@@ -1,0 +1,4 @@
+onecache$|application$|cache$|exe$|pdb$|tmp$|manifest$|tlog$|resources$
+qwapp\.c$|dlldata\.c$|(_p|_i|_h)\.(c|h)$|_manifest.rc$
+\.sln$|\.vcxproj$|\.c$|\.cpp$|\\.h$|\\.rc$|\\.dlg$|\\.htm$|\\.html$
+qdf$|dat$|qdf-backup$

@@ -1,0 +1,82 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="CopyOnWrite.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="WindowState" Type="System.Windows.Forms.FormWindowState" Scope="User">
+      <Value Profile="(Default)">Normal</Value>
+    </Setting>
+    <Setting Name="ToFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\_bak</Value>
+    </Setting>
+    <Setting Name="Col_FileName_Width" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">180</Value>
+    </Setting>
+    <Setting Name="Col_FullPath_Width" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">236</Value>
+    </Setting>
+    <Setting Name="Col_TimeStamp_Width" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">154</Value>
+    </Setting>
+    <Setting Name="IsMatch" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;\.sln$|\.vcxproj$|\.c$|\.cpp$|\.h$|\.rc$|\.dlg$|\.htm$|\.html$&lt;/string&gt;
+  &lt;string /&gt;
+  &lt;string /&gt;
+  &lt;string&gt;match nothing&lt;/string&gt;
+  &lt;string /&gt;
+  &lt;string /&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+    <Setting Name="FromFolder" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;C:\_qdev\&lt;/string&gt;
+  &lt;string&gt;C:\_T&lt;/string&gt;
+  &lt;string&gt;c:\_qdev_data&lt;/string&gt;
+  &lt;string&gt;C:\Users\trichards&lt;/string&gt;
+  &lt;string&gt;c:\_CopyOnWrite&lt;/string&gt;
+  &lt;string&gt;h:\_OneNote&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+    <Setting Name="WindowPosition" Type="System.Drawing.Rectangle" Scope="User">
+      <Value Profile="(Default)">1, 0, 667, 1080</Value>
+    </Setting>
+    <Setting Name="Negative" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;qwapp\.c$|dlldata\.c$|(_p|_i|_h)\.(c|h)$|_manifest.rc$|\ \-\ Copy|Debug&lt;/string&gt;
+  &lt;string&gt;onecache$|application$|cache$|exe$|pdb$|tmp$|manifest$|tlog$|resources$|suo$|FileListAbsolute.txt|Debug|OFXLOG.DAT|mp3$|png$|dll$|msi$|cab$|appinfo$vmx$|vmxf$|cache&lt;/string&gt;
+  &lt;string&gt;qdf$|dat$|qdf-backup$|_sync_perf.txt$&lt;/string&gt;
+  &lt;string&gt;^Cookies|^ntuser|^SyncData|^Current|^~|^FavIcons|tmp$|^Preferences|winprf$|Default$&lt;/string&gt;
+  &lt;string&gt;onecache$|application$|cache$|exe$|pdb$|tmp$|manifest$|tlog$|resources$|suo$|FileListAbsolute.txt|Debug|OFXLOG.DAT|mp3$|png$|dll$|deploy$|publish&lt;/string&gt;
+  &lt;string /&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+    <Setting Name="Disable" Type="System.Boolean[]" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfBoolean xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;boolean&gt;false&lt;/boolean&gt;
+  &lt;boolean&gt;false&lt;/boolean&gt;
+  &lt;boolean&gt;false&lt;/boolean&gt;
+  &lt;boolean&gt;false&lt;/boolean&gt;
+  &lt;boolean&gt;false&lt;/boolean&gt;
+  &lt;boolean&gt;false&lt;/boolean&gt;
+&lt;/ArrayOfBoolean&gt;</Value>
+    </Setting>
+    <Setting Name="SplitterPos" Type="System.Int32[]" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfInt xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;int&gt;434&lt;/int&gt;
+  &lt;int&gt;632&lt;/int&gt;
+  &lt;int&gt;632&lt;/int&gt;
+  &lt;int&gt;632&lt;/int&gt;
+  &lt;int&gt;632&lt;/int&gt;
+  &lt;int&gt;279&lt;/int&gt;
+&lt;/ArrayOfInt&gt;</Value>
+    </Setting>
+    <Setting Name="Col_Tab_Width" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">56</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

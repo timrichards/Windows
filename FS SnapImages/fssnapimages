@@ -1,0 +1,607 @@
+#!/bin/bash
+#2345678901234567890123456789012345678901234567890123456789012345678901234567890
+#XXXXXXXXX0000000000XXXXXXXXXX0000000000XXXXXXXXXX0000000000XXXXXXXXXX0000000000
+#
+# Script name: fssnapimages      - Two files:
+#              fssnapimages      - this file, wrapper script for singleton main;
+#                                  parse command line; queue tasks
+#              fssnapimages-main - the main script
+# Author:      Tim Richards, 11/2006, tim9richards@gmail.com
+# Dependency:  Rsync
+# License:     GPL
+# Bash:        3.1.17(1)-release
+
+# Date:        Version  Comments
+# 061210.1807  0.42     moved mounts to subdir. Moves the queue to queue dir.
+# 061210.1429  0.41     Concurrency check. UNSTUCK/UNSTUCKALL options.
+# 061209.1757  0.4      Quoted the hell out of it. Fixed mounting quoting.
+# 061209.1629  0.39b(04)-7 special holiday version
+# 061209.1028  0.39     Cleanup
+# 061208.1831  0.38     Dev options; XML output for main.
+# 061208.1452  0.37     Cleanup; characterizing states; prep for dev options.
+# 061207.2112  0.36     Cleanup; fixed reporting of mounting errors.
+# 061207.1907  0.35     Mount; check for presence of `.fssnapimages' on each.
+# 061207.1234  0.34     Set in queueing with error on duplicates prior & current
+# 061207.0905  0.33     "$Quoted". Workaround -gt bash bug.
+# 061206.2326  0.32     Some more cleanup
+# 061206.1924           Fixed `can't repeat'.
+# 061206.1847  0.31     Tidying up. Multiple options OK, but can't repeat.
+# 061206.1811  0.3      Robust verbose option option. Excludes.
+# 061206.0941  0.29     Some more cleanup while I think about queueing
+# 061205.1827  0.28     Machine is Clean. Ready for queueing logic.
+# 061205.1408  0.27     partition number check
+# 061205.1120  0.26     machine ok
+# 061204.2341  0.25     info moved to wrapper; command line machine
+# 061203.1726           arrays will not be implemented. See wrapper for usage.
+# 061203.1341  0.24     embel arrays some; src dir vs. mount pt.
+# 061202.2431  0.23     checks: no run main; .check.
+# 061202.1600  0.22     maybe part array; bug@334 `[-d' -> `[ -d'; singleton; 
+#                       wrapper into two files: this (fssnapimages-main) and
+#                       the wrapper (fssnapimages); $L;
+# 061201.2610  0.21     split
+# 061201.2510  0.2      ramdisk; maybe fsck
+# 061130.2507  0.1      First posted to timrichards.wikispaces.com/fssnapimages
+
+# Usage:
+#            fssnapimages    source       dest 
+#
+#            fssnapimages    -e excludes-file       source       dest
+#                               per `rsync'
+# where                                   
+#        source : is a directory tree or a /dev/hd?# device
+#    ------                               
+#          dest :              is always a /dev/hd?# device
+#    ------
+#
+# and
+#       /dev/hd?# device is optionally prefixed by a `-t' and/or a `-o' option
+#                 per `mount'.
+#                                         
+#             - : hyphens separate source-dest pairs - space before and after
+#                                         
+# Examples:                               
+#            fssnapimages    /dev/hd?#        /dev/hd?#
+#    or                                   
+#            fssnapimages    /full/source/dir /dev/hd?#
+#    or                                   
+#            fssnapimages    source       dest - source dest
+#    or                                   
+#            fssnapimages    source       dest - source dest - source dest ...
+#    or
+#            fssnapimages    -e excludes-file source dest ...
+#    or
+#            fssnapimages    {-e ...} {-t ...} {-o ...} /dev/hd?#  dest {- ...
+#    or
+#            fssnapimages    {-e/t/o} /dev/hd?#  {-t ...} {-o ... } dest {- ...
+#    or
+#            fssnapimages    {-e ...} source  {-t ...} {-o ... } dest {- ...
+#
+# Idea: This script will backup your entire filesystem to an uncompressed
+# filesystem on a partition on your second drive. Run from cron, it will then
+# create hourly snapshots of a subset, say /home. The first goal is to be able
+# to boot from the second drive if your system goes south, and to have lost at
+# most an hour's worth of work and virtually no downtime, without RAID. However
+# the second goal is the primary one: Using hard links, to recreate the different
+# stages of the filesystem or data subset, so that, without CVS, you are able to
+# restore a previous data version. Multiple snapshot directories will then be
+# browseable, allowing you to seek back to when you were sane, so you thought.
+#
+# Scenario: You have two hard drives with a partition on the second as large as
+# will fit the data you want replicated. You will modify this script to point to
+# your source directory and destination partition. This program will then take
+# over that partition, erasing it completely. All your existing data will be
+# destroyed.
+#
+# The first run of fssnapimages will take a considerably long time; as much time
+# as it takes to replicate data using Rsync. Subsequent runs can be directed to
+# a subdirectory, /home, for instance, for speed. Any system updates will
+# require you to recreate the base filesystem. It is up to you to manage and
+# delete the snapshot "MostRecentHour" directories. 500MB/Min on my computer, on
+# first run. Subsequent runs take about ten seconds. The drives get noisy for
+# ten seconds then quit.
+#
+# Future functionality not yet implemented or possibly > /dev/null:
+# Usage: fssnapimage src_disk_dir [[-m dst_device dst_mount_point] | dst_dir]
+#
+# Rewritten from http://www.mikerubel.org/computers/rsync_snapshots/#Incremental
+# which seems to have been abandoned in early 2004.
+#
+# This code is functional but incomplete, showing, as above, a desire for future
+# functionality not yet implemented.
+#
+#!WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!WARNING!
+# THE ENTIRE CONTENTS OF THE dst_device PATH WILL BE APPROPRIATED AND ERASED BY
+# THIS PROGRAM. THE PURPOSE IS TO RECREATE THE SOURCE FILESYSTEM ON dst_device.
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+
+unset PATH
+L="fssnapimages"
+
+exec_fssnapimages="/usr/local/bin/fssnapimages-main"
+
+             echo="/bin/echo"
+          mkdir_p="/bin/mkdir -p"
+            mount="/bin/mount"
+           umount="/bin/umount"
+            touch="/bin/touch"
+            rm_rf="/bin/rm -rf --preserve-root" # let's play it safe
+            rmdir="/bin/rmdir"
+               mv="/bin/mv"
+
+          ramdisk="/tmp/.fssnapimages" # This has to be the same with main
+
+# -- State machine
+
+# 061204.2018
+# Machine: 1 state is start; 3 state is successful command completion
+#
+#      State:                    Expects:                     Jump to:
+#      ------------------------- ---------------------------  --------
+AA=1  # no source; no dest        source: device or directory  AB
+      # no option                    or: option arg            OA
+      #                              or: device option         DA
+AB=2  # source.                   dest: device. Queues here.   AC
+      #                              or: device option         DA
+AC=3  # dest.                     hyphen or end                AD or end
+AD=4  #(hyphen                    Transitional)                AA
+
+# option states
+OA=5  # option arg                option param                 OB
+OB=6  #(option param              Transitional)                AA
+
+# device options
+DA=7  # device option             device option param          AA/AB *
+#                                            Flagged for once repeat *
+            free_state=8     # smallest integer greater than largest state
+
+           error_state=-1    # error-multiplier
+    option_param_state="$OA" # jump-to state index for the option specifier
+dev_option_param_state="$DA" # jump-to state index for device option
+           queue_state="$free_state"
+
+
+# -- Queue handler
+
+q_total=0
+add_to_potential_queue() {
+   # Queue Logic Starts Here
+   # We have `source_dev' or `source_dir'; and we have `dest_dev'.
+   # We may have `excludes_file'.
+
+   q_source_dev_o_option["$q_total"]="$source_dev_o_option"
+   q_source_dev_t_option["$q_total"]="$source_dev_t_option"
+            q_source_dev["$q_total"]="$source_dev"
+            q_source_dir["$q_total"]="$source_dir"
+     q_dest_dev_o_option["$q_total"]="$dest_dev_o_option"
+     q_dest_dev_t_option["$q_total"]="$dest_dev_t_option"
+              q_dest_dev["$q_total"]="$dest_dev"
+                        (( q_total++ ))
+
+   # excludes file is better handled later, below, since it's singleton.
+
+   # doesn't seem to be necessary: experiment by removing? 061208.1756
+                                 unset source_dev_o_option
+                                 unset source_dev_t_option
+                                 unset source_dev
+                                 unset source_dir
+                                 unset dest_dev_o_option
+                                 unset dest_dev_t_option
+                                 unset dest_dev
+}
+
+set_in_queue_and_sleep() {
+   local q_dir="$ramdisk/.queue"
+   local q_tmp="$ramdisk/.q_tmp"
+
+      # Start up the ramdisk - only main brings it down -----------------------
+   QA=$(( state=$queue_state ))                                   # State is QA
+   if ! [ -f "$ramdisk/.ramdisk_is_running" ]
+   then
+      $mkdir_p "$ramdisk"
+      $mount -t ramfs fssnapimages $ramdisk
+      $touch "$ramdisk/.ramdisk_is_running" 2> /dev/null
+
+         # make the queue directory
+      $mkdir_p "$q_dir"
+   elif [ -f "$ramdisk/.busy_queueing" ]
+   then
+         # need to check for concurrent process and wait until it's done
+         # queueing otherwise the same thing can get queued twice or something
+         # nah let's exit with an error. Yeah. That'll doem.
+      return $(( state*=error_state ))          # redundant: *=
+   fi
+  $touch "$ramdisk/.busy_queueing"
+
+      # Check entire request array and possibly bail ---------------------------
+      # state is only used for error reporting.                    # State is QB
+   QB=$(( ++state ))
+   for (( i=0; i<"$q_total"; i++ ))
+   do
+      if [ -f "$q_dir/.${q_dest_dev[$i]}" ]     # Form of "c1"
+      then
+         p="/dev/hd${q_dest_dev[$i]}"           # Friendly hack error out
+
+            # Item was queued by a former instance of the command
+         return $(( state*=error_state ))       # redundant: *=
+      fi
+   done
+
+      # Queue all requests and possibly bail -----------------------------------
+      # Use a temp directory so that the main doesn't              # State is QC
+      # start chewing on it by some freak of coincidence like yourself man.
+   QC=$(( ++state ))
+   $rm_rf "$q_tmp" 2> /dev/null                 # make sure it's new
+   $mkdir_p "$q_tmp"
+   for (( i=0; i<"$q_total"; i++ ))
+   do
+      if [ -f "$q_tmp/${q_dest_dev[$i]}" ]      # Form of "c1"
+      then
+         $rm_rf "$q_tmp" 2> /dev/null           # unqueue the new items
+         p="/dev/hd${q_dest_dev[$i]}"           # Friendly hack error out
+
+            # Item was queued twice in this command instance
+         return $(( state*=error_state ))       # redundant: *=
+      fi
+
+         # Jumped the hurdle. Make the queue item (queued in device order)
+
+      local F="$q_tmp/${q_dest_dev[$i]}"
+      echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" > "$F"
+      echo "<!DOCTYPE fssnapimages>" >> "$F"
+
+      echo "<dest_dev=\"/dev/hd${q_dest_dev[$i]}\" >" >> "$F"
+      if [ ! -z "${q_source_dev_o_option[$i]}" ]; then
+$echo -e "\t<source_dev_o_option=\"${q_source_dev_o_option[$i]}\" />" >> "$F";fi
+      if [ ! -z "${q_source_dev_t_option[$i]}" ]; then
+$echo -e "\t<source_dev_t_option=\"${q_source_dev_t_option[$i]}\" />" >> "$F";fi
+      if [ ! -z "${q_source_dev[$i]}" ]; then
+$echo -e "\t<source_dev=\"/dev/hd${q_source_dev[$i]}\" />" >> "$F"; fi
+      if [ ! -z "${q_source_dir[$i]}" ]; then
+$echo -e "\t<source_dir=\"${q_source_dir[$i]}\" />" >> "$F"; fi
+      if [ ! -z "${q_dest_dev_o_option[$i]}" ]; then
+$echo -e "\t<dest_dev_o_option=\"${q_dest_dev_o_option[$i]}\" />" >> "$F"; fi
+      if [ ! -z "${q_dest_dev_t_option[$i]}" ]; then
+$echo -e "\t<dest_dev_t_option=\"${q_dest_dev_t_option[$i]}\" />" >> "$F"; fi
+      if [ ! -z "$excludes_file" ]; then
+$echo -e "\t<excludes_file=\"$excludes_file\" />" >> "$F"; fi
+      echo "</dest_dev>" >> "$F"
+   done
+
+      # Mount the dests and test them all for mount errors ---------------------
+   QD=$(( ++state ))                                               # State is QD
+   for (( i=0; i<"$q_total"; i++ ))
+   do
+      # -t reiserfs, e.g, gets nudged together to look like -treiserfs yet this
+      # is what works. [061209.1612] This quoting is important to fussy bash.
+      unset dev_t_option
+      if [ ! -z "${q_dest_dev_t_option[$i]}" ]; then
+         local dev_t_option="-t""${q_dest_dev_t_option[$i]}"; fi
+
+      unset dev_o_option
+      if [ ! -z "${q_dest_dev_o_option[$i]}" ]; then
+         local dev_o_option="-o""${q_dest_dev_o_option[$i]}"; fi
+
+      $mkdir_p "$ramdisk/.mounts/${q_dest_dev[$i]}"
+
+      # [61209.1742] This is one of those rare instances where quoting the vars
+      # gets you into trouble. So the two option constructs seem to have to be
+      # unquoted in the mount command.
+
+      $mount "/dev/hd${q_dest_dev[$i]}" "$ramdisk/.mounts/${q_dest_dev[$i]}" \
+             $dev_t_option $dev_o_option
+
+      if [[ "$?" != 0 ]]                        # mount reported an error
+      then
+         p="/dev/hd${q_dest_dev[$i]}"           # Friendly hack error out
+         for (( j=0; j<"$i"; j++ ))             # Less-than: i didn't mount
+         do
+            $umount "$ramdisk/.mounts/${q_dest_dev[$j]}" 2> /dev/null
+            $rm_rf  "$ramdisk/.mounts/${q_dest_dev[$j]}" 2> /dev/null
+         done
+         $rm_rf "$q_tmp" 2> /dev/null           # unqueue the new items
+         return $(( state*=error_state ))       # redundant: *=
+      fi
+   done
+
+      # Test the mounts for presence of `.fssnapimages' ------------------------
+   QE=$(( ++state ))                                               # State is QE
+   unset p
+   for (( i=0; i<"$q_total"; i++ ))
+   do
+      if ! [ -d "$ramdisk/.mounts/${q_dest_dev[$i]}/.fssnapimages" ]
+      then
+         p="$p/dev/hd${q_dest_dev[$i]}\n"       # Friendly hack error list out
+      fi
+   done
+
+   if ! [ -z "$p" ]
+   then
+      for (( i=0; i<"$q_total"; i++ ))
+      do
+         $umount "$ramdisk/.mounts/${q_dest_dev[$i]}" 2> /dev/null
+         $rm_rf  "$ramdisk/.mounts/${q_dest_dev[$i]}" 2> /dev/null
+      done
+      $rm_rf "$q_tmp" 2> /dev/null              # unqueue the new items
+      p="${p%"\n"}"
+      return $(( state*=error_state ))          # redundant: *=
+   fi
+
+      # Move the queue to the queue directory ---------------------------------
+   $mv "$q_tmp"/* "$q_dir"
+   $rmdir "$q_tmp"
+
+   #  confirm_running_main
+
+   # 2. Check for running main and start it in motion
+   #  A. Main takes ramdrive path as its only argument.
+   #   1. Main seeds the ramdrive with its existence.
+   #   2. Main eats the queue
+   #   3. Main exits when the queue is gone
+   # 3. The wrapper sleeps until its items are done and returns state
+
+   $rm_rf "$ramdisk/.busy_queueing" 2> /dev/null
+   #  snooze
+
+   return $(( state=0 ))                        # redundant: =
+}
+
+unmount_all() {
+   $rm_rf "$ramdisk/.busy_queueing"
+   $rm_rf "$ramdisk/.queue"
+   $umount "$ramdisk/.mounts"/*
+   $rmdir  "$ramdisk/.mounts"/*
+   $umount "$ramdisk"
+   $rmdir  "$ramdisk"
+}
+
+# -- State handlers
+
+is_it_a_dev_option() {
+   it_is_a_dev_option="false"
+   unset dev_option
+   unset dev_option_save_state
+
+   # if this is the 3rd time through both dev_t_option and dev_o_option
+   # will be set.
+   if [ ! -z "$dev_o_option" ] && [ ! -z "$dev_t_option" ]
+   then
+      return
+   fi
+
+   if [[ "$p" == "-o" || "$p" == "-t" ]]
+   then
+      dev_option="$p"                     
+      dev_option_save_state="$state"   # jump back to where post-options
+      state="$dev_option_param_state"  # state becomes DA
+      it_is_a_dev_option="true"        # request a fall-through to cline interp.
+   fi
+}
+
+is_it_a_device() {                     # state is AA or AB
+   it_is_a_device="false"
+   case "${p: -1}" in                  # last digit i.e "/dev/hdc10" is required
+[0-9]) 
+      if [[ "$p" == /dev/hd* && -b "$p" ]] # It's a hard drive partition
+      then                             # and we have the device name.
+         device="${p#/dev/hd}"         # strip everything but "c1"
+         it_is_a_device="true"
+         unset dev_option_save_state   # reset for future device options
+      fi ;;
+   esac
+}
+
+source_dev_or_dir_or_option() {        # AA state, callees increment
+   is_it_a_dev_option
+   if [[ "$it_is_a_dev_option" == "true" ]]
+   then
+      return
+   fi
+
+   is_it_a_device
+   if [[ "$it_is_a_device" == "true" ]]
+   then
+      unset source_dir
+      source_dev_o_option="$dev_o_option"
+      source_dev_t_option="$dev_t_option"
+      source_dev="$device"
+      unset dev_o_option               # required for dest dev.
+      unset dev_t_option
+      unset device                     # `device', OK. Unset `source_dir' here.
+      (( state++ ))
+   elif [ -d "$p" ] && [ -z "$dev_o_option" ] && [ -z "$dev_t_option" ]
+   then
+      unset source_dev
+      source_dir="$p"                  # it's all good
+      (( state++ ))                    # now state is AB
+   elif [[ $once_through != "true" && "${p: 0: 1}" == "-" && "${#p}" > 1 ]]
+   then
+      option="${p#-}"
+      option="${option#-}"
+      case "$option" in
+   UNSTUCK) $rm_rf "$ramdisk/.busy_queueing" 2> /dev/null
+            $killall "fssnapimages"
+            exit 0 ;;   # jic
+UNSTUCKALL) $killall "fssnapimages-main"
+            unmount_all
+            $killall "fssnapimages"
+            exit 0 ;;   # jic
+         *) state="$option_param_state" ;;
+      esac
+   else
+      (( state*=error_state ))
+   fi
+}
+
+dest_dev_and_queue() {                 # state is AB
+   is_it_a_dev_option
+   if [[ "$it_is_a_dev_option" == "true" ]]
+   then
+      return
+   fi
+
+   is_it_a_device
+   if [[ "$it_is_a_device" == "true" ]]
+   then
+      dest_dev_o_option="$dev_o_option"
+      dest_dev_t_option="$dev_t_option"
+      dest_dev="$device"
+      unset dev_o_option               # required for next source dev
+      unset dev_t_option
+      unset device                     # `device', OK. Do Not unset `source_dir'
+      add_to_potential_queue           # temp queue bails if command line errs
+      (( state++ ))
+   else
+      (( state*=error_state ))
+   fi
+}
+
+check_for_more() {                     # state is AC
+   if [[ "$p" == "-" ]]
+   then
+      once_through="true"
+      (( state++ ))                    # success
+   else
+      (( state*=error_state ))
+   fi
+}
+
+option_param() {                       # state is option_param_state OA
+   if [[ "$option" == "e" && -f "$p" && -z "$excludes_file" ]]
+   then                                # needs to be a regular file and unset
+      excludes_file="$p"
+      (( state++ ))                    # success
+   else
+      (( state*=error_state ))
+   fi
+}
+
+dev_option_param() {                   # state is DA
+   # either `-o' or `-t' is guaranteed by the caller
+   if [[ "$dev_option" == "-o" ]]
+   then {
+      if [ -z "$dev_o_option" ]
+      then
+         state="$dev_option_save_state" # go through same dev req after this
+         dev_o_option="$p"
+      else
+         (( state*=error_state ))      # duplicate request for the same option
+      fi
+   } elif [[ "$dev_option" == "-t" ]]
+   then {
+      if [ -z "$dev_t_option" ]
+      then
+         state="$dev_option_save_state"
+         dev_t_option="$p"
+      else
+         (( state*=error_state ))
+      fi
+   } fi
+}
+
+# -- State machine ------------------------------------------------- entry point
+
+state=1                                # negative state codes that error
+while [[ "$#" > 0  &&  "$state" -gt -1 ]]
+do
+   p="$1"
+   case "$state" in
+$AA) source_dev_or_dir_or_option ;;    # is it a directory or device?
+$AB) dest_dev_and_queue ;;             # needs to be a device
+$AC) check_for_more; if [[ "$state" == "$AD" ]]; then state="$AA"; fi; ;;
+$OA) option_param;   if [[ "$state" == "$OB" ]]; then state="$AA"; fi; ;;
+$DA) dev_option_param ;;               # a device option was requested.
+   esac
+   shift
+done
+
+# -- State egress
+
+# 3 is the only valid state here, because only when a pair has been read should
+# we then have no more items. Positives mean we ran out of input.
+case "$state" in
+            $AA  ) $echo "$L: Missing parameters"                         ;;
+-$AA|$((256-$AA))) $echo "$L: Invalid source directory or device"         \
+                             "parameter or option '$p'; or device"        \
+                             "parameter specified for non-device"         ;;
+            $AB  ) $echo "$L: Missing destination device parameter"       \
+                             "or option"                                  ;;
+-$AB|$((256-$AB))) $echo "$L: Invalid destination device parameter"       \
+                             "or option '$p'"                             ;;
+-$AC|$((256-$AC))) $echo "$L: Invalid '-' delimiter '$p'"                 ;;
+            $OA  ) $echo "$L: Missing '$option' option parameter"         \
+                             "or invalid option '$option'"                ;;
+-$OA|$((256-$OA))) $echo "$L: Invalid option parameter '$p';"             \
+                             "or invalid option '$option'"                ;;
+            $DA  ) $echo "$L: Missing '$dev_option'"                      \
+                             "device option parameter"                    ;;
+-$DA|$((256-$DA))) $echo "$L: Repeated device option '$dev_option'"       ;;
+esac
+
+if [[ "$state" != 3 ]]
+then
+   if [[ "$state" == 0 ]]; then exit -99; fi   # Bizarre             # -99 = 157
+   exit "$state"
+fi
+
+# -- Communicate successful command line
+
+set_in_queue_and_sleep
+state="$?"                             # friendly reuse of state for error state
+
+case "$state" in
+-$QA|$((256-$QA))) $echo    "$L: concurrent process is busy queueing. Use"        \
+                                "--UNSTUCK or --UNSTUCKALL to clean out the queue";;
+-$QB|$((256-$QB))) $echo    "$L: $p already queued"                               ;;
+-$QC|$((256-$QC))) $echo    "$L: $p requested twice"                              ;;
+-$QD|$((256-$QD))) $echo    "$L: $p would not mount"                              ;;
+-$QE|$((256-$QE))) $echo -e "$L: The following device(s) failed for absence of"   \
+                                "'.fssnapimages' directory:\n$p"                  ;;
+esac
+
+# ?????????????????????????????????????????????????????????????????? HACK
+unmount_all
+exit 0
+# ?????????????????????????????????????????????????????????????????? HACK
+
+if [[ "$state" != 0 ]]
+then
+   exit "$state"
+fi
+
+exit # ????????????????????????????????????????????????????????????????????? HACK
+
+
+# -- End of state
+
+# 061202.1450 Singleton check: The ramdisk is temporary, a perfect place to
+# stash a transitory runtime file, guaranteed not to be there when... uh-oh...
+if [ -f "$ramdisk/.fssnapimages-is-already-running" ]
+then
+   $echo "$L: Already running. cron?"
+   exit 1 # This can't really be reported as an error. Actually it's status quo.
+   # Do Not Unmount the ramdisk here
+fi
+# Better hope the ramdisk comes down at script end. What if the script is inter-
+# rupted? How to do that when the script exits?
+# Duh: wrap the script within another script, hence this wrapper.
+
+   # Set up the environment-----------------------------------------------------
+$mkdir_p $ramdisk
+$mount -t ramfs fssnapimages $ramdisk
+
+   # Singleton check setup.
+$touch $ramdisk/.fssnapimages-is-already-running 2> /dev/null
+
+   # Run the script
+$exec_fssnapimages
+error_maybe=$?
+
+   # Just in case the ramdisk doesn't come down, at least remove the singleton
+   # indicator file
+$rm_rf $ramdisk/.fssnapimages-is-already-running 2> /dev/null
+   # Make sure the ramdisk is down
+$umount $ramdisk 2> /dev/null
+
+   # report the main's error as this is just a wrapper
+exit $error_maybe

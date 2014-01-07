@@ -1,0 +1,420 @@
+#!/bin/bash
+#2345678901234567890123456789012345678901234567890123456789012345678901234567890
+#XXXXXXXXX0000000000XXXXXXXXXX0000000000XXXXXXXXXX0000000000XXXXXXXXXX0000000000
+#
+# Script name: fssnapimages      - Two files:
+#              fssnapimages      - wrapper script to test singleton
+#              fssnapimages-main - this file, the main script
+# Author:      Tim Richards, 11/2006, tim9richards@gmail.com
+# Dependency:  Rsync
+# License:     GPL
+# Bash:        3.1.17(1)-release
+
+#========================================================Exported path constants
+    src_disk_dir=/home
+      dst_device=/dev/hdd8
+     dst_fs_type="-t ext3"
+    dst_mount_pt=/root/fssnapimages  # renamed to dst_dsk at mount
+        excludes="/usr/local/etc/fssnapimages-exclude"
+#=========================================================Source and Dest Arrays
+# These are the names of the drives, without the partition indexes attached. You
+# have two drives in your computer. Which is the source drive? Which is the
+# destination drive? 061203.1322
+
+         src_dev="/dev/hda"
+         dst_dev="/dev/hdc"
+
+# tim@Tardis:~$ sudo fdisk -l
+# ..
+# 
+#    Device Boot   ..   Id  System
+# /dev/hdc1   *    ..   83  Linux
+# /dev/hdc2        ..    f  W95 Ext'd (LBA)
+# /dev/hdc3        ..    7  HPFS/NTFS
+# /dev/hdc4        ..   83  Linux
+# /dev/hdc5        ..   83  Linux
+# /dev/hdc6        ..   83  Linux
+# /dev/hdc7        ..   83  Linux
+# /dev/hdc8        ..   82  Linux swap / Solaris
+# 
+# Partition table entries are not in disk order
+
+   # 061203.1238: Bash arrays are zero based. The zeroth index is always Z. Run
+   # fdisk -l to divine where your parts are put in /dev. Use the above types to
+   # put the partition types into the array. Always set "W95 Ext'd (LBA)"
+   # as your extended partition table. Here, mine is /dev/hdc2, and so under the
+   # twoth index I have that set to Z.
+
+setup_partition_types()
+{
+   local e="-t ext3"
+   local f="-t vfat"
+   local n="-t ntfs"
+   local r="-t reiserfs"
+   unset Z # Z is purposely set to null
+
+   # /dev/hd? partition index                1  1  1  1  1  1
+   #           0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+   src_type=( $Z $Z $Z $Z $Z $Z $Z $Z $Z $Z $Z $Z $Z $Z $Z $Z )
+   dst_type=( $Z $e $Z $n $r $r $r $Z $Z $Z $Z $Z $Z $Z $Z $Z )
+
+# no source types because I want to set the src directories up to go into the
+# destination partions
+   src_dirs=(
+      $Z                   # 0
+      "/boot"              # 1
+      $Z                   # 2 - extended partition table
+      $Z                   # 3 - don't muck with NTFS for now
+      "/"  #todo:excludes  # 4 - root filesystem with excludes for /boot; /usr; /home; /proc; "etc."
+      "/usr"               # 5
+      "/home"              # 6
+      $Z                   # 7
+   )
+}
+setup_partition_types
+#===============================================================================
+#------------------------------------------------Destination Directory Structure
+# ls 
+# .fssnapimages
+# -------------------
+#    MostRecentHour
+#    MostRecentHour-1
+#    MostRecentHour-..
+#    MostRecentHour-Nh-1
+#    MostRecentHour-Nh
+#    ..TODAY ONLY
+# 
+#    MostRecentDay
+#    MostRecentDay-1
+#    MostRecentDay-2
+#    MostRecentDay-..
+#    MostRecentDay-Nd
+#    ..THIS WEEK ONLY
+# 
+#    MostRecentWeek
+#    MostRecentWeek-1
+#    MostRecentWeek-..
+#    MostRecentWeek-Nw-1
+#    MostRecentWeek-Nw
+#    ..THIS MONTH ONLY
+# 
+#    MostRecentMonth
+#    MostRecentMonth-1
+#    MostRecentMonth-2
+#    MostRecentMonth-..
+#    MostRecentMonth-Nm
+# 
+#    ..THIS YEAR ONLY
+# -------------------
+# 
+# Contents of most recent hour are in the root directory.
+# 
+#-------------------------------------------------------------------------------
+unset PATH
+#============================================================= Command constants
+            id=/usr/bin/id
+          echo=/bin/echo
+         mount=/bin/mount
+        umount=/bin/umount
+            df="/bin/df --sync -h --block-size=M" 
+            ls=/bin/ls
+          grep=/bin/grep
+          tail=/usr/bin/tail
+            mv=/bin/mv
+          date=/bin/date
+      rsync_va="/usr/bin/rsync -va --exclude-from=$excludes"
+         touch=/bin/touch
+       mkdir_p="/bin/mkdir -p"
+         rm_rf="/bin/rm -rf --preserve-root" # let's play it safe
+         cp_al="/bin/cp -al"
+          fsck="/sbin/fsck -a"
+           cat=/bin/cat
+#=================================================================Path constants
+      fssnapimages=fssnapimages # no dot here: It'll be used later
+    MostRecentHour=MostRecentHour
+      fssnapsource=.fssnapsource
+           ramdisk=/tmp/.fssnapimages  # wrapper defines this = /tmp/fssnapimages
+#===============================================================================
+         fssi_exit=0   # fssnapimages exit code
+# 061202.2228: This script is meant to be run only from the wrapper, which will
+# have created a special file we can check and bail if it isn't there.
+if ! [ -f $ramdisk/.fssnapimages-is-already-running ]
+then
+   $echo "$0: Perhaps I might try calling 'fssnapimages' instead of 'fssnapimages-main',"
+   $echo "and I would also be superuser."
+   exit 1
+fi
+#------------------------------------------------------------------Preliminaries
+# make sure we're running as root
+if (( `$id -u` != 0 ));then $echo "$0: Works best from the root crontab."; exit 1;fi
+dst_disk=$dst_mount_pt; unset dst_mount_pt  # dst_mount_pt just there for export
+#...............................................................mount() function
+mount() { $mount -o $mountperm $dst_fs_type $dst_device $dst_disk; }
+#...............................................................split() function
+split() {
+   if (( $wasnt_mounted ))
+   then
+      # The drive is mounted. Unmount it.
+      $umount $dst_disk
+   else 
+      # The drive is mounted. Remount it.
+      mountperm="remount,ro"; mount
+   fi
+# no - in wrapper now -    $umount $ramdisk
+# no - in wrapper now -    $rm_rf $ramdisk 2> /dev/null # doesn't matter if it hangs on
+   exit $fssi_exit
+}
+#...............................................................................
+#exit_if_error is only the only dog of mountit here so maybe it should get fixed
+#.......................................................exit_if_error() function
+exit_if_error(){ local error=$?; if (( $error )); then $echo $error; exit 1;fi;}
+#...............................................................................
+#-------------------------------------------------------------------------------
+# mount it
+mountperm="rw,remount"; mount 2> /dev/null
+# maybe it's not already mounted.
+if (( $? )); then mountperm="rw"; mount; exit_if_error; wasnt_mounted="true"; fi
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------Main Program
+if ! [ -d $dst_disk/.$fssnapimages ]
+then      # set in fssnapimages hidden dir
+  $echo $"\
+!WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!WARNING!
+ THE ENTIRE CONTENTS OF THE dst_device PATH WILL BE APPROPRIATED AND ERASED BY
+ THIS PROGRAM. THE PURPOSE IS TO RECREATE THE SOURCE FILESYSTEM ON dst_device.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+In order to confirm your knowledge of this WARNING and make this program work
+you must create a directory with the name shown and try again. "
+   $echo $dst_disk/.$fssnapimages
+echo $"\
+!WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!WARNING!
+ THE ENTIRE CONTENTS OF THE dst_device PATH WILL BE APPROPRIATED AND ERASED BY
+ THIS PROGRAM. THE PURPOSE IS TO RECREATE THE SOURCE FILESYSTEM ON dst_device.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+   exit 1
+fi
+
+# no - in wrapper now - # 061201.1816 mount the ramdisk
+# no - in wrapper now - $mkdir_p $ramdisk
+# no - in wrapper now - # $mount -t ramfs fssnapimages $ramdisk
+
+# To Rsync backup:
+# 1. Cycle MostRecentHour directories so that
+#    MostRecentHour-i --> MostRecentHour-(i+1) when
+#  A. MostRecentHour --> MostRecentHour-1, preserving /the/ most recent even
+#     when it's not today, and
+#  B. MostRecentHour-[1-N] get cycled only when today so that any yesterday
+#     MostRecentHour directories get deleted.
+#  At the end of this cycling MostRecentHour does not exist.
+
+if [ -d $dst_disk/.$fssnapimages/$MostRecentHour ]
+then
+   # 061129.1658-Don't use the date arithmetic. Sometimes you want to manually
+   # rename directories which screws it up. Just deal with what we're trying to
+   # solve here: namely, incrementing each directory's number by one.
+   # no - oldest=`$ls -r --sort=time "$dst_disk/.$fssnapimages/" | \
+   # no -    $grep $MostRecentHour- | $tail -1`
+   # no - oldest=${oldest:(-1)}
+  
+   # Instead: while we have directory match, count up...
+   (( a = 1 ))
+   while [ -d $dst_disk/.$fssnapimages/$MostRecentHour-$a  ] 
+   do
+      (( a++ ))
+   done
+   # ...and then rename, counting back down (directory doesn't exist for `a' so
+   # initialize by decrementing)
+   for (( a-- ; a > 0 ; a-- ))
+   do
+      # this doesn't change the modification date
+      # no special move here: rename only
+      $mv $dst_disk/.$fssnapimages/$MostRecentHour-$a \
+         $dst_disk/.$fssnapimages/$MostRecentHour-$(( a+1 ))
+   done
+
+   # no special move here: rename only
+   $mv $dst_disk/.$fssnapimages/$MostRecentHour \
+      $dst_disk/.$fssnapimages/$MostRecentHour-1
+fi
+
+# 061127.1723 This is the first non-dry run
+# MostRecentHour   created from
+# MostRecentHour-1
+# tim@Tardis:~$ df /dev/hdc5
+# Filesystem           1K-blocks      Used Available Use% Mounted on
+# /dev/hdc5            145439972  95885712  49554260  66% /root/fssnapimages
+# 061128.1816 This is what it looks like now with archive excluded home only
+# It didn't change a thing during run, and completed in a minute, and so
+# this df is /both/ before and after. Crontab installed for hourly.
+# tim@Tardis:~$ df /dev/hdc5
+# Filesystem           1K-blocks      Used Available Use% Mounted on
+# /dev/hdc5            145439972  83795352  61644620  58% /root/fssnapimages
+# tim@Tardis:~$ df /dev/hdc5
+# Filesystem           1K-blocks      Used Available Use% Mounted on
+# /dev/hdc5            145439972  83812208  61627764  58% /root/fssnapimages
+# i.e.
+# tim@Tardis:~$ echo $(( 83812208 + 83795352 )) = 167 GiB total (167 607 560)
+# tim@Tardis:~$ echo $(( 83812208 - 83795352 )) =  16 MiB used        16 856 
+# I can deal with adding 16MB every hour. Big deal.
+
+
+# 2. Rsync verbose (-v), archive (-a). Rsync checks the times automatically
+# (-t). The --delete isn't applicable because the MostRecentHour doesn't exist
+# yet.
+
+log_date=$($date +%y%m%d.%H%M)
+metric_df_before=$($df $dst_disk)
+
+$rsync_va --link-dest=$dst_disk/.$fssnapimages/$MostRecentHour-1 \
+   $src_disk_dir $dst_disk/.$fssnapimages/$MostRecentHour > \
+   $ramdisk/tmp \
+   2>$dst_disk/.$fssnapimages/fssnapimages-err-$log_date
+
+# 061129.2628 - Remove the noisy directory list from the output: strip all
+# lines that have a trailing forward slash /
+$grep $ramdisk/tmp -e "^.*[^/]$" > $ramdisk/tmp2
+$rm_rf $ramdisk/tmp
+$mv $ramdisk/tmp2 $ramdisk/tmp
+
+# 061130.18:09 - Add file info to each line: before and after date and sizes:
+# File Name                                                                            Old ModTime-OldSizeK-Old Permiss-New ModTime-NewSizeK-New Permiss
+# home/tim/.mozilla/firefox/5t7u2o2v.default/bookmarkbackups/bookmarks-2006-11-30.html 061130.1810 12345678 drwxrwxrwxt 061130.1812 123456.8 drwxrwxrwxt
+# home/tim/.mozilla/firefox/5t7u2o2v.default/bookmarkbackups/bookmarks-2006-11-30.html ---new file--------------------- 061130.1812 123456.8 drwxrwxrwxt
+# So if your text editor wraps the above two lines it underscores the small
+# problem: find the longest line, add 1, and that is the index at which all
+# the new columns start.
+
+# if [ -f $line | $grep -e " ]
+# then
+# fi
+
+$mv $ramdisk/tmp $dst_disk/.$fssnapimages/fssnapimages-log-$log_date
+
+# 061129 - Here are some metrics - see below
+metric_df_rsync=$($df $dst_disk)
+metric_t_rsync=$($date +%y%m%d.%H%M)
+
+if ! [ -d $dst_disk/.$fssnapimages/$MostRecentHour ]
+then
+   $echo "$0: Rsync bailed. Look at log file. Directory structure untouched."
+   fssi_exit=2
+   split #() exit
+fi
+
+$touch $dst_disk/.$fssnapimages/$MostRecentHour
+
+   # 3. Move the root directory contents to a subfolder and then delete it.
+   # #-Update-Tim-061127.2119 Monday: Check to see if src_disk_dir is a folder
+   #    and if it is only delete that.
+   # 061128.1831 duh: if [ -d $dst_disk/$src_disk_dir ]
+   # failsafe if the directory structure is bunged---don't want to
+   # delete $dst_disk
+if [ $src_disk_dir != "/" ] \
+   && ! [ -d $dst_disk/$src_disk_dir/.$fssnapimages ]  # failsafe
+then
+   $rm_rf $dst_disk$src_disk_dir
+else {
+   # Preserve .$fssnapimages
+      # A.
+   $mkdir_p $dst_disk/.tmp
+      # B. move all visible files and dirs to dot tmp
+   $mv $dst_disk/* $dst_disk/.tmp 2>/dev/null # errors on none found
+      # C. rename it to remove the dot
+   $mv $dst_disk/.tmp $dst_disk/tmp
+      # D. rename dot $fssnapimages to remove the dot
+   $mv $dst_disk/.$fssnapimages $dst_disk/$fssnapimages
+      # E. move all hidden files to tmp
+   $mv $dst_disk/.[!.]* $dst_disk/tmp 2>/dev/null # errors on none found
+      # F. rename $fssnapimages to recreate the dot
+   $mv $dst_disk/$fssnapimages $dst_disk/.$fssnapimages
+
+      # 061201.18:08 Let's do some checks here and bail if it bar foos.
+   if [ -d $dst_disk/tmp/.$fssnapimages] || ! [ -d $dst_disk/.$fssnapimages]
+   then
+      echo "$0: Error copying .$fssnapimages. Nothing deleted. See $dst_disk/tmp"
+      fssi_exit=3
+      split #() exit
+   fi
+      # G. delete everything from the root directory, since it's all in temp.
+   $rm_rf $dst_disk/tmp
+      # So now there is nothing visible in $dst-disk. Yet there exists
+      # $dst-disk/.$fssnapimages
+      # Now we have at the very least $dst-disk/.$fssnapimages/$MostRecentHour
+} fi
+
+   # 4. Recreate the filesystem on the root directory of the destination disk.
+$cp_al $dst_disk/.$fssnapimages/$MostRecentHour/* $dst_disk
+$cp_al $dst_disk/.$fssnapimages/$MostRecentHour/.[!.]* $dst_disk 2>/dev/null
+   # This is good for the hourly backups. Now once a day the daily cp -al will
+   # be run off the oldest hourly.
+   # 061127.2447-Naah. Just cull all but the newest from each day. Figure out
+   # the naming system.
+
+# 061129 - Here are some metrics
+metric_df_cp=$($df $dst_disk)
+metric_t_cp=$($date +%y%m%d.%H%M)
+
+echo $"     -------
+Here are some metrics:
+     Source: $src_disk_dir
+     Dest:   $dst_disk/.$fssnapimages/$MostRecentHour
+-----Before and after Rsync
+     Before:       $log_date
+$metric_df_before
+     After Rsync:  $metric_t_rsync
+$metric_df_rsync
+     After cp:     $metric_t_cp
+$metric_df_cp" >> $dst_disk/.$fssnapimages/fssnapimages-log-$log_date
+
+
+# Example tail:
+
+# ..
+# home/tim/bin/fssnapimages
+# home/tim/bin/fssnapimages~
+# sent 34578390 bytes  received 9894 bytes  1687233.37 bytes/sec
+# total size is 1880091266  speedup is 54.36
+#      -------
+# Here are some metrics:
+#      Source: /home
+#      Dest:   /root/fssnapimages/.fssnapimages/MostRecentHour
+# -----Before and after Rsync
+#      Before:       061202.0108
+# Filesystem           1M-blocks      Used Available Use% Mounted on
+# /dev/hdc5              142032M    83826M    58206M  60% /root/fssnapimages
+#      After Rsync:  061202.0109
+# Filesystem           1M-blocks      Used Available Use% Mounted on
+# /dev/hdc5              142032M    83860M    58172M  60% /root/fssnapimages
+#      After cp:     061202.0109
+# Filesystem           1M-blocks      Used Available Use% Mounted on
+# /dev/hdc5              142032M    83860M    58172M  60% /root/fssnapimages
+
+
+# End of program
+#-------------------------------------------------------------------------------
+# 061201.1828: Check the filesystem
+# $umount $dst_device
+# The drive is now unmounted.
+
+# dst_device, now, since it is unmounted.
+# fsck_a $dst_device > /dev/null 2> $ramdisk/tmp
+# error=$?
+# if (( 0 )) # (( $error ))
+# then {
+#   mountperm="rw"; mount
+#   # The drive is mounted again.
+#
+#   echo "$0: Fsck returned error code $error"
+#   if [ -f $ramdisk/tmp ]
+#   then
+#      $cat $ramdisk/tmp >> $dst_disk/.$fssnapimages/fssnapimages-err-$log_date
+#      $rm_rf $ramdisk/tmp
+#   fi
+#
+#   fssi_exit=4
+# TODO: the mounts all suck here for split()
+#
+# fi
+
+#-------------------------------------------------------------------------------
+split #() exit

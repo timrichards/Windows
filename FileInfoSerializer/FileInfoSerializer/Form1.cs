@@ -263,15 +263,22 @@ namespace FileInfoSerializer
                         return;
                     }
 
-                    if (m_strPath.Length > 0)
+                    if (bFileOK)
                     {
-                        strStatus = bFileOK ? m_str_USING_FILE : "File is bad. Will overwrite.";
+                        strStatus = m_str_USING_FILE;
                     }
                     else
                     {
-                        form_cb_Path.BackColor = Color.Red;
-                        MessageBox.Show("File is bad and path does not exist.           ", "Volume Source Path");
-                        return;
+                        if (m_strPath.Length > 0)
+                        {
+                            strStatus = "File is bad. Will overwrite.";
+                        }
+                        else
+                        {
+                            form_cb_Path.BackColor = Color.Red;
+                            MessageBox.Show("File is bad and path does not exist.           ", "Volume Source Path");
+                            return;
+                        }
                     }
                 }
                 else

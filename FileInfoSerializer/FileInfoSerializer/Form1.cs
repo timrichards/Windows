@@ -740,7 +740,7 @@ namespace FileInfoSerializer
                             {
                                 if (form_rad_Folder_Outermost.Checked)
                                 {
-                                    if (strArray[0].EndsWith("\\") == false)
+                                    if (strArray[0].EndsWith(m_strSearch) == false)
                                     {
                                         continue;
                                     }

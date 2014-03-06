@@ -30,8 +30,8 @@
         {
             this.form_btn_Search = new System.Windows.Forms.Button();
             this.form_cb_Search = new System.Windows.Forms.ComboBox();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.form_tabControl = new System.Windows.Forms.TabControl();
+            this.form_tabPage_Volumes = new System.Windows.Forms.TabPage();
             this.form_btn_LoadVolumeList = new System.Windows.Forms.Button();
             this.form_btn_SaveVolumeList = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
@@ -53,7 +53,11 @@
             this.form_cb_SaveAs = new System.Windows.Forms.ComboBox();
             this.form_cb_Path = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.form_tabPage_Search = new System.Windows.Forms.TabPage();
+            this.label6 = new System.Windows.Forms.Label();
+            this.form_rad_Folder_Innermost = new System.Windows.Forms.RadioButton();
+            this.form_rad_Folder_Outermost = new System.Windows.Forms.RadioButton();
+            this.form_rad_Folder_None = new System.Windows.Forms.RadioButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.form_lv_SearchResults = new System.Windows.Forms.ListView();
             this.form_lv_SearchResults_col_Volume = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -63,6 +67,8 @@
             this.form_lv_SearchResults_col_Modified = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_SearchResults_col_Created = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_SearchResults_col_Path = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.form_lv_SearchResults_col_Error1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.form_lv_SearchResults_col_Error2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_PathErrors = new System.Windows.Forms.ListView();
             this.form_lv_Errors_col_Volume = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_Errors_col_FileOrPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -71,20 +77,17 @@
             this.label3 = new System.Windows.Forms.Label();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.form_lv_SearchResults_col_Error1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_lv_SearchResults_col_Error2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_rad_Folder_None = new System.Windows.Forms.RadioButton();
-            this.form_rad_Folder_Outermost = new System.Windows.Forms.RadioButton();
-            this.form_rad_Folder_Innermost = new System.Windows.Forms.RadioButton();
-            this.label6 = new System.Windows.Forms.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
+            this.form_tabPage_Browse = new System.Windows.Forms.TabPage();
+            this.form_treeView_Browse = new System.Windows.Forms.TreeView();
+            this.form_tabControl.SuspendLayout();
+            this.form_tabPage_Volumes.SuspendLayout();
+            this.form_tabPage_Search.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.form_tabPage_Browse.SuspendLayout();
             this.SuspendLayout();
             // 
             // form_btn_Search
@@ -109,42 +112,43 @@
             this.form_cb_Search.TabIndex = 0;
             this.form_cb_Search.SelectedIndexChanged += new System.EventHandler(this.cb_Search_SelectedIndexChanged);
             // 
-            // tabControl1
+            // form_tabControl
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 0);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(730, 382);
-            this.tabControl1.TabIndex = 0;
+            this.form_tabControl.Controls.Add(this.form_tabPage_Volumes);
+            this.form_tabControl.Controls.Add(this.form_tabPage_Search);
+            this.form_tabControl.Controls.Add(this.form_tabPage_Browse);
+            this.form_tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_tabControl.Location = new System.Drawing.Point(0, 0);
+            this.form_tabControl.Name = "form_tabControl";
+            this.form_tabControl.SelectedIndex = 0;
+            this.form_tabControl.Size = new System.Drawing.Size(730, 382);
+            this.form_tabControl.TabIndex = 0;
             // 
-            // tabPage1
+            // form_tabPage_Volumes
             // 
-            this.tabPage1.Controls.Add(this.form_btn_LoadVolumeList);
-            this.tabPage1.Controls.Add(this.form_btn_SaveVolumeList);
-            this.tabPage1.Controls.Add(this.label5);
-            this.tabPage1.Controls.Add(this.form_btn_RemoveVolume);
-            this.tabPage1.Controls.Add(this.form_btn_ToggleInclude);
-            this.tabPage1.Controls.Add(this.form_btn_AddVolume);
-            this.tabPage1.Controls.Add(this.form_cb_VolumeName);
-            this.tabPage1.Controls.Add(this.label4);
-            this.tabPage1.Controls.Add(this.form_lv_Volumes);
-            this.tabPage1.Controls.Add(this.form_btn_SavePathInfo);
-            this.tabPage1.Controls.Add(this.form_btn_SaveAs);
-            this.tabPage1.Controls.Add(this.label2);
-            this.tabPage1.Controls.Add(this.form_btn_Path);
-            this.tabPage1.Controls.Add(this.form_cb_SaveAs);
-            this.tabPage1.Controls.Add(this.form_cb_Path);
-            this.tabPage1.Controls.Add(this.label1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(722, 356);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Volumes";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.form_tabPage_Volumes.Controls.Add(this.form_btn_LoadVolumeList);
+            this.form_tabPage_Volumes.Controls.Add(this.form_btn_SaveVolumeList);
+            this.form_tabPage_Volumes.Controls.Add(this.label5);
+            this.form_tabPage_Volumes.Controls.Add(this.form_btn_RemoveVolume);
+            this.form_tabPage_Volumes.Controls.Add(this.form_btn_ToggleInclude);
+            this.form_tabPage_Volumes.Controls.Add(this.form_btn_AddVolume);
+            this.form_tabPage_Volumes.Controls.Add(this.form_cb_VolumeName);
+            this.form_tabPage_Volumes.Controls.Add(this.label4);
+            this.form_tabPage_Volumes.Controls.Add(this.form_lv_Volumes);
+            this.form_tabPage_Volumes.Controls.Add(this.form_btn_SavePathInfo);
+            this.form_tabPage_Volumes.Controls.Add(this.form_btn_SaveAs);
+            this.form_tabPage_Volumes.Controls.Add(this.label2);
+            this.form_tabPage_Volumes.Controls.Add(this.form_btn_Path);
+            this.form_tabPage_Volumes.Controls.Add(this.form_cb_SaveAs);
+            this.form_tabPage_Volumes.Controls.Add(this.form_cb_Path);
+            this.form_tabPage_Volumes.Controls.Add(this.label1);
+            this.form_tabPage_Volumes.Location = new System.Drawing.Point(4, 22);
+            this.form_tabPage_Volumes.Name = "form_tabPage_Volumes";
+            this.form_tabPage_Volumes.Padding = new System.Windows.Forms.Padding(3);
+            this.form_tabPage_Volumes.Size = new System.Drawing.Size(722, 356);
+            this.form_tabPage_Volumes.TabIndex = 0;
+            this.form_tabPage_Volumes.Text = "Volumes";
+            this.form_tabPage_Volumes.UseVisualStyleBackColor = true;
             // 
             // form_btn_LoadVolumeList
             // 
@@ -350,22 +354,63 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "Path";
             // 
-            // tabPage2
+            // form_tabPage_Search
             // 
-            this.tabPage2.Controls.Add(this.label6);
-            this.tabPage2.Controls.Add(this.form_rad_Folder_Innermost);
-            this.tabPage2.Controls.Add(this.form_rad_Folder_Outermost);
-            this.tabPage2.Controls.Add(this.form_rad_Folder_None);
-            this.tabPage2.Controls.Add(this.splitContainer1);
-            this.tabPage2.Controls.Add(this.form_cb_Search);
-            this.tabPage2.Controls.Add(this.form_btn_Search);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(722, 356);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Search";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.form_tabPage_Search.Controls.Add(this.label6);
+            this.form_tabPage_Search.Controls.Add(this.form_rad_Folder_Innermost);
+            this.form_tabPage_Search.Controls.Add(this.form_rad_Folder_Outermost);
+            this.form_tabPage_Search.Controls.Add(this.form_rad_Folder_None);
+            this.form_tabPage_Search.Controls.Add(this.splitContainer1);
+            this.form_tabPage_Search.Controls.Add(this.form_cb_Search);
+            this.form_tabPage_Search.Controls.Add(this.form_btn_Search);
+            this.form_tabPage_Search.Location = new System.Drawing.Point(4, 22);
+            this.form_tabPage_Search.Name = "form_tabPage_Search";
+            this.form_tabPage_Search.Padding = new System.Windows.Forms.Padding(3);
+            this.form_tabPage_Search.Size = new System.Drawing.Size(722, 356);
+            this.form_tabPage_Search.TabIndex = 1;
+            this.form_tabPage_Search.Text = "Search";
+            this.form_tabPage_Search.UseVisualStyleBackColor = true;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(224, 36);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(118, 13);
+            this.label6.TabIndex = 2;
+            this.label6.Text = "Folder special handling:";
+            // 
+            // form_rad_Folder_Innermost
+            // 
+            this.form_rad_Folder_Innermost.AutoSize = true;
+            this.form_rad_Folder_Innermost.Location = new System.Drawing.Point(484, 34);
+            this.form_rad_Folder_Innermost.Name = "form_rad_Folder_Innermost";
+            this.form_rad_Folder_Innermost.Size = new System.Drawing.Size(151, 17);
+            this.form_rad_Folder_Innermost.TabIndex = 5;
+            this.form_rad_Folder_Innermost.Text = "Innermost that have length";
+            this.form_rad_Folder_Innermost.UseVisualStyleBackColor = true;
+            // 
+            // form_rad_Folder_Outermost
+            // 
+            this.form_rad_Folder_Outermost.AutoSize = true;
+            this.form_rad_Folder_Outermost.Location = new System.Drawing.Point(405, 34);
+            this.form_rad_Folder_Outermost.Name = "form_rad_Folder_Outermost";
+            this.form_rad_Folder_Outermost.Size = new System.Drawing.Size(73, 17);
+            this.form_rad_Folder_Outermost.TabIndex = 4;
+            this.form_rad_Folder_Outermost.Text = "Outermost";
+            this.form_rad_Folder_Outermost.UseVisualStyleBackColor = true;
+            // 
+            // form_rad_Folder_None
+            // 
+            this.form_rad_Folder_None.AutoSize = true;
+            this.form_rad_Folder_None.Checked = true;
+            this.form_rad_Folder_None.Location = new System.Drawing.Point(348, 34);
+            this.form_rad_Folder_None.Name = "form_rad_Folder_None";
+            this.form_rad_Folder_None.Size = new System.Drawing.Size(51, 17);
+            this.form_rad_Folder_None.TabIndex = 3;
+            this.form_rad_Folder_None.TabStop = true;
+            this.form_rad_Folder_None.Text = "None";
+            this.form_rad_Folder_None.UseVisualStyleBackColor = true;
             // 
             // splitContainer1
             // 
@@ -444,6 +489,14 @@
             this.form_lv_SearchResults_col_Path.Text = "Path";
             this.form_lv_SearchResults_col_Path.Width = 223;
             // 
+            // form_lv_SearchResults_col_Error1
+            // 
+            this.form_lv_SearchResults_col_Error1.Text = "Error 1";
+            // 
+            // form_lv_SearchResults_col_Error2
+            // 
+            this.form_lv_SearchResults_col_Error2.Text = "Error 2";
+            // 
             // form_lv_PathErrors
             // 
             this.form_lv_PathErrors.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -498,78 +551,49 @@
             this.saveFileDialog1.Filter = "Text files|*.txt|All files|*.*";
             this.saveFileDialog1.OverwritePrompt = false;
             // 
-            // form_lv_SearchResults_col_Error1
-            // 
-            this.form_lv_SearchResults_col_Error1.Text = "Error 1";
-            // 
-            // form_lv_SearchResults_col_Error2
-            // 
-            this.form_lv_SearchResults_col_Error2.Text = "Error 2";
-            // 
-            // form_rad_Folder_None
-            // 
-            this.form_rad_Folder_None.AutoSize = true;
-            this.form_rad_Folder_None.Checked = true;
-            this.form_rad_Folder_None.Location = new System.Drawing.Point(348, 34);
-            this.form_rad_Folder_None.Name = "form_rad_Folder_None";
-            this.form_rad_Folder_None.Size = new System.Drawing.Size(51, 17);
-            this.form_rad_Folder_None.TabIndex = 3;
-            this.form_rad_Folder_None.TabStop = true;
-            this.form_rad_Folder_None.Text = "None";
-            this.form_rad_Folder_None.UseVisualStyleBackColor = true;
-            // 
-            // form_rad_Folder_Outermost
-            // 
-            this.form_rad_Folder_Outermost.AutoSize = true;
-            this.form_rad_Folder_Outermost.Location = new System.Drawing.Point(405, 34);
-            this.form_rad_Folder_Outermost.Name = "form_rad_Folder_Outermost";
-            this.form_rad_Folder_Outermost.Size = new System.Drawing.Size(73, 17);
-            this.form_rad_Folder_Outermost.TabIndex = 4;
-            this.form_rad_Folder_Outermost.Text = "Outermost";
-            this.form_rad_Folder_Outermost.UseVisualStyleBackColor = true;
-            // 
-            // form_rad_Folder_Innermost
-            // 
-            this.form_rad_Folder_Innermost.AutoSize = true;
-            this.form_rad_Folder_Innermost.Location = new System.Drawing.Point(484, 34);
-            this.form_rad_Folder_Innermost.Name = "form_rad_Folder_Innermost";
-            this.form_rad_Folder_Innermost.Size = new System.Drawing.Size(151, 17);
-            this.form_rad_Folder_Innermost.TabIndex = 5;
-            this.form_rad_Folder_Innermost.Text = "Innermost that have length";
-            this.form_rad_Folder_Innermost.UseVisualStyleBackColor = true;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(224, 36);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(118, 13);
-            this.label6.TabIndex = 2;
-            this.label6.Text = "Folder special handling:";
-            // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // form_tabPage_Browse
+            // 
+            this.form_tabPage_Browse.Controls.Add(this.form_treeView_Browse);
+            this.form_tabPage_Browse.Location = new System.Drawing.Point(4, 22);
+            this.form_tabPage_Browse.Name = "form_tabPage_Browse";
+            this.form_tabPage_Browse.Size = new System.Drawing.Size(722, 356);
+            this.form_tabPage_Browse.TabIndex = 2;
+            this.form_tabPage_Browse.Text = "Browse";
+            this.form_tabPage_Browse.UseVisualStyleBackColor = true;
+            this.form_tabPage_Browse.Paint += new System.Windows.Forms.PaintEventHandler(this.form_tabPage_Browse_Paint);
+            // 
+            // form_treeView_Browse
+            // 
+            this.form_treeView_Browse.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_treeView_Browse.Location = new System.Drawing.Point(0, 0);
+            this.form_treeView_Browse.Name = "form_treeView_Browse";
+            this.form_treeView_Browse.Size = new System.Drawing.Size(722, 356);
+            this.form_treeView_Browse.TabIndex = 0;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(730, 382);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.form_tabControl);
             this.MinimumSize = new System.Drawing.Size(746, 420);
             this.Name = "Form1";
             this.Text = "SearchDirLists";
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
+            this.form_tabControl.ResumeLayout(false);
+            this.form_tabPage_Volumes.ResumeLayout(false);
+            this.form_tabPage_Volumes.PerformLayout();
+            this.form_tabPage_Search.ResumeLayout(false);
+            this.form_tabPage_Search.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.form_tabPage_Browse.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -578,8 +602,8 @@
 
         private System.Windows.Forms.Button form_btn_Search;
         private System.Windows.Forms.ComboBox form_cb_Search;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabControl form_tabControl;
+        private System.Windows.Forms.TabPage form_tabPage_Volumes;
         private System.Windows.Forms.Button form_btn_ToggleInclude;
         private System.Windows.Forms.Button form_btn_AddVolume;
         private System.Windows.Forms.ComboBox form_cb_VolumeName;
@@ -597,7 +621,7 @@
         private System.Windows.Forms.ComboBox form_cb_SaveAs;
         private System.Windows.Forms.ComboBox form_cb_Path;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage form_tabPage_Search;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.ListView form_lv_SearchResults;
         private System.Windows.Forms.ColumnHeader form_lv_SearchResults_col_Filename;
@@ -626,6 +650,8 @@
         private System.Windows.Forms.RadioButton form_rad_Folder_Outermost;
         private System.Windows.Forms.RadioButton form_rad_Folder_None;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.TabPage form_tabPage_Browse;
+        private System.Windows.Forms.TreeView form_treeView_Browse;
 
     }
 }

@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using del = Delimon.Win32.IO;
+using System.Collections;
 
 namespace SearchDirLists
 {
@@ -20,13 +21,15 @@ namespace SearchDirLists
         private const String m_str_TOTAL_LENGTH_LOC = m_str_HEADER + " LENGTH";
         private const String m_str_VOLUME_LIST_HEADER = m_str_HEADER + " VOLUME LIST";
 
-        String m_strVolumeName = "";
-        String m_strPath = "";
-        String m_strSaveAs = "";
-        String m_strSearch = "";
+        private String m_strVolumeName = "";
+        private String m_strPath = "";
+        private String m_strSaveAs = "";
+        private String m_strSearch = "";
 
-        long m_nTotalLength = 0;
-        List<String> m_list_Errors = new List<string>();
+        private long m_nTotalLength = 0;
+        private List<String> m_list_Errors = new List<string>();
+
+        private bool m_bBrowseLoaded = false;
 
         public Form1()
         {
@@ -126,6 +129,7 @@ namespace SearchDirLists
 
             ComboBoxItemsInsert(form_cb_SaveAs);
             m_strSaveAs = form_cb_SaveAs.Text = saveFileDialog1.FileName;
+            m_bBrowseLoaded = false;
         }
 
         private bool IsLV_VolumeItemUnique()
@@ -356,6 +360,7 @@ namespace SearchDirLists
             }
 
             MessageBox.Show("Completed.                           ", "Save Path Info");
+            m_bBrowseLoaded = false;
         }
 
         private void form_btn_SaveVolumeList_Click(object sender, EventArgs e)
@@ -426,6 +431,8 @@ namespace SearchDirLists
             {
                 form_btn_SavePathInfo.Enabled = true;
             }
+
+            m_bBrowseLoaded = false;
         }
 
 #endregion // Button Click
@@ -714,10 +721,9 @@ namespace SearchDirLists
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            SaveFields();
-
             Console.Clear();
             Console.WriteLine("Searching for '" + m_strSearch + "'");
+
             DateTime dtStart = DateTime.Now;
 
             foreach (ListViewItem lvItem in form_lv_Volumes.Items)
@@ -777,8 +783,10 @@ namespace SearchDirLists
             }
 
             TimeSpan span = DateTime.Now - dtStart;
+            String strTimeSpent = String.Format("Completed Search for {0} in {1} milliseconds.", m_strSearch, span.Milliseconds);
 
-            MessageBox.Show(String.Format("Completed Search for {0} in {1} milliseconds.", m_strSearch, span.Milliseconds));
+            Console.WriteLine(strTimeSpent);
+            MessageBox.Show(strTimeSpent);
         }
 
         private void UpdateLV_VolumesSelection()
@@ -792,6 +800,90 @@ namespace SearchDirLists
         private void form_lv_Volumes_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             UpdateLV_VolumesSelection();
+        }
+
+        private void form_tabPage_Browse_Paint(object sender, PaintEventArgs e)
+        {
+            if (m_bBrowseLoaded)
+            {
+                return;
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Creating browsing tree.");
+            DateTime dtStart = DateTime.Now;
+            
+            foreach (ListViewItem lvItem in form_lv_Volumes.Items)
+            {
+                if (LV_VolumesItemInclude(lvItem) == false)
+                {
+                    continue;
+                }
+
+                form_cb_VolumeName.Text = lvItem.SubItems[0].Text;
+                form_cb_Path.Text = lvItem.SubItems[1].Text;
+                form_cb_SaveAs.Text = lvItem.SubItems[2].Text;
+                SaveFields();
+
+                Stack<String> stack_Directories = new Stack<String>();
+
+                using (StreamReader file = new StreamReader(m_strSaveAs))
+                {
+                    String line = "";
+
+                    int nMax = 20;
+                    int nCount = 0;
+
+                    while ((line = file.ReadLine()) != null)
+                    {
+                        if (line.Contains('\t') == false)
+                        {
+                            continue;
+                        }
+
+                        if (line.Contains(":\\") == false)
+                        {
+                            continue;
+                        }
+
+                        String[] strArray = line.Split('\t');
+
+                        if (strArray[0].Length > 0) // directory
+                        {
+                            bool bParent = false;
+
+                            while ((stack_Directories.Count()) > 0 && (strArray[0].StartsWith(stack_Directories.Peek()) == false))
+                            {
+                                stack_Directories.Pop();
+
+                                if (bParent)
+                                {
+                                    Console.WriteLine("Parent.");
+                                }
+
+                                bParent = true;
+                            }
+
+                            // sibling
+                            stack_Directories.Push(strArray[0]);
+                            Console.WriteLine(stack_Directories.Count + " " + strArray[0]);
+
+                            if (++nCount > nMax)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            TimeSpan span = DateTime.Now - dtStart;
+            String strTimeSpent = String.Format("Completed browsing tree in {0} milliseconds.", span.Milliseconds);
+
+            Console.WriteLine(strTimeSpent);
+            MessageBox.Show(strTimeSpent);
+
+            m_bBrowseLoaded = true;
         }
     }
 }

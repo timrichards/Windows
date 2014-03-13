@@ -1017,7 +1017,8 @@ namespace SearchDirLists
 
             if (((int) nG) > 0) strSz = nG.ToString(strFormat) + " GB";
             else if (((int) nM) > 0) strSz = nM.ToString(strFormat) + " MB";
-            else if (((int) nK) > 0) strSz = nK.ToString(strFormat) + " KB";
+            else if (((int)nK) > 0) strSz = nK.ToString(strFormat) + " KB";
+            else strSz = "1 KB";
 
             return strSz;
         }
@@ -1048,9 +1049,6 @@ namespace SearchDirLists
             Debug.Assert(nodeParent.Tag is String);
 
             String strFile = (String)nodeParent.Tag;
-
-            // TODO: Open the file to read in reverse. Leave it open.
-
             String strLine = "";
             int nPrevDirPlus1 = 0;
 
@@ -1078,7 +1076,6 @@ namespace SearchDirLists
             }
 
             String[] strArray = strLine.Split('\t');
-
             int nIx = 0;
             DateTime dt;
 
@@ -1125,8 +1122,6 @@ namespace SearchDirLists
                 }
             }
 
-            String strLengthDebug = nLengthDebug.ToString("###,###,###,###,###");
-
             if ((nLineNo - nPrevDirPlus1) > 0)
             {
                 form_LV_Detail.Items.Add(new ListViewItem(new String[] { "# Files", (nLineNo - nPrevDirPlus1).ToString() }));
@@ -1134,6 +1129,8 @@ namespace SearchDirLists
             
             if (nLengthDebug > 0)
             {
+                String strLengthDebug = nLengthDebug.ToString("###,###,###,###,###");
+
                 form_LV_Detail.Items.Add(new ListViewItem(new String[] { "Files size", FormatSize(nLengthDebug.ToString()) + " (" + strLengthDebug + " bytes)" }));
             }
         }

@@ -600,6 +600,8 @@
             // form_treeView_Browse
             // 
             this.form_treeView_Browse.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_treeView_Browse.FullRowSelect = true;
+            this.form_treeView_Browse.HideSelection = false;
             this.form_treeView_Browse.Location = new System.Drawing.Point(0, 0);
             this.form_treeView_Browse.Name = "form_treeView_Browse";
             this.form_treeView_Browse.Size = new System.Drawing.Size(334, 356);
@@ -636,6 +638,8 @@
             this.columnHeader9,
             this.columnHeader10});
             this.form_LV_Files.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_LV_Files.FullRowSelect = true;
+            this.form_LV_Files.HideSelection = false;
             this.form_LV_Files.Location = new System.Drawing.Point(0, 0);
             this.form_LV_Files.Name = "form_LV_Files";
             this.form_LV_Files.Size = new System.Drawing.Size(384, 169);
@@ -695,7 +699,7 @@
             // 
             // columnHeader1
             // 
-            this.columnHeader1.Text = "Detail";
+            this.columnHeader1.Text = "Directory Detail";
             this.columnHeader1.Width = 105;
             // 
             // columnHeader2

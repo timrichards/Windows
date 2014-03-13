@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.form_btn_Search = new System.Windows.Forms.Button();
             this.form_cb_Search = new System.Windows.Forms.ComboBox();
             this.form_tabControl = new System.Windows.Forms.TabControl();
@@ -75,11 +76,12 @@
             this.form_lv_Errors_col_Error1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_Errors_col_Error2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label3 = new System.Windows.Forms.Label();
+            this.form_tabPage_Browse = new System.Windows.Forms.TabPage();
+            this.form_treeView_Browse = new System.Windows.Forms.TreeView();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.form_tabPage_Browse = new System.Windows.Forms.TabPage();
-            this.form_treeView_Browse = new System.Windows.Forms.TreeView();
+            this.timer_killRed = new System.Windows.Forms.Timer(this.components);
             this.form_tabControl.SuspendLayout();
             this.form_tabPage_Volumes.SuspendLayout();
             this.form_tabPage_Search.SuspendLayout();
@@ -545,16 +547,6 @@
             this.label3.TabIndex = 1;
             this.label3.Text = "Path Errors";
             // 
-            // saveFileDialog1
-            // 
-            this.saveFileDialog1.DefaultExt = "txt";
-            this.saveFileDialog1.Filter = "Text files|*.txt|All files|*.*";
-            this.saveFileDialog1.OverwritePrompt = false;
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
-            // 
             // form_tabPage_Browse
             // 
             this.form_tabPage_Browse.Controls.Add(this.form_treeView_Browse);
@@ -573,6 +565,21 @@
             this.form_treeView_Browse.Name = "form_treeView_Browse";
             this.form_treeView_Browse.Size = new System.Drawing.Size(722, 356);
             this.form_treeView_Browse.TabIndex = 0;
+            // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.DefaultExt = "txt";
+            this.saveFileDialog1.Filter = "Text files|*.txt|All files|*.*";
+            this.saveFileDialog1.OverwritePrompt = false;
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // timer_killRed
+            // 
+            this.timer_killRed.Interval = 10000;
+            this.timer_killRed.Tick += new System.EventHandler(this.timer_killRed_Tick);
             // 
             // Form1
             // 
@@ -652,6 +659,7 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.TabPage form_tabPage_Browse;
         private System.Windows.Forms.TreeView form_treeView_Browse;
+        private System.Windows.Forms.Timer timer_killRed;
 
     }
 }

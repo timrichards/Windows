@@ -524,6 +524,7 @@ namespace SearchDirLists
                 WriteHeader(fs);
                 fs.WriteLine();
                 fs.WriteLine(m_str_START + " " + DateTime.Now.ToString());
+                fs.WriteLine(FormatString());
                 TraverseTree(fs, m_strPath);
                 fs.WriteLine(m_str_END + " " + DateTime.Now.ToString());
                 fs.WriteLine();
@@ -833,10 +834,12 @@ namespace SearchDirLists
             static SortedDictionary<String, Node> nodes = null;
             SortedDictionary<String, Node> subNodes = new SortedDictionary<string, Node>();
             String m_strPath = "";
+            int m_nLineNo = 0;
 
-            public Node(String in_str)
+            public Node(String in_str, int nLineNo)
             {
                 m_strPath = in_str;
+                m_nLineNo = nLineNo;
 
                 String strParent = m_strPath;
                 int nIndex = strParent.LastIndexOf(Path.DirectorySeparatorChar);
@@ -850,7 +853,7 @@ namespace SearchDirLists
 
                 if (nodes.ContainsKey(strParent) == false)
                 {
-                    nodes.Add(strParent, new Node(strParent));
+                    nodes.Add(strParent, new Node(strParent, 0));
                 }
 
                 if (nodes[strParent].subNodes.ContainsKey(m_strPath) == false)
@@ -869,6 +872,8 @@ namespace SearchDirLists
                 int nIndex = m_strPath.LastIndexOf(Path.DirectorySeparatorChar);
                 String strShortPath = m_strPath.Substring(nIndex + 1);
 
+                TreeNode treeNode = null;
+
                 if (subNodes.Count >= 1)
                 {
                     List<TreeNode> treeList = new List<TreeNode>();
@@ -878,12 +883,15 @@ namespace SearchDirLists
                         treeList.Add(node.AddToTree());
                     }
 
-                    return new TreeNode(strShortPath, treeList.ToArray());
+                    treeNode = new TreeNode(strShortPath, treeList.ToArray());
                 }
                 else
                 {
-                    return new TreeNode(strShortPath);
+                    treeNode = new TreeNode(strShortPath);
                 }
+
+                treeNode.Tag = m_nLineNo;
+                return treeNode;
             }
         }
 
@@ -898,7 +906,7 @@ namespace SearchDirLists
                 Node.SetRootNode(nodes);
             }
 
-            public void AddToTree(String in_str)
+            public void AddToTree(String in_str, int nLineNo)
             {
                 in_str = in_str.Trim();
 
@@ -907,7 +915,7 @@ namespace SearchDirLists
                     in_str = in_str.Remove(in_str.LastIndexOf(Path.DirectorySeparatorChar));
                 }
 
-                nodes.Add(in_str, new Node(in_str));
+                nodes.Add(in_str, new Node(in_str, nLineNo));
             }
 
             public void AddToTree()
@@ -939,13 +947,19 @@ namespace SearchDirLists
                 form_cb_SaveAs.Text = lvItem.SubItems[2].Text;
                 SaveFields();
 
+                form_treeView_Browse.Nodes.Clear();
+
                 using (StreamReader file = new StreamReader(m_strSaveAs))
                 {
                     String line = "";
                     DirData dirData = new DirData(form_treeView_Browse);
 
+                    int nLineNo = -1;
+
                     while ((line = file.ReadLine()) != null)
                     {
+                        ++nLineNo;
+
                         if (line.Contains('\t') == false)
                         {
                             continue;
@@ -965,20 +979,20 @@ namespace SearchDirLists
                         }
 
                         // directory
-                        dirData.AddToTree(strNew);
+                        dirData.AddToTree(strNew, nLineNo);
                     }
 
                     dirData.AddToTree();
+                    form_treeView_Browse.Nodes[0].Tag = m_strSaveAs;
                 }
             }
 
+            m_bBrowseLoaded = true;
             TimeSpan span = DateTime.Now - dtStart;
             String strTimeSpent = String.Format("Completed browsing tree in {0} milliseconds.", span.Milliseconds);
 
             Console.WriteLine(strTimeSpent);
             MessageBox.Show(strTimeSpent);
-
-            m_bBrowseLoaded = true;
         }
 
         private void timer_killRed_Tick(object sender, EventArgs e)
@@ -987,6 +1001,141 @@ namespace SearchDirLists
             form_cb_Path.BackColor = Color.Empty;
             form_cb_SaveAs.BackColor = Color.Empty;
             timer_killRed.Enabled = false;
+        }
+
+        String FormatSize(String in_str)
+        {
+            long nLength = 0;
+
+            Debug.Assert(long.TryParse(in_str, out nLength));
+
+            double nK = nLength / 1024.0 - .05;
+            double nM = nLength / 1024.0 / 1024 - .05;
+            double nG = nLength / 1024.0 / 1024 / 1024 - .05;
+            String strSz = "";
+            String strFormat = "###,##0.0";
+
+            if (((int) nG) > 0) strSz = nG.ToString(strFormat) + " GB";
+            else if (((int) nM) > 0) strSz = nM.ToString(strFormat) + " MB";
+            else if (((int) nK) > 0) strSz = nK.ToString(strFormat) + " KB";
+
+            return strSz;
+        }
+
+        private void form_treeView_Browse_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            form_LV_Detail.Items.Clear();
+            form_LV_Files.Items.Clear();
+
+            if ((e.Node.Tag is int) == false)
+            {
+                return;
+            }
+
+            if (((int)e.Node.Tag) <= 0)
+            {
+                return;
+            }
+
+            int nLineNo = (int)e.Node.Tag;
+            TreeNode nodeParent = e.Node;
+
+            while (nodeParent.Parent != null)
+            {
+                nodeParent = nodeParent.Parent;
+            }
+
+            Debug.Assert(nodeParent.Tag is String);
+
+            String strFile = (String)nodeParent.Tag;
+
+            // TODO: Open the file to read in reverse. Leave it open.
+
+            String strLine = "";
+            int nPrevDirPlus1 = 0;
+
+            using (StreamReader file = new StreamReader(strFile))
+            {
+                for (int i = 0; i < nLineNo; ++i)
+                {
+                    strLine = file.ReadLine();
+                    if (strLine.StartsWith('\t'.ToString()) == false)
+                    {
+                        if ((strLine.Contains(":\\") == false) || (strLine.Contains("\t") == false))
+                        {
+                            // header line, anyway not a directory path: doesn't start with the drive letter.
+                            Debug.Assert(nPrevDirPlus1 == 0);
+                            nPrevDirPlus1 = 0;
+                        }
+                        else
+                        {
+                            nPrevDirPlus1 = i+1;
+                        }
+                    }
+                }
+
+                strLine = file.ReadLine();
+            }
+
+            String[] strArray = strLine.Split('\t');
+
+            int nIx = 0;
+            DateTime dt;
+
+            nIx = 2; if (strArray.Length > nIx) { form_LV_Detail.Items.Add(new ListViewItem(new String[] { "Created\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() })); }
+            nIx = 3; if (strArray.Length > nIx) form_LV_Detail.Items.Add(new ListViewItem(new String[] { "Modified\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
+            nIx = 4; if (strArray.Length > nIx) form_LV_Detail.Items.Add(new ListViewItem(new String[] { "Attributes\t", strArray[nIx] }));
+
+            nIx = 5;
+
+            if (strArray.Length > nIx)
+            {
+                form_LV_Detail.Items.Add(new ListViewItem(new String[] { "Size\t", FormatSize(strArray[nIx]) + " (" + long.Parse(strArray[nIx]).ToString("###,###,###,###,###") + " bytes)" }));
+            }
+
+            nIx = 6; if (strArray.Length > nIx) form_LV_Detail.Items.Add(new ListViewItem(new String[] { "Error 1\t", strArray[nIx] }));
+            nIx = 7; if (strArray.Length > nIx) form_LV_Detail.Items.Add(new ListViewItem(new String[] { "Error 2\t", strArray[nIx] }));
+
+            if (nPrevDirPlus1 <= 0)
+            {
+                return;
+            }
+
+            long nLengthDebug = 0;
+
+            using (StreamReader file = new StreamReader(strFile))
+            {
+                for (int i = 0; i < nPrevDirPlus1; ++i)
+                {
+                    file.ReadLine();
+                }
+
+                for (int i = nPrevDirPlus1; i < nLineNo; ++i)
+                {
+                    strLine = file.ReadLine();
+                    strArray = strLine.Split('\t');
+
+                    if (strArray.Length > 5)
+                    {
+                        nLengthDebug += long.Parse(strArray[5]);
+                        strArray[5] = FormatSize(strArray[5]);
+                    }
+
+                    form_LV_Files.Items.Add(new ListViewItem(strArray));
+                }
+            }
+
+            String strLengthDebug = nLengthDebug.ToString("###,###,###,###,###");
+
+            if ((nLineNo - nPrevDirPlus1) > 0)
+            {
+                form_LV_Detail.Items.Add(new ListViewItem(new String[] { "# Files", (nLineNo - nPrevDirPlus1).ToString() }));
+            }
+            
+            if (nLengthDebug > 0)
+            {
+                form_LV_Detail.Items.Add(new ListViewItem(new String[] { "Files size", FormatSize(nLengthDebug.ToString()) + " (" + strLengthDebug + " bytes)" }));
+            }
         }
     }
 }

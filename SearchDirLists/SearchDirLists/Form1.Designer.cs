@@ -243,9 +243,9 @@
             this.form_cb_VolumeName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.form_cb_VolumeName.FormattingEnabled = true;
-            this.form_cb_VolumeName.Location = new System.Drawing.Point(113, 16);
+            this.form_cb_VolumeName.Location = new System.Drawing.Point(111, 16);
             this.form_cb_VolumeName.Name = "form_cb_VolumeName";
-            this.form_cb_VolumeName.Size = new System.Drawing.Size(597, 21);
+            this.form_cb_VolumeName.Size = new System.Drawing.Size(599, 21);
             this.form_cb_VolumeName.TabIndex = 0;
             this.form_cb_VolumeName.SelectedIndexChanged += new System.EventHandler(this.form_cb_VolumeName_SelectedIndexChanged);
             // 
@@ -254,9 +254,9 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(14, 19);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(93, 13);
+            this.label4.Size = new System.Drawing.Size(91, 13);
             this.label4.TabIndex = 0;
-            this.label4.Text = "Volume Nickname";
+            this.label4.Text = "Volume nickname";
             // 
             // form_lv_Volumes
             // 
@@ -282,7 +282,7 @@
             // 
             // form_lv_Volumes_col_Volume
             // 
-            this.form_lv_Volumes_col_Volume.Text = "Volume Name";
+            this.form_lv_Volumes_col_Volume.Text = "Volume name";
             this.form_lv_Volumes_col_Volume.Width = 200;
             // 
             // form_lv_Volumes_col_Path
@@ -292,7 +292,7 @@
             // 
             // form_lv_Volumes_col_SaveToFile
             // 
-            this.form_lv_Volumes_col_SaveToFile.Text = "Save to File";
+            this.form_lv_Volumes_col_SaveToFile.Text = "Save to file";
             this.form_lv_Volumes_col_SaveToFile.Width = 183;
             // 
             // form_lv_Volumes_col_Status
@@ -302,7 +302,7 @@
             // 
             // form_lv_Volumes_col_IncludeInSearch
             // 
-            this.form_lv_Volumes_col_IncludeInSearch.Text = "Include in Search";
+            this.form_lv_Volumes_col_IncludeInSearch.Text = "Include in search";
             this.form_lv_Volumes_col_IncludeInSearch.Width = 97;
             // 
             // form_btn_SavePathInfo
@@ -334,9 +334,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(14, 75);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(101, 13);
+            this.label2.Size = new System.Drawing.Size(94, 13);
             this.label2.TabIndex = 6;
-            this.label2.Text = "Directory Listing File";
+            this.label2.Text = "Directory listing file";
             // 
             // form_btn_Path
             // 
@@ -354,9 +354,9 @@
             this.form_cb_SaveAs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.form_cb_SaveAs.FormattingEnabled = true;
-            this.form_cb_SaveAs.Location = new System.Drawing.Point(121, 72);
+            this.form_cb_SaveAs.Location = new System.Drawing.Point(114, 72);
             this.form_cb_SaveAs.Name = "form_cb_SaveAs";
-            this.form_cb_SaveAs.Size = new System.Drawing.Size(555, 21);
+            this.form_cb_SaveAs.Size = new System.Drawing.Size(562, 21);
             this.form_cb_SaveAs.TabIndex = 2;
             // 
             // form_cb_Path
@@ -491,17 +491,17 @@
             // form_lv_SearchResults_col_Length
             // 
             this.form_lv_SearchResults_col_Length.Text = "Length";
-            this.form_lv_SearchResults_col_Length.Width = 73;
+            this.form_lv_SearchResults_col_Length.Width = 80;
             // 
             // form_lv_SearchResults_col_ContainingDir
             // 
-            this.form_lv_SearchResults_col_ContainingDir.Text = "Containing Dir";
+            this.form_lv_SearchResults_col_ContainingDir.Text = "Containing dir";
             this.form_lv_SearchResults_col_ContainingDir.Width = 99;
             // 
             // form_lv_SearchResults_col_Modified
             // 
             this.form_lv_SearchResults_col_Modified.Text = "Modified";
-            this.form_lv_SearchResults_col_Modified.Width = 86;
+            this.form_lv_SearchResults_col_Modified.Width = 100;
             // 
             // form_lv_SearchResults_col_Created
             // 
@@ -699,8 +699,8 @@
             // 
             // columnHeader1
             // 
-            this.columnHeader1.Text = "Directory Detail";
-            this.columnHeader1.Width = 105;
+            this.columnHeader1.Text = "Directory detail";
+            this.columnHeader1.Width = 120;
             // 
             // columnHeader2
             // 

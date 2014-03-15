@@ -794,7 +794,7 @@ namespace SearchDirLists
         {
             Console.Clear();
 
-            if (SaveFields() == false)  // for m_strSearch
+            if (SaveFields(false) == false)  // for m_strSearch
             {
                 return;
             }
@@ -814,7 +814,7 @@ namespace SearchDirLists
                 form_cb_Path.Text = lvItem.SubItems[1].Text;
                 form_cb_SaveAs.Text = lvItem.SubItems[2].Text;
 
-                if (SaveFields() == false)
+                if (SaveFields(false) == false)
                 {
                     return;
                 }

@@ -1252,10 +1252,18 @@ namespace SearchDirLists
                         file.ReadLine();
                     }
 
+                    List<String> listLines = new List<string>();
+
                     for (long i = nPrevDirPlus1; i < nLineNo; ++i)
                     {
-                        String strSubFile = file.ReadLine();
-                        strArray = strSubFile.Split('\t');
+                        listLines.Add(file.ReadLine());
+                    }
+
+                    listLines.Sort();
+
+                    for (int i = 0; i < listLines.Count; ++i )
+                    {
+                        strArray = listLines[i].Split('\t');
 
                         if (strArray.Length > 5)
                         {

@@ -887,11 +887,23 @@ namespace SearchDirLists
             UpdateLV_VolumesSelection();
         }
 
+        class NodeDatum
+        {
+            long m_nPrevLineNo = 0;
+            long m_nLineNo = 0;
+
+            public long PrevlineNo { get { return m_nPrevLineNo; } }
+            public long LineNo { get { return m_nLineNo; } }
+            public NodeDatum(long nPrevLineNo, long nLineNo) { m_nPrevLineNo = nPrevLineNo; m_nLineNo = nLineNo; }
+        }
+
         class Node
         {
             static SortedDictionary<String, Node> nodes = null;
             SortedDictionary<String, Node> subNodes = new SortedDictionary<string, Node>();
             String m_strPath = "";
+            static long m_nStaticLineNo = 0;
+            long m_nPrevLineNo = 0;
             long m_nLineNo = 0;
             bool bUseShortPath = true;
 
@@ -903,7 +915,8 @@ namespace SearchDirLists
                 }
 
                 m_strPath = in_str;
-                m_nLineNo = nLineNo;
+                m_nPrevLineNo = m_nStaticLineNo;
+                m_nStaticLineNo = m_nLineNo = nLineNo;
 
                 // Path.GetDirectoryName() does not preserve filesystem root
 
@@ -985,7 +998,7 @@ namespace SearchDirLists
                     treeNode = new TreeNode(strShortPath);
                 }
 
-                treeNode.Tag = m_nLineNo;
+                treeNode.Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo);
                 return treeNode;
             }
         }
@@ -1069,6 +1082,19 @@ namespace SearchDirLists
                     {
                         ++nLineNo;
 
+                        StringBuilder strDriveInfo = new StringBuilder();
+
+                        if (line == m_str_DRIVE)
+                        {
+                            for (int i = 0; i < 8; ++i)
+                            {
+                                strDriveInfo.AppendLine(file.ReadLine());
+                                ++nLineNo;
+                            }
+
+                            m_hashCache.Add("driveInfo" + m_strSaveAs, strDriveInfo.ToString().Trim());
+                        }
+
                         if (line.Contains('\t') == false)
                         {
                             continue;
@@ -1132,17 +1158,20 @@ namespace SearchDirLists
             form_LV_Detail.Items.Clear();
             form_LV_Files.Items.Clear();
 
-            if ((e.Node.Tag is long) == false)
+            if ((e.Node.Tag is NodeDatum) == false)
             {
                 return "";
             }
 
-            if (((long)e.Node.Tag) <= 0)
+            NodeDatum nodeDatum = (NodeDatum) e.Node.Tag;
+
+            if (nodeDatum.LineNo <= 0)
             {
                 return "";
             }
 
-            long nLineNo = (long)e.Node.Tag;
+            long nPrevDir = nodeDatum.PrevlineNo;
+            long nLineNo = nodeDatum.LineNo;
             TreeNode nodeParent = e.Node;
 
             while (nodeParent.Parent != null)
@@ -1153,60 +1182,7 @@ namespace SearchDirLists
             Debug.Assert(nodeParent.Tag is String);
 
             String strFile = (String)nodeParent.Tag;
-            String strLine = "";
-            long nPrevDirPlus1 = 0;
-
-            using (StreamReader file = new StreamReader(strFile))
-            {
-                StringBuilder strDriveInfo = new StringBuilder();
-                bool bHaveDriveInfo = m_hashCache.ContainsKey("driveInfo" + strFile);
-                int nDriveLine = 0;
-
-                for (long i = 0; i < nLineNo; ++i)
-                {
-                    strLine = file.ReadLine();
-
-                    if (bHaveDriveInfo == false)
-                    {
-                        if (nDriveLine == 0)
-                        {
-                            if (strLine == m_str_DRIVE)
-                            {
-                                nDriveLine = 1;
-                            }
-                        }
-                        else if (nDriveLine < 9)
-                        {
-                            strDriveInfo.AppendLine(strLine);
-                            ++nDriveLine;
-                        }
-                        else
-                        {
-                            m_hashCache.Add("driveInfo" + strFile, strDriveInfo.ToString().Trim());
-                            bHaveDriveInfo = true;
-                            nDriveLine = 0;
-                        }
-                    }
-
-                    if (strLine.StartsWith('\t'.ToString()))
-                    {
-                        continue;
-                    }
-
-                    if ((strLine.Contains(":" + Path.DirectorySeparatorChar) == false) || (strLine.Contains("\t") == false))
-                    {
-                        // header line, anyway not a directory path: doesn't start with the drive letter.
-                        nPrevDirPlus1 = 0;
-                    }
-                    else
-                    {
-                        nPrevDirPlus1 = i+1;
-                    }
-                }
-
-                strLine = file.ReadLine();
-            }
-
+            String strLine = File.ReadLines(strFile).Skip((int)nLineNo).Take(1).ToArray()[0];
             String[] strArray = strLine.Split('\t');
             long nIx = 0;
             DateTime dt;
@@ -1229,12 +1205,12 @@ namespace SearchDirLists
 
             Console.WriteLine(strLine);
 
-            if (nPrevDirPlus1 <= 0)
+            if (nPrevDir <= 0)
             {
                 return strFile;
             }
 
-            if ((nLineNo - nPrevDirPlus1) <= 0)  // dir has no files
+            if ((nLineNo - nPrevDir) <= 1)  // dir has no files
             {
                 return strFile;
             }
@@ -1244,55 +1220,42 @@ namespace SearchDirLists
             if (m_hashCache.ContainsKey(strLine) == false)
             {
                 DateTime dtStart = DateTime.Now;
+                List<String> listLines = File.ReadLines(strFile)
+                    .Skip((int)nPrevDir+1)
+                    .Take((int)(nLineNo - nPrevDir - 1))
+                    .ToList();
 
-                using (StreamReader file = new StreamReader(strFile))
+                listLines.Sort();
+
+                for (int i = 0; i < listLines.Count; ++i)
                 {
-                    for (long i = 0; i < nPrevDirPlus1; ++i)
+                    strArray = listLines[i].Split('\t');
+
+                    if ((strArray.Length > 5) && (strArray[5].Length > 0))
                     {
-                        file.ReadLine();
+                        nLengthDebug += long.Parse(strArray[5]);
+                        strArray[5] = FormatSize(strArray[5]);
                     }
 
-                    List<String> listLines = new List<string>();
-
-                    for (long i = nPrevDirPlus1; i < nLineNo; ++i)
-                    {
-                        listLines.Add(file.ReadLine());
-                    }
-
-                    listLines.Sort();
-
-                    for (int i = 0; i < listLines.Count; ++i )
-                    {
-                        strArray = listLines[i].Split('\t');
-
-                        if (strArray.Length > 5)
-                        {
-                            nLengthDebug += long.Parse(strArray[5]);
-                            strArray[5] = FormatSize(strArray[5]);
-                        }
-
-                        form_LV_Files.Items.Add(new ListViewItem(strArray));
-                    }
-
-                    Debug.Assert(file.ReadLine() == strLine);
-
-                    TimeSpan timeSpan = (DateTime.Now - dtStart);
-                    String strTimeSpan = (((int)timeSpan.TotalMilliseconds / 100) / 10.0).ToString();
-                    Console.WriteLine("File list took " + strTimeSpan + " seconds.");
-
-                    if (timeSpan.Seconds > 1)
-                    {
-                        ListViewItem[] itemArray = new ListViewItem[form_LV_Files.Items.Count];
-
-                        form_LV_Files.Items.CopyTo(itemArray, 0);
-                        m_hashCache.Add(strLine, itemArray);
-                        m_hashCache.Add("nLengthDebug" + strLine, nLengthDebug);
-                        m_hashCache.Add("timeSpan" + strLine, strTimeSpan);
-                        Console.WriteLine("Cached.");
-                    }
-
-                    form_LV_Detail.Items.Add(new ListViewItem(new String[] { "# Files", (nLineNo - nPrevDirPlus1).ToString() }));
+                    form_LV_Files.Items.Add(new ListViewItem(strArray));
                 }
+
+                TimeSpan timeSpan = (DateTime.Now - dtStart);
+                String strTimeSpan = (((int)timeSpan.TotalMilliseconds / 100) / 10.0).ToString();
+                Console.WriteLine("File list took " + strTimeSpan + " seconds.");
+
+                if (timeSpan.Seconds > 1)
+                {
+                    ListViewItem[] itemArray = new ListViewItem[form_LV_Files.Items.Count];
+
+                    form_LV_Files.Items.CopyTo(itemArray, 0);
+                    m_hashCache.Add(strLine, itemArray);
+                    m_hashCache.Add("nLengthDebug" + strLine, nLengthDebug);
+                    m_hashCache.Add("timeSpan" + strLine, strTimeSpan);
+                    Console.WriteLine("Cached.");
+                }
+
+                form_LV_Detail.Items.Add(new ListViewItem(new String[] { "# Files", (nLineNo - nPrevDir + 1).ToString() }));
             }
             else    // file list is cached
             {

@@ -641,6 +641,7 @@
             this.form_LV_Files.FullRowSelect = true;
             this.form_LV_Files.HideSelection = false;
             this.form_LV_Files.Location = new System.Drawing.Point(0, 0);
+            this.form_LV_Files.MultiSelect = false;
             this.form_LV_Files.Name = "form_LV_Files";
             this.form_LV_Files.Size = new System.Drawing.Size(384, 169);
             this.form_LV_Files.TabIndex = 0;
@@ -690,8 +691,11 @@
             this.columnHeader1,
             this.columnHeader2});
             this.form_LV_Detail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_LV_Detail.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.form_LV_Detail.Location = new System.Drawing.Point(0, 0);
+            this.form_LV_Detail.MultiSelect = false;
             this.form_LV_Detail.Name = "form_LV_Detail";
+            this.form_LV_Detail.Scrollable = false;
             this.form_LV_Detail.Size = new System.Drawing.Size(384, 183);
             this.form_LV_Detail.TabIndex = 0;
             this.form_LV_Detail.UseCompatibleStateImageBehavior = false;
@@ -705,7 +709,7 @@
             // columnHeader2
             // 
             this.columnHeader2.Text = "";
-            this.columnHeader2.Width = 264;
+            this.columnHeader2.Width = 9999;
             // 
             // saveFileDialog1
             // 

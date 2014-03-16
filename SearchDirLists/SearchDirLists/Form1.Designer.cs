@@ -55,19 +55,19 @@
             this.form_cb_Path = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.form_tabPage_Search = new System.Windows.Forms.TabPage();
+            this.form_btn_Search_FillPaths = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.form_rad_Folder_Innermost = new System.Windows.Forms.RadioButton();
             this.form_rad_Folder_Outermost = new System.Windows.Forms.RadioButton();
             this.form_rad_Folder_None = new System.Windows.Forms.RadioButton();
             this.split_Volumes = new System.Windows.Forms.SplitContainer();
             this.form_lv_SearchResults = new System.Windows.Forms.ListView();
-            this.form_lv_SearchResults_col_Volume = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_lv_SearchResults_col_Filename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_lv_SearchResults_col_Length = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_lv_SearchResults_col_ContainingDir = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_lv_SearchResults_col_Modified = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_lv_SearchResults_col_Created = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_SearchResults_col_Path = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.form_lv_SearchResults_col_Filename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.form_lv_SearchResults_col_Created = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.form_lv_SearchResults_col_Modified = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.form_lv_SearchResults_col_Length = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_SearchResults_col_Error1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_SearchResults_col_Error2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_PathErrors = new System.Windows.Forms.ListView();
@@ -96,6 +96,7 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.timer_killRed = new System.Windows.Forms.Timer(this.components);
+            this.form_chk_SearchCase = new System.Windows.Forms.CheckBox();
             this.form_tabControl.SuspendLayout();
             this.form_tabPage_Volumes.SuspendLayout();
             this.form_tabPage_Search.SuspendLayout();
@@ -135,6 +136,7 @@
             this.form_cb_Search.Size = new System.Drawing.Size(722, 21);
             this.form_cb_Search.TabIndex = 0;
             this.form_cb_Search.SelectedIndexChanged += new System.EventHandler(this.cb_Search_SelectedIndexChanged);
+            this.form_cb_Search.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_cb_Search_KeyPress);
             // 
             // form_tabControl
             // 
@@ -380,6 +382,8 @@
             // 
             // form_tabPage_Search
             // 
+            this.form_tabPage_Search.Controls.Add(this.form_chk_SearchCase);
+            this.form_tabPage_Search.Controls.Add(this.form_btn_Search_FillPaths);
             this.form_tabPage_Search.Controls.Add(this.label6);
             this.form_tabPage_Search.Controls.Add(this.form_rad_Folder_Innermost);
             this.form_tabPage_Search.Controls.Add(this.form_rad_Folder_Outermost);
@@ -394,6 +398,16 @@
             this.form_tabPage_Search.TabIndex = 1;
             this.form_tabPage_Search.Text = "Search";
             this.form_tabPage_Search.UseVisualStyleBackColor = true;
+            // 
+            // form_btn_Search_FillPaths
+            // 
+            this.form_btn_Search_FillPaths.Enabled = false;
+            this.form_btn_Search_FillPaths.Location = new System.Drawing.Point(8, 31);
+            this.form_btn_Search_FillPaths.Name = "form_btn_Search_FillPaths";
+            this.form_btn_Search_FillPaths.Size = new System.Drawing.Size(75, 23);
+            this.form_btn_Search_FillPaths.TabIndex = 7;
+            this.form_btn_Search_FillPaths.Text = "Fill Paths";
+            this.form_btn_Search_FillPaths.UseVisualStyleBackColor = true;
             // 
             // label6
             // 
@@ -460,13 +474,12 @@
             // form_lv_SearchResults
             // 
             this.form_lv_SearchResults.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.form_lv_SearchResults_col_Volume,
-            this.form_lv_SearchResults_col_Filename,
-            this.form_lv_SearchResults_col_Length,
-            this.form_lv_SearchResults_col_ContainingDir,
-            this.form_lv_SearchResults_col_Modified,
-            this.form_lv_SearchResults_col_Created,
             this.form_lv_SearchResults_col_Path,
+            this.form_lv_SearchResults_col_Filename,
+            this.form_lv_SearchResults_col_Created,
+            this.form_lv_SearchResults_col_Modified,
+            this.columnHeader11,
+            this.form_lv_SearchResults_col_Length,
             this.form_lv_SearchResults_col_Error1,
             this.form_lv_SearchResults_col_Error2});
             this.form_lv_SearchResults.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -479,39 +492,33 @@
             this.form_lv_SearchResults.UseCompatibleStateImageBehavior = false;
             this.form_lv_SearchResults.View = System.Windows.Forms.View.Details;
             // 
-            // form_lv_SearchResults_col_Volume
+            // form_lv_SearchResults_col_Path
             // 
-            this.form_lv_SearchResults_col_Volume.Text = "Volume";
+            this.form_lv_SearchResults_col_Path.Text = "Path";
             // 
             // form_lv_SearchResults_col_Filename
             // 
             this.form_lv_SearchResults_col_Filename.Text = "Filename";
             this.form_lv_SearchResults_col_Filename.Width = 101;
             // 
-            // form_lv_SearchResults_col_Length
+            // form_lv_SearchResults_col_Created
             // 
-            this.form_lv_SearchResults_col_Length.Text = "Length";
-            this.form_lv_SearchResults_col_Length.Width = 80;
-            // 
-            // form_lv_SearchResults_col_ContainingDir
-            // 
-            this.form_lv_SearchResults_col_ContainingDir.Text = "Containing dir";
-            this.form_lv_SearchResults_col_ContainingDir.Width = 99;
+            this.form_lv_SearchResults_col_Created.Text = "Created";
+            this.form_lv_SearchResults_col_Created.Width = 100;
             // 
             // form_lv_SearchResults_col_Modified
             // 
             this.form_lv_SearchResults_col_Modified.Text = "Modified";
             this.form_lv_SearchResults_col_Modified.Width = 100;
             // 
-            // form_lv_SearchResults_col_Created
+            // columnHeader11
             // 
-            this.form_lv_SearchResults_col_Created.Text = "Created";
-            this.form_lv_SearchResults_col_Created.Width = 100;
+            this.columnHeader11.Text = "Attributes";
             // 
-            // form_lv_SearchResults_col_Path
+            // form_lv_SearchResults_col_Length
             // 
-            this.form_lv_SearchResults_col_Path.Text = "Path";
-            this.form_lv_SearchResults_col_Path.Width = 223;
+            this.form_lv_SearchResults_col_Length.Text = "Length";
+            this.form_lv_SearchResults_col_Length.Width = 80;
             // 
             // form_lv_SearchResults_col_Error1
             // 
@@ -583,6 +590,7 @@
             // split_Files
             // 
             this.split_Files.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.split_Files.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.split_Files.Location = new System.Drawing.Point(0, 0);
             this.split_Files.Name = "split_Files";
             // 
@@ -611,6 +619,7 @@
             // split_Detail
             // 
             this.split_Detail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.split_Detail.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.split_Detail.Location = new System.Drawing.Point(0, 0);
             this.split_Detail.Name = "split_Detail";
             this.split_Detail.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -650,7 +659,7 @@
             // 
             // columnHeader3
             // 
-            this.columnHeader3.Text = "Dir";
+            this.columnHeader3.Text = "Path";
             this.columnHeader3.Width = 0;
             // 
             // columnHeader4
@@ -726,6 +735,18 @@
             this.timer_killRed.Interval = 10000;
             this.timer_killRed.Tick += new System.EventHandler(this.timer_killRed_Tick);
             // 
+            // form_chk_SearchCase
+            // 
+            this.form_chk_SearchCase.AutoSize = true;
+            this.form_chk_SearchCase.Checked = true;
+            this.form_chk_SearchCase.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.form_chk_SearchCase.Location = new System.Drawing.Point(122, 35);
+            this.form_chk_SearchCase.Name = "form_chk_SearchCase";
+            this.form_chk_SearchCase.Size = new System.Drawing.Size(96, 17);
+            this.form_chk_SearchCase.TabIndex = 8;
+            this.form_chk_SearchCase.Text = "Case Sensitive";
+            this.form_chk_SearchCase.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -786,15 +807,13 @@
         private System.Windows.Forms.ListView form_lv_SearchResults;
         private System.Windows.Forms.ColumnHeader form_lv_SearchResults_col_Filename;
         private System.Windows.Forms.ColumnHeader form_lv_SearchResults_col_Length;
-        private System.Windows.Forms.ColumnHeader form_lv_SearchResults_col_ContainingDir;
         private System.Windows.Forms.ColumnHeader form_lv_SearchResults_col_Modified;
         private System.Windows.Forms.ColumnHeader form_lv_SearchResults_col_Created;
-        private System.Windows.Forms.ColumnHeader form_lv_SearchResults_col_Path;
         private System.Windows.Forms.ListView form_lv_PathErrors;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.ColumnHeader form_lv_SearchResults_col_Volume;
+        private System.Windows.Forms.ColumnHeader form_lv_SearchResults_col_Path;
         private System.Windows.Forms.ColumnHeader form_lv_Errors_col_Volume;
         private System.Windows.Forms.ColumnHeader form_lv_Errors_col_FileOrPath;
         private System.Windows.Forms.ColumnHeader form_lv_Errors_col_Error1;
@@ -827,6 +846,9 @@
         private System.Windows.Forms.ColumnHeader columnHeader8;
         private System.Windows.Forms.ColumnHeader columnHeader9;
         private System.Windows.Forms.ColumnHeader columnHeader10;
+        private System.Windows.Forms.ColumnHeader columnHeader11;
+        private System.Windows.Forms.Button form_btn_Search_FillPaths;
+        private System.Windows.Forms.CheckBox form_chk_SearchCase;
 
     }
 }

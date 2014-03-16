@@ -483,9 +483,19 @@ namespace SearchDirLists
                 {
                     String[] strArray = strLine.Split('\t');
 
-                    ListViewItem lvItem = new ListViewItem(new string[] { strArray[0], strArray[1], strArray[2], strArray[3], strArray[4] });
+                    strArray[3] = "Using file.";
 
-                    form_lv_Volumes.Items.Add(lvItem);
+                    if (File.Exists(strArray[2]) == false)
+                    {
+                        strArray[2] = Path.GetDirectoryName(openFileDialog1.FileName) + Path.DirectorySeparatorChar + Path.GetFileName(strArray[2]);
+
+                        if (File.Exists(strArray[2]) == false)
+                        {
+                            strArray[3] = "No file. Will create.";
+                        }
+                    }
+
+                    form_lv_Volumes.Items.Add(new ListViewItem(strArray));
                 }
             }
 
@@ -792,7 +802,9 @@ namespace SearchDirLists
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
+            form_lv_SearchResults.Items.Clear();
             Console.Clear();
+            form_btn_Search_FillPaths.Enabled = false;
 
             if (SaveFields(false) == false)  // for m_strSearch
             {
@@ -824,44 +836,67 @@ namespace SearchDirLists
                     String line = "";
                     long counter = -1;
 
+                    if (form_chk_SearchCase.Checked)
+                    {
+                        m_strSearch = m_strSearch.ToLower();
+                    }
+
                     while ((line = file.ReadLine()) != null)
                     {
                         ++counter;
 
-                        if (line.Contains(m_strSearch) == false)
+                        if (form_chk_SearchCase.Checked)
                         {
-                            continue;
+                            if (line.Contains(m_strSearch) == false)
+                            {
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            if (line.ToLower().Contains(m_strSearch) == false)
+                            {
+                                continue;
+                            }
                         }
 
                         String[] strArray = line.Split('\t');
 
-                        if (strArray[0].Length <= 0) // not a directory
+                        if (strArray[0].Length > 0) // directory
                         {
-                            continue;
-                        }
-
-                        if (form_rad_Folder_Outermost.Checked)
-                        {
-                            if (strArray[0].EndsWith(m_strSearch) == false)
+                            if (form_rad_Folder_Outermost.Checked)
                             {
-                                continue;
+                                if (strArray[0].EndsWith(m_strSearch) == false)
+                                {
+                                    continue;
+                                }
+                            }
+                            else if (form_rad_Folder_Innermost.Checked)
+                            {
+                                if (strArray.Length < 6)
+                                {
+                                    continue;
+                                }
+
+                                long nParse = 0;
+
+                                if (long.TryParse(strArray[5], out nParse) == false)
+                                {
+                                    continue;
+                                }
                             }
                         }
-                        else if (form_rad_Folder_Innermost.Checked)
+                        else
                         {
-                            if (strArray.Length < 6)
-                            {
-                                continue;
-                            }
-
-                            long nParse = 0;
-
-                            if (long.TryParse(strArray[5], out nParse) == false)
-                            {
-                                continue;
-                            }
+                            form_btn_Search_FillPaths.Enabled = true;
                         }
 
+                        if ((strArray.Length > 5) && (strArray[5].Length > 0))
+                        {
+                            strArray[5] = FormatSize(strArray[5]);
+                        }
+
+                        form_lv_SearchResults.Items.Add(new ListViewItem(strArray));
                         Console.WriteLine(counter.ToString() + ": " + line);
                     }
                 }
@@ -969,17 +1004,19 @@ namespace SearchDirLists
 
                 if (subNodes.Count == 1)
                 {
+                    Node subNode = subNodes.Values.First();
+
                     if (this == nodes.Values.First())
                     {
                         // cull all root node single-chains.
                         SetRootNode(subNodes);
-                        subNodes.Values.First().m_strPath.Insert(0, m_strPath + Path.DirectorySeparatorChar);
-                        subNodes.Values.First().bUseShortPath = false;
-                        treeNode = subNodes.Values.First().AddToTree(strVolumeName);
+                        subNode.m_strPath.Insert(0, m_strPath + Path.DirectorySeparatorChar);
+                        subNode.bUseShortPath = false;
+                        treeNode = subNode.AddToTree(strVolumeName);
                     }
                     else
                     {
-                        treeNode = new TreeNode(strShortPath, new TreeNode[] { subNodes.Values.First().AddToTree() });
+                        treeNode = new TreeNode(strShortPath, new TreeNode[] { subNode.AddToTree() });
                     }
                 }
                 else if (subNodes.Count > 1)
@@ -1093,6 +1130,7 @@ namespace SearchDirLists
                             }
 
                             m_hashCache.Add("driveInfo" + m_strSaveAs, strDriveInfo.ToString().Trim());
+                            continue;
                         }
 
                         if (line.Contains('\t') == false)
@@ -1314,6 +1352,14 @@ namespace SearchDirLists
                 {
                     form_LV_Detail.Items.Add(new ListViewItem(new String[] { "Volume Label", arrDriveInfo[7] }));
                 }
+            }
+        }
+
+        private void form_cb_Search_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (new char[] { (char)Keys.Enter, (char)Keys.Return}.Contains(e.KeyChar))
+            {
+                btnSearch_Click(sender, e);
             }
         }
     }

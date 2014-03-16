@@ -836,7 +836,7 @@ namespace SearchDirLists
                     String line = "";
                     long counter = -1;
 
-                    if (form_chk_SearchCase.Checked)
+                    if (form_chk_SearchCase.Checked == false)
                     {
                         m_strSearch = m_strSearch.ToLower();
                     }

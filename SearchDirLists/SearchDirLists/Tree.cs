@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,9 @@ using System.Threading;
 
 namespace SearchDirLists
 {
+    delegate void TreeStatusDelegate(TreeNode rootNode);
+    delegate void TreeDoneDelegate();
+
     class NodeDatum
     {
         long m_nPrevLineNo = 0;
@@ -129,13 +133,13 @@ namespace SearchDirLists
 
     class DirData
     {
-        TreeView form_treeView_Browse = null;
         SortedDictionary<String, Node> nodes = new SortedDictionary<string, Node>();
+        static TreeStatusDelegate m_callbackStatus = null;
 
-        public DirData(TreeView ctl)
+        public DirData(TreeStatusDelegate callbackStatus)
         {
-            form_treeView_Browse = ctl;
             Node.SetRootNode(nodes);
+            m_callbackStatus = callbackStatus;
         }
 
         public void AddToTree(String in_str, long nLineNo)
@@ -158,55 +162,58 @@ namespace SearchDirLists
         {
             TreeNode rootNode = nodes.Values.First().AddToTree(strVolumeName);
 
-            form_treeView_Browse.Nodes.Add(rootNode);
+            m_callbackStatus(rootNode);
             return rootNode;
         }
     }
 
-    public partial class Form1 : Form
+    class Tree : Utilities
     {
-        private void DoTree()
+        List<LVvolStrings> m_list_lvVolStrings = new List<LVvolStrings>();
+        Hashtable m_hashCache;
+        TreeStatusDelegate m_callbackStatus;
+        TreeDoneDelegate m_callbackDone;
+
+        public Tree(ListView.ListViewItemCollection lvItems, Hashtable hashCache, 
+            TreeStatusDelegate callbackStatus, TreeDoneDelegate callbackDone)
         {
-            if (m_bBrowseLoaded)
+            foreach (ListViewItem lvItem in lvItems)
             {
-                return;
+                m_list_lvVolStrings.Add(new LVvolStrings(lvItem));
             }
 
-            //    new Thread(new ThreadStart(CreateBrowsingTree)).Start();
-            //}
+            m_hashCache = hashCache;
+            m_callbackStatus = callbackStatus;
+            m_callbackDone = callbackDone;
+        }
 
-            //private void CreateBrowsingTree()
-            //{
-            form_treeView_Browse.Nodes.Clear();
-            form_LV_Files.Items.Clear();
-            form_LV_Detail.Items.Clear();
-            m_hashCache.Clear();
-
+        public void Go()
+        {
             Console.WriteLine();
             Console.WriteLine("Creating browsing tree.");
 
             DateTime dtStart = DateTime.Now;
 
-            foreach (ListViewItem lvItem in form_lv_Volumes.Items)
+            foreach (LVvolStrings volStrings in m_list_lvVolStrings)
             {
-                if (LV_VolumesItemInclude(lvItem) == false)
+                if (LV_VolumesItemInclude(volStrings) == false)
                 {
                     continue;
                 }
 
-                form_cb_VolumeName.Text = lvItem.SubItems[0].Text;
-                form_cb_Path.Text = lvItem.SubItems[1].Text;
-                form_cb_SaveAs.Text = lvItem.SubItems[2].Text;
+                String strVolumeName = volStrings.VolumeName;
+                String strPath = volStrings.Path;
+                String strSaveAs = volStrings.SaveAs;
 
-                if (SaveFields(false) == false)
+                if (FormatPath(ref strPath, ref strSaveAs, false) == false)
                 {
                     return;
                 }
 
-                using (StreamReader file = new StreamReader(m_strSaveAs))
+                using (StreamReader file = new StreamReader(strSaveAs))
                 {
                     String line = "";
-                    DirData dirData = new DirData(form_treeView_Browse);
+                    DirData dirData = new DirData(m_callbackStatus);
                     long nLineNo = -1;
 
                     while ((line = file.ReadLine()) != null)
@@ -223,7 +230,7 @@ namespace SearchDirLists
                                 ++nLineNo;
                             }
 
-                            m_hashCache.Add("driveInfo" + m_strSaveAs, strDriveInfo.ToString().Trim());
+                            m_hashCache.Add("driveInfo" + strSaveAs, strDriveInfo.ToString().Trim());
                             continue;
                         }
 
@@ -249,12 +256,59 @@ namespace SearchDirLists
                         dirData.AddToTree(strNew, nLineNo);
                     }
 
-                    dirData.AddToTree(m_strVolumeName).Tag = m_strSaveAs;
+                    dirData.AddToTree(strVolumeName).Tag = strSaveAs;
                 }
             }
 
             Console.WriteLine(String.Format("Completed browsing tree in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 10) / 100.0));
+            m_callbackDone();
+        }
+    }
+
+    public partial class Form1 : Form
+    {
+        private bool m_bThreadingTree = false;
+        private bool m_bBrowseLoaded = false;
+        Hashtable m_hashCache = new Hashtable();
+
+        void TreeStatusCallback(TreeNode rootNode)
+        {
+            if (InvokeRequired) { Invoke(new TreeStatusDelegate(TreeStatusCallback), new object[] { rootNode }); return; }
+
+            form_treeView_Browse.Nodes.Add(rootNode);
+        }
+
+        void TreeDoneCallback()
+        {
+            if (InvokeRequired) { Invoke(new TreeDoneDelegate(TreeDoneCallback)); return; }
+
+            m_bThreadingTree = false;
             m_bBrowseLoaded = true;
+        }
+
+        private void DoTree()
+        {
+            if (m_bBrowseLoaded)
+            {
+                return;
+            }
+
+            if (m_bThreadingTree)
+            {
+                //MessageBox.Show("Already in progress.                      ", "Create Browsing Tree");
+                return;
+            }
+
+            form_treeView_Browse.Nodes.Clear();
+            form_LV_Files.Items.Clear();
+            form_LV_Detail.Items.Clear();
+            m_hashCache.Clear();
+
+            Tree tree = new Tree(form_lv_Volumes.Items, m_hashCache,
+                new TreeStatusDelegate(TreeStatusCallback), new TreeDoneDelegate(TreeDoneCallback));
+
+            m_bThreadingTree = true;
+            new Thread(new ThreadStart(tree.Go)).Start();
         }
     }
 }

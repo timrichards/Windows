@@ -12,29 +12,33 @@ using System.Threading;
 namespace SearchDirLists
 {
     delegate void SearchStatusDelegate(String[] strArray, bool bFillPaths);
+    delegate void SearchDoneDelegate();
 
     class Search : Utilities
     {
         List<LVvolStrings> m_list_lvVolStrings = new List<LVvolStrings>();
-        SearchStatusDelegate m_callbackStatus = null;
         String m_strSearch = null;
         bool m_bCaseSensitive = true;
+        SearchStatusDelegate m_callbackStatus = null;
+        SearchDoneDelegate m_callbackDone = null;
 
         public enum FolderSpecialHandling { None, Outermost, Innermost };
         FolderSpecialHandling m_folderHandling;
 
-        public Search(ListView.ListViewItemCollection lvItems, SearchStatusDelegate callbackStatus,
-            String strSearch, bool bCaseSensitive, FolderSpecialHandling folderHandling)
+        public Search(ListView.ListViewItemCollection lvItems,
+            String strSearch, bool bCaseSensitive, FolderSpecialHandling folderHandling,
+            SearchStatusDelegate callbackStatus, SearchDoneDelegate callbackDone)
         {
             foreach (ListViewItem lvItem in lvItems)
             {
                 m_list_lvVolStrings.Add(new LVvolStrings(lvItem));
             }
 
-            m_callbackStatus = callbackStatus;
             m_strSearch = strSearch;
             m_bCaseSensitive = bCaseSensitive;
             m_folderHandling = folderHandling;
+            m_callbackStatus = callbackStatus;
+            m_callbackDone = callbackDone;
         }
 
         public void Go()
@@ -57,7 +61,7 @@ namespace SearchDirLists
 
                 if (FormatPath(ref strPath, ref strSaveAs, false) == false)
                 {
-                    return; // false;
+                    return;
                 }
 
                 using (StreamReader file = new StreamReader(strSaveAs))
@@ -141,6 +145,8 @@ namespace SearchDirLists
 
     public partial class Form1 : Form
     {
+        private bool m_bThreadingSearch = false;
+
         void SearchStatusCallback(String[] strArray, bool bFillPaths)
         {
             if (InvokeRequired)
@@ -154,8 +160,21 @@ namespace SearchDirLists
             form_btn_Search_FillPaths.Enabled = bFillPaths;
         }
 
+        void SearchDoneCallback()
+        {
+            if (InvokeRequired) { Invoke(new SearchDoneDelegate(SearchDoneCallback)); return; }
+
+            m_bThreadingSearch = false;
+        }
+
         private void DoSearch()
         {
+            if (m_bThreadingSearch)
+            {
+                MessageBox.Show("Already in progress.                       ", "Search");
+                return;
+            }
+
             form_lv_SearchResults.Items.Clear();
             Console.Clear();
             form_btn_Search_FillPaths.Enabled = false;
@@ -172,8 +191,10 @@ namespace SearchDirLists
             }
 
             m_strSearch = form_cb_Search.Text;
-            Search search = new Search(form_lv_Volumes.Items, new SearchStatusDelegate(SearchStatusCallback),
-                m_strSearch, form_chk_SearchCase.Checked, folderHandling);
+            Search search = new Search(form_lv_Volumes.Items, m_strSearch, form_chk_SearchCase.Checked, folderHandling,
+                new SearchStatusDelegate(SearchStatusCallback), new SearchDoneDelegate(SearchDoneCallback));
+
+            m_bThreadingSearch = true;
 
             new Thread(new ThreadStart(search.Go)).Start();
         }

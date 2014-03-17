@@ -43,7 +43,7 @@ namespace SearchDirLists
             this.form_btn_AddVolume = new System.Windows.Forms.Button();
             this.form_cb_VolumeName = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.form_lv_Volumes = new ListViewEx();
+            this.form_lv_Volumes = new ListViewEmbeddedControls.ListViewEx();
             this.form_lv_Volumes_col_Volume = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_Volumes_col_Path = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_Volumes_col_SaveToFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -57,13 +57,14 @@ namespace SearchDirLists
             this.form_cb_Path = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.form_tabPage_Search = new System.Windows.Forms.TabPage();
+            this.form_chk_SearchCase = new System.Windows.Forms.CheckBox();
             this.form_btn_Search_FillPaths = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.form_rad_Folder_Innermost = new System.Windows.Forms.RadioButton();
             this.form_rad_Folder_Outermost = new System.Windows.Forms.RadioButton();
             this.form_rad_Folder_None = new System.Windows.Forms.RadioButton();
             this.split_Volumes = new System.Windows.Forms.SplitContainer();
-            this.form_lv_SearchResults = new ListViewEx();
+            this.form_lv_SearchResults = new ListViewEmbeddedControls.ListViewEx();
             this.form_lv_SearchResults_col_Path = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_SearchResults_col_Filename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_SearchResults_col_Created = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -72,7 +73,7 @@ namespace SearchDirLists
             this.form_lv_SearchResults_col_Length = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_SearchResults_col_Error1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_SearchResults_col_Error2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_lv_PathErrors = new ListViewEx();
+            this.form_lv_PathErrors = new ListViewEmbeddedControls.ListViewEx();
             this.form_lv_Errors_col_Volume = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_Errors_col_FileOrPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_Errors_col_Error1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -82,7 +83,7 @@ namespace SearchDirLists
             this.split_Files = new System.Windows.Forms.SplitContainer();
             this.form_treeView_Browse = new System.Windows.Forms.TreeView();
             this.split_Detail = new System.Windows.Forms.SplitContainer();
-            this.form_LV_Files = new ListViewEx();
+            this.form_LV_Files = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -91,14 +92,13 @@ namespace SearchDirLists
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_LV_Detail = new ListViewEx();
+            this.form_LV_Detail = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.timer_killRed = new System.Windows.Forms.Timer(this.components);
-            this.form_chk_SearchCase = new System.Windows.Forms.CheckBox();
             this.form_tabControl.SuspendLayout();
             this.form_tabPage_Volumes.SuspendLayout();
             this.form_tabPage_Search.SuspendLayout();
@@ -401,6 +401,19 @@ namespace SearchDirLists
             this.form_tabPage_Search.Text = "Search";
             this.form_tabPage_Search.UseVisualStyleBackColor = true;
             // 
+            // form_chk_SearchCase
+            // 
+            this.form_chk_SearchCase.AutoSize = true;
+            this.form_chk_SearchCase.Checked = true;
+            this.form_chk_SearchCase.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.form_chk_SearchCase.Location = new System.Drawing.Point(122, 35);
+            this.form_chk_SearchCase.Name = "form_chk_SearchCase";
+            this.form_chk_SearchCase.Size = new System.Drawing.Size(96, 17);
+            this.form_chk_SearchCase.TabIndex = 8;
+            this.form_chk_SearchCase.Text = "Case Sensitive";
+            this.form_chk_SearchCase.UseVisualStyleBackColor = true;
+            this.form_chk_SearchCase.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_cb_Search_KeyPress);
+            // 
             // form_btn_Search_FillPaths
             // 
             this.form_btn_Search_FillPaths.Enabled = false;
@@ -429,6 +442,7 @@ namespace SearchDirLists
             this.form_rad_Folder_Innermost.TabIndex = 5;
             this.form_rad_Folder_Innermost.Text = "Innermost that have length";
             this.form_rad_Folder_Innermost.UseVisualStyleBackColor = true;
+            this.form_rad_Folder_Innermost.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_cb_Search_KeyPress);
             // 
             // form_rad_Folder_Outermost
             // 
@@ -439,6 +453,7 @@ namespace SearchDirLists
             this.form_rad_Folder_Outermost.TabIndex = 4;
             this.form_rad_Folder_Outermost.Text = "Outermost";
             this.form_rad_Folder_Outermost.UseVisualStyleBackColor = true;
+            this.form_rad_Folder_Outermost.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_cb_Search_KeyPress);
             // 
             // form_rad_Folder_None
             // 
@@ -451,6 +466,7 @@ namespace SearchDirLists
             this.form_rad_Folder_None.TabStop = true;
             this.form_rad_Folder_None.Text = "None";
             this.form_rad_Folder_None.UseVisualStyleBackColor = true;
+            this.form_rad_Folder_None.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_cb_Search_KeyPress);
             // 
             // split_Volumes
             // 
@@ -736,18 +752,6 @@ namespace SearchDirLists
             // 
             this.timer_killRed.Interval = 10000;
             this.timer_killRed.Tick += new System.EventHandler(this.timer_killRed_Tick);
-            // 
-            // form_chk_SearchCase
-            // 
-            this.form_chk_SearchCase.AutoSize = true;
-            this.form_chk_SearchCase.Checked = true;
-            this.form_chk_SearchCase.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.form_chk_SearchCase.Location = new System.Drawing.Point(122, 35);
-            this.form_chk_SearchCase.Name = "form_chk_SearchCase";
-            this.form_chk_SearchCase.Size = new System.Drawing.Size(96, 17);
-            this.form_chk_SearchCase.TabIndex = 8;
-            this.form_chk_SearchCase.Text = "Case Sensitive";
-            this.form_chk_SearchCase.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 

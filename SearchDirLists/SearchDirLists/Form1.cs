@@ -18,12 +18,6 @@ namespace SearchDirLists
         private String m_strSaveAs = "";
         private String m_strSearch = "";
 
-        private List<String> m_list_Errors = new List<string>();
-
-        private bool m_bBrowseLoaded = false;
-
-        Hashtable m_hashCache = new Hashtable();
-
         public Form1()
         {
             InitializeComponent();

@@ -13,7 +13,7 @@ namespace SearchDirLists
 {
     delegate void TreeStatusDelegate(TreeNode rootNode);
     delegate void TreeDoneDelegate();
-    delegate int TreeSelectStatusDelegate(ListViewItem lvItemDetails = null, ListViewItem lvItemFile = null, ListViewItem[] itemArray = null);
+    delegate void TreeSelectStatusDelegate(ListViewItem lvItemDetails = null, ListViewItem[] itemArray = null);
     delegate void TreeSelectDoneDelegate();
 
     class NodeDatum
@@ -286,6 +286,12 @@ namespace SearchDirLists
 
         public void Go()
         {
+            Go_A();
+            m_doneCallback();
+        }
+
+        private void Go_A()
+        {
             TreeNode nodeParent = m_treeNode;
 
             while (nodeParent.Parent != null)
@@ -388,68 +394,33 @@ namespace SearchDirLists
 
             long nLengthDebug = 0;
 
-            if (m_hashCache.ContainsKey(strLine) == false)
+            DateTime dtStart = DateTime.Now;
+            List<String> listLines = File.ReadLines(strFile)
+                .Skip((int)nPrevDir + 1)
+                .Take((int)(nLineNo - nPrevDir - 1))
+                .ToList();
+
+            listLines.Sort();
+
+            ListViewItem[] itemArray = new ListViewItem[listLines.Count];
+
+            for (int i = 0; i < listLines.Count; ++i)
             {
-                DateTime dtStart = DateTime.Now;
-                List<String> listLines = File.ReadLines(strFile)
-                    .Skip((int)nPrevDir + 1)
-                    .Take((int)(nLineNo - nPrevDir - 1))
-                    .ToList();
+                strArray = listLines[i].Split('\t');
 
-                listLines.Sort();
-
-                for (int i = 0; i < listLines.Count; ++i)
+                if ((strArray.Length > 5) && (strArray[5].Length > 0))
                 {
-                    strArray = listLines[i].Split('\t');
-
-                    if ((strArray.Length > 5) && (strArray[5].Length > 0))
-                    {
-                        nLengthDebug += long.Parse(strArray[5]);
-                        strArray[5] = Utilities.FormatSize(strArray[5]);
-                    }
-
-                    m_statusCallback(lvItemFile: new ListViewItem(strArray));
+                    nLengthDebug += long.Parse(strArray[5]);
+                    strArray[5] = Utilities.FormatSize(strArray[5]);
                 }
 
-                TimeSpan timeSpan = (DateTime.Now - dtStart);
-                String strTimeSpan = (((int)timeSpan.TotalMilliseconds / 100) / 10.0).ToString();
-
-                Console.WriteLine("File list took " + strTimeSpan + " seconds.");
-
-                if (timeSpan.Seconds > 1)
-                {
-                    ListViewItem[] itemArray = new ListViewItem[m_statusCallback() /*returns length of file LV*/];
-
-                    m_statusCallback(itemArray: itemArray); // loads an empty array
-                    m_hashCache.Add(strLine, itemArray);
-                    m_hashCache.Add("nLengthDebug" + strLine, nLengthDebug);
-                    m_hashCache.Add("timeSpan" + strLine, strTimeSpan);
-                    Console.WriteLine("Cached.");
-                }
-
-                m_statusCallback(new ListViewItem(new String[] { "# Files", (nLineNo - nPrevDir + 1).ToString() }));
+                itemArray[i] = new ListViewItem(strArray);
             }
-            else    // file list is cached
-            {
-                DateTime dtStart = DateTime.Now;
-                ListViewItem[] itemArray = (ListViewItem[])m_hashCache[strLine];
 
-                m_statusCallback(itemArray: itemArray); // loads from a full array
-
-                if (itemArray.Length > 0)
-                {
-                    m_statusCallback(new ListViewItem(new String[] { "# Files", itemArray.Length.ToString() }));
-                }
-
-                TimeSpan timeSpan = (DateTime.Now - dtStart);
-
-                nLengthDebug = (long)m_hashCache["nLengthDebug" + strLine];
-                Console.WriteLine("File list used to take " + (String)m_hashCache["timeSpan" + strLine] + " seconds before caching.");
-                Console.WriteLine("Cache read took " + (int)timeSpan.TotalMilliseconds + " milliseconds.");
-            }
+            m_statusCallback(itemArray: itemArray);
+            m_statusCallback(new ListViewItem(new String[] { "# Files", (nLineNo - nPrevDir - 1).ToString() }));
 
             Debug.Assert(nLengthDebug == nLengthDebug_A);
-            m_doneCallback();
         }
     }
 
@@ -476,33 +447,19 @@ namespace SearchDirLists
             m_bBrowseLoaded = true;
         }
 
-        int TreeSelectStatusCallback(ListViewItem lvItemDetails = null, ListViewItem lvItemFile = null, ListViewItem[] itemArray = null)
+        void TreeSelectStatusCallback(ListViewItem lvItemDetails = null, ListViewItem[] itemArray = null)
         {
-            if (InvokeRequired) { return (int) Invoke(new TreeSelectStatusDelegate(TreeSelectStatusCallback), new object[] { lvItemDetails, lvItemFile, itemArray }); }
+            if (InvokeRequired) { Invoke(new TreeSelectStatusDelegate(TreeSelectStatusCallback), new object[] { lvItemDetails, itemArray }); return;  }
 
             if (lvItemDetails != null)
             {
                 form_LV_Detail.Items.Add(lvItemDetails);
             }
 
-            if (lvItemFile != null)
-            {
-                form_LV_Files.Items.Add(lvItemFile);
-            }
-
             if (itemArray != null)
             {
-                if (itemArray[0].Text.Length == 0)
-                {
-                    form_LV_Files.Items.CopyTo(itemArray, 0);
-                }
-                else
-                {
-                    form_LV_Files.Items.AddRange(itemArray);
-                }
+                form_LV_Files.Items.AddRange(itemArray);
             }
-
-            return form_LV_Files.Items.Count;
         }
 
         void TreeSelectDoneCallback()

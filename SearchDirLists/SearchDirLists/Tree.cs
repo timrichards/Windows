@@ -7,11 +7,14 @@ using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 using System.Threading;
+using System.Drawing;
 
 namespace SearchDirLists
 {
     delegate void TreeStatusDelegate(TreeNode rootNode);
     delegate void TreeDoneDelegate();
+    delegate int TreeSelectStatusDelegate(ListViewItem lvItemDetails = null, ListViewItem lvItemFile = null, ListViewItem[] itemArray = null);
+    delegate void TreeSelectDoneDelegate();
 
     class NodeDatum
     {
@@ -265,10 +268,197 @@ namespace SearchDirLists
         }
     }
 
+    class TreeSelect
+    {
+        TreeNode m_treeNode = null;
+        static Hashtable m_hashCache = null;
+        static TreeSelectStatusDelegate m_statusCallback = null;
+        static TreeSelectDoneDelegate m_doneCallback = null;
+
+        public TreeSelect(TreeNode node, Hashtable hashCache,
+            TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
+        {
+            m_treeNode = node;
+            m_hashCache = hashCache;
+            m_statusCallback = statusCallback;
+            m_doneCallback = doneCallback;
+        }
+
+        public void Go()
+        {
+            TreeNode nodeParent = m_treeNode;
+
+            while (nodeParent.Parent != null)
+            {
+                nodeParent = nodeParent.Parent;
+            }
+
+            Debug.Assert(nodeParent.Tag is String);
+
+            String strFile = (String)nodeParent.Tag;
+
+            if (File.Exists(strFile) == false)
+            {
+                Debug.Assert(false);
+                return;
+            }
+
+            if ((m_treeNode.Tag is NodeDatum) == false)
+            {
+                return;
+            }
+
+            NodeDatum nodeDatum = (NodeDatum)m_treeNode.Tag;
+
+            if (nodeDatum.LineNo <= 0)
+            {
+                return;
+            }
+
+            long nPrevDir = nodeDatum.PrevlineNo;
+            long nLineNo = nodeDatum.LineNo;
+            String strLine = File.ReadLines(strFile).Skip((int)nLineNo).Take(1).ToArray()[0];
+            String[] strArray = strLine.Split('\t');
+            long nIx = 0;
+            DateTime dt;
+
+
+            // Directory detail
+
+            nIx = 2; if ((strArray.Length > nIx) && (strArray[nIx].Length > 0)) { m_statusCallback(new ListViewItem(new String[] { "Created\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() })); }
+            nIx = 3; if ((strArray.Length > nIx) && (strArray[nIx].Length > 0)) m_statusCallback(new ListViewItem(new String[] { "Modified\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
+            nIx = 4; if ((strArray.Length > nIx) && (strArray[nIx].Length > 0)) m_statusCallback(new ListViewItem(new String[] { "Attributes\t", strArray[nIx] }));
+            nIx = 5;
+
+            long nLengthDebug_A = 0;
+
+            if ((strArray.Length > nIx) && (strArray[nIx].Length > 0))
+            {
+                Debug.Assert(long.TryParse(strArray[nIx], out nLengthDebug_A));
+                m_statusCallback(new ListViewItem(new String[] { "Size\t", Utilities.FormatSize(strArray[nIx], true) }));
+            }
+
+            nIx = 6; if ((strArray.Length > nIx) && (strArray[nIx].Length > 0)) m_statusCallback(new ListViewItem(new String[] { "Error 1\t", strArray[nIx] }));
+            nIx = 7; if ((strArray.Length > nIx) && (strArray[nIx].Length > 0)) m_statusCallback(new ListViewItem(new String[] { "Error 2\t", strArray[nIx] }));
+
+            Console.WriteLine(strLine);
+
+
+            // Volume detail
+
+            if (m_hashCache.ContainsKey("driveInfo" + strFile))
+            {
+                String strDriveInfo = (String)m_hashCache["driveInfo" + strFile];
+                String[] arrDriveInfo = strDriveInfo.Split(new String[] { "\r\n", "\n" }, StringSplitOptions.None);
+
+                Debug.Assert(new int[] { 7, 8 }.Contains(arrDriveInfo.Length));
+                m_statusCallback(new ListViewItem());
+
+                ListViewItem lvItem = new ListViewItem("Volume detail");
+
+                lvItem.BackColor = Color.DarkGray;
+                lvItem.ForeColor = Color.White;
+                m_statusCallback(lvItem);
+                m_statusCallback(new ListViewItem(new String[] { "Available Free Space", Utilities.FormatSize(arrDriveInfo[0], true) }));
+                m_statusCallback(new ListViewItem(new String[] { "Drive Format", arrDriveInfo[1] }));
+                m_statusCallback(new ListViewItem(new String[] { "Drive Type", arrDriveInfo[2] }));
+                m_statusCallback(new ListViewItem(new String[] { "Name", arrDriveInfo[3] }));
+                m_statusCallback(new ListViewItem(new String[] { "Root Directory", arrDriveInfo[4] }));
+                m_statusCallback(new ListViewItem(new String[] { "Total Free Space", Utilities.FormatSize(arrDriveInfo[5], true) }));
+                m_statusCallback(new ListViewItem(new String[] { "Total Size", Utilities.FormatSize(arrDriveInfo[6], true) }));
+
+                if (arrDriveInfo.Length == 8)
+                {
+                    m_statusCallback(new ListViewItem(new String[] { "Volume Label", arrDriveInfo[7] }));
+                }
+            }
+
+
+            // file list
+
+            if (nPrevDir <= 0)
+            {
+                return;
+            }
+
+            if ((nLineNo - nPrevDir) <= 1)  // dir has no files
+            {
+                return;
+            }
+
+            long nLengthDebug = 0;
+
+            if (m_hashCache.ContainsKey(strLine) == false)
+            {
+                DateTime dtStart = DateTime.Now;
+                List<String> listLines = File.ReadLines(strFile)
+                    .Skip((int)nPrevDir + 1)
+                    .Take((int)(nLineNo - nPrevDir - 1))
+                    .ToList();
+
+                listLines.Sort();
+
+                for (int i = 0; i < listLines.Count; ++i)
+                {
+                    strArray = listLines[i].Split('\t');
+
+                    if ((strArray.Length > 5) && (strArray[5].Length > 0))
+                    {
+                        nLengthDebug += long.Parse(strArray[5]);
+                        strArray[5] = Utilities.FormatSize(strArray[5]);
+                    }
+
+                    m_statusCallback(lvItemFile: new ListViewItem(strArray));
+                }
+
+                TimeSpan timeSpan = (DateTime.Now - dtStart);
+                String strTimeSpan = (((int)timeSpan.TotalMilliseconds / 100) / 10.0).ToString();
+
+                Console.WriteLine("File list took " + strTimeSpan + " seconds.");
+
+                if (timeSpan.Seconds > 1)
+                {
+                    ListViewItem[] itemArray = new ListViewItem[m_statusCallback() /*returns length of file LV*/];
+
+                    m_statusCallback(itemArray: itemArray); // loads an empty array
+                    m_hashCache.Add(strLine, itemArray);
+                    m_hashCache.Add("nLengthDebug" + strLine, nLengthDebug);
+                    m_hashCache.Add("timeSpan" + strLine, strTimeSpan);
+                    Console.WriteLine("Cached.");
+                }
+
+                m_statusCallback(new ListViewItem(new String[] { "# Files", (nLineNo - nPrevDir + 1).ToString() }));
+            }
+            else    // file list is cached
+            {
+                DateTime dtStart = DateTime.Now;
+                ListViewItem[] itemArray = (ListViewItem[])m_hashCache[strLine];
+
+                m_statusCallback(itemArray: itemArray); // loads from a full array
+
+                if (itemArray.Length > 0)
+                {
+                    m_statusCallback(new ListViewItem(new String[] { "# Files", itemArray.Length.ToString() }));
+                }
+
+                TimeSpan timeSpan = (DateTime.Now - dtStart);
+
+                nLengthDebug = (long)m_hashCache["nLengthDebug" + strLine];
+                Console.WriteLine("File list used to take " + (String)m_hashCache["timeSpan" + strLine] + " seconds before caching.");
+                Console.WriteLine("Cache read took " + (int)timeSpan.TotalMilliseconds + " milliseconds.");
+            }
+
+            Debug.Assert(nLengthDebug == nLengthDebug_A);
+            m_doneCallback();
+        }
+    }
+
     public partial class Form1 : Form
     {
         private bool m_bThreadingTree = false;
+        private bool m_bThreadingTreeSelect = false;
         private bool m_bBrowseLoaded = false;
+        Thread m_threadSelect;
         Hashtable m_hashCache = new Hashtable();
 
         void TreeStatusCallback(TreeNode rootNode)
@@ -284,6 +474,42 @@ namespace SearchDirLists
 
             m_bThreadingTree = false;
             m_bBrowseLoaded = true;
+        }
+
+        int TreeSelectStatusCallback(ListViewItem lvItemDetails = null, ListViewItem lvItemFile = null, ListViewItem[] itemArray = null)
+        {
+            if (InvokeRequired) { return (int) Invoke(new TreeSelectStatusDelegate(TreeSelectStatusCallback), new object[] { lvItemDetails, lvItemFile, itemArray }); }
+
+            if (lvItemDetails != null)
+            {
+                form_LV_Detail.Items.Add(lvItemDetails);
+            }
+
+            if (lvItemFile != null)
+            {
+                form_LV_Files.Items.Add(lvItemFile);
+            }
+
+            if (itemArray != null)
+            {
+                if (itemArray[0].Text.Length == 0)
+                {
+                    form_LV_Files.Items.CopyTo(itemArray, 0);
+                }
+                else
+                {
+                    form_LV_Files.Items.AddRange(itemArray);
+                }
+            }
+
+            return form_LV_Files.Items.Count;
+        }
+
+        void TreeSelectDoneCallback()
+        {
+            if (InvokeRequired) { Invoke(new TreeSelectDoneDelegate(TreeSelectDoneCallback)); return; }
+
+            m_bThreadingTreeSelect = false;
         }
 
         private void DoTree()
@@ -309,6 +535,20 @@ namespace SearchDirLists
 
             m_bThreadingTree = true;
             new Thread(new ThreadStart(tree.Go)).Start();
+        }
+
+        private void DoTreeSelect(TreeNode node)
+        {
+            if (m_bThreadingTreeSelect)
+            {
+                m_threadSelect.Abort();
+            }
+
+            TreeSelect treeSelect = new TreeSelect(node, m_hashCache,
+                new TreeSelectStatusDelegate(TreeSelectStatusCallback), new TreeSelectDoneDelegate(TreeSelectDoneCallback));
+
+            m_bThreadingTreeSelect = true;
+            (m_threadSelect = new Thread(new ThreadStart(treeSelect.Go))).Start();
         }
     }
 }

@@ -539,7 +539,7 @@ namespace SearchDirLists
 
         private void DoTreeSelect(TreeNode node)
         {
-            if (m_bThreadingTreeSelect)
+            if (m_bThreadingTreeSelect && m_threadSelect.IsAlive)
             {
                 m_threadSelect.Abort();
             }

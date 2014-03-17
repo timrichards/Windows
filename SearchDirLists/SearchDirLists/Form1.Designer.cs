@@ -1,4 +1,6 @@
-﻿namespace SearchDirLists
+﻿using ListViewEmbeddedControls;
+
+namespace SearchDirLists
 {
     partial class Form1
     {
@@ -41,7 +43,7 @@
             this.form_btn_AddVolume = new System.Windows.Forms.Button();
             this.form_cb_VolumeName = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.form_lv_Volumes = new System.Windows.Forms.ListView();
+            this.form_lv_Volumes = new ListViewEx();
             this.form_lv_Volumes_col_Volume = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_Volumes_col_Path = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_Volumes_col_SaveToFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -61,7 +63,7 @@
             this.form_rad_Folder_Outermost = new System.Windows.Forms.RadioButton();
             this.form_rad_Folder_None = new System.Windows.Forms.RadioButton();
             this.split_Volumes = new System.Windows.Forms.SplitContainer();
-            this.form_lv_SearchResults = new System.Windows.Forms.ListView();
+            this.form_lv_SearchResults = new ListViewEx();
             this.form_lv_SearchResults_col_Path = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_SearchResults_col_Filename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_SearchResults_col_Created = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -70,7 +72,7 @@
             this.form_lv_SearchResults_col_Length = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_SearchResults_col_Error1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_SearchResults_col_Error2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_lv_PathErrors = new System.Windows.Forms.ListView();
+            this.form_lv_PathErrors = new ListViewEx();
             this.form_lv_Errors_col_Volume = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_Errors_col_FileOrPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_Errors_col_Error1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -80,7 +82,7 @@
             this.split_Files = new System.Windows.Forms.SplitContainer();
             this.form_treeView_Browse = new System.Windows.Forms.TreeView();
             this.split_Detail = new System.Windows.Forms.SplitContainer();
-            this.form_LV_Files = new System.Windows.Forms.ListView();
+            this.form_LV_Files = new ListViewEx();
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -89,7 +91,7 @@
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_LV_Detail = new System.Windows.Forms.ListView();
+            this.form_LV_Detail = new ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
@@ -789,7 +791,7 @@
         private System.Windows.Forms.Button form_btn_AddVolume;
         private System.Windows.Forms.ComboBox form_cb_VolumeName;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ListView form_lv_Volumes;
+        private ListViewEx form_lv_Volumes;
         private System.Windows.Forms.ColumnHeader form_lv_Volumes_col_Volume;
         private System.Windows.Forms.ColumnHeader form_lv_Volumes_col_Path;
         private System.Windows.Forms.ColumnHeader form_lv_Volumes_col_SaveToFile;
@@ -804,12 +806,12 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TabPage form_tabPage_Search;
         private System.Windows.Forms.SplitContainer split_Volumes;
-        private System.Windows.Forms.ListView form_lv_SearchResults;
+        private ListViewEx form_lv_SearchResults;
         private System.Windows.Forms.ColumnHeader form_lv_SearchResults_col_Filename;
         private System.Windows.Forms.ColumnHeader form_lv_SearchResults_col_Length;
         private System.Windows.Forms.ColumnHeader form_lv_SearchResults_col_Modified;
         private System.Windows.Forms.ColumnHeader form_lv_SearchResults_col_Created;
-        private System.Windows.Forms.ListView form_lv_PathErrors;
+        private ListViewEx form_lv_PathErrors;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
@@ -833,9 +835,9 @@
         private System.Windows.Forms.TreeView form_treeView_Browse;
         private System.Windows.Forms.Timer timer_killRed;
         private System.Windows.Forms.SplitContainer split_Files;
-        private System.Windows.Forms.ListView form_LV_Detail;
+        private ListViewEx form_LV_Detail;
         private System.Windows.Forms.SplitContainer split_Detail;
-        private System.Windows.Forms.ListView form_LV_Files;
+        private ListViewEx form_LV_Files;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;

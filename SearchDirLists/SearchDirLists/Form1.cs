@@ -992,6 +992,7 @@ namespace SearchDirLists
                 Console.WriteLine("Searching for '" + m_strSearch + "'");
 
                 DateTime dtStart = DateTime.Now;
+                bool bFillPaths = false;
 
                 foreach (LVvolStrings lvStrings in m_list_lvVolStrings)
                 {
@@ -1013,7 +1014,6 @@ namespace SearchDirLists
                     {
                         String line = "";
                         long counter = -1;
-                        bool bFillPaths = false;
 
                         if (m_bCaseSensitive == false)
                         {

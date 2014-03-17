@@ -82,6 +82,12 @@
     <Compile Include="ReadOnlyRichTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="SaveDirInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Search.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

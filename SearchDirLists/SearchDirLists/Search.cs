@@ -76,7 +76,7 @@ namespace SearchDirLists
                 using (StreamReader file = new StreamReader(strSaveAs))
                 {
                     String line = "";
-                    long counter = -1;
+                    long counter = 0;   // lines number from one
 
                     if (m_bCaseSensitive == false)
                     {

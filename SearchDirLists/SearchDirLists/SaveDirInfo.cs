@@ -91,19 +91,32 @@ namespace SearchDirLists
             long nLength = 0;
 
             Debug.Assert(long.TryParse(in_str, out nLength));
+            return FormatSize(nLength, bBytes);
+        }
 
+        public static String FormatSize(long nLength, bool bBytes = false)
+        {
+            double nT = nLength / 1024.0 / 1024.0 / 1024 / 1024 - .05;
             double nG = nLength / 1024.0 / 1024 / 1024 - .05;
             double nM = nLength / 1024.0 / 1024 - .05;
             double nK = nLength / 1024.0 - .05;     // Windows Explorer seems to not round
             String strFormat = "###,##0.0";
             String strSz = "";
 
-            if (((int)nG) > 0) strSz = nG.ToString(strFormat) + " GB";
+            if (((int)nT) > 0) strSz = nT.ToString(strFormat) + " TB";
+            else if (((int)nG) > 0) strSz = nG.ToString(strFormat) + " GB";
             else if (((int)nM) > 0) strSz = nM.ToString(strFormat) + " MB";
             else if (((int)nK) > 0) strSz = nK.ToString(strFormat) + " KB";
             else strSz = "1 KB";                    // Windows Explorer mins at 1K
 
-            return strSz + (bBytes ? (" (" + nLength.ToString("###,###,###,###,###") + " bytes)") : "");
+            if (nLength > 0)
+            {
+                return strSz + (bBytes ? (" (" + nLength.ToString("###,###,###,###,###") + " bytes)") : "");
+            }
+            else
+            {
+                return "0 bytes";
+            }
         }
     }
 
@@ -448,8 +461,8 @@ namespace SearchDirLists
             {
                 WriteHeader(fs, strVolumeName, strPath);
                 fs.WriteLine();
-                fs.WriteLine(m_str_START + " " + DateTime.Now.ToString());
                 fs.WriteLine(FormatString());
+                fs.WriteLine(m_str_START + " " + DateTime.Now.ToString());
                 TraverseTree(fs, strPath);
                 fs.WriteLine(m_str_END + " " + DateTime.Now.ToString());
                 fs.WriteLine();

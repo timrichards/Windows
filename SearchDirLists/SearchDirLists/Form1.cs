@@ -315,6 +315,7 @@ namespace SearchDirLists
             form_lv_Volumes.Items.Add(lvItem);
             form_btn_SavePathInfo.Enabled = true;
             m_bBrowseLoaded = false;
+            DoTree(true);
         }
 
         private void form_btn_RemoveVolume_Click(object sender, EventArgs e)
@@ -330,6 +331,7 @@ namespace SearchDirLists
             UpdateLV_VolumesSelection();
             form_btn_SavePathInfo.Enabled = (form_lv_Volumes.Items.Count > 0);
             m_bBrowseLoaded = false;
+            DoTree(true);
         }
 
         private void SetLV_VolumesItemInclude(ListViewItem lvItem, bool bInclude)
@@ -358,6 +360,7 @@ namespace SearchDirLists
         private void form_btn_SavePathInfo_Click(object sender, EventArgs e)
         {
             DoSavePathInfo();
+            DoTree(true);
         }
 
         private void form_btn_SaveVolumeList_Click(object sender, EventArgs e)
@@ -440,6 +443,7 @@ namespace SearchDirLists
             }
 
             m_bBrowseLoaded = false;
+            DoTree(true);
         }
 
         private void UpdateLV_VolumesSelection()

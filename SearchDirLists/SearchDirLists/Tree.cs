@@ -434,6 +434,7 @@ namespace SearchDirLists
         private bool m_bThreadingTree = false;
         private bool m_bThreadingTreeSelect = false;
         private bool m_bBrowseLoaded = false;
+        Thread m_threadTree;
         Thread m_threadSelect;
         Hashtable m_hashCache = new Hashtable();
 
@@ -474,7 +475,7 @@ namespace SearchDirLists
             m_bThreadingTreeSelect = false;
         }
 
-        private void DoTree()
+        private void DoTree(bool bKill = false)
         {
             if (m_bBrowseLoaded)
             {
@@ -483,8 +484,15 @@ namespace SearchDirLists
 
             if (m_bThreadingTree)
             {
-                //MessageBox.Show("Already in progress.                      ", "Create Browsing Tree");
-                return;
+                if (bKill)
+                {
+                    m_threadTree.Abort();
+                    m_bThreadingTree = false;
+                }
+                else
+                {
+                    return;
+                }
             }
 
             form_treeView_Browse.Nodes.Clear();
@@ -496,7 +504,7 @@ namespace SearchDirLists
                 new TreeStatusDelegate(TreeStatusCallback), new TreeDoneDelegate(TreeDoneCallback));
 
             m_bThreadingTree = true;
-            new Thread(new ThreadStart(tree.Go)).Start();
+            (m_threadTree = new Thread(new ThreadStart(tree.Go))).Start();
         }
 
         private void DoTreeSelect(TreeNode node)

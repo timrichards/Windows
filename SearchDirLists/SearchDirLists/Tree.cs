@@ -130,6 +130,11 @@ namespace SearchDirLists
                     subNode.m_strPath.Insert(0, m_strPath + Path.DirectorySeparatorChar);
                     subNode.bUseShortPath = false;
                     treeNode = subNode.AddToTree(strVolumeName);
+
+                    // further down at new NodeDatum...
+                    m_nPrevLineNo = subNode.m_nPrevLineNo;
+                    m_nLength = subNode.m_nLength;
+                    m_nLineNo = subNode.m_nLineNo;
                 }
                 else
                 {

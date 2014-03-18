@@ -237,6 +237,11 @@ namespace SearchDirLists
                             continue;
                         }
 
+                        if (line.StartsWith(Utilities.m_str_END))
+                        {
+                            break;  // all done
+                        }
+
                         if (line.Contains('\t') == false)
                         {
                             continue;

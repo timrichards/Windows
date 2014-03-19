@@ -512,8 +512,8 @@ namespace SearchDirLists
             ++nLVexttrClickIndex;
 
             List<TreeNode> listTreeNodes = (List<TreeNode>)form_LV_Clones.SelectedItems[0].Tag;
-            int nLength = listTreeNodes.Count;
-            form_treeView_Browse.SelectedNode = listTreeNodes[nLVexttrClickIndex % nLength];
+
+            form_treeView_Browse.SelectedNode = listTreeNodes[nLVexttrClickIndex % listTreeNodes.Count];
         }
     }
 }

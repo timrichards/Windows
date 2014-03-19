@@ -588,27 +588,28 @@ namespace SearchDirLists
                     if (nLength <= 0)
                     {
                         ((NodeDatum)treeNode.Tag).m_listClones = null;
-                        return;
-                    }
-
-                    if (dictClones.ContainsKey(nLength))
-                    {
-                        if (dictClones[nLength] != listClones)
-                        {
-                            while (dictClones.ContainsKey(nLength))
-                            {
-                                --nLength;
-                            }
-
-                            dictClones.Add(nLength, listClones);
-                        }
                     }
                     else
                     {
-                        dictClones.Add(nLength, listClones);
-                    }
+                        if (dictClones.ContainsKey(nLength))
+                        {
+                            if (dictClones[nLength] != listClones)
+                            {
+                                while (dictClones.ContainsKey(nLength))
+                                {
+                                    --nLength;
+                                }
 
-                    treeNode.BackColor = Color.LightYellow;
+                                dictClones.Add(nLength, listClones);
+                            }
+                        }
+                        else
+                        {
+                            dictClones.Add(nLength, listClones);
+                        }
+
+                        treeNode.BackColor = Color.LightYellow;
+                    }
                 }
             }
 

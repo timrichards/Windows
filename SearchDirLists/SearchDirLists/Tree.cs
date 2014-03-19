@@ -16,7 +16,28 @@ namespace SearchDirLists
     delegate void TreeSelectStatusDelegate(ListViewItem lvItemDetails = null, ListViewItem[] itemArray = null);
     delegate void TreeSelectDoneDelegate();
 
-    class NodeDatum
+    class DetailsDatum
+    {
+        protected long m_nLengthSubnodes = 0;
+        protected long m_nNumSubnodeFiles = 0;
+        protected long m_nNumSubnodes = 0;
+
+        static public DetailsDatum operator +(DetailsDatum in_datum1, DetailsDatum in_datum2)
+        {
+            DetailsDatum datum = new DetailsDatum();
+
+            datum.m_nLengthSubnodes = in_datum1.m_nLengthSubnodes + in_datum2.m_nLengthSubnodes;
+            datum.m_nNumSubnodeFiles = in_datum1.m_nNumSubnodeFiles + in_datum2.m_nNumSubnodeFiles;
+            datum.m_nNumSubnodes = in_datum1.m_nNumSubnodes + in_datum2.m_nNumSubnodes;
+            return datum;
+        }
+
+        public long LengthSubnodes { get { return m_nLengthSubnodes; } set { m_nLengthSubnodes = value; } }
+        public long NumSubnodeFiles { get { return m_nNumSubnodeFiles; } set { m_nNumSubnodeFiles = value; } }
+        public long NumSubnodes { get { return m_nNumSubnodes; } set { m_nNumSubnodes = value; } }
+    }
+
+    class NodeDatum : DetailsDatum
     {
         long m_nPrevLineNo = 0;
         long m_nLineNo = 0;
@@ -25,6 +46,7 @@ namespace SearchDirLists
         public long PrevlineNo { get { return m_nPrevLineNo; } }
         public long LineNo { get { return m_nLineNo; } }
         public long Length { get { return m_nLength; } }
+
         public NodeDatum(long nPrevLineNo, long nLineNo, long nLength) { m_nPrevLineNo = nPrevLineNo; m_nLineNo = nLineNo; m_nLength = nLength; }
 
         protected NodeDatum(NodeDatum node)
@@ -215,6 +237,33 @@ namespace SearchDirLists
             m_callbackDone = callbackDone;
         }
 
+        DetailsDatum TreeSubnodeDetails(TreeNode treeNode)
+        {
+            DetailsDatum datum = new DetailsDatum();
+
+            foreach (TreeNode node in treeNode.Nodes)
+            {
+                datum += TreeSubnodeDetails(node);
+            }
+
+            if ((treeNode.Tag is NodeDatum) == false)
+            {
+                return datum;
+            }
+
+            NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+
+            if (nodeDatum.LineNo <= 0)
+            {
+                return datum;
+            }
+
+            nodeDatum.LengthSubnodes = (datum.LengthSubnodes += nodeDatum.Length);
+            nodeDatum.NumSubnodeFiles = (datum.NumSubnodeFiles += nodeDatum.LineNo - nodeDatum.PrevlineNo - 1);
+            nodeDatum.NumSubnodes = (datum.NumSubnodes += treeNode.Nodes.Count);
+            return datum;
+        }
+
         public void Go()
         {
             Console.WriteLine();
@@ -306,6 +355,7 @@ namespace SearchDirLists
                     TreeNode rootNode = dirData.AddToTree(strVolumeName);
 
                     rootNode.Tag = new RootNodeDatum((NodeDatum)rootNode.Tag, strSaveAs);
+                    TreeSubnodeDetails(rootNode);
                 }
             }
 
@@ -382,21 +432,17 @@ namespace SearchDirLists
 
             // Tree subnode detail
 
-            long nLengthSubnodes = 0;
-            long nNumSubnodeFiles = 0;
-            long nNumSubnodes = 0;
             String NUMFMT = "###,###,###,##0";
 
-            TreeSubnodeDetails(m_treeNode, ref nLengthSubnodes, ref nNumSubnodeFiles, ref nNumSubnodes);
             m_statusCallback(new ListViewItem(new String[] { "# Immediate Folders", m_treeNode.Nodes.Count.ToString(NUMFMT) }));
-            m_statusCallback(new ListViewItem(new String[] { "Total # Files", nNumSubnodeFiles.ToString(NUMFMT) }));
+            m_statusCallback(new ListViewItem(new String[] { "Total # Files", nodeDatum.NumSubnodeFiles.ToString(NUMFMT) }));
 
-            if (nNumSubnodes > 0)
+            if (nodeDatum.NumSubnodes > 0)
             {
-                m_statusCallback(new ListViewItem(new String[] { "Total # Folders", nNumSubnodes.ToString(NUMFMT) }));
+                m_statusCallback(new ListViewItem(new String[] { "Total # Folders", nodeDatum.NumSubnodes.ToString(NUMFMT) }));
             }
 
-            m_statusCallback(new ListViewItem(new String[] { "Total Size", Utilities.FormatSize(nLengthSubnodes, true) }));
+            m_statusCallback(new ListViewItem(new String[] { "Total Size", Utilities.FormatSize(nodeDatum.LengthSubnodes, true) }));
 
             Console.WriteLine(strLine);
 
@@ -488,29 +534,6 @@ namespace SearchDirLists
             m_doneCallback();
         }
 
-        void TreeSubnodeDetails(TreeNode treeNode, ref long nLengthSubnodes, ref long nNumSubnodeFiles, ref long nNumSubnodes)
-        {
-            foreach (TreeNode node in treeNode.Nodes)
-            {
-                TreeSubnodeDetails(node, ref nLengthSubnodes, ref nNumSubnodeFiles, ref nNumSubnodes);
-            }
-
-            if ((treeNode.Tag is NodeDatum) == false)
-            {
-                return;
-            }
-
-            NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
-
-            if (nodeDatum.LineNo <= 0)
-            {
-                return;
-            }
-
-            nLengthSubnodes += nodeDatum.Length;
-            nNumSubnodeFiles += nodeDatum.LineNo - nodeDatum.PrevlineNo - 1;
-            nNumSubnodes += treeNode.Nodes.Count;
-        }
     }
 
     public partial class Form1 : Form

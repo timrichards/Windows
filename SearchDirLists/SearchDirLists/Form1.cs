@@ -478,6 +478,14 @@ namespace SearchDirLists
             form_LV_Files.Items.Clear();
 
             DoTreeSelect(e.Node);
+
+            NodeDatum nodeDatum = (NodeDatum)e.Node.Tag;
+
+            if (nodeDatum.m_lvCloneItem != null)
+            {
+                nodeDatum.m_lvCloneItem.Selected = true;
+                form_LV_Clones.TopItem = nodeDatum.m_lvCloneItem;
+            }
         }
 
         private void btnSearch_Click(object sender, EventArgs e)
@@ -491,6 +499,21 @@ namespace SearchDirLists
             {
                 btnSearch_Click(sender, e);
             }
+        }
+
+        int nLVexttrClickIndex = -1;
+        private void form_lvExtra_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            nLVexttrClickIndex = -1;
+        }
+
+        private void form_lvExtra_MouseClick(object sender, MouseEventArgs e)
+        {
+            ++nLVexttrClickIndex;
+
+            List<TreeNode> listTreeNodes = (List<TreeNode>)form_LV_Clones.SelectedItems[0].Tag;
+            int nLength = listTreeNodes.Count;
+            form_treeView_Browse.SelectedNode = listTreeNodes[nLVexttrClickIndex % nLength];
         }
     }
 }

@@ -47,6 +47,9 @@ namespace SearchDirLists
         public long LineNo { get { return m_nLineNo; } }
         public long Length { get { return m_nLength; } }
 
+        public List<TreeNode> m_listClones = null;
+        public ListViewItem m_lvCloneItem = null;
+
         public NodeDatum(long nPrevLineNo, long nLineNo, long nLength) { m_nPrevLineNo = nPrevLineNo; m_nLineNo = nLineNo; m_nLength = nLength; }
 
         protected NodeDatum(NodeDatum node)
@@ -261,6 +264,20 @@ namespace SearchDirLists
             nodeDatum.LengthSubnodes = (datum.LengthSubnodes += nodeDatum.Length);
             nodeDatum.NumSubnodeFiles = (datum.NumSubnodeFiles += nodeDatum.LineNo - nodeDatum.PrevlineNo - 1);
             nodeDatum.NumSubnodes = (datum.NumSubnodes += treeNode.Nodes.Count);
+
+            String strKey = nodeDatum.LengthSubnodes + " " + nodeDatum.NumSubnodeFiles + " " + nodeDatum.NumSubnodes;
+
+            if (m_hashCache.ContainsKey(strKey))
+            {
+                ((List<TreeNode>)m_hashCache[strKey]).Add(treeNode);
+            }
+            else
+            {
+                List<TreeNode> listNodes = new List<TreeNode>();
+                listNodes.Add(treeNode);
+                m_hashCache.Add(strKey, listNodes);
+            }
+
             return datum;
         }
 
@@ -552,9 +569,120 @@ namespace SearchDirLists
             form_treeView_Browse.Nodes.Add(rootNode);
         }
 
+        // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
+        // Breadth-first.
+        void FixClones(SortedDictionary<long, List<TreeNode>> dictClones, TreeNode treeNode, bool bRemoveClone = false)
+        {
+            List<TreeNode> listClones = ((NodeDatum)treeNode.Tag).m_listClones;
+
+            if (listClones != null)
+            {
+                if (bRemoveClone)
+                {
+                    ((NodeDatum)treeNode.Tag).m_listClones = null;
+                }
+                else
+                {
+                    long nLength = ((NodeDatum)listClones[1].Tag).LengthSubnodes;
+
+                    if (nLength <= 0)
+                    {
+                        ((NodeDatum)treeNode.Tag).m_listClones = null;
+                        return;
+                    }
+
+                    if (dictClones.ContainsKey(nLength))
+                    {
+                        if (dictClones[nLength] != listClones)
+                        {
+                            while (dictClones.ContainsKey(nLength))
+                            {
+                                --nLength;
+                            }
+
+                            dictClones.Add(nLength, listClones);
+                        }
+                    }
+                    else
+                    {
+                        dictClones.Add(nLength, listClones);
+                    }
+
+                    treeNode.BackColor = Color.LightYellow;
+                }
+            }
+
+            foreach (TreeNode subNode in treeNode.Nodes)
+            {
+                FixClones(dictClones, subNode, bRemoveClone || (listClones != null));
+            }
+        }
+
         void TreeDoneCallback()
         {
             if (InvokeRequired) { Invoke(new TreeDoneDelegate(TreeDoneCallback)); return; }
+
+            List<String> strHashList = new List<string>();
+
+            foreach (String str in m_hashCache.Keys)
+            {
+                strHashList.Add(str);
+            }
+
+            foreach (String str in strHashList)
+            {
+                object obj = m_hashCache[str];
+
+                if (obj is List<TreeNode>)
+                {
+                    List<TreeNode> listNodes = (List<TreeNode>)obj;
+
+                    if (listNodes.Count > 1)
+                    {
+                        foreach (TreeNode treeNode in listNodes)
+                        {
+                            ((NodeDatum)treeNode.Tag).m_listClones = listNodes;
+                        }
+                    }
+
+                    m_hashCache.Remove(str);
+                }
+            }
+
+            SortedDictionary<long, List<TreeNode>> dictClones = new SortedDictionary<long, List<TreeNode>>();
+
+            foreach (TreeNode treeNode in form_treeView_Browse.Nodes)
+            {
+                FixClones(dictClones, treeNode);
+            }
+
+            IEnumerable<KeyValuePair<long, List<TreeNode>>> dictReverse = dictClones.Reverse();
+            List<ListViewItem> listLVitems = new List<ListViewItem>();
+
+            foreach (KeyValuePair<long, List<TreeNode>> listNodes in dictReverse)
+            {
+                String str_nClones = "";
+                int nClones = listNodes.Value.Count;
+
+                if (nClones > 2)
+                {
+                    str_nClones = nClones.ToString("###,###");
+                }
+
+                ListViewItem lvItem = new ListViewItem(new String[] { listNodes.Value[0].Text, str_nClones });
+
+                lvItem.Tag = listNodes.Value;
+
+                foreach (TreeNode treeNode in listNodes.Value)
+                {
+                    ((NodeDatum)treeNode.Tag).m_lvCloneItem = lvItem;
+                }
+
+                listLVitems.Add(lvItem);
+            }
+
+            form_LV_Clones.Items.Clear();
+            form_LV_Clones.Items.AddRange(listLVitems.ToArray());
 
             m_bThreadingTree = false;
             m_bBrowseLoaded = true;

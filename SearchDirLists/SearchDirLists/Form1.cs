@@ -80,14 +80,17 @@ namespace SearchDirLists
             return true;
         }
 
-        private void ComboBoxItemsInsert(ComboBox comboBox, String strText = "")
+        private void ComboBoxItemsInsert(ComboBox comboBox, String strText = "", bool bTrimText = true)
         {
             if (strText.Length <= 0)
             {
                 strText = comboBox.Text;
             }
 
-            strText = strText.Trim();
+            if (bTrimText)
+            {
+                strText = strText.Trim();
+            }
 
             if (strText.Length <= 0)
             {
@@ -478,6 +481,12 @@ namespace SearchDirLists
             form_LV_DetailVol.Items.Clear();
             form_LV_Files.Items.Clear();
 
+            if (bTreeClick)
+            {
+                form_cb_TreeFind.Text = e.Node.FullPath;
+                bTreeClick = false;
+            }
+
             DoTreeSelect(e.Node);
 
             NodeDatum nodeDatum = (NodeDatum)e.Node.Tag;
@@ -516,6 +525,111 @@ namespace SearchDirLists
 
             form_treeView_Browse.SelectedNode = listTreeNodes[nLVexttrClickIndex % listTreeNodes.Count];
             form_treeView_Browse.Select();
+        }
+
+        private TreeNode GetNodeByPath(string path, TreeView treeView)
+        {
+            TreeNode node = null;
+            string[] pathLevel = path.Split('\\');
+            int i = 0;
+            foreach (TreeNode topNode in treeView.Nodes)
+            {
+                if (topNode.Text.ToUpper() == pathLevel[i].ToUpper())
+                {
+                    node = topNode;
+                    i++;
+                    break;
+                }
+            }
+            if ((i < pathLevel.Length) && node != null)
+            {
+                node = GetSubNode(node, pathLevel, i);
+            }
+
+            return node;
+        }
+
+        private TreeNode GetSubNode(TreeNode node, string[] pathLevel, int i)
+        {
+            TreeNode newNode = new TreeNode();
+            foreach (TreeNode subNode in node.Nodes)
+            {
+                if (subNode.Text.ToUpper().Trim() == pathLevel[i].ToUpper().Trim())
+                {
+                    newNode = subNode;
+                    i++;
+                    if (i == pathLevel.Length)
+                    {
+                        break;
+                    }
+                    if (i < pathLevel.Length)
+                    {
+                        newNode = GetSubNode(newNode, pathLevel, i);
+                    }
+                }
+            }
+            return newNode;
+        }
+        
+        int nTreeFindTextChanged = 0;
+        TreeNode[] arrayTreeFound = null;
+        private void form_btn_TreeFind_Click(object sender, EventArgs e)
+        {
+            if (nTreeFindTextChanged == 0)
+            {
+                arrayTreeFound = form_treeView_Browse.Nodes.Find(form_cb_TreeFind.Text, true);
+
+                if ((arrayTreeFound == null) || (arrayTreeFound.Length == 0))
+                {
+                    TreeNode treeNode = GetNodeByPath(form_cb_TreeFind.Text, form_treeView_Browse);
+
+                    if (treeNode == null)
+                    {
+                        MessageBox.Show("Couldn't find the specified search parameter in the tree.", "Search in Tree");
+                    }
+                    else
+                    {
+                        arrayTreeFound = new TreeNode[] { treeNode };
+                    }
+                }
+            }
+
+            if ((arrayTreeFound != null) && (arrayTreeFound.Length > 0))
+            {
+                form_treeView_Browse.SelectedNode = arrayTreeFound[nTreeFindTextChanged % arrayTreeFound.Length];
+                ++nTreeFindTextChanged;
+            }
+        }
+
+        private void form_edit_TreeFind_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (new Keys[] { Keys.Enter, Keys.Return }.Contains((Keys)e.KeyChar))
+            {
+                form_btn_TreeFind_Click(sender, e);
+                bTreeClick = false;
+                e.Handled = true;
+            }
+        }
+
+        private void form_btn_TreeCollapse_Click(object sender, EventArgs e)
+        {
+            form_treeView_Browse.CollapseAll();
+        }
+
+        private void form_edit_TreeFind_TextChanged(object sender, EventArgs e)
+        {
+            nTreeFindTextChanged = 0;
+        }
+
+        bool bTreeClick = false;
+        private void form_treeView_Browse_MouseClick(object sender, MouseEventArgs e)
+        {
+            bTreeClick = true;
+        }
+
+        private void form_cb_TreeFind_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ComboBoxItemsInsert(form_cb_TreeFind, bTrimText: false);
         }
     }
 }

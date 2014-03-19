@@ -37,6 +37,11 @@ namespace SearchDirLists
         public long NumSubnodes { get { return m_nNumSubnodes; } set { m_nNumSubnodes = value; } }
     }
 
+    class NodeDatumLVitemHolder
+    {
+        public ListViewItem m_lvCloneItem = null;
+    }
+
     class NodeDatum : DetailsDatum
     {
         long m_nPrevLineNo = 0;
@@ -48,7 +53,14 @@ namespace SearchDirLists
         public long Length { get { return m_nLength; } }
 
         public List<TreeNode> m_listClones = null;
-        public ListViewItem m_lvCloneItem = null;
+
+        public void SetLVitemHolder(NodeDatum holder) { m_lvCloneItem_ = (holder != null) ? holder.m_lvCloneItem_ : null; }
+        NodeDatumLVitemHolder m_lvCloneItem_ = new NodeDatumLVitemHolder();
+        public ListViewItem m_lvCloneItem
+        {
+            get { return (m_lvCloneItem_ != null) ? m_lvCloneItem_.m_lvCloneItem : null; }
+            set { if (m_lvCloneItem_ != null) m_lvCloneItem_.m_lvCloneItem = value; }
+        }
 
         public NodeDatum(long nPrevLineNo, long nLineNo, long nLength) { m_nPrevLineNo = nPrevLineNo; m_nLineNo = nLineNo; m_nLength = nLength; }
 
@@ -183,6 +195,7 @@ namespace SearchDirLists
             }
 
             treeNode.Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo, m_nLength);
+            treeNode.Name = treeNode.Text;
             return treeNode;
         }
     }
@@ -564,20 +577,24 @@ namespace SearchDirLists
 
         // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
         // Breadth-first.
-        void FixClones(SortedDictionary<long, List<TreeNode>> dictClones, TreeNode treeNode, bool bRemoveClone = false)
+        void FixClones(SortedDictionary<long, List<TreeNode>> dictClones, TreeNode treeNode, TreeNode rootClone = null)
         {
             List<TreeNode> listClones = ((NodeDatum)treeNode.Tag).m_listClones;
 
             if (listClones != null)
             {
-                if (bRemoveClone)
+                if (rootClone != null)
                 {
                     foreach (TreeNode otherNode in listClones)
                     {
                         ((NodeDatum)otherNode.Tag).m_listClones = null;
+                        ((NodeDatum)otherNode.Tag).SetLVitemHolder((NodeDatum)rootClone.Tag);
+                        otherNode.ForeColor = Color.DimGray;
                     }
 
                     ((NodeDatum)treeNode.Tag).m_listClones = null;
+                    ((NodeDatum)treeNode.Tag).SetLVitemHolder(null);
+                    treeNode.ForeColor = Color.DimGray;
                     listClones.Clear();     // does not remove listClones from dict: see below
                 }
                 else
@@ -607,14 +624,22 @@ namespace SearchDirLists
                             dictClones.Add(nLength, listClones);
                         }
 
-                        treeNode.BackColor = Color.LightYellow;
+                        if (treeNode.ForeColor == Color.Empty)
+                        {
+                            treeNode.ForeColor = Color.DarkBlue;
+                        }
                     }
                 }
             }
 
+            if ((listClones != null) && (rootClone == null))
+            {
+                rootClone = treeNode;
+            }
+
             foreach (TreeNode subNode in treeNode.Nodes)
             {
-                FixClones(dictClones, subNode, bRemoveClone || (listClones != null));
+                FixClones(dictClones, subNode, rootClone);
             }
         }
 
@@ -633,20 +658,27 @@ namespace SearchDirLists
             {
                 object obj = m_hashCache[str];
 
-                if (obj is List<TreeNode>)
+                if ((obj is List<TreeNode>) == false)
                 {
-                    List<TreeNode> listNodes = (List<TreeNode>)obj;
+                    continue;
+                }
 
-                    if (listNodes.Count > 1)
+                List<TreeNode> listNodes = (List<TreeNode>)obj;
+
+                if (listNodes.Count > 1)
+                {
+                    foreach (TreeNode treeNode in listNodes)
                     {
-                        foreach (TreeNode treeNode in listNodes)
+                        NodeDatum nodeDatum = ((NodeDatum)treeNode.Tag);
+
+                        if (nodeDatum.LengthSubnodes > 0)
                         {
                             ((NodeDatum)treeNode.Tag).m_listClones = listNodes;
                         }
                     }
-
-                    m_hashCache.Remove(str);
                 }
+
+                m_hashCache.Remove(str);
             }
 
             SortedDictionary<long, List<TreeNode>> dictClones = new SortedDictionary<long, List<TreeNode>>();

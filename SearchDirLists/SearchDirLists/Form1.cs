@@ -210,7 +210,7 @@ namespace SearchDirLists
                 return;
             }
 
-            if (form_lv_Volumes.FindItemWithText(m_strSaveAs) != null)
+            if (form_LV_SourceVolDirList.FindItemWithText(m_strSaveAs) != null)
             {
                 FormError(form_cb_SaveAs, "File already in use in list of volumes.            ", "Volume Save As");
                 return;
@@ -227,13 +227,13 @@ namespace SearchDirLists
                 }
             }
 
-            if ((File.Exists(m_strSaveAs) == false) && form_lv_Volumes.Items.ContainsKey(m_strPath))
+            if ((File.Exists(m_strSaveAs) == false) && form_LV_SourceVolDirList.Items.ContainsKey(m_strPath))
             {
                 FormError(form_cb_Path, "Path already added.                                   ", "Volume Source Path");
                 return;
             }
 
-            if ((m_strVolumeName.Length > 0) && form_lv_Volumes.FindItemWithText(m_strVolumeName) != null)
+            if ((m_strVolumeName.Length > 0) && form_LV_SourceVolDirList.FindItemWithText(m_strVolumeName) != null)
             {
                 form_cb_VolumeName.BackColor = Color.Red;
 
@@ -312,7 +312,7 @@ namespace SearchDirLists
             ListViewItem lvItem = new ListViewItem(new string[] { m_strVolumeName, m_strPath, m_strSaveAs, strStatus, "Yes" });
 
             lvItem.Name = m_strPath;
-            form_lv_Volumes.Items.Add(lvItem);
+            form_LV_SourceVolDirList.Items.Add(lvItem);
             form_btn_SavePathInfo.Enabled = true;
             m_bBrowseLoaded = false;
             DoTree(true);
@@ -320,16 +320,16 @@ namespace SearchDirLists
 
         private void form_btn_RemoveVolume_Click(object sender, EventArgs e)
         {
-            ListView.SelectedIndexCollection lvSelect = form_lv_Volumes.SelectedIndices;
+            ListView.SelectedIndexCollection lvSelect = form_LV_SourceVolDirList.SelectedIndices;
 
             if (lvSelect.Count <= 0)
             {
                 return;
             }
 
-            form_lv_Volumes.Items[lvSelect[0]].Remove();
+            form_LV_SourceVolDirList.Items[lvSelect[0]].Remove();
             UpdateLV_VolumesSelection();
-            form_btn_SavePathInfo.Enabled = (form_lv_Volumes.Items.Count > 0);
+            form_btn_SavePathInfo.Enabled = (form_LV_SourceVolDirList.Items.Count > 0);
             m_bBrowseLoaded = false;
             DoTree(true);
         }
@@ -341,7 +341,7 @@ namespace SearchDirLists
 
         private void form_btn_ToggleInclude_Click(object sender, EventArgs e)
         {
-            ListView.SelectedListViewItemCollection lvSelect = form_lv_Volumes.SelectedItems;
+            ListView.SelectedListViewItemCollection lvSelect = form_LV_SourceVolDirList.SelectedItems;
 
             if (lvSelect.Count <= 0)
             {
@@ -383,7 +383,7 @@ namespace SearchDirLists
             {
                 fs.WriteLine(Utilities.m_str_VOLUME_LIST_HEADER);
 
-                foreach (ListViewItem lvItem in form_lv_Volumes.Items)
+                foreach (ListViewItem lvItem in form_LV_SourceVolDirList.Items)
                 {
                     foreach (ListViewItem.ListViewSubItem lvSubitem in lvItem.SubItems)
                     {
@@ -415,7 +415,7 @@ namespace SearchDirLists
                     return;
                 }
 
-                form_lv_Volumes.Items.Clear();
+                form_LV_SourceVolDirList.Items.Clear();
 
                 while ((strLine = fs.ReadLine()) != null)
                 {
@@ -433,11 +433,11 @@ namespace SearchDirLists
                         }
                     }
 
-                    form_lv_Volumes.Items.Add(new ListViewItem(strArray));
+                    form_LV_SourceVolDirList.Items.Add(new ListViewItem(strArray));
                 }
             }
 
-            if (form_lv_Volumes.Items.Count > 0)
+            if (form_LV_SourceVolDirList.Items.Count > 0)
             {
                 form_btn_SavePathInfo.Enabled = true;
             }
@@ -448,7 +448,7 @@ namespace SearchDirLists
 
         private void UpdateLV_VolumesSelection()
         {
-            bool bHasSelection = (form_lv_Volumes.SelectedIndices.Count > 0);
+            bool bHasSelection = (form_LV_SourceVolDirList.SelectedIndices.Count > 0);
 
             form_btn_RemoveVolume.Enabled = bHasSelection;
             form_btn_ToggleInclude.Enabled = bHasSelection;
@@ -475,13 +475,14 @@ namespace SearchDirLists
         private void form_treeView_Browse_AfterSelect(object sender, TreeViewEventArgs e)
         {
             form_LV_Detail.Items.Clear();
+            form_LV_DetailVol.Items.Clear();
             form_LV_Files.Items.Clear();
 
             DoTreeSelect(e.Node);
 
             NodeDatum nodeDatum = (NodeDatum)e.Node.Tag;
 
-            if (nodeDatum.m_lvCloneItem != null)
+            if ((nodeDatum.m_lvCloneItem != null) && (nodeDatum.m_lvCloneItem.Selected == false))
             {
                 nodeDatum.m_lvCloneItem.Selected = true;
                 form_LV_Clones.TopItem = nodeDatum.m_lvCloneItem;
@@ -514,6 +515,7 @@ namespace SearchDirLists
             List<TreeNode> listTreeNodes = (List<TreeNode>)form_LV_Clones.SelectedItems[0].Tag;
 
             form_treeView_Browse.SelectedNode = listTreeNodes[nLVexttrClickIndex % listTreeNodes.Count];
+            form_treeView_Browse.Select();
         }
     }
 }

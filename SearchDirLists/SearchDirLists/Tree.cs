@@ -13,7 +13,7 @@ namespace SearchDirLists
 {
     delegate void TreeStatusDelegate(TreeNode rootNode);
     delegate void TreeDoneDelegate();
-    delegate void TreeSelectStatusDelegate(ListViewItem lvItemDetails = null, ListViewItem[] itemArray = null);
+    delegate void TreeSelectStatusDelegate(ListViewItem lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem lvVol = null);
     delegate void TreeSelectDoneDelegate();
 
     class DetailsDatum
@@ -517,24 +517,17 @@ namespace SearchDirLists
                 String[] arrDriveInfo = strDriveInfo.Split(new String[] { "\r\n", "\n" }, StringSplitOptions.None);
 
                 Debug.Assert(new int[] { 7, 8 }.Contains(arrDriveInfo.Length));
-                m_statusCallback(new ListViewItem());
-
-                ListViewItem lvItem = new ListViewItem("Volume detail");
-
-                lvItem.BackColor = Color.DarkGray;
-                lvItem.ForeColor = Color.White;
-                m_statusCallback(lvItem);
-                m_statusCallback(new ListViewItem(new String[] { "Available Free Space", Utilities.FormatSize(arrDriveInfo[0], true) }));
-                m_statusCallback(new ListViewItem(new String[] { "Drive Format", arrDriveInfo[1] }));
-                m_statusCallback(new ListViewItem(new String[] { "Drive Type", arrDriveInfo[2] }));
-                m_statusCallback(new ListViewItem(new String[] { "Name", arrDriveInfo[3] }));
-                m_statusCallback(new ListViewItem(new String[] { "Root Directory", arrDriveInfo[4] }));
-                m_statusCallback(new ListViewItem(new String[] { "Total Free Space", Utilities.FormatSize(arrDriveInfo[5], true) }));
-                m_statusCallback(new ListViewItem(new String[] { "Total Size", Utilities.FormatSize(arrDriveInfo[6], true) }));
+                m_statusCallback(lvVol: new ListViewItem(new String[] { "Available Free Space", Utilities.FormatSize(arrDriveInfo[0], true) }));
+                m_statusCallback(lvVol: new ListViewItem(new String[] { "Drive Format", arrDriveInfo[1] }));
+                m_statusCallback(lvVol: new ListViewItem(new String[] { "Drive Type", arrDriveInfo[2] }));
+                m_statusCallback(lvVol: new ListViewItem(new String[] { "Name", arrDriveInfo[3] }));
+                m_statusCallback(lvVol: new ListViewItem(new String[] { "Root Directory", arrDriveInfo[4] }));
+                m_statusCallback(lvVol: new ListViewItem(new String[] { "Total Free Space", Utilities.FormatSize(arrDriveInfo[5], true) }));
+                m_statusCallback(lvVol: new ListViewItem(new String[] { "Total Size", Utilities.FormatSize(arrDriveInfo[6], true) }));
 
                 if (arrDriveInfo.Length == 8)
                 {
-                    m_statusCallback(new ListViewItem(new String[] { "Volume Label", arrDriveInfo[7] }));
+                    m_statusCallback(lvVol: new ListViewItem(new String[] { "Volume Label", arrDriveInfo[7] }));
                 }
             }
         }
@@ -579,7 +572,13 @@ namespace SearchDirLists
             {
                 if (bRemoveClone)
                 {
+                    foreach (TreeNode otherNode in listClones)
+                    {
+                        ((NodeDatum)otherNode.Tag).m_listClones = null;
+                    }
+
                     ((NodeDatum)treeNode.Tag).m_listClones = null;
+                    listClones.Clear();     // does not remove listClones from dict: see below
                 }
                 else
                 {
@@ -665,6 +664,11 @@ namespace SearchDirLists
                 String str_nClones = "";
                 int nClones = listNodes.Value.Count;
 
+                if (nClones <= 0)       // precisely from bRemoveClone above
+                {
+                    continue;
+                }
+
                 if (nClones > 2)
                 {
                     str_nClones = nClones.ToString("###,###");
@@ -682,16 +686,15 @@ namespace SearchDirLists
                 listLVitems.Add(lvItem);
             }
 
-            form_LV_Clones.Items.Clear();
             form_LV_Clones.Items.AddRange(listLVitems.ToArray());
 
             m_bThreadingTree = false;
             m_bBrowseLoaded = true;
         }
 
-        void TreeSelectStatusCallback(ListViewItem lvItemDetails = null, ListViewItem[] itemArray = null)
+        void TreeSelectStatusCallback(ListViewItem lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem lvVol = null)
         {
-            if (InvokeRequired) { Invoke(new TreeSelectStatusDelegate(TreeSelectStatusCallback), new object[] { lvItemDetails, itemArray }); return;  }
+            if (InvokeRequired) { Invoke(new TreeSelectStatusDelegate(TreeSelectStatusCallback), new object[] { lvItemDetails, itemArray, lvVol }); return;  }
 
             if (lvItemDetails != null)
             {
@@ -701,6 +704,11 @@ namespace SearchDirLists
             if (itemArray != null)
             {
                 form_LV_Files.Items.AddRange(itemArray);
+            }
+
+            if (lvVol != null)
+            {
+                form_LV_DetailVol.Items.Add(lvVol);
             }
         }
 
@@ -734,9 +742,11 @@ namespace SearchDirLists
             form_treeView_Browse.Nodes.Clear();
             form_LV_Files.Items.Clear();
             form_LV_Detail.Items.Clear();
+            form_LV_DetailVol.Items.Clear();
+            form_LV_Clones.Items.Clear();
             m_hashCache.Clear();
 
-            Tree tree = new Tree(form_lv_Volumes.Items, m_hashCache,
+            Tree tree = new Tree(form_LV_SourceVolDirList.Items, m_hashCache,
                 new TreeStatusDelegate(TreeStatusCallback), new TreeDoneDelegate(TreeDoneCallback));
 
             m_bThreadingTree = true;

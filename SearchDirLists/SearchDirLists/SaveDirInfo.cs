@@ -520,7 +520,7 @@ namespace SearchDirLists
         {
             if (InvokeRequired) { Invoke(new SavePathInfoStatusDelegate(SavePathInfoStatusCallback), new object[] { nIndex, strText }); return; }
 
-            form_lv_Volumes.Items[nIndex].SubItems[3].Text = strText;
+            form_LV_SourceVolDirList.Items[nIndex].SubItems[3].Text = strText;
         }
 
         void SavePathInfoDoneCallback()
@@ -539,7 +539,7 @@ namespace SearchDirLists
                 return;
             }
 
-            SavePathInfo savePathInfo = new SavePathInfo(form_lv_Volumes.Items,
+            SavePathInfo savePathInfo = new SavePathInfo(form_LV_SourceVolDirList.Items,
                 new SavePathInfoStatusDelegate(SavePathInfoStatusCallback),
                 new SavePathInfoDoneDelegate(SavePathInfoDoneCallback));
 

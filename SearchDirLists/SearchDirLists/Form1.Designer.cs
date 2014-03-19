@@ -776,7 +776,7 @@ namespace SearchDirLists
             // 
             this.split_Clones.Panel2.Controls.Add(this.form_LV_Clones);
             this.split_Clones.Size = new System.Drawing.Size(632, 186);
-            this.split_Clones.SplitterDistance = 387;
+            this.split_Clones.SplitterDistance = 375;
             this.split_Clones.TabIndex = 1;
             // 
             // split_DetailVols

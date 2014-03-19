@@ -353,6 +353,7 @@ namespace SearchDirLists
 
             SetLV_VolumesItemInclude(lvSelect[0], LV_VolumesItemInclude(lvSelect[0]) == false);
             m_bBrowseLoaded = false;
+            DoTree(true);
         }
 
         private bool LV_VolumesItemInclude(ListViewItem lvItem)

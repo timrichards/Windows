@@ -645,7 +645,33 @@ namespace SearchDirLists
                 return;
             }
 
-            form_treeView_Browse.SelectedNode = (TreeNode)form_lv_Unique.SelectedItems[0].Tag;
+            TreeNode treeNode = form_treeView_Browse.SelectedNode = (TreeNode)form_lv_Unique.SelectedItems[0].Tag;
+
+            treeNode.Expand();
+            form_treeView_Browse.TopNode = treeNode.Parent;
+
+            if (treeNode.IsVisible == false)
+            {
+                for (int i = 0; i < 5; ++i)
+                {
+                    TreeNode neighbor = treeNode;
+
+                    if (neighbor.PrevNode != null)
+                    {
+                        neighbor = form_treeView_Browse.TopNode = neighbor.PrevNode;
+
+                        if (treeNode.IsVisible == false)
+                        {
+                            neighbor.Collapse();
+                        }
+                    }
+                    else
+                    {
+                        form_treeView_Browse.TopNode = neighbor;
+                        break;
+                    }
+                }
+            }
         }
     }
 }

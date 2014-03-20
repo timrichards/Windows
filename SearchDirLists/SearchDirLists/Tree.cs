@@ -146,7 +146,7 @@ namespace SearchDirLists
             nodes = node;
         }
 
-        public TreeNode AddToTree(String strVolumeName = null)
+        public TreeNode AddToTree(List<TreeNode> listTreeNodes, String strVolumeName = null)
         {
             int nIndex = m_strPath.LastIndexOf(Path.DirectorySeparatorChar);
             String strShortPath = bUseShortPath ? m_strPath.Substring(nIndex + 1) : m_strPath;
@@ -174,10 +174,11 @@ namespace SearchDirLists
                 if (this == nodes.Values.First())
                 {
                     // cull all root node single-chains.
+                    // m_listTreeNodes is not modified here, but searching for a drive letter works fine in practice so far
                     SetRootNode(subNodes);
                     subNode.m_strPath.Insert(0, m_strPath + Path.DirectorySeparatorChar);
                     subNode.bUseShortPath = false;
-                    treeNode = subNode.AddToTree(strVolumeName);
+                    treeNode = subNode.AddToTree(listTreeNodes, strVolumeName);
 
                     // further down at new NodeDatum...
                     m_nPrevLineNo = subNode.m_nPrevLineNo;
@@ -186,7 +187,7 @@ namespace SearchDirLists
                 }
                 else
                 {
-                    treeNode = new TreeNode(strShortPath, new TreeNode[] { subNode.AddToTree() });
+                    treeNode = new TreeNode(strShortPath, new TreeNode[] { subNode.AddToTree(listTreeNodes) });
                 }
             }
             else if (subNodes.Count > 1)
@@ -195,7 +196,7 @@ namespace SearchDirLists
 
                 foreach (Node node in subNodes.Values)
                 {
-                    treeList.Add(node.AddToTree());
+                    treeList.Add(node.AddToTree(listTreeNodes));
                 }
 
                 treeNode = new TreeNode(strShortPath, treeList.ToArray());
@@ -206,7 +207,7 @@ namespace SearchDirLists
             }
 
             treeNode.Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo, m_nLength);
-            treeNode.Name = treeNode.Text;
+            listTreeNodes.Add(treeNode);
             return treeNode;
         }
     }
@@ -231,13 +232,12 @@ namespace SearchDirLists
             }
 
             in_str = in_str.TrimEnd(Path.DirectorySeparatorChar);
-
             nodes.Add(in_str, new Node(in_str, nLineNo, nLength));
         }
 
-        public TreeNode AddToTree(String strVolumeName)
+        public TreeNode AddToTree(List<TreeNode> listTreeNodes, String strVolumeName)
         {
-            TreeNode rootNode = nodes.Values.First().AddToTree(strVolumeName);
+            TreeNode rootNode = nodes.Values.First().AddToTree(listTreeNodes, strVolumeName);
 
             m_callbackStatus(rootNode);
             return rootNode;
@@ -250,16 +250,18 @@ namespace SearchDirLists
         Hashtable m_hashCache;
         TreeStatusDelegate m_callbackStatus;
         TreeDoneDelegate m_callbackDone;
+        List<TreeNode> m_listTreeNodes;
 
-        public Tree(ListView.ListViewItemCollection lvItems, Hashtable hashCache, 
+        public Tree(ListView.ListViewItemCollection lvVolItems, Hashtable hashCache, List<TreeNode> listTreeNodes,
             TreeStatusDelegate callbackStatus, TreeDoneDelegate callbackDone)
         {
-            foreach (ListViewItem lvItem in lvItems)
+            foreach (ListViewItem lvItem in lvVolItems)
             {
                 m_list_lvVolStrings.Add(new LVvolStrings(lvItem));
             }
 
             m_hashCache = hashCache;
+            m_listTreeNodes = listTreeNodes;
             m_callbackStatus = callbackStatus;
             m_callbackDone = callbackDone;
         }
@@ -405,7 +407,7 @@ namespace SearchDirLists
                         }
                     }
 
-                    TreeNode rootNode = dirData.AddToTree(strVolumeName);
+                    TreeNode rootNode = dirData.AddToTree(m_listTreeNodes, strVolumeName);
 
                     rootNode.Tag = new RootNodeDatum((NodeDatum)rootNode.Tag, strSaveAs, strDriveLetter);
                     TreeSubnodeDetails(rootNode);
@@ -594,6 +596,7 @@ namespace SearchDirLists
         Thread m_threadTree = null;
         Thread m_threadSelect = null;
         Hashtable m_hashCache = new Hashtable();
+        List<TreeNode> m_listTreeNodes = new List<TreeNode>();
 
         void TreeStatusCallback(TreeNode rootNode)
         {
@@ -839,6 +842,11 @@ namespace SearchDirLists
 
                 lvItem.Tag = treeNode;
                 listLVunique.Add(lvItem);
+
+                NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+
+                Debug.Assert(nodeDatum.m_lvCloneItem == null);
+                nodeDatum.m_lvCloneItem = lvItem;
             }
 
             form_lv_Unique.Items.AddRange(listLVunique.ToArray());
@@ -901,7 +909,7 @@ namespace SearchDirLists
             form_LV_Clones.Items.Clear();
             m_hashCache.Clear();
 
-            Tree tree = new Tree(form_LV_VolumesMain.Items, m_hashCache,
+            Tree tree = new Tree(form_LV_VolumesMain.Items, m_hashCache, m_listTreeNodes, 
                 new TreeStatusDelegate(TreeStatusCallback), new TreeDoneDelegate(TreeDoneCallback));
 
             m_bThreadingTree = true;

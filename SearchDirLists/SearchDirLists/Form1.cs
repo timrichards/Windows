@@ -495,7 +495,16 @@ namespace SearchDirLists
             if ((nodeDatum.m_lvCloneItem != null) && (nodeDatum.m_lvCloneItem.Selected == false))
             {
                 nodeDatum.m_lvCloneItem.Selected = true;
-                form_LV_Clones.TopItem = nodeDatum.m_lvCloneItem;
+
+                if (form_LV_Clones.Items.Contains(nodeDatum.m_lvCloneItem))
+                {
+                    form_LV_Clones.TopItem = nodeDatum.m_lvCloneItem;
+                }
+
+                if (form_lv_Unique.Items.Contains(nodeDatum.m_lvCloneItem))
+                {
+                    form_lv_Unique.TopItem = nodeDatum.m_lvCloneItem;
+                }
             }
         }
 
@@ -536,45 +545,75 @@ namespace SearchDirLists
         private TreeNode GetNodeByPath(string path, TreeView treeView)
         {
             TreeNode node = null;
-            string[] pathLevel = path.Split('\\');
+            string[] pathLevel = path.ToLower().Split(Path.DirectorySeparatorChar);
             int i = 0;
+            int nPathLevelLength = pathLevel.Length;
+
             foreach (TreeNode topNode in treeView.Nodes)
             {
-                if (topNode.Text.ToUpper() == pathLevel[i].ToUpper())
+                String strNode = topNode.Text.ToLower();
+
+                if (strNode.Contains(Path.DirectorySeparatorChar))
+                {
+                    int nCount = strNode.Count(c => c == Path.DirectorySeparatorChar);
+
+                    for (int n = 0; n < nPathLevelLength - 1; ++n)
+                    {
+                        if (n < nCount)
+                        {
+                            pathLevel[0] += Path.DirectorySeparatorChar + pathLevel[n + 1];
+                        }
+                    }
+
+                    for (int n = 1; n < nPathLevelLength-1; ++n)
+                    {
+                        if ((nCount + n) < pathLevel.Length)
+                        {
+                            pathLevel[n] = pathLevel[nCount + n];
+                        }
+                    }
+
+                    if (nPathLevelLength > 1)
+                    {
+                        Debug.Assert(nPathLevelLength > nCount + 1);
+                        nPathLevelLength -= nCount;
+                    }
+                }
+                
+                if (strNode == pathLevel[i])
                 {
                     node = topNode;
                     i++;
                     break;
                 }
             }
-            if ((i < pathLevel.Length) && node != null)
+
+            if ((i < nPathLevelLength) && node != null)
             {
-                node = GetSubNode(node, pathLevel, i);
+                node = GetSubNode(node, pathLevel, i, nPathLevelLength);
             }
 
             return node;
         }
 
-        private TreeNode GetSubNode(TreeNode node, string[] pathLevel, int i)
+        private TreeNode GetSubNode(TreeNode node, string[] pathLevel, int i, int nPathLevelLength)
         {
-            TreeNode newNode = new TreeNode();
             foreach (TreeNode subNode in node.Nodes)
             {
-                if (subNode.Text.ToUpper().Trim() == pathLevel[i].ToUpper().Trim())
+                if (subNode.Text.ToLower() != pathLevel[i])
                 {
-                    newNode = subNode;
-                    i++;
-                    if (i == pathLevel.Length)
-                    {
-                        break;
-                    }
-                    if (i < pathLevel.Length)
-                    {
-                        newNode = GetSubNode(newNode, pathLevel, i);
-                    }
+                    continue;
                 }
+
+                if (++i == nPathLevelLength)
+                {
+                    return subNode;
+                }
+
+                return GetSubNode(subNode, pathLevel, i, nPathLevelLength);
             }
-            return newNode;
+
+            return null;
         }
         
         int nTreeFindTextChanged = 0;
@@ -583,20 +622,29 @@ namespace SearchDirLists
         {
             if (nTreeFindTextChanged == 0)
             {
-                arrayTreeFound = form_treeView_Browse.Nodes.Find(form_cb_TreeFind.Text, true);
+                TreeNode treeNode = GetNodeByPath(form_cb_TreeFind.Text, form_treeView_Browse);
 
-                if ((arrayTreeFound == null) || (arrayTreeFound.Length == 0))
+                if (treeNode == null)
                 {
-                    TreeNode treeNode = GetNodeByPath(form_cb_TreeFind.Text, form_treeView_Browse);
+                    // case sensitive only when user enters an uppercase character
 
-                    if (treeNode == null)
+                    if (form_cb_TreeFind.Text.ToLower() == form_cb_TreeFind.Text)
                     {
-                        MessageBox.Show("Couldn't find the specified search parameter in the tree.", "Search in Tree");
+                        arrayTreeFound = m_listTreeNodes.FindAll(node => node.Text.ToLower().Contains(form_cb_TreeFind.Text)).ToArray();
                     }
                     else
                     {
-                        arrayTreeFound = new TreeNode[] { treeNode };
+                        arrayTreeFound = m_listTreeNodes.FindAll(node => node.Text.Contains(form_cb_TreeFind.Text)).ToArray();
                     }
+
+                    if ((arrayTreeFound == null) || (arrayTreeFound.Length == 0))
+                    {
+                        MessageBox.Show("Couldn't find the specified search parameter in the tree.", "Search in Tree");
+                    }
+                }
+                else
+                {
+                    arrayTreeFound = new TreeNode[] { treeNode };
                 }
             }
 
@@ -604,6 +652,10 @@ namespace SearchDirLists
             {
                 form_treeView_Browse.SelectedNode = arrayTreeFound[nTreeFindTextChanged % arrayTreeFound.Length];
                 ++nTreeFindTextChanged;
+            }
+            else
+            {
+                nTreeFindTextChanged = 0;
             }
         }
 

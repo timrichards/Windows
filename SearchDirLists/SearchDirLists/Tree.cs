@@ -12,7 +12,7 @@ using System.Drawing;
 namespace SearchDirLists
 {
     delegate void TreeStatusDelegate(TreeNode rootNode);
-    delegate void TreeDoneDelegate();
+    delegate void TreeDoneDelegate(long nMaxLength);
     delegate void TreeSelectStatusDelegate(ListViewItem lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem lvVol = null);
     delegate void TreeSelectDoneDelegate();
 
@@ -37,7 +37,7 @@ namespace SearchDirLists
         public long NumSubnodes { get { return m_nNumSubnodes; } set { m_nNumSubnodes = value; } }
     }
 
-    class NodeDatumLVitemHolder
+    class NodeDatumLVitemHolder     // this was a way of setting the listview item in a different node after processing the first. Not used.
     {
         public ListViewItem m_lvCloneItem = null;
     }
@@ -62,6 +62,8 @@ namespace SearchDirLists
             set { if (m_lvCloneItem_ != null) m_lvCloneItem_.m_lvCloneItem = value; }
         }
 
+        public bool bDifferentDrives = false;
+
         public NodeDatum(long nPrevLineNo, long nLineNo, long nLength) { m_nPrevLineNo = nPrevLineNo; m_nLineNo = nLineNo; m_nLength = nLength; }
 
         protected NodeDatum(NodeDatum node)
@@ -75,11 +77,14 @@ namespace SearchDirLists
     class RootNodeDatum : NodeDatum
     {
         String m_strFile = null;
+        String m_strDriveLetter = null;
 
         public String StrFile { get { return m_strFile; } }
-        public RootNodeDatum(NodeDatum node, String strFile) : base(node)
+        public String StrDriveLetter { get { return m_strDriveLetter; } }
+        public RootNodeDatum(NodeDatum node, String strFile, String strDriveLetter) : base(node)
         {
             m_strFile = strFile;
+            m_strDriveLetter = strDriveLetter;
         }
     }
 
@@ -104,6 +109,12 @@ namespace SearchDirLists
 
             m_strPath = in_str;
             m_nPrevLineNo = m_nStaticLineNo;
+
+            if (nLineNo == 0)   // new Node("...", 0, 0) when there's no root is a hack 
+            {
+                nLineNo = m_nStaticLineNo;
+            }
+
             m_nStaticLineNo = m_nLineNo = nLineNo;
             m_nLength = nLength;
 
@@ -300,6 +311,7 @@ namespace SearchDirLists
             Console.WriteLine("Creating browsing tree.");
 
             DateTime dtStart = DateTime.Now;
+            long nMaxLength = 0;
 
             foreach (LVvolStrings volStrings in m_list_lvVolStrings)
             {
@@ -319,9 +331,10 @@ namespace SearchDirLists
 
                 using (StreamReader file = new StreamReader(strSaveAs))
                 {
-                    String line = "";
+                    String line = null;
                     DirData dirData = new DirData(m_callbackStatus);
                     long nLineNo = 0;       // lines number from one
+                    String strDriveLetter = null;
 
                     while ((line = file.ReadLine()) != null)
                     {
@@ -380,17 +393,27 @@ namespace SearchDirLists
                         }
 
                         dirData.AddToTree(strNew, nLineNo, nLength);
+
+                        if (nLength > nMaxLength)
+                        {
+                            nMaxLength = nLength;
+                        }
+
+                        if (strDriveLetter == null)
+                        {
+                            strDriveLetter = strNew.Substring(0, strNew.IndexOf(":" + Path.DirectorySeparatorChar));
+                        }
                     }
 
                     TreeNode rootNode = dirData.AddToTree(strVolumeName);
 
-                    rootNode.Tag = new RootNodeDatum((NodeDatum)rootNode.Tag, strSaveAs);
+                    rootNode.Tag = new RootNodeDatum((NodeDatum)rootNode.Tag, strSaveAs, strDriveLetter);
                     TreeSubnodeDetails(rootNode);
                 }
             }
 
             Console.WriteLine(String.Format("Completed browsing tree in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 10) / 100.0));
-            m_callbackDone();
+            m_callbackDone(nMaxLength);
         }
     }
 
@@ -410,17 +433,21 @@ namespace SearchDirLists
             m_doneCallback = doneCallback;
         }
 
-        private String Go_A()
+        static public TreeNode GetParentRoot(TreeNode treeNode)
         {
-            TreeNode nodeParent = m_treeNode;
+            TreeNode nodeParent = treeNode;
 
             while (nodeParent.Parent != null)
             {
                 nodeParent = nodeParent.Parent;
             }
 
-            Debug.Assert(nodeParent.Tag is RootNodeDatum);
+            return nodeParent;
+        }
 
+        private String Go_A()
+        {
+            TreeNode nodeParent = GetParentRoot(m_treeNode);
             RootNodeDatum rootNode = (RootNodeDatum)nodeParent.Tag;
             String strFile = (String)rootNode.StrFile;
 
@@ -577,75 +604,89 @@ namespace SearchDirLists
 
         // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
         // Breadth-first.
-        void FixClones(SortedDictionary<long, List<TreeNode>> dictClones, TreeNode treeNode, TreeNode rootClone = null)
+        void FixClones(SortedDictionary<long, List<TreeNode>> dictClones, TreeNode treeNode, long nMaxLength, TreeNode rootClone = null)
         {
-            List<TreeNode> listClones = ((NodeDatum)treeNode.Tag).m_listClones;
+            // neither rootClone nor nMaxLength are used at all (rootClone is used as a bool).
+            // provisional.
+
+            NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+            List<TreeNode> listClones = nodeDatum.m_listClones;
+            long nLength = nodeDatum.LengthSubnodes;
 
             if (listClones != null)
             {
-                if (rootClone != null)
+                if (nLength < 100 * 1024)
                 {
+                    treeNode.ForeColor = Color.LightGray;
+
                     foreach (TreeNode otherNode in listClones)
                     {
                         ((NodeDatum)otherNode.Tag).m_listClones = null;
-                        ((NodeDatum)otherNode.Tag).SetLVitemHolder((NodeDatum)rootClone.Tag);
-                        otherNode.ForeColor = Color.DimGray;
                     }
 
-                    ((NodeDatum)treeNode.Tag).m_listClones = null;
-                    ((NodeDatum)treeNode.Tag).SetLVitemHolder(null);
-                    treeNode.ForeColor = Color.DimGray;
-                    listClones.Clear();     // does not remove listClones from dict: see below
+                    listClones = nodeDatum.m_listClones = null;
                 }
-                else
+                else if (rootClone == null)
                 {
-                    long nLength = ((NodeDatum)listClones[1].Tag).LengthSubnodes;
-
-                    if (nLength <= 0)
+                    if (dictClones.ContainsKey(nLength))
                     {
-                        ((NodeDatum)treeNode.Tag).m_listClones = null;
+                        if (dictClones[nLength] != listClones)
+                        {
+                            while (dictClones.ContainsKey(nLength))
+                            {
+                                --nLength;
+                            }
+
+                            dictClones.Add(nLength, listClones);
+                        }
                     }
                     else
                     {
-                        if (dictClones.ContainsKey(nLength))
-                        {
-                            if (dictClones[nLength] != listClones)
-                            {
-                                while (dictClones.ContainsKey(nLength))
-                                {
-                                    --nLength;
-                                }
+                        dictClones.Add(nLength, listClones);
+                    }
 
-                                dictClones.Add(nLength, listClones);
-                            }
-                        }
-                        else
-                        {
-                            dictClones.Add(nLength, listClones);
-                        }
 
-                        if (treeNode.ForeColor == Color.Empty)
+                    // Test to see if clones are on separate volumes.
+
+                    RootNodeDatum rootNodeDatum = ((RootNodeDatum)TreeSelect.GetParentRoot(treeNode).Tag);
+
+                    Debug.Assert(treeNode.ForeColor == Color.Empty);
+                    treeNode.ForeColor = Color.DarkRed;
+                    bool bDifferentDrives = false;
+
+                    foreach (TreeNode subnode in listClones)
+                    {
+                        RootNodeDatum rootNodeDatum_A = ((RootNodeDatum)TreeSelect.GetParentRoot(subnode).Tag);
+                        Debug.Assert(rootNodeDatum.StrDriveLetter.Length == rootNodeDatum_A.StrDriveLetter.Length);
+
+                        if (rootNodeDatum.StrDriveLetter != rootNodeDatum_A.StrDriveLetter)
                         {
-                            treeNode.ForeColor = Color.DarkBlue;
+                            treeNode.ForeColor = Color.SteelBlue;
+                            bDifferentDrives = true;
                         }
                     }
-                }
-            }
 
-            if ((listClones != null) && (rootClone == null))
-            {
-                rootClone = treeNode;
+                    if (bDifferentDrives)
+                    {
+                        foreach (TreeNode subNode in listClones)
+                        {
+                            ((NodeDatum)subNode.Tag).bDifferentDrives = true;
+                        }
+                    }
+
+                    rootClone = treeNode;
+                }
             }
 
             foreach (TreeNode subNode in treeNode.Nodes)
             {
-                FixClones(dictClones, subNode, rootClone);
+                FixClones(dictClones, subNode, nMaxLength, rootClone);
             }
         }
 
-        void TreeDoneCallback()
+        void TreeDoneCallback(long nMaxLength)
         {
-            if (InvokeRequired) { Invoke(new TreeDoneDelegate(TreeDoneCallback)); return; }
+            if (InvokeRequired) { Invoke(new TreeDoneDelegate(TreeDoneCallback), new object[] { nMaxLength } ); return; }
 
             List<String> strHashList = new List<string>();
 
@@ -685,7 +726,7 @@ namespace SearchDirLists
 
             foreach (TreeNode treeNode in form_treeView_Browse.Nodes)
             {
-                FixClones(dictClones, treeNode);
+                FixClones(dictClones, treeNode, nMaxLength);
             }
 
             IEnumerable<KeyValuePair<long, List<TreeNode>>> dictReverse = dictClones.Reverse();
@@ -712,7 +753,14 @@ namespace SearchDirLists
 
                 foreach (TreeNode treeNode in listNodes.Value)
                 {
-                    ((NodeDatum)treeNode.Tag).m_lvCloneItem = lvItem;
+                    NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+
+                    nodeDatum.m_lvCloneItem = lvItem;
+
+                    if (nodeDatum.bDifferentDrives == false)
+                    {
+                        lvItem.ForeColor = Color.DarkRed;
+                    }
                 }
 
                 listLVitems.Add(lvItem);

@@ -212,7 +212,7 @@ namespace SearchDirLists
             }
 
             m_strSearch = form_cb_Search.Text;
-            m_search = new Search(form_LV_SourceVolDirList.Items, m_strSearch, form_chk_SearchCase.Checked, folderHandling,
+            m_search = new Search(form_LV_VolumesMain.Items, m_strSearch, form_chk_SearchCase.Checked, folderHandling,
                 new SearchStatusDelegate(SearchStatusCallback), new SearchDoneDelegate(SearchDoneCallback));
 
             m_bThreadingSearch = true;

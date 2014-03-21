@@ -450,8 +450,18 @@ namespace SearchDirLists
         private String Go_A()
         {
             TreeNode nodeParent = GetParentRoot(m_treeNode);
-            RootNodeDatum rootNode = (RootNodeDatum)nodeParent.Tag;
-            String strFile = (String)rootNode.StrFile;
+            String strFile = null;
+
+            if (nodeParent.Tag is RootNodeDatum)
+            {
+                RootNodeDatum rootNode = (RootNodeDatum)nodeParent.Tag;
+                strFile = (String)rootNode.StrFile;
+            }
+            else
+            {
+                // from compare LV
+                strFile = nodeParent.Name;
+            }
 
             if (File.Exists(strFile) == false)
             {

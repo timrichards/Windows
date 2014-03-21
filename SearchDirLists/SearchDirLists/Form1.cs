@@ -482,10 +482,10 @@ namespace SearchDirLists
             form_LV_DetailVol.Items.Clear();
             form_LV_Files.Items.Clear();
 
-            if (bTreeClick)
+            if (bPutPathInFindEditBox)
             {
+                bPutPathInFindEditBox = false;
                 form_cb_TreeFind.Text = e.Node.FullPath;
-                bTreeClick = false;
             }
 
             DoTreeSelect(e.Node);
@@ -496,15 +496,21 @@ namespace SearchDirLists
             {
                 nodeDatum.m_lvCloneItem.Selected = true;
 
+                bool bFirst = true;
                 if (form_LV_Clones.Items.Contains(nodeDatum.m_lvCloneItem))
                 {
                     form_LV_Clones.TopItem = nodeDatum.m_lvCloneItem;
+                    bFirst = false;
                 }
 
+                bool bSecond = true;
                 if (form_lv_Unique.Items.Contains(nodeDatum.m_lvCloneItem))
                 {
                     form_lv_Unique.TopItem = nodeDatum.m_lvCloneItem;
+                    bSecond = false;
                 }
+
+                Debug.Assert(bFirst || bSecond);    // just want to see what's obvious: listview item can't be in two lists
             }
         }
 
@@ -538,12 +544,18 @@ namespace SearchDirLists
 
             List<TreeNode> listTreeNodes = (List<TreeNode>)form_LV_Clones.SelectedItems[0].Tag;
 
+            bPutPathInFindEditBox = true;
             form_treeView_Browse.SelectedNode = listTreeNodes[nLVexttrClickIndex % listTreeNodes.Count];
             form_treeView_Browse.Select();
         }
 
         private TreeNode GetNodeByPath(string path, TreeView treeView)
         {
+            if ((path == null) || (path.Length == 0))
+            {
+                return null;
+            }
+
             TreeNode node = null;
             string[] pathLevel = path.ToLower().Split(Path.DirectorySeparatorChar);
             int i = 0;
@@ -555,6 +567,9 @@ namespace SearchDirLists
 
                 if (strNode.Contains(Path.DirectorySeparatorChar))
                 {
+                    pathLevel = path.ToLower().Split(Path.DirectorySeparatorChar);
+                    nPathLevelLength = pathLevel.Length;
+
                     int nCount = strNode.Count(c => c == Path.DirectorySeparatorChar);
 
                     for (int n = 0; n < nPathLevelLength - 1; ++n)
@@ -615,37 +630,64 @@ namespace SearchDirLists
 
             return null;
         }
-        
+
         int nTreeFindTextChanged = 0;
         TreeNode[] arrayTreeFound = null;
+        TreeNode FindNode(String strSearch, TreeNode startNode = null)
+        {
+            if ((strSearch == null) || (strSearch.Length == 0))
+            {
+                return null;
+            }
+
+            TreeNode treeNode = GetNodeByPath(strSearch, form_treeView_Browse);
+
+            if (treeNode == null)
+            {
+                // case sensitive only when user enters an uppercase character
+
+                if (strSearch.ToLower() == strSearch)
+                {
+                    arrayTreeFound = m_listTreeNodes.FindAll(node => node.Text.ToLower().Contains(strSearch)).ToArray();
+                }
+                else
+                {
+                    arrayTreeFound = m_listTreeNodes.FindAll(node => node.Text.Contains(strSearch)).ToArray();
+                }
+
+                if ((arrayTreeFound == null) || (arrayTreeFound.Length == 0))
+                {
+                    MessageBox.Show("Couldn't find the specified search parameter in the tree.", "Search in Tree");
+                }
+            }
+            else
+            {
+                arrayTreeFound = new TreeNode[] { treeNode };
+            }
+
+            if ((arrayTreeFound != null) && (arrayTreeFound.Length > 0))
+            {
+                if (arrayTreeFound.Contains(startNode))
+                {
+                    nTreeFindTextChanged = arrayTreeFound.Count(node => node != startNode);
+                    return startNode;
+                }
+                else
+                {
+                    return arrayTreeFound[0];
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         private void form_btn_TreeFind_Click(object sender, EventArgs e)
         {
             if (nTreeFindTextChanged == 0)
             {
-                TreeNode treeNode = GetNodeByPath(form_cb_TreeFind.Text, form_treeView_Browse);
-
-                if (treeNode == null)
-                {
-                    // case sensitive only when user enters an uppercase character
-
-                    if (form_cb_TreeFind.Text.ToLower() == form_cb_TreeFind.Text)
-                    {
-                        arrayTreeFound = m_listTreeNodes.FindAll(node => node.Text.ToLower().Contains(form_cb_TreeFind.Text)).ToArray();
-                    }
-                    else
-                    {
-                        arrayTreeFound = m_listTreeNodes.FindAll(node => node.Text.Contains(form_cb_TreeFind.Text)).ToArray();
-                    }
-
-                    if ((arrayTreeFound == null) || (arrayTreeFound.Length == 0))
-                    {
-                        MessageBox.Show("Couldn't find the specified search parameter in the tree.", "Search in Tree");
-                    }
-                }
-                else
-                {
-                    arrayTreeFound = new TreeNode[] { treeNode };
-                }
+                FindNode(form_cb_TreeFind.Text, form_treeView_Browse.SelectedNode);
             }
 
             if ((arrayTreeFound != null) && (arrayTreeFound.Length > 0))
@@ -663,8 +705,8 @@ namespace SearchDirLists
         {
             if (new Keys[] { Keys.Enter, Keys.Return }.Contains((Keys)e.KeyChar))
             {
+                bPutPathInFindEditBox = false;
                 form_btn_TreeFind_Click(sender, e);
-                bTreeClick = false;
                 e.Handled = true;
             }
         }
@@ -679,10 +721,10 @@ namespace SearchDirLists
             nTreeFindTextChanged = 0;
         }
 
-        bool bTreeClick = false;
+        bool bPutPathInFindEditBox = false;
         private void form_treeView_Browse_MouseClick(object sender, MouseEventArgs e)
         {
-            bTreeClick = true;
+            bPutPathInFindEditBox = true;
         }
 
         private void form_cb_TreeFind_SelectedIndexChanged(object sender, EventArgs e)
@@ -697,32 +739,225 @@ namespace SearchDirLists
                 return;
             }
 
+            bPutPathInFindEditBox = true;
             TreeNode treeNode = form_treeView_Browse.SelectedNode = (TreeNode)form_lv_Unique.SelectedItems[0].Tag;
 
             treeNode.Expand();
             form_treeView_Browse.TopNode = treeNode.Parent;
 
-            if (treeNode.IsVisible == false)
+            if (treeNode.IsVisible)
             {
-                for (int i = 0; i < 5; ++i)
+                return;
+            }
+
+            for (int i = 0; i < 5; ++i)
+            {
+                TreeNode neighbor = treeNode;
+
+                if (neighbor.PrevNode != null)
                 {
-                    TreeNode neighbor = treeNode;
+                    neighbor = form_treeView_Browse.TopNode = neighbor.PrevNode;
 
-                    if (neighbor.PrevNode != null)
+                    if (treeNode.IsVisible == false)
                     {
-                        neighbor = form_treeView_Browse.TopNode = neighbor.PrevNode;
-
-                        if (treeNode.IsVisible == false)
-                        {
-                            neighbor.Collapse();
-                        }
-                    }
-                    else
-                    {
-                        form_treeView_Browse.TopNode = neighbor;
-                        break;
+                        neighbor.Collapse();
                     }
                 }
+                else
+                {
+                    form_treeView_Browse.TopNode = neighbor;
+                    break;
+                }
+            }
+        }
+
+        Color clrBlink = Color.DarkTurquoise;
+        String strCompare1 = null;
+        TreeNode nodeCompare1 = null;
+        private void form_chk_Compare1_CheckedChanged(object sender, EventArgs e)
+        {
+            form_cb_TreeFind.BackColor = Color.Empty;
+            nBlink = 0;
+
+            if (bComparing)
+            {
+                strCompare1 = null;
+                strCompare2 = null;
+                nodeCompare1 = null;
+                nodeCompare2 = null;
+                form_treeCompare.Nodes.Clear();
+                split_TreeFind.Panel1Collapsed = true;
+                form_chk_Compare1.Text = strBtnCompareOrigText;
+                form_chk_Compare1.Checked = false;
+                bComparing = false;
+            }
+            else if (form_chk_Compare1.Checked)
+            {
+                clrBlink = Color.DarkTurquoise;         // has to go here
+                strCompare1 = form_cb_TreeFind.Text;
+
+                bool bError = (strCompare1.Length == 0);
+
+                if (bError == false)
+                {
+                    nodeCompare1 = FindNode(strCompare1, form_treeView_Browse.SelectedNode);
+                    bError = (nodeCompare1 == null);
+                }
+
+                if (bError)
+                {
+                    clrBlink = Color.Red;
+                    form_chk_Compare1.Checked = false;  // event retriggers this handler
+                }
+                else
+                {
+                    form_treeView_Browse.SelectedNode = nodeCompare1;
+                    form_btn_TreeCompare.Enabled = true;
+                }
+
+                timer_blink.Enabled = true;
+            }
+            else
+            {
+                form_btn_TreeCompare.Enabled = false;
+                timer_blink.Enabled = false;
+                strCompare1 = null;
+            }
+        }
+
+        int nBlink = 0;
+        private void timer_blink_Tick(object sender, EventArgs e)
+        {
+            if (++nBlink >= 10)
+            {
+                form_cb_TreeFind.BackColor = Color.Empty;
+                timer_blink.Enabled = false;
+                nBlink = 0;
+            }
+            else if (form_cb_TreeFind.BackColor != clrBlink)
+            {
+                form_cb_TreeFind.BackColor = clrBlink;
+            }
+            else
+            {
+                form_cb_TreeFind.BackColor = Color.Empty;
+            }
+        }
+
+        bool Compare(TreeNode t1, TreeNode t2)
+        {
+            bool bRet = true;
+
+            foreach (TreeNode s1 in t1.Nodes)
+            {
+                bool bCompare = true;
+                bool bCompareSub = true;
+
+                if (t2.Nodes.ContainsKey(s1.Name))
+                {
+                    TreeNode s2 = t2.Nodes[s1.Name];
+
+                    if (Compare(s1, s2) == false)
+                    {
+                        bCompareSub = false;
+                    }
+
+                    if (s1.Nodes.Count != s2.Nodes.Count)
+                    {
+                        bCompare = false;
+                    }
+
+                    NodeDatum n1 = (NodeDatum)s1.Tag;
+                    NodeDatum n2 = (NodeDatum)s2.Tag;
+
+                    if (n1.Length != n2.Length)
+                    {
+                        bCompare = false;
+                    }
+
+                    if (bCompare == false)
+                    {
+                        s2.ForeColor = Color.Red;
+                    }
+                }
+                else
+                {
+                    bCompare = false;
+                }
+
+                if (bCompare == false)
+                {
+                    s1.ForeColor = Color.Red;
+                }
+                else if (bCompareSub == false)
+                {
+                    s1.ForeColor = Color.DarkRed;
+                }
+
+                bRet &= bCompare && bCompareSub;
+            }
+
+            return bRet;
+        }
+
+        void NameNodes(TreeNode treeNode)
+        {
+            treeNode.Name = treeNode.Text;
+
+            foreach (TreeNode subNode in treeNode.Nodes)
+            {
+                NameNodes(subNode);
+            }
+        }
+
+        String strCompare2 = null;
+        TreeNode nodeCompare2 = null;
+        String strBtnCompareOrigText = null;
+        bool bComparing = false;
+        private void form_btn_TreeCompare_Click(object sender, EventArgs e)
+        {
+            form_cb_TreeFind.BackColor = Color.Empty;
+            nBlink = 0;
+            Debug.Assert(form_chk_Compare1.Checked);
+            Debug.Assert(strCompare1.Length > 0);
+            clrBlink = Color.DarkTurquoise;
+            strCompare2 = form_cb_TreeFind.Text;
+
+            bool bError = (strCompare2.Length == 0);
+
+            if (bError == false)
+            {
+                nodeCompare2 = FindNode(strCompare2, form_treeView_Browse.SelectedNode);
+                bError = ((nodeCompare2 == null) || (nodeCompare2 == nodeCompare1));
+            }
+
+            if (bError)
+            {
+                clrBlink = Color.Red;
+            }
+            else
+            {
+                timer_blink.Enabled = true;
+
+                form_treeView_Browse.SelectedNode = nodeCompare2;
+                split_TreeFind.Panel1Collapsed = false;
+                strBtnCompareOrigText = form_chk_Compare1.Text;
+                form_chk_Compare1.Text = "Comparing";
+                form_btn_TreeCompare.Enabled = false;
+
+                String strFile1 = ((RootNodeDatum)TreeSelect.GetParentRoot(nodeCompare1).Tag).StrFile;
+                String strFile2 = ((RootNodeDatum)TreeSelect.GetParentRoot(nodeCompare2).Tag).StrFile;
+                nodeCompare1 = (TreeNode)nodeCompare1.Clone();
+                nodeCompare2 = (TreeNode)nodeCompare2.Clone();
+                form_treeCompare.Nodes.Add(nodeCompare1);
+                form_treeCompare.Nodes.Add(nodeCompare2);
+                NameNodes(nodeCompare1);
+                NameNodes(nodeCompare2);
+                nodeCompare1.Name = strFile1;
+                nodeCompare2.Name = strFile2;
+                Compare(nodeCompare1, nodeCompare2);
+                Compare(nodeCompare2, nodeCompare1);
+                bComparing = true;
             }
         }
     }

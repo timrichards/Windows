@@ -480,7 +480,15 @@ namespace SearchDirLists
         {
             form_LV_Detail.Items.Clear();
             form_LV_DetailVol.Items.Clear();
-            form_LV_Files.Items.Clear();
+
+            if (sender == tree_compare2)
+            {
+                form_lv_FileCompare.Items.Clear();
+            }
+            else
+            {
+                form_LV_Files.Items.Clear();
+            }
 
             if (bPutPathInFindEditBox)
             {
@@ -488,7 +496,7 @@ namespace SearchDirLists
                 form_cb_TreeFind.Text = e.Node.FullPath;
             }
 
-            DoTreeSelect(e.Node);
+            DoTreeSelect(e.Node, new object[] { tree_compare1, tree_compare2}.Contains(sender));
 
             NodeDatum nodeDatum = (NodeDatum)e.Node.Tag;
 
@@ -713,7 +721,14 @@ namespace SearchDirLists
 
         private void form_btn_TreeCollapse_Click(object sender, EventArgs e)
         {
-            form_treeView_Browse.CollapseAll();
+            if (bComparing)
+            {
+                form_btn_ComparePrev_Click(sender, e);
+            }
+            else
+            {
+                form_treeView_Browse.CollapseAll();
+            }
         }
 
         private void form_edit_TreeFind_TextChanged(object sender, EventArgs e)
@@ -774,6 +789,11 @@ namespace SearchDirLists
         Color clrBlink = Color.DarkTurquoise;
         String strCompare1 = null;
         TreeNode nodeCompare1 = null;
+        String strBtnFileCompareOrig = null;
+        String strBtnTreeCollapseOrig = null;
+        String strFilesColOrig = null;
+        String strFileCompareColOrig = null;
+        String strVolDetailColOrig = null;
         private void form_chk_Compare1_CheckedChanged(object sender, EventArgs e)
         {
             form_cb_TreeFind.BackColor = Color.Empty;
@@ -785,10 +805,18 @@ namespace SearchDirLists
                 strCompare2 = null;
                 nodeCompare1 = null;
                 nodeCompare2 = null;
-                form_treeCompare.Nodes.Clear();
+                tree_compare1.Nodes.Clear();
+                tree_compare2.Nodes.Clear();
                 split_TreeFind.Panel1Collapsed = true;
                 form_chk_Compare1.Text = strBtnCompareOrigText;
                 form_chk_Compare1.Checked = false;
+                split_FileCompare.Panel2Collapsed = true;
+                form_btn_TreeCollapse.Text = strBtnTreeCollapseOrig;
+                form_btn_TreeCompare.Text = strBtnCompareOrigText;
+                form_btn_TreeCompare.Enabled = false;
+                form_col_Filename.Text = strFilesColOrig;
+                form_colFileCompare.Text = strFileCompareColOrig;
+                form_colVolDetail.Text = strVolDetailColOrig;
                 bComparing = false;
             }
             else if (form_chk_Compare1.Checked)
@@ -844,7 +872,8 @@ namespace SearchDirLists
             }
         }
 
-        bool Compare(TreeNode t1, TreeNode t2)
+        Dictionary<TreeNode, TreeNode> dictCompareDiffs = new Dictionary<TreeNode, TreeNode>();
+        bool Compare(TreeNode t1, TreeNode t2, bool bReverse = false, bool bMin10M = true)
         {
             bool bRet = true;
 
@@ -852,12 +881,18 @@ namespace SearchDirLists
             {
                 bool bCompare = true;
                 bool bCompareSub = true;
+                TreeNode s2 = null;
 
-                if (t2.Nodes.ContainsKey(s1.Name))
+                NodeDatum n1 = (NodeDatum)s1.Tag;
+
+                if (bMin10M && (n1.LengthSubnodes < 10 * 1024 * 1024))
                 {
-                    TreeNode s2 = t2.Nodes[s1.Name];
+                }
+                else if (t2.Nodes.ContainsKey(s1.Name))
+                {
+                    s2 = t2.Nodes[s1.Name];
 
-                    if (Compare(s1, s2) == false)
+                    if (Compare(s1, s2, bReverse) == false)
                     {
                         bCompareSub = false;
                     }
@@ -867,10 +902,9 @@ namespace SearchDirLists
                         bCompare = false;
                     }
 
-                    NodeDatum n1 = (NodeDatum)s1.Tag;
                     NodeDatum n2 = (NodeDatum)s2.Tag;
 
-                    if (n1.Length != n2.Length)
+                    if (Math.Abs(n1.Length - n2.Length) > 100 * 1024)
                     {
                         bCompare = false;
                     }
@@ -888,13 +922,31 @@ namespace SearchDirLists
                 if (bCompare == false)
                 {
                     s1.ForeColor = Color.Red;
+
+                    if (bReverse)
+                    {
+                        if (s2 != null)
+                        {
+                            if (dictCompareDiffs.ContainsKey(s2) == false)
+                            {
+                                dictCompareDiffs.Add(s2, s1);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (dictCompareDiffs.ContainsKey(s1) == false)
+                        {
+                            dictCompareDiffs.Add(s1, s2);
+                        }
+                    }
                 }
                 else if (bCompareSub == false)
                 {
                     s1.ForeColor = Color.DarkRed;
                 }
 
-                bRet &= bCompare && bCompareSub;
+                bRet &= (bCompare && bCompareSub);
             }
 
             return bRet;
@@ -916,48 +968,139 @@ namespace SearchDirLists
         bool bComparing = false;
         private void form_btn_TreeCompare_Click(object sender, EventArgs e)
         {
-            form_cb_TreeFind.BackColor = Color.Empty;
-            nBlink = 0;
-            Debug.Assert(form_chk_Compare1.Checked);
-            Debug.Assert(strCompare1.Length > 0);
-            clrBlink = Color.DarkTurquoise;
-            strCompare2 = form_cb_TreeFind.Text;
-
-            bool bError = (strCompare2.Length == 0);
-
-            if (bError == false)
+            if (bComparing)
             {
-                nodeCompare2 = FindNode(strCompare2, form_treeView_Browse.SelectedNode);
-                bError = ((nodeCompare2 == null) || (nodeCompare2 == nodeCompare1));
-            }
-
-            if (bError)
-            {
-                clrBlink = Color.Red;
+                form_btn_CompareNext_Click(sender, e);
             }
             else
             {
-                timer_blink.Enabled = true;
+                form_cb_TreeFind.BackColor = Color.Empty;
+                nBlink = 0;
+                Debug.Assert(form_chk_Compare1.Checked);
+                Debug.Assert(strCompare1.Length > 0);
+                clrBlink = Color.DarkTurquoise;
+                strCompare2 = form_cb_TreeFind.Text;
 
-                form_treeView_Browse.SelectedNode = nodeCompare2;
-                split_TreeFind.Panel1Collapsed = false;
-                strBtnCompareOrigText = form_chk_Compare1.Text;
-                form_chk_Compare1.Text = "Comparing";
-                form_btn_TreeCompare.Enabled = false;
+                bool bError = (strCompare2.Length == 0);
 
-                String strFile1 = ((RootNodeDatum)TreeSelect.GetParentRoot(nodeCompare1).Tag).StrFile;
-                String strFile2 = ((RootNodeDatum)TreeSelect.GetParentRoot(nodeCompare2).Tag).StrFile;
-                nodeCompare1 = (TreeNode)nodeCompare1.Clone();
-                nodeCompare2 = (TreeNode)nodeCompare2.Clone();
-                form_treeCompare.Nodes.Add(nodeCompare1);
-                form_treeCompare.Nodes.Add(nodeCompare2);
-                NameNodes(nodeCompare1);
-                NameNodes(nodeCompare2);
-                nodeCompare1.Name = strFile1;
-                nodeCompare2.Name = strFile2;
-                Compare(nodeCompare1, nodeCompare2);
-                Compare(nodeCompare2, nodeCompare1);
-                bComparing = true;
+                if (bError == false)
+                {
+                    nodeCompare2 = FindNode(strCompare2, form_treeView_Browse.SelectedNode);
+                    bError = ((nodeCompare2 == null) || (nodeCompare2 == nodeCompare1));
+                }
+
+                if (bError)
+                {
+                    clrBlink = Color.Red;
+                }
+                else
+                {
+                    timer_blink.Enabled = true;
+
+                    form_treeView_Browse.SelectedNode = nodeCompare2;
+                    split_TreeFind.Panel1Collapsed = false;
+                    strBtnCompareOrigText = form_chk_Compare1.Text;
+
+                    String strFile1 = ((RootNodeDatum)TreeSelect.GetParentRoot(nodeCompare1).Tag).StrFile;
+                    String strFile2 = ((RootNodeDatum)TreeSelect.GetParentRoot(nodeCompare2).Tag).StrFile;
+                    nodeCompare1 = (TreeNode)nodeCompare1.Clone();
+                    nodeCompare2 = (TreeNode)nodeCompare2.Clone();
+                    tree_compare1.Nodes.Add(nodeCompare1);
+                    tree_compare2.Nodes.Add(nodeCompare2);
+                    NameNodes(nodeCompare1);
+                    NameNodes(nodeCompare2);
+                    nodeCompare1.Name = strFile1;
+                    nodeCompare2.Name = strFile2;
+                    nodeCompare2.Checked = true;    // hack to put it in the right file pane
+                    dictCompareDiffs.Clear();
+                    Compare(nodeCompare1, nodeCompare2);
+                    Compare(nodeCompare2, nodeCompare1, true);
+
+                    if (dictCompareDiffs.Count == 0)
+                    {
+                        Compare(nodeCompare1, nodeCompare2, bMin10M: true);
+                        Compare(nodeCompare2, nodeCompare1, true, bMin10M: true);
+                    }
+
+                    split_FileCompare.Panel2Collapsed = false;
+                    strBtnCompareOrigText = form_btn_TreeCompare.Text;
+                    form_btn_TreeCompare.Text = "> >";
+                    form_chk_Compare1.Text = "Comparing";
+                    strBtnTreeCollapseOrig = form_btn_TreeCollapse.Text;
+                    form_btn_TreeCollapse.Text = "< <";
+                    strFilesColOrig = form_col_Filename.Text;
+                    strFileCompareColOrig = form_colFileCompare.Text;
+                    strVolDetailColOrig = form_colVolDetail.Text;
+                    form_colVolDetail.Text = "Compared directory detail";
+                    nCompareIndex = -1;
+                    bComparing = true;
+                }
+            }
+        }
+
+        void CompareNav()
+        {
+            Console.WriteLine(dictCompareDiffs.ToArray()[nCompareIndex]);
+            form_chk_Compare1.Text = nCompareIndex + 1 + " of " + dictCompareDiffs.Count;
+            form_LV_Files.Items.Clear();
+            form_lv_FileCompare.Items.Clear();
+            form_LV_Detail.Items.Clear();
+            form_LV_DetailVol.Items.Clear();
+            tree_compare1.TopNode = tree_compare1.SelectedNode = dictCompareDiffs.ToArray()[nCompareIndex].Key;
+            tree_compare2.TopNode = tree_compare2.SelectedNode = dictCompareDiffs.ToArray()[nCompareIndex].Value;
+            form_col_Filename.Text = tree_compare1.SelectedNode.Text;
+            form_colFileCompare.Text = "";
+
+            if (tree_compare2.SelectedNode != null)
+            {
+                form_colFileCompare.Text = tree_compare2.SelectedNode.Text;
+            }
+
+            if (tree_compare1.SelectedNode == null)
+            {
+                tree_compare1.CollapseAll();
+            }
+            else
+            {
+                tree_compare1.SelectedNode.EnsureVisible();
+            }
+
+            if (tree_compare2.SelectedNode == null)
+            {
+                tree_compare2.CollapseAll();
+            }
+            else
+            {
+                tree_compare2.SelectedNode.EnsureVisible();
+            }
+        }
+
+        int nCompareIndex = -1;
+        private void form_btn_ComparePrev_Click(object sender, EventArgs e)
+        {
+            --nCompareIndex;
+
+            if (nCompareIndex < 0)
+            {
+                nCompareIndex = 0;
+            }
+            else
+            {
+                CompareNav();
+            }
+        }
+
+        private void form_btn_CompareNext_Click(object sender, EventArgs e)
+        {
+            ++nCompareIndex;
+
+            if (nCompareIndex > dictCompareDiffs.Count - 1)
+            {
+                nCompareIndex = dictCompareDiffs.Count - 1;
+            }
+            else
+            {
+                CompareNav();
             }
         }
     }

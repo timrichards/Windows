@@ -13,7 +13,7 @@ namespace SearchDirLists
 {
     delegate void TreeStatusDelegate(TreeNode rootNode);
     delegate void TreeDoneDelegate(long nMaxLength);
-    delegate void TreeSelectStatusDelegate(ListViewItem lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem lvVol = null);
+    delegate void TreeSelectStatusDelegate(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem lvVol = null, bool bSecondComparePane = false);
     delegate void TreeSelectDoneDelegate();
 
     class DetailsDatum
@@ -451,6 +451,7 @@ namespace SearchDirLists
         {
             TreeNode nodeParent = GetParentRoot(m_treeNode);
             String strFile = null;
+            bool bSecondComparePane = false;
 
             if (nodeParent.Tag is RootNodeDatum)
             {
@@ -461,6 +462,11 @@ namespace SearchDirLists
             {
                 // from compare LV
                 strFile = nodeParent.Name;
+
+                if (nodeParent.Checked)
+                {
+                    bSecondComparePane = true;
+                }
             }
 
             if (File.Exists(strFile) == false)
@@ -491,28 +497,31 @@ namespace SearchDirLists
 
             // Directory detail
 
-            nIx = 2; if ((strArray.Length > nIx) && (strArray[nIx].Length > 0)) { m_statusCallback(new ListViewItem(new String[] { "Created\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() })); }
-            nIx = 3; if ((strArray.Length > nIx) && (strArray[nIx].Length > 0)) m_statusCallback(new ListViewItem(new String[] { "Modified\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
-            nIx = 4; if ((strArray.Length > nIx) && (strArray[nIx].Length > 0)) m_statusCallback(new ListViewItem(new String[] { "Attributes\t", strArray[nIx] }));
-            m_statusCallback(new ListViewItem(new String[] { "Immediate Size\t", Utilities.FormatSize(nodeDatum.Length, true) }));
-            nIx = 6; if ((strArray.Length > nIx) && (strArray[nIx].Length > 0)) m_statusCallback(new ListViewItem(new String[] { "Error 1\t", strArray[nIx] }));
-            nIx = 7; if ((strArray.Length > nIx) && (strArray[nIx].Length > 0)) m_statusCallback(new ListViewItem(new String[] { "Error 2\t", strArray[nIx] }));
-            m_statusCallback(new ListViewItem(new String[] { "# Immediate Files", (nLineNo - nPrevDir - 1).ToString() }));
+            List<ListViewItem> listItems = new List<ListViewItem>();
+
+            nIx = 2; if ((strArray.Length > nIx) && (strArray[nIx].Length > 0)) { listItems.Add(new ListViewItem(new String[] { "Created\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() })); }
+            nIx = 3; if ((strArray.Length > nIx) && (strArray[nIx].Length > 0)) listItems.Add(new ListViewItem(new String[] { "Modified\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
+            nIx = 4; if ((strArray.Length > nIx) && (strArray[nIx].Length > 0)) listItems.Add(new ListViewItem(new String[] { "Attributes\t", strArray[nIx] }));
+            listItems.Add(new ListViewItem(new String[] { "Immediate Size\t", Utilities.FormatSize(nodeDatum.Length, true) }));
+            nIx = 6; if ((strArray.Length > nIx) && (strArray[nIx].Length > 0)) listItems.Add(new ListViewItem(new String[] { "Error 1\t", strArray[nIx] }));
+            nIx = 7; if ((strArray.Length > nIx) && (strArray[nIx].Length > 0)) listItems.Add(new ListViewItem(new String[] { "Error 2\t", strArray[nIx] }));
+            listItems.Add(new ListViewItem(new String[] { "# Immediate Files", (nLineNo - nPrevDir - 1).ToString() }));
 
             // Tree subnode detail
 
             String NUMFMT = "###,###,###,##0";
 
-            m_statusCallback(new ListViewItem(new String[] { "# Immediate Folders", m_treeNode.Nodes.Count.ToString(NUMFMT) }));
-            m_statusCallback(new ListViewItem(new String[] { "Total # Files", nodeDatum.NumSubnodeFiles.ToString(NUMFMT) }));
+            listItems.Add(new ListViewItem(new String[] { "# Immediate Folders", m_treeNode.Nodes.Count.ToString(NUMFMT) }));
+            listItems.Add(new ListViewItem(new String[] { "Total # Files", nodeDatum.NumSubnodeFiles.ToString(NUMFMT) }));
 
             if (nodeDatum.NumSubnodes > 0)
             {
-                m_statusCallback(new ListViewItem(new String[] { "Total # Folders", nodeDatum.NumSubnodes.ToString(NUMFMT) }));
+                listItems.Add(new ListViewItem(new String[] { "Total # Folders", nodeDatum.NumSubnodes.ToString(NUMFMT) }));
             }
 
-            m_statusCallback(new ListViewItem(new String[] { "Total Size", Utilities.FormatSize(nodeDatum.LengthSubnodes, true) }));
+            listItems.Add(new ListViewItem(new String[] { "Total Size", Utilities.FormatSize(nodeDatum.LengthSubnodes, true) }));
 
+            m_statusCallback(lvItemDetails: listItems.ToArray(), bSecondComparePane: bSecondComparePane);
             Console.WriteLine(strLine);
 
 
@@ -553,10 +562,18 @@ namespace SearchDirLists
                 itemArray[i] = new ListViewItem(strArrayFiles);
             }
 
-            m_statusCallback(itemArray: itemArray);
+            m_statusCallback(itemArray: itemArray, bSecondComparePane: bSecondComparePane);
 
             Debug.Assert(nLengthDebug == nodeDatum.Length);
-            return strFile;
+
+            if (bSecondComparePane)
+            {
+                return null;    // co-opt the second pane for compare directory details
+            }
+            else
+            {
+                return strFile;
+            }
         }
 
         private void Go_B(String strFile)
@@ -865,18 +882,32 @@ namespace SearchDirLists
             m_bBrowseLoaded = true;
         }
 
-        void TreeSelectStatusCallback(ListViewItem lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem lvVol = null)
+        void TreeSelectStatusCallback(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem lvVol = null, bool bSecondComparePane = false)
         {
-            if (InvokeRequired) { Invoke(new TreeSelectStatusDelegate(TreeSelectStatusCallback), new object[] { lvItemDetails, itemArray, lvVol }); return;  }
+            if (InvokeRequired) { Invoke(new TreeSelectStatusDelegate(TreeSelectStatusCallback), new object[] { lvItemDetails, itemArray, lvVol, bSecondComparePane }); return; }
 
             if (lvItemDetails != null)
             {
-                form_LV_Detail.Items.Add(lvItemDetails);
+                if (bSecondComparePane)
+                {
+                    form_LV_DetailVol.Items.AddRange(lvItemDetails);
+                }
+                else
+                {
+                    form_LV_Detail.Items.AddRange(lvItemDetails);
+                }
             }
 
             if (itemArray != null)
             {
-                form_LV_Files.Items.AddRange(itemArray);
+                if (bSecondComparePane)
+                {
+                    form_lv_FileCompare.Items.AddRange(itemArray);
+                }
+                else
+                {
+                    form_LV_Files.Items.AddRange(itemArray);
+                }
             }
 
             if (lvVol != null)
@@ -914,6 +945,7 @@ namespace SearchDirLists
 
             form_treeView_Browse.Nodes.Clear();
             form_LV_Files.Items.Clear();
+            form_lv_FileCompare.Items.Clear();
             form_LV_Detail.Items.Clear();
             form_LV_DetailVol.Items.Clear();
             form_LV_Clones.Items.Clear();
@@ -926,7 +958,7 @@ namespace SearchDirLists
             (m_threadTree = new Thread(new ThreadStart(tree.Go))).Start();
         }
 
-        private void DoTreeSelect(TreeNode node)
+        private void DoTreeSelect(TreeNode node, bool bDoNotThread = false)
         {
             if (m_bThreadingTreeSelect && m_threadSelect.IsAlive)
             {
@@ -936,8 +968,15 @@ namespace SearchDirLists
             TreeSelect treeSelect = new TreeSelect(node, m_hashCache,
                 new TreeSelectStatusDelegate(TreeSelectStatusCallback), new TreeSelectDoneDelegate(TreeSelectDoneCallback));
 
-            m_bThreadingTreeSelect = true;
-            (m_threadSelect = new Thread(new ThreadStart(treeSelect.Go))).Start();
+            if (bDoNotThread)
+            {
+                treeSelect.Go();
+            }
+            else
+            {
+                m_bThreadingTreeSelect = true;
+                (m_threadSelect = new Thread(new ThreadStart(treeSelect.Go))).Start();
+            }
         }
     }
 }

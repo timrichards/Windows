@@ -641,7 +641,7 @@ namespace SearchDirLists
 
             (m_threadSelect = new Thread(new ThreadStart(Go))).Start();
 
-            if (m_bComparing && (m_staticThread == null))
+            if ((m_bComparing == false) && (m_staticThread == null)) 
             {
                 m_staticThread = m_threadSelect;
             }

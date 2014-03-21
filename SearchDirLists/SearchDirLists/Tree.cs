@@ -14,7 +14,7 @@ namespace SearchDirLists
     delegate void TreeStatusDelegate(TreeNode rootNode);
     delegate void TreeDoneDelegate(long nMaxLength);
     delegate void TreeSelectStatusDelegate(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem lvVol = null, bool bSecondComparePane = false);
-    delegate void TreeSelectDoneDelegate();
+    delegate void TreeSelectDoneDelegate(TreeSelect treeSelect);
 
     class DetailsDatum
     {
@@ -97,7 +97,7 @@ namespace SearchDirLists
         public static long FirstLineNo { set { m_nStaticLineNo = value; } }
         long m_nPrevLineNo = 0;
         long m_nLineNo = 0;
-        long m_nLength;
+        long m_nLength = 0;
         bool bUseShortPath = true;
 
         public Node(String in_str, long nLineNo, long nLength)
@@ -247,10 +247,10 @@ namespace SearchDirLists
     class Tree : Utilities
     {
         List<LVvolStrings> m_list_lvVolStrings = new List<LVvolStrings>();
-        Hashtable m_hashCache;
-        TreeStatusDelegate m_callbackStatus;
-        TreeDoneDelegate m_callbackDone;
-        List<TreeNode> m_listTreeNodes;
+        Hashtable m_hashCache = null;
+        TreeStatusDelegate m_callbackStatus = null;
+        TreeDoneDelegate m_callbackDone = null;
+        List<TreeNode> m_listTreeNodes = null;
 
         public Tree(ListView.ListViewItemCollection lvVolItems, Hashtable hashCache, List<TreeNode> listTreeNodes,
             TreeStatusDelegate callbackStatus, TreeDoneDelegate callbackDone)
@@ -565,15 +565,7 @@ namespace SearchDirLists
             m_statusCallback(itemArray: itemArray, bSecondComparePane: bSecondComparePane);
 
             Debug.Assert(nLengthDebug == nodeDatum.Length);
-
-            if (bSecondComparePane)
-            {
-                return null;    // co-opt the second pane for compare directory details
-            }
-            else
-            {
-                return strFile;
-            }
+            return strFile;
         }
 
         private void Go_B(String strFile)
@@ -605,25 +597,64 @@ namespace SearchDirLists
         {
             String strFile = Go_A();
 
-            if (strFile != null)
+            if ((m_bComparing == false) && (strFile != null))
             {
                 Go_B(strFile);
             }
 
-            m_doneCallback();
+            m_doneCallback(this);
         }
 
+        Thread m_threadSelect = null;
+        static Thread m_staticThread = null;
+
+        public void EndThread(bool bKill = false)
+        {
+            if (m_threadSelect == null)
+            {
+                return;
+            }
+
+            if (bKill && m_threadSelect.IsAlive)
+            {
+                m_threadSelect.Abort();
+            }
+
+            if (m_threadSelect == m_staticThread)
+            {
+                m_staticThread = null;
+            }
+
+            m_threadSelect = null;
+        }
+
+        bool m_bComparing = false;
+        public void DoThreadFactory(bool bComparing)
+        {
+            m_bComparing = bComparing;
+
+            if ((m_bComparing == false) && (m_staticThread != null) && m_staticThread.IsAlive)
+            {
+                m_staticThread.Abort();
+                m_staticThread = null;
+            }
+
+            (m_threadSelect = new Thread(new ThreadStart(Go))).Start();
+
+            if (m_bComparing && (m_staticThread == null))
+            {
+                m_staticThread = m_threadSelect;
+            }
+        }
     }
 
     public partial class Form1 : Form
     {
-        private bool m_bThreadingTree = false;
-        private bool m_bThreadingTreeSelect = false;
         private bool m_bBrowseLoaded = false;
-        Thread m_threadTree = null;
-        Thread m_threadSelect = null;
         Hashtable m_hashCache = new Hashtable();
         List<TreeNode> m_listTreeNodes = new List<TreeNode>();
+        Thread m_threadTree = null;
+        bool m_bThreadingTree = false;
 
         void TreeStatusCallback(TreeNode rootNode)
         {
@@ -916,11 +947,11 @@ namespace SearchDirLists
             }
         }
 
-        void TreeSelectDoneCallback()
+        void TreeSelectDoneCallback(TreeSelect treeSelect)
         {
-            if (InvokeRequired) { Invoke(new TreeSelectDoneDelegate(TreeSelectDoneCallback)); return; }
+            if (InvokeRequired) { Invoke(new TreeSelectDoneDelegate(TreeSelectDoneCallback), new object[] { treeSelect } ); return; }
 
-            m_bThreadingTreeSelect = false;
+            treeSelect.EndThread();
         }
 
         private void DoTree(bool bKill = false)
@@ -958,25 +989,12 @@ namespace SearchDirLists
             (m_threadTree = new Thread(new ThreadStart(tree.Go))).Start();
         }
 
-        private void DoTreeSelect(TreeNode node, bool bDoNotThread = false)
+        private void DoTreeSelect(TreeNode node, bool bComparing = false)
         {
-            if (m_bThreadingTreeSelect && m_threadSelect.IsAlive)
-            {
-                m_threadSelect.Abort();
-            }
-
             TreeSelect treeSelect = new TreeSelect(node, m_hashCache,
                 new TreeSelectStatusDelegate(TreeSelectStatusCallback), new TreeSelectDoneDelegate(TreeSelectDoneCallback));
 
-            if (bDoNotThread)
-            {
-                treeSelect.Go();
-            }
-            else
-            {
-                m_bThreadingTreeSelect = true;
-                (m_threadSelect = new Thread(new ThreadStart(treeSelect.Go))).Start();
-            }
+            treeSelect.DoThreadFactory(bComparing);
         }
     }
 }

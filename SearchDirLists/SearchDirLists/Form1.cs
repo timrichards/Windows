@@ -535,10 +535,16 @@ namespace SearchDirLists
             }
         }
 
-        int nLVexttrClickIndex = -1;
+        int nLVclonesClickIndex = -1;
         private void form_lvClones_SelectedIndexChanged(object sender, EventArgs e)
         {
-            nLVexttrClickIndex = -1;
+            //use this code if amending this method to do more than just reset the clone click index.
+            //if (bComparing)
+            //{
+            //    return;
+            //}
+
+            nLVclonesClickIndex = -1;
         }
 
         private void form_lvClones_MouseClick(object sender, MouseEventArgs e)
@@ -548,12 +554,12 @@ namespace SearchDirLists
                 return;
             }
 
-            ++nLVexttrClickIndex;
+            ++nLVclonesClickIndex;
 
             List<TreeNode> listTreeNodes = (List<TreeNode>)form_LV_Clones.SelectedItems[0].Tag;
 
             bPutPathInFindEditBox = true;
-            form_treeView_Browse.SelectedNode = listTreeNodes[nLVexttrClickIndex % listTreeNodes.Count];
+            form_treeView_Browse.SelectedNode = listTreeNodes[nLVclonesClickIndex % listTreeNodes.Count];
             form_treeView_Browse.Select();
         }
 
@@ -749,6 +755,11 @@ namespace SearchDirLists
 
         private void form_lv_Unique_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (bComparing)
+            {
+                return;
+            }
+
             if (form_lv_Unique.SelectedItems.Count == 0)
             {
                 return;

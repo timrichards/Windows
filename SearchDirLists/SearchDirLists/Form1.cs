@@ -855,6 +855,7 @@ namespace SearchDirLists
                 split_Clones.Panel2Collapsed = false;
                 split_TreeFind.Panel2Collapsed = false;
                 bComparing = false;
+                form_treeView_Browse_AfterSelect(form_treeView_Browse, new TreeViewEventArgs(form_treeView_Browse.SelectedNode));
             }
             else if (form_chk_Compare1.Checked)
             {
@@ -928,14 +929,15 @@ namespace SearchDirLists
                 {
                     s2 = t2.Nodes[s1.Name];
 
-                    bCompareSub &= Compare(s1, s2, bReverse);
-
-               //     bCompare &= (s1.Nodes.Count == s2.Nodes.Count);
+                    if (Compare(s1, s2, bReverse, bMin10M) == false)
+                    {
+                        bCompareSub = false;
+                    }
 
                     NodeDatum n2 = (NodeDatum)s2.Tag;
 
                     bCompare &= (n1.NumImmediateFiles == n2.NumImmediateFiles);
-                    bCompare &= (Math.Abs(n1.Length - n2.Length) <= 100 * 1024);
+                    bCompare &= (Math.Abs(n1.Length - n2.Length) <= (bMin10M ? (100 * 1024) : 0));
 
                     if (bCompare == false)
                     {
@@ -960,6 +962,7 @@ namespace SearchDirLists
                     }
                     else if (dictCompareDiffs.ContainsValue(r2) == false)
                     {
+                        Debug.Assert(false); // when does this get hit?
                         dictCompareDiffs.Add(new TreeNode(), r2);
                     }
                 }
@@ -1040,10 +1043,11 @@ namespace SearchDirLists
                     Compare(nodeCompare1, nodeCompare2);
                     Compare(nodeCompare2, nodeCompare1, true);
 
-                    if (dictCompareDiffs.Count == 0)
+                    if (dictCompareDiffs.Count < 15)
                     {
-                        Compare(nodeCompare1, nodeCompare2, bMin10M: true);
-                        Compare(nodeCompare2, nodeCompare1, true, bMin10M: true);
+                        dictCompareDiffs.Clear();
+                        Compare(nodeCompare1, nodeCompare2, bMin10M: false);
+                        Compare(nodeCompare2, nodeCompare1, true, bMin10M: false);
                     }
 
                     SortedDictionary<long, KeyValuePair<TreeNode, TreeNode>> dictSort = new SortedDictionary<long, KeyValuePair<TreeNode, TreeNode>>();
@@ -1094,6 +1098,8 @@ namespace SearchDirLists
                     split_TreeFind.Panel2Collapsed = true;
                     form_btn_Compare.Select();
                     bComparing = true;
+                    tree_compare1.SelectedNode = tree_compare1.Nodes[0];
+                    tree_compare2.SelectedNode = tree_compare2.Nodes[0];
                 }
             }
         }
@@ -1241,6 +1247,34 @@ namespace SearchDirLists
             {
                 form_btn_ComparePrev_Click(sender, e);
                 e.Handled = true;
+            }
+            else if (e.KeyChar == '!')
+            {
+                form_chk_Compare1.Checked = false;
+                form_lv_Unique.Select();
+            }
+        }
+
+        private void form_treeView_Browse_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar != '!')
+            {
+                return;
+            }
+
+            e.Handled = true;
+
+            if (bComparing)
+            {
+                form_chk_Compare1.Checked = false;          // leave Compare mode
+            }
+            else if (form_btn_Compare.Enabled == false)
+            {
+                form_chk_Compare1.Checked = true;           // enter first path to compare
+            }
+            else
+            {
+                form_btn_Compare_Click(sender, e);          // enter second path and start Compare mode
             }
         }
     }

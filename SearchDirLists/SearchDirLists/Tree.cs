@@ -335,6 +335,7 @@ namespace SearchDirLists
                     return;
                 }
 
+                //List<String> strLines = File.ReadAllLines(strSaveAs).Where(s => s.StartsWith("\t")).ToList();
                 using (StreamReader file = new StreamReader(strSaveAs))
                 {
                     String line = null;
@@ -390,7 +391,7 @@ namespace SearchDirLists
                         }
 
                         // directory
-                        int nIx = 5;
+                        int nIx = Utilities.nColLENGTH;
                         long nLength = 0;
 
                         if ((strArray.Length > nIx) && (strArray[nIx].Length > 0))
@@ -445,6 +446,8 @@ namespace SearchDirLists
         static Hashtable m_hashCache = null;
         static TreeSelectStatusDelegate m_statusCallback = null;
         static TreeSelectDoneDelegate m_doneCallback = null;
+        Thread m_threadSelect = null;
+        String m_strCompareDir = null;
 
         public TreeSelect(TreeNode node, Hashtable hashCache,
             TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
@@ -572,10 +575,10 @@ namespace SearchDirLists
             {
                 String[] strArrayFiles = listLines[i].Split('\t');
 
-                if ((strArrayFiles.Length > 5) && (strArrayFiles[5].Length > 0))
+                if ((strArrayFiles.Length > Utilities.nColLENGTH) && (strArrayFiles[Utilities.nColLENGTH].Length > 0))
                 {
-                    nLengthDebug += long.Parse(strArrayFiles[5]);
-                    strArrayFiles[5] = Utilities.FormatSize(strArrayFiles[5]);
+                    nLengthDebug += long.Parse(strArrayFiles[Utilities.nColLENGTH]);
+                    strArrayFiles[Utilities.nColLENGTH] = Utilities.FormatSize(strArrayFiles[Utilities.nColLENGTH]);
                 }
 
                 itemArray[i] = new ListViewItem(strArrayFiles);
@@ -603,7 +606,7 @@ namespace SearchDirLists
                 m_statusCallback(lvVol: new ListViewItem(new String[] { "Drive Type", arrDriveInfo[2] }));
                 m_statusCallback(lvVol: new ListViewItem(new String[] { "Name", arrDriveInfo[3] }));
                 m_statusCallback(lvVol: new ListViewItem(new String[] { "Root Directory", arrDriveInfo[4] }));
-                m_statusCallback(lvVol: new ListViewItem(new String[] { "Total Free Space", Utilities.FormatSize(arrDriveInfo[5], true) }));
+                m_statusCallback(lvVol: new ListViewItem(new String[] { "Total Free Space", Utilities.FormatSize(arrDriveInfo[Utilities.nColLENGTH], true) }));
                 m_statusCallback(lvVol: new ListViewItem(new String[] { "Total Size", Utilities.FormatSize(arrDriveInfo[6], true) }));
 
                 if (arrDriveInfo.Length == 8)
@@ -625,7 +628,6 @@ namespace SearchDirLists
             m_doneCallback(this);
         }
 
-        Thread m_threadSelect = null;
         static Thread m_staticThread = null;
 
         public void EndThread(bool bKill = false)
@@ -648,7 +650,6 @@ namespace SearchDirLists
             m_threadSelect = null;
         }
 
-        String m_strCompareDir = null;
         public void DoThreadFactory(String strCompareDir)
         {
             m_strCompareDir = strCompareDir;
@@ -957,9 +958,9 @@ namespace SearchDirLists
                 {
                     item.Name = item.SubItems[1].Text;
 
-                    if (item.SubItems.Count > 5)
+                    if (item.SubItems.Count > Utilities.nColLENGTH)
                     {
-                        item.Name += item.SubItems[5].Text;      // name + size
+                        item.Name += item.SubItems[Utilities.nColLENGTH].Text;      // name + size
                     }
                 }
             }

@@ -11,6 +11,9 @@ using System.Text;
 
 namespace SearchDirLists
 {
+    delegate void SavePathInfoStatusDelegate(int nIndex, String strText);
+    delegate void SavePathInfoDoneDelegate();
+
     class Utilities
     {
         public const String m_str_HEADER = "SearchDirLists 0.1";
@@ -23,6 +26,8 @@ namespace SearchDirLists
 
         public const String m_str_USING_FILE = "Using file.";
         public const String m_str_SAVED = "Saved.";
+
+        public const int nColLENGTH = 5;
 
         public static void CopyTo(Stream src, Stream dest)
         {
@@ -189,9 +194,6 @@ namespace SearchDirLists
             m_strInclude = lvItem.SubItems[4].Text;
         }
     }
-
-    delegate void SavePathInfoStatusDelegate(int nIndex, String strText);
-    delegate void SavePathInfoDoneDelegate();
 
     class SavePathInfo : Utilities
     {

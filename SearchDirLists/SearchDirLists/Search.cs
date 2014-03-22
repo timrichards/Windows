@@ -122,7 +122,7 @@ namespace SearchDirLists
 
                                 long nParse = 0;
 
-                                if (long.TryParse(strArray[5], out nParse) == false)
+                                if (long.TryParse(strArray[Utilities.nColLENGTH], out nParse) == false)
                                 {
                                     continue;
                                 }
@@ -133,9 +133,9 @@ namespace SearchDirLists
                             m_bFillPaths = true;
                         }
 
-                        if ((strArray.Length > 5) && (strArray[5].Length > 0))
+                        if ((strArray.Length > Utilities.nColLENGTH) && (strArray[Utilities.nColLENGTH].Length > 0))
                         {
-                            strArray[5] = FormatSize(strArray[5]);
+                            strArray[Utilities.nColLENGTH] = FormatSize(strArray[Utilities.nColLENGTH]);
                         }
 
                         m_listLVitems.Add(new ListViewItem(strArray)); 

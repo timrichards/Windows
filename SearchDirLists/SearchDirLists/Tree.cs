@@ -21,6 +21,7 @@ namespace SearchDirLists
         protected long m_nLengthSubnodes = 0;
         protected long m_nNumSubnodeFiles = 0;
         protected long m_nNumSubnodes = 0;
+        protected long m_nNumImmediateFiles = 0;
 
         static public DetailsDatum operator +(DetailsDatum in_datum1, DetailsDatum in_datum2)
         {
@@ -29,12 +30,14 @@ namespace SearchDirLists
             datum.m_nLengthSubnodes = in_datum1.m_nLengthSubnodes + in_datum2.m_nLengthSubnodes;
             datum.m_nNumSubnodeFiles = in_datum1.m_nNumSubnodeFiles + in_datum2.m_nNumSubnodeFiles;
             datum.m_nNumSubnodes = in_datum1.m_nNumSubnodes + in_datum2.m_nNumSubnodes;
+            datum.m_nNumImmediateFiles = in_datum1.m_nNumImmediateFiles + in_datum2.m_nNumImmediateFiles;
             return datum;
         }
 
         public long LengthSubnodes { get { return m_nLengthSubnodes; } set { m_nLengthSubnodes = value; } }
         public long NumSubnodeFiles { get { return m_nNumSubnodeFiles; } set { m_nNumSubnodeFiles = value; } }
         public long NumSubnodes { get { return m_nNumSubnodes; } set { m_nNumSubnodes = value; } }
+        public long NumImmediateFiles { get { return m_nNumImmediateFiles; } set { m_nNumImmediateFiles = value; } }
     }
 
     class NodeDatumLVitemHolder     // this was a way of setting the listview item in a different node after processing the first. Not used.
@@ -288,7 +291,8 @@ namespace SearchDirLists
             }
 
             nodeDatum.LengthSubnodes = (datum.LengthSubnodes += nodeDatum.Length);
-            nodeDatum.NumSubnodeFiles = (datum.NumSubnodeFiles += nodeDatum.LineNo - nodeDatum.PrevlineNo - 1);
+            nodeDatum.NumImmediateFiles = (nodeDatum.LineNo - nodeDatum.PrevlineNo - 1);
+            nodeDatum.NumSubnodeFiles = (datum.NumSubnodeFiles += nodeDatum.NumImmediateFiles);
             nodeDatum.NumSubnodes = (datum.NumSubnodes += treeNode.Nodes.Count);
 
             String strKey = nodeDatum.LengthSubnodes + " " + nodeDatum.NumSubnodeFiles + " " + nodeDatum.NumSubnodes;
@@ -913,6 +917,53 @@ namespace SearchDirLists
             m_bBrowseLoaded = true;
         }
 
+        public class LVitemNameComparer : IEqualityComparer<ListViewItem>
+        {
+
+            public bool Equals(ListViewItem x, ListViewItem y)
+            {
+                //Check whether the objects are the same object.  
+                if (Object.ReferenceEquals(x, y)) return true;
+
+                //Check whether the products' properties are equal.  
+                return x != null && y != null && x.Name.Equals(y.Name);
+            }
+
+            public int GetHashCode(ListViewItem obj)
+            {
+                //Get hash code for the Name field if it is not null.  
+                return obj.Name == null ? 0 : obj.Name.GetHashCode();
+            }
+
+            public static void NameItems(ListView.ListViewItemCollection list)
+            {
+                foreach (ListViewItem item in list)
+                {
+                    item.Name = item.SubItems[1].Text;
+
+                    if (item.SubItems.Count > 5)
+                    {
+                        item.Name += item.SubItems[5].Text;      // name + size
+                    }
+                }
+            }
+
+            public static void MarkItemsFrom1notIn2(ListView lv1, ListView lv2)
+            {
+                List<ListViewItem> list = lv1.Items.Cast<ListViewItem>().Except(lv2.Items.Cast<ListViewItem>(), new LVitemNameComparer()).ToList();
+
+                if (list.Count > 0)
+                {
+                    lv1.TopItem = list[0];
+                }
+
+                foreach (ListViewItem item in list)
+                {
+                    item.ForeColor = Color.Red;
+                }
+            }
+        }
+        
         void TreeSelectStatusCallback(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem lvVol = null, bool bSecondComparePane = false)
         {
             if (InvokeRequired) { Invoke(new TreeSelectStatusDelegate(TreeSelectStatusCallback), new object[] { lvItemDetails, itemArray, lvVol, bSecondComparePane }); return; }
@@ -934,6 +985,16 @@ namespace SearchDirLists
                 if (bSecondComparePane)
                 {
                     form_lv_FileCompare.Items.AddRange(itemArray);
+
+                    if (form_col_Filename.Text == form_colFileCompare.Text)
+                    {
+                        // Compare file listings
+
+                        LVitemNameComparer.NameItems(form_LV_Files.Items);
+                        LVitemNameComparer.NameItems(form_lv_FileCompare.Items);
+                        LVitemNameComparer.MarkItemsFrom1notIn2(form_LV_Files, form_lv_FileCompare);
+                        LVitemNameComparer.MarkItemsFrom1notIn2(form_lv_FileCompare, form_LV_Files);
+                    }
                 }
                 else
                 {

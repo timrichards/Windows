@@ -906,7 +906,6 @@ namespace SearchDirLists
                 bool bCompare = true;
                 bool bCompareSub = true;
                 TreeNode s2 = null;
-
                 NodeDatum n1 = (NodeDatum)s1.Tag;
 
                 if (bMin10M && (n1.LengthSubnodes < 10 * 1024 * 1024))
@@ -916,22 +915,14 @@ namespace SearchDirLists
                 {
                     s2 = t2.Nodes[s1.Name];
 
-                    if (Compare(s1, s2, bReverse) == false)
-                    {
-                        bCompareSub = false;
-                    }
+                    bCompareSub &= Compare(s1, s2, bReverse);
 
-                    if (s1.Nodes.Count != s2.Nodes.Count)
-                    {
-                        bCompare = false;
-                    }
+                    bCompare &= (s1.Nodes.Count == s2.Nodes.Count);
 
                     NodeDatum n2 = (NodeDatum)s2.Tag;
 
-                    if (Math.Abs(n1.Length - n2.Length) > 100 * 1024)
-                    {
-                        bCompare = false;
-                    }
+                    bCompare &= (n1.NumImmediateFiles == n2.NumImmediateFiles);
+                    bCompare &= (Math.Abs(n1.Length - n2.Length) <= 100 * 1024);
 
                     if (bCompare == false)
                     {
@@ -947,16 +938,16 @@ namespace SearchDirLists
                 {
                     s1.ForeColor = Color.Red;
 
-                    if (bReverse && (s2 != null))
+                    TreeNode r1 = bReverse ? s2 : s1;
+                    TreeNode r2 = bReverse ? s1 : s2;
+
+                    if (dictCompareDiffs.ContainsKey(r1) == false)
                     {
-                        if (dictCompareDiffs.ContainsKey(s2) == false)
-                        {
-                            dictCompareDiffs.Add(s2, s1);
-                        }
+                        dictCompareDiffs.Add(r1, r2);
                     }
-                    else if (dictCompareDiffs.ContainsKey(s1) == false)
+                    else if (dictCompareDiffs.ContainsValue(r2) == false)
                     {
-                        dictCompareDiffs.Add(s1, s2);
+                        dictCompareDiffs.Add(new TreeNode(), r2);
                     }
                 }
                 else if (bCompareSub == false)
@@ -1022,6 +1013,7 @@ namespace SearchDirLists
 
                     String strFile1 = ((RootNodeDatum)TreeSelect.GetParentRoot(nodeCompare1).Tag).StrFile;
                     String strFile2 = ((RootNodeDatum)TreeSelect.GetParentRoot(nodeCompare2).Tag).StrFile;
+
                     nodeCompare1 = (TreeNode)nodeCompare1.Clone();
                     nodeCompare2 = (TreeNode)nodeCompare2.Clone();
                     tree_compare1.Nodes.Add(nodeCompare1);
@@ -1034,10 +1026,44 @@ namespace SearchDirLists
                     dictCompareDiffs.Clear();
                     Compare(nodeCompare1, nodeCompare2);
                     Compare(nodeCompare2, nodeCompare1, true);
+
                     if (dictCompareDiffs.Count == 0)
                     {
                         Compare(nodeCompare1, nodeCompare2, bMin10M: true);
                         Compare(nodeCompare2, nodeCompare1, true, bMin10M: true);
+                    }
+
+                    SortedDictionary<long, KeyValuePair<TreeNode, TreeNode>> dictSort = new SortedDictionary<long, KeyValuePair<TreeNode, TreeNode>>();
+
+                    foreach (KeyValuePair<TreeNode, TreeNode> pair in dictCompareDiffs)
+                    {
+                        long l1 = 0, l2 = 0;
+
+                        if (pair.Key.Text.Length > 0)
+                        {
+                            l1 = ((NodeDatum)pair.Key.Tag).Length;
+                        }
+
+                        if (pair.Value != null)
+                        {
+                            l2 = ((NodeDatum)pair.Value.Tag).Length;
+                        }
+
+                        long lMax = Math.Max(l1, l2);
+
+                        while (dictSort.ContainsKey(lMax))
+                        {
+                            --lMax;
+                        }
+
+                        dictSort.Add(lMax, pair);
+                    }
+
+                    dictCompareDiffs.Clear();
+
+                    foreach (KeyValuePair<TreeNode, TreeNode> pair in dictSort.Values.Reverse())
+                    {
+                        dictCompareDiffs.Add(pair.Key, pair.Value);
                     }
 
                     split_FileCompare.Panel2Collapsed = false;
@@ -1053,6 +1079,7 @@ namespace SearchDirLists
                     nCompareIndex = -1;
                     split_Clones.Panel2Collapsed = true;
                     split_TreeFind.Panel2Collapsed = true;
+                    form_btn_Compare.Select();
                     bComparing = true;
                 }
             }
@@ -1066,31 +1093,36 @@ namespace SearchDirLists
             form_lv_FileCompare.Items.Clear();
             form_LV_Detail.Items.Clear();
             form_LV_DetailVol.Items.Clear();
-            tree_compare1.TopNode = tree_compare1.SelectedNode = dictCompareDiffs.ToArray()[nCompareIndex].Key;
-            tree_compare2.TopNode = tree_compare2.SelectedNode = dictCompareDiffs.ToArray()[nCompareIndex].Value;
-            form_col_Filename.Text = tree_compare1.SelectedNode.Text;
-            form_colFileCompare.Text = "";
 
-            if (tree_compare2.SelectedNode != null)
+            TreeNode treeNode = dictCompareDiffs.ToArray()[nCompareIndex].Key;
+
+            if (treeNode.Name.Length == 0)  // can't have a null key in the dictionary so there's a new TreeNode there
             {
-                form_colFileCompare.Text = tree_compare2.SelectedNode.Text;
+                treeNode = null;
             }
+
+            tree_compare1.TopNode = tree_compare1.SelectedNode = treeNode;
+            tree_compare2.TopNode = tree_compare2.SelectedNode = dictCompareDiffs.ToArray()[nCompareIndex].Value;
 
             if (tree_compare1.SelectedNode == null)
             {
+                form_col_Filename.Text = "";
                 tree_compare1.CollapseAll();
             }
             else
             {
+                form_col_Filename.Text = tree_compare1.SelectedNode.Text;
                 tree_compare1.SelectedNode.EnsureVisible();
             }
 
             if (tree_compare2.SelectedNode == null)
             {
+                form_colFileCompare.Text = "";
                 tree_compare2.CollapseAll();
             }
             else
             {
+                form_colFileCompare.Text = tree_compare2.SelectedNode.Text;
                 tree_compare2.SelectedNode.EnsureVisible();
             }
         }
@@ -1146,6 +1178,25 @@ namespace SearchDirLists
             else
             {
                 form_btn_Compare_Click(sender, e);
+            }
+        }
+
+        private void form_btn_Compare_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (bComparing == false)
+            {
+                return;
+            }
+
+            if (e.KeyChar == '.')
+            {
+                form_btn_CompareNext_Click(sender, e);
+                e.Handled = true;
+            }
+            else if (e.KeyChar == ',')
+            {
+                form_btn_ComparePrev_Click(sender, e);
+                e.Handled = true;
             }
         }
     }

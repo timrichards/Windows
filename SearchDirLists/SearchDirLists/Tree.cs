@@ -423,6 +423,22 @@ namespace SearchDirLists
         }
     }
 
+    // One tag at the first item, so the compare listviewer knows what the first listviewer's state is.
+    class LVitemFileTag
+    {
+        String m_strCompareDir;
+        long m_nNumFiles;   // equivalent to number of items in the listviewer. Not currently used
+
+        public String StrCompareDir { get { return m_strCompareDir; } }
+        public long NumFiles { get { return m_nNumFiles; } }
+
+        public LVitemFileTag(string strCompareDir, long nNumFiles)
+        {
+            m_strCompareDir = strCompareDir;
+            m_nNumFiles = nNumFiles;
+        }
+    }
+
     class TreeSelect
     {
         TreeNode m_treeNode = null;
@@ -550,7 +566,6 @@ namespace SearchDirLists
             listLines.Sort();
 
             ListViewItem[] itemArray = new ListViewItem[listLines.Count];
-
             long nLengthDebug = 0;
 
             for (int i = 0; i < listLines.Count; ++i)
@@ -566,6 +581,7 @@ namespace SearchDirLists
                 itemArray[i] = new ListViewItem(strArrayFiles);
             }
 
+            itemArray[0].Tag = new LVitemFileTag(m_strCompareDir, itemArray.Length);
             m_statusCallback(itemArray: itemArray, bSecondComparePane: bSecondComparePane);
 
             Debug.Assert(nLengthDebug == nodeDatum.Length);
@@ -601,7 +617,7 @@ namespace SearchDirLists
         {
             String strFile = Go_A();
 
-            if ((m_bComparing == false) && (strFile != null))
+            if ((m_strCompareDir == null) && (strFile != null))     // not comparing, and there is a source file: do directory detail
             {
                 Go_B(strFile);
             }
@@ -632,12 +648,12 @@ namespace SearchDirLists
             m_threadSelect = null;
         }
 
-        bool m_bComparing = false;
-        public void DoThreadFactory(bool bComparing)
+        String m_strCompareDir = null;
+        public void DoThreadFactory(String strCompareDir)
         {
-            m_bComparing = bComparing;
+            m_strCompareDir = strCompareDir;
 
-            if ((m_bComparing == false) && (m_staticThread != null) && m_staticThread.IsAlive)
+            if ((m_strCompareDir == null) && (m_staticThread != null) && m_staticThread.IsAlive)
             {
                 m_staticThread.Abort();
                 m_staticThread = null;
@@ -645,7 +661,7 @@ namespace SearchDirLists
 
             (m_threadSelect = new Thread(new ThreadStart(Go))).Start();
 
-            if ((m_bComparing == false) && (m_staticThread == null)) 
+            if ((m_strCompareDir == null) && (m_staticThread == null)) 
             {
                 m_staticThread = m_threadSelect;
             }
@@ -925,7 +941,7 @@ namespace SearchDirLists
                 //Check whether the objects are the same object.  
                 if (Object.ReferenceEquals(x, y)) return true;
 
-                //Check whether the products' properties are equal.  
+                //Check whether the objects' properties are equal.  
                 return x != null && y != null && x.Name.Equals(y.Name);
             }
 
@@ -980,31 +996,28 @@ namespace SearchDirLists
                 }
             }
 
+            ListView lv1 = bSecondComparePane ? form_lv_FileCompare : form_LV_Files;
+            ListView lv2 = bSecondComparePane ? form_LV_Files : form_lv_FileCompare;
+
             if (itemArray != null)
             {
-                if (bSecondComparePane)
-                {
-                    form_lv_FileCompare.Items.AddRange(itemArray);
+                lv1.Items.AddRange(itemArray);
 
-                    if (form_col_Filename.Text == form_colFileCompare.Text)
+                if ((lv1.Items.Count > 0) && (lv2.Items.Count > 0))
+                {
+                    LVitemFileTag tag1 = (LVitemFileTag)lv1.Items[0].Tag;
+                    LVitemFileTag tag2 = (LVitemFileTag)lv2.Items[0].Tag;
+
+                    if ((tag1.StrCompareDir == tag2.StrCompareDir))
                     {
                         // Compare file listings
 
-                        LVitemNameComparer.NameItems(form_LV_Files.Items);
-                        LVitemNameComparer.NameItems(form_lv_FileCompare.Items);
-                        LVitemNameComparer.MarkItemsFrom1notIn2(form_LV_Files, form_lv_FileCompare);
-                        LVitemNameComparer.MarkItemsFrom1notIn2(form_lv_FileCompare, form_LV_Files);
+                        LVitemNameComparer.NameItems(lv1.Items);
+                        LVitemNameComparer.NameItems(lv2.Items);
+                        LVitemNameComparer.MarkItemsFrom1notIn2(lv1, lv2);
+                        LVitemNameComparer.MarkItemsFrom1notIn2(lv2, lv1);
                     }
                 }
-                else
-                {
-                    form_LV_Files.Items.AddRange(itemArray);
-                }
-            }
-
-            if (lvVol != null)
-            {
-                form_LV_DetailVol.Items.Add(lvVol);
             }
         }
 
@@ -1050,12 +1063,12 @@ namespace SearchDirLists
             (m_threadTree = new Thread(new ThreadStart(tree.Go))).Start();
         }
 
-        private void DoTreeSelect(TreeNode node, bool bComparing = false)
+        private void DoTreeSelect(TreeNode node, String strCompareDir = null)
         {
             TreeSelect treeSelect = new TreeSelect(node, m_hashCache,
                 new TreeSelectStatusDelegate(TreeSelectStatusCallback), new TreeSelectDoneDelegate(TreeSelectDoneCallback));
 
-            treeSelect.DoThreadFactory(bComparing);
+            treeSelect.DoThreadFactory(strCompareDir);
         }
     }
 }

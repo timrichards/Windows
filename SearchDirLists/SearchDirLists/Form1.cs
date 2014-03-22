@@ -493,10 +493,23 @@ namespace SearchDirLists
                 {
                     form_LV_DetailVol.Items.Clear();
                 }
-
             }
 
-            DoTreeSelect(e.Node, new object[] { tree_compare1, tree_compare2}.Contains(sender));
+            String strFolder = null;
+
+            if (sender == tree_compare1)
+            {
+                strFolder = tree_compare1.SelectedNode.Text;
+            }
+            else if (sender == tree_compare2)
+            {
+                strFolder = tree_compare2.SelectedNode.Text;
+            }
+
+            Debug.Assert((new object[] { tree_compare1, tree_compare2 }.Contains(sender)) == bComparing);
+            Debug.Assert((strFolder != null) == bComparing);
+
+            DoTreeSelect(e.Node, strFolder);
 
             if (bComparing)
             {
@@ -917,7 +930,7 @@ namespace SearchDirLists
 
                     bCompareSub &= Compare(s1, s2, bReverse);
 
-                    bCompare &= (s1.Nodes.Count == s2.Nodes.Count);
+               //     bCompare &= (s1.Nodes.Count == s2.Nodes.Count);
 
                     NodeDatum n2 = (NodeDatum)s2.Tag;
 
@@ -1158,26 +1171,57 @@ namespace SearchDirLists
 
         private void form_lv_Unique_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar != '!')
+            {
+                ListView.SelectedListViewItemCollection lvSel = form_lv_Unique.SelectedItems;
+
+                if (lvSel.Count > 0)
+                {
+                    int nIx = form_lv_Unique.SelectedItems[0].Index;
+
+                    // accidentally trying to compare too early (using < and >)
+                    if (e.KeyChar == '.')
+                    {
+                        if (nIx < form_lv_Unique.Items.Count - 1)
+                        {
+                            form_lv_Unique.Items[nIx + 1].Selected = true;
+                        }
+
+                        e.Handled = true;
+                    }
+                    else if (e.KeyChar == ',')
+                    {
+                        if (nIx > 0)
+                        {
+                            form_lv_Unique.Items[nIx - 1].Selected = true;
+                        }
+
+                        e.Handled = true;
+                    }
+                }
+            }
+
+            if (e.Handled)
             {
                 return;
             }
-
-            if (bComparing)
+            else if (e.KeyChar == '!')
             {
-                Debug.Assert(false);
-                return;
-            }
+                if (bComparing)
+                {
+                    Debug.Assert(false);    // the listviewer shouldn't even be visible
+                    return;
+                }
 
-            e.Handled = true;
+                e.Handled = true;
 
-            if (form_btn_Compare.Enabled == false)
-            {
-                form_chk_Compare1.Checked = true;
-            }
-            else
-            {
-                form_btn_Compare_Click(sender, e);
+                if (form_btn_Compare.Enabled == false)
+                {
+                    form_chk_Compare1.Checked = true;
+                }
+                else
+                {
+                    form_btn_Compare_Click(sender, e);
+                }
             }
         }
 

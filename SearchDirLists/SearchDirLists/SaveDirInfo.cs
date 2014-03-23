@@ -178,7 +178,7 @@ namespace SearchDirLists
             }
         }
 
-        public String FormatString(String strDir = "", String strFile = "", DateTime? dtCreated = null, DateTime? dtModified = null, String strAttributes = "", long nLength = 0, String strError1 = "", String strError2 = "", int? nHeader = null)
+        public static String FormatString(String strDir = "", String strFile = "", DateTime? dtCreated = null, DateTime? dtModified = null, String strAttributes = "", long nLength = 0, String strError1 = "", String strError2 = "", int? nHeader = null)
         {
             String strLength = "";
             String strCreated = "";
@@ -205,11 +205,11 @@ namespace SearchDirLists
 
                 if (nHeader == 0)
                 {
-                    return "0" + '\t' + "1" + '\t' + "2" + '\t' + "3" + '\t' + "4" + '\t' + "5" + '\t' + "6" + '\t' + "7" + '\t' + "8" + '\t' + "9";
+                    return "2" + '\t' + "3" + '\t' + "4" + '\t' + "5" + '\t' + "6" + '\t' + "7" + '\t' + "8" + '\t' + "9";
                 }
                 else if (nHeader == 1)
                 {
-                    return "Ln #" + '\t' + "Ln Type" + '\t' + "Dir" + '\t' + "File" + '\t' + "Created" + '\t' + "Modded" + '\t' + "Attrib" + '\t' + "Length" + '\t' + "Error1" + '\t' + "Error2";
+                    return "Dir" + '\t' + "File" + '\t' + "Created" + '\t' + "Modded" + '\t' + "Attrib" + '\t' + "Length" + '\t' + "Error1" + '\t' + "Error2";
                 }
             }
 
@@ -236,7 +236,7 @@ namespace SearchDirLists
         protected const String m_strLINETYPE_Error_File = "r";
         protected const String m_strLINETYPE_Length = "L";
 
-        String FormatLine(String strLineType, long nLineNo, String strLine_in = null)
+        static String FormatLine(String strLineType, long nLineNo, String strLine_in = null)
         {
             String strLine_out = strLineType  + "\t" + nLineNo;
 
@@ -248,7 +248,7 @@ namespace SearchDirLists
             return strLine_out;
         }
 
-        protected void Convert(String strFile)
+        public static void ConvertFile(String strFile)
         {
             String strFile_01 = Path.GetDirectoryName(strFile) + Path.DirectorySeparatorChar +
                 Path.GetFileNameWithoutExtension(strFile) + "_01" + Path.GetExtension(strFile);
@@ -264,6 +264,7 @@ namespace SearchDirLists
                 {
                     String strLine = null;
                     long nLineNo = 0;       // lines number from one
+                    bool bAtErrors = false;
 
                     while ((strLine = file_in.ReadLine()) != null)
                     {
@@ -288,6 +289,8 @@ namespace SearchDirLists
                         else if (strLine == m_str_DRIVE_01)
                         {
                             Debug.Assert(nLineNo == 4);
+
+                            file_out.WriteLine(FormatLine(m_strLINETYPE_DriveInfo, nLineNo, m_str_DRIVE));
 
                             for (int i = 0; i < 8; ++i)
                             {
@@ -327,6 +330,7 @@ namespace SearchDirLists
                         else if (strLine == m_str_ERRORS_LOC_01)
                         {
                             file_out.WriteLine(FormatLine(m_strLINETYPE_Comment, nLineNo, m_str_ERRORS_LOC));
+                            bAtErrors = true;
                             continue;
                         }
                         else if (strLine.StartsWith(m_str_TOTAL_LENGTH_LOC_01))
@@ -340,7 +344,7 @@ namespace SearchDirLists
 
                         if (strDir.Length <= 0)
                         {
-                            file_out.WriteLine(FormatLine(m_strLINETYPE_File, nLineNo, strLine));
+                            file_out.WriteLine(FormatLine(bAtErrors ? m_strLINETYPE_Error_File : m_strLINETYPE_File, nLineNo, strLine));
                             continue;
                         }
                         else if (strDir.Contains(":" + Path.DirectorySeparatorChar) == false)
@@ -350,7 +354,7 @@ namespace SearchDirLists
                         }
 
                         // directory
-                        file_out.WriteLine(FormatLine(m_strLINETYPE_Directory, nLineNo, strLine));
+                        file_out.WriteLine(FormatLine(bAtErrors ? m_strLINETYPE_Error_Dir : m_strLINETYPE_Directory, nLineNo, strLine));
                     }
                 }
             }

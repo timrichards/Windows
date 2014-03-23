@@ -182,24 +182,41 @@ namespace SearchDirLists
 
         private bool ReadHeader()
         {
+            {
+                String strLine = File.ReadLines(m_strSaveAs).Take(1).ToArray()[0];
+
+                if (strLine == Utilities.m_str_HEADER_01)
+                {
+                    Console.WriteLine("Converting " + m_strSaveAs);
+                    Utilities.ConvertFile(m_strSaveAs);
+                    Console.WriteLine("File converted to " + Utilities.m_str_HEADER);
+                }
+            }
+
+            {
+                String strLine = File.ReadLines(m_strSaveAs).Take(1).ToArray()[0].Split('\t')[2];
+
+                Debug.Assert(strLine == Utilities.m_str_HEADER);
+
+                if (strLine != Utilities.m_str_HEADER)
+                {
+                    return false;
+                }
+            }
+
             using (StreamReader file = new StreamReader(m_strSaveAs))
             {
                 do
                 {
                     String line = file.ReadLine();
 
-                    if (line != Utilities.m_str_HEADER_01) break;
-
-                    line = file.ReadLine();
-
                     if (line == null) break;
-
-                    form_cb_VolumeName.Text = line;
                     line = file.ReadLine();
-
                     if (line == null) break;
-
-                    form_cb_Path.Text = line;
+                    form_cb_VolumeName.Text = line.Split('\t')[2];
+                    line = file.ReadLine();
+                    if (line == null) break;
+                    form_cb_Path.Text = line.Split('\t')[2];
                     return SaveFields(false);
                 }
                 while (false);

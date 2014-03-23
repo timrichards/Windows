@@ -325,7 +325,7 @@ namespace SearchDirLists
                 if (strLine == m_str_HEADER_01)
                 {
                     Console.WriteLine("Converting " + strSaveAs);
-                    Convert(strSaveAs);
+                    ConvertFile(strSaveAs);
                     Console.WriteLine("File converted to " + m_str_HEADER);
                 }
             }
@@ -656,7 +656,7 @@ namespace SearchDirLists
                 m_statusCallback(lvVol: new ListViewItem(new String[] { "Drive Type", arrDriveInfo[2] }));
                 m_statusCallback(lvVol: new ListViewItem(new String[] { "Name", arrDriveInfo[3] }));
                 m_statusCallback(lvVol: new ListViewItem(new String[] { "Root Directory", arrDriveInfo[4] }));
-                m_statusCallback(lvVol: new ListViewItem(new String[] { "Total Free Space", FormatSize(arrDriveInfo[nColLENGTH], true) }));
+                m_statusCallback(lvVol: new ListViewItem(new String[] { "Total Free Space", FormatSize(arrDriveInfo[5], true) }));
                 m_statusCallback(lvVol: new ListViewItem(new String[] { "Total Size", FormatSize(arrDriveInfo[6], true) }));
 
                 if (arrDriveInfo.Length == 8)

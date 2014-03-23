@@ -188,7 +188,7 @@ namespace SearchDirLists
                 {
                     String line = file.ReadLine();
 
-                    if (line != Utilities.m_str_HEADER) break;
+                    if (line != Utilities.m_str_HEADER_01) break;
 
                     line = file.ReadLine();
 
@@ -410,7 +410,7 @@ namespace SearchDirLists
                 {
                     foreach (ListViewItem.ListViewSubItem lvSubitem in lvItem.SubItems)
                     {
-                        fs.Write(lvSubitem.Text + "\t");
+                        fs.Write(lvSubitem.Text + '\t');
                     }
 
                     fs.WriteLine();
@@ -432,7 +432,7 @@ namespace SearchDirLists
             {
                 String strLine = fs.ReadLine();
 
-                if (strLine != Utilities.m_str_VOLUME_LIST_HEADER)
+                if (new String[] { Utilities.m_str_VOLUME_LIST_HEADER_01, Utilities.m_str_VOLUME_LIST_HEADER}.Contains(strLine) == false)
                 {
                     MessageBox.Show(openFileDialog1.FileName + " is not a valid volume list file.", "Load Volume List");
                     return;
@@ -967,7 +967,6 @@ namespace SearchDirLists
                     }
                     else if (dictCompareDiffs.ContainsValue(r2) == false)
                     {
-                        Debug.Assert(false); // when does this get hit?
                         dictCompareDiffs.Add(new TreeNode(), r2);
                     }
                 }

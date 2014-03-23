@@ -16,7 +16,15 @@ namespace SearchDirLists
 
     class Utilities
     {
-        public const String m_str_HEADER = "SearchDirLists 0.1";
+        public const String m_str_HEADER_01 = "SearchDirLists 0.1";
+        public const String m_str_START_01 = m_str_HEADER_01 + " START";
+        public const String m_str_END_01 = m_str_HEADER_01 + " END";
+        public const String m_str_ERRORS_LOC_01 = m_str_HEADER_01 + " ERRORS";
+        public const String m_str_TOTAL_LENGTH_LOC_01 = m_str_HEADER_01 + " LENGTH";
+        public const String m_str_DRIVE_01 = m_str_HEADER_01 + " DRIVE";
+        public const String m_str_VOLUME_LIST_HEADER_01 = m_str_HEADER_01 + " VOLUME LIST";
+
+        public const String m_str_HEADER = "SearchDirLists 0.2";
         public const String m_str_START = m_str_HEADER + " START";
         public const String m_str_END = m_str_HEADER + " END";
         public const String m_str_ERRORS_LOC = m_str_HEADER + " ERRORS";
@@ -27,7 +35,7 @@ namespace SearchDirLists
         public const String m_str_USING_FILE = "Using file.";
         public const String m_str_SAVED = "Saved.";
 
-        public const int nColLENGTH = 5;
+        public const int nColLENGTH = 7;
 
         public static void CopyTo(Stream src, Stream dest)
         {
@@ -169,6 +177,184 @@ namespace SearchDirLists
                 return "0 bytes";
             }
         }
+
+        public String FormatString(String strDir = "", String strFile = "", DateTime? dtCreated = null, DateTime? dtModified = null, String strAttributes = "", long nLength = 0, String strError1 = "", String strError2 = "", int? nHeader = null)
+        {
+            String strLength = "";
+            String strCreated = "";
+            String strModified = "";
+
+            if (nLength > 0)
+            {
+                strLength = nLength.ToString();
+            }
+
+            if (dtCreated != null)
+            {
+                strCreated = dtCreated.ToString();
+            }
+
+            if (dtModified != null)
+            {
+                strModified = dtModified.ToString();
+            }
+
+            if ((strDir + strFile + strCreated + strModified + strAttributes + strLength + strError1 + strError2).Length <= 0)
+            {
+                Debug.Assert(nHeader is int);
+
+                if (nHeader == 0)
+                {
+                    return "0" + '\t' + "1" + '\t' + "2" + '\t' + "3" + '\t' + "4" + '\t' + "5" + '\t' + "6" + '\t' + "7" + '\t' + "8" + '\t' + "9";
+                }
+                else if (nHeader == 1)
+                {
+                    return "Ln #" + '\t' + "Ln Type" + '\t' + "Dir" + '\t' + "File" + '\t' + "Created" + '\t' + "Modded" + '\t' + "Attrib" + '\t' + "Length" + '\t' + "Error1" + '\t' + "Error2";
+                }
+            }
+
+            if ((strDir.TrimEnd() != strDir) || (strFile.TrimEnd() != strFile))
+            {
+                strError1 += " Trailing whitespace";
+                strError1.Trim();
+            }
+
+            return (strDir + '\t' + strFile + '\t' + strCreated + '\t' + strModified + '\t' + strAttributes + '\t' + strLength + '\t' + strError1 + '\t' + strError2).TrimEnd();
+        }
+
+        protected const String m_strLINETYPE_Version = "V";
+        protected const String m_strLINETYPE_Nickname = "N";
+        protected const String m_strLINETYPE_Path = "P";
+        protected const String m_strLINETYPE_DriveInfo = "I";
+        protected const String m_strLINETYPE_Comment = "C";
+        protected const String m_strLINETYPE_Start = "S";
+        protected const String m_strLINETYPE_Directory = "D";
+        protected const String m_strLINETYPE_File = "F";
+        protected const String m_strLINETYPE_End = "E";
+        protected const String m_strLINETYPE_Blank = "B";
+        protected const String m_strLINETYPE_Error_Dir = "R";
+        protected const String m_strLINETYPE_Error_File = "r";
+        protected const String m_strLINETYPE_Length = "L";
+
+        String FormatLine(String strLineType, long nLineNo, String strLine_in = null)
+        {
+            String strLine_out = strLineType  + "\t" + nLineNo;
+
+            if (strLine_in != null)
+            {
+                strLine_out += '\t' + strLine_in;
+            }
+
+            return strLine_out;
+        }
+
+        protected void Convert(String strFile)
+        {
+            String strFile_01 = Path.GetDirectoryName(strFile) + Path.DirectorySeparatorChar +
+                Path.GetFileNameWithoutExtension(strFile) + "_01" + Path.GetExtension(strFile);
+
+            if (File.Exists(strFile_01) == false)
+            {
+                File.Move(strFile, strFile_01);
+            }
+
+            using (StreamWriter file_out = new StreamWriter(strFile))
+            {
+                using (StreamReader file_in = new StreamReader(strFile_01))
+                {
+                    String strLine = null;
+                    long nLineNo = 0;       // lines number from one
+
+                    while ((strLine = file_in.ReadLine()) != null)
+                    {
+                        ++nLineNo;
+
+                        if (strLine == m_str_HEADER_01)
+                        {
+                            Debug.Assert(nLineNo == 1);
+                            file_out.WriteLine(FormatLine(m_strLINETYPE_Version, nLineNo, m_str_HEADER));
+                            continue;
+                        }
+                        else if (nLineNo == 2)
+                        {
+                            file_out.WriteLine(FormatLine(m_strLINETYPE_Nickname, nLineNo, strLine));
+                            continue;
+                        }
+                        else if (nLineNo == 3)
+                        {
+                            file_out.WriteLine(FormatLine(m_strLINETYPE_Path, nLineNo, strLine));
+                            continue;
+                        }
+                        else if (strLine == m_str_DRIVE_01)
+                        {
+                            Debug.Assert(nLineNo == 4);
+
+                            for (int i = 0; i < 8; ++i)
+                            {
+                                strLine = file_in.ReadLine();
+                                file_out.WriteLine(FormatLine(m_strLINETYPE_DriveInfo, nLineNo, strLine));
+                                ++nLineNo;
+                            }
+
+                            continue;
+                        }
+                        else if (strLine == "")
+                        {
+                            file_out.WriteLine(FormatLine(m_strLINETYPE_Blank, nLineNo));
+                            continue;
+                        }
+                        else if (nLineNo == 14)
+                        {
+                            file_out.WriteLine(FormatLine(m_strLINETYPE_Comment, nLineNo, FormatString(nHeader: 0)));
+                            continue;
+                        }
+                        else if (nLineNo == 15)
+                        {
+                            file_out.WriteLine(FormatLine(m_strLINETYPE_Comment, nLineNo, FormatString(nHeader: 1)));
+                            continue;
+                        }
+                        else if (strLine.StartsWith(m_str_START_01))
+                        {
+                            Debug.Assert(nLineNo == 16);
+                            file_out.WriteLine(FormatLine(m_strLINETYPE_Start, nLineNo, m_str_START));
+                            continue;
+                        }
+                        else if (strLine.StartsWith(m_str_END_01))
+                        {
+                            file_out.WriteLine(FormatLine(m_strLINETYPE_End, nLineNo, m_str_END));
+                            continue;
+                        }
+                        else if (strLine == m_str_ERRORS_LOC_01)
+                        {
+                            file_out.WriteLine(FormatLine(m_strLINETYPE_Comment, nLineNo, m_str_ERRORS_LOC));
+                            continue;
+                        }
+                        else if (strLine.StartsWith(m_str_TOTAL_LENGTH_LOC_01))
+                        {
+                            file_out.WriteLine(FormatLine(m_strLINETYPE_Length, nLineNo, m_str_TOTAL_LENGTH_LOC));
+                            continue;
+                        }
+
+                        String[] strArray = strLine.Split('\t');
+                        String strDir = strArray[0];
+
+                        if (strDir.Length <= 0)
+                        {
+                            file_out.WriteLine(FormatLine(m_strLINETYPE_File, nLineNo, strLine));
+                            continue;
+                        }
+                        else if (strDir.Contains(":" + Path.DirectorySeparatorChar) == false)
+                        {
+                            Debug.Assert(false);        // all that's left is directories
+                            continue;
+                        }
+
+                        // directory
+                        file_out.WriteLine(FormatLine(m_strLINETYPE_Directory, nLineNo, strLine));
+                    }
+                }
+            }
+        }
     }
 
     class LVvolStrings
@@ -217,7 +403,7 @@ namespace SearchDirLists
 
         private void WriteHeader(TextWriter fs, String strVolumeName, String strPath)
         {
-            fs.WriteLine(m_str_HEADER);
+            fs.WriteLine(m_str_HEADER_01);
             // assume SaveFields() by caller because SaveFields() has already prompted user
             fs.WriteLine(strVolumeName);
             fs.WriteLine(strPath);
@@ -233,42 +419,6 @@ namespace SearchDirLists
             fs.WriteLine(driveInfo.TotalFreeSpace);
             fs.WriteLine(driveInfo.TotalSize);
             fs.WriteLine(driveInfo.VolumeLabel);
-        }
-
-        public String FormatString(String strDir = "", String strFile = "", DateTime? dtCreated = null, DateTime? dtModified = null, String strAttributes = "", long nLength = 0, String strError1 = "", String strError2 = "")
-        {
-            String strLength = "";
-            String strCreated = "";
-            String strModified = "";
-
-            if (nLength > 0)
-            {
-                strLength = nLength.ToString();
-            }
-
-            if (dtCreated != null)
-            {
-                strCreated = dtCreated.ToString();
-            }
-
-            if (dtModified != null)
-            {
-                strModified = dtModified.ToString();
-            }
-
-            if ((strDir + strFile + strCreated + strModified + strAttributes + strLength + strError1 + strError2).Length <= 0)
-            {
-                return "0" + "\t" + "1" + "\t" + "2" + "\t" + "3" + "\t" + "4" + "\t" + "5" + "\t" + "6" + "\t" + "7" + "\n"
-                     + "Dir" + "\t" + "File" + "\t" + "Created" + "\t" + "Modded" + "\t" + "Attrib" + "\t" + "Length" + "\t" + "Error1" + "\t" + "Error2";
-            }
-
-            if ((strDir.TrimEnd() != strDir) || (strFile.TrimEnd() != strFile))
-            {
-                strError1 += " Trailing whitespace";
-                strError1.Trim();
-            }
-
-            return (strDir + "\t" + strFile + "\t" + strCreated + "\t" + strModified + "\t" + strAttributes + "\t" + strLength + "\t" + strError1 + "\t" + strError2).TrimEnd();
         }
 
         bool CheckNTFS_chars(String strFile, bool bFile = true)

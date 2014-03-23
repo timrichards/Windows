@@ -130,6 +130,12 @@ namespace SearchDirLists
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.timer_killRed = new System.Windows.Forms.Timer(this.components);
             this.timer_blink = new System.Windows.Forms.Timer(this.components);
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader18 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader25 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader26 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader27 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_tabControl.SuspendLayout();
             this.form_tabPage_Volumes.SuspendLayout();
             this.form_tabPage_Search.SuspendLayout();
@@ -547,6 +553,8 @@ namespace SearchDirLists
             // form_lv_SearchResults
             // 
             this.form_lv_SearchResults.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader26,
+            this.columnHeader27,
             this.form_lv_SearchResults_col_Path,
             this.form_lv_SearchResults_col_Filename,
             this.form_lv_SearchResults_col_Created,
@@ -596,10 +604,12 @@ namespace SearchDirLists
             // form_lv_SearchResults_col_Error1
             // 
             this.form_lv_SearchResults_col_Error1.Text = "Error 1";
+            this.form_lv_SearchResults_col_Error1.Width = 195;
             // 
             // form_lv_SearchResults_col_Error2
             // 
             this.form_lv_SearchResults_col_Error2.Text = "Error 2";
+            this.form_lv_SearchResults_col_Error2.Width = 274;
             // 
             // form_lv_PathErrors
             // 
@@ -866,6 +876,8 @@ namespace SearchDirLists
             // form_LV_Files
             // 
             this.form_LV_Files.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader4,
+            this.columnHeader14,
             this.columnHeader3,
             this.form_col_Filename,
             this.columnHeader5,
@@ -925,6 +937,8 @@ namespace SearchDirLists
             // form_lv_FileCompare
             // 
             this.form_lv_FileCompare.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader18,
+            this.columnHeader25,
             this.columnHeader17,
             this.form_colFileCompare,
             this.columnHeader19,
@@ -1151,6 +1165,36 @@ namespace SearchDirLists
             this.timer_blink.Interval = 50;
             this.timer_blink.Tick += new System.EventHandler(this.timer_blink_Tick);
             // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Line Type";
+            this.columnHeader4.Width = 0;
+            // 
+            // columnHeader14
+            // 
+            this.columnHeader14.Text = "Line #";
+            this.columnHeader14.Width = 0;
+            // 
+            // columnHeader18
+            // 
+            this.columnHeader18.Text = "Line Type";
+            this.columnHeader18.Width = 0;
+            // 
+            // columnHeader25
+            // 
+            this.columnHeader25.Text = "Line  #";
+            this.columnHeader25.Width = 0;
+            // 
+            // columnHeader26
+            // 
+            this.columnHeader26.Text = "Line Type";
+            this.columnHeader26.Width = 0;
+            // 
+            // columnHeader27
+            // 
+            this.columnHeader27.Text = "Line #";
+            this.columnHeader27.Width = 0;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1309,6 +1353,12 @@ namespace SearchDirLists
         private System.Windows.Forms.ColumnHeader columnHeader22;
         private System.Windows.Forms.ColumnHeader columnHeader23;
         private System.Windows.Forms.ColumnHeader columnHeader24;
+        private System.Windows.Forms.ColumnHeader columnHeader26;
+        private System.Windows.Forms.ColumnHeader columnHeader27;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.ColumnHeader columnHeader14;
+        private System.Windows.Forms.ColumnHeader columnHeader18;
+        private System.Windows.Forms.ColumnHeader columnHeader25;
 
     }
 }

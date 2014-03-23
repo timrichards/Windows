@@ -290,7 +290,7 @@ namespace SearchDirLists
                         {
                             Debug.Assert(nLineNo == 4);
 
-                            file_out.WriteLine(FormatLine(m_strLINETYPE_DriveInfo, nLineNo, m_str_DRIVE));
+                            file_out.WriteLine(FormatLine(m_strLINETYPE_Comment, nLineNo, m_str_DRIVE));
 
                             for (int i = 0; i < 8; ++i)
                             {

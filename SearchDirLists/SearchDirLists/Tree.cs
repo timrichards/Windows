@@ -724,12 +724,13 @@ namespace SearchDirLists
         List<TreeNode> m_listTreeNodes = new List<TreeNode>();
         Thread m_threadTree = null;
         bool m_bThreadingTree = false;
+        List<TreeNode> m_listRootNodes = null;
 
         void TreeStatusCallback(TreeNode rootNode)
         {
-            if (InvokeRequired) { Invoke(new TreeStatusDelegate(TreeStatusCallback), new object[] { rootNode }); return; }
+      //      if (InvokeRequired) { Invoke(new TreeStatusDelegate(TreeStatusCallback), new object[] { rootNode }); return; }
 
-            form_treeView_Browse.Nodes.Add(rootNode);
+            m_listRootNodes.Add(rootNode);
         }
 
         // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
@@ -816,6 +817,7 @@ namespace SearchDirLists
         void TreeDoneCallback()
         {
             if (InvokeRequired) { Invoke(new TreeDoneDelegate(TreeDoneCallback)); return; }
+            DateTime dtStart = DateTime.Now;
 
             List<String> strHashList = new List<string>();
 
@@ -854,12 +856,16 @@ namespace SearchDirLists
             strHashList.Clear();
 
             SortedDictionary<long, List<TreeNode>> dictClones = new SortedDictionary<long, List<TreeNode>>();
+            Console.WriteLine("TreeDoneCallback() before FixClones() took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
 
-            foreach (TreeNode treeNode in form_treeView_Browse.Nodes)
+            DateTime dtStart_B = DateTime.Now;
+            foreach (TreeNode treeNode in m_listRootNodes)
             {
                 FixClones(dictClones, treeNode);
             }
+            Console.WriteLine("FixClones() took " + (DateTime.Now - dtStart_B).TotalMilliseconds / 1000.0 + " seconds.");
 
+            DateTime dtStart_C = DateTime.Now;
             IEnumerable<KeyValuePair<long, List<TreeNode>>> dictReverse = dictClones.Reverse();
             dictClones = null;
             List<ListViewItem> listLVitems = new List<ListViewItem>();
@@ -901,10 +907,12 @@ namespace SearchDirLists
             form_LV_Clones.Items.AddRange(listLVitems.ToArray());
             dictReverse = null;
             listLVitems = null;
+            Console.WriteLine("Clones() took " + (DateTime.Now - dtStart_C).TotalMilliseconds / 1000.0 + " seconds.");
 
 
             // Non-clones (unique)
 
+            DateTime dtStart_D = DateTime.Now;
             Debug.Assert(strHashList.Count == 0);
 
             foreach (String str in m_hashCache.Keys)
@@ -931,28 +939,32 @@ namespace SearchDirLists
                 NodeDatum nodeDatum = ((NodeDatum)treeNode.Tag);
                 long nLength = nodeDatum.LengthSubnodes;
 
-                if (dictUnique.ContainsKey(nLength))
+                if (nLength > 100 * 1024)
                 {
-                    if (dictUnique[nLength] != treeNode)
+                    if (dictUnique.ContainsKey(nLength))
                     {
-                        while (dictUnique.ContainsKey(nLength))
+                        if (dictUnique[nLength] != treeNode)
                         {
-                            --nLength;
-                        }
+                            while (dictUnique.ContainsKey(nLength))
+                            {
+                                --nLength;
+                            }
 
+                            dictUnique.Add(nLength, treeNode);
+                        }
+                    }
+                    else
+                    {
                         dictUnique.Add(nLength, treeNode);
                     }
                 }
-                else
-                {
-                    dictUnique.Add(nLength, treeNode);
-                }
-
                 m_hashCache.Remove(str);
             }
 
             Debug.Assert(m_hashCache.Count == form_LV_VolumesMain.Items.Count);     // fun trivia for now
+            Console.WriteLine("Uniques before reverse took " + (DateTime.Now - dtStart_D).TotalMilliseconds / 1000.0 + " seconds.");
 
+            DateTime dtStart_E = DateTime.Now;
             IEnumerable<KeyValuePair<long, TreeNode>> dictUniqueReverse = dictUnique.Reverse();
             List<ListViewItem> listLVunique = new List<ListViewItem>();
 
@@ -977,7 +989,16 @@ namespace SearchDirLists
             }
 
             form_lv_Unique.Items.AddRange(listLVunique.ToArray());
+            Console.WriteLine("Uniques after reverse took " + (DateTime.Now - dtStart_E).TotalMilliseconds / 1000.0 + " seconds.");
 
+            Console.WriteLine("TreeDoneCallback() took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
+            DateTime dtStart_A = DateTime.Now;
+
+            m_listRootNodes.Sort((x, y) => String.Compare(x.Text, y.Text));
+            form_treeView_Browse.Nodes.Clear();
+            form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
+            form_treeView_Browse.Enabled = true;
+            m_listRootNodes = null;
             m_bThreadingTree = false;
             m_bBrowseLoaded = true;
         }
@@ -1140,6 +1161,9 @@ namespace SearchDirLists
             form_LV_DetailVol.Items.Clear();
             form_LV_Clones.Items.Clear();
             m_hashCache.Clear();
+            m_listRootNodes = new List<TreeNode>();
+            form_treeView_Browse.Nodes.Add("Creating treeview...");
+            form_treeView_Browse.Enabled = false;
 
             Tree tree = new Tree(form_LV_VolumesMain.Items, m_hashCache, m_listTreeNodes, 
                 new TreeStatusDelegate(TreeStatusCallback), new TreeDoneDelegate(TreeDoneCallback));

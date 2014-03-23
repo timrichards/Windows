@@ -213,13 +213,30 @@ namespace SearchDirLists
                 }
             }
 
+            bool bDbgCheck = false;
+
             if ((strDir.TrimEnd() != strDir) || (strFile.TrimEnd() != strFile))
             {
                 strError1 += " Trailing whitespace";
                 strError1.Trim();
+                Debug.Assert(strDir.Length > 0 || strFile.Length > 0);
+                bDbgCheck = true;
             }
 
-            return (strDir + '\t' + strFile + '\t' + strCreated + '\t' + strModified + '\t' + strAttributes + '\t' + strLength + '\t' + strError1 + '\t' + strError2).TrimEnd();
+            String strRet = (strDir + '\t' + strFile + '\t' + strCreated + '\t' + strModified + '\t' + strAttributes + '\t' + strLength + '\t' + strError1 + '\t' + strError2).TrimEnd();
+
+            if (bDbgCheck)
+            {
+                String[] strArray = strRet.Split('\t');
+                DateTime dtParse;
+
+                if ((strArray.Length > 5) && strArray[5].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
+                {
+                    Debug.Assert(false);
+                }
+            }
+
+            return strRet;
         }
 
         protected const String m_strLINETYPE_Version = "V";
@@ -344,7 +361,14 @@ namespace SearchDirLists
 
                         if (strDir.Length <= 0)
                         {
-                            file_out.WriteLine(FormatLine(bAtErrors ? m_strLINETYPE_Error_File : m_strLINETYPE_File, nLineNo, strLine));
+                            DateTime dtParse;
+                            String strTab = "";
+                            if ((strArray.Length > 5) && strArray[5].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
+                            {
+                                strTab = "\t";
+                            }
+
+                            file_out.WriteLine(FormatLine(bAtErrors ? m_strLINETYPE_Error_File : m_strLINETYPE_File, nLineNo, strTab + strLine));
                             continue;
                         }
                         else if (strDir.Contains(":" + Path.DirectorySeparatorChar) == false)

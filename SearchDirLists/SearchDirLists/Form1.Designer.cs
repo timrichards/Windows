@@ -65,6 +65,8 @@ namespace SearchDirLists
             this.form_rad_Folder_None = new System.Windows.Forms.RadioButton();
             this.split_Volumes = new System.Windows.Forms.SplitContainer();
             this.form_lv_SearchResults = new ListViewEmbeddedControls.ListViewEx();
+            this.columnHeader26 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader27 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_SearchResults_col_Path = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_SearchResults_col_Filename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_SearchResults_col_Created = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -94,6 +96,8 @@ namespace SearchDirLists
             this.split_Detail = new System.Windows.Forms.SplitContainer();
             this.split_FileCompare = new System.Windows.Forms.SplitContainer();
             this.form_LV_Files = new ListViewEmbeddedControls.ListViewEx();
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_col_Filename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -103,6 +107,8 @@ namespace SearchDirLists
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_FileCompare = new ListViewEmbeddedControls.ListViewEx();
+            this.columnHeader18 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader25 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader17 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_colFileCompare = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader19 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -130,12 +136,7 @@ namespace SearchDirLists
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.timer_killRed = new System.Windows.Forms.Timer(this.components);
             this.timer_blink = new System.Windows.Forms.Timer(this.components);
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader18 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader25 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader26 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader27 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.form_btn_Copy = new System.Windows.Forms.Button();
             this.form_tabControl.SuspendLayout();
             this.form_tabPage_Volumes.SuspendLayout();
             this.form_tabPage_Search.SuspendLayout();
@@ -573,6 +574,16 @@ namespace SearchDirLists
             this.form_lv_SearchResults.UseCompatibleStateImageBehavior = false;
             this.form_lv_SearchResults.View = System.Windows.Forms.View.Details;
             // 
+            // columnHeader26
+            // 
+            this.columnHeader26.Text = "Line Type";
+            this.columnHeader26.Width = 0;
+            // 
+            // columnHeader27
+            // 
+            this.columnHeader27.Text = "Line #";
+            this.columnHeader27.Width = 0;
+            // 
             // form_lv_SearchResults_col_Path
             // 
             this.form_lv_SearchResults_col_Path.Text = "Path";
@@ -661,6 +672,7 @@ namespace SearchDirLists
             // 
             // form_tabPage_Browse
             // 
+            this.form_tabPage_Browse.Controls.Add(this.form_btn_Copy);
             this.form_tabPage_Browse.Controls.Add(this.form_chk_Compare1);
             this.form_tabPage_Browse.Controls.Add(this.form_btn_Compare);
             this.form_tabPage_Browse.Controls.Add(this.form_cb_TreeFind);
@@ -705,7 +717,7 @@ namespace SearchDirLists
             this.form_cb_TreeFind.FormattingEnabled = true;
             this.form_cb_TreeFind.Location = new System.Drawing.Point(221, 5);
             this.form_cb_TreeFind.Name = "form_cb_TreeFind";
-            this.form_cb_TreeFind.Size = new System.Drawing.Size(674, 21);
+            this.form_cb_TreeFind.Size = new System.Drawing.Size(638, 21);
             this.form_cb_TreeFind.TabIndex = 4;
             this.form_cb_TreeFind.SelectedIndexChanged += new System.EventHandler(this.form_cb_TreeFind_SelectedIndexChanged);
             this.form_cb_TreeFind.TextChanged += new System.EventHandler(this.form_edit_TreeFind_TextChanged);
@@ -897,6 +909,16 @@ namespace SearchDirLists
             this.form_LV_Files.UseCompatibleStateImageBehavior = false;
             this.form_LV_Files.View = System.Windows.Forms.View.Details;
             // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Line Type";
+            this.columnHeader4.Width = 0;
+            // 
+            // columnHeader14
+            // 
+            this.columnHeader14.Text = "Line #";
+            this.columnHeader14.Width = 0;
+            // 
             // columnHeader3
             // 
             this.columnHeader3.Text = "Path";
@@ -957,6 +979,16 @@ namespace SearchDirLists
             this.form_lv_FileCompare.TabIndex = 1;
             this.form_lv_FileCompare.UseCompatibleStateImageBehavior = false;
             this.form_lv_FileCompare.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader18
+            // 
+            this.columnHeader18.Text = "Line Type";
+            this.columnHeader18.Width = 0;
+            // 
+            // columnHeader25
+            // 
+            this.columnHeader25.Text = "Line  #";
+            this.columnHeader25.Width = 0;
             // 
             // columnHeader17
             // 
@@ -1137,9 +1169,9 @@ namespace SearchDirLists
             // form_btn_TreeFind
             // 
             this.form_btn_TreeFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btn_TreeFind.Location = new System.Drawing.Point(901, 3);
+            this.form_btn_TreeFind.Location = new System.Drawing.Point(865, 3);
             this.form_btn_TreeFind.Name = "form_btn_TreeFind";
-            this.form_btn_TreeFind.Size = new System.Drawing.Size(69, 23);
+            this.form_btn_TreeFind.Size = new System.Drawing.Size(58, 23);
             this.form_btn_TreeFind.TabIndex = 2;
             this.form_btn_TreeFind.Text = "Navigate";
             this.form_btn_TreeFind.UseVisualStyleBackColor = true;
@@ -1165,35 +1197,15 @@ namespace SearchDirLists
             this.timer_blink.Interval = 50;
             this.timer_blink.Tick += new System.EventHandler(this.timer_blink_Tick);
             // 
-            // columnHeader4
+            // form_btn_Copy
             // 
-            this.columnHeader4.Text = "Line Type";
-            this.columnHeader4.Width = 0;
-            // 
-            // columnHeader14
-            // 
-            this.columnHeader14.Text = "Line #";
-            this.columnHeader14.Width = 0;
-            // 
-            // columnHeader18
-            // 
-            this.columnHeader18.Text = "Line Type";
-            this.columnHeader18.Width = 0;
-            // 
-            // columnHeader25
-            // 
-            this.columnHeader25.Text = "Line  #";
-            this.columnHeader25.Width = 0;
-            // 
-            // columnHeader26
-            // 
-            this.columnHeader26.Text = "Line Type";
-            this.columnHeader26.Width = 0;
-            // 
-            // columnHeader27
-            // 
-            this.columnHeader27.Text = "Line #";
-            this.columnHeader27.Width = 0;
+            this.form_btn_Copy.Location = new System.Drawing.Point(929, 3);
+            this.form_btn_Copy.Name = "form_btn_Copy";
+            this.form_btn_Copy.Size = new System.Drawing.Size(41, 23);
+            this.form_btn_Copy.TabIndex = 7;
+            this.form_btn_Copy.Text = "Copy";
+            this.form_btn_Copy.UseVisualStyleBackColor = true;
+            this.form_btn_Copy.Click += new System.EventHandler(this.form_btn_Copy_Click);
             // 
             // Form1
             // 
@@ -1359,6 +1371,7 @@ namespace SearchDirLists
         private System.Windows.Forms.ColumnHeader columnHeader14;
         private System.Windows.Forms.ColumnHeader columnHeader18;
         private System.Windows.Forms.ColumnHeader columnHeader25;
+        private System.Windows.Forms.Button form_btn_Copy;
 
     }
 }

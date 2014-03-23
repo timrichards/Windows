@@ -544,7 +544,6 @@ namespace SearchDirLists
 
             Debug.Assert((new object[] { tree_compare1, tree_compare2 }.Contains(sender)) == bComparing);
             Debug.Assert((strFolder != null) == bComparing);
-
             DoTreeSelect(e.Node, strFolder);
 
             if (bComparing)
@@ -578,7 +577,7 @@ namespace SearchDirLists
                     bSecond = false;
                 }
 
-                Debug.Assert(bFirst || bSecond);    // just want to see what's obvious: listview item can't be in two lists
+                Debug.Assert(bFirst ^ bSecond);    // just want to see what's obvious: listview item can't be in two lists
             }
         }
 
@@ -599,6 +598,11 @@ namespace SearchDirLists
         {
             //use this code if amending this method to do more than just reset the clone click index.
             //if (bComparing)
+            //{
+            //    return;
+            //}
+
+            //if (form_lvClones.Focused == false)
             //{
             //    return;
             //}
@@ -821,6 +825,11 @@ namespace SearchDirLists
                 return;
             }
 
+            if (form_lv_Unique.Focused == false)
+            {
+                return;
+            }
+
             m_bPutPathInFindEditBox = true;
             TreeNode treeNode = form_treeView_Browse.SelectedNode = (TreeNode)form_lv_Unique.SelectedItems[0].Tag;
 
@@ -944,7 +953,7 @@ namespace SearchDirLists
                 TreeNode s2 = null;
                 NodeDatum n1 = (NodeDatum)s1.Tag;
 
-                if (bMin10M && (n1.LengthSubnodes < 10 * 1024 * 1024))
+                if (bMin10M && (n1.LengthSubnodes <= 10 * 1024 * 1024))
                 {
                 }
                 else if (t2.Nodes.ContainsKey(s1.Name))
@@ -959,7 +968,7 @@ namespace SearchDirLists
                     NodeDatum n2 = (NodeDatum)s2.Tag;
 
                     bCompare &= (n1.NumImmediateFiles == n2.NumImmediateFiles);
-                    bCompare &= (Math.Abs(n1.Length - n2.Length) <= (bMin10M ? (100 * 1024) : 0));
+                    bCompare &= (Math.Abs(n1.Length - n2.Length) <= (bMin10M ? (10 * 1024 * 1024) : 0));
 
                     if (bCompare == false)
                     {
@@ -1146,7 +1155,6 @@ namespace SearchDirLists
             }
             else
             {
-                form_col_Filename.Text = tree_compare1.SelectedNode.Text;
                 tree_compare1.SelectedNode.EnsureVisible();
             }
 
@@ -1157,7 +1165,6 @@ namespace SearchDirLists
             }
             else
             {
-                form_colFileCompare.Text = tree_compare2.SelectedNode.Text;
                 tree_compare2.SelectedNode.EnsureVisible();
             }
         }
@@ -1225,6 +1232,12 @@ namespace SearchDirLists
             {
                 return;
             }
+            else if (e.KeyChar == 3)
+            {
+                // Copy
+                Clipboard.SetText(form_cb_TreeFind.Text);
+                e.Handled = true;
+            }
             else if (e.KeyChar == '!')
             {
                 if (bComparing)
@@ -1267,12 +1280,26 @@ namespace SearchDirLists
             {
                 form_chk_Compare1.Checked = false;
                 form_lv_Unique.Select();
+                e.Handled = true;
+            }
+            else if (e.KeyChar == 3)
+            {
+                // Copy
+                Clipboard.SetText(form_cb_TreeFind.Text);
+                e.Handled = true;
             }
         }
 
         private void form_treeView_Browse_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar != '!')
+            if (e.KeyChar == 3)
+            {
+                // Copy
+                Clipboard.SetText(form_cb_TreeFind.Text);
+                e.Handled = true;
+                return;
+            }
+            else if (e.KeyChar != '!')
             {
                 return;
             }
@@ -1291,6 +1318,11 @@ namespace SearchDirLists
             {
                 form_btn_Compare_Click(sender, e);          // enter second path and start Compare mode
             }
+        }
+
+        private void form_btn_Copy_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(form_cb_TreeFind.Text);
         }
     }
 }

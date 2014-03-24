@@ -109,6 +109,7 @@ namespace SearchDirLists
         long m_nLineNo = 0;
         long m_nLength = 0;
         bool bUseShortPath = true;
+        object thisLock = new object();
 
         public Node(String in_str, long nLineNo, long nLength, RootNode rootNode)
         {
@@ -214,7 +215,12 @@ namespace SearchDirLists
             }
 
             treeNode.Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo, m_nLength);
-            listTreeNodes.Add(treeNode);
+
+            lock (thisLock)
+            {
+                listTreeNodes.Add(treeNode);
+            }
+
             return treeNode;
         }
     }
@@ -258,6 +264,7 @@ namespace SearchDirLists
         Hashtable m_hashCache = null;
         List<TreeNode> m_listTreeNodes = null;
         static TreeStatusDelegate m_statusCallback = null;
+        object thisLock = new object();
 
         public TreeRootNodeThread(LVvolStrings volStrings, Hashtable hashCache, List<TreeNode> listTreeNodes, TreeStatusDelegate statusCallback)
         {
@@ -295,15 +302,18 @@ namespace SearchDirLists
 
             String strKey = nodeDatum.LengthSubnodes + " " + nodeDatum.NumSubnodeFiles + " " + nodeDatum.NumSubnodes;
 
-            if (m_hashCache.ContainsKey(strKey))
+            lock (thisLock)
             {
-                ((List<TreeNode>)m_hashCache[strKey]).Add(treeNode);
-            }
-            else
-            {
-                List<TreeNode> listNodes = new List<TreeNode>();
-                listNodes.Add(treeNode);
-                m_hashCache.Add(strKey, listNodes);
+                if (m_hashCache.ContainsKey(strKey))
+                {
+                    ((List<TreeNode>)m_hashCache[strKey]).Add(treeNode);
+                }
+                else
+                {
+                    List<TreeNode> listNodes = new List<TreeNode>();
+                    listNodes.Add(treeNode);
+                    m_hashCache.Add(strKey, listNodes);
+                }
             }
 
             return datum;
@@ -360,7 +370,10 @@ namespace SearchDirLists
                     strBuilder.AppendLine(strArray[2]);
                 }
 
-                m_hashCache.Add("driveInfo" + strSaveAs, strBuilder.ToString().Trim());
+                lock (thisLock)
+                {
+                    m_hashCache.Add("driveInfo" + strSaveAs, strBuilder.ToString().Trim());
+                }
             }
 
             RootNode rootNode = new RootNode();
@@ -818,6 +831,31 @@ namespace SearchDirLists
             }
         }
 
+        void InsertSizeMarkers(List<ListViewItem> listLVitems)
+        {
+            bool bUnique = (listLVitems[0].Tag is TreeNode);
+            int nCount = listLVitems.Count;
+            int nInterval = (nCount < 100) ? 10 : (nCount < 1000) ? 25 : 100;
+            ListViewItem lvMarker = new ListViewItem();
+
+            lvMarker.BackColor = Color.DarkSlateGray;
+            lvMarker.ForeColor = Color.White;
+            lvMarker.Font = new Font(lvMarker.Font, FontStyle.Bold);
+            lvMarker.Tag = null;
+
+            for (int i = nCount - nInterval; i >= 0; i -= nInterval)
+            {
+                ListViewItem lvItem = (ListViewItem)lvMarker.Clone();
+                lvItem.Text = (Utilities.FormatSize(((NodeDatum)((TreeNode)(bUnique ? listLVitems[i].Tag : ((List<TreeNode>)listLVitems[i].Tag)[0])).Tag).LengthSubnodes, bNoDecimal: true));
+                listLVitems.Insert(i, lvItem);
+
+                if ((i > 0) && (i - nInterval < 0))
+                {
+                    i = nInterval;
+                }
+            }
+        }
+
         void TreeDoneCallback()
         {
             if (InvokeRequired) { Invoke(new TreeDoneDelegate(TreeDoneCallback)); return; }
@@ -898,9 +936,10 @@ namespace SearchDirLists
                 listLVitems.Add(lvItem);
             }
 
+            dictReverse = null;
+            InsertSizeMarkers(listLVitems);
             form_LV_Clones.Items.Clear();
             form_LV_Clones.Items.AddRange(listLVitems.ToArray());
-            dictReverse = null;
             listLVitems = null;
 
 
@@ -969,6 +1008,7 @@ namespace SearchDirLists
                 nodeDatum.m_lvCloneItem = lvItem;
             }
 
+            InsertSizeMarkers(listLVunique);
             form_lv_Unique.Items.Clear();
             form_lv_Unique.Items.AddRange(listLVunique.ToArray());
             m_listRootNodes.Sort((x, y) => String.Compare(x.Text, y.Text));
@@ -1193,7 +1233,7 @@ namespace SearchDirLists
 
             m_listRootNodes = new List<TreeNode>();
             TreeNode treeNode = new TreeNode("Creating treeview...        ");
-            treeNode.NodeFont = new Font(this.Font.Name, this.Font.Size, FontStyle.Bold | FontStyle.Underline);
+            treeNode.NodeFont = new Font(form_treeView_Browse.Font, FontStyle.Bold | FontStyle.Underline);
 
             form_treeView_Browse.Nodes.Add(treeNode);
             form_treeView_Browse.Enabled = false;

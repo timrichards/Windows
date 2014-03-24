@@ -153,17 +153,18 @@ namespace SearchDirLists
             return FormatSize(nLength, bBytes);
         }
 
-        public static String FormatSize(long nLength, bool bBytes = false)
+        public static String FormatSize(long nLength, bool bBytes = false, bool bNoDecimal = false)
         {
             double nT = nLength / 1024.0 / 1024.0 / 1024 / 1024 - .05;
             double nG = nLength / 1024.0 / 1024 / 1024 - .05;
             double nM = nLength / 1024.0 / 1024 - .05;
             double nK = nLength / 1024.0 - .05;     // Windows Explorer seems to not round
-            String strFormat = "###,##0.0";
+            String strFmt_big = "###,##0.0";
+            String strFormat = bNoDecimal ? "###,###" : strFmt_big;
             String strSz = "";
 
-            if (((int)nT) > 0) strSz = nT.ToString(strFormat) + " TB";
-            else if (((int)nG) > 0) strSz = nG.ToString(strFormat) + " GB";
+            if (((int)nT) > 0) strSz = nT.ToString(strFmt_big) + " TB";
+            else if (((int)nG) > 0) strSz = nG.ToString(strFmt_big) + " GB";
             else if (((int)nM) > 0) strSz = nM.ToString(strFormat) + " MB";
             else if (((int)nK) > 0) strSz = nK.ToString(strFormat) + " KB";
             else strSz = "1 KB";                    // Windows Explorer mins at 1K

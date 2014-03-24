@@ -562,6 +562,7 @@ namespace SearchDirLists
             if ((nodeDatum.m_lvCloneItem != null) && (nodeDatum.m_lvCloneItem.Selected == false))
             {
                 nodeDatum.m_lvCloneItem.Selected = true;
+                nodeDatum.m_lvCloneItem.Focused = true;
 
                 bool bFirst = true;
                 if (form_LV_Clones.Items.Contains(nodeDatum.m_lvCloneItem))
@@ -617,6 +618,15 @@ namespace SearchDirLists
                 return;
             }
 
+            if (form_LV_Clones.SelectedItems[0].Tag == null)
+            {
+                // marker item
+                ListViewItem lvItem = form_LV_Clones.Items[form_LV_Clones.SelectedItems[0].Index + 1];
+
+                lvItem.Selected = true;
+                lvItem.Focused = true;
+            }
+
             ++m_nLVclonesClickIndex;
 
             List<TreeNode> listTreeNodes = (List<TreeNode>)form_LV_Clones.SelectedItems[0].Tag;
@@ -642,11 +652,11 @@ namespace SearchDirLists
             {
                 String strNode = topNode.Text.ToLower();
 
+                pathLevel = path.ToLower().Split(Path.DirectorySeparatorChar);
+                nPathLevelLength = pathLevel.Length;
+
                 if (strNode.Contains(Path.DirectorySeparatorChar))
                 {
-                    pathLevel = path.ToLower().Split(Path.DirectorySeparatorChar);
-                    nPathLevelLength = pathLevel.Length;
-
                     int nCount = strNode.Count(c => c == Path.DirectorySeparatorChar);
 
                     for (int n = 0; n < nPathLevelLength - 1; ++n)
@@ -667,7 +677,7 @@ namespace SearchDirLists
 
                     if (nPathLevelLength > 1)
                     {
-                        Debug.Assert(nPathLevelLength > nCount + 1);
+                        Debug.Assert((nPathLevelLength - nCount) > 0);
                         nPathLevelLength -= nCount;
                     }
                 }
@@ -832,6 +842,11 @@ namespace SearchDirLists
 
             m_bPutPathInFindEditBox = true;
             TreeNode treeNode = form_treeView_Browse.SelectedNode = (TreeNode)form_lv_Unique.SelectedItems[0].Tag;
+
+            if (treeNode == null)
+            {
+                return;
+            }
 
             treeNode.Expand();
             form_treeView_Browse.TopNode = treeNode.Parent;
@@ -1212,6 +1227,7 @@ namespace SearchDirLists
                         if (nIx < form_lv_Unique.Items.Count - 1)
                         {
                             form_lv_Unique.Items[nIx + 1].Selected = true;
+                            form_lv_Unique.Items[nIx + 1].Focused = true;
                         }
 
                         e.Handled = true;
@@ -1221,6 +1237,7 @@ namespace SearchDirLists
                         if (nIx > 0)
                         {
                             form_lv_Unique.Items[nIx - 1].Selected = true;
+                            form_lv_Unique.Items[nIx - 1].Focused = true;
                         }
 
                         e.Handled = true;
@@ -1323,6 +1340,26 @@ namespace SearchDirLists
         private void form_btn_Copy_Click(object sender, EventArgs e)
         {
             Clipboard.SetText(form_cb_TreeFind.Text);
+        }
+
+        private void form_lv_Unique_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (form_lv_Unique.SelectedItems.Count <= 0)
+            {
+                return;
+            }
+
+            if (form_lv_Unique.SelectedItems[0].Tag == null)
+            {
+                // marker item
+                form_lv_Unique.Select();
+
+                ListViewItem lvItem = form_lv_Unique.Items[form_lv_Unique.SelectedItems[0].Index + 1];
+                
+                lvItem.Selected = true;
+                lvItem.Focused = true;
+                return;
+            }
         }
     }
 }

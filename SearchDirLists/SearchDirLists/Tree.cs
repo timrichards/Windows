@@ -823,7 +823,7 @@ namespace SearchDirLists
 
             bool bUnique = (listLVitems[0].Tag is TreeNode);
             int nCount = listLVitems.Count;
-            int nInterval = (nCount < 100) ? 10 : (nCount < 1000) ? 25 : 100;
+            int nInterval = (nCount < 100) ? 10 : (nCount < 1000) ? 25 : 50;
             ListViewItem lvMarker = new ListViewItem();
 
             lvMarker.BackColor = Color.DarkSlateGray;
@@ -831,16 +831,11 @@ namespace SearchDirLists
             lvMarker.Font = new Font(lvMarker.Font, FontStyle.Bold);
             lvMarker.Tag = null;
 
-            for (int i = nCount - nInterval; i >= 0; i -= nInterval)
+            for (int i = nCount - nCount % nInterval; i >= 0; i -= nInterval)       // Enter the Zeroth
             {
                 ListViewItem lvItem = (ListViewItem)lvMarker.Clone();
                 lvItem.Text = (Utilities.FormatSize(((NodeDatum)((TreeNode)(bUnique ? listLVitems[i].Tag : ((List<TreeNode>)listLVitems[i].Tag)[0])).Tag).LengthSubnodes, bNoDecimal: true));
                 listLVitems.Insert(i, lvItem);
-
-                if ((i > 0) && (i - nInterval < 0))     // Enter the Zeroth
-                {
-                    i = nInterval;
-                }
             }
         }
 
@@ -900,7 +895,7 @@ namespace SearchDirLists
                     continue;
                 }
 
-                if (nClones > 2)        // includes the subject
+                if (nClones > 2)        // includes the subject node: this line says don't but 2's all over the listviewer
                 {
                     str_nClones = nClones.ToString("###,###");
                 }
@@ -956,7 +951,7 @@ namespace SearchDirLists
 
                 if (nLength <= 100 * 1024)
                 {
-                    continue;       // not sorted yet
+                    continue;       // continue not break: not sorted yet
                 }
 
                 if (dictUnique.ContainsKey(nLength))

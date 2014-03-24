@@ -35,6 +35,7 @@ namespace SearchDirLists
             this.form_cb_Search = new System.Windows.Forms.ComboBox();
             this.form_tabControl = new System.Windows.Forms.TabControl();
             this.form_tabPage_Volumes = new System.Windows.Forms.TabPage();
+            this.form_btn_VolGroup = new System.Windows.Forms.Button();
             this.form_btn_LoadVolumeList = new System.Windows.Forms.Button();
             this.form_btn_SaveVolumeList = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
@@ -60,6 +61,8 @@ namespace SearchDirLists
             this.split_Volumes = new System.Windows.Forms.SplitContainer();
             this.label3 = new System.Windows.Forms.Label();
             this.form_tabPage_Browse = new System.Windows.Forms.TabPage();
+            this.form_lbl_VolGroup = new System.Windows.Forms.Label();
+            this.form_btn_Copy = new System.Windows.Forms.Button();
             this.form_chk_Compare1 = new System.Windows.Forms.CheckBox();
             this.form_btn_Compare = new System.Windows.Forms.Button();
             this.form_cb_TreeFind = new System.Windows.Forms.ComboBox();
@@ -81,8 +84,6 @@ namespace SearchDirLists
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.timer_killRed = new System.Windows.Forms.Timer(this.components);
             this.timer_blink = new System.Windows.Forms.Timer(this.components);
-            this.form_btn_Copy = new System.Windows.Forms.Button();
-            this.form_btn_VolGroup = new System.Windows.Forms.Button();
             this.timer_DoTree = new System.Windows.Forms.Timer(this.components);
             this.form_LV_VolumesMain = new ListViewEmbeddedControls.ListViewEx();
             this.form_lv_Volumes_col_Volume = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -188,7 +189,7 @@ namespace SearchDirLists
             this.form_btn_Search.Location = new System.Drawing.Point(892, 31);
             this.form_btn_Search.Name = "form_btn_Search";
             this.form_btn_Search.Size = new System.Drawing.Size(75, 23);
-            this.form_btn_Search.TabIndex = 1;
+            this.form_btn_Search.TabIndex = 7;
             this.form_btn_Search.Text = "Search String";
             this.form_btn_Search.UseVisualStyleBackColor = true;
             this.form_btn_Search.Click += new System.EventHandler(this.btnSearch_Click);
@@ -244,22 +245,35 @@ namespace SearchDirLists
             this.form_tabPage_Volumes.Text = "Volumes";
             this.form_tabPage_Volumes.UseVisualStyleBackColor = true;
             // 
+            // form_btn_VolGroup
+            // 
+            this.form_btn_VolGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_btn_VolGroup.Enabled = false;
+            this.form_btn_VolGroup.Location = new System.Drawing.Point(760, 142);
+            this.form_btn_VolGroup.Name = "form_btn_VolGroup";
+            this.form_btn_VolGroup.Size = new System.Drawing.Size(98, 23);
+            this.form_btn_VolGroup.TabIndex = 14;
+            this.form_btn_VolGroup.Text = "Volume Group";
+            this.form_btn_VolGroup.UseVisualStyleBackColor = true;
+            this.form_btn_VolGroup.Click += new System.EventHandler(this.form_btn_VolGroup_Click);
+            // 
             // form_btn_LoadVolumeList
             // 
             this.form_btn_LoadVolumeList.Location = new System.Drawing.Point(126, 143);
             this.form_btn_LoadVolumeList.Name = "form_btn_LoadVolumeList";
             this.form_btn_LoadVolumeList.Size = new System.Drawing.Size(51, 23);
-            this.form_btn_LoadVolumeList.TabIndex = 7;
+            this.form_btn_LoadVolumeList.TabIndex = 11;
             this.form_btn_LoadVolumeList.Text = "Load";
             this.form_btn_LoadVolumeList.UseVisualStyleBackColor = true;
             this.form_btn_LoadVolumeList.Click += new System.EventHandler(this.form_btn_LoadVolumeList_Click);
             // 
             // form_btn_SaveVolumeList
             // 
+            this.form_btn_SaveVolumeList.Enabled = false;
             this.form_btn_SaveVolumeList.Location = new System.Drawing.Point(74, 143);
             this.form_btn_SaveVolumeList.Name = "form_btn_SaveVolumeList";
             this.form_btn_SaveVolumeList.Size = new System.Drawing.Size(46, 23);
-            this.form_btn_SaveVolumeList.TabIndex = 6;
+            this.form_btn_SaveVolumeList.TabIndex = 10;
             this.form_btn_SaveVolumeList.Text = "Save";
             this.form_btn_SaveVolumeList.UseVisualStyleBackColor = true;
             this.form_btn_SaveVolumeList.Click += new System.EventHandler(this.form_btn_SaveVolumeList_Click);
@@ -277,10 +291,10 @@ namespace SearchDirLists
             // 
             this.form_btn_RemoveVolume.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.form_btn_RemoveVolume.Enabled = false;
-            this.form_btn_RemoveVolume.Location = new System.Drawing.Point(752, 142);
+            this.form_btn_RemoveVolume.Location = new System.Drawing.Point(864, 143);
             this.form_btn_RemoveVolume.Name = "form_btn_RemoveVolume";
             this.form_btn_RemoveVolume.Size = new System.Drawing.Size(103, 23);
-            this.form_btn_RemoveVolume.TabIndex = 8;
+            this.form_btn_RemoveVolume.TabIndex = 15;
             this.form_btn_RemoveVolume.Text = "Remove Volume";
             this.form_btn_RemoveVolume.UseVisualStyleBackColor = true;
             this.form_btn_RemoveVolume.Click += new System.EventHandler(this.form_btn_RemoveVolume_Click);
@@ -289,10 +303,10 @@ namespace SearchDirLists
             // 
             this.form_btn_ToggleInclude.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.form_btn_ToggleInclude.Enabled = false;
-            this.form_btn_ToggleInclude.Location = new System.Drawing.Point(861, 142);
+            this.form_btn_ToggleInclude.Location = new System.Drawing.Point(654, 143);
             this.form_btn_ToggleInclude.Name = "form_btn_ToggleInclude";
             this.form_btn_ToggleInclude.Size = new System.Drawing.Size(100, 23);
-            this.form_btn_ToggleInclude.TabIndex = 9;
+            this.form_btn_ToggleInclude.TabIndex = 13;
             this.form_btn_ToggleInclude.Text = "Toggle Include";
             this.form_btn_ToggleInclude.UseVisualStyleBackColor = true;
             this.form_btn_ToggleInclude.Click += new System.EventHandler(this.form_btn_ToggleInclude_Click);
@@ -303,7 +317,7 @@ namespace SearchDirLists
             this.form_btn_AddVolume.Location = new System.Drawing.Point(444, 99);
             this.form_btn_AddVolume.Name = "form_btn_AddVolume";
             this.form_btn_AddVolume.Size = new System.Drawing.Size(85, 66);
-            this.form_btn_AddVolume.TabIndex = 3;
+            this.form_btn_AddVolume.TabIndex = 12;
             this.form_btn_AddVolume.Text = "Add Volume";
             this.form_btn_AddVolume.UseVisualStyleBackColor = true;
             this.form_btn_AddVolume.Click += new System.EventHandler(this.form_btn_AddVolume_Click);
@@ -316,7 +330,7 @@ namespace SearchDirLists
             this.form_cb_VolumeName.Location = new System.Drawing.Point(111, 16);
             this.form_cb_VolumeName.Name = "form_cb_VolumeName";
             this.form_cb_VolumeName.Size = new System.Drawing.Size(850, 21);
-            this.form_cb_VolumeName.TabIndex = 0;
+            this.form_cb_VolumeName.TabIndex = 1;
             this.form_cb_VolumeName.SelectedIndexChanged += new System.EventHandler(this.form_cb_VolumeName_SelectedIndexChanged);
             // 
             // label4
@@ -336,9 +350,10 @@ namespace SearchDirLists
             this.form_btn_SavePathInfo.Location = new System.Drawing.Point(14, 357);
             this.form_btn_SavePathInfo.Name = "form_btn_SavePathInfo";
             this.form_btn_SavePathInfo.Size = new System.Drawing.Size(947, 40);
-            this.form_btn_SavePathInfo.TabIndex = 11;
+            this.form_btn_SavePathInfo.TabIndex = 0;
             this.form_btn_SavePathInfo.Text = "Save Directory Listings";
             this.form_btn_SavePathInfo.UseVisualStyleBackColor = true;
+            this.form_btn_SavePathInfo.EnabledChanged += new System.EventHandler(this.form_btn_SavePathInfo_EnabledChanged);
             this.form_btn_SavePathInfo.Click += new System.EventHandler(this.form_btn_SavePathInfo_Click);
             // 
             // form_btn_SaveAs
@@ -347,7 +362,7 @@ namespace SearchDirLists
             this.form_btn_SaveAs.Location = new System.Drawing.Point(933, 70);
             this.form_btn_SaveAs.Name = "form_btn_SaveAs";
             this.form_btn_SaveAs.Size = new System.Drawing.Size(28, 23);
-            this.form_btn_SaveAs.TabIndex = 5;
+            this.form_btn_SaveAs.TabIndex = 8;
             this.form_btn_SaveAs.Text = "...";
             this.form_btn_SaveAs.UseVisualStyleBackColor = true;
             this.form_btn_SaveAs.Click += new System.EventHandler(this.form_btn_SaveAs_Click);
@@ -380,7 +395,7 @@ namespace SearchDirLists
             this.form_cb_SaveAs.Location = new System.Drawing.Point(114, 72);
             this.form_cb_SaveAs.Name = "form_cb_SaveAs";
             this.form_cb_SaveAs.Size = new System.Drawing.Size(813, 21);
-            this.form_cb_SaveAs.TabIndex = 2;
+            this.form_cb_SaveAs.TabIndex = 7;
             // 
             // form_cb_Path
             // 
@@ -390,7 +405,7 @@ namespace SearchDirLists
             this.form_cb_Path.Location = new System.Drawing.Point(49, 43);
             this.form_cb_Path.Name = "form_cb_Path";
             this.form_cb_Path.Size = new System.Drawing.Size(878, 21);
-            this.form_cb_Path.TabIndex = 1;
+            this.form_cb_Path.TabIndex = 3;
             // 
             // label1
             // 
@@ -428,7 +443,7 @@ namespace SearchDirLists
             this.form_chk_SearchCase.Location = new System.Drawing.Point(122, 35);
             this.form_chk_SearchCase.Name = "form_chk_SearchCase";
             this.form_chk_SearchCase.Size = new System.Drawing.Size(96, 17);
-            this.form_chk_SearchCase.TabIndex = 8;
+            this.form_chk_SearchCase.TabIndex = 2;
             this.form_chk_SearchCase.Text = "Case Sensitive";
             this.form_chk_SearchCase.UseVisualStyleBackColor = true;
             this.form_chk_SearchCase.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_cb_Search_KeyPress);
@@ -439,7 +454,7 @@ namespace SearchDirLists
             this.form_btn_Search_FillPaths.Location = new System.Drawing.Point(8, 31);
             this.form_btn_Search_FillPaths.Name = "form_btn_Search_FillPaths";
             this.form_btn_Search_FillPaths.Size = new System.Drawing.Size(75, 23);
-            this.form_btn_Search_FillPaths.TabIndex = 7;
+            this.form_btn_Search_FillPaths.TabIndex = 1;
             this.form_btn_Search_FillPaths.Text = "Fill Paths";
             this.form_btn_Search_FillPaths.UseVisualStyleBackColor = true;
             // 
@@ -449,7 +464,7 @@ namespace SearchDirLists
             this.label6.Location = new System.Drawing.Point(224, 36);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(118, 13);
-            this.label6.TabIndex = 2;
+            this.label6.TabIndex = 3;
             this.label6.Text = "Folder special handling:";
             // 
             // form_rad_Folder_Innermost
@@ -458,7 +473,7 @@ namespace SearchDirLists
             this.form_rad_Folder_Innermost.Location = new System.Drawing.Point(484, 34);
             this.form_rad_Folder_Innermost.Name = "form_rad_Folder_Innermost";
             this.form_rad_Folder_Innermost.Size = new System.Drawing.Size(151, 17);
-            this.form_rad_Folder_Innermost.TabIndex = 5;
+            this.form_rad_Folder_Innermost.TabIndex = 6;
             this.form_rad_Folder_Innermost.Text = "Innermost that have length";
             this.form_rad_Folder_Innermost.UseVisualStyleBackColor = true;
             this.form_rad_Folder_Innermost.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_cb_Search_KeyPress);
@@ -469,7 +484,7 @@ namespace SearchDirLists
             this.form_rad_Folder_Outermost.Location = new System.Drawing.Point(405, 34);
             this.form_rad_Folder_Outermost.Name = "form_rad_Folder_Outermost";
             this.form_rad_Folder_Outermost.Size = new System.Drawing.Size(73, 17);
-            this.form_rad_Folder_Outermost.TabIndex = 4;
+            this.form_rad_Folder_Outermost.TabIndex = 5;
             this.form_rad_Folder_Outermost.Text = "Outermost";
             this.form_rad_Folder_Outermost.UseVisualStyleBackColor = true;
             this.form_rad_Folder_Outermost.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_cb_Search_KeyPress);
@@ -481,7 +496,7 @@ namespace SearchDirLists
             this.form_rad_Folder_None.Location = new System.Drawing.Point(348, 34);
             this.form_rad_Folder_None.Name = "form_rad_Folder_None";
             this.form_rad_Folder_None.Size = new System.Drawing.Size(51, 17);
-            this.form_rad_Folder_None.TabIndex = 3;
+            this.form_rad_Folder_None.TabIndex = 4;
             this.form_rad_Folder_None.TabStop = true;
             this.form_rad_Folder_None.Text = "None";
             this.form_rad_Folder_None.UseVisualStyleBackColor = true;
@@ -514,11 +529,12 @@ namespace SearchDirLists
             this.label3.Location = new System.Drawing.Point(0, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(59, 13);
-            this.label3.TabIndex = 1;
+            this.label3.TabIndex = 0;
             this.label3.Text = "Path Errors";
             // 
             // form_tabPage_Browse
             // 
+            this.form_tabPage_Browse.Controls.Add(this.form_lbl_VolGroup);
             this.form_tabPage_Browse.Controls.Add(this.form_btn_Copy);
             this.form_tabPage_Browse.Controls.Add(this.form_chk_Compare1);
             this.form_tabPage_Browse.Controls.Add(this.form_btn_Compare);
@@ -534,13 +550,36 @@ namespace SearchDirLists
             this.form_tabPage_Browse.UseVisualStyleBackColor = true;
             this.form_tabPage_Browse.Paint += new System.Windows.Forms.PaintEventHandler(this.form_tabPage_Browse_Paint);
             // 
+            // form_lbl_VolGroup
+            // 
+            this.form_lbl_VolGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_lbl_VolGroup.AutoSize = true;
+            this.form_lbl_VolGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.form_lbl_VolGroup.Location = new System.Drawing.Point(841, 8);
+            this.form_lbl_VolGroup.Name = "form_lbl_VolGroup";
+            this.form_lbl_VolGroup.Size = new System.Drawing.Size(74, 13);
+            this.form_lbl_VolGroup.TabIndex = 6;
+            this.form_lbl_VolGroup.Text = "Volume Group";
+            this.form_lbl_VolGroup.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // form_btn_Copy
+            // 
+            this.form_btn_Copy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_btn_Copy.Location = new System.Drawing.Point(794, 3);
+            this.form_btn_Copy.Name = "form_btn_Copy";
+            this.form_btn_Copy.Size = new System.Drawing.Size(41, 23);
+            this.form_btn_Copy.TabIndex = 5;
+            this.form_btn_Copy.Text = "Copy";
+            this.form_btn_Copy.UseVisualStyleBackColor = true;
+            this.form_btn_Copy.Click += new System.EventHandler(this.form_btn_Copy_Click);
+            // 
             // form_chk_Compare1
             // 
             this.form_chk_Compare1.AutoSize = true;
             this.form_chk_Compare1.Location = new System.Drawing.Point(70, 7);
             this.form_chk_Compare1.Name = "form_chk_Compare1";
             this.form_chk_Compare1.Size = new System.Drawing.Size(77, 17);
-            this.form_chk_Compare1.TabIndex = 6;
+            this.form_chk_Compare1.TabIndex = 1;
             this.form_chk_Compare1.Text = "Compare 1";
             this.form_chk_Compare1.UseVisualStyleBackColor = true;
             this.form_chk_Compare1.CheckedChanged += new System.EventHandler(this.form_chk_Compare1_CheckedChanged);
@@ -551,7 +590,7 @@ namespace SearchDirLists
             this.form_btn_Compare.Location = new System.Drawing.Point(153, 3);
             this.form_btn_Compare.Name = "form_btn_Compare";
             this.form_btn_Compare.Size = new System.Drawing.Size(62, 23);
-            this.form_btn_Compare.TabIndex = 5;
+            this.form_btn_Compare.TabIndex = 2;
             this.form_btn_Compare.Text = "Compare";
             this.form_btn_Compare.UseVisualStyleBackColor = true;
             this.form_btn_Compare.Click += new System.EventHandler(this.form_btn_Compare_Click);
@@ -564,8 +603,8 @@ namespace SearchDirLists
             this.form_cb_TreeFind.FormattingEnabled = true;
             this.form_cb_TreeFind.Location = new System.Drawing.Point(221, 5);
             this.form_cb_TreeFind.Name = "form_cb_TreeFind";
-            this.form_cb_TreeFind.Size = new System.Drawing.Size(638, 21);
-            this.form_cb_TreeFind.TabIndex = 4;
+            this.form_cb_TreeFind.Size = new System.Drawing.Size(503, 21);
+            this.form_cb_TreeFind.TabIndex = 3;
             this.form_cb_TreeFind.SelectedIndexChanged += new System.EventHandler(this.form_cb_TreeFind_SelectedIndexChanged);
             this.form_cb_TreeFind.TextChanged += new System.EventHandler(this.form_edit_TreeFind_TextChanged);
             this.form_cb_TreeFind.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_edit_TreeFind_KeyPress);
@@ -575,7 +614,7 @@ namespace SearchDirLists
             this.form_btn_TreeCollapse.Location = new System.Drawing.Point(3, 3);
             this.form_btn_TreeCollapse.Name = "form_btn_TreeCollapse";
             this.form_btn_TreeCollapse.Size = new System.Drawing.Size(61, 23);
-            this.form_btn_TreeCollapse.TabIndex = 3;
+            this.form_btn_TreeCollapse.TabIndex = 0;
             this.form_btn_TreeCollapse.Text = "Collapse";
             this.form_btn_TreeCollapse.UseVisualStyleBackColor = true;
             this.form_btn_TreeCollapse.Click += new System.EventHandler(this.form_btn_TreeCollapse_Click);
@@ -770,10 +809,10 @@ namespace SearchDirLists
             // form_btn_TreeFind
             // 
             this.form_btn_TreeFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btn_TreeFind.Location = new System.Drawing.Point(865, 3);
+            this.form_btn_TreeFind.Location = new System.Drawing.Point(730, 3);
             this.form_btn_TreeFind.Name = "form_btn_TreeFind";
             this.form_btn_TreeFind.Size = new System.Drawing.Size(58, 23);
-            this.form_btn_TreeFind.TabIndex = 2;
+            this.form_btn_TreeFind.TabIndex = 4;
             this.form_btn_TreeFind.Text = "Navigate";
             this.form_btn_TreeFind.UseVisualStyleBackColor = true;
             this.form_btn_TreeFind.Click += new System.EventHandler(this.form_btn_TreeFind_Click);
@@ -798,29 +837,6 @@ namespace SearchDirLists
             this.timer_blink.Interval = 50;
             this.timer_blink.Tick += new System.EventHandler(this.timer_blink_Tick);
             // 
-            // form_btn_Copy
-            // 
-            this.form_btn_Copy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btn_Copy.Location = new System.Drawing.Point(929, 3);
-            this.form_btn_Copy.Name = "form_btn_Copy";
-            this.form_btn_Copy.Size = new System.Drawing.Size(41, 23);
-            this.form_btn_Copy.TabIndex = 7;
-            this.form_btn_Copy.Text = "Copy";
-            this.form_btn_Copy.UseVisualStyleBackColor = true;
-            this.form_btn_Copy.Click += new System.EventHandler(this.form_btn_Copy_Click);
-            // 
-            // form_btn_VolGroup
-            // 
-            this.form_btn_VolGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btn_VolGroup.Enabled = false;
-            this.form_btn_VolGroup.Location = new System.Drawing.Point(648, 142);
-            this.form_btn_VolGroup.Name = "form_btn_VolGroup";
-            this.form_btn_VolGroup.Size = new System.Drawing.Size(98, 23);
-            this.form_btn_VolGroup.TabIndex = 12;
-            this.form_btn_VolGroup.Text = "Volume Group";
-            this.form_btn_VolGroup.UseVisualStyleBackColor = true;
-            this.form_btn_VolGroup.Click += new System.EventHandler(this.form_btn_VolGroup_Click);
-            // 
             // timer_DoTree
             // 
             this.timer_DoTree.Interval = 3000;
@@ -844,7 +860,7 @@ namespace SearchDirLists
             this.form_LV_VolumesMain.MultiSelect = false;
             this.form_LV_VolumesMain.Name = "form_LV_VolumesMain";
             this.form_LV_VolumesMain.Size = new System.Drawing.Size(973, 179);
-            this.form_LV_VolumesMain.TabIndex = 10;
+            this.form_LV_VolumesMain.TabIndex = 16;
             this.form_LV_VolumesMain.UseCompatibleStateImageBehavior = false;
             this.form_LV_VolumesMain.View = System.Windows.Forms.View.Details;
             this.form_LV_VolumesMain.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.form_lv_Volumes_ItemSelectionChanged);
@@ -852,12 +868,12 @@ namespace SearchDirLists
             // form_lv_Volumes_col_Volume
             // 
             this.form_lv_Volumes_col_Volume.Text = "Volume name";
-            this.form_lv_Volumes_col_Volume.Width = 200;
+            this.form_lv_Volumes_col_Volume.Width = 186;
             // 
             // form_lv_Volumes_col_Path
             // 
             this.form_lv_Volumes_col_Path.Text = "Path";
-            this.form_lv_Volumes_col_Path.Width = 134;
+            this.form_lv_Volumes_col_Path.Width = 146;
             // 
             // form_lv_Volumes_col_SaveToFile
             // 
@@ -867,17 +883,17 @@ namespace SearchDirLists
             // form_lv_Volumes_col_Status
             // 
             this.form_lv_Volumes_col_Status.Text = "Status";
-            this.form_lv_Volumes_col_Status.Width = 94;
+            this.form_lv_Volumes_col_Status.Width = 139;
             // 
             // form_lv_Volumes_col_IncludeInSearch
             // 
             this.form_lv_Volumes_col_IncludeInSearch.Text = "Include in search";
-            this.form_lv_Volumes_col_IncludeInSearch.Width = 97;
+            this.form_lv_Volumes_col_IncludeInSearch.Width = 107;
             // 
             // columnHeader28
             // 
             this.columnHeader28.Text = "Volume Group";
-            this.columnHeader28.Width = 252;
+            this.columnHeader28.Width = 201;
             // 
             // form_lv_SearchResults
             // 
@@ -965,7 +981,7 @@ namespace SearchDirLists
             this.form_lv_PathErrors.MultiSelect = false;
             this.form_lv_PathErrors.Name = "form_lv_PathErrors";
             this.form_lv_PathErrors.Size = new System.Drawing.Size(981, 69);
-            this.form_lv_PathErrors.TabIndex = 0;
+            this.form_lv_PathErrors.TabIndex = 1;
             this.form_lv_PathErrors.UseCompatibleStateImageBehavior = false;
             this.form_lv_PathErrors.View = System.Windows.Forms.View.Details;
             // 
@@ -1169,7 +1185,7 @@ namespace SearchDirLists
             this.form_LV_DetailVol.Name = "form_LV_DetailVol";
             this.form_LV_DetailVol.Scrollable = false;
             this.form_LV_DetailVol.Size = new System.Drawing.Size(75, 198);
-            this.form_LV_DetailVol.TabIndex = 1;
+            this.form_LV_DetailVol.TabIndex = 0;
             this.form_LV_DetailVol.UseCompatibleStateImageBehavior = false;
             this.form_LV_DetailVol.View = System.Windows.Forms.View.Details;
             // 
@@ -1195,7 +1211,7 @@ namespace SearchDirLists
             this.form_lv_Unique.MultiSelect = false;
             this.form_lv_Unique.Name = "form_lv_Unique";
             this.form_lv_Unique.Size = new System.Drawing.Size(240, 187);
-            this.form_lv_Unique.TabIndex = 2;
+            this.form_lv_Unique.TabIndex = 0;
             this.form_lv_Unique.UseCompatibleStateImageBehavior = false;
             this.form_lv_Unique.View = System.Windows.Forms.View.Details;
             this.form_lv_Unique.SelectedIndexChanged += new System.EventHandler(this.form_lv_Unique_SelectedIndexChanged);
@@ -1220,7 +1236,7 @@ namespace SearchDirLists
             this.form_LV_Clones.MultiSelect = false;
             this.form_LV_Clones.Name = "form_LV_Clones";
             this.form_LV_Clones.Size = new System.Drawing.Size(240, 183);
-            this.form_LV_Clones.TabIndex = 1;
+            this.form_LV_Clones.TabIndex = 0;
             this.form_LV_Clones.UseCompatibleStateImageBehavior = false;
             this.form_LV_Clones.View = System.Windows.Forms.View.Details;
             this.form_LV_Clones.SelectedIndexChanged += new System.EventHandler(this.form_lvClones_SelectedIndexChanged);
@@ -1404,6 +1420,7 @@ namespace SearchDirLists
         private System.Windows.Forms.Button form_btn_VolGroup;
         private System.Windows.Forms.ColumnHeader columnHeader28;
         private System.Windows.Forms.Timer timer_DoTree;
+        private System.Windows.Forms.Label form_lbl_VolGroup;
 
     }
 }

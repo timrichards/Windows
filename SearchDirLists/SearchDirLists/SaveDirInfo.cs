@@ -11,8 +11,8 @@ using System.Text;
 
 namespace SearchDirLists
 {
-    delegate void SavePathInfoStatusDelegate(int nIndex, String strText);
-    delegate void SavePathInfoDoneDelegate();
+    delegate void SaveDirListingsStatusDelegate(int nIndex, String strText);
+    delegate void SaveDirListingsDoneDelegate(int nFilesWritten);
 
     class Utilities
     {
@@ -413,16 +413,16 @@ namespace SearchDirLists
         }
     }
 
-    class SavePathInfo : Utilities
+    class SaveDirListings : Utilities
     {
         List<LVvolStrings> m_list_lvVolStrings = new List<LVvolStrings>();
         long m_nTotalLength = 0;
         List<String> m_list_Errors = new List<string>();
-        SavePathInfoStatusDelegate m_callbackStatus = null;
-        SavePathInfoDoneDelegate m_callbackDone = null;
+        SaveDirListingsStatusDelegate m_callbackStatus = null;
+        SaveDirListingsDoneDelegate m_callbackDone = null;
 
-        public SavePathInfo(ListView.ListViewItemCollection lvItems,
-            SavePathInfoStatusDelegate callbackStatus, SavePathInfoDoneDelegate callbackDone)
+        public SaveDirListings(ListView.ListViewItemCollection lvItems,
+            SaveDirListingsStatusDelegate callbackStatus, SaveDirListingsDoneDelegate callbackDone)
         {
             foreach (ListViewItem lvItem in lvItems)
             {
@@ -678,11 +678,7 @@ namespace SearchDirLists
                 return false;
             }
 
-            //String strSavePathInfo = form_btn_SavePathInfo.Text;
             String strPathOrig = Directory.GetCurrentDirectory();
-
-            //form_btn_SavePathInfo.Text = "Running Task...";
-            //this.Enabled = false;
 
             m_list_Errors.Clear();
             m_nTotalLength = 0;
@@ -708,15 +704,14 @@ namespace SearchDirLists
             }
 
             Directory.SetCurrentDirectory(strPathOrig);
-            m_callbackDone();
-            //form_btn_SavePathInfo.Text = strSavePathInfo;
-            //this.Enabled = true;
             return true;
         }
 
         public void Go()
         {
             int nIndex = -1;
+
+            int nFilesWritten = 0;
 
             foreach (LVvolStrings lvStrings in m_list_lvVolStrings)
             {
@@ -732,50 +727,58 @@ namespace SearchDirLists
                 if (SaveDirectoryListing(lvStrings))
                 {
                     m_callbackStatus(nIndex, m_str_SAVED);
-                    MessageBox.Show("Completed.                           ", "Save Path Info");
+                    ++nFilesWritten;
                 }
                 else
                 {
                     m_callbackStatus(nIndex, "Not saved.");
                 }
             }
+
+            m_callbackDone(nFilesWritten);
         }
     }
 
     public partial class Form1 : Form
     {
-        private bool m_bThreadingSavePath = false;
+        private bool m_bThreadingSaveDirListings = false;
 
-        void SavePathInfoStatusCallback(int nIndex, String strText)
+        void SaveDirListingsStatusCallback(int nIndex, String strText)
         {
-            if (InvokeRequired) { Invoke(new SavePathInfoStatusDelegate(SavePathInfoStatusCallback), new object[] { nIndex, strText }); return; }
+            if (InvokeRequired) { Invoke(new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback), new object[] { nIndex, strText }); return; }
 
             form_LV_VolumesMain.Items[nIndex].SubItems[3].Text = strText;
         }
 
-        void SavePathInfoDoneCallback()
+        void SaveDirListingsDoneCallback(int nFilesWritten)
         {
-            if (InvokeRequired) { Invoke(new SavePathInfoDoneDelegate(SavePathInfoDoneCallback)); return; }
+            if (InvokeRequired) { Invoke(new SaveDirListingsDoneDelegate(SaveDirListingsDoneCallback), new object[] { nFilesWritten }); return; }
 
-            m_bThreadingSavePath = false;
-            m_bBrowseLoaded = false;
+            if (nFilesWritten > 0)
+            {
+                m_bBrowseLoaded = false;
+                DoTree(true);
+            }
+
+            MessageBox.Show("Completed. " + nFilesWritten + " files written.               ", "Save Directory Listings");
+            m_bThreadingSaveDirListings = false;
         }
 
-        private void DoSavePathInfo()
+        private void DoSaveDirListings()
         {
-            if (m_bThreadingSavePath)
+            if (m_bThreadingSaveDirListings)
             {
-                MessageBox.Show("Already in progress.                       ", "Save Path Info");
+                MessageBox.Show("Already in progress.                       ", "Save Directory Listings");
                 return;
             }
 
-            SavePathInfo savePathInfo = new SavePathInfo(form_LV_VolumesMain.Items,
-                new SavePathInfoStatusDelegate(SavePathInfoStatusCallback),
-                new SavePathInfoDoneDelegate(SavePathInfoDoneCallback));
+            SaveDirListings saveDirListings = new SaveDirListings(form_LV_VolumesMain.Items,
+                new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback),
+                new SaveDirListingsDoneDelegate(SaveDirListingsDoneCallback));
 
-            m_bThreadingSavePath = true;
+            m_bThreadingSaveDirListings = true;
 
-            new Thread(new ThreadStart(savePathInfo.Go)).Start();
+            new Thread(new ThreadStart(saveDirListings.Go)).Start();
         }
     }
 }

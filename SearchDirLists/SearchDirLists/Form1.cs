@@ -33,14 +33,13 @@ namespace SearchDirLists
         String m_strBtnCompareOrigText = null;
         String m_strChkCompareOrigText = null;
         bool bComparing = false;
-        Color clrBlink = Color.DarkTurquoise;
-        int nBlink = 0;
         Dictionary<TreeNode, TreeNode> dictCompareDiffs = new Dictionary<TreeNode, TreeNode>();
+        Blink blink = null;
 
         public Form1()
         {
             InitializeComponent();
-            Console.WindowWidth = Console.LargestWindowWidth;
+            blink = new Blink(timer_blink, form_cb_TreeFind);
         }
 
 #region Selected Index Changed
@@ -397,8 +396,7 @@ namespace SearchDirLists
 
         private void form_btn_SavePathInfo_Click(object sender, EventArgs e)
         {
-            DoSavePathInfo();
-            DoTree(true);
+            DoSaveDirListings();
         }
 
         private void form_btn_SaveVolumeList_Click(object sender, EventArgs e)
@@ -550,6 +548,8 @@ namespace SearchDirLists
             {
                 return;
             }
+
+            form_lbl_VolGroup.Text = ((RootNodeDatum)TreeSelect.GetParentRoot(e.Node).Tag).StrVolumeGroup;
 
             if (m_bPutPathInFindEditBox)
             {
@@ -777,11 +777,13 @@ namespace SearchDirLists
 
             if ((m_arrayTreeFound != null) && (m_arrayTreeFound.Length > 0))
             {
+                blink.Go(Once: true);
                 form_treeView_Browse.SelectedNode = m_arrayTreeFound[m_nTreeFindTextChanged % m_arrayTreeFound.Length];
                 ++m_nTreeFindTextChanged;
             }
             else
             {
+                blink.Go(clr: Color.Red, Once: true);
                 m_nTreeFindTextChanged = 0;
             }
         }
@@ -790,7 +792,7 @@ namespace SearchDirLists
         {
             if (new Keys[] { Keys.Enter, Keys.Return }.Contains((Keys)e.KeyChar))
             {
-                m_bPutPathInFindEditBox = false;
+                m_bPutPathInFindEditBox = false;    // because the search term may not be the complete path: Volume Group gets updated though.
                 form_btn_TreeFind_Click(sender, e);
                 e.Handled = true;
             }
@@ -879,9 +881,6 @@ namespace SearchDirLists
 
         private void form_chk_Compare1_CheckedChanged(object sender, EventArgs e)
         {
-            form_cb_TreeFind.BackColor = Color.Empty;
-            nBlink = 0;
-
             if (bComparing)
             {
                 form_chk_Compare1.Text = m_strChkCompareOrigText;
@@ -907,7 +906,6 @@ namespace SearchDirLists
             }
             else if (form_chk_Compare1.Checked)
             {
-                clrBlink = Color.DarkTurquoise;         // has to go here
                 m_strCompare1 = form_cb_TreeFind.Text;
 
                 bool bError = (m_strCompare1.Length == 0);
@@ -917,6 +915,8 @@ namespace SearchDirLists
                     m_nodeCompare1 = FindNode(m_strCompare1, form_treeView_Browse.SelectedNode);
                     bError = (m_nodeCompare1 == null);
                 }
+
+                Color clrBlink = Color.DarkTurquoise;
 
                 if (bError)
                 {
@@ -929,32 +929,62 @@ namespace SearchDirLists
                     form_btn_Compare.Enabled = true;
                 }
 
-                timer_blink.Enabled = true;
+                blink.Go(clr: clrBlink);
             }
             else
             {
                 form_btn_Compare.Enabled = false;
-                timer_blink.Enabled = false;
                 m_strCompare1 = null;
+            }
+        }
+
+        class Blink
+        {
+            System.Windows.Forms.Timer m_timer = null;
+            Control m_defaultControl = null;
+            Color m_clrBlink = Color.DarkTurquoise;
+            int m_nBlink = 0;
+            Control m_ctlBlink = null;
+            int m_nNumBlinks = 10;
+
+            public void Go(Control ctl = null, Color? clr = null, bool Once = false)
+            {
+                m_ctlBlink = ctl ?? m_defaultControl;
+                m_clrBlink = clr ?? Color.Turquoise;
+                m_nBlink = 0;
+                m_nNumBlinks = Once ? 2 : 10;
+                m_timer.Interval = Once ? 100 : 50;
+                m_timer.Enabled = true;
+            }
+
+            public void Tick()
+            {
+                if (++m_nBlink >= m_nNumBlinks)
+                {
+                    m_ctlBlink.BackColor = Color.Empty;
+                    m_timer.Enabled = false;
+                    m_nBlink = 0;
+                }
+                else if (m_ctlBlink.BackColor != m_clrBlink)
+                {
+                    m_ctlBlink.BackColor = m_clrBlink;
+                }
+                else
+                {
+                    m_ctlBlink.BackColor = Color.Empty;
+                }
+            }
+
+            public Blink(System.Windows.Forms.Timer timer, Control defaultControl)
+            {
+                m_timer = timer;
+                m_defaultControl = defaultControl;
             }
         }
 
         private void timer_blink_Tick(object sender, EventArgs e)
         {
-            if (++nBlink >= 10)
-            {
-                form_cb_TreeFind.BackColor = Color.Empty;
-                timer_blink.Enabled = false;
-                nBlink = 0;
-            }
-            else if (form_cb_TreeFind.BackColor != clrBlink)
-            {
-                form_cb_TreeFind.BackColor = clrBlink;
-            }
-            else
-            {
-                form_cb_TreeFind.BackColor = Color.Empty;
-            }
+            blink.Tick();
         }
 
         bool Compare(TreeNode t1, TreeNode t2, bool bReverse = false, bool bMin10M = true)
@@ -1041,10 +1071,8 @@ namespace SearchDirLists
             else
             {
                 form_cb_TreeFind.BackColor = Color.Empty;
-                nBlink = 0;
                 Debug.Assert(form_chk_Compare1.Checked);
                 Debug.Assert(m_strCompare1.Length > 0);
-                clrBlink = Color.DarkTurquoise;
                 m_strCompare2 = form_cb_TreeFind.Text;
 
                 bool bError = (m_strCompare2.Length == 0);
@@ -1057,11 +1085,11 @@ namespace SearchDirLists
 
                 if (bError)
                 {
-                    clrBlink = Color.Red;
+                    blink.Go(clr: Color.Red);
                 }
                 else
                 {
-                    timer_blink.Enabled = true;
+                    blink.Go();
                     m_strBtnCompareOrigText = form_btn_Compare.Text;
                     m_strChkCompareOrigText = form_chk_Compare1.Text;
                     m_strBtnTreeCollapseOrig = form_btn_TreeCollapse.Text;
@@ -1252,7 +1280,7 @@ namespace SearchDirLists
             else if (e.KeyChar == 3)
             {
                 // Copy
-                Clipboard.SetText(form_cb_TreeFind.Text);
+                form_btn_Copy_Click(sender, e);
                 e.Handled = true;
             }
             else if (e.KeyChar == '!')
@@ -1302,7 +1330,7 @@ namespace SearchDirLists
             else if (e.KeyChar == 3)
             {
                 // Copy
-                Clipboard.SetText(form_cb_TreeFind.Text);
+                form_btn_Copy_Click(sender, e);
                 e.Handled = true;
             }
         }
@@ -1312,7 +1340,7 @@ namespace SearchDirLists
             if (e.KeyChar == 3)
             {
                 // Copy
-                Clipboard.SetText(form_cb_TreeFind.Text);
+                form_btn_Copy_Click(sender, e);
                 e.Handled = true;
                 return;
             }
@@ -1339,7 +1367,14 @@ namespace SearchDirLists
 
         private void form_btn_Copy_Click(object sender, EventArgs e)
         {
+            if (form_cb_TreeFind.Text.Length <= 0)
+            {
+                blink.Go(clr: Color.Red, Once: true);
+                return;
+            }
+
             Clipboard.SetText(form_cb_TreeFind.Text);
+            blink.Go(Once: true);
         }
 
         private void form_lv_Unique_MouseClick(object sender, MouseEventArgs e)
@@ -1412,6 +1447,11 @@ namespace SearchDirLists
         {
             timer_DoTree.Stop();
             timer_DoTree.Start();
+        }
+
+        private void form_btn_SavePathInfo_EnabledChanged(object sender, EventArgs e)
+        {
+            form_btn_SaveVolumeList.Enabled = form_btn_SavePathInfo.Enabled;
         }
     }
 }

@@ -1,0 +1,113 @@
+﻿namespace SearchDirLists
+{
+    partial class InputBox
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.form_lbl_Prompt = new System.Windows.Forms.Label();
+            this.form_cb_Entry = new System.Windows.Forms.ComboBox();
+            this.form_btn_OK = new System.Windows.Forms.Button();
+            this.form_btn_Cancel = new System.Windows.Forms.Button();
+            this.SuspendLayout();
+            // 
+            // form_lbl_Prompt
+            // 
+            this.form_lbl_Prompt.AutoSize = true;
+            this.form_lbl_Prompt.Location = new System.Drawing.Point(94, 33);
+            this.form_lbl_Prompt.Name = "form_lbl_Prompt";
+            this.form_lbl_Prompt.Size = new System.Drawing.Size(46, 13);
+            this.form_lbl_Prompt.TabIndex = 0;
+            this.form_lbl_Prompt.Text = "Prompt?";
+            // 
+            // form_cb_Entry
+            // 
+            this.form_cb_Entry.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_cb_Entry.FormattingEnabled = true;
+            this.form_cb_Entry.Location = new System.Drawing.Point(97, 69);
+            this.form_cb_Entry.Name = "form_cb_Entry";
+            this.form_cb_Entry.Size = new System.Drawing.Size(302, 21);
+            this.form_cb_Entry.TabIndex = 1;
+            // 
+            // form_btn_OK
+            // 
+            this.form_btn_OK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_btn_OK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.form_btn_OK.Location = new System.Drawing.Point(328, 148);
+            this.form_btn_OK.Name = "form_btn_OK";
+            this.form_btn_OK.Size = new System.Drawing.Size(75, 23);
+            this.form_btn_OK.TabIndex = 2;
+            this.form_btn_OK.Text = "OK";
+            this.form_btn_OK.UseVisualStyleBackColor = true;
+            // 
+            // form_btn_Cancel
+            // 
+            this.form_btn_Cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_btn_Cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.form_btn_Cancel.Location = new System.Drawing.Point(409, 148);
+            this.form_btn_Cancel.Name = "form_btn_Cancel";
+            this.form_btn_Cancel.Size = new System.Drawing.Size(75, 23);
+            this.form_btn_Cancel.TabIndex = 3;
+            this.form_btn_Cancel.Text = "Cancel";
+            this.form_btn_Cancel.UseVisualStyleBackColor = true;
+            // 
+            // InputBox
+            // 
+            this.AcceptButton = this.form_btn_OK;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.form_btn_Cancel;
+            this.ClientSize = new System.Drawing.Size(496, 183);
+            this.ControlBox = false;
+            this.Controls.Add(this.form_btn_Cancel);
+            this.Controls.Add(this.form_btn_OK);
+            this.Controls.Add(this.form_cb_Entry);
+            this.Controls.Add(this.form_lbl_Prompt);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "InputBox";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "InputBox";
+            this.TopMost = true;
+            this.Load += new System.EventHandler(this.InputBox_Load);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Label form_lbl_Prompt;
+        private System.Windows.Forms.ComboBox form_cb_Entry;
+        private System.Windows.Forms.Button form_btn_OK;
+        private System.Windows.Forms.Button form_btn_Cancel;
+    }
+}

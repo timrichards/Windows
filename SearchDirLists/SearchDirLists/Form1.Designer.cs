@@ -82,12 +82,15 @@ namespace SearchDirLists
             this.timer_killRed = new System.Windows.Forms.Timer(this.components);
             this.timer_blink = new System.Windows.Forms.Timer(this.components);
             this.form_btn_Copy = new System.Windows.Forms.Button();
+            this.form_btn_VolGroup = new System.Windows.Forms.Button();
+            this.timer_DoTree = new System.Windows.Forms.Timer(this.components);
             this.form_LV_VolumesMain = new ListViewEmbeddedControls.ListViewEx();
             this.form_lv_Volumes_col_Volume = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_Volumes_col_Path = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_Volumes_col_SaveToFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_Volumes_col_Status = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_Volumes_col_IncludeInSearch = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader28 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_SearchResults = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader26 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader27 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -216,6 +219,7 @@ namespace SearchDirLists
             // 
             // form_tabPage_Volumes
             // 
+            this.form_tabPage_Volumes.Controls.Add(this.form_btn_VolGroup);
             this.form_tabPage_Volumes.Controls.Add(this.form_btn_LoadVolumeList);
             this.form_tabPage_Volumes.Controls.Add(this.form_btn_SaveVolumeList);
             this.form_tabPage_Volumes.Controls.Add(this.label5);
@@ -805,6 +809,23 @@ namespace SearchDirLists
             this.form_btn_Copy.UseVisualStyleBackColor = true;
             this.form_btn_Copy.Click += new System.EventHandler(this.form_btn_Copy_Click);
             // 
+            // form_btn_VolGroup
+            // 
+            this.form_btn_VolGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_btn_VolGroup.Enabled = false;
+            this.form_btn_VolGroup.Location = new System.Drawing.Point(648, 142);
+            this.form_btn_VolGroup.Name = "form_btn_VolGroup";
+            this.form_btn_VolGroup.Size = new System.Drawing.Size(98, 23);
+            this.form_btn_VolGroup.TabIndex = 12;
+            this.form_btn_VolGroup.Text = "Volume Group";
+            this.form_btn_VolGroup.UseVisualStyleBackColor = true;
+            this.form_btn_VolGroup.Click += new System.EventHandler(this.form_btn_VolGroup_Click);
+            // 
+            // timer_DoTree
+            // 
+            this.timer_DoTree.Interval = 3000;
+            this.timer_DoTree.Tick += new System.EventHandler(this.timer_DoTree_Tick);
+            // 
             // form_LV_VolumesMain
             // 
             this.form_LV_VolumesMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -815,7 +836,8 @@ namespace SearchDirLists
             this.form_lv_Volumes_col_Path,
             this.form_lv_Volumes_col_SaveToFile,
             this.form_lv_Volumes_col_Status,
-            this.form_lv_Volumes_col_IncludeInSearch});
+            this.form_lv_Volumes_col_IncludeInSearch,
+            this.columnHeader28});
             this.form_LV_VolumesMain.FullRowSelect = true;
             this.form_LV_VolumesMain.HideSelection = false;
             this.form_LV_VolumesMain.Location = new System.Drawing.Point(0, 172);
@@ -851,6 +873,11 @@ namespace SearchDirLists
             // 
             this.form_lv_Volumes_col_IncludeInSearch.Text = "Include in search";
             this.form_lv_Volumes_col_IncludeInSearch.Width = 97;
+            // 
+            // columnHeader28
+            // 
+            this.columnHeader28.Text = "Volume Group";
+            this.columnHeader28.Width = 252;
             // 
             // form_lv_SearchResults
             // 
@@ -1374,6 +1401,9 @@ namespace SearchDirLists
         private System.Windows.Forms.ColumnHeader columnHeader18;
         private System.Windows.Forms.ColumnHeader columnHeader25;
         private System.Windows.Forms.Button form_btn_Copy;
+        private System.Windows.Forms.Button form_btn_VolGroup;
+        private System.Windows.Forms.ColumnHeader columnHeader28;
+        private System.Windows.Forms.Timer timer_DoTree;
 
     }
 }

@@ -208,14 +208,12 @@ namespace SearchDirLists
             {
                 do
                 {
-                    String line = file.ReadLine();
+                    String line = null;
 
-                    if (line == null) break;
-                    line = file.ReadLine();
-                    if (line == null) break;
+                    if ((line = file.ReadLine()) == null) break;
+                    if ((line = file.ReadLine()) == null) break;
                     form_cb_VolumeName.Text = line.Split('\t')[2];
-                    line = file.ReadLine();
-                    if (line == null) break;
+                    if ((line = file.ReadLine()) == null) break;
                     form_cb_Path.Text = line.Split('\t')[2];
                     return SaveFields(false);
                 }
@@ -370,7 +368,7 @@ namespace SearchDirLists
             UpdateLV_VolumesSelection();
             form_btn_SavePathInfo.Enabled = (form_LV_VolumesMain.Items.Count > 0);
             m_bBrowseLoaded = false;
-            DoTree(true);
+            RestartTreeTimer();
         }
 
         private void SetLV_VolumesItemInclude(ListViewItem lvItem, bool bInclude)
@@ -389,7 +387,7 @@ namespace SearchDirLists
 
             SetLV_VolumesItemInclude(lvSelect[0], LV_VolumesItemInclude(lvSelect[0]) == false);
             m_bBrowseLoaded = false;
-            DoTree(true);
+            RestartTreeTimer();
         }
 
         private bool LV_VolumesItemInclude(ListViewItem lvItem)
@@ -437,6 +435,7 @@ namespace SearchDirLists
 
         private void form_btn_LoadVolumeList_Click(object sender, EventArgs e)
         {
+            timer_DoTree.Stop();
             openFileDialog1.InitialDirectory = saveFileDialog1.InitialDirectory;
             openFileDialog1.FileName = saveFileDialog1.FileName;
 
@@ -490,6 +489,7 @@ namespace SearchDirLists
         {
             bool bHasSelection = (form_LV_VolumesMain.SelectedIndices.Count > 0);
 
+            form_btn_VolGroup.Enabled = bHasSelection;
             form_btn_RemoveVolume.Enabled = bHasSelection;
             form_btn_ToggleInclude.Enabled = bHasSelection;
         }
@@ -1360,6 +1360,58 @@ namespace SearchDirLists
                 lvItem.Focused = true;
                 return;
             }
+        }
+
+        private void form_btn_VolGroup_Click(object sender, EventArgs e)
+        {
+            if (form_LV_VolumesMain.SelectedItems.Count == 0)
+            {
+                return;
+            }
+
+            timer_DoTree.Stop();
+            InputBox inputBox = new InputBox();
+
+            inputBox.Text = "Volume Group";
+            inputBox.Prompt = "Enter a volume group name";
+            inputBox.Entry = form_LV_VolumesMain.SelectedItems[0].SubItems[5].Text;
+
+            SortedDictionary<String, object> dictVolGroups = new SortedDictionary<string, object>();
+
+            foreach (ListViewItem lvItem in form_LV_VolumesMain.Items)
+            {
+                String strVolGroup = lvItem.SubItems[5].Text;
+
+                if (dictVolGroups.ContainsKey(strVolGroup) == false)
+                {
+                    dictVolGroups.Add(strVolGroup, null);
+                }
+            }
+
+            foreach (KeyValuePair<String, object> entry in dictVolGroups)
+            {
+                inputBox.AddSelector(entry.Key);
+            }
+
+            if (inputBox.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            form_LV_VolumesMain.SelectedItems[0].SubItems[5].Text = inputBox.Entry;
+            RestartTreeTimer();
+        }
+
+        private void timer_DoTree_Tick(object sender, EventArgs e)
+        {
+            timer_DoTree.Stop();
+            DoTree(true);
+        }
+
+        void RestartTreeTimer()
+        {
+            timer_DoTree.Stop();
+            timer_DoTree.Start();
         }
     }
 }

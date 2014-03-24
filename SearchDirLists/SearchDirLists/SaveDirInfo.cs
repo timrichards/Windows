@@ -393,12 +393,14 @@ namespace SearchDirLists
         String m_strSaveAs = "";
         String m_strStatus = "";
         String m_strInclude = "";
+        String m_strVolumeGroup = "";
 
         public String VolumeName { get { return m_strVolumeName; } }
         public String Path { get { return m_strPath; } }
         public String SaveAs { get { return m_strSaveAs; } }
         public String Status { get { return m_strStatus; } }
         public String Include { get { return m_strInclude; } }
+        public String VolumeGroup { get { return m_strVolumeGroup; } }
 
         public LVvolStrings(ListViewItem lvItem)
         {
@@ -407,6 +409,7 @@ namespace SearchDirLists
             m_strSaveAs = lvItem.SubItems[2].Text;
             m_strStatus = lvItem.SubItems[3].Text;
             m_strInclude = lvItem.SubItems[4].Text;
+            m_strVolumeGroup = lvItem.SubItems[5].Text;
         }
     }
 

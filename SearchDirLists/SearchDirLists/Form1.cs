@@ -22,24 +22,35 @@ namespace SearchDirLists
         TreeNode[] m_arrayTreeFound = null;
         bool m_bPutPathInFindEditBox = false;
         String m_strCompare1 = null;
-        String m_strCompare2 = null;
         TreeNode m_nodeCompare1 = null;
         TreeNode m_nodeCompare2 = null;
         int m_nCompareIndex = -1;
+        bool bComparing = false;
+        Dictionary<TreeNode, TreeNode> dictCompareDiffs = new Dictionary<TreeNode, TreeNode>();
+
+        // initialized in constructor:
+        Blink blink = null;
         String m_strBtnTreeCollapseOrig = null;
         String m_strFilesColOrig = null;
         String m_strFileCompareColOrig = null;
         String m_strVolDetailColOrig = null;
-        String m_strBtnCompareOrigText = null;
-        String m_strChkCompareOrigText = null;
-        bool bComparing = false;
-        Dictionary<TreeNode, TreeNode> dictCompareDiffs = new Dictionary<TreeNode, TreeNode>();
-        Blink blink = null;
+        String m_strBtnCompareOrig = null;
+        String m_strChkCompareOrig = null;
+        String m_strVolGroupOrig = null;
+        Font m_FontVolGroupOrig = null;
 
         public Form1()
         {
             InitializeComponent();
             blink = new Blink(timer_blink, form_cb_TreeFind);
+            m_strBtnTreeCollapseOrig = form_btn_TreeCollapse.Text;
+            m_strFilesColOrig = form_col_Filename.Text;
+            m_strFileCompareColOrig = form_colFileCompare.Text;
+            m_strVolDetailColOrig = form_colVolDetail.Text;
+            m_strBtnCompareOrig = form_btn_Compare.Text;
+            m_strChkCompareOrig = form_chk_Compare1.Text;
+            m_strVolGroupOrig = form_lbl_VolGroup.Text;
+            m_FontVolGroupOrig = form_lbl_VolGroup.Font;
         }
 
 #region Selected Index Changed
@@ -559,6 +570,11 @@ namespace SearchDirLists
 
             NodeDatum nodeDatum = (NodeDatum)e.Node.Tag;
 
+            if (nodeDatum.NumImmediateFiles == 0)
+            {
+                form_col_Filename.Text = m_strFilesColOrig;
+            }
+
             if ((nodeDatum.m_lvCloneItem != null) && (nodeDatum.m_lvCloneItem.Selected == false))
             {
                 nodeDatum.m_lvCloneItem.Selected = true;
@@ -883,18 +899,19 @@ namespace SearchDirLists
         {
             if (bComparing)
             {
-                form_chk_Compare1.Text = m_strChkCompareOrigText;
+                form_chk_Compare1.Text = m_strChkCompareOrig;
                 form_btn_TreeCollapse.Text = m_strBtnTreeCollapseOrig;
-                form_btn_Compare.Text = m_strBtnCompareOrigText;
+                form_btn_Compare.Text = m_strBtnCompareOrig;
                 form_col_Filename.Text = m_strFilesColOrig;
                 form_colFileCompare.Text = m_strFileCompareColOrig;
                 form_colVolDetail.Text = m_strVolDetailColOrig;
+                form_lbl_VolGroup.Text = m_strVolGroupOrig;
+                form_lbl_VolGroup.Font = m_FontVolGroupOrig;
                 split_TreeFind.Panel1Collapsed = true;
                 split_TreeFind.Panel2Collapsed = false;
                 split_FileCompare.Panel2Collapsed = true;
                 split_Clones.Panel2Collapsed = false;
                 m_strCompare1 = null;
-                m_strCompare2 = null;
                 m_nodeCompare1 = null;
                 m_nodeCompare2 = null;
                 tree_compare1.Nodes.Clear();
@@ -942,6 +959,7 @@ namespace SearchDirLists
         {
             System.Windows.Forms.Timer m_timer = null;
             Control m_defaultControl = null;
+            Color m_clrControlOrig = Color.Empty;
             Color m_clrBlink = Color.DarkTurquoise;
             int m_nBlink = 0;
             Control m_ctlBlink = null;
@@ -961,7 +979,7 @@ namespace SearchDirLists
             {
                 if (++m_nBlink >= m_nNumBlinks)
                 {
-                    m_ctlBlink.BackColor = Color.Empty;
+                    m_ctlBlink.BackColor = m_clrControlOrig;
                     m_timer.Enabled = false;
                     m_nBlink = 0;
                 }
@@ -971,7 +989,7 @@ namespace SearchDirLists
                 }
                 else
                 {
-                    m_ctlBlink.BackColor = Color.Empty;
+                    m_ctlBlink.BackColor = m_clrControlOrig;
                 }
             }
 
@@ -979,6 +997,7 @@ namespace SearchDirLists
             {
                 m_timer = timer;
                 m_defaultControl = defaultControl;
+                m_clrControlOrig = defaultControl.BackColor;
             }
         }
 
@@ -1073,13 +1092,13 @@ namespace SearchDirLists
                 form_cb_TreeFind.BackColor = Color.Empty;
                 Debug.Assert(form_chk_Compare1.Checked);
                 Debug.Assert(m_strCompare1.Length > 0);
-                m_strCompare2 = form_cb_TreeFind.Text;
+                String strCompare2 = form_cb_TreeFind.Text;
 
-                bool bError = (m_strCompare2.Length == 0);
+                bool bError = (strCompare2.Length == 0);
 
                 if (bError == false)
                 {
-                    m_nodeCompare2 = FindNode(m_strCompare2, form_treeView_Browse.SelectedNode);
+                    m_nodeCompare2 = FindNode(strCompare2, form_treeView_Browse.SelectedNode);
                     bError = ((m_nodeCompare2 == null) || (m_nodeCompare2 == m_nodeCompare1));
                 }
 
@@ -1090,16 +1109,6 @@ namespace SearchDirLists
                 else
                 {
                     blink.Go();
-                    m_strBtnCompareOrigText = form_btn_Compare.Text;
-                    m_strChkCompareOrigText = form_chk_Compare1.Text;
-                    m_strBtnTreeCollapseOrig = form_btn_TreeCollapse.Text;
-                    m_strVolDetailColOrig = form_colVolDetail.Text;
-                    m_strFilesColOrig = form_col_Filename.Text;
-                    m_strFileCompareColOrig = form_colFileCompare.Text;
-                    form_btn_Compare.Text = "> >";
-                    form_chk_Compare1.Text = "Comparing";
-                    form_btn_TreeCollapse.Text = "< <";
-                    form_colVolDetail.Text = "Directory detail";
                     split_TreeFind.Panel1Collapsed = false;
                     split_TreeFind.Panel2Collapsed = true;
                     split_FileCompare.Panel2Collapsed = false;
@@ -1165,6 +1174,12 @@ namespace SearchDirLists
 
                     m_nCompareIndex = -1;
                     form_btn_Compare.Select();
+                    form_btn_Compare.Text = "> >";
+                    form_chk_Compare1.Text = "0 of " + dictCompareDiffs.Count;
+                    form_btn_TreeCollapse.Text = "< <";
+                    form_colVolDetail.Text = "Directory detail";
+                    form_lbl_VolGroup.Text = "Comparing";
+                    form_lbl_VolGroup.Font = new Font(m_FontVolGroupOrig, FontStyle.Regular);
                     bComparing = true;
                     tree_compare1.SelectedNode = tree_compare1.Nodes[0];
                     tree_compare2.SelectedNode = tree_compare2.Nodes[0];

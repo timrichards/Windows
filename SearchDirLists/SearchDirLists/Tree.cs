@@ -720,8 +720,15 @@ namespace SearchDirLists
         {
             if (InvokeRequired) { Invoke(new TreeStatusDelegate(TreeStatusCallback), new object[] { rootNode }); return; }
 
-            form_treeView_Browse.Nodes.Add(rootNode.Text);
-            m_listRootNodes.Add(rootNode);
+            lock (form_treeView_Browse)
+            {
+                form_treeView_Browse.Nodes.Add(rootNode.Text);
+            }
+
+            lock (m_listRootNodes)
+            {
+                m_listRootNodes.Add(rootNode);
+            }
         }
 
         // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
@@ -783,18 +790,22 @@ namespace SearchDirLists
                 {
                     TreeNode rootNode_A = TreeSelect.GetParentRoot(subnode);
 
-                    if (rootNode != rootNode_A)
+                    if (rootNode == rootNode_A)
                     {
-                        RootNodeDatum rootNodeDatum_A = (RootNodeDatum)rootNode_A.Tag;
-
-                        if ((rootNodeDatum.StrVolumeGroup.Length == 0) ||
-                            (rootNodeDatum.StrVolumeGroup != rootNodeDatum_A.StrVolumeGroup))
-                        {
-                            treeNode.ForeColor = Color.SteelBlue;
-                            bDifferentDrives = true;
-                            break;
-                        }
+                        continue;
                     }
+
+                    RootNodeDatum rootNodeDatum_A = (RootNodeDatum)rootNode_A.Tag;
+
+                    if ((rootNodeDatum.StrVolumeGroup.Length > 0) &&
+                        (rootNodeDatum.StrVolumeGroup == rootNodeDatum_A.StrVolumeGroup))
+                    {
+                        continue;
+                    }
+
+                    treeNode.ForeColor = Color.SteelBlue;
+                    bDifferentDrives = true;
+                    break;
                 }
 
                 if (bDifferentDrives)
@@ -1033,6 +1044,8 @@ namespace SearchDirLists
 
             public static void MarkItemsFrom1notIn2(ListView lv1, ListView lv2)
             {
+                if ((lv1.Items.Count <= 0) || (lv2.Items.Count <= 0)) { return; }
+
                 List<ListViewItem> list = lv1.Items.Cast<ListViewItem>().Except(lv2.Items.Cast<ListViewItem>(), new LVitemNameComparer()).ToList();
 
                 if (list.Count > 0)
@@ -1048,10 +1061,9 @@ namespace SearchDirLists
 
             public static void SetTopItem(ListView lv1, ListView lv2)
             {
-                if (lv1.TopItem.Index > 0)
-                {
-                    return;
-                }
+                if (lv1.TopItem == null) { return; }
+                if (lv1.TopItem.Index > 0) { return; }
+                if (lv2.TopItem == null) { return; }
 
                 int nIx = lv2.TopItem.Index - (lv2.Items.Count - lv1.Items.Count);
 
@@ -1075,19 +1087,25 @@ namespace SearchDirLists
             {
                 if (bSecondComparePane)
                 {
-                    form_LV_DetailVol.Items.Clear();
-                    form_LV_DetailVol.Items.AddRange(lvItemDetails);
+                    lock (form_LV_DetailVol)
+                    {
+                        form_LV_DetailVol.Items.Clear();
+                        form_LV_DetailVol.Items.AddRange(lvItemDetails);
+                    }
                 }
                 else
                 {
-                    form_LV_Detail.Items.Clear();
-                    form_LV_Detail.Items.AddRange(lvItemDetails);
+                    lock (form_LV_Detail)
+                    {
+                        form_LV_Detail.Items.Clear();
+                        form_LV_Detail.Items.AddRange(lvItemDetails);
+                    }
                 }
             }
 
             if (lvVol != null)
             {
-                form_LV_DetailVol.Items.Add(lvVol);
+                lock (form_LV_DetailVol) { form_LV_DetailVol.Items.Add(lvVol); }
             }
 
 
@@ -1098,84 +1116,81 @@ namespace SearchDirLists
                 return;
             }
 
+            if (bComparing == false)
+            {
+                lock (form_LV_Files)
+                {
+                    form_LV_Files.Items.Clear();
+                    form_LV_Files.Items.AddRange(itemArray);
+                }
+
+                lock (form_col_Filename)
+                {
+                    lock (form_treeView_Browse)
+                    {
+                        form_col_Filename.Text = form_treeView_Browse.SelectedNode.Text;
+                    }
+                }
+
+                return;
+            }
+
+            LVitemFileTag tag1 = (LVitemFileTag)itemArray[0].Tag;
             ListView lv1 = bSecondComparePane ? form_lv_FileCompare : form_LV_Files;
             ListView lv2 = bSecondComparePane ? form_LV_Files : form_lv_FileCompare;
 
-            lv1.Items.Clear();
-            lv1.Items.AddRange(itemArray);
-
-            // Compare file listings in itemArray
-
-            if ((lv1.Items.Count <= 0) || (lv2.Items.Count <= 0))
+            if ((tree_compare2.SelectedNode != null) &&
+                (tree_compare1.SelectedNode.Text != tree_compare2.SelectedNode.Text))
             {
                 return;
             }
-
-            LVitemFileTag tag1 = (LVitemFileTag)lv1.Items[0].Tag;
-            LVitemFileTag tag2 = (LVitemFileTag)lv2.Items[0].Tag;
-
-            if ((tag1.StrCompareDir != tag2.StrCompareDir))
-            {
-                return;
-            }
-
-            Debug.Assert(tree_compare1.SelectedNode.Text == tree_compare2.SelectedNode.Text);
 
             if (tag1.StrCompareDir != tree_compare1.SelectedNode.Text)
             {
-                lv1.Items.Clear();
-                lv2.Items.Clear();
+                Console.Write("a");
                 return;
             }
 
-            Debug.Assert(tag1.StrCompareDir == tree_compare1.SelectedNode.Text);
-            form_col_Filename.Text = tree_compare1.SelectedNode.Text;
-            form_colFileCompare.Text = tree_compare2.SelectedNode.Text;
+            if ((lv2.Items.Count > 0) &&
+                (((LVitemFileTag)lv2.Items[0].Tag).StrCompareDir != tree_compare2.SelectedNode.Text))
+            {
+                Console.Write("b");
+                return;
+            }
 
-            //// itemArray
+            lock (lv1)
+            {
+                lv1.Items.Clear();
+                lv1.Items.AddRange(itemArray);
+            }
 
-            //ListView lv1 = bSecondComparePane ? form_lv_FileCompare : form_LV_Files;
-            //ListView lv2 = bSecondComparePane ? form_LV_Files : form_lv_FileCompare;
+            if (bSecondComparePane)
+            {
+                lock (form_colFileCompare)
+                {
+                    form_colFileCompare.Text = tree_compare2.SelectedNode.Text;
+                }
+            }
+            else
+            {
+                lock (form_col_Filename)
+                {
+                    form_col_Filename.Text = tree_compare1.SelectedNode.Text;
+                }
+            }
 
-            //if (itemArray == null)
-            //{
-            //    return;
-            //}
-
-            //lv1.Items.Clear();
-            //LVitemFileTag tag1 = (LVitemFileTag)itemArray[0].Tag;
-            //LVitemFileTag tag2 = (LVitemFileTag)itemArray[0].Tag;
-
-            //if ((tag1.StrCompareDir != tag2.StrCompareDir))
-            //{
-            //    return;
-            //}
-
-            //Debug.Assert(tree_compare1.SelectedNode.Text == tree_compare2.SelectedNode.Text);
-
-            //if (tag1.StrCompareDir != tree_compare1.SelectedNode.Text)
-            //{
-            //    lv1.Items.Add(new ListViewItem("You're navigating too fast."));
-            //    lv2.Items.Clear();
-            //    lv2.Items.Add(new ListViewItem("You're navigating too fast."));
-            //    return;
-            //}
-
-            //lv1.Items.AddRange(itemArray);
-
-            //// Compare file listings in itemArray
-
-            //if ((lv1.Items.Count <= 0) || (lv2.Items.Count <= 0))
-            //{
-            //    return;
-            //}
-
-            LVitemNameComparer.NameItems(lv1.Items);
-            LVitemNameComparer.NameItems(lv2.Items);
-            LVitemNameComparer.MarkItemsFrom1notIn2(lv1, lv2);
-            LVitemNameComparer.MarkItemsFrom1notIn2(lv2, lv1);
-            LVitemNameComparer.SetTopItem(lv1, lv2);
-            LVitemNameComparer.SetTopItem(lv2, lv1);
+            lock (lv1)
+            {
+                lock (lv2)
+                {
+                    LVitemNameComparer.NameItems(lv1.Items);
+                    LVitemNameComparer.NameItems(lv2.Items);
+                    LVitemNameComparer.MarkItemsFrom1notIn2(lv1, lv2);
+                    LVitemNameComparer.MarkItemsFrom1notIn2(lv2, lv1);
+                    LVitemNameComparer.SetTopItem(lv1, lv2);
+                    LVitemNameComparer.SetTopItem(lv2, lv1);
+                }
+            }
         }
 
         private void DoTree(bool bKill = false)

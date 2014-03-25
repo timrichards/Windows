@@ -409,7 +409,11 @@ namespace SearchDirLists
             m_strSaveAs = lvItem.SubItems[2].Text;
             m_strStatus = lvItem.SubItems[3].Text;
             m_strInclude = lvItem.SubItems[4].Text;
-            m_strVolumeGroup = lvItem.SubItems[5].Text;
+
+            if (lvItem.SubItems.Count > 5)
+            {
+                m_strVolumeGroup = lvItem.SubItems[5].Text;
+            }
         }
     }
 

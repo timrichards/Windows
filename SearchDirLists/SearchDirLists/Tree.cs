@@ -1021,11 +1021,12 @@ namespace SearchDirLists
             {
                 foreach (ListViewItem item in list)
                 {
-                    item.Name = item.SubItems[3].Text;
+                    item.Name = item.Text;
+                    int nLengthCol = Utilities.nColLENGTH - 3;
 
-                    if (item.SubItems.Count > Utilities.nColLENGTH)
+                    if (item.SubItems.Count > nLengthCol)
                     {
-                        item.Name += item.SubItems[Utilities.nColLENGTH].Text;      // name + size
+                        item.Name += item.SubItems[nLengthCol].Text;      // name + size
                     }
                 }
             }
@@ -1253,27 +1254,11 @@ namespace SearchDirLists
             m_tree.DoThreadFactory();
         }
 
-        private void DoTreeSelect(TreeNode treeNode, String strCompareDir = null)   // strCompareDir says comparing
+        private void DoTreeSelect(TreeNode treeNode, String strCompareDir = null)
         {
             TreeNode nodeParent = TreeSelect.GetParentRoot(treeNode);
-            String strFile = null;
-            bool bSecondComparePane = false;
-
-            if (m_bCompareMode)
-            {
-                // from compare LV
-                strFile = nodeParent.Name;
-
-                if (nodeParent.Checked)
-                {
-                    bSecondComparePane = true;
-                }
-            }
-            else
-            {
-                strFile = (String)((RootNodeDatum)nodeParent.Tag).StrFile;
-            }
-
+            String strFile = (String)((RootNodeDatum)nodeParent.Tag).StrFile;
+            bool bSecondComparePane = (m_bCompareMode && nodeParent.Checked);
             Thread threadKill = bSecondComparePane ? m_threadSelectCompare : m_threadSelect;
 
             if ((threadKill != null) && threadKill.IsAlive)

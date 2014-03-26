@@ -681,7 +681,7 @@ namespace SearchDirLists
             this.tree_compare1.Size = new System.Drawing.Size(72, 200);
             this.tree_compare1.TabIndex = 1;
             this.tree_compare1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterSelect);
-            this.tree_compare1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tree_compare1_KeyPress);
+            this.tree_compare1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tree_compare_KeyPress);
             this.tree_compare1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_treeView_Browse_MouseClick);
             // 
             // tree_compare2
@@ -695,7 +695,7 @@ namespace SearchDirLists
             this.tree_compare2.Size = new System.Drawing.Size(74, 200);
             this.tree_compare2.TabIndex = 2;
             this.tree_compare2.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterSelect);
-            this.tree_compare2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tree_compare2_KeyPress);
+            this.tree_compare2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tree_compare_KeyPress);
             this.tree_compare2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_treeView_Browse_MouseClick);
             // 
             // form_treeView_Browse

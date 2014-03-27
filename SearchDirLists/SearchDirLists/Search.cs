@@ -146,8 +146,8 @@ namespace SearchDirLists
 
             m_timerFillList.Dispose();
             m_callbackDone();
-            TimeSpan span = DateTime.Now - dtStart;
-            String strTimeSpent = String.Format("Completed Search for {0} in {1} milliseconds.", m_strSearch, (int)span.TotalMilliseconds);
+
+            String strTimeSpent = String.Format("Completed Search for {0} in {1} seconds.", m_strSearch, (DateTime.Now - dtStart).TotalMilliseconds/1000);
 
             Console.WriteLine(strTimeSpent);
             MessageBox.Show(strTimeSpent);

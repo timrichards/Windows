@@ -364,6 +364,7 @@ namespace SearchDirLists
                         {
                             DateTime dtParse;
                             String strTab = "";
+
                             if ((strArray.Length > 5) && strArray[5].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
                             {
                                 strTab = "\t";
@@ -714,7 +715,6 @@ namespace SearchDirLists
         public void Go()
         {
             int nIndex = -1;
-
             int nFilesWritten = 0;
 
             foreach (LVvolStrings lvStrings in m_list_lvVolStrings)

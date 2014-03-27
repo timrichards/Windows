@@ -27,6 +27,9 @@ namespace SearchDirLists
         int m_nCompareIndex = -1;
         bool m_bCompareMode = false;
         Dictionary<TreeNode, TreeNode> dictCompareDiffs = new Dictionary<TreeNode, TreeNode>();
+        Control m_ctlLastFocusForCopyButton = null;
+        List<TreeNode> m_listTreeNodes_Compare1 = new List<TreeNode>();
+        List<TreeNode> m_listTreeNodes_Compare2 = new List<TreeNode>();
 
         // initialized in constructor:
         Blink blink = null;
@@ -523,7 +526,7 @@ namespace SearchDirLists
 
         private void form_treeView_Browse_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (sender == tree_compare2)
+            if (sender == form_treeView_compare2)
             {
                 Debug.Assert(m_bCompareMode);
                 form_lv_FileCompare.Items.Clear();
@@ -542,16 +545,16 @@ namespace SearchDirLists
 
             String strCompareDir = null;
 
-            if (sender == tree_compare1)
+            if (sender == form_treeView_compare1)
             {
-                strCompareDir = tree_compare1.SelectedNode.Text;
+                strCompareDir = form_treeView_compare1.SelectedNode.Text;
             }
-            else if (sender == tree_compare2)
+            else if (sender == form_treeView_compare2)
             {
-                strCompareDir = tree_compare2.SelectedNode.Text;
+                strCompareDir = form_treeView_compare2.SelectedNode.Text;
             }
 
-            Debug.Assert((new object[] { tree_compare1, tree_compare2 }.Contains(sender)) == m_bCompareMode);
+            Debug.Assert((new object[] { form_treeView_compare1, form_treeView_compare2 }.Contains(sender)) == m_bCompareMode);
             Debug.Assert((strCompareDir != null) == m_bCompareMode);
             DoTreeSelect(e.Node, strCompareDir);
 
@@ -580,21 +583,14 @@ namespace SearchDirLists
                 nodeDatum.m_lvCloneItem.Selected = true;
                 nodeDatum.m_lvCloneItem.Focused = true;
 
-                bool bFirst = true;
                 if (form_LV_Clones.Items.Contains(nodeDatum.m_lvCloneItem))
                 {
                     form_LV_Clones.TopItem = nodeDatum.m_lvCloneItem;
-                    bFirst = false;
                 }
-
-                bool bSecond = true;
-                if (form_lv_Unique.Items.Contains(nodeDatum.m_lvCloneItem))
+                else if (form_lv_Unique.Items.Contains(nodeDatum.m_lvCloneItem))
                 {
                     form_lv_Unique.TopItem = nodeDatum.m_lvCloneItem;
-                    bSecond = false;
                 }
-
-                Debug.Assert(bFirst ^ bSecond);    // just want to see what's obvious: listview item can't be in two lists
             }
         }
 
@@ -734,31 +730,47 @@ namespace SearchDirLists
             return null;
         }
 
-        TreeNode FindNode(String strSearch, TreeNode startNode = null)
+        TreeNode FindNode(String strSearch, TreeNode startNode = null, TreeView treeView = null)
         {
             if ((strSearch == null) || (strSearch.Length == 0))
             {
                 return null;
             }
 
-            TreeNode treeNode = GetNodeByPath(strSearch, form_treeView_Browse);
+            if (treeView == null)
+            {
+                treeView = form_treeView_Browse;
+            }
+
+            if (startNode != null)
+            {
+                treeView = startNode.TreeView;
+            }
+            else if (m_bCompareMode)
+            {
+                treeView = (m_ctlLastFocusForCopyButton is TreeView) ? (TreeView)m_ctlLastFocusForCopyButton : form_treeView_compare1;
+            }
+
+            TreeNode treeNode = GetNodeByPath(strSearch, treeView);
 
             if (treeNode == null)
             {
                 // case sensitive only when user enters an uppercase character
 
+                List<TreeNode> listTreeNodes = m_listTreeNodes;
+
+                if (m_bCompareMode)
+                {
+                    listTreeNodes = (treeView == form_treeView_compare2) ? m_listTreeNodes_Compare2 : m_listTreeNodes_Compare1;
+                }
+
                 if (strSearch.ToLower() == strSearch)
                 {
-                    m_arrayTreeFound = m_listTreeNodes.FindAll(node => node.Text.ToLower().Contains(strSearch)).ToArray();
+                    m_arrayTreeFound = listTreeNodes.FindAll(node => node.Text.ToLower().Contains(strSearch)).ToArray();
                 }
                 else
                 {
-                    m_arrayTreeFound = m_listTreeNodes.FindAll(node => node.Text.Contains(strSearch)).ToArray();
-                }
-
-                if ((m_arrayTreeFound == null) || (m_arrayTreeFound.Length == 0))
-                {
-                    MessageBox.Show("Couldn't find the specified search parameter in the tree.", "Search in Tree");
+                    m_arrayTreeFound = listTreeNodes.FindAll(node => node.Text.Contains(strSearch)).ToArray();
                 }
             }
             else
@@ -786,22 +798,43 @@ namespace SearchDirLists
 
         private void form_btn_TreeFind_Click(object sender, EventArgs e)
         {
-            if (m_nTreeFindTextChanged == 0)
+            TreeView treeView = form_treeView_Browse;
+
+            if (m_bCompareMode)
             {
-                FindNode(form_cb_TreeFind.Text, form_treeView_Browse.SelectedNode);
+                treeView = (m_ctlLastFocusForCopyButton is TreeView) ? (TreeView)m_ctlLastFocusForCopyButton : form_treeView_compare1;
             }
 
-            if ((m_arrayTreeFound != null) && (m_arrayTreeFound.Length > 0))
+            do
             {
-                blink.Go(Once: true);
-                form_treeView_Browse.SelectedNode = m_arrayTreeFound[m_nTreeFindTextChanged % m_arrayTreeFound.Length];
-                ++m_nTreeFindTextChanged;
+                if (m_nTreeFindTextChanged == 0)
+                {
+                    FindNode(form_cb_TreeFind.Text, treeView.SelectedNode, treeView);
+                }
+
+                if ((m_arrayTreeFound != null) && (m_arrayTreeFound.Length > 0))
+                {
+                    TreeNode treeNode = m_arrayTreeFound[m_nTreeFindTextChanged % m_arrayTreeFound.Length];
+
+                    treeNode.TreeView.SelectedNode = treeNode;
+                    ++m_nTreeFindTextChanged;
+                    blink.Go(Once: true);
+                }
+                else if (treeView == form_treeView_compare1)
+                {
+                    treeView = form_treeView_compare2;
+                    continue;
+                }
+                else
+                {
+                    m_nTreeFindTextChanged = 0;
+                    blink.Go(clr: Color.Red, Once: true);
+                    MessageBox.Show("Couldn't find the specified search parameter in the tree.", "Search in Tree");
+                }
+
+                break;
             }
-            else
-            {
-                blink.Go(clr: Color.Red, Once: true);
-                m_nTreeFindTextChanged = 0;
-            }
+            while (true);
         }
 
         private void form_edit_TreeFind_KeyPress(object sender, KeyPressEventArgs e)
@@ -859,6 +892,7 @@ namespace SearchDirLists
             }
 
             m_bPutPathInFindEditBox = true;
+
             TreeNode treeNode = form_treeView_Browse.SelectedNode = (TreeNode)form_lv_Unique.SelectedItems[0].Tag;
 
             if (treeNode == null)
@@ -914,8 +948,8 @@ namespace SearchDirLists
                 m_strCompare1 = null;
                 m_nodeCompare1 = null;
                 m_nodeCompare2 = null;
-                tree_compare1.Nodes.Clear();
-                tree_compare2.Nodes.Clear();
+                form_treeView_compare1.Nodes.Clear();
+                form_treeView_compare2.Nodes.Clear();
                 form_chk_Compare1.Checked = false;
                 form_btn_Compare.Enabled = false;
                 m_bCompareMode = false;
@@ -970,6 +1004,12 @@ namespace SearchDirLists
             {
                 m_lvItem = lvItem;
 
+                if (m_timer.Enabled)
+                {
+                    Reset();
+                    SetCtlBackColor(m_clrControlOrig);
+                }
+
                 if (m_lvItem != null)
                 {
                     m_clrControlOrig = m_lvItem.BackColor;
@@ -989,19 +1029,36 @@ namespace SearchDirLists
                 m_timer.Enabled = true;
             }
 
+            void Reset()
+            {
+                m_timer.Enabled = false;
+                m_nBlink = 0;
+
+                if (m_lvItem != null)
+                {
+                    m_lvItem.Selected = true;
+                }
+            }
+
+            void SetCtlBackColor(Color clr)
+            {
+                if (m_lvItem != null)
+                {
+                    m_lvItem.BackColor = clr;
+                }
+                else
+                {
+                    m_ctlBlink.BackColor = clr;
+                }
+            }
+
             public void Tick()
             {
                 Color colorChg = m_clrControlOrig;
 
                 if (++m_nBlink >= m_nNumBlinks)
                 {
-                    m_timer.Enabled = false;
-                    m_nBlink = 0;
-
-                    if (m_lvItem != null)
-                    {
-                        m_lvItem.Selected = true;
-                    }
+                    Reset();
                 }
                 else if (((m_lvItem != null) && (m_lvItem.BackColor != m_clrBlink)) ||
                     (m_ctlBlink.BackColor != m_clrBlink))
@@ -1009,14 +1066,7 @@ namespace SearchDirLists
                     colorChg = m_clrBlink;
                 }
 
-                if (m_lvItem != null)
-                {
-                    m_lvItem.BackColor = colorChg;
-                }
-                else
-                {
-                    m_ctlBlink.BackColor = colorChg;
-                }
+                SetCtlBackColor(colorChg);
             }
 
             public Blink(System.Windows.Forms.Timer timer, Control defaultControl)
@@ -1097,13 +1147,14 @@ namespace SearchDirLists
             return bRet;
         }
 
-        void NameNodes(TreeNode treeNode)
+        void NameNodes(TreeNode treeNode, List<TreeNode> listTreeNodes)
         {
             treeNode.Name = treeNode.Text;
+            listTreeNodes.Add(treeNode);
 
             foreach (TreeNode subNode in treeNode.Nodes)
             {
-                NameNodes(subNode);
+                NameNodes(subNode, listTreeNodes);
             }
         }
 
@@ -1148,8 +1199,10 @@ namespace SearchDirLists
                     String strFullPath2 = m_nodeCompare2.FullPath;
                     m_nodeCompare1 = (TreeNode)m_nodeCompare1.Clone();
                     m_nodeCompare2 = (TreeNode)m_nodeCompare2.Clone();
-                    NameNodes(m_nodeCompare1);
-                    NameNodes(m_nodeCompare2);
+                    m_listTreeNodes_Compare1.Clear();
+                    m_listTreeNodes_Compare2.Clear();
+                    NameNodes(m_nodeCompare1, m_listTreeNodes_Compare1);
+                    NameNodes(m_nodeCompare2, m_listTreeNodes_Compare2);
                     m_nodeCompare1.Name = strFullPath1;
                     m_nodeCompare2.Name = strFullPath2;
                     m_nodeCompare1.Tag = new RootNodeDatum((NodeDatum)m_nodeCompare1.Tag, rootNodeDatum1.StrFile, rootNodeDatum1.StrVolumeGroup);
@@ -1199,8 +1252,8 @@ namespace SearchDirLists
                         dictCompareDiffs.Add(pair.Key, pair.Value);
                     }
 
-                    tree_compare1.Nodes.Add(m_nodeCompare1);
-                    tree_compare2.Nodes.Add(m_nodeCompare2);
+                    form_treeView_compare1.Nodes.Add(m_nodeCompare1);
+                    form_treeView_compare2.Nodes.Add(m_nodeCompare2);
                     m_nCompareIndex = -1;
                     form_btn_Compare.Select();
                     form_btn_Compare.Text = "> >";
@@ -1210,8 +1263,8 @@ namespace SearchDirLists
                     form_lbl_VolGroup.Text = "Compare Mode";
                     form_lbl_VolGroup.Font = new Font(m_FontVolGroupOrig, FontStyle.Regular | FontStyle.Bold);
                     m_bCompareMode = true;
-                    tree_compare1.SelectedNode = tree_compare1.Nodes[0];
-                    tree_compare2.SelectedNode = tree_compare2.Nodes[0];
+                    form_treeView_compare1.SelectedNode = form_treeView_compare1.Nodes[0];
+                    form_treeView_compare2.SelectedNode = form_treeView_compare2.Nodes[0];
                 }
             }
         }
@@ -1232,27 +1285,27 @@ namespace SearchDirLists
                 treeNode = null;
             }
 
-            tree_compare1.TopNode = tree_compare1.SelectedNode = treeNode;
-            tree_compare2.TopNode = tree_compare2.SelectedNode = dictCompareDiffs.ToArray()[m_nCompareIndex].Value;
+            form_treeView_compare1.TopNode = form_treeView_compare1.SelectedNode = treeNode;
+            form_treeView_compare2.TopNode = form_treeView_compare2.SelectedNode = dictCompareDiffs.ToArray()[m_nCompareIndex].Value;
 
-            if (tree_compare1.SelectedNode == null)
+            if (form_treeView_compare1.SelectedNode == null)
             {
                 form_col_Filename.Text = m_strFilesColOrig;
-                tree_compare1.CollapseAll();
+                form_treeView_compare1.CollapseAll();
             }
             else
             {
-                tree_compare1.SelectedNode.EnsureVisible();
+                form_treeView_compare1.SelectedNode.EnsureVisible();
             }
 
-            if (tree_compare2.SelectedNode == null)
+            if (form_treeView_compare2.SelectedNode == null)
             {
                 form_colFileCompare.Text = m_strFileCompareColOrig;
-                tree_compare2.CollapseAll();
+                form_treeView_compare2.CollapseAll();
             }
             else
             {
-                tree_compare2.SelectedNode.EnsureVisible();
+                form_treeView_compare2.SelectedNode.EnsureVisible();
             }
         }
 
@@ -1348,7 +1401,7 @@ namespace SearchDirLists
             }
         }
 
-        private void form_btn_Compare_KeyPress(object sender, KeyPressEventArgs e)
+        void CompareModeButtonKeyPress(object sender, KeyPressEventArgs e)
         {
             if (m_bCompareMode == false)
             {
@@ -1423,11 +1476,25 @@ namespace SearchDirLists
 
         private void form_btn_Copy_Click(object sender, EventArgs e)
         {
-            CopyToClipboard();
-
             if (m_bCompareMode)
             {
-                blink.Go(clr: Color.Yellow);
+                if (new object[] { form_treeView_compare1, form_treeView_compare2 }.Contains(m_ctlLastFocusForCopyButton))
+                {
+                    form_tree_compare_KeyPress(m_ctlLastFocusForCopyButton, new KeyPressEventArgs((char)3));
+                }
+                else if (new object[] { form_LV_Files, form_lv_FileCompare }.Contains(m_ctlLastFocusForCopyButton))
+                {
+                    FileListKeyPress((ListView) m_ctlLastFocusForCopyButton, new KeyPressEventArgs((char)3));
+                }
+                else
+                {
+                    CopyToClipboard();
+                    blink.Go(clr: Color.Yellow);
+                }
+            }
+            else
+            {
+                CopyToClipboard();
             }
         }
 
@@ -1529,21 +1596,21 @@ namespace SearchDirLists
             form_cb_TreeFind.Text += strFullPath.Substring(strFullPath.IndexOf(Path.DirectorySeparatorChar));
         }
 
-        private void tree_compare_KeyPress(object sender, KeyPressEventArgs e)
+        private void form_tree_compare_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == 3)
             {
                 PutTreeCompareNodePathIntoFindCombo((TreeView)sender);
             }
 
-            form_btn_Compare_KeyPress(sender, e);
+            CompareModeButtonKeyPress(sender, e);
         }
 
-        void FileListKeyPress(KeyPressEventArgs e, ListView lv)
+        void FileListKeyPress(ListView lv, KeyPressEventArgs e)
         {
             if ((e.KeyChar != 3) && m_bCompareMode)
             {
-                form_btn_Compare_KeyPress(lv, e);
+                CompareModeButtonKeyPress(lv, e);
             }
 
             if ((e.KeyChar != 3) || (lv.SelectedItems.Count <= 0))
@@ -1553,7 +1620,7 @@ namespace SearchDirLists
 
             if (m_bCompareMode)
             {
-                PutTreeCompareNodePathIntoFindCombo((lv == form_LV_Files) ? tree_compare1 : tree_compare2);
+                PutTreeCompareNodePathIntoFindCombo((lv == form_LV_Files) ? form_treeView_compare1 : form_treeView_compare2);
             }
 
             Clipboard.SetText(form_cb_TreeFind.Text + Path.DirectorySeparatorChar + lv.SelectedItems[0].Text);
@@ -1563,12 +1630,18 @@ namespace SearchDirLists
 
         private void form_LV_Files_KeyPress(object sender, KeyPressEventArgs e)
         {
-            FileListKeyPress(e, form_LV_Files);
+            FileListKeyPress(form_LV_Files, e);
         }
 
         private void form_lv_FileCompare_KeyPress(object sender, KeyPressEventArgs e)
         {
-            FileListKeyPress(e, form_lv_FileCompare);
+            FileListKeyPress(form_lv_FileCompare, e);
+        }
+
+        private void formCtl_EnterForCopyButton(object sender, EventArgs e)
+        {
+            m_ctlLastFocusForCopyButton = (Control) sender;
+            m_nTreeFindTextChanged = 0;
         }
     }
 }

@@ -838,6 +838,7 @@ namespace SearchDirLists
             for (int i = nCount - nCount % nInterval; i >= 0; i -= nInterval)       // Enter the Zeroth
             {
                 ListViewItem lvItem = (ListViewItem)lvMarker.Clone();
+
                 lvItem.Text = (Utilities.FormatSize(((NodeDatum)((TreeNode)(bUnique ? listLVitems[i].Tag : ((List<TreeNode>)listLVitems[i].Tag)[0])).Tag).LengthSubnodes, bNoDecimal: true));
                 listLVitems.Insert(i, lvItem);
             }
@@ -1105,8 +1106,6 @@ namespace SearchDirLists
                 return;
             }
 
-            Console.Write("A");
-
             if (m_bCompareMode == false)
             {
                 lock (form_LV_Files)
@@ -1123,15 +1122,13 @@ namespace SearchDirLists
                 return;
             }
 
-            TreeView t1 = bSecondComparePane ? tree_compare2 : tree_compare1;
-            TreeView t2 = bSecondComparePane ? tree_compare1 : tree_compare2;
+            TreeView t1 = bSecondComparePane ? form_treeView_compare2 : form_treeView_compare1;
+            TreeView t2 = bSecondComparePane ? form_treeView_compare1 : form_treeView_compare2;
 
             if (t1.SelectedNode == null)
             {
                 return;
             }
-
-            Console.Write("C");
 
             if (lvFileItem.StrCompareDir != t1.SelectedNode.Text)
             {
@@ -1139,8 +1136,6 @@ namespace SearchDirLists
                 Console.WriteLine("Fast: " + lvFileItem.StrCompareDir + "\t\t" + t1.SelectedNode.Text);
                 return;
             }
-
-            Console.Write("D");
 
             ListView lv1 = bSecondComparePane ? form_lv_FileCompare : form_LV_Files;
             ListView lv2 = bSecondComparePane ? form_LV_Files : form_lv_FileCompare;
@@ -1152,41 +1147,46 @@ namespace SearchDirLists
                 lv1.Items[0].Tag = lvFileItem;
             }
 
-            Console.Write("G");
-
             if (bSecondComparePane)
             {
                 lock (form_colFileCompare)
                 {
-                    form_colFileCompare.Text = tree_compare2.SelectedNode.Text;
+                    form_colFileCompare.Text = form_treeView_compare2.SelectedNode.Text;
                 }
             }
             else
             {
                 lock (form_col_Filename)
                 {
-                    form_col_Filename.Text = tree_compare1.SelectedNode.Text;
+                    form_col_Filename.Text = form_treeView_compare1.SelectedNode.Text;
                 }
             }
 
-            Console.Write("E");
+            TreeNode treeNode1 = t1.SelectedNode;
+            TreeNode treeNode2 = t2.SelectedNode;
 
-            if ((t2.SelectedNode == null) ||
-                (t1.SelectedNode.Text != t2.SelectedNode.Text))
+            if (treeNode2 == null)
             {
                 return;
             }
 
-            Console.Write("F");
+            if (treeNode1.Level != treeNode2.Level)
+            {
+                return;
+            }
+
+            if ((treeNode1.Level > 0) &&
+                (treeNode1.Text != treeNode2.Text))
+            {
+                return;
+            }
 
             if ((lv2.Items.Count > 0) &&
-                (((LVitemFileTag)lv2.Items[0].Tag).StrCompareDir != t2.SelectedNode.Text))
+                (((LVitemFileTag)lv2.Items[0].Tag).StrCompareDir != treeNode2.Text))
             {
                 Debug.Assert(false);
                 return;
             }
-
-            Console.Write("H");
 
             lock (lv1)
             {

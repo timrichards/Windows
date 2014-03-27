@@ -23,6 +23,18 @@ namespace SearchDirLists
         protected long m_nNumSubnodes = 0;
         protected long m_nNumImmediateFiles = 0;
 
+        public DetailsDatum()
+        {
+        }
+
+        public DetailsDatum(DetailsDatum in_datum)
+        {
+            m_nLengthSubnodes = in_datum.m_nLengthSubnodes;
+            m_nNumSubnodeFiles = in_datum.m_nNumSubnodeFiles;
+            m_nNumSubnodes = in_datum.m_nNumSubnodes;
+            m_nNumImmediateFiles = in_datum.m_nNumImmediateFiles;
+        }
+
         static public DetailsDatum operator +(DetailsDatum in_datum1, DetailsDatum in_datum2)
         {
             DetailsDatum datum = new DetailsDatum();
@@ -69,7 +81,7 @@ namespace SearchDirLists
 
         public NodeDatum(long nPrevLineNo, long nLineNo, long nLength) { m_nPrevLineNo = nPrevLineNo; m_nLineNo = nLineNo; m_nLength = nLength; }
 
-        protected NodeDatum(NodeDatum node)
+        protected NodeDatum(NodeDatum node) : base(node)
         {
             m_nPrevLineNo = node.m_nPrevLineNo;
             m_nLineNo = node.m_nLineNo;
@@ -516,17 +528,18 @@ namespace SearchDirLists
         static Hashtable m_hashCache = null;
         static TreeSelectStatusDelegate m_statusCallback = null;
         static TreeSelectDoneDelegate m_doneCallback = null;
-        String m_strCompareDir = null;
         Thread m_thread = null;
         String m_strFile = null;
+        bool m_bCompareMode = false;
         bool m_bSecondComparePane = false;
 
-        public TreeSelect(TreeNode node, Hashtable hashCache, String strFile, bool bSecondComparePane,
+        public TreeSelect(TreeNode node, Hashtable hashCache, String strFile, bool bCompareMode, bool bSecondComparePane,
             TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
         {
             m_treeNode = node;
             m_hashCache = hashCache;
             m_strFile = strFile;
+            m_bCompareMode = bCompareMode;
             m_bSecondComparePane = bSecondComparePane;
             m_statusCallback = statusCallback;
             m_doneCallback = doneCallback;
@@ -645,7 +658,7 @@ namespace SearchDirLists
                 listFiles.Add(new ListViewItem(strArrayFiles));
             }
 
-            m_statusCallback(itemArray: listFiles.ToArray(), bSecondComparePane: m_bSecondComparePane, lvFileItem: new LVitemFileTag(m_strCompareDir, listFiles.Count));
+            m_statusCallback(itemArray: listFiles.ToArray(), bSecondComparePane: m_bSecondComparePane, lvFileItem: new LVitemFileTag(m_treeNode.Text, listFiles.Count));
             Debug.Assert(nLengthDebug == nodeDatum.Length);
         }
 
@@ -678,7 +691,7 @@ namespace SearchDirLists
         {
             Go_A();
 
-            if (m_strCompareDir == null)
+            if (m_bCompareMode == false)
             {
                 // not in compare mode so do directory detail
                 Go_B();
@@ -687,10 +700,8 @@ namespace SearchDirLists
             m_doneCallback(m_bSecondComparePane);
         }
 
-        public Thread DoThreadFactory(String strCompareDir)
+        public Thread DoThreadFactory()
         {
-            m_strCompareDir = strCompareDir;
-
             m_thread = new Thread(new ThreadStart(Go));
 
             m_thread.IsBackground = true;
@@ -973,7 +984,7 @@ namespace SearchDirLists
             }
 
             m_hashCache = hashTable;
-            Debug.Assert(m_hashCache.Count == form_LV_VolumesMain.Items.Count);     // fun trivia for now
+            Debug.Assert(m_hashCache.Count == form_lvVolumesMain.Items.Count);     // fun trivia for now
 
             IEnumerable<KeyValuePair<long, TreeNode>> dictUniqueReverse = dictUnique.Reverse();
             List<ListViewItem> listLVunique = new List<ListViewItem>();
@@ -1114,11 +1125,6 @@ namespace SearchDirLists
                     form_LV_Files.Items.AddRange(itemArray);
                 }
 
-                lock (form_col_Filename)
-                {
-                    form_col_Filename.Text = form_treeView_Browse.SelectedNode.Text;
-                }
-
                 return;
             }
 
@@ -1129,6 +1135,8 @@ namespace SearchDirLists
             {
                 return;
             }
+
+            Console.Write("A");
 
             if (lvFileItem.StrCompareDir != t1.SelectedNode.Text)
             {
@@ -1147,20 +1155,7 @@ namespace SearchDirLists
                 lv1.Items[0].Tag = lvFileItem;
             }
 
-            if (bSecondComparePane)
-            {
-                lock (form_colFileCompare)
-                {
-                    form_colFileCompare.Text = form_treeView_compare2.SelectedNode.Text;
-                }
-            }
-            else
-            {
-                lock (form_col_Filename)
-                {
-                    form_col_Filename.Text = form_treeView_compare1.SelectedNode.Text;
-                }
-            }
+            Console.Write("B");
 
             TreeNode treeNode1 = t1.SelectedNode;
             TreeNode treeNode2 = t2.SelectedNode;
@@ -1169,6 +1164,8 @@ namespace SearchDirLists
             {
                 return;
             }
+
+            Console.Write("C");
 
             if (treeNode1.Level != treeNode2.Level)
             {
@@ -1181,12 +1178,16 @@ namespace SearchDirLists
                 return;
             }
 
+            Console.Write("D");
+
             if ((lv2.Items.Count > 0) &&
                 (((LVitemFileTag)lv2.Items[0].Tag).StrCompareDir != treeNode2.Text))
             {
                 Debug.Assert(false);
                 return;
             }
+
+            Console.Write("E");
 
             lock (lv1)
             {
@@ -1248,17 +1249,17 @@ namespace SearchDirLists
             form_treeView_Browse.Nodes.Add(treeNode);
             form_treeView_Browse.Enabled = false;
 
-            m_tree = new Tree(form_LV_VolumesMain.Items, m_hashCache, m_listTreeNodes, 
+            m_tree = new Tree(form_lvVolumesMain.Items, m_hashCache, m_listTreeNodes, 
                 new TreeStatusDelegate(TreeStatusCallback), new TreeDoneDelegate(TreeDoneCallback));
 
             m_tree.DoThreadFactory();
         }
 
-        private void DoTreeSelect(TreeNode treeNode, String strCompareDir = null)
+        private void DoTreeSelect(TreeNode treeNode)
         {
-            TreeNode nodeParent = TreeSelect.GetParentRoot(treeNode);
-            String strFile = (String)((RootNodeDatum)nodeParent.Tag).StrFile;
-            bool bSecondComparePane = (m_bCompareMode && nodeParent.Checked);
+            TreeNode rootNode = TreeSelect.GetParentRoot(treeNode);
+            String strFile = (String)((RootNodeDatum)rootNode.Tag).StrFile;
+            bool bSecondComparePane = (m_bCompareMode && rootNode.Checked);
             Thread threadKill = bSecondComparePane ? m_threadSelectCompare : m_threadSelect;
 
             if ((threadKill != null) && threadKill.IsAlive)
@@ -1267,10 +1268,10 @@ namespace SearchDirLists
                 // no need to null it: gets reassigned below
             }
 
-            TreeSelect treeSelect = new TreeSelect(treeNode, m_hashCache, strFile, bSecondComparePane,
+            TreeSelect treeSelect = new TreeSelect(treeNode, m_hashCache, strFile, m_bCompareMode, bSecondComparePane,
                 new TreeSelectStatusDelegate(TreeSelectStatusCallback), new TreeSelectDoneDelegate(TreeSelectDoneCallback));
 
-            Thread thread = treeSelect.DoThreadFactory(strCompareDir);
+            Thread thread = treeSelect.DoThreadFactory();
 
             if (bSecondComparePane)
             {

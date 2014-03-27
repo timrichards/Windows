@@ -751,7 +751,7 @@ namespace SearchDirLists
         {
             if (InvokeRequired) { Invoke(new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback), new object[] { nIndex, strText }); return; }
 
-            form_LV_VolumesMain.Items[nIndex].SubItems[3].Text = strText;
+            form_lvVolumesMain.Items[nIndex].SubItems[3].Text = strText;
         }
 
         void SaveDirListingsDoneCallback(int nFilesWritten)
@@ -776,7 +776,7 @@ namespace SearchDirLists
                 return;
             }
 
-            SaveDirListings saveDirListings = new SaveDirListings(form_LV_VolumesMain.Items,
+            SaveDirListings saveDirListings = new SaveDirListings(form_lvVolumesMain.Items,
                 new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback),
                 new SaveDirListingsDoneDelegate(SaveDirListingsDoneCallback));
 

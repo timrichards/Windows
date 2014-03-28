@@ -11,33 +11,159 @@ using System.Threading;
 
 namespace SearchDirLists
 {
-    delegate void SearchStatusDelegate();
+    delegate void SearchStatusDelegate(String strFile, List<String> listResultLines);
     delegate void SearchDoneDelegate();
+    delegate void SearchResultsDelegate();
 
-    class Search : Utilities
+    class SearchResults
     {
-        List<LVvolStrings> m_list_lvVolStrings = new List<LVvolStrings>();
+        String m_strFile;
+        List<String> m_listResultLines;
+
+        public String StrFile { get { return m_strFile; } }
+        public List<String> ResultLines { get { return m_listResultLines; } }
+
+        public SearchResults(String strFile, List<String> listResultLines)
+        {
+            m_strFile = strFile;
+            m_listResultLines = listResultLines;
+        }
+    }
+
+    class SearchFile : Utilities
+    {
+        Thread m_thread = null;
+        SearchStatusDelegate m_statusCallback = null;
+        LVvolStrings m_volStrings = null;
         String m_strSearch = null;
         bool m_bCaseSensitive = true;
-        SearchStatusDelegate m_callbackStatus = null;
-        SearchDoneDelegate m_callbackDone = null;
-        public List<ListViewItem> m_listLVitems = new List<ListViewItem>();
-        System.Threading.Timer m_timerFillList = null;
-        public bool m_bFillPaths = false;
+        List<String> m_listResultLines = new List<string>();
 
         public enum FolderSpecialHandling { None, Outermost, Innermost };
         FolderSpecialHandling m_folderHandling;
 
-        public void TimerFillList_Tick(Object stateInfo)
+        public SearchFile(LVvolStrings volStrings, String strSearch, bool bCaseSensitive, FolderSpecialHandling folderHandling,
+            SearchStatusDelegate statusCallback)
         {
-            m_callbackStatus();
+            m_volStrings = volStrings;
+            m_strSearch = strSearch;
+            m_bCaseSensitive = bCaseSensitive;
+            m_folderHandling = folderHandling;
+            m_statusCallback = statusCallback;
         }
 
-        public Search(ListView.ListViewItemCollection lvItems,
-            String strSearch, bool bCaseSensitive, FolderSpecialHandling folderHandling,
-            SearchStatusDelegate callbackStatus, SearchDoneDelegate callbackDone)
+        public void Go()
         {
-            foreach (ListViewItem lvItem in lvItems)
+            if (LV_VolumesItemInclude(m_volStrings) == false)
+            {
+                return;
+            }
+
+            String strVolumeName = m_volStrings.VolumeName;
+            String strPath = m_volStrings.Path;
+            String strSaveAs = m_volStrings.SaveAs;
+
+            if (FormatPath(ref strPath, ref strSaveAs, false) == false)
+            {
+                return;
+            }
+
+            using (StreamReader file = new StreamReader(strSaveAs))
+            {
+                String strLine = "";
+                long nLineNo = 0;   // lines number from one
+
+                if (m_bCaseSensitive == false)
+                {
+                    m_strSearch = m_strSearch.ToLower();
+                }
+
+                while ((strLine = file.ReadLine()) != null)
+                {
+                    ++nLineNo;
+
+                    if (m_bCaseSensitive)
+                    {
+                        if (strLine.Contains(m_strSearch) == false)
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        if (strLine.ToLower().Contains(m_strSearch) == false)
+                        {
+                            continue;
+                        }
+                    }
+
+                    String[] strArray = strLine.Split('\t');
+
+                    if (strArray[2].Length > 0) // directory
+                    {
+                        if (m_folderHandling == FolderSpecialHandling.Outermost)
+                        {
+                            if (strArray[2].EndsWith(m_strSearch) == false)
+                            {
+                                continue;
+                            }
+                        }
+                        else if (m_folderHandling == FolderSpecialHandling.Innermost)
+                        {
+                            if (strArray.Length < nColLENGTH + 1)
+                            {
+                                continue;
+                            }
+
+                            long nParse = 0;
+
+                            if (long.TryParse(strArray[nColLENGTH], out nParse) == false)
+                            {
+                                continue;
+                            }
+                        }
+                    }
+
+                    if ((strArray.Length > nColLENGTH) && (strArray[nColLENGTH].Length > 0))
+                    {
+                        strArray[nColLENGTH] = FormatSize(strArray[nColLENGTH]);
+                    }
+
+                    m_listResultLines.Add(strLine); 
+                    Console.WriteLine(strSaveAs + ": " + strLine);
+                }
+            }
+
+            if (m_listResultLines.Count > 0)
+            {
+                m_statusCallback(strSaveAs, m_listResultLines);
+            }
+        }
+
+        public Thread DoThreadFactory()
+        {
+            m_thread = new Thread(new ThreadStart(Go));
+            m_thread.IsBackground = true;
+            m_thread.Start();
+            return m_thread;
+        }
+    }
+
+    class Search
+    {
+        Thread m_thread = null;
+        List<Thread> m_listThreads = new List<Thread>();
+        SearchStatusDelegate m_statusCallback = null;
+        SearchDoneDelegate m_doneCallback = null;
+        String m_strSearch = null;
+        List<LVvolStrings> m_list_lvVolStrings = new List<LVvolStrings>();
+        bool m_bCaseSensitive = false;
+        SearchFile.FolderSpecialHandling m_folderHandling = SearchFile.FolderSpecialHandling.Outermost;
+
+        public Search(ListView.ListViewItemCollection lvVolItems, String strSearch, bool bCaseSensitive, SearchFile.FolderSpecialHandling folderHandling,
+            SearchStatusDelegate statusCallback, SearchDoneDelegate doneCallback)
+        {
+            foreach (ListViewItem lvItem in lvVolItems)
             {
                 m_list_lvVolStrings.Add(new LVvolStrings(lvItem));
             }
@@ -45,183 +171,121 @@ namespace SearchDirLists
             m_strSearch = strSearch;
             m_bCaseSensitive = bCaseSensitive;
             m_folderHandling = folderHandling;
-            m_callbackStatus = callbackStatus;
-            m_callbackDone = callbackDone;
-
-            m_timerFillList = new System.Threading.Timer(this.TimerFillList_Tick, new AutoResetEvent(false), 500, 500);
+            m_statusCallback = statusCallback;
+            m_doneCallback = doneCallback;
         }
 
-        public void Go()
+        void Go()
         {
             Console.WriteLine("Searching for '" + m_strSearch + "'");
 
             DateTime dtStart = DateTime.Now;
 
-            foreach (LVvolStrings lvStrings in m_list_lvVolStrings)
+            foreach (LVvolStrings volStrings in m_list_lvVolStrings)
             {
-                if (LV_VolumesItemInclude(lvStrings) == false)
+                SearchFile searchFile = new SearchFile(volStrings, m_strSearch, m_bCaseSensitive, m_folderHandling,
+                    m_statusCallback);
+                m_listThreads.Add(searchFile.DoThreadFactory());
+            }
+
+            foreach (Thread thread in m_listThreads)
+            {
+                thread.Join();
+            }
+
+            Console.WriteLine(String.Format("Completed Search for {0} in {1} seconds.", m_strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
+            m_doneCallback();
+        }
+
+        public void EndThread()
+        {
+            foreach (Thread thread in m_listThreads)
+            {
+                if (thread.IsAlive)
                 {
-                    continue;
-                }
-
-                String strVolumeName = lvStrings.VolumeName;
-                String strPath = lvStrings.Path;
-                String strSaveAs = lvStrings.SaveAs;
-
-                if (FormatPath(ref strPath, ref strSaveAs, false) == false)
-                {
-                    return;
-                }
-
-                using (StreamReader file = new StreamReader(strSaveAs))
-                {
-                    String line = "";
-                    long counter = 0;   // lines number from one
-
-                    if (m_bCaseSensitive == false)
-                    {
-                        m_strSearch = m_strSearch.ToLower();
-                    }
-
-                    while ((line = file.ReadLine()) != null)
-                    {
-                        ++counter;
-
-                        if (m_bCaseSensitive)
-                        {
-                            if (line.Contains(m_strSearch) == false)
-                            {
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            if (line.ToLower().Contains(m_strSearch) == false)
-                            {
-                                continue;
-                            }
-                        }
-
-                        String[] strArray = line.Split('\t');
-
-                        if (strArray[2].Length > 0) // directory
-                        {
-                            if (m_folderHandling == FolderSpecialHandling.Outermost)
-                            {
-                                if (strArray[2].EndsWith(m_strSearch) == false)
-                                {
-                                    continue;
-                                }
-                            }
-                            else if (m_folderHandling == FolderSpecialHandling.Innermost)
-                            {
-                                if (strArray.Length < nColLENGTH + 1)
-                                {
-                                    continue;
-                                }
-
-                                long nParse = 0;
-
-                                if (long.TryParse(strArray[nColLENGTH], out nParse) == false)
-                                {
-                                    continue;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            m_bFillPaths = true;
-                        }
-
-                        if ((strArray.Length > nColLENGTH) && (strArray[nColLENGTH].Length > 0))
-                        {
-                            strArray[nColLENGTH] = FormatSize(strArray[nColLENGTH]);
-                        }
-
-                        m_listLVitems.Add(new ListViewItem(strArray)); 
-                        Console.WriteLine(counter.ToString() + ": " + line);
-                    }
+                    thread.Abort();
                 }
             }
 
-            m_timerFillList.Dispose();
-            m_callbackDone();
+            m_listThreads = new List<Thread>();
 
-            String strTimeSpent = String.Format("Completed Search for {0} in {1} seconds.", m_strSearch, (DateTime.Now - dtStart).TotalMilliseconds/1000);
+            if ((m_thread != null) && m_thread.IsAlive)
+            {
+                m_thread.Abort();
+            }
 
-            Console.WriteLine(strTimeSpent);
-            MessageBox.Show(strTimeSpent);
+            m_thread = null;
+        }
+
+        public void DoThreadFactory()
+        {
+            m_thread = new Thread(new ThreadStart(Go));
+            m_thread.IsBackground = true;
+            m_thread.Start();
         }
     }
 
     public partial class Form1 : Form
     {
-        Thread m_threadSearch = null;
         Search m_search = null;
+        List<SearchResults> m_listSearchResults = new List<SearchResults>();
+        SearchResultsDelegate m_searchResultsCallback = null;
 
-        void UpdateLV()
+        void SearchStatusCallback(String strFile, List<String> listResultLines)
         {
-            if (m_search == null)
+            if (listResultLines.Count <= 0)
             {
+                Debug.Assert(false); // caller takes care of this
                 return;
             }
 
-            form_btnSearchFillPaths.Enabled = m_search.m_bFillPaths;
-            form_lvSearchResults.Items.AddRange(m_search.m_listLVitems.ToArray());
-            m_search.m_listLVitems.Clear();
-        }
-
-        void SearchStatusCallback()
-        {
-            if (InvokeRequired) { Invoke(new SearchStatusDelegate(SearchStatusCallback)); return; }
-
-            UpdateLV();
+            lock (m_listSearchResults)
+            {
+                m_listSearchResults.Add(new SearchResults(strFile, listResultLines));
+            }
         }
 
         void SearchDoneCallback()
         {
             if (InvokeRequired) { Invoke(new SearchDoneDelegate(SearchDoneCallback)); return; }
 
-            UpdateLV();
-            m_threadSearch = null;
             m_search = null;
+            m_searchResultsCallback();
+            m_searchResultsCallback = null;
         }
 
-        private void DoSearch()
+        private void SearchFiles(String strSearch, SearchResultsDelegate searchResultsCallback, bool bKill = false)
         {
-            if (m_threadSearch != null)
+            if (m_search != null)
             {
-                if (MessageBox.Show("Already in progress. Restart search?       ", "Search", MessageBoxButtons.YesNo) != DialogResult.Yes)
+                DialogResult dlgResult = DialogResult.Yes;
+
+                if (bKill == false)
+                {
+                    dlgResult = MessageBox.Show("Already in progress. Restart search?       ", "Search", MessageBoxButtons.YesNoCancel);
+
+                    if (dlgResult == DialogResult.No)
+                    {
+                        return;
+                    }
+                }
+
+                m_search.EndThread();   // no need to null: gets redefined below
+
+                if (dlgResult != DialogResult.Yes)
                 {
                     return;
                 }
-
-                if (m_threadSearch.IsAlive)
-                {
-                    m_threadSearch.Abort();
-                }
             }
 
-            form_lvSearchResults.Items.Clear();
-            form_btnSearchFillPaths.Enabled = false;
+            m_listSearchResults = new List<SearchResults>();
+            m_searchResultsCallback = searchResultsCallback;
 
-            Search.FolderSpecialHandling folderHandling = Search.FolderSpecialHandling.None;
+            SearchFile.FolderSpecialHandling folderHandling = SearchFile.FolderSpecialHandling.None;
 
-            if (form_radSearchDirHandlingOutermost.Checked)
-            {
-                folderHandling = Search.FolderSpecialHandling.Outermost;
-            }
-            else if (form_radSearchDirHandlingInnermost.Checked)
-            {
-                folderHandling = Search.FolderSpecialHandling.Innermost;
-            }
-
-            m_strSearch = form_cbSearch.Text;
-            m_search = new Search(form_lvVolumesMain.Items, m_strSearch, form_chkSearchCase.Checked, folderHandling,
+            m_search = new Search(form_lvVolumesMain.Items, strSearch, true, folderHandling,
                 new SearchStatusDelegate(SearchStatusCallback), new SearchDoneDelegate(SearchDoneCallback));
-            m_threadSearch = new Thread(new ThreadStart(m_search.Go));
-            m_threadSearch.IsBackground = true;
-            m_threadSearch.Start();
+            m_search.DoThreadFactory();
         }
     }
 }

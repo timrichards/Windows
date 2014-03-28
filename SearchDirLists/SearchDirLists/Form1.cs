@@ -16,9 +16,9 @@ namespace SearchDirLists
         private String m_strVolumeName = "";
         private String m_strPath = "";
         private String m_strSaveAs = "";
-        private String m_strSearch = "";
         int m_nLVclonesClickIndex = -1;
         int m_nTreeFindTextChanged = 0;
+        bool m_bFileFound = false;
         TreeNode[] m_arrayTreeFound = null;
         bool m_bPutPathInFindEditBox = false;
         String m_strCompare1 = null;
@@ -93,7 +93,6 @@ namespace SearchDirLists
         {
             m_strVolumeName = form_cbVolumeName.Text.Trim();
             m_strPath = form_cbPath.Text.Trim();
-            m_strSearch = form_cbSearch.Text;
 
             if (m_strPath.Length > 0)
             {
@@ -159,12 +158,6 @@ namespace SearchDirLists
         {
             ComboBoxItemsInsert(form_cbSaveAs, m_strSaveAs);
             m_strSaveAs = form_cbSaveAs.Text;
-        }
-
-        private void cb_Search_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ComboBoxItemsInsert(form_cbSearch, m_strSearch);
-            m_strSearch = form_cbSearch.Text;
         }
 
 #endregion //Selected Index Changed
@@ -607,19 +600,6 @@ namespace SearchDirLists
             }
         }
 
-        private void btnSearch_Click(object sender, EventArgs e)
-        {
-            DoSearch();
-        }
-
-        private void form_cb_Search_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (new Keys[] {Keys.Enter, Keys.Return}.Contains((Keys) e.KeyChar))
-            {
-                btnSearch_Click(sender, e);
-            }
-        }
-
         private void form_lvClones_SelectedIndexChanged(object sender, EventArgs e)
         {
             //use this code if amending this method to do more than just reset the clone click index.
@@ -793,6 +773,7 @@ namespace SearchDirLists
                 if (m_arrayTreeFound.Contains(startNode))
                 {
                     m_nTreeFindTextChanged = m_arrayTreeFound.Count(node => node != startNode);
+                    m_bFileFound = false;
                     return startNode;
                 }
                 else
@@ -806,6 +787,45 @@ namespace SearchDirLists
             }
         }
 
+        void NavToFile()
+        {
+            int nCounter = -1;
+
+            while (true)
+            {
+                foreach (SearchResults searchResults in m_listSearchResults)
+                {
+                    foreach (String strFileLine in searchResults.ResultLines)
+                    {
+                        if (++nCounter < m_nTreeFindTextChanged)
+                        {
+                            continue;
+                        }
+
+                        String[] arrLine = strFileLine.Split('\t');
+
+                        // strSearchResults will always be a list of files, because the tree search was already tried.
+                        Debug.Assert(new String[] { Utilities.m_strLINETYPE_File, Utilities.m_strLINETYPE_Error_File }.Contains(arrLine[0]));
+
+                        if (arrLine[0] != Utilities.m_strLINETYPE_File)
+                        {
+                            continue;
+                        }
+
+                        String strDirLine = File.ReadLines(searchResults.StrFile).Skip(int.Parse(arrLine[1])).SkipWhile(s => s.StartsWith(Utilities.m_strLINETYPE_Directory) == false).Take(1).ToArray()[0];
+                        String strDir = strDirLine.Split('\t')[2];
+                        TreeNode treeNode = GetNodeByPath(strDir, form_treeView_Browse);
+
+                        Debug.Assert(treeNode != null);
+                        treeNode.TreeView.SelectedNode = treeNode;
+                        ++m_nTreeFindTextChanged;
+                        m_blink.Go(Once: true);
+                        return;
+                    }
+                }
+            }
+        }
+
         private void form_btn_TreeFind_Click(object sender, EventArgs e)
         {
             TreeView treeView = form_treeView_Browse;
@@ -815,36 +835,56 @@ namespace SearchDirLists
                 treeView = (m_ctlLastFocusForCopyButton is TreeView) ? (TreeView)m_ctlLastFocusForCopyButton : form_treeCompare1;
             }
 
-            do
+            while (true)
             {
                 if (m_nTreeFindTextChanged == 0)
                 {
+                    m_bFileFound = false;
                     FindNode(form_cb_TreeFind.Text, treeView.SelectedNode, treeView);
                 }
 
-                if ((m_arrayTreeFound != null) && (m_arrayTreeFound.Length > 0))
+                if (m_bFileFound)
                 {
-                    TreeNode treeNode = m_arrayTreeFound[m_nTreeFindTextChanged % m_arrayTreeFound.Length];
-
-                    treeNode.TreeView.SelectedNode = treeNode;
-                    ++m_nTreeFindTextChanged;
-                    m_blink.Go(Once: true);
-                }
-                else if (treeView == form_treeCompare1)
-                {
-                    treeView = form_treeCompare2;
-                    continue;
+                    NavToFile();
                 }
                 else
                 {
-                    m_nTreeFindTextChanged = 0;
-                    m_blink.Go(clr: Color.Red, Once: true);
-                    MessageBox.Show("Couldn't find the specified search parameter in the tree.", "Search in Tree");
+                    if ((m_arrayTreeFound != null) && (m_arrayTreeFound.Length > 0))
+                    {
+                        TreeNode treeNode = m_arrayTreeFound[m_nTreeFindTextChanged % m_arrayTreeFound.Length];
+
+                        treeNode.TreeView.SelectedNode = treeNode;
+                        ++m_nTreeFindTextChanged;
+                        m_blink.Go(Once: true);
+                    }
+                    else if (treeView == form_treeCompare1)
+                    {
+                        treeView = form_treeCompare2;
+                        continue;
+                    }
+                    else
+                    {
+                        SearchFiles(form_cb_TreeFind.Text, new SearchResultsDelegate(SearchResultsCallback));
+                    }
                 }
 
                 break;
             }
-            while (true);
+        }
+
+        void SearchResultsCallback()
+        {
+            if (m_listSearchResults.Count <= 0)
+            {
+                m_nTreeFindTextChanged = 0;
+                m_bFileFound = false;
+                m_blink.Go(clr: Color.Red, Once: true);
+                MessageBox.Show("Couldn't find the specified search parameter.", "Search");
+                return;
+            }
+
+            m_bFileFound = true;
+            NavToFile();
         }
 
         private void form_edit_TreeFind_KeyPress(object sender, KeyPressEventArgs e)
@@ -872,6 +912,7 @@ namespace SearchDirLists
         private void form_edit_TreeFind_TextChanged(object sender, EventArgs e)
         {
             m_nTreeFindTextChanged = 0;
+            m_bFileFound = false;
         }
 
         private void form_treeView_Browse_MouseClick(object sender, MouseEventArgs e)
@@ -1059,7 +1100,7 @@ namespace SearchDirLists
                 {
                     m_lvItem.BackColor = clr;
                 }
-                else if (m_clrBlink != null)
+                else if (m_ctlBlink != null)
                 {
                     m_ctlBlink.BackColor = clr;
                 }
@@ -1668,37 +1709,39 @@ namespace SearchDirLists
         {
             m_ctlLastFocusForCopyButton = (Control) sender;
             m_nTreeFindTextChanged = 0;
+            m_bFileFound = false;
         }
 
-        void SearchCopy()
+        private void form_treeView_Browse_DrawNode(object sender, DrawTreeNodeEventArgs e)
         {
-            ListView.SelectedListViewItemCollection selItems = form_lvSearchResults.SelectedItems;
+            Brush brush = new SolidBrush(((TreeView)sender).ForeColor);
 
-            if (selItems.Count <= 0)
+            if ((e.State & TreeNodeStates.Selected) != 0)
             {
-                m_blink.Go(form_btnSearchCopy, clr: Color.Red, Once: true);
+                e.Graphics.FillRectangle(new SolidBrush(SystemColors.Highlight), Rectangle.Inflate(e.Bounds, 2, 0));
+                brush = new SolidBrush(SystemColors.HighlightText);
+            }
+
+            if ((e.Node.Level > 0) || (e.Node.Name == null) || (e.Node.Name.Length == 0))
+            {
+                e.Graphics.DrawString(e.Node.Text.ToString(), ((TreeView)sender).Font, brush, e.Bounds.Left, e.Bounds.Top);
             }
             else
             {
-                selItems[0].EnsureVisible();
-                Clipboard.SetText(selItems[0].SubItems[2].Text);
-                m_blink.Go(lvItem: selItems[0], Once: true);
+                e.Graphics.DrawString(e.Node.Name.ToString(), ((TreeView)sender).Font, brush, e.Bounds.Left, e.Bounds.Top);
             }
-        }
 
-        private void form_btnSearchCopy_Click(object sender, EventArgs e)
-        {
-            SearchCopy();
-        }
-
-        private void form_lv_SearchResults_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar != 3)
+            if ((e.State & TreeNodeStates.Focused) != 0)
             {
-                return;
+                using (Pen focusPen = new Pen(Color.Black))
+                {
+                    focusPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
+                    Rectangle focusBounds = e.Bounds;
+                    focusBounds.Size = new Size(focusBounds.Width - 1,
+                    focusBounds.Height - 1);
+                    e.Graphics.DrawRectangle(focusPen, focusBounds);
+                }
             }
-
-            SearchCopy();
         }
     }
 }

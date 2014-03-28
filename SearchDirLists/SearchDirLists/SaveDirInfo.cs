@@ -33,19 +33,19 @@ namespace SearchDirLists
         public const String m_str_USING_FILE = "Using file.";
         public const String m_str_SAVED = "Saved.";
         public const int nColLENGTH = 7;
-        protected const String m_strLINETYPE_Version = "V";
-        protected const String m_strLINETYPE_Nickname = "N";
-        protected const String m_strLINETYPE_Path = "P";
-        protected const String m_strLINETYPE_DriveInfo = "I";
-        protected const String m_strLINETYPE_Comment = "C";
-        protected const String m_strLINETYPE_Start = "S";
-        protected const String m_strLINETYPE_Directory = "D";
-        protected const String m_strLINETYPE_File = "F";
-        protected const String m_strLINETYPE_End = "E";
-        protected const String m_strLINETYPE_Blank = "B";
-        protected const String m_strLINETYPE_Error_Dir = "R";
-        protected const String m_strLINETYPE_Error_File = "r";
-        protected const String m_strLINETYPE_Length = "L";
+        public const String m_strLINETYPE_Version = "V";
+        public const String m_strLINETYPE_Nickname = "N";
+        public const String m_strLINETYPE_Path = "P";
+        public const String m_strLINETYPE_DriveInfo = "I";
+        public const String m_strLINETYPE_Comment = "C";
+        public const String m_strLINETYPE_Start = "S";
+        public const String m_strLINETYPE_Directory = "D";
+        public const String m_strLINETYPE_File = "F";
+        public const String m_strLINETYPE_End = "E";
+        public const String m_strLINETYPE_Blank = "B";
+        public const String m_strLINETYPE_Error_Dir = "R";
+        public const String m_strLINETYPE_Error_File = "r";
+        public const String m_strLINETYPE_Length = "L";
 
 
         public static void CopyTo(Stream src, Stream dest)

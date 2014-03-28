@@ -170,20 +170,6 @@ namespace SearchDirLists
             int nIndex = m_strPath.LastIndexOf(Path.DirectorySeparatorChar);
             String strShortPath = bUseShortPath ? m_strPath.Substring(nIndex + 1) : m_strPath;
 
-            if (strVolumeName != null)
-            {
-                bool bNotRedundant = (strVolumeName.EndsWith(strShortPath) == false);
-
-                if (bNotRedundant)
-                {
-                    strShortPath = strVolumeName + " (" + strShortPath + ")";
-                }
-                else
-                {
-                    strShortPath = strVolumeName;
-                }
-            }
-
             TreeNode treeNode = null;
 
             if (subNodes.Count == 1)
@@ -226,6 +212,20 @@ namespace SearchDirLists
             }
 
             treeNode.Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo, m_nLength);
+
+            if (strVolumeName != null)
+            {
+                bool bNotRedundant = (strVolumeName.EndsWith(strShortPath) == false);
+
+                if (bNotRedundant)
+                {
+                    treeNode.Name = strVolumeName + " (" + strShortPath + ")";
+                }
+                else
+                {
+                    treeNode.Name = strVolumeName;
+                }
+            }
 
             lock (listTreeNodes)
             {
@@ -424,7 +424,6 @@ namespace SearchDirLists
         public Thread DoThreadFactory()
         {
             m_thread = new Thread(new ThreadStart(Go));
-
             m_thread.IsBackground = true;
             m_thread.Start();
             return m_thread;
@@ -442,7 +441,7 @@ namespace SearchDirLists
         Thread m_thread = null;
 
         public Tree(ListView.ListViewItemCollection lvVolItems, Hashtable hashCache, List<TreeNode> listTreeNodes,
-            TreeStatusDelegate callbackStatus, TreeDoneDelegate callbackDone)
+            TreeStatusDelegate statusCallback, TreeDoneDelegate doneCallback)
         {
             foreach (ListViewItem lvItem in lvVolItems)
             {
@@ -451,11 +450,11 @@ namespace SearchDirLists
 
             m_hashCache = hashCache;
             m_listTreeNodes = listTreeNodes;
-            m_statusCallback = callbackStatus;
-            m_doneCallback = callbackDone;
+            m_statusCallback = statusCallback;
+            m_doneCallback = doneCallback;
         }
 
-        public void Go()
+        void Go()
         {
             Console.WriteLine();
             Console.WriteLine("Creating browsing tree.");
@@ -500,7 +499,6 @@ namespace SearchDirLists
         public void DoThreadFactory()
         {
             m_thread = new Thread(new ThreadStart(Go));
-
             m_thread.IsBackground = true;
             m_thread.Start();
         }
@@ -557,7 +555,7 @@ namespace SearchDirLists
             return nodeParent;
         }
 
-        private void Go_A()
+        void Go_A()
         {
             if (File.Exists(m_strFile) == false)
             {
@@ -662,7 +660,7 @@ namespace SearchDirLists
             Debug.Assert(nLengthDebug == nodeDatum.Length);
         }
 
-        private void Go_B()
+        void Go_B()
         {
             // Volume detail
 
@@ -687,7 +685,7 @@ namespace SearchDirLists
             }
         }
 
-        public void Go()
+        void Go()
         {
             Go_A();
 
@@ -1205,6 +1203,8 @@ namespace SearchDirLists
 
         void TreeSelectDoneCallback(bool bSecondComparePane)
         {
+            if (InvokeRequired) { Invoke(new TreeSelectDoneDelegate(TreeSelectDoneCallback), new object[] { bSecondComparePane }); return; }
+
             if (bSecondComparePane)
             {
                 m_threadSelectCompare = null;
@@ -1213,6 +1213,17 @@ namespace SearchDirLists
             {
                 m_threadSelect = null;
             }
+
+            // find file results list from NavToFile()
+            ListViewItem lvItem = form_lvFiles.FindItemWithText(form_cb_TreeFind.Text);
+
+            if (lvItem == null)
+            {
+                return;
+            }
+
+            lvItem.Selected = true;
+            lvItem.EnsureVisible();
         }
 
         private void DoTree(bool bKill = false)
@@ -1241,17 +1252,15 @@ namespace SearchDirLists
             form_lvClones.Items.Clear();
             form_lvUnique.Items.Clear();
             m_hashCache.Clear();
-
             m_listRootNodes = new List<TreeNode>();
-            TreeNode treeNode = new TreeNode("Creating treeview...        ");
-            treeNode.NodeFont = new Font(form_treeView_Browse.Font, FontStyle.Bold | FontStyle.Underline);
 
+            TreeNode treeNode = new TreeNode("Creating treeview...        ");
+
+            treeNode.NodeFont = new Font(form_treeView_Browse.Font, FontStyle.Bold | FontStyle.Underline);
             form_treeView_Browse.Nodes.Add(treeNode);
             form_treeView_Browse.Enabled = false;
-
             m_tree = new Tree(form_lvVolumesMain.Items, m_hashCache, m_listTreeNodes, 
                 new TreeStatusDelegate(TreeStatusCallback), new TreeDoneDelegate(TreeDoneCallback));
-
             m_tree.DoThreadFactory();
         }
 

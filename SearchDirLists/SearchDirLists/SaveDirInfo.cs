@@ -23,7 +23,6 @@ namespace SearchDirLists
         public const String m_str_TOTAL_LENGTH_LOC_01 = m_str_HEADER_01 + " LENGTH";
         public const String m_str_DRIVE_01 = m_str_HEADER_01 + " DRIVE";
         public const String m_str_VOLUME_LIST_HEADER_01 = m_str_HEADER_01 + " VOLUME LIST";
-
         public const String m_str_HEADER = "SearchDirLists 0.2";
         public const String m_str_START = m_str_HEADER + " START";
         public const String m_str_END = m_str_HEADER + " END";
@@ -31,11 +30,23 @@ namespace SearchDirLists
         public const String m_str_TOTAL_LENGTH_LOC = m_str_HEADER + " LENGTH";
         public const String m_str_DRIVE = m_str_HEADER + " DRIVE";
         public const String m_str_VOLUME_LIST_HEADER = m_str_HEADER + " VOLUME LIST";
-
         public const String m_str_USING_FILE = "Using file.";
         public const String m_str_SAVED = "Saved.";
-
         public const int nColLENGTH = 7;
+        protected const String m_strLINETYPE_Version = "V";
+        protected const String m_strLINETYPE_Nickname = "N";
+        protected const String m_strLINETYPE_Path = "P";
+        protected const String m_strLINETYPE_DriveInfo = "I";
+        protected const String m_strLINETYPE_Comment = "C";
+        protected const String m_strLINETYPE_Start = "S";
+        protected const String m_strLINETYPE_Directory = "D";
+        protected const String m_strLINETYPE_File = "F";
+        protected const String m_strLINETYPE_End = "E";
+        protected const String m_strLINETYPE_Blank = "B";
+        protected const String m_strLINETYPE_Error_Dir = "R";
+        protected const String m_strLINETYPE_Error_File = "r";
+        protected const String m_strLINETYPE_Length = "L";
+
 
         public static void CopyTo(Stream src, Stream dest)
         {
@@ -54,30 +65,34 @@ namespace SearchDirLists
             var bytes = Encoding.UTF8.GetBytes(str);
 
             using (var msi = new MemoryStream(bytes))
-            using (var mso = new MemoryStream())
             {
-                using (var gs = new GZipStream(mso, CompressionMode.Compress))
+                using (var mso = new MemoryStream())
                 {
-                    //msi.CopyTo(gs);
-                    CopyTo(msi, gs);
-                }
+                    using (var gs = new GZipStream(mso, CompressionMode.Compress))
+                    {
+                        //msi.CopyTo(gs);
+                        CopyTo(msi, gs);
+                    }
 
-                return mso.ToArray();
+                    return mso.ToArray();
+                }
             }
         }
 
         public static string Unzip(byte[] bytes)
         {
             using (var msi = new MemoryStream(bytes))
-            using (var mso = new MemoryStream())
             {
-                using (var gs = new GZipStream(msi, CompressionMode.Decompress))
+                using (var mso = new MemoryStream())
                 {
-                    //gs.CopyTo(mso);
-                    CopyTo(gs, mso);
-                }
+                    using (var gs = new GZipStream(msi, CompressionMode.Decompress))
+                    {
+                        //gs.CopyTo(mso);
+                        CopyTo(gs, mso);
+                    }
 
-                return Encoding.UTF8.GetString(mso.ToArray());
+                    return Encoding.UTF8.GetString(mso.ToArray());
+                }
             }
         }
 
@@ -89,6 +104,7 @@ namespace SearchDirLists
             }
 
             String strDirName = Path.GetDirectoryName(strPath);
+
             if ((strDirName == null) || Directory.Exists(strDirName))
             {
                 String strCapDrive = strPath.Substring(0, strPath.IndexOf(":" + Path.DirectorySeparatorChar) + 2);
@@ -240,20 +256,6 @@ namespace SearchDirLists
             return strRet;
         }
 
-        protected const String m_strLINETYPE_Version = "V";
-        protected const String m_strLINETYPE_Nickname = "N";
-        protected const String m_strLINETYPE_Path = "P";
-        protected const String m_strLINETYPE_DriveInfo = "I";
-        protected const String m_strLINETYPE_Comment = "C";
-        protected const String m_strLINETYPE_Start = "S";
-        protected const String m_strLINETYPE_Directory = "D";
-        protected const String m_strLINETYPE_File = "F";
-        protected const String m_strLINETYPE_End = "E";
-        protected const String m_strLINETYPE_Blank = "B";
-        protected const String m_strLINETYPE_Error_Dir = "R";
-        protected const String m_strLINETYPE_Error_File = "r";
-        protected const String m_strLINETYPE_Length = "L";
-
         static String FormatLine(String strLineType, long nLineNo, String strLine_in = null)
         {
             String strLine_out = strLineType  + "\t" + nLineNo;
@@ -307,7 +309,6 @@ namespace SearchDirLists
                         else if (strLine == m_str_DRIVE_01)
                         {
                             Debug.Assert(nLineNo == 4);
-
                             file_out.WriteLine(FormatLine(m_strLINETYPE_Comment, nLineNo, m_str_DRIVE));
 
                             for (int i = 0; i < 8; ++i)
@@ -395,7 +396,6 @@ namespace SearchDirLists
         String m_strStatus = "";
         String m_strInclude = "";
         String m_strVolumeGroup = "";
-
         public String VolumeName { get { return m_strVolumeName; } }
         public String Path { get { return m_strPath; } }
         public String SaveAs { get { return m_strSaveAs; } }
@@ -507,10 +507,12 @@ namespace SearchDirLists
             // Data structure to hold names of subfolders to be 
             // examined for files.
             Stack<string> dirs = new Stack<string>(64);
+
             if (!del.Directory.Exists(root))
             {
                 throw new ArgumentException();
             }
+
             dirs.Push(root);
 
             while (dirs.Count > 0)
@@ -527,6 +529,7 @@ namespace SearchDirLists
                 {
                     subDirs = del.Directory.GetDirectories(currentDir);
                 }
+
                 // An UnauthorizedAccessException exception will be thrown if we do not have 
                 // discovery permission on a folder or file. It may or may not be acceptable  
                 // to ignore the exception and continue enumerating the remaining files and  
@@ -539,8 +542,7 @@ namespace SearchDirLists
 
                 catch (PathTooLongException)
                 {
-                    String strOut = FormatString(strDir: currentDir, strError1: "PathTooLongException");
-                    m_list_Errors.Add(strOut);
+                    m_list_Errors.Add(FormatString(strDir: currentDir, strError1: "PathTooLongException"));
                     continue;
                 }
                 catch (ArgumentException e)
@@ -570,14 +572,11 @@ namespace SearchDirLists
                 {
                     files = del.Directory.GetFiles(currentDir);
                 }
-
                 catch (UnauthorizedAccessException e)
                 {
-
                     m_list_Errors.Add(FormatString(strDir: currentDir, strFile: "GetFiles()", strError1: "UnauthorizedAccessException", strError2: e.Message));
                     continue;
                 }
-
                 catch (System.IO.DirectoryNotFoundException e)
                 {
                     m_list_Errors.Add(FormatString(strDir: currentDir, strFile: "GetFiles()", strError1: "DirectoryNotFoundException", strError2: e.Message));

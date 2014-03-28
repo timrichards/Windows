@@ -426,13 +426,11 @@ namespace SearchDirLists
                 return;
             }
 
-            if (File.Exists(saveFileDialog1.FileName))
+            if ((File.Exists(saveFileDialog1.FileName))
+                && (MessageBox.Show(saveFileDialog1.FileName + " already exists. Overwrite?         ", "Volume List Save As", MessageBoxButtons.YesNo)
+                != System.Windows.Forms.DialogResult.Yes))
             {
-                if (MessageBox.Show(saveFileDialog1.FileName + " already exists. Overwrite?         ", "Volume List Save As", MessageBoxButtons.YesNo)
-                    != System.Windows.Forms.DialogResult.Yes)
-                {
-                    return;
-                }
+                return;
             }
 
             using (TextWriter fs = File.CreateText(saveFileDialog1.FileName))
@@ -654,12 +652,10 @@ namespace SearchDirLists
                 lvItem.Focused = true;
             }
 
-            ++m_nLVclonesClickIndex;
-
             List<TreeNode> listTreeNodes = (List<TreeNode>)form_lvClones.SelectedItems[0].Tag;
 
             m_bPutPathInFindEditBox = true;
-            form_treeView_Browse.SelectedNode = listTreeNodes[m_nLVclonesClickIndex % listTreeNodes.Count];
+            form_treeView_Browse.SelectedNode = listTreeNodes[++m_nLVclonesClickIndex % listTreeNodes.Count];
             form_treeView_Browse.Select();
         }
 
@@ -958,7 +954,6 @@ namespace SearchDirLists
                 form_lblVolGroup.BackColor = m_clrVolGroupOrig;
                 form_colDirDetail.Text = m_strColDirDetailOrig;
                 form_colVolDetail.Text = m_strColVolDetailOrig;
-
                 form_splitTreeFind.Panel1Collapsed = true;
                 form_splitTreeFind.Panel2Collapsed = false;
                 form_splitCompareFiles.Panel2Collapsed = true;
@@ -1185,8 +1180,8 @@ namespace SearchDirLists
                 form_cb_TreeFind.BackColor = Color.Empty;
                 Debug.Assert(form_chkCompare1.Checked);
                 Debug.Assert(m_strCompare1.Length > 0);
-                String strCompare2 = form_cb_TreeFind.Text;
 
+                String strCompare2 = form_cb_TreeFind.Text;
                 bool bError = (strCompare2.Length == 0);
 
                 if (bError == false)
@@ -1206,13 +1201,13 @@ namespace SearchDirLists
                     form_splitTreeFind.Panel2Collapsed = true;
                     form_splitCompareFiles.Panel2Collapsed = false;
                     form_splitClones.Panel2Collapsed = true;
-
                     form_treeView_Browse.SelectedNode = m_nodeCompare2;
 
-                    RootNodeDatum rootNodeDatum1=(RootNodeDatum)TreeSelect.GetParentRoot(m_nodeCompare1).Tag;
-                    RootNodeDatum rootNodeDatum2=(RootNodeDatum)TreeSelect.GetParentRoot(m_nodeCompare2).Tag;
+                    RootNodeDatum rootNodeDatum1 = (RootNodeDatum)TreeSelect.GetParentRoot(m_nodeCompare1).Tag;
+                    RootNodeDatum rootNodeDatum2 = (RootNodeDatum)TreeSelect.GetParentRoot(m_nodeCompare2).Tag;
                     String strFullPath1 = m_nodeCompare1.FullPath;
                     String strFullPath2 = m_nodeCompare2.FullPath;
+
                     m_nodeCompare1 = (TreeNode)m_nodeCompare1.Clone();
                     m_nodeCompare2 = (TreeNode)m_nodeCompare2.Clone();
                     m_listTreeNodes_Compare1.Clear();
@@ -1549,6 +1544,7 @@ namespace SearchDirLists
             }
 
             timer_DoTree.Stop();
+
             InputBox inputBox = new InputBox();
 
             inputBox.Text = "Volume Group";

@@ -569,6 +569,12 @@ namespace SearchDirLists
             }
 
             form_lblVolGroup.Text = ((RootNodeDatum)rootNode.Tag).StrVolumeGroup;
+
+            if (form_lblVolGroup.Text.Length == 0)
+            {
+                form_lblVolGroup.Text = "(no volume group set)";
+            }
+
             form_colVolDetail.Text = rootNode.Text;
             form_colDirDetail.Text = form_colFilename.Text = e.Node.Text;
 

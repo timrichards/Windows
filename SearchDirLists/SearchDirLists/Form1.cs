@@ -532,8 +532,6 @@ namespace SearchDirLists
 
         private void form_treeView_Browse_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            form_colDirDetail.Text = form_colFilename.Text = e.Node.Text;
-
             if (sender == form_treeCompare2)
             {
                 Debug.Assert(m_bCompareMode);
@@ -553,7 +551,6 @@ namespace SearchDirLists
 
             TreeNode rootNode = TreeSelect.GetParentRoot(e.Node);
 
-            form_lblVolGroup.Text = ((RootNodeDatum)rootNode.Tag).StrVolumeGroup;
             Debug.Assert((new object[] { form_treeCompare1, form_treeCompare2 }.Contains(sender)) == m_bCompareMode);
             DoTreeSelect(e.Node);
 
@@ -563,11 +560,17 @@ namespace SearchDirLists
                 {
                     form_colVolDetail.Text = form_colFileCompare.Text = e.Node.Text;
                 }
+                else
+                {
+                    form_colDirDetail.Text = form_colFilename.Text = e.Node.Text;
+                }
 
                 return;
             }
 
+            form_lblVolGroup.Text = ((RootNodeDatum)rootNode.Tag).StrVolumeGroup;
             form_colVolDetail.Text = rootNode.Text;
+            form_colDirDetail.Text = form_colFilename.Text = e.Node.Text;
 
             if (m_bPutPathInFindEditBox)
             {
@@ -582,19 +585,21 @@ namespace SearchDirLists
                 form_colFilename.Text = m_strColFilesOrig;
             }
 
-            if ((nodeDatum.m_lvCloneItem != null) && (nodeDatum.m_lvCloneItem.Selected == false))
+            if ((nodeDatum.m_lvCloneItem == null) || nodeDatum.m_lvCloneItem.Selected)
             {
-                nodeDatum.m_lvCloneItem.Selected = true;
-                nodeDatum.m_lvCloneItem.Focused = true;
+                return;
+            }
 
-                if (form_lvClones.Items.Contains(nodeDatum.m_lvCloneItem))
-                {
-                    form_lvClones.TopItem = nodeDatum.m_lvCloneItem;
-                }
-                else if (form_lvUnique.Items.Contains(nodeDatum.m_lvCloneItem))
-                {
-                    form_lvUnique.TopItem = nodeDatum.m_lvCloneItem;
-                }
+            nodeDatum.m_lvCloneItem.Selected = true;
+            nodeDatum.m_lvCloneItem.Focused = true;
+
+            if (form_lvClones.Items.Contains(nodeDatum.m_lvCloneItem))
+            {
+                form_lvClones.TopItem = nodeDatum.m_lvCloneItem;
+            }
+            else if (form_lvUnique.Items.Contains(nodeDatum.m_lvCloneItem))
+            {
+                form_lvUnique.TopItem = nodeDatum.m_lvCloneItem;
             }
         }
 

@@ -938,8 +938,8 @@ namespace SearchDirLists
             dictReverse = null;
 
             InsertSizeMarkers(listLVitems);
-            form_LV_Clones.Items.Clear();
-            form_LV_Clones.Items.AddRange(listLVitems.ToArray());
+            form_lvClones.Items.Clear();
+            form_lvClones.Items.AddRange(listLVitems.ToArray());
             listLVitems = null;
 
 
@@ -1004,8 +1004,8 @@ namespace SearchDirLists
             }
 
             InsertSizeMarkers(listLVunique);
-            form_lv_Unique.Items.Clear();
-            form_lv_Unique.Items.AddRange(listLVunique.ToArray());
+            form_lvUnique.Items.Clear();
+            form_lvUnique.Items.AddRange(listLVunique.ToArray());
             m_listRootNodes.Sort((x, y) => String.Compare(x.Text, y.Text));
             form_treeView_Browse.Nodes.Clear();
             form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
@@ -1088,25 +1088,25 @@ namespace SearchDirLists
             {
                 if (bSecondComparePane)
                 {
-                    lock (form_LV_DetailVol)
+                    lock (form_lvDetailVol)
                     {
-                        form_LV_DetailVol.Items.Clear();
-                        form_LV_DetailVol.Items.AddRange(lvItemDetails);
+                        form_lvDetailVol.Items.Clear();
+                        form_lvDetailVol.Items.AddRange(lvItemDetails);
                     }
                 }
                 else
                 {
-                    lock (form_LV_Detail)
+                    lock (form_lvDetail)
                     {
-                        form_LV_Detail.Items.Clear();
-                        form_LV_Detail.Items.AddRange(lvItemDetails);
+                        form_lvDetail.Items.Clear();
+                        form_lvDetail.Items.AddRange(lvItemDetails);
                     }
                 }
             }
 
             if (lvVol != null)
             {
-                lock (form_LV_DetailVol) { form_LV_DetailVol.Items.Add(lvVol); }
+                lock (form_lvDetailVol) { form_lvDetailVol.Items.Add(lvVol); }
             }
 
 
@@ -1119,17 +1119,17 @@ namespace SearchDirLists
 
             if (m_bCompareMode == false)
             {
-                lock (form_LV_Files)
+                lock (form_lvFiles)
                 {
-                    form_LV_Files.Items.Clear();
-                    form_LV_Files.Items.AddRange(itemArray);
+                    form_lvFiles.Items.Clear();
+                    form_lvFiles.Items.AddRange(itemArray);
                 }
 
                 return;
             }
 
-            TreeView t1 = bSecondComparePane ? form_treeView_compare2 : form_treeView_compare1;
-            TreeView t2 = bSecondComparePane ? form_treeView_compare1 : form_treeView_compare2;
+            TreeView t1 = bSecondComparePane ? form_treeCompare2 : form_treeCompare1;
+            TreeView t2 = bSecondComparePane ? form_treeCompare1 : form_treeCompare2;
 
             if (t1.SelectedNode == null)
             {
@@ -1145,8 +1145,8 @@ namespace SearchDirLists
                 return;
             }
 
-            ListView lv1 = bSecondComparePane ? form_lv_FileCompare : form_LV_Files;
-            ListView lv2 = bSecondComparePane ? form_LV_Files : form_lv_FileCompare;
+            ListView lv1 = bSecondComparePane ? form_lvFileCompare : form_lvFiles;
+            ListView lv2 = bSecondComparePane ? form_lvFiles : form_lvFileCompare;
 
             lock (lv1)
             {
@@ -1236,10 +1236,10 @@ namespace SearchDirLists
             }
 
             form_treeView_Browse.Nodes.Clear();
-            form_LV_Files.Items.Clear();
-            form_lv_FileCompare.Items.Clear();
-            form_LV_Clones.Items.Clear();
-            form_lv_Unique.Items.Clear();
+            form_lvFiles.Items.Clear();
+            form_lvFileCompare.Items.Clear();
+            form_lvClones.Items.Clear();
+            form_lvUnique.Items.Clear();
             m_hashCache.Clear();
 
             m_listRootNodes = new List<TreeNode>();

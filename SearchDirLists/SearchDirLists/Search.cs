@@ -104,18 +104,18 @@ namespace SearchDirLists
 
                         String[] strArray = line.Split('\t');
 
-                        if (strArray[0].Length > 0) // directory
+                        if (strArray[2].Length > 0) // directory
                         {
                             if (m_folderHandling == FolderSpecialHandling.Outermost)
                             {
-                                if (strArray[0].EndsWith(m_strSearch) == false)
+                                if (strArray[2].EndsWith(m_strSearch) == false)
                                 {
                                     continue;
                                 }
                             }
                             else if (m_folderHandling == FolderSpecialHandling.Innermost)
                             {
-                                if (strArray.Length < 6)
+                                if (strArray.Length < nColLENGTH + 1)
                                 {
                                     continue;
                                 }
@@ -156,19 +156,18 @@ namespace SearchDirLists
 
     public partial class Form1 : Form
     {
-        private bool m_bThreadingSearch = false;
+        Thread m_threadSearch = null;
         Search m_search = null;
 
         void UpdateLV()
         {
             if (m_search == null)
             {
-                Debug.Assert(false);
                 return;
             }
 
-            form_btn_Search_FillPaths.Enabled = m_search.m_bFillPaths;
-            form_lv_SearchResults.Items.AddRange(m_search.m_listLVitems.ToArray());
+            form_btnSearchFillPaths.Enabled = m_search.m_bFillPaths;
+            form_lvSearchResults.Items.AddRange(m_search.m_listLVitems.ToArray());
             m_search.m_listLVitems.Clear();
         }
 
@@ -184,40 +183,45 @@ namespace SearchDirLists
             if (InvokeRequired) { Invoke(new SearchDoneDelegate(SearchDoneCallback)); return; }
 
             UpdateLV();
-            m_bThreadingSearch = false;
+            m_threadSearch = null;
             m_search = null;
         }
 
         private void DoSearch()
         {
-            if (m_bThreadingSearch)
+            if (m_threadSearch != null)
             {
-                MessageBox.Show("Already in progress.                       ", "Search");
-                return;
+                if (MessageBox.Show("Already in progress. Restart search?       ", "Search", MessageBoxButtons.YesNo) != DialogResult.Yes)
+                {
+                    return;
+                }
+
+                if (m_threadSearch.IsAlive)
+                {
+                    m_threadSearch.Abort();
+                }
             }
 
-            form_lv_SearchResults.Items.Clear();
-            Console.Clear();
-            form_btn_Search_FillPaths.Enabled = false;
+            form_lvSearchResults.Items.Clear();
+            form_btnSearchFillPaths.Enabled = false;
 
             Search.FolderSpecialHandling folderHandling = Search.FolderSpecialHandling.None;
 
-            if (form_rad_Folder_Outermost.Checked)
+            if (form_radSearchDirHandlingOutermost.Checked)
             {
                 folderHandling = Search.FolderSpecialHandling.Outermost;
             }
-            else if (form_rad_Folder_Innermost.Checked)
+            else if (form_radSearchDirHandlingInnermost.Checked)
             {
                 folderHandling = Search.FolderSpecialHandling.Innermost;
             }
 
             m_strSearch = form_cbSearch.Text;
-            m_search = new Search(form_lvVolumesMain.Items, m_strSearch, form_chk_SearchCase.Checked, folderHandling,
+            m_search = new Search(form_lvVolumesMain.Items, m_strSearch, form_chkSearchCase.Checked, folderHandling,
                 new SearchStatusDelegate(SearchStatusCallback), new SearchDoneDelegate(SearchDoneCallback));
-
-            m_bThreadingSearch = true;
-
-            new Thread(new ThreadStart(m_search.Go)).Start();
+            m_threadSearch = new Thread(new ThreadStart(m_search.Go));
+            m_threadSearch.IsBackground = true;
+            m_threadSearch.Start();
         }
     }
 }

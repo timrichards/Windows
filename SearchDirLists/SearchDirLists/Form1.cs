@@ -545,15 +545,19 @@ namespace SearchDirLists
             Debug.Assert((new object[] { form_treeCompare1, form_treeCompare2 }.Contains(sender)) == m_bCompareMode);
             DoTreeSelect(e.Node);
 
+            String strNode = (e.Node.Level == 0) ? e.Node.ToolTipText : e.Node.Text;
+
+            Debug.Assert(strNode.Length > 0);
+
             if (m_bCompareMode)
             {
                 if (rootNode.Checked)   // hack to denote second compare pane
                 {
-                    form_colVolDetail.Text = form_colFileCompare.Text = e.Node.Text;
+                    form_colVolDetail.Text = form_colFileCompare.Text = strNode;
                 }
                 else
                 {
-                    form_colDirDetail.Text = form_colFilename.Text = e.Node.Text;
+                    form_colDirDetail.Text = form_colFilename.Text = strNode;
                 }
 
                 return;
@@ -566,8 +570,8 @@ namespace SearchDirLists
                 form_lblVolGroup.Text = "(no volume group set)";
             }
 
-            form_colVolDetail.Text = rootNode.Text;
-            form_colDirDetail.Text = form_colFilename.Text = e.Node.Text;
+            form_colVolDetail.Text = rootNode.ToolTipText;
+            form_colDirDetail.Text = form_colFilename.Text = strNode;
 
             if (m_bPutPathInFindEditBox)
             {
@@ -647,15 +651,15 @@ namespace SearchDirLists
             }
 
             TreeNode node = null;
-            string[] pathLevel = path.ToLower().Split(Path.DirectorySeparatorChar);
+            string[] pathLevel = null;
             int i = 0;
-            int nPathLevelLength = pathLevel.Length;
+            int nPathLevelLength = 0;
 
             foreach (TreeNode topNode in treeView.Nodes)
             {
                 String strNode = topNode.Text.ToLower();
 
-                pathLevel = path.ToLower().Split(Path.DirectorySeparatorChar);
+                pathLevel = path.ToLower().Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
                 nPathLevelLength = pathLevel.Length;
 
                 if (strNode.Contains(Path.DirectorySeparatorChar))
@@ -803,28 +807,57 @@ namespace SearchDirLists
                         }
 
                         String[] arrLine = strFileLine.Split('\t');
+                        String strDir = null;
 
-                        // strSearchResults will always be a list of files, because the tree search was already tried.
-                        Debug.Assert(new String[] { Utilities.m_strLINETYPE_File, Utilities.m_strLINETYPE_Error_File }.Contains(arrLine[0]));
-
-                        if (arrLine[0] != Utilities.m_strLINETYPE_File)
+                        if (new String[] { Utilities.m_strLINETYPE_Directory, Utilities.m_strLINETYPE_Error_Dir }.Contains(arrLine[0]))
                         {
-                            continue;
+                            if (form_cb_TreeFind.Text.StartsWith(Path.DirectorySeparatorChar.ToString()))
+                            {
+                                // user is searching for files
+                                ++m_nTreeFindTextChanged;
+                                continue;
+                            }
+
+                            if (arrLine[0] != Utilities.m_strLINETYPE_Directory)
+                            {
+                                // just want to see what happens. Error dirs aren't put into the tree yet.
+                                Debug.Assert(GetNodeByPath(strDir, form_treeView_Browse) != null);
+                                ++m_nTreeFindTextChanged;
+                                continue;
+                            }
+
+                            strDir = arrLine[2];
+                        }
+                        else
+                        {
+                            Debug.Assert(new String[] { Utilities.m_strLINETYPE_File, Utilities.m_strLINETYPE_Error_File }.Contains(arrLine[0]));
+
+                            if (arrLine[0] == Utilities.m_strLINETYPE_File)
+                            {
+                                m_strMaybeFile = arrLine[3];
+                                
+                                String strDirLine = File.ReadLines(searchResults.StrFile).Skip(int.Parse(arrLine[1])).SkipWhile(s => s.StartsWith(Utilities.m_strLINETYPE_Directory) == false).Take(1).ToArray()[0];
+                                
+                                strDir = strDirLine.Split('\t')[2];
+                            }
                         }
 
-                        String strDirLine = File.ReadLines(searchResults.StrFile).Skip(int.Parse(arrLine[1])).SkipWhile(s => s.StartsWith(Utilities.m_strLINETYPE_Directory) == false).Take(1).ToArray()[0];
-                        String strDir = strDirLine.Split('\t')[2];
                         TreeNode treeNode = GetNodeByPath(strDir, form_treeView_Browse);
 
                         Debug.Assert(treeNode != null);
+
+                        treeNode.TreeView.SelectedNode = null;      // hack to call TreeSelectDoneCallback()
                         treeNode.TreeView.SelectedNode = treeNode;
                         ++m_nTreeFindTextChanged;
-                        m_blink.Go(Once: true);
                         return;
                     }
                 }
+
+                // Don't bother imposing a modulus. Just let m_nTreeFindTextChanged grow.
             }
         }
+
+        String m_strMaybeFile = null;
 
         private void form_btn_TreeFind_Click(object sender, EventArgs e)
         {
@@ -839,8 +872,17 @@ namespace SearchDirLists
             {
                 if (m_nTreeFindTextChanged == 0)
                 {
-                    m_bFileFound = false;
-                    FindNode(form_cb_TreeFind.Text, treeView.SelectedNode, treeView);
+                    if (form_cb_TreeFind.Text.StartsWith(Path.DirectorySeparatorChar.ToString()))
+                    {
+                        // special code for find file
+                        SearchFiles(form_cb_TreeFind.Text.Substring(1), new SearchResultsDelegate(SearchResultsCallback));
+                        // async
+                        return;
+                    }
+                    else
+                    {
+                        FindNode(form_cb_TreeFind.Text, treeView.SelectedNode, treeView);
+                    }
                 }
 
                 if (m_bFileFound)
@@ -862,6 +904,26 @@ namespace SearchDirLists
                         treeView = form_treeCompare2;
                         continue;
                     }
+                    else if (form_cb_TreeFind.Text.Contains(Path.DirectorySeparatorChar))
+                    {
+                        Debug.Assert(form_cb_TreeFind.Text.EndsWith(Path.DirectorySeparatorChar.ToString()) == false);
+
+                        int nPos = form_cb_TreeFind.Text.LastIndexOf(Path.DirectorySeparatorChar);
+                        String strMaybePath = form_cb_TreeFind.Text.Substring(0, nPos);
+                        TreeNode treeNode = GetNodeByPath(strMaybePath, form_treeView_Browse);
+
+                        m_strMaybeFile = form_cb_TreeFind.Text.Substring(nPos + 1);
+
+                        if (treeNode != null)
+                        {
+                            treeNode.TreeView.SelectedNode = treeNode;
+                        }
+                        else
+                        {
+                            Debug.Assert(m_listSearchResults.Count <= 0);
+                            SearchResultsCallback();    // hack: consolidates reporting the error.
+                        }
+                    }
                     else
                     {
                         SearchFiles(form_cb_TreeFind.Text, new SearchResultsDelegate(SearchResultsCallback));
@@ -874,17 +936,20 @@ namespace SearchDirLists
 
         void SearchResultsCallback()
         {
-            if (m_listSearchResults.Count <= 0)
+            if (m_listSearchResults.Count > 0)
+            {
+                m_bFileFound = true;
+                NavToFile();
+            }
+            else
             {
                 m_nTreeFindTextChanged = 0;
                 m_bFileFound = false;
+                m_strMaybeFile = null;
                 m_blink.Go(clr: Color.Red, Once: true);
                 MessageBox.Show("Couldn't find the specified search parameter.", "Search");
                 return;
             }
-
-            m_bFileFound = true;
-            NavToFile();
         }
 
         private void form_edit_TreeFind_KeyPress(object sender, KeyPressEventArgs e)
@@ -1691,7 +1756,7 @@ namespace SearchDirLists
                 PutTreeCompareNodePathIntoFindCombo((lv == form_lvFiles) ? form_treeCompare1 : form_treeCompare2);
             }
 
-            Clipboard.SetText(form_cb_TreeFind.Text + Path.DirectorySeparatorChar + lv.SelectedItems[0].Text);
+            Clipboard.SetText(form_treeView_Browse.SelectedNode.FullPath + Path.DirectorySeparatorChar + lv.SelectedItems[0].Text);
             m_blink.Go(lvItem: lv.SelectedItems[0], Once: true);
         }
 
@@ -1710,38 +1775,6 @@ namespace SearchDirLists
             m_ctlLastFocusForCopyButton = (Control) sender;
             m_nTreeFindTextChanged = 0;
             m_bFileFound = false;
-        }
-
-        private void form_treeView_Browse_DrawNode(object sender, DrawTreeNodeEventArgs e)
-        {
-            Brush brush = new SolidBrush(((TreeView)sender).ForeColor);
-
-            if ((e.State & TreeNodeStates.Selected) != 0)
-            {
-                e.Graphics.FillRectangle(new SolidBrush(SystemColors.Highlight), Rectangle.Inflate(e.Bounds, 2, 0));
-                brush = new SolidBrush(SystemColors.HighlightText);
-            }
-
-            if ((e.Node.Level > 0) || (e.Node.Name == null) || (e.Node.Name.Length == 0))
-            {
-                e.Graphics.DrawString(e.Node.Text.ToString(), ((TreeView)sender).Font, brush, e.Bounds.Left, e.Bounds.Top);
-            }
-            else
-            {
-                e.Graphics.DrawString(e.Node.Name.ToString(), ((TreeView)sender).Font, brush, e.Bounds.Left, e.Bounds.Top);
-            }
-
-            if ((e.State & TreeNodeStates.Focused) != 0)
-            {
-                using (Pen focusPen = new Pen(Color.Black))
-                {
-                    focusPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
-                    Rectangle focusBounds = e.Bounds;
-                    focusBounds.Size = new Size(focusBounds.Width - 1,
-                    focusBounds.Height - 1);
-                    e.Graphics.DrawRectangle(focusPen, focusBounds);
-                }
-            }
         }
     }
 }

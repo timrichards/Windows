@@ -211,19 +211,22 @@ namespace SearchDirLists
                 treeNode = new TreeNode(strShortPath);
             }
 
-            treeNode.Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo, m_nLength);
+            treeNode.Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo, m_nLength);  // this is almost but not quite always newly assigned here.
 
-            if (strVolumeName != null)
+            if (this == m_rootNode.Nodes.Values.First())
             {
-                bool bNotRedundant = (strVolumeName.EndsWith(strShortPath) == false);
+                if (strVolumeName != null)
+                {
+                    bool bNotRedundant = (strVolumeName.EndsWith(treeNode.Text) == false);
 
-                if (bNotRedundant)
-                {
-                    treeNode.Name = strVolumeName + " (" + strShortPath + ")";
-                }
-                else
-                {
-                    treeNode.Name = strVolumeName;
+                    if (bNotRedundant)
+                    {
+                        treeNode.ToolTipText = strVolumeName + " (" + treeNode.Text + ")";
+                    }
+                    else
+                    {
+                        treeNode.ToolTipText = strVolumeName;
+                    }
                 }
             }
 
@@ -914,7 +917,11 @@ namespace SearchDirLists
                     str_nClones = nClones.ToString("###,###");
                 }
 
-                ListViewItem lvItem = new ListViewItem(new String[] { listNodes.Value[0].Text, str_nClones });
+                String strNode = (listNodes.Value[0].Level == 0) ? listNodes.Value[0].ToolTipText : listNodes.Value[0].Text;
+
+                Debug.Assert(strNode.Length > 0);
+
+                ListViewItem lvItem = new ListViewItem(new String[] { strNode, str_nClones });
 
                 lvItem.Tag = listNodes.Value;
 
@@ -990,7 +997,11 @@ namespace SearchDirLists
             foreach (KeyValuePair<long, TreeNode> listNodes in dictUniqueReverse)
             {
                 TreeNode treeNode = listNodes.Value;
-                ListViewItem lvItem = new ListViewItem(treeNode.Text);
+                String strNode = (treeNode.Level == 0) ? treeNode.ToolTipText : treeNode.Text;
+
+                Debug.Assert(strNode.Length > 0);
+
+                ListViewItem lvItem = new ListViewItem(strNode);
 
                 lvItem.Tag = treeNode;
                 listLVunique.Add(lvItem);
@@ -1077,7 +1088,7 @@ namespace SearchDirLists
                 }
             }
         }
-        
+
         void TreeSelectStatusCallback(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem lvVol = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null)
         {
             if (InvokeRequired) { Invoke(new TreeSelectStatusDelegate(TreeSelectStatusCallback), new object[] { lvItemDetails, itemArray, lvVol, bSecondComparePane, lvFileItem }); return; }
@@ -1213,9 +1224,9 @@ namespace SearchDirLists
             {
                 m_threadSelect = null;
             }
-
+   
             // find file results list from NavToFile()
-            ListViewItem lvItem = form_lvFiles.FindItemWithText(form_cb_TreeFind.Text);
+            ListViewItem lvItem = form_lvFiles.FindItemWithText(m_strMaybeFile ?? form_cb_TreeFind.Text);
 
             if (lvItem == null)
             {
@@ -1224,6 +1235,7 @@ namespace SearchDirLists
 
             lvItem.Selected = true;
             lvItem.EnsureVisible();
+            m_blink.Go(Once: true);
         }
 
         private void DoTree(bool bKill = false)

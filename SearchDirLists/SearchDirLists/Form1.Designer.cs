@@ -587,15 +587,14 @@ namespace SearchDirLists
             // form_treeView_Browse
             // 
             this.form_treeView_Browse.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_treeView_Browse.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawText;
             this.form_treeView_Browse.FullRowSelect = true;
             this.form_treeView_Browse.HideSelection = false;
             this.form_treeView_Browse.Location = new System.Drawing.Point(0, 0);
             this.form_treeView_Browse.Name = "form_treeView_Browse";
             this.form_treeView_Browse.ShowLines = false;
+            this.form_treeView_Browse.ShowNodeToolTips = true;
             this.form_treeView_Browse.Size = new System.Drawing.Size(570, 374);
             this.form_treeView_Browse.TabIndex = 0;
-            this.form_treeView_Browse.DrawNode += new System.Windows.Forms.DrawTreeNodeEventHandler(this.form_treeView_Browse_DrawNode);
             this.form_treeView_Browse.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterSelect);
             this.form_treeView_Browse.Enter += new System.EventHandler(this.formCtl_EnterForCopyButton);
             this.form_treeView_Browse.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_treeView_Browse_KeyPress);

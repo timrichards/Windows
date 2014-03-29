@@ -130,7 +130,6 @@ namespace SearchDirLists
                     }
 
                     m_listResultLines.Add(strLine); 
-                    Console.WriteLine(strSaveAs + ": " + strLine);
                 }
             }
 

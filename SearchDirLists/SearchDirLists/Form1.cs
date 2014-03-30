@@ -848,6 +848,22 @@ namespace SearchDirLists
                 {
                     foreach (SearchResultDir resultDir in searchResults.Results)
                     {
+                        if (resultDir.ListFiles.Count == 0)
+                        {
+                            if (++nCounter < m_nTreeFindTextChanged)
+                            {
+                                continue;
+                            }
+
+                            TreeNode treeNode = GetNodeByPath(resultDir.StrDir, form_treeView_Browse);
+
+                            Debug.Assert(treeNode != null);
+                            treeNode.TreeView.SelectedNode = treeNode;
+                            ++m_nTreeFindTextChanged;
+                            m_blink.Go(Once: true);
+                            return;
+                        }
+
                         foreach (String strFile in resultDir.ListFiles)
                         {
                             if (++nCounter < m_nTreeFindTextChanged)
@@ -999,6 +1015,12 @@ namespace SearchDirLists
 
         private void form_edit_TreeFind_TextChanged(object sender, EventArgs e)
         {
+            if (m_listSearchResults != null)
+            {
+                m_listSearchResults = null;
+                GC.Collect();
+            }
+
             m_nTreeFindTextChanged = 0;
             m_bFileFound = false;
         }

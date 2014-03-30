@@ -17,7 +17,7 @@ namespace SearchDirLists
 
     class SearchResultDir
     {
-        String m_strDir;
+        String m_strDir = null;
         List<String> m_listFiles = new List<string>();
 
         public String StrDir { get { return m_strDir; } set { m_strDir = value; } }
@@ -88,63 +88,85 @@ namespace SearchDirLists
             using (StreamReader file = new StreamReader(strSaveAs))
             {
                 String strLine = "";
+                SearchResultDir searchResultDir = null;
+                String strSearch = m_strSearch;
 
                 if (m_bCaseSensitive == false)
                 {
-                    m_strSearch = m_strSearch.ToLower();
+                    strSearch = strSearch.ToLower();
                 }
-
-                SearchResultDir searchResultDir = null;
 
                 while ((strLine = file.ReadLine()) != null)
                 {
-                    String[] arrLine = strLine.Split('\t');
+                    bool bDir = strLine.StartsWith(m_strLINETYPE_Directory);
+                    bool bFile = strLine.StartsWith(m_strLINETYPE_File);
 
-                    if (strLine.StartsWith(m_strLINETYPE_Directory) && (searchResultDir != null))
+                    if ((bDir == false) && (bFile == false))
                     {
-                        searchResultDir.StrDir = arrLine[2];
+                        continue;
+                    }
+
+                    String strDir = null, strMatchDir = null;
+                    String strFile = null, strMatchFile = null;
+
+                    {
+                        String[] arrLine = strLine.Split('\t');
+
+                        if (bDir) { strDir = strMatchDir = arrLine[2]; }
+                        if (bFile) { strFile = strMatchFile = arrLine[3]; }
+                    }
+
+                    if (m_bCaseSensitive == false)
+                    {
+                        if (bDir) { strMatchDir = strMatchDir.ToLower(); }
+                        if (bFile) { strMatchFile = strMatchFile.ToLower(); }
+                    }
+
+                    if (bDir && (searchResultDir != null))
+                    {
+                        searchResultDir.StrDir = strDir;
                         searchResultDir.ListFiles.Sort();
                         m_listResults.Add(searchResultDir);
                         searchResultDir = null;
                     }
 
-                    if (m_bCaseSensitive)
+                    if (bDir && (strMatchDir.EndsWith(strSearch)))            // Ends with dir ("outermost")
                     {
-                        if (strLine.Contains(m_strSearch) == false)
+                        if (searchResultDir == null)
                         {
-                            continue;
+                            searchResultDir = new SearchResultDir();
                         }
-                    }
-                    else
-                    {
-                        if (strLine.ToLower().Contains(m_strSearch) == false)
-                        {
-                            continue;
-                        }
-                    }
 
-                    if (searchResultDir == null)
-                    {
-                        searchResultDir = new SearchResultDir();
-                    }
-
-                    if (strLine.StartsWith(m_strLINETYPE_Directory))
-                    {
-                        searchResultDir.StrDir = arrLine[2];
+                        searchResultDir.StrDir = strDir;
                         m_listResults.Add(searchResultDir);
                         searchResultDir = null;
                     }
-                    else if (strLine.StartsWith(m_strLINETYPE_File))
+                    else if (bFile && (strMatchFile.Contains(strSearch)))     // Contains file
                     {
-                        searchResultDir.ListFiles.Add(arrLine[3]);
+                        if (searchResultDir == null)
+                        {
+                            searchResultDir = new SearchResultDir();
+                        }
+
+                        searchResultDir.ListFiles.Add(strFile);
                     }
                 }
 
-                Debug.Assert(searchResultDir == null);
+                if (searchResultDir != null)
+                {
+                    Debug.Assert(searchResultDir.StrDir == null);
+                }
+                else
+                {
+                    Debug.Assert(searchResultDir == null);
+                }
             }
 
-            m_listResults.Sort((x, y) => x.StrDir.CompareTo(y.StrDir));
-            m_statusCallback(m_strSearch, m_volStrings, m_listResults);
+            if (m_listResults.Count > 0)
+            {
+                m_listResults.Sort((x, y) => x.StrDir.CompareTo(y.StrDir));
+                m_statusCallback(m_strSearch, m_volStrings, m_listResults);
+            }
         }
 
         public Thread DoThreadFactory()

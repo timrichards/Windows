@@ -248,7 +248,11 @@ namespace SearchDirLists
         {
             if (InvokeRequired) { Invoke(new SearchDoneDelegate(SearchDoneCallback)); return; }
 
-            m_search = null;
+            lock (m_search)
+            {
+                m_search = null;
+            }
+
             m_searchResultsCallback();
             m_searchResultsCallback = null;
         }

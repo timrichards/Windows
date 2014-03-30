@@ -215,17 +215,17 @@ namespace SearchDirLists
 
             if (this == m_rootNode.Nodes.Values.First())
             {
+                treeNode.Name = treeNode.Text;
+
                 if (strVolumeName != null)
                 {
-                    bool bNotRedundant = (strVolumeName.EndsWith(treeNode.Text) == false);
-
-                    if (bNotRedundant)
+                    if (strVolumeName.EndsWith(treeNode.Text))
                     {
-                        treeNode.ToolTipText = strVolumeName + " (" + treeNode.Text + ")";
+                        treeNode.Text = strVolumeName;
                     }
                     else
                     {
-                        treeNode.ToolTipText = strVolumeName;
+                        treeNode.Text = strVolumeName + " (" + treeNode.Text + ")";
                     }
                 }
             }
@@ -917,7 +917,7 @@ namespace SearchDirLists
                     str_nClones = nClones.ToString("###,###");
                 }
 
-                String strNode = (listNodes.Value[0].Level == 0) ? listNodes.Value[0].ToolTipText : listNodes.Value[0].Text;
+                String strNode = listNodes.Value[0].Text;
 
                 Debug.Assert(strNode.Length > 0);
 
@@ -997,7 +997,7 @@ namespace SearchDirLists
             foreach (KeyValuePair<long, TreeNode> listNodes in dictUniqueReverse)
             {
                 TreeNode treeNode = listNodes.Value;
-                String strNode = (treeNode.Level == 0) ? treeNode.ToolTipText : treeNode.Text;
+                String strNode = treeNode.Text;
 
                 Debug.Assert(strNode.Length > 0);
 

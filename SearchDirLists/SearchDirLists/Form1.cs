@@ -521,6 +521,36 @@ namespace SearchDirLists
             timer_killRed.Enabled = false;
         }
 
+        String FullPath(TreeNode treeNode)
+        {
+            StringBuilder stbFullPath = null;
+            TreeNode parentNode = treeNode.Parent;
+
+            if (parentNode == null)
+            {
+                stbFullPath = new StringBuilder(treeNode.Name);
+            }
+            else
+            {
+                stbFullPath = new StringBuilder(treeNode.Text);
+            }
+            
+            while ((parentNode != null) && (parentNode.Parent != null))
+            {
+                stbFullPath.Insert(0, Path.DirectorySeparatorChar);
+                stbFullPath.Insert(0, parentNode.Text);
+                parentNode = parentNode.Parent;
+            }
+
+            if ((parentNode != null) && (parentNode.Parent == null))
+            {
+                stbFullPath.Insert(0, Path.DirectorySeparatorChar);
+                stbFullPath.Insert(0, parentNode.Name);
+            }
+
+            return stbFullPath.ToString();
+        }
+
         private void form_treeView_Browse_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (sender == form_treeCompare2)
@@ -545,7 +575,7 @@ namespace SearchDirLists
             Debug.Assert((new object[] { form_treeCompare1, form_treeCompare2 }.Contains(sender)) == m_bCompareMode);
             DoTreeSelect(e.Node);
 
-            String strNode = (e.Node.Level == 0) ? e.Node.ToolTipText : e.Node.Text;
+            String strNode = e.Node.Text;
 
             Debug.Assert(strNode.Length > 0);
 
@@ -570,13 +600,13 @@ namespace SearchDirLists
                 form_lblVolGroup.Text = "(no volume group set)";
             }
 
-            form_colVolDetail.Text = rootNode.ToolTipText;
+            form_colVolDetail.Text = rootNode.Text;
             form_colDirDetail.Text = form_colFilename.Text = strNode;
 
             if (m_bPutPathInFindEditBox)
             {
                 m_bPutPathInFindEditBox = false;
-                form_cb_TreeFind.Text = e.Node.FullPath;
+                form_cb_TreeFind.Text = FullPath(e.Node);
             }
 
             NodeDatum nodeDatum = (NodeDatum)e.Node.Tag;
@@ -645,9 +675,19 @@ namespace SearchDirLists
 
         private TreeNode GetNodeByPath(string path, TreeView treeView)
         {
-            if ((path == null) || (path.Length == 0))
+            return GetNodeByPath_A(path, treeView) ?? GetNodeByPath_A(path, treeView, true);
+        }
+
+        private TreeNode GetNodeByPath_A(string strPath, TreeView treeView, bool bIgnoreCase = false)
+        {
+            if ((strPath == null) || (strPath.Length == 0))
             {
                 return null;
+            }
+
+            if (bIgnoreCase)
+            {
+                strPath = strPath.ToLower();
             }
 
             TreeNode node = null;
@@ -657,9 +697,14 @@ namespace SearchDirLists
 
             foreach (TreeNode topNode in treeView.Nodes)
             {
-                String strNode = topNode.Text.ToLower();
+                String strNode = topNode.Name;
 
-                pathLevel = path.ToLower().Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+                if (bIgnoreCase)
+                {
+                    strNode = strNode.ToLower();
+                }
+
+                pathLevel = strPath.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
                 nPathLevelLength = pathLevel.Length;
 
                 if (strNode.Contains(Path.DirectorySeparatorChar))
@@ -699,17 +744,19 @@ namespace SearchDirLists
 
             if ((i < nPathLevelLength) && node != null)
             {
-                node = GetSubNode(node, pathLevel, i, nPathLevelLength);
+                node = GetSubNode(node, pathLevel, i, nPathLevelLength, bIgnoreCase);
             }
 
             return node;
         }
 
-        private TreeNode GetSubNode(TreeNode node, string[] pathLevel, int i, int nPathLevelLength)
+        private TreeNode GetSubNode(TreeNode node, string[] pathLevel, int i, int nPathLevelLength, bool bIgnoreCase)
         {
             foreach (TreeNode subNode in node.Nodes)
             {
-                if (subNode.Text.ToLower() != pathLevel[i])
+                String strText = bIgnoreCase ? subNode.Text.ToLower() : subNode.Text;
+
+                if (strText != pathLevel[i])
                 {
                     continue;
                 }
@@ -719,7 +766,7 @@ namespace SearchDirLists
                     return subNode;
                 }
 
-                return GetSubNode(subNode, pathLevel, i, nPathLevelLength);
+                return GetSubNode(subNode, pathLevel, i, nPathLevelLength, bIgnoreCase);
             }
 
             return null;
@@ -1086,20 +1133,17 @@ namespace SearchDirLists
                     bError = (m_nodeCompare1 == null);
                 }
 
-                Color clrBlink = Color.DarkTurquoise;
-
                 if (bError)
                 {
-                    clrBlink = Color.Red;
+                    m_blink.Go(clr: Color.Red, Once: true);
                     form_chkCompare1.Checked = false;  // event retriggers this handler
                 }
                 else
                 {
+                    m_blink.Go();
                     form_treeView_Browse.SelectedNode = m_nodeCompare1;
                     form_btnCompare.Enabled = true;
                 }
-
-                m_blink.Go(clr: clrBlink);
             }
             else
             {
@@ -1298,7 +1342,7 @@ namespace SearchDirLists
 
                 if (bError)
                 {
-                    m_blink.Go(clr: Color.Red);
+                    m_blink.Go(clr: Color.Red, Once:true);
                 }
                 else
                 {
@@ -1311,8 +1355,10 @@ namespace SearchDirLists
 
                     RootNodeDatum rootNodeDatum1 = (RootNodeDatum)TreeSelect.GetParentRoot(m_nodeCompare1).Tag;
                     RootNodeDatum rootNodeDatum2 = (RootNodeDatum)TreeSelect.GetParentRoot(m_nodeCompare2).Tag;
-                    String strFullPath1 = m_nodeCompare1.FullPath;
-                    String strFullPath2 = m_nodeCompare2.FullPath;
+                    String strFullPath1 = FullPath(m_nodeCompare1);
+                    String strFullPath2 = FullPath(m_nodeCompare2);
+                    String strFullPath1A = m_nodeCompare1.FullPath;
+                    String strFullPath2A = m_nodeCompare2.FullPath;
 
                     m_nodeCompare1 = (TreeNode)m_nodeCompare1.Clone();
                     m_nodeCompare2 = (TreeNode)m_nodeCompare2.Clone();
@@ -1322,6 +1368,8 @@ namespace SearchDirLists
                     NameNodes(m_nodeCompare2, m_listTreeNodes_Compare2);
                     m_nodeCompare1.Name = strFullPath1;
                     m_nodeCompare2.Name = strFullPath2;
+                    m_nodeCompare1.ToolTipText = strFullPath1A;
+                    m_nodeCompare2.ToolTipText = strFullPath2A;
                     m_nodeCompare1.Tag = new RootNodeDatum((NodeDatum)m_nodeCompare1.Tag, rootNodeDatum1.StrFile, rootNodeDatum1.StrVolumeGroup);
                     m_nodeCompare2.Tag = new RootNodeDatum((NodeDatum)m_nodeCompare2.Tag, rootNodeDatum2.StrFile, rootNodeDatum2.StrVolumeGroup);
                     m_nodeCompare2.Checked = true;    // hack to put it in the right file pane
@@ -1707,18 +1755,7 @@ namespace SearchDirLists
                 return;
             }
 
-            TreeNode treeNode = treeView.SelectedNode;
-
-            form_cb_TreeFind.Text = TreeSelect.GetParentRoot(treeNode).Name;
-
-            if (treeNode.Level <= 0)
-            {
-                return;
-            }
-
-            String strFullPath = treeNode.FullPath;
-
-            form_cb_TreeFind.Text += strFullPath.Substring(strFullPath.IndexOf(Path.DirectorySeparatorChar));
+            form_cb_TreeFind.Text = FullPath(treeView.SelectedNode);
         }
 
         private void form_tree_compare_KeyPress(object sender, KeyPressEventArgs e)
@@ -1756,7 +1793,7 @@ namespace SearchDirLists
                 PutTreeCompareNodePathIntoFindCombo((lv == form_lvFiles) ? form_treeCompare1 : form_treeCompare2);
             }
 
-            Clipboard.SetText(form_treeView_Browse.SelectedNode.FullPath + Path.DirectorySeparatorChar + lv.SelectedItems[0].Text);
+            Clipboard.SetText(FullPath(form_treeView_Browse.SelectedNode) + Path.DirectorySeparatorChar + lv.SelectedItems[0].Text);
             m_blink.Go(lvItem: lv.SelectedItems[0], Once: true);
         }
 

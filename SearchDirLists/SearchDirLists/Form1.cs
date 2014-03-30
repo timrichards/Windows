@@ -893,8 +893,15 @@ namespace SearchDirLists
 
                         Debug.Assert(treeNode != null);
 
-                        treeNode.TreeView.SelectedNode = null;      // hack to call TreeSelectDoneCallback()
-                        treeNode.TreeView.SelectedNode = treeNode;
+                        if (treeNode.TreeView.SelectedNode == treeNode)
+                        {
+                            SelectFoundFile();
+                        }
+                        else
+                        {
+                            treeNode.TreeView.SelectedNode = treeNode;
+                        }
+
                         ++m_nTreeFindTextChanged;
                         return;
                     }

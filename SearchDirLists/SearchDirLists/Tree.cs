@@ -1212,6 +1212,21 @@ namespace SearchDirLists
             }
         }
 
+        void SelectFoundFile()
+        {
+            // find file results list from NavToFile()
+            ListViewItem lvItem = form_lvFiles.FindItemWithText(m_strMaybeFile ?? form_cb_TreeFind.Text);
+
+            if (lvItem == null)
+            {
+                return;
+            }
+
+            lvItem.Selected = true;
+            lvItem.EnsureVisible();
+            m_blink.Go(Once: true);
+        }
+
         void TreeSelectDoneCallback(bool bSecondComparePane)
         {
             if (InvokeRequired) { Invoke(new TreeSelectDoneDelegate(TreeSelectDoneCallback), new object[] { bSecondComparePane }); return; }
@@ -1224,18 +1239,8 @@ namespace SearchDirLists
             {
                 m_threadSelect = null;
             }
-   
-            // find file results list from NavToFile()
-            ListViewItem lvItem = form_lvFiles.FindItemWithText(m_strMaybeFile ?? form_cb_TreeFind.Text);
 
-            if (lvItem == null)
-            {
-                return;
-            }
-
-            lvItem.Selected = true;
-            lvItem.EnsureVisible();
-            m_blink.Go(Once: true);
+            SelectFoundFile();
         }
 
         private void DoTree(bool bKill = false)

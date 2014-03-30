@@ -421,7 +421,7 @@ namespace SearchDirLists
 
             rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag, strSaveAs, m_volStrings.VolumeGroup);
             TreeSubnodeDetails(rootTreeNode);
-            Console.WriteLine(strSaveAs + " browsing tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
+            Console.WriteLine(strSaveAs + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
         }
 
         public Thread DoThreadFactory()
@@ -460,7 +460,7 @@ namespace SearchDirLists
         void Go()
         {
             Console.WriteLine();
-            Console.WriteLine("Creating browsing tree.");
+            Console.WriteLine("Creating tree.");
 
             DateTime dtStart = DateTime.Now;
 
@@ -475,7 +475,7 @@ namespace SearchDirLists
                 thread.Join();
             }
 
-            Console.WriteLine(String.Format("Completed browsing tree in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 10) / 100.0));
+            Console.WriteLine(String.Format("Completed tree in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 10) / 100.0));
             m_doneCallback();
         }
 
@@ -580,7 +580,7 @@ namespace SearchDirLists
 
             long nPrevDir = nodeDatum.PrevlineNo;
             long nLineNo = nodeDatum.LineNo;
-            String strLine = File.ReadLines(m_strFile).Skip((int)nLineNo-1).Take(1).ToArray()[0];
+            String strLine = File.ReadLines(m_strFile).Skip((int)nLineNo - 1).Take(1).ToArray()[0];
             String[] strArray = strLine.Split('\t');
 
             Debug.Assert(strArray[2].Length > 0);

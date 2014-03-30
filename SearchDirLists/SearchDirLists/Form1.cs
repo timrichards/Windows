@@ -846,64 +846,33 @@ namespace SearchDirLists
             {
                 foreach (SearchResults searchResults in m_listSearchResults)
                 {
-                    foreach (String strFileLine in searchResults.ResultLines)
+                    foreach (SearchResultDir resultDir in searchResults.Results)
                     {
-                        if (++nCounter < m_nTreeFindTextChanged)
+                        foreach (String strFile in resultDir.ListFiles)
                         {
-                            continue;
-                        }
-
-                        String[] arrLine = strFileLine.Split('\t');
-                        String strDir = null;
-
-                        if (new String[] { Utilities.m_strLINETYPE_Directory, Utilities.m_strLINETYPE_Error_Dir }.Contains(arrLine[0]))
-                        {
-                            if (form_cb_TreeFind.Text.StartsWith(Path.DirectorySeparatorChar.ToString()))
+                            if (++nCounter < m_nTreeFindTextChanged)
                             {
-                                // user is searching for files
-                                ++m_nTreeFindTextChanged;
                                 continue;
                             }
 
-                            if (arrLine[0] != Utilities.m_strLINETYPE_Directory)
+                            m_strMaybeFile = strFile;
+
+                            TreeNode treeNode = GetNodeByPath(resultDir.StrDir, form_treeView_Browse);
+
+                            Debug.Assert(treeNode != null);
+
+                            if (treeNode.TreeView.SelectedNode == treeNode)
                             {
-                                // just want to see what happens. Error dirs aren't put into the tree yet.
-                                Debug.Assert(GetNodeByPath(strDir, form_treeView_Browse) != null);
-                                ++m_nTreeFindTextChanged;
-                                continue;
+                                SelectFoundFile();
+                            }
+                            else
+                            {
+                                treeNode.TreeView.SelectedNode = treeNode;
                             }
 
-                            strDir = arrLine[2];
+                            ++m_nTreeFindTextChanged;
+                            return;
                         }
-                        else
-                        {
-                            Debug.Assert(new String[] { Utilities.m_strLINETYPE_File, Utilities.m_strLINETYPE_Error_File }.Contains(arrLine[0]));
-
-                            if (arrLine[0] == Utilities.m_strLINETYPE_File)
-                            {
-                                m_strMaybeFile = arrLine[3];
-                                
-                                String strDirLine = File.ReadLines(searchResults.StrFile).Skip(int.Parse(arrLine[1])).SkipWhile(s => s.StartsWith(Utilities.m_strLINETYPE_Directory) == false).Take(1).ToArray()[0];
-                                
-                                strDir = strDirLine.Split('\t')[2];
-                            }
-                        }
-
-                        TreeNode treeNode = GetNodeByPath(strDir, form_treeView_Browse);
-
-                        Debug.Assert(treeNode != null);
-
-                        if (treeNode.TreeView.SelectedNode == treeNode)
-                        {
-                            SelectFoundFile();
-                        }
-                        else
-                        {
-                            treeNode.TreeView.SelectedNode = treeNode;
-                        }
-
-                        ++m_nTreeFindTextChanged;
-                        return;
                     }
                 }
 
@@ -1817,8 +1786,6 @@ namespace SearchDirLists
         private void formCtl_EnterForCopyButton(object sender, EventArgs e)
         {
             m_ctlLastFocusForCopyButton = (Control) sender;
-            m_nTreeFindTextChanged = 0;
-            m_bFileFound = false;
         }
     }
 }

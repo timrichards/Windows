@@ -11,22 +11,39 @@ using System.Threading;
 
 namespace SearchDirLists
 {
-    delegate void SearchStatusDelegate(String strFile, List<String> listResultLines);
+    delegate void SearchStatusDelegate(String strSearch, LVvolStrings volStrings, List<SearchResultDir> listResults);
     delegate void SearchDoneDelegate();
     delegate void SearchResultsDelegate();
 
+    class SearchResultDir
+    {
+        String m_strDir;
+        List<String> m_listFiles = new List<string>();
+
+        public String StrDir { get { return m_strDir; } set { m_strDir = value; } }
+        public List<String> ListFiles { get { return m_listFiles; } }
+
+        void AddFile(String strFile)
+        {
+            m_listFiles.Add(strFile);
+        }
+    }
+
     class SearchResults
     {
-        String m_strFile;
-        List<String> m_listResultLines;
+        String m_strSearch = null;
+        LVvolStrings m_volStrings = null;
+        List<SearchResultDir> m_listResults = null;
 
-        public String StrFile { get { return m_strFile; } }
-        public List<String> ResultLines { get { return m_listResultLines; } }
+        public String StrSearch { get { return m_strSearch; } }
+        public LVvolStrings VolStrings { get { return m_volStrings; } }
+        public List<SearchResultDir> Results { get { return m_listResults; } }
 
-        public SearchResults(String strFile, List<String> listResultLines)
+        public SearchResults(String strSearch, LVvolStrings volStrings, List<SearchResultDir> listResults)
         {
-            m_strFile = strFile;
-            m_listResultLines = listResultLines;
+            m_strSearch = strSearch;
+            m_volStrings = volStrings;
+            m_listResults = listResults;
         }
     }
 
@@ -37,10 +54,10 @@ namespace SearchDirLists
         LVvolStrings m_volStrings = null;
         String m_strSearch = null;
         bool m_bCaseSensitive = true;
-        List<String> m_listResultLines = new List<string>();
+        List<SearchResultDir> m_listResults = new List<SearchResultDir>();
 
-        public enum FolderSpecialHandling { None, Outermost, Innermost };
-        FolderSpecialHandling m_folderHandling;
+        public enum FolderSpecialHandling { None, Outermost, Innermost };       // not used
+        FolderSpecialHandling m_folderHandling;                                 // not used
 
         public SearchFile(LVvolStrings volStrings, String strSearch, bool bCaseSensitive, FolderSpecialHandling folderHandling,
             SearchStatusDelegate statusCallback)
@@ -48,7 +65,7 @@ namespace SearchDirLists
             m_volStrings = volStrings;
             m_strSearch = strSearch;
             m_bCaseSensitive = bCaseSensitive;
-            m_folderHandling = folderHandling;
+            m_folderHandling = folderHandling;                                 // not used
             m_statusCallback = statusCallback;
         }
 
@@ -71,16 +88,25 @@ namespace SearchDirLists
             using (StreamReader file = new StreamReader(strSaveAs))
             {
                 String strLine = "";
-                long nLineNo = 0;   // lines number from one
 
                 if (m_bCaseSensitive == false)
                 {
                     m_strSearch = m_strSearch.ToLower();
                 }
 
+                SearchResultDir searchResultDir = null;
+
                 while ((strLine = file.ReadLine()) != null)
                 {
-                    ++nLineNo;
+                    String[] arrLine = strLine.Split('\t');
+
+                    if (strLine.StartsWith(m_strLINETYPE_Directory) && (searchResultDir != null))
+                    {
+                        searchResultDir.StrDir = arrLine[2];
+                        searchResultDir.ListFiles.Sort();
+                        m_listResults.Add(searchResultDir);
+                        searchResultDir = null;
+                    }
 
                     if (m_bCaseSensitive)
                     {
@@ -97,46 +123,28 @@ namespace SearchDirLists
                         }
                     }
 
-                    String[] strArray = strLine.Split('\t');
-
-                    if (strArray[2].Length > 0) // directory
+                    if (searchResultDir == null)
                     {
-                        if (m_folderHandling == FolderSpecialHandling.Outermost)
-                        {
-                            if (strArray[2].EndsWith(m_strSearch) == false)
-                            {
-                                continue;
-                            }
-                        }
-                        else if (m_folderHandling == FolderSpecialHandling.Innermost)
-                        {
-                            if (strArray.Length < nColLENGTH + 1)
-                            {
-                                continue;
-                            }
-
-                            long nParse = 0;
-
-                            if (long.TryParse(strArray[nColLENGTH], out nParse) == false)
-                            {
-                                continue;
-                            }
-                        }
+                        searchResultDir = new SearchResultDir();
                     }
 
-                    if ((strArray.Length > nColLENGTH) && (strArray[nColLENGTH].Length > 0))
+                    if (strLine.StartsWith(m_strLINETYPE_Directory))
                     {
-                        strArray[nColLENGTH] = FormatSize(strArray[nColLENGTH]);
+                        searchResultDir.StrDir = arrLine[2];
+                        m_listResults.Add(searchResultDir);
+                        searchResultDir = null;
                     }
-
-                    m_listResultLines.Add(strLine); 
+                    else if (strLine.StartsWith(m_strLINETYPE_File))
+                    {
+                        searchResultDir.ListFiles.Add(arrLine[3]);
+                    }
                 }
+
+                Debug.Assert(searchResultDir == null);
             }
 
-            if (m_listResultLines.Count > 0)
-            {
-                m_statusCallback(strSaveAs, m_listResultLines);
-            }
+            m_listResults.Sort((x, y) => x.StrDir.CompareTo(y.StrDir));
+            m_statusCallback(m_strSearch, m_volStrings, m_listResults);
         }
 
         public Thread DoThreadFactory()
@@ -157,7 +165,7 @@ namespace SearchDirLists
         String m_strSearch = null;
         List<LVvolStrings> m_list_lvVolStrings = new List<LVvolStrings>();
         bool m_bCaseSensitive = false;
-        SearchFile.FolderSpecialHandling m_folderHandling = SearchFile.FolderSpecialHandling.Outermost;
+        SearchFile.FolderSpecialHandling m_folderHandling = SearchFile.FolderSpecialHandling.Outermost;     // not used
 
         public Search(ListView.ListViewItemCollection lvVolItems, String strSearch, bool bCaseSensitive, SearchFile.FolderSpecialHandling folderHandling,
             SearchStatusDelegate statusCallback, SearchDoneDelegate doneCallback)
@@ -169,7 +177,7 @@ namespace SearchDirLists
 
             m_strSearch = strSearch;
             m_bCaseSensitive = bCaseSensitive;
-            m_folderHandling = folderHandling;
+            m_folderHandling = folderHandling;                                                       // not used
             m_statusCallback = statusCallback;
             m_doneCallback = doneCallback;
         }
@@ -184,6 +192,7 @@ namespace SearchDirLists
             {
                 SearchFile searchFile = new SearchFile(volStrings, m_strSearch, m_bCaseSensitive, m_folderHandling,
                     m_statusCallback);
+
                 m_listThreads.Add(searchFile.DoThreadFactory());
             }
 
@@ -230,9 +239,9 @@ namespace SearchDirLists
         List<SearchResults> m_listSearchResults = new List<SearchResults>();
         SearchResultsDelegate m_searchResultsCallback = null;
 
-        void SearchStatusCallback(String strFile, List<String> listResultLines)
+        void SearchStatusCallback(String strSearch, LVvolStrings volStrings, List<SearchResultDir> listResults)
         {
-            if (listResultLines.Count <= 0)
+            if (listResults.Count <= 0)
             {
                 Debug.Assert(false); // caller takes care of this
                 return;
@@ -240,7 +249,7 @@ namespace SearchDirLists
 
             lock (m_listSearchResults)
             {
-                m_listSearchResults.Add(new SearchResults(strFile, listResultLines));
+                m_listSearchResults.Add(new SearchResults(strSearch, volStrings, listResults));
             }
         }
 
@@ -253,6 +262,7 @@ namespace SearchDirLists
                 m_search = null;
             }
 
+            m_listSearchResults.Sort((x, y) => (x.VolStrings.VolumeName.CompareTo(y.VolStrings.VolumeName)));
             m_searchResultsCallback();
             m_searchResultsCallback = null;
         }

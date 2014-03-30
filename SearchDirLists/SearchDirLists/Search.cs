@@ -54,17 +54,20 @@ namespace SearchDirLists
         LVvolStrings m_volStrings = null;
         String m_strSearch = null;
         bool m_bCaseSensitive = true;
+        bool m_bSearchFilesOnly = false;
         List<SearchResultDir> m_listResults = new List<SearchResultDir>();
 
         public enum FolderSpecialHandling { None, Outermost, Innermost };       // not used
         FolderSpecialHandling m_folderHandling;                                 // not used
 
-        public SearchFile(LVvolStrings volStrings, String strSearch, bool bCaseSensitive, FolderSpecialHandling folderHandling,
+        public SearchFile(LVvolStrings volStrings, String strSearch, bool bCaseSensitive,
+            FolderSpecialHandling folderHandling, bool bSearchFilesOnly,
             SearchStatusDelegate statusCallback)
         {
             m_volStrings = volStrings;
             m_strSearch = strSearch;
             m_bCaseSensitive = bCaseSensitive;
+            m_bSearchFilesOnly = bSearchFilesOnly;
             m_folderHandling = folderHandling;                                 // not used
             m_statusCallback = statusCallback;
         }
@@ -130,7 +133,7 @@ namespace SearchDirLists
                         searchResultDir = null;
                     }
 
-                    if (bDir && (strMatchDir.EndsWith(strSearch)))            // Ends with dir ("outermost")
+                    if ((m_bSearchFilesOnly == false) && bDir && (strMatchDir.EndsWith(strSearch)))     // Ends with dir ("outermost")
                     {
                         if (searchResultDir == null)
                         {
@@ -141,7 +144,7 @@ namespace SearchDirLists
                         m_listResults.Add(searchResultDir);
                         searchResultDir = null;
                     }
-                    else if (bFile && (strMatchFile.Contains(strSearch)))     // Contains file
+                    else if (bFile && (strMatchFile.Contains(strSearch)))                               // Contains file
                     {
                         if (searchResultDir == null)
                         {
@@ -188,8 +191,10 @@ namespace SearchDirLists
         List<LVvolStrings> m_list_lvVolStrings = new List<LVvolStrings>();
         bool m_bCaseSensitive = false;
         SearchFile.FolderSpecialHandling m_folderHandling = SearchFile.FolderSpecialHandling.Outermost;     // not used
+        bool m_bSearchFilesOnly = false;
 
-        public Search(ListView.ListViewItemCollection lvVolItems, String strSearch, bool bCaseSensitive, SearchFile.FolderSpecialHandling folderHandling,
+        public Search(ListView.ListViewItemCollection lvVolItems, String strSearch, bool bCaseSensitive,
+            SearchFile.FolderSpecialHandling folderHandling, bool bSearchFilesOnly,
             SearchStatusDelegate statusCallback, SearchDoneDelegate doneCallback)
         {
             foreach (ListViewItem lvItem in lvVolItems)
@@ -200,6 +205,7 @@ namespace SearchDirLists
             m_strSearch = strSearch;
             m_bCaseSensitive = bCaseSensitive;
             m_folderHandling = folderHandling;                                                       // not used
+            m_bSearchFilesOnly = bSearchFilesOnly;
             m_statusCallback = statusCallback;
             m_doneCallback = doneCallback;
         }
@@ -212,7 +218,7 @@ namespace SearchDirLists
 
             foreach (LVvolStrings volStrings in m_list_lvVolStrings)
             {
-                SearchFile searchFile = new SearchFile(volStrings, m_strSearch, m_bCaseSensitive, m_folderHandling,
+                SearchFile searchFile = new SearchFile(volStrings, m_strSearch, m_bCaseSensitive, m_folderHandling, m_bSearchFilesOnly,
                     m_statusCallback);
 
                 m_listThreads.Add(searchFile.DoThreadFactory());
@@ -289,7 +295,9 @@ namespace SearchDirLists
             m_searchResultsCallback = null;
         }
 
-        private void SearchFiles(String strSearch, SearchResultsDelegate searchResultsCallback, bool bKill = false)
+        private void SearchFiles(String strSearch,
+            SearchResultsDelegate searchResultsCallback,
+            bool bKill = false, bool bSearchFilesOnly = false)
         {
             if (m_search != null)
             {
@@ -318,7 +326,7 @@ namespace SearchDirLists
 
             SearchFile.FolderSpecialHandling folderHandling = SearchFile.FolderSpecialHandling.None;
 
-            m_search = new Search(form_lvVolumesMain.Items, strSearch, true, folderHandling,
+            m_search = new Search(form_lvVolumesMain.Items, strSearch, true, folderHandling, bSearchFilesOnly,
                 new SearchStatusDelegate(SearchStatusCallback), new SearchDoneDelegate(SearchDoneCallback));
             m_search.DoThreadFactory();
         }

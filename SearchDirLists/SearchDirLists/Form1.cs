@@ -913,8 +913,19 @@ namespace SearchDirLists
                 {
                     if (form_cb_TreeFind.Text.StartsWith(Path.DirectorySeparatorChar.ToString()))
                     {
-                        // special code for find file
-                        SearchFiles(form_cb_TreeFind.Text.Substring(1), new SearchResultsDelegate(SearchResultsCallback));
+                        // special code for find file and dir
+                        String strSearch = form_cb_TreeFind.Text.Substring(1);
+                        bool bSearchFileOnly = false;
+
+                        if (strSearch.StartsWith(Path.DirectorySeparatorChar.ToString()))
+                        {
+                            strSearch = strSearch.Substring(1);
+                            bSearchFileOnly = true;
+                        }
+
+                        SearchFiles(form_cb_TreeFind.Text.Substring(1),
+                            new SearchResultsDelegate(SearchResultsCallback),
+                            bSearchFilesOnly: bSearchFileOnly);
                         // async
                         return;
                     }

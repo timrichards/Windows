@@ -127,13 +127,13 @@ namespace SearchDirLists
                     {
                         String[] arrLine = strLine.Split('\t');
 
-                        if (bDir) { strDir = strMatchDir = arrLine[2]; }
+                        if (bDir) { strDir = strMatchDir = arrLine[2].TrimEnd(Path.DirectorySeparatorChar); }
                         if (bFile) { strFile = strMatchFile = arrLine[3]; }
                     }
 
                     if (m_bCaseSensitive == false)
                     {
-                        if (bDir) { strMatchDir = strMatchDir.ToLower().TrimEnd(Path.DirectorySeparatorChar); }
+                        if (bDir) { strMatchDir = strMatchDir.ToLower(); }
                         if (bFile) { strMatchFile = strMatchFile.ToLower(); }
                     }
 

@@ -134,14 +134,6 @@ namespace SearchDirLists
                         if (bFile) { strMatchFile = strMatchFile.ToLower(); }
                     }
 
-                    // "redoing" this logic prevents bugs during code maintenance from leaking into the result strings
-
-                    String strDir = null;
-                    String strFile = null;
-
-                    if (bDir) { strDir = arrLine[2].TrimEnd(Path.DirectorySeparatorChar); }
-                    if (bFile) { strFile = arrLine[3]; }
-
                     // strMatchDir gets set to just the folder name after this, but first check the full path
                     if (bDir && (strMatchDir == strCurrentNode))
                     {
@@ -158,6 +150,12 @@ namespace SearchDirLists
                         bFirst = true;
                     }
 
+                    // "redoing" this logic prevents bugs during code maintenance from leaking into the result strings
+
+                    String strDir = null;
+
+                    if (bDir) { strDir = arrLine[2].TrimEnd(Path.DirectorySeparatorChar); }
+
                     if (bDir && (searchResultDir != null))
                     {
                         searchResultDir.StrDir = strDir;
@@ -166,10 +164,10 @@ namespace SearchDirLists
                         searchResultDir = null;
                     }
 
-                    // ...now just the last folder name for strMatchDir...
+                    // ...now just the last folder name for strMatchDir...      // "outermost"
                     if (bDir && strMatchDir.Contains(Path.DirectorySeparatorChar))
                     {
-                        strMatchDir = strMatchDir.Substring(strMatchDir.LastIndexOf(Path.DirectorySeparatorChar) + 1);     // "outermost"
+                        strMatchDir = strMatchDir.Substring(strMatchDir.LastIndexOf(Path.DirectorySeparatorChar) + 1);
                     }
 
                     if ((m_bSearchFilesOnly == false) && bDir && (strMatchDir.Contains(strSearch)))
@@ -183,8 +181,10 @@ namespace SearchDirLists
                         listResults.Add(searchResultDir);
                         searchResultDir = null;
                     }
-                    else if (bFile && (strMatchFile.Contains(strSearch)))                               // Contains file
+                    else if (bFile && (strMatchFile.Contains(strSearch)))
                     {
+                        String strFile = arrLine[3];
+
                         if (searchResultDir == null)
                         {
                             searchResultDir = new SearchResultsDir();

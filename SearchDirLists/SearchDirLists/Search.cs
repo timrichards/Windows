@@ -121,15 +121,12 @@ namespace SearchDirLists
                         continue;
                     }
 
-                    String strDir = null, strMatchDir = null;
-                    String strFile = null, strMatchFile = null;
+                    String[] arrLine = strLine.Split('\t');
+                    String strMatchDir = null;
+                    String strMatchFile = null;
 
-                    {
-                        String[] arrLine = strLine.Split('\t');
-
-                        if (bDir) { strDir = strMatchDir = arrLine[2].TrimEnd(Path.DirectorySeparatorChar); }
-                        if (bFile) { strFile = strMatchFile = arrLine[3]; }
-                    }
+                    if (bDir) { strMatchDir = arrLine[2].TrimEnd(Path.DirectorySeparatorChar); }
+                    if (bFile) { strMatchFile = arrLine[3]; }
 
                     if (m_bCaseSensitive == false)
                     {
@@ -137,6 +134,15 @@ namespace SearchDirLists
                         if (bFile) { strMatchFile = strMatchFile.ToLower(); }
                     }
 
+                    // "redoing" this logic prevents bugs during code maintenance from leaking into the result strings
+
+                    String strDir = null;
+                    String strFile = null;
+
+                    if (bDir) { strDir = arrLine[2].TrimEnd(Path.DirectorySeparatorChar); }
+                    if (bFile) { strFile = arrLine[3]; }
+
+                    // strMatchDir gets set to just the folder name after this, but first check the full path
                     if (bDir && (strMatchDir == strCurrentNode))
                     {
                         if (listResults.Count > 0)
@@ -160,7 +166,13 @@ namespace SearchDirLists
                         searchResultDir = null;
                     }
 
-                    if ((m_bSearchFilesOnly == false) && bDir && (strMatchDir.EndsWith(strSearch)))     // Ends with dir ("outermost")
+                    // ...now just the last folder name for strMatchDir...
+                    if (bDir && strMatchDir.Contains(Path.DirectorySeparatorChar))
+                    {
+                        strMatchDir = strMatchDir.Substring(strMatchDir.LastIndexOf(Path.DirectorySeparatorChar) + 1);     // "outermost"
+                    }
+
+                    if ((m_bSearchFilesOnly == false) && bDir && (strMatchDir.Contains(strSearch)))
                     {
                         if (searchResultDir == null)
                         {

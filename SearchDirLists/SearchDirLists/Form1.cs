@@ -846,7 +846,7 @@ namespace SearchDirLists
             {
                 foreach (SearchResults searchResults in m_listSearchResults)
                 {
-                    foreach (SearchResultDir resultDir in searchResults.Results)
+                    foreach (SearchResultsDir resultDir in searchResults.Results)
                     {
                         if (resultDir.ListFiles.Count == 0)
                         {

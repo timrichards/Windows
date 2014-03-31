@@ -98,15 +98,17 @@ namespace SearchDirLists
 
             using (StreamReader file = new StreamReader(strSaveAs))
             {
-                String strLine = "";
+                String strLine = null;
                 SearchResultsDir searchResultDir = null;
                 String strSearch = m_strSearch;
                 List<SearchResultsDir> listResults = new List<SearchResultsDir>();
                 bool bFirst = false;
+                String strCurrentNode = m_strCurrentNode ?? "";
 
                 if (m_bCaseSensitive == false)
                 {
                     strSearch = strSearch.ToLower();
+                    strCurrentNode = strCurrentNode.ToLower();
                 }
 
                 while ((strLine = file.ReadLine()) != null)
@@ -131,19 +133,22 @@ namespace SearchDirLists
 
                     if (m_bCaseSensitive == false)
                     {
-                        if (bDir) { strMatchDir = strMatchDir.ToLower(); }
+                        if (bDir) { strMatchDir = strMatchDir.ToLower().TrimEnd(Path.DirectorySeparatorChar); }
                         if (bFile) { strMatchFile = strMatchFile.ToLower(); }
                     }
 
-                    if (bDir && (strDir == m_strCurrentNode))
+                    if (bDir && (strMatchDir == strCurrentNode))
                     {
                         if (listResults.Count > 0)
                         {
                             listResults.Sort((x, y) => x.StrDir.CompareTo(y.StrDir));
                             m_statusCallback(m_strSearch, m_volStrings, listResults, bLast: true);
                         }
+                        else
+                        {
+                            listResults = new List<SearchResultsDir>();
+                        }
 
-                        listResults = new List<SearchResultsDir>();
                         bFirst = true;
                     }
 
@@ -322,14 +327,14 @@ namespace SearchDirLists
 
             if (m_firstSearchResults != null)
             {
-                Debug.Assert(m_lastSearchResults != null);
                 m_listSearchResults.Insert(0, m_firstSearchResults);
+                m_firstSearchResults = null;
             }
 
             if (m_lastSearchResults != null)
             {
-                Debug.Assert(m_firstSearchResults != null);
                 m_listSearchResults.Add(m_lastSearchResults);
+                m_lastSearchResults = null;
             }
 
             m_searchResultsCallback();
@@ -374,7 +379,8 @@ namespace SearchDirLists
                 strCurrentNode = FullPath(form_treeView_Browse.SelectedNode);
             }
 
-            m_search = new Search(form_lvVolumesMain.Items, strSearch, true, folderHandling, bSearchFilesOnly, strCurrentNode,
+            m_search = new Search(form_lvVolumesMain.Items, strSearch, strSearch.ToLower() != strSearch,
+                folderHandling, bSearchFilesOnly, strCurrentNode,
                 new SearchStatusDelegate(SearchStatusCallback), new SearchDoneDelegate(SearchDoneCallback));
             m_search.DoThreadFactory();
         }

@@ -1224,6 +1224,7 @@ namespace SearchDirLists
 
             lvItem.Selected = true;
             lvItem.EnsureVisible();
+            m_blink.Stop();
             m_blink.Go(Once: true);
         }
 

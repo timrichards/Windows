@@ -860,6 +860,7 @@ namespace SearchDirLists
                             Debug.Assert(treeNode != null);
                             treeNode.TreeView.SelectedNode = treeNode;
                             ++m_nTreeFindTextChanged;
+                            m_blink.Stop();
                             m_blink.Go(Once: true);
                             return;
                         }
@@ -923,6 +924,7 @@ namespace SearchDirLists
                             bSearchFileOnly = true;
                         }
 
+                        m_blink.Go(bProgress: true);
                         SearchFiles(form_cb_TreeFind.Text.Substring(1),
                             new SearchResultsDelegate(SearchResultsCallback),
                             bSearchFilesOnly: bSearchFileOnly);
@@ -947,6 +949,7 @@ namespace SearchDirLists
 
                         treeNode.TreeView.SelectedNode = treeNode;
                         ++m_nTreeFindTextChanged;
+                        m_blink.Stop();
                         m_blink.Go(Once: true);
                     }
                     else if (treeView == form_treeCompare1)
@@ -996,6 +999,7 @@ namespace SearchDirLists
                 m_nTreeFindTextChanged = 0;
                 m_bFileFound = false;
                 m_strMaybeFile = null;
+                m_blink.Stop();
                 m_blink.Go(clr: Color.Red, Once: true);
                 MessageBox.Show("Couldn't find the specified search parameter.", "Search");
                 return;
@@ -1142,6 +1146,8 @@ namespace SearchDirLists
                     bError = (m_nodeCompare1 == null);
                 }
 
+                m_blink.Stop();
+
                 if (bError)
                 {
                     m_blink.Go(clr: Color.Red, Once: true);
@@ -1171,15 +1177,15 @@ namespace SearchDirLists
             Control m_ctlBlink = null;
             int m_nNumBlinks = 10;
             ListViewItem m_lvItem = null;
+            bool m_bProgress = false;
 
-            public void Go(Control ctl = null, ListViewItem lvItem = null, Color? clr = null, bool Once = false)
+            public void Go(Control ctl = null, ListViewItem lvItem = null, Color? clr = null, bool Once = false, bool bProgress = false)
             {
                 m_lvItem = lvItem;
 
                 if (m_timer.Enabled)
                 {
-                    Reset();
-                    SetCtlBackColor(m_clrControlOrig);
+                    Stop();
                 }
 
                 if (m_lvItem != null)
@@ -1194,11 +1200,18 @@ namespace SearchDirLists
                     m_clrControlOrig = m_ctlBlink.BackColor;
                 }
 
-                m_clrBlink = clr ?? Color.Turquoise;
+                m_bProgress = bProgress;
+                m_clrBlink = clr ?? (bProgress ? Color.LightSalmon : Color.Turquoise);
                 m_nBlink = 0;
                 m_nNumBlinks = Once ? 2 : 10;
-                m_timer.Interval = Once ? 100 : 50;
+                m_timer.Interval = bProgress ? 500 : (Once ? 100 : 50);
                 m_timer.Enabled = true;
+            }
+
+            public void Stop()
+            {
+                Reset();
+                SetCtlBackColor(m_clrControlOrig);
             }
 
             void Reset()
@@ -1645,6 +1658,8 @@ namespace SearchDirLists
 
         void CopyToClipboard()
         {
+            m_blink.Stop();
+
             if (form_cb_TreeFind.Text.Length <= 0)
             {
                 m_blink.Go(clr: Color.Red, Once: true);
@@ -1790,6 +1805,7 @@ namespace SearchDirLists
             }
 
             e.Handled = true;
+            m_blink.Stop();
 
             if (lv.SelectedItems.Count <= 0)
             {

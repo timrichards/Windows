@@ -82,7 +82,7 @@ namespace SearchDirLists
 
         public void Go()
         {
-            if (LV_VolumesItemInclude(m_volStrings) == false)
+            if (LV_VolumesItemCanLoad(m_volStrings) == false)
             {
                 return;
             }
@@ -383,7 +383,6 @@ namespace SearchDirLists
             m_searchResultsCallback = searchResultsCallback;
 
             SearchFile.FolderSpecialHandling folderHandling = SearchFile.FolderSpecialHandling.None;
-
             String strCurrentNode = null;
 
             if (form_treeView_Browse.SelectedNode != null)

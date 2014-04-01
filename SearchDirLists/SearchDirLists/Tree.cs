@@ -116,7 +116,7 @@ namespace SearchDirLists
     {
         RootNode m_rootNode = null;
         SortedDictionary<String, Node> subNodes = new SortedDictionary<string, Node>();
-        String m_strPath = "";
+        String m_strPath = null;
         long m_nPrevLineNo = 0;
         long m_nLineNo = 0;
         long m_nLength = 0;
@@ -337,7 +337,7 @@ namespace SearchDirLists
         {
             DateTime dtStart = DateTime.Now;
 
-            if (LV_VolumesItemInclude(m_volStrings) == false)
+            if (LV_VolumesItemCanLoad(m_volStrings) == false)
             {
                 return;
             }
@@ -466,6 +466,11 @@ namespace SearchDirLists
 
             foreach (LVvolStrings volStrings in m_list_lvVolStrings)
             {
+                if (LV_VolumesItemCanLoad(volStrings) == false)
+                {
+                    continue;
+                }
+
                 TreeRootNodeThread treeRoot = new TreeRootNodeThread(volStrings, m_hashCache, m_listTreeNodes, m_statusCallback);
                 m_listThreads.Add(treeRoot.DoThreadFactory());
             }
@@ -476,6 +481,12 @@ namespace SearchDirLists
             }
 
             Console.WriteLine(String.Format("Completed tree in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 10) / 100.0));
+
+            if (m_listThreads.Count == 0)
+            {
+                return;
+            }
+
             m_doneCallback();
         }
 
@@ -847,7 +858,7 @@ namespace SearchDirLists
             lvMarker.Font = new Font(lvMarker.Font, FontStyle.Bold);
             lvMarker.Tag = null;
 
-            for (int i = nCount - nCount % nInterval; i >= 0; i -= nInterval)       // Enter the Zeroth
+            for (int i = nCount - Math.Max(nCount % nInterval, 1); i >= 0; i -= nInterval)        // Enter the Zeroth
             {
                 ListViewItem lvItem = (ListViewItem)lvMarker.Clone();
 
@@ -904,7 +915,7 @@ namespace SearchDirLists
 
             foreach (KeyValuePair<long, List<TreeNode>> listNodes in dictReverse)
             {
-                String str_nClones = "";
+                String str_nClones = null;
                 int nClones = listNodes.Value.Count;
 
                 if (nClones <= 0)       // precisely from bRemoveClone above

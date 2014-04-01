@@ -13,9 +13,9 @@ namespace SearchDirLists
 {
     public partial class Form1 : Form
     {
-        private String m_strVolumeName = "";
-        private String m_strPath = "";
-        private String m_strSaveAs = "";
+        private String m_strVolumeName = null;
+        private String m_strPath = null;
+        private String m_strSaveAs = null;
         int m_nLVclonesClickIndex = -1;
         int m_nTreeFindTextChanged = 0;
         bool m_bFileFound = false;
@@ -185,8 +185,8 @@ namespace SearchDirLists
 
             if (File.Exists(m_strSaveAs))
             {
-                form_cbVolumeName.Text = "";
-                form_cbPath.Text = "";
+                form_cbVolumeName.Text = null;
+                form_cbPath.Text = null;
             }
 
             m_bBrowseLoaded = false;
@@ -457,7 +457,7 @@ namespace SearchDirLists
             {
                 String strLine = fs.ReadLine();
 
-                if (new String[] { Utilities.m_str_VOLUME_LIST_HEADER_01, Utilities.m_str_VOLUME_LIST_HEADER}.Contains(strLine) == false)
+                if ((Utilities.m_str_VOLUME_LIST_HEADER_01 + Utilities.m_str_VOLUME_LIST_HEADER).Contains(strLine) == false)
                 {
                     MessageBox.Show(openFileDialog1.FileName + " is not a valid volume list file.", "Load Volume List");
                     return;
@@ -473,7 +473,7 @@ namespace SearchDirLists
 
                     if (File.Exists(strArray[2]) == false)
                     {
-                        strArray[2] = Path.GetDirectoryName(openFileDialog1.FileName) + Path.DirectorySeparatorChar + Path.GetFileName(strArray[2]);
+                        strArray[2] = Path.Combine(Path.GetDirectoryName(openFileDialog1.FileName), Path.GetFileName(strArray[2]));
 
                         if (File.Exists(strArray[2]) == false)
                         {
@@ -1818,7 +1818,7 @@ namespace SearchDirLists
                 PutTreeCompareNodePathIntoFindCombo((lv == form_lvFiles) ? form_treeCompare1 : form_treeCompare2);
             }
 
-            Clipboard.SetText(FullPath(form_treeView_Browse.SelectedNode) + Path.DirectorySeparatorChar + lv.SelectedItems[0].Text);
+            Clipboard.SetText(Path.Combine(FullPath(form_treeView_Browse.SelectedNode), lv.SelectedItems[0].Text));
             m_blink.Go(lvItem: lv.SelectedItems[0], Once: true);
         }
 

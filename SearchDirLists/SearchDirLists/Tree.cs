@@ -858,8 +858,29 @@ namespace SearchDirLists
             lvMarker.Font = new Font(lvMarker.Font, FontStyle.Bold);
             lvMarker.Tag = null;
 
-            for (int i = nCount - Math.Max(nCount % nInterval, 1); i >= 0; i -= nInterval)        // Enter the Zeroth
             {
+                int i = nCount - 1;
+                ListViewItem lvItem = (ListViewItem)lvMarker.Clone();
+
+                lvItem.Text = (Utilities.FormatSize(((NodeDatum)((TreeNode)(bUnique ? listLVitems[i].Tag : ((List<TreeNode>)listLVitems[i].Tag)[0])).Tag).LengthSubnodes, bNoDecimal: true));
+                listLVitems.Add(lvItem);
+            }
+
+            int nInitial = nCount % nInterval;
+
+            if (nInitial == 0) nInitial = nInterval;
+
+            for (int i = nCount - nInitial; i > nInterval / 2; i -= nInterval)
+            {
+                ListViewItem lvItem = (ListViewItem)lvMarker.Clone();
+
+                lvItem.Text = (Utilities.FormatSize(((NodeDatum)((TreeNode)(bUnique ? listLVitems[i].Tag : ((List<TreeNode>)listLVitems[i].Tag)[0])).Tag).LengthSubnodes, bNoDecimal: true));
+                listLVitems.Insert(i, lvItem);
+            }
+
+            // Enter the Zeroth
+            {
+                int i = 0;
                 ListViewItem lvItem = (ListViewItem)lvMarker.Clone();
 
                 lvItem.Text = (Utilities.FormatSize(((NodeDatum)((TreeNode)(bUnique ? listLVitems[i].Tag : ((List<TreeNode>)listLVitems[i].Tag)[0])).Tag).LengthSubnodes, bNoDecimal: true));

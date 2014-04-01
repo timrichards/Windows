@@ -66,29 +66,6 @@ namespace SearchDirLists
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool FindClose(IntPtr hFindFile);
 
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        internal static extern FileAttributes GetFileAttributesW(string lpFileName);
-
-        static object DirectoryExists_lock = new object();
-
-        public static bool DirectoryExists(String strParentDir)
-        {
-            lock (DirectoryExists_lock)
-            {
-                bool bRet = false;
-                WIN32_FIND_DATAW ffd;
-                IntPtr handle = FindFirstFileW(@"\\?\" + strParentDir, out ffd);
-
-                if (handle != (IntPtr) (-1))
-                {
-                    bRet = ((ffd.dwFileAttributes & FileAttributes.FILE_ATTRIBUTE_DIRECTORY) != 0);
-                    FindClose(handle);
-                }
-
-                return bRet;
-            }
-        }
-
         public class FileInfo
         {
             bool m_bValid = false;
@@ -111,29 +88,36 @@ namespace SearchDirLists
 
             DateTime FromFileTime(System.Runtime.InteropServices.ComTypes.FILETIME time)
             {
-                long highBits = time.dwHighDateTime;
-                highBits = highBits << 32;
-
-                return DateTime.FromFileTimeUtc(highBits + (long)(uint)time.dwLowDateTime);
+                return DateTime.FromFileTimeUtc((time.dwHighDateTime << 32) + (long)(uint)time.dwLowDateTime);
             }
 
             static object FileInfo_lock = new object();
 
-            public FileInfo(String strParentDir)
+            public void FromFindData(WIN32_FIND_DATAW ffd)
+            {
+                m_strName = ffd.cFileName;
+                m_dtCreationTime = FromFileTime(ffd.ftCreationTime);
+                m_dtLastWriteTime = FromFileTime(ffd.ftLastWriteTime);
+                m_fileAttributes = (System.IO.FileAttributes)ffd.dwFileAttributes;
+                m_nLength = (ffd.nFileSizeHigh << 32) + ffd.nFileSizeLow;
+                m_bValid = true;
+            }
+
+            public FileInfo(WIN32_FIND_DATAW ffd)
+            {
+                FromFindData(ffd);
+            }
+
+            public FileInfo(String strFile)
             {
                 lock (FileInfo_lock)
                 {
-                    WIN32_FIND_DATAW ffd;
-                    IntPtr handle = FindFirstFileW(@"\\?\" + strParentDir, out ffd);
+                    WIN32_FIND_DATAW ffd = new WIN32_FIND_DATAW();
+                    IntPtr handle = FindFirstFileW(@"\\?\" + strFile, out ffd);
 
                     if (handle != (IntPtr) (-1))
                     {
-                        m_strName = ffd.cFileName;
-                        m_dtCreationTime = FromFileTime(ffd.ftCreationTime);
-                        m_dtLastWriteTime = FromFileTime(ffd.ftLastWriteTime);
-                        m_fileAttributes = (System.IO.FileAttributes)ffd.dwFileAttributes;
-                        m_nLength = (ffd.nFileSizeHigh << 32) + ffd.nFileSizeLow;
-                        m_bValid = true;
+                        FromFindData(ffd);
                     }
                 }
             }
@@ -141,44 +125,46 @@ namespace SearchDirLists
 
         static object GetSubItems_lock = new object();
 
-        public static List<String> GetSubItems(String strParentDir, bool bGetDirs = false, bool bGetFiles = false)
+        public static void GetDirectory(String strDir, out Win32.FileInfo di, out List<String> listDirs, out List<String> listFiles)
         {
             lock (GetSubItems_lock)
             {
-                List<String> listSubItems = new List<string>();
-                WIN32_FIND_DATAW ffd;
-                IntPtr handle = FindFirstFileW(@"\\?\" + strParentDir + @"\*", out ffd);
-                bool bSuccess = (handle != (IntPtr) (-1));
+                WIN32_FIND_DATAW ffd = new WIN32_FIND_DATAW();
+                IntPtr handle = FindFirstFileW(@"\\?\" + strDir + @"\*", out ffd);
+                di = null;
+                listDirs = null;
+                listFiles = null;
 
-                if (bSuccess)
+                if (handle == (IntPtr) (-1))
                 {
-                    bool bNextFile = false;
-
-                    do
-                    {
-                        bool bIsDirectory = ((ffd.dwFileAttributes & FileAttributes.FILE_ATTRIBUTE_DIRECTORY) != 0);
-                        bool bAdd = false;
-
-                        if (bGetDirs) { bAdd = (bIsDirectory); }
-                        else if (bGetFiles) { bAdd = (bIsDirectory == false); }
-
-                        bAdd &= (("..".Contains(ffd.cFileName) == false));
-
-                        if (bAdd)
-                        {
-                            listSubItems.Add(Path.Combine(strParentDir, ffd.cFileName));
-                        }
-
-                        bNextFile = FindNextFileW(handle, out ffd);
-                    }
-                    while (bNextFile);
-
-                    bSuccess = false;
-                    FindClose(handle);
-                    listSubItems.Sort();
+                    return;
                 }
 
-                return listSubItems;
+                di = new Win32.FileInfo(ffd);
+                listDirs = new List<string>();
+                listFiles = new List<string>();
+
+                do
+                {
+                    if ("..".Contains(ffd.cFileName))
+                    {
+                        continue;
+                    }
+
+                    if ((ffd.dwFileAttributes & FileAttributes.FILE_ATTRIBUTE_DIRECTORY) != 0)
+                    {
+                        listDirs.Add(Path.Combine(strDir, ffd.cFileName));
+                    }
+                    else
+                    {
+                        listFiles.Add(Path.Combine(strDir, ffd.cFileName));
+                    }
+                }
+                while (FindNextFileW(handle, out ffd));
+
+                FindClose(handle);
+                listDirs.Sort();
+                listFiles.Sort();
             }
         }
     }
@@ -338,10 +324,7 @@ namespace SearchDirLists
 
         public static String FormatSize(String in_str, bool bBytes = false)
         {
-            long nLength = 0;
-
-            Debug.Assert(long.TryParse(in_str, out nLength));
-            return FormatSize(nLength, bBytes);
+            return FormatSize(long.Parse(in_str), bBytes);
         }
 
         public static String FormatSize(long nLength, bool bBytes = false, bool bNoDecimal = false)
@@ -600,6 +583,14 @@ namespace SearchDirLists
         List<String> m_list_Errors = new List<string>();
         SaveDirListingsStatusDelegate m_callbackStatus = null;
         SaveDirListingsDoneDelegate m_callbackDone = null;
+        System.Threading.Timer m_timerStatus = null;
+        int m_nVolIx = -1;
+        int m_nStatusCount = 0;
+
+        void SaveDirListings_TimerCallback(object state)
+        {
+            m_callbackStatus(m_nVolIx, "Saving " + m_nStatusCount.ToString("###,###,###"));
+        }
 
         public SaveDirListings(ListView.ListViewItemCollection lvItems,
             SaveDirListingsStatusDelegate callbackStatus, SaveDirListingsDoneDelegate callbackDone)
@@ -611,6 +602,7 @@ namespace SearchDirLists
 
             m_callbackStatus = callbackStatus;
             m_callbackDone = callbackDone;
+            m_timerStatus = new System.Threading.Timer(new TimerCallback(SaveDirListings_TimerCallback), null, 1000, 1000);
         }
 
         private void WriteHeader(TextWriter fs, String strVolumeName, String strPath)
@@ -635,25 +627,12 @@ namespace SearchDirLists
 
         bool CheckNTFS_chars(String strFile, bool bFile = true)
         {
-            bool bFileOK = true;
             String strFilenameCheck = strFile.Replace(":" + Path.DirectorySeparatorChar, "");
             Char chrErrorMessage = ' ';
 
-            if (strFilenameCheck.Contains(chrErrorMessage = ':'))
-            {
-                bFileOK = false;
-            }
-            else if (strFilenameCheck.Contains(chrErrorMessage = '?'))
-            {
-                bFileOK = false;
-            }
-
-            else if (strFilenameCheck.Contains(chrErrorMessage = '"'))
-            {
-                bFileOK = false;
-            }
-
-            if (bFileOK == false)
+            if ((strFilenameCheck.Contains(chrErrorMessage = ':'))
+                || (strFilenameCheck.Contains(chrErrorMessage = '?'))
+                || (strFilenameCheck.Contains(chrErrorMessage = '"')))
             {
                 String strErrorFile = null;
                 String strErrorDir = null;
@@ -676,46 +655,31 @@ namespace SearchDirLists
             }
         }
 
-        // http://msdn.microsoft.com/en-us/library/bb513869.aspx
         public void TraverseTree(TextWriter fs, string root)
         {
-            // Data structure to hold names of subfolders to be 
-            // examined for files.
-            Stack<string> dirs = new Stack<string>(64);
+            Stack<string> stackDirs = new Stack<string>(64);
 
-            if (Win32.DirectoryExists(root) == false)
+            stackDirs.Push(root);
+
+            while (stackDirs.Count > 0)
             {
-                throw new ArgumentException();
-            }
+                ++m_nStatusCount;
 
-            dirs.Push(root);
-
-            while (dirs.Count > 0)
-            {
-                string currentDir = dirs.Pop();
+                string currentDir = stackDirs.Pop();
 
                 if (CheckNTFS_chars(currentDir, false) == false)
                 {
                     continue;
                 }
 
-                List<String> listSubDirs = new List<string>();
+                Win32.FileInfo di = null;
+                List<String> listSubDirs = null;
+                List<String> listFiles = null;
 
                 try
                 {
-                    listSubDirs = Win32.GetSubItems(currentDir, bGetDirs: true);
+                    Win32.GetDirectory(currentDir, out di, out listSubDirs, out listFiles);
                 }
-
-                // An UnauthorizedAccessException exception will be thrown if we do not have 
-                // discovery permission on a folder or file. It may or may not be acceptable  
-                // to ignore the exception and continue enumerating the remaining files and  
-                // folders. It is also possible (but unlikely) that a DirectoryNotFound exception  
-                // will be raised. This will happen if currentDir has been deleted by 
-                // another application or thread after our call to DirectoryExists(). The  
-                // choice of which exceptions to catch depends entirely on the specific task  
-                // you are intending to perform and also on how much you know with certainty  
-                // about the systems on which this code will run.
-
                 catch (PathTooLongException)
                 {
                     m_list_Errors.Add(FormatString(strDir: currentDir, strError1: "PathTooLongException"));
@@ -742,23 +706,6 @@ namespace SearchDirLists
                     continue;
                 }
 
-                List<String> listFiles = null;
-
-                try
-                {
-                    listFiles = Win32.GetSubItems(currentDir, bGetFiles: true);
-                }
-                catch (UnauthorizedAccessException e)
-                {
-                    m_list_Errors.Add(FormatString(strDir: currentDir, strFile: "GetFiles()", strError1: "UnauthorizedAccessException", strError2: e.Message));
-                    continue;
-                }
-                catch (System.IO.DirectoryNotFoundException e)
-                {
-                    m_list_Errors.Add(FormatString(strDir: currentDir, strFile: "GetFiles()", strError1: "DirectoryNotFoundException", strError2: e.Message));
-                    continue;
-                }
-
                 long nDirLength = 0;
 
                 // Perform the required action on each file here. 
@@ -769,6 +716,7 @@ namespace SearchDirLists
 
                     if (CheckNTFS_chars(strFile) == false)
                     {
+                        Debug.Assert(false);
                         continue;
                     }
 
@@ -808,12 +756,9 @@ namespace SearchDirLists
                     }
 
                     fs.WriteLine(strOut);
-                    Console.Write(".");
                 }
 
                 {
-                    Win32.FileInfo di = new Win32.FileInfo(currentDir);
-
                     String strError1 = null;
                     String strError2 = null;
 
@@ -823,6 +768,7 @@ namespace SearchDirLists
                         strError2 = currentDir.Length.ToString();
                     }
 
+                    Debug.Assert(di.IsValid);
                     fs.WriteLine(FormatString(strDir: currentDir, dtCreated: di.CreationTime, strAttributes: di.Attributes.ToString("X"), dtModified: di.LastWriteTime, nLength: nDirLength, strError1: strError1, strError2: strError2));
                     Console.WriteLine();
                 }
@@ -830,7 +776,9 @@ namespace SearchDirLists
                 // Push the subdirectories onto the stack for traversal. 
                 // This could also be done before handing the files. 
                 foreach (string str in listSubDirs)
-                    dirs.Push(str);
+                {
+                    stackDirs.Push(str);
+                }
             }
         }
 
@@ -889,31 +837,31 @@ namespace SearchDirLists
 
         public void Go()
         {
-            int nIndex = -1;
             int nFilesWritten = 0;
 
             foreach (LVvolStrings lvStrings in m_list_lvVolStrings)
             {
-                ++nIndex;
+                ++m_nVolIx;
 
                 if ((m_str_USING_FILE + m_str_SAVED).Contains(lvStrings.Status))
                 {
                     continue;
                 }
 
-                m_callbackStatus(nIndex, "Saving...");
+                m_callbackStatus(m_nVolIx, "Saving...");
 
                 if (SaveDirectoryListing(lvStrings))
                 {
-                    m_callbackStatus(nIndex, m_str_SAVED);
+                    m_callbackStatus(m_nVolIx, m_str_SAVED);
                     ++nFilesWritten;
                 }
                 else
                 {
-                    m_callbackStatus(nIndex, "Not saved.");
+                    m_callbackStatus(m_nVolIx, "Not saved.");
                 }
             }
 
+            m_timerStatus.Dispose();
             m_callbackDone(nFilesWritten);
         }
     }

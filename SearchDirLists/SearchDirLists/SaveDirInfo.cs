@@ -54,10 +54,10 @@ namespace SearchDirLists
             internal string cAlternate;
         }
 
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern IntPtr FindFirstFileW(string lpFileName, out WIN32_FIND_DATAW lpFindFileData);
 
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool FindNextFileW(IntPtr hFindFile, out WIN32_FIND_DATAW lpFindFileData);
 
@@ -88,7 +88,10 @@ namespace SearchDirLists
 
             DateTime FromFileTime(System.Runtime.InteropServices.ComTypes.FILETIME time)
             {
-                return DateTime.FromFileTimeUtc((time.dwHighDateTime << 32) + (long)(uint)time.dwLowDateTime);
+                long highBits = time.dwHighDateTime;
+                highBits = highBits << 32;
+
+                return DateTime.FromFileTimeUtc(highBits + (long)(uint)time.dwLowDateTime);
             }
 
             static object FileInfo_lock = new object();
@@ -125,7 +128,7 @@ namespace SearchDirLists
 
         static object GetSubItems_lock = new object();
 
-        public static void GetDirectory(String strDir, out Win32.FileInfo di, out List<String> listDirs, out List<String> listFiles)
+        public static bool GetDirectory(String strDir, out Win32.FileInfo di, out List<String> listDirs, out List<String> listFiles)
         {
             lock (GetSubItems_lock)
             {
@@ -137,7 +140,7 @@ namespace SearchDirLists
 
                 if (handle == (IntPtr) (-1))
                 {
-                    return;
+                    return false;
                 }
 
                 di = new Win32.FileInfo(ffd);
@@ -165,6 +168,7 @@ namespace SearchDirLists
                 FindClose(handle);
                 listDirs.Sort();
                 listFiles.Sort();
+                return true;
             }
         }
     }
@@ -585,11 +589,10 @@ namespace SearchDirLists
         SaveDirListingsDoneDelegate m_callbackDone = null;
         System.Threading.Timer m_timerStatus = null;
         int m_nVolIx = -1;
-        int m_nStatusCount = 0;
 
         void SaveDirListings_TimerCallback(object state)
         {
-            m_callbackStatus(m_nVolIx, "Saving " + m_nStatusCount.ToString("###,###,###"));
+            m_callbackStatus(m_nVolIx, "Saving " + FormatSize(m_nTotalLength));
         }
 
         public SaveDirListings(ListView.ListViewItemCollection lvItems,
@@ -663,8 +666,6 @@ namespace SearchDirLists
 
             while (stackDirs.Count > 0)
             {
-                ++m_nStatusCount;
-
                 string currentDir = stackDirs.Pop();
 
                 if (CheckNTFS_chars(currentDir, false) == false)
@@ -675,34 +676,13 @@ namespace SearchDirLists
                 Win32.FileInfo di = null;
                 List<String> listSubDirs = null;
                 List<String> listFiles = null;
+                bool bSuccess = Win32.GetDirectory(currentDir, out di, out listSubDirs, out listFiles);
+                Exception e = null;
 
-                try
+                if (bSuccess == false)
                 {
-                    Win32.GetDirectory(currentDir, out di, out listSubDirs, out listFiles);
-                }
-                catch (PathTooLongException)
-                {
-                    m_list_Errors.Add(FormatString(strDir: currentDir, strError1: "PathTooLongException"));
-                    continue;
-                }
-                catch (ArgumentException e)
-                {
-                    m_list_Errors.Add(FormatString(strDir: currentDir, strError1: "ArgumentException", strError2: e.Message));
-                    continue;
-                }
-                catch (UnauthorizedAccessException e)
-                {
-                    m_list_Errors.Add(FormatString(strDir: currentDir, strError1: "UnauthorizedAccessException", strError2: e.Message));
-                    continue;
-                }
-                catch (DirectoryNotFoundException e)
-                {
-                    m_list_Errors.Add(FormatString(strDir: currentDir, strError1: "DirectoryNotFoundException", strError2: e.Message));
-                    continue;
-                }
-                catch (Exception e)
-                {
-                    m_list_Errors.Add(FormatString(strDir: currentDir, strError1: "Exception", strError2: e.Message));
+                    e = new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+                    m_list_Errors.Add(FormatString(strDir: currentDir, strError1: e.Message));
                     continue;
                 }
 
@@ -720,41 +700,22 @@ namespace SearchDirLists
                         continue;
                     }
 
-                    try
+                    Win32.FileInfo fi = new Win32.FileInfo(strFile);
+
+                    Debug.Assert(fi.IsValid);
+
+                    String strError1 = null;
+                    String strError2 = null;
+
+                    if (strFile.Length > 260)
                     {
-                        Win32.FileInfo fi = new Win32.FileInfo(strFile);
-
-                        Debug.Assert(fi.IsValid);
-
-                        String strError1 = null;
-                        String strError2 = null;
-
-                        if (strFile.Length > 260)
-                        {
-                            strError1 = "Path Length";
-                            strError2 = strFile.Length.ToString();
-                        }
-
-                        strOut = FormatString(strFile: fi.Name, dtCreated: fi.CreationTime, strAttributes: fi.Attributes.ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Length, strError1: strError1, strError2: strError2);
-                        m_nTotalLength += fi.Length;
-                        nDirLength += fi.Length;
-                    }
-                    catch (PathTooLongException)
-                    {
-                        strOut = FormatString(strFile: strFile, strError1: "PathTooLongException");
-                        m_list_Errors.Add(strOut);
-                        continue;
-                    }
-                    catch (System.IO.FileNotFoundException)
-                    {
-                        // If file was deleted by a separate application 
-                        //  or thread since the call to TraverseTree() 
-                        // then just continue.
-                        strOut = FormatString(strFile: strFile, strError1: "FileNotFoundException");
-                        m_list_Errors.Add(strOut);
-                        continue;
+                        strError1 = "Path Length";
+                        strError2 = strFile.Length.ToString();
                     }
 
+                    strOut = FormatString(strFile: fi.Name, dtCreated: fi.CreationTime, strAttributes: fi.Attributes.ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Length, strError1: strError1, strError2: strError2);
+                    m_nTotalLength += fi.Length;
+                    nDirLength += fi.Length;
                     fs.WriteLine(strOut);
                 }
 

@@ -273,11 +273,11 @@ namespace SearchDirLists
 
     class TreeRootNodeThread : Utilities
     {
+        static TreeStatusDelegate m_statusCallback = null;
         Thread m_thread = null;
         LVvolStrings m_volStrings = null;
         Hashtable m_hashCache = null;
         List<TreeNode> m_listTreeNodes = null;
-        static TreeStatusDelegate m_statusCallback = null;
 
         public TreeRootNodeThread(LVvolStrings volStrings, Hashtable hashCache, List<TreeNode> listTreeNodes, TreeStatusDelegate statusCallback)
         {
@@ -339,6 +339,7 @@ namespace SearchDirLists
 
             if (LV_VolumesItemCanLoad(m_volStrings) == false)
             {
+                Debug.Assert(false);    // guaranteed by caller
                 return;
             }
 
@@ -813,7 +814,7 @@ namespace SearchDirLists
 
                     RootNodeDatum rootNodeDatum_A = (RootNodeDatum)rootNode_A.Tag;
 
-                    if ((rootNodeDatum.StrVolumeGroup.Length > 0) &&
+                    if ((rootNodeDatum.StrVolumeGroup != null) &&
                         (rootNodeDatum.StrVolumeGroup == rootNodeDatum_A.StrVolumeGroup))
                     {
                         continue;
@@ -1021,7 +1022,6 @@ namespace SearchDirLists
             }
 
             m_hashCache = hashTable;
-            Debug.Assert(m_hashCache.Count == form_lvVolumesMain.Items.Count);     // fun trivia for now
 
             IEnumerable<KeyValuePair<long, TreeNode>> dictUniqueReverse = dictUnique.Reverse();
             List<ListViewItem> listLVunique = new List<ListViewItem>();

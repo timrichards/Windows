@@ -141,9 +141,6 @@ namespace SearchDirLists
                         {
                             listResults.Sort((x, y) => x.StrDir.CompareTo(y.StrDir));
                             m_statusCallback(m_strSearch, m_volStrings, listResults, bLast: true);
-                        }
-                        else
-                        {
                             listResults = new List<SearchResultsDir>();
                         }
 

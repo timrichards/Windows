@@ -925,7 +925,7 @@ namespace SearchDirLists
                         }
 
                         m_blink.Go(bProgress: true);
-                        SearchFiles(form_cb_TreeFind.Text.Substring(1),
+                        SearchFiles(strSearch,
                             new SearchResultsDelegate(SearchResultsCallback),
                             bSearchFilesOnly: bSearchFileOnly);
                         // async

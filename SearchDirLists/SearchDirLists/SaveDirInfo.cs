@@ -112,15 +112,12 @@ namespace SearchDirLists
 
             public FileInfo(String strFile)
             {
-//                lock (FileInfo_lock)
-                {
-                    WIN32_FIND_DATAW ffd = new WIN32_FIND_DATAW();
-                    IntPtr handle = FindFirstFileW(@"\\?\" + strFile, out ffd);
+                WIN32_FIND_DATAW ffd = new WIN32_FIND_DATAW();
+                IntPtr handle = FindFirstFileW(@"\\?\" + strFile, out ffd);
 
-                    if (handle != (IntPtr) (-1))
-                    {
-                        FromFindData(ffd);
-                    }
+                if (handle != (IntPtr) (-1))
+                {
+                    FromFindData(ffd);
                 }
             }
         }
@@ -129,60 +126,58 @@ namespace SearchDirLists
 
         public static bool GetDirectory(String strDir, out Win32.FileInfo di, out List<String> listDirs, out List<String> listFiles)
         {
-//            lock (GetSubItems_lock)
+            di = null;
+            listDirs = null;
+            listFiles = null;
+
+            WIN32_FIND_DATAW ffd = new WIN32_FIND_DATAW();
+            IntPtr handle = FindFirstFileW(@"\\?\" + strDir + @"\*", out ffd);
+
+            if (handle == (IntPtr)(-1))
             {
-                WIN32_FIND_DATAW ffd = new WIN32_FIND_DATAW();
-                IntPtr handle = FindFirstFileW(@"\\?\" + strDir + @"\*", out ffd);
-                di = null;
-                listDirs = null;
-                listFiles = null;
-
-                if (handle == (IntPtr) (-1))
-                {
-                    return false;
-                }
-
-                di = new Win32.FileInfo(ffd);
-                listDirs = new List<string>();
-                listFiles = new List<string>();
-
-                do
-                {
-                    if ("..".Contains(ffd.cFileName))
-                    {
-                        continue;
-                    }
-
-                    if ((ffd.dwFileAttributes & FileAttributes.FILE_ATTRIBUTE_DIRECTORY) != 0)
-                    {
-                        if ((ffd.dwFileAttributes & FileAttributes.FILE_ATTRIBUTE_REPARSE_POINT) != 0)
-                        {
-                            const uint IO_REPARSE_TAG_MOUNT_POINT = 0xA0000003;
-                            const uint IO_REPARSE_TAG_SYMLINK = 0xA000000C;
-
-                            // stay on source drive. Treat mount points and symlinks as files.
-                            if (((ffd.dwReserved0 & IO_REPARSE_TAG_MOUNT_POINT) != 0)
-                                || ((ffd.dwReserved0 & IO_REPARSE_TAG_SYMLINK) != 0))
-                            {
-                                listFiles.Add(Path.Combine(strDir, ffd.cFileName));
-                                continue;
-                            }
-                        }
-
-                        listDirs.Add(Path.Combine(strDir, ffd.cFileName));
-                    }
-                    else
-                    {
-                        listFiles.Add(Path.Combine(strDir, ffd.cFileName));
-                    }
-                }
-                while (FindNextFileW(handle, out ffd));
-
-                FindClose(handle);
-                listDirs.Sort();
-                listFiles.Sort();
-                return true;
+                return false;
             }
+
+            di = new Win32.FileInfo(ffd);
+            listDirs = new List<string>();
+            listFiles = new List<string>();
+
+            do
+            {
+                if ("..".Contains(ffd.cFileName))
+                {
+                    continue;
+                }
+
+                if ((ffd.dwFileAttributes & FileAttributes.FILE_ATTRIBUTE_DIRECTORY) != 0)
+                {
+                    if ((ffd.dwFileAttributes & FileAttributes.FILE_ATTRIBUTE_REPARSE_POINT) != 0)
+                    {
+                        const uint IO_REPARSE_TAG_MOUNT_POINT = 0xA0000003;
+                        const uint IO_REPARSE_TAG_SYMLINK = 0xA000000C;
+
+                        // stay on source drive. Treat mount points and symlinks as files.
+                        if (((ffd.dwReserved0 & IO_REPARSE_TAG_MOUNT_POINT) != 0)
+                            || ((ffd.dwReserved0 & IO_REPARSE_TAG_SYMLINK) != 0))
+                        {
+                            listFiles.Add(Path.Combine(strDir, ffd.cFileName));
+                            continue;
+                        }
+                    }
+
+                    listDirs.Add(Path.Combine(strDir, ffd.cFileName));
+                }
+                else
+                {
+                    listFiles.Add(Path.Combine(strDir, ffd.cFileName));
+                }
+            }
+            while (FindNextFileW(handle, out ffd));
+
+            FindClose(handle);
+            listDirs.Sort();
+            listFiles.Sort();
+            return true;
         }
     }
 
@@ -603,7 +598,7 @@ namespace SearchDirLists
         System.Threading.Timer m_timerStatus = null;
         int m_nVolIx = 0;
 
-        void SaveDirListings_TimerCallback(object state)
+        void SaveDirListing_TimerCallback(object state)
         {
             m_statusCallback(m_nVolIx, false, "Saving " + FormatSize(m_nTotalLength));
         }
@@ -614,7 +609,7 @@ namespace SearchDirLists
             m_nVolIx = nVolIx;
             m_volStrings = volStrings;
             m_statusCallback = statusCallback;
-            m_timerStatus = new System.Threading.Timer(new TimerCallback(SaveDirListings_TimerCallback), null, 1000, 1000);
+            m_timerStatus = new System.Threading.Timer(new TimerCallback(SaveDirListing_TimerCallback), null, 1000, 1000);
         }
 
         private void WriteHeader(TextWriter fs, String strVolumeName, String strPath)
@@ -667,7 +662,7 @@ namespace SearchDirLists
             }
         }
 
-        public void TraverseTree(TextWriter fs, string root)
+        void TraverseTree(TextWriter fs, string root)
         {
             Stack<string> stackDirs = new Stack<string>(64);
 
@@ -679,26 +674,23 @@ namespace SearchDirLists
 
                 if (CheckNTFS_chars(currentDir, false) == false)
                 {
+                    Debug.Assert(false);
                     continue;
                 }
 
                 Win32.FileInfo di = null;
                 List<String> listSubDirs = null;
                 List<String> listFiles = null;
-                bool bSuccess = Win32.GetDirectory(currentDir, out di, out listSubDirs, out listFiles);
-                Exception e = null;
 
-                if (bSuccess == false)
+                if (Win32.GetDirectory(currentDir, out di, out listSubDirs, out listFiles) == false)
                 {
-                    e = new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
-                    m_list_Errors.Add(FormatString(strDir: currentDir, strError1: e.Message));
+                    m_list_Errors.Add(FormatString(strDir: currentDir,
+                        strError1: new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message));
                     continue;
                 }
 
                 long nDirLength = 0;
 
-                // Perform the required action on each file here. 
-                // Modify this block to perform your required task. 
                 foreach (string strFile in listFiles)
                 {
                     String strOut = null;
@@ -752,7 +744,7 @@ namespace SearchDirLists
             }
         }
 
-        private void Go()
+        void Go()
         {
             String strVolumeName = m_volStrings.VolumeName;
             String strPath = m_volStrings.Path;
@@ -780,9 +772,6 @@ namespace SearchDirLists
             }
 
             String strPathOrig = Directory.GetCurrentDirectory();
-
-            m_list_Errors.Clear();
-            m_nTotalLength = 0;
 
             using (TextWriter fs = File.CreateText(strSaveAs))
             {
@@ -826,8 +815,6 @@ namespace SearchDirLists
         Thread m_thread = null;
         List<Thread> m_listThreads = new List<Thread>();
         List<LVvolStrings> m_list_lvVolStrings = new List<LVvolStrings>();
-        long m_nTotalLength = 0;
-        List<String> m_list_Errors = new List<string>();
 
         int m_nFilesWritten = 0;
         public int FilesWritten { get { return m_nFilesWritten; } set { m_nFilesWritten = value; } }
@@ -863,10 +850,7 @@ namespace SearchDirLists
                 }
 
                 m_statusCallback(nVolIx, false, "Saving...");
-
-                SaveDirListing saveDirListing = new SaveDirListing(nVolIx, volStrings, m_statusCallback);
-
-                m_listThreads.Add(saveDirListing.DoThreadFactory());
+                m_listThreads.Add(new SaveDirListing(nVolIx, volStrings, m_statusCallback).DoThreadFactory());
             }
 
             foreach (Thread thread in m_listThreads)
@@ -916,7 +900,10 @@ namespace SearchDirLists
 
             if (bSuccess)
             {
-                ++m_saveDirListings.FilesWritten;
+                lock (m_saveDirListings)
+                {
+                    ++m_saveDirListings.FilesWritten;
+                }
             }
 
             lock (form_lvVolumesMain)

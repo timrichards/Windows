@@ -666,6 +666,10 @@ namespace SearchDirLists
             {
                 form_lvUnique.TopItem = nodeDatum.m_lvCloneItem;
             }
+            else if (form_lvNonClones.Items.Contains(nodeDatum.m_lvCloneItem))
+            {
+                form_lvNonClones.TopItem = nodeDatum.m_lvCloneItem;
+            }
         }
 
         private void form_lvClones_SelectedIndexChanged(object sender, EventArgs e)
@@ -1086,57 +1090,7 @@ namespace SearchDirLists
 
         private void form_lv_Unique_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (m_bCompareMode)
-            {
-                return;
-            }
-
-            if (form_lvUnique.SelectedItems.Count == 0)
-            {
-                return;
-            }
-
-            if (form_lvUnique.Focused == false)
-            {
-                return;
-            }
-
-            m_bPutPathInFindEditBox = true;
-
-            TreeNode treeNode = form_treeView_Browse.SelectedNode = (TreeNode)form_lvUnique.SelectedItems[0].Tag;
-
-            if (treeNode == null)
-            {
-                return;
-            }
-
-            treeNode.Expand();
-            form_treeView_Browse.TopNode = treeNode.Parent;
-
-            if (treeNode.IsVisible)
-            {
-                return;
-            }
-
-            for (int i = 0; i < 5; ++i)
-            {
-                TreeNode neighbor = treeNode;
-
-                if (neighbor.PrevNode != null)
-                {
-                    neighbor = form_treeView_Browse.TopNode = neighbor.PrevNode;
-
-                    if (treeNode.IsVisible == false)
-                    {
-                        neighbor.Collapse();
-                    }
-                }
-                else
-                {
-                    form_treeView_Browse.TopNode = neighbor;
-                    break;
-                }
-            }
+            SelectedIndexChanged(form_lvUnique);
         }
 
         private void form_chk_Compare1_CheckedChanged(object sender, EventArgs e)
@@ -1883,30 +1837,69 @@ namespace SearchDirLists
             context_rclick_node.Show(form_treeView_Browse, e.Location);
         }
 
-        TreeNode ShowNextNonClonedNode(TreeNode startNode)
+        private void showNextNonclonedFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            NodeDatum nodeDatum = (NodeDatum)startNode.Tag;
+            form_treeView_Browse.SelectedNode = ((NodeDatum) showNextNoncloned_node.Tag).m_nextNonClone;
+        }
 
-            if (nodeDatum.m_listClones != null)
+        private void form_lvNonClones_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SelectedIndexChanged(form_lvNonClones);
+        }
+
+        void SelectedIndexChanged(ListView lv)
+        {
+            if (m_bCompareMode)
             {
-                if (startNode.NextNode != null)
+                return;
+            }
+
+            if (lv.SelectedItems.Count == 0)
+            {
+                return;
+            }
+
+            if (lv.Focused == false)
+            {
+                return;
+            }
+
+            m_bPutPathInFindEditBox = true;
+
+            TreeNode treeNode = form_treeView_Browse.SelectedNode = (TreeNode)lv.SelectedItems[0].Tag;
+
+            if (treeNode == null)
+            {
+                return;
+            }
+
+            treeNode.Expand();
+            form_treeView_Browse.TopNode = treeNode.Parent;
+
+            if (treeNode.IsVisible)
+            {
+                return;
+            }
+
+            for (int i = 0; i < 5; ++i)
+            {
+                TreeNode neighbor = treeNode;
+
+                if (neighbor.PrevNode != null)
                 {
-                    return ShowNextNonClonedNode(startNode.NextNode);
+                    neighbor = form_treeView_Browse.TopNode = neighbor.PrevNode;
+
+                    if (treeNode.IsVisible == false)
+                    {
+                        neighbor.Collapse();
+                    }
                 }
                 else
                 {
-                    return startNode;
+                    form_treeView_Browse.TopNode = neighbor;
+                    break;
                 }
             }
-            else
-            {
-                return startNode;
-            }
-        }
-
-        private void showNextNonclonedFolderToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            form_treeView_Browse.SelectedNode = ShowNextNonClonedNode(showNextNoncloned_node);
         }
     }
 }

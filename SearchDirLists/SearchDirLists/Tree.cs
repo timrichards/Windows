@@ -78,6 +78,7 @@ namespace SearchDirLists
         }
 
         public bool bDifferentDrives = false;
+        public TreeNode m_nextNonClone = null;
 
         public NodeDatum(long nPrevLineNo, long nLineNo, long nLength) { m_nPrevLineNo = nPrevLineNo; m_nLineNo = nLineNo; m_nLength = nLength; }
 
@@ -718,6 +719,7 @@ namespace SearchDirLists
         private bool m_bBrowseLoaded = false;
         Hashtable m_hashCache = new Hashtable();
         List<TreeNode> m_listTreeNodes = new List<TreeNode>();
+        List<TreeNode> m_listNonClones = new List<TreeNode>();
         List<TreeNode> m_listRootNodes = null;
         Tree m_tree = null;
         Thread m_threadSelect = null;
@@ -790,7 +792,7 @@ namespace SearchDirLists
                 RootNodeDatum rootNodeDatum = (RootNodeDatum)rootNode.Tag;
 
                 Debug.Assert(treeNode.ForeColor == Color.Empty);
-                treeNode.ForeColor = Color.DarkRed;
+                treeNode.ForeColor = Color.Red;
                 bool bDifferentDrives = false;
 
                 foreach (TreeNode subnode in listClones)
@@ -879,18 +881,42 @@ namespace SearchDirLists
             }
         }
 
-        void AddNodeToList(TreeNode treeNode)
+        class AddTreeToList
         {
-            m_listTreeNodes.Add(treeNode);
+            List<TreeNode> m_listTreeNodes = null;
+            List<TreeNode> m_listNonClones = null;
+            int m_nListIx = 0;
 
-            if (treeNode.FirstNode != null)
+            public AddTreeToList(List<TreeNode> listTreeNodes, List<TreeNode> listNonClones)
             {
-                AddNodeToList(treeNode.FirstNode);
+                m_listTreeNodes = listTreeNodes;
+                m_listNonClones = listNonClones;
             }
 
-            if (treeNode.NextNode != null)
+            public void Go(TreeNode treeNode)
             {
-                AddNodeToList(treeNode.NextNode);
+                if (treeNode.ForeColor == Color.Red)
+                {
+                    m_listNonClones.Add(treeNode);
+
+                    for (int i = m_nListIx; i < m_listTreeNodes.Count; ++i)
+                    {
+                        ((NodeDatum)m_listTreeNodes[i].Tag).m_nextNonClone = treeNode;
+                        m_nListIx = m_listTreeNodes.Count;
+                    }
+                }
+
+                m_listTreeNodes.Add(treeNode);
+
+                if (treeNode.FirstNode != null)
+                {
+                    Go(treeNode.FirstNode);
+                }
+
+                if (treeNode.NextNode != null)
+                {
+                    Go(treeNode.NextNode);
+                }
             }
         }
 
@@ -1053,10 +1079,40 @@ namespace SearchDirLists
             form_lvUnique.Items.Clear();
             form_lvUnique.Items.AddRange(listLVunique.ToArray());
             m_listRootNodes.Sort((x, y) => String.Compare(x.Text, y.Text));
-
             form_treeView_Browse.Nodes.Clear();
             form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
-            AddNodeToList(form_treeView_Browse.Nodes[0]);
+
+            new AddTreeToList(m_listTreeNodes, m_listNonClones).Go(form_treeView_Browse.Nodes[0]);
+            List<TreeNode> listNonClonesDescLength = new List<TreeNode>();
+            List<ListViewItem> listLVnonClones = new List<ListViewItem>();
+
+            listNonClonesDescLength = m_listNonClones.ToList<TreeNode>();
+            listNonClonesDescLength.Sort((x, y) => ((NodeDatum)y.Tag).LengthSubnodes.CompareTo(((NodeDatum)x.Tag).LengthSubnodes));
+
+            foreach (TreeNode treeNode in listNonClonesDescLength)
+            {
+                String strNode = treeNode.Text;
+
+                Debug.Assert(Utilities.StrValid(strNode));
+
+                ListViewItem lvItem = new ListViewItem(strNode);
+
+                lvItem.Tag = treeNode;
+                listLVnonClones.Add(lvItem);
+
+                NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+
+                if (nodeDatum.m_lvCloneItem != null)
+                {
+                    nodeDatum.m_lvCloneItem = lvItem;
+                }
+            }
+
+            InsertSizeMarkers(listLVnonClones);
+            form_lvNonClones.Items.Clear();
+            form_lvNonClones.Items.AddRange(listLVnonClones.ToArray());
+            listNonClonesDescLength = null;
+            listLVnonClones = null;
             m_listRootNodes = null;
             form_treeView_Browse.Enabled = true;
             m_bBrowseLoaded = true;

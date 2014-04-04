@@ -108,6 +108,8 @@ namespace SearchDirLists
             this.form_lvClones = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.context_rclick_node = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.showNextNonclonedFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.form_tabControl.SuspendLayout();
             this.form_tabPageVolumes.SuspendLayout();
             this.form_tabPage_Browse.SuspendLayout();
@@ -143,6 +145,7 @@ namespace SearchDirLists
             this.form_splitUnique.Panel1.SuspendLayout();
             this.form_splitUnique.Panel2.SuspendLayout();
             this.form_splitUnique.SuspendLayout();
+            this.context_rclick_node.SuspendLayout();
             this.SuspendLayout();
             // 
             // form_tabControl
@@ -187,7 +190,7 @@ namespace SearchDirLists
             // 
             this.form_btnVolGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.form_btnVolGroup.Enabled = false;
-            this.form_btnVolGroup.Location = new System.Drawing.Point(874, 143);
+            this.form_btnVolGroup.Location = new System.Drawing.Point(874, 142);
             this.form_btnVolGroup.Name = "form_btnVolGroup";
             this.form_btnVolGroup.Size = new System.Drawing.Size(93, 23);
             this.form_btnVolGroup.TabIndex = 14;
@@ -544,6 +547,7 @@ namespace SearchDirLists
             this.form_treeView_Browse.Size = new System.Drawing.Size(570, 374);
             this.form_treeView_Browse.TabIndex = 0;
             this.form_treeView_Browse.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterSelect);
+            this.form_treeView_Browse.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.form_treeView_Browse_NodeMouseClick);
             this.form_treeView_Browse.Enter += new System.EventHandler(this.formCtl_EnterForCopyButton);
             this.form_treeView_Browse.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_treeView_Browse_KeyPress);
             this.form_treeView_Browse.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_treeView_Browse_MouseClick);
@@ -653,12 +657,13 @@ namespace SearchDirLists
             // saveFileDialog1
             // 
             this.saveFileDialog1.DefaultExt = "txt";
-            this.saveFileDialog1.Filter = "Text files|*.txt|All files|*.*";
+            this.saveFileDialog1.Filter = "SearchDirLists files|*.sd9|Text files|*.txt|All files|*.*";
             this.saveFileDialog1.OverwritePrompt = false;
             // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.Filter = "SearchDirLists files|*.sd9|Text files|*.txt|All files|*.*";
             // 
             // timer_killRed
             // 
@@ -950,6 +955,20 @@ namespace SearchDirLists
             this.columnHeader13.Text = " ";
             this.columnHeader13.Width = 50;
             // 
+            // context_rclick_node
+            // 
+            this.context_rclick_node.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showNextNonclonedFolderToolStripMenuItem});
+            this.context_rclick_node.Name = "context_rclick_node";
+            this.context_rclick_node.Size = new System.Drawing.Size(228, 48);
+            // 
+            // showNextNonclonedFolderToolStripMenuItem
+            // 
+            this.showNextNonclonedFolderToolStripMenuItem.Name = "showNextNonclonedFolderToolStripMenuItem";
+            this.showNextNonclonedFolderToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.showNextNonclonedFolderToolStripMenuItem.Text = "Show next non-cloned folder";
+            this.showNextNonclonedFolderToolStripMenuItem.Click += new System.EventHandler(this.showNextNonclonedFolderToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -996,6 +1015,7 @@ namespace SearchDirLists
             this.form_splitUnique.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.form_splitUnique)).EndInit();
             this.form_splitUnique.ResumeLayout(false);
+            this.context_rclick_node.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1079,6 +1099,8 @@ namespace SearchDirLists
         private System.Windows.Forms.ColumnHeader columnHeader28;
         private System.Windows.Forms.Timer timer_DoTree;
         private System.Windows.Forms.Label form_lblVolGroup;
+        private System.Windows.Forms.ContextMenuStrip context_rclick_node;
+        private System.Windows.Forms.ToolStripMenuItem showNextNonclonedFolderToolStripMenuItem;
 
     }
 }

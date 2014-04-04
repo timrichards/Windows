@@ -214,6 +214,11 @@ namespace SearchDirLists
         public const String m_strLINETYPE_Error_File = "r";
         public const String m_strLINETYPE_Length = "L";
 
+        public static bool StrValid(String str)
+        {
+            return ((str != null) && (str.Length > 0));
+        }
+
 
         public static void CopyTo(Stream src, Stream dest)
         {
@@ -272,7 +277,7 @@ namespace SearchDirLists
 
             String strDirName = Path.GetDirectoryName(strPath);
 
-            if ((strDirName == null) || Directory.Exists(strDirName))
+            if ((StrValid(strDirName) == false) || Directory.Exists(strDirName))
             {
                 String strCapDrive = strPath.Substring(0, strPath.IndexOf(":" + Path.DirectorySeparatorChar) + 2);
 
@@ -285,7 +290,7 @@ namespace SearchDirLists
                 else
                 {
                     strPath = strPath.TrimEnd(Path.DirectorySeparatorChar);
-                    Debug.Assert(strDirName != null);
+                    Debug.Assert(StrValid(strDirName));
                 }
             }
             else if (bFailOnDirectory)
@@ -298,7 +303,7 @@ namespace SearchDirLists
 
         public static bool FormatPath(ref String strPath, ref String strSaveAs, bool bFailOnDirectory = true)
         {
-            if (strPath.Length > 0)
+            if (StrValid(strPath))
             {
                 strPath += Path.DirectorySeparatorChar;
 
@@ -309,7 +314,7 @@ namespace SearchDirLists
                 }
             }
 
-            if (strSaveAs.Length > 0)
+            if (StrValid(strSaveAs))
             {
                 strSaveAs = Path.GetFullPath(strSaveAs.Trim());
 
@@ -386,7 +391,7 @@ namespace SearchDirLists
                 strModified = dtModified.ToString();
             }
 
-            if ((strDir + strFile + strCreated + strModified + strAttributes + strLength + strError1 + strError2).Length <= 0)
+            if (StrValid(strDir + strFile + strCreated + strModified + strAttributes + strLength + strError1 + strError2) == false)
             {
                 Debug.Assert(nHeader is int);
 
@@ -406,7 +411,7 @@ namespace SearchDirLists
             {
                 strError1 += " Trailing whitespace";
                 strError1.Trim();
-                Debug.Assert(strDir.Length > 0 || strFile.Length > 0);
+                Debug.Assert(StrValid(strDir) || StrValid(strFile));
                 bDbgCheck = true;
             }
 
@@ -430,7 +435,7 @@ namespace SearchDirLists
         {
             String strLine_out = strLineType  + "\t" + nLineNo;
 
-            if (strLine_in != null)
+            if (StrValid(strLine_in))
             {
                 strLine_out += '\t' + strLine_in;
             }
@@ -531,7 +536,7 @@ namespace SearchDirLists
                         String[] strArray = strLine.Split('\t');
                         String strDir = strArray[0];
 
-                        if (strDir.Length <= 0)
+                        if (StrValid(strDir) == false)
                         {
                             DateTime dtParse;
                             String strTab = null;
@@ -558,7 +563,7 @@ namespace SearchDirLists
         }
     }
 
-    class LVvolStrings
+    class LVvolStrings : Utilities
     {
         String m_strVolumeName = null;
         String m_strPath = null;
@@ -581,7 +586,7 @@ namespace SearchDirLists
             m_strStatus = lvItem.SubItems[3].Text;
             m_strInclude = lvItem.SubItems[4].Text;
 
-            if (lvItem.SubItems.Count > 5)
+            if ((lvItem.SubItems.Count > 5) && StrValid(lvItem.SubItems[5].Text))
             {
                 m_strVolumeGroup = lvItem.SubItems[5].Text;
             }
@@ -764,7 +769,7 @@ namespace SearchDirLists
                 return;
             }
 
-            if (strSaveAs.Length <= 0)
+            if (StrValid(strSaveAs) == false)
             {
                 m_statusCallback(m_nVolIx, false, "Not saved.");
                 MessageBox.Show("Must specify save filename.                  ", "Save Directory Listing");

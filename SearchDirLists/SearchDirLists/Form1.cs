@@ -15,7 +15,7 @@ namespace SearchDirLists
     {
         private String m_strVolumeName = null;
         private String m_strPath = null;
-        private String m_strSaveAs = null;
+        private String m_strSaveAs = "";
         int m_nLVclonesClickIndex = -1;
         int m_nTreeFindTextChanged = 0;
         bool m_bFileFound = false;
@@ -94,7 +94,7 @@ namespace SearchDirLists
             m_strVolumeName = form_cbVolumeName.Text.Trim();
             m_strPath = form_cbPath.Text.Trim();
 
-            if (m_strPath.Length > 0)
+            if (Utilities.StrValid(m_strPath))
             {
                 m_strPath += Path.DirectorySeparatorChar;
 
@@ -104,7 +104,7 @@ namespace SearchDirLists
                 }
             }
 
-            if (form_cbSaveAs.Text.Length > 0)
+            if (Utilities.StrValid(form_cbSaveAs.Text))
             {
                 form_cbSaveAs.Text = m_strSaveAs = Path.GetFullPath(form_cbSaveAs.Text.Trim());
 
@@ -119,7 +119,7 @@ namespace SearchDirLists
 
         private void ComboBoxItemsInsert(ComboBox comboBox, String strText = "", bool bTrimText = true)
         {
-            if (strText.Length <= 0)
+            if (Utilities.StrValid(strText) == false)
             {
                 strText = comboBox.Text;
             }
@@ -129,7 +129,7 @@ namespace SearchDirLists
                 strText = strText.Trim();
             }
 
-            if (strText.Length <= 0)
+            if (Utilities.StrValid(strText) == false)
             {
                 return;
             }
@@ -175,6 +175,11 @@ namespace SearchDirLists
 
         private void form_btn_SaveAs_Click(object sender, EventArgs e)
         {
+            if (Utilities.StrValid(m_strSaveAs))
+            {
+                saveFileDialog1.InitialDirectory = Path.GetDirectoryName(m_strSaveAs);
+            }
+
             if (saveFileDialog1.ShowDialog() != DialogResult.OK)
             {
                 return;
@@ -253,7 +258,7 @@ namespace SearchDirLists
             form_cbPath.BackColor = Color.Empty;
             form_cbSaveAs.BackColor = Color.Empty;
 
-            if (m_strSaveAs.Length <= 0)
+            if (Utilities.StrValid(m_strSaveAs) == false)
             {
                 FormError(form_cbSaveAs, "Must have a file to load or save directory listing to.", "Volume Save As");
                 return;
@@ -265,7 +270,7 @@ namespace SearchDirLists
                 return;
             }
 
-            if (File.Exists(m_strSaveAs) && (m_strPath.Length > 0))
+            if (File.Exists(m_strSaveAs) && Utilities.StrValid(m_strPath))
             {
                 if (MessageBox.Show(m_strSaveAs + " already exists. Overwrite?                 ", "Volume Save As", MessageBoxButtons.YesNo)
                     != System.Windows.Forms.DialogResult.Yes)
@@ -282,7 +287,7 @@ namespace SearchDirLists
                 return;
             }
 
-            if ((m_strVolumeName.Length > 0) && form_lvVolumesMain.FindItemWithText(m_strVolumeName) != null)
+            if (Utilities.StrValid(m_strVolumeName) && form_lvVolumesMain.FindItemWithText(m_strVolumeName) != null)
             {
                 form_cbVolumeName.BackColor = Color.Red;
 
@@ -297,14 +302,14 @@ namespace SearchDirLists
                 }
             }
 
-            if ((File.Exists(m_strSaveAs) == false) && (m_strPath.Length <= 0))
+            if ((File.Exists(m_strSaveAs) == false) && (Utilities.StrValid(m_strPath) == false))
             {
                 form_cbPath.BackColor = Color.Red;
                 MessageBox.Show("Must have a path or existing directory listing file.  ", "Volume Source Path");
                 return;
             }
 
-            if ((m_strPath.Length > 0) && (Directory.Exists(m_strPath) == false))
+            if (Utilities.StrValid(m_strPath) && (Directory.Exists(m_strPath) == false))
             {
                 form_cbPath.BackColor = Color.Red;
                 MessageBox.Show("Path does not exist.                                  ", "Volume Source Path");
@@ -315,7 +320,7 @@ namespace SearchDirLists
 
             if (File.Exists(m_strSaveAs))
             {
-                if (m_strPath.Length <= 0)
+                if (Utilities.StrValid(m_strPath) == false)
                 {
                     bool bFileOK = ReadHeader();
 
@@ -325,7 +330,7 @@ namespace SearchDirLists
                     }
                     else
                     {
-                        if (m_strPath.Length > 0)
+                        if (Utilities.StrValid(m_strPath))
                         {
                             strStatus = "File is bad. Will overwrite.";
                         }
@@ -343,7 +348,7 @@ namespace SearchDirLists
                 }
             }
 
-            if (m_strVolumeName.Length == 0)
+            if (Utilities.StrValid(m_strVolumeName) == false)
             {
                 form_cbVolumeName.BackColor = Color.Red;
 
@@ -412,6 +417,66 @@ namespace SearchDirLists
             DoSaveDirListings();
         }
 
+        partial class SOTFile
+        {
+            public static void WriteList(ListView.ListViewItemCollection lvItems, StreamWriter sw)
+            {
+                sw.WriteLine(Utilities.m_str_VOLUME_LIST_HEADER);
+
+                foreach (ListViewItem lvItem in lvItems)
+                {
+                    foreach (ListViewItem.ListViewSubItem lvSubitem in lvItem.SubItems)
+                    {
+                        sw.Write(lvSubitem.Text + '\t');
+                    }
+
+                    sw.WriteLine();
+                }
+            }
+
+            public static void ReadList(ListView.ListViewItemCollection lvItems, StreamReader sr, String strDir_in = null)
+            {
+                String strLine = sr.ReadLine();
+
+                if ((Utilities.m_str_VOLUME_LIST_HEADER_01 + Utilities.m_str_VOLUME_LIST_HEADER).Contains(strLine) == false)
+                {
+                    MessageBox.Show("Not a valid volume list file.", "Load Volume List");
+                    return;
+                }
+
+                lvItems.Clear();
+
+                while ((strLine = sr.ReadLine()) != null)
+                {
+                    String[] strArray = strLine.Split('\t');
+
+                    strArray[3] = "Using file.";
+
+                    if (File.Exists(strArray[2]) == false)
+                    {
+                        strArray[2] = Path.Combine(strDir_in ?? Path.GetTempPath(), Path.GetFileName(strArray[2]));
+
+                        if (File.Exists(strArray[2]) == false)
+                        {
+                            strArray[3] = "No file. Will create.";
+                        }
+                    }
+
+                    lvItems.Add(new ListViewItem(strArray));
+                }
+            }
+
+            public bool Save(String strFile, ListView.ListViewItemCollection lvItems)
+            {
+                return false;
+            }
+
+            public bool Load(String strFile, ListView.ListViewItemCollection lvItems)
+            {
+                return false;
+            }
+        }
+
         private void form_btn_SaveVolumeList_Click(object sender, EventArgs e)
         {
             if (saveFileDialog1.ShowDialog() != DialogResult.OK)
@@ -426,18 +491,11 @@ namespace SearchDirLists
                 return;
             }
 
-            using (TextWriter fs = File.CreateText(saveFileDialog1.FileName))
+            if (new SOTFile().Save(saveFileDialog1.FileName, form_lvVolumesMain.Items) == false)
             {
-                fs.WriteLine(Utilities.m_str_VOLUME_LIST_HEADER);
-
-                foreach (ListViewItem lvItem in form_lvVolumesMain.Items)
+                using (StreamWriter fs = File.CreateText(saveFileDialog1.FileName))
                 {
-                    foreach (ListViewItem.ListViewSubItem lvSubitem in lvItem.SubItems)
-                    {
-                        fs.Write(lvSubitem.Text + '\t');
-                    }
-
-                    fs.WriteLine();
+                    SOTFile.WriteList(form_lvVolumesMain.Items, fs);
                 }
             }
         }
@@ -453,35 +511,11 @@ namespace SearchDirLists
                 return;
             }
 
-            using (TextReader fs = File.OpenText(openFileDialog1.FileName))
+            if (new SOTFile().Load(openFileDialog1.FileName, form_lvVolumesMain.Items) == false)
             {
-                String strLine = fs.ReadLine();
-
-                if ((Utilities.m_str_VOLUME_LIST_HEADER_01 + Utilities.m_str_VOLUME_LIST_HEADER).Contains(strLine) == false)
+                using (StreamReader fs = File.OpenText(openFileDialog1.FileName))
                 {
-                    MessageBox.Show(openFileDialog1.FileName + " is not a valid volume list file.", "Load Volume List");
-                    return;
-                }
-
-                form_lvVolumesMain.Items.Clear();
-
-                while ((strLine = fs.ReadLine()) != null)
-                {
-                    String[] strArray = strLine.Split('\t');
-
-                    strArray[3] = "Using file.";
-
-                    if (File.Exists(strArray[2]) == false)
-                    {
-                        strArray[2] = Path.Combine(Path.GetDirectoryName(openFileDialog1.FileName), Path.GetFileName(strArray[2]));
-
-                        if (File.Exists(strArray[2]) == false)
-                        {
-                            strArray[3] = "No file. Will create.";
-                        }
-                    }
-
-                    form_lvVolumesMain.Items.Add(new ListViewItem(strArray));
+                    SOTFile.ReadList(form_lvVolumesMain.Items, fs);
                 }
             }
 
@@ -577,7 +611,7 @@ namespace SearchDirLists
 
             String strNode = e.Node.Text;
 
-            Debug.Assert(strNode.Length > 0);
+            Debug.Assert(Utilities.StrValid(strNode));
 
             if (m_bCompareMode)
             {
@@ -595,7 +629,7 @@ namespace SearchDirLists
 
             form_lblVolGroup.Text = ((RootNodeDatum)rootNode.Tag).StrVolumeGroup;
 
-            if (form_lblVolGroup.Text.Length == 0)
+            if (Utilities.StrValid(form_lblVolGroup.Text) == false)
             {
                 form_lblVolGroup.Text = "(no volume group set)";
             }
@@ -680,7 +714,7 @@ namespace SearchDirLists
 
         private TreeNode GetNodeByPath_A(string strPath, TreeView treeView, bool bIgnoreCase = false)
         {
-            if ((strPath == null) || (strPath.Length == 0))
+            if (Utilities.StrValid(strPath) == false)
             {
                 return null;
             }
@@ -691,7 +725,7 @@ namespace SearchDirLists
             }
 
             TreeNode node = null;
-            string[] pathLevel = null;
+            string[] arrPath = null;
             int i = 0;
             int nPathLevelLength = 0;
 
@@ -704,8 +738,8 @@ namespace SearchDirLists
                     strNode = strNode.ToLower();
                 }
 
-                pathLevel = strPath.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
-                nPathLevelLength = pathLevel.Length;
+                arrPath = strPath.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+                nPathLevelLength = arrPath.Length;
 
                 if (strNode.Contains(Path.DirectorySeparatorChar))
                 {
@@ -715,15 +749,15 @@ namespace SearchDirLists
                     {
                         if (n < nCount)
                         {
-                            pathLevel[0] += Path.DirectorySeparatorChar + pathLevel[n + 1];
+                            arrPath[0] += Path.DirectorySeparatorChar + arrPath[n + 1];
                         }
                     }
 
                     for (int n = 1; n < nPathLevelLength - 1; ++n)
                     {
-                        if ((nCount + n) < pathLevel.Length)
+                        if ((nCount + n) < arrPath.Length)
                         {
-                            pathLevel[n] = pathLevel[nCount + n];
+                            arrPath[n] = arrPath[nCount + n];
                         }
                     }
 
@@ -734,7 +768,7 @@ namespace SearchDirLists
                     }
                 }
                 
-                if (strNode == pathLevel[i])
+                if (strNode == arrPath[i])
                 {
                     node = topNode;
                     i++;
@@ -744,7 +778,7 @@ namespace SearchDirLists
 
             if ((i < nPathLevelLength) && node != null)
             {
-                node = GetSubNode(node, pathLevel, i, nPathLevelLength, bIgnoreCase);
+                node = GetSubNode(node, arrPath, i, nPathLevelLength, bIgnoreCase);
             }
 
             return node;
@@ -774,7 +808,7 @@ namespace SearchDirLists
 
         TreeNode FindNode(String strSearch, TreeNode startNode = null, TreeView treeView = null)
         {
-            if ((strSearch == null) || (strSearch.Length == 0))
+            if (Utilities.StrValid(strSearch) == false)
             {
                 return null;
             }
@@ -1138,7 +1172,7 @@ namespace SearchDirLists
             {
                 m_strCompare1 = form_cb_TreeFind.Text;
 
-                bool bError = (m_strCompare1.Length == 0);
+                bool bError = (Utilities.StrValid(m_strCompare1) == false);
 
                 if (bError == false)
                 {
@@ -1351,10 +1385,10 @@ namespace SearchDirLists
             {
                 form_cb_TreeFind.BackColor = Color.Empty;
                 Debug.Assert(form_chkCompare1.Checked);
-                Debug.Assert(m_strCompare1.Length > 0);
+                Debug.Assert(Utilities.StrValid(m_strCompare1));
 
                 String strCompare2 = form_cb_TreeFind.Text;
-                bool bError = (strCompare2.Length == 0);
+                bool bError = (Utilities.StrValid(strCompare2) == false);
 
                 if (bError == false)
                 {
@@ -1419,7 +1453,7 @@ namespace SearchDirLists
                     {
                         long l1 = 0, l2 = 0;
 
-                        if (pair.Key.Text.Length > 0)
+                        if (Utilities.StrValid(pair.Key.Text))
                         {
                             l1 = ((NodeDatum)pair.Key.Tag).LengthSubnodes;
                         }
@@ -1477,7 +1511,7 @@ namespace SearchDirLists
 
             TreeNode treeNode = dictCompareDiffs.ToArray()[m_nCompareIndex].Key;
 
-            if (treeNode.Name.Length == 0)  // can't have a null key in the dictionary so there's a new TreeNode there
+            if (Utilities.StrValid(treeNode.Name) == false)  // can't have a null key in the dictionary so there's a new TreeNode there
             {
                 treeNode = null;
             }
@@ -1660,7 +1694,7 @@ namespace SearchDirLists
         {
             m_blink.Stop();
 
-            if (form_cb_TreeFind.Text.Length <= 0)
+            if (Utilities.StrValid(form_cb_TreeFind.Text) == false)
             {
                 m_blink.Go(clr: Color.Red, Once: true);
                 return;
@@ -1835,6 +1869,44 @@ namespace SearchDirLists
         private void formCtl_EnterForCopyButton(object sender, EventArgs e)
         {
             m_ctlLastFocusForCopyButton = (Control) sender;
+        }
+
+        TreeNode showNextNoncloned_node = null;
+        private void form_treeView_Browse_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right)
+            {
+                return;
+            }
+
+            showNextNoncloned_node = e.Node;
+            context_rclick_node.Show(form_treeView_Browse, e.Location);
+        }
+
+        TreeNode ShowNextNonClonedNode(TreeNode startNode)
+        {
+            NodeDatum nodeDatum = (NodeDatum)startNode.Tag;
+
+            if (nodeDatum.m_listClones != null)
+            {
+                if (startNode.NextNode != null)
+                {
+                    return ShowNextNonClonedNode(startNode.NextNode);
+                }
+                else
+                {
+                    return startNode;
+                }
+            }
+            else
+            {
+                return startNode;
+            }
+        }
+
+        private void showNextNonclonedFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            form_treeView_Browse.SelectedNode = ShowNextNonClonedNode(showNextNoncloned_node);
         }
     }
 }

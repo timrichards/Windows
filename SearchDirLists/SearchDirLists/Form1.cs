@@ -17,6 +17,7 @@ namespace SearchDirLists
         private String m_strPath = null;
         private String m_strSaveAs = "";
         int m_nLVclonesClickIndex = -1;
+        int m_nLVsameDriveClickIndex = -1;
         int m_nTreeFindTextChanged = 0;
         bool m_bFileFound = false;
         TreeNode[] m_arrayTreeFound = null;
@@ -690,24 +691,29 @@ namespace SearchDirLists
 
         private void form_lvClones_MouseClick(object sender, MouseEventArgs e)
         {
-            if (form_lvClones.SelectedItems.Count == 0)
+            lvClonesClick(form_lvClones, ref m_nLVclonesClickIndex);
+        }
+
+        void lvClonesClick(ListView lv, ref int nClickIndex)
+        {
+            if (lv.SelectedItems.Count == 0)
             {
                 return;
             }
 
-            if (form_lvClones.SelectedItems[0].Tag == null)
+            if (lv.SelectedItems[0].Tag == null)
             {
                 // marker item
-                ListViewItem lvItem = form_lvClones.Items[form_lvClones.SelectedItems[0].Index + 1];
+                ListViewItem lvItem = lv.Items[lv.SelectedItems[0].Index + 1];
 
                 lvItem.Selected = true;
                 lvItem.Focused = true;
             }
 
-            List<TreeNode> listTreeNodes = (List<TreeNode>)form_lvClones.SelectedItems[0].Tag;
+            List<TreeNode> listTreeNodes = (List<TreeNode>)lv.SelectedItems[0].Tag;
 
             m_bPutPathInFindEditBox = true;
-            form_treeView_Browse.SelectedNode = listTreeNodes[++m_nLVclonesClickIndex % listTreeNodes.Count];
+            form_treeView_Browse.SelectedNode = listTreeNodes[++nClickIndex % listTreeNodes.Count];
             form_treeView_Browse.Select();
         }
 
@@ -1899,7 +1905,12 @@ namespace SearchDirLists
 
         private void form_lvSameDrive_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SelectedIndexChanged(form_lvSameDrive);
+            m_nLVsameDriveClickIndex = -1;
+        }
+
+        private void form_lvSameDrive_MouseClick(object sender, MouseEventArgs e)
+        {
+            lvClonesClick(form_lvSameDrive, ref m_nLVsameDriveClickIndex);
         }
     }
 }

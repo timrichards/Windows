@@ -42,13 +42,6 @@ namespace SearchDirLists
             this.form_btnAddVolume = new System.Windows.Forms.Button();
             this.form_cbVolumeName = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.form_lvVolumesMain = new ListViewEmbeddedControls.ListViewEx();
-            this.form_lv_Volumes_col_Volume = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_lv_Volumes_col_Path = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_lv_Volumes_col_SaveToFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_lv_Volumes_col_Status = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_lv_Volumes_col_IncludeInSearch = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader28 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_btnSavePathInfo = new System.Windows.Forms.Button();
             this.form_btnSaveAs = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
@@ -72,6 +65,25 @@ namespace SearchDirLists
             this.form_splitClones = new System.Windows.Forms.SplitContainer();
             this.form_splitDetail = new System.Windows.Forms.SplitContainer();
             this.form_splitCompareFiles = new System.Windows.Forms.SplitContainer();
+            this.form_splitDetailVols = new System.Windows.Forms.SplitContainer();
+            this.form_splitNonClones = new System.Windows.Forms.SplitContainer();
+            this.form_splitUnique = new System.Windows.Forms.SplitContainer();
+            this.form_btn_TreeFind = new System.Windows.Forms.Button();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.timer_killRed = new System.Windows.Forms.Timer(this.components);
+            this.timer_blink = new System.Windows.Forms.Timer(this.components);
+            this.timer_DoTree = new System.Windows.Forms.Timer(this.components);
+            this.context_rclick_node = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.showNextSameDriveFolder = new System.Windows.Forms.ToolStripMenuItem();
+            this.form_lvVolumesMain = new ListViewEmbeddedControls.ListViewEx();
+            this.form_lv_Volumes_col_Volume = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.form_lv_Volumes_col_Path = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.form_lv_Volumes_col_SaveToFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.form_lv_Volumes_col_Status = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.form_lv_Volumes_col_IncludeInSearch = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader28 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lvFiles = new ListViewEmbeddedControls.ListViewEx();
             this.form_colFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -88,31 +100,19 @@ namespace SearchDirLists
             this.columnHeader22 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader23 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader24 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_splitDetailVols = new System.Windows.Forms.SplitContainer();
             this.form_lvDetail = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_colDirDetail = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lvDetailVol = new ListViewEmbeddedControls.ListViewEx();
             this.form_colDirDetailCompare = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_colVolDetail = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_splitNonClones = new System.Windows.Forms.SplitContainer();
             this.form_lvSameDrive = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_splitUnique = new System.Windows.Forms.SplitContainer();
             this.form_lvUnique = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader16 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lvClones = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_btn_TreeFind = new System.Windows.Forms.Button();
-            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.timer_killRed = new System.Windows.Forms.Timer(this.components);
-            this.timer_blink = new System.Windows.Forms.Timer(this.components);
-            this.timer_DoTree = new System.Windows.Forms.Timer(this.components);
-            this.context_rclick_node = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.showNextSameDriveFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.form_tabControl.SuspendLayout();
             this.form_tabPageVolumes.SuspendLayout();
             this.form_tabPage_Browse.SuspendLayout();
@@ -289,60 +289,6 @@ namespace SearchDirLists
             this.label4.Size = new System.Drawing.Size(91, 13);
             this.label4.TabIndex = 0;
             this.label4.Text = "Volume nickname";
-            // 
-            // form_lvVolumesMain
-            // 
-            this.form_lvVolumesMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_lvVolumesMain.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.form_lv_Volumes_col_Volume,
-            this.form_lv_Volumes_col_Path,
-            this.form_lv_Volumes_col_SaveToFile,
-            this.form_lv_Volumes_col_Status,
-            this.form_lv_Volumes_col_IncludeInSearch,
-            this.columnHeader28});
-            this.form_lvVolumesMain.FullRowSelect = true;
-            this.form_lvVolumesMain.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.form_lvVolumesMain.HideSelection = false;
-            this.form_lvVolumesMain.Location = new System.Drawing.Point(0, 172);
-            this.form_lvVolumesMain.MultiSelect = false;
-            this.form_lvVolumesMain.Name = "form_lvVolumesMain";
-            this.form_lvVolumesMain.Size = new System.Drawing.Size(973, 179);
-            this.form_lvVolumesMain.TabIndex = 16;
-            this.form_lvVolumesMain.UseCompatibleStateImageBehavior = false;
-            this.form_lvVolumesMain.View = System.Windows.Forms.View.Details;
-            this.form_lvVolumesMain.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.form_lv_Volumes_ItemSelectionChanged);
-            // 
-            // form_lv_Volumes_col_Volume
-            // 
-            this.form_lv_Volumes_col_Volume.Text = "Volume name";
-            this.form_lv_Volumes_col_Volume.Width = 190;
-            // 
-            // form_lv_Volumes_col_Path
-            // 
-            this.form_lv_Volumes_col_Path.Text = "Path";
-            this.form_lv_Volumes_col_Path.Width = 190;
-            // 
-            // form_lv_Volumes_col_SaveToFile
-            // 
-            this.form_lv_Volumes_col_SaveToFile.Text = "Save to file";
-            this.form_lv_Volumes_col_SaveToFile.Width = 250;
-            // 
-            // form_lv_Volumes_col_Status
-            // 
-            this.form_lv_Volumes_col_Status.Text = "Status";
-            this.form_lv_Volumes_col_Status.Width = 130;
-            // 
-            // form_lv_Volumes_col_IncludeInSearch
-            // 
-            this.form_lv_Volumes_col_IncludeInSearch.Text = "Include in search";
-            this.form_lv_Volumes_col_IncludeInSearch.Width = 95;
-            // 
-            // columnHeader28
-            // 
-            this.columnHeader28.Text = "Volume Group";
-            this.columnHeader28.Width = 100;
             // 
             // form_btnSavePathInfo
             // 
@@ -668,6 +614,165 @@ namespace SearchDirLists
             this.form_splitCompareFiles.SplitterDistance = 71;
             this.form_splitCompareFiles.TabIndex = 1;
             // 
+            // form_splitDetailVols
+            // 
+            this.form_splitDetailVols.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_splitDetailVols.Location = new System.Drawing.Point(0, 0);
+            this.form_splitDetailVols.Name = "form_splitDetailVols";
+            // 
+            // form_splitDetailVols.Panel1
+            // 
+            this.form_splitDetailVols.Panel1.Controls.Add(this.form_lvDetail);
+            // 
+            // form_splitDetailVols.Panel2
+            // 
+            this.form_splitDetailVols.Panel2.Controls.Add(this.form_lvDetailVol);
+            this.form_splitDetailVols.Size = new System.Drawing.Size(140, 198);
+            this.form_splitDetailVols.SplitterDistance = 67;
+            this.form_splitDetailVols.TabIndex = 1;
+            // 
+            // form_splitNonClones
+            // 
+            this.form_splitNonClones.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_splitNonClones.Location = new System.Drawing.Point(0, 0);
+            this.form_splitNonClones.Name = "form_splitNonClones";
+            this.form_splitNonClones.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // form_splitNonClones.Panel1
+            // 
+            this.form_splitNonClones.Panel1.Controls.Add(this.form_lvSameDrive);
+            // 
+            // form_splitNonClones.Panel2
+            // 
+            this.form_splitNonClones.Panel2.Controls.Add(this.form_splitUnique);
+            this.form_splitNonClones.Size = new System.Drawing.Size(252, 374);
+            this.form_splitNonClones.SplitterDistance = 130;
+            this.form_splitNonClones.TabIndex = 3;
+            // 
+            // form_splitUnique
+            // 
+            this.form_splitUnique.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_splitUnique.Location = new System.Drawing.Point(0, 0);
+            this.form_splitUnique.Name = "form_splitUnique";
+            this.form_splitUnique.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // form_splitUnique.Panel1
+            // 
+            this.form_splitUnique.Panel1.Controls.Add(this.form_lvUnique);
+            // 
+            // form_splitUnique.Panel2
+            // 
+            this.form_splitUnique.Panel2.Controls.Add(this.form_lvClones);
+            this.form_splitUnique.Size = new System.Drawing.Size(252, 240);
+            this.form_splitUnique.SplitterDistance = 120;
+            this.form_splitUnique.TabIndex = 2;
+            // 
+            // form_btn_TreeFind
+            // 
+            this.form_btn_TreeFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_btn_TreeFind.Location = new System.Drawing.Point(720, 3);
+            this.form_btn_TreeFind.Name = "form_btn_TreeFind";
+            this.form_btn_TreeFind.Size = new System.Drawing.Size(58, 23);
+            this.form_btn_TreeFind.TabIndex = 4;
+            this.form_btn_TreeFind.Text = "Navigate";
+            this.form_btn_TreeFind.UseVisualStyleBackColor = true;
+            this.form_btn_TreeFind.Click += new System.EventHandler(this.form_btn_TreeFind_Click);
+            this.form_btn_TreeFind.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
+            // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.DefaultExt = "txt";
+            this.saveFileDialog1.Filter = "SearchDirLists files|*.sot|Text files|*.txt|All files|*.*";
+            this.saveFileDialog1.OverwritePrompt = false;
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.Filter = "SearchDirLists files|*.sot|Text files|*.txt|All files|*.*";
+            // 
+            // timer_killRed
+            // 
+            this.timer_killRed.Interval = 10000;
+            this.timer_killRed.Tick += new System.EventHandler(this.timer_killRed_Tick);
+            // 
+            // timer_blink
+            // 
+            this.timer_blink.Interval = 50;
+            this.timer_blink.Tick += new System.EventHandler(this.timer_blink_Tick);
+            // 
+            // timer_DoTree
+            // 
+            this.timer_DoTree.Interval = 3000;
+            this.timer_DoTree.Tick += new System.EventHandler(this.timer_DoTree_Tick);
+            // 
+            // context_rclick_node
+            // 
+            this.context_rclick_node.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showNextSameDriveFolder});
+            this.context_rclick_node.Name = "context_rclick_node";
+            this.context_rclick_node.Size = new System.Drawing.Size(225, 26);
+            // 
+            // showNextSameDriveFolder
+            // 
+            this.showNextSameDriveFolder.Name = "showNextSameDriveFolder";
+            this.showNextSameDriveFolder.Size = new System.Drawing.Size(224, 22);
+            this.showNextSameDriveFolder.Text = "Show next same-drive folder";
+            this.showNextSameDriveFolder.Click += new System.EventHandler(this.showNextSameDrive_Click);
+            // 
+            // form_lvVolumesMain
+            // 
+            this.form_lvVolumesMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_lvVolumesMain.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.form_lv_Volumes_col_Volume,
+            this.form_lv_Volumes_col_Path,
+            this.form_lv_Volumes_col_SaveToFile,
+            this.form_lv_Volumes_col_Status,
+            this.form_lv_Volumes_col_IncludeInSearch,
+            this.columnHeader28});
+            this.form_lvVolumesMain.FullRowSelect = true;
+            this.form_lvVolumesMain.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.form_lvVolumesMain.HideSelection = false;
+            this.form_lvVolumesMain.Location = new System.Drawing.Point(0, 172);
+            this.form_lvVolumesMain.MultiSelect = false;
+            this.form_lvVolumesMain.Name = "form_lvVolumesMain";
+            this.form_lvVolumesMain.Size = new System.Drawing.Size(973, 179);
+            this.form_lvVolumesMain.TabIndex = 16;
+            this.form_lvVolumesMain.UseCompatibleStateImageBehavior = false;
+            this.form_lvVolumesMain.View = System.Windows.Forms.View.Details;
+            this.form_lvVolumesMain.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.form_lv_Volumes_ItemSelectionChanged);
+            // 
+            // form_lv_Volumes_col_Volume
+            // 
+            this.form_lv_Volumes_col_Volume.Text = "Volume name";
+            this.form_lv_Volumes_col_Volume.Width = 190;
+            // 
+            // form_lv_Volumes_col_Path
+            // 
+            this.form_lv_Volumes_col_Path.Text = "Path";
+            this.form_lv_Volumes_col_Path.Width = 190;
+            // 
+            // form_lv_Volumes_col_SaveToFile
+            // 
+            this.form_lv_Volumes_col_SaveToFile.Text = "Save to file";
+            this.form_lv_Volumes_col_SaveToFile.Width = 250;
+            // 
+            // form_lv_Volumes_col_Status
+            // 
+            this.form_lv_Volumes_col_Status.Text = "Status";
+            this.form_lv_Volumes_col_Status.Width = 130;
+            // 
+            // form_lv_Volumes_col_IncludeInSearch
+            // 
+            this.form_lv_Volumes_col_IncludeInSearch.Text = "Include in search";
+            this.form_lv_Volumes_col_IncludeInSearch.Width = 95;
+            // 
+            // columnHeader28
+            // 
+            this.columnHeader28.Text = "Volume Group";
+            this.columnHeader28.Width = 100;
+            // 
             // form_lvFiles
             // 
             this.form_lvFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -784,23 +889,6 @@ namespace SearchDirLists
             // 
             this.columnHeader24.Text = "Error 2";
             // 
-            // form_splitDetailVols
-            // 
-            this.form_splitDetailVols.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_splitDetailVols.Location = new System.Drawing.Point(0, 0);
-            this.form_splitDetailVols.Name = "form_splitDetailVols";
-            // 
-            // form_splitDetailVols.Panel1
-            // 
-            this.form_splitDetailVols.Panel1.Controls.Add(this.form_lvDetail);
-            // 
-            // form_splitDetailVols.Panel2
-            // 
-            this.form_splitDetailVols.Panel2.Controls.Add(this.form_lvDetailVol);
-            this.form_splitDetailVols.Size = new System.Drawing.Size(140, 198);
-            this.form_splitDetailVols.SplitterDistance = 67;
-            this.form_splitDetailVols.TabIndex = 1;
-            // 
             // form_lvDetail
             // 
             this.form_lvDetail.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -853,24 +941,6 @@ namespace SearchDirLists
             this.form_colVolDetail.Text = " ";
             this.form_colVolDetail.Width = 9999;
             // 
-            // form_splitNonClones
-            // 
-            this.form_splitNonClones.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_splitNonClones.Location = new System.Drawing.Point(0, 0);
-            this.form_splitNonClones.Name = "form_splitNonClones";
-            this.form_splitNonClones.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // form_splitNonClones.Panel1
-            // 
-            this.form_splitNonClones.Panel1.Controls.Add(this.form_lvSameDrive);
-            // 
-            // form_splitNonClones.Panel2
-            // 
-            this.form_splitNonClones.Panel2.Controls.Add(this.form_splitUnique);
-            this.form_splitNonClones.Size = new System.Drawing.Size(252, 374);
-            this.form_splitNonClones.SplitterDistance = 130;
-            this.form_splitNonClones.TabIndex = 3;
-            // 
             // form_lvSameDrive
             // 
             this.form_lvSameDrive.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -887,29 +957,12 @@ namespace SearchDirLists
             this.form_lvSameDrive.UseCompatibleStateImageBehavior = false;
             this.form_lvSameDrive.View = System.Windows.Forms.View.Details;
             this.form_lvSameDrive.SelectedIndexChanged += new System.EventHandler(this.form_lvSameDrive_SelectedIndexChanged);
+            this.form_lvSameDrive.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_lvSameDrive_MouseClick);
             // 
             // columnHeader2
             // 
             this.columnHeader2.Text = "Same drive";
             this.columnHeader2.Width = 230;
-            // 
-            // form_splitUnique
-            // 
-            this.form_splitUnique.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_splitUnique.Location = new System.Drawing.Point(0, 0);
-            this.form_splitUnique.Name = "form_splitUnique";
-            this.form_splitUnique.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // form_splitUnique.Panel1
-            // 
-            this.form_splitUnique.Panel1.Controls.Add(this.form_lvUnique);
-            // 
-            // form_splitUnique.Panel2
-            // 
-            this.form_splitUnique.Panel2.Controls.Add(this.form_lvClones);
-            this.form_splitUnique.Size = new System.Drawing.Size(252, 240);
-            this.form_splitUnique.SplitterDistance = 120;
-            this.form_splitUnique.TabIndex = 2;
             // 
             // form_lvUnique
             // 
@@ -963,58 +1016,6 @@ namespace SearchDirLists
             // 
             this.columnHeader13.Text = " ";
             this.columnHeader13.Width = 50;
-            // 
-            // form_btn_TreeFind
-            // 
-            this.form_btn_TreeFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btn_TreeFind.Location = new System.Drawing.Point(720, 3);
-            this.form_btn_TreeFind.Name = "form_btn_TreeFind";
-            this.form_btn_TreeFind.Size = new System.Drawing.Size(58, 23);
-            this.form_btn_TreeFind.TabIndex = 4;
-            this.form_btn_TreeFind.Text = "Navigate";
-            this.form_btn_TreeFind.UseVisualStyleBackColor = true;
-            this.form_btn_TreeFind.Click += new System.EventHandler(this.form_btn_TreeFind_Click);
-            this.form_btn_TreeFind.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
-            // 
-            // saveFileDialog1
-            // 
-            this.saveFileDialog1.DefaultExt = "txt";
-            this.saveFileDialog1.Filter = "SearchDirLists files|*.sot|Text files|*.txt|All files|*.*";
-            this.saveFileDialog1.OverwritePrompt = false;
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
-            this.openFileDialog1.Filter = "SearchDirLists files|*.sot|Text files|*.txt|All files|*.*";
-            // 
-            // timer_killRed
-            // 
-            this.timer_killRed.Interval = 10000;
-            this.timer_killRed.Tick += new System.EventHandler(this.timer_killRed_Tick);
-            // 
-            // timer_blink
-            // 
-            this.timer_blink.Interval = 50;
-            this.timer_blink.Tick += new System.EventHandler(this.timer_blink_Tick);
-            // 
-            // timer_DoTree
-            // 
-            this.timer_DoTree.Interval = 3000;
-            this.timer_DoTree.Tick += new System.EventHandler(this.timer_DoTree_Tick);
-            // 
-            // context_rclick_node
-            // 
-            this.context_rclick_node.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showNextSameDriveFolder});
-            this.context_rclick_node.Name = "context_rclick_node";
-            this.context_rclick_node.Size = new System.Drawing.Size(225, 26);
-            // 
-            // showNextSameDriveFolder
-            // 
-            this.showNextSameDriveFolder.Name = "showNextSameDriveFolder";
-            this.showNextSameDriveFolder.Size = new System.Drawing.Size(224, 22);
-            this.showNextSameDriveFolder.Text = "Show next same-drive folder";
-            this.showNextSameDriveFolder.Click += new System.EventHandler(this.showNextSameDrive_Click);
             // 
             // Form1
             // 

@@ -317,9 +317,14 @@ namespace SearchDirLists
             {
                 m_lastSearchResults = new SearchResults(strSearch, volStrings, listResults);
             }
-            else lock (m_listSearchResults)
+            else
             {
-                m_listSearchResults.Add(new SearchResults(strSearch, volStrings, listResults));
+                m_listSearchResults = new List<SearchResults>();
+
+                lock (m_listSearchResults)
+                {
+                    m_listSearchResults.Add(new SearchResults(strSearch, volStrings, listResults));
+                }
             }
         }
 

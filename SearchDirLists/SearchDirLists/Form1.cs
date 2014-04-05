@@ -666,9 +666,9 @@ namespace SearchDirLists
             {
                 form_lvUnique.TopItem = nodeDatum.m_lvCloneItem;
             }
-            else if (form_lvNonClones.Items.Contains(nodeDatum.m_lvCloneItem))
+            else if (form_lvSameDrive.Items.Contains(nodeDatum.m_lvCloneItem))
             {
-                form_lvNonClones.TopItem = nodeDatum.m_lvCloneItem;
+                form_lvSameDrive.TopItem = nodeDatum.m_lvCloneItem;
             }
         }
 
@@ -1825,7 +1825,7 @@ namespace SearchDirLists
             m_ctlLastFocusForCopyButton = (Control) sender;
         }
 
-        TreeNode showNextNoncloned_node = null;
+        TreeNode showNextSameDriveNode = null;
         private void form_treeView_Browse_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (e.Button != MouseButtons.Right)
@@ -1833,18 +1833,8 @@ namespace SearchDirLists
                 return;
             }
 
-            showNextNoncloned_node = e.Node;
+            showNextSameDriveNode = e.Node;
             context_rclick_node.Show(form_treeView_Browse, e.Location);
-        }
-
-        private void showNextNonclonedFolderToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            form_treeView_Browse.SelectedNode = ((NodeDatum) showNextNoncloned_node.Tag).m_nextNonClone;
-        }
-
-        private void form_lvNonClones_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            SelectedIndexChanged(form_lvNonClones);
         }
 
         void SelectedIndexChanged(ListView lv)
@@ -1900,6 +1890,16 @@ namespace SearchDirLists
                     break;
                 }
             }
+        }
+
+        private void showNextSameDrive_Click(object sender, EventArgs e)
+        {
+            form_treeView_Browse.SelectedNode = ((NodeDatum)showNextSameDriveNode.Tag).m_nextSameDrive;
+        }
+
+        private void form_lvSameDrive_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SelectedIndexChanged(form_lvSameDrive);
         }
     }
 }

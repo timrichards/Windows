@@ -78,7 +78,7 @@ namespace SearchDirLists
         }
 
         public bool bDifferentDrives = false;
-        public TreeNode m_nextNonClone = null;
+        public TreeNode m_nextSameDrive = null;
 
         public NodeDatum(long nPrevLineNo, long nLineNo, long nLength) { m_nPrevLineNo = nPrevLineNo; m_nLineNo = nLineNo; m_nLength = nLength; }
 
@@ -719,7 +719,7 @@ namespace SearchDirLists
         private bool m_bBrowseLoaded = false;
         Hashtable m_hashCache = new Hashtable();
         List<TreeNode> m_listTreeNodes = new List<TreeNode>();
-        List<TreeNode> m_listNonClones = new List<TreeNode>();
+        List<TreeNode> m_listSameDrive = new List<TreeNode>();
         List<TreeNode> m_listRootNodes = null;
         Tree m_tree = null;
         Thread m_threadSelect = null;
@@ -884,24 +884,26 @@ namespace SearchDirLists
         class AddTreeToList
         {
             List<TreeNode> m_listTreeNodes = null;
-            List<TreeNode> m_listNonClones = null;
+            List<TreeNode> m_listSameDrive = null;
             int m_nListIx = 0;
 
-            public AddTreeToList(List<TreeNode> listTreeNodes, List<TreeNode> listNonClones)
+            public AddTreeToList(List<TreeNode> listTreeNodes, List<TreeNode> listSameDrive)
             {
                 m_listTreeNodes = listTreeNodes;
-                m_listNonClones = listNonClones;
+                m_listSameDrive = listSameDrive;
             }
 
             public void Go(TreeNode treeNode)
             {
                 if (treeNode.ForeColor == Color.Red)
                 {
-                    m_listNonClones.Add(treeNode);
+                    Debug.Assert(((NodeDatum)treeNode.Tag).bDifferentDrives == false);
+
+                    m_listSameDrive.Add(treeNode);
 
                     for (int i = m_nListIx; i < m_listTreeNodes.Count; ++i)
                     {
-                        ((NodeDatum)m_listTreeNodes[i].Tag).m_nextNonClone = treeNode;
+                        ((NodeDatum)m_listTreeNodes[i].Tag).m_nextSameDrive = treeNode;
                         m_nListIx = m_listTreeNodes.Count;
                     }
                 }
@@ -941,10 +943,8 @@ namespace SearchDirLists
                     {
                         NodeDatum nodeDatum = ((NodeDatum)treeNode.Tag);
 
-                        if (nodeDatum.LengthSubnodes > 100 * 1024)
-                        {
-                            nodeDatum.m_listClones = listNodes;
-                        }
+                        Debug.Assert(nodeDatum.LengthSubnodes > 100 * 1024);
+                        nodeDatum.m_listClones = listNodes;
                     }
                 }
                 else
@@ -1082,14 +1082,14 @@ namespace SearchDirLists
             form_treeView_Browse.Nodes.Clear();
             form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
 
-            new AddTreeToList(m_listTreeNodes, m_listNonClones).Go(form_treeView_Browse.Nodes[0]);
-            List<TreeNode> listNonClonesDescLength = new List<TreeNode>();
-            List<ListViewItem> listLVnonClones = new List<ListViewItem>();
+            new AddTreeToList(m_listTreeNodes, m_listSameDrive).Go(form_treeView_Browse.Nodes[0]);
+            List<TreeNode> listSameDriveDescLength = new List<TreeNode>();
+            List<ListViewItem> listLVsameDrive = new List<ListViewItem>();
 
-            listNonClonesDescLength = m_listNonClones.ToList<TreeNode>();
-            listNonClonesDescLength.Sort((x, y) => ((NodeDatum)y.Tag).LengthSubnodes.CompareTo(((NodeDatum)x.Tag).LengthSubnodes));
+            listSameDriveDescLength = m_listSameDrive.ToList<TreeNode>();
+            listSameDriveDescLength.Sort((x, y) => ((NodeDatum)y.Tag).LengthSubnodes.CompareTo(((NodeDatum)x.Tag).LengthSubnodes));
 
-            foreach (TreeNode treeNode in listNonClonesDescLength)
+            foreach (TreeNode treeNode in listSameDriveDescLength)
             {
                 String strNode = treeNode.Text;
 
@@ -1098,7 +1098,7 @@ namespace SearchDirLists
                 ListViewItem lvItem = new ListViewItem(strNode);
 
                 lvItem.Tag = treeNode;
-                listLVnonClones.Add(lvItem);
+                listLVsameDrive.Add(lvItem);
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
@@ -1108,11 +1108,11 @@ namespace SearchDirLists
                 }
             }
 
-            InsertSizeMarkers(listLVnonClones);
-            form_lvNonClones.Items.Clear();
-            form_lvNonClones.Items.AddRange(listLVnonClones.ToArray());
-            listNonClonesDescLength = null;
-            listLVnonClones = null;
+            InsertSizeMarkers(listLVsameDrive);
+            form_lvSameDrive.Items.Clear();
+            form_lvSameDrive.Items.AddRange(listLVsameDrive.ToArray());
+            listSameDriveDescLength = null;
+            listLVsameDrive = null;
             m_listRootNodes = null;
             form_treeView_Browse.Enabled = true;
             m_bBrowseLoaded = true;

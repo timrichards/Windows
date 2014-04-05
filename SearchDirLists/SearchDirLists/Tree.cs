@@ -71,12 +71,14 @@ namespace SearchDirLists
         {
             get
             {
-                double nSubnodeFiles = NumSubnodeFiles / 1000000.0;
-                Debug.Assert(nSubnodeFiles < 1);
-                double nSubnodes = NumSubnodes / 100000000000.0;
-                Debug.Assert(nSubnodes < 1 / 1000000.0);
+                const double n1stDIV = 100000.0;
+                double nSubnodes = NumSubnodes / n1stDIV;
+                double nSubnodeFiles = NumSubnodeFiles / n1stDIV / 10000000.0;
+                double nRet = LengthSubnodes + nSubnodeFiles + nSubnodes;
 
-                return LengthSubnodes + nSubnodeFiles + nSubnodes;
+                Debug.Assert(nSubnodes < 1);
+                Debug.Assert(nSubnodeFiles * n1stDIV < 1.0);
+                return nRet;
             }
         }
 
@@ -803,6 +805,8 @@ namespace SearchDirLists
 
                     foreach (TreeNode subnode in listClones)
                     {
+                        Debug.Assert(((NodeDatum)subnode.Tag).Key == nodeDatum.Key);
+
                         TreeNode rootNode_A = TreeSelect.GetParentRoot(subnode);
 
                         if (rootNode == rootNode_A)

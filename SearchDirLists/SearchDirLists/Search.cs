@@ -91,7 +91,7 @@ namespace SearchDirLists
             String strPath = m_volStrings.Path;
             String strSaveAs = m_volStrings.SaveAs;
 
-            if (FormatPath(ref strPath, ref strSaveAs, false) == false)
+            if (FormatPath(ref strPath, ref strSaveAs, bFailOnDirectory: false) == false)
             {
                 return;
             }

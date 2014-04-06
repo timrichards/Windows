@@ -1030,17 +1030,11 @@ namespace SearchDirLists
                 ListViewItem lvItem = new ListViewItem(new String[] { strNode, str_nClones });
 
                 lvItem.Tag = listNodes.Value;
+                lvItem.ForeColor = listNodes.Value[0].ForeColor;
 
                 foreach (TreeNode treeNode in listNodes.Value)
                 {
-                    NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
-
-                    nodeDatum.m_lvCloneItem = lvItem;
-
-                    if (nodeDatum.bDifferentVols == false)
-                    {
-                        lvItem.ForeColor = Color.Firebrick;
-                    }
+                    ((NodeDatum)treeNode.Tag).m_lvCloneItem = lvItem;
                 }
 
                 listLVitems.Add(lvItem);

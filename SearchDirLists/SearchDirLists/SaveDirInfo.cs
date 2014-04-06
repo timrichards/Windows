@@ -12,7 +12,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace SearchDirLists
 {
-    delegate void SaveDirListingsStatusDelegate(int nIndex, bool bSuccess, String strText);
+    delegate void SaveDirListingsStatusDelegate(int nIndex, String strText, bool bSuccess = false);
     delegate void SaveDirListingsDoneDelegate();
 
     class Win32
@@ -70,7 +70,7 @@ namespace SearchDirLists
             bool m_bValid = false;
             public bool IsValid { get { return m_bValid; } }
 
-            String m_strName = "";
+            String m_strName = null;
             public String Name { get { return m_strName; } }
 
             DateTime m_dtCreationTime = DateTime.MinValue;
@@ -370,7 +370,7 @@ namespace SearchDirLists
             }
         }
 
-        public static String FormatString(String strDir = "", String strFile = "", DateTime? dtCreated = null, DateTime? dtModified = null, String strAttributes = null, long nLength = 0, String strError1 = null, String strError2 = null, int? nHeader = null)
+        public static String FormatString(String strDir = null, String strFile = null, DateTime? dtCreated = null, DateTime? dtModified = null, String strAttributes = null, long nLength = 0, String strError1 = null, String strError2 = null, int? nHeader = null)
         {
             String strLength = null;
             String strCreated = null;
@@ -605,7 +605,7 @@ namespace SearchDirLists
 
         void SaveDirListing_TimerCallback(object state)
         {
-            m_statusCallback(m_nVolIx, false, "Saving " + FormatSize(m_nTotalLength));
+            m_statusCallback(m_nVolIx, "Saving " + FormatSize(m_nTotalLength));
         }
 
         public SaveDirListing(int nVolIx, LVvolStrings volStrings,
@@ -677,7 +677,7 @@ namespace SearchDirLists
             {
                 string currentDir = stackDirs.Pop();
 
-                if (CheckNTFS_chars(currentDir, false) == false)
+                if (CheckNTFS_chars(currentDir, bFile: false) == false)
                 {
                     Debug.Assert(false);
                     continue;
@@ -758,20 +758,20 @@ namespace SearchDirLists
             if (FormatPath(ref strPath, ref strSaveAs) == false)
             {
                 // FormatPath() has its own message box
-                m_statusCallback(m_nVolIx, false, "Not saved.");
+                m_statusCallback(m_nVolIx, "Not saved.");
                 return;
             }
 
             if (Directory.Exists(strPath) == false)
             {
-                m_statusCallback(m_nVolIx, false, "Not saved.");
+                m_statusCallback(m_nVolIx, "Not saved.");
                 MessageBox.Show("Source Path does not exist.                  ", "Save Directory Listing");
                 return;
             }
 
             if (StrValid(strSaveAs) == false)
             {
-                m_statusCallback(m_nVolIx, false, "Not saved.");
+                m_statusCallback(m_nVolIx, "Not saved.");
                 MessageBox.Show("Must specify save filename.                  ", "Save Directory Listing");
                 return;
             }
@@ -800,7 +800,7 @@ namespace SearchDirLists
             }
 
             Directory.SetCurrentDirectory(strPathOrig);
-            m_statusCallback(m_nVolIx, bSuccess: true, strText: m_str_SAVED);
+            m_statusCallback(m_nVolIx, strText: m_str_SAVED, bSuccess: true);
             m_timerStatus.Dispose();
         }
 
@@ -854,7 +854,7 @@ namespace SearchDirLists
                     continue;
                 }
 
-                m_statusCallback(nVolIx, false, "Saving...");
+                m_statusCallback(nVolIx, "Saving...");
                 m_listThreads.Add(new SaveDirListing(nVolIx, volStrings, m_statusCallback).DoThreadFactory());
             }
 
@@ -899,9 +899,9 @@ namespace SearchDirLists
     {
         SaveDirListings m_saveDirListings = null;
 
-        void SaveDirListingsStatusCallback(int nIndex, bool bSuccess, String strText)
+        void SaveDirListingsStatusCallback(int nIndex, String strText, bool bSuccess = false)
         {
-            if (InvokeRequired) { Invoke(new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback), new object[] { nIndex, bSuccess, strText }); return; }
+            if (InvokeRequired) { Invoke(new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback), new object[] { nIndex, strText, bSuccess }); return; }
 
             if (bSuccess)
             {

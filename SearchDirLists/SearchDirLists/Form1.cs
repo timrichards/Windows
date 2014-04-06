@@ -224,7 +224,7 @@ namespace SearchDirLists
             m_clrVolGroupOrig = form_lblVolGroup.BackColor;
         }
 
-        void ComboBoxItemsInsert(ComboBox comboBox, String strText = "", bool bTrimText = true)
+        void ComboBoxItemsInsert(ComboBox comboBox, String strText = null, bool bTrimText = true)
         {
             if (Utilities.StrValid(strText) == false)
             {

@@ -16,8 +16,8 @@ namespace SearchDirLists
         private String m_strVolumeName = null;
         private String m_strPath = null;
         private String m_strSaveAs = "";
-        int m_nLVclonesClickIndex = -1;
-        int m_nLVsameDriveClickIndex = -1;
+        int m_nLVclonesClickIx = -1;
+        int m_nLVsameVolClickIx = -1;
         int m_nTreeFindTextChanged = 0;
         bool m_bFileFound = false;
         TreeNode[] m_arrayTreeFound = null;
@@ -667,9 +667,9 @@ namespace SearchDirLists
             {
                 form_lvUnique.TopItem = nodeDatum.m_lvCloneItem;
             }
-            else if (form_lvSameDrive.Items.Contains(nodeDatum.m_lvCloneItem))
+            else if (form_lvSameVol.Items.Contains(nodeDatum.m_lvCloneItem))
             {
-                form_lvSameDrive.TopItem = nodeDatum.m_lvCloneItem;
+                form_lvSameVol.TopItem = nodeDatum.m_lvCloneItem;
             }
         }
 
@@ -686,12 +686,12 @@ namespace SearchDirLists
             //    return;
             //}
 
-            m_nLVclonesClickIndex = -1;
+            m_nLVclonesClickIx = -1;
         }
 
         private void form_lvClones_MouseClick(object sender, MouseEventArgs e)
         {
-            lvClonesClick(form_lvClones, ref m_nLVclonesClickIndex);
+            lvClonesClick(form_lvClones, ref m_nLVclonesClickIx);
         }
 
         void lvClonesClick(ListView lv, ref int nClickIndex)
@@ -719,7 +719,7 @@ namespace SearchDirLists
 
         private TreeNode GetNodeByPath(string path, TreeView treeView)
         {
-            return GetNodeByPath_A(path, treeView) ?? GetNodeByPath_A(path, treeView, true);
+            return GetNodeByPath_A(path, treeView) ?? GetNodeByPath_A(path, treeView, bIgnoreCase: true);
         }
 
         private TreeNode GetNodeByPath_A(string strPath, TreeView treeView, bool bIgnoreCase = false)
@@ -1391,20 +1391,20 @@ namespace SearchDirLists
                     m_nodeCompare2.Checked = true;    // hack to put it in the right file pane
                     dictCompareDiffs.Clear();
                     Compare(m_nodeCompare1, m_nodeCompare2);
-                    Compare(m_nodeCompare2, m_nodeCompare1, true);
+                    Compare(m_nodeCompare2, m_nodeCompare1, bReverse: true);
 
                     if (dictCompareDiffs.Count < 15)
                     {
                         dictCompareDiffs.Clear();
                         Compare(m_nodeCompare1, m_nodeCompare2, nMin10M: 0);
-                        Compare(m_nodeCompare2, m_nodeCompare1, true, nMin10M: 0);
+                        Compare(m_nodeCompare2, m_nodeCompare1, bReverse: true, nMin10M: 0);
                     }
 
                     if (dictCompareDiffs.Count < 15)
                     {
                         dictCompareDiffs.Clear();
                         Compare(m_nodeCompare1, m_nodeCompare2, nMin10M: 0, nMin100K: 0);
-                        Compare(m_nodeCompare2, m_nodeCompare1, true, nMin10M: 0, nMin100K: 0);
+                        Compare(m_nodeCompare2, m_nodeCompare1, bReverse: true, nMin10M: 0, nMin100K: 0);
                     }
 
                     SortedDictionary<long, KeyValuePair<TreeNode, TreeNode>> dictSort = new SortedDictionary<long, KeyValuePair<TreeNode, TreeNode>>();
@@ -1831,7 +1831,7 @@ namespace SearchDirLists
             m_ctlLastFocusForCopyButton = (Control) sender;
         }
 
-        TreeNode showNextSameDriveNode = null;
+        TreeNode showNextSameVolNode = null;
         private void form_treeView_Browse_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (e.Button != MouseButtons.Right)
@@ -1839,7 +1839,7 @@ namespace SearchDirLists
                 return;
             }
 
-            showNextSameDriveNode = e.Node;
+            showNextSameVolNode = e.Node;
             context_rclick_node.Show(form_treeView_Browse, e.Location);
         }
 
@@ -1898,19 +1898,19 @@ namespace SearchDirLists
             }
         }
 
-        private void showNextSameDrive_Click(object sender, EventArgs e)
+        private void form_lvSameVol_SelectedIndexChanged(object sender, EventArgs e)
         {
-            form_treeView_Browse.SelectedNode = ((NodeDatum)showNextSameDriveNode.Tag).m_nextSameDrive;
+            m_nLVsameVolClickIx = -1;
         }
 
-        private void form_lvSameDrive_SelectedIndexChanged(object sender, EventArgs e)
+        private void form_lvSameVol_MouseClick(object sender, MouseEventArgs e)
         {
-            m_nLVsameDriveClickIndex = -1;
+            lvClonesClick(form_lvSameVol, ref m_nLVsameVolClickIx);
         }
 
-        private void form_lvSameDrive_MouseClick(object sender, MouseEventArgs e)
+        private void showNextSameVol_Click(object sender, EventArgs e)
         {
-            lvClonesClick(form_lvSameDrive, ref m_nLVsameDriveClickIndex);
+            form_treeView_Browse.SelectedNode = ((NodeDatum)showNextSameVolNode.Tag).m_nextSameVol;
         }
     }
 }

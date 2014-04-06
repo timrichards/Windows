@@ -800,7 +800,7 @@ namespace SearchDirLists
             }
 
             Directory.SetCurrentDirectory(strPathOrig);
-            m_statusCallback(m_nVolIx, true, m_str_SAVED);
+            m_statusCallback(m_nVolIx, bSuccess: true, strText: m_str_SAVED);
             m_timerStatus.Dispose();
         }
 

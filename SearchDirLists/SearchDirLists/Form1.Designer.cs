@@ -398,6 +398,7 @@ namespace SearchDirLists
             this.form_cbSaveAs.Name = "form_cbSaveAs";
             this.form_cbSaveAs.Size = new System.Drawing.Size(813, 21);
             this.form_cbSaveAs.TabIndex = 7;
+            this.form_cbSaveAs.SelectedIndexChanged += new System.EventHandler(this.form_cb_SaveAs_SelectedIndexChanged);
             // 
             // form_cbPath
             // 
@@ -408,6 +409,7 @@ namespace SearchDirLists
             this.form_cbPath.Name = "form_cbPath";
             this.form_cbPath.Size = new System.Drawing.Size(878, 21);
             this.form_cbPath.TabIndex = 3;
+            this.form_cbPath.SelectedIndexChanged += new System.EventHandler(this.form_cb_Path_SelectedIndexChanged);
             // 
             // label1
             // 

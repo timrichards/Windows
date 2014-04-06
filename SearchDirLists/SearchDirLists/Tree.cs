@@ -797,7 +797,7 @@ namespace SearchDirLists
                     RootNodeDatum rootNodeDatum = (RootNodeDatum)rootNode.Tag;
 
                     Debug.Assert(treeNode.ForeColor == Color.Empty);
-                    treeNode.ForeColor = Color.DarkRed;
+                    treeNode.ForeColor = Color.Firebrick;
 
                     bool bDifferentVols = false;
 
@@ -919,7 +919,7 @@ namespace SearchDirLists
             {
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
-                if ((treeNode.ForeColor == Color.DarkRed) && (treeNode == nodeDatum.m_listClones[0]))
+                if ((treeNode.ForeColor == Color.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
                 {
                     Debug.Assert((nodeDatum.m_listClones != null) && (nodeDatum.bDifferentVols == false));
                     m_listSameVol.Add(treeNode);
@@ -935,7 +935,12 @@ namespace SearchDirLists
 
                 if (bCloneOK)
                 {
-                    treeNode.BackColor = Color.Snow;
+                    treeNode.BackColor = Color.LightGoldenrodYellow;
+
+                    if (nodeDatum.m_lvCloneItem != null)
+                    {
+                        nodeDatum.m_lvCloneItem.BackColor = treeNode.BackColor;
+                    }
                 }
 
                 if (treeNode.FirstNode != null)
@@ -1034,7 +1039,7 @@ namespace SearchDirLists
 
                     if (nodeDatum.bDifferentVols == false)
                     {
-                        lvItem.ForeColor = Color.DarkRed;
+                        lvItem.ForeColor = Color.Firebrick;
                     }
                 }
 
@@ -1051,9 +1056,34 @@ namespace SearchDirLists
             IEnumerable<KeyValuePair<double, TreeNode>> dictUniqueReverse = dictUnique.Reverse();
             List<ListViewItem> listLVunique = new List<ListViewItem>();
 
+            int nCanceled = 0;
+
             foreach (KeyValuePair<double, TreeNode> listNodes in dictUniqueReverse)
             {
                 TreeNode treeNode = listNodes.Value;
+
+                {
+                    bool bCancel = false;
+                    TreeNode parentNode = treeNode.Parent;
+
+                    while (parentNode != null)
+                    {
+                        if (((NodeDatum)parentNode.Tag).bDifferentVols)
+                        {
+                            bCancel = true;
+                            break;
+                        }
+
+                        parentNode = parentNode.Parent;
+                    }
+
+                    if (bCancel)
+                    {
+                        ++nCanceled;
+                        continue;
+                    }
+                }
+
                 String strNode = treeNode.Text;
 
                 Debug.Assert(Utilities.StrValid(strNode));
@@ -1067,6 +1097,24 @@ namespace SearchDirLists
                 if (nodeDatum.NumImmediateFiles > 0)
                 {
                     treeNode.ForeColor = lvItem.ForeColor = Color.Red;
+
+                    TreeNode parentNode = treeNode.Parent;
+
+                    while (parentNode != null)
+                    {
+                        Debug.Assert(new Color[] { Color.Empty, Color.Red, Color.DarkRed }.Contains(parentNode.ForeColor));
+
+                        parentNode.ForeColor = Color.DarkRed;
+
+                        NodeDatum nodeDatum_A = (NodeDatum)parentNode.Tag;
+
+                        if (nodeDatum_A.m_lvCloneItem != null)
+                        {
+                            nodeDatum_A.m_lvCloneItem.ForeColor = parentNode.ForeColor;
+                        }
+
+                        parentNode = parentNode.Parent;
+                    }
                 }
 
                 listLVunique.Add(lvItem);
@@ -1074,6 +1122,8 @@ namespace SearchDirLists
                 nodeDatum.m_lvCloneItem = lvItem;
             }
 
+            Console.WriteLine(nCanceled + " unique folders canceled because they're in cloned folders");
+            dictUniqueReverse = null;
             InsertSizeMarkers(listLVunique);
             form_lvUnique.Items.Clear();
             form_lvUnique.Items.AddRange(listLVunique.ToArray());
@@ -1098,7 +1148,8 @@ namespace SearchDirLists
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
                 lvItem.Tag = nodeDatum.m_listClones;
-                lvItem.ForeColor = Color.DarkRed;
+                lvItem.ForeColor = Color.Firebrick;
+                lvItem.BackColor = treeNode.BackColor;
                 listLVsameDrive.Add(lvItem);
 
                 if (nodeDatum.m_lvCloneItem != null)

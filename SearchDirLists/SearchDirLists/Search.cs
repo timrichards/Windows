@@ -88,7 +88,7 @@ namespace SearchDirLists
             }
 
             String strVolumeName = m_volStrings.VolumeName;
-            String strPath = m_volStrings.Path;
+            String strPath = m_volStrings.StrPath;
             String strSaveAs = m_volStrings.SaveAs;
 
             if (FormatPath(ref strPath, ref strSaveAs, bFailOnDirectory: false) == false)

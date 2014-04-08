@@ -95,7 +95,10 @@ namespace SearchDirLists
 
             public void FromFindData(WIN32_FIND_DATAW ffd)
             {
-                m_strName = ffd.cFileName;
+                String P = Path.DirectorySeparatorChar.ToString();
+                String PP = P + P;
+
+                m_strName = ffd.cFileName.Replace(PP, P).TrimEnd(Path.DirectorySeparatorChar);
                 m_dtCreationTime = FromFileTime(ffd.ftCreationTime);
                 m_dtLastWriteTime = FromFileTime(ffd.ftLastWriteTime);
                 m_fileAttributes = (System.IO.FileAttributes)ffd.dwFileAttributes;
@@ -590,7 +593,11 @@ namespace SearchDirLists
                         }
 
                         // directory
-                        file_out.WriteLine(FormatLine(bAtErrors ? m_strLINETYPE_Error_Dir : m_strLINETYPE_Directory, nLineNo, strLine));
+                        String P = Path.DirectorySeparatorChar.ToString();
+                        String PP = P + P;
+                        String str = strLine.Replace(PP, P);
+
+                        file_out.WriteLine(FormatLine(bAtErrors ? m_strLINETYPE_Error_Dir : m_strLINETYPE_Directory, nLineNo, str));
                     }
                 }
             }
@@ -608,7 +615,7 @@ namespace SearchDirLists
         String m_strVolumeGroup = null;
         public int Index { get { return m_nIndex; } }
         public String VolumeName { get { return m_strVolumeName; } }
-        public String Path { get { return m_strPath; } }
+        public String StrPath { get { return m_strPath; } }
         public String SaveAs { get { return m_strSaveAs; } }
         public String Status { get { return m_strStatus; } }
         public String Include { get { return m_strInclude; } }
@@ -791,7 +798,7 @@ namespace SearchDirLists
         void Go()
         {
             String strVolumeName = m_volStrings.VolumeName;
-            String strPath = m_volStrings.Path;
+            String strPath = m_volStrings.StrPath;
             String strSaveAs = m_volStrings.SaveAs;
 
             if (FormatPath(ref strPath, ref strSaveAs) == false)

@@ -162,7 +162,7 @@ namespace SearchDirLists
                 return;
             }
 
-            strParent = strParent.Remove(nIndex);
+            strParent = strParent.Remove(nIndex).TrimEnd(Path.DirectorySeparatorChar);
 
             if (m_rootNode.Nodes.ContainsKey(strParent) == false)
             {
@@ -179,7 +179,6 @@ namespace SearchDirLists
         {
             int nIndex = m_strPath.LastIndexOf(Path.DirectorySeparatorChar);
             String strShortPath = bUseShortPath ? m_strPath.Substring(nIndex + 1) : m_strPath;
-
             TreeNode treeNode = null;
 
             if (subNodes.Count == 1)
@@ -346,7 +345,7 @@ namespace SearchDirLists
             }
 
             String strVolumeName = m_volStrings.VolumeName;
-            String strPath = m_volStrings.Path;
+            String strPath = m_volStrings.StrPath;
             String strSaveAs = m_volStrings.SaveAs;
 
             if (FormatPath(ref strPath, ref strSaveAs, false) == false)

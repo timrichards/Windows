@@ -12,6 +12,7 @@ using System.Threading;
 namespace SearchDirLists
 {
     delegate void MessageBoxDelegate(String strMessage, String strTitle = null);
+    delegate bool DoSomething();
 
     public partial class Form1 : Form
     {
@@ -158,9 +159,18 @@ namespace SearchDirLists
 
                 foreach (ListViewItem lvItem in lvItems)
                 {
+                    int nIx = 0;
+
                     foreach (ListViewItem.ListViewSubItem lvSubitem in lvItem.SubItems)
                     {
-                        sw.Write(lvSubitem.Text + '\t');
+                        String str = lvSubitem.Text;
+
+                        if (nIx == 1)
+                        {
+                            str = str.TrimEnd(Path.DirectorySeparatorChar);
+                        }
+
+                        sw.Write(str + '\t');
                     }
 
                     sw.WriteLine();
@@ -195,6 +205,7 @@ namespace SearchDirLists
                         }
                     }
 
+                    strArray[1] = strArray[1].TrimEnd(Path.DirectorySeparatorChar);
                     lvItems.Add(new ListViewItem(strArray));
                 }
             }
@@ -673,6 +684,18 @@ namespace SearchDirLists
             return true;
         }
 
+        void InterruptTreeTimerWithAction(DoSomething DoAction)
+        {
+            bool bTimer = timer_DoTree.Enabled;
+
+            timer_DoTree.Stop();
+
+            if (DoAction() || bTimer)
+            {
+                RestartTreeTimer();
+            }
+        }
+
         bool LV_VolumesItemInclude(ListViewItem lvItem)
         {
             return (lvItem.SubItems[4].Text == "Yes");
@@ -957,9 +980,14 @@ namespace SearchDirLists
 
         void form_btn_AddVolume_Click(object sender, EventArgs e)
         {
+            InterruptTreeTimerWithAction(new DoSomething(form_btn_AddVolume_Click_A));
+        }
+
+        bool form_btn_AddVolume_Click_A()
+        {
             if (SaveFields(false) == false)
             {
-                return;
+                return false;
             }
 
             form_cbVolumeName.BackColor = Color.Empty;
@@ -969,13 +997,13 @@ namespace SearchDirLists
             if (Utilities.StrValid(m_strSaveAs) == false)
             {
                 FormError(form_cbSaveAs, "Must have a file to load or save directory listing to.", "Volume Save As");
-                return;
+                return false;
             }
 
             if (form_lvVolumesMain.FindItemWithText(m_strSaveAs) != null)
             {
                 FormError(form_cbSaveAs, "File already in use in list of volumes.            ", "Volume Save As");
-                return;
+                return false;
             }
 
             if (File.Exists(m_strSaveAs) && Utilities.StrValid(m_strPath))
@@ -985,14 +1013,14 @@ namespace SearchDirLists
                 {
                     form_cbSaveAs.BackColor = Color.Red;
                     timer_killRed.Enabled = true;
-                    return;
+                    return false;
                 }
             }
 
             if ((File.Exists(m_strSaveAs) == false) && form_lvVolumesMain.Items.ContainsKey(m_strPath))
             {
                 FormError(form_cbPath, "Path already added.                                   ", "Volume Source Path");
-                return;
+                return false;
             }
 
             if (Utilities.StrValid(m_strVolumeName) && form_lvVolumesMain.FindItemWithText(m_strVolumeName) != null)
@@ -1002,7 +1030,7 @@ namespace SearchDirLists
                 if (MessageBox.Show("Nickname already in use. Use it for more than one volume?", "Volume Save As", MessageBoxButtons.YesNo)
                     != DialogResult.Yes)
                 {
-                    return;
+                    return false;
                 }
                 else
                 {
@@ -1014,14 +1042,14 @@ namespace SearchDirLists
             {
                 form_cbPath.BackColor = Color.Red;
                 MessageBox.Show("Must have a path or existing directory listing file.  ", "Volume Source Path");
-                return;
+                return false;
             }
 
             if (Utilities.StrValid(m_strPath) && (Directory.Exists(m_strPath) == false))
             {
                 form_cbPath.BackColor = Color.Red;
                 MessageBox.Show("Path does not exist.                                  ", "Volume Source Path");
-                return;
+                return false;
             }
 
             String strStatus = "Not Saved";
@@ -1046,7 +1074,7 @@ namespace SearchDirLists
                         {
                             form_cbPath.BackColor = Color.Red;
                             MessageBox.Show("File is bad and path does not exist.           ", "Volume Source Path");
-                            return;
+                            return false;
                         }
                     }
                 }
@@ -1063,7 +1091,7 @@ namespace SearchDirLists
                 if (MessageBox.Show("Continue without entering a nickname for this volume?", "Volume Save As", MessageBoxButtons.YesNo)
                     != DialogResult.Yes)
                 {
-                    return;
+                    return false;
                 }
                 else
                 {
@@ -1077,7 +1105,7 @@ namespace SearchDirLists
             form_lvVolumesMain.Items.Add(lvItem);
             form_btnSavePathInfo.Enabled = true;
             m_bBrowseLoaded = false;
-            RestartTreeTimer();
+            return true;
         }
 
         void form_btn_Compare_Click(object sender, EventArgs e)
@@ -1251,13 +1279,17 @@ namespace SearchDirLists
 
         void form_btn_LoadVolumeList_Click(object sender, EventArgs e)
         {
-            timer_DoTree.Stop();
+            InterruptTreeTimerWithAction(new DoSomething(form_btn_LoadVolumeList_Click_A));
+        }
+
+        bool form_btn_LoadVolumeList_Click_A()
+        {
             openFileDialog1.InitialDirectory = saveFileDialog1.InitialDirectory;
             openFileDialog1.FileName = saveFileDialog1.FileName;
 
             if (openFileDialog1.ShowDialog() != DialogResult.OK)
             {
-                return;
+                return false;
             }
 
             if (new SOTFile().Load(openFileDialog1.FileName, form_lvVolumesMain.Items) == false)
@@ -1274,7 +1306,7 @@ namespace SearchDirLists
             }
 
             m_bBrowseLoaded = false;
-            RestartTreeTimer();
+            return true;
         }
 
         void form_btnNavigate_Click(object sender, EventArgs e)
@@ -1367,13 +1399,19 @@ namespace SearchDirLists
 
         void form_btn_Path_Click(object sender, EventArgs e)
         {
+            InterruptTreeTimerWithAction(new DoSomething(form_btn_Path_Click_A));
+        }
+
+        bool form_btn_Path_Click_A()
+        {
             if (folderBrowserDialog1.ShowDialog() != DialogResult.OK)
             {
-                return;
+                return false;
             }
 
             ComboBoxItemsInsert(form_cbPath);
             m_strPath = form_cbPath.Text = folderBrowserDialog1.SelectedPath;
+            return true;
         }
 
         void form_btn_RemoveVolume_Click(object sender, EventArgs e)
@@ -1394,6 +1432,11 @@ namespace SearchDirLists
 
         void form_btn_SaveAs_Click(object sender, EventArgs e)
         {
+            InterruptTreeTimerWithAction(new DoSomething(form_btn_SaveAs_Click));
+        }
+
+        bool form_btn_SaveAs_Click()
+        {
             if (Utilities.StrValid(m_strSaveAs))
             {
                 saveFileDialog1.InitialDirectory = Path.GetDirectoryName(m_strSaveAs);
@@ -1401,7 +1444,7 @@ namespace SearchDirLists
 
             if (saveFileDialog1.ShowDialog() != DialogResult.OK)
             {
-                return;
+                return false;
             }
 
             ComboBoxItemsInsert(form_cbSaveAs);
@@ -1414,10 +1457,12 @@ namespace SearchDirLists
             }
 
             m_bBrowseLoaded = false;
+            return true;
         }
 
         void form_btn_SavePathInfo_Click(object sender, EventArgs e)
         {
+            timer_DoTree.Stop();
             DoSaveDirListings();
         }
 
@@ -1428,16 +1473,21 @@ namespace SearchDirLists
 
         void form_btn_SaveVolumeList_Click(object sender, EventArgs e)
         {
+            InterruptTreeTimerWithAction(new DoSomething(form_btn_SaveVolumeList_Click_A));
+        }
+
+        bool form_btn_SaveVolumeList_Click_A()
+        {
             if (saveFileDialog1.ShowDialog() != DialogResult.OK)
             {
-                return;
+                return false;
             }
 
             if ((File.Exists(saveFileDialog1.FileName))
                 && (MessageBox.Show(this, saveFileDialog1.FileName + " already exists. Overwrite?                ", "Volume List Save As", MessageBoxButtons.YesNo)
                 != System.Windows.Forms.DialogResult.Yes))
             {
-                return;
+                return false;
             }
 
             if (new SOTFile().Save(saveFileDialog1.FileName, form_lvVolumesMain.Items) == false)
@@ -1447,6 +1497,8 @@ namespace SearchDirLists
                     SOTFile.WriteList(form_lvVolumesMain.Items, fs);
                 }
             }
+
+            return false;   // Saving the volume list doesn't compel redrawing the tree.
         }
 
         void form_btn_ToggleInclude_Click(object sender, EventArgs e)
@@ -1477,12 +1529,15 @@ namespace SearchDirLists
 
         void form_btn_VolGroup_Click(object sender, EventArgs e)
         {
+            InterruptTreeTimerWithAction(new DoSomething(form_btn_VolGroup_Click_A));
+        }
+
+        bool form_btn_VolGroup_Click_A()
+        {
             if (form_lvVolumesMain.SelectedItems.Count == 0)
             {
-                return;
+                return false;
             }
-
-            timer_DoTree.Stop();
 
             InputBox inputBox = new InputBox();
 
@@ -1509,11 +1564,11 @@ namespace SearchDirLists
 
             if (inputBox.ShowDialog() != DialogResult.OK)
             {
-                return;
+                return false;
             }
 
             form_lvVolumesMain.SelectedItems[0].SubItems[5].Text = inputBox.Entry;
-            RestartTreeTimer();
+            return true;
         }
 
         void form_cbNavigate_KeyPress(object sender, KeyPressEventArgs e)

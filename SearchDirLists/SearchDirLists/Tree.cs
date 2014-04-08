@@ -739,8 +739,7 @@ namespace SearchDirLists
 
             lock (form_treeView_Browse)
             {
-                form_treeView_Browse.Nodes.Add(rootNode.Text);
-                form_treeView_Browse.Nodes[form_treeView_Browse.Nodes.Count - 1].Checked = true;
+                form_treeView_Browse.Nodes.Add(rootNode.Text);    // items added to show progress
             }
 
             lock (m_listRootNodes)
@@ -1144,6 +1143,7 @@ namespace SearchDirLists
             listLVsameVol = null;
             m_listRootNodes = null;
             form_treeView_Browse.Enabled = true;
+            form_treeView_Browse.CheckBoxes = m_bCheckboxes;
             m_bBrowseLoaded = true;
             GC.Collect();
         }
@@ -1395,6 +1395,7 @@ namespace SearchDirLists
             form_lvUnique.Items.Clear();
             m_hashCache.Clear();
             m_listRootNodes = new List<TreeNode>();
+            form_treeView_Browse.CheckBoxes = false;    // items added to show progress
 
             if (form_lvVolumesMain.Items.Count <= 0)
             {

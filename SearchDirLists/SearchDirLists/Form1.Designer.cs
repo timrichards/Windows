@@ -22,7 +22,7 @@ namespace SearchDirLists
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
+        #region Windows Designer generated code
 
         /// <summary>
         /// Required method for Designer support - do not modify
@@ -50,12 +50,16 @@ namespace SearchDirLists
             this.form_cbPath = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.form_tabPage_Browse = new System.Windows.Forms.TabPage();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.form_btn_TreeCollapse = new System.Windows.Forms.Button();
             this.form_lblVolGroup = new System.Windows.Forms.Label();
+            this.form_btn_TreeFind = new System.Windows.Forms.Button();
             this.form_btnTreeCopy = new System.Windows.Forms.Button();
+            this.form_cb_TreeFind = new System.Windows.Forms.ComboBox();
             this.form_chkCompare1 = new System.Windows.Forms.CheckBox();
             this.form_btnCompare = new System.Windows.Forms.Button();
-            this.form_cb_TreeFind = new System.Windows.Forms.ComboBox();
-            this.form_btn_TreeCollapse = new System.Windows.Forms.Button();
+            this.form_splitFiles = new System.Windows.Forms.SplitContainer();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.form_splitTreeFind = new System.Windows.Forms.SplitContainer();
             this.form_splitCompare = new System.Windows.Forms.SplitContainer();
             this.form_treeCompare1 = new System.Windows.Forms.TreeView();
@@ -67,7 +71,6 @@ namespace SearchDirLists
             this.form_splitDetailVols = new System.Windows.Forms.SplitContainer();
             this.form_splitNonClones = new System.Windows.Forms.SplitContainer();
             this.form_splitUnique = new System.Windows.Forms.SplitContainer();
-            this.form_btn_TreeFind = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -81,6 +84,9 @@ namespace SearchDirLists
             this.form_lv_Volumes_col_Status = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_Volumes_col_IncludeInSearch = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader28 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.form_lvCopy = new ListViewEmbeddedControls.ListViewEx();
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lvFiles = new ListViewEmbeddedControls.ListViewEx();
             this.form_colFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -110,11 +116,25 @@ namespace SearchDirLists
             this.form_lvClones = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.form_btnSaveCopyDirs = new System.Windows.Forms.Button();
+            this.form_btnLoadCopyDirs = new System.Windows.Forms.Button();
+            this.form_btnCopyGen = new System.Windows.Forms.Button();
             this.form_tabControl.SuspendLayout();
             this.form_tabPageVolumes.SuspendLayout();
             this.form_tabPage_Browse.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.form_splitFiles)).BeginInit();
+            this.form_splitFiles.Panel1.SuspendLayout();
+            this.form_splitFiles.Panel2.SuspendLayout();
+            this.form_splitFiles.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.form_splitTreeFind)).BeginInit();
             this.form_splitTreeFind.Panel1.SuspendLayout();
             this.form_splitTreeFind.Panel2.SuspendLayout();
@@ -147,14 +167,10 @@ namespace SearchDirLists
             this.form_splitUnique.Panel1.SuspendLayout();
             this.form_splitUnique.Panel2.SuspendLayout();
             this.form_splitUnique.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
-            this.splitContainer2.Panel1.SuspendLayout();
-            this.splitContainer2.Panel2.SuspendLayout();
-            this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
+            this.splitContainer3.Panel1.SuspendLayout();
+            this.splitContainer3.Panel2.SuspendLayout();
+            this.splitContainer3.SuspendLayout();
             this.SuspendLayout();
             // 
             // form_tabControl
@@ -379,22 +395,71 @@ namespace SearchDirLists
             this.form_tabPage_Browse.UseVisualStyleBackColor = true;
             this.form_tabPage_Browse.Paint += new System.Windows.Forms.PaintEventHandler(this.form_tabPage_Browse_Paint);
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainer1.IsSplitterFixed = true;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.form_btn_TreeCollapse);
+            this.splitContainer1.Panel1.Controls.Add(this.form_lblVolGroup);
+            this.splitContainer1.Panel1.Controls.Add(this.form_btn_TreeFind);
+            this.splitContainer1.Panel1.Controls.Add(this.form_btnTreeCopy);
+            this.splitContainer1.Panel1.Controls.Add(this.form_cb_TreeFind);
+            this.splitContainer1.Panel1.Controls.Add(this.form_chkCompare1);
+            this.splitContainer1.Panel1.Controls.Add(this.form_btnCompare);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.form_splitFiles);
+            this.splitContainer1.Size = new System.Drawing.Size(973, 405);
+            this.splitContainer1.SplitterDistance = 29;
+            this.splitContainer1.TabIndex = 7;
+            // 
+            // form_btn_TreeCollapse
+            // 
+            this.form_btn_TreeCollapse.Location = new System.Drawing.Point(3, 3);
+            this.form_btn_TreeCollapse.Name = "form_btn_TreeCollapse";
+            this.form_btn_TreeCollapse.Size = new System.Drawing.Size(61, 23);
+            this.form_btn_TreeCollapse.TabIndex = 0;
+            this.form_btn_TreeCollapse.Text = "Collapse";
+            this.form_btn_TreeCollapse.UseVisualStyleBackColor = true;
+            this.form_btn_TreeCollapse.Click += new System.EventHandler(this.form_btn_TreeCollapse_Click);
+            this.form_btn_TreeCollapse.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
+            // 
             // form_lblVolGroup
             // 
             this.form_lblVolGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.form_lblVolGroup.AutoSize = true;
             this.form_lblVolGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.form_lblVolGroup.Location = new System.Drawing.Point(847, 8);
+            this.form_lblVolGroup.Location = new System.Drawing.Point(862, 8);
             this.form_lblVolGroup.Name = "form_lblVolGroup";
             this.form_lblVolGroup.Size = new System.Drawing.Size(74, 13);
             this.form_lblVolGroup.TabIndex = 6;
             this.form_lblVolGroup.Text = "Volume Group";
             this.form_lblVolGroup.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // form_btn_TreeFind
+            // 
+            this.form_btn_TreeFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_btn_TreeFind.Location = new System.Drawing.Point(751, 3);
+            this.form_btn_TreeFind.Name = "form_btn_TreeFind";
+            this.form_btn_TreeFind.Size = new System.Drawing.Size(58, 23);
+            this.form_btn_TreeFind.TabIndex = 4;
+            this.form_btn_TreeFind.Text = "Navigate";
+            this.form_btn_TreeFind.UseVisualStyleBackColor = true;
+            this.form_btn_TreeFind.Click += new System.EventHandler(this.form_btn_TreeFind_Click);
+            this.form_btn_TreeFind.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
+            // 
             // form_btnTreeCopy
             // 
             this.form_btnTreeCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btnTreeCopy.Location = new System.Drawing.Point(800, 3);
+            this.form_btnTreeCopy.Location = new System.Drawing.Point(815, 3);
             this.form_btnTreeCopy.Name = "form_btnTreeCopy";
             this.form_btnTreeCopy.Size = new System.Drawing.Size(41, 23);
             this.form_btnTreeCopy.TabIndex = 5;
@@ -402,6 +467,19 @@ namespace SearchDirLists
             this.form_btnTreeCopy.UseVisualStyleBackColor = true;
             this.form_btnTreeCopy.Click += new System.EventHandler(this.form_btn_Copy_Click);
             this.form_btnTreeCopy.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
+            // 
+            // form_cb_TreeFind
+            // 
+            this.form_cb_TreeFind.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_cb_TreeFind.FormattingEnabled = true;
+            this.form_cb_TreeFind.Location = new System.Drawing.Point(221, 5);
+            this.form_cb_TreeFind.Name = "form_cb_TreeFind";
+            this.form_cb_TreeFind.Size = new System.Drawing.Size(524, 21);
+            this.form_cb_TreeFind.TabIndex = 3;
+            this.form_cb_TreeFind.SelectedIndexChanged += new System.EventHandler(this.form_cb_TreeFind_SelectedIndexChanged);
+            this.form_cb_TreeFind.TextChanged += new System.EventHandler(this.form_edit_TreeFind_TextChanged);
+            this.form_cb_TreeFind.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_edit_TreeFind_KeyPress);
             // 
             // form_chkCompare1
             // 
@@ -426,29 +504,42 @@ namespace SearchDirLists
             this.form_btnCompare.Click += new System.EventHandler(this.form_btn_Compare_Click);
             this.form_btnCompare.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
-            // form_cb_TreeFind
+            // form_splitFiles
             // 
-            this.form_cb_TreeFind.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_cb_TreeFind.FormattingEnabled = true;
-            this.form_cb_TreeFind.Location = new System.Drawing.Point(221, 5);
-            this.form_cb_TreeFind.Name = "form_cb_TreeFind";
-            this.form_cb_TreeFind.Size = new System.Drawing.Size(509, 21);
-            this.form_cb_TreeFind.TabIndex = 3;
-            this.form_cb_TreeFind.SelectedIndexChanged += new System.EventHandler(this.form_cb_TreeFind_SelectedIndexChanged);
-            this.form_cb_TreeFind.TextChanged += new System.EventHandler(this.form_edit_TreeFind_TextChanged);
-            this.form_cb_TreeFind.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_edit_TreeFind_KeyPress);
+            this.form_splitFiles.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_splitFiles.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.form_splitFiles.Location = new System.Drawing.Point(0, 0);
+            this.form_splitFiles.Name = "form_splitFiles";
             // 
-            // form_btn_TreeCollapse
+            // form_splitFiles.Panel1
             // 
-            this.form_btn_TreeCollapse.Location = new System.Drawing.Point(3, 3);
-            this.form_btn_TreeCollapse.Name = "form_btn_TreeCollapse";
-            this.form_btn_TreeCollapse.Size = new System.Drawing.Size(61, 23);
-            this.form_btn_TreeCollapse.TabIndex = 0;
-            this.form_btn_TreeCollapse.Text = "Collapse";
-            this.form_btn_TreeCollapse.UseVisualStyleBackColor = true;
-            this.form_btn_TreeCollapse.Click += new System.EventHandler(this.form_btn_TreeCollapse_Click);
-            this.form_btn_TreeCollapse.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
+            this.form_splitFiles.Panel1.Controls.Add(this.splitContainer2);
+            // 
+            // form_splitFiles.Panel2
+            // 
+            this.form_splitFiles.Panel2.Controls.Add(this.form_splitClones);
+            this.form_splitFiles.Size = new System.Drawing.Size(973, 372);
+            this.form_splitFiles.SplitterDistance = 570;
+            this.form_splitFiles.TabIndex = 1;
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.form_splitTreeFind);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
+            this.splitContainer2.Size = new System.Drawing.Size(570, 372);
+            this.splitContainer2.SplitterDistance = 170;
+            this.splitContainer2.TabIndex = 2;
             // 
             // form_splitTreeFind
             // 
@@ -465,8 +556,8 @@ namespace SearchDirLists
             // form_splitTreeFind.Panel2
             // 
             this.form_splitTreeFind.Panel2.Controls.Add(this.form_treeView_Browse);
-            this.form_splitTreeFind.Size = new System.Drawing.Size(239, 196);
-            this.form_splitTreeFind.SplitterDistance = 200;
+            this.form_splitTreeFind.Size = new System.Drawing.Size(570, 170);
+            this.form_splitTreeFind.SplitterDistance = 145;
             this.form_splitTreeFind.SplitterWidth = 1;
             this.form_splitTreeFind.TabIndex = 1;
             // 
@@ -483,12 +574,13 @@ namespace SearchDirLists
             // form_splitCompare.Panel2
             // 
             this.form_splitCompare.Panel2.Controls.Add(this.form_treeCompare2);
-            this.form_splitCompare.Size = new System.Drawing.Size(150, 200);
+            this.form_splitCompare.Size = new System.Drawing.Size(150, 145);
             this.form_splitCompare.SplitterDistance = 72;
             this.form_splitCompare.TabIndex = 2;
             // 
             // form_treeCompare1
             // 
+            this.form_treeCompare1.CheckBoxes = true;
             this.form_treeCompare1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.form_treeCompare1.FullRowSelect = true;
             this.form_treeCompare1.HideSelection = false;
@@ -496,8 +588,9 @@ namespace SearchDirLists
             this.form_treeCompare1.Name = "form_treeCompare1";
             this.form_treeCompare1.ShowLines = false;
             this.form_treeCompare1.ShowNodeToolTips = true;
-            this.form_treeCompare1.Size = new System.Drawing.Size(72, 200);
+            this.form_treeCompare1.Size = new System.Drawing.Size(72, 145);
             this.form_treeCompare1.TabIndex = 1;
+            this.form_treeCompare1.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterCheck);
             this.form_treeCompare1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterSelect);
             this.form_treeCompare1.Enter += new System.EventHandler(this.formCtl_EnterForCopyButton);
             this.form_treeCompare1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_tree_compare_KeyPress);
@@ -512,8 +605,9 @@ namespace SearchDirLists
             this.form_treeCompare2.Name = "form_treeCompare2";
             this.form_treeCompare2.ShowLines = false;
             this.form_treeCompare2.ShowNodeToolTips = true;
-            this.form_treeCompare2.Size = new System.Drawing.Size(74, 200);
+            this.form_treeCompare2.Size = new System.Drawing.Size(74, 145);
             this.form_treeCompare2.TabIndex = 2;
+            this.form_treeCompare2.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterCheck);
             this.form_treeCompare2.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterSelect);
             this.form_treeCompare2.Enter += new System.EventHandler(this.formCtl_EnterForCopyButton);
             this.form_treeCompare2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_tree_compare_KeyPress);
@@ -528,7 +622,7 @@ namespace SearchDirLists
             this.form_treeView_Browse.Location = new System.Drawing.Point(0, 0);
             this.form_treeView_Browse.Name = "form_treeView_Browse";
             this.form_treeView_Browse.ShowLines = false;
-            this.form_treeView_Browse.Size = new System.Drawing.Size(239, 196);
+            this.form_treeView_Browse.Size = new System.Drawing.Size(570, 170);
             this.form_treeView_Browse.TabIndex = 0;
             this.form_treeView_Browse.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterCheck);
             this.form_treeView_Browse.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterSelect);
@@ -550,8 +644,8 @@ namespace SearchDirLists
             // form_splitClones.Panel2
             // 
             this.form_splitClones.Panel2.Controls.Add(this.form_splitNonClones);
-            this.form_splitClones.Size = new System.Drawing.Size(973, 373);
-            this.form_splitClones.SplitterDistance = 718;
+            this.form_splitClones.Size = new System.Drawing.Size(399, 372);
+            this.form_splitClones.SplitterDistance = 138;
             this.form_splitClones.TabIndex = 1;
             // 
             // form_splitDetail
@@ -569,8 +663,8 @@ namespace SearchDirLists
             // form_splitDetail.Panel2
             // 
             this.form_splitDetail.Panel2.Controls.Add(this.form_splitDetailVols);
-            this.form_splitDetail.Size = new System.Drawing.Size(718, 373);
-            this.form_splitDetail.SplitterDistance = 196;
+            this.form_splitDetail.Size = new System.Drawing.Size(138, 372);
+            this.form_splitDetail.SplitterDistance = 170;
             this.form_splitDetail.TabIndex = 1;
             // 
             // form_splitCompareFiles
@@ -581,13 +675,13 @@ namespace SearchDirLists
             // 
             // form_splitCompareFiles.Panel1
             // 
-            this.form_splitCompareFiles.Panel1.Controls.Add(this.splitContainer2);
+            this.form_splitCompareFiles.Panel1.Controls.Add(this.form_lvFiles);
             // 
             // form_splitCompareFiles.Panel2
             // 
             this.form_splitCompareFiles.Panel2.Controls.Add(this.form_lvFileCompare);
             this.form_splitCompareFiles.Panel2Collapsed = true;
-            this.form_splitCompareFiles.Size = new System.Drawing.Size(718, 196);
+            this.form_splitCompareFiles.Size = new System.Drawing.Size(138, 170);
             this.form_splitCompareFiles.SplitterDistance = 71;
             this.form_splitCompareFiles.TabIndex = 1;
             // 
@@ -604,8 +698,8 @@ namespace SearchDirLists
             // form_splitDetailVols.Panel2
             // 
             this.form_splitDetailVols.Panel2.Controls.Add(this.form_lvDetailVol);
-            this.form_splitDetailVols.Size = new System.Drawing.Size(718, 173);
-            this.form_splitDetailVols.SplitterDistance = 343;
+            this.form_splitDetailVols.Size = new System.Drawing.Size(138, 198);
+            this.form_splitDetailVols.SplitterDistance = 66;
             this.form_splitDetailVols.TabIndex = 1;
             // 
             // form_splitNonClones
@@ -622,7 +716,7 @@ namespace SearchDirLists
             // form_splitNonClones.Panel2
             // 
             this.form_splitNonClones.Panel2.Controls.Add(this.form_splitUnique);
-            this.form_splitNonClones.Size = new System.Drawing.Size(251, 373);
+            this.form_splitNonClones.Size = new System.Drawing.Size(257, 372);
             this.form_splitNonClones.SplitterDistance = 129;
             this.form_splitNonClones.TabIndex = 3;
             // 
@@ -640,21 +734,9 @@ namespace SearchDirLists
             // form_splitUnique.Panel2
             // 
             this.form_splitUnique.Panel2.Controls.Add(this.form_lvClones);
-            this.form_splitUnique.Size = new System.Drawing.Size(251, 240);
-            this.form_splitUnique.SplitterDistance = 120;
+            this.form_splitUnique.Size = new System.Drawing.Size(257, 239);
+            this.form_splitUnique.SplitterDistance = 119;
             this.form_splitUnique.TabIndex = 2;
-            // 
-            // form_btn_TreeFind
-            // 
-            this.form_btn_TreeFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btn_TreeFind.Location = new System.Drawing.Point(736, 3);
-            this.form_btn_TreeFind.Name = "form_btn_TreeFind";
-            this.form_btn_TreeFind.Size = new System.Drawing.Size(58, 23);
-            this.form_btn_TreeFind.TabIndex = 4;
-            this.form_btn_TreeFind.Text = "Navigate";
-            this.form_btn_TreeFind.UseVisualStyleBackColor = true;
-            this.form_btn_TreeFind.Click += new System.EventHandler(this.form_btn_TreeFind_Click);
-            this.form_btn_TreeFind.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // saveFileDialog1
             // 
@@ -736,6 +818,34 @@ namespace SearchDirLists
             this.columnHeader28.Text = "Volume Group";
             this.columnHeader28.Width = 100;
             // 
+            // form_lvCopy
+            // 
+            this.form_lvCopy.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader3,
+            this.columnHeader4});
+            this.form_lvCopy.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_lvCopy.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.form_lvCopy.Location = new System.Drawing.Point(0, 0);
+            this.form_lvCopy.MultiSelect = false;
+            this.form_lvCopy.Name = "form_lvCopy";
+            this.form_lvCopy.Scrollable = false;
+            this.form_lvCopy.Size = new System.Drawing.Size(570, 165);
+            this.form_lvCopy.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.form_lvCopy.TabIndex = 1;
+            this.form_lvCopy.UseCompatibleStateImageBehavior = false;
+            this.form_lvCopy.View = System.Windows.Forms.View.Details;
+            this.form_lvCopy.SelectedIndexChanged += new System.EventHandler(this.form_lvCopy_SelectedIndexChanged);
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Folders selected for copy";
+            this.columnHeader3.Width = 200;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = " ";
+            this.columnHeader4.Width = 9999;
+            // 
             // form_lvFiles
             // 
             this.form_lvFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -753,7 +863,7 @@ namespace SearchDirLists
             this.form_lvFiles.Location = new System.Drawing.Point(0, 0);
             this.form_lvFiles.MultiSelect = false;
             this.form_lvFiles.Name = "form_lvFiles";
-            this.form_lvFiles.Size = new System.Drawing.Size(475, 196);
+            this.form_lvFiles.Size = new System.Drawing.Size(138, 170);
             this.form_lvFiles.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.form_lvFiles.TabIndex = 0;
             this.form_lvFiles.UseCompatibleStateImageBehavior = false;
@@ -863,7 +973,7 @@ namespace SearchDirLists
             this.form_lvDetail.MultiSelect = false;
             this.form_lvDetail.Name = "form_lvDetail";
             this.form_lvDetail.Scrollable = false;
-            this.form_lvDetail.Size = new System.Drawing.Size(343, 173);
+            this.form_lvDetail.Size = new System.Drawing.Size(66, 198);
             this.form_lvDetail.TabIndex = 0;
             this.form_lvDetail.UseCompatibleStateImageBehavior = false;
             this.form_lvDetail.View = System.Windows.Forms.View.Details;
@@ -889,7 +999,7 @@ namespace SearchDirLists
             this.form_lvDetailVol.MultiSelect = false;
             this.form_lvDetailVol.Name = "form_lvDetailVol";
             this.form_lvDetailVol.Scrollable = false;
-            this.form_lvDetailVol.Size = new System.Drawing.Size(371, 173);
+            this.form_lvDetailVol.Size = new System.Drawing.Size(68, 198);
             this.form_lvDetailVol.TabIndex = 0;
             this.form_lvDetailVol.UseCompatibleStateImageBehavior = false;
             this.form_lvDetailVol.View = System.Windows.Forms.View.Details;
@@ -915,7 +1025,7 @@ namespace SearchDirLists
             this.form_lvUnique.Location = new System.Drawing.Point(0, 0);
             this.form_lvUnique.MultiSelect = false;
             this.form_lvUnique.Name = "form_lvUnique";
-            this.form_lvUnique.Size = new System.Drawing.Size(251, 129);
+            this.form_lvUnique.Size = new System.Drawing.Size(257, 129);
             this.form_lvUnique.TabIndex = 0;
             this.form_lvUnique.UseCompatibleStateImageBehavior = false;
             this.form_lvUnique.View = System.Windows.Forms.View.Details;
@@ -939,7 +1049,7 @@ namespace SearchDirLists
             this.form_lvSameVol.Location = new System.Drawing.Point(0, 0);
             this.form_lvSameVol.MultiSelect = false;
             this.form_lvSameVol.Name = "form_lvSameVol";
-            this.form_lvSameVol.Size = new System.Drawing.Size(251, 120);
+            this.form_lvSameVol.Size = new System.Drawing.Size(257, 119);
             this.form_lvSameVol.TabIndex = 1;
             this.form_lvSameVol.UseCompatibleStateImageBehavior = false;
             this.form_lvSameVol.View = System.Windows.Forms.View.Details;
@@ -963,7 +1073,7 @@ namespace SearchDirLists
             this.form_lvClones.Location = new System.Drawing.Point(0, 0);
             this.form_lvClones.MultiSelect = false;
             this.form_lvClones.Name = "form_lvClones";
-            this.form_lvClones.Size = new System.Drawing.Size(251, 116);
+            this.form_lvClones.Size = new System.Drawing.Size(257, 116);
             this.form_lvClones.TabIndex = 0;
             this.form_lvClones.UseCompatibleStateImageBehavior = false;
             this.form_lvClones.View = System.Windows.Forms.View.Details;
@@ -980,48 +1090,60 @@ namespace SearchDirLists
             this.columnHeader13.Text = " ";
             this.columnHeader13.Width = 50;
             // 
-            // splitContainer1
+            // splitContainer3
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer1.IsSplitterFixed = true;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer3.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.splitContainer3.IsSplitterFixed = true;
+            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer3.Name = "splitContainer3";
+            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
-            // splitContainer1.Panel1
+            // splitContainer3.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.form_btn_TreeCollapse);
-            this.splitContainer1.Panel1.Controls.Add(this.form_lblVolGroup);
-            this.splitContainer1.Panel1.Controls.Add(this.form_btn_TreeFind);
-            this.splitContainer1.Panel1.Controls.Add(this.form_btnTreeCopy);
-            this.splitContainer1.Panel1.Controls.Add(this.form_cb_TreeFind);
-            this.splitContainer1.Panel1.Controls.Add(this.form_chkCompare1);
-            this.splitContainer1.Panel1.Controls.Add(this.form_btnCompare);
+            this.splitContainer3.Panel1.Controls.Add(this.form_lvCopy);
             // 
-            // splitContainer1.Panel2
+            // splitContainer3.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.form_splitClones);
-            this.splitContainer1.Size = new System.Drawing.Size(973, 405);
-            this.splitContainer1.SplitterDistance = 28;
-            this.splitContainer1.TabIndex = 7;
+            this.splitContainer3.Panel2.Controls.Add(this.form_btnCopyGen);
+            this.splitContainer3.Panel2.Controls.Add(this.form_btnLoadCopyDirs);
+            this.splitContainer3.Panel2.Controls.Add(this.form_btnSaveCopyDirs);
+            this.splitContainer3.Size = new System.Drawing.Size(570, 198);
+            this.splitContainer3.SplitterDistance = 165;
+            this.splitContainer3.TabIndex = 2;
             // 
-            // splitContainer2
+            // form_btnSaveCopyDirs
             // 
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Name = "splitContainer2";
+            this.form_btnSaveCopyDirs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.form_btnSaveCopyDirs.Location = new System.Drawing.Point(3, 3);
+            this.form_btnSaveCopyDirs.Name = "form_btnSaveCopyDirs";
+            this.form_btnSaveCopyDirs.Size = new System.Drawing.Size(75, 23);
+            this.form_btnSaveCopyDirs.TabIndex = 0;
+            this.form_btnSaveCopyDirs.Text = "Save";
+            this.form_btnSaveCopyDirs.UseVisualStyleBackColor = true;
+            this.form_btnSaveCopyDirs.Click += new System.EventHandler(this.form_btnSaveCopyDirs_Click);
             // 
-            // splitContainer2.Panel1
+            // form_btnLoadCopyDirs
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.form_splitTreeFind);
+            this.form_btnLoadCopyDirs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.form_btnLoadCopyDirs.Location = new System.Drawing.Point(84, 3);
+            this.form_btnLoadCopyDirs.Name = "form_btnLoadCopyDirs";
+            this.form_btnLoadCopyDirs.Size = new System.Drawing.Size(75, 23);
+            this.form_btnLoadCopyDirs.TabIndex = 1;
+            this.form_btnLoadCopyDirs.Text = "Load";
+            this.form_btnLoadCopyDirs.UseVisualStyleBackColor = true;
+            this.form_btnLoadCopyDirs.Click += new System.EventHandler(this.form_btnLoadCopyDirs_Click);
             // 
-            // splitContainer2.Panel2
+            // form_btnCopyGen
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.form_lvFiles);
-            this.splitContainer2.Size = new System.Drawing.Size(718, 196);
-            this.splitContainer2.SplitterDistance = 239;
-            this.splitContainer2.TabIndex = 1;
+            this.form_btnCopyGen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.form_btnCopyGen.Location = new System.Drawing.Point(165, 3);
+            this.form_btnCopyGen.Name = "form_btnCopyGen";
+            this.form_btnCopyGen.Size = new System.Drawing.Size(115, 23);
+            this.form_btnCopyGen.TabIndex = 2;
+            this.form_btnCopyGen.Text = "Generate script";
+            this.form_btnCopyGen.UseVisualStyleBackColor = true;
+            this.form_btnCopyGen.Click += new System.EventHandler(this.form_btnCopyGen_Click);
             // 
             // Form1
             // 
@@ -1036,6 +1158,19 @@ namespace SearchDirLists
             this.form_tabPageVolumes.ResumeLayout(false);
             this.form_tabPageVolumes.PerformLayout();
             this.form_tabPage_Browse.ResumeLayout(false);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            this.form_splitFiles.Panel1.ResumeLayout(false);
+            this.form_splitFiles.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.form_splitFiles)).EndInit();
+            this.form_splitFiles.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
             this.form_splitTreeFind.Panel1.ResumeLayout(false);
             this.form_splitTreeFind.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.form_splitTreeFind)).EndInit();
@@ -1068,15 +1203,10 @@ namespace SearchDirLists
             this.form_splitUnique.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.form_splitUnique)).EndInit();
             this.form_splitUnique.ResumeLayout(false);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel1.PerformLayout();
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
-            this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
-            this.splitContainer2.ResumeLayout(false);
+            this.splitContainer3.Panel1.ResumeLayout(false);
+            this.splitContainer3.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
+            this.splitContainer3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1112,6 +1242,7 @@ namespace SearchDirLists
         private System.Windows.Forms.TabPage form_tabPage_Browse;
         private System.Windows.Forms.TreeView form_treeView_Browse;
         private System.Windows.Forms.Timer timer_killRed;
+        private System.Windows.Forms.SplitContainer form_splitFiles;
         private ListViewEx form_lvDetail;
         private System.Windows.Forms.SplitContainer form_splitDetail;
         private ListViewEx form_lvFiles;
@@ -1164,7 +1295,13 @@ namespace SearchDirLists
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
+        private ListViewEx form_lvCopy;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.Button form_btnLoadCopyDirs;
+        private System.Windows.Forms.Button form_btnSaveCopyDirs;
+        private System.Windows.Forms.Button form_btnCopyGen;
 
     }
 }
-

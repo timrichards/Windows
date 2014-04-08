@@ -29,6 +29,7 @@ namespace SearchDirLists
         bool m_bCompareMode = false;
         bool m_bFileFound = false;
         bool m_bPutPathInFindEditBox = false;
+        bool m_bCheckboxes = false;
 
         TreeNode m_nodeCompare1 = null;
         TreeNode m_nodeCompare2 = null;
@@ -39,7 +40,6 @@ namespace SearchDirLists
         Dictionary<TreeNode, TreeNode> dictCompareDiffs = new Dictionary<TreeNode, TreeNode>();
         List<TreeNode> m_listTreeNodes_Compare1 = new List<TreeNode>();
         List<TreeNode> m_listTreeNodes_Compare2 = new List<TreeNode>();
-        List<TreeNode> m_listMarkedForCopy = new List<TreeNode>();
 
         // initialized in constructor:
         Blink m_blink = null;
@@ -231,6 +231,7 @@ namespace SearchDirLists
             m_strVolGroupOrig = form_lblVolGroup.Text;
             m_FontVolGroupOrig = form_lblVolGroup.Font;
             m_clrVolGroupOrig = form_lblVolGroup.BackColor;
+            m_bCheckboxes = form_treeView_Browse.CheckBoxes;
 
             Utilities.SetMessageBoxDelegate(MessageboxCallback);
         }
@@ -912,7 +913,7 @@ namespace SearchDirLists
                 return;
             }
 
-            treeNode.Expand();
+    //        treeNode.Expand();
             form_treeView_Browse.TopNode = treeNode.Parent;
 
             if (treeNode.IsVisible)
@@ -1917,14 +1918,37 @@ namespace SearchDirLists
 
         private void form_treeView_Browse_AfterCheck(object sender, TreeViewEventArgs e)
         {
+            String strPath = FullPath(e.Node);
+
             if (e.Node.Checked)
             {
-                m_listMarkedForCopy.Add(e.Node);
+                ListViewItem lvItem = new ListViewItem(e.Node.Text);
+
+                lvItem.SubItems.Add(lvItem.Name = strPath);
+                lvItem.Tag = e.Node;
+                form_lvCopy.Items.Add(lvItem);
             }
             else
             {
-                m_listMarkedForCopy.Remove(e.Node);
+                form_lvCopy.Items.Remove(form_lvCopy.Items.Find(strPath, false)[0]);
             }
+        }
+
+        private void form_lvCopy_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SelectedIndexChanged(form_lvCopy);
+        }
+
+        private void form_btnSaveCopyDirs_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void form_btnLoadCopyDirs_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void form_btnCopyGen_Click(object sender, EventArgs e)
+        {
         }
     }
 }

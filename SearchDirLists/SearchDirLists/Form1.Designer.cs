@@ -53,9 +53,9 @@ namespace SearchDirLists
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.form_btn_TreeCollapse = new System.Windows.Forms.Button();
             this.form_lblVolGroup = new System.Windows.Forms.Label();
-            this.form_btn_TreeFind = new System.Windows.Forms.Button();
+            this.form_btnNavigate = new System.Windows.Forms.Button();
             this.form_btnTreeCopy = new System.Windows.Forms.Button();
-            this.form_cb_TreeFind = new System.Windows.Forms.ComboBox();
+            this.form_cbNavigate = new System.Windows.Forms.ComboBox();
             this.form_chkCompare1 = new System.Windows.Forms.CheckBox();
             this.form_btnCompare = new System.Windows.Forms.Button();
             this.form_splitFiles = new System.Windows.Forms.SplitContainer();
@@ -66,6 +66,7 @@ namespace SearchDirLists
             this.form_treeCompare2 = new System.Windows.Forms.TreeView();
             this.form_treeView_Browse = new System.Windows.Forms.TreeView();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.form_btnCopyClear = new System.Windows.Forms.Button();
             this.form_btnCopyGen = new System.Windows.Forms.Button();
             this.form_btnLoadCopyDirs = new System.Windows.Forms.Button();
             this.form_btnSaveCopyDirs = new System.Windows.Forms.Button();
@@ -120,7 +121,6 @@ namespace SearchDirLists
             this.form_lvClones = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_btnCopyClear = new System.Windows.Forms.Button();
             this.form_tabControl.SuspendLayout();
             this.form_tabPageVolumes.SuspendLayout();
             this.form_tabPage_Browse.SuspendLayout();
@@ -409,9 +409,9 @@ namespace SearchDirLists
             // 
             this.splitContainer1.Panel1.Controls.Add(this.form_btn_TreeCollapse);
             this.splitContainer1.Panel1.Controls.Add(this.form_lblVolGroup);
-            this.splitContainer1.Panel1.Controls.Add(this.form_btn_TreeFind);
+            this.splitContainer1.Panel1.Controls.Add(this.form_btnNavigate);
             this.splitContainer1.Panel1.Controls.Add(this.form_btnTreeCopy);
-            this.splitContainer1.Panel1.Controls.Add(this.form_cb_TreeFind);
+            this.splitContainer1.Panel1.Controls.Add(this.form_cbNavigate);
             this.splitContainer1.Panel1.Controls.Add(this.form_chkCompare1);
             this.splitContainer1.Panel1.Controls.Add(this.form_btnCompare);
             // 
@@ -447,15 +447,15 @@ namespace SearchDirLists
             // 
             // form_btn_TreeFind
             // 
-            this.form_btn_TreeFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btn_TreeFind.Location = new System.Drawing.Point(751, 3);
-            this.form_btn_TreeFind.Name = "form_btn_TreeFind";
-            this.form_btn_TreeFind.Size = new System.Drawing.Size(58, 23);
-            this.form_btn_TreeFind.TabIndex = 4;
-            this.form_btn_TreeFind.Text = "Navigate";
-            this.form_btn_TreeFind.UseVisualStyleBackColor = true;
-            this.form_btn_TreeFind.Click += new System.EventHandler(this.form_btn_TreeFind_Click);
-            this.form_btn_TreeFind.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
+            this.form_btnNavigate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_btnNavigate.Location = new System.Drawing.Point(751, 3);
+            this.form_btnNavigate.Name = "form_btnNavigate";
+            this.form_btnNavigate.Size = new System.Drawing.Size(58, 23);
+            this.form_btnNavigate.TabIndex = 4;
+            this.form_btnNavigate.Text = "Navigate";
+            this.form_btnNavigate.UseVisualStyleBackColor = true;
+            this.form_btnNavigate.Click += new System.EventHandler(this.form_btnNavigate_Click);
+            this.form_btnNavigate.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_btnTreeCopy
             // 
@@ -471,16 +471,16 @@ namespace SearchDirLists
             // 
             // form_cb_TreeFind
             // 
-            this.form_cb_TreeFind.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.form_cbNavigate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_cb_TreeFind.FormattingEnabled = true;
-            this.form_cb_TreeFind.Location = new System.Drawing.Point(221, 5);
-            this.form_cb_TreeFind.Name = "form_cb_TreeFind";
-            this.form_cb_TreeFind.Size = new System.Drawing.Size(524, 21);
-            this.form_cb_TreeFind.TabIndex = 3;
-            this.form_cb_TreeFind.SelectedIndexChanged += new System.EventHandler(this.form_cb_TreeFind_SelectedIndexChanged);
-            this.form_cb_TreeFind.TextChanged += new System.EventHandler(this.form_edit_TreeFind_TextChanged);
-            this.form_cb_TreeFind.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_edit_TreeFind_KeyPress);
+            this.form_cbNavigate.FormattingEnabled = true;
+            this.form_cbNavigate.Location = new System.Drawing.Point(221, 5);
+            this.form_cbNavigate.Name = "form_cbNavigate";
+            this.form_cbNavigate.Size = new System.Drawing.Size(524, 21);
+            this.form_cbNavigate.TabIndex = 3;
+            this.form_cbNavigate.SelectedIndexChanged += new System.EventHandler(this.form_cbNavigate_SelectedIndexChanged);
+            this.form_cbNavigate.TextChanged += new System.EventHandler(this.form_cbNavigate_TextChanged);
+            this.form_cbNavigate.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_cbNavigate_KeyPress);
             // 
             // form_chkCompare1
             // 
@@ -654,6 +654,16 @@ namespace SearchDirLists
             this.splitContainer3.SplitterDistance = 165;
             this.splitContainer3.TabIndex = 2;
             // 
+            // form_btnCopyClear
+            // 
+            this.form_btnCopyClear.Location = new System.Drawing.Point(286, 3);
+            this.form_btnCopyClear.Name = "form_btnCopyClear";
+            this.form_btnCopyClear.Size = new System.Drawing.Size(75, 23);
+            this.form_btnCopyClear.TabIndex = 3;
+            this.form_btnCopyClear.Text = "Clear";
+            this.form_btnCopyClear.UseVisualStyleBackColor = true;
+            this.form_btnCopyClear.Click += new System.EventHandler(this.form_btnCopyClear_Click);
+            // 
             // form_btnCopyGen
             // 
             this.form_btnCopyGen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -826,6 +836,7 @@ namespace SearchDirLists
             this.form_lvVolumesMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_lvVolumesMain.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.form_lvVolumesMain.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.form_lv_Volumes_col_Volume,
             this.form_lv_Volumes_col_Path,
@@ -906,6 +917,7 @@ namespace SearchDirLists
             // 
             // form_lvFiles
             // 
+            this.form_lvFiles.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.form_lvFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.form_colFilename,
             this.columnHeader5,
@@ -1048,6 +1060,7 @@ namespace SearchDirLists
             // 
             // form_lvDetailVol
             // 
+            this.form_lvDetailVol.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.form_lvDetailVol.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.form_colDirDetailCompare,
             this.form_colVolDetail});
@@ -1098,6 +1111,7 @@ namespace SearchDirLists
             // 
             // form_lvSameVol
             // 
+            this.form_lvSameVol.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.form_lvSameVol.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2});
             this.form_lvSameVol.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1147,16 +1161,6 @@ namespace SearchDirLists
             // 
             this.columnHeader13.Text = " ";
             this.columnHeader13.Width = 50;
-            // 
-            // form_btnCopyClear
-            // 
-            this.form_btnCopyClear.Location = new System.Drawing.Point(286, 3);
-            this.form_btnCopyClear.Name = "form_btnCopyClear";
-            this.form_btnCopyClear.Size = new System.Drawing.Size(75, 23);
-            this.form_btnCopyClear.TabIndex = 3;
-            this.form_btnCopyClear.Text = "Clear";
-            this.form_btnCopyClear.UseVisualStyleBackColor = true;
-            this.form_btnCopyClear.Click += new System.EventHandler(this.form_btnCopyClear_Click);
             // 
             // Form1
             // 
@@ -1276,9 +1280,9 @@ namespace SearchDirLists
         private ListViewEx form_lvDetailVol;
         private System.Windows.Forms.ColumnHeader form_colDirDetailCompare;
         private System.Windows.Forms.ColumnHeader form_colVolDetail;
-        private System.Windows.Forms.Button form_btn_TreeFind;
+        private System.Windows.Forms.Button form_btnNavigate;
         private System.Windows.Forms.Button form_btn_TreeCollapse;
-        private System.Windows.Forms.ComboBox form_cb_TreeFind;
+        private System.Windows.Forms.ComboBox form_cbNavigate;
         private System.Windows.Forms.SplitContainer form_splitUnique;
         private ListViewEx form_lvUnique;
         private System.Windows.Forms.ColumnHeader columnHeader16;

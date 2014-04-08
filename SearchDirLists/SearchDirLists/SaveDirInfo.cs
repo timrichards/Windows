@@ -131,7 +131,11 @@ namespace SearchDirLists
             listFiles = null;
 
             WIN32_FIND_DATAW ffd = new WIN32_FIND_DATAW();
-            IntPtr handle = FindFirstFileW(@"\\?\" + strDir + @"\*", out ffd);
+
+            String P = Path.DirectorySeparatorChar.ToString();
+            String PP = P + P;
+
+            IntPtr handle = FindFirstFileW(PP + '?' + P + strDir + P + '*', out ffd);
 
             if (handle == (IntPtr)(-1))
             {
@@ -160,16 +164,16 @@ namespace SearchDirLists
                         if (((ffd.dwReserved0 & IO_REPARSE_TAG_MOUNT_POINT) != 0)
                             || ((ffd.dwReserved0 & IO_REPARSE_TAG_SYMLINK) != 0))
                         {
-                            listFiles.Add(strDir + Path.DirectorySeparatorChar + ffd.cFileName);        //
+                            listFiles.Add((strDir + P + ffd.cFileName).Replace(PP, P));        //
                             continue;
                         }
                     }
 
-                    listDirs.Add(strDir + Path.DirectorySeparatorChar + ffd.cFileName);                 //
+                    listDirs.Add((strDir + P + ffd.cFileName).Replace(PP, P));                 //
                 }
                 else
                 {
-                    listFiles.Add(strDir + Path.DirectorySeparatorChar + ffd.cFileName);                // Path.Combine() whines about bad chars in path
+                    listFiles.Add((strDir + P + ffd.cFileName).Replace(PP, P));                // Path.Combine() whines about bad chars in path
                 }
             }
             while (FindNextFileW(handle, out ffd));
@@ -200,7 +204,8 @@ namespace SearchDirLists
         public const String m_str_USING_FILE = "Using file.";
         public const String m_str_SAVED = "Saved.";
         public const int nColLENGTH = 7;
-        public const int nColLENGTH_01 = 4;
+        public const int nColLENGTH_01 = 5;
+        public const int nColLENGTH_LV = 4;
         public const String m_strLINETYPE_Version = "V";
         public const String m_strLINETYPE_Nickname = "N";
         public const String m_strLINETYPE_Path = "P";
@@ -472,6 +477,11 @@ namespace SearchDirLists
         public static void ConvertFile(String strFile)
         {
             String strFile_01 = StrFile_01(strFile);
+
+            if (File.Exists(strFile_01))
+            {
+                File.Delete(strFile_01);
+            }
 
             File.Move(strFile, strFile_01);
 

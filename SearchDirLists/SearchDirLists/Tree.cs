@@ -357,7 +357,7 @@ namespace SearchDirLists
             {
                 bool bValid = false;
 
-                do
+                while (true)
                 {
                     bool bAttemptConvert = false;
 
@@ -407,7 +407,6 @@ namespace SearchDirLists
                     File.Delete(StrFile_01(strSaveAs));
                     bAttemptConvert = true;
                 }
-                while (false);
 
                 if (bValid == false)
                 {
@@ -701,10 +700,10 @@ namespace SearchDirLists
             {
                 String[] strArrayFiles = strFileLine.Split('\t').Skip(3).ToArray();
 
-                if ((strArrayFiles.Length > nColLENGTH_01) && StrValid(strArrayFiles[nColLENGTH_01]))
+                if ((strArrayFiles.Length > nColLENGTH_LV) && StrValid(strArrayFiles[nColLENGTH_LV]))
                 {
-                    nLengthDebug += long.Parse(strArrayFiles[nColLENGTH_01]);
-                    strArrayFiles[nColLENGTH_01] = FormatSize(strArrayFiles[nColLENGTH_01]);
+                    nLengthDebug += long.Parse(strArrayFiles[nColLENGTH_LV]);
+                    strArrayFiles[nColLENGTH_LV] = FormatSize(strArrayFiles[nColLENGTH_LV]);
                 }
 
                 listFiles.Add(new ListViewItem(strArrayFiles));
@@ -1220,9 +1219,9 @@ namespace SearchDirLists
                 {
                     item.Name = item.Text;
 
-                    if (item.SubItems.Count > Utilities.nColLENGTH_01)
+                    if (item.SubItems.Count > Utilities.nColLENGTH_LV)
                     {
-                        item.Name += item.SubItems[Utilities.nColLENGTH_01].Text;      // name + size
+                        item.Name += item.SubItems[Utilities.nColLENGTH_LV].Text;      // name + size
                     }
                 }
             }
@@ -1390,7 +1389,7 @@ namespace SearchDirLists
         void SelectFoundFile()
         {
             // find file results list from NavToFile()
-            ListViewItem lvItem = form_lvFiles.FindItemWithText(m_strMaybeFile ?? form_cb_TreeFind.Text);
+            ListViewItem lvItem = form_lvFiles.FindItemWithText(m_strMaybeFile ?? form_cbNavigate.Text);
 
             if (lvItem == null)
             {

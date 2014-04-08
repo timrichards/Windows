@@ -11,7 +11,7 @@ using System.Drawing;
 
 namespace SearchDirLists
 {
-    delegate void TreeStatusDelegate(TreeNode rootNode);
+    delegate void TreeStatusDelegate(TreeNode rootNode = null, LVvolStrings volStrings = null);
     delegate void TreeDoneDelegate();
     delegate void TreeSelectStatusDelegate(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem lvVol = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null);
     delegate void TreeSelectDoneDelegate(bool bSecondComparePane);
@@ -246,11 +246,11 @@ namespace SearchDirLists
     class DirData
     {
         RootNode m_rootNode = null;
-        static TreeStatusDelegate m_callbackStatus = null;
+        static TreeStatusDelegate m_statusCallback = null;
 
-        public DirData(TreeStatusDelegate callbackStatus, RootNode rootNode)
+        public DirData(TreeStatusDelegate statusCallback, RootNode rootNode)
         {
-            m_callbackStatus = callbackStatus;
+            m_statusCallback = statusCallback;
             m_rootNode = rootNode;
         }
 
@@ -270,7 +270,7 @@ namespace SearchDirLists
         {
             TreeNode rootNode = m_rootNode.Nodes.Values.First().AddToTree(strVolumeName);
 
-            m_callbackStatus(rootNode);
+            m_statusCallback(rootNode);
             return rootNode;
         }
     }
@@ -355,24 +355,64 @@ namespace SearchDirLists
             }
 
             {
-                String strLine = File.ReadLines(strSaveAs).Take(1).ToArray()[0];
+                bool bValid = false;
 
-                if (strLine == m_str_HEADER_01)
+                do
                 {
-                    Console.WriteLine("Converting " + strSaveAs);
-                    ConvertFile(strSaveAs);
-                    Console.WriteLine("File converted to " + m_str_HEADER);
+                    bool bAttemptConvert = false;
+
+                    do
+                    {
+                        String[] arrLine = File.ReadLines(strSaveAs).Take(1).ToArray();
+
+                        if (arrLine.Length <= 0) break;
+
+                        if (arrLine[0] == m_str_HEADER_01)
+                        {
+                            Console.WriteLine("Converting " + strSaveAs);
+                            ConvertFile(strSaveAs);
+                            Console.WriteLine("File converted to " + m_str_HEADER);
+                        }
+
+                        String strToken = File.ReadLines(strSaveAs).Take(1).ToArray()[0].Split('\t')[2];
+
+                        if (strToken != m_str_HEADER) break;
+
+                        String[] arrLine_A = File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Length)).ToArray();
+
+                        if (arrLine_A.Length == 0) break;
+
+                        String[] arrToken = arrLine_A[0].Split('\t');
+
+                        if (arrToken.Length < 3) break;
+
+                        String strToken_A = arrToken[2];
+
+                        if (strToken_A != m_str_TOTAL_LENGTH_LOC) break;
+
+                        bValid = true;
+                    }
+                    while (false);
+
+                    if (bValid || bAttemptConvert)
+                    {
+                        break;
+                    }
+
+                    if (File.Exists(StrFile_01(strSaveAs)) == false)
+                    {
+                        break;
+                    }
+
+                    File.Delete(StrFile_01(strSaveAs));
+                    bAttemptConvert = true;
                 }
-            }
+                while (false);
 
-            {
-                String strLine = File.ReadLines(strSaveAs).Take(1).ToArray()[0].Split('\t')[2];
-
-                Debug.Assert(strLine == m_str_HEADER);
-
-                if (strLine != m_str_HEADER)
+                if (bValid == false)
                 {
-                    m_MessageboxCallback("Bad file.");
+                    m_MessageboxCallback("Bad file: " + strSaveAs);
+                    m_statusCallback(volStrings: m_volStrings);
                     return;
                 }
             }
@@ -660,12 +700,11 @@ namespace SearchDirLists
             foreach (String strFileLine in listLines)
             {
                 String[] strArrayFiles = strFileLine.Split('\t').Skip(3).ToArray();
-                int nLengthCol = nColLENGTH - 3;
 
-                if ((strArrayFiles.Length > nLengthCol) && StrValid(strArrayFiles[nLengthCol]))
+                if ((strArrayFiles.Length > nColLENGTH_01) && StrValid(strArrayFiles[nColLENGTH_01]))
                 {
-                    nLengthDebug += long.Parse(strArrayFiles[nLengthCol]);
-                    strArrayFiles[nLengthCol] = FormatSize(strArrayFiles[nLengthCol]);
+                    nLengthDebug += long.Parse(strArrayFiles[nColLENGTH_01]);
+                    strArrayFiles[nColLENGTH_01] = FormatSize(strArrayFiles[nColLENGTH_01]);
                 }
 
                 listFiles.Add(new ListViewItem(strArrayFiles));
@@ -733,18 +772,26 @@ namespace SearchDirLists
         Thread m_threadSelect = null;
         Thread m_threadSelectCompare = null;
 
-        void TreeStatusCallback(TreeNode rootNode)
+        void TreeStatusCallback(TreeNode rootNode, LVvolStrings volStrings)
         {
-            if (InvokeRequired) { Invoke(new TreeStatusDelegate(TreeStatusCallback), new object[] { rootNode }); return; }
+            if (InvokeRequired) { Invoke(new TreeStatusDelegate(TreeStatusCallback), new object[] { rootNode, volStrings }); return; }
 
-            lock (form_treeView_Browse)
+            if (volStrings != null)     // error state
             {
-                form_treeView_Browse.Nodes.Add(rootNode.Text);    // items added to show progress
+                volStrings.SetStatus_BadFile(form_lvVolumesMain);
             }
 
-            lock (m_listRootNodes)
+            if (rootNode != null)
             {
-                m_listRootNodes.Add(rootNode);
+                lock (form_treeView_Browse)
+                {
+                    form_treeView_Browse.Nodes.Add(rootNode.Text);    // items added to show progress
+                }
+
+                lock (m_listRootNodes)
+                {
+                    m_listRootNodes.Add(rootNode);
+                }
             }
         }
 
@@ -911,37 +958,40 @@ namespace SearchDirLists
                 m_listSameVol = listSameVol;
             }
 
-            public void Go(TreeNode treeNode, bool bCloneOK = false)
+            public void Go(TreeNode treeNode_in, bool bCloneOK = false)
             {
-                NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+                TreeNode treeNode = treeNode_in;
 
-                if ((treeNode.ForeColor == Color.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
+                do
                 {
-                    Debug.Assert((nodeDatum.m_listClones != null) && (nodeDatum.m_bDifferentVols == false));
-                    m_listSameVol.Add(treeNode);
-                }
+                    NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
-                m_listTreeNodes.Add(treeNode);
-
-                if (bCloneOK)
-                {
-                    treeNode.BackColor = Color.LightGoldenrodYellow;
-
-                    if (nodeDatum.m_lvItem != null)
+                    if ((treeNode.ForeColor == Color.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
                     {
-                        nodeDatum.m_lvItem.BackColor = treeNode.BackColor;
+                        Debug.Assert((nodeDatum.m_listClones != null) && (nodeDatum.m_bDifferentVols == false));
+                        m_listSameVol.Add(treeNode);
                     }
-                }
 
-                if (treeNode.FirstNode != null)
-                {
-                    Go(treeNode.FirstNode, bCloneOK || (treeNode.ForeColor == Color.SteelBlue));
-                }
+                    m_listTreeNodes.Add(treeNode);
 
-                if (treeNode.NextNode != null)
-                {
-                    Go(treeNode.NextNode, bCloneOK);
+                    if (bCloneOK)
+                    {
+                        treeNode.BackColor = Color.LightGoldenrodYellow;
+
+                        if (nodeDatum.m_lvItem != null)
+                        {
+                            nodeDatum.m_lvItem.BackColor = treeNode.BackColor;
+                        }
+                    }
+
+                    if (treeNode.FirstNode != null)
+                    {
+                        Go(treeNode.FirstNode, bCloneOK || (treeNode.ForeColor == Color.SteelBlue));
+                    }
+
+                    treeNode = treeNode.NextNode;
                 }
+                while (treeNode != null);
             }
         }
 
@@ -1031,7 +1081,6 @@ namespace SearchDirLists
             }
 
             dictReverse = null;
-
             InsertSizeMarkers(listLVitems);
             form_lvClones.Items.Clear();
             form_lvClones.Items.AddRange(listLVitems.ToArray());
@@ -1081,8 +1130,6 @@ namespace SearchDirLists
 
                     while (parentNode_A != null)
                     {
-                        Debug.Assert(new Color[] { Color.Empty, Color.Red, Color.DarkRed }.Contains(parentNode_A.ForeColor));
-
                         if (parentNode_A.ForeColor == Color.Empty)
                         {
                             parentNode_A.ForeColor = Color.DarkRed;
@@ -1114,7 +1161,12 @@ namespace SearchDirLists
             form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
 
             List<TreeNode> listSameVolDescLength = new List<TreeNode>();
-            new AddTreeToList(m_listTreeNodes, listSameVolDescLength).Go(form_treeView_Browse.Nodes[0]);
+
+            if (form_treeView_Browse.Nodes.Count > 0)
+            {
+                new AddTreeToList(m_listTreeNodes, listSameVolDescLength).Go(form_treeView_Browse.Nodes[0]);
+            }
+
             List<ListViewItem> listLVsameVol = new List<ListViewItem>();
             listSameVolDescLength.Sort((x, y) => ((NodeDatum)y.Tag).LengthSubnodes.CompareTo(((NodeDatum)x.Tag).LengthSubnodes));
 
@@ -1167,11 +1219,10 @@ namespace SearchDirLists
                 foreach (ListViewItem item in list)
                 {
                     item.Name = item.Text;
-                    int nLengthCol = Utilities.nColLENGTH - 3;
 
-                    if (item.SubItems.Count > nLengthCol)
+                    if (item.SubItems.Count > Utilities.nColLENGTH_01)
                     {
-                        item.Name += item.SubItems[nLengthCol].Text;      // name + size
+                        item.Name += item.SubItems[Utilities.nColLENGTH_01].Text;      // name + size
                     }
                 }
             }
@@ -1395,7 +1446,7 @@ namespace SearchDirLists
             form_lvUnique.Items.Clear();
             m_hashCache.Clear();
             m_listRootNodes = new List<TreeNode>();
-            form_treeView_Browse.CheckBoxes = false;    // items added to show progress
+            form_treeView_Browse.CheckBoxes = false;    // treeview items will be added to show progress
 
             if (form_lvVolumesMain.Items.Count <= 0)
             {

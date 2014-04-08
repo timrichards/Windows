@@ -1061,8 +1061,8 @@ namespace SearchDirLists
             {
                 form_cbVolumeName.BackColor = Color.Red;
 
-                if (MessageBox.Show("Would you like to enter a nickname for this volume?", "Volume Save As", MessageBoxButtons.YesNo)
-                    != DialogResult.No)
+                if (MessageBox.Show("Continue without entering a nickname for this volume?", "Volume Save As", MessageBoxButtons.YesNo)
+                    != DialogResult.Yes)
                 {
                     return;
                 }
@@ -1078,7 +1078,7 @@ namespace SearchDirLists
             form_lvVolumesMain.Items.Add(lvItem);
             form_btnSavePathInfo.Enabled = true;
             m_bBrowseLoaded = false;
-            DoTree(true);
+            RestartTreeTimer();
         }
 
         private void form_btn_Compare_Click(object sender, EventArgs e)
@@ -1275,7 +1275,7 @@ namespace SearchDirLists
             }
 
             m_bBrowseLoaded = false;
-            DoTree(true);
+            RestartTreeTimer();
         }
 
         private void form_btn_Path_Click(object sender, EventArgs e)
@@ -1347,7 +1347,7 @@ namespace SearchDirLists
             }
 
             if ((File.Exists(saveFileDialog1.FileName))
-                && (MessageBox.Show(saveFileDialog1.FileName + " already exists. Overwrite?         ", "Volume List Save As", MessageBoxButtons.YesNo)
+                && (MessageBox.Show(this, saveFileDialog1.FileName + " already exists. Overwrite?                ", "Volume List Save As", MessageBoxButtons.YesNo)
                 != System.Windows.Forms.DialogResult.Yes))
             {
                 return;
@@ -1958,7 +1958,7 @@ namespace SearchDirLists
                 ((TreeNode)lvItem.Tag).Checked = false;
             }
 
-            form_lvCopy.Clear();
+            form_lvCopy.Items.Clear();
         }
     }
 }

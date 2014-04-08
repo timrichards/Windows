@@ -1950,5 +1950,15 @@ namespace SearchDirLists
         private void form_btnCopyGen_Click(object sender, EventArgs e)
         {
         }
+
+        private void form_btnCopyClear_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem lvItem in form_lvCopy.Items)
+            {
+                ((TreeNode)lvItem.Tag).Checked = false;
+            }
+
+            form_lvCopy.Clear();
+        }
     }
 }

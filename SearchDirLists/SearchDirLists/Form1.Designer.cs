@@ -65,6 +65,10 @@ namespace SearchDirLists
             this.form_treeCompare1 = new System.Windows.Forms.TreeView();
             this.form_treeCompare2 = new System.Windows.Forms.TreeView();
             this.form_treeView_Browse = new System.Windows.Forms.TreeView();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.form_btnCopyGen = new System.Windows.Forms.Button();
+            this.form_btnLoadCopyDirs = new System.Windows.Forms.Button();
+            this.form_btnSaveCopyDirs = new System.Windows.Forms.Button();
             this.form_splitClones = new System.Windows.Forms.SplitContainer();
             this.form_splitDetail = new System.Windows.Forms.SplitContainer();
             this.form_splitCompareFiles = new System.Windows.Forms.SplitContainer();
@@ -116,10 +120,7 @@ namespace SearchDirLists
             this.form_lvClones = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
-            this.form_btnSaveCopyDirs = new System.Windows.Forms.Button();
-            this.form_btnLoadCopyDirs = new System.Windows.Forms.Button();
-            this.form_btnCopyGen = new System.Windows.Forms.Button();
+            this.form_btnCopyClear = new System.Windows.Forms.Button();
             this.form_tabControl.SuspendLayout();
             this.form_tabPageVolumes.SuspendLayout();
             this.form_tabPage_Browse.SuspendLayout();
@@ -143,6 +144,10 @@ namespace SearchDirLists
             this.form_splitCompare.Panel1.SuspendLayout();
             this.form_splitCompare.Panel2.SuspendLayout();
             this.form_splitCompare.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
+            this.splitContainer3.Panel1.SuspendLayout();
+            this.splitContainer3.Panel2.SuspendLayout();
+            this.splitContainer3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.form_splitClones)).BeginInit();
             this.form_splitClones.Panel1.SuspendLayout();
             this.form_splitClones.Panel2.SuspendLayout();
@@ -167,10 +172,6 @@ namespace SearchDirLists
             this.form_splitUnique.Panel1.SuspendLayout();
             this.form_splitUnique.Panel2.SuspendLayout();
             this.form_splitUnique.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
-            this.splitContainer3.Panel1.SuspendLayout();
-            this.splitContainer3.Panel2.SuspendLayout();
-            this.splitContainer3.SuspendLayout();
             this.SuspendLayout();
             // 
             // form_tabControl
@@ -630,6 +631,62 @@ namespace SearchDirLists
             this.form_treeView_Browse.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_treeView_Browse_KeyPress);
             this.form_treeView_Browse.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_treeView_Browse_MouseClick);
             // 
+            // splitContainer3
+            // 
+            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer3.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.splitContainer3.IsSplitterFixed = true;
+            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer3.Name = "splitContainer3";
+            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer3.Panel1
+            // 
+            this.splitContainer3.Panel1.Controls.Add(this.form_lvCopy);
+            // 
+            // splitContainer3.Panel2
+            // 
+            this.splitContainer3.Panel2.Controls.Add(this.form_btnCopyClear);
+            this.splitContainer3.Panel2.Controls.Add(this.form_btnCopyGen);
+            this.splitContainer3.Panel2.Controls.Add(this.form_btnLoadCopyDirs);
+            this.splitContainer3.Panel2.Controls.Add(this.form_btnSaveCopyDirs);
+            this.splitContainer3.Size = new System.Drawing.Size(570, 198);
+            this.splitContainer3.SplitterDistance = 165;
+            this.splitContainer3.TabIndex = 2;
+            // 
+            // form_btnCopyGen
+            // 
+            this.form_btnCopyGen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.form_btnCopyGen.Location = new System.Drawing.Point(165, 3);
+            this.form_btnCopyGen.Name = "form_btnCopyGen";
+            this.form_btnCopyGen.Size = new System.Drawing.Size(115, 23);
+            this.form_btnCopyGen.TabIndex = 2;
+            this.form_btnCopyGen.Text = "Generate script";
+            this.form_btnCopyGen.UseVisualStyleBackColor = true;
+            this.form_btnCopyGen.Click += new System.EventHandler(this.form_btnCopyGen_Click);
+            // 
+            // form_btnLoadCopyDirs
+            // 
+            this.form_btnLoadCopyDirs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.form_btnLoadCopyDirs.Location = new System.Drawing.Point(84, 3);
+            this.form_btnLoadCopyDirs.Name = "form_btnLoadCopyDirs";
+            this.form_btnLoadCopyDirs.Size = new System.Drawing.Size(75, 23);
+            this.form_btnLoadCopyDirs.TabIndex = 1;
+            this.form_btnLoadCopyDirs.Text = "Load";
+            this.form_btnLoadCopyDirs.UseVisualStyleBackColor = true;
+            this.form_btnLoadCopyDirs.Click += new System.EventHandler(this.form_btnLoadCopyDirs_Click);
+            // 
+            // form_btnSaveCopyDirs
+            // 
+            this.form_btnSaveCopyDirs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.form_btnSaveCopyDirs.Location = new System.Drawing.Point(3, 3);
+            this.form_btnSaveCopyDirs.Name = "form_btnSaveCopyDirs";
+            this.form_btnSaveCopyDirs.Size = new System.Drawing.Size(75, 23);
+            this.form_btnSaveCopyDirs.TabIndex = 0;
+            this.form_btnSaveCopyDirs.Text = "Save";
+            this.form_btnSaveCopyDirs.UseVisualStyleBackColor = true;
+            this.form_btnSaveCopyDirs.Click += new System.EventHandler(this.form_btnSaveCopyDirs_Click);
+            // 
             // form_splitClones
             // 
             this.form_splitClones.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -820,15 +877,16 @@ namespace SearchDirLists
             // 
             // form_lvCopy
             // 
+            this.form_lvCopy.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.form_lvCopy.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader3,
             this.columnHeader4});
             this.form_lvCopy.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_lvCopy.FullRowSelect = true;
             this.form_lvCopy.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.form_lvCopy.Location = new System.Drawing.Point(0, 0);
             this.form_lvCopy.MultiSelect = false;
             this.form_lvCopy.Name = "form_lvCopy";
-            this.form_lvCopy.Scrollable = false;
             this.form_lvCopy.Size = new System.Drawing.Size(570, 165);
             this.form_lvCopy.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.form_lvCopy.TabIndex = 1;
@@ -839,12 +897,12 @@ namespace SearchDirLists
             // columnHeader3
             // 
             this.columnHeader3.Text = "Folders selected for copy";
-            this.columnHeader3.Width = 200;
+            this.columnHeader3.Width = 240;
             // 
             // columnHeader4
             // 
             this.columnHeader4.Text = " ";
-            this.columnHeader4.Width = 9999;
+            this.columnHeader4.Width = 300;
             // 
             // form_lvFiles
             // 
@@ -1090,60 +1148,15 @@ namespace SearchDirLists
             this.columnHeader13.Text = " ";
             this.columnHeader13.Width = 50;
             // 
-            // splitContainer3
+            // form_btnCopyClear
             // 
-            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer3.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer3.IsSplitterFixed = true;
-            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer3.Name = "splitContainer3";
-            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer3.Panel1
-            // 
-            this.splitContainer3.Panel1.Controls.Add(this.form_lvCopy);
-            // 
-            // splitContainer3.Panel2
-            // 
-            this.splitContainer3.Panel2.Controls.Add(this.form_btnCopyGen);
-            this.splitContainer3.Panel2.Controls.Add(this.form_btnLoadCopyDirs);
-            this.splitContainer3.Panel2.Controls.Add(this.form_btnSaveCopyDirs);
-            this.splitContainer3.Size = new System.Drawing.Size(570, 198);
-            this.splitContainer3.SplitterDistance = 165;
-            this.splitContainer3.TabIndex = 2;
-            // 
-            // form_btnSaveCopyDirs
-            // 
-            this.form_btnSaveCopyDirs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.form_btnSaveCopyDirs.Location = new System.Drawing.Point(3, 3);
-            this.form_btnSaveCopyDirs.Name = "form_btnSaveCopyDirs";
-            this.form_btnSaveCopyDirs.Size = new System.Drawing.Size(75, 23);
-            this.form_btnSaveCopyDirs.TabIndex = 0;
-            this.form_btnSaveCopyDirs.Text = "Save";
-            this.form_btnSaveCopyDirs.UseVisualStyleBackColor = true;
-            this.form_btnSaveCopyDirs.Click += new System.EventHandler(this.form_btnSaveCopyDirs_Click);
-            // 
-            // form_btnLoadCopyDirs
-            // 
-            this.form_btnLoadCopyDirs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.form_btnLoadCopyDirs.Location = new System.Drawing.Point(84, 3);
-            this.form_btnLoadCopyDirs.Name = "form_btnLoadCopyDirs";
-            this.form_btnLoadCopyDirs.Size = new System.Drawing.Size(75, 23);
-            this.form_btnLoadCopyDirs.TabIndex = 1;
-            this.form_btnLoadCopyDirs.Text = "Load";
-            this.form_btnLoadCopyDirs.UseVisualStyleBackColor = true;
-            this.form_btnLoadCopyDirs.Click += new System.EventHandler(this.form_btnLoadCopyDirs_Click);
-            // 
-            // form_btnCopyGen
-            // 
-            this.form_btnCopyGen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.form_btnCopyGen.Location = new System.Drawing.Point(165, 3);
-            this.form_btnCopyGen.Name = "form_btnCopyGen";
-            this.form_btnCopyGen.Size = new System.Drawing.Size(115, 23);
-            this.form_btnCopyGen.TabIndex = 2;
-            this.form_btnCopyGen.Text = "Generate script";
-            this.form_btnCopyGen.UseVisualStyleBackColor = true;
-            this.form_btnCopyGen.Click += new System.EventHandler(this.form_btnCopyGen_Click);
+            this.form_btnCopyClear.Location = new System.Drawing.Point(286, 3);
+            this.form_btnCopyClear.Name = "form_btnCopyClear";
+            this.form_btnCopyClear.Size = new System.Drawing.Size(75, 23);
+            this.form_btnCopyClear.TabIndex = 3;
+            this.form_btnCopyClear.Text = "Clear";
+            this.form_btnCopyClear.UseVisualStyleBackColor = true;
+            this.form_btnCopyClear.Click += new System.EventHandler(this.form_btnCopyClear_Click);
             // 
             // Form1
             // 
@@ -1179,6 +1192,10 @@ namespace SearchDirLists
             this.form_splitCompare.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.form_splitCompare)).EndInit();
             this.form_splitCompare.ResumeLayout(false);
+            this.splitContainer3.Panel1.ResumeLayout(false);
+            this.splitContainer3.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
+            this.splitContainer3.ResumeLayout(false);
             this.form_splitClones.Panel1.ResumeLayout(false);
             this.form_splitClones.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.form_splitClones)).EndInit();
@@ -1203,10 +1220,6 @@ namespace SearchDirLists
             this.form_splitUnique.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.form_splitUnique)).EndInit();
             this.form_splitUnique.ResumeLayout(false);
-            this.splitContainer3.Panel1.ResumeLayout(false);
-            this.splitContainer3.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
-            this.splitContainer3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1302,6 +1315,7 @@ namespace SearchDirLists
         private System.Windows.Forms.Button form_btnLoadCopyDirs;
         private System.Windows.Forms.Button form_btnSaveCopyDirs;
         private System.Windows.Forms.Button form_btnCopyGen;
+        private System.Windows.Forms.Button form_btnCopyClear;
 
     }
 }

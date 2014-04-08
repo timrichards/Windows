@@ -54,7 +54,7 @@ namespace SearchDirLists
 
     class NodeDatumLVitemHolder     // this was a way of setting the listview item in a different node after processing the first. Not used.
     {
-        public ListViewItem m_lvCloneItem = null;
+        public ListViewItem m_lvItem = null;
     }
 
     class NodeDatum : DetailsDatum
@@ -84,16 +84,15 @@ namespace SearchDirLists
 
         public List<TreeNode> m_listClones = null;
 
-        public void SetLVitemHolder(NodeDatum holder) { m_lvCloneItem_ = (holder != null) ? holder.m_lvCloneItem_ : null; }
-        NodeDatumLVitemHolder m_lvCloneItem_ = new NodeDatumLVitemHolder();
-        public ListViewItem m_lvCloneItem
+        public void SetLVitemHolder(NodeDatum holder) { m_lvItem_ = (holder != null) ? holder.m_lvItem_ : null; }
+        NodeDatumLVitemHolder m_lvItem_ = new NodeDatumLVitemHolder();
+        public ListViewItem m_lvItem
         {
-            get { return (m_lvCloneItem_ != null) ? m_lvCloneItem_.m_lvCloneItem : null; }
-            set { if (m_lvCloneItem_ != null) m_lvCloneItem_.m_lvCloneItem = value; }
+            get { return (m_lvItem_ != null) ? m_lvItem_.m_lvItem : null; }
+            set { if (m_lvItem_ != null) m_lvItem_.m_lvItem = value; }
         }
 
-        public bool bDifferentVols = false;
-        public TreeNode m_nextSameVol = null;
+        public bool m_bDifferentVols = false;
 
         public NodeDatum(long nPrevLineNo, long nLineNo, long nLength) { m_nPrevLineNo = nPrevLineNo; m_nLineNo = nLineNo; m_nLength = nLength; }
 
@@ -141,7 +140,6 @@ namespace SearchDirLists
         public Node(String in_str, long nLineNo, long nLength, RootNode rootNode)
         {
             Debug.Assert(nLineNo != 0);
-
             m_rootNode = rootNode;
 
             if (in_str.EndsWith(":" + Path.DirectorySeparatorChar) == false)
@@ -374,7 +372,7 @@ namespace SearchDirLists
 
                 if (strLine != m_str_HEADER)
                 {
-                    MessageBox.Show("Bad file.");
+                    m_MessageboxCallback("Bad file.");
                     return;
                 }
             }
@@ -540,7 +538,7 @@ namespace SearchDirLists
     class TreeSelect : Utilities
     {
         TreeNode m_treeNode = null;
-        static Hashtable m_hashCache = null;
+        Hashtable m_hashCache = null;
         static TreeSelectStatusDelegate m_statusCallback = null;
         static TreeSelectDoneDelegate m_doneCallback = null;
         Thread m_thread = null;
@@ -730,7 +728,6 @@ namespace SearchDirLists
         private bool m_bBrowseLoaded = false;
         Hashtable m_hashCache = new Hashtable();
         List<TreeNode> m_listTreeNodes = new List<TreeNode>();
-        List<TreeNode> m_listSameVol = new List<TreeNode>();
         List<TreeNode> m_listRootNodes = null;
         Tree m_tree = null;
         Thread m_threadSelect = null;
@@ -743,6 +740,7 @@ namespace SearchDirLists
             lock (form_treeView_Browse)
             {
                 form_treeView_Browse.Nodes.Add(rootNode.Text);
+                form_treeView_Browse.Nodes[form_treeView_Browse.Nodes.Count - 1].Checked = true;
             }
 
             lock (m_listRootNodes)
@@ -784,7 +782,7 @@ namespace SearchDirLists
                 if (dictClones.ContainsKey(nodeDatum.Key))
                 {
                     Debug.Assert(dictClones[nodeDatum.Key] == listClones);
-                    Debug.Assert(((NodeDatum)dictClones[nodeDatum.Key][0].Tag).bDifferentVols == nodeDatum.bDifferentVols);
+                    Debug.Assert(((NodeDatum)dictClones[nodeDatum.Key][0].Tag).m_bDifferentVols == nodeDatum.m_bDifferentVols);
                     Debug.Assert(dictClones[nodeDatum.Key][0].ForeColor == treeNode.ForeColor);
                 }
                 else
@@ -827,7 +825,7 @@ namespace SearchDirLists
 
                     foreach (TreeNode subNode in listClones)
                     {
-                        ((NodeDatum)subNode.Tag).bDifferentVols = bDifferentVols;
+                        ((NodeDatum)subNode.Tag).m_bDifferentVols = bDifferentVols;
                         subNode.ForeColor = treeNode.ForeColor;
                     }
                 }
@@ -907,7 +905,6 @@ namespace SearchDirLists
         {
             List<TreeNode> m_listTreeNodes = null;
             List<TreeNode> m_listSameVol = null;
-            int m_nListIx = 0;
 
             public AddTreeToList(List<TreeNode> listTreeNodes, List<TreeNode> listSameVol)
             {
@@ -921,14 +918,8 @@ namespace SearchDirLists
 
                 if ((treeNode.ForeColor == Color.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
                 {
-                    Debug.Assert((nodeDatum.m_listClones != null) && (nodeDatum.bDifferentVols == false));
+                    Debug.Assert((nodeDatum.m_listClones != null) && (nodeDatum.m_bDifferentVols == false));
                     m_listSameVol.Add(treeNode);
-
-                    for (int i = m_nListIx; i < m_listTreeNodes.Count; ++i)
-                    {
-                        ((NodeDatum)m_listTreeNodes[i].Tag).m_nextSameVol = treeNode;
-                        m_nListIx = m_listTreeNodes.Count;
-                    }
                 }
 
                 m_listTreeNodes.Add(treeNode);
@@ -937,9 +928,9 @@ namespace SearchDirLists
                 {
                     treeNode.BackColor = Color.LightGoldenrodYellow;
 
-                    if (nodeDatum.m_lvCloneItem != null)
+                    if (nodeDatum.m_lvItem != null)
                     {
-                        nodeDatum.m_lvCloneItem.BackColor = treeNode.BackColor;
+                        nodeDatum.m_lvItem.BackColor = treeNode.BackColor;
                     }
                 }
 
@@ -1034,7 +1025,7 @@ namespace SearchDirLists
 
                 foreach (TreeNode treeNode in listNodes.Value)
                 {
-                    ((NodeDatum)treeNode.Tag).m_lvCloneItem = lvItem;
+                    ((NodeDatum)treeNode.Tag).m_lvItem = lvItem;
                 }
 
                 listLVitems.Add(lvItem);
@@ -1055,34 +1046,29 @@ namespace SearchDirLists
             foreach (KeyValuePair<double, TreeNode> listNodes in dictUniqueReverse)
             {
                 TreeNode treeNode = listNodes.Value;
+                TreeNode parentNode = treeNode.Parent;
+                bool bCancel = false;
 
+                while (parentNode != null)
                 {
-                    bool bCancel = false;
-                    TreeNode parentNode = treeNode.Parent;
-
-                    while (parentNode != null)
+                    if (((NodeDatum)parentNode.Tag).m_bDifferentVols)
                     {
-                        if (((NodeDatum)parentNode.Tag).bDifferentVols)
-                        {
-                            bCancel = true;
-                            break;
-                        }
-
-                        parentNode = parentNode.Parent;
+                        bCancel = true;
+                        break;
                     }
 
-                    if (bCancel)
-                    {
-                        ++nCanceled;
-                        continue;
-                    }
+                    parentNode = parentNode.Parent;
                 }
 
-                String strNode = treeNode.Text;
+                if (bCancel)
+                {
+                    ++nCanceled;
+                    continue;
+                }
 
-                Debug.Assert(Utilities.StrValid(strNode));
+                Debug.Assert(Utilities.StrValid(treeNode.Text));
 
-                ListViewItem lvItem = new ListViewItem(strNode);
+                ListViewItem lvItem = new ListViewItem(treeNode.Text);
 
                 lvItem.Tag = treeNode;
 
@@ -1092,28 +1078,31 @@ namespace SearchDirLists
                 {
                     treeNode.ForeColor = lvItem.ForeColor = Color.Red;
 
-                    TreeNode parentNode = treeNode.Parent;
+                    TreeNode parentNode_A = treeNode.Parent;
 
-                    while (parentNode != null)
+                    while (parentNode_A != null)
                     {
-                        Debug.Assert(new Color[] { Color.Empty, Color.Red, Color.DarkRed }.Contains(parentNode.ForeColor));
+                        Debug.Assert(new Color[] { Color.Empty, Color.Red, Color.DarkRed }.Contains(parentNode_A.ForeColor));
 
-                        parentNode.ForeColor = Color.DarkRed;
-
-                        NodeDatum nodeDatum_A = (NodeDatum)parentNode.Tag;
-
-                        if (nodeDatum_A.m_lvCloneItem != null)
+                        if (parentNode_A.ForeColor == Color.Empty)
                         {
-                            nodeDatum_A.m_lvCloneItem.ForeColor = parentNode.ForeColor;
+                            parentNode_A.ForeColor = Color.DarkRed;
+
+                            NodeDatum nodeDatum_A = (NodeDatum)parentNode_A.Tag;
+
+                            if (nodeDatum_A.m_lvItem != null)
+                            {
+                                nodeDatum_A.m_lvItem.ForeColor = parentNode_A.ForeColor;
+                            }
                         }
 
-                        parentNode = parentNode.Parent;
+                        parentNode_A = parentNode_A.Parent;
                     }
                 }
 
                 listLVunique.Add(lvItem);
-                Debug.Assert(nodeDatum.m_lvCloneItem == null);
-                nodeDatum.m_lvCloneItem = lvItem;
+                Debug.Assert(nodeDatum.m_lvItem == null);
+                nodeDatum.m_lvItem = lvItem;
             }
 
             Console.WriteLine(nCanceled + " unique folders canceled because they're in cloned folders");
@@ -1125,38 +1114,34 @@ namespace SearchDirLists
             form_treeView_Browse.Nodes.Clear();
             form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
 
-            new AddTreeToList(m_listTreeNodes, m_listSameVol).Go(form_treeView_Browse.Nodes[0]);
-            List<TreeNode> listSameDriveDescLength = new List<TreeNode>();
-            List<ListViewItem> listLVsameDrive = new List<ListViewItem>();
+            List<TreeNode> listSameVolDescLength = new List<TreeNode>();
+            new AddTreeToList(m_listTreeNodes, listSameVolDescLength).Go(form_treeView_Browse.Nodes[0]);
+            List<ListViewItem> listLVsameVol = new List<ListViewItem>();
+            listSameVolDescLength.Sort((x, y) => ((NodeDatum)y.Tag).LengthSubnodes.CompareTo(((NodeDatum)x.Tag).LengthSubnodes));
 
-            listSameDriveDescLength = m_listSameVol.ToList<TreeNode>();
-            listSameDriveDescLength.Sort((x, y) => ((NodeDatum)y.Tag).LengthSubnodes.CompareTo(((NodeDatum)x.Tag).LengthSubnodes));
-
-            foreach (TreeNode treeNode in listSameDriveDescLength)
+            foreach (TreeNode treeNode in listSameVolDescLength)
             {
-                String strNode = treeNode.Text;
+                Debug.Assert(Utilities.StrValid(treeNode.Text));
 
-                Debug.Assert(Utilities.StrValid(strNode));
-
-                ListViewItem lvItem = new ListViewItem(strNode);
+                ListViewItem lvItem = new ListViewItem(treeNode.Text);
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
                 lvItem.Tag = nodeDatum.m_listClones;
                 lvItem.ForeColor = Color.Firebrick;
                 lvItem.BackColor = treeNode.BackColor;
-                listLVsameDrive.Add(lvItem);
+                listLVsameVol.Add(lvItem);
 
-                if (nodeDatum.m_lvCloneItem != null)
+                if (nodeDatum.m_lvItem != null)
                 {
-                    nodeDatum.m_lvCloneItem = lvItem;
+                    nodeDatum.m_lvItem = lvItem;
                 }
             }
 
-            InsertSizeMarkers(listLVsameDrive);
+            InsertSizeMarkers(listLVsameVol);
             form_lvSameVol.Items.Clear();
-            form_lvSameVol.Items.AddRange(listLVsameDrive.ToArray());
-            listSameDriveDescLength = null;
-            listLVsameDrive = null;
+            form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
+            listSameVolDescLength = null;
+            listLVsameVol = null;
             m_listRootNodes = null;
             form_treeView_Browse.Enabled = true;
             m_bBrowseLoaded = true;

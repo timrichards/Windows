@@ -214,11 +214,25 @@ namespace SearchDirLists
         public const String m_strLINETYPE_Error_File = "r";
         public const String m_strLINETYPE_Length = "L";
 
+        static MessageBoxDelegate m_MessageboxCallback_ = null;
+        protected MessageBoxDelegate m_MessageboxCallback = null;
+
+        protected Utilities()
+        {
+            Debug.Assert(m_MessageboxCallback_ != null);
+
+            m_MessageboxCallback = m_MessageboxCallback_;
+        }
+
+        public static void SetMessageBoxDelegate(MessageBoxDelegate messageBoxCallback)
+        {
+            m_MessageboxCallback_ = messageBoxCallback;
+        }
+
         public static bool StrValid(String str)
         {
             return ((str != null) && (str.Length > 0));
         }
-
 
         public static void CopyTo(Stream src, Stream dest)
         {
@@ -309,7 +323,7 @@ namespace SearchDirLists
 
                 if (FormatPath(ref strPath, bFailOnDirectory) == false)
                 {
-                    MessageBox.Show("Error in Source path.                   ", "Save Directory Listing");
+                    m_MessageboxCallback_("Error in Source path.                   ", "Save Directory Listing");
                     return false;
                 }
             }
@@ -320,7 +334,7 @@ namespace SearchDirLists
 
                 if (FormatPath(ref strSaveAs, bFailOnDirectory) == false)
                 {
-                    MessageBox.Show("Error in Save filename.                  ", "Save Directory Listing");
+                    m_MessageboxCallback_("Error in Save filename.                  ", "Save Directory Listing");
                     return false;
                 }
             }
@@ -765,14 +779,14 @@ namespace SearchDirLists
             if (Directory.Exists(strPath) == false)
             {
                 m_statusCallback(m_nVolIx, "Not saved.");
-                MessageBox.Show("Source Path does not exist.                  ", "Save Directory Listing");
+                m_MessageboxCallback("Source Path does not exist.                  ", "Save Directory Listing");
                 return;
             }
 
             if (StrValid(strSaveAs) == false)
             {
                 m_statusCallback(m_nVolIx, "Not saved.");
-                MessageBox.Show("Must specify save filename.                  ", "Save Directory Listing");
+                m_MessageboxCallback("Must specify save filename.                  ", "Save Directory Listing");
                 return;
             }
 

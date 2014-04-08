@@ -11,6 +11,8 @@ using System.Threading;
 
 namespace SearchDirLists
 {
+    delegate void MessageBoxDelegate(String strMessage, String strTitle = null);
+
     public partial class Form1 : Form
     {
         String m_strCompare1 = null;
@@ -37,6 +39,7 @@ namespace SearchDirLists
         Dictionary<TreeNode, TreeNode> dictCompareDiffs = new Dictionary<TreeNode, TreeNode>();
         List<TreeNode> m_listTreeNodes_Compare1 = new List<TreeNode>();
         List<TreeNode> m_listTreeNodes_Compare2 = new List<TreeNode>();
+        List<TreeNode> m_listMarkedForCopy = new List<TreeNode>();
 
         // initialized in constructor:
         Blink m_blink = null;
@@ -207,9 +210,15 @@ namespace SearchDirLists
             }
         }
 
+        const String m_strMARKFORCOPY = "markForCopy";
+
         public Form1()
         {
             InitializeComponent();
+
+            // Assert string-lookup form items exist
+        //    Debug.Assert(context_rclick_node.Items[m_strMARKFORCOPY] != null);
+
             m_blink = new Blink(timer_blink, form_cb_TreeFind);
             m_strBtnTreeCollapseOrig = form_btn_TreeCollapse.Text;
             m_strColFilesOrig = form_colFilename.Text;
@@ -222,6 +231,8 @@ namespace SearchDirLists
             m_strVolGroupOrig = form_lblVolGroup.Text;
             m_FontVolGroupOrig = form_lblVolGroup.Font;
             m_clrVolGroupOrig = form_lblVolGroup.BackColor;
+
+            Utilities.SetMessageBoxDelegate(MessageboxCallback);
         }
 
         void ComboBoxItemsInsert(ComboBox comboBox, String strText = null, bool bTrimText = true)
@@ -690,6 +701,14 @@ namespace SearchDirLists
             form_treeView_Browse.Select();
         }
 
+        void MessageboxCallback(String strMessage, String strTitle)
+        {
+            if (InvokeRequired) { Invoke(new MessageBoxDelegate(MessageboxCallback), new object[] { strMessage, strTitle }); return; }
+
+            // make MessageBox modal from a worker thread
+            MessageBox.Show(strMessage, strTitle);
+        }
+
         void NameNodes(TreeNode treeNode, List<TreeNode> listTreeNodes)
         {
             treeNode.Name = treeNode.Text;
@@ -925,11 +944,6 @@ namespace SearchDirLists
         void SetLV_VolumesItemInclude(ListViewItem lvItem, bool bInclude)
         {
             lvItem.SubItems[4].Text = (bInclude) ? "Yes" : "No";
-        }
-
-        private void showNextSameVol_Click(object sender, EventArgs e)
-        {
-            form_treeView_Browse.SelectedNode = ((NodeDatum)showNextSameVolNode.Tag).m_nextSameVol;
         }
 
         void UpdateLV_VolumesSelection()
@@ -1825,25 +1839,25 @@ namespace SearchDirLists
                 form_colFilename.Text = m_strColFilesOrig;
             }
 
-            if ((nodeDatum.m_lvCloneItem == null) || nodeDatum.m_lvCloneItem.Selected)
+            if ((nodeDatum.m_lvItem == null) || nodeDatum.m_lvItem.Selected)
             {
                 return;
             }
 
-            nodeDatum.m_lvCloneItem.Selected = true;
-            nodeDatum.m_lvCloneItem.Focused = true;
+            nodeDatum.m_lvItem.Selected = true;
+            nodeDatum.m_lvItem.Focused = true;
 
-            if (form_lvClones.Items.Contains(nodeDatum.m_lvCloneItem))
+            if (form_lvClones.Items.Contains(nodeDatum.m_lvItem))
             {
-                form_lvClones.TopItem = nodeDatum.m_lvCloneItem;
+                form_lvClones.TopItem = nodeDatum.m_lvItem;
             }
-            else if (form_lvUnique.Items.Contains(nodeDatum.m_lvCloneItem))
+            else if (form_lvUnique.Items.Contains(nodeDatum.m_lvItem))
             {
-                form_lvUnique.TopItem = nodeDatum.m_lvCloneItem;
+                form_lvUnique.TopItem = nodeDatum.m_lvItem;
             }
-            else if (form_lvSameVol.Items.Contains(nodeDatum.m_lvCloneItem))
+            else if (form_lvSameVol.Items.Contains(nodeDatum.m_lvItem))
             {
-                form_lvSameVol.TopItem = nodeDatum.m_lvCloneItem;
+                form_lvSameVol.TopItem = nodeDatum.m_lvItem;
             }
         }
 
@@ -1882,17 +1896,6 @@ namespace SearchDirLists
             m_bPutPathInFindEditBox = true;
         }
 
-        private void form_treeView_Browse_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            if (e.Button != MouseButtons.Right)
-            {
-                return;
-            }
-
-            showNextSameVolNode = e.Node;
-            context_rclick_node.Show(form_treeView_Browse, e.Location);
-        }
-
         private void timer_blink_Tick(object sender, EventArgs e)
         {
             m_blink.Tick();
@@ -1910,6 +1913,18 @@ namespace SearchDirLists
             form_cbPath.BackColor = Color.Empty;
             form_cbSaveAs.BackColor = Color.Empty;
             timer_killRed.Enabled = false;
+        }
+
+        private void form_treeView_Browse_AfterCheck(object sender, TreeViewEventArgs e)
+        {
+            if (e.Node.Checked)
+            {
+                m_listMarkedForCopy.Add(e.Node);
+            }
+            else
+            {
+                m_listMarkedForCopy.Remove(e.Node);
+            }
         }
     }
 }

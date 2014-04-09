@@ -179,34 +179,52 @@ namespace SearchDirLists
 
             public static void ReadList(ListView.ListViewItemCollection lvItems, StreamReader sr, String strDir_in = null)
             {
+                bool bValid = false;
+                List<ListViewItem> listItems = new List<ListViewItem>();
                 String strLine = sr.ReadLine();
 
-                if ((Utilities.m_str_VOLUME_LIST_HEADER_01 + Utilities.m_str_VOLUME_LIST_HEADER).Contains(strLine) == false)
+                do
                 {
-                    MessageBox.Show("Not a valid volume list file.", "Load Volume List");
-                    return;
-                }
+                    if (strLine == null) break;
+                    if ((Utilities.m_str_VOLUME_LIST_HEADER_01 + Utilities.m_str_VOLUME_LIST_HEADER).Contains(strLine) == false)
+                        break;
 
-                lvItems.Clear();
-
-                while ((strLine = sr.ReadLine()) != null)
-                {
-                    String[] strArray = strLine.Split('\t');
-
-                    strArray[3] = "Using file.";
-
-                    if (File.Exists(strArray[2]) == false)
+                    while ((strLine = sr.ReadLine()) != null)
                     {
-                        strArray[2] = Path.Combine(strDir_in ?? Path.GetTempPath(), Path.GetFileName(strArray[2]));
+                        String[] strArray = strLine.Split('\t');
+
+                        if (strArray.Length < 4)
+                        {
+                            break;
+                        }
+
+                        strArray[3] = "Using file.";
 
                         if (File.Exists(strArray[2]) == false)
                         {
-                            strArray[3] = "No file. Will create.";
-                        }
-                    }
+                            strArray[2] = Path.Combine(strDir_in ?? Path.GetTempPath(), Path.GetFileName(strArray[2]));
 
-                    strArray[1] = strArray[1].TrimEnd(Path.DirectorySeparatorChar);
-                    lvItems.Add(new ListViewItem(strArray));
+                            if (File.Exists(strArray[2]) == false)
+                            {
+                                strArray[3] = "No file. Will create.";
+                            }
+                        }
+
+                        strArray[1] = strArray[1].TrimEnd(Path.DirectorySeparatorChar);
+                        listItems.Add(new ListViewItem(strArray));
+                        bValid = true;
+                    }
+                }
+                while (false);
+
+                if (bValid == false)
+                {
+                    MessageBox.Show("Not a valid volume list file.", "Load Volume List");
+                }
+                else
+                {
+                    lvItems.Clear();
+                    lvItems.AddRange(listItems.ToArray());
                 }
             }
 
@@ -221,7 +239,7 @@ namespace SearchDirLists
             }
         }
 
-        const String m_strMARKFORCOPY = "markForCopy";
+   //     const String m_strMARKFORCOPY = "markForCopy";
 
         public Form1()
         {
@@ -816,7 +834,11 @@ namespace SearchDirLists
         bool ReadHeader()
         {
             {
-                String strLine = File.ReadLines(m_strSaveAs).Take(1).ToArray()[0];
+                String[] arrLine = File.ReadLines(m_strSaveAs).Take(1).ToArray();
+
+                if (arrLine.Length <= 0) return false;
+
+                String strLine = arrLine[0];
 
                 if (strLine == Utilities.m_str_HEADER_01)
                 {
@@ -845,9 +867,13 @@ namespace SearchDirLists
 
                     if ((line = file.ReadLine()) == null) break;
                     if ((line = file.ReadLine()) == null) break;
-                    form_cbVolumeName.Text = line.Split('\t')[2];
+                    String[] arrLine = line.Split('\t');
+                    if (arrLine.Length < 3) break;
+                    form_cbVolumeName.Text = arrLine[2];
                     if ((line = file.ReadLine()) == null) break;
-                    form_cbPath.Text = line.Split('\t')[2];
+                    arrLine = line.Split('\t');
+                    if (arrLine.Length < 3) break;
+                    form_cbPath.Text = arrLine[2];
                     return SaveFields(false);
                 }
                 while (false);
@@ -1416,14 +1442,18 @@ namespace SearchDirLists
 
         void form_btn_RemoveVolume_Click(object sender, EventArgs e)
         {
-            ListView.SelectedIndexCollection lvSelect = form_lvVolumesMain.SelectedIndices;
+            ListView.SelectedListViewItemCollection lvSelect = form_lvVolumesMain.SelectedItems;
 
             if (lvSelect.Count <= 0)
             {
                 return;
             }
 
-            form_lvVolumesMain.Items[lvSelect[0]].Remove();
+            foreach (ListViewItem lvItem in lvSelect)
+            {
+                lvItem.Remove();
+            }
+
             UpdateLV_VolumesSelection();
             form_btnSavePathInfo.Enabled = (form_lvVolumesMain.Items.Count > 0);
             m_bBrowseLoaded = false;
@@ -1510,7 +1540,11 @@ namespace SearchDirLists
                 return;
             }
 
-            SetLV_VolumesItemInclude(lvSelect[0], LV_VolumesItemInclude(lvSelect[0]) == false);
+            foreach (ListViewItem lvItem in lvSelect)
+            {
+                SetLV_VolumesItemInclude(lvItem, LV_VolumesItemInclude(lvItem) == false);
+            }
+
             m_bBrowseLoaded = false;
             RestartTreeTimer();
         }
@@ -1534,7 +1568,9 @@ namespace SearchDirLists
 
         bool form_btn_VolGroup_Click_A()
         {
-            if (form_lvVolumesMain.SelectedItems.Count == 0)
+            ListView.SelectedListViewItemCollection lvSelect = form_lvVolumesMain.SelectedItems;
+
+            if (lvSelect.Count <= 0)
             {
                 return false;
             }
@@ -1567,7 +1603,11 @@ namespace SearchDirLists
                 return false;
             }
 
-            form_lvVolumesMain.SelectedItems[0].SubItems[5].Text = inputBox.Entry;
+            foreach (ListViewItem lvItem in lvSelect)
+            {
+                lvItem.SubItems[5].Text = inputBox.Entry;
+            }
+
             return true;
         }
 

@@ -1189,6 +1189,12 @@ namespace SearchDirLists
             InsertSizeMarkers(listLVsameVol);
             form_lvSameVol.Items.Clear();
             form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
+
+            //foreach (TreeNode treeNode in m_listTreeNodes)
+            //{
+            //    Debug.Assert(treeNode.TreeView == form_treeView_Browse);
+            //}
+
             listSameVolDescLength = null;
             listLVsameVol = null;
             m_listRootNodes = null;

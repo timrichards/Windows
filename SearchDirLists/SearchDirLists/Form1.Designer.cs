@@ -326,7 +326,6 @@ namespace SearchDirLists
             this.form_lvVolumesMain.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.form_lvVolumesMain.HideSelection = false;
             this.form_lvVolumesMain.Location = new System.Drawing.Point(0, 172);
-            this.form_lvVolumesMain.MultiSelect = false;
             this.form_lvVolumesMain.Name = "form_lvVolumesMain";
             this.form_lvVolumesMain.Size = new System.Drawing.Size(973, 179);
             this.form_lvVolumesMain.TabIndex = 16;

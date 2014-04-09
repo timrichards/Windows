@@ -88,8 +88,8 @@ namespace SearchDirLists
             DateTime FromFileTime(System.Runtime.InteropServices.ComTypes.FILETIME time)
             {
                 long highBits = time.dwHighDateTime;
-                highBits = highBits << 32;
 
+                highBits = highBits << 32;
                 return DateTime.FromFileTimeUtc(highBits + (long)(uint)time.dwLowDateTime);
             }
 
@@ -102,7 +102,11 @@ namespace SearchDirLists
                 m_dtCreationTime = FromFileTime(ffd.ftCreationTime);
                 m_dtLastWriteTime = FromFileTime(ffd.ftLastWriteTime);
                 m_fileAttributes = (System.IO.FileAttributes)ffd.dwFileAttributes;
-                m_nLength = (ffd.nFileSizeHigh << 32) + ffd.nFileSizeLow;
+
+                long highBits = ffd.nFileSizeHigh;
+
+                highBits = highBits << 32;
+                m_nLength = highBits + (long)(uint)ffd.nFileSizeLow;
                 m_bValid = true;
             }
 
@@ -743,6 +747,7 @@ namespace SearchDirLists
                 }
 
                 long nDirLength = 0;
+                bool bHasLength = false;
 
                 foreach (string strFile in listFiles)
                 {
@@ -769,6 +774,14 @@ namespace SearchDirLists
                     strOut = FormatString(strFile: fi.Name, dtCreated: fi.CreationTime, strAttributes: fi.Attributes.ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Length, strError1: strError1, strError2: strError2);
                     m_nTotalLength += fi.Length;
                     nDirLength += fi.Length;
+
+                    Debug.Assert(fi.Length >= 0);
+
+                    if (fi.Length > 0)
+                    {
+                        bHasLength = true;
+                    }
+
                     fs.WriteLine(strOut);
                 }
 
@@ -783,6 +796,12 @@ namespace SearchDirLists
                     }
 
                     Debug.Assert(di.IsValid);
+
+                    if (bHasLength)
+                    {
+                        Debug.Assert(nDirLength > 0);
+                    }
+
                     fs.WriteLine(FormatString(strDir: currentDir, dtCreated: di.CreationTime, strAttributes: di.Attributes.ToString("X"), dtModified: di.LastWriteTime, nLength: nDirLength, strError1: strError1, strError2: strError2));
                 }
 

@@ -34,7 +34,6 @@ namespace SearchDirLists
 
         TreeNode m_nodeCompare1 = null;
         TreeNode m_nodeCompare2 = null;
-        TreeNode showNextSameVolNode = null;
         TreeNode[] m_arrayTreeFound = null;
 
         Control m_ctlLastFocusForCopyButton = null;

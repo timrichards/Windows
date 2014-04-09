@@ -805,6 +805,7 @@ namespace SearchDirLists
             ListView form_lvUnique = null;
             List<TreeNode> m_listRootNodes = null;
             List<TreeNode> m_listTreeNodes = null;
+            bool m_bCheckboxes = false;
 
             // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.
             List<ListViewItem> listLVitems = new List<ListViewItem>();
@@ -901,7 +902,7 @@ namespace SearchDirLists
 
             public TreeDone(TreeView treeView_Browse, Hashtable hashCache,
                 ListView lvClones, ListView lvSameVol, ListView lvUnique,
-                List<TreeNode> listRootNodes, List<TreeNode> listTreeNodes)
+                List<TreeNode> listRootNodes, List<TreeNode> listTreeNodes, bool bCheckboxes)
             {
                 form_treeView_Browse = treeView_Browse;
                 m_hashCache = hashCache;
@@ -910,6 +911,7 @@ namespace SearchDirLists
                 form_lvUnique = lvUnique;
                 m_listRootNodes = listRootNodes;
                 m_listTreeNodes = listTreeNodes;
+                m_bCheckboxes = bCheckboxes;
             }
 
             // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
@@ -1188,23 +1190,23 @@ namespace SearchDirLists
                 Debug.Assert(form_lvClones.Items.Count == 0);
                 form_lvClones.Items.AddRange(listLVitems.ToArray());
                 listLVitems = null;
-
                 Debug.Assert(form_lvUnique.Items.Count == 0);
                 form_lvUnique.Items.AddRange(listLVunique.ToArray());
                 form_treeView_Browse.Nodes.Clear();
+                form_treeView_Browse.Enabled = true;
+                form_treeView_Browse.CheckBoxes = m_bCheckboxes;
                 form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
-
-                if (form_treeView_Browse.Nodes.Count > 0)
-                {
-                    new AddTreeToList(m_listTreeNodes, listSameVolDescLength).Go(form_treeView_Browse.Nodes[0]);
-                }
-
                 ++m_nThreadSeq;
                 return false;           // unused bool return
             }
 
             public void Step3_OnThread()
             {
+                if (form_treeView_Browse.Nodes.Count > 0)
+                {
+                    new AddTreeToList(m_listTreeNodes, listSameVolDescLength).Go(form_treeView_Browse.Nodes[0]);
+                }
+
                 listSameVolDescLength.Sort((x, y) => ((NodeDatum)y.Tag).LengthSubnodes.CompareTo(((NodeDatum)x.Tag).LengthSubnodes));
 
                 foreach (TreeNode treeNode in listSameVolDescLength)
@@ -1240,37 +1242,35 @@ namespace SearchDirLists
             }
         }
 
-        bool TreeDoneCallback_A()
+        void TreeDoneCallback()
         {
+            TreeDone treeDone = new TreeDone(form_treeView_Browse, m_hashCache,
+                form_lvClones, form_lvSameVol, form_lvUnique,
+                m_listRootNodes, m_listTreeNodes, m_bCheckboxes);
+
+            DateTime dtStart = DateTime.Now;
+            treeDone.Step1_OnThread();
+            Debug.Assert(treeDone.ThreadSeq == 1);
+            Console.WriteLine(treeDone.ThreadSeq + " " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+            Invoke(new DoSomething(treeDone.Step2_OnForm));
+            Debug.Assert(treeDone.ThreadSeq == 2);
+            Console.WriteLine(treeDone.ThreadSeq + " " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+            treeDone.Step3_OnThread();
+            Debug.Assert(treeDone.ThreadSeq == 3);
+            Console.WriteLine(treeDone.ThreadSeq + " " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+            Invoke(new DoSomething(treeDone.Step4_OnForm));
+            Debug.Assert(treeDone.ThreadSeq == 4);
+            Console.WriteLine(treeDone.ThreadSeq + " " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+            treeDone = null;
+            m_listRootNodes = null;
+
             //foreach (TreeNode treeNode in m_listTreeNodes)
             //{
             //    Debug.Assert(treeNode.TreeView == form_treeView_Browse);
             //}
 
-            m_listRootNodes = null;
-            form_treeView_Browse.Enabled = true;
-            form_treeView_Browse.CheckBoxes = m_bCheckboxes;
             m_bBrowseLoaded = true;
             GC.Collect();
-            return false;               // unused bool return
-        }
-
-        void TreeDoneCallback()
-        {
-            TreeDone treeDone = new TreeDone(form_treeView_Browse, m_hashCache,
-                form_lvClones, form_lvSameVol, form_lvUnique,
-                m_listRootNodes, m_listTreeNodes);
-
-            treeDone.Step1_OnThread();
-            Debug.Assert(treeDone.ThreadSeq == 1);
-            Invoke(new DoSomething(treeDone.Step2_OnForm));
-            Debug.Assert(treeDone.ThreadSeq == 2);
-            treeDone.Step3_OnThread();
-            Debug.Assert(treeDone.ThreadSeq == 3);
-            Invoke(new DoSomething(treeDone.Step4_OnForm));
-            Debug.Assert(treeDone.ThreadSeq == 4);
-            treeDone = null;
-            Invoke(new DoSomething(TreeDoneCallback_A));
         }
 
         public class LVitemNameComparer : IEqualityComparer<ListViewItem>

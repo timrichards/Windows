@@ -50,8 +50,8 @@ namespace SearchDirLists
     class SearchBase : Utilities
     {
         protected String m_strSearch = null;
-        protected bool   m_bCaseSensitive = true;
-        protected bool   m_bSearchFilesOnly = false;
+        protected bool m_bCaseSensitive = true;
+        protected bool m_bSearchFilesOnly = false;
         protected String m_strCurrentNode = null;
 
         public enum FolderSpecialHandling { None, Outermost, Innermost };       // not used
@@ -74,7 +74,8 @@ namespace SearchDirLists
         SearchStatusDelegate m_statusCallback = null;
         LVvolStrings m_volStrings = null;
 
-        public SearchFile(SearchBase searchBase, LVvolStrings volStrings, SearchStatusDelegate statusCallback) : base(searchBase)
+        public SearchFile(SearchBase searchBase, LVvolStrings volStrings, SearchStatusDelegate statusCallback)
+            : base(searchBase)
         {
             m_volStrings = volStrings;
             m_statusCallback = statusCallback;
@@ -251,7 +252,7 @@ namespace SearchDirLists
 
             foreach (LVvolStrings volStrings in m_list_lvVolStrings)
             {
-                SearchFile searchFile = new SearchFile((SearchBase) this, volStrings, m_statusCallback);
+                SearchFile searchFile = new SearchFile((SearchBase)this, volStrings, m_statusCallback);
 
                 m_listThreads.Add(searchFile.DoThreadFactory());
             }

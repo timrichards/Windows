@@ -96,7 +96,8 @@ namespace SearchDirLists
 
         public NodeDatum(long nPrevLineNo, long nLineNo, long nLength) { m_nPrevLineNo = nPrevLineNo; m_nLineNo = nLineNo; m_nLength = nLength; }
 
-        protected NodeDatum(NodeDatum node) : base(node)
+        protected NodeDatum(NodeDatum node)
+            : base(node)
         {
             m_nPrevLineNo = node.m_nPrevLineNo;
             m_nLineNo = node.m_nLineNo;
@@ -111,7 +112,8 @@ namespace SearchDirLists
 
         public String StrFile { get { return m_strFile; } }
         public String StrVolumeGroup { get { return m_strVolumeGroup; } }
-        public RootNodeDatum(NodeDatum node, String strFile, String strVolGroup) : base(node)
+        public RootNodeDatum(NodeDatum node, String strFile, String strVolGroup)
+            : base(node)
         {
             m_strFile = strFile;
             m_strVolumeGroup = strVolGroup;
@@ -665,7 +667,7 @@ namespace SearchDirLists
 
             listItems.Add(new ListViewItem(new String[] { "Total Size", FormatSize(nodeDatum.LengthSubnodes, bBytes: true) }));
 
-            m_statusCallback(lvItemDetails: listItems.ToArray(), bSecondComparePane:  m_bSecondComparePane);
+            m_statusCallback(lvItemDetails: listItems.ToArray(), bSecondComparePane: m_bSecondComparePane);
             Console.WriteLine(strLine);
 
 
@@ -793,415 +795,482 @@ namespace SearchDirLists
             }
         }
 
-        // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
-        // Breadth-first.
-        void FixClones(SortedDictionary<double, List<TreeNode>> dictClones, TreeNode treeNode, TreeNode rootClone = null)
+        class TreeDone : Utilities
         {
-            // neither rootClone nor nMaxLength are used at all (rootClone is used as a bool).
-            // provisional.
-
-            NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
-            List<TreeNode> listClones = nodeDatum.m_listClones;
-            long nLength = nodeDatum.LengthSubnodes;
-
-            if (nLength <= 100 * 1024)
-            {
-                treeNode.ForeColor = Color.LightGray;
-
-                if (listClones != null)
-                {
-                    foreach (TreeNode otherNode in listClones)
-                    {
-                        ((NodeDatum)otherNode.Tag).m_listClones = null;
-                    }
-                }
-
-                listClones = nodeDatum.m_listClones = null;
-            }
-
-            if ((listClones != null) && (rootClone == null))
-            {
-                rootClone = treeNode;
-
-                if (dictClones.ContainsKey(nodeDatum.Key))
-                {
-                    Debug.Assert(dictClones[nodeDatum.Key] == listClones);
-                    Debug.Assert(((NodeDatum)dictClones[nodeDatum.Key][0].Tag).m_bDifferentVols == nodeDatum.m_bDifferentVols);
-                    Debug.Assert(dictClones[nodeDatum.Key][0].ForeColor == treeNode.ForeColor);
-                }
-                else
-                {
-                    dictClones.Add(nodeDatum.Key, listClones);
-
-                    // Test to see if clones are on separate volumes.
-
-                    TreeNode rootNode = TreeSelect.GetParentRoot(treeNode);
-                    RootNodeDatum rootNodeDatum = (RootNodeDatum)rootNode.Tag;
-
-                    Debug.Assert(treeNode.ForeColor == Color.Empty);
-                    treeNode.ForeColor = Color.Firebrick;
-
-                    bool bDifferentVols = false;
-
-                    foreach (TreeNode subnode in listClones)
-                    {
-                        Debug.Assert(((NodeDatum)subnode.Tag).Key == nodeDatum.Key);
-
-                        TreeNode rootNode_A = TreeSelect.GetParentRoot(subnode);
-
-                        if (rootNode == rootNode_A)
-                        {
-                            continue;
-                        }
-
-                        RootNodeDatum rootNodeDatum_A = (RootNodeDatum)rootNode_A.Tag;
-
-                        if (Utilities.StrValid(rootNodeDatum.StrVolumeGroup) &&
-                            (rootNodeDatum.StrVolumeGroup == rootNodeDatum_A.StrVolumeGroup))
-                        {
-                            continue;
-                        }
-
-                        treeNode.ForeColor = Color.SteelBlue;
-                        bDifferentVols = true;
-                        break;
-                    }
-
-                    foreach (TreeNode subNode in listClones)
-                    {
-                        ((NodeDatum)subNode.Tag).m_bDifferentVols = bDifferentVols;
-                        subNode.ForeColor = treeNode.ForeColor;
-                    }
-                }
-            }
-
-            foreach (TreeNode subNode in treeNode.Nodes)
-            {
-                FixClones(dictClones, subNode, rootClone);
-            }
-        }
-
-        class InsertSizeMarker
-        {
-            static ListViewItem lvMarker = new ListViewItem();
-            static bool bInit = false;
-
-            static void Init()
-            {
-                if (bInit == false)
-                {
-                    lvMarker.BackColor = Color.DarkSlateGray;
-                    lvMarker.ForeColor = Color.White;
-                    lvMarker.Font = new Font(lvMarker.Font, FontStyle.Bold);
-                    lvMarker.Tag = null;
-                    bInit = true;
-                }
-            }
-
-            public static void Go(List<ListViewItem> listLVitems, int nIx, bool bUnique, bool bAdd = false)
-            {
-                Init();
-
-                ListViewItem lvItem = (ListViewItem)lvMarker.Clone();
-
-                lvItem.Text = (Utilities.FormatSize(((NodeDatum)((TreeNode)(bUnique ? listLVitems[nIx].Tag : ((List<TreeNode>)listLVitems[nIx].Tag)[0])).Tag).LengthSubnodes, bNoDecimal: true));
-
-                if (bAdd)
-                {
-                    listLVitems.Add(lvItem);
-                }
-                else
-                {
-                    listLVitems.Insert(nIx, lvItem);
-                }
-            }
-        }
-
-        void InsertSizeMarkers(List<ListViewItem> listLVitems)
-        {
-            if (listLVitems.Count <= 0)
-            {
-                return;
-            }
-
-            bool bUnique = (listLVitems[0].Tag is TreeNode);
-            int nCount = listLVitems.Count;
-            int nInterval = (nCount < 100) ? 10 : (nCount < 1000) ? 25 : 50;
-
-            InsertSizeMarker.Go(listLVitems, nCount - 1, bUnique, bAdd: true);
-
-            int nInitial = nCount % nInterval;
-
-            if (nInitial == 0)
-            {
-                nInitial = nInterval;
-            }
-
-            for (int i = nCount - nInitial; i > nInterval / 2; i -= nInterval)
-            {
-                InsertSizeMarker.Go(listLVitems, i, bUnique);
-            }
-
-            InsertSizeMarker.Go(listLVitems, 0, bUnique);            // Enter the Zeroth
-        }
-
-        class AddTreeToList
-        {
+            // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
+            TreeView form_treeView_Browse = null;
+            Hashtable m_hashCache = null;
+            ListView form_lvClones = null;
+            ListView form_lvSameVol = null;
+            ListView form_lvUnique = null;
+            List<TreeNode> m_listRootNodes = null;
             List<TreeNode> m_listTreeNodes = null;
-            List<TreeNode> m_listSameVol = null;
 
-            public AddTreeToList(List<TreeNode> listTreeNodes, List<TreeNode> listSameVol)
+            // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.
+            List<ListViewItem> listLVitems = new List<ListViewItem>();
+            List<ListViewItem> listLVunique = new List<ListViewItem>();
+            List<TreeNode> listSameVolDescLength = new List<TreeNode>();
+            List<ListViewItem> listLVsameVol = new List<ListViewItem>();
+
+            int m_nThreadSeq;
+            public int ThreadSeq { get { return m_nThreadSeq; } }
+
+            class AddTreeToList
             {
-                m_listTreeNodes = listTreeNodes;
-                m_listSameVol = listSameVol;
+                List<TreeNode> m_listTreeNodes = null;
+                List<TreeNode> m_listSameVol = null;
+
+                public AddTreeToList(List<TreeNode> listTreeNodes, List<TreeNode> listSameVol)
+                {
+                    m_listTreeNodes = listTreeNodes;
+                    m_listSameVol = listSameVol;
+                }
+
+                public void Go(TreeNode treeNode_in, bool bCloneOK = false)
+                {
+                    TreeNode treeNode = treeNode_in;
+
+                    do
+                    {
+                        NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+
+                        if ((treeNode.ForeColor == Color.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
+                        {
+                            Debug.Assert((nodeDatum.m_listClones != null) && (nodeDatum.m_bDifferentVols == false));
+                            m_listSameVol.Add(treeNode);
+                        }
+
+                        m_listTreeNodes.Add(treeNode);
+
+                        if (bCloneOK)
+                        {
+                            treeNode.BackColor = Color.LightGoldenrodYellow;
+
+                            if (nodeDatum.m_lvItem != null)
+                            {
+                                nodeDatum.m_lvItem.BackColor = treeNode.BackColor;
+                            }
+                        }
+
+                        if (treeNode.FirstNode != null)
+                        {
+                            Go(treeNode.FirstNode, bCloneOK || (treeNode.ForeColor == Color.SteelBlue));
+                        }
+
+                        treeNode = treeNode.NextNode;
+                    }
+                    while (treeNode != null);
+                }
             }
 
-            public void Go(TreeNode treeNode_in, bool bCloneOK = false)
+            class InsertSizeMarker
             {
-                TreeNode treeNode = treeNode_in;
+                static ListViewItem lvMarker = new ListViewItem();
+                static bool bInit = false;
 
-                do
+                static void Init()
                 {
-                    NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
-
-                    if ((treeNode.ForeColor == Color.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
+                    if (bInit == false)
                     {
-                        Debug.Assert((nodeDatum.m_listClones != null) && (nodeDatum.m_bDifferentVols == false));
-                        m_listSameVol.Add(treeNode);
+                        lvMarker.BackColor = Color.DarkSlateGray;
+                        lvMarker.ForeColor = Color.White;
+                        lvMarker.Font = new Font(lvMarker.Font, FontStyle.Bold);
+                        lvMarker.Tag = null;
+                        bInit = true;
                     }
+                }
 
-                    m_listTreeNodes.Add(treeNode);
+                public static void Go(List<ListViewItem> listLVitems, int nIx, bool bUnique, bool bAdd = false)
+                {
+                    Init();
 
-                    if (bCloneOK)
+                    ListViewItem lvItem = (ListViewItem)lvMarker.Clone();
+
+                    lvItem.Text = (Utilities.FormatSize(((NodeDatum)((TreeNode)(bUnique ? listLVitems[nIx].Tag : ((List<TreeNode>)listLVitems[nIx].Tag)[0])).Tag).LengthSubnodes, bNoDecimal: true));
+
+                    if (bAdd)
                     {
-                        treeNode.BackColor = Color.LightGoldenrodYellow;
+                        listLVitems.Add(lvItem);
+                    }
+                    else
+                    {
+                        listLVitems.Insert(nIx, lvItem);
+                    }
+                }
+            }
 
-                        if (nodeDatum.m_lvItem != null)
+            public TreeDone(TreeView treeView_Browse, Hashtable hashCache,
+                ListView lvClones, ListView lvSameVol, ListView lvUnique,
+                List<TreeNode> listRootNodes, List<TreeNode> listTreeNodes)
+            {
+                form_treeView_Browse = treeView_Browse;
+                m_hashCache = hashCache;
+                form_lvClones = lvClones;
+                form_lvSameVol = lvSameVol;
+                form_lvUnique = lvUnique;
+                m_listRootNodes = listRootNodes;
+                m_listTreeNodes = listTreeNodes;
+            }
+
+            // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
+            // Breadth-first.
+            void FixClones(SortedDictionary<double, List<TreeNode>> dictClones, TreeNode treeNode, TreeNode rootClone = null)
+            {
+                // neither rootClone nor nMaxLength are used at all (rootClone is used as a bool).
+                // provisional.
+
+                NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+                List<TreeNode> listClones = nodeDatum.m_listClones;
+                long nLength = nodeDatum.LengthSubnodes;
+
+                if (nLength <= 100 * 1024)
+                {
+                    treeNode.ForeColor = Color.LightGray;
+
+                    if (listClones != null)
+                    {
+                        foreach (TreeNode otherNode in listClones)
                         {
-                            nodeDatum.m_lvItem.BackColor = treeNode.BackColor;
+                            ((NodeDatum)otherNode.Tag).m_listClones = null;
                         }
                     }
 
-                    if (treeNode.FirstNode != null)
-                    {
-                        Go(treeNode.FirstNode, bCloneOK || (treeNode.ForeColor == Color.SteelBlue));
-                    }
-
-                    treeNode = treeNode.NextNode;
+                    listClones = nodeDatum.m_listClones = null;
                 }
-                while (treeNode != null);
-            }
-        }
 
-        void TreeDoneCallback()
-        {
-            if (InvokeRequired) { Invoke(new TreeDoneDelegate(TreeDoneCallback)); return; }
-
-            Hashtable hashTable = new Hashtable();
-            SortedDictionary<double, TreeNode> dictUnique = new SortedDictionary<double, TreeNode>();
-
-            foreach (DictionaryEntry pair in m_hashCache)
-            {
-                if (pair.Value is List<TreeNode>)
+                if ((listClones != null) && (rootClone == null))
                 {
-                    List<TreeNode> listNodes = (List<TreeNode>)pair.Value;
+                    rootClone = treeNode;
 
-                    if (listNodes.Count > 1)
+                    if (dictClones.ContainsKey(nodeDatum.Key))
                     {
-                        foreach (TreeNode treeNode in listNodes)
+                        Debug.Assert(dictClones[nodeDatum.Key] == listClones);
+                        Debug.Assert(((NodeDatum)dictClones[nodeDatum.Key][0].Tag).m_bDifferentVols == nodeDatum.m_bDifferentVols);
+                        Debug.Assert(dictClones[nodeDatum.Key][0].ForeColor == treeNode.ForeColor);
+                    }
+                    else
+                    {
+                        dictClones.Add(nodeDatum.Key, listClones);
+
+                        // Test to see if clones are on separate volumes.
+
+                        TreeNode rootNode = TreeSelect.GetParentRoot(treeNode);
+                        RootNodeDatum rootNodeDatum = (RootNodeDatum)rootNode.Tag;
+
+                        Debug.Assert(treeNode.ForeColor == Color.Empty);
+                        treeNode.ForeColor = Color.Firebrick;
+
+                        bool bDifferentVols = false;
+
+                        foreach (TreeNode subnode in listClones)
                         {
+                            Debug.Assert(((NodeDatum)subnode.Tag).Key == nodeDatum.Key);
+
+                            TreeNode rootNode_A = TreeSelect.GetParentRoot(subnode);
+
+                            if (rootNode == rootNode_A)
+                            {
+                                continue;
+                            }
+
+                            RootNodeDatum rootNodeDatum_A = (RootNodeDatum)rootNode_A.Tag;
+
+                            if (Utilities.StrValid(rootNodeDatum.StrVolumeGroup) &&
+                                (rootNodeDatum.StrVolumeGroup == rootNodeDatum_A.StrVolumeGroup))
+                            {
+                                continue;
+                            }
+
+                            treeNode.ForeColor = Color.SteelBlue;
+                            bDifferentVols = true;
+                            break;
+                        }
+
+                        foreach (TreeNode subNode in listClones)
+                        {
+                            ((NodeDatum)subNode.Tag).m_bDifferentVols = bDifferentVols;
+                            subNode.ForeColor = treeNode.ForeColor;
+                        }
+                    }
+                }
+
+                foreach (TreeNode subNode in treeNode.Nodes)
+                {
+                    FixClones(dictClones, subNode, rootClone);
+                }
+            }
+
+            void InsertSizeMarkers(List<ListViewItem> listLVitems)
+            {
+                if (listLVitems.Count <= 0)
+                {
+                    return;
+                }
+
+                bool bUnique = (listLVitems[0].Tag is TreeNode);
+                int nCount = listLVitems.Count;
+                int nInterval = (nCount < 100) ? 10 : (nCount < 1000) ? 25 : 50;
+
+                InsertSizeMarker.Go(listLVitems, nCount - 1, bUnique, bAdd: true);
+
+                int nInitial = nCount % nInterval;
+
+                if (nInitial == 0)
+                {
+                    nInitial = nInterval;
+                }
+
+                for (int i = nCount - nInitial; i > nInterval / 2; i -= nInterval)
+                {
+                    InsertSizeMarker.Go(listLVitems, i, bUnique);
+                }
+
+                InsertSizeMarker.Go(listLVitems, 0, bUnique);            // Enter the Zeroth
+            }
+
+            public void Step1_OnThread()
+            {
+                Hashtable hashTable = new Hashtable();
+                SortedDictionary<double, TreeNode> dictUnique = new SortedDictionary<double, TreeNode>();
+
+                foreach (DictionaryEntry pair in m_hashCache)
+                {
+                    if (pair.Value is List<TreeNode>)
+                    {
+                        List<TreeNode> listNodes = (List<TreeNode>)pair.Value;
+
+                        if (listNodes.Count > 1)
+                        {
+                            foreach (TreeNode treeNode in listNodes)
+                            {
+                                NodeDatum nodeDatum = ((NodeDatum)treeNode.Tag);
+
+                                Debug.Assert(nodeDatum.LengthSubnodes > 100 * 1024);
+                                nodeDatum.m_listClones = listNodes;
+                            }
+                        }
+                        else
+                        {
+                            TreeNode treeNode = listNodes[0];
                             NodeDatum nodeDatum = ((NodeDatum)treeNode.Tag);
 
-                            Debug.Assert(nodeDatum.LengthSubnodes > 100 * 1024);
-                            nodeDatum.m_listClones = listNodes;
+                            dictUnique.Add((double)pair.Key, treeNode);
                         }
                     }
                     else
                     {
-                        TreeNode treeNode = listNodes[0];
-                        NodeDatum nodeDatum = ((NodeDatum)treeNode.Tag);
-
-                        dictUnique.Add((double)pair.Key, treeNode);
+                        hashTable.Add(pair.Key, pair.Value);
                     }
                 }
-                else
+
+                m_hashCache = hashTable;
+
+                SortedDictionary<double, List<TreeNode>> dictClones = new SortedDictionary<double, List<TreeNode>>();
+
+                foreach (TreeNode treeNode in m_listRootNodes)
                 {
-                    hashTable.Add(pair.Key, pair.Value);
-                }
-            }
-
-            m_hashCache = hashTable;
-
-            SortedDictionary<double, List<TreeNode>> dictClones = new SortedDictionary<double, List<TreeNode>>();
-
-            foreach (TreeNode treeNode in m_listRootNodes)
-            {
-                FixClones(dictClones, treeNode);
-            }
-
-            IEnumerable<KeyValuePair<double, List<TreeNode>>> dictReverse = dictClones.Reverse();
-
-            dictClones = null;
-
-            List<ListViewItem> listLVitems = new List<ListViewItem>();
-
-            foreach (KeyValuePair<double, List<TreeNode>> listNodes in dictReverse)
-            {
-                String str_nClones = null;
-                int nClones = listNodes.Value.Count;
-
-                if (nClones <= 0)
-                {
-                    Debug.Assert(false);
-                    continue;
+                    FixClones(dictClones, treeNode);
                 }
 
-                if (nClones > 2)        // includes the subject node: this line says don't put 2's all over the listviewer
+                m_listRootNodes.Sort((x, y) => String.Compare(x.Text, y.Text));
+
+                IEnumerable<KeyValuePair<double, List<TreeNode>>> dictReverse = dictClones.Reverse();
+
+                dictClones = null;
+
+                foreach (KeyValuePair<double, List<TreeNode>> listNodes in dictReverse)
                 {
-                    str_nClones = nClones.ToString("###,###");
-                }
+                    String str_nClones = null;
+                    int nClones = listNodes.Value.Count;
 
-                String strNode = listNodes.Value[0].Text;
-
-                Debug.Assert(Utilities.StrValid(strNode));
-
-                ListViewItem lvItem = new ListViewItem(new String[] { strNode, str_nClones });
-
-                lvItem.Tag = listNodes.Value;
-                lvItem.ForeColor = listNodes.Value[0].ForeColor;
-
-                foreach (TreeNode treeNode in listNodes.Value)
-                {
-                    ((NodeDatum)treeNode.Tag).m_lvItem = lvItem;
-                }
-
-                listLVitems.Add(lvItem);
-            }
-
-            dictReverse = null;
-            InsertSizeMarkers(listLVitems);
-            form_lvClones.Items.Clear();
-            form_lvClones.Items.AddRange(listLVitems.ToArray());
-            listLVitems = null;
-
-            IEnumerable<KeyValuePair<double, TreeNode>> dictUniqueReverse = dictUnique.Reverse();
-            List<ListViewItem> listLVunique = new List<ListViewItem>();
-
-            int nCanceled = 0;
-
-            foreach (KeyValuePair<double, TreeNode> listNodes in dictUniqueReverse)
-            {
-                TreeNode treeNode = listNodes.Value;
-                TreeNode parentNode = treeNode.Parent;
-                bool bCancel = false;
-
-                while (parentNode != null)
-                {
-                    if (((NodeDatum)parentNode.Tag).m_bDifferentVols)
+                    if (nClones <= 0)
                     {
-                        bCancel = true;
-                        break;
+                        Debug.Assert(false);
+                        continue;
                     }
 
-                    parentNode = parentNode.Parent;
-                }
-
-                if (bCancel)
-                {
-                    ++nCanceled;
-                    continue;
-                }
-
-                Debug.Assert(Utilities.StrValid(treeNode.Text));
-
-                ListViewItem lvItem = new ListViewItem(treeNode.Text);
-
-                lvItem.Tag = treeNode;
-
-                NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
-
-                if (nodeDatum.NumImmediateFiles > 0)
-                {
-                    treeNode.ForeColor = lvItem.ForeColor = Color.Red;
-
-                    TreeNode parentNode_A = treeNode.Parent;
-
-                    while (parentNode_A != null)
+                    if (nClones > 2)        // includes the subject node: this line says don't put 2's all over the listviewer
                     {
-                        if (parentNode_A.ForeColor == Color.Empty)
+                        str_nClones = nClones.ToString("###,###");
+                    }
+
+                    String strNode = listNodes.Value[0].Text;
+
+                    Debug.Assert(Utilities.StrValid(strNode));
+
+                    ListViewItem lvItem = new ListViewItem(new String[] { strNode, str_nClones });
+
+                    lvItem.Tag = listNodes.Value;
+                    lvItem.ForeColor = listNodes.Value[0].ForeColor;
+
+                    foreach (TreeNode treeNode in listNodes.Value)
+                    {
+                        ((NodeDatum)treeNode.Tag).m_lvItem = lvItem;
+                    }
+
+                    listLVitems.Add(lvItem);
+                }
+
+                dictReverse = null;
+                InsertSizeMarkers(listLVitems);
+
+                IEnumerable<KeyValuePair<double, TreeNode>> dictUniqueReverse = dictUnique.Reverse();
+                int nCanceled = 0;
+
+                foreach (KeyValuePair<double, TreeNode> listNodes in dictUniqueReverse)
+                {
+                    TreeNode treeNode = listNodes.Value;
+                    TreeNode parentNode = treeNode.Parent;
+                    bool bCancel = false;
+
+                    while (parentNode != null)
+                    {
+                        if (((NodeDatum)parentNode.Tag).m_bDifferentVols)
                         {
-                            parentNode_A.ForeColor = Color.DarkRed;
-
-                            NodeDatum nodeDatum_A = (NodeDatum)parentNode_A.Tag;
-
-                            if (nodeDatum_A.m_lvItem != null)
-                            {
-                                nodeDatum_A.m_lvItem.ForeColor = parentNode_A.ForeColor;
-                            }
+                            bCancel = true;
+                            break;
                         }
 
-                        parentNode_A = parentNode_A.Parent;
+                        parentNode = parentNode.Parent;
+                    }
+
+                    if (bCancel)
+                    {
+                        ++nCanceled;
+                        continue;
+                    }
+
+                    Debug.Assert(Utilities.StrValid(treeNode.Text));
+
+                    ListViewItem lvItem = new ListViewItem(treeNode.Text);
+
+                    lvItem.Tag = treeNode;
+
+                    NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+
+                    if (nodeDatum.NumImmediateFiles > 0)
+                    {
+                        treeNode.ForeColor = lvItem.ForeColor = Color.Red;
+
+                        TreeNode parentNode_A = treeNode.Parent;
+
+                        while (parentNode_A != null)
+                        {
+                            if (parentNode_A.ForeColor == Color.Empty)
+                            {
+                                parentNode_A.ForeColor = Color.DarkRed;
+
+                                NodeDatum nodeDatum_A = (NodeDatum)parentNode_A.Tag;
+
+                                if (nodeDatum_A.m_lvItem != null)
+                                {
+                                    nodeDatum_A.m_lvItem.ForeColor = parentNode_A.ForeColor;
+                                }
+                            }
+
+                            parentNode_A = parentNode_A.Parent;
+                        }
+                    }
+
+                    listLVunique.Add(lvItem);
+                    Debug.Assert(nodeDatum.m_lvItem == null);
+                    nodeDatum.m_lvItem = lvItem;
+                }
+
+                Console.WriteLine(nCanceled + " unique folders canceled because they're in cloned folders");
+                dictUniqueReverse = null;
+                InsertSizeMarkers(listLVunique);
+                ++m_nThreadSeq;
+            }
+
+            public bool Step2_OnForm()
+            {
+                Debug.Assert(form_lvClones.Items.Count == 0);
+                form_lvClones.Items.AddRange(listLVitems.ToArray());
+                listLVitems = null;
+
+                Debug.Assert(form_lvUnique.Items.Count == 0);
+                form_lvUnique.Items.AddRange(listLVunique.ToArray());
+                form_treeView_Browse.Nodes.Clear();
+                form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
+
+                if (form_treeView_Browse.Nodes.Count > 0)
+                {
+                    new AddTreeToList(m_listTreeNodes, listSameVolDescLength).Go(form_treeView_Browse.Nodes[0]);
+                }
+
+                ++m_nThreadSeq;
+                return false;           // unused bool return
+            }
+
+            public void Step3_OnThread()
+            {
+                listSameVolDescLength.Sort((x, y) => ((NodeDatum)y.Tag).LengthSubnodes.CompareTo(((NodeDatum)x.Tag).LengthSubnodes));
+
+                foreach (TreeNode treeNode in listSameVolDescLength)
+                {
+                    Debug.Assert(Utilities.StrValid(treeNode.Text));
+
+                    ListViewItem lvItem = new ListViewItem(treeNode.Text);
+                    NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+
+                    lvItem.Tag = nodeDatum.m_listClones;
+                    lvItem.ForeColor = Color.Firebrick;
+                    lvItem.BackColor = treeNode.BackColor;
+                    listLVsameVol.Add(lvItem);
+
+                    if (nodeDatum.m_lvItem != null)
+                    {
+                        nodeDatum.m_lvItem = lvItem;
                     }
                 }
 
-                listLVunique.Add(lvItem);
-                Debug.Assert(nodeDatum.m_lvItem == null);
-                nodeDatum.m_lvItem = lvItem;
+                InsertSizeMarkers(listLVsameVol);
+                ++m_nThreadSeq;
             }
 
-            Console.WriteLine(nCanceled + " unique folders canceled because they're in cloned folders");
-            dictUniqueReverse = null;
-            InsertSizeMarkers(listLVunique);
-            form_lvUnique.Items.Clear();
-            form_lvUnique.Items.AddRange(listLVunique.ToArray());
-            m_listRootNodes.Sort((x, y) => String.Compare(x.Text, y.Text));
-            form_treeView_Browse.Nodes.Clear();
-            form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
-
-            List<TreeNode> listSameVolDescLength = new List<TreeNode>();
-
-            if (form_treeView_Browse.Nodes.Count > 0)
+            public bool Step4_OnForm()
             {
-                new AddTreeToList(m_listTreeNodes, listSameVolDescLength).Go(form_treeView_Browse.Nodes[0]);
+                Debug.Assert(form_lvSameVol.Items.Count == 0);
+                form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
+                listSameVolDescLength = null;
+                listLVsameVol = null;
+                ++m_nThreadSeq;
+                return false;           // unused bool return
             }
+        }
 
-            List<ListViewItem> listLVsameVol = new List<ListViewItem>();
-            listSameVolDescLength.Sort((x, y) => ((NodeDatum)y.Tag).LengthSubnodes.CompareTo(((NodeDatum)x.Tag).LengthSubnodes));
-
-            foreach (TreeNode treeNode in listSameVolDescLength)
-            {
-                Debug.Assert(Utilities.StrValid(treeNode.Text));
-
-                ListViewItem lvItem = new ListViewItem(treeNode.Text);
-                NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
-
-                lvItem.Tag = nodeDatum.m_listClones;
-                lvItem.ForeColor = Color.Firebrick;
-                lvItem.BackColor = treeNode.BackColor;
-                listLVsameVol.Add(lvItem);
-
-                if (nodeDatum.m_lvItem != null)
-                {
-                    nodeDatum.m_lvItem = lvItem;
-                }
-            }
-
-            InsertSizeMarkers(listLVsameVol);
-            form_lvSameVol.Items.Clear();
-            form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
-
+        bool TreeDoneCallback_A()
+        {
             //foreach (TreeNode treeNode in m_listTreeNodes)
             //{
             //    Debug.Assert(treeNode.TreeView == form_treeView_Browse);
             //}
 
-            listSameVolDescLength = null;
-            listLVsameVol = null;
             m_listRootNodes = null;
             form_treeView_Browse.Enabled = true;
             form_treeView_Browse.CheckBoxes = m_bCheckboxes;
             m_bBrowseLoaded = true;
             GC.Collect();
+            return false;               // unused bool return
+        }
+
+        void TreeDoneCallback()
+        {
+            TreeDone treeDone = new TreeDone(form_treeView_Browse, m_hashCache,
+                form_lvClones, form_lvSameVol, form_lvUnique,
+                m_listRootNodes, m_listTreeNodes);
+
+            treeDone.Step1_OnThread();
+            Debug.Assert(treeDone.ThreadSeq == 1);
+            Invoke(new DoSomething(treeDone.Step2_OnForm));
+            Debug.Assert(treeDone.ThreadSeq == 2);
+            treeDone.Step3_OnThread();
+            Debug.Assert(treeDone.ThreadSeq == 3);
+            Invoke(new DoSomething(treeDone.Step4_OnForm));
+            Debug.Assert(treeDone.ThreadSeq == 4);
+            treeDone = null;
+            Invoke(new DoSomething(TreeDoneCallback_A));
         }
 
         public class LVitemNameComparer : IEqualityComparer<ListViewItem>
@@ -1448,6 +1517,13 @@ namespace SearchDirLists
             form_lvFileCompare.Items.Clear();
             form_lvClones.Items.Clear();
             form_lvUnique.Items.Clear();
+            form_lvSameVol.Items.Clear();
+            form_lvDetail.Items.Clear();
+            form_lvDetailVol.Items.Clear();
+            form_colFilename.Text = m_strColFilesOrig;
+            form_colDirDetail.Text = m_strColDirDetailOrig;
+            form_colVolDetail.Text = m_strColVolDetailOrig;
+
             m_hashCache.Clear();
             m_listRootNodes = new List<TreeNode>();
             form_treeView_Browse.CheckBoxes = false;    // treeview items will be added to show progress
@@ -1462,7 +1538,7 @@ namespace SearchDirLists
             treeNode.NodeFont = new Font(form_treeView_Browse.Font, FontStyle.Bold | FontStyle.Underline);
             form_treeView_Browse.Nodes.Add(treeNode);
             form_treeView_Browse.Enabled = false;
-            m_tree = new Tree(form_lvVolumesMain.Items, m_hashCache, 
+            m_tree = new Tree(form_lvVolumesMain.Items, m_hashCache,
                 new TreeStatusDelegate(TreeStatusCallback), new TreeDoneDelegate(TreeDoneCallback));
             m_tree.DoThreadFactory();
         }

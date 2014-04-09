@@ -122,7 +122,7 @@ namespace SearchDirLists
                 WIN32_FIND_DATAW ffd = new WIN32_FIND_DATAW();
                 IntPtr handle = FindFirstFileW(@"\\?\" + strFile, out ffd);
 
-                if (handle != (IntPtr) (-1))
+                if (handle != (IntPtr)(-1))
                 {
                     FromFindData(ffd);
                 }
@@ -465,7 +465,7 @@ namespace SearchDirLists
 
         static String FormatLine(String strLineType, long nLineNo, String strLine_in = null)
         {
-            String strLine_out = strLineType  + "\t" + nLineNo;
+            String strLine_out = strLineType + "\t" + nLineNo;
 
             if (StrValid(strLine_in))
             {

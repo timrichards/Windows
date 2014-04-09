@@ -151,6 +151,21 @@ namespace SearchDirLists
             }
         }
 
+        class BufferedTreeView : TreeView
+        {
+            protected override void OnHandleCreated(EventArgs e)
+            {
+                SendMessage(this.Handle, TVM_SETEXTENDEDSTYLE, (IntPtr)TVS_EX_DOUBLEBUFFER, (IntPtr)TVS_EX_DOUBLEBUFFER);
+                base.OnHandleCreated(e);
+            }
+            // Pinvoke:
+            private const int TVM_SETEXTENDEDSTYLE = 0x1100 + 44;
+            private const int TVM_GETEXTENDEDSTYLE = 0x1100 + 45;
+            private const int TVS_EX_DOUBLEBUFFER = 0x0004;
+            [System.Runtime.InteropServices.DllImport("user32.dll")]
+            private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
+        }
+
         partial class SOTFile
         {
             public static void WriteList(ListView.ListViewItemCollection lvItems, StreamWriter sw)
@@ -179,15 +194,20 @@ namespace SearchDirLists
 
             public static void ReadList(ListView.ListViewItemCollection lvItems, StreamReader sr, String strDir_in = null)
             {
-                bool bValid = false;
                 List<ListViewItem> listItems = new List<ListViewItem>();
                 String strLine = sr.ReadLine();
 
                 do
                 {
-                    if (strLine == null) break;
-                    if ((Utilities.m_str_VOLUME_LIST_HEADER_01 + Utilities.m_str_VOLUME_LIST_HEADER).Contains(strLine) == false)
+                    if (strLine == null)
+                    {
                         break;
+                    }
+
+                    if ((Utilities.m_str_VOLUME_LIST_HEADER_01 + Utilities.m_str_VOLUME_LIST_HEADER).Contains(strLine) == false)
+                    {
+                        break;
+                    }
 
                     while ((strLine = sr.ReadLine()) != null)
                     {
@@ -212,19 +232,18 @@ namespace SearchDirLists
 
                         strArray[1] = strArray[1].TrimEnd(Path.DirectorySeparatorChar);
                         listItems.Add(new ListViewItem(strArray));
-                        bValid = true;
                     }
                 }
                 while (false);
 
-                if (bValid == false)
-                {
-                    MessageBox.Show("Not a valid volume list file.", "Load Volume List");
-                }
-                else
+                if (listItems.Count > 0)
                 {
                     lvItems.Clear();
                     lvItems.AddRange(listItems.ToArray());
+                }
+                else
+                {
+                    MessageBox.Show("Not a valid volume list file.", "Load Volume List");
                 }
             }
 
@@ -239,14 +258,14 @@ namespace SearchDirLists
             }
         }
 
-   //     const String m_strMARKFORCOPY = "markForCopy";
+        //     const String m_strMARKFORCOPY = "markForCopy";
 
         public Form1()
         {
             InitializeComponent();
 
             // Assert string-lookup form items exist
-        //    Debug.Assert(context_rclick_node.Items[m_strMARKFORCOPY] != null);
+            //    Debug.Assert(context_rclick_node.Items[m_strMARKFORCOPY] != null);
 
             m_blink = new Blink(timer_blink, form_cbNavigate);
             m_strBtnTreeCollapseOrig = form_btn_TreeCollapse.Text;
@@ -961,7 +980,7 @@ namespace SearchDirLists
                 return;
             }
 
-    //        treeNode.Expand();
+            //        treeNode.Expand();
             form_treeView_Browse.TopNode = treeNode.Parent;
 
             if (treeNode.IsVisible)
@@ -1322,7 +1341,7 @@ namespace SearchDirLists
             {
                 using (StreamReader fs = File.OpenText(openFileDialog1.FileName))
                 {
-                    SOTFile.ReadList(form_lvVolumesMain.Items, fs);
+                    SOTFile.ReadList(form_lvVolumesMain.Items, fs, Path.GetDirectoryName(openFileDialog1.FileName));
                 }
             }
 
@@ -1857,12 +1876,6 @@ namespace SearchDirLists
         void form_lv_Volumes_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             UpdateLV_VolumesSelection();
-        }
-      
-        void form_tabPage_Browse_Paint(object sender, PaintEventArgs e)
-        {
-            timer_DoTree.Stop();
-            DoTree();
         }
 
         void form_tree_compare_KeyPress(object sender, KeyPressEventArgs e)

@@ -122,7 +122,7 @@ namespace SearchDirLists
 
     class RootNode
     {
-        SortedDictionary<String, Node> m_nodes = new SortedDictionary<string, Node>();
+        SortedDictionary<String, Node> m_nodes = new SortedDictionary<String, Node>();
         long m_firstLineNo = 0;
 
         public SortedDictionary<String, Node> Nodes { get { return m_nodes; } set { m_nodes = value; } }
@@ -132,7 +132,7 @@ namespace SearchDirLists
     class Node : Utilities
     {
         RootNode m_rootNode = null;
-        SortedDictionary<String, Node> subNodes = new SortedDictionary<string, Node>();
+        SortedDictionary<String, Node> subNodes = new SortedDictionary<String, Node>();
         String m_strPath = null;
         long m_nPrevLineNo = 0;
         long m_nLineNo = 0;
@@ -424,7 +424,11 @@ namespace SearchDirLists
                 foreach (String strLine in arrDriveInfo)
                 {
                     String[] strArray = strLine.Split('\t');
-                    strBuilder.AppendLine(strArray[2]);
+
+                    if (strArray.Length > 2)
+                    {
+                        strBuilder.AppendLine(strArray[2]);
+                    }
                 }
 
                 lock (m_hashCache)
@@ -443,7 +447,7 @@ namespace SearchDirLists
             List<String> listLines = File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Directory)).ToList();
             DirData dirData = new DirData(m_statusCallback, rootNode);
 
-            foreach (string strLine in listLines)
+            foreach (String strLine in listLines)
             {
                 String[] strArray = strLine.Split('\t');
                 long nLineNo = long.Parse(strArray[1]);
@@ -568,7 +572,7 @@ namespace SearchDirLists
         public String StrCompareDir { get { return m_strCompareDir; } }
         public long NumFiles { get { return m_nNumFiles; } }
 
-        public LVitemFileTag(string strCompareDir, long nNumFiles)
+        public LVitemFileTag(String strCompareDir, long nNumFiles)
         {
             m_strCompareDir = strCompareDir;
             m_nNumFiles = nNumFiles;

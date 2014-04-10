@@ -263,7 +263,7 @@ namespace SearchDirLists
         {
             InitializeComponent();
 
-            // Assert string-lookup form items exist
+            // Assert String-lookup form items exist
             //    Debug.Assert(context_rclick_node.Items[m_strMARKFORCOPY] != null);
 
             m_blink = new Blink(timer_blink, form_cbNavigate);
@@ -594,12 +594,12 @@ namespace SearchDirLists
             return stbFullPath.ToString().Replace(PP, P);
         }
 
-        TreeNode GetNodeByPath(string path, TreeView treeView)
+        TreeNode GetNodeByPath(String path, TreeView treeView)
         {
             return GetNodeByPath_A(path, treeView) ?? GetNodeByPath_A(path, treeView, bIgnoreCase: true);
         }
 
-        TreeNode GetNodeByPath_A(string strPath, TreeView treeView, bool bIgnoreCase = false)
+        TreeNode GetNodeByPath_A(String strPath, TreeView treeView, bool bIgnoreCase = false)
         {
             if (Utilities.StrValid(strPath) == false)
             {
@@ -612,7 +612,7 @@ namespace SearchDirLists
             }
 
             TreeNode node = null;
-            string[] arrPath = null;
+            String[] arrPath = null;
             int i = 0;
             int nPathLevelLength = 0;
             String P = Path.DirectorySeparatorChar.ToString();
@@ -673,7 +673,7 @@ namespace SearchDirLists
             return node;
         }
 
-        TreeNode GetSubNode(TreeNode node, string[] pathLevel, int i, int nPathLevelLength, bool bIgnoreCase)
+        TreeNode GetSubNode(TreeNode node, String[] pathLevel, int i, int nPathLevelLength, bool bIgnoreCase)
         {
             foreach (TreeNode subNode in node.Nodes)
             {
@@ -1143,7 +1143,7 @@ namespace SearchDirLists
                 }
             }
 
-            ListViewItem lvItem = new ListViewItem(new string[] { m_strVolumeName, m_strPath, m_strSaveAs, strStatus, "Yes" });
+            ListViewItem lvItem = new ListViewItem(new String[] { m_strVolumeName, m_strPath, m_strSaveAs, strStatus, "Yes" });
 
             lvItem.Name = m_strPath;
             form_lvVolumesMain.Items.Add(lvItem);
@@ -1599,7 +1599,7 @@ namespace SearchDirLists
             inputBox.Prompt = "Enter a volume group name";
             inputBox.Entry = form_lvVolumesMain.SelectedItems[0].SubItems[5].Text;
 
-            SortedDictionary<String, object> dictVolGroups = new SortedDictionary<string, object>();
+            SortedDictionary<String, object> dictVolGroups = new SortedDictionary<String, object>();
 
             foreach (ListViewItem lvItem in form_lvVolumesMain.Items)
             {

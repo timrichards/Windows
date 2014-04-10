@@ -18,7 +18,7 @@ namespace SearchDirLists
     class SearchResultsDir
     {
         String m_strDir = null;
-        List<String> m_listFiles = new List<string>();
+        List<String> m_listFiles = new List<String>();
 
         public String StrDir { get { return m_strDir; } set { m_strDir = value; } }
         public List<String> ListFiles { get { return m_listFiles; } }
@@ -227,7 +227,7 @@ namespace SearchDirLists
         List<LVvolStrings> m_list_lvVolStrings = new List<LVvolStrings>();
 
         public Search(ListView.ListViewItemCollection lvVolItems, String strSearch, bool bCaseSensitive,
-            SearchFile.FolderSpecialHandling folderHandling, bool bSearchFilesOnly, string strCurrentNode,
+            SearchFile.FolderSpecialHandling folderHandling, bool bSearchFilesOnly, String strCurrentNode,
             SearchStatusDelegate statusCallback, SearchDoneDelegate doneCallback)
         {
             foreach (ListViewItem lvItem in lvVolItems)

@@ -330,7 +330,7 @@ namespace SearchDirLists
                 TreeNode s2 = null;
                 NodeDatum n1 = (NodeDatum)s1.Tag;
 
-                if (n1.LengthSubnodes <= (nMin10M + nMin100K))
+                if (n1.TotalLength <= (nMin10M + nMin100K))
                 {
                     s1.ForeColor = Color.LightGray;
                 }
@@ -345,7 +345,7 @@ namespace SearchDirLists
 
                     NodeDatum n2 = (NodeDatum)s2.Tag;
 
-                    bCompare &= (n1.NumImmediateFiles == n2.NumImmediateFiles);
+                    bCompare &= (n1.nImmediateFiles == n2.nImmediateFiles);
                     bCompare &= (Math.Abs(n1.Length - n2.Length) <= (nMin10M + nMin100K));
 
                     if (bCompare == false) { s2.ForeColor = Color.Red; }
@@ -1243,12 +1243,12 @@ namespace SearchDirLists
 
                         if (Utilities.StrValid(pair.Key.Text))
                         {
-                            l1 = ((NodeDatum)pair.Key.Tag).LengthSubnodes;
+                            l1 = ((NodeDatum)pair.Key.Tag).TotalLength;
                         }
 
                         if (pair.Value != null)
                         {
-                            l2 = ((NodeDatum)pair.Value.Tag).LengthSubnodes;
+                            l2 = ((NodeDatum)pair.Value.Tag).TotalLength;
                         }
 
                         long lMax = Math.Max(l1, l2);
@@ -1960,7 +1960,7 @@ namespace SearchDirLists
 
             NodeDatum nodeDatum = (NodeDatum)e.Node.Tag;
 
-            if (nodeDatum.NumImmediateFiles == 0)
+            if (nodeDatum.nImmediateFiles == 0)
             {
                 form_colFilename.Text = m_strColFilesOrig;
             }
@@ -2112,6 +2112,35 @@ namespace SearchDirLists
             }
 
             form_lvCopy.Items.Clear();
+        }
+
+        private void form_searchFoldersAndFiles_Click(object sender, EventArgs e)
+        {
+            if (m_nTreeFindTextChanged == 0)
+            {
+                m_blink.Go(bProgress: true);
+                SearchFiles(form_cbNavigate.Text,
+                    new SearchResultsDelegate(SearchResultsCallback));
+            }
+            else
+            {
+                form_btnNavigate_Click(sender, e);
+            }
+        }
+
+        private void form_btnSearchFiles_Click(object sender, EventArgs e)
+        {
+            if (m_nTreeFindTextChanged == 0)
+            {
+                m_blink.Go(bProgress: true);
+                SearchFiles(form_cbNavigate.Text,
+                    new SearchResultsDelegate(SearchResultsCallback),
+                    bSearchFilesOnly: true);
+            }
+            else
+            {
+                form_btnNavigate_Click(sender, e);
+            }
         }
     }
 }

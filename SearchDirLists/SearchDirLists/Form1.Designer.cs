@@ -69,9 +69,9 @@ namespace SearchDirLists
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.form_splitTreeFind = new System.Windows.Forms.SplitContainer();
             this.form_splitCompare = new System.Windows.Forms.SplitContainer();
-            this.form_treeCompare1 = new BufferedTreeView();
-            this.form_treeCompare2 = new BufferedTreeView();
-            this.form_treeView_Browse = new BufferedTreeView();
+            this.form_treeCompare1 = new SearchDirLists.Form1.BufferedTreeView();
+            this.form_treeCompare2 = new SearchDirLists.Form1.BufferedTreeView();
+            this.form_treeView_Browse = new SearchDirLists.Form1.BufferedTreeView();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.form_lvCopy = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -121,6 +121,9 @@ namespace SearchDirLists
             this.timer_killRed = new System.Windows.Forms.Timer(this.components);
             this.timer_blink = new System.Windows.Forms.Timer(this.components);
             this.timer_DoTree = new System.Windows.Forms.Timer(this.components);
+            this.form_searchFoldersAndFiles = new System.Windows.Forms.Button();
+            this.form_btnSearchFiles = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
             this.form_tabControl.SuspendLayout();
             this.form_tabPageVolumes.SuspendLayout();
             this.form_tabPage_Browse.SuspendLayout();
@@ -291,7 +294,7 @@ namespace SearchDirLists
             // 
             // form_cbVolumeName
             // 
-            this.form_cbVolumeName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.form_cbVolumeName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.form_cbVolumeName.FormattingEnabled = true;
             this.form_cbVolumeName.Location = new System.Drawing.Point(111, 16);
@@ -311,8 +314,8 @@ namespace SearchDirLists
             // 
             // form_lvVolumesMain
             // 
-            this.form_lvVolumesMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.form_lvVolumesMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.form_lvVolumesMain.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.form_lvVolumesMain.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -365,7 +368,7 @@ namespace SearchDirLists
             // 
             // form_btnSavePathInfo
             // 
-            this.form_btnSavePathInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.form_btnSavePathInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.form_btnSavePathInfo.Enabled = false;
             this.form_btnSavePathInfo.Location = new System.Drawing.Point(14, 357);
@@ -410,7 +413,7 @@ namespace SearchDirLists
             // 
             // form_cbSaveAs
             // 
-            this.form_cbSaveAs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.form_cbSaveAs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.form_cbSaveAs.FormattingEnabled = true;
             this.form_cbSaveAs.Location = new System.Drawing.Point(114, 72);
@@ -421,7 +424,7 @@ namespace SearchDirLists
             // 
             // form_cbPath
             // 
-            this.form_cbPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.form_cbPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.form_cbPath.FormattingEnabled = true;
             this.form_cbPath.Location = new System.Drawing.Point(49, 43);
@@ -460,6 +463,9 @@ namespace SearchDirLists
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.label3);
+            this.splitContainer1.Panel1.Controls.Add(this.form_btnSearchFiles);
+            this.splitContainer1.Panel1.Controls.Add(this.form_searchFoldersAndFiles);
             this.splitContainer1.Panel1.Controls.Add(this.form_btn_TreeCollapse);
             this.splitContainer1.Panel1.Controls.Add(this.form_lblVolGroup);
             this.splitContainer1.Panel1.Controls.Add(this.form_btnNavigate);
@@ -501,11 +507,11 @@ namespace SearchDirLists
             // form_btnNavigate
             // 
             this.form_btnNavigate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btnNavigate.Location = new System.Drawing.Point(751, 3);
+            this.form_btnNavigate.Location = new System.Drawing.Point(661, 3);
             this.form_btnNavigate.Name = "form_btnNavigate";
             this.form_btnNavigate.Size = new System.Drawing.Size(58, 23);
             this.form_btnNavigate.TabIndex = 4;
-            this.form_btnNavigate.Text = "Navigate";
+            this.form_btnNavigate.Text = "Folders";
             this.form_btnNavigate.UseVisualStyleBackColor = true;
             this.form_btnNavigate.Click += new System.EventHandler(this.form_btnNavigate_Click);
             this.form_btnNavigate.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
@@ -513,7 +519,7 @@ namespace SearchDirLists
             // form_btnTreeCopy
             // 
             this.form_btnTreeCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btnTreeCopy.Location = new System.Drawing.Point(815, 3);
+            this.form_btnTreeCopy.Location = new System.Drawing.Point(567, 3);
             this.form_btnTreeCopy.Name = "form_btnTreeCopy";
             this.form_btnTreeCopy.Size = new System.Drawing.Size(41, 23);
             this.form_btnTreeCopy.TabIndex = 5;
@@ -524,12 +530,12 @@ namespace SearchDirLists
             // 
             // form_cbNavigate
             // 
-            this.form_cbNavigate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.form_cbNavigate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.form_cbNavigate.FormattingEnabled = true;
             this.form_cbNavigate.Location = new System.Drawing.Point(221, 5);
             this.form_cbNavigate.Name = "form_cbNavigate";
-            this.form_cbNavigate.Size = new System.Drawing.Size(524, 21);
+            this.form_cbNavigate.Size = new System.Drawing.Size(340, 21);
             this.form_cbNavigate.TabIndex = 3;
             this.form_cbNavigate.SelectedIndexChanged += new System.EventHandler(this.form_cbNavigate_SelectedIndexChanged);
             this.form_cbNavigate.TextChanged += new System.EventHandler(this.form_cbNavigate_TextChanged);
@@ -1160,6 +1166,38 @@ namespace SearchDirLists
             this.timer_DoTree.Interval = 3000;
             this.timer_DoTree.Tick += new System.EventHandler(this.timer_DoTree_Tick);
             // 
+            // form_searchFoldersAndFiles
+            // 
+            this.form_searchFoldersAndFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_searchFoldersAndFiles.Location = new System.Drawing.Point(725, 3);
+            this.form_searchFoldersAndFiles.Name = "form_searchFoldersAndFiles";
+            this.form_searchFoldersAndFiles.Size = new System.Drawing.Size(84, 23);
+            this.form_searchFoldersAndFiles.TabIndex = 7;
+            this.form_searchFoldersAndFiles.Text = "Folders && Files";
+            this.form_searchFoldersAndFiles.UseVisualStyleBackColor = true;
+            this.form_searchFoldersAndFiles.Click += new System.EventHandler(this.form_searchFoldersAndFiles_Click);
+            // 
+            // form_btnSearchFiles
+            // 
+            this.form_btnSearchFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_btnSearchFiles.Location = new System.Drawing.Point(815, 3);
+            this.form_btnSearchFiles.Name = "form_btnSearchFiles";
+            this.form_btnSearchFiles.Size = new System.Drawing.Size(41, 23);
+            this.form_btnSearchFiles.TabIndex = 8;
+            this.form_btnSearchFiles.Text = "Files";
+            this.form_btnSearchFiles.UseVisualStyleBackColor = true;
+            this.form_btnSearchFiles.Click += new System.EventHandler(this.form_btnSearchFiles_Click);
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(614, 8);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(41, 13);
+            this.label3.TabIndex = 9;
+            this.label3.Text = "Search";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1319,6 +1357,9 @@ namespace SearchDirLists
         private System.Windows.Forms.Button form_btnSaveCopyDirs;
         private System.Windows.Forms.Button form_btnCopyGen;
         private System.Windows.Forms.Button form_btnCopyClear;
+        private System.Windows.Forms.Button form_searchFoldersAndFiles;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button form_btnSearchFiles;
 
     }
 }

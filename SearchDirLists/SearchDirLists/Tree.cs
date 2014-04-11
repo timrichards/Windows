@@ -22,6 +22,7 @@ namespace SearchDirLists
         protected long m_nNumSubnodeFiles = 0;
         protected long m_nNumSubnodes = 0;
         protected long m_nNumImmediateFiles = 0;
+        protected long m_nNumNonEmptySubnodes = 0;
 
         public DetailsDatum()
         {
@@ -33,6 +34,7 @@ namespace SearchDirLists
             m_nNumSubnodeFiles = in_datum.m_nNumSubnodeFiles;
             m_nNumSubnodes = in_datum.m_nNumSubnodes;
             m_nNumImmediateFiles = in_datum.m_nNumImmediateFiles;
+            m_nNumNonEmptySubnodes = in_datum.m_nNumNonEmptySubnodes;
         }
 
         static public DetailsDatum operator +(DetailsDatum in_datum1, DetailsDatum in_datum2)
@@ -43,6 +45,7 @@ namespace SearchDirLists
             datum.m_nNumSubnodeFiles = in_datum1.m_nNumSubnodeFiles + in_datum2.m_nNumSubnodeFiles;
             datum.m_nNumSubnodes = in_datum1.m_nNumSubnodes + in_datum2.m_nNumSubnodes;
             datum.m_nNumImmediateFiles = in_datum1.m_nNumImmediateFiles + in_datum2.m_nNumImmediateFiles;
+            datum.m_nNumNonEmptySubnodes = in_datum1.m_nNumNonEmptySubnodes + in_datum2.m_nNumNonEmptySubnodes;
             return datum;
         }
 
@@ -50,6 +53,7 @@ namespace SearchDirLists
         public long NumSubnodeFiles { get { return m_nNumSubnodeFiles; } set { m_nNumSubnodeFiles = value; } }
         public long NumSubnodes { get { return m_nNumSubnodes; } set { m_nNumSubnodes = value; } }
         public long NumImmediateFiles { get { return m_nNumImmediateFiles; } set { m_nNumImmediateFiles = value; } }
+        public long NumNonEmptySubnodes { get { return m_nNumNonEmptySubnodes; } set { m_nNumNonEmptySubnodes = value; } }
     }
 
     class NodeDatumLVitemHolder     // this was a way of setting the listview item in a different node after processing the first. Not used.
@@ -72,7 +76,7 @@ namespace SearchDirLists
             get
             {
                 const double n1stDIV = 100000.0;
-                double nSubnodes = NumSubnodes / n1stDIV;
+                double nSubnodes = NumNonEmptySubnodes / n1stDIV;
                 double nSubnodeFiles = NumSubnodeFiles / n1stDIV / 10000000.0;
                 double nRet = LengthSubnodes + nSubnodeFiles + nSubnodes;
 
@@ -315,6 +319,13 @@ namespace SearchDirLists
             nodeDatum.NumImmediateFiles = (nodeDatum.LineNo - nodeDatum.PrevlineNo - 1);
             nodeDatum.NumSubnodeFiles = (datum.NumSubnodeFiles += nodeDatum.NumImmediateFiles);
             nodeDatum.NumSubnodes = (datum.NumSubnodes += treeNode.Nodes.Count);
+
+            if (nodeDatum.NumImmediateFiles > 0)
+            {
+                ++datum.NumNonEmptySubnodes;
+            }
+
+            nodeDatum.NumNonEmptySubnodes = datum.NumNonEmptySubnodes;
 
             double nKey = nodeDatum.Key;
 
@@ -667,6 +678,11 @@ namespace SearchDirLists
             if (nodeDatum.NumSubnodes > 0)
             {
                 listItems.Add(new ListViewItem(new String[] { "Total # Folders", nodeDatum.NumSubnodes.ToString(NUMFMT) }));
+            }
+
+            if (nodeDatum.NumNonEmptySubnodes > 0)
+            {
+                listItems.Add(new ListViewItem(new String[] { "Total # Non-empty Folders", nodeDatum.NumNonEmptySubnodes.ToString(NUMFMT) }));
             }
 
             listItems.Add(new ListViewItem(new String[] { "Total Size", FormatSize(nodeDatum.LengthSubnodes, bBytes: true) }));
@@ -1047,18 +1063,36 @@ namespace SearchDirLists
 
                         if (listNodes.Count > 1)
                         {
+                            List<TreeNode> listKeep = new List<TreeNode>();
+
                             foreach (TreeNode treeNode in listNodes)
                             {
                                 NodeDatum nodeDatum = ((NodeDatum)treeNode.Tag);
 
                                 Debug.Assert(nodeDatum.LengthSubnodes > 100 * 1024);
-                                nodeDatum.m_listClones = listNodes;
+
+                                if (listNodes.Contains(treeNode.Parent) == false)
+                                {
+                                    listKeep.Add(treeNode);
+                                }
+                            }
+
+                            if (listKeep.Count > 1)
+                            {
+                                foreach (TreeNode treeNode in listKeep)
+                                {
+                                    ((NodeDatum)treeNode.Tag).m_listClones = listKeep;
+                                }
+                            }
+                            else
+                            {
+                                listNodes = listKeep;   // kick off "else" logic below after deleting child clones
                             }
                         }
-                        else
+
+                        if (listNodes.Count == 1)       // "else"
                         {
                             TreeNode treeNode = listNodes[0];
-                            NodeDatum nodeDatum = ((NodeDatum)treeNode.Tag);
 
                             dictUnique.Add((double)pair.Key, treeNode);
                         }
@@ -1100,20 +1134,27 @@ namespace SearchDirLists
                         str_nClones = nClones.ToString("###,###");
                     }
 
-                    String strNode = listNodes.Value[0].Text;
-
-                    Debug.Assert(Utilities.StrValid(strNode));
-
-                    ListViewItem lvItem = new ListViewItem(new String[] { strNode, str_nClones });
+                    ListViewItem lvItem = new ListViewItem(new String[] { "", str_nClones });
 
                     lvItem.Tag = listNodes.Value;
                     lvItem.ForeColor = listNodes.Value[0].ForeColor;
 
+                    TreeNode nameNode = null;
+                    int nLevel = 999;
+
                     foreach (TreeNode treeNode in listNodes.Value)
                     {
+                        if (treeNode.Level < nLevel)
+                        {
+                            nLevel = treeNode.Level;
+                            nameNode = treeNode;
+                        }
+
                         ((NodeDatum)treeNode.Tag).m_lvItem = lvItem;
                     }
 
+                    lvItem.Text = nameNode.Text;
+                    Debug.Assert(Utilities.StrValid(lvItem.Text));
                     listLVitems.Add(lvItem);
                 }
 
@@ -1154,28 +1195,25 @@ namespace SearchDirLists
 
                     NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
-                    if (nodeDatum.NumImmediateFiles > 0)
+                    treeNode.ForeColor = lvItem.ForeColor = Color.Red;
+
+                    TreeNode parentNode_A = treeNode.Parent;
+
+                    while (parentNode_A != null)
                     {
-                        treeNode.ForeColor = lvItem.ForeColor = Color.Red;
-
-                        TreeNode parentNode_A = treeNode.Parent;
-
-                        while (parentNode_A != null)
+                        if (parentNode_A.ForeColor == Color.Empty)
                         {
-                            if (parentNode_A.ForeColor == Color.Empty)
+                            parentNode_A.ForeColor = Color.DarkRed;
+
+                            NodeDatum nodeDatum_A = (NodeDatum)parentNode_A.Tag;
+
+                            if (nodeDatum_A.m_lvItem != null)
                             {
-                                parentNode_A.ForeColor = Color.DarkRed;
-
-                                NodeDatum nodeDatum_A = (NodeDatum)parentNode_A.Tag;
-
-                                if (nodeDatum_A.m_lvItem != null)
-                                {
-                                    nodeDatum_A.m_lvItem.ForeColor = parentNode_A.ForeColor;
-                                }
+                                nodeDatum_A.m_lvItem.ForeColor = parentNode_A.ForeColor;
                             }
-
-                            parentNode_A = parentNode_A.Parent;
                         }
+
+                        parentNode_A = parentNode_A.Parent;
                     }
 
                     listLVunique.Add(lvItem);

@@ -211,6 +211,7 @@ namespace SearchDirLists
         public const String m_str_TOTAL_LENGTH_LOC = m_str_HEADER + " LENGTH";
         public const String m_str_DRIVE = m_str_HEADER + " DRIVE";
         public const String m_str_VOLUME_LIST_HEADER = m_str_HEADER + " VOLUME LIST";
+        public const String m_str_COPYDIRS_LIST_HEADER = m_str_HEADER + " COPYDIRS LIST";
         public const String m_str_USING_FILE = "Using file.";
         public const String m_str_SAVED = "Saved.";
         public const int nColLENGTH = 7;
@@ -662,19 +663,21 @@ namespace SearchDirLists
         List<String> m_list_Errors = new List<String>();
         System.Threading.Timer m_timerStatus = null;
 
-        private double StdDev(IEnumerable<double> values)
+        private double StdDevSign(List<double> values)
         {
-            double avg = values.Average();
-            return Math.Sqrt(
-                values.Sum(d => Math.Pow(d - avg, 2)) /
+            double nAvg = values.Average();
+            double nStdDev = Math.Sqrt(
+                values.Sum(d => Math.Pow(d - nAvg, 2)) /
                 (values.Count() - 1));
+
+            return nStdDev *= Math.Sign(values[values.Count] - nAvg);
         }
         
         void SaveDirListing_TimerCallback(object state)
         {
             m_listFileDiffs.Add(m_nFilesDiff);
 
-            double nFilesDiff = m_nFilesDiff/StdDev(m_listFileDiffs);
+            double nFilesDiff = m_nFilesDiff/StdDevSign(m_listFileDiffs);
 
             m_nFilesDiff = 0;
             m_statusCallback(m_volStrings.Index, nFilesTotal: m_nFilesTotal, nLengthTotal: m_nLengthTotal, nFilesDiff: nFilesDiff);
@@ -754,7 +757,6 @@ namespace SearchDirLists
 
                 if (CheckNTFS_chars(currentDir, bFile: false) == false)
                 {
-                    Debug.Assert(false);
                     continue;
                 }
 
@@ -823,7 +825,6 @@ namespace SearchDirLists
                     }
 
                     fs.WriteLine(FormatString(strDir: currentDir, dtCreated: di.CreationTime, strAttributes: di.Attributes.Value.ToString("X"), dtModified: di.LastWriteTime, nLength: nDirLength, strError1: strError1, strError2: strError2));
-                    fs.Flush();
                 }
 
                 // Push the subdirectories onto the stack for traversal. 

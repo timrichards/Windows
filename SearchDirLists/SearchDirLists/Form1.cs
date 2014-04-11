@@ -167,9 +167,9 @@ namespace SearchDirLists
 
         partial class SOTFile
         {
-            public static void WriteList(ListView.ListViewItemCollection lvItems, StreamWriter sw)
+            public static void WriteList(ListView.ListViewItemCollection lvItems, StreamWriter sw, String strHeader = null)
             {
-                sw.WriteLine(Utilities.m_str_VOLUME_LIST_HEADER);
+                sw.WriteLine(strHeader ?? Utilities.m_str_VOLUME_LIST_HEADER);
 
                 foreach (ListViewItem lvItem in lvItems)
                 {
@@ -191,7 +191,7 @@ namespace SearchDirLists
                 }
             }
 
-            public static void ReadList(ListView.ListViewItemCollection lvItems, StreamReader sr, String strDir_in = null)
+            public static void ReadList(ListView.ListViewItemCollection lvItems, StreamReader sr, String strDir_in = null, String strHeader = null)
             {
                 List<ListViewItem> listItems = new List<ListViewItem>();
                 String strLine = sr.ReadLine();
@@ -203,7 +203,7 @@ namespace SearchDirLists
                         break;
                     }
 
-                    if ((Utilities.m_str_VOLUME_LIST_HEADER_01 + Utilities.m_str_VOLUME_LIST_HEADER).Contains(strLine) == false)
+                    if ((strHeader ?? (Utilities.m_str_VOLUME_LIST_HEADER_01 + Utilities.m_str_VOLUME_LIST_HEADER)).Contains(strLine) == false)
                     {
                         break;
                     }
@@ -212,24 +212,28 @@ namespace SearchDirLists
                     {
                         String[] strArray = strLine.Split('\t');
 
-                        if (strArray.Length < 4)
+                        if (strHeader == null)
                         {
-                            break;
-                        }
+                            if (strArray.Length < 4)
+                            {
+                                break;
+                            }
 
-                        strArray[3] = "Using file.";
-
-                        if (File.Exists(strArray[2]) == false)
-                        {
-                            strArray[2] = Path.Combine(strDir_in ?? Path.GetTempPath(), Path.GetFileName(strArray[2]));
+                            strArray[3] = "Using file.";
 
                             if (File.Exists(strArray[2]) == false)
                             {
-                                strArray[3] = "No file. Will create.";
+                                strArray[2] = Path.Combine(strDir_in ?? Path.GetTempPath(), Path.GetFileName(strArray[2]));
+
+                                if (File.Exists(strArray[2]) == false)
+                                {
+                                    strArray[3] = "No file. Will create.";
+                                }
                             }
+
+                            strArray[1] = strArray[1].TrimEnd(Path.DirectorySeparatorChar);
                         }
 
-                        strArray[1] = strArray[1].TrimEnd(Path.DirectorySeparatorChar);
                         listItems.Add(new ListViewItem(strArray));
                     }
                 }
@@ -242,7 +246,14 @@ namespace SearchDirLists
                 }
                 else
                 {
-                    MessageBox.Show("Not a valid volume list file.", "Load Volume List");
+                    if (strHeader == null)
+                    {
+                        MessageBox.Show("Not a valid volume list file.       ", "Load Volume List");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Not a valid file.                   ");
+                    }
                 }
             }
 
@@ -2055,10 +2066,38 @@ namespace SearchDirLists
 
         void form_btnSaveCopyDirs_Click(object sender, EventArgs e)
         {
+            if (saveFileDialog1.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            if ((File.Exists(saveFileDialog1.FileName))
+                && (MessageBox.Show(this, saveFileDialog1.FileName + " already exists. Overwrite?                ", "Save folders selected for copy", MessageBoxButtons.YesNo)
+                != System.Windows.Forms.DialogResult.Yes))
+            {
+                return;
+            }
+
+            using (StreamWriter fs = File.CreateText(saveFileDialog1.FileName))
+            {
+                SOTFile.WriteList(form_lvCopy.Items, fs, Utilities.m_str_COPYDIRS_LIST_HEADER);
+            }
         }
 
         void form_btnLoadCopyDirs_Click(object sender, EventArgs e)
         {
+            openFileDialog1.InitialDirectory = saveFileDialog1.InitialDirectory;
+            openFileDialog1.FileName = saveFileDialog1.FileName;
+
+            if (openFileDialog1.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            using (StreamReader fs = File.OpenText(openFileDialog1.FileName))
+            {
+                SOTFile.ReadList(form_lvCopy.Items, fs, Path.GetDirectoryName(openFileDialog1.FileName), Utilities.m_str_COPYDIRS_LIST_HEADER);
+            }
         }
 
         void form_btnCopyGen_Click(object sender, EventArgs e)

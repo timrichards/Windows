@@ -830,7 +830,6 @@ namespace SearchDirLists
             // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.
             List<ListViewItem> listLVitems = new List<ListViewItem>();
             List<ListViewItem> listLVunique = new List<ListViewItem>();
-            List<TreeNode> listSameVolDescLength = new List<TreeNode>();
             List<ListViewItem> listLVsameVol = new List<ListViewItem>();
 
             int m_nThreadSeq;
@@ -1195,6 +1194,25 @@ namespace SearchDirLists
 
                     NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
+                    bool bUnique = (nodeDatum.Length > 0);
+
+                    if (bUnique == false)
+                    {
+                        foreach (TreeNode subNode in treeNode.Nodes)
+                        {
+                            if (((NodeDatum)subNode.Tag).m_listClones == null)
+                            {
+                                bUnique = true;
+                                break;
+                            }
+                        }
+
+                        if (bUnique == false)
+                        {
+                            continue;
+                        }
+                    }
+
                     treeNode.ForeColor = lvItem.ForeColor = Color.Red;
 
                     TreeNode parentNode_A = treeNode.Parent;
@@ -1224,29 +1242,13 @@ namespace SearchDirLists
                 Console.WriteLine(nCanceled + " unique folders canceled because they're in cloned folders");
                 dictUniqueReverse = null;
                 InsertSizeMarkers(listLVunique);
-                ++m_nThreadSeq;
-            }
 
-            public bool Step2_OnForm()
-            {
-                Debug.Assert(form_lvClones.Items.Count == 0);
-                form_lvClones.Items.AddRange(listLVitems.ToArray());
-                listLVitems = null;
-                Debug.Assert(form_lvUnique.Items.Count == 0);
-                form_lvUnique.Items.AddRange(listLVunique.ToArray());
-                form_treeView_Browse.Nodes.Clear();
-                form_treeView_Browse.Enabled = true;
-                form_treeView_Browse.CheckBoxes = m_bCheckboxes;
-                form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
-                ++m_nThreadSeq;
-                return false;           // unused bool return
-            }
+                TreeNode treeNode_A = new TreeNode("", m_listRootNodes.ToArray());
+                List<TreeNode> listSameVolDescLength = new List<TreeNode>();
 
-            public void Step3_OnThread()
-            {
-                if (form_treeView_Browse.Nodes.Count > 0)
+                if (treeNode_A.Nodes.Count > 0)
                 {
-                    new AddTreeToList(m_listTreeNodes, listSameVolDescLength).Go(form_treeView_Browse.Nodes[0]);
+                    new AddTreeToList(m_listTreeNodes, listSameVolDescLength).Go(treeNode_A.Nodes[0]);
                 }
 
                 listSameVolDescLength.Sort((x, y) => ((NodeDatum)y.Tag).LengthSubnodes.CompareTo(((NodeDatum)x.Tag).LengthSubnodes));
@@ -1269,15 +1271,24 @@ namespace SearchDirLists
                     }
                 }
 
+                listSameVolDescLength = null;
                 InsertSizeMarkers(listLVsameVol);
                 ++m_nThreadSeq;
             }
 
-            public bool Step4_OnForm()
+            public bool Step2_OnForm()
             {
+                Debug.Assert(form_lvClones.Items.Count == 0);
+                form_lvClones.Items.AddRange(listLVitems.ToArray());
+                listLVitems = null;
+                Debug.Assert(form_lvUnique.Items.Count == 0);
+                form_lvUnique.Items.AddRange(listLVunique.ToArray());
+                form_treeView_Browse.Nodes.Clear();
+                form_treeView_Browse.Enabled = true;
+                form_treeView_Browse.CheckBoxes = m_bCheckboxes;
+                form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
                 Debug.Assert(form_lvSameVol.Items.Count == 0);
                 form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
-                listSameVolDescLength = null;
                 listLVsameVol = null;
                 ++m_nThreadSeq;
                 return false;           // unused bool return
@@ -1296,12 +1307,6 @@ namespace SearchDirLists
             Console.WriteLine(treeDone.ThreadSeq + " " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             Invoke(new DoSomething(treeDone.Step2_OnForm));
             Debug.Assert(treeDone.ThreadSeq == 2);
-            Console.WriteLine(treeDone.ThreadSeq + " " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
-            treeDone.Step3_OnThread();
-            Debug.Assert(treeDone.ThreadSeq == 3);
-            Console.WriteLine(treeDone.ThreadSeq + " " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
-            Invoke(new DoSomething(treeDone.Step4_OnForm));
-            Debug.Assert(treeDone.ThreadSeq == 4);
             Console.WriteLine(treeDone.ThreadSeq + " " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             treeDone = null;
             m_listRootNodes = null;

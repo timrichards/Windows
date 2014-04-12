@@ -623,15 +623,15 @@ namespace SearchDirLists
                 strPath = strPath.ToLower();
             }
 
-            TreeNode node = null;
-            String[] arrPath = null;
-            int i = 0;
-            int nPathLevelLength = 0;
+            TreeNode nodeRet = null;
             String P = Path.DirectorySeparatorChar.ToString();
             String PP = P + P;
 
             foreach (TreeNode topNode in treeView.Nodes)
             {
+                String[] arrPath = null;
+                int nPathLevelLength = 0;
+                int nLevel = 0;
                 String strNode = topNode.Name.TrimEnd(Path.DirectorySeparatorChar).Replace(PP, P);
 
                 if (bIgnoreCase)
@@ -669,20 +669,24 @@ namespace SearchDirLists
                     }
                 }
 
-                if (strNode == arrPath[i])
+                if (strNode == arrPath[nLevel])
                 {
-                    node = topNode;
-                    i++;
-                    break;
+                    nodeRet = topNode;
+                    nLevel++;
+
+                    if ((nLevel < nPathLevelLength) && nodeRet != null)
+                    {
+                        nodeRet = GetSubNode(nodeRet, arrPath, nLevel, nPathLevelLength, bIgnoreCase);
+
+                        if (nodeRet != null)
+                        {
+                            return nodeRet;
+                        }
+                    }
                 }
             }
 
-            if ((i < nPathLevelLength) && node != null)
-            {
-                node = GetSubNode(node, arrPath, i, nPathLevelLength, bIgnoreCase);
-            }
-
-            return node;
+            return nodeRet;
         }
 
         TreeNode GetSubNode(TreeNode node, String[] pathLevel, int i, int nPathLevelLength, bool bIgnoreCase)
@@ -991,7 +995,6 @@ namespace SearchDirLists
                 return;
             }
 
-            //        treeNode.Expand();
             form_treeView_Browse.TopNode = treeNode.Parent;
 
             if (treeNode.IsVisible)
@@ -1374,6 +1377,7 @@ namespace SearchDirLists
         void Search(object sender)
         {
             m_ctlLastSearchSender = (Control)sender;
+
             TreeView treeView = form_treeView_Browse;
 
             if (m_bCompareMode)
@@ -1385,29 +1389,7 @@ namespace SearchDirLists
             {
                 if (m_nTreeFindTextChanged == 0)
                 {
-                    if (form_cbNavigate.Text.StartsWith(Path.DirectorySeparatorChar.ToString()))
-                    {
-                        // special code for find file and dir
-                        String strSearch = form_cbNavigate.Text.Substring(1);
-                        bool bSearchFileOnly = false;
-
-                        if (strSearch.StartsWith(Path.DirectorySeparatorChar.ToString()))
-                        {
-                            strSearch = strSearch.Substring(1);
-                            bSearchFileOnly = true;
-                        }
-
-                        m_blink.Go(bProgress: true);
-                        SearchFiles(strSearch,
-                            new SearchResultsDelegate(SearchResultsCallback),
-                            bSearchFilesOnly: bSearchFileOnly);
-                        // async
-                        return;
-                    }
-                    else
-                    {
-                        FindNode(form_cbNavigate.Text, treeView.SelectedNode, treeView);
-                    }
+                    FindNode(form_cbNavigate.Text, treeView.SelectedNode, treeView);
                 }
 
                 if (m_bFileFound)
@@ -2102,9 +2084,18 @@ namespace SearchDirLists
                 return;
             }
 
+            ListView lv = new ListView();   // Hack: check changed event loads the real listviewer
+
             using (StreamReader fs = File.OpenText(openFileDialog1.FileName))
             {
-                SOTFile.ReadList(form_lvCopy.Items, fs, Path.GetDirectoryName(openFileDialog1.FileName), Utilities.m_str_COPYDIRS_LIST_HEADER);
+                SOTFile.ReadList(lv.Items, fs, Path.GetDirectoryName(openFileDialog1.FileName), Utilities.m_str_COPYDIRS_LIST_HEADER);
+            }
+
+            foreach (ListViewItem lvItem in lv.Items)
+            {
+                TreeNode treeNode = GetNodeByPath(lvItem.SubItems[1].Text, form_treeView_Browse);
+                lvItem.Tag = treeNode;
+                treeNode.Checked = true;
             }
         }
 

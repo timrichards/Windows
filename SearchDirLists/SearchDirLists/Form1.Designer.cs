@@ -121,7 +121,6 @@ namespace SearchDirLists
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.timer_killRed = new System.Windows.Forms.Timer(this.components);
             this.timer_blink = new System.Windows.Forms.Timer(this.components);
             this.timer_DoTree = new System.Windows.Forms.Timer(this.components);
             this.form_tabControl.SuspendLayout();
@@ -495,7 +494,7 @@ namespace SearchDirLists
             this.form_btnSearchFiles.TabIndex = 8;
             this.form_btnSearchFiles.Text = "Files";
             this.form_btnSearchFiles.UseVisualStyleBackColor = true;
-            this.form_btnSearchFiles.Click += new System.EventHandler(this.form_btnSearchFiles_Click);
+            this.form_btnSearchFiles.Click += new System.EventHandler(this.form_searchFoldersAndFiles_Click);
             // 
             // form_searchFoldersAndFiles
             // 
@@ -1187,18 +1186,13 @@ namespace SearchDirLists
             // saveFileDialog1
             // 
             this.saveFileDialog1.DefaultExt = "txt";
-            this.saveFileDialog1.Filter = "SearchDirLists files|*.sot|Text files|*.txt|All files|*.*";
+            this.saveFileDialog1.Filter = "Text files|*.txt|SearchDirLists files|*.sot|All files|*.*";
             this.saveFileDialog1.OverwritePrompt = false;
             // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            this.openFileDialog1.Filter = "SearchDirLists files|*.sot|Text files|*.txt|All files|*.*";
-            // 
-            // timer_killRed
-            // 
-            this.timer_killRed.Interval = 10000;
-            this.timer_killRed.Tick += new System.EventHandler(this.timer_killRed_Tick);
+            this.openFileDialog1.Filter = "Text files|*.txt|SearchDirLists files|*.sot|All files|*.*";
             // 
             // timer_blink
             // 
@@ -1307,7 +1301,6 @@ namespace SearchDirLists
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.TabPage form_tabPage_Browse;
         private BufferedTreeView form_treeView_Browse;
-        private System.Windows.Forms.Timer timer_killRed;
         private System.Windows.Forms.SplitContainer form_splitFiles;
         private ListViewEx form_lvDetail;
         private System.Windows.Forms.SplitContainer form_splitDetail;

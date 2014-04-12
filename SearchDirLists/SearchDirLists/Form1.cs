@@ -569,9 +569,9 @@ namespace SearchDirLists
 
         void FormError(Control control, String strError, String strTitle)
         {
-            control.BackColor = Color.Red;
-            timer_killRed.Enabled = true;
+            m_blink.Go(control, clr: Color.Red);
             MessageBox.Show(strError, strTitle);
+            m_blink.Go(control, clr: Color.Red, Once: true);
         }
 
         String FullPath(TreeNode treeNode)
@@ -883,11 +883,11 @@ namespace SearchDirLists
             }
 
             {
-                String strLine = File.ReadLines(m_strSaveAs).Take(1).ToArray()[0].Split('\t')[2];
+                String[] arrLine = File.ReadLines(m_strSaveAs).Take(1).ToArray()[0].Split('\t');
 
-                Debug.Assert(strLine == Utilities.m_str_HEADER);
+                if (arrLine.Length < 3) return false;
 
-                if (strLine != Utilities.m_str_HEADER)
+                if (arrLine[2] != Utilities.m_str_HEADER)
                 {
                     return false;
                 }
@@ -1049,10 +1049,6 @@ namespace SearchDirLists
                 return false;
             }
 
-            form_cbVolumeName.BackColor = Color.Empty;
-            form_cbPath.BackColor = Color.Empty;
-            form_cbSaveAs.BackColor = Color.Empty;
-
             if (Utilities.StrValid(m_strSaveAs) == false)
             {
                 FormError(form_cbSaveAs, "Must have a file to load or save directory listing to.", "Volume Save As");
@@ -1067,11 +1063,12 @@ namespace SearchDirLists
 
             if (File.Exists(m_strSaveAs) && Utilities.StrValid(m_strPath))
             {
+                m_blink.Go(form_cbSaveAs, clr: Color.Red);
+
                 if (MessageBox.Show(m_strSaveAs + " already exists. Overwrite?                 ", "Volume Save As", MessageBoxButtons.YesNo)
                     != System.Windows.Forms.DialogResult.Yes)
                 {
-                    form_cbSaveAs.BackColor = Color.Red;
-                    timer_killRed.Enabled = true;
+                    m_blink.Go(form_cbSaveAs, clr: Color.Red, Once: true);
                     return false;
                 }
             }
@@ -1084,30 +1081,29 @@ namespace SearchDirLists
 
             if (Utilities.StrValid(m_strVolumeName) && form_lvVolumesMain.FindItemWithText(m_strVolumeName) != null)
             {
-                form_cbVolumeName.BackColor = Color.Red;
+                m_blink.Go(form_cbVolumeName, clr: Color.Red);
 
                 if (MessageBox.Show("Nickname already in use. Use it for more than one volume?", "Volume Save As", MessageBoxButtons.YesNo)
                     != DialogResult.Yes)
                 {
+                    m_blink.Go(form_cbVolumeName, clr: Color.Red, Once: true);
                     return false;
-                }
-                else
-                {
-                    form_cbVolumeName.BackColor = Color.Empty;
                 }
             }
 
             if ((File.Exists(m_strSaveAs) == false) && (Utilities.StrValid(m_strPath) == false))
             {
-                form_cbPath.BackColor = Color.Red;
+                m_blink.Go(form_cbPath, clr: Color.Red);
                 MessageBox.Show("Must have a path or existing directory listing file.  ", "Volume Source Path");
+                m_blink.Go(form_cbPath, clr: Color.Red, Once: true);
                 return false;
             }
 
             if (Utilities.StrValid(m_strPath) && (Directory.Exists(m_strPath) == false))
             {
-                form_cbPath.BackColor = Color.Red;
+                m_blink.Go(form_cbPath, clr: Color.Red);
                 MessageBox.Show("Path does not exist.                                  ", "Volume Source Path");
+                m_blink.Go(form_cbPath, clr: Color.Red, Once: true);
                 return false;
             }
 
@@ -1131,8 +1127,9 @@ namespace SearchDirLists
                         }
                         else
                         {
-                            form_cbPath.BackColor = Color.Red;
+                            m_blink.Go(form_cbPath, clr: Color.Red);
                             MessageBox.Show("File is bad and path does not exist.           ", "Volume Source Path");
+                            m_blink.Go(form_cbPath, clr: Color.Red, Once: true);
                             return false;
                         }
                     }
@@ -1145,16 +1142,13 @@ namespace SearchDirLists
 
             if (Utilities.StrValid(m_strVolumeName) == false)
             {
-                form_cbVolumeName.BackColor = Color.Red;
+                m_blink.Go(form_cbVolumeName, clr: Color.Red);
 
                 if (MessageBox.Show("Continue without entering a nickname for this volume?", "Volume Save As", MessageBoxButtons.YesNo)
                     != DialogResult.Yes)
                 {
+                    m_blink.Go(form_cbVolumeName, clr: Color.Red, Once: true);
                     return false;
-                }
-                else
-                {
-                    form_cbVolumeName.BackColor = Color.Empty;
                 }
             }
 
@@ -2023,14 +2017,6 @@ namespace SearchDirLists
             DoTree(true);
         }
 
-        void timer_killRed_Tick(object sender, EventArgs e)
-        {
-            form_cbVolumeName.BackColor = Color.Empty;
-            form_cbPath.BackColor = Color.Empty;
-            form_cbSaveAs.BackColor = Color.Empty;
-            timer_killRed.Enabled = false;
-        }
-
         void form_treeView_Browse_AfterCheck(object sender, TreeViewEventArgs e)
         {
             String strPath = FullPath(e.Node);
@@ -2109,31 +2095,9 @@ namespace SearchDirLists
             {
                 ((TreeNode)lvItem.Tag).Checked = false;
             }
-
-            form_lvCopy.Items.Clear();
         }
 
         private void form_searchFoldersAndFiles_Click(object sender, EventArgs e)
-        {
-            if (m_ctlLastSearchSender != sender)
-            {
-                m_ctlLastSearchSender = (Control) sender;
-                m_nTreeFindTextChanged = 0;
-            }
-
-            if (m_nTreeFindTextChanged == 0)
-            {
-                m_blink.Go(bProgress: true);
-                SearchFiles(form_cbNavigate.Text,
-                    new SearchResultsDelegate(SearchResultsCallback));
-            }
-            else
-            {
-                Search(sender);
-            }
-        }
-
-        private void form_btnSearchFiles_Click(object sender, EventArgs e)
         {
             if (m_ctlLastSearchSender != sender)
             {
@@ -2146,7 +2110,7 @@ namespace SearchDirLists
                 m_blink.Go(bProgress: true);
                 SearchFiles(form_cbNavigate.Text,
                     new SearchResultsDelegate(SearchResultsCallback),
-                    bSearchFilesOnly: true);
+                    bSearchFilesOnly: (sender == form_btnSearchFiles));
             }
             else
             {

@@ -386,21 +386,19 @@ namespace SearchDirLists
                             Console.WriteLine("File converted to " + m_str_HEADER);
                         }
 
-                        String strToken = File.ReadLines(strSaveAs).Take(1).ToArray()[0].Split('\t')[2];
+                        String[] arrToken = File.ReadLines(strSaveAs).Take(1).ToArray()[0].Split('\t');
 
-                        if (strToken != m_str_HEADER) break;
+                        if (arrToken.Length < 3) break;
+                        if (arrToken[2] != m_str_HEADER) break;
 
                         String[] arrLine_A = File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Length)).ToArray();
 
                         if (arrLine_A.Length == 0) break;
 
-                        String[] arrToken = arrLine_A[0].Split('\t');
+                        String[] arrToken_A = arrLine_A[0].Split('\t');
 
-                        if (arrToken.Length < 3) break;
-
-                        String strToken_A = arrToken[2];
-
-                        if (strToken_A != m_str_TOTAL_LENGTH_LOC) break;
+                        if (arrToken_A.Length < 3) break;
+                        if (arrToken_A[2] != m_str_TOTAL_LENGTH_LOC) break;
 
                         bValid = true;
                     }

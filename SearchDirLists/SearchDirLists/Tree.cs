@@ -1522,21 +1522,26 @@ namespace SearchDirLists
                 return;
             }
 
-            form_treeView_Browse.Nodes.Clear();
+            m_hashCache.Clear();
+            m_listRootNodes = new List<TreeNode>();
             form_lvFiles.Items.Clear();
             form_lvFileCompare.Items.Clear();
-            form_lvClones.Items.Clear();
-            form_lvUnique.Items.Clear();
-            form_lvSameVol.Items.Clear();
             form_lvDetail.Items.Clear();
             form_lvDetailVol.Items.Clear();
             form_colFilename.Text = m_strColFilesOrig;
             form_colDirDetail.Text = m_strColDirDetailOrig;
             form_colVolDetail.Text = m_strColVolDetailOrig;
-
-            m_hashCache.Clear();
-            m_listRootNodes = new List<TreeNode>();
+            form_treeView_Browse.Nodes.Clear();
             form_treeView_Browse.CheckBoxes = false;    // treeview items will be added to show progress
+            form_lvClones.Items.Clear();
+            form_lvSameVol.Items.Clear();
+            form_lvUnique.Items.Clear();
+
+            foreach (ListView lv in new ListView[] { form_lvClones, form_lvSameVol, form_lvUnique })
+            {
+                lv.Tag = SortOrder.None;
+                lv.SetSortIcon(0, SortOrder.None);
+            }
 
             if (form_lvVolumesMain.Items.Count <= 0)
             {

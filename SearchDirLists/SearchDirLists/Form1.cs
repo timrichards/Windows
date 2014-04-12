@@ -2216,14 +2216,21 @@ namespace SearchDirLists
                 lv.Tag = SortOrder.None;
             }
 
-            SortOrder sortOrder = (SortOrder) lv.Tag;
-
-            foreach (ListViewItem lvItem in lv.Items.Cast<ListViewItem>().Where(i => i.Tag == null).ToList())
+            if (lv.Items.Count == 0)
             {
-                lvItem.Remove();
+                return;
             }
 
-            List<ListViewItem> listItems = lv.Items.Cast<ListViewItem>().ToList();
+            SortOrder sortOrder = (SortOrder) lv.Tag;
+
+            List<ListViewItem> listItems = new List<ListViewItem>();
+
+            foreach (ListViewItem lvItem in lv.Items.Cast<ListViewItem>().Where(i => i.Tag != null).ToList())
+            {
+                listItems.Add(lvItem);
+            }
+
+            lv.Items.Clear();
 
             switch (sortOrder)
             {
@@ -2259,7 +2266,6 @@ namespace SearchDirLists
                 }
             }
 
-            lv.Items.Clear();
             lv.Items.AddRange(listItems.ToArray());
             lv.Tag = sortOrder;
             lv.SetSortIcon(0, sortOrder);

@@ -1028,7 +1028,7 @@ namespace SearchDirLists
                 }
             }
 
-            void InsertSizeMarkers(List<ListViewItem> listLVitems)
+            public static void InsertSizeMarkers(List<ListViewItem> listLVitems)
             {
                 if (listLVitems.Count <= 0)
                 {

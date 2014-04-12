@@ -37,6 +37,7 @@ namespace SearchDirLists
         TreeNode[] m_arrayTreeFound = null;
 
         Control m_ctlLastFocusForCopyButton = null;
+        Control m_ctlLastSearchSender = null;
         Dictionary<TreeNode, TreeNode> dictCompareDiffs = new Dictionary<TreeNode, TreeNode>();
         List<TreeNode> m_listTreeNodes_Compare1 = new List<TreeNode>();
         List<TreeNode> m_listTreeNodes_Compare2 = new List<TreeNode>();
@@ -1364,8 +1365,15 @@ namespace SearchDirLists
             return true;
         }
 
+        
         void form_btnNavigate_Click(object sender, EventArgs e)
         {
+            Search(sender);
+        }
+
+        void Search(object sender)
+        {
+            m_ctlLastSearchSender = (Control)sender;
             TreeView treeView = form_treeView_Browse;
 
             if (m_bCompareMode)
@@ -2116,6 +2124,12 @@ namespace SearchDirLists
 
         private void form_searchFoldersAndFiles_Click(object sender, EventArgs e)
         {
+            if (m_ctlLastSearchSender != sender)
+            {
+                m_ctlLastSearchSender = (Control) sender;
+                m_nTreeFindTextChanged = 0;
+            }
+
             if (m_nTreeFindTextChanged == 0)
             {
                 m_blink.Go(bProgress: true);
@@ -2124,12 +2138,18 @@ namespace SearchDirLists
             }
             else
             {
-                form_btnNavigate_Click(sender, e);
+                Search(sender);
             }
         }
 
         private void form_btnSearchFiles_Click(object sender, EventArgs e)
         {
+            if (m_ctlLastSearchSender != sender)
+            {
+                m_ctlLastSearchSender = (Control)sender;
+                m_nTreeFindTextChanged = 0;
+            }
+
             if (m_nTreeFindTextChanged == 0)
             {
                 m_blink.Go(bProgress: true);
@@ -2139,7 +2159,7 @@ namespace SearchDirLists
             }
             else
             {
-                form_btnNavigate_Click(sender, e);
+                Search(sender);
             }
         }
     }

@@ -2294,11 +2294,6 @@ namespace SearchDirLists
 
         }
 
-        private void form_btnIgnoreList_Click(object sender, EventArgs e)
-        {
-            form_splitIgnore.Panel1Collapsed = true;
-        }
-
         private void form_btnSaveIgnoreList_Click(object sender, EventArgs e)
         {
 
@@ -2312,11 +2307,6 @@ namespace SearchDirLists
         private void form_btnClearIgnoreList_Click(object sender, EventArgs e)
         {
 
-        }
-
-        private void form_btnCopyList_Click(object sender, EventArgs e)
-        {
-            form_splitIgnore.Panel2Collapsed = true;
         }
     }
 }

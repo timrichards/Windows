@@ -2175,7 +2175,12 @@ namespace SearchDirLists
         {
             foreach (ListViewItem lvItem in form_lvCopy.Items)
             {
-                ((TreeNode)lvItem.Tag).Checked = false;
+                TreeNode treeNode = (TreeNode)lvItem.Tag;
+
+                if (treeNode != null)
+                {
+                    treeNode.Checked = false;
+                }
             }
         }
 

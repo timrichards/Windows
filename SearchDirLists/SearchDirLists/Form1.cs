@@ -1052,8 +1052,10 @@ namespace SearchDirLists
             }
         }
 
-        void SelectedIndexChanged(ListView lv)
+        void SelectedIndexChanged(object sender, EventArgs e)
         {
+            ListView lv = (ListView)sender;
+
             if (m_bCompareMode)
             {
                 return;
@@ -1453,6 +1455,12 @@ namespace SearchDirLists
 
         void Search(object sender)
         {
+            if (form_cbNavigate.Text.Length == 0)
+            {
+                m_blink.Go(clr: Color.Red, Once: true);
+                return;
+            }
+
             m_ctlLastSearchSender = (Control)sender;
 
             TreeView treeView = form_treeView_Browse;
@@ -1945,11 +1953,6 @@ namespace SearchDirLists
             }
         }
 
-        void form_lv_Unique_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            SelectedIndexChanged(form_lvUnique);
-        }
-
         void form_lv_Volumes_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             UpdateLV_VolumesSelection();
@@ -2119,11 +2122,6 @@ namespace SearchDirLists
             }
         }
 
-        void form_lvCopy_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            SelectedIndexChanged(form_lvCopy);
-        }
-
         void form_btnSaveCopyDirs_Click(object sender, EventArgs e)
         {
             if (saveFileDialog1.ShowDialog() != DialogResult.OK)
@@ -2183,6 +2181,12 @@ namespace SearchDirLists
 
         private void form_searchFoldersAndFiles_Click(object sender, EventArgs e)
         {
+            if (form_cbNavigate.Text.Length == 0)
+            {
+                m_blink.Go(clr: Color.Red, Once: true);
+                return;
+            }
+
             if (m_ctlLastSearchSender != sender)
             {
                 m_ctlLastSearchSender = (Control)sender;
@@ -2216,8 +2220,9 @@ namespace SearchDirLists
                 return;
             }
 
-            SortOrder sortOrder = (SortOrder) lv.Tag;
+            lv.Sorting = SortOrder.None;    // initially eg the copy list may be autosorted. From then on use tag, bespoke.
 
+            SortOrder sortOrder = (SortOrder) lv.Tag;
             List<ListViewItem> listItems = new List<ListViewItem>();
 
             foreach (ListViewItem lvItem in lv.Items.Cast<ListViewItem>().Where(i => i.Tag != null).ToList())
@@ -2277,6 +2282,41 @@ namespace SearchDirLists
                 lvSelectedItem.Selected = true;
                 lvSelectedItem.EnsureVisible();
             }
+        }
+
+        private void form_lvCopy_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void form_lv_Unique_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void form_btnIgnoreList_Click(object sender, EventArgs e)
+        {
+            form_splitIgnore.Panel1Collapsed = true;
+        }
+
+        private void form_btnSaveIgnoreList_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void form_btnLoadIgnoreList_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void form_btnClearIgnoreList_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void form_btnCopyList_Click(object sender, EventArgs e)
+        {
+            form_splitIgnore.Panel2Collapsed = true;
         }
     }
 }

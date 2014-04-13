@@ -2202,12 +2202,7 @@ namespace SearchDirLists
             }
         }
 
-        private void form_lvClones_ColumnClick(object sender, ColumnClickEventArgs e)
-        {
-            ColumnClick(sender);
-        }
-
-        private void ColumnClick(object sender, bool bListTags = true)
+        private void form_lvTreeNodes_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             ListView lv = (ListView)sender;
 
@@ -2230,6 +2225,13 @@ namespace SearchDirLists
                 listItems.Add(lvItem);
             }
 
+            ListViewItem lvSelectedItem = null;
+
+            if ((lv.SelectedItems != null) && (lv.SelectedItems.Count > 0))
+            {
+                lvSelectedItem = lv.SelectedItems[0];
+            }
+
             lv.Items.Clear();
 
             switch (sortOrder)
@@ -2245,7 +2247,7 @@ namespace SearchDirLists
                 {
                     sortOrder = SortOrder.None;
 
-                    if (bListTags)
+                    if (listItems[0].Tag is List<TreeNode>)
                     {
                         listItems.Sort((x, y) => ((NodeDatum)((List<TreeNode>)y.Tag)[0].Tag).TotalLength.CompareTo(((NodeDatum)((List<TreeNode>)x.Tag)[0].Tag).TotalLength));
                     }
@@ -2269,11 +2271,12 @@ namespace SearchDirLists
             lv.Items.AddRange(listItems.ToArray());
             lv.Tag = sortOrder;
             lv.SetSortIcon(0, sortOrder);
-        }
 
-        private void form_lvUnique_ColumnClick(object sender, ColumnClickEventArgs e)
-        {
-            ColumnClick(sender, false);
+            if (lvSelectedItem != null)
+            {
+                lvSelectedItem.Selected = true;
+                lvSelectedItem.EnsureVisible();
+            }
         }
     }
 }

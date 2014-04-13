@@ -1105,7 +1105,7 @@ namespace SearchDirLists
             this.form_lvUnique.TabIndex = 0;
             this.form_lvUnique.UseCompatibleStateImageBehavior = false;
             this.form_lvUnique.View = System.Windows.Forms.View.Details;
-            this.form_lvUnique.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.form_lvUnique_ColumnClick);
+            this.form_lvUnique.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.form_lvTreeNodes_ColumnClick);
             this.form_lvUnique.SelectedIndexChanged += new System.EventHandler(this.form_lv_Unique_SelectedIndexChanged);
             this.form_lvUnique.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_lv_Unique_KeyPress);
             this.form_lvUnique.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_lv_Unique_MouseClick);
@@ -1150,7 +1150,7 @@ namespace SearchDirLists
             this.form_lvSameVol.TabIndex = 1;
             this.form_lvSameVol.UseCompatibleStateImageBehavior = false;
             this.form_lvSameVol.View = System.Windows.Forms.View.Details;
-            this.form_lvSameVol.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.form_lvClones_ColumnClick);
+            this.form_lvSameVol.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.form_lvTreeNodes_ColumnClick);
             this.form_lvSameVol.SelectedIndexChanged += new System.EventHandler(this.form_lvSameVol_SelectedIndexChanged);
             this.form_lvSameVol.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_lvSameVol_MouseClick);
             // 
@@ -1176,7 +1176,7 @@ namespace SearchDirLists
             this.form_lvClones.TabIndex = 0;
             this.form_lvClones.UseCompatibleStateImageBehavior = false;
             this.form_lvClones.View = System.Windows.Forms.View.Details;
-            this.form_lvClones.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.form_lvClones_ColumnClick);
+            this.form_lvClones.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.form_lvTreeNodes_ColumnClick);
             this.form_lvClones.SelectedIndexChanged += new System.EventHandler(this.form_lvClones_SelectedIndexChanged);
             this.form_lvClones.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_lvClones_MouseClick);
             // 

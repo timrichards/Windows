@@ -14,7 +14,7 @@ namespace SearchDirLists
     delegate void MessageBoxDelegate(String strMessage, String strTitle = null);
     delegate bool DoSomething();
 
-    public partial class Form1 : Form
+    partial class Form1 : Form
     {
         String m_strCompare1 = null;
         String m_strMaybeFile = null;
@@ -68,7 +68,7 @@ namespace SearchDirLists
             ListViewItem m_lvItem = null;
             bool m_bProgress = false;
 
-            public void Go(Control ctl = null, ListViewItem lvItem = null, Color? clr = null, bool Once = false, bool bProgress = false)
+            internal void Go(Control ctl = null, ListViewItem lvItem = null, Color? clr = null, bool Once = false, bool bProgress = false)
             {
                 m_lvItem = lvItem;
 
@@ -97,7 +97,7 @@ namespace SearchDirLists
                 m_timer.Enabled = true;
             }
 
-            public void Stop()
+            internal void Stop()
             {
                 Reset();
                 SetCtlBackColor(m_clrControlOrig);
@@ -126,7 +126,7 @@ namespace SearchDirLists
                 }
             }
 
-            public void Tick()
+            internal void Tick()
             {
                 Color colorChg = m_clrControlOrig;
 
@@ -143,7 +143,7 @@ namespace SearchDirLists
                 SetCtlBackColor(colorChg);
             }
 
-            public Blink(System.Windows.Forms.Timer timer, Control defaultControl)
+            internal Blink(System.Windows.Forms.Timer timer, Control defaultControl)
             {
                 m_timer = timer;
                 m_defaultControl = defaultControl;
@@ -178,7 +178,7 @@ namespace SearchDirLists
 
         partial class SOTFile
         {
-            public static void WriteList(ListView.ListViewItemCollection lvItems, StreamWriter sw, String strHeader = null)
+            internal static void WriteList(ListView.ListViewItemCollection lvItems, StreamWriter sw, String strHeader = null)
             {
                 sw.WriteLine(strHeader ?? Utilities.m_str_VOLUME_LIST_HEADER);
 
@@ -202,7 +202,7 @@ namespace SearchDirLists
                 }
             }
 
-            public static void ReadList(ListView.ListViewItemCollection lvItems, StreamReader sr, String strDir_in = null, String strHeader = null)
+            internal static void ReadList(ListView.ListViewItemCollection lvItems, StreamReader sr, String strDir_in = null, String strHeader = null)
             {
                 List<ListViewItem> listItems = new List<ListViewItem>();
                 String strLine = sr.ReadLine();
@@ -268,12 +268,12 @@ namespace SearchDirLists
                 }
             }
 
-            public bool Save(String strFile, ListView.ListViewItemCollection lvItems)
+            internal bool Save(String strFile, ListView.ListViewItemCollection lvItems)
             {
                 return false;
             }
 
-            public bool Load(String strFile, ListView.ListViewItemCollection lvItems)
+            internal bool Load(String strFile, ListView.ListViewItemCollection lvItems)
             {
                 return false;
             }
@@ -281,7 +281,7 @@ namespace SearchDirLists
 
         //     const String m_strMARKFORCOPY = "markForCopy";
 
-        public Form1()
+        internal Form1()
         {
             InitializeComponent();
 
@@ -928,30 +928,9 @@ namespace SearchDirLists
 
         bool ReadHeader()
         {
+            if (Utilities.ValidateFile(m_strSaveAs) == false)
             {
-                String[] arrLine = File.ReadLines(m_strSaveAs).Take(1).ToArray();
-
-                if (arrLine.Length <= 0) return false;
-
-                String strLine = arrLine[0];
-
-                if (strLine == Utilities.m_str_HEADER_01)
-                {
-                    Console.WriteLine("Converting " + m_strSaveAs);
-                    Utilities.ConvertFile(m_strSaveAs);
-                    Console.WriteLine("File converted to " + Utilities.m_str_HEADER);
-                }
-            }
-
-            {
-                String[] arrLine = File.ReadLines(m_strSaveAs).Take(1).ToArray()[0].Split('\t');
-
-                if (arrLine.Length < 3) return false;
-
-                if (arrLine[2] != Utilities.m_str_HEADER)
-                {
-                    return false;
-                }
+                return false;
             }
 
             using (StreamReader file = new StreamReader(m_strSaveAs))
@@ -962,10 +941,13 @@ namespace SearchDirLists
 
                     if ((line = file.ReadLine()) == null) break;
                     if ((line = file.ReadLine()) == null) break;
+                    if (line.StartsWith(Utilities.m_strLINETYPE_Nickname) == false) break;
                     String[] arrLine = line.Split('\t');
-                    if (arrLine.Length < 3) break;
-                    form_cbVolumeName.Text = arrLine[2];
+                    String strName = String.Empty;
+                    if (arrLine.Length > 2) strName = arrLine[2];
+                    form_cbVolumeName.Text = strName;
                     if ((line = file.ReadLine()) == null) break;
+                    if (line.StartsWith(Utilities.m_strLINETYPE_Path) == false) break;
                     arrLine = line.Split('\t');
                     if (arrLine.Length < 3) break;
                     form_cbPath.Text = arrLine[2];
@@ -1146,6 +1128,8 @@ namespace SearchDirLists
                 return false;
             }
 
+            bool bOpenedFile = (Utilities.StrValid(m_strPath) == false);
+
             if (File.Exists(m_strSaveAs) && Utilities.StrValid(m_strPath))
             {
                 m_blink.Go(form_cbSaveAs, clr: Color.Red);
@@ -1225,7 +1209,7 @@ namespace SearchDirLists
                 }
             }
 
-            if (Utilities.StrValid(m_strVolumeName) == false)
+            if ((bOpenedFile == false) && (Utilities.StrValid(m_strVolumeName) == false))
             {
                 m_blink.Go(form_cbVolumeName, clr: Color.Red);
 
@@ -2114,16 +2098,22 @@ namespace SearchDirLists
 
                 lvItem.SubItems.Add(lvItem.Name = strPath);
                 lvItem.Tag = e.Node;
-                form_lvCopy.Items.Add(lvItem);
+                form_lvCopyList.Items.Add(lvItem);
             }
             else
             {
-                form_lvCopy.Items.Remove(form_lvCopy.Items.Find(strPath, false)[0]);
+                form_lvCopyList.Items.Remove(form_lvCopyList.Items.Find(strPath, false)[0]);
             }
         }
 
         void form_btnSaveCopyDirs_Click(object sender, EventArgs e)
         {
+            if (form_lvCopyList.Items.Count == 0)
+            {
+                m_blink.Go(ctl:form_btnSaveCopyDirs, clr: Color.Red, Once: true);
+                return;
+            }
+
             if (saveFileDialog1.ShowDialog() != DialogResult.OK)
             {
                 return;
@@ -2138,7 +2128,7 @@ namespace SearchDirLists
 
             using (StreamWriter fs = File.CreateText(saveFileDialog1.FileName))
             {
-                SOTFile.WriteList(form_lvCopy.Items, fs, Utilities.m_str_COPYDIRS_LIST_HEADER);
+                SOTFile.WriteList(form_lvCopyList.Items, fs, Utilities.m_str_COPYDIRS_LIST_HEADER);
             }
         }
 
@@ -2162,8 +2152,11 @@ namespace SearchDirLists
             foreach (ListViewItem lvItem in lv.Items)
             {
                 TreeNode treeNode = GetNodeByPath(lvItem.SubItems[1].Text, form_treeView_Browse);
-                lvItem.Tag = treeNode;
-                treeNode.Checked = true;
+
+                if (treeNode != null)
+                {
+                    treeNode.Checked = true;
+                }
             }
         }
 
@@ -2173,7 +2166,7 @@ namespace SearchDirLists
 
         void form_btnCopyClear_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem lvItem in form_lvCopy.Items)
+            foreach (ListViewItem lvItem in form_lvCopyList.Items)
             {
                 TreeNode treeNode = (TreeNode)lvItem.Tag;
 
@@ -2299,12 +2292,12 @@ namespace SearchDirLists
 
         }
 
-        private void form_btnSaveIgnoreList_Click(object sender, EventArgs e)
+        private void form_btnLoadIgnoreList_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void form_btnLoadIgnoreList_Click(object sender, EventArgs e)
+        private void form_btnSaveIgnoreList_Click(object sender, EventArgs e)
         {
 
         }

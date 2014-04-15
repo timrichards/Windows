@@ -373,36 +373,7 @@ namespace SearchDirLists
                 {
                     bool bAttemptConvert = false;
 
-                    do
-                    {
-                        String[] arrLine = File.ReadLines(strSaveAs).Take(1).ToArray();
-
-                        if (arrLine.Length <= 0) break;
-
-                        if (arrLine[0] == m_str_HEADER_01)
-                        {
-                            Console.WriteLine("Converting " + strSaveAs);
-                            ConvertFile(strSaveAs);
-                            Console.WriteLine("File converted to " + m_str_HEADER);
-                        }
-
-                        String[] arrToken = File.ReadLines(strSaveAs).Take(1).ToArray()[0].Split('\t');
-
-                        if (arrToken.Length < 3) break;
-                        if (arrToken[2] != m_str_HEADER) break;
-
-                        String[] arrLine_A = File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Length)).ToArray();
-
-                        if (arrLine_A.Length == 0) break;
-
-                        String[] arrToken_A = arrLine_A[0].Split('\t');
-
-                        if (arrToken_A.Length < 3) break;
-                        if (arrToken_A[2] != m_str_TOTAL_LENGTH_LOC) break;
-
-                        bValid = true;
-                    }
-                    while (false);
+                    bValid = ValidateFile(strSaveAs);
 
                     if (bValid || bAttemptConvert)
                     {
@@ -792,7 +763,7 @@ namespace SearchDirLists
         }
     }
 
-    public partial class Form1 : Form
+    partial class Form1 : Form
     {
         private bool m_bBrowseLoaded = false;
         Hashtable m_hashCache = new Hashtable();

@@ -20,8 +20,8 @@ namespace SearchDirLists
         String m_strDir = null;
         List<String> m_listFiles = new List<String>();
 
-        public String StrDir { get { return m_strDir; } set { m_strDir = value; } }
-        public List<String> ListFiles { get { return m_listFiles; } }
+        internal String StrDir { get { return m_strDir; } set { m_strDir = value; } }
+        internal List<String> ListFiles { get { return m_listFiles; } }
 
         void AddFile(String strFile)
         {
@@ -35,11 +35,11 @@ namespace SearchDirLists
         LVvolStrings m_volStrings = null;
         List<SearchResultsDir> m_listResults = null;
 
-        public String StrSearch { get { return m_strSearch; } }
-        public LVvolStrings VolStrings { get { return m_volStrings; } }
-        public List<SearchResultsDir> Results { get { return m_listResults; } }
+        internal String StrSearch { get { return m_strSearch; } }
+        internal LVvolStrings VolStrings { get { return m_volStrings; } }
+        internal List<SearchResultsDir> Results { get { return m_listResults; } }
 
-        public SearchResults(String strSearch, LVvolStrings volStrings, List<SearchResultsDir> listResults)
+        internal SearchResults(String strSearch, LVvolStrings volStrings, List<SearchResultsDir> listResults)
         {
             m_strSearch = strSearch;
             m_volStrings = volStrings;
@@ -54,7 +54,7 @@ namespace SearchDirLists
         protected bool m_bSearchFilesOnly = false;
         protected String m_strCurrentNode = null;
 
-        public enum FolderSpecialHandling { None, Outermost, Innermost };       // not used
+        internal enum FolderSpecialHandling { None, Outermost, Innermost };       // not used
         protected SearchFile.FolderSpecialHandling m_folderHandling = SearchFile.FolderSpecialHandling.Outermost;     // not used
 
         protected SearchBase() { }
@@ -74,14 +74,14 @@ namespace SearchDirLists
         SearchStatusDelegate m_statusCallback = null;
         LVvolStrings m_volStrings = null;
 
-        public SearchFile(SearchBase searchBase, LVvolStrings volStrings, SearchStatusDelegate statusCallback)
+        internal SearchFile(SearchBase searchBase, LVvolStrings volStrings, SearchStatusDelegate statusCallback)
             : base(searchBase)
         {
             m_volStrings = volStrings;
             m_statusCallback = statusCallback;
         }
 
-        public void Go()
+        internal void Go()
         {
             if (LV_VolumesItemCanLoad(m_volStrings) == false)
             {
@@ -209,7 +209,7 @@ namespace SearchDirLists
             }
         }
 
-        public Thread DoThreadFactory()
+        internal Thread DoThreadFactory()
         {
             m_thread = new Thread(new ThreadStart(Go));
             m_thread.IsBackground = true;
@@ -226,7 +226,7 @@ namespace SearchDirLists
         SearchDoneDelegate m_doneCallback = null;
         List<LVvolStrings> m_list_lvVolStrings = new List<LVvolStrings>();
 
-        public Search(ListView.ListViewItemCollection lvVolItems, String strSearch, bool bCaseSensitive,
+        internal Search(ListView.ListViewItemCollection lvVolItems, String strSearch, bool bCaseSensitive,
             SearchFile.FolderSpecialHandling folderHandling, bool bSearchFilesOnly, String strCurrentNode,
             SearchStatusDelegate statusCallback, SearchDoneDelegate doneCallback)
         {
@@ -266,7 +266,7 @@ namespace SearchDirLists
             m_doneCallback();
         }
 
-        public void EndThread()
+        internal void EndThread()
         {
             foreach (Thread thread in m_listThreads)
             {
@@ -286,7 +286,7 @@ namespace SearchDirLists
             m_thread = null;
         }
 
-        public void DoThreadFactory()
+        internal void DoThreadFactory()
         {
             m_thread = new Thread(new ThreadStart(Go));
             m_thread.IsBackground = true;
@@ -294,7 +294,7 @@ namespace SearchDirLists
         }
     }
 
-    public partial class Form1 : Form
+    partial class Form1 : Form
     {
         Search m_search = null;
         List<SearchResults> m_listSearchResults = new List<SearchResults>();

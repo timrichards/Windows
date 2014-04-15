@@ -2174,6 +2174,10 @@ namespace SearchDirLists
                 {
                     treeNode.Checked = false;
                 }
+                else
+                {
+                    lvItem.Remove();    // sorted by size
+                }
             }
         }
 

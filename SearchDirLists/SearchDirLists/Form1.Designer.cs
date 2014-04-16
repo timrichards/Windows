@@ -34,11 +34,12 @@ namespace SearchDirLists
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.form_tabControl = new System.Windows.Forms.TabControl();
             this.form_tabPageVolumes = new System.Windows.Forms.TabPage();
+            this.form_btnModifyFile = new System.Windows.Forms.Button();
             this.form_btnVolGroup = new System.Windows.Forms.Button();
-            this.form_btn_LoadVolumeList = new System.Windows.Forms.Button();
-            this.form_btn_SaveVolumeList = new System.Windows.Forms.Button();
+            this.form_btnLoadVolumeList = new System.Windows.Forms.Button();
+            this.form_btnSaveVolumeList = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
-            this.form_btn_RemoveVolume = new System.Windows.Forms.Button();
+            this.form_btnRemoveVolume = new System.Windows.Forms.Button();
             this.form_btnToggleInclude = new System.Windows.Forms.Button();
             this.form_btnAddVolume = new System.Windows.Forms.Button();
             this.form_cbVolumeName = new System.Windows.Forms.ComboBox();
@@ -50,7 +51,7 @@ namespace SearchDirLists
             this.form_lv_Volumes_col_Status = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_Volumes_col_IncludeInSearch = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader28 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_btnSavePathInfo = new System.Windows.Forms.Button();
+            this.form_btnSaveDirList = new System.Windows.Forms.Button();
             this.form_btnSaveAs = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.form_btnPath = new System.Windows.Forms.Button();
@@ -208,17 +209,18 @@ namespace SearchDirLists
             // 
             // form_tabPageVolumes
             // 
+            this.form_tabPageVolumes.Controls.Add(this.form_btnModifyFile);
             this.form_tabPageVolumes.Controls.Add(this.form_btnVolGroup);
-            this.form_tabPageVolumes.Controls.Add(this.form_btn_LoadVolumeList);
-            this.form_tabPageVolumes.Controls.Add(this.form_btn_SaveVolumeList);
+            this.form_tabPageVolumes.Controls.Add(this.form_btnLoadVolumeList);
+            this.form_tabPageVolumes.Controls.Add(this.form_btnSaveVolumeList);
             this.form_tabPageVolumes.Controls.Add(this.label5);
-            this.form_tabPageVolumes.Controls.Add(this.form_btn_RemoveVolume);
+            this.form_tabPageVolumes.Controls.Add(this.form_btnRemoveVolume);
             this.form_tabPageVolumes.Controls.Add(this.form_btnToggleInclude);
             this.form_tabPageVolumes.Controls.Add(this.form_btnAddVolume);
             this.form_tabPageVolumes.Controls.Add(this.form_cbVolumeName);
             this.form_tabPageVolumes.Controls.Add(this.label4);
             this.form_tabPageVolumes.Controls.Add(this.form_lvVolumesMain);
-            this.form_tabPageVolumes.Controls.Add(this.form_btnSavePathInfo);
+            this.form_tabPageVolumes.Controls.Add(this.form_btnSaveDirList);
             this.form_tabPageVolumes.Controls.Add(this.form_btnSaveAs);
             this.form_tabPageVolumes.Controls.Add(this.label2);
             this.form_tabPageVolumes.Controls.Add(this.form_btnPath);
@@ -234,38 +236,51 @@ namespace SearchDirLists
             this.form_tabPageVolumes.Text = "Volumes";
             this.form_tabPageVolumes.UseVisualStyleBackColor = true;
             // 
+            // form_btnModifyFile
+            // 
+            this.form_btnModifyFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_btnModifyFile.Enabled = false;
+            this.form_btnModifyFile.Location = new System.Drawing.Point(892, 143);
+            this.form_btnModifyFile.Name = "form_btnModifyFile";
+            this.form_btnModifyFile.Size = new System.Drawing.Size(75, 23);
+            this.form_btnModifyFile.TabIndex = 17;
+            this.form_btnModifyFile.Text = "Modify file";
+            this.form_btnModifyFile.UseVisualStyleBackColor = true;
+            this.form_btnModifyFile.Click += new System.EventHandler(this.form_btnModifyFile_Click);
+            // 
             // form_btnVolGroup
             // 
             this.form_btnVolGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.form_btnVolGroup.Enabled = false;
-            this.form_btnVolGroup.Location = new System.Drawing.Point(874, 142);
+            this.form_btnVolGroup.Location = new System.Drawing.Point(793, 143);
             this.form_btnVolGroup.Name = "form_btnVolGroup";
             this.form_btnVolGroup.Size = new System.Drawing.Size(93, 23);
             this.form_btnVolGroup.TabIndex = 14;
-            this.form_btnVolGroup.Text = "Volume Group";
+            this.form_btnVolGroup.Text = "Volume group";
             this.form_btnVolGroup.UseVisualStyleBackColor = true;
             this.form_btnVolGroup.Click += new System.EventHandler(this.form_btn_VolGroup_Click);
             // 
-            // form_btn_LoadVolumeList
+            // form_btnLoadVolumeList
             // 
-            this.form_btn_LoadVolumeList.Location = new System.Drawing.Point(121, 143);
-            this.form_btn_LoadVolumeList.Name = "form_btn_LoadVolumeList";
-            this.form_btn_LoadVolumeList.Size = new System.Drawing.Size(51, 23);
-            this.form_btn_LoadVolumeList.TabIndex = 11;
-            this.form_btn_LoadVolumeList.Text = "Load";
-            this.form_btn_LoadVolumeList.UseVisualStyleBackColor = true;
-            this.form_btn_LoadVolumeList.Click += new System.EventHandler(this.form_btn_LoadVolumeList_Click);
+            this.form_btnLoadVolumeList.Location = new System.Drawing.Point(121, 143);
+            this.form_btnLoadVolumeList.Name = "form_btnLoadVolumeList";
+            this.form_btnLoadVolumeList.Size = new System.Drawing.Size(51, 23);
+            this.form_btnLoadVolumeList.TabIndex = 11;
+            this.form_btnLoadVolumeList.Text = "Load";
+            this.form_btnLoadVolumeList.UseVisualStyleBackColor = true;
+            this.form_btnLoadVolumeList.Click += new System.EventHandler(this.form_btn_LoadVolumeList_Click);
             // 
-            // form_btn_SaveVolumeList
+            // form_btnSaveVolumeList
             // 
-            this.form_btn_SaveVolumeList.Enabled = false;
-            this.form_btn_SaveVolumeList.Location = new System.Drawing.Point(69, 143);
-            this.form_btn_SaveVolumeList.Name = "form_btn_SaveVolumeList";
-            this.form_btn_SaveVolumeList.Size = new System.Drawing.Size(46, 23);
-            this.form_btn_SaveVolumeList.TabIndex = 10;
-            this.form_btn_SaveVolumeList.Text = "Save";
-            this.form_btn_SaveVolumeList.UseVisualStyleBackColor = true;
-            this.form_btn_SaveVolumeList.Click += new System.EventHandler(this.form_btn_SaveVolumeList_Click);
+            this.form_btnSaveVolumeList.Enabled = false;
+            this.form_btnSaveVolumeList.Location = new System.Drawing.Point(69, 143);
+            this.form_btnSaveVolumeList.Name = "form_btnSaveVolumeList";
+            this.form_btnSaveVolumeList.Size = new System.Drawing.Size(46, 23);
+            this.form_btnSaveVolumeList.TabIndex = 10;
+            this.form_btnSaveVolumeList.Text = "Save";
+            this.form_btnSaveVolumeList.UseVisualStyleBackColor = true;
+            this.form_btnSaveVolumeList.EnabledChanged += new System.EventHandler(this.form_btnSaveDirLists_EnabledChanged);
+            this.form_btnSaveVolumeList.Click += new System.EventHandler(this.form_btnSaveVolumeList_Click);
             // 
             // label5
             // 
@@ -276,27 +291,27 @@ namespace SearchDirLists
             this.label5.TabIndex = 9;
             this.label5.Text = "Volume list";
             // 
-            // form_btn_RemoveVolume
+            // form_btnRemoveVolume
             // 
-            this.form_btn_RemoveVolume.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btn_RemoveVolume.Enabled = false;
-            this.form_btn_RemoveVolume.Location = new System.Drawing.Point(667, 142);
-            this.form_btn_RemoveVolume.Name = "form_btn_RemoveVolume";
-            this.form_btn_RemoveVolume.Size = new System.Drawing.Size(103, 23);
-            this.form_btn_RemoveVolume.TabIndex = 15;
-            this.form_btn_RemoveVolume.Text = "Remove Volume";
-            this.form_btn_RemoveVolume.UseVisualStyleBackColor = true;
-            this.form_btn_RemoveVolume.Click += new System.EventHandler(this.form_btn_RemoveVolume_Click);
+            this.form_btnRemoveVolume.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_btnRemoveVolume.Enabled = false;
+            this.form_btnRemoveVolume.Location = new System.Drawing.Point(586, 143);
+            this.form_btnRemoveVolume.Name = "form_btnRemoveVolume";
+            this.form_btnRemoveVolume.Size = new System.Drawing.Size(103, 23);
+            this.form_btnRemoveVolume.TabIndex = 15;
+            this.form_btnRemoveVolume.Text = "Remove volume";
+            this.form_btnRemoveVolume.UseVisualStyleBackColor = true;
+            this.form_btnRemoveVolume.Click += new System.EventHandler(this.form_btnRemoveVolume_Click);
             // 
             // form_btnToggleInclude
             // 
             this.form_btnToggleInclude.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.form_btnToggleInclude.Enabled = false;
-            this.form_btnToggleInclude.Location = new System.Drawing.Point(776, 142);
+            this.form_btnToggleInclude.Location = new System.Drawing.Point(695, 143);
             this.form_btnToggleInclude.Name = "form_btnToggleInclude";
             this.form_btnToggleInclude.Size = new System.Drawing.Size(92, 23);
             this.form_btnToggleInclude.TabIndex = 13;
-            this.form_btnToggleInclude.Text = "Toggle Include";
+            this.form_btnToggleInclude.Text = "Toggle include";
             this.form_btnToggleInclude.UseVisualStyleBackColor = true;
             this.form_btnToggleInclude.Click += new System.EventHandler(this.form_btn_ToggleInclude_Click);
             // 
@@ -385,20 +400,20 @@ namespace SearchDirLists
             this.columnHeader28.Text = "Volume Group";
             this.columnHeader28.Width = 100;
             // 
-            // form_btnSavePathInfo
+            // form_btnSaveDirList
             // 
-            this.form_btnSavePathInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.form_btnSaveDirList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btnSavePathInfo.Enabled = false;
-            this.form_btnSavePathInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.form_btnSavePathInfo.Location = new System.Drawing.Point(14, 354);
-            this.form_btnSavePathInfo.Name = "form_btnSavePathInfo";
-            this.form_btnSavePathInfo.Size = new System.Drawing.Size(947, 40);
-            this.form_btnSavePathInfo.TabIndex = 0;
-            this.form_btnSavePathInfo.Text = "Save Directory Listings";
-            this.form_btnSavePathInfo.UseVisualStyleBackColor = true;
-            this.form_btnSavePathInfo.EnabledChanged += new System.EventHandler(this.form_btn_SavePathInfo_EnabledChanged);
-            this.form_btnSavePathInfo.Click += new System.EventHandler(this.form_btn_SavePathInfo_Click);
+            this.form_btnSaveDirList.Enabled = false;
+            this.form_btnSaveDirList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.form_btnSaveDirList.Location = new System.Drawing.Point(14, 354);
+            this.form_btnSaveDirList.Name = "form_btnSaveDirList";
+            this.form_btnSaveDirList.Size = new System.Drawing.Size(947, 40);
+            this.form_btnSaveDirList.TabIndex = 0;
+            this.form_btnSaveDirList.Text = "Save Directory Listings";
+            this.form_btnSaveDirList.UseVisualStyleBackColor = true;
+            this.form_btnSaveDirList.EnabledChanged += new System.EventHandler(this.form_btnSaveDirLists_EnabledChanged);
+            this.form_btnSaveDirList.Click += new System.EventHandler(this.form_btnSaveDirLists_Click);
             // 
             // form_btnSaveAs
             // 
@@ -409,7 +424,7 @@ namespace SearchDirLists
             this.form_btnSaveAs.TabIndex = 8;
             this.form_btnSaveAs.Text = "...";
             this.form_btnSaveAs.UseVisualStyleBackColor = true;
-            this.form_btnSaveAs.Click += new System.EventHandler(this.form_btn_SaveAs_Click);
+            this.form_btnSaveAs.Click += new System.EventHandler(this.form_btnSaveAs_Click);
             // 
             // label2
             // 
@@ -429,7 +444,7 @@ namespace SearchDirLists
             this.form_btnPath.TabIndex = 4;
             this.form_btnPath.Text = "...";
             this.form_btnPath.UseVisualStyleBackColor = true;
-            this.form_btnPath.Click += new System.EventHandler(this.form_btn_Path_Click);
+            this.form_btnPath.Click += new System.EventHandler(this.form_btnPath_Click);
             // 
             // form_cbSaveAs
             // 
@@ -522,7 +537,7 @@ namespace SearchDirLists
             this.form_searchFoldersAndFiles.Name = "form_searchFoldersAndFiles";
             this.form_searchFoldersAndFiles.Size = new System.Drawing.Size(84, 23);
             this.form_searchFoldersAndFiles.TabIndex = 7;
-            this.form_searchFoldersAndFiles.Text = "Folders && Files";
+            this.form_searchFoldersAndFiles.Text = "Folders && files";
             this.form_searchFoldersAndFiles.UseVisualStyleBackColor = true;
             this.form_searchFoldersAndFiles.Click += new System.EventHandler(this.form_searchFoldersAndFiles_Click);
             // 
@@ -1431,7 +1446,7 @@ namespace SearchDirLists
         private System.Windows.Forms.ColumnHeader form_lv_Volumes_col_SaveToFile;
         private System.Windows.Forms.ColumnHeader form_lv_Volumes_col_Status;
         private System.Windows.Forms.ColumnHeader form_lv_Volumes_col_IncludeInSearch;
-        private System.Windows.Forms.Button form_btnSavePathInfo;
+        private System.Windows.Forms.Button form_btnSaveDirList;
         private System.Windows.Forms.Button form_btnSaveAs;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button form_btnPath;
@@ -1440,9 +1455,9 @@ namespace SearchDirLists
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.Button form_btn_RemoveVolume;
-        private System.Windows.Forms.Button form_btn_LoadVolumeList;
-        private System.Windows.Forms.Button form_btn_SaveVolumeList;
+        private System.Windows.Forms.Button form_btnRemoveVolume;
+        private System.Windows.Forms.Button form_btnLoadVolumeList;
+        private System.Windows.Forms.Button form_btnSaveVolumeList;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.TabPage form_tabPage_Browse;
@@ -1521,6 +1536,7 @@ namespace SearchDirLists
         private ListViewEx form_lvIgnoreList;
         private System.Windows.Forms.ColumnHeader columnHeader11;
         private System.Windows.Forms.ColumnHeader columnHeader14;
+        private System.Windows.Forms.Button form_btnModifyFile;
 
     }
 }

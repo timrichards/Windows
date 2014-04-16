@@ -32,5 +32,11 @@ namespace SearchDirLists
             //    form_cb_Entry.SelectedIndex = 0;
             //}
         }
+
+        public void SetNextButtons()
+        {
+            form_btn_OK.Text = "Next";
+            form_btn_Cancel.Text = "Skip";
+        }
     }
 }

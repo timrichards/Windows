@@ -6,56 +6,56 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-internal static class ListViewExtensions
+public static class ListViewExtensions
 {
     [StructLayout(LayoutKind.Sequential)]
-    internal struct HDITEM
+    public struct HDITEM
     {
-        internal Mask mask;
-        internal int cxy;
+        public Mask mask;
+        public int cxy;
         [MarshalAs(UnmanagedType.LPTStr)]
-        internal string pszText;
-        internal IntPtr hbm;
-        internal int cchTextMax;
-        internal Format fmt;
-        internal IntPtr lParam;
+        public string pszText;
+        public IntPtr hbm;
+        public int cchTextMax;
+        public Format fmt;
+        public IntPtr lParam;
         // _WIN32_IE >= 0x0300 
-        internal int iImage;
-        internal int iOrder;
+        public int iImage;
+        public int iOrder;
         // _WIN32_IE >= 0x0500
-        internal uint type;
-        internal IntPtr pvFilter;
+        public uint type;
+        public IntPtr pvFilter;
         // _WIN32_WINNT >= 0x0600
-        internal uint state;
+        public uint state;
 
         [Flags]
-        internal enum Mask
+        public enum Mask
         {
             Format = 0x4,       // HDI_FORMAT
         };
 
         [Flags]
-        internal enum Format
+        public enum Format
         {
             SortDown = 0x200,   // HDF_SORTDOWN
             SortUp = 0x400,     // HDF_SORTUP
         };
     };
 
-    internal const int LVM_FIRST = 0x1000;
-    internal const int LVM_GETHEADER = LVM_FIRST + 31;
+    public const int LVM_FIRST = 0x1000;
+    public const int LVM_GETHEADER = LVM_FIRST + 31;
 
-    internal const int HDM_FIRST = 0x1200;
-    internal const int HDM_GETITEM = HDM_FIRST + 11;
-    internal const int HDM_SETITEM = HDM_FIRST + 12;
-
-    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    internal static extern IntPtr SendMessage(IntPtr hWnd, UInt32 msg, IntPtr wParam, IntPtr lParam);
+    public const int HDM_FIRST = 0x1200;
+    public const int HDM_GETITEM = HDM_FIRST + 11;
+    public const int HDM_SETITEM = HDM_FIRST + 12;
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    internal static extern IntPtr SendMessage(IntPtr hWnd, UInt32 msg, IntPtr wParam, ref HDITEM lParam);
+    public static extern IntPtr SendMessage(IntPtr hWnd, UInt32 msg, IntPtr wParam, IntPtr lParam);
 
-    internal static void SetSortIcon(this ListView listViewControl, int columnIndex, SortOrder order)
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern IntPtr SendMessage(IntPtr hWnd, UInt32 msg, IntPtr wParam, ref HDITEM lParam);
+
+    public static void SetSortIcon(this ListView listViewControl, int columnIndex, SortOrder order)
     {
         IntPtr columnHeader = SendMessage(listViewControl.Handle, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
         for (int columnNumber = 0; columnNumber <= listViewControl.Columns.Count - 1; columnNumber++)
@@ -103,7 +103,7 @@ namespace ListViewEmbeddedControls
     /// <summary>
     /// Zusammenfassung für ListViewEx.
     /// </summary>
-    internal class ListViewEx : ListView
+    public class ListViewEx : ListView
     {
         #region Interop-Defines
         [DllImport("user32.dll")]
@@ -122,16 +122,16 @@ namespace ListViewEmbeddedControls
         /// </summary>
         private struct EmbeddedControl
         {
-            internal Control Control;
-            internal int Column;
-            internal int Row;
-            internal DockStyle Dock;
-            internal ListViewItem Item;
+            public Control Control;
+            public int Column;
+            public int Row;
+            public DockStyle Dock;
+            public ListViewItem Item;
         }
 
         private ArrayList _embeddedControls = new ArrayList();
 
-        internal ListViewEx()
+        public ListViewEx()
         {
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
             this.SetStyle(ControlStyles.EnableNotifyMessage, true);
@@ -217,7 +217,7 @@ namespace ListViewEmbeddedControls
         /// <param name="col">Index of column</param>
         /// <param name="row">Index of row</param>
         /// <param name="dock">Location and resize behavior of embedded control</param>
-        internal void AddEmbeddedControl(Control c, int col, int row, DockStyle dock = DockStyle.Fill)
+        public void AddEmbeddedControl(Control c, int col, int row, DockStyle dock = DockStyle.Fill)
         {
             if (c == null)
                 throw new ArgumentNullException();
@@ -243,7 +243,7 @@ namespace ListViewEmbeddedControls
         /// Remove a control from the ListView
         /// </summary>
         /// <param name="c">Control to be removed</param>
-        internal void RemoveEmbeddedControl(Control c)
+        public void RemoveEmbeddedControl(Control c)
         {
             if (c == null)
                 throw new ArgumentNullException();
@@ -268,7 +268,7 @@ namespace ListViewEmbeddedControls
         /// <param name="col">Index of Column</param>
         /// <param name="row">Index of Row</param>
         /// <returns>Control found at given location or null if none assigned.</returns>
-        internal Control GetEmbeddedControl(int col, int row)
+        public Control GetEmbeddedControl(int col, int row)
         {
             foreach (EmbeddedControl ec in _embeddedControls)
                 if (ec.Row == row && ec.Column == col)
@@ -278,7 +278,7 @@ namespace ListViewEmbeddedControls
         }
 
         [DefaultValue(View.LargeIcon)]
-        internal new View View
+        public new View View
         {
             get
             {

@@ -755,7 +755,7 @@ namespace SearchDirLists
 
             if ((nIx = strFile.IndexOfAny(arrChar)) > -1)
             {
-                return ((int)strFile[nIx]).ToString();
+                return "NTFS ASCII " + ((int)strFile[nIx]).ToString();
             }
             else
             {
@@ -778,63 +778,33 @@ namespace SearchDirLists
                 Win32.WIN32_FIND_DATA winDir = stackDirs.Pop();
                 long nDirLength = 0;
                 bool bHasLength = false;
-                String strError2 = null;
-
-                {
-                    String strCharError = CheckNTFS_chars(winDir.strAltFileName);
-
-                    if (strCharError != null)
-                    {
-                        strError2 = "NTFS ASCII " + strCharError;
-
-                        //if (fi.IsValid == false)
-                        //{
-                        //    String strErrorFile = winData.strFileName;
-                        //    String strErrorDir = winData.strAltFileName.Substring(0, winData.strAltFileName.LastIndexOf(Path.DirectorySeparatorChar));
-
-                        //    m_list_Errors.Add(FormatString(strFile: strErrorFile, strDir: strErrorDir, strError2: strError2));
-                        //    continue;
-                        //}
-                    }
-                }
+                String strError2_Dir = CheckNTFS_chars(winDir.strAltFileName);
 
                 if (Win32.GetDirectory(winDir.strAltFileName, ref listSubDirs, ref listFiles) == false)
                 {
                     m_list_Errors.Add(FormatString(strDir: winDir.strAltFileName,
-                        strError1: new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message, strError2: strError2));
+                        strError1: new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message, strError2: strError2_Dir));
                     continue;
                 }
 
                 foreach (Win32.WIN32_FIND_DATA winData in listFiles)
                 {
                     Win32.FileData fi = new Win32.FileData(winData);
-                    strError2 = null;
+                    String strError2_File = CheckNTFS_chars(winData.strFileName, bFile: true);
 
+                    if (fi.IsValid == false)
                     {
-                        String strCharError = CheckNTFS_chars(winData.strFileName, bFile: true);
+                        String strErrorFile = winData.strFileName;
+                        String strErrorDir = winData.strAltFileName.Substring(0, winData.strAltFileName.LastIndexOf(Path.DirectorySeparatorChar));
 
-                        if (strCharError != null)
-                        {
-                            strError2 = "NTFS ASCII " + strCharError;
-
-                            if (fi.IsValid == false)
-                            {
-                                String strErrorFile = winData.strFileName;
-                                String strErrorDir = winData.strAltFileName.Substring(0, winData.strAltFileName.LastIndexOf(Path.DirectorySeparatorChar));
-
-                                m_list_Errors.Add(FormatString(strFile: strErrorFile, strDir: strErrorDir, strError2: strError2));
-                                continue;
-                            }
-                        }
+                        m_list_Errors.Add(FormatString(strFile: strErrorFile, strDir: strErrorDir, strError2: strError2_File));
+                        continue;
                     }
 
-                    Debug.Assert(fi.IsValid);
-
                     m_nLengthTotal += fi.Size;
+                    nDirLength += fi.Size;
                     ++m_nFilesTotal;
                     ++m_nFilesDiff;
-
-                    nDirLength += fi.Size;
 
                     String strError1 = null;
 
@@ -843,7 +813,7 @@ namespace SearchDirLists
                         strError1 = "Path Length: " + winData.strAltFileName.Length.ToString();
                     }
 
-                    String strOut = FormatString(strFile: fi.Name, dtCreated: fi.CreationTime, strAttributes: fi.Attributes.ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2);
+                    String strOut = FormatString(strFile: fi.Name, dtCreated: fi.CreationTime, strAttributes: fi.Attributes.ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File);
 
                     Debug.Assert(fi.Size >= 0);
 
@@ -866,16 +836,16 @@ namespace SearchDirLists
                     Debug.Assert(bHasLength == (nDirLength > 0));
                     Win32.FileData di = new Win32.FileData(winDir);
 
-                    if (winDir.strAltFileName.EndsWith(":\\"))
+                    if (winDir.strAltFileName.EndsWith(@":\"))
                     {
                         Debug.Assert(di.IsValid == false);          // yes, yes...
                         Debug.Assert(winDir.strAltFileName.Length == 3);
-                        fs.WriteLine(FormatString(strDir: winDir.strAltFileName, nLength: nDirLength, strError1: strError1));
+                        fs.WriteLine(FormatString(strDir: winDir.strAltFileName, nLength: nDirLength, strError1: strError1, strError2: strError2_Dir));
                     }
                     else
                     {
                         Debug.Assert(di.IsValid);
-                        fs.WriteLine(FormatString(strDir: winDir.strAltFileName, dtCreated: di.CreationTime, strAttributes: di.Attributes.ToString("X"), dtModified: di.LastWriteTime, nLength: nDirLength, strError1: strError1));
+                        fs.WriteLine(FormatString(strDir: winDir.strAltFileName, dtCreated: di.CreationTime, strAttributes: di.Attributes.ToString("X"), dtModified: di.LastWriteTime, nLength: nDirLength, strError1: strError1, strError2: strError2_Dir));
                     }
                 }
 

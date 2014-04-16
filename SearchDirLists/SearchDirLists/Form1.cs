@@ -743,6 +743,7 @@ namespace SearchDirLists
                 return false;
             }
 
+            strPath = strPath.TrimEnd(Path.DirectorySeparatorChar);
             return true;
         }
 
@@ -1100,8 +1101,9 @@ namespace SearchDirLists
             bool bHasSelection = (form_lvVolumesMain.SelectedIndices.Count > 0);
 
             form_btnVolGroup.Enabled = bHasSelection;
-            form_btn_RemoveVolume.Enabled = bHasSelection;
+            form_btnRemoveVolume.Enabled = bHasSelection;
             form_btnToggleInclude.Enabled = bHasSelection;
+            form_btnModifyFile.Enabled = (form_lvVolumesMain.SelectedIndices.Count == 1);
         }
 
         void form_btn_AddVolume_Click(object sender, EventArgs e)
@@ -1225,7 +1227,7 @@ namespace SearchDirLists
 
             lvItem.Name = m_strPath;
             form_lvVolumesMain.Items.Add(lvItem);
-            form_btnSavePathInfo.Enabled = true;
+            form_btnSaveDirList.Enabled = true;
             m_bBrowseLoaded = false;
             return true;
         }
@@ -1424,7 +1426,7 @@ namespace SearchDirLists
 
             if (form_lvVolumesMain.Items.Count > 0)
             {
-                form_btnSavePathInfo.Enabled = true;
+                form_btnSaveDirList.Enabled = true;
             }
 
             m_bBrowseLoaded = false;
@@ -1511,12 +1513,12 @@ namespace SearchDirLists
             }
         }
 
-        void form_btn_Path_Click(object sender, EventArgs e)
+        void form_btnPath_Click(object sender, EventArgs e)
         {
-            InterruptTreeTimerWithAction(new DoSomething(form_btn_Path_Click_A));
+            InterruptTreeTimerWithAction(new DoSomething(form_btnPath_Click_A));
         }
 
-        bool form_btn_Path_Click_A()
+        bool form_btnPath_Click_A()
         {
             if (folderBrowserDialog1.ShowDialog() != DialogResult.OK)
             {
@@ -1528,7 +1530,7 @@ namespace SearchDirLists
             return true;
         }
 
-        void form_btn_RemoveVolume_Click(object sender, EventArgs e)
+        void form_btnRemoveVolume_Click(object sender, EventArgs e)
         {
             ListView.SelectedListViewItemCollection lvSelect = form_lvVolumesMain.SelectedItems;
 
@@ -1543,17 +1545,17 @@ namespace SearchDirLists
             }
 
             UpdateLV_VolumesSelection();
-            form_btnSavePathInfo.Enabled = (form_lvVolumesMain.Items.Count > 0);
+            form_btnSaveDirList.Enabled = (form_lvVolumesMain.Items.Count > 0);
             m_bBrowseLoaded = false;
             RestartTreeTimer();
         }
 
-        void form_btn_SaveAs_Click(object sender, EventArgs e)
+        void form_btnSaveAs_Click(object sender, EventArgs e)
         {
-            InterruptTreeTimerWithAction(new DoSomething(form_btn_SaveAs_Click));
+            InterruptTreeTimerWithAction(new DoSomething(form_btnSaveAs_Click));
         }
 
-        bool form_btn_SaveAs_Click()
+        bool form_btnSaveAs_Click()
         {
             if (Utilities.StrValid(m_strSaveAs))
             {
@@ -1578,23 +1580,23 @@ namespace SearchDirLists
             return true;
         }
 
-        void form_btn_SavePathInfo_Click(object sender, EventArgs e)
+        void form_btnSaveDirLists_Click(object sender, EventArgs e)
         {
             timer_DoTree.Stop();
             DoSaveDirListings();
         }
 
-        void form_btn_SavePathInfo_EnabledChanged(object sender, EventArgs e)
+        void form_btnSaveDirLists_EnabledChanged(object sender, EventArgs e)
         {
-            form_btn_SaveVolumeList.Enabled = form_btnSavePathInfo.Enabled;
+            form_btnSaveVolumeList.Enabled = form_btnSaveDirList.Enabled;
         }
 
-        void form_btn_SaveVolumeList_Click(object sender, EventArgs e)
+        void form_btnSaveVolumeList_Click(object sender, EventArgs e)
         {
-            InterruptTreeTimerWithAction(new DoSomething(form_btn_SaveVolumeList_Click_A));
+            InterruptTreeTimerWithAction(new DoSomething(form_btnSaveVolumeList_Click_A));
         }
 
-        bool form_btn_SaveVolumeList_Click_A()
+        bool form_btnSaveVolumeList_Click_A()
         {
             if (saveFileDialog1.ShowDialog() != DialogResult.OK)
             {
@@ -2309,6 +2311,132 @@ namespace SearchDirLists
         private void form_btnClearIgnoreList_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void form_btnModifyFile_Click(object sender, EventArgs e)
+        {
+            InterruptTreeTimerWithAction(new DoSomething(form_btnModifyFile_Click_A));
+        }
+
+        bool form_btnModifyFile_Click_A()
+        {
+            ListView.SelectedListViewItemCollection lvSelect = form_lvVolumesMain.SelectedItems;
+
+            if (lvSelect.Count <= 0)
+            {
+                return false;
+            }
+
+            if (lvSelect.Count > 1)
+            {
+                MessageBox.Show("Only one file can be modified at a time.", "Modify file");
+                return false;
+            }
+
+            String strVolumeName_orig = form_lvVolumesMain.SelectedItems[0].Text;
+            String strVolumeName = null;
+
+            {
+                InputBox inputBox = new InputBox();
+
+                inputBox.Text = "Step 1 of 2: Volume name";
+                inputBox.Prompt = "Enter a volume name. (Next: drive letter)";
+                inputBox.Entry = strVolumeName_orig;
+                inputBox.SetNextButtons();
+
+                if ((inputBox.ShowDialog() == DialogResult.OK) && (Utilities.StrValid(inputBox.Entry)))
+                {
+                    strVolumeName = inputBox.Entry;
+                }
+            }
+
+            String strDriveLetter_orig = null;
+            String strDriveLetter = null;
+
+            while (true)
+            {
+                InputBox inputBox = new InputBox();
+
+                inputBox.Text = "Step 2 of 2: Drive letter";
+                inputBox.Prompt = "Enter a drive letter.";
+
+                String str = form_lvVolumesMain.SelectedItems[0].SubItems[1].Text;
+
+                Debug.Assert(str.Length > 0);
+
+                if (str.Length > 0)
+                {
+                    strDriveLetter_orig = str[0].ToString();
+                    inputBox.Entry = strDriveLetter_orig.ToUpper();
+                }
+
+                inputBox.SetNextButtons();
+
+                if (inputBox.ShowDialog() == DialogResult.OK)
+                {
+                    if (inputBox.Entry.Length > 1)
+                    {
+                        MessageBox.Show("Drive letter must be one letter.", "Drive letter");
+                        continue;
+                    }
+
+                    strDriveLetter = inputBox.Entry.ToUpper();
+                }
+
+                break;
+            }
+
+            if (Utilities.StrValid(strVolumeName) == false)
+            {
+                if ((Utilities.StrValid(strDriveLetter) == false) &&
+                    (Utilities.StrValid(strDriveLetter_orig) == false))
+                {
+                    return false;
+                }
+                else if (Utilities.NotNull(strDriveLetter) != Utilities.NotNull(strDriveLetter_orig))
+                {
+                    return false;
+                }
+            }
+
+            String strFileName = form_lvVolumesMain.SelectedItems[0].SubItems[2].Text;
+            StringBuilder sbFileConts = new StringBuilder();
+
+            using (StringReader reader = new StringReader(File.ReadAllText(strFileName)))
+            {
+                String strLine = null;
+                bool bHitNickname = (Utilities.StrValid(strVolumeName) == false);
+
+                while ((strLine = reader.ReadLine()) != null)
+                {
+                    StringBuilder sbLine = new StringBuilder(strLine);
+
+                    if ((bHitNickname == false) && strLine.StartsWith(Utilities.m_strLINETYPE_Nickname))
+                    {
+                        sbLine.Replace(strVolumeName_orig, strVolumeName);
+                        form_lvVolumesMain.SelectedItems[0].Text = strVolumeName;
+                        bHitNickname = true;
+                    }
+
+                    sbFileConts.AppendLine(sbLine.ToString());
+                }
+            }
+
+            if (Utilities.StrValid(strDriveLetter) && (strDriveLetter != strDriveLetter_orig))
+            {
+                sbFileConts.Replace(strDriveLetter_orig + @":\", strDriveLetter + @":\");
+                form_lvVolumesMain.SelectedItems[0].SubItems[1].Text = strDriveLetter + ":";
+            }
+
+            File.WriteAllText(strFileName, sbFileConts.ToString());
+            m_blink.Go(form_btnSaveVolumeList);
+
+            if (MessageBox.Show("Update the volume list?", "Modify file", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                form_btnSaveVolumeList_Click_A();
+            }
+
+            return true;
         }
     }
 }

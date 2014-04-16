@@ -259,11 +259,11 @@ namespace SearchDirLists
                 {
                     if (strHeader == null)
                     {
-                        MessageBox.Show("Not a valid volume list file.       ", "Load Volume List");
+                        MessageBox.Show("Not a valid volume list file.".PadRight(100), "Load Volume List");
                     }
                     else
                     {
-                        MessageBox.Show("Not a valid file.                   ");
+                        MessageBox.Show("Not a valid file.".PadRight(100));
                     }
                 }
             }
@@ -580,7 +580,7 @@ namespace SearchDirLists
         void FormError(Control control, String strError, String strTitle)
         {
             m_blink.Go(control, clr: Color.Red);
-            MessageBox.Show(strError, strTitle);
+            MessageBox.Show(strError.PadRight(100), strTitle);
             m_blink.Go(control, clr: Color.Red, Once: true);
         }
 
@@ -739,7 +739,7 @@ namespace SearchDirLists
             else if (bFailOnDirectory)
             {
                 form_tabControl.TabIndex = 0;
-                FormError(ctl, "Path does not exist.                    ", "Save Fields");
+                FormError(ctl, "Path does not exist.", "Save Fields");
                 return false;
             }
 
@@ -799,7 +799,7 @@ namespace SearchDirLists
             if (InvokeRequired) { Invoke(new MessageBoxDelegate(MessageboxCallback), new object[] { strMessage, strTitle }); return; }
 
             // make MessageBox modal from a worker thread
-            MessageBox.Show(strMessage, strTitle);
+            MessageBox.Show(strMessage.PadRight(100), strTitle);
         }
 
         void NameNodes(TreeNode treeNode, List<TreeNode> listTreeNodes)
@@ -1008,7 +1008,7 @@ namespace SearchDirLists
             m_strMaybeFile = null;
             m_blink.Stop();
             m_blink.Go(clr: Color.Red, Once: true);
-            MessageBox.Show("Couldn't find the specified search parameter.", "Search");
+            MessageBox.Show("Couldn't find the specified search parameter.".PadRight(100), "Search");
         }
 
         void SearchResultsCallback()
@@ -1133,7 +1133,7 @@ namespace SearchDirLists
 
             if (form_lvVolumesMain.FindItemWithText(m_strSaveAs) != null)
             {
-                FormError(form_cbSaveAs, "File already in use in list of volumes.            ", "Volume Save As");
+                FormError(form_cbSaveAs, "File already in use in list of volumes.", "Volume Save As");
                 return false;
             }
 
@@ -1143,7 +1143,7 @@ namespace SearchDirLists
             {
                 m_blink.Go(form_cbSaveAs, clr: Color.Red);
 
-                if (MessageBox.Show(m_strSaveAs + " already exists. Overwrite?                 ", "Volume Save As", MessageBoxButtons.YesNo)
+                if (MessageBox.Show(m_strSaveAs + " already exists. Overwrite?".PadRight(100), "Volume Save As", MessageBoxButtons.YesNo)
                     != System.Windows.Forms.DialogResult.Yes)
                 {
                     m_blink.Go(form_cbSaveAs, clr: Color.Red, Once: true);
@@ -1153,7 +1153,7 @@ namespace SearchDirLists
 
             if ((File.Exists(m_strSaveAs) == false) && form_lvVolumesMain.Items.ContainsKey(m_strPath))
             {
-                FormError(form_cbPath, "Path already added.                                   ", "Volume Source Path");
+                FormError(form_cbPath, "Path already added.", "Volume Source Path");
                 return false;
             }
 
@@ -1161,7 +1161,7 @@ namespace SearchDirLists
             {
                 m_blink.Go(form_cbVolumeName, clr: Color.Red);
 
-                if (MessageBox.Show("Nickname already in use. Use it for more than one volume?", "Volume Save As", MessageBoxButtons.YesNo)
+                if (MessageBox.Show("Nickname already in use. Use it for more than one volume?".PadRight(100), "Volume Save As", MessageBoxButtons.YesNo)
                     != DialogResult.Yes)
                 {
                     m_blink.Go(form_cbVolumeName, clr: Color.Red, Once: true);
@@ -1172,7 +1172,7 @@ namespace SearchDirLists
             if ((File.Exists(m_strSaveAs) == false) && (Utilities.StrValid(m_strPath) == false))
             {
                 m_blink.Go(form_cbPath, clr: Color.Red);
-                MessageBox.Show("Must have a path or existing directory listing file.  ", "Volume Source Path");
+                MessageBox.Show("Must have a path or existing directory listing file.".PadRight(100), "Volume Source Path");
                 m_blink.Go(form_cbPath, clr: Color.Red, Once: true);
                 return false;
             }
@@ -1180,7 +1180,7 @@ namespace SearchDirLists
             if (Utilities.StrValid(m_strPath) && (Directory.Exists(m_strPath) == false))
             {
                 m_blink.Go(form_cbPath, clr: Color.Red);
-                MessageBox.Show("Path does not exist.                                  ", "Volume Source Path");
+                MessageBox.Show("Path does not exist.".PadRight(100), "Volume Source Path");
                 m_blink.Go(form_cbPath, clr: Color.Red, Once: true);
                 return false;
             }
@@ -1206,7 +1206,7 @@ namespace SearchDirLists
                         else
                         {
                             m_blink.Go(form_cbPath, clr: Color.Red);
-                            MessageBox.Show("File is bad and path does not exist.           ", "Volume Source Path");
+                            MessageBox.Show("File is bad and path does not exist.".PadRight(100), "Volume Source Path");
                             m_blink.Go(form_cbPath, clr: Color.Red, Once: true);
                             return false;
                         }
@@ -1222,7 +1222,7 @@ namespace SearchDirLists
             {
                 m_blink.Go(form_cbVolumeName, clr: Color.Red);
 
-                if (MessageBox.Show("Continue without entering a nickname for this volume?", "Volume Save As", MessageBoxButtons.YesNo)
+                if (MessageBox.Show("Continue without entering a nickname for this volume?".PadRight(100), "Volume Save As", MessageBoxButtons.YesNo)
                     != DialogResult.Yes)
                 {
                     m_blink.Go(form_cbVolumeName, clr: Color.Red, Once: true);
@@ -1611,7 +1611,7 @@ namespace SearchDirLists
             }
 
             if ((File.Exists(saveFileDialog1.FileName))
-                && (MessageBox.Show(this, saveFileDialog1.FileName + " already exists. Overwrite?                ", "Volume List Save As", MessageBoxButtons.YesNo)
+                && (MessageBox.Show(this, (saveFileDialog1.FileName + " already exists. Overwrite?").PadRight(100), "Volume List Save As", MessageBoxButtons.YesNo)
                 != System.Windows.Forms.DialogResult.Yes))
             {
                 return false;
@@ -2129,7 +2129,7 @@ namespace SearchDirLists
             }
 
             if ((File.Exists(saveFileDialog1.FileName))
-                && (MessageBox.Show(this, saveFileDialog1.FileName + " already exists. Overwrite?                ", "Save folders selected for copy", MessageBoxButtons.YesNo)
+                && (MessageBox.Show(this, (saveFileDialog1.FileName + " already exists. Overwrite?").PadRight(100), "Save folders selected for copy", MessageBoxButtons.YesNo)
                 != System.Windows.Forms.DialogResult.Yes))
             {
                 return;
@@ -2336,7 +2336,8 @@ namespace SearchDirLists
 
             if (lvSelect.Count > 1)
             {
-                MessageBox.Show("Only one file can be modified at a time.", "Modify file");
+                Debug.Assert(false);    // guaranteed by selection logic
+                MessageBox.Show("Only one file can be modified at a time.".PadRight(100), "Modify file");
                 return false;
             }
 
@@ -2369,21 +2370,21 @@ namespace SearchDirLists
 
                 String str = form_lvVolumesMain.SelectedItems[0].SubItems[1].Text;
 
-                Debug.Assert(str.Length > 0);
-
-                if (str.Length > 0)
+                if (str.Length <= 0)
                 {
-                    strDriveLetter_orig = str[0].ToString();
-                    inputBox.Entry = strDriveLetter_orig.ToUpper();
+                    Debug.Assert(false);
+                    break;
                 }
 
+                strDriveLetter_orig = str[0].ToString();
+                inputBox.Entry = strDriveLetter_orig.ToUpper();
                 inputBox.SetNextButtons();
 
                 if (inputBox.ShowDialog() == DialogResult.OK)
                 {
                     if (inputBox.Entry.Length > 1)
                     {
-                        MessageBox.Show("Drive letter must be one letter.", "Drive letter");
+                        MessageBox.Show("Drive letter must be one letter.".PadRight(100), "Drive letter");
                         continue;
                     }
 
@@ -2407,7 +2408,7 @@ namespace SearchDirLists
                     break;
                 }
 
-                MessageBox.Show("No changes made.", "Modify file");
+                MessageBox.Show("No changes made.".PadRight(100), "Modify file");
                 return false;
             }
             while (false);
@@ -2460,7 +2461,7 @@ namespace SearchDirLists
             File.WriteAllText(strFileName, sbFileConts.ToString());
             m_blink.Go(form_btnSaveVolumeList);
 
-            if (MessageBox.Show("Update the volume list?", "Modify file", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("Update the volume list?".PadRight(100), "Modify file", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 form_btnSaveVolumeList_Click_A();
             }

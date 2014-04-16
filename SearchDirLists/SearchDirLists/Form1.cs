@@ -753,7 +753,14 @@ namespace SearchDirLists
 
             timer_DoTree.Stop();
 
-            if (DoAction() || bTimer)
+            bool bKillTree = DoAction();
+
+            if (bKillTree)
+            {
+                KillTreeBuilder();
+            }
+
+            if (bKillTree || bTimer)
             {
                 RestartTreeTimer();
             }
@@ -2386,24 +2393,30 @@ namespace SearchDirLists
                 break;
             }
 
-            if ((Utilities.StrValid(strVolumeName) == false) ||
-                (Utilities.NotNull(strVolumeName) == Utilities.NotNull(strVolumeName_orig)))
+            do
             {
-                strVolumeName = strVolumeName_orig = null;
+                if ((Utilities.StrValid(strVolumeName)) &&
+                    (Utilities.NotNull(strVolumeName) != Utilities.NotNull(strVolumeName_orig)))
+                {
+                    break;
+                }
 
-                if ((Utilities.StrValid(strDriveLetter) == false) &&
-                    (Utilities.StrValid(strDriveLetter_orig) == false))
+                if (Utilities.StrValid(strDriveLetter) &&
+                    (Utilities.NotNull(strDriveLetter) != Utilities.NotNull(strDriveLetter_orig)))
                 {
-                    return false;
+                    break;
                 }
-                else if (Utilities.NotNull(strDriveLetter) == Utilities.NotNull(strDriveLetter_orig))
-                {
-                    return false;
-                }
+
+                MessageBox.Show("No changes made.", "Modify file");
+                return false;
             }
+            while (false);
 
             String strFileName = form_lvVolumesMain.SelectedItems[0].SubItems[2].Text;
             StringBuilder sbFileConts = new StringBuilder();
+            bool bDriveLetter = Utilities.StrValid(strDriveLetter);
+
+            KillTreeBuilder(bJoin: true);
 
             using (StringReader reader = new StringReader(File.ReadAllText(strFileName)))
             {
@@ -2418,11 +2431,11 @@ namespace SearchDirLists
                     {
                         if (Utilities.StrValid(strVolumeName_orig))
                         {
-                            sbLine.Replace(strVolumeName_orig, strVolumeName);
+                            sbLine.Replace(strVolumeName_orig, Utilities.NotNull(strVolumeName));
                         }
                         else
                         {
-                            Debug.Assert(strLine.EndsWith(Utilities.m_strLINETYPE_Nickname));
+                            Debug.Assert(sbLine.ToString().Split('\t').Length == 2);
                             sbLine.Append("\t");
                             sbLine.Append(strVolumeName);
                         }
@@ -2430,14 +2443,17 @@ namespace SearchDirLists
                         form_lvVolumesMain.SelectedItems[0].Text = strVolumeName;
                         bHitNickname = true;
                     }
+                    else if (bDriveLetter)
+                    {
+                        sbLine.Replace(strDriveLetter_orig + @":\", strDriveLetter + @":\");
+                    }
 
                     sbFileConts.AppendLine(sbLine.ToString());
                 }
             }
 
-            if (Utilities.StrValid(strDriveLetter))
+            if (bDriveLetter)
             {
-                sbFileConts.Replace(strDriveLetter_orig + @":\", strDriveLetter + @":\");
                 form_lvVolumesMain.SelectedItems[0].SubItems[1].Text = strDriveLetter + ":";
             }
 

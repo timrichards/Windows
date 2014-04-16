@@ -515,7 +515,7 @@ namespace SearchDirLists
             m_doneCallback();
         }
 
-        public void EndThread()
+        public void EndThread(bool bJoin = false)
         {
             foreach (Thread thread in m_listThreads)
             {
@@ -530,6 +530,11 @@ namespace SearchDirLists
             if ((m_thread != null) && m_thread.IsAlive)
             {
                 m_thread.Abort();
+
+                if (m_thread.IsAlive && bJoin)
+                {
+                    m_thread.Join();
+                }
             }
 
             m_thread = null;
@@ -1473,7 +1478,16 @@ namespace SearchDirLists
             SelectFoundFile();
         }
 
-        private void DoTree(bool bKill = false)
+        void KillTreeBuilder(bool bJoin = false)
+        {
+            if (m_tree != null)
+            {
+                m_tree.EndThread(bJoin);
+                m_bBrowseLoaded = false;
+            }
+        }
+
+        void DoTree(bool bKill = false)
         {
             if (m_tree != null)
             {

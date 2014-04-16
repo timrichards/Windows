@@ -2423,6 +2423,7 @@ namespace SearchDirLists
                         else
                         {
                             Debug.Assert(strLine.EndsWith(Utilities.m_strLINETYPE_Nickname));
+                            sbLine.Append("\t");
                             sbLine.Append(strVolumeName);
                         }
 

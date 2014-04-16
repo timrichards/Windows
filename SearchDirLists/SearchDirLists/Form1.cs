@@ -2386,14 +2386,17 @@ namespace SearchDirLists
                 break;
             }
 
-            if (Utilities.StrValid(strVolumeName) == false)
+            if ((Utilities.StrValid(strVolumeName) == false) ||
+                (Utilities.NotNull(strVolumeName) == Utilities.NotNull(strVolumeName_orig)))
             {
+                strVolumeName = strVolumeName_orig = null;
+
                 if ((Utilities.StrValid(strDriveLetter) == false) &&
                     (Utilities.StrValid(strDriveLetter_orig) == false))
                 {
                     return false;
                 }
-                else if (Utilities.NotNull(strDriveLetter) != Utilities.NotNull(strDriveLetter_orig))
+                else if (Utilities.NotNull(strDriveLetter) == Utilities.NotNull(strDriveLetter_orig))
                 {
                     return false;
                 }
@@ -2413,7 +2416,16 @@ namespace SearchDirLists
 
                     if ((bHitNickname == false) && strLine.StartsWith(Utilities.m_strLINETYPE_Nickname))
                     {
-                        sbLine.Replace(strVolumeName_orig, strVolumeName);
+                        if (Utilities.StrValid(strVolumeName_orig))
+                        {
+                            sbLine.Replace(strVolumeName_orig, strVolumeName);
+                        }
+                        else
+                        {
+                            Debug.Assert(strLine.EndsWith(Utilities.m_strLINETYPE_Nickname));
+                            sbLine.Append(strVolumeName);
+                        }
+
                         form_lvVolumesMain.SelectedItems[0].Text = strVolumeName;
                         bHitNickname = true;
                     }
@@ -2422,7 +2434,7 @@ namespace SearchDirLists
                 }
             }
 
-            if (Utilities.StrValid(strDriveLetter) && (strDriveLetter != strDriveLetter_orig))
+            if (Utilities.StrValid(strDriveLetter))
             {
                 sbFileConts.Replace(strDriveLetter_orig + @":\", strDriveLetter + @":\");
                 form_lvVolumesMain.SelectedItems[0].SubItems[1].Text = strDriveLetter + ":";

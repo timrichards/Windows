@@ -322,7 +322,7 @@ namespace SearchDirLists
             this.form_btnAddVolume.Name = "form_btnAddVolume";
             this.form_btnAddVolume.Size = new System.Drawing.Size(85, 66);
             this.form_btnAddVolume.TabIndex = 12;
-            this.form_btnAddVolume.Text = "Add Volume";
+            this.form_btnAddVolume.Text = "Add volume";
             this.form_btnAddVolume.UseVisualStyleBackColor = true;
             this.form_btnAddVolume.Click += new System.EventHandler(this.form_btn_AddVolume_Click);
             // 
@@ -397,7 +397,7 @@ namespace SearchDirLists
             // 
             // columnHeader28
             // 
-            this.columnHeader28.Text = "Volume Group";
+            this.columnHeader28.Text = "Volume group";
             this.columnHeader28.Width = 100;
             // 
             // form_btnSaveDirList
@@ -410,7 +410,7 @@ namespace SearchDirLists
             this.form_btnSaveDirList.Name = "form_btnSaveDirList";
             this.form_btnSaveDirList.Size = new System.Drawing.Size(947, 40);
             this.form_btnSaveDirList.TabIndex = 0;
-            this.form_btnSaveDirList.Text = "Save Directory Listings";
+            this.form_btnSaveDirList.Text = "Save directory listings";
             this.form_btnSaveDirList.UseVisualStyleBackColor = true;
             this.form_btnSaveDirList.EnabledChanged += new System.EventHandler(this.form_btnSaveDirLists_EnabledChanged);
             this.form_btnSaveDirList.Click += new System.EventHandler(this.form_btnSaveDirLists_Click);
@@ -559,9 +559,9 @@ namespace SearchDirLists
             this.form_lblVolGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_lblVolGroup.Location = new System.Drawing.Point(862, 8);
             this.form_lblVolGroup.Name = "form_lblVolGroup";
-            this.form_lblVolGroup.Size = new System.Drawing.Size(74, 13);
+            this.form_lblVolGroup.Size = new System.Drawing.Size(72, 13);
             this.form_lblVolGroup.TabIndex = 6;
-            this.form_lblVolGroup.Text = "Volume Group";
+            this.form_lblVolGroup.Text = "Volume group";
             this.form_lblVolGroup.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // form_btnNavigate

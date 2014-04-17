@@ -1214,11 +1214,7 @@ namespace SearchDirLists
                     lvItem.ForeColor = Color.Firebrick;
                     lvItem.BackColor = treeNode.BackColor;
                     listLVsameVol.Add(lvItem);
-
-                    if (nodeDatum.m_lvItem != null)
-                    {
-                        nodeDatum.m_lvItem = lvItem;
-                    }
+                    nodeDatum.m_lvItem = lvItem;
                 }
 
                 listSameVolDescLength = null;
@@ -1227,7 +1223,8 @@ namespace SearchDirLists
 
             void IgnoreNode_B(ListViewItem lvItem, TreeNode treeNode)
             {
-                ListViewItem lvItem_A = ((NodeDatum)treeNode.Tag).m_lvItem;
+                NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+                ListViewItem lvItem_A = nodeDatum.m_lvItem;
 
                 if (lvItem_A != null)
                 {
@@ -1236,31 +1233,27 @@ namespace SearchDirLists
                         return;
                     }
 
-                    lvItem_A.Remove();
+                    listLVitems.Remove(lvItem_A);
+                    listLVsameVol.Remove(lvItem_A);
+                    listLVunique.Remove(lvItem_A);
                 }
 
-                ((NodeDatum)treeNode.Tag).m_lvItem = lvItem;
-
+                nodeDatum.m_lvItem = lvItem;
                 treeNode.ForeColor = Color.DarkGray;
                 treeNode.BackColor = Color.Empty;
 
-                if (treeNode.Tag is List<TreeNode>)
+                if (nodeDatum.m_listClones != null)
                 {
-                    List<TreeNode> listNodes = (List<TreeNode>)treeNode.Tag;
-                    TreeNode[] arrNodes = new TreeNode[listNodes.Count];
+                    TreeNode[] arrNodes = new TreeNode[nodeDatum.m_listClones.Count];
 
-                    listNodes.CopyTo(arrNodes);
-                    listNodes.Clear();          // other nodes have this list
-                    treeNode.Tag = null;
+                    nodeDatum.m_listClones.CopyTo(arrNodes);
+                    nodeDatum.m_listClones.Clear();          // other nodes have this list
+                    nodeDatum.m_listClones = null;
 
                     foreach (TreeNode treeNode_A in arrNodes)
                     {
                         IgnoreNode_B(lvItem, treeNode_A);
                     }
-                }
-                else if (treeNode.Tag is TreeNode)
-                {
-                    IgnoreNode_B(lvItem, (TreeNode)treeNode.Tag);
                 }
 
                 foreach (TreeNode treeNode_A in treeNode.Nodes)

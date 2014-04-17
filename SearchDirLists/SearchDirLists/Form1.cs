@@ -584,7 +584,7 @@ namespace SearchDirLists
             m_blink.Go(control, clr: Color.Red, Once: true);
         }
 
-        String FullPath(TreeNode treeNode)
+        static String FullPath(TreeNode treeNode)
         {
             StringBuilder stbFullPath = null;
             TreeNode parentNode = treeNode.Parent;
@@ -2345,6 +2345,11 @@ namespace SearchDirLists
                 SOTFile.ReadList(form_lvIgnoreList.Items, fs, Path.GetDirectoryName(openFileDialog1.FileName), Utilities.m_str_IGNORE_LIST_HEADER);
             }
 
+            foreach (ListViewItem lvItem in form_lvIgnoreList.Items)
+            {
+                lvItem.Name = lvItem.Text;
+            }
+
             KillTreeBuilder();
             RestartTreeTimer();
         }
@@ -2513,9 +2518,21 @@ namespace SearchDirLists
                 return;
             }
 
-            ListViewItem lvItem = new ListViewItem(new String[] { treeNode.Text, (treeNode.Level + 1).ToString() } );
+            if (form_lvIgnoreList.Items.ContainsKey(treeNode.Text))
+            {
+                ListViewItem lvItem = form_lvIgnoreList.Items[treeNode.Text];
 
-            form_lvIgnoreList.Items.Add(lvItem);
+                lvItem.EnsureVisible();
+                m_blink.Go(lvItem: lvItem, Once: true);
+                return;
+            }
+
+            {
+                ListViewItem lvItem = new ListViewItem(new String[] { treeNode.Text, (treeNode.Level + 1).ToString() });
+
+                lvItem.Name = lvItem.Text;
+                form_lvIgnoreList.Items.Add(lvItem);
+            }
         }
 
         private void form_btnIgnoreDel_Click(object sender, EventArgs e)

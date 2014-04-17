@@ -208,6 +208,7 @@ namespace SearchDirLists
         internal const String m_str_DRIVE = m_str_HEADER + " DRIVE";
         internal const String m_str_VOLUME_LIST_HEADER = m_str_HEADER + " VOLUME LIST";
         internal const String m_str_COPYDIRS_LIST_HEADER = m_str_HEADER + " COPYDIRS LIST";
+        internal const String m_str_IGNORE_LIST_HEADER = m_str_HEADER + " IGNORE LIST";
         internal const String m_str_USING_FILE = "Using file.";
         internal const String m_str_SAVED = "Saved.";
         internal const int nColLENGTH = 7;

@@ -2035,19 +2035,7 @@ namespace SearchDirLists
 
             nodeDatum.m_lvItem.Selected = true;
             nodeDatum.m_lvItem.Focused = true;
-
-            if (form_lvClones.Items.Contains(nodeDatum.m_lvItem))
-            {
-                form_lvClones.TopItem = nodeDatum.m_lvItem;
-            }
-            else if (form_lvUnique.Items.Contains(nodeDatum.m_lvItem))
-            {
-                form_lvUnique.TopItem = nodeDatum.m_lvItem;
-            }
-            else if (form_lvSameVol.Items.Contains(nodeDatum.m_lvItem))
-            {
-                form_lvSameVol.TopItem = nodeDatum.m_lvItem;
-            }
+            nodeDatum.m_lvItem.ListView.TopItem = nodeDatum.m_lvItem;
         }
 
         void form_treeView_Browse_KeyPress(object sender, KeyPressEventArgs e)
@@ -2096,16 +2084,15 @@ namespace SearchDirLists
             DoTree(true);
         }
 
-        int n = 0;
         void form_treeView_Browse_AfterCheck(object sender, TreeViewEventArgs e)
         {
             String strPath = FullPath(e.Node);
 
             if (e.Node.Checked)
             {
-                ListViewItem lvItem = new ListViewItem(e.Node.Text);
+                ListViewItem lvItem = new ListViewItem(new String[] { e.Node.Text, strPath } );
 
-                lvItem.SubItems.Add(lvItem.Name = strPath);
+                lvItem.Name = strPath;
                 lvItem.Tag = e.Node;
                 form_lvCopyList.Items.Add(lvItem);
             }
@@ -2248,6 +2235,13 @@ namespace SearchDirLists
                 lvSelectedItem = lv.SelectedItems[0];
             }
 
+            bool bNullTags = (listItems.Count <= 0);
+
+            if (bNullTags)
+            {
+                listItems = lv.Items.Cast<ListViewItem>().ToList();
+            }
+
             lv.Items.Clear();
 
             switch (sortOrder)
@@ -2261,6 +2255,11 @@ namespace SearchDirLists
 
                 case SortOrder.Descending:
                 {
+                    if (bNullTags)
+                    {
+                        goto case SortOrder.None;
+                    }
+
                     sortOrder = SortOrder.None;
 
                     if (listItems[0].Tag is List<TreeNode>)
@@ -2305,19 +2304,54 @@ namespace SearchDirLists
 
         }
 
-        private void form_btnLoadIgnoreList_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void form_btnSaveIgnoreList_Click(object sender, EventArgs e)
         {
+            if (form_lvIgnoreList.Items.Count == 0)
+            {
+                m_blink.Go(ctl: form_btnSaveIgnoreList, clr: Color.Red, Once: true);
+                return;
+            }
 
+            if (saveFileDialog1.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            if ((File.Exists(saveFileDialog1.FileName))
+                && (MessageBox.Show(this, (saveFileDialog1.FileName + " already exists. Overwrite?").PadRight(100), "Save ignore list", MessageBoxButtons.YesNo)
+                != System.Windows.Forms.DialogResult.Yes))
+            {
+                return;
+            }
+
+            using (StreamWriter fs = File.CreateText(saveFileDialog1.FileName))
+            {
+                SOTFile.WriteList(form_lvIgnoreList.Items, fs, Utilities.m_str_IGNORE_LIST_HEADER);
+            }
+        }
+
+        private void form_btnLoadIgnoreList_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.InitialDirectory = saveFileDialog1.InitialDirectory;
+            openFileDialog1.FileName = saveFileDialog1.FileName;
+
+            if (openFileDialog1.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            using (StreamReader fs = File.OpenText(openFileDialog1.FileName))
+            {
+                SOTFile.ReadList(form_lvIgnoreList.Items, fs, Path.GetDirectoryName(openFileDialog1.FileName), Utilities.m_str_IGNORE_LIST_HEADER);
+            }
+
+            KillTreeBuilder();
+            RestartTreeTimer();
         }
 
         private void form_btnClearIgnoreList_Click(object sender, EventArgs e)
         {
-
+            form_lvIgnoreList.Items.Clear();
         }
 
         private void form_btnModifyFile_Click(object sender, EventArgs e)
@@ -2437,7 +2471,7 @@ namespace SearchDirLists
                         else
                         {
                             Debug.Assert(sbLine.ToString().Split('\t').Length == 2);
-                            sbLine.Append("\t");
+                            sbLine.Append('\t');
                             sbLine.Append(strVolumeName);
                         }
 
@@ -2446,7 +2480,7 @@ namespace SearchDirLists
                     }
                     else if (bDriveLetter)
                     {
-                        sbLine.Replace(strDriveLetter_orig + @":\", strDriveLetter + @":\");
+                        sbLine.Replace("\t" + strDriveLetter_orig + @":\", "\t" + strDriveLetter + @":\");
                     }
 
                     sbFileConts.AppendLine(sbLine.ToString());
@@ -2467,6 +2501,41 @@ namespace SearchDirLists
             }
 
             return true;
+        }
+
+        private void form_btnIgnoreAdd_Click(object sender, EventArgs e)
+        {
+            TreeNode treeNode = form_treeView_Browse.SelectedNode;
+
+            if (treeNode == null)
+            {
+                m_blink.Go(form_btnIgnoreAdd, clr: Color.Red, Once: true);
+                return;
+            }
+
+            ListViewItem lvItem = new ListViewItem(new String[] { treeNode.Text, (treeNode.Level + 1).ToString() } );
+
+            form_lvIgnoreList.Items.Add(lvItem);
+        }
+
+        private void form_btnIgnoreDel_Click(object sender, EventArgs e)
+        {
+            if (form_lvIgnoreList.SelectedItems.Count <= 0)
+            {
+                m_blink.Go(form_btnIgnoreDel, clr: Color.Red, Once: true);
+                return;
+            }
+
+            foreach (ListViewItem lvItem in form_lvIgnoreList.SelectedItems)
+            {
+                lvItem.Remove();
+            }
+        }
+
+        private void form_btnIgnoreTree_Click(object sender, EventArgs e)
+        {
+            KillTreeBuilder();
+            RestartTreeTimer();
         }
     }
 }

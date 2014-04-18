@@ -2356,7 +2356,15 @@ namespace SearchDirLists
 
         private void form_btnClearIgnoreList_Click(object sender, EventArgs e)
         {
+            if (form_lvIgnoreList.Items.Count <= 0)
+            {
+                return;
+            }
+
             form_lvIgnoreList.Items.Clear();
+
+            KillTreeBuilder();
+            RestartTreeTimer();
         }
 
         private void form_btnModifyFile_Click(object sender, EventArgs e)
@@ -2550,6 +2558,12 @@ namespace SearchDirLists
         }
 
         private void form_btnIgnoreTree_Click(object sender, EventArgs e)
+        {
+            KillTreeBuilder();
+            RestartTreeTimer();
+        }
+
+        private void form_chkLoose_CheckedChanged(object sender, EventArgs e)
         {
             KillTreeBuilder();
             RestartTreeTimer();

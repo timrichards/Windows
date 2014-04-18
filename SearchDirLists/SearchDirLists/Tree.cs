@@ -774,6 +774,7 @@ namespace SearchDirLists
         Hashtable m_hashCache = new Hashtable();
         List<TreeNode> m_listTreeNodes = new List<TreeNode>();
         List<TreeNode> m_listRootNodes = null;
+        List<ListViewItem> m_list_lvIgnore = new List<ListViewItem>();
         Tree m_tree = null;
         Thread m_threadSelect = null;
         Thread m_threadSelectCompare = null;
@@ -812,12 +813,14 @@ namespace SearchDirLists
             List<TreeNode> m_listRootNodes = null;
             List<TreeNode> m_listTreeNodes = null;
             bool m_bCheckboxes = false;
-            ListView form_lvIgnore = null;
+            List<ListViewItem> m_list_lvIgnore = null;
 
             // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.
             List<ListViewItem> listLVitems = new List<ListViewItem>();
             List<ListViewItem> listLVunique = new List<ListViewItem>();
             List<ListViewItem> listLVsameVol = new List<ListViewItem>();
+            Dictionary<TreeNode, ListViewItem> dictIgnoreNodes = new Dictionary<TreeNode, ListViewItem>();
+            bool m_bLoose = false;
 
             class AddTreeToList
             {
@@ -850,7 +853,7 @@ namespace SearchDirLists
                         {
                             treeNode.BackColor = Color.LightGoldenrodYellow;
 
-                            if (nodeDatum.m_lvItem != null)
+                            if ((nodeDatum.m_lvItem != null) && (nodeDatum.m_lvItem.ListView == null))  // ignore LV
                             {
                                 nodeDatum.m_lvItem.BackColor = treeNode.BackColor;
                             }
@@ -906,7 +909,7 @@ namespace SearchDirLists
             public TreeDone(TreeView treeView_Browse, Hashtable hashCache,
                 ListView lvClones, ListView lvSameVol, ListView lvUnique,
                 List<TreeNode> listRootNodes, List<TreeNode> listTreeNodes, bool bCheckboxes,
-                ListView lvIgnore)
+                List<ListViewItem> list_lvIgnore, bool bLoose)
             {
                 form_treeView_Browse = treeView_Browse;
                 m_hashCache = hashCache;
@@ -916,7 +919,8 @@ namespace SearchDirLists
                 m_listRootNodes = listRootNodes;
                 m_listTreeNodes = listTreeNodes;
                 m_bCheckboxes = bCheckboxes;
-                form_lvIgnore = lvIgnore;
+                m_list_lvIgnore = list_lvIgnore;
+                m_bLoose = bLoose;
             }
 
             // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
@@ -1035,59 +1039,205 @@ namespace SearchDirLists
                 InsertSizeMarker.Go(listLVitems, 0, bUnique);            // Enter the Zeroth
             }
 
+            void IgnoreNode_A(ListViewItem lvItem, TreeNode treeNode, bool bContinue = true)
+            {
+                do
+                {
+                    if (dictIgnoreNodes.ContainsKey(treeNode))
+                    {
+                        continue;
+                    }
+
+                    dictIgnoreNodes.Add(treeNode, lvItem);
+
+                    NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+
+                    if ((nodeDatum.m_listClones != null) && (nodeDatum.m_listClones.Count > 0))
+                    {
+                        Debug.Assert(false); // this block is no loner in context
+                        TreeNode[] arrNodes = new TreeNode[nodeDatum.m_listClones.Count];
+
+                        nodeDatum.m_listClones.CopyTo(arrNodes);
+                        nodeDatum.m_listClones.Clear();          // other nodes have this list
+                        nodeDatum.m_listClones = null;
+
+                        foreach (TreeNode treeNode_A in arrNodes)
+                        {
+                            IgnoreNode_A(lvItem, treeNode_A, bContinue: false);
+                        }
+                    }
+
+                    if (treeNode.Nodes.Count > 0)
+                    {
+                        IgnoreNode_A(lvItem, treeNode.Nodes[0], bContinue: true);
+                    }
+                }
+                while (bContinue && ((treeNode = treeNode.NextNode) != null));
+            }
+
+            void IgnoreNode(String sbMatch, int nMaxLevel, TreeNode treeNode)
+            {
+                if (treeNode.Level > nMaxLevel)
+                {
+                    return;
+                }
+
+                do
+                {
+                    if (sbMatch.Contains(treeNode.Text))
+                    {
+                        foreach (ListViewItem lvItem in m_list_lvIgnore)
+                        {
+                            int nLevel = int.Parse(lvItem.SubItems[1].Text) - 1;
+
+                            if ((nLevel == treeNode.Level) && (lvItem.Text == treeNode.Text))
+                            {
+                                IgnoreNode_A((ListViewItem)lvItem.Tag, treeNode, bContinue: false);
+                                break;
+                            }
+                        }
+                    }
+
+                    if (treeNode.Nodes.Count > 0)
+                    {
+                        IgnoreNode(sbMatch, nMaxLevel, treeNode.Nodes[0]);
+                    }
+                }
+                while ((treeNode = treeNode.NextNode) != null);
+            }
+
+            void IgnoreNode(TreeNode treeNode, ListViewItem lvIgnoreItem = null)
+            {
+                ((NodeDatum)treeNode.Tag).m_lvItem = lvIgnoreItem ?? dictIgnoreNodes[treeNode];
+                treeNode.ForeColor = Color.DarkGray;
+                treeNode.BackColor = Color.Empty;
+            }
+
+            NodeDatum IgnoreParent(TreeNode parentNode)
+            {
+                NodeDatum nodeDatum_A = (NodeDatum)parentNode.Tag;
+
+                if ((nodeDatum_A.m_lvItem != null) && (nodeDatum_A.m_lvItem.ListView != null)) // the ignore list
+                {
+                    Debug.Assert(parentNode.ForeColor == Color.DarkGray);
+                    nodeDatum_A.m_lvItem = null;
+                    parentNode.ForeColor = Color.Empty;
+                }
+
+                return nodeDatum_A;
+            }
+
             public void Step1_OnThread()
             {
+                if (m_list_lvIgnore.Count > 0)
+                {
+                    DateTime dtStart = DateTime.Now;
+                    TreeView treeView = new TreeView();     // sets level
+                    int nMaxLevel = m_list_lvIgnore.Max(i => int.Parse(i.SubItems[1].Text) - 1);
+                    StringBuilder sbMatch = new StringBuilder();
+
+                    treeView.Nodes.AddRange(m_listRootNodes.ToArray());
+
+                    foreach (ListViewItem lvItem in m_list_lvIgnore)
+                    {
+                        sbMatch.AppendLine(lvItem.Text);
+                    }
+
+                    IgnoreNode(sbMatch.ToString(), nMaxLevel, m_listRootNodes[0]);
+                    treeView.Nodes.Clear();                 // prevents destroy nodes
+                    Console.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+                }
+
                 Hashtable hashTable = new Hashtable();
                 SortedDictionary<double, TreeNode> dictUnique = new SortedDictionary<double, TreeNode>();
 
                 foreach (DictionaryEntry pair in m_hashCache)
                 {
-                    if (pair.Value is List<TreeNode>)
+                    if ((pair.Value is List<TreeNode>) == false)
                     {
-                        List<TreeNode> listNodes = (List<TreeNode>)pair.Value;
+                        hashTable.Add(pair.Key, pair.Value);
+                        continue;
+                    }
 
-                        if (listNodes.Count > 1)
+                    List<TreeNode> listNodes = (List<TreeNode>)pair.Value;
+
+                    if (listNodes.Count == 1)       // "else"
+                    {
+                        TreeNode treeNode = listNodes[0];
+
+                        if (dictIgnoreNodes.ContainsKey(treeNode))
                         {
-                            List<TreeNode> listKeep = new List<TreeNode>();
-
-                            foreach (TreeNode treeNode in listNodes)
-                            {
-                                NodeDatum nodeDatum = ((NodeDatum)treeNode.Tag);
-
-                                Debug.Assert(nodeDatum.TotalLength > 100 * 1024);
-
-                                if (listNodes.Contains(treeNode.Parent) == false)
-                                {
-                                    listKeep.Add(treeNode);
-                                }
-                            }
-
-                            if (listKeep.Count > 1)
-                            {
-                                foreach (TreeNode treeNode in listKeep)
-                                {
-                                    ((NodeDatum)treeNode.Tag).m_listClones = listKeep;
-                                }
-                            }
-                            else
-                            {
-                                listNodes = listKeep;   // kick off "else" logic below after deleting child clones
-                            }
+                            IgnoreNode(treeNode);
+                            continue;
                         }
 
-                        if (listNodes.Count == 1)       // "else"
+                        if (((NodeDatum)treeNode.Tag).nImmediateFiles > 0)
                         {
-                            TreeNode treeNode = listNodes[0];
+                            dictUnique.Add((double)pair.Key, treeNode);
+                        }
 
-                            if (((NodeDatum)treeNode.Tag).nImmediateFiles > 0)
-                            {
-                                dictUnique.Add((double)pair.Key, treeNode);
-                            }
+                        continue;
+                    }
+
+                    if (listNodes.Count < 1)
+                    {
+                        Debug.Assert(false);
+                        continue;
+                    }
+
+                    Debug.Assert(listNodes.Count > 1);
+
+                    bool bIgnore = true;
+                    bool bAny = false;
+                    ListViewItem lvIgnoreItem = null;
+
+                    foreach (TreeNode treeNode in listNodes)
+                    {
+                        if (dictIgnoreNodes.ContainsKey(treeNode) == false)
+                        {
+                            bIgnore = false;
+                        }
+                        else
+                        {
+                            bAny = true;
+                            lvIgnoreItem = dictIgnoreNodes[treeNode];
+                        }
+                    }
+
+                    if (bIgnore || (m_bLoose && bAny))
+                    {
+                        foreach (TreeNode treeNode in listNodes)
+                        {
+                            IgnoreNode(treeNode, lvIgnoreItem);
+                        }
+
+                        continue;
+                    }
+
+                    List<TreeNode> listKeep = new List<TreeNode>();
+
+                    foreach (TreeNode treeNode in listNodes)
+                    {
+                        NodeDatum nodeDatum = ((NodeDatum)treeNode.Tag);
+
+                        Debug.Assert(nodeDatum.TotalLength > 100 * 1024);
+
+                        if (listNodes.Contains(treeNode.Parent) == false)
+                        {
+                            listKeep.Add(treeNode);
+                        }
+                    }
+
+                    if (listKeep.Count > 1)
+                    {
+                        foreach (TreeNode treeNode in listKeep)
+                        {
+                            ((NodeDatum)treeNode.Tag).m_listClones = listKeep;
                         }
                     }
                     else
                     {
-                        hashTable.Add(pair.Key, pair.Value);
+                        listNodes = listKeep;   // kick off "else" logic below after deleting child clones
                     }
                 }
 
@@ -1132,6 +1282,22 @@ namespace SearchDirLists
 
                     foreach (TreeNode treeNode in listNodes.Value)
                     {
+                        TreeNode parentNode = treeNode.Parent;
+
+                        while (parentNode != null)
+                        {
+                            NodeDatum nodeDatum_A = (NodeDatum)parentNode.Tag;
+
+                            if ((nodeDatum_A.m_lvItem != null) && (nodeDatum_A.m_lvItem.ListView != null)) // the ignore list
+                            {
+                                Debug.Assert(parentNode.ForeColor == Color.DarkGray);
+                                nodeDatum_A.m_lvItem = null;
+                                parentNode.ForeColor = Color.Empty;
+                            }
+
+                            parentNode = parentNode.Parent;
+                        }
+
                         if (treeNode.Level < nLevel)
                         {
                             nLevel = treeNode.Level;
@@ -1169,11 +1335,11 @@ namespace SearchDirLists
 
                     while (parentNode != null)
                     {
+                        NodeDatum nodeDatum_A = IgnoreParent(parentNode);
+
                         if (parentNode.ForeColor == Color.Empty)
                         {
                             parentNode.ForeColor = Color.DarkRed;
-
-                            NodeDatum nodeDatum_A = (NodeDatum)parentNode.Tag;
 
                             if (nodeDatum_A.m_lvItem != null)
                             {
@@ -1205,10 +1371,22 @@ namespace SearchDirLists
 
                 foreach (TreeNode treeNode in listSameVolDescLength)
                 {
+                    TreeNode parentNode = treeNode.Parent;
+
+                    while (parentNode != null)
+                    {
+                        if (parentNode.Tag != null)
+                        {
+                            IgnoreParent(parentNode);
+                        }
+
+                        parentNode = parentNode.Parent;
+                    }
+
+                    NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
                     Debug.Assert(Utilities.StrValid(treeNode.Text));
 
                     ListViewItem lvItem = new ListViewItem(treeNode.Text);
-                    NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
                     lvItem.Tag = nodeDatum.m_listClones;
                     lvItem.ForeColor = Color.Firebrick;
@@ -1221,101 +1399,12 @@ namespace SearchDirLists
                 InsertSizeMarkers(listLVsameVol);
             }
 
-            void IgnoreNode_B(ListViewItem lvItem, TreeNode treeNode)
-            {
-                NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
-                ListViewItem lvItem_A = nodeDatum.m_lvItem;
-
-                if (lvItem_A != null)
-                {
-                    if (form_lvIgnore.Items.Contains(lvItem_A))
-                    {
-                        return;
-                    }
-
-                    listLVitems.Remove(lvItem_A);
-                    listLVsameVol.Remove(lvItem_A);
-                    listLVunique.Remove(lvItem_A);
-                }
-
-                nodeDatum.m_lvItem = lvItem;
-                treeNode.ForeColor = Color.DarkGray;
-                treeNode.BackColor = Color.Empty;
-
-                if (nodeDatum.m_listClones != null)
-                {
-                    TreeNode[] arrNodes = new TreeNode[nodeDatum.m_listClones.Count];
-
-                    nodeDatum.m_listClones.CopyTo(arrNodes);
-                    nodeDatum.m_listClones.Clear();          // other nodes have this list
-                    nodeDatum.m_listClones = null;
-
-                    foreach (TreeNode treeNode_A in arrNodes)
-                    {
-                        IgnoreNode_B(lvItem, treeNode_A);
-                    }
-                }
-
-                foreach (TreeNode treeNode_A in treeNode.Nodes)
-                {
-                    IgnoreNode_B(lvItem, treeNode_A);
-
-                    if (treeNode_A.NextNode != null)
-                    {
-                        IgnoreNode_B(lvItem, treeNode_A.NextNode);
-                    }
-                }
-            }
-
-            void IgnoreNode_A(ListViewItem lvItem, TreeNode treeNode)
-            {
-                int nLevel = int.Parse(lvItem.SubItems[1].Text) - 1;
-
-                if ((nLevel == treeNode.Level) && (lvItem.Text == treeNode.Text))
-                {
-                    IgnoreNode_B(lvItem, treeNode);
-                }
-
-                if (nLevel <= treeNode.Level)
-                {
-                    return;
-                }
-
-                foreach (TreeNode treeNode_A in treeNode.Nodes)
-                {
-                    IgnoreNode_A(lvItem, treeNode_A);
-
-                    if (treeNode_A.NextNode != null)
-                    {
-                        IgnoreNode_A(lvItem, treeNode_A.NextNode);
-                    }
-                }
-            }
-
-            void IgnoreNode(TreeNode treeNode)
-            {
-                foreach (ListViewItem lvItem in form_lvIgnore.Items)
-                {
-                    IgnoreNode_A(lvItem, treeNode);
-                }
-            }
-
             public bool Step2_OnForm()
             {
                 form_treeView_Browse.Nodes.Clear();
                 form_treeView_Browse.Enabled = true;
                 form_treeView_Browse.CheckBoxes = m_bCheckboxes;
                 form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
-
-                DateTime dtStart = DateTime.Now;
-
-                foreach (TreeNode treeNode in m_listRootNodes)
-                {
-                    IgnoreNode(treeNode);
-                }
-
-                Console.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
-
                 Debug.Assert(form_lvClones.Items.Count == 0);
                 form_lvClones.Items.AddRange(listLVitems.ToArray());
                 listLVitems = null;
@@ -1333,7 +1422,7 @@ namespace SearchDirLists
             TreeDone treeDone = new TreeDone(form_treeView_Browse, m_hashCache,
                 form_lvClones, form_lvSameVol, form_lvUnique,
                 m_listRootNodes, m_listTreeNodes, m_bCheckboxes,
-                form_lvIgnoreList);
+                m_list_lvIgnore, form_chkLoose.Checked);
             DateTime dtStart = DateTime.Now;
 
             treeDone.Step1_OnThread();
@@ -1625,6 +1714,16 @@ namespace SearchDirLists
             treeNode.NodeFont = new Font(form_treeView_Browse.Font, FontStyle.Bold | FontStyle.Underline);
             form_treeView_Browse.Nodes.Add(treeNode);
             form_treeView_Browse.Enabled = false;
+            m_list_lvIgnore.Clear();
+
+            foreach (ListViewItem lvItem in form_lvIgnoreList.Items)
+            {
+                ListViewItem lvItem_A = (ListViewItem)lvItem.Clone();
+
+                lvItem_A.Tag = lvItem;
+                m_list_lvIgnore.Add(lvItem_A);
+            }
+
             m_tree = new Tree(form_lvVolumesMain.Items, m_hashCache,
                 new TreeStatusDelegate(TreeStatusCallback), new TreeDoneDelegate(TreeDoneCallback));
             m_tree.DoThreadFactory();

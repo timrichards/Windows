@@ -268,11 +268,14 @@ namespace SearchDirLists
 
         internal void EndThread()
         {
-            foreach (Thread thread in m_listThreads)
+            lock (m_listThreads)
             {
-                if (thread.IsAlive)
+                foreach (Thread thread in m_listThreads)
                 {
-                    thread.Abort();
+                    if (thread.IsAlive)
+                    {
+                        thread.Abort();
+                    }
                 }
             }
 

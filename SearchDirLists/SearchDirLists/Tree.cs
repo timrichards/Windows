@@ -190,11 +190,13 @@ namespace SearchDirLists
     struct HashKey : IComparable
     {
         public ulong nTotalLength;      //  found   41 bits
-        public uint nFilesInSubdirs;  //          23 bits
-        public uint nDirsWithFiles;   //          16 bits
+        public uint nFilesInSubdirs;    //          23 bits
+        public uint nDirsWithFiles;     //          16 bits
 
+        public static uint n_ct = 0;
         public int CompareTo(object obj)
         {
+            ++n_ct;
             HashKey that = (HashKey) obj;
 
             if (this == that) return 0;
@@ -202,14 +204,18 @@ namespace SearchDirLists
             return 1;
         }
 
+        public static uint n_eq = 0;
         public override bool Equals(object obj)
         {
+            ++n_eq;
             if ((obj is HashKey) == false) return false;
             return (((HashKey)obj) == this);
         }
 
+        public static uint n_hc = 0;
         public override int GetHashCode()
         {
+            ++n_hc;
             unchecked               // any overflow mixes the bits a bit better
             {
                 int result = 37;    // prime
@@ -224,18 +230,24 @@ namespace SearchDirLists
             }
         }
 
+        public static uint n_ts = 0;
         public override string ToString()
         {
+            ++n_ts;
             return base.ToString();
         }
 
+        public static uint n_ee = 0;
         public static bool operator ==(HashKey x, HashKey y)
         {
+            ++n_ee;
             return (x.nTotalLength == y.nTotalLength) && (x.nFilesInSubdirs == y.nFilesInSubdirs) && (x.nDirsWithFiles == y.nDirsWithFiles);
         }
 
+        public static uint n_lt = 0;
         public static bool operator <(HashKey x, HashKey y)
         {
+            ++n_lt;
             if (x.nTotalLength > y.nTotalLength) return false;
             if (x.nTotalLength < y.nTotalLength) return true;
             if (x.nFilesInSubdirs > y.nFilesInSubdirs) return false;
@@ -245,10 +257,22 @@ namespace SearchDirLists
             return false;
         }
 
-        public static bool operator !=(HashKey x, HashKey y) { return ((x == y) == false); }
-        public static bool operator >(HashKey x, HashKey y) { return ((x <= y) == false); }
-        public static bool operator <=(HashKey x, HashKey y) { return ((x < y) || (x == y)); }
-        public static bool operator >=(HashKey x, HashKey y) { return ((x < y) == false); }
+        public static bool operator !=(HashKey x, HashKey y) { ++n_ne; return ((x == y) == false); }    public static uint n_ne = 0;
+        public static bool operator >(HashKey x, HashKey y) { ++n_gt; return ((x <= y) == false); }     public static uint n_gt = 0;
+        public static bool operator <=(HashKey x, HashKey y) { ++n_le; return ((x < y) || (x == y)); }  public static uint n_le = 0;
+        public static bool operator >=(HashKey x, HashKey y) { ++n_ge; return ((x < y) == false); }     public static uint n_ge = 0;
+
+        // calls:       
+        //n_ct 265887               Console.WriteLine("n_ct " + HashKey.n_ct);
+        //n_ee 457876               Console.WriteLine("n_ee " + HashKey.n_ee);
+        //n_eq 184792               Console.WriteLine("n_eq " + HashKey.n_eq);
+        //n_ge 0                    Console.WriteLine("n_ge " + HashKey.n_ge);
+        //n_gt 0                    Console.WriteLine("n_gt " + HashKey.n_gt);
+        //n_hc 426782               Console.WriteLine("n_hc " + HashKey.n_hc);
+        //n_le 0                    Console.WriteLine("n_le " + HashKey.n_le);
+        //n_lt 253331               Console.WriteLine("n_lt " + HashKey.n_lt);
+        //n_ne 0                    Console.WriteLine("n_ne " + HashKey.n_ne);
+        //n_ts 0                    Console.WriteLine("n_ts " + HashKey.n_ts);
     }                              
 
     class NodeDatum : DetailsDatum
@@ -654,11 +678,14 @@ namespace SearchDirLists
 
         public void EndThread(bool bJoin = false)
         {
-            foreach (Thread thread in m_listThreads)
+            lock (m_listThreads)
             {
-                if (thread.IsAlive)
+                foreach (Thread thread in m_listThreads)
                 {
-                    thread.Abort();
+                    if (thread.IsAlive)
+                    {
+                        thread.Abort();
+                    }
                 }
             }
 

@@ -330,7 +330,7 @@ namespace SearchDirLists
             comboBox.Items.Insert(0, strText);
         }
 
-        bool Compare(TreeNode t1, TreeNode t2, bool bReverse = false, long nMin10M = (10 * 1024 - 100) * 1024, long nMin100K = 100 * 1024)
+        bool Compare(TreeNode t1, TreeNode t2, bool bReverse = false, ulong nMin10M = (10 * 1024 - 100) * 1024, ulong nMin100K = 100 * 1024)
         {
             bool bRet = true;
 
@@ -357,7 +357,7 @@ namespace SearchDirLists
                     NodeDatum n2 = (NodeDatum)s2.Tag;
 
                     bCompare &= (n1.nImmediateFiles == n2.nImmediateFiles);
-                    bCompare &= (Math.Abs(n1.Length - n2.Length) <= (nMin10M + nMin100K));
+                    bCompare &= (Math.Abs((long)(n1.Length - n2.Length)) <= (long)(nMin10M + nMin100K));
 
                     if (bCompare == false) { s2.ForeColor = Color.Red; }
                     else if (s2.ForeColor == Color.Empty) { s2.ForeColor = Color.SteelBlue; }
@@ -1311,11 +1311,11 @@ namespace SearchDirLists
                         Compare(m_nodeCompare2, m_nodeCompare1, bReverse: true, nMin10M: 0, nMin100K: 0);
                     }
 
-                    SortedDictionary<long, KeyValuePair<TreeNode, TreeNode>> dictSort = new SortedDictionary<long, KeyValuePair<TreeNode, TreeNode>>();
+                    SortedDictionary<ulong, KeyValuePair<TreeNode, TreeNode>> dictSort = new SortedDictionary<ulong, KeyValuePair<TreeNode, TreeNode>>();
 
                     foreach (KeyValuePair<TreeNode, TreeNode> pair in dictCompareDiffs)
                     {
-                        long l1 = 0, l2 = 0;
+                        ulong l1 = 0, l2 = 0;
 
                         if (Utilities.StrValid(pair.Key.Text))
                         {
@@ -1327,7 +1327,7 @@ namespace SearchDirLists
                             l2 = ((NodeDatum)pair.Value.Tag).TotalLength;
                         }
 
-                        long lMax = Math.Max(l1, l2);
+                        ulong lMax = Math.Max(l1, l2);
 
                         while (dictSort.ContainsKey(lMax))
                         {

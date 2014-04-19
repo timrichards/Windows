@@ -104,7 +104,7 @@ namespace SearchDirLists
                 String strSearch = m_strSearch;
                 List<SearchResultsDir> listResults = new List<SearchResultsDir>();
                 bool bFirst = false;
-                String strCurrentNode = m_strCurrentNode ?? "";
+                String strCurrentNode = m_strCurrentNode ?? String.Empty;
 
                 if (m_bCaseSensitive == false)
                 {

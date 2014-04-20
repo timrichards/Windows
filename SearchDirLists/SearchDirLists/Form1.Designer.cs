@@ -363,6 +363,7 @@ namespace SearchDirLists
             this.form_lv_Volumes_col_Status,
             this.form_lv_Volumes_col_IncludeInSearch,
             this.columnHeader28});
+            this.form_lvVolumesMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_lvVolumesMain.FullRowSelect = true;
             this.form_lvVolumesMain.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.form_lvVolumesMain.HideSelection = false;
@@ -377,17 +378,17 @@ namespace SearchDirLists
             // form_lv_Volumes_col_Volume
             // 
             this.form_lv_Volumes_col_Volume.Text = "Volume name";
-            this.form_lv_Volumes_col_Volume.Width = 190;
+            this.form_lv_Volumes_col_Volume.Width = 300;
             // 
             // form_lv_Volumes_col_Path
             // 
             this.form_lv_Volumes_col_Path.Text = "Path";
-            this.form_lv_Volumes_col_Path.Width = 190;
+            this.form_lv_Volumes_col_Path.Width = 200;
             // 
             // form_lv_Volumes_col_SaveToFile
             // 
             this.form_lv_Volumes_col_SaveToFile.Text = "Save to file";
-            this.form_lv_Volumes_col_SaveToFile.Width = 250;
+            this.form_lv_Volumes_col_SaveToFile.Width = 400;
             // 
             // form_lv_Volumes_col_Status
             // 
@@ -397,7 +398,7 @@ namespace SearchDirLists
             // form_lv_Volumes_col_IncludeInSearch
             // 
             this.form_lv_Volumes_col_IncludeInSearch.Text = "Include in search";
-            this.form_lv_Volumes_col_IncludeInSearch.Width = 95;
+            this.form_lv_Volumes_col_IncludeInSearch.Width = 120;
             // 
             // columnHeader28
             // 
@@ -597,10 +598,11 @@ namespace SearchDirLists
             // 
             this.form_cbNavigate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_cbNavigate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_cbNavigate.FormattingEnabled = true;
-            this.form_cbNavigate.Location = new System.Drawing.Point(221, 5);
+            this.form_cbNavigate.Location = new System.Drawing.Point(221, 3);
             this.form_cbNavigate.Name = "form_cbNavigate";
-            this.form_cbNavigate.Size = new System.Drawing.Size(340, 21);
+            this.form_cbNavigate.Size = new System.Drawing.Size(340, 24);
             this.form_cbNavigate.TabIndex = 3;
             this.form_cbNavigate.SelectedIndexChanged += new System.EventHandler(this.form_cbNavigate_SelectedIndexChanged);
             this.form_cbNavigate.TextChanged += new System.EventHandler(this.form_cbNavigate_TextChanged);
@@ -722,6 +724,7 @@ namespace SearchDirLists
             // 
             this.form_treeCompare1.CheckBoxes = true;
             this.form_treeCompare1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_treeCompare1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_treeCompare1.FullRowSelect = true;
             this.form_treeCompare1.HideSelection = false;
             this.form_treeCompare1.Location = new System.Drawing.Point(0, 0);
@@ -739,6 +742,7 @@ namespace SearchDirLists
             // form_treeCompare2
             // 
             this.form_treeCompare2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_treeCompare2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_treeCompare2.FullRowSelect = true;
             this.form_treeCompare2.HideSelection = false;
             this.form_treeCompare2.Location = new System.Drawing.Point(0, 0);
@@ -758,6 +762,7 @@ namespace SearchDirLists
             this.form_treeView_Browse.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.form_treeView_Browse.CheckBoxes = true;
             this.form_treeView_Browse.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_treeView_Browse.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_treeView_Browse.FullRowSelect = true;
             this.form_treeView_Browse.HideSelection = false;
             this.form_treeView_Browse.Location = new System.Drawing.Point(0, 0);
@@ -790,7 +795,7 @@ namespace SearchDirLists
             this.tabPage1.Location = new System.Drawing.Point(4, 4);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(562, 205);
+            this.tabPage1.Size = new System.Drawing.Size(562, 204);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Copy list";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -813,14 +818,14 @@ namespace SearchDirLists
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.form_lvCopyList);
-            this.splitContainer3.Size = new System.Drawing.Size(556, 199);
+            this.splitContainer3.Size = new System.Drawing.Size(556, 198);
             this.splitContainer3.SplitterDistance = 51;
             this.splitContainer3.TabIndex = 2;
             // 
             // form_btnSaveCopyDirs
             // 
             this.form_btnSaveCopyDirs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.form_btnSaveCopyDirs.Location = new System.Drawing.Point(3, 144);
+            this.form_btnSaveCopyDirs.Location = new System.Drawing.Point(3, 143);
             this.form_btnSaveCopyDirs.Name = "form_btnSaveCopyDirs";
             this.form_btnSaveCopyDirs.Size = new System.Drawing.Size(43, 23);
             this.form_btnSaveCopyDirs.TabIndex = 0;
@@ -831,7 +836,7 @@ namespace SearchDirLists
             // form_btnCopyClear
             // 
             this.form_btnCopyClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.form_btnCopyClear.Location = new System.Drawing.Point(3, 173);
+            this.form_btnCopyClear.Location = new System.Drawing.Point(3, 172);
             this.form_btnCopyClear.Name = "form_btnCopyClear";
             this.form_btnCopyClear.Size = new System.Drawing.Size(43, 23);
             this.form_btnCopyClear.TabIndex = 3;
@@ -842,7 +847,7 @@ namespace SearchDirLists
             // form_btnLoadCopyDirs
             // 
             this.form_btnLoadCopyDirs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.form_btnLoadCopyDirs.Location = new System.Drawing.Point(4, 115);
+            this.form_btnLoadCopyDirs.Location = new System.Drawing.Point(4, 114);
             this.form_btnLoadCopyDirs.Name = "form_btnLoadCopyDirs";
             this.form_btnLoadCopyDirs.Size = new System.Drawing.Size(42, 23);
             this.form_btnLoadCopyDirs.TabIndex = 1;
@@ -853,7 +858,7 @@ namespace SearchDirLists
             // form_btnCopyGen
             // 
             this.form_btnCopyGen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.form_btnCopyGen.Location = new System.Drawing.Point(4, 86);
+            this.form_btnCopyGen.Location = new System.Drawing.Point(4, 85);
             this.form_btnCopyGen.Name = "form_btnCopyGen";
             this.form_btnCopyGen.Size = new System.Drawing.Size(42, 23);
             this.form_btnCopyGen.TabIndex = 2;
@@ -868,12 +873,13 @@ namespace SearchDirLists
             this.columnHeader3,
             this.columnHeader4});
             this.form_lvCopyList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_lvCopyList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_lvCopyList.FullRowSelect = true;
             this.form_lvCopyList.HideSelection = false;
             this.form_lvCopyList.Location = new System.Drawing.Point(0, 0);
             this.form_lvCopyList.MultiSelect = false;
             this.form_lvCopyList.Name = "form_lvCopyList";
-            this.form_lvCopyList.Size = new System.Drawing.Size(501, 199);
+            this.form_lvCopyList.Size = new System.Drawing.Size(501, 198);
             this.form_lvCopyList.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.form_lvCopyList.TabIndex = 1;
             this.form_lvCopyList.UseCompatibleStateImageBehavior = false;
@@ -1100,6 +1106,7 @@ namespace SearchDirLists
             this.columnHeader9,
             this.columnHeader10});
             this.form_lvFiles.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_lvFiles.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_lvFiles.FullRowSelect = true;
             this.form_lvFiles.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.form_lvFiles.HideSelection = false;
@@ -1117,21 +1124,22 @@ namespace SearchDirLists
             // form_colFilename
             // 
             this.form_colFilename.Text = "Filename";
-            this.form_colFilename.Width = 250;
+            this.form_colFilename.Width = 350;
             // 
             // columnHeader5
             // 
             this.columnHeader5.Text = "Created";
-            this.columnHeader5.Width = 130;
+            this.columnHeader5.Width = 150;
             // 
             // columnHeader6
             // 
             this.columnHeader6.Text = "Modified";
-            this.columnHeader6.Width = 130;
+            this.columnHeader6.Width = 150;
             // 
             // columnHeader7
             // 
             this.columnHeader7.Text = "Attributes";
+            this.columnHeader7.Width = 80;
             // 
             // columnHeader8
             // 
@@ -1158,6 +1166,7 @@ namespace SearchDirLists
             this.columnHeader23,
             this.columnHeader24});
             this.form_lvFileCompare.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_lvFileCompare.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_lvFileCompare.FullRowSelect = true;
             this.form_lvFileCompare.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.form_lvFileCompare.HideSelection = false;
@@ -1229,6 +1238,7 @@ namespace SearchDirLists
             this.columnHeader1,
             this.form_colDirDetail});
             this.form_lvDetail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_lvDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_lvDetail.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.form_lvDetail.Location = new System.Drawing.Point(0, 0);
             this.form_lvDetail.MultiSelect = false;
@@ -1256,6 +1266,7 @@ namespace SearchDirLists
             this.form_colDirDetailCompare,
             this.form_colVolDetail});
             this.form_lvDetailVol.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_lvDetailVol.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_lvDetailVol.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.form_lvDetailVol.Location = new System.Drawing.Point(0, 0);
             this.form_lvDetailVol.MultiSelect = false;
@@ -1300,6 +1311,7 @@ namespace SearchDirLists
             this.form_lvUnique.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader16});
             this.form_lvUnique.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_lvUnique.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_lvUnique.FullRowSelect = true;
             this.form_lvUnique.HideSelection = false;
             this.form_lvUnique.LabelWrap = false;
@@ -1345,6 +1357,7 @@ namespace SearchDirLists
             this.form_lvSameVol.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2});
             this.form_lvSameVol.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_lvSameVol.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_lvSameVol.FullRowSelect = true;
             this.form_lvSameVol.HideSelection = false;
             this.form_lvSameVol.LabelWrap = false;
@@ -1372,6 +1385,7 @@ namespace SearchDirLists
             this.columnHeader12,
             this.columnHeader13});
             this.form_lvClones.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_lvClones.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_lvClones.FullRowSelect = true;
             this.form_lvClones.HideSelection = false;
             this.form_lvClones.LabelWrap = false;

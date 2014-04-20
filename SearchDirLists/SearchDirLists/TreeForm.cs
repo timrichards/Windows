@@ -9,7 +9,8 @@ using System.ComponentModel;
 
 namespace SearchDirLists
 {
-    [System.ComponentModel.DesignerCategory("")]
+    class NoFormDesigner_Placeholder {}
+
     partial class Form1 : Form
     {
         Hashtable m_hashCache = new Hashtable();

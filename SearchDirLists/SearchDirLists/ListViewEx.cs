@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 [EditorBrowsable(EditorBrowsableState.Never)]
+[System.ComponentModel.DesignerCategory("")]
 public static class ListViewExtensions
 {
     [StructLayout(LayoutKind.Sequential)]

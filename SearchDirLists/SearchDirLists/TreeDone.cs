@@ -324,14 +324,14 @@ namespace SearchDirLists
 
         public void Step1_OnThread()
         {
+            TreeView treeView = new TreeView();     // sets Level and Next.
+            treeView.Nodes.AddRange(m_listRootNodes.ToArray());
+
             if (m_list_lvIgnore.Count > 0)
             {
                 DateTime dtStart = DateTime.Now;
-                TreeView treeView = new TreeView();     // sets level
                 int nMaxLevel = m_list_lvIgnore.Max(i => int.Parse(i.SubItems[1].Text) - 1);
                 StringBuilder sbMatch = new StringBuilder();
-
-                treeView.Nodes.AddRange(m_listRootNodes.ToArray());
 
                 foreach (ListViewItem lvItem in m_list_lvIgnore)
                 {
@@ -339,7 +339,6 @@ namespace SearchDirLists
                 }
 
                 IgnoreNode_Query(sbMatch.ToString(), nMaxLevel, m_listRootNodes[0]);
-                treeView.Nodes.Clear();                 // prevents destroy nodes
                 Console.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             }
 
@@ -549,7 +548,6 @@ namespace SearchDirLists
             dictUniqueReverse = null;
             InsertSizeMarkers(listLVunique);
 
-            new TreeNode(String.Empty, m_listRootNodes.ToArray()); // sets rootnode.Next
             List<TreeNode> listSameVolDescLength = new List<TreeNode>();
 
             if (m_listRootNodes.Count > 0)
@@ -588,6 +586,7 @@ namespace SearchDirLists
 
             listSameVolDescLength = null;
             InsertSizeMarkers(listLVsameVol);
+            treeView.Nodes.Clear();                 // prevents destroy nodes
         }
 
         public bool Step2_OnForm()

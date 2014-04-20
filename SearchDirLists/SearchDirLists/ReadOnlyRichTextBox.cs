@@ -5,10 +5,8 @@ using System.Windows.Forms;
 
 namespace ListViewEmbeddedControls
 {
-	/// <summary>
-	/// Zusammenfassung für ReadOnlyRichTextBox.
-	/// </summary>
-	public class ReadOnlyRichTextBox : RichTextBox
+    [System.ComponentModel.DesignerCategory("")]
+    public class ReadOnlyRichTextBox : RichTextBox
 	{
 		public ReadOnlyRichTextBox()
 		{

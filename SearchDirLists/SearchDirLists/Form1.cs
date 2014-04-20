@@ -357,7 +357,7 @@ namespace SearchDirLists
                     NodeDatum n2 = (NodeDatum)s2.Tag;
 
                     bCompare &= (n1.nImmediateFiles == n2.nImmediateFiles);
-                    bCompare &= (Math.Abs((long)(n1.Length - n2.Length)) <= (long)(nMin10M + nMin100K));
+                    bCompare &= (Math.Abs((long)(n1.nLength - n2.nLength)) <= (long)(nMin10M + nMin100K));
 
                     if (bCompare == false) { s2.ForeColor = Color.Red; }
                     else if (s2.ForeColor == Color.Empty) { s2.ForeColor = Color.SteelBlue; }
@@ -1235,7 +1235,6 @@ namespace SearchDirLists
             lvItem.Name = m_strPath;
             form_lvVolumesMain.Items.Add(lvItem);
             form_btnSaveDirList.Enabled = true;
-            m_bBrowseLoaded = false;
             return true;
         }
 
@@ -1436,7 +1435,6 @@ namespace SearchDirLists
                 form_btnSaveDirList.Enabled = true;
             }
 
-            m_bBrowseLoaded = false;
             return true;
         }
 
@@ -1553,7 +1551,6 @@ namespace SearchDirLists
 
             UpdateLV_VolumesSelection();
             form_btnSaveDirList.Enabled = (form_lvVolumesMain.Items.Count > 0);
-            m_bBrowseLoaded = false;
             RestartTreeTimer();
         }
 
@@ -1583,7 +1580,6 @@ namespace SearchDirLists
                 form_cbPath.Text = null;
             }
 
-            m_bBrowseLoaded = false;
             return true;
         }
 
@@ -1642,7 +1638,6 @@ namespace SearchDirLists
                 SetLV_VolumesItemInclude(lvItem, LV_VolumesItemInclude(lvItem) == false);
             }
 
-            m_bBrowseLoaded = false;
             RestartTreeTimer();
         }
 
@@ -2081,7 +2076,7 @@ namespace SearchDirLists
         void timer_DoTree_Tick(object sender, EventArgs e)
         {
             timer_DoTree.Stop();
-            DoTree(true);
+            DoTree(bKill: true);
         }
 
         void form_treeView_Browse_AfterCheck(object sender, TreeViewEventArgs e)

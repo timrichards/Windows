@@ -12,10 +12,9 @@ namespace SearchDirLists
     [System.ComponentModel.DesignerCategory("")]
     partial class Form1 : Form
     {
-        private bool m_bBrowseLoaded = false;
         Hashtable m_hashCache = new Hashtable();
         List<TreeNode> m_listTreeNodes = new List<TreeNode>();
-        List<TreeNode> m_listRootNodes = null;
+        List<TreeNode> m_listRootNodes = new List<TreeNode>();
         List<ListViewItem> m_list_lvIgnore = new List<ListViewItem>();
         Tree m_tree = null;
         Thread m_threadSelect = null;
@@ -46,6 +45,8 @@ namespace SearchDirLists
 
         void TreeDoneCallback()
         {
+            Debug.Assert(m_listTreeNodes.Count == 0);
+
             TreeDone treeDone = new TreeDone(form_treeView_Browse, m_hashCache,
                 form_lvClones, form_lvSameVol, form_lvUnique,
                 m_listRootNodes, m_listTreeNodes, m_bCheckboxes,
@@ -57,9 +58,9 @@ namespace SearchDirLists
             Invoke(new DoSomething(treeDone.Step2_OnForm));
             Console.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             treeDone = null;
-            m_listRootNodes = null;
-            m_list_lvIgnore = new List<ListViewItem>();
-            m_bBrowseLoaded = true;
+            m_tree = null;
+            m_listRootNodes.Clear();
+            m_list_lvIgnore.Clear();
             GC.Collect();
         }
 
@@ -223,7 +224,6 @@ namespace SearchDirLists
             if (m_tree != null)
             {
                 m_tree.EndThread(bJoin);
-                m_bBrowseLoaded = false;
             }
         }
 
@@ -234,7 +234,6 @@ namespace SearchDirLists
                 if (bKill)
                 {
                     m_tree.EndThread();
-                    m_bBrowseLoaded = false;
                 }
                 else
                 {
@@ -242,13 +241,9 @@ namespace SearchDirLists
                 }
             }
 
-            if (m_bBrowseLoaded)
-            {
-                return;
-            }
-
             m_hashCache.Clear();
-            m_listRootNodes = new List<TreeNode>();
+            m_listRootNodes.Clear();
+            m_listTreeNodes.Clear();
             form_lvFiles.Items.Clear();
             form_lvFileCompare.Items.Clear();
             form_lvDetail.Items.Clear();

@@ -316,7 +316,7 @@ namespace SearchDirLists
                 }
             }
 
-            m_listThreads = new List<Thread>();
+            m_listThreads.Clear();
 
             if ((m_thread != null) && m_thread.IsAlive)
             {
@@ -370,7 +370,6 @@ namespace SearchDirLists
 
             if (m_saveDirListings.FilesWritten > 0)
             {
-                m_bBrowseLoaded = false;
                 RestartTreeTimer();
             }
 

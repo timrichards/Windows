@@ -514,11 +514,10 @@ namespace SearchDirLists
 
                 {
                     bool bValid = false;
+                    bool bAttemptConvert = false;
 
                     while (true)
                     {
-                        bool bAttemptConvert = false;
-
                         bValid = ValidateFile(strSaveAs);
 
                         if (bValid || bAttemptConvert)

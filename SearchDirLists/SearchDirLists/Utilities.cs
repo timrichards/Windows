@@ -489,11 +489,14 @@ namespace SearchDirLists
 
                 if (arrLine.Length <= 0) break;
 
+                bool bConvertFile = false;
+
                 if (arrLine[0] == m_str_HEADER_01)
                 {
                     Console.WriteLine("Converting " + strSaveAs);
                     ConvertFile(strSaveAs);
                     Console.WriteLine("File converted to " + m_str_HEADER);
+                    bConvertFile = true;
                 }
 
                 String[] arrToken = File.ReadLines(strSaveAs).Take(1).ToArray()[0].Split('\t');
@@ -509,6 +512,13 @@ namespace SearchDirLists
 
                 if (arrToken_A.Length < 3) break;
                 if (arrToken_A[2] != m_str_TOTAL_LENGTH_LOC) break;
+
+                String strFile_01 = StrFile_01(strSaveAs);
+
+                if (bConvertFile && File.Exists(strFile_01))
+                {
+                    File.Delete(strFile_01);
+                }
 
                 return true;
             }

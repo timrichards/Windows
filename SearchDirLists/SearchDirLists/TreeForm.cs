@@ -58,6 +58,7 @@ namespace SearchDirLists
             Console.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             treeDone = null;
             m_listRootNodes = null;
+            m_list_lvIgnore = new List<ListViewItem>();
             m_bBrowseLoaded = true;
             GC.Collect();
         }
@@ -277,7 +278,7 @@ namespace SearchDirLists
             treeNode.NodeFont = new Font(form_treeView_Browse.Font, FontStyle.Bold | FontStyle.Underline);
             form_treeView_Browse.Nodes.Add(treeNode);
             form_treeView_Browse.Enabled = false;
-            m_list_lvIgnore.Clear();
+            Debug.Assert(m_list_lvIgnore.Count == 0);
 
             foreach (ListViewItem lvItem in form_lvIgnoreList.Items)
             {

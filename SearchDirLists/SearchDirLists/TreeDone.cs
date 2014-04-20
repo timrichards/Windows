@@ -484,15 +484,7 @@ namespace SearchDirLists
 
                     while (parentNode != null)
                     {
-                        NodeDatum nodeDatum_A = (NodeDatum)parentNode.Tag;
-
-                        if ((nodeDatum_A.m_lvItem != null) && (nodeDatum_A.m_lvItem.ListView != null)) // the ignore list
-                        {
-                            Debug.Assert(parentNode.ForeColor == Color.DarkGray);
-                            nodeDatum_A.m_lvItem = null;
-                            parentNode.ForeColor = Color.Empty;
-                        }
-
+                        UnsetIgnoredParent(parentNode);
                         parentNode = parentNode.Parent;
                     }
 
@@ -582,6 +574,7 @@ namespace SearchDirLists
                 }
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+
                 Debug.Assert(Utilities.StrValid(treeNode.Text));
 
                 ListViewItem lvItem = new ListViewItem(treeNode.Text);

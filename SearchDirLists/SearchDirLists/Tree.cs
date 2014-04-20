@@ -72,150 +72,36 @@ namespace SearchDirLists
         }
     }
 
-    class Node : Utilities
+    class HashKey : IComparable
     {
-        RootNode m_rootNode = null;
-        SortedDictionary<String, Node> subNodes = new SortedDictionary<String, Node>();
-        String m_strPath = null;
-        uint m_nPrevLineNo = 0;
-        uint m_nLineNo = 0;
-        ulong m_nLength = 0;
-        bool bUseShortPath = true;
+        public readonly ulong nTotalLength;      //  found   41 bits
+        public readonly uint nFilesInSubdirs;    //          23 bits
+        public readonly uint nDirsWithFiles;     //          16 bits
 
-        public Node(String in_str, uint nLineNo, ulong nLength, RootNode rootNode)
+        public HashKey(ulong nTotalLength_in, uint nFilesInSubdirs_in, uint nDirsWithFiles_in)
         {
-            Debug.Assert(nLineNo != 0);
-            m_rootNode = rootNode;
-
-            if (in_str.EndsWith(":" + Path.DirectorySeparatorChar) == false)
-            {
-                Debug.Assert(in_str.Trim().EndsWith(Path.DirectorySeparatorChar.ToString()) == false);
-            }
-
-            m_strPath = in_str;
-            m_nPrevLineNo = m_rootNode.FirstLineNo;
-            m_rootNode.FirstLineNo = m_nLineNo = nLineNo;
-            m_nLength = nLength;
-
-            // Path.GetDirectoryName() does not preserve filesystem root
-
-            String strParent = m_strPath;
-            int nIndex = strParent.LastIndexOf(Path.DirectorySeparatorChar);
-
-            if (nIndex < 0)
-            {
-                return;
-            }
-
-            strParent = strParent.Remove(nIndex).TrimEnd(Path.DirectorySeparatorChar);
-
-            if (m_rootNode.Nodes.ContainsKey(strParent) == false)
-            {
-                m_rootNode.Nodes.Add(strParent, new Node(strParent, m_rootNode.FirstLineNo, 0, m_rootNode));
-            }
-
-            if (m_rootNode.Nodes[strParent].subNodes.ContainsKey(m_strPath) == false)
-            {
-                m_rootNode.Nodes[strParent].subNodes.Add(m_strPath, this);
-            }
+            nTotalLength = nTotalLength_in;
+            nFilesInSubdirs = nFilesInSubdirs_in;
+            nDirsWithFiles = nDirsWithFiles_in;
         }
 
-        public TreeNode AddToTree(String strVolumeName = null)
-        {
-            int nIndex = m_strPath.LastIndexOf(Path.DirectorySeparatorChar);
-            String strShortPath = bUseShortPath ? m_strPath.Substring(nIndex + 1) : m_strPath;
-            TreeNode treeNode = null;
-
-            if (subNodes.Count == 1)
-            {
-                Node subNode = subNodes.Values.First();
-
-                if (this == m_rootNode.Nodes.Values.First())
-                {
-                    // cull all root node single-chains.
-                    m_rootNode.Nodes = subNodes;
-                    subNode.m_strPath.Insert(0, m_strPath + Path.DirectorySeparatorChar);
-                    subNode.bUseShortPath = false;
-                    treeNode = subNode.AddToTree(strVolumeName);
-
-                    // further down at new NodeDatum...
-                    m_nPrevLineNo = subNode.m_nPrevLineNo;
-                    m_nLength = subNode.m_nLength;
-                    m_nLineNo = subNode.m_nLineNo;
-                }
-                else
-                {
-                    treeNode = new TreeNode(strShortPath, new TreeNode[] { subNode.AddToTree() });
-                }
-            }
-            else if (subNodes.Count > 1)
-            {
-                List<TreeNode> treeList = new List<TreeNode>();
-
-                foreach (Node node in subNodes.Values)
-                {
-                    treeList.Add(node.AddToTree());
-                }
-
-                treeNode = new TreeNode(strShortPath, treeList.ToArray());
-            }
-            else
-            {
-                treeNode = new TreeNode(strShortPath);
-            }
-
-            treeNode.Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo, m_nLength);  // this is almost but not quite always newly assigned here.
-
-            if (this == m_rootNode.Nodes.Values.First())
-            {
-                treeNode.Name = treeNode.Text;
-
-                if (StrValid(strVolumeName))
-                {
-                    if (strVolumeName.EndsWith(treeNode.Text))
-                    {
-                        treeNode.Text = strVolumeName;
-                    }
-                    else
-                    {
-                        treeNode.Text = strVolumeName + " (" + treeNode.Text + ")";
-                    }
-                }
-            }
-
-            return treeNode;
-        }
-    }
-
-    struct HashKey : IComparable
-    {
-        public ulong nTotalLength;      //  found   41 bits
-        public uint nFilesInSubdirs;    //          23 bits
-        public uint nDirsWithFiles;     //          16 bits
-
-        public static uint n_ct = 0;
         public int CompareTo(object obj)
         {
-            ++n_ct;
             HashKey that = (HashKey) obj;
 
-            if (this == that) return 0;
             if (this < that) return -1;
+            if (this == that) return 0;
             return 1;
         }
 
-        public static uint n_eq = 0;
         public override bool Equals(object obj)
         {
-            ++n_eq;
             if ((obj is HashKey) == false) return false;
             return (((HashKey)obj) == this);
         }
 
-        public static uint n_hc = 0;
         public override int GetHashCode()
         {
-            ++n_hc;
             unchecked               // any overflow mixes the bits a bit better
             {
                 int result = 37;    // prime
@@ -230,24 +116,20 @@ namespace SearchDirLists
             }
         }
 
-        public static uint n_ts = 0;
         public override string ToString()
         {
-            ++n_ts;
-            return base.ToString();
+            return "nTotalLength: " + nTotalLength + "\n" +
+                "nFilesInSubdirs: " + nFilesInSubdirs + "\n" +
+                "nDirsWithFiles: " + nDirsWithFiles + "\n";
         }
 
-        public static uint n_ee = 0;
         public static bool operator ==(HashKey x, HashKey y)
         {
-            ++n_ee;
             return (x.nTotalLength == y.nTotalLength) && (x.nFilesInSubdirs == y.nFilesInSubdirs) && (x.nDirsWithFiles == y.nDirsWithFiles);
         }
 
-        public static uint n_lt = 0;
         public static bool operator <(HashKey x, HashKey y)
         {
-            ++n_lt;
             if (x.nTotalLength > y.nTotalLength) return false;
             if (x.nTotalLength < y.nTotalLength) return true;
             if (x.nFilesInSubdirs > y.nFilesInSubdirs) return false;
@@ -257,39 +139,32 @@ namespace SearchDirLists
             return false;
         }
 
-        public static bool operator !=(HashKey x, HashKey y) { ++n_ne; return ((x == y) == false); }    public static uint n_ne = 0;
-        public static bool operator >(HashKey x, HashKey y) { ++n_gt; return ((x <= y) == false); }     public static uint n_gt = 0;
-        public static bool operator <=(HashKey x, HashKey y) { ++n_le; return ((x < y) || (x == y)); }  public static uint n_le = 0;
-        public static bool operator >=(HashKey x, HashKey y) { ++n_ge; return ((x < y) == false); }     public static uint n_ge = 0;
-
-        // calls:       
-        //n_ct 265887               Console.WriteLine("n_ct " + HashKey.n_ct);
-        //n_ee 457876               Console.WriteLine("n_ee " + HashKey.n_ee);
-        //n_eq 184792               Console.WriteLine("n_eq " + HashKey.n_eq);
-        //n_ge 0                    Console.WriteLine("n_ge " + HashKey.n_ge);
-        //n_gt 0                    Console.WriteLine("n_gt " + HashKey.n_gt);
-        //n_hc 426782               Console.WriteLine("n_hc " + HashKey.n_hc);
-        //n_le 0                    Console.WriteLine("n_le " + HashKey.n_le);
-        //n_lt 253331               Console.WriteLine("n_lt " + HashKey.n_lt);
-        //n_ne 0                    Console.WriteLine("n_ne " + HashKey.n_ne);
-        //n_ts 0                    Console.WriteLine("n_ts " + HashKey.n_ts);
+        public static bool operator !=(HashKey x, HashKey y) { return ((x == y) == false); }
+        public static bool operator >(HashKey x, HashKey y) { return ((x <= y) == false); }
+        public static bool operator <=(HashKey x, HashKey y) { return ((x < y) || (x == y)); }
+        public static bool operator >=(HashKey x, HashKey y) { return ((x < y) == false); } 
     }                              
 
     class NodeDatum : DetailsDatum
     {
-        uint m_nPrevLineNo = 0;
-        uint m_nLineNo = 0;
-        ulong m_nLength = 0;
+        readonly uint m_nPrevLineNo = 0;
+        readonly uint m_nLineNo = 0;
+        readonly ulong m_nLength = 0;
 
         public uint PrevlineNo { get { return m_nPrevLineNo; } }
         public uint LineNo { get { return m_nLineNo; } }
         public ulong Length { get { return m_nLength; } }
 
+        class NodeDatumLVitemHolder     // this was a way of setting the listview item in a different node after processing the first. Not used.
+        {
+            public ListViewItem m_lvItem = null;
+        }
+
         public HashKey Key
         {
             get
             {
-                return new HashKey { nTotalLength = (ulong)TotalLength, nFilesInSubdirs = nFilesInSubdirs, nDirsWithFiles = nDirsWithFiles };
+                return new HashKey((ulong)TotalLength, nFilesInSubdirs, nDirsWithFiles);
             }
         }
 
@@ -314,20 +189,6 @@ namespace SearchDirLists
             m_nLineNo = node.m_nLineNo;
             m_nLength = node.m_nLength;
         }
-    }
-
-    class NodeDatumLVitemHolder     // this was a way of setting the listview item in a different node after processing the first. Not used.
-    {
-        public ListViewItem m_lvItem = null;
-    }
-
-    class RootNode
-    {
-        SortedDictionary<String, Node> m_nodes = new SortedDictionary<String, Node>();
-        uint m_firstLineNo = 0;
-
-        public SortedDictionary<String, Node> Nodes { get { return m_nodes; } set { m_nodes = value; } }
-        public uint FirstLineNo { get { return m_firstLineNo; } set { m_firstLineNo = value; } }
     }
 
     class RootNodeDatum : NodeDatum
@@ -455,6 +316,130 @@ namespace SearchDirLists
                     m_statusCallback(rootNode);
                     return rootNode;
                 }
+            }
+
+            class Node : Utilities
+            {
+                RootNode m_rootNode = null;
+                SortedDictionary<String, Node> subNodes = new SortedDictionary<String, Node>();
+                String m_strPath = null;
+                uint m_nPrevLineNo = 0;
+                uint m_nLineNo = 0;
+                ulong m_nLength = 0;
+                bool bUseShortPath = true;
+
+                public Node(String in_str, uint nLineNo, ulong nLength, RootNode rootNode)
+                {
+                    Debug.Assert(nLineNo != 0);
+                    m_rootNode = rootNode;
+
+                    if (in_str.EndsWith(":" + Path.DirectorySeparatorChar) == false)
+                    {
+                        Debug.Assert(in_str.Trim().EndsWith(Path.DirectorySeparatorChar.ToString()) == false);
+                    }
+
+                    m_strPath = in_str;
+                    m_nPrevLineNo = m_rootNode.FirstLineNo;
+                    m_rootNode.FirstLineNo = m_nLineNo = nLineNo;
+                    m_nLength = nLength;
+
+                    // Path.GetDirectoryName() does not preserve filesystem root
+
+                    String strParent = m_strPath;
+                    int nIndex = strParent.LastIndexOf(Path.DirectorySeparatorChar);
+
+                    if (nIndex < 0)
+                    {
+                        return;
+                    }
+
+                    strParent = strParent.Remove(nIndex).TrimEnd(Path.DirectorySeparatorChar);
+
+                    if (m_rootNode.Nodes.ContainsKey(strParent) == false)
+                    {
+                        m_rootNode.Nodes.Add(strParent, new Node(strParent, m_rootNode.FirstLineNo, 0, m_rootNode));
+                    }
+
+                    if (m_rootNode.Nodes[strParent].subNodes.ContainsKey(m_strPath) == false)
+                    {
+                        m_rootNode.Nodes[strParent].subNodes.Add(m_strPath, this);
+                    }
+                }
+
+                public TreeNode AddToTree(String strVolumeName = null)
+                {
+                    int nIndex = m_strPath.LastIndexOf(Path.DirectorySeparatorChar);
+                    String strShortPath = bUseShortPath ? m_strPath.Substring(nIndex + 1) : m_strPath;
+                    TreeNode treeNode = null;
+
+                    if (subNodes.Count == 1)
+                    {
+                        Node subNode = subNodes.Values.First();
+
+                        if (this == m_rootNode.Nodes.Values.First())
+                        {
+                            // cull all root node single-chains.
+                            m_rootNode.Nodes = subNodes;
+                            subNode.m_strPath.Insert(0, m_strPath + Path.DirectorySeparatorChar);
+                            subNode.bUseShortPath = false;
+                            treeNode = subNode.AddToTree(strVolumeName);
+
+                            // further down at new NodeDatum...
+                            m_nPrevLineNo = subNode.m_nPrevLineNo;
+                            m_nLength = subNode.m_nLength;
+                            m_nLineNo = subNode.m_nLineNo;
+                        }
+                        else
+                        {
+                            treeNode = new TreeNode(strShortPath, new TreeNode[] { subNode.AddToTree() });
+                        }
+                    }
+                    else if (subNodes.Count > 1)
+                    {
+                        List<TreeNode> treeList = new List<TreeNode>();
+
+                        foreach (Node node in subNodes.Values)
+                        {
+                            treeList.Add(node.AddToTree());
+                        }
+
+                        treeNode = new TreeNode(strShortPath, treeList.ToArray());
+                    }
+                    else
+                    {
+                        treeNode = new TreeNode(strShortPath);
+                    }
+
+                    treeNode.Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo, m_nLength);  // this is almost but not quite always newly assigned here.
+
+                    if (this == m_rootNode.Nodes.Values.First())
+                    {
+                        treeNode.Name = treeNode.Text;
+
+                        if (StrValid(strVolumeName))
+                        {
+                            if (strVolumeName.EndsWith(treeNode.Text))
+                            {
+                                treeNode.Text = strVolumeName;
+                            }
+                            else
+                            {
+                                treeNode.Text = strVolumeName + " (" + treeNode.Text + ")";
+                            }
+                        }
+                    }
+
+                    return treeNode;
+                }
+            }
+
+            class RootNode
+            {
+                SortedDictionary<String, Node> m_nodes = new SortedDictionary<String, Node>();
+                uint m_firstLineNo = 0;
+
+                public SortedDictionary<String, Node> Nodes { get { return m_nodes; } set { m_nodes = value; } }
+                public uint FirstLineNo { get { return m_firstLineNo; } set { m_firstLineNo = value; } }
             }
 
             public TreeRootNodeThread(LVvolStrings volStrings, Hashtable hashCache, TreeStatusDelegate statusCallback)
@@ -886,7 +871,7 @@ namespace SearchDirLists
                 m_statusCallback(lvVol: new ListViewItem(new String[] { "Total Free Space", FormatSize(arrDriveInfo[5], bBytes: true) }));
                 m_statusCallback(lvVol: new ListViewItem(new String[] { "Total Size", FormatSize(arrDriveInfo[6], bBytes: true) }));
 
-                if (arrDriveInfo.Length == 8)
+                if (arrDriveInfo.Length > 7)
                 {
                     m_statusCallback(lvVol: new ListViewItem(new String[] { "Volume Label", arrDriveInfo[7] }));
                 }

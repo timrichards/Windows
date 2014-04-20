@@ -2565,6 +2565,11 @@ namespace SearchDirLists
 
         private void form_chkLoose_CheckedChanged(object sender, EventArgs e)
         {
+            if (form_lvIgnoreList.Items.Count <= 0)
+            {
+                return;
+            }
+
             KillTreeBuilder();
             RestartTreeTimer();
         }

@@ -9,8 +9,6 @@ using System.ComponentModel;
 
 namespace SearchDirLists
 {
-    class NoFormDesigner_Placeholder {}
-
     partial class Form1 : Form
     {
         Hashtable m_hashCache = new Hashtable();
@@ -44,6 +42,14 @@ namespace SearchDirLists
             }
         }
 
+        void TreeCleanup()
+        {
+            m_tree = null;
+            m_listRootNodes.Clear();
+            m_list_lvIgnore.Clear();
+            GC.Collect();
+        }
+
         void TreeDoneCallback()
         {
             Debug.Assert(m_listTreeNodes.Count == 0);
@@ -59,10 +65,7 @@ namespace SearchDirLists
             Invoke(new DoSomething(treeDone.Step2_OnForm));
             Console.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             treeDone = null;
-            m_tree = null;
-            m_listRootNodes.Clear();
-            m_list_lvIgnore.Clear();
-            GC.Collect();
+            TreeCleanup();
         }
 
         void TreeSelectStatusCallback(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem lvVol = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null)
@@ -234,7 +237,8 @@ namespace SearchDirLists
             {
                 if (bKill)
                 {
-                    m_tree.EndThread();
+                    m_tree.EndThread(bJoin: true);
+                    TreeCleanup();
                 }
                 else
                 {
@@ -243,7 +247,6 @@ namespace SearchDirLists
             }
 
             m_hashCache.Clear();
-            m_listRootNodes.Clear();
             m_listTreeNodes.Clear();
             form_lvFiles.Items.Clear();
             form_lvFileCompare.Items.Clear();
@@ -274,6 +277,7 @@ namespace SearchDirLists
             treeNode.NodeFont = new Font(form_treeView_Browse.Font, FontStyle.Bold | FontStyle.Underline);
             form_treeView_Browse.Nodes.Add(treeNode);
             form_treeView_Browse.Enabled = false;
+            Debug.Assert(m_listRootNodes.Count == 0);
             Debug.Assert(m_list_lvIgnore.Count == 0);
 
             foreach (ListViewItem lvItem in form_lvIgnoreList.Items)

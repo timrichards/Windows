@@ -301,8 +301,8 @@ namespace SearchDirLists
             m_FontVolGroupOrig = form_lblVolGroup.Font;
             m_clrVolGroupOrig = form_lblVolGroup.BackColor;
             m_bCheckboxes = form_treeView_Browse.CheckBoxes;
-
             Utilities.SetMessageBoxDelegate(MessageboxCallback);
+            splitIgnoreList.SplitterDistance = splitCopyList.SplitterDistance = form_btnCopyClear.Left + form_btnCopyClear.Width + 5;
         }
 
         void ComboBoxItemsInsert(ComboBox comboBox, String strText = null, bool bTrimText = true)

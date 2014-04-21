@@ -31,19 +31,15 @@ namespace SearchDirLists
 
     class SearchResults
     {
-        String m_strSearch = null;
-        LVvolStrings m_volStrings = null;
-        List<SearchResultsDir> m_listResults = null;
-
-        internal String StrSearch { get { return m_strSearch; } }
-        internal LVvolStrings VolStrings { get { return m_volStrings; } }
-        internal List<SearchResultsDir> Results { get { return m_listResults; } }
+        internal readonly String StrSearch = null;
+        internal readonly LVvolStrings VolStrings = null;
+        internal readonly List<SearchResultsDir> Results = null;
 
         internal SearchResults(String strSearch, LVvolStrings volStrings, List<SearchResultsDir> listResults)
         {
-            m_strSearch = strSearch;
-            m_volStrings = volStrings;
-            m_listResults = listResults;
+            StrSearch = strSearch;
+            VolStrings = volStrings;
+            Results = listResults;
         }
     }
 
@@ -165,7 +161,10 @@ namespace SearchDirLists
                     // ...now just the last folder name for strMatchDir...      // "outermost"
                     if (bDir && strMatchDir.Contains(Path.DirectorySeparatorChar))
                     {
-                        strMatchDir = strMatchDir.Substring(strMatchDir.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+                        if (strSearch.Contains(Path.DirectorySeparatorChar) == false)
+                        {
+                            strMatchDir = strMatchDir.Substring(strMatchDir.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+                        }
                     }
 
                     if ((m_bSearchFilesOnly == false) && bDir && (strMatchDir.Contains(strSearch)))

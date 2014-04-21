@@ -24,11 +24,11 @@ namespace SearchDirLists
         protected uint m_nImmediateFiles = 0;
         protected uint m_nDirsWithFiles = 0;
 
-        public DetailsDatum()
+        internal DetailsDatum()
         {
         }
 
-        public DetailsDatum(DetailsDatum in_datum)
+        internal DetailsDatum(DetailsDatum in_datum)
         {
             m_nTotalLength = in_datum.m_nTotalLength;
             m_nFilesInSubdirs = in_datum.m_nFilesInSubdirs;
@@ -49,20 +49,20 @@ namespace SearchDirLists
             return datum;
         }
 
-        public ulong TotalLength { get { return m_nTotalLength; } set { m_nTotalLength = value; } }
-        public uint nFilesInSubdirs { get { return m_nFilesInSubdirs; } set { m_nFilesInSubdirs = value; } }
-        public uint nSubDirs { get { return m_nSubDirs; } set { m_nSubDirs = value; } }
-        public uint nImmediateFiles { get { return m_nImmediateFiles; } set { m_nImmediateFiles = value; } }
-        public uint nDirsWithFiles { get { return m_nDirsWithFiles; } set { m_nDirsWithFiles = value; } }
+        internal ulong TotalLength { get { return m_nTotalLength; } set { m_nTotalLength = value; } }
+        internal uint nFilesInSubdirs { get { return m_nFilesInSubdirs; } set { m_nFilesInSubdirs = value; } }
+        internal uint nSubDirs { get { return m_nSubDirs; } set { m_nSubDirs = value; } }
+        internal uint nImmediateFiles { get { return m_nImmediateFiles; } set { m_nImmediateFiles = value; } }
+        internal uint nDirsWithFiles { get { return m_nDirsWithFiles; } set { m_nDirsWithFiles = value; } }
     }
 
     // One tag at the first item, so the compare listviewer knows what the first listviewer's state is.
     class LVitemFileTag
     {
-        public readonly String StrCompareDir = null;
-        public readonly long nNumFiles = 0;   // equivalent to number of items in the listviewer. Not currently used
+        internal readonly String StrCompareDir = null;
+        internal readonly long nNumFiles = 0;   // equivalent to number of items in the listviewer. Not currently used
 
-        public LVitemFileTag(String strCompareDir_in, long nNumFiles_in)
+        internal LVitemFileTag(String strCompareDir_in, long nNumFiles_in)
         {
             StrCompareDir = strCompareDir_in;
             nNumFiles = nNumFiles_in;
@@ -71,11 +71,11 @@ namespace SearchDirLists
 
     class HashKey : IComparable
     {
-        public readonly ulong nTotalLength;      //  found   41 bits
-        public readonly uint nFilesInSubdirs;    //          23 bits
-        public readonly uint nDirsWithFiles;     //          16 bits
+        internal readonly ulong nTotalLength;      //  found   41 bits
+        internal readonly uint nFilesInSubdirs;    //          23 bits
+        internal readonly uint nDirsWithFiles;     //          16 bits
 
-        public HashKey(ulong nTotalLength_in, uint nFilesInSubdirs_in, uint nDirsWithFiles_in)
+        internal HashKey(ulong nTotalLength_in, uint nFilesInSubdirs_in, uint nDirsWithFiles_in)
         {
             nTotalLength = nTotalLength_in;
             nFilesInSubdirs = nFilesInSubdirs_in;
@@ -144,16 +144,16 @@ namespace SearchDirLists
 
     class NodeDatum : DetailsDatum
     {
-        public readonly uint nPrevLineNo = 0;
-        public readonly uint nLineNo = 0;
-        public readonly ulong nLength = 0;
+        internal readonly uint nPrevLineNo = 0;
+        internal readonly uint nLineNo = 0;
+        internal readonly ulong nLength = 0;
 
         class NodeDatumLVitemHolder     // this was a way of setting the listview item in a different node after processing the first. Not used.
         {
-            public ListViewItem m_lvItem = null;
+            internal ListViewItem m_lvItem = null;
         }
 
-        public HashKey Key
+        internal HashKey Key
         {
             get
             {
@@ -161,19 +161,19 @@ namespace SearchDirLists
             }
         }
 
-        public List<TreeNode> m_listClones = null;
+        internal List<TreeNode> m_listClones = null;
 
-        public void SetLVitemHolder(NodeDatum holder) { m_lvItem_ = (holder != null) ? holder.m_lvItem_ : null; }
+        internal void SetLVitemHolder(NodeDatum holder) { m_lvItem_ = (holder != null) ? holder.m_lvItem_ : null; }
         NodeDatumLVitemHolder m_lvItem_ = new NodeDatumLVitemHolder();
-        public ListViewItem m_lvItem
+        internal ListViewItem m_lvItem
         {
             get { return (m_lvItem_ != null) ? m_lvItem_.m_lvItem : null; }
             set { if (m_lvItem_ != null) m_lvItem_.m_lvItem = value; }
         }
 
-        public bool m_bDifferentVols = false;
+        internal bool m_bDifferentVols = false;
 
-        public NodeDatum(uint nPrevLineNo_in, uint nLineNo_in, ulong nLength_in) { nPrevLineNo = nPrevLineNo_in; nLineNo = nLineNo_in; nLength = nLength_in; }
+        internal NodeDatum(uint nPrevLineNo_in, uint nLineNo_in, ulong nLength_in) { nPrevLineNo = nPrevLineNo_in; nLineNo = nLineNo_in; nLength = nLength_in; }
 
         protected NodeDatum(NodeDatum node)
             : base(node)
@@ -186,10 +186,10 @@ namespace SearchDirLists
 
     class RootNodeDatum : NodeDatum
     {
-        public readonly String StrFile = null;
-        public readonly String StrVolumeGroup = null;
+        internal readonly String StrFile = null;
+        internal readonly String StrVolumeGroup = null;
 
-        public RootNodeDatum(NodeDatum node, String strFile, String strVolGroup)
+        internal RootNodeDatum(NodeDatum node, String strFile, String strVolGroup)
             : base(node)
         {
             StrFile = strFile;
@@ -211,7 +211,7 @@ namespace SearchDirLists
             return obj.Name == null ? 0 : obj.Name.GetHashCode();
         }
 
-        public static void NameItems(ListView.ListViewItemCollection list)
+        internal static void NameItems(ListView.ListViewItemCollection list)
         {
             foreach (ListViewItem item in list)
             {
@@ -224,7 +224,7 @@ namespace SearchDirLists
             }
         }
 
-        public static void MarkItemsFrom1notIn2(ListView lv1, ListView lv2)
+        internal static void MarkItemsFrom1notIn2(ListView lv1, ListView lv2)
         {
             if ((lv1.Items.Count <= 0) || (lv2.Items.Count <= 0)) { return; }
 
@@ -241,7 +241,7 @@ namespace SearchDirLists
             }
         }
 
-        public static void SetTopItem(ListView lv1, ListView lv2)
+        internal static void SetTopItem(ListView lv1, ListView lv2)
         {
             if (lv1.TopItem == null) { return; }
             if (lv1.TopItem.Index > 0) { return; }
@@ -282,13 +282,13 @@ namespace SearchDirLists
                 RootNode m_rootNode = null;
                 static TreeStatusDelegate m_statusCallback = null;
 
-                public DirData(TreeStatusDelegate statusCallback, RootNode rootNode)
+                internal DirData(TreeStatusDelegate statusCallback, RootNode rootNode)
                 {
                     m_statusCallback = statusCallback;
                     m_rootNode = rootNode;
                 }
 
-                public void AddToTree(String in_str, uint nLineNo, ulong nLength)
+                internal void AddToTree(String in_str, uint nLineNo, ulong nLength)
                 {
                     if (m_rootNode.Nodes.ContainsKey(in_str))
                     {
@@ -300,7 +300,7 @@ namespace SearchDirLists
                     m_rootNode.Nodes.Add(in_str, new Node(in_str, nLineNo, nLength, m_rootNode));
                 }
 
-                public TreeNode AddToTree(String strVolumeName)
+                internal TreeNode AddToTree(String strVolumeName)
                 {
                     TreeNode rootNode = m_rootNode.Nodes.Values.First().AddToTree(strVolumeName);
 
@@ -319,7 +319,7 @@ namespace SearchDirLists
                 ulong m_nLength = 0;
                 bool bUseShortPath = true;
 
-                public Node(String in_str, uint nLineNo, ulong nLength, RootNode rootNode)
+                internal Node(String in_str, uint nLineNo, ulong nLength, RootNode rootNode)
                 {
                     Debug.Assert(nLineNo != 0);
                     m_rootNode = rootNode;
@@ -357,7 +357,7 @@ namespace SearchDirLists
                     }
                 }
 
-                public TreeNode AddToTree(String strVolumeName = null)
+                internal TreeNode AddToTree(String strVolumeName = null)
                 {
                     int nIndex = m_strPath.LastIndexOf(Path.DirectorySeparatorChar);
                     String strShortPath = bUseShortPath ? m_strPath.Substring(nIndex + 1) : m_strPath;
@@ -429,11 +429,11 @@ namespace SearchDirLists
                 SortedDictionary<String, Node> m_nodes = new SortedDictionary<String, Node>();
                 uint m_firstLineNo = 0;
 
-                public SortedDictionary<String, Node> Nodes { get { return m_nodes; } set { m_nodes = value; } }
-                public uint FirstLineNo { get { return m_firstLineNo; } set { m_firstLineNo = value; } }
+                internal SortedDictionary<String, Node> Nodes { get { return m_nodes; } set { m_nodes = value; } }
+                internal uint FirstLineNo { get { return m_firstLineNo; } set { m_firstLineNo = value; } }
             }
 
-            public TreeRootNodeThread(LVvolStrings volStrings, Hashtable hashCache, TreeStatusDelegate statusCallback)
+            internal TreeRootNodeThread(LVvolStrings volStrings, Hashtable hashCache, TreeStatusDelegate statusCallback)
             {
                 m_volStrings = volStrings;
                 m_hashCache = hashCache;
@@ -493,7 +493,7 @@ namespace SearchDirLists
                 return datum;
             }
 
-            public void Go()
+            internal void Go()
             {
                 DateTime dtStart = DateTime.Now;
 
@@ -596,7 +596,7 @@ namespace SearchDirLists
                 Console.WriteLine(strSaveAs + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
             }
 
-            public Thread DoThreadFactory()
+            internal Thread DoThreadFactory()
             {
                 m_thread = new Thread(new ThreadStart(Go));
                 m_thread.IsBackground = true;
@@ -605,7 +605,7 @@ namespace SearchDirLists
             }
         }
 
-        public Tree(ListView.ListViewItemCollection lvVolItems, Hashtable hashCache,
+        internal Tree(ListView.ListViewItemCollection lvVolItems, Hashtable hashCache,
             TreeStatusDelegate statusCallback, TreeDoneDelegate doneCallback)
         {
             foreach (ListViewItem lvItem in lvVolItems)
@@ -651,7 +651,7 @@ namespace SearchDirLists
             m_doneCallback();
         }
 
-        public void EndThread(bool bJoin = false)
+        internal void EndThread(bool bJoin = false)
         {
             lock (m_listThreads)
             {
@@ -679,7 +679,7 @@ namespace SearchDirLists
             m_thread = null;
         }
 
-        public void DoThreadFactory()
+        internal void DoThreadFactory()
         {
             m_thread = new Thread(new ThreadStart(Go));
             m_thread.IsBackground = true;
@@ -698,7 +698,7 @@ namespace SearchDirLists
         bool m_bCompareMode = false;
         bool m_bSecondComparePane = false;
 
-        public TreeSelect(TreeNode node, Hashtable hashCache, String strFile, bool bCompareMode, bool bSecondComparePane,
+        internal TreeSelect(TreeNode node, Hashtable hashCache, String strFile, bool bCompareMode, bool bSecondComparePane,
             TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
         {
             m_treeNode = node;
@@ -710,7 +710,7 @@ namespace SearchDirLists
             m_doneCallback = doneCallback;
         }
 
-        static public TreeNode GetParentRoot(TreeNode treeNode)
+        static internal TreeNode GetParentRoot(TreeNode treeNode)
         {
             TreeNode nodeParent = treeNode;
 
@@ -881,7 +881,7 @@ namespace SearchDirLists
             m_doneCallback(m_bSecondComparePane);
         }
 
-        public Thread DoThreadFactory()
+        internal Thread DoThreadFactory()
         {
             m_thread = new Thread(new ThreadStart(Go));
 

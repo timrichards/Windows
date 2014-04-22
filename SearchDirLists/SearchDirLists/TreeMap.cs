@@ -40,7 +40,7 @@ namespace SearchDirLists
 
 	struct Options
 	{
-        public Options (
+        internal Options (
 		    STYLE style_in,
 		    bool  grid_in,
 		    Color gridColor_in,
@@ -62,15 +62,15 @@ namespace SearchDirLists
             lightSourceY = lightSourceY_in;
         }
 
-		public readonly STYLE style;			// Squarification method
-		public readonly bool  grid;				// Whether or not to draw grid lines
-		public readonly Color gridColor;		// Color of grid lines
-		public double brightness;		        // 0..1.0	(default = 0.84)
-		public double height;			        // 0..oo	(default = 0.40)	Factor "H"
-		public double scaleFactor;		        // 0..1.0	(default = 0.90)	Factor "F"
-		public double ambientLight;	            // 0..1.0	(default = 0.15)	Factor "Ia"
-		public double lightSourceX;	            // -4.0..+4.0 (default = -1.0), negative = left
-		public double lightSourceY;	            // -4.0..+4.0 (default = -1.0), negative = top
+		internal readonly STYLE style;			// Squarification method
+		internal readonly bool  grid;				// Whether or not to draw grid lines
+		internal readonly Color gridColor;		// Color of grid lines
+		internal double brightness;		        // 0..1.0	(default = 0.84)
+		internal double height;			        // 0..oo	(default = 0.40)	Factor "H"
+		internal double scaleFactor;		        // 0..1.0	(default = 0.90)	Factor "F"
+		internal double ambientLight;	            // 0..1.0	(default = 0.15)	Factor "Ia"
+		internal double lightSourceX;	            // -4.0..+4.0 (default = -1.0), negative = left
+		internal double lightSourceY;	            // -4.0..+4.0 (default = -1.0), negative = top
 
 		int GetBrightnessPercent()	            { return RoundDouble(brightness * 100); }
 		int GetHeightPercent()		            { return RoundDouble(height * 100); }
@@ -103,7 +103,7 @@ namespace SearchDirLists
 	        return (color.R + color.G + color.B) / 255.0 / 3.0;
         }
 
-        public static Color MakeBrightColor(Color color, double brightness)
+        internal static Color MakeBrightColor(Color color, double brightness)
         {
 	        Debug.Assert(brightness >= 0.0);
 	        Debug.Assert(brightness <= 1.0);
@@ -126,7 +126,7 @@ namespace SearchDirLists
 	        return Color.FromArgb(red, green, blue);
         }
 
-        public static void NormalizeColor(ref int red, ref int green, ref int blue)
+        internal static void NormalizeColor(ref int red, ref int green, ref int blue)
         {
 	        Debug.Assert(red + green + blue <= 3 * 255);
 
@@ -144,7 +144,7 @@ namespace SearchDirLists
 	        }
         }
 
-        public static void DistributeFirst(ref int first, ref int second, ref int third)
+        internal static void DistributeFirst(ref int first, ref int second, ref int third)
         {
             {
 	            int h= (first - 255) / 2;
@@ -247,7 +247,7 @@ namespace SearchDirLists
 	        return _defaultOptionsOld;
         }
 
-        public TreeMap()
+        internal TreeMap()
         {
 	        SetOptions(_defaultOptions);
         }
@@ -272,9 +272,12 @@ namespace SearchDirLists
 	        return m_options;
         }
 
-        // BufferedGraphics
-        public void DrawTreemap(Graphics graphics, Rectangle rc, TreeNode root, Options? options = null)
+        TreeNode m_rootNode = null;
+
+        internal TreeMap DrawTreemap(Graphics graphics, Rectangle rc, TreeNode root, Options? options = null)
         {
+            m_rootNode = root;
+
             if (options != null)
             {
                 SetOptions(options.Value);
@@ -283,7 +286,7 @@ namespace SearchDirLists
 	        if (rc.Width <= 0 || rc.Height <= 0)
             {
                 Debug.Assert(false);
-		        return;
+		        return this;
             }
 
 	        if (m_options.grid)
@@ -305,7 +308,7 @@ namespace SearchDirLists
 
 	        if (rc.Width <= 0 || rc.Height <= 0)
             {
-		        return;
+		        return this;
             }
 
 	        if (((NodeDatum)root.Tag).nTotalLength > 0)
@@ -325,107 +328,8 @@ namespace SearchDirLists
 	        {
 		        graphics.FillRectangle(Brushes.Black, rc);
 	        }
-        }
 
-        TreeNode FindItemByPoint(TreeNode item, Point point)
-        {
-	        Debug.Assert(item != null);
-
-	        Rectangle rc = ((NodeDatum)item.Tag).TreeMapRect;
-
-	        if (rc.Contains(point) == false)
-	        {
-		        // The only case that this function returns null is that
-		        // point is not inside the rectangle of item.
-		        //
-		        // Take notice of
-		        // (a) the very right an bottom lines, which can be "grid" and
-		        //     are not covered by the root rectangle,
-		        // (b) the fact, that WM_MOUSEMOVEs can occur after WM_SIZE but
-		        //     before WM_PAINT.
-		        //
-		        return null;
-	        }
-
-	        Debug.Assert(rc.Contains(point));
-
-	        TreeNode ret = null;
-
-	        int gridWidth = m_options.grid ? 1: 0;
-
-	        if (rc.Width <= gridWidth || rc.Height <= gridWidth)
-	        {
-		        ret= item;
-	        }
-	        else if (item.Nodes.Count == 0)
-	        {
-		        ret= item;
-	        }
-	        else
-	        {
-		        Debug.Assert(((NodeDatum)item.Tag).nTotalLength > 0);
-		        Debug.Assert(item.Nodes.Count > 0);
-
-		        for (int i=0; i < item.Nodes.Count; i++)
-		        {
-			        TreeNode child= item.Nodes[i];
-
-			        Debug.Assert(((NodeDatum)child.Tag).nTotalLength > 0);
-
-        #if _DEBUG
-			        Rectangle rcChild= ((NodeDatum)child.Tag).TreeMapRect;
-			        Debug.Assert(rcChild.Right >= rcChild.Left);
-			        Debug.Assert(rcChild.Bottom >= rcChild.Top);
-			        Debug.Assert(rcChild.Left >= rc.Left);
-			        Debug.Assert(rcChild.Right <= rc.Right);
-			        Debug.Assert(rcChild.Top >= rc.Top);
-			        Debug.Assert(rcChild.Bottom <= rc.Bottom);
-        #endif
-			        if (((NodeDatum)child.Tag).TreeMapRect.Contains(point))
-			        {
-				        ret= FindItemByPoint(child, point);
-				        Debug.Assert(ret != null);
-        #if STRONGDEBUG
-        #if _DEBUG
-				        for (i++; i < item.Nodes.Count; i++)
-				        {
-					        child= item.Nodes[i);
-					
-					        if (((NodeDatum)child.Tag).nTotalLength == 0)
-						        break;
-
-					        rcChild= ((NodeDatum)child.Tag).TreeMapRect;
-					        if (rcChild.Left == -1)
-					        {
-						        Debug.Assert(rcChild.Top == -1);
-						        Debug.Assert(rcChild.Right == -1);
-						        Debug.Assert(rcChild.Bottom == -1);
-						        break;
-					        }
-					
-					        Debug.Assert(rcChild.Right >= rcChild.Left);
-					        Debug.Assert(rcChild.Bottom >= rcChild.Top);
-					        Debug.Assert(rcChild.Left >= rc.Left);
-					        Debug.Assert(rcChild.Right <= rc.Right);
-					        Debug.Assert(rcChild.Top >= rc.Top);
-					        Debug.Assert(rcChild.Bottom <= rc.Bottom);
-				        }
-        #endif
-        #endif
-
-				        break;
-			        }
-		        }
-	        }
-
-	        Debug.Assert(ret != null);
-
-	        if (ret == null)
-	        {
-		        ret= item;
-	        }
-
-	        return ret;
+            return this;
         }
 
         void DrawColorPreview(Graphics graphics, Rectangle rc, Color color, Options options)
@@ -620,7 +524,9 @@ namespace SearchDirLists
             List<TreeNode> listChildren
         )
         {
-            if (((NodeDatum)parent.Tag).nTotalLength == 0)
+            NodeDatum nodeDatum = (NodeDatum)parent.Tag;
+
+            if (nodeDatum.nTotalLength == 0)
 	        {
 		        rows.Add(1.0);
                 childrenPerRow.Add(listChildren.Count);
@@ -629,18 +535,18 @@ namespace SearchDirLists
 		        return true;
 	        }
 
-	        bool horizontalRows= (((NodeDatum)parent.Tag).TreeMapRect.Width >= ((NodeDatum)parent.Tag).TreeMapRect.Height);
+            bool horizontalRows = (nodeDatum.TreeMapRect.Width >= nodeDatum.TreeMapRect.Height);
 
 	        double width= 1.0;
 	        if (horizontalRows)
 	        {
-		        if (((NodeDatum)parent.Tag).TreeMapRect.Height > 0)
-			        width= (double)((NodeDatum)parent.Tag).TreeMapRect.Width / ((NodeDatum)parent.Tag).TreeMapRect.Height;
+                if (nodeDatum.TreeMapRect.Height > 0)
+                    width = (double)nodeDatum.TreeMapRect.Width / nodeDatum.TreeMapRect.Height;
 	        }
 	        else
 	        {
-		        if (((NodeDatum)parent.Tag).TreeMapRect.Width > 0)
-			        width= (double)((NodeDatum)parent.Tag).TreeMapRect.Height / ((NodeDatum)parent.Tag).TreeMapRect.Width;
+                if (nodeDatum.TreeMapRect.Width > 0)
+                    width = (double)nodeDatum.TreeMapRect.Height / nodeDatum.TreeMapRect.Width;
 	        }
             
             int nextChild = 0;
@@ -740,18 +646,20 @@ namespace SearchDirLists
         //
         void SequoiaView_DrawChildren(Graphics graphics, TreeNode parent, double[] surface, double h, uint flags)
         {
+            NodeDatum nodeDatum = (NodeDatum)parent.Tag;
+
 	        // Rest rectangle to fill
-	        Rectangle remaining = ((NodeDatum)parent.Tag).TreeMapRect;
+            Rectangle remaining = nodeDatum.TreeMapRect;
 	
 	        Debug.Assert(remaining.Width > 0);
 	        Debug.Assert(remaining.Height > 0);
 
 	        // Size of rest rectangle
-	        ulong remainingSize = ((NodeDatum)parent.Tag).nTotalLength;
+            ulong remainingSize = nodeDatum.nTotalLength;
 	        Debug.Assert(remainingSize > 0);
 
 	        // Scale factor
-	        double sizePerSquarePixel= (double)((NodeDatum)parent.Tag).nTotalLength / remaining.Width / remaining.Height;
+            double sizePerSquarePixel = (double)nodeDatum.nTotalLength / remaining.Width / remaining.Height;
 
 	        // First child for next row
 	        int head = 0;

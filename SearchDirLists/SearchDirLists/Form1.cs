@@ -1957,9 +1957,71 @@ namespace SearchDirLists
         }
 
         BufferedGraphics bg = null;
+        delegate void DrawTreeMapDelegate(BufferedGraphics bg_in, TreeMap treeMap_in);
+        DrawTreeMap m_DrawTreeMap = null;
+        TreeMap m_TreeMap = null;
+
+        class DrawTreeMap
+        {
+            BufferedGraphics m_bg = null;
+            Size m_size;
+            Graphics m_graphics;
+            Rectangle m_rect;
+            DrawTreeMapDelegate m_callback = null;
+            TreeNode m_treeNode = null;
+            TreeMap m_TreeMap = null;
+            Thread m_thread = null;
+
+            internal DrawTreeMap(PictureBox pictureBox, DrawTreeMapDelegate callback, TreeNode treeNode)
+            {
+                m_size = pictureBox.ClientRectangle.Size;
+                m_graphics = pictureBox.CreateGraphics();
+                m_rect = pictureBox.ClientRectangle;
+                m_callback = callback;
+                m_treeNode = (TreeNode) treeNode.Clone();
+            }
+
+            internal void Go()
+            {
+                BufferedGraphicsContext bgcontext = BufferedGraphicsManager.Current;
+
+                bgcontext.MaximumBuffer = m_size;
+                m_bg = bgcontext.Allocate(m_graphics, m_rect);
+                m_TreeMap = new TreeMap().DrawTreemap(m_bg.Graphics, m_rect, m_treeNode);
+                m_callback(m_bg, m_TreeMap);
+            }
+
+            internal DrawTreeMap DoThreadFactory()
+            {
+                m_thread = new Thread(new ThreadStart(Go));
+                m_thread.IsBackground = true;
+                m_thread.Start();
+                return this;
+            }
+        }
+
+        void DrawTreeMapCallback(BufferedGraphics bg_in, TreeMap treeMap)
+        {
+            if (InvokeRequired) { Invoke(new DrawTreeMapDelegate(DrawTreeMapCallback), new object[] { bg_in, treeMap }); return; }
+
+            bg = bg_in;
+            m_TreeMap = treeMap;
+
+            if (bg == null)
+            {
+                Debug.Assert(false);
+                return;
+            }
+
+            m_DrawTreeMap = null;
+            GC.Collect();
+            bg.Render();
+        }
 
         void form_treeView_Browse_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            m_DrawTreeMap = new DrawTreeMap(pictureBox1, DrawTreeMapCallback, e.Node).DoThreadFactory();
+
             if (sender == form_treeCompare2)
             {
                 Debug.Assert(m_bCompareMode);
@@ -2033,12 +2095,6 @@ namespace SearchDirLists
             nodeDatum.m_lvItem.Selected = true;
             nodeDatum.m_lvItem.Focused = true;
             nodeDatum.m_lvItem.ListView.TopItem = nodeDatum.m_lvItem;
-
-            BufferedGraphicsContext bgcontext = BufferedGraphicsManager.Current;
-            bgcontext.MaximumBuffer = pictureBox1.ClientRectangle.Size;
-            BufferedGraphics bg = bgcontext.Allocate(pictureBox1.CreateGraphics(), pictureBox1.ClientRectangle);
-            new TreeMap().DrawTreemap(bg.Graphics, pictureBox1.ClientRectangle, e.Node);
-            bg.Render();
         }
 
         void form_treeView_Browse_KeyPress(object sender, KeyPressEventArgs e)
@@ -2583,6 +2639,82 @@ namespace SearchDirLists
             {
                 bg.Render();
             }
+        }
+
+        TreeNode FindMapNode(TreeNode treeNode_in, Point pt, bool bNextNode = true)
+        {
+            TreeNode treeNode = treeNode_in;
+
+            do
+            {
+                NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+
+                if (nodeDatum.TreeMapRect.Contains(pt))
+                {
+                    if (treeNode != treeNode_in)
+                    {
+                        return treeNode;
+                    }
+
+                    if ((treeNode.Nodes != null) && (treeNode.Nodes.Count > 0))
+                    {
+                        TreeNode foundNode = FindMapNode(treeNode.Nodes[0], pt);
+
+                        if (foundNode != null)
+                        {
+                            return foundNode;
+                        }
+                    }
+                }
+            }
+            while (bNextNode && ((treeNode = treeNode.NextNode) != null));
+
+            return null;
+        }
+
+        ToolTip toolTip = null;
+        TreeNode prevNode = null;
+
+        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (m_TreeMap == null)
+            {
+                return;
+            }
+
+            if (form_treeView_Browse.SelectedNode == null)
+            {
+                return;
+            }
+
+            if ((Cursor.Current == Cursors.Arrow) && (prevNode != null))        // hack: clicked in tooltip
+            {
+                toolTip.Active = false;
+                prevNode.TreeView.SelectedNode = prevNode;
+                return;
+            }
+
+            prevNode = FindMapNode(prevNode ?? form_treeView_Browse.SelectedNode, e.Location);
+
+            if (prevNode == null)
+            {
+                prevNode = FindMapNode(form_treeView_Browse.SelectedNode, e.Location);
+            }
+
+            if (prevNode == null)
+            {
+                return;
+            }
+
+            if (toolTip == null)
+            {
+                toolTip = new ToolTip();
+                toolTip.UseFading = true;
+            }
+
+            toolTip.Active = true;
+            toolTip.ToolTipTitle = prevNode.Text;
+            toolTip.Show(Utilities.FormatSize(((NodeDatum)prevNode.Tag).nTotalLength, bBytes: true), pictureBox1, e.Location);
         }
     }
 }

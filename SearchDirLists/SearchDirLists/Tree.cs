@@ -168,7 +168,7 @@ namespace SearchDirLists
         internal bool m_bDifferentVols = false;
 
         internal NodeDatum(uint nPrevLineNo_in, uint nLineNo_in, ulong nLength_in, TreeNode treeNode)
-        { nPrevLineNo = nPrevLineNo_in; nLineNo = nLineNo_in; nLength = nLength_in; backref = treeNode; }
+        { nPrevLineNo = nPrevLineNo_in; nLineNo = nLineNo_in; nLength = nLength_in; }
 
         protected NodeDatum(NodeDatum node)
             : base(node)
@@ -179,7 +179,6 @@ namespace SearchDirLists
         }
 
         internal Rectangle TreeMapRect;
-        internal readonly TreeNode backref;
     }
 
     class RootNodeDatum : NodeDatum

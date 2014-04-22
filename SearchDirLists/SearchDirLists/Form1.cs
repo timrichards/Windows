@@ -1956,10 +1956,8 @@ namespace SearchDirLists
             CompareModeButtonKeyPress(sender, e);
         }
 
-        BufferedGraphics bg = null;
-        delegate void DrawTreeMapDelegate(BufferedGraphics bg_in, TreeMap treeMap_in);
+        delegate void DrawTreeMapDelegate(BufferedGraphics bg);
         DrawTreeMap m_DrawTreeMap = null;
-        TreeMap m_TreeMap = null;
 
         class DrawTreeMap
         {
@@ -1969,30 +1967,42 @@ namespace SearchDirLists
             Rectangle m_rect;
             DrawTreeMapDelegate m_callback = null;
             TreeNode m_treeNode = null;
-            TreeMap m_TreeMap = null;
             Thread m_thread = null;
 
-            internal DrawTreeMap(PictureBox pictureBox, DrawTreeMapDelegate callback, TreeNode treeNode)
+            internal DrawTreeMap(DrawTreeMapDelegate callback, TreeNode treeNode)
             {
-                m_size = pictureBox.ClientRectangle.Size;
-                m_graphics = pictureBox.CreateGraphics();
-                m_rect = pictureBox.ClientRectangle;
                 m_callback = callback;
-                m_treeNode = (TreeNode) treeNode.Clone();
+                m_treeNode = treeNode;
             }
 
             internal void Go()
             {
-                BufferedGraphicsContext bgcontext = BufferedGraphicsManager.Current;
+                lock (this)
+                {
+                    if (m_bg == null)
+                    {
+                        BufferedGraphicsContext bgcontext = BufferedGraphicsManager.Current;
 
-                bgcontext.MaximumBuffer = m_size;
-                m_bg = bgcontext.Allocate(m_graphics, m_rect);
-                m_TreeMap = new TreeMap().DrawTreemap(m_bg.Graphics, m_rect, m_treeNode);
-                m_callback(m_bg, m_TreeMap);
+                        bgcontext.MaximumBuffer = m_size;
+                        m_bg = bgcontext.Allocate(m_graphics, m_rect);
+                    }
+
+                    new TreeMap().DrawTreemap(m_bg.Graphics, m_rect, m_treeNode);
+                    m_callback(m_bg);
+                }
             }
 
-            internal DrawTreeMap DoThreadFactory()
+            internal DrawTreeMap DoThreadFactory(PictureBox pictureBox)
             {
+                m_size = pictureBox.ClientRectangle.Size;
+                m_graphics = pictureBox.CreateGraphics();
+                m_rect = pictureBox.ClientRectangle;
+
+                if ((m_thread != null) && m_thread.IsAlive)
+                {
+                    m_thread.Abort();
+                }
+
                 m_thread = new Thread(new ThreadStart(Go));
                 m_thread.IsBackground = true;
                 m_thread.Start();
@@ -2000,27 +2010,16 @@ namespace SearchDirLists
             }
         }
 
-        void DrawTreeMapCallback(BufferedGraphics bg_in, TreeMap treeMap)
+        void DrawTreeMapCallback(BufferedGraphics bg)
         {
-            if (InvokeRequired) { Invoke(new DrawTreeMapDelegate(DrawTreeMapCallback), new object[] { bg_in, treeMap }); return; }
+            if (InvokeRequired) { Invoke(new DrawTreeMapDelegate(DrawTreeMapCallback), new object[] { bg }); return; }
 
-            bg = bg_in;
-            m_TreeMap = treeMap;
-
-            if (bg == null)
-            {
-                Debug.Assert(false);
-                return;
-            }
-
-            m_DrawTreeMap = null;
-            GC.Collect();
             bg.Render();
         }
 
         void form_treeView_Browse_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            m_DrawTreeMap = new DrawTreeMap(pictureBox1, DrawTreeMapCallback, e.Node).DoThreadFactory();
+            m_DrawTreeMap = new DrawTreeMap(DrawTreeMapCallback, e.Node).DoThreadFactory(pictureBox1);
 
             if (sender == form_treeCompare2)
             {
@@ -2635,9 +2634,9 @@ namespace SearchDirLists
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
-            if (bg != null)
+            if (m_DrawTreeMap != null)
             {
-                bg.Render();
+                m_DrawTreeMap.DoThreadFactory(pictureBox1);
             }
         }
 
@@ -2677,11 +2676,6 @@ namespace SearchDirLists
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
-            if (m_TreeMap == null)
-            {
-                return;
-            }
-
             if (form_treeView_Browse.SelectedNode == null)
             {
                 return;
@@ -2715,6 +2709,14 @@ namespace SearchDirLists
             toolTip.Active = true;
             toolTip.ToolTipTitle = prevNode.Text;
             toolTip.Show(Utilities.FormatSize(((NodeDatum)prevNode.Tag).nTotalLength, bBytes: true), pictureBox1, e.Location);
+        }
+
+        private void pictureBox1_Resize(object sender, EventArgs e)
+        {
+            //if (m_DrawTreeMap != null)
+            //{
+            //    m_DrawTreeMap.DoThreadFactory(pictureBox1);
+            //}
         }
     }
 }

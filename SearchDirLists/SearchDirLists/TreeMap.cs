@@ -26,106 +26,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace SearchDirLists
 {
-	enum STYLE
-	{
-		SimpleStyle,		// This style is not used in WinDirStat (it's rather uninteresting).
-		KDirStatStyle,		// Children are layed out in rows. Similar to the style used by KDirStat.
-		SequoiaViewStyle	// The 'classical' squarification as described in at http://www.win.tue.nl/~vanwijk/.
-	};
-
 	struct Options
 	{
         internal Options (
-		    STYLE style_in,
 		    bool  grid_in,
 		    Color gridColor_in,
 		    double brightness_in,
-		    double height_in,
-		    double scaleFactor_in,
-		    double ambientLight_in,
-		    double lightSourceX_in,
-		    double lightSourceY_in
+		    double height_in
         ) {
-            style= style_in;
             grid= grid_in;
             gridColor = gridColor_in;
             brightness = brightness_in;
             height = height_in;
-            scaleFactor = scaleFactor_in;
-            ambientLight = ambientLight_in;
-            lightSourceX = lightSourceX_in;
-            lightSourceY = lightSourceY_in;
         }
 
-		internal readonly STYLE style;			// Squarification method
 		internal readonly bool  grid;				// Whether or not to draw grid lines
 		internal readonly Color gridColor;		// Color of grid lines
 		internal double brightness;		        // 0..1.0	(default = 0.84)
 		internal double height;			        // 0..oo	(default = 0.40)	Factor "H"
-		internal double scaleFactor;		        // 0..1.0	(default = 0.90)	Factor "F"
-		internal double ambientLight;	            // 0..1.0	(default = 0.15)	Factor "Ia"
-		internal double lightSourceX;	            // -4.0..+4.0 (default = -1.0), negative = left
-		internal double lightSourceY;	            // -4.0..+4.0 (default = -1.0), negative = top
-
-		int GetBrightnessPercent()	            { return RoundDouble(brightness * 100); }
-		int GetHeightPercent()		            { return RoundDouble(height * 100); }
-		int GetScaleFactorPercent()	            { return RoundDouble(scaleFactor * 100); }
-		int GetAmbientLightPercent()            { return RoundDouble(ambientLight * 100); }
-		int GetLightSourceXPercent()            { return RoundDouble(lightSourceX * 100); }
-		int GetLightSourceYPercent()            { return RoundDouble(lightSourceY * 100); }
-		Point GetLightSourcePoint()             { return new Point(GetLightSourceXPercent(), GetLightSourceYPercent()); }
-
-		void SetBrightnessPercent(int n)	    { brightness = n / 100.0; }
-		void SetHeightPercent(int n)		    { height = n / 100.0; }
-		void SetScaleFactorPercent(int n)	    { scaleFactor = n / 100.0; }
-		void SetAmbientLightPercent(int n)	    { ambientLight = n / 100.0; }
-		void SetLightSourceXPercent(int n)	    { lightSourceX = n / 100.0; }
-		void SetLightSourceYPercent(int n)	    { lightSourceY = n / 100.0; }
-		void SetLightSourcePoint(Point pt)      { SetLightSourceXPercent(pt.X); SetLightSourceYPercent(pt.Y); }
-
-		int RoundDouble(double d) { return Math.Sign(d) * (int)(Math.Abs(d) + 0.5); }
 	}
 
     class ColorSpace
     {
-        // The EqualizeColors() method creates a palette with colors
-        // all having the same brightness of 0.6
-        // Later in RenderCushion() this number is used again to
-        // scale the colors.
-
-        double GetColorBrightness(Color color)
-        {
-	        return (color.R + color.G + color.B) / 255.0 / 3.0;
-        }
-
-        internal static Color MakeBrightColor(Color color, double brightness)
-        {
-	        Debug.Assert(brightness >= 0.0);
-	        Debug.Assert(brightness <= 1.0);
-
-	        double dred= color.R / 255.0;
-	        double dgreen= color.G / 255.0;
-	        double dblue= color.B / 255.0;
-
-	        double f= 3.0 * brightness / (dred + dgreen + dblue);
-	        dred*= f;
-	        dgreen*= f;
-	        dblue*= f;
-
-	        int red		= (int)(dred * 255);
-	        int green	= (int)(dgreen * 255);
-	        int blue	= (int)(dblue * 255);
-	
-	        NormalizeColor(ref red, ref green, ref blue);
-
-	        return Color.FromArgb(red, green, blue);
-        }
-
         internal static void NormalizeColor(ref int red, ref int green, ref int blue)
         {
 	        Debug.Assert(red + green + blue <= 3 * 255);
@@ -144,7 +72,7 @@ namespace SearchDirLists
 	        }
         }
 
-        internal static void DistributeFirst(ref int first, ref int second, ref int third)
+        static void DistributeFirst(ref int first, ref int second, ref int third)
         {
             {
 	            int h= (first - 255) / 2;
@@ -175,67 +103,19 @@ namespace SearchDirLists
 
     class TreeMap
     {
-        static double PALETTE_BRIGHTNESS = 0.6;
-
-        const uint COLORFLAG_DARKER = 0x01000000;
-	    const uint COLORFLAG_LIGHTER = 0x02000000;
-	    const uint COLORFLAG_MASK	 = 0x03000000;
-
         Options m_options;
-	    double m_Lx;			// Derived parameters
-	    double m_Ly;
-	    double m_Lz;
 
         Options _defaultOptions = new Options(
-	        STYLE.KDirStatStyle,
 	        false,
 	        Color.FromArgb(0,0,0),
 	        0.88,
-	        0.38,
-	        0.91,
-	        0.13,
-	        -1.0,
-	        -1.0);
+	        0.38);
 
         Options _defaultOptionsOld = new Options(
-            STYLE.KDirStatStyle,
 	        false,
 	        Color.FromArgb(0,0,0),
 	        0.85,
-	        0.4,
-	        0.9,
-	        0.15,
-	        -1.0,
-	        -1.0);
-
-        Color[] _defaultCushionColors = new Color[] {
-	        Color.FromArgb(0, 0, 255),
-	        Color.FromArgb(255, 0, 0),
-	        Color.FromArgb(0, 255, 0),
-	        Color.FromArgb(0, 255, 255),
-	        Color.FromArgb(255, 0, 255),
-	        Color.FromArgb(255, 255, 0),
-	        Color.FromArgb(150, 150, 255),
-	        Color.FromArgb(255, 150, 150),
-	        Color.FromArgb(150, 255, 150),
-	        Color.FromArgb(150, 255, 255),
-	        Color.FromArgb(255, 150, 255),
-	        Color.FromArgb(255, 255, 150),
-	        Color.FromArgb(255, 255, 255)
-        };
-
-        void GetDefaultPalette(ref Color[] palette)
-        {
-		    EqualizeColors(_defaultCushionColors, _defaultCushionColors.Length, ref palette);
-        }
-
-        void EqualizeColors(Color[] colors, int count, ref Color[] palette)
-        {
-	        for (int i=0; i < count; i++)
-	        {
-		        palette[i] = ColorSpace.MakeBrightColor(colors[i], PALETTE_BRIGHTNESS);
-	        }
-        }
+	        0.4);
 
         Options GetDefaultOptions()
         {
@@ -255,16 +135,6 @@ namespace SearchDirLists
         void SetOptions(Options options)
         {
 	        m_options= options;
-
-	        // Derive normalized vector here for performance
-	        double lx = m_options.lightSourceX;			// negative = left
-	        double ly = m_options.lightSourceY;			// negative = top
-	        double lz = 10;
-
-	        double len= Math.Sqrt(lx*lx + ly*ly + lz*lz);
-	        m_Lx = lx / len;
-	        m_Ly = ly / len;
-	        m_Lz = lz / len;
         }
 
         Options GetOptions()
@@ -291,7 +161,10 @@ namespace SearchDirLists
 
 	        if (m_options.grid)
 	        {
-		        graphics.FillRectangle(new SolidBrush(m_options.gridColor), rc);
+                lock (graphics)
+                {
+                    graphics.FillRectangle(new SolidBrush(m_options.gridColor), rc);
+                }
 	        }
 	        else
 	        {
@@ -299,8 +172,11 @@ namespace SearchDirLists
 		        // If we didn't do this, the layout of the treemap would
 		        // change, when grid is switched on and off.
                 Pen pen = new Pen(SystemColors.ButtonShadow, 1);
-                { int nLine = rc.Right - 1; graphics.DrawLine(pen, new Point(nLine, rc.Top), new Point(nLine, rc.Bottom)); }
-                { int nLine = rc.Bottom - 1; graphics.DrawLine(pen, new Point(rc.Left, nLine), new Point(rc.Right, nLine)); }
+                lock (graphics)
+                {
+                    { int nLine = rc.Right - 1; graphics.DrawLine(pen, new Point(nLine, rc.Top), new Point(nLine, rc.Bottom)); }
+                    { int nLine = rc.Bottom - 1; graphics.DrawLine(pen, new Point(rc.Left, nLine), new Point(rc.Right, nLine)); }
+                }
 	        }
 
 	        rc.Width--;
@@ -315,7 +191,7 @@ namespace SearchDirLists
 	        {
 		        double[] surface = new double[4];
 
-		        RecurseDrawGraph(graphics, root, rc, true, surface, m_options.height, 0);
+		        RecurseDrawGraph(graphics, root, rc);
 
         #if _DEBUG
 		        for (int x=rc.Left; x < rc.Right - m_options.grid; x++)
@@ -326,34 +202,19 @@ namespace SearchDirLists
 	        }
 	        else
 	        {
-		        graphics.FillRectangle(Brushes.Black, rc);
+                lock (graphics)
+                {
+                    graphics.FillRectangle(Brushes.Black, rc);
+                }
 	        }
 
             return this;
         }
 
-        void DrawColorPreview(Graphics graphics, Rectangle rc, Color color, Options options)
-        {
-		    double[] surface = new double[4];
-
-	        AddRidge(rc, surface, m_options.height * m_options.scaleFactor);
-
-            RenderRectangle(graphics, rc, surface, color);
-
-	        if (m_options.grid)
-	        {
-                graphics.DrawRectangle(new Pen(m_options.gridColor, 1), rc);
-	        }
-        }
-
         void RecurseDrawGraph(
 	        Graphics graphics,
 	        TreeNode item, 
-	        Rectangle rc,
-	        bool asroot,
-	        double[] psurface,
-	        double h,
-	        uint flags
+	        Rectangle rc
         )
         {
 	        Debug.Assert(rc.Width >= 0);
@@ -369,33 +230,16 @@ namespace SearchDirLists
 		        return;
 	        }
 
-	        double[] surface = new double[4];
-
-            Debug.Assert(psurface.Length == 4);
-
-	        if (IsCushionShading())
-	        {
-		        for (int i=0; i < 4; i++)
-                {
-			        surface[i]= psurface[i];
-                }
-
-		        if (!asroot)
-                {
-			        AddRidge(rc, surface, h);
-                }
-	        }
-
 	        if (item.Nodes.Count == 0)
 	        {
-		        RenderLeaf(graphics, item, surface);
+		        RenderLeaf(graphics, item);
 	        }
 	        else
 	        {
 		        Debug.Assert(item.Nodes.Count > 0);
 		        Debug.Assert(((NodeDatum)item.Tag).nTotalLength > 0);
 
-		        DrawChildren(graphics, item, surface, h, flags);
+                KDirStat_DrawChildren(graphics, item);
 	        }
         }
 
@@ -404,35 +248,10 @@ namespace SearchDirLists
         // simply have a member variable of type CTreemap but have to deal with
         // pointers, factory methods and explicit destruction. It's not worth.
 
-        void DrawChildren(
-	        Graphics graphics, 
-	        TreeNode parent, 
-	        double[] surface,
-	        double h,
-	        uint flags
-        )
-        {
-	        switch (m_options.style)
-	        {
-	        case STYLE.KDirStatStyle:
-		        KDirStat_DrawChildren(graphics, parent, surface, h, flags);
-		        break;
-
-	        case STYLE.SequoiaViewStyle:
-		        SequoiaView_DrawChildren(graphics, parent, surface, h, flags);
-		        break;
-
-	        case STYLE.SimpleStyle:
-		        Simple_DrawChildren(graphics, parent, surface, h, flags);
-		        break;
-	        }
-        }
-
-
         // I learned this squarification style from the KDirStat executable.
         // It's the most complex one here but also the clearest, imho.
         //
-        void KDirStat_DrawChildren(Graphics graphics, TreeNode parent, double[] surface, double h, uint flags)
+        void KDirStat_DrawChildren(Graphics graphics, TreeNode parent)
         {
 	        Debug.Assert(parent.Nodes.Count > 0);
 
@@ -491,7 +310,7 @@ namespace SearchDirLists
 			        }
 			        #endif			
 			
-			        RecurseDrawGraph(graphics, child, rcChild, false, surface, h * m_options.scaleFactor, 0);
+			        RecurseDrawGraph(graphics, child, rcChild);
 
 			        if (lastChild)
 			        {
@@ -641,292 +460,7 @@ namespace SearchDirLists
 	        return rowHeight;
         }
 
-
-        // The classical squarification method.
-        //
-        void SequoiaView_DrawChildren(Graphics graphics, TreeNode parent, double[] surface, double h, uint flags)
-        {
-            NodeDatum nodeDatum = (NodeDatum)parent.Tag;
-
-	        // Rest rectangle to fill
-            Rectangle remaining = nodeDatum.TreeMapRect;
-	
-	        Debug.Assert(remaining.Width > 0);
-	        Debug.Assert(remaining.Height > 0);
-
-	        // Size of rest rectangle
-            ulong remainingSize = nodeDatum.nTotalLength;
-	        Debug.Assert(remainingSize > 0);
-
-	        // Scale factor
-            double sizePerSquarePixel = (double)nodeDatum.nTotalLength / remaining.Width / remaining.Height;
-
-	        // First child for next row
-	        int head = 0;
-
-	        // At least one child left
-	        while (head < parent.Nodes.Count)
-	        {
-		        Debug.Assert(remaining.Width > 0);
-		        Debug.Assert(remaining.Height > 0);
-
-		        // How we devide the remaining rectangle 
-		        bool horizontal = (remaining.Width >= remaining.Height);
-
-		        // Height of the new row
-		        int height = horizontal ? remaining.Height : remaining.Width;
-
-		        // Square of height in size scale for ratio formula
-		        double hh= (height * height) * sizePerSquarePixel;
-		        Debug.Assert(hh > 0);
-
-		        // Row will be made up of child(rowBegin)...child(rowEnd - 1)
-		        int rowBegin = head;
-		        int rowEnd = head;
-
-		        // Worst ratio so far
-		        double worst = double.MaxValue;
-
-		        // Maxmium size of children in row
-		        ulong rmax= ((NodeDatum)parent.Nodes[rowBegin].Tag).nTotalLength;
-
-		        // Sum of sizes of children in row
-		        ulong sum= 0;
-
-		        // This condition will hold at least once.
-		        while (rowEnd < parent.Nodes.Count)
-		        {
-			        // We check a virtual row made up of child(rowBegin)...child(rowEnd) here.
-
-			        // Minimum size of child in virtual row
-			        ulong rmin= ((NodeDatum)parent.Nodes[rowEnd].Tag).nTotalLength;
-
-			        // If sizes of the rest of the children is zero, we add all of them
-			        if (rmin == 0)
-			        {
-				        rowEnd= parent.Nodes.Count;
-				        break;
-			        }
-
-			        // Calculate the worst ratio in virtual row.
-			        // Formula taken from the "Squarified Treemaps" paper.
-			        // (http://http://www.win.tue.nl/~vanwijk/)
-
-			        double ss= ((double)sum + rmin) * ((double)sum + rmin);
-			        double ratio1 = hh * rmax / ss;
-			        double ratio2 = ss / hh / rmin;
-
-			        double nextWorst = Math.Max(ratio1, ratio2);
-
-			        // Will the ratio get worse?
-			        if (nextWorst > worst)
-			        {
-				        // Yes. Don't take the virtual row, but the
-				        // real row (child(rowBegin)..child(rowEnd - 1))
-				        // made so far.
-				        break;
-			        }
-
-			        // Here we have decided to add child(rowEnd) to the row.
-			        sum+= rmin;
-			        rowEnd++;
-
-			        worst= nextWorst;
-		        }
-
-		        // Row will be made up of child(rowBegin)...child(rowEnd - 1).
-		        // sum is the size of the row.
-
-		        // As the size of parent is greater than zero, the size of
-		        // the first child must have been greater than zero, too.
-		        Debug.Assert(sum > 0);
-
-		        // Width of row
-		        int width = (horizontal ? remaining.Width : remaining.Height);
-		        Debug.Assert(width > 0);
-
-		        if (sum < remainingSize)
-			        width= (int)((double)sum / remainingSize * width);
-		        // else: use up the whole width
-		        // width may be 0 here.
-
-		        // Build the rectangles of children.
-                int rc_l = 0, rc_t = 0, rc_r = 0, rc_b = 0;
-		        double fBegin;
-
-		        if (horizontal)
-		        {
-			        rc_l= remaining.Left;
-			        rc_r= remaining.Left + width;
-			        fBegin= remaining.Top;
-		        }
-		        else
-		        {
-			        rc_t= remaining.Top;
-			        rc_b= remaining.Top + width;
-			        fBegin= remaining.Left;
-		        }
-
-		        // Now put the children into their places
-		        for (int i=rowBegin; i < rowEnd; i++)
-		        {
-			        int begin= (int)fBegin;
-			        double fraction= (double)(((NodeDatum)parent.Nodes[i].Tag).nTotalLength) / sum;
-			        double fEnd= fBegin + fraction * height;
-			        int end= (int)fEnd;
-			        bool lastChild = (i == rowEnd - 1 || ((NodeDatum)parent.Nodes[i+1].Tag).nTotalLength == 0);
-
-			        if (lastChild)
-			        {
-				        // Use up the whole height
-				        end= (horizontal ? remaining.Top + height : remaining.Left + height);
-			        }
-		
-			        if (horizontal)
-			        {
-				        rc_t= begin;
-				        rc_b= end;
-			        }
-			        else
-			        {
-				        rc_l= begin;
-				        rc_r= end;
-			        }
-
-                    Rectangle rc = new Rectangle(rc_l, rc_t, rc_r - rc_l, rc_t - rc_b);
-
-			        Debug.Assert(rc.Left <= rc.Right);
-			        Debug.Assert(rc.Top <= rc.Bottom);
-
-			        Debug.Assert(rc.Left >= remaining.Left);
-			        Debug.Assert(rc.Right <= remaining.Right);
-			        Debug.Assert(rc.Top >= remaining.Top);
-			        Debug.Assert(rc.Bottom <= remaining.Bottom);
-
-			        RecurseDrawGraph(graphics, parent.Nodes[i], rc, false, surface, h * m_options.scaleFactor, 0);
-
-			        if (lastChild)
-                    {
-				        break;
-                    }
-
-			        fBegin= fEnd;
-		        }
-
-		        // Put the next row into the rest of the rectangle
-		        if (horizontal)
-			        remaining.Offset(width, 0);
-		        else
-			        remaining.Offset(0, width);
-
-		        remainingSize-= sum;
-		
-		        Debug.Assert(remaining.Left <= remaining.Right);
-		        Debug.Assert(remaining.Top <= remaining.Bottom);
-
-		        Debug.Assert(remainingSize >= 0);
-
-		        head+= (rowEnd - rowBegin);
-
-		        if (remaining.Width <= 0 || remaining.Height <= 0)
-		        {
-			        if (head < parent.Nodes.Count)
-				        ((NodeDatum)parent.Nodes[head].Tag).TreeMapRect = new Rectangle(-1, -1, -1, -1);
-
-			        break;
-		        }
-	        }
-	        Debug.Assert(remainingSize == 0);
-	        Debug.Assert(remaining.Left == remaining.Right || remaining.Top == remaining.Bottom);
-        }
-
-
-        // No squarification. Children are arranged alternately horizontally and vertically.
-        //
-        void Simple_DrawChildren(Graphics graphics, TreeNode parent, double[] surface, double h, uint flags)
-        {
-        #if true
-	        Debug.Assert(false); // Not used in Windirstat.
-
-
-        #else
-	        Debug.Assert(parent.Nodes.Count > 0);
-	        Debug.Assert(((NodeDatum)parent.Tag).nTotalLength > 0);
-
-	        Rectangle rc= ((NodeDatum)parent.Tag).TreeMapRect;
-
-	        bool horizontal = (flags == 0);
-
-	        int width = horizontal ? rc.Width : rc.Height;
-	        Debug.Assert(width >= 0);
-
-	        double fBegin = horizontal ? rc.Left : rc.Top;
-	        int veryEnd = horizontal ? rc.Right : rc.Bottom;
-
-	        for (int i=0; i < parent.Nodes.Count; i++)
-	        {
-		        double fraction = (double)(parent.Nodes[i).TmiGetSize()) / ((NodeDatum)parent.Tag).nTotalLength;
-
-		        double fEnd = fBegin + fraction * width;
-
-		        bool lastChild = (i == parent.Nodes.Count - 1 || parent.Nodes[i + 1).TmiGetSize() == 0);
-
-		        if (lastChild)
-			        fEnd = veryEnd;
-
-		        int begin= (int)fBegin;
-		        int end= (int)fEnd;
-
-		        Debug.Assert(begin <= end);
-		        Debug.Assert(end <= veryEnd);
-
-		        Rectangle rcChild;
-		        if (horizontal)
-		        {
-			        rcChild.Left= begin;
-			        rcChild.Right= end;
-			        rcChild.Top= rc.Top;
-			        rcChild.Bottom= rc.Bottom;
-		        }
-		        else
-		        {
-			        rcChild.Top= begin;
-			        rcChild.Bottom= end;
-			        rcChild.Left= rc.Left;
-			        rcChild.Right= rc.Right;
-		        }
-
-		        RecurseDrawGraph(
-			        graphics, 
-			        parent.Nodes[i), 
-			        rcChild,
-			        false,
-			        surface,
-			        h * m_options.scaleFactor,
-			        flags == 0 ? 1 : 0
-		        );
-
-		        if (lastChild)
-		        {
-			        i++;
-			        break;
-		        }
-
-		        fBegin= fEnd;
-	        }
-	        if (i < parent.Nodes.Count)
-		        parent.Nodes[i).TmiSetRectangle(Rectangle(-1, -1, -1, -1));
-        #endif
-        }
-
-        bool IsCushionShading()
-        {
-	        return m_options.ambientLight < 1.0
-		        && m_options.height > 0.0
-		        && m_options.scaleFactor > 0.0;
-        }
-
-        void RenderLeaf(Graphics graphics, TreeNode item, double[] surface)
+        void RenderLeaf(Graphics graphics, TreeNode item)
         {
 	        Rectangle rc= ((NodeDatum)item.Tag).TreeMapRect;
 
@@ -938,144 +472,26 @@ namespace SearchDirLists
 			        return;
 	        }
 
-	        RenderRectangle(graphics, rc, surface, item.ForeColor == Color.Empty ? Color.SandyBrown : item.ForeColor);
+            DrawCushion(graphics, rc, (item.ForeColor == Color.Empty) ? Color.SandyBrown : item.ForeColor);
         }
 
-        void RenderRectangle(Graphics graphics, Rectangle rc, double[] surface, Color color)
+        void DrawCushion(Graphics graphics, Rectangle rc, Color col)
         {
-	        double brightness = m_options.brightness;
+            GraphicsPath path = new GraphicsPath();
+            Rectangle r = rc;
 
-	        if ((color.ToArgb() & COLORFLAG_MASK) != 0)
-	        {
-		        uint flags = (uint) (color.ToArgb() & COLORFLAG_MASK);
-		        color= ColorSpace.MakeBrightColor(color, PALETTE_BRIGHTNESS);
+            r.Inflate(r.Width / 2, r.Height / 2);
+            path.AddEllipse(r);
 
-		        if ((flags & COLORFLAG_DARKER) != 0)
-		        {
-			        brightness*= 0.66;
-		        }
-		        else
-		        {
-			        brightness*= 1.2;
-			        if (brightness > 1.0)
-				        brightness= 1.0;
-		        }
-	        }
+            PathGradientBrush brush = new PathGradientBrush(path);
 
-	        if (IsCushionShading())
-	        {
-		        DrawCushion(graphics, rc, surface, color, brightness);
-	        }
-	        else
-	        {
-		        DrawSolidRect(graphics, rc, color, brightness);
-	        }
-        }
+            brush.CenterColor = Color.Wheat;
+            brush.SurroundColors = new Color[] { ControlPaint.Dark(col) };
 
-        void DrawSolidRect(Graphics graphics, Rectangle rc, Color col, double brightness)
-        {
-	        int red = col.R;
-	        int green = col.G;
-	        int blue = col.B;
-	
-	        double factor = brightness / PALETTE_BRIGHTNESS;
-
-	        red= (int)(red * factor);
-	        green= (int)(green * factor);
-	        blue= (int)(blue * factor);
-
-	        ColorSpace.NormalizeColor(ref red, ref green, ref blue);
-
-	        graphics.FillRectangle(new SolidBrush(Color.FromArgb(red, green, blue)), rc);
-        }
-
-        void DrawCushion(Graphics graphics, Rectangle rc, double[] surface, Color col, double brightness)
-        {
-	        // Cushion parameters
-	        double Ia = m_options.ambientLight;
-
-	        // Derived parameters
-	        double Is = 1 - Ia;			// shading
-
-	        double colR= col.R;
-	        double colG= col.G;
-	        double colB= col.B;
-
-	        for (int iy = rc.Top; iy < rc.Bottom; iy++)
+            lock (graphics)
             {
-	            for (int ix = rc.Left; ix < rc.Right; ix++)
-	            {
-		            double nx= -(2 * surface[0] * (ix + 0.5) + surface[2]);
-		            double ny= -(2 * surface[1] * (iy + 0.5) + surface[3]);
-		            double cosa= (nx*m_Lx + ny*m_Ly + m_Lz) / Math.Sqrt(nx*nx + ny*ny + 1.0);
-		            if (cosa > 1.0)
-			            cosa= 1.0;
-		
-		            double pixel= Is * cosa;
-		            if (pixel < 0)
-			            pixel= 0;
-		
-		            pixel+= Ia;
-		            Debug.Assert(pixel <= 1.0);
-
-		            // Now, pixel is the brightness of the pixel, 0...1.0.
-
-		            // Apply contrast.
-		            // Not implemented.
-		            // Costs performance and nearly the same effect can be
-		            // made width the m_options.ambientLight parameter.
-		            // pixel= pow(pixel, m_options.contrast);
-
-		            // Apply "brightness"
-		            pixel*= brightness / PALETTE_BRIGHTNESS;
-
-		            // Make color value
-		            int red		= (int)(colR * pixel);
-		            int green	= (int)(colG * pixel);
-		            int blue	= (int)(colB * pixel);
-
-		            ColorSpace.NormalizeColor(ref red, ref green, ref blue);
-
-		            // ... and set!
-		            graphics.DrawLine(new Pen(Color.FromArgb(red, green, blue)), new Point(ix, iy), new Point(ix+1, iy+1));
-	            }
+                graphics.FillRectangle(brush, rc);
             }
-        }
-
-        void AddRidge(Rectangle rc, double[] surface, double h)
-        {
-	        /* 
-	        Unoptimized:
-
-	        if (rc.Width > 0)
-	        {
-		        surface[2]+= 4 * h * (rc.Right + rc.Left) / (rc.Right - rc.Left);
-		        surface[0]-= 4 * h / (rc.Right - rc.Left);
-	        }
-
-	        if (rc.Height > 0)
-	        {
-		        surface[3]+= 4 * h * (rc.Bottom + rc.Top) / (rc.Bottom - rc.Top);
-		        surface[1]-= 4 * h / (rc.Bottom - rc.Top);
-	        }
-	        */
-	
-	        // Optimized (gained 15 ms of 1030):
-
-	        int width= rc.Width;
-	        int height= rc.Height;
-
-	        Debug.Assert(width > 0 && height > 0);
-
-	        double h4= 4 * h;
-
-	        double wf= h4 / width;
-	        surface[2]+= wf * (rc.Right + rc.Left);
-	        surface[0]-= wf;
-
-	        double hf= h4 / height;
-	        surface[3]+= hf * (rc.Bottom + rc.Top);
-	        surface[1]-= hf;
         }
     }
 }

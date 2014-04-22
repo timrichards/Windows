@@ -18,11 +18,11 @@ namespace SearchDirLists
 
     class DetailsDatum
     {
-        protected ulong m_nTotalLength = 0;
-        protected uint m_nFilesInSubdirs = 0;
-        protected uint m_nSubDirs = 0;
-        protected uint m_nImmediateFiles = 0;
-        protected uint m_nDirsWithFiles = 0;
+        internal ulong nTotalLength = 0;
+        internal uint nFilesInSubdirs = 0;
+        internal uint nSubDirs = 0;
+        internal uint nImmediateFiles = 0;
+        internal uint nDirsWithFiles = 0;
 
         internal DetailsDatum()
         {
@@ -30,30 +30,24 @@ namespace SearchDirLists
 
         internal DetailsDatum(DetailsDatum in_datum)
         {
-            m_nTotalLength = in_datum.m_nTotalLength;
-            m_nFilesInSubdirs = in_datum.m_nFilesInSubdirs;
-            m_nSubDirs = in_datum.m_nSubDirs;
-            m_nImmediateFiles = in_datum.m_nImmediateFiles;
-            m_nDirsWithFiles = in_datum.m_nDirsWithFiles;
+            nTotalLength = in_datum.nTotalLength;
+            nFilesInSubdirs = in_datum.nFilesInSubdirs;
+            nSubDirs = in_datum.nSubDirs;
+            nImmediateFiles = in_datum.nImmediateFiles;
+            nDirsWithFiles = in_datum.nDirsWithFiles;
         }
 
         static public DetailsDatum operator +(DetailsDatum in_datum1, DetailsDatum in_datum2)
         {
             DetailsDatum datum = new DetailsDatum();
 
-            datum.m_nTotalLength = in_datum1.m_nTotalLength + in_datum2.m_nTotalLength;
-            datum.m_nFilesInSubdirs = in_datum1.m_nFilesInSubdirs + in_datum2.m_nFilesInSubdirs;
-            datum.m_nSubDirs = in_datum1.m_nSubDirs + in_datum2.m_nSubDirs;
-            datum.m_nImmediateFiles = in_datum1.m_nImmediateFiles + in_datum2.m_nImmediateFiles;
-            datum.m_nDirsWithFiles = in_datum1.m_nDirsWithFiles + in_datum2.m_nDirsWithFiles;
+            datum.nTotalLength = in_datum1.nTotalLength + in_datum2.nTotalLength;
+            datum.nFilesInSubdirs = in_datum1.nFilesInSubdirs + in_datum2.nFilesInSubdirs;
+            datum.nSubDirs = in_datum1.nSubDirs + in_datum2.nSubDirs;
+            datum.nImmediateFiles = in_datum1.nImmediateFiles + in_datum2.nImmediateFiles;
+            datum.nDirsWithFiles = in_datum1.nDirsWithFiles + in_datum2.nDirsWithFiles;
             return datum;
         }
-
-        internal ulong TotalLength { get { return m_nTotalLength; } set { m_nTotalLength = value; } }
-        internal uint nFilesInSubdirs { get { return m_nFilesInSubdirs; } set { m_nFilesInSubdirs = value; } }
-        internal uint nSubDirs { get { return m_nSubDirs; } set { m_nSubDirs = value; } }
-        internal uint nImmediateFiles { get { return m_nImmediateFiles; } set { m_nImmediateFiles = value; } }
-        internal uint nDirsWithFiles { get { return m_nDirsWithFiles; } set { m_nDirsWithFiles = value; } }
     }
 
     // One tag at the first item, so the compare listviewer knows what the first listviewer's state is.
@@ -157,7 +151,7 @@ namespace SearchDirLists
         {
             get
             {
-                return new HashKey((ulong)TotalLength, nFilesInSubdirs, nDirsWithFiles);
+                return new HashKey((ulong)nTotalLength, nFilesInSubdirs, nDirsWithFiles);
             }
         }
 
@@ -182,6 +176,8 @@ namespace SearchDirLists
             nLineNo = node.nLineNo;
             nLength = node.nLength;
         }
+
+        internal Rectangle TreeMapRect;
     }
 
     class RootNodeDatum : NodeDatum
@@ -461,7 +457,7 @@ namespace SearchDirLists
                     return datum;
                 }
 
-                nodeDatum.TotalLength = (datum.TotalLength += nodeDatum.nLength);
+                nodeDatum.nTotalLength = (datum.nTotalLength += nodeDatum.nLength);
                 nodeDatum.nImmediateFiles = (nodeDatum.nLineNo - nodeDatum.nPrevLineNo - 1);
                 nodeDatum.nFilesInSubdirs = (datum.nFilesInSubdirs += nodeDatum.nImmediateFiles);
                 nodeDatum.nSubDirs = (datum.nSubDirs += (uint)treeNode.Nodes.Count);
@@ -481,7 +477,7 @@ namespace SearchDirLists
                     {
                         ((List<TreeNode>)m_hashCache[nKey]).Add(treeNode);
                     }
-                    else if (nodeDatum.TotalLength > 100 * 1024)
+                    else if (nodeDatum.nTotalLength > 100 * 1024)
                     {
                         List<TreeNode> listNodes = new List<TreeNode>();
 
@@ -794,7 +790,7 @@ namespace SearchDirLists
                 listItems.Add(new ListViewItem(new String[] { "# Subfolders", strItem }));
             }
 
-            listItems.Add(new ListViewItem(new String[] { "Total Size", FormatSize(nodeDatum.TotalLength, bBytes: true) }));
+            listItems.Add(new ListViewItem(new String[] { "Total Size", FormatSize(nodeDatum.nTotalLength, bBytes: true) }));
 
             m_statusCallback(lvItemDetails: listItems.ToArray(), bSecondComparePane: m_bSecondComparePane);
             Console.WriteLine(strLine);

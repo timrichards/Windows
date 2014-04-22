@@ -341,7 +341,7 @@ namespace SearchDirLists
                 TreeNode s2 = null;
                 NodeDatum n1 = (NodeDatum)s1.Tag;
 
-                if (n1.TotalLength <= (nMin10M + nMin100K))
+                if (n1.nTotalLength <= (nMin10M + nMin100K))
                 {
                     s1.ForeColor = Color.LightGray;
                 }
@@ -1318,12 +1318,12 @@ namespace SearchDirLists
 
                         if (Utilities.StrValid(pair.Key.Text))
                         {
-                            l1 = ((NodeDatum)pair.Key.Tag).TotalLength;
+                            l1 = ((NodeDatum)pair.Key.Tag).nTotalLength;
                         }
 
                         if (pair.Value != null)
                         {
-                            l2 = ((NodeDatum)pair.Value.Tag).TotalLength;
+                            l2 = ((NodeDatum)pair.Value.Tag).nTotalLength;
                         }
 
                         ulong lMax = Math.Max(l1, l2);
@@ -1956,6 +1956,8 @@ namespace SearchDirLists
             CompareModeButtonKeyPress(sender, e);
         }
 
+        BufferedGraphics bg = null;
+
         void form_treeView_Browse_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (sender == form_treeCompare2)
@@ -2031,6 +2033,12 @@ namespace SearchDirLists
             nodeDatum.m_lvItem.Selected = true;
             nodeDatum.m_lvItem.Focused = true;
             nodeDatum.m_lvItem.ListView.TopItem = nodeDatum.m_lvItem;
+
+            BufferedGraphicsContext bgcontext = BufferedGraphicsManager.Current;
+            bgcontext.MaximumBuffer = pictureBox1.ClientRectangle.Size;
+            BufferedGraphics bg = bgcontext.Allocate(pictureBox1.CreateGraphics(), pictureBox1.ClientRectangle);
+            new TreeMap().DrawTreemap(bg.Graphics, pictureBox1.ClientRectangle, e.Node);
+            bg.Render();
         }
 
         void form_treeView_Browse_KeyPress(object sender, KeyPressEventArgs e)
@@ -2259,11 +2267,11 @@ namespace SearchDirLists
 
                     if (listItems[0].Tag is List<TreeNode>)
                     {
-                        listItems.Sort((x, y) => ((NodeDatum)((List<TreeNode>)y.Tag)[0].Tag).TotalLength.CompareTo(((NodeDatum)((List<TreeNode>)x.Tag)[0].Tag).TotalLength));
+                        listItems.Sort((x, y) => ((NodeDatum)((List<TreeNode>)y.Tag)[0].Tag).nTotalLength.CompareTo(((NodeDatum)((List<TreeNode>)x.Tag)[0].Tag).nTotalLength));
                     }
                     else
                     {
-                        listItems.Sort((x, y) => ((NodeDatum)((TreeNode)y.Tag).Tag).TotalLength.CompareTo(((NodeDatum)((TreeNode)x.Tag).Tag).TotalLength));
+                        listItems.Sort((x, y) => ((NodeDatum)((TreeNode)y.Tag).Tag).nTotalLength.CompareTo(((NodeDatum)((TreeNode)x.Tag).Tag).nTotalLength));
                     }
 
                     TreeDone.InsertSizeMarkers(listItems);
@@ -2567,6 +2575,14 @@ namespace SearchDirLists
 
             KillTreeBuilder();
             RestartTreeTimer();
+        }
+
+        private void pictureBox1_Paint(object sender, PaintEventArgs e)
+        {
+            if (bg != null)
+            {
+                bg.Render();
+            }
         }
     }
 }

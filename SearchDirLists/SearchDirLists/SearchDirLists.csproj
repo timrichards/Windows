@@ -123,6 +123,7 @@
     <Compile Include="TreeForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="TreeMap.cs" />
     <Compile Include="Utilities.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

@@ -102,6 +102,8 @@ namespace SearchDirLists
             this.form_splitClones = new System.Windows.Forms.SplitContainer();
             this.form_splitDetail = new System.Windows.Forms.SplitContainer();
             this.form_splitCompareFiles = new System.Windows.Forms.SplitContainer();
+            this.tabControl2 = new System.Windows.Forms.TabControl();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.form_lvFiles = new ListViewEmbeddedControls.ListViewEx();
             this.form_colFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -110,6 +112,8 @@ namespace SearchDirLists
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.form_lvFileCompare = new ListViewEmbeddedControls.ListViewEx();
             this.form_colFileCompare = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader19 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -131,6 +135,7 @@ namespace SearchDirLists
             this.form_splitUnique = new System.Windows.Forms.SplitContainer();
             this.form_lvSameVol = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lvClones = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -185,6 +190,10 @@ namespace SearchDirLists
             this.form_splitCompareFiles.Panel1.SuspendLayout();
             this.form_splitCompareFiles.Panel2.SuspendLayout();
             this.form_splitCompareFiles.SuspendLayout();
+            this.tabControl2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.form_splitDetailVols)).BeginInit();
             this.form_splitDetailVols.Panel1.SuspendLayout();
             this.form_splitDetailVols.Panel2.SuspendLayout();
@@ -1085,7 +1094,7 @@ namespace SearchDirLists
             // 
             // form_splitCompareFiles.Panel1
             // 
-            this.form_splitCompareFiles.Panel1.Controls.Add(this.form_lvFiles);
+            this.form_splitCompareFiles.Panel1.Controls.Add(this.tabControl2);
             // 
             // form_splitCompareFiles.Panel2
             // 
@@ -1095,8 +1104,31 @@ namespace SearchDirLists
             this.form_splitCompareFiles.SplitterDistance = 71;
             this.form_splitCompareFiles.TabIndex = 1;
             // 
+            // tabControl2
+            // 
+            this.tabControl2.Controls.Add(this.tabPage3);
+            this.tabControl2.Controls.Add(this.tabPage4);
+            this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl2.Location = new System.Drawing.Point(0, 0);
+            this.tabControl2.Name = "tabControl2";
+            this.tabControl2.SelectedIndex = 0;
+            this.tabControl2.Size = new System.Drawing.Size(138, 147);
+            this.tabControl2.TabIndex = 1;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.form_lvFiles);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(130, 121);
+            this.tabPage3.TabIndex = 0;
+            this.tabPage3.Text = "File list";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
             // form_lvFiles
             // 
+            this.form_lvFiles.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.form_lvFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.form_colFilename,
             this.columnHeader5,
@@ -1110,10 +1142,10 @@ namespace SearchDirLists
             this.form_lvFiles.FullRowSelect = true;
             this.form_lvFiles.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.form_lvFiles.HideSelection = false;
-            this.form_lvFiles.Location = new System.Drawing.Point(0, 0);
+            this.form_lvFiles.Location = new System.Drawing.Point(3, 3);
             this.form_lvFiles.MultiSelect = false;
             this.form_lvFiles.Name = "form_lvFiles";
-            this.form_lvFiles.Size = new System.Drawing.Size(138, 147);
+            this.form_lvFiles.Size = new System.Drawing.Size(124, 115);
             this.form_lvFiles.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.form_lvFiles.TabIndex = 0;
             this.form_lvFiles.UseCompatibleStateImageBehavior = false;
@@ -1154,6 +1186,27 @@ namespace SearchDirLists
             // columnHeader10
             // 
             this.columnHeader10.Text = "Error 2";
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.pictureBox1);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(130, 121);
+            this.tabPage4.TabIndex = 1;
+            this.tabPage4.Text = "Disk usage";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox1.Location = new System.Drawing.Point(3, 3);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(124, 115);
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
             // 
             // form_lvFileCompare
             // 
@@ -1355,7 +1408,8 @@ namespace SearchDirLists
             // 
             this.form_lvSameVol.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.form_lvSameVol.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader2});
+            this.columnHeader2,
+            this.columnHeader15});
             this.form_lvSameVol.Dock = System.Windows.Forms.DockStyle.Fill;
             this.form_lvSameVol.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_lvSameVol.FullRowSelect = true;
@@ -1376,7 +1430,12 @@ namespace SearchDirLists
             // columnHeader2
             // 
             this.columnHeader2.Text = "Same volume group";
-            this.columnHeader2.Width = 230;
+            this.columnHeader2.Width = 180;
+            // 
+            // columnHeader15
+            // 
+            this.columnHeader15.Text = " ";
+            this.columnHeader15.Width = 50;
             // 
             // form_lvClones
             // 
@@ -1493,6 +1552,10 @@ namespace SearchDirLists
             this.form_splitCompareFiles.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.form_splitCompareFiles)).EndInit();
             this.form_splitCompareFiles.ResumeLayout(false);
+            this.tabControl2.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.form_splitDetailVols.Panel1.ResumeLayout(false);
             this.form_splitDetailVols.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.form_splitDetailVols)).EndInit();
@@ -1618,6 +1681,11 @@ namespace SearchDirLists
         private System.Windows.Forms.Button form_btnIgnoreDel;
         private System.Windows.Forms.Button form_btnIgnoreTree;
         private System.Windows.Forms.CheckBox form_chkLoose;
+        private System.Windows.Forms.ColumnHeader columnHeader15;
+        private System.Windows.Forms.TabControl tabControl2;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.PictureBox pictureBox1;
 
     }
 }

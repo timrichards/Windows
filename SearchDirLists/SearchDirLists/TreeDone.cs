@@ -102,7 +102,7 @@ namespace SearchDirLists
 
                 ListViewItem lvItem = (ListViewItem)lvMarker.Clone();
 
-                lvItem.Text = (Utilities.FormatSize(((NodeDatum)((TreeNode)(bUnique ? listLVitems[nIx].Tag : ((List<TreeNode>)listLVitems[nIx].Tag)[0])).Tag).TotalLength, bNoDecimal: true));
+                lvItem.Text = (Utilities.FormatSize(((NodeDatum)((TreeNode)(bUnique ? listLVitems[nIx].Tag : ((List<TreeNode>)listLVitems[nIx].Tag)[0])).Tag).nTotalLength, bNoDecimal: true));
 
                 if (bAdd)
                 {
@@ -141,7 +141,7 @@ namespace SearchDirLists
 
             NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
             List<TreeNode> listClones = nodeDatum.m_listClones;
-            ulong nLength = nodeDatum.TotalLength;
+            ulong nLength = nodeDatum.nTotalLength;
 
             if (nLength <= 100 * 1024)
             {
@@ -398,7 +398,7 @@ namespace SearchDirLists
                     {
                         NodeDatum nodeDatum = ((NodeDatum)treeNode.Tag);
 
-                        Debug.Assert(nodeDatum.TotalLength > 100 * 1024);
+                        Debug.Assert(nodeDatum.nTotalLength > 100 * 1024);
 
                         if (listNodes.Contains(treeNode.Parent) == false)
                         {
@@ -455,7 +455,6 @@ namespace SearchDirLists
 
             foreach (KeyValuePair<HashKey, List<TreeNode>> listNodes in dictReverse)
             {
-                String str_nClones = null;
                 int nClones = listNodes.Value.Count;
 
                 if (nClones <= 0)
@@ -463,6 +462,8 @@ namespace SearchDirLists
                     Debug.Assert(false);
                     continue;
                 }
+
+                String str_nClones = null;
 
                 if (nClones > 2)        // includes the subject node: this line says don't put 2's all over the listviewer
                 {
@@ -555,7 +556,7 @@ namespace SearchDirLists
                 new AddTreeToList(m_listTreeNodes, listSameVolDescLength).Go(m_listRootNodes[0]);
             }
 
-            listSameVolDescLength.Sort((x, y) => ((NodeDatum)y.Tag).TotalLength.CompareTo(((NodeDatum)x.Tag).TotalLength));
+            listSameVolDescLength.Sort((x, y) => ((NodeDatum)y.Tag).nTotalLength.CompareTo(((NodeDatum)x.Tag).nTotalLength));
 
             foreach (TreeNode treeNode in listSameVolDescLength)
             {
@@ -575,7 +576,21 @@ namespace SearchDirLists
 
                 Debug.Assert(Utilities.StrValid(treeNode.Text));
 
-                ListViewItem lvItem = new ListViewItem(treeNode.Text);
+                int nClones = nodeDatum.m_listClones.Count;
+
+                if (nClones <= 0)
+                {
+                    Debug.Assert(false);
+                }
+
+                String str_nClones = null;
+
+                if (nClones > 2)
+                {
+                    str_nClones = nClones.ToString("###,###");
+                }
+
+                ListViewItem lvItem = new ListViewItem(new String[] { treeNode.Text, str_nClones });
 
                 lvItem.Tag = nodeDatum.m_listClones;
                 lvItem.ForeColor = Color.Firebrick;

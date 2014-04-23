@@ -56,6 +56,33 @@ namespace SearchDirLists
         String m_strChkCompareOrig = null;
         String m_strVolGroupOrig = null;
 
+        //     const String m_strMARKFORCOPY = "markForCopy";
+
+        class Form1TreeView : TreeView
+        {
+            // enable double buffer
+
+            protected override void OnHandleCreated(EventArgs e)
+            {
+                SendMessage(this.Handle, TVM_SETEXTENDEDSTYLE, (IntPtr)TVS_EX_DOUBLEBUFFER, (IntPtr)TVS_EX_DOUBLEBUFFER);
+                base.OnHandleCreated(e);
+            }
+            private const int TVM_SETEXTENDEDSTYLE = 0x1100 + 44;
+            private const int TVM_GETEXTENDEDSTYLE = 0x1100 + 45;
+            private const int TVS_EX_DOUBLEBUFFER = 0x0004;
+            [System.Runtime.InteropServices.DllImport("user32.dll")]
+            private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
+
+            // suppress double click bug in treeview. Affects checkboxes
+
+            protected override void WndProc(ref Message m)
+            {
+                // Suppress WM_LBUTTONDBLCLK
+                if (m.Msg == 0x203) { m.Result = IntPtr.Zero; }
+                else base.WndProc(ref m);
+            }
+        }
+
         class Blink
         {
             System.Windows.Forms.Timer m_timer = null;
@@ -148,31 +175,6 @@ namespace SearchDirLists
                 m_timer = timer;
                 m_defaultControl = defaultControl;
                 m_clrControlOrig = defaultControl.BackColor;
-            }
-        }
-
-        class Form1TreeView : TreeView
-        {
-            // enable double buffer
-
-            protected override void OnHandleCreated(EventArgs e)
-            {
-                SendMessage(this.Handle, TVM_SETEXTENDEDSTYLE, (IntPtr)TVS_EX_DOUBLEBUFFER, (IntPtr)TVS_EX_DOUBLEBUFFER);
-                base.OnHandleCreated(e);
-            }
-            private const int TVM_SETEXTENDEDSTYLE = 0x1100 + 44;
-            private const int TVM_GETEXTENDEDSTYLE = 0x1100 + 45;
-            private const int TVS_EX_DOUBLEBUFFER = 0x0004;
-            [System.Runtime.InteropServices.DllImport("user32.dll")]
-            private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
-
-            // suppress double click bug in treeview. Affects checkboxes
-
-            protected override void WndProc(ref Message m)
-            {
-                // Suppress WM_LBUTTONDBLCLK
-                if (m.Msg == 0x203) { m.Result = IntPtr.Zero; }
-                else base.WndProc(ref m);
             }
         }
 
@@ -278,8 +280,6 @@ namespace SearchDirLists
                 return false;
             }
         }
-
-        //     const String m_strMARKFORCOPY = "markForCopy";
 
         internal Form1()
         {
@@ -1355,8 +1355,7 @@ namespace SearchDirLists
                     form_lblVolGroup.BackColor = Color.LightGoldenrodYellow;
                     form_lblVolGroup.Font = new Font(m_FontVolGroupOrig, FontStyle.Regular);
                     m_bCompareMode = true;
-                    m_DrawTreeMap.Dispose();
-                    m_DrawTreeMap = null;
+                    form_tmapUserCtl.Clear();
                     tabControl_FileList.SelectedTab = tabPage_FileList;
                     form_treeCompare1.SelectedNode = form_treeCompare1.Nodes[0];
                     form_treeCompare2.SelectedNode = form_treeCompare2.Nodes[0];
@@ -1959,24 +1958,13 @@ namespace SearchDirLists
             CompareModeButtonKeyPress(sender, e);
         }
 
-        void DrawTreeMapCallback(BufferedGraphics bg)
-        {
-            if (InvokeRequired) { Invoke(new DrawTreeMapDelegate(DrawTreeMapCallback), new object[] { bg }); return; }
-
-            bg.Render();
-        }
-
         void form_treeView_Browse_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (m_DrawTreeMap != null)
-            {
-                m_DrawTreeMap.Dispose();
-                m_DrawTreeMap = null;
-            }
+            form_tmapUserCtl.Clear();
 
             if (tabControl_FileList.SelectedTab == tabPage_DiskUsage)
             {
-                m_DrawTreeMap = new DrawTreeMap(DrawTreeMapCallback, e.Node).DoThreadFactory(pictureBox1);
+                form_tmapUserCtl.DoThreadFactory(e.Node);
             }
 
             if (sender == form_treeCompare2)
@@ -2590,28 +2578,14 @@ namespace SearchDirLists
             RestartTreeTimer();
         }
 
-        private void pictureBox1_Paint(object sender, PaintEventArgs e)
+        private void form_tmapUserCtl_MouseUp(object sender, MouseEventArgs e)
         {
-            if (m_DrawTreeMap != null)
-            {
-                m_DrawTreeMap.DoThreadFactory(pictureBox1);
-            }
-        }
-
-        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (m_DrawTreeMap != null)
-            {
-                m_DrawTreeMap.DoToolTip(pictureBox1, e.Location);
-            }
+            form_tmapUserCtl.DoToolTip(form_tmapUserCtl, e.Location);
         }
 
         private void ClearToolTip(object sender, EventArgs e)
         {
-            if (m_DrawTreeMap != null)
-            {
-                m_DrawTreeMap.ClearToolTip();
-            }
+            form_tmapUserCtl.ClearToolTip();
         }
     }
 }

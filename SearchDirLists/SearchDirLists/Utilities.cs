@@ -8,6 +8,7 @@ using System.IO.Compression;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Drawing;
 
 namespace SearchDirLists
 {
@@ -182,6 +183,20 @@ namespace SearchDirLists
             listDirs.Sort((x, y) => x.strFileName.CompareTo(y.strFileName));
             listFiles.Sort((x, y) => x.strFileName.CompareTo(y.strFileName));
             return true;
+        }
+    }
+
+    static class ExtensionMethods
+    {
+        internal static Rectangle Scale(this RectangleF rc_in, SizeF scale)
+        {
+            RectangleF rc = rc_in;
+
+            rc.X *= scale.Width;
+            rc.Y *= scale.Height;
+            rc.Width *= scale.Width;
+            rc.Height *= scale.Height;
+            return Rectangle.Ceiling(rc);
         }
     }
 

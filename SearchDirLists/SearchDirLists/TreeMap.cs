@@ -34,76 +34,222 @@ using System.Threading;
 
 namespace SearchDirLists
 {
-    delegate void DrawTreeMapDelegate(BufferedGraphics bg);
-
-    struct Options
-	{
-        internal Options (
-		    bool  grid_in,
-		    Color gridColor_in,
-		    double brightness_in,
-		    double height_in
-        ) {
-            grid= grid_in;
-            gridColor = gridColor_in;
-            brightness = brightness_in;
-            height = height_in;
-        }
-
-		internal readonly bool  grid;				// Whether or not to draw grid lines
-		internal readonly Color gridColor;		// Color of grid lines
-		internal double brightness;		        // 0..1.0	(default = 0.84)
-		internal double height;			        // 0..oo	(default = 0.40)	Factor "H"
-	}
-
-    class ColorSpace
+    class TreeMapUserControl : UserControl
     {
-        internal static void NormalizeColor(ref int red, ref int green, ref int blue)
-        {
-	        Debug.Assert(red + green + blue <= 3 * 255);
+        Rectangle m_rectScreen = Rectangle.Empty;
+        RectangleF m_selRect = Rectangle.Empty;
+        SizeF m_sizeTranslate = SizeF.Empty;
+        BufferedGraphics m_bg = null;
+        TreeNode m_treeNode = null;
+        TreeNode m_fileNode = null;
+        TreeNode m_prevNode = null;
+        ToolTip m_toolTip = null;
+        Thread m_thread = null;
 
-	        if (red > 255)
-	        {
-		        DistributeFirst(ref red, ref green, ref blue);
-	        }
-	        else if (green > 255)
-	        {
-		        DistributeFirst(ref green, ref red, ref blue);
-	        }
-	        else if (blue > 255)
-	        {
-		        DistributeFirst(ref blue, ref red, ref green);
-	        }
+        public TreeMapUserControl()
+        {
+            SetOptions(_defaultOptions);
+            this.SetStyle(ControlStyles.DoubleBuffer |
+              ControlStyles.UserPaint |
+              ControlStyles.AllPaintingInWmPaint,
+              true);
         }
 
-        static void DistributeFirst(ref int first, ref int second, ref int third)
+        internal void Clear()
         {
+            if (m_bg != null)
             {
-	            int h= (first - 255) / 2;
-	            first= 255;
-	            second+= h;
-	            third+= h;
+                m_bg.Dispose();
+                m_bg = null;
             }
 
-	        if (second > 255)
-	        {
-		        int h= second - 255;
-		        second= 255;
-		        third+= h;
-		        Debug.Assert(third <= 255);
-	        }
-	        else if (third > 255)
-	        {
-		        int h= third - 255;
-		        third= 255;
-		        second+= h;
-		        Debug.Assert(second <= 255);
-	        }
+            if (m_toolTip != null)
+            {
+                m_toolTip.Dispose();
+                m_toolTip = null;
+            }
         }
-    }
 
-    class TreeMap : Utilities
-    {
+        internal void ClearToolTip()
+        {
+            if (m_toolTip != null)
+            {
+                m_selRect = Rectangle.Empty;
+                m_toolTip.Active = false;
+            }
+
+            Invalidate();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            Clear();
+            base.Dispose(disposing);
+        }
+
+        internal void DoThreadFactory(TreeNode treeNode)
+        {
+            m_treeNode = treeNode;
+            DoThreadFactory();
+        }
+
+        internal void DoThreadFactory()
+        {
+            if (m_treeNode == null)
+            {
+                return;
+            }
+
+            if ((m_thread != null) && m_thread.IsAlive)
+            {
+                m_thread.Abort();
+            }
+
+            m_thread = new Thread(new ThreadStart(Go));
+            m_thread.IsBackground = true;
+            m_thread.Start();
+        }
+
+        internal void DoToolTip(Control ctl, PointF pt_in)
+        {
+            Point pt = Point.Ceiling(new PointF(pt_in.X / m_sizeTranslate.Width, pt_in.Y / m_sizeTranslate.Height));
+
+            if (m_bg != null)
+            {
+                m_bg.Render();
+            }
+
+            TreeNode treeNode = m_treeNode;
+
+            if (m_fileNode != null)
+            {
+                Debug.Assert(m_fileNode.Text == treeNode.Text);
+                treeNode = m_fileNode;
+                m_prevNode = null;
+            }
+
+            if ((Cursor.Current == Cursors.Arrow) && (m_prevNode != null))        // hack: clicked in tooltip
+            {
+                m_toolTip.Active = false;
+                m_prevNode.TreeView.SelectedNode = m_prevNode;
+                return;
+            }
+
+            m_prevNode = FindMapNode(m_prevNode ?? treeNode, pt);
+
+            if (m_prevNode == null)
+            {
+                m_prevNode = FindMapNode(treeNode, pt);
+            }
+
+            if (m_prevNode == null)
+            {
+                return;
+            }
+
+            if (m_toolTip == null)
+            {
+                m_toolTip = new ToolTip();
+                m_toolTip.UseFading = true;
+            }
+
+            NodeDatum nodeDatum = (NodeDatum)m_prevNode.Tag;
+
+            m_toolTip.Active = true;
+            m_toolTip.ToolTipTitle = m_prevNode.Text;
+            m_toolTip.Show(Utilities.FormatSize(nodeDatum.nTotalLength, bBytes: true), ctl, Point.Ceiling(pt_in));
+            m_selRect = nodeDatum.TreeMapRect;
+            Invalidate();
+        }
+
+        TreeNode FindMapNode(TreeNode treeNode_in, Point pt, bool bNextNode = true)
+        {
+            TreeNode treeNode = treeNode_in;
+
+            do
+            {
+                NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+
+                if (nodeDatum.TreeMapRect.Contains(pt) == false)
+                {
+                    continue;
+                }
+
+                if (treeNode != treeNode_in)
+                {
+                    return treeNode;
+                }
+
+                if ((treeNode.Nodes == null) || (treeNode.Nodes.Count == 0))
+                {
+                    continue;
+                }
+
+                TreeNode foundNode = FindMapNode(treeNode.Nodes[0], pt);
+
+                if (foundNode != null)
+                {
+                    return foundNode;
+                }
+            }
+            while (bNextNode && ((treeNode = treeNode.NextNode) != null));
+
+            return null;
+        }
+
+        internal void Go()
+        {
+            lock (this)
+            {
+                if (m_bg == null)
+                {
+                    BufferedGraphicsContext bgcontext = BufferedGraphicsManager.Current;
+
+                    bgcontext.MaximumBuffer = m_rectScreen.Size;
+                    m_bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), m_rectScreen);
+                }
+
+                m_bg.Graphics.Clear(Color.DarkGray);
+                m_fileNode = DrawTreemap(m_bg.Graphics, m_rectScreen);
+                m_bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), m_rectScreen);
+                m_bg.Render();
+                m_selRect = Rectangle.Empty;
+                Invalidate();
+            }
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            m_rectScreen = Screen.GetBounds(this);
+            BackgroundImage = new Bitmap(m_rectScreen.Width, m_rectScreen.Height);
+            TranslateSize();
+            base.OnLoad(e);
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            if (m_selRect == Rectangle.Empty)
+            {
+                return;
+            }
+
+            e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(64, 0, 0, 0)), m_selRect.Scale(m_sizeTranslate));
+        }
+
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
+            TranslateSize();
+        }
+
+        void TranslateSize()
+        {
+            SizeF sizeScreen = m_rectScreen.Size;
+            m_sizeTranslate = new SizeF((float)Size.Width / sizeScreen.Width, (float)Size.Height / sizeScreen.Height);
+        }
+
         Options m_options;
 
         Options _defaultOptions = new Options(
@@ -128,11 +274,6 @@ namespace SearchDirLists
 	        return _defaultOptionsOld;
         }
 
-        internal TreeMap()
-        {
-	        SetOptions(_defaultOptions);
-        }
-
         void SetOptions(Options options)
         {
 	        m_options= options;
@@ -143,12 +284,8 @@ namespace SearchDirLists
 	        return m_options;
         }
 
-        TreeNode m_rootNode = null;
-
-        internal TreeNode DrawTreemap(Graphics graphics, Rectangle rc, TreeNode root, Options? options = null)
+        internal TreeNode DrawTreemap(Graphics graphics, Rectangle rc, Options? options = null)
         {
-            m_rootNode = root;
-
             if (options != null)
             {
                 SetOptions(options.Value);
@@ -188,11 +325,11 @@ namespace SearchDirLists
 		        return null;
             }
 
-	        if (((NodeDatum)root.Tag).nTotalLength > 0)
+	        if (((NodeDatum)m_treeNode.Tag).nTotalLength > 0)
 	        {
 		        double[] surface = new double[4];
 
-		        return RecurseDrawGraph(graphics, root, rc, bStart: true);
+                return RecurseDrawGraph(graphics, m_treeNode, rc, bStart: true);
 
         #if _DEBUG
 		        for (int x=rc.Left; x < rc.Right - m_options.grid; x++)
@@ -318,10 +455,10 @@ namespace SearchDirLists
                 String[] strArrayFiles = strFileLine.Split('\t').Skip(3).ToArray();
                 ulong nLength = 0;
 
-                if ((strArrayFiles.Length > nColLENGTH_LV) && StrValid(strArrayFiles[nColLENGTH_LV]))
+                if ((strArrayFiles.Length > Utilities.nColLENGTH_LV) && Utilities.StrValid(strArrayFiles[Utilities.nColLENGTH_LV]))
                 {
-                    nLength = ulong.Parse(strArrayFiles[nColLENGTH_LV]);
-                    strArrayFiles[nColLENGTH_LV] = FormatSize(strArrayFiles[nColLENGTH_LV]);
+                    nLength = ulong.Parse(strArrayFiles[Utilities.nColLENGTH_LV]);
+                    strArrayFiles[Utilities.nColLENGTH_LV] = Utilities.FormatSize(strArrayFiles[Utilities.nColLENGTH_LV]);
                 }
 
                 NodeDatum nodeDatum_A = new NodeDatum(0, 0, 0);
@@ -474,8 +611,8 @@ namespace SearchDirLists
 	        return horizontalRows;
         }
 
-        double KDirStat_CalcutateNextRow(TreeNode parent, int nextChild, double width, ref int childrenUsed, double[] arrChildWidth
-            , List<TreeNode> listChildren)
+        double KDirStat_CalcutateNextRow(TreeNode parent, int nextChild, double width, ref int childrenUsed, double[] arrChildWidth,
+            List<TreeNode> listChildren)
         {
 	        const double _minProportion = 0.4;
 	        Debug.Assert(_minProportion < 1);
@@ -599,172 +736,23 @@ namespace SearchDirLists
         }
     }
 
-    class DrawTreeMap : IDisposable
-    {
-        BufferedGraphics m_bg = null;
-        Size m_size;
-        Graphics m_graphics;
-        Rectangle m_rect;
-        DrawTreeMapDelegate m_callback = null;
-        TreeNode m_treeNode = null;
-        TreeNode m_fileNode = null;
-        TreeNode m_prevNode = null;
-        ToolTip m_toolTip = null;
-        Thread m_thread = null;
-
-        public void Dispose()
-        {
-            if (m_bg != null)
-            {
-                m_bg.Dispose();
-            }
-
-            if (m_toolTip != null)
-            {
-                m_toolTip.Dispose();
-            }
+    struct Options
+	{
+        internal Options (
+		    bool  grid_in,
+		    Color gridColor_in,
+		    double brightness_in,
+		    double height_in
+        ) {
+            grid= grid_in;
+            gridColor = gridColor_in;
+            brightness = brightness_in;
+            height = height_in;
         }
 
-        internal DrawTreeMap(DrawTreeMapDelegate callback, TreeNode treeNode)
-        {
-            m_callback = callback;
-            m_treeNode = treeNode;
-        }
-
-        internal void Go()
-        {
-            lock (this)
-            {
-                if (m_bg == null)
-                {
-                    BufferedGraphicsContext bgcontext = BufferedGraphicsManager.Current;
-
-                    bgcontext.MaximumBuffer = m_size;
-                    m_bg = bgcontext.Allocate(m_graphics, m_rect);
-                }
-
-                m_fileNode = new TreeMap().DrawTreemap(m_bg.Graphics, m_rect, m_treeNode);
-                m_callback(m_bg);
-            }
-        }
-
-        internal DrawTreeMap DoThreadFactory(PictureBox pictureBox)
-        {
-            m_size = pictureBox.ClientRectangle.Size;
-            m_graphics = pictureBox.CreateGraphics();
-            m_rect = pictureBox.ClientRectangle;
-
-            if ((m_thread != null) && m_thread.IsAlive)
-            {
-                m_thread.Abort();
-            }
-
-            m_thread = new Thread(new ThreadStart(Go));
-            m_thread.IsBackground = true;
-            m_thread.Start();
-            return this;
-        }
-
-        TreeNode FindMapNode(TreeNode treeNode_in, Point pt, bool bNextNode = true)
-        {
-            TreeNode treeNode = treeNode_in;
-
-            do
-            {
-                NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
-
-                if (nodeDatum.TreeMapRect.Contains(pt) == false)
-                {
-                    continue;
-                }
-
-                if (treeNode != treeNode_in)
-                {
-                    return treeNode;
-                }
-
-                if ((treeNode.Nodes == null) || (treeNode.Nodes.Count == 0))
-                {
-                    continue;
-                }
-
-                TreeNode foundNode = FindMapNode(treeNode.Nodes[0], pt);
-
-                if (foundNode != null)
-                {
-                    return foundNode;
-                }
-            }
-            while (bNextNode && ((treeNode = treeNode.NextNode) != null));
-
-            return null;
-        }
-
-        internal void DoToolTip(PictureBox pictureBox, Point pt)
-        {
-            if (m_bg != null)
-            {
-                m_bg.Render();
-            }
-
-            TreeNode treeNode = m_prevNode;
-
-            if (m_fileNode != null)
-            {
-                Debug.Assert(m_fileNode.Text == treeNode.Text);
-                treeNode = m_fileNode;
-                m_prevNode = null;
-            }
-
-            if ((Cursor.Current == Cursors.Arrow) && (m_prevNode != null))        // hack: clicked in tooltip
-            {
-                m_toolTip.Active = false;
-                m_prevNode.TreeView.SelectedNode = m_prevNode;
-                return;
-            }
-
-            m_prevNode = FindMapNode(m_prevNode ?? treeNode, pt);
-
-            if (m_prevNode == null)
-            {
-                m_prevNode = FindMapNode(treeNode, pt);
-            }
-
-            if (m_prevNode == null)
-            {
-                return;
-            }
-
-            if (m_toolTip == null)
-            {
-                m_toolTip = new ToolTip();
-                m_toolTip.UseFading = true;
-            }
-
-            NodeDatum nodeDatum = (NodeDatum)m_prevNode.Tag;
-
-            m_toolTip.Active = true;
-            m_toolTip.ToolTipTitle = m_prevNode.Text;
-            m_toolTip.Show(Utilities.FormatSize(nodeDatum.nTotalLength, bBytes: true), pictureBox, pt);
-
-            Rectangle rc = nodeDatum.TreeMapRect;
-
-            rc.Inflate(-rc.Width/2 + 1, -rc.Height/2 + 1);
-            ControlPaint.DrawSelectionFrame(pictureBox.CreateGraphics(), true, nodeDatum.TreeMapRect, rc, Color.White);
-        }
-
-        internal void ClearToolTip()
-        {
-            if (m_toolTip != null)
-            {
-                m_toolTip.Dispose();
-                m_toolTip = null;
-            }
-        }
-    }
-
-    partial class Form1
-    {
-        DrawTreeMap m_DrawTreeMap = null;
-    }
+		internal readonly bool  grid;				// Whether or not to draw grid lines
+		internal readonly Color gridColor;		// Color of grid lines
+		internal double brightness;		        // 0..1.0	(default = 0.84)
+		internal double height;			        // 0..oo	(default = 0.40)	Factor "H"
+	}
 }

@@ -29,6 +29,8 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.IO;
+using System.Threading;
 
 namespace SearchDirLists
 {
@@ -101,7 +103,7 @@ namespace SearchDirLists
 
 /////////////////////////////////////////////////////////////////////////////
 
-    class TreeMap
+    class TreeMap : Utilities
     {
         Options m_options;
 
@@ -144,7 +146,7 @@ namespace SearchDirLists
 
         TreeNode m_rootNode = null;
 
-        internal TreeMap DrawTreemap(Graphics graphics, Rectangle rc, TreeNode root, Options? options = null)
+        internal TreeNode DrawTreemap(Graphics graphics, Rectangle rc, TreeNode root, Options? options = null)
         {
             m_rootNode = root;
 
@@ -156,7 +158,7 @@ namespace SearchDirLists
 	        if (rc.Width <= 0 || rc.Height <= 0)
             {
                 Debug.Assert(false);
-		        return this;
+		        return null;
             }
 
 	        if (m_options.grid)
@@ -184,14 +186,14 @@ namespace SearchDirLists
 
 	        if (rc.Width <= 0 || rc.Height <= 0)
             {
-		        return this;
+		        return null;
             }
 
 	        if (((NodeDatum)root.Tag).nTotalLength > 0)
 	        {
 		        double[] surface = new double[4];
 
-		        RecurseDrawGraph(graphics, root, rc);
+		        return RecurseDrawGraph(graphics, root, rc, bStart: true);
 
         #if _DEBUG
 		        for (int x=rc.Left; x < rc.Right - m_options.grid; x++)
@@ -208,13 +210,14 @@ namespace SearchDirLists
                 }
 	        }
 
-            return this;
+            return null;
         }
 
-        void RecurseDrawGraph(
+        TreeNode RecurseDrawGraph(
 	        Graphics graphics,
 	        TreeNode item, 
-	        Rectangle rc
+	        Rectangle rc,
+            bool bStart = false
         )
         {
 	        Debug.Assert(rc.Width >= 0);
@@ -227,30 +230,121 @@ namespace SearchDirLists
 
 	        if (rc.Width <= gridWidth || rc.Height <= gridWidth)
 	        {
-		        return;
+		        return null;
 	        }
+
+            bool bDoFileList = false;
 
 	        if (item.Nodes.Count == 0)
 	        {
-		        RenderLeaf(graphics, item);
-	        }
-	        else
-	        {
-		        Debug.Assert(item.Nodes.Count > 0);
-		        Debug.Assert(((NodeDatum)item.Tag).nTotalLength > 0);
+                if (bStart == false)
+                {
+                    RenderLeaf(graphics, item);
+                    return null;
+                }
 
-                KDirStat_DrawChildren(graphics, item);
+                bDoFileList = true;
+                item = DoFileList(item);
+
+                if (item == null)
+                {
+                    return null;
+                }
 	        }
+	        
+		    Debug.Assert(item.Nodes.Count > 0);
+		    Debug.Assert(((NodeDatum)item.Tag).nTotalLength > 0);
+
+            KDirStat_DrawChildren(graphics, item);
+
+            if (bDoFileList)
+            {
+                return item;    // the file list as a fake cloned treenode for tooltip search
+            }
+
+            return null;
         }
 
-        // My first approach was to make this member pure virtual and have three
-        // classes derived from CTreemap. The disadvantage is then, that we cannot
-        // simply have a member variable of type CTreemap but have to deal with
-        // pointers, factory methods and explicit destruction. It's not worth.
+        TreeNode DoFileList(TreeNode parent)
+        {
+            TreeNode treeNode = (TreeNode)parent.Clone();
 
-        // I learned this squarification style from the KDirStat executable.
-        // It's the most complex one here but also the clearest, imho.
-        //
+            TreeNode rootNode = TreeSelect.GetParentRoot(parent);
+            String strFile = (String)((RootNodeDatum)rootNode.Tag).StrFile;
+
+            if (File.Exists(strFile) == false)
+            {
+                Debug.Assert(false);
+                return null;
+            }
+
+            if ((parent.Tag is NodeDatum) == false)
+            {
+                return null;
+            }
+
+            NodeDatum nodeDatum = (NodeDatum)parent.Tag;
+
+            if (nodeDatum.nLineNo <= 0)
+            {
+                return null;
+            }
+
+            long nPrevDir = nodeDatum.nPrevLineNo;
+            long nLineNo = nodeDatum.nLineNo;
+
+            if (nPrevDir <= 0)
+            {
+                return null;
+            }
+
+            if ((nLineNo - nPrevDir) <= 1)  // dir has no files
+            {
+                return null;
+            }
+
+            DateTime dtStart = DateTime.Now;
+            List<String> listLines = File.ReadLines(strFile)
+                .Skip((int)nPrevDir)
+                .Take((int)(nLineNo - nPrevDir - 1))
+                .ToList();
+
+            if (listLines.Count <= 0)
+            {
+                return null;
+            }
+
+            foreach (String strFileLine in listLines)
+            {
+                String[] strArrayFiles = strFileLine.Split('\t').Skip(3).ToArray();
+                ulong nLength = 0;
+
+                if ((strArrayFiles.Length > nColLENGTH_LV) && StrValid(strArrayFiles[nColLENGTH_LV]))
+                {
+                    nLength = ulong.Parse(strArrayFiles[nColLENGTH_LV]);
+                    strArrayFiles[nColLENGTH_LV] = FormatSize(strArrayFiles[nColLENGTH_LV]);
+                }
+
+                NodeDatum nodeDatum_A = new NodeDatum(0, 0, 0);
+                TreeNode treeNode_A = new TreeNode(strArrayFiles[0]);
+
+                nodeDatum_A.nTotalLength = nLength;
+                treeNode_A.Tag = nodeDatum_A;
+                treeNode_A.ForeColor = Color.OliveDrab;
+                treeNode.Nodes.Add(treeNode_A);
+            }
+
+            return treeNode;
+        }       
+
+         //My first approach was to make this member pure virtual and have three
+         //classes derived from CTreemap. The disadvantage is then, that we cannot
+         //simply have a member variable of type CTreemap but have to deal with
+         //pointers, factory methods and explicit destruction. It's not worth.
+
+         //I learned this squarification style from the KDirStat executable.
+         //It's the most complex one here but also the clearest, imho.
+        
         void KDirStat_DrawChildren(Graphics graphics, TreeNode parent)
         {
 	        Debug.Assert(parent.Nodes.Count > 0);
@@ -493,5 +587,147 @@ namespace SearchDirLists
                 graphics.FillRectangle(brush, rc);
             }
         }
+    }
+
+    delegate void DrawTreeMapDelegate(BufferedGraphics bg);
+
+    class DrawTreeMap : IDisposable
+    {
+        BufferedGraphics m_bg = null;
+        Size m_size;
+        Graphics m_graphics;
+        Rectangle m_rect;
+        DrawTreeMapDelegate m_callback = null;
+        TreeNode m_treeNode = null;
+        TreeNode m_fileNode = null;
+        Thread m_thread = null;
+
+        public void Dispose()
+        {
+            if (m_bg != null)
+            {
+                m_bg.Dispose();
+            }
+        }
+
+        internal DrawTreeMap(DrawTreeMapDelegate callback, TreeNode treeNode)
+        {
+            m_callback = callback;
+            m_treeNode = treeNode;
+        }
+
+        internal void Go()
+        {
+            lock (this)
+            {
+                if (m_bg == null)
+                {
+                    BufferedGraphicsContext bgcontext = BufferedGraphicsManager.Current;
+
+                    bgcontext.MaximumBuffer = m_size;
+                    m_bg = bgcontext.Allocate(m_graphics, m_rect);
+                }
+
+                m_fileNode = new TreeMap().DrawTreemap(m_bg.Graphics, m_rect, m_treeNode);
+                m_callback(m_bg);
+            }
+        }
+
+        internal DrawTreeMap DoThreadFactory(PictureBox pictureBox)
+        {
+            m_size = pictureBox.ClientRectangle.Size;
+            m_graphics = pictureBox.CreateGraphics();
+            m_rect = pictureBox.ClientRectangle;
+
+            if ((m_thread != null) && m_thread.IsAlive)
+            {
+                m_thread.Abort();
+            }
+
+            m_thread = new Thread(new ThreadStart(Go));
+            m_thread.IsBackground = true;
+            m_thread.Start();
+            return this;
+        }
+
+        TreeNode FindMapNode(TreeNode treeNode_in, Point pt, bool bNextNode = true)
+        {
+            TreeNode treeNode = treeNode_in;
+
+            do
+            {
+                NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+
+                if (nodeDatum.TreeMapRect.Contains(pt))
+                {
+                    if (treeNode != treeNode_in)
+                    {
+                        return treeNode;
+                    }
+
+                    if ((treeNode.Nodes != null) && (treeNode.Nodes.Count > 0))
+                    {
+                        TreeNode foundNode = FindMapNode(treeNode.Nodes[0], pt);
+
+                        if (foundNode != null)
+                        {
+                            return foundNode;
+                        }
+                    }
+                }
+            }
+            while (bNextNode && ((treeNode = treeNode.NextNode) != null));
+
+            return null;
+        }
+
+        ToolTip toolTip = null;
+        TreeNode prevNode = null;
+
+        internal void DoToolTip(PictureBox pictureBox, TreeNode selectedNode, Point pt)
+        {
+            if (selectedNode == null)
+            {
+                return;
+            }
+
+            TreeNode treeNode = selectedNode;
+
+            if (m_fileNode != null)
+            {
+                Debug.Assert(m_fileNode.Text == treeNode.Text);
+                treeNode = m_fileNode;
+                prevNode = null;
+            }
+
+            if ((Cursor.Current == Cursors.Arrow) && (prevNode != null))        // hack: clicked in tooltip
+            {
+                toolTip.Active = false;
+                prevNode.TreeView.SelectedNode = prevNode;
+                return;
+            }
+
+            prevNode = FindMapNode(prevNode ?? treeNode, pt);
+
+            if (prevNode == null)
+            {
+                return;
+            }
+
+            if (toolTip == null)
+            {
+                toolTip = new ToolTip();
+                toolTip.UseFading = true;
+            }
+
+            toolTip.Active = true;
+            toolTip.ToolTipTitle = prevNode.Text;
+            toolTip.Show(Utilities.FormatSize(((NodeDatum)prevNode.Tag).nTotalLength, bBytes: true), pictureBox, pt);
+        }
+    }
+
+    partial class Form1
+    {
+        DrawTreeMap m_DrawTreeMap = null;
     }
 }

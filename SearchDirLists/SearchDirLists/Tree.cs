@@ -167,7 +167,7 @@ namespace SearchDirLists
 
         internal bool m_bDifferentVols = false;
 
-        internal NodeDatum(uint nPrevLineNo_in, uint nLineNo_in, ulong nLength_in, TreeNode treeNode)
+        internal NodeDatum(uint nPrevLineNo_in, uint nLineNo_in, ulong nLength_in)
         { nPrevLineNo = nPrevLineNo_in; nLineNo = nLineNo_in; nLength = nLength_in; }
 
         protected NodeDatum(NodeDatum node)
@@ -398,7 +398,7 @@ namespace SearchDirLists
                         treeNode = new TreeNode(strShortPath);
                     }
 
-                    treeNode.Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo, m_nLength, treeNode);  // this is almost but not quite always newly assigned here.
+                    treeNode.Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo, m_nLength);  // this is almost but not quite always newly assigned here.
 
                     if (this == m_rootNode.Nodes.Values.First())
                     {

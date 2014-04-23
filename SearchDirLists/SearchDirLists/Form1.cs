@@ -1355,6 +1355,9 @@ namespace SearchDirLists
                     form_lblVolGroup.BackColor = Color.LightGoldenrodYellow;
                     form_lblVolGroup.Font = new Font(m_FontVolGroupOrig, FontStyle.Regular);
                     m_bCompareMode = true;
+                    m_DrawTreeMap.Dispose();
+                    m_DrawTreeMap = null;
+                    tabControl_FileList.SelectedTab = tabPage_FileList;
                     form_treeCompare1.SelectedNode = form_treeCompare1.Nodes[0];
                     form_treeCompare2.SelectedNode = form_treeCompare2.Nodes[0];
                 }
@@ -1968,9 +1971,13 @@ namespace SearchDirLists
             if (m_DrawTreeMap != null)
             {
                 m_DrawTreeMap.Dispose();
+                m_DrawTreeMap = null;
             }
 
-            m_DrawTreeMap = new DrawTreeMap(DrawTreeMapCallback, e.Node).DoThreadFactory(pictureBox1);
+            if (tabControl_FileList.SelectedTab == tabPage_DiskUsage)
+            {
+                m_DrawTreeMap = new DrawTreeMap(DrawTreeMapCallback, e.Node).DoThreadFactory(pictureBox1);
+            }
 
             if (sender == form_treeCompare2)
             {
@@ -2595,7 +2602,15 @@ namespace SearchDirLists
         {
             if (m_DrawTreeMap != null)
             {
-                m_DrawTreeMap.DoToolTip(pictureBox1, form_treeView_Browse.SelectedNode, e.Location);
+                m_DrawTreeMap.DoToolTip(pictureBox1, e.Location);
+            }
+        }
+
+        private void ClearToolTip(object sender, EventArgs e)
+        {
+            if (m_DrawTreeMap != null)
+            {
+                m_DrawTreeMap.ClearToolTip();
             }
         }
     }

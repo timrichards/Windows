@@ -34,7 +34,9 @@ using System.Threading;
 
 namespace SearchDirLists
 {
-	struct Options
+    delegate void DrawTreeMapDelegate(BufferedGraphics bg);
+
+    struct Options
 	{
         internal Options (
 		    bool  grid_in,
@@ -99,9 +101,6 @@ namespace SearchDirLists
 	        }
         }
     }
-
-
-/////////////////////////////////////////////////////////////////////////////
 
     class TreeMap : Utilities
     {
@@ -582,14 +581,23 @@ namespace SearchDirLists
             brush.CenterColor = Color.Wheat;
             brush.SurroundColors = new Color[] { ControlPaint.Dark(col) };
 
-            lock (graphics)
+            while (true)
             {
-                graphics.FillRectangle(brush, rc);
+                lock (graphics)
+                {
+                    try
+                    {
+                        graphics.FillRectangle(brush, rc);
+                        break;
+                    }
+                    catch (System.InvalidOperationException)
+                    {
+                        Thread.Sleep(10);
+                    }
+                }
             }
         }
     }
-
-    delegate void DrawTreeMapDelegate(BufferedGraphics bg);
 
     class DrawTreeMap : IDisposable
     {
@@ -600,6 +608,8 @@ namespace SearchDirLists
         DrawTreeMapDelegate m_callback = null;
         TreeNode m_treeNode = null;
         TreeNode m_fileNode = null;
+        TreeNode m_prevNode = null;
+        ToolTip m_toolTip = null;
         Thread m_thread = null;
 
         public void Dispose()
@@ -607,6 +617,11 @@ namespace SearchDirLists
             if (m_bg != null)
             {
                 m_bg.Dispose();
+            }
+
+            if (m_toolTip != null)
+            {
+                m_toolTip.Dispose();
             }
         }
 
@@ -658,22 +673,26 @@ namespace SearchDirLists
             {
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
-                if (nodeDatum.TreeMapRect.Contains(pt))
+                if (nodeDatum.TreeMapRect.Contains(pt) == false)
                 {
-                    if (treeNode != treeNode_in)
-                    {
-                        return treeNode;
-                    }
+                    continue;
+                }
 
-                    if ((treeNode.Nodes != null) && (treeNode.Nodes.Count > 0))
-                    {
-                        TreeNode foundNode = FindMapNode(treeNode.Nodes[0], pt);
+                if (treeNode != treeNode_in)
+                {
+                    return treeNode;
+                }
 
-                        if (foundNode != null)
-                        {
-                            return foundNode;
-                        }
-                    }
+                if ((treeNode.Nodes == null) || (treeNode.Nodes.Count == 0))
+                {
+                    continue;
+                }
+
+                TreeNode foundNode = FindMapNode(treeNode.Nodes[0], pt);
+
+                if (foundNode != null)
+                {
+                    return foundNode;
                 }
             }
             while (bNextNode && ((treeNode = treeNode.NextNode) != null));
@@ -681,48 +700,66 @@ namespace SearchDirLists
             return null;
         }
 
-        ToolTip toolTip = null;
-        TreeNode prevNode = null;
-
-        internal void DoToolTip(PictureBox pictureBox, TreeNode selectedNode, Point pt)
+        internal void DoToolTip(PictureBox pictureBox, Point pt)
         {
-            if (selectedNode == null)
+            if (m_bg != null)
             {
-                return;
+                m_bg.Render();
             }
 
-            TreeNode treeNode = selectedNode;
+            TreeNode treeNode = m_prevNode;
 
             if (m_fileNode != null)
             {
                 Debug.Assert(m_fileNode.Text == treeNode.Text);
                 treeNode = m_fileNode;
-                prevNode = null;
+                m_prevNode = null;
             }
 
-            if ((Cursor.Current == Cursors.Arrow) && (prevNode != null))        // hack: clicked in tooltip
+            if ((Cursor.Current == Cursors.Arrow) && (m_prevNode != null))        // hack: clicked in tooltip
             {
-                toolTip.Active = false;
-                prevNode.TreeView.SelectedNode = prevNode;
+                m_toolTip.Active = false;
+                m_prevNode.TreeView.SelectedNode = m_prevNode;
                 return;
             }
 
-            prevNode = FindMapNode(prevNode ?? treeNode, pt);
+            m_prevNode = FindMapNode(m_prevNode ?? treeNode, pt);
 
-            if (prevNode == null)
+            if (m_prevNode == null)
+            {
+                m_prevNode = FindMapNode(treeNode, pt);
+            }
+
+            if (m_prevNode == null)
             {
                 return;
             }
 
-            if (toolTip == null)
+            if (m_toolTip == null)
             {
-                toolTip = new ToolTip();
-                toolTip.UseFading = true;
+                m_toolTip = new ToolTip();
+                m_toolTip.UseFading = true;
             }
 
-            toolTip.Active = true;
-            toolTip.ToolTipTitle = prevNode.Text;
-            toolTip.Show(Utilities.FormatSize(((NodeDatum)prevNode.Tag).nTotalLength, bBytes: true), pictureBox, pt);
+            NodeDatum nodeDatum = (NodeDatum)m_prevNode.Tag;
+
+            m_toolTip.Active = true;
+            m_toolTip.ToolTipTitle = m_prevNode.Text;
+            m_toolTip.Show(Utilities.FormatSize(nodeDatum.nTotalLength, bBytes: true), pictureBox, pt);
+
+            Rectangle rc = nodeDatum.TreeMapRect;
+
+            rc.Inflate(-rc.Width/2 + 1, -rc.Height/2 + 1);
+            ControlPaint.DrawSelectionFrame(pictureBox.CreateGraphics(), true, nodeDatum.TreeMapRect, rc, Color.White);
+        }
+
+        internal void ClearToolTip()
+        {
+            if (m_toolTip != null)
+            {
+                m_toolTip.Dispose();
+                m_toolTip = null;
+            }
         }
     }
 

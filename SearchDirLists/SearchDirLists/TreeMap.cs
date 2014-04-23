@@ -130,7 +130,14 @@ namespace SearchDirLists
 
             if ((Cursor.Current == Cursors.Arrow) && (m_prevNode != null))        // hack: clicked in tooltip
             {
-                m_toolTip.Active = false;
+                Debug.Assert(m_toolTip != null);
+
+                if (m_toolTip != null)
+                {
+                    Debug.Assert(false);
+                    m_toolTip.Active = false;
+                }
+
                 m_prevNode.TreeView.SelectedNode = m_prevNode;
                 return;
             }
@@ -150,13 +157,14 @@ namespace SearchDirLists
             if (m_toolTip == null)
             {
                 m_toolTip = new ToolTip();
-                m_toolTip.UseFading = true;
             }
+
+            m_toolTip.Active = true;
+            m_toolTip.UseFading = true;
+            m_toolTip.ToolTipTitle = m_prevNode.Text;
 
             NodeDatum nodeDatum = (NodeDatum)m_prevNode.Tag;
 
-            m_toolTip.Active = true;
-            m_toolTip.ToolTipTitle = m_prevNode.Text;
             m_toolTip.Show(Utilities.FormatSize(nodeDatum.nTotalLength, bBytes: true), ctl, Point.Ceiling(pt_in));
             m_selRect = nodeDatum.TreeMapRect;
             Invalidate();
@@ -214,6 +222,13 @@ namespace SearchDirLists
                 m_bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), m_rectScreen);
                 m_bg.Render();
                 m_selRect = Rectangle.Empty;
+                m_prevNode = null;
+
+                if (m_toolTip != null)
+                {
+                    m_toolTip.Active = false;
+                }
+
                 Invalidate();
             }
         }
@@ -242,6 +257,13 @@ namespace SearchDirLists
         {
             base.OnSizeChanged(e);
             TranslateSize();
+            m_selRect = Rectangle.Empty;
+            m_prevNode = null;
+
+            if (m_toolTip != null)
+            {
+                m_toolTip.Active = false;
+            }
         }
 
         void TranslateSize()

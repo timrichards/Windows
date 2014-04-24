@@ -13,7 +13,7 @@ namespace SearchDirLists
 {
     class TreeMapUserControl : UserControl
     {
-        Rectangle m_rectScreen = Rectangle.Empty;
+        Rectangle m_rectBitmap = Rectangle.Empty;
         RectangleF m_selRect = Rectangle.Empty;
         SizeF m_sizeTranslate = SizeF.Empty;
         BufferedGraphics m_bg = null;
@@ -30,6 +30,13 @@ namespace SearchDirLists
               ControlStyles.UserPaint |
               ControlStyles.AllPaintingInWmPaint,
               true);
+        }
+
+        internal void Clear()
+        {
+            m_treeNode = null;
+            m_fileNode = null;
+            m_prevNode = null;
         }
 
         internal void ClearToolTip()
@@ -106,7 +113,7 @@ namespace SearchDirLists
                 return null;
             }
 
-            TreeNode nodeFileList = new TreeNode();
+            TreeNode nodeFileList = new TreeNode(parent.Text);
             NodeDatum nodeDatum_B = new NodeDatum(0, 0, 0);
             ulong nTotalLength = 0;
 
@@ -135,7 +142,6 @@ namespace SearchDirLists
             nodeDatum_B.nTotalLength = nTotalLength;
             nodeDatum_B.TreeMapRect = nodeDatum.TreeMapRect;
             nodeFileList.Tag = nodeDatum_B;
-            nodeFileList.Text = parent.Text;
 
             return nodeFileList;
         }
@@ -303,13 +309,13 @@ namespace SearchDirLists
                 {
                     BufferedGraphicsContext bgcontext = BufferedGraphicsManager.Current;
 
-                    bgcontext.MaximumBuffer = m_rectScreen.Size;
-                    m_bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), m_rectScreen);
+                    bgcontext.MaximumBuffer = m_rectBitmap.Size;
+                    m_bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), m_rectBitmap);
                 }
 
                 m_bg.Graphics.Clear(Color.DarkGray);
-                m_fileNode = DrawTreemap(m_bg.Graphics, m_rectScreen);
-                m_bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), m_rectScreen);
+                m_fileNode = DrawTreemap(m_bg.Graphics, m_rectBitmap);
+                m_bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), m_rectBitmap);
                 m_bg.Render();
                 m_selRect = Rectangle.Empty;
                 m_prevNode = null;
@@ -325,10 +331,10 @@ namespace SearchDirLists
 
         protected override void OnLoad(EventArgs e)
         {
-            m_rectScreen = Screen.GetBounds(this);
-            BackgroundImage = new Bitmap(m_rectScreen.Width, m_rectScreen.Height);
-            TranslateSize();
             base.OnLoad(e);
+            m_rectBitmap = Screen.GetBounds(this); // new Rectangle(0, 0, 1024, 1024);
+            BackgroundImage = new Bitmap(m_rectBitmap.Size.Width, m_rectBitmap.Size.Height);
+            TranslateSize();
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -358,8 +364,8 @@ namespace SearchDirLists
 
         void TranslateSize()
         {
-            SizeF sizeScreen = m_rectScreen.Size;
-            m_sizeTranslate = new SizeF((float)Size.Width / sizeScreen.Width, (float)Size.Height / sizeScreen.Height);
+            SizeF sizeBitmap = m_rectBitmap.Size;
+            m_sizeTranslate = new SizeF((float)Size.Width / sizeBitmap.Width, (float)Size.Height / sizeBitmap.Height);
         }
 
         // treemap.cpp	- Implementation of CColorSpace, CTreemap and CTreemapPreview
@@ -509,7 +515,7 @@ namespace SearchDirLists
 
             TreeNode filesNode = null;
 
-            if (bStart)
+            if (bStart && (nodeDatum.TreeMapFiles == null))
             {
                 filesNode = DoFileList(item);
             }
@@ -530,7 +536,7 @@ namespace SearchDirLists
                     return null;
                 }
             }
-            else if (bStart)
+            else if (bStart && (nodeDatum.TreeMapFiles == null))
             {
                 nodeDatum.TreeMapFiles = filesNode;
             }
@@ -561,8 +567,7 @@ namespace SearchDirLists
 	        Debug.Assert(parent.Nodes.Count > 0);
 
             NodeDatum nodeDatum = (NodeDatum)parent.Tag;
-	        Rectangle rc= nodeDatum.TreeMapRect;
-
+	        Rectangle rc = nodeDatum.TreeMapRect;
 	        List<double> rows = new List<double>();	// Our rectangle is divided into rows, each of which gets this height (fraction of total height).
 	        List<int> childrenPerRow = new List<int>();// childrenPerRow[i] = # of children in rows[i]
             List<TreeNode> listChildren = parent.Nodes.Cast<TreeNode>().Where(t => ((NodeDatum)t.Tag).nTotalLength > 0).ToList();
@@ -570,6 +575,18 @@ namespace SearchDirLists
             if (nodeDatum.TreeMapFiles != null)
             {
                 listChildren.Add(nodeDatum.TreeMapFiles);
+            }
+            else if (nodeDatum.nLength > 0)
+            {
+                NodeDatum nodeFiles = new NodeDatum(0, 0, 0);
+
+                nodeFiles.nTotalLength = nodeDatum.nLength;
+
+                TreeNode treeNode = new TreeNode(parent.Text);
+
+                treeNode.Tag = nodeFiles;
+                treeNode.ForeColor = Color.OliveDrab;
+                listChildren.Add(treeNode);
             }
 
             listChildren.Sort((x, y) => ((NodeDatum)y.Tag).nTotalLength.CompareTo(((NodeDatum)x.Tag).nTotalLength));

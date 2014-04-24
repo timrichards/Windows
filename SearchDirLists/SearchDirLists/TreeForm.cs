@@ -260,6 +260,7 @@ namespace SearchDirLists
             form_lvClones.Items.Clear();
             form_lvSameVol.Items.Clear();
             form_lvUnique.Items.Clear();
+            form_tmapUserCtl.Clear();
 
             foreach (ListView lv in new ListView[] { form_lvClones, form_lvSameVol, form_lvUnique })
             {

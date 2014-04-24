@@ -1,27 +1,4 @@
-﻿// treemap.cpp	- Implementation of CColorSpace, CTreemap and CTreemapPreview
-//
-// WinDirStat - Directory Statistics
-// Copyright (C) 2003-2004 Bernhard Seifert
-//
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-//
-// Author: bseifert@users.sourceforge.net, bseifert@daccord.net
-//
-// Last modified: $Date: 2004/11/05 16:53:08 $
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -83,6 +60,85 @@ namespace SearchDirLists
             base.Dispose(disposing);
         }
 
+        TreeNode DoFileList(TreeNode parent)
+        {
+            String strFile = (String)((RootNodeDatum)TreeSelect.GetParentRoot(parent).Tag).StrFile;
+
+            if (File.Exists(strFile) == false)
+            {
+                Debug.Assert(false);
+                return null;
+            }
+
+            if ((parent.Tag is NodeDatum) == false)
+            {
+                return null;
+            }
+
+            NodeDatum nodeDatum = (NodeDatum)parent.Tag;
+
+            if (nodeDatum.nLineNo <= 0)
+            {
+                return null;
+            }
+
+            long nPrevDir = nodeDatum.nPrevLineNo;
+            long nLineNo = nodeDatum.nLineNo;
+
+            if (nPrevDir <= 0)
+            {
+                return null;
+            }
+
+            if ((nLineNo - nPrevDir) <= 1)  // dir has no files
+            {
+                return null;
+            }
+
+            DateTime dtStart = DateTime.Now;
+            List<String> listLines = File.ReadLines(strFile)
+                .Skip((int)nPrevDir)
+                .Take((int)(nLineNo - nPrevDir - 1))
+                .ToList();
+
+            if (listLines.Count <= 0)
+            {
+                return null;
+            }
+
+            TreeNode nodeFileList = new TreeNode();
+            NodeDatum nodeDatum_B = new NodeDatum(0, 0, 0);
+            ulong nTotalLength = 0;
+
+            foreach (String strFileLine in listLines)
+            {
+                String[] strArrayFiles = strFileLine.Split('\t').Skip(3).ToArray();
+                ulong nLength = 0;
+
+                if ((strArrayFiles.Length > Utilities.nColLENGTH_LV) && Utilities.StrValid(strArrayFiles[Utilities.nColLENGTH_LV]))
+                {
+                    nLength = ulong.Parse(strArrayFiles[Utilities.nColLENGTH_LV]);
+                    strArrayFiles[Utilities.nColLENGTH_LV] = Utilities.FormatSize(strArrayFiles[Utilities.nColLENGTH_LV]);
+                }
+
+                NodeDatum nodeDatum_A = new NodeDatum(0, 0, 0);
+                TreeNode nodeFile = new TreeNode(strArrayFiles[0]);
+
+                nodeDatum_A.nTotalLength = nLength;
+                nTotalLength += nLength;
+                nodeFile.Tag = nodeDatum_A;
+                nodeFile.ForeColor = Color.OliveDrab;
+                nodeFileList.Nodes.Add(nodeFile);
+            }
+
+            Debug.Assert(nTotalLength == nodeDatum.nLength);
+            nodeDatum_B.nTotalLength = nTotalLength;
+            nodeFileList.Tag = nodeDatum_B;
+            nodeFileList.Text = "Immediate Files (" + parent.Text + ")";
+
+            return nodeFileList;
+        }
+
         internal void DoThreadFactory(TreeNode treeNode)
         {
             m_treeNode = treeNode;
@@ -139,7 +195,20 @@ namespace SearchDirLists
 
             TreeNode m_prevNode_A = m_prevNode;
 
-            m_prevNode = FindMapNode(m_prevNode ?? treeNode, pt);
+            if ((m_prevNode == null) && (treeNode != m_fileNode))
+            {
+                NodeDatum nodeDatum_A = (NodeDatum)treeNode.Tag;
+
+                if (nodeDatum_A.TreeMapFiles != null)
+                {
+                    m_prevNode = FindMapNode(nodeDatum_A.TreeMapFiles, pt);
+                }
+            }
+
+            if (m_prevNode_A == m_prevNode)
+            {
+                m_prevNode = FindMapNode(m_prevNode ?? treeNode, pt);
+            }
 
             if (m_prevNode == null)
             {
@@ -195,7 +264,7 @@ namespace SearchDirLists
                     continue;
                 }
 
-                if (treeNode != treeNode_in)
+                if (bNextNode || (treeNode != treeNode_in))
                 {
                     return treeNode;
                 }
@@ -284,6 +353,29 @@ namespace SearchDirLists
             m_sizeTranslate = new SizeF((float)Size.Width / sizeScreen.Width, (float)Size.Height / sizeScreen.Height);
         }
 
+        // treemap.cpp	- Implementation of CColorSpace, CTreemap and CTreemapPreview
+        //
+        // WinDirStat - Directory Statistics
+        // Copyright (C) 2003-2004 Bernhard Seifert
+        //
+        // This program is free software; you can redistribute it and/or modify
+        // it under the terms of the GNU General Public License as published by
+        // the Free Software Foundation; either version 2 of the License, or
+        // (at your option) any later version.
+        //
+        // This program is distributed in the hope that it will be useful,
+        // but WITHOUT ANY WARRANTY; without even the implied warranty of
+        // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        // GNU General Public License for more details.
+        //
+        // You should have received a copy of the GNU General Public License
+        // along with this program; if not, write to the Free Software
+        // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+        //
+        // Author: bseifert@users.sourceforge.net, bseifert@daccord.net
+        //
+        // Last modified: $Date: 2004/11/05 16:53:08 $
+        
         Options m_options;
 
         Options _defaultOptions = new Options(
@@ -392,9 +484,10 @@ namespace SearchDirLists
         {
 	        Debug.Assert(rc.Width >= 0);
 	        Debug.Assert(rc.Height >= 0);
-	        Debug.Assert(((NodeDatum)item.Tag).nTotalLength > 0);
 
-	        ((NodeDatum)item.Tag).TreeMapRect = rc;
+            NodeDatum nodeDatum = (NodeDatum)item.Tag;
+            Debug.Assert(nodeDatum.nTotalLength > 0);
+            nodeDatum.TreeMapRect = rc;
 
 	        int gridWidth= m_options.grid ? 1 : 0;
 
@@ -405,8 +498,15 @@ namespace SearchDirLists
 
             bool bDoFileList = false;
 
-	        if (item.Nodes.Count == 0)
-	        {
+            TreeNode filesNode = null;
+
+            if (bStart)
+            {
+                filesNode = DoFileList(item);
+            }
+
+            if (item.Nodes.Count == 0)
+            {
                 if (bStart == false)
                 {
                     RenderLeaf(graphics, item);
@@ -414,16 +514,20 @@ namespace SearchDirLists
                 }
 
                 bDoFileList = true;
-                item = DoFileList(item);
+                item = filesNode;
 
                 if (item == null)
                 {
                     return null;
                 }
-	        }
+            }
+            else if (bStart)
+            {
+                nodeDatum.TreeMapFiles = filesNode;
+            }
 	        
 		    Debug.Assert(item.Nodes.Count > 0);
-		    Debug.Assert(((NodeDatum)item.Tag).nTotalLength > 0);
+            Debug.Assert(nodeDatum.nTotalLength > 0);
 
             KDirStat_DrawChildren(graphics, item, bStart);
 
@@ -434,78 +538,6 @@ namespace SearchDirLists
 
             return null;
         }
-
-        TreeNode DoFileList(TreeNode parent)
-        {
-            TreeNode treeNode = (TreeNode)parent.Clone();
-
-            TreeNode rootNode = TreeSelect.GetParentRoot(parent);
-            String strFile = (String)((RootNodeDatum)rootNode.Tag).StrFile;
-
-            if (File.Exists(strFile) == false)
-            {
-                Debug.Assert(false);
-                return null;
-            }
-
-            if ((parent.Tag is NodeDatum) == false)
-            {
-                return null;
-            }
-
-            NodeDatum nodeDatum = (NodeDatum)parent.Tag;
-
-            if (nodeDatum.nLineNo <= 0)
-            {
-                return null;
-            }
-
-            long nPrevDir = nodeDatum.nPrevLineNo;
-            long nLineNo = nodeDatum.nLineNo;
-
-            if (nPrevDir <= 0)
-            {
-                return null;
-            }
-
-            if ((nLineNo - nPrevDir) <= 1)  // dir has no files
-            {
-                return null;
-            }
-
-            DateTime dtStart = DateTime.Now;
-            List<String> listLines = File.ReadLines(strFile)
-                .Skip((int)nPrevDir)
-                .Take((int)(nLineNo - nPrevDir - 1))
-                .ToList();
-
-            if (listLines.Count <= 0)
-            {
-                return null;
-            }
-
-            foreach (String strFileLine in listLines)
-            {
-                String[] strArrayFiles = strFileLine.Split('\t').Skip(3).ToArray();
-                ulong nLength = 0;
-
-                if ((strArrayFiles.Length > Utilities.nColLENGTH_LV) && Utilities.StrValid(strArrayFiles[Utilities.nColLENGTH_LV]))
-                {
-                    nLength = ulong.Parse(strArrayFiles[Utilities.nColLENGTH_LV]);
-                    strArrayFiles[Utilities.nColLENGTH_LV] = Utilities.FormatSize(strArrayFiles[Utilities.nColLENGTH_LV]);
-                }
-
-                NodeDatum nodeDatum_A = new NodeDatum(0, 0, 0);
-                TreeNode treeNode_A = new TreeNode(strArrayFiles[0]);
-
-                nodeDatum_A.nTotalLength = nLength;
-                treeNode_A.Tag = nodeDatum_A;
-                treeNode_A.ForeColor = Color.OliveDrab;
-                treeNode.Nodes.Add(treeNode_A);
-            }
-
-            return treeNode;
-        }       
 
          //My first approach was to make this member pure virtual and have three
          //classes derived from CTreemap. The disadvantage is then, that we cannot
@@ -519,17 +551,23 @@ namespace SearchDirLists
         {
 	        Debug.Assert(parent.Nodes.Count > 0);
 
-	        Rectangle rc= ((NodeDatum)parent.Tag).TreeMapRect;
+            NodeDatum nodeDatum = (NodeDatum)parent.Tag;
+	        Rectangle rc= nodeDatum.TreeMapRect;
 
 	        List<double> rows = new List<double>();	// Our rectangle is divided into rows, each of which gets this height (fraction of total height).
 	        List<int> childrenPerRow = new List<int>();// childrenPerRow[i] = # of children in rows[i]
             List<TreeNode> listChildren = parent.Nodes.Cast<TreeNode>().Where(t => ((NodeDatum)t.Tag).nTotalLength > 0).ToList();
 
+            if (nodeDatum.TreeMapFiles != null)
+            {
+                listChildren.Add(nodeDatum.TreeMapFiles);
+            }
+
             listChildren.Sort((x, y) => ((NodeDatum)y.Tag).nTotalLength.CompareTo(((NodeDatum)x.Tag).nTotalLength));
             listChildren = listChildren.ToList();
 
             double[] childWidth = // Widths of the children (fraction of row width).
-             new Double[listChildren.Count];
+                new Double[listChildren.Count];
 
 	        bool horizontalRows= KDirStat_ArrangeChildren(parent, childWidth, rows, childrenPerRow, listChildren);
 
@@ -569,7 +607,7 @@ namespace SearchDirLists
 			        if (rcChild.Width > 0 && rcChild.Height > 0)
 			        {
 				        Rectangle test;
-				        test.IntersectRect(((NodeDatum)parent.Tag).TreeMapRect, rcChild);
+				        test.IntersectRect(nodeDatum.TreeMapRect, rcChild);
 				        Debug.Assert(test == rcChild);
 			        }
 			        #endif			

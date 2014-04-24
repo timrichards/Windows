@@ -58,8 +58,9 @@ namespace SearchDirLists
             this.form_cbSaveAs = new System.Windows.Forms.ComboBox();
             this.form_cbPath = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.form_tabPage_Browse = new System.Windows.Forms.TabPage();
+            this.form_tabPageBrowse = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.form_btnUp = new System.Windows.Forms.Button();
             this.form_btnSearchFiles = new System.Windows.Forms.Button();
             this.form_searchFoldersAndFiles = new System.Windows.Forms.Button();
             this.form_btn_TreeCollapse = new System.Windows.Forms.Button();
@@ -144,10 +145,9 @@ namespace SearchDirLists
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.timer_blink = new System.Windows.Forms.Timer(this.components);
             this.timer_DoTree = new System.Windows.Forms.Timer(this.components);
-            this.form_btnUp = new System.Windows.Forms.Button();
             this.form_tabControl.SuspendLayout();
             this.form_tabPageVolumes.SuspendLayout();
-            this.form_tabPage_Browse.SuspendLayout();
+            this.form_tabPageBrowse.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -211,7 +211,7 @@ namespace SearchDirLists
             // form_tabControl
             // 
             this.form_tabControl.Controls.Add(this.form_tabPageVolumes);
-            this.form_tabControl.Controls.Add(this.form_tabPage_Browse);
+            this.form_tabControl.Controls.Add(this.form_tabPageBrowse);
             this.form_tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.form_tabControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_tabControl.Location = new System.Drawing.Point(0, 0);
@@ -491,16 +491,16 @@ namespace SearchDirLists
             this.label1.TabIndex = 2;
             this.label1.Text = "Path";
             // 
-            // form_tabPage_Browse
+            // form_tabPageBrowse
             // 
-            this.form_tabPage_Browse.Controls.Add(this.splitContainer1);
-            this.form_tabPage_Browse.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.form_tabPage_Browse.Location = new System.Drawing.Point(4, 25);
-            this.form_tabPage_Browse.Name = "form_tabPage_Browse";
-            this.form_tabPage_Browse.Size = new System.Drawing.Size(973, 402);
-            this.form_tabPage_Browse.TabIndex = 2;
-            this.form_tabPage_Browse.Text = "Browse";
-            this.form_tabPage_Browse.UseVisualStyleBackColor = true;
+            this.form_tabPageBrowse.Controls.Add(this.splitContainer1);
+            this.form_tabPageBrowse.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.form_tabPageBrowse.Location = new System.Drawing.Point(4, 25);
+            this.form_tabPageBrowse.Name = "form_tabPageBrowse";
+            this.form_tabPageBrowse.Size = new System.Drawing.Size(973, 402);
+            this.form_tabPageBrowse.TabIndex = 2;
+            this.form_tabPageBrowse.Text = "Browse";
+            this.form_tabPageBrowse.UseVisualStyleBackColor = true;
             // 
             // splitContainer1
             // 
@@ -531,6 +531,16 @@ namespace SearchDirLists
             this.splitContainer1.Size = new System.Drawing.Size(973, 402);
             this.splitContainer1.SplitterDistance = 29;
             this.splitContainer1.TabIndex = 7;
+            // 
+            // form_btnUp
+            // 
+            this.form_btnUp.Location = new System.Drawing.Point(221, 3);
+            this.form_btnUp.Name = "form_btnUp";
+            this.form_btnUp.Size = new System.Drawing.Size(30, 23);
+            this.form_btnUp.TabIndex = 10;
+            this.form_btnUp.Text = "Up";
+            this.form_btnUp.UseVisualStyleBackColor = true;
+            this.form_btnUp.Click += new System.EventHandler(this.form_btnUp_Click);
             // 
             // form_btnSearchFiles
             // 
@@ -781,6 +791,7 @@ namespace SearchDirLists
             this.form_treeView_Browse.Size = new System.Drawing.Size(570, 135);
             this.form_treeView_Browse.TabIndex = 0;
             this.form_treeView_Browse.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterCheck);
+            this.form_treeView_Browse.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.form_treeView_Browse_BeforeSelect);
             this.form_treeView_Browse.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterSelect);
             this.form_treeView_Browse.Enter += new System.EventHandler(this.formCtl_EnterForCopyButton);
             this.form_treeView_Browse.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_treeView_Browse_KeyPress);
@@ -1498,16 +1509,6 @@ namespace SearchDirLists
             this.timer_DoTree.Interval = 3000;
             this.timer_DoTree.Tick += new System.EventHandler(this.timer_DoTree_Tick);
             // 
-            // form_btnUp
-            // 
-            this.form_btnUp.Location = new System.Drawing.Point(221, 3);
-            this.form_btnUp.Name = "form_btnUp";
-            this.form_btnUp.Size = new System.Drawing.Size(30, 23);
-            this.form_btnUp.TabIndex = 10;
-            this.form_btnUp.Text = "Up";
-            this.form_btnUp.UseVisualStyleBackColor = true;
-            this.form_btnUp.Click += new System.EventHandler(this.form_btnUp_Click);
-            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1527,7 +1528,7 @@ namespace SearchDirLists
             this.form_tabControl.ResumeLayout(false);
             this.form_tabPageVolumes.ResumeLayout(false);
             this.form_tabPageVolumes.PerformLayout();
-            this.form_tabPage_Browse.ResumeLayout(false);
+            this.form_tabPageBrowse.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -1620,7 +1621,7 @@ namespace SearchDirLists
         private System.Windows.Forms.Button form_btnSaveVolumeList;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.TabPage form_tabPage_Browse;
+        private System.Windows.Forms.TabPage form_tabPageBrowse;
         private Form1TreeView form_treeView_Browse;
         private System.Windows.Forms.SplitContainer form_splitFiles;
         private ListViewEx form_lvDetail;

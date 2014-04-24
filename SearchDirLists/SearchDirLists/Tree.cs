@@ -178,7 +178,8 @@ namespace SearchDirLists
             nLength = node.nLength;
         }
 
-        internal Rectangle TreeMapRect;
+        internal Rectangle TreeMapRect = Rectangle.Empty;
+        internal TreeNode TreeMapFiles = null;
     }
 
     class RootNodeDatum : NodeDatum

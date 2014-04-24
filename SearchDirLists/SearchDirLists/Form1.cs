@@ -1436,6 +1436,7 @@ namespace SearchDirLists
                 form_btnSaveDirList.Enabled = true;
             }
 
+            form_tabControl.SelectedTab = form_tabPageBrowse;
             return true;
         }
 
@@ -2600,6 +2601,18 @@ namespace SearchDirLists
             }
 
             form_treeView_Browse.SelectedNode = form_treeView_Browse.SelectedNode.Parent;
+        }
+
+        private void form_treeView_Browse_BeforeSelect(object sender, TreeViewCancelEventArgs e)
+        {
+            TreeNode treeNode = ((TreeView)sender).SelectedNode;
+
+            if (treeNode == null)
+            {
+                return;
+            }
+
+            ((NodeDatum)treeNode.Tag).TreeMapFiles = null;
         }
     }
 }

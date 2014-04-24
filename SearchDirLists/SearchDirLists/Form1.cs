@@ -1960,10 +1960,7 @@ namespace SearchDirLists
 
         void form_treeView_Browse_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (tabControl_FileList.SelectedTab == tabPage_DiskUsage)
-            {
-                form_tmapUserCtl.DoThreadFactory(e.Node);
-            }
+            form_tmapUserCtl.DoThreadFactory(e.Node);
 
             if (sender == form_treeCompare2)
             {
@@ -2618,7 +2615,7 @@ namespace SearchDirLists
                 return;
             }
 
-            ((NodeDatum)treeNode.Tag).TreeMapFiles = null;
+        //    ((NodeDatum)treeNode.Tag).TreeMapFiles = null;
         }
     }
 }

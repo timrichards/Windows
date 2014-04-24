@@ -204,7 +204,7 @@ namespace SearchDirLists
             lvItem.Selected = true;
             lvItem.EnsureVisible();
             m_blink.Stop();
-            m_blink.Go(Once: true);
+            m_blink.Go(lvItem: lvItem, Once: true);
         }
 
         void TreeSelectDoneCallback(bool bSecondComparePane)

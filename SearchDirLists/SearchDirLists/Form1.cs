@@ -2578,7 +2578,13 @@ namespace SearchDirLists
 
         private void form_tmapUserCtl_MouseUp(object sender, MouseEventArgs e)
         {
-            form_tmapUserCtl.DoToolTip(form_tmapUserCtl, e.Location);
+            m_strMaybeFile = form_tmapUserCtl.DoToolTip(form_tmapUserCtl, e.Location);
+
+            if (m_strMaybeFile != null)
+            {
+                tabControl_FileList.SelectedTab = tabPage_FileList;
+                SelectFoundFile();
+            }
         }
 
         private void ClearToolTip(object sender, EventArgs e)

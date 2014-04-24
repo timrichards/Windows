@@ -162,7 +162,7 @@ namespace SearchDirLists
             m_thread.Start();
         }
 
-        internal void DoToolTip(Control ctl, PointF pt_in)
+        internal String DoToolTip(Control ctl, PointF pt_in)      // return file name if clicked in file tooltip
         {
             Point pt = Point.Ceiling(new PointF(pt_in.X / m_sizeTranslate.Width, pt_in.Y / m_sizeTranslate.Height));
 
@@ -189,8 +189,16 @@ namespace SearchDirLists
                     m_toolTip.Active = false;
                 }
 
-                m_prevNode.TreeView.SelectedNode = m_prevNode;
-                return;
+                if (m_prevNode.TreeView != null)    // null if fake file treenode (NodeDatum.TreeMapFiles)
+                {
+                    m_prevNode.TreeView.SelectedNode = m_prevNode;
+                }
+                else
+                {
+                    return m_prevNode.Text;
+                }
+
+                return null;
             }
 
             TreeNode m_prevNode_A = m_prevNode;
@@ -227,7 +235,7 @@ namespace SearchDirLists
 
             if (m_prevNode == null)
             {
-                return;
+                return null;
             }
 
             if (m_toolTip == null)
@@ -244,6 +252,7 @@ namespace SearchDirLists
             m_toolTip.Show(Utilities.FormatSize(nodeDatum.nTotalLength, bBytes: true), ctl, Point.Ceiling(pt_in));
             m_selRect = nodeDatum.TreeMapRect;
             Invalidate();
+            return null;
         }
 
         TreeNode FindMapNode(TreeNode treeNode_in, Point pt, bool bNextNode = false)

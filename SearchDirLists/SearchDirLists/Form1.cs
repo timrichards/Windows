@@ -1355,7 +1355,6 @@ namespace SearchDirLists
                     form_lblVolGroup.BackColor = Color.LightGoldenrodYellow;
                     form_lblVolGroup.Font = new Font(m_FontVolGroupOrig, FontStyle.Regular);
                     m_bCompareMode = true;
-                    form_tmapUserCtl.Clear();
                     tabControl_FileList.SelectedTab = tabPage_FileList;
                     form_treeCompare1.SelectedNode = form_treeCompare1.Nodes[0];
                     form_treeCompare2.SelectedNode = form_treeCompare2.Nodes[0];
@@ -1960,8 +1959,6 @@ namespace SearchDirLists
 
         void form_treeView_Browse_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            form_tmapUserCtl.Clear();
-
             if (tabControl_FileList.SelectedTab == tabPage_DiskUsage)
             {
                 form_tmapUserCtl.DoThreadFactory(e.Node);
@@ -2586,6 +2583,23 @@ namespace SearchDirLists
         private void ClearToolTip(object sender, EventArgs e)
         {
             form_tmapUserCtl.ClearToolTip();
+        }
+
+        private void form_btnUp_Click(object sender, EventArgs e)
+        {
+            if (form_treeView_Browse.SelectedNode == null)
+            {
+                m_blink.Go(form_btnUp, clr: Color.Red, Once: true);
+                return;
+            }
+
+            if (form_treeView_Browse.SelectedNode.Parent == null)
+            {
+                m_blink.Go(form_btnUp, clr: Color.Red, Once: true);
+                return;
+            }
+
+            form_treeView_Browse.SelectedNode = form_treeView_Browse.SelectedNode.Parent;
         }
     }
 }

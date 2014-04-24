@@ -607,17 +607,21 @@ namespace SearchDirLists
         public bool Step2_OnForm()
         {
             form_treeView_Browse.Nodes.Clear();
-            form_treeView_Browse.Enabled = true;
-            form_treeView_Browse.CheckBoxes = m_bCheckboxes;
-            form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
-            Debug.Assert(form_lvClones.Items.Count == 0);
-            form_lvClones.Items.AddRange(listLVitems.ToArray());
-            listLVitems = null;
-            Debug.Assert(form_lvUnique.Items.Count == 0);
-            form_lvUnique.Items.AddRange(listLVunique.ToArray());
-            Debug.Assert(form_lvSameVol.Items.Count == 0);
-            form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
-            listLVsameVol = null;
+
+            if (m_listRootNodes.Count > 0)
+            {
+                form_treeView_Browse.Enabled = true;
+                form_treeView_Browse.CheckBoxes = m_bCheckboxes;
+                form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
+                Debug.Assert(form_lvClones.Items.Count == 0);
+                form_lvClones.Items.AddRange(listLVitems.ToArray());
+                Debug.Assert(form_lvUnique.Items.Count == 0);
+                form_lvUnique.Items.AddRange(listLVunique.ToArray());
+                Debug.Assert(form_lvSameVol.Items.Count == 0);
+                form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
+                form_treeView_Browse.SelectedNode = m_listRootNodes[0];
+            }
+
             return false;           // unused bool return
         }
     }

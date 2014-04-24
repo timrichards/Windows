@@ -102,6 +102,8 @@ namespace SearchDirLists
             this.form_splitClones = new System.Windows.Forms.SplitContainer();
             this.form_splitDetail = new System.Windows.Forms.SplitContainer();
             this.tabControl_FileList = new System.Windows.Forms.TabControl();
+            this.tabPage_DiskUsage = new System.Windows.Forms.TabPage();
+            this.form_tmapUserCtl = new SearchDirLists.TreeMapUserControl();
             this.tabPage_FileList = new System.Windows.Forms.TabPage();
             this.form_splitCompareFiles = new System.Windows.Forms.SplitContainer();
             this.form_lvFiles = new ListViewEmbeddedControls.ListViewEx();
@@ -120,8 +122,6 @@ namespace SearchDirLists
             this.columnHeader22 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader23 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader24 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.tabPage_DiskUsage = new System.Windows.Forms.TabPage();
-            this.form_tmapUserCtl = new SearchDirLists.TreeMapUserControl();
             this.form_splitDetailVols = new System.Windows.Forms.SplitContainer();
             this.form_lvDetail = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -144,6 +144,7 @@ namespace SearchDirLists
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.timer_blink = new System.Windows.Forms.Timer(this.components);
             this.timer_DoTree = new System.Windows.Forms.Timer(this.components);
+            this.form_btnUp = new System.Windows.Forms.Button();
             this.form_tabControl.SuspendLayout();
             this.form_tabPageVolumes.SuspendLayout();
             this.form_tabPage_Browse.SuspendLayout();
@@ -187,12 +188,12 @@ namespace SearchDirLists
             this.form_splitDetail.Panel2.SuspendLayout();
             this.form_splitDetail.SuspendLayout();
             this.tabControl_FileList.SuspendLayout();
+            this.tabPage_DiskUsage.SuspendLayout();
             this.tabPage_FileList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.form_splitCompareFiles)).BeginInit();
             this.form_splitCompareFiles.Panel1.SuspendLayout();
             this.form_splitCompareFiles.Panel2.SuspendLayout();
             this.form_splitCompareFiles.SuspendLayout();
-            this.tabPage_DiskUsage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.form_splitDetailVols)).BeginInit();
             this.form_splitDetailVols.Panel1.SuspendLayout();
             this.form_splitDetailVols.Panel2.SuspendLayout();
@@ -512,6 +513,7 @@ namespace SearchDirLists
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.form_btnUp);
             this.splitContainer1.Panel1.Controls.Add(this.form_btnSearchFiles);
             this.splitContainer1.Panel1.Controls.Add(this.form_searchFoldersAndFiles);
             this.splitContainer1.Panel1.Controls.Add(this.form_btn_TreeCollapse);
@@ -608,9 +610,9 @@ namespace SearchDirLists
             | System.Windows.Forms.AnchorStyles.Right)));
             this.form_cbNavigate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_cbNavigate.FormattingEnabled = true;
-            this.form_cbNavigate.Location = new System.Drawing.Point(221, 3);
+            this.form_cbNavigate.Location = new System.Drawing.Point(257, 3);
             this.form_cbNavigate.Name = "form_cbNavigate";
-            this.form_cbNavigate.Size = new System.Drawing.Size(340, 24);
+            this.form_cbNavigate.Size = new System.Drawing.Size(304, 24);
             this.form_cbNavigate.TabIndex = 3;
             this.form_cbNavigate.SelectedIndexChanged += new System.EventHandler(this.form_cbNavigate_SelectedIndexChanged);
             this.form_cbNavigate.TextChanged += new System.EventHandler(this.form_cbNavigate_TextChanged);
@@ -1087,8 +1089,8 @@ namespace SearchDirLists
             // 
             // tabControl_FileList
             // 
-            this.tabControl_FileList.Controls.Add(this.tabPage_FileList);
             this.tabControl_FileList.Controls.Add(this.tabPage_DiskUsage);
+            this.tabControl_FileList.Controls.Add(this.tabPage_FileList);
             this.tabControl_FileList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl_FileList.Location = new System.Drawing.Point(0, 0);
             this.tabControl_FileList.Name = "tabControl_FileList";
@@ -1096,6 +1098,32 @@ namespace SearchDirLists
             this.tabControl_FileList.Size = new System.Drawing.Size(138, 147);
             this.tabControl_FileList.TabIndex = 1;
             this.tabControl_FileList.SelectedIndexChanged += new System.EventHandler(this.ClearToolTip);
+            // 
+            // tabPage_DiskUsage
+            // 
+            this.tabPage_DiskUsage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.tabPage_DiskUsage.Controls.Add(this.form_tmapUserCtl);
+            this.tabPage_DiskUsage.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_DiskUsage.Margin = new System.Windows.Forms.Padding(0);
+            this.tabPage_DiskUsage.Name = "tabPage_DiskUsage";
+            this.tabPage_DiskUsage.Size = new System.Drawing.Size(130, 121);
+            this.tabPage_DiskUsage.TabIndex = 1;
+            this.tabPage_DiskUsage.Text = "Disk usage";
+            this.tabPage_DiskUsage.UseVisualStyleBackColor = true;
+            // 
+            // form_tmapUserCtl
+            // 
+            this.form_tmapUserCtl.BackColor = System.Drawing.Color.DarkGray;
+            this.form_tmapUserCtl.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("form_tmapUserCtl.BackgroundImage")));
+            this.form_tmapUserCtl.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.form_tmapUserCtl.Cursor = System.Windows.Forms.Cursors.Cross;
+            this.form_tmapUserCtl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_tmapUserCtl.Location = new System.Drawing.Point(0, 0);
+            this.form_tmapUserCtl.Name = "form_tmapUserCtl";
+            this.form_tmapUserCtl.Size = new System.Drawing.Size(130, 121);
+            this.form_tmapUserCtl.TabIndex = 0;
+            this.form_tmapUserCtl.MouseUp += new System.Windows.Forms.MouseEventHandler(this.form_tmapUserCtl_MouseUp);
+            this.form_tmapUserCtl.Resize += new System.EventHandler(this.ClearToolTip);
             // 
             // tabPage_FileList
             // 
@@ -1245,32 +1273,6 @@ namespace SearchDirLists
             // columnHeader24
             // 
             this.columnHeader24.Text = "Error 2";
-            // 
-            // tabPage_DiskUsage
-            // 
-            this.tabPage_DiskUsage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.tabPage_DiskUsage.Controls.Add(this.form_tmapUserCtl);
-            this.tabPage_DiskUsage.Location = new System.Drawing.Point(4, 22);
-            this.tabPage_DiskUsage.Margin = new System.Windows.Forms.Padding(0);
-            this.tabPage_DiskUsage.Name = "tabPage_DiskUsage";
-            this.tabPage_DiskUsage.Size = new System.Drawing.Size(130, 121);
-            this.tabPage_DiskUsage.TabIndex = 1;
-            this.tabPage_DiskUsage.Text = "Disk usage";
-            this.tabPage_DiskUsage.UseVisualStyleBackColor = true;
-            // 
-            // form_tmapUserCtl
-            // 
-            this.form_tmapUserCtl.BackColor = System.Drawing.Color.DarkGray;
-            this.form_tmapUserCtl.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("form_tmapUserCtl.BackgroundImage")));
-            this.form_tmapUserCtl.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.form_tmapUserCtl.Cursor = System.Windows.Forms.Cursors.Cross;
-            this.form_tmapUserCtl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_tmapUserCtl.Location = new System.Drawing.Point(0, 0);
-            this.form_tmapUserCtl.Name = "form_tmapUserCtl";
-            this.form_tmapUserCtl.Size = new System.Drawing.Size(130, 121);
-            this.form_tmapUserCtl.TabIndex = 0;
-            this.form_tmapUserCtl.MouseUp += new System.Windows.Forms.MouseEventHandler(this.form_tmapUserCtl_MouseUp);
-            this.form_tmapUserCtl.Resize += new System.EventHandler(this.ClearToolTip);
             // 
             // form_splitDetailVols
             // 
@@ -1496,6 +1498,16 @@ namespace SearchDirLists
             this.timer_DoTree.Interval = 3000;
             this.timer_DoTree.Tick += new System.EventHandler(this.timer_DoTree_Tick);
             // 
+            // form_btnUp
+            // 
+            this.form_btnUp.Location = new System.Drawing.Point(221, 3);
+            this.form_btnUp.Name = "form_btnUp";
+            this.form_btnUp.Size = new System.Drawing.Size(30, 23);
+            this.form_btnUp.TabIndex = 10;
+            this.form_btnUp.Text = "Up";
+            this.form_btnUp.UseVisualStyleBackColor = true;
+            this.form_btnUp.Click += new System.EventHandler(this.form_btnUp_Click);
+            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1558,12 +1570,12 @@ namespace SearchDirLists
             ((System.ComponentModel.ISupportInitialize)(this.form_splitDetail)).EndInit();
             this.form_splitDetail.ResumeLayout(false);
             this.tabControl_FileList.ResumeLayout(false);
+            this.tabPage_DiskUsage.ResumeLayout(false);
             this.tabPage_FileList.ResumeLayout(false);
             this.form_splitCompareFiles.Panel1.ResumeLayout(false);
             this.form_splitCompareFiles.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.form_splitCompareFiles)).EndInit();
             this.form_splitCompareFiles.ResumeLayout(false);
-            this.tabPage_DiskUsage.ResumeLayout(false);
             this.form_splitDetailVols.Panel1.ResumeLayout(false);
             this.form_splitDetailVols.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.form_splitDetailVols)).EndInit();
@@ -1694,6 +1706,7 @@ namespace SearchDirLists
         private System.Windows.Forms.TabPage tabPage_FileList;
         private System.Windows.Forms.TabPage tabPage_DiskUsage;
         private TreeMapUserControl form_tmapUserCtl;
+        private System.Windows.Forms.Button form_btnUp;
 
     }
 }

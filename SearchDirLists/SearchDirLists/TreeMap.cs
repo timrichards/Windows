@@ -55,21 +55,6 @@ namespace SearchDirLists
               true);
         }
 
-        internal void Clear()
-        {
-            if (m_bg != null)
-            {
-                m_bg.Dispose();
-                m_bg = null;
-            }
-
-            if (m_toolTip != null)
-            {
-                m_toolTip.Dispose();
-                m_toolTip = null;
-            }
-        }
-
         internal void ClearToolTip()
         {
             if (m_toolTip != null)
@@ -83,7 +68,18 @@ namespace SearchDirLists
 
         protected override void Dispose(bool disposing)
         {
-            Clear();
+            if (m_bg != null)
+            {
+                m_bg.Dispose();
+                m_bg = null;
+            }
+
+            if (m_toolTip != null)
+            {
+                m_toolTip.Dispose();
+                m_toolTip = null;
+            }
+
             base.Dispose(disposing);
         }
 
@@ -134,7 +130,6 @@ namespace SearchDirLists
 
                 if (m_toolTip != null)
                 {
-                    Debug.Assert(false);
                     m_toolTip.Active = false;
                 }
 
@@ -142,11 +137,23 @@ namespace SearchDirLists
                 return;
             }
 
+            TreeNode m_prevNode_A = m_prevNode;
+
             m_prevNode = FindMapNode(m_prevNode ?? treeNode, pt);
 
             if (m_prevNode == null)
             {
-                m_prevNode = FindMapNode(treeNode, pt);
+                if ((m_prevNode_A != null) && (m_prevNode_A.Parent != null) && (m_prevNode_A.Parent != m_treeNode))
+                {
+                    m_prevNode_A = m_prevNode_A.Parent;
+                }
+
+                m_prevNode = FindMapNode(m_prevNode_A, pt);
+
+                if ((m_prevNode == null) && (m_prevNode_A != treeNode))
+                {
+                    m_prevNode = FindMapNode(treeNode, pt);
+                }
             }
 
             if (m_prevNode == null)
@@ -170,9 +177,14 @@ namespace SearchDirLists
             Invalidate();
         }
 
-        TreeNode FindMapNode(TreeNode treeNode_in, Point pt, bool bNextNode = true)
+        TreeNode FindMapNode(TreeNode treeNode_in, Point pt, bool bNextNode = false)
         {
             TreeNode treeNode = treeNode_in;
+
+            if (treeNode == null)
+            {
+                return null;
+            }
 
             do
             {
@@ -193,7 +205,7 @@ namespace SearchDirLists
                     continue;
                 }
 
-                TreeNode foundNode = FindMapNode(treeNode.Nodes[0], pt);
+                TreeNode foundNode = FindMapNode(treeNode.Nodes[0], pt, bNextNode: true);
 
                 if (foundNode != null)
                 {
@@ -413,7 +425,7 @@ namespace SearchDirLists
 		    Debug.Assert(item.Nodes.Count > 0);
 		    Debug.Assert(((NodeDatum)item.Tag).nTotalLength > 0);
 
-            KDirStat_DrawChildren(graphics, item);
+            KDirStat_DrawChildren(graphics, item, bStart);
 
             if (bDoFileList)
             {
@@ -503,7 +515,7 @@ namespace SearchDirLists
          //I learned this squarification style from the KDirStat executable.
          //It's the most complex one here but also the clearest, imho.
         
-        void KDirStat_DrawChildren(Graphics graphics, TreeNode parent)
+        void KDirStat_DrawChildren(Graphics graphics, TreeNode parent, bool bStart = false)
         {
 	        Debug.Assert(parent.Nodes.Count > 0);
 
@@ -564,7 +576,12 @@ namespace SearchDirLists
 			
 			        RecurseDrawGraph(graphics, child, rcChild);
 
-			        if (lastChild)
+                    if (bStart)
+                    {
+                        graphics.DrawRectangle(new Pen(Color.Black, 2), rcChild);
+                    }
+                    
+                    if (lastChild)
 			        {
 				        i++;
                         c++;

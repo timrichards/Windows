@@ -20,11 +20,12 @@ namespace SearchDirLists
         TreeNode m_treeNode = null;
         TreeNode m_fileNode = null;
         TreeNode m_prevNode = null;
-        ToolTip m_toolTip = null;
+        ToolTip m_toolTip = new ToolTip();
         Thread m_thread = null;
 
         public TreeMapUserControl()
         {
+            m_toolTip.UseFading = true;
             SetOptions(_defaultOptions);
             this.SetStyle(ControlStyles.DoubleBuffer |
               ControlStyles.UserPaint |
@@ -41,12 +42,8 @@ namespace SearchDirLists
 
         internal void ClearToolTip()
         {
-            if (m_toolTip != null)
-            {
-                m_selRect = Rectangle.Empty;
-                m_toolTip.Active = false;
-            }
-
+            m_selRect = Rectangle.Empty;
+            m_toolTip.Hide(this);
             Invalidate();
         }
 
@@ -58,12 +55,8 @@ namespace SearchDirLists
                 m_bg = null;
             }
 
-            if (m_toolTip != null)
-            {
-                m_toolTip.Dispose();
-                m_toolTip = null;
-            }
-
+            m_toolTip.Dispose();
+            m_toolTip = null;
             base.Dispose(disposing);
         }
 
@@ -154,6 +147,8 @@ namespace SearchDirLists
 
         internal void DoThreadFactory()
         {
+            m_toolTip.Hide(this);
+
             if (m_treeNode == null)
             {
                 return;
@@ -169,29 +164,19 @@ namespace SearchDirLists
             m_thread.Start();
         }
 
-        internal String DoToolTip(Control ctl, PointF pt_in)      // return file name if clicked in file tooltip
+        internal String DoToolTip(PointF pt_in)      // return file name if clicked in file tooltip
         {
-            Point pt = Point.Ceiling(new PointF(pt_in.X / m_sizeTranslate.Width, pt_in.Y / m_sizeTranslate.Height));
+            m_toolTip.Hide(this);
 
-            if (m_bg != null)
+            if (m_bg == null)
             {
-                m_bg.Render();
+                return null;
             }
 
-            TreeNode treeNode = m_treeNode;
-
-            if (m_fileNode != null)
-            {
-                Debug.Assert(m_fileNode.Text == treeNode.Text);
-                treeNode = m_fileNode;
-                m_prevNode = null;
-            }
+            m_bg.Render();
 
             if (Cursor.Current == Cursors.Arrow)        // hack: clicked in tooltip
             {
-                Debug.Assert(m_toolTip != null);
-                m_toolTip.Active = false;
-
                 TreeNode treeNode_A = (TreeNode)m_toolTip.Tag;
 
                 if (treeNode_A.TreeView != null)    // null if fake file treenode (NodeDatum.TreeMapFiles)
@@ -206,57 +191,76 @@ namespace SearchDirLists
                 return null;
             }
 
-            TreeNode m_prevNode_A = m_prevNode;
+            TreeNode nodeRet = null;
 
-            if ((m_prevNode == null) && (treeNode != m_fileNode))
+            do
             {
-                NodeDatum nodeDatum_A = (NodeDatum)treeNode.Tag;
+                TreeNode treeNode = m_treeNode;
+                Point pt = Point.Ceiling(new PointF(pt_in.X / m_sizeTranslate.Width, pt_in.Y / m_sizeTranslate.Height));
 
-                if (nodeDatum_A.TreeMapFiles != null)
+                if (m_fileNode == null)
                 {
-                    m_prevNode = FindMapNode(nodeDatum_A.TreeMapFiles, pt);
+                    NodeDatum nodeDatum_A = (NodeDatum)m_treeNode.Tag;
+
+                    if (nodeDatum_A.TreeMapFiles != null)
+                    {
+                        if ((nodeRet = FindMapNode(nodeDatum_A.TreeMapFiles, pt)) != null)
+                        {
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.Assert(m_fileNode.Text == m_treeNode.Text);
+                    treeNode = m_fileNode;
+                    m_prevNode = null;
+                }
+
+                if ((nodeRet = FindMapNode(m_prevNode ?? treeNode, pt)) != null)
+                {
+                    break;
+                }
+
+                TreeNode nodeUplevel = m_prevNode;
+                bool bFoundUplevel = false;
+
+                while ((nodeUplevel != null) && (nodeUplevel.Parent != null))
+                {
+                    if ((nodeRet = FindMapNode(nodeUplevel.Parent, pt)) != null)
+                    {
+                        bFoundUplevel = true;
+                        break;
+                    }
+
+                    nodeUplevel = nodeUplevel.Parent;
+                }
+
+                if (bFoundUplevel)
+                {
+                    break;
+                }
+
+                if ((nodeRet = FindMapNode(m_treeNode, pt)) != null)
+                {
+                    break;
                 }
             }
+            while (false);
 
-            if (m_prevNode_A == m_prevNode)
-            {
-                m_prevNode = FindMapNode(m_prevNode ?? treeNode, pt);
-            }
-
-            if (m_prevNode == null)
-            {
-                if ((m_prevNode_A != null) && (m_prevNode_A.Parent != null) && (m_prevNode_A.Parent != m_treeNode))
-                {
-                    m_prevNode_A = m_prevNode_A.Parent;
-                }
-
-                m_prevNode = FindMapNode(m_prevNode_A, pt);
-
-                if ((m_prevNode == null) && (m_prevNode_A != treeNode))
-                {
-                    m_prevNode = FindMapNode(treeNode, pt);
-                }
-            }
-
-            if (m_prevNode == null)
+            if (nodeRet == null)
             {
                 return null;
             }
 
-            if (m_toolTip == null)
-            {
-                m_toolTip = new ToolTip();
-            }
+            m_toolTip.ToolTipTitle = nodeRet.Text;
+            m_toolTip.Tag = nodeRet;
 
-            m_toolTip.Active = true;
-            m_toolTip.UseFading = true;
-            m_toolTip.ToolTipTitle = m_prevNode.Text;
-            m_toolTip.Tag = m_prevNode;
+            NodeDatum nodeDatum = (NodeDatum)nodeRet.Tag;
 
-            NodeDatum nodeDatum = (NodeDatum)m_prevNode.Tag;
-
-            m_toolTip.Show(Utilities.FormatSize(nodeDatum.nTotalLength, bBytes: true), ctl, Point.Ceiling(pt_in));
+            m_toolTip.Show(Utilities.FormatSize(nodeDatum.nTotalLength, bBytes: true), this, Point.Ceiling(pt_in));
             m_selRect = nodeDatum.TreeMapRect;
+            m_prevNode = nodeRet;
             Invalidate();
             return null;
         }
@@ -319,12 +323,6 @@ namespace SearchDirLists
                 m_bg.Render();
                 m_selRect = Rectangle.Empty;
                 m_prevNode = null;
-
-                if (m_toolTip != null)
-                {
-                    m_toolTip.Active = false;
-                }
-
                 Invalidate();
             }
         }
@@ -332,7 +330,7 @@ namespace SearchDirLists
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            m_rectBitmap = Screen.GetBounds(this); // new Rectangle(0, 0, 1024, 1024);
+            m_rectBitmap = new Rectangle(0, 0, 1024, 1024);
             BackgroundImage = new Bitmap(m_rectBitmap.Size.Width, m_rectBitmap.Size.Height);
             TranslateSize();
         }
@@ -355,17 +353,14 @@ namespace SearchDirLists
             TranslateSize();
             m_selRect = Rectangle.Empty;
             m_prevNode = null;
-
-            if (m_toolTip != null)
-            {
-                m_toolTip.Active = false;
-            }
+            m_toolTip.Hide(this);
         }
 
         void TranslateSize()
         {
             SizeF sizeBitmap = m_rectBitmap.Size;
-            m_sizeTranslate = new SizeF((float)Size.Width / sizeBitmap.Width, (float)Size.Height / sizeBitmap.Height);
+            SizeF size = Size;
+            m_sizeTranslate = new SizeF(size.Width / sizeBitmap.Width, size.Height / sizeBitmap.Height);
         }
 
         // treemap.cpp	- Implementation of CColorSpace, CTreemap and CTreemapPreview
@@ -500,10 +495,6 @@ namespace SearchDirLists
 	        Debug.Assert(rc.Width >= 0);
 	        Debug.Assert(rc.Height >= 0);
 
-            NodeDatum nodeDatum = (NodeDatum)item.Tag;
-            Debug.Assert(nodeDatum.nTotalLength > 0);
-            nodeDatum.TreeMapRect = rc;
-
 	        int gridWidth= m_options.grid ? 1 : 0;
 
 	        if (rc.Width <= gridWidth || rc.Height <= gridWidth)
@@ -511,12 +502,17 @@ namespace SearchDirLists
 		        return null;
 	        }
 
-            bool bDoFileList = false;
+            NodeDatum nodeDatum = (NodeDatum)item.Tag;
 
+            Debug.Assert(nodeDatum.nTotalLength > 0);
+            nodeDatum.TreeMapRect = rc;
+
+            bool bDoFileList = false;
             TreeNode filesNode = null;
 
             if (bStart && (nodeDatum.TreeMapFiles == null))
             {
+                Debug.Assert(item.TreeView != null);
                 filesNode = DoFileList(item);
             }
 
@@ -590,7 +586,6 @@ namespace SearchDirLists
             }
 
             listChildren.Sort((x, y) => ((NodeDatum)y.Tag).nTotalLength.CompareTo(((NodeDatum)x.Tag).nTotalLength));
-            listChildren = listChildren.ToList();
 
             double[] childWidth = // Widths of the children (fraction of row width).
                 new Double[listChildren.Count];

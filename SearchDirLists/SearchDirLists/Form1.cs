@@ -2575,7 +2575,7 @@ namespace SearchDirLists
 
         private void form_tmapUserCtl_MouseUp(object sender, MouseEventArgs e)
         {
-            m_strMaybeFile = form_tmapUserCtl.DoToolTip(form_tmapUserCtl, e.Location);
+            m_strMaybeFile = form_tmapUserCtl.DoToolTip(e.Location);
 
             if (m_strMaybeFile != null)
             {

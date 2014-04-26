@@ -60,70 +60,36 @@ namespace SearchDirLists
             base.Dispose(disposing);
         }
 
-        TreeNode DoFileList(TreeNode parent)
+        TreeNode GetFileList(TreeNode parent)
         {
-            String strFile = (String)((RootNodeDatum)TreeSelect.GetParentRoot(parent).Tag).StrFile;
+            List<ulong> listLength = new List<ulong>();
+            List<String[]> listFiles = TreeSelect.GetFileList(parent, listLength);
 
-            if ((parent.Tag is NodeDatum) == false)
-            {
-                return null;
-            }
-
-            NodeDatum nodeDatum = (NodeDatum)parent.Tag;
-
-            if (nodeDatum.nLineNo <= 0)
-            {
-                return null;
-            }
-
-            long nPrevDir = nodeDatum.nPrevLineNo;
-            long nLineNo = nodeDatum.nLineNo;
-
-            if (nPrevDir <= 0)
-            {
-                return null;
-            }
-
-            if ((nLineNo - nPrevDir) <= 1)  // dir has no files
-            {
-                return null;
-            }
-
-            DateTime dtStart = DateTime.Now;
-            List<String> listLines = File.ReadLines(strFile)
-                .Skip((int)nPrevDir)
-                .Take((int)(nLineNo - nPrevDir - 1))
-                .ToList();
-
-            if (listLines.Count <= 0)
+            if (listFiles == null)
             {
                 return null;
             }
 
             TreeNode nodeFileList = new TreeNode(parent.Text);
-            NodeDatum nodeDatum_B = new NodeDatum(0, 0, 0);
             ulong nTotalLength = 0;
+            List<ulong>.Enumerator iterUlong = listLength.GetEnumerator();
 
-            foreach (String strFileLine in listLines)
+            foreach (String[] arrLine in listFiles)
             {
-                String[] strArrayFiles = strFileLine.Split('\t').Skip(3).ToArray();
-                ulong nLength = 0;
-
-                if ((strArrayFiles.Length > Utilities.nColLENGTH_LV) && Utilities.StrValid(strArrayFiles[Utilities.nColLENGTH_LV]))
-                {
-                    nLength = ulong.Parse(strArrayFiles[Utilities.nColLENGTH_LV]);
-                    strArrayFiles[Utilities.nColLENGTH_LV] = Utilities.FormatSize(strArrayFiles[Utilities.nColLENGTH_LV]);
-                }
-
+                Debug.Assert(iterUlong.MoveNext());
                 NodeDatum nodeDatum_A = new NodeDatum(0, 0, 0);
-                TreeNode nodeFile = new TreeNode(strArrayFiles[0]);
 
-                nodeDatum_A.nTotalLength = nLength;
-                nTotalLength += nLength;
+                nTotalLength += nodeDatum_A.nTotalLength = iterUlong.Current;
+
+                TreeNode nodeFile = new TreeNode(arrLine[0]);
+
                 nodeFile.Tag = nodeDatum_A;
                 nodeFile.ForeColor = Color.OliveDrab;
                 nodeFileList.Nodes.Add(nodeFile);
             }
+
+            NodeDatum nodeDatum = (NodeDatum)parent.Tag;
+            NodeDatum nodeDatum_B = new NodeDatum(0, 0, 0);
 
             Debug.Assert(nTotalLength == nodeDatum.nLength);
             nodeDatum_B.nTotalLength = nTotalLength;
@@ -432,13 +398,6 @@ namespace SearchDirLists
 	        if (((NodeDatum)m_treeNode.Tag).nTotalLength > 0)
 	        {
                 return RecurseDrawGraph(graphics, m_treeNode, rc, bStart: true);
-
-        #if _DEBUG
-		        for (int x=rc.Left; x < rc.Right - m_options.grid; x++)
-		        for (int y=rc.Top; y < rc.Bottom - m_options.grid; y++)
-			        Debug.Assert(FindItemByPoint(root, CPoint(x, y)) != null);
-        #endif
-
 	        }
 	        else
 	        {
@@ -474,23 +433,50 @@ namespace SearchDirLists
 
             if (bStart && (nodeDatum.TreeMapFiles == null) && (item.TreeView != null))
             {
-                nodeDatum.TreeMapFiles = DoFileList(item);
+                nodeDatum.TreeMapFiles = GetFileList(item);
             }
 
-            if (item.Nodes.Count == 0)
-            {
-                //TreeNode filesNode = ((NodeDatum)item.Tag).TreeMapFiles;
-
-                //if (filesNode != null)
-                //{
-                //    item = filesNode;
-                //}
-
-                RenderLeaf(graphics, item);
-            }
-            else
+            if (item.Nodes.Count > 0)
             {
                 KDirStat_DrawChildren(graphics, item, bStart);
+                return null;
+            }
+
+            if (m_bGrid)
+            {
+                rc.Offset(1, 1);
+
+                if (rc.Width <= 0 || rc.Height <= 0)
+                    return null;
+            }
+
+            Color col = (item.ForeColor == Color.Empty) ? Color.SandyBrown : item.ForeColor;
+            GraphicsPath path = new GraphicsPath();
+            Rectangle r = rc;
+
+            r.Inflate(r.Width / 2, r.Height / 2);
+            path.AddEllipse(r);
+
+            PathGradientBrush brush = new PathGradientBrush(path);
+
+            brush.CenterColor = Color.Wheat;
+            brush.SurroundColors = new Color[] { ControlPaint.Dark(col) };
+
+            while (true)
+            {
+                lock (graphics)
+                {
+                    try
+                    {
+                        graphics.FillRectangle(brush, rc);
+                        break;
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        Console.WriteLine("RenderLeaf() InvalidOperationException");
+                        Thread.Sleep(10);
+                    }
+                }
             }
 
             return null;
@@ -528,7 +514,28 @@ namespace SearchDirLists
             double[] childWidth = // Widths of the children (fraction of row width).
                 new Double[listChildren.Count];
 
-	        bool horizontalRows= KDirStat_ArrangeChildren(parent, childWidth, rows, childrenPerRow, listChildren);
+            bool horizontalRows = (rc.Width >= rc.Height);
+            double width_A = 1.0;
+            if (horizontalRows)
+            {
+                if (rc.Height > 0)
+                    width_A = (double)rc.Width / rc.Height;
+            }
+            else
+            {
+                if (rc.Width > 0)
+                    width_A = (double)rc.Height / rc.Width;
+            }
+
+            int nextChild = 0;
+            while (nextChild < listChildren.Count)
+            {
+                int childrenUsed = 0;
+
+                rows.Add(KDirStat_CalcutateNextRow(parent, nextChild, width_A, ref childrenUsed, childWidth, listChildren));
+                childrenPerRow.Add(childrenUsed);
+                nextChild += childrenUsed;
+            }
 
 	        int width= horizontalRows ? rc.Width : rc.Height;
 	        int height= horizontalRows ? rc.Height : rc.Width;
@@ -559,15 +566,6 @@ namespace SearchDirLists
 			            (horizontalRows)
                         ? new Rectangle((int)left, (int)top, right-(int)left, bottom-(int)top)
                         : new Rectangle((int)top, (int)left, bottom-(int)top, right-(int)left);
-
-			        #if _DEBUG
-			        if (rcChild.Width > 0 && rcChild.Height > 0)
-			        {
-				        Rectangle test;
-				        test.IntersectRect(nodeDatum.TreeMapRect, rcChild);
-				        Debug.Assert(test == rcChild);
-			        }
-			        #endif			
 			
 			        RecurseDrawGraph(graphics, child, rcChild);
 
@@ -596,49 +594,10 @@ namespace SearchDirLists
 	        // This asserts due to rounding error: Debug.Assert(top == (horizontalRows ? rc.Bottom : rc.Right));
         }
 
-
-        // return: whether the rows are horizontal.
-        //
-        bool KDirStat_ArrangeChildren(
-	        TreeNode parent,
-	        double[] childWidth,
-	        List<double> rows,
-	        List<int> childrenPerRow,
-            List<TreeNode> listChildren
-        )
-        {
-            NodeDatum nodeDatum = (NodeDatum)parent.Tag;
-            bool horizontalRows = (nodeDatum.TreeMapRect.Width >= nodeDatum.TreeMapRect.Height);
-
-	        double width= 1.0;
-	        if (horizontalRows)
-	        {
-                if (nodeDatum.TreeMapRect.Height > 0)
-                    width = (double)nodeDatum.TreeMapRect.Width / nodeDatum.TreeMapRect.Height;
-	        }
-	        else
-	        {
-                if (nodeDatum.TreeMapRect.Width > 0)
-                    width = (double)nodeDatum.TreeMapRect.Height / nodeDatum.TreeMapRect.Width;
-	        }
-            
-            int nextChild = 0;
-            while (nextChild < listChildren.Count)
-	        {
-		        int childrenUsed = 0;
-
-		        rows.Add(KDirStat_CalcutateNextRow(parent, nextChild, width, ref childrenUsed, childWidth, listChildren));
-		        childrenPerRow.Add(childrenUsed);
-		        nextChild+= childrenUsed;
-	        }
-
-	        return horizontalRows;
-        }
-
         double KDirStat_CalcutateNextRow(TreeNode parent, int nextChild, double width, ref int childrenUsed, double[] arrChildWidth,
             List<TreeNode> listChildren)
         {
-	        const double _minProportion = 0.4;
+            const double _minProportion = 0.4;
 	        Debug.Assert(_minProportion < 1);
 
             Debug.Assert(nextChild < listChildren.Count);
@@ -697,52 +656,6 @@ namespace SearchDirLists
 	        }
 
 	        return rowHeight;
-        }
-
-        void RenderLeaf(Graphics graphics, TreeNode item)
-        {
-	        Rectangle rc= ((NodeDatum)item.Tag).TreeMapRect;
-
-	        if (m_bGrid)
-	        {
-                rc.Offset(1, 1);
-
-                if (rc.Width <= 0 || rc.Height <= 0)
-			        return;
-	        }
-
-            DrawCushion(graphics, rc, (item.ForeColor == Color.Empty) ? Color.SandyBrown : item.ForeColor);
-        }
-
-        void DrawCushion(Graphics graphics, Rectangle rc, Color col)
-        {
-            GraphicsPath path = new GraphicsPath();
-            Rectangle r = rc;
-
-            r.Inflate(r.Width / 2, r.Height / 2);
-            path.AddEllipse(r);
-
-            PathGradientBrush brush = new PathGradientBrush(path);
-
-            brush.CenterColor = Color.Wheat;
-            brush.SurroundColors = new Color[] { ControlPaint.Dark(col) };
-
-            while (true)
-            {
-                lock (graphics)
-                {
-                    try
-                    {
-                        graphics.FillRectangle(brush, rc);
-                        break;
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        Console.WriteLine("DrawCushion() InvalidOperationException");
-                        Thread.Sleep(10);
-                    }
-                }
-            }
         }
     }
 }

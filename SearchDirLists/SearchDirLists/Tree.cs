@@ -793,52 +793,88 @@ namespace SearchDirLists
             }
 
             listItems.Add(new ListViewItem(new String[] { "Total Size", FormatSize(nodeDatum.nTotalLength, bBytes: true) }));
-
             m_statusCallback(lvItemDetails: listItems.ToArray(), bSecondComparePane: m_bSecondComparePane);
             Console.WriteLine(strLine);
 
+            List<String[]> listFiles_A = GetFileList(m_treeNode);
 
-            // file list
+            if (listFiles_A != null)
+            {
+                List<ListViewItem> listFiles = new List<ListViewItem>();
+
+                foreach (String[] arrLine in listFiles_A)
+                {
+                    listFiles.Add(new ListViewItem(arrLine));
+                }
+
+                m_statusCallback(itemArray: listFiles.ToArray(), bSecondComparePane: m_bSecondComparePane, lvFileItem: new LVitemFileTag(m_treeNode.Text, listFiles.Count));
+            }
+        }
+
+        internal static List<String[]> GetFileList(TreeNode parent, List<ulong> listLength = null)
+        {
+            String strFile = (String)((RootNodeDatum)TreeSelect.GetParentRoot(parent).Tag).StrFile;
+
+            if ((parent.Tag is NodeDatum) == false)
+            {
+                return null;
+            }
+
+            NodeDatum nodeDatum = (NodeDatum)parent.Tag;
+
+            if (nodeDatum.nLineNo <= 0)
+            {
+                return null;
+            }
+
+            long nPrevDir = nodeDatum.nPrevLineNo;
+            long nLineNo = nodeDatum.nLineNo;
 
             if (nPrevDir <= 0)
             {
-                return;
+                return null;
             }
 
             if ((nLineNo - nPrevDir) <= 1)  // dir has no files
             {
-                return;
+                return null;
             }
 
             DateTime dtStart = DateTime.Now;
-            List<String> listLines = File.ReadLines(m_strFile)
+            List<String> listLines = File.ReadLines(strFile)
                 .Skip((int)nPrevDir)
                 .Take((int)(nLineNo - nPrevDir - 1))
                 .ToList();
 
             if (listLines.Count <= 0)
             {
-                return;
+                return null;
             }
 
-            List<ListViewItem> listFiles = new List<ListViewItem>();
+            List<String[]> listFiles = new List<String[]>();
             ulong nLengthDebug = 0;
 
             foreach (String strFileLine in listLines)
             {
                 String[] strArrayFiles = strFileLine.Split('\t').Skip(3).ToArray();
+                ulong nLength = 0;
 
-                if ((strArrayFiles.Length > nColLENGTH_LV) && StrValid(strArrayFiles[nColLENGTH_LV]))
+                if ((strArrayFiles.Length > Utilities.nColLENGTH_LV) && Utilities.StrValid(strArrayFiles[Utilities.nColLENGTH_LV]))
                 {
-                    nLengthDebug += ulong.Parse(strArrayFiles[nColLENGTH_LV]);
-                    strArrayFiles[nColLENGTH_LV] = FormatSize(strArrayFiles[nColLENGTH_LV]);
+                    nLengthDebug += nLength = ulong.Parse(strArrayFiles[Utilities.nColLENGTH_LV]);
+                    strArrayFiles[Utilities.nColLENGTH_LV] = Utilities.FormatSize(strArrayFiles[Utilities.nColLENGTH_LV]);
                 }
 
-                listFiles.Add(new ListViewItem(strArrayFiles));
+                listFiles.Add(strArrayFiles);
+
+                if (listLength != null)
+                {
+                    listLength.Add(nLength);
+                }
             }
 
-            m_statusCallback(itemArray: listFiles.ToArray(), bSecondComparePane: m_bSecondComparePane, lvFileItem: new LVitemFileTag(m_treeNode.Text, listFiles.Count));
             Debug.Assert(nLengthDebug == nodeDatum.nLength);
+            return listFiles;
         }
 
         void Go_B()

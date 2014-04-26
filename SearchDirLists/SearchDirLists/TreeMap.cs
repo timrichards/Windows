@@ -161,6 +161,12 @@ namespace SearchDirLists
         internal String DoToolTip(PointF pt_in)      // return file name if clicked in file tooltip
         {
             m_toolTip.Hide(this);
+
+            if (m_treeNode == null)
+            {
+                return null;
+            }
+
             m_bg.Render();
 
             if (Cursor.Current == Cursors.Arrow)        // hack: clicked in tooltip
@@ -182,8 +188,6 @@ namespace SearchDirLists
             Point pt = Point.Ceiling(new PointF(pt_in.X / m_sizeTranslate.Width, pt_in.Y / m_sizeTranslate.Height));
             TreeNode nodeRet = null;
 
-            m_toolTip.ToolTipTitle = String.Empty;
-
             do
             {
                 TreeNode treeNode = m_treeNode;
@@ -195,8 +199,20 @@ namespace SearchDirLists
                     m_prevNode = null;
                 }
 
-                if ((nodeRet = FindMapNode(m_prevNode ?? treeNode, pt)) != null)
+                TreeNode m_prevNode_A = m_prevNode ?? treeNode;
+
+                if ((nodeRet = FindMapNode(m_prevNode_A, pt)) != null)
                 {
+                    NodeDatum nodeDatum_A = (NodeDatum)m_prevNode_A.Tag;
+
+                    if (nodeDatum_A.TreeMapFiles != null)
+                    {
+                        if (((NodeDatum)nodeDatum_A.TreeMapFiles.Tag).TreeMapRect.Contains(pt))
+                        {
+                            nodeRet = m_prevNode_A;
+                        }
+                    }
+
                     break;
                 }
 
@@ -224,12 +240,26 @@ namespace SearchDirLists
                     break;
                 }
 
-                nodeRet = FindMapNode(((NodeDatum)m_treeNode.Tag).TreeMapFiles, pt);
-                m_toolTip.ToolTipTitle = " (immediate files)";
+                nodeRet = m_treeNode;
             }
             while (false);
 
-            m_toolTip.ToolTipTitle = m_toolTip.ToolTipTitle.Insert(0, nodeRet.Text);
+            TreeNode nodeRet_A = FindMapNode(((NodeDatum)nodeRet.Tag).TreeMapFiles, pt);
+            bool bImmediateFiles = false;
+
+            if (nodeRet_A != null && (nodeRet == m_treeNode))
+            {
+                nodeRet = nodeRet_A;
+                bImmediateFiles = true;
+            }
+
+            m_toolTip.ToolTipTitle = nodeRet.Text;
+
+            if (bImmediateFiles)
+            {
+                m_toolTip.ToolTipTitle += " (immediate files)";
+            }
+
             m_toolTip.Tag = nodeRet;
 
             NodeDatum nodeDatum = (NodeDatum)nodeRet.Tag;
@@ -237,6 +267,7 @@ namespace SearchDirLists
             m_toolTip.Show(Utilities.FormatSize(nodeDatum.nTotalLength, bBytes: true), this, Point.Ceiling(pt_in));
             m_selRect = nodeDatum.TreeMapRect;
             m_prevNode = nodeRet;
+
             Invalidate();
             return null;
         }
@@ -298,6 +329,13 @@ namespace SearchDirLists
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
+            if ((Site != null) && Site.DesignMode)    // prevent bitmap from getting into the pesky resx
+            {
+                BackColor = Color.Turquoise;          // litmus
+                return;
+            }
+
             m_rectBitmap = new Rectangle(0, 0, 1024, 1024);
             BackgroundImage = new Bitmap(m_rectBitmap.Size.Width, m_rectBitmap.Size.Height);
 
@@ -439,9 +477,15 @@ namespace SearchDirLists
                 nodeDatum.TreeMapFiles = DoFileList(item);
             }
 
-            if ((item.Nodes.Count == 0) &&
-                ((bStart && (nodeDatum.TreeMapFiles != null)) == false))
+            if (item.Nodes.Count == 0)
             {
+                //TreeNode filesNode = ((NodeDatum)item.Tag).TreeMapFiles;
+
+                //if (filesNode != null)
+                //{
+                //    item = filesNode;
+                //}
+
                 RenderLeaf(graphics, item);
             }
             else

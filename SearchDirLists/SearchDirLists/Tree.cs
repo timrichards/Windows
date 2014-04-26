@@ -859,10 +859,10 @@ namespace SearchDirLists
                 String[] strArrayFiles = strFileLine.Split('\t').Skip(3).ToArray();
                 ulong nLength = 0;
 
-                if ((strArrayFiles.Length > Utilities.nColLENGTH_LV) && Utilities.StrValid(strArrayFiles[Utilities.nColLENGTH_LV]))
+                if ((strArrayFiles.Length > nColLENGTH_LV) && StrValid(strArrayFiles[nColLENGTH_LV]))
                 {
-                    nLengthDebug += nLength = ulong.Parse(strArrayFiles[Utilities.nColLENGTH_LV]);
-                    strArrayFiles[Utilities.nColLENGTH_LV] = Utilities.FormatSize(strArrayFiles[Utilities.nColLENGTH_LV]);
+                    nLengthDebug += nLength = ulong.Parse(strArrayFiles[nColLENGTH_LV]);
+                    strArrayFiles[nColLENGTH_LV] = FormatSize(strArrayFiles[nColLENGTH_LV]);
                 }
 
                 listFiles.Add(strArrayFiles);

@@ -81,6 +81,11 @@ namespace SearchDirLists
 
                 nTotalLength += nodeDatum_A.nTotalLength = iterUlong.Current;
 
+                if (iterUlong.Current <= 0)
+                {
+                    continue;
+                }
+
                 TreeNode nodeFile = new TreeNode(arrLine[0]);
 
                 nodeFile.Tag = nodeDatum_A;
@@ -95,7 +100,6 @@ namespace SearchDirLists
             nodeDatum_B.nTotalLength = nTotalLength;
             nodeDatum_B.TreeMapRect = nodeDatum.TreeMapRect;
             nodeFileList.Tag = nodeDatum_B;
-
             return nodeFileList;
         }
 
@@ -153,9 +157,16 @@ namespace SearchDirLists
 
             Point pt = Point.Ceiling(new PointF(pt_in.X / m_sizeTranslate.Width, pt_in.Y / m_sizeTranslate.Height));
             TreeNode nodeRet = null;
+            bool bImmediateFiles = false;
 
             do
             {
+                if ((nodeRet = FindMapNode(((NodeDatum)m_treeNode.Tag).TreeMapFiles, pt)) != null)
+                {
+                    bImmediateFiles = true;
+                    break;
+                }
+
                 TreeNode treeNode = m_treeNode;
 
                 if (m_fileNode != null)
@@ -169,16 +180,6 @@ namespace SearchDirLists
 
                 if ((nodeRet = FindMapNode(m_prevNode_A, pt)) != null)
                 {
-                    NodeDatum nodeDatum_A = (NodeDatum)m_prevNode_A.Tag;
-
-                    if (nodeDatum_A.TreeMapFiles != null)
-                    {
-                        if (((NodeDatum)nodeDatum_A.TreeMapFiles.Tag).TreeMapRect.Contains(pt))
-                        {
-                            nodeRet = m_prevNode_A;
-                        }
-                    }
-
                     break;
                 }
 
@@ -210,13 +211,15 @@ namespace SearchDirLists
             }
             while (false);
 
-            TreeNode nodeRet_A = FindMapNode(((NodeDatum)nodeRet.Tag).TreeMapFiles, pt);
-            bool bImmediateFiles = false;
-
-            if (nodeRet_A != null && (nodeRet == m_treeNode))
+            if (bImmediateFiles == false)
             {
-                nodeRet = nodeRet_A;
-                bImmediateFiles = true;
+                TreeNode nodeRet_A = FindMapNode(((NodeDatum)nodeRet.Tag).TreeMapFiles, pt);
+
+                if (nodeRet_A != null && (nodeRet == m_treeNode))
+                {
+                    nodeRet = nodeRet_A;
+                    bImmediateFiles = true;
+                }
             }
 
             m_toolTip.ToolTipTitle = nodeRet.Text;
@@ -436,7 +439,7 @@ namespace SearchDirLists
                 nodeDatum.TreeMapFiles = GetFileList(item);
             }
 
-            if (item.Nodes.Count > 0)
+            if ((item.Nodes.Count > 0) || (bStart && (nodeDatum.TreeMapFiles != null)))
             {
                 KDirStat_DrawChildren(graphics, item, bStart);
                 return null;

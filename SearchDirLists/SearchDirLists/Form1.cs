@@ -1960,6 +1960,20 @@ namespace SearchDirLists
 
         void form_treeView_Browse_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            if ((m_listHistory.Count > 0) && (m_nIxHistory > 0) && (m_nIxHistory < m_listHistory.Count))
+            {
+                if (m_listHistory[m_nIxHistory] != e.Node)
+                {
+                    if ((m_listHistory.Count - 1) > m_nIxHistory)
+                    {
+                        m_listHistory.RemoveRange(m_nIxHistory, m_listHistory.Count - m_nIxHistory - 1);
+                    }
+
+                    m_listHistory.Add(e.Node);
+                    Debug.Assert(++m_nIxHistory == (m_listHistory.Count - 1));
+                }
+            }
+
             form_tmapUserCtl.DoThreadFactory(e.Node);
 
             if (sender == form_treeCompare2)
@@ -2606,16 +2620,51 @@ namespace SearchDirLists
             form_treeView_Browse.SelectedNode = form_treeView_Browse.SelectedNode.Parent;
         }
 
-        private void form_treeView_Browse_BeforeSelect(object sender, TreeViewCancelEventArgs e)
-        {
-            TreeNode treeNode = ((TreeView)sender).SelectedNode;
+        List<TreeNode> m_listHistory = new List<TreeNode>();
+        int m_nIxHistory = -1;
 
-            if (treeNode == null)
+        void DoHistory(object sender, int? nIxHistory = null)
+        {
+            if (nIxHistory != null)
             {
-                return;
+                m_nIxHistory = nIxHistory.Value;
             }
 
-        //    ((NodeDatum)treeNode.Tag).TreeMapFiles = null;
+            do
+            {
+                if (m_listHistory.Count <= 0)
+                {
+                    break;
+                }
+
+                if (m_nIxHistory > (m_listHistory.Count - 1))
+                {
+                    break;
+                }
+
+                TreeNode treeNode = m_listHistory[m_nIxHistory];
+
+                if (treeNode.TreeView.SelectedNode == treeNode)
+                {
+                    break;
+                }
+
+                treeNode.TreeView.SelectedNode = treeNode;
+                return;
+            }
+            while (false);
+
+            m_blink.Go((Control)sender, clr: Color.Red, Once: true);
+        }
+
+        private void form_btnBack_Click(object sender, EventArgs e)
+        {
+            DoHistory(sender, Math.Max(0, --m_nIxHistory));
+        }
+
+        private void form_btnForward_Click(object sender, EventArgs e)
+        {
+            DoHistory(sender, Math.Min(m_listHistory.Count - 1, ++m_nIxHistory));
         }
     }
 }

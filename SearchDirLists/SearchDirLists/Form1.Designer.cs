@@ -145,6 +145,8 @@ namespace SearchDirLists
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.timer_blink = new System.Windows.Forms.Timer(this.components);
             this.timer_DoTree = new System.Windows.Forms.Timer(this.components);
+            this.form_btnBack = new System.Windows.Forms.Button();
+            this.form_btnForward = new System.Windows.Forms.Button();
             this.form_tabControl.SuspendLayout();
             this.form_tabPageVolumes.SuspendLayout();
             this.form_tabPageBrowse.SuspendLayout();
@@ -513,6 +515,8 @@ namespace SearchDirLists
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.form_btnForward);
+            this.splitContainer1.Panel1.Controls.Add(this.form_btnBack);
             this.splitContainer1.Panel1.Controls.Add(this.form_btnUp);
             this.splitContainer1.Panel1.Controls.Add(this.form_btnSearchFiles);
             this.splitContainer1.Panel1.Controls.Add(this.form_searchFoldersAndFiles);
@@ -620,9 +624,9 @@ namespace SearchDirLists
             | System.Windows.Forms.AnchorStyles.Right)));
             this.form_cbNavigate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_cbNavigate.FormattingEnabled = true;
-            this.form_cbNavigate.Location = new System.Drawing.Point(257, 3);
+            this.form_cbNavigate.Location = new System.Drawing.Point(327, 3);
             this.form_cbNavigate.Name = "form_cbNavigate";
-            this.form_cbNavigate.Size = new System.Drawing.Size(304, 24);
+            this.form_cbNavigate.Size = new System.Drawing.Size(234, 24);
             this.form_cbNavigate.TabIndex = 3;
             this.form_cbNavigate.SelectedIndexChanged += new System.EventHandler(this.form_cbNavigate_SelectedIndexChanged);
             this.form_cbNavigate.TextChanged += new System.EventHandler(this.form_cbNavigate_TextChanged);
@@ -791,7 +795,6 @@ namespace SearchDirLists
             this.form_treeView_Browse.Size = new System.Drawing.Size(570, 135);
             this.form_treeView_Browse.TabIndex = 0;
             this.form_treeView_Browse.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterCheck);
-            this.form_treeView_Browse.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.form_treeView_Browse_BeforeSelect);
             this.form_treeView_Browse.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterSelect);
             this.form_treeView_Browse.Enter += new System.EventHandler(this.formCtl_EnterForCopyButton);
             this.form_treeView_Browse.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_treeView_Browse_KeyPress);
@@ -1124,8 +1127,7 @@ namespace SearchDirLists
             // 
             // form_tmapUserCtl
             // 
-            this.form_tmapUserCtl.BackColor = System.Drawing.Color.DarkGray;
-            this.form_tmapUserCtl.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("form_tmapUserCtl.BackgroundImage")));
+            this.form_tmapUserCtl.BackColor = System.Drawing.Color.Turquoise;
             this.form_tmapUserCtl.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.form_tmapUserCtl.Cursor = System.Windows.Forms.Cursors.Cross;
             this.form_tmapUserCtl.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1509,6 +1511,26 @@ namespace SearchDirLists
             this.timer_DoTree.Interval = 3000;
             this.timer_DoTree.Tick += new System.EventHandler(this.timer_DoTree_Tick);
             // 
+            // form_btnBack
+            // 
+            this.form_btnBack.Location = new System.Drawing.Point(257, 3);
+            this.form_btnBack.Name = "form_btnBack";
+            this.form_btnBack.Size = new System.Drawing.Size(29, 23);
+            this.form_btnBack.TabIndex = 11;
+            this.form_btnBack.Text = "<--";
+            this.form_btnBack.UseVisualStyleBackColor = true;
+            this.form_btnBack.Click += new System.EventHandler(this.form_btnBack_Click);
+            // 
+            // form_btnForward
+            // 
+            this.form_btnForward.Location = new System.Drawing.Point(292, 3);
+            this.form_btnForward.Name = "form_btnForward";
+            this.form_btnForward.Size = new System.Drawing.Size(29, 23);
+            this.form_btnForward.TabIndex = 12;
+            this.form_btnForward.Text = "-->";
+            this.form_btnForward.UseVisualStyleBackColor = true;
+            this.form_btnForward.Click += new System.EventHandler(this.form_btnForward_Click);
+            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1708,6 +1730,8 @@ namespace SearchDirLists
         private System.Windows.Forms.TabPage tabPage_DiskUsage;
         private TreeMapUserControl form_tmapUserCtl;
         private System.Windows.Forms.Button form_btnUp;
+        private System.Windows.Forms.Button form_btnForward;
+        private System.Windows.Forms.Button form_btnBack;
 
     }
 }

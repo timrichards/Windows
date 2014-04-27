@@ -188,7 +188,7 @@ namespace SearchDirLists
 
     static class ExtensionMethods
     {
-        internal static Rectangle Scale(this RectangleF rc_in, SizeF scale)
+        internal static Rectangle Scale(this Rectangle rc_in, SizeF scale)
         {
             RectangleF rc = rc_in;
 

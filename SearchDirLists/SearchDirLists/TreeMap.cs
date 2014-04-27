@@ -15,12 +15,14 @@ namespace SearchDirLists
     {
         bool m_bGrid = false;
         Rectangle m_rectBitmap = Rectangle.Empty;
-        RectangleF m_selRect = Rectangle.Empty;
+        Rectangle m_selRect = Rectangle.Empty;
+        RectangleF m_rectCenter = Rectangle.Empty;
         SizeF m_sizeTranslate = SizeF.Empty;
         BufferedGraphics m_bg = null;
         TreeNode m_treeNode = null;
         TreeNode m_fileNode = null;
         TreeNode m_prevNode = null;
+        TreeNode m_deepNode = null;
         ToolTip m_toolTip = new ToolTip();
         Thread m_thread = null;
 
@@ -93,6 +95,11 @@ namespace SearchDirLists
                 nodeFileList.Nodes.Add(nodeFile);
             }
 
+            if (nTotalLength <= 0)
+            {
+                return null;
+            }
+
             NodeDatum nodeDatum = (NodeDatum)parent.Tag;
             NodeDatum nodeDatum_B = new NodeDatum(0, 0, 0);
 
@@ -105,7 +112,30 @@ namespace SearchDirLists
 
         internal void DoThreadFactory(TreeNode treeNode)
         {
+            bool bIsParent = false;
+
+            if (m_deepNode != null)
+            {
+                TreeNode parentNode = m_deepNode;
+
+                while (parentNode.Parent != null)
+                {
+                    if (parentNode == treeNode)
+                    {
+                        bIsParent = true;
+                    }
+
+                    parentNode = parentNode.Parent;
+                }
+            }
+
+            if (bIsParent == false)
+            {
+                m_deepNode = treeNode;
+            }
+
             m_treeNode = treeNode;
+
             DoThreadFactory();
         }
 
@@ -137,8 +167,6 @@ namespace SearchDirLists
                 return null;
             }
 
-            m_bg.Render();
-
             if (Cursor.Current == Cursors.Arrow)        // hack: clicked in tooltip
             {
                 TreeNode treeNode_A = (TreeNode)m_toolTip.Tag;
@@ -152,6 +180,14 @@ namespace SearchDirLists
                     return treeNode_A.Text;
                 }
 
+                return null;
+            }
+
+            if (m_rectCenter.Contains(pt_in))
+            {
+                m_deepNode = null;
+                m_rectCenter = Rectangle.Empty;
+                ClearToolTip();     // has Invalidate()
                 return null;
             }
 
@@ -222,6 +258,12 @@ namespace SearchDirLists
                 }
             }
 
+            if (nodeRet == m_prevNode)
+            {
+                nodeRet = m_treeNode;
+                bImmediateFiles = false;
+            }
+
             m_toolTip.ToolTipTitle = nodeRet.Text;
 
             if (bImmediateFiles)
@@ -235,8 +277,8 @@ namespace SearchDirLists
 
             m_toolTip.Show(Utilities.FormatSize(nodeDatum.nTotalLength, bBytes: true), this, Point.Ceiling(pt_in));
             m_selRect = nodeDatum.TreeMapRect;
-            m_prevNode = nodeRet;
 
+            m_prevNode = nodeRet;
             Invalidate();
             return null;
         }
@@ -305,6 +347,7 @@ namespace SearchDirLists
                 return;
             }
 
+            BackColor = Color.Empty;
             m_rectBitmap = new Rectangle(0, 0, 1024, 1024);
             BackgroundImage = new Bitmap(m_rectBitmap.Size.Width, m_rectBitmap.Size.Height);
 
@@ -319,12 +362,37 @@ namespace SearchDirLists
         {
             base.OnPaint(e);
 
-            if (m_selRect == Rectangle.Empty)
+            if (m_selRect != Rectangle.Empty)
             {
-                return;
+                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(64, 0, 0, 0)), m_selRect.Scale(m_sizeTranslate));
             }
 
-            e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(64, 0, 0, 0)), m_selRect.Scale(m_sizeTranslate));
+            if ((m_deepNode != null) && (m_deepNode != m_treeNode))
+            {
+                RectangleF rectCenter = (((NodeDatum)m_deepNode.Tag).TreeMapRect).Scale(m_sizeTranslate);
+
+                rectCenter.Inflate(-rectCenter.Width / 2 + 10, -rectCenter.Height / 2 + 10);
+
+                GraphicsPath path = new GraphicsPath();
+                m_rectCenter = rectCenter;
+
+                m_rectCenter.Inflate(m_rectCenter.Width / 2, m_rectCenter.Height / 2);
+                path.AddEllipse(m_rectCenter);
+
+                PathGradientBrush brush = new PathGradientBrush(path);
+
+                brush.CenterColor = Color.White;
+                brush.SurroundColors = new Color[] { Color.FromArgb(0, 0, 0, 0) };
+                e.Graphics.FillEllipse(brush, m_rectCenter);
+                brush.CenterColor = Color.Black;
+                brush.SurroundColors = new Color[] { Color.White };
+                e.Graphics.FillPie(brush, Rectangle.Ceiling(rectCenter), 90, 90);
+                e.Graphics.FillPie(brush, Rectangle.Ceiling(rectCenter), 270, 90);
+                brush.CenterColor = Color.White;
+                brush.SurroundColors = new Color[] { Color.Black };
+                e.Graphics.FillPie(brush, Rectangle.Ceiling(rectCenter), 0, 90);
+                e.Graphics.FillPie(brush, Rectangle.Ceiling(rectCenter), 180, 90);
+            }
         }
 
         protected override void OnSizeChanged(EventArgs e)
@@ -439,9 +507,10 @@ namespace SearchDirLists
                 nodeDatum.TreeMapFiles = GetFileList(item);
             }
 
-            if ((item.Nodes.Count > 0) || (bStart && (nodeDatum.TreeMapFiles != null)))
+            if (((item.Nodes.Count > 0) || (bStart && (nodeDatum.TreeMapFiles != null)))
+                && KDirStat_DrawChildren(graphics, item, bStart))
             {
-                KDirStat_DrawChildren(graphics, item, bStart);
+                // one scenario: empty folder with files when bStart is not true
                 return null;
             }
 
@@ -493,7 +562,7 @@ namespace SearchDirLists
          //I learned this squarification style from the KDirStat executable.
          //It's the most complex one here but also the clearest, imho.
         
-        void KDirStat_DrawChildren(Graphics graphics, TreeNode parent, bool bStart = false)
+        bool KDirStat_DrawChildren(Graphics graphics, TreeNode parent, bool bStart = false)
         {
             NodeDatum nodeDatum = (NodeDatum)parent.Tag;
 	        Rectangle rc = nodeDatum.TreeMapRect;
@@ -511,7 +580,7 @@ namespace SearchDirLists
             if (listChildren.Count == 0)
             {
                 // any files are zero in length
-                return;
+                return false;
             }
 
             double[] childWidth = // Widths of the children (fraction of row width).
@@ -595,6 +664,7 @@ namespace SearchDirLists
 		        top= fBottom;
 	        }
 	        // This asserts due to rounding error: Debug.Assert(top == (horizontalRows ? rc.Bottom : rc.Right));
+            return true;
         }
 
         double KDirStat_CalcutateNextRow(TreeNode parent, int nextChild, double width, ref int childrenUsed, double[] arrChildWidth,

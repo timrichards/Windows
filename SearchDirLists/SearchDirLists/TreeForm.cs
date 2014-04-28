@@ -248,6 +248,14 @@ namespace SearchDirLists
 
             m_hashCache.Clear();
             m_listTreeNodes.Clear();
+            m_nodeCompare1 = null;
+            m_nodeCompare2 = null;
+            m_arrayTreeFound = null;
+            dictCompareDiffs.Clear();
+            m_listTreeNodes_Compare1.Clear();
+            m_listTreeNodes_Compare2.Clear();
+            m_listHistory.Clear();
+            m_nIxHistory = -1;
             form_lvFiles.Items.Clear();
             form_lvFileCompare.Items.Clear();
             form_lvDetail.Items.Clear();

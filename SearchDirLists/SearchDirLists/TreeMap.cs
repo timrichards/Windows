@@ -56,6 +56,9 @@ namespace SearchDirLists
             m_treeNode = null;
             m_fileNode = null;
             m_prevNode = null;
+            m_deepNode = null;
+            m_deepNodeDrawn = null;
+            m_toolTip.Tag = null;
         }
 
         internal void ClearSelection()

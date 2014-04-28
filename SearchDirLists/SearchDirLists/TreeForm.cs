@@ -296,7 +296,7 @@ namespace SearchDirLists
 
         private void DoTreeSelect(TreeNode treeNode)
         {
-            TreeNode rootNode = TreeSelect.GetParentRoot(treeNode);
+            TreeNode rootNode = treeNode.Root();
             String strFile = (String)((RootNodeDatum)rootNode.Tag).StrFile;
             bool bSecondComparePane = (m_bCompareMode && rootNode.Checked);
             Thread threadKill = bSecondComparePane ? m_threadSelectCompare : m_threadSelect;

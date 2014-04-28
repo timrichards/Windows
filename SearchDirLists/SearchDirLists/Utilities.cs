@@ -198,6 +198,40 @@ namespace SearchDirLists
             rc.Height *= scale.Height;
             return Rectangle.Ceiling(rc);
         }
+
+        internal static TreeNode Root(this TreeNode treeNode)
+        {
+            TreeNode nodeParent = treeNode;
+
+            while (nodeParent.Parent != null)
+            {
+                nodeParent = nodeParent.Parent;
+            }
+
+            return nodeParent;
+        }
+
+        internal static bool IsChildOf(this TreeNode child, TreeNode treeNode)
+        {
+            if (child.Level <= treeNode.Level)
+            {
+                return false;
+            }
+
+            TreeNode parentNode = child.Parent;
+
+            while (parentNode != null)
+            {
+                if (parentNode == treeNode)
+                {
+                    return true;
+                }
+
+                parentNode = parentNode.Parent;
+            }
+
+            return false;
+        }
     }
 
     class Utilities

@@ -174,7 +174,7 @@ namespace SearchDirLists
 
                     // Test to see if clones are on separate volumes.
 
-                    TreeNode rootNode = TreeSelect.GetParentRoot(treeNode);
+                    TreeNode rootNode = treeNode.Root();
                     RootNodeDatum rootNodeDatum = (RootNodeDatum)rootNode.Tag;
 
                     Debug.Assert(treeNode.ForeColor == Color.Empty);
@@ -186,7 +186,7 @@ namespace SearchDirLists
                     {
                         Debug.Assert(((NodeDatum)subnode.Tag).Key == nodeDatum.Key);
 
-                        TreeNode rootNode_A = TreeSelect.GetParentRoot(subnode);
+                        TreeNode rootNode_A = subnode.Root();
 
                         if (rootNode == rootNode_A)
                         {

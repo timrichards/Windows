@@ -708,18 +708,6 @@ namespace SearchDirLists
             m_doneCallback = doneCallback;
         }
 
-        static internal TreeNode GetParentRoot(TreeNode treeNode)
-        {
-            TreeNode nodeParent = treeNode;
-
-            while (nodeParent.Parent != null)
-            {
-                nodeParent = nodeParent.Parent;
-            }
-
-            return nodeParent;
-        }
-
         void Go_A()
         {
             if (File.Exists(m_strFile) == false)
@@ -813,7 +801,7 @@ namespace SearchDirLists
 
         internal static List<String[]> GetFileList(TreeNode parent, List<ulong> listLength = null)
         {
-            String strFile = (String)((RootNodeDatum)TreeSelect.GetParentRoot(parent).Tag).StrFile;
+            String strFile = (String)((RootNodeDatum)parent.Root().Tag).StrFile;
 
             if ((parent.Tag is NodeDatum) == false)
             {

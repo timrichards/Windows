@@ -60,6 +60,8 @@ namespace SearchDirLists
             this.label1 = new System.Windows.Forms.Label();
             this.form_tabPageBrowse = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.form_btnForward = new System.Windows.Forms.Button();
+            this.form_btnBack = new System.Windows.Forms.Button();
             this.form_btnUp = new System.Windows.Forms.Button();
             this.form_btnSearchFiles = new System.Windows.Forms.Button();
             this.form_searchFoldersAndFiles = new System.Windows.Forms.Button();
@@ -145,8 +147,6 @@ namespace SearchDirLists
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.timer_blink = new System.Windows.Forms.Timer(this.components);
             this.timer_DoTree = new System.Windows.Forms.Timer(this.components);
-            this.form_btnBack = new System.Windows.Forms.Button();
-            this.form_btnForward = new System.Windows.Forms.Button();
             this.form_tabControl.SuspendLayout();
             this.form_tabPageVolumes.SuspendLayout();
             this.form_tabPageBrowse.SuspendLayout();
@@ -536,6 +536,26 @@ namespace SearchDirLists
             this.splitContainer1.SplitterDistance = 29;
             this.splitContainer1.TabIndex = 7;
             // 
+            // form_btnForward
+            // 
+            this.form_btnForward.Location = new System.Drawing.Point(292, 3);
+            this.form_btnForward.Name = "form_btnForward";
+            this.form_btnForward.Size = new System.Drawing.Size(29, 23);
+            this.form_btnForward.TabIndex = 12;
+            this.form_btnForward.Text = "-->";
+            this.form_btnForward.UseVisualStyleBackColor = true;
+            this.form_btnForward.Click += new System.EventHandler(this.form_btnForward_Click);
+            // 
+            // form_btnBack
+            // 
+            this.form_btnBack.Location = new System.Drawing.Point(257, 3);
+            this.form_btnBack.Name = "form_btnBack";
+            this.form_btnBack.Size = new System.Drawing.Size(29, 23);
+            this.form_btnBack.TabIndex = 11;
+            this.form_btnBack.Text = "<--";
+            this.form_btnBack.UseVisualStyleBackColor = true;
+            this.form_btnBack.Click += new System.EventHandler(this.form_btnBack_Click);
+            // 
             // form_btnUp
             // 
             this.form_btnUp.Location = new System.Drawing.Point(221, 3);
@@ -631,6 +651,7 @@ namespace SearchDirLists
             this.form_cbNavigate.SelectedIndexChanged += new System.EventHandler(this.form_cbNavigate_SelectedIndexChanged);
             this.form_cbNavigate.TextChanged += new System.EventHandler(this.form_cbNavigate_TextChanged);
             this.form_cbNavigate.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_cbNavigate_KeyPress);
+            this.form_cbNavigate.MouseUp += new System.Windows.Forms.MouseEventHandler(this.form_cbNavigate_MouseUp);
             // 
             // form_btnCompare
             // 
@@ -1511,26 +1532,6 @@ namespace SearchDirLists
             this.timer_DoTree.Interval = 3000;
             this.timer_DoTree.Tick += new System.EventHandler(this.timer_DoTree_Tick);
             // 
-            // form_btnBack
-            // 
-            this.form_btnBack.Location = new System.Drawing.Point(257, 3);
-            this.form_btnBack.Name = "form_btnBack";
-            this.form_btnBack.Size = new System.Drawing.Size(29, 23);
-            this.form_btnBack.TabIndex = 11;
-            this.form_btnBack.Text = "<--";
-            this.form_btnBack.UseVisualStyleBackColor = true;
-            this.form_btnBack.Click += new System.EventHandler(this.form_btnBack_Click);
-            // 
-            // form_btnForward
-            // 
-            this.form_btnForward.Location = new System.Drawing.Point(292, 3);
-            this.form_btnForward.Name = "form_btnForward";
-            this.form_btnForward.Size = new System.Drawing.Size(29, 23);
-            this.form_btnForward.TabIndex = 12;
-            this.form_btnForward.Text = "-->";
-            this.form_btnForward.UseVisualStyleBackColor = true;
-            this.form_btnForward.Click += new System.EventHandler(this.form_btnForward_Click);
-            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1545,6 +1546,7 @@ namespace SearchDirLists
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Activated += new System.EventHandler(this.ClearToolTip);
             this.Deactivate += new System.EventHandler(this.ClearToolTip);
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.Enter += new System.EventHandler(this.ClearToolTip);
             this.Leave += new System.EventHandler(this.ClearToolTip);
             this.form_tabControl.ResumeLayout(false);

@@ -42,6 +42,10 @@ namespace SearchDirLists
         List<TreeNode> m_listTreeNodes_Compare1 = new List<TreeNode>();
         List<TreeNode> m_listTreeNodes_Compare2 = new List<TreeNode>();
 
+        List<TreeNode> m_listHistory = new List<TreeNode>();
+        int m_nIxHistory = -1;
+        bool m_bHistoryButton = false;
+
         // initialized in constructor:
         Blink m_blink = null;
         Color m_clrVolGroupOrig = Color.Empty;
@@ -1272,8 +1276,8 @@ namespace SearchDirLists
                     form_splitClones.Panel2Collapsed = true;
                     form_treeView_Browse.SelectedNode = m_nodeCompare2;
 
-                    RootNodeDatum rootNodeDatum1 = (RootNodeDatum)TreeSelect.GetParentRoot(m_nodeCompare1).Tag;
-                    RootNodeDatum rootNodeDatum2 = (RootNodeDatum)TreeSelect.GetParentRoot(m_nodeCompare2).Tag;
+                    RootNodeDatum rootNodeDatum1 = (RootNodeDatum)m_nodeCompare1.Root().Tag;
+                    RootNodeDatum rootNodeDatum2 = (RootNodeDatum)m_nodeCompare2.Root().Tag;
                     String strFullPath1 = FullPath(m_nodeCompare1);
                     String strFullPath2 = FullPath(m_nodeCompare2);
                     String strFullPath1A = m_nodeCompare1.FullPath;
@@ -1960,19 +1964,18 @@ namespace SearchDirLists
 
         void form_treeView_Browse_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if ((m_listHistory.Count > 0) && (m_nIxHistory > 0) && (m_nIxHistory < m_listHistory.Count))
+            if (m_bHistoryButton == false)
             {
-                if (m_listHistory[m_nIxHistory] != e.Node)
+                if ((m_listHistory.Count > 0) && (m_nIxHistory > 0) && ((m_listHistory.Count - 1) > m_nIxHistory))
                 {
-                    if ((m_listHistory.Count - 1) > m_nIxHistory)
-                    {
-                        m_listHistory.RemoveRange(m_nIxHistory, m_listHistory.Count - m_nIxHistory - 1);
-                    }
-
-                    m_listHistory.Add(e.Node);
-                    Debug.Assert(++m_nIxHistory == (m_listHistory.Count - 1));
+                    m_listHistory.RemoveRange(m_nIxHistory, m_listHistory.Count - m_nIxHistory - 1);
                 }
+
+                m_listHistory.Add(e.Node);
+                Debug.Assert(++m_nIxHistory == (m_listHistory.Count - 1));
             }
+
+            m_bHistoryButton = false;
 
             form_tmapUserCtl.DoThreadFactory(e.Node);
 
@@ -1993,7 +1996,7 @@ namespace SearchDirLists
                 }
             }
 
-            TreeNode rootNode = TreeSelect.GetParentRoot(e.Node);
+            TreeNode rootNode = e.Node.Root();
 
             Debug.Assert((new object[] { form_treeCompare1, form_treeCompare2 }.Contains(sender)) == m_bCompareMode);
             DoTreeSelect(e.Node);
@@ -2589,18 +2592,20 @@ namespace SearchDirLists
 
         private void form_tmapUserCtl_MouseUp(object sender, MouseEventArgs e)
         {
-            m_strMaybeFile = form_tmapUserCtl.DoToolTip(e.Location);
+            TreeNode treeNode = form_tmapUserCtl.DoToolTip(e.Location);
 
-            if (m_strMaybeFile != null)
+            if (treeNode == null)
             {
-                tabControl_FileList.SelectedTab = tabPage_FileList;
-                SelectFoundFile();
+                return;
             }
+
+            m_bPutPathInFindEditBox = true;
+            treeNode.TreeView.SelectedNode = treeNode;
         }
 
         private void ClearToolTip(object sender, EventArgs e)
         {
-            form_tmapUserCtl.ClearToolTip();
+            form_tmapUserCtl.ClearSelection();
         }
 
         private void form_btnUp_Click(object sender, EventArgs e)
@@ -2617,38 +2622,35 @@ namespace SearchDirLists
                 return;
             }
 
+            m_bPutPathInFindEditBox = true;
             form_treeView_Browse.SelectedNode = form_treeView_Browse.SelectedNode.Parent;
         }
 
-        List<TreeNode> m_listHistory = new List<TreeNode>();
-        int m_nIxHistory = -1;
-
-        void DoHistory(object sender, int? nIxHistory = null)
+        void DoHistory(object sender, int nDirection)
         {
-            if (nIxHistory != null)
-            {
-                m_nIxHistory = nIxHistory.Value;
-            }
+            int nIxHistory = m_nIxHistory + nDirection;
 
             do
             {
+                if (nIxHistory < 0)
+                {
+                    break;
+                }
+
                 if (m_listHistory.Count <= 0)
                 {
                     break;
                 }
 
-                if (m_nIxHistory > (m_listHistory.Count - 1))
+                if (nIxHistory > (m_listHistory.Count - 1))
                 {
                     break;
                 }
 
-                TreeNode treeNode = m_listHistory[m_nIxHistory];
-
-                if (treeNode.TreeView.SelectedNode == treeNode)
-                {
-                    break;
-                }
-
+                TreeNode treeNode = m_listHistory[nIxHistory];
+                m_nIxHistory = nIxHistory;
+                m_bHistoryButton = true;
+                m_bPutPathInFindEditBox = true;
                 treeNode.TreeView.SelectedNode = treeNode;
                 return;
             }
@@ -2659,12 +2661,36 @@ namespace SearchDirLists
 
         private void form_btnBack_Click(object sender, EventArgs e)
         {
-            DoHistory(sender, Math.Max(0, --m_nIxHistory));
+            DoHistory(sender, -1);
         }
 
         private void form_btnForward_Click(object sender, EventArgs e)
         {
-            DoHistory(sender, Math.Min(m_listHistory.Count - 1, ++m_nIxHistory));
+            DoHistory(sender, +1);
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            form_tmapUserCtl.TooltipAnchor = form_cbNavigate;
+        }
+
+        private void form_cbNavigate_MouseUp(object sender, MouseEventArgs e)
+        {
+            form_tmapUserCtl.ClearSelection();
+
+            if (Cursor.Current != Cursors.Arrow)        // hack: clicked in tooltip
+            {
+                return;
+            }
+
+            m_bPutPathInFindEditBox = true;
+            m_strMaybeFile = form_tmapUserCtl.Tooltip_Click();
+
+            if (m_strMaybeFile != null)
+            {
+                tabControl_FileList.SelectedTab = tabPage_FileList;
+                SelectFoundFile();
+            }
         }
     }
 }

@@ -301,6 +301,7 @@ namespace SearchDirLists
             }
 
             m_treeNode = treeNode;
+            ClearSelection();
             m_dtHideGoofball = DateTime.Now;
             m_bg.Graphics.Clear(Color.DarkGray);
 

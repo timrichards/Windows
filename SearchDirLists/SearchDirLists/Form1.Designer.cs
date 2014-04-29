@@ -1166,7 +1166,7 @@ namespace SearchDirLists
             this.tabPage_FileList.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage_FileList.Size = new System.Drawing.Size(130, 121);
             this.tabPage_FileList.TabIndex = 0;
-            this.tabPage_FileList.Text = "File list";
+            this.tabPage_FileList.Text = "Immediate files";
             this.tabPage_FileList.UseVisualStyleBackColor = true;
             // 
             // form_splitCompareFiles

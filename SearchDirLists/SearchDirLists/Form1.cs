@@ -1293,8 +1293,8 @@ namespace SearchDirLists
                     m_nodeCompare2.Name = strFullPath2;
                     m_nodeCompare1.ToolTipText = strFullPath1A;
                     m_nodeCompare2.ToolTipText = strFullPath2A;
-                    m_nodeCompare1.Tag = new RootNodeDatum((NodeDatum)m_nodeCompare1.Tag, rootNodeDatum1.StrFile, rootNodeDatum1.StrVolumeGroup);
-                    m_nodeCompare2.Tag = new RootNodeDatum((NodeDatum)m_nodeCompare2.Tag, rootNodeDatum2.StrFile, rootNodeDatum2.StrVolumeGroup);
+                    m_nodeCompare1.Tag = new RootNodeDatum((NodeDatum)m_nodeCompare1.Tag, rootNodeDatum1);
+                    m_nodeCompare2.Tag = new RootNodeDatum((NodeDatum)m_nodeCompare2.Tag, rootNodeDatum2);
                     m_nodeCompare2.Checked = true;    // hack to put it in the right file pane
                     dictCompareDiffs.Clear();
                     Compare(m_nodeCompare1, m_nodeCompare2);
@@ -2610,20 +2610,32 @@ namespace SearchDirLists
 
         private void form_btnUp_Click(object sender, EventArgs e)
         {
-            if (form_treeView_Browse.SelectedNode == null)
+            TreeNode treeNode = form_treeView_Browse.SelectedNode;
+
+            if (treeNode == null)
             {
                 m_blink.Go(form_btnUp, clr: Color.Red, Once: true);
                 return;
             }
 
-            if (form_treeView_Browse.SelectedNode.Parent == null)
+            if (treeNode.Parent == null)
             {
-                m_blink.Go(form_btnUp, clr: Color.Red, Once: true);
+                RootNodeDatum rootNodeDatum = (RootNodeDatum)treeNode.Tag;
+
+                if (rootNodeDatum.VolumeView == true)
+                {
+                    m_blink.Go(form_btnUp, clr: Color.Red, Once: true);
+                    return;
+                }
+
+                rootNodeDatum.VolumeView = true;
+                treeNode.TreeView.SelectedNode = null;    // to kick in a change selection event
+                treeNode.TreeView.SelectedNode = treeNode;
                 return;
             }
 
             m_bPutPathInFindEditBox = true;
-            form_treeView_Browse.SelectedNode = form_treeView_Browse.SelectedNode.Parent;
+            treeNode.TreeView.SelectedNode = treeNode.Parent;
         }
 
         void DoHistory(object sender, int nDirection)

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Diagnostics;
 using System.Windows.Forms;
-using System.IO;
 using System.Threading;
 
 namespace SearchDirLists
@@ -63,8 +61,8 @@ namespace SearchDirLists
 
         internal void ClearSelection()
         {
+            m_toolTip.Hide(TooltipAnchor ?? this);
             m_selRect = Rectangle.Empty;
-            Tooltip_Hide();
             Invalidate();
         }
 
@@ -98,7 +96,7 @@ namespace SearchDirLists
             foreach (String[] arrLine in listFiles)
             {
                 Debug.Assert(iterUlong.MoveNext());
-                NodeDatum nodeDatum_A = new NodeDatum(0, 0, 0);
+                NodeDatum nodeDatum_A = new NodeDatum();
 
                 nTotalLength += nodeDatum_A.nTotalLength = iterUlong.Current;
 
@@ -120,7 +118,7 @@ namespace SearchDirLists
             }
 
             NodeDatum nodeDatum = (NodeDatum)parent.Tag;
-            NodeDatum nodeDatum_B = new NodeDatum(0, 0, 0);
+            NodeDatum nodeDatum_B = new NodeDatum();
 
             Debug.Assert(nTotalLength == nodeDatum.nLength);
             nodeDatum_B.nTotalLength = nTotalLength;
@@ -143,7 +141,7 @@ namespace SearchDirLists
 
         internal void DoThreadFactory()
         {
-            Tooltip_Hide();
+            ClearSelection();
 
             if (m_treeNode == null)
             {
@@ -166,6 +164,12 @@ namespace SearchDirLists
 
             if (treeNode_A.TreeView != null)    // null if fake file treenode (NodeDatum.TreeMapFiles)
             {
+                if (treeNode_A.Tag is RootNodeDatum)
+                {
+                    ((RootNodeDatum)treeNode_A.Tag).VolumeView = (((RootNodeDatum)treeNode_A.Tag).VolumeView == false);
+                    treeNode_A.TreeView.SelectedNode = null;    // to kick in a change selection event
+                }
+
                 treeNode_A.TreeView.SelectedNode = treeNode_A;
             }
             else
@@ -176,14 +180,9 @@ namespace SearchDirLists
             return null;
         }
 
-        internal void Tooltip_Hide()
-        {
-            m_toolTip.Hide(TooltipAnchor ?? this);
-        }
-
         internal TreeNode DoToolTip(Point pt_in)
         {
-            Tooltip_Hide();
+            ClearSelection();
 
             if (m_treeNode == null)
             {
@@ -426,15 +425,15 @@ namespace SearchDirLists
         {
             base.OnSizeChanged(e);
             TranslateSize();
-            m_selRect = Rectangle.Empty;
             m_prevNode = null;
-            Tooltip_Hide();
+            ClearSelection();
         }
 
         void TranslateSize()
         {
             SizeF sizeBitmap = m_rectBitmap.Size;
             SizeF size = Size;
+
             m_sizeTranslate = new SizeF(size.Width / sizeBitmap.Width, size.Height / sizeBitmap.Height);
         }
 
@@ -494,7 +493,9 @@ namespace SearchDirLists
 		        return null;
             }
 
-	        if (((NodeDatum)m_treeNode.Tag).nTotalLength > 0)
+            NodeDatum nodeDatum = (NodeDatum)m_treeNode.Tag;
+
+            if (nodeDatum.nTotalLength > 0)
 	        {
                 return RecurseDrawGraph(graphics, m_treeNode, rc, bStart: true);
 	        }
@@ -544,7 +545,7 @@ namespace SearchDirLists
             if (((item.Nodes.Count > 0) || (bStart && (nodeDatum.TreeMapFiles != null)))
                 && KDirStat_DrawChildren(graphics, item, bStart))
             {
-                // one scenario: empty folder with files when bStart is not true
+                // example scenario: empty folder when there are immediate files and bStart is not true
                 return null;
             }
 
@@ -596,30 +597,103 @@ namespace SearchDirLists
          //I learned this squarification style from the KDirStat executable.
          //It's the most complex one here but also the clearest, imho.
         
-        bool KDirStat_DrawChildren(Graphics graphics, TreeNode parent, bool bStart = false)
+        bool KDirStat_DrawChildren(Graphics graphics, TreeNode parent_in, bool bStart = false)
         {
+            List<TreeNode> listChildren = null;
+            TreeNode parent = null;
+
+            bool bVolumeNode = false;
+
+            do
+            {
+                if ((bStart == false) || ((parent_in.Tag is RootNodeDatum) == false))
+                {
+                    break;
+                }
+
+                RootNodeDatum rootNodeDatum = (RootNodeDatum)parent_in.Tag;
+
+                if (rootNodeDatum.VolumeView == false)
+                {
+                    break;
+                }
+
+                NodeDatum nodeDatumFree = new NodeDatum();
+                TreeNode nodeFree = new TreeNode(parent_in.Text + " (free space)");
+
+                nodeDatumFree.nTotalLength = rootNodeDatum.VolumeFree;
+                nodeFree.Tag = nodeDatumFree;
+                nodeFree.ForeColor = Color.MediumSpringGreen;
+
+                NodeDatum nodeDatumUnread = new NodeDatum();
+                TreeNode nodeUnread = new TreeNode(parent_in.Text + " (unread data)");         // TODO: incorporate error list
+                long nUnreadLength = (long)rootNodeDatum.VolumeLength - (long)rootNodeDatum.VolumeFree - (long)rootNodeDatum.nTotalLength;
+                ulong nVolumeLength = rootNodeDatum.VolumeLength;
+
+                if (nUnreadLength < 0)
+                {
+                    // doesn't equal (long)rootNodeDatum.VolumeFree.
+                    // compare nTotalLength to end of file length.
+                    // compressed drive? hard links?
+
+                    nVolumeLength = rootNodeDatum.VolumeFree + rootNodeDatum.nTotalLength;
+                    nUnreadLength = 0;
+
+                    if (rootNodeDatum.VolumeFree <= 0)
+                    {
+                        break;
+                    }
+                }
+
+                nodeDatumUnread.nTotalLength = (ulong)nUnreadLength;
+                nodeUnread.Tag = nodeDatumUnread;
+                nodeUnread.ForeColor = Color.MediumVioletRed;
+                listChildren = new List<TreeNode>();
+                listChildren.Add(parent_in);                            // parent added as child
+                listChildren.Add(nodeFree);
+
+                if (nUnreadLength > 0)
+                {
+                    listChildren.Add(nodeUnread);
+                }
+
+                parent = new TreeNode(parent_in.Text + " (volume)");       // parent reassigned as volume
+                NodeDatum nodeDatumVolume = new NodeDatum();
+                nodeDatumVolume.nTotalLength = nVolumeLength;
+                nodeDatumVolume.TreeMapRect = ((NodeDatum)parent_in.Tag).TreeMapRect;
+                parent.Tag = nodeDatumVolume;
+                bVolumeNode = true;
+                rootNodeDatum.VolumeView = true;
+            }
+            while (false);
+
+            if (bVolumeNode == false)
+            {
+                parent = parent_in;
+                listChildren = parent.Nodes.Cast<TreeNode>().Where(t => ((NodeDatum)t.Tag).nTotalLength > 0).ToList();
+            }
+
             NodeDatum nodeDatum = (NodeDatum)parent.Tag;
-	        Rectangle rc = nodeDatum.TreeMapRect;
+            Rectangle rc = nodeDatum.TreeMapRect;
 	        List<double> rows = new List<double>();	// Our rectangle is divided into rows, each of which gets this height (fraction of total height).
 	        List<int> childrenPerRow = new List<int>();// childrenPerRow[i] = # of children in rows[i]
-            List<TreeNode> listChildren = parent.Nodes.Cast<TreeNode>().Where(t => ((NodeDatum)t.Tag).nTotalLength > 0).ToList();
 
             if (bStart && (nodeDatum.TreeMapFiles != null))
             {
                 listChildren.Add(nodeDatum.TreeMapFiles);
             }
-	        else if (nodeDatum.nLength > 0)
-	        {
-	            NodeDatum nodeFiles = new NodeDatum(0, 0, 0);
-	
-	            nodeFiles.nTotalLength = nodeDatum.nLength;
-	
-	            TreeNode treeNode = new TreeNode(parent.Text);
-	
-	            treeNode.Tag = nodeFiles;
-	            treeNode.ForeColor = Color.OliveDrab;
-	            listChildren.Add(treeNode);
-	        }
+            else if (nodeDatum.nLength > 0)
+            {
+                NodeDatum nodeFiles = new NodeDatum();
+
+                nodeFiles.nTotalLength = nodeDatum.nLength;
+
+                TreeNode treeNode = new TreeNode(parent.Text);
+
+                treeNode.Tag = nodeFiles;
+                treeNode.ForeColor = Color.OliveDrab;
+                listChildren.Add(treeNode);
+            }
 
             listChildren.Sort((x, y) => ((NodeDatum)y.Tag).nTotalLength.CompareTo(((NodeDatum)x.Tag).nTotalLength));
 

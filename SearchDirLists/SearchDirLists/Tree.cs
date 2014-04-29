@@ -167,6 +167,7 @@ namespace SearchDirLists
 
         internal bool m_bDifferentVols = false;
 
+        internal NodeDatum() { }
         internal NodeDatum(uint nPrevLineNo_in, uint nLineNo_in, ulong nLength_in)
         { nPrevLineNo = nPrevLineNo_in; nLineNo = nLineNo_in; nLength = nLength_in; }
 
@@ -186,12 +187,27 @@ namespace SearchDirLists
     {
         internal readonly String StrFile = null;
         internal readonly String StrVolumeGroup = null;
+        internal readonly ulong VolumeFree = 0;
+        internal readonly ulong VolumeLength = 0;
+        public bool VolumeView = true;
 
-        internal RootNodeDatum(NodeDatum node, String strFile, String strVolGroup)
+        internal RootNodeDatum(NodeDatum node, String strFile_in, String strVolGroup_in,
+            ulong nVolumeFree_in, ulong nVolumeLength_in)
             : base(node)
         {
-            StrFile = strFile;
-            StrVolumeGroup = strVolGroup;
+            StrFile = strFile_in;
+            StrVolumeGroup = strVolGroup_in;
+            VolumeLength = nVolumeLength_in;
+            VolumeFree = nVolumeFree_in;
+        }
+
+        internal RootNodeDatum(NodeDatum node, RootNodeDatum rootNode)
+            : base(node)
+        {
+            StrFile = rootNode.StrFile;
+            StrVolumeGroup = rootNode.StrVolumeGroup;
+            VolumeLength = rootNode.VolumeLength;
+            VolumeFree = rootNode.VolumeFree;
         }
     }
 
@@ -540,17 +556,31 @@ namespace SearchDirLists
                     }
                 }
 
+                ulong nVolFree = 0;
+                ulong nVolLength = 0;
+
                 {
                     String[] arrDriveInfo = File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_DriveInfo)).ToArray();
                     StringBuilder strBuilder = new StringBuilder();
+                    int nIx = -1;
 
                     foreach (String strLine in arrDriveInfo)
                     {
                         String[] strArray = strLine.Split('\t');
+                        ++nIx;
 
                         if (strArray.Length > 2)
                         {
                             strBuilder.AppendLine(strArray[2]);
+
+                            if ((nIx == 5) && StrValid(strArray[2]))
+                            {
+                                nVolFree = ulong.Parse(strArray[2]);
+                            }
+                            else if ((nIx == 6) && StrValid(strArray[2]))
+                            {
+                                nVolLength = ulong.Parse(strArray[2]);
+                            }
                         }
                     }
 
@@ -589,7 +619,7 @@ namespace SearchDirLists
 
                 TreeNode rootTreeNode = dirData.AddToTree(strVolumeName);
 
-                rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag, strSaveAs, m_volStrings.VolumeGroup);
+                rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag, strSaveAs, m_volStrings.VolumeGroup, nVolFree, nVolLength);
                 TreeSubnodeDetails(rootTreeNode);
                 Console.WriteLine(strSaveAs + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
             }

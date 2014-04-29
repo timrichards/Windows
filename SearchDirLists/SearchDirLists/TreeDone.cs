@@ -438,7 +438,7 @@ namespace SearchDirLists
                 }
             }
 
-            m_hashCache = hashTable;
+            m_hashCache = hashTable;    // this shouldn't work unless passing back by ref. However it does seem to work.
 
             SortedDictionary<HashKey, List<TreeNode>> dictClones = new SortedDictionary<HashKey, List<TreeNode>>();
 

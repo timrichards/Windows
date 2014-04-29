@@ -153,9 +153,11 @@ namespace SearchDirLists
                 m_thread.Abort();
             }
 
-            m_thread = new Thread(new ThreadStart(Go));
-            m_thread.IsBackground = true;
-            m_thread.Start();
+            Go();
+
+            //m_thread = new Thread(new ThreadStart(Go));
+            //m_thread.IsBackground = true;
+            //m_thread.Start();
         }
 
         internal String Tooltip_Click()
@@ -342,13 +344,14 @@ namespace SearchDirLists
             {
                 m_dtHideGoofball = DateTime.Now;
                 m_bg.Graphics.Clear(Color.DarkGray);
-                m_fileNode = DrawTreemap(m_bg.Graphics, m_rectBitmap);
+                m_fileNode = DrawTreemap();
                 m_dtHideGoofball = DateTime.MinValue;
                 m_bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), m_rectBitmap);
                 m_bg.Render();
                 m_selRect = Rectangle.Empty;
                 m_prevNode = null;
                 Invalidate();
+                Console.WriteLine("TreeMap Go: " + m_treeNode);
             }
         }
 
@@ -462,10 +465,12 @@ namespace SearchDirLists
         //
         // Last modified: $Date: 2004/11/05 16:53:08 $
         
-        internal TreeNode DrawTreemap(Graphics graphics, Rectangle rc, bool bGrid = false)
+        internal TreeNode DrawTreemap(bool bGrid = false)
         {
             m_deepNodeDrawn = null;
             m_bGrid = bGrid;
+            Graphics graphics = m_bg.Graphics;
+            Rectangle rc = m_rectBitmap;
 
 	        if (bGrid)
 	        {
@@ -499,7 +504,7 @@ namespace SearchDirLists
 
             if (nodeDatum.nTotalLength > 0)
 	        {
-                return RecurseDrawGraph(graphics, m_treeNode, rc, bStart: true);
+                return RecurseDrawGraph(m_treeNode, rc, bStart: true);
 	        }
 	        else
 	        {
@@ -513,7 +518,6 @@ namespace SearchDirLists
         }
 
         TreeNode RecurseDrawGraph(
-	        Graphics graphics,
 	        TreeNode item, 
 	        Rectangle rc,
             bool bStart = false
@@ -522,7 +526,8 @@ namespace SearchDirLists
             Debug.Assert(rc.Width >= 0);
 	        Debug.Assert(rc.Height >= 0);
 
-	        int gridWidth= m_bGrid ? 1 : 0;
+            Graphics graphics = m_bg.Graphics;
+            int gridWidth = m_bGrid ? 1 : 0;
 
 	        if (rc.Width <= gridWidth || rc.Height <= gridWidth)
 	        {
@@ -761,7 +766,7 @@ namespace SearchDirLists
                         ? new Rectangle((int)left, (int)top, right-(int)left, bottom-(int)top)
                         : new Rectangle((int)top, (int)left, bottom-(int)top, right-(int)left);
 			
-			        RecurseDrawGraph(graphics, child, rcChild);
+			        RecurseDrawGraph(child, rcChild);
 
                     if (bStart)
                     {

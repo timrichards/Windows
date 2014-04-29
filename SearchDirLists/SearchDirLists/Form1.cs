@@ -44,7 +44,7 @@ namespace SearchDirLists
 
         List<TreeNode> m_listHistory = new List<TreeNode>();
         int m_nIxHistory = -1;
-        bool m_bHistoryButton = false;
+        bool m_bHistoryDefer = false;
 
         // initialized in constructor:
         Blink m_blink = null;
@@ -2007,11 +2007,7 @@ namespace SearchDirLists
             {
                 TreeNode treeNode_A = new TreeNode();
 
-                if (((RootNodeDatum)treeNode.Tag).VolumeView)
-                {
-                    treeNode_A.Checked = true;
-                }
-
+                treeNode_A.Checked = ((RootNodeDatum)treeNode.Tag).VolumeView;
                 treeNode_A.Tag = treeNode;
                 m_listHistory.Add(treeNode_A);
             }
@@ -2023,8 +2019,10 @@ namespace SearchDirLists
 
         void form_treeView_Browse_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (m_bHistoryButton == false)
+            if (m_bHistoryDefer == false)
             {
+                m_bHistoryDefer = true;
+
                 if ((m_listHistory.Count > 0) && (m_nIxHistory > 0) && ((m_listHistory.Count - 1) > m_nIxHistory))
                 {
                     m_listHistory.RemoveRange(m_nIxHistory, m_listHistory.Count - m_nIxHistory - 1);
@@ -2039,7 +2037,7 @@ namespace SearchDirLists
                 }
             }
 
-            m_bHistoryButton = false;
+            m_bHistoryDefer = false;
             form_tmapUserCtl.DoThreadFactory(e.Node);
 
             if (sender == form_treeCompare2)
@@ -2714,15 +2712,14 @@ namespace SearchDirLists
 
                 TreeNode treeNode = History_GetAt(nIxHistory);
 
-                m_nIxHistory = nIxHistory;
-                m_bHistoryButton = true;
-                m_bPutPathInFindEditBox = true;
-
                 if (treeNode.TreeView.SelectedNode == treeNode)
                 {
-                    treeNode.TreeView.SelectedNode = null;  // volume
+                    treeNode.TreeView.SelectedNode = null;      // VolumeView needs refresh since it's the same node
                 }
 
+                m_nIxHistory = nIxHistory;
+                m_bHistoryDefer = true;
+                m_bPutPathInFindEditBox = true;
                 treeNode.TreeView.SelectedNode = treeNode;
                 return;
             }

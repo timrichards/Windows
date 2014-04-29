@@ -340,8 +340,10 @@ namespace SearchDirLists
         {
             lock (this)
             {
+                m_dtHideGoofball = DateTime.Now;
                 m_bg.Graphics.Clear(Color.DarkGray);
                 m_fileNode = DrawTreemap(m_bg.Graphics, m_rectBitmap);
+                m_dtHideGoofball = DateTime.MinValue;
                 m_bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), m_rectBitmap);
                 m_bg.Render();
                 m_selRect = Rectangle.Empty;

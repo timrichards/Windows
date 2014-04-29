@@ -2038,7 +2038,7 @@ namespace SearchDirLists
             }
 
             m_bHistoryDefer = false;
-            form_tmapUserCtl.DoThreadFactory(e.Node);
+            form_tmapUserCtl.Render(e.Node);
 
             if (sender == form_treeCompare2)
             {

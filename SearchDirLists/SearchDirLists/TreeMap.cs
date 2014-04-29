@@ -20,7 +20,6 @@ namespace SearchDirLists
         SizeF m_sizeTranslate = SizeF.Empty;
         BufferedGraphics m_bg = null;
         TreeNode m_treeNode = null;
-        TreeNode m_fileNode = null;
         TreeNode m_prevNode = null;
         TreeNode m_deepNode = null;
         TreeNode m_deepNodeDrawn = null;
@@ -28,7 +27,6 @@ namespace SearchDirLists
         int m_nAnimFrame = 0;
         DateTime m_dtHideGoofball = DateTime.MinValue;
         ToolTip m_toolTip = new ToolTip();
-        Thread m_thread = null;
 
         void TimerAnim_Callback(object state)
         {
@@ -52,7 +50,6 @@ namespace SearchDirLists
         internal void Clear()
         {
             m_treeNode = null;
-            m_fileNode = null;
             m_prevNode = null;
             m_deepNode = null;
             m_deepNodeDrawn = null;
@@ -127,39 +124,6 @@ namespace SearchDirLists
             return nodeFileList;
         }
 
-        internal void DoThreadFactory(TreeNode treeNode)
-        {
-            if ((m_deepNode == null) || (m_deepNode.IsChildOf(treeNode) == false))
-            {
-                m_deepNode = treeNode;
-            }
-
-            m_treeNode = treeNode;
-            DoThreadFactory();
-            m_dtHideGoofball = DateTime.MinValue;
-        }
-
-        internal void DoThreadFactory()
-        {
-            ClearSelection();
-
-            if (m_treeNode == null)
-            {
-                return;
-            }
-
-            if ((m_thread != null) && m_thread.IsAlive)
-            {
-                m_thread.Abort();
-            }
-
-            Go();
-
-            //m_thread = new Thread(new ThreadStart(Go));
-            //m_thread.IsBackground = true;
-            //m_thread.Start();
-        }
-
         internal String Tooltip_Click()
         {
             TreeNode treeNode_A = (TreeNode)m_toolTip.Tag;
@@ -219,16 +183,7 @@ namespace SearchDirLists
                     break;
                 }
 
-                TreeNode treeNode = m_treeNode;
-
-                if (m_fileNode != null)
-                {
-                    Debug.Assert(m_fileNode.Text == m_treeNode.Text);
-                    treeNode = m_fileNode;
-                    m_prevNode = null;
-                }
-
-                TreeNode m_prevNode_A = m_prevNode ?? treeNode;
+                TreeNode m_prevNode_A = m_prevNode ?? m_treeNode;
 
                 if ((nodeRet = FindMapNode(m_prevNode_A, pt)) != null)
                 {
@@ -338,35 +293,68 @@ namespace SearchDirLists
             return null;
         }
 
-        internal void Go()
+        internal void Render(TreeNode treeNode)
         {
-            lock (this)
+            if ((m_deepNode == null) || (m_deepNode.IsChildOf(treeNode) == false))
             {
-                m_dtHideGoofball = DateTime.Now;
-                m_bg.Graphics.Clear(Color.DarkGray);
-                m_fileNode = DrawTreemap();
-                m_dtHideGoofball = DateTime.MinValue;
-                m_bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), m_rectBitmap);
-                m_bg.Render();
-                m_selRect = Rectangle.Empty;
-                m_prevNode = null;
-                Invalidate();
-                Console.WriteLine("TreeMap Go: " + m_treeNode);
+                m_deepNode = treeNode;
             }
+
+            m_treeNode = treeNode;
+            m_dtHideGoofball = DateTime.Now;
+            m_bg.Graphics.Clear(Color.DarkGray);
+
+            do
+            {
+                DateTime dtStart = DateTime.Now;
+                DrawTreemap();
+
+                if ((DateTime.Now - dtStart) < TimeSpan.FromSeconds(1))
+                {
+                    break;
+                }
+            }
+            while (SetBitmapSize());
+
+            m_dtHideGoofball = DateTime.MinValue;
+            m_bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), m_rectBitmap);
+            m_bg.Render();
+            m_selRect = Rectangle.Empty;
+            m_prevNode = null;
+            Invalidate();
+            m_dtHideGoofball = DateTime.MinValue;
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            if ((Site != null) && Site.DesignMode)    // prevent bitmap from getting into the pesky resx
+            if (Site != null) // && Site.DesignMode)    // prevent bitmap from getting into the pesky resx
             {
                 BackColor = Color.Turquoise;          // litmus
                 return;
             }
 
             BackColor = Color.Empty;
-            m_rectBitmap = new Rectangle(0, 0, 1024, 1024);
+            SetBitmapSize(1024);
+        }
+
+        bool SetBitmapSize(int nPxPerSide = -1)
+        {
+            if (nPxPerSide == -1)
+            {
+                int nWidth = m_rectBitmap.Size.Width;
+                Debug.Assert(nWidth > 32);
+
+                if (nWidth <= 32)
+                {
+                    return false;
+                }
+
+                nPxPerSide = (int)(nWidth / 2.0);
+            }
+
+            m_rectBitmap = new Rectangle(0, 0, nPxPerSide, nPxPerSide);
             BackgroundImage = new Bitmap(m_rectBitmap.Size.Width, m_rectBitmap.Size.Height);
 
             BufferedGraphicsContext bgcontext = BufferedGraphicsManager.Current;
@@ -374,6 +362,7 @@ namespace SearchDirLists
             bgcontext.MaximumBuffer = m_rectBitmap.Size;
             m_bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), m_rectBitmap);
             TranslateSize();
+            return true;
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -420,7 +409,7 @@ namespace SearchDirLists
             e.Graphics.FillPie(brush, r_A, 90 + nAnimFrame, 90);
             e.Graphics.FillPie(brush, r_A, 270 + nAnimFrame, 90);
             brush.CenterColor = Color.Black;
-            brush.SurroundColors = new Color[] { Color.FromArgb(128, 255, 255, 255) };
+            brush.SurroundColors = new Color[] { Color.White };
             e.Graphics.FillPie(brush, r_A, 0 + nAnimFrame, 90);
             e.Graphics.FillPie(brush, r_A, 180 + nAnimFrame, 90);
             ++m_nAnimFrame;
@@ -465,7 +454,7 @@ namespace SearchDirLists
         //
         // Last modified: $Date: 2004/11/05 16:53:08 $
         
-        internal TreeNode DrawTreemap(bool bGrid = false)
+        internal void DrawTreemap(bool bGrid = false)
         {
             m_deepNodeDrawn = null;
             m_bGrid = bGrid;
@@ -474,50 +463,40 @@ namespace SearchDirLists
 
 	        if (bGrid)
 	        {
-                lock (graphics)
-                {
-                    graphics.FillRectangle(new SolidBrush(Color.Black), rc);
-                }
-	        }
+                graphics.FillRectangle(new SolidBrush(Color.Black), rc);
+            }
 	        else
 	        {
 		        // We shrink the rectangle here, too.
 		        // If we didn't do this, the layout of the treemap would
 		        // change, when grid is switched on and off.
                 Pen pen = new Pen(SystemColors.ButtonShadow, 1);
-                lock (graphics)
-                {
-                    { int nLine = rc.Right - 1; graphics.DrawLine(pen, new Point(nLine, rc.Top), new Point(nLine, rc.Bottom)); }
-                    { int nLine = rc.Bottom - 1; graphics.DrawLine(pen, new Point(rc.Left, nLine), new Point(rc.Right, nLine)); }
-                }
-	        }
+
+                { int nLine = rc.Right - 1; graphics.DrawLine(pen, new Point(nLine, rc.Top), new Point(nLine, rc.Bottom)); }
+                { int nLine = rc.Bottom - 1; graphics.DrawLine(pen, new Point(rc.Left, nLine), new Point(rc.Right, nLine)); }
+            }
 
 	        rc.Width--;
 	        rc.Height--;
 
 	        if (rc.Width <= 0 || rc.Height <= 0)
             {
-		        return null;
+		        return;
             }
 
             NodeDatum nodeDatum = (NodeDatum)m_treeNode.Tag;
 
             if (nodeDatum.nTotalLength > 0)
 	        {
-                return RecurseDrawGraph(m_treeNode, rc, bStart: true);
+                RecurseDrawGraph(m_treeNode, rc, bStart: true);
 	        }
 	        else
 	        {
-                lock (graphics)
-                {
-                    graphics.FillRectangle(Brushes.Wheat, rc);
-                }
-	        }
-
-            return null;
+                graphics.FillRectangle(Brushes.Wheat, rc);
+            }
         }
 
-        TreeNode RecurseDrawGraph(
+        void RecurseDrawGraph(
 	        TreeNode item, 
 	        Rectangle rc,
             bool bStart = false
@@ -531,7 +510,7 @@ namespace SearchDirLists
 
 	        if (rc.Width <= gridWidth || rc.Height <= gridWidth)
 	        {
-		        return null;
+		        return;
 	        }
 
             if ((m_deepNode != null) &&
@@ -553,7 +532,7 @@ namespace SearchDirLists
                 && KDirStat_DrawChildren(graphics, item, bStart))
             {
                 // example scenario: empty folder when there are immediate files and bStart is not true
-                return null;
+                return;
             }
 
             if (m_bGrid)
@@ -561,7 +540,7 @@ namespace SearchDirLists
                 rc.Offset(1, 1);
 
                 if (rc.Width <= 0 || rc.Height <= 0)
-                    return null;
+                    return;
             }
 
             Color col = (item.ForeColor == Color.Empty) ? Color.SandyBrown : item.ForeColor;
@@ -575,25 +554,7 @@ namespace SearchDirLists
 
             brush.CenterColor = Color.Wheat;
             brush.SurroundColors = new Color[] { ControlPaint.Dark(col) };
-
-            while (true)
-            {
-                lock (graphics)
-                {
-                    try
-                    {
-                        graphics.FillRectangle(brush, rc);
-                        break;
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        Console.WriteLine("RenderLeaf() InvalidOperationException");
-                        Thread.Sleep(10);
-                    }
-                }
-            }
-
-            return null;
+            graphics.FillRectangle(brush, rc);
         }
 
          //My first approach was to make this member pure virtual and have three
@@ -665,7 +626,9 @@ namespace SearchDirLists
                 }
 
                 parent = new TreeNode(parent_in.Text + " (volume)");       // parent reassigned as volume
+
                 NodeDatum nodeDatumVolume = new NodeDatum();
+
                 nodeDatumVolume.nTotalLength = nVolumeLength;
                 nodeDatumVolume.TreeMapRect = ((NodeDatum)parent_in.Tag).TreeMapRect;
                 parent.Tag = nodeDatumVolume;

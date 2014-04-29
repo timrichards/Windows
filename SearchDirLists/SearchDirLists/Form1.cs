@@ -2023,7 +2023,7 @@ namespace SearchDirLists
             {
                 m_bHistoryDefer = true;
 
-                if ((m_listHistory.Count > 0) && (m_nIxHistory > 0) && ((m_listHistory.Count - 1) > m_nIxHistory))
+                if ((m_listHistory.Count > 0) && (m_nIxHistory > -1) && ((m_listHistory.Count - 1) > m_nIxHistory))
                 {
                     m_listHistory.RemoveRange(m_nIxHistory, m_listHistory.Count - m_nIxHistory - 1);
                 }

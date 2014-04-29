@@ -60,8 +60,6 @@ namespace SearchDirLists
         String m_strChkCompareOrig = null;
         String m_strVolGroupOrig = null;
 
-        //     const String m_strMARKFORCOPY = "markForCopy";
-
         class Form1TreeView : TreeView
         {
             // enable double buffer
@@ -1962,6 +1960,67 @@ namespace SearchDirLists
             CompareModeButtonKeyPress(sender, e);
         }
 
+        TreeNode History_GetAt(int n)
+        {
+            TreeNode treeNode = m_listHistory[n];
+
+            if (treeNode.Tag is TreeNode)
+            {
+                TreeNode treeNode_A = (TreeNode)treeNode.Tag;
+
+                ((RootNodeDatum)treeNode_A.Tag).VolumeView = treeNode.Checked;
+                return treeNode_A;
+            }
+            else
+            {
+                return treeNode;
+            }
+        }
+
+        bool History_Equals(TreeNode treeNode)
+        {
+            if (treeNode.Tag is RootNodeDatum)
+            {
+                TreeNode treeNode_A = (TreeNode)m_listHistory[m_listHistory.Count - 1];
+
+                if ((treeNode_A.Tag is TreeNode) == false)
+                {
+                    return false;
+                }
+
+                if (((RootNodeDatum)treeNode.Tag).VolumeView != treeNode_A.Checked)
+                {
+                    return false;
+                }
+
+                return (treeNode_A.Tag == treeNode);
+            }
+            else
+            {
+                return (treeNode == m_listHistory[m_listHistory.Count -1]);
+            }
+        }
+
+        void History_Add(TreeNode treeNode)
+        {
+            if (treeNode.Tag is RootNodeDatum)
+            {
+                TreeNode treeNode_A = new TreeNode();
+
+                if (((RootNodeDatum)treeNode.Tag).VolumeView)
+                {
+                    treeNode_A.Checked = true;
+                }
+
+                treeNode_A.Tag = treeNode;
+                m_listHistory.Add(treeNode_A);
+            }
+            else
+            {
+                m_listHistory.Add(treeNode);
+            }
+        }
+
         void form_treeView_Browse_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (m_bHistoryButton == false)
@@ -1971,12 +2030,16 @@ namespace SearchDirLists
                     m_listHistory.RemoveRange(m_nIxHistory, m_listHistory.Count - m_nIxHistory - 1);
                 }
 
-                m_listHistory.Add(e.Node);
-                Debug.Assert(++m_nIxHistory == (m_listHistory.Count - 1));
+                Debug.Assert(m_nIxHistory == (m_listHistory.Count - 1));
+
+                if ((m_nIxHistory < 0) || (History_Equals(e.Node) == false))
+                {
+                    History_Add(e.Node);
+                    ++m_nIxHistory;
+                }
             }
 
             m_bHistoryButton = false;
-
             form_tmapUserCtl.DoThreadFactory(e.Node);
 
             if (sender == form_treeCompare2)
@@ -2172,10 +2235,6 @@ namespace SearchDirLists
             }
         }
 
-        void form_btnCopyGen_Click(object sender, EventArgs e)
-        {
-        }
-
         void form_btnCopyClear_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem lvItem in form_lvCopyList.Items)
@@ -2308,16 +2367,6 @@ namespace SearchDirLists
                 lvSelectedItem.Selected = true;
                 lvSelectedItem.EnsureVisible();
             }
-        }
-
-        private void form_lvCopy_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void form_lv_Unique_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void form_btnSaveIgnoreList_Click(object sender, EventArgs e)
@@ -2618,7 +2667,11 @@ namespace SearchDirLists
                 return;
             }
 
-            if (treeNode.Parent == null)
+            if ((treeNode.Parent != null) && (treeNode.Parent.Parent == null))
+            {
+                ((RootNodeDatum)treeNode.Parent.Tag).VolumeView = false;
+            }
+            else if (treeNode.Parent == null)
             {
                 RootNodeDatum rootNodeDatum = (RootNodeDatum)treeNode.Tag;
 
@@ -2659,10 +2712,17 @@ namespace SearchDirLists
                     break;
                 }
 
-                TreeNode treeNode = m_listHistory[nIxHistory];
+                TreeNode treeNode = History_GetAt(nIxHistory);
+
                 m_nIxHistory = nIxHistory;
                 m_bHistoryButton = true;
                 m_bPutPathInFindEditBox = true;
+
+                if (treeNode.TreeView.SelectedNode == treeNode)
+                {
+                    treeNode.TreeView.SelectedNode = null;  // volume
+                }
+
                 treeNode.TreeView.SelectedNode = treeNode;
                 return;
             }

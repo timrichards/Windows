@@ -909,7 +909,6 @@ namespace SearchDirLists
             this.form_btnCopyGen.TabIndex = 2;
             this.form_btnCopyGen.Text = "Script";
             this.form_btnCopyGen.UseVisualStyleBackColor = true;
-            this.form_btnCopyGen.Click += new System.EventHandler(this.form_btnCopyGen_Click);
             // 
             // form_lvCopyList
             // 

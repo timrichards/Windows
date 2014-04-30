@@ -2792,5 +2792,15 @@ namespace SearchDirLists
         {
             form_tmapUserCtl.ClearSelection();
         }
+
+        private void Form1_HelpRequested(object sender, HelpEventArgs hlpevent)
+        {
+            new AboutBox1().ShowDialog(this);
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+            new AboutBox1().ShowDialog(this);
+        }
     }
 }

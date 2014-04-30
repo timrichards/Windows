@@ -147,6 +147,7 @@ namespace SearchDirLists
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.timer_blink = new System.Windows.Forms.Timer(this.components);
             this.timer_DoTree = new System.Windows.Forms.Timer(this.components);
+            this.label6 = new System.Windows.Forms.Label();
             this.form_tabControl.SuspendLayout();
             this.form_tabPageVolumes.SuspendLayout();
             this.form_tabPageBrowse.SuspendLayout();
@@ -1531,10 +1532,22 @@ namespace SearchDirLists
             this.timer_DoTree.Interval = 3000;
             this.timer_DoTree.Tick += new System.EventHandler(this.timer_DoTree_Tick);
             // 
+            // label6
+            // 
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(884, 6);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(81, 13);
+            this.label6.TabIndex = 1;
+            this.label6.Text = "Hit F1 for About";
+            this.label6.Click += new System.EventHandler(this.label6_Click);
+            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(981, 431);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.form_tabControl);
             this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -1546,6 +1559,7 @@ namespace SearchDirLists
             this.Activated += new System.EventHandler(this.ClearToolTip);
             this.Deactivate += new System.EventHandler(this.ClearToolTip);
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.Form1_HelpRequested);
             this.Enter += new System.EventHandler(this.ClearToolTip);
             this.Leave += new System.EventHandler(this.ClearToolTip);
             this.form_tabControl.ResumeLayout(false);
@@ -1613,6 +1627,7 @@ namespace SearchDirLists
             ((System.ComponentModel.ISupportInitialize)(this.form_splitUnique)).EndInit();
             this.form_splitUnique.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -1733,6 +1748,7 @@ namespace SearchDirLists
         private System.Windows.Forms.Button form_btnUp;
         private System.Windows.Forms.Button form_btnForward;
         private System.Windows.Forms.Button form_btnBack;
+        private System.Windows.Forms.Label label6;
 
     }
 }

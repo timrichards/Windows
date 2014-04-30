@@ -405,7 +405,7 @@ namespace SearchDirLists
             // form_lv_Volumes_col_Status
             // 
             this.form_lv_Volumes_col_Status.Text = "Status";
-            this.form_lv_Volumes_col_Status.Width = 130;
+            this.form_lv_Volumes_col_Status.Width = 170;
             // 
             // form_lv_Volumes_col_IncludeInSearch
             // 
@@ -579,12 +579,12 @@ namespace SearchDirLists
             this.form_btnSearchFiles.UseVisualStyleBackColor = true;
             this.form_btnSearchFiles.Click += new System.EventHandler(this.form_btnSearchFoldersAndFiles_Click);
             // 
-            // form_searchFoldersAndFiles
+            // form_btnSearchFoldersAndFiles
             // 
             this.form_btnSearchFoldersAndFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.form_btnSearchFoldersAndFiles.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.form_btnSearchFoldersAndFiles.Location = new System.Drawing.Point(725, 3);
-            this.form_btnSearchFoldersAndFiles.Name = "form_searchFoldersAndFiles";
+            this.form_btnSearchFoldersAndFiles.Name = "form_btnSearchFoldersAndFiles";
             this.form_btnSearchFoldersAndFiles.Size = new System.Drawing.Size(84, 23);
             this.form_btnSearchFoldersAndFiles.TabIndex = 7;
             this.form_btnSearchFoldersAndFiles.Text = "Folders && files";

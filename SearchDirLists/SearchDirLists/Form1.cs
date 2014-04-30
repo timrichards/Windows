@@ -644,7 +644,7 @@ namespace SearchDirLists
             }
             else if (bFailOnDirectory)
             {
-                form_tabControl.TabIndex = 0;
+                form_tabControl.SelectedTab = form_tabPageVolumes;
                 FormError(ctl, "Path does not exist.", "Save Fields");
                 return false;
             }

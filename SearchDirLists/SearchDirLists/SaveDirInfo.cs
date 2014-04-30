@@ -347,7 +347,7 @@ namespace SearchDirLists
                 Debug.Assert(strText == null);
                 Debug.Assert(bSuccess == false);
 
-                strText = nFilesTotal.ToString("###,###,###,###") + " (" + Utilities.FormatSize(nLengthTotal) + ") SD " + nFilesDiff.ToString("#.0");
+                strText = nFilesTotal.ToString("###,###,###,###") + " (" + Utilities.FormatSize(nLengthTotal) + ") SD " + nFilesDiff.ToString("#0.0");
             }
 
             if (bSuccess)
@@ -361,6 +361,7 @@ namespace SearchDirLists
             lock (form_lvVolumesMain)
             {
                 form_lvVolumesMain.Items[nIndex].SubItems[3].Text = strText;
+                form_lvVolumesMain.Invalidate();
             }
         }
 
@@ -371,6 +372,7 @@ namespace SearchDirLists
             if (m_saveDirListings.FilesWritten > 0)
             {
                 RestartTreeTimer();
+                form_tabControl.SelectedTab = form_tabPageBrowse;
             }
 
             MessageBox.Show("Completed. " + m_saveDirListings.FilesWritten + " files written.               ", "Save Directory Listings");

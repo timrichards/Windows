@@ -1,0 +1,27 @@
+SearchDirLists can rapidly save the directory listings of all your hard drives all at once. It then scans those listings and correlates "clones": which are folders with identical contents. It determines this by noting what the total size of the folder is, how many subfolders with files it has, and how many files there are total in the directory. It does not correlate by name of folder. (To save your first directory listing go to that heading down a few paragraphs.)
+
+Once done with the correlation, in less than half a minute, an explorer treeview appears along the left side of the Browse tab view, and three listviews show up on the right: at the bottom a listview of clones codes all the folders that are safely backed up onto other drives in blue. Above that those folders that are in the same volume group or on the same drive are in a brick red color: these are clones, but they are more likely to get lost if something happens to a drive. Finally, above that, there is the list of folders which didn't have any corollary. These folders are the most likely to get lost.
+
+The same colors are coded throughout, so by clicking a folder in one of the listviews will bring it up in the treeview on the left, under the same color. The two clone listviewers, the two lower ones, respond to second and third clicks, since each item represents more than one location for the clone. Clicking again navigates to the other locations. The number in the second column indicates if there are three or more clones: otherwise it's always two. These lists are sortable by clicking on the column headers.
+
+There is a compare mode for directories that did not correlate. Click on the first, click Compare, click on the second, and click Compare again. In Compare mode you are presented with the file lists of both directories, and files that are different appear in red. Shortcut keys for navigating some lists and compare mode are < and >, and the bang symbol ! for exiting and entering compare mode.
+
+At the lower left there is provision for a list of common folders to ignore, such as Windows. By clicking the Loose checkbox, all folders correlating to any that match subfolders listed will also be greyed out and removed from the clone corollaries. This unclutters the lists at the risk of overlooking a potentially important folder.
+
+Also at the lower left there is a list of specific folders you want copied. Both lists can be saved and reloaded later. The copy list is added to by checking the box next to the folder you want copied in the treeview.
+
+Under the first top tab, Volumes, you can change the drive letter and the nickname of directory listing files by clicking the Modify File button. You can group multiple listings under the same volume group and thus change the corollary. You can save this list of directory listings and have multiple copies: some with different volume groups yet having the same directory listing files.
+
+To save your first directory listing
+------------------------------------
+enter a nickname to appear in the treeview so that you can easily identify this volume. Give a path by entering it or browsing for it. Specify a location and name for the directory listing file by entering it or browsing for it using the ellipsis button at the right.
+
+Click the large square Add Volume button in the center to add this volume to the list. Do this for multiple volumes if you want, and save the list using the Volume List Save and Load buttons to the left.
+
+Click the Save Directory Listings button at the bottom of the form. The status of each of the volumes' directory listing will appear, and it should take just a few minutes. Any mountable drives should work, but network drives are not tested. Linux ExtFS and Macintosh drives, if you have drivers for them and see them in Explorer, can be scanned, as can any virtual drives you can mount in Windows Explorer.
+
+Finally there is a tree map view on the second Browse tab. By clicking each volume in the treeview you are presented with a disk usage analysis. At the outer level, any free space is shown in a bright green, and any unscanned space is in magenta. The third pane shows the actual scanned data. You can click and drill down. The color codings are the same as for the clones: blue for safe; brick red for warning; bright red for solitary. Grey for ignored. The tan ones correspond to the uncolored, or black ones, in the treeview. These may have been affected by the ignore list, or they may be safe subfolders of a cloned directory. (In the treeview, the background for all subitems of a blue, safely cloned folder, is yellow, so they can be easily identified as safe.) Files are coded in green. Zoomed out, multiple files are represented by one green box.
+
+Drilling down and the coming back up the treemap produces a spinning ball to show the deepest folder you visited. Clicking this ball once makes it go away so that you can see its neighbors when it's crowded. Clicking again within five seconds takes you back to that deep folder.
+
+At any time you can drill down using the treemap itself. To do this you click and darken a folder in the treemap. The direct subfolders are bordered in black. You can go beyond this and continue clicking down from the current view, or you can click the title of the folder in the toolip that appears in the search box.

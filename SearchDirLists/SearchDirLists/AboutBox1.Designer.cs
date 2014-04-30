@@ -39,6 +39,21 @@
             this.tableLayoutPanel.SuspendLayout();
             this.SuspendLayout();
             // 
+            // textBoxDescription
+            // 
+            textBoxDescription.Dock = System.Windows.Forms.DockStyle.Fill;
+            textBoxDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            textBoxDescription.Location = new System.Drawing.Point(6, 113);
+            textBoxDescription.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
+            textBoxDescription.Multiline = true;
+            textBoxDescription.Name = "textBoxDescription";
+            textBoxDescription.ReadOnly = true;
+            textBoxDescription.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            textBoxDescription.Size = new System.Drawing.Size(767, 378);
+            textBoxDescription.TabIndex = 23;
+            textBoxDescription.TabStop = false;
+            textBoxDescription.Text = resources.GetString("textBoxDescription.Text");
+            // 
             // tableLayoutPanel
             // 
             this.tableLayoutPanel.ColumnCount = 1;
@@ -111,21 +126,6 @@
             this.labelCompanyName.Text = "Tim Richards";
             this.labelCompanyName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // textBoxDescription
-            // 
-            textBoxDescription.Dock = System.Windows.Forms.DockStyle.Fill;
-            textBoxDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            textBoxDescription.Location = new System.Drawing.Point(6, 113);
-            textBoxDescription.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
-            textBoxDescription.Multiline = true;
-            textBoxDescription.Name = "textBoxDescription";
-            textBoxDescription.ReadOnly = true;
-            textBoxDescription.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            textBoxDescription.Size = new System.Drawing.Size(767, 378);
-            textBoxDescription.TabIndex = 23;
-            textBoxDescription.TabStop = false;
-            textBoxDescription.Text = resources.GetString("textBoxDescription.Text");
-            // 
             // okButton
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -153,6 +153,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "AboutBox1";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.AboutBox1_FormClosed);
             this.tableLayoutPanel.ResumeLayout(false);
             this.tableLayoutPanel.PerformLayout();
             this.ResumeLayout(false);

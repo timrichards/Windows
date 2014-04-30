@@ -104,5 +104,23 @@ namespace SearchDirLists
         {
             this.Close();
         }
+
+        static bool static_bShown = false;
+
+        public void ShowDialog_Once(IWin32Window owner = null)
+        {
+            if (static_bShown)
+            {
+                return;
+            }
+
+            static_bShown = true;
+            ShowDialog(owner);
+        }
+
+        private void AboutBox1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            static_bShown = false;
+        }
     }
 }

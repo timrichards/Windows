@@ -64,7 +64,7 @@ namespace SearchDirLists
             this.form_btnBack = new System.Windows.Forms.Button();
             this.form_btnUp = new System.Windows.Forms.Button();
             this.form_btnSearchFiles = new System.Windows.Forms.Button();
-            this.form_searchFoldersAndFiles = new System.Windows.Forms.Button();
+            this.form_btnSearchFoldersAndFiles = new System.Windows.Forms.Button();
             this.form_btn_TreeCollapse = new System.Windows.Forms.Button();
             this.form_lblVolGroup = new System.Windows.Forms.Label();
             this.form_btnNavigate = new System.Windows.Forms.Button();
@@ -147,7 +147,7 @@ namespace SearchDirLists
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.timer_blink = new System.Windows.Forms.Timer(this.components);
             this.timer_DoTree = new System.Windows.Forms.Timer(this.components);
-            this.label6 = new System.Windows.Forms.Label();
+            this.label_About = new System.Windows.Forms.Label();
             this.form_tabControl.SuspendLayout();
             this.form_tabPageVolumes.SuspendLayout();
             this.form_tabPageBrowse.SuspendLayout();
@@ -520,7 +520,7 @@ namespace SearchDirLists
             this.splitContainer1.Panel1.Controls.Add(this.form_btnBack);
             this.splitContainer1.Panel1.Controls.Add(this.form_btnUp);
             this.splitContainer1.Panel1.Controls.Add(this.form_btnSearchFiles);
-            this.splitContainer1.Panel1.Controls.Add(this.form_searchFoldersAndFiles);
+            this.splitContainer1.Panel1.Controls.Add(this.form_btnSearchFoldersAndFiles);
             this.splitContainer1.Panel1.Controls.Add(this.form_btn_TreeCollapse);
             this.splitContainer1.Panel1.Controls.Add(this.form_lblVolGroup);
             this.splitContainer1.Panel1.Controls.Add(this.form_btnNavigate);
@@ -577,19 +577,19 @@ namespace SearchDirLists
             this.form_btnSearchFiles.TabIndex = 8;
             this.form_btnSearchFiles.Text = "Files";
             this.form_btnSearchFiles.UseVisualStyleBackColor = true;
-            this.form_btnSearchFiles.Click += new System.EventHandler(this.form_searchFoldersAndFiles_Click);
+            this.form_btnSearchFiles.Click += new System.EventHandler(this.form_btnSearchFoldersAndFiles_Click);
             // 
             // form_searchFoldersAndFiles
             // 
-            this.form_searchFoldersAndFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_searchFoldersAndFiles.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.form_searchFoldersAndFiles.Location = new System.Drawing.Point(725, 3);
-            this.form_searchFoldersAndFiles.Name = "form_searchFoldersAndFiles";
-            this.form_searchFoldersAndFiles.Size = new System.Drawing.Size(84, 23);
-            this.form_searchFoldersAndFiles.TabIndex = 7;
-            this.form_searchFoldersAndFiles.Text = "Folders && files";
-            this.form_searchFoldersAndFiles.UseVisualStyleBackColor = true;
-            this.form_searchFoldersAndFiles.Click += new System.EventHandler(this.form_searchFoldersAndFiles_Click);
+            this.form_btnSearchFoldersAndFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_btnSearchFoldersAndFiles.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.form_btnSearchFoldersAndFiles.Location = new System.Drawing.Point(725, 3);
+            this.form_btnSearchFoldersAndFiles.Name = "form_searchFoldersAndFiles";
+            this.form_btnSearchFoldersAndFiles.Size = new System.Drawing.Size(84, 23);
+            this.form_btnSearchFoldersAndFiles.TabIndex = 7;
+            this.form_btnSearchFoldersAndFiles.Text = "Folders && files";
+            this.form_btnSearchFoldersAndFiles.UseVisualStyleBackColor = true;
+            this.form_btnSearchFoldersAndFiles.Click += new System.EventHandler(this.form_btnSearchFoldersAndFiles_Click);
             // 
             // form_btn_TreeCollapse
             // 
@@ -1532,22 +1532,22 @@ namespace SearchDirLists
             this.timer_DoTree.Interval = 3000;
             this.timer_DoTree.Tick += new System.EventHandler(this.timer_DoTree_Tick);
             // 
-            // label6
+            // label_About
             // 
-            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(884, 6);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(81, 13);
-            this.label6.TabIndex = 1;
-            this.label6.Text = "Hit F1 for About";
-            this.label6.Click += new System.EventHandler(this.label6_Click);
+            this.label_About.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label_About.AutoSize = true;
+            this.label_About.Location = new System.Drawing.Point(884, 6);
+            this.label_About.Name = "label_About";
+            this.label_About.Size = new System.Drawing.Size(81, 13);
+            this.label_About.TabIndex = 1;
+            this.label_About.Text = "Hit F1 for About";
+            this.label_About.Click += new System.EventHandler(this.label_About_Click);
             // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(981, 431);
-            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label_About);
             this.Controls.Add(this.form_tabControl);
             this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -1722,7 +1722,7 @@ namespace SearchDirLists
         private System.Windows.Forms.Button form_btnSaveCopyDirs;
         private System.Windows.Forms.Button form_btnCopyGen;
         private System.Windows.Forms.Button form_btnCopyClear;
-        private System.Windows.Forms.Button form_searchFoldersAndFiles;
+        private System.Windows.Forms.Button form_btnSearchFoldersAndFiles;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button form_btnSearchFiles;
         private System.Windows.Forms.TabControl tabControl1;
@@ -1748,7 +1748,7 @@ namespace SearchDirLists
         private System.Windows.Forms.Button form_btnUp;
         private System.Windows.Forms.Button form_btnForward;
         private System.Windows.Forms.Button form_btnBack;
-        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label_About;
 
     }
 }

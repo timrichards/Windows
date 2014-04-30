@@ -45,6 +45,7 @@ namespace SearchDirLists
         List<TreeNode> m_listHistory = new List<TreeNode>();
         int m_nIxHistory = -1;
         bool m_bHistoryDefer = false;
+        bool m_bTreeViewIndirectSelChange = false;
 
         // initialized in constructor:
         Blink m_blink = null;
@@ -443,7 +444,9 @@ namespace SearchDirLists
                 treeNode = null;
             }
 
+            m_bTreeViewIndirectSelChange = true;
             form_treeCompare1.TopNode = form_treeCompare1.SelectedNode = treeNode;
+            m_bTreeViewIndirectSelChange = true;
             form_treeCompare2.TopNode = form_treeCompare2.SelectedNode = dictCompareDiffs.ToArray()[m_nCompareIndex].Value;
 
             if (form_treeCompare1.SelectedNode == null)
@@ -792,6 +795,7 @@ namespace SearchDirLists
             List<TreeNode> listTreeNodes = (List<TreeNode>)lv.SelectedItems[0].Tag;
 
             m_bPutPathInFindEditBox = true;
+            m_bTreeViewIndirectSelChange = true;
             form_treeView_Browse.SelectedNode = listTreeNodes[++nClickIndex % listTreeNodes.Count];
             form_treeView_Browse.Select();
         }
@@ -874,6 +878,7 @@ namespace SearchDirLists
 
                             if (treeNode != null)
                             {
+                                m_bTreeViewIndirectSelChange = true;
                                 treeNode.TreeView.SelectedNode = treeNode;
                                 ++m_nTreeFindTextChanged;
                                 m_blink.Stop();
@@ -910,6 +915,7 @@ namespace SearchDirLists
                                     }
                                     else
                                     {
+                                        m_bTreeViewIndirectSelChange = true;
                                         treeNode.TreeView.SelectedNode = treeNode;
                                     }
 
@@ -1064,6 +1070,7 @@ namespace SearchDirLists
             }
 
             m_bPutPathInFindEditBox = true;
+            m_bTreeViewIndirectSelChange = true;
 
             TreeNode treeNode = form_treeView_Browse.SelectedNode = (TreeNode)lv.SelectedItems[0].Tag;
 
@@ -1272,6 +1279,7 @@ namespace SearchDirLists
                     form_splitTreeFind.Panel2Collapsed = true;
                     form_splitCompareFiles.Panel2Collapsed = false;
                     form_splitClones.Panel2Collapsed = true;
+                    m_bTreeViewIndirectSelChange = true;
                     form_treeView_Browse.SelectedNode = m_nodeCompare2;
 
                     RootNodeDatum rootNodeDatum1 = (RootNodeDatum)m_nodeCompare1.Root().Tag;
@@ -1358,7 +1366,9 @@ namespace SearchDirLists
                     form_lblVolGroup.Font = new Font(m_FontVolGroupOrig, FontStyle.Regular);
                     m_bCompareMode = true;
                     tabControl_FileList.SelectedTab = tabPage_FileList;
+                    m_bTreeViewIndirectSelChange = true;
                     form_treeCompare1.SelectedNode = form_treeCompare1.Nodes[0];
+                    m_bTreeViewIndirectSelChange = true;
                     form_treeCompare2.SelectedNode = form_treeCompare2.Nodes[0];
                 }
             }
@@ -1482,6 +1492,7 @@ namespace SearchDirLists
                     {
                         TreeNode treeNode = m_arrayTreeFound[m_nTreeFindTextChanged % m_arrayTreeFound.Length];
 
+                        m_bTreeViewIndirectSelChange = true;
                         treeNode.TreeView.SelectedNode = treeNode;
                         ++m_nTreeFindTextChanged;
                         m_blink.Stop();
@@ -1504,6 +1515,7 @@ namespace SearchDirLists
 
                         if (treeNode != null)
                         {
+                            m_bTreeViewIndirectSelChange = true;
                             treeNode.TreeView.SelectedNode = treeNode;
                         }
                         else
@@ -1803,6 +1815,7 @@ namespace SearchDirLists
                 else
                 {
                     m_blink.Go();
+                    m_bTreeViewIndirectSelChange = true;
                     form_treeView_Browse.SelectedNode = m_nodeCompare1;
                     form_btnCompare.Enabled = true;
                 }
@@ -2005,7 +2018,7 @@ namespace SearchDirLists
         {
             if (treeNode.Tag is RootNodeDatum)
             {
-                TreeNode treeNode_A = new TreeNode();
+                TreeNode treeNode_A = new TreeNode();   // checked means VolumeView mode and necessitates History_Add() etc.
 
                 treeNode_A.Checked = ((RootNodeDatum)treeNode.Tag).VolumeView;
                 treeNode_A.Tag = treeNode;
@@ -2038,6 +2051,14 @@ namespace SearchDirLists
             }
 
             m_bHistoryDefer = false;
+
+            if ((m_bTreeViewIndirectSelChange == false)
+                && (e.Node.Parent == null))
+            {
+                ((RootNodeDatum)e.Node.Tag).VolumeView = true;
+            }
+
+            m_bTreeViewIndirectSelChange = false;
             form_tmapUserCtl.Render(e.Node);
 
             if (sender == form_treeCompare2)
@@ -2117,9 +2138,8 @@ namespace SearchDirLists
 
         void form_treeView_Browse_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar == 3)
+            if (e.KeyChar == 3)     // this actually means cancel (ctrl-C) in PC parlance. Keys.Cancel would misrepresent
             {
-                // Copy
                 CopyToClipboard();
                 e.Handled = true;
                 return;
@@ -2647,6 +2667,7 @@ namespace SearchDirLists
             }
 
             m_bPutPathInFindEditBox = true;
+            m_bTreeViewIndirectSelChange = true;
             treeNode.TreeView.SelectedNode = treeNode;
         }
 
@@ -2665,6 +2686,9 @@ namespace SearchDirLists
                 return;
             }
 
+            m_bPutPathInFindEditBox = true;
+            m_bTreeViewIndirectSelChange = true;
+
             if ((treeNode.Parent != null) && (treeNode.Parent.Parent == null))
             {
                 ((RootNodeDatum)treeNode.Parent.Tag).VolumeView = false;
@@ -2680,12 +2704,11 @@ namespace SearchDirLists
                 }
 
                 rootNodeDatum.VolumeView = true;
-                treeNode.TreeView.SelectedNode = null;    // to kick in a change selection event
+                treeNode.TreeView.SelectedNode = null;      // to kick in a change selection event
                 treeNode.TreeView.SelectedNode = treeNode;
                 return;
             }
 
-            m_bPutPathInFindEditBox = true;
             treeNode.TreeView.SelectedNode = treeNode.Parent;
         }
 
@@ -2720,6 +2743,7 @@ namespace SearchDirLists
                 m_nIxHistory = nIxHistory;
                 m_bHistoryDefer = true;
                 m_bPutPathInFindEditBox = true;
+                m_bTreeViewIndirectSelChange = true;
                 treeNode.TreeView.SelectedNode = treeNode;
                 return;
             }
@@ -2753,13 +2777,20 @@ namespace SearchDirLists
             }
 
             m_bPutPathInFindEditBox = true;
+            m_bTreeViewIndirectSelChange = true;
             m_strMaybeFile = form_tmapUserCtl.Tooltip_Click();
 
             if (m_strMaybeFile != null)
             {
+                m_bTreeViewIndirectSelChange = false;   // didn't hit a sel change
                 tabControl_FileList.SelectedTab = tabPage_FileList;
                 SelectFoundFile();
             }
+        }
+
+        private void form_tmapUserCtl_Leave(object sender, EventArgs e)
+        {
+            form_tmapUserCtl.ClearSelection();
         }
     }
 }

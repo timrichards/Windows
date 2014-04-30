@@ -1149,12 +1149,12 @@ namespace SearchDirLists
             // 
             this.form_tmapUserCtl.BackColor = System.Drawing.Color.Turquoise;
             this.form_tmapUserCtl.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.form_tmapUserCtl.Cursor = System.Windows.Forms.Cursors.Cross;
             this.form_tmapUserCtl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.form_tmapUserCtl.Location = new System.Drawing.Point(0, 0);
             this.form_tmapUserCtl.Name = "form_tmapUserCtl";
             this.form_tmapUserCtl.Size = new System.Drawing.Size(130, 121);
             this.form_tmapUserCtl.TabIndex = 0;
+            this.form_tmapUserCtl.Leave += new System.EventHandler(this.form_tmapUserCtl_Leave);
             this.form_tmapUserCtl.MouseUp += new System.Windows.Forms.MouseEventHandler(this.form_tmapUserCtl_MouseUp);
             this.form_tmapUserCtl.Resize += new System.EventHandler(this.ClearToolTip);
             // 

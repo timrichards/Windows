@@ -332,7 +332,7 @@ namespace SearchDirLists
 
             if (Site != null) // && Site.DesignMode)    // prevent bitmap from getting into the pesky resx
             {
-                BackColor = Color.Turquoise;          // litmus
+                BackColor = Color.Turquoise;            // litmus
                 return;
             }
 
@@ -352,7 +352,7 @@ namespace SearchDirLists
                     return false;
                 }
 
-                nPxPerSide = (int)(nWidth / 2.0);
+                nPxPerSide = (int)(nWidth * .75);
             }
 
             m_rectBitmap = new Rectangle(0, 0, nPxPerSide, nPxPerSide);
@@ -400,13 +400,13 @@ namespace SearchDirLists
             brush.CenterColor = Color.White;
             brush.SurroundColors = new Color[] { Color.FromArgb(0, 0, 0, 0) };
             e.Graphics.FillEllipse(brush, m_rectCenter);
-            brush.CenterColor = Color.White;
-            brush.SurroundColors = new Color[] { Color.Black };
             r.Inflate(-r.Width / 5, -r.Height / 5);
 
             Rectangle r_A = Rectangle.Ceiling(r);
             int nAnimFrame = (m_nAnimFrame %= 6) * 30;
 
+            brush.CenterColor = Color.White;
+            brush.SurroundColors = new Color[] { Color.Black };
             e.Graphics.FillPie(brush, r_A, 90 + nAnimFrame, 90);
             e.Graphics.FillPie(brush, r_A, 270 + nAnimFrame, 90);
             brush.CenterColor = Color.Black;
@@ -595,38 +595,33 @@ namespace SearchDirLists
                 nodeFree.ForeColor = Color.MediumSpringGreen;
 
                 NodeDatum nodeDatumUnread = new NodeDatum();
-                TreeNode nodeUnread = new TreeNode(parent_in.Text + " (unread data)");         // TODO: incorporate error list
-                long nUnreadLength = (long)rootNodeDatum.VolumeLength - (long)rootNodeDatum.VolumeFree - (long)rootNodeDatum.nTotalLength;
+                TreeNode nodeUnread = new TreeNode(parent_in.Text + " (unread data)");
                 ulong nVolumeLength = rootNodeDatum.VolumeLength;
+                long nUnreadLength = (long)nVolumeLength - (long)rootNodeDatum.VolumeFree - (long)rootNodeDatum.nTotalLength;
 
                 if (nUnreadLength < 0)
                 {
-                    // doesn't equal (long)rootNodeDatum.VolumeFree.
-                    // compare nTotalLength to end of file length.
-                    // compressed drive? hard links?
-
-                    nVolumeLength = rootNodeDatum.VolumeFree + rootNodeDatum.nTotalLength;
-                    nUnreadLength = 0;
-
-                    if (rootNodeDatum.VolumeFree <= 0)
-                    {
-                        break;
-                    }
+                    nVolumeLength = rootNodeDatum.VolumeFree + rootNodeDatum.nTotalLength;      // Faked length to make up for compression and hard links
+                    nodeDatumUnread.nTotalLength = 0;
+                }
+                else
+                {
+                    nodeDatumUnread.nTotalLength = nVolumeLength - rootNodeDatum.VolumeFree - rootNodeDatum.nTotalLength;
                 }
 
                 nodeDatumUnread.nTotalLength = (ulong)nUnreadLength;
                 nodeUnread.Tag = nodeDatumUnread;
                 nodeUnread.ForeColor = Color.MediumVioletRed;
                 listChildren = new List<TreeNode>();
-                listChildren.Add(parent_in);                            // parent added as child
-                listChildren.Add(nodeFree);
+                listChildren.Add(parent_in);                                // parent added as child, with two other nodes:
+                listChildren.Add(nodeFree);                                 // free space (color: spring green); and
 
                 if (nUnreadLength > 0)
                 {
-                    listChildren.Add(nodeUnread);
+                    listChildren.Add(nodeUnread);                           // unread guess, affected by compression and hard links (violet)
                 }
 
-                parent = new TreeNode(parent_in.Text + " (volume)");       // parent reassigned as volume
+                parent = new TreeNode(parent_in.Text + " (volume)");
 
                 NodeDatum nodeDatumVolume = new NodeDatum();
 

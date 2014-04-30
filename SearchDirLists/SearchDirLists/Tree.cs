@@ -24,10 +24,7 @@ namespace SearchDirLists
         internal uint nImmediateFiles = 0;
         internal uint nDirsWithFiles = 0;
 
-        internal DetailsDatum()
-        {
-        }
-
+        internal DetailsDatum() {}
         internal DetailsDatum(DetailsDatum in_datum)
         {
             nTotalLength = in_datum.nTotalLength;
@@ -167,7 +164,7 @@ namespace SearchDirLists
 
         internal bool m_bDifferentVols = false;
 
-        internal NodeDatum() { }
+        internal NodeDatum() {}
         internal NodeDatum(uint nPrevLineNo_in, uint nLineNo_in, ulong nLength_in)
         { nPrevLineNo = nPrevLineNo_in; nLineNo = nLineNo_in; nLength = nLength_in; }
 
@@ -217,7 +214,7 @@ namespace SearchDirLists
         {
             if (Object.ReferenceEquals(x, y)) return true;
 
-            return x != null && y != null && Utilities.StrValid(x.Name) && x.Name.Equals(y.Name);
+            return (x != null) && (y != null) && Utilities.StrValid(x.Name) && x.Name.Equals(y.Name);
         }
 
         public int GetHashCode(ListViewItem obj)
@@ -618,9 +615,13 @@ namespace SearchDirLists
                 }
 
                 TreeNode rootTreeNode = dirData.AddToTree(strVolumeName);
+                ulong nScannedLength = ulong.Parse(
+                    File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Length)).ToArray()[0]
+                    .Split('\t')[nColLENGTH]);
 
                 rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag, strSaveAs, m_volStrings.VolumeGroup, nVolFree, nVolLength);
                 TreeSubnodeDetails(rootTreeNode);
+                Debug.Assert(nScannedLength == ((RootNodeDatum)rootTreeNode.Tag).nTotalLength);
                 Console.WriteLine(strSaveAs + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
             }
 

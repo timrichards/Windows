@@ -281,20 +281,15 @@ namespace SearchDirLists
             m_MessageboxCallback = m_MessageboxCallback_;
         }
 
-        static bool static_bDebug = false;
-        internal static bool TestDebug() { static_bDebug = true; return false; }
         internal static bool Assert(double nLocation, bool bCondition)
         {
             if (bCondition) return true;
 
-            static_bDebug = false;
-            Debug.Assert(TestDebug());
-
-            if (static_bDebug == false)
-            {
-                m_MessageboxCallback_("Assertion failed at location " + nLocation + ". Please discuss this bug at http://sourceforge.net/projects/searchdirlists/.", "SearchDirLists Assertion Failure");
-            }
-
+#if (DEBUG)
+            Debug.Assert(false);
+#else
+            m_MessageboxCallback_("Assertion failed at location " + nLocation + ". Please discuss this bug at http://sourceforge.net/projects/searchdirlists/.", "SearchDirLists Assertion Failure");
+#endif
             return false;
         }
 

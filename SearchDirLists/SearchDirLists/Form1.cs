@@ -2818,6 +2818,10 @@ namespace SearchDirLists
         void Form1_Load(object sender, EventArgs e)
         {
             form_tmapUserCtl.TooltipAnchor = form_cbNavigate;
+
+#if (DEBUG)
+                MessageBox.Show("Debug mode.");
+#endif
         }
 
         void label_About_Click(object sender, EventArgs e)

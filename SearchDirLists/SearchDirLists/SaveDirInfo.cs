@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.IO;
-using System.Diagnostics;
 using System.Threading;
 using System.Runtime.InteropServices;
 
@@ -143,7 +142,7 @@ namespace SearchDirLists
 
                     String strOut = FormatString(strFile: fi.Name, dtCreated: fi.CreationTime, strAttributes: fi.Attributes.ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File);
 
-                    Debug.Assert(fi.Size >= 0);
+                    Utilities.Assert(fi.Size >= 0);
 
                     if (fi.Size > 0)
                     {
@@ -161,18 +160,18 @@ namespace SearchDirLists
                         strError1 = "Path Length: " + winDir.strAltFileName.Length.ToString();
                     }
 
-                    Debug.Assert(bHasLength == (nDirLength > 0));
+                    Utilities.Assert(bHasLength == (nDirLength > 0));
                     Win32.FileData di = new Win32.FileData(winDir);
 
                     if (winDir.strAltFileName.EndsWith(@":\"))
                     {
-                        Debug.Assert(di.IsValid == false);          // yes, yes...
-                        Debug.Assert(winDir.strAltFileName.Length == 3);
+                        Utilities.Assert(di.IsValid == false);          // yes, yes...
+                        Utilities.Assert(winDir.strAltFileName.Length == 3);
                         fs.WriteLine(FormatString(strDir: winDir.strAltFileName, nLength: nDirLength, strError1: strError1, strError2: strError2_Dir));
                     }
                     else
                     {
-                        Debug.Assert(di.IsValid);
+                        Utilities.Assert(di.IsValid);
                         fs.WriteLine(FormatString(strDir: winDir.strAltFileName, dtCreated: di.CreationTime, strAttributes: di.Attributes.ToString("X"), dtModified: di.LastWriteTime, nLength: nDirLength, strError1: strError1, strError2: strError2_Dir));
                     }
                 }
@@ -345,8 +344,8 @@ namespace SearchDirLists
 
             if (nLengthTotal > 0)
             {
-                Debug.Assert(strText == null);
-                Debug.Assert(bSuccess == false);
+                Utilities.Assert(strText == null);
+                Utilities.Assert(bSuccess == false);
 
                 strText = nFilesTotal.ToString("###,###,###,###") + " (" + Utilities.FormatSize(nLengthTotal) + ") SD " + nFilesDiff.ToString("#0.0");
             }

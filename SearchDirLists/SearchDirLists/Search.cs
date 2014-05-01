@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using System.Collections;
-using System.Diagnostics;
 using System.Threading;
 
 namespace SearchDirLists
@@ -193,11 +189,11 @@ namespace SearchDirLists
 
                 if (searchResultDir != null)
                 {
-                    Debug.Assert(searchResultDir.StrDir == null);
+                    Utilities.Assert(searchResultDir.StrDir == null);
                 }
                 else
                 {
-                    Debug.Assert(searchResultDir == null);
+                    Utilities.Assert(searchResultDir == null);
                 }
 
                 if (listResults.Count > 0)
@@ -308,7 +304,7 @@ namespace SearchDirLists
         {
             if (listResults.Count <= 0)
             {
-                Debug.Assert(false); // caller takes care of this
+                Utilities.Assert(false); // caller takes care of this
                 return;
             }
 

@@ -276,9 +276,17 @@ namespace SearchDirLists
 
         protected Utilities()
         {
-            Debug.Assert(m_MessageboxCallback_ != null);
+            Utilities.Assert(m_MessageboxCallback_ != null);
 
             m_MessageboxCallback = m_MessageboxCallback_;
+        }
+
+        internal static bool Assert(bool bCondition)
+        {
+            if (bCondition) return true;
+
+            Debug.Assert(false);
+            return false;
         }
 
         internal static void SetMessageBoxDelegate(MessageBoxDelegate messageBoxCallback)
@@ -361,12 +369,12 @@ namespace SearchDirLists
 
                 if (strPath == strCapDrive.ToUpper())
                 {
-                    Debug.Assert(strDirName == null);
+                    Utilities.Assert(strDirName == null);
                 }
                 else
                 {
                     strPath = strPath.TrimEnd(Path.DirectorySeparatorChar);
-                    Debug.Assert(StrValid(strDirName));
+                    Utilities.Assert(StrValid(strDirName));
                 }
             }
             else if (bFailOnDirectory)
@@ -474,7 +482,7 @@ namespace SearchDirLists
 
             if (StrValid(strDir + strFile + strCreated + strModified + strAttributes + strLength + strError1 + strError2) == false)
             {
-                Debug.Assert(nHeader is int);
+                Utilities.Assert(nHeader is int);
 
                 if (nHeader == 0)
                 {
@@ -492,7 +500,7 @@ namespace SearchDirLists
             {
                 strError1 += " Trailing whitespace";
                 strError1.Trim();
-                Debug.Assert(StrValid(strDir) || StrValid(strFile));
+                Utilities.Assert(StrValid(strDir) || StrValid(strFile));
                 bDbgCheck = true;
             }
 
@@ -505,7 +513,7 @@ namespace SearchDirLists
 
                 if ((strArray.Length > 5) && strArray[5].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
                 {
-                    Debug.Assert(false);
+                    Utilities.Assert(false);
                 }
             }
 
@@ -597,7 +605,7 @@ namespace SearchDirLists
 
                         if (strLine == m_str_HEADER_01)
                         {
-                            Debug.Assert(nLineNo == 1);
+                            Utilities.Assert(nLineNo == 1);
                             file_out.WriteLine(FormatLine(m_strLINETYPE_Version, nLineNo, m_str_HEADER));
                             continue;
                         }
@@ -613,7 +621,7 @@ namespace SearchDirLists
                         }
                         else if (strLine == m_str_DRIVE_01)
                         {
-                            Debug.Assert(nLineNo == 4);
+                            Utilities.Assert(nLineNo == 4);
                             file_out.WriteLine(FormatLine(m_strLINETYPE_Comment, nLineNo, m_str_DRIVE));
 
                             for (int i = 0; i < 8; ++i)
@@ -642,7 +650,7 @@ namespace SearchDirLists
                         }
                         else if (strLine.StartsWith(m_str_START_01))
                         {
-                            Debug.Assert(nLineNo == 16);
+                            Utilities.Assert(nLineNo == 16);
                             file_out.WriteLine(FormatLine(m_strLINETYPE_Start, nLineNo, m_str_START));
                             continue;
                         }
@@ -683,7 +691,7 @@ namespace SearchDirLists
                         }
                         else if (strDir.Contains(":" + Path.DirectorySeparatorChar) == false)
                         {
-                            Debug.Assert(false);        // all that's left is directories
+                            Utilities.Assert(false);        // all that's left is directories
                             continue;
                         }
 

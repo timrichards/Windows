@@ -2,10 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Threading;
 using System.Drawing;
-using System.ComponentModel;
 
 namespace SearchDirLists
 {
@@ -52,7 +50,7 @@ namespace SearchDirLists
 
         void TreeDoneCallback()
         {
-            Debug.Assert(m_listTreeNodes.Count == 0);
+            Utilities.Assert(m_listTreeNodes.Count == 0);
 
             TreeDone treeDone = new TreeDone(form_treeView_Browse, m_hashCache,
                 form_lvClones, form_lvSameVol, form_lvUnique,
@@ -171,7 +169,7 @@ namespace SearchDirLists
             if ((lv2.Items.Count > 0) &&
                 (((LVitemFileTag)lv2.Items[0].Tag).StrCompareDir != treeNode2.Text))
             {
-                Debug.Assert(false);
+                Utilities.Assert(false);
                 return;
             }
 
@@ -286,8 +284,8 @@ namespace SearchDirLists
             treeNode.NodeFont = new Font(form_treeView_Browse.Font, FontStyle.Bold | FontStyle.Underline);
             form_treeView_Browse.Nodes.Add(treeNode);
             form_treeView_Browse.Enabled = false;
-            Debug.Assert(m_listRootNodes.Count == 0);
-            Debug.Assert(m_list_lvIgnore.Count == 0);
+            Utilities.Assert(m_listRootNodes.Count == 0);
+            Utilities.Assert(m_list_lvIgnore.Count == 0);
 
             foreach (ListViewItem lvItem in form_lvIgnoreList.Items)
             {

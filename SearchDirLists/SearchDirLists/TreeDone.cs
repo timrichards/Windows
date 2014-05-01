@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.IO;
-using System.Diagnostics;
-using System.Threading;
 using System.Drawing;
 
 namespace SearchDirLists
@@ -52,7 +49,7 @@ namespace SearchDirLists
 
                     if ((treeNode.ForeColor == Color.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
                     {
-                        Debug.Assert((nodeDatum.m_listClones != null) && (nodeDatum.m_bDifferentVols == false));
+                        Utilities.Assert((nodeDatum.m_listClones != null) && (nodeDatum.m_bDifferentVols == false));
                         m_listSameVol.Add(treeNode);
                     }
 
@@ -164,9 +161,9 @@ namespace SearchDirLists
 
                 if (dictClones.ContainsKey(nodeDatum.Key))
                 {
-                    Debug.Assert(dictClones[nodeDatum.Key] == listClones);
-                    Debug.Assert(((NodeDatum)dictClones[nodeDatum.Key][0].Tag).m_bDifferentVols == nodeDatum.m_bDifferentVols);
-                    Debug.Assert(dictClones[nodeDatum.Key][0].ForeColor == treeNode.ForeColor);
+                    Utilities.Assert(dictClones[nodeDatum.Key] == listClones);
+                    Utilities.Assert(((NodeDatum)dictClones[nodeDatum.Key][0].Tag).m_bDifferentVols == nodeDatum.m_bDifferentVols);
+                    Utilities.Assert(dictClones[nodeDatum.Key][0].ForeColor == treeNode.ForeColor);
                 }
                 else
                 {
@@ -177,14 +174,14 @@ namespace SearchDirLists
                     TreeNode rootNode = treeNode.Root();
                     RootNodeDatum rootNodeDatum = (RootNodeDatum)rootNode.Tag;
 
-                    Debug.Assert(treeNode.ForeColor == Color.Empty);
+                    Utilities.Assert(treeNode.ForeColor == Color.Empty);
                     treeNode.ForeColor = Color.Firebrick;
 
                     bool bDifferentVols = false;
 
                     foreach (TreeNode subnode in listClones)
                     {
-                        Debug.Assert(((NodeDatum)subnode.Tag).Key == nodeDatum.Key);
+                        Utilities.Assert(((NodeDatum)subnode.Tag).Key == nodeDatum.Key);
 
                         TreeNode rootNode_A = subnode.Root();
 
@@ -314,7 +311,7 @@ namespace SearchDirLists
 
             if ((nodeDatum_A.m_lvItem != null) && (nodeDatum_A.m_lvItem.ListView != null)) // the ignore list
             {
-                Debug.Assert(parentNode.ForeColor == Color.DarkGray);
+                Utilities.Assert(parentNode.ForeColor == Color.DarkGray);
                 nodeDatum_A.m_lvItem = null;
                 parentNode.ForeColor = Color.Empty;
             }
@@ -357,7 +354,7 @@ namespace SearchDirLists
 
                 if (listNodes.Count < 1)
                 {
-                    Debug.Assert(false);
+                    Utilities.Assert(false);
                     continue;
                 }
 
@@ -398,7 +395,7 @@ namespace SearchDirLists
                     {
                         NodeDatum nodeDatum = ((NodeDatum)treeNode.Tag);
 
-                        Debug.Assert(nodeDatum.nTotalLength > 100 * 1024);
+                        Utilities.Assert(nodeDatum.nTotalLength > 100 * 1024);
 
                         if (listNodes.Contains(treeNode.Parent) == false)
                         {
@@ -459,7 +456,7 @@ namespace SearchDirLists
 
                 if (nClones <= 0)
                 {
-                    Debug.Assert(false);
+                    Utilities.Assert(false);
                     continue;
                 }
 
@@ -498,7 +495,7 @@ namespace SearchDirLists
                 }
 
                 lvItem.Text = nameNode.Text;
-                Debug.Assert(Utilities.StrValid(lvItem.Text));
+                Utilities.Assert(Utilities.StrValid(lvItem.Text));
                 listLVitems.Add(lvItem);
             }
 
@@ -511,7 +508,7 @@ namespace SearchDirLists
             {
                 TreeNode treeNode = listNodes.Value;
 
-                Debug.Assert(Utilities.StrValid(treeNode.Text));
+                Utilities.Assert(Utilities.StrValid(treeNode.Text));
 
                 ListViewItem lvItem = new ListViewItem(treeNode.Text);
 
@@ -519,7 +516,7 @@ namespace SearchDirLists
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
-                Debug.Assert(nodeDatum.nImmediateFiles > 0);
+                Utilities.Assert(nodeDatum.nImmediateFiles > 0);
 
                 TreeNode parentNode = treeNode.Parent;
 
@@ -542,7 +539,7 @@ namespace SearchDirLists
 
                 treeNode.ForeColor = lvItem.ForeColor = Color.Red;
                 listLVunique.Add(lvItem);
-                Debug.Assert(nodeDatum.m_lvItem == null);
+                Utilities.Assert(nodeDatum.m_lvItem == null);
                 nodeDatum.m_lvItem = lvItem;
             }
 
@@ -574,13 +571,13 @@ namespace SearchDirLists
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
-                Debug.Assert(Utilities.StrValid(treeNode.Text));
+                Utilities.Assert(Utilities.StrValid(treeNode.Text));
 
                 int nClones = nodeDatum.m_listClones.Count;
 
                 if (nClones <= 0)
                 {
-                    Debug.Assert(false);
+                    Utilities.Assert(false);
                 }
 
                 String str_nClones = null;
@@ -613,11 +610,11 @@ namespace SearchDirLists
                 form_treeView_Browse.Enabled = true;
                 form_treeView_Browse.CheckBoxes = m_bCheckboxes;
                 form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
-                Debug.Assert(form_lvClones.Items.Count == 0);
+                Utilities.Assert(form_lvClones.Items.Count == 0);
                 form_lvClones.Items.AddRange(listLVitems.ToArray());
-                Debug.Assert(form_lvUnique.Items.Count == 0);
+                Utilities.Assert(form_lvUnique.Items.Count == 0);
                 form_lvUnique.Items.AddRange(listLVunique.ToArray());
-                Debug.Assert(form_lvSameVol.Items.Count == 0);
+                Utilities.Assert(form_lvSameVol.Items.Count == 0);
                 form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
                 form_treeView_Browse.SelectedNode = m_listRootNodes[0];
             }

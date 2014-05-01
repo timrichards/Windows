@@ -879,18 +879,9 @@ namespace SearchDirLists
 
         void lvClonesClick(ListView lv, ref int nClickIndex)
         {
-            if (lv.SelectedItems.Count == 0)
+            if (LVMarkerClick(lv) == false)
             {
                 return;
-            }
-
-            if (lv.SelectedItems[0].Tag == null)
-            {
-                // marker item
-                ListViewItem lvItem = lv.Items[lv.SelectedItems[0].Index + 1];
-
-                lvItem.Selected = true;
-                lvItem.Focused = true;
             }
 
             List<TreeNode> listTreeNodes = (List<TreeNode>)lv.SelectedItems[0].Tag;
@@ -899,6 +890,37 @@ namespace SearchDirLists
             m_bTreeViewIndirectSelChange = true;
             form_treeView_Browse.SelectedNode = listTreeNodes[++nClickIndex % listTreeNodes.Count];
             form_treeView_Browse.Select();
+        }
+
+        bool LVMarkerClick(ListView lv)
+        {
+            if (lv.SelectedItems.Count <= 0)
+            {
+                return false;
+            }
+
+            if (lv.SelectedItems[0].Tag == null)
+            {
+                // marker item
+                int nIx = lv.SelectedItems[0].Index + 1;
+
+                if (nIx >= lv.Items.Count)
+                {
+                    nIx -= 2;
+
+                    if (nIx < 0)
+                    {
+                        return false;
+                    }
+                }
+
+                ListViewItem lvItem = lv.Items[nIx];
+
+                lvItem.Selected = true;
+                lvItem.Focused = true;
+            }
+
+            return true;
         }
 
         void MessageboxCallback(String strMessage, String strTitle)
@@ -2593,22 +2615,7 @@ namespace SearchDirLists
 
         void form_lv_Unique_MouseClick(object sender, MouseEventArgs e)
         {
-            if (form_lvUnique.SelectedItems.Count <= 0)
-            {
-                return;
-            }
-
-            if (form_lvUnique.SelectedItems[0].Tag == null)
-            {
-                // marker item
-                form_lvUnique.Select();
-
-                ListViewItem lvItem = form_lvUnique.Items[form_lvUnique.SelectedItems[0].Index + 1];
-
-                lvItem.Selected = true;
-                lvItem.Focused = true;
-                return;
-            }
+            LVMarkerClick(form_lvUnique);
         }
 
         void form_lv_Volumes_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)

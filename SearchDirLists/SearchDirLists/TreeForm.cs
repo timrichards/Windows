@@ -50,7 +50,7 @@ namespace SearchDirLists
 
         void TreeDoneCallback()
         {
-            Utilities.Assert(m_listTreeNodes.Count == 0);
+            Utilities.Assert(1304.5304, m_listTreeNodes.Count == 0);
 
             TreeDone treeDone = new TreeDone(form_treeView_Browse, m_hashCache,
                 form_lvClones, form_lvSameVol, form_lvUnique,
@@ -169,7 +169,7 @@ namespace SearchDirLists
             if ((lv2.Items.Count > 0) &&
                 (((LVitemFileTag)lv2.Items[0].Tag).StrCompareDir != treeNode2.Text))
             {
-                Utilities.Assert(false);
+                Utilities.Assert(1304.5301, false);
                 return;
             }
 
@@ -284,8 +284,8 @@ namespace SearchDirLists
             treeNode.NodeFont = new Font(form_treeView_Browse.Font, FontStyle.Bold | FontStyle.Underline);
             form_treeView_Browse.Nodes.Add(treeNode);
             form_treeView_Browse.Enabled = false;
-            Utilities.Assert(m_listRootNodes.Count == 0);
-            Utilities.Assert(m_list_lvIgnore.Count == 0);
+            Utilities.Assert(1304.5302, m_listRootNodes.Count == 0);
+            Utilities.Assert(1304.5303, m_list_lvIgnore.Count == 0);
 
             foreach (ListViewItem lvItem in form_lvIgnoreList.Items)
             {

@@ -288,7 +288,7 @@ namespace SearchDirLists
             InitializeComponent();
 
             // Assert String-lookup form items exist
-            //    Utilities.Assert(context_rclick_node.Items[m_strMARKFORCOPY] != null);
+            //    Utilities.Assert(1300.1316, context_rclick_node.Items[m_strMARKFORCOPY] != null);
 
             m_blink = new Blink(timer_blink, form_cbNavigate);
             m_strBtnTreeCollapseOrig = form_btn_TreeCollapse.Text;
@@ -749,7 +749,7 @@ namespace SearchDirLists
 
                     if (nPathLevelLength > 1)
                     {
-                        Utilities.Assert((nPathLevelLength - nCount) > 0);
+                        Utilities.Assert(1300.1301, (nPathLevelLength - nCount) > 0);
                         nPathLevelLength -= nCount;
                     }
                 }
@@ -1036,7 +1036,7 @@ namespace SearchDirLists
             if (treeNode == null)
             {
                 // compare mode
-                Utilities.Assert(treeView != form_treeView_Browse);
+                Utilities.Assert(1300.1302, treeView != form_treeView_Browse);
 
                 if (treeView == form_treeView_Browse)
                 {
@@ -1199,7 +1199,7 @@ namespace SearchDirLists
                     }
                     else if (form_cbNavigate.Text.Contains(Path.DirectorySeparatorChar))
                     {
-                        Utilities.Assert(form_cbNavigate.Text.EndsWith(Path.DirectorySeparatorChar.ToString()) == false);
+                        Utilities.Assert(1300.1303, form_cbNavigate.Text.EndsWith(Path.DirectorySeparatorChar.ToString()) == false);
 
                         int nPos = form_cbNavigate.Text.LastIndexOf(Path.DirectorySeparatorChar);
                         String strMaybePath = form_cbNavigate.Text.Substring(0, nPos);
@@ -1214,7 +1214,7 @@ namespace SearchDirLists
                         }
                         else
                         {
-                            Utilities.Assert(m_listSearchResults.Count <= 0);
+                            Utilities.Assert(1300.1304, m_listSearchResults.Count <= 0);
                             SearchResultsCallback_Fail();
                         }
                     }
@@ -1378,7 +1378,7 @@ namespace SearchDirLists
                     form_cbVolumeName.Text = String.Empty;
                     m_blink.Go(form_cbPath, clr: Color.Yellow, Once: true);
                     form_cbPath.Text = String.Empty;
-                    Utilities.Assert(SaveFields(false));
+                    Utilities.Assert(1300.1305, SaveFields(false));
                 }
             }
 
@@ -1496,8 +1496,8 @@ namespace SearchDirLists
             else
             {
                 form_cbNavigate.BackColor = Color.Empty;
-                Utilities.Assert(form_chkCompare1.Checked);
-                Utilities.Assert(Utilities.StrValid(m_strCompare1));
+                Utilities.Assert(1300.1306, form_chkCompare1.Checked);
+                Utilities.Assert(1300.1307, Utilities.StrValid(m_strCompare1));
 
                 String strCompare2 = form_cbNavigate.Text;
                 bool bError = (Utilities.StrValid(strCompare2) == false);
@@ -1832,7 +1832,7 @@ namespace SearchDirLists
 
             if (lvSelect.Count > 1)
             {
-                Utilities.Assert(false);    // guaranteed by selection logic
+                Utilities.Assert(1300.1308, false);    // guaranteed by selection logic
                 MessageBox.Show("Only one file can be modified at a time.".PadRight(100), "Modify file");
                 return false;
             }
@@ -1868,7 +1868,7 @@ namespace SearchDirLists
 
                 if (str.Length <= 0)
                 {
-                    Utilities.Assert(false);
+                    Utilities.Assert(1300.1309, false);
                     break;
                 }
 
@@ -1932,7 +1932,7 @@ namespace SearchDirLists
                         }
                         else
                         {
-                            Utilities.Assert(sbLine.ToString().Split('\t').Length == 2);
+                            Utilities.Assert(1300.13101, sbLine.ToString().Split('\t').Length == 2);
                             sbLine.Append('\t');
                             sbLine.Append(strVolumeName);
                         }
@@ -2596,7 +2596,7 @@ namespace SearchDirLists
             {
                 if (m_bCompareMode)
                 {
-                    Utilities.Assert(false);    // the listviewer shouldn't even be visible
+                    Utilities.Assert(1300.1311, false);    // the listviewer shouldn't even be visible
                     return;
                 }
 
@@ -2681,7 +2681,7 @@ namespace SearchDirLists
                     m_listHistory.RemoveRange(m_nIxHistory, m_listHistory.Count - m_nIxHistory - 1);
                 }
 
-                Utilities.Assert(m_nIxHistory == (m_listHistory.Count - 1));
+                Utilities.Assert(1300.1312, m_nIxHistory == (m_listHistory.Count - 1));
 
                 if ((m_nIxHistory < 0) || (History_Equals(e.Node) == false))
                 {
@@ -2703,7 +2703,7 @@ namespace SearchDirLists
 
             if (sender == form_treeCompare2)
             {
-                Utilities.Assert(m_bCompareMode);
+                Utilities.Assert(1300.1313, m_bCompareMode);
                 form_lvFileCompare.Items.Clear();
                 form_lvDetailVol.Items.Clear();
             }
@@ -2720,12 +2720,12 @@ namespace SearchDirLists
 
             TreeNode rootNode = e.Node.Root();
 
-            Utilities.Assert((new object[] { form_treeCompare1, form_treeCompare2 }.Contains(sender)) == m_bCompareMode);
+            Utilities.Assert(1300.1314, (new object[] { form_treeCompare1, form_treeCompare2 }.Contains(sender)) == m_bCompareMode);
             DoTreeSelect(e.Node);
 
             String strNode = e.Node.Text;
 
-            Utilities.Assert(Utilities.StrValid(strNode));
+            Utilities.Assert(1300.1315, Utilities.StrValid(strNode));
 
             if (m_bCompareMode)
             {

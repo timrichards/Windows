@@ -189,11 +189,11 @@ namespace SearchDirLists
 
                 if (searchResultDir != null)
                 {
-                    Utilities.Assert(searchResultDir.StrDir == null);
+                    Utilities.Assert(1307.8303, searchResultDir.StrDir == null);
                 }
                 else
                 {
-                    Utilities.Assert(searchResultDir == null);
+                    Utilities.Assert(1307.8301, searchResultDir == null);
                 }
 
                 if (listResults.Count > 0)
@@ -304,7 +304,7 @@ namespace SearchDirLists
         {
             if (listResults.Count <= 0)
             {
-                Utilities.Assert(false); // caller takes care of this
+                Utilities.Assert(1307.8302, false); // caller takes care of this
                 return;
             }
 

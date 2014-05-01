@@ -142,7 +142,7 @@ namespace SearchDirLists
 
                     String strOut = FormatString(strFile: fi.Name, dtCreated: fi.CreationTime, strAttributes: fi.Attributes.ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File);
 
-                    Utilities.Assert(fi.Size >= 0);
+                    Utilities.Assert(1306.7307, fi.Size >= 0);
 
                     if (fi.Size > 0)
                     {
@@ -160,18 +160,18 @@ namespace SearchDirLists
                         strError1 = "Path Length: " + winDir.strAltFileName.Length.ToString();
                     }
 
-                    Utilities.Assert(bHasLength == (nDirLength > 0));
+                    Utilities.Assert(1306.7301, bHasLength == (nDirLength > 0));
                     Win32.FileData di = new Win32.FileData(winDir);
 
                     if (winDir.strAltFileName.EndsWith(@":\"))
                     {
-                        Utilities.Assert(di.IsValid == false);          // yes, yes...
-                        Utilities.Assert(winDir.strAltFileName.Length == 3);
+                        Utilities.Assert(1306.7302, di.IsValid == false);          // yes, yes...
+                        Utilities.Assert(1306.7303, winDir.strAltFileName.Length == 3);
                         fs.WriteLine(FormatString(strDir: winDir.strAltFileName, nLength: nDirLength, strError1: strError1, strError2: strError2_Dir));
                     }
                     else
                     {
-                        Utilities.Assert(di.IsValid);
+                        Utilities.Assert(1306.7304, di.IsValid);
                         fs.WriteLine(FormatString(strDir: winDir.strAltFileName, dtCreated: di.CreationTime, strAttributes: di.Attributes.ToString("X"), dtModified: di.LastWriteTime, nLength: nDirLength, strError1: strError1, strError2: strError2_Dir));
                     }
                 }
@@ -344,8 +344,8 @@ namespace SearchDirLists
 
             if (nLengthTotal > 0)
             {
-                Utilities.Assert(strText == null);
-                Utilities.Assert(bSuccess == false);
+                Utilities.Assert(1306.7305, strText == null);
+                Utilities.Assert(1306.7306, bSuccess == false);
 
                 strText = nFilesTotal.ToString("###,###,###,###") + " (" + Utilities.FormatSize(nLengthTotal) + ") SD " + nFilesDiff.ToString("#0.0");
             }

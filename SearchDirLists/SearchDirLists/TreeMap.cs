@@ -90,7 +90,7 @@ namespace SearchDirLists
 
             foreach (String[] arrLine in listFiles)
             {
-                Utilities.Assert(iterUlong.MoveNext());
+                Utilities.Assert(1302.3316, iterUlong.MoveNext());
                 NodeDatum nodeDatum_A = new NodeDatum();
 
                 nTotalLength += nodeDatum_A.nTotalLength = iterUlong.Current;
@@ -115,7 +115,7 @@ namespace SearchDirLists
             NodeDatum nodeDatum = (NodeDatum)parent.Tag;
             NodeDatum nodeDatum_B = new NodeDatum();
 
-            Utilities.Assert(nTotalLength == nodeDatum.nLength);
+            Utilities.Assert(1302.3301, nTotalLength == nodeDatum.nLength);
             nodeDatum_B.nTotalLength = nTotalLength;
             nodeDatum_B.TreeMapRect = nodeDatum.TreeMapRect;
             nodeFileList.Tag = nodeDatum_B;
@@ -343,7 +343,7 @@ namespace SearchDirLists
             if (nPxPerSide == -1)
             {
                 int nWidth = m_rectBitmap.Size.Width;
-                Utilities.Assert(nWidth > 32);
+                Utilities.Assert(1302.3302, nWidth > 32);
 
                 if (nWidth <= 32)
                 {
@@ -501,8 +501,8 @@ namespace SearchDirLists
             bool bStart = false
         )
         {
-            Utilities.Assert(rc.Width >= 0);
-	        Utilities.Assert(rc.Height >= 0);
+            Utilities.Assert(1302.3303, rc.Width >= 0);
+            Utilities.Assert(1302.3304, rc.Height >= 0);
 
             Graphics graphics = m_bg.Graphics;
             int gridWidth = m_bGrid ? 1 : 0;
@@ -709,7 +709,7 @@ namespace SearchDirLists
                 for (int i=0; i < childrenPerRow[row]; i++, c++)
 		        {
                     TreeNode child = listChildren[c];
-			        Utilities.Assert(childWidth[c] >= 0);
+                    Utilities.Assert(1302.3305, childWidth[c] >= 0);
 			        double fRight= left + childWidth[c] * width;
 			        int right= (int)fRight;
 
@@ -744,10 +744,10 @@ namespace SearchDirLists
 
 			        left= fRight;
 		        }
-		        // This asserts due to rounding error: Utilities.Assert(left == (horizontalRows ? rc.Right : rc.Bottom));
+                // This asserts due to rounding error: Utilities.Assert(1302.3306, left == (horizontalRows ? rc.Right : rc.Bottom));
 		        top= fBottom;
 	        }
-	        // This asserts due to rounding error: Utilities.Assert(top == (horizontalRows ? rc.Bottom : rc.Right));
+            // This asserts due to rounding error: Utilities.Assert(1302.3307, top == (horizontalRows ? rc.Bottom : rc.Right));
             return true;
         }
 
@@ -755,10 +755,10 @@ namespace SearchDirLists
             List<TreeNode> listChildren)
         {
             const double _minProportion = 0.4;
-	        Utilities.Assert(_minProportion < 1);
+            Utilities.Assert(1302.3308, _minProportion < 1);
 
-            Utilities.Assert(nextChild < listChildren.Count);
-	        Utilities.Assert(width >= 1.0);
+            Utilities.Assert(1302.3309, nextChild < listChildren.Count);
+            Utilities.Assert(1302.33101, width >= 1.0);
 
 	        double mySize= (double)((NodeDatum)parent.Tag).nTotalLength;
 	        ulong sizeUsed= 0;
@@ -770,8 +770,8 @@ namespace SearchDirLists
                 ulong childSize = ((NodeDatum)listChildren[i].Tag).nTotalLength;
 		        sizeUsed+= childSize;
 		        double virtualRowHeight= sizeUsed / mySize;
-		        Utilities.Assert(virtualRowHeight > 0);
-		        Utilities.Assert(virtualRowHeight <= 1);
+                Utilities.Assert(1302.3311, virtualRowHeight > 0);
+                Utilities.Assert(1302.3312, virtualRowHeight <= 1);
 		
 		        // Rectangle(mySize)    = width * 1.0
 		        // Rectangle(childSize) = childWidth * virtualRowHeight
@@ -781,7 +781,7 @@ namespace SearchDirLists
 
 		        if (childWidth / virtualRowHeight < _minProportion)
 		        {
-			        Utilities.Assert(i > nextChild); // because width >= 1 and _minProportion < 1.
+                    Utilities.Assert(1302.3313, i > nextChild); // because width >= 1 and _minProportion < 1.
 			        // For the first child we have:
 			        // childWidth / rowHeight
 			        // = childSize / mySize * width / rowHeight / rowHeight
@@ -794,7 +794,7 @@ namespace SearchDirLists
 		        rowHeight= virtualRowHeight;
 	        }
 
-	        Utilities.Assert(i > nextChild);
+            Utilities.Assert(1302.3314, i > nextChild);
 
 	        // Now i-1 is the last child used
 	        // and rowHeight is the height of the row.
@@ -808,7 +808,7 @@ namespace SearchDirLists
 		        double rowSize= mySize * rowHeight;
                 double childSize = (double)((NodeDatum)listChildren[nextChild + i].Tag).nTotalLength;
 		        double cw= childSize / rowSize;
-		        Utilities.Assert(cw >= 0);
+                Utilities.Assert(1302.3315, cw >= 0);
 		        arrChildWidth[nextChild + i]= cw;
 	        }
 

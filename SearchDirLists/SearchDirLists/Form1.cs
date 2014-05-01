@@ -1116,6 +1116,12 @@ namespace SearchDirLists
                     return false;
                 }
 
+                if (Directory.Exists(m_strSaveAs))
+                {
+                    FormError(form_cbSaveAs, "Must specify save filename. Only directory entered.", "Save Fields");
+                    return false;
+                }
+
                 if (FormatPath(form_cbSaveAs, ref m_strSaveAs, bFailOnDirectory) == false)
                 {
                     return false;

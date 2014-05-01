@@ -54,7 +54,6 @@ namespace SearchDirLists
         {
             m_volStrings = volStrings;
             m_statusCallback = statusCallback;
-            m_timerStatus = new System.Threading.Timer(new TimerCallback(SaveDirListing_TimerCallback), null, 1000, 1000);
         }
 
         private void WriteHeader(TextWriter fs, String strVolumeName, String strPath)
@@ -187,12 +186,6 @@ namespace SearchDirLists
 
         void Go()
         {
-            Go_A();
-            m_timerStatus.Dispose();
-        }
-
-        void Go_A()
-        {
             String strVolumeName = m_volStrings.VolumeName;
             String strPath = m_volStrings.StrPath;
             String strSaveAs = m_volStrings.SaveAs;
@@ -227,7 +220,10 @@ namespace SearchDirLists
                 fs.WriteLine(FormatString(nHeader: 0));
                 fs.WriteLine(FormatString(nHeader: 1));
                 fs.WriteLine(m_str_START_01 + " " + DateTime.Now.ToString());
+                m_timerStatus = new System.Threading.Timer(new TimerCallback(SaveDirListing_TimerCallback), null, 1000, 1000);
                 TraverseTree(fs, strPath);
+                m_timerStatus.Dispose();
+                m_timerStatus = null;
                 fs.WriteLine(m_str_END_01 + " " + DateTime.Now.ToString());
                 fs.WriteLine();
                 fs.WriteLine(m_str_ERRORS_LOC_01);

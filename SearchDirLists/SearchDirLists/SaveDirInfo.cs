@@ -187,6 +187,12 @@ namespace SearchDirLists
 
         void Go()
         {
+            Go_A();
+            m_timerStatus.Dispose();
+        }
+
+        void Go_A()
+        {
             String strVolumeName = m_volStrings.VolumeName;
             String strPath = m_volStrings.StrPath;
             String strSaveAs = m_volStrings.SaveAs;
@@ -201,14 +207,14 @@ namespace SearchDirLists
             if (Directory.Exists(strPath) == false)
             {
                 m_statusCallback(m_volStrings.Index, "Not saved.");
-                m_MessageboxCallback("Source Path does not exist.                  ", "Save Directory Listing");
+                m_MessageboxCallback("Source Path does not exist.".PadRight(100), "Save Directory Listing");
                 return;
             }
 
             if (StrValid(strSaveAs) == false)
             {
                 m_statusCallback(m_volStrings.Index, "Not saved.");
-                m_MessageboxCallback("Must specify save filename.                  ", "Save Directory Listing");
+                m_MessageboxCallback("Must specify save filename.".PadRight(100), "Save Directory Listing");
                 return;
             }
 
@@ -237,7 +243,6 @@ namespace SearchDirLists
 
             Directory.SetCurrentDirectory(strPathOrig);
             m_statusCallback(m_volStrings.Index, strText: m_str_SAVED, bSuccess: true);
-            m_timerStatus.Dispose();
         }
 
         internal Thread DoThreadFactory()

@@ -346,17 +346,18 @@ namespace SearchDirLists
             // 
             this.form_cbVolumeName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_cbVolumeName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_cbVolumeName.FormattingEnabled = true;
-            this.form_cbVolumeName.Location = new System.Drawing.Point(111, 16);
+            this.form_cbVolumeName.Location = new System.Drawing.Point(105, 6);
             this.form_cbVolumeName.Name = "form_cbVolumeName";
-            this.form_cbVolumeName.Size = new System.Drawing.Size(850, 21);
+            this.form_cbVolumeName.Size = new System.Drawing.Size(856, 24);
             this.form_cbVolumeName.TabIndex = 1;
             this.form_cbVolumeName.SelectedIndexChanged += new System.EventHandler(this.form_cb_VolumeName_SelectedIndexChanged);
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(14, 19);
+            this.label4.Location = new System.Drawing.Point(8, 11);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(91, 13);
             this.label4.TabIndex = 0;
@@ -435,7 +436,7 @@ namespace SearchDirLists
             // form_btnSaveAs
             // 
             this.form_btnSaveAs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btnSaveAs.Location = new System.Drawing.Point(933, 70);
+            this.form_btnSaveAs.Location = new System.Drawing.Point(933, 66);
             this.form_btnSaveAs.Name = "form_btnSaveAs";
             this.form_btnSaveAs.Size = new System.Drawing.Size(28, 23);
             this.form_btnSaveAs.TabIndex = 8;
@@ -446,7 +447,7 @@ namespace SearchDirLists
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(14, 75);
+            this.label2.Location = new System.Drawing.Point(8, 71);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(94, 13);
             this.label2.TabIndex = 6;
@@ -455,7 +456,7 @@ namespace SearchDirLists
             // form_btnPath
             // 
             this.form_btnPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btnPath.Location = new System.Drawing.Point(933, 43);
+            this.form_btnPath.Location = new System.Drawing.Point(933, 36);
             this.form_btnPath.Name = "form_btnPath";
             this.form_btnPath.Size = new System.Drawing.Size(28, 23);
             this.form_btnPath.TabIndex = 4;
@@ -467,10 +468,11 @@ namespace SearchDirLists
             // 
             this.form_cbSaveAs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_cbSaveAs.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_cbSaveAs.FormattingEnabled = true;
-            this.form_cbSaveAs.Location = new System.Drawing.Point(114, 72);
+            this.form_cbSaveAs.Location = new System.Drawing.Point(108, 66);
             this.form_cbSaveAs.Name = "form_cbSaveAs";
-            this.form_cbSaveAs.Size = new System.Drawing.Size(813, 21);
+            this.form_cbSaveAs.Size = new System.Drawing.Size(819, 24);
             this.form_cbSaveAs.TabIndex = 7;
             this.form_cbSaveAs.SelectedIndexChanged += new System.EventHandler(this.form_cb_SaveAs_SelectedIndexChanged);
             // 
@@ -478,17 +480,18 @@ namespace SearchDirLists
             // 
             this.form_cbPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_cbPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_cbPath.FormattingEnabled = true;
-            this.form_cbPath.Location = new System.Drawing.Point(49, 43);
+            this.form_cbPath.Location = new System.Drawing.Point(49, 36);
             this.form_cbPath.Name = "form_cbPath";
-            this.form_cbPath.Size = new System.Drawing.Size(878, 21);
+            this.form_cbPath.Size = new System.Drawing.Size(878, 24);
             this.form_cbPath.TabIndex = 3;
             this.form_cbPath.SelectedIndexChanged += new System.EventHandler(this.form_cb_Path_SelectedIndexChanged);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(14, 46);
+            this.label1.Location = new System.Drawing.Point(11, 41);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(29, 13);
             this.label1.TabIndex = 2;
@@ -1346,7 +1349,7 @@ namespace SearchDirLists
             // columnHeader1
             // 
             this.columnHeader1.Text = "Directory detail";
-            this.columnHeader1.Width = 120;
+            this.columnHeader1.Width = 150;
             // 
             // form_colDirDetail
             // 
@@ -1374,7 +1377,7 @@ namespace SearchDirLists
             // form_colDirDetailCompare
             // 
             this.form_colDirDetailCompare.Text = "Volume detail";
-            this.form_colDirDetailCompare.Width = 120;
+            this.form_colDirDetailCompare.Width = 150;
             // 
             // form_colVolDetail
             // 

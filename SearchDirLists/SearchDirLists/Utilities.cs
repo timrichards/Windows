@@ -532,48 +532,44 @@ namespace SearchDirLists
 
         internal static bool ValidateFile(String strSaveAs)
         {
-            do
+            if (File.Exists(strSaveAs) == false) return false;
+
+            String[] arrLine = File.ReadLines(strSaveAs).Take(1).ToArray();
+
+            if (arrLine.Length <= 0) return false;
+
+            bool bConvertFile = false;
+
+            if (arrLine[0] == m_str_HEADER_01)
             {
-                String[] arrLine = File.ReadLines(strSaveAs).Take(1).ToArray();
-
-                if (arrLine.Length <= 0) break;
-
-                bool bConvertFile = false;
-
-                if (arrLine[0] == m_str_HEADER_01)
-                {
-                    Console.WriteLine("Converting " + strSaveAs);
-                    ConvertFile(strSaveAs);
-                    Console.WriteLine("File converted to " + m_str_HEADER);
-                    bConvertFile = true;
-                }
-
-                String[] arrToken = File.ReadLines(strSaveAs).Take(1).ToArray()[0].Split('\t');
-
-                if (arrToken.Length < 3) break;
-                if (arrToken[2] != m_str_HEADER) break;
-
-                String[] arrLine_A = File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Length)).ToArray();
-
-                if (arrLine_A.Length == 0) break;
-
-                String[] arrToken_A = arrLine_A[0].Split('\t');
-
-                if (arrToken_A.Length < 3) break;
-                if (arrToken_A[2] != m_str_TOTAL_LENGTH_LOC) break;
-
-                String strFile_01 = StrFile_01(strSaveAs);
-
-                if (bConvertFile && File.Exists(strFile_01))
-                {
-                    File.Delete(strFile_01);
-                }
-
-                return true;
+                Console.WriteLine("Converting " + strSaveAs);
+                ConvertFile(strSaveAs);
+                Console.WriteLine("File converted to " + m_str_HEADER);
+                bConvertFile = true;
             }
-            while (false);
 
-            return false;
+            String[] arrToken = File.ReadLines(strSaveAs).Take(1).ToArray()[0].Split('\t');
+
+            if (arrToken.Length < 3) return false;
+            if (arrToken[2] != m_str_HEADER) return false;
+
+            String[] arrLine_A = File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Length)).ToArray();
+
+            if (arrLine_A.Length == 0) return false;
+
+            String[] arrToken_A = arrLine_A[0].Split('\t');
+
+            if (arrToken_A.Length < 3) return false;
+            if (arrToken_A[2] != m_str_TOTAL_LENGTH_LOC) return false;
+
+            String strFile_01 = StrFile_01(strSaveAs);
+
+            if (bConvertFile && File.Exists(strFile_01))
+            {
+                File.Delete(strFile_01);
+            }
+
+            return true;
         }
 
         internal static void ConvertFile(String strFile)

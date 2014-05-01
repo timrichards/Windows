@@ -1100,7 +1100,21 @@ namespace SearchDirLists
 
             if (Utilities.StrValid(form_cbSaveAs.Text))
             {
-                form_cbSaveAs.Text = m_strSaveAs = Path.GetFullPath(form_cbSaveAs.Text.Trim());
+                try
+                {
+                    form_cbSaveAs.Text = m_strSaveAs = Path.GetFullPath(form_cbSaveAs.Text.Trim());
+                }
+                catch
+                {
+                    FormError(form_cbSaveAs, "Error in save listings filename.", "Save Fields");
+                    return false;
+                }
+
+                if (Directory.Exists(Path.GetDirectoryName(m_strSaveAs)) == false)
+                {
+                    FormError(form_cbSaveAs, "Directory to save listings to doesn't exist.", "Save Fields");
+                    return false;
+                }
 
                 if (FormatPath(form_cbSaveAs, ref m_strSaveAs, bFailOnDirectory) == false)
                 {
@@ -1904,7 +1918,9 @@ namespace SearchDirLists
 
             if (bDriveLetter)
             {
-                form_lvVolumesMain.SelectedItems[0].SubItems[1].Text = strDriveLetter + ":";
+                ListViewItem lvItem = form_lvVolumesMain.SelectedItems[0];
+
+                lvItem.Name = lvItem.SubItems[1].Text = strDriveLetter + ":";
             }
 
             File.WriteAllText(strFileName, sbFileConts.ToString());

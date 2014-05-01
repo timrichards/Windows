@@ -547,7 +547,7 @@ namespace SearchDirLists
 
                     if (bValid == false)
                     {
-                        m_MessageboxCallback("Bad file: " + strSaveAs);
+                        m_MessageboxCallback(("Bad file: " + strSaveAs).PadRight(100), "Tree");
                         m_statusCallback(volStrings: m_volStrings);
                         return;
                     }

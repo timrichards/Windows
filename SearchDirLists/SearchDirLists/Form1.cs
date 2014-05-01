@@ -494,23 +494,8 @@ namespace SearchDirLists
         {
             int nIxHistory = m_nIxHistory + nDirection;
 
-            do
+            if ((nIxHistory >= 0) && (m_listHistory.Count > 0) && (nIxHistory <= (m_listHistory.Count - 1)))
             {
-                if (nIxHistory < 0)
-                {
-                    break;
-                }
-
-                if (m_listHistory.Count <= 0)
-                {
-                    break;
-                }
-
-                if (nIxHistory > (m_listHistory.Count - 1))
-                {
-                    break;
-                }
-
                 TreeNode treeNode = History_GetAt(nIxHistory);
 
                 if (treeNode.TreeView.SelectedNode == treeNode)
@@ -523,11 +508,11 @@ namespace SearchDirLists
                 m_bPutPathInFindEditBox = true;
                 m_bTreeViewIndirectSelChange = true;
                 treeNode.TreeView.SelectedNode = treeNode;
-                return;
             }
-            while (false);
-
-            m_blink.Go((Control)sender, clr: Color.Red, Once: true);
+            else
+            {
+                m_blink.Go((Control)sender, clr: Color.Red, Once: true);
+            }
         }
 
         void FileListKeyPress(ListView lv, KeyPressEventArgs e)
@@ -1074,28 +1059,25 @@ namespace SearchDirLists
 
             using (StreamReader file = new StreamReader(m_strSaveAs))
             {
-                do
-                {
-                    String line = null;
+                String line = null;
 
-                    if ((line = file.ReadLine()) == null) break;
-                    if ((line = file.ReadLine()) == null) break;
-                    if (line.StartsWith(Utilities.m_strLINETYPE_Nickname) == false) break;
-                    String[] arrLine = line.Split('\t');
-                    String strName = String.Empty;
-                    if (arrLine.Length > 2) strName = arrLine[2];
-                    form_cbVolumeName.Text = strName;
-                    if ((line = file.ReadLine()) == null) break;
-                    if (line.StartsWith(Utilities.m_strLINETYPE_Path) == false) break;
-                    arrLine = line.Split('\t');
-                    if (arrLine.Length < 3) break;
-                    form_cbPath.Text = arrLine[2];
-                    return SaveFields(false);
-                }
-                while (false);
+                if ((line = file.ReadLine()) == null) return false;
+                if ((line = file.ReadLine()) == null) return false;
+                if (line.StartsWith(Utilities.m_strLINETYPE_Nickname) == false) return false;
+
+                String[] arrLine = line.Split('\t');
+                String strName = String.Empty;
+
+                if (arrLine.Length > 2) strName = arrLine[2];
+                form_cbVolumeName.Text = strName;
+                if ((line = file.ReadLine()) == null) return false;
+                if (line.StartsWith(Utilities.m_strLINETYPE_Path) == false) return false;
+                arrLine = line.Split('\t');
+                if (arrLine.Length < 3) return false;
+                form_cbPath.Text = arrLine[2];
             }
 
-            return false;
+            return SaveFields(false);
         }
 
         void RestartTreeTimer()
@@ -1890,24 +1872,15 @@ namespace SearchDirLists
                 break;
             }
 
-            do
+            if (((Utilities.StrValid(strVolumeName) == false) ||
+                (Utilities.NotNull(strVolumeName) == Utilities.NotNull(strVolumeName_orig)))
+                &&
+                ((Utilities.StrValid(strDriveLetter) == false) ||
+                (Utilities.NotNull(strDriveLetter) == Utilities.NotNull(strDriveLetter_orig))))
             {
-                if ((Utilities.StrValid(strVolumeName)) &&
-                    (Utilities.NotNull(strVolumeName) != Utilities.NotNull(strVolumeName_orig)))
-                {
-                    break;
-                }
-
-                if (Utilities.StrValid(strDriveLetter) &&
-                    (Utilities.NotNull(strDriveLetter) != Utilities.NotNull(strDriveLetter_orig)))
-                {
-                    break;
-                }
-
                 MessageBox.Show("No changes made.".PadRight(100), "Modify file");
                 return false;
             }
-            while (false);
 
             String strFileName = form_lvVolumesMain.SelectedItems[0].SubItems[2].Text;
             StringBuilder sbFileConts = new StringBuilder();
@@ -2820,7 +2793,8 @@ namespace SearchDirLists
             form_tmapUserCtl.TooltipAnchor = form_cbNavigate;
 
 #if (DEBUG)
-                MessageBox.Show("Debug mode.");
+#warning DEBUG is defined.
+            MessageBox.Show("Debug mode.");
 #endif
         }
 

@@ -89,18 +89,16 @@ namespace SearchDirLists
 
         public override int GetHashCode()
         {
-            unchecked               // any overflow mixes the bits a bit better
-            {
-                int result = 37;    // prime
+            // any overflow mixes the bits a bit better.
+            int result = 37;    // prime
 
-                result *= 397;      // also prime
-                result += nTotalLength.GetHashCode();
-                result *= 397;
-                result += nFilesInSubdirs.GetHashCode();
-                result *= 397;
-                result += nDirsWithFiles.GetHashCode();
-                return result;
-            }
+            result *= 397;      // also prime
+            result += nTotalLength.GetHashCode();
+            result *= 397;
+            result += nFilesInSubdirs.GetHashCode();
+            result *= 397;
+            result += nDirsWithFiles.GetHashCode();
+            return result;
         }
 
         public override string ToString()

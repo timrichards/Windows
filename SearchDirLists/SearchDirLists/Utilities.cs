@@ -281,15 +281,26 @@ namespace SearchDirLists
             m_MessageboxCallback = m_MessageboxCallback_;
         }
 
-        internal static bool Assert(double nLocation, bool bCondition)
+        internal static bool Assert(double nLocation, bool bCondition, String strError_in = null)
         {
             if (bCondition) return true;
 
+            bool bShowCustomDialog = true;
+            String strError = strError_in ?? "Assertion failed at location " + nLocation + ".";
+
 #if (DEBUG)
-            Debug.Assert(false);
-#else
-            m_MessageboxCallback_("Assertion failed at location " + nLocation + ". Please discuss this bug at http://sourceforge.net/projects/searchdirlists/.", "SearchDirLists Assertion Failure");
+            bShowCustomDialog = (Trace.Listeners.Cast<TraceListener>().Any(i => i is DefaultTraceListener) == false);
+            
+            if (bShowCustomDialog == false)
+            {
+                Debug.Assert(false, strError);
+            }
 #endif
+            if (bShowCustomDialog)
+            {
+                m_MessageboxCallback_(strError + " Please discuss this bug at http://sourceforge.net/projects/searchdirlists/.", "SearchDirLists Assertion Failure");
+            }
+
             return false;
         }
 

@@ -435,7 +435,10 @@ namespace SearchDirLists
                 }
             }
 
-            m_hashCache = hashTable;    // this shouldn't work unless passing back by ref. However it does seem to work.
+            // even a reference type: this shouldn't work unless passing back by ref. However it does seem to work.
+            // m_hashCache is a member of this instance of TreeDone and now points to
+            m_hashCache = hashTable;
+            // so why does that make Form1.m_hashCache now suddenly point to the same memory, as though passed back by ref?
 
             SortedDictionary<HashKey, List<TreeNode>> dictClones = new SortedDictionary<HashKey, List<TreeNode>>();
 

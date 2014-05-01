@@ -2794,7 +2794,10 @@ namespace SearchDirLists
 
 #if (DEBUG)
 #warning DEBUG is defined.
-            MessageBox.Show("Debug mode.");
+            Utilities.Assert(0, false, "DEBUG is defined.");
+            Utilities.Assert(0, System.Diagnostics.Debugger.IsAttached, "Debugger is not attached!");
+#else
+            Utilities.Assert(0, (System.Diagnostics.Debugger.IsAttached == false), "Debugger is attached but DEBUG is not defined.");
 #endif
         }
 

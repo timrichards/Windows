@@ -172,13 +172,20 @@ namespace SearchDirLists
             Point pt = Point.Ceiling(new PointF(pt_in.X / m_sizeTranslate.Width, pt_in.Y / m_sizeTranslate.Height));
             TreeNode nodeRet = null;
             bool bImmediateFiles = false;
+            bool bVolumeView = false;
 
             do
             {
-                if ((nodeRet = FindMapNode(((NodeDatum)m_treeNode.Tag).TreeMapFiles, pt)) != null)
                 {
-                    bImmediateFiles = true;
-                    break;
+                    NodeDatum nodeDatum = ((NodeDatum)m_treeNode.Tag);
+
+                    bVolumeView = ((nodeDatum is RootNodeDatum) && ((RootNodeDatum)nodeDatum).VolumeView);
+
+                    if ((bVolumeView == false) && ((nodeRet = FindMapNode(nodeDatum.TreeMapFiles, pt)) != null))
+                    {
+                        bImmediateFiles = true;
+                        break;
+                    }
                 }
 
                 TreeNode m_prevNode_A = m_prevNode ?? m_treeNode;
@@ -216,7 +223,7 @@ namespace SearchDirLists
             }
             while (false);
 
-            if (bImmediateFiles == false)
+            if ((bVolumeView == false) && (bImmediateFiles == false))
             {
                 TreeNode nodeRet_A = FindMapNode(((NodeDatum)nodeRet.Tag).TreeMapFiles, pt);
 
@@ -242,10 +249,13 @@ namespace SearchDirLists
 
             m_toolTip.Tag = nodeRet;
 
-            NodeDatum nodeDatum = (NodeDatum)nodeRet.Tag;
+            {
+                NodeDatum nodeDatum = (NodeDatum)nodeRet.Tag;
 
-            m_selRect = nodeDatum.TreeMapRect;
-            m_toolTip.Show(Utilities.FormatSize(nodeDatum.nTotalLength, bBytes: true), TooltipAnchor, new Point(0, 0));
+                m_selRect = nodeDatum.TreeMapRect;
+                m_toolTip.Show(Utilities.FormatSize(nodeDatum.nTotalLength, bBytes: true), TooltipAnchor, new Point(0, 0));
+            }
+
             m_prevNode = nodeRet;
             Invalidate();
             return null;
@@ -306,9 +316,10 @@ namespace SearchDirLists
             do
             {
                 DateTime dtStart = DateTime.Now;
+
                 DrawTreemap();
 
-                if ((DateTime.Now - dtStart) < TimeSpan.FromSeconds(1))
+                if ((DateTime.Now - dtStart) < TimeSpan.FromSeconds(1.5))
                 {
                     break;
                 }

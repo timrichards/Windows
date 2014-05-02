@@ -1599,6 +1599,8 @@ namespace SearchDirLists
                     form_lblVolGroup.Text = "Compare Mode";
                     form_lblVolGroup.BackColor = Color.LightGoldenrodYellow;
                     form_lblVolGroup.Font = new Font(m_FontVolGroupOrig, FontStyle.Regular);
+                    m_listHistory.Clear();
+                    m_nIxHistory = -1;
                     m_bCompareMode = true;
                     tabControl_FileList.SelectedTab = tabPage_FileList;
                     m_bTreeViewIndirectSelChange = true;
@@ -2364,6 +2366,8 @@ namespace SearchDirLists
                 form_treeCompare2.Nodes.Clear();
                 form_chkCompare1.Checked = false;
                 form_btnCompare.Enabled = false;
+                m_listHistory.Clear();
+                m_nIxHistory = -1;
                 m_bCompareMode = false;
                 form_treeView_Browse_AfterSelect(form_treeView_Browse, new TreeViewEventArgs(form_treeView_Browse.SelectedNode));
             }

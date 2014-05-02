@@ -34,6 +34,18 @@ namespace SearchDirLists
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.form_tabControl = new System.Windows.Forms.TabControl();
             this.form_tabPageVolumes = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.form_cbVolumeName = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.form_cbPath = new System.Windows.Forms.ComboBox();
+            this.form_cbSaveAs = new System.Windows.Forms.ComboBox();
+            this.form_btnPath = new System.Windows.Forms.Button();
+            this.form_btnSaveAs = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.btnFontClear = new System.Windows.Forms.Button();
+            this.form_btnFontDown = new System.Windows.Forms.Button();
+            this.form_btnFontUp = new System.Windows.Forms.Button();
             this.form_btnModifyFile = new System.Windows.Forms.Button();
             this.form_btnVolGroup = new System.Windows.Forms.Button();
             this.form_btnLoadVolumeList = new System.Windows.Forms.Button();
@@ -42,8 +54,6 @@ namespace SearchDirLists
             this.form_btnRemoveVolume = new System.Windows.Forms.Button();
             this.form_btnToggleInclude = new System.Windows.Forms.Button();
             this.form_btnAddVolume = new System.Windows.Forms.Button();
-            this.form_cbVolumeName = new System.Windows.Forms.ComboBox();
-            this.label4 = new System.Windows.Forms.Label();
             this.form_lvVolumesMain = new ListViewEmbeddedControls.ListViewEx();
             this.form_lv_Volumes_col_Volume = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_Volumes_col_Path = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -52,12 +62,6 @@ namespace SearchDirLists
             this.form_lv_Volumes_col_IncludeInSearch = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader28 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_btnSaveDirList = new System.Windows.Forms.Button();
-            this.form_btnSaveAs = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.form_btnPath = new System.Windows.Forms.Button();
-            this.form_cbSaveAs = new System.Windows.Forms.ComboBox();
-            this.form_cbPath = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.form_tabPageBrowse = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.form_btnForward = new System.Windows.Forms.Button();
@@ -150,6 +154,7 @@ namespace SearchDirLists
             this.label_About = new System.Windows.Forms.Label();
             this.form_tabControl.SuspendLayout();
             this.form_tabPageVolumes.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.form_tabPageBrowse.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -225,6 +230,10 @@ namespace SearchDirLists
             // 
             // form_tabPageVolumes
             // 
+            this.form_tabPageVolumes.Controls.Add(this.tableLayoutPanel1);
+            this.form_tabPageVolumes.Controls.Add(this.btnFontClear);
+            this.form_tabPageVolumes.Controls.Add(this.form_btnFontDown);
+            this.form_tabPageVolumes.Controls.Add(this.form_btnFontUp);
             this.form_tabPageVolumes.Controls.Add(this.form_btnModifyFile);
             this.form_tabPageVolumes.Controls.Add(this.form_btnVolGroup);
             this.form_tabPageVolumes.Controls.Add(this.form_btnLoadVolumeList);
@@ -233,16 +242,8 @@ namespace SearchDirLists
             this.form_tabPageVolumes.Controls.Add(this.form_btnRemoveVolume);
             this.form_tabPageVolumes.Controls.Add(this.form_btnToggleInclude);
             this.form_tabPageVolumes.Controls.Add(this.form_btnAddVolume);
-            this.form_tabPageVolumes.Controls.Add(this.form_cbVolumeName);
-            this.form_tabPageVolumes.Controls.Add(this.label4);
             this.form_tabPageVolumes.Controls.Add(this.form_lvVolumesMain);
             this.form_tabPageVolumes.Controls.Add(this.form_btnSaveDirList);
-            this.form_tabPageVolumes.Controls.Add(this.form_btnSaveAs);
-            this.form_tabPageVolumes.Controls.Add(this.label2);
-            this.form_tabPageVolumes.Controls.Add(this.form_btnPath);
-            this.form_tabPageVolumes.Controls.Add(this.form_cbSaveAs);
-            this.form_tabPageVolumes.Controls.Add(this.form_cbPath);
-            this.form_tabPageVolumes.Controls.Add(this.label1);
             this.form_tabPageVolumes.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_tabPageVolumes.Location = new System.Drawing.Point(4, 25);
             this.form_tabPageVolumes.Name = "form_tabPageVolumes";
@@ -251,6 +252,154 @@ namespace SearchDirLists
             this.form_tabPageVolumes.TabIndex = 0;
             this.form_tabPageVolumes.Text = "Volumes";
             this.form_tabPageVolumes.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel1.AutoSize = true;
+            this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel1.ColumnCount = 3;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 35F));
+            this.tableLayoutPanel1.Controls.Add(this.form_cbVolumeName, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.label4, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.form_cbPath, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.form_cbSaveAs, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.form_btnPath, 2, 1);
+            this.tableLayoutPanel1.Controls.Add(this.form_btnSaveAs, 2, 2);
+            this.tableLayoutPanel1.Controls.Add(this.label2, 0, 2);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(6, 6);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(954, 90);
+            this.tableLayoutPanel1.TabIndex = 21;
+            // 
+            // form_cbVolumeName
+            // 
+            this.form_cbVolumeName.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_cbVolumeName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.form_cbVolumeName.FormattingEnabled = true;
+            this.form_cbVolumeName.Location = new System.Drawing.Point(103, 3);
+            this.form_cbVolumeName.Name = "form_cbVolumeName";
+            this.form_cbVolumeName.Size = new System.Drawing.Size(813, 24);
+            this.form_cbVolumeName.TabIndex = 1;
+            this.form_cbVolumeName.SelectedIndexChanged += new System.EventHandler(this.form_cb_VolumeName_SelectedIndexChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label4.Location = new System.Drawing.Point(3, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(94, 30);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "Volume nickname";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label1.Location = new System.Drawing.Point(3, 30);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(94, 30);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Path";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // form_cbPath
+            // 
+            this.form_cbPath.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_cbPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.form_cbPath.FormattingEnabled = true;
+            this.form_cbPath.Location = new System.Drawing.Point(103, 33);
+            this.form_cbPath.Name = "form_cbPath";
+            this.form_cbPath.Size = new System.Drawing.Size(813, 24);
+            this.form_cbPath.TabIndex = 3;
+            this.form_cbPath.SelectedIndexChanged += new System.EventHandler(this.form_cb_Path_SelectedIndexChanged);
+            // 
+            // form_cbSaveAs
+            // 
+            this.form_cbSaveAs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_cbSaveAs.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.form_cbSaveAs.FormattingEnabled = true;
+            this.form_cbSaveAs.Location = new System.Drawing.Point(103, 63);
+            this.form_cbSaveAs.Name = "form_cbSaveAs";
+            this.form_cbSaveAs.Size = new System.Drawing.Size(813, 24);
+            this.form_cbSaveAs.TabIndex = 7;
+            this.form_cbSaveAs.SelectedIndexChanged += new System.EventHandler(this.form_cb_SaveAs_SelectedIndexChanged);
+            // 
+            // form_btnPath
+            // 
+            this.form_btnPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_btnPath.Location = new System.Drawing.Point(923, 33);
+            this.form_btnPath.Name = "form_btnPath";
+            this.form_btnPath.Size = new System.Drawing.Size(28, 22);
+            this.form_btnPath.TabIndex = 4;
+            this.form_btnPath.Text = "...";
+            this.form_btnPath.UseVisualStyleBackColor = true;
+            this.form_btnPath.Click += new System.EventHandler(this.form_btnPath_Click);
+            // 
+            // form_btnSaveAs
+            // 
+            this.form_btnSaveAs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.form_btnSaveAs.Location = new System.Drawing.Point(923, 63);
+            this.form_btnSaveAs.Name = "form_btnSaveAs";
+            this.form_btnSaveAs.Size = new System.Drawing.Size(28, 23);
+            this.form_btnSaveAs.TabIndex = 8;
+            this.form_btnSaveAs.Text = "...";
+            this.form_btnSaveAs.UseVisualStyleBackColor = true;
+            this.form_btnSaveAs.Click += new System.EventHandler(this.form_btnSaveAs_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label2.Location = new System.Drawing.Point(3, 60);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(94, 30);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "Directory listing file";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // btnFontClear
+            // 
+            this.btnFontClear.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.btnFontClear.Location = new System.Drawing.Point(692, 99);
+            this.btnFontClear.Name = "btnFontClear";
+            this.btnFontClear.Size = new System.Drawing.Size(41, 23);
+            this.btnFontClear.TabIndex = 20;
+            this.btnFontClear.Text = "Clear";
+            this.btnFontClear.UseVisualStyleBackColor = true;
+            this.btnFontClear.Click += new System.EventHandler(this.btnFontClear_Click);
+            // 
+            // form_btnFontDown
+            // 
+            this.form_btnFontDown.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.form_btnFontDown.Location = new System.Drawing.Point(586, 99);
+            this.form_btnFontDown.Name = "form_btnFontDown";
+            this.form_btnFontDown.Size = new System.Drawing.Size(47, 23);
+            this.form_btnFontDown.TabIndex = 19;
+            this.form_btnFontDown.Text = "Font -";
+            this.form_btnFontDown.UseVisualStyleBackColor = true;
+            this.form_btnFontDown.Click += new System.EventHandler(this.form_btnFontDown_Click);
+            // 
+            // form_btnFontUp
+            // 
+            this.form_btnFontUp.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.form_btnFontUp.Location = new System.Drawing.Point(639, 99);
+            this.form_btnFontUp.Name = "form_btnFontUp";
+            this.form_btnFontUp.Size = new System.Drawing.Size(47, 23);
+            this.form_btnFontUp.TabIndex = 18;
+            this.form_btnFontUp.Text = "Font +";
+            this.form_btnFontUp.UseVisualStyleBackColor = true;
+            this.form_btnFontUp.Click += new System.EventHandler(this.form_btnFontUp_Click);
             // 
             // form_btnModifyFile
             // 
@@ -342,27 +491,6 @@ namespace SearchDirLists
             this.form_btnAddVolume.UseVisualStyleBackColor = true;
             this.form_btnAddVolume.Click += new System.EventHandler(this.form_btn_AddVolume_Click);
             // 
-            // form_cbVolumeName
-            // 
-            this.form_cbVolumeName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_cbVolumeName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.form_cbVolumeName.FormattingEnabled = true;
-            this.form_cbVolumeName.Location = new System.Drawing.Point(105, 6);
-            this.form_cbVolumeName.Name = "form_cbVolumeName";
-            this.form_cbVolumeName.Size = new System.Drawing.Size(856, 24);
-            this.form_cbVolumeName.TabIndex = 1;
-            this.form_cbVolumeName.SelectedIndexChanged += new System.EventHandler(this.form_cb_VolumeName_SelectedIndexChanged);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(8, 11);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(91, 13);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "Volume nickname";
-            // 
             // form_lvVolumesMain
             // 
             this.form_lvVolumesMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -432,70 +560,6 @@ namespace SearchDirLists
             this.form_btnSaveDirList.UseVisualStyleBackColor = true;
             this.form_btnSaveDirList.EnabledChanged += new System.EventHandler(this.form_btnSaveDirLists_EnabledChanged);
             this.form_btnSaveDirList.Click += new System.EventHandler(this.form_btnSaveDirLists_Click);
-            // 
-            // form_btnSaveAs
-            // 
-            this.form_btnSaveAs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btnSaveAs.Location = new System.Drawing.Point(933, 66);
-            this.form_btnSaveAs.Name = "form_btnSaveAs";
-            this.form_btnSaveAs.Size = new System.Drawing.Size(28, 23);
-            this.form_btnSaveAs.TabIndex = 8;
-            this.form_btnSaveAs.Text = "...";
-            this.form_btnSaveAs.UseVisualStyleBackColor = true;
-            this.form_btnSaveAs.Click += new System.EventHandler(this.form_btnSaveAs_Click);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 71);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(94, 13);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "Directory listing file";
-            // 
-            // form_btnPath
-            // 
-            this.form_btnPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btnPath.Location = new System.Drawing.Point(933, 36);
-            this.form_btnPath.Name = "form_btnPath";
-            this.form_btnPath.Size = new System.Drawing.Size(28, 23);
-            this.form_btnPath.TabIndex = 4;
-            this.form_btnPath.Text = "...";
-            this.form_btnPath.UseVisualStyleBackColor = true;
-            this.form_btnPath.Click += new System.EventHandler(this.form_btnPath_Click);
-            // 
-            // form_cbSaveAs
-            // 
-            this.form_cbSaveAs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_cbSaveAs.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.form_cbSaveAs.FormattingEnabled = true;
-            this.form_cbSaveAs.Location = new System.Drawing.Point(108, 66);
-            this.form_cbSaveAs.Name = "form_cbSaveAs";
-            this.form_cbSaveAs.Size = new System.Drawing.Size(819, 24);
-            this.form_cbSaveAs.TabIndex = 7;
-            this.form_cbSaveAs.SelectedIndexChanged += new System.EventHandler(this.form_cb_SaveAs_SelectedIndexChanged);
-            // 
-            // form_cbPath
-            // 
-            this.form_cbPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_cbPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.form_cbPath.FormattingEnabled = true;
-            this.form_cbPath.Location = new System.Drawing.Point(49, 36);
-            this.form_cbPath.Name = "form_cbPath";
-            this.form_cbPath.Size = new System.Drawing.Size(878, 24);
-            this.form_cbPath.TabIndex = 3;
-            this.form_cbPath.SelectedIndexChanged += new System.EventHandler(this.form_cb_Path_SelectedIndexChanged);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(11, 41);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(29, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Path";
             // 
             // form_tabPageBrowse
             // 
@@ -1517,13 +1581,13 @@ namespace SearchDirLists
             // saveFileDialog1
             // 
             this.saveFileDialog1.DefaultExt = "txt";
-            this.saveFileDialog1.Filter = "Text files|*.txt|SearchDirLists files|*.sot|All files|*.*";
+            this.saveFileDialog1.Filter = "Text files|*.txt|All files|*.*";
             this.saveFileDialog1.OverwritePrompt = false;
             // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            this.openFileDialog1.Filter = "Text files|*.txt|SearchDirLists files|*.sot|All files|*.*";
+            this.openFileDialog1.Filter = "Text files|*.txt|All files|*.*";
             // 
             // timer_blink
             // 
@@ -1568,6 +1632,8 @@ namespace SearchDirLists
             this.form_tabControl.ResumeLayout(false);
             this.form_tabPageVolumes.ResumeLayout(false);
             this.form_tabPageVolumes.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.form_tabPageBrowse.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
@@ -1752,6 +1818,10 @@ namespace SearchDirLists
         private System.Windows.Forms.Button form_btnForward;
         private System.Windows.Forms.Button form_btnBack;
         private System.Windows.Forms.Label label_About;
+        private System.Windows.Forms.Button form_btnFontDown;
+        private System.Windows.Forms.Button form_btnFontUp;
+        private System.Windows.Forms.Button btnFontClear;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 
     }
 }

@@ -824,6 +824,11 @@ namespace SearchDirLists
 
         void History_Add(TreeNode treeNode)
         {
+            if (treeNode.TreeView == null)
+            {
+                return;
+            }
+
             if (treeNode.Tag is RootNodeDatum)
             {
                 TreeNode treeNode_A = new TreeNode();   // checked means VolumeView mode and necessitates History_Add() etc.
@@ -1370,15 +1375,20 @@ namespace SearchDirLists
                 return false;
             }
 
-            if (Utilities.StrValid(m_strVolumeName) && form_lvVolumesMain.FindItemWithText(m_strVolumeName) != null)
+            if (Utilities.StrValid(m_strVolumeName))
             {
-                m_blink.Go(form_cbVolumeName, clr: Color.Red);
+                ListViewItem lvItem = form_lvVolumesMain.FindItemWithText(m_strVolumeName);
 
-                if (MessageBox.Show("Nickname already in use. Use it for more than one volume?".PadRight(100), "Volume Save As", MessageBoxButtons.YesNo)
-                    != DialogResult.Yes)
+                if ((lvItem != null) && (lvItem.Text == m_strVolumeName))
                 {
-                    m_blink.Go(form_cbVolumeName, clr: Color.Red, Once: true);
-                    return false;
+                    m_blink.Go(form_cbVolumeName, clr: Color.Red);
+
+                    if (MessageBox.Show("Nickname already in use. Use it for more than one volume?".PadRight(100), "Volume Save As", MessageBoxButtons.YesNo)
+                        != DialogResult.Yes)
+                    {
+                        m_blink.Go(form_cbVolumeName, clr: Color.Red, Once: true);
+                        return false;
+                    }
                 }
             }
 
@@ -1443,10 +1453,13 @@ namespace SearchDirLists
                 }
             }
 
-            ListViewItem lvItem = new ListViewItem(new String[] { m_strVolumeName, m_strPath, m_strSaveAs, strStatus, "Yes" });
+            {
+                ListViewItem lvItem = new ListViewItem(new String[] { m_strVolumeName, m_strPath, m_strSaveAs, strStatus, "Yes" });
 
-            lvItem.Name = m_strPath;
-            form_lvVolumesMain.Items.Add(lvItem);
+                lvItem.Name = m_strPath;
+                form_lvVolumesMain.Items.Add(lvItem);
+            }
+
             form_btnSaveDirList.Enabled = true;
             return true;
         }
@@ -2213,12 +2226,21 @@ namespace SearchDirLists
 
             inputBox.Text = "Volume Group";
             inputBox.Prompt = "Enter a volume group name";
-            inputBox.Entry = form_lvVolumesMain.SelectedItems[0].SubItems[5].Text;
+
+            if (form_lvVolumesMain.SelectedItems[0].SubItems.Count > 5)
+            {
+                inputBox.Entry = form_lvVolumesMain.SelectedItems[0].SubItems[5].Text;
+            }
 
             SortedDictionary<String, object> dictVolGroups = new SortedDictionary<String, object>();
 
             foreach (ListViewItem lvItem in form_lvVolumesMain.Items)
             {
+                if (lvItem.SubItems.Count <= 5)
+                {
+                    continue;
+                }
+
                 String strVolGroup = lvItem.SubItems[5].Text;
 
                 if (dictVolGroups.ContainsKey(strVolGroup) == false)
@@ -2239,6 +2261,11 @@ namespace SearchDirLists
 
             foreach (ListViewItem lvItem in lvSelect)
             {
+                while (lvItem.SubItems.Count <= 5)
+                {
+                    lvItem.SubItems.Add(new ListViewItem.ListViewSubItem());
+                }
+
                 lvItem.SubItems[5].Text = inputBox.Entry;
             }
 

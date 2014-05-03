@@ -2238,6 +2238,11 @@ namespace SearchDirLists
         {
             TreeNode treeNode = form_treeView_Browse.SelectedNode;
 
+            if (m_bCompareMode)
+            {
+                treeNode = ((m_ctlLastFocusForCopyButton is TreeView) ? (TreeView)m_ctlLastFocusForCopyButton : form_treeCompare1).SelectedNode;
+            }
+
             if (treeNode == null)
             {
                 m_blink.Go(form_btnUp, clr: Color.Red, Once: true);

@@ -52,11 +52,16 @@ namespace SearchDirLists
             m_deepNode = null;
             m_deepNodeDrawn = null;
             m_toolTip.Tag = null;
+            ClearSelection();
         }
 
         internal void ClearSelection()
         {
-            m_toolTip.Hide(TooltipAnchor ?? this);
+            Control ctl = TooltipAnchor;
+            if ((ctl == null) || ctl.IsDisposed) ctl = this;
+            if ((ctl == null) || ctl.IsDisposed) { return; }
+
+            m_toolTip.Hide(ctl);
             m_selRect = Rectangle.Empty;
             Invalidate();
         }

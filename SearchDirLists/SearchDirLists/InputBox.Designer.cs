@@ -89,7 +89,7 @@
             this.AutoScroll = true;
             this.AutoSize = true;
             this.CancelButton = this.form_btn_Cancel;
-            this.ClientSize = new System.Drawing.Size(722, 252);
+            this.ClientSize = new System.Drawing.Size(722, 270);
             this.ControlBox = false;
             this.Controls.Add(this.form_btn_Cancel);
             this.Controls.Add(this.form_btn_OK);

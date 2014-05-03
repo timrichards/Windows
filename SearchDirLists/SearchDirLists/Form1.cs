@@ -43,7 +43,8 @@ namespace SearchDirLists
         int m_nIxHistory = -1;
         bool m_bHistoryDefer = false;
         bool m_bTreeViewIndirectSelChange = false;
-        bool bChkCompare1IndirectCheckChange = false;
+        bool m_bChkCompare1IndirectCheckChange = false;
+        bool m_bNavDropDown = false;
         List<Control> m_listLargeFontCtls = new List<Control>();
         List<Control> m_listSmallFontCtls = new List<Control>();
         TabPage m_FileListTabPageBeforeCompare = null;
@@ -2353,6 +2354,12 @@ namespace SearchDirLists
         {
             form_tmapUserCtl.ClearSelection();
 
+            if (m_bNavDropDown)
+            {
+                m_bNavDropDown = false;
+                return;
+            }
+
             if (Cursor.Current != Cursors.Arrow)        // hack: clicked in tooltip
             {
                 return;
@@ -2407,9 +2414,9 @@ namespace SearchDirLists
 
         void form_chk_Compare1_CheckedChanged(object sender, EventArgs e)
         {
-            if (bChkCompare1IndirectCheckChange == true)
+            if (m_bChkCompare1IndirectCheckChange == true)
             {
-                bChkCompare1IndirectCheckChange = false;
+                m_bChkCompare1IndirectCheckChange = false;
                 return;
             }
 
@@ -2463,7 +2470,7 @@ namespace SearchDirLists
                 if (bError)
                 {
                     m_blink.Go(clr: Color.Red, Once: true);
-                    bChkCompare1IndirectCheckChange = true;
+                    m_bChkCompare1IndirectCheckChange = true;
                     form_chkCompare1.Checked = false;
                 }
                 else
@@ -2983,6 +2990,11 @@ namespace SearchDirLists
             {
                 ctl.Font = (Font)Font.Clone();
             }
+        }
+
+        private void form_cbNavigate_DropDown(object sender, EventArgs e)
+        {
+            m_bNavDropDown = true;
         }
     }
 }

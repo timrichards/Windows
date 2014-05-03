@@ -129,6 +129,11 @@ namespace SearchDirLists
 
         internal String Tooltip_Click()
         {
+            if (m_toolTip.Tag == null)
+            {
+                return null;
+            }
+
             TreeNode treeNode_A = (TreeNode)m_toolTip.Tag;
 
             if (treeNode_A.TreeView != null)    // null if fake file treenode (NodeDatum.TreeMapFiles)

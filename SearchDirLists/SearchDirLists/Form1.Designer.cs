@@ -1711,6 +1711,7 @@ namespace SearchDirLists
             this.form_cbNavigate.Name = "form_cbNavigate";
             this.form_cbNavigate.Size = new System.Drawing.Size(447, 24);
             this.form_cbNavigate.TabIndex = 6;
+            this.form_cbNavigate.DropDown += new System.EventHandler(this.form_cbNavigate_DropDown);
             this.form_cbNavigate.SelectedIndexChanged += new System.EventHandler(this.form_cbNavigate_SelectedIndexChanged);
             this.form_cbNavigate.TextChanged += new System.EventHandler(this.form_cbNavigate_TextChanged);
             this.form_cbNavigate.Enter += new System.EventHandler(this.formCtl_EnterForCopyButton);

@@ -43,8 +43,10 @@ namespace SearchDirLists
         int m_nIxHistory = -1;
         bool m_bHistoryDefer = false;
         bool m_bTreeViewIndirectSelChange = false;
+        bool bChkCompare1IndirectCheckChange = false;
         List<Control> m_listLargeFontCtls = new List<Control>();
         List<Control> m_listSmallFontCtls = new List<Control>();
+        TabPage m_FileListTabPageBeforeCompare = null;
 
         // initialized in constructor:
         Blink m_blink = null;
@@ -59,6 +61,27 @@ namespace SearchDirLists
         String m_strBtnCompareOrig = null;
         String m_strChkCompareOrig = null;
         String m_strVolGroupOrig = null;
+
+        public partial class Form1LayoutPanel : TableLayoutPanel
+        {
+            void SetStyle()
+            {
+                SetStyle(ControlStyles.AllPaintingInWmPaint |
+                  ControlStyles.OptimizedDoubleBuffer |
+                  ControlStyles.UserPaint, true);
+            }
+
+            public Form1LayoutPanel()
+            {
+                SetStyle();
+            }
+
+            public Form1LayoutPanel(System.ComponentModel.IContainer container)
+            {
+                container.Add(this);
+                SetStyle();
+            }
+        }
 
         class Form1TreeView : TreeView
         {
@@ -290,7 +313,7 @@ namespace SearchDirLists
             InitializeComponent();
 
             // Assert String-lookup form items exist
-            //    Utilities.Assert(1300.1316, context_rclick_node.Items[m_strMARKFORCOPY] != null);
+            //    Utilities.Assert(1300.1317, context_rclick_node.Items[m_strMARKFORCOPY] != null);
 
             m_blink = new Blink(timer_blink, form_cbNavigate);
             m_strBtnTreeCollapseOrig = form_btn_TreeCollapse.Text;
@@ -306,7 +329,6 @@ namespace SearchDirLists
             m_clrVolGroupOrig = form_lblVolGroup.BackColor;
             m_bCheckboxes = form_treeView_Browse.CheckBoxes;
             Utilities.SetMessageBoxDelegate(MessageboxCallback);
-            splitIgnoreList.SplitterDistance = splitCopyList.SplitterDistance = form_btnCopyClear.Left + form_btnCopyClear.Width + 5;
             m_listLargeFontCtls.Add(form_tabControl);
             m_listSmallFontCtls.Add(form_tabPageVolumes);
             m_listLargeFontCtls.Add(form_cbVolumeName);
@@ -512,6 +534,11 @@ namespace SearchDirLists
 
         void ClearToolTip(object sender, EventArgs e)
         {
+            if (form_tmapUserCtl.IsDisposed)
+            {
+                return;
+            }
+
             form_tmapUserCtl.ClearSelection();
         }
 
@@ -1513,6 +1540,10 @@ namespace SearchDirLists
             {
                 form_btn_CompareNext_Click(sender, e);
             }
+            else if (form_chkCompare1.Checked == false)
+            {
+                form_chkCompare1.Checked = true;
+            }
             else
             {
                 form_cbNavigate.BackColor = Color.Empty;
@@ -1626,6 +1657,10 @@ namespace SearchDirLists
                     form_lblVolGroup.Font = new Font(m_FontVolGroupOrig, FontStyle.Regular);
                     m_listHistory.Clear();
                     m_nIxHistory = -1;
+                    form_btnNavigate.Enabled = false;
+                    form_btnSearchFiles.Enabled = false;
+                    form_btnSearchFoldersAndFiles.Enabled = false;
+                    m_FileListTabPageBeforeCompare = tabControl_FileList.SelectedTab;
                     m_bCompareMode = true;
                     tabControl_FileList.SelectedTab = tabPage_FileList;
                     m_bTreeViewIndirectSelChange = true;
@@ -2367,8 +2402,15 @@ namespace SearchDirLists
 
         void form_chk_Compare1_CheckedChanged(object sender, EventArgs e)
         {
+            if (bChkCompare1IndirectCheckChange == true)
+            {
+                bChkCompare1IndirectCheckChange = false;
+                return;
+            }
+
             if (m_bCompareMode)
             {
+                Utilities.Assert(1300.13105, form_chkCompare1.Checked == false);
                 form_chkCompare1.Text = m_strChkCompareOrig;
                 form_btn_TreeCollapse.Text = m_strBtnTreeCollapseOrig;
                 form_btnCompare.Text = m_strBtnCompareOrig;
@@ -2389,10 +2431,13 @@ namespace SearchDirLists
                 m_nodeCompare2 = null;
                 form_treeCompare1.Nodes.Clear();
                 form_treeCompare2.Nodes.Clear();
-                form_chkCompare1.Checked = false;
-                form_btnCompare.Enabled = false;
                 m_listHistory.Clear();
                 m_nIxHistory = -1;
+                form_btnNavigate.Enabled = true;
+                form_btnSearchFiles.Enabled = true;
+                form_btnSearchFoldersAndFiles.Enabled = true;
+                tabControl_FileList.SelectedTab = m_FileListTabPageBeforeCompare;
+
                 m_bCompareMode = false;
                 form_treeView_Browse_AfterSelect(form_treeView_Browse, new TreeViewEventArgs(form_treeView_Browse.SelectedNode));
             }
@@ -2413,19 +2458,18 @@ namespace SearchDirLists
                 if (bError)
                 {
                     m_blink.Go(clr: Color.Red, Once: true);
-                    form_chkCompare1.Checked = false;  // event retriggers this handler
+                    bChkCompare1IndirectCheckChange = true;
+                    form_chkCompare1.Checked = false;
                 }
                 else
                 {
                     m_blink.Go();
                     m_bTreeViewIndirectSelChange = true;
                     form_treeView_Browse.SelectedNode = m_nodeCompare1;
-                    form_btnCompare.Enabled = true;
                 }
             }
             else
             {
-                form_btnCompare.Enabled = false;
                 m_strCompare1 = null;
             }
         }
@@ -2631,7 +2675,7 @@ namespace SearchDirLists
 
                 e.Handled = true;
 
-                if (form_btnCompare.Enabled == false)
+                if (form_chkCompare1.Checked == false)
                 {
                     form_chkCompare1.Checked = true;
                 }
@@ -2758,7 +2802,15 @@ namespace SearchDirLists
 
             if (m_bCompareMode)
             {
-                String strDirAndVolume = strNode + " (on " + rootNode.ToolTipText.Substring(0, rootNode.ToolTipText.IndexOf(Path.DirectorySeparatorChar)) + ")";
+                String strDirAndVolume = strNode;
+                String strVolume = rootNode.ToolTipText;
+
+                if (strVolume.Contains(Path.DirectorySeparatorChar))
+                {
+                    strVolume = strVolume.Substring(0, strVolume.IndexOf(Path.DirectorySeparatorChar));
+                    strDirAndVolume += " (on " + strVolume + ")";
+                }
+
 
                 if (rootNode.Checked)   // hack to denote second compare pane
                 {
@@ -2772,13 +2824,9 @@ namespace SearchDirLists
                 return;
             }
 
-            form_lblVolGroup.Text = ((RootNodeDatum)rootNode.Tag).StrVolumeGroup;
+            String strVolumeGroup = ((RootNodeDatum)rootNode.Tag).StrVolumeGroup;
 
-            if (Utilities.StrValid(form_lblVolGroup.Text) == false)
-            {
-                form_lblVolGroup.Text = "(no volume group set)";
-            }
-
+            form_lblVolGroup.Text = Utilities.StrValid(strVolumeGroup) ? strVolumeGroup : "(no volume group set)";
             form_colVolDetail.Text = rootNode.Text;
             form_colDirDetail.Text = form_colFilename.Text = strNode;
 
@@ -2824,7 +2872,7 @@ namespace SearchDirLists
             {
                 form_chkCompare1.Checked = false;           // leave Compare mode
             }
-            else if (form_btnCompare.Enabled == false)
+            else if (form_chkCompare1.Checked == false)
             {
                 form_chkCompare1.Checked = true;            // enter first path to compare
             }
@@ -2870,6 +2918,13 @@ namespace SearchDirLists
         void timer_DoTree_Tick(object sender, EventArgs e)
         {
             timer_DoTree.Stop();
+
+            if (m_bCompareMode)
+            {
+                Utilities.Assert(1300.1316, form_chkCompare1.Checked);
+                form_chkCompare1.Checked = false;
+            }
+
             DoTree(bKill: true);
         }
 

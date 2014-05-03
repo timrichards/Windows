@@ -619,7 +619,7 @@ namespace SearchDirLists
                 form_lvUnique.Items.AddRange(listLVunique.ToArray());
                 Utilities.Assert(1305.6318, form_lvSameVol.Items.Count == 0);
                 form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
-                form_treeView_Browse.SelectedNode = m_listRootNodes[0];
+                form_treeView_Browse.SelectedNode = m_listRootNodes[0];     // m_bPutPathInFindEditBox is set in TreeDoneCallback()
             }
 
             return false;           // unused bool return

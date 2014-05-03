@@ -60,6 +60,7 @@ namespace SearchDirLists
 
             treeDone.Step1_OnThread();
             Console.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+            m_bPutPathInFindEditBox = true;
             Invoke(new DoSomething(treeDone.Step2_OnForm));
             Console.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             treeDone = null;

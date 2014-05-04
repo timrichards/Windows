@@ -120,38 +120,11 @@ namespace SearchDirLists
             NodeDatum nodeDatum = (NodeDatum)parent.Tag;
             NodeDatum nodeDatum_B = new NodeDatum();
 
-            Utilities.Assert(1302.3301, nTotalLength == nodeDatum.nLength);
+            Utilities.Assert(1302.3317, nTotalLength == nodeDatum.nLength);
             nodeDatum_B.nTotalLength = nTotalLength;
             nodeDatum_B.TreeMapRect = nodeDatum.TreeMapRect;
             nodeFileList.Tag = nodeDatum_B;
             return nodeFileList;
-        }
-
-        internal String Tooltip_Click()
-        {
-            if (m_toolTip.Tag == null)
-            {
-                return null;
-            }
-
-            TreeNode treeNode_A = (TreeNode)m_toolTip.Tag;
-
-            if (treeNode_A.TreeView != null)    // null if fake file treenode (NodeDatum.TreeMapFiles)
-            {
-                if (treeNode_A.Tag is RootNodeDatum)
-                {
-                    ((RootNodeDatum)treeNode_A.Tag).VolumeView = (((RootNodeDatum)treeNode_A.Tag).VolumeView == false);
-                    treeNode_A.TreeView.SelectedNode = null;    // to kick in a change selection event
-                }
-
-                treeNode_A.TreeView.SelectedNode = treeNode_A;
-            }
-            else
-            {
-                return treeNode_A.Text;
-            }
-
-            return null;
         }
 
         internal TreeNode DoToolTip(Point pt_in)
@@ -311,80 +284,6 @@ namespace SearchDirLists
             return null;
         }
 
-        internal void Render(TreeNode treeNode)
-        {
-            if ((m_deepNode == null) || (m_deepNode.IsChildOf(treeNode) == false))
-            {
-                m_deepNode = treeNode;
-            }
-
-            m_treeNode = treeNode;
-            ClearSelection();
-            m_dtHideGoofball = DateTime.Now;
-            m_bg.Graphics.Clear(Color.DarkGray);
-
-            do
-            {
-                DateTime dtStart = DateTime.Now;
-
-                DrawTreemap();
-
-                if ((DateTime.Now - dtStart) < TimeSpan.FromSeconds(1.5))
-                {
-                    break;
-                }
-            }
-            while (SetBitmapSize());
-
-            m_dtHideGoofball = DateTime.MinValue;
-            m_bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), m_rectBitmap);
-            m_bg.Render();
-            m_selRect = Rectangle.Empty;
-            m_prevNode = null;
-            Invalidate();
-            m_dtHideGoofball = DateTime.MinValue;
-        }
-
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            if (Site != null) // && Site.DesignMode)    // prevent bitmap from getting into the pesky resx
-            {
-                BackColor = Color.Turquoise;            // litmus
-                return;
-            }
-
-            BackColor = Color.Empty;
-            SetBitmapSize(1024);
-        }
-
-        bool SetBitmapSize(int nPxPerSide = -1)
-        {
-            if (nPxPerSide == -1)
-            {
-                int nWidth = m_rectBitmap.Size.Width;
-                Utilities.Assert(1302.3302, nWidth > 32);
-
-                if (nWidth <= 32)
-                {
-                    return false;
-                }
-
-                nPxPerSide = (int)(nWidth * .75);
-            }
-
-            m_rectBitmap = new Rectangle(0, 0, nPxPerSide, nPxPerSide);
-            BackgroundImage = new Bitmap(m_rectBitmap.Size.Width, m_rectBitmap.Size.Height);
-
-            BufferedGraphicsContext bgcontext = BufferedGraphicsManager.Current;
-
-            bgcontext.MaximumBuffer = m_rectBitmap.Size;
-            m_bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), m_rectBitmap);
-            TranslateSize();
-            return true;
-        }
-
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -441,6 +340,99 @@ namespace SearchDirLists
             TranslateSize();
             m_prevNode = null;
             ClearSelection();
+        }
+
+        internal void Render(TreeNode treeNode)
+        {
+            if ((m_deepNode == null) || (m_deepNode.IsChildOf(treeNode) == false))
+            {
+                m_deepNode = treeNode;
+            }
+
+            m_treeNode = treeNode;
+            ClearSelection();
+            m_dtHideGoofball = DateTime.Now;
+
+            if (m_bg == null)
+            {
+                SetBitmapSize(1024);    // needs to be here: OnLoad is called after form_treeView_Browse_AfterSelect()
+            }
+
+            m_bg.Graphics.Clear(Color.DarkGray);
+
+            do
+            {
+                DateTime dtStart = DateTime.Now;
+
+                DrawTreemap();
+
+                if ((DateTime.Now - dtStart) < TimeSpan.FromSeconds(1.5))
+                {
+                    break;
+                }
+            }
+            while (SetBitmapSize());
+
+            m_dtHideGoofball = DateTime.MinValue;
+            m_bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), m_rectBitmap);
+            m_bg.Render();
+            m_selRect = Rectangle.Empty;
+            m_prevNode = null;
+            Invalidate();
+            m_dtHideGoofball = DateTime.MinValue;
+        }
+
+        bool SetBitmapSize(int nPxPerSide = -1)
+        {
+            if (nPxPerSide == -1)
+            {
+                int nWidth = m_rectBitmap.Size.Width;
+                Utilities.Assert(1302.3302, nWidth > 32);
+
+                if (nWidth <= 32)
+                {
+                    return false;
+                }
+
+                nPxPerSide = (int)(nWidth * .75);
+            }
+
+            m_rectBitmap = new Rectangle(0, 0, nPxPerSide, nPxPerSide);
+            BackgroundImage = new Bitmap(m_rectBitmap.Size.Width, m_rectBitmap.Size.Height);
+
+            BufferedGraphicsContext bgcontext = BufferedGraphicsManager.Current;
+
+            bgcontext.MaximumBuffer = m_rectBitmap.Size;
+            m_bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), m_rectBitmap);
+            TranslateSize();
+            return true;
+        }
+
+        internal String Tooltip_Click()
+        {
+            if (m_toolTip.Tag == null)
+            {
+                return null;
+            }
+
+            TreeNode treeNode_A = (TreeNode)m_toolTip.Tag;
+
+            if (treeNode_A.TreeView != null)    // null if fake file treenode (NodeDatum.TreeMapFiles)
+            {
+                if (treeNode_A.Tag is RootNodeDatum)
+                {
+                    ((RootNodeDatum)treeNode_A.Tag).VolumeView = (((RootNodeDatum)treeNode_A.Tag).VolumeView == false);
+                    treeNode_A.TreeView.SelectedNode = null;    // to kick in a change selection event
+                }
+
+                treeNode_A.TreeView.SelectedNode = treeNode_A;
+            }
+            else
+            {
+                return treeNode_A.Text;
+            }
+
+            return null;
         }
 
         void TranslateSize()

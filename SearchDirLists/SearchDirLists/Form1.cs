@@ -2996,5 +2996,13 @@ namespace SearchDirLists
         {
             m_bNavDropDown = true;
         }
+
+        private void form_cbSaveAs_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (new Keys[] { Keys.Enter, Keys.Return }.Contains((Keys)e.KeyChar))
+            {
+                form_btn_AddVolume_Click(sender, e);
+            }
+        }
     }
 }

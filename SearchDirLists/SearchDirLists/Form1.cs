@@ -45,8 +45,6 @@ namespace SearchDirLists
         bool m_bTreeViewIndirectSelChange = false;
         bool m_bChkCompare1IndirectCheckChange = false;
         bool m_bNavDropDown = false;
-        List<Control> m_listLargeFontCtls = new List<Control>();
-        List<Control> m_listSmallFontCtls = new List<Control>();
         TabPage m_FileListTabPageBeforeCompare = null;
 
         // initialized in constructor:
@@ -63,7 +61,7 @@ namespace SearchDirLists
         String m_strChkCompareOrig = null;
         String m_strVolGroupOrig = null;
 
-        public partial class Form1LayoutPanel : TableLayoutPanel
+        public class Form1LayoutPanel : TableLayoutPanel
         {
             void SetStyle()
             {
@@ -84,7 +82,7 @@ namespace SearchDirLists
             }
         }
 
-        class Form1TreeView : TreeView
+        public class Form1TreeView : TreeView
         {
             // enable double buffer
 
@@ -330,29 +328,6 @@ namespace SearchDirLists
             m_clrVolGroupOrig = form_lblVolGroup.BackColor;
             m_bCheckboxes = form_treeView_Browse.CheckBoxes;
             Utilities.SetMessageBoxDelegate(MessageboxCallback);
-            m_listLargeFontCtls.Add(form_tabControl);
-            m_listSmallFontCtls.Add(form_tabPageVolumes);
-            m_listLargeFontCtls.Add(form_cbVolumeName);
-            m_listLargeFontCtls.Add(form_lvVolumesMain);
-            m_listLargeFontCtls.Add(form_btnSaveDirList);
-            m_listLargeFontCtls.Add(form_cbSaveAs);
-            m_listLargeFontCtls.Add(form_cbPath);
-            m_listSmallFontCtls.Add(form_tabPageBrowse);
-            m_listSmallFontCtls.Add(form_lblVolGroup);
-            m_listLargeFontCtls.Add(form_cbNavigate);
-            m_listSmallFontCtls.Add(label3);
-            m_listSmallFontCtls.Add(form_chkCompare1);
-            m_listLargeFontCtls.Add(form_treeCompare1);
-            m_listLargeFontCtls.Add(form_treeCompare2);
-            m_listLargeFontCtls.Add(form_treeView_Browse);
-            m_listLargeFontCtls.Add(form_lvCopyList);
-            m_listLargeFontCtls.Add(form_lvFiles);
-            m_listLargeFontCtls.Add(form_lvFileCompare);
-            m_listLargeFontCtls.Add(form_lvDetail);
-            m_listLargeFontCtls.Add(form_lvDetailVol);
-            m_listLargeFontCtls.Add(form_lvUnique);
-            m_listLargeFontCtls.Add(form_lvSameVol);
-            m_listLargeFontCtls.Add(form_lvClones);
         }
 
         void ComboBoxItemsInsert(ComboBox comboBox, String strText = null, bool bTrimText = true)
@@ -2940,58 +2915,6 @@ namespace SearchDirLists
             DoTree(bKill: true);
         }
 
-        private void form_btnFontDown_Click(object sender, EventArgs e)
-        {
-            FontChange(-1);
-        }
-
-        private void form_btnFontUp_Click(object sender, EventArgs e)
-        {
-            FontChange(+1);
-        }
-
-        void FontChange(int nDirection)
-        {
-            Font newFont = null;
-
-            foreach (Control ctl in m_listSmallFontCtls)
-            {
-                if (ctl.Font == null) { ctl.Font = (Font) Font.Clone(); }
-            }
-
-            foreach (Control ctl in m_listLargeFontCtls)
-            {
-                if (newFont == null)
-                {
-                    if (ctl.Font != null)
-                    {
-                        newFont = new Font(ctl.Font.FontFamily, ctl.Font.Size + nDirection);
-                    }
-                    else
-                    {
-                        newFont = new Font(Font.FontFamily, Font.Size + nDirection);
-                    }
-                }
-
-                if (ctl is ListView) ((ListView)ctl).BeginUpdate();
-                ctl.Font = newFont;
-                if (ctl is ListView) ((ListView)ctl).EndUpdate();
-            }
-        }
-
-        private void btnFontClear_Click(object sender, EventArgs e)
-        {
-            foreach (Control ctl in m_listLargeFontCtls)
-            {
-                ctl.Font = new Font(Font.FontFamily, 10);
-            }
-
-            foreach (Control ctl in m_listSmallFontCtls)
-            {
-                ctl.Font = (Font)Font.Clone();
-            }
-        }
-
         private void form_cbNavigate_DropDown(object sender, EventArgs e)
         {
             m_bNavDropDown = true;
@@ -3003,6 +2926,11 @@ namespace SearchDirLists
             {
                 form_btn_AddVolume_Click(sender, e);
             }
+        }
+
+        private void checkBox1_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.FillRectangle(new SolidBrush(BackColor), e.ClipRectangle);
         }
     }
 }

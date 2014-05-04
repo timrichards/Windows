@@ -124,6 +124,7 @@ namespace SearchDirLists
             nodeDatum_B.nTotalLength = nTotalLength;
             nodeDatum_B.TreeMapRect = nodeDatum.TreeMapRect;
             nodeFileList.Tag = nodeDatum_B;
+            Utilities.Assert(1302.3318, nodeFileList.SelectedImageIndex == -1);              // sets the bitmap size
             return nodeFileList;
         }
 
@@ -349,63 +350,42 @@ namespace SearchDirLists
                 m_deepNode = treeNode;
             }
 
-            m_treeNode = treeNode;
+            int nPxPerSide = (treeNode.SelectedImageIndex == -1) ? 2048 : treeNode.SelectedImageIndex;
+
+            if (nPxPerSide != m_rectBitmap.Size.Width)
+            {
+                DateTime dtStart_A = DateTime.Now;
+
+                m_rectBitmap = new Rectangle(0, 0, nPxPerSide, nPxPerSide);
+                BackgroundImage = new Bitmap(m_rectBitmap.Size.Width, m_rectBitmap.Size.Height);
+
+                BufferedGraphicsContext bgcontext = BufferedGraphicsManager.Current;
+
+                bgcontext.MaximumBuffer = m_rectBitmap.Size;
+                m_bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), m_rectBitmap);
+                TranslateSize();
+                Console.WriteLine("Size bitmap " + nPxPerSide  + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000.0 + " seconds.");
+            }
+
+            DateTime dtStart = DateTime.Now;
+
             ClearSelection();
-            m_dtHideGoofball = DateTime.Now;
-
-            if (m_bg == null)
-            {
-                SetBitmapSize(1024);    // needs to be here: OnLoad is called after form_treeView_Browse_AfterSelect()
-            }
-
             m_bg.Graphics.Clear(Color.DarkGray);
-
-            do
-            {
-                DateTime dtStart = DateTime.Now;
-
-                DrawTreemap();
-
-                if ((DateTime.Now - dtStart) < TimeSpan.FromSeconds(1.5))
-                {
-                    break;
-                }
-            }
-            while (SetBitmapSize());
-
-            m_dtHideGoofball = DateTime.MinValue;
+            m_treeNode = treeNode;
+            DrawTreemap();
             m_bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), m_rectBitmap);
             m_bg.Render();
             m_selRect = Rectangle.Empty;
             m_prevNode = null;
             Invalidate();
             m_dtHideGoofball = DateTime.MinValue;
-        }
 
-        bool SetBitmapSize(int nPxPerSide = -1)
-        {
-            if (nPxPerSide == -1)
+            if ((DateTime.Now - dtStart) > TimeSpan.FromSeconds(1))
             {
-                int nWidth = m_rectBitmap.Size.Width;
-                Utilities.Assert(1302.3302, nWidth > 32);
-
-                if (nWidth <= 32)
-                {
-                    return false;
-                }
-
-                nPxPerSide = (int)(nWidth * .75);
+                treeNode.SelectedImageIndex = Math.Max((int)
+                    (((treeNode.SelectedImageIndex == -1) ? m_rectBitmap.Size.Width : treeNode.SelectedImageIndex)
+                    * .75), 256);
             }
-
-            m_rectBitmap = new Rectangle(0, 0, nPxPerSide, nPxPerSide);
-            BackgroundImage = new Bitmap(m_rectBitmap.Size.Width, m_rectBitmap.Size.Height);
-
-            BufferedGraphicsContext bgcontext = BufferedGraphicsManager.Current;
-
-            bgcontext.MaximumBuffer = m_rectBitmap.Size;
-            m_bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), m_rectBitmap);
-            TranslateSize();
-            return true;
         }
 
         internal String Tooltip_Click()

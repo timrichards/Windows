@@ -409,6 +409,7 @@ namespace SearchDirLists
                         treeNode = new TreeNode(strShortPath);
                     }
 
+                    Utilities.Assert(1302.3318, treeNode.SelectedImageIndex == -1);        // sets the bitmap size
                     treeNode.Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo, m_nLength);  // this is almost but not quite always newly assigned here.
 
                     if (this == m_rootNode.Nodes.Values.First())

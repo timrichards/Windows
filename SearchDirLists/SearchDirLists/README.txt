@@ -25,3 +25,13 @@ Finally there is a tree map view on the second Browse tab. By clicking each volu
 Drilling down and the coming back up the treemap produces a spinning ball to show the deepest folder you visited. Clicking this ball once makes it go away so that you can see its neighbors when it's crowded. Clicking again within five seconds takes you back to that deep folder.
 
 At any time you can drill down using the treemap itself. To do this you click and darken a folder in the treemap. The direct subfolders are bordered in black. You can go beyond this and continue clicking down from the current view, or you can click the title of the folder in the toolip that appears in the search box.
+
+Full credit in the code to Bernhard Seifert, GPL v2, for the treemap, from WinDirStat, 2004.
+
+Please make suggestions and bug reports! Start a discussion at http://sourceforge.net/projects/searchdirlists/
+
+Thanks for trying out this application.
+
+Sincerely,
+Tim Richards
+May 2014

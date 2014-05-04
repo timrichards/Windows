@@ -362,6 +362,12 @@ namespace SearchDirLists
                 BufferedGraphicsContext bgcontext = BufferedGraphicsManager.Current;
 
                 bgcontext.MaximumBuffer = m_rectBitmap.Size;
+
+                if (m_bg != null)
+                {
+                    m_bg.Dispose();
+                }
+
                 m_bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), m_rectBitmap);
                 TranslateSize();
                 Console.WriteLine("Size bitmap " + nPxPerSide  + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000.0 + " seconds.");

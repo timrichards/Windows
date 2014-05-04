@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.IO;
 using System.Threading;
+using System.Collections.Concurrent;
 
 namespace SearchDirLists
 {
@@ -216,7 +217,7 @@ namespace SearchDirLists
     class Search : SearchBase
     {
         Thread m_thread = null;
-        List<Thread> m_listThreads = new List<Thread>();
+        ConcurrentBag<Thread> m_cbagThreads = new ConcurrentBag<Thread>();
         SearchStatusDelegate m_statusCallback = null;
         SearchDoneDelegate m_doneCallback = null;
         List<LVvolStrings> m_list_lvVolStrings = new List<LVvolStrings>();
@@ -249,10 +250,10 @@ namespace SearchDirLists
             {
                 SearchFile searchFile = new SearchFile((SearchBase)this, volStrings, m_statusCallback);
 
-                m_listThreads.Add(searchFile.DoThreadFactory());
+                m_cbagThreads.Add(searchFile.DoThreadFactory());
             }
 
-            foreach (Thread thread in m_listThreads)
+            foreach (Thread thread in m_cbagThreads)
             {
                 thread.Join();
             }
@@ -263,18 +264,15 @@ namespace SearchDirLists
 
         internal void EndThread()
         {
-            lock (m_listThreads)
+            foreach (Thread thread in m_cbagThreads)
             {
-                foreach (Thread thread in m_listThreads)
+                if (thread.IsAlive)
                 {
-                    if (thread.IsAlive)
-                    {
-                        thread.Abort();
-                    }
+                    thread.Abort();
                 }
             }
 
-            m_listThreads.Clear();
+            m_cbagThreads = new ConcurrentBag<Thread>();
 
             if ((m_thread != null) && m_thread.IsAlive)
             {

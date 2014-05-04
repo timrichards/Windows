@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Threading;
 using System.Runtime.InteropServices;
+using System.Collections.Concurrent;
 
 namespace SearchDirLists
 {
@@ -254,7 +255,7 @@ namespace SearchDirLists
         SaveDirListingsStatusDelegate m_statusCallback = null;
         SaveDirListingsDoneDelegate m_doneCallback = null;
         Thread m_thread = null;
-        List<Thread> m_listThreads = new List<Thread>();
+        ConcurrentBag<Thread> m_cbagThreads = new ConcurrentBag<Thread>();
         List<LVvolStrings> m_list_lvVolStrings = new List<LVvolStrings>();
 
         int m_nFilesWritten = 0;
@@ -291,10 +292,10 @@ namespace SearchDirLists
                 }
 
                 m_statusCallback(nVolIx, "Saving...");
-                m_listThreads.Add(new SaveDirListing(volStrings, m_statusCallback).DoThreadFactory());
+                m_cbagThreads.Add(new SaveDirListing(volStrings, m_statusCallback).DoThreadFactory());
             }
 
-            foreach (Thread thread in m_listThreads)
+            foreach (Thread thread in m_cbagThreads)
             {
                 thread.Join();
             }
@@ -305,18 +306,15 @@ namespace SearchDirLists
 
         internal void EndThread()
         {
-            lock (m_listThreads)
+            foreach (Thread thread in m_cbagThreads)
             {
-                foreach (Thread thread in m_listThreads)
+                if (thread.IsAlive)
                 {
-                    if (thread.IsAlive)
-                    {
-                        thread.Abort();
-                    }
+                    thread.Abort();
                 }
             }
 
-            m_listThreads.Clear();
+            m_cbagThreads = new ConcurrentBag<Thread>();
 
             if ((m_thread != null) && m_thread.IsAlive)
             {

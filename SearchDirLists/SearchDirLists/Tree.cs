@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Threading;
 using System.Drawing;
+using System.Collections.Concurrent;
 
 namespace SearchDirLists
 {
@@ -275,7 +276,7 @@ namespace SearchDirLists
         Hashtable m_hashCache = null;
         TreeStatusDelegate m_statusCallback = null;
         TreeDoneDelegate m_doneCallback = null;
-        List<Thread> m_listThreads = new List<Thread>();
+        ConcurrentBag<Thread> m_cbagThreads = new ConcurrentBag<Thread>();
         Thread m_thread = null;
 
         class TreeRootNodeThread : Utilities
@@ -660,17 +661,17 @@ namespace SearchDirLists
                 }
 
                 TreeRootNodeThread treeRoot = new TreeRootNodeThread(volStrings, m_hashCache, m_statusCallback);
-                m_listThreads.Add(treeRoot.DoThreadFactory());
+                m_cbagThreads.Add(treeRoot.DoThreadFactory());
             }
 
-            foreach (Thread thread in m_listThreads)
+            foreach (Thread thread in m_cbagThreads)
             {
                 thread.Join();
             }
 
             Console.WriteLine(String.Format("Completed tree in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 10) / 100.0));
 
-            if (m_listThreads.Count <= 0)
+            if (m_cbagThreads.Count <= 0)
             {
                 return;
             }
@@ -680,18 +681,15 @@ namespace SearchDirLists
 
         internal void EndThread(bool bJoin = false)
         {
-            lock (m_listThreads)
+            foreach (Thread thread in m_cbagThreads)
             {
-                foreach (Thread thread in m_listThreads)
+                if (thread.IsAlive)
                 {
-                    if (thread.IsAlive)
-                    {
-                        thread.Abort();
-                    }
+                    thread.Abort();
                 }
             }
 
-            m_listThreads.Clear();
+            m_cbagThreads = new ConcurrentBag<Thread>();
 
             if ((m_thread != null) && m_thread.IsAlive)
             {

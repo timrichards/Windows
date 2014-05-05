@@ -336,8 +336,7 @@ namespace SearchDirLists
             }
 
             m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
-
-			m_bThreadAbort = true;
+            m_bThreadAbort = true;
             m_thread = null;
         }
 
@@ -357,7 +356,7 @@ namespace SearchDirLists
 
         void SaveDirListingsStatusCallback(int nIndex, String strText = null, bool bSuccess = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0)
         {
-            if (AppExit || ((m_saveDirListings != null) && m_saveDirListings.IsAborted))
+            if (AppExit || (m_saveDirListings == null) || m_saveDirListings.IsAborted)
             {
                 return;
             }
@@ -389,7 +388,7 @@ namespace SearchDirLists
 
         void SaveDirListingsDoneCallback()
         {
-            if (AppExit || ((m_saveDirListings != null) && m_saveDirListings.IsAborted))
+            if (AppExit || (m_saveDirListings == null) || m_saveDirListings.IsAborted)
             {
                 return;
             }

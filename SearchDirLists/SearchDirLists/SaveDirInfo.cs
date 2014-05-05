@@ -16,6 +16,7 @@ namespace SearchDirLists
     {
         SaveDirListingsStatusDelegate m_statusCallback = null;
         Thread m_thread = null;
+        bool m_bThreadAbort = false;
         LVvolStrings m_volStrings = null;
         long m_nLengthTotal = 0;
         long m_nFilesTotal = 0;
@@ -103,6 +104,11 @@ namespace SearchDirLists
 
             while (stackDirs.Count > 0)
             {
+                if (m_bThreadAbort || Form1.AppExit)
+                {
+                    return;
+                }
+
                 Win32.WIN32_FIND_DATA winDir = stackDirs.Pop();
                 long nDirLength = 0;
                 bool bHasLength = false;
@@ -241,12 +247,23 @@ namespace SearchDirLists
             m_statusCallback(m_volStrings.Index, strText: m_str_SAVED, bSuccess: true);
         }
 
-        internal Thread DoThreadFactory()
+        internal SaveDirListing DoThreadFactory()
         {
             m_thread = new Thread(new ThreadStart(Go));
             m_thread.IsBackground = true;
             m_thread.Start();
-            return m_thread;
+            return this;
+        }
+
+        internal void Join()
+        {
+            m_thread.Join();
+        }
+
+        internal void Abort()
+        {
+            m_bThreadAbort = true;
+            m_thread.Abort();
         }
     }
 
@@ -255,7 +272,8 @@ namespace SearchDirLists
         SaveDirListingsStatusDelegate m_statusCallback = null;
         SaveDirListingsDoneDelegate m_doneCallback = null;
         Thread m_thread = null;
-        ConcurrentBag<Thread> m_cbagThreads = new ConcurrentBag<Thread>();
+        bool m_bThreadAbort = false;
+        ConcurrentBag<SaveDirListing> m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
         List<LVvolStrings> m_list_lvVolStrings = new List<LVvolStrings>();
 
         int m_nFilesWritten = 0;
@@ -292,35 +310,34 @@ namespace SearchDirLists
                 }
 
                 m_statusCallback(nVolIx, "Saving...");
-                m_cbagThreads.Add(new SaveDirListing(volStrings, m_statusCallback).DoThreadFactory());
+                m_cbagWorkers.Add(new SaveDirListing(volStrings, m_statusCallback).DoThreadFactory());
             }
 
-            foreach (Thread thread in m_cbagThreads)
+            foreach (SaveDirListing worker in m_cbagWorkers)
             {
-                thread.Join();
+                worker.Join();
             }
 
             Console.WriteLine(String.Format("Finished saving directory listings in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
+
+            if (m_bThreadAbort || Form1.AppExit)
+            {
+                return;
+            }
+
             m_doneCallback();
         }
 
         internal void EndThread()
         {
-            foreach (Thread thread in m_cbagThreads)
+            foreach (SaveDirListing worker in m_cbagWorkers)
             {
-                if (thread.IsAlive)
-                {
-                    thread.Abort();
-                }
+                worker.Abort();
             }
 
-            m_cbagThreads = new ConcurrentBag<Thread>();
+            m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
 
-            if ((m_thread != null) && m_thread.IsAlive)
-            {
-                m_thread.Abort();
-            }
-
+			m_bThreadAbort = true;
             m_thread = null;
         }
 
@@ -330,6 +347,8 @@ namespace SearchDirLists
             m_thread.IsBackground = true;
             m_thread.Start();
         }
+
+        internal bool IsAborted { get { return m_bThreadAbort; } }
     }
 
     partial class Form1 : Form
@@ -338,7 +357,7 @@ namespace SearchDirLists
 
         void SaveDirListingsStatusCallback(int nIndex, String strText = null, bool bSuccess = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0)
         {
-            if (m_bFormClosing)
+            if (AppExit || ((m_saveDirListings != null) && m_saveDirListings.IsAborted))
             {
                 return;
             }
@@ -370,7 +389,7 @@ namespace SearchDirLists
 
         void SaveDirListingsDoneCallback()
         {
-            if (m_bFormClosing)
+            if (AppExit || ((m_saveDirListings != null) && m_saveDirListings.IsAborted))
             {
                 return;
             }

@@ -276,13 +276,15 @@ namespace SearchDirLists
         Hashtable m_hashCache = null;
         TreeStatusDelegate m_statusCallback = null;
         TreeDoneDelegate m_doneCallback = null;
-        ConcurrentBag<Thread> m_cbagThreads = new ConcurrentBag<Thread>();
+        ConcurrentBag<TreeRootNodeBuilder> m_cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
         Thread m_thread = null;
+        bool m_bThreadAbort = false;
 
-        class TreeRootNodeThread : Utilities
+        class TreeRootNodeBuilder : Utilities
         {
             static TreeStatusDelegate m_statusCallback = null;
             Thread m_thread = null;
+            bool m_bThreadAbort = false;
             LVvolStrings m_volStrings = null;
             Hashtable m_hashCache = null;
 
@@ -330,6 +332,11 @@ namespace SearchDirLists
 
                 internal Node(String in_str, uint nLineNo, ulong nLength, RootNode rootNode)
                 {
+                    if (Form1.AppExit)
+                    {
+                        return;
+                    }
+
                     Utilities.Assert(1301.2301, nLineNo != 0);
                     m_rootNode = rootNode;
 
@@ -368,6 +375,11 @@ namespace SearchDirLists
 
                 internal TreeNode AddToTree(String strVolumeName = null)
                 {
+                    if (Form1.AppExit)
+                    {
+                        return new TreeNode();
+                    }
+
                     int nIndex = m_strPath.LastIndexOf(Path.DirectorySeparatorChar);
                     String strShortPath = bUseShortPath ? m_strPath.Substring(nIndex + 1) : m_strPath;
                     TreeNode treeNode = null;
@@ -443,7 +455,7 @@ namespace SearchDirLists
                 internal uint FirstLineNo { get { return m_firstLineNo; } set { m_firstLineNo = value; } }
             }
 
-            internal TreeRootNodeThread(LVvolStrings volStrings, Hashtable hashCache, TreeStatusDelegate statusCallback)
+            internal TreeRootNodeBuilder(LVvolStrings volStrings, Hashtable hashCache, TreeStatusDelegate statusCallback)
             {
                 m_volStrings = volStrings;
                 m_hashCache = hashCache;
@@ -456,6 +468,11 @@ namespace SearchDirLists
 
                 foreach (TreeNode node in treeNode.Nodes)
                 {
+                    if (m_bThreadAbort || Form1.AppExit)
+                    {
+                        return datum;
+                    }
+
                     datum += TreeSubnodeDetails(node);
                 }
 
@@ -582,6 +599,12 @@ namespace SearchDirLists
 
                     lock (m_hashCache)
                     {
+                        if (m_hashCache.Contains("driveInfo" + strSaveAs))
+                        {
+                            Utilities.Assert(1301.23035, false);
+                            m_hashCache.Remove("driveInfo" + strSaveAs);
+                        }
+
                         m_hashCache.Add("driveInfo" + strSaveAs, strBuilder.ToString().Trim());
                     }
                 }
@@ -598,6 +621,11 @@ namespace SearchDirLists
 
                 foreach (String strLine in listLines)
                 {
+                    if (Form1.AppExit)
+                    {
+                        return;
+                    }
+
                     String[] strArray = strLine.Split('\t');
                     uint nLineNo = uint.Parse(strArray[1]);
                     int nIx = nColLENGTH;
@@ -624,12 +652,23 @@ namespace SearchDirLists
                 Console.WriteLine(strSaveAs + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
             }
 
-            internal Thread DoThreadFactory()
+            internal TreeRootNodeBuilder DoThreadFactory()
             {
                 m_thread = new Thread(new ThreadStart(Go));
                 m_thread.IsBackground = true;
                 m_thread.Start();
-                return m_thread;
+                return this;
+            }
+
+            internal void Join()
+            {
+                m_thread.Join();
+            }
+
+            internal void Abort()
+            {
+                m_bThreadAbort = true;
+                m_thread.Abort();
             }
         }
 
@@ -660,18 +699,23 @@ namespace SearchDirLists
                     continue;
                 }
 
-                TreeRootNodeThread treeRoot = new TreeRootNodeThread(volStrings, m_hashCache, m_statusCallback);
-                m_cbagThreads.Add(treeRoot.DoThreadFactory());
+                TreeRootNodeBuilder treeRoot = new TreeRootNodeBuilder(volStrings, m_hashCache, m_statusCallback);
+                m_cbagWorkers.Add(treeRoot.DoThreadFactory());
             }
 
-            foreach (Thread thread in m_cbagThreads)
+            foreach (TreeRootNodeBuilder worker in m_cbagWorkers)
             {
-                thread.Join();
+                worker.Join();
             }
 
             Console.WriteLine(String.Format("Completed tree in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 10) / 100.0));
 
-            if (m_cbagThreads.Count <= 0)
+            if (m_cbagWorkers.Count <= 0)
+            {
+                return;
+            }
+
+            if (m_bThreadAbort || Form1.AppExit)
             {
                 return;
             }
@@ -681,26 +725,13 @@ namespace SearchDirLists
 
         internal void EndThread(bool bJoin = false)
         {
-            foreach (Thread thread in m_cbagThreads)
+            foreach (TreeRootNodeBuilder worker in m_cbagWorkers)
             {
-                if (thread.IsAlive)
-                {
-                    thread.Abort();
-                }
+				worker.Abort();
             }
 
-            m_cbagThreads = new ConcurrentBag<Thread>();
-
-            if ((m_thread != null) && m_thread.IsAlive)
-            {
-                m_thread.Abort();
-
-                if (m_thread.IsAlive && bJoin)
-                {
-                    m_thread.Join();
-                }
-            }
-
+            TreeDone.Abort();
+            m_bThreadAbort = true;
             m_thread = null;
         }
 
@@ -710,6 +741,8 @@ namespace SearchDirLists
             m_thread.IsBackground = true;
             m_thread.Start();
         }
+
+        internal bool IsAborted { get { return m_bThreadAbort; } }
     }
 
     class TreeSelect : Utilities
@@ -933,7 +966,6 @@ namespace SearchDirLists
         internal Thread DoThreadFactory()
         {
             m_thread = new Thread(new ThreadStart(Go));
-
             m_thread.IsBackground = true;
             m_thread.Start();
             return m_thread;

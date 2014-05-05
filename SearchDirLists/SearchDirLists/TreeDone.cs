@@ -28,6 +28,17 @@ namespace SearchDirLists
         Dictionary<TreeNode, ListViewItem> dictIgnoreNodes = new Dictionary<TreeNode, ListViewItem>();
         bool m_bLoose = false;
 
+        bool m_bThreadAbort = false;
+        static TreeDone static_this = null;
+
+        public static void Abort()
+        {
+            if (static_this != null)
+            {
+                static_this.m_bThreadAbort = true;
+            }
+        }
+
         class AddTreeToList
         {
             List<TreeNode> m_listTreeNodes = null;
@@ -117,6 +128,7 @@ namespace SearchDirLists
             List<TreeNode> listRootNodes, List<TreeNode> listTreeNodes, bool bCheckboxes,
             List<ListViewItem> list_lvIgnore, bool bLoose)
         {
+            static_this = this;
             form_treeView_Browse = treeView_Browse;
             m_hashCache = hashCache;
             form_lvClones = lvClones;
@@ -181,6 +193,11 @@ namespace SearchDirLists
 
                     foreach (TreeNode subnode in listClones)
                     {
+                        if (m_bThreadAbort || Form1.AppExit)
+                        {
+                            return;
+                        }
+
                         Utilities.Assert(1305.6305, ((NodeDatum)subnode.Tag).Key == nodeDatum.Key);
 
                         TreeNode rootNode_A = subnode.Root();
@@ -213,6 +230,11 @@ namespace SearchDirLists
 
             foreach (TreeNode subNode in treeNode.Nodes)
             {
+                if (m_bThreadAbort || Form1.AppExit)
+                {
+                    return;
+                }
+
                 FixClones(dictClones, subNode, rootClone);
             }
         }
@@ -273,6 +295,11 @@ namespace SearchDirLists
 
             do
             {
+                if (m_bThreadAbort || Form1.AppExit)
+                {
+                    return;
+                }
+
                 if (sbMatch.Contains(treeNode.Text))
                 {
                     foreach (ListViewItem lvItem in m_list_lvIgnore)
@@ -344,6 +371,11 @@ namespace SearchDirLists
 
             foreach (DictionaryEntry pair in m_hashCache)
             {
+                if (m_bThreadAbort || Form1.AppExit)
+                {
+                    return;
+                }
+
                 if ((pair.Value is List<TreeNode>) == false)
                 {
                     hashTable.Add(pair.Key, pair.Value);
@@ -366,6 +398,11 @@ namespace SearchDirLists
 
                     foreach (TreeNode treeNode in listNodes)
                     {
+                        if (m_bThreadAbort || Form1.AppExit)
+                        {
+                            return;
+                        }
+
                         if (dictIgnoreNodes.ContainsKey(treeNode) == false)
                         {
                             bIgnore = false;
@@ -393,6 +430,11 @@ namespace SearchDirLists
 
                     foreach (TreeNode treeNode in listNodes)
                     {
+                        if (m_bThreadAbort || Form1.AppExit)
+                        {
+                            return;
+                        }
+
                         NodeDatum nodeDatum = ((NodeDatum)treeNode.Tag);
 
                         Utilities.Assert(1305.6308, nodeDatum.nTotalLength > 100 * 1024);
@@ -438,7 +480,7 @@ namespace SearchDirLists
             // even a reference type: this shouldn't work unless passing back by ref. However it does seem to work.
             // m_hashCache is a member of this instance of TreeDone and now points to
             m_hashCache = hashTable;
-            // so why does that make Form1.m_hashCache now suddenly point to the same memory, as though passed back by ref?
+            // so why does that make Form1.m_hashCache now point to the same memory, as though passed back by ref?
 
             SortedDictionary<HashKey, List<TreeNode>> dictClones = new SortedDictionary<HashKey, List<TreeNode>>();
 
@@ -455,6 +497,11 @@ namespace SearchDirLists
 
             foreach (KeyValuePair<HashKey, List<TreeNode>> listNodes in dictReverse)
             {
+                if (m_bThreadAbort || Form1.AppExit)
+                {
+                    return;
+                }
+
                 int nClones = listNodes.Value.Count;
 
                 if (nClones <= 0)
@@ -465,7 +512,7 @@ namespace SearchDirLists
 
                 String str_nClones = null;
 
-                if (nClones > 2)        // includes the subject node: this line says don't put 2's all over the listviewer
+                if (nClones > 2)        // includes the subject node: only note three clones or more
                 {
                     str_nClones = nClones.ToString("###,###");
                 }
@@ -480,6 +527,11 @@ namespace SearchDirLists
 
                 foreach (TreeNode treeNode in listNodes.Value)
                 {
+                    if (m_bThreadAbort || Form1.AppExit)
+                    {
+                        return;
+                    }
+
                     TreeNode parentNode = treeNode.Parent;
 
                     while (parentNode != null)
@@ -509,6 +561,11 @@ namespace SearchDirLists
 
             foreach (KeyValuePair<HashKey, TreeNode> listNodes in dictUniqueReverse)
             {
+                if (m_bThreadAbort || Form1.AppExit)
+                {
+                    return;
+                }
+
                 TreeNode treeNode = listNodes.Value;
 
                 Utilities.Assert(1305.6311, Utilities.StrValid(treeNode.Text));
@@ -560,6 +617,11 @@ namespace SearchDirLists
 
             foreach (TreeNode treeNode in listSameVolDescLength)
             {
+                if (m_bThreadAbort || Form1.AppExit)
+                {
+                    return;
+                }
+
                 TreeNode parentNode = treeNode.Parent;
 
                 while (parentNode != null)
@@ -606,6 +668,11 @@ namespace SearchDirLists
 
         public bool Step2_OnForm()
         {
+            if (m_bThreadAbort || Form1.AppExit)
+            {
+                return false;
+            }
+
             form_treeView_Browse.Nodes.Clear();
 
             if (m_listRootNodes.Count > 0)
@@ -613,15 +680,34 @@ namespace SearchDirLists
                 form_treeView_Browse.Enabled = true;
                 form_treeView_Browse.CheckBoxes = m_bCheckboxes;
                 form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
+
+                if (m_bThreadAbort || Form1.AppExit)
+                {
+                    return false;
+                }
+
                 Utilities.Assert(1305.6316, form_lvClones.Items.Count == 0);
                 form_lvClones.Items.AddRange(listLVitems.ToArray());
+
+                if (m_bThreadAbort || Form1.AppExit)
+                {
+                    return false;
+                }
+
                 Utilities.Assert(1305.6317, form_lvUnique.Items.Count == 0);
                 form_lvUnique.Items.AddRange(listLVunique.ToArray());
+
+                if (m_bThreadAbort || Form1.AppExit)
+                {
+                    return false;
+                }
+
                 Utilities.Assert(1305.6318, form_lvSameVol.Items.Count == 0);
                 form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
                 form_treeView_Browse.SelectedNode = m_listRootNodes[0];     // m_bPutPathInFindEditBox is set in TreeDoneCallback()
             }
 
+            static_this = null;
             return false;           // unused bool return
         }
     }

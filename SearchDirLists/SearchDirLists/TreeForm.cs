@@ -19,8 +19,9 @@ namespace SearchDirLists
 
         void TreeStatusCallback(TreeNode rootNode, LVvolStrings volStrings)
         {
-            if (m_bFormClosing)
+            if (AppExit || (m_tree == null) || (m_tree.IsAborted))
             {
+                TreeCleanup();
                 return;
             }
 
@@ -50,11 +51,16 @@ namespace SearchDirLists
             m_tree = null;
             m_listRootNodes.Clear();
             m_list_lvIgnore.Clear();
-            GC.Collect();
         }
 
         void TreeDoneCallback()
         {
+            if (AppExit || (m_tree == null) || (m_tree.IsAborted))
+            {
+                TreeCleanup();
+                return;
+            }
+
             Utilities.Assert(1304.5304, m_listTreeNodes.Count == 0);
 
             TreeDone treeDone = new TreeDone(form_treeView_Browse, m_hashCache,
@@ -65,16 +71,24 @@ namespace SearchDirLists
 
             treeDone.Step1_OnThread();
             Console.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+
+            if (AppExit || (m_tree == null) || (m_tree.IsAborted))
+            {
+                TreeCleanup();
+                return;
+            }
+
             m_bPutPathInFindEditBox = true;
             Invoke(new DoSomething(treeDone.Step2_OnForm));
             Console.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             treeDone = null;
             TreeCleanup();
+            GC.Collect();
         }
 
         void TreeSelectStatusCallback(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem lvVol = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null)
         {
-            if (m_bFormClosing)
+            if (AppExit)
             {
                 return;
             }
@@ -218,7 +232,7 @@ namespace SearchDirLists
 
         void TreeSelectDoneCallback(bool bSecondComparePane)
         {
-            if (m_bFormClosing)
+            if (AppExit)
             {
                 return;
             }
@@ -326,8 +340,10 @@ namespace SearchDirLists
             if ((threadKill != null) && threadKill.IsAlive)
             {
                 threadKill.Abort();
-                // no need to null it: gets reassigned below
             }
+
+            m_threadSelectCompare = null;
+            m_threadSelect = null;
 
             TreeSelect treeSelect = new TreeSelect(treeNode, m_hashCache, strFile, m_bCompareMode, bSecondComparePane,
                 new TreeSelectStatusDelegate(TreeSelectStatusCallback), new TreeSelectDoneDelegate(TreeSelectDoneCallback));

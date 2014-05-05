@@ -46,7 +46,9 @@ namespace SearchDirLists
         bool m_bChkCompare1IndirectCheckChange = false;
         bool m_bNavDropDown = false;
         TabPage m_FileListTabPageBeforeCompare = null;
-        bool m_bFormClosing = false;
+
+        static bool m_bAppExit = false;
+        public static bool AppExit { get { return m_bAppExit; } }
 
         // initialized in constructor:
         Blink m_blink = null;
@@ -944,7 +946,7 @@ namespace SearchDirLists
 
         void MessageboxCallback(String strMessage, String strTitle)
         {
-            if (m_bFormClosing)
+            if (AppExit)
             {
                 return;
             }
@@ -1059,123 +1061,6 @@ namespace SearchDirLists
             }
 
             return true;
-        }
-
-        void Search(object sender)
-        {
-            if (form_cbNavigate.Text.Length == 0)
-            {
-                m_blink.Go(clr: Color.Red, Once: true);
-                return;
-            }
-
-            m_ctlLastSearchSender = (Control)sender;
-
-            TreeView treeView = form_treeView_Browse;
-
-            if (m_bCompareMode)
-            {
-                treeView = (m_ctlLastFocusForCopyButton is TreeView) ? (TreeView)m_ctlLastFocusForCopyButton : form_treeCompare1;
-            }
-
-            while (true)
-            {
-                if (m_nTreeFindTextChanged == 0)
-                {
-                    FindNode(form_cbNavigate.Text, treeView.SelectedNode, treeView);
-                }
-
-                if (m_bFileFound)
-                {
-                    NavToFile(treeView);
-                }
-                else
-                {
-                    if ((m_arrayTreeFound != null) && (m_arrayTreeFound.Length > 0))
-                    {
-                        TreeNode treeNode = m_arrayTreeFound[m_nTreeFindTextChanged % m_arrayTreeFound.Length];
-
-                        m_bTreeViewIndirectSelChange = true;
-                        treeNode.TreeView.SelectedNode = treeNode;
-                        ++m_nTreeFindTextChanged;
-                        m_blink.Stop();
-                        m_blink.Go(Once: true);
-                    }
-                    else if (treeView == form_treeCompare1)
-                    {
-                        treeView = form_treeCompare2;
-                        continue;
-                    }
-                    else if (form_cbNavigate.Text.Contains(Path.DirectorySeparatorChar))
-                    {
-                        Utilities.Assert(1300.1303, form_cbNavigate.Text.EndsWith(Path.DirectorySeparatorChar.ToString()) == false);
-
-                        int nPos = form_cbNavigate.Text.LastIndexOf(Path.DirectorySeparatorChar);
-                        String strMaybePath = form_cbNavigate.Text.Substring(0, nPos);
-                        TreeNode treeNode = GetNodeByPath(strMaybePath, form_treeView_Browse);
-
-                        m_strMaybeFile = form_cbNavigate.Text.Substring(nPos + 1);
-
-                        if (treeNode != null)
-                        {
-                            m_bTreeViewIndirectSelChange = true;
-                            treeNode.TreeView.SelectedNode = treeNode;
-                        }
-                        else
-                        {
-                            Utilities.Assert(1300.1304, m_listSearchResults.Count <= 0);
-                            SearchResultsCallback_Fail();
-                        }
-                    }
-                    else
-                    {
-                        SearchFiles(form_cbNavigate.Text, new SearchResultsDelegate(SearchResultsCallback));
-                    }
-                }
-
-                break;
-            }
-        }
-
-        void SearchResultsCallback()
-        {
-            if (m_listSearchResults.Count > 0)
-            {
-                m_bFileFound = true;
-
-                TreeView treeView = form_treeView_Browse;
-
-                if (m_bCompareMode)
-                {
-                    treeView = (m_ctlLastFocusForCopyButton is TreeView) ? (TreeView)m_ctlLastFocusForCopyButton : form_treeCompare1;
-
-                    if (NavToFile(treeView) == false)
-                    {
-                        if (NavToFile((treeView == form_treeCompare1) ? form_treeCompare2 : form_treeCompare1) == false)
-                        {
-                            SearchResultsCallback_Fail();
-                        }
-                    }
-                }
-                else
-                {
-                    NavToFile(treeView);
-                }
-            }
-            else
-            {
-                SearchResultsCallback_Fail();
-            }
-        }
-
-        void SearchResultsCallback_Fail()
-        {
-            m_nTreeFindTextChanged = 0;
-            m_bFileFound = false;
-            m_strMaybeFile = null;
-            m_blink.Stop();
-            m_blink.Go(clr: Color.Red, Once: true);
-            MessageBox.Show("Couldn't find the specified search parameter.".PadRight(100), "Search");
         }
 
         void SelectedIndexChanged(object sender, EventArgs e)
@@ -1887,7 +1772,7 @@ namespace SearchDirLists
 
         void form_btnNavigate_Click(object sender, EventArgs e)
         {
-            Search(sender);
+            DoSearch(sender);
         }
 
         void form_btnPath_Click(object sender, EventArgs e)
@@ -2071,7 +1956,7 @@ namespace SearchDirLists
             }
             else
             {
-                Search(sender);
+                DoSearch(sender);
             }
         }
 
@@ -2646,8 +2531,7 @@ namespace SearchDirLists
 
             m_bHistoryDefer = false;
 
-            if ((m_bTreeViewIndirectSelChange == false)
-                && (e.Node.Parent == null))
+            if ((m_bTreeViewIndirectSelChange == false) && (e.Node.Parent == null))
             {
                 ((RootNodeDatum)e.Node.Tag).VolumeView = true;
             }
@@ -2829,7 +2713,7 @@ namespace SearchDirLists
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            m_bFormClosing = true;
+            m_bAppExit = true;
         }
     }
 }

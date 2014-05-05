@@ -338,6 +338,11 @@ namespace SearchDirLists
 
         void SaveDirListingsStatusCallback(int nIndex, String strText = null, bool bSuccess = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0)
         {
+            if (m_bFormClosing)
+            {
+                return;
+            }
+
             if (InvokeRequired) { Invoke(new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback), new object[] { nIndex, strText, bSuccess, nFilesTotal, nLengthTotal, nFilesDiff }); return; }
 
             if (nLengthTotal > 0)
@@ -365,6 +370,11 @@ namespace SearchDirLists
 
         void SaveDirListingsDoneCallback()
         {
+            if (m_bFormClosing)
+            {
+                return;
+            }
+
             if (InvokeRequired) { Invoke(new SaveDirListingsDoneDelegate(SaveDirListingsDoneCallback)); return; }
 
             if (m_saveDirListings.FilesWritten > 0)

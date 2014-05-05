@@ -19,6 +19,11 @@ namespace SearchDirLists
 
         void TreeStatusCallback(TreeNode rootNode, LVvolStrings volStrings)
         {
+            if (m_bFormClosing)
+            {
+                return;
+            }
+
             if (InvokeRequired) { Invoke(new TreeStatusDelegate(TreeStatusCallback), new object[] { rootNode, volStrings }); return; }
 
             if (volStrings != null)     // error state
@@ -69,6 +74,11 @@ namespace SearchDirLists
 
         void TreeSelectStatusCallback(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem lvVol = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null)
         {
+            if (m_bFormClosing)
+            {
+                return;
+            }
+
             if (InvokeRequired) { Invoke(new TreeSelectStatusDelegate(TreeSelectStatusCallback), new object[] { lvItemDetails, itemArray, lvVol, bSecondComparePane, lvFileItem }); return; }
 
             if (lvItemDetails != null)
@@ -208,6 +218,11 @@ namespace SearchDirLists
 
         void TreeSelectDoneCallback(bool bSecondComparePane)
         {
+            if (m_bFormClosing)
+            {
+                return;
+            }
+
             if (InvokeRequired) { Invoke(new TreeSelectDoneDelegate(TreeSelectDoneCallback), new object[] { bSecondComparePane }); return; }
 
             if (bSecondComparePane)

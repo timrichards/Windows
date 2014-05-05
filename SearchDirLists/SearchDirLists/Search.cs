@@ -298,6 +298,123 @@ namespace SearchDirLists
         SearchResults m_lastSearchResults = null;
         SearchResultsDelegate m_searchResultsCallback = null;
 
+        bool NavToFile(TreeView treeView)
+        {
+            int nCounter = -1;
+            int nSearchLoop = -1;
+
+            while (true)
+            {
+                int nSearchIx = -1;
+
+                if (m_listSearchResults.Count == 0)       // torturing the UX
+                {
+                    return false;
+                }
+
+                foreach (SearchResults searchResults in m_listSearchResults)
+                {
+                    foreach (SearchResultsDir resultDir in searchResults.Results)
+                    {
+                        if (resultDir.ListFiles.Count == 0)
+                        {
+                            if (++nCounter < m_nTreeFindTextChanged)
+                            {
+                                continue;
+                            }
+
+                            bool bContinue = false;
+                            TreeNode treeNode = NavToFile(resultDir.StrDir, treeView,
+                                ref nSearchLoop, ref nSearchIx, ref bContinue);
+
+                            if (bContinue)
+                            {
+                                continue;
+                            }
+
+                            if (treeNode != null)
+                            {
+                                m_bTreeViewIndirectSelChange = true;
+                                treeNode.TreeView.SelectedNode = treeNode;
+                                ++m_nTreeFindTextChanged;
+                                m_blink.Stop();
+                                m_blink.Go(Once: true);
+                            }
+
+                            return (treeNode != null);
+                        }
+                        else
+                        {
+                            foreach (String strFile in resultDir.ListFiles)
+                            {
+                                if (++nCounter < m_nTreeFindTextChanged)
+                                {
+                                    continue;
+                                }
+
+                                m_strMaybeFile = strFile;
+
+                                bool bContinue = false;
+                                TreeNode treeNode = NavToFile(resultDir.StrDir, treeView,
+                                    ref nSearchLoop, ref nSearchIx, ref bContinue);
+
+                                if (bContinue)
+                                {
+                                    continue;
+                                }
+
+                                if (treeNode != null)
+                                {
+                                    if (treeNode.TreeView.SelectedNode == treeNode)
+                                    {
+                                        SelectFoundFile();
+                                    }
+                                    else
+                                    {
+                                        m_bTreeViewIndirectSelChange = true;
+                                        treeNode.TreeView.SelectedNode = treeNode;
+                                    }
+
+                                    ++m_nTreeFindTextChanged;
+                                }
+
+                                return (treeNode != null);
+                            }
+                        }
+                    }
+                }
+
+                // Don't bother imposing a modulus. Just let m_nTreeFindTextChanged grow.
+            }
+        }
+
+        TreeNode NavToFile(String strDir, TreeView treeView, ref int nSearchLoop, ref int nSearchIx, ref bool bContinue)
+        {
+            TreeNode treeNode = GetNodeByPath(strDir, treeView);
+            bContinue = false;
+
+            if (treeNode == null)
+            {
+                // compare mode
+                Utilities.Assert(1300.1302, treeView != form_treeView_Browse);
+
+                if (treeView == form_treeView_Browse)
+                {
+                    return null;
+                }
+
+                if (nSearchIx >= nSearchLoop)
+                {
+                    return null;
+                }
+
+                nSearchLoop = nSearchIx;
+                bContinue = true;
+            }
+
+            return treeNode;
+        }
+
         void SearchStatusCallback(String strSearch, LVvolStrings volStrings, List<SearchResultsDir> listResults, bool bFirst = false, bool bLast = false)
         {
             if (listResults.Count <= 0)
@@ -327,13 +444,14 @@ namespace SearchDirLists
 
         void SearchDoneCallback()
         {
-            if (InvokeRequired) { Invoke(new SearchDoneDelegate(SearchDoneCallback)); return; }
-
-            lock (m_search)
+            if (m_bFormClosing)
             {
-                m_search = null;
+                return;
             }
 
+            if (InvokeRequired) { Invoke(new SearchDoneDelegate(SearchDoneCallback)); return; }
+
+            m_search = null;
             m_listSearchResults.Sort((x, y) => (x.VolStrings.VolumeName.CompareTo(y.VolStrings.VolumeName)));
 
             if (m_firstSearchResults != null)
@@ -348,7 +466,11 @@ namespace SearchDirLists
                 m_lastSearchResults = null;
             }
 
-            m_searchResultsCallback();
+            if (m_searchResultsCallback != null)    // torturing the UX
+            {
+                m_searchResultsCallback();
+            }
+
             m_searchResultsCallback = null;
         }
 
@@ -370,7 +492,10 @@ namespace SearchDirLists
                     }
                 }
 
-                m_search.EndThread();   // no need to null: gets redefined below
+                if (m_search != null)       // torturing the UX
+                {
+                    m_search.EndThread();   // no need to null: gets redefined below
+                }
 
                 if (dlgResult != DialogResult.Yes)
                 {

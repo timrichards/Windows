@@ -46,6 +46,7 @@ namespace SearchDirLists
         bool m_bChkCompare1IndirectCheckChange = false;
         bool m_bNavDropDown = false;
         TabPage m_FileListTabPageBeforeCompare = null;
+        bool m_bFormClosing = false;
 
         // initialized in constructor:
         Blink m_blink = null;
@@ -943,6 +944,11 @@ namespace SearchDirLists
 
         void MessageboxCallback(String strMessage, String strTitle)
         {
+            if (m_bFormClosing)
+            {
+                return;
+            }
+
             if (InvokeRequired) { Invoke(new MessageBoxDelegate(MessageboxCallback), new object[] { strMessage, strTitle }); return; }
 
             // make MessageBox modal from a worker thread
@@ -959,118 +965,6 @@ namespace SearchDirLists
             {
                 NameNodes(subNode, listTreeNodes);
             }
-        }
-
-        bool NavToFile(TreeView treeView)
-        {
-            int nCounter = -1;
-            int nSearchLoop = -1;
-
-            while (true)
-            {
-                int nSearchIx = -1;
-
-                foreach (SearchResults searchResults in m_listSearchResults)
-                {
-                    foreach (SearchResultsDir resultDir in searchResults.Results)
-                    {
-                        if (resultDir.ListFiles.Count == 0)
-                        {
-                            if (++nCounter < m_nTreeFindTextChanged)
-                            {
-                                continue;
-                            }
-
-                            bool bContinue = false;
-                            TreeNode treeNode = NavToFile(resultDir.StrDir, treeView,
-                                ref nSearchLoop, ref nSearchIx, ref bContinue);
-
-                            if (bContinue)
-                            {
-                                continue;
-                            }
-
-                            if (treeNode != null)
-                            {
-                                m_bTreeViewIndirectSelChange = true;
-                                treeNode.TreeView.SelectedNode = treeNode;
-                                ++m_nTreeFindTextChanged;
-                                m_blink.Stop();
-                                m_blink.Go(Once: true);
-                            }
-
-                            return (treeNode != null);
-                        }
-                        else
-                        {
-                            foreach (String strFile in resultDir.ListFiles)
-                            {
-                                if (++nCounter < m_nTreeFindTextChanged)
-                                {
-                                    continue;
-                                }
-
-                                m_strMaybeFile = strFile;
-
-                                bool bContinue = false;
-                                TreeNode treeNode = NavToFile(resultDir.StrDir, treeView,
-                                    ref nSearchLoop, ref nSearchIx, ref bContinue);
-
-                                if (bContinue)
-                                {
-                                    continue;
-                                }
-
-                                if (treeNode != null)
-                                {
-                                    if (treeNode.TreeView.SelectedNode == treeNode)
-                                    {
-                                        SelectFoundFile();
-                                    }
-                                    else
-                                    {
-                                        m_bTreeViewIndirectSelChange = true;
-                                        treeNode.TreeView.SelectedNode = treeNode;
-                                    }
-
-                                    ++m_nTreeFindTextChanged;
-                                }
-
-                                return (treeNode != null);
-                            }
-                        }
-                    }
-                }
-
-                // Don't bother imposing a modulus. Just let m_nTreeFindTextChanged grow.
-            }
-        }
-
-        TreeNode NavToFile(String strDir, TreeView treeView, ref int nSearchLoop, ref int nSearchIx, ref bool bContinue)
-        {
-            TreeNode treeNode = GetNodeByPath(strDir, treeView);
-            bContinue = false;
-
-            if (treeNode == null)
-            {
-                // compare mode
-                Utilities.Assert(1300.1302, treeView != form_treeView_Browse);
-
-                if (treeView == form_treeView_Browse)
-                {
-                    return null;
-                }
-
-                if (nSearchIx >= nSearchLoop)
-                {
-                    return null;
-                }
-
-                nSearchLoop = nSearchIx;
-                bContinue = true;
-            }
-
-            return treeNode;
         }
 
         void PutTreeCompareNodePathIntoFindCombo(TreeView treeView)
@@ -2931,6 +2825,11 @@ namespace SearchDirLists
         private void checkBox1_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.FillRectangle(new SolidBrush(BackColor), e.ClipRectangle);
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            m_bFormClosing = true;
         }
     }
 }

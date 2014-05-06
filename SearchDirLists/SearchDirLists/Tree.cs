@@ -727,7 +727,7 @@ namespace SearchDirLists
         {
             foreach (TreeRootNodeBuilder worker in m_cbagWorkers)
             {
-				worker.Abort();
+                worker.Abort();
             }
 
             TreeDone.Abort();

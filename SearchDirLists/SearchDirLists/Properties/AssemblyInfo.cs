@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Tim Richards")]
 [assembly: AssemblyProduct("SearchDirLists")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
+[assembly: AssemblyCopyright("Copyright ©  2014 (GPLv2)")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

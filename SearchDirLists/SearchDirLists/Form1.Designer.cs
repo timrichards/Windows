@@ -31,7 +31,7 @@ namespace SearchDirLists
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.CheckBox checkBox1;
+            System.Windows.Forms.CheckBox form_chkSpacer;
             System.Windows.Forms.Label label4;
             System.Windows.Forms.Label label1;
             System.Windows.Forms.Label label2;
@@ -153,7 +153,7 @@ namespace SearchDirLists
             this.timer_blink = new System.Windows.Forms.Timer(this.components);
             this.timer_DoTree = new System.Windows.Forms.Timer(this.components);
             this.label_About = new System.Windows.Forms.Label();
-            checkBox1 = new System.Windows.Forms.CheckBox();
+            form_chkSpacer = new System.Windows.Forms.CheckBox();
             label4 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
@@ -219,18 +219,18 @@ namespace SearchDirLists
             // 
             // checkBox1
             // 
-            checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            checkBox1.AutoSize = true;
-            checkBox1.CausesValidation = false;
-            checkBox1.Enabled = false;
-            checkBox1.ForeColor = System.Drawing.Color.Tomato;
-            checkBox1.Location = new System.Drawing.Point(3, 122);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new System.Drawing.Size(55, 17);
-            checkBox1.TabIndex = 2;
-            checkBox1.Text = "Loose";
-            checkBox1.UseVisualStyleBackColor = true;
-            checkBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.checkBox1_Paint);
+            form_chkSpacer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            form_chkSpacer.AutoSize = true;
+            form_chkSpacer.CausesValidation = false;
+            form_chkSpacer.Enabled = false;
+            form_chkSpacer.ForeColor = System.Drawing.Color.Tomato;
+            form_chkSpacer.Location = new System.Drawing.Point(3, 122);
+            form_chkSpacer.Name = "checkBox1";
+            form_chkSpacer.Size = new System.Drawing.Size(55, 17);
+            form_chkSpacer.TabIndex = 2;
+            form_chkSpacer.Text = "Loose";
+            form_chkSpacer.UseVisualStyleBackColor = true;
+            form_chkSpacer.Paint += new System.Windows.Forms.PaintEventHandler(this.form_chkSpacer_Paint);
             // 
             // label4
             // 
@@ -825,7 +825,7 @@ namespace SearchDirLists
             this.tableLayoutPanel5.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel5.ColumnCount = 1;
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel5.Controls.Add(checkBox1, 0, 0);
+            this.tableLayoutPanel5.Controls.Add(form_chkSpacer, 0, 0);
             this.tableLayoutPanel5.Controls.Add(this.form_btnCopyClear, 0, 4);
             this.tableLayoutPanel5.Controls.Add(this.form_btnSaveCopyDirs, 0, 3);
             this.tableLayoutPanel5.Controls.Add(this.form_btnCopyGen, 0, 1);

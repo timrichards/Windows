@@ -304,297 +304,6 @@ namespace SearchDirLists
             return false;
         }
 
-        internal static void SetMessageBoxDelegate(MessageBoxDelegate messageBoxCallback)
-        {
-            m_MessageboxCallback_ = messageBoxCallback;
-        }
-
-        internal static String NotNull(String str)
-        {
-            return str ?? String.Empty;
-        }
-
-        internal static bool StrValid(String str)
-        {
-            return ((str != null) && (str.Length > 0));
-        }
-
-        internal static void CopyTo(Stream src, Stream dest)
-        {
-            byte[] bytes = new byte[4096];
-
-            int cnt;
-
-            while ((cnt = src.Read(bytes, 0, bytes.Length)) != 0)
-            {
-                dest.Write(bytes, 0, cnt);
-            }
-        }
-
-        internal static byte[] Zip(String str)
-        {
-            var bytes = Encoding.UTF8.GetBytes(str);
-
-            using (var msi = new MemoryStream(bytes))
-            {
-                using (var mso = new MemoryStream())
-                {
-                    using (var gs = new GZipStream(mso, CompressionMode.Compress))
-                    {
-                        //msi.CopyTo(gs);
-                        CopyTo(msi, gs);
-                    }
-
-                    return mso.ToArray();
-                }
-            }
-        }
-
-        internal static String Unzip(byte[] bytes)
-        {
-            using (var msi = new MemoryStream(bytes))
-            {
-                using (var mso = new MemoryStream())
-                {
-                    using (var gs = new GZipStream(msi, CompressionMode.Decompress))
-                    {
-                        //gs.CopyTo(mso);
-                        CopyTo(gs, mso);
-                    }
-
-                    return Encoding.UTF8.GetString(mso.ToArray());
-                }
-            }
-        }
-
-        internal static bool FormatPath(ref String strPath, bool bFailOnDirectory = true)
-        {
-            while (strPath.Contains(@"\\"))
-            {
-                strPath = strPath.Replace(@"\\", @"\");
-            }
-
-            String strDirName = Path.GetDirectoryName(strPath);
-
-            if ((StrValid(strDirName) == false) || Directory.Exists(strDirName))
-            {
-                String strCapDrive = strPath.Substring(0, strPath.IndexOf(":" + Path.DirectorySeparatorChar) + 2);
-
-                strPath = Path.GetFullPath(strPath).Replace(strCapDrive, strCapDrive.ToUpper());
-
-                if (strPath == strCapDrive.ToUpper())
-                {
-                    Utilities.Assert(1303.4301, strDirName == null);
-                }
-                else
-                {
-                    strPath = strPath.TrimEnd(Path.DirectorySeparatorChar);
-                    Utilities.Assert(1303.4302, StrValid(strDirName));
-                }
-            }
-            else if (bFailOnDirectory)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        internal static bool FormatPath(ref String strPath, ref String strSaveAs, bool bFailOnDirectory = true)
-        {
-            if (StrValid(strPath))
-            {
-                strPath += Path.DirectorySeparatorChar;
-
-                if (FormatPath(ref strPath, bFailOnDirectory) == false)
-                {
-                    m_MessageboxCallback_("Error in Source path.                   ", "Save Directory Listing");
-                    return false;
-                }
-            }
-
-            if (StrValid(strSaveAs))
-            {
-                strSaveAs = Path.GetFullPath(strSaveAs.Trim());
-
-                if (FormatPath(ref strSaveAs, bFailOnDirectory) == false)
-                {
-                    m_MessageboxCallback_("Error in Save filename.                  ", "Save Directory Listing");
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        internal static bool LV_VolumesItemInclude(LVvolStrings lvStrings)
-        {
-            return (lvStrings.Include == "Yes");
-        }
-
-        internal static bool LV_VolumesItemCanLoad(LVvolStrings lvStrings)
-        {
-            return (LV_VolumesItemInclude(lvStrings) &&
-                ((Utilities.m_str_USING_FILE + Utilities.m_str_SAVED).Contains(lvStrings.Status)));
-        }
-
-        internal static String FormatSize(String in_str, bool bBytes = false)
-        {
-            return FormatSize(ulong.Parse(in_str), bBytes);
-        }
-
-        internal static String FormatSize(long nLength, bool bBytes = false, bool bNoDecimal = false)
-        {
-            return FormatSize((ulong)nLength, bBytes, bNoDecimal);
-        }
-
-        internal static String FormatSize(ulong nLength, bool bBytes = false, bool bNoDecimal = false)
-        {
-            double nT = nLength / 1024.0 / 1024.0 / 1024 / 1024 - .05;
-            double nG = nLength / 1024.0 / 1024 / 1024 - .05;
-            double nM = nLength / 1024.0 / 1024 - .05;
-            double nK = nLength / 1024.0 - .05;     // Windows Explorer seems to not round
-            String strFmt_big = "###,##0.0";
-            String strFormat = bNoDecimal ? "###,###" : strFmt_big;
-            String strSz = null;
-
-            if (((int)nT) > 0) strSz = nT.ToString(strFmt_big) + " TB";
-            else if (((int)nG) > 0) strSz = nG.ToString(strFmt_big) + " GB";
-            else if (((int)nM) > 0) strSz = nM.ToString(strFormat) + " MB";
-            else if (((int)nK) > 0) strSz = nK.ToString(strFormat) + " KB";
-            else strSz = "1 KB";                    // Windows Explorer mins at 1K
-
-            if (nLength > 0)
-            {
-                return strSz + (bBytes ? (" (" + nLength.ToString("###,###,###,###,###") + " bytes)") : String.Empty);
-            }
-            else
-            {
-                return "0 bytes";
-            }
-        }
-
-        internal static String FormatString(String strDir = null, String strFile = null, DateTime? dtCreated = null, DateTime? dtModified = null, String strAttributes = null, long nLength = 0, String strError1 = null, String strError2 = null, int? nHeader = null)
-        {
-            String strLength = null;
-            String strCreated = null;
-            String strModified = null;
-
-            if (nLength > 0)
-            {
-                strLength = nLength.ToString();
-            }
-
-            if (dtCreated != null)
-            {
-                strCreated = dtCreated.ToString();
-            }
-
-            if (dtModified != null)
-            {
-                strModified = dtModified.ToString();
-            }
-
-            if (StrValid(strDir + strFile + strCreated + strModified + strAttributes + strLength + strError1 + strError2) == false)
-            {
-                Utilities.Assert(1303.4303, nHeader is int);
-
-                if (nHeader == 0)
-                {
-                    return "2" + '\t' + "3" + '\t' + "4" + '\t' + "5" + '\t' + "6" + '\t' + "7" + '\t' + "8" + '\t' + "9";
-                }
-                else if (nHeader == 1)
-                {
-                    return "Dir" + '\t' + "File" + '\t' + "Created" + '\t' + "Modded" + '\t' + "Attrib" + '\t' + "Length" + '\t' + "Error1" + '\t' + "Error2";
-                }
-            }
-
-            bool bDbgCheck = false;
-
-            if ((NotNull(strDir).TrimEnd() != NotNull(strDir)) || (NotNull(strFile).TrimEnd() != NotNull(strFile)))
-            {
-                strError1 += " Trailing whitespace";
-                strError1.Trim();
-                Utilities.Assert(1303.4304, StrValid(strDir) || StrValid(strFile));
-                bDbgCheck = true;
-            }
-
-            String strRet = (strDir + '\t' + strFile + '\t' + strCreated + '\t' + strModified + '\t' + strAttributes + '\t' + strLength + '\t' + strError1 + '\t' + strError2).TrimEnd();
-
-            if (bDbgCheck)
-            {
-                String[] strArray = strRet.Split('\t');
-                DateTime dtParse;
-
-                if ((strArray.Length > 5) && strArray[5].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
-                {
-                    Utilities.Assert(1303.4305, false);
-                }
-            }
-
-            return strRet;
-        }
-
-        static String FormatLine(String strLineType, long nLineNo, String strLine_in = null)
-        {
-            String strLine_out = strLineType + "\t" + nLineNo;
-
-            if (StrValid(strLine_in))
-            {
-                strLine_out += '\t' + strLine_in;
-            }
-
-            return strLine_out;
-        }
-
-        protected static String StrFile_01(String strFile)
-        {
-            return Path.Combine(Path.GetDirectoryName(strFile),
-                Path.GetFileNameWithoutExtension(strFile) + "_01" + Path.GetExtension(strFile));
-        }
-
-        internal static bool ValidateFile(String strSaveAs)
-        {
-            if (File.Exists(strSaveAs) == false) return false;
-
-            String[] arrLine = File.ReadLines(strSaveAs).Take(1).ToArray();
-
-            if (arrLine.Length <= 0) return false;
-
-            bool bConvertFile = false;
-
-            if (arrLine[0] == m_str_HEADER_01)
-            {
-                Console.WriteLine("Converting " + strSaveAs);
-                ConvertFile(strSaveAs);
-                Console.WriteLine("File converted to " + m_str_HEADER);
-                bConvertFile = true;
-            }
-
-            String[] arrToken = File.ReadLines(strSaveAs).Take(1).ToArray()[0].Split('\t');
-
-            if (arrToken.Length < 3) return false;
-            if (arrToken[2] != m_str_HEADER) return false;
-
-            String[] arrLine_A = File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Length)).ToArray();
-
-            if (arrLine_A.Length == 0) return false;
-
-            String[] arrToken_A = arrLine_A[0].Split('\t');
-
-            if (arrToken_A.Length < 3) return false;
-            if (arrToken_A[2] != m_str_TOTAL_LENGTH_LOC) return false;
-
-            String strFile_01 = StrFile_01(strSaveAs);
-
-            if (bConvertFile && File.Exists(strFile_01))
-            {
-                File.Delete(strFile_01);
-            }
-
-            return true;
-        }
-
         internal static void ConvertFile(String strFile)
         {
             String strFile_01 = StrFile_01(strFile);
@@ -719,6 +428,249 @@ namespace SearchDirLists
                     }
                 }
             }
+        }
+
+        internal static bool FormatPath(ref String strPath, bool bFailOnDirectory = true)
+        {
+            while (strPath.Contains(@"\\"))
+            {
+                strPath = strPath.Replace(@"\\", @"\");
+            }
+
+            String strDirName = Path.GetDirectoryName(strPath);
+
+            if ((StrValid(strDirName) == false) || Directory.Exists(strDirName))
+            {
+                String strCapDrive = strPath.Substring(0, strPath.IndexOf(":" + Path.DirectorySeparatorChar) + 2);
+
+                strPath = Path.GetFullPath(strPath).Replace(strCapDrive, strCapDrive.ToUpper());
+
+                if (strPath == strCapDrive.ToUpper())
+                {
+                    Utilities.Assert(1303.4301, strDirName == null);
+                }
+                else
+                {
+                    strPath = strPath.TrimEnd(Path.DirectorySeparatorChar);
+                    Utilities.Assert(1303.4302, StrValid(strDirName));
+                }
+            }
+            else if (bFailOnDirectory)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        internal static bool FormatPath(ref String strPath, ref String strSaveAs, bool bFailOnDirectory = true)
+        {
+            if (StrValid(strPath))
+            {
+                strPath += Path.DirectorySeparatorChar;
+
+                if (FormatPath(ref strPath, bFailOnDirectory) == false)
+                {
+                    m_MessageboxCallback_("Error in Source path.                   ", "Save Directory Listing");
+                    return false;
+                }
+            }
+
+            if (StrValid(strSaveAs))
+            {
+                strSaveAs = Path.GetFullPath(strSaveAs.Trim());
+
+                if (FormatPath(ref strSaveAs, bFailOnDirectory) == false)
+                {
+                    m_MessageboxCallback_("Error in Save filename.                  ", "Save Directory Listing");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        internal static bool LV_VolumesItemCanLoad(LVvolStrings lvStrings)
+        {
+            return (LV_VolumesItemInclude(lvStrings) &&
+                ((Utilities.m_str_USING_FILE + Utilities.m_str_SAVED).Contains(lvStrings.Status)));
+        }
+
+        internal static bool LV_VolumesItemInclude(LVvolStrings lvStrings)
+        {
+            return (lvStrings.Include == "Yes");
+        }
+
+        static String FormatLine(String strLineType, long nLineNo, String strLine_in = null)
+        {
+            String strLine_out = strLineType + "\t" + nLineNo;
+
+            if (StrValid(strLine_in))
+            {
+                strLine_out += '\t' + strLine_in;
+            }
+
+            return strLine_out;
+        }
+
+        internal static String FormatSize(String in_str, bool bBytes = false)
+        {
+            return FormatSize(ulong.Parse(in_str), bBytes);
+        }
+
+        internal static String FormatSize(long nLength, bool bBytes = false, bool bNoDecimal = false)
+        {
+            return FormatSize((ulong)nLength, bBytes, bNoDecimal);
+        }
+
+        internal static String FormatSize(ulong nLength, bool bBytes = false, bool bNoDecimal = false)
+        {
+            double nT = nLength / 1024.0 / 1024.0 / 1024 / 1024 - .05;
+            double nG = nLength / 1024.0 / 1024 / 1024 - .05;
+            double nM = nLength / 1024.0 / 1024 - .05;
+            double nK = nLength / 1024.0 - .05;     // Windows Explorer seems to not round
+            String strFmt_big = "###,##0.0";
+            String strFormat = bNoDecimal ? "###,###" : strFmt_big;
+            String strSz = null;
+
+            if (((int)nT) > 0) strSz = nT.ToString(strFmt_big) + " TB";
+            else if (((int)nG) > 0) strSz = nG.ToString(strFmt_big) + " GB";
+            else if (((int)nM) > 0) strSz = nM.ToString(strFormat) + " MB";
+            else if (((int)nK) > 0) strSz = nK.ToString(strFormat) + " KB";
+            else strSz = "1 KB";                    // Windows Explorer mins at 1K
+
+            if (nLength > 0)
+            {
+                return strSz + (bBytes ? (" (" + nLength.ToString("###,###,###,###,###") + " bytes)") : String.Empty);
+            }
+            else
+            {
+                return "0 bytes";
+            }
+        }
+
+        internal static String FormatString(String strDir = null, String strFile = null, DateTime? dtCreated = null, DateTime? dtModified = null, String strAttributes = null, long nLength = 0, String strError1 = null, String strError2 = null, int? nHeader = null)
+        {
+            String strLength = null;
+            String strCreated = null;
+            String strModified = null;
+
+            if (nLength > 0)
+            {
+                strLength = nLength.ToString();
+            }
+
+            if (dtCreated != null)
+            {
+                strCreated = dtCreated.ToString();
+            }
+
+            if (dtModified != null)
+            {
+                strModified = dtModified.ToString();
+            }
+
+            if (StrValid(strDir + strFile + strCreated + strModified + strAttributes + strLength + strError1 + strError2) == false)
+            {
+                Utilities.Assert(1303.4303, nHeader is int);
+
+                if (nHeader == 0)
+                {
+                    return "2" + '\t' + "3" + '\t' + "4" + '\t' + "5" + '\t' + "6" + '\t' + "7" + '\t' + "8" + '\t' + "9";
+                }
+                else if (nHeader == 1)
+                {
+                    return "Dir" + '\t' + "File" + '\t' + "Created" + '\t' + "Modded" + '\t' + "Attrib" + '\t' + "Length" + '\t' + "Error1" + '\t' + "Error2";
+                }
+            }
+
+            bool bDbgCheck = false;
+
+            if ((NotNull(strDir).TrimEnd() != NotNull(strDir)) || (NotNull(strFile).TrimEnd() != NotNull(strFile)))
+            {
+                strError1 += " Trailing whitespace";
+                strError1.Trim();
+                Utilities.Assert(1303.4304, StrValid(strDir) || StrValid(strFile));
+                bDbgCheck = true;
+            }
+
+            String strRet = (strDir + '\t' + strFile + '\t' + strCreated + '\t' + strModified + '\t' + strAttributes + '\t' + strLength + '\t' + strError1 + '\t' + strError2).TrimEnd();
+
+            if (bDbgCheck)
+            {
+                String[] strArray = strRet.Split('\t');
+                DateTime dtParse;
+
+                if ((strArray.Length > 5) && strArray[5].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
+                {
+                    Utilities.Assert(1303.4305, false);
+                }
+            }
+
+            return strRet;
+        }
+
+        internal static String NotNull(String str)
+        {
+            return str ?? String.Empty;
+        }
+
+        internal static void SetMessageBoxDelegate(MessageBoxDelegate messageBoxCallback)
+        {
+            m_MessageboxCallback_ = messageBoxCallback;
+        }
+
+        protected static String StrFile_01(String strFile)
+        {
+            return Path.Combine(Path.GetDirectoryName(strFile),
+                Path.GetFileNameWithoutExtension(strFile) + "_01" + Path.GetExtension(strFile));
+        }
+
+        internal static bool StrValid(String str)
+        {
+            return ((str != null) && (str.Length > 0));
+        }
+
+        internal static bool ValidateFile(String strSaveAs)
+        {
+            if (File.Exists(strSaveAs) == false) return false;
+
+            String[] arrLine = File.ReadLines(strSaveAs).Take(1).ToArray();
+
+            if (arrLine.Length <= 0) return false;
+
+            bool bConvertFile = false;
+
+            if (arrLine[0] == m_str_HEADER_01)
+            {
+                Console.WriteLine("Converting " + strSaveAs);
+                ConvertFile(strSaveAs);
+                Console.WriteLine("File converted to " + m_str_HEADER);
+                bConvertFile = true;
+            }
+
+            String[] arrToken = File.ReadLines(strSaveAs).Take(1).ToArray()[0].Split('\t');
+
+            if (arrToken.Length < 3) return false;
+            if (arrToken[2] != m_str_HEADER) return false;
+
+            String[] arrLine_A = File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Length)).ToArray();
+
+            if (arrLine_A.Length == 0) return false;
+
+            String[] arrToken_A = arrLine_A[0].Split('\t');
+
+            if (arrToken_A.Length < 3) return false;
+            if (arrToken_A[2] != m_str_TOTAL_LENGTH_LOC) return false;
+
+            String strFile_01 = StrFile_01(strSaveAs);
+
+            if (bConvertFile && File.Exists(strFile_01))
+            {
+                File.Delete(strFile_01);
+            }
+
+            return true;
         }
     }
 

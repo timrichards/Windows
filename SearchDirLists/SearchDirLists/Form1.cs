@@ -2094,6 +2094,11 @@ namespace SearchDirLists
             return true;
         }
 
+        void form_cbNavigate_DropDown(object sender, EventArgs e)
+        {
+            m_bNavDropDown = true;
+        }
+
         void form_cbNavigate_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (new Keys[] { Keys.Enter, Keys.Return }.Contains((Keys)e.KeyChar))
@@ -2154,6 +2159,14 @@ namespace SearchDirLists
             m_strPath = form_cbPath.Text;
         }
 
+        void form_cbSaveAs_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (new Keys[] { Keys.Enter, Keys.Return }.Contains((Keys)e.KeyChar))
+            {
+                form_btn_AddVolume_Click(sender, e);
+            }
+        }
+
         void form_cb_SaveAs_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBoxItemsInsert(form_cbSaveAs, m_strSaveAs);
@@ -2164,6 +2177,11 @@ namespace SearchDirLists
         {
             ComboBoxItemsInsert(form_cbVolumeName, m_strPath);
             m_strPath = form_cbVolumeName.Text;
+        }
+
+        void form_chkSpacer_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.FillRectangle(new SolidBrush(BackColor), e.ClipRectangle);
         }
 
         void form_chk_Compare1_CheckedChanged(object sender, EventArgs e)
@@ -2657,6 +2675,11 @@ namespace SearchDirLists
             new AboutBox1().ShowDialog_Once(this);
         }
 
+        void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            m_bAppExit = true;
+        }
+
         void Form1_Load(object sender, EventArgs e)
         {
             form_tmapUserCtl.TooltipAnchor = form_cbNavigate;
@@ -2691,29 +2714,6 @@ namespace SearchDirLists
             }
 
             DoTree(bKill: true);
-        }
-
-        private void form_cbNavigate_DropDown(object sender, EventArgs e)
-        {
-            m_bNavDropDown = true;
-        }
-
-        private void form_cbSaveAs_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (new Keys[] { Keys.Enter, Keys.Return }.Contains((Keys)e.KeyChar))
-            {
-                form_btn_AddVolume_Click(sender, e);
-            }
-        }
-
-        private void checkBox1_Paint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.FillRectangle(new SolidBrush(BackColor), e.ClipRectangle);
-        }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            m_bAppExit = true;
         }
     }
 }

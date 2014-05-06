@@ -79,55 +79,6 @@ namespace SearchDirLists
             base.Dispose(disposing);
         }
 
-        TreeNode GetFileList(TreeNode parent)
-        {
-            List<ulong> listLength = new List<ulong>();
-            List<String[]> listFiles = TreeSelect.GetFileList(parent, listLength);
-
-            if (listFiles == null)
-            {
-                return null;
-            }
-
-            TreeNode nodeFileList = new TreeNode(parent.Text);
-            ulong nTotalLength = 0;
-            List<ulong>.Enumerator iterUlong = listLength.GetEnumerator();
-
-            foreach (String[] arrLine in listFiles)
-            {
-                Utilities.Assert(1302.3316, iterUlong.MoveNext());
-                NodeDatum nodeDatum_A = new NodeDatum();
-
-                nTotalLength += nodeDatum_A.nTotalLength = iterUlong.Current;
-
-                if (iterUlong.Current <= 0)
-                {
-                    continue;
-                }
-
-                TreeNode nodeFile = new TreeNode(arrLine[0]);
-
-                nodeFile.Tag = nodeDatum_A;
-                nodeFile.ForeColor = Color.OliveDrab;
-                nodeFileList.Nodes.Add(nodeFile);
-            }
-
-            if (nTotalLength <= 0)
-            {
-                return null;
-            }
-
-            NodeDatum nodeDatum = (NodeDatum)parent.Tag;
-            NodeDatum nodeDatum_B = new NodeDatum();
-
-            Utilities.Assert(1302.3317, nTotalLength == nodeDatum.nLength);
-            nodeDatum_B.nTotalLength = nTotalLength;
-            nodeDatum_B.TreeMapRect = nodeDatum.TreeMapRect;
-            nodeFileList.Tag = nodeDatum_B;
-            Utilities.Assert(1302.3318, nodeFileList.SelectedImageIndex == -1);              // sets the bitmap size
-            return nodeFileList;
-        }
-
         internal TreeNode DoToolTip(Point pt_in)
         {
             ClearSelection();
@@ -283,6 +234,55 @@ namespace SearchDirLists
             while (bNextNode && ((treeNode = treeNode.NextNode) != null));
 
             return null;
+        }
+
+        TreeNode GetFileList(TreeNode parent)
+        {
+            List<ulong> listLength = new List<ulong>();
+            List<String[]> listFiles = TreeSelect.GetFileList(parent, listLength);
+
+            if (listFiles == null)
+            {
+                return null;
+            }
+
+            TreeNode nodeFileList = new TreeNode(parent.Text);
+            ulong nTotalLength = 0;
+            List<ulong>.Enumerator iterUlong = listLength.GetEnumerator();
+
+            foreach (String[] arrLine in listFiles)
+            {
+                Utilities.Assert(1302.3316, iterUlong.MoveNext());
+                NodeDatum nodeDatum_A = new NodeDatum();
+
+                nTotalLength += nodeDatum_A.nTotalLength = iterUlong.Current;
+
+                if (iterUlong.Current <= 0)
+                {
+                    continue;
+                }
+
+                TreeNode nodeFile = new TreeNode(arrLine[0]);
+
+                nodeFile.Tag = nodeDatum_A;
+                nodeFile.ForeColor = Color.OliveDrab;
+                nodeFileList.Nodes.Add(nodeFile);
+            }
+
+            if (nTotalLength <= 0)
+            {
+                return null;
+            }
+
+            NodeDatum nodeDatum = (NodeDatum)parent.Tag;
+            NodeDatum nodeDatum_B = new NodeDatum();
+
+            Utilities.Assert(1302.3317, nTotalLength == nodeDatum.nLength);
+            nodeDatum_B.nTotalLength = nTotalLength;
+            nodeDatum_B.TreeMapRect = nodeDatum.TreeMapRect;
+            nodeFileList.Tag = nodeDatum_B;
+            Utilities.Assert(1302.3318, nodeFileList.SelectedImageIndex == -1);              // sets the bitmap size
+            return nodeFileList;
         }
 
         protected override void OnPaint(PaintEventArgs e)

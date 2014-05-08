@@ -277,7 +277,6 @@ namespace SearchDirLists
                 if (bKill)
                 {
                     m_tree.EndThread(bJoin: true);
-                    m_dictNodes.Clear();
                     TreeCleanup();
                 }
                 else
@@ -317,6 +316,11 @@ namespace SearchDirLists
             form_lvClones.Items.Clear();
             form_lvSameVol.Items.Clear();
             form_lvUnique.Items.Clear();
+
+            if (bKill)
+            {
+                m_dictNodes.Clear();
+            }
 
             if (m_dictNodes.Count == 0)     // .Clear() to signal recreate. Ignore list only requires recorrelation
             {                               // this works because m_tree is not null during recreate.

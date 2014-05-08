@@ -462,15 +462,11 @@ namespace SearchDirLists
                     if (dictIgnoreNodes.ContainsKey(treeNode))
                     {
                         IgnoreNode_Mark(treeNode);
-                        continue;
                     }
-
-                    if (((NodeDatum)treeNode.Tag).nImmediateFiles > 0)
+                    else if (((NodeDatum)treeNode.Tag).nImmediateFiles > 0)
                     {
                         dictUnique.Add(pair.Key, treeNode);
                     }
-
-                    continue;
                 }
             }
 

@@ -273,6 +273,8 @@ namespace SearchDirLists
 
         static MessageBoxDelegate m_MessageboxCallback_ = null;
         protected MessageBoxDelegate m_MessageboxCallback = null;
+        static double m_lastAssertLocation = -1;
+        static DateTime m_dtLastAssert = DateTime.MinValue;
 
         protected Utilities()
         {
@@ -288,6 +290,8 @@ namespace SearchDirLists
             bool bShowCustomDialog = true;
             String strError = strError_in ?? "Assertion failed at location " + nLocation + ".";
 
+            Console.WriteLine(strError);
+
 #if (DEBUG)
             bShowCustomDialog = (Trace.Listeners.Cast<TraceListener>().Any(i => i is DefaultTraceListener) == false);
             
@@ -296,15 +300,16 @@ namespace SearchDirLists
                 Debug.Assert(false, strError);
             }
 #endif
-            if (bShowCustomDialog)
+            if (bShowCustomDialog && (m_lastAssertLocation != nLocation) && ((DateTime.Now - m_dtLastAssert).Seconds > 1))
             {
                 m_MessageboxCallback_(strError + " Please discuss this bug at http://sourceforge.net/projects/searchdirlists/.", "SearchDirLists Assertion Failure");
+                m_lastAssertLocation = nLocation;
             }
 
             return false;
         }
 
-        internal static void CheckAndInvoke(Control control, Action action)
+        internal static void CheckAndInvoke(Control control, Delegate action)
         {
             if (control.InvokeRequired)
             {
@@ -312,7 +317,14 @@ namespace SearchDirLists
             }
             else
             {
-                action();
+                if (action is Action)
+                {
+                    ((Action)action)();
+                }
+                else
+                {
+                    action.DynamicInvoke();     // late-bound and slow
+                }
             }
         }
 
@@ -483,7 +495,7 @@ namespace SearchDirLists
 
                 if (FormatPath(ref strPath, bFailOnDirectory) == false)
                 {
-                    m_MessageboxCallback_("Error in Source path.                   ", "Save Directory Listing");
+                    m_MessageboxCallback_("Error in Source path.".PadRight(100), "Save Directory Listing");
                     return false;
                 }
             }
@@ -494,7 +506,7 @@ namespace SearchDirLists
 
                 if (FormatPath(ref strSaveAs, bFailOnDirectory) == false)
                 {
-                    m_MessageboxCallback_("Error in Save filename.                  ", "Save Directory Listing");
+                    m_MessageboxCallback_("Error in Save filename.".PadRight(100), "Save Directory Listing");
                     return false;
                 }
             }

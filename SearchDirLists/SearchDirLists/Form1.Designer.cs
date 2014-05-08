@@ -216,21 +216,6 @@ namespace SearchDirLists
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
-            // form_chkSpacer
-            // 
-            this.form_chkSpacer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.form_chkSpacer.AutoSize = true;
-            this.form_chkSpacer.CausesValidation = false;
-            this.form_chkSpacer.Enabled = false;
-            this.form_chkSpacer.ForeColor = System.Drawing.Color.Tomato;
-            this.form_chkSpacer.Location = new System.Drawing.Point(3, 122);
-            this.form_chkSpacer.Name = "form_chkSpacer";
-            this.form_chkSpacer.Size = new System.Drawing.Size(55, 17);
-            this.form_chkSpacer.TabIndex = 2;
-            this.form_chkSpacer.Text = "Loose";
-            this.form_chkSpacer.UseVisualStyleBackColor = true;
-            this.form_chkSpacer.Paint += new System.Windows.Forms.PaintEventHandler(this.form_chkSpacer_Paint);
-            // 
             // label4
             // 
             label4.AutoSize = true;
@@ -290,6 +275,21 @@ namespace SearchDirLists
             label5.TabIndex = 12;
             label5.Text = "Volume list";
             label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // form_chkSpacer
+            // 
+            this.form_chkSpacer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.form_chkSpacer.AutoSize = true;
+            this.form_chkSpacer.CausesValidation = false;
+            this.form_chkSpacer.Enabled = false;
+            this.form_chkSpacer.ForeColor = System.Drawing.Color.Tomato;
+            this.form_chkSpacer.Location = new System.Drawing.Point(3, 122);
+            this.form_chkSpacer.Name = "form_chkSpacer";
+            this.form_chkSpacer.Size = new System.Drawing.Size(55, 17);
+            this.form_chkSpacer.TabIndex = 2;
+            this.form_chkSpacer.Text = "Loose";
+            this.form_chkSpacer.UseVisualStyleBackColor = true;
+            this.form_chkSpacer.Paint += new System.Windows.Forms.PaintEventHandler(this.form_chkSpacer_Paint);
             // 
             // form_tabControl
             // 
@@ -1738,11 +1738,13 @@ namespace SearchDirLists
             // 
             this.label_About.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label_About.AutoSize = true;
-            this.label_About.Location = new System.Drawing.Point(1041, 6);
+            this.label_About.Location = new System.Drawing.Point(1062, 6);
+            this.label_About.Margin = new System.Windows.Forms.Padding(0);
             this.label_About.Name = "label_About";
             this.label_About.Size = new System.Drawing.Size(81, 13);
             this.label_About.TabIndex = 1;
             this.label_About.Text = "Hit F1 for About";
+            this.label_About.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.label_About.Click += new System.EventHandler(this.label_About_Click);
             // 
             // Form1

@@ -1807,7 +1807,6 @@ namespace SearchDirLists
 
             UpdateLV_VolumesSelection();
             form_btnSaveDirList.Enabled = (form_lvVolumesMain.Items.Count > 0);
-            m_dictNodes.Clear();    // signal reload tree
             RestartTreeTimer();
         }
 
@@ -1974,7 +1973,6 @@ namespace SearchDirLists
                 SetLV_VolumesItemInclude(lvItem, LV_VolumesItemInclude(lvItem) == false);
             }
 
-            m_dictNodes.Clear();    // signal reload tree
             RestartTreeTimer();
         }
 
@@ -2261,6 +2259,7 @@ namespace SearchDirLists
                 return;
             }
 
+            m_bKillTree = false;
             RestartTreeTimer();
         }
 

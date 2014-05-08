@@ -397,7 +397,6 @@ namespace SearchDirLists
 
             if (m_saveDirListings.FilesWritten > 0)
             {
-                m_dictNodes.Clear();    // signal reload tree
                 RestartTreeTimer();
                 form_tabControl.SelectedTab = form_tabPageBrowse;
             }

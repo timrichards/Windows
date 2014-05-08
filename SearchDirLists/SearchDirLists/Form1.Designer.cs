@@ -31,13 +31,13 @@ namespace SearchDirLists
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.CheckBox form_chkSpacer;
             System.Windows.Forms.Label label4;
             System.Windows.Forms.Label label1;
             System.Windows.Forms.Label label2;
             System.Windows.Forms.Label label3;
             System.Windows.Forms.Label label5;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            this.form_chkSpacer = new System.Windows.Forms.CheckBox();
             this.form_tabControl = new System.Windows.Forms.TabControl();
             this.form_tabPageVolumes = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new SearchDirLists.Form1.Form1LayoutPanel(this.components);
@@ -153,7 +153,6 @@ namespace SearchDirLists
             this.timer_blink = new System.Windows.Forms.Timer(this.components);
             this.timer_DoTree = new System.Windows.Forms.Timer(this.components);
             this.label_About = new System.Windows.Forms.Label();
-            form_chkSpacer = new System.Windows.Forms.CheckBox();
             label4 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
@@ -217,20 +216,20 @@ namespace SearchDirLists
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
-            // checkBox1
+            // form_chkSpacer
             // 
-            form_chkSpacer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            form_chkSpacer.AutoSize = true;
-            form_chkSpacer.CausesValidation = false;
-            form_chkSpacer.Enabled = false;
-            form_chkSpacer.ForeColor = System.Drawing.Color.Tomato;
-            form_chkSpacer.Location = new System.Drawing.Point(3, 122);
-            form_chkSpacer.Name = "checkBox1";
-            form_chkSpacer.Size = new System.Drawing.Size(55, 17);
-            form_chkSpacer.TabIndex = 2;
-            form_chkSpacer.Text = "Loose";
-            form_chkSpacer.UseVisualStyleBackColor = true;
-            form_chkSpacer.Paint += new System.Windows.Forms.PaintEventHandler(this.form_chkSpacer_Paint);
+            this.form_chkSpacer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.form_chkSpacer.AutoSize = true;
+            this.form_chkSpacer.CausesValidation = false;
+            this.form_chkSpacer.Enabled = false;
+            this.form_chkSpacer.ForeColor = System.Drawing.Color.Tomato;
+            this.form_chkSpacer.Location = new System.Drawing.Point(3, 122);
+            this.form_chkSpacer.Name = "form_chkSpacer";
+            this.form_chkSpacer.Size = new System.Drawing.Size(55, 17);
+            this.form_chkSpacer.TabIndex = 2;
+            this.form_chkSpacer.Text = "Loose";
+            this.form_chkSpacer.UseVisualStyleBackColor = true;
+            this.form_chkSpacer.Paint += new System.Windows.Forms.PaintEventHandler(this.form_chkSpacer_Paint);
             // 
             // label4
             // 
@@ -825,7 +824,7 @@ namespace SearchDirLists
             this.tableLayoutPanel5.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel5.ColumnCount = 1;
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel5.Controls.Add(form_chkSpacer, 0, 0);
+            this.tableLayoutPanel5.Controls.Add(this.form_chkSpacer, 0, 0);
             this.tableLayoutPanel5.Controls.Add(this.form_btnCopyClear, 0, 4);
             this.tableLayoutPanel5.Controls.Add(this.form_btnSaveCopyDirs, 0, 3);
             this.tableLayoutPanel5.Controls.Add(this.form_btnCopyGen, 0, 1);
@@ -1953,6 +1952,7 @@ namespace SearchDirLists
         private System.Windows.Forms.Button form_btnModifyFile;
         private System.Windows.Forms.Button form_btnRemoveVolume;
         private System.Windows.Forms.Button form_btnToggleInclude;
+        private System.Windows.Forms.CheckBox form_chkSpacer;
 
     }
 }

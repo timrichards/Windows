@@ -60,11 +60,11 @@ namespace SearchDirLists
         }
     }
 
-    class HashKey : IComparable
+    class HashKey : IComparable                     // reverse sort: < means >
     {
-        internal readonly ulong nTotalLength;      //  found   41 bits
-        internal readonly uint nFilesInSubdirs;    //          23 bits
-        internal readonly uint nDirsWithFiles;     //          16 bits
+        internal readonly ulong nTotalLength;       //  found   41 bits
+        internal readonly uint nFilesInSubdirs;     //          23 bits
+        internal readonly uint nDirsWithFiles;      //          16 bits
 
         internal HashKey(ulong nTotalLength_in, uint nFilesInSubdirs_in, uint nDirsWithFiles_in)
         {
@@ -114,7 +114,7 @@ namespace SearchDirLists
             return (x.nTotalLength == y.nTotalLength) && (x.nFilesInSubdirs == y.nFilesInSubdirs) && (x.nDirsWithFiles == y.nDirsWithFiles);
         }
 
-        public static bool operator <(HashKey x, HashKey y)
+        public static bool operator >(HashKey x, HashKey y)         // reverse sort
         {
             if (x.nTotalLength > y.nTotalLength) return false;
             if (x.nTotalLength < y.nTotalLength) return true;
@@ -126,9 +126,9 @@ namespace SearchDirLists
         }
 
         public static bool operator !=(HashKey x, HashKey y) { return ((x == y) == false); }
-        public static bool operator >(HashKey x, HashKey y) { return ((x <= y) == false); }
-        public static bool operator <=(HashKey x, HashKey y) { return ((x < y) || (x == y)); }
-        public static bool operator >=(HashKey x, HashKey y) { return ((x < y) == false); } 
+        public static bool operator <(HashKey x, HashKey y) { return ((x >= y) == false); }
+        public static bool operator >=(HashKey x, HashKey y) { return ((x > y) || (x == y)); }
+        public static bool operator <=(HashKey x, HashKey y) { return ((x > y) == false); } 
     }                              
 
     class NodeDatum : DetailsDatum
@@ -273,7 +273,8 @@ namespace SearchDirLists
     class Tree : Utilities
     {
         List<LVvolStrings> m_list_lvVolStrings = new List<LVvolStrings>();
-        Hashtable m_hashCache = null;
+        SortedDictionary<HashKey, List<TreeNode>> m_dictNodes = null;
+        Dictionary<String, String> m_dictDriveInfo = null;
         TreeStatusDelegate m_statusCallback = null;
         TreeDoneDelegate m_doneCallback = null;
         ConcurrentBag<TreeRootNodeBuilder> m_cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
@@ -286,7 +287,8 @@ namespace SearchDirLists
             Thread m_thread = null;
             bool m_bThreadAbort = false;
             LVvolStrings m_volStrings = null;
-            Hashtable m_hashCache = null;
+            SortedDictionary<HashKey, List<TreeNode>> m_dictNodes = null;
+            Dictionary<String, String> m_dictDriveInfo = null;
 
             class DirData
             {
@@ -422,7 +424,8 @@ namespace SearchDirLists
                         treeNode = new TreeNode(strShortPath);
                     }
 
-                    Utilities.Assert(1302.3318, treeNode.SelectedImageIndex == -1);        // sets the bitmap size
+                    Utilities.Assert(1302.3318, treeNode.SelectedImageIndex == -1);     // sets the bitmap size
+                    treeNode.SelectedImageIndex = -1;
                     treeNode.Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo, m_nLength);  // this is almost but not quite always newly assigned here.
 
                     if (this == m_rootNode.Nodes.Values.First())
@@ -455,10 +458,13 @@ namespace SearchDirLists
                 internal uint FirstLineNo { get { return m_firstLineNo; } set { m_firstLineNo = value; } }
             }
 
-            internal TreeRootNodeBuilder(LVvolStrings volStrings, Hashtable hashCache, TreeStatusDelegate statusCallback)
+            internal TreeRootNodeBuilder(LVvolStrings volStrings,
+                SortedDictionary<HashKey, List<TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
+                TreeStatusDelegate statusCallback)
             {
                 m_volStrings = volStrings;
-                m_hashCache = hashCache;
+                m_dictNodes = dictNodes;
+                m_dictDriveInfo = dictDriveInfo;
                 m_statusCallback = statusCallback;
             }
 
@@ -502,18 +508,18 @@ namespace SearchDirLists
 
                 HashKey nKey = nodeDatum.Key;
 
-                lock (m_hashCache)
+                lock (m_dictNodes)
                 {
-                    if (m_hashCache.ContainsKey(nKey))
+                    if (m_dictNodes.ContainsKey(nKey))
                     {
-                        ((List<TreeNode>)m_hashCache[nKey]).Add(treeNode);
+                        m_dictNodes[nKey].Add(treeNode);
                     }
                     else if (nodeDatum.nTotalLength > 100 * 1024)
                     {
                         List<TreeNode> listNodes = new List<TreeNode>();
 
                         listNodes.Add(treeNode);
-                        m_hashCache.Add(nKey, listNodes);
+                        m_dictNodes.Add(nKey, listNodes);
                     }
                 }
 
@@ -597,15 +603,15 @@ namespace SearchDirLists
                         }
                     }
 
-                    lock (m_hashCache)
+                    lock (m_dictDriveInfo)
                     {
-                        if (m_hashCache.Contains("driveInfo" + strSaveAs))
+                        if (m_dictDriveInfo.ContainsKey(strSaveAs))
                         {
                             Utilities.Assert(1301.23035, false);
-                            m_hashCache.Remove("driveInfo" + strSaveAs);
+                            m_dictDriveInfo.Remove(strSaveAs);
                         }
 
-                        m_hashCache.Add("driveInfo" + strSaveAs, strBuilder.ToString().Trim());
+                        m_dictDriveInfo.Add(strSaveAs, strBuilder.ToString().Trim());
                     }
                 }
 
@@ -672,7 +678,8 @@ namespace SearchDirLists
             }
         }
 
-        internal Tree(ListView.ListViewItemCollection lvVolItems, Hashtable hashCache,
+        internal Tree(ListView.ListViewItemCollection lvVolItems,
+            SortedDictionary<HashKey, List<TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
             TreeStatusDelegate statusCallback, TreeDoneDelegate doneCallback)
         {
             foreach (ListViewItem lvItem in lvVolItems)
@@ -680,7 +687,8 @@ namespace SearchDirLists
                 m_list_lvVolStrings.Add(new LVvolStrings(lvItem));
             }
 
-            m_hashCache = hashCache;
+            m_dictNodes = dictNodes;
+            m_dictDriveInfo = dictDriveInfo;
             m_statusCallback = statusCallback;
             m_doneCallback = doneCallback;
         }
@@ -699,7 +707,7 @@ namespace SearchDirLists
                     continue;
                 }
 
-                TreeRootNodeBuilder treeRoot = new TreeRootNodeBuilder(volStrings, m_hashCache, m_statusCallback);
+                TreeRootNodeBuilder treeRoot = new TreeRootNodeBuilder(volStrings, m_dictNodes, m_dictDriveInfo, m_statusCallback);
                 m_cbagWorkers.Add(treeRoot.DoThreadFactory());
             }
 
@@ -748,7 +756,8 @@ namespace SearchDirLists
     class TreeSelect : Utilities
     {
         TreeNode m_treeNode = null;
-        Hashtable m_hashCache = null;
+        SortedDictionary<HashKey, List<TreeNode>> m_dictNodes = null;
+        Dictionary<String, String> m_dictDriveInfo = null;
         static TreeSelectStatusDelegate m_statusCallback = null;
         static TreeSelectDoneDelegate m_doneCallback = null;
         Thread m_thread = null;
@@ -756,11 +765,13 @@ namespace SearchDirLists
         bool m_bCompareMode = false;
         bool m_bSecondComparePane = false;
 
-        internal TreeSelect(TreeNode node, Hashtable hashCache, String strFile, bool bCompareMode, bool bSecondComparePane,
+        internal TreeSelect(TreeNode node, SortedDictionary<HashKey, List<TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
+            String strFile, bool bCompareMode, bool bSecondComparePane,
             TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
         {
             m_treeNode = node;
-            m_hashCache = hashCache;
+            m_dictNodes = dictNodes;
+            m_dictDriveInfo = dictDriveInfo;
             m_strFile = strFile;
             m_bCompareMode = bCompareMode;
             m_bSecondComparePane = bSecondComparePane;
@@ -929,9 +940,9 @@ namespace SearchDirLists
         {
             // Volume detail
 
-            if (m_hashCache.ContainsKey("driveInfo" + m_strFile))
+            if (m_dictDriveInfo.ContainsKey(m_strFile))
             {
-                String strDriveInfo = (String)m_hashCache["driveInfo" + m_strFile];
+                String strDriveInfo = (String)m_dictDriveInfo[m_strFile];
                 String[] arrDriveInfo = strDriveInfo.Split(new String[] { "\r\n", "\n" }, StringSplitOptions.None);
 
                 Utilities.Assert(1301.2308, new int[] { 7, 8 }.Contains(arrDriveInfo.Length));

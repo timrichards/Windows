@@ -171,7 +171,7 @@ namespace SearchDirLists
                         }
                     }
 
-                    if ((m_bSearchFilesOnly == false) && bDir && (strMatchDir.Contains(strSearch)))
+                    if ((m_bSearchFilesOnly == false) && bDir && strMatchDir.Contains(strSearch))
                     {
                         if (searchResultDir == null)
                         {
@@ -182,7 +182,7 @@ namespace SearchDirLists
                         listResults.Add(searchResultDir);
                         searchResultDir = null;
                     }
-                    else if (bFile && (strMatchFile.Contains(strSearch)))
+                    else if (bFile && strMatchFile.Contains(strSearch))
                     {
                         String strFile = arrLine[3];
 
@@ -544,7 +544,7 @@ namespace SearchDirLists
 
                 if (bKill == false)
                 {
-                    dlgResult = MessageBox.Show("Already in progress. Restart search?       ", "Search", MessageBoxButtons.YesNoCancel);
+                    dlgResult = MessageBox.Show("Already in progress. Restart search?".PadRight(100), "Search", MessageBoxButtons.YesNoCancel);
 
                     if (dlgResult == DialogResult.No)
                     {

@@ -9,13 +9,87 @@ namespace SearchDirLists
 {
     partial class Form1 : Form
     {
-        Hashtable m_hashCache = new Hashtable();
+        SortedDictionary<HashKey, List<TreeNode>> m_dictNodes = new SortedDictionary<HashKey,List<TreeNode>>();
+        Dictionary<String, String> m_dictDriveInfo = new Dictionary<string,string>();
         List<TreeNode> m_listTreeNodes = new List<TreeNode>();
         List<TreeNode> m_listRootNodes = new List<TreeNode>();
         List<ListViewItem> m_list_lvIgnore = new List<ListViewItem>();
         Tree m_tree = null;
         Thread m_threadSelect = null;
         Thread m_threadSelectCompare = null;
+
+        void TreeCleanup()
+        {
+            m_tree = null;
+            m_list_lvIgnore.Clear();
+        }
+
+        void ClearForCorrelation()
+        {
+            m_listTreeNodes.Clear();
+            m_nodeCompare1 = null;
+            m_nodeCompare2 = null;
+            m_arrayTreeFound = null;
+            dictCompareDiffs.Clear();
+            m_listTreeNodes_Compare1.Clear();
+            m_listTreeNodes_Compare2.Clear();
+            m_listHistory.Clear();
+            m_nIxHistory = -1;
+            form_lvFiles.Items.Clear();
+            form_lvFileCompare.Items.Clear();
+            form_lvDetail.Items.Clear();
+            form_lvDetailVol.Items.Clear();
+            form_colFilename.Text = m_strColFilesOrig;
+            form_colDirDetail.Text = m_strColDirDetailOrig;
+            form_colVolDetail.Text = m_strColVolDetailOrig;
+            form_treeView_Browse.Nodes.Clear();
+            form_lvClones.Items.Clear();
+            form_lvSameVol.Items.Clear();
+            form_lvUnique.Items.Clear();
+            form_tmapUserCtl.Clear();
+
+            TreeNode treeNode = new TreeNode("Creating treeview...        ");
+
+            treeNode.NodeFont = new Font(form_treeView_Browse.Font, FontStyle.Bold | FontStyle.Underline);
+            form_treeView_Browse.Nodes.Add(treeNode);
+            form_treeView_Browse.Enabled = false;
+            form_treeView_Browse.CheckBoxes = false;    // treeview items may be added to show progress
+        }
+
+        void ClearForTree()
+        {
+            m_dictNodes.Clear();
+            m_dictDriveInfo.Clear();
+            m_listRootNodes.Clear();
+            ClearForCorrelation();                      // prevent UX during long process
+        }
+
+        void Correlate_A()
+        {
+            Utilities.Assert(1304.5304, m_listTreeNodes.Count == 0);
+
+            TreeDone treeDone = new TreeDone(form_treeView_Browse, m_dictNodes,
+                form_lvClones, form_lvSameVol, form_lvUnique,
+                m_listRootNodes, m_listTreeNodes, m_bCheckboxes,
+                m_list_lvIgnore, form_chkLoose.Checked);
+            DateTime dtStart = DateTime.Now;
+
+            treeDone.Step1_OnThread();
+            Console.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+
+            if (AppExit)
+            {
+                TreeCleanup();
+                return;
+            }
+
+            m_bPutPathInFindEditBox = true;
+            Invoke(new DoSomething(treeDone.Step2_OnForm));
+            Console.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+            treeDone = null;
+            TreeCleanup();
+            GC.Collect();
+        }
 
         void TreeStatusCallback(TreeNode rootNode, LVvolStrings volStrings)
         {
@@ -44,46 +118,6 @@ namespace SearchDirLists
                     m_listRootNodes.Add(rootNode);
                 }
             }
-        }
-
-        void TreeCleanup()
-        {
-            m_tree = null;
-            m_listRootNodes.Clear();
-            m_list_lvIgnore.Clear();
-        }
-
-        void TreeDoneCallback()
-        {
-            if (AppExit || (m_tree == null) || (m_tree.IsAborted))
-            {
-                TreeCleanup();
-                return;
-            }
-
-            Utilities.Assert(1304.5304, m_listTreeNodes.Count == 0);
-
-            TreeDone treeDone = new TreeDone(form_treeView_Browse, m_hashCache,
-                form_lvClones, form_lvSameVol, form_lvUnique,
-                m_listRootNodes, m_listTreeNodes, m_bCheckboxes,
-                m_list_lvIgnore, form_chkLoose.Checked);
-            DateTime dtStart = DateTime.Now;
-
-            treeDone.Step1_OnThread();
-            Console.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
-
-            if (AppExit || (m_tree == null) || (m_tree.IsAborted))
-            {
-                TreeCleanup();
-                return;
-            }
-
-            m_bPutPathInFindEditBox = true;
-            Invoke(new DoSomething(treeDone.Step2_OnForm));
-            Console.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
-            treeDone = null;
-            TreeCleanup();
-            GC.Collect();
         }
 
         void TreeSelectStatusCallback(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem lvVol = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null)
@@ -259,6 +293,24 @@ namespace SearchDirLists
             }
         }
 
+        void Correlate()
+        {
+            foreach (TreeNode treeNode in m_listTreeNodes)
+            {
+                treeNode.ForeColor = Color.Empty;
+                treeNode.BackColor = Color.Empty;
+
+                NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+
+                nodeDatum.m_lvItem = null;
+                nodeDatum.m_listClones = null;
+                nodeDatum.m_bDifferentVols = false;
+            }
+
+            ClearForCorrelation();
+            new Thread(new ThreadStart(Correlate_A)).Start();
+        }
+
         void DoTree(bool bKill = false)
         {
             if (m_tree != null)
@@ -274,29 +326,13 @@ namespace SearchDirLists
                 }
             }
 
-            m_hashCache.Clear();
-            m_listTreeNodes.Clear();
-            m_nodeCompare1 = null;
-            m_nodeCompare2 = null;
-            m_arrayTreeFound = null;
-            dictCompareDiffs.Clear();
-            m_listTreeNodes_Compare1.Clear();
-            m_listTreeNodes_Compare2.Clear();
-            m_listHistory.Clear();
-            m_nIxHistory = -1;
-            form_lvFiles.Items.Clear();
-            form_lvFileCompare.Items.Clear();
-            form_lvDetail.Items.Clear();
-            form_lvDetailVol.Items.Clear();
-            form_colFilename.Text = m_strColFilesOrig;
-            form_colDirDetail.Text = m_strColDirDetailOrig;
-            form_colVolDetail.Text = m_strColVolDetailOrig;
-            form_treeView_Browse.Nodes.Clear();
-            form_treeView_Browse.CheckBoxes = false;    // treeview items will be added to show progress
-            form_lvClones.Items.Clear();
-            form_lvSameVol.Items.Clear();
-            form_lvUnique.Items.Clear();
-            form_tmapUserCtl.Clear();
+            if (m_dictNodes.Count > 0)      // clear to signal recreate. Ignore list only requires recorrelation
+            {
+                Correlate();
+                return;
+            }
+
+            ClearForTree();
 
             foreach (ListView lv in new ListView[] { form_lvClones, form_lvSameVol, form_lvUnique })
             {
@@ -309,11 +345,6 @@ namespace SearchDirLists
                 return;
             }
 
-            TreeNode treeNode = new TreeNode("Creating treeview...        ");
-
-            treeNode.NodeFont = new Font(form_treeView_Browse.Font, FontStyle.Bold | FontStyle.Underline);
-            form_treeView_Browse.Nodes.Add(treeNode);
-            form_treeView_Browse.Enabled = false;
             Utilities.Assert(1304.5302, m_listRootNodes.Count == 0);
             Utilities.Assert(1304.5303, m_list_lvIgnore.Count == 0);
 
@@ -325,12 +356,12 @@ namespace SearchDirLists
                 m_list_lvIgnore.Add(lvItem_A);
             }
 
-            m_tree = new Tree(form_lvVolumesMain.Items, m_hashCache,
-                new TreeStatusDelegate(TreeStatusCallback), new TreeDoneDelegate(TreeDoneCallback));
+            m_tree = new Tree(form_lvVolumesMain.Items, m_dictNodes, m_dictDriveInfo,
+                new TreeStatusDelegate(TreeStatusCallback), new TreeDoneDelegate(Correlate_A));
             m_tree.DoThreadFactory();
         }
 
-        private void DoTreeSelect(TreeNode treeNode)
+        void DoTreeSelect(TreeNode treeNode)
         {
             TreeNode rootNode = treeNode.Root();
             String strFile = (String)((RootNodeDatum)rootNode.Tag).StrFile;
@@ -345,7 +376,8 @@ namespace SearchDirLists
             m_threadSelectCompare = null;
             m_threadSelect = null;
 
-            TreeSelect treeSelect = new TreeSelect(treeNode, m_hashCache, strFile, m_bCompareMode, bSecondComparePane,
+            TreeSelect treeSelect = new TreeSelect(treeNode, m_dictNodes, m_dictDriveInfo,
+                strFile, m_bCompareMode, bSecondComparePane,
                 new TreeSelectStatusDelegate(TreeSelectStatusCallback), new TreeSelectDoneDelegate(TreeSelectDoneCallback));
 
             Thread thread = treeSelect.DoThreadFactory();

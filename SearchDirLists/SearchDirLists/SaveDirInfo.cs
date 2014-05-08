@@ -397,11 +397,12 @@ namespace SearchDirLists
 
             if (m_saveDirListings.FilesWritten > 0)
             {
+                m_dictNodes.Clear();    // signal reload tree
                 RestartTreeTimer();
                 form_tabControl.SelectedTab = form_tabPageBrowse;
             }
 
-            MessageBox.Show("Completed. " + m_saveDirListings.FilesWritten + " files written.               ", "Save Directory Listings");
+            MessageBox.Show(("Completed. " + m_saveDirListings.FilesWritten + " files written.").PadRight(100), "Save Directory Listings");
             m_saveDirListings = null;
         }
 
@@ -409,7 +410,7 @@ namespace SearchDirLists
         {
             if (m_saveDirListings != null)
             {
-                MessageBox.Show("Already in progress.                       ", "Save Directory Listings");
+                MessageBox.Show("Already in progress.".PadRight(100), "Save Directory Listings");
                 return;
             }
 

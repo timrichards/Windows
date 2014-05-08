@@ -1165,7 +1165,7 @@ namespace SearchDirLists
             {
                 m_blink.Go(form_cbSaveAs, clr: Color.Red);
 
-                if (MessageBox.Show(m_strSaveAs + " already exists. Overwrite?".PadRight(100), "Volume Save As", MessageBoxButtons.YesNo)
+                if (MessageBox.Show((m_strSaveAs + " already exists. Overwrite?").PadRight(100), "Volume Save As", MessageBoxButtons.YesNo)
                     != System.Windows.Forms.DialogResult.Yes)
                 {
                     m_blink.Go(form_cbVolumeName, clr: Color.Yellow, Once: true);
@@ -1808,6 +1808,7 @@ namespace SearchDirLists
 
             UpdateLV_VolumesSelection();
             form_btnSaveDirList.Enabled = (form_lvVolumesMain.Items.Count > 0);
+            m_dictNodes.Clear();    // signal reload tree
             RestartTreeTimer();
         }
 
@@ -1974,6 +1975,7 @@ namespace SearchDirLists
                 SetLV_VolumesItemInclude(lvItem, LV_VolumesItemInclude(lvItem) == false);
             }
 
+            m_dictNodes.Clear();    // signal reload tree
             RestartTreeTimer();
         }
 
@@ -2179,11 +2181,6 @@ namespace SearchDirLists
             m_strPath = form_cbVolumeName.Text;
         }
 
-        void form_chkSpacer_Paint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.FillRectangle(new SolidBrush(BackColor), e.ClipRectangle);
-        }
-
         void form_chk_Compare1_CheckedChanged(object sender, EventArgs e)
         {
             if (m_bChkCompare1IndirectCheckChange == true)
@@ -2267,6 +2264,11 @@ namespace SearchDirLists
 
             KillTreeBuilder();
             RestartTreeTimer();
+        }
+
+        void form_chkSpacer_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.FillRectangle(new SolidBrush(BackColor), e.ClipRectangle);
         }
 
         void formCtl_EnterForCopyButton(object sender, EventArgs e)

@@ -12,7 +12,7 @@ namespace SearchDirLists
     {
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
         TreeView form_treeView_Browse = null;
-        Hashtable m_hashCache = null;
+        SortedDictionary<HashKey, List<TreeNode>> m_dictNodes = null;
         ListView form_lvClones = null;
         ListView form_lvSameVol = null;
         ListView form_lvUnique = null;
@@ -123,14 +123,14 @@ namespace SearchDirLists
             }
         }
 
-        public TreeDone(TreeView treeView_Browse, Hashtable hashCache,
+        public TreeDone(TreeView treeView_Browse, SortedDictionary<HashKey, List<TreeNode>> dictNodes,
             ListView lvClones, ListView lvSameVol, ListView lvUnique,
             List<TreeNode> listRootNodes, List<TreeNode> listTreeNodes, bool bCheckboxes,
             List<ListViewItem> list_lvIgnore, bool bLoose)
         {
             static_this = this;
             form_treeView_Browse = treeView_Browse;
-            m_hashCache = hashCache;
+            m_dictNodes = dictNodes;
             form_lvClones = lvClones;
             form_lvSameVol = lvSameVol;
             form_lvUnique = lvUnique;
@@ -366,20 +366,13 @@ namespace SearchDirLists
                 Console.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             }
 
-            Hashtable hashTable = new Hashtable();
             SortedDictionary<HashKey, TreeNode> dictUnique = new SortedDictionary<HashKey, TreeNode>();
 
-            foreach (DictionaryEntry pair in m_hashCache)
+            foreach (KeyValuePair<HashKey, List<TreeNode>> pair in m_dictNodes)
             {
                 if (m_bThreadAbort || Form1.AppExit)
                 {
                     return;
-                }
-
-                if ((pair.Value is List<TreeNode>) == false)
-                {
-                    hashTable.Add(pair.Key, pair.Value);
-                    continue;
                 }
 
                 List<TreeNode> listNodes = (List<TreeNode>)pair.Value;
@@ -470,17 +463,12 @@ namespace SearchDirLists
 
                     if (((NodeDatum)treeNode.Tag).nImmediateFiles > 0)
                     {
-                        dictUnique.Add((HashKey)pair.Key, treeNode);
+                        dictUnique.Add(pair.Key, treeNode);
                     }
 
                     continue;
                 }
             }
-
-            // even a reference type: this shouldn't work unless passing back by ref. However it does seem to work.
-            // m_hashCache is a member of this instance of TreeDone and now points to
-            m_hashCache = hashTable;
-            // so why does that make Form1.m_hashCache now point to the same memory, as though passed back by ref?
 
             SortedDictionary<HashKey, List<TreeNode>> dictClones = new SortedDictionary<HashKey, List<TreeNode>>();
 
@@ -491,11 +479,7 @@ namespace SearchDirLists
 
             m_listRootNodes.Sort((x, y) => String.Compare(x.Text, y.Text));
 
-            IEnumerable<KeyValuePair<HashKey, List<TreeNode>>> dictReverse = dictClones.Reverse();
-
-            dictClones = null;
-
-            foreach (KeyValuePair<HashKey, List<TreeNode>> listNodes in dictReverse)
+            foreach (KeyValuePair<HashKey, List<TreeNode>> listNodes in dictClones)
             {
                 if (m_bThreadAbort || Form1.AppExit)
                 {
@@ -554,12 +538,10 @@ namespace SearchDirLists
                 listLVitems.Add(lvItem);
             }
 
-            dictReverse = null;
+            dictClones = null;
             InsertSizeMarkers(listLVitems);
 
-            IEnumerable<KeyValuePair<HashKey, TreeNode>> dictUniqueReverse = dictUnique.Reverse();
-
-            foreach (KeyValuePair<HashKey, TreeNode> listNodes in dictUniqueReverse)
+            foreach (KeyValuePair<HashKey, TreeNode> listNodes in dictUnique)
             {
                 if (m_bThreadAbort || Form1.AppExit)
                 {
@@ -603,7 +585,7 @@ namespace SearchDirLists
                 nodeDatum.m_lvItem = lvItem;
             }
 
-            dictUniqueReverse = null;
+            dictUnique = null;
             InsertSizeMarkers(listLVunique);
 
             List<TreeNode> listSameVolDescLength = new List<TreeNode>();

@@ -326,6 +326,16 @@ namespace SearchDirLists
                 }
             }
 
+            Utilities.Assert(1304.5303, m_list_lvIgnore.Count == 0);
+
+            foreach (ListViewItem lvItem in form_lvIgnoreList.Items)
+            {
+                ListViewItem lvItem_A = (ListViewItem)lvItem.Clone();
+
+                lvItem_A.Tag = lvItem;
+                m_list_lvIgnore.Add(lvItem_A);
+            }
+
             if (m_dictNodes.Count > 0)      // clear to signal recreate. Ignore list only requires recorrelation
             {
                 Correlate();
@@ -346,15 +356,6 @@ namespace SearchDirLists
             }
 
             Utilities.Assert(1304.5302, m_listRootNodes.Count == 0);
-            Utilities.Assert(1304.5303, m_list_lvIgnore.Count == 0);
-
-            foreach (ListViewItem lvItem in form_lvIgnoreList.Items)
-            {
-                ListViewItem lvItem_A = (ListViewItem)lvItem.Clone();
-
-                lvItem_A.Tag = lvItem;
-                m_list_lvIgnore.Add(lvItem_A);
-            }
 
             m_tree = new Tree(form_lvVolumesMain.Items, m_dictNodes, m_dictDriveInfo,
                 new TreeStatusDelegate(TreeStatusCallback), new TreeDoneDelegate(Correlate_A));

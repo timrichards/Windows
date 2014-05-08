@@ -326,6 +326,17 @@ namespace SearchDirLists
                 }
             }
 
+            foreach (ListView lv in new ListView[] { form_lvClones, form_lvSameVol, form_lvUnique })
+            {
+                lv.Tag = SortOrder.None;
+                lv.SetSortIcon(0, SortOrder.None);
+            }
+
+            if (form_lvVolumesMain.Items.Count <= 0)
+            {
+                return;
+            }
+
             Utilities.Assert(1304.5303, m_list_lvIgnore.Count == 0);
 
             foreach (ListViewItem lvItem in form_lvIgnoreList.Items)
@@ -343,17 +354,6 @@ namespace SearchDirLists
             }
 
             ClearForTree();
-
-            foreach (ListView lv in new ListView[] { form_lvClones, form_lvSameVol, form_lvUnique })
-            {
-                lv.Tag = SortOrder.None;
-                lv.SetSortIcon(0, SortOrder.None);
-            }
-
-            if (form_lvVolumesMain.Items.Count <= 0)
-            {
-                return;
-            }
 
             Utilities.Assert(1304.5302, m_listRootNodes.Count == 0);
 

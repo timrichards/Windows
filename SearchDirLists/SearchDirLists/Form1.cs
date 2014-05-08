@@ -2687,7 +2687,7 @@ namespace SearchDirLists
             form_tmapUserCtl.TooltipAnchor = form_cbNavigate;
 
 #if (DEBUG)
-#warning DEBUG is defined.
+//#warning DEBUG is defined.
             Utilities.Assert(0, false, "DEBUG is defined.");
             Utilities.Assert(0, System.Diagnostics.Debugger.IsAttached, "Debugger is not attached!");
 #else

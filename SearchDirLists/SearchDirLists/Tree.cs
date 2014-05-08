@@ -60,7 +60,7 @@ namespace SearchDirLists
         }
     }
 
-    class HashKey : IComparable                     // reverse sort: < means >
+    class HashKey : IComparable
     {
         internal readonly ulong nTotalLength;       //  found   41 bits
         internal readonly uint nFilesInSubdirs;     //          23 bits
@@ -77,7 +77,7 @@ namespace SearchDirLists
         {
             HashKey that = (HashKey) obj;
 
-            if (this < that) return -1;
+            if (this > that) return -1;             // reverse sort
             if (this == that) return 0;
             return 1;
         }
@@ -114,14 +114,14 @@ namespace SearchDirLists
             return (x.nTotalLength == y.nTotalLength) && (x.nFilesInSubdirs == y.nFilesInSubdirs) && (x.nDirsWithFiles == y.nDirsWithFiles);
         }
 
-        public static bool operator >(HashKey x, HashKey y)         // reverse sort
+        public static bool operator >(HashKey x, HashKey y)
         {
-            if (x.nTotalLength > y.nTotalLength) return false;
-            if (x.nTotalLength < y.nTotalLength) return true;
-            if (x.nFilesInSubdirs > y.nFilesInSubdirs) return false;
-            if (x.nFilesInSubdirs < y.nFilesInSubdirs) return true;
-            if (x.nDirsWithFiles > y.nDirsWithFiles) return false;
-            if (x.nDirsWithFiles < y.nDirsWithFiles) return true;
+            if (x.nTotalLength < y.nTotalLength) return false;
+            if (x.nTotalLength > y.nTotalLength) return true;
+            if (x.nFilesInSubdirs < y.nFilesInSubdirs) return false;
+            if (x.nFilesInSubdirs > y.nFilesInSubdirs) return true;
+            if (x.nDirsWithFiles < y.nDirsWithFiles) return false;
+            if (x.nDirsWithFiles > y.nDirsWithFiles) return true;
             return false;
         }
 
@@ -270,25 +270,41 @@ namespace SearchDirLists
         }
     }
 
-    class Tree : Utilities
+    class TreeBase : Utilities
+    {
+        protected SortedDictionary<HashKey, List<TreeNode>> m_dictNodes = null;
+        protected Dictionary<String, String> m_dictDriveInfo = null;
+        protected static TreeStatusDelegate m_statusCallback = null;
+
+        internal TreeBase(SortedDictionary<HashKey, List<TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
+            TreeStatusDelegate statusCallback)
+        {
+            m_dictNodes = dictNodes;
+            m_dictDriveInfo = dictDriveInfo;
+            m_statusCallback = statusCallback;
+        }
+
+        internal TreeBase(TreeBase base_in)
+        {
+            m_dictNodes = base_in.m_dictNodes;
+            m_dictDriveInfo = base_in.m_dictDriveInfo;
+            Utilities.Assert(1301.23085, m_statusCallback != null);
+        }
+    }
+
+    class Tree : TreeBase
     {
         List<LVvolStrings> m_list_lvVolStrings = new List<LVvolStrings>();
-        SortedDictionary<HashKey, List<TreeNode>> m_dictNodes = null;
-        Dictionary<String, String> m_dictDriveInfo = null;
-        TreeStatusDelegate m_statusCallback = null;
         TreeDoneDelegate m_doneCallback = null;
         ConcurrentBag<TreeRootNodeBuilder> m_cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
         Thread m_thread = null;
         bool m_bThreadAbort = false;
 
-        class TreeRootNodeBuilder : Utilities
+        class TreeRootNodeBuilder : TreeBase
         {
-            static TreeStatusDelegate m_statusCallback = null;
             Thread m_thread = null;
             bool m_bThreadAbort = false;
             LVvolStrings m_volStrings = null;
-            SortedDictionary<HashKey, List<TreeNode>> m_dictNodes = null;
-            Dictionary<String, String> m_dictDriveInfo = null;
 
             class DirData
             {
@@ -458,14 +474,9 @@ namespace SearchDirLists
                 internal uint FirstLineNo { get { return m_firstLineNo; } set { m_firstLineNo = value; } }
             }
 
-            internal TreeRootNodeBuilder(LVvolStrings volStrings,
-                SortedDictionary<HashKey, List<TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
-                TreeStatusDelegate statusCallback)
+            internal TreeRootNodeBuilder(LVvolStrings volStrings, TreeBase base_in) : base(base_in)
             {
                 m_volStrings = volStrings;
-                m_dictNodes = dictNodes;
-                m_dictDriveInfo = dictDriveInfo;
-                m_statusCallback = statusCallback;
             }
 
             DetailsDatum TreeSubnodeDetails(TreeNode treeNode)
@@ -681,15 +692,13 @@ namespace SearchDirLists
         internal Tree(ListView.ListViewItemCollection lvVolItems,
             SortedDictionary<HashKey, List<TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
             TreeStatusDelegate statusCallback, TreeDoneDelegate doneCallback)
+            : base(dictNodes, dictDriveInfo, statusCallback)
         {
             foreach (ListViewItem lvItem in lvVolItems)
             {
                 m_list_lvVolStrings.Add(new LVvolStrings(lvItem));
             }
 
-            m_dictNodes = dictNodes;
-            m_dictDriveInfo = dictDriveInfo;
-            m_statusCallback = statusCallback;
             m_doneCallback = doneCallback;
         }
 
@@ -707,7 +716,7 @@ namespace SearchDirLists
                     continue;
                 }
 
-                TreeRootNodeBuilder treeRoot = new TreeRootNodeBuilder(volStrings, m_dictNodes, m_dictDriveInfo, m_statusCallback);
+                TreeRootNodeBuilder treeRoot = new TreeRootNodeBuilder(volStrings, this);
                 m_cbagWorkers.Add(treeRoot.DoThreadFactory());
             }
 

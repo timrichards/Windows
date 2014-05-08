@@ -349,7 +349,11 @@ namespace SearchDirLists
         public void Step1_OnThread()
         {
             TreeView treeView = new TreeView();     // sets Level and Next.
-            treeView.Nodes.AddRange(m_listRootNodes.ToArray());
+
+            if (m_listRootNodes[0].TreeView == null)
+            {
+                treeView.Nodes.AddRange(m_listRootNodes.ToArray());
+            }
 
             if (m_list_lvIgnore.Count > 0)
             {
@@ -655,13 +659,20 @@ namespace SearchDirLists
                 return false;
             }
 
-            form_treeView_Browse.Nodes.Clear();
+            if (form_treeView_Browse.Enabled == false)      // stays enabled when Correlate() is called directly
+            {
+                form_treeView_Browse.Nodes.Clear();
+            }
 
             if (m_listRootNodes.Count > 0)
             {
-                form_treeView_Browse.Enabled = true;
-                form_treeView_Browse.CheckBoxes = m_bCheckboxes;
-                form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
+                if (form_treeView_Browse.Enabled == false)
+                {
+                    form_treeView_Browse.Enabled = true;
+                    form_treeView_Browse.CheckBoxes = m_bCheckboxes;
+                    form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
+                    form_treeView_Browse.SelectedNode = m_listRootNodes[0];     // m_bPutPathInFindEditBox is set in TreeDoneCallback()
+                }
 
                 if (m_bThreadAbort || Form1.AppExit)
                 {
@@ -686,7 +697,6 @@ namespace SearchDirLists
 
                 Utilities.Assert(1305.6318, form_lvSameVol.Items.Count == 0);
                 form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
-                form_treeView_Browse.SelectedNode = m_listRootNodes[0];     // m_bPutPathInFindEditBox is set in TreeDoneCallback()
             }
 
             static_this = null;

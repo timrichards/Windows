@@ -2633,6 +2633,11 @@ namespace SearchDirLists
                 return;
             }
 
+            if (nodeDatum.m_lvItem.ListView == null)    // during Corellate()
+            {
+                return;
+            }
+
             nodeDatum.m_lvItem.Selected = true;
             nodeDatum.m_lvItem.Focused = true;
             nodeDatum.m_lvItem.ListView.TopItem = nodeDatum.m_lvItem;

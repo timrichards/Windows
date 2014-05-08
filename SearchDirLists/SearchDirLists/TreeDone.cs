@@ -649,14 +649,14 @@ namespace SearchDirLists
 
             listSameVolDescLength = null;
             InsertSizeMarkers(listLVsameVol);
-            treeView.Nodes.Clear();                 // prevents destroy nodes
+            treeView.Nodes.Clear();                         // prevents destroy nodes
         }
 
-        public bool Step2_OnForm()
+        public void Step2_OnForm()
         {
             if (m_bThreadAbort || Form1.AppExit)
             {
-                return false;
+                return;
             }
 
             if (form_treeView_Browse.Enabled == false)      // stays enabled when Correlate() is called directly
@@ -671,12 +671,11 @@ namespace SearchDirLists
                     form_treeView_Browse.Enabled = true;
                     form_treeView_Browse.CheckBoxes = m_bCheckboxes;
                     form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
-                    form_treeView_Browse.SelectedNode = m_listRootNodes[0];     // m_bPutPathInFindEditBox is set in TreeDoneCallback()
                 }
 
                 if (m_bThreadAbort || Form1.AppExit)
                 {
-                    return false;
+                    return;
                 }
 
                 Utilities.Assert(1305.6316, form_lvClones.Items.Count == 0);
@@ -684,7 +683,7 @@ namespace SearchDirLists
 
                 if (m_bThreadAbort || Form1.AppExit)
                 {
-                    return false;
+                    return;
                 }
 
                 Utilities.Assert(1305.6317, form_lvUnique.Items.Count == 0);
@@ -692,15 +691,26 @@ namespace SearchDirLists
 
                 if (m_bThreadAbort || Form1.AppExit)
                 {
-                    return false;
+                    return;
                 }
 
                 Utilities.Assert(1305.6318, form_lvSameVol.Items.Count == 0);
                 form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
+
+                if (form_treeView_Browse.SelectedNode != null)      // m_bPutPathInFindEditBox is set in TreeDoneCallback()
+                {
+                    TreeNode treeNode = form_treeView_Browse.SelectedNode;
+
+                    form_treeView_Browse.SelectedNode = null;
+                    form_treeView_Browse.SelectedNode = treeNode;   // reselect in new correlation listviewers
+                }
+                else
+                {
+                    form_treeView_Browse.SelectedNode = m_listRootNodes[0];
+                }
             }
 
             static_this = null;
-            return false;           // unused bool return
         }
     }
 }

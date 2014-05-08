@@ -9,7 +9,7 @@ using System.IO;
 namespace SearchDirLists
 {
     delegate void MessageBoxDelegate(String strMessage, String strTitle = null);
-    delegate bool DoSomething();
+    delegate bool BoolAction();
 
     partial class Form1 : Form
     {
@@ -46,6 +46,7 @@ namespace SearchDirLists
         bool m_bChkCompare1IndirectCheckChange = false;
         bool m_bNavDropDown = false;
         TabPage m_FileListTabPageBeforeCompare = null;
+        bool m_bKillTree = true;
 
         static bool m_bAppExit = false;
         public static bool AppExit { get { return m_bAppExit; } }
@@ -874,13 +875,13 @@ namespace SearchDirLists
             }
         }
 
-        void InterruptTreeTimerWithAction(DoSomething DoAction)
+        void InterruptTreeTimerWithAction(BoolAction boolAction)
         {
             bool bTimer = timer_DoTree.Enabled;
 
             timer_DoTree.Stop();
 
-            bool bKillTree = DoAction();
+            bool bKillTree = boolAction();
 
             if (bKillTree)
             {
@@ -1137,7 +1138,7 @@ namespace SearchDirLists
 
         void form_btn_AddVolume_Click(object sender, EventArgs e)
         {
-            InterruptTreeTimerWithAction(new DoSomething(form_btn_AddVolume_Click));
+            InterruptTreeTimerWithAction(new BoolAction(form_btn_AddVolume_Click));
         }
 
         bool form_btn_AddVolume_Click()
@@ -1284,8 +1285,6 @@ namespace SearchDirLists
             }
 
             form_lvIgnoreList.Items.Clear();
-
-            KillTreeBuilder();
             RestartTreeTimer();
         }
 
@@ -1537,7 +1536,7 @@ namespace SearchDirLists
 
         void form_btnIgnoreTree_Click(object sender, EventArgs e)
         {
-            KillTreeBuilder();
+            m_bKillTree = false;
             RestartTreeTimer();
         }
 
@@ -1591,14 +1590,14 @@ namespace SearchDirLists
 
             if (form_lvIgnoreList.Items.Count > 0)
             {
-                KillTreeBuilder();
+                m_bKillTree = false;
                 RestartTreeTimer();
             }
         }
 
         void form_btn_LoadVolumeList_Click(object sender, EventArgs e)
         {
-            InterruptTreeTimerWithAction(new DoSomething(form_btn_LoadVolumeList_Click));
+            InterruptTreeTimerWithAction(new BoolAction(form_btn_LoadVolumeList_Click));
         }
 
         bool form_btn_LoadVolumeList_Click()
@@ -1630,7 +1629,7 @@ namespace SearchDirLists
 
         void form_btnModifyFile_Click(object sender, EventArgs e)
         {
-            InterruptTreeTimerWithAction(new DoSomething(form_btnModifyFile_Click));
+            InterruptTreeTimerWithAction(new BoolAction(form_btnModifyFile_Click));
         }
 
         bool form_btnModifyFile_Click()
@@ -1777,7 +1776,7 @@ namespace SearchDirLists
 
         void form_btnPath_Click(object sender, EventArgs e)
         {
-            InterruptTreeTimerWithAction(new DoSomething(form_btnPath_Click));
+            InterruptTreeTimerWithAction(new BoolAction(form_btnPath_Click));
         }
 
         bool form_btnPath_Click()
@@ -1814,7 +1813,7 @@ namespace SearchDirLists
 
         void form_btnSaveAs_Click(object sender, EventArgs e)
         {
-            InterruptTreeTimerWithAction(new DoSomething(form_btnSaveAs_Click));
+            InterruptTreeTimerWithAction(new BoolAction(form_btnSaveAs_Click));
         }
 
         bool form_btnSaveAs_Click()
@@ -1906,7 +1905,7 @@ namespace SearchDirLists
 
         void form_btnSaveVolumeList_Click(object sender, EventArgs e)
         {
-            InterruptTreeTimerWithAction(new DoSomething(form_btnSaveVolumeList_Click));
+            InterruptTreeTimerWithAction(new BoolAction(form_btnSaveVolumeList_Click));
         }
 
         bool form_btnSaveVolumeList_Click()
@@ -2034,7 +2033,7 @@ namespace SearchDirLists
 
         void form_btn_VolGroup_Click(object sender, EventArgs e)
         {
-            InterruptTreeTimerWithAction(new DoSomething(form_btn_VolGroup_Click));
+            InterruptTreeTimerWithAction(new BoolAction(form_btn_VolGroup_Click));
         }
 
         bool form_btn_VolGroup_Click()
@@ -2262,7 +2261,6 @@ namespace SearchDirLists
                 return;
             }
 
-            KillTreeBuilder();
             RestartTreeTimer();
         }
 
@@ -2720,7 +2718,8 @@ namespace SearchDirLists
                 form_chkCompare1.Checked = false;
             }
 
-            DoTree(bKill: true);
+            DoTree(bKill: m_bKillTree);
+            m_bKillTree = true;
         }
     }
 }

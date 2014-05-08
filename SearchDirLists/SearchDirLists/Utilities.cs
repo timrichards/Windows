@@ -188,29 +188,6 @@ namespace SearchDirLists
 
     static class ExtensionMethods
     {
-        internal static Rectangle Scale(this Rectangle rc_in, SizeF scale)
-        {
-            RectangleF rc = rc_in;
-
-            rc.X *= scale.Width;
-            rc.Y *= scale.Height;
-            rc.Width *= scale.Width;
-            rc.Height *= scale.Height;
-            return Rectangle.Ceiling(rc);
-        }
-
-        internal static TreeNode Root(this TreeNode treeNode)
-        {
-            TreeNode nodeParent = treeNode;
-
-            while (nodeParent.Parent != null)
-            {
-                nodeParent = nodeParent.Parent;
-            }
-
-            return nodeParent;
-        }
-
         internal static bool IsChildOf(this TreeNode child, TreeNode treeNode)
         {
             if (child.Level <= treeNode.Level)
@@ -231,6 +208,29 @@ namespace SearchDirLists
             }
 
             return false;
+        }
+
+        internal static TreeNode Root(this TreeNode treeNode)
+        {
+            TreeNode nodeParent = treeNode;
+
+            while (nodeParent.Parent != null)
+            {
+                nodeParent = nodeParent.Parent;
+            }
+
+            return nodeParent;
+        }
+
+        internal static Rectangle Scale(this Rectangle rc_in, SizeF scale)
+        {
+            RectangleF rc = rc_in;
+
+            rc.X *= scale.Width;
+            rc.Y *= scale.Height;
+            rc.Width *= scale.Width;
+            rc.Height *= scale.Height;
+            return Rectangle.Ceiling(rc);
         }
     }
 
@@ -302,6 +302,18 @@ namespace SearchDirLists
             }
 
             return false;
+        }
+
+        internal static void CheckAndInvoke(Control control, Action action)
+        {
+            if (control.InvokeRequired)
+            {
+                control.Invoke(action);
+            }
+            else
+            {
+                action();
+            }
         }
 
         internal static void ConvertFile(String strFile)

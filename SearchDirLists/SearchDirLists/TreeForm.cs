@@ -26,9 +26,24 @@ namespace SearchDirLists
             m_list_lvIgnore.Clear();
         }
 
+        void LoadIgnoreList()
+        {
+            Utilities.Assert(1304.5303, m_list_lvIgnore.Count == 0);
+
+            foreach (ListViewItem lvItem in form_lvIgnoreList.Items)
+            {
+                ListViewItem lvItem_A = (ListViewItem)lvItem.Clone();
+
+                lvItem_A.Tag = lvItem;
+                m_list_lvIgnore.Add(lvItem_A);
+            }
+        }
+
         void Correlate()
         {
             Utilities.Assert(1304.5304, m_listTreeNodes.Count == 0);
+            Utilities.Assert(1304.5305, InvokeRequired);
+            Utilities.CheckAndInvoke(this, new Action(LoadIgnoreList));
 
             TreeDone treeDone = new TreeDone(form_treeView_Browse, m_dictNodes,
                 form_lvClones, form_lvSameVol, form_lvUnique,
@@ -46,7 +61,7 @@ namespace SearchDirLists
             }
 
             m_bPutPathInFindEditBox = true;
-            Invoke(new DoSomething(treeDone.Step2_OnForm));
+            Utilities.CheckAndInvoke(this, new Action(treeDone.Step2_OnForm));
             Console.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             treeDone = null;
             TreeCleanup();
@@ -262,6 +277,7 @@ namespace SearchDirLists
                 if (bKill)
                 {
                     m_tree.EndThread(bJoin: true);
+                    m_dictNodes.Clear();
                     TreeCleanup();
                 }
                 else
@@ -298,29 +314,12 @@ namespace SearchDirLists
                 return;
             }
 
-            Utilities.Assert(1304.5303, m_list_lvIgnore.Count == 0);
-
-            foreach (ListViewItem lvItem in form_lvIgnoreList.Items)
-            {
-                ListViewItem lvItem_A = (ListViewItem)lvItem.Clone();
-
-                lvItem_A.Tag = lvItem;
-                m_list_lvIgnore.Add(lvItem_A);
-            }
-
-            form_lvFiles.Items.Clear();
-            form_lvFileCompare.Items.Clear();
-            form_lvDetail.Items.Clear();
-            form_lvDetailVol.Items.Clear();
-            form_colFilename.Text = m_strColFilesOrig;
-            form_colDirDetail.Text = m_strColDirDetailOrig;
-            form_colVolDetail.Text = m_strColVolDetailOrig;
             form_lvClones.Items.Clear();
             form_lvSameVol.Items.Clear();
             form_lvUnique.Items.Clear();
 
-            if (m_dictNodes.Count == 0)      // .Clear() to signal recreate. Ignore list only requires recorrelation
-            {
+            if (m_dictNodes.Count == 0)     // .Clear() to signal recreate. Ignore list only requires recorrelation
+            {                               // this works because m_tree is not null during recreate.
                 m_dictDriveInfo.Clear();
                 m_listRootNodes.Clear();
                 m_listTreeNodes.Clear();
@@ -332,13 +331,21 @@ namespace SearchDirLists
                 m_listTreeNodes_Compare2.Clear();
                 m_listHistory.Clear();
                 m_nIxHistory = -1;
+                form_lvFiles.Items.Clear();
+                form_lvFileCompare.Items.Clear();
+                form_lvDetail.Items.Clear();
+                form_lvDetailVol.Items.Clear();
+                form_tmapUserCtl.Clear();
+                form_colFilename.Text = m_strColFilesOrig;
+                form_colDirDetail.Text = m_strColDirDetailOrig;
+                form_colVolDetail.Text = m_strColVolDetailOrig;
 
                 TreeNode treeNode = new TreeNode("Creating treeview...        ");
 
                 treeNode.NodeFont = new Font(form_treeView_Browse.Font, FontStyle.Bold | FontStyle.Underline);
                 form_treeView_Browse.Nodes.Clear();
                 form_treeView_Browse.Nodes.Add(treeNode);
-                form_treeView_Browse.CheckBoxes = false;    // treeview items may be added to show progress
+                form_treeView_Browse.CheckBoxes = false;    // treeview items are faked to show progress
                 form_treeView_Browse.Enabled = false;
 
                 Utilities.Assert(1304.5302, m_listRootNodes.Count == 0);

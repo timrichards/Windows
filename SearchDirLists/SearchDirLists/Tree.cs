@@ -717,6 +717,7 @@ namespace SearchDirLists
                 }
 
                 TreeRootNodeBuilder treeRoot = new TreeRootNodeBuilder(volStrings, this);
+
                 m_cbagWorkers.Add(treeRoot.DoThreadFactory());
             }
 

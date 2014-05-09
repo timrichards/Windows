@@ -317,16 +317,18 @@ namespace SearchDirLists
                     m_rootNode = rootNode;
                 }
 
-                internal void AddToTree(String in_str, uint nLineNo, ulong nLength)
+                internal void AddToTree(String str_in, uint nLineNo, ulong nLength)
                 {
-                    if (m_rootNode.Nodes.ContainsKey(in_str))
+                    if (m_rootNode.Nodes.ContainsKey(str_in))
                     {
-                        Node node = m_rootNode.Nodes[in_str];
+                        Node node = m_rootNode.Nodes[str_in];
+
                         Utilities.Assert(1301.2309, false);
                     }
 
-                    in_str = in_str.TrimEnd(Path.DirectorySeparatorChar);
-                    m_rootNode.Nodes.Add(in_str, new Node(in_str, nLineNo, nLength, m_rootNode));
+                    String str = str_in.TrimEnd(Path.DirectorySeparatorChar);
+
+                    m_rootNode.Nodes.Add(str, new Node(str, nLineNo, nLength, m_rootNode));
                 }
 
                 internal TreeNode AddToTree(String strVolumeName)
@@ -440,7 +442,8 @@ namespace SearchDirLists
                         treeNode = new TreeNode(strShortPath);
                     }
 
-                    Utilities.Assert(1302.3318, treeNode.SelectedImageIndex == -1);     // sets the bitmap size
+                    Utilities.Assert(1301.230225, treeNode.Text == strShortPath);
+                    Utilities.Assert(1301.23025, treeNode.SelectedImageIndex == -1);     // sets the bitmap size
                     treeNode.SelectedImageIndex = -1;
                     treeNode.Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo, m_nLength);  // this is almost but not quite always newly assigned here.
 
@@ -635,6 +638,7 @@ namespace SearchDirLists
 
                 List<String> listLines = File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Directory)).ToList();
                 DirData dirData = new DirData(m_statusCallback, rootNode);
+                bool bZeroLengthsWritten = true;
 
                 foreach (String strLine in listLines)
                 {
@@ -652,6 +656,11 @@ namespace SearchDirLists
                     {
                         nLength = ulong.Parse(strArray[nIx]);
                     }
+                    else
+                    {
+                //        Utilities.Assert(1301.230375, false);
+                        bZeroLengthsWritten = false;     // files created before 140509 Fri drop zeroes from the end of the line
+                    }
 
                     String strDir = strArray[2];
 
@@ -665,7 +674,23 @@ namespace SearchDirLists
 
                 rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag, strSaveAs, m_volStrings.VolumeGroup, nVolFree, nVolLength);
                 TreeSubnodeDetails(rootTreeNode);
-                Utilities.Assert(1301.2304, nScannedLength == ((RootNodeDatum)rootTreeNode.Tag).nTotalLength);
+#if (DEBUG)
+                if (bZeroLengthsWritten)
+                {
+                    Console.WriteLine(File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_File)).Sum(s => decimal.Parse(s.Split('\t')[nColLENGTH])));
+                    Console.WriteLine(File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Directory)).Sum(s => decimal.Parse(s.Split('\t')[nColLENGTH])));
+                }
+
+                Console.WriteLine(nScannedLength);
+#endif
+                ulong nTotalLength = ((RootNodeDatum)rootTreeNode.Tag).nTotalLength;
+
+                if (nScannedLength != nTotalLength)
+                {
+                    Console.WriteLine(nTotalLength);
+                    Utilities.Assert(1301.2304, false);
+                }
+
                 Console.WriteLine(strSaveAs + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
             }
 
@@ -727,11 +752,6 @@ namespace SearchDirLists
             }
 
             Console.WriteLine(String.Format("Completed tree in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 10) / 100.0));
-
-            if (m_cbagWorkers.Count <= 0)
-            {
-                return;
-            }
 
             if (m_bThreadAbort || Form1.AppExit)
             {

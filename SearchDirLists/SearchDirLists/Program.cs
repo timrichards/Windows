@@ -23,4 +23,3 @@ namespace SearchDirLists
         private static extern bool SetProcessDPIAware();
     }
 }
-

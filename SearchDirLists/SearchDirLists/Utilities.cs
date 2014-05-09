@@ -70,7 +70,6 @@ namespace SearchDirLists
             DateTime m_CreationTimeUtc;
             DateTime m_LastAccessTimeUtc;
             DateTime m_LastWriteTimeUtc;
-            string m_Name;
             long m_Size;
             bool m_bValid = false;
 
@@ -78,7 +77,6 @@ namespace SearchDirLists
             internal DateTime CreationTimeUtc { get { return m_CreationTimeUtc; } }
             internal DateTime LastAccessTimeUtc { get { return m_LastAccessTimeUtc; } }
             internal DateTime LastWriteTimeUtc { get { return m_LastWriteTimeUtc; } }
-            internal string Name { get { return m_Name; } }
             internal long Size { get { return m_Size; } }
             internal bool IsValid { get { return m_bValid; } }
 
@@ -98,7 +96,6 @@ namespace SearchDirLists
                 m_CreationTimeUtc = ConvertDateTime(findData.ftCreationTimeHigh, findData.ftCreationTimeLow);
                 m_LastAccessTimeUtc = ConvertDateTime(findData.ftLastAccessTimeHigh, findData.ftLastAccessTimeLow);
                 m_LastWriteTimeUtc = ConvertDateTime(findData.ftLastWriteTimeHigh, findData.ftLastWriteTimeLow);
-                m_Name = findData.strFileName;
                 m_Size = CombineHighLowInts(findData.nFileSizeHigh, findData.nFileSizeLow);
                 m_bValid = (findData.ftCreationTimeHigh | findData.ftCreationTimeLow) != 0;
             }
@@ -309,11 +306,11 @@ namespace SearchDirLists
             return false;
         }
 
-        internal static void CheckAndInvoke(Control control, Delegate action)
+        internal static object CheckAndInvoke(Control control, Delegate action, object[] args = null)
         {
             if (control.InvokeRequired)
             {
-                control.Invoke(action);
+                return control.Invoke(action);
             }
             else
             {
@@ -321,10 +318,31 @@ namespace SearchDirLists
                 {
                     ((Action)action)();
                 }
-                else
+                else if (action is BoolAction)
                 {
-                    action.DynamicInvoke();     // late-bound and slow
+                    return ((BoolAction)action)();
                 }
+                {
+                    return action.DynamicInvoke(args);     // late-bound and slow
+                }
+            }
+        }
+
+        internal static String CheckNTFS_chars(ref String strFile, bool bFile = false)
+        {
+            char[] arrChar = bFile ? Path.GetInvalidFileNameChars() : Path.GetInvalidPathChars();
+            int nIx = -1;
+
+            if ((nIx = strFile.IndexOfAny(arrChar)) > -1)
+            {
+                String strRet = "NTFS ASCII " + ((int)strFile[nIx]).ToString();
+
+                strFile = strFile.Replace("\n", "").Replace("\r", "").Replace("\t", "");    // program-incompatible
+                return strRet;
+            }
+            else
+            {
+                return null;
             }
         }
 
@@ -573,13 +591,13 @@ namespace SearchDirLists
             }
         }
 
-        internal static String FormatString(String strDir = null, String strFile = null, DateTime? dtCreated = null, DateTime? dtModified = null, String strAttributes = null, long nLength = 0, String strError1 = null, String strError2 = null, int? nHeader = null)
+        internal static String FormatString(String strDir = null, String strFile = null, DateTime? dtCreated = null, DateTime? dtModified = null, String strAttributes = null, long nLength = -1, String strError1 = null, String strError2 = null, int? nHeader = null)
         {
             String strLength = null;
             String strCreated = null;
             String strModified = null;
 
-            if (nLength > 0)
+            if (nLength > -1)
             {
                 strLength = nLength.ToString();
             }
@@ -619,18 +637,18 @@ namespace SearchDirLists
             }
 
             String strRet = (strDir + '\t' + strFile + '\t' + strCreated + '\t' + strModified + '\t' + strAttributes + '\t' + strLength + '\t' + strError1 + '\t' + strError2).TrimEnd();
-
+#if (DEBUG)
             if (bDbgCheck)
             {
                 String[] strArray = strRet.Split('\t');
-                DateTime dtParse;
+                DateTime dtParse = DateTime.MinValue;
 
-                if ((strArray.Length > 5) && strArray[5].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
+                if (strArray[nColLENGTH_01].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
                 {
-                    Utilities.Assert(1303.4305, false);
+                    Utilities.Assert(1303.4306, false);
                 }
             }
-
+#endif
             return strRet;
         }
 
@@ -736,5 +754,4 @@ namespace SearchDirLists
                 m_strStatus = "Bad file. Will overwrite.";
         }
     }
-
 }

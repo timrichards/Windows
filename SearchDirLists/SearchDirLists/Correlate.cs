@@ -8,7 +8,7 @@ using System.Drawing;
 
 namespace SearchDirLists
 {
-    class TreeDone : Utilities
+    class Correlate : Utilities
     {
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
         TreeView form_treeView_Browse = null;
@@ -29,7 +29,7 @@ namespace SearchDirLists
         bool m_bLoose = false;
 
         bool m_bThreadAbort = false;
-        static TreeDone static_this = null;
+        static Correlate static_this = null;
 
         public static void Abort()
         {
@@ -123,7 +123,7 @@ namespace SearchDirLists
             }
         }
 
-        public TreeDone(TreeView treeView_Browse, SortedDictionary<HashKey, List<TreeNode>> dictNodes,
+        public Correlate(TreeView treeView_Browse, SortedDictionary<HashKey, List<TreeNode>> dictNodes,
             ListView lvClones, ListView lvSameVol, ListView lvUnique,
             List<TreeNode> listRootNodes, List<TreeNode> listTreeNodes, bool bCheckboxes,
             List<ListViewItem> list_lvIgnore, bool bLoose)

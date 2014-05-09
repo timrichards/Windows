@@ -637,9 +637,10 @@ namespace SearchDirLists
             }
 
             String strRet = (strDir + '\t' + strFile + '\t' + strCreated + '\t' + strModified + '\t' + strAttributes + '\t' + strLength + '\t' + strError1 + '\t' + strError2).TrimEnd();
-#if (DEBUG)
+
             if (bDbgCheck)
             {
+#if (DEBUG)
                 String[] strArray = strRet.Split('\t');
                 DateTime dtParse = DateTime.MinValue;
 
@@ -647,8 +648,9 @@ namespace SearchDirLists
                 {
                     Utilities.Assert(1303.4306, false);
                 }
-            }
 #endif
+            }
+
             return strRet;
         }
 

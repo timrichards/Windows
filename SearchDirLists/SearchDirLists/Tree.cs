@@ -674,15 +674,17 @@ namespace SearchDirLists
 
                 rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag, strSaveAs, m_volStrings.VolumeGroup, nVolFree, nVolLength);
                 TreeSubnodeDetails(rootTreeNode);
-#if (DEBUG)
+
                 if (bZeroLengthsWritten)
                 {
+#if (DEBUG)
                     Console.WriteLine(File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_File)).Sum(s => decimal.Parse(s.Split('\t')[nColLENGTH])));
                     Console.WriteLine(File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Directory)).Sum(s => decimal.Parse(s.Split('\t')[nColLENGTH])));
+#endif
                 }
 
                 Console.WriteLine(nScannedLength);
-#endif
+
                 ulong nTotalLength = ((RootNodeDatum)rootTreeNode.Tag).nTotalLength;
 
                 if (nScannedLength != nTotalLength)

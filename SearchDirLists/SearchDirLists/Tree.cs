@@ -768,7 +768,7 @@ namespace SearchDirLists
                 worker.Abort();
             }
 
-            TreeDone.Abort();
+            Correlate.Abort();
             m_bThreadAbort = true;
             m_thread = null;
         }

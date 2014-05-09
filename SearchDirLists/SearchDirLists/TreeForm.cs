@@ -45,7 +45,7 @@ namespace SearchDirLists
             Utilities.Assert(1304.5305, InvokeRequired);
             Utilities.CheckAndInvoke(this, new Action(LoadIgnoreList));
 
-            TreeDone correlate = new TreeDone(form_treeView_Browse, m_dictNodes,
+            Correlate correlate = new Correlate(form_treeView_Browse, m_dictNodes,
                 form_lvClones, form_lvSameVol, form_lvUnique,
                 m_listRootNodes, m_listTreeNodes, m_bCheckboxes,
                 m_list_lvIgnore, form_chkLoose.Checked);

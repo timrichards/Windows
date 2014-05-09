@@ -2381,7 +2381,7 @@ namespace SearchDirLists
                             listItems.Sort((x, y) => ((NodeDatum)((TreeNode)y.Tag).Tag).nTotalLength.CompareTo(((NodeDatum)((TreeNode)x.Tag).Tag).nTotalLength));
                         }
 
-                        TreeDone.InsertSizeMarkers(listItems);
+                        Correlate.InsertSizeMarkers(listItems);
                         break;
                     }
 

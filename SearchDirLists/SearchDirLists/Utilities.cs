@@ -270,7 +270,7 @@ namespace SearchDirLists
 
         static MessageBoxDelegate m_MessageboxCallback_ = null;
         protected MessageBoxDelegate m_MessageboxCallback = null;
-        static double m_lastAssertLocation = -1;
+        static double m_nLastAssertLoc = -1;
         static DateTime m_dtLastAssert = DateTime.MinValue;
 
         protected Utilities()
@@ -287,9 +287,14 @@ namespace SearchDirLists
             bool bShowCustomDialog = true;
             String strError = strError_in ?? "Assertion failed at location " + nLocation + ".";
 
-            Console.WriteLine(strError);
+            if ((m_nLastAssertLoc == nLocation) && ((DateTime.Now - m_dtLastAssert).Seconds < 1))
+            {
+                return false;
+            }
 
 #if (DEBUG)
+            Console.WriteLine(strError);
+
             bShowCustomDialog = (Trace.Listeners.Cast<TraceListener>().Any(i => i is DefaultTraceListener) == false);
             
             if (bShowCustomDialog == false)
@@ -297,12 +302,13 @@ namespace SearchDirLists
                 Debug.Assert(false, strError);
             }
 #endif
-            if (bShowCustomDialog && (m_lastAssertLocation != nLocation) && ((DateTime.Now - m_dtLastAssert).Seconds > 1))
+            if (bShowCustomDialog)
             {
                 m_MessageboxCallback_(strError + " Please discuss this bug at http://sourceforge.net/projects/searchdirlists/.", "SearchDirLists Assertion Failure");
-                m_lastAssertLocation = nLocation;
             }
 
+            m_nLastAssertLoc = nLocation;
+            m_dtLastAssert = DateTime.Now;
             return false;
         }
 

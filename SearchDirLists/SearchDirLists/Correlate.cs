@@ -58,6 +58,12 @@ namespace SearchDirLists
                 {
                     NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
+                    if (nodeDatum == null)
+                    {
+                        Utilities.Assert(1305.63185, false);
+                        continue;
+                    }
+
                     if ((treeNode.ForeColor == Color.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
                     {
                         Utilities.Assert(1305.6319, (nodeDatum.m_listClones != null) && (nodeDatum.m_bDifferentVols == false));

@@ -88,7 +88,6 @@ namespace SearchDirLists
             this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tableLayoutPanel7 = new SearchDirLists.Form1.Form1LayoutPanel(this.components);
             this.form_btnClearIgnoreList = new System.Windows.Forms.Button();
-            this.form_btnIgnoreTree = new System.Windows.Forms.Button();
             this.form_btnIgnoreAdd = new System.Windows.Forms.Button();
             this.form_btnIgnoreDel = new System.Windows.Forms.Button();
             this.form_btnSaveIgnoreList = new System.Windows.Forms.Button();
@@ -283,7 +282,7 @@ namespace SearchDirLists
             this.form_chkSpacer.CausesValidation = false;
             this.form_chkSpacer.Enabled = false;
             this.form_chkSpacer.ForeColor = System.Drawing.Color.Tomato;
-            this.form_chkSpacer.Location = new System.Drawing.Point(3, 122);
+            this.form_chkSpacer.Location = new System.Drawing.Point(3, 90);
             this.form_chkSpacer.Name = "form_chkSpacer";
             this.form_chkSpacer.Size = new System.Drawing.Size(55, 17);
             this.form_chkSpacer.TabIndex = 2;
@@ -651,7 +650,7 @@ namespace SearchDirLists
             // 
             this.splitContainer2.Panel2.Controls.Add(this.tabControl1);
             this.splitContainer2.Size = new System.Drawing.Size(360, 550);
-            this.splitContainer2.SplitterDistance = 250;
+            this.splitContainer2.SplitterDistance = 282;
             this.splitContainer2.TabIndex = 2;
             // 
             // form_splitTreeFind
@@ -669,7 +668,7 @@ namespace SearchDirLists
             // form_splitTreeFind.Panel2
             // 
             this.form_splitTreeFind.Panel2.Controls.Add(this.form_treeView_Browse);
-            this.form_splitTreeFind.Size = new System.Drawing.Size(360, 250);
+            this.form_splitTreeFind.Size = new System.Drawing.Size(360, 282);
             this.form_splitTreeFind.SplitterDistance = 101;
             this.form_splitTreeFind.SplitterWidth = 1;
             this.form_splitTreeFind.TabIndex = 1;
@@ -739,7 +738,7 @@ namespace SearchDirLists
             this.form_treeView_Browse.Location = new System.Drawing.Point(0, 0);
             this.form_treeView_Browse.Name = "form_treeView_Browse";
             this.form_treeView_Browse.ShowLines = false;
-            this.form_treeView_Browse.Size = new System.Drawing.Size(360, 250);
+            this.form_treeView_Browse.Size = new System.Drawing.Size(360, 282);
             this.form_treeView_Browse.TabIndex = 0;
             this.form_treeView_Browse.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterCheck);
             this.form_treeView_Browse.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterSelect);
@@ -757,7 +756,7 @@ namespace SearchDirLists
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(360, 296);
+            this.tabControl1.Size = new System.Drawing.Size(360, 264);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -766,7 +765,7 @@ namespace SearchDirLists
             this.tabPage1.Location = new System.Drawing.Point(4, 4);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(352, 270);
+            this.tabPage1.Size = new System.Drawing.Size(352, 238);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Copy list";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -783,7 +782,7 @@ namespace SearchDirLists
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(346, 264);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(346, 232);
             this.tableLayoutPanel4.TabIndex = 3;
             // 
             // form_lvCopyList
@@ -799,7 +798,7 @@ namespace SearchDirLists
             this.form_lvCopyList.Location = new System.Drawing.Point(70, 3);
             this.form_lvCopyList.MultiSelect = false;
             this.form_lvCopyList.Name = "form_lvCopyList";
-            this.form_lvCopyList.Size = new System.Drawing.Size(273, 258);
+            this.form_lvCopyList.Size = new System.Drawing.Size(273, 226);
             this.form_lvCopyList.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.form_lvCopyList.TabIndex = 1;
             this.form_lvCopyList.UseCompatibleStateImageBehavior = false;
@@ -839,7 +838,7 @@ namespace SearchDirLists
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(61, 258);
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(61, 226);
             this.tableLayoutPanel5.TabIndex = 0;
             // 
             // form_btnCopyClear
@@ -847,7 +846,7 @@ namespace SearchDirLists
             this.form_btnCopyClear.AutoSize = true;
             this.form_btnCopyClear.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.form_btnCopyClear.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_btnCopyClear.Location = new System.Drawing.Point(3, 232);
+            this.form_btnCopyClear.Location = new System.Drawing.Point(3, 200);
             this.form_btnCopyClear.Name = "form_btnCopyClear";
             this.form_btnCopyClear.Size = new System.Drawing.Size(55, 23);
             this.form_btnCopyClear.TabIndex = 3;
@@ -861,7 +860,7 @@ namespace SearchDirLists
             this.form_btnSaveCopyDirs.AutoSize = true;
             this.form_btnSaveCopyDirs.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.form_btnSaveCopyDirs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_btnSaveCopyDirs.Location = new System.Drawing.Point(3, 203);
+            this.form_btnSaveCopyDirs.Location = new System.Drawing.Point(3, 171);
             this.form_btnSaveCopyDirs.Name = "form_btnSaveCopyDirs";
             this.form_btnSaveCopyDirs.Size = new System.Drawing.Size(55, 23);
             this.form_btnSaveCopyDirs.TabIndex = 2;
@@ -875,7 +874,7 @@ namespace SearchDirLists
             this.form_btnCopyGen.AutoSize = true;
             this.form_btnCopyGen.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.form_btnCopyGen.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_btnCopyGen.Location = new System.Drawing.Point(3, 145);
+            this.form_btnCopyGen.Location = new System.Drawing.Point(3, 113);
             this.form_btnCopyGen.Name = "form_btnCopyGen";
             this.form_btnCopyGen.Size = new System.Drawing.Size(55, 23);
             this.form_btnCopyGen.TabIndex = 0;
@@ -888,7 +887,7 @@ namespace SearchDirLists
             this.form_btnLoadCopyDirs.AutoSize = true;
             this.form_btnLoadCopyDirs.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.form_btnLoadCopyDirs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_btnLoadCopyDirs.Location = new System.Drawing.Point(3, 174);
+            this.form_btnLoadCopyDirs.Location = new System.Drawing.Point(3, 142);
             this.form_btnLoadCopyDirs.Name = "form_btnLoadCopyDirs";
             this.form_btnLoadCopyDirs.Size = new System.Drawing.Size(55, 23);
             this.form_btnLoadCopyDirs.TabIndex = 1;
@@ -903,7 +902,7 @@ namespace SearchDirLists
             this.tabPage2.Location = new System.Drawing.Point(4, 4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(352, 270);
+            this.tabPage2.Size = new System.Drawing.Size(352, 238);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Ignore list";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -920,7 +919,7 @@ namespace SearchDirLists
             this.tableLayoutPanel6.Name = "tableLayoutPanel6";
             this.tableLayoutPanel6.RowCount = 1;
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(346, 264);
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(346, 232);
             this.tableLayoutPanel6.TabIndex = 4;
             // 
             // form_lvIgnoreList
@@ -933,9 +932,8 @@ namespace SearchDirLists
             this.form_lvIgnoreList.FullRowSelect = true;
             this.form_lvIgnoreList.HideSelection = false;
             this.form_lvIgnoreList.Location = new System.Drawing.Point(70, 3);
-            this.form_lvIgnoreList.MultiSelect = false;
             this.form_lvIgnoreList.Name = "form_lvIgnoreList";
-            this.form_lvIgnoreList.Size = new System.Drawing.Size(273, 258);
+            this.form_lvIgnoreList.Size = new System.Drawing.Size(273, 226);
             this.form_lvIgnoreList.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.form_lvIgnoreList.TabIndex = 0;
             this.form_lvIgnoreList.UseCompatibleStateImageBehavior = false;
@@ -960,7 +958,6 @@ namespace SearchDirLists
             this.tableLayoutPanel7.ColumnCount = 1;
             this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel7.Controls.Add(this.form_btnClearIgnoreList, 0, 7);
-            this.tableLayoutPanel7.Controls.Add(this.form_btnIgnoreTree, 0, 4);
             this.tableLayoutPanel7.Controls.Add(this.form_btnIgnoreAdd, 0, 2);
             this.tableLayoutPanel7.Controls.Add(this.form_btnIgnoreDel, 0, 3);
             this.tableLayoutPanel7.Controls.Add(this.form_btnSaveIgnoreList, 0, 6);
@@ -978,7 +975,7 @@ namespace SearchDirLists
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel7.Size = new System.Drawing.Size(61, 258);
+            this.tableLayoutPanel7.Size = new System.Drawing.Size(61, 226);
             this.tableLayoutPanel7.TabIndex = 0;
             // 
             // form_btnClearIgnoreList
@@ -986,7 +983,7 @@ namespace SearchDirLists
             this.form_btnClearIgnoreList.AutoSize = true;
             this.form_btnClearIgnoreList.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.form_btnClearIgnoreList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_btnClearIgnoreList.Location = new System.Drawing.Point(3, 232);
+            this.form_btnClearIgnoreList.Location = new System.Drawing.Point(3, 200);
             this.form_btnClearIgnoreList.Name = "form_btnClearIgnoreList";
             this.form_btnClearIgnoreList.Size = new System.Drawing.Size(55, 23);
             this.form_btnClearIgnoreList.TabIndex = 6;
@@ -994,26 +991,12 @@ namespace SearchDirLists
             this.form_btnClearIgnoreList.UseVisualStyleBackColor = true;
             this.form_btnClearIgnoreList.Click += new System.EventHandler(this.form_btnClearIgnoreList_Click);
             // 
-            // form_btnIgnoreTree
-            // 
-            this.form_btnIgnoreTree.AutoSize = true;
-            this.form_btnIgnoreTree.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.form_btnIgnoreTree.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_btnIgnoreTree.Location = new System.Drawing.Point(3, 145);
-            this.form_btnIgnoreTree.Name = "form_btnIgnoreTree";
-            this.form_btnIgnoreTree.Size = new System.Drawing.Size(55, 23);
-            this.form_btnIgnoreTree.TabIndex = 3;
-            this.form_btnIgnoreTree.Text = "Tree";
-            this.form_btnIgnoreTree.UseVisualStyleBackColor = true;
-            this.form_btnIgnoreTree.Click += new System.EventHandler(this.form_btnIgnoreTree_Click);
-            this.form_btnIgnoreTree.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
-            // 
             // form_btnIgnoreAdd
             // 
             this.form_btnIgnoreAdd.AutoSize = true;
             this.form_btnIgnoreAdd.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.form_btnIgnoreAdd.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_btnIgnoreAdd.Location = new System.Drawing.Point(3, 87);
+            this.form_btnIgnoreAdd.Location = new System.Drawing.Point(3, 84);
             this.form_btnIgnoreAdd.Name = "form_btnIgnoreAdd";
             this.form_btnIgnoreAdd.Size = new System.Drawing.Size(55, 23);
             this.form_btnIgnoreAdd.TabIndex = 1;
@@ -1027,7 +1010,7 @@ namespace SearchDirLists
             this.form_btnIgnoreDel.AutoSize = true;
             this.form_btnIgnoreDel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.form_btnIgnoreDel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_btnIgnoreDel.Location = new System.Drawing.Point(3, 116);
+            this.form_btnIgnoreDel.Location = new System.Drawing.Point(3, 113);
             this.form_btnIgnoreDel.Name = "form_btnIgnoreDel";
             this.form_btnIgnoreDel.Size = new System.Drawing.Size(55, 23);
             this.form_btnIgnoreDel.TabIndex = 2;
@@ -1041,7 +1024,7 @@ namespace SearchDirLists
             this.form_btnSaveIgnoreList.AutoSize = true;
             this.form_btnSaveIgnoreList.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.form_btnSaveIgnoreList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_btnSaveIgnoreList.Location = new System.Drawing.Point(3, 203);
+            this.form_btnSaveIgnoreList.Location = new System.Drawing.Point(3, 171);
             this.form_btnSaveIgnoreList.Name = "form_btnSaveIgnoreList";
             this.form_btnSaveIgnoreList.Size = new System.Drawing.Size(55, 23);
             this.form_btnSaveIgnoreList.TabIndex = 5;
@@ -1055,7 +1038,7 @@ namespace SearchDirLists
             this.form_btnLoadIgnoreList.AutoSize = true;
             this.form_btnLoadIgnoreList.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.form_btnLoadIgnoreList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_btnLoadIgnoreList.Location = new System.Drawing.Point(3, 174);
+            this.form_btnLoadIgnoreList.Location = new System.Drawing.Point(3, 142);
             this.form_btnLoadIgnoreList.Name = "form_btnLoadIgnoreList";
             this.form_btnLoadIgnoreList.Size = new System.Drawing.Size(55, 23);
             this.form_btnLoadIgnoreList.TabIndex = 4;
@@ -1068,7 +1051,7 @@ namespace SearchDirLists
             // 
             this.form_chkLoose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.form_chkLoose.AutoSize = true;
-            this.form_chkLoose.Location = new System.Drawing.Point(3, 64);
+            this.form_chkLoose.Location = new System.Drawing.Point(3, 61);
             this.form_chkLoose.Name = "form_chkLoose";
             this.form_chkLoose.Size = new System.Drawing.Size(55, 17);
             this.form_chkLoose.TabIndex = 0;
@@ -1928,7 +1911,6 @@ namespace SearchDirLists
         private System.Windows.Forms.ColumnHeader columnHeader14;
         private System.Windows.Forms.Button form_btnIgnoreAdd;
         private System.Windows.Forms.Button form_btnIgnoreDel;
-        private System.Windows.Forms.Button form_btnIgnoreTree;
         private System.Windows.Forms.CheckBox form_chkLoose;
         private System.Windows.Forms.ColumnHeader columnHeader15;
         private System.Windows.Forms.TabControl tabControl_FileList;

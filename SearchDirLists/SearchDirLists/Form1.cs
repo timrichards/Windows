@@ -1285,6 +1285,7 @@ namespace SearchDirLists
             }
 
             form_lvIgnoreList.Items.Clear();
+            m_bKillTree = false;
             RestartTreeTimer();
         }
 
@@ -1518,6 +1519,9 @@ namespace SearchDirLists
                 lvItem.Name = lvItem.Text;
                 form_lvIgnoreList.Items.Add(lvItem);
             }
+
+            m_bKillTree = false;
+            RestartTreeTimer();
         }
 
         void form_btnIgnoreDel_Click(object sender, EventArgs e)
@@ -1532,10 +1536,7 @@ namespace SearchDirLists
             {
                 lvItem.Remove();
             }
-        }
 
-        void form_btnIgnoreTree_Click(object sender, EventArgs e)
-        {
             m_bKillTree = false;
             RestartTreeTimer();
         }

@@ -340,6 +340,7 @@ namespace SearchDirLists
                 form_colFilename.Text = m_strColFilesOrig;
                 form_colDirDetail.Text = m_strColDirDetailOrig;
                 form_colVolDetail.Text = m_strColVolDetailOrig;
+                form_treeView_Browse.Nodes.Clear();
 
                 if (form_lvVolumesMain.Items.Count <= 0)
                 {
@@ -349,7 +350,6 @@ namespace SearchDirLists
                 TreeNode treeNode = new TreeNode("Creating treeview...        ");
 
                 treeNode.NodeFont = new Font(form_treeView_Browse.Font, FontStyle.Bold | FontStyle.Underline);
-                form_treeView_Browse.Nodes.Clear();
                 form_treeView_Browse.Nodes.Add(treeNode);
                 form_treeView_Browse.CheckBoxes = false;    // treeview items are faked to show progress
                 form_treeView_Browse.Enabled = false;
@@ -362,6 +362,10 @@ namespace SearchDirLists
             }
             else
             {
+                int nNodeCount = form_treeView_Browse.GetNodeCount(includeSubTrees: true);
+
+                Utilities.Assert(1304.530225, m_listTreeNodes.Count == nNodeCount);
+
                 foreach (TreeNode treeNode in m_listTreeNodes)
                 {
                     treeNode.ForeColor = Color.Empty;

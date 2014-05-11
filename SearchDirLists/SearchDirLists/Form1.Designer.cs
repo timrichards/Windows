@@ -767,7 +767,7 @@ namespace SearchDirLists
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(352, 238);
             this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Copy list";
+            this.tabPage1.Text = "Copy scratchpad";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // tableLayoutPanel4

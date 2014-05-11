@@ -316,7 +316,7 @@ namespace SearchDirLists
             InitializeComponent();
 
             // Assert String-lookup form items exist
-            //    Utilities.Assert(1300.1317, context_rclick_node.Items[m_strMARKFORCOPY] != null);
+            //    Utilities.Assert(1300.1318, context_rclick_node.Items[m_strMARKFORCOPY] != null);
 
             m_blink = new Blink(timer_blink, form_cbNavigate);
             m_strBtnTreeCollapseOrig = form_btn_TreeCollapse.Text;
@@ -2626,14 +2626,21 @@ namespace SearchDirLists
                 form_colFilename.Text = m_strColFilesOrig;
             }
 
-            if ((nodeDatum.m_lvItem == null) || nodeDatum.m_lvItem.Selected)
+            if (nodeDatum.m_lvItem == null)
             {
                 return;
             }
 
             if (nodeDatum.m_lvItem.ListView == null)    // during Corellate()
             {
+                Utilities.Assert(1300.1316, m_threadCorrelate != null);
                 return;
+            }
+
+            // ignore list
+            foreach (ListViewItem lvItem in nodeDatum.m_lvItem.ListView.SelectedItems)
+            {
+                lvItem.Selected = false;
             }
 
             nodeDatum.m_lvItem.Selected = true;
@@ -2714,7 +2721,7 @@ namespace SearchDirLists
 
             if (m_bCompareMode)
             {
-                Utilities.Assert(1300.1316, form_chkCompare1.Checked);
+                Utilities.Assert(1300.1317, form_chkCompare1.Checked);
                 form_chkCompare1.Checked = false;
             }
 

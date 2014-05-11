@@ -124,6 +124,35 @@
     <value>Search Directory Listings
 -------------------------
 
+Background colors:
+	Yellow: subfolder of a blue, safe cloned folder
+	Light red: parent folder of a red, solitary folder
+
+Foreground colors:
+	Blue: safe folder whose clone is on a separate drive/volume group
+	Brick red: unsafe folder whose clone is only on the same drive/volume group
+	Red: unsafe solitary, uncloned folder
+	Black: Folder with no immediate files (has no correlation)
+	Light grey: Folder with &lt; 100Kb of data
+	Dark grey: Ignored folder
+
+List features:
+	Multiselect: volume list; ignore list
+	Sort: all lists save volume list; immediate files; compare
+	Click-again: Clones list and Same volume group list
+
+Treemap:
+	Graphic of nested rectangles representing folders and subfolders.
+	Click-again: drill down to nested subfolders
+	Tooltip on navigate find edit box: click folder name to go
+
+Copy scratchpad:
+	Checkboxes in the treeview add items to this list. Scratchpad of folders you'd like to remember to back up.
+
+Ignore list
+	Items here unclutter the corollary lists on the right side.
+	Loose checkbox: ignore corollaries of ignored folders even if they're not immediately represented by the ignore list
+
 SearchDirLists can rapidly save the directory listings of all your hard drives all at once. It then scans those listings and correlates "clones": which are folders with identical contents. It determines this by noting what the total size of the folder is, how many subfolders with files it has, and how many files there are total in the directory. It does not correlate by name of folder. (To save your first directory listing go to that heading down a few paragraphs.)
 
 Once done with the correlation, in less than half a minute, an explorer treeview appears along the left side of the Browse tab view, and three listviews show up on the right: at the bottom a listview of clones codes all the folders that are safely backed up onto other drives in blue. Above that those folders that are in the same volume group or on the same drive are in a brick red color: these are clones, but they are more likely to get lost if something happens to a drive. Finally, above that, there is the list of folders which didn't have any corollary. These folders are the most likely to get lost.

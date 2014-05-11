@@ -27,7 +27,6 @@ namespace SearchDirLists
         List<ListViewItem> listLVsameVol = new List<ListViewItem>();
         Dictionary<TreeNode, ListViewItem> dictIgnoreNodes = new Dictionary<TreeNode, ListViewItem>();
         bool m_bLoose = false;
-
         bool m_bThreadAbort = false;
         static Correlate static_this = null;
 
@@ -52,25 +51,30 @@ namespace SearchDirLists
 
             public void Go(TreeNode treeNode_in, bool bCloneOK = false)
             {
+                if (treeNode_in == null)
+                {
+                    Utilities.Assert(1305.6301, false);
+                }
+
                 TreeNode treeNode = treeNode_in;
 
                 do
                 {
+                    m_listTreeNodes.Add(treeNode);
+
                     NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
                     if (nodeDatum == null)
                     {
-                        Utilities.Assert(1305.63185, false);
+                        Utilities.Assert(1305.6302, false);
                         continue;
                     }
 
                     if ((treeNode.ForeColor == Color.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
                     {
-                        Utilities.Assert(1305.6319, (nodeDatum.m_listClones != null) && (nodeDatum.m_bDifferentVols == false));
+                        Utilities.Assert(1305.6303, (nodeDatum.m_listClones.Count > 0) && (nodeDatum.m_bDifferentVols == false));
                         m_listSameVol.Add(treeNode);
                     }
-
-                    m_listTreeNodes.Add(treeNode);
 
                     if (bCloneOK)
                     {
@@ -84,12 +88,10 @@ namespace SearchDirLists
 
                     if (treeNode.FirstNode != null)
                     {
-                        Go(treeNode.FirstNode, bCloneOK || (treeNode.ForeColor == Color.SteelBlue));
+                        Go(treeNode.FirstNode, bCloneOK || (new Color[] {Color.SteelBlue, Color.DarkBlue}.Contains(treeNode.ForeColor)));
                     }
-
-                    treeNode = treeNode.NextNode;
                 }
-                while (treeNode != null);
+                while ((treeNode = treeNode.NextNode) != null);
             }
         }
 
@@ -161,27 +163,18 @@ namespace SearchDirLists
             if (nLength <= 100 * 1024)
             {
                 treeNode.ForeColor = Color.LightGray;
-
-                if (listClones != null)
-                {
-                    foreach (TreeNode otherNode in listClones)
-                    {
-                        ((NodeDatum)otherNode.Tag).m_listClones = null;
-                    }
-                }
-
-                listClones = nodeDatum.m_listClones = null;
+                nodeDatum.m_listClones.Clear();
             }
 
-            if ((listClones != null) && (rootClone == null))
+            if ((listClones.Count > 0) && (rootClone == null))
             {
                 rootClone = treeNode;
 
                 if (dictClones.ContainsKey(nodeDatum.Key))
                 {
-                    Utilities.Assert(1305.6301, dictClones[nodeDatum.Key] == listClones);
-                    Utilities.Assert(1305.6302, ((NodeDatum)dictClones[nodeDatum.Key][0].Tag).m_bDifferentVols == nodeDatum.m_bDifferentVols);
-                    Utilities.Assert(1305.6303, dictClones[nodeDatum.Key][0].ForeColor == treeNode.ForeColor);
+                    Utilities.Assert(1305.6304, dictClones[nodeDatum.Key] == listClones);
+                    Utilities.Assert(1305.6305, ((NodeDatum)dictClones[nodeDatum.Key][0].Tag).m_bDifferentVols == nodeDatum.m_bDifferentVols);
+                    Utilities.Assert(1305.6306, dictClones[nodeDatum.Key][0].ForeColor == treeNode.ForeColor);
                 }
                 else
                 {
@@ -192,7 +185,7 @@ namespace SearchDirLists
                     TreeNode rootNode = treeNode.Root();
                     RootNodeDatum rootNodeDatum = (RootNodeDatum)rootNode.Tag;
 
-                    Utilities.Assert(1305.6304, treeNode.ForeColor == Color.Empty);
+                    Utilities.Assert(1305.6307, new Color[] { Color.Empty, Color.DarkBlue }.Contains(treeNode.ForeColor));
                     treeNode.ForeColor = Color.Firebrick;
 
                     bool bDifferentVols = false;
@@ -204,7 +197,7 @@ namespace SearchDirLists
                             return;
                         }
 
-                        Utilities.Assert(1305.6305, ((NodeDatum)subnode.Tag).Key == nodeDatum.Key);
+                        Utilities.Assert(1305.6308, ((NodeDatum)subnode.Tag).Key == nodeDatum.Key);
 
                         TreeNode rootNode_A = subnode.Root();
 
@@ -221,7 +214,12 @@ namespace SearchDirLists
                             continue;
                         }
 
-                        treeNode.ForeColor = Color.SteelBlue;
+                        if (treeNode.ForeColor != Color.DarkBlue)
+                        {
+                            Utilities.Assert(1305.63085, treeNode.ForeColor == Color.Firebrick);
+                            treeNode.ForeColor = Color.SteelBlue;
+                        }
+
                         bDifferentVols = true;
                         break;
                     }
@@ -273,8 +271,10 @@ namespace SearchDirLists
             InsertSizeMarker.Go(listLVitems, 0, bUnique);            // Enter the Zeroth
         }
 
-        void IgnoreNodeAndSubnodes(ListViewItem lvItem, TreeNode treeNode, bool bContinue)
+        void IgnoreNodeAndSubnodes(ListViewItem lvItem, TreeNode treeNode_in, bool bContinue)
         {
+            TreeNode treeNode = treeNode_in;
+
             do
             {
                 if (dictIgnoreNodes.ContainsKey(treeNode))
@@ -282,6 +282,7 @@ namespace SearchDirLists
                     continue;
                 }
 
+                Utilities.Assert(1305.6309, lvItem != null);
                 dictIgnoreNodes.Add(treeNode, lvItem);
 
                 if (treeNode.Nodes.Count > 0)
@@ -292,12 +293,14 @@ namespace SearchDirLists
             while (bContinue && ((treeNode = treeNode.NextNode) != null));
         }
 
-        void IgnoreNode_Query(String sbMatch, int nMaxLevel, TreeNode treeNode)
+        void IgnoreNode_Query(String sbMatch, int nMaxLevel, TreeNode treeNode_in)
         {
-            if (treeNode.Level > nMaxLevel)
+            if (treeNode_in.Level > nMaxLevel)
             {
                 return;
             }
+
+            TreeNode treeNode = treeNode_in;
 
             do
             {
@@ -306,16 +309,16 @@ namespace SearchDirLists
                     return;
                 }
 
-                if (sbMatch.Contains(treeNode.Text))
+                if (sbMatch.Contains(treeNode.Text.ToLower()))
                 {
                     foreach (ListViewItem lvItem in m_list_lvIgnore)
                     {
-                        if (lvItem.Text != treeNode.Text)
+                        if (treeNode.Level != (int.Parse(lvItem.SubItems[1].Text) - 1))
                         {
                             continue;
                         }
 
-                        if (treeNode.Level == (int.Parse(lvItem.SubItems[1].Text) - 1))
+                        if (lvItem.Text.ToLower() == treeNode.Text.ToLower())
                         {
                             IgnoreNodeAndSubnodes((ListViewItem)lvItem.Tag, treeNode, bContinue: false);
                             break;
@@ -331,25 +334,28 @@ namespace SearchDirLists
             while ((treeNode = treeNode.NextNode) != null);
         }
 
-        void IgnoreNode_Mark(TreeNode treeNode, ListViewItem lvIgnoreItem = null)
+        void SnowUniqueParents(TreeNode treeNode)
         {
-            ((NodeDatum)treeNode.Tag).m_lvItem = lvIgnoreItem ?? dictIgnoreNodes[treeNode];
-            treeNode.ForeColor = Color.DarkGray;
-            treeNode.BackColor = Color.Empty;
-        }
+            TreeNode parentNode = treeNode.Parent;
 
-        NodeDatum UnsetIgnoredParent(TreeNode parentNode)
-        {
-            NodeDatum nodeDatum_A = (NodeDatum)parentNode.Tag;
-
-            if ((nodeDatum_A.m_lvItem != null) && (nodeDatum_A.m_lvItem.ListView != null)) // the ignore list
+            while (parentNode != null)
             {
-                Utilities.Assert(1305.6306, parentNode.ForeColor == Color.DarkGray);
-                nodeDatum_A.m_lvItem = null;
-                parentNode.ForeColor = Color.Empty;
-            }
+                parentNode.BackColor = Color.Snow;
 
-            return nodeDatum_A;
+                NodeDatum nodeDatum = (NodeDatum)parentNode.Tag;
+
+                if (nodeDatum.m_lvItem != null)
+                {
+                    nodeDatum.m_lvItem.BackColor = parentNode.BackColor;
+                }
+
+                if (parentNode.ForeColor != Color.DarkOrange)
+                {
+                    Utilities.Assert(1305.63101, (parentNode.ForeColor == Color.Empty) == (nodeDatum.m_lvItem == null));
+                }
+
+                parentNode = parentNode.Parent;
+            }
         }
 
         public void Step1_OnThread()
@@ -372,13 +378,58 @@ namespace SearchDirLists
                     sbMatch.AppendLine(lvItem.Text);
                 }
 
-                IgnoreNode_Query(sbMatch.ToString(), nMaxLevel, m_listRootNodes[0]);
+                IgnoreNode_Query(sbMatch.ToString().ToLower(), nMaxLevel, m_listRootNodes[0]);
                 Console.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+            }
+
+            Dictionary<TreeNode, ListViewItem> dictIgnoreMark = new Dictionary<TreeNode, ListViewItem>();
+            SortedDictionary<HashKey, List<TreeNode>> dictNodes = new SortedDictionary<HashKey, List<TreeNode>>();
+
+            foreach (KeyValuePair<HashKey, List<TreeNode>> pair in m_dictNodes)     // clone to remove ignored
+            {
+                dictNodes.Add(pair.Key, pair.Value.ToList());                       // clone pair.Value to remove ignored, using ToList() 
+            }
+
+            foreach (KeyValuePair<TreeNode, ListViewItem> pair in dictIgnoreNodes)
+            {
+                NodeDatum nodeDatum = (NodeDatum) pair.Key.Tag;
+
+                if (dictNodes.ContainsKey(nodeDatum.Key) == false)
+                {
+                    continue;
+                }
+
+                if (m_bLoose)
+                {
+                    foreach (TreeNode treeNode in dictNodes[nodeDatum.Key])
+                    {
+                        dictIgnoreMark.Add(treeNode, pair.Value);
+                    }
+
+                    dictNodes.Remove(nodeDatum.Key);
+                }
+                else
+                {
+                    foreach (TreeNode treeNode in dictNodes[nodeDatum.Key])
+                    {
+                        if (treeNode == pair.Key)
+                        {
+                            dictIgnoreMark.Add(treeNode, pair.Value);
+                            dictNodes[nodeDatum.Key].Remove(treeNode);
+                            break;
+                        }
+                    }
+                }
+
+                if (dictNodes[nodeDatum.Key].Count == 0)
+                {
+                    dictNodes.Remove(nodeDatum.Key);
+                }
             }
 
             SortedDictionary<HashKey, TreeNode> dictUnique = new SortedDictionary<HashKey, TreeNode>();
 
-            foreach (KeyValuePair<HashKey, List<TreeNode>> pair in m_dictNodes)
+            foreach (KeyValuePair<HashKey, List<TreeNode>> pair in dictNodes)
             {
                 if (m_bThreadAbort || Form1.AppExit)
                 {
@@ -389,70 +440,36 @@ namespace SearchDirLists
 
                 if (listNodes.Count < 1)
                 {
-                    Utilities.Assert(1305.6307, false);
+                    Utilities.Assert(1305.6311, false);
                     continue;
                 }
 
                 if (listNodes.Count > 1)
                 {
-                    bool bIgnore = true;
-                    bool bAny = false;
-                    ListViewItem lvIgnoreItem = null;
-
-                    foreach (TreeNode treeNode in listNodes)
-                    {
-                        if (m_bThreadAbort || Form1.AppExit)
-                        {
-                            return;
-                        }
-
-                        if (dictIgnoreNodes.ContainsKey(treeNode) == false)
-                        {
-                            bIgnore = false;
-                            if (m_bLoose == false) break;
-                        }
-                        else
-                        {
-                            bAny = true;
-                            lvIgnoreItem = dictIgnoreNodes[treeNode];
-                            if (m_bLoose) break;
-                        }
-                    }
-
-                    if (bIgnore || (m_bLoose && bAny))
-                    {
-                        foreach (TreeNode treeNode in listNodes)
-                        {
-                            IgnoreNode_Mark(treeNode, lvIgnoreItem);
-                        }
-
-                        continue;
-                    }
-
                     List<TreeNode> listKeep = new List<TreeNode>();
 
-                    foreach (TreeNode treeNode in listNodes)
+                    foreach (TreeNode treeNode_A in listNodes)
                     {
                         if (m_bThreadAbort || Form1.AppExit)
                         {
                             return;
                         }
 
-                        NodeDatum nodeDatum = ((NodeDatum)treeNode.Tag);
+                        NodeDatum nodeDatum = ((NodeDatum)treeNode_A.Tag);
 
-                        Utilities.Assert(1305.6308, nodeDatum.nTotalLength > 100 * 1024);
+                        Utilities.Assert(1305.6312, nodeDatum.nTotalLength > 100 * 1024);
 
-                        if (listNodes.Contains(treeNode.Parent) == false)
+                        if (listNodes.Contains(treeNode_A.Parent) == false)
                         {
-                            listKeep.Add(treeNode);
+                            listKeep.Add(treeNode_A);
                         }
                     }
 
                     if (listKeep.Count > 1)
                     {
-                        foreach (TreeNode treeNode in listKeep)
+                        foreach (TreeNode treeNode_A in listKeep)
                         {
-                            ((NodeDatum)treeNode.Tag).m_listClones = listKeep;
+                            ((NodeDatum)treeNode_A.Tag).m_listClones = listKeep;
                         }
                     }
                     else
@@ -465,11 +482,7 @@ namespace SearchDirLists
                 {
                     TreeNode treeNode = listNodes[0];
 
-                    if (dictIgnoreNodes.ContainsKey(treeNode))
-                    {
-                        IgnoreNode_Mark(treeNode);
-                    }
-                    else if (((NodeDatum)treeNode.Tag).nImmediateFiles > 0)
+                    if (((NodeDatum)treeNode.Tag).nImmediateFiles > 0)
                     {
                         dictUnique.Add(pair.Key, treeNode);
                     }
@@ -496,7 +509,7 @@ namespace SearchDirLists
 
                 if (nClones <= 0)
                 {
-                    Utilities.Assert(1305.6309, false);
+                    Utilities.Assert(1305.6313, false);
                     continue;
                 }
 
@@ -524,12 +537,6 @@ namespace SearchDirLists
 
                     TreeNode parentNode = treeNode.Parent;
 
-                    while (parentNode != null)
-                    {
-                        UnsetIgnoredParent(parentNode);
-                        parentNode = parentNode.Parent;
-                    }
-
                     if (treeNode.Level < nLevel)
                     {
                         nLevel = treeNode.Level;
@@ -540,8 +547,23 @@ namespace SearchDirLists
                 }
 
                 lvItem.Text = nameNode.Text;
-                Utilities.Assert(1305.63101, Utilities.StrValid(lvItem.Text));
+                Utilities.Assert(1305.6314, Utilities.StrValid(lvItem.Text));
                 listLVitems.Add(lvItem);
+            }
+
+            foreach (KeyValuePair<TreeNode, ListViewItem> pair in dictIgnoreMark)
+            {
+                TreeNode treeNode = pair.Key;
+                ListViewItem lvIgnoreItem = pair.Value;
+
+                treeNode.ForeColor = Color.DarkGray;
+                treeNode.BackColor = Color.Empty;
+
+                NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+
+                nodeDatum.m_lvItem = lvIgnoreItem ?? dictIgnoreNodes[treeNode];
+                Utilities.Assert(1305.6315, nodeDatum.m_lvItem != null);
+                nodeDatum.m_listClones.Remove(treeNode);
             }
 
             dictClones = null;
@@ -556,7 +578,7 @@ namespace SearchDirLists
 
                 TreeNode treeNode = listNodes.Value;
 
-                Utilities.Assert(1305.6311, Utilities.StrValid(treeNode.Text));
+                Utilities.Assert(1305.6316, Utilities.StrValid(treeNode.Text));
 
                 ListViewItem lvItem = new ListViewItem(treeNode.Text);
 
@@ -564,70 +586,48 @@ namespace SearchDirLists
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
-                Utilities.Assert(1305.6312, nodeDatum.nImmediateFiles > 0);
+                Utilities.Assert(1305.6317, nodeDatum.nImmediateFiles > 0);
+                SnowUniqueParents(treeNode);
 
-                TreeNode parentNode = treeNode.Parent;
-
-                while (parentNode != null)
+                if (treeNode.ForeColor != Color.DarkOrange)
                 {
-                    NodeDatum nodeDatum_A = UnsetIgnoredParent(parentNode);
-
-                    if (parentNode.ForeColor == Color.Empty)
-                    {
-                        parentNode.ForeColor = Color.DarkRed;
-
-                        if (nodeDatum_A.m_lvItem != null)
-                        {
-                            nodeDatum_A.m_lvItem.ForeColor = parentNode.ForeColor;
-                        }
-                    }
-
-                    parentNode = parentNode.Parent;
+                    Utilities.Assert(1305.63175, treeNode.ForeColor == Color.Empty);
+                    treeNode.ForeColor = Color.Red;
                 }
 
-                treeNode.ForeColor = lvItem.ForeColor = Color.Red;
+                lvItem.ForeColor = treeNode.ForeColor;
                 listLVunique.Add(lvItem);
-                Utilities.Assert(1305.6313, nodeDatum.m_lvItem == null);
+                Utilities.Assert(1305.6318, nodeDatum.m_lvItem == null);
                 nodeDatum.m_lvItem = lvItem;
             }
 
             dictUnique = null;
             InsertSizeMarkers(listLVunique);
 
-            List<TreeNode> listSameVolDescLength = new List<TreeNode>();
+            List<TreeNode> listSameVol = new List<TreeNode>();
 
             if (m_listRootNodes.Count > 0)
             {
-                new AddTreeToList(m_listTreeNodes, listSameVolDescLength).Go(m_listRootNodes[0]);
+                new AddTreeToList(m_listTreeNodes, listSameVol).Go(m_listRootNodes[0]);
             }
 
-            listSameVolDescLength.Sort((x, y) => ((NodeDatum)y.Tag).nTotalLength.CompareTo(((NodeDatum)x.Tag).nTotalLength));
+            listSameVol.Sort((x, y) => ((NodeDatum)y.Tag).nTotalLength.CompareTo(((NodeDatum)x.Tag).nTotalLength));
 
-            foreach (TreeNode treeNode in listSameVolDescLength)
+            foreach (TreeNode treeNode in listSameVol)
             {
                 if (m_bThreadAbort || Form1.AppExit)
                 {
                     return;
                 }
 
-                TreeNode parentNode = treeNode.Parent;
-
-                while (parentNode != null)
-                {
-                    if (parentNode.Tag != null)
-                    {
-                        UnsetIgnoredParent(parentNode);
-                    }
-
-                    parentNode = parentNode.Parent;
-                }
+                SnowUniqueParents(treeNode);
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
                 int nClones = nodeDatum.m_listClones.Count;
 
                 if (nClones <= 0)
                 {
-                    Utilities.Assert(1305.6315, false);
+                    Utilities.Assert(1305.6319, false);
                 }
 
                 String str_nClones = null;
@@ -637,7 +637,7 @@ namespace SearchDirLists
                     str_nClones = nClones.ToString("###,###");
                 }
 
-                Utilities.Assert(1305.6314, Utilities.StrValid(treeNode.Text));
+                Utilities.Assert(1305.63201, Utilities.StrValid(treeNode.Text));
 
                 ListViewItem lvItem = new ListViewItem(new String[] { treeNode.Text, str_nClones });
 
@@ -648,7 +648,7 @@ namespace SearchDirLists
                 nodeDatum.m_lvItem = lvItem;
             }
 
-            listSameVolDescLength = null;
+            listSameVol = null;
             InsertSizeMarkers(listLVsameVol);
             treeView.Nodes.Clear();                         // prevents destroy nodes
         }
@@ -679,7 +679,7 @@ namespace SearchDirLists
                     return;
                 }
 
-                Utilities.Assert(1305.6316, form_lvClones.Items.Count == 0);
+                Utilities.Assert(1305.6321, form_lvClones.Items.Count == 0);
                 form_lvClones.Items.AddRange(listLVitems.ToArray());
 
                 if (m_bThreadAbort || Form1.AppExit)
@@ -687,7 +687,7 @@ namespace SearchDirLists
                     return;
                 }
 
-                Utilities.Assert(1305.6317, form_lvUnique.Items.Count == 0);
+                Utilities.Assert(1305.6322, form_lvUnique.Items.Count == 0);
                 form_lvUnique.Items.AddRange(listLVunique.ToArray());
 
                 if (m_bThreadAbort || Form1.AppExit)
@@ -695,7 +695,7 @@ namespace SearchDirLists
                     return;
                 }
 
-                Utilities.Assert(1305.6318, form_lvSameVol.Items.Count == 0);
+                Utilities.Assert(1305.6323, form_lvSameVol.Items.Count == 0);
                 form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
 
                 if (form_treeView_Browse.SelectedNode != null)      // m_bPutPathInFindEditBox is set in TreeDoneCallback()

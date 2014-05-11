@@ -28,7 +28,7 @@ namespace SearchDirLists
 
         void LoadIgnoreList()
         {
-            Utilities.Assert(1304.5303, m_list_lvIgnore.Count == 0);
+            Utilities.Assert(1304.5301, m_list_lvIgnore.Count == 0);
 
             foreach (ListViewItem lvItem in form_lvIgnoreList.Items)
             {
@@ -41,8 +41,8 @@ namespace SearchDirLists
 
         void DoCorrelation()
         {
-            Utilities.Assert(1304.5304, m_listTreeNodes.Count == 0);
-            Utilities.Assert(1304.5305, InvokeRequired);
+            Utilities.Assert(1304.5302, m_listTreeNodes.Count == 0);
+            Utilities.Assert(1304.5303, InvokeRequired);
             Utilities.CheckAndInvoke(this, new Action(LoadIgnoreList));
 
             Correlate correlate = new Correlate(form_treeView_Browse, m_dictNodes,
@@ -132,8 +132,6 @@ namespace SearchDirLists
             }
 
 
-            // itemArray
-
             if (itemArray == null)
             {
                 return;
@@ -205,7 +203,7 @@ namespace SearchDirLists
             if ((lv2.Items.Count > 0) &&
                 (((LVitemFileTag)lv2.Items[0].Tag).StrCompareDir != treeNode2.Text))
             {
-                Utilities.Assert(1304.5301, false);
+                Utilities.Assert(1304.5304, false);
                 return;
             }
 
@@ -354,7 +352,7 @@ namespace SearchDirLists
                 form_treeView_Browse.CheckBoxes = false;    // treeview items are faked to show progress
                 form_treeView_Browse.Enabled = false;
 
-                Utilities.Assert(1304.5302, m_listRootNodes.Count == 0);
+                Utilities.Assert(1304.5305, m_listRootNodes.Count == 0);
 
                 m_tree = new Tree(form_lvVolumesMain.Items, m_dictNodes, m_dictDriveInfo,
                     new TreeStatusDelegate(TreeStatusCallback), new TreeDoneDelegate(DoCorrelation));
@@ -364,7 +362,7 @@ namespace SearchDirLists
             {
                 int nNodeCount = form_treeView_Browse.GetNodeCount(includeSubTrees: true);
 
-                Utilities.Assert(1304.530225, m_listTreeNodes.Count == nNodeCount);
+                Utilities.Assert(1304.5306, m_listTreeNodes.Count == nNodeCount);
 
                 foreach (TreeNode treeNode in m_listTreeNodes)
                 {
@@ -375,12 +373,12 @@ namespace SearchDirLists
 
                     if (nodeDatum == null)
                     {
-                        Utilities.Assert(1304.53025, false);
+                        Utilities.Assert(1304.5307, false);
                         continue;
                     }
 
                     nodeDatum.m_lvItem = null;
-                    nodeDatum.m_listClones = null;
+                    nodeDatum.m_listClones.Clear();
                     nodeDatum.m_bDifferentVols = false;
                 }
 

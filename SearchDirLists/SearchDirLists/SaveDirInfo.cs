@@ -155,8 +155,8 @@ namespace SearchDirLists
                         strError1 = "Path Length: " + strFullPath.Length.ToString();
                     }
 
-                    Utilities.Assert(1306.7301, bHasLength == (nDirLength > 0));
-                    Utilities.Assert(1306.73015, nDirLength >= 0);
+                    Utilities.Assert(1306.7308, bHasLength == (nDirLength > 0));
+                    Utilities.Assert(1306.7301, nDirLength >= 0);
 
                     Win32.FileData di = new Win32.FileData(winDir);
 

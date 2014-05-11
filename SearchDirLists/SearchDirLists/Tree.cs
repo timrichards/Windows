@@ -150,7 +150,7 @@ namespace SearchDirLists
             }
         }
 
-        internal List<TreeNode> m_listClones = null;
+        internal List<TreeNode> m_listClones = new List<TreeNode>();
 
         internal void SetLVitemHolder(NodeDatum holder) { m_lvItem_ = (holder != null) ? holder.m_lvItem_ : null; }
         NodeDatumLVitemHolder m_lvItem_ = new NodeDatumLVitemHolder();
@@ -288,7 +288,7 @@ namespace SearchDirLists
         {
             m_dictNodes = base_in.m_dictNodes;
             m_dictDriveInfo = base_in.m_dictDriveInfo;
-            Utilities.Assert(1301.23085, m_statusCallback != null);
+            Utilities.Assert(1301.2301, m_statusCallback != null);
         }
     }
 
@@ -323,7 +323,7 @@ namespace SearchDirLists
                     {
                         Node node = m_rootNode.Nodes[str_in];
 
-                        Utilities.Assert(1301.2309, false);
+                        Utilities.Assert(1301.2302, false);
                     }
 
                     String str = str_in.TrimEnd(Path.DirectorySeparatorChar);
@@ -357,12 +357,12 @@ namespace SearchDirLists
                         return;
                     }
 
-                    Utilities.Assert(1301.2301, nLineNo != 0);
+                    Utilities.Assert(1301.2303, nLineNo != 0);
                     m_rootNode = rootNode;
 
                     if (in_str.EndsWith(":" + Path.DirectorySeparatorChar) == false)
                     {
-                        Utilities.Assert(1301.2302, in_str.Trim().EndsWith(Path.DirectorySeparatorChar.ToString()) == false);
+                        Utilities.Assert(1301.2304, in_str.Trim().EndsWith(Path.DirectorySeparatorChar.ToString()) == false);
                     }
 
                     m_strPath = in_str;
@@ -442,8 +442,8 @@ namespace SearchDirLists
                         treeNode = new TreeNode(strShortPath);
                     }
 
-                    Utilities.Assert(1301.230225, treeNode.Text == strShortPath);
-                    Utilities.Assert(1301.23025, treeNode.SelectedImageIndex == -1);     // sets the bitmap size
+                    Utilities.Assert(1301.2305, treeNode.Text == strShortPath);
+                    Utilities.Assert(1301.2306, treeNode.SelectedImageIndex == -1);     // sets the bitmap size
                     treeNode.SelectedImageIndex = -1;
                     treeNode.Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo, m_nLength);  // this is almost but not quite always newly assigned here.
 
@@ -546,7 +546,7 @@ namespace SearchDirLists
 
                 if (LV_VolumesItemCanLoad(m_volStrings) == false)
                 {
-                    Utilities.Assert(1301.2303, false);    // guaranteed by caller
+                    Utilities.Assert(1301.2307, false);    // guaranteed by caller
                     return;
                 }
 
@@ -621,7 +621,7 @@ namespace SearchDirLists
                     {
                         if (m_dictDriveInfo.ContainsKey(strSaveAs))
                         {
-                            Utilities.Assert(1301.23035, false);
+                            Utilities.Assert(1301.2308, false);
                             m_dictDriveInfo.Remove(strSaveAs);
                         }
 
@@ -658,7 +658,7 @@ namespace SearchDirLists
                     }
                     else
                     {
-                //        Utilities.Assert(1301.230375, false);
+                //        Utilities.Assert(1301.2309, false);
                         bZeroLengthsWritten = false;     // files created before 140509 Fri drop zeroes from the end of the line
                     }
 
@@ -690,7 +690,7 @@ namespace SearchDirLists
                 if (nScannedLength != nTotalLength)
                 {
                     Console.WriteLine(nTotalLength);
-                    Utilities.Assert(1301.2304, false);
+                    Utilities.Assert(1301.23101, false);
                 }
 
                 Console.WriteLine(strSaveAs + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
@@ -815,7 +815,7 @@ namespace SearchDirLists
         {
             if (File.Exists(m_strFile) == false)
             {
-                Utilities.Assert(1301.2305, false);
+                Utilities.Assert(1301.2311, false);
                 return;
             }
 
@@ -836,7 +836,7 @@ namespace SearchDirLists
             String strLine = File.ReadLines(m_strFile).Skip((int)nLineNo - 1).Take(1).ToArray()[0];
             String[] strArray = strLine.Split('\t');
 
-            Utilities.Assert(1301.2306, StrValid(strArray[2]));
+            Utilities.Assert(1301.2312, StrValid(strArray[2]));
 
             long nIx = 0;
             DateTime dt;
@@ -964,7 +964,7 @@ namespace SearchDirLists
                 }
             }
 
-            Utilities.Assert(1301.2307, nLengthDebug == nodeDatum.nLength);
+            Utilities.Assert(1301.2313, nLengthDebug == nodeDatum.nLength);
             return listFiles;
         }
 
@@ -977,7 +977,7 @@ namespace SearchDirLists
                 String strDriveInfo = (String)m_dictDriveInfo[m_strFile];
                 String[] arrDriveInfo = strDriveInfo.Split(new String[] { "\r\n", "\n" }, StringSplitOptions.None);
 
-                Utilities.Assert(1301.2308, new int[] { 7, 8 }.Contains(arrDriveInfo.Length));
+                Utilities.Assert(1301.2314, new int[] { 7, 8 }.Contains(arrDriveInfo.Length));
                 m_statusCallback(lvVol: new ListViewItem(new String[] { "Available Free Space", FormatSize(arrDriveInfo[0], bBytes: true) }));
                 m_statusCallback(lvVol: new ListViewItem(new String[] { "Drive Format", arrDriveInfo[1] }));
                 m_statusCallback(lvVol: new ListViewItem(new String[] { "Drive Type", arrDriveInfo[2] }));

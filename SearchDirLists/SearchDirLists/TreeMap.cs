@@ -277,11 +277,11 @@ namespace SearchDirLists
             NodeDatum nodeDatum = (NodeDatum)parent.Tag;
             NodeDatum nodeDatum_B = new NodeDatum();
 
-            Utilities.Assert(1302.3317, nTotalLength == nodeDatum.nLength);
+            Utilities.Assert(1302.3301, nTotalLength == nodeDatum.nLength);
             nodeDatum_B.nTotalLength = nTotalLength;
             nodeDatum_B.TreeMapRect = nodeDatum.TreeMapRect;
             nodeFileList.Tag = nodeDatum_B;
-            Utilities.Assert(1302.3318, nodeFileList.SelectedImageIndex == -1);              // sets the bitmap size
+            Utilities.Assert(1302.3302, nodeFileList.SelectedImageIndex == -1);              // sets the bitmap size
             return nodeFileList;
         }
 

@@ -197,11 +197,11 @@ namespace SearchDirLists
 
                 if (searchResultDir != null)
                 {
-                    Utilities.Assert(1307.8303, searchResultDir.StrDir == null);
+                    Utilities.Assert(1307.8301, searchResultDir.StrDir == null);
                 }
                 else
                 {
-                    Utilities.Assert(1307.8301, searchResultDir == null);
+                    Utilities.Assert(1307.8302, searchResultDir == null);
                 }
 
                 if (listResults.Count > 0)
@@ -415,7 +415,7 @@ namespace SearchDirLists
             if (treeNode == null)
             {
                 // compare mode
-                Utilities.Assert(1300.1302, treeView != form_treeView_Browse);
+                Utilities.Assert(1307.8303, treeView != form_treeView_Browse);
 
                 if (treeView == form_treeView_Browse)
                 {
@@ -479,7 +479,7 @@ namespace SearchDirLists
         {
             if (listResults.Count <= 0)
             {
-                Utilities.Assert(1307.8302, false); // caller takes care of this
+                Utilities.Assert(1307.8304, false); // caller takes care of this
                 return;
             }
 
@@ -627,7 +627,7 @@ namespace SearchDirLists
                     }
                     else if (form_cbNavigate.Text.Contains(Path.DirectorySeparatorChar))
                     {
-                        Utilities.Assert(1300.1303, form_cbNavigate.Text.EndsWith(Path.DirectorySeparatorChar.ToString()) == false);
+                        Utilities.Assert(1307.8305, form_cbNavigate.Text.EndsWith(Path.DirectorySeparatorChar.ToString()) == false);
 
                         int nPos = form_cbNavigate.Text.LastIndexOf(Path.DirectorySeparatorChar);
                         String strMaybePath = form_cbNavigate.Text.Substring(0, nPos);
@@ -642,7 +642,7 @@ namespace SearchDirLists
                         }
                         else
                         {
-                            Utilities.Assert(1300.1304, m_listSearchResults.Count <= 0);
+                            Utilities.Assert(1307.8306, m_listSearchResults.Count <= 0);
                             SearchResultsCallback_Fail();
                         }
                     }

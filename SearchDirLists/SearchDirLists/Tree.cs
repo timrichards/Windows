@@ -762,16 +762,20 @@ namespace SearchDirLists
             m_doneCallback();
         }
 
-        internal void EndThread(bool bJoin = false)
+        internal void EndThread(bool bJoin = false)     // bJoin is not used because it induces lag.
         {
+            m_bThreadAbort = true;
+            m_thread.Abort();
+            m_thread = null;
+
             foreach (TreeRootNodeBuilder worker in m_cbagWorkers)
             {
                 worker.Abort();
             }
 
+            m_cbagWorkers = null;
             Correlate.Abort();
-            m_bThreadAbort = true;
-            m_thread = null;
+            m_dictNodes.Clear();
         }
 
         internal void DoThreadFactory()

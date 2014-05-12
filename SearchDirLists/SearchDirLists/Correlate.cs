@@ -362,6 +362,12 @@ namespace SearchDirLists
         {
             TreeView treeView = new TreeView();     // sets Level and Next.
 
+            if (m_listRootNodes.Count <= 0)
+            {
+                Utilities.Assert(1305.63105, false);
+                return;
+            }
+
             if (m_listRootNodes[0].TreeView == null)
             {
                 treeView.Nodes.AddRange(m_listRootNodes.ToArray());
@@ -555,6 +561,8 @@ namespace SearchDirLists
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
+                Utilities.Assert(1305.63143, lvIgnoreItem != null);
+                Utilities.Assert(1305.63143, dictIgnoreNodes.ContainsKey(treeNode) && dictIgnoreNodes[treeNode] != null);
                 nodeDatum.m_lvItem = lvIgnoreItem ?? dictIgnoreNodes[treeNode];
                 Utilities.Assert(1305.6315, nodeDatum.m_lvItem != null);
                 nodeDatum.m_listClones.Remove(treeNode);

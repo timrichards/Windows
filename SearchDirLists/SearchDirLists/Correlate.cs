@@ -649,6 +649,12 @@ namespace SearchDirLists
 
         public void Step2_OnForm()
         {
+            Step2_OnForm_A();
+            static_this = null;
+        }
+
+        void Step2_OnForm_A()
+        {
             if (m_bThreadAbort || Form1.AppExit)
             {
                 return;
@@ -712,8 +718,6 @@ namespace SearchDirLists
                     form_treeView_Browse.SelectedNode = m_listRootNodes[0];
                 }
             }
-
-            static_this = null;
         }
     }
 }

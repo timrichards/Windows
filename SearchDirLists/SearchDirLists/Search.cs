@@ -261,7 +261,7 @@ namespace SearchDirLists
 
         void Go()
         {
-            Console.WriteLine("Searching for '" + m_strSearch + "'");
+            Utilities.WriteLine("Searching for '" + m_strSearch + "'");
 
             DateTime dtStart = DateTime.Now;
 
@@ -277,7 +277,7 @@ namespace SearchDirLists
                 worker.Join();
             }
 
-            Console.WriteLine(String.Format("Completed Search for {0} in {1} seconds.", m_strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
+            Utilities.WriteLine(String.Format("Completed Search for {0} in {1} seconds.", m_strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
             if (m_bThreadAbort || Form1.AppExit)
             {

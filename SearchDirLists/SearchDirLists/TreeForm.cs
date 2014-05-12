@@ -52,7 +52,7 @@ namespace SearchDirLists
             DateTime dtStart = DateTime.Now;
 
             correlate.Step1_OnThread();
-            Console.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+            Utilities.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
 
             if (AppExit)
             {
@@ -62,10 +62,15 @@ namespace SearchDirLists
 
             m_bPutPathInFindEditBox = true;
             Utilities.CheckAndInvoke(this, new Action(correlate.Step2_OnForm));
-            Console.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+            Utilities.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             correlate = null;
             TreeCleanup();
             GC.Collect();
+
+            if (Form.ActiveForm == null)
+            {
+                FlashWindow.Go();
+            }
         }
 
         void TreeStatusCallback(TreeNode rootNode, LVvolStrings volStrings)
@@ -156,12 +161,12 @@ namespace SearchDirLists
                 return;
             }
 
-            Console.Write("A");
+            Utilities.Write("A");
 
             if (lvFileItem.StrCompareDir != t1.SelectedNode.Text)
             {
                 // User is navigating faster than this thread.
-                Console.WriteLine("Fast: " + lvFileItem.StrCompareDir + "\t\t" + t1.SelectedNode.Text);
+                Utilities.WriteLine("Fast: " + lvFileItem.StrCompareDir + "\t\t" + t1.SelectedNode.Text);
                 return;
             }
 
@@ -175,7 +180,7 @@ namespace SearchDirLists
                 lv1.Items[0].Tag = lvFileItem;
             }
 
-            Console.Write("B");
+            Utilities.Write("B");
 
             TreeNode treeNode1 = t1.SelectedNode;
             TreeNode treeNode2 = t2.SelectedNode;
@@ -185,7 +190,7 @@ namespace SearchDirLists
                 return;
             }
 
-            Console.Write("C");
+            Utilities.Write("C");
 
             if (treeNode1.Level != treeNode2.Level)
             {
@@ -198,7 +203,7 @@ namespace SearchDirLists
                 return;
             }
 
-            Console.Write("D");
+            Utilities.Write("D");
 
             if ((lv2.Items.Count > 0) &&
                 (((LVitemFileTag)lv2.Items[0].Tag).StrCompareDir != treeNode2.Text))
@@ -207,7 +212,7 @@ namespace SearchDirLists
                 return;
             }
 
-            Console.Write("E");
+            Utilities.Write("E");
 
             lock (lv1)
             {

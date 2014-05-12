@@ -658,7 +658,6 @@ namespace SearchDirLists
                     }
                     else
                     {
-                //        Utilities.Assert(1301.2309, false);
                         bZeroLengthsWritten = false;     // files created before 140509 Fri drop zeroes from the end of the line
                     }
 
@@ -678,22 +677,22 @@ namespace SearchDirLists
                 if (bZeroLengthsWritten)
                 {
 #if (DEBUG)
-                    Console.WriteLine(File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_File)).Sum(s => decimal.Parse(s.Split('\t')[nColLENGTH])));
-                    Console.WriteLine(File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Directory)).Sum(s => decimal.Parse(s.Split('\t')[nColLENGTH])));
+                    Utilities.WriteLine(File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_File)).Sum(s => decimal.Parse(s.Split('\t')[nColLENGTH])).ToString());
+                    Utilities.WriteLine(File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Directory)).Sum(s => decimal.Parse(s.Split('\t')[nColLENGTH])).ToString());
 #endif
                 }
 
-                Console.WriteLine(nScannedLength);
+                Utilities.WriteLine(nScannedLength.ToString());
 
                 ulong nTotalLength = ((RootNodeDatum)rootTreeNode.Tag).nTotalLength;
 
                 if (nScannedLength != nTotalLength)
                 {
-                    Console.WriteLine(nTotalLength);
+                    Utilities.WriteLine(nTotalLength.ToString());
                     Utilities.Assert(1301.23101, false);
                 }
 
-                Console.WriteLine(strSaveAs + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
+                Utilities.WriteLine(strSaveAs + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
             }
 
             internal TreeRootNodeBuilder DoThreadFactory()
@@ -731,8 +730,8 @@ namespace SearchDirLists
 
         void Go()
         {
-            Console.WriteLine();
-            Console.WriteLine("Creating tree.");
+            Utilities.WriteLine();
+            Utilities.WriteLine("Creating tree.");
 
             DateTime dtStart = DateTime.Now;
 
@@ -753,7 +752,7 @@ namespace SearchDirLists
                 worker.Join();
             }
 
-            Console.WriteLine(String.Format("Completed tree in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 10) / 100.0));
+            Utilities.WriteLine(String.Format("Completed tree in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 10) / 100.0));
 
             if (m_bThreadAbort || Form1.AppExit)
             {
@@ -885,7 +884,7 @@ namespace SearchDirLists
 
             listItems.Add(new ListViewItem(new String[] { "Total Size", FormatSize(nodeDatum.nTotalLength, bBytes: true) }));
             m_statusCallback(lvItemDetails: listItems.ToArray(), bSecondComparePane: m_bSecondComparePane);
-            Console.WriteLine(strLine);
+            Utilities.WriteLine(strLine);
 
             List<String[]> listFiles_A = GetFileList(m_treeNode);
 

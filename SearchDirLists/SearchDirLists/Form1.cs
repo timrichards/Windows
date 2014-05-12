@@ -10,6 +10,7 @@ namespace SearchDirLists
 {
     delegate void MessageBoxDelegate(String strMessage, String strTitle = null);
     delegate bool BoolAction();
+    delegate void ArgAction(object[] args = null);
 
     partial class Form1 : Form
     {
@@ -50,6 +51,7 @@ namespace SearchDirLists
 
         static bool m_bAppExit = false;
         public static bool AppExit { get { return m_bAppExit; } }
+        public static Form static_form = null;
 
         // initialized in constructor:
         Blink m_blink = null;
@@ -313,6 +315,7 @@ namespace SearchDirLists
 
         internal Form1()
         {
+            static_form = this;
             InitializeComponent();
 
             // Assert String-lookup form items exist
@@ -454,7 +457,7 @@ namespace SearchDirLists
 
         void CompareNav()
         {
-            Console.WriteLine(dictCompareDiffs.ToArray()[m_nCompareIndex]);
+            Utilities.WriteLine(dictCompareDiffs.ToArray()[m_nCompareIndex].ToString());
             form_chkCompare1.Text = m_nCompareIndex + 1 + " of " + dictCompareDiffs.Count;
             form_lvFiles.Items.Clear();
             form_lvFileCompare.Items.Clear();

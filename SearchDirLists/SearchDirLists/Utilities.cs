@@ -9,189 +9,10 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Drawing;
+using System.Threading;
 
 namespace SearchDirLists
 {
-    class UList<T> : Dictionary<T, object>
-    {
-        public void Add(T t) { base.Add(t, null); }
-        public T this[int i] { get { return base.Keys.ElementAt(i); } }
-        public new IEnumerator<T> GetEnumerator() { return base.Keys.GetEnumerator(); }
-        public T[] ToArray() { return base.Keys.ToArray(); }
-        public List<T> ToList() { return base.Keys.ToList(); }
-    }
-
-    class Win32
-    {
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        internal struct WIN32_FIND_DATA
-        {
-            internal FileAttributes fileAttributes;
-            internal uint ftCreationTimeLow;
-            internal uint ftCreationTimeHigh;
-            internal uint ftLastAccessTimeLow;
-            internal uint ftLastAccessTimeHigh;
-            internal uint ftLastWriteTimeLow;
-            internal uint ftLastWriteTimeHigh;
-            internal uint nFileSizeHigh;
-            internal uint nFileSizeLow;
-            internal int dwReserved0;
-            internal int dwReserved1;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-            internal string strFileName;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
-            internal string strAltFileName;
-        }
-
-        internal enum IndexInfoLevels
-        {
-            FindExInfoStandard = 0,
-            FindExInfoBasic,
-            FindExInfoMaxInfoLevel
-        };
-
-        private enum IndexSearchOps
-        {
-            FindExSearchNameMatch = 0,
-            FindExSearchLimitToDirectories,
-            FindExSearchLimitToDevices
-        };
-
-        private const int FIND_FIRST_EX_LARGE_FETCH = 0x02;
-
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, BestFitMapping = false), SuppressUnmanagedCodeSecurity]
-        private static extern IntPtr FindFirstFileExW(string lpFileName, IndexInfoLevels infoLevel, out WIN32_FIND_DATA lpFindFileData, IndexSearchOps fSearchOp, IntPtr lpSearchFilter, int dwAdditionalFlag);
-
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, BestFitMapping = false), SuppressUnmanagedCodeSecurity]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool FindNextFileW(IntPtr handle, out WIN32_FIND_DATA lpFindFileData);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool FindClose(IntPtr hFindFile);
-
-        private static readonly IntPtr InvalidHandleValue = new IntPtr(-1);
-
-        [Serializable]
-        internal class FileData
-        {
-            FileAttributes m_Attributes;
-            DateTime m_CreationTimeUtc;
-            DateTime m_LastAccessTimeUtc;
-            DateTime m_LastWriteTimeUtc;
-            long m_Size;
-            bool m_bValid = false;
-
-            internal FileAttributes Attributes { get { return m_Attributes; } }
-            internal DateTime CreationTimeUtc { get { return m_CreationTimeUtc; } }
-            internal DateTime LastAccessTimeUtc { get { return m_LastAccessTimeUtc; } }
-            internal DateTime LastWriteTimeUtc { get { return m_LastWriteTimeUtc; } }
-            internal long Size { get { return m_Size; } }
-            internal bool IsValid { get { return m_bValid; } }
-
-            internal static bool WinFile(String strFile, out WIN32_FIND_DATA winFindData)
-            {
-                String P = Path.DirectorySeparatorChar.ToString();
-                String PP = P + P;
-                IntPtr handle = FindFirstFileExW(PP + '?' + P + strFile, IndexInfoLevels.FindExInfoBasic, out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
-
-                winFindData.strAltFileName = strFile.Replace(PP, P);                        // 8.3 not used
-                return (handle != InvalidHandleValue);
-            }
-
-            internal FileData(WIN32_FIND_DATA findData)
-            {
-                m_Attributes = findData.fileAttributes;
-                m_CreationTimeUtc = ConvertDateTime(findData.ftCreationTimeHigh, findData.ftCreationTimeLow);
-                m_LastAccessTimeUtc = ConvertDateTime(findData.ftLastAccessTimeHigh, findData.ftLastAccessTimeLow);
-                m_LastWriteTimeUtc = ConvertDateTime(findData.ftLastWriteTimeHigh, findData.ftLastWriteTimeLow);
-                m_Size = CombineHighLowInts(findData.nFileSizeHigh, findData.nFileSizeLow);
-                m_bValid = (findData.ftCreationTimeHigh | findData.ftCreationTimeLow) != 0;
-            }
-
-            internal DateTime CreationTime
-            {
-                get { return CreationTimeUtc.ToLocalTime(); }
-            }
-
-            internal DateTime LastAccessTime
-            {
-                get { return LastAccessTimeUtc.ToLocalTime(); }
-            }
-
-            internal DateTime LastWriteTime
-            {
-                get { return LastWriteTimeUtc.ToLocalTime(); }
-            }
-
-            private static long CombineHighLowInts(uint high, uint low)
-            {
-                return (((long)high) << 0x20) | low;
-            }
-
-            private static DateTime ConvertDateTime(uint high, uint low)
-            {
-                long fileTime = CombineHighLowInts(high, low);
-                return DateTime.FromFileTimeUtc(fileTime);
-            }
-        }
-
-        internal static bool GetDirectory(String strDir, ref List<WIN32_FIND_DATA> listDirs, ref List<WIN32_FIND_DATA> listFiles)
-        {
-            String P = Path.DirectorySeparatorChar.ToString();
-            String PP = P + P;
-            WIN32_FIND_DATA winFindData;
-            IntPtr handle = FindFirstFileExW(PP + '?' + P + strDir + P + '*', IndexInfoLevels.FindExInfoBasic, out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
-
-            if (handle == InvalidHandleValue)
-            {
-                return false;
-            }
-
-            listDirs.Clear();
-            listFiles.Clear();
-
-            do
-            {
-                if ("..".Contains(winFindData.strFileName))
-                {
-                    continue;
-                }
-
-                winFindData.strAltFileName = (strDir + P + winFindData.strFileName).Replace(PP, P);     // 8.3 not used
-
-                if ((winFindData.fileAttributes & FileAttributes.Directory) != 0)
-                {
-                    if ((winFindData.fileAttributes & FileAttributes.ReparsePoint) != 0)
-                    {
-                        const uint IO_REPARSE_TAG_MOUNT_POINT = 0xA0000003;
-                        const uint IO_REPARSE_TAG_SYMLINK = 0xA000000C;
-
-                        // stay on source drive. Treat mount points and symlinks as files.
-                        if (((winFindData.dwReserved0 & IO_REPARSE_TAG_MOUNT_POINT) != 0)
-                            || ((winFindData.dwReserved0 & IO_REPARSE_TAG_SYMLINK) != 0))
-                        {
-                            listFiles.Add(winFindData);
-                            continue;
-                        }
-                    }
-
-                    listDirs.Add(winFindData);
-                }
-                else
-                {
-                    listFiles.Add(winFindData);
-                }
-            }
-            while (FindNextFileW(handle, out winFindData));
-
-            FindClose(handle);
-            listDirs.Sort((x, y) => x.strFileName.CompareTo(y.strFileName));
-            listFiles.Sort((x, y) => x.strFileName.CompareTo(y.strFileName));
-            return true;
-        }
-    }
-
     static class ExtensionMethods
     {
         internal static bool IsChildOf(this TreeNode child, TreeNode treeNode)
@@ -240,6 +61,105 @@ namespace SearchDirLists
         }
     }
 
+    class FlashWindow
+    {
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct FLASHWINFO
+        {
+            public UInt32 cbSize;
+            public IntPtr hwnd;
+            public UInt32 dwFlags;
+            public UInt32 uCount;
+            public UInt32 dwTimeout;
+        }
+
+        public const UInt32 FLASHW_ALL = 3;
+
+        internal static void Go(Control ctl_in = null)
+        {
+            Control ctl = ctl_in ?? Form1.static_form;
+
+            Utilities.CheckAndInvoke(ctl, new ArgAction(FlashWindow_A), new object[] { ctl });
+        }
+
+        static void FlashWindow_A(object[] args = null)
+        {
+            if (args == null)
+            {
+                Utilities.Assert(1303.43015, false);
+                return;
+            }
+
+            Control ctl = (Control)args[0];
+            FLASHWINFO fInfo = new FLASHWINFO();
+
+            fInfo.cbSize = Convert.ToUInt32(Marshal.SizeOf(fInfo));
+            fInfo.hwnd = ctl.Handle;
+            fInfo.dwFlags = FLASHW_ALL;
+            fInfo.uCount = 3;
+            fInfo.dwTimeout = 0;
+            FlashWindowEx(ref fInfo);
+        }
+
+    }
+
+    class LVvolStrings : Utilities
+    {
+        int m_nIndex = -1;
+        String m_strVolumeName = null;
+        String m_strPath = null;
+        String m_strSaveAs = null;
+        String m_strStatus = null;
+        String m_strInclude = null;
+        String m_strVolumeGroup = null;
+        internal int Index { get { return m_nIndex; } }
+        internal String VolumeName { get { return m_strVolumeName; } }
+        internal String StrPath { get { return m_strPath; } }
+        internal String SaveAs { get { return m_strSaveAs; } }
+        internal String Status { get { return m_strStatus; } }
+        internal String Include { get { return m_strInclude; } }
+        internal String VolumeGroup { get { return m_strVolumeGroup; } }
+
+        internal LVvolStrings(ListViewItem lvItem)
+        {
+            m_nIndex = lvItem.Index;
+            m_strVolumeName = lvItem.SubItems[0].Text;
+            m_strPath = lvItem.SubItems[1].Text;
+            m_strSaveAs = lvItem.SubItems[2].Text;
+            m_strStatus = lvItem.SubItems[3].Text;
+            m_strInclude = lvItem.SubItems[4].Text;
+
+            if ((lvItem.SubItems.Count > 5) && StrValid(lvItem.SubItems[5].Text))
+            {
+                m_strVolumeGroup = lvItem.SubItems[5].Text;
+            }
+        }
+
+        internal void SetStatus_BadFile(ListView lv)
+        {
+            lv.Items[Index].SubItems[3].Text =
+                m_strStatus = "Bad file. Will overwrite.";
+        }
+    }
+
+    class UList<T> :
+#if (DEBUG)
+        Dictionary<T, object>       // guarantees uniqueness
+    {
+        public void Add(T t) { base.Add(t, null); }
+        public T this[int i] { get { return base.Keys.ElementAt(i); } }
+        public new IEnumerator<T> GetEnumerator() { return base.Keys.GetEnumerator(); }
+        public T[] ToArray() { return base.Keys.ToArray(); }
+        public List<T> ToList() { return base.Keys.ToList(); }
+    }
+#else
+        List<T> { }                  // uses less memory, faster
+#endif
+
     class Utilities
     {
         internal const String m_str_HEADER_01 = "SearchDirLists 0.1";
@@ -277,32 +197,52 @@ namespace SearchDirLists
         internal const String m_strLINETYPE_Error_File = "r";
         internal const String m_strLINETYPE_Length = "L";
 
-        static MessageBoxDelegate m_MessageboxCallback_ = null;
+        static MessageBoxDelegate static_MessageboxCallback = null;
         protected MessageBoxDelegate m_MessageboxCallback = null;
-        static double m_nLastAssertLoc = -1;
-        static DateTime m_dtLastAssert = DateTime.MinValue;
+        static double static_nLastAssertLoc = -1;
+        static DateTime static_dtLastAssert = DateTime.MinValue;
+        static bool static_bAssertUp = false;
 
         protected Utilities()
         {
-            Utilities.Assert(1303.4301, m_MessageboxCallback_ != null);
-
-            m_MessageboxCallback = m_MessageboxCallback_;
+            m_MessageboxCallback = static_MessageboxCallback;
         }
 
         internal static bool Assert(double nLocation, bool bCondition, String strError_in = null)
         {
             if (bCondition) return true;
 
-            bool bShowCustomDialog = true;
-            String strError = strError_in ?? "Assertion failed at location " + nLocation + ".";
-
-            if ((m_nLastAssertLoc == nLocation) && ((DateTime.Now - m_dtLastAssert).Seconds < 1))
+            if ((static_nLastAssertLoc == nLocation) && ((DateTime.Now - static_dtLastAssert).Seconds < 1))
             {
                 return false;
             }
 
+            Assert_A(nLocation, bCondition, strError_in);
+            static_nLastAssertLoc = nLocation;
+            static_dtLastAssert = DateTime.Now;
+            return false;
+        }
+
+        static void Assert_A(double nLocation, bool bCondition, String strError_in)
+        {
+            String strError = strError_in ?? "Assertion failed at location " + nLocation + ".";
+
+            Utilities.WriteLine(strError);
+
+            if (static_bAssertUp)
+            {
 #if (DEBUG)
-            Console.WriteLine(strError);
+                FlashWindow();
+#endif
+                return;
+            }
+
+            static_bAssertUp = true;
+
+            bool bShowCustomDialog = true;
+
+#if (DEBUG)
+            Utilities.WriteLine(strError);
 
             bShowCustomDialog = (Trace.Listeners.Cast<TraceListener>().Any(i => i is DefaultTraceListener) == false);
             
@@ -313,19 +253,28 @@ namespace SearchDirLists
 #endif
             if (bShowCustomDialog)
             {
-                m_MessageboxCallback_(strError + " Please discuss this bug at http://sourceforge.net/projects/searchdirlists/.", "SearchDirLists Assertion Failure");
+                new Thread(new ParameterizedThreadStart(Assert_B)).Start(strError);
             }
+        }
 
-            m_nLastAssertLoc = nLocation;
-            m_dtLastAssert = DateTime.Now;
-            return false;
+        static void Assert_B(object strError)
+        {
+            static_MessageboxCallback(((String)strError) + " Please discuss this bug at http://sourceforge.net/projects/searchdirlists/.", "SearchDirLists Assertion Failure");
+            static_bAssertUp = false;
         }
 
         internal static object CheckAndInvoke(Control control, Delegate action, object[] args = null)
         {
             if (control.InvokeRequired)
             {
-                return control.Invoke(action);
+                if (args == null)
+                {
+                    return control.Invoke(action);
+                }
+                else
+                {
+                    return control.Invoke(action, (object)args);
+                }
             }
             else
             {
@@ -337,10 +286,17 @@ namespace SearchDirLists
                 {
                     return ((BoolAction)action)();
                 }
+                else if (action is ArgAction)
+                {
+                    ((ArgAction)action)(args);
+                }
+                else
                 {
                     return action.DynamicInvoke(args);     // late-bound and slow
                 }
             }
+
+            return null;
         }
 
         internal static String CheckNTFS_chars(ref String strFile, bool bFile = false)
@@ -528,7 +484,7 @@ namespace SearchDirLists
 
                 if (FormatPath(ref strPath, bFailOnDirectory) == false)
                 {
-                    m_MessageboxCallback_("Error in Source path.".PadRight(100), "Save Directory Listing");
+                    static_MessageboxCallback("Error in Source path.".PadRight(100), "Save Directory Listing");
                     return false;
                 }
             }
@@ -539,7 +495,7 @@ namespace SearchDirLists
 
                 if (FormatPath(ref strSaveAs, bFailOnDirectory) == false)
                 {
-                    m_MessageboxCallback_("Error in Save filename.".PadRight(100), "Save Directory Listing");
+                    static_MessageboxCallback("Error in Save filename.".PadRight(100), "Save Directory Listing");
                     return false;
                 }
             }
@@ -676,7 +632,7 @@ namespace SearchDirLists
 
         internal static void SetMessageBoxDelegate(MessageBoxDelegate messageBoxCallback)
         {
-            m_MessageboxCallback_ = messageBoxCallback;
+            static_MessageboxCallback = messageBoxCallback;
         }
 
         protected static String StrFile_01(String strFile)
@@ -702,9 +658,9 @@ namespace SearchDirLists
 
             if (arrLine[0] == m_str_HEADER_01)
             {
-                Console.WriteLine("Converting " + strSaveAs);
+                Utilities.WriteLine("Converting " + strSaveAs);
                 ConvertFile(strSaveAs);
-                Console.WriteLine("File converted to " + m_str_HEADER);
+                Utilities.WriteLine("File converted to " + m_str_HEADER);
                 bConvertFile = true;
             }
 
@@ -731,44 +687,190 @@ namespace SearchDirLists
 
             return true;
         }
+
+        static internal void Write(String str)
+        {
+#if (DEBUG)
+            Console.Write(str);
+#endif
+        }
+
+        static internal void WriteLine(String str = null)
+        {
+#if (DEBUG)
+            Console.WriteLine(str);
+#endif
+        }
     }
 
-    class LVvolStrings : Utilities
+    class Win32FindFile
     {
-        int m_nIndex = -1;
-        String m_strVolumeName = null;
-        String m_strPath = null;
-        String m_strSaveAs = null;
-        String m_strStatus = null;
-        String m_strInclude = null;
-        String m_strVolumeGroup = null;
-        internal int Index { get { return m_nIndex; } }
-        internal String VolumeName { get { return m_strVolumeName; } }
-        internal String StrPath { get { return m_strPath; } }
-        internal String SaveAs { get { return m_strSaveAs; } }
-        internal String Status { get { return m_strStatus; } }
-        internal String Include { get { return m_strInclude; } }
-        internal String VolumeGroup { get { return m_strVolumeGroup; } }
-
-        internal LVvolStrings(ListViewItem lvItem)
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        internal struct DATUM
         {
-            m_nIndex = lvItem.Index;
-            m_strVolumeName = lvItem.SubItems[0].Text;
-            m_strPath = lvItem.SubItems[1].Text;
-            m_strSaveAs = lvItem.SubItems[2].Text;
-            m_strStatus = lvItem.SubItems[3].Text;
-            m_strInclude = lvItem.SubItems[4].Text;
+            internal FileAttributes fileAttributes;
+            internal uint ftCreationTimeLow;
+            internal uint ftCreationTimeHigh;
+            internal uint ftLastAccessTimeLow;
+            internal uint ftLastAccessTimeHigh;
+            internal uint ftLastWriteTimeLow;
+            internal uint ftLastWriteTimeHigh;
+            internal uint nFileSizeHigh;
+            internal uint nFileSizeLow;
+            internal int dwReserved0;
+            internal int dwReserved1;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
+            internal string strFileName;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
+            internal string strAltFileName;
+        }
 
-            if ((lvItem.SubItems.Count > 5) && StrValid(lvItem.SubItems[5].Text))
+        internal enum IndexInfoLevels
+        {
+            FindExInfoStandard = 0,
+            FindExInfoBasic,
+            FindExInfoMaxInfoLevel
+        };
+
+        private enum IndexSearchOps
+        {
+            FindExSearchNameMatch = 0,
+            FindExSearchLimitToDirectories,
+            FindExSearchLimitToDevices
+        };
+
+        private const int FIND_FIRST_EX_LARGE_FETCH = 0x02;
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, BestFitMapping = false), SuppressUnmanagedCodeSecurity]
+        private static extern IntPtr FindFirstFileExW(string lpFileName, IndexInfoLevels infoLevel, out DATUM lpFindFileData, IndexSearchOps fSearchOp, IntPtr lpSearchFilter, int dwAdditionalFlag);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, BestFitMapping = false), SuppressUnmanagedCodeSecurity]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool FindNextFileW(IntPtr handle, out DATUM lpFindFileData);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool FindClose(IntPtr hFindFile);
+
+        private static readonly IntPtr InvalidHandleValue = new IntPtr(-1);
+
+        [Serializable]
+        internal class FileData
+        {
+            FileAttributes m_Attributes;
+            DateTime m_CreationTimeUtc;
+            DateTime m_LastAccessTimeUtc;
+            DateTime m_LastWriteTimeUtc;
+            long m_Size;
+            bool m_bValid = false;
+
+            internal FileAttributes Attributes { get { return m_Attributes; } }
+            internal DateTime CreationTimeUtc { get { return m_CreationTimeUtc; } }
+            internal DateTime LastAccessTimeUtc { get { return m_LastAccessTimeUtc; } }
+            internal DateTime LastWriteTimeUtc { get { return m_LastWriteTimeUtc; } }
+            internal long Size { get { return m_Size; } }
+            internal bool IsValid { get { return m_bValid; } }
+
+            internal static bool WinFile(String strFile, out DATUM winFindData)
             {
-                m_strVolumeGroup = lvItem.SubItems[5].Text;
+                String P = Path.DirectorySeparatorChar.ToString();
+                String PP = P + P;
+                IntPtr handle = FindFirstFileExW(PP + '?' + P + strFile, IndexInfoLevels.FindExInfoBasic, out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
+
+                winFindData.strAltFileName = strFile.Replace(PP, P);                        // 8.3 not used
+                return (handle != InvalidHandleValue);
+            }
+
+            internal FileData(DATUM findData)
+            {
+                m_Attributes = findData.fileAttributes;
+                m_CreationTimeUtc = ConvertDateTime(findData.ftCreationTimeHigh, findData.ftCreationTimeLow);
+                m_LastAccessTimeUtc = ConvertDateTime(findData.ftLastAccessTimeHigh, findData.ftLastAccessTimeLow);
+                m_LastWriteTimeUtc = ConvertDateTime(findData.ftLastWriteTimeHigh, findData.ftLastWriteTimeLow);
+                m_Size = CombineHighLowInts(findData.nFileSizeHigh, findData.nFileSizeLow);
+                m_bValid = (findData.ftCreationTimeHigh | findData.ftCreationTimeLow) != 0;
+            }
+
+            internal DateTime CreationTime
+            {
+                get { return CreationTimeUtc.ToLocalTime(); }
+            }
+
+            internal DateTime LastAccessTime
+            {
+                get { return LastAccessTimeUtc.ToLocalTime(); }
+            }
+
+            internal DateTime LastWriteTime
+            {
+                get { return LastWriteTimeUtc.ToLocalTime(); }
+            }
+
+            private static long CombineHighLowInts(uint high, uint low)
+            {
+                return (((long)high) << 0x20) | low;
+            }
+
+            private static DateTime ConvertDateTime(uint high, uint low)
+            {
+                long fileTime = CombineHighLowInts(high, low);
+                return DateTime.FromFileTimeUtc(fileTime);
             }
         }
 
-        internal void SetStatus_BadFile(ListView lv)
+        internal static bool GetDirectory(String strDir, ref List<DATUM> listDirs, ref List<DATUM> listFiles)
         {
-            lv.Items[Index].SubItems[3].Text =
-                m_strStatus = "Bad file. Will overwrite.";
+            String P = Path.DirectorySeparatorChar.ToString();
+            String PP = P + P;
+            DATUM winFindData;
+            IntPtr handle = FindFirstFileExW(PP + '?' + P + strDir + P + '*', IndexInfoLevels.FindExInfoBasic, out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
+
+            if (handle == InvalidHandleValue)
+            {
+                return false;
+            }
+
+            listDirs.Clear();
+            listFiles.Clear();
+
+            do
+            {
+                if ("..".Contains(winFindData.strFileName))
+                {
+                    continue;
+                }
+
+                winFindData.strAltFileName = (strDir + P + winFindData.strFileName).Replace(PP, P);     // 8.3 not used
+
+                if ((winFindData.fileAttributes & FileAttributes.Directory) != 0)
+                {
+                    if ((winFindData.fileAttributes & FileAttributes.ReparsePoint) != 0)
+                    {
+                        const uint IO_REPARSE_TAG_MOUNT_POINT = 0xA0000003;
+                        const uint IO_REPARSE_TAG_SYMLINK = 0xA000000C;
+
+                        // stay on source drive. Treat mount points and symlinks as files.
+                        if (((winFindData.dwReserved0 & IO_REPARSE_TAG_MOUNT_POINT) != 0)
+                            || ((winFindData.dwReserved0 & IO_REPARSE_TAG_SYMLINK) != 0))
+                        {
+                            listFiles.Add(winFindData);
+                            continue;
+                        }
+                    }
+
+                    listDirs.Add(winFindData);
+                }
+                else
+                {
+                    listFiles.Add(winFindData);
+                }
+            }
+            while (FindNextFileW(handle, out winFindData));
+
+            FindClose(handle);
+            listDirs.Sort((x, y) => x.strFileName.CompareTo(y.strFileName));
+            listFiles.Sort((x, y) => x.strFileName.CompareTo(y.strFileName));
+            return true;
         }
     }
 }

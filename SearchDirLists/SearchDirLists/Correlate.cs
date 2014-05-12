@@ -379,7 +379,7 @@ namespace SearchDirLists
                 }
 
                 IgnoreNode_Query(sbMatch.ToString().ToLower(), nMaxLevel, m_listRootNodes[0]);
-                Console.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+                Utilities.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             }
 
             Dictionary<TreeNode, ListViewItem> dictIgnoreMark = new Dictionary<TreeNode, ListViewItem>();
@@ -671,9 +671,9 @@ namespace SearchDirLists
                 {
                     form_treeView_Browse.Enabled = true;
                     form_treeView_Browse.CheckBoxes = m_bCheckboxes;
-                    Console.Write("A");
+                    Utilities.Write("A");
                     form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
-                    Console.WriteLine("A");
+                    Utilities.WriteLine("A");
                 }
 
                 if (m_bThreadAbort || Form1.AppExit)
@@ -682,9 +682,9 @@ namespace SearchDirLists
                 }
 
                 Utilities.Assert(1305.6321, form_lvClones.Items.Count == 0);
-                Console.Write("B");
+                Utilities.Write("B");
                 form_lvClones.Items.AddRange(listLVitems.ToArray());
-                Console.WriteLine("B");
+                Utilities.WriteLine("B");
 
                 if (m_bThreadAbort || Form1.AppExit)
                 {
@@ -692,9 +692,9 @@ namespace SearchDirLists
                 }
 
                 Utilities.Assert(1305.6322, form_lvUnique.Items.Count == 0);
-                Console.Write("C");
+                Utilities.Write("C");
                 form_lvUnique.Items.AddRange(listLVunique.ToArray());
-                Console.WriteLine("C");
+                Utilities.WriteLine("C");
 
                 if (m_bThreadAbort || Form1.AppExit)
                 {
@@ -702,9 +702,9 @@ namespace SearchDirLists
                 }
 
                 Utilities.Assert(1305.6323, form_lvSameVol.Items.Count == 0);
-                Console.Write("D");
+                Utilities.Write("D");
                 form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
-                Console.WriteLine("D");
+                Utilities.WriteLine("D");
 
                 if (form_treeView_Browse.SelectedNode != null)      // m_bPutPathInFindEditBox is set in TreeDoneCallback()
                 {

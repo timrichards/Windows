@@ -79,12 +79,12 @@ namespace SearchDirLists
 
         void TraverseTree(TextWriter fs, String root)
         {
-            Stack<Win32.WIN32_FIND_DATA> stackDirs = new Stack<Win32.WIN32_FIND_DATA>(64);
-            List<Win32.WIN32_FIND_DATA> listSubDirs = new List<Win32.WIN32_FIND_DATA>();
-            List<Win32.WIN32_FIND_DATA> listFiles = new List<Win32.WIN32_FIND_DATA>();
-            Win32.WIN32_FIND_DATA winRoot;
+            Stack<Win32FindFile.DATUM> stackDirs = new Stack<Win32FindFile.DATUM>(64);
+            List<Win32FindFile.DATUM> listSubDirs = new List<Win32FindFile.DATUM>();
+            List<Win32FindFile.DATUM> listFiles = new List<Win32FindFile.DATUM>();
+            Win32FindFile.DATUM winRoot;
 
-            Win32.FileData.WinFile(root, out winRoot);
+            Win32FindFile.FileData.WinFile(root, out winRoot);
             stackDirs.Push(winRoot);
 
             while (stackDirs.Count > 0)
@@ -94,22 +94,22 @@ namespace SearchDirLists
                     return;
                 }
 
-                Win32.WIN32_FIND_DATA winDir = stackDirs.Pop();
+                Win32FindFile.DATUM winDir = stackDirs.Pop();
                 long nDirLength = 0;
                 bool bHasLength = false;
                 String strFullPath = winDir.strAltFileName;
                 String strError2_Dir = CheckNTFS_chars(ref strFullPath);
 
-                if (Win32.GetDirectory(strFullPath, ref listSubDirs, ref listFiles) == false)
+                if (Win32FindFile.GetDirectory(strFullPath, ref listSubDirs, ref listFiles) == false)
                 {
                     m_list_Errors.Add(FormatString(strDir: strFullPath,
                         strError1: new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message, strError2: strError2_Dir));
                     continue;
                 }
 
-                foreach (Win32.WIN32_FIND_DATA winData in listFiles)
+                foreach (Win32FindFile.DATUM winData in listFiles)
                 {
-                    Win32.FileData fi = new Win32.FileData(winData);
+                    Win32FindFile.FileData fi = new Win32FindFile.FileData(winData);
                     String strFile = winData.strFileName;
                     String strError2_File = CheckNTFS_chars(ref strFile, bFile: true);
 
@@ -158,7 +158,7 @@ namespace SearchDirLists
                     Utilities.Assert(1306.7308, bHasLength == (nDirLength > 0));
                     Utilities.Assert(1306.7301, nDirLength >= 0);
 
-                    Win32.FileData di = new Win32.FileData(winDir);
+                    Win32FindFile.FileData di = new Win32FindFile.FileData(winDir);
 
                     if (strFullPath.EndsWith(@":\"))
                     {
@@ -173,7 +173,7 @@ namespace SearchDirLists
                     }
                 }
 
-                foreach (Win32.WIN32_FIND_DATA winData in listSubDirs)
+                foreach (Win32FindFile.DATUM winData in listSubDirs)
                 {
                     stackDirs.Push(winData);
                 }
@@ -284,8 +284,8 @@ namespace SearchDirLists
 
         void Go()
         {
-            Console.WriteLine();
-            Console.WriteLine("Saving directory listings.");
+            Utilities.WriteLine();
+            Utilities.WriteLine("Saving directory listings.");
 
             DateTime dtStart = DateTime.Now;
             int nVolIx = -1;
@@ -308,7 +308,7 @@ namespace SearchDirLists
                 worker.Join();
             }
 
-            Console.WriteLine(String.Format("Finished saving directory listings in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
+            Utilities.WriteLine(String.Format("Finished saving directory listings in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
             if (m_bThreadAbort || Form1.AppExit)
             {

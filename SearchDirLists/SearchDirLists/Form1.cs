@@ -36,8 +36,8 @@ namespace SearchDirLists
         Control m_ctlLastFocusForCopyButton = null;
         Control m_ctlLastSearchSender = null;
         Dictionary<TreeNode, TreeNode> dictCompareDiffs = new Dictionary<TreeNode, TreeNode>();
-        List<TreeNode> m_listTreeNodes_Compare1 = new List<TreeNode>();
-        List<TreeNode> m_listTreeNodes_Compare2 = new List<TreeNode>();
+        UList<TreeNode> m_listTreeNodes_Compare1 = new UList<TreeNode>();
+        UList<TreeNode> m_listTreeNodes_Compare2 = new UList<TreeNode>();
 
         List<TreeNode> m_listHistory = new List<TreeNode>();
         int m_nIxHistory = -1;
@@ -234,7 +234,7 @@ namespace SearchDirLists
 
             internal static bool ReadList(ListView.ListViewItemCollection lvItems, StreamReader sr, String strDir_in = null, String strHeader = null)
             {
-                List<ListViewItem> listItems = new List<ListViewItem>();
+                UList<ListViewItem> listItems = new UList<ListViewItem>();
                 String strLine = sr.ReadLine();
 
                 do
@@ -603,11 +603,11 @@ namespace SearchDirLists
             {
                 // case sensitive only when user enters an uppercase character
 
-                List<TreeNode> listTreeNodes = m_listTreeNodes;
+                List<TreeNode> listTreeNodes = m_listTreeNodes.ToList();
 
                 if (m_bCompareMode)
                 {
-                    listTreeNodes = (treeView == form_treeCompare2) ? m_listTreeNodes_Compare2 : m_listTreeNodes_Compare1;
+                    listTreeNodes = ((treeView == form_treeCompare2) ? m_listTreeNodes_Compare2 : m_listTreeNodes_Compare1).ToList();
                 }
 
                 if (strSearch.ToLower() == strSearch)
@@ -906,7 +906,7 @@ namespace SearchDirLists
                 return;
             }
 
-            List<TreeNode> listTreeNodes = (List<TreeNode>)lv.SelectedItems[0].Tag;
+            UList<TreeNode> listTreeNodes = (UList<TreeNode>)lv.SelectedItems[0].Tag;
 
             m_bPutPathInFindEditBox = true;
             m_bTreeViewIndirectSelChange = true;
@@ -958,7 +958,7 @@ namespace SearchDirLists
             MessageBox.Show(strMessage.PadRight(100), strTitle);
         }
 
-        void NameNodes(TreeNode treeNode, List<TreeNode> listTreeNodes)
+        void NameNodes(TreeNode treeNode, UList<TreeNode> listTreeNodes)
         {
             treeNode.Name = treeNode.Text;
             treeNode.ForeColor = Color.Empty;
@@ -2373,9 +2373,9 @@ namespace SearchDirLists
 
                         sortOrder = SortOrder.None;
 
-                        if (listItems[0].Tag is List<TreeNode>)
+                        if (listItems[0].Tag is UList<TreeNode>)
                         {
-                            listItems.Sort((x, y) => ((NodeDatum)((List<TreeNode>)y.Tag)[0].Tag).nTotalLength.CompareTo(((NodeDatum)((List<TreeNode>)x.Tag)[0].Tag).nTotalLength));
+                            listItems.Sort((x, y) => ((NodeDatum)((UList<TreeNode>)y.Tag)[0].Tag).nTotalLength.CompareTo(((NodeDatum)((UList<TreeNode>)x.Tag)[0].Tag).nTotalLength));
                         }
                         else
                         {
@@ -2637,10 +2637,13 @@ namespace SearchDirLists
                 return;
             }
 
-            // ignore list
-            foreach (ListViewItem lvItem in nodeDatum.m_lvItem.ListView.SelectedItems)
+            if (new ListView[] { form_lvClones, form_lvSameVol }.Contains(nodeDatum.m_lvItem.ListView) == false) // click-again lists
             {
-                lvItem.Selected = false;
+                // ignore list
+                foreach (ListViewItem lvItem in nodeDatum.m_lvItem.ListView.SelectedItems)
+                {
+                    lvItem.Selected = false;
+                }
             }
 
             nodeDatum.m_lvItem.Selected = true;

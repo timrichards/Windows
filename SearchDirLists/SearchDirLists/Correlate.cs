@@ -12,12 +12,12 @@ namespace SearchDirLists
     {
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
         TreeView form_treeView_Browse = null;
-        SortedDictionary<HashKey, List<TreeNode>> m_dictNodes = null;
+        SortedDictionary<HashKey, UList<TreeNode>> m_dictNodes = null;
         ListView form_lvClones = null;
         ListView form_lvSameVol = null;
         ListView form_lvUnique = null;
         List<TreeNode> m_listRootNodes = null;
-        List<TreeNode> m_listTreeNodes = null;
+        UList<TreeNode> m_listTreeNodes = null;
         bool m_bCheckboxes = false;
         List<ListViewItem> m_list_lvIgnore = null;
 
@@ -40,10 +40,10 @@ namespace SearchDirLists
 
         class AddTreeToList
         {
-            List<TreeNode> m_listTreeNodes = null;
+            UList<TreeNode> m_listTreeNodes = null;
             List<TreeNode> m_listSameVol = null;
 
-            public AddTreeToList(List<TreeNode> listTreeNodes, List<TreeNode> listSameVol)
+            public AddTreeToList(UList<TreeNode> listTreeNodes, List<TreeNode> listSameVol)
             {
                 m_listTreeNodes = listTreeNodes;
                 m_listSameVol = listSameVol;
@@ -118,7 +118,7 @@ namespace SearchDirLists
 
                 ListViewItem lvItem = (ListViewItem)lvMarker.Clone();
 
-                lvItem.Text = (Utilities.FormatSize(((NodeDatum)((TreeNode)(bUnique ? listLVitems[nIx].Tag : ((List<TreeNode>)listLVitems[nIx].Tag)[0])).Tag).nTotalLength, bNoDecimal: true));
+                lvItem.Text = (Utilities.FormatSize(((NodeDatum)((TreeNode)(bUnique ? listLVitems[nIx].Tag : ((UList<TreeNode>)listLVitems[nIx].Tag)[0])).Tag).nTotalLength, bNoDecimal: true));
 
                 if (bAdd)
                 {
@@ -131,9 +131,9 @@ namespace SearchDirLists
             }
         }
 
-        public Correlate(TreeView treeView_Browse, SortedDictionary<HashKey, List<TreeNode>> dictNodes,
+        public Correlate(TreeView treeView_Browse, SortedDictionary<HashKey, UList<TreeNode>> dictNodes,
             ListView lvClones, ListView lvSameVol, ListView lvUnique,
-            List<TreeNode> listRootNodes, List<TreeNode> listTreeNodes, bool bCheckboxes,
+            List<TreeNode> listRootNodes, UList<TreeNode> listTreeNodes, bool bCheckboxes,
             List<ListViewItem> list_lvIgnore, bool bLoose)
         {
             static_this = this;
@@ -151,13 +151,13 @@ namespace SearchDirLists
 
         // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
         // Breadth-first.
-        void FixClones(SortedDictionary<HashKey, List<TreeNode>> dictClones, TreeNode treeNode, TreeNode rootClone = null)
+        void FixClones(SortedDictionary<HashKey, UList<TreeNode>> dictClones, TreeNode treeNode, TreeNode rootClone = null)
         {
             // neither rootClone nor nMaxLength are used at all (rootClone is used as a bool).
             // provisional.
 
             NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
-            List<TreeNode> listClones = nodeDatum.m_listClones;
+            UList<TreeNode> listClones = nodeDatum.m_listClones;
             ulong nLength = nodeDatum.nTotalLength;
 
             if (nLength <= 100 * 1024)
@@ -385,14 +385,15 @@ namespace SearchDirLists
             Dictionary<TreeNode, ListViewItem> dictIgnoreMark = new Dictionary<TreeNode, ListViewItem>();
             SortedDictionary<HashKey, List<TreeNode>> dictNodes = new SortedDictionary<HashKey, List<TreeNode>>();
 
-            foreach (KeyValuePair<HashKey, List<TreeNode>> pair in m_dictNodes)     // clone to remove ignored
+            foreach (KeyValuePair<HashKey, UList<TreeNode>> pair in m_dictNodes)    // clone to remove ignored
             {
                 dictNodes.Add(pair.Key, pair.Value.ToList());                       // clone pair.Value to remove ignored, using ToList() 
             }
 
             foreach (KeyValuePair<TreeNode, ListViewItem> pair in dictIgnoreNodes)
             {
-                NodeDatum nodeDatum = (NodeDatum) pair.Key.Tag;
+                TreeNode treeNode = pair.Key;
+                NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
                 if (dictNodes.ContainsKey(nodeDatum.Key) == false)
                 {
@@ -401,29 +402,22 @@ namespace SearchDirLists
 
                 if (m_bLoose)
                 {
-                    foreach (TreeNode treeNode in dictNodes[nodeDatum.Key])
+                    foreach (TreeNode treeNode_A in dictNodes[nodeDatum.Key])
                     {
-                        dictIgnoreMark.Add(treeNode, pair.Value);
+                        dictIgnoreMark.Add(treeNode_A, pair.Value);
                     }
 
                     dictNodes.Remove(nodeDatum.Key);
                 }
-                else
+                else if (dictNodes[nodeDatum.Key].Contains(treeNode))
                 {
-                    foreach (TreeNode treeNode in dictNodes[nodeDatum.Key])
-                    {
-                        if (treeNode == pair.Key)
-                        {
-                            dictIgnoreMark.Add(treeNode, pair.Value);
-                            dictNodes[nodeDatum.Key].Remove(treeNode);
-                            break;
-                        }
-                    }
-                }
+                    dictIgnoreMark.Add(treeNode, pair.Value);
+                    dictNodes[nodeDatum.Key].Remove(treeNode);
 
-                if (dictNodes[nodeDatum.Key].Count == 0)
-                {
-                    dictNodes.Remove(nodeDatum.Key);
+                    if (dictNodes[nodeDatum.Key].Count == 0)
+                    {
+                        dictNodes.Remove(nodeDatum.Key);
+                    }
                 }
             }
 
@@ -446,7 +440,7 @@ namespace SearchDirLists
 
                 if (listNodes.Count > 1)
                 {
-                    List<TreeNode> listKeep = new List<TreeNode>();
+                    UList<TreeNode> listKeep = new UList<TreeNode>();
 
                     foreach (TreeNode treeNode_A in listNodes)
                     {
@@ -474,7 +468,7 @@ namespace SearchDirLists
                     }
                     else
                     {
-                        listNodes = listKeep;   // kick off "else" logic below after deleting child clones
+                        listNodes = listKeep.ToList();   // kick off "else" logic below after deleting child clones
                     }
                 }
 
@@ -489,7 +483,7 @@ namespace SearchDirLists
                 }
             }
 
-            SortedDictionary<HashKey, List<TreeNode>> dictClones = new SortedDictionary<HashKey, List<TreeNode>>();
+            SortedDictionary<HashKey, UList<TreeNode>> dictClones = new SortedDictionary<HashKey, UList<TreeNode>>();
 
             foreach (TreeNode treeNode in m_listRootNodes)
             {
@@ -498,7 +492,7 @@ namespace SearchDirLists
 
             m_listRootNodes.Sort((x, y) => String.Compare(x.Text, y.Text));
 
-            foreach (KeyValuePair<HashKey, List<TreeNode>> listNodes in dictClones)
+            foreach (KeyValuePair<HashKey, UList<TreeNode>> listNodes in dictClones)
             {
                 if (m_bThreadAbort || Form1.AppExit)
                 {
@@ -671,7 +665,9 @@ namespace SearchDirLists
                 {
                     form_treeView_Browse.Enabled = true;
                     form_treeView_Browse.CheckBoxes = m_bCheckboxes;
+                    Console.Write("A");
                     form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
+                    Console.WriteLine("A");
                 }
 
                 if (m_bThreadAbort || Form1.AppExit)
@@ -680,7 +676,9 @@ namespace SearchDirLists
                 }
 
                 Utilities.Assert(1305.6321, form_lvClones.Items.Count == 0);
+                Console.Write("B");
                 form_lvClones.Items.AddRange(listLVitems.ToArray());
+                Console.WriteLine("B");
 
                 if (m_bThreadAbort || Form1.AppExit)
                 {
@@ -688,7 +686,9 @@ namespace SearchDirLists
                 }
 
                 Utilities.Assert(1305.6322, form_lvUnique.Items.Count == 0);
+                Console.Write("C");
                 form_lvUnique.Items.AddRange(listLVunique.ToArray());
+                Console.WriteLine("C");
 
                 if (m_bThreadAbort || Form1.AppExit)
                 {
@@ -696,7 +696,9 @@ namespace SearchDirLists
                 }
 
                 Utilities.Assert(1305.6323, form_lvSameVol.Items.Count == 0);
+                Console.Write("D");
                 form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
+                Console.WriteLine("D");
 
                 if (form_treeView_Browse.SelectedNode != null)      // m_bPutPathInFindEditBox is set in TreeDoneCallback()
                 {

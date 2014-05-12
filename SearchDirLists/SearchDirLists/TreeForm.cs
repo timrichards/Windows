@@ -9,9 +9,9 @@ namespace SearchDirLists
 {
     partial class Form1 : Form
     {
-        SortedDictionary<HashKey, List<TreeNode>> m_dictNodes = new SortedDictionary<HashKey,List<TreeNode>>();
+        SortedDictionary<HashKey, UList<TreeNode>> m_dictNodes = new SortedDictionary<HashKey,UList<TreeNode>>();
         Dictionary<String, String> m_dictDriveInfo = new Dictionary<string,string>();
-        List<TreeNode> m_listTreeNodes = new List<TreeNode>();
+        UList<TreeNode> m_listTreeNodes = new UList<TreeNode>();
         List<TreeNode> m_listRootNodes = new List<TreeNode>();
         List<ListViewItem> m_list_lvIgnore = new List<ListViewItem>();
         Tree m_tree = null;

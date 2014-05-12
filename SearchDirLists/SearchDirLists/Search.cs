@@ -239,7 +239,7 @@ namespace SearchDirLists
         ConcurrentBag<SearchFile> m_cbagWorkers = new ConcurrentBag<SearchFile>();
         SearchStatusDelegate m_statusCallback = null;
         SearchDoneDelegate m_doneCallback = null;
-        List<LVvolStrings> m_list_lvVolStrings = new List<LVvolStrings>();
+        UList<LVvolStrings> m_list_lvVolStrings = new UList<LVvolStrings>();
 
         internal Search(ListView.ListViewItemCollection lvVolItems, String strSearch, bool bCaseSensitive,
             SearchFile.FolderSpecialHandling folderHandling, bool bSearchFilesOnly, String strCurrentNode,

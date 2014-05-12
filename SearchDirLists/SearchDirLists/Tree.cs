@@ -150,7 +150,7 @@ namespace SearchDirLists
             }
         }
 
-        internal List<TreeNode> m_listClones = new List<TreeNode>();
+        internal UList<TreeNode> m_listClones = new UList<TreeNode>();
 
         internal void SetLVitemHolder(NodeDatum holder) { m_lvItem_ = (holder != null) ? holder.m_lvItem_ : null; }
         NodeDatumLVitemHolder m_lvItem_ = new NodeDatumLVitemHolder();
@@ -272,11 +272,11 @@ namespace SearchDirLists
 
     class TreeBase : Utilities
     {
-        protected SortedDictionary<HashKey, List<TreeNode>> m_dictNodes = null;
+        protected SortedDictionary<HashKey, UList<TreeNode>> m_dictNodes = null;
         protected Dictionary<String, String> m_dictDriveInfo = null;
         protected static TreeStatusDelegate m_statusCallback = null;
 
-        internal TreeBase(SortedDictionary<HashKey, List<TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
+        internal TreeBase(SortedDictionary<HashKey, UList<TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
             TreeStatusDelegate statusCallback)
         {
             m_dictNodes = dictNodes;
@@ -294,7 +294,7 @@ namespace SearchDirLists
 
     class Tree : TreeBase
     {
-        List<LVvolStrings> m_list_lvVolStrings = new List<LVvolStrings>();
+        UList<LVvolStrings> m_list_lvVolStrings = new UList<LVvolStrings>();
         TreeDoneDelegate m_doneCallback = null;
         ConcurrentBag<TreeRootNodeBuilder> m_cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
         Thread m_thread = null;
@@ -428,7 +428,7 @@ namespace SearchDirLists
                     }
                     else if (subNodes.Count > 1)
                     {
-                        List<TreeNode> treeList = new List<TreeNode>();
+                        UList<TreeNode> treeList = new UList<TreeNode>();
 
                         foreach (Node node in subNodes.Values)
                         {
@@ -530,7 +530,7 @@ namespace SearchDirLists
                     }
                     else if (nodeDatum.nTotalLength > 100 * 1024)
                     {
-                        List<TreeNode> listNodes = new List<TreeNode>();
+                        UList<TreeNode> listNodes = new UList<TreeNode>();
 
                         listNodes.Add(treeNode);
                         m_dictNodes.Add(nKey, listNodes);
@@ -717,7 +717,7 @@ namespace SearchDirLists
         }
 
         internal Tree(ListView.ListViewItemCollection lvVolItems,
-            SortedDictionary<HashKey, List<TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
+            SortedDictionary<HashKey, UList<TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
             TreeStatusDelegate statusCallback, TreeDoneDelegate doneCallback)
             : base(dictNodes, dictDriveInfo, statusCallback)
         {
@@ -788,7 +788,7 @@ namespace SearchDirLists
     class TreeSelect : Utilities
     {
         TreeNode m_treeNode = null;
-        SortedDictionary<HashKey, List<TreeNode>> m_dictNodes = null;
+        SortedDictionary<HashKey, UList<TreeNode>> m_dictNodes = null;
         Dictionary<String, String> m_dictDriveInfo = null;
         static TreeSelectStatusDelegate m_statusCallback = null;
         static TreeSelectDoneDelegate m_doneCallback = null;
@@ -797,7 +797,7 @@ namespace SearchDirLists
         bool m_bCompareMode = false;
         bool m_bSecondComparePane = false;
 
-        internal TreeSelect(TreeNode node, SortedDictionary<HashKey, List<TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
+        internal TreeSelect(TreeNode node, SortedDictionary<HashKey, UList<TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
             String strFile, bool bCompareMode, bool bSecondComparePane,
             TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
         {
@@ -844,7 +844,7 @@ namespace SearchDirLists
 
             // Directory detail
 
-            List<ListViewItem> listItems = new List<ListViewItem>();
+            UList<ListViewItem> listItems = new UList<ListViewItem>();
 
             nIx = 4; if ((strArray.Length > nIx) && StrValid(strArray[nIx])) { listItems.Add(new ListViewItem(new String[] { "Created\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() })); }
             nIx = 5; if ((strArray.Length > nIx) && StrValid(strArray[nIx])) listItems.Add(new ListViewItem(new String[] { "Modified\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
@@ -891,7 +891,7 @@ namespace SearchDirLists
 
             if (listFiles_A != null)
             {
-                List<ListViewItem> listFiles = new List<ListViewItem>();
+                UList<ListViewItem> listFiles = new UList<ListViewItem>();
 
                 foreach (String[] arrLine in listFiles_A)
                 {

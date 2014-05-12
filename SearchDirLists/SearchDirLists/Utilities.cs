@@ -12,6 +12,15 @@ using System.Drawing;
 
 namespace SearchDirLists
 {
+    class UList<T> : Dictionary<T, object>
+    {
+        public void Add(T t) { base.Add(t, null); }
+        public T this[int i] { get { return base.Keys.ElementAt(i); } }
+        public new IEnumerator<T> GetEnumerator() { return base.Keys.GetEnumerator(); }
+        public T[] ToArray() { return base.Keys.ToArray(); }
+        public List<T> ToList() { return base.Keys.ToList(); }
+    }
+
     class Win32
     {
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]

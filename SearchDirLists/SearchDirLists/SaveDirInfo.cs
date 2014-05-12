@@ -264,7 +264,7 @@ namespace SearchDirLists
         Thread m_thread = null;
         bool m_bThreadAbort = false;
         ConcurrentBag<SaveDirListing> m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
-        List<LVvolStrings> m_list_lvVolStrings = new List<LVvolStrings>();
+        UList<LVvolStrings> m_list_lvVolStrings = new UList<LVvolStrings>();
 
         int m_nFilesWritten = 0;
         internal int FilesWritten { get { return m_nFilesWritten; } set { m_nFilesWritten = value; } }

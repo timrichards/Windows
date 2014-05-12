@@ -217,14 +217,6 @@ namespace SearchDirLists
                 return false;
             }
 
-            Assert_A(nLocation, bCondition, strError_in);
-            static_nLastAssertLoc = nLocation;
-            static_dtLastAssert = DateTime.Now;
-            return false;
-        }
-
-        static void Assert_A(double nLocation, bool bCondition, String strError_in)
-        {
             String strError = strError_in ?? "Assertion failed at location " + nLocation + ".";
 
             Utilities.WriteLine(strError);
@@ -232,32 +224,31 @@ namespace SearchDirLists
             if (static_bAssertUp)
             {
 #if (DEBUG)
-                FlashWindow();
+                FlashWindow.Go();
 #endif
-                return;
             }
-
-            static_bAssertUp = true;
-
-            bool bShowCustomDialog = true;
-
+            else
+            {
 #if (DEBUG)
-            Utilities.WriteLine(strError);
-
-            bShowCustomDialog = (Trace.Listeners.Cast<TraceListener>().Any(i => i is DefaultTraceListener) == false);
-            
-            if (bShowCustomDialog == false)
-            {
-                Debug.Assert(false, strError);
-            }
+                if (Trace.Listeners.Cast<TraceListener>().Any(i => i is DefaultTraceListener))
+                {
+                    Debug.Assert(false, strError);
+                }
+                else
 #endif
-            if (bShowCustomDialog)
-            {
-                new Thread(new ParameterizedThreadStart(Assert_B)).Start(strError);
+                {
+                    static_bAssertUp = true;
+                    new Thread(new ParameterizedThreadStart(Assert_A)).Start(strError);
+                }
+
+                static_nLastAssertLoc = nLocation;
+                static_dtLastAssert = DateTime.Now;
             }
+
+            return false;
         }
 
-        static void Assert_B(object strError)
+        static void Assert_A(object strError)
         {
             static_MessageboxCallback(((String)strError) + " Please discuss this bug at http://sourceforge.net/projects/searchdirlists/.", "SearchDirLists Assertion Failure");
             static_bAssertUp = false;

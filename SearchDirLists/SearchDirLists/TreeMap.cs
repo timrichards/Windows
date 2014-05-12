@@ -11,7 +11,6 @@ namespace SearchDirLists
     {
         public Control TooltipAnchor;
 
-        bool m_bGrid = false;
         Rectangle m_rectBitmap = Rectangle.Empty;
         Rectangle m_selRect = Rectangle.Empty;
         Rectangle m_rectCenter = Rectangle.Empty;
@@ -350,7 +349,7 @@ namespace SearchDirLists
                 m_deepNode = treeNode;
             }
 
-            int nPxPerSide = (treeNode.SelectedImageIndex == -1) ? 2048 : treeNode.SelectedImageIndex;
+            int nPxPerSide = (treeNode.SelectedImageIndex == -1) ? 1024 : treeNode.SelectedImageIndex;
 
             if (nPxPerSide != m_rectBitmap.Size.Width)
             {
@@ -370,7 +369,7 @@ namespace SearchDirLists
 
                 m_bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), m_rectBitmap);
                 TranslateSize();
-                Console.WriteLine("Size bitmap " + nPxPerSide  + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000.0 + " seconds.");
+                Utilities.WriteLine("Size bitmap " + nPxPerSide  + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000.0 + " seconds.");
             }
 
             DateTime dtStart = DateTime.Now;
@@ -452,27 +451,11 @@ namespace SearchDirLists
         //
         // Last modified: $Date: 2004/11/05 16:53:08 $
         
-        internal void DrawTreemap(bool bGrid = false)
+        internal void DrawTreemap()
         {
             m_deepNodeDrawn = null;
-            m_bGrid = bGrid;
             Graphics graphics = m_bg.Graphics;
             Rectangle rc = m_rectBitmap;
-
-	        if (bGrid)
-	        {
-                graphics.FillRectangle(new SolidBrush(Color.Black), rc);
-            }
-	        else
-	        {
-		        // We shrink the rectangle here, too.
-		        // If we didn't do this, the layout of the treemap would
-		        // change, when grid is switched on and off.
-                Pen pen = new Pen(SystemColors.ButtonShadow, 1);
-
-                { int nLine = rc.Right - 1; graphics.DrawLine(pen, new Point(nLine, rc.Top), new Point(nLine, rc.Bottom)); }
-                { int nLine = rc.Bottom - 1; graphics.DrawLine(pen, new Point(rc.Left, nLine), new Point(rc.Right, nLine)); }
-            }
 
 	        rc.Width--;
 	        rc.Height--;
@@ -504,9 +487,8 @@ namespace SearchDirLists
             Utilities.Assert(1302.3304, rc.Height >= 0);
 
             Graphics graphics = m_bg.Graphics;
-            int gridWidth = m_bGrid ? 1 : 0;
 
-	        if (rc.Width <= gridWidth || rc.Height <= gridWidth)
+	        if (rc.Width <= 0 || rc.Height <= 0)
 	        {
 		        return;
 	        }
@@ -533,15 +515,6 @@ namespace SearchDirLists
                 return;
             }
 
-            if (m_bGrid)
-            {
-                rc.Offset(1, 1);
-
-                if (rc.Width <= 0 || rc.Height <= 0)
-                    return;
-            }
-
-            Color col = (item.ForeColor == Color.Empty) ? Color.SandyBrown : item.ForeColor;
             GraphicsPath path = new GraphicsPath();
             Rectangle r = rc;
 
@@ -551,7 +524,7 @@ namespace SearchDirLists
             PathGradientBrush brush = new PathGradientBrush(path);
 
             brush.CenterColor = Color.Wheat;
-            brush.SurroundColors = new Color[] { ControlPaint.Dark(col) };
+            brush.SurroundColors = new Color[] { ControlPaint.Dark((item.ForeColor == Color.Empty) ? Color.SandyBrown : item.ForeColor) };
             graphics.FillRectangle(brush, rc);
         }
 

@@ -104,7 +104,6 @@ namespace SearchDirLists
             fInfo.dwTimeout = 0;
             FlashWindowEx(ref fInfo);
         }
-
     }
 
     class LVvolStrings : Utilities
@@ -432,6 +431,37 @@ namespace SearchDirLists
                     }
                 }
             }
+        }
+
+        internal static int CountNodes(List<TreeNode> listNodes)
+        {
+            int nCount = 0;
+
+            foreach (TreeNode treeNode in listNodes)
+            {
+                nCount += CountNodes(treeNode, bNextNode:false);
+            }
+
+            return nCount;
+        }
+
+        internal static int CountNodes(TreeNode treeNode_in, bool bNextNode = true)
+        {
+            TreeNode treeNode = treeNode_in;
+            int nCount = 0;
+
+            do
+            {
+                if ((treeNode.Nodes != null) && (treeNode.Nodes.Count > 0))
+                {
+                    nCount += CountNodes(treeNode.Nodes[0]);
+                }
+
+                ++nCount;
+            }
+            while (bNextNode && ((treeNode = treeNode.NextNode) != null));
+
+            return nCount;
         }
 
         internal static bool FormatPath(ref String strPath, bool bFailOnDirectory = true)

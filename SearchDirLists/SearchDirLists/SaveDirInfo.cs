@@ -160,9 +160,9 @@ namespace SearchDirLists
 
                     Win32FindFile.FileData di = new Win32FindFile.FileData(winDir);
 
-                    if (strFullPath.EndsWith(@":\"))
+                    if (strFullPath.EndsWith(@":\"))                            // root directory
                     {
-                        Utilities.Assert(1306.7302, di.IsValid == false);          // yes, yes...
+                        Utilities.Assert(1306.7302, di.IsValid == false);       // yes, yes...
                         Utilities.Assert(1306.7303, strFullPath.Length == 3);
                         fs.WriteLine(FormatString(strDir: strFullPath, nLength: nDirLength, strError1: strError1, strError2: strError2_Dir));
                     }

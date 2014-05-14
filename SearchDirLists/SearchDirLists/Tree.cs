@@ -765,15 +765,19 @@ namespace SearchDirLists
         internal void EndThread(bool bJoin = false)     // bJoin is not used because it induces lag.
         {
             m_bThreadAbort = true;
-            m_thread.Abort();
-            m_thread = null;
+
+            if (m_thread != null)
+            {
+                m_thread.Abort();
+                m_thread = null;
+            }
 
             foreach (TreeRootNodeBuilder worker in m_cbagWorkers)
             {
                 worker.Abort();
             }
 
-            m_cbagWorkers = null;
+            m_cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
             Correlate.Abort();
             m_dictNodes.Clear();
         }
@@ -843,7 +847,6 @@ namespace SearchDirLists
 
             long nIx = 0;
             DateTime dt;
-
 
             // Directory detail
 
@@ -971,39 +974,33 @@ namespace SearchDirLists
             return listFiles;
         }
 
-        void Go_B()
-        {
-            // Volume detail
-
-            if (m_dictDriveInfo.ContainsKey(m_strFile))
-            {
-                String strDriveInfo = (String)m_dictDriveInfo[m_strFile];
-                String[] arrDriveInfo = strDriveInfo.Split(new String[] { "\r\n", "\n" }, StringSplitOptions.None);
-
-                Utilities.Assert(1301.2314, new int[] { 7, 8 }.Contains(arrDriveInfo.Length));
-                m_statusCallback(lvVol: new ListViewItem(new String[] { "Available Free Space", FormatSize(arrDriveInfo[0], bBytes: true) }));
-                m_statusCallback(lvVol: new ListViewItem(new String[] { "Drive Format", arrDriveInfo[1] }));
-                m_statusCallback(lvVol: new ListViewItem(new String[] { "Drive Type", arrDriveInfo[2] }));
-                m_statusCallback(lvVol: new ListViewItem(new String[] { "Name", arrDriveInfo[3] }));
-                m_statusCallback(lvVol: new ListViewItem(new String[] { "Root Directory", arrDriveInfo[4] }));
-                m_statusCallback(lvVol: new ListViewItem(new String[] { "Total Free Space", FormatSize(arrDriveInfo[5], bBytes: true) }));
-                m_statusCallback(lvVol: new ListViewItem(new String[] { "Total Size", FormatSize(arrDriveInfo[6], bBytes: true) }));
-
-                if (arrDriveInfo.Length > 7)
-                {
-                    m_statusCallback(lvVol: new ListViewItem(new String[] { "Volume Label", arrDriveInfo[7] }));
-                }
-            }
-        }
-
         void Go()
         {
             Go_A();
 
             if (m_bCompareMode == false)
             {
-                // not in compare mode so do directory detail
-                Go_B();
+                // Volume detail
+
+                if (m_dictDriveInfo.ContainsKey(m_strFile))
+                {
+                    String strDriveInfo = (String)m_dictDriveInfo[m_strFile];
+                    String[] arrDriveInfo = strDriveInfo.Split(new String[] { "\r\n", "\n" }, StringSplitOptions.None);
+
+                    Utilities.Assert(1301.2314, new int[] { 7, 8 }.Contains(arrDriveInfo.Length));
+                    m_statusCallback(lvVol: new ListViewItem(new String[] { "Available Free Space", FormatSize(arrDriveInfo[0], bBytes: true) }));
+                    m_statusCallback(lvVol: new ListViewItem(new String[] { "Drive Format", arrDriveInfo[1] }));
+                    m_statusCallback(lvVol: new ListViewItem(new String[] { "Drive Type", arrDriveInfo[2] }));
+                    m_statusCallback(lvVol: new ListViewItem(new String[] { "Name", arrDriveInfo[3] }));
+                    m_statusCallback(lvVol: new ListViewItem(new String[] { "Root Directory", arrDriveInfo[4] }));
+                    m_statusCallback(lvVol: new ListViewItem(new String[] { "Total Free Space", FormatSize(arrDriveInfo[5], bBytes: true) }));
+                    m_statusCallback(lvVol: new ListViewItem(new String[] { "Total Size", FormatSize(arrDriveInfo[6], bBytes: true) }));
+
+                    if (arrDriveInfo.Length > 7)
+                    {
+                        m_statusCallback(lvVol: new ListViewItem(new String[] { "Volume Label", arrDriveInfo[7] }));
+                    }
+                }
             }
 
             m_doneCallback(m_bSecondComparePane);

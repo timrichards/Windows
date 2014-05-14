@@ -9,8 +9,8 @@ namespace SearchDirLists
 {
     partial class Form1 : Form
     {
-        SortedDictionary<HashKey, UList<TreeNode>> m_dictNodes = new SortedDictionary<HashKey,UList<TreeNode>>();
-        Dictionary<String, String> m_dictDriveInfo = new Dictionary<string,string>();
+        SortedDictionary<HashKey, UList<TreeNode>> m_dictNodes = new SortedDictionary<HashKey, UList<TreeNode>>();
+        Dictionary<String, String> m_dictDriveInfo = new Dictionary<string, string>();
         UList<TreeNode> m_listTreeNodes = new UList<TreeNode>();
         List<TreeNode> m_listRootNodes = new List<TreeNode>();
         List<ListViewItem> m_list_lvIgnore = new List<ListViewItem>();
@@ -41,6 +41,12 @@ namespace SearchDirLists
 
         void DoCorrelation()
         {
+            if (m_listRootNodes.Count <= 0)
+            {
+                form_treeView_Browse.Nodes.Clear();
+                return;
+            }
+
             Utilities.Assert(1304.5302, m_listTreeNodes.Count == 0);
             Utilities.Assert(1304.5303, InvokeRequired);
             Utilities.CheckAndInvoke(this, new Action(LoadIgnoreList));
@@ -66,6 +72,12 @@ namespace SearchDirLists
             correlate = null;
             TreeCleanup();
             GC.Collect();
+
+            int nNodeCount = form_treeView_Browse.GetNodeCount(includeSubTrees: true);
+            int nNodeCount_A = Utilities.CountNodes(form_treeView_Browse.Nodes[0]);
+
+            Utilities.Assert(1304.5306, Utilities.CountNodes(m_listRootNodes) == nNodeCount);
+            Utilities.Assert(1304.53065, m_listTreeNodes.Count == nNodeCount);
 
             if (Form.ActiveForm == null)
             {
@@ -282,6 +294,7 @@ namespace SearchDirLists
                 {
                     m_tree.EndThread(bJoin: true);
                     form_treeView_Browse.Nodes.Clear();
+                    m_listRootNodes.Clear();
                     TreeCleanup();
                 }
                 else
@@ -356,9 +369,7 @@ namespace SearchDirLists
                 form_treeView_Browse.Nodes.Add(treeNode);
                 form_treeView_Browse.CheckBoxes = false;    // treeview items are faked to show progress
                 form_treeView_Browse.Enabled = false;
-
                 Utilities.Assert(1304.5305, m_listRootNodes.Count == 0);
-
                 m_tree = new Tree(form_lvVolumesMain.Items, m_dictNodes, m_dictDriveInfo,
                     new TreeStatusDelegate(TreeStatusCallback), new TreeDoneDelegate(DoCorrelation));
                 m_tree.DoThreadFactory();

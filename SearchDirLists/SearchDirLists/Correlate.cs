@@ -42,6 +42,8 @@ namespace SearchDirLists
         {
             UList<TreeNode> m_listTreeNodes = null;
             List<TreeNode> m_listSameVol = null;
+            int m_nCount = 0;
+            internal int Count { get { return m_nCount; } }
 
             public AddTreeToList(UList<TreeNode> listTreeNodes, List<TreeNode> listSameVol)
             {
@@ -49,7 +51,17 @@ namespace SearchDirLists
                 m_listSameVol = listSameVol;
             }
 
-            public void Go(TreeNode treeNode_in, bool bCloneOK = false)
+            public AddTreeToList Go(List<TreeNode> listNodes)
+            {
+                foreach (TreeNode treeNode in listNodes)
+                {
+                    Go(treeNode, bNextNode: false);
+                }
+
+                return this;
+            }
+
+            void Go(TreeNode treeNode_in, bool bCloneOK = false, bool bNextNode = true)
             {
                 if (treeNode_in == null)
                 {
@@ -61,6 +73,7 @@ namespace SearchDirLists
                 do
                 {
                     m_listTreeNodes.Add(treeNode);
+                    ++m_nCount;
 
                     NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
@@ -91,7 +104,7 @@ namespace SearchDirLists
                         Go(treeNode.FirstNode, bCloneOK || (new Color[] {Color.SteelBlue, Color.DarkBlue}.Contains(treeNode.ForeColor)));
                     }
                 }
-                while ((treeNode = treeNode.NextNode) != null);
+                while (bNextNode && ((treeNode = treeNode.NextNode) != null));
             }
         }
 
@@ -258,9 +271,15 @@ namespace SearchDirLists
 
             int nInitial = nCount % nInterval;
 
-            if (nInitial == 0)
+            if (nInitial <= 0)
             {
                 nInitial = nInterval;
+            }
+
+            if (nCount - nInitial <= 0)
+            {
+                Utilities.Assert(1305.630875, false);
+                return;
             }
 
             for (int i = nCount - nInitial; i > nInterval / 2; i -= nInterval)
@@ -360,6 +379,17 @@ namespace SearchDirLists
 
         public void Step1_OnThread()
         {
+            //Action NestedFn1 = () =>
+            //{
+            //};
+
+            //Action NestedFn2 = () =>
+            //{
+            //};
+
+            //NestedFn1();
+            //NestedFn2();
+
             TreeView treeView = new TreeView();     // sets Level and Next.
 
             if (m_listRootNodes.Count <= 0)
@@ -474,11 +504,11 @@ namespace SearchDirLists
                     }
                     else
                     {
-                        listNodes = listKeep.ToList();   // kick off "else" logic below after deleting child clones
+                        listNodes = listKeep.ToList();  // kick off "else" logic below after deleting child clones
                     }
                 }
 
-                if (listNodes.Count == 1)       // "else"
+                if (listNodes.Count == 1)               // "else"
                 {
                     TreeNode treeNode = listNodes[0];
 
@@ -561,9 +591,7 @@ namespace SearchDirLists
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
-                Utilities.Assert(1305.63143, lvIgnoreItem != null);
-                Utilities.Assert(1305.63143, dictIgnoreNodes.ContainsKey(treeNode) && dictIgnoreNodes[treeNode] != null);
-                nodeDatum.m_lvItem = lvIgnoreItem ?? dictIgnoreNodes[treeNode];
+                nodeDatum.m_lvItem = lvIgnoreItem;
                 Utilities.Assert(1305.6315, nodeDatum.m_lvItem != null);
                 nodeDatum.m_listClones.Remove(treeNode);
             }
@@ -610,7 +638,13 @@ namespace SearchDirLists
 
             if (m_listRootNodes.Count > 0)
             {
-                new AddTreeToList(m_listTreeNodes, listSameVol).Go(m_listRootNodes[0]);
+                int nCount = Utilities.CountNodes(m_listRootNodes);
+                int nCount_A = new AddTreeToList(m_listTreeNodes, listSameVol).Go(m_listRootNodes).Count;
+
+                Utilities.Assert(1305.63183, nCount_A == nCount);
+                Utilities.Assert(1305.63185, m_listTreeNodes.Count == nCount);
+                Utilities.Assert(1305.63187, Utilities.CountNodes(m_listRootNodes) == nCount);
+                Utilities.WriteLine("Step1_OnThread " + nCount);
             }
 
             listSameVol.Sort((x, y) => ((NodeDatum)y.Tag).nTotalLength.CompareTo(((NodeDatum)x.Tag).nTotalLength));
@@ -679,9 +713,18 @@ namespace SearchDirLists
                 {
                     form_treeView_Browse.Enabled = true;
                     form_treeView_Browse.CheckBoxes = m_bCheckboxes;
+
+                    int nCount = Utilities.CountNodes(m_listRootNodes);
+
                     Utilities.Write("A");
                     form_treeView_Browse.Nodes.AddRange(m_listRootNodes.ToArray());
                     Utilities.WriteLine("A");
+
+                    int nCount_A = Utilities.CountNodes(m_listRootNodes);
+
+                    Utilities.Assert(1305.63203, nCount_A == nCount);
+                    Utilities.Assert(1305.63207, form_treeView_Browse.GetNodeCount(includeSubTrees: true) == nCount);
+                    Utilities.WriteLine("Step2_OnForm_A " + nCount);
                 }
 
                 if (m_bThreadAbort || Form1.AppExit)

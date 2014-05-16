@@ -13,6 +13,264 @@ using System.Threading;
 
 namespace SearchDirLists
 {
+    class Blink
+    {
+        System.Windows.Forms.Timer m_timer = null;
+        Control m_defaultControl = null;
+        Color m_clrControlOrig = Color.Empty;
+        Color m_clrBlink = Color.DarkTurquoise;
+        int m_nBlink = 0;
+        Control m_ctlBlink = null;
+        int m_nNumBlinks = 10;
+        ListViewItem m_lvItem = null;
+        bool m_bProgress = false;
+
+        internal void Go(Control ctl = null, ListViewItem lvItem = null, Color? clr = null, bool Once = false, bool bProgress = false)
+        {
+            m_lvItem = lvItem;
+
+            if (m_timer.Enabled)
+            {
+                Stop();
+            }
+
+            if (m_lvItem != null)
+            {
+                m_clrControlOrig = m_lvItem.BackColor;
+                m_lvItem.Selected = false;
+                m_ctlBlink = null;
+            }
+            else
+            {
+                m_ctlBlink = ctl ?? m_defaultControl;
+                m_clrControlOrig = m_ctlBlink.BackColor;
+            }
+
+            m_bProgress = bProgress;
+            m_clrBlink = clr ?? (bProgress ? Color.LightSalmon : Color.Turquoise);
+            m_nBlink = 0;
+            m_nNumBlinks = Once ? 2 : 10;
+            m_timer.Interval = bProgress ? 500 : (Once ? 100 : 50);
+            m_timer.Enabled = true;
+        }
+
+        internal void Stop()
+        {
+            Reset();
+            SetCtlBackColor(m_clrControlOrig);
+        }
+
+        void Reset()
+        {
+            m_timer.Enabled = false;
+            m_nBlink = 0;
+
+            if (m_lvItem != null)
+            {
+                m_lvItem.Selected = true;
+            }
+        }
+
+        void SetCtlBackColor(Color clr)
+        {
+            if (m_lvItem != null)
+            {
+                m_lvItem.BackColor = clr;
+            }
+            else if (m_ctlBlink != null)
+            {
+                m_ctlBlink.BackColor = clr;
+            }
+        }
+
+        internal void Tick()
+        {
+            Color colorChg = m_clrControlOrig;
+
+            if (++m_nBlink >= m_nNumBlinks)
+            {
+                Reset();
+            }
+            else if (((m_lvItem != null) && (m_lvItem.BackColor != m_clrBlink)) ||
+                (m_ctlBlink.BackColor != m_clrBlink))
+            {
+                colorChg = m_clrBlink;
+            }
+
+            SetCtlBackColor(colorChg);
+        }
+
+        internal Blink(System.Windows.Forms.Timer timer, Control defaultControl)
+        {
+            m_timer = timer;
+            m_defaultControl = defaultControl;
+            m_clrControlOrig = defaultControl.BackColor;
+        }
+    }
+
+// SearchDirLists listing file|*.sdl_list|SearchDirLists volume list file|*.sdl_vol|SearchDirLists copy scratchpad file|*.sdl_copy|SearchDirLists ignore list file|*.sdl_ignore
+    abstract class SDL_File : Utilities
+    {
+        public static String BaseFilter = null;
+        public static String FileAndDirListFileFilter = "SearchDirLists listing file|*.sdl_list";
+
+        public readonly String Header = null;
+
+        string m_strDescription = null;
+        public String Description { get { return m_strDescription + " list file"; } }
+
+        string m_strFilter = null;
+        public String Filter { get { return "SearchDirLists " + Description + "|" + m_strFilter; } }
+
+        protected static OpenFileDialog ofd = null;
+        protected static SaveFileDialog sfd = null;
+
+        protected string m_strPrevFile = null;
+
+        internal static void SetFileDialogs(OpenFileDialog ofd_in, SaveFileDialog sfd_in)
+        {
+            ofd = ofd_in;
+            sfd = sfd_in;
+            BaseFilter = ofd.Filter;
+        }
+
+        protected SDL_File(String strHeader, String strFilter, String strDescription)
+        {
+            Utilities.Assert(1303.4311, ofd != null);
+            Utilities.Assert(1303.4312, sfd != null);
+            Header = strHeader;
+            m_strFilter = strFilter;
+            m_strDescription = strDescription;
+        }
+
+        delegate void ReadListItemDelegate(UList<ListViewItem> listItems, String[] strArray);
+        protected virtual void ReadListItem(UList<ListViewItem> listItems, String[] strArray) { listItems.Add(new ListViewItem(strArray)); }
+        internal bool ReadList(ListView.ListViewItemCollection lvItems) { return ReadList(lvItems, ReadListItem); }
+        bool ReadList(ListView.ListViewItemCollection lvItems, ReadListItemDelegate _readListItem)
+        {
+            FileDialog fd = ofd;
+
+            fd.Filter = Filter + "|" + BaseFilter;
+            fd.FileName = Path.GetFileNameWithoutExtension(m_strPrevFile);
+            fd.InitialDirectory = Path.GetDirectoryName(m_strPrevFile);
+
+            if (fd.ShowDialog() != DialogResult.OK)
+            {
+                return false;
+            }
+
+            m_strPrevFile = fd.FileName;
+
+            UList<ListViewItem> listItems = new UList<ListViewItem>();
+
+            using (StreamReader sr = File.OpenText(fd.FileName))
+            {
+                String strLine = sr.ReadLine();
+
+                if (strLine == Header)
+                {
+                    while ((strLine = sr.ReadLine()) != null)
+                    {
+                        _readListItem(listItems, strLine.Split('\t'));
+                    }
+                }
+            }
+
+            if (listItems.Count > 0)
+            {
+                lvItems.Clear();
+                lvItems.AddRange(listItems.ToArray());
+            }
+            else
+            {
+                MessageBox.Show("Not a valid " + Description + ".".PadRight(100), "Load " + Description);
+            }
+
+            return (listItems.Count > 0);
+        }
+
+        delegate String WriteListItemDelegate(int nIndex, String str);
+        protected virtual String WriteListItem(int nIndex, String str) { return str; }
+        internal bool WriteList(ListView.ListViewItemCollection lvItems) { return WriteList(lvItems, WriteListItem); }
+        bool WriteList(ListView.ListViewItemCollection lvItems, WriteListItemDelegate _writeListItem)
+        {
+            FileDialog fd = sfd;
+
+            fd.Filter = Filter + "|" + BaseFilter;
+            fd.FileName = Path.GetFileNameWithoutExtension(m_strPrevFile);
+            fd.InitialDirectory = Path.GetDirectoryName(m_strPrevFile);
+
+            if (fd.ShowDialog() != DialogResult.OK)
+            {
+                return false;
+            }
+
+            m_strPrevFile = fd.FileName;
+
+            if ((File.Exists(fd.FileName))
+                && (MessageBox.Show((fd.FileName + " already exists. Overwrite?").PadRight(100), Description, MessageBoxButtons.YesNo)
+                != System.Windows.Forms.DialogResult.Yes))
+            {
+                return false;
+            }
+
+            using (StreamWriter sw = File.CreateText(fd.FileName))
+            {
+                sw.WriteLine(Header);
+
+                foreach (ListViewItem lvItem in lvItems)
+                {
+                    int nIx = 0;
+
+                    foreach (ListViewItem.ListViewSubItem lvSubitem in lvItem.SubItems)
+                    {
+                        sw.Write(_writeListItem(nIx, lvSubitem.Text) + '\t');
+                        ++nIx;
+                    }
+
+                    sw.WriteLine();
+                }
+            }
+
+            return true;
+        }
+    }
+
+    class SDL_VolumeFile : SDL_File
+    {
+        internal SDL_VolumeFile() : base(m_str_VOLUME_LIST_HEADER, "*.sdl_vol", "volume") { }
+
+        protected override void ReadListItem(UList<ListViewItem> listItems, String[] strArray)
+        {
+            if (strArray.Length < 4)
+            {
+                return;
+            }
+
+            strArray[3] = "Using file.";
+
+            if (File.Exists(strArray[2]) == false)
+            {
+                strArray[2] = Path.Combine(Path.GetDirectoryName(m_strPrevFile), Path.GetFileName(strArray[2]));
+
+                if (File.Exists(strArray[2]) == false)
+                {
+                    strArray[3] = "No file. Will create.";
+                }
+            }
+
+            strArray[1] = strArray[1].TrimEnd(Path.DirectorySeparatorChar);
+            listItems.Add(new ListViewItem(strArray));
+        }
+
+        protected override String WriteListItem(int nIndex, String str)
+        {
+            return (nIndex == 1) ? str.TrimEnd(Path.DirectorySeparatorChar) : str;
+        }
+    }
+    class SDL_CopyFile : SDL_File { internal SDL_CopyFile() : base(m_str_COPYDIRS_LIST_HEADER, "*.sdl_copy", "copy") { } }
+    class SDL_IgnoreFile : SDL_File { internal SDL_IgnoreFile() : base(m_str_IGNORE_LIST_HEADER, "*.sdl_ignore", "ignore") { } }
+
     static class ExtensionMethods
     {
         internal static bool IsChildOf(this TreeNode child, TreeNode treeNode)
@@ -90,7 +348,7 @@ namespace SearchDirLists
         {
             if (args == null)
             {
-                Utilities.Assert(1303.43015, false);
+                Utilities.Assert(1303.4301, false);
                 return;
             }
 
@@ -179,6 +437,7 @@ namespace SearchDirLists
         internal const String m_str_IGNORE_LIST_HEADER = m_str_HEADER + " IGNORE LIST";
         internal const String m_str_USING_FILE = "Using file.";
         internal const String m_str_SAVED = "Saved.";
+        internal const String m_str_NOTSAVED = "Not saved.";
         internal const int nColLENGTH = 7;
         internal const int nColLENGTH_01 = 5;
         internal const int nColLENGTH_LV = 4;
@@ -216,7 +475,12 @@ namespace SearchDirLists
                 return false;
             }
 
-            String strError = strError_in ?? "Assertion failed at location " + nLocation + ".";
+            String strError = "Assertion failed at location " + nLocation + ".";
+
+            if (StrValid(strError_in))
+            {
+                strError += "\n\nAdditional information: " + strError_in;
+            }
 
             Utilities.WriteLine(strError);
 
@@ -249,7 +513,7 @@ namespace SearchDirLists
 
         static void Assert_A(object strError)
         {
-            static_MessageboxCallback(((String)strError) + " Please discuss this bug at http://sourceforge.net/projects/searchdirlists/.", "SearchDirLists Assertion Failure");
+            static_MessageboxCallback(((String)strError).PadRight(100) + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.", "SearchDirLists Assertion Failure");
             static_bAssertUp = false;
         }
 
@@ -439,7 +703,7 @@ namespace SearchDirLists
 
             foreach (TreeNode treeNode in listNodes)
             {
-                nCount += CountNodes(treeNode, bNextNode:false);
+                nCount += CountNodes(treeNode, bNextNode: false);
             }
 
             return nCount;

@@ -113,206 +113,6 @@ namespace SearchDirLists
             }
         }
 
-        class Blink
-        {
-            System.Windows.Forms.Timer m_timer = null;
-            Control m_defaultControl = null;
-            Color m_clrControlOrig = Color.Empty;
-            Color m_clrBlink = Color.DarkTurquoise;
-            int m_nBlink = 0;
-            Control m_ctlBlink = null;
-            int m_nNumBlinks = 10;
-            ListViewItem m_lvItem = null;
-            bool m_bProgress = false;
-
-            internal void Go(Control ctl = null, ListViewItem lvItem = null, Color? clr = null, bool Once = false, bool bProgress = false)
-            {
-                m_lvItem = lvItem;
-
-                if (m_timer.Enabled)
-                {
-                    Stop();
-                }
-
-                if (m_lvItem != null)
-                {
-                    m_clrControlOrig = m_lvItem.BackColor;
-                    m_lvItem.Selected = false;
-                    m_ctlBlink = null;
-                }
-                else
-                {
-                    m_ctlBlink = ctl ?? m_defaultControl;
-                    m_clrControlOrig = m_ctlBlink.BackColor;
-                }
-
-                m_bProgress = bProgress;
-                m_clrBlink = clr ?? (bProgress ? Color.LightSalmon : Color.Turquoise);
-                m_nBlink = 0;
-                m_nNumBlinks = Once ? 2 : 10;
-                m_timer.Interval = bProgress ? 500 : (Once ? 100 : 50);
-                m_timer.Enabled = true;
-            }
-
-            internal void Stop()
-            {
-                Reset();
-                SetCtlBackColor(m_clrControlOrig);
-            }
-
-            void Reset()
-            {
-                m_timer.Enabled = false;
-                m_nBlink = 0;
-
-                if (m_lvItem != null)
-                {
-                    m_lvItem.Selected = true;
-                }
-            }
-
-            void SetCtlBackColor(Color clr)
-            {
-                if (m_lvItem != null)
-                {
-                    m_lvItem.BackColor = clr;
-                }
-                else if (m_ctlBlink != null)
-                {
-                    m_ctlBlink.BackColor = clr;
-                }
-            }
-
-            internal void Tick()
-            {
-                Color colorChg = m_clrControlOrig;
-
-                if (++m_nBlink >= m_nNumBlinks)
-                {
-                    Reset();
-                }
-                else if (((m_lvItem != null) && (m_lvItem.BackColor != m_clrBlink)) ||
-                    (m_ctlBlink.BackColor != m_clrBlink))
-                {
-                    colorChg = m_clrBlink;
-                }
-
-                SetCtlBackColor(colorChg);
-            }
-
-            internal Blink(System.Windows.Forms.Timer timer, Control defaultControl)
-            {
-                m_timer = timer;
-                m_defaultControl = defaultControl;
-                m_clrControlOrig = defaultControl.BackColor;
-            }
-        }
-
-        partial class SOTFile       // SearchDirLists files|*.sot|
-        {
-            internal static void WriteList(ListView.ListViewItemCollection lvItems, StreamWriter sw, String strHeader = null)
-            {
-                sw.WriteLine(strHeader ?? Utilities.m_str_VOLUME_LIST_HEADER);
-
-                foreach (ListViewItem lvItem in lvItems)
-                {
-                    int nIx = 0;
-
-                    foreach (ListViewItem.ListViewSubItem lvSubitem in lvItem.SubItems)
-                    {
-                        String str = lvSubitem.Text;
-
-                        if (nIx == 1)
-                        {
-                            str = str.TrimEnd(Path.DirectorySeparatorChar);
-                        }
-
-                        sw.Write(str + '\t');
-                    }
-
-                    sw.WriteLine();
-                }
-            }
-
-            internal static bool ReadList(ListView.ListViewItemCollection lvItems, StreamReader sr, String strDir_in = null, String strHeader = null)
-            {
-                UList<ListViewItem> listItems = new UList<ListViewItem>();
-                String strLine = sr.ReadLine();
-
-                do
-                {
-                    if (strLine == null)
-                    {
-                        break;
-                    }
-
-                    if ((strHeader ?? (Utilities.m_str_VOLUME_LIST_HEADER_01 + Utilities.m_str_VOLUME_LIST_HEADER)).Contains(strLine) == false)
-                    {
-                        break;
-                    }
-
-                    while ((strLine = sr.ReadLine()) != null)
-                    {
-                        String[] strArray = strLine.Split('\t');
-
-                        if (strHeader == null)
-                        {
-                            if (strArray.Length < 4)
-                            {
-                                break;
-                            }
-
-                            strArray[3] = "Using file.";
-
-                            if (File.Exists(strArray[2]) == false)
-                            {
-                                strArray[2] = Path.Combine(strDir_in ?? Path.GetTempPath(), Path.GetFileName(strArray[2]));
-
-                                if (File.Exists(strArray[2]) == false)
-                                {
-                                    strArray[3] = "No file. Will create.";
-                                }
-                            }
-
-                            strArray[1] = strArray[1].TrimEnd(Path.DirectorySeparatorChar);
-                        }
-
-                        listItems.Add(new ListViewItem(strArray));
-                    }
-                }
-                while (false);
-
-                if (listItems.Count > 0)
-                {
-                    lvItems.Clear();
-                    lvItems.AddRange(listItems.ToArray());
-                }
-                else
-                {
-                    if (strHeader == null)
-                    {
-                        MessageBox.Show("Not a valid volume list file.".PadRight(100), "Load Volume List");
-                    }
-                    else
-                    {
-                        MessageBox.Show("Not a valid file.".PadRight(100));
-                    }
-                }
-
-                return (listItems.Count > 0);
-            }
-
-            internal bool Save(String strFile, ListView.ListViewItemCollection lvItems)
-            {
-                return false;
-            }
-
-            internal bool Load(String strFile, ListView.ListViewItemCollection lvItems)
-            {
-                return false;
-            }
-        }
-
         internal Form1()
         {
             static_form = this;
@@ -335,6 +135,7 @@ namespace SearchDirLists
             m_clrVolGroupOrig = form_lblVolGroup.BackColor;
             m_bCheckboxes = form_treeView_Browse.CheckBoxes;
             Utilities.SetMessageBoxDelegate(MessageboxCallback);
+            SDL_File.SetFileDialogs(openFileDialog1, saveFileDialog1);
         }
 
         void ComboBoxItemsInsert(ComboBox comboBox, String strText = null, bool bTrimText = true)
@@ -1546,20 +1347,15 @@ namespace SearchDirLists
 
         void form_btnLoadCopyDirs_Click(object sender, EventArgs e)
         {
-            openFileDialog1.InitialDirectory = saveFileDialog1.InitialDirectory;
-            openFileDialog1.FileName = saveFileDialog1.FileName;
+            ListView lv = new ListView();   // Hack: check changed event loads the real listviewer
 
-            if (openFileDialog1.ShowDialog() != DialogResult.OK)
+            if (new SDL_CopyFile().ReadList(lv.Items) == false)
             {
                 return;
             }
 
-            ListView lv = new ListView();   // Hack: check changed event loads the real listviewer
-
-            using (StreamReader fs = File.OpenText(openFileDialog1.FileName))
-            {
-                SOTFile.ReadList(lv.Items, fs, Path.GetDirectoryName(openFileDialog1.FileName), Utilities.m_str_COPYDIRS_LIST_HEADER);
-            }
+            int nTotal = 0;
+            int nLoaded = 0;
 
             foreach (ListViewItem lvItem in lv.Items)
             {
@@ -1568,28 +1364,23 @@ namespace SearchDirLists
                 if (treeNode != null)
                 {
                     treeNode.Checked = true;
+                    ++nLoaded;
                 }
+
+                ++nTotal;
+            }
+
+            if (nLoaded != nTotal)
+            {
+                MessageBox.Show((nLoaded + " of " + nTotal + " scratchpad folders found in the tree.").PadRight(100), "Load copy scratchpad");
             }
         }
 
         void form_btnLoadIgnoreList_Click(object sender, EventArgs e)
         {
-            openFileDialog1.InitialDirectory = saveFileDialog1.InitialDirectory;
-            openFileDialog1.FileName = saveFileDialog1.FileName;
-
-            if (openFileDialog1.ShowDialog() != DialogResult.OK)
+            if (new SDL_IgnoreFile().ReadList(form_lvIgnoreList.Items) == false)
             {
                 return;
-            }
-
-            using (StreamReader fs = File.OpenText(openFileDialog1.FileName))
-            {
-                SOTFile.ReadList(form_lvIgnoreList.Items, fs, Path.GetDirectoryName(openFileDialog1.FileName), Utilities.m_str_IGNORE_LIST_HEADER);
-            }
-
-            foreach (ListViewItem lvItem in form_lvIgnoreList.Items)
-            {
-                lvItem.Name = lvItem.Text;
             }
 
             if (form_lvIgnoreList.Items.Count > 0)
@@ -1599,27 +1390,21 @@ namespace SearchDirLists
             }
         }
 
-        void form_btn_LoadVolumeList_Click(object sender, EventArgs e)
+        void form_btnLoadVolumeList_Click(object sender, EventArgs e)
         {
-            InterruptTreeTimerWithAction(new BoolAction(form_btn_LoadVolumeList_Click));
+            InterruptTreeTimerWithAction(new BoolAction(form_btnLoadVolumeList_Click));
         }
 
-        bool form_btn_LoadVolumeList_Click()
+        bool form_btnLoadVolumeList_Click()
         {
-            openFileDialog1.InitialDirectory = saveFileDialog1.InitialDirectory;
-            openFileDialog1.FileName = saveFileDialog1.FileName;
-
-            if (openFileDialog1.ShowDialog() != DialogResult.OK)
+            if (new SDL_VolumeFile().ReadList(form_lvVolumesMain.Items) == false)
             {
                 return false;
             }
 
-            if (new SOTFile().Load(openFileDialog1.FileName, form_lvVolumesMain.Items) == false)
+            foreach (ListViewItem lvItem in form_lvIgnoreList.Items)
             {
-                using (StreamReader fs = File.OpenText(openFileDialog1.FileName))
-                {
-                    SOTFile.ReadList(form_lvVolumesMain.Items, fs, Path.GetDirectoryName(openFileDialog1.FileName));
-                }
+                lvItem.Name = lvItem.Text;
             }
 
             if (form_lvVolumesMain.Items.Count > 0)
@@ -1628,7 +1413,7 @@ namespace SearchDirLists
                 form_tabControl.SelectedTab = form_tabPageBrowse;
             }
 
-            return true;
+            return true;    // this kicks off the tree
         }
 
         void form_btnModifyFile_Click(object sender, EventArgs e)
@@ -1654,6 +1439,17 @@ namespace SearchDirLists
 
             String strVolumeName_orig = form_lvVolumesMain.SelectedItems[0].Text;
             String strVolumeName = null;
+            String strFileName = form_lvVolumesMain.SelectedItems[0].SubItems[2].Text;
+
+            if (m_saveDirListings != null)
+            {
+                try { using (new StreamReader(strFileName)) { } }
+                catch
+                {
+                    MessageBox.Show("Currently saving listings and can't open file yet. Please wait.".PadRight(100), "Modify file");
+                    return false;
+                }
+            }
 
             {
                 InputBox inputBox = new InputBox();
@@ -1715,7 +1511,6 @@ namespace SearchDirLists
                 return false;
             }
 
-            String strFileName = form_lvVolumesMain.SelectedItems[0].SubItems[2].Text;
             StringBuilder sbFileConts = new StringBuilder();
             bool bDriveLetter = Utilities.StrValid(strDriveLetter);
 
@@ -1821,6 +1616,8 @@ namespace SearchDirLists
 
         bool form_btnSaveAs_Click()
         {
+            saveFileDialog1.Filter = SDL_File.FileAndDirListFileFilter + "|" + SDL_File.BaseFilter;
+
             if (Utilities.StrValid(m_strSaveAs))
             {
                 saveFileDialog1.InitialDirectory = Path.GetDirectoryName(m_strSaveAs);
@@ -1851,28 +1648,17 @@ namespace SearchDirLists
                 return;
             }
 
-            if (saveFileDialog1.ShowDialog() != DialogResult.OK)
-            {
-                return;
-            }
-
-            if ((File.Exists(saveFileDialog1.FileName))
-                && (MessageBox.Show(this, (saveFileDialog1.FileName + " already exists. Overwrite?").PadRight(100), "Save folders selected for copy", MessageBoxButtons.YesNo)
-                != System.Windows.Forms.DialogResult.Yes))
-            {
-                return;
-            }
-
-            using (StreamWriter fs = File.CreateText(saveFileDialog1.FileName))
-            {
-                SOTFile.WriteList(form_lvCopyList.Items, fs, Utilities.m_str_COPYDIRS_LIST_HEADER);
-            }
+            new SDL_CopyFile().WriteList(form_lvCopyList.Items);
         }
 
         void form_btnSaveDirLists_Click(object sender, EventArgs e)
         {
             timer_DoTree.Stop();
-            DoSaveDirListings();
+
+            if (DoSaveDirListings() == false)   // cancelled
+            {
+                RestartTreeTimer();
+            }
         }
 
         void form_btnSaveDirLists_EnabledChanged(object sender, EventArgs e)
@@ -1888,52 +1674,19 @@ namespace SearchDirLists
                 return;
             }
 
-            if (saveFileDialog1.ShowDialog() != DialogResult.OK)
+            new SDL_IgnoreFile().WriteList(form_lvIgnoreList.Items);
+        }
+
+        void form_btnSaveVolumeList_Click(object sender = null, EventArgs e = null)
+        {
+            if (form_lvVolumesMain.Items.Count == 0)
             {
+                m_blink.Go(ctl: form_lvVolumesMain, clr: Color.Red, Once: true);
+                Utilities.Assert(1300.13103, false);    // shouldn't even be hit: this button gets dimmed
                 return;
             }
 
-            if ((File.Exists(saveFileDialog1.FileName))
-                && (MessageBox.Show(this, (saveFileDialog1.FileName + " already exists. Overwrite?").PadRight(100), "Save ignore list", MessageBoxButtons.YesNo)
-                != System.Windows.Forms.DialogResult.Yes))
-            {
-                return;
-            }
-
-            using (StreamWriter fs = File.CreateText(saveFileDialog1.FileName))
-            {
-                SOTFile.WriteList(form_lvIgnoreList.Items, fs, Utilities.m_str_IGNORE_LIST_HEADER);
-            }
-        }
-
-        void form_btnSaveVolumeList_Click(object sender, EventArgs e)
-        {
-            InterruptTreeTimerWithAction(new BoolAction(form_btnSaveVolumeList_Click));
-        }
-
-        bool form_btnSaveVolumeList_Click()
-        {
-            if (saveFileDialog1.ShowDialog() != DialogResult.OK)
-            {
-                return false;
-            }
-
-            if ((File.Exists(saveFileDialog1.FileName))
-                && (MessageBox.Show(this, (saveFileDialog1.FileName + " already exists. Overwrite?").PadRight(100), "Volume List Save As", MessageBoxButtons.YesNo)
-                != System.Windows.Forms.DialogResult.Yes))
-            {
-                return false;
-            }
-
-            if (new SOTFile().Save(saveFileDialog1.FileName, form_lvVolumesMain.Items) == false)
-            {
-                using (StreamWriter fs = File.CreateText(saveFileDialog1.FileName))
-                {
-                    SOTFile.WriteList(form_lvVolumesMain.Items, fs);
-                }
-            }
-
-            return false;   // Saving the volume list doesn't compel redrawing the tree.
+            new SDL_VolumeFile().WriteList(form_lvVolumesMain.Items);
         }
 
         void form_btnSearchFoldersAndFiles_Click(object sender, EventArgs e)
@@ -2640,18 +2393,19 @@ namespace SearchDirLists
                 return;
             }
 
-            if (new ListView[] { form_lvClones, form_lvSameVol }.Contains(nodeDatum.m_lvItem.ListView) == false) // click-again lists
+            if (nodeDatum.m_lvItem.ListView == form_lvIgnoreList)
             {
-                // ignore list
                 foreach (ListViewItem lvItem in nodeDatum.m_lvItem.ListView.SelectedItems)
                 {
                     lvItem.Selected = false;
                 }
             }
-
-            nodeDatum.m_lvItem.Selected = true;
-            nodeDatum.m_lvItem.Focused = true;
-            nodeDatum.m_lvItem.ListView.TopItem = nodeDatum.m_lvItem;
+            else if (nodeDatum.m_lvItem.Selected == false)
+            {
+                nodeDatum.m_lvItem.Selected = true;
+                nodeDatum.m_lvItem.Focused = true;
+                nodeDatum.m_lvItem.ListView.TopItem = nodeDatum.m_lvItem;
+            }
         }
 
         void form_treeView_Browse_KeyPress(object sender, KeyPressEventArgs e)

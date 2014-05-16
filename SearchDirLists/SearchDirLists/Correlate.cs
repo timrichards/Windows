@@ -276,15 +276,12 @@ namespace SearchDirLists
                 nInitial = nInterval;
             }
 
-            if (nCount - nInitial <= 0)
+            if (nCount - nInitial > 0)
             {
-                Utilities.Assert(1305.630875, false);
-                return;
-            }
-
-            for (int i = nCount - nInitial; i > nInterval / 2; i -= nInterval)
-            {
-                InsertSizeMarker.Go(listLVitems, i, bUnique);
+                for (int i = nCount - nInitial; i > nInterval / 2; i -= nInterval)
+                {
+                    InsertSizeMarker.Go(listLVitems, i, bUnique);
+                }
             }
 
             InsertSizeMarker.Go(listLVitems, 0, bUnique);            // Enter the Zeroth

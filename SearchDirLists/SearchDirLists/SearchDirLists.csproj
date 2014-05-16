@@ -24,7 +24,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>37</ApplicationRevision>
+    <ApplicationRevision>44</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -184,6 +184,32 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ico_alpha_cmDisplayStartmenuForm_il_6_16x16.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <FileAssociation Include=".sdl_copy">
+      <Visible>False</Visible>
+      <Description>SearchDirLists copy scratchpad</Description>
+      <Progid>2</Progid>
+      <DefaultIcon>ico_alpha_cmDisplayStartmenuForm_il_6_16x16.ico</DefaultIcon>
+    </FileAssociation>
+    <FileAssociation Include=".sdl_ignore">
+      <Visible>False</Visible>
+      <Description>SearchDirLists ignore list</Description>
+      <Progid>3</Progid>
+      <DefaultIcon>ico_alpha_cmDisplayStartmenuForm_il_6_16x16.ico</DefaultIcon>
+    </FileAssociation>
+    <FileAssociation Include=".sdl_list">
+      <Visible>False</Visible>
+      <Description>SearchDirLists file and directory listing</Description>
+      <Progid>0</Progid>
+      <DefaultIcon>ico_alpha_cmDisplayStartmenuForm_il_6_16x16.ico</DefaultIcon>
+    </FileAssociation>
+    <FileAssociation Include=".sdl_vol">
+      <Visible>False</Visible>
+      <Description>SearchDirLists volumes</Description>
+      <Progid>1</Progid>
+      <DefaultIcon>ico_alpha_cmDisplayStartmenuForm_il_6_16x16.ico</DefaultIcon>
+    </FileAssociation>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

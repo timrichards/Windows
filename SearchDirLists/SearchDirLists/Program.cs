@@ -11,11 +11,16 @@ namespace SearchDirLists
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(String[] args)
         {
             if (Environment.OSVersion.Version.Major >= 6) SetProcessDPIAware();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            if ((args != null) && (args.Length > 0))
+            {
+            }
+
             Application.Run(new Form1());
         }
 

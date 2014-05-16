@@ -442,7 +442,7 @@ namespace SearchDirLists
                         treeNode = new TreeNode(strShortPath);
                     }
 
-                    Utilities.Assert(1301.2305, treeNode.Text == strShortPath);
+                    //Utilities.Assert(1301.2305, treeNode.Text == strShortPath, "\"" + treeNode.Text + "\" != \"" + strShortPath + "\""); not true for non-root
                     Utilities.Assert(1301.2306, treeNode.SelectedImageIndex == -1);     // sets the bitmap size
                     treeNode.SelectedImageIndex = -1;
                     treeNode.Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo, m_nLength);  // this is almost but not quite always newly assigned here.

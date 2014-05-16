@@ -518,7 +518,7 @@ namespace SearchDirLists
             this.form_btnLoadVolumeList.TabIndex = 13;
             this.form_btnLoadVolumeList.Text = "Load";
             this.form_btnLoadVolumeList.UseVisualStyleBackColor = true;
-            this.form_btnLoadVolumeList.Click += new System.EventHandler(this.form_btn_LoadVolumeList_Click);
+            this.form_btnLoadVolumeList.Click += new System.EventHandler(this.form_btnLoadVolumeList_Click);
             // 
             // form_btnModifyFile
             // 

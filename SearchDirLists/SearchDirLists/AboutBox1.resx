@@ -124,6 +124,8 @@
     <value>Search Directory Listings
 -------------------------
 
+Rapidly saves directory listings of your hard drives all at once, then correlates identical folders so you can see what's duplicated among drives. Listings can be searched when volumes are off site. Volumes can be grouped to see what data is at risk if a group is lost. Has a compare mode for when folders vary; shows graphical disk usage. Can read any volume mounted in Windows Explorer; supports long path names.
+
 Background colors:
 	Yellow: subfolder of a blue, safe cloned folder
 	Light red: parent folder of a red, solitary folder
@@ -135,6 +137,8 @@ Foreground colors:
 	Black: Folder with no immediate files (has no correlation)
 	Light grey: Folder with &lt; 100Kb of data
 	Dark grey: Ignored folder
+	[Dark orange: Last remaining folder with a clone that became ignored.] TBD
+	[Dark blue: Folders with a clone that became ignored.] TBD
 
 List features:
 	Multiselect: volume list; ignore list
@@ -153,7 +157,7 @@ Ignore list
 	Items here unclutter the corollary lists on the right side.
 	Loose checkbox: ignore corollaries of ignored folders even if they're not immediately represented by the ignore list
 
-SearchDirLists can rapidly save the directory listings of all your hard drives all at once. It then scans those listings and correlates "clones": which are folders with identical contents. It determines this by noting what the total size of the folder is, how many subfolders with files it has, and how many files there are total in the directory. It does not correlate by name of folder. (To save your first directory listing go to that heading down a few paragraphs.)
+SearchDirLists determines cloned folders by noting what the total size of the folder is, how many subfolders with files it has, and how many files there are total in the directory. It does not correlate by name of folder. (To save your first directory listing go to that heading down a few paragraphs.)
 
 Once done with the correlation, in less than half a minute, an explorer treeview appears along the left side of the Browse tab view, and three listviews show up on the right: at the bottom a listview of clones codes all the folders that are safely backed up onto other drives in blue. Above that those folders that are in the same volume group or on the same drive are in a brick red color: these are clones, but they are more likely to get lost if something happens to a drive. Finally, above that, there is the list of folders which didn't have any corollary. These folders are the most likely to get lost.
 
@@ -163,7 +167,7 @@ There is a compare mode for directories that did not correlate. Click on the fir
 
 At the lower left there is provision for a list of common folders to ignore, such as Windows. By clicking the Loose checkbox, all folders correlating to any that match subfolders listed will also be greyed out and removed from the clone corollaries. This unclutters the lists at the risk of overlooking a potentially important folder.
 
-Also at the lower left there is a list of specific folders you want copied. Both lists can be saved and reloaded later. The copy list is added to by checking the box next to the folder you want copied in the treeview.
+Also at the lower left there is a list of specific folders you want copied. The copy list is added to by checking the box next to the folder you want copied in the treeview. Both lists can be saved and reloaded later.
 
 Under the first top tab, Volumes, you can change the drive letter and the nickname of directory listing files by clicking the Modify File button. You can group multiple listings under the same volume group and thus change the correlation. You can save this list of directory listings and have multiple copies: some with different volume groups yet having the same directory listing files.
 
@@ -181,7 +185,7 @@ Drilling down and the coming back up the treemap produces a spinning ball to sho
 
 You can drill down using the treemap itself. To do this you click and darken a folder in the treemap. The direct subfolders are bordered in black. You can go beyond this and continue clicking down from the current view. Click the title of the folder in the toolip that appears in the search box.
 
-Full credit in the code to Bernhard Seifert, GPL v2, for the treemap, from WinDirStat, 2004.
+I cribbed Bernhard Seifert's 2004 WinDirStat code to arrange the rectangles in the treemap, licensed under GPLv2.
 
 Please make suggestions and bug reports! Start a discussion at http://sourceforge.net/projects/searchdirlists/
 

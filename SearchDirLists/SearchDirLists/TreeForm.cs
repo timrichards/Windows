@@ -26,7 +26,7 @@ namespace SearchDirLists
             m_list_lvIgnore.Clear();
         }
 
-        void LoadIgnoreList()
+        void LoadlvIgnoreList()
         {
             Utilities.Assert(1304.5301, m_list_lvIgnore.Count == 0);
 
@@ -49,7 +49,7 @@ namespace SearchDirLists
 
             Utilities.Assert(1304.5302, m_listTreeNodes.Count == 0);
             Utilities.Assert(1304.5303, InvokeRequired);
-            Utilities.CheckAndInvoke(this, new Action(LoadIgnoreList));
+            Utilities.CheckAndInvoke(this, new Action(LoadlvIgnoreList));
 
             Correlate correlate = new Correlate(form_treeView_Browse, m_dictNodes,
                 form_lvClones, form_lvSameVol, form_lvUnique,

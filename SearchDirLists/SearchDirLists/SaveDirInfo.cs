@@ -396,7 +396,7 @@ namespace SearchDirLists
             if (m_saveDirListings.FilesWritten > 0)
             {
                 RestartTreeTimer();
-                form_tabControl.SelectedTab = form_tabPageBrowse;
+                form_tabControlMain.SelectedTab = form_tabPageBrowse;
             }
 
             MessageBox.Show(("Completed. " + m_saveDirListings.FilesWritten + " files written.").PadRight(100), "Save Directory Listings");

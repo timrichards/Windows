@@ -108,7 +108,7 @@ namespace SearchDirLists
             bool bImmediateFiles = false;
             bool bVolumeView = false;
 
-            do
+            do      // this is a while-false breakout
             {
                 {
                     NodeDatum nodeDatum = ((NodeDatum)m_treeNode.Tag);
@@ -543,7 +543,7 @@ namespace SearchDirLists
 
             bool bVolumeNode = false;
 
-            do
+            do      // this is a while-false breakout
             {
                 if ((bStart == false) || ((parent_in.Tag is RootNodeDatum) == false))
                 {

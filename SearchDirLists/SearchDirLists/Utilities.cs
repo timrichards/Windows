@@ -112,20 +112,21 @@ namespace SearchDirLists
     abstract class SDL_File : Utilities
     {
         public static String BaseFilter = null;
-        public static String FileAndDirListFileFilter = "SearchDirLists listing file|*.sdl_list";
+        public static String FileAndDirListFileFilter = "SearchDirLists listing file|*." + m_strFILEEXT_Listing;
 
         public readonly String Header = null;
 
-        string m_strDescription = null;
+        String m_strDescription = null;
         public String Description { get { return m_strDescription + " list file"; } }
 
-        string m_strFilter = null;
-        public String Filter { get { return "SearchDirLists " + Description + "|" + m_strFilter; } }
+        String m_strExt = null;
+        public String Filter { get { return "SearchDirLists " + Description + "|*." + m_strExt; } }
 
         protected static OpenFileDialog ofd = null;
         protected static SaveFileDialog sfd = null;
 
-        protected string m_strPrevFile = null;
+        protected String m_strPrevFile = null;
+        protected String m_strFileNotDialog = null;
 
         internal static void SetFileDialogs(OpenFileDialog ofd_in, SaveFileDialog sfd_in)
         {
@@ -134,23 +135,19 @@ namespace SearchDirLists
             BaseFilter = ofd.Filter;
         }
 
-        protected SDL_File(String strHeader, String strFilter, String strDescription)
+        protected SDL_File(String strHeader, String strExt, String strDescription)
         {
             Utilities.Assert(1303.4311, ofd != null);
             Utilities.Assert(1303.4312, sfd != null);
             Header = strHeader;
-            m_strFilter = strFilter;
+            m_strExt = strExt;
             m_strDescription = strDescription;
         }
 
-        delegate void ReadListItemDelegate(UList<ListViewItem> listItems, String[] strArray);
-        protected virtual void ReadListItem(UList<ListViewItem> listItems, String[] strArray) { listItems.Add(new ListViewItem(strArray)); }
-        internal bool ReadList(ListView.ListViewItemCollection lvItems) { return ReadList(lvItems, ReadListItem); }
-        bool ReadList(ListView.ListViewItemCollection lvItems, ReadListItemDelegate _readListItem)
+        bool ShowDialog(FileDialog fd)
         {
-            FileDialog fd = ofd;
-
             fd.Filter = Filter + "|" + BaseFilter;
+            fd.FilterIndex = 0;
             fd.FileName = Path.GetFileNameWithoutExtension(m_strPrevFile);
             fd.InitialDirectory = Path.GetDirectoryName(m_strPrevFile);
 
@@ -159,11 +156,22 @@ namespace SearchDirLists
                 return false;
             }
 
-            m_strPrevFile = fd.FileName;
+            m_strFileNotDialog = m_strPrevFile = fd.FileName;
+            return true;
+        }
+
+        protected virtual void ReadListItem(UList<ListViewItem> listItems, String[] strArray) { listItems.Add(new ListViewItem(strArray)); }
+
+        internal bool ReadList(ListView.ListViewItemCollection lvItems)
+        {
+            if ((m_strFileNotDialog == null) && (ShowDialog(ofd) == false))
+            {
+                return false;
+            }
 
             UList<ListViewItem> listItems = new UList<ListViewItem>();
 
-            using (StreamReader sr = File.OpenText(fd.FileName))
+            using (StreamReader sr = File.OpenText(m_strFileNotDialog))
             {
                 String strLine = sr.ReadLine();
 
@@ -171,7 +179,7 @@ namespace SearchDirLists
                 {
                     while ((strLine = sr.ReadLine()) != null)
                     {
-                        _readListItem(listItems, strLine.Split('\t'));
+                        ReadListItem(listItems, strLine.Split('\t'));
                     }
                 }
             }
@@ -189,32 +197,23 @@ namespace SearchDirLists
             return (listItems.Count > 0);
         }
 
-        delegate String WriteListItemDelegate(int nIndex, String str);
         protected virtual String WriteListItem(int nIndex, String str) { return str; }
-        internal bool WriteList(ListView.ListViewItemCollection lvItems) { return WriteList(lvItems, WriteListItem); }
-        bool WriteList(ListView.ListViewItemCollection lvItems, WriteListItemDelegate _writeListItem)
+
+        internal bool WriteList(ListView.ListViewItemCollection lvItems)
         {
-            FileDialog fd = sfd;
-
-            fd.Filter = Filter + "|" + BaseFilter;
-            fd.FileName = Path.GetFileNameWithoutExtension(m_strPrevFile);
-            fd.InitialDirectory = Path.GetDirectoryName(m_strPrevFile);
-
-            if (fd.ShowDialog() != DialogResult.OK)
+            if (ShowDialog(sfd) == false)
             {
                 return false;
             }
 
-            m_strPrevFile = fd.FileName;
-
-            if ((File.Exists(fd.FileName))
-                && (MessageBox.Show((fd.FileName + " already exists. Overwrite?").PadRight(100), Description, MessageBoxButtons.YesNo)
+            if ((File.Exists(m_strPrevFile))
+                && (MessageBox.Show((m_strPrevFile + " already exists. Overwrite?").PadRight(100), Description, MessageBoxButtons.YesNo)
                 != System.Windows.Forms.DialogResult.Yes))
             {
                 return false;
             }
 
-            using (StreamWriter sw = File.CreateText(fd.FileName))
+            using (StreamWriter sw = File.CreateText(m_strPrevFile))
             {
                 sw.WriteLine(Header);
 
@@ -224,7 +223,7 @@ namespace SearchDirLists
 
                     foreach (ListViewItem.ListViewSubItem lvSubitem in lvItem.SubItems)
                     {
-                        sw.Write(_writeListItem(nIx, lvSubitem.Text) + '\t');
+                        sw.Write(WriteListItem(nIx, lvSubitem.Text) + '\t');
                         ++nIx;
                     }
 
@@ -238,7 +237,7 @@ namespace SearchDirLists
 
     class SDL_VolumeFile : SDL_File
     {
-        internal SDL_VolumeFile() : base(m_str_VOLUME_LIST_HEADER, "*.sdl_vol", "volume") { }
+        internal SDL_VolumeFile(String strFile = null) : base(m_str_VOLUME_LIST_HEADER, m_strFILEEXT_Volume, "volume") { m_strFileNotDialog = strFile; }
 
         protected override void ReadListItem(UList<ListViewItem> listItems, String[] strArray)
         {
@@ -268,8 +267,8 @@ namespace SearchDirLists
             return (nIndex == 1) ? str.TrimEnd(Path.DirectorySeparatorChar) : str;
         }
     }
-    class SDL_CopyFile : SDL_File { internal SDL_CopyFile() : base(m_str_COPYDIRS_LIST_HEADER, "*.sdl_copy", "copy") { } }
-    class SDL_IgnoreFile : SDL_File { internal SDL_IgnoreFile() : base(m_str_IGNORE_LIST_HEADER, "*.sdl_ignore", "ignore") { } }
+    class SDL_CopyFile : SDL_File { internal SDL_CopyFile() : base(m_str_COPYDIRS_LIST_HEADER, m_strFILEEXT_Copy, "copy") { } }
+    class SDL_IgnoreFile : SDL_File { internal SDL_IgnoreFile(String strFile = null) : base(m_str_IGNORE_LIST_HEADER, m_strFILEEXT_Ignore, "ignore") { m_strFileNotDialog = strFile; } }
 
     static class ExtensionMethods
     {
@@ -454,6 +453,10 @@ namespace SearchDirLists
         internal const String m_strLINETYPE_Error_Dir = "R";
         internal const String m_strLINETYPE_Error_File = "r";
         internal const String m_strLINETYPE_Length = "L";
+        internal const String m_strFILEEXT_Listing = "sdl_list";
+        internal const String m_strFILEEXT_Volume = "sdl_vol";
+        internal const String m_strFILEEXT_Copy = "sdl_copy";
+        internal const String m_strFILEEXT_Ignore = "sdl_ignore";
 
         static MessageBoxDelegate static_MessageboxCallback = null;
         protected MessageBoxDelegate m_MessageboxCallback = null;

@@ -12,7 +12,6 @@ using System.Collections.Concurrent;
 namespace SearchDirLists
 {
     delegate void TreeStatusDelegate(TreeNode rootNode = null, LVvolStrings volStrings = null);
-    delegate void TreeDoneDelegate();
     delegate void TreeSelectStatusDelegate(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem lvVol = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null);
     delegate void TreeSelectDoneDelegate(bool bSecondComparePane);
 
@@ -295,7 +294,7 @@ namespace SearchDirLists
     class Tree : TreeBase
     {
         UList<LVvolStrings> m_list_lvVolStrings = new UList<LVvolStrings>();
-        TreeDoneDelegate m_doneCallback = null;
+        Action m_doneCallback = null;
         ConcurrentBag<TreeRootNodeBuilder> m_cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
         Thread m_thread = null;
         bool m_bThreadAbort = false;
@@ -717,7 +716,7 @@ namespace SearchDirLists
 
         internal Tree(ListView.ListViewItemCollection lvVolItems,
             SortedDictionary<HashKey, UList<TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
-            TreeStatusDelegate statusCallback, TreeDoneDelegate doneCallback)
+            TreeStatusDelegate statusCallback, Action doneCallback)
             : base(dictNodes, dictDriveInfo, statusCallback)
         {
             foreach (ListViewItem lvItem in lvVolItems)

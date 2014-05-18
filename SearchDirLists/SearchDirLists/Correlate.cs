@@ -10,6 +10,15 @@ namespace SearchDirLists
 {
     class Correlate : Utilities
     {
+        static Correlate static_this = null;
+
+        public static void ClearMem()
+        {
+            Utilities.Assert(1305.6324, static_this == null);
+
+            static_this = null;
+        }
+
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
         TreeView form_treeView_Browse = null;
         SortedDictionary<HashKey, UList<TreeNode>> m_dictNodes = null;
@@ -28,7 +37,6 @@ namespace SearchDirLists
         Dictionary<TreeNode, ListViewItem> dictIgnoreNodes = new Dictionary<TreeNode, ListViewItem>();
         bool m_bLoose = false;
         bool m_bThreadAbort = false;
-        static Correlate static_this = null;
 
         public static void Abort()
         {
@@ -376,17 +384,6 @@ namespace SearchDirLists
 
         public void Step1_OnThread()
         {
-            //Action NestedFn1 = () =>
-            //{
-            //};
-
-            //Action NestedFn2 = () =>
-            //{
-            //};
-
-            //NestedFn1();
-            //NestedFn2();
-
             TreeView treeView = new TreeView();     // sets Level and Next.
 
             if (m_listRootNodes.Count <= 0)
@@ -688,24 +685,23 @@ namespace SearchDirLists
 
         public void Step2_OnForm()
         {
-            Step2_OnForm_A();
-            static_this = null;
-        }
-
-        void Step2_OnForm_A()
-        {
-            if (m_bThreadAbort || Form1.AppExit)
+            Utilities.Closure(new Action(() =>
             {
-                return;
-            }
+                if (m_bThreadAbort || Form1.AppExit)
+                {
+                    return;
+                }
 
-            if (form_treeView_Browse.Enabled == false)      // stays enabled when Correlate() is called directly
-            {
-                form_treeView_Browse.Nodes.Clear();
-            }
+                if (form_treeView_Browse.Enabled == false)      // stays enabled when Correlate() is called directly
+                {
+                    form_treeView_Browse.Nodes.Clear();
+                }
 
-            if (m_listRootNodes.Count > 0)
-            {
+                if (m_listRootNodes.Count <= 0)
+                {
+                    return;
+                }
+
                 if (form_treeView_Browse.Enabled == false)
                 {
                     form_treeView_Browse.Enabled = true;
@@ -765,7 +761,9 @@ namespace SearchDirLists
                 {
                     form_treeView_Browse.SelectedNode = m_listRootNodes[0];
                 }
-            }
+            }));
+
+            static_this = null;
         }
     }
 }

@@ -11,10 +11,56 @@ namespace SearchDirLists
 {
     delegate void MessageBoxDelegate(String strMessage, String strTitle = null);
     delegate bool BoolAction();
-    delegate void ArgAction(object[] args = null);
 
     partial class Form1 : Form
     {
+        TreeNode m_nodeCompare1 = null;
+        TreeNode m_nodeCompare2 = null;
+        TreeNode[] m_arrayTreeFound = null;
+        Dictionary<TreeNode, TreeNode> dictCompareDiffs = new Dictionary<TreeNode, TreeNode>();
+        UList<TreeNode> m_listTreeNodes_Compare1 = new UList<TreeNode>();
+        UList<TreeNode> m_listTreeNodes_Compare2 = new UList<TreeNode>();
+        List<TreeNode> m_listHistory = new List<TreeNode>();
+        int m_nIxHistory = -1;
+
+        // Memory allocations occur just below all partial class Form1 : Form declarations, then ClearMem_...() for each.
+        // Declarations continue below these two ClearMem() methods.
+
+        void ClearMem_Form1()
+        {
+            Utilities.Assert(1300.1318, form_lvClones.Items.Count == 0);
+            Utilities.Assert(1300.1319, form_lvSameVol.Items.Count == 0);
+            Utilities.Assert(1300.1320, form_lvUnique.Items.Count == 0);
+
+            form_lvClones.Items.Clear();
+            form_lvSameVol.Items.Clear();
+            form_lvUnique.Items.Clear();
+
+            m_nodeCompare1 = null;
+            m_nodeCompare2 = null;
+            m_arrayTreeFound = null;
+            dictCompareDiffs.Clear();
+            m_listTreeNodes_Compare1.Clear();
+            m_listTreeNodes_Compare2.Clear();
+            m_listHistory.Clear();
+            m_nIxHistory = -1;
+            form_lvFiles.Items.Clear();
+            form_lvFileCompare.Items.Clear();
+            form_lvDetail.Items.Clear();
+            form_lvDetailVol.Items.Clear();
+            form_tmapUserCtl.Clear();
+            form_treeView_Browse.Nodes.Clear();
+        }
+
+        void ClearMem()
+        {
+            Correlate.ClearMem();
+            ClearMem_Form1();
+            ClearMem_SaveDirListings();
+            ClearMem_Search();
+            ClearMem_TreeForm();
+        }
+
         String m_strCompare1 = null;
         String m_strMaybeFile = null;
         String m_strVolumeName = null;
@@ -31,24 +77,17 @@ namespace SearchDirLists
         bool m_bPutPathInFindEditBox = false;
         bool m_bCheckboxes = false;
 
-        TreeNode m_nodeCompare1 = null;
-        TreeNode m_nodeCompare2 = null;
-        TreeNode[] m_arrayTreeFound = null;
-
         Control m_ctlLastFocusForCopyButton = null;
         Control m_ctlLastSearchSender = null;
-        Dictionary<TreeNode, TreeNode> dictCompareDiffs = new Dictionary<TreeNode, TreeNode>();
-        UList<TreeNode> m_listTreeNodes_Compare1 = new UList<TreeNode>();
-        UList<TreeNode> m_listTreeNodes_Compare2 = new UList<TreeNode>();
 
-        List<TreeNode> m_listHistory = new List<TreeNode>();
-        int m_nIxHistory = -1;
         bool m_bHistoryDefer = false;
         bool m_bTreeViewIndirectSelChange = false;
         bool m_bChkCompare1IndirectCheckChange = false;
         bool m_bNavDropDown = false;
+        bool m_btmapUserCtl_MouseDown = false;
         TabPage m_FileListTabPageBeforeCompare = null;
         bool m_bKillTree = true;
+        bool m_bRestartTreeTimer = false;
 
         static bool m_bAppExit = false;
         public static bool AppExit { get { return m_bAppExit; } }
@@ -235,12 +274,12 @@ namespace SearchDirLists
 
             if (e.KeyChar == '.')
             {
-                form_btnCompareNext_Click(sender, e);
+                form_btnCompareNext_Click();
                 e.Handled = true;
             }
             else if (e.KeyChar == ',')
             {
-                form_btnComparePrev_Click(sender, e);
+                form_btnComparePrev_Click();
                 e.Handled = true;
             }
             else if (e.KeyChar == '!')
@@ -699,9 +738,35 @@ namespace SearchDirLists
             }
         }
 
+        void LoadCopyScratchPad(ListView lvFake)
+        {
+            int nTotal = 0;
+            int nLoaded = 0;
+
+            foreach (ListViewItem lvItem in lvFake.Items)
+            {
+                TreeNode treeNode = GetNodeByPath(lvItem.SubItems[1].Text, form_treeView_Browse);
+
+                if (treeNode != null)
+                {
+                    treeNode.Checked = true;
+                    ++nLoaded;
+                }
+
+                ++nTotal;
+            }
+
+            if (nLoaded != nTotal)
+            {
+                MessageBox.Show((nLoaded + " of " + nTotal + " scratchpad folders found in the tree.").PadRight(100), "Load copy scratchpad");
+                form_tabControlCopyIgnore.SelectedTab = form_tabPageCopy;
+                m_blink.Go(form_lvCopyList, clr: Color.Yellow, Once: true);
+            }
+        }
+
         void LoadIgnoreList(String strFile = null)
         {
-            if (new SDL_IgnoreFile(strFile).ReadList(form_lvIgnoreList.Items) == false)
+            if (new SDL_IgnoreFile(strFile).ReadList(form_lvIgnoreList) == false)
             {
                 return;
             }
@@ -715,7 +780,7 @@ namespace SearchDirLists
 
         bool LoadVolumeList(String strFile = null)
         {
-            if (new SDL_VolumeFile(strFile).ReadList(form_lvVolumesMain.Items) == false)
+            if (new SDL_VolumeFile(strFile).ReadList(form_lvVolumesMain) == false)
             {
                 return false;
             }
@@ -852,6 +917,7 @@ namespace SearchDirLists
 
         void RestartTreeTimer()
         {
+            m_bRestartTreeTimer = true;
             timer_DoTree.Stop();
             timer_DoTree.Start();
         }
@@ -1129,11 +1195,11 @@ namespace SearchDirLists
             RestartTreeTimer();
         }
 
-        void form_btnCompare_Click(object sender, EventArgs e)
+        void form_btnCompare_Click(object sender = null, EventArgs e = null)
         {
             if (m_bCompareMode)
             {
-                form_btnCompareNext_Click(sender, e);
+                form_btnCompareNext_Click();
             }
             else if (form_chkCompare1.Checked == false)
             {
@@ -1266,7 +1332,7 @@ namespace SearchDirLists
             }
         }
 
-        void form_btnCompareNext_Click(object sender, EventArgs e)
+        void form_btnCompareNext_Click(object sender = null, EventArgs e = null)
         {
             if (dictCompareDiffs.Count == 0)
             {
@@ -1277,7 +1343,7 @@ namespace SearchDirLists
             CompareNav();
         }
 
-        void form_btnComparePrev_Click(object sender, EventArgs e)
+        void form_btnComparePrev_Click(object sender = null, EventArgs e = null)
         {
             if (dictCompareDiffs.Count == 0)
             {
@@ -1381,35 +1447,21 @@ namespace SearchDirLists
             RestartTreeTimer();
         }
 
-        void form_btnLoadCopyDirs_Click(object sender, EventArgs e)
+        void form_btnLoadCopyScratchpad_Click(object sender, EventArgs e)
         {
-            ListView lv = new ListView();   // Hack: check changed event loads the real listviewer
+            ListView lvFake = new ListView();   // Hack: check changed event loads the real listviewer
 
-            if (new SDL_CopyFile().ReadList(lv.Items) == false)
+            foreach (ColumnHeader col in form_lvCopyList.Columns)
+            {
+                lvFake.Columns.Add(new ColumnHeader());
+            }
+
+            if (new SDL_CopyFile().ReadList(lvFake) == false)
             {
                 return;
             }
 
-            int nTotal = 0;
-            int nLoaded = 0;
-
-            foreach (ListViewItem lvItem in lv.Items)
-            {
-                TreeNode treeNode = GetNodeByPath(lvItem.SubItems[1].Text, form_treeView_Browse);
-
-                if (treeNode != null)
-                {
-                    treeNode.Checked = true;
-                    ++nLoaded;
-                }
-
-                ++nTotal;
-            }
-
-            if (nLoaded != nTotal)
-            {
-                MessageBox.Show((nLoaded + " of " + nTotal + " scratchpad folders found in the tree.").PadRight(100), "Load copy scratchpad");
-            }
+            LoadCopyScratchPad(lvFake);
         }
 
         void form_btnLoadIgnoreList_Click(object sender, EventArgs e)
@@ -1579,26 +1631,18 @@ namespace SearchDirLists
             return true;
         }
 
-        void form_btnNavigate_Click(object sender, EventArgs e)
+        void form_btnNavigate_Click(object sender, EventArgs e = null)
         {
             DoSearch(sender);
         }
 
         void form_btnPath_Click(object sender, EventArgs e)
         {
-            InterruptTreeTimerWithAction(new BoolAction(form_btnPath_Click));
-        }
-
-        bool form_btnPath_Click()
-        {
-            if (folderBrowserDialog1.ShowDialog() != DialogResult.OK)
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
-                return false;
+                ComboBoxItemsInsert(form_cbPath);
+                m_strPath = form_cbPath.Text = folderBrowserDialog1.SelectedPath;
             }
-
-            ComboBoxItemsInsert(form_cbPath);
-            m_strPath = form_cbPath.Text = folderBrowserDialog1.SelectedPath;
-            return true;
         }
 
         void form_btnRemoveVolume_Click(object sender, EventArgs e)
@@ -1622,11 +1666,6 @@ namespace SearchDirLists
 
         void form_btnSaveAs_Click(object sender, EventArgs e)
         {
-            InterruptTreeTimerWithAction(new BoolAction(form_btnSaveAs_Click));
-        }
-
-        bool form_btnSaveAs_Click()
-        {
             saveFileDialog1.Filter = SDL_File.FileAndDirListFileFilter + "|" + SDL_File.BaseFilter;
 
             if (Utilities.StrValid(m_strSaveAs))
@@ -1634,21 +1673,17 @@ namespace SearchDirLists
                 saveFileDialog1.InitialDirectory = Path.GetDirectoryName(m_strSaveAs);
             }
 
-            if (saveFileDialog1.ShowDialog() != DialogResult.OK)
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                return false;
+                ComboBoxItemsInsert(form_cbSaveAs);
+                m_strSaveAs = form_cbSaveAs.Text = saveFileDialog1.FileName;
+
+                if (File.Exists(m_strSaveAs))
+                {
+                    form_cbVolumeName.Text = null;
+                    form_cbPath.Text = null;
+                }
             }
-
-            ComboBoxItemsInsert(form_cbSaveAs);
-            m_strSaveAs = form_cbSaveAs.Text = saveFileDialog1.FileName;
-
-            if (File.Exists(m_strSaveAs))
-            {
-                form_cbVolumeName.Text = null;
-                form_cbPath.Text = null;
-            }
-
-            return true;
         }
 
         void form_btnSaveCopyDirs_Click(object sender, EventArgs e)
@@ -1717,9 +1752,7 @@ namespace SearchDirLists
             if (m_nTreeFindTextChanged == 0)
             {
                 m_blink.Go(bProgress: true);
-                SearchFiles(form_cbNavigate.Text,
-                    new SearchResultsDelegate(SearchResultsCallback),
-                    bSearchFilesOnly: (sender == form_btnSearchFiles));
+                SearchFiles(form_cbNavigate.Text, bSearchFilesOnly: (sender == form_btnSearchFiles));
             }
             else
             {
@@ -1748,7 +1781,7 @@ namespace SearchDirLists
         {
             if (m_bCompareMode)
             {
-                form_btnComparePrev_Click(sender, e);
+                form_btnComparePrev_Click();
             }
             else
             {
@@ -1871,7 +1904,7 @@ namespace SearchDirLists
             if (new Keys[] { Keys.Enter, Keys.Return }.Contains((Keys)e.KeyChar))
             {
                 m_bPutPathInFindEditBox = false;    // because the search term may not be the complete path: Volume Group gets updated though.
-                form_btnNavigate_Click(sender, e);
+                form_btnNavigate_Click(sender);
                 e.Handled = true;
             }
         }
@@ -2232,7 +2265,7 @@ namespace SearchDirLists
                 }
                 else
                 {
-                    form_btnCompare_Click(sender, e);
+                    form_btnCompare_Click();
                 }
             }
         }
@@ -2252,8 +2285,20 @@ namespace SearchDirLists
             form_tmapUserCtl.ClearSelection();
         }
 
+        void form_tmapUserCtl_MouseDown(object sender, MouseEventArgs e)
+        {
+            m_btmapUserCtl_MouseDown = true;
+        }
+
         void form_tmapUserCtl_MouseUp(object sender, MouseEventArgs e)
         {
+            if (m_btmapUserCtl_MouseDown == false)
+            {
+                return;
+            }
+
+            m_btmapUserCtl_MouseDown = false;
+
             TreeNode treeNode = form_tmapUserCtl.DoToolTip(e.Location);
 
             if (treeNode == null)
@@ -2296,6 +2341,11 @@ namespace SearchDirLists
 
         void form_treeView_Browse_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            if (m_bRestartTreeTimer)
+            {
+                return;
+            }
+
             if (m_bHistoryDefer == false)
             {
                 m_bHistoryDefer = true;
@@ -2360,7 +2410,6 @@ namespace SearchDirLists
                     strVolume = strVolume.Substring(0, strVolume.IndexOf(Path.DirectorySeparatorChar));
                     strDirAndVolume += " (on " + strVolume + ")";
                 }
-
 
                 if (rootNode.Checked)   // hack to denote second compare pane
                 {
@@ -2444,7 +2493,7 @@ namespace SearchDirLists
             }
             else
             {
-                form_btnCompare_Click(sender, e);          // enter second path and start Compare mode
+                form_btnCompare_Click();                    // enter second path and start Compare mode
             }
         }
 
@@ -2472,34 +2521,32 @@ namespace SearchDirLists
             Utilities.Assert(0, false, "DEBUG is defined.");
             Utilities.Assert(0, System.Diagnostics.Debugger.IsAttached, "Debugger is not attached!");
 #else
-            do      // this is a while-false breakout
+            Utilities.Closure(new Action(() =>
             {
                 if (Utilities.Assert(0, (System.Diagnostics.Debugger.IsAttached == false), "Debugger is attached but DEBUG is not defined.") == false)
                 {
-                    break;
+                    return;
                 }
 
                 ActivationArguments args = AppDomain.CurrentDomain.SetupInformation.ActivationArguments;
 
                 if (Utilities.Assert(1300.13165, args != null) == false)
                 {
-                    break;
+                    return;
                 }
 
                 String[] arrArgs = args.ActivationData;
 
                 if (Utilities.Assert(1300.13165, arrArgs.Length > 0) == false)
                 {
-                    break;
+                    return;
                 }
 
                 String strFile = arrArgs[0];
 
-                switch (Path.GetExtension(strFile))
+                switch (Path.GetExtension(strFile).Substring(1))
                 {
-                    case ".application": break;
-
-                    case "." + Utilities.m_strFILEEXT_Listing:
+                    case Utilities.m_strFILEEXT_Listing:
                     {
                         form_cbSaveAs.Text = strFile;
                         form_btnAddVolume_Click();
@@ -2508,7 +2555,7 @@ namespace SearchDirLists
                         break;
                     }
 
-                    case "." + Utilities.m_strFILEEXT_Volume:
+                    case Utilities.m_strFILEEXT_Volume:
                     {
                         if (LoadVolumeList(strFile))
                         {
@@ -2518,14 +2565,17 @@ namespace SearchDirLists
                         break;
                     }
 
-                    case "." + Utilities.m_strFILEEXT_Copy:
+                    case Utilities.m_strFILEEXT_Copy:
                     {
+                        form_tabControlMain.SelectedTab = form_tabPageBrowse;
+                        form_tabControlCopyIgnore.SelectedTab = form_tabPageCopy;
+                        m_blink.Go(form_lvCopyList, clr: Color.Yellow, Once: true);
                         MessageBox.Show("The Copy scratchpad cannot be loaded with no directory listings.", "Load Copy scratchpad externally");
                         Application.Exit();
                         break;
                     }
 
-                    case "." + Utilities.m_strFILEEXT_Ignore:
+                    case Utilities.m_strFILEEXT_Ignore:
                     {
                         LoadIgnoreList(strFile);
                         form_tabControlMain.SelectedTab = form_tabPageBrowse;
@@ -2533,7 +2583,8 @@ namespace SearchDirLists
                         break;
                     }
                 }
-            } while (false);
+            }));
+
 #endif
         }
 
@@ -2559,6 +2610,7 @@ namespace SearchDirLists
 
             DoTree(bKill: m_bKillTree);
             m_bKillTree = true;
+            m_bRestartTreeTimer = false;
         }
     }
 }

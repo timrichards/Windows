@@ -108,7 +108,7 @@ namespace SearchDirLists
             bool bImmediateFiles = false;
             bool bVolumeView = false;
 
-            do      // this is a while-false breakout
+            Utilities.Closure(new Action(() =>
             {
                 {
                     NodeDatum nodeDatum = ((NodeDatum)m_treeNode.Tag);
@@ -118,7 +118,7 @@ namespace SearchDirLists
                     if ((bVolumeView == false) && ((nodeRet = FindMapNode(nodeDatum.TreeMapFiles, pt)) != null))
                     {
                         bImmediateFiles = true;
-                        break;
+                        return;
                     }
                 }
 
@@ -126,7 +126,7 @@ namespace SearchDirLists
 
                 if ((nodeRet = FindMapNode(m_prevNode_A, pt)) != null)
                 {
-                    break;
+                    return;
                 }
 
                 TreeNode nodeUplevel = (m_prevNode != null) ? m_prevNode.Parent : null;
@@ -137,7 +137,7 @@ namespace SearchDirLists
                     if ((nodeRet = FindMapNode(nodeUplevel, pt)) != null)
                     {
                         bFoundUplevel = true;
-                        break;
+                        return;
                     }
 
                     nodeUplevel = nodeUplevel.Parent;
@@ -145,17 +145,16 @@ namespace SearchDirLists
 
                 if (bFoundUplevel)
                 {
-                    break;
+                    return;
                 }
 
                 if ((nodeRet = FindMapNode(m_treeNode, pt)) != null)
                 {
-                    break;
+                    return;
                 }
 
                 nodeRet = m_treeNode;
-            }
-            while (false);
+            }));
 
             if ((bVolumeView == false) && (bImmediateFiles == false))
             {
@@ -543,18 +542,18 @@ namespace SearchDirLists
 
             bool bVolumeNode = false;
 
-            do      // this is a while-false breakout
+            Utilities.Closure(new Action(() =>
             {
                 if ((bStart == false) || ((parent_in.Tag is RootNodeDatum) == false))
                 {
-                    break;
+                    return;
                 }
 
                 RootNodeDatum rootNodeDatum = (RootNodeDatum)parent_in.Tag;
 
                 if (rootNodeDatum.VolumeView == false)
                 {
-                    break;
+                    return;
                 }
 
                 NodeDatum nodeDatumFree = new NodeDatum();
@@ -600,8 +599,7 @@ namespace SearchDirLists
                 parent.Tag = nodeDatumVolume;
                 bVolumeNode = true;
                 rootNodeDatum.VolumeView = true;
-            }
-            while (false);
+            }));
 
             if (bVolumeNode == false)
             {

@@ -290,14 +290,14 @@ namespace SearchDirLists
             this.form_chkSpacer.UseVisualStyleBackColor = true;
             this.form_chkSpacer.Paint += new System.Windows.Forms.PaintEventHandler(this.form_chkSpacer_Paint);
             // 
-            // form_tabControl
+            // form_tabControlMain
             // 
             this.form_tabControlMain.Controls.Add(this.form_tabPageVolumes);
             this.form_tabControlMain.Controls.Add(this.form_tabPageBrowse);
             this.form_tabControlMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.form_tabControlMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_tabControlMain.Location = new System.Drawing.Point(0, 0);
-            this.form_tabControlMain.Name = "form_tabControl";
+            this.form_tabControlMain.Name = "form_tabControlMain";
             this.form_tabControlMain.SelectedIndex = 0;
             this.form_tabControlMain.Size = new System.Drawing.Size(1196, 621);
             this.form_tabControlMain.TabIndex = 0;
@@ -893,7 +893,7 @@ namespace SearchDirLists
             this.form_btnLoadCopyDirs.TabIndex = 1;
             this.form_btnLoadCopyDirs.Text = "Load";
             this.form_btnLoadCopyDirs.UseVisualStyleBackColor = true;
-            this.form_btnLoadCopyDirs.Click += new System.EventHandler(this.form_btnLoadCopyDirs_Click);
+            this.form_btnLoadCopyDirs.Click += new System.EventHandler(this.form_btnLoadCopyScratchpad_Click);
             this.form_btnLoadCopyDirs.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_tabPageIgnore
@@ -1133,6 +1133,7 @@ namespace SearchDirLists
             this.form_tmapUserCtl.TabIndex = 0;
             this.form_tmapUserCtl.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             this.form_tmapUserCtl.Leave += new System.EventHandler(this.form_tmapUserCtl_Leave);
+            this.form_tmapUserCtl.MouseDown += new System.Windows.Forms.MouseEventHandler(this.form_tmapUserCtl_MouseDown);
             this.form_tmapUserCtl.MouseUp += new System.Windows.Forms.MouseEventHandler(this.form_tmapUserCtl_MouseUp);
             this.form_tmapUserCtl.Resize += new System.EventHandler(this.ClearToolTip);
             // 

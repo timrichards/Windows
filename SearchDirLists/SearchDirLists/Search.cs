@@ -10,8 +10,6 @@ using System.Collections.Concurrent;
 namespace SearchDirLists
 {
     delegate void SearchStatusDelegate(String strSearch, LVvolStrings volStrings, List<SearchResultsDir> listResults, bool bFirst = false, bool bLast = false);
-    delegate void SearchDoneDelegate();
-    delegate void SearchResultsDelegate();
 
     class SearchResultsDir
     {
@@ -238,12 +236,12 @@ namespace SearchDirLists
         bool m_bThreadAbort = false;
         ConcurrentBag<SearchFile> m_cbagWorkers = new ConcurrentBag<SearchFile>();
         SearchStatusDelegate m_statusCallback = null;
-        SearchDoneDelegate m_doneCallback = null;
+        Action m_doneCallback = null;
         UList<LVvolStrings> m_list_lvVolStrings = new UList<LVvolStrings>();
 
         internal Search(ListView.ListViewItemCollection lvVolItems, String strSearch, bool bCaseSensitive,
             SearchFile.FolderSpecialHandling folderHandling, bool bSearchFilesOnly, String strCurrentNode,
-            SearchStatusDelegate statusCallback, SearchDoneDelegate doneCallback)
+            SearchStatusDelegate statusCallback, Action doneCallback)
         {
             foreach (ListViewItem lvItem in lvVolItems)
             {
@@ -314,7 +312,17 @@ namespace SearchDirLists
         List<SearchResults> m_listSearchResults = new List<SearchResults>();
         SearchResults m_firstSearchResults = null;
         SearchResults m_lastSearchResults = null;
-        SearchResultsDelegate m_searchResultsCallback = null;
+
+        void ClearMem_Search()
+        {
+            Utilities.Assert(1307.83025, m_search == null);
+
+            m_search = null;
+
+            m_listSearchResults.Clear();
+            m_firstSearchResults = null;
+            m_lastSearchResults = null;
+        }
 
         bool NavToFile(TreeView treeView)
         {
@@ -434,38 +442,7 @@ namespace SearchDirLists
             return treeNode;
         }
 
-        void SearchResultsCallback()
-        {
-            if (m_listSearchResults.Count > 0)
-            {
-                m_bFileFound = true;
-
-                TreeView treeView = form_treeView_Browse;
-
-                if (m_bCompareMode)
-                {
-                    treeView = (m_ctlLastFocusForCopyButton is TreeView) ? (TreeView)m_ctlLastFocusForCopyButton : form_treeCompare1;
-
-                    if (NavToFile(treeView) == false)
-                    {
-                        if (NavToFile((treeView == form_treeCompare1) ? form_treeCompare2 : form_treeCompare1) == false)
-                        {
-                            SearchResultsCallback_Fail();
-                        }
-                    }
-                }
-                else
-                {
-                    NavToFile(treeView);
-                }
-            }
-            else
-            {
-                SearchResultsCallback_Fail();
-            }
-        }
-
-        void SearchResultsCallback_Fail()
+        void SearchFail()
         {
             m_nTreeFindTextChanged = 0;
             m_bFileFound = false;
@@ -509,7 +486,7 @@ namespace SearchDirLists
                 return;
             }
 
-            if (InvokeRequired) { Invoke(new SearchDoneDelegate(SearchDoneCallback)); return; }
+            if (InvokeRequired) { Invoke(new Action(SearchDoneCallback)); return; }
 
             m_search = null;
             m_listSearchResults.Sort((x, y) => (x.VolStrings.VolumeName.CompareTo(y.VolStrings.VolumeName)));
@@ -526,17 +503,36 @@ namespace SearchDirLists
                 m_lastSearchResults = null;
             }
 
-            if (m_searchResultsCallback != null)    // torturing the UX
+            if (m_listSearchResults.Count > 0)
             {
-                m_searchResultsCallback();
-            }
+                m_bFileFound = true;
 
-            m_searchResultsCallback = null;
+                TreeView treeView = form_treeView_Browse;
+
+                if (m_bCompareMode)
+                {
+                    treeView = (m_ctlLastFocusForCopyButton is TreeView) ? (TreeView)m_ctlLastFocusForCopyButton : form_treeCompare1;
+
+                    if (NavToFile(treeView) == false)
+                    {
+                        if (NavToFile((treeView == form_treeCompare1) ? form_treeCompare2 : form_treeCompare1) == false)
+                        {
+                            SearchFail();
+                        }
+                    }
+                }
+                else
+                {
+                    NavToFile(treeView);
+                }
+            }
+            else
+            {
+                SearchFail();
+            }
         }
 
-        private void SearchFiles(String strSearch,
-            SearchResultsDelegate searchResultsCallback,
-            bool bKill = false, bool bSearchFilesOnly = false)
+        private void SearchFiles(String strSearch, bool bKill = false, bool bSearchFilesOnly = false)
         {
             if (m_search != null)
             {
@@ -564,7 +560,6 @@ namespace SearchDirLists
             }
 
             m_listSearchResults = new List<SearchResults>();
-            m_searchResultsCallback = searchResultsCallback;
 
             SearchFile.FolderSpecialHandling folderHandling = SearchFile.FolderSpecialHandling.None;    // not used
             String strCurrentNode = null;
@@ -576,7 +571,7 @@ namespace SearchDirLists
 
             m_search = new Search(form_lvVolumesMain.Items, strSearch, strSearch.ToLower() != strSearch,
                 folderHandling, bSearchFilesOnly, strCurrentNode,
-                new SearchStatusDelegate(SearchStatusCallback), new SearchDoneDelegate(SearchDoneCallback));
+                new SearchStatusDelegate(SearchStatusCallback), new Action(SearchDoneCallback));
             m_search.DoThreadFactory();
         }
 
@@ -643,12 +638,12 @@ namespace SearchDirLists
                         else
                         {
                             Utilities.Assert(1307.8306, m_listSearchResults.Count <= 0);
-                            SearchResultsCallback_Fail();
+                            SearchFail();
                         }
                     }
                     else
                     {
-                        SearchFiles(form_cbNavigate.Text, new SearchResultsDelegate(SearchResultsCallback));
+                        SearchFiles(form_cbNavigate.Text);
                     }
                 }
 

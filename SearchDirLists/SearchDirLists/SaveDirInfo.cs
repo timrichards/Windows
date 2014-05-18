@@ -10,7 +10,6 @@ using System.Collections.Concurrent;
 namespace SearchDirLists
 {
     delegate void SaveDirListingsStatusDelegate(int nIndex, String strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0);
-    delegate void SaveDirListingsDoneDelegate();
 
     class SaveDirListing : Utilities
     {
@@ -268,7 +267,7 @@ namespace SearchDirLists
     class SaveDirListings : Utilities
     {
         SaveDirListingsStatusDelegate m_statusCallback = null;
-        SaveDirListingsDoneDelegate m_doneCallback = null;
+        Action m_doneCallback = null;
         Thread m_thread = null;
         bool m_bThreadAbort = false;
         ConcurrentBag<SaveDirListing> m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
@@ -279,7 +278,7 @@ namespace SearchDirLists
 
         internal SaveDirListings(ListView.ListViewItemCollection lvVolItems,
                 SaveDirListingsStatusDelegate statusCallback,
-                SaveDirListingsDoneDelegate doneCallback)
+                Action doneCallback)
         {
             foreach (ListViewItem lvItem in lvVolItems)
             {
@@ -352,6 +351,13 @@ namespace SearchDirLists
     {
         SaveDirListings m_saveDirListings = null;
 
+        void ClearMem_SaveDirListings()
+        {
+            Utilities.Assert(1306.73045, m_saveDirListings == null);
+
+            m_saveDirListings = null;
+        }
+
         void SaveDirListingsStatusCallback(int nIndex, String strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0)
         {
             if (AppExit || (m_saveDirListings == null) || m_saveDirListings.IsAborted)
@@ -391,7 +397,7 @@ namespace SearchDirLists
                 return;
             }
 
-            if (InvokeRequired) { Invoke(new SaveDirListingsDoneDelegate(SaveDirListingsDoneCallback)); return; }
+            if (InvokeRequired) { Invoke(new Action(SaveDirListingsDoneCallback)); return; }
 
             if (m_saveDirListings.FilesWritten > 0)
             {
@@ -413,7 +419,7 @@ namespace SearchDirLists
 
             m_saveDirListings = new SaveDirListings(form_lvVolumesMain.Items,
                 new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback),
-                new SaveDirListingsDoneDelegate(SaveDirListingsDoneCallback));
+                new Action(SaveDirListingsDoneCallback));
             m_saveDirListings.DoThreadFactory();
             return true;
         }

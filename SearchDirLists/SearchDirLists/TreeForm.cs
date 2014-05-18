@@ -9,15 +9,30 @@ namespace SearchDirLists
 {
     partial class Form1 : Form
     {
-        SortedDictionary<HashKey, UList<TreeNode>> m_dictNodes = new SortedDictionary<HashKey, UList<TreeNode>>();
-        Dictionary<String, String> m_dictDriveInfo = new Dictionary<string, string>();
-        UList<TreeNode> m_listTreeNodes = new UList<TreeNode>();
-        List<TreeNode> m_listRootNodes = new List<TreeNode>();
         List<ListViewItem> m_list_lvIgnore = new List<ListViewItem>();
         Tree m_tree = null;
+        Dictionary<String, String> m_dictDriveInfo = new Dictionary<String, String>();
+        UList<TreeNode> m_listTreeNodes = new UList<TreeNode>();
+        List<TreeNode> m_listRootNodes = new List<TreeNode>();
+        SortedDictionary<HashKey, UList<TreeNode>> m_dictNodes = new SortedDictionary<HashKey, UList<TreeNode>>();
+
         Thread m_threadCorrelate = null;
         Thread m_threadSelect = null;
         Thread m_threadSelectCompare = null;
+
+        void ClearMem_TreeForm()
+        {
+            Utilities.Assert(1304.5308, m_list_lvIgnore.Count == 0);
+            Utilities.Assert(1304.5309, m_tree == null);
+
+            m_list_lvIgnore.Clear();
+            m_tree = null;
+
+            m_dictDriveInfo.Clear();
+            m_listTreeNodes.Clear();
+            m_listRootNodes.Clear();
+            m_dictNodes.Clear();        // m_dictNodes is tested to recreate tree.
+        }
 
         void TreeCleanup()
         {
@@ -26,17 +41,22 @@ namespace SearchDirLists
             m_list_lvIgnore.Clear();
         }
 
-        void LoadlvIgnoreList()
+        void TreeDoneCallback()
         {
-            Utilities.Assert(1304.5301, m_list_lvIgnore.Count == 0);
+            DoCorrelation();
 
-            foreach (ListViewItem lvItem in form_lvIgnoreList.Items)
+            Utilities.CheckAndInvoke(this, new Action(() =>
             {
-                ListViewItem lvItem_A = (ListViewItem)lvItem.Clone();
+                ListView lvFake = new ListView();
 
-                lvItem_A.Tag = lvItem;
-                m_list_lvIgnore.Add(lvItem_A);
-            }
+                foreach (ListViewItem lvItem in form_lvCopyList.Items)
+                {
+                    lvFake.Items.Add((ListViewItem)lvItem.Clone());
+                }
+
+                form_lvCopyList.Items.Clear();
+                LoadCopyScratchPad(lvFake);
+            }));
         }
 
         void DoCorrelation()
@@ -49,7 +69,18 @@ namespace SearchDirLists
 
             Utilities.Assert(1304.5302, m_listTreeNodes.Count == 0);
             Utilities.Assert(1304.5303, InvokeRequired);
-            Utilities.CheckAndInvoke(this, new Action(LoadlvIgnoreList));
+            Utilities.CheckAndInvoke(this, new Action(() =>
+            {
+                Utilities.Assert(1304.5301, m_list_lvIgnore.Count == 0);
+
+                foreach (ListViewItem lvItem in form_lvIgnoreList.Items)
+                {
+                    ListViewItem lvItem_A = (ListViewItem)lvItem.Clone();
+
+                    lvItem_A.Tag = lvItem;
+                    m_list_lvIgnore.Add(lvItem_A);
+                }
+            }));
 
             Correlate correlate = new Correlate(form_treeView_Browse, m_dictNodes,
                 form_lvClones, form_lvSameVol, form_lvUnique,
@@ -147,7 +178,6 @@ namespace SearchDirLists
             {
                 lock (form_lvDetailVol) { form_lvDetailVol.Items.Add(lvVol); }
             }
-
 
             if (itemArray == null)
             {
@@ -337,26 +367,11 @@ namespace SearchDirLists
 
             if (m_dictNodes.Count == 0)     // .Clear() to signal recreate. Ignore list only requires recorrelation
             {                               // this works because m_tree is not null during recreate.
-                m_dictDriveInfo.Clear();
-                m_listRootNodes.Clear();
-                m_listTreeNodes.Clear();
-                m_nodeCompare1 = null;
-                m_nodeCompare2 = null;
-                m_arrayTreeFound = null;
-                dictCompareDiffs.Clear();
-                m_listTreeNodes_Compare1.Clear();
-                m_listTreeNodes_Compare2.Clear();
-                m_listHistory.Clear();
-                m_nIxHistory = -1;
-                form_lvFiles.Items.Clear();
-                form_lvFileCompare.Items.Clear();
-                form_lvDetail.Items.Clear();
-                form_lvDetailVol.Items.Clear();
-                form_tmapUserCtl.Clear();
+                ClearMem();
+
                 form_colFilename.Text = m_strColFilesOrig;
                 form_colDirDetail.Text = m_strColDirDetailOrig;
                 form_colVolDetail.Text = m_strColVolDetailOrig;
-                form_treeView_Browse.Nodes.Clear();
 
                 if (form_lvVolumesMain.Items.Count <= 0)
                 {
@@ -371,7 +386,7 @@ namespace SearchDirLists
                 form_treeView_Browse.Enabled = false;
                 Utilities.Assert(1304.5305, m_listRootNodes.Count == 0);
                 m_tree = new Tree(form_lvVolumesMain.Items, m_dictNodes, m_dictDriveInfo,
-                    new TreeStatusDelegate(TreeStatusCallback), new TreeDoneDelegate(DoCorrelation));
+                    new TreeStatusDelegate(TreeStatusCallback), new Action(TreeDoneCallback));
                 m_tree.DoThreadFactory();
             }
             else

@@ -122,23 +122,23 @@ namespace SearchDirLists
         String m_strExt = null;
         public String Filter { get { return "SearchDirLists " + Description + "|*." + m_strExt; } }
 
-        protected static OpenFileDialog ofd = null;
-        protected static SaveFileDialog sfd = null;
+        protected static OpenFileDialog static_OpenFileDialog = null;
+        protected static SaveFileDialog static_SaveFileDialog = null;
 
         protected String m_strPrevFile = null;
         protected String m_strFileNotDialog = null;
 
         internal static void SetFileDialogs(OpenFileDialog ofd_in, SaveFileDialog sfd_in)
         {
-            ofd = ofd_in;
-            sfd = sfd_in;
-            BaseFilter = ofd.Filter;
+            static_OpenFileDialog = ofd_in;
+            static_SaveFileDialog = sfd_in;
+            BaseFilter = static_OpenFileDialog.Filter;
         }
 
         protected SDL_File(String strHeader, String strExt, String strDescription)
         {
-            Utilities.Assert(1303.4311, ofd != null);
-            Utilities.Assert(1303.4312, sfd != null);
+            Utilities.Assert(1303.4311, static_OpenFileDialog != null);
+            Utilities.Assert(1303.4312, static_SaveFileDialog != null);
             Header = strHeader;
             m_strExt = strExt;
             m_strDescription = strDescription;
@@ -162,9 +162,9 @@ namespace SearchDirLists
 
         protected virtual void ReadListItem(UList<ListViewItem> listItems, String[] strArray) { listItems.Add(new ListViewItem(strArray)); }
 
-        internal bool ReadList(ListView.ListViewItemCollection lvItems)
+        internal bool ReadList(ListView lv)
         {
-            if ((m_strFileNotDialog == null) && (ShowDialog(ofd) == false))
+            if ((m_strFileNotDialog == null) && (ShowDialog(static_OpenFileDialog) == false))
             {
                 return false;
             }
@@ -179,15 +179,15 @@ namespace SearchDirLists
                 {
                     while ((strLine = sr.ReadLine()) != null)
                     {
-                        ReadListItem(listItems, strLine.Split('\t'));
+                        ReadListItem(listItems, strLine.TrimEnd(new char[] {'\t'}).Split('\t').Take(lv.Columns.Count).ToArray());
                     }
                 }
             }
 
             if (listItems.Count > 0)
             {
-                lvItems.Clear();
-                lvItems.AddRange(listItems.ToArray());
+                lv.Items.Clear();
+                lv.Items.AddRange(listItems.ToArray());
             }
             else
             {
@@ -201,7 +201,7 @@ namespace SearchDirLists
 
         internal bool WriteList(ListView.ListViewItemCollection lvItems)
         {
-            if (ShowDialog(sfd) == false)
+            if (ShowDialog(static_SaveFileDialog) == false)
             {
                 return false;
             }
@@ -219,11 +219,13 @@ namespace SearchDirLists
 
                 foreach (ListViewItem lvItem in lvItems)
                 {
-                    int nIx = 0;
+                    sw.Write(WriteListItem(0, lvItem.SubItems[0].Text));
 
-                    foreach (ListViewItem.ListViewSubItem lvSubitem in lvItem.SubItems)
+                    int nIx = 1;
+
+                    foreach (ListViewItem.ListViewSubItem lvSubitem in lvItem.SubItems.Cast<ListViewItem.ListViewSubItem>().Skip(1))
                     {
-                        sw.Write(WriteListItem(nIx, lvSubitem.Text) + '\t');
+                        sw.Write('\t' + WriteListItem(nIx, lvSubitem.Text));
                         ++nIx;
                     }
 
@@ -234,41 +236,6 @@ namespace SearchDirLists
             return true;
         }
     }
-
-    class SDL_VolumeFile : SDL_File
-    {
-        internal SDL_VolumeFile(String strFile = null) : base(m_str_VOLUME_LIST_HEADER, m_strFILEEXT_Volume, "volume") { m_strFileNotDialog = strFile; }
-
-        protected override void ReadListItem(UList<ListViewItem> listItems, String[] strArray)
-        {
-            if (strArray.Length < 4)
-            {
-                return;
-            }
-
-            strArray[3] = "Using file.";
-
-            if (File.Exists(strArray[2]) == false)
-            {
-                strArray[2] = Path.Combine(Path.GetDirectoryName(m_strPrevFile), Path.GetFileName(strArray[2]));
-
-                if (File.Exists(strArray[2]) == false)
-                {
-                    strArray[3] = "No file. Will create.";
-                }
-            }
-
-            strArray[1] = strArray[1].TrimEnd(Path.DirectorySeparatorChar);
-            listItems.Add(new ListViewItem(strArray));
-        }
-
-        protected override String WriteListItem(int nIndex, String str)
-        {
-            return (nIndex == 1) ? str.TrimEnd(Path.DirectorySeparatorChar) : str;
-        }
-    }
-    class SDL_CopyFile : SDL_File { internal SDL_CopyFile() : base(m_str_COPYDIRS_LIST_HEADER, m_strFILEEXT_Copy, "copy") { } }
-    class SDL_IgnoreFile : SDL_File { internal SDL_IgnoreFile(String strFile = null) : base(m_str_IGNORE_LIST_HEADER, m_strFILEEXT_Ignore, "ignore") { m_strFileNotDialog = strFile; } }
 
     static class ExtensionMethods
     {
@@ -340,26 +307,17 @@ namespace SearchDirLists
         {
             Control ctl = ctl_in ?? Form1.static_form;
 
-            Utilities.CheckAndInvoke(ctl, new ArgAction(FlashWindow_A), new object[] { ctl });
-        }
-
-        static void FlashWindow_A(object[] args = null)
-        {
-            if (args == null)
+            Utilities.CheckAndInvoke(ctl, new Action(() =>
             {
-                Utilities.Assert(1303.4301, false);
-                return;
-            }
+                FLASHWINFO fInfo = new FLASHWINFO();
 
-            Control ctl = (Control)args[0];
-            FLASHWINFO fInfo = new FLASHWINFO();
-
-            fInfo.cbSize = Convert.ToUInt32(Marshal.SizeOf(fInfo));
-            fInfo.hwnd = ctl.Handle;
-            fInfo.dwFlags = FLASHW_ALL;
-            fInfo.uCount = 3;
-            fInfo.dwTimeout = 0;
-            FlashWindowEx(ref fInfo);
+                fInfo.cbSize = Convert.ToUInt32(Marshal.SizeOf(fInfo));
+                fInfo.hwnd = ctl.Handle;                                    // closure in C# ?!
+                fInfo.dwFlags = FLASHW_ALL;
+                fInfo.uCount = 3;
+                fInfo.dwTimeout = 0;
+                FlashWindowEx(ref fInfo);
+            }));
         }
     }
 
@@ -401,6 +359,43 @@ namespace SearchDirLists
                 m_strStatus = "Bad file. Will overwrite.";
         }
     }
+
+    class SDL_VolumeFile : SDL_File
+    {
+        internal SDL_VolumeFile(String strFile = null) : base(m_str_VOLUME_LIST_HEADER, m_strFILEEXT_Volume, "volume") { m_strFileNotDialog = strFile; }
+
+        protected override void ReadListItem(UList<ListViewItem> listItems, String[] strArray)
+        {
+            if (strArray.Length < 4)
+            {
+                return;
+            }
+
+            strArray[3] = "Using file.";
+
+            if (File.Exists(strArray[2]) == false)
+            {
+                strArray[2] = Path.Combine(Path.GetDirectoryName(m_strPrevFile), Path.GetFileName(strArray[2]));
+
+                if (File.Exists(strArray[2]) == false)
+                {
+                    strArray[3] = "No file. Will create.";
+                }
+            }
+
+            strArray[1] = strArray[1].TrimEnd(Path.DirectorySeparatorChar);
+            listItems.Add(new ListViewItem(strArray));
+        }
+
+        protected override String WriteListItem(int nIndex, String str)
+        {
+            return (nIndex == 1) ? str.TrimEnd(Path.DirectorySeparatorChar) : str;
+        }
+    }
+
+    class SDL_CopyFile : SDL_File { internal SDL_CopyFile() : base(m_str_COPYDIRS_LIST_HEADER, m_strFILEEXT_Copy, "copy") { } }
+
+    class SDL_IgnoreFile : SDL_File { internal SDL_IgnoreFile(String strFile = null) : base(m_str_IGNORE_LIST_HEADER, m_strFILEEXT_Ignore, "ignore") { m_strFileNotDialog = strFile; } }
 
     class UList<T> :
 #if (DEBUG)
@@ -520,6 +515,8 @@ namespace SearchDirLists
             static_bAssertUp = false;
         }
 
+        internal static void Closure(Action action) { action(); }
+
         internal static object CheckAndInvoke(Control control, Delegate action, object[] args = null)
         {
             if (control.InvokeRequired)
@@ -542,10 +539,6 @@ namespace SearchDirLists
                 else if (action is BoolAction)
                 {
                     return ((BoolAction)action)();
-                }
-                else if (action is ArgAction)
-                {
-                    ((ArgAction)action)(args);
                 }
                 else
                 {

@@ -277,8 +277,8 @@ namespace SearchDirLists
         internal int FilesWritten { get { return m_nFilesWritten; } set { m_nFilesWritten = value; } }
 
         internal SaveDirListings(ListView.ListViewItemCollection lvVolItems,
-                SaveDirListingsStatusDelegate statusCallback,
-                Action doneCallback)
+            SaveDirListingsStatusDelegate statusCallback,
+            Action doneCallback)
         {
             foreach (ListViewItem lvItem in lvVolItems)
             {

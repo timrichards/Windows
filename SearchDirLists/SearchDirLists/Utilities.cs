@@ -312,7 +312,7 @@ namespace SearchDirLists
                 FLASHWINFO fInfo = new FLASHWINFO();
 
                 fInfo.cbSize = Convert.ToUInt32(Marshal.SizeOf(fInfo));
-                fInfo.hwnd = ctl.Handle;                                    // closure in C# ?!
+                fInfo.hwnd = ctl.Handle;
                 fInfo.dwFlags = FLASHW_ALL;
                 fInfo.uCount = 3;
                 fInfo.dwTimeout = 0;

@@ -14,9 +14,9 @@ namespace SearchDirLists
         Dictionary<String, String> m_dictDriveInfo = new Dictionary<String, String>();
         UList<TreeNode> m_listTreeNodes = new UList<TreeNode>();
         List<TreeNode> m_listRootNodes = new List<TreeNode>();
-        SortedDictionary<HashKey, UList<TreeNode>> m_dictNodes = new SortedDictionary<HashKey, UList<TreeNode>>();
+        SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = new SortedDictionary<Correlate, UList<TreeNode>>();
 
-        Thread m_threadCorrelate = null;
+        Thread m_threadCollate = null;
         Thread m_threadSelect = null;
         Thread m_threadSelectCompare = null;
 
@@ -31,19 +31,24 @@ namespace SearchDirLists
             m_dictDriveInfo.Clear();
             m_listTreeNodes.Clear();
             m_listRootNodes.Clear();
-            m_dictNodes.Clear();        // m_dictNodes is tested to recreate tree.
+
+            // m_dictNodes is tested to recreate tree.
+            Utilities.Assert(1304.5301, m_dictNodes.Count == 0);
+            m_dictNodes.Clear();
         }
 
         void TreeCleanup()
         {
             m_tree = null;
-            m_threadCorrelate = null;
+            m_threadCollate = null;
             m_list_lvIgnore.Clear();
+
+            Collate.ClearMem();
         }
 
         void TreeDoneCallback()
         {
-            DoCorrelation();
+            DoCollation();
 
             Utilities.CheckAndInvoke(this, new Action(() =>
             {
@@ -59,7 +64,7 @@ namespace SearchDirLists
             }));
         }
 
-        void DoCorrelation()
+        void DoCollation()
         {
             if (m_listRootNodes.Count <= 0)
             {
@@ -82,13 +87,13 @@ namespace SearchDirLists
                 }
             }));
 
-            Correlate correlate = new Correlate(form_treeView_Browse, m_dictNodes,
+            Collate collate = new Collate(form_treeView_Browse, m_dictNodes,
                 form_lvClones, form_lvSameVol, form_lvUnique,
                 m_listRootNodes, m_listTreeNodes, m_bCheckboxes,
                 m_list_lvIgnore, form_chkLoose.Checked);
             DateTime dtStart = DateTime.Now;
 
-            correlate.Step1_OnThread();
+            collate.Step1_OnThread();
             Utilities.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
 
             if (AppExit)
@@ -98,9 +103,9 @@ namespace SearchDirLists
             }
 
             m_bPutPathInFindEditBox = true;
-            Utilities.CheckAndInvoke(this, new Action(correlate.Step2_OnForm));
+            Utilities.CheckAndInvoke(this, new Action(collate.Step2_OnForm));
             Utilities.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
-            correlate = null;
+            collate = null;
             TreeCleanup();
             GC.Collect();
 
@@ -320,34 +325,30 @@ namespace SearchDirLists
         {
             if (m_tree != null)
             {
-                if (bKill)
-                {
-                    m_tree.EndThread(bJoin: true);
-                    form_treeView_Browse.Nodes.Clear();
-                    m_listRootNodes.Clear();
-                    TreeCleanup();
-                }
-                else
+                if (bKill == false)
                 {
                     return;
                 }
+
+                m_tree.EndThread(bJoin: true);
+                form_treeView_Browse.Nodes.Clear();
+                m_listRootNodes.Clear();
+                TreeCleanup();
             }
 
-            if (m_threadCorrelate != null)
+            if (m_threadCollate != null)
             {
-                if (bKill)
-                {
-                    if (m_threadCorrelate.IsAlive)
-                    {
-                        m_threadCorrelate.Abort();
-                    }
-
-                    TreeCleanup();
-                }
-                else
+                if (bKill == false)
                 {
                     return;
                 }
+
+                if (m_threadCollate.IsAlive)
+                {
+                    m_threadCollate.Abort();
+                }
+
+                TreeCleanup();
             }
 
             foreach (ListView lv in new ListView[] { form_lvClones, form_lvSameVol, form_lvUnique })
@@ -414,16 +415,16 @@ namespace SearchDirLists
                 }
 
                 m_listTreeNodes.Clear();
-                m_threadCorrelate = new Thread(new ThreadStart(DoCorrelation));
-                m_threadCorrelate.IsBackground = true;
-                m_threadCorrelate.Start();
+                m_threadCollate = new Thread(new ThreadStart(DoCollation));
+                m_threadCollate.IsBackground = true;
+                m_threadCollate.Start();
             }
         }
 
         void DoTreeSelect(TreeNode treeNode)
         {
             TreeNode rootNode = treeNode.Root();
-            String strFile = (String)((RootNodeDatum)rootNode.Tag).StrFile;
+            String strFile = ((RootNodeDatum)rootNode.Tag).StrFile;
             bool bSecondComparePane = (m_bCompareMode && rootNode.Checked);
             Thread threadKill = bSecondComparePane ? m_threadSelectCompare : m_threadSelect;
 

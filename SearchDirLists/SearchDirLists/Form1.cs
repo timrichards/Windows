@@ -54,7 +54,7 @@ namespace SearchDirLists
 
         void ClearMem()
         {
-            Correlate.ClearMem();
+            Collate.ClearMem();
             ClearMem_Form1();
             ClearMem_SaveDirListings();
             ClearMem_Search();
@@ -2160,7 +2160,7 @@ namespace SearchDirLists
                 case SortOrder.Ascending:
                     {
                         sortOrder = SortOrder.Descending;
-                        listItems.Sort((x, y) => y.Text.CompareTo(x.Text));
+                        listItems.Sort((y, x) => x.Text.CompareTo(y.Text));
                         break;
                     }
 
@@ -2175,14 +2175,14 @@ namespace SearchDirLists
 
                         if (listItems[0].Tag is UList<TreeNode>)
                         {
-                            listItems.Sort((x, y) => ((NodeDatum)((UList<TreeNode>)y.Tag)[0].Tag).nTotalLength.CompareTo(((NodeDatum)((UList<TreeNode>)x.Tag)[0].Tag).nTotalLength));
+                            listItems.Sort((y, x) => ((NodeDatum)((UList<TreeNode>)x.Tag)[0].Tag).nTotalLength.CompareTo(((NodeDatum)((UList<TreeNode>)y.Tag)[0].Tag).nTotalLength));
                         }
                         else
                         {
-                            listItems.Sort((x, y) => ((NodeDatum)((TreeNode)y.Tag).Tag).nTotalLength.CompareTo(((NodeDatum)((TreeNode)x.Tag).Tag).nTotalLength));
+                            listItems.Sort((y, x) => ((NodeDatum)((TreeNode)x.Tag).Tag).nTotalLength.CompareTo(((NodeDatum)((TreeNode)y.Tag).Tag).nTotalLength));
                         }
 
-                        Correlate.InsertSizeMarkers(listItems);
+                        Collate.InsertSizeMarkers(listItems);
                         break;
                     }
 
@@ -2449,7 +2449,7 @@ namespace SearchDirLists
 
             if (nodeDatum.m_lvItem.ListView == null)    // during Corellate()
             {
-                Utilities.Assert(1300.1316, m_threadCorrelate != null);
+                Utilities.Assert(1300.1316, m_threadCollate != null);
                 return;
             }
 

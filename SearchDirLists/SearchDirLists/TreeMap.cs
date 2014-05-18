@@ -629,7 +629,7 @@ namespace SearchDirLists
                 listChildren.Add(treeNode);
             }
 
-            listChildren.Sort((x, y) => ((NodeDatum)y.Tag).nTotalLength.CompareTo(((NodeDatum)x.Tag).nTotalLength));
+            listChildren.Sort((y, x) => ((NodeDatum)x.Tag).nTotalLength.CompareTo(((NodeDatum)y.Tag).nTotalLength));
 
             if (listChildren.Count == 0)
             {

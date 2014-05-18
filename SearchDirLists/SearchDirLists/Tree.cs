@@ -59,13 +59,13 @@ namespace SearchDirLists
         }
     }
 
-    class HashKey : IComparable
+    class Correlate : IComparable
     {
         internal readonly ulong nTotalLength;       //  found   41 bits
         internal readonly uint nFilesInSubdirs;     //          23 bits
         internal readonly uint nDirsWithFiles;      //          16 bits
 
-        internal HashKey(ulong nTotalLength_in, uint nFilesInSubdirs_in, uint nDirsWithFiles_in)
+        internal Correlate(ulong nTotalLength_in, uint nFilesInSubdirs_in, uint nDirsWithFiles_in)
         {
             nTotalLength = nTotalLength_in;
             nFilesInSubdirs = nFilesInSubdirs_in;
@@ -74,7 +74,7 @@ namespace SearchDirLists
 
         public int CompareTo(object obj)
         {
-            HashKey that = (HashKey) obj;
+            Correlate that = (Correlate) obj;
 
             if (this > that) return -1;             // reverse sort
             if (this == that) return 0;
@@ -83,8 +83,8 @@ namespace SearchDirLists
 
         public override bool Equals(object obj)
         {
-            if ((obj is HashKey) == false) return false;
-            return (((HashKey)obj) == this);
+            if ((obj is Correlate) == false) return false;
+            return (((Correlate)obj) == this);
         }
 
         public override int GetHashCode()
@@ -108,12 +108,12 @@ namespace SearchDirLists
                 "nDirsWithFiles: " + nDirsWithFiles + "\n";
         }
 
-        public static bool operator ==(HashKey x, HashKey y)
+        public static bool operator ==(Correlate x, Correlate y)
         {
             return (x.nTotalLength == y.nTotalLength) && (x.nFilesInSubdirs == y.nFilesInSubdirs) && (x.nDirsWithFiles == y.nDirsWithFiles);
         }
 
-        public static bool operator >(HashKey x, HashKey y)
+        public static bool operator >(Correlate x, Correlate y)
         {
             if (x.nTotalLength < y.nTotalLength) return false;
             if (x.nTotalLength > y.nTotalLength) return true;
@@ -124,10 +124,10 @@ namespace SearchDirLists
             return false;
         }
 
-        public static bool operator !=(HashKey x, HashKey y) { return ((x == y) == false); }
-        public static bool operator <(HashKey x, HashKey y) { return ((x >= y) == false); }
-        public static bool operator >=(HashKey x, HashKey y) { return ((x > y) || (x == y)); }
-        public static bool operator <=(HashKey x, HashKey y) { return ((x > y) == false); } 
+        public static bool operator !=(Correlate x, Correlate y) { return ((x == y) == false); }
+        public static bool operator <(Correlate x, Correlate y) { return ((x >= y) == false); }
+        public static bool operator >=(Correlate x, Correlate y) { return ((x > y) || (x == y)); }
+        public static bool operator <=(Correlate x, Correlate y) { return ((x > y) == false); } 
     }                              
 
     class NodeDatum : DetailsDatum
@@ -141,11 +141,11 @@ namespace SearchDirLists
             internal ListViewItem m_lvItem = null;
         }
 
-        internal HashKey Key
+        internal Correlate Key
         {
             get
             {
-                return new HashKey((ulong)nTotalLength, nFilesInSubdirs, nDirsWithFiles);
+                return new Correlate((ulong)nTotalLength, nFilesInSubdirs, nDirsWithFiles);
             }
         }
 
@@ -271,11 +271,11 @@ namespace SearchDirLists
 
     class TreeBase : Utilities
     {
-        protected SortedDictionary<HashKey, UList<TreeNode>> m_dictNodes = null;
+        protected SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = null;
         protected Dictionary<String, String> m_dictDriveInfo = null;
         protected static TreeStatusDelegate m_statusCallback = null;
 
-        internal TreeBase(SortedDictionary<HashKey, UList<TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
+        internal TreeBase(SortedDictionary<Correlate, UList<TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
             TreeStatusDelegate statusCallback)
         {
             m_dictNodes = dictNodes;
@@ -519,7 +519,7 @@ namespace SearchDirLists
 
                 nodeDatum.nDirsWithFiles = datum.nDirsWithFiles;
 
-                HashKey nKey = nodeDatum.Key;
+                Correlate nKey = nodeDatum.Key;
 
                 lock (m_dictNodes)
                 {
@@ -715,7 +715,7 @@ namespace SearchDirLists
         }
 
         internal Tree(ListView.ListViewItemCollection lvVolItems,
-            SortedDictionary<HashKey, UList<TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
+            SortedDictionary<Correlate, UList<TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
             TreeStatusDelegate statusCallback, Action doneCallback)
             : base(dictNodes, dictDriveInfo, statusCallback)
         {
@@ -777,7 +777,7 @@ namespace SearchDirLists
             }
 
             m_cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
-            Correlate.Abort();
+            Collate.Abort();
             m_dictNodes.Clear();
         }
 
@@ -794,7 +794,7 @@ namespace SearchDirLists
     class TreeSelect : Utilities
     {
         TreeNode m_treeNode = null;
-        SortedDictionary<HashKey, UList<TreeNode>> m_dictNodes = null;
+        SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = null;
         Dictionary<String, String> m_dictDriveInfo = null;
         static TreeSelectStatusDelegate m_statusCallback = null;
         static TreeSelectDoneDelegate m_doneCallback = null;
@@ -803,7 +803,7 @@ namespace SearchDirLists
         bool m_bCompareMode = false;
         bool m_bSecondComparePane = false;
 
-        internal TreeSelect(TreeNode node, SortedDictionary<HashKey, UList<TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
+        internal TreeSelect(TreeNode node, SortedDictionary<Correlate, UList<TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
             String strFile, bool bCompareMode, bool bSecondComparePane,
             TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
         {
@@ -909,7 +909,7 @@ namespace SearchDirLists
 
         internal static List<String[]> GetFileList(TreeNode parent, List<ulong> listLength = null)
         {
-            String strFile = (String)((RootNodeDatum)parent.Root().Tag).StrFile;
+            String strFile = ((RootNodeDatum)parent.Root().Tag).StrFile;
 
             if ((parent.Tag is NodeDatum) == false)
             {
@@ -983,7 +983,7 @@ namespace SearchDirLists
 
                 if (m_dictDriveInfo.ContainsKey(m_strFile))
                 {
-                    String strDriveInfo = (String)m_dictDriveInfo[m_strFile];
+                    String strDriveInfo = m_dictDriveInfo[m_strFile];
                     String[] arrDriveInfo = strDriveInfo.Split(new String[] { "\r\n", "\n" }, StringSplitOptions.None);
 
                     Utilities.Assert(1301.2314, new int[] { 7, 8 }.Contains(arrDriveInfo.Length));

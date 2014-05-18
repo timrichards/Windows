@@ -35,6 +35,11 @@ namespace SearchDirLists
             // m_dictNodes is tested to recreate tree.
             Utilities.Assert(1304.5301, m_dictNodes.Count == 0);
             m_dictNodes.Clear();
+
+            foreach (ListViewItem lvItem in form_lvCopyList.Items)
+            {
+                lvItem.Tag = null;
+            }
         }
 
         void TreeCleanup()

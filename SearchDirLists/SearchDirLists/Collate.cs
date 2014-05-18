@@ -697,7 +697,7 @@ namespace SearchDirLists
                     return;
                 }
 
-                if (form_treeView_Browse.Enabled == false)      // stays enabled when Correlate() is called directly
+                if (form_treeView_Browse.Enabled == false)      // stays enabled when DoCollation() is called directly
                 {
                     form_treeView_Browse.Nodes.Clear();
                 }
@@ -760,7 +760,7 @@ namespace SearchDirLists
                     TreeNode treeNode = form_treeView_Browse.SelectedNode;
 
                     form_treeView_Browse.SelectedNode = null;
-                    form_treeView_Browse.SelectedNode = treeNode;   // reselect in new correlation listviewers
+                    form_treeView_Browse.SelectedNode = treeNode;   // reselect in repopulated collation listviewers
                 }
                 else
                 {

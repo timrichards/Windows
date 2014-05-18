@@ -46,7 +46,7 @@ At the lower left there is provision for a list of common folders to ignore, suc
 
 Also at the lower left there is a list of specific folders you want copied. The copy list is added to by checking the box next to the folder you want copied in the treeview. Both lists can be saved and reloaded later.
 
-Under the first top tab, Volumes, you can change the drive letter and the nickname of directory listing files by clicking the Modify File button. You can group multiple listings under the same volume group and thus change the correlation. You can save this list of directory listings and have multiple copies: some with different volume groups yet having the same directory listing files.
+Under the first top tab, Volumes, you can change the drive letter and the nickname of directory listing files by clicking the Modify File button. Changing the drive letter might help in search, if multiple volumes have the same drive letter. You can collate multiple listings under the same volume group, which changes whether they appear as safe or unsafe cloned folders. You can save this list of directory listings and have multiple copies: some with different volume groups yet having the same directory listing files.
 
 To save your first directory listing
 ------------------------------------

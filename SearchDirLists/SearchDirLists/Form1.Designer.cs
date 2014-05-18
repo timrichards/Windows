@@ -493,7 +493,7 @@ namespace SearchDirLists
             this.form_btnVolGroup.TabIndex = 17;
             this.form_btnVolGroup.Text = "Volume group";
             this.form_btnVolGroup.UseVisualStyleBackColor = true;
-            this.form_btnVolGroup.Click += new System.EventHandler(this.form_btn_VolGroup_Click);
+            this.form_btnVolGroup.Click += new System.EventHandler(this.form_btnVolGroup_Click);
             // 
             // form_btnSaveVolumeList
             // 
@@ -561,7 +561,7 @@ namespace SearchDirLists
             this.form_btnToggleInclude.TabIndex = 16;
             this.form_btnToggleInclude.Text = "Toggle include";
             this.form_btnToggleInclude.UseVisualStyleBackColor = true;
-            this.form_btnToggleInclude.Click += new System.EventHandler(this.form_btn_ToggleInclude_Click);
+            this.form_btnToggleInclude.Click += new System.EventHandler(this.form_btnToggleInclude_Click);
             // 
             // form_btnAddVolume
             // 
@@ -1555,7 +1555,7 @@ namespace SearchDirLists
             this.form_btn_TreeCollapse.TabIndex = 0;
             this.form_btn_TreeCollapse.Text = "Collapse";
             this.form_btn_TreeCollapse.UseVisualStyleBackColor = true;
-            this.form_btn_TreeCollapse.Click += new System.EventHandler(this.form_btn_TreeCollapse_Click);
+            this.form_btn_TreeCollapse.Click += new System.EventHandler(this.form_btnTreeCollapse_Click);
             this.form_btn_TreeCollapse.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_lblVolGroup

@@ -22,8 +22,8 @@ namespace SearchDirLists
 
         void ClearMem_TreeForm()
         {
-            Utilities.Assert(1304.5308, m_list_lvIgnore.Count == 0);
-            Utilities.Assert(1304.5309, m_tree == null);
+            Utilities.Assert(1304.5301, m_list_lvIgnore.Count == 0);
+            Utilities.Assert(1304.5302, m_tree == null);
 
             m_list_lvIgnore.Clear();
             m_tree = null;
@@ -33,7 +33,7 @@ namespace SearchDirLists
             m_listRootNodes.Clear();
 
             // m_dictNodes is tested to recreate tree.
-            Utilities.Assert(1304.5301, m_dictNodes.Count == 0);
+            Utilities.Assert(1304.5303, m_dictNodes.Count == 0);
             m_dictNodes.Clear();
 
             foreach (ListViewItem lvItem in form_lvCopyList.Items)
@@ -77,11 +77,11 @@ namespace SearchDirLists
                 return;
             }
 
-            Utilities.Assert(1304.5302, m_listTreeNodes.Count == 0);
-            Utilities.Assert(1304.5303, InvokeRequired);
+            Utilities.Assert(1304.5304, m_listTreeNodes.Count == 0);
+            Utilities.Assert(1304.5304, InvokeRequired);
             Utilities.CheckAndInvoke(this, new Action(() =>
             {
-                Utilities.Assert(1304.5301, m_list_lvIgnore.Count == 0);
+                Utilities.Assert(1304.5306, m_list_lvIgnore.Count == 0);
 
                 foreach (ListViewItem lvItem in form_lvIgnoreList.Items)
                 {
@@ -117,8 +117,8 @@ namespace SearchDirLists
             int nNodeCount = form_treeView_Browse.GetNodeCount(includeSubTrees: true);
             int nNodeCount_A = Utilities.CountNodes(form_treeView_Browse.Nodes[0]);
 
-            Utilities.Assert(1304.5306, Utilities.CountNodes(m_listRootNodes) == nNodeCount);
-            Utilities.Assert(1304.53065, m_listTreeNodes.Count == nNodeCount);
+            Utilities.Assert(1304.5307, Utilities.CountNodes(m_listRootNodes) == nNodeCount);
+            Utilities.Assert(1304.5308, m_listTreeNodes.Count == nNodeCount);
 
             if (Form.ActiveForm == null)
             {
@@ -126,7 +126,7 @@ namespace SearchDirLists
             }
         }
 
-        void TreeStatusCallback(TreeNode rootNode, LVvolStrings volStrings)
+        void TreeStatusCallback(LVvolStrings volStrings, TreeNode rootNode = null, bool bError = false)
         {
             if (AppExit || (m_tree == null) || (m_tree.IsAborted))
             {
@@ -134,24 +134,28 @@ namespace SearchDirLists
                 return;
             }
 
-            if (InvokeRequired) { Invoke(new TreeStatusDelegate(TreeStatusCallback), new object[] { rootNode, volStrings }); return; }
+            if (InvokeRequired) { Invoke(new TreeStatusDelegate(TreeStatusCallback), new object[] { volStrings, rootNode, bError }); return; }
 
-            if (volStrings != null)     // error state
+            if (bError)
             {
                 volStrings.SetStatus_BadFile(form_lvVolumesMain);
             }
-
-            if (rootNode != null)
+            else if (rootNode != null)
             {
                 lock (form_treeView_Browse)
                 {
                     form_treeView_Browse.Nodes.Add(rootNode.Text);    // items added to show progress
+                    volStrings.SetStatus_Done(form_lvVolumesMain, rootNode);
                 }
 
                 lock (m_listRootNodes)
                 {
                     m_listRootNodes.Add(rootNode);
                 }
+            }
+            else
+            {
+                Utilities.Assert(1304.53085, false);
             }
         }
 
@@ -260,7 +264,7 @@ namespace SearchDirLists
             if ((lv2.Items.Count > 0) &&
                 (((LVitemFileTag)lv2.Items[0].Tag).StrCompareDir != treeNode2.Text))
             {
-                Utilities.Assert(1304.5304, false);
+                Utilities.Assert(1304.5309, false);
                 return;
             }
 
@@ -390,7 +394,7 @@ namespace SearchDirLists
                 form_treeView_Browse.Nodes.Add(treeNode);
                 form_treeView_Browse.CheckBoxes = false;    // treeview items are faked to show progress
                 form_treeView_Browse.Enabled = false;
-                Utilities.Assert(1304.5305, m_listRootNodes.Count == 0);
+                Utilities.Assert(1304.5310, m_listRootNodes.Count == 0);
                 m_tree = new Tree(form_lvVolumesMain.Items, m_dictNodes, m_dictDriveInfo,
                     new TreeStatusDelegate(TreeStatusCallback), new Action(TreeDoneCallback));
                 m_tree.DoThreadFactory();
@@ -399,7 +403,7 @@ namespace SearchDirLists
             {
                 int nNodeCount = form_treeView_Browse.GetNodeCount(includeSubTrees: true);
 
-                Utilities.Assert(1304.5306, m_listTreeNodes.Count == nNodeCount);
+                Utilities.Assert(1304.5311, m_listTreeNodes.Count == nNodeCount);
 
                 foreach (TreeNode treeNode in m_listTreeNodes)
                 {
@@ -410,7 +414,7 @@ namespace SearchDirLists
 
                     if (nodeDatum == null)
                     {
-                        Utilities.Assert(1304.5307, false);
+                        Utilities.Assert(1304.5312, false);
                         continue;
                     }
 

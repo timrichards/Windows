@@ -358,6 +358,11 @@ namespace SearchDirLists
             lv.Items[Index].SubItems[3].Text =
                 m_strStatus = "Bad file. Will overwrite.";
         }
+
+        internal void SetStatus_Done(ListView lv, TreeNode rootNode)
+        {
+            lv.Items[Index].Tag = rootNode;
+        }
     }
 
     class SDL_VolumeFile : SDL_File

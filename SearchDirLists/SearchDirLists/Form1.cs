@@ -28,9 +28,9 @@ namespace SearchDirLists
 
         void ClearMem_Form1()
         {
-            Utilities.Assert(1300.1318, form_lvClones.Items.Count == 0);
-            Utilities.Assert(1300.1319, form_lvSameVol.Items.Count == 0);
-            Utilities.Assert(1300.1320, form_lvUnique.Items.Count == 0);
+            Utilities.Assert(1308.9318, form_lvClones.Items.Count == 0);
+            Utilities.Assert(1308.9301, form_lvSameVol.Items.Count == 0);
+            Utilities.Assert(1308.9302, form_lvUnique.Items.Count == 0);
 
             form_lvClones.Items.Clear();
             form_lvSameVol.Items.Clear();
@@ -159,7 +159,7 @@ namespace SearchDirLists
             InitializeComponent();
 
             // Assert String-lookup form items exist
-            //    Utilities.Assert(1300.1318, context_rclick_node.Items[m_strMARKFORCOPY] != null);
+            //    Utilities.Assert(1308.9303, context_rclick_node.Items[m_strMARKFORCOPY] != null);
 
             m_blink = new Blink(timer_blink, form_cbNavigate);
             m_strBtnTreeCollapseOrig = form_btn_TreeCollapse.Text;
@@ -176,6 +176,137 @@ namespace SearchDirLists
             m_bCheckboxes = form_treeView_Browse.CheckBoxes;
             Utilities.SetMessageBoxDelegate(MessageboxCallback);
             SDL_File.SetFileDialogs(openFileDialog1, saveFileDialog1);
+        }
+
+        bool AddVolume()
+        {
+            if (SaveFields(false) == false)
+            {
+                return false;
+            }
+
+            if (Utilities.StrValid(m_strSaveAs) == false)
+            {
+                FormError(form_cbSaveAs, "Must have a file to load or save directory listing to.", "Volume Save As");
+                return false;
+            }
+
+            if (form_lvVolumesMain.FindItemWithText(m_strSaveAs) != null)
+            {
+                FormError(form_cbSaveAs, "File already in use in list of volumes.", "Volume Save As");
+                return false;
+            }
+
+            bool bOpenedFile = (Utilities.StrValid(m_strPath) == false);
+
+            if (File.Exists(m_strSaveAs) && Utilities.StrValid(m_strPath))
+            {
+                m_blink.Go(form_cbSaveAs, clr: Color.Red);
+
+                if (MessageBox.Show((m_strSaveAs + " already exists. Overwrite?").PadRight(100), "Volume Save As", MessageBoxButtons.YesNo)
+                    != System.Windows.Forms.DialogResult.Yes)
+                {
+                    m_blink.Go(form_cbVolumeName, clr: Color.Yellow, Once: true);
+                    form_cbVolumeName.Text = String.Empty;
+                    m_blink.Go(form_cbPath, clr: Color.Yellow, Once: true);
+                    form_cbPath.Text = String.Empty;
+                    Utilities.Assert(1308.9304, SaveFields(false));
+                }
+            }
+
+            if ((File.Exists(m_strSaveAs) == false) && form_lvVolumesMain.Items.ContainsKey(m_strPath))
+            {
+                FormError(form_cbPath, "Path already added.", "Volume Source Path");
+                return false;
+            }
+
+            if (Utilities.StrValid(m_strVolumeName))
+            {
+                ListViewItem lvItem = form_lvVolumesMain.FindItemWithText(m_strVolumeName);
+
+                if ((lvItem != null) && (lvItem.Text == m_strVolumeName))
+                {
+                    m_blink.Go(form_cbVolumeName, clr: Color.Red);
+
+                    if (MessageBox.Show("Nickname already in use. Use it for more than one volume?".PadRight(100), "Volume Save As", MessageBoxButtons.YesNo)
+                        != DialogResult.Yes)
+                    {
+                        m_blink.Go(form_cbVolumeName, clr: Color.Red, Once: true);
+                        return false;
+                    }
+                }
+            }
+
+            if ((File.Exists(m_strSaveAs) == false) && (Utilities.StrValid(m_strPath) == false))
+            {
+                m_blink.Go(form_cbPath, clr: Color.Red);
+                MessageBox.Show("Must have a path or existing directory listing file.".PadRight(100), "Volume Source Path");
+                m_blink.Go(form_cbPath, clr: Color.Red, Once: true);
+                return false;
+            }
+
+            if (Utilities.StrValid(m_strPath) && (Directory.Exists(m_strPath) == false))
+            {
+                m_blink.Go(form_cbPath, clr: Color.Red);
+                MessageBox.Show("Path does not exist.".PadRight(100), "Volume Source Path");
+                m_blink.Go(form_cbPath, clr: Color.Red, Once: true);
+                return false;
+            }
+
+            String strStatus = "Not Saved";
+
+            if (File.Exists(m_strSaveAs))
+            {
+                if (Utilities.StrValid(m_strPath) == false)
+                {
+                    bool bFileOK = ReadHeader();
+
+                    if (bFileOK)
+                    {
+                        strStatus = Utilities.m_str_USING_FILE;
+                    }
+                    else
+                    {
+                        if (Utilities.StrValid(m_strPath))
+                        {
+                            strStatus = "File is bad. Will overwrite.";
+                        }
+                        else
+                        {
+                            m_blink.Go(form_cbPath, clr: Color.Red);
+                            MessageBox.Show("File is bad and path does not exist.".PadRight(100), "Volume Source Path");
+                            m_blink.Go(form_cbPath, clr: Color.Red, Once: true);
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    strStatus = "Will overwrite.";
+                }
+            }
+
+            if ((bOpenedFile == false) && (Utilities.StrValid(m_strVolumeName) == false))
+            {
+                m_blink.Go(form_cbVolumeName, clr: Color.Red);
+
+                if (MessageBox.Show("Continue without entering a nickname for this volume?".PadRight(100), "Volume Save As", MessageBoxButtons.YesNo)
+                    != DialogResult.Yes)
+                {
+                    m_blink.Go(form_cbVolumeName, clr: Color.Red, Once: true);
+                    return false;
+                }
+            }
+
+            {
+                ListViewItem lvItem = new ListViewItem(new String[] { m_strVolumeName, m_strPath, m_strSaveAs, strStatus, "Yes" });
+
+                lvItem.Name = m_strPath;
+                form_lvVolumesMain.Items.Add(lvItem);
+            }
+
+            form_btnSaveDirList.Enabled = true;
+            return true;
         }
 
         void ComboBoxItemsInsert(ComboBox comboBox, String strText = null, bool bTrimText = true)
@@ -610,7 +741,7 @@ namespace SearchDirLists
 
                     if (nPathLevelLength > 1)
                     {
-                        Utilities.Assert(1300.1301, (nPathLevelLength - nCount) > 0);
+                        Utilities.Assert(1308.9305, (nPathLevelLength - nCount) > 0);
                         nPathLevelLength -= nCount;
                     }
                 }
@@ -773,7 +904,11 @@ namespace SearchDirLists
 
             if (form_lvIgnoreList.Items.Count > 0)
             {
-                m_bKillTree = false;
+                if (m_bKillTree)
+                {
+                    m_bKillTree = timer_DoTree.Enabled;
+                }
+
                 RestartTreeTimer();
             }
         }
@@ -917,7 +1052,7 @@ namespace SearchDirLists
 
         void RestartTreeTimer()
         {
-            m_bRestartTreeTimer = true;
+            m_bRestartTreeTimer = m_bKillTree;
             timer_DoTree.Stop();
             timer_DoTree.Start();
         }
@@ -1044,138 +1179,7 @@ namespace SearchDirLists
 
         void form_btnAddVolume_Click(object sender, EventArgs e)
         {
-            InterruptTreeTimerWithAction(new BoolAction(form_btnAddVolume_Click));
-        }
-
-        bool form_btnAddVolume_Click()
-        {
-            if (SaveFields(false) == false)
-            {
-                return false;
-            }
-
-            if (Utilities.StrValid(m_strSaveAs) == false)
-            {
-                FormError(form_cbSaveAs, "Must have a file to load or save directory listing to.", "Volume Save As");
-                return false;
-            }
-
-            if (form_lvVolumesMain.FindItemWithText(m_strSaveAs) != null)
-            {
-                FormError(form_cbSaveAs, "File already in use in list of volumes.", "Volume Save As");
-                return false;
-            }
-
-            bool bOpenedFile = (Utilities.StrValid(m_strPath) == false);
-
-            if (File.Exists(m_strSaveAs) && Utilities.StrValid(m_strPath))
-            {
-                m_blink.Go(form_cbSaveAs, clr: Color.Red);
-
-                if (MessageBox.Show((m_strSaveAs + " already exists. Overwrite?").PadRight(100), "Volume Save As", MessageBoxButtons.YesNo)
-                    != System.Windows.Forms.DialogResult.Yes)
-                {
-                    m_blink.Go(form_cbVolumeName, clr: Color.Yellow, Once: true);
-                    form_cbVolumeName.Text = String.Empty;
-                    m_blink.Go(form_cbPath, clr: Color.Yellow, Once: true);
-                    form_cbPath.Text = String.Empty;
-                    Utilities.Assert(1300.1305, SaveFields(false));
-                }
-            }
-
-            if ((File.Exists(m_strSaveAs) == false) && form_lvVolumesMain.Items.ContainsKey(m_strPath))
-            {
-                FormError(form_cbPath, "Path already added.", "Volume Source Path");
-                return false;
-            }
-
-            if (Utilities.StrValid(m_strVolumeName))
-            {
-                ListViewItem lvItem = form_lvVolumesMain.FindItemWithText(m_strVolumeName);
-
-                if ((lvItem != null) && (lvItem.Text == m_strVolumeName))
-                {
-                    m_blink.Go(form_cbVolumeName, clr: Color.Red);
-
-                    if (MessageBox.Show("Nickname already in use. Use it for more than one volume?".PadRight(100), "Volume Save As", MessageBoxButtons.YesNo)
-                        != DialogResult.Yes)
-                    {
-                        m_blink.Go(form_cbVolumeName, clr: Color.Red, Once: true);
-                        return false;
-                    }
-                }
-            }
-
-            if ((File.Exists(m_strSaveAs) == false) && (Utilities.StrValid(m_strPath) == false))
-            {
-                m_blink.Go(form_cbPath, clr: Color.Red);
-                MessageBox.Show("Must have a path or existing directory listing file.".PadRight(100), "Volume Source Path");
-                m_blink.Go(form_cbPath, clr: Color.Red, Once: true);
-                return false;
-            }
-
-            if (Utilities.StrValid(m_strPath) && (Directory.Exists(m_strPath) == false))
-            {
-                m_blink.Go(form_cbPath, clr: Color.Red);
-                MessageBox.Show("Path does not exist.".PadRight(100), "Volume Source Path");
-                m_blink.Go(form_cbPath, clr: Color.Red, Once: true);
-                return false;
-            }
-
-            String strStatus = "Not Saved";
-
-            if (File.Exists(m_strSaveAs))
-            {
-                if (Utilities.StrValid(m_strPath) == false)
-                {
-                    bool bFileOK = ReadHeader();
-
-                    if (bFileOK)
-                    {
-                        strStatus = Utilities.m_str_USING_FILE;
-                    }
-                    else
-                    {
-                        if (Utilities.StrValid(m_strPath))
-                        {
-                            strStatus = "File is bad. Will overwrite.";
-                        }
-                        else
-                        {
-                            m_blink.Go(form_cbPath, clr: Color.Red);
-                            MessageBox.Show("File is bad and path does not exist.".PadRight(100), "Volume Source Path");
-                            m_blink.Go(form_cbPath, clr: Color.Red, Once: true);
-                            return false;
-                        }
-                    }
-                }
-                else
-                {
-                    strStatus = "Will overwrite.";
-                }
-            }
-
-            if ((bOpenedFile == false) && (Utilities.StrValid(m_strVolumeName) == false))
-            {
-                m_blink.Go(form_cbVolumeName, clr: Color.Red);
-
-                if (MessageBox.Show("Continue without entering a nickname for this volume?".PadRight(100), "Volume Save As", MessageBoxButtons.YesNo)
-                    != DialogResult.Yes)
-                {
-                    m_blink.Go(form_cbVolumeName, clr: Color.Red, Once: true);
-                    return false;
-                }
-            }
-
-            {
-                ListViewItem lvItem = new ListViewItem(new String[] { m_strVolumeName, m_strPath, m_strSaveAs, strStatus, "Yes" });
-
-                lvItem.Name = m_strPath;
-                form_lvVolumesMain.Items.Add(lvItem);
-            }
-
-            form_btnSaveDirList.Enabled = true;
-            return true;
+            InterruptTreeTimerWithAction(new BoolAction(AddVolume));
         }
 
         void form_btnBack_Click(object sender, EventArgs e)
@@ -1191,7 +1195,12 @@ namespace SearchDirLists
             }
 
             form_lvIgnoreList.Items.Clear();
-            m_bKillTree = false;
+
+            if (m_bKillTree)
+            {
+                m_bKillTree = timer_DoTree.Enabled;
+            }
+
             RestartTreeTimer();
         }
 
@@ -1208,8 +1217,8 @@ namespace SearchDirLists
             else
             {
                 form_cbNavigate.BackColor = Color.Empty;
-                Utilities.Assert(1300.1306, form_chkCompare1.Checked);
-                Utilities.Assert(1300.1307, Utilities.StrValid(m_strCompare1));
+                Utilities.Assert(1308.9306, form_chkCompare1.Checked);
+                Utilities.Assert(1308.9307, Utilities.StrValid(m_strCompare1));
 
                 String strCompare2 = form_cbNavigate.Text;
                 bool bError = (Utilities.StrValid(strCompare2) == false);
@@ -1426,7 +1435,11 @@ namespace SearchDirLists
                 form_lvIgnoreList.Items.Add(lvItem);
             }
 
-            m_bKillTree = false;
+            if (m_bKillTree)
+            {
+                m_bKillTree = timer_DoTree.Enabled;
+            }
+
             RestartTreeTimer();
         }
 
@@ -1443,7 +1456,11 @@ namespace SearchDirLists
                 lvItem.Remove();
             }
 
-            m_bKillTree = false;
+            if (m_bKillTree)
+            {
+                m_bKillTree = timer_DoTree.Enabled;
+            }
+
             RestartTreeTimer();
         }
 
@@ -1471,164 +1488,157 @@ namespace SearchDirLists
 
         void form_btnLoadVolumeList_Click(object sender, EventArgs e)
         {
-            InterruptTreeTimerWithAction(new BoolAction(form_btnLoadVolumeList_Click));
-        }
-
-        bool form_btnLoadVolumeList_Click()
-        {
-            return LoadVolumeList();
+            InterruptTreeTimerWithAction(new BoolAction(() => { return LoadVolumeList(); }));
         }
 
         void form_btnModifyFile_Click(object sender, EventArgs e)
         {
-            InterruptTreeTimerWithAction(new BoolAction(form_btnModifyFile_Click));
-        }
-
-        bool form_btnModifyFile_Click()
-        {
-            ListView.SelectedListViewItemCollection lvSelect = form_lvVolumesMain.SelectedItems;
-
-            if (lvSelect.Count <= 0)
+            InterruptTreeTimerWithAction(new BoolAction(() =>
             {
-                return false;
-            }
+                ListView.SelectedListViewItemCollection lvSelect = form_lvVolumesMain.SelectedItems;
 
-            if (lvSelect.Count > 1)
-            {
-                Utilities.Assert(1300.1308, false);    // guaranteed by selection logic
-                MessageBox.Show("Only one file can be modified at a time.".PadRight(100), "Modify file");
-                return false;
-            }
-
-            String strVolumeName_orig = form_lvVolumesMain.SelectedItems[0].Text;
-            String strVolumeName = null;
-            String strFileName = form_lvVolumesMain.SelectedItems[0].SubItems[2].Text;
-
-            if (m_saveDirListings != null)
-            {
-                try { using (new StreamReader(strFileName)) { } }
-                catch
+                if (lvSelect.Count <= 0)
                 {
-                    MessageBox.Show("Currently saving listings and can't open file yet. Please wait.".PadRight(100), "Modify file");
                     return false;
                 }
-            }
 
-            {
-                InputBox inputBox = new InputBox();
-
-                inputBox.Text = "Step 1 of 2: Volume name";
-                inputBox.Prompt = "Enter a volume name. (Next: drive letter)";
-                inputBox.Entry = strVolumeName_orig;
-                inputBox.SetNextButtons();
-
-                if ((inputBox.ShowDialog() == DialogResult.OK) && (Utilities.StrValid(inputBox.Entry)))
+                if (lvSelect.Count > 1)
                 {
-                    strVolumeName = inputBox.Entry;
+                    Utilities.Assert(1308.9308, false);    // guaranteed by selection logic
+                    MessageBox.Show("Only one file can be modified at a time.".PadRight(100), "Modify file");
+                    return false;
                 }
-            }
 
-            String strDriveLetter_orig = null;
-            String strDriveLetter = null;
+                String strVolumeName_orig = form_lvVolumesMain.SelectedItems[0].Text;
+                String strVolumeName = null;
+                String strFileName = form_lvVolumesMain.SelectedItems[0].SubItems[2].Text;
 
-            while (true)
-            {
-                InputBox inputBox = new InputBox();
-
-                inputBox.Text = "Step 2 of 2: Drive letter";
-                inputBox.Prompt = "Enter a drive letter.";
-
-                String str = form_lvVolumesMain.SelectedItems[0].SubItems[1].Text;
-
-                if (str.Length <= 0)
+                if (m_saveDirListings != null)
                 {
-                    Utilities.Assert(1300.1309, false);
+                    try { using (new StreamReader(strFileName)) { } }
+                    catch
+                    {
+                        MessageBox.Show("Currently saving listings and can't open file yet. Please wait.".PadRight(100), "Modify file");
+                        return false;
+                    }
+                }
+
+                {
+                    InputBox inputBox = new InputBox();
+
+                    inputBox.Text = "Step 1 of 2: Volume name";
+                    inputBox.Prompt = "Enter a volume name. (Next: drive letter)";
+                    inputBox.Entry = strVolumeName_orig;
+                    inputBox.SetNextButtons();
+
+                    if ((inputBox.ShowDialog() == DialogResult.OK) && (Utilities.StrValid(inputBox.Entry)))
+                    {
+                        strVolumeName = inputBox.Entry;
+                    }
+                }
+
+                String strDriveLetter_orig = null;
+                String strDriveLetter = null;
+
+                while (true)
+                {
+                    InputBox inputBox = new InputBox();
+
+                    inputBox.Text = "Step 2 of 2: Drive letter";
+                    inputBox.Prompt = "Enter a drive letter.";
+
+                    String str = form_lvVolumesMain.SelectedItems[0].SubItems[1].Text;
+
+                    if (str.Length <= 0)
+                    {
+                        Utilities.Assert(1308.9309, false);
+                        break;
+                    }
+
+                    strDriveLetter_orig = str[0].ToString();
+                    inputBox.Entry = strDriveLetter_orig.ToUpper();
+                    inputBox.SetNextButtons();
+
+                    if (inputBox.ShowDialog() == DialogResult.OK)
+                    {
+                        if (inputBox.Entry.Length > 1)
+                        {
+                            MessageBox.Show("Drive letter must be one letter.".PadRight(100), "Drive letter");
+                            continue;
+                        }
+
+                        strDriveLetter = inputBox.Entry.ToUpper();
+                    }
+
                     break;
                 }
 
-                strDriveLetter_orig = str[0].ToString();
-                inputBox.Entry = strDriveLetter_orig.ToUpper();
-                inputBox.SetNextButtons();
-
-                if (inputBox.ShowDialog() == DialogResult.OK)
+                if (((Utilities.StrValid(strVolumeName) == false) ||
+                    (Utilities.NotNull(strVolumeName) == Utilities.NotNull(strVolumeName_orig)))
+                    &&
+                    ((Utilities.StrValid(strDriveLetter) == false) ||
+                    (Utilities.NotNull(strDriveLetter) == Utilities.NotNull(strDriveLetter_orig))))
                 {
-                    if (inputBox.Entry.Length > 1)
-                    {
-                        MessageBox.Show("Drive letter must be one letter.".PadRight(100), "Drive letter");
-                        continue;
-                    }
-
-                    strDriveLetter = inputBox.Entry.ToUpper();
+                    MessageBox.Show("No changes made.".PadRight(100), "Modify file");
+                    return false;
                 }
 
-                break;
-            }
+                StringBuilder sbFileConts = new StringBuilder();
+                bool bDriveLetter = Utilities.StrValid(strDriveLetter);
 
-            if (((Utilities.StrValid(strVolumeName) == false) ||
-                (Utilities.NotNull(strVolumeName) == Utilities.NotNull(strVolumeName_orig)))
-                &&
-                ((Utilities.StrValid(strDriveLetter) == false) ||
-                (Utilities.NotNull(strDriveLetter) == Utilities.NotNull(strDriveLetter_orig))))
-            {
-                MessageBox.Show("No changes made.".PadRight(100), "Modify file");
-                return false;
-            }
+                KillTreeBuilder(bJoin: true);
 
-            StringBuilder sbFileConts = new StringBuilder();
-            bool bDriveLetter = Utilities.StrValid(strDriveLetter);
-
-            KillTreeBuilder(bJoin: true);
-
-            using (StringReader reader = new StringReader(File.ReadAllText(strFileName)))
-            {
-                String strLine = null;
-                bool bHitNickname = (Utilities.StrValid(strVolumeName) == false);
-
-                while ((strLine = reader.ReadLine()) != null)
+                using (StringReader reader = new StringReader(File.ReadAllText(strFileName)))
                 {
-                    StringBuilder sbLine = new StringBuilder(strLine);
+                    String strLine = null;
+                    bool bHitNickname = (Utilities.StrValid(strVolumeName) == false);
 
-                    if ((bHitNickname == false) && strLine.StartsWith(Utilities.m_strLINETYPE_Nickname))
+                    while ((strLine = reader.ReadLine()) != null)
                     {
-                        if (Utilities.StrValid(strVolumeName_orig))
+                        StringBuilder sbLine = new StringBuilder(strLine);
+
+                        if ((bHitNickname == false) && strLine.StartsWith(Utilities.m_strLINETYPE_Nickname))
                         {
-                            sbLine.Replace(strVolumeName_orig, Utilities.NotNull(strVolumeName));
+                            if (Utilities.StrValid(strVolumeName_orig))
+                            {
+                                sbLine.Replace(strVolumeName_orig, Utilities.NotNull(strVolumeName));
+                            }
+                            else
+                            {
+                                Utilities.Assert(1308.93101, sbLine.ToString().Split('\t').Length == 2);
+                                sbLine.Append('\t');
+                                sbLine.Append(strVolumeName);
+                            }
+
+                            form_lvVolumesMain.SelectedItems[0].Text = strVolumeName;
+                            bHitNickname = true;
                         }
-                        else
+                        else if (bDriveLetter)
                         {
-                            Utilities.Assert(1300.13101, sbLine.ToString().Split('\t').Length == 2);
-                            sbLine.Append('\t');
-                            sbLine.Append(strVolumeName);
+                            sbLine.Replace("\t" + strDriveLetter_orig + @":\", "\t" + strDriveLetter + @":\");
                         }
 
-                        form_lvVolumesMain.SelectedItems[0].Text = strVolumeName;
-                        bHitNickname = true;
+                        sbFileConts.AppendLine(sbLine.ToString());
                     }
-                    else if (bDriveLetter)
-                    {
-                        sbLine.Replace("\t" + strDriveLetter_orig + @":\", "\t" + strDriveLetter + @":\");
-                    }
-
-                    sbFileConts.AppendLine(sbLine.ToString());
                 }
-            }
 
-            if (bDriveLetter)
-            {
-                ListViewItem lvItem = form_lvVolumesMain.SelectedItems[0];
+                if (bDriveLetter)
+                {
+                    ListViewItem lvItem = form_lvVolumesMain.SelectedItems[0];
 
-                lvItem.Name = lvItem.SubItems[1].Text = strDriveLetter + ":";
-            }
+                    lvItem.Name = lvItem.SubItems[1].Text = strDriveLetter + ":";
+                }
 
-            File.WriteAllText(strFileName, sbFileConts.ToString());
-            m_blink.Go(form_btnSaveVolumeList);
+                File.WriteAllText(strFileName, sbFileConts.ToString());
+                m_blink.Go(form_btnSaveVolumeList);
 
-            if (MessageBox.Show("Update the volume list?".PadRight(100), "Modify file", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
-                form_btnSaveVolumeList_Click();
-            }
+                if (MessageBox.Show("Update the volume list?".PadRight(100), "Modify file", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    form_btnSaveVolumeList_Click();
+                }
 
-            return true;
+                return true;
+            }));
         }
 
         void form_btnNavigate_Click(object sender, EventArgs e = null)
@@ -1728,7 +1738,7 @@ namespace SearchDirLists
             if (form_lvVolumesMain.Items.Count == 0)
             {
                 m_blink.Go(ctl: form_lvVolumesMain, clr: Color.Red, Once: true);
-                Utilities.Assert(1300.13103, false);    // shouldn't even be hit: this button gets dimmed
+                Utilities.Assert(1308.93103, false);    // shouldn't even be hit: this button gets dimmed
                 return;
             }
 
@@ -1760,7 +1770,7 @@ namespace SearchDirLists
             }
         }
 
-        void form_btn_ToggleInclude_Click(object sender, EventArgs e)
+        void form_btnToggleInclude_Click(object sender, EventArgs e)
         {
             ListView.SelectedListViewItemCollection lvSelect = form_lvVolumesMain.SelectedItems;
 
@@ -1777,7 +1787,7 @@ namespace SearchDirLists
             RestartTreeTimer();
         }
 
-        void form_btn_TreeCollapse_Click(object sender, EventArgs e)
+        void form_btnTreeCollapse_Click(object sender, EventArgs e)
         {
             if (m_bCompareMode)
             {
@@ -1830,68 +1840,71 @@ namespace SearchDirLists
             treeNode.TreeView.SelectedNode = treeNode.Parent;
         }
 
-        void form_btn_VolGroup_Click(object sender, EventArgs e)
+        void form_btnVolGroup_Click(object sender, EventArgs e)
         {
-            InterruptTreeTimerWithAction(new BoolAction(form_btn_VolGroup_Click));
-        }
-
-        bool form_btn_VolGroup_Click()
-        {
-            ListView.SelectedListViewItemCollection lvSelect = form_lvVolumesMain.SelectedItems;
-
-            if (lvSelect.Count <= 0)
+            if (m_bKillTree)
             {
-                return false;
+                m_bKillTree = timer_DoTree.Enabled;
             }
 
-            InputBox inputBox = new InputBox();
-
-            inputBox.Text = "Volume Group";
-            inputBox.Prompt = "Enter a volume group name";
-
-            if (form_lvVolumesMain.SelectedItems[0].SubItems.Count > 5)
+            InterruptTreeTimerWithAction(new BoolAction(() =>
             {
-                inputBox.Entry = form_lvVolumesMain.SelectedItems[0].SubItems[5].Text;
-            }
+                ListView.SelectedListViewItemCollection lvSelect = form_lvVolumesMain.SelectedItems;
 
-            SortedDictionary<String, object> dictVolGroups = new SortedDictionary<String, object>();
-
-            foreach (ListViewItem lvItem in form_lvVolumesMain.Items)
-            {
-                if (lvItem.SubItems.Count <= 5)
+                if (lvSelect.Count <= 0)
                 {
-                    continue;
+                    return false;
                 }
 
-                String strVolGroup = lvItem.SubItems[5].Text;
+                InputBox inputBox = new InputBox();
 
-                if (dictVolGroups.ContainsKey(strVolGroup) == false)
+                inputBox.Text = "Volume Group";
+                inputBox.Prompt = "Enter a volume group name";
+
+                if (form_lvVolumesMain.SelectedItems[0].SubItems.Count > 5)
                 {
-                    dictVolGroups.Add(strVolGroup, null);
-                }
-            }
-
-            foreach (KeyValuePair<String, object> entry in dictVolGroups)
-            {
-                inputBox.AddSelector(entry.Key);
-            }
-
-            if (inputBox.ShowDialog() != DialogResult.OK)
-            {
-                return false;
-            }
-
-            foreach (ListViewItem lvItem in lvSelect)
-            {
-                while (lvItem.SubItems.Count <= 5)
-                {
-                    lvItem.SubItems.Add(new ListViewItem.ListViewSubItem());
+                    inputBox.Entry = form_lvVolumesMain.SelectedItems[0].SubItems[5].Text;
                 }
 
-                lvItem.SubItems[5].Text = inputBox.Entry;
-            }
+                SortedDictionary<String, object> dictVolGroups = new SortedDictionary<String, object>();
 
-            return true;
+                foreach (ListViewItem lvItem in form_lvVolumesMain.Items)
+                {
+                    if (lvItem.SubItems.Count <= 5)
+                    {
+                        continue;
+                    }
+
+                    String strVolGroup = lvItem.SubItems[5].Text;
+
+                    if (dictVolGroups.ContainsKey(strVolGroup) == false)
+                    {
+                        dictVolGroups.Add(strVolGroup, null);
+                    }
+                }
+
+                foreach (KeyValuePair<String, object> entry in dictVolGroups)
+                {
+                    inputBox.AddSelector(entry.Key);
+                }
+
+                if (inputBox.ShowDialog() != DialogResult.OK)
+                {
+                    return false;
+                }
+
+                foreach (ListViewItem lvItem in lvSelect)
+                {
+                    while (lvItem.SubItems.Count <= 5)
+                    {
+                        lvItem.SubItems.Add(new ListViewItem.ListViewSubItem());
+                    }
+
+                    ((RootNodeDatum)((TreeNode)lvItem.Tag).Tag).StrVolumeGroup = lvItem.SubItems[5].Text = inputBox.Entry;
+                }
+
+                return true;
+            }));
         }
 
         void form_cbNavigate_DropDown(object sender, EventArgs e)
@@ -1989,7 +2002,7 @@ namespace SearchDirLists
 
             if (m_bCompareMode)
             {
-                Utilities.Assert(1300.13105, form_chkCompare1.Checked == false);
+                Utilities.Assert(1308.93105, form_chkCompare1.Checked == false);
                 form_chkCompare1.Text = m_strChkCompareOrig;
                 form_btn_TreeCollapse.Text = m_strBtnTreeCollapseOrig;
                 form_btnCompare.Text = m_strBtnCompareOrig;
@@ -2060,7 +2073,11 @@ namespace SearchDirLists
                 return;
             }
 
-            m_bKillTree = false;
+            if (m_bKillTree)
+            {
+                m_bKillTree = timer_DoTree.Enabled;
+            }
+
             RestartTreeTimer();
         }
 
@@ -2253,7 +2270,7 @@ namespace SearchDirLists
             {
                 if (m_bCompareMode)
                 {
-                    Utilities.Assert(1300.1311, false);    // the listviewer shouldn't even be visible
+                    Utilities.Assert(1308.9311, false);    // the listviewer shouldn't even be visible
                     return;
                 }
 
@@ -2355,7 +2372,7 @@ namespace SearchDirLists
                     m_listHistory.RemoveRange(m_nIxHistory, m_listHistory.Count - m_nIxHistory - 1);
                 }
 
-                Utilities.Assert(1300.1312, m_nIxHistory == (m_listHistory.Count - 1));
+                Utilities.Assert(1308.9312, m_nIxHistory == (m_listHistory.Count - 1));
 
                 if ((m_nIxHistory < 0) || (History_Equals(e.Node) == false))
                 {
@@ -2376,7 +2393,7 @@ namespace SearchDirLists
 
             if (sender == form_treeCompare2)
             {
-                Utilities.Assert(1300.1313, m_bCompareMode);
+                Utilities.Assert(1308.9313, m_bCompareMode);
                 form_lvFileCompare.Items.Clear();
                 form_lvDetailVol.Items.Clear();
             }
@@ -2393,12 +2410,12 @@ namespace SearchDirLists
 
             TreeNode rootNode = e.Node.Root();
 
-            Utilities.Assert(1300.1314, (new object[] { form_treeCompare1, form_treeCompare2 }.Contains(sender)) == m_bCompareMode);
+            Utilities.Assert(1308.9314, (new object[] { form_treeCompare1, form_treeCompare2 }.Contains(sender)) == m_bCompareMode);
             DoTreeSelect(e.Node);
 
             String strNode = e.Node.Text;
 
-            Utilities.Assert(1300.1315, Utilities.StrValid(strNode));
+            Utilities.Assert(1308.9315, Utilities.StrValid(strNode));
 
             if (m_bCompareMode)
             {
@@ -2449,7 +2466,7 @@ namespace SearchDirLists
 
             if (nodeDatum.m_lvItem.ListView == null)    // during Corellate()
             {
-                Utilities.Assert(1300.1316, m_threadCollate != null);
+                Utilities.Assert(1308.9316, m_threadCollate != null);
                 return;
             }
 
@@ -2530,14 +2547,14 @@ namespace SearchDirLists
 
                 ActivationArguments args = AppDomain.CurrentDomain.SetupInformation.ActivationArguments;
 
-                if (Utilities.Assert(1300.13165, args != null) == false)
+                if (Utilities.Assert(1308.93165, args != null) == false)
                 {
                     return;
                 }
 
                 String[] arrArgs = args.ActivationData;
 
-                if (Utilities.Assert(1300.13165, arrArgs.Length > 0) == false)
+                if (Utilities.Assert(1308.93165, arrArgs.Length > 0) == false)
                 {
                     return;
                 }
@@ -2549,7 +2566,7 @@ namespace SearchDirLists
                     case Utilities.m_strFILEEXT_Listing:
                     {
                         form_cbSaveAs.Text = strFile;
-                        form_btnAddVolume_Click();
+                        AddVolume();
                         form_tabControlMain.SelectedTab = form_tabPageBrowse;
                         RestartTreeTimer();
                         break;
@@ -2604,7 +2621,7 @@ namespace SearchDirLists
 
             if (m_bCompareMode)
             {
-                Utilities.Assert(1300.1317, form_chkCompare1.Checked);
+                Utilities.Assert(1308.9317, form_chkCompare1.Checked);
                 form_chkCompare1.Checked = false;
             }
 

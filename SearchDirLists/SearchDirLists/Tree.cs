@@ -11,7 +11,7 @@ using System.Collections.Concurrent;
 
 namespace SearchDirLists
 {
-    delegate void TreeStatusDelegate(TreeNode rootNode = null, LVvolStrings volStrings = null);
+    delegate void TreeStatusDelegate(LVvolStrings volStrings, TreeNode rootNode = null, bool bError = false);
     delegate void TreeSelectStatusDelegate(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem lvVol = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null);
     delegate void TreeSelectDoneDelegate(bool bSecondComparePane);
 
@@ -179,11 +179,12 @@ namespace SearchDirLists
 
     class RootNodeDatum : NodeDatum
     {
+        internal String StrVolumeGroup = null;
+        internal bool VolumeView = true;
+
         internal readonly String StrFile = null;
-        internal readonly String StrVolumeGroup = null;
         internal readonly ulong VolumeFree = 0;
         internal readonly ulong VolumeLength = 0;
-        public bool VolumeView = true;
 
         internal RootNodeDatum(NodeDatum node, String strFile_in, String strVolGroup_in,
             ulong nVolumeFree_in, ulong nVolumeLength_in)
@@ -308,11 +309,9 @@ namespace SearchDirLists
             class DirData
             {
                 RootNode m_rootNode = null;
-                static TreeStatusDelegate m_statusCallback = null;
 
-                internal DirData(TreeStatusDelegate statusCallback, RootNode rootNode)
+                internal DirData(RootNode rootNode)
                 {
-                    m_statusCallback = statusCallback;
                     m_rootNode = rootNode;
                 }
 
@@ -332,10 +331,7 @@ namespace SearchDirLists
 
                 internal TreeNode AddToTree(String strVolumeName)
                 {
-                    TreeNode rootNode = m_rootNode.Nodes.Values.First().AddToTree(strVolumeName);
-
-                    m_statusCallback(rootNode);
-                    return rootNode;
+                    return m_rootNode.Nodes.Values.First().AddToTree(strVolumeName);
                 }
             }
 
@@ -583,7 +579,7 @@ namespace SearchDirLists
                     if (bValid == false)
                     {
                         m_MessageboxCallback(("Bad file: " + strSaveAs).PadRight(100), "Tree");
-                        m_statusCallback(volStrings: m_volStrings);
+                        m_statusCallback(m_volStrings, bError: true);
                         return;
                     }
                 }
@@ -636,7 +632,7 @@ namespace SearchDirLists
                 }
 
                 List<String> listLines = File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Directory)).ToList();
-                DirData dirData = new DirData(m_statusCallback, rootNode);
+                DirData dirData = new DirData(rootNode);
                 bool bZeroLengthsWritten = true;
 
                 foreach (String strLine in listLines)
@@ -666,12 +662,10 @@ namespace SearchDirLists
                 }
 
                 TreeNode rootTreeNode = dirData.AddToTree(strVolumeName);
-                ulong nScannedLength = ulong.Parse(
-                    File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Length)).ToArray()[0]
-                    .Split('\t')[nColLENGTH]);
 
                 rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag, strSaveAs, m_volStrings.VolumeGroup, nVolFree, nVolLength);
                 TreeSubnodeDetails(rootTreeNode);
+                m_statusCallback(m_volStrings, rootTreeNode);
 
                 if (bZeroLengthsWritten)
                 {
@@ -680,6 +674,10 @@ namespace SearchDirLists
                     Utilities.WriteLine(File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Directory)).Sum(s => decimal.Parse(s.Split('\t')[nColLENGTH])).ToString());
 #endif
                 }
+
+                ulong nScannedLength = ulong.Parse(
+                    File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Length)).ToArray()[0]
+                    .Split('\t')[nColLENGTH]);
 
                 Utilities.WriteLine(nScannedLength.ToString());
 

@@ -118,7 +118,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Tree.cs" />
-    <Compile Include="Correlate.cs" />
+    <Compile Include="Collate.cs" />
     <Compile Include="TreeForm.cs">
       <SubType>Form</SubType>
     </Compile>

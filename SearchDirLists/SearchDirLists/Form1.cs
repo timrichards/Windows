@@ -1828,7 +1828,7 @@ namespace SearchDirLists
 
         void form_btnVolGroup_Click(object sender, EventArgs e)
         {
-            m_bKillTree &= timer_DoTree.Enabled;
+            m_bKillTree = (m_tree != null) || (m_bKillTree && timer_DoTree.Enabled);
 
             InterruptTreeTimerWithAction(new BoolAction(() =>
             {
@@ -1883,7 +1883,12 @@ namespace SearchDirLists
                         lvItem.SubItems.Add(new ListViewItem.ListViewSubItem());
                     }
 
-                    ((RootNodeDatum)((TreeNode)lvItem.Tag).Tag).StrVolumeGroup = lvItem.SubItems[5].Text = inputBox.Entry;
+                    lvItem.SubItems[5].Text = inputBox.Entry;
+
+                    if (m_tree == null)
+                    {
+                        ((RootNodeDatum)((TreeNode)lvItem.Tag).Tag).StrVolumeGroup = inputBox.Entry;
+                    }
                 }
 
                 return true;

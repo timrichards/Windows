@@ -904,11 +904,7 @@ namespace SearchDirLists
 
             if (form_lvIgnoreList.Items.Count > 0)
             {
-                if (m_bKillTree)
-                {
-                    m_bKillTree = timer_DoTree.Enabled;
-                }
-
+                m_bKillTree &= timer_DoTree.Enabled;
                 RestartTreeTimer();
             }
         }
@@ -1196,11 +1192,7 @@ namespace SearchDirLists
 
             form_lvIgnoreList.Items.Clear();
 
-            if (m_bKillTree)
-            {
-                m_bKillTree = timer_DoTree.Enabled;
-            }
-
+            m_bKillTree &= timer_DoTree.Enabled;
             RestartTreeTimer();
         }
 
@@ -1435,11 +1427,7 @@ namespace SearchDirLists
                 form_lvIgnoreList.Items.Add(lvItem);
             }
 
-            if (m_bKillTree)
-            {
-                m_bKillTree = timer_DoTree.Enabled;
-            }
-
+            m_bKillTree &= timer_DoTree.Enabled;
             RestartTreeTimer();
         }
 
@@ -1456,11 +1444,7 @@ namespace SearchDirLists
                 lvItem.Remove();
             }
 
-            if (m_bKillTree)
-            {
-                m_bKillTree = timer_DoTree.Enabled;
-            }
-
+            m_bKillTree &= timer_DoTree.Enabled;
             RestartTreeTimer();
         }
 
@@ -1709,9 +1693,11 @@ namespace SearchDirLists
 
         void form_btnSaveDirLists_Click(object sender, EventArgs e)
         {
+            bool bRestartTreeTimer = timer_DoTree.Enabled;
+
             timer_DoTree.Stop();
 
-            if (DoSaveDirListings() == false)   // cancelled
+            if ((DoSaveDirListings() == false) && bRestartTreeTimer)   // cancelled
             {
                 RestartTreeTimer();
             }
@@ -1842,10 +1828,7 @@ namespace SearchDirLists
 
         void form_btnVolGroup_Click(object sender, EventArgs e)
         {
-            if (m_bKillTree)
-            {
-                m_bKillTree = timer_DoTree.Enabled;
-            }
+            m_bKillTree &= timer_DoTree.Enabled;
 
             InterruptTreeTimerWithAction(new BoolAction(() =>
             {
@@ -2073,11 +2056,7 @@ namespace SearchDirLists
                 return;
             }
 
-            if (m_bKillTree)
-            {
-                m_bKillTree = timer_DoTree.Enabled;
-            }
-
+            m_bKillTree &= timer_DoTree.Enabled;
             RestartTreeTimer();
         }
 

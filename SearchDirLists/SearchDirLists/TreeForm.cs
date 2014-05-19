@@ -79,6 +79,7 @@ namespace SearchDirLists
 
             Utilities.Assert(1304.5304, m_listTreeNodes.Count == 0);
             Utilities.Assert(1304.5304, InvokeRequired);
+
             Utilities.CheckAndInvoke(this, new Action(() =>
             {
                 Utilities.Assert(1304.5306, m_list_lvIgnore.Count == 0);

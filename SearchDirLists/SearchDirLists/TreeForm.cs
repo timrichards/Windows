@@ -287,6 +287,11 @@ namespace SearchDirLists
 
         void SelectFoundFile()
         {
+            if (AppExit)
+            {
+                return;
+            }
+
             // find file results list from NavToFile()
             ListViewItem lvItem = form_lvFiles.FindItemWithText(m_strMaybeFile ?? form_cbNavigate.Text);
 
@@ -326,8 +331,10 @@ namespace SearchDirLists
         {
             if (m_tree != null)
             {
-                m_tree.EndThread(bJoin);
+                m_tree.EndThread(bJoin: true);
                 form_treeView_Browse.Nodes.Clear();
+                m_listRootNodes.Clear();
+                TreeCleanup();
             }
         }
 
@@ -340,10 +347,7 @@ namespace SearchDirLists
                     return;
                 }
 
-                m_tree.EndThread(bJoin: true);
-                form_treeView_Browse.Nodes.Clear();
-                m_listRootNodes.Clear();
-                TreeCleanup();
+                KillTreeBuilder(bJoin: true);
             }
 
             if (m_threadCollate != null)

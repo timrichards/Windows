@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Runtime.Hosting;
+using System.Threading;
 
 namespace SearchDirLists
 {
@@ -1059,7 +1060,18 @@ namespace SearchDirLists
 
             do
             {
-                m_listTreeNodes.Remove(treeNode);
+                if ((treeNode.Nodes != null) && (treeNode.Nodes.Count > 0))
+                {
+                    RemoveCorrelation(treeNode.Nodes[0], bContinue: true);
+                }
+
+                if (m_listTreeNodes.Contains(treeNode))
+                {
+                    m_listTreeNodes.Remove(treeNode);
+                }
+
+                treeNode.ForeColor = Color.Empty;
+                treeNode.BackColor = Color.Empty;
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
@@ -1067,17 +1079,15 @@ namespace SearchDirLists
                 {
                     UList<TreeNode> listClones = m_dictNodes[nodeDatum.Key];
 
-                    listClones.Remove(treeNode);
-
-                    if (listClones.Count == 0)
+                    if (listClones.Contains(treeNode))
                     {
-                        m_dictNodes.Remove(nodeDatum.Key);
-                    }
-                }
+                        listClones.Remove(treeNode);
 
-                if ((treeNode.Nodes != null) && (treeNode.Nodes.Count > 0))
-                {
-                    RemoveCorrelation(treeNode.Nodes[0], bContinue: true);
+                        if (listClones.Count == 0)
+                        {
+                            m_dictNodes.Remove(nodeDatum.Key);
+                        }
+                    }
                 }
             }
             while (bContinue && ((treeNode = treeNode.NextNode) != null));
@@ -1678,26 +1688,77 @@ namespace SearchDirLists
                 return;
             }
 
-            m_bKillTree &= timer_DoTree.Enabled;
+            m_bKillTree = (m_tree != null) || (m_bKillTree && timer_DoTree.Enabled);
+            timer_DoTree.Enabled = false;
+            KillTreeBuilder(bJoin: true);
+
+            if (m_bKillTree == false)
+            {
+                uint nNumFoldersKeep = 0;
+                uint nNumFoldersRemove = 0;
+
+                foreach (ListViewItem lvItem in form_lvVolumesMain.Items)
+                {
+                    RootNodeDatum rootNodeDatum = (RootNodeDatum)((TreeNode)lvItem.Tag).Tag;
+
+                    if (lvSelect.Contains(lvItem))
+                    {
+                        nNumFoldersRemove += rootNodeDatum.nSubDirs;
+                    }
+                    else
+                    {
+                        nNumFoldersKeep += rootNodeDatum.nSubDirs;
+                    }
+                }
+
+                m_bKillTree = (nNumFoldersRemove > nNumFoldersKeep);
+            }
+
+            if (m_bKillTree)
+            {
+                RestartTreeTimer();
+            }
+            else
+            {
+                List<ListViewItem> listLVvolItems = new List<ListViewItem>();
+
+                foreach (ListViewItem lvItem in lvSelect)
+                {
+                    listLVvolItems.Add(lvItem);
+                    form_treeView_Browse.Nodes.Remove((TreeNode)lvItem.Tag);
+                }
+
+                new Thread(new ThreadStart(() =>
+                {
+                    foreach (ListViewItem lvItem in listLVvolItems)
+                    {
+                        TreeNode rootNode = (TreeNode)lvItem.Tag;
+
+                        if (rootNode == null)
+                        {
+                            Utilities.Assert(1308.93103, false);
+                            continue;
+                        }
+
+                        RemoveCorrelation(rootNode);
+                        m_listRootNodes.Remove(rootNode);
+                    }
+
+                    Invoke(new Action(() =>
+                    {
+                        RestartTreeTimer();
+                    }));
+                }))
+                .Start();
+            }
 
             foreach (ListViewItem lvItem in lvSelect)
             {
                 lvItem.Remove();
-
-                TreeNode rootNode = (TreeNode)lvItem.Tag;
-
-                if ((m_bKillTree == false) && (rootNode != null))
-                {
-                    RemoveCorrelation(rootNode);
-                }
-
-                form_treeView_Browse.Nodes.Remove(rootNode);
-                m_listRootNodes.Remove(rootNode);
             }
 
             EnableButtonsWhenVolsSel();
             form_btnSaveDirList.Enabled = (form_lvVolumesMain.Items.Count > 0);
-            RestartTreeTimer();
         }
 
         void form_btnSaveAs_Click(object sender, EventArgs e)
@@ -1766,7 +1827,7 @@ namespace SearchDirLists
             if (form_lvVolumesMain.Items.Count == 0)
             {
                 m_blink.Go(ctl: form_lvVolumesMain, clr: Color.Red, Once: true);
-                Utilities.Assert(1308.93103, false);    // shouldn't even be hit: this button gets dimmed
+                Utilities.Assert(1308.93105, false);    // shouldn't even be hit: this button gets dimmed
                 return;
             }
 
@@ -2036,7 +2097,7 @@ namespace SearchDirLists
 
             if (m_bCompareMode)
             {
-                Utilities.Assert(1308.93105, form_chkCompare1.Checked == false);
+                Utilities.Assert(1308.93107, form_chkCompare1.Checked == false);
                 form_chkCompare1.Text = m_strChkCompareOrig;
                 form_btn_TreeCollapse.Text = m_strBtnTreeCollapseOrig;
                 form_btnCompare.Text = m_strBtnCompareOrig;

@@ -403,7 +403,7 @@ namespace SearchDirLists
     class SDL_IgnoreFile : SDL_File { internal SDL_IgnoreFile(String strFile = null) : base(m_str_IGNORE_LIST_HEADER, m_strFILEEXT_Ignore, "ignore") { m_strFileNotDialog = strFile; } }
 
     class UList<T> :
-#if (DEBUG)
+#if (true)
         Dictionary<T, object>       // guarantees uniqueness
     {
         public void Add(T t) { base.Add(t, null); }
@@ -411,8 +411,10 @@ namespace SearchDirLists
         public new IEnumerator<T> GetEnumerator() { return base.Keys.GetEnumerator(); }
         public T[] ToArray() { return base.Keys.ToArray(); }
         public List<T> ToList() { return base.Keys.ToList(); }
+        public bool Contains(T t) { return base.ContainsKey(t); }
     }
 #else
+#error Locks up removing items.
         List<T> { }                  // uses less memory, faster
 #endif
 
@@ -524,6 +526,11 @@ namespace SearchDirLists
 
         internal static object CheckAndInvoke(Control control, Delegate action, object[] args = null)
         {
+            if (Form1.AppExit)
+            {
+                return null;
+            }
+
             if (control.InvokeRequired)
             {
                 if (args == null)

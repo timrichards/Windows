@@ -1053,6 +1053,36 @@ namespace SearchDirLists
             timer_DoTree.Start();
         }
 
+        void RemoveCorrelation(TreeNode treeNode_in, bool bContinue = false)
+        {
+            TreeNode treeNode = treeNode_in;
+
+            do
+            {
+                m_listTreeNodes.Remove(treeNode);
+
+                NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+
+                if (m_dictNodes.ContainsKey(nodeDatum.Key))     // same scenario as empty parent. Search "Parent folder may contain only its clone subfolder, in which case unmark the subfolder"
+                {
+                    UList<TreeNode> listClones = m_dictNodes[nodeDatum.Key];
+
+                    listClones.Remove(treeNode);
+
+                    if (listClones.Count == 0)
+                    {
+                        m_dictNodes.Remove(nodeDatum.Key);
+                    }
+                }
+
+                if ((treeNode.Nodes != null) && (treeNode.Nodes.Count > 0))
+                {
+                    RemoveCorrelation(treeNode.Nodes[0], bContinue: true);
+                }
+            }
+            while (bContinue && ((treeNode = treeNode.NextNode) != null));
+        }
+
         bool SaveFields(bool bFailOnDirectory = true)
         {
             m_strVolumeName = form_cbVolumeName.Text.Trim();
@@ -1163,7 +1193,7 @@ namespace SearchDirLists
             lvItem.SubItems[4].Text = (bInclude) ? "Yes" : "No";
         }
 
-        void UpdateLV_VolumesSelection()
+        void EnableButtonsWhenVolsSel()
         {
             bool bHasSelection = (form_lvVolumesMain.SelectedIndices.Count > 0);
 
@@ -1648,12 +1678,24 @@ namespace SearchDirLists
                 return;
             }
 
+            m_bKillTree &= timer_DoTree.Enabled;
+
             foreach (ListViewItem lvItem in lvSelect)
             {
                 lvItem.Remove();
+
+                TreeNode rootNode = (TreeNode)lvItem.Tag;
+
+                if ((m_bKillTree == false) && (rootNode != null))
+                {
+                    RemoveCorrelation(rootNode);
+                }
+
+                form_treeView_Browse.Nodes.Remove(rootNode);
+                m_listRootNodes.Remove(rootNode);
             }
 
-            UpdateLV_VolumesSelection();
+            EnableButtonsWhenVolsSel();
             form_btnSaveDirList.Enabled = (form_lvVolumesMain.Items.Count > 0);
             RestartTreeTimer();
         }
@@ -1828,7 +1870,7 @@ namespace SearchDirLists
 
         void form_btnVolGroup_Click(object sender, EventArgs e)
         {
-            m_bKillTree = (m_tree != null) || (m_bKillTree && timer_DoTree.Enabled);
+            m_bKillTree &= timer_DoTree.Enabled;
 
             InterruptTreeTimerWithAction(new BoolAction(() =>
             {
@@ -1885,7 +1927,11 @@ namespace SearchDirLists
 
                     lvItem.SubItems[5].Text = inputBox.Entry;
 
-                    if (m_tree == null)
+                    if (lvItem.Tag == null)
+                    {
+                        m_bKillTree = true;
+                    }
+                    else if (m_bKillTree == false)
                     {
                         ((RootNodeDatum)((TreeNode)lvItem.Tag).Tag).StrVolumeGroup = inputBox.Entry;
                     }
@@ -2278,7 +2324,7 @@ namespace SearchDirLists
 
         void form_lv_Volumes_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
-            UpdateLV_VolumesSelection();
+            EnableButtonsWhenVolsSel();
         }
 
         void form_tmapUserCtl_Leave(object sender, EventArgs e)

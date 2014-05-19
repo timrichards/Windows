@@ -2629,70 +2629,71 @@ namespace SearchDirLists
             Utilities.Assert(0, false, "DEBUG is defined.");
             Utilities.Assert(0, System.Diagnostics.Debugger.IsAttached, "Debugger is not attached!");
 #else
-            Utilities.Closure(new Action(() =>
+            if (Utilities.Assert(0, (System.Diagnostics.Debugger.IsAttached == false), "Debugger is attached but DEBUG is not defined.") == false)
             {
-                if (Utilities.Assert(0, (System.Diagnostics.Debugger.IsAttached == false), "Debugger is attached but DEBUG is not defined.") == false)
+                return;
+            }
+
+            ActivationArguments args = AppDomain.CurrentDomain.SetupInformation.ActivationArguments;
+
+            if (Utilities.Assert(1308.93165, args != null) == false)
+            {
+                return;
+            }
+
+            String[] arrArgs = args.ActivationData;
+
+            if (arrArgs == null)
+            {
+                return;
+            }
+
+            if (Utilities.Assert(1308.93165, arrArgs.Length > 0) == false)
+            {
+                return;
+            }
+
+            String strFile = arrArgs[0];
+
+            switch (Path.GetExtension(strFile).Substring(1))
+            {
+                case Utilities.m_strFILEEXT_Listing:
                 {
-                    return;
+                    form_cbSaveAs.Text = strFile;
+                    AddVolume();
+                    form_tabControlMain.SelectedTab = form_tabPageBrowse;
+                    RestartTreeTimer();
+                    break;
                 }
 
-                ActivationArguments args = AppDomain.CurrentDomain.SetupInformation.ActivationArguments;
-
-                if (Utilities.Assert(1308.93165, args != null) == false)
+                case Utilities.m_strFILEEXT_Volume:
                 {
-                    return;
-                }
-
-                String[] arrArgs = args.ActivationData;
-
-                if (Utilities.Assert(1308.93165, arrArgs.Length > 0) == false)
-                {
-                    return;
-                }
-
-                String strFile = arrArgs[0];
-
-                switch (Path.GetExtension(strFile).Substring(1))
-                {
-                    case Utilities.m_strFILEEXT_Listing:
+                    if (LoadVolumeList(strFile))
                     {
-                        form_cbSaveAs.Text = strFile;
-                        AddVolume();
-                        form_tabControlMain.SelectedTab = form_tabPageBrowse;
                         RestartTreeTimer();
-                        break;
                     }
 
-                    case Utilities.m_strFILEEXT_Volume:
-                    {
-                        if (LoadVolumeList(strFile))
-                        {
-                            RestartTreeTimer();
-                        }
-
-                        break;
-                    }
-
-                    case Utilities.m_strFILEEXT_Copy:
-                    {
-                        form_tabControlMain.SelectedTab = form_tabPageBrowse;
-                        form_tabControlCopyIgnore.SelectedTab = form_tabPageCopy;
-                        m_blink.Go(form_lvCopyList, clr: Color.Yellow, Once: true);
-                        MessageBox.Show("The Copy scratchpad cannot be loaded with no directory listings.", "Load Copy scratchpad externally");
-                        Application.Exit();
-                        break;
-                    }
-
-                    case Utilities.m_strFILEEXT_Ignore:
-                    {
-                        LoadIgnoreList(strFile);
-                        form_tabControlMain.SelectedTab = form_tabPageBrowse;
-                        form_tabControlCopyIgnore.SelectedTab = form_tabPageIgnore;
-                        break;
-                    }
+                    break;
                 }
-            }));
 
+                case Utilities.m_strFILEEXT_Copy:
+                {
+                    form_tabControlMain.SelectedTab = form_tabPageBrowse;
+                    form_tabControlCopyIgnore.SelectedTab = form_tabPageCopy;
+                    m_blink.Go(form_lvCopyList, clr: Color.Yellow, Once: true);
+                    MessageBox.Show("The Copy scratchpad cannot be loaded with no directory listings.", "Load Copy scratchpad externally");
+                    Application.Exit();
+                    break;
+                }
+
+                case Utilities.m_strFILEEXT_Ignore:
+                {
+                    LoadIgnoreList(strFile);
+                    form_tabControlMain.SelectedTab = form_tabPageBrowse;
+                    form_tabControlCopyIgnore.SelectedTab = form_tabPageIgnore;
+                    break;
+                }
+            }
 #endif
         }
 

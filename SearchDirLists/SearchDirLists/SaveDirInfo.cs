@@ -386,6 +386,12 @@ namespace SearchDirLists
             lock (form_lvVolumesMain)
             {
                 form_lvVolumesMain.Items[nIndex].SubItems[3].Text = strText;
+
+                if (bDone && (strText == Utilities.m_str_SAVED))
+                {
+                    form_lvVolumesMain.Items[nIndex].Name = null;    // indexing by path, only for unsaved volumes
+                }
+
                 form_lvVolumesMain.Invalidate();
             }
         }

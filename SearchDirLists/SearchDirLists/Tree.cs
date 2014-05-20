@@ -539,7 +539,7 @@ namespace SearchDirLists
             {
                 DateTime dtStart = DateTime.Now;
 
-                if (LV_VolumesItemCanLoad(m_volStrings) == false)
+                if (m_volStrings.CanLoad == false)
                 {
                     Utilities.Assert(1301.2307, false);    // guaranteed by caller
                     return;
@@ -734,7 +734,7 @@ namespace SearchDirLists
 
             foreach (LVvolStrings volStrings in m_list_lvVolStrings)
             {
-                if (LV_VolumesItemCanLoad(volStrings) == false)
+                if (volStrings.CanLoad == false)
                 {
                     continue;
                 }

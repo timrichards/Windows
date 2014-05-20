@@ -215,29 +215,6 @@ namespace SearchDirLists
                 }
             }
 
-            if ((File.Exists(m_strSaveAs) == false) && form_lvVolumesMain.Items.ContainsKey(m_strPath))
-            {
-                FormError(form_cbPath, "Path already added.", "Volume Source Path");
-                return false;
-            }
-
-            if (Utilities.StrValid(m_strVolumeName))
-            {
-                ListViewItem lvItem = form_lvVolumesMain.FindItemWithText(m_strVolumeName);
-
-                if ((lvItem != null) && (lvItem.Text == m_strVolumeName))
-                {
-                    m_blink.Go(form_cbVolumeName, clr: Color.Red);
-
-                    if (MessageBox.Show("Nickname already in use. Use it for more than one volume?".PadRight(100), "Volume Save As", MessageBoxButtons.YesNo)
-                        != DialogResult.Yes)
-                    {
-                        m_blink.Go(form_cbVolumeName, clr: Color.Red, Once: true);
-                        return false;
-                    }
-                }
-            }
-
             if ((File.Exists(m_strSaveAs) == false) && (Utilities.StrValid(m_strPath) == false))
             {
                 m_blink.Go(form_cbPath, clr: Color.Red);
@@ -255,12 +232,13 @@ namespace SearchDirLists
             }
 
             String strStatus = "Not Saved";
+            bool bFileOK = false;
 
             if (File.Exists(m_strSaveAs))
             {
                 if (Utilities.StrValid(m_strPath) == false)
                 {
-                    bool bFileOK = ReadHeader();
+                    bFileOK = ReadHeader();
 
                     if (bFileOK)
                     {
@@ -287,7 +265,29 @@ namespace SearchDirLists
                 }
             }
 
-            if ((bOpenedFile == false) && (Utilities.StrValid(m_strVolumeName) == false))
+            if ((bFileOK == false) && (form_lvVolumesMain.Items.ContainsKey(m_strPath)))
+            {
+                FormError(form_cbPath, "Path already added.", "Volume Source Path");
+                return false;
+            }
+
+            if (Utilities.StrValid(m_strVolumeName))
+            {
+                ListViewItem lvItem = form_lvVolumesMain.FindItemWithText(m_strVolumeName);
+
+                if ((lvItem != null) && (lvItem.Text == m_strVolumeName))
+                {
+                    m_blink.Go(form_cbVolumeName, clr: Color.Red);
+
+                    if (MessageBox.Show("Nickname already in use. Use it for more than one volume?".PadRight(100), "Volume Save As", MessageBoxButtons.YesNo)
+                        != DialogResult.Yes)
+                    {
+                        m_blink.Go(form_cbVolumeName, clr: Color.Red, Once: true);
+                        return false;
+                    }
+                }
+            }
+            else if (bOpenedFile == false)
             {
                 m_blink.Go(form_cbVolumeName, clr: Color.Red);
 
@@ -302,12 +302,16 @@ namespace SearchDirLists
             {
                 ListViewItem lvItem = new ListViewItem(new String[] { m_strVolumeName, m_strPath, m_strSaveAs, strStatus, "Yes" });
 
-                lvItem.Name = m_strPath;
+                if (bFileOK == false)
+                {
+                    lvItem.Name = m_strPath;    // indexing by path, only for unsaved volumes
+                }
+
                 form_lvVolumesMain.Items.Add(lvItem);
             }
 
             form_btnSaveDirList.Enabled = true;
-            return true;
+            return bFileOK;
         }
 
         void ComboBoxItemsInsert(ComboBox comboBox, String strText = null, bool bTrimText = true)
@@ -917,11 +921,6 @@ namespace SearchDirLists
                 return false;
             }
 
-            foreach (ListViewItem lvItem in form_lvVolumesMain.Items)
-            {
-                lvItem.Name = lvItem.Text;
-            }
-
             if (form_lvVolumesMain.Items.Count > 0)
             {
                 form_btnSaveDirList.Enabled = true;
@@ -1075,18 +1074,22 @@ namespace SearchDirLists
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
-                if (m_dictNodes.ContainsKey(nodeDatum.Key))     // same scenario as empty parent. Search "Parent folder may contain only its clone subfolder, in which case unmark the subfolder"
+                if (m_dictNodes.ContainsKey(nodeDatum.Key) == false)
                 {
-                    UList<TreeNode> listClones = m_dictNodes[nodeDatum.Key];
+                    // same scenario as empty parent.
+                    // Search "Parent folder may contain only its clone subfolder, in which case unmark the subfolder"
+                    continue;
+                }
 
-                    if (listClones.Contains(treeNode))
+                UList<TreeNode> listClones = m_dictNodes[nodeDatum.Key];
+
+                if (listClones.Contains(treeNode))
+                {
+                    listClones.Remove(treeNode);
+
+                    if (listClones.Count == 0)
                     {
-                        listClones.Remove(treeNode);
-
-                        if (listClones.Count == 0)
-                        {
-                            m_dictNodes.Remove(nodeDatum.Key);
-                        }
+                        m_dictNodes.Remove(nodeDatum.Key);
                     }
                 }
             }
@@ -1650,7 +1653,7 @@ namespace SearchDirLists
                 {
                     ListViewItem lvItem = form_lvVolumesMain.SelectedItems[0];
 
-                    lvItem.Name = lvItem.SubItems[1].Text = strDriveLetter + ":";
+                    lvItem.SubItems[1].Text = strDriveLetter + ":";
                 }
 
                 File.WriteAllText(strFileName, sbFileConts.ToString());
@@ -1699,6 +1702,12 @@ namespace SearchDirLists
 
                 foreach (ListViewItem lvItem in form_lvVolumesMain.Items)
                 {
+                    if (lvItem.Tag == null)
+                    {
+                        // scenario: unsaved file
+                        continue;
+                    }
+
                     RootNodeDatum rootNodeDatum = (RootNodeDatum)((TreeNode)lvItem.Tag).Tag;
 
                     if (lvSelect.Contains(lvItem))
@@ -1724,6 +1733,12 @@ namespace SearchDirLists
 
                 foreach (ListViewItem lvItem in lvSelect)
                 {
+                    if (lvItem.Tag == null)
+                    {
+                        // scenario: unsaved file
+                        continue;
+                    }
+
                     listLVvolItems.Add(lvItem);
                     form_treeView_Browse.Nodes.Remove((TreeNode)lvItem.Tag);
                 }
@@ -1733,12 +1748,6 @@ namespace SearchDirLists
                     foreach (ListViewItem lvItem in listLVvolItems)
                     {
                         TreeNode rootNode = (TreeNode)lvItem.Tag;
-
-                        if (rootNode == null)
-                        {
-                            Utilities.Assert(1308.93103, false);
-                            continue;
-                        }
 
                         RemoveCorrelation(rootNode);
                         m_listRootNodes.Remove(rootNode);

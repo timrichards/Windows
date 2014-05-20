@@ -353,6 +353,16 @@ namespace SearchDirLists
             }
         }
 
+        internal bool CanInclude { get { return Include == "Yes"; } }
+        internal bool CanLoad
+        {
+            get
+            {
+                return (CanInclude &&
+                    ((Utilities.m_str_USING_FILE + Utilities.m_str_SAVED).Contains(Status)));
+            }
+        }
+
         internal void SetStatus_BadFile(ListView lv)
         {
             lv.Items[Index].SubItems[3].Text =
@@ -794,17 +804,6 @@ namespace SearchDirLists
             }
 
             return true;
-        }
-
-        internal static bool LV_VolumesItemCanLoad(LVvolStrings lvStrings)
-        {
-            return (LV_VolumesItemInclude(lvStrings) &&
-                ((Utilities.m_str_USING_FILE + Utilities.m_str_SAVED).Contains(lvStrings.Status)));
-        }
-
-        internal static bool LV_VolumesItemInclude(LVvolStrings lvStrings)
-        {
-            return (lvStrings.Include == "Yes");
         }
 
         static String FormatLine(String strLineType, long nLineNo, String strLine_in = null)

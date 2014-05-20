@@ -76,7 +76,7 @@ namespace SearchDirLists
 
         internal void Go()
         {
-            if (LV_VolumesItemCanLoad(m_volStrings) == false)
+            if (m_volStrings.CanLoad == false)
             {
                 return;
             }

@@ -331,7 +331,7 @@ namespace SearchDirLists
         {
             if (m_tree != null)
             {
-                m_tree.EndThread(bJoin: true);
+                m_tree.EndThread(bJoin: bJoin);
                 form_treeView_Browse.Nodes.Clear();
                 m_listRootNodes.Clear();
                 TreeCleanup();

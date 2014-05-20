@@ -171,21 +171,13 @@ namespace SearchDirLists
 
             if (lvItemDetails != null)
             {
-                if (bSecondComparePane)
+                ListView lv = bSecondComparePane ? form_lvDetailVol : form_lvDetail;
+
+                lock (lv)
                 {
-                    lock (form_lvDetailVol)
-                    {
-                        form_lvDetailVol.Items.Clear();
-                        form_lvDetailVol.Items.AddRange(lvItemDetails);
-                    }
-                }
-                else
-                {
-                    lock (form_lvDetail)
-                    {
-                        form_lvDetail.Items.Clear();
-                        form_lvDetail.Items.AddRange(lvItemDetails);
-                    }
+                    lv.Items.Clear();
+                    lv.Items.AddRange(lvItemDetails);
+                    lv.Invalidate();
                 }
             }
 
@@ -205,6 +197,7 @@ namespace SearchDirLists
                 {
                     form_lvFiles.Items.Clear();
                     form_lvFiles.Items.AddRange(itemArray);
+                    form_lvFiles.Invalidate();
                 }
 
                 return;
@@ -234,6 +227,7 @@ namespace SearchDirLists
             {
                 lv1.Items.Clear();
                 lv1.Items.AddRange(itemArray);
+                lv1.Invalidate();
                 lv1.Items[0].Tag = lvFileItem;
             }
 

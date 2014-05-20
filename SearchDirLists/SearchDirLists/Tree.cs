@@ -624,16 +624,18 @@ namespace SearchDirLists
                     }
                 }
 
-                RootNode rootNode = new RootNode();
+                DirData dirData = null;
 
                 {
+                    RootNode rootNode = new RootNode();
                     String strStart = File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Start)).ToArray()[0];
+
                     rootNode.FirstLineNo = uint.Parse(strStart.Split('\t')[1]);
+                    dirData = new DirData(rootNode);
                 }
 
-                List<String> listLines = File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Directory)).ToList();
-                DirData dirData = new DirData(rootNode);
                 bool bZeroLengthsWritten = true;
+                List<String> listLines = File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Directory)).ToList();
 
                 foreach (String strLine in listLines)
                 {

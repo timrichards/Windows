@@ -733,6 +733,7 @@ namespace SearchDirLists
                 Utilities.Assert(1305.6321, form_lvClones.Items.Count == 0);
                 Utilities.Write("B");
                 form_lvClones.Items.AddRange(listLVdiffVol.ToArray());
+                form_lvClones.Invalidate();
                 Utilities.WriteLine("B");
 
                 if (m_bThreadAbort || Form1.AppExit)
@@ -743,6 +744,7 @@ namespace SearchDirLists
                 Utilities.Assert(1305.6322, form_lvUnique.Items.Count == 0);
                 Utilities.Write("C");
                 form_lvUnique.Items.AddRange(listLVunique.ToArray());
+                form_lvUnique.Invalidate();
                 Utilities.WriteLine("C");
 
                 if (m_bThreadAbort || Form1.AppExit)
@@ -753,6 +755,7 @@ namespace SearchDirLists
                 Utilities.Assert(1305.6323, form_lvSameVol.Items.Count == 0);
                 Utilities.Write("D");
                 form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
+                form_lvSameVol.Invalidate();
                 Utilities.WriteLine("D");
 
                 if (form_treeView_Browse.SelectedNode != null)      // m_bPutPathInFindEditBox is set in TreeDoneCallback()

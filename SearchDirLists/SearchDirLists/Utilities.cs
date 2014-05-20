@@ -16,68 +16,85 @@ namespace SearchDirLists
     class Blinky
     {
         static bool m_bTreeSelect = false;
-        public static bool TreeSelect { get { return m_bTreeSelect; } }
+        internal static bool TreeSelect { get { return m_bTreeSelect; } }
 
         readonly Control m_defaultControl = null;
         readonly System.Windows.Forms.Timer m_timer = null;
 
-        // Only one of these is set at any given time
-        Control m_ctlBlink = null;
-        ListViewItem m_lvItem = null;
-        TreeNode m_treeNode = null;
-
+        Holder m_blinky = new NullHolder();
         Color m_clrOrig = Color.Empty;
         Color m_clrBlink = Color.DarkTurquoise;
         int m_nBlink = 0;
         int m_nNumBlinks = 10;
         bool m_bProgress = false;
 
+        abstract class Holder
+        {
+            internal virtual Color BackColor { get; set; }
+            internal virtual void Reset() { }
+        }
+        class NullHolder : Holder { }
+        class TreeNodeHolder : Holder
+        {
+            readonly TreeNode m_obj = null;
+            internal TreeNodeHolder(TreeNode obj) { m_obj = obj; m_bTreeSelect = true; }
+            internal override Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
+            internal override void Reset() { m_bTreeSelect = false; m_obj.TreeView.SelectedNode = m_obj; }
+        }
+        class ListViewItemHolder : Holder
+        {
+            readonly ListViewItem m_obj = null;
+            internal ListViewItemHolder(ListViewItem obj) { m_obj = obj; }
+            internal override Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
+            internal override void Reset() { m_obj.Selected = true; }
+        }
+        class ControlHolder : Holder
+        {
+            readonly Control m_obj = null;
+            internal ControlHolder(Control obj) { m_obj = obj; }
+            internal override Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
+        }
+
         internal Blinky(System.Windows.Forms.Timer timer, Control defaultControl)
         {
             m_timer = timer;
             m_defaultControl = defaultControl;
-            m_clrOrig = defaultControl.BackColor;
         }
 
-        internal void SelectTreeNode(TreeNode treeNode, Color? clr = null, bool Once = false)
+        internal void SelectTreeNode(TreeNode treeNode)
         {
             Reset();
-            m_treeNode = treeNode;
-            m_clrOrig = m_treeNode.BackColor;
-            m_bTreeSelect = true;
+            m_blinky = new TreeNodeHolder(treeNode);
             treeNode.TreeView.Select();
             treeNode.EnsureVisible();
             treeNode.TreeView.SelectedNode = null;
-            Go(clr, Once);
+            Go(Once: true);
         }
 
-        internal void SelectLVitem(ListViewItem lvItem, Color? clr = null, bool Once = false)
+        internal void SelectLVitem(ListViewItem lvItem)
         {
             Reset();
-            m_lvItem = lvItem;
-            m_clrOrig = m_lvItem.BackColor;
-            m_lvItem.EnsureVisible();
-            m_lvItem.Selected = false;
-            m_ctlBlink = null;
-            Go(clr, Once);
+            m_blinky = new ListViewItemHolder(lvItem);
+            lvItem.EnsureVisible();
+            lvItem.Selected = false;
+            Go(Once: true);
         }
 
         internal void Go(Control ctl, Color? clr = null, bool Once = false)
         {
             Reset();
-            m_ctlBlink = ctl;
-            m_clrOrig = ctl.BackColor;
+            m_blinky = new ControlHolder(ctl);
             Go(clr, Once);
         }
 
         internal void Go(Color? clr = null, bool Once = false, bool bProgress = false)
         {
-            if ((m_lvItem == null) && (m_treeNode == null) && (m_ctlBlink == null))
+            if (m_blinky is NullHolder)
             {
-                m_ctlBlink = m_defaultControl;
-                m_clrOrig = m_defaultControl.BackColor;
+                m_blinky = new ControlHolder(m_defaultControl);
             }
 
+            m_clrOrig = m_blinky.BackColor;
             m_bProgress = bProgress;
             m_clrBlink = clr ?? (bProgress ? Color.LightSalmon : Color.Turquoise);
             m_nBlink = 0;
@@ -88,19 +105,13 @@ namespace SearchDirLists
 
         internal void Tick()
         {
-            if (++m_nBlink >= m_nNumBlinks)
+            if (++m_nBlink < m_nNumBlinks)
             {
-                Reset();
-            }
-            else if (((m_lvItem != null) && (m_lvItem.BackColor != m_clrBlink)) ||
-                ((m_treeNode != null) && (m_treeNode.BackColor != m_clrBlink)) ||
-                (m_ctlBlink.BackColor != m_clrBlink))
-            {
-                SetCtlBackColor(m_clrBlink);
+                SetCtlBackColor((m_blinky.BackColor == m_clrBlink) ? m_clrOrig : m_clrBlink);
             }
             else
             {
-                SetCtlBackColor(m_clrOrig);
+                Reset();
             }
         }
 
@@ -109,38 +120,14 @@ namespace SearchDirLists
             m_timer.Enabled = false;
             m_nBlink = 0;
             SetCtlBackColor(m_clrOrig);
-
-            if (m_lvItem != null)
-            {
-                m_lvItem.Selected = true;
-                m_defaultControl.Select();
-            }
-            else if (m_treeNode != null)
-            {
-                m_bTreeSelect = false;
-                m_treeNode.TreeView.SelectedNode = m_treeNode;
-                m_defaultControl.Select();
-            }
-
-            m_ctlBlink = null;
-            m_lvItem = null;
-            m_treeNode = null;
+            m_blinky.Reset();
+            m_defaultControl.Select();
+            m_blinky = new NullHolder();
         }
 
         void SetCtlBackColor(Color clr)
         {
-            if (m_lvItem != null)
-            {
-                m_lvItem.BackColor = clr;
-            }
-            else if (m_treeNode != null)
-            {
-                m_treeNode.BackColor = clr;
-            }
-            else if (m_ctlBlink != null)
-            {
-                m_ctlBlink.BackColor = clr;
-            }
+            m_blinky.BackColor = clr;
         }
     }
 
@@ -362,6 +349,7 @@ namespace SearchDirLists
             {
                 lv.Items.Clear();
                 lv.Items.AddRange(listItems.ToArray());
+                lv.Invalidate();
             }
             else
             {

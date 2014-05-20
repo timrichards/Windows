@@ -553,7 +553,7 @@ namespace SearchDirLists
                 ListViewItem lvItem = lv.SelectedItems[0];
 
                 Clipboard.SetText(Path.Combine(FullPath(form_treeView_Browse.SelectedNode), lvItem.Text));
-                m_blinky.SelectLVitem(lvItem: lvItem, Once: true);
+                m_blinky.SelectLVitem(lvItem: lvItem);
             }
             else
             {
@@ -1458,7 +1458,7 @@ namespace SearchDirLists
             }
             else if (form_lvIgnoreList.Items.ContainsKey(treeNode.Text))
             {
-                m_blinky.SelectLVitem(lvItem: form_lvIgnoreList.Items[treeNode.Text], Once: true);
+                m_blinky.SelectLVitem(lvItem: form_lvIgnoreList.Items[treeNode.Text]);
             }
             else
             {
@@ -2319,6 +2319,7 @@ namespace SearchDirLists
             }
 
             lv.Items.AddRange(listItems.ToArray());
+            lv.Invalidate();
             lv.Tag = sortOrder;
             lv.SetSortIcon(0, sortOrder);
 

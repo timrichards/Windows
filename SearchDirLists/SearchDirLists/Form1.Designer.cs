@@ -1708,7 +1708,7 @@ namespace SearchDirLists
             this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.Filter = "Text files|*.txt|All files|*.*";
             // 
-            // timer_blink
+            // timer_blinky
             // 
             this.timer_blinky.Interval = 50;
             this.timer_blinky.Tick += new System.EventHandler(this.timer_blink_Tick);

@@ -361,7 +361,7 @@ namespace SearchDirLists
                             if (treeNode != null)
                             {
                                 m_bTreeViewIndirectSelChange = true;
-                                m_blinky.SelectTreeNode(treeNode, Once: true);
+                                m_blinky.SelectTreeNode(treeNode);
                                 ++m_nTreeFindTextChanged;
                             }
 
@@ -456,13 +456,15 @@ namespace SearchDirLists
                 return;
             }
 
-            // find file results list from NavToFile()
-            ListViewItem lvItem = form_lvFiles.FindItemWithText(m_strMaybeFile ?? form_cbFindbox.Text);
-
-            if (lvItem != null)
+            if (Utilities.StrValid(m_strMaybeFile))
             {
-                form_tabControlFileList.SelectedTab = form_tabPageFileList;
-                m_blinky.SelectLVitem(lvItem: lvItem, Once: true);
+                ListViewItem lvItem = form_lvFiles.FindItemWithText(m_strMaybeFile, includeSubItemsInSearch: true, startIndex: 0);
+
+                if (lvItem != null)
+                {
+                    form_tabControlFileList.SelectedTab = form_tabPageFileList;
+                    m_blinky.SelectLVitem(lvItem: lvItem);
+                }
             }
         }
 
@@ -624,7 +626,7 @@ namespace SearchDirLists
                         TreeNode treeNode = m_arrayTreeFound[m_nTreeFindTextChanged % m_arrayTreeFound.Length];
 
                         m_bTreeViewIndirectSelChange = true;
-                        m_blinky.SelectTreeNode(treeNode, Once: true);
+                        m_blinky.SelectTreeNode(treeNode);
                         ++m_nTreeFindTextChanged;
                     }
                     else if (treeView == form_treeCompare1)

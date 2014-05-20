@@ -285,27 +285,6 @@ namespace SearchDirLists
             }
         }
 
-        void SelectFoundFile()
-        {
-            if (AppExit)
-            {
-                return;
-            }
-
-            // find file results list from NavToFile()
-            ListViewItem lvItem = form_lvFiles.FindItemWithText(m_strMaybeFile ?? form_cbNavigate.Text);
-
-            if (lvItem == null)
-            {
-                return;
-            }
-
-            lvItem.Selected = true;
-            lvItem.EnsureVisible();
-            m_blink.Stop();
-            m_blink.Go(lvItem: lvItem, Once: true);
-        }
-
         void TreeSelectDoneCallback(bool bSecondComparePane)
         {
             if (AppExit)

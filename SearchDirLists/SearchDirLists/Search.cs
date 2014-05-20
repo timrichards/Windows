@@ -361,10 +361,8 @@ namespace SearchDirLists
                             if (treeNode != null)
                             {
                                 m_bTreeViewIndirectSelChange = true;
-                                treeNode.TreeView.SelectedNode = treeNode;
+                                m_blinky.SelectTreeNode(treeNode, Once: true);
                                 ++m_nTreeFindTextChanged;
-                                m_blink.Stop();
-                                m_blink.Go(Once: true);
                             }
 
                             return (treeNode != null);
@@ -447,9 +445,25 @@ namespace SearchDirLists
             m_nTreeFindTextChanged = 0;
             m_bFileFound = false;
             m_strMaybeFile = null;
-            m_blink.Stop();
-            m_blink.Go(clr: Color.Red, Once: true);
+            m_blinky.Go(clr: Color.Red, Once: true);
             MessageBox.Show("Couldn't find the specified search parameter.".PadRight(100), "Search");
+        }
+
+        void SelectFoundFile()
+        {
+            if (AppExit)
+            {
+                return;
+            }
+
+            // find file results list from NavToFile()
+            ListViewItem lvItem = form_lvFiles.FindItemWithText(m_strMaybeFile ?? form_cbFindbox.Text);
+
+            if (lvItem != null)
+            {
+                form_tabControlFileList.SelectedTab = form_tabPageFileList;
+                m_blinky.SelectLVitem(lvItem: lvItem, Once: true);
+            }
         }
 
         void SearchStatusCallback(String strSearch, LVvolStrings volStrings, List<SearchResultsDir> listResults, bool bFirst = false, bool bLast = false)
@@ -577,9 +591,9 @@ namespace SearchDirLists
 
         void DoSearch(object sender)
         {
-            if (form_cbNavigate.Text.Length == 0)
+            if (form_cbFindbox.Text.Length == 0)
             {
-                m_blink.Go(clr: Color.Red, Once: true);
+                m_blinky.Go(clr: Color.Red, Once: true);
                 return;
             }
 
@@ -596,7 +610,7 @@ namespace SearchDirLists
             {
                 if (m_nTreeFindTextChanged == 0)
                 {
-                    FindNode(form_cbNavigate.Text, treeView.SelectedNode, treeView);
+                    FindNode(form_cbFindbox.Text, treeView.SelectedNode, treeView);
                 }
 
                 if (m_bFileFound)
@@ -610,25 +624,23 @@ namespace SearchDirLists
                         TreeNode treeNode = m_arrayTreeFound[m_nTreeFindTextChanged % m_arrayTreeFound.Length];
 
                         m_bTreeViewIndirectSelChange = true;
-                        treeNode.TreeView.SelectedNode = treeNode;
+                        m_blinky.SelectTreeNode(treeNode, Once: true);
                         ++m_nTreeFindTextChanged;
-                        m_blink.Stop();
-                        m_blink.Go(Once: true);
                     }
                     else if (treeView == form_treeCompare1)
                     {
                         treeView = form_treeCompare2;
                         continue;
                     }
-                    else if (form_cbNavigate.Text.Contains(Path.DirectorySeparatorChar))
+                    else if (form_cbFindbox.Text.Contains(Path.DirectorySeparatorChar))
                     {
-                        Utilities.Assert(1307.8305, form_cbNavigate.Text.EndsWith(Path.DirectorySeparatorChar.ToString()) == false);
+                        Utilities.Assert(1307.8305, form_cbFindbox.Text.EndsWith(Path.DirectorySeparatorChar.ToString()) == false);
 
-                        int nPos = form_cbNavigate.Text.LastIndexOf(Path.DirectorySeparatorChar);
-                        String strMaybePath = form_cbNavigate.Text.Substring(0, nPos);
+                        int nPos = form_cbFindbox.Text.LastIndexOf(Path.DirectorySeparatorChar);
+                        String strMaybePath = form_cbFindbox.Text.Substring(0, nPos);
                         TreeNode treeNode = GetNodeByPath(strMaybePath, form_treeView_Browse);
 
-                        m_strMaybeFile = form_cbNavigate.Text.Substring(nPos + 1);
+                        m_strMaybeFile = form_cbFindbox.Text.Substring(nPos + 1);
 
                         if (treeNode != null)
                         {
@@ -643,7 +655,7 @@ namespace SearchDirLists
                     }
                     else
                     {
-                        SearchFiles(form_cbNavigate.Text);
+                        SearchFiles(form_cbFindbox.Text);
                     }
                 }
 

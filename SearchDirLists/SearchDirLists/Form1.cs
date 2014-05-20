@@ -1540,14 +1540,23 @@ namespace SearchDirLists
                 String strVolumeName = null;
                 String strFileName = form_lvVolumesMain.SelectedItems[0].SubItems[2].Text;
 
-                if (m_saveDirListings != null)
+                try { using (new StreamReader(strFileName)) { } }
+                catch
                 {
-                    try { using (new StreamReader(strFileName)) { } }
-                    catch
+                    if (m_saveDirListings != null)
                     {
                         MessageBox.Show("Currently saving listings and can't open file yet. Please wait.".PadRight(100), "Modify file");
-                        return false;
                     }
+                    else if (Utilities.StrValid(lvSelect[0].Name))
+                    {
+                        MessageBox.Show("File hasn't been saved yet.".PadRight(100), "Modify file");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Can't open file.".PadRight(100), "Modify file");
+                    }
+
+                    return false;
                 }
 
                 {

@@ -1711,7 +1711,7 @@ namespace SearchDirLists
             // timer_blinky
             // 
             this.timer_blinky.Interval = 50;
-            this.timer_blinky.Tick += new System.EventHandler(this.timer_blink_Tick);
+            this.timer_blinky.Tick += new System.EventHandler(this.timer_blinky_Tick);
             // 
             // timer_DoTree
             // 

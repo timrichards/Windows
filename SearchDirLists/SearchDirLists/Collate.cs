@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,9 +30,9 @@ namespace SearchDirLists
         List<ListViewItem> m_list_lvIgnore = null;
 
         // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.
-        List<ListViewItem> listLVdiffVol = new List<ListViewItem>();
         List<ListViewItem> listLVunique = new List<ListViewItem>();
         List<ListViewItem> listLVsameVol = new List<ListViewItem>();
+        List<ListViewItem> listLVdiffVol = new List<ListViewItem>();
         Dictionary<TreeNode, ListViewItem> dictIgnoreNodes = new Dictionary<TreeNode, ListViewItem>();
         bool m_bLoose = false;
         bool m_bThreadAbort = false;

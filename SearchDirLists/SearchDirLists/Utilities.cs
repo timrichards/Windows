@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.IO;
-using System.Diagnostics;
-using System.IO.Compression;
-using System.Text;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Drawing;
@@ -107,7 +104,7 @@ namespace SearchDirLists
         {
             if (++m_nBlink < m_nNumBlinks)
             {
-                SetCtlBackColor((m_blinky.BackColor == m_clrBlink) ? m_clrOrig : m_clrBlink);
+                m_blinky.BackColor = (m_blinky.BackColor == m_clrBlink) ? m_clrOrig : m_clrBlink;
             }
             else
             {
@@ -119,15 +116,10 @@ namespace SearchDirLists
         {
             m_timer.Enabled = false;
             m_nBlink = 0;
-            SetCtlBackColor(m_clrOrig);
+            m_blinky.BackColor = m_clrOrig;
             m_blinky.Reset();
-            m_defaultControl.Select();
             m_blinky = new NullHolder();
-        }
-
-        void SetCtlBackColor(Color clr)
-        {
-            m_blinky.BackColor = clr;
+            m_defaultControl.Select();
         }
     }
 
@@ -540,7 +532,12 @@ namespace SearchDirLists
 #endif
                 {
                     static_bAssertUp = true;
-                    new Thread(new ParameterizedThreadStart(Assert_A)).Start(strError);
+                    new Thread(new ThreadStart(() =>
+                    {
+                        static_MessageboxCallback(((String)strError).PadRight(100) + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.", "SearchDirLists Assertion Failure");
+                        static_bAssertUp = false;
+                    }))
+                    .Start();
                 }
 
                 static_nLastAssertLoc = nLocation;
@@ -548,12 +545,6 @@ namespace SearchDirLists
             }
 
             return false;
-        }
-
-        static void Assert_A(object strError)
-        {
-            static_MessageboxCallback(((String)strError).PadRight(100) + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.", "SearchDirLists Assertion Failure");
-            static_bAssertUp = false;
         }
 
         internal static void Closure(Action action) { action(); }

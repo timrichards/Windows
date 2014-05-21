@@ -1847,15 +1847,15 @@ namespace SearchDirLists
             }
         }
 
-        // form_cbFindbox; form_btnFolder; form_btnFoldersAndFiles; form_btnFiles
+        // form_btnFolder; form_btnFoldersAndFiles; form_btnFiles
         void form_btnFind_Click(object sender, EventArgs e = null)
         {
             m_strSelectFile = null;
 
             if (form_cbFindbox.Text.Length > 0)
             {
-                if (m_ctlLastSearchSender != sender)    // only when keydown in form_cbFindbox is false:
-                {                                       // form_cbFindbox_KeyPress() calls form_btnFind_Click(m_ctlLastSearchSender);
+                if (m_ctlLastSearchSender != sender)
+                {
                     m_ctlLastSearchSender = (Control)sender;
                     m_nTreeFindTextChanged = 0;
                 }
@@ -2026,12 +2026,48 @@ namespace SearchDirLists
 
         void form_cbFindbox_KeyPress(object sender, KeyPressEventArgs e)
         {
+            if (form_cbFindbox.Text.Length <= 0)
+            {
+                return;
+            }
+
             if (new Keys[] { Keys.Enter, Keys.Return }.Contains((Keys)e.KeyChar))
             {
-                m_bPutPathInFindEditBox = false;    // search term is usually not the complete path.
-                form_btnFind_Click(m_ctlLastSearchSender);
-                e.Handled = true;
             }
+            else if (m_nTreeFindTextChanged > 0)
+            {
+                if (e.KeyChar == '.')           //  >
+                {
+                }
+                else if (e.KeyChar == ',')      //  <
+                {
+                    if (m_nTreeFindTextChanged > 1)
+                    {
+                        m_nTreeFindTextChanged -= 2;
+                    }
+                    else if (m_nTreeFindTextChanged == 1)
+                    {
+                        m_nTreeFindTextChanged = 0;
+                    }
+                    else
+                    {
+                        e.Handled = true;
+                        return;
+                    }
+                }
+                else
+                {
+                    return;
+                }
+            }
+            else
+            {
+                return;
+            }
+
+            m_bPutPathInFindEditBox = false;    // search term is usually not the complete path.
+            DoSearch(m_ctlLastSearchSender);
+            e.Handled = true;
         }
 
         void form_cbFindbox_MouseUp(object sender, MouseEventArgs e)
@@ -2667,6 +2703,7 @@ namespace SearchDirLists
 
             if (arrArgs == null)
             {
+                // scenario: launched from Start menu
                 return;
             }
 
@@ -2724,7 +2761,7 @@ namespace SearchDirLists
             new AboutBox1().ShowDialog_Once(this);
         }
 
-        void timer_blink_Tick(object sender, EventArgs e)
+        void timer_blinky_Tick(object sender, EventArgs e)
         {
             m_blinky.Tick();
         }

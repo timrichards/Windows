@@ -456,15 +456,23 @@ namespace SearchDirLists
                 return;
             }
 
-            if (Utilities.StrValid(m_strSelectFile))
+            if (Utilities.StrValid(m_strSelectFile) == false)
             {
-                ListViewItem lvItem = form_lvFiles.FindItemWithText(m_strSelectFile, includeSubItemsInSearch: true, startIndex: 0);
+                return;
+            }
 
-                if (lvItem != null)
-                {
-                    form_tabControlFileList.SelectedTab = form_tabPageFileList;
-                    m_blinky.SelectLVitem(lvItem: lvItem);
-                }
+            if (form_lvFiles.Items.Count <= 0)
+            {
+                MessageBox.Show("Meant to select a file in a surprisingly empty listviewer.\n" + "Could be you were navigating too fast.".PadRight(100), "Select found file");
+                return;
+            }
+
+            ListViewItem lvItem = form_lvFiles.FindItemWithText(m_strSelectFile, includeSubItemsInSearch: true, startIndex: 0);
+
+            if (lvItem != null)
+            {
+                form_tabControlFileList.SelectedTab = form_tabPageFileList;
+                m_blinky.SelectLVitem(lvItem: lvItem);
             }
 
             m_strSelectFile = null;

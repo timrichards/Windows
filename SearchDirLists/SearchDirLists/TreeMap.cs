@@ -236,8 +236,8 @@ namespace SearchDirLists
 
         TreeNode GetFileList(TreeNode parent)
         {
-            List<ulong> listLength = new List<ulong>();
-            List<String[]> listFiles = TreeSelect.GetFileList(parent, listLength);
+            List<ulong> listLengths = new List<ulong>();
+            List<String[]> listFiles = TreeSelect.GetFileList(parent, listLengths);
 
             if (listFiles == null)
             {
@@ -246,7 +246,7 @@ namespace SearchDirLists
 
             TreeNode nodeFileList = new TreeNode(parent.Text);
             ulong nTotalLength = 0;
-            List<ulong>.Enumerator iterUlong = listLength.GetEnumerator();
+            List<ulong>.Enumerator iterUlong = listLengths.GetEnumerator();
 
             foreach (String[] arrLine in listFiles)
             {

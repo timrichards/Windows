@@ -376,7 +376,7 @@ namespace SearchDirLists
                                     continue;
                                 }
 
-                                m_strMaybeFile = strFile;
+                                m_strSelectFile = strFile;
 
                                 bool bContinue = false;
                                 TreeNode treeNode = NavToFile(resultDir.StrDir, treeView,
@@ -444,7 +444,7 @@ namespace SearchDirLists
         {
             m_nTreeFindTextChanged = 0;
             m_bFileFound = false;
-            m_strMaybeFile = null;
+            m_strSelectFile = null;
             m_blinky.Go(clr: Color.Red, Once: true);
             MessageBox.Show("Couldn't find the specified search parameter.".PadRight(100), "Search");
         }
@@ -456,9 +456,9 @@ namespace SearchDirLists
                 return;
             }
 
-            if (Utilities.StrValid(m_strMaybeFile))
+            if (Utilities.StrValid(m_strSelectFile))
             {
-                ListViewItem lvItem = form_lvFiles.FindItemWithText(m_strMaybeFile, includeSubItemsInSearch: true, startIndex: 0);
+                ListViewItem lvItem = form_lvFiles.FindItemWithText(m_strSelectFile, includeSubItemsInSearch: true, startIndex: 0);
 
                 if (lvItem != null)
                 {
@@ -466,6 +466,8 @@ namespace SearchDirLists
                     m_blinky.SelectLVitem(lvItem: lvItem);
                 }
             }
+
+            m_strSelectFile = null;
         }
 
         void SearchStatusCallback(String strSearch, LVvolStrings volStrings, List<SearchResultsDir> listResults, bool bFirst = false, bool bLast = false)
@@ -642,7 +644,7 @@ namespace SearchDirLists
                         String strMaybePath = form_cbFindbox.Text.Substring(0, nPos);
                         TreeNode treeNode = GetNodeByPath(strMaybePath, form_treeView_Browse);
 
-                        m_strMaybeFile = form_cbFindbox.Text.Substring(nPos + 1);
+                        m_strSelectFile = form_cbFindbox.Text.Substring(nPos + 1);
 
                         if (treeNode != null)
                         {

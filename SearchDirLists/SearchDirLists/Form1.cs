@@ -63,7 +63,7 @@ namespace SearchDirLists
         }
 
         String m_strCompare1 = null;
-        String m_strMaybeFile = null;
+        String m_strSelectFile = null;
         String m_strVolumeName = null;
         String m_strPath = null;
         String m_strSaveAs = null;
@@ -1850,7 +1850,7 @@ namespace SearchDirLists
         // form_cbFindbox; form_btnFolder; form_btnFoldersAndFiles; form_btnFiles
         void form_btnFind_Click(object sender, EventArgs e = null)
         {
-            m_strMaybeFile = null;
+            m_strSelectFile = null;
 
             if (form_cbFindbox.Text.Length > 0)
             {
@@ -2051,9 +2051,9 @@ namespace SearchDirLists
 
             m_bPutPathInFindEditBox = true;
             m_bTreeViewIndirectSelChange = true;
-            m_strMaybeFile = form_tmapUserCtl.Tooltip_Click();
+            m_strSelectFile = form_tmapUserCtl.Tooltip_Click();
 
-            if (m_strMaybeFile != null)
+            if (m_strSelectFile != null)
             {
                 m_bTreeViewIndirectSelChange = false;   // didn't hit a sel change
                 form_tabControlFileList.SelectedTab = form_tabPageFileList;

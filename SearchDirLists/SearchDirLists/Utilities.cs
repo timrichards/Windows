@@ -354,7 +354,7 @@ namespace SearchDirLists
             }
             else
             {
-                m_MessageboxCallback("Not a valid " + Description + ".".PadRight(100), "Load " + Description);
+                m_MessageboxCallback("Not a valid " + Description + ".", "Load " + Description);
             }
 
             return (listItems.Count > 0);
@@ -370,7 +370,7 @@ namespace SearchDirLists
             }
 
             if ((File.Exists(m_strPrevFile))
-                && (m_MessageboxCallback((m_strPrevFile + " already exists. Overwrite?").PadRight(100), Description, MessageBoxButtons.YesNo)
+                && (m_MessageboxCallback(m_strPrevFile + " already exists. Overwrite?", Description, MessageBoxButtons.YesNo)
                 != System.Windows.Forms.DialogResult.Yes))
             {
                 return false;
@@ -543,7 +543,7 @@ namespace SearchDirLists
                     static_bAssertUp = true;
                     new Thread(new ThreadStart(() =>
                     {
-                        static_MessageboxCallback(((String)strError).PadRight(100) + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.", "SearchDirLists Assertion Failure");
+                        static_MessageboxCallback(strError.PadRight(100) + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.", "SearchDirLists Assertion Failure");
                         static_bAssertUp = false;
                     }))
                     .Start();
@@ -811,7 +811,7 @@ namespace SearchDirLists
 
                 if (FormatPath(ref strPath, bFailOnDirectory) == false)
                 {
-                    static_MessageboxCallback("Error in Source path.".PadRight(100), "Save Directory Listing");
+                    static_MessageboxCallback("Error in Source path.", "Save Directory Listing");
                     return false;
                 }
             }
@@ -822,7 +822,7 @@ namespace SearchDirLists
 
                 if (FormatPath(ref strSaveAs, bFailOnDirectory) == false)
                 {
-                    static_MessageboxCallback("Error in Save filename.".PadRight(100), "Save Directory Listing");
+                    static_MessageboxCallback("Error in Save filename.", "Save Directory Listing");
                     return false;
                 }
             }

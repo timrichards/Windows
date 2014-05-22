@@ -195,14 +195,14 @@ namespace SearchDirLists
             if (Directory.Exists(strPath) == false)
             {
                 m_statusCallback(m_volStrings.Index, m_str_NOTSAVED);
-                m_MessageboxCallback("Source Path does not exist.".PadRight(100), "Save Directory Listing");
+                m_MessageboxCallback("Source Path does not exist.", "Save Directory Listing");
                 return;
             }
 
             if (StrValid(strSaveAs) == false)
             {
                 m_statusCallback(m_volStrings.Index, m_str_NOTSAVED);
-                m_MessageboxCallback("Must specify save filename.".PadRight(100), "Save Directory Listing");
+                m_MessageboxCallback("Must specify save filename.", "Save Directory Listing");
                 return;
             }
 
@@ -240,7 +240,7 @@ namespace SearchDirLists
             catch (Exception e)
             {
                 m_statusCallback(m_volStrings.Index, strText: m_str_NOTSAVED, bDone: true);
-                m_MessageboxCallback(strSaveAs + ("\nException: " + e.Message).PadRight(100), "Save Directory Listing");
+                m_MessageboxCallback(strSaveAs.PadRight(100) + "\nException: " + e.Message, "Save Directory Listing");
             }
         }
 
@@ -411,7 +411,7 @@ namespace SearchDirLists
                 form_tabControlMain.SelectedTab = form_tabPageBrowse;
             }
 
-            Form1MessageBox(("Completed. " + m_saveDirListings.FilesWritten + " files written.").PadRight(100), "Save Directory Listings");
+            Form1MessageBox("Completed. " + m_saveDirListings.FilesWritten + " files written.", "Save Directory Listings");
             m_saveDirListings = null;
         }
 
@@ -419,7 +419,7 @@ namespace SearchDirLists
         {
             if (m_saveDirListings != null)
             {
-                Form1MessageBox("Already in progress.".PadRight(100), "Save Directory Listings");
+                Form1MessageBox("Already in progress.", "Save Directory Listings");
                 return false;
             }
 

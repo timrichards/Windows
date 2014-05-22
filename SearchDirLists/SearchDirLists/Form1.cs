@@ -71,7 +71,6 @@ namespace SearchDirLists
             ClearMem_TreeForm();
         }
 
-        String m_strCompare1 = null;
         String m_strSelectFile = null;
         String m_strVolumeName = null;
         String m_strPath = null;
@@ -1131,19 +1130,17 @@ namespace SearchDirLists
             {
                 TreeNode neighbor = treeNode;
 
-                if (neighbor.PrevNode != null)
-                {
-                    neighbor = form_treeViewBrowse.TopNode = neighbor.PrevNode;
-
-                    if (treeNode.IsVisible == false)
-                    {
-                        neighbor.Collapse();
-                    }
-                }
-                else
+                if (neighbor.PrevNode == null)
                 {
                     form_treeViewBrowse.TopNode = neighbor;
                     break;
+                }
+
+                neighbor = form_treeViewBrowse.TopNode = neighbor.PrevNode;
+
+                if (treeNode.IsVisible == false)
+                {
+                    neighbor.Collapse();
                 }
             }
         }
@@ -1191,136 +1188,135 @@ namespace SearchDirLists
             if (m_bCompareMode)
             {
                 CompareNav();
+                return;
             }
-            else if (form_chkCompare1.Checked == false)
+            
+            if (form_chkCompare1.Checked == false)
             {
                 form_chkCompare1.Checked = true;
+                return;
             }
-            else
+
+            form_cbFindbox.BackColor = Color.Empty;
+            Utilities.Assert(1308.9306, form_chkCompare1.Checked);
+            Utilities.Assert(1308.9307, m_nodeCompare2 == null);
+
+            if (form_treeViewBrowse.SelectedNode == null)
             {
-                form_cbFindbox.BackColor = Color.Empty;
-                Utilities.Assert(1308.9306, form_chkCompare1.Checked);
-                Utilities.Assert(1308.9307, Utilities.StrValid(m_strCompare1));
-
-                String strCompare2 = form_cbFindbox.Text;
-                bool bError = (Utilities.StrValid(strCompare2) == false);
-
-                if (bError == false)
-                {
-                    m_nodeCompare2 = FindNode(strCompare2, form_treeViewBrowse.SelectedNode);
-                    bError = ((m_nodeCompare2 == null) || (m_nodeCompare2 == m_nodeCompare1));
-                }
-
-                if (bError)
-                {
-                    m_blinky.Go(clr: Color.Red, Once: true);
-                }
-                else
-                {
-                    m_blinky.Go();
-                    form_splitTreeFind.Panel1Collapsed = false;
-                    form_splitTreeFind.Panel2Collapsed = true;
-                    form_splitCompareFiles.Panel2Collapsed = false;
-                    form_splitClones.Panel2Collapsed = true;
-                    m_bTreeViewIndirectSelChange = true;
-                    form_treeViewBrowse.SelectedNode = m_nodeCompare2;
-
-                    RootNodeDatum rootNodeDatum1 = (RootNodeDatum)m_nodeCompare1.Root().Tag;
-                    RootNodeDatum rootNodeDatum2 = (RootNodeDatum)m_nodeCompare2.Root().Tag;
-                    String strFullPath1 = FullPath(m_nodeCompare1);
-                    String strFullPath2 = FullPath(m_nodeCompare2);
-                    String strFullPath1A = m_nodeCompare1.FullPath;
-                    String strFullPath2A = m_nodeCompare2.FullPath;
-
-                    m_nodeCompare1 = (TreeNode)m_nodeCompare1.Clone();
-                    m_nodeCompare2 = (TreeNode)m_nodeCompare2.Clone();
-                    m_listTreeNodes_Compare1.Clear();
-                    m_listTreeNodes_Compare2.Clear();
-                    NameNodes(m_nodeCompare1, m_listTreeNodes_Compare1);
-                    NameNodes(m_nodeCompare2, m_listTreeNodes_Compare2);
-                    m_nodeCompare1.Name = strFullPath1;
-                    m_nodeCompare2.Name = strFullPath2;
-                    m_nodeCompare1.ToolTipText = strFullPath1A;
-                    m_nodeCompare2.ToolTipText = strFullPath2A;
-                    m_nodeCompare1.Tag = new RootNodeDatum((NodeDatum)m_nodeCompare1.Tag, rootNodeDatum1);
-                    m_nodeCompare2.Tag = new RootNodeDatum((NodeDatum)m_nodeCompare2.Tag, rootNodeDatum2);
-                    m_nodeCompare2.Checked = true;    // hack to put it in the right file pane
-                    dictCompareDiffs.Clear();
-                    Compare(m_nodeCompare1, m_nodeCompare2);
-                    Compare(m_nodeCompare2, m_nodeCompare1, bReverse: true);
-
-                    if (dictCompareDiffs.Count < 15)
-                    {
-                        dictCompareDiffs.Clear();
-                        Compare(m_nodeCompare1, m_nodeCompare2, nMin10M: 0);
-                        Compare(m_nodeCompare2, m_nodeCompare1, bReverse: true, nMin10M: 0);
-                    }
-
-                    if (dictCompareDiffs.Count < 15)
-                    {
-                        dictCompareDiffs.Clear();
-                        Compare(m_nodeCompare1, m_nodeCompare2, nMin10M: 0, nMin100K: 0);
-                        Compare(m_nodeCompare2, m_nodeCompare1, bReverse: true, nMin10M: 0, nMin100K: 0);
-                    }
-
-                    SortedDictionary<ulong, KeyValuePair<TreeNode, TreeNode>> dictSort = new SortedDictionary<ulong, KeyValuePair<TreeNode, TreeNode>>();
-
-                    foreach (KeyValuePair<TreeNode, TreeNode> pair in dictCompareDiffs)
-                    {
-                        ulong l1 = 0, l2 = 0;
-
-                        if (Utilities.StrValid(pair.Key.Text))
-                        {
-                            l1 = ((NodeDatum)pair.Key.Tag).nTotalLength;
-                        }
-
-                        if (pair.Value != null)
-                        {
-                            l2 = ((NodeDatum)pair.Value.Tag).nTotalLength;
-                        }
-
-                        ulong lMax = Math.Max(l1, l2);
-
-                        while (dictSort.ContainsKey(lMax))
-                        {
-                            --lMax;
-                        }
-
-                        dictSort.Add(lMax, pair);
-                    }
-
-                    dictCompareDiffs.Clear();
-
-                    foreach (KeyValuePair<TreeNode, TreeNode> pair in dictSort.Values.Reverse())
-                    {
-                        dictCompareDiffs.Add(pair.Key, pair.Value);
-                    }
-
-                    form_treeCompare1.Nodes.Add(m_nodeCompare1);
-                    form_treeCompare2.Nodes.Add(m_nodeCompare2);
-                    m_nCompareIndex = -1;
-                    form_btnCompare.Select();
-                    form_btnCompare.Text = "> >";
-                    form_chkCompare1.Text = "0 of " + dictCompareDiffs.Count;
-                    form_btnCollapse.Text = "< <";
-                    form_colDirDetailCompare.Text = "Directory detail";
-                    form_lblVolGroup.Text = "Compare Mode";
-                    form_lblVolGroup.BackColor = Color.LightGoldenrodYellow;
-                    form_lblVolGroup.Font = new Font(m_FontVolGroupOrig, FontStyle.Regular);
-                    m_listHistory.Clear();
-                    m_nIxHistory = -1;
-                    form_btnFolder.Enabled = false;
-                    form_btnFiles.Enabled = false;
-                    form_btnFoldersAndFiles.Enabled = false;
-                    m_FileListTabPageBeforeCompare = form_tabControlFileList.SelectedTab;
-                    m_bCompareMode = true;
-                    form_tabControlFileList.SelectedTab = form_tabPageFileList;
-                    m_bTreeViewIndirectSelChange = true;
-                    form_treeCompare1.SelectedNode = form_treeCompare1.Nodes[0];
-                    m_bTreeViewIndirectSelChange = true;
-                    form_treeCompare2.SelectedNode = form_treeCompare2.Nodes[0];
-                }
+                m_blinky.Go(clr: Color.Red, Once: true);
+                return;
             }
+
+            if (form_treeViewBrowse.SelectedNode == m_nodeCompare1)
+            {
+                m_blinky.Go(clr: Color.Red, Once: true);
+                return;
+            }
+
+            m_nodeCompare2 = form_treeViewBrowse.SelectedNode;
+
+            m_blinky.Go();
+            form_splitTreeFind.Panel1Collapsed = false;
+            form_splitTreeFind.Panel2Collapsed = true;
+            form_splitCompareFiles.Panel2Collapsed = false;
+            form_splitClones.Panel2Collapsed = true;
+            m_bTreeViewIndirectSelChange = true;
+            form_treeViewBrowse.SelectedNode = m_nodeCompare2;
+
+            RootNodeDatum rootNodeDatum1 = (RootNodeDatum)m_nodeCompare1.Root().Tag;
+            RootNodeDatum rootNodeDatum2 = (RootNodeDatum)m_nodeCompare2.Root().Tag;
+            String strFullPath1 = FullPath(m_nodeCompare1);
+            String strFullPath2 = FullPath(m_nodeCompare2);
+            String strFullPath1A = m_nodeCompare1.FullPath;
+            String strFullPath2A = m_nodeCompare2.FullPath;
+
+            m_nodeCompare1 = (TreeNode)m_nodeCompare1.Clone();
+            m_nodeCompare2 = (TreeNode)m_nodeCompare2.Clone();
+            m_listTreeNodes_Compare1.Clear();
+            m_listTreeNodes_Compare2.Clear();
+            NameNodes(m_nodeCompare1, m_listTreeNodes_Compare1);
+            NameNodes(m_nodeCompare2, m_listTreeNodes_Compare2);
+            m_nodeCompare1.Name = strFullPath1;
+            m_nodeCompare2.Name = strFullPath2;
+            m_nodeCompare1.ToolTipText = strFullPath1A;
+            m_nodeCompare2.ToolTipText = strFullPath2A;
+            m_nodeCompare1.Tag = new RootNodeDatum((NodeDatum)m_nodeCompare1.Tag, rootNodeDatum1);
+            m_nodeCompare2.Tag = new RootNodeDatum((NodeDatum)m_nodeCompare2.Tag, rootNodeDatum2);
+            m_nodeCompare2.Checked = true;    // hack to put it in the right file pane
+            dictCompareDiffs.Clear();
+            Compare(m_nodeCompare1, m_nodeCompare2);
+            Compare(m_nodeCompare2, m_nodeCompare1, bReverse: true);
+
+            if (dictCompareDiffs.Count < 15)
+            {
+                dictCompareDiffs.Clear();
+                Compare(m_nodeCompare1, m_nodeCompare2, nMin10M: 0);
+                Compare(m_nodeCompare2, m_nodeCompare1, bReverse: true, nMin10M: 0);
+            }
+
+            if (dictCompareDiffs.Count < 15)
+            {
+                dictCompareDiffs.Clear();
+                Compare(m_nodeCompare1, m_nodeCompare2, nMin10M: 0, nMin100K: 0);
+                Compare(m_nodeCompare2, m_nodeCompare1, bReverse: true, nMin10M: 0, nMin100K: 0);
+            }
+
+            SortedDictionary<ulong, KeyValuePair<TreeNode, TreeNode>> dictSort = new SortedDictionary<ulong, KeyValuePair<TreeNode, TreeNode>>();
+
+            foreach (KeyValuePair<TreeNode, TreeNode> pair in dictCompareDiffs)
+            {
+                ulong l1 = 0, l2 = 0;
+
+                if (Utilities.StrValid(pair.Key.Text))
+                {
+                    l1 = ((NodeDatum)pair.Key.Tag).nTotalLength;
+                }
+
+                if (pair.Value != null)
+                {
+                    l2 = ((NodeDatum)pair.Value.Tag).nTotalLength;
+                }
+
+                ulong lMax = Math.Max(l1, l2);
+
+                while (dictSort.ContainsKey(lMax))
+                {
+                    --lMax;
+                }
+
+                dictSort.Add(lMax, pair);
+            }
+
+            dictCompareDiffs.Clear();
+
+            foreach (KeyValuePair<TreeNode, TreeNode> pair in dictSort.Values.Reverse())
+            {
+                dictCompareDiffs.Add(pair.Key, pair.Value);
+            }
+
+            form_treeCompare1.Nodes.Add(m_nodeCompare1);
+            form_treeCompare2.Nodes.Add(m_nodeCompare2);
+            m_nCompareIndex = -1;
+            form_btnCompare.Select();
+            form_btnCompare.Text = "> >";
+            form_chkCompare1.Text = "0 of " + dictCompareDiffs.Count;
+            form_btnCollapse.Text = "< <";
+            form_colDirDetailCompare.Text = "Directory detail";
+            form_lblVolGroup.Text = "Compare Mode";
+            form_lblVolGroup.BackColor = Color.LightGoldenrodYellow;
+            form_lblVolGroup.Font = new Font(m_FontVolGroupOrig, FontStyle.Regular);
+            m_listHistory.Clear();
+            m_nIxHistory = -1;
+            form_btnFolder.Enabled = false;
+            form_btnFiles.Enabled = false;
+            form_btnFoldersAndFiles.Enabled = false;
+            m_FileListTabPageBeforeCompare = form_tabControlFileList.SelectedTab;
+            m_bCompareMode = true;
+            form_tabControlFileList.SelectedTab = form_tabPageFileList;
+            m_bTreeViewIndirectSelChange = true;
+            form_treeCompare1.SelectedNode = form_treeCompare1.Nodes[0];
+            m_bTreeViewIndirectSelChange = true;
+            form_treeCompare2.SelectedNode = form_treeCompare2.Nodes[0];
         }
 
         void form_btnCopy_Click(object sender, EventArgs e)
@@ -2073,7 +2069,6 @@ namespace SearchDirLists
                 form_splitTreeFind.Panel2Collapsed = false;
                 form_splitCompareFiles.Panel2Collapsed = true;
                 form_splitClones.Panel2Collapsed = false;
-                m_strCompare1 = null;
                 m_nodeCompare1 = null;
                 m_nodeCompare2 = null;
                 form_treeCompare1.Nodes.Clear();
@@ -2090,30 +2085,25 @@ namespace SearchDirLists
             }
             else if (form_chkCompare1.Checked)
             {
-                m_strCompare1 = form_cbFindbox.Text;
+                m_nodeCompare1 = form_treeViewBrowse.SelectedNode;
 
-                bool bError = (Utilities.StrValid(m_strCompare1) == false);
-
-                if (bError == false)
+                if (m_nodeCompare1 != null)
                 {
-                    m_nodeCompare1 = FindNode(m_strCompare1, form_treeViewBrowse.SelectedNode);
-                    bError = (m_nodeCompare1 == null);
+                    if (m_nSearchResultsIndexer > 0)
+                    {
+                        m_blinky.SelectTreeNode(m_nodeCompare1, Once: false);
+                    }
+                    else
+                    {
+                        m_blinky.Go();
+                    }
                 }
-
-                if (bError)
+                else
                 {
                     m_blinky.Go(clr: Color.Red, Once: true);
                     m_bChkCompare1IndirectCheckChange = true;
                     form_chkCompare1.Checked = false;
                 }
-                else
-                {
-                    m_blinky.Go();
-                }
-            }
-            else
-            {
-                m_strCompare1 = null;
             }
         }
 
@@ -2529,12 +2519,19 @@ namespace SearchDirLists
             {
                 e.Handled = true;
             }
-            else if (new Keys[] { Keys.Left, Keys.Right, Keys.Enter, Keys.Return }.Contains(e.KeyCode))
+            else if (new Keys[] { Keys.Left, Keys.Right }.Contains(e.KeyCode))
             {
                 if (m_bCompareMode || (m_nSearchResultsIndexer > 0))
                 {
-                    // L and R prevent the text cursor from walking in the find box
-                    e.Handled = true;
+                    // L and R prevent the text cursor from walking in the find box, and the tab-order of controls
+                    e.SuppressKeyPress = e.Handled = true;
+                }
+            }
+            else if (new Keys[] { Keys.Enter, Keys.Return }.Contains(e.KeyCode))
+            {
+                if (m_nSearchResultsIndexer > 0)
+                {
+                    e.SuppressKeyPress = e.Handled = true;
                 }
             }
         }
@@ -2551,8 +2548,6 @@ namespace SearchDirLists
                 CopyToClipboard();
                 e.Handled = true;
             }
-
-            Console.WriteLine(e.KeyChar.ToString());
         }
 
         void Form1_KeyUp(object sender, KeyEventArgs e)
@@ -2577,7 +2572,7 @@ namespace SearchDirLists
                     form_btnCompare_Click();                    // enter second path and start Compare mode
                 }
 
-                e.Handled = true;
+                e.SuppressKeyPress = e.Handled = true;
             }
             else if (new Keys[] { Keys.Left, Keys.Right, Keys.Enter, Keys.Return }.Contains(e.KeyCode))
             {
@@ -2586,17 +2581,17 @@ namespace SearchDirLists
                     if (e.KeyCode == Keys.Left)
                     {
                         CompareNav(bNext: false);
-                        e.Handled = true;
+                        e.SuppressKeyPress = e.Handled = true;
                     }
                     else if (e.KeyCode == Keys.Right)
                     {
                         CompareNav();
-                        e.Handled = true;
+                        e.SuppressKeyPress = e.Handled = true;
                     }
                 }
                 else if (m_nSearchResultsIndexer > 0)
                 {
-                    e.Handled = true;
+                    e.SuppressKeyPress = e.Handled = true;
 
                     if (e.KeyCode == Keys.Left)
                     {

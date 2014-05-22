@@ -1522,6 +1522,7 @@ namespace SearchDirLists
             this.form_btnCompare.Name = "form_btnCompare";
             this.form_btnCompare.Size = new System.Drawing.Size(59, 24);
             this.form_btnCompare.TabIndex = 2;
+            this.form_btnCompare.TabStop = false;
             this.form_btnCompare.Text = "Compare";
             this.form_btnCompare.UseVisualStyleBackColor = true;
             this.form_btnCompare.Click += new System.EventHandler(this.form_btnCompare_Click);
@@ -1535,6 +1536,7 @@ namespace SearchDirLists
             this.form_btnCollapse.Name = "form_btnCollapse";
             this.form_btnCollapse.Size = new System.Drawing.Size(57, 24);
             this.form_btnCollapse.TabIndex = 0;
+            this.form_btnCollapse.TabStop = false;
             this.form_btnCollapse.Text = "Collapse";
             this.form_btnCollapse.UseVisualStyleBackColor = true;
             this.form_btnCollapse.Click += new System.EventHandler(this.form_btnTreeCollapse_Click);
@@ -1573,6 +1575,7 @@ namespace SearchDirLists
             this.form_btnForward.Name = "form_btnForward";
             this.form_btnForward.Size = new System.Drawing.Size(44, 24);
             this.form_btnForward.TabIndex = 5;
+            this.form_btnForward.TabStop = false;
             this.form_btnForward.Text = "-->";
             this.form_btnForward.UseVisualStyleBackColor = true;
             this.form_btnForward.Click += new System.EventHandler(this.form_btnForward_Click);
@@ -1599,6 +1602,7 @@ namespace SearchDirLists
             this.form_btnBack.Name = "form_btnBack";
             this.form_btnBack.Size = new System.Drawing.Size(44, 24);
             this.form_btnBack.TabIndex = 4;
+            this.form_btnBack.TabStop = false;
             this.form_btnBack.Text = "<--";
             this.form_btnBack.UseVisualStyleBackColor = true;
             this.form_btnBack.Click += new System.EventHandler(this.form_btnBack_Click);
@@ -1625,6 +1629,7 @@ namespace SearchDirLists
             this.form_btnUp.Name = "form_btnUp";
             this.form_btnUp.Size = new System.Drawing.Size(44, 24);
             this.form_btnUp.TabIndex = 3;
+            this.form_btnUp.TabStop = false;
             this.form_btnUp.Text = "Up";
             this.form_btnUp.UseVisualStyleBackColor = true;
             this.form_btnUp.Click += new System.EventHandler(this.form_btnUp_Click);
@@ -1667,6 +1672,7 @@ namespace SearchDirLists
             this.form_chkCompare1.Name = "form_chkCompare1";
             this.form_chkCompare1.Size = new System.Drawing.Size(77, 24);
             this.form_chkCompare1.TabIndex = 1;
+            this.form_chkCompare1.TabStop = false;
             this.form_chkCompare1.Text = "Compare 1";
             this.form_chkCompare1.UseVisualStyleBackColor = true;
             this.form_chkCompare1.CheckedChanged += new System.EventHandler(this.form_chk_Compare1_CheckedChanged);

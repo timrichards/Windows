@@ -209,8 +209,6 @@ namespace SearchDirLists
     {
         public bool Equals(ListViewItem x, ListViewItem y)
         {
-            if (Object.ReferenceEquals(x, y)) return true;
-
             return (x != null) && (y != null) && Utilities.StrValid(x.Name) && x.Name.Equals(y.Name);
         }
 

@@ -126,6 +126,15 @@
 
 Rapidly saves directory listings of your hard drives all at once, then correlates identical folders so you can see what's duplicated among drives. Listings can be searched when volumes are off site. Volumes can be grouped to see what data is at risk if a group is lost. Has a compare mode for when folders vary; shows graphical disk usage. Can read any volume mounted in Windows Explorer; supports long path names.
 
+Keyboard:
+	F2: compare mode; exit compare mode
+	Left and right arrows:
+		Search results list
+		Clone listviewers
+		Compare mode list
+	Enter; return: advance through search results
+	Ctrl-C: copy current path
+
 Background colors:
 	Yellow: subfolder of a blue, safe cloned folder
 	Light red: parent folder of a red, solitary folder
@@ -163,7 +172,7 @@ Once done with the correlation, in less than half a minute, an explorer treeview
 
 Clicking a folder in one of the listviews will bring it up in the treeview on the left, under the same color. The two clone listviewers, the two lower ones, respond to second and third clicks, since each item represents more than one location for the clone. Clicking again navigates to the other locations. The number in the second column indicates if there are three or more clones: otherwise it's always two. These lists are sortable by clicking on the column headers.
 
-There is a compare mode for directories that did not correlate. Click on the first, click Compare, click on the second, and click Compare again. In Compare mode you are presented with the file lists of both directories, and files that are different appear in red. Shortcut keys for navigating some lists and compare mode are &lt; and &gt;, and the bang symbol ! for exiting and entering compare mode. The compare list is sorted in descending size, so the first compare item is the largest difference.
+There is a compare mode for directories that did not correlate. Click on the first, click Compare, click on the second, and click Compare again. In Compare mode you are presented with the file lists of both directories, and files that are different appear in red. Shortcut keys for navigating some lists and compare mode are left and right arrows, and the F2 key for exiting and entering compare mode. The compare list is sorted in descending size, so the first compare item is the largest difference.
 
 At the lower left there is provision for a list of common folders to ignore, such as Windows. By clicking the Loose checkbox, all folders correlating to any that match subfolders listed will also be greyed out and removed from the clone corollaries. This unclutters the lists at the risk of overlooking a potentially important folder.
 

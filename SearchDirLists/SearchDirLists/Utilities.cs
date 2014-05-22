@@ -59,14 +59,14 @@ namespace SearchDirLists
             m_defaultControl = defaultControl;
         }
 
-        internal void SelectTreeNode(TreeNode treeNode)
+        internal void SelectTreeNode(TreeNode treeNode, bool Once = true)
         {
             Reset();
             m_blinky = new TreeNodeHolder(treeNode);
             treeNode.TreeView.Select();
             treeNode.EnsureVisible();
             treeNode.TreeView.SelectedNode = null;
-            Go(Once: true);
+            Go(Once: Once);
             m_defaultControl.Select();      // search results UX, and selected treeview
         }
 

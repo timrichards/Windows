@@ -411,7 +411,7 @@ namespace SearchDirLists
                 form_tabControlMain.SelectedTab = form_tabPageBrowse;
             }
 
-            MessageBox.Show(("Completed. " + m_saveDirListings.FilesWritten + " files written.").PadRight(100), "Save Directory Listings");
+            Form1MessageBox(("Completed. " + m_saveDirListings.FilesWritten + " files written.").PadRight(100), "Save Directory Listings");
             m_saveDirListings = null;
         }
 
@@ -419,7 +419,7 @@ namespace SearchDirLists
         {
             if (m_saveDirListings != null)
             {
-                MessageBox.Show("Already in progress.".PadRight(100), "Save Directory Listings");
+                Form1MessageBox("Already in progress.".PadRight(100), "Save Directory Listings");
                 return false;
             }
 

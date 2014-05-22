@@ -19,14 +19,15 @@ namespace SearchDirLists
         readonly System.Windows.Forms.Timer m_timer = null;
 
         Holder m_blinky = new NullHolder();
-        Color m_clrOrig = Color.Empty;
         Color m_clrBlink = Color.DarkTurquoise;
+        static Color static_clrDefault = Color.Empty;
         int m_nBlink = 0;
         int m_nNumBlinks = 10;
         bool m_bProgress = false;
 
         abstract class Holder
         {
+            internal Color ClrOrig = Color.Empty;
             internal virtual Color BackColor { get; set; }
             internal virtual void Reset() { }
         }
@@ -47,16 +48,21 @@ namespace SearchDirLists
         }
         class ControlHolder : Holder
         {
-            readonly Control m_obj = null;
+            protected readonly Control m_obj = null;
             internal ControlHolder(Control obj) { m_obj = obj; }
             internal override Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
         }
-        class DefaultHolder : ControlHolder { internal DefaultHolder(Control obj) : base(obj) { } }
+        class DefaultHolder : ControlHolder
+        {
+            internal DefaultHolder(Control obj) : base(obj) { }
+            internal override void Reset() { m_obj.BackColor = static_clrDefault; }
+        }
 
         internal Blinky(System.Windows.Forms.Timer timer, Control defaultControl)
         {
             m_timer = timer;
             m_defaultControl = defaultControl;
+            static_clrDefault = m_defaultControl.BackColor;
         }
 
         internal void SelectTreeNode(TreeNode treeNode, bool Once = true)
@@ -91,10 +97,11 @@ namespace SearchDirLists
         {
             if (m_blinky is NullHolder)
             {
+                Reset();
                 m_blinky = new DefaultHolder(m_defaultControl);
             }
 
-            m_clrOrig = m_blinky.BackColor;
+            m_blinky.ClrOrig = m_blinky.BackColor;
             m_bProgress = bProgress;
             m_clrBlink = clr ?? (bProgress ? Color.LightSalmon : Color.Turquoise);
             m_nBlink = 0;
@@ -107,7 +114,7 @@ namespace SearchDirLists
         {
             if (++m_nBlink < m_nNumBlinks)
             {
-                m_blinky.BackColor = (m_blinky.BackColor == m_clrBlink) ? m_clrOrig : m_clrBlink;
+                m_blinky.BackColor = (m_blinky.BackColor == m_clrBlink) ? m_blinky.ClrOrig : m_clrBlink;
             }
             else
             {
@@ -115,11 +122,11 @@ namespace SearchDirLists
             }
         }
 
-        void Reset()
+        internal void Reset()
         {
             m_timer.Enabled = false;
             m_nBlink = 0;
-            m_blinky.BackColor = m_clrOrig;
+            m_blinky.BackColor = m_blinky.ClrOrig;
             m_blinky.Reset();
             m_blinky = new NullHolder();
         }
@@ -347,7 +354,7 @@ namespace SearchDirLists
             }
             else
             {
-                MessageBox.Show("Not a valid " + Description + ".".PadRight(100), "Load " + Description);
+                m_MessageboxCallback("Not a valid " + Description + ".".PadRight(100), "Load " + Description);
             }
 
             return (listItems.Count > 0);
@@ -363,7 +370,7 @@ namespace SearchDirLists
             }
 
             if ((File.Exists(m_strPrevFile))
-                && (MessageBox.Show((m_strPrevFile + " already exists. Overwrite?").PadRight(100), Description, MessageBoxButtons.YesNo)
+                && (m_MessageboxCallback((m_strPrevFile + " already exists. Overwrite?").PadRight(100), Description, MessageBoxButtons.YesNo)
                 != System.Windows.Forms.DialogResult.Yes))
             {
                 return false;

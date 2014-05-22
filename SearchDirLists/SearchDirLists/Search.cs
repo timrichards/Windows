@@ -446,7 +446,7 @@ namespace SearchDirLists
             m_bNavToFile = false;
             m_strSelectFile = null;
             m_blinky.Go(clr: Color.Red, Once: true);
-            MessageBox.Show("Couldn't find the specified search parameter.".PadRight(100), "Search");
+            Form1MessageBox("Couldn't find the specified search parameter.".PadRight(100), "Search");
         }
 
         void SelectFoundFile()
@@ -566,7 +566,7 @@ namespace SearchDirLists
 
                 if (bKill == false)
                 {
-                    dlgResult = MessageBox.Show("Already in progress. Restart search?".PadRight(100), "Search", MessageBoxButtons.YesNoCancel);
+                    dlgResult = Form1MessageBox("Already in progress. Restart search?".PadRight(100), "Search", MessageBoxButtons.YesNoCancel);
 
                     if (dlgResult == DialogResult.No)
                     {

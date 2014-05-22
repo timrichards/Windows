@@ -344,7 +344,7 @@ namespace SearchDirLists
                     {
                         if (resultDir.ListFiles.Count == 0)
                         {
-                            if (++nCounter < m_nTreeFindTextChanged)
+                            if (++nCounter < m_nSearchResultsIndexer)
                             {
                                 continue;
                             }
@@ -362,7 +362,7 @@ namespace SearchDirLists
                             {
                                 m_bTreeViewIndirectSelChange = true;
                                 m_blinky.SelectTreeNode(treeNode);
-                                ++m_nTreeFindTextChanged;
+                                ++m_nSearchResultsIndexer;
                             }
 
                             return (treeNode != null);
@@ -371,7 +371,7 @@ namespace SearchDirLists
                         {
                             foreach (String strFile in resultDir.ListFiles)
                             {
-                                if (++nCounter < m_nTreeFindTextChanged)
+                                if (++nCounter < m_nSearchResultsIndexer)
                                 {
                                     continue;
                                 }
@@ -399,7 +399,7 @@ namespace SearchDirLists
                                         treeNode.TreeView.SelectedNode = treeNode;
                                     }
 
-                                    ++m_nTreeFindTextChanged;
+                                    ++m_nSearchResultsIndexer;
                                 }
 
                                 return (treeNode != null);
@@ -442,8 +442,8 @@ namespace SearchDirLists
 
         void SearchFail()
         {
-            m_nTreeFindTextChanged = 0;
-            m_bFileFound = false;
+            m_nSearchResultsIndexer = 0;
+            m_bNavToFile = false;
             m_strSelectFile = null;
             m_blinky.Go(clr: Color.Red, Once: true);
             MessageBox.Show("Couldn't find the specified search parameter.".PadRight(100), "Search");
@@ -531,7 +531,7 @@ namespace SearchDirLists
 
             if (m_listSearchResults.Count > 0)
             {
-                m_bFileFound = true;
+                m_bNavToFile = true;
 
                 TreeView treeView = form_treeViewBrowse;
 
@@ -620,24 +620,24 @@ namespace SearchDirLists
 
             while (true)
             {
-                if (m_nTreeFindTextChanged == 0)
+                if (m_nSearchResultsIndexer == 0)
                 {
                     FindNode(form_cbFindbox.Text, treeView.SelectedNode, treeView);
                 }
 
-                if (m_bFileFound)
+                if (m_bNavToFile)
                 {
                     NavToFile(treeView);
                 }
                 else
                 {
-                    if ((m_arrayTreeFound != null) && (m_arrayTreeFound.Length > 0))
+                    if ((m_arrSearchResults != null) && (m_arrSearchResults.Length > 0))
                     {
-                        TreeNode treeNode = m_arrayTreeFound[m_nTreeFindTextChanged % m_arrayTreeFound.Length];
+                        TreeNode treeNode = m_arrSearchResults[m_nSearchResultsIndexer % m_arrSearchResults.Length];
 
                         m_bTreeViewIndirectSelChange = true;
                         m_blinky.SelectTreeNode(treeNode);
-                        ++m_nTreeFindTextChanged;
+                        ++m_nSearchResultsIndexer;
                     }
                     else if (treeView == form_treeCompare1)
                     {

@@ -67,7 +67,7 @@ namespace SearchDirLists
             treeNode.EnsureVisible();
             treeNode.TreeView.SelectedNode = null;
             Go(Once: true);
-            m_defaultControl.Select();
+            m_defaultControl.Select();      // search results UX, and selected treeview
         }
 
         internal void SelectLVitem(ListViewItem lvItem)
@@ -77,6 +77,7 @@ namespace SearchDirLists
             lvItem.EnsureVisible();
             lvItem.Selected = false;
             Go(Once: true);
+            m_defaultControl.Select();      // search results UX
         }
 
         internal void Go(Control ctl, Color? clr = null, bool Once = false)

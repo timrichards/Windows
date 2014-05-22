@@ -725,7 +725,7 @@ namespace SearchDirLists
             this.form_treeCompare2.Enter += new System.EventHandler(this.form_treeCompare_Enter);
             this.form_treeCompare2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_treeViewBrowse_MouseClick);
             // 
-            // form_treeView_Browse
+            // form_treeViewBrowse
             // 
             this.form_treeViewBrowse.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.form_treeViewBrowse.CheckBoxes = true;
@@ -734,7 +734,7 @@ namespace SearchDirLists
             this.form_treeViewBrowse.FullRowSelect = true;
             this.form_treeViewBrowse.HideSelection = false;
             this.form_treeViewBrowse.Location = new System.Drawing.Point(0, 0);
-            this.form_treeViewBrowse.Name = "form_treeView_Browse";
+            this.form_treeViewBrowse.Name = "form_treeViewBrowse";
             this.form_treeViewBrowse.ShowLines = false;
             this.form_treeViewBrowse.Size = new System.Drawing.Size(360, 282);
             this.form_treeViewBrowse.TabIndex = 0;
@@ -1424,8 +1424,10 @@ namespace SearchDirLists
             this.form_lvSameVol.UseCompatibleStateImageBehavior = false;
             this.form_lvSameVol.View = System.Windows.Forms.View.Details;
             this.form_lvSameVol.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.form_lvTreeNodes_ColumnClick);
-            this.form_lvSameVol.SelectedIndexChanged += new System.EventHandler(this.form_lvSameVol_SelectedIndexChanged);
-            this.form_lvSameVol.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_lvSameVol_MouseClick);
+            this.form_lvSameVol.SelectedIndexChanged += new System.EventHandler(this.form_lvClones_SelectedIndexChanged);
+            this.form_lvSameVol.Enter += new System.EventHandler(this.form_lvClones_Enter);
+            this.form_lvSameVol.KeyUp += new System.Windows.Forms.KeyEventHandler(this.form_lvClones_KeyUp);
+            this.form_lvSameVol.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_lvClones_Click);
             // 
             // columnHeader2
             // 
@@ -1458,7 +1460,9 @@ namespace SearchDirLists
             this.form_lvClones.View = System.Windows.Forms.View.Details;
             this.form_lvClones.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.form_lvTreeNodes_ColumnClick);
             this.form_lvClones.SelectedIndexChanged += new System.EventHandler(this.form_lvClones_SelectedIndexChanged);
-            this.form_lvClones.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_lvClones_MouseClick);
+            this.form_lvClones.Enter += new System.EventHandler(this.form_lvClones_Enter);
+            this.form_lvClones.KeyUp += new System.Windows.Forms.KeyEventHandler(this.form_lvClones_KeyUp);
+            this.form_lvClones.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_lvClones_Click);
             // 
             // columnHeader12
             // 

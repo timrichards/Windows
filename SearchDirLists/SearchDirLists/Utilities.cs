@@ -18,7 +18,7 @@ namespace SearchDirLists
         readonly Control m_defaultControl = null;
         readonly System.Windows.Forms.Timer m_timer = null;
 
-        Holder m_blinky = new NullHolder();
+        Holder m_holder = new NullHolder();
         Color m_clrBlink = Color.DarkTurquoise;
         static Color static_clrDefault = Color.Empty;
         int m_nBlink = 0;
@@ -29,7 +29,7 @@ namespace SearchDirLists
         {
             internal Color ClrOrig = Color.Empty;
             internal virtual Color BackColor { get; set; }
-            internal virtual void Reset() { }
+            internal virtual void ResetHolder() { }
         }
         class NullHolder : Holder { }
         class TreeNodeHolder : Holder
@@ -37,14 +37,14 @@ namespace SearchDirLists
             readonly TreeNode m_obj = null;
             internal TreeNodeHolder(TreeNode obj) { m_obj = obj; m_bTreeSelect = true; }
             internal override Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
-            internal override void Reset() { m_bTreeSelect = false; m_obj.TreeView.SelectedNode = m_obj; }
+            internal override void ResetHolder() { m_bTreeSelect = false; m_obj.TreeView.SelectedNode = m_obj; }
         }
         class ListViewItemHolder : Holder
         {
             readonly ListViewItem m_obj = null;
             internal ListViewItemHolder(ListViewItem obj) { m_obj = obj; }
             internal override Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
-            internal override void Reset() { m_obj.Selected = true; }
+            internal override void ResetHolder() { m_obj.Selected = true; }
         }
         class ControlHolder : Holder
         {
@@ -55,7 +55,7 @@ namespace SearchDirLists
         class DefaultHolder : ControlHolder
         {
             internal DefaultHolder(Control obj) : base(obj) { }
-            internal override void Reset() { m_obj.BackColor = static_clrDefault; }
+            internal override void ResetHolder() { m_obj.BackColor = static_clrDefault; }
         }
 
         internal Blinky(System.Windows.Forms.Timer timer, Control defaultControl)
@@ -68,7 +68,7 @@ namespace SearchDirLists
         internal void SelectTreeNode(TreeNode treeNode, bool Once = true)
         {
             Reset();
-            m_blinky = new TreeNodeHolder(treeNode);
+            m_holder = new TreeNodeHolder(treeNode);
             treeNode.TreeView.Select();
             treeNode.EnsureVisible();
             treeNode.TreeView.SelectedNode = null;
@@ -79,7 +79,7 @@ namespace SearchDirLists
         internal void SelectLVitem(ListViewItem lvItem)
         {
             Reset();
-            m_blinky = new ListViewItemHolder(lvItem);
+            m_holder = new ListViewItemHolder(lvItem);
             lvItem.EnsureVisible();
             lvItem.Selected = false;
             Go(Once: true);
@@ -89,19 +89,19 @@ namespace SearchDirLists
         internal void Go(Control ctl, Color? clr = null, bool Once = false)
         {
             Reset();
-            m_blinky = new ControlHolder(ctl);
+            m_holder = new ControlHolder(ctl);
             Go(clr, Once);
         }
 
         internal void Go(Color? clr = null, bool Once = false, bool bProgress = false)
         {
-            if (m_blinky is NullHolder)
+            if (m_holder is NullHolder)
             {
                 Reset();
-                m_blinky = new DefaultHolder(m_defaultControl);
+                m_holder = new DefaultHolder(m_defaultControl);
             }
 
-            m_blinky.ClrOrig = m_blinky.BackColor;
+            m_holder.ClrOrig = m_holder.BackColor;
             m_bProgress = bProgress;
             m_clrBlink = clr ?? (bProgress ? Color.LightSalmon : Color.Turquoise);
             m_nBlink = 0;
@@ -114,7 +114,7 @@ namespace SearchDirLists
         {
             if (++m_nBlink < m_nNumBlinks)
             {
-                m_blinky.BackColor = (m_blinky.BackColor == m_clrBlink) ? m_blinky.ClrOrig : m_clrBlink;
+                m_holder.BackColor = (m_holder.BackColor == m_clrBlink) ? m_holder.ClrOrig : m_clrBlink;
             }
             else
             {
@@ -126,9 +126,9 @@ namespace SearchDirLists
         {
             m_timer.Enabled = false;
             m_nBlink = 0;
-            m_blinky.BackColor = m_blinky.ClrOrig;
-            m_blinky.Reset();
-            m_blinky = new NullHolder();
+            m_holder.BackColor = m_holder.ClrOrig;
+            m_holder.ResetHolder();   // has to be last before deleting object.
+            m_holder = new NullHolder();
         }
     }
 
@@ -539,16 +539,13 @@ namespace SearchDirLists
                 }
                 else
 #endif
+                static_bAssertUp = true;
+                new Thread(new ThreadStart(() =>
                 {
-                    static_bAssertUp = true;
-                    new Thread(new ThreadStart(() =>
-                    {
-                        static_MessageboxCallback(strError.PadRight(100) + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.", "SearchDirLists Assertion Failure");
-                        static_bAssertUp = false;
-                    }))
-                    .Start();
-                }
-
+                    static_MessageboxCallback(strError + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.".PadRight(100), "SearchDirLists Assertion Failure");
+                    static_bAssertUp = false;
+                }))
+                .Start();
                 static_nLastAssertLoc = nLocation;
                 static_dtLastAssert = DateTime.Now;
             }

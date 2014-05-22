@@ -13,6 +13,8 @@ using System.Threading;
 //      compare zeroth; file list
 //      up arrow under marker in clone list
 //      click marker in clone list
+//      why need Blinky.static_clrDefault?
+//      need SelectedIndexChanged() scrolling code?
 
 namespace SearchDirLists
 {
@@ -2250,40 +2252,40 @@ namespace SearchDirLists
             switch (sortOrder)
             {
                 case SortOrder.Ascending:
-                    {
-                        sortOrder = SortOrder.Descending;
-                        listItems.Sort((y, x) => x.Text.CompareTo(y.Text));
-                        break;
-                    }
+                {
+                    sortOrder = SortOrder.Descending;
+                    listItems.Sort((y, x) => x.Text.CompareTo(y.Text));
+                    break;
+                }
 
                 case SortOrder.Descending:
+                {
+                    if (bNullTags)
                     {
-                        if (bNullTags)
-                        {
-                            goto case SortOrder.None;
-                        }
-
-                        sortOrder = SortOrder.None;
-
-                        if (listItems[0].Tag is UList<TreeNode>)
-                        {
-                            listItems.Sort((y, x) => ((NodeDatum)((UList<TreeNode>)x.Tag)[0].Tag).nTotalLength.CompareTo(((NodeDatum)((UList<TreeNode>)y.Tag)[0].Tag).nTotalLength));
-                        }
-                        else
-                        {
-                            listItems.Sort((y, x) => ((NodeDatum)((TreeNode)x.Tag).Tag).nTotalLength.CompareTo(((NodeDatum)((TreeNode)y.Tag).Tag).nTotalLength));
-                        }
-
-                        Collate.InsertSizeMarkers(listItems);
-                        break;
+                        goto case SortOrder.None;
                     }
+
+                    sortOrder = SortOrder.None;
+
+                    if (listItems[0].Tag is UList<TreeNode>)
+                    {
+                        listItems.Sort((y, x) => ((NodeDatum)((UList<TreeNode>)x.Tag)[0].Tag).nTotalLength.CompareTo(((NodeDatum)((UList<TreeNode>)y.Tag)[0].Tag).nTotalLength));
+                    }
+                    else
+                    {
+                        listItems.Sort((y, x) => ((NodeDatum)((TreeNode)x.Tag).Tag).nTotalLength.CompareTo(((NodeDatum)((TreeNode)y.Tag).Tag).nTotalLength));
+                    }
+
+                    Collate.InsertSizeMarkers(listItems);
+                    break;
+                }
 
                 case SortOrder.None:
-                    {
-                        sortOrder = SortOrder.Ascending;
-                        listItems.Sort((x, y) => x.Text.CompareTo(y.Text));
-                        break;
-                    }
+                {
+                    sortOrder = SortOrder.Ascending;
+                    listItems.Sort((x, y) => x.Text.CompareTo(y.Text));
+                    break;
+                }
             }
 
             lv.Items.AddRange(listItems.ToArray());

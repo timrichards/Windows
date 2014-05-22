@@ -35,7 +35,7 @@ namespace SearchDirLists
             Utilities.Assert(1304.5303, m_dictNodes.Count == 0);
             m_dictNodes.Clear();
 
-            foreach (ListViewItem lvItem in form_lvCopyList.Items)
+            foreach (ListViewItem lvItem in form_lvCopyScratchpad.Items)
             {
                 lvItem.Tag = null;
             }
@@ -58,12 +58,12 @@ namespace SearchDirLists
             {
                 ListView lvFake = new ListView();
 
-                foreach (ListViewItem lvItem in form_lvCopyList.Items)
+                foreach (ListViewItem lvItem in form_lvCopyScratchpad.Items)
                 {
                     lvFake.Items.Add((ListViewItem)lvItem.Clone());
                 }
 
-                form_lvCopyList.Items.Clear();
+                form_lvCopyScratchpad.Items.Clear();
                 LoadCopyScratchPad(lvFake);
             }));
         }
@@ -72,7 +72,7 @@ namespace SearchDirLists
         {
             if (m_listRootNodes.Count <= 0)
             {
-                form_treeView_Browse.Nodes.Clear();
+                form_treeViewBrowse.Nodes.Clear();
                 return;
             }
 
@@ -92,7 +92,7 @@ namespace SearchDirLists
                 }
             }));
 
-            Collate collate = new Collate(form_treeView_Browse, m_dictNodes,
+            Collate collate = new Collate(form_treeViewBrowse, m_dictNodes,
                 form_lvClones, form_lvSameVol, form_lvUnique,
                 m_listRootNodes, m_listTreeNodes, m_bCheckboxes,
                 m_list_lvIgnore, form_chkLoose.Checked);
@@ -114,8 +114,8 @@ namespace SearchDirLists
             TreeCleanup();
             GC.Collect();
 
-            int nNodeCount = form_treeView_Browse.GetNodeCount(includeSubTrees: true);
-            int nNodeCount_A = Utilities.CountNodes(form_treeView_Browse.Nodes[0]);
+            int nNodeCount = form_treeViewBrowse.GetNodeCount(includeSubTrees: true);
+            int nNodeCount_A = Utilities.CountNodes(form_treeViewBrowse.Nodes[0]);
 
             Utilities.Assert(1304.5307, Utilities.CountNodes(m_listRootNodes) == nNodeCount);
             Utilities.Assert(1304.5308, m_listTreeNodes.Count == nNodeCount);
@@ -142,9 +142,9 @@ namespace SearchDirLists
             }
             else if (rootNode != null)
             {
-                lock (form_treeView_Browse)
+                lock (form_treeViewBrowse)
                 {
-                    form_treeView_Browse.Nodes.Add(rootNode.Text);    // items added to show progress
+                    form_treeViewBrowse.Nodes.Add(rootNode.Text);    // items added to show progress
                     volStrings.SetStatus_Done(form_lvVolumesMain, rootNode);
                 }
 
@@ -304,7 +304,7 @@ namespace SearchDirLists
             if (m_tree != null)
             {
                 m_tree.EndThread(bJoin: bJoin);
-                form_treeView_Browse.Nodes.Clear();
+                form_treeViewBrowse.Nodes.Clear();
                 m_listRootNodes.Clear();
                 TreeCleanup();
             }
@@ -367,10 +367,10 @@ namespace SearchDirLists
 
                 TreeNode treeNode = new TreeNode("Creating treeview...        ");
 
-                treeNode.NodeFont = new Font(form_treeView_Browse.Font, FontStyle.Bold | FontStyle.Underline);
-                form_treeView_Browse.Nodes.Add(treeNode);
-                form_treeView_Browse.CheckBoxes = false;    // treeview items are faked to show progress
-                form_treeView_Browse.Enabled = false;
+                treeNode.NodeFont = new Font(form_treeViewBrowse.Font, FontStyle.Bold | FontStyle.Underline);
+                form_treeViewBrowse.Nodes.Add(treeNode);
+                form_treeViewBrowse.CheckBoxes = false;    // treeview items are faked to show progress
+                form_treeViewBrowse.Enabled = false;
                 Utilities.Assert(1304.5310, m_listRootNodes.Count == 0);
                 m_tree = new Tree(form_lvVolumesMain.Items, m_dictNodes, m_dictDriveInfo,
                     new TreeStatusDelegate(TreeStatusCallback), new Action(TreeDoneCallback));
@@ -378,7 +378,7 @@ namespace SearchDirLists
             }
             else
             {
-                int nNodeCount = form_treeView_Browse.GetNodeCount(includeSubTrees: true);
+                int nNodeCount = form_treeViewBrowse.GetNodeCount(includeSubTrees: true);
 
                 Utilities.Assert(1304.5311, m_listTreeNodes.Count == nNodeCount);
 

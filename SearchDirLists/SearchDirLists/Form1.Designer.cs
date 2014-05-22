@@ -69,11 +69,11 @@ namespace SearchDirLists
             this.form_splitCompare = new System.Windows.Forms.SplitContainer();
             this.form_treeCompare1 = new SearchDirLists.Form1.Form1TreeView();
             this.form_treeCompare2 = new SearchDirLists.Form1.Form1TreeView();
-            this.form_treeView_Browse = new SearchDirLists.Form1.Form1TreeView();
+            this.form_treeViewBrowse = new SearchDirLists.Form1.Form1TreeView();
             this.form_tabControlCopyIgnore = new System.Windows.Forms.TabControl();
             this.form_tabPageCopy = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel4 = new SearchDirLists.Form1.Form1LayoutPanel(this.components);
-            this.form_lvCopyList = new ListViewEmbeddedControls.ListViewEx();
+            this.form_lvCopyScratchpad = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tableLayoutPanel5 = new SearchDirLists.Form1.Form1LayoutPanel(this.components);
@@ -412,7 +412,7 @@ namespace SearchDirLists
             this.form_lvVolumesMain.TabIndex = 19;
             this.form_lvVolumesMain.UseCompatibleStateImageBehavior = false;
             this.form_lvVolumesMain.View = System.Windows.Forms.View.Details;
-            this.form_lvVolumesMain.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.form_lvVolumes_ItemSelectionChanged);
+            this.form_lvVolumesMain.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.form_lvVolumesMain_ItemSelectionChanged);
             // 
             // form_lv_Volumes_col_Volume
             // 
@@ -667,7 +667,7 @@ namespace SearchDirLists
             // 
             // form_splitTreeFind.Panel2
             // 
-            this.form_splitTreeFind.Panel2.Controls.Add(this.form_treeView_Browse);
+            this.form_splitTreeFind.Panel2.Controls.Add(this.form_treeViewBrowse);
             this.form_splitTreeFind.Size = new System.Drawing.Size(360, 282);
             this.form_splitTreeFind.SplitterDistance = 101;
             this.form_splitTreeFind.SplitterWidth = 1;
@@ -703,11 +703,10 @@ namespace SearchDirLists
             this.form_treeCompare1.ShowNodeToolTips = true;
             this.form_treeCompare1.Size = new System.Drawing.Size(72, 101);
             this.form_treeCompare1.TabIndex = 1;
-            this.form_treeCompare1.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterCheck);
-            this.form_treeCompare1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterSelect);
-            this.form_treeCompare1.Enter += new System.EventHandler(this.form_ctlEnterForCopyButton);
-            this.form_treeCompare1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_tree_compare_KeyPress);
-            this.form_treeCompare1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_treeView_Browse_MouseClick);
+            this.form_treeCompare1.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.form_treeViewBrowse_AfterCheck);
+            this.form_treeCompare1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_AfterSelect);
+            this.form_treeCompare1.Enter += new System.EventHandler(this.form_treeCompare_Enter);
+            this.form_treeCompare1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_treeViewBrowse_MouseClick);
             // 
             // form_treeCompare2
             // 
@@ -721,30 +720,28 @@ namespace SearchDirLists
             this.form_treeCompare2.ShowNodeToolTips = true;
             this.form_treeCompare2.Size = new System.Drawing.Size(74, 101);
             this.form_treeCompare2.TabIndex = 2;
-            this.form_treeCompare2.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterCheck);
-            this.form_treeCompare2.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterSelect);
-            this.form_treeCompare2.Enter += new System.EventHandler(this.form_ctlEnterForCopyButton);
-            this.form_treeCompare2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_tree_compare_KeyPress);
-            this.form_treeCompare2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_treeView_Browse_MouseClick);
+            this.form_treeCompare2.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.form_treeViewBrowse_AfterCheck);
+            this.form_treeCompare2.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_AfterSelect);
+            this.form_treeCompare2.Enter += new System.EventHandler(this.form_treeCompare_Enter);
+            this.form_treeCompare2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_treeViewBrowse_MouseClick);
             // 
             // form_treeView_Browse
             // 
-            this.form_treeView_Browse.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.form_treeView_Browse.CheckBoxes = true;
-            this.form_treeView_Browse.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_treeView_Browse.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.form_treeView_Browse.FullRowSelect = true;
-            this.form_treeView_Browse.HideSelection = false;
-            this.form_treeView_Browse.Location = new System.Drawing.Point(0, 0);
-            this.form_treeView_Browse.Name = "form_treeView_Browse";
-            this.form_treeView_Browse.ShowLines = false;
-            this.form_treeView_Browse.Size = new System.Drawing.Size(360, 282);
-            this.form_treeView_Browse.TabIndex = 0;
-            this.form_treeView_Browse.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterCheck);
-            this.form_treeView_Browse.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_Browse_AfterSelect);
-            this.form_treeView_Browse.Enter += new System.EventHandler(this.form_ctlEnterForCopyButton);
-            this.form_treeView_Browse.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_treeView_Browse_KeyPress);
-            this.form_treeView_Browse.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_treeView_Browse_MouseClick);
+            this.form_treeViewBrowse.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.form_treeViewBrowse.CheckBoxes = true;
+            this.form_treeViewBrowse.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_treeViewBrowse.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.form_treeViewBrowse.FullRowSelect = true;
+            this.form_treeViewBrowse.HideSelection = false;
+            this.form_treeViewBrowse.Location = new System.Drawing.Point(0, 0);
+            this.form_treeViewBrowse.Name = "form_treeView_Browse";
+            this.form_treeViewBrowse.ShowLines = false;
+            this.form_treeViewBrowse.Size = new System.Drawing.Size(360, 282);
+            this.form_treeViewBrowse.TabIndex = 0;
+            this.form_treeViewBrowse.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.form_treeViewBrowse_AfterCheck);
+            this.form_treeViewBrowse.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_AfterSelect);
+            this.form_treeViewBrowse.Enter += new System.EventHandler(this.form_ctlEnterForCopyButton);
+            this.form_treeViewBrowse.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_treeViewBrowse_MouseClick);
             // 
             // form_tabControlCopyIgnore
             // 
@@ -775,7 +772,7 @@ namespace SearchDirLists
             this.tableLayoutPanel4.ColumnCount = 2;
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.Controls.Add(this.form_lvCopyList, 1, 0);
+            this.tableLayoutPanel4.Controls.Add(this.form_lvCopyScratchpad, 1, 0);
             this.tableLayoutPanel4.Controls.Add(this.tableLayoutPanel5, 0, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 3);
@@ -785,27 +782,26 @@ namespace SearchDirLists
             this.tableLayoutPanel4.Size = new System.Drawing.Size(346, 232);
             this.tableLayoutPanel4.TabIndex = 3;
             // 
-            // form_lvCopyList
+            // form_lvCopyScratchpad
             // 
-            this.form_lvCopyList.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.form_lvCopyList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.form_lvCopyScratchpad.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.form_lvCopyScratchpad.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader3,
             this.columnHeader4});
-            this.form_lvCopyList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_lvCopyList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.form_lvCopyList.FullRowSelect = true;
-            this.form_lvCopyList.HideSelection = false;
-            this.form_lvCopyList.Location = new System.Drawing.Point(70, 3);
-            this.form_lvCopyList.MultiSelect = false;
-            this.form_lvCopyList.Name = "form_lvCopyList";
-            this.form_lvCopyList.Size = new System.Drawing.Size(273, 226);
-            this.form_lvCopyList.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.form_lvCopyList.TabIndex = 1;
-            this.form_lvCopyList.UseCompatibleStateImageBehavior = false;
-            this.form_lvCopyList.View = System.Windows.Forms.View.Details;
-            this.form_lvCopyList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.form_lvTreeNodes_ColumnClick);
-            this.form_lvCopyList.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
-            this.form_lvCopyList.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
+            this.form_lvCopyScratchpad.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_lvCopyScratchpad.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.form_lvCopyScratchpad.FullRowSelect = true;
+            this.form_lvCopyScratchpad.HideSelection = false;
+            this.form_lvCopyScratchpad.Location = new System.Drawing.Point(70, 3);
+            this.form_lvCopyScratchpad.MultiSelect = false;
+            this.form_lvCopyScratchpad.Name = "form_lvCopyScratchpad";
+            this.form_lvCopyScratchpad.Size = new System.Drawing.Size(273, 226);
+            this.form_lvCopyScratchpad.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.form_lvCopyScratchpad.TabIndex = 1;
+            this.form_lvCopyScratchpad.UseCompatibleStateImageBehavior = false;
+            this.form_lvCopyScratchpad.View = System.Windows.Forms.View.Details;
+            this.form_lvCopyScratchpad.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.form_lvTreeNodes_ColumnClick);
+            this.form_lvCopyScratchpad.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
             // 
             // columnHeader3
             // 
@@ -852,8 +848,7 @@ namespace SearchDirLists
             this.form_btnCopyClear.TabIndex = 3;
             this.form_btnCopyClear.Text = "Clear";
             this.form_btnCopyClear.UseVisualStyleBackColor = true;
-            this.form_btnCopyClear.Click += new System.EventHandler(this.form_btnCopyClear_Click);
-            this.form_btnCopyClear.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
+            this.form_btnCopyClear.Click += new System.EventHandler(this.form_btnCopyScratchpadClear_Click);
             // 
             // form_btnSaveCopyDirs
             // 
@@ -867,7 +862,6 @@ namespace SearchDirLists
             this.form_btnSaveCopyDirs.Text = "Save";
             this.form_btnSaveCopyDirs.UseVisualStyleBackColor = true;
             this.form_btnSaveCopyDirs.Click += new System.EventHandler(this.form_btnSaveCopyDirs_Click);
-            this.form_btnSaveCopyDirs.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_btnCopyGen
             // 
@@ -880,7 +874,6 @@ namespace SearchDirLists
             this.form_btnCopyGen.TabIndex = 0;
             this.form_btnCopyGen.Text = "Script";
             this.form_btnCopyGen.UseVisualStyleBackColor = true;
-            this.form_btnCopyGen.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_btnLoadCopyDirs
             // 
@@ -894,7 +887,6 @@ namespace SearchDirLists
             this.form_btnLoadCopyDirs.Text = "Load";
             this.form_btnLoadCopyDirs.UseVisualStyleBackColor = true;
             this.form_btnLoadCopyDirs.Click += new System.EventHandler(this.form_btnLoadCopyScratchpad_Click);
-            this.form_btnLoadCopyDirs.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_tabPageIgnore
             // 
@@ -939,7 +931,6 @@ namespace SearchDirLists
             this.form_lvIgnoreList.UseCompatibleStateImageBehavior = false;
             this.form_lvIgnoreList.View = System.Windows.Forms.View.Details;
             this.form_lvIgnoreList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.form_lvTreeNodes_ColumnClick);
-            this.form_lvIgnoreList.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // columnHeader11
             // 
@@ -1003,7 +994,6 @@ namespace SearchDirLists
             this.form_btnIgnoreAdd.Text = "Add";
             this.form_btnIgnoreAdd.UseVisualStyleBackColor = true;
             this.form_btnIgnoreAdd.Click += new System.EventHandler(this.form_btnIgnoreAdd_Click);
-            this.form_btnIgnoreAdd.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_btnIgnoreDel
             // 
@@ -1017,7 +1007,6 @@ namespace SearchDirLists
             this.form_btnIgnoreDel.Text = "Del";
             this.form_btnIgnoreDel.UseVisualStyleBackColor = true;
             this.form_btnIgnoreDel.Click += new System.EventHandler(this.form_btnIgnoreDel_Click);
-            this.form_btnIgnoreDel.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_btnSaveIgnoreList
             // 
@@ -1031,7 +1020,6 @@ namespace SearchDirLists
             this.form_btnSaveIgnoreList.Text = "Save";
             this.form_btnSaveIgnoreList.UseVisualStyleBackColor = true;
             this.form_btnSaveIgnoreList.Click += new System.EventHandler(this.form_btnSaveIgnoreList_Click);
-            this.form_btnSaveIgnoreList.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_btnLoadIgnoreList
             // 
@@ -1045,7 +1033,6 @@ namespace SearchDirLists
             this.form_btnLoadIgnoreList.Text = "Load";
             this.form_btnLoadIgnoreList.UseVisualStyleBackColor = true;
             this.form_btnLoadIgnoreList.Click += new System.EventHandler(this.form_btnLoadIgnoreList_Click);
-            this.form_btnLoadIgnoreList.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_chkLoose
             // 
@@ -1058,7 +1045,6 @@ namespace SearchDirLists
             this.form_chkLoose.Text = "Loose";
             this.form_chkLoose.UseVisualStyleBackColor = true;
             this.form_chkLoose.CheckedChanged += new System.EventHandler(this.form_chkLoose_CheckedChanged);
-            this.form_chkLoose.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_splitClones
             // 
@@ -1108,7 +1094,6 @@ namespace SearchDirLists
             this.form_tabControlFileList.Size = new System.Drawing.Size(557, 259);
             this.form_tabControlFileList.TabIndex = 0;
             this.form_tabControlFileList.SelectedIndexChanged += new System.EventHandler(this.ClearToolTip);
-            this.form_tabControlFileList.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_tabPageDiskUsage
             // 
@@ -1131,7 +1116,6 @@ namespace SearchDirLists
             this.form_tmapUserCtl.Name = "form_tmapUserCtl";
             this.form_tmapUserCtl.Size = new System.Drawing.Size(549, 233);
             this.form_tmapUserCtl.TabIndex = 0;
-            this.form_tmapUserCtl.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             this.form_tmapUserCtl.Leave += new System.EventHandler(this.form_tmapUserCtl_Leave);
             this.form_tmapUserCtl.MouseDown += new System.Windows.Forms.MouseEventHandler(this.form_tmapUserCtl_MouseDown);
             this.form_tmapUserCtl.MouseUp += new System.Windows.Forms.MouseEventHandler(this.form_tmapUserCtl_MouseUp);
@@ -1190,8 +1174,7 @@ namespace SearchDirLists
             this.form_lvFiles.TabIndex = 0;
             this.form_lvFiles.UseCompatibleStateImageBehavior = false;
             this.form_lvFiles.View = System.Windows.Forms.View.Details;
-            this.form_lvFiles.Enter += new System.EventHandler(this.form_ctlEnterForCopyButton);
-            this.form_lvFiles.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_lvFiles_KeyPress);
+            this.form_lvFiles.Enter += new System.EventHandler(this.form_lvFiles_Enter);
             // 
             // form_colFilename
             // 
@@ -1250,8 +1233,7 @@ namespace SearchDirLists
             this.form_lvFileCompare.TabIndex = 1;
             this.form_lvFileCompare.UseCompatibleStateImageBehavior = false;
             this.form_lvFileCompare.View = System.Windows.Forms.View.Details;
-            this.form_lvFileCompare.Enter += new System.EventHandler(this.form_ctlEnterForCopyButton);
-            this.form_lvFileCompare.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_lvFileCompare_KeyPress);
+            this.form_lvFileCompare.Enter += new System.EventHandler(this.form_lvFiles_Enter);
             // 
             // form_colFileCompare
             // 
@@ -1320,7 +1302,6 @@ namespace SearchDirLists
             this.form_lvDetail.TabIndex = 0;
             this.form_lvDetail.UseCompatibleStateImageBehavior = false;
             this.form_lvDetail.View = System.Windows.Forms.View.Details;
-            this.form_lvDetail.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // columnHeader1
             // 
@@ -1349,7 +1330,6 @@ namespace SearchDirLists
             this.form_lvDetailVol.TabIndex = 0;
             this.form_lvDetailVol.UseCompatibleStateImageBehavior = false;
             this.form_lvDetailVol.View = System.Windows.Forms.View.Details;
-            this.form_lvDetailVol.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_colDirDetailCompare
             // 
@@ -1399,7 +1379,6 @@ namespace SearchDirLists
             this.form_lvUnique.View = System.Windows.Forms.View.Details;
             this.form_lvUnique.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.form_lvTreeNodes_ColumnClick);
             this.form_lvUnique.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChanged);
-            this.form_lvUnique.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_lvUnique_KeyPress);
             this.form_lvUnique.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_lvUnique_MouseClick);
             // 
             // columnHeader16
@@ -1542,7 +1521,6 @@ namespace SearchDirLists
             this.form_btnCompare.Text = "Compare";
             this.form_btnCompare.UseVisualStyleBackColor = true;
             this.form_btnCompare.Click += new System.EventHandler(this.form_btnCompare_Click);
-            this.form_btnCompare.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_btnCollapse
             // 
@@ -1556,7 +1534,6 @@ namespace SearchDirLists
             this.form_btnCollapse.Text = "Collapse";
             this.form_btnCollapse.UseVisualStyleBackColor = true;
             this.form_btnCollapse.Click += new System.EventHandler(this.form_btnTreeCollapse_Click);
-            this.form_btnCollapse.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_lblVolGroup
             // 
@@ -1582,7 +1559,6 @@ namespace SearchDirLists
             this.form_btnFiles.Text = "Files";
             this.form_btnFiles.UseVisualStyleBackColor = true;
             this.form_btnFiles.Click += new System.EventHandler(this.form_btnFind_Click);
-            this.form_btnFiles.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_btnForward
             // 
@@ -1596,7 +1572,6 @@ namespace SearchDirLists
             this.form_btnForward.Text = "-->";
             this.form_btnForward.UseVisualStyleBackColor = true;
             this.form_btnForward.Click += new System.EventHandler(this.form_btnForward_Click);
-            this.form_btnForward.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_btnFoldersAndFiles
             // 
@@ -1610,7 +1585,6 @@ namespace SearchDirLists
             this.form_btnFoldersAndFiles.Text = "Folders && files";
             this.form_btnFoldersAndFiles.UseVisualStyleBackColor = true;
             this.form_btnFoldersAndFiles.Click += new System.EventHandler(this.form_btnFind_Click);
-            this.form_btnFoldersAndFiles.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_btnBack
             // 
@@ -1624,7 +1598,6 @@ namespace SearchDirLists
             this.form_btnBack.Text = "<--";
             this.form_btnBack.UseVisualStyleBackColor = true;
             this.form_btnBack.Click += new System.EventHandler(this.form_btnBack_Click);
-            this.form_btnBack.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_btnFolder
             // 
@@ -1638,7 +1611,6 @@ namespace SearchDirLists
             this.form_btnFolder.Text = "Folders";
             this.form_btnFolder.UseVisualStyleBackColor = true;
             this.form_btnFolder.Click += new System.EventHandler(this.form_btnFind_Click);
-            this.form_btnFolder.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_btnUp
             // 
@@ -1652,7 +1624,6 @@ namespace SearchDirLists
             this.form_btnUp.Text = "Up";
             this.form_btnUp.UseVisualStyleBackColor = true;
             this.form_btnUp.Click += new System.EventHandler(this.form_btnUp_Click);
-            this.form_btnUp.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_btnTreeCopy
             // 
@@ -1666,7 +1637,6 @@ namespace SearchDirLists
             this.form_btnTreeCopy.Text = "Copy";
             this.form_btnTreeCopy.UseVisualStyleBackColor = true;
             this.form_btnTreeCopy.Click += new System.EventHandler(this.form_btnCopy_Click);
-            this.form_btnTreeCopy.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CompareModeButtonKeyPress);
             // 
             // form_cbFindbox
             // 
@@ -1681,7 +1651,7 @@ namespace SearchDirLists
             this.form_cbFindbox.SelectedIndexChanged += new System.EventHandler(this.form_cbFindbox_SelectedIndexChanged);
             this.form_cbFindbox.TextChanged += new System.EventHandler(this.form_cbFindbox_TextChanged);
             this.form_cbFindbox.Enter += new System.EventHandler(this.form_ctlEnterForCopyButton);
-            this.form_cbFindbox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_cbFindbox_KeyPress);
+            this.form_cbFindbox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.form_cbFindbox_KeyUp);
             this.form_cbFindbox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.form_cbFindbox_MouseUp);
             // 
             // form_chkCompare1
@@ -1740,6 +1710,7 @@ namespace SearchDirLists
             this.Controls.Add(this.form_tabControlMain);
             this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(875, 420);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -1751,6 +1722,9 @@ namespace SearchDirLists
             this.Load += new System.EventHandler(this.Form1_Load);
             this.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.Form1_HelpRequested);
             this.Enter += new System.EventHandler(this.ClearToolTip);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Form1_KeyPress);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.Leave += new System.EventHandler(this.ClearToolTip);
             this.form_tabControlMain.ResumeLayout(false);
             this.form_tabPageVolumes.ResumeLayout(false);
@@ -1841,7 +1815,7 @@ namespace SearchDirLists
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.TabPage form_tabPageBrowse;
-        private Form1TreeView form_treeView_Browse;
+        private Form1TreeView form_treeViewBrowse;
         private System.Windows.Forms.SplitContainer form_splitFiles;
         private ListViewEx form_lvDetail;
         private System.Windows.Forms.SplitContainer form_splitDetail;
@@ -1893,7 +1867,7 @@ namespace SearchDirLists
         private ListViewEx form_lvSameVol;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private ListViewEx form_lvCopyList;
+        private ListViewEx form_lvCopyScratchpad;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.Button form_btnLoadCopyDirs;

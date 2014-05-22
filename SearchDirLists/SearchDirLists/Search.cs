@@ -421,9 +421,9 @@ namespace SearchDirLists
             if (treeNode == null)
             {
                 // compare mode
-                Utilities.Assert(1307.8303, treeView != form_treeView_Browse);
+                Utilities.Assert(1307.8303, treeView != form_treeViewBrowse);
 
-                if (treeView == form_treeView_Browse)
+                if (treeView == form_treeViewBrowse)
                 {
                     return null;
                 }
@@ -463,7 +463,7 @@ namespace SearchDirLists
 
             if (form_lvFiles.Items.Count <= 0)
             {
-                MessageBox.Show("Meant to select a file in a surprisingly empty listviewer.\n" + "Could be you were navigating too fast.".PadRight(100), "Select found file");
+                FlashWindow.Go(Once: true);
                 return;
             }
 
@@ -533,7 +533,7 @@ namespace SearchDirLists
             {
                 m_bFileFound = true;
 
-                TreeView treeView = form_treeView_Browse;
+                TreeView treeView = form_treeViewBrowse;
 
                 if (m_bCompareMode)
                 {
@@ -590,9 +590,9 @@ namespace SearchDirLists
             SearchFile.FolderSpecialHandling folderHandling = SearchFile.FolderSpecialHandling.None;    // not used
             String strCurrentNode = null;
 
-            if (form_treeView_Browse.SelectedNode != null)
+            if (form_treeViewBrowse.SelectedNode != null)
             {
-                strCurrentNode = FullPath(form_treeView_Browse.SelectedNode);
+                strCurrentNode = FullPath(form_treeViewBrowse.SelectedNode);
             }
 
             m_search = new Search(form_lvVolumesMain.Items, strSearch, strSearch.ToLower() != strSearch,
@@ -611,7 +611,7 @@ namespace SearchDirLists
 
             m_ctlLastSearchSender = (Control)sender;
 
-            TreeView treeView = form_treeView_Browse;
+            TreeView treeView = form_treeViewBrowse;
 
             if (m_bCompareMode)
             {
@@ -650,7 +650,7 @@ namespace SearchDirLists
 
                         int nPos = form_cbFindbox.Text.LastIndexOf(Path.DirectorySeparatorChar);
                         String strMaybePath = form_cbFindbox.Text.Substring(0, nPos);
-                        TreeNode treeNode = GetNodeByPath(strMaybePath, form_treeView_Browse);
+                        TreeNode treeNode = GetNodeByPath(strMaybePath, form_treeViewBrowse);
 
                         m_strSelectFile = form_cbFindbox.Text.Substring(nPos + 1);
 

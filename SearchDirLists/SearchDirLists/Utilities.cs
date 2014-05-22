@@ -51,6 +51,7 @@ namespace SearchDirLists
             internal ControlHolder(Control obj) { m_obj = obj; }
             internal override Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
         }
+        class DefaultHolder : ControlHolder { internal DefaultHolder(Control obj) : base(obj) { } }
 
         internal Blinky(System.Windows.Forms.Timer timer, Control defaultControl)
         {
@@ -66,6 +67,7 @@ namespace SearchDirLists
             treeNode.EnsureVisible();
             treeNode.TreeView.SelectedNode = null;
             Go(Once: true);
+            m_defaultControl.Select();
         }
 
         internal void SelectLVitem(ListViewItem lvItem)
@@ -88,7 +90,7 @@ namespace SearchDirLists
         {
             if (m_blinky is NullHolder)
             {
-                m_blinky = new ControlHolder(m_defaultControl);
+                m_blinky = new DefaultHolder(m_defaultControl);
             }
 
             m_clrOrig = m_blinky.BackColor;
@@ -119,7 +121,6 @@ namespace SearchDirLists
             m_blinky.BackColor = m_clrOrig;
             m_blinky.Reset();
             m_blinky = new NullHolder();
-            m_defaultControl.Select();
         }
     }
 
@@ -189,7 +190,7 @@ namespace SearchDirLists
 
         public const UInt32 FLASHW_ALL = 3;
 
-        internal static void Go(Control ctl_in = null)
+        internal static void Go(Control ctl_in = null, bool Once = false)
         {
             Control ctl = ctl_in ?? Form1.static_form;
 
@@ -200,7 +201,7 @@ namespace SearchDirLists
                 fInfo.cbSize = Convert.ToUInt32(Marshal.SizeOf(fInfo));
                 fInfo.hwnd = ctl.Handle;
                 fInfo.dwFlags = FLASHW_ALL;
-                fInfo.uCount = 3;
+                fInfo.uCount = (uint) (Once ? 1 : 3);
                 fInfo.dwTimeout = 0;
                 FlashWindowEx(ref fInfo);
             }));

@@ -1426,8 +1426,11 @@ namespace SearchDirLists
             this.form_lvSameVol.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.form_lvTreeNodes_ColumnClick);
             this.form_lvSameVol.SelectedIndexChanged += new System.EventHandler(this.form_lvClones_SelectedIndexChanged);
             this.form_lvSameVol.Enter += new System.EventHandler(this.form_lvClones_Enter);
+            this.form_lvSameVol.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_lvClones_KeyDown);
             this.form_lvSameVol.KeyUp += new System.Windows.Forms.KeyEventHandler(this.form_lvClones_KeyUp);
-            this.form_lvSameVol.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_lvClones_Click);
+            this.form_lvSameVol.Leave += new System.EventHandler(this.form_lvClones_Leave);
+            this.form_lvSameVol.MouseDown += new System.Windows.Forms.MouseEventHandler(this.form_lvClones_MouseDown);
+            this.form_lvSameVol.MouseUp += new System.Windows.Forms.MouseEventHandler(this.form_lvClones_MouseUp);
             // 
             // columnHeader2
             // 
@@ -1461,8 +1464,12 @@ namespace SearchDirLists
             this.form_lvClones.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.form_lvTreeNodes_ColumnClick);
             this.form_lvClones.SelectedIndexChanged += new System.EventHandler(this.form_lvClones_SelectedIndexChanged);
             this.form_lvClones.Enter += new System.EventHandler(this.form_lvClones_Enter);
+            this.form_lvClones.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_lvClones_KeyDown);
             this.form_lvClones.KeyUp += new System.Windows.Forms.KeyEventHandler(this.form_lvClones_KeyUp);
-            this.form_lvClones.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_lvClones_Click);
+            this.form_lvClones.Leave += new System.EventHandler(this.form_lvClones_Leave);
+            this.form_lvClones.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_lvClones_MouseUp);
+            this.form_lvClones.MouseDown += new System.Windows.Forms.MouseEventHandler(this.form_lvClones_MouseDown);
+            this.form_lvClones.MouseUp += new System.Windows.Forms.MouseEventHandler(this.form_lvClones_MouseUp);
             // 
             // columnHeader12
             // 

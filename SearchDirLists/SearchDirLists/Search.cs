@@ -476,6 +476,7 @@ namespace SearchDirLists
             }
 
             m_strSelectFile = null;
+            m_bNavToFile = false;
         }
 
         void SearchStatusCallback(String strSearch, LVvolStrings volStrings, List<SearchResultsDir> listResults, bool bFirst = false, bool bLast = false)

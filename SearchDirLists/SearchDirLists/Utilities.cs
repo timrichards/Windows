@@ -1004,14 +1004,14 @@ namespace SearchDirLists
         static internal void Write(String str)
         {
 #if (DEBUG)
-            Console.Write(str);
+            Utilities.Write(str);
 #endif
         }
 
         static internal void WriteLine(String str = null)
         {
 #if (DEBUG)
-            Console.WriteLine(str);
+            Utilities.WriteLine(str);
 #endif
         }
     }

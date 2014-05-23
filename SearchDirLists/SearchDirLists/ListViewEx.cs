@@ -108,6 +108,10 @@ namespace ListViewEmbeddedControls
     /// </summary>
     public class ListViewEx : ListView
     {
+    }
+
+    public class ListViewEx_unused : ListView
+    {
         #region Interop-Defines
         [DllImport("user32.dll")]
         private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wPar, IntPtr lPar);
@@ -134,7 +138,7 @@ namespace ListViewEmbeddedControls
 
         private ArrayList _embeddedControls = new ArrayList();
 
-        public ListViewEx()
+        public ListViewEx_unused()
         {
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
             this.SetStyle(ControlStyles.EnableNotifyMessage, true);

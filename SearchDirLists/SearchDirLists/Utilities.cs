@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Drawing;
 using System.Threading;
+using System.Diagnostics;
 
 namespace SearchDirLists
 {
@@ -506,7 +507,7 @@ namespace SearchDirLists
             m_MessageboxCallback = static_MessageboxCallback;
         }
 
-        internal static bool Assert(double nLocation, bool bCondition, String strError_in = null)
+        internal static bool Assert(double nLocation, bool bCondition, String strError_in = null, bool bOnlyDebug = false)
         {
             if (bCondition) return true;
 
@@ -538,16 +539,21 @@ namespace SearchDirLists
                     Debug.Assert(false, strError);
                 }
                 else
+#else
+                if (bOnlyDebug == false)
 #endif
-                static_bAssertUp = true;
-                new Thread(new ThreadStart(() =>
                 {
-                    static_MessageboxCallback(strError + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.".PadRight(100), "SearchDirLists Assertion Failure");
-                    static_bAssertUp = false;
-                }))
-                .Start();
-                static_nLastAssertLoc = nLocation;
-                static_dtLastAssert = DateTime.Now;
+                    static_bAssertUp = true;
+
+                    new Thread(new ThreadStart(() =>
+                    {
+                        static_MessageboxCallback(strError + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.".PadRight(100), "SearchDirLists Assertion Failure");
+                        static_bAssertUp = false;
+                    }))
+                    .Start();
+                    static_nLastAssertLoc = nLocation;
+                    static_dtLastAssert = DateTime.Now;
+                }
             }
 
             return false;
@@ -1004,14 +1010,14 @@ namespace SearchDirLists
         static internal void Write(String str)
         {
 #if (DEBUG)
-            Utilities.Write(str);
+            Console.Write(str);
 #endif
         }
 
         static internal void WriteLine(String str = null)
         {
 #if (DEBUG)
-            Utilities.WriteLine(str);
+            Console.WriteLine(str);
 #endif
         }
     }

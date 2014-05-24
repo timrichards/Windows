@@ -11,7 +11,6 @@ using System.Threading;
 // TODO:
 //      search results interrupt wonky
 //      compare file list
-//      up arrow under marker in clone list
 //      why need Blinky.static_clrDefault?
 
 namespace SearchDirLists
@@ -588,6 +587,28 @@ namespace SearchDirLists
             }
         }
 
+        DialogResult Form1MessageBox(String strMessage, String strTitle = null, MessageBoxButtons? buttons = null)
+        {
+            if (AppExit)
+            {
+                return DialogResult.None;
+            }
+
+            if (InvokeRequired) { return (DialogResult)Invoke(new MessageBoxDelegate(Form1MessageBox), new object[] { strMessage, strTitle, buttons }); }
+
+            m_blinky.Reset();
+
+            // make MessageBox modal from a worker thread
+            if (buttons == null)
+            {
+                return MessageBox.Show(strMessage.PadRight(100), strTitle);
+            }
+            else
+            {
+                return MessageBox.Show(strMessage.PadRight(100), strTitle, buttons.Value);
+            }
+        }
+
         bool FormatPath(Control ctl, ref String strPath, bool bFailOnDirectory = true)
         {
             if (Directory.Exists(Path.GetFullPath(strPath)))
@@ -900,7 +921,38 @@ namespace SearchDirLists
             return true;    // this kicks off the tree
         }
 
-        bool LV_MarkerClick(ListView lv)     // returns true when selected tag is not null, and may change selection.
+        void LV_CloneSelNode(ListView lv)
+        {
+            if (Utilities.Assert(1308.93183, lv.SelectedItems.Count > 0) == false)
+            {
+                return;
+            }
+
+            UList<TreeNode> listTreeNodes = (UList<TreeNode>)lv.SelectedItems[0].Tag;
+
+            if (Utilities.Assert(1308.93187, listTreeNodes != null) == false)
+            {
+                return;
+            }
+
+            m_bPutPathInFindEditBox = true;
+            m_bTreeViewIndirectSelChange = true;
+            m_bClonesLVindirectSelChange = true;                                        // TODO: Is this in the way or is it applicable?
+            form_treeViewBrowse.SelectedNode = listTreeNodes[++m_nLVclonesClickIx % listTreeNodes.Count];
+        }
+
+        void LV_ClonesSelChange(ListView lv, bool bUp = false)
+        {
+            if (LV_MarkerClick(lv, bUp) == false)
+            {
+                return;
+            }
+
+            m_nLVclonesClickIx = -1;
+            LV_CloneSelNode(lv);
+        }
+
+        bool LV_MarkerClick(ListView lv, bool bUp = false)     // returns true when selected tag is not null, and may change selection.
         {
             if (lv.SelectedItems.Count <= 0)
             {
@@ -914,12 +966,15 @@ namespace SearchDirLists
 
             // marker item
             int nIx = lv.SelectedItems[0].Index + 1;
+            bool bGt = (nIx >= lv.Items.Count);
 
-            if (nIx >= lv.Items.Count)
+            if (bUp || bGt)
             {
-                nIx -= 2;
-
-                if (nIx < 0)
+                if ((nIx - 2) >= 0)
+                {
+                    nIx -= 2;
+                }
+                else if (bGt)
                 {
                     return false;   // LV with just a marker item? assert?
                 }
@@ -947,51 +1002,9 @@ namespace SearchDirLists
             return (lv.SelectedItems[0].Tag != null);
         }
 
-        void LV_ClonesSelChange(ListView lv)
-        {
-            if (LV_MarkerClick(lv) == false)
-            {
-                return;
-            }
-
-            m_nLVclonesClickIx = -1;
-            LV_clonesTree(lv);
-        }
-
-        void LV_clonesTree(ListView lv)
-        {
-            UList<TreeNode> listTreeNodes = (UList<TreeNode>)lv.SelectedItems[0].Tag;
-
-            m_bPutPathInFindEditBox = true;
-            m_bTreeViewIndirectSelChange = true;
-            m_bClonesLVindirectSelChange = true;
-            form_treeViewBrowse.SelectedNode = listTreeNodes[++m_nLVclonesClickIx % listTreeNodes.Count];
-        }
-
         bool LV_VolumesItemInclude(ListViewItem lvItem)
         {
             return (lvItem.SubItems[4].Text == "Yes");
-        }
-
-        DialogResult Form1MessageBox(String strMessage, String strTitle = null, MessageBoxButtons? buttons = null)
-        {
-            if (AppExit)
-            {
-                return DialogResult.None;
-            }
-
-            if (InvokeRequired) { return (DialogResult) Invoke(new MessageBoxDelegate(Form1MessageBox), new object[] { strMessage, strTitle, buttons }); }
-
-            m_blinky.Reset();
-            // make MessageBox modal from a worker thread
-            if (buttons == null)
-            {
-                return MessageBox.Show(strMessage.PadRight(100), strTitle);
-            }
-            else
-            {
-                return MessageBox.Show(strMessage.PadRight(100), strTitle, buttons.Value);
-            }
         }
 
         void NameNodes(TreeNode treeNode, UList<TreeNode> listTreeNodes)
@@ -1018,6 +1031,13 @@ namespace SearchDirLists
 
         bool QueryLVselChange(object sender)
         {
+            bool bUp = false;
+
+            return QueryLVselChange(sender, ref bUp);
+        }
+
+        bool QueryLVselChange(object sender, ref bool bUp)
+        {
             if ((sender is ListView) == false)
             {
                 Utilities.Assert(1308.9319, false);
@@ -1033,7 +1053,12 @@ namespace SearchDirLists
 
             ++m_nSelChgIx;
             m_arrSelChgIx[m_nSelChgIx %= 2] = lv.SelectedItems[0].Index;
-            return (m_arrSelChgIx[m_nSelChgIx % 2] != m_arrSelChgIx[(m_nSelChgIx + 1) % 2]);
+
+            int nNow = m_arrSelChgIx[m_nSelChgIx % 2];  // extra modulus just to be sure
+            int nPrev = m_arrSelChgIx[(m_nSelChgIx + 1) % 2];
+
+            bUp = nNow < nPrev;
+            return nNow != nPrev;
         }
 
         bool ReadHeader()
@@ -1337,7 +1362,7 @@ namespace SearchDirLists
 
             m_dictCompareDiffs.Clear();
 
-            if (rootNodeDatum1.nTotalLength != rootNodeDatum2.nTotalLength)
+            if (rootNodeDatum1.nLength != rootNodeDatum2.nLength)
             {
                 m_dictCompareDiffs.Add(m_nodeCompare1, nodeCompare2);
             }
@@ -1836,7 +1861,7 @@ namespace SearchDirLists
             else
             {
                 m_blinky.Go(ctl: form_lvVolumesMain, clr: Color.Red, Once: true);
-                Utilities.Assert(1308.93105, false);    // shouldn't even be hit: this button gets dimmed
+                Utilities.Assert(1308.93103, false);    // shouldn't even be hit: this button gets dimmed
             }
         }
 
@@ -2105,7 +2130,7 @@ namespace SearchDirLists
 
         void form_chk_Compare1_CheckedChanged(object sender, EventArgs e)
         {
-            if (m_bChkCompare1IndirectCheckChange == true)
+            if (m_bChkCompare1IndirectCheckChange)
             {
                 m_bChkCompare1IndirectCheckChange = false;
                 return;
@@ -2113,7 +2138,7 @@ namespace SearchDirLists
 
             if (m_bCompareMode)
             {
-                Utilities.Assert(1308.93107, form_chkCompare1.Checked == false);
+                Utilities.Assert(1308.93105, form_chkCompare1.Checked == false);
                 form_chkCompare1.Text = m_strChkCompareOrig;
                 form_btnCollapse.Text = m_strBtnTreeCollapseOrig;
                 form_btnCompare.Text = m_strBtnCompareOrig;
@@ -2192,18 +2217,17 @@ namespace SearchDirLists
 
         void form_lvClones_Enter(object sender, EventArgs e)
         {
-            m_nLVclonesClickIx = -1;
-        }
+            //if (Form.ActiveForm == null)
+            //{
+            //    return;
+            //}
 
-        void form_lvClones_Leave(object sender, EventArgs e)
-        {
-            m_bLVclonesMouseDown = false;
-            m_bLVclonesMouseSelChg = false;
+            m_nLVclonesClickIx = -1;
         }
 
         void form_lvClones_KeyDown(object sender, KeyEventArgs e)
         {
-            Utilities.Assert(1308.9321, QueryLVselChange(sender) == false);
+            Utilities.Assert(1308.93107, QueryLVselChange(sender) == false, bOnlyDebug: true);
         }
 
         void form_lvClones_KeyUp(object sender, KeyEventArgs e)
@@ -2218,25 +2242,52 @@ namespace SearchDirLists
             }
 
             Utilities.WriteLine("form_lvClones_KeyUp");
-            LV_clonesTree((ListView)sender);
+            LV_CloneSelNode((ListView)sender);
         }
 
         void form_lvClones_MouseDown(object sender, MouseEventArgs e)
         {
             m_bLVclonesMouseDown = true;
-            Utilities.Assert(1308.93195, m_bLVclonesMouseSelChg == false);
+            Utilities.Assert(1308.93109, m_bLVclonesMouseSelChg == false, bOnlyDebug: true);
+            m_bLVclonesMouseSelChg = false;
+        }
+
+        void form_lvClones_MouseLeave(object sender, EventArgs e)
+        {
+            if (Form.ActiveForm == null)
+            {
+                return;
+            }
+
+            form_lvClones_MouseUp(sender);
+            m_bLVclonesMouseSelChg = false;
         }
 
         void form_lvClones_MouseUp(object sender, MouseEventArgs e = null)
         {
-            Utilities.Assert(1308.9320, QueryLVselChange(sender) == false);
-            m_bLVclonesMouseDown = false;
+            if (Form.ActiveForm == null)
+            {
+                return;
+            }
+
+            Utilities.Assert(1308.93111, QueryLVselChange(sender) == false, bOnlyDebug: true);
+
+            if (m_bLVclonesMouseDown == false)  // leave
+            {
+                return;
+            }
 
             if (m_bLVclonesMouseSelChg)
             {
                 LV_ClonesSelChange((ListView)sender);
                 m_bLVclonesMouseSelChg = false;
             }
+            else
+            {
+                LV_CloneSelNode((ListView)sender);
+            }
+
+            m_bLVclonesMouseDown = false;
         }
 
         void form_lvClones_SelectedIndexChanged(object sender, EventArgs e)
@@ -2246,7 +2297,7 @@ namespace SearchDirLists
                 return;
             }
 
-            if (m_bClonesLVindirectSelChange == true)
+            if (m_bClonesLVindirectSelChange)
             {
                 m_bClonesLVindirectSelChange = false;
                 return;
@@ -2259,25 +2310,32 @@ namespace SearchDirLists
                 return;
             }
 
-            if (QueryLVselChange(sender) == false)
+            bool bUp = false;
+
+            if (QueryLVselChange(sender, ref bUp) == false)
             {
                 return;
             }
 
             Utilities.WriteLine("form_lvClones_SelectedIndexChanged");
 
-            if (m_bLVclonesMouseDown == false)
+            if (m_bLVclonesMouseDown)
             {
-                LV_ClonesSelChange(lv);
+                m_bLVclonesMouseSelChg = true;
             }
             else
             {
-                m_bLVclonesMouseSelChg = true;
+                LV_ClonesSelChange(lv, bUp);
             }
         }
 
         void form_lvFiles_Enter(object sender, EventArgs e)
         {
+            if (Form.ActiveForm == null)
+            {
+                return;
+            }
+
             form_ctlEnterForCopyButton(sender, e);
 
             if (m_bCompareMode == false)
@@ -2401,6 +2459,11 @@ namespace SearchDirLists
 
         void form_tmapUserCtl_Leave(object sender, EventArgs e)
         {
+            //if (Form.ActiveForm == null)
+            //{
+            //    return;
+            //}
+
             form_tmapUserCtl.ClearSelection();
         }
 
@@ -2432,6 +2495,11 @@ namespace SearchDirLists
 
         void form_treeCompare_Enter(object sender, EventArgs e)
         {
+            if (Form.ActiveForm == null)
+            {
+                return;
+            }
+
             form_ctlEnterForCopyButton(sender, e);
             form_cbFindbox.Text = FullPath(((TreeView)sender).SelectedNode);
         }

@@ -669,7 +669,7 @@ namespace SearchDirLists
 
                             continue;
                         }
-                        else if (strLine.Length == 0)
+                        else if (strLine.Length <= 0)
                         {
                             file_out.WriteLine(FormatLine(m_strLINETYPE_Blank, nLineNo));
                             continue;
@@ -990,7 +990,7 @@ namespace SearchDirLists
 
             String[] arrLine_A = File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Length)).ToArray();
 
-            if (arrLine_A.Length == 0) return false;
+            if (arrLine_A.Length <= 0) return false;
 
             String[] arrToken_A = arrLine_A[0].Split('\t');
 

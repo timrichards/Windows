@@ -333,7 +333,7 @@ namespace SearchDirLists
             {
                 int nSearchIx = -1;
 
-                if (m_listSearchResults.Count == 0)       // torturing the UX
+                if (m_listSearchResults.Count <= 0)       // torturing the UX
                 {
                     return false;
                 }
@@ -342,9 +342,9 @@ namespace SearchDirLists
                 {
                     foreach (SearchResultsDir resultDir in searchResults.Results)
                     {
-                        if (resultDir.ListFiles.Count == 0)
+                        if (resultDir.ListFiles.Count <= 0)
                         {
-                            if (++nCounter < m_nSearchResultsIndexer)
+                            if (++nCounter <= m_nSearchResultsIndexer)
                             {
                                 continue;
                             }
@@ -371,7 +371,7 @@ namespace SearchDirLists
                         {
                             foreach (String strFile in resultDir.ListFiles)
                             {
-                                if (++nCounter < m_nSearchResultsIndexer)
+                                if (++nCounter <= m_nSearchResultsIndexer)
                                 {
                                     continue;
                                 }
@@ -442,7 +442,9 @@ namespace SearchDirLists
 
         void SearchFail()
         {
-            m_nSearchResultsIndexer = 0;
+            m_nSearchResultsIndexer = -1;
+            Utilities.Assert(1307.8303, m_arrSearchResults == null, bOnlyDebug: true);
+            m_arrSearchResults = null;
             m_bNavToFile = false;
             m_strSelectFile = null;
             m_blinky.Go(clr: Color.Red, Once: true);
@@ -476,7 +478,6 @@ namespace SearchDirLists
             }
 
             m_strSelectFile = null;
-            m_bNavToFile = false;
         }
 
         void SearchStatusCallback(String strSearch, LVvolStrings volStrings, List<SearchResultsDir> listResults, bool bFirst = false, bool bLast = false)
@@ -497,8 +498,6 @@ namespace SearchDirLists
             }
             else
             {
-                m_listSearchResults = new List<SearchResults>();
-
                 lock (m_listSearchResults)
                 {
                     m_listSearchResults.Add(new SearchResults(strSearch, volStrings, listResults));
@@ -530,30 +529,30 @@ namespace SearchDirLists
                 m_lastSearchResults = null;
             }
 
-            if (m_listSearchResults.Count > 0)
+            if (m_listSearchResults.Count <= 0)
             {
-                m_bNavToFile = true;
-
-                TreeView treeView = form_treeViewBrowse;
-
-                if (m_bCompareMode)
-                {
-                    treeView = (m_ctlLastFocusForCopyButton is TreeView) ? (TreeView)m_ctlLastFocusForCopyButton : form_treeCompare1;
-
-                    if (NavToFile(treeView) == false)
-                    {
-                        if (NavToFile((treeView == form_treeCompare1) ? form_treeCompare2 : form_treeCompare1) == false)
-                        {
-                            SearchFail();
-                        }
-                    }
-                }
-                else
-                {
-                    NavToFile(treeView);
-                }
+                SearchFail();
+                return;
             }
-            else
+
+            m_bNavToFile = true;
+
+            TreeView treeView = form_treeViewBrowse;
+
+            if (m_bCompareMode == false)
+            {
+                NavToFile(treeView);
+                return;
+            }
+
+            treeView = (m_ctlLastFocusForCopyButton is TreeView) ? (TreeView)m_ctlLastFocusForCopyButton : form_treeCompare1;
+
+            if (NavToFile(treeView))
+            {
+                return;
+            }
+
+            if (NavToFile((treeView == form_treeCompare1) ? form_treeCompare2 : form_treeCompare1) == false)
             {
                 SearchFail();
             }
@@ -604,7 +603,7 @@ namespace SearchDirLists
 
         void DoSearch(object sender)
         {
-            if (form_cbFindbox.Text.Length == 0)
+            if (form_cbFindbox.Text.Length <= 0)
             {
                 m_blinky.Go(clr: Color.Red, Once: true);
                 return;
@@ -621,7 +620,7 @@ namespace SearchDirLists
 
             while (true)
             {
-                if (m_nSearchResultsIndexer == 0)
+                if (m_nSearchResultsIndexer < 0)
                 {
                     FindNode(form_cbFindbox.Text, treeView.SelectedNode, treeView);
                 }

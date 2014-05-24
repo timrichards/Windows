@@ -27,7 +27,7 @@ namespace SearchDirLists
 
         private void InputBox_Load(object sender, EventArgs e)
         {
-            //if ((form_cb_Entry.Text.Length == 0) && (form_cb_Entry.Items.Count > 0))
+            //if ((form_cb_Entry.Text.Length <= 0) && (form_cb_Entry.Items.Count > 0))
             //{
             //    form_cb_Entry.SelectedIndex = 0;
             //}

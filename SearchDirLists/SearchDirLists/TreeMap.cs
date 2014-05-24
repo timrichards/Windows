@@ -217,7 +217,7 @@ namespace SearchDirLists
                     return treeNode;
                 }
 
-                if ((treeNode.Nodes == null) || (treeNode.Nodes.Count == 0))
+                if ((treeNode.Nodes == null) || (treeNode.Nodes.Count <= 0))
                 {
                     continue;
                 }
@@ -280,6 +280,7 @@ namespace SearchDirLists
             nodeDatum_B.TreeMapRect = nodeDatum.TreeMapRect;
             nodeFileList.Tag = nodeDatum_B;
             Utilities.Assert(1302.3302, nodeFileList.SelectedImageIndex == -1);              // sets the bitmap size
+            nodeFileList.SelectedImageIndex = -1;
             return nodeFileList;
         }
 
@@ -348,7 +349,7 @@ namespace SearchDirLists
                 m_deepNode = treeNode;
             }
 
-            int nPxPerSide = (treeNode.SelectedImageIndex == -1) ? 1024 : treeNode.SelectedImageIndex;
+            int nPxPerSide = (treeNode.SelectedImageIndex < 0) ? 1024 : treeNode.SelectedImageIndex;
 
             if (nPxPerSide != m_rectBitmap.Size.Width)
             {
@@ -387,7 +388,7 @@ namespace SearchDirLists
             if ((DateTime.Now - dtStart) > TimeSpan.FromSeconds(1))
             {
                 treeNode.SelectedImageIndex = Math.Max((int)
-                    (((treeNode.SelectedImageIndex == -1) ? m_rectBitmap.Size.Width : treeNode.SelectedImageIndex)
+                    (((treeNode.SelectedImageIndex < 0) ? m_rectBitmap.Size.Width : treeNode.SelectedImageIndex)
                     * .75), 256);
             }
         }
@@ -631,7 +632,7 @@ namespace SearchDirLists
 
             listChildren.Sort((y, x) => ((NodeDatum)x.Tag).nTotalLength.CompareTo(((NodeDatum)y.Tag).nTotalLength));
 
-            if (listChildren.Count == 0)
+            if (listChildren.Count <= 0)
             {
                 // any files are zero in length
                 return false;

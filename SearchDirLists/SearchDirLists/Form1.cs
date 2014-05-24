@@ -12,6 +12,7 @@ using System.Threading;
 //      search results interrupt wonky
 //      compare file list
 //      why need Blinky.static_clrDefault?
+//      enable search for compare mode, like it had been
 
 namespace SearchDirLists
 {
@@ -26,7 +27,7 @@ namespace SearchDirLists
         UList<TreeNode> m_listTreeNodes_Compare2 = new UList<TreeNode>();
 
         TreeNode[] m_arrSearchResults = null;
-        int m_nSearchResultsIndexer = 0;
+        int m_nSearchResultsIndexer = -1;
         bool m_bNavToFile = false;
 
         List<TreeNode> m_listHistory = new List<TreeNode>();
@@ -51,7 +52,7 @@ namespace SearchDirLists
             m_listTreeNodes_Compare2.Clear();
 
             m_arrSearchResults = null;
-            m_nSearchResultsIndexer = 0;
+            m_nSearchResultsIndexer = -1;
             m_bNavToFile = false;
 
             m_listHistory.Clear();
@@ -417,7 +418,7 @@ namespace SearchDirLists
 
         void CompareNav(bool bNext = true)
         {
-            if (m_dictCompareDiffs.Count == 0)
+            if (m_dictCompareDiffs.Count <= 0)
             {
                 return;
             }
@@ -572,12 +573,13 @@ namespace SearchDirLists
             {
                 if (m_arrSearchResults.Contains(startNode))
                 {
-                    m_nSearchResultsIndexer = m_arrSearchResults.Count(node => node != startNode);
+                    m_nSearchResultsIndexer = (m_arrSearchResults.Count(node => node != startNode) - 1);
                     m_bNavToFile = false;
                     return startNode;
                 }
                 else
                 {
+                    m_nSearchResultsIndexer = 0;
                     return m_arrSearchResults[0];
                 }
             }
@@ -994,7 +996,7 @@ namespace SearchDirLists
             lvItem.Selected = true;
             lvItem.Focused = true;
 
-            if (lv.SelectedItems.Count == 0)
+            if (lv.SelectedItems.Count <= 0)
             {
                 return false;
             }
@@ -1046,15 +1048,14 @@ namespace SearchDirLists
 
             ListView lv = (ListView)sender;
 
-            if (lv.SelectedItems.Count == 0)
+            if (lv.SelectedItems.Count <= 0)
             {
                 return false;
             }
 
             ++m_nSelChgIx;
-            m_arrSelChgIx[m_nSelChgIx %= 2] = lv.SelectedItems[0].Index;
 
-            int nNow = m_arrSelChgIx[m_nSelChgIx % 2];  // extra modulus just to be sure
+            int nNow = m_arrSelChgIx[m_nSelChgIx %= 2] = lv.SelectedItems[0].Index;
             int nPrev = m_arrSelChgIx[(m_nSelChgIx + 1) % 2];
 
             bUp = nNow < nPrev;
@@ -1132,7 +1133,7 @@ namespace SearchDirLists
                 {
                     listClones.Remove(treeNode);
 
-                    if (listClones.Count == 0)
+                    if (listClones.Count <= 0)
                     {
                         m_dictNodes.Remove(nodeDatum.Key);
                     }
@@ -1198,7 +1199,7 @@ namespace SearchDirLists
                 return;
             }
 
-            if (lv.SelectedItems.Count == 0)
+            if (lv.SelectedItems.Count <= 0)
             {
                 return;
             }
@@ -1281,7 +1282,7 @@ namespace SearchDirLists
             }
 
             m_arrSearchResults = null;
-            m_nSearchResultsIndexer = 0;
+            m_nSearchResultsIndexer = -1;
             m_bNavToFile = false;
 
             Utilities.Assert(1308.9306, form_chkCompare1.Checked);
@@ -1875,10 +1876,10 @@ namespace SearchDirLists
                 if (m_ctlLastSearchSender != sender)
                 {
                     m_ctlLastSearchSender = (Control)sender;
-                    m_nSearchResultsIndexer = 0;
+                    m_nSearchResultsIndexer = -1;
                 }
 
-                if ((m_nSearchResultsIndexer == 0) && new Button[] { form_btnFoldersAndFiles, form_btnFiles }.Contains(sender))
+                if ((m_nSearchResultsIndexer < 0) && new Button[] { form_btnFoldersAndFiles, form_btnFiles }.Contains(sender))
                 {
                     m_blinky.Go(bProgress: true);
                     SearchFiles(form_cbFindbox.Text, bSearchFilesOnly: (sender == form_btnFiles));
@@ -2097,7 +2098,7 @@ namespace SearchDirLists
                 GC.Collect();
             }
 
-            m_nSearchResultsIndexer = 0;
+            m_nSearchResultsIndexer = -1;
             m_bNavToFile = false;
         }
 
@@ -2176,7 +2177,7 @@ namespace SearchDirLists
 
                 if (m_nodeCompare1 != null)
                 {
-                    if (m_nSearchResultsIndexer > 0)
+                    if (m_nSearchResultsIndexer >= 0)
                     {
                         m_blinky.SelectTreeNode(m_nodeCompare1, Once: false);
                     }
@@ -2355,7 +2356,7 @@ namespace SearchDirLists
                 lv.Tag = SortOrder.None;
             }
 
-            if (lv.Items.Count == 0)
+            if (lv.Items.Count <= 0)
             {
                 return;
             }
@@ -2626,7 +2627,7 @@ namespace SearchDirLists
 
             NodeDatum nodeDatum = (NodeDatum)e.Node.Tag;
 
-            if (nodeDatum.nImmediateFiles == 0)
+            if (nodeDatum.nImmediateFiles <= 0)
             {
                 form_colFilename.Text = m_strColFilesOrig;
             }
@@ -2686,7 +2687,7 @@ namespace SearchDirLists
             }
             else if (new Keys[] { Keys.Left, Keys.Right }.Contains(e.KeyCode))
             {
-                if (m_bCompareMode || (m_nSearchResultsIndexer > 0))
+                if (m_bCompareMode || (m_nSearchResultsIndexer >= 0))
                 {
                     // L and R prevent the text cursor from walking in the find box, (and the tab-order of controls doesn't work.)
                     e.SuppressKeyPress = e.Handled = true;
@@ -2694,7 +2695,7 @@ namespace SearchDirLists
             }
             else if (new Keys[] { Keys.Enter, Keys.Return }.Contains(e.KeyCode))
             {
-                if (m_nSearchResultsIndexer > 0)
+                if (m_nSearchResultsIndexer >= 0)
                 {
                     e.SuppressKeyPress = e.Handled = true;
                 }
@@ -2754,7 +2755,7 @@ namespace SearchDirLists
                         e.SuppressKeyPress = e.Handled = true;
                     }
                 }
-                else if (m_nSearchResultsIndexer > 0)
+                else if (m_nSearchResultsIndexer >= 0)
                 {
                     e.SuppressKeyPress = e.Handled = true;
 

@@ -352,7 +352,7 @@ namespace SearchDirLists
                 m_dictNodes.Clear();
             }
 
-            if (m_dictNodes.Count == 0)     // .Clear() to signal recreate. Ignore list only requires recorrelation
+            if (m_dictNodes.Count <= 0)     // .Clear() to signal recreate. Ignore list only requires recorrelation
             {                               // this works because m_tree is not null during recreate.
                 ClearMem();
 

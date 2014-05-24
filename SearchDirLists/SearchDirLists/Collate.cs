@@ -444,7 +444,7 @@ namespace SearchDirLists
                     dictIgnoreMark.Add(treeNode, pair.Value);
                     dictNodes[nodeDatum.Key].Remove(treeNode);
 
-                    if (dictNodes[nodeDatum.Key].Count == 0)
+                    if (dictNodes[nodeDatum.Key].Count <= 0)
                     {
                         dictNodes.Remove(nodeDatum.Key);
                     }
@@ -729,7 +729,7 @@ namespace SearchDirLists
                     return;
                 }
 
-                Utilities.Assert(1305.6321, form_lvClones.Items.Count == 0);
+                Utilities.Assert(1305.6321, form_lvClones.Items.Count <= 0);
                 Utilities.Write("B");
                 form_lvClones.Items.AddRange(listLVdiffVol.ToArray());
                 form_lvClones.Invalidate();
@@ -740,7 +740,7 @@ namespace SearchDirLists
                     return;
                 }
 
-                Utilities.Assert(1305.6322, form_lvUnique.Items.Count == 0);
+                Utilities.Assert(1305.6322, form_lvUnique.Items.Count <= 0);
                 Utilities.Write("C");
                 form_lvUnique.Items.AddRange(listLVunique.ToArray());
                 form_lvUnique.Invalidate();
@@ -751,7 +751,7 @@ namespace SearchDirLists
                     return;
                 }
 
-                Utilities.Assert(1305.6323, form_lvSameVol.Items.Count == 0);
+                Utilities.Assert(1305.6323, form_lvSameVol.Items.Count <= 0);
                 Utilities.Write("D");
                 form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
                 form_lvSameVol.Invalidate();

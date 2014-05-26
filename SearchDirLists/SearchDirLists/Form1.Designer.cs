@@ -143,7 +143,7 @@ namespace SearchDirLists
             this.form_btnBack = new System.Windows.Forms.Button();
             this.form_btnFolder = new System.Windows.Forms.Button();
             this.form_btnUp = new System.Windows.Forms.Button();
-            this.form_btnTreeCopy = new System.Windows.Forms.Button();
+            this.form_btnCopyToClipboard = new System.Windows.Forms.Button();
             this.form_cbFindbox = new System.Windows.Forms.ComboBox();
             this.form_chkCompare1 = new System.Windows.Forms.CheckBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
@@ -703,6 +703,7 @@ namespace SearchDirLists
             this.form_treeCompare1.ShowNodeToolTips = true;
             this.form_treeCompare1.Size = new System.Drawing.Size(72, 101);
             this.form_treeCompare1.TabIndex = 1;
+            this.form_treeCompare1.Tag = "COMPARE 1";
             this.form_treeCompare1.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.form_treeViewBrowse_AfterCheck);
             this.form_treeCompare1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_AfterSelect);
             this.form_treeCompare1.Enter += new System.EventHandler(this.form_treeCompare_Enter);
@@ -720,6 +721,7 @@ namespace SearchDirLists
             this.form_treeCompare2.ShowNodeToolTips = true;
             this.form_treeCompare2.Size = new System.Drawing.Size(74, 101);
             this.form_treeCompare2.TabIndex = 2;
+            this.form_treeCompare2.Tag = "COMPARE 2";
             this.form_treeCompare2.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.form_treeViewBrowse_AfterCheck);
             this.form_treeCompare2.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_AfterSelect);
             this.form_treeCompare2.Enter += new System.EventHandler(this.form_treeCompare_Enter);
@@ -738,9 +740,10 @@ namespace SearchDirLists
             this.form_treeViewBrowse.ShowLines = false;
             this.form_treeViewBrowse.Size = new System.Drawing.Size(360, 282);
             this.form_treeViewBrowse.TabIndex = 0;
+            this.form_treeViewBrowse.Tag = "MAIN TREEVIEW";
             this.form_treeViewBrowse.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.form_treeViewBrowse_AfterCheck);
             this.form_treeViewBrowse.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.form_treeView_AfterSelect);
-            this.form_treeViewBrowse.Enter += new System.EventHandler(this.form_ctlEnterForCopyButton);
+            this.form_treeViewBrowse.Enter += new System.EventHandler(this.form_SetCopyToClipboardTree);
             this.form_treeViewBrowse.MouseClick += new System.Windows.Forms.MouseEventHandler(this.form_treeViewBrowse_MouseClick);
             // 
             // form_tabControlCopyIgnore
@@ -1509,7 +1512,7 @@ namespace SearchDirLists
             this.tableLayoutPanel2.Controls.Add(this.form_btnFolder, 9, 0);
             this.tableLayoutPanel2.Controls.Add(this.form_btnUp, 3, 0);
             this.tableLayoutPanel2.Controls.Add(label3, 8, 0);
-            this.tableLayoutPanel2.Controls.Add(this.form_btnTreeCopy, 7, 0);
+            this.tableLayoutPanel2.Controls.Add(this.form_btnCopyToClipboard, 7, 0);
             this.tableLayoutPanel2.Controls.Add(this.form_cbFindbox, 6, 0);
             this.tableLayoutPanel2.Controls.Add(this.form_chkCompare1, 1, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1641,18 +1644,18 @@ namespace SearchDirLists
             this.form_btnUp.UseVisualStyleBackColor = true;
             this.form_btnUp.Click += new System.EventHandler(this.form_btnUp_Click);
             // 
-            // form_btnTreeCopy
+            // form_btnCopyToClipboard
             // 
-            this.form_btnTreeCopy.AutoSize = true;
-            this.form_btnTreeCopy.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.form_btnTreeCopy.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_btnTreeCopy.Location = new System.Drawing.Point(817, 3);
-            this.form_btnTreeCopy.Name = "form_btnTreeCopy";
-            this.form_btnTreeCopy.Size = new System.Drawing.Size(41, 24);
-            this.form_btnTreeCopy.TabIndex = 7;
-            this.form_btnTreeCopy.Text = "Copy";
-            this.form_btnTreeCopy.UseVisualStyleBackColor = true;
-            this.form_btnTreeCopy.Click += new System.EventHandler(this.form_btnCopy_Click);
+            this.form_btnCopyToClipboard.AutoSize = true;
+            this.form_btnCopyToClipboard.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.form_btnCopyToClipboard.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.form_btnCopyToClipboard.Location = new System.Drawing.Point(817, 3);
+            this.form_btnCopyToClipboard.Name = "form_btnCopyToClipboard";
+            this.form_btnCopyToClipboard.Size = new System.Drawing.Size(41, 24);
+            this.form_btnCopyToClipboard.TabIndex = 7;
+            this.form_btnCopyToClipboard.Text = "Copy";
+            this.form_btnCopyToClipboard.UseVisualStyleBackColor = true;
+            this.form_btnCopyToClipboard.Click += new System.EventHandler(this.form_btnCopyToClipBoard_Click);
             // 
             // form_cbFindbox
             // 
@@ -1666,7 +1669,6 @@ namespace SearchDirLists
             this.form_cbFindbox.DropDown += new System.EventHandler(this.form_cbFindbox_DropDown);
             this.form_cbFindbox.SelectedIndexChanged += new System.EventHandler(this.form_cbFindbox_SelectedIndexChanged);
             this.form_cbFindbox.TextChanged += new System.EventHandler(this.form_cbFindbox_TextChanged);
-            this.form_cbFindbox.Enter += new System.EventHandler(this.form_ctlEnterForCopyButton);
             this.form_cbFindbox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.form_cbFindbox_KeyUp);
             this.form_cbFindbox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.form_cbFindbox_MouseUp);
             // 
@@ -1876,7 +1878,7 @@ namespace SearchDirLists
         private System.Windows.Forms.ColumnHeader columnHeader22;
         private System.Windows.Forms.ColumnHeader columnHeader23;
         private System.Windows.Forms.ColumnHeader columnHeader24;
-        private System.Windows.Forms.Button form_btnTreeCopy;
+        private System.Windows.Forms.Button form_btnCopyToClipboard;
         private System.Windows.Forms.ColumnHeader columnHeader28;
         private System.Windows.Forms.Timer timer_DoTree;
         private System.Windows.Forms.Label form_lblVolGroup;

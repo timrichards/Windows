@@ -21,7 +21,6 @@ namespace SearchDirLists
 
         Holder m_holder = new NullHolder();
         Color m_clrBlink = Color.DarkTurquoise;
-        static Color static_clrDefault = Color.Empty;
         int m_nBlink = 0;
         int m_nNumBlinks = 10;
         bool m_bProgress = false;
@@ -53,17 +52,11 @@ namespace SearchDirLists
             internal ControlHolder(Control obj) { m_obj = obj; }
             internal override Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
         }
-        class DefaultHolder : ControlHolder
-        {
-            internal DefaultHolder(Control obj) : base(obj) { }
-            internal override void ResetHolder() { m_obj.BackColor = static_clrDefault; }
-        }
 
         internal Blinky(System.Windows.Forms.Timer timer, Control defaultControl)
         {
             m_timer = timer;
             m_defaultControl = defaultControl;
-            static_clrDefault = m_defaultControl.BackColor;
         }
 
         internal void SelectTreeNode(TreeNode treeNode, bool Once = true)
@@ -73,7 +66,7 @@ namespace SearchDirLists
             treeNode.TreeView.Select();
             treeNode.EnsureVisible();
             treeNode.TreeView.SelectedNode = null;
-            Go(Once: Once);
+            Go_A(Once: Once);
             m_defaultControl.Select();      // search results UX, and selected treeview
         }
 
@@ -83,7 +76,7 @@ namespace SearchDirLists
             m_holder = new ListViewItemHolder(lvItem);
             lvItem.EnsureVisible();
             lvItem.Selected = false;
-            Go(Once: true);
+            Go_A(Once: true);
             m_defaultControl.Select();      // search results UX
         }
 
@@ -91,16 +84,22 @@ namespace SearchDirLists
         {
             Reset();
             m_holder = new ControlHolder(ctl);
-            Go(clr, Once);
+            Go_A(clr, Once);
         }
 
         internal void Go(Color? clr = null, bool Once = false, bool bProgress = false)
         {
-            if (m_holder is NullHolder)
-            {
-                Reset();
-                m_holder = new DefaultHolder(m_defaultControl);
-            }
+            Reset();
+            m_holder = new ControlHolder(m_defaultControl);
+            Go_A(clr, Once, bProgress);
+        }
+
+        void Go_A(Color? clr = null, bool Once = false, bool bProgress = false)
+        {
+            Utilities.Assert(1303.431013, m_timer.Enabled == false, bTraceOnly: true);
+            Utilities.Assert(1303.431015, m_nBlink == 0, bTraceOnly: true);
+            Utilities.Assert(1303.431017, (m_holder is NullHolder) == false, bTraceOnly: true);
+            Utilities.Assert(1303.431019, m_bProgress == false, bTraceOnly: true);
 
             m_holder.ClrOrig = m_holder.BackColor;
             m_bProgress = bProgress;
@@ -113,7 +112,7 @@ namespace SearchDirLists
 
         internal void Tick()
         {
-            if (++m_nBlink < m_nNumBlinks)
+            if (m_bProgress || (++m_nBlink < m_nNumBlinks))
             {
                 m_holder.BackColor = (m_holder.BackColor == m_clrBlink) ? m_holder.ClrOrig : m_clrBlink;
             }
@@ -127,6 +126,7 @@ namespace SearchDirLists
         {
             m_timer.Enabled = false;
             m_nBlink = 0;
+            m_bProgress = false;
             m_holder.BackColor = m_holder.ClrOrig;
             m_holder.ResetHolder();   // has to be last before deleting object.
             m_holder = new NullHolder();
@@ -255,7 +255,7 @@ namespace SearchDirLists
             get
             {
                 return (CanInclude &&
-                    ((Utilities.m_str_USING_FILE + Utilities.m_str_SAVED).Contains(Status)));
+                    ((Utilities.mSTRusingFile + Utilities.mSTRsaved).Contains(Status)));
             }
         }
 
@@ -275,7 +275,7 @@ namespace SearchDirLists
     abstract class SDL_File : Utilities
     {
         public static String BaseFilter = null;
-        public static String FileAndDirListFileFilter = "SearchDirLists listing file|*." + m_strFILEEXT_Listing;
+        public static String FileAndDirListFileFilter = "SearchDirLists listing file|*." + mSTRfileExt_Listing;
 
         public readonly String Header = null;
 
@@ -403,7 +403,7 @@ namespace SearchDirLists
 
     class SDL_VolumeFile : SDL_File
     {
-        internal SDL_VolumeFile(String strFile = null) : base(m_str_VOLUME_LIST_HEADER, m_strFILEEXT_Volume, "volume") { m_strFileNotDialog = strFile; }
+        internal SDL_VolumeFile(String strFile = null) : base(mSTRvolListHeader, mSTRfileExt_Volume, "volume") { m_strFileNotDialog = strFile; }
 
         protected override void ReadListItem(UList<ListViewItem> listItems, String[] strArray)
         {
@@ -434,9 +434,9 @@ namespace SearchDirLists
         }
     }
 
-    class SDL_CopyFile : SDL_File { internal SDL_CopyFile() : base(m_str_COPYDIRS_LIST_HEADER, m_strFILEEXT_Copy, "copy") { } }
+    class SDL_CopyFile : SDL_File { internal SDL_CopyFile() : base(mSTRcopyScratchpadHeader, mSTRfileExt_Copy, "copy") { } }
 
-    class SDL_IgnoreFile : SDL_File { internal SDL_IgnoreFile(String strFile = null) : base(m_str_IGNORE_LIST_HEADER, m_strFILEEXT_Ignore, "ignore") { m_strFileNotDialog = strFile; } }
+    class SDL_IgnoreFile : SDL_File { internal SDL_IgnoreFile(String strFile = null) : base(mSTRignoreListHeader, mSTRfileExt_Ignore, "ignore") { m_strFileNotDialog = strFile; } }
 
     class UList<T> :
 #if (true)
@@ -456,58 +456,65 @@ namespace SearchDirLists
 
     class Utilities
     {
-        internal const String m_str_HEADER_01 = "SearchDirLists 0.1";
-        internal const String m_str_START_01 = m_str_HEADER_01 + " START";
-        internal const String m_str_END_01 = m_str_HEADER_01 + " END";
-        internal const String m_str_ERRORS_LOC_01 = m_str_HEADER_01 + " ERRORS";
-        internal const String m_str_TOTAL_LENGTH_LOC_01 = m_str_HEADER_01 + " LENGTH";
-        internal const String m_str_DRIVE_01 = m_str_HEADER_01 + " DRIVE";
-        internal const String m_str_VOLUME_LIST_HEADER_01 = m_str_HEADER_01 + " VOLUME LIST";
-        internal const String m_str_HEADER = "SearchDirLists 0.2";
-        internal const String m_str_START = m_str_HEADER + " START";
-        internal const String m_str_END = m_str_HEADER + " END";
-        internal const String m_str_ERRORS_LOC = m_str_HEADER + " ERRORS";
-        internal const String m_str_TOTAL_LENGTH_LOC = m_str_HEADER + " LENGTH";
-        internal const String m_str_DRIVE = m_str_HEADER + " DRIVE";
-        internal const String m_str_VOLUME_LIST_HEADER = m_str_HEADER + " VOLUME LIST";
-        internal const String m_str_COPYDIRS_LIST_HEADER = m_str_HEADER + " COPYDIRS LIST";
-        internal const String m_str_IGNORE_LIST_HEADER = m_str_HEADER + " IGNORE LIST";
-        internal const String m_str_USING_FILE = "Using file.";
-        internal const String m_str_SAVED = "Saved.";
-        internal const String m_str_NOTSAVED = "Not saved.";
-        internal const int nColLENGTH = 7;
-        internal const int nColLENGTH_01 = 5;
-        internal const int nColLENGTH_LV = 4;
-        internal const String m_strLINETYPE_Version = "V";
-        internal const String m_strLINETYPE_Nickname = "N";
-        internal const String m_strLINETYPE_Path = "P";
-        internal const String m_strLINETYPE_DriveInfo = "I";
-        internal const String m_strLINETYPE_Comment = "C";
-        internal const String m_strLINETYPE_Start = "S";
-        internal const String m_strLINETYPE_Directory = "D";
-        internal const String m_strLINETYPE_File = "F";
-        internal const String m_strLINETYPE_End = "E";
-        internal const String m_strLINETYPE_Blank = "B";
-        internal const String m_strLINETYPE_Error_Dir = "R";
-        internal const String m_strLINETYPE_Error_File = "r";
-        internal const String m_strLINETYPE_Length = "L";
-        internal const String m_strFILEEXT_Listing = "sdl_list";
-        internal const String m_strFILEEXT_Volume = "sdl_vol";
-        internal const String m_strFILEEXT_Copy = "sdl_copy";
-        internal const String m_strFILEEXT_Ignore = "sdl_ignore";
+        internal const String mSTRheader01 = "SearchDirLists 0.1";
+        internal const String mSTRstart01 = mSTRheader01 + " START";
+        internal const String mSTRend01 = mSTRheader01 + " END";
+        internal const String mSTRerrorsLoc01 = mSTRheader01 + " ERRORS";
+        internal const String mSTRtotalLengthLoc01 = mSTRheader01 + " LENGTH";
+        internal const String mSTRdrive01 = mSTRheader01 + " DRIVE";
+        internal const String mSTRvolListHeader01 = mSTRheader01 + " VOLUME LIST";
+
+        internal const String mSTRheader = "SearchDirLists 0.2";
+        internal const String mSTRstart = mSTRheader + " START";
+        internal const String mSTRend = mSTRheader + " END";
+        internal const String mSTRerrorsLoc = mSTRheader + " ERRORS";
+        internal const String mSTRtotalLengthLoc = mSTRheader + " LENGTH";
+        internal const String mSTRdrive = mSTRheader + " DRIVE";
+        internal const String mSTRvolListHeader = mSTRheader + " VOLUME LIST";
+        internal const String mSTRcopyScratchpadHeader = mSTRheader + " COPYDIRS LIST";
+        internal const String mSTRignoreListHeader = mSTRheader + " IGNORE LIST";
+        internal const String mSTRusingFile = "Using file.";
+        internal const String mSTRsaved = "Saved.";
+        internal const String mSTRnotSaved = "Not saved.";
+
+        internal const int mNcolLength = 7;
+        internal const int mNcolLength01 = 5;
+        internal const int mNcolLengthLV = 4;
+
+        internal const String mSTRlineType_Version = "V";
+        internal const String mSTRlineType_Nickname = "N";
+        internal const String mSTRlineType_Path = "P";
+        internal const String mSTRlineType_DriveInfo = "I";
+        internal const String mSTRlineType_Comment = "C";
+        internal const String mSTRlineType_Start = "S";
+        internal const String mSTRlineType_Directory = "D";
+        internal const String mSTRlineType_File = "F";
+        internal const String mSTRlineType_End = "E";
+        internal const String mSTRlineType_Blank = "B";
+        internal const String mSTRlineType_ErrorDir = "R";
+        internal const String mSTRlineType_ErrorFile = "r";
+        internal const String mSTRlineType_Length = "L";
+
+        internal const String mSTRfileExt_Listing = "sdl_list";
+        internal const String mSTRfileExt_Volume = "sdl_vol";
+        internal const String mSTRfileExt_Copy = "sdl_copy";
+        internal const String mSTRfileExt_Ignore = "sdl_ignore";
 
         static MessageBoxDelegate static_MessageboxCallback = null;
         protected MessageBoxDelegate m_MessageboxCallback = null;
         static double static_nLastAssertLoc = -1;
         static DateTime static_dtLastAssert = DateTime.MinValue;
+
+#if (DEBUG == false)
         static bool static_bAssertUp = false;
+#endif
 
         protected Utilities()
         {
             m_MessageboxCallback = static_MessageboxCallback;
         }
 
-        internal static bool Assert(double nLocation, bool bCondition, String strError_in = null, bool bOnlyDebug = false)
+        internal static bool Assert(double nLocation, bool bCondition, String strError_in = null, bool bTraceOnly = false)
         {
             if (bCondition) return true;
 
@@ -524,38 +531,31 @@ namespace SearchDirLists
             }
 
             Utilities.WriteLine(strError);
-
-            if (static_bAssertUp)
-            {
 #if (DEBUG)
-                FlashWindow.Go();
-#endif
-            }
-            else
-            {
-#if (DEBUG)
-                if (Trace.Listeners.Cast<TraceListener>().Any(i => i is DefaultTraceListener))
-                {
-                    Debug.Assert(false, strError);
-                }
-                else
+            Debug.Assert(false, strError);
 #else
-                if (bOnlyDebug == false)
-#endif
+            if (static_bAssertUp == false)
+            {
+                bool bTrace = Trace.Listeners.Cast<TraceListener>().Any(i => i is DefaultTraceListener);
+                Action messageBox = new Action(() =>
                 {
-                    static_bAssertUp = true;
+                    static_MessageboxCallback(strError + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.".PadRight(100), "SearchDirLists Assertion Failure");
+                    static_bAssertUp = false;
+                });
 
-                    new Thread(new ThreadStart(() =>
-                    {
-                        static_MessageboxCallback(strError + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.".PadRight(100), "SearchDirLists Assertion Failure");
-                        static_bAssertUp = false;
-                    }))
-                    .Start();
+                if (bTrace)
+                {
+                    messageBox();
+                }
+                else if (bTraceOnly == false)
+                {
                     static_nLastAssertLoc = nLocation;
                     static_dtLastAssert = DateTime.Now;
+                    static_bAssertUp = true;
+                    new Thread(new ThreadStart(messageBox)).Start();
                 }
             }
-
+#endif
             return false;
         }
 
@@ -639,31 +639,31 @@ namespace SearchDirLists
                     {
                         ++nLineNo;
 
-                        if (strLine == m_str_HEADER_01)
+                        if (strLine == mSTRheader01)
                         {
                             Utilities.Assert(1303.4302, nLineNo == 1);
-                            file_out.WriteLine(FormatLine(m_strLINETYPE_Version, nLineNo, m_str_HEADER));
+                            file_out.WriteLine(FormatLine(mSTRlineType_Version, nLineNo, mSTRheader));
                             continue;
                         }
                         else if (nLineNo == 2)
                         {
-                            file_out.WriteLine(FormatLine(m_strLINETYPE_Nickname, nLineNo, strLine));
+                            file_out.WriteLine(FormatLine(mSTRlineType_Nickname, nLineNo, strLine));
                             continue;
                         }
                         else if (nLineNo == 3)
                         {
-                            file_out.WriteLine(FormatLine(m_strLINETYPE_Path, nLineNo, strLine));
+                            file_out.WriteLine(FormatLine(mSTRlineType_Path, nLineNo, strLine));
                             continue;
                         }
-                        else if (strLine == m_str_DRIVE_01)
+                        else if (strLine == mSTRdrive01)
                         {
                             Utilities.Assert(1303.4303, nLineNo == 4);
-                            file_out.WriteLine(FormatLine(m_strLINETYPE_Comment, nLineNo, m_str_DRIVE));
+                            file_out.WriteLine(FormatLine(mSTRlineType_Comment, nLineNo, mSTRdrive));
 
                             for (int i = 0; i < 8; ++i)
                             {
                                 strLine = file_in.ReadLine();
-                                file_out.WriteLine(FormatLine(m_strLINETYPE_DriveInfo, nLineNo, strLine));
+                                file_out.WriteLine(FormatLine(mSTRlineType_DriveInfo, nLineNo, strLine));
                                 ++nLineNo;
                             }
 
@@ -671,41 +671,41 @@ namespace SearchDirLists
                         }
                         else if (strLine.Length <= 0)
                         {
-                            file_out.WriteLine(FormatLine(m_strLINETYPE_Blank, nLineNo));
+                            file_out.WriteLine(FormatLine(mSTRlineType_Blank, nLineNo));
                             continue;
                         }
                         else if (nLineNo == 14)
                         {
-                            file_out.WriteLine(FormatLine(m_strLINETYPE_Comment, nLineNo, FormatString(nHeader: 0)));
+                            file_out.WriteLine(FormatLine(mSTRlineType_Comment, nLineNo, FormatString(nHeader: 0)));
                             continue;
                         }
                         else if (nLineNo == 15)
                         {
-                            file_out.WriteLine(FormatLine(m_strLINETYPE_Comment, nLineNo, FormatString(nHeader: 1)));
+                            file_out.WriteLine(FormatLine(mSTRlineType_Comment, nLineNo, FormatString(nHeader: 1)));
                             continue;
                         }
-                        else if (strLine.StartsWith(m_str_START_01))
+                        else if (strLine.StartsWith(mSTRstart01))
                         {
                             Utilities.Assert(1303.4304, nLineNo == 16);
-                            file_out.WriteLine(FormatLine(m_strLINETYPE_Start, nLineNo, m_str_START));
+                            file_out.WriteLine(FormatLine(mSTRlineType_Start, nLineNo, mSTRstart));
                             continue;
                         }
-                        else if (strLine.StartsWith(m_str_END_01))
+                        else if (strLine.StartsWith(mSTRend01))
                         {
-                            file_out.WriteLine(FormatLine(m_strLINETYPE_End, nLineNo, m_str_END));
+                            file_out.WriteLine(FormatLine(mSTRlineType_End, nLineNo, mSTRend));
                             continue;
                         }
-                        else if (strLine == m_str_ERRORS_LOC_01)
+                        else if (strLine == mSTRerrorsLoc01)
                         {
-                            file_out.WriteLine(FormatLine(m_strLINETYPE_Comment, nLineNo, m_str_ERRORS_LOC));
+                            file_out.WriteLine(FormatLine(mSTRlineType_Comment, nLineNo, mSTRerrorsLoc));
                             bAtErrors = true;
                             continue;
                         }
-                        else if (strLine.StartsWith(m_str_TOTAL_LENGTH_LOC_01))
+                        else if (strLine.StartsWith(mSTRtotalLengthLoc01))
                         {
                             String[] arrLine = strLine.Split('\t');
 
-                            file_out.WriteLine(FormatLine(m_strLINETYPE_Length, nLineNo, FormatString(strDir: m_str_TOTAL_LENGTH_LOC, nLength: long.Parse(arrLine[nColLENGTH_01]))));
+                            file_out.WriteLine(FormatLine(mSTRlineType_Length, nLineNo, FormatString(strDir: mSTRtotalLengthLoc, nLength: long.Parse(arrLine[mNcolLength01]))));
                             continue;
                         }
 
@@ -722,7 +722,7 @@ namespace SearchDirLists
                                 strTab = "\t";
                             }
 
-                            file_out.WriteLine(FormatLine(bAtErrors ? m_strLINETYPE_Error_File : m_strLINETYPE_File, nLineNo, strTab + strLine));
+                            file_out.WriteLine(FormatLine(bAtErrors ? mSTRlineType_ErrorFile : mSTRlineType_File, nLineNo, strTab + strLine));
                             continue;
                         }
                         else if (strDir.Contains(":" + Path.DirectorySeparatorChar) == false)
@@ -736,7 +736,7 @@ namespace SearchDirLists
                         String PP = P + P;
                         String str = strLine.Replace(PP, P);
 
-                        file_out.WriteLine(FormatLine(bAtErrors ? m_strLINETYPE_Error_Dir : m_strLINETYPE_Directory, nLineNo, str));
+                        file_out.WriteLine(FormatLine(bAtErrors ? mSTRlineType_ErrorDir : mSTRlineType_Directory, nLineNo, str));
                     }
                 }
             }
@@ -934,7 +934,7 @@ namespace SearchDirLists
                 String[] strArray = strRet.Split('\t');
                 DateTime dtParse = DateTime.MinValue;
 
-                if (strArray[nColLENGTH_01].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
+                if (strArray[mNcolLength01].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
                 {
                     Utilities.Assert(1303.43101, false);
                 }
@@ -975,27 +975,27 @@ namespace SearchDirLists
 
             bool bConvertFile = false;
 
-            if (arrLine[0] == m_str_HEADER_01)
+            if (arrLine[0] == mSTRheader01)
             {
                 Utilities.WriteLine("Converting " + strSaveAs);
                 ConvertFile(strSaveAs);
-                Utilities.WriteLine("File converted to " + m_str_HEADER);
+                Utilities.WriteLine("File converted to " + mSTRheader);
                 bConvertFile = true;
             }
 
             String[] arrToken = File.ReadLines(strSaveAs).Take(1).ToArray()[0].Split('\t');
 
             if (arrToken.Length < 3) return false;
-            if (arrToken[2] != m_str_HEADER) return false;
+            if (arrToken[2] != mSTRheader) return false;
 
-            String[] arrLine_A = File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Length)).ToArray();
+            String[] arrLine_A = File.ReadLines(strSaveAs).Where(s => s.StartsWith(mSTRlineType_Length)).ToArray();
 
             if (arrLine_A.Length <= 0) return false;
 
             String[] arrToken_A = arrLine_A[0].Split('\t');
 
             if (arrToken_A.Length < 3) return false;
-            if (arrToken_A[2] != m_str_TOTAL_LENGTH_LOC) return false;
+            if (arrToken_A[2] != mSTRtotalLengthLoc) return false;
 
             String strFile_01 = StrFile_01(strSaveAs);
 

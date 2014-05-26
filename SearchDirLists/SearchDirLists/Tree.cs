@@ -223,9 +223,9 @@ namespace SearchDirLists
             {
                 item.Name = item.Text;
 
-                if (item.SubItems.Count > Utilities.nColLENGTH_LV)
+                if (item.SubItems.Count > Utilities.mNcolLengthLV)
                 {
-                    item.Name += item.SubItems[Utilities.nColLENGTH_LV].Text;      // name + size
+                    item.Name += item.SubItems[Utilities.mNcolLengthLV].Text;      // name + size
                 }
             }
         }
@@ -585,7 +585,7 @@ namespace SearchDirLists
                 ulong nVolLength = 0;
 
                 {
-                    String[] arrDriveInfo = File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_DriveInfo)).ToArray();
+                    String[] arrDriveInfo = File.ReadLines(strSaveAs).Where(s => s.StartsWith(mSTRlineType_DriveInfo)).ToArray();
                     StringBuilder strBuilder = new StringBuilder();
                     int nIx = -1;
 
@@ -625,14 +625,14 @@ namespace SearchDirLists
 
                 {
                     RootNode rootNode = new RootNode();
-                    String strStart = File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Start)).ToArray()[0];
+                    String strStart = File.ReadLines(strSaveAs).Where(s => s.StartsWith(mSTRlineType_Start)).ToArray()[0];
 
                     rootNode.FirstLineNo = uint.Parse(strStart.Split('\t')[1]);
                     dirData = new DirData(rootNode);
                 }
 
                 bool bZeroLengthsWritten = true;
-                List<String> listLines = File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Directory)).ToList();
+                List<String> listLines = File.ReadLines(strSaveAs).Where(s => s.StartsWith(mSTRlineType_Directory)).ToList();
 
                 foreach (String strLine in listLines)
                 {
@@ -643,7 +643,7 @@ namespace SearchDirLists
 
                     String[] strArray = strLine.Split('\t');
                     uint nLineNo = uint.Parse(strArray[1]);
-                    int nIx = nColLENGTH;
+                    int nIx = mNcolLength;
                     ulong nLength = 0;
 
                     if ((strArray.Length > nIx) && StrValid(strArray[nIx]))
@@ -669,14 +669,14 @@ namespace SearchDirLists
                 if (bZeroLengthsWritten)
                 {
 #if (DEBUG)
-                    Utilities.WriteLine(File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_File)).Sum(s => decimal.Parse(s.Split('\t')[nColLENGTH])).ToString());
-                    Utilities.WriteLine(File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Directory)).Sum(s => decimal.Parse(s.Split('\t')[nColLENGTH])).ToString());
+                    Utilities.WriteLine(File.ReadLines(strSaveAs).Where(s => s.StartsWith(mSTRlineType_File)).Sum(s => decimal.Parse(s.Split('\t')[mNcolLength])).ToString());
+                    Utilities.WriteLine(File.ReadLines(strSaveAs).Where(s => s.StartsWith(mSTRlineType_Directory)).Sum(s => decimal.Parse(s.Split('\t')[mNcolLength])).ToString());
 #endif
                 }
 
                 ulong nScannedLength = ulong.Parse(
-                    File.ReadLines(strSaveAs).Where(s => s.StartsWith(m_strLINETYPE_Length)).ToArray()[0]
-                    .Split('\t')[nColLENGTH]);
+                    File.ReadLines(strSaveAs).Where(s => s.StartsWith(mSTRlineType_Length)).ToArray()[0]
+                    .Split('\t')[mNcolLength]);
 
                 Utilities.WriteLine(nScannedLength.ToString());
 
@@ -952,10 +952,10 @@ namespace SearchDirLists
                 String[] strArrayFiles = strFileLine.Split('\t').Skip(3).ToArray();
                 ulong nLength = 0;
 
-                if ((strArrayFiles.Length > nColLENGTH_LV) && StrValid(strArrayFiles[nColLENGTH_LV]))
+                if ((strArrayFiles.Length > mNcolLengthLV) && StrValid(strArrayFiles[mNcolLengthLV]))
                 {
-                    nLengthDebug += nLength = ulong.Parse(strArrayFiles[nColLENGTH_LV]);
-                    strArrayFiles[nColLENGTH_LV] = FormatSize(strArrayFiles[nColLENGTH_LV]);
+                    nLengthDebug += nLength = ulong.Parse(strArrayFiles[mNcolLengthLV]);
+                    strArrayFiles[mNcolLengthLV] = FormatSize(strArrayFiles[mNcolLengthLV]);
                 }
 
                 listFiles.Add(strArrayFiles);

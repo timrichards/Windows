@@ -58,14 +58,14 @@ namespace SearchDirLists
 
         private void WriteHeader(TextWriter fs, String strVolumeName, String strPath)
         {
-            fs.WriteLine(m_str_HEADER_01);
+            fs.WriteLine(mSTRheader01);
             // assume SaveFields() by caller because SaveFields() has already prompted user
             fs.WriteLine(strVolumeName);
             fs.WriteLine(strPath);
 
             DriveInfo driveInfo = new DriveInfo(strPath.Substring(0, strPath.IndexOf(Path.DirectorySeparatorChar)));
 
-            fs.WriteLine(m_str_DRIVE_01);
+            fs.WriteLine(mSTRdrive01);
             fs.WriteLine(driveInfo.AvailableFreeSpace);
             fs.WriteLine(driveInfo.DriveFormat);
             fs.WriteLine(driveInfo.DriveType);
@@ -188,20 +188,20 @@ namespace SearchDirLists
             if (FormatPath(ref strPath, ref strSaveAs) == false)
             {
                 // FormatPath() has its own message box
-                m_statusCallback(m_volStrings.Index, m_str_NOTSAVED);
+                m_statusCallback(m_volStrings.Index, mSTRnotSaved);
                 return;
             }
 
             if (Directory.Exists(strPath) == false)
             {
-                m_statusCallback(m_volStrings.Index, m_str_NOTSAVED);
+                m_statusCallback(m_volStrings.Index, mSTRnotSaved);
                 m_MessageboxCallback("Source Path does not exist.", "Save Directory Listing");
                 return;
             }
 
             if (StrValid(strSaveAs) == false)
             {
-                m_statusCallback(m_volStrings.Index, m_str_NOTSAVED);
+                m_statusCallback(m_volStrings.Index, mSTRnotSaved);
                 m_MessageboxCallback("Must specify save filename.", "Save Directory Listing");
                 return;
             }
@@ -216,14 +216,14 @@ namespace SearchDirLists
                     fs.WriteLine();
                     fs.WriteLine(FormatString(nHeader: 0));
                     fs.WriteLine(FormatString(nHeader: 1));
-                    fs.WriteLine(m_str_START_01 + " " + DateTime.Now.ToString());
+                    fs.WriteLine(mSTRstart01 + " " + DateTime.Now.ToString());
                     m_timerStatus = new System.Threading.Timer(new TimerCallback(SaveDirListing_TimerCallback), null, 1000, 1000);
                     TraverseTree(fs, strPath);
                     m_timerStatus.Dispose();
                     m_timerStatus = null;
-                    fs.WriteLine(m_str_END_01 + " " + DateTime.Now.ToString());
+                    fs.WriteLine(mSTRend01 + " " + DateTime.Now.ToString());
                     fs.WriteLine();
-                    fs.WriteLine(m_str_ERRORS_LOC_01);
+                    fs.WriteLine(mSTRerrorsLoc01);
 
                     foreach (String strError in m_list_Errors)
                     {
@@ -231,15 +231,15 @@ namespace SearchDirLists
                     }
 
                     fs.WriteLine();
-                    fs.WriteLine(FormatString(strDir: m_str_TOTAL_LENGTH_LOC_01, nLength: m_nLengthTotal));
+                    fs.WriteLine(FormatString(strDir: mSTRtotalLengthLoc01, nLength: m_nLengthTotal));
                 }
 
                 Directory.SetCurrentDirectory(strPathOrig);
-                m_statusCallback(m_volStrings.Index, strText: m_str_SAVED, bDone: true);
+                m_statusCallback(m_volStrings.Index, strText: mSTRsaved, bDone: true);
             }
             catch (Exception e)
             {
-                m_statusCallback(m_volStrings.Index, strText: m_str_NOTSAVED, bDone: true);
+                m_statusCallback(m_volStrings.Index, strText: mSTRnotSaved, bDone: true);
                 m_MessageboxCallback(strSaveAs.PadRight(100) + "\nException: " + e.Message, "Save Directory Listing");
             }
         }
@@ -301,7 +301,7 @@ namespace SearchDirLists
             {
                 ++nVolIx;
 
-                if ((m_str_USING_FILE + m_str_SAVED).Contains(volStrings.Status))
+                if ((mSTRusingFile + mSTRsaved).Contains(volStrings.Status))
                 {
                     continue;
                 }
@@ -387,7 +387,7 @@ namespace SearchDirLists
             {
                 form_lvVolumesMain.Items[nIndex].SubItems[3].Text = strText;
 
-                if (bDone && (strText == Utilities.m_str_SAVED))
+                if (bDone && (strText == Utilities.mSTRsaved))
                 {
                     form_lvVolumesMain.Items[nIndex].Name = null;    // indexing by path, only for unsaved volumes
                 }

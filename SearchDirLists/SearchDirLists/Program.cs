@@ -11,10 +11,17 @@ namespace SearchDirLists
         [STAThread]
         static void Main()
         {
-            if (Environment.OSVersion.Version.Major >= 6) SetProcessDPIAware();
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            if (MessageBox.Show("Run WPF?", "Run WPF?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                new App().Run();
+            }
+            else
+            {
+                if (Environment.OSVersion.Version.Major >= 6) SetProcessDPIAware();
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new Form1());
+            }
         }   
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]

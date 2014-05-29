@@ -510,6 +510,7 @@ namespace SearchDirLists
 
             if (form_lvFiles.Items.Count <= 0)
             {
+                // expected a file but got an empty listviewer
                 FlashWindow.Go(Once: true);
                 return;
             }
@@ -590,10 +591,10 @@ namespace SearchDirLists
                 SearchFail();
             }
 
-            if ((m_form1MessageOwner != null) && (m_form1MessageOwner.Text == mSTRsearchTitle))
+            if ((m_form1MessageBoxOwner != null) && (m_form1MessageBoxOwner.Text == mSTRsearchTitle))
             {
-                m_form1MessageOwner.Dispose();
-                m_form1MessageOwner = null;
+                m_form1MessageBoxOwner.Dispose();
+                m_form1MessageBoxOwner = null;
             }
         }
 
@@ -660,7 +661,7 @@ namespace SearchDirLists
 
             if (m_bCompareMode)
             {
-                treeView = (m_treeCopyToClipboard is TreeView) ? (TreeView)m_treeCopyToClipboard : form_treeCompare1;
+                treeView = m_treeCopyToClipboard;
             }
 
             while (true)

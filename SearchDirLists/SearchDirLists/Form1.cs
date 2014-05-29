@@ -9,9 +9,7 @@ using System.Runtime.Hosting;
 using System.Threading;
 
 // TODO:
-//      search results interrupt wonky
 //      compare file list
-//      why need Blinky.static_clrDefault?
 //      enable search for compare mode, like it had been
 //      first compare item still doesn't go back
 //      save treeNode prior to null - file list redraw
@@ -95,7 +93,7 @@ namespace SearchDirLists
         bool m_bNavDropDown = false;
         bool m_btmapUserCtl_MouseDown = false;
 
-        Form m_form1MessageOwner = null;
+        Form m_form1MessageBoxOwner = null;
         TabPage m_FileListTabPageBeforeCompare = null;
         bool m_bKillTree = true;
         bool m_bRestartTreeTimer = false;
@@ -518,31 +516,31 @@ namespace SearchDirLists
 
             m_blinky.Reset();
 
-            if (m_form1MessageOwner != null)
+            if (m_form1MessageBoxOwner != null)
             {
-                m_form1MessageOwner.Dispose();
-                m_form1MessageOwner = null;
+                m_form1MessageBoxOwner.Dispose();
+                m_form1MessageBoxOwner = null;
             }
 
-            m_form1MessageOwner = new Form();
-            m_form1MessageOwner.Owner = this;
-            m_form1MessageOwner.Text = strTitle;
+            m_form1MessageBoxOwner = new Form();
+            m_form1MessageBoxOwner.Owner = this;
+            m_form1MessageBoxOwner.Text = strTitle;
 
             DialogResult dlgRet = DialogResult.None;
 
             if (buttons == null)
             {
-                dlgRet = MessageBox.Show(m_form1MessageOwner, strMessage.PadRight(100), strTitle);
+                dlgRet = MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100), strTitle);
             }
             else
             {
-                dlgRet = MessageBox.Show(m_form1MessageOwner, strMessage.PadRight(100), strTitle, buttons.Value);
+                dlgRet = MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100), strTitle, buttons.Value);
             }
 
-            if (m_form1MessageOwner != null)
+            if (m_form1MessageBoxOwner != null)
             {
-                m_form1MessageOwner.Dispose();
-                m_form1MessageOwner = null;
+                m_form1MessageBoxOwner.Dispose();
+                m_form1MessageBoxOwner = null;
                 return dlgRet;
             }
 
@@ -917,7 +915,8 @@ namespace SearchDirLists
                 }
                 else if (bGt)
                 {
-                    return false;   // LV with just a marker item? assert?
+                    Utilities.Assert(1308.93189, false, bTraceOnly: true);
+                    return false;   // LV with just a marker item?
                 }
             }
 

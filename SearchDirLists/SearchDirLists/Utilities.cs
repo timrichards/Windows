@@ -219,13 +219,13 @@ namespace SearchDirLists
 
     class LVvolStrings : Utilities
     {
-        int m_nIndex = -1;
-        String m_strVolumeName = null;
-        String m_strPath = null;
-        String m_strSaveAs = null;
+        readonly int m_nIndex = -1;
+        readonly String m_strVolumeName = null;
+        readonly String m_strPath = null;
+        readonly String m_strSaveAs = null;
         String m_strStatus = null;
-        String m_strInclude = null;
-        String m_strVolumeGroup = null;
+        readonly String m_strInclude = null;
+        readonly String m_strVolumeGroup = null;
         internal int Index { get { return m_nIndex; } }
         internal String VolumeName { get { return m_strVolumeName; } }
         internal String StrPath { get { return m_strPath; } }
@@ -536,7 +536,8 @@ namespace SearchDirLists
 #else
             if (static_bAssertUp == false)
             {
-                bool bTrace = Trace.Listeners.Cast<TraceListener>().Any(i => i is DefaultTraceListener);
+                bool bTrace = false; // Trace.Listeners.Cast<TraceListener>().Any(i => i is DefaultTraceListener);
+
                 Action messageBox = new Action(() =>
                 {
                     static_MessageboxCallback(strError + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.".PadRight(100), "SearchDirLists Assertion Failure");
@@ -1190,6 +1191,25 @@ namespace SearchDirLists
             listDirs.Sort((x, y) => x.strFileName.CompareTo(y.strFileName));
             listFiles.Sort((x, y) => x.strFileName.CompareTo(y.strFileName));
             return true;
+        }
+    }
+
+    class WPF_Form
+    {
+        internal static DialogResult WPFMessageBox(String strMessage, String strTitle = null, MessageBoxButtons? buttons = null)
+        {
+            DialogResult dlgRet = DialogResult.None;
+
+            if (buttons == null)
+            {
+                dlgRet = MessageBox.Show(strMessage.PadRight(100), strTitle);
+            }
+            else
+            {
+                dlgRet = MessageBox.Show(strMessage.PadRight(100), strTitle, buttons.Value);
+            }
+
+            return dlgRet;
         }
     }
 }

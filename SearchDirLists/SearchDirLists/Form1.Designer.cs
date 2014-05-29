@@ -1733,7 +1733,7 @@ namespace SearchDirLists
             this.MinimumSize = new System.Drawing.Size(875, 420);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "SearchDirLists";
+            this.Text = "Search Directory Listings";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Activated += new System.EventHandler(this.ClearToolTip);
             this.Deactivate += new System.EventHandler(this.ClearToolTip);

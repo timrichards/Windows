@@ -411,8 +411,8 @@ namespace SearchDirLists
                 form_tabControlMain.SelectedTab = form_tabPageBrowse;
             }
 
+            m_saveDirListings = null;   // has to precede messagebox
             Form1MessageBox("Completed. " + m_saveDirListings.FilesWritten + " files written.", "Save Directory Listings");
-            m_saveDirListings = null;
         }
 
         private bool DoSaveDirListings()

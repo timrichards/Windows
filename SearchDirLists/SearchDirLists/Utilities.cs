@@ -116,6 +116,36 @@ namespace SearchDirLists
     {
     }
 
+    public class SDL_TreeView : TreeView
+    {
+        // enable double buffer
+
+        public SDL_TreeView()
+        {
+            DoubleBuffered = true;
+        }
+
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            SendMessage(this.Handle, TVM_SETEXTENDEDSTYLE, (IntPtr)TVS_EX_DOUBLEBUFFER, (IntPtr)TVS_EX_DOUBLEBUFFER);
+            base.OnHandleCreated(e);
+        }
+        private const int TVM_SETEXTENDEDSTYLE = 0x1100 + 44;
+        private const int TVM_GETEXTENDEDSTYLE = 0x1100 + 45;
+        private const int TVS_EX_DOUBLEBUFFER = 0x0004;
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
+
+        // suppress double click bug in treeview. Affects checkboxes
+
+        protected override void WndProc(ref Message m)
+        {
+            // Suppress WM_LBUTTONDBLCLK
+            if (m.Msg == 0x203) { m.Result = IntPtr.Zero; }
+            else base.WndProc(ref m);
+        }
+    }
+
     class SDL_TreeNode : TreeNode
     {
         public SDL_TreeNode() : base() { }
@@ -123,7 +153,7 @@ namespace SearchDirLists
         internal SDL_TreeNode(String strContent, SDL_TreeNode[] arrNodes) : base(strContent, arrNodes) { }
     }
 
-    static class SDLWPF
+    static class SDLWPF_Ext
     {
         internal static object GetTag(this TreeNode node) { return node.Tag; }
         internal static void SetTag(this TreeNode node, object o) { node.Tag = o; }
@@ -136,10 +166,13 @@ namespace SearchDirLists
         internal static String Text(this ListViewItem.ListViewSubItem l) { return l.Text; }
         internal static void SetText(this ListViewItem.ListViewSubItem l, String s) { l.Text = s; }
         internal static int GetCount(this ListViewItem.ListViewSubItemCollection a) { return a.Count; }
+    }
 
-        internal static TreeView treeViewMain = Form1.static_form.form_treeViewBrowse;
-        internal static TreeView treeViewCompare1 = Form1.static_form.form_treeCompare1;
-        internal static TreeView treeViewCompare2 = Form1.static_form.form_treeCompare2;
+    class SDLWPF
+    {
+        internal static SDL_TreeView treeViewMain = (SDL_TreeView)Form1.static_form.form_treeViewBrowse;
+        internal static SDL_TreeView treeViewCompare1 = (SDL_TreeView)Form1.static_form.form_treeCompare1;
+        internal static SDL_TreeView treeViewCompare2 = (SDL_TreeView)Form1.static_form.form_treeCompare2;
     }
 #endif
 
@@ -238,10 +271,10 @@ class Blinky
 
         void Go_A(Drawing.Color? clr = null, bool Once = false, bool bProgress = false)
         {
-            Utilities.Assert(1303.431013, m_timer.IsEnabled == false, bTraceOnly: true);
-            Utilities.Assert(1303.431015, m_nBlink == 0, bTraceOnly: true);
-            Utilities.Assert(1303.431017, (m_holder is NullHolder) == false, bTraceOnly: true);
-            Utilities.Assert(1303.431019, m_bProgress == false, bTraceOnly: true);
+            Utilities.Assert(1303.4301, m_timer.IsEnabled == false, bTraceOnly: true);
+            Utilities.Assert(1303.4302, m_nBlink == 0, bTraceOnly: true);
+            Utilities.Assert(1303.4303, (m_holder is NullHolder) == false, bTraceOnly: true);
+            Utilities.Assert(1303.4304, m_bProgress == false, bTraceOnly: true);
 
             m_holder.ClrOrig = m_holder.BackColor;
             m_bProgress = bProgress;
@@ -430,8 +463,8 @@ class Blinky
 
         protected SDL_File(String strHeader, String strExt, String strDescription)
         {
-            Utilities.Assert(1303.4311, static_OpenFileDialog != null);
-            Utilities.Assert(1303.4312, static_SaveFileDialog != null);
+            Utilities.Assert(1303.4305, static_OpenFileDialog != null);
+            Utilities.Assert(1303.4306, static_SaveFileDialog != null);
             Header = strHeader;
             m_strExt = strExt;
             m_strDescription = strDescription;
@@ -631,18 +664,13 @@ class Blinky
         internal const String mSTRfileExt_Ignore = "sdl_ignore";
 
         static MessageBoxDelegate static_MessageboxCallback = null;
-        protected MessageBoxDelegate m_MessageboxCallback = null;
+        protected MessageBoxDelegate m_MessageboxCallback = static_MessageboxCallback;
         static double static_nLastAssertLoc = -1;
         static DateTime static_dtLastAssert = DateTime.MinValue;
 
 #if (DEBUG == false)
         static bool static_bAssertUp = false;
 #endif
-
-        protected Utilities()
-        {
-            m_MessageboxCallback = static_MessageboxCallback;
-        }
 
         internal static bool Assert(double nLocation, bool bCondition, String strError_in = null, bool bTraceOnly = false)
         {
@@ -772,7 +800,7 @@ class Blinky
 
                         if (strLine == mSTRheader01)
                         {
-                            Utilities.Assert(1303.4302, nLineNo == 1);
+                            Utilities.Assert(1303.4307, nLineNo == 1);
                             file_out.WriteLine(FormatLine(mSTRlineType_Version, nLineNo, mSTRheader));
                             continue;
                         }
@@ -788,7 +816,7 @@ class Blinky
                         }
                         else if (strLine == mSTRdrive01)
                         {
-                            Utilities.Assert(1303.4303, nLineNo == 4);
+                            Utilities.Assert(1303.4308, nLineNo == 4);
                             file_out.WriteLine(FormatLine(mSTRlineType_Comment, nLineNo, mSTRdrive));
 
                             for (int i = 0; i < 8; ++i)
@@ -817,7 +845,7 @@ class Blinky
                         }
                         else if (strLine.StartsWith(mSTRstart01))
                         {
-                            Utilities.Assert(1303.4304, nLineNo == 16);
+                            Utilities.Assert(1303.4309, nLineNo == 16);
                             file_out.WriteLine(FormatLine(mSTRlineType_Start, nLineNo, mSTRstart));
                             continue;
                         }
@@ -858,7 +886,7 @@ class Blinky
                         }
                         else if (strDir.Contains(":" + Path.DirectorySeparatorChar) == false)
                         {
-                            Utilities.Assert(1303.4305, false);        // all that's left is directories
+                            Utilities.Assert(1303.4311, false);        // all that's left is directories
                             continue;
                         }
 
@@ -921,12 +949,12 @@ class Blinky
 
                 if (strPath == strCapDrive.ToUpper())
                 {
-                    Utilities.Assert(1303.4306, strDirName == null);
+                    Utilities.Assert(1303.4312, strDirName == null);
                 }
                 else
                 {
                     strPath = strPath.TrimEnd(Path.DirectorySeparatorChar);
-                    Utilities.Assert(1303.4307, StrValid(strDirName));
+                    Utilities.Assert(1303.4313, StrValid(strDirName));
                 }
             }
             else if (bFailOnDirectory)
@@ -1035,7 +1063,7 @@ class Blinky
 
             if (StrValid(strDir + strFile + strCreated + strModified + strAttributes + strLength + strError1 + strError2) == false)
             {
-                Utilities.Assert(1303.4308, nHeader is int);
+                Utilities.Assert(1303.4314, nHeader is int);
 
                 if (nHeader == 0)
                 {
@@ -1053,7 +1081,7 @@ class Blinky
             {
                 strError1 += " Trailing whitespace";
                 strError1.Trim();
-                Utilities.Assert(1303.4309, StrValid(strDir) || StrValid(strFile));
+                Utilities.Assert(1303.4315, StrValid(strDir) || StrValid(strFile));
                 bDbgCheck = true;
             }
 
@@ -1067,7 +1095,7 @@ class Blinky
 
                 if (strArray[mNcolLength01].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
                 {
-                    Utilities.Assert(1303.43101, false);
+                    Utilities.Assert(1303.4316, false);
                 }
 #endif
             }

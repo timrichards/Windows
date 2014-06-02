@@ -269,8 +269,8 @@ namespace SearchDirLists
 
     class TreeBase : Utilities
     {
-        protected SortedDictionary<Correlate, UList<SDL_TreeNode>> m_dictNodes = null;
-        protected Dictionary<String, String> m_dictDriveInfo = null;
+        protected readonly SortedDictionary<Correlate, UList<SDL_TreeNode>> m_dictNodes = null;
+        protected readonly Dictionary<String, String> m_dictDriveInfo = null;
         protected static TreeStatusDelegate m_statusCallback = null;
 
         internal TreeBase(SortedDictionary<Correlate, UList<SDL_TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
@@ -291,8 +291,8 @@ namespace SearchDirLists
 
     class Tree : TreeBase
     {
-        UList<LVvolStrings> m_list_lvVolStrings = null;
-        Action m_doneCallback = null;
+        readonly UList<LVvolStrings> m_list_lvVolStrings = null;
+        readonly Action m_doneCallback = null;
         ConcurrentBag<TreeRootNodeBuilder> m_cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
         Thread m_thread = null;
         bool m_bThreadAbort = false;
@@ -469,6 +469,7 @@ namespace SearchDirLists
             internal TreeRootNodeBuilder(LVvolStrings volStrings, TreeBase base_in) : base(base_in)
             {
                 m_volStrings = volStrings;
+                Utilities.Assert(1301.2301, m_statusCallback != null);
             }
 
             DetailsDatum TreeSubnodeDetails(SDL_TreeNode treeNode)
@@ -715,6 +716,7 @@ namespace SearchDirLists
         {
             m_list_lvVolStrings = listLVvolStrings;
             m_doneCallback = doneCallback;
+            Utilities.Assert(1301.2301, m_statusCallback != null);
         }
 
         void Go()
@@ -783,15 +785,15 @@ namespace SearchDirLists
 
     class TreeSelect : Utilities
     {
-        SDL_TreeNode m_treeNode = null;
-        SortedDictionary<Correlate, UList<SDL_TreeNode>> m_dictNodes = null;
-        Dictionary<String, String> m_dictDriveInfo = null;
-        static TreeSelectStatusDelegate m_statusCallback = null;
-        static TreeSelectDoneDelegate m_doneCallback = null;
+        readonly SDL_TreeNode m_treeNode = null;
+        readonly SortedDictionary<Correlate, UList<SDL_TreeNode>> m_dictNodes = null;
+        readonly Dictionary<String, String> m_dictDriveInfo = null;
+        readonly TreeSelectStatusDelegate m_statusCallback = null;
+        readonly TreeSelectDoneDelegate m_doneCallback = null;
         Thread m_thread = null;
-        String m_strFile = null;
-        bool m_bCompareMode = false;
-        bool m_bSecondComparePane = false;
+        readonly String m_strFile = null;
+        readonly bool m_bCompareMode = false;
+        readonly bool m_bSecondComparePane = false;
 
         internal TreeSelect(SDL_TreeNode node, SortedDictionary<Correlate, UList<SDL_TreeNode>> dictNodes, Dictionary<String, String> dictDriveInfo,
             String strFile, bool bCompareMode, bool bSecondComparePane,

@@ -128,7 +128,7 @@ namespace SearchDirLists
             }
 
             Utilities.Assert(1304.5304, gd.m_listTreeNodes.Count == 0);
-            Utilities.Assert(1304.5304, InvokeRequired);
+            Utilities.Assert(1304.5305, InvokeRequired);
 
             Utilities.CheckAndInvoke(this, new Action(() =>
             {
@@ -206,7 +206,7 @@ namespace SearchDirLists
             }
             else
             {
-                Utilities.Assert(1304.53085, false);
+                Utilities.Assert(1304.5309, false);
             }
         }
 
@@ -309,7 +309,7 @@ namespace SearchDirLists
             if ((lv2.Items.Count > 0) &&
                 (((LVitemFileTag)lv2.Items[0].Tag).StrCompareDir != treeNode2.Text))
             {
-                Utilities.Assert(1304.5309, false);
+                Utilities.Assert(1304.5311, false);
                 return;
             }
 
@@ -411,7 +411,7 @@ namespace SearchDirLists
                 SDLWPF.treeViewMain.Nodes.Add(treeNode);
                 SDLWPF.treeViewMain.CheckBoxes = false;    // treeview items are faked to show progress
                 SDLWPF.treeViewMain.Enabled = false;
-                Utilities.Assert(1304.5310, gd.m_listRootNodes.Count == 0);
+                Utilities.Assert(1304.5312, gd.m_listRootNodes.Count == 0);
 
                 UList<LVvolStrings> listLVvolStrings = new UList<LVvolStrings>();
 
@@ -428,7 +428,7 @@ namespace SearchDirLists
             {
                 int nNodeCount = SDLWPF.treeViewMain.GetNodeCount(includeSubTrees: true);
 
-                Utilities.Assert(1304.5311, gd.m_listTreeNodes.Count == nNodeCount);
+                Utilities.Assert(1304.5313, gd.m_listTreeNodes.Count == nNodeCount);
 
                 foreach (SDL_TreeNode treeNode in gd.m_listTreeNodes)
                 {
@@ -439,7 +439,7 @@ namespace SearchDirLists
 
                     if (nodeDatum == null)
                     {
-                        Utilities.Assert(1304.5312, false);
+                        Utilities.Assert(1304.5314, false);
                         continue;
                     }
 

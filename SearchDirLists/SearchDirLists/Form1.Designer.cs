@@ -68,9 +68,9 @@ namespace SearchDirLists
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.form_splitTreeFind = new System.Windows.Forms.SplitContainer();
             this.form_splitCompare = new System.Windows.Forms.SplitContainer();
-            this.form_treeCompare1 = new SearchDirLists.Form1.Form1TreeView();
-            this.form_treeCompare2 = new SearchDirLists.Form1.Form1TreeView();
-            this.form_treeViewBrowse = new SearchDirLists.Form1.Form1TreeView();
+            this.form_treeCompare1 = new SearchDirLists.SDL_TreeView();
+            this.form_treeCompare2 = new SearchDirLists.SDL_TreeView();
+            this.form_treeViewBrowse = new SearchDirLists.SDL_TreeView();
             this.form_tabControlCopyIgnore = new System.Windows.Forms.TabControl();
             this.form_tabPageCopy = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel4 = new SearchDirLists.Form1.Form1LayoutPanel(this.components);
@@ -1823,7 +1823,7 @@ namespace SearchDirLists
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.TabPage form_tabPageBrowse;
-        public Form1TreeView form_treeViewBrowse;
+        public SDL_TreeView form_treeViewBrowse;
         private System.Windows.Forms.SplitContainer form_splitFiles;
         private ListViewEx form_lvDetail;
         private System.Windows.Forms.SplitContainer form_splitDetail;
@@ -1854,9 +1854,9 @@ namespace SearchDirLists
         private System.Windows.Forms.CheckBox form_chkCompare1;
         private System.Windows.Forms.Button form_btnCompare;
         private System.Windows.Forms.SplitContainer form_splitTreeFind;
-        public Form1TreeView form_treeCompare1;
+        public SDL_TreeView form_treeCompare1;
         private System.Windows.Forms.SplitContainer form_splitCompare;
-        public Form1TreeView form_treeCompare2;
+        public SDL_TreeView form_treeCompare2;
         private System.Windows.Forms.SplitContainer form_splitCompareFiles;
         private ListViewEx form_lvFileCompare;
         private System.Windows.Forms.ColumnHeader form_colFileCompare;

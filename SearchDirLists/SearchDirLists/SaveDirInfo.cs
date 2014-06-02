@@ -13,8 +13,8 @@ namespace SearchDirLists
 
     class SaveDirListings : Utilities
     {
-        SaveDirListingsStatusDelegate m_statusCallback = null;
-        Action m_doneCallback = null;
+        readonly SaveDirListingsStatusDelegate m_statusCallback = null;
+        readonly Action m_doneCallback = null;
         Thread m_thread = null;
         bool m_bThreadAbort = false;
         ConcurrentBag<SaveDirListing> m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
@@ -25,16 +25,15 @@ namespace SearchDirLists
 
         class SaveDirListing : Utilities
         {
-            SaveDirListingsStatusDelegate m_statusCallback = null;
+            readonly SaveDirListingsStatusDelegate m_statusCallback = null;
             Thread m_thread = null;
             bool m_bThreadAbort = false;
-            LVvolStrings m_volStrings = null;
+            readonly LVvolStrings m_volStrings = null;
             long m_nLengthTotal = 0;
             long m_nFilesTotal = 0;
             long m_nFilesDiff = 0;
             readonly List<double> m_listFileDiffs = new List<double>();
             readonly List<String> m_list_Errors = new List<String>();
-            System.Threading.Timer m_timerStatus = null;
 
             private double StdDevSign(List<double> values)
             {
@@ -44,21 +43,6 @@ namespace SearchDirLists
                     (values.Count() - 1));
 
                 return nStdDev *= Math.Sign(values[values.Count - 1] - nAvg);
-            }
-
-            void SaveDirListing_TimerCallback(object state)
-            {
-                m_listFileDiffs.Add(m_nFilesDiff);
-
-                if (m_listFileDiffs.Count < 2)
-                {
-                    return;
-                }
-
-                double nFilesDiff = m_nFilesDiff / StdDevSign(m_listFileDiffs);
-
-                m_nFilesDiff = 0;
-                m_statusCallback(m_volStrings.Index, nFilesTotal: m_nFilesTotal, nLengthTotal: m_nLengthTotal, nFilesDiff: nFilesDiff);
             }
 
             internal SaveDirListing(LVvolStrings volStrings,
@@ -229,10 +213,23 @@ namespace SearchDirLists
                         fs.WriteLine(FormatString(nHeader: 0));
                         fs.WriteLine(FormatString(nHeader: 1));
                         fs.WriteLine(mSTRstart01 + " " + DateTime.Now.ToString());
-                        m_timerStatus = new System.Threading.Timer(new TimerCallback(SaveDirListing_TimerCallback), null, 1000, 1000);
+
+                        TimeSpan timeSpan = new TimeSpan(0, 0, 0, 1);
+                        System.Threading.Timer timer = new System.Threading.Timer(new TimerCallback((Object state) =>
+                        {
+                            m_listFileDiffs.Add(m_nFilesDiff);
+
+                            if (m_listFileDiffs.Count >= 2)
+                            {
+                                double nFilesDiff = m_nFilesDiff / StdDevSign(m_listFileDiffs);
+
+                                m_nFilesDiff = 0;
+                                m_statusCallback(m_volStrings.Index, nFilesTotal: m_nFilesTotal, nLengthTotal: m_nLengthTotal, nFilesDiff: nFilesDiff);
+                            }
+                        }), null, timeSpan, timeSpan);
+
                         TraverseTree(fs, strPath);
-                        m_timerStatus.Dispose();
-                        m_timerStatus = null;
+                        timer.Dispose();
                         fs.WriteLine(mSTRend01 + " " + DateTime.Now.ToString());
                         fs.WriteLine();
                         fs.WriteLine(mSTRerrorsLoc01);
@@ -414,8 +411,10 @@ namespace SearchDirLists
                 form_tabControlMain.SelectedTab = form_tabPageBrowse;
             }
 
+            int nFilesWritten = gd.m_saveDirListings.FilesWritten;
+
             gd.m_saveDirListings = null;   // has to precede messagebox
-            Form1MessageBox("Completed. " + gd.m_saveDirListings.FilesWritten + " files written.", "Save Directory Listings");
+            Form1MessageBox("Completed. " + nFilesWritten + " files written.", "Save Directory Listings");
         }
 
         bool DoSaveDirListings()

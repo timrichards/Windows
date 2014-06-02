@@ -11,6 +11,83 @@ namespace SearchDirLists
 {
     delegate void SaveDirListingsStatusDelegate(int nIndex, String strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0);
 
+    partial class Form1
+    {
+        void SaveDirListingsStatusCallback(int nIndex, String strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0)
+        {
+            if (GlobalData.AppExit || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
+            {
+                return;
+            }
+
+            if (InvokeRequired) { Invoke(new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback), new object[] { nIndex, strText, bDone, nFilesTotal, nLengthTotal, nFilesDiff }); return; }
+
+            if (nLengthTotal > 0)
+            {
+                Utilities.Assert(1306.7305, strText == null);
+                Utilities.Assert(1306.7306, bDone == false);
+
+                strText = nFilesTotal.ToString("###,###,###,###") + " (" + Utilities.FormatSize(nLengthTotal) + ") SD " + nFilesDiff.ToString("#0.0");
+            }
+
+            if (bDone)
+            {
+                lock (gd.m_saveDirListings)
+                {
+                    ++gd.m_saveDirListings.FilesWritten;
+                }
+            }
+
+            lock (form_lvVolumesMain)
+            {
+                form_lvVolumesMain.Items[nIndex].SubItems[3].Text = strText;
+
+                if (bDone && (strText == Utilities.mSTRsaved))
+                {
+                    form_lvVolumesMain.Items[nIndex].Name = null;    // indexing by path, only for unsaved volumes
+                }
+
+                form_lvVolumesMain.Invalidate();
+            }
+        }
+
+        void SaveDirListingsDoneCallback()
+        {
+            if (GlobalData.AppExit || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
+            {
+                return;
+            }
+
+            if (InvokeRequired) { Invoke(new Action(SaveDirListingsDoneCallback)); return; }
+
+            if (gd.m_saveDirListings.FilesWritten > 0)
+            {
+                gd.RestartTreeTimer();
+                form_tabControlMain.SelectedTab = form_tabPageBrowse;
+            }
+
+            int nFilesWritten = gd.m_saveDirListings.FilesWritten;
+
+            gd.m_saveDirListings = null;   // has to precede messagebox
+            Form1MessageBox("Completed. " + nFilesWritten + " files written.", "Save Directory Listings");
+        }
+
+        bool DoSaveDirListings()
+        {
+            if (gd.m_saveDirListings != null)
+            {
+                Form1MessageBox("Already in progress.", "Save Directory Listings");
+                return false;
+            }
+
+            gd.m_saveDirListings = new SaveDirListings(form_lvVolumesMain.Items,
+                new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback),
+                new Action(SaveDirListingsDoneCallback));
+            gd.m_saveDirListings.DoThreadFactory();
+            return true;
+        }
+    }
+
     class SaveDirListings : Utilities
     {
         readonly SaveDirListingsStatusDelegate m_statusCallback = null;
@@ -353,83 +430,6 @@ namespace SearchDirLists
             Utilities.Assert(1306.73045, m_saveDirListings == null);
 
             m_saveDirListings = null;
-        }
-    }
-
-    partial class Form1
-    {
-        void SaveDirListingsStatusCallback(int nIndex, String strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0)
-        {
-            if (GlobalData.AppExit || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
-            {
-                return;
-            }
-
-            if (InvokeRequired) { Invoke(new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback), new object[] { nIndex, strText, bDone, nFilesTotal, nLengthTotal, nFilesDiff }); return; }
-
-            if (nLengthTotal > 0)
-            {
-                Utilities.Assert(1306.7305, strText == null);
-                Utilities.Assert(1306.7306, bDone == false);
-
-                strText = nFilesTotal.ToString("###,###,###,###") + " (" + Utilities.FormatSize(nLengthTotal) + ") SD " + nFilesDiff.ToString("#0.0");
-            }
-
-            if (bDone)
-            {
-                lock (gd.m_saveDirListings)
-                {
-                    ++gd.m_saveDirListings.FilesWritten;
-                }
-            }
-
-            lock (form_lvVolumesMain)
-            {
-                form_lvVolumesMain.Items[nIndex].SubItems[3].Text = strText;
-
-                if (bDone && (strText == Utilities.mSTRsaved))
-                {
-                    form_lvVolumesMain.Items[nIndex].Name = null;    // indexing by path, only for unsaved volumes
-                }
-
-                form_lvVolumesMain.Invalidate();
-            }
-        }
-
-        void SaveDirListingsDoneCallback()
-        {
-            if (GlobalData.AppExit || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
-            {
-                return;
-            }
-
-            if (InvokeRequired) { Invoke(new Action(SaveDirListingsDoneCallback)); return; }
-
-            if (gd.m_saveDirListings.FilesWritten > 0)
-            {
-                gd.RestartTreeTimer();
-                form_tabControlMain.SelectedTab = form_tabPageBrowse;
-            }
-
-            int nFilesWritten = gd.m_saveDirListings.FilesWritten;
-
-            gd.m_saveDirListings = null;   // has to precede messagebox
-            Form1MessageBox("Completed. " + nFilesWritten + " files written.", "Save Directory Listings");
-        }
-
-        bool DoSaveDirListings()
-        {
-            if (gd.m_saveDirListings != null)
-            {
-                Form1MessageBox("Already in progress.", "Save Directory Listings");
-                return false;
-            }
-
-            gd.m_saveDirListings = new SaveDirListings(form_lvVolumesMain.Items,
-                new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback),
-                new Action(SaveDirListingsDoneCallback));
-            gd.m_saveDirListings.DoThreadFactory();
-            return true;
         }
     }
 }

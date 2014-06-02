@@ -34,6 +34,8 @@ namespace SearchDirLists
     delegate DialogResult MessageBoxDelegate(String strMessage, String strTitle = null, MessageBoxButtons? buttons = null);
     delegate bool BoolAction();
 
+//    [System.ComponentModel.DesignerCategory("Designer")]
+    [System.ComponentModel.DesignerCategory("Code")]
     partial class Form1 : Form
     {
         readonly GlobalData gd = null;      // do not call constructor here.
@@ -787,7 +789,7 @@ namespace SearchDirLists
 
         void form_btnCopyToClipBoard_Click(object sender = null, EventArgs e = null)
         {
-            TreeView treeView = gd.m_treeCopyToClipboard;
+            SDL_TreeView treeView = gd.m_treeCopyToClipboard;
 
             if (gd.m_bCompareMode)
             {
@@ -2089,7 +2091,7 @@ namespace SearchDirLists
 
             if (e.KeyCode == Keys.F2)
             {
-                e.Handled = true;
+                e.SuppressKeyPress = e.Handled = true;
             }
             else if (new Keys[] { Keys.Left, Keys.Right }.Contains(e.KeyCode))
             {
@@ -2293,12 +2295,10 @@ namespace SearchDirLists
     partial class GlobalData : Utilities
     {
         internal SDL_TreeView m_treeCopyToClipboard = null;
-
         internal SDL_TreeNode m_nodeCompare1 = null;
         internal readonly Dictionary<SDL_TreeNode, SDL_TreeNode> m_dictCompareDiffs = new Dictionary<SDL_TreeNode, SDL_TreeNode>();
         internal readonly UList<SDL_TreeNode> m_listTreeNodes_Compare1 = new UList<SDL_TreeNode>();
         internal readonly UList<SDL_TreeNode> m_listTreeNodes_Compare2 = new UList<SDL_TreeNode>();
-
         internal readonly List<SDL_TreeNode> m_listHistory = new List<SDL_TreeNode>();
         internal int m_nIxHistory = -1;
 
@@ -2510,111 +2510,6 @@ namespace SearchDirLists
             }
 
             return stbFullPath.ToString().Replace(PP, P);
-        }
-
-        internal SDL_TreeNode GetNodeByPath(String path, TreeView treeView)
-        {
-            return GetNodeByPath_A(path, treeView) ?? GetNodeByPath_A(path, treeView, bIgnoreCase: true);
-        }
-
-        internal SDL_TreeNode GetNodeByPath_A(String strPath, TreeView treeView, bool bIgnoreCase = false)
-        {
-            if (Utilities.StrValid(strPath) == false)
-            {
-                return null;
-            }
-
-            if (bIgnoreCase)
-            {
-                strPath = strPath.ToLower();
-            }
-
-            SDL_TreeNode nodeRet = null;
-            String P = Path.DirectorySeparatorChar.ToString();
-            String PP = P + P;
-
-            foreach (TreeNode topNode in treeView.Nodes)
-            {
-                String[] arrPath = null;
-                int nPathLevelLength = 0;
-                int nLevel = 0;
-                String strNode = topNode.Name.TrimEnd(Path.DirectorySeparatorChar).Replace(PP, P);
-
-                if (bIgnoreCase)
-                {
-                    strNode = strNode.ToLower();
-                }
-
-                arrPath = strPath.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
-                nPathLevelLength = arrPath.Length;
-
-                if (strNode.Contains(Path.DirectorySeparatorChar))
-                {
-                    int nCount = strNode.Count(c => c == Path.DirectorySeparatorChar);
-
-                    for (int n = 0; n < nPathLevelLength - 1; ++n)
-                    {
-                        if (n < nCount)
-                        {
-                            arrPath[0] += Path.DirectorySeparatorChar + arrPath[n + 1];
-                        }
-                    }
-
-                    for (int n = 1; n < nPathLevelLength - 1; ++n)
-                    {
-                        if ((nCount + n) < arrPath.Length)
-                        {
-                            arrPath[n] = arrPath[nCount + n];
-                        }
-                    }
-
-                    if (nPathLevelLength > 1)
-                    {
-                        Utilities.Assert(1308.9329, (nPathLevelLength - nCount) > 0);
-                        nPathLevelLength -= nCount;
-                    }
-                }
-
-                if (strNode == arrPath[nLevel])
-                {
-                    nodeRet = (SDL_TreeNode)topNode;
-                    nLevel++;
-
-                    if ((nLevel < nPathLevelLength) && nodeRet != null)
-                    {
-                        nodeRet = GetSubNode(nodeRet, arrPath, nLevel, nPathLevelLength, bIgnoreCase);
-
-                        if (nodeRet != null)
-                        {
-                            return nodeRet;
-                        }
-                    }
-                }
-            }
-
-            return nodeRet;
-        }
-
-        internal SDL_TreeNode GetSubNode(SDL_TreeNode node, String[] pathLevel, int i, int nPathLevelLength, bool bIgnoreCase)
-        {
-            foreach (SDL_TreeNode subNode in node.Nodes)
-            {
-                String strText = bIgnoreCase ? subNode.Text.ToLower() : subNode.Text;
-
-                if (strText != pathLevel[i])
-                {
-                    continue;
-                }
-
-                if (++i == nPathLevelLength)
-                {
-                    return subNode;
-                }
-
-                return GetSubNode(subNode, pathLevel, i, nPathLevelLength, bIgnoreCase);
-            }
-
-            return null;
         }
 
         internal SDL_TreeNode History_GetAt(int n)

@@ -8,6 +8,7 @@ using System.Windows.Threading;
 
 namespace SearchDirLists
 {
+    [System.ComponentModel.DesignerCategory("Code")]
     class TreeMapUserControl : UserControl
     {
         public Control TooltipAnchor;

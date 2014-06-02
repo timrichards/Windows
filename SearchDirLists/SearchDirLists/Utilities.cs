@@ -28,6 +28,13 @@ namespace SearchDirLists
 /**/    class SDL_TreeView : TreeView
 /**/    {
 /**/        internal TreeViewItem SelectedNode { get { return (TreeViewItem)SelectedItem; } set { } }
+/**/        internal bool CheckBoxes;
+/**/        internal void CollapseAll() { }
+/**/        internal bool Enabled;
+/**/        internal Drawing.Font Font;
+/**/        internal int GetNodeCount(bool includeSubTrees = false) { return 0; }
+/**/        internal ItemCollection Nodes { get { return Items; } }
+/**/        internal SDL_TreeNode TopNode { get { return null; } }
 /**/    }
 /**/
 /**/    class SDL_TreeNode : TreeViewItem
@@ -40,7 +47,7 @@ namespace SearchDirLists
 /**/        internal Drawing.Color ForeColor { get { return this.GetForeColor(); } set { this.SetForeColor(value); } }
 /**/        internal Drawing.Color BackColor { get { return this.GetBackColor(); } set { this.SetBackColor(value); } }
 /**/        internal SDL_TreeNode FirstNode { get { return (SDL_TreeNode)this.GetFirstNode(); } }
-/**/        internal String GlobalData.FullPath { get { return this.GetFullPath(); } }
+/**/        internal String FullPath { get { return this.GetFullPath(); } }
 /**/        internal ItemCollection Nodes { get { return Items; } }
 /**/        internal SDL_TreeNode NextNode { get { if (Parent == null) return null; ItemCollection c = ((TreeViewItem)Parent).Items; int i = c.IndexOf(this) + 1; if (i < c.Count) return (SDL_TreeNode)c[i]; return null; } }
 /**/        internal int Level { get { int i = 0; if (Parent != null) { i = ((SDL_TreeNode)Parent).Level; ++i; } return i; } }
@@ -78,6 +85,7 @@ namespace SearchDirLists
 /**/        internal static void SetTag(this DependencyObject obj, object o) { ((TreeViewItem)obj).Tag = o; }
 /**/        internal static TreeViewItem GetFirstNode(this SDL_TreeNode node) { return (node.Items.Count > 0) ? (TreeViewItem)node.Items[0] : null; }
 /**/        internal static String GetFullPath(this SDL_TreeNode node) { String s = ""; if (node.Parent != null) { s += ((SDL_TreeNode)node.Parent).GetFullPath() + Path.DirectorySeparatorChar; } s += node.Header; return s; }
+/**/        internal static void AddRange(this ItemCollection c, SDL_TreeNode[] a) { foreach (SDL_TreeNode i in a) { c.Add(i); } }
 /**/
 /**/        // Control
 /**/        static Drawing.Color _GetColor(Media.Brush brush) { Media.Color c = ((SolidColorBrush)brush).Color; return Drawing.Color.FromArgb(c.A, c.R, c.G, c.B); }
@@ -100,9 +108,9 @@ namespace SearchDirLists
 /**/        internal static Color Clr(Drawing.Color i) { Color c = Color.FromArgb(i.A, i.R, i.G, i.B); return c; }
 /**/        internal static Drawing.Color ClrA(Color i) { Drawing.Color c = Drawing.Color.FromArgb(i.A, i.R, i.G, i.B); return c; }
 /**/
-/**/        internal static TreeView treeViewMain = null; //Form1.static_form.SDLWPF.treeViewMain;
-/**/        internal static TreeView treeViewCompare1 = null; //Form1.static_form.form_treeCompare1;
-/**/        internal static TreeView treeViewCompare2 = null; //Form1.static_form.form_treeCompare2;
+/**/        internal static SDL_TreeView treeViewMain = null; //Form1.static_form.SDLWPF.treeViewMain;
+/**/        internal static SDL_TreeView treeViewCompare1 = null; //Form1.static_form.form_treeCompare1;
+/**/        internal static SDL_TreeView treeViewCompare2 = null; //Form1.static_form.form_treeCompare2;
 /**/    }
 #else
     class SDL_ListViewItem : ListViewItem
@@ -116,6 +124,7 @@ namespace SearchDirLists
     {
     }
 
+    [System.ComponentModel.DesignerCategory("Code")]
     public class SDL_TreeView : TreeView
     {
         // enable double buffer

@@ -13,28 +13,26 @@ namespace SearchDirLists
 
         public static void ClearMem()
         {
-            Utilities.Assert(1305.6324, static_this == null);
-
+            Utilities.Assert(1305.6301, static_this == null);
             static_this = null;
         }
 
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
-        TreeView form_treeView_Browse = null;
-        SortedDictionary<Correlate, UList<SDL_TreeNode>> m_dictNodes = null;
-        ListView form_lvClones = null;
-        ListView form_lvSameVol = null;
-        ListView form_lvUnique = null;
-        List<SDL_TreeNode> m_listRootNodes = null;
-        UList<SDL_TreeNode> m_listTreeNodes = null;
-        bool m_bCheckboxes = false;
-        List<SDL_ListViewItem> m_list_lvIgnore = null;
+        readonly SortedDictionary<Correlate, UList<SDL_TreeNode>> m_dictNodes = null;
+        readonly ListView form_lvClones = null;
+        readonly ListView form_lvSameVol = null;
+        readonly ListView form_lvUnique = null;
+        readonly List<SDL_TreeNode> m_listRootNodes = null;
+        readonly UList<SDL_TreeNode> m_listTreeNodes = null;
+        readonly bool m_bCheckboxes = false;
+        readonly List<SDL_ListViewItem> m_list_lvIgnore = null;
 
         // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.
         readonly List<SDL_ListViewItem> listLVunique = new List<SDL_ListViewItem>();
         readonly List<SDL_ListViewItem> listLVsameVol = new List<SDL_ListViewItem>();
         readonly List<SDL_ListViewItem> listLVdiffVol = new List<SDL_ListViewItem>();
         readonly Dictionary<SDL_TreeNode, SDL_ListViewItem> dictIgnoreNodes = new Dictionary<SDL_TreeNode, SDL_ListViewItem>();
-        bool m_bLoose = false;
+        readonly bool m_bLoose = false;
         bool m_bThreadAbort = false;
 
         public static void Abort()
@@ -73,7 +71,7 @@ namespace SearchDirLists
             {
                 if (treeNode_in == null)
                 {
-                    Utilities.Assert(1305.6301, false);
+                    Utilities.Assert(1305.6302, false);
                 }
 
                 SDL_TreeNode treeNode = treeNode_in;
@@ -87,13 +85,13 @@ namespace SearchDirLists
 
                     if (nodeDatum == null)
                     {
-                        Utilities.Assert(1305.6302, false);
+                        Utilities.Assert(1305.6303, false);
                         continue;
                     }
 
                     if ((treeNode.ForeColor == Color.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
                     {
-                        Utilities.Assert(1305.6303, (nodeDatum.m_listClones.Count > 0) && (nodeDatum.m_bDifferentVols == false));
+                        Utilities.Assert(1305.6304, (nodeDatum.m_listClones.Count > 0) && (nodeDatum.m_bDifferentVols == false));
                         m_listSameVol.Add(treeNode);
                     }
 
@@ -152,13 +150,12 @@ namespace SearchDirLists
             }
         }
 
-        public Collate(TreeView treeView_Browse, SortedDictionary<Correlate, UList<SDL_TreeNode>> dictNodes,
+        public Collate(SortedDictionary<Correlate, UList<SDL_TreeNode>> dictNodes,
             ListView lvClones, ListView lvSameVol, ListView lvUnique,
             List<SDL_TreeNode> listRootNodes, UList<SDL_TreeNode> listTreeNodes, bool bCheckboxes,
             List<SDL_ListViewItem> list_lvIgnore, bool bLoose)
         {
             static_this = this;
-            form_treeView_Browse = treeView_Browse;
             m_dictNodes = dictNodes;
             form_lvClones = lvClones;
             form_lvSameVol = lvSameVol;
@@ -193,9 +190,9 @@ namespace SearchDirLists
 
                 if (dictClones.ContainsKey(nodeDatum.Key))
                 {
-                    Utilities.Assert(1305.6304, dictClones[nodeDatum.Key] == listClones);
-                    Utilities.Assert(1305.6305, ((NodeDatum)dictClones[nodeDatum.Key][0].Tag).m_bDifferentVols == nodeDatum.m_bDifferentVols);
-                    Utilities.Assert(1305.6306, dictClones[nodeDatum.Key][0].ForeColor == treeNode.ForeColor);
+                    Utilities.Assert(1305.6305, dictClones[nodeDatum.Key] == listClones);
+                    Utilities.Assert(1305.6306, ((NodeDatum)dictClones[nodeDatum.Key][0].Tag).m_bDifferentVols == nodeDatum.m_bDifferentVols);
+                    Utilities.Assert(1305.6307, dictClones[nodeDatum.Key][0].ForeColor == treeNode.ForeColor);
                 }
                 else
                 {
@@ -206,7 +203,7 @@ namespace SearchDirLists
                     SDL_TreeNode rootNode = treeNode.Root();
                     RootNodeDatum rootNodeDatum = (RootNodeDatum)rootNode.Tag;
 
-                    Utilities.Assert(1305.6307, new Color[] { Color.Empty, Color.DarkBlue }.Contains(treeNode.ForeColor));
+                    Utilities.Assert(1305.6308, new Color[] { Color.Empty, Color.DarkBlue }.Contains(treeNode.ForeColor));
                     treeNode.ForeColor = Color.Firebrick;
 
                     bool bDifferentVols = false;
@@ -218,7 +215,7 @@ namespace SearchDirLists
                             return;
                         }
 
-                        Utilities.Assert(1305.6308, ((NodeDatum)subnode.Tag).Key == nodeDatum.Key);
+                        Utilities.Assert(1305.6309, ((NodeDatum)subnode.Tag).Key == nodeDatum.Key);
 
                         SDL_TreeNode rootNode_A = subnode.Root();
 
@@ -237,7 +234,7 @@ namespace SearchDirLists
 
                         if (treeNode.ForeColor != Color.DarkBlue)
                         {
-                            Utilities.Assert(1305.63085, treeNode.ForeColor == Color.Firebrick);
+                            Utilities.Assert(1305.6311, treeNode.ForeColor == Color.Firebrick);
                             treeNode.ForeColor = Color.SteelBlue;
                         }
 
@@ -306,7 +303,7 @@ namespace SearchDirLists
                     continue;
                 }
 
-                Utilities.Assert(1305.6309, lvItem != null);
+                Utilities.Assert(1305.6312, lvItem != null);
                 dictIgnoreNodes.Add(treeNode, lvItem);
 
                 if (treeNode.Nodes.Count > 0)
@@ -375,7 +372,7 @@ namespace SearchDirLists
 
                 if (parentNode.ForeColor != Color.DarkOrange)
                 {
-                    Utilities.Assert(1305.63101, (parentNode.ForeColor == Color.Empty) == (nodeDatum.m_lvItem == null));
+                    Utilities.Assert(1305.6313, (parentNode.ForeColor == Color.Empty) == (nodeDatum.m_lvItem == null));
                 }
 
                 parentNode = (SDL_TreeNode)parentNode.Parent;
@@ -384,11 +381,11 @@ namespace SearchDirLists
 
         public void Step1_OnThread()
         {
-            TreeView treeView = new TreeView();     // sets Level and NextNode
+            SDL_TreeView treeView = new SDL_TreeView();     // sets Level and NextNode
 
             if (m_listRootNodes.Count <= 0)
             {
-                Utilities.Assert(1305.63105, false);
+                Utilities.Assert(1305.6314, false);
                 return;
             }
 
@@ -464,7 +461,7 @@ namespace SearchDirLists
 
                 if (listNodes.Count < 1)
                 {
-                    Utilities.Assert(1305.6311, false);
+                    Utilities.Assert(1305.6315, false);
                     continue;
                 }
                 
@@ -483,7 +480,7 @@ namespace SearchDirLists
 
                         NodeDatum nodeDatum = ((NodeDatum)treeNode_A.Tag);
 
-                        Utilities.Assert(1305.6312, nodeDatum.nTotalLength > 100 * 1024);
+                        Utilities.Assert(1305.6316, nodeDatum.nTotalLength > 100 * 1024);
 
                         if (listNodes.Contains(treeNode_A.Parent) == false)
                         {
@@ -537,7 +534,7 @@ namespace SearchDirLists
 
                 if (nClones <= 0)
                 {
-                    Utilities.Assert(1305.6313, false);
+                    Utilities.Assert(1305.6317, false);
                     continue;
                 }
 
@@ -575,7 +572,7 @@ namespace SearchDirLists
                 }
 
                 lvItem.SetText(nameNode.Text);
-                Utilities.Assert(1305.6314, Utilities.StrValid(lvItem.Text()));
+                Utilities.Assert(1305.6318, Utilities.StrValid(lvItem.Text()));
                 listLVdiffVol.Add(lvItem);
             }
 
@@ -590,7 +587,7 @@ namespace SearchDirLists
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
                 nodeDatum.m_lvItem = lvIgnoreItem;
-                Utilities.Assert(1305.6315, nodeDatum.m_lvItem != null);
+                Utilities.Assert(1305.6319, nodeDatum.m_lvItem != null);
                 nodeDatum.m_listClones.Remove(treeNode);
             }
 
@@ -606,7 +603,7 @@ namespace SearchDirLists
 
                 SDL_TreeNode treeNode = listNodes.Value;
 
-                Utilities.Assert(1305.6316, Utilities.StrValid(treeNode.Text));
+                Utilities.Assert(1305.6321, Utilities.StrValid(treeNode.Text));
 
                 SDL_ListViewItem lvItem = new SDL_ListViewItem(treeNode.Text);
 
@@ -614,18 +611,18 @@ namespace SearchDirLists
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
-                Utilities.Assert(1305.6317, nodeDatum.nImmediateFiles > 0);
+                Utilities.Assert(1305.6322, nodeDatum.nImmediateFiles > 0);
                 SnowUniqueParents(treeNode);
 
                 if (treeNode.ForeColor != Color.DarkOrange)
                 {
-                    Utilities.Assert(1305.63175, treeNode.ForeColor == Color.Empty);
+                    Utilities.Assert(1305.6323, treeNode.ForeColor == Color.Empty);
                     treeNode.ForeColor = Color.Red;
                 }
 
                 lvItem.ForeColor = treeNode.ForeColor;
                 listLVunique.Add(lvItem);
-                Utilities.Assert(1305.6318, nodeDatum.m_lvItem == null);
+                Utilities.Assert(1305.6324, nodeDatum.m_lvItem == null);
                 nodeDatum.m_lvItem = lvItem;
             }
 
@@ -639,9 +636,9 @@ namespace SearchDirLists
                 int nCount = Utilities.CountNodes(m_listRootNodes);
                 int nCount_A = new AddTreeToList(m_listTreeNodes, listSameVol).Go(m_listRootNodes).Count;
 
-                Utilities.Assert(1305.63183, nCount_A == nCount);
-                Utilities.Assert(1305.63185, m_listTreeNodes.Count == nCount);
-                Utilities.Assert(1305.63187, Utilities.CountNodes(m_listRootNodes) == nCount);
+                Utilities.Assert(1305.6325, nCount_A == nCount);
+                Utilities.Assert(1305.6326, m_listTreeNodes.Count == nCount);
+                Utilities.Assert(1305.6327, Utilities.CountNodes(m_listRootNodes) == nCount);
                 Utilities.WriteLine("Step1_OnThread " + nCount);
             }
 
@@ -661,7 +658,7 @@ namespace SearchDirLists
 
                 if (nClones <= 0)
                 {
-                    Utilities.Assert(1305.6319, false);
+                    Utilities.Assert(1305.6328, false);
                 }
 
                 String str_nClones = null;
@@ -671,7 +668,7 @@ namespace SearchDirLists
                     str_nClones = nClones.ToString("###,###");
                 }
 
-                Utilities.Assert(1305.63201, Utilities.StrValid(treeNode.Text));
+                Utilities.Assert(1305.6329, Utilities.StrValid(treeNode.Text));
 
                 SDL_ListViewItem lvItem = new SDL_ListViewItem(new String[] { treeNode.Text, str_nClones });
 
@@ -696,9 +693,9 @@ namespace SearchDirLists
                     return;
                 }
 
-                if (form_treeView_Browse.Enabled == false)      // stays enabled when DoCollation() is called directly
+                if (SDLWPF.treeViewMain.Enabled == false)      // stays enabled when DoCollation() is called directly
                 {
-                    form_treeView_Browse.Nodes.Clear();
+                    SDLWPF.treeViewMain.Nodes.Clear();
                 }
 
                 if (m_listRootNodes.Count <= 0)
@@ -706,10 +703,10 @@ namespace SearchDirLists
                     return;
                 }
 
-                if (form_treeView_Browse.Enabled == false)
+                if (SDLWPF.treeViewMain.Enabled == false)
                 {
-                    form_treeView_Browse.Enabled = true;
-                    form_treeView_Browse.CheckBoxes = m_bCheckboxes;
+                    SDLWPF.treeViewMain.Enabled = true;
+                    SDLWPF.treeViewMain.CheckBoxes = m_bCheckboxes;
 
                     int nCount = Utilities.CountNodes(m_listRootNodes);
 
@@ -719,8 +716,8 @@ namespace SearchDirLists
 
                     int nCount_A = Utilities.CountNodes(m_listRootNodes);
 
-                    Utilities.Assert(1305.63203, nCount_A == nCount);
-                    Utilities.Assert(1305.63207, form_treeView_Browse.GetNodeCount(includeSubTrees: true) == nCount);
+                    Utilities.Assert(1305.6331, nCount_A == nCount);
+                    Utilities.Assert(1305.6332, SDLWPF.treeViewMain.GetNodeCount(includeSubTrees: true) == nCount);
                     Utilities.WriteLine("Step2_OnForm_A " + nCount);
                 }
 
@@ -729,7 +726,7 @@ namespace SearchDirLists
                     return;
                 }
 
-                Utilities.Assert(1305.6321, form_lvClones.Items.Count <= 0);
+                Utilities.Assert(1305.6333, form_lvClones.Items.Count <= 0);
                 Utilities.Write("B");
                 form_lvClones.Items.AddRange(listLVdiffVol.ToArray());
                 form_lvClones.Invalidate();
@@ -740,7 +737,7 @@ namespace SearchDirLists
                     return;
                 }
 
-                Utilities.Assert(1305.6322, form_lvUnique.Items.Count <= 0);
+                Utilities.Assert(1305.6334, form_lvUnique.Items.Count <= 0);
                 Utilities.Write("C");
                 form_lvUnique.Items.AddRange(listLVunique.ToArray());
                 form_lvUnique.Invalidate();
@@ -751,22 +748,22 @@ namespace SearchDirLists
                     return;
                 }
 
-                Utilities.Assert(1305.6323, form_lvSameVol.Items.Count <= 0);
+                Utilities.Assert(1305.6335, form_lvSameVol.Items.Count <= 0);
                 Utilities.Write("D");
                 form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
                 form_lvSameVol.Invalidate();
                 Utilities.WriteLine("D");
 
-                if (form_treeView_Browse.SelectedNode != null)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
+                if (SDLWPF.treeViewMain.SelectedNode != null)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
                 {
                     SDL_TreeNode treeNode = (SDL_TreeNode)SDLWPF.treeViewMain.SelectedNode;
 
-                    form_treeView_Browse.SelectedNode = null;
-                    form_treeView_Browse.SelectedNode = treeNode;   // reselect in repopulated collation listviewers
+                    SDLWPF.treeViewMain.SelectedNode = null;
+                    SDLWPF.treeViewMain.SelectedNode = treeNode;   // reselect in repopulated collation listviewers
                 }
                 else
                 {
-                    form_treeView_Browse.SelectedNode = m_listRootNodes[0];
+                    SDLWPF.treeViewMain.SelectedNode = m_listRootNodes[0];
                 }
             }));
 

@@ -6,89 +6,6 @@ using System.Drawing;
 
 namespace SearchDirLists
 {
-    partial class GlobalData
-    {
-        internal readonly SortedDictionary<Correlate, UList<SDL_TreeNode>> m_dictNodes = new SortedDictionary<Correlate, UList<SDL_TreeNode>>();
-        internal readonly Dictionary<String, String> m_dictDriveInfo = new Dictionary<String, String>();
-        internal Tree m_tree = null;
-        internal Thread m_threadCollate = null;
-        internal Thread m_threadSelect = null;
-        internal Thread m_threadSelectCompare = null;
-
-        internal readonly List<SDL_ListViewItem> m_listLVignore = new List<SDL_ListViewItem>();
-        internal readonly UList<SDL_TreeNode> m_listTreeNodes = new UList<SDL_TreeNode>();
-        internal readonly List<SDL_TreeNode> m_listRootNodes = new List<SDL_TreeNode>();
-
-        internal void ClearMem_TreeForm()
-        {
-            Utilities.Assert(1304.5301, m_listLVignore.Count == 0);
-
-            m_listLVignore.Clear();
-            m_listTreeNodes.Clear();
-            m_listRootNodes.Clear();
-
-            Utilities.Assert(1304.5302, m_tree == null);
-            m_tree = null;
-
-            m_dictDriveInfo.Clear();
-
-            // m_dictNodes is tested to recreate tree.
-            Utilities.Assert(1304.5303, m_dictNodes.Count == 0);
-            m_dictNodes.Clear();
-        }
-
-        internal void KillTreeBuilder(bool bJoin = false)
-        {
-            if (m_tree != null)
-            {
-                m_tree.EndThread(bJoin: bJoin);
-                SDLWPF.treeViewMain.Nodes.Clear();
-                m_listRootNodes.Clear();
-                TreeCleanup();
-            }
-        }
-
-        internal void TreeCleanup()
-        {
-            m_tree = null;
-            m_threadCollate = null;
-            m_listLVignore.Clear();
-
-            Collate.ClearMem();
-        }
-
-        internal void DoTreeSelect(SDL_TreeNode treeNode, TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
-        {
-            SDL_TreeNode rootNode = treeNode.Root();
-            String strFile = ((RootNodeDatum)rootNode.Tag).StrFile;
-            bool bSecondComparePane = (m_bCompareMode && rootNode.Checked);
-            Thread threadKill = bSecondComparePane ? m_threadSelectCompare : m_threadSelect;
-
-            if ((threadKill != null) && threadKill.IsAlive)
-            {
-                threadKill.Abort();
-            }
-
-            m_threadSelectCompare = null;
-            m_threadSelect = null;
-
-            TreeSelect treeSelect = new TreeSelect(treeNode, m_dictNodes, m_dictDriveInfo,
-                strFile, m_bCompareMode, bSecondComparePane,
-                statusCallback, doneCallback);
-
-            Thread thread = treeSelect.DoThreadFactory();
-
-            if (bSecondComparePane)
-            {
-                m_threadSelectCompare = thread;
-            }
-            else
-            {
-                m_threadSelect = thread;
-            }
-        }
-    }
-
     partial class Form1
     {
         internal void ClearMem_TreeForm()
@@ -143,7 +60,7 @@ namespace SearchDirLists
                 }
             }));
 
-            Collate collate = new Collate(SDLWPF.treeViewMain, gd.m_dictNodes,
+            Collate collate = new Collate(gd.m_dictNodes,
                 form_lvClones, form_lvSameVol, form_lvUnique,
                 gd.m_listRootNodes, gd.m_listTreeNodes, gd.m_bCheckboxes,
                 gd.m_listLVignore, form_chkLoose.Checked);
@@ -452,6 +369,88 @@ namespace SearchDirLists
                 gd.m_threadCollate = new Thread(new ThreadStart(DoCollation));
                 gd.m_threadCollate.IsBackground = true;
                 gd.m_threadCollate.Start();
+            }
+        }
+    }
+
+    partial class GlobalData
+    {
+        internal readonly SortedDictionary<Correlate, UList<SDL_TreeNode>> m_dictNodes = new SortedDictionary<Correlate, UList<SDL_TreeNode>>();
+        internal readonly Dictionary<String, String> m_dictDriveInfo = new Dictionary<String, String>();
+        internal Tree m_tree = null;
+        internal Thread m_threadCollate = null;
+        internal Thread m_threadSelect = null;
+        internal Thread m_threadSelectCompare = null;
+
+        internal readonly List<SDL_ListViewItem> m_listLVignore = new List<SDL_ListViewItem>();
+        internal readonly UList<SDL_TreeNode> m_listTreeNodes = new UList<SDL_TreeNode>();
+        internal readonly List<SDL_TreeNode> m_listRootNodes = new List<SDL_TreeNode>();
+
+        internal void ClearMem_TreeForm()
+        {
+            Utilities.Assert(1304.5301, m_listLVignore.Count == 0);
+
+            m_listLVignore.Clear();
+            m_listTreeNodes.Clear();
+            m_listRootNodes.Clear();
+
+            Utilities.Assert(1304.5302, m_tree == null);
+            m_tree = null;
+
+            m_dictDriveInfo.Clear();
+
+            // m_dictNodes is tested to recreate tree.
+            Utilities.Assert(1304.5303, m_dictNodes.Count == 0);
+            m_dictNodes.Clear();
+        }
+
+        internal void KillTreeBuilder(bool bJoin = false)
+        {
+            if (m_tree != null)
+            {
+                m_tree.EndThread(bJoin: bJoin);
+                SDLWPF.treeViewMain.Nodes.Clear();
+                m_listRootNodes.Clear();
+                TreeCleanup();
+            }
+        }
+
+        internal void TreeCleanup()
+        {
+            m_tree = null;
+            m_threadCollate = null;
+            m_listLVignore.Clear();
+            Collate.ClearMem();
+        }
+
+        internal void DoTreeSelect(SDL_TreeNode treeNode, TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
+        {
+            SDL_TreeNode rootNode = treeNode.Root();
+            String strFile = ((RootNodeDatum)rootNode.Tag).StrFile;
+            bool bSecondComparePane = (m_bCompareMode && rootNode.Checked);
+            Thread threadKill = bSecondComparePane ? m_threadSelectCompare : m_threadSelect;
+
+            if ((threadKill != null) && threadKill.IsAlive)
+            {
+                threadKill.Abort();
+            }
+
+            m_threadSelectCompare = null;
+            m_threadSelect = null;
+
+            TreeSelect treeSelect = new TreeSelect(treeNode, m_dictNodes, m_dictDriveInfo,
+                strFile, m_bCompareMode, bSecondComparePane,
+                statusCallback, doneCallback);
+
+            Thread thread = treeSelect.DoThreadFactory();
+
+            if (bSecondComparePane)
+            {
+                m_threadSelectCompare = thread;
+            }
+            else
+            {
+                m_threadSelect = thread;
             }
         }
     }

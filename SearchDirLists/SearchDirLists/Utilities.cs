@@ -1,65 +1,196 @@
-﻿using System;
+﻿//#define WPF
+#if WPF
+using System.Windows.Controls;
+using System.Windows.Media; using Media = System.Windows.Media;
+using System.Windows.Markup;
+using System.Xml;
+using System.Windows;
+#else
+using System.Windows.Forms;
+using System.Drawing;
+#endif
+
+using Forms = System.Windows.Forms;
+using Drawing = System.Drawing;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Drawing;
 using System.Threading;
 using System.Diagnostics;
 
 namespace SearchDirLists
 {
-    class Blinky
+#if (WPF)
+/**/    class SDL_TreeView : TreeView
+/**/    {
+/**/        internal TreeViewItem SelectedNode { get { return (TreeViewItem)SelectedItem; } set { } }
+/**/    }
+/**/
+/**/    class SDL_TreeNode : TreeViewItem
+/**/    {
+/**/        internal SDL_TreeNode() { }
+/**/        internal SDL_TreeNode(String strContent) { Header = strContent; }
+/**/        internal SDL_TreeNode(String strContent, SDL_TreeNode[] arrNodes) { Header = strContent; foreach (SDL_TreeNode treeNode in arrNodes) { Items.Add(treeNode); } }
+/**/        
+/**/        internal bool Checked;
+/**/        internal Drawing.Color ForeColor { get { return this.GetForeColor(); } set { this.SetForeColor(value); } }
+/**/        internal Drawing.Color BackColor { get { return this.GetBackColor(); } set { this.SetBackColor(value); } }
+/**/        internal SDL_TreeNode FirstNode { get { return (SDL_TreeNode)this.GetFirstNode(); } }
+/**/        internal String GlobalData.FullPath { get { return this.GetFullPath(); } }
+/**/        internal ItemCollection Nodes { get { return Items; } }
+/**/        internal SDL_TreeNode NextNode { get { if (Parent == null) return null; ItemCollection c = ((TreeViewItem)Parent).Items; int i = c.IndexOf(this) + 1; if (i < c.Count) return (SDL_TreeNode)c[i]; return null; } }
+/**/        internal int Level { get { int i = 0; if (Parent != null) { i = ((SDL_TreeNode)Parent).Level; ++i; } return i; } }
+/**/        internal Drawing.Font NodeFont; // { get { return new Drawing.Font(FontFamily.FamilyNames[, (float)FontSize, (Drawing.FontStyle)FontStyle); } }
+/**/        internal int SelectedImageIndex = -1;
+/**/        internal String Text { get { return (String)Header; } set { Header = value; } }
+/**/        internal String ToolTipText;
+/**/        internal SDL_TreeView TreeView;
+/**/    }
+/**/
+/**/    class SDL_ListViewItem : ListViewItem
+/**/    {
+/**/        public SDL_ListViewItem() : base() { }
+/**/        internal SDL_ListViewItem(String strContent) { AddText(strContent); }
+/**/        internal SDL_ListViewItem(String[] arrString) {} //{ int n = this. View.Columns.Count;  foreach (String s in arrString) { } }
+/**/        internal Drawing.Color ForeColor { get { return this.GetForeColor(); } set { this.SetForeColor(value); } }
+/**/        internal Drawing.Color BackColor { get { return this.GetBackColor(); } set { this.SetBackColor(value); } }
+/**/        internal bool Selected;
+/**/        internal bool Focused;
+/**/        internal Drawing.Font Font;
+/**/        internal int Index;
+/**/        internal ListView ListView;
+/**/        internal void Remove() { }
+/**/        internal ListViewItem[] SubItems;
+/**/    }
+/**/
+/**/    class SDL_ListViewSubitem : ListViewItem
+/**/    {
+/**/    }
+/**/
+/**/    static class SDLWPF
+/**/    {
+/**/        // TreeNode
+/**/        internal static object GetTag(this DependencyObject obj) { return ((TreeViewItem)obj).Tag; }
+/**/        internal static void SetTag(this DependencyObject obj, object o) { ((TreeViewItem)obj).Tag = o; }
+/**/        internal static TreeViewItem GetFirstNode(this SDL_TreeNode node) { return (node.Items.Count > 0) ? (TreeViewItem)node.Items[0] : null; }
+/**/        internal static String GetFullPath(this SDL_TreeNode node) { String s = ""; if (node.Parent != null) { s += ((SDL_TreeNode)node.Parent).GetFullPath() + Path.DirectorySeparatorChar; } s += node.Header; return s; }
+/**/
+/**/        // Control
+/**/        static Drawing.Color _GetColor(Media.Brush brush) { Media.Color c = ((SolidColorBrush)brush).Color; return Drawing.Color.FromArgb(c.A, c.R, c.G, c.B); }
+/**/        static SolidColorBrush _SetColor(Drawing.Color color) { Drawing.Color c = color; return new SolidColorBrush(Media.Color.FromArgb(c.A, c.R, c.G, c.B)); }
+/**/        internal static Drawing.Color GetBackColor(this Control ctl) { return _GetColor(ctl.Background); }
+/**/        internal static void SetBackColor(this Control ctl, Drawing.Color c) { ctl.Background = _SetColor(c); }
+/**/        internal static Drawing.Color GetForeColor(this Control ctl) { return _GetColor(ctl.Foreground); }
+/**/        internal static void SetForeColor(this Control ctl, Drawing.Color c) { ctl.Foreground = _SetColor(c); }
+/**/        internal static object Clone(this Control ctl) { return XamlReader.Load(XmlReader.Create(new StringReader(XamlWriter.Save(ctl)))); }
+/**/        internal static void EnsureVisible(this Control ctl) { ctl.BringIntoView(); }
+/**/
+/**/        // LV
+/**/        internal static bool ContainsKey(this ItemCollection c) { return false; }
+/**/        internal static String Text(this ListViewItem l) { return null; }
+/**/        internal static void SetText(this ListViewItem l, String s) { }
+/**/        internal static int GetCount(this ListViewItem[] a) { return a.Length; }
+/**/        internal static void Add(this ListViewItem[] a, ListViewItem i) { List<ListViewItem> l = a.ToList(); l.Add(i); a = l.ToArray(); }
+/**/
+/**/        // Static
+/**/        internal static Color Clr(Drawing.Color i) { Color c = Color.FromArgb(i.A, i.R, i.G, i.B); return c; }
+/**/        internal static Drawing.Color ClrA(Color i) { Drawing.Color c = Drawing.Color.FromArgb(i.A, i.R, i.G, i.B); return c; }
+/**/
+/**/        internal static TreeView treeViewMain = null; //Form1.static_form.SDLWPF.treeViewMain;
+/**/        internal static TreeView treeViewCompare1 = null; //Form1.static_form.form_treeCompare1;
+/**/        internal static TreeView treeViewCompare2 = null; //Form1.static_form.form_treeCompare2;
+/**/    }
+#else
+    class SDL_ListViewItem : ListViewItem
+    {
+        public SDL_ListViewItem() : base() { }
+        internal SDL_ListViewItem(String strContent) : base(strContent) { }
+        internal SDL_ListViewItem(String[] arrString) : base(arrString) { }
+    }
+
+    class SDL_ListViewSubitem : ListViewItem.ListViewSubItem
+    {
+    }
+
+    class SDL_TreeNode : TreeNode
+    {
+        internal SDL_TreeNode() : base() { }
+        internal SDL_TreeNode(String strContent) : base(strContent) { }
+        internal SDL_TreeNode(String strContent, SDL_TreeNode[] arrNodes) : base(strContent, arrNodes) { }
+    }
+
+    static class SDLWPF
+    {
+        internal static object GetTag(this TreeNode node) { return node.Tag; }
+        internal static void SetTag(this TreeNode node, object o) { node.Tag = o; }
+        internal static Color Clr(Drawing.Color i) { return i; }
+        internal static Color ClrA(Drawing.Color i) { return i; }
+
+        // extension method as property
+        internal static String Text(this ListViewItem l) { return l.Text; }
+        internal static void SetText(this ListViewItem l, String s) { l.Text = s; }
+        internal static String Text(this ListViewItem.ListViewSubItem l) { return l.Text; }
+        internal static void SetText(this ListViewItem.ListViewSubItem l, String s) { l.Text = s; }
+        internal static int GetCount(this ListViewItem.ListViewSubItemCollection a) { return a.Count; }
+
+        internal static TreeView treeViewMain = Form1.static_form.form_treeViewBrowse;
+        internal static TreeView treeViewCompare1 = Form1.static_form.form_treeCompare1;
+        internal static TreeView treeViewCompare2 = Form1.static_form.form_treeCompare2;
+    }
+#endif
+
+class Blinky
     {
         static bool m_bTreeSelect = false;
         internal static bool TreeSelect { get { return m_bTreeSelect; } }
 
-        readonly Control m_defaultControl = null;
-        readonly System.Windows.Forms.Timer m_timer = null;
+        readonly Forms.Control m_defaultControl = null;
+        readonly Forms.Timer m_timer = null;
 
         Holder m_holder = new NullHolder();
-        Color m_clrBlink = Color.DarkTurquoise;
+        Drawing.Color m_clrBlink = Drawing.Color.DarkTurquoise;
         int m_nBlink = 0;
         int m_nNumBlinks = 10;
         bool m_bProgress = false;
 
         abstract class Holder
         {
-            internal Color ClrOrig = Color.Empty;
-            internal virtual Color BackColor { get; set; }
+            internal Drawing.Color ClrOrig = Drawing.Color.Empty;
+            internal virtual Drawing.Color BackColor { get; set; }
             internal virtual void ResetHolder() { }
         }
         class NullHolder : Holder { }
         class TreeNodeHolder : Holder
         {
-            readonly TreeNode m_obj = null;
-            internal TreeNodeHolder(TreeNode obj) { m_obj = obj; m_bTreeSelect = true; }
-            internal override Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
+            readonly SDL_TreeNode m_obj = null;
+            internal TreeNodeHolder(SDL_TreeNode obj) { m_obj = obj; m_bTreeSelect = true; }
+            internal override Drawing.Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
             internal override void ResetHolder() { m_bTreeSelect = false; m_obj.TreeView.SelectedNode = m_obj; }
         }
         class ListViewItemHolder : Holder
         {
-            readonly ListViewItem m_obj = null;
-            internal ListViewItemHolder(ListViewItem obj) { m_obj = obj; }
-            internal override Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
+            readonly SDL_ListViewItem m_obj = null;
+            internal ListViewItemHolder(SDL_ListViewItem obj) { m_obj = obj; }
+            internal override Drawing.Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
             internal override void ResetHolder() { m_obj.Selected = true; }
         }
         class ControlHolder : Holder
         {
-            protected readonly Control m_obj = null;
-            internal ControlHolder(Control obj) { m_obj = obj; }
-            internal override Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
+            protected readonly Forms.Control m_obj = null;
+            internal ControlHolder(Forms.Control obj) { m_obj = obj; }
+            internal override Drawing.Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
         }
 
-        internal Blinky(System.Windows.Forms.Timer timer, Control defaultControl)
+        internal Blinky(Forms.Timer timer, Forms.Control defaultControl)
         {
             m_timer = timer;
             m_defaultControl = defaultControl;
         }
 
-        internal void SelectTreeNode(TreeNode treeNode, bool Once = true)
+        internal void SelectTreeNode(SDL_TreeNode treeNode, bool Once = true)
         {
             Reset();
             m_holder = new TreeNodeHolder(treeNode);
@@ -70,7 +201,7 @@ namespace SearchDirLists
             m_defaultControl.Select();      // search results UX, and selected treeview
         }
 
-        internal void SelectLVitem(ListViewItem lvItem)
+        internal void SelectLVitem(SDL_ListViewItem lvItem)
         {
             Reset();
             m_holder = new ListViewItemHolder(lvItem);
@@ -80,21 +211,21 @@ namespace SearchDirLists
             m_defaultControl.Select();      // search results UX
         }
 
-        internal void Go(Control ctl, Color? clr = null, bool Once = false)
+        internal void Go(Forms.Control ctl, Drawing.Color? clr = null, bool Once = false)
         {
             Reset();
             m_holder = new ControlHolder(ctl);
             Go_A(clr, Once);
         }
 
-        internal void Go(Color? clr = null, bool Once = false, bool bProgress = false)
+        internal void Go(Drawing.Color? clr = null, bool Once = false, bool bProgress = false)
         {
             Reset();
             m_holder = new ControlHolder(m_defaultControl);
             Go_A(clr, Once, bProgress);
         }
 
-        void Go_A(Color? clr = null, bool Once = false, bool bProgress = false)
+        void Go_A(Drawing.Color? clr = null, bool Once = false, bool bProgress = false)
         {
             Utilities.Assert(1303.431013, m_timer.Enabled == false, bTraceOnly: true);
             Utilities.Assert(1303.431015, m_nBlink == 0, bTraceOnly: true);
@@ -103,7 +234,7 @@ namespace SearchDirLists
 
             m_holder.ClrOrig = m_holder.BackColor;
             m_bProgress = bProgress;
-            m_clrBlink = clr ?? (bProgress ? Color.LightSalmon : Color.Turquoise);
+            m_clrBlink = clr ?? (bProgress ? Drawing.Color.LightSalmon : Drawing.Color.Turquoise);
             m_nBlink = 0;
             m_nNumBlinks = Once ? 2 : 10;
             m_timer.Interval = bProgress ? 500 : (Once ? 100 : 50);
@@ -135,14 +266,14 @@ namespace SearchDirLists
 
     static class ExtensionMethods
     {
-        internal static bool IsChildOf(this TreeNode child, TreeNode treeNode)
+        internal static bool IsChildOf(this SDL_TreeNode child, SDL_TreeNode treeNode)
         {
             if (child.Level <= treeNode.Level)
             {
                 return false;
             }
 
-            TreeNode parentNode = child.Parent;
+            SDL_TreeNode parentNode = (SDL_TreeNode)child.Parent;
 
             while (parentNode != null)
             {
@@ -151,33 +282,33 @@ namespace SearchDirLists
                     return true;
                 }
 
-                parentNode = parentNode.Parent;
+                parentNode = (SDL_TreeNode)parentNode.Parent;
             }
 
             return false;
         }
 
-        internal static TreeNode Root(this TreeNode treeNode)
+        internal static SDL_TreeNode Root(this SDL_TreeNode treeNode)
         {
-            TreeNode nodeParent = treeNode;
+            SDL_TreeNode nodeParent = treeNode;
 
             while (nodeParent.Parent != null)
             {
-                nodeParent = nodeParent.Parent;
+                nodeParent = (SDL_TreeNode)nodeParent.Parent;
             }
 
             return nodeParent;
         }
 
-        internal static Rectangle Scale(this Rectangle rc_in, SizeF scale)
+        internal static Drawing.Rectangle Scale(this Drawing.Rectangle rc_in, Drawing.SizeF scale)
         {
-            RectangleF rc = rc_in;
+            Drawing.RectangleF rc = rc_in;
 
             rc.X *= scale.Width;
             rc.Y *= scale.Height;
             rc.Width *= scale.Width;
             rc.Height *= scale.Height;
-            return Rectangle.Ceiling(rc);
+            return Drawing.Rectangle.Ceiling(rc);
         }
     }
 
@@ -199,9 +330,9 @@ namespace SearchDirLists
 
         public const UInt32 FLASHW_ALL = 3;
 
-        internal static void Go(Control ctl_in = null, bool Once = false)
+        internal static void Go(Forms.Control ctl_in = null, bool Once = false)
         {
-            Control ctl = ctl_in ?? Form1.static_form;
+            Forms.Control ctl = ctl_in ?? Form1.static_form;
 
             Utilities.CheckAndInvoke(ctl, new Action(() =>
             {
@@ -234,18 +365,18 @@ namespace SearchDirLists
         internal String Include { get { return m_strInclude; } }
         internal String VolumeGroup { get { return m_strVolumeGroup; } }
 
-        internal LVvolStrings(ListViewItem lvItem)
+        internal LVvolStrings(SDL_ListViewItem lvItem)
         {
             m_nIndex = lvItem.Index;
-            m_strVolumeName = lvItem.SubItems[0].Text;
-            m_strPath = lvItem.SubItems[1].Text;
-            m_strSaveAs = lvItem.SubItems[2].Text;
-            m_strStatus = lvItem.SubItems[3].Text;
-            m_strInclude = lvItem.SubItems[4].Text;
+            m_strVolumeName = lvItem.SubItems[0].Text();
+            m_strPath = lvItem.SubItems[1].Text();
+            m_strSaveAs = lvItem.SubItems[2].Text();
+            m_strStatus = lvItem.SubItems[3].Text();
+            m_strInclude = lvItem.SubItems[4].Text();
 
-            if ((lvItem.SubItems.Count > 5) && StrValid(lvItem.SubItems[5].Text))
+            if ((lvItem.SubItems.Count > 5) && StrValid(lvItem.SubItems[5].Text()))
             {
-                m_strVolumeGroup = lvItem.SubItems[5].Text;
+                m_strVolumeGroup = lvItem.SubItems[5].Text();
             }
         }
 
@@ -259,13 +390,13 @@ namespace SearchDirLists
             }
         }
 
-        internal void SetStatus_BadFile(ListView lv)
+        internal void SetStatus_BadFile(Forms.ListView lv)
         {
             lv.Items[Index].SubItems[3].Text =
                 m_strStatus = "Bad file. Will overwrite.";
         }
 
-        internal void SetStatus_Done(ListView lv, TreeNode rootNode)
+        internal void SetStatus_Done(Forms.ListView lv, SDL_TreeNode rootNode)
         {
             lv.Items[Index].Tag = rootNode;
         }
@@ -285,13 +416,13 @@ namespace SearchDirLists
         String m_strExt = null;
         public String Filter { get { return "SearchDirLists " + Description + "|*." + m_strExt; } }
 
-        protected static OpenFileDialog static_OpenFileDialog = null;
-        protected static SaveFileDialog static_SaveFileDialog = null;
+        protected static Forms.OpenFileDialog static_OpenFileDialog = null;
+        protected static Forms.SaveFileDialog static_SaveFileDialog = null;
 
         protected String m_strPrevFile = null;
         protected String m_strFileNotDialog = null;
 
-        internal static void SetFileDialogs(OpenFileDialog ofd_in, SaveFileDialog sfd_in)
+        internal static void SetFileDialogs(Forms.OpenFileDialog ofd_in, Forms.SaveFileDialog sfd_in)
         {
             static_OpenFileDialog = ofd_in;
             static_SaveFileDialog = sfd_in;
@@ -307,14 +438,14 @@ namespace SearchDirLists
             m_strDescription = strDescription;
         }
 
-        bool ShowDialog(FileDialog fd)
+        bool ShowDialog(Forms.FileDialog fd)
         {
             fd.Filter = Filter + "|" + BaseFilter;
             fd.FilterIndex = 0;
             fd.FileName = Path.GetFileNameWithoutExtension(m_strPrevFile);
             fd.InitialDirectory = Path.GetDirectoryName(m_strPrevFile);
 
-            if (fd.ShowDialog() != DialogResult.OK)
+            if (fd.ShowDialog() != Forms.DialogResult.OK)
             {
                 return false;
             }
@@ -323,16 +454,16 @@ namespace SearchDirLists
             return true;
         }
 
-        protected virtual void ReadListItem(UList<ListViewItem> listItems, String[] strArray) { listItems.Add(new ListViewItem(strArray)); }
+        protected virtual void ReadListItem(UList<SDL_ListViewItem> listItems, String[] strArray) { listItems.Add(new SDL_ListViewItem(strArray)); }
 
-        internal bool ReadList(ListView lv)
+        internal bool ReadList(Forms.ListView lv)
         {
             if ((m_strFileNotDialog == null) && (ShowDialog(static_OpenFileDialog) == false))
             {
                 return false;
             }
 
-            UList<ListViewItem> listItems = new UList<ListViewItem>();
+            UList<SDL_ListViewItem> listItems = new UList<SDL_ListViewItem>();
 
             using (StreamReader sr = File.OpenText(m_strFileNotDialog))
             {
@@ -363,7 +494,7 @@ namespace SearchDirLists
 
         protected virtual String WriteListItem(int nIndex, String str) { return str; }
 
-        internal bool WriteList(ListView.ListViewItemCollection lvItems)
+        internal bool WriteList(Forms.ListView.ListViewItemCollection lvItems)
         {
             if (ShowDialog(static_SaveFileDialog) == false)
             {
@@ -371,8 +502,8 @@ namespace SearchDirLists
             }
 
             if ((File.Exists(m_strPrevFile))
-                && (m_MessageboxCallback(m_strPrevFile + " already exists. Overwrite?", Description, MessageBoxButtons.YesNo)
-                != System.Windows.Forms.DialogResult.Yes))
+                && (m_MessageboxCallback(m_strPrevFile + " already exists. Overwrite?", Description, Forms.MessageBoxButtons.YesNo)
+                != Forms.DialogResult.Yes))
             {
                 return false;
             }
@@ -381,13 +512,13 @@ namespace SearchDirLists
             {
                 sw.WriteLine(Header);
 
-                foreach (ListViewItem lvItem in lvItems)
+                foreach (SDL_ListViewItem lvItem in lvItems)
                 {
-                    sw.Write(WriteListItem(0, lvItem.SubItems[0].Text));
+                    sw.Write(WriteListItem(0, lvItem.SubItems[0].Text()));
 
                     int nIx = 1;
 
-                    foreach (ListViewItem.ListViewSubItem lvSubitem in lvItem.SubItems.Cast<ListViewItem.ListViewSubItem>().Skip(1))
+                    foreach (Forms.ListViewItem.ListViewSubItem lvSubitem in lvItem.SubItems.Cast<Forms.ListViewItem.ListViewSubItem>().Skip(1))
                     {
                         sw.Write('\t' + WriteListItem(nIx, lvSubitem.Text));
                         ++nIx;
@@ -405,7 +536,7 @@ namespace SearchDirLists
     {
         internal SDL_VolumeFile(String strFile = null) : base(mSTRvolListHeader, mSTRfileExt_Volume, "volume") { m_strFileNotDialog = strFile; }
 
-        protected override void ReadListItem(UList<ListViewItem> listItems, String[] strArray)
+        protected override void ReadListItem(UList<SDL_ListViewItem> listItems, String[] strArray)
         {
             if (strArray.Length < 4)
             {
@@ -425,7 +556,7 @@ namespace SearchDirLists
             }
 
             strArray[1] = strArray[1].TrimEnd(Path.DirectorySeparatorChar);
-            listItems.Add(new ListViewItem(strArray));
+            listItems.Add(new SDL_ListViewItem(strArray));
         }
 
         protected override String WriteListItem(int nIndex, String str)
@@ -562,9 +693,9 @@ namespace SearchDirLists
 
         internal static void Closure(Action action) { action(); }
 
-        internal static object CheckAndInvoke(Control control, Delegate action, object[] args = null)
+        internal static object CheckAndInvoke(Forms.Control control, Delegate action, object[] args = null)
         {
-            if (Form1.AppExit)
+            if (GlobalData.AppExit)
             {
                 return null;
             }
@@ -743,11 +874,11 @@ namespace SearchDirLists
             }
         }
 
-        internal static int CountNodes(List<TreeNode> listNodes)
+        internal static int CountNodes(List<SDL_TreeNode> listNodes)
         {
             int nCount = 0;
 
-            foreach (TreeNode treeNode in listNodes)
+            foreach (SDL_TreeNode treeNode in listNodes)
             {
                 nCount += CountNodes(treeNode, bNextNode: false);
             }
@@ -755,21 +886,21 @@ namespace SearchDirLists
             return nCount;
         }
 
-        internal static int CountNodes(TreeNode treeNode_in, bool bNextNode = true)
+        internal static int CountNodes(SDL_TreeNode treeNode_in, bool bNextNode = true)
         {
-            TreeNode treeNode = treeNode_in;
+            SDL_TreeNode treeNode = treeNode_in;
             int nCount = 0;
 
             do
             {
                 if ((treeNode.Nodes != null) && (treeNode.Nodes.Count > 0))
                 {
-                    nCount += CountNodes(treeNode.Nodes[0]);
+                    nCount += CountNodes((SDL_TreeNode)treeNode.Nodes[0]);
                 }
 
                 ++nCount;
             }
-            while (bNextNode && ((treeNode = treeNode.NextNode) != null));
+            while (bNextNode && ((treeNode = (SDL_TreeNode)treeNode.NextNode) != null));
 
             return nCount;
         }
@@ -1196,17 +1327,17 @@ namespace SearchDirLists
 
     class WPF_Form
     {
-        internal static DialogResult WPFMessageBox(String strMessage, String strTitle = null, MessageBoxButtons? buttons = null)
+        internal static Forms.DialogResult WPFMessageBox(String strMessage, String strTitle = null, Forms.MessageBoxButtons? buttons = null)
         {
-            DialogResult dlgRet = DialogResult.None;
+            Forms.DialogResult dlgRet = Forms.DialogResult.None;
 
             if (buttons == null)
             {
-                dlgRet = MessageBox.Show(strMessage.PadRight(100), strTitle);
+                dlgRet = Forms.MessageBox.Show(strMessage.PadRight(100), strTitle);
             }
             else
             {
-                dlgRet = MessageBox.Show(strMessage.PadRight(100), strTitle, buttons.Value);
+                dlgRet = Forms.MessageBox.Show(strMessage.PadRight(100), strTitle, buttons.Value);
             }
 
             return dlgRet;

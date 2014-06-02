@@ -69,17 +69,17 @@
                 <ItemsControl Grid.Row="1" Style="{StaticResource ComboRows}">
                     <Label Content="Path" />
                     <ComboBox Name="from_cbPath"  Grid.Column="1"/>
-                    <Button Content="..." Name="form_btnPath" Grid.Column="2" />
+                    <Button Content="..." Name="form_btnPath" Grid.Column="2"  Command="{Binding Path=Icmd_SetPath}"/>
                 </ItemsControl>
                 <ItemsControl Grid.Row="2" Style="{StaticResource ComboRows}">
                     <Label Content="Directory listing file" />
                     <ComboBox Name="from_cbVolumeName" HorizontalAlignment="Stretch" Grid.Column="1"/>
-                    <Button Content="..." Name="form_btnSaveAs" Grid.Column="2" />
+                    <Button Content="..." Name="form_btnSaveAs" Grid.Column="2" Command="{Binding Path=Icmd_SetListingFile}"/>
                 </ItemsControl>
                 <StackPanel Grid.Row="3" Orientation="Horizontal">
                     <Label Content="Volume list" VerticalAlignment="Bottom"/>
-                    <Button Content="Load" Name="form_btnLoad" />
-                    <Button Content="Save" Name="form_btnSave"/>
+                    <Button Content="Load" Name="form_btnLoad" Command="{Binding Path=Icmd_LoadVolumeList}"/>
+                    <Button Content="Save" Name="form_btnSave" Command="{Binding Path=Icmd_SaveVolumeList}"/>
                 </StackPanel>
                 <Button Grid.Row="3" Content="Add volume" HorizontalAlignment="Center" Height="60" Command="{Binding Path=Icmd_AddVolume}"/>
                 <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">

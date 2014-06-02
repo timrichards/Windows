@@ -107,7 +107,7 @@ namespace SearchDirLists
 
                 while ((strLine = file.ReadLine()) != null)
                 {
-                    if (m_bThreadAbort || Form1.AppExit)
+                    if (m_bThreadAbort || GlobalData.AppExit)
                     {
                         return;
                     }
@@ -243,7 +243,7 @@ namespace SearchDirLists
             SearchFile.FolderSpecialHandling folderHandling, bool bSearchFilesOnly, String strCurrentNode,
             SearchStatusDelegate statusCallback, Action doneCallback)
         {
-            foreach (ListViewItem lvItem in lvVolItems)
+            foreach (SDL_ListViewItem lvItem in lvVolItems)
             {
                 m_list_lvVolStrings.Add(new LVvolStrings(lvItem));
             }
@@ -277,7 +277,7 @@ namespace SearchDirLists
 
             Utilities.WriteLine(String.Format("Completed Search for {0} in {1} seconds.", m_strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
-            if (m_bThreadAbort || Form1.AppExit)
+            if (m_bThreadAbort || GlobalData.AppExit)
             {
                 return;
             }
@@ -306,18 +306,19 @@ namespace SearchDirLists
         public bool IsAborted { get { return m_bThreadAbort; } }
     }
 
-    partial class Form1 : Form
+    partial class GlobalData
     {
-        bool m_bSearchResultsType2_List = false;
-        int m_nSearchResultsIndexer = -1;
-        TreeNode[] m_SearchResultsType1_Array = null;
-        List<SearchResults> m_SearchResultsType2_List = new List<SearchResults>();
+        internal bool m_bSearchResultsType2_List = false;
+        internal int m_nSearchResultsIndexer = -1;
+        internal SDL_TreeNode[] m_SearchResultsType1_Array = null;
+        internal List<SearchResults> m_SearchResultsType2_List = new List<SearchResults>();
 
-        SearchType2 m_searchType2 = null;
-        SearchResults m_firstSearchResults = null;
-        SearchResults m_lastSearchResults = null;
+        internal SearchType2 m_searchType2 = null;
+        internal SearchResults m_firstSearchResults = null;
+        internal SearchResults m_lastSearchResults = null;
+        internal String m_strSelectFile = null;
 
-        void ClearMem_Search()
+        internal void ClearMem_Search()
         {
             m_bSearchResultsType2_List = false;
             m_nSearchResultsIndexer = -1;
@@ -332,160 +333,9 @@ namespace SearchDirLists
             m_lastSearchResults = null;
         }
 
-        const String mSTRsearchTitle = "Search";
+        internal const String mSTRsearchTitle = "Search";
 
-        TreeNode SearchType1_FindNode(String strSearch, TreeNode startNode = null, TreeView treeView = null)
-        {
-            ClearMem_Search();
-
-            if (Utilities.StrValid(strSearch) == false)
-            {
-                return null;
-            }
-
-            if (startNode != null)
-            {
-                treeView = startNode.TreeView;
-            }
-            else if (m_bCompareMode)
-            {
-                treeView = (m_treeCopyToClipboard is TreeView) ? (TreeView)m_treeCopyToClipboard : form_treeCompare1;
-            }
-            else if (treeView == null)
-            {
-                treeView = form_treeViewBrowse;
-            }
-
-            TreeNode treeNode = GetNodeByPath(strSearch, treeView);
-
-            if (treeNode == null)
-            {
-                // case sensitive only when user enters an uppercase character
-
-                List<TreeNode> listTreeNodes = m_listTreeNodes.ToList();
-
-                if (m_bCompareMode)
-                {
-                    listTreeNodes = ((treeView == form_treeCompare2) ? m_listTreeNodes_Compare2 : m_listTreeNodes_Compare1).ToList();
-                }
-
-                if (strSearch.ToLower() == strSearch)
-                {
-                    m_SearchResultsType1_Array = listTreeNodes.FindAll(node => node.Text.ToLower().Contains(strSearch)).ToArray();
-                }
-                else
-                {
-                    m_SearchResultsType1_Array = listTreeNodes.FindAll(node => node.Text.Contains(strSearch)).ToArray();
-                }
-            }
-            else
-            {
-                m_SearchResultsType1_Array = new TreeNode[] { treeNode };
-            }
-
-            if ((m_SearchResultsType1_Array != null) && (m_SearchResultsType1_Array.Length > 0))
-            {
-                if (m_SearchResultsType1_Array.Contains(startNode))
-                {
-                    m_nSearchResultsIndexer = (m_SearchResultsType1_Array.Count(node => node != startNode) - 1);
-                    return startNode;
-                }
-                else
-                {
-                    m_nSearchResultsIndexer = 0;
-                    return m_SearchResultsType1_Array[0];
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        bool SearchResultsType2_Nav(TreeView treeView)
-        {
-            int nCounter = -1;
-
-            while (true)
-            {
-                if (m_SearchResultsType2_List.Count <= 0)       // torturing the UX
-                {
-                    return false;
-                }
-
-                foreach (SearchResults searchResults in m_SearchResultsType2_List)
-                {
-                    foreach (SearchResultsDir resultDir in searchResults.Results)
-                    {
-                        if (resultDir.ListFiles.Count <= 0)
-                        {
-                            if (++nCounter <= m_nSearchResultsIndexer)
-                            {
-                                continue;
-                            }
-
-                            TreeNode treeNode = GetNodeByPath(resultDir.StrDir, treeView);
-
-                            if (treeNode == null)
-                            {
-                                // compare mode
-                                Utilities.Assert(1307.8303, false);
-                            }
-
-                            if (treeNode != null)
-                            {
-                                m_bTreeViewIndirectSelChange = true;
-                                m_blinky.SelectTreeNode(treeNode);
-                                ++m_nSearchResultsIndexer;
-                            }
-
-                            return (treeNode != null);
-                        }
-                        else
-                        {
-                            foreach (String strFile in resultDir.ListFiles)
-                            {
-                                if (++nCounter <= m_nSearchResultsIndexer)
-                                {
-                                    continue;
-                                }
-
-                                m_strSelectFile = strFile;
-
-                                TreeNode treeNode = GetNodeByPath(resultDir.StrDir, treeView);
-
-                                if (treeNode == null)
-                                {
-                                    // compare mode
-                                    Utilities.Assert(1307.8303, false);
-                                }
-
-                                if (treeNode != null)
-                                {
-                                    if (treeNode.TreeView.SelectedNode == treeNode)
-                                    {
-                                        SelectFoundFile();
-                                    }
-                                    else
-                                    {
-                                        m_bTreeViewIndirectSelChange = true;
-                                        treeNode.TreeView.SelectedNode = treeNode;
-                                    }
-
-                                    ++m_nSearchResultsIndexer;
-                                }
-
-                                return (treeNode != null);
-                            }
-                        }
-                    }
-                }
-
-                // Don't bother imposing a modulus. Just let m_nSearchResultsIndexer grow.
-            }
-        }
-
-        void SearchFail()
+        internal void SearchFail()
         {
             m_nSearchResultsIndexer = -1;
             Utilities.Assert(1307.83037, m_SearchResultsType1_Array == null, bTraceOnly: true);
@@ -493,40 +343,10 @@ namespace SearchDirLists
             m_bSearchResultsType2_List = false;
             m_strSelectFile = null;
             m_blinky.Go(clr: Color.Red, Once: true);
-            Form1MessageBox("Couldn't find the specified search parameter.", mSTRsearchTitle);
+            m_MessageboxCallback("Couldn't find the specified search parameter.", mSTRsearchTitle);
         }
 
-        void SelectFoundFile()
-        {
-            if (AppExit)
-            {
-                return;
-            }
-
-            if (Utilities.StrValid(m_strSelectFile) == false)
-            {
-                return;
-            }
-
-            if (form_lvFiles.Items.Count <= 0)
-            {
-                // expected a file but got an empty listviewer
-                FlashWindow.Go(Once: true);
-                return;
-            }
-
-            ListViewItem lvItem = form_lvFiles.FindItemWithText(m_strSelectFile, includeSubItemsInSearch: true, startIndex: 0);
-
-            if (lvItem != null)
-            {
-                form_tabControlFileList.SelectedTab = form_tabPageFileList;
-                m_blinky.SelectLVitem(lvItem: lvItem);
-            }
-
-            m_strSelectFile = null;
-        }
-
-        void SearchStatusCallback(SearchResults searchResults, bool bFirst = false, bool bLast = false)
+        internal void SearchStatusCallback(SearchResults searchResults, bool bFirst = false, bool bLast = false)
         {
             if (searchResults.Results.Count <= 0)
             {
@@ -551,47 +371,233 @@ namespace SearchDirLists
             }
         }
 
+
+    }
+
+    partial class Form1
+    {
+        SDL_TreeNode SearchType1_FindNode(String strSearch, SDL_TreeNode startNode = null, TreeView treeView = null)
+        {
+            gd.ClearMem_Search();
+
+            if (Utilities.StrValid(strSearch) == false)
+            {
+                return null;
+            }
+
+            if (startNode != null)
+            {
+                treeView = startNode.TreeView;
+            }
+            else if (gd.m_bCompareMode)
+            {
+                treeView = (m_treeCopyToClipboard is TreeView) ? (TreeView)m_treeCopyToClipboard : SDLWPF.treeViewCompare1;
+            }
+            else if (treeView == null)
+            {
+                treeView = SDLWPF.treeViewMain;
+            }
+
+            SDL_TreeNode treeNode = gd.GetNodeByPath(strSearch, treeView);
+
+            if (treeNode == null)
+            {
+                // case sensitive only when user enters an uppercase character
+
+                List<SDL_TreeNode> listTreeNodes = gd.m_listTreeNodes.ToList();
+
+                if (gd.m_bCompareMode)
+                {
+                    listTreeNodes = ((treeView == SDLWPF.treeViewCompare2) ? gd.m_listTreeNodes_Compare2 : gd.m_listTreeNodes_Compare1).ToList();
+                }
+
+                if (strSearch.ToLower() == strSearch)
+                {
+                    gd.m_SearchResultsType1_Array = listTreeNodes.FindAll(node => node.Text.ToLower().Contains(strSearch)).ToArray();
+                }
+                else
+                {
+                    gd.m_SearchResultsType1_Array = listTreeNodes.FindAll(node => node.Text.Contains(strSearch)).ToArray();
+                }
+            }
+            else
+            {
+                gd.m_SearchResultsType1_Array = new SDL_TreeNode[] { treeNode };
+            }
+
+            if ((gd.m_SearchResultsType1_Array != null) && (gd.m_SearchResultsType1_Array.Length > 0))
+            {
+                if (gd.m_SearchResultsType1_Array.Contains(startNode))
+                {
+                    gd.m_nSearchResultsIndexer = (gd.m_SearchResultsType1_Array.Count(node => node != startNode) - 1);
+                    return startNode;
+                }
+                else
+                {
+                    gd.m_nSearchResultsIndexer = 0;
+                    return gd.m_SearchResultsType1_Array[0];
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        bool SearchResultsType2_Nav(TreeView treeView)
+        {
+            int nCounter = -1;
+
+            while (true)
+            {
+                if (gd.m_SearchResultsType2_List.Count <= 0)       // torturing the UX
+                {
+                    return false;
+                }
+
+                foreach (SearchResults searchResults in gd.m_SearchResultsType2_List)
+                {
+                    foreach (SearchResultsDir resultDir in searchResults.Results)
+                    {
+                        if (resultDir.ListFiles.Count <= 0)
+                        {
+                            if (++nCounter <= gd.m_nSearchResultsIndexer)
+                            {
+                                continue;
+                            }
+
+                            SDL_TreeNode treeNode = gd.GetNodeByPath(resultDir.StrDir, treeView);
+
+                            if (treeNode == null)
+                            {
+                                // compare mode
+                                Utilities.Assert(1307.8303, false);
+                            }
+
+                            if (treeNode != null)
+                            {
+                                gd.m_bTreeViewIndirectSelChange = true;
+                                gd.m_blinky.SelectTreeNode(treeNode);
+                                ++gd.m_nSearchResultsIndexer;
+                            }
+
+                            return (treeNode != null);
+                        }
+                        else
+                        {
+                            foreach (String strFile in resultDir.ListFiles)
+                            {
+                                if (++nCounter <= gd.m_nSearchResultsIndexer)
+                                {
+                                    continue;
+                                }
+
+                                gd.m_strSelectFile = strFile;
+
+                                SDL_TreeNode treeNode = gd.GetNodeByPath(resultDir.StrDir, treeView);
+
+                                if (treeNode == null)
+                                {
+                                    // compare mode
+                                    Utilities.Assert(1307.8303, false);
+                                }
+
+                                if (treeNode != null)
+                                {
+                                    if (treeNode.TreeView.SelectedNode == treeNode)
+                                    {
+                                        SelectFoundFile();
+                                    }
+                                    else
+                                    {
+                                        gd.m_bTreeViewIndirectSelChange = true;
+                                        treeNode.TreeView.SelectedNode = treeNode;
+                                    }
+
+                                    ++gd.m_nSearchResultsIndexer;
+                                }
+
+                                return (treeNode != null);
+                            }
+                        }
+                    }
+                }
+
+                // Don't bother imposing a modulus. Just let m_nSearchResultsIndexer grow.
+            }
+        }
+
+        void SelectFoundFile()
+        {
+            if (GlobalData.AppExit)
+            {
+                return;
+            }
+
+            if (Utilities.StrValid(gd.m_strSelectFile) == false)
+            {
+                return;
+            }
+
+            if (form_lvFiles.Items.Count <= 0)
+            {
+                // expected a file but got an empty listviewer
+                FlashWindow.Go(Once: true);
+                return;
+            }
+
+            SDL_ListViewItem lvItem = (SDL_ListViewItem)form_lvFiles.FindItemWithText(gd.m_strSelectFile, includeSubItemsInSearch: true, startIndex: 0);
+
+            if (lvItem != null)
+            {
+                form_tabControlFileList.SelectedTab = form_tabPageFileList;
+                gd.m_blinky.SelectLVitem(lvItem: lvItem);
+            }
+
+            gd.m_strSelectFile = null;
+        }
+
         void SearchDoneCallback()
         {
-            if (AppExit || (m_searchType2 == null) || m_searchType2.IsAborted)
+            if (GlobalData.AppExit || (gd.m_searchType2 == null) || gd.m_searchType2.IsAborted)
             {
                 return;
             }
 
             if (InvokeRequired) { Invoke(new Action(SearchDoneCallback)); return; }
 
-            m_searchType2 = null;
-            m_SearchResultsType2_List.Sort((x, y) => (x.VolStrings.VolumeName.CompareTo(y.VolStrings.VolumeName)));
+            gd.m_searchType2 = null;
+            gd.m_SearchResultsType2_List.Sort((x, y) => (x.VolStrings.VolumeName.CompareTo(y.VolStrings.VolumeName)));
 
-            if (m_firstSearchResults != null)
+            if (gd.m_firstSearchResults != null)
             {
-                m_SearchResultsType2_List.Insert(0, m_firstSearchResults);
-                m_firstSearchResults = null;
+                gd.m_SearchResultsType2_List.Insert(0, gd.m_firstSearchResults);
+                gd.m_firstSearchResults = null;
             }
 
-            if (m_lastSearchResults != null)
+            if (gd.m_lastSearchResults != null)
             {
-                m_SearchResultsType2_List.Add(m_lastSearchResults);
-                m_lastSearchResults = null;
+                gd.m_SearchResultsType2_List.Add(gd.m_lastSearchResults);
+                gd.m_lastSearchResults = null;
             }
 
-            m_blinky.Reset();
+            gd.m_blinky.Reset();
 
-            if (m_SearchResultsType2_List.Count <= 0)
+            if (gd.m_SearchResultsType2_List.Count <= 0)
             {
-                SearchFail();
+                gd.SearchFail();
                 return;
             }
 
-            m_bSearchResultsType2_List = true;
+            gd.m_bSearchResultsType2_List = true;
 
-            if (SearchResultsType2_Nav(form_treeViewBrowse) == false)
+            if (SearchResultsType2_Nav(SDLWPF.treeViewMain) == false)
             {
                 Utilities.Assert(1307.83043, false);
-                SearchFail();
+                gd.SearchFail();
             }
 
-            if ((m_form1MessageBoxOwner != null) && (m_form1MessageBoxOwner.Text == mSTRsearchTitle))
+            if ((m_form1MessageBoxOwner != null) && (m_form1MessageBoxOwner.Text == GlobalData.mSTRsearchTitle))
             {
                 m_form1MessageBoxOwner.Dispose();
                 m_form1MessageBoxOwner = null;
@@ -600,26 +606,26 @@ namespace SearchDirLists
 
         private void DoSearchType2(String strSearch, bool bKill = false, bool bSearchFilesOnly = false)
         {
-            if (m_searchType2 != null)
+            if (gd.m_searchType2 != null)
             {
                 DialogResult dlgResult = DialogResult.Yes;
 
                 if (bKill == false)
                 {
-                    dlgResult = Form1MessageBox("Already in progress. Restart search?" + "\n(or Cancel search.)".PadRight(100), mSTRsearchTitle, MessageBoxButtons.YesNoCancel);
+                    dlgResult = Form1MessageBox("Already in progress. Restart search?" + "\n(or Cancel search.)".PadRight(100), GlobalData.mSTRsearchTitle, MessageBoxButtons.YesNoCancel);
 
                     if (dlgResult == DialogResult.No)
                     {
-                        m_blinky.Go(bProgress: true);
+                        gd.m_blinky.Go(bProgress: true);
                         return;
                     }
                 }
 
-                if (m_searchType2 != null)   // needs to be here
+                if (gd.m_searchType2 != null)   // needs to be here
                 {
                     // DialogResult.Cancel
-                    m_searchType2.EndThread();
-                    m_searchType2 = null;
+                    gd.m_searchType2.EndThread();
+                    gd.m_searchType2 = null;
                 }
 
                 if (dlgResult != DialogResult.Yes)
@@ -628,66 +634,66 @@ namespace SearchDirLists
                 }
             }
 
-            m_blinky.Go(bProgress: true);
-            m_SearchResultsType2_List = new List<SearchResults>();
+            gd.m_blinky.Go(bProgress: true);
+            gd.m_SearchResultsType2_List = new List<SearchResults>();
 
             SearchFile.FolderSpecialHandling folderHandling = SearchFile.FolderSpecialHandling.None;    // not used
             String strCurrentNode = null;
 
-            if (form_treeViewBrowse.SelectedNode != null)
+            if (SDLWPF.treeViewMain.SelectedNode != null)
             {
-                strCurrentNode = FullPath(form_treeViewBrowse.SelectedNode);
+                strCurrentNode = GlobalData.FullPath((SDL_TreeNode)SDLWPF.treeViewMain.SelectedNode);
             }
 
-            Utilities.Assert(1307.83047, m_searchType2 == null);
+            Utilities.Assert(1307.83047, gd.m_searchType2 == null);
 
-            m_searchType2 = new SearchType2(form_lvVolumesMain.Items, strSearch, strSearch.ToLower() != strSearch,
+            gd.m_searchType2 = new SearchType2(form_lvVolumesMain.Items, strSearch, strSearch.ToLower() != strSearch,
                 folderHandling, bSearchFilesOnly, strCurrentNode,
-                new SearchStatusDelegate(SearchStatusCallback), new Action(SearchDoneCallback));
-            m_searchType2.DoThreadFactory();
+                new SearchStatusDelegate(gd.SearchStatusCallback), new Action(SearchDoneCallback));
+            gd.m_searchType2.DoThreadFactory();
         }
 
         void DoSearch(object sender)
         {
             if (form_cbFindbox.Text.Length <= 0)
             {
-                m_blinky.Go(clr: Color.Red, Once: true);
+                gd.m_blinky.Go(clr: Color.Red, Once: true);
                 return;
             }
 
             m_ctlLastSearchSender = (Control)sender;
 
-            TreeView treeView = form_treeViewBrowse;
+            TreeView treeView = SDLWPF.treeViewMain;
 
-            if (m_bCompareMode)
+            if (gd.m_bCompareMode)
             {
                 treeView = m_treeCopyToClipboard;
             }
 
             while (true)
             {
-                if (m_nSearchResultsIndexer < 0)
+                if (gd.m_nSearchResultsIndexer < 0)
                 {
-                    SearchType1_FindNode(form_cbFindbox.Text, treeView.SelectedNode, treeView);
+                    SearchType1_FindNode(form_cbFindbox.Text, (SDL_TreeNode)treeView.SelectedNode, treeView);
                 }
 
-                if (m_bSearchResultsType2_List)
+                if (gd.m_bSearchResultsType2_List)
                 {
                     SearchResultsType2_Nav(treeView);
                     break;
                 }
 
-                if ((m_SearchResultsType1_Array != null) && (m_SearchResultsType1_Array.Length > 0))
+                if ((gd.m_SearchResultsType1_Array != null) && (gd.m_SearchResultsType1_Array.Length > 0))
                 {
-                    TreeNode treeNode = m_SearchResultsType1_Array[m_nSearchResultsIndexer % m_SearchResultsType1_Array.Length];
+                    SDL_TreeNode treeNode = gd.m_SearchResultsType1_Array[gd.m_nSearchResultsIndexer % gd.m_SearchResultsType1_Array.Length];
 
-                    m_bTreeViewIndirectSelChange = true;
-                    m_blinky.SelectTreeNode(treeNode);
-                    ++m_nSearchResultsIndexer;
+                    gd.m_bTreeViewIndirectSelChange = true;
+                    gd.m_blinky.SelectTreeNode(treeNode);
+                    ++gd.m_nSearchResultsIndexer;
                 }
-                else if (treeView == form_treeCompare1)
+                else if (treeView == SDLWPF.treeViewCompare1)
                 {
-                    treeView = form_treeCompare2;
+                    treeView = SDLWPF.treeViewCompare2;
                     continue;
                 }
                 else if (form_cbFindbox.Text.Contains(Path.DirectorySeparatorChar))
@@ -696,19 +702,19 @@ namespace SearchDirLists
 
                     int nPos = form_cbFindbox.Text.LastIndexOf(Path.DirectorySeparatorChar);
                     String strMaybePath = form_cbFindbox.Text.Substring(0, nPos);
-                    TreeNode treeNode = GetNodeByPath(strMaybePath, form_treeViewBrowse);
+                    SDL_TreeNode treeNode = gd.GetNodeByPath(strMaybePath, SDLWPF.treeViewMain);
 
-                    m_strSelectFile = form_cbFindbox.Text.Substring(nPos + 1);
+                    gd.m_strSelectFile = form_cbFindbox.Text.Substring(nPos + 1);
 
                     if (treeNode != null)
                     {
-                        m_bTreeViewIndirectSelChange = true;
+                        gd.m_bTreeViewIndirectSelChange = true;
                         treeNode.TreeView.SelectedNode = treeNode;
                     }
                     else
                     {
-                        Utilities.Assert(1307.8306, m_SearchResultsType2_List.Count <= 0);
-                        SearchFail();
+                        Utilities.Assert(1307.8306, gd.m_SearchResultsType2_List.Count <= 0);
+                        gd.SearchFail();
                     }
                 }
                 else

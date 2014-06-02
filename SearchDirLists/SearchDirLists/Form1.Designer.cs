@@ -150,7 +150,6 @@ namespace SearchDirLists
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.timer_blinky = new System.Windows.Forms.Timer(this.components);
             this.form_labelAbout = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
@@ -1697,11 +1696,6 @@ namespace SearchDirLists
             this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.Filter = "Text files|*.txt|All files|*.*";
             // 
-            // timer_blinky
-            // 
-            this.timer_blinky.Interval = 50;
-            this.timer_blinky.Tick += new System.EventHandler(this.timer_blinky_Tick);
-            // 
             // form_labelAbout
             // 
             this.form_labelAbout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -1859,7 +1853,6 @@ namespace SearchDirLists
         private System.Windows.Forms.ColumnHeader columnHeader16;
         private System.Windows.Forms.CheckBox form_chkCompare1;
         private System.Windows.Forms.Button form_btnCompare;
-        private System.Windows.Forms.Timer timer_blinky;
         private System.Windows.Forms.SplitContainer form_splitTreeFind;
         public Form1TreeView form_treeCompare1;
         private System.Windows.Forms.SplitContainer form_splitCompare;

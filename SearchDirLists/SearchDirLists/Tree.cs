@@ -335,7 +335,7 @@ namespace SearchDirLists
             class Node : Utilities
             {
                 readonly RootNode m_rootNode = null;
-                SortedDictionary<String, Node> subNodes = new SortedDictionary<String, Node>();
+                readonly SortedDictionary<String, Node> subNodes = new SortedDictionary<String, Node>();
                 readonly String m_strPath = null;
                 uint m_nPrevLineNo = 0;
                 uint m_nLineNo = 0;
@@ -462,11 +462,8 @@ namespace SearchDirLists
 
             class RootNode
             {
-                SortedDictionary<String, Node> m_nodes = new SortedDictionary<String, Node>();
-                uint m_firstLineNo = 0;
-
-                internal SortedDictionary<String, Node> Nodes { get { return m_nodes; } set { m_nodes = value; } }
-                internal uint FirstLineNo { get { return m_firstLineNo; } set { m_firstLineNo = value; } }
+                internal SortedDictionary<String, Node> Nodes = new SortedDictionary<String, Node>();
+                internal uint FirstLineNo = 0;
             }
 
             internal TreeRootNodeBuilder(LVvolStrings volStrings, TreeBase base_in) : base(base_in)

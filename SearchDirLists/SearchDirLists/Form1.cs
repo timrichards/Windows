@@ -36,7 +36,7 @@ namespace SearchDirLists
 
     partial class Form1 : Form
     {
-        GlobalData gd = new GlobalData();   // end of file
+        readonly GlobalData gd = new GlobalData();   // end of file
 
         // Memory allocations occur just below all partial class Form1 : Form declarations, then ClearMem_...() for each.
         // Declarations continue below these two ClearMem() methods.
@@ -58,7 +58,6 @@ namespace SearchDirLists
             form_lvDetail.Items.Clear();
             form_lvDetailVol.Items.Clear();
             form_tmapUserCtl.Clear();
-            SDLWPF.treeViewMain.Nodes.Clear();
         }
 
         void ClearMem()
@@ -135,7 +134,7 @@ namespace SearchDirLists
             InitializeComponent();
 
             gd.timer_DoTree.Interval = new System.TimeSpan(3000);
-            gd.timer_DoTree.Tick += new System.EventHandler((object o, EventArgs e) =>
+            gd.timer_DoTree.Tick += new System.EventHandler((object sender, EventArgs e) =>
             {
                 gd.timer_DoTree.Stop();
 
@@ -153,7 +152,7 @@ namespace SearchDirLists
             // Assert String-lookup form items exist
             //    Utilities.Assert(1308.9303, context_rclick_node.Items[m_strMARKFORCOPY] != null);
 
-            gd.m_blinky = new Blinky(timer_blinky, form_cbFindbox);
+            gd.m_blinky = new Blinky(form_cbFindbox);
             gd.m_strBtnTreeCollapseOrig = form_btnCollapse.Text;
             gd.m_strColFilesOrig = form_colFilename.Text;
             gd.m_strColFileCompareOrig = form_colFileCompare.Text;
@@ -1503,7 +1502,7 @@ namespace SearchDirLists
         {
             if (gd.m_SearchResultsType2_List.Count > 0)
             {
-                gd.m_SearchResultsType2_List = new List<SearchResults>();
+                gd.m_SearchResultsType2_List.Clear();
                 GC.Collect();
             }
 
@@ -2298,11 +2297,6 @@ namespace SearchDirLists
             new AboutBox1().ShowDialog_Once(this);
         }
 
-        void timer_blinky_Tick(object sender, EventArgs e)
-        {
-            gd.m_blinky.Tick();
-        }
-
         void timer_DoTree_Tick(object sender, EventArgs e)
         {
             gd.timer_DoTree.Stop();
@@ -2322,11 +2316,11 @@ namespace SearchDirLists
     partial class GlobalData : Utilities
     {
         internal SDL_TreeNode m_nodeCompare1 = null;
-        internal Dictionary<SDL_TreeNode, SDL_TreeNode> m_dictCompareDiffs = new Dictionary<SDL_TreeNode, SDL_TreeNode>();
-        internal UList<SDL_TreeNode> m_listTreeNodes_Compare1 = new UList<SDL_TreeNode>();
-        internal UList<SDL_TreeNode> m_listTreeNodes_Compare2 = new UList<SDL_TreeNode>();
+        internal readonly Dictionary<SDL_TreeNode, SDL_TreeNode> m_dictCompareDiffs = new Dictionary<SDL_TreeNode, SDL_TreeNode>();
+        internal readonly UList<SDL_TreeNode> m_listTreeNodes_Compare1 = new UList<SDL_TreeNode>();
+        internal readonly UList<SDL_TreeNode> m_listTreeNodes_Compare2 = new UList<SDL_TreeNode>();
 
-        internal List<SDL_TreeNode> m_listHistory = new List<SDL_TreeNode>();
+        internal readonly List<SDL_TreeNode> m_listHistory = new List<SDL_TreeNode>();
         internal int m_nIxHistory = -1;
 
         internal void ClearMem_Form1()
@@ -2338,9 +2332,11 @@ namespace SearchDirLists
 
             m_listHistory.Clear();
             m_nIxHistory = -1;
+
+            SDLWPF.treeViewMain.Nodes.Clear();
         }
 
-        internal DispatcherTimer timer_DoTree = new DispatcherTimer();
+        internal readonly DispatcherTimer timer_DoTree = new DispatcherTimer();
 
         internal String m_strVolumeName = null;
         internal String m_strPath = null;
@@ -2348,7 +2344,7 @@ namespace SearchDirLists
 
         internal int m_nCompareIndex = 0;
         internal int m_nLVclonesClickIx = -1;
-        internal int[] m_arrSelChgIx = new int[2];
+        internal readonly int[] m_arrSelChgIx = new int[2];
         internal int m_nSelChgIx = 0;
         internal bool m_bLVclonesMouseDown = false;
         internal bool m_bLVclonesMouseSelChg = false;

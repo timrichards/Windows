@@ -8,16 +8,16 @@ namespace SearchDirLists
 {
     partial class GlobalData
     {
-        internal SortedDictionary<Correlate, UList<SDL_TreeNode>> m_dictNodes = new SortedDictionary<Correlate, UList<SDL_TreeNode>>();
-        internal Dictionary<String, String> m_dictDriveInfo = new Dictionary<String, String>();
+        internal readonly SortedDictionary<Correlate, UList<SDL_TreeNode>> m_dictNodes = new SortedDictionary<Correlate, UList<SDL_TreeNode>>();
+        internal readonly Dictionary<String, String> m_dictDriveInfo = new Dictionary<String, String>();
         internal Tree m_tree = null;
         internal Thread m_threadCollate = null;
         internal Thread m_threadSelect = null;
         internal Thread m_threadSelectCompare = null;
 
-        internal List<SDL_ListViewItem> m_listLVignore = new List<SDL_ListViewItem>();
-        internal UList<SDL_TreeNode> m_listTreeNodes = new UList<SDL_TreeNode>();
-        internal List<SDL_TreeNode> m_listRootNodes = new List<SDL_TreeNode>();
+        internal readonly List<SDL_ListViewItem> m_listLVignore = new List<SDL_ListViewItem>();
+        internal readonly UList<SDL_TreeNode> m_listTreeNodes = new UList<SDL_TreeNode>();
+        internal readonly List<SDL_TreeNode> m_listRootNodes = new List<SDL_TreeNode>();
 
         internal void ClearMem_TreeForm()
         {

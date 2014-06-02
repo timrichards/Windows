@@ -30,10 +30,10 @@ namespace SearchDirLists
         List<SDL_ListViewItem> m_list_lvIgnore = null;
 
         // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.
-        List<SDL_ListViewItem> listLVunique = new List<SDL_ListViewItem>();
-        List<SDL_ListViewItem> listLVsameVol = new List<SDL_ListViewItem>();
-        List<SDL_ListViewItem> listLVdiffVol = new List<SDL_ListViewItem>();
-        Dictionary<SDL_TreeNode, SDL_ListViewItem> dictIgnoreNodes = new Dictionary<SDL_TreeNode, SDL_ListViewItem>();
+        readonly List<SDL_ListViewItem> listLVunique = new List<SDL_ListViewItem>();
+        readonly List<SDL_ListViewItem> listLVsameVol = new List<SDL_ListViewItem>();
+        readonly List<SDL_ListViewItem> listLVdiffVol = new List<SDL_ListViewItem>();
+        readonly Dictionary<SDL_TreeNode, SDL_ListViewItem> dictIgnoreNodes = new Dictionary<SDL_TreeNode, SDL_ListViewItem>();
         bool m_bLoose = false;
         bool m_bThreadAbort = false;
 
@@ -118,7 +118,7 @@ namespace SearchDirLists
 
         class InsertSizeMarker
         {
-            static SDL_ListViewItem lvMarker = new SDL_ListViewItem();
+            readonly static SDL_ListViewItem lvMarker = new SDL_ListViewItem();
             static bool bInit = false;
 
             static void Init()

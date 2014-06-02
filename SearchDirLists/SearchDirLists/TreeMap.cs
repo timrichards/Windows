@@ -4,6 +4,7 @@ using System.Linq;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using System.Windows.Threading;
 
 namespace SearchDirLists
 {
@@ -20,25 +21,27 @@ namespace SearchDirLists
         SDL_TreeNode m_prevNode = null;
         SDL_TreeNode m_deepNode = null;
         SDL_TreeNode m_deepNodeDrawn = null;
-        System.Threading.Timer m_timerAnim = null;
+        readonly DispatcherTimer m_timerAnim = new DispatcherTimer();
         int m_nAnimFrame = 0;
         DateTime m_dtHideGoofball = DateTime.MinValue;
-        ToolTip m_toolTip = new ToolTip();
-
-        void TimerAnim_Callback(object state)
-        {
-            if (m_rectCenter != Rectangle.Empty)
-            {
-                Invalidate(m_rectCenter);
-            }
-        }
+        readonly ToolTip m_toolTip = new ToolTip();
 
         public TreeMapUserControl()
         {
             m_toolTip.UseFading = true;
             m_toolTip.UseAnimation = true;
-            m_timerAnim = new System.Threading.Timer(TimerAnim_Callback, null, 33, 33);    // 30 FPS
-            this.SetStyle(ControlStyles.DoubleBuffer |
+            m_timerAnim.Interval = new TimeSpan(0, 0, 0, 0, 33);    // 30 FPS
+            m_timerAnim.Tick += new EventHandler((Object sender, EventArgs e) =>
+            {
+                if (m_rectCenter != Rectangle.Empty)
+                {
+                    ++m_nAnimFrame;
+                    Invalidate(m_rectCenter);
+                }
+            });
+            m_timerAnim.Start();
+
+            SetStyle(ControlStyles.DoubleBuffer |
                 ControlStyles.UserPaint |
                 ControlStyles.AllPaintingInWmPaint,
                 true);
@@ -74,7 +77,6 @@ namespace SearchDirLists
             }
 
             m_toolTip.Dispose();
-            m_toolTip = null;
             base.Dispose(disposing);
         }
 
@@ -331,7 +333,6 @@ namespace SearchDirLists
             brush.SurroundColors = new Color[] { Color.White };
             e.Graphics.FillPie(brush, r_A, 0 + nAnimFrame, 90);
             e.Graphics.FillPie(brush, r_A, 180 + nAnimFrame, 90);
-            ++m_nAnimFrame;
         }
 
         protected override void OnSizeChanged(EventArgs e)

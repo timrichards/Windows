@@ -20,6 +20,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Threading;
 using System.Diagnostics;
+using System.Windows.Threading;
 
 namespace SearchDirLists
 {
@@ -117,7 +118,7 @@ namespace SearchDirLists
 
     class SDL_TreeNode : TreeNode
     {
-        internal SDL_TreeNode() : base() { }
+        public SDL_TreeNode() : base() { }
         internal SDL_TreeNode(String strContent) : base(strContent) { }
         internal SDL_TreeNode(String strContent, SDL_TreeNode[] arrNodes) : base(strContent, arrNodes) { }
     }
@@ -148,7 +149,7 @@ class Blinky
         internal static bool TreeSelect { get { return m_bTreeSelect; } }
 
         readonly Forms.Control m_defaultControl = null;
-        readonly Forms.Timer m_timer = null;
+        readonly DispatcherTimer m_timer = new DispatcherTimer();
 
         Holder m_holder = new NullHolder();
         Drawing.Color m_clrBlink = Drawing.Color.DarkTurquoise;
@@ -184,10 +185,20 @@ class Blinky
             internal override Drawing.Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
         }
 
-        internal Blinky(Forms.Timer timer, Forms.Control defaultControl)
+        internal Blinky(Forms.Control defaultControl)
         {
-            m_timer = timer;
             m_defaultControl = defaultControl;
+            m_timer.Tick += new EventHandler((object sender, EventArgs e) =>
+            {
+                if (m_bProgress || (++m_nBlink < m_nNumBlinks))
+                {
+                    m_holder.BackColor = (m_holder.BackColor == m_clrBlink) ? m_holder.ClrOrig : m_clrBlink;
+                }
+                else
+                {
+                    Reset();
+                }
+            });
         }
 
         internal void SelectTreeNode(SDL_TreeNode treeNode, bool Once = true)
@@ -227,7 +238,7 @@ class Blinky
 
         void Go_A(Drawing.Color? clr = null, bool Once = false, bool bProgress = false)
         {
-            Utilities.Assert(1303.431013, m_timer.Enabled == false, bTraceOnly: true);
+            Utilities.Assert(1303.431013, m_timer.IsEnabled == false, bTraceOnly: true);
             Utilities.Assert(1303.431015, m_nBlink == 0, bTraceOnly: true);
             Utilities.Assert(1303.431017, (m_holder is NullHolder) == false, bTraceOnly: true);
             Utilities.Assert(1303.431019, m_bProgress == false, bTraceOnly: true);
@@ -237,25 +248,13 @@ class Blinky
             m_clrBlink = clr ?? (bProgress ? Drawing.Color.LightSalmon : Drawing.Color.Turquoise);
             m_nBlink = 0;
             m_nNumBlinks = Once ? 2 : 10;
-            m_timer.Interval = bProgress ? 500 : (Once ? 100 : 50);
-            m_timer.Enabled = true;
-        }
-
-        internal void Tick()
-        {
-            if (m_bProgress || (++m_nBlink < m_nNumBlinks))
-            {
-                m_holder.BackColor = (m_holder.BackColor == m_clrBlink) ? m_holder.ClrOrig : m_clrBlink;
-            }
-            else
-            {
-                Reset();
-            }
+            m_timer.Interval = new TimeSpan(0, 0, 0, 0, bProgress ? 500 : (Once ? 100 : 50));
+            m_timer.Start();
         }
 
         internal void Reset()
         {
-            m_timer.Enabled = false;
+            m_timer.Stop();
             m_nBlink = 0;
             m_bProgress = false;
             m_holder.BackColor = m_holder.ClrOrig;

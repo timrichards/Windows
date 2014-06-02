@@ -18,7 +18,7 @@ namespace SearchDirLists
         Thread m_thread = null;
         bool m_bThreadAbort = false;
         ConcurrentBag<SaveDirListing> m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
-        UList<LVvolStrings> m_list_lvVolStrings = new UList<LVvolStrings>();
+        readonly UList<LVvolStrings> m_list_lvVolStrings = new UList<LVvolStrings>();
 
         int m_nFilesWritten = 0;
         internal int FilesWritten { get { return m_nFilesWritten; } set { m_nFilesWritten = value; } }
@@ -32,8 +32,8 @@ namespace SearchDirLists
             long m_nLengthTotal = 0;
             long m_nFilesTotal = 0;
             long m_nFilesDiff = 0;
-            List<double> m_listFileDiffs = new List<double>();
-            List<String> m_list_Errors = new List<String>();
+            readonly List<double> m_listFileDiffs = new List<double>();
+            readonly List<String> m_list_Errors = new List<String>();
             System.Threading.Timer m_timerStatus = null;
 
             private double StdDevSign(List<double> values)

@@ -7,7 +7,7 @@ namespace SearchDirLists
 {
     class LVvolInterface
     {
-        Form1 m_form1 = null;
+        readonly Form1 m_form1 = null;
         internal LVvolInterface() { m_form1 = new Form1(); }
         internal void SetPath() { m_form1.form_btnPath_Click(); }
         internal void SetListingFile() { m_form1.form_btnSaveAs_Click(); }
@@ -22,9 +22,9 @@ namespace SearchDirLists
 
     class LVvolViewModel : ObservableObject
     {
-        LVvolInterface m_lvVolInterface = new LVvolInterface();
+        readonly LVvolInterface m_lvVolInterface = new LVvolInterface();
         //     LVvolStrings m_datumCurrent;
-        List<LVvolStrings> m_listData = new List<LVvolStrings>();
+        readonly List<LVvolStrings> m_listData = new List<LVvolStrings>();
 
         int m_nIndex = -1;
   //      int m_nMaxIndex = -1;

@@ -17,7 +17,7 @@ namespace SearchDirLists
         // useful code but not implemented or working
         // https://stackoverflow.com/questions/4769916/how-to-get-a-listview-from-a-listviewitem
 
-        ListView listview = new ListView();
+        readonly ListView listview = new ListView();
         private void Window_Loaded(object s, RoutedEventArgs args)
         {
             var collectionview = CollectionViewSource.GetDefaultView(this.listview.Items);

@@ -14,7 +14,7 @@ namespace SearchDirLists
     class SearchResultsDir
     {
         String m_strDir = null;
-        List<String> m_listFiles = new List<String>();
+        readonly List<String> m_listFiles = new List<String>();
 
         internal String StrDir { get { return m_strDir; } set { m_strDir = value; } }
         internal List<String> ListFiles { get { return m_listFiles; } }
@@ -237,7 +237,7 @@ namespace SearchDirLists
         ConcurrentBag<SearchFile> m_cbagWorkers = new ConcurrentBag<SearchFile>();
         SearchStatusDelegate m_statusCallback = null;
         Action m_doneCallback = null;
-        UList<LVvolStrings> m_list_lvVolStrings = new UList<LVvolStrings>();
+        readonly UList<LVvolStrings> m_list_lvVolStrings = new UList<LVvolStrings>();
 
         internal SearchType2(ListView.ListViewItemCollection lvVolItems, String strSearch, bool bCaseSensitive,
             SearchFile.FolderSpecialHandling folderHandling, bool bSearchFilesOnly, String strCurrentNode,
@@ -311,7 +311,7 @@ namespace SearchDirLists
         internal bool m_bSearchResultsType2_List = false;
         internal int m_nSearchResultsIndexer = -1;
         internal SDL_TreeNode[] m_SearchResultsType1_Array = null;
-        internal List<SearchResults> m_SearchResultsType2_List = new List<SearchResults>();
+        internal readonly List<SearchResults> m_SearchResultsType2_List = new List<SearchResults>();
 
         internal SearchType2 m_searchType2 = null;
         internal SearchResults m_firstSearchResults = null;
@@ -370,8 +370,6 @@ namespace SearchDirLists
                 }
             }
         }
-
-
     }
 
     partial class Form1
@@ -635,7 +633,7 @@ namespace SearchDirLists
             }
 
             gd.m_blinky.Go(bProgress: true);
-            gd.m_SearchResultsType2_List = new List<SearchResults>();
+            gd.m_SearchResultsType2_List.Clear();
 
             SearchFile.FolderSpecialHandling folderHandling = SearchFile.FolderSpecialHandling.None;    // not used
             String strCurrentNode = null;

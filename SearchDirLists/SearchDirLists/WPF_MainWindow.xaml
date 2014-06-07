@@ -2,7 +2,7 @@
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
  Title="Search Directory Listings" Height="504" Width="1008">
-    <TabControl HorizontalAlignment="Stretch" Margin="0" Name="form_tabControlMain" VerticalAlignment="Stretch">
+    <TabControl HorizontalAlignment="Stretch" Margin="0" Name="xaml_tabControlMain" VerticalAlignment="Stretch">
         <TabControl.Resources>
             <Style x:Key="ControlStyle" TargetType="FrameworkElement">
                 <Setter Property="Margin" Value="2,1"/>
@@ -32,7 +32,7 @@
                 <Setter Property="VerticalAlignment" Value="Stretch"/>
             </Style>
         </TabControl.Resources>
-        <TabItem Header="Volumes" Name="form_tabPageVolumes">
+        <TabItem Header="Volumes" Name="xaml_tabPageVolumes">
             <Grid>
                 <Grid.Resources>
                     <Style x:Key="ComboRows" TargetType="ItemsControl">
@@ -64,31 +64,31 @@
                 </Grid.RowDefinitions>
                 <ItemsControl Style="{StaticResource ComboRows}">
                     <Label Content="Volume nickname" />
-                    <ComboBox Name="from_cbNickname" Grid.Column="1"/>
+                    <ComboBox Name="xaml_cbVolumeName" Grid.Column="1" ItemsSource="{Binding ListVolumeName}" SelectedValue="{Binding CBVolumeName}"/>
                 </ItemsControl>
                 <ItemsControl Grid.Row="1" Style="{StaticResource ComboRows}">
                     <Label Content="Path" />
-                    <ComboBox Name="from_cbPath"  Grid.Column="1"/>
-                    <Button Content="..." Name="form_btnPath" Grid.Column="2"  Command="{Binding Path=Icmd_SetPath}"/>
+                    <ComboBox Name="xaml_cbPath" Grid.Column="1" ItemsSource="{Binding ListPath}" SelectedValue="{Binding CBPath}"/>
+                    <Button Content="..." Name="xaml_btnPath" Grid.Column="2" Command="{Binding Icmd_SetPath}"/>
                 </ItemsControl>
                 <ItemsControl Grid.Row="2" Style="{StaticResource ComboRows}">
                     <Label Content="Directory listing file" />
-                    <ComboBox Name="from_cbVolumeName" HorizontalAlignment="Stretch" Grid.Column="1"/>
-                    <Button Content="..." Name="form_btnSaveAs" Grid.Column="2" Command="{Binding Path=Icmd_SetListingFile}"/>
+                    <ComboBox Name="xaml_cbSaveAs" HorizontalAlignment="Stretch" Grid.Column="1" ItemsSource="{Binding ListSaveAs}" SelectedValue="{Binding CBSaveAs}"/>
+                    <Button Content="..." Name="xaml_btnSaveAs" Grid.Column="2" Command="{Binding Icmd_SaveAs}"/>
                 </ItemsControl>
                 <StackPanel Grid.Row="3" Orientation="Horizontal">
                     <Label Content="Volume list" VerticalAlignment="Bottom"/>
-                    <Button Content="Load" Name="form_btnLoad" Command="{Binding Path=Icmd_LoadVolumeList}"/>
-                    <Button Content="Save" Name="form_btnSave" Command="{Binding Path=Icmd_SaveVolumeList}"/>
+                    <Button Content="Load" Name="xaml_btnLoad" Command="{Binding Icmd_LoadVolumeList}"/>
+                    <Button Content="Save" Name="xaml_btnSave" Command="{Binding Icmd_SaveVolumeList}"/>
                 </StackPanel>
-                <Button Grid.Row="3" Content="Add volume" HorizontalAlignment="Center" Height="60" Command="{Binding Path=Icmd_AddVolume}"/>
+                <Button Grid.Row="3" Content="Add volume" HorizontalAlignment="Center" Height="60" Command="{Binding Icmd_AddVolume}"/>
                 <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="Remove volume" Name="form_btnRemove" Command="{Binding Path=Icmd_RemoveVolume}"/>
-                    <Button Content="Toggle include" Name="form_btnToggleInclude" Command="{Binding Path=Icmd_ToggleInclude}"/>
-                    <Button Content="Volume group" Name="form_btnVolumeGroup" Command="{Binding Path=Icmd_VolumeGroup}"/>
-                    <Button Content="Modify file" Name="form_btnModifyFile" Command="{Binding Path=Icmd_ModifyFile}"/>
+                    <Button Content="Remove volume" Name="xaml_btnRemove" Command="{Binding Icmd_RemoveVolume}"/>
+                    <Button Content="Toggle include" Name="xaml_btnToggleInclude" Command="{Binding Icmd_ToggleInclude}"/>
+                    <Button Content="Volume group" Name="xaml_btnVolumeGroup" Command="{Binding Icmd_VolumeGroup}"/>
+                    <Button Content="Modify file" Name="xaml_btnModifyFile" Command="{Binding Icmd_ModifyFile}"/>
                 </StackPanel>
-                <ListView Grid.Row="4" Name="form_lvVolumesMain">
+                <ListView Grid.Row="4" Name="xaml_lvVolumesMain">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Volume name"/>
@@ -100,10 +100,10 @@
                         </GridView>
                     </ListView.View>
                 </ListView>
-                <Button Grid.Row="5" Content="Save directory listings" Name="form_btnSaveDirLists" Height="30"/>
+                <Button Grid.Row="5" Content="Save directory listings" Name="xaml_btnSaveDirLists" Height="30"/>
             </Grid>
         </TabItem>
-        <TabItem Header="Browse" Name="form_tabPageBrowse">
+        <TabItem Header="Browse" Name="xaml_tabPageBrowse">
             <Grid>
                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <Grid.RowDefinitions>
@@ -126,35 +126,35 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <StackPanel Orientation="Horizontal">
-                            <Button Content="Collapse" Name="form_btnCollapse" />
-                            <CheckBox Content="Compare 1" Name="form_chkCompare1" />
-                            <Button Content="Compare" Name="form_btnCompare" />
-                            <Button Content="Up" Name="form_btnUp" />
-                            <Button Content="&lt;--" Name="form_btnBack" />
-                            <Button Content="--&gt;" Name="form_btnForward" />
+                            <Button Content="Collapse" Name="xaml_btnCollapse" />
+                            <CheckBox Content="Compare 1" Name="xaml_chkCompare1" />
+                            <Button Content="Compare" Name="xaml_btnCompare" />
+                            <Button Content="Up" Name="xaml_btnUp" />
+                            <Button Content="&lt;--" Name="xaml_btnBack" />
+                            <Button Content="--&gt;" Name="xaml_btnForward" />
                         </StackPanel>
                         <ComboBox Name="from_cbSearch" HorizontalAlignment="Stretch" Grid.Column="1"/>
-                        <StackPanel Orientation="Horizontal"  Grid.Column="2">
-                            <Button Content="Copy" Name="form_btnCopy" />
-                            <Label Content="Search:" FontStyle="Italic"  />
-                            <Button Content="Folders" Name="form_btnFolders"  />
-                            <Button Content="Folders &amp; Files" Name="form_btnFoldersFiles"  />
-                            <Button Content="Files" Name="form_btnFiles"  />
-                            <Label Content="Volume group" FontStyle="Italic" Name="form_labelVolumeGroup" />
+                        <StackPanel Orientation="Horizontal" Grid.Column="2">
+                            <Button Content="Copy" Name="xaml_btnCopy" />
+                            <Label Content="Search:" FontStyle="Italic" />
+                            <Button Content="Folders" Name="xaml_btnFolders" />
+                            <Button Content="Folders &amp; Files" Name="xaml_btnFoldersFiles" />
+                            <Button Content="Files" Name="xaml_btnFiles" />
+                            <Label Content="Volume group" FontStyle="Italic" Name="xaml_labelVolumeGroup" />
                         </StackPanel>
                     </Grid>
-                    <TreeView HorizontalAlignment="Stretch" Name="form_treeViewBrowse" VerticalAlignment="Stretch" Grid.RowSpan="1" BorderThickness="0" Grid.Row="1"/>
+                    <TreeView HorizontalAlignment="Stretch" Name="xaml_treeViewBrowse" VerticalAlignment="Stretch" Grid.RowSpan="1" BorderThickness="0" Grid.Row="1"/>
                     <TabControl HorizontalAlignment="Stretch" Name="tabControl1" VerticalAlignment="Stretch" TabStripPlacement="Bottom" Grid.Row="3">
-                        <TabItem Header="Copy scratchpad" Name="form_tabItemCopyScratchpad">
+                        <TabItem Header="Copy scratchpad" Name="xaml_tabItemCopyScratchpad">
                             <DockPanel>
                                 <StackPanel Height="Auto" Width="Auto" Orientation="Vertical" VerticalAlignment="Bottom">
-                                    <CheckBox Content="Loose" Name="form_chkSpacer" Opacity="0" Height="0"/>
-                                    <Button Content="Script" Name="form_btnCopyScript" />
-                                    <Button Content="Load" Name="form_btnCopyLoad" />
-                                    <Button Content="Save" Name="form_btnCopySave" />
-                                    <Button Content="Clear" Name="form_btnCopyClear" />
+                                    <CheckBox Content="Loose" Name="xaml_chkSpacer" Opacity="0" Height="0"/>
+                                    <Button Content="Script" Name="xaml_btnCopyScript" />
+                                    <Button Content="Load" Name="xaml_btnCopyLoad" />
+                                    <Button Content="Save" Name="xaml_btnCopySave" />
+                                    <Button Content="Clear" Name="xaml_btnCopyClear" />
                                 </StackPanel>
-                                <ListView Name="form_lvCopyScratchpad" Width="Auto">
+                                <ListView Name="xaml_lvCopyScratchpad" Width="Auto">
                                     <ListView.View>
                                         <GridView>
                                             <GridViewColumn Header="Folders selected for copy" Width="Auto"/>
@@ -164,17 +164,17 @@
                                 </ListView>
                             </DockPanel>
                         </TabItem>
-                        <TabItem Header="Ignore list" Name="form_tabItemIgnore">
+                        <TabItem Header="Ignore list" Name="xaml_tabItemIgnore">
                             <DockPanel>
                                 <StackPanel Height="Auto" Width="Auto" Orientation="Vertical" VerticalAlignment="Bottom">
-                                    <CheckBox Content="Loose" Name="form_chkLoose" />
-                                    <Button Content="Add" Name="form_btnIgnoreAdd" />
-                                    <Button Content="Del" Name="form_btnIgnoreDel" />
-                                    <Button Content="Load" Name="form_btnIgnoreLoad" />
-                                    <Button Content="Save" Name="form_btnIgnoreSave" />
-                                    <Button Content="Clear" Name="form_btnIgnoreClear" />
+                                    <CheckBox Content="Loose" Name="xaml_chkLoose" />
+                                    <Button Content="Add" Name="xaml_btnIgnoreAdd" />
+                                    <Button Content="Del" Name="xaml_btnIgnoreDel" />
+                                    <Button Content="Load" Name="xaml_btnIgnoreLoad" />
+                                    <Button Content="Save" Name="xaml_btnIgnoreSave" />
+                                    <Button Content="Clear" Name="xaml_btnIgnoreClear" />
                                 </StackPanel>
-                                <ListView Name="form_lvIgnore" Width="Auto">
+                                <ListView Name="xaml_lvIgnore" Width="Auto">
                                     <ListView.View>
                                         <GridView>
                                             <GridViewColumn Header="Common folders to ignore" Width="Auto"/>
@@ -201,11 +201,11 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TabControl Grid.Column="0" HorizontalAlignment="Stretch" Name="tabControl2" VerticalAlignment="Stretch" Grid.Row="0" Grid.ColumnSpan="3">
-                            <TabItem Header="Disk usage" Name="form_tabItemDiskUsage">
+                            <TabItem Header="Disk usage" Name="xaml_tabItemDiskUsage">
                                 <Grid />
                             </TabItem>
-                            <TabItem Header="Immediate files" Name="form_tabItemFiles">
-                                <ListView Name="form_lvFiles" Width="Auto"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0">
+                            <TabItem Header="Immediate files" Name="xaml_tabItemFiles">
+                                <ListView Name="xaml_lvFiles" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0">
                                     <ListView.View>
                                         <GridView>
                                             <GridViewColumn Header="Filename"/>
@@ -220,14 +220,14 @@
                                 </ListView>
                             </TabItem>
                         </TabControl>
-                        <ListView Name="form_lvDetail" Width="Auto"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="0">
+                        <ListView Name="xaml_lvDetail" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="0">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Directory detail"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>
-                        <ListView Name="form_lvDetailVol" Width="Auto"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="2">
+                        <ListView Name="xaml_lvDetailVol" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="2">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Volume detail"/>
@@ -245,21 +245,21 @@
                             <RowDefinition Height="3" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <ListView Name="form_lvUnique" Width="Auto"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0">
+                        <ListView Name="xaml_lvUnique" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Solitary"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>
-                        <ListView Name="form_lvSameVol" Width="Auto"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="0">
+                        <ListView Name="xaml_lvSameVol" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="0">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Same volume group"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>
-                        <ListView Name="form_lvClones" Width="Auto"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="4" Grid.Column="0">
+                        <ListView Name="xaml_lvClones" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="4" Grid.Column="0">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Clones"/>

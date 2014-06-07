@@ -1,11 +1,24 @@
-﻿using System;
+﻿#if WPF
+using System.Windows.Controls;
+using System.Windows.Media;
+using Media = System.Windows.Media;
+using System.Windows.Markup;
+using System.Xml;
+using System.Windows;
+#else
+using System.Windows.Forms;
+using System.Drawing;
+#endif
+
+using Forms = System.Windows.Forms;
+using Drawing = System.Drawing;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using System.IO;
 using System.Threading;
-using System.Drawing;
 using System.Collections.Concurrent;
 
 namespace SearchDirLists
@@ -172,7 +185,7 @@ namespace SearchDirLists
             nLength = node.nLength;
         }
 
-        internal Rectangle TreeMapRect = Rectangle.Empty;
+        internal Drawing.Rectangle TreeMapRect = Drawing.Rectangle.Empty;
         internal SDL_TreeNode TreeMapFiles = null;
     }
 
@@ -243,7 +256,7 @@ namespace SearchDirLists
 
             foreach (SDL_ListViewItem item in list)
             {
-                item.ForeColor = Color.Red;
+                item.ForeColor = Drawing.Color.Red;
             }
         }
 

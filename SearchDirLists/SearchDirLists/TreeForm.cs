@@ -1,8 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#if WPF
+using System.Windows.Controls;
+using System.Windows.Media; using Media = System.Windows.Media;
+using System.Windows.Markup;
+using System.Xml;
+using System.Windows;
+#else
 using System.Windows.Forms;
-using System.Threading;
 using System.Drawing;
+#endif
+
+using Forms = System.Windows.Forms;
+using Drawing = System.Drawing;
+
+using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace SearchDirLists
 {
@@ -170,8 +182,8 @@ namespace SearchDirLists
                 return;
             }
 
-            TreeView t1 = bSecondComparePane ? SDLWPF.treeViewCompare2 : SDLWPF.treeViewCompare1;
-            TreeView t2 = bSecondComparePane ? SDLWPF.treeViewCompare1 : SDLWPF.treeViewCompare2;
+            SDL_TreeView t1 = bSecondComparePane ? SDLWPF.treeViewCompare2 : SDLWPF.treeViewCompare1;
+            SDL_TreeView t2 = bSecondComparePane ? SDLWPF.treeViewCompare1 : SDLWPF.treeViewCompare2;
 
             if (t1.SelectedNode == null)
             {
@@ -195,7 +207,7 @@ namespace SearchDirLists
                 lv1.Items.Clear();
                 lv1.Items.AddRange(itemArray);
                 lv1.Invalidate();
-                lv1.Items[0].Tag = lvFileItem;
+                ((SDL_ListViewItem)lv1.Items[0]).Tag = lvFileItem;
             }
 
             Utilities.Write("B");
@@ -224,7 +236,7 @@ namespace SearchDirLists
             Utilities.Write("D");
 
             if ((lv2.Items.Count > 0) &&
-                (((LVitemFileTag)lv2.Items[0].Tag).StrCompareDir != treeNode2.Text))
+                (((LVitemFileTag)((SDL_ListViewItem)lv2.Items[0]).Tag).StrCompareDir != treeNode2.Text))
             {
                 Utilities.Assert(1304.5311, false);
                 return;

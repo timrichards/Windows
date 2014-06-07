@@ -1,10 +1,22 @@
-﻿using System;
+﻿#if WPF
+using System.Windows.Controls;
+using System.Windows.Media; using Media = System.Windows.Media;
+using System.Windows.Markup;
+using System.Xml;
+using System.Windows;
+#else
+using System.Windows.Forms;
+using System.Drawing;
+#endif
+
+using Forms = System.Windows.Forms;
+using Drawing = System.Drawing;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using System.IO;
 using System.Threading;
-using System.Drawing;
 using System.Collections.Concurrent;
 
 namespace SearchDirLists
@@ -231,7 +243,7 @@ namespace SearchDirLists
                 return;
             }
 
-            m_ctlLastSearchSender = (Control)sender;
+            m_ctlLastSearchSender = (SDL_Control)sender;
 
             SDL_TreeView treeView = SDLWPF.treeViewMain;
 
@@ -331,11 +343,16 @@ namespace SearchDirLists
         protected bool m_bCaseSensitive = true;
         protected bool m_bSearchFilesOnly = false;
         protected String m_strCurrentNode = null;
+        protected static SearchStatusDelegate m_statusCallback = null;
 
-        internal enum FolderSpecialHandling { None, Outermost, Innermost };       // not used
-        protected SearchBase.FolderSpecialHandling m_folderHandling = SearchBase.FolderSpecialHandling.Outermost;     // not used
+        internal enum FolderSpecialHandling { None, Outermost, Innermost };                     // not used
+        protected FolderSpecialHandling m_folderHandling = FolderSpecialHandling.Outermost;     // not used
 
-        protected SearchBase() { }
+        protected SearchBase(SearchStatusDelegate statusCallback)
+        {
+            m_statusCallback = statusCallback;
+        }
+        
         protected SearchBase(SearchBase searchBase)
         {
             m_strSearch = searchBase.m_strSearch;
@@ -343,6 +360,7 @@ namespace SearchDirLists
             m_bSearchFilesOnly = searchBase.m_bSearchFilesOnly;
             m_strCurrentNode = searchBase.m_strCurrentNode;
             m_folderHandling = searchBase.m_folderHandling;
+            Utilities.Assert(1307.8315, m_statusCallback != null);
         }
     }
 
@@ -351,22 +369,19 @@ namespace SearchDirLists
         Thread m_thread = null;
         bool m_bThreadAbort = false;
         ConcurrentBag<SearchFile> m_cbagWorkers = new ConcurrentBag<SearchFile>();
-        SearchStatusDelegate m_statusCallback = null;
-        Action m_doneCallback = null;
+        readonly Action m_doneCallback = null;
         readonly UList<LVvolStrings> m_list_lvVolStrings = new UList<LVvolStrings>();
 
         class SearchFile : SearchBase
         {
             Thread m_thread = null;
             bool m_bThreadAbort = false;
-            SearchStatusDelegate m_statusCallback = null;
             LVvolStrings m_volStrings = null;
 
-            internal SearchFile(SearchBase searchBase, LVvolStrings volStrings, SearchStatusDelegate statusCallback)
+            internal SearchFile(SearchBase searchBase, LVvolStrings volStrings)
                 : base(searchBase)
             {
                 m_volStrings = volStrings;
-                m_statusCallback = statusCallback;
             }
 
             internal void Go()
@@ -527,7 +542,7 @@ namespace SearchDirLists
 
         internal SearchType2(ListView.ListViewItemCollection lvVolItems, String strSearch, bool bCaseSensitive,
             SearchBase.FolderSpecialHandling folderHandling, bool bSearchFilesOnly, String strCurrentNode,
-            SearchStatusDelegate statusCallback, Action doneCallback)
+            SearchStatusDelegate statusCallback, Action doneCallback) : base(statusCallback)
         {
             foreach (SDL_ListViewItem lvItem in lvVolItems)
             {
@@ -539,7 +554,6 @@ namespace SearchDirLists
             m_folderHandling = folderHandling;          // not used
             m_bSearchFilesOnly = bSearchFilesOnly;
             m_strCurrentNode = strCurrentNode;
-            m_statusCallback = statusCallback;
             m_doneCallback = doneCallback;
         }
 
@@ -551,7 +565,7 @@ namespace SearchDirLists
 
             foreach (LVvolStrings volStrings in m_list_lvVolStrings)
             {
-                SearchFile searchFile = new SearchFile((SearchBase)this, volStrings, m_statusCallback);
+                SearchFile searchFile = new SearchFile((SearchBase)this, volStrings);
 
                 m_cbagWorkers.Add(searchFile.DoThreadFactory());
             }
@@ -615,8 +629,9 @@ namespace SearchDirLists
             String P = Path.DirectorySeparatorChar.ToString();
             String PP = P + P;
 
-            foreach (TreeNode topNode in treeView.Nodes)
+            foreach (Object obj in treeView.Nodes)
             {
+                SDL_TreeNode topNode = (SDL_TreeNode)obj;
                 String[] arrPath = null;
                 int nPathLevelLength = 0;
                 int nLevel = 0;

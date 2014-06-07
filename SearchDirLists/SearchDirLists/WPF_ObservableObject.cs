@@ -4,6 +4,8 @@ using System.Diagnostics;
 
 namespace SearchDirLists
 {
+    delegate void RaisePropertyChangedDelegate(String propertyName);
+
     internal abstract class ObservableObject : INotifyPropertyChanged
     {
         #region Debugging Aides

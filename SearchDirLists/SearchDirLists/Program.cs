@@ -11,11 +11,11 @@ namespace SearchDirLists
         [STAThread]
         static void Main()
         {
-            //if (MessageBox.Show("Run WPF?", "Run WPF?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            //{
-            //    new App().Run();
-            //}
-            //else
+            if (MessageBox.Show("Run WPF?", "Run WPF?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                new App().Run();
+            }
+            else
             {
                 if (Environment.OSVersion.Version.Major >= 6) SetProcessDPIAware();
                 Application.EnableVisualStyles();

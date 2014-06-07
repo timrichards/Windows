@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 
+
 namespace SearchDirLists
 {
     /// <summary>
@@ -12,7 +13,7 @@ namespace SearchDirLists
             base.OnStartup(e);
 
             MainWindow app = new MainWindow();
-            LVvolViewModel context = new LVvolViewModel();
+            LVvolViewModel context = new LVvolViewModel(app);
             app.DataContext = context;
             app.Show();
         }

@@ -1,8 +1,6 @@
-﻿//#define WPF
-#if WPF
+﻿#if WPF
 using System.Windows.Controls;
-using System.Windows.Media;
-using Media = System.Windows.Media;
+using System.Windows.Media; using Media = System.Windows.Media;
 using System.Windows.Markup;
 using System.Xml;
 using System.Windows;
@@ -71,7 +69,7 @@ namespace SearchDirLists
             ClearMem_TreeForm();
         }
 
-        Control m_ctlLastSearchSender = null;
+        SDL_Control m_ctlLastSearchSender = null;
         Form m_form1MessageBoxOwner = null;
         TabPage m_FileListTabPageBeforeCompare = null;
         internal static Form1 static_form = null;
@@ -475,7 +473,7 @@ namespace SearchDirLists
                 return;
             }
 
-            UList<SDL_TreeNode> listTreeNodes = (UList<SDL_TreeNode>)lv.SelectedItems[0].Tag;
+            UList<SDL_TreeNode> listTreeNodes = (UList<SDL_TreeNode>)((SDL_ListViewItem)lv.SelectedItems[0]).Tag;
 
             if (Utilities.Assert(1308.9308, listTreeNodes != null) == false)
             {
@@ -506,7 +504,7 @@ namespace SearchDirLists
                 return;
             }
 
-            form_cbFindbox.Text = GlobalData.FullPath((SDL_TreeNode)treeView.SelectedNode);
+            form_cbFindbox.Text = GlobalData.FullPath((SDL_TreeNode)((SDL_TreeView)treeView).SelectedNode);
         }
 
         bool ReadHeader()
@@ -609,14 +607,14 @@ namespace SearchDirLists
             gd.m_bPutPathInFindEditBox = true;
             gd.m_bTreeViewIndirectSelChange = true;
 
-            SDL_TreeNode treeNode = (SDL_TreeNode)(SDLWPF.treeViewMain.SelectedNode = (SDL_TreeNode)lv.SelectedItems[0].Tag);
+            SDL_TreeNode treeNode = (SDL_TreeNode)(SDLWPF.treeViewMain.SelectedNode = (SDL_TreeNode)((SDL_ListViewItem)lv.SelectedItems[0]).Tag);
 
             if (treeNode == null)
             {
                 return;
             }
 
-            SDLWPF.treeViewMain.TopNode = treeNode.Parent;
+            SDLWPF.treeViewMain.TopNode = (SDL_TreeNode)treeNode.Parent;
             treeNode.EnsureVisible();
         }
 
@@ -782,9 +780,9 @@ namespace SearchDirLists
             gd.m_bCompareMode = true;
             form_tabControlFileList.SelectedTab = form_tabPageFileList;
             gd.m_bTreeViewIndirectSelChange = true;
-            SDLWPF.treeViewCompare1.SelectedNode = SDLWPF.treeViewCompare1.Nodes[0];
+            SDLWPF.treeViewCompare1.SelectedNode = (SDL_TreeNode)SDLWPF.treeViewCompare1.Nodes[0];
             gd.m_bTreeViewIndirectSelChange = true;
-            SDLWPF.treeViewCompare2.SelectedNode = SDLWPF.treeViewCompare2.Nodes[0];
+            SDLWPF.treeViewCompare2.SelectedNode = (SDL_TreeNode)SDLWPF.treeViewCompare2.Nodes[0];
         }
 
         void form_btnCopyToClipBoard_Click(object sender = null, EventArgs e = null)
@@ -1261,7 +1259,7 @@ namespace SearchDirLists
             {
                 if (m_ctlLastSearchSender != sender)
                 {
-                    m_ctlLastSearchSender = (Control)sender;
+                    m_ctlLastSearchSender = (SDL_Control)sender;
                     gd.m_nSearchResultsIndexer = -1;
                 }
 
@@ -2195,7 +2193,7 @@ namespace SearchDirLists
 
         void Form1_Load(object sender, EventArgs e)
         {
-            form_tmapUserCtl.TooltipAnchor = form_cbFindbox;
+            form_tmapUserCtl.TooltipAnchor = (Control)form_cbFindbox;
 
 #if (DEBUG)
 //#warning DEBUG is defined.
@@ -2464,7 +2462,7 @@ namespace SearchDirLists
             }
             else
             {
-                m_blinky.Go((Control)sender, clr: Color.Red, Once: true);
+                m_blinky.Go((SDL_Control)sender, clr: Color.Red, Once: true);
             }
         }
 

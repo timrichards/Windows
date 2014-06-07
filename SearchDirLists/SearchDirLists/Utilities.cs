@@ -1,5 +1,4 @@
-﻿//#define WPF
-#if WPF
+﻿#if WPF
 using System.Windows.Controls;
 using System.Windows.Media; using Media = System.Windows.Media;
 using System.Windows.Markup;
@@ -12,6 +11,7 @@ using System.Drawing;
 
 using Forms = System.Windows.Forms;
 using Drawing = System.Drawing;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,16 +25,24 @@ using System.Windows.Threading;
 namespace SearchDirLists
 {
 #if (WPF)
+    class SDL_Control : Control
+    {
+        internal IntPtr Handle;
+        internal bool IsDisposed { get { return false; } }
+    }
+
+    [System.ComponentModel.DesignerCategory("Code")]
 /**/    class SDL_TreeView : TreeView
 /**/    {
-/**/        internal TreeViewItem SelectedNode { get { return (TreeViewItem)SelectedItem; } set { } }
+/**/        internal SDL_TreeNode SelectedNode { get { return (SDL_TreeNode)SelectedItem; } set { } }
 /**/        internal bool CheckBoxes;
 /**/        internal void CollapseAll() { }
 /**/        internal bool Enabled;
 /**/        internal Drawing.Font Font;
 /**/        internal int GetNodeCount(bool includeSubTrees = false) { return 0; }
 /**/        internal ItemCollection Nodes { get { return Items; } }
-/**/        internal SDL_TreeNode TopNode { get { return null; } }
+/**/        internal SDL_TreeNode TopNode { get { return null; } set { } }
+/**/        internal void Select() { }
 /**/    }
 /**/
 /**/    class SDL_TreeNode : TreeViewItem
@@ -78,6 +86,7 @@ namespace SearchDirLists
 /**/    {
 /**/    }
 /**/
+  //      class SDL_ItemCollection : 
 /**/    static class SDLWPF
 /**/    {
 /**/        // TreeNode
@@ -87,7 +96,7 @@ namespace SearchDirLists
 /**/        internal static String GetFullPath(this SDL_TreeNode node) { String s = ""; if (node.Parent != null) { s += ((SDL_TreeNode)node.Parent).GetFullPath() + Path.DirectorySeparatorChar; } s += node.Header; return s; }
 /**/        internal static void AddRange(this ItemCollection c, SDL_TreeNode[] a) { foreach (SDL_TreeNode i in a) { c.Add(i); } }
 /**/
-/**/        // Control
+/**/        // SDL_Control
 /**/        static Drawing.Color _GetColor(Media.Brush brush) { Media.Color c = ((SolidColorBrush)brush).Color; return Drawing.Color.FromArgb(c.A, c.R, c.G, c.B); }
 /**/        static SolidColorBrush _SetColor(Drawing.Color color) { Drawing.Color c = color; return new SolidColorBrush(Media.Color.FromArgb(c.A, c.R, c.G, c.B)); }
 /**/        internal static Drawing.Color GetBackColor(this Control ctl) { return _GetColor(ctl.Background); }
@@ -96,6 +105,9 @@ namespace SearchDirLists
 /**/        internal static void SetForeColor(this Control ctl, Drawing.Color c) { ctl.Foreground = _SetColor(c); }
 /**/        internal static object Clone(this Control ctl) { return XamlReader.Load(XmlReader.Create(new StringReader(XamlWriter.Save(ctl)))); }
 /**/        internal static void EnsureVisible(this Control ctl) { ctl.BringIntoView(); }
+            internal static void Invalidate(this Control ctl) { }
+            internal bool IsDisposed(this Control ctl) { return false; }
+
 /**/
 /**/        // LV
 /**/        internal static bool ContainsKey(this ItemCollection c) { return false; }
@@ -113,6 +125,11 @@ namespace SearchDirLists
 /**/        internal static SDL_TreeView treeViewCompare2 = null; //Form1.static_form.form_treeCompare2;
 /**/    }
 #else
+    class SDL_Control : Control
+    {
+        public SDL_Control() : base() { }
+    }
+
     class SDL_ListViewItem : ListViewItem
     {
         public SDL_ListViewItem() : base() { }
@@ -190,7 +207,7 @@ class Blinky
         static bool m_bTreeSelect = false;
         internal static bool TreeSelect { get { return m_bTreeSelect; } }
 
-        readonly Forms.Control m_defaultControl = null;
+        readonly Control m_defaultControl = null;
         readonly DispatcherTimer m_timer = new DispatcherTimer();
 
         Holder m_holder = new NullHolder();
@@ -222,12 +239,12 @@ class Blinky
         }
         class ControlHolder : Holder
         {
-            protected readonly Forms.Control m_obj = null;
-            internal ControlHolder(Forms.Control obj) { m_obj = obj; }
+            protected readonly Control m_obj = null;
+            internal ControlHolder(Control obj) { m_obj = obj; }
             internal override Drawing.Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
         }
 
-        internal Blinky(Forms.Control defaultControl)
+        internal Blinky(Control defaultControl)
         {
             m_defaultControl = defaultControl;
             m_timer.Tick += new EventHandler((object sender, EventArgs e) =>
@@ -264,7 +281,7 @@ class Blinky
             m_defaultControl.Select();      // search results UX
         }
 
-        internal void Go(Forms.Control ctl, Drawing.Color? clr = null, bool Once = false)
+        internal void Go(Control ctl, Drawing.Color? clr = null, bool Once = false)
         {
             Reset();
             m_holder = new ControlHolder(ctl);
@@ -371,9 +388,9 @@ class Blinky
 
         public const UInt32 FLASHW_ALL = 3;
 
-        internal static void Go(Forms.Control ctl_in = null, bool Once = false)
+        internal static void Go(SDL_Control ctl_in = null, bool Once = false)
         {
-            Forms.Control ctl = ctl_in ?? Form1.static_form;
+            SDL_Control ctl = ctl_in ?? (SDL_Control)(Control)Form1.static_form;
 
             Utilities.CheckAndInvoke(ctl, new Action(() =>
             {
@@ -729,7 +746,7 @@ class Blinky
 
         internal static void Closure(Action action) { action(); }
 
-        internal static object CheckAndInvoke(Forms.Control control, Delegate action, object[] args = null)
+        internal static object CheckAndInvoke(Control control, Delegate action, object[] args = null)
         {
             if (GlobalData.AppExit)
             {

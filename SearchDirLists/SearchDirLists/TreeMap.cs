@@ -24,7 +24,7 @@ namespace SearchDirLists
     [System.ComponentModel.DesignerCategory("Code")]
     class TreeMapUserControl : Forms.UserControl
     {
-        public Forms.Control TooltipAnchor;
+        public Forms.Control TooltipAnchor = null;
 
         Drawing.Rectangle m_rectBitmap = Drawing.Rectangle.Empty;
         Drawing.Rectangle m_selRect = Drawing.Rectangle.Empty;

@@ -15,6 +15,7 @@ namespace SearchDirLists
             {
                 new App().Run();
             }
+#if (WPF == false)
             else
             {
                 if (Environment.OSVersion.Version.Major >= 6) SetProcessDPIAware();
@@ -22,6 +23,7 @@ namespace SearchDirLists
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new Form1());
             }
+#endif
         }   
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]

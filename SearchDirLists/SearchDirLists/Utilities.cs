@@ -37,7 +37,7 @@ namespace SearchDirLists
     [System.ComponentModel.DesignerCategory("Code")]
     class SDL_Control : Control
     {
-        internal IntPtr Handle;
+        internal IntPtr Handle = (IntPtr)0;
         internal bool IsDisposed { get { return false; } }
     }
 
@@ -48,7 +48,7 @@ namespace SearchDirLists
 /**/        internal bool CheckBoxes;
 /**/        internal void CollapseAll() { }
 /**/        internal bool Enabled;
-/**/        internal Drawing.Font Font;
+/**/        internal Drawing.Font Font = null;
 /**/        internal int GetNodeCount(bool includeSubTrees = false) { return 0; }
 /**/        internal ItemCollection Nodes { get { return Items; } }
 /**/        internal SDL_TreeNode TopNode { get { return null; } set { } }
@@ -69,11 +69,11 @@ namespace SearchDirLists
 /**/        internal ItemCollection Nodes { get { return Items; } }
 /**/        internal SDL_TreeNode NextNode { get { if (Parent == null) return null; ItemCollection c = ((TreeViewItem)Parent).Items; int i = c.IndexOf(this) + 1; if (i < c.Count) return (SDL_TreeNode)c[i]; return null; } }
 /**/        internal int Level { get { int i = 0; if (Parent != null) { i = ((SDL_TreeNode)Parent).Level; ++i; } return i; } }
-/**/        internal Drawing.Font NodeFont; // { get { return new Drawing.Font(FontFamily.FamilyNames[, (float)FontSize, (Drawing.FontStyle)FontStyle); } }
+/**/        internal Drawing.Font NodeFont = null; // { get { return new Drawing.Font(FontFamily.FamilyNames[, (float)FontSize, (Drawing.FontStyle)FontStyle); } }
 /**/        internal int SelectedImageIndex = -1;
 /**/        internal String Text { get { return (String)Header; } set { Header = value; } }
-/**/        internal String ToolTipText;
-/**/        internal SDL_TreeView TreeView;
+/**/        internal String ToolTipText = null;
+/**/        internal SDL_TreeView TreeView = null;
 /**/    }
 /**/
 /**/    class SDL_ListViewItem : ListViewItem
@@ -83,13 +83,13 @@ namespace SearchDirLists
 /**/        internal SDL_ListViewItem(String[] arrString) {} //{ int n = this. View.Columns.Count;  foreach (String s in arrString) { } }
 /**/        internal Drawing.Color ForeColor { get { return this.GetForeColor(); } set { this.SetForeColor(value); } }
 /**/        internal Drawing.Color BackColor { get { return this.GetBackColor(); } set { this.SetBackColor(value); } }
-/**/        internal bool Selected;
+/**/        internal void Select(bool bSel = true) {}
 /**/        internal bool Focused;
 /**/        internal Drawing.Font Font;
-/**/        internal int Index;
-/**/        internal ListView ListView;
+/**/        internal int Index = -1;
+/**/        internal ListView ListView = null;
 /**/        internal void Remove() { }
-/**/        internal ListViewItem[] SubItems;
+/**/        internal ListViewItem[] SubItems = null;
 /**/    }
 /**/
 /**/    class SDL_ListViewSubitem : ListViewItem
@@ -128,6 +128,7 @@ namespace SearchDirLists
             internal static void TopItemSet(this ListView lv, int n) { }
             internal static void TopItemSet(this ListView lv, ListViewItem l) { }
             internal static SDL_ListViewItem TopItem(this ListView lv) { return null; }
+            internal static void AddRange(this ItemCollection c, object[] a) { }
 
             internal static bool InvokeRequired(this WPF.Window w) { return w.Dispatcher.CheckAccess(); }
             internal static object Invoke(this WPF.Window w, Delegate m, params object[] a) { return w.Dispatcher.Invoke(m, a); }
@@ -158,6 +159,7 @@ namespace SearchDirLists
         public SDL_ListViewItem() : base() { }
         internal SDL_ListViewItem(String strContent) : base(strContent) { }
         internal SDL_ListViewItem(String[] arrString) : base(arrString) { }
+        internal void Select(bool bSel = true) { Selected = bSel; }
     }
 
     class SDL_ListViewSubitem : ListViewItem.ListViewSubItem
@@ -215,6 +217,8 @@ namespace SearchDirLists
         internal static Color ClrA(Drawing.Color i) { return i; }
 
         // extension method as property
+        internal static Drawing.Color GetBackColor(this Control ctl) { return ctl.BackColor; }
+        internal static void SetBackColor(this Control ctl, Drawing.Color c) { ctl.BackColor = c; }
         internal static String Text(this ListViewItem l) { return l.Text; }
         internal static void SetText(this ListViewItem l, String s) { l.Text = s; }
         internal static String Text(this ListViewItem.ListViewSubItem l) { return l.Text; }
@@ -270,7 +274,7 @@ class Blinky
             readonly SDL_ListViewItem m_obj = null;
             internal ListViewItemHolder(SDL_ListViewItem obj) { m_obj = obj; }
             internal override Drawing.Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
-            internal override void ResetHolder() { m_obj.Selected = true; }
+            internal override void ResetHolder() { m_obj.Select(); }
         }
         class ControlHolder : Holder
         {
@@ -278,7 +282,14 @@ class Blinky
             internal ControlHolder(Forms.Control obj) { m_obj = obj; }
             internal override Drawing.Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
         }
-
+#if (WPF)
+        class WPFControlHolder : Holder
+        {
+            protected readonly WPF.Controls.Control m_obj = null;
+            internal WPFControlHolder(WPF.Controls.Control obj) { m_obj = obj; }
+            internal override Drawing.Color BackColor { get { return m_obj.GetBackColor(); } set { m_obj.SetBackColor(value); } }
+        }
+#endif
         internal Blinky(Forms.Control defaultControl)
         {
             m_defaultControl = defaultControl;
@@ -311,7 +322,7 @@ class Blinky
             Reset();
             m_holder = new ListViewItemHolder(lvItem);
             lvItem.EnsureVisible();
-            lvItem.Selected = false;
+            lvItem.Select(false);
             Go_A(Once: true);
             m_defaultControl.Select();      // search results UX
         }
@@ -322,7 +333,14 @@ class Blinky
             m_holder = new ControlHolder(ctl);
             Go_A(clr, Once);
         }
-
+#if (WPF)
+        internal void Go(WPF.Controls.Control ctl, Drawing.Color? clr = null, bool Once = false)
+        {
+            Reset();
+            m_holder = new WPFControlHolder(ctl);
+            Go_A(clr, Once);
+        }
+#endif
         internal void Go(Drawing.Color? clr = null, bool Once = false, bool bProgress = false)
         {
             Reset();
@@ -564,7 +582,7 @@ class Blinky
         }
 
         protected virtual void ReadListItem(UList<SDL_ListViewItem> listItems, String[] strArray) { listItems.Add(new SDL_ListViewItem(strArray)); }
-
+#if (WPF == false)
         internal bool ReadList(Forms.ListView lv)
         {
             if ((m_strFileNotDialog == null) && (ShowDialog(static_OpenFileDialog) == false))
@@ -600,7 +618,7 @@ class Blinky
 
             return (listItems.Count > 0);
         }
-
+#endif
         protected virtual String WriteListItem(int nIndex, String str) { return str; }
 
         internal bool WriteList(Forms.ListView.ListViewItemCollection lvItems)

@@ -2566,13 +2566,13 @@ namespace SearchDirLists
                 return false;
             }
 
-            if (lv.SelectedItems[0].Tag != null)
+            if (((ListViewItem)lv.SelectedItems[0]).Tag != null)
             {
                 return true;
             }
 
             // marker item
-            int nIx = lv.SelectedItems[0].Index + 1;
+            int nIx = ((SDL_ListViewItem)lv.SelectedItems[0]).Index + 1;
             bool bGt = (nIx >= lv.Items.Count);
 
             if (bUp || bGt)
@@ -2599,7 +2599,7 @@ namespace SearchDirLists
 
             Utilities.WriteLine("LVMarkerClick");
             lvItem.EnsureVisible();
-            lvItem.Selected = true;
+            lvItem.Select();
             lvItem.Focused = true;
 
             if (lv.SelectedItems.Count <= 0)
@@ -2607,7 +2607,7 @@ namespace SearchDirLists
                 return false;
             }
 
-            return (lv.SelectedItems[0].Tag != null);
+            return (((ListViewItem)lv.SelectedItems[0]).Tag != null);
         }
 
         internal bool LV_VolumesItemInclude(SDL_ListViewItem lvItem)
@@ -2653,7 +2653,7 @@ namespace SearchDirLists
 
             ++m_nSelChgIx;
 
-            int nNow =  m_arrSelChgIx[m_nSelChgIx %= 2] = lv.SelectedItems[0].Index;
+            int nNow =  m_arrSelChgIx[m_nSelChgIx %= 2] = ((SDL_ListViewItem)lv.SelectedItems[0]).Index;
             int nPrev = m_arrSelChgIx[(m_nSelChgIx + 1) % 2];
 
             bUp = nNow < nPrev;

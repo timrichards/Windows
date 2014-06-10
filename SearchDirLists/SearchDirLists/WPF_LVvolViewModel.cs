@@ -6,7 +6,7 @@ using Forms = System.Windows.Forms;
 using System.Windows.Controls;
 using System.ComponentModel;
 using System.IO;
-
+using Drawing = System.Drawing;
 
 namespace SearchDirLists
 {
@@ -57,7 +57,6 @@ namespace SearchDirLists
             mSDL_CBVolumeName = new SDL_ItemsControl("CBVolumeName", RaisePropertyChanged, m_app.xaml_cbVolumeName.Items);
             mSDL_CBPath = new SDL_ItemsControl("CBPath", RaisePropertyChanged, m_app.xaml_cbPath.Items);
             mSDL_CBSaveAs = new SDL_ItemsControl("CBSaveAs", RaisePropertyChanged, m_app.xaml_cbSaveAs.Items);
-            m_form1 = new Form1();
             saveFileDialog1.DefaultExt = "txt";
             saveFileDialog1.Filter = "Text files|*.txt|All files|*.*";
             saveFileDialog1.OverwritePrompt = false;
@@ -109,7 +108,6 @@ namespace SearchDirLists
         public ICommand Icmd_VolumeGroup { get { if (mIcmd_volumeGroup == null) { mIcmd_volumeGroup = new RelayCommand(param => WPF_btnSetVolumeGroup_Click(), param => CanModifyMultiple()); } return mIcmd_volumeGroup; } } ICommand mIcmd_volumeGroup = null;
         public ICommand Icmd_ModifyFile { get { if (mIcmd_modifyFile == null) { mIcmd_modifyFile = new RelayCommand(param => WPF_btnModifyFile_Click(), param => CanModifyOne()); } return mIcmd_modifyFile; } } ICommand mIcmd_modifyFile = null;
 
-        readonly Form1 m_form1 = null;
         readonly Forms.FolderBrowserDialog folderBrowserDialog1 = new Forms.FolderBrowserDialog();
         readonly Forms.SaveFileDialog saveFileDialog1 = new Forms.SaveFileDialog();
 
@@ -142,18 +140,18 @@ namespace SearchDirLists
             }
         }
 
-        internal void WPF_btnLoadVolumeList_Click() { m_form1.form_btnLoadVolumeList_Click(); }
-        internal void WPF_btnSaveVolumeList_Click() { m_form1.form_btnSaveVolumeList_Click(); }
+        internal void WPF_btnLoadVolumeList_Click() { }
+        internal void WPF_btnSaveVolumeList_Click() { }
 
         internal void WPF_btnAddVolume_Click()
         {
             gd.InterruptTreeTimerWithAction(new BoolAction(AddVolume));
         }
 
-        internal void WPF_btnRemoveVolume_Click() { m_form1.form_btnRemoveVolume_Click(); }
-        internal void WPF_btnToggleInclude_Click() { m_form1.form_btnToggleInclude_Click(); }
-        internal void WPF_btnSetVolumeGroup_Click() { m_form1.form_btnVolGroup_Click(); }
-        internal void WPF_btnModifyFile_Click() { m_form1.form_btnModifyFile_Click(); }
+        internal void WPF_btnRemoveVolume_Click() { }
+        internal void WPF_btnToggleInclude_Click() { }
+        internal void WPF_btnSetVolumeGroup_Click() { }
+        internal void WPF_btnModifyFile_Click() { }
 
         bool AddVolume()
         {
@@ -163,7 +161,7 @@ namespace SearchDirLists
             {
                 return false;
             }
-#if (WPF)
+#if (false)
             if (Utilities.StrValid(gd.m_strSaveAs) == false)
             {
                 gd.FormError(m_app.xaml_cbSaveAs, "Must have a file to load or save directory listing to.", "Volume Save As");
@@ -180,14 +178,14 @@ namespace SearchDirLists
 
             if (File.Exists(gd.m_strSaveAs) && Utilities.StrValid(gd.m_strPath))
             {
-                gd.m_blinky.Go(m_app.xaml_cbSaveAs, clr: Color.Red);
+                gd.m_blinky.Go(m_app.xaml_cbSaveAs, clr: Drawing.Color.Red);
 
-                if (MessageBox(gd.m_strSaveAs + " already exists. Overwrite?", "Volume Save As", MessageBoxButtons.YesNo)
-                    != System.Windows.Forms.DialogResult.Yes)
+                if (Utilities.MBox(gd.m_strSaveAs + " already exists. Overwrite?", "Volume Save As", MBoxBtns.YesNo)
+                    != MBoxRet.Yes)
                 {
-                    gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Color.Yellow, Once: true);
+                    gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Yellow, Once: true);
                     m_app.xaml_cbVolumeName.Text = String.Empty;
-                    gd.m_blinky.Go(m_app.xaml_cbPath, clr: Color.Yellow, Once: true);
+                    gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Yellow, Once: true);
                     CBPath = String.Empty;
                     Utilities.Assert(1308.9306, SaveFields(false));
                 }
@@ -195,17 +193,17 @@ namespace SearchDirLists
 
             if ((File.Exists(gd.m_strSaveAs) == false) && (Utilities.StrValid(gd.m_strPath) == false))
             {
-                gd.m_blinky.Go(m_app.xaml_cbPath, clr: Color.Red);
-                MessageBox("Must have a path or existing directory listing file.", "Volume Source Path");
-                gd.m_blinky.Go(m_app.xaml_cbPath, clr: Color.Red, Once: true);
+                gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red);
+                Utilities.MBox("Must have a path or existing directory listing file.", "Volume Source Path");
+                gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red, Once: true);
                 return false;
             }
 
             if (Utilities.StrValid(gd.m_strPath) && (Directory.Exists(gd.m_strPath) == false))
             {
-                gd.m_blinky.Go(m_app.xaml_cbPath, clr: Color.Red);
-                MessageBox("Path does not exist.", "Volume Source Path");
-                gd.m_blinky.Go(m_app.xaml_cbPath, clr: Color.Red, Once: true);
+                gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red);
+                Utilities.MBox("Path does not exist.", "Volume Source Path");
+                gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red, Once: true);
                 return false;
             }
 
@@ -229,9 +227,9 @@ namespace SearchDirLists
                         }
                         else
                         {
-                            gd.m_blinky.Go(m_app.xaml_cbPath, clr: Color.Red);
-                            MessageBox("File is bad and path does not exist.", "Volume Source Path");
-                            gd.m_blinky.Go(m_app.xaml_cbPath, clr: Color.Red, Once: true);
+                            gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red);
+                            Utilities.MBox("File is bad and path does not exist.", "Volume Source Path");
+                            gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red, Once: true);
                             return false;
                         }
                     }
@@ -254,24 +252,24 @@ namespace SearchDirLists
 
                 if ((lvItem != null) && (lvItem.Text() == gd.m_strVolumeName))
                 {
-                    gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Color.Red);
+                    gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Red);
 
-                    if (MessageBox("Nickname already in use. Use it for more than one volume?", "Volume Save As", MessageBoxButtons.YesNo)
-                        != DialogResult.Yes)
+                    if (Utilities.MBox("Nickname already in use. Use it for more than one volume?", "Volume Save As", MBoxBtns.YesNo)
+                        != MBoxRet.Yes)
                     {
-                        gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Color.Red, Once: true);
+                        gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Red, Once: true);
                         return false;
                     }
                 }
             }
             else if (bOpenedFile == false)
             {
-                gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Color.Red);
+                gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Red);
 
-                if (MessageBox("Continue without entering a nickname for this volume?", "Volume Save As", MessageBoxButtons.YesNo)
-                    != DialogResult.Yes)
+                if (Utilities.MBox("Continue without entering a nickname for this volume?", "Volume Save As", MBoxBtns.YesNo)
+                    != MBoxRet.Yes)
                 {
-                    gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Color.Red, Once: true);
+                    gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Red, Once: true);
                     return false;
                 }
             }

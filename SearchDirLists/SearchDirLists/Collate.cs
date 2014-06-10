@@ -101,7 +101,7 @@ namespace SearchDirLists
                         continue;
                     }
 
-                    if ((treeNode.ForeColor == Color.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
+                    if ((treeNode.ForeColor == Drawing.Color.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
                     {
                         Utilities.Assert(1305.6304, (nodeDatum.m_listClones.Count > 0) && (nodeDatum.m_bDifferentVols == false));
                         m_listSameVol.Add(treeNode);
@@ -109,7 +109,7 @@ namespace SearchDirLists
 
                     if (bCloneOK)
                     {
-                        treeNode.BackColor = Color.LightGoldenrodYellow;
+                        treeNode.BackColor = Drawing.Color.LightGoldenrodYellow;
 
                         if ((nodeDatum.m_lvItem != null) && (nodeDatum.m_lvItem.ListView == null))  // ignore LV
                         {
@@ -119,7 +119,7 @@ namespace SearchDirLists
 
                     if (treeNode.FirstNode != null)
                     {
-                        Go((SDL_TreeNode)treeNode.FirstNode, bCloneOK || (new Color[] { Color.SteelBlue, Color.DarkBlue }.Contains(treeNode.ForeColor)));
+                        Go((SDL_TreeNode)treeNode.FirstNode, bCloneOK || (new Drawing.Color[] { Drawing.Color.SteelBlue, Drawing.Color.DarkBlue }.Contains(treeNode.ForeColor)));
                     }
                 }
                 while (bNextNode && ((treeNode = (SDL_TreeNode)treeNode.NextNode) != null));
@@ -135,9 +135,9 @@ namespace SearchDirLists
             {
                 if (bInit == false)
                 {
-                    lvMarker.BackColor = Color.DarkSlateGray;
-                    lvMarker.ForeColor = Color.White;
-                    lvMarker.Font = new Font(lvMarker.Font, FontStyle.Bold);
+                    lvMarker.BackColor = Drawing.Color.DarkSlateGray;
+                    lvMarker.ForeColor = Drawing.Color.White;
+                    lvMarker.Font = new Drawing.Font(lvMarker.Font, Drawing.FontStyle.Bold);
                     lvMarker.Tag = null;
                     bInit = true;
                 }
@@ -192,7 +192,7 @@ namespace SearchDirLists
 
             if (nLength <= 100 * 1024)
             {
-                treeNode.ForeColor = Color.LightGray;
+                treeNode.ForeColor = Drawing.Color.LightGray;
                 nodeDatum.m_listClones.Clear();
             }
 
@@ -215,8 +215,8 @@ namespace SearchDirLists
                     SDL_TreeNode rootNode = treeNode.Root();
                     RootNodeDatum rootNodeDatum = (RootNodeDatum)rootNode.Tag;
 
-                    Utilities.Assert(1305.6308, new Color[] { Color.Empty, Color.DarkBlue }.Contains(treeNode.ForeColor));
-                    treeNode.ForeColor = Color.Firebrick;
+                    Utilities.Assert(1305.6308, new Drawing.Color[] { Drawing.Color.Empty, Drawing.Color.DarkBlue }.Contains(treeNode.ForeColor));
+                    treeNode.ForeColor = Drawing.Color.Firebrick;
 
                     bool bDifferentVols = false;
 
@@ -244,10 +244,10 @@ namespace SearchDirLists
                             continue;
                         }
 
-                        if (treeNode.ForeColor != Color.DarkBlue)
+                        if (treeNode.ForeColor != Drawing.Color.DarkBlue)
                         {
-                            Utilities.Assert(1305.6311, treeNode.ForeColor == Color.Firebrick);
-                            treeNode.ForeColor = Color.SteelBlue;
+                            Utilities.Assert(1305.6311, treeNode.ForeColor == Drawing.Color.Firebrick);
+                            treeNode.ForeColor = Drawing.Color.SteelBlue;
                         }
 
                         bDifferentVols = true;
@@ -373,7 +373,7 @@ namespace SearchDirLists
 
             while (parentNode != null)
             {
-                parentNode.BackColor = Color.Snow;
+                parentNode.BackColor = Drawing.Color.Snow;
 
                 NodeDatum nodeDatum = (NodeDatum)parentNode.Tag;
 
@@ -382,9 +382,9 @@ namespace SearchDirLists
                     nodeDatum.m_lvItem.BackColor = parentNode.BackColor;
                 }
 
-                if (parentNode.ForeColor != Color.DarkOrange)
+                if (parentNode.ForeColor != Drawing.Color.DarkOrange)
                 {
-                    Utilities.Assert(1305.6313, (parentNode.ForeColor == Color.Empty) == (nodeDatum.m_lvItem == null));
+                    Utilities.Assert(1305.6313, (parentNode.ForeColor == Drawing.Color.Empty) == (nodeDatum.m_lvItem == null));
                 }
 
                 parentNode = (SDL_TreeNode)parentNode.Parent;
@@ -593,8 +593,8 @@ namespace SearchDirLists
                 SDL_TreeNode treeNode = pair.Key;
                 SDL_ListViewItem lvIgnoreItem = pair.Value;
 
-                treeNode.ForeColor = Color.DarkGray;
-                treeNode.BackColor = Color.Empty;
+                treeNode.ForeColor = Drawing.Color.DarkGray;
+                treeNode.BackColor = Drawing.Color.Empty;
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
@@ -626,10 +626,10 @@ namespace SearchDirLists
                 Utilities.Assert(1305.6322, nodeDatum.nImmediateFiles > 0);
                 SnowUniqueParents(treeNode);
 
-                if (treeNode.ForeColor != Color.DarkOrange)
+                if (treeNode.ForeColor != Drawing.Color.DarkOrange)
                 {
-                    Utilities.Assert(1305.6323, treeNode.ForeColor == Color.Empty);
-                    treeNode.ForeColor = Color.Red;
+                    Utilities.Assert(1305.6323, treeNode.ForeColor == Drawing.Color.Empty);
+                    treeNode.ForeColor = Drawing.Color.Red;
                 }
 
                 lvItem.ForeColor = treeNode.ForeColor;
@@ -685,7 +685,7 @@ namespace SearchDirLists
                 SDL_ListViewItem lvItem = new SDL_ListViewItem(new String[] { treeNode.Text, str_nClones });
 
                 lvItem.Tag = nodeDatum.m_listClones;
-                lvItem.ForeColor = Color.Firebrick;
+                lvItem.ForeColor = Drawing.Color.Firebrick;
                 lvItem.BackColor = treeNode.BackColor;
                 listLVsameVol.Add(lvItem);
                 nodeDatum.m_lvItem = lvItem;

@@ -590,7 +590,7 @@ namespace SearchDirLists
 
                     if (bValid == false)
                     {
-                        MessageBox("Bad file: " + strSaveAs, "Tree");
+                        MBox("Bad file: " + strSaveAs, "Tree");
                         m_statusCallback(m_volStrings, bError: true);
                         return;
                     }

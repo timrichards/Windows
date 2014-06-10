@@ -18,6 +18,7 @@ using System.Threading;
 
 namespace SearchDirLists
 {
+#if (WPF == false)
     partial class Form1
     {
         internal void ClearMem_TreeForm()
@@ -384,6 +385,7 @@ namespace SearchDirLists
             }
         }
     }
+#endif
 
     partial class GlobalData
     {

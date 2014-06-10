@@ -31,7 +31,7 @@ using System.Windows.Interop;
 namespace SearchDirLists
 {
     delegate bool BoolAction();
-    delegate Forms.DialogResult MessageBoxDelegate(String strMessage, String strTitle = null, Forms.MessageBoxButtons? buttons = null);
+    delegate MBoxRet MBoxDelegate(String strMessage, String strTitle = null, MBoxBtns? buttons = null);
 
 #if (WPF == false)
     //    [System.ComponentModel.DesignerCategory("Designer")]
@@ -73,7 +73,6 @@ namespace SearchDirLists
 
         Control m_ctlLastSearchSender = null;
         TabPage m_FileListTabPageBeforeCompare = null;
-        internal static Form1 static_form = null;
         internal readonly Color m_clrVolGroupOrig = Color.Empty;
         internal readonly Font m_FontVolGroupOrig = null;
 
@@ -101,7 +100,7 @@ namespace SearchDirLists
         internal Form1()
         {
             gd = new GlobalData();   // at end of file. Has to come after message box is set.
-            static_form = this;
+            GlobalData.static_form = this;
             InitializeComponent();
 
             gd.timer_DoTree.Interval = new System.TimeSpan(0, 0, 3);
@@ -165,8 +164,8 @@ namespace SearchDirLists
             {
                 gd.m_blinky.Go(form_cbSaveAs, clr: Color.Red);
 
-                if (Utilities.MessageBox(gd.m_strSaveAs + " already exists. Overwrite?", "Volume Save As", MessageBoxButtons.YesNo)
-                    != DialogResult.Yes)
+                if (Utilities.MBox(gd.m_strSaveAs + " already exists. Overwrite?", "Volume Save As", MBoxBtns.YesNo)
+                    != MBoxRet.Yes)
                 {
                     gd.m_blinky.Go(form_cbVolumeName, clr: Color.Yellow, Once: true);
                     form_cbVolumeName.Text = String.Empty;
@@ -179,7 +178,7 @@ namespace SearchDirLists
             if ((File.Exists(gd.m_strSaveAs) == false) && (Utilities.StrValid(gd.m_strPath) == false))
             {
                 gd.m_blinky.Go(form_cbPath, clr: Color.Red);
-                Utilities.MessageBox("Must have a path or existing directory listing file.", "Volume Source Path");
+                Utilities.MBox("Must have a path or existing directory listing file.", "Volume Source Path");
                 gd.m_blinky.Go(form_cbPath, clr: Color.Red, Once: true);
                 return false;
             }
@@ -187,7 +186,7 @@ namespace SearchDirLists
             if (Utilities.StrValid(gd.m_strPath) && (Directory.Exists(gd.m_strPath) == false))
             {
                 gd.m_blinky.Go(form_cbPath, clr: Color.Red);
-                Utilities.MessageBox("Path does not exist.", "Volume Source Path");
+                Utilities.MBox("Path does not exist.", "Volume Source Path");
                 gd.m_blinky.Go(form_cbPath, clr: Color.Red, Once: true);
                 return false;
             }
@@ -214,7 +213,7 @@ namespace SearchDirLists
                         else
                         {
                             gd.m_blinky.Go(form_cbPath, clr: Color.Red);
-                            Utilities.MessageBox("File is bad and path does not exist.", "Volume Source Path");
+                            Utilities.MBox("File is bad and path does not exist.", "Volume Source Path");
                             gd.m_blinky.Go(form_cbPath, clr: Color.Red, Once: true);
                             return false;
                         }
@@ -240,8 +239,8 @@ namespace SearchDirLists
                 {
                     gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red);
 
-                    if (Utilities.MessageBox("Nickname already in use. Use it for more than one volume?", "Volume Save As", MessageBoxButtons.YesNo)
-                        != DialogResult.Yes)
+                    if (Utilities.MBox("Nickname already in use. Use it for more than one volume?", "Volume Save As", MBoxBtns.YesNo)
+                        != MBoxRet.Yes)
                     {
                         gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red, Once: true);
                         return false;
@@ -252,8 +251,8 @@ namespace SearchDirLists
             {
                 gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red);
 
-                if (Utilities.MessageBox("Continue without entering a nickname for this volume?", "Volume Save As", MessageBoxButtons.YesNo)
-                    != DialogResult.Yes)
+                if (Utilities.MBox("Continue without entering a nickname for this volume?", "Volume Save As", MBoxBtns.YesNo)
+                    != MBoxRet.Yes)
                 {
                     gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red, Once: true);
                     return false;
@@ -386,7 +385,7 @@ namespace SearchDirLists
 
             if (nLoaded != nTotal)
             {
-                Utilities.MessageBox(nLoaded + " of " + nTotal + " scratchpad folders found in the tree.", "Load copy scratchpad");
+                Utilities.MBox(nLoaded + " of " + nTotal + " scratchpad folders found in the tree.", "Load copy scratchpad");
                 form_tabControlCopyIgnore.SelectedTab = form_tabPageCopy;
                 gd.m_blinky.Go(form_lvCopyScratchpad, clr: Color.Yellow, Once: true);
             }
@@ -888,7 +887,7 @@ namespace SearchDirLists
                 if (lvSelect.Count > 1)
                 {
                     Utilities.Assert(1308.9311, false, bTraceOnly: true);    // guaranteed by selection logic
-                    Utilities.MessageBox("Only one file can be modified at a time.", "Modify file");
+                    Utilities.MBox("Only one file can be modified at a time.", "Modify file");
                     return false;
                 }
 
@@ -901,15 +900,15 @@ namespace SearchDirLists
                 {
                     if (gd.m_saveDirListings != null)
                     {
-                        Utilities.MessageBox("Currently saving listings and can't open file yet. Please wait.", "Modify file");
+                        Utilities.MBox("Currently saving listings and can't open file yet. Please wait.", "Modify file");
                     }
                     else if (Utilities.StrValid(lvSelect[0].Name))
                     {
-                        Utilities.MessageBox("File hasn't been saved yet.", "Modify file");
+                        Utilities.MBox("File hasn't been saved yet.", "Modify file");
                     }
                     else
                     {
-                        Utilities.MessageBox("Can't open file.", "Modify file");
+                        Utilities.MBox("Can't open file.", "Modify file");
                     }
 
                     return false;
@@ -955,7 +954,7 @@ namespace SearchDirLists
                     {
                         if (inputBox.Entry.Length > 1)
                         {
-                            Utilities.MessageBox("Drive letter must be one letter.", "Drive letter");
+                            Utilities.MBox("Drive letter must be one letter.", "Drive letter");
                             continue;
                         }
 
@@ -971,7 +970,7 @@ namespace SearchDirLists
                     ((Utilities.StrValid(strDriveLetter) == false) ||
                     (Utilities.NotNull(strDriveLetter) == Utilities.NotNull(strDriveLetter_orig))))
                 {
-                    Utilities.MessageBox("No changes made.", "Modify file");
+                    Utilities.MBox("No changes made.", "Modify file");
                     return false;
                 }
 
@@ -1024,7 +1023,7 @@ namespace SearchDirLists
                 File.WriteAllText(strFileName, sbFileConts.ToString());
                 gd.m_blinky.Go(form_btnSaveVolumeList);
 
-                if (Utilities.MessageBox("Update the volume list?", "Modify file", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (Utilities.MBox("Update the volume list?", "Modify file", MBoxBtns.YesNo) == MBoxRet.Yes)
                 {
                     form_btnSaveVolumeList_Click();
                 }
@@ -2210,7 +2209,7 @@ namespace SearchDirLists
                     form_tabControlMain.SelectedTab = form_tabPageBrowse;
                     form_tabControlCopyIgnore.SelectedTab = form_tabPageCopy;
                     gd.m_blinky.Go(form_lvCopyScratchpad, clr: Color.Yellow, Once: true);
-                    Utilities.MessageBox("The Copy scratchpad cannot be loaded with no directory listings.", "Load Copy scratchpad externally");
+                    Utilities.MBox("The Copy scratchpad cannot be loaded with no directory listings.", "Load Copy scratchpad externally");
                     Application.Exit();
                     break;
                 }
@@ -2245,6 +2244,16 @@ namespace SearchDirLists
             gd.m_bKillTree = true;
             gd.m_bRestartTreeTimer = false;
         }
+    }
+
+    partial class GlobalData
+    {
+        internal static Form1 static_form = null;
+    }
+#else
+    partial class GlobalData
+    {
+        internal static WPF.Window static_form = null;
     }
 #endif
 
@@ -2424,11 +2433,11 @@ namespace SearchDirLists
             }
         }
 
-        internal void FormError(System.Windows.Controls.Control control, String strError, String strTitle) { MessageBox(strError, strTitle); }
+        internal void FormError(System.Windows.Controls.Control control, String strError, String strTitle) { MBox(strError, strTitle); }
         internal void FormError(Forms.Control control, String strError, String strTitle)
         {
             m_blinky.Go(control, clr: Drawing.Color.Red, Once: true);
-            MessageBox(strError, strTitle);
+            MBox(strError, strTitle);
             m_blinky.Go(control, clr: Drawing.Color.Red, Once: true);
         }
 

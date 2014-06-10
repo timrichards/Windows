@@ -70,14 +70,14 @@ namespace SearchDirLists
             int nFilesWritten = gd.m_saveDirListings.FilesWritten;
 
             gd.m_saveDirListings = null;   // has to precede messagebox
-            Utilities.MessageBox("Completed. " + nFilesWritten + " files written.", "Save Directory Listings");
+            Utilities.MBox("Completed. " + nFilesWritten + " files written.", "Save Directory Listings");
         }
 
         bool DoSaveDirListings()
         {
             if (gd.m_saveDirListings != null)
             {
-                Utilities.MessageBox("Already in progress.", "Save Directory Listings");
+                Utilities.MBox("Already in progress.", "Save Directory Listings");
                 return false;
             }
 
@@ -270,14 +270,14 @@ namespace SearchDirLists
                 if (Directory.Exists(strPath) == false)
                 {
                     m_statusCallback(m_volStrings.Index, mSTRnotSaved);
-                    MessageBox("Source Path does not exist.", "Save Directory Listing");
+                    MBox("Source Path does not exist.", "Save Directory Listing");
                     return;
                 }
 
                 if (StrValid(strSaveAs) == false)
                 {
                     m_statusCallback(m_volStrings.Index, mSTRnotSaved);
-                    MessageBox("Must specify save filename.", "Save Directory Listing");
+                    MBox("Must specify save filename.", "Save Directory Listing");
                     return;
                 }
 
@@ -328,7 +328,7 @@ namespace SearchDirLists
                 catch (Exception e)
                 {
                     m_statusCallback(m_volStrings.Index, strText: mSTRnotSaved, bDone: true);
-                    MessageBox(strSaveAs.PadRight(100) + "\nException: " + e.Message, "Save Directory Listing");
+                    MBox(strSaveAs.PadRight(100) + "\nException: " + e.Message, "Save Directory Listing");
                 }
             }
 

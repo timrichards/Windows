@@ -186,13 +186,13 @@ namespace SearchDirLists
         {
             if (gd.m_searchType2 != null)
             {
-                DialogResult mboxResult = DialogResult.Yes;
+                MBoxRet mboxRet = MBoxRet.Yes;
 
                 if (bKill == false)
                 {
-                    mboxResult = Utilities.MessageBox("Already in progress. Restart search?" + "\n(or Cancel search.)".PadRight(100), GlobalData.mSTRsearchTitle, MessageBoxButtons.YesNoCancel);
+                    mboxRet = Utilities.MBox("Already in progress. Restart search?" + "\n(or Cancel search.)".PadRight(100), GlobalData.mSTRsearchTitle, MBoxBtns.YesNoCancel);
 
-                    if (mboxResult == DialogResult.No)
+                    if (mboxRet == MBoxRet.No)
                     {
                         return;
                     }
@@ -207,7 +207,7 @@ namespace SearchDirLists
                     gd.m_searchType2 = null;
                 }
 
-                if (mboxResult != DialogResult.Yes)
+                if (mboxRet != MBoxRet.Yes)
                 {
                     return;
                 }
@@ -753,7 +753,7 @@ namespace SearchDirLists
             m_bSearchResultsType2_List = false;
             m_strSelectFile = null;
             m_blinky.Go(clr: Drawing.Color.Red, Once: true);
-            MessageBox("Couldn't find the specified search parameter.", mSTRsearchTitle);
+            MBox("Couldn't find the specified search parameter.", mSTRsearchTitle);
         }
 
         internal void SearchStatusCallback(SearchResults searchResults, bool bFirst = false, bool bLast = false)

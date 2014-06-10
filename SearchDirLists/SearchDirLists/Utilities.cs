@@ -1,6 +1,6 @@
 ﻿#if WPF
 using System.Windows.Controls;
-using System.Windows.Media; using Media = System.Windows.Media;
+using System.Windows.Media;
 using System.Windows.Markup;
 using System.Xml;
 #else
@@ -29,6 +29,12 @@ using System.Windows.Interop;
 namespace SearchDirLists
 {
 #if (WPF)
+    [System.ComponentModel.DesignerCategory("Code")]
+    class SDL_Win : WPF.Window { }
+    enum MBoxBtns { OK = WPF.MessageBoxButton.OK, YesNo = WPF.MessageBoxButton.YesNo, YesNoCancel = WPF.MessageBoxButton.YesNoCancel }
+    enum MBoxRet { None = WPF.MessageBoxResult.None, Yes = WPF.MessageBoxResult.Yes, No = WPF.MessageBoxResult.No }
+
+    [System.ComponentModel.DesignerCategory("Code")]
     class SDL_Control : Control
     {
         internal IntPtr Handle;
@@ -122,6 +128,11 @@ namespace SearchDirLists
             internal static void TopItemSet(this ListView lv, int n) { }
             internal static void TopItemSet(this ListView lv, ListViewItem l) { }
             internal static SDL_ListViewItem TopItem(this ListView lv) { return null; }
+
+            internal static bool InvokeRequired(this WPF.Window w) { return w.Dispatcher.CheckAccess(); }
+            internal static object Invoke(this WPF.Window w, Delegate m, params object[] a) { return w.Dispatcher.Invoke(m, a); }
+            internal static void TitleSet(this WPF.Window w, String s) { w.Title = s; }
+            internal static String TitleGet(this WPF.Window w) { return w.Title; }
 /**/
 /**/        // Static
 /**/        internal static Color Clr(Drawing.Color i) { Color c = Color.FromArgb(i.A, i.R, i.G, i.B); return c; }
@@ -132,6 +143,11 @@ namespace SearchDirLists
 /**/        internal static SDL_TreeView treeViewCompare2 = null; //Form1.static_form.form_treeCompare2;
 /**/    }
 #else
+    [System.ComponentModel.DesignerCategory("Code")]
+    class SDL_Win : Form {}
+    enum MBoxBtns { OK = MessageBoxButtons.OK, YesNo = MessageBoxButtons.YesNo, YesNoCancel = MessageBoxButtons.YesNoCancel }
+    enum MBoxRet { None = DialogResult.None, Yes = DialogResult.Yes, No = DialogResult.No }
+
     class SDL_Control : Control
     {
         public SDL_Control() : base() { }
@@ -208,13 +224,16 @@ namespace SearchDirLists
         internal static void TopItemSet(this ListView lv, int n) { lv.TopItem = lv.Items[n]; }
         internal static void TopItemSet(this ListView lv, ListViewItem l) { lv.TopItem = l; }
         internal static SDL_ListViewItem TopItem(this ListView lv) { return (SDL_ListViewItem)lv.TopItem; }
+        internal static bool InvokeRequired(this Control c) { return c.InvokeRequired; }
+        internal static void TitleSet(this Control c, String s) { c.Text = s; }
+        internal static String TitleGet(this Control c) { return c.Text; }
     }
 
     class SDLWPF
     {
-        internal static SDL_TreeView treeViewMain = (SDL_TreeView)Form1.static_form.form_treeViewBrowse;
-        internal static SDL_TreeView treeViewCompare1 = (SDL_TreeView)Form1.static_form.form_treeCompare1;
-        internal static SDL_TreeView treeViewCompare2 = (SDL_TreeView)Form1.static_form.form_treeCompare2;
+        internal static SDL_TreeView treeViewMain = (SDL_TreeView)GlobalData.static_form.form_treeViewBrowse;
+        internal static SDL_TreeView treeViewCompare1 = (SDL_TreeView)GlobalData.static_form.form_treeCompare1;
+        internal static SDL_TreeView treeViewCompare2 = (SDL_TreeView)GlobalData.static_form.form_treeCompare2;
     }
 #endif
 
@@ -406,14 +425,30 @@ class Blinky
 
         internal static void Go(Forms.Control ctl_in = null, bool Once = false)
         {
-            Forms.Control ctl = ctl_in ?? Form1.static_form;
-
-            Utilities.CheckAndInvoke(ctl, new Action(() =>
+#if (WPF)
+            Dispatcher dispatcher = GlobalData.static_form.Dispatcher;
+#else
+            Forms.Control dispatcher = ctl_in ?? GlobalData.static_form;
+#endif
+            Utilities.CheckAndInvoke(dispatcher, new Action(() =>
             {
                 FLASHWINFO fInfo = new FLASHWINFO();
 
                 fInfo.cbSize = Convert.ToUInt32(Marshal.SizeOf(fInfo));
-                fInfo.hwnd = ctl.Handle;
+
+                if (ctl_in != null)
+                {
+                    fInfo.hwnd = ctl_in.Handle;
+                }
+                else
+                {
+#if (WPF)
+                    fInfo.hwnd = new WindowInteropHelper(GlobalData.static_form).Handle;
+#else
+                    fInfo.hwnd = GlobalData.static_form.Handle;
+#endif
+                }
+
                 fInfo.dwFlags = FLASHW_ALL;
                 fInfo.uCount = (uint) (Once ? 1 : 3);
                 fInfo.dwTimeout = 0;
@@ -560,7 +595,7 @@ class Blinky
             }
             else
             {
-                MessageBox("Not a valid " + Description + ".", "Load " + Description);
+                MBox("Not a valid " + Description + ".", "Load " + Description);
             }
 
             return (listItems.Count > 0);
@@ -576,8 +611,8 @@ class Blinky
             }
 
             if ((File.Exists(m_strPrevFile))
-                && (MessageBox(m_strPrevFile + " already exists. Overwrite?", Description, Forms.MessageBoxButtons.YesNo)
-                != Forms.DialogResult.Yes))
+                && (MBox(m_strPrevFile + " already exists. Overwrite?", Description, MBoxBtns.YesNo)
+                != MBoxRet.Yes))
             {
                 return false;
             }
@@ -705,7 +740,7 @@ class Blinky
         internal const String mSTRfileExt_Copy = "sdl_copy";
         internal const String mSTRfileExt_Ignore = "sdl_ignore";
 
-        static Forms.Form m_form1MessageBoxOwner = null;
+        static SDL_Win m_form1MessageBoxOwner = null;
         static double static_nLastAssertLoc = -1;
         static DateTime static_dtLastAssert = DateTime.MinValue;
 
@@ -739,7 +774,7 @@ class Blinky
 
                 Action messageBox = new Action(() =>
                 {
-                    MessageBox(strError + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.".PadRight(100), "SearchDirLists Assertion Failure");
+                    MBox(strError + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.".PadRight(100), "SearchDirLists Assertion Failure");
                     static_bAssertUp = false;
                 });
 
@@ -761,22 +796,29 @@ class Blinky
 
         internal static void Closure(Action action) { action(); }
 
-        internal static object CheckAndInvoke(Forms.Control control, Delegate action, object[] args = null)
+#if (WPF)
+        internal static object CheckAndInvoke(Dispatcher dispatcher, Delegate action, object[] args = null)
         {
+            bool bInvoke = dispatcher.CheckAccess();
+#else
+        internal static object CheckAndInvoke(Control dispatcher, Delegate action, object[] args = null)
+        {
+            bool bInvoke = dispatcher.InvokeRequired;
+#endif
             if (GlobalData.AppExit)
             {
                 return null;
             }
 
-            if (control.InvokeRequired)
+            if (bInvoke)
             {
                 if (args == null)
                 {
-                    return control.Invoke(action);
+                    return dispatcher.Invoke(action);
                 }
                 else
                 {
-                    return control.Invoke(action, (object)args);
+                    return dispatcher.Invoke(action, (object)args);
                 }
             }
             else
@@ -1014,7 +1056,7 @@ class Blinky
 
                 if (FormatPath(ref strPath, bFailOnDirectory) == false)
                 {
-                    MessageBox("Error in Source path.", "Save Directory Listing");
+                    MBox("Error in Source path.", "Save Directory Listing");
                     return false;
                 }
             }
@@ -1025,7 +1067,7 @@ class Blinky
 
                 if (FormatPath(ref strSaveAs, bFailOnDirectory) == false)
                 {
-                    MessageBox("Error in Save filename.", "Save Directory Listing");
+                    MBox("Error in Save filename.", "Save Directory Listing");
                     return false;
                 }
             }
@@ -1145,32 +1187,27 @@ class Blinky
         }
 
         // make MessageBox modal from a worker thread
-        internal static Forms.DialogResult MessageBox(String strMessage, String strTitle = null, Forms.MessageBoxButtons? buttons = null)
+        internal static MBoxRet MBox(String strMessage, String strTitle = null, MBoxBtns? buttons_in = null)
         {
             if (GlobalData.AppExit)
             {
-                return Forms.DialogResult.None;
+                return MBoxRet.None;
             }
 
-            if (Form1.static_form.InvokeRequired) { return (DialogResult)Form1.static_form.Invoke(new MessageBoxDelegate(MessageBox), new object[] { strMessage, strTitle, buttons }); }
+            if (GlobalData.static_form.InvokeRequired()) { return (MBoxRet) GlobalData.static_form.Invoke(new MBoxDelegate(MBox), new object[] { strMessage, strTitle, buttons_in }); }
 
             MessageBoxKill();
-            m_form1MessageBoxOwner = new Forms.Form();           
-            m_form1MessageBoxOwner.Owner = Form1.static_form;
-            m_form1MessageBoxOwner.Text = strTitle;
-            m_form1MessageBoxOwner.Icon = Form1.static_form.Icon;
+            m_form1MessageBoxOwner = new SDL_Win();
+            m_form1MessageBoxOwner.Owner = GlobalData.static_form;
+            m_form1MessageBoxOwner.TitleSet(strTitle);
+            m_form1MessageBoxOwner.Icon = GlobalData.static_form.Icon;
 
-            Forms.DialogResult msgBoxRet = Forms.DialogResult.None;
-
-            if (buttons == null)
-            {
-                msgBoxRet = Forms.MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100), strTitle);
-            }
-            else
-            {
-                msgBoxRet = Forms.MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100), strTitle, buttons.Value);
-            }
-
+            MBoxBtns buttons = (buttons_in != null) ? buttons_in.Value : MBoxBtns.OK;
+#if (WPF)
+            MBoxRet msgBoxRet = (MBoxRet)WPF.MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100), strTitle, (WPF.MessageBoxButton)buttons);
+#else
+            MBoxRet msgBoxRet = (MBoxRet)MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100), strTitle, (MessageBoxButtons)buttons);
+#endif
             if (m_form1MessageBoxOwner != null)
             {
                 MessageBoxKill();
@@ -1178,16 +1215,16 @@ class Blinky
             }
 
             // cancelled externally
-            return Forms.DialogResult.None;
+            return MBoxRet.None;
         }
 
         internal static void MessageBoxKill(String strMatch = null)
         {
-            if ((m_form1MessageBoxOwner != null) && new String[] { null, m_form1MessageBoxOwner.Text }.Contains(strMatch))
+            if ((m_form1MessageBoxOwner != null) && new String[] { null, m_form1MessageBoxOwner.TitleGet() }.Contains(strMatch))
             {
-                m_form1MessageBoxOwner.Dispose();
+                m_form1MessageBoxOwner.Close();
                 m_form1MessageBoxOwner = null;
-                Form1.static_form.Activate();
+                GlobalData.static_form.Activate();
             }
         }
 

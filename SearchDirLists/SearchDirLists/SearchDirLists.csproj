@@ -143,9 +143,7 @@
     <Compile Include="Collate.cs" />
     <Compile Include="TreeForm.cs" />
     <Compile Include="TreeMap.cs" />
-    <Compile Include="Utilities.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Utilities.cs" />
     <EmbeddedResource Include="AboutBox1.resx">
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </EmbeddedResource>

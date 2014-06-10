@@ -37,8 +37,8 @@ namespace SearchDirLists
 
         bool SaveFields(bool bFailOnDirectory = true)
         {
-            gd.m_strVolumeName = CBVolumeName.Trim();
-            CBPath = CBPath.Trim();
+            gd.m_strVolumeName = Utilities.NotNull(CBVolumeName).Trim();
+            CBPath = Utilities.NotNull(CBPath).Trim();
 
             if (Utilities.StrValid(CBPath))
             {

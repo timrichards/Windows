@@ -19,12 +19,22 @@ namespace SearchDirLists
 
         RaisePropertyChangedDelegate PropertyChanged = null;
         ItemCollection items = null;
+        String m_strOnePrefix = "CB";
+        String m_strListPrefix = "List";
 
-        public SDL_ItemsControl(String strName, RaisePropertyChangedDelegate chgDelegate, ItemCollection items_in)
+        public SDL_ItemsControl(String strName, RaisePropertyChangedDelegate chgDelegate, ItemCollection items_in, String[] arrStrPrefix = null)
         {
             m_strPropName = strName;
             PropertyChanged = chgDelegate;
             items = items_in;
+
+            if (arrStrPrefix != null)
+            {
+                Utilities.Assert(1309.1001, arrStrPrefix.Length == 2, bTraceOnly: true);
+
+                if (arrStrPrefix[0] != null) m_strOnePrefix = arrStrPrefix[0];
+                if (arrStrPrefix[1] != null) m_strListPrefix = arrStrPrefix[1];
+            }
         }
 
         public void Set(String str)
@@ -33,13 +43,13 @@ namespace SearchDirLists
             {
                 m_list.Add(str);
                 items.Refresh();
-                PropertyChanged("List" + m_strPropName);
+                PropertyChanged(m_strListPrefix + m_strPropName);
             }
 
             if (str == Current) return;
 
             Current = str;
-            PropertyChanged(m_strPropName);
+            PropertyChanged(m_strOnePrefix + m_strPropName);
         }
 
         public List<String> Get() { return m_list; }
@@ -49,18 +59,16 @@ namespace SearchDirLists
     {
         readonly GlobalData gd = null;
         MainWindow m_app = null;
+        static readonly Forms.FolderBrowserDialog folderBrowserDialog1 = new Forms.FolderBrowserDialog();
 
         public LVvolViewModel(MainWindow app)
         {
             gd = new GlobalData();
             m_app = app;
-            mSDL_CBVolumeName = new SDL_ItemsControl("CBVolumeName", RaisePropertyChanged, m_app.xaml_cbVolumeName.Items);
-            mSDL_CBPath = new SDL_ItemsControl("CBPath", RaisePropertyChanged, m_app.xaml_cbPath.Items);
-            mSDL_CBSaveAs = new SDL_ItemsControl("CBSaveAs", RaisePropertyChanged, m_app.xaml_cbSaveAs.Items);
-            saveFileDialog1.DefaultExt = "txt";
-            saveFileDialog1.Filter = "Text files|*.txt|All files|*.*";
-            saveFileDialog1.OverwritePrompt = false;
-            mSDL_LVVolumesMain = new SDL_ItemsControl("LVVolumesMain", RaisePropertyChanged, m_app.xaml_lvVolumesMain.Items);
+            mSDL_CBVolumeName = new SDL_ItemsControl("VolumeName", RaisePropertyChanged, m_app.xaml_cbVolumeName.Items);
+            mSDL_CBPath = new SDL_ItemsControl("Path", RaisePropertyChanged, m_app.xaml_cbPath.Items);
+            mSDL_CBSaveAs = new SDL_ItemsControl("SaveAs", RaisePropertyChanged, m_app.xaml_cbSaveAs.Items);
+            mSDL_LVVolumesMain = new SDL_ItemsControl("VolumesMain", RaisePropertyChanged, m_app.xaml_lvVolumesMain.Items, new String[] { "LV", null });
         }
 
         //     LVvolStrings m_datumCurrent;
@@ -108,9 +116,6 @@ namespace SearchDirLists
         public ICommand Icmd_VolumeGroup { get { if (mIcmd_volumeGroup == null) { mIcmd_volumeGroup = new RelayCommand(param => WPF_btnSetVolumeGroup_Click(), param => CanModifyMultiple()); } return mIcmd_volumeGroup; } } ICommand mIcmd_volumeGroup = null;
         public ICommand Icmd_ModifyFile { get { if (mIcmd_modifyFile == null) { mIcmd_modifyFile = new RelayCommand(param => WPF_btnModifyFile_Click(), param => CanModifyOne()); } return mIcmd_modifyFile; } } ICommand mIcmd_modifyFile = null;
 
-        readonly Forms.FolderBrowserDialog folderBrowserDialog1 = new Forms.FolderBrowserDialog();
-        readonly Forms.SaveFileDialog saveFileDialog1 = new Forms.SaveFileDialog();
-
         internal void WPF_btnSetPath_Click()
         {
             if (folderBrowserDialog1.ShowDialog() == Forms.DialogResult.OK)
@@ -121,16 +126,17 @@ namespace SearchDirLists
 
         internal void WPF_btnSaveAs_Click()
         {
-            saveFileDialog1.Filter = SDL_File.FileAndDirListFileFilter + "|" + SDL_File.BaseFilter;
+            SDL_File.Init();
+            SDL_File.SFD.Filter = SDL_File.FileAndDirListFileFilter + "|" + SDL_File.BaseFilter;
 
             if (Utilities.StrValid(CBSaveAs))
             {
-                saveFileDialog1.InitialDirectory = Path.GetDirectoryName(CBSaveAs);
+                SDL_File.SFD.InitialDirectory = Path.GetDirectoryName(CBSaveAs);
             }
 
-            if (saveFileDialog1.ShowDialog() == Forms.DialogResult.OK)
+            if (SDL_File.SFD.ShowDialog() == Forms.DialogResult.OK)
             {
-                CBSaveAs = saveFileDialog1.FileName;
+                CBSaveAs = SDL_File.SFD.FileName;
 
                 if (File.Exists(CBSaveAs))
                 {
@@ -161,13 +167,14 @@ namespace SearchDirLists
             {
                 return false;
             }
-#if (false)
+
             if (Utilities.StrValid(gd.m_strSaveAs) == false)
             {
                 gd.FormError(m_app.xaml_cbSaveAs, "Must have a file to load or save directory listing to.", "Volume Save As");
                 return false;
             }
 
+#if (false)
             if (m_app.xaml_lvVolumesMain.FindItemWithText(gd.m_strSaveAs) != null)
             {
                 gd.FormError(m_app.xaml_cbSaveAs, "File already in use in list of volumes.", "Volume Save As");

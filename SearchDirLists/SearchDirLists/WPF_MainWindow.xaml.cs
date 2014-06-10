@@ -11,6 +11,9 @@ namespace SearchDirLists
     {
         public MainWindow()
         {
+#if (WPF)
+            GlobalData.static_form = this;
+#endif
             InitializeComponent();
         }
 

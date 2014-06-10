@@ -148,8 +148,6 @@ namespace SearchDirLists
             this.form_cbFindbox = new System.Windows.Forms.ComboBox();
             this.form_chkCompare1 = new System.Windows.Forms.CheckBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.form_labelAbout = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
@@ -1685,17 +1683,6 @@ namespace SearchDirLists
             this.form_chkCompare1.UseVisualStyleBackColor = true;
             this.form_chkCompare1.CheckedChanged += new System.EventHandler(this.form_chk_Compare1_CheckedChanged);
             // 
-            // saveFileDialog1
-            // 
-            this.saveFileDialog1.DefaultExt = "txt";
-            this.saveFileDialog1.Filter = "Text files|*.txt|All files|*.*";
-            this.saveFileDialog1.OverwritePrompt = false;
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
-            this.openFileDialog1.Filter = "Text files|*.txt|All files|*.*";
-            // 
             // form_labelAbout
             // 
             this.form_labelAbout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -1819,8 +1806,6 @@ namespace SearchDirLists
         private System.Windows.Forms.ComboBox form_cbSaveAs;
         private System.Windows.Forms.ComboBox form_cbPath;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
-        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.TabPage form_tabPageBrowse;
         public SDL_TreeView form_treeViewBrowse;
         private System.Windows.Forms.SplitContainer form_splitFiles;

@@ -136,7 +136,6 @@ namespace SearchDirLists
 
             m_FontVolGroupOrig = form_lblVolGroup.Font;
             m_clrVolGroupOrig = form_lblVolGroup.BackColor;
-            SDL_File.SetFileDialogs(openFileDialog1, saveFileDialog1);
         }
 
         bool AddVolume()
@@ -494,8 +493,8 @@ namespace SearchDirLists
 
         bool SaveFields(bool bFailOnDirectory = true)
         {
-            gd.m_strVolumeName = form_cbVolumeName.Text.Trim();
-            gd.m_strPath = form_cbPath.Text.Trim();
+            gd.m_strVolumeName = Utilities.NotNull(form_cbVolumeName.Text).Trim();
+            gd.m_strPath = Utilities.NotNull(form_cbPath.Text).Trim();
 
             if (Utilities.StrValid(gd.m_strPath))
             {
@@ -1131,17 +1130,18 @@ namespace SearchDirLists
 
         internal void form_btnSaveAs_Click(object sender = null, EventArgs e = null)
         {
-            saveFileDialog1.Filter = SDL_File.FileAndDirListFileFilter + "|" + SDL_File.BaseFilter;
+            SDL_File.Init();
+            SDL_File.SFD.Filter = SDL_File.FileAndDirListFileFilter + "|" + SDL_File.BaseFilter;
 
             if (Utilities.StrValid(gd.m_strSaveAs))
             {
-                saveFileDialog1.InitialDirectory = Path.GetDirectoryName(gd.m_strSaveAs);
+                SDL_File.SFD.InitialDirectory = Path.GetDirectoryName(gd.m_strSaveAs);
             }
 
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            if (SDL_File.SFD.ShowDialog() == DialogResult.OK)
             {
                 gd.ComboBoxItemsInsert(form_cbSaveAs);
-                gd.m_strSaveAs = form_cbSaveAs.Text = saveFileDialog1.FileName;
+                gd.m_strSaveAs = form_cbSaveAs.Text = SDL_File.SFD.FileName;
 
                 if (File.Exists(gd.m_strSaveAs))
                 {

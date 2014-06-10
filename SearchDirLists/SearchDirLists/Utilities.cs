@@ -130,7 +130,7 @@ namespace SearchDirLists
             internal static SDL_ListViewItem TopItem(this ListView lv) { return null; }
             internal static void AddRange(this ItemCollection c, object[] a) { }
 
-            internal static bool InvokeRequired(this WPF.Window w) { return w.Dispatcher.CheckAccess(); }
+            internal static bool InvokeRequired(this WPF.Window w) { return (w.Dispatcher.CheckAccess() == false); }
             internal static object Invoke(this WPF.Window w, Delegate m, params object[] a) { return w.Dispatcher.Invoke(m, a); }
             internal static void TitleSet(this WPF.Window w, String s) { w.Title = s; }
             internal static String TitleGet(this WPF.Window w) { return w.Title; }
@@ -543,23 +543,33 @@ class Blinky
         String m_strExt = null;
         public String Filter { get { return "SearchDirLists " + Description + "|*." + m_strExt; } }
 
-        protected static Forms.OpenFileDialog static_OpenFileDialog = null;
-        protected static Forms.SaveFileDialog static_SaveFileDialog = null;
+        static Forms.OpenFileDialog OFD = null;
+        internal static Forms.SaveFileDialog SFD = null;        // TODO: remove frankenSFD
 
         protected String m_strPrevFile = null;
         protected String m_strFileNotDialog = null;
 
-        internal static void SetFileDialogs(Forms.OpenFileDialog ofd_in, Forms.SaveFileDialog sfd_in)
+        static bool bInited = false;
+
+        internal static void Init()
         {
-            static_OpenFileDialog = ofd_in;
-            static_SaveFileDialog = sfd_in;
-            BaseFilter = static_OpenFileDialog.Filter;
+            if (bInited)
+            {
+                return;
+            }
+
+            OFD = new Forms.OpenFileDialog();
+            SFD = new Forms.SaveFileDialog();
+            SFD.OverwritePrompt = false;
+            BaseFilter = "Text files|*.txt|All files|*.*";
+            bInited = true;
         }
 
         protected SDL_File(String strHeader, String strExt, String strDescription)
         {
-            Utilities.Assert(1303.4305, static_OpenFileDialog != null);
-            Utilities.Assert(1303.4306, static_SaveFileDialog != null);
+            Init();
+            Utilities.Assert(1303.4305, OFD != null);
+            Utilities.Assert(1303.4306, SFD != null);
             Header = strHeader;
             m_strExt = strExt;
             m_strDescription = strDescription;
@@ -585,7 +595,7 @@ class Blinky
 #if (WPF == false)
         internal bool ReadList(Forms.ListView lv)
         {
-            if ((m_strFileNotDialog == null) && (ShowDialog(static_OpenFileDialog) == false))
+            if ((m_strFileNotDialog == null) && (ShowDialog(OFD) == false))
             {
                 return false;
             }
@@ -623,7 +633,7 @@ class Blinky
 
         internal bool WriteList(Forms.ListView.ListViewItemCollection lvItems)
         {
-            if (ShowDialog(static_SaveFileDialog) == false)
+            if (ShowDialog(SFD) == false)
             {
                 return false;
             }

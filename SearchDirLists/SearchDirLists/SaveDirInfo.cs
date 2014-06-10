@@ -11,6 +11,7 @@ namespace SearchDirLists
 {
     delegate void SaveDirListingsStatusDelegate(int nIndex, String strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0);
 
+#if (WPF == false)
     partial class Form1
     {
         void SaveDirListingsStatusCallback(int nIndex, String strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0)
@@ -69,14 +70,14 @@ namespace SearchDirLists
             int nFilesWritten = gd.m_saveDirListings.FilesWritten;
 
             gd.m_saveDirListings = null;   // has to precede messagebox
-            Form1MessageBox("Completed. " + nFilesWritten + " files written.", "Save Directory Listings");
+            Utilities.MessageBox("Completed. " + nFilesWritten + " files written.", "Save Directory Listings");
         }
 
         bool DoSaveDirListings()
         {
             if (gd.m_saveDirListings != null)
             {
-                Form1MessageBox("Already in progress.", "Save Directory Listings");
+                Utilities.MessageBox("Already in progress.", "Save Directory Listings");
                 return false;
             }
 
@@ -87,6 +88,7 @@ namespace SearchDirLists
             return true;
         }
     }
+#endif
 
     class SaveDirListings : Utilities
     {
@@ -268,14 +270,14 @@ namespace SearchDirLists
                 if (Directory.Exists(strPath) == false)
                 {
                     m_statusCallback(m_volStrings.Index, mSTRnotSaved);
-                    m_MessageboxCallback("Source Path does not exist.", "Save Directory Listing");
+                    MessageBox("Source Path does not exist.", "Save Directory Listing");
                     return;
                 }
 
                 if (StrValid(strSaveAs) == false)
                 {
                     m_statusCallback(m_volStrings.Index, mSTRnotSaved);
-                    m_MessageboxCallback("Must specify save filename.", "Save Directory Listing");
+                    MessageBox("Must specify save filename.", "Save Directory Listing");
                     return;
                 }
 
@@ -326,7 +328,7 @@ namespace SearchDirLists
                 catch (Exception e)
                 {
                     m_statusCallback(m_volStrings.Index, strText: mSTRnotSaved, bDone: true);
-                    m_MessageboxCallback(strSaveAs.PadRight(100) + "\nException: " + e.Message, "Save Directory Listing");
+                    MessageBox(strSaveAs.PadRight(100) + "\nException: " + e.Message, "Save Directory Listing");
                 }
             }
 

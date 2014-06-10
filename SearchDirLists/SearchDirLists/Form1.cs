@@ -3,12 +3,12 @@ using System.Windows.Controls;
 using System.Windows.Media; using Media = System.Windows.Media;
 using System.Windows.Markup;
 using System.Xml;
-using System.Windows;
 #else
 using System.Windows.Forms;
 using System.Drawing;
 #endif
 
+using WPF = System.Windows;
 using Forms = System.Windows.Forms;
 using Drawing = System.Drawing;
 
@@ -20,6 +20,7 @@ using System.IO;
 using System.Runtime.Hosting;
 using System.Threading;
 using System.Windows.Threading;
+using System.Windows.Interop;
 
 // TODO:
 //      compare file list
@@ -29,10 +30,11 @@ using System.Windows.Threading;
 
 namespace SearchDirLists
 {
-    delegate DialogResult MessageBoxDelegate(String strMessage, String strTitle = null, MessageBoxButtons? buttons = null);
     delegate bool BoolAction();
+    delegate Forms.DialogResult MessageBoxDelegate(String strMessage, String strTitle = null, Forms.MessageBoxButtons? buttons = null);
 
-//    [System.ComponentModel.DesignerCategory("Designer")]
+#if (WPF == false)
+    //    [System.ComponentModel.DesignerCategory("Designer")]
     [System.ComponentModel.DesignerCategory("Code")]
     partial class Form1 : Form
     {
@@ -45,9 +47,9 @@ namespace SearchDirLists
         {
             gd.ClearMem_Form1();
 
-            Utilities.Assert(1308.9301, form_lvClones.Items.Count == 0);
-            Utilities.Assert(1308.9302, form_lvSameVol.Items.Count == 0);
-            Utilities.Assert(1308.9303, form_lvUnique.Items.Count == 0);
+            Utilities.Assert(1308.9301, form_lvClones.Items.Count == 0, bTraceOnly: true);
+            Utilities.Assert(1308.9302, form_lvSameVol.Items.Count == 0, bTraceOnly: true);
+            Utilities.Assert(1308.9303, form_lvUnique.Items.Count == 0, bTraceOnly: true);
 
             form_lvClones.Items.Clear();
             form_lvSameVol.Items.Clear();
@@ -69,8 +71,7 @@ namespace SearchDirLists
             ClearMem_TreeForm();
         }
 
-        SDL_Control m_ctlLastSearchSender = null;
-        Form m_form1MessageBoxOwner = null;
+        Control m_ctlLastSearchSender = null;
         TabPage m_FileListTabPageBeforeCompare = null;
         internal static Form1 static_form = null;
         internal readonly Color m_clrVolGroupOrig = Color.Empty;
@@ -99,7 +100,6 @@ namespace SearchDirLists
 
         internal Form1()
         {
-            Utilities.SetMessageBoxDelegate(Form1MessageBox);
             gd = new GlobalData();   // at end of file. Has to come after message box is set.
             static_form = this;
             InitializeComponent();
@@ -165,8 +165,8 @@ namespace SearchDirLists
             {
                 gd.m_blinky.Go(form_cbSaveAs, clr: Color.Red);
 
-                if (Form1MessageBox(gd.m_strSaveAs + " already exists. Overwrite?", "Volume Save As", MessageBoxButtons.YesNo)
-                    != System.Windows.Forms.DialogResult.Yes)
+                if (Utilities.MessageBox(gd.m_strSaveAs + " already exists. Overwrite?", "Volume Save As", MessageBoxButtons.YesNo)
+                    != DialogResult.Yes)
                 {
                     gd.m_blinky.Go(form_cbVolumeName, clr: Color.Yellow, Once: true);
                     form_cbVolumeName.Text = String.Empty;
@@ -179,7 +179,7 @@ namespace SearchDirLists
             if ((File.Exists(gd.m_strSaveAs) == false) && (Utilities.StrValid(gd.m_strPath) == false))
             {
                 gd.m_blinky.Go(form_cbPath, clr: Color.Red);
-                Form1MessageBox("Must have a path or existing directory listing file.", "Volume Source Path");
+                Utilities.MessageBox("Must have a path or existing directory listing file.", "Volume Source Path");
                 gd.m_blinky.Go(form_cbPath, clr: Color.Red, Once: true);
                 return false;
             }
@@ -187,7 +187,7 @@ namespace SearchDirLists
             if (Utilities.StrValid(gd.m_strPath) && (Directory.Exists(gd.m_strPath) == false))
             {
                 gd.m_blinky.Go(form_cbPath, clr: Color.Red);
-                Form1MessageBox("Path does not exist.", "Volume Source Path");
+                Utilities.MessageBox("Path does not exist.", "Volume Source Path");
                 gd.m_blinky.Go(form_cbPath, clr: Color.Red, Once: true);
                 return false;
             }
@@ -214,7 +214,7 @@ namespace SearchDirLists
                         else
                         {
                             gd.m_blinky.Go(form_cbPath, clr: Color.Red);
-                            Form1MessageBox("File is bad and path does not exist.", "Volume Source Path");
+                            Utilities.MessageBox("File is bad and path does not exist.", "Volume Source Path");
                             gd.m_blinky.Go(form_cbPath, clr: Color.Red, Once: true);
                             return false;
                         }
@@ -240,7 +240,7 @@ namespace SearchDirLists
                 {
                     gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red);
 
-                    if (Form1MessageBox("Nickname already in use. Use it for more than one volume?", "Volume Save As", MessageBoxButtons.YesNo)
+                    if (Utilities.MessageBox("Nickname already in use. Use it for more than one volume?", "Volume Save As", MessageBoxButtons.YesNo)
                         != DialogResult.Yes)
                     {
                         gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red, Once: true);
@@ -252,7 +252,7 @@ namespace SearchDirLists
             {
                 gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red);
 
-                if (Form1MessageBox("Continue without entering a nickname for this volume?", "Volume Save As", MessageBoxButtons.YesNo)
+                if (Utilities.MessageBox("Continue without entering a nickname for this volume?", "Volume Save As", MessageBoxButtons.YesNo)
                     != DialogResult.Yes)
                 {
                     gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red, Once: true);
@@ -340,50 +340,6 @@ namespace SearchDirLists
             form_tmapUserCtl.ClearSelection();
         }
 
-        // make MessageBox modal from a worker thread
-        DialogResult Form1MessageBox(String strMessage, String strTitle = null, MessageBoxButtons? buttons = null)
-        {
-            if (GlobalData.AppExit)
-            {
-                return DialogResult.None;
-            }
-
-            if (InvokeRequired) { return (DialogResult)Invoke(new MessageBoxDelegate(Form1MessageBox), new object[] { strMessage, strTitle, buttons }); }
-
-       //     gd.m_blinky.Reset();
-
-            if (m_form1MessageBoxOwner != null)
-            {
-                m_form1MessageBoxOwner.Dispose();
-                m_form1MessageBoxOwner = null;
-            }
-
-            m_form1MessageBoxOwner = new Form();
-            m_form1MessageBoxOwner.Owner = this;
-            m_form1MessageBoxOwner.Text = strTitle;
-
-            DialogResult dlgRet = DialogResult.None;
-
-            if (buttons == null)
-            {
-                dlgRet = MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100), strTitle);
-            }
-            else
-            {
-                dlgRet = MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100), strTitle, buttons.Value);
-            }
-
-            if (m_form1MessageBoxOwner != null)
-            {
-                m_form1MessageBoxOwner.Dispose();
-                m_form1MessageBoxOwner = null;
-                return dlgRet;
-            }
-
-            // cancelled externally
-            return DialogResult.None;
-        }
-
         bool FormatPath(Control ctl, ref String strPath, bool bFailOnDirectory = true)
         {
             if (Directory.Exists(Path.GetFullPath(strPath)))
@@ -430,7 +386,7 @@ namespace SearchDirLists
 
             if (nLoaded != nTotal)
             {
-                Form1MessageBox(nLoaded + " of " + nTotal + " scratchpad folders found in the tree.", "Load copy scratchpad");
+                Utilities.MessageBox(nLoaded + " of " + nTotal + " scratchpad folders found in the tree.", "Load copy scratchpad");
                 form_tabControlCopyIgnore.SelectedTab = form_tabPageCopy;
                 gd.m_blinky.Go(form_lvCopyScratchpad, clr: Color.Yellow, Once: true);
             }
@@ -468,14 +424,14 @@ namespace SearchDirLists
 
         void LV_CloneSelNode(ListView lv)
         {
-            if (Utilities.Assert(1308.9307, lv.SelectedItems.Count > 0) == false)
+            if (Utilities.Assert(1308.9307, lv.SelectedItems.Count > 0, bTraceOnly: true) == false)
             {
                 return;
             }
 
             UList<SDL_TreeNode> listTreeNodes = (UList<SDL_TreeNode>)((SDL_ListViewItem)lv.SelectedItems[0]).Tag;
 
-            if (Utilities.Assert(1308.9308, listTreeNodes != null) == false)
+            if (Utilities.Assert(1308.9308, listTreeNodes != null, bTraceOnly: true) == false)
             {
                 return;
             }
@@ -931,8 +887,8 @@ namespace SearchDirLists
 
                 if (lvSelect.Count > 1)
                 {
-                    Utilities.Assert(1308.9311, false);    // guaranteed by selection logic
-                    Form1MessageBox("Only one file can be modified at a time.", "Modify file");
+                    Utilities.Assert(1308.9311, false, bTraceOnly: true);    // guaranteed by selection logic
+                    Utilities.MessageBox("Only one file can be modified at a time.", "Modify file");
                     return false;
                 }
 
@@ -945,15 +901,15 @@ namespace SearchDirLists
                 {
                     if (gd.m_saveDirListings != null)
                     {
-                        Form1MessageBox("Currently saving listings and can't open file yet. Please wait.", "Modify file");
+                        Utilities.MessageBox("Currently saving listings and can't open file yet. Please wait.", "Modify file");
                     }
                     else if (Utilities.StrValid(lvSelect[0].Name))
                     {
-                        Form1MessageBox("File hasn't been saved yet.", "Modify file");
+                        Utilities.MessageBox("File hasn't been saved yet.", "Modify file");
                     }
                     else
                     {
-                        Form1MessageBox("Can't open file.", "Modify file");
+                        Utilities.MessageBox("Can't open file.", "Modify file");
                     }
 
                     return false;
@@ -987,7 +943,7 @@ namespace SearchDirLists
 
                     if (str.Length <= 0)
                     {
-                        Utilities.Assert(1308.9312, false);
+                        Utilities.Assert(1308.9312, false, bTraceOnly: true);
                         break;
                     }
 
@@ -999,7 +955,7 @@ namespace SearchDirLists
                     {
                         if (inputBox.Entry.Length > 1)
                         {
-                            Form1MessageBox("Drive letter must be one letter.", "Drive letter");
+                            Utilities.MessageBox("Drive letter must be one letter.", "Drive letter");
                             continue;
                         }
 
@@ -1015,7 +971,7 @@ namespace SearchDirLists
                     ((Utilities.StrValid(strDriveLetter) == false) ||
                     (Utilities.NotNull(strDriveLetter) == Utilities.NotNull(strDriveLetter_orig))))
                 {
-                    Form1MessageBox("No changes made.", "Modify file");
+                    Utilities.MessageBox("No changes made.", "Modify file");
                     return false;
                 }
 
@@ -1068,7 +1024,7 @@ namespace SearchDirLists
                 File.WriteAllText(strFileName, sbFileConts.ToString());
                 gd.m_blinky.Go(form_btnSaveVolumeList);
 
-                if (Form1MessageBox("Update the volume list?", "Modify file", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (Utilities.MessageBox("Update the volume list?", "Modify file", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     form_btnSaveVolumeList_Click();
                 }
@@ -1246,7 +1202,7 @@ namespace SearchDirLists
             else
             {
                 gd.m_blinky.Go(ctl: form_btnSaveVolumeList, clr: Color.Red, Once: true);
-                Utilities.Assert(1308.9314, false);    // shouldn't even be hit: this button gets dimmed
+                Utilities.Assert(1308.9314, false, bTraceOnly: true);    // shouldn't even be hit: this button gets dimmed
             }
         }
 
@@ -1259,7 +1215,7 @@ namespace SearchDirLists
             {
                 if (m_ctlLastSearchSender != sender)
                 {
-                    m_ctlLastSearchSender = (SDL_Control)sender;
+                    m_ctlLastSearchSender = (Control)sender;
                     gd.m_nSearchResultsIndexer = -1;
                 }
 
@@ -2036,7 +1992,7 @@ namespace SearchDirLists
 
             if (nodeDatum.m_lvItem.ListView == null)    // during Corellate()
             {
-                Utilities.Assert(1308.9324, gd.m_threadCollate != null);
+                Utilities.Assert(1308.9324, gd.m_threadCollate != null, bTraceOnly: true);
                 return;
             }
 
@@ -2072,6 +2028,7 @@ namespace SearchDirLists
             else
             {
                 GlobalData.AppExit = true;
+                Utilities.MessageBoxKill();
             }
         }
 
@@ -2177,13 +2134,13 @@ namespace SearchDirLists
                         }
                         else
                         {
-                            return;                     // zeroth item, handled
+                            return;                         // zeroth item, handled
                         }
                     }
 
                     // Keys.Left with above processing
                     // Keys.Right, Keys.Enter, Keys.Return
-                    gd.m_bPutPathInFindEditBox = false;    // search term is usually not the complete path.
+                    gd.m_bPutPathInFindEditBox = false;     // search term is usually not the complete path.
                     DoSearch(m_ctlLastSearchSender);
                 }
 
@@ -2207,7 +2164,7 @@ namespace SearchDirLists
 
             ActivationArguments args = AppDomain.CurrentDomain.SetupInformation.ActivationArguments;
 
-            if (Utilities.Assert(1308.9326, args != null) == false)
+            if (Utilities.Assert(1308.9326, args != null, bTraceOnly: true) == false)
             {
                 return;
             }
@@ -2220,7 +2177,7 @@ namespace SearchDirLists
                 return;
             }
 
-            if (Utilities.Assert(1308.9327, arrArgs.Length > 0) == false)
+            if (Utilities.Assert(1308.9327, arrArgs.Length > 0, bTraceOnly: true) == false)
             {
                 return;
             }
@@ -2253,7 +2210,7 @@ namespace SearchDirLists
                     form_tabControlMain.SelectedTab = form_tabPageBrowse;
                     form_tabControlCopyIgnore.SelectedTab = form_tabPageCopy;
                     gd.m_blinky.Go(form_lvCopyScratchpad, clr: Color.Yellow, Once: true);
-                    Form1MessageBox("The Copy scratchpad cannot be loaded with no directory listings.", "Load Copy scratchpad externally");
+                    Utilities.MessageBox("The Copy scratchpad cannot be loaded with no directory listings.", "Load Copy scratchpad externally");
                     Application.Exit();
                     break;
                 }
@@ -2288,7 +2245,8 @@ namespace SearchDirLists
             gd.m_bKillTree = true;
             gd.m_bRestartTreeTimer = false;
         }
-   }
+    }
+#endif
 
     partial class GlobalData : Utilities
     {
@@ -2392,11 +2350,11 @@ namespace SearchDirLists
 
                 if (n1.nTotalLength <= (nMin10M + nMin100K))
                 {
-                    s1.ForeColor = Color.LightGray;
+                    s1.ForeColor = Drawing.Color.LightGray;
                 }
                 else if (t2.Nodes.ContainsKey(s1.Name))
                 {
-                    s2 = (SDL_TreeNode)t2.Nodes[s1.Name];
+                    s2 = (SDL_TreeNode)t2.Nodes.GetAt(s1.Name);
 
                     if (Compare(s1, s2, bReverse, nMin10M, nMin100K) == false)
                     {
@@ -2408,8 +2366,8 @@ namespace SearchDirLists
                     bCompare &= (n1.nImmediateFiles == n2.nImmediateFiles);
                     bCompare &= (Math.Abs((long)(n1.nLength - n2.nLength)) <= (long)(nMin10M + nMin100K));
 
-                    if (bCompare == false) { s2.ForeColor = Color.Red; }
-                    else if (s2.ForeColor == Color.Empty) { s2.ForeColor = Color.SteelBlue; }
+                    if (bCompare == false) { s2.ForeColor = Drawing.Color.Red; }
+                    else if (s2.ForeColor == Drawing.Color.Empty) { s2.ForeColor = Drawing.Color.SteelBlue; }
                 }
                 else
                 {
@@ -2431,9 +2389,9 @@ namespace SearchDirLists
                     }
                 }
 
-                if (bCompare == false) { s1.ForeColor = Color.Red; }
-                else if (bCompareSub == false) { s1.ForeColor = Color.DarkRed; }
-                else if (s1.ForeColor == Color.Empty) { s1.ForeColor = Color.SteelBlue; }
+                if (bCompare == false) { s1.ForeColor = Drawing.Color.Red; }
+                else if (bCompareSub == false) { s1.ForeColor = Drawing.Color.DarkRed; }
+                else if (s1.ForeColor == Drawing.Color.Empty) { s1.ForeColor = Drawing.Color.SteelBlue; }
 
                 bRet &= (bCompare && bCompareSub);
             }
@@ -2462,15 +2420,16 @@ namespace SearchDirLists
             }
             else
             {
-                m_blinky.Go((SDL_Control)sender, clr: Color.Red, Once: true);
+                m_blinky.Go((Forms.Control)sender, clr: Drawing.Color.Red, Once: true);
             }
         }
 
-        internal void FormError(Control control, String strError, String strTitle)
+        internal void FormError(System.Windows.Controls.Control control, String strError, String strTitle) { MessageBox(strError, strTitle); }
+        internal void FormError(Forms.Control control, String strError, String strTitle)
         {
-            m_blinky.Go(control, clr: Color.Red, Once: true);
-            m_MessageboxCallback(strError, strTitle);
-            m_blinky.Go(control, clr: Color.Red, Once: true);
+            m_blinky.Go(control, clr: Drawing.Color.Red, Once: true);
+            MessageBox(strError, strTitle);
+            m_blinky.Go(control, clr: Drawing.Color.Red, Once: true);
         }
 
         internal static String FullPath(SDL_TreeNode treeNode)
@@ -2622,7 +2581,7 @@ namespace SearchDirLists
 
             SDL_ListViewItem lvItem = (SDL_ListViewItem)lv.Items[nIx];
 
-            if (Utilities.Assert(1308.9332, lvItem.Tag != null) == false)
+            if (Utilities.Assert(1308.9332, lvItem.Tag != null, bTraceOnly: true) == false)
             {
                 return false;
             }
@@ -2650,7 +2609,7 @@ namespace SearchDirLists
         internal void NameNodes(SDL_TreeNode treeNode, UList<SDL_TreeNode> listTreeNodes)
         {
             treeNode.Name = treeNode.Text;
-            treeNode.ForeColor = Color.Empty;
+            treeNode.ForeColor = Drawing.Color.Empty;
             listTreeNodes.Add(treeNode);
 
             foreach (SDL_TreeNode subNode in treeNode.Nodes)
@@ -2672,7 +2631,7 @@ namespace SearchDirLists
 
             if ((sender is ListView) == false)
             {
-                Utilities.Assert(1308.9333, false);
+                Utilities.Assert(1308.9333, false, bTraceOnly: true);
                 return false;
             }
 
@@ -2685,7 +2644,7 @@ namespace SearchDirLists
 
             ++m_nSelChgIx;
 
-            int nNow = m_arrSelChgIx[m_nSelChgIx %= 2] = lv.SelectedItems[0].Index;
+            int nNow =  m_arrSelChgIx[m_nSelChgIx %= 2] = lv.SelectedItems[0].Index;
             int nPrev = m_arrSelChgIx[(m_nSelChgIx + 1) % 2];
 
             bUp = nNow < nPrev;
@@ -2715,14 +2674,14 @@ namespace SearchDirLists
                     m_listTreeNodes.Remove(treeNode);
                 }
 
-                treeNode.ForeColor = Color.Empty;
-                treeNode.BackColor = Color.Empty;
+                treeNode.ForeColor = Drawing.Color.Empty;
+                treeNode.BackColor = Drawing.Color.Empty;
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
                 if (m_dictNodes.ContainsKey(nodeDatum.Key) == false)
                 {
-                    // same scenario as empty parent.
+                    // same scenario as empty parent:
                     // Search "Parent folder may contain only its clone subfolder, in which case unmark the subfolder"
                     continue;
                 }

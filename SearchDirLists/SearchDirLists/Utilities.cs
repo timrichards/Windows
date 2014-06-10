@@ -3,14 +3,15 @@ using System.Windows.Controls;
 using System.Windows.Media; using Media = System.Windows.Media;
 using System.Windows.Markup;
 using System.Xml;
-using System.Windows;
 #else
 using System.Windows.Forms;
 using System.Drawing;
 #endif
 
+using WPF = System.Windows;
 using Forms = System.Windows.Forms;
 using Drawing = System.Drawing;
+using Media = System.Windows.Media;
 
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,9 @@ using System.Security;
 using System.Threading;
 using System.Diagnostics;
 using System.Windows.Threading;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Windows.Interop;
 
 namespace SearchDirLists
 {
@@ -86,12 +90,11 @@ namespace SearchDirLists
 /**/    {
 /**/    }
 /**/
-  //      class SDL_ItemCollection : 
 /**/    static class SDLWPF
 /**/    {
 /**/        // TreeNode
-/**/        internal static object GetTag(this DependencyObject obj) { return ((TreeViewItem)obj).Tag; }
-/**/        internal static void SetTag(this DependencyObject obj, object o) { ((TreeViewItem)obj).Tag = o; }
+/**/        internal static object GetTag(this WPF.DependencyObject obj) { return ((TreeViewItem)obj).Tag; }
+/**/        internal static void SetTag(this WPF.DependencyObject obj, object o) { ((TreeViewItem)obj).Tag = o; }
 /**/        internal static TreeViewItem GetFirstNode(this SDL_TreeNode node) { return (node.Items.Count > 0) ? (TreeViewItem)node.Items[0] : null; }
 /**/        internal static String GetFullPath(this SDL_TreeNode node) { String s = ""; if (node.Parent != null) { s += ((SDL_TreeNode)node.Parent).GetFullPath() + Path.DirectorySeparatorChar; } s += node.Header; return s; }
 /**/        internal static void AddRange(this ItemCollection c, SDL_TreeNode[] a) { foreach (SDL_TreeNode i in a) { c.Add(i); } }
@@ -106,15 +109,19 @@ namespace SearchDirLists
 /**/        internal static object Clone(this Control ctl) { return XamlReader.Load(XmlReader.Create(new StringReader(XamlWriter.Save(ctl)))); }
 /**/        internal static void EnsureVisible(this Control ctl) { ctl.BringIntoView(); }
             internal static void Invalidate(this Control ctl) { }
-            internal bool IsDisposed(this Control ctl) { return false; }
-
+            internal static bool IsDisposed(this Control ctl) { return false; }
 /**/
 /**/        // LV
-/**/        internal static bool ContainsKey(this ItemCollection c) { return false; }
+/**/        internal static bool ContainsKey(this ItemCollection c, String str) { return false; }
+            internal static object GetAt(this ItemCollection c, String s) { return c[c.IndexOf(s)]; }
 /**/        internal static String Text(this ListViewItem l) { return null; }
 /**/        internal static void SetText(this ListViewItem l, String s) { }
 /**/        internal static int GetCount(this ListViewItem[] a) { return a.Length; }
 /**/        internal static void Add(this ListViewItem[] a, ListViewItem i) { List<ListViewItem> l = a.ToList(); l.Add(i); a = l.ToArray(); }
+//https://stackoverflow.com/questions/1077397/scroll-listviewitem-to-be-at-the-top-of-a-listview
+            internal static void TopItemSet(this ListView lv, int n) { }
+            internal static void TopItemSet(this ListView lv, ListViewItem l) { }
+            internal static SDL_ListViewItem TopItem(this ListView lv) { return null; }
 /**/
 /**/        // Static
 /**/        internal static Color Clr(Drawing.Color i) { Color c = Color.FromArgb(i.A, i.R, i.G, i.B); return c; }
@@ -139,6 +146,11 @@ namespace SearchDirLists
 
     class SDL_ListViewSubitem : ListViewItem.ListViewSubItem
     {
+    }
+
+    class SDL_LVItemCollection: ListView.ListViewItemCollection
+    {
+        internal SDL_LVItemCollection(ListView lv) : base(lv) { }
     }
 
     [System.ComponentModel.DesignerCategory("Code")]
@@ -192,6 +204,10 @@ namespace SearchDirLists
         internal static String Text(this ListViewItem.ListViewSubItem l) { return l.Text; }
         internal static void SetText(this ListViewItem.ListViewSubItem l, String s) { l.Text = s; }
         internal static int GetCount(this ListViewItem.ListViewSubItemCollection a) { return a.Count; }
+        internal static TreeNode GetAt(this TreeNodeCollection c, String s) { return c[s]; }
+        internal static void TopItemSet(this ListView lv, int n) { lv.TopItem = lv.Items[n]; }
+        internal static void TopItemSet(this ListView lv, ListViewItem l) { lv.TopItem = l; }
+        internal static SDL_ListViewItem TopItem(this ListView lv) { return (SDL_ListViewItem)lv.TopItem; }
     }
 
     class SDLWPF
@@ -207,7 +223,7 @@ class Blinky
         static bool m_bTreeSelect = false;
         internal static bool TreeSelect { get { return m_bTreeSelect; } }
 
-        readonly Control m_defaultControl = null;
+        readonly Forms.Control m_defaultControl = null;
         readonly DispatcherTimer m_timer = new DispatcherTimer();
 
         Holder m_holder = new NullHolder();
@@ -239,12 +255,12 @@ class Blinky
         }
         class ControlHolder : Holder
         {
-            protected readonly Control m_obj = null;
-            internal ControlHolder(Control obj) { m_obj = obj; }
+            protected readonly Forms.Control m_obj = null;
+            internal ControlHolder(Forms.Control obj) { m_obj = obj; }
             internal override Drawing.Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
         }
 
-        internal Blinky(Control defaultControl)
+        internal Blinky(Forms.Control defaultControl)
         {
             m_defaultControl = defaultControl;
             m_timer.Tick += new EventHandler((object sender, EventArgs e) =>
@@ -281,7 +297,7 @@ class Blinky
             m_defaultControl.Select();      // search results UX
         }
 
-        internal void Go(Control ctl, Drawing.Color? clr = null, bool Once = false)
+        internal void Go(Forms.Control ctl, Drawing.Color? clr = null, bool Once = false)
         {
             Reset();
             m_holder = new ControlHolder(ctl);
@@ -388,9 +404,9 @@ class Blinky
 
         public const UInt32 FLASHW_ALL = 3;
 
-        internal static void Go(SDL_Control ctl_in = null, bool Once = false)
+        internal static void Go(Forms.Control ctl_in = null, bool Once = false)
         {
-            SDL_Control ctl = ctl_in ?? (SDL_Control)(Control)Form1.static_form;
+            Forms.Control ctl = ctl_in ?? Form1.static_form;
 
             Utilities.CheckAndInvoke(ctl, new Action(() =>
             {
@@ -432,7 +448,7 @@ class Blinky
             m_strStatus = lvItem.SubItems[3].Text();
             m_strInclude = lvItem.SubItems[4].Text();
 
-            if ((lvItem.SubItems.Count > 5) && StrValid(lvItem.SubItems[5].Text()))
+            if ((lvItem.SubItems.GetCount() > 5) && StrValid(lvItem.SubItems[5].Text()))
             {
                 m_strVolumeGroup = lvItem.SubItems[5].Text();
             }
@@ -544,7 +560,7 @@ class Blinky
             }
             else
             {
-                m_MessageboxCallback("Not a valid " + Description + ".", "Load " + Description);
+                MessageBox("Not a valid " + Description + ".", "Load " + Description);
             }
 
             return (listItems.Count > 0);
@@ -560,7 +576,7 @@ class Blinky
             }
 
             if ((File.Exists(m_strPrevFile))
-                && (m_MessageboxCallback(m_strPrevFile + " already exists. Overwrite?", Description, Forms.MessageBoxButtons.YesNo)
+                && (MessageBox(m_strPrevFile + " already exists. Overwrite?", Description, Forms.MessageBoxButtons.YesNo)
                 != Forms.DialogResult.Yes))
             {
                 return false;
@@ -689,8 +705,7 @@ class Blinky
         internal const String mSTRfileExt_Copy = "sdl_copy";
         internal const String mSTRfileExt_Ignore = "sdl_ignore";
 
-        static MessageBoxDelegate static_MessageboxCallback = null;
-        protected MessageBoxDelegate m_MessageboxCallback = static_MessageboxCallback;
+        static Forms.Form m_form1MessageBoxOwner = null;
         static double static_nLastAssertLoc = -1;
         static DateTime static_dtLastAssert = DateTime.MinValue;
 
@@ -724,7 +739,7 @@ class Blinky
 
                 Action messageBox = new Action(() =>
                 {
-                    static_MessageboxCallback(strError + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.".PadRight(100), "SearchDirLists Assertion Failure");
+                    MessageBox(strError + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.".PadRight(100), "SearchDirLists Assertion Failure");
                     static_bAssertUp = false;
                 });
 
@@ -746,7 +761,7 @@ class Blinky
 
         internal static void Closure(Action action) { action(); }
 
-        internal static object CheckAndInvoke(Control control, Delegate action, object[] args = null)
+        internal static object CheckAndInvoke(Forms.Control control, Delegate action, object[] args = null)
         {
             if (GlobalData.AppExit)
             {
@@ -999,7 +1014,7 @@ class Blinky
 
                 if (FormatPath(ref strPath, bFailOnDirectory) == false)
                 {
-                    static_MessageboxCallback("Error in Source path.", "Save Directory Listing");
+                    MessageBox("Error in Source path.", "Save Directory Listing");
                     return false;
                 }
             }
@@ -1010,7 +1025,7 @@ class Blinky
 
                 if (FormatPath(ref strSaveAs, bFailOnDirectory) == false)
                 {
-                    static_MessageboxCallback("Error in Save filename.", "Save Directory Listing");
+                    MessageBox("Error in Save filename.", "Save Directory Listing");
                     return false;
                 }
             }
@@ -1129,14 +1144,56 @@ class Blinky
             return strRet;
         }
 
+        // make MessageBox modal from a worker thread
+        internal static Forms.DialogResult MessageBox(String strMessage, String strTitle = null, Forms.MessageBoxButtons? buttons = null)
+        {
+            if (GlobalData.AppExit)
+            {
+                return Forms.DialogResult.None;
+            }
+
+            if (Form1.static_form.InvokeRequired) { return (DialogResult)Form1.static_form.Invoke(new MessageBoxDelegate(MessageBox), new object[] { strMessage, strTitle, buttons }); }
+
+            MessageBoxKill();
+            m_form1MessageBoxOwner = new Forms.Form();           
+            m_form1MessageBoxOwner.Owner = Form1.static_form;
+            m_form1MessageBoxOwner.Text = strTitle;
+            m_form1MessageBoxOwner.Icon = Form1.static_form.Icon;
+
+            Forms.DialogResult msgBoxRet = Forms.DialogResult.None;
+
+            if (buttons == null)
+            {
+                msgBoxRet = Forms.MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100), strTitle);
+            }
+            else
+            {
+                msgBoxRet = Forms.MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100), strTitle, buttons.Value);
+            }
+
+            if (m_form1MessageBoxOwner != null)
+            {
+                MessageBoxKill();
+                return msgBoxRet;
+            }
+
+            // cancelled externally
+            return Forms.DialogResult.None;
+        }
+
+        internal static void MessageBoxKill(String strMatch = null)
+        {
+            if ((m_form1MessageBoxOwner != null) && new String[] { null, m_form1MessageBoxOwner.Text }.Contains(strMatch))
+            {
+                m_form1MessageBoxOwner.Dispose();
+                m_form1MessageBoxOwner = null;
+                Form1.static_form.Activate();
+            }
+        }
+
         internal static String NotNull(String str)
         {
             return str ?? String.Empty;
-        }
-
-        internal static void SetMessageBoxDelegate(MessageBoxDelegate messageBoxCallback)
-        {
-            static_MessageboxCallback = messageBoxCallback;
         }
 
         protected static String StrFile_01(String strFile)
@@ -1148,6 +1205,16 @@ class Blinky
         internal static bool StrValid(String str)
         {
             return ((str != null) && (str.Length > 0));
+        }
+
+        internal static void SetProperty<T>(object input, T outObj, Expression<Func<T, object>> outExpr)
+        {
+            if (input == null)
+            {
+                return;
+            }
+
+            ((PropertyInfo)((MemberExpression)outExpr.Body).Member).SetValue(outObj, input, null);
         }
 
         internal static bool ValidateFile(String strSaveAs)

@@ -45,7 +45,7 @@ namespace SearchDirLists
         public List<String> Get() { return m_list; }
     }
 
-    class LVvolViewModel : ObservableObject
+    partial class LVvolViewModel : ObservableObject
     {
         readonly GlobalData gd = null;
         MainWindow m_app = null;
@@ -158,12 +158,12 @@ namespace SearchDirLists
         bool AddVolume()
         {
             bool bFileOK = false;
-#if (WPF)
+
             if (SaveFields(false) == false)
             {
                 return false;
             }
-
+#if (WPF)
             if (Utilities.StrValid(gd.m_strSaveAs) == false)
             {
                 gd.FormError(m_app.xaml_cbSaveAs, "Must have a file to load or save directory listing to.", "Volume Save As");
@@ -182,7 +182,7 @@ namespace SearchDirLists
             {
                 gd.m_blinky.Go(m_app.xaml_cbSaveAs, clr: Color.Red);
 
-                if (Form1MessageBox(gd.m_strSaveAs + " already exists. Overwrite?", "Volume Save As", MessageBoxButtons.YesNo)
+                if (MessageBox(gd.m_strSaveAs + " already exists. Overwrite?", "Volume Save As", MessageBoxButtons.YesNo)
                     != System.Windows.Forms.DialogResult.Yes)
                 {
                     gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Color.Yellow, Once: true);
@@ -196,7 +196,7 @@ namespace SearchDirLists
             if ((File.Exists(gd.m_strSaveAs) == false) && (Utilities.StrValid(gd.m_strPath) == false))
             {
                 gd.m_blinky.Go(m_app.xaml_cbPath, clr: Color.Red);
-                Form1MessageBox("Must have a path or existing directory listing file.", "Volume Source Path");
+                MessageBox("Must have a path or existing directory listing file.", "Volume Source Path");
                 gd.m_blinky.Go(m_app.xaml_cbPath, clr: Color.Red, Once: true);
                 return false;
             }
@@ -204,7 +204,7 @@ namespace SearchDirLists
             if (Utilities.StrValid(gd.m_strPath) && (Directory.Exists(gd.m_strPath) == false))
             {
                 gd.m_blinky.Go(m_app.xaml_cbPath, clr: Color.Red);
-                Form1MessageBox("Path does not exist.", "Volume Source Path");
+                MessageBox("Path does not exist.", "Volume Source Path");
                 gd.m_blinky.Go(m_app.xaml_cbPath, clr: Color.Red, Once: true);
                 return false;
             }
@@ -230,7 +230,7 @@ namespace SearchDirLists
                         else
                         {
                             gd.m_blinky.Go(m_app.xaml_cbPath, clr: Color.Red);
-                            Form1MessageBox("File is bad and path does not exist.", "Volume Source Path");
+                            MessageBox("File is bad and path does not exist.", "Volume Source Path");
                             gd.m_blinky.Go(m_app.xaml_cbPath, clr: Color.Red, Once: true);
                             return false;
                         }
@@ -256,7 +256,7 @@ namespace SearchDirLists
                 {
                     gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Color.Red);
 
-                    if (Form1MessageBox("Nickname already in use. Use it for more than one volume?", "Volume Save As", MessageBoxButtons.YesNo)
+                    if (MessageBox("Nickname already in use. Use it for more than one volume?", "Volume Save As", MessageBoxButtons.YesNo)
                         != DialogResult.Yes)
                     {
                         gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Color.Red, Once: true);
@@ -268,7 +268,7 @@ namespace SearchDirLists
             {
                 gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Color.Red);
 
-                if (Form1MessageBox("Continue without entering a nickname for this volume?", "Volume Save As", MessageBoxButtons.YesNo)
+                if (MessageBox("Continue without entering a nickname for this volume?", "Volume Save As", MessageBoxButtons.YesNo)
                     != DialogResult.Yes)
                 {
                     gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Color.Red, Once: true);

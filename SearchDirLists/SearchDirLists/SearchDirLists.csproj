@@ -81,18 +81,6 @@
   <PropertyGroup>
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'WPF Release|x86'">
-    <OutputPath>bin\x86\WPF Release\</OutputPath>
-    <Optimize>true</Optimize>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
-    <DefineConstants>WPF</DefineConstants>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'WPF Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\WPF Debug\</OutputPath>
@@ -125,11 +113,12 @@
     <Compile Include="AboutBox1.Designer.cs">
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </Compile>
+    <Compile Include="WPF_LVvolViewModel_A.cs" />
     <Compile Include="WPF_app.xaml.cs">
       <DependentUpon>WPF_app.xaml</DependentUpon>
     </Compile>
     <Compile Include="Form1.cs" />
-    <Compile Include="Form1.Designer.cs">
+    <Compile Include="Form1.Designer.cs" Condition="'$(Configuration)|$(Platform)' != 'WPF Debug|x86' ">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="InputBox.cs">

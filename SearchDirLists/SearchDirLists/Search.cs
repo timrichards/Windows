@@ -3,12 +3,12 @@ using System.Windows.Controls;
 using System.Windows.Media; using Media = System.Windows.Media;
 using System.Windows.Markup;
 using System.Xml;
-using System.Windows;
 #else
 using System.Windows.Forms;
 using System.Drawing;
 #endif
 
+using WPF = System.Windows;
 using Forms = System.Windows.Forms;
 using Drawing = System.Drawing;
 
@@ -23,6 +23,7 @@ namespace SearchDirLists
 {
     delegate void SearchStatusDelegate(SearchResults searchResults, bool bFirst = false, bool bLast = false);
 
+#if (WPF == false)
     partial class Form1
     {
         bool SearchResultsType2_Nav(SDL_TreeView treeView)
@@ -178,24 +179,20 @@ namespace SearchDirLists
                 gd.SearchFail();
             }
 
-            if ((m_form1MessageBoxOwner != null) && (m_form1MessageBoxOwner.Text == GlobalData.mSTRsearchTitle))
-            {
-                m_form1MessageBoxOwner.Dispose();
-                m_form1MessageBoxOwner = null;
-            }
+            Utilities.MessageBoxKill(GlobalData.mSTRsearchTitle);
         }
 
         private void DoSearchType2(String strSearch, bool bKill = false, bool bSearchFilesOnly = false)
         {
             if (gd.m_searchType2 != null)
             {
-                DialogResult dlgResult = DialogResult.Yes;
+                DialogResult mboxResult = DialogResult.Yes;
 
                 if (bKill == false)
                 {
-                    dlgResult = Form1MessageBox("Already in progress. Restart search?" + "\n(or Cancel search.)".PadRight(100), GlobalData.mSTRsearchTitle, MessageBoxButtons.YesNoCancel);
+                    mboxResult = Utilities.MessageBox("Already in progress. Restart search?" + "\n(or Cancel search.)".PadRight(100), GlobalData.mSTRsearchTitle, MessageBoxButtons.YesNoCancel);
 
-                    if (dlgResult == DialogResult.No)
+                    if (mboxResult == DialogResult.No)
                     {
                         return;
                     }
@@ -210,7 +207,7 @@ namespace SearchDirLists
                     gd.m_searchType2 = null;
                 }
 
-                if (dlgResult != DialogResult.Yes)
+                if (mboxResult != DialogResult.Yes)
                 {
                     return;
                 }
@@ -229,7 +226,14 @@ namespace SearchDirLists
 
             Utilities.Assert(1307.8312, gd.m_searchType2 == null);
 
-            gd.m_searchType2 = new SearchType2(form_lvVolumesMain.Items, strSearch, strSearch.ToLower() != strSearch,
+            UList<LVvolStrings> list_lvVolStrings = new UList<LVvolStrings>();
+
+            foreach (SDL_ListViewItem lvItem in form_lvVolumesMain.Items)
+            {
+                list_lvVolStrings.Add(new LVvolStrings(lvItem));
+            }
+
+            gd.m_searchType2 = new SearchType2(list_lvVolStrings, strSearch, strSearch.ToLower() != strSearch,
                 folderHandling, bSearchFilesOnly, strCurrentNode,
                 new SearchStatusDelegate(gd.SearchStatusCallback), new Action(SearchDoneCallback));
             gd.m_searchType2.DoThreadFactory();
@@ -243,7 +247,7 @@ namespace SearchDirLists
                 return;
             }
 
-            m_ctlLastSearchSender = (SDL_Control)sender;
+            m_ctlLastSearchSender = (Control)sender;
 
             SDL_TreeView treeView = SDLWPF.treeViewMain;
 
@@ -308,6 +312,7 @@ namespace SearchDirLists
             }
         }
     }
+#endif
 
     class SearchResultsDir
     {
@@ -370,7 +375,7 @@ namespace SearchDirLists
         bool m_bThreadAbort = false;
         ConcurrentBag<SearchFile> m_cbagWorkers = new ConcurrentBag<SearchFile>();
         readonly Action m_doneCallback = null;
-        readonly UList<LVvolStrings> m_list_lvVolStrings = new UList<LVvolStrings>();
+        readonly UList<LVvolStrings> m_list_lvVolStrings = null;
 
         class SearchFile : SearchBase
         {
@@ -540,15 +545,11 @@ namespace SearchDirLists
             }
         }
 
-        internal SearchType2(ListView.ListViewItemCollection lvVolItems, String strSearch, bool bCaseSensitive,
+        internal SearchType2(UList<LVvolStrings> list_lvVolStrings, String strSearch, bool bCaseSensitive,
             SearchBase.FolderSpecialHandling folderHandling, bool bSearchFilesOnly, String strCurrentNode,
             SearchStatusDelegate statusCallback, Action doneCallback) : base(statusCallback)
         {
-            foreach (SDL_ListViewItem lvItem in lvVolItems)
-            {
-                m_list_lvVolStrings.Add(new LVvolStrings(lvItem));
-            }
-
+            m_list_lvVolStrings = list_lvVolStrings;
             m_strSearch = strSearch;
             m_bCaseSensitive = bCaseSensitive;
             m_folderHandling = folderHandling;          // not used
@@ -751,8 +752,8 @@ namespace SearchDirLists
             m_SearchResultsType1_Array = null;
             m_bSearchResultsType2_List = false;
             m_strSelectFile = null;
-            m_blinky.Go(clr: Color.Red, Once: true);
-            m_MessageboxCallback("Couldn't find the specified search parameter.", mSTRsearchTitle);
+            m_blinky.Go(clr: Drawing.Color.Red, Once: true);
+            MessageBox("Couldn't find the specified search parameter.", mSTRsearchTitle);
         }
 
         internal void SearchStatusCallback(SearchResults searchResults, bool bFirst = false, bool bLast = false)

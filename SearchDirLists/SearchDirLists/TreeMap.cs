@@ -22,9 +22,9 @@ using System.Windows.Threading;
 namespace SearchDirLists
 {
     [System.ComponentModel.DesignerCategory("Code")]
-    class TreeMapUserControl : UserControl
+    class TreeMapUserControl : Forms.UserControl
     {
-        public Control TooltipAnchor;
+        public Forms.Control TooltipAnchor;
 
         Drawing.Rectangle m_rectBitmap = Drawing.Rectangle.Empty;
         Drawing.Rectangle m_selRect = Drawing.Rectangle.Empty;
@@ -38,7 +38,7 @@ namespace SearchDirLists
         readonly DispatcherTimer m_timerAnim = new DispatcherTimer();
         int m_nAnimFrame = 0;
         DateTime m_dtHideGoofball = DateTime.MinValue;
-        readonly ToolTip m_toolTip = new ToolTip();
+        readonly Forms.ToolTip m_toolTip = new Forms.ToolTip();
 
         public TreeMapUserControl()
         {
@@ -55,9 +55,9 @@ namespace SearchDirLists
             });
             m_timerAnim.Start();
 
-            SetStyle(ControlStyles.DoubleBuffer |
-                ControlStyles.UserPaint |
-                ControlStyles.AllPaintingInWmPaint,
+            SetStyle(Forms.ControlStyles.DoubleBuffer |
+                Forms.ControlStyles.UserPaint |
+                Forms.ControlStyles.AllPaintingInWmPaint,
                 true);
         }
 
@@ -73,7 +73,7 @@ namespace SearchDirLists
 
         internal void ClearSelection()
         {
-            Control ctl = TooltipAnchor;
+            Forms.Control ctl = TooltipAnchor;
             if ((ctl == null) || ctl.IsDisposed) ctl = this;
             if ((ctl == null) || ctl.IsDisposed) { return; }
 

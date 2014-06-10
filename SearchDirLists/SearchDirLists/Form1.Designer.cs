@@ -1800,7 +1800,6 @@ namespace SearchDirLists
             this.tableLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
@@ -1918,6 +1917,6 @@ namespace SearchDirLists
         private System.Windows.Forms.Button form_btnRemoveVolume;
         private System.Windows.Forms.Button form_btnToggleInclude;
         private System.Windows.Forms.CheckBox form_chkSpacer;
-
     }
 }
+

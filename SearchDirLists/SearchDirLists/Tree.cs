@@ -230,15 +230,19 @@ namespace SearchDirLists
             return obj.Name == null ? 0 : obj.Name.GetHashCode();
         }
 
+#if (WPF)
+        internal static void NameItems(ItemCollection list)
+#else
         internal static void NameItems(ListView.ListViewItemCollection list)
+#endif
         {
             foreach (SDL_ListViewItem item in list)
             {
                 item.Name = item.Text();
 
-                if (item.SubItems.Count > Utilities.mNcolLengthLV)
+                if (item.SubItems.GetCount() > Utilities.mNcolLengthLV)
                 {
-                    item.Name += item.SubItems[Utilities.mNcolLengthLV].Text();      // name + size
+                    item.Name += item.SubItems[Utilities.mNcolLengthLV].Text();         // name + size
                 }
             }
         }
@@ -251,7 +255,7 @@ namespace SearchDirLists
 
             if (list.Count > 0)
             {
-                lv1.TopItem = list[0];
+                lv1.TopItemSet(list[0]);
             }
 
             foreach (SDL_ListViewItem item in list)
@@ -262,11 +266,11 @@ namespace SearchDirLists
 
         internal static void SetTopItem(ListView lv1, ListView lv2)
         {
-            if (lv1.TopItem == null) { return; }
-            if (lv1.TopItem.Index > 0) { return; }
-            if (lv2.TopItem == null) { return; }
+            if (lv1.TopItem() == null) { return; }
+            if (lv1.TopItem().Index > 0) { return; }
+            if (lv2.TopItem() == null) { return; }
 
-            int nIx = lv2.TopItem.Index - Math.Abs(lv2.Items.Count - lv1.Items.Count);
+            int nIx = lv2.TopItem().Index - Math.Abs(lv2.Items.Count - lv1.Items.Count);
 
             if (nIx < 0)
             {
@@ -275,7 +279,7 @@ namespace SearchDirLists
 
             if (lv1.Items.Count > nIx)
             {
-                lv1.TopItem = lv1.Items[nIx];
+                lv1.TopItemSet(nIx);
             }
         }
     }
@@ -586,7 +590,7 @@ namespace SearchDirLists
 
                     if (bValid == false)
                     {
-                        m_MessageboxCallback("Bad file: " + strSaveAs, "Tree");
+                        MessageBox("Bad file: " + strSaveAs, "Tree");
                         m_statusCallback(m_volStrings, bError: true);
                         return;
                     }

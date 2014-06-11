@@ -1,11 +1,11 @@
 ﻿#if WPF
 using System.Windows.Controls;
-using System.Windows.Media; using Media = System.Windows.Media;
-using System.Windows.Markup;
-using System.Xml;
 #else
 using System.Windows.Forms;
 using System.Drawing;
+using System.Runtime.Hosting;       // release mode
+using System.Linq;
+using System.Threading;
 #endif
 
 using WPF = System.Windows;
@@ -14,13 +14,9 @@ using Drawing = System.Drawing;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.IO;
-using System.Runtime.Hosting;
-using System.Threading;
 using System.Windows.Threading;
-using System.Windows.Interop;
 
 // TODO:
 //      compare file list

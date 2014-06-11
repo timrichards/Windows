@@ -1,23 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Input;
-using Forms = System.Windows.Forms;
 using System.Windows.Controls;
 using System.Collections.ObjectModel;
+
+using Forms = System.Windows.Forms;
 
 namespace SearchDirLists
 {
     class ItemsControlVM : ObservableObject
     {
-        public List<String> m_list = new List<String>();
+        readonly public List<String> m_list = new List<String>();
+        readonly ItemCollection m_items = null;
+        readonly Action m_Action = null;
         String m_strCurrent = null;
-        ItemCollection items = null;
-        Action m_Action = null;
 
         public ItemsControlVM(ItemsControl itemsCtl, Action action)
         {
             itemsCtl.DataContext = this;
-            items = itemsCtl.Items;
+            m_items = itemsCtl.Items;
             m_Action = action;
         }
 
@@ -28,7 +29,7 @@ namespace SearchDirLists
                 if ((value != null) && (m_list.Contains(value) == false))
                 {
                     m_list.Add(value);
-                    items.Refresh();
+                    m_items.Refresh();
                     RaisePropertyChanged("List");
                 }
 
@@ -100,8 +101,8 @@ namespace SearchDirLists
 
     class VolumesListViewVM : ObservableObject
     {
-        ObservableCollection<VolumeLVitemVM> m_items = new ObservableCollection<VolumeLVitemVM>();
-        ItemsControl m_itemsCtl = null;
+        readonly ObservableCollection<VolumeLVitemVM> m_items = new ObservableCollection<VolumeLVitemVM>();
+        readonly ItemsControl m_itemsCtl = null;
 
         internal VolumesListViewVM(ItemsControl itemsCtl)
         {
@@ -132,7 +133,7 @@ namespace SearchDirLists
         readonly ItemsControlVM CBVolumeName = null;
         readonly ItemsControlVM CBPath = null;
         readonly ItemsControlVM CBSaveAs = null;
-        readonly VolumesListViewVM mo_lvVolViewModelList = null;
+        readonly VolumesListViewVM m_VolsLVvm = null;
 
         public VolumesTabVM(MainWindow app)
         {
@@ -142,12 +143,12 @@ namespace SearchDirLists
             CBVolumeName = new ItemsControlVM(m_app.xaml_cbVolumeName, new Action(() => { gd.m_strVolumeName = CBVolumeName.S; }));
             CBPath = new ItemsControlVM(m_app.xaml_cbPath, new Action(() => { gd.m_strPath = CBPath.S; }));
             CBSaveAs = new ItemsControlVM(m_app.xaml_cbSaveAs, new Action(() => { gd.m_strSaveAs = CBSaveAs.S; }));
-            mo_lvVolViewModelList = new VolumesListViewVM(m_app.xaml_lvVolumesMain);
+            m_VolsLVvm = new VolumesListViewVM(m_app.xaml_lvVolumesMain);
         }
 
         bool SelectedOne { get { return m_app.xaml_lvVolumesMain.SelectedItems.Count == 1; } }
         bool Selected { get { return m_app.xaml_lvVolumesMain.SelectedItems.Count > 0; } }
-        bool HasItems { get { return mo_lvVolViewModelList.Count > 0; } }
+        bool HasItems { get { return m_VolsLVvm.Count > 0; } }
 
         // In order of appearance on the form
         public ICommand Icmd_SetPath { get { if (mIcmd_setPath == null) { mIcmd_setPath = new RelayCommand(param => SetPath()); } return mIcmd_setPath; } } ICommand mIcmd_setPath = null;

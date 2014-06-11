@@ -3,28 +3,27 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Markup;
 using System.Xml;
+using System.Windows.Interop;
+using Media = System.Windows.Media;
 #else
 using System.Windows.Forms;
-using System.Drawing;
+using System.Threading;         // release mode
 #endif
 
 using WPF = System.Windows;
 using Forms = System.Windows.Forms;
 using Drawing = System.Drawing;
-using Media = System.Windows.Media;
 
+using System.Diagnostics;       // debug mode
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Threading;
-using System.Diagnostics;
 using System.Windows.Threading;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Windows.Interop;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 

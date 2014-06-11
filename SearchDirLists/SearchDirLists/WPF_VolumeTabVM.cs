@@ -150,6 +150,7 @@ namespace SearchDirLists
         bool Selected { get { return m_app.xaml_lvVolumesMain.SelectedItems.Count > 0; } }
         bool HasItems { get { return mo_lvVolViewModelList.Count > 0; } }
 
+        // In order of appearance on the form
         public ICommand Icmd_SetPath { get { if (mIcmd_setPath == null) { mIcmd_setPath = new RelayCommand(param => SetPath()); } return mIcmd_setPath; } } ICommand mIcmd_setPath = null;
         public ICommand Icmd_SaveAs { get { if (mIcmd_SaveAs == null) { mIcmd_SaveAs = new RelayCommand(param => SaveAs()); } return mIcmd_SaveAs; } } ICommand mIcmd_SaveAs = null;
         public ICommand Icmd_LoadVolumeList { get { if (mIcmd_loadVolumeList == null) { mIcmd_loadVolumeList = new RelayCommand(param => LoadVolumeList_Click()); } return mIcmd_loadVolumeList; } } ICommand mIcmd_loadVolumeList = null;

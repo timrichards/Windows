@@ -112,7 +112,7 @@
     <Compile Include="AboutBox1.Designer.cs">
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </Compile>
-    <Compile Include="WPF_VolumeTabViewModel_A.cs" />
+    <Compile Include="WPF_VolumeTabVM_Guts.cs" />
     <Compile Include="WPF_app.xaml.cs">
       <DependentUpon>WPF_app.xaml</DependentUpon>
     </Compile>
@@ -127,7 +127,7 @@
       <DependentUpon>InputBox.cs</DependentUpon>
     </Compile>
     <Compile Include="ListViewEx.cs" />
-    <Compile Include="WPF_VolumeTabViewModel.cs" />
+    <Compile Include="WPF_VolumeTabVM.cs" />
     <Compile Include="WPF_MainWindow.xaml.cs">
       <DependentUpon>WPF_MainWindow.xaml</DependentUpon>
     </Compile>

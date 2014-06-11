@@ -13,7 +13,7 @@ namespace SearchDirLists
             base.OnStartup(e);
 
             MainWindow app = new MainWindow();
-            VolumeTabVM context = new VolumeTabVM(app);
+            VolumesTabVM context = new VolumesTabVM(app);
             app.DataContext = context;
             app.Show();
         }

@@ -8,10 +8,9 @@ using System.Threading;
 using Forms = System.Windows.Forms;
 using System.Text;
 
-#if (true)
 namespace SearchDirLists
 {
-    partial class VolumeTabVM
+    partial class VolumesTabVM
     {
         void AddVolume()
         {
@@ -637,4 +636,3 @@ namespace SearchDirLists
         }
     }
 }
-#endif

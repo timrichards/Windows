@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Windows.Input;
 using Forms = System.Windows.Forms;
 using System.Windows.Controls;
-using System.IO;
 using System.Collections.ObjectModel;
 
 namespace SearchDirLists
@@ -124,7 +123,7 @@ namespace SearchDirLists
         internal bool ContainsSaveAs(String strSaveAs) { foreach (VolumeLVitemVM item in m_items) if (item.SaveAs == strSaveAs) return true; return false; }
     }
 
-    partial class VolumeTabVM : ObservableObject
+    partial class VolumesTabVM : ObservableObject
     {
         readonly GlobalData gd = null;
         readonly MainWindow m_app = null;
@@ -135,7 +134,7 @@ namespace SearchDirLists
         readonly ItemsControlVM CBSaveAs = null;
         readonly VolumesListViewVM mo_lvVolViewModelList = null;
 
-        public VolumeTabVM(MainWindow app)
+        public VolumesTabVM(MainWindow app)
         {
             gd = new GlobalData();
             m_app = app;

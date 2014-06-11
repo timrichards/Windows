@@ -2433,8 +2433,12 @@ namespace SearchDirLists
             }
         }
 
-        internal void FormError(System.Windows.Controls.Control control, String strError, String strTitle) { MBox(strError, strTitle); }
-        internal void FormError(Forms.Control control, String strError, String strTitle)
+#if (WPF)
+        internal void FormError(Forms.Control defaultControl, String strError, String strTitle){}
+#else
+        internal void FormError(WPF.Controls.Control defaultControl, String strError, String strTitle){}
+#endif
+        internal void FormError(Control control, String strError, String strTitle)
         {
             m_blinky.Go(control, clr: Drawing.Color.Red, Once: true);
             MBox(strError, strTitle);

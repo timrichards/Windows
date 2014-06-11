@@ -10,94 +10,116 @@ using Drawing = System.Drawing;
 
 namespace SearchDirLists
 {
-    class SDL_ItemsControl
+    class SDL_ItemsControl : ObservableObject
     {
         public List<String> m_list = new List<String>();
-        public String m_strPropName = "";
-
-        public String Current = null;
-
-        RaisePropertyChangedDelegate PropertyChanged = null;
+        String m_strCurrent = null;
         ItemCollection items = null;
-        String m_strOnePrefix = "CB";
-        String m_strListPrefix = "List";
+        Action m_Action = null;
 
-        public SDL_ItemsControl(String strName, RaisePropertyChangedDelegate chgDelegate, ItemCollection items_in, String[] arrStrPrefix = null)
+        public SDL_ItemsControl(ItemsControl itemsCtl, Action action)
         {
-            m_strPropName = strName;
-            PropertyChanged = chgDelegate;
-            items = items_in;
-
-            if (arrStrPrefix != null)
-            {
-                Utilities.Assert(1309.1001, arrStrPrefix.Length == 2, bTraceOnly: true);
-
-                if (arrStrPrefix[0] != null) m_strOnePrefix = arrStrPrefix[0];
-                if (arrStrPrefix[1] != null) m_strListPrefix = arrStrPrefix[1];
-            }
+            itemsCtl.DataContext = this;
+            items = itemsCtl.Items;
+            m_Action = action;
         }
 
-        public void Set(String str)
+        public String S
         {
-            if ((str != null) && (m_list.Contains(str) == false))
+            set
             {
-                m_list.Add(str);
-                items.Refresh();
-                PropertyChanged(m_strListPrefix + m_strPropName);
+                if ((value != null) && (m_list.Contains(value) == false))
+                {
+                    m_list.Add(value);
+                    items.Refresh();
+                    RaisePropertyChanged("List");
+                }
+
+                if (value == m_strCurrent) return;
+
+                m_strCurrent = value;
+                m_Action();
+                RaisePropertyChanged("S");
             }
 
-            if (str == Current) return;
-
-            Current = str;
-            PropertyChanged(m_strOnePrefix + m_strPropName);
+            get { return m_strCurrent; }
         }
+    
+        public List<String> List { get { return m_list; } }
 
-        public List<String> Get() { return m_list; }
+        public override string ToString()
+        {
+            return m_strCurrent;
+        }
     }
 
-    partial class LVvolViewModel : ObservableObject
+    class LVvolViewModel
     {
-        readonly GlobalData gd = null;
-        MainWindow m_app = null;
-        static readonly Forms.FolderBrowserDialog folderBrowserDialog1 = new Forms.FolderBrowserDialog();
+  //      LVvolStrings datum = new LVvolStrings();
 
-        public LVvolViewModel(MainWindow app)
+        RaisePropertyChangedDelegate RaisePropertyChanged = null;
+
+        internal LVvolViewModel(RaisePropertyChangedDelegate propchgDelegate)
         {
-            gd = new GlobalData();
-            m_app = app;
-            mSDL_CBVolumeName = new SDL_ItemsControl("VolumeName", RaisePropertyChanged, m_app.xaml_cbVolumeName.Items);
-            mSDL_CBPath = new SDL_ItemsControl("Path", RaisePropertyChanged, m_app.xaml_cbPath.Items);
-            mSDL_CBSaveAs = new SDL_ItemsControl("SaveAs", RaisePropertyChanged, m_app.xaml_cbSaveAs.Items);
-            mSDL_LVVolumesMain = new SDL_ItemsControl("VolumesMain", RaisePropertyChanged, m_app.xaml_lvVolumesMain.Items, new String[] { "LV", null });
+            RaisePropertyChanged = propchgDelegate;
         }
 
-        //     LVvolStrings m_datumCurrent;
-        readonly List<LVvolStrings> m_listData = new List<LVvolStrings>();
-
-        int m_nIndex = -1;
-  //      int m_nMaxIndex = -1;
-
-        SDL_ItemsControl mSDL_CBVolumeName = null;
-        SDL_ItemsControl mSDL_CBPath = null;
-        SDL_ItemsControl mSDL_CBSaveAs = null;
+        String m_strVolumeName = null;
+        String m_strPath = null;
+        String m_strSaveAs = null;
         String m_strStatus = null;
         String m_strInclude = null;
         String m_strVolumeGroup = null;
-        SDL_ItemsControl mSDL_LVVolumesMain = null;
 
-        public int Index { get { return m_nIndex; } set { if (value != m_nIndex) { m_nIndex = value; RaisePropertyChanged("Index"); } } }
-        public String CBVolumeName { get { return mSDL_CBVolumeName.Current; } set { mSDL_CBVolumeName.Set(gd.m_strVolumeName = value); } }
-        public String CBPath { get { return mSDL_CBPath.Current; } set { mSDL_CBPath.Set(gd.m_strPath = value); } }
-        public String CBSaveAs { get { return mSDL_CBSaveAs.Current; } set { mSDL_CBSaveAs.Set(gd.m_strSaveAs = value); } }
-        public String StrStatus { get { return m_strStatus; } set { if (value != m_strStatus) { m_strStatus = value; RaisePropertyChanged("StrStatus"); } } }
-        public String StrPath { get { return m_strInclude; } set { if (value != m_strInclude) { m_strInclude = value; RaisePropertyChanged("StrPath"); } } }
-        public String StrVolumeGroup { get { return m_strVolumeGroup; } set { if (value != m_strVolumeGroup) { m_strVolumeGroup = value; RaisePropertyChanged("StrVolumeGroup"); } } }
-        public String LVVolumesMain { get { return mSDL_LVVolumesMain.Current; } set { mSDL_LVVolumesMain.Set(value); } }
+        public String VolumeName { get { return m_strVolumeName; } set { if (value != m_strVolumeName) { m_strVolumeName = value; RaisePropertyChanged("LVItem_VolumeName"); } } }
+        public String Path { get { return m_strPath; } set { if (value != m_strPath) { m_strPath = value; RaisePropertyChanged("LVItem_Path"); } } }
+        public String SaveAs { get { return m_strSaveAs; } set { if (value != m_strSaveAs) { m_strSaveAs = value; RaisePropertyChanged("LVItem_SaveAs"); } } }
+        public String Status { get { return m_strStatus; } set { if (value != m_strStatus) { m_strStatus = value; RaisePropertyChanged("LVItem_Status"); } } }
+        public String Include { get { return m_strInclude; } set { if (value != m_strInclude) { m_strInclude = value; RaisePropertyChanged("LVItem_Include"); } } }
+        public String VolumeGroup { get { return m_strVolumeGroup; } set { if (value != m_strVolumeGroup) { m_strVolumeGroup = value; RaisePropertyChanged("LVItem_VolumeGroup"); } } }
+    }
 
-        public List<String> ListVolumeName { get { return mSDL_CBVolumeName.Get(); } }
-        public List<String> ListPath { get { return mSDL_CBPath.Get(); } }
-        public List<String> ListSaveAs { get { return mSDL_CBSaveAs.Get(); } }
-        public List<String> ListVolumesMain { get { return mSDL_LVVolumesMain.Get(); } }
+    class LVvolViewModel_List
+    {
+        List<LVvolViewModel> list = new List<LVvolViewModel>();
+
+        internal bool ContainsVolumeName(String strVolumeName)
+        {
+            return false;
+        }
+
+        internal bool ContainsPath(String strPath)
+        {
+            return false;
+        }
+
+        internal bool ContainsSaveAs(String strSaveAs)
+        {
+            return false;
+        }
+    }
+
+    partial class VolumeTabViewModel : ObservableObject
+    {
+        readonly GlobalData gd = null;
+        readonly MainWindow m_app = null;
+        static readonly Forms.FolderBrowserDialog folderBrowserDialog1 = new Forms.FolderBrowserDialog();
+
+        readonly SDL_ItemsControl CBVolumeName = null;
+        readonly SDL_ItemsControl CBPath = null;
+        readonly SDL_ItemsControl CBSaveAs = null;
+
+        public VolumeTabViewModel(MainWindow app)
+        {
+            gd = new GlobalData();
+            m_app = app;
+            gd.m_blinky = new Blinky(m_app.xaml_cbFindbox);
+            CBVolumeName = new SDL_ItemsControl(m_app.xaml_cbVolumeName, new Action(() => { gd.m_strVolumeName = CBVolumeName.S; }));
+            CBPath = new SDL_ItemsControl(m_app.xaml_cbPath, new Action(() => { gd.m_strPath = CBPath.S; }));
+            CBSaveAs = new SDL_ItemsControl(m_app.xaml_cbSaveAs, new Action(() => { gd.m_strSaveAs = CBSaveAs.S; }));
+        }
+
+        readonly LVvolViewModel_List mo_lvVolViewModelList = new LVvolViewModel_List();
 
         bool m_bCanModifyOne = false;
         bool m_bCanModifyMultiple = false;
@@ -120,7 +142,7 @@ namespace SearchDirLists
         {
             if (folderBrowserDialog1.ShowDialog() == Forms.DialogResult.OK)
             {
-                CBPath = folderBrowserDialog1.SelectedPath;
+                CBPath.S = folderBrowserDialog1.SelectedPath;
             }
         }
 
@@ -129,19 +151,19 @@ namespace SearchDirLists
             SDL_File.Init();
             SDL_File.SFD.Filter = SDL_File.FileAndDirListFileFilter + "|" + SDL_File.BaseFilter;
 
-            if (Utilities.StrValid(CBSaveAs))
+            if (Utilities.StrValid(CBSaveAs.S))
             {
-                SDL_File.SFD.InitialDirectory = Path.GetDirectoryName(CBSaveAs);
+                SDL_File.SFD.InitialDirectory = Path.GetDirectoryName(CBSaveAs.S);
             }
 
             if (SDL_File.SFD.ShowDialog() == Forms.DialogResult.OK)
             {
-                CBSaveAs = SDL_File.SFD.FileName;
+                CBSaveAs.S = SDL_File.SFD.FileName;
 
-                if (File.Exists(CBSaveAs))
+                if (File.Exists(CBSaveAs.S))
                 {
-                    CBVolumeName = null;
-                    CBPath = null;
+                    CBVolumeName.S = null;
+                    CBPath.S = null;
                 }
             }
         }
@@ -158,143 +180,5 @@ namespace SearchDirLists
         internal void WPF_btnToggleInclude_Click() { }
         internal void WPF_btnSetVolumeGroup_Click() { }
         internal void WPF_btnModifyFile_Click() { }
-
-        bool AddVolume()
-        {
-            bool bFileOK = false;
-
-            if (SaveFields(false) == false)
-            {
-                return false;
-            }
-
-            if (Utilities.StrValid(gd.m_strSaveAs) == false)
-            {
-                gd.FormError(m_app.xaml_cbSaveAs, "Must have a file to load or save directory listing to.", "Volume Save As");
-                return false;
-            }
-
-#if (false)
-            if (m_app.xaml_lvVolumesMain.FindItemWithText(gd.m_strSaveAs) != null)
-            {
-                gd.FormError(m_app.xaml_cbSaveAs, "File already in use in list of volumes.", "Volume Save As");
-                return false;
-            }
-
-            bool bOpenedFile = (Utilities.StrValid(gd.m_strPath) == false);
-
-            if (File.Exists(gd.m_strSaveAs) && Utilities.StrValid(gd.m_strPath))
-            {
-                gd.m_blinky.Go(m_app.xaml_cbSaveAs, clr: Drawing.Color.Red);
-
-                if (Utilities.MBox(gd.m_strSaveAs + " already exists. Overwrite?", "Volume Save As", MBoxBtns.YesNo)
-                    != MBoxRet.Yes)
-                {
-                    gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Yellow, Once: true);
-                    m_app.xaml_cbVolumeName.Text = String.Empty;
-                    gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Yellow, Once: true);
-                    CBPath = String.Empty;
-                    Utilities.Assert(1308.9306, SaveFields(false));
-                }
-            }
-
-            if ((File.Exists(gd.m_strSaveAs) == false) && (Utilities.StrValid(gd.m_strPath) == false))
-            {
-                gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red);
-                Utilities.MBox("Must have a path or existing directory listing file.", "Volume Source Path");
-                gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red, Once: true);
-                return false;
-            }
-
-            if (Utilities.StrValid(gd.m_strPath) && (Directory.Exists(gd.m_strPath) == false))
-            {
-                gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red);
-                Utilities.MBox("Path does not exist.", "Volume Source Path");
-                gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red, Once: true);
-                return false;
-            }
-
-            String strStatus = "Not Saved";
-
-            if (File.Exists(gd.m_strSaveAs))
-            {
-                if (Utilities.StrValid(gd.m_strPath) == false)
-                {
-                    bFileOK = ReadHeader();
-
-                    if (bFileOK)
-                    {
-                        strStatus = Utilities.mSTRusingFile;
-                    }
-                    else
-                    {
-                        if (Utilities.StrValid(gd.m_strPath))
-                        {
-                            strStatus = "File is bad. Will overwrite.";
-                        }
-                        else
-                        {
-                            gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red);
-                            Utilities.MBox("File is bad and path does not exist.", "Volume Source Path");
-                            gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red, Once: true);
-                            return false;
-                        }
-                    }
-                }
-                else
-                {
-                    strStatus = "Will overwrite.";
-                }
-            }
-
-            if ((bFileOK == false) && (m_app.xaml_lvVolumesMain.Items.ContainsKey(gd.m_strPath)))
-            {
-                gd.FormError(m_app.xaml_cbPath, "Path already added.", "Volume Source Path");
-                return false;
-            }
-
-            if (Utilities.StrValid(gd.m_strVolumeName))
-            {
-                SDL_ListViewItem lvItem = (SDL_ListViewItem)m_app.xaml_lvVolumesMain.FindItemWithText(gd.m_strVolumeName);
-
-                if ((lvItem != null) && (lvItem.Text() == gd.m_strVolumeName))
-                {
-                    gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Red);
-
-                    if (Utilities.MBox("Nickname already in use. Use it for more than one volume?", "Volume Save As", MBoxBtns.YesNo)
-                        != MBoxRet.Yes)
-                    {
-                        gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Red, Once: true);
-                        return false;
-                    }
-                }
-            }
-            else if (bOpenedFile == false)
-            {
-                gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Red);
-
-                if (Utilities.MBox("Continue without entering a nickname for this volume?", "Volume Save As", MBoxBtns.YesNo)
-                    != MBoxRet.Yes)
-                {
-                    gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Red, Once: true);
-                    return false;
-                }
-            }
-
-            {
-                SDL_ListViewItem lvItem = new SDL_ListViewItem(new String[] { gd.m_strVolumeName, gd.m_strPath, gd.m_strSaveAs, strStatus, "Yes" });
-
-                if (bFileOK == false)
-                {
-                    lvItem.Name = gd.m_strPath;    // indexing by path, only for unsaved volumes
-                }
-
-                m_app.xaml_lvVolumesMain.Items.Add(lvItem);
-            }
-
-            form_btnSaveDirList.Enabled = true;
-#endif
-            return bFileOK;
-        }
     }
 }

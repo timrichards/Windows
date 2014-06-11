@@ -106,12 +106,12 @@ namespace SearchDirLists
 /**/        internal static void AddRange(this ItemCollection c, SDL_TreeNode[] a) { foreach (SDL_TreeNode i in a) { c.Add(i); } }
 /**/
 /**/        // SDL_Control
-/**/        static Drawing.Color _GetColor(Media.Brush brush) { Media.Color c = ((SolidColorBrush)brush).Color; return Drawing.Color.FromArgb(c.A, c.R, c.G, c.B); }
-/**/        static SolidColorBrush _SetColor(Drawing.Color color) { Drawing.Color c = color; return new SolidColorBrush(Media.Color.FromArgb(c.A, c.R, c.G, c.B)); }
-/**/        internal static Drawing.Color GetBackColor(this Control ctl) { return _GetColor(ctl.Background); }
-/**/        internal static void SetBackColor(this Control ctl, Drawing.Color c) { ctl.Background = _SetColor(c); }
-/**/        internal static Drawing.Color GetForeColor(this Control ctl) { return _GetColor(ctl.Foreground); }
-/**/        internal static void SetForeColor(this Control ctl, Drawing.Color c) { ctl.Foreground = _SetColor(c); }
+/**/        static Drawing.Color _BrushToClr(Media.Brush brush) { Media.Color c = ((SolidColorBrush)brush).Color; return Drawing.Color.FromArgb(c.A, c.R, c.G, c.B); }
+/**/        static SolidColorBrush _ClrToBrush(Drawing.Color c) { return new SolidColorBrush(Media.Color.FromArgb(c.A, c.R, c.G, c.B)); }
+/**/        internal static Drawing.Color GetBackColor(this Control ctl) { return _BrushToClr(ctl.Background); }
+/**/        internal static void SetBackColor(this Control ctl, Drawing.Color c) { ctl.Background = _ClrToBrush(c); }
+/**/        internal static Drawing.Color GetForeColor(this Control ctl) { return _BrushToClr(ctl.Foreground); }
+/**/        internal static void SetForeColor(this Control ctl, Drawing.Color c) { ctl.Foreground = _ClrToBrush(c); }
 /**/        internal static object Clone(this Control ctl) { return XamlReader.Load(XmlReader.Create(new StringReader(XamlWriter.Save(ctl)))); }
 /**/        internal static void EnsureVisible(this Control ctl) { ctl.BringIntoView(); }
             internal static void Invalidate(this Control ctl) { }
@@ -134,10 +134,12 @@ namespace SearchDirLists
             internal static object Invoke(this WPF.Window w, Delegate m, params object[] a) { return w.Dispatcher.Invoke(m, a); }
             internal static void TitleSet(this WPF.Window w, String s) { w.Title = s; }
             internal static String TitleGet(this WPF.Window w) { return w.Title; }
+
+            internal static void Select(this WPF.Controls.Control c) { c.Focus(); }
 /**/
 /**/        // Static
-/**/        internal static Color Clr(Drawing.Color i) { Color c = Color.FromArgb(i.A, i.R, i.G, i.B); return c; }
-/**/        internal static Drawing.Color ClrA(Color i) { Drawing.Color c = Drawing.Color.FromArgb(i.A, i.R, i.G, i.B); return c; }
+/**/   //     internal static Color Clr(Drawing.Color i) { Color c = Color.FromArgb(i.A, i.R, i.G, i.B); return c; }
+/**/   //     internal static Drawing.Color ClrA(Color i) { Drawing.Color c = Drawing.Color.FromArgb(i.A, i.R, i.G, i.B); return c; }
 /**/
 /**/        internal static SDL_TreeView treeViewMain = null; //Form1.static_form.SDLWPF.treeViewMain;
 /**/        internal static SDL_TreeView treeViewCompare1 = null; //Form1.static_form.form_treeCompare1;
@@ -213,8 +215,8 @@ namespace SearchDirLists
     {
         internal static object GetTag(this TreeNode node) { return node.Tag; }
         internal static void SetTag(this TreeNode node, object o) { node.Tag = o; }
-        internal static Color Clr(Drawing.Color i) { return i; }
-        internal static Color ClrA(Drawing.Color i) { return i; }
+  //      internal static Color Clr(Drawing.Color i) { return i; }
+  //      internal static Color ClrA(Drawing.Color i) { return i; }
 
         // extension method as property
         internal static Drawing.Color GetBackColor(this Control ctl) { return ctl.BackColor; }
@@ -246,7 +248,7 @@ class Blinky
         static bool m_bTreeSelect = false;
         internal static bool TreeSelect { get { return m_bTreeSelect; } }
 
-        readonly Forms.Control m_defaultControl = null;
+        readonly Control m_defaultControl = null;
         readonly DispatcherTimer m_timer = new DispatcherTimer();
 
         Holder m_holder = new NullHolder();
@@ -278,26 +280,24 @@ class Blinky
         }
         class ControlHolder : Holder
         {
-            protected readonly Forms.Control m_obj = null;
-            internal ControlHolder(Forms.Control obj) { m_obj = obj; }
-            internal override Drawing.Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
-        }
-#if (WPF)
-        class WPFControlHolder : Holder
-        {
-            protected readonly WPF.Controls.Control m_obj = null;
-            internal WPFControlHolder(WPF.Controls.Control obj) { m_obj = obj; }
+            protected readonly Control m_obj = null;
+            internal ControlHolder(Control obj) { m_obj = obj; }
             internal override Drawing.Color BackColor { get { return m_obj.GetBackColor(); } set { m_obj.SetBackColor(value); } }
         }
+
+#if (WPF)
+        internal Blinky(Forms.Control defaultControl){}
+#else
+        internal Blinky(WPF.Controls.Control defaultControl){}
 #endif
-        internal Blinky(Forms.Control defaultControl)
+        internal Blinky(Control defaultControl)
         {
             m_defaultControl = defaultControl;
             m_timer.Tick += new EventHandler((object sender, EventArgs e) =>
             {
                 if (m_bProgress || (++m_nBlink < m_nNumBlinks))
                 {
-                    m_holder.BackColor = (m_holder.BackColor == m_clrBlink) ? m_holder.ClrOrig : m_clrBlink;
+                    m_holder.BackColor = (m_nBlink % 2 == 0) ? m_holder.ClrOrig : m_clrBlink;
                 }
                 else
                 {
@@ -329,18 +329,22 @@ class Blinky
 
         internal void Go(Forms.Control ctl, Drawing.Color? clr = null, bool Once = false)
         {
+#if (WPF == false)
             Reset();
             m_holder = new ControlHolder(ctl);
             Go_A(clr, Once);
+#endif
         }
-#if (WPF)
+
         internal void Go(WPF.Controls.Control ctl, Drawing.Color? clr = null, bool Once = false)
         {
+#if (WPF)
             Reset();
-            m_holder = new WPFControlHolder(ctl);
+            m_holder = new ControlHolder(ctl);
             Go_A(clr, Once);
-        }
 #endif
+        }
+
         internal void Go(Drawing.Color? clr = null, bool Once = false, bool bProgress = false)
         {
             Reset();
@@ -532,7 +536,7 @@ class Blinky
     // SearchDirLists listing file|*.sdl_list|SearchDirLists volume list file|*.sdl_vol|SearchDirLists copy scratchpad file|*.sdl_copy|SearchDirLists ignore list file|*.sdl_ignore
     abstract class SDL_File : Utilities
     {
-        public static String BaseFilter = null;
+        public static String BaseFilter = "Text files|*.txt|All files|*.*";
         public static String FileAndDirListFileFilter = "SearchDirLists listing file|*." + mSTRfileExt_Listing;
 
         public readonly String Header = null;
@@ -543,7 +547,6 @@ class Blinky
         String m_strExt = null;
         public String Filter { get { return "SearchDirLists " + Description + "|*." + m_strExt; } }
 
-        static Forms.OpenFileDialog OFD = null;
         internal static Forms.SaveFileDialog SFD = null;        // TODO: remove frankenSFD
 
         protected String m_strPrevFile = null;
@@ -558,17 +561,14 @@ class Blinky
                 return;
             }
 
-            OFD = new Forms.OpenFileDialog();
             SFD = new Forms.SaveFileDialog();
             SFD.OverwritePrompt = false;
-            BaseFilter = "Text files|*.txt|All files|*.*";
             bInited = true;
         }
 
         protected SDL_File(String strHeader, String strExt, String strDescription)
         {
             Init();
-            Utilities.Assert(1303.4305, OFD != null);
             Utilities.Assert(1303.4306, SFD != null);
             Header = strHeader;
             m_strExt = strExt;
@@ -595,7 +595,7 @@ class Blinky
 #if (WPF == false)
         internal bool ReadList(Forms.ListView lv)
         {
-            if ((m_strFileNotDialog == null) && (ShowDialog(OFD) == false))
+            if ((m_strFileNotDialog == null) && (ShowDialog(new Forms.OpenFileDialog()) == false))
             {
                 return false;
             }

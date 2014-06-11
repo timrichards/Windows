@@ -1241,7 +1241,7 @@ namespace SearchDirLists
             {
                 foreach (SDL_ListViewItem lvItem in lvSelect)
                 {
-                    gd.SetLV_VolumesItemInclude(lvItem, gd.LV_VolumesItemInclude(lvItem) == false);
+                    lvItem.SubItems[4].SetText((lvItem.SubItems[4].Text() != "Yes") ? "Yes" : "No");
                 }
 
                 gd.RestartTreeTimer();
@@ -2614,11 +2614,6 @@ namespace SearchDirLists
             return (((ListViewItem)lv.SelectedItems[0]).Tag != null);
         }
 
-        internal bool LV_VolumesItemInclude(SDL_ListViewItem lvItem)
-        {
-            return (lvItem.SubItems[4].Text() == "Yes");
-        }
-
         internal void NameNodes(SDL_TreeNode treeNode, UList<SDL_TreeNode> listTreeNodes)
         {
             treeNode.Name = treeNode.Text;
@@ -2712,11 +2707,6 @@ namespace SearchDirLists
                 }
             }
             while (bContinue && ((treeNode = (SDL_TreeNode)treeNode.NextNode) != null));
-        }
-
-        internal void SetLV_VolumesItemInclude(SDL_ListViewItem lvItem, bool bInclude)
-        {
-            lvItem.SubItems[4].SetText((bInclude) ? "Yes" : "No");
         }
     }
 }

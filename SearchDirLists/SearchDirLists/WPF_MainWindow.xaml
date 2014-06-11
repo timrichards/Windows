@@ -78,8 +78,8 @@
                 </ItemsControl>
                 <StackPanel Grid.Row="3" Orientation="Horizontal">
                     <Label Content="Volume list" VerticalAlignment="Bottom"/>
-                    <Button Content="Load" Name="xaml_btnLoad" Command="{Binding Icmd_LoadVolumeList}"/>
-                    <Button Content="Save" Name="xaml_btnSave" Command="{Binding Icmd_SaveVolumeList}"/>
+                    <Button Content="Load" Name="xaml_btnLoadVolumeList" Command="{Binding Icmd_LoadVolumeList}"/>
+                    <Button Content="Save" Name="xaml_btnSaveVolumeList" Command="{Binding Icmd_SaveVolumeList}"/>
                 </StackPanel>
                 <Button Grid.Row="3" Content="Add volume" HorizontalAlignment="Center" Height="60" Command="{Binding Icmd_AddVolume}"/>
                 <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
@@ -95,7 +95,7 @@
                             <GridViewColumn Header="Path" DisplayMemberBinding="{Binding Path}"/>
                             <GridViewColumn Header="Save to file" DisplayMemberBinding="{Binding SaveAs}"/>
                             <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}"/>
-                            <GridViewColumn Header="Include in search" DisplayMemberBinding="{Binding Include}"/>
+                            <GridViewColumn Header="Include in search" DisplayMemberBinding="{Binding IncludeStr}"/>
                             <GridViewColumn Header="Volume group" DisplayMemberBinding="{Binding VolumeGroup}"/>
                         </GridView>
                     </ListView.View>

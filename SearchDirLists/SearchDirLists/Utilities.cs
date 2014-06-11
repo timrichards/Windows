@@ -26,6 +26,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Windows.Interop;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace SearchDirLists
 {
@@ -339,10 +340,13 @@ class Blinky
 
         internal void Go(WPF.Controls.Control ctl, Drawing.Color? clr = null, bool Once = false)
         {
-#if (WPF)
-            Reset();
-            m_holder = new ControlHolder(ctl);
-            Go_A(clr, Once);
+#if (WPF) 
+            if (ctl.Background is SolidColorBrush)      // TODO: Fix the gradient brush issue on buttons
+            {
+                Reset();
+                m_holder = new ControlHolder(ctl);
+                Go_A(clr, Once);
+            }
 #endif
         }
 
@@ -611,6 +615,15 @@ class Blinky
                 return false;
             }
 
+            if (Keyboard.IsKeyDown(Key.LeftShift) == false)
+            {
+#if (WPF)
+                listItems.Clear();
+#else
+                lv.Items.Clear();
+#endif
+            }
+
             using (StreamReader sr = File.OpenText(m_strFileNotDialog))
             {
                 String strLine = sr.ReadLine();
@@ -627,7 +640,6 @@ class Blinky
             if (listItems.Count > 0)
             {
 #if (WPF == false)
-                lv.Items.Clear();
                 lv.Items.AddRange(listItems.ToArray());
                 lv.Invalidate();
 #endif
@@ -670,6 +682,40 @@ class Blinky
                     {
                         sw.Write('\t' + WriteListItem(nIx, lvSubitem.Text));
                         ++nIx;
+                    }
+
+                    sw.WriteLine();
+                }
+            }
+
+            return true;
+        }
+
+        internal bool WriteList(ObservableCollection<LVvolViewModel> lvItems)
+        {
+            if (ShowDialog(SFD) == false)
+            {
+                return false;
+            }
+
+            if ((File.Exists(m_strPrevFile))
+                && (MBox(m_strPrevFile + " already exists. Overwrite?", Description, MBoxBtns.YesNo)
+                != MBoxRet.Yes))
+            {
+                return false;
+            }
+
+            using (StreamWriter sw = File.CreateText(m_strPrevFile))
+            {
+                sw.WriteLine(Header);
+
+                foreach (LVvolViewModel lvItem in lvItems)
+                {
+                    sw.Write(WriteListItem(0, lvItem[0]));
+
+                    for (int nIx = 1; nIx < LVvolViewModel.NumCols; ++nIx)
+                    {
+                        sw.Write('\t' + WriteListItem(nIx, lvItem[nIx]));
                     }
 
                     sw.WriteLine();

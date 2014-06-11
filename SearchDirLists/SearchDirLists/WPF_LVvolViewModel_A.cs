@@ -2,6 +2,11 @@
 using System.IO;
 using System.Windows.Controls;
 using Drawing = System.Drawing;
+using System.Linq;
+using System.Collections.Generic;
+using System.Threading;
+using Forms = System.Windows.Forms;
+using System.Text;
 
 #if (true)
 namespace SearchDirLists
@@ -131,6 +136,201 @@ namespace SearchDirLists
             return bSaveAsExists;
         }
 
+        String FormatPath(String strPath, Control ctl, bool bFailOnDirectory = true)
+        {
+            if (Directory.Exists(Path.GetFullPath(strPath)))
+            {
+                String strCapDrive = strPath.Substring(0, strPath.IndexOf(":" + Path.DirectorySeparatorChar) + 2);
+
+                strPath = Path.GetFullPath(strPath).Replace(strCapDrive, strCapDrive.ToUpper());
+
+                if (strPath != strCapDrive.ToUpper())
+                {
+                    strPath = strPath.TrimEnd(Path.DirectorySeparatorChar);
+                }
+            }
+            else if (bFailOnDirectory)
+            {
+                m_app.xaml_tabControlMain.SelectedItem = m_app.xaml_tabPageVolumes;
+                gd.FormError(ctl, "Path does not exist.", "Save Fields");
+                return null;
+            }
+
+            return strPath.TrimEnd(Path.DirectorySeparatorChar);
+        }
+
+        bool LoadVolumeList(String strFile = null)
+        {
+            if (new SDL_VolumeFile(strFile).ReadList(mo_lvVolViewModelList.Items) == false)
+            {
+                return false;
+            }
+
+            if (HasItems)
+            {
+                m_app.xaml_tabControlMain.SelectedItem = m_app.xaml_tabPageBrowse;
+            }
+
+            return true;    // this kicks off the tree
+        }
+
+        internal void ModifyFile()
+        {
+            gd.InterruptTreeTimerWithAction(new BoolAction(() =>
+            {
+                LVvolViewModel[] lvSelect = m_app.xaml_lvVolumesMain.SelectedItems.Cast<LVvolViewModel>().ToArray();
+
+                if (lvSelect.Length <= 0)
+                {
+                    return false;
+                }
+
+                if (lvSelect.Length > 1)
+                {
+                    Utilities.Assert(1308.9311, false, bTraceOnly: true);    // guaranteed by selection logic
+                    Utilities.MBox("Only one file can be modified at a time.", "Modify file");
+                    return false;
+                }
+
+                LVvolViewModel lvItem = lvSelect[0];
+
+                String strVolumeName_orig = lvItem.VolumeName;
+                String strVolumeName = null;
+                String strSaveAs = lvItem.SaveAs;
+
+                try { using (new StreamReader(strSaveAs)) { } }
+                catch
+                {
+                    if (gd.m_saveDirListings != null)
+                    {
+                        Utilities.MBox("Currently saving listings and can't open file yet. Please wait.", "Modify file");
+                    }
+                    else if (lvItem.SaveAsExists == false)
+                    {
+                        Utilities.MBox("File hasn't been saved yet.", "Modify file");
+                    }
+                    else
+                    {
+                        Utilities.MBox("Can't open file.", "Modify file");
+                    }
+
+                    return false;
+                }
+
+                {
+                    InputBox inputBox = new InputBox();
+
+                    inputBox.Text = "Step 1 of 2: Volume name";
+                    inputBox.Prompt = "Enter a volume name. (Next: drive letter)";
+                    inputBox.Entry = strVolumeName_orig;
+                    inputBox.SetNextButtons();
+
+                    if ((inputBox.ShowDialog() == Forms.DialogResult.OK) && (Utilities.StrValid(inputBox.Entry)))
+                    {
+                        strVolumeName = inputBox.Entry;
+                    }
+                }
+
+                String strDriveLetter_orig = null;
+                String strDriveLetter = null;
+
+                while (true)
+                {
+                    InputBox inputBox = new InputBox();
+
+                    inputBox.Text = "Step 2 of 2: Drive letter";
+                    inputBox.Prompt = "Enter a drive letter.";
+
+                    if (lvItem.Path.Length <= 0)
+                    {
+                        Utilities.Assert(1308.9312, false, bTraceOnly: true);
+                        break;
+                    }
+
+                    strDriveLetter_orig = lvItem.Path[0].ToString();
+                    inputBox.Entry = strDriveLetter_orig.ToUpper();
+                    inputBox.SetNextButtons();
+
+                    if (inputBox.ShowDialog() == Forms.DialogResult.OK)
+                    {
+                        if (inputBox.Entry.Length > 1)
+                        {
+                            Utilities.MBox("Drive letter must be one letter.", "Drive letter");
+                            continue;
+                        }
+
+                        strDriveLetter = inputBox.Entry.ToUpper();
+                    }
+
+                    break;
+                }
+
+                if (((Utilities.StrValid(strVolumeName) == false) ||
+                    (Utilities.NotNull(strVolumeName) == Utilities.NotNull(strVolumeName_orig)))
+                    &&
+                    ((Utilities.StrValid(strDriveLetter) == false) ||
+                    (Utilities.NotNull(strDriveLetter) == Utilities.NotNull(strDriveLetter_orig))))
+                {
+                    Utilities.MBox("No changes made.", "Modify file");
+                    return false;
+                }
+
+                StringBuilder sbFileConts = new StringBuilder();
+                bool bDriveLetter = Utilities.StrValid(strDriveLetter);
+
+                gd.KillTreeBuilder(bJoin: true);
+
+                using (StringReader reader = new StringReader(File.ReadAllText(strSaveAs)))
+                {
+                    String strLine = null;
+                    bool bHitNickname = (Utilities.StrValid(strVolumeName) == false);
+
+                    while ((strLine = reader.ReadLine()) != null)
+                    {
+                        StringBuilder sbLine = new StringBuilder(strLine);
+
+                        if ((bHitNickname == false) && strLine.StartsWith(Utilities.mSTRlineType_Nickname))
+                        {
+                            if (Utilities.StrValid(strVolumeName_orig))
+                            {
+                                sbLine.Replace(strVolumeName_orig, Utilities.NotNull(strVolumeName));
+                            }
+                            else
+                            {
+                                Utilities.Assert(1308.9313, sbLine.ToString().Split('\t').Length == 2);
+                                sbLine.Append('\t');
+                                sbLine.Append(strVolumeName);
+                            }
+
+                            lvItem.VolumeName = strVolumeName;
+                            bHitNickname = true;
+                        }
+                        else if (bDriveLetter)
+                        {
+                            sbLine.Replace("\t" + strDriveLetter_orig + @":\", "\t" + strDriveLetter + @":\");
+                        }
+
+                        sbFileConts.AppendLine(sbLine.ToString());
+                    }
+                }
+
+                if (bDriveLetter)
+                {
+                    lvItem.Path = strDriveLetter + ":";
+                }
+
+                File.WriteAllText(strSaveAs, sbFileConts.ToString());
+                gd.m_blinky.Go(m_app.xaml_btnSaveVolumeList);
+
+                if (Utilities.MBox("Update the volume list?", "Modify file", MBoxBtns.YesNo) == MBoxRet.Yes)
+                {
+                    SaveVolumeList();
+                }
+
+                return true;
+            }));
+        }
+
         bool ReadHeader()
         {
             if (Utilities.ValidateFile(CBSaveAs.S) == false)
@@ -161,27 +361,92 @@ namespace SearchDirLists
             return SaveFields(false);
         }
 
-        String FormatPath(String strPath, Control ctl, bool bFailOnDirectory = true)
+        void RemoveVolume()
         {
-            if (Directory.Exists(Path.GetFullPath(strPath)))
+            LVvolViewModel[] lvSelect = m_app.xaml_lvVolumesMain.SelectedItems.Cast<LVvolViewModel>().ToArray();
+
+            if (lvSelect.Length <= 0)
             {
-                String strCapDrive = strPath.Substring(0, strPath.IndexOf(":" + Path.DirectorySeparatorChar) + 2);
+                return;
+            }
 
-                strPath = Path.GetFullPath(strPath).Replace(strCapDrive, strCapDrive.ToUpper());
+            gd.m_bKillTree = (gd.m_tree != null) || (gd.m_bKillTree && gd.timer_DoTree.IsEnabled);
+            gd.timer_DoTree.IsEnabled = false;
+            gd.KillTreeBuilder(bJoin: true);
 
-                if (strPath != strCapDrive.ToUpper())
+            if (gd.m_bKillTree == false)
+            {
+                uint nNumFoldersKeep = 0;
+                uint nNumFoldersRemove = 0;
+
+                foreach (LVvolViewModel lvItem in mo_lvVolViewModelList.Items)
                 {
-                    strPath = strPath.TrimEnd(Path.DirectorySeparatorChar);
+                    if (lvItem.SaveAsExists == false)
+                    {
+                        // scenario: unsaved file
+                        continue;
+                    }
+
+                    if (lvItem.treeNode == null)
+                    {
+                        continue;
+                    }
+
+                    RootNodeDatum rootNodeDatum = (RootNodeDatum)lvItem.treeNode.Tag;
+
+                    if (lvSelect.Contains(lvItem))
+                    {
+                        nNumFoldersRemove += rootNodeDatum.nSubDirs;
+                    }
+                    else
+                    {
+                        nNumFoldersKeep += rootNodeDatum.nSubDirs;
+                    }
                 }
-            }
-            else if (bFailOnDirectory)
-            {
-                m_app.xaml_tabControlMain.SelectedItem = m_app.xaml_tabPageVolumes;
-                gd.FormError(ctl, "Path does not exist.", "Save Fields");
-                return null;
+
+                gd.m_bKillTree = (nNumFoldersRemove > nNumFoldersKeep);
             }
 
-            return strPath.TrimEnd(Path.DirectorySeparatorChar);
+            if (gd.m_bKillTree)
+            {
+                gd.RestartTreeTimer();
+            }
+            else
+            {
+                List<LVvolViewModel> listLVvolItems = new List<LVvolViewModel>();
+
+                foreach (LVvolViewModel lvItem in lvSelect)
+                {
+                    if (lvItem.SaveAsExists == false)
+                    {
+                        // scenario: unsaved file
+                        continue;
+                    }
+
+                    listLVvolItems.Add(lvItem);
+                    SDLWPF.treeViewMain.Nodes.Remove(lvItem.treeNode);
+                }
+
+                new Thread(new ThreadStart(() =>
+                {
+                    foreach (LVvolViewModel lvItem in listLVvolItems)
+                    {
+                        gd.RemoveCorrelation(lvItem.treeNode);
+                        gd.m_listRootNodes.Remove(lvItem.treeNode);
+                    }
+
+                    m_app.Dispatcher.Invoke(new Action(() =>
+                    {
+                        gd.RestartTreeTimer();
+                    }));
+                }))
+                .Start();
+            }
+
+            foreach (LVvolViewModel lvItem in lvSelect)
+            {
+                mo_lvVolViewModelList.Items.Remove(lvItem);
+            }
         }
 
         bool SaveFields(bool bFailOnDirectory = true)
@@ -244,19 +509,101 @@ namespace SearchDirLists
             return true;
         }
 
-        bool LoadVolumeList(String strFile = null)
+        void SaveDirLists()
         {
-            if (new SDL_VolumeFile(strFile).ReadList(mo_lvVolViewModelList.Items) == false)
-            {
-                return false;
-            }
+            bool bRestartTreeTimer = gd.timer_DoTree.IsEnabled;
 
-            if (CanSaveDirLists)
-            {
-                m_app.xaml_tabControlMain.SelectedItem = m_app.xaml_tabPageBrowse;
-            }
+            gd.timer_DoTree.Stop();
 
-            return true;    // this kicks off the tree
+ //           if ((DoSaveDirListings() == false) && bRestartTreeTimer)   // cancelled
+            {
+                gd.RestartTreeTimer();
+            }
+        }
+
+        void SaveVolumeList()
+        {
+            if (HasItems)
+            {
+                new SDL_VolumeFile().WriteList(mo_lvVolViewModelList.Items);
+            }
+            else
+            {
+                gd.m_blinky.Go(ctl: m_app.xaml_btnSaveVolumeList, clr: Drawing.Color.Red, Once: true);
+                Utilities.Assert(1308.9314, false, bTraceOnly: true);    // shouldn't even be hit: this button gets dimmed
+            }
+        }
+
+        void SetVolumeGroup()
+        {
+            gd.m_bKillTree &= gd.timer_DoTree.IsEnabled;
+
+            gd.InterruptTreeTimerWithAction(new BoolAction(() =>
+            {
+                LVvolViewModel[] lvSelect = m_app.xaml_lvVolumesMain.SelectedItems.Cast<LVvolViewModel>().ToArray();
+
+                if (lvSelect.Length <= 0)
+                {
+                    return false;
+                }
+
+                InputBox inputBox = new InputBox();
+
+                inputBox.Text = "Volume Group";
+                inputBox.Prompt = "Enter a volume group name";
+                inputBox.Entry = lvSelect[0].VolumeGroup;
+
+                SortedDictionary<String, object> dictVolGroups = new SortedDictionary<String, object>();
+
+                foreach (LVvolViewModel lvItem in mo_lvVolViewModelList.Items)
+                {
+                    if ((lvItem.VolumeGroup != null) && (dictVolGroups.ContainsKey(lvItem.VolumeGroup) == false))
+                    {
+                        dictVolGroups.Add(lvItem.VolumeGroup, null);
+                    }
+                }
+
+                foreach (KeyValuePair<String, object> entry in dictVolGroups)
+                {
+                    inputBox.AddSelector(entry.Key);
+                }
+
+                if (inputBox.ShowDialog() != Forms.DialogResult.OK)
+                {
+                    return false;
+                }
+
+                foreach (LVvolViewModel lvItem in lvSelect)
+                {
+                    lvItem.VolumeGroup = inputBox.Entry;
+
+                    if (lvItem.treeNode == null)
+                    {
+                        gd.m_bKillTree = true;
+                    }
+                    else if (gd.m_bKillTree == false)
+                    {
+                        ((RootNodeDatum)(lvItem.treeNode).Tag).StrVolumeGroup = inputBox.Entry;
+                    }
+                }
+
+                return true;
+            }));
+        }
+
+        void ToggleInclude()
+        {
+            LVvolViewModel[] lvSelect = m_app.xaml_lvVolumesMain.SelectedItems.Cast<LVvolViewModel>().ToArray();
+
+            if (lvSelect.Length > 0)
+            {
+                foreach (LVvolViewModel lvItem in lvSelect)
+                {
+                    lvItem.Include = (lvItem.Include == false);
+                }
+
+                gd.RestartTreeTimer();
+            }
         }
     }
 }

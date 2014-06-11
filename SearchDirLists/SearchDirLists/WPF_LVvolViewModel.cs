@@ -67,7 +67,7 @@ namespace SearchDirLists
             Path = strPath;
             SaveAs = strSaveAs;
             Status = strStatus;
-            Include = "Yes";
+            IncludeStr = "Yes";
             SaveAsExists = bSaveAsExists;
         }
 
@@ -79,10 +79,12 @@ namespace SearchDirLists
             if (arrStr.Length > 1) Path = arrStr[1];
             if (arrStr.Length > 2) SaveAs = arrStr[2];
             if (arrStr.Length > 3) Status = arrStr[3];
-            if (arrStr.Length > 4) Include = arrStr[4];
+            if (arrStr.Length > 4) IncludeStr = arrStr[4];
             if (arrStr.Length > 5) VolumeGroup = arrStr[5];
             SaveAsExists = true;
         }
+
+        internal String this[int i] { get { return new String[] { VolumeName, Path, SaveAs, Status, IncludeStr, VolumeGroup }[i]; } }
 
         internal const int NumCols = 6;
 
@@ -99,8 +101,11 @@ namespace SearchDirLists
         public String Path { get { return m_strPath; } set { if (value != m_strPath) { m_strPath = value; RaisePropertyChanged("Path"); } } }
         public String SaveAs { get { return m_strSaveAs; } set { if (value != m_strSaveAs) { m_strSaveAs = value; RaisePropertyChanged("SaveAs"); } } }
         public String Status { get { return m_strStatus; } set { if (value != m_strStatus) { m_strStatus = value; RaisePropertyChanged("Status"); } } }
-        public String Include { get { return m_strInclude; } set { if (value != m_strInclude) { m_strInclude = value; RaisePropertyChanged("Include"); } } }
+        public String IncludeStr { get { return m_strInclude; } set { if (value != m_strInclude) { m_strInclude = value; RaisePropertyChanged("IncludeStr"); } } }
         public String VolumeGroup { get { return m_strVolumeGroup; } set { if (value != m_strVolumeGroup) { m_strVolumeGroup = value; RaisePropertyChanged("VolumeGroup"); } } }
+
+        internal SDL_TreeNode treeNode = null;
+        internal bool Include { get { return (IncludeStr == "Yes"); } set { IncludeStr = (value ? "Yes" : "No"); } }
     }
 
     class LVvolViewModel_List : ObservableObject
@@ -150,20 +155,20 @@ namespace SearchDirLists
             mo_lvVolViewModelList = new LVvolViewModel_List(m_app.xaml_lvVolumesMain);
         }
 
-        bool CanModifyOne = false;
-        bool CanModifyMultiple = false;
-        bool CanSaveDirLists { get { return mo_lvVolViewModelList.Count > 0; } }
+        bool SelectedOne { get { return m_app.xaml_lvVolumesMain.SelectedItems.Count == 1; } }
+        bool Selected { get { return m_app.xaml_lvVolumesMain.SelectedItems.Count > 0; } }
+        bool HasItems { get { return mo_lvVolViewModelList.Count > 0; } }
 
         public ICommand Icmd_SetPath { get { if (mIcmd_setPath == null) { mIcmd_setPath = new RelayCommand(param => WPF_btnSetPath_Click()); } return mIcmd_setPath; } } ICommand mIcmd_setPath = null;
         public ICommand Icmd_SaveAs { get { if (mIcmd_SaveAs == null) { mIcmd_SaveAs = new RelayCommand(param => WPF_btnSaveAs_Click()); } return mIcmd_SaveAs; } } ICommand mIcmd_SaveAs = null;
         public ICommand Icmd_LoadVolumeList { get { if (mIcmd_loadVolumeList == null) { mIcmd_loadVolumeList = new RelayCommand(param => WPF_btnLoadVolumeList_Click()); } return mIcmd_loadVolumeList; } } ICommand mIcmd_loadVolumeList = null;
-        public ICommand Icmd_SaveVolumeList { get { if (mIcmd_saveVolumeList == null) { mIcmd_saveVolumeList = new RelayCommand(param => WPF_btnSaveVolumeList_Click(), param => CanModifyOne); } return mIcmd_saveVolumeList; } } ICommand mIcmd_saveVolumeList = null;
+        public ICommand Icmd_SaveVolumeList { get { if (mIcmd_saveVolumeList == null) { mIcmd_saveVolumeList = new RelayCommand(param => WPF_btnSaveVolumeList_Click(), param => HasItems); } return mIcmd_saveVolumeList; } } ICommand mIcmd_saveVolumeList = null;
         public ICommand Icmd_AddVolume { get { if (mIcmd_addVolume == null) { mIcmd_addVolume = new RelayCommand(param => WPF_btnAddVolume_Click()); } return mIcmd_addVolume; } } ICommand mIcmd_addVolume = null;
-        public ICommand Icmd_RemoveVolume { get { if (mIcmd_removeVolume == null) { mIcmd_removeVolume = new RelayCommand(param => WPF_btnRemoveVolume_Click(), param => CanModifyMultiple); } return mIcmd_removeVolume; } } ICommand mIcmd_removeVolume = null;
-        public ICommand Icmd_ToggleInclude { get { if (mIcmd_toggleInclude == null) { mIcmd_toggleInclude = new RelayCommand(param => WPF_btnToggleInclude_Click(), param => CanModifyMultiple); } return mIcmd_toggleInclude; } } ICommand mIcmd_toggleInclude = null;
-        public ICommand Icmd_VolumeGroup { get { if (mIcmd_volumeGroup == null) { mIcmd_volumeGroup = new RelayCommand(param => WPF_btnSetVolumeGroup_Click(), param => CanModifyMultiple); } return mIcmd_volumeGroup; } } ICommand mIcmd_volumeGroup = null;
-        public ICommand Icmd_ModifyFile { get { if (mIcmd_modifyFile == null) { mIcmd_modifyFile = new RelayCommand(param => WPF_btnModifyFile_Click(), param => CanModifyOne); } return mIcmd_modifyFile; } } ICommand mIcmd_modifyFile = null;
-        public ICommand Icmd_SaveDirLists { get { if (mIcmd_saveDirLists == null) { mIcmd_saveDirLists = new RelayCommand(param => WPF_btnSaveDirLists_Click(), param => CanSaveDirLists); } return mIcmd_saveDirLists; } } ICommand mIcmd_saveDirLists = null;
+        public ICommand Icmd_RemoveVolume { get { if (mIcmd_removeVolume == null) { mIcmd_removeVolume = new RelayCommand(param => WPF_btnRemoveVolume_Click(), param => Selected); } return mIcmd_removeVolume; } } ICommand mIcmd_removeVolume = null;
+        public ICommand Icmd_ToggleInclude { get { if (mIcmd_toggleInclude == null) { mIcmd_toggleInclude = new RelayCommand(param => WPF_btnToggleInclude_Click(), param => Selected); } return mIcmd_toggleInclude; } } ICommand mIcmd_toggleInclude = null;
+        public ICommand Icmd_VolumeGroup { get { if (mIcmd_volumeGroup == null) { mIcmd_volumeGroup = new RelayCommand(param => WPF_btnSetVolumeGroup_Click(), param => Selected); } return mIcmd_volumeGroup; } } ICommand mIcmd_volumeGroup = null;
+        public ICommand Icmd_ModifyFile { get { if (mIcmd_modifyFile == null) { mIcmd_modifyFile = new RelayCommand(param => WPF_btnModifyFile_Click(), param => SelectedOne); } return mIcmd_modifyFile; } } ICommand mIcmd_modifyFile = null;
+        public ICommand Icmd_SaveDirLists { get { if (mIcmd_saveDirLists == null) { mIcmd_saveDirLists = new RelayCommand(param => WPF_btnSaveDirLists_Click(), param => HasItems); } return mIcmd_saveDirLists; } } ICommand mIcmd_saveDirLists = null;
 
         internal void WPF_btnSetPath_Click()
         {
@@ -196,12 +201,12 @@ namespace SearchDirLists
         }
 
         internal void WPF_btnLoadVolumeList_Click() { gd.InterruptTreeTimerWithAction(new BoolAction(() => { return LoadVolumeList(); })); }
-        internal void WPF_btnSaveVolumeList_Click() { }
+        internal void WPF_btnSaveVolumeList_Click() { SaveVolumeList(); }
         internal void WPF_btnAddVolume_Click() { gd.InterruptTreeTimerWithAction(new BoolAction(() => { return AddVolume(); })); }
-        internal void WPF_btnRemoveVolume_Click() { }
-        internal void WPF_btnToggleInclude_Click() { }
-        internal void WPF_btnSetVolumeGroup_Click() { }
-        internal void WPF_btnModifyFile_Click() { }
-        internal void WPF_btnSaveDirLists_Click() { }
+        internal void WPF_btnRemoveVolume_Click() { RemoveVolume(); }
+        internal void WPF_btnToggleInclude_Click() { ToggleInclude(); }
+        internal void WPF_btnSetVolumeGroup_Click() { SetVolumeGroup(); }
+        internal void WPF_btnModifyFile_Click() { ModifyFile(); }
+        internal void WPF_btnSaveDirLists_Click() { SaveDirLists(); }
     }
 }

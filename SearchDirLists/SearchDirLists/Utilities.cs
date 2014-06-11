@@ -597,12 +597,12 @@ class Blinky
         }
 
         protected virtual void ReadListItem(UList<SDL_ListViewItem> listItems, String[] strArray) { listItems.Add(new SDL_ListViewItem(strArray)); }
-        protected virtual void ReadListItem(ObservableCollection<LVvolViewModel> listItems, String[] strArray) { listItems.Add(new LVvolViewModel(strArray)); }
+        protected virtual void ReadListItem(ObservableCollection<VolumeLVitemVM> listItems, String[] strArray) { listItems.Add(new VolumeLVitemVM(strArray)); }
 
-        internal bool ReadList(ObservableCollection<LVvolViewModel> listItems)
+        internal bool ReadList(ObservableCollection<VolumeLVitemVM> listItems)
 #if (WPF)
         {
-            int nCols = LVvolViewModel.NumCols;
+            int nCols = VolumeLVitemVM.NumCols;
 #else
         { return false; }
         internal bool ReadList(Forms.ListView lv)
@@ -691,7 +691,7 @@ class Blinky
             return true;
         }
 
-        internal bool WriteList(ObservableCollection<LVvolViewModel> lvItems)
+        internal bool WriteList(ObservableCollection<VolumeLVitemVM> lvItems)
         {
             if (ShowDialog(SFD) == false)
             {
@@ -709,11 +709,11 @@ class Blinky
             {
                 sw.WriteLine(Header);
 
-                foreach (LVvolViewModel lvItem in lvItems)
+                foreach (VolumeLVitemVM lvItem in lvItems)
                 {
                     sw.Write(WriteListItem(0, lvItem[0]));
 
-                    for (int nIx = 1; nIx < LVvolViewModel.NumCols; ++nIx)
+                    for (int nIx = 1; nIx < VolumeLVitemVM.NumCols; ++nIx)
                     {
                         sw.Write('\t' + WriteListItem(nIx, lvItem[nIx]));
                     }

@@ -11,129 +11,132 @@ using System.Text;
 #if (true)
 namespace SearchDirLists
 {
-    partial class VolumeTabViewModel
+    partial class VolumeTabVM
     {
-        bool AddVolume()
+        void AddVolume()
         {
-            bool bSaveAsExists = false;
-
-            if (SaveFields(false) == false)
+            gd.InterruptTreeTimerWithAction(new BoolAction(() =>
             {
-                return false;
-            }
+                bool bSaveAsExists = false;
 
-            if (Utilities.StrValid(CBSaveAs.S) == false)
-            {
-                gd.FormError(m_app.xaml_cbSaveAs, "Must have a file to load or save directory listing to.", "Volume Save As");
-                return false;
-            }
-
-            if (mo_lvVolViewModelList.ContainsSaveAs(CBSaveAs.S))
-            {
-                gd.FormError(m_app.xaml_cbSaveAs, "File already in use in list of volumes.", "Volume Save As");
-                return false;
-            }
-
-            bool bOpenedFile = (Utilities.StrValid(CBPath.S) == false);
-
-            if (File.Exists(CBSaveAs.S) && Utilities.StrValid(CBPath.S))
-            {
-                gd.m_blinky.Go(m_app.xaml_cbSaveAs, clr: Drawing.Color.Red);
-
-                if (Utilities.MBox(CBSaveAs + ("\nalready exists. Overwrite?").PadRight(100), "Volume Save As", MBoxBtns.YesNo)
-                    != MBoxRet.Yes)
+                if (SaveFields(false) == false)
                 {
-                    gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Yellow, Once: true);
-                    m_app.xaml_cbVolumeName.Text = String.Empty;
-                    gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Yellow, Once: true);
-                    CBPath.S = String.Empty;
-                    Utilities.Assert(1308.9306, SaveFields(false));
+                    return false;
                 }
-            }
 
-            if ((File.Exists(CBSaveAs.S) == false) && (Utilities.StrValid(CBPath.S) == false))
-            {
-                gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red);
-                Utilities.MBox("Must have a path or existing directory listing file.", "Volume Source Path");
-                gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red, Once: true);
-                return false;
-            }
-
-            if (Utilities.StrValid(CBPath.S) && (Directory.Exists(CBPath.S) == false))
-            {
-                gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red);
-                Utilities.MBox("Path does not exist.", "Volume Source Path");
-                gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red, Once: true);
-                return false;
-            }
-
-            String strStatus = "Not Saved";
-
-            if (File.Exists(CBSaveAs.S))
-            {
-                if (Utilities.StrValid(CBPath.S) == false)
+                if (Utilities.StrValid(CBSaveAs.S) == false)
                 {
-                    bSaveAsExists = ReadHeader();
+                    gd.FormError(m_app.xaml_cbSaveAs, "Must have a file to load or save directory listing to.", "Volume Save As");
+                    return false;
+                }
 
-                    if (bSaveAsExists)
+                if (mo_lvVolViewModelList.ContainsSaveAs(CBSaveAs.S))
+                {
+                    gd.FormError(m_app.xaml_cbSaveAs, "File already in use in list of volumes.", "Volume Save As");
+                    return false;
+                }
+
+                bool bOpenedFile = (Utilities.StrValid(CBPath.S) == false);
+
+                if (File.Exists(CBSaveAs.S) && Utilities.StrValid(CBPath.S))
+                {
+                    gd.m_blinky.Go(m_app.xaml_cbSaveAs, clr: Drawing.Color.Red);
+
+                    if (Utilities.MBox(CBSaveAs + ("\nalready exists. Overwrite?").PadRight(100), "Volume Save As", MBoxBtns.YesNo)
+                        != MBoxRet.Yes)
                     {
-                        strStatus = Utilities.mSTRusingFile;
+                        gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Yellow, Once: true);
+                        m_app.xaml_cbVolumeName.Text = String.Empty;
+                        gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Yellow, Once: true);
+                        CBPath.S = String.Empty;
+                        Utilities.Assert(1308.9306, SaveFields(false));
                     }
-                    else
+                }
+
+                if ((File.Exists(CBSaveAs.S) == false) && (Utilities.StrValid(CBPath.S) == false))
+                {
+                    gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red);
+                    Utilities.MBox("Must have a path or existing directory listing file.", "Volume Source Path");
+                    gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red, Once: true);
+                    return false;
+                }
+
+                if (Utilities.StrValid(CBPath.S) && (Directory.Exists(CBPath.S) == false))
+                {
+                    gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red);
+                    Utilities.MBox("Path does not exist.", "Volume Source Path");
+                    gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red, Once: true);
+                    return false;
+                }
+
+                String strStatus = "Not Saved";
+
+                if (File.Exists(CBSaveAs.S))
+                {
+                    if (Utilities.StrValid(CBPath.S) == false)
                     {
-                        if (Utilities.StrValid(CBPath.S))
+                        bSaveAsExists = ReadHeader();
+
+                        if (bSaveAsExists)
                         {
-                            strStatus = "File is bad. Will overwrite.";
+                            strStatus = Utilities.mSTRusingFile;
                         }
                         else
                         {
-                            gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red);
-                            Utilities.MBox("File is bad and path does not exist.", "Volume Source Path");
-                            gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red, Once: true);
+                            if (Utilities.StrValid(CBPath.S))
+                            {
+                                strStatus = "File is bad. Will overwrite.";
+                            }
+                            else
+                            {
+                                gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red);
+                                Utilities.MBox("File is bad and path does not exist.", "Volume Source Path");
+                                gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red, Once: true);
+                                return false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        strStatus = "Will overwrite.";
+                    }
+                }
+
+                if ((bSaveAsExists == false) && (mo_lvVolViewModelList.ContainsUnsavedPath(CBPath.S)))
+                {
+                    gd.FormError(m_app.xaml_cbPath, "Path already added.", "Volume Source Path");
+                    return false;
+                }
+
+                if (Utilities.StrValid(CBVolumeName.S))
+                {
+                    if (mo_lvVolViewModelList.ContainsVolumeName(CBVolumeName.S))
+                    {
+                        gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Red);
+
+                        if (Utilities.MBox("Nickname already in use. Use it for more than one volume?", "Volume Save As", MBoxBtns.YesNo)
+                            != MBoxRet.Yes)
+                        {
+                            gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Red, Once: true);
                             return false;
                         }
                     }
                 }
-                else
-                {
-                    strStatus = "Will overwrite.";
-                }
-            }
-
-            if ((bSaveAsExists == false) && (mo_lvVolViewModelList.ContainsUnsavedPath(CBPath.S)))
-            {
-                gd.FormError(m_app.xaml_cbPath, "Path already added.", "Volume Source Path");
-                return false;
-            }
-
-            if (Utilities.StrValid(CBVolumeName.S))
-            {
-                if (mo_lvVolViewModelList.ContainsVolumeName(CBVolumeName.S))
+                else if (bOpenedFile == false)
                 {
                     gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Red);
 
-                    if (Utilities.MBox("Nickname already in use. Use it for more than one volume?", "Volume Save As", MBoxBtns.YesNo)
+                    if (Utilities.MBox("Continue without entering a nickname for this volume?", "Volume Save As", MBoxBtns.YesNo)
                         != MBoxRet.Yes)
                     {
                         gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Red, Once: true);
                         return false;
                     }
                 }
-            }
-            else if (bOpenedFile == false)
-            {
-                gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Red);
 
-                if (Utilities.MBox("Continue without entering a nickname for this volume?", "Volume Save As", MBoxBtns.YesNo)
-                    != MBoxRet.Yes)
-                {
-                    gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Red, Once: true);
-                    return false;
-                }
-            }
-
-            mo_lvVolViewModelList.Add(new LVvolViewModel(CBVolumeName.S, CBPath.S, CBSaveAs.S, strStatus, bSaveAsExists));
-            return bSaveAsExists;
+                mo_lvVolViewModelList.Add(new VolumeLVitemVM(CBVolumeName.S, CBPath.S, CBSaveAs.S, strStatus, bSaveAsExists));
+                return bSaveAsExists;
+            }));
         }
 
         String FormatPath(String strPath, Control ctl, bool bFailOnDirectory = true)
@@ -159,6 +162,8 @@ namespace SearchDirLists
             return strPath.TrimEnd(Path.DirectorySeparatorChar);
         }
 
+        void LoadVolumeList_Click() { gd.InterruptTreeTimerWithAction(new BoolAction(() => { return LoadVolumeList(); })); }
+
         bool LoadVolumeList(String strFile = null)
         {
             if (new SDL_VolumeFile(strFile).ReadList(mo_lvVolViewModelList.Items) == false)
@@ -178,7 +183,7 @@ namespace SearchDirLists
         {
             gd.InterruptTreeTimerWithAction(new BoolAction(() =>
             {
-                LVvolViewModel[] lvSelect = m_app.xaml_lvVolumesMain.SelectedItems.Cast<LVvolViewModel>().ToArray();
+                VolumeLVitemVM[] lvSelect = m_app.xaml_lvVolumesMain.SelectedItems.Cast<VolumeLVitemVM>().ToArray();
 
                 if (lvSelect.Length <= 0)
                 {
@@ -192,7 +197,7 @@ namespace SearchDirLists
                     return false;
                 }
 
-                LVvolViewModel lvItem = lvSelect[0];
+                VolumeLVitemVM lvItem = lvSelect[0];
 
                 String strVolumeName_orig = lvItem.VolumeName;
                 String strVolumeName = null;
@@ -363,7 +368,7 @@ namespace SearchDirLists
 
         void RemoveVolume()
         {
-            LVvolViewModel[] lvSelect = m_app.xaml_lvVolumesMain.SelectedItems.Cast<LVvolViewModel>().ToArray();
+            VolumeLVitemVM[] lvSelect = m_app.xaml_lvVolumesMain.SelectedItems.Cast<VolumeLVitemVM>().ToArray();
 
             if (lvSelect.Length <= 0)
             {
@@ -379,16 +384,11 @@ namespace SearchDirLists
                 uint nNumFoldersKeep = 0;
                 uint nNumFoldersRemove = 0;
 
-                foreach (LVvolViewModel lvItem in mo_lvVolViewModelList.Items)
+                foreach (VolumeLVitemVM lvItem in mo_lvVolViewModelList.Items)
                 {
-                    if (lvItem.SaveAsExists == false)
-                    {
-                        // scenario: unsaved file
-                        continue;
-                    }
-
                     if (lvItem.treeNode == null)
                     {
+                        // scenario: unsaved file
                         continue;
                     }
 
@@ -413,11 +413,11 @@ namespace SearchDirLists
             }
             else
             {
-                List<LVvolViewModel> listLVvolItems = new List<LVvolViewModel>();
+                List<VolumeLVitemVM> listLVvolItems = new List<VolumeLVitemVM>();
 
-                foreach (LVvolViewModel lvItem in lvSelect)
+                foreach (VolumeLVitemVM lvItem in lvSelect)
                 {
-                    if (lvItem.SaveAsExists == false)
+                    if (lvItem.treeNode == null)
                     {
                         // scenario: unsaved file
                         continue;
@@ -429,7 +429,7 @@ namespace SearchDirLists
 
                 new Thread(new ThreadStart(() =>
                 {
-                    foreach (LVvolViewModel lvItem in listLVvolItems)
+                    foreach (VolumeLVitemVM lvItem in listLVvolItems)
                     {
                         gd.RemoveCorrelation(lvItem.treeNode);
                         gd.m_listRootNodes.Remove(lvItem.treeNode);
@@ -443,9 +443,43 @@ namespace SearchDirLists
                 .Start();
             }
 
-            foreach (LVvolViewModel lvItem in lvSelect)
+            foreach (VolumeLVitemVM lvItem in lvSelect)
             {
                 mo_lvVolViewModelList.Items.Remove(lvItem);
+            }
+        }
+
+        void SaveAs()
+        {
+            SDL_File.Init();
+            SDL_File.SFD.Filter = SDL_File.FileAndDirListFileFilter + "|" + SDL_File.BaseFilter;
+
+            if (Utilities.StrValid(CBSaveAs.S))
+            {
+                SDL_File.SFD.InitialDirectory = Path.GetDirectoryName(CBSaveAs.S);
+            }
+
+            if (SDL_File.SFD.ShowDialog() == Forms.DialogResult.OK)
+            {
+                CBSaveAs.S = SDL_File.SFD.FileName;
+
+                if (File.Exists(CBSaveAs.S))
+                {
+                    CBVolumeName.S = null;
+                    CBPath.S = null;
+                }
+            }
+        }
+
+        void SaveDirLists()
+        {
+            bool bRestartTreeTimer = gd.timer_DoTree.IsEnabled;
+
+            gd.timer_DoTree.Stop();
+
+ //           if ((DoSaveDirListings() == false) && bRestartTreeTimer)   // cancelled
+            {
+                gd.RestartTreeTimer();
             }
         }
 
@@ -509,18 +543,6 @@ namespace SearchDirLists
             return true;
         }
 
-        void SaveDirLists()
-        {
-            bool bRestartTreeTimer = gd.timer_DoTree.IsEnabled;
-
-            gd.timer_DoTree.Stop();
-
- //           if ((DoSaveDirListings() == false) && bRestartTreeTimer)   // cancelled
-            {
-                gd.RestartTreeTimer();
-            }
-        }
-
         void SaveVolumeList()
         {
             if (HasItems)
@@ -534,13 +556,21 @@ namespace SearchDirLists
             }
         }
 
+        void SetPath()
+        {
+            if (folderBrowserDialog1.ShowDialog() == Forms.DialogResult.OK)
+            {
+                CBPath.S = folderBrowserDialog1.SelectedPath;
+            }
+        }
+
         void SetVolumeGroup()
         {
             gd.m_bKillTree &= gd.timer_DoTree.IsEnabled;
 
             gd.InterruptTreeTimerWithAction(new BoolAction(() =>
             {
-                LVvolViewModel[] lvSelect = m_app.xaml_lvVolumesMain.SelectedItems.Cast<LVvolViewModel>().ToArray();
+                VolumeLVitemVM[] lvSelect = m_app.xaml_lvVolumesMain.SelectedItems.Cast<VolumeLVitemVM>().ToArray();
 
                 if (lvSelect.Length <= 0)
                 {
@@ -555,7 +585,7 @@ namespace SearchDirLists
 
                 SortedDictionary<String, object> dictVolGroups = new SortedDictionary<String, object>();
 
-                foreach (LVvolViewModel lvItem in mo_lvVolViewModelList.Items)
+                foreach (VolumeLVitemVM lvItem in mo_lvVolViewModelList.Items)
                 {
                     if ((lvItem.VolumeGroup != null) && (dictVolGroups.ContainsKey(lvItem.VolumeGroup) == false))
                     {
@@ -573,7 +603,7 @@ namespace SearchDirLists
                     return false;
                 }
 
-                foreach (LVvolViewModel lvItem in lvSelect)
+                foreach (VolumeLVitemVM lvItem in lvSelect)
                 {
                     lvItem.VolumeGroup = inputBox.Entry;
 
@@ -593,11 +623,11 @@ namespace SearchDirLists
 
         void ToggleInclude()
         {
-            LVvolViewModel[] lvSelect = m_app.xaml_lvVolumesMain.SelectedItems.Cast<LVvolViewModel>().ToArray();
+            VolumeLVitemVM[] lvSelect = m_app.xaml_lvVolumesMain.SelectedItems.Cast<VolumeLVitemVM>().ToArray();
 
             if (lvSelect.Length > 0)
             {
-                foreach (LVvolViewModel lvItem in lvSelect)
+                foreach (VolumeLVitemVM lvItem in lvSelect)
                 {
                     lvItem.Include = (lvItem.Include == false);
                 }

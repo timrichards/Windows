@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Windows.Controls;
-using System.Reflection;
-using System.Linq.Expressions;
 using Drawing = System.Drawing;
 
 #if (true)
@@ -15,7 +10,7 @@ namespace SearchDirLists
     {
         bool AddVolume()
         {
-            bool bFileOK = false;
+            bool bSaveAsExists = false;
 
             if (SaveFields(false) == false)
             {
@@ -73,9 +68,9 @@ namespace SearchDirLists
             {
                 if (Utilities.StrValid(CBPath.S) == false)
                 {
-                    bFileOK = ReadHeader();
+                    bSaveAsExists = ReadHeader();
 
-                    if (bFileOK)
+                    if (bSaveAsExists)
                     {
                         strStatus = Utilities.mSTRusingFile;
                     }
@@ -100,7 +95,7 @@ namespace SearchDirLists
                 }
             }
 
-            if ((bFileOK == false) && (mo_lvVolViewModelList.ContainsPath(CBPath.S)))
+            if ((bSaveAsExists == false) && (mo_lvVolViewModelList.ContainsUnsavedPath(CBPath.S)))
             {
                 gd.FormError(m_app.xaml_cbPath, "Path already added.", "Volume Source Path");
                 return false;
@@ -132,20 +127,8 @@ namespace SearchDirLists
                 }
             }
 
-            {
-                SDL_ListViewItem lvItem = new SDL_ListViewItem(new String[] { CBVolumeName.S, CBPath.S, CBSaveAs.S, strStatus, "Yes" });
-
-                if (bFileOK == false)
-                {
-                    lvItem.Name = CBPath.S;    // indexing by path, only for unsaved volumes
-                }
-
-                m_app.xaml_lvVolumesMain.Items.Add(lvItem);
-            }
-
-            //            form_btnSaveDirList.Enabled = true;
-
-            return bFileOK;
+            mo_lvVolViewModelList.Add(new LVvolViewModel(CBVolumeName.S, CBPath.S, CBSaveAs.S, strStatus, bSaveAsExists));
+            return bSaveAsExists;
         }
 
         bool ReadHeader()
@@ -259,6 +242,21 @@ namespace SearchDirLists
             }
 
             return true;
+        }
+
+        bool LoadVolumeList(String strFile = null)
+        {
+            if (new SDL_VolumeFile(strFile).ReadList(mo_lvVolViewModelList.Items) == false)
+            {
+                return false;
+            }
+
+            if (CanSaveDirLists)
+            {
+                m_app.xaml_tabControlMain.SelectedItem = m_app.xaml_tabPageBrowse;
+            }
+
+            return true;    // this kicks off the tree
         }
     }
 }

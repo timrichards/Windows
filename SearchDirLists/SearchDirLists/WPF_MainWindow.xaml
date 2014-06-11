@@ -88,19 +88,19 @@
                     <Button Content="Volume group" Name="xaml_btnVolumeGroup" Command="{Binding Icmd_VolumeGroup}"/>
                     <Button Content="Modify file" Name="xaml_btnModifyFile" Command="{Binding Icmd_ModifyFile}"/>
                 </StackPanel>
-                <ListView Grid.Row="4" Name="xaml_lvVolumesMain">
+                <ListView Grid.Row="4" Name="xaml_lvVolumesMain" ItemsSource="{Binding Items}">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Volume name"/>
-                            <GridViewColumn Header="Path"/>
-                            <GridViewColumn Header="Save to file"/>
-                            <GridViewColumn Header="Status"/>
-                            <GridViewColumn Header="Include in search"/>
-                            <GridViewColumn Header="Volume group"/>
+                            <GridViewColumn Header="Volume name" DisplayMemberBinding="{Binding VolumeName}"/>
+                            <GridViewColumn Header="Path" DisplayMemberBinding="{Binding Path}"/>
+                            <GridViewColumn Header="Save to file" DisplayMemberBinding="{Binding SaveAs}"/>
+                            <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}"/>
+                            <GridViewColumn Header="Include in search" DisplayMemberBinding="{Binding Include}"/>
+                            <GridViewColumn Header="Volume group" DisplayMemberBinding="{Binding VolumeGroup}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
-                <Button Grid.Row="5" Content="Save directory listings" Name="xaml_btnSaveDirLists" Height="30"/>
+                <Button Grid.Row="5" Content="Save directory listings" Name="xaml_btnSaveDirLists" Height="30" Command="{Binding Icmd_SaveDirLists}"/>
             </Grid>
         </TabItem>
         <TabItem Header="Browse" Name="xaml_tabPageBrowse">

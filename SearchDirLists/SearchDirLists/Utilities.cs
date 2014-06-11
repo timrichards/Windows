@@ -25,6 +25,7 @@ using System.Windows.Threading;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Windows.Interop;
+using System.Collections.ObjectModel;
 
 namespace SearchDirLists
 {
@@ -592,15 +593,23 @@ class Blinky
         }
 
         protected virtual void ReadListItem(UList<SDL_ListViewItem> listItems, String[] strArray) { listItems.Add(new SDL_ListViewItem(strArray)); }
-#if (WPF == false)
+        protected virtual void ReadListItem(ObservableCollection<LVvolViewModel> listItems, String[] strArray) { listItems.Add(new LVvolViewModel(strArray)); }
+
+        internal bool ReadList(ObservableCollection<LVvolViewModel> listItems)
+#if (WPF)
+        {
+            int nCols = LVvolViewModel.NumCols;
+#else
+        { return false; }
         internal bool ReadList(Forms.ListView lv)
         {
+            int nCols = lv.Columns.Count;
+            UList<SDL_ListViewItem> listItems = new UList<SDL_ListViewItem>();
+#endif
             if ((m_strFileNotDialog == null) && (ShowDialog(new Forms.OpenFileDialog()) == false))
             {
                 return false;
             }
-
-            UList<SDL_ListViewItem> listItems = new UList<SDL_ListViewItem>();
 
             using (StreamReader sr = File.OpenText(m_strFileNotDialog))
             {
@@ -610,16 +619,18 @@ class Blinky
                 {
                     while ((strLine = sr.ReadLine()) != null)
                     {
-                        ReadListItem(listItems, strLine.TrimEnd(new char[] { '\t' }).Split('\t').Take(lv.Columns.Count).ToArray());
+                        ReadListItem(listItems, strLine.TrimEnd(new char[] { '\t' }).Split('\t').Take(nCols).ToArray());
                     }
                 }
             }
 
             if (listItems.Count > 0)
             {
+#if (WPF == false)
                 lv.Items.Clear();
                 lv.Items.AddRange(listItems.ToArray());
                 lv.Invalidate();
+#endif
             }
             else
             {
@@ -628,7 +639,7 @@ class Blinky
 
             return (listItems.Count > 0);
         }
-#endif
+
         protected virtual String WriteListItem(int nIndex, String str) { return str; }
 
         internal bool WriteList(Forms.ListView.ListViewItemCollection lvItems)

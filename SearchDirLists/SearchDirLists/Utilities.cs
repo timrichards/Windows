@@ -646,7 +646,9 @@ class Blinky
             if (lv.Items.Count > 0)
             {
 #if (WPF == false)
-                lv_in.Items.AddRange(lv.Items.Cast<ListViewItem>().ToArray());
+                ListViewItem[] lvItems = lv.Items.Cast<ListViewItem>().ToArray();
+                lv.Items.Clear();
+                lv_in.Items.AddRange(lvItems);
                 lv_in.Invalidate();
 #endif
             }

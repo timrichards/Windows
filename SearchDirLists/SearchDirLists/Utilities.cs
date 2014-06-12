@@ -727,7 +727,7 @@ class Blinky
                 return;
             }
 
-            strArray[3] = "Using file.";
+            strArray[3] = Utilities.mSTRusingFile;
 
             if (File.Exists(strArray[2]) == false)
             {

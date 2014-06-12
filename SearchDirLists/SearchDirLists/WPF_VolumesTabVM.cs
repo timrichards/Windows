@@ -78,7 +78,7 @@ namespace SearchDirLists
             Utilities.Assert(1310.1001, arrStr.Length <= NumCols);
             arrStr.CopyTo(marr, 0);
             for (int i = 0; i < arrStr.Length; ++i) Raise(i);
-            SaveAsExists = true;
+            SaveAsExists = (Status == Utilities.mSTRusingFile);
         }
 
         internal String this[int i] { get { return marr[i]; } }

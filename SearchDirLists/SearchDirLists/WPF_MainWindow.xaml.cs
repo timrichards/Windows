@@ -1,6 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Data;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Linq;
 
 namespace SearchDirLists
 {
@@ -49,6 +51,14 @@ namespace SearchDirLists
             }
 
             return null;
+        }
+
+        private void xaml_cbSaveAs_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (new Key[] {Key.Enter, Key.Return}.Contains(e.Key))
+            {
+                xaml_btnAddVolume.Command.Execute(null);
+            }
         }
     }
 }

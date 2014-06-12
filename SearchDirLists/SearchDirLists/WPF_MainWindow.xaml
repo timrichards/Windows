@@ -30,12 +30,20 @@
                 <Setter Property="Height" Value="Auto"/>
                 <Setter Property="HorizontalAlignment" Value="Stretch"/>
                 <Setter Property="VerticalAlignment" Value="Stretch"/>
+                <Setter Property="Focusable" Value="false"/>
+            </Style>
+            <Style TargetType="StackPanel">
+                <Setter Property="Focusable" Value="false"/>
+            </Style>
+            <Style TargetType="DockPanel">
+                <Setter Property="Focusable" Value="false"/>
             </Style>
         </TabControl.Resources>
         <TabItem Header="Volumes" Name="xaml_tabItemVolumes">
             <Grid>
                 <Grid.Resources>
                     <Style x:Key="ComboRows" TargetType="ItemsControl">
+                        <Setter Property="Focusable" Value="false"/>
                         <Setter Property="ItemsPanel">
                             <Setter.Value>
                                 <ItemsPanelTemplate>
@@ -73,7 +81,7 @@
                 </ItemsControl>
                 <ItemsControl Grid.Row="2" Style="{StaticResource ComboRows}">
                     <Label Content="Directory listing file" />
-                    <ComboBox Name="xaml_cbSaveAs" HorizontalAlignment="Stretch" Grid.Column="1" ItemsSource="{Binding List}" SelectedValue="{Binding S}"/>
+                    <ComboBox Name="xaml_cbSaveAs" HorizontalAlignment="Stretch" Grid.Column="1" ItemsSource="{Binding List}" SelectedValue="{Binding S}" KeyDown="xaml_cbSaveAs_KeyDown"/>
                     <Button Content="..." Name="xaml_btnSaveAs" Grid.Column="2" Command="{Binding Icmd_SaveAs}"/>
                 </ItemsControl>
                 <StackPanel Grid.Row="3" Orientation="Horizontal">
@@ -81,7 +89,7 @@
                     <Button Content="Load" Name="xaml_btnLoadVolumeList" Command="{Binding Icmd_LoadVolumeList}"/>
                     <Button Content="Save" Name="xaml_btnSaveVolumeList" Command="{Binding Icmd_SaveVolumeList}"/>
                 </StackPanel>
-                <Button Grid.Row="3" Content="Add volume" HorizontalAlignment="Center" Height="60" Command="{Binding Icmd_AddVolume}"/>
+                <Button Name="xaml_btnAddVolume" Grid.Row="3" Content="Add volume" HorizontalAlignment="Center" Height="60" Command="{Binding Icmd_AddVolume}"/>
                 <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Content="Remove volume" Name="xaml_btnRemove" Command="{Binding Icmd_RemoveVolume}"/>
                     <Button Content="Toggle include" Name="xaml_btnToggleInclude" Command="{Binding Icmd_ToggleInclude}"/>

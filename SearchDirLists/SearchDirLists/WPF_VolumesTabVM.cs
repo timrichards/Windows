@@ -8,7 +8,7 @@ using Forms = System.Windows.Forms;
 
 namespace SearchDirLists
 {
-    // Class members are ordered: (1) Public properties then (2) internal (including constructors) then (3) private, with data somewhat mixed.
+    // Class members are generally ordered public on down, which mixes constructors and types.
 
     class ItemsControlVM : ObservableObject
     {
@@ -58,10 +58,16 @@ namespace SearchDirLists
         public String IncludeStr { get { return marr[4]; } set { SetProperty(4, value); } }
         public String VolumeGroup { get { return marr[5]; } set { SetProperty(5, value); } }
 
-        internal VolumeLVitemVM(VolumesListViewVM LV, String strVol, String strPath, String strSaveAs, String strStatus, bool bSaveAsExists)
+        VolumeLVitemVM(VolumesListViewVM LV)
         {
             Index = LV.Count;
+            LV_RaisePropertyChanged = LV.RaisePropertyChanged;
             marr = new string[NumCols];
+        }
+
+        internal VolumeLVitemVM(VolumesListViewVM LV, String strVol, String strPath, String strSaveAs, String strStatus, bool bSaveAsExists)
+            : this(LV)
+        {
             VolumeName = strVol;
             Path = strPath;
             SaveAs = strSaveAs;
@@ -70,11 +76,8 @@ namespace SearchDirLists
             SaveAsExists = bSaveAsExists;
         }
 
-        internal VolumeLVitemVM(VolumesListViewVM LV, String[] arrStr)
+        internal VolumeLVitemVM(VolumesListViewVM LV, String[] arrStr) : this(LV)
         {
-            Index = LV.Count;
-            LV_RaisePropertyChanged = LV.RaisePropertyChanged;
-            marr = new string[NumCols];
             Utilities.Assert(1310.1001, arrStr.Length <= NumCols);
             arrStr.CopyTo(marr, 0);
             for (int i = 0; i < arrStr.Length; ++i) Raise(i);
@@ -95,8 +98,8 @@ namespace SearchDirLists
             String strPropName = arrPropName[nCol];
 
             RaisePropertyChanged(strPropName);
-            VolumesListViewVM.m_strColWidth = "50"; LV_RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there
-            VolumesListViewVM.m_strColWidth = "NaN"; LV_RaisePropertyChanged("Width" + strPropName);
+            VolumesListViewVM.SCW = 50.ToString(); LV_RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there
+            VolumesListViewVM.SCW = double.NaN.ToString(); LV_RaisePropertyChanged("Width" + strPropName);
         }
 
         void SetProperty(int nCol, String s) { if (this[nCol] != s) { marr[nCol] = s; Raise(nCol); } }
@@ -110,14 +113,14 @@ namespace SearchDirLists
     {
         public ObservableCollection<VolumeLVitemVM> Items { get { return m_items; } }
 
-        public String WidthVolumeName { get { return m_strColWidth; } }     // franken all same width...
-        public String WidthPath { get { return m_strColWidth; } }
-        public String WidthSaveAs { get { return m_strColWidth; } }
-        public String WidthStatus { get { return m_strColWidth; } }
-        public String WidthIncludeStr { get { return m_strColWidth; } }
-        public String WidthVolumeGroup { get { return m_strColWidth; } }
+        public String WidthVolumeName { get { return SCW; } }                   // franken all NaN
+        public String WidthPath { get { return SCW; } }
+        public String WidthSaveAs { get { return SCW; } }
+        public String WidthStatus { get { return SCW; } }
+        public String WidthIncludeStr { get { return SCW; } }
+        public String WidthVolumeGroup { get { return SCW; } }
 
-        internal static String m_strColWidth = "NaN";                       // frankenhoek
+        internal static String SCW = double.NaN.ToString();                     // frankenhoek
 
         internal VolumesListViewVM(ItemsControl itemsCtl)
         {

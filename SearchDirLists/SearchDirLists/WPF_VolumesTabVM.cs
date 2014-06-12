@@ -71,8 +71,9 @@ namespace SearchDirLists
 
         internal VolumeLVitemVM(String[] arrStr)
         {
+            marr = new string[NumCols];
             Utilities.Assert(1310.1001, arrStr.Length <= NumCols);
-            marr = arrStr;
+            arrStr.CopyTo(marr, 0);
             for (int i = 0; i < arrStr.Length; ++i) Raise(i);
             SaveAsExists = true;
         }
@@ -81,6 +82,7 @@ namespace SearchDirLists
         internal bool Include { get { return (IncludeStr == "Yes"); } set { IncludeStr = (value ? "Yes" : "No"); } }
 
         internal const int NumCols = 6;
+        internal static VolumesListViewVM m_LV = null;
 
         internal bool SaveAsExists = false;     // TODO: set back to false when fail Tree
         internal SDL_TreeNode treeNode = null;
@@ -89,9 +91,11 @@ namespace SearchDirLists
         {
             String strPropName = new String[] { "VolumeName", "Path", "SaveAs", "Status", "IncludeStr", "VolumeGroup" }[nCol];
             RaisePropertyChanged(strPropName);
+            m_LV.RaiseColWidth(0.ToString(), "Width" + strPropName);
+            m_LV.RaiseColWidth("NaN", "Width" + strPropName);
         }
 
-        void SetProperty(int nCol, String s) { if (this[nCol] == s) return; marr[nCol] = s; Raise(nCol); }
+        void SetProperty(int nCol, String s) { if (this[nCol] != s) { marr[nCol] = s; Raise(nCol); } }
 
         String[] marr = null;       // all properties (columns/items) get stored here
     }
@@ -100,9 +104,19 @@ namespace SearchDirLists
     {
         public ObservableCollection<VolumeLVitemVM> Items { get { return m_items; } }
 
+        public String WidthVolumeName { get { return m_strColWidth; } }
+        public String WidthPath { get { return m_strColWidth; } }
+        public String WidthSaveAs { get { return m_strColWidth; } }
+        public String WidthStatus { get { return m_strColWidth; } }
+        public String WidthIncludeStr { get { return m_strColWidth; } }
+        public String WidthVolumeGroup { get { return m_strColWidth; } }
+
+        internal void RaiseColWidth(String strColWidth, String strPropName) { m_strColWidth = strColWidth; RaisePropertyChanged(strPropName); }
+
         internal VolumesListViewVM(ItemsControl itemsCtl)
         {
             (m_itemsCtl = itemsCtl).DataContext = this;
+            VolumeLVitemVM.m_LV = this;
         }
 
         internal bool Add(VolumeLVitemVM item)
@@ -114,9 +128,11 @@ namespace SearchDirLists
         }
 
         internal int Count { get { return m_items.Count; } }
-        internal bool ContainsVolumeName(String strVolumeName) { foreach (VolumeLVitemVM item in m_items) if (item.VolumeName == strVolumeName) return true; return false; }
-        internal bool ContainsUnsavedPath(String strPath) { foreach (VolumeLVitemVM item in m_items) if ((item.Path == strPath) && (item.SaveAsExists == false)) return true; return false; }
-        internal bool ContainsSaveAs(String strSaveAs) { foreach (VolumeLVitemVM item in m_items) if (item.SaveAs == strSaveAs) return true; return false; }
+        internal bool ContainsVolumeName(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if (item.VolumeName.ToLower() == s) return true; return false; }
+        internal bool ContainsUnsavedPath(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if ((item.Path.ToLower() == s) && (item.SaveAsExists == false)) return true; return false; }
+        internal bool ContainsSaveAs(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if (item.SaveAs.ToLower() == s) return true; return false; }
+
+        String m_strColWidth = "NaN";
 
         readonly ObservableCollection<VolumeLVitemVM> m_items = new ObservableCollection<VolumeLVitemVM>();
         readonly ItemsControl m_itemsCtl = null;
@@ -164,6 +180,7 @@ namespace SearchDirLists
         readonly ItemsControlVM CBPath = null;
         readonly ItemsControlVM CBSaveAs = null;
         readonly VolumesListViewVM LV = null;
+        readonly ICommand[] mIcommands = null;
 
         bool SelectedOne { get { return m_app.xaml_lvVolumesMain.SelectedItems.Count == 1; } }
         bool Selected { get { return m_app.xaml_lvVolumesMain.SelectedItems.Count > 0; } }
@@ -172,7 +189,5 @@ namespace SearchDirLists
         readonly GlobalData gd = null;
         readonly MainWindow m_app = null;
         static readonly Forms.FolderBrowserDialog folderBrowserDialog1 = new Forms.FolderBrowserDialog();
-
-        readonly ICommand[] mIcommands = null;
     }
 }

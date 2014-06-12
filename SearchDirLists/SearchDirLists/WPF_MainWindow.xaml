@@ -91,12 +91,12 @@
                 <ListView Grid.Row="4" Name="xaml_lvVolumesMain" ItemsSource="{Binding Items}">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Volume name" DisplayMemberBinding="{Binding VolumeName}"/>
-                            <GridViewColumn Header="Path" DisplayMemberBinding="{Binding Path}"/>
-                            <GridViewColumn Header="Save to file" DisplayMemberBinding="{Binding SaveAs}"/>
-                            <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}"/>
-                            <GridViewColumn Header="Include in search" DisplayMemberBinding="{Binding IncludeStr}"/>
-                            <GridViewColumn Header="Volume group" DisplayMemberBinding="{Binding VolumeGroup}"/>
+                            <GridViewColumn Header="Volume name" DisplayMemberBinding="{Binding VolumeName}" Width="{Binding WidthVolumeName}"/>
+                            <GridViewColumn Header="Path" DisplayMemberBinding="{Binding Path}" Width="{Binding WidthPath}"/>
+                            <GridViewColumn Header="Save to file" DisplayMemberBinding="{Binding SaveAs}" Width="{Binding WidthSaveAs}"/>
+                            <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="{Binding WidthStatus}"/>
+                            <GridViewColumn Header="Include in search" DisplayMemberBinding="{Binding IncludeStr}" Width="{Binding WidthIncludeStr}"/>
+                            <GridViewColumn Header="Volume group" DisplayMemberBinding="{Binding VolumeGroup}" Width="{Binding WidthVolumeGroup}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>

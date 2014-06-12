@@ -82,41 +82,41 @@ namespace SearchDirLists
         internal bool Include { get { return (IncludeStr == "Yes"); } set { IncludeStr = (value ? "Yes" : "No"); } }
 
         internal const int NumCols = 6;
-        internal static VolumesListViewVM m_LV = null;
+        internal static RaisePropertyChangedDelegate LV_RaisePropertyChanged = null;                    // frankenhoek
 
-        internal bool SaveAsExists = false;     // TODO: set back to false when fail Tree
+        internal bool SaveAsExists = false;                             // TODO: set back to false when fail Tree
         internal SDL_TreeNode treeNode = null;
 
         void Raise(int nCol)
         {
             String strPropName = new String[] { "VolumeName", "Path", "SaveAs", "Status", "IncludeStr", "VolumeGroup" }[nCol];
             RaisePropertyChanged(strPropName);
-            m_LV.RaiseColWidth(0.ToString(), "Width" + strPropName);
-            m_LV.RaiseColWidth("NaN", "Width" + strPropName);
+            VolumesListViewVM.m_strColWidth = "50"; LV_RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there
+            VolumesListViewVM.m_strColWidth = "NaN"; LV_RaisePropertyChanged("Width" + strPropName);
         }
 
         void SetProperty(int nCol, String s) { if (this[nCol] != s) { marr[nCol] = s; Raise(nCol); } }
 
-        String[] marr = null;       // all properties (columns/items) get stored here
+        String[] marr = null;                                           // all properties (columns/items) get stored here
     }
 
     class VolumesListViewVM : ObservableObject
     {
         public ObservableCollection<VolumeLVitemVM> Items { get { return m_items; } }
 
-        public String WidthVolumeName { get { return m_strColWidth; } }
+        public String WidthVolumeName { get { return m_strColWidth; } }     // franken all same width...
         public String WidthPath { get { return m_strColWidth; } }
         public String WidthSaveAs { get { return m_strColWidth; } }
         public String WidthStatus { get { return m_strColWidth; } }
         public String WidthIncludeStr { get { return m_strColWidth; } }
         public String WidthVolumeGroup { get { return m_strColWidth; } }
 
-        internal void RaiseColWidth(String strColWidth, String strPropName) { m_strColWidth = strColWidth; RaisePropertyChanged(strPropName); }
+        internal static String m_strColWidth = "NaN";                       // frankenhoek
 
         internal VolumesListViewVM(ItemsControl itemsCtl)
         {
             (m_itemsCtl = itemsCtl).DataContext = this;
-            VolumeLVitemVM.m_LV = this;
+            VolumeLVitemVM.LV_RaisePropertyChanged = RaisePropertyChanged;
         }
 
         internal bool Add(VolumeLVitemVM item)
@@ -131,8 +131,6 @@ namespace SearchDirLists
         internal bool ContainsVolumeName(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if (item.VolumeName.ToLower() == s) return true; return false; }
         internal bool ContainsUnsavedPath(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if ((item.Path.ToLower() == s) && (item.SaveAsExists == false)) return true; return false; }
         internal bool ContainsSaveAs(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if (item.SaveAs.ToLower() == s) return true; return false; }
-
-        String m_strColWidth = "NaN";
 
         readonly ObservableCollection<VolumeLVitemVM> m_items = new ObservableCollection<VolumeLVitemVM>();
         readonly ItemsControl m_itemsCtl = null;

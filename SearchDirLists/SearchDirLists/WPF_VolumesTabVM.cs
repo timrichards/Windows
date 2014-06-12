@@ -78,7 +78,7 @@ namespace SearchDirLists
             Utilities.Assert(1310.1001, arrStr.Length <= NumCols);
             arrStr.CopyTo(marr, 0);
             for (int i = 0; i < arrStr.Length; ++i) Raise(i);
-            SaveAsExists = (Status == Utilities.mSTRusingFile);
+            SaveAsExists = (Status == Utilities.mSTRusingFile);                 // TODO: check dup drive letter, and if letter is mounted.
         }
 
         internal String this[int i] { get { return marr[i]; } }
@@ -87,7 +87,7 @@ namespace SearchDirLists
         internal const int NumCols = 6;
 
         internal int Index = -1;
-        internal bool SaveAsExists = false;                                      // TODO: set back to false when fail Tree
+        internal bool SaveAsExists = false;                                     // TODO: set back to false when fail Tree
         internal SDL_TreeNode treeNode = null;
 
         void Raise(int nCol)

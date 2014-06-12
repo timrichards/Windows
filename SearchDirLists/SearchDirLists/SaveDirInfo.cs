@@ -424,7 +424,7 @@ namespace SearchDirLists
             {
                 ++nVolIx;
 
-                if ((mSTRusingFile + mSTRsaved).Contains(volStrings.Status))
+                if ((mSTRusingFile + mSTRsaved + mSTRcantSave).Contains(volStrings.Status))
                 {
                     continue;
                 }

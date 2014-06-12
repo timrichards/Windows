@@ -651,13 +651,13 @@ class Blinky
                 lv_in.Items.AddRange(lvItems);
                 lv_in.Invalidate();
 #endif
+                return true;
             }
             else
             {
                 MBox("Not a valid " + Description + ".", "Load " + Description);
+                return false;
             }
-
-            return (lv.Items.Count > 0);
         }
 
         protected virtual String WriteListItem(int nIndex, String str) { return str; }
@@ -727,7 +727,7 @@ class Blinky
                 return;
             }
 
-            strArray[3] = Utilities.mSTRusingFile;
+            strArray[3] = mSTRusingFile;
 
             if (File.Exists(strArray[2]) == false)
             {
@@ -735,7 +735,14 @@ class Blinky
 
                 if (File.Exists(strArray[2]) == false)
                 {
-                    strArray[3] = "No file. Will create.";
+                    if (Directory.Exists(strArray[1]))
+                    {
+                        strArray[3] = "No file. Will create.";
+                    }
+                    else
+                    {
+                        strArray[3] = mSTRcantSave;
+                    }
                 }
             }
 
@@ -795,6 +802,7 @@ class Blinky
         internal const String mSTRusingFile = "Using file.";
         internal const String mSTRsaved = "Saved.";
         internal const String mSTRnotSaved = "Not saved.";
+        internal const String mSTRcantSave = "Can't save. Not mounted.";
 
         internal const int mNcolLength = 7;
         internal const int mNcolLength01 = 5;

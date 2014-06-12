@@ -58,9 +58,9 @@ namespace SearchDirLists
         public String IncludeStr { get { return marr[4]; } set { SetProperty(4, value); } }
         public String VolumeGroup { get { return marr[5]; } set { SetProperty(5, value); } }
 
-        internal VolumeLVitemVM(int index, String strVol, String strPath, String strSaveAs, String strStatus, bool bSaveAsExists)
+        internal VolumeLVitemVM(VolumesListViewVM LV, String strVol, String strPath, String strSaveAs, String strStatus, bool bSaveAsExists)
         {
-            Index = index;
+            Index = LV.Count;
             marr = new string[NumCols];
             VolumeName = strVol;
             Path = strPath;
@@ -70,9 +70,10 @@ namespace SearchDirLists
             SaveAsExists = bSaveAsExists;
         }
 
-        internal VolumeLVitemVM(int index, String[] arrStr)
+        internal VolumeLVitemVM(VolumesListViewVM LV, String[] arrStr)
         {
-            Index = index;
+            Index = LV.Count;
+            LV_RaisePropertyChanged = LV.RaisePropertyChanged;
             marr = new string[NumCols];
             Utilities.Assert(1310.1001, arrStr.Length <= NumCols);
             arrStr.CopyTo(marr, 0);
@@ -84,10 +85,9 @@ namespace SearchDirLists
         internal bool Include { get { return (IncludeStr == "Yes"); } set { IncludeStr = (value ? "Yes" : "No"); } }
 
         internal const int NumCols = 6;
-        internal static RaisePropertyChangedDelegate LV_RaisePropertyChanged = null;                    // frankenhoek
 
         internal int Index = -1;
-        internal bool SaveAsExists = false;                                 // TODO: set back to false when fail Tree
+        internal bool SaveAsExists = false;                                      // TODO: set back to false when fail Tree
         internal SDL_TreeNode treeNode = null;
 
         void Raise(int nCol)
@@ -101,8 +101,9 @@ namespace SearchDirLists
 
         void SetProperty(int nCol, String s) { if (this[nCol] != s) { marr[nCol] = s; Raise(nCol); } }
 
-        String[] arrPropName = new String[] { "VolumeName", "Path", "SaveAs", "Status", "IncludeStr", "VolumeGroup" };
-        String[] marr = null;                                               // all properties (columns/items) get stored here
+        readonly RaisePropertyChangedDelegate LV_RaisePropertyChanged = null;   // frankenhoek
+        readonly String[] arrPropName = new String[] { "VolumeName", "Path", "SaveAs", "Status", "IncludeStr", "VolumeGroup" };
+        String[] marr = null;                                                   // all properties (columns/items) get stored here
     }
 
     class VolumesListViewVM : ObservableObject
@@ -121,7 +122,6 @@ namespace SearchDirLists
         internal VolumesListViewVM(ItemsControl itemsCtl)
         {
             (m_itemsCtl = itemsCtl).DataContext = this;
-            VolumeLVitemVM.LV_RaisePropertyChanged = RaisePropertyChanged;
         }
 
         internal bool Add(VolumeLVitemVM item)

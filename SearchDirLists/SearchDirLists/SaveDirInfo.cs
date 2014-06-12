@@ -74,11 +74,17 @@ namespace SearchDirLists
             Utilities.MBox("Completed. " + nFilesWritten + " files written.", "Save Directory Listings");
         }
     }
-#else
+#endif
     partial class VolumesTabVM
     {
         void SaveDirListingsStatusCallback(int nIndex, String strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0)
         {
+#if (WPF == false)
+        }
+        void SaveDirListingsDoneCallback()
+        { }
+    }
+#else
             if (GlobalData.AppExit || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
             {
                 return;
@@ -135,7 +141,6 @@ namespace SearchDirLists
         }
     }
 #endif
-
     class SaveDirListings : Utilities
     {
         readonly SaveDirListingsStatusDelegate m_statusCallback = null;

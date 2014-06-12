@@ -606,19 +606,19 @@ class Blinky
             return true;
         }
 
-        protected virtual void ReadListItem(UList<SDL_ListViewItem> listItems, String[] strArray) { listItems.Add(new SDL_ListViewItem(strArray)); }
-        protected virtual void ReadListItem(ObservableCollection<VolumeLVitemVM> listItems, String[] strArray) { listItems.Add(new VolumeLVitemVM(listItems.Count, strArray)); }
+        protected virtual void ReadListItem(ListView lv, String[] strArray) { lv.Items.Add(new SDL_ListViewItem(strArray)); }
+        protected virtual void ReadListItem(VolumesListViewVM lv, String[] strArray) { lv.Items.Add(new VolumeLVitemVM(lv, strArray)); }
 
-        internal bool ReadList(ObservableCollection<VolumeLVitemVM> listItems)
+        internal bool ReadList(VolumesListViewVM lv)
 #if (WPF)
         {
             int nCols = VolumeLVitemVM.NumCols;
 #else
         { return false; }
-        internal bool ReadList(Forms.ListView lv)
+        internal bool ReadList(Forms.ListView lv_in)
         {
-            int nCols = lv.Columns.Count;
-            UList<SDL_ListViewItem> listItems = new UList<SDL_ListViewItem>();
+            int nCols = lv_in.Columns.Count;
+            ListView lv = new ListView();       // fake
 #endif
             if ((m_strFileNotDialog == null) && (ShowDialog(new Forms.OpenFileDialog()) == false))
             {
@@ -627,11 +627,7 @@ class Blinky
 
             if (Keyboard.IsKeyDown(Key.LeftShift) == false)
             {
-#if (WPF)
-                listItems.Clear();
-#else
                 lv.Items.Clear();
-#endif
             }
 
             using (StreamReader sr = File.OpenText(m_strFileNotDialog))
@@ -642,16 +638,16 @@ class Blinky
                 {
                     while ((strLine = sr.ReadLine()) != null)
                     {
-                        ReadListItem(listItems, strLine.TrimEnd(new char[] { '\t' }).Split('\t').Take(nCols).ToArray());
+                        ReadListItem(lv, strLine.TrimEnd(new char[] { '\t' }).Split('\t').Take(nCols).ToArray());
                     }
                 }
             }
 
-            if (listItems.Count > 0)
+            if (lv.Items.Count > 0)
             {
 #if (WPF == false)
-                lv.Items.AddRange(listItems.ToArray());
-                lv.Invalidate();
+                lv_in.Items.AddRange(lv.Items.Cast<ListViewItem>().ToArray());
+                lv_in.Invalidate();
 #endif
             }
             else
@@ -659,12 +655,16 @@ class Blinky
                 MBox("Not a valid " + Description + ".", "Load " + Description);
             }
 
-            return (listItems.Count > 0);
+            return (lv.Items.Count > 0);
         }
 
         protected virtual String WriteListItem(int nIndex, String str) { return str; }
 
+        internal bool WriteList(ObservableCollection<VolumeLVitemVM> lvItems)
+#if (WPF == false)
+        { return false; }
         internal bool WriteList(Forms.ListView.ListViewItemCollection lvItems)
+#endif
         {
             if (ShowDialog(SFD) == false)
             {
@@ -681,7 +681,15 @@ class Blinky
             using (StreamWriter sw = File.CreateText(m_strPrevFile))
             {
                 sw.WriteLine(Header);
+#if (WPF)
+                foreach (VolumeLVitemVM lvItem in lvItems)
+                {
+                    sw.Write(WriteListItem(0, lvItem[0]));
 
+                    for (int nIx = 1; nIx < VolumeLVitemVM.NumCols; ++nIx)
+                    {
+                        sw.Write('\t' + WriteListItem(nIx, lvItem[nIx]));
+#else
                 foreach (SDL_ListViewItem lvItem in lvItems)
                 {
                     sw.Write(WriteListItem(0, lvItem.SubItems[0].Text()));
@@ -692,40 +700,7 @@ class Blinky
                     {
                         sw.Write('\t' + WriteListItem(nIx, lvSubitem.Text));
                         ++nIx;
-                    }
-
-                    sw.WriteLine();
-                }
-            }
-
-            return true;
-        }
-
-        internal bool WriteList(ObservableCollection<VolumeLVitemVM> lvItems)
-        {
-            if (ShowDialog(SFD) == false)
-            {
-                return false;
-            }
-
-            if ((File.Exists(m_strPrevFile))
-                && (MBox(m_strPrevFile + " already exists. Overwrite?", Description, MBoxBtns.YesNo)
-                != MBoxRet.Yes))
-            {
-                return false;
-            }
-
-            using (StreamWriter sw = File.CreateText(m_strPrevFile))
-            {
-                sw.WriteLine(Header);
-
-                foreach (VolumeLVitemVM lvItem in lvItems)
-                {
-                    sw.Write(WriteListItem(0, lvItem[0]));
-
-                    for (int nIx = 1; nIx < VolumeLVitemVM.NumCols; ++nIx)
-                    {
-                        sw.Write('\t' + WriteListItem(nIx, lvItem[nIx]));
+#endif
                     }
 
                     sw.WriteLine();
@@ -739,8 +714,11 @@ class Blinky
     class SDL_VolumeFile : SDL_File
     {
         internal SDL_VolumeFile(String strFile = null) : base(mSTRvolListHeader, mSTRfileExt_Volume, "volume") { m_strFileNotDialog = strFile; }
-
-        protected override void ReadListItem(UList<SDL_ListViewItem> listItems, String[] strArray)
+#if (WPF)
+        protected override void ReadListItem(VolumesListViewVM lv, String[] strArray)
+#else
+        protected override void ReadListItem(ListView lv, String[] strArray)
+#endif
         {
             if (strArray.Length < 4)
             {
@@ -760,7 +738,11 @@ class Blinky
             }
 
             strArray[1] = strArray[1].TrimEnd(Path.DirectorySeparatorChar);
-            listItems.Add(new SDL_ListViewItem(strArray));
+#if (WPF)
+            lv.Items.Add(new VolumeLVitemVM(lv, strArray));
+#else
+            lv.Items.Add(new SDL_ListViewItem(strArray));
+#endif
         }
 
         protected override String WriteListItem(int nIndex, String str)

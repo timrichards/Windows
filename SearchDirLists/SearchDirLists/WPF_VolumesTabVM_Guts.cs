@@ -134,7 +134,7 @@ namespace SearchDirLists
                     }
                 }
 
-                LV.Add(new VolumeLVitemVM(LV.Count, CBVolumeName.S, CBPath.S, CBSaveAs.S, strStatus, bSaveAsExists));
+                LV.Add(new VolumeLVitemVM(LV, CBVolumeName.S, CBPath.S, CBSaveAs.S, strStatus, bSaveAsExists));
                 return bSaveAsExists;
             }));
         }
@@ -166,7 +166,7 @@ namespace SearchDirLists
 
         bool LoadVolumeList(String strFile = null)
         {
-            if (new SDL_VolumeFile(strFile).ReadList(LV.Items) == false)
+            if (new SDL_VolumeFile(strFile).ReadList(LV) == false)
             {
                 return false;
             }

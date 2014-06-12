@@ -8,20 +8,10 @@ using Forms = System.Windows.Forms;
 
 namespace SearchDirLists
 {
+    // Class members are ordered: (1) Public properties then (2) internal (including constructors) then (3) private, with data somewhat mixed.
+
     class ItemsControlVM : ObservableObject
     {
-        readonly public List<String> m_list = new List<String>();
-        readonly ItemCollection m_items = null;
-        readonly Action m_Action = null;
-        String m_strCurrent = null;
-
-        public ItemsControlVM(ItemsControl itemsCtl, Action action)
-        {
-            itemsCtl.DataContext = this;
-            m_items = itemsCtl.Items;
-            m_Action = action;
-        }
-
         public String S
         {
             set
@@ -44,17 +34,33 @@ namespace SearchDirLists
         }
     
         public List<String> List { get { return m_list; } }
+        public override string ToString() { return m_strCurrent; }
 
-        public override string ToString()
+        internal ItemsControlVM(ItemsControl itemsCtl, Action action)
         {
-            return m_strCurrent;
+            itemsCtl.DataContext = this;
+            m_items = itemsCtl.Items;
+            m_Action = action;
         }
+
+        readonly List<String> m_list = new List<String>();
+        readonly ItemCollection m_items = null;
+        readonly Action m_Action = null;
+        String m_strCurrent = null;
     }
 
     class VolumeLVitemVM : ObservableObject
     {
+        public String VolumeName { get { return marr[0]; } set { SetProperty(0, value); } }
+        public String Path { get { return marr[1]; } set { SetProperty(1, value); } }
+        public String SaveAs { get { return marr[2]; } set { SetProperty(2, value); } }
+        public String Status { get { return marr[3]; } set { SetProperty(3, value); } }
+        public String IncludeStr { get { return marr[4]; } set { SetProperty(4, value); } }
+        public String VolumeGroup { get { return marr[5]; } set { SetProperty(5, value); } }
+
         internal VolumeLVitemVM(String strVol, String strPath, String strSaveAs, String strStatus, bool bSaveAsExists)
         {
+            marr = new string[NumCols];
             VolumeName = strVol;
             Path = strPath;
             SaveAs = strSaveAs;
@@ -66,43 +72,33 @@ namespace SearchDirLists
         internal VolumeLVitemVM(String[] arrStr)
         {
             Utilities.Assert(1310.1001, arrStr.Length <= NumCols);
-
-            if (arrStr.Length > 0) VolumeName = arrStr[0];
-            if (arrStr.Length > 1) Path = arrStr[1];
-            if (arrStr.Length > 2) SaveAs = arrStr[2];
-            if (arrStr.Length > 3) Status = arrStr[3];
-            if (arrStr.Length > 4) IncludeStr = arrStr[4];
-            if (arrStr.Length > 5) VolumeGroup = arrStr[5];
+            marr = arrStr;
+            for (int i = 0; i < arrStr.Length; ++i) Raise(i);
             SaveAsExists = true;
         }
 
-        internal String this[int i] { get { return new String[] { VolumeName, Path, SaveAs, Status, IncludeStr, VolumeGroup }[i]; } }
+        internal String this[int i] { get { return marr[i]; } }
+        internal bool Include { get { return (IncludeStr == "Yes"); } set { IncludeStr = (value ? "Yes" : "No"); } }
 
         internal const int NumCols = 6;
-        String m_strVolumeName = null;
-        String m_strPath = null;
-        String m_strSaveAs = null;
-        String m_strStatus = null;
-        String m_strInclude = null;
-        String m_strVolumeGroup = null;
 
         internal bool SaveAsExists = false;     // TODO: set back to false when fail Tree
-
-        public String VolumeName { get { return m_strVolumeName; } set { if (value != m_strVolumeName) { m_strVolumeName = value; RaisePropertyChanged("VolumeName"); } } }
-        public String Path { get { return m_strPath; } set { if (value != m_strPath) { m_strPath = value; RaisePropertyChanged("Path"); } } }
-        public String SaveAs { get { return m_strSaveAs; } set { if (value != m_strSaveAs) { m_strSaveAs = value; RaisePropertyChanged("SaveAs"); } } }
-        public String Status { get { return m_strStatus; } set { if (value != m_strStatus) { m_strStatus = value; RaisePropertyChanged("Status"); } } }
-        public String IncludeStr { get { return m_strInclude; } set { if (value != m_strInclude) { m_strInclude = value; RaisePropertyChanged("IncludeStr"); } } }
-        public String VolumeGroup { get { return m_strVolumeGroup; } set { if (value != m_strVolumeGroup) { m_strVolumeGroup = value; RaisePropertyChanged("VolumeGroup"); } } }
-
         internal SDL_TreeNode treeNode = null;
-        internal bool Include { get { return (IncludeStr == "Yes"); } set { IncludeStr = (value ? "Yes" : "No"); } }
+
+        void Raise(int nCol)
+        {
+            String strPropName = new String[] { "VolumeName", "Path", "SaveAs", "Status", "IncludeStr", "VolumeGroup" }[nCol];
+            RaisePropertyChanged(strPropName);
+        }
+
+        void SetProperty(int nCol, String s) { if (this[nCol] == s) return; marr[nCol] = s; Raise(nCol); }
+
+        String[] marr = null;       // all properties (columns/items) get stored here
     }
 
     class VolumesListViewVM : ObservableObject
     {
-        readonly ObservableCollection<VolumeLVitemVM> m_items = new ObservableCollection<VolumeLVitemVM>();
-        readonly ItemsControl m_itemsCtl = null;
+        public ObservableCollection<VolumeLVitemVM> Items { get { return m_items; } }
 
         internal VolumesListViewVM(ItemsControl itemsCtl)
         {
@@ -117,25 +113,30 @@ namespace SearchDirLists
             return true;
         }
 
-        public ObservableCollection<VolumeLVitemVM> Items { get { return m_items; } }
         internal int Count { get { return m_items.Count; } }
         internal bool ContainsVolumeName(String strVolumeName) { foreach (VolumeLVitemVM item in m_items) if (item.VolumeName == strVolumeName) return true; return false; }
         internal bool ContainsUnsavedPath(String strPath) { foreach (VolumeLVitemVM item in m_items) if ((item.Path == strPath) && (item.SaveAsExists == false)) return true; return false; }
         internal bool ContainsSaveAs(String strSaveAs) { foreach (VolumeLVitemVM item in m_items) if (item.SaveAs == strSaveAs) return true; return false; }
+
+        readonly ObservableCollection<VolumeLVitemVM> m_items = new ObservableCollection<VolumeLVitemVM>();
+        readonly ItemsControl m_itemsCtl = null;
     }
 
     partial class VolumesTabVM : ObservableObject
     {
-        readonly GlobalData gd = null;
-        readonly MainWindow m_app = null;
-        static readonly Forms.FolderBrowserDialog folderBrowserDialog1 = new Forms.FolderBrowserDialog();
+        // In order of appearance on the form
+        public ICommand Icmd_SetPath { get { return mIcommands[0]; } }
+        public ICommand Icmd_SaveAs { get { return mIcommands[1]; } }
+        public ICommand Icmd_LoadVolumeList { get { return mIcommands[2]; } }
+        public ICommand Icmd_SaveVolumeList { get { return mIcommands[3]; } }
+        public ICommand Icmd_AddVolume { get { return mIcommands[4]; } }
+        public ICommand Icmd_RemoveVolume { get { return mIcommands[5]; } }
+        public ICommand Icmd_ToggleInclude { get { return mIcommands[6]; } }
+        public ICommand Icmd_VolumeGroup { get { return mIcommands[7]; } }
+        public ICommand Icmd_ModifyFile { get { return mIcommands[8]; } }
+        public ICommand Icmd_SaveDirLists { get { return mIcommands[9]; } }
 
-        readonly ItemsControlVM CBVolumeName = null;
-        readonly ItemsControlVM CBPath = null;
-        readonly ItemsControlVM CBSaveAs = null;
-        readonly VolumesListViewVM m_VolsLVvm = null;
-
-        public VolumesTabVM(MainWindow app)
+        internal VolumesTabVM(MainWindow app)
         {
             gd = new GlobalData();
             m_app = app;
@@ -143,23 +144,35 @@ namespace SearchDirLists
             CBVolumeName = new ItemsControlVM(m_app.xaml_cbVolumeName, new Action(() => { gd.m_strVolumeName = CBVolumeName.S; }));
             CBPath = new ItemsControlVM(m_app.xaml_cbPath, new Action(() => { gd.m_strPath = CBPath.S; }));
             CBSaveAs = new ItemsControlVM(m_app.xaml_cbSaveAs, new Action(() => { gd.m_strSaveAs = CBSaveAs.S; }));
-            m_VolsLVvm = new VolumesListViewVM(m_app.xaml_lvVolumesMain);
+            LV = new VolumesListViewVM(m_app.xaml_lvVolumesMain);
+            mIcommands = new ICommand[]
+            {
+                new RelayCommand(param => SetPath()),
+                new RelayCommand(param => SaveAs()),
+                new RelayCommand(param => LoadVolumeList_Click()),
+                new RelayCommand(param => SaveVolumeList()),
+                new RelayCommand(param => AddVolume()),
+                new RelayCommand(param => RemoveVolume(), param => Selected),
+                new RelayCommand(param => ToggleInclude(), param => Selected),
+                new RelayCommand(param => SetVolumeGroup(), param => Selected),
+                new RelayCommand(param => ModifyFile(), param => SelectedOne),
+                new RelayCommand(param => SaveDirLists(), param => HasItems)
+            };
         }
+
+        readonly ItemsControlVM CBVolumeName = null;
+        readonly ItemsControlVM CBPath = null;
+        readonly ItemsControlVM CBSaveAs = null;
+        readonly VolumesListViewVM LV = null;
 
         bool SelectedOne { get { return m_app.xaml_lvVolumesMain.SelectedItems.Count == 1; } }
         bool Selected { get { return m_app.xaml_lvVolumesMain.SelectedItems.Count > 0; } }
-        bool HasItems { get { return m_VolsLVvm.Count > 0; } }
+        bool HasItems { get { return LV.Count > 0; } }
 
-        // In order of appearance on the form
-        public ICommand Icmd_SetPath { get { if (mIcmd_setPath == null) { mIcmd_setPath = new RelayCommand(param => SetPath()); } return mIcmd_setPath; } } ICommand mIcmd_setPath = null;
-        public ICommand Icmd_SaveAs { get { if (mIcmd_SaveAs == null) { mIcmd_SaveAs = new RelayCommand(param => SaveAs()); } return mIcmd_SaveAs; } } ICommand mIcmd_SaveAs = null;
-        public ICommand Icmd_LoadVolumeList { get { if (mIcmd_loadVolumeList == null) { mIcmd_loadVolumeList = new RelayCommand(param => LoadVolumeList_Click()); } return mIcmd_loadVolumeList; } } ICommand mIcmd_loadVolumeList = null;
-        public ICommand Icmd_SaveVolumeList { get { if (mIcmd_saveVolumeList == null) { mIcmd_saveVolumeList = new RelayCommand(param => SaveVolumeList(), param => HasItems); } return mIcmd_saveVolumeList; } } ICommand mIcmd_saveVolumeList = null;
-        public ICommand Icmd_AddVolume { get { if (mIcmd_addVolume == null) { mIcmd_addVolume = new RelayCommand(param => AddVolume()); } return mIcmd_addVolume; } } ICommand mIcmd_addVolume = null;
-        public ICommand Icmd_RemoveVolume { get { if (mIcmd_removeVolume == null) { mIcmd_removeVolume = new RelayCommand(param => RemoveVolume(), param => Selected); } return mIcmd_removeVolume; } } ICommand mIcmd_removeVolume = null;
-        public ICommand Icmd_ToggleInclude { get { if (mIcmd_toggleInclude == null) { mIcmd_toggleInclude = new RelayCommand(param => ToggleInclude(), param => Selected); } return mIcmd_toggleInclude; } } ICommand mIcmd_toggleInclude = null;
-        public ICommand Icmd_VolumeGroup { get { if (mIcmd_volumeGroup == null) { mIcmd_volumeGroup = new RelayCommand(param => SetVolumeGroup(), param => Selected); } return mIcmd_volumeGroup; } } ICommand mIcmd_volumeGroup = null;
-        public ICommand Icmd_ModifyFile { get { if (mIcmd_modifyFile == null) { mIcmd_modifyFile = new RelayCommand(param => ModifyFile(), param => SelectedOne); } return mIcmd_modifyFile; } } ICommand mIcmd_modifyFile = null;
-        public ICommand Icmd_SaveDirLists { get { if (mIcmd_saveDirLists == null) { mIcmd_saveDirLists = new RelayCommand(param => SaveDirLists(), param => HasItems); } return mIcmd_saveDirLists; } } ICommand mIcmd_saveDirLists = null;
+        readonly GlobalData gd = null;
+        readonly MainWindow m_app = null;
+        static readonly Forms.FolderBrowserDialog folderBrowserDialog1 = new Forms.FolderBrowserDialog();
+
+        readonly ICommand[] mIcommands = null;
     }
 }

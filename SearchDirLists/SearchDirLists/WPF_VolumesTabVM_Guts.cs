@@ -30,7 +30,7 @@ namespace SearchDirLists
                     return false;
                 }
 
-                if (m_VolsLVvm.ContainsSaveAs(CBSaveAs.S))
+                if (LV.ContainsSaveAs(CBSaveAs.S))
                 {
                     gd.FormError(m_app.xaml_cbSaveAs, "File already in use in list of volumes.", "Volume Save As");
                     return false;
@@ -102,7 +102,7 @@ namespace SearchDirLists
                     }
                 }
 
-                if ((bSaveAsExists == false) && (m_VolsLVvm.ContainsUnsavedPath(CBPath.S)))
+                if ((bSaveAsExists == false) && (LV.ContainsUnsavedPath(CBPath.S)))
                 {
                     gd.FormError(m_app.xaml_cbPath, "Path already added.", "Volume Source Path");
                     return false;
@@ -110,7 +110,7 @@ namespace SearchDirLists
 
                 if (Utilities.StrValid(CBVolumeName.S))
                 {
-                    if (m_VolsLVvm.ContainsVolumeName(CBVolumeName.S))
+                    if (LV.ContainsVolumeName(CBVolumeName.S))
                     {
                         gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Red);
 
@@ -134,7 +134,7 @@ namespace SearchDirLists
                     }
                 }
 
-                m_VolsLVvm.Add(new VolumeLVitemVM(CBVolumeName.S, CBPath.S, CBSaveAs.S, strStatus, bSaveAsExists));
+                LV.Add(new VolumeLVitemVM(CBVolumeName.S, CBPath.S, CBSaveAs.S, strStatus, bSaveAsExists));
                 return bSaveAsExists;
             }));
         }
@@ -166,7 +166,7 @@ namespace SearchDirLists
 
         bool LoadVolumeList(String strFile = null)
         {
-            if (new SDL_VolumeFile(strFile).ReadList(m_VolsLVvm.Items) == false)
+            if (new SDL_VolumeFile(strFile).ReadList(LV.Items) == false)
             {
                 return false;
             }
@@ -384,7 +384,7 @@ namespace SearchDirLists
                 uint nNumFoldersKeep = 0;
                 uint nNumFoldersRemove = 0;
 
-                foreach (VolumeLVitemVM lvItem in m_VolsLVvm.Items)
+                foreach (VolumeLVitemVM lvItem in LV.Items)
                 {
                     if (lvItem.treeNode == null)
                     {
@@ -445,7 +445,7 @@ namespace SearchDirLists
 
             foreach (VolumeLVitemVM lvItem in lvSelect)
             {
-                m_VolsLVvm.Items.Remove(lvItem);
+                LV.Items.Remove(lvItem);
             }
         }
 
@@ -547,7 +547,7 @@ namespace SearchDirLists
         {
             if (HasItems)
             {
-                new SDL_VolumeFile().WriteList(m_VolsLVvm.Items);
+                new SDL_VolumeFile().WriteList(LV.Items);
             }
             else
             {
@@ -585,7 +585,7 @@ namespace SearchDirLists
 
                 SortedDictionary<String, object> dictVolGroups = new SortedDictionary<String, object>();
 
-                foreach (VolumeLVitemVM lvItem in m_VolsLVvm.Items)
+                foreach (VolumeLVitemVM lvItem in LV.Items)
                 {
                     if ((lvItem.VolumeGroup != null) && (dictVolGroups.ContainsKey(lvItem.VolumeGroup) == false))
                     {

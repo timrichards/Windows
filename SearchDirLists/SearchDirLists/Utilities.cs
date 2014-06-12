@@ -500,6 +500,17 @@ class Blinky
         internal String Include { get { return m_strInclude; } }
         internal String VolumeGroup { get { return m_strVolumeGroup; } }
 
+        internal LVvolStrings(VolumeLVitemVM lvItem)
+        {
+            m_nIndex = lvItem.Index;
+            m_strVolumeName = lvItem.VolumeName;
+            m_strPath = lvItem.Path;
+            m_strSaveAs = lvItem.SaveAs;
+            m_strStatus = lvItem.Status;
+            m_strInclude = lvItem.IncludeStr;
+            m_strVolumeGroup = lvItem.VolumeGroup;
+        }
+
         internal LVvolStrings(SDL_ListViewItem lvItem)
         {
             m_nIndex = lvItem.Index;
@@ -596,7 +607,7 @@ class Blinky
         }
 
         protected virtual void ReadListItem(UList<SDL_ListViewItem> listItems, String[] strArray) { listItems.Add(new SDL_ListViewItem(strArray)); }
-        protected virtual void ReadListItem(ObservableCollection<VolumeLVitemVM> listItems, String[] strArray) { listItems.Add(new VolumeLVitemVM(strArray)); }
+        protected virtual void ReadListItem(ObservableCollection<VolumeLVitemVM> listItems, String[] strArray) { listItems.Add(new VolumeLVitemVM(listItems.Count, strArray)); }
 
         internal bool ReadList(ObservableCollection<VolumeLVitemVM> listItems)
 #if (WPF)

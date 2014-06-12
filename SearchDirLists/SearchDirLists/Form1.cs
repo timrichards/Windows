@@ -1165,7 +1165,8 @@ namespace SearchDirLists
 
             gd.timer_DoTree.Stop();
 
-            if ((DoSaveDirListings() == false) && bRestartTreeTimer)   // cancelled
+            if ((gd.DoSaveDirListings(form_lvVolumesMain.Items, SaveDirListingsStatusCallback, SaveDirListingsDoneCallback)
+                == false) && bRestartTreeTimer)   // cancelled
             {
                 gd.RestartTreeTimer();
             }

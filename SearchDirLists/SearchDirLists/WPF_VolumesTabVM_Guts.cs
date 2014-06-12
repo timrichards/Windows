@@ -134,7 +134,7 @@ namespace SearchDirLists
                     }
                 }
 
-                LV.Add(new VolumeLVitemVM(CBVolumeName.S, CBPath.S, CBSaveAs.S, strStatus, bSaveAsExists));
+                LV.Add(new VolumeLVitemVM(LV.Count, CBVolumeName.S, CBPath.S, CBSaveAs.S, strStatus, bSaveAsExists));
                 return bSaveAsExists;
             }));
         }
@@ -154,7 +154,7 @@ namespace SearchDirLists
             }
             else if (bFailOnDirectory)
             {
-                m_app.xaml_tabControlMain.SelectedItem = m_app.xaml_tabPageVolumes;
+                m_app.xaml_tabControlMain.SelectedItem = m_app.xaml_tabItemVolumes;
                 gd.FormError(ctl, "Path does not exist.", "Save Fields");
                 return null;
             }
@@ -173,7 +173,7 @@ namespace SearchDirLists
 
             if (HasItems)
             {
-                m_app.xaml_tabControlMain.SelectedItem = m_app.xaml_tabPageBrowse;
+                m_app.xaml_tabControlMain.SelectedItem = m_app.xaml_tabItemBrowse;
             }
 
             return true;    // this kicks off the tree
@@ -477,7 +477,8 @@ namespace SearchDirLists
 
             gd.timer_DoTree.Stop();
 
- //           if ((DoSaveDirListings() == false) && bRestartTreeTimer)   // cancelled
+            if ((gd.DoSaveDirListings(LV.Items, SaveDirListingsStatusCallback, SaveDirListingsDoneCallback)
+                == false) && bRestartTreeTimer)   // cancelled
             {
                 gd.RestartTreeTimer();
             }

@@ -32,7 +32,7 @@
                 <Setter Property="VerticalAlignment" Value="Stretch"/>
             </Style>
         </TabControl.Resources>
-        <TabItem Header="Volumes" Name="xaml_tabPageVolumes">
+        <TabItem Header="Volumes" Name="xaml_tabItemVolumes">
             <Grid>
                 <Grid.Resources>
                     <Style x:Key="ComboRows" TargetType="ItemsControl">
@@ -103,7 +103,7 @@
                 <Button Grid.Row="5" Content="Save directory listings" Name="xaml_btnSaveDirLists" Height="30" Command="{Binding Icmd_SaveDirLists}"/>
             </Grid>
         </TabItem>
-        <TabItem Header="Browse" Name="xaml_tabPageBrowse">
+        <TabItem Header="Browse" Name="xaml_tabItemBrowse">
             <Grid>
                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <Grid.RowDefinitions>

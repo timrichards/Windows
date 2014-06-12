@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 
 namespace SearchDirLists
 {
@@ -72,20 +73,65 @@ namespace SearchDirLists
             gd.m_saveDirListings = null;   // has to precede messagebox
             Utilities.MBox("Completed. " + nFilesWritten + " files written.", "Save Directory Listings");
         }
-
-        bool DoSaveDirListings()
+    }
+#else
+    partial class VolumesTabVM
+    {
+        void SaveDirListingsStatusCallback(int nIndex, String strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0)
         {
-            if (gd.m_saveDirListings != null)
+            if (GlobalData.AppExit || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
             {
-                Utilities.MBox("Already in progress.", "Save Directory Listings");
-                return false;
+                return;
             }
 
-            gd.m_saveDirListings = new SaveDirListings(form_lvVolumesMain.Items,
-                new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback),
-                new Action(SaveDirListingsDoneCallback));
-            gd.m_saveDirListings.DoThreadFactory();
-            return true;
+            if (m_app.Dispatcher.CheckAccess() == false) { m_app.Dispatcher.Invoke(new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback), new object[] { nIndex, strText, bDone, nFilesTotal, nLengthTotal, nFilesDiff }); return; }
+
+            if (nLengthTotal > 0)
+            {
+                Utilities.Assert(1306.7305, strText == null);
+                Utilities.Assert(1306.7306, bDone == false);
+
+                strText = nFilesTotal.ToString("###,###,###,###") + " (" + Utilities.FormatSize(nLengthTotal) + ") SD " + nFilesDiff.ToString("#0.0");
+            }
+
+            if (bDone)
+            {
+                lock (gd.m_saveDirListings)
+                {
+                    ++gd.m_saveDirListings.FilesWritten;
+                }
+            }
+
+            lock (LV)
+            {
+                LV.Items[nIndex].Status = strText;
+
+                if (bDone && (strText == Utilities.mSTRsaved))
+                {
+                    LV.Items[nIndex].SaveAsExists = true;    // indexing by path, only for unsaved volumes
+                }
+            }
+        }
+
+        void SaveDirListingsDoneCallback()
+        {
+            if (GlobalData.AppExit || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
+            {
+                return;
+            }
+
+            if (m_app.Dispatcher.CheckAccess() == false) { m_app.Dispatcher.Invoke(new Action(SaveDirListingsDoneCallback)); return; }
+
+            if (gd.m_saveDirListings.FilesWritten > 0)
+            {
+                gd.RestartTreeTimer();
+                m_app.xaml_tabControlMain.SelectedItem = m_app.xaml_tabItemBrowse;
+            }
+
+            int nFilesWritten = gd.m_saveDirListings.FilesWritten;
+
+            gd.m_saveDirListings = null;   // has to precede messagebox
+            Utilities.MBox("Completed. " + nFilesWritten + " files written.", "Save Directory Listings");
         }
     }
 #endif
@@ -352,15 +398,11 @@ namespace SearchDirLists
             }
         }
 
-        internal SaveDirListings(ListView.ListViewItemCollection lvVolItems,
+        internal SaveDirListings(UList<LVvolStrings> list_lvVolStrings,
             SaveDirListingsStatusDelegate statusCallback,
             Action doneCallback)
         {
-            foreach (SDL_ListViewItem lvItem in lvVolItems)
-            {
-                m_list_lvVolStrings.Add(new LVvolStrings(lvItem));
-            }
-
+            m_list_lvVolStrings = list_lvVolStrings;
             m_statusCallback = statusCallback;
             m_doneCallback = doneCallback;
         }
@@ -432,6 +474,33 @@ namespace SearchDirLists
             Utilities.Assert(1306.73045, m_saveDirListings == null);
 
             m_saveDirListings = null;
+        }
+
+        internal bool DoSaveDirListings(ObservableCollection<VolumeLVitemVM> lvItems, SaveDirListingsStatusDelegate statusCallback, Action doneCallback)
+#if (WPF == false)
+        { return false; }
+        internal bool DoSaveDirListings(ListView.ListViewItemCollection lvItems, SaveDirListingsStatusDelegate statusCallback, Action doneCallback)
+#endif
+        {
+            if (m_saveDirListings != null)
+            {
+                Utilities.MBox("Already in progress.", "Save Directory Listings");
+                return false;
+            }
+
+            UList<LVvolStrings> list_lvVolStrings = new UList<LVvolStrings>();
+
+#if (WPF)
+            foreach (VolumeLVitemVM lvItem in lvItems)
+#else
+            foreach (SDL_ListViewItem lvItem in lvItems)
+#endif
+            {
+                list_lvVolStrings.Add(new LVvolStrings(lvItem));
+            }
+
+            (m_saveDirListings = new SaveDirListings(list_lvVolStrings, statusCallback, doneCallback)).DoThreadFactory();
+            return true;
         }
     }
 }

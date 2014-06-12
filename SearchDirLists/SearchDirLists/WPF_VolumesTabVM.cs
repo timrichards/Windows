@@ -58,8 +58,9 @@ namespace SearchDirLists
         public String IncludeStr { get { return marr[4]; } set { SetProperty(4, value); } }
         public String VolumeGroup { get { return marr[5]; } set { SetProperty(5, value); } }
 
-        internal VolumeLVitemVM(String strVol, String strPath, String strSaveAs, String strStatus, bool bSaveAsExists)
+        internal VolumeLVitemVM(int index, String strVol, String strPath, String strSaveAs, String strStatus, bool bSaveAsExists)
         {
+            Index = index;
             marr = new string[NumCols];
             VolumeName = strVol;
             Path = strPath;
@@ -69,8 +70,9 @@ namespace SearchDirLists
             SaveAsExists = bSaveAsExists;
         }
 
-        internal VolumeLVitemVM(String[] arrStr)
+        internal VolumeLVitemVM(int index, String[] arrStr)
         {
+            Index = index;
             marr = new string[NumCols];
             Utilities.Assert(1310.1001, arrStr.Length <= NumCols);
             arrStr.CopyTo(marr, 0);
@@ -84,12 +86,14 @@ namespace SearchDirLists
         internal const int NumCols = 6;
         internal static RaisePropertyChangedDelegate LV_RaisePropertyChanged = null;                    // frankenhoek
 
-        internal bool SaveAsExists = false;                             // TODO: set back to false when fail Tree
+        internal int Index = -1;
+        internal bool SaveAsExists = false;                                 // TODO: set back to false when fail Tree
         internal SDL_TreeNode treeNode = null;
 
         void Raise(int nCol)
         {
-            String strPropName = new String[] { "VolumeName", "Path", "SaveAs", "Status", "IncludeStr", "VolumeGroup" }[nCol];
+            String strPropName = arrPropName[nCol];
+
             RaisePropertyChanged(strPropName);
             VolumesListViewVM.m_strColWidth = "50"; LV_RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there
             VolumesListViewVM.m_strColWidth = "NaN"; LV_RaisePropertyChanged("Width" + strPropName);
@@ -97,7 +101,8 @@ namespace SearchDirLists
 
         void SetProperty(int nCol, String s) { if (this[nCol] != s) { marr[nCol] = s; Raise(nCol); } }
 
-        String[] marr = null;                                           // all properties (columns/items) get stored here
+        String[] arrPropName = new String[] { "VolumeName", "Path", "SaveAs", "Status", "IncludeStr", "VolumeGroup" };
+        String[] marr = null;                                               // all properties (columns/items) get stored here
     }
 
     class VolumesListViewVM : ObservableObject

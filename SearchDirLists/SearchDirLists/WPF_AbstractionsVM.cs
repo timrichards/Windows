@@ -110,6 +110,11 @@ namespace SearchDirLists
         readonly protected ObservableCollection<VolumeLVitemVM> m_items = new ObservableCollection<VolumeLVitemVM>();
         readonly ItemsControl m_itemsCtl = null;
     }
+}
+
+namespace Template      // prevents smart tag rename command from renaming the templates after you've copied them and rename them
+{
+    using SearchDirLists;
 
     class Template_LVitemVM : ListViewItemVM
     {
@@ -118,10 +123,10 @@ namespace SearchDirLists
         internal new const int NumCols = 0;
         readonly new static String[] arrPropName = new String[] { };
 
-        Template_LVitemVM(ClonesListViewVM LV)
+        Template_LVitemVM(Template_ListViewVM LV)
             : base(LV, NumCols, arrPropName) { }
 
-        internal Template_LVitemVM(ClonesListViewVM LV, String[] arrStr)
+        internal Template_LVitemVM(Template_ListViewVM LV, String[] arrStr)
             : this(LV)
         {
             CopyInArray(arrStr);
@@ -130,7 +135,7 @@ namespace SearchDirLists
 
     class Template_ListViewVM : ListViewVM
     {
-        public String WidthColumnNameHere { get { return SCW; } }                           // franken all NaN
+        public String WidthColumnNameHere { get { return SCW; } }
 
         internal Template_ListViewVM(ItemsControl itemsCtl) : base(itemsCtl) { }
     }

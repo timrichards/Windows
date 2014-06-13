@@ -452,7 +452,7 @@ class Blinky
         internal static void Go(Forms.Control ctl_in = null, bool Once = false)
         {
 #if (WPF)
-            Dispatcher dispatcher = GlobalData.static_form.Dispatcher;
+            Dispatcher dispatcher = GlobalData.static_wpfWin.Dispatcher;
 #else
             Forms.Control dispatcher = ctl_in ?? GlobalData.static_form;
 #endif
@@ -469,7 +469,7 @@ class Blinky
                 else
                 {
 #if (WPF)
-                    fInfo.hwnd = new WindowInteropHelper(GlobalData.static_form).Handle;
+                    fInfo.hwnd = new WindowInteropHelper(GlobalData.static_wpfWin).Handle;
 #else
                     fInfo.hwnd = GlobalData.static_form.Handle;
 #endif
@@ -1281,13 +1281,13 @@ class Blinky
                 return MBoxRet.None;
             }
 
-            if (GlobalData.static_form.InvokeRequired()) { return (MBoxRet) GlobalData.static_form.Invoke(new MBoxDelegate(MBox), new object[] { strMessage, strTitle, buttons_in }); }
+            if (GlobalData.static_wpfOrForm.InvokeRequired()) { return (MBoxRet)GlobalData.static_wpfOrForm.Invoke(new MBoxDelegate(MBox), new object[] { strMessage, strTitle, buttons_in }); }
 
             MessageBoxKill();
             m_form1MessageBoxOwner = new SDL_Win();
-            m_form1MessageBoxOwner.Owner = GlobalData.static_form;
+            m_form1MessageBoxOwner.Owner = GlobalData.static_wpfOrForm;
             m_form1MessageBoxOwner.TitleSet(strTitle);
-            m_form1MessageBoxOwner.Icon = GlobalData.static_form.Icon;
+            m_form1MessageBoxOwner.Icon = GlobalData.static_wpfOrForm.Icon;
 
             MBoxBtns buttons = (buttons_in != null) ? buttons_in.Value : MBoxBtns.OK;
 #if (WPF)
@@ -1311,7 +1311,7 @@ class Blinky
             {
                 m_form1MessageBoxOwner.Close();
                 m_form1MessageBoxOwner = null;
-                GlobalData.static_form.Activate();
+                GlobalData.static_wpfOrForm.Activate();
             }
         }
 

@@ -34,7 +34,7 @@ namespace SearchDirLists
     [System.ComponentModel.DesignerCategory("Code")]
     partial class Form1 : Form
     {
-        readonly GlobalData gd = null;      // do not call constructor here.
+        readonly GlobalData gd = null;
 
         // Memory allocations occur just below all partial class Form1 : Form declarations, then ClearMem_...() for each.
         // Declarations continue below these two ClearMem() methods.
@@ -95,8 +95,7 @@ namespace SearchDirLists
 
         internal Form1()
         {
-            gd = new GlobalData();   // at end of file. Has to come after message box is set.
-            GlobalData.static_form = this;
+            gd = GlobalData.GetInstance(this);
             InitializeComponent();
 
             gd.timer_DoTree.Interval = new System.TimeSpan(0, 0, 3);
@@ -2245,12 +2244,19 @@ namespace SearchDirLists
 
     partial class GlobalData
     {
+        internal static Form1 static_wpfOrForm = null;
         internal static Form1 static_form = null;
+        internal static GlobalData GetInstance(Form1 form) { if (static_instance == null) static_instance = new GlobalData(form); return static_instance; }
+        internal static GlobalData GetInstance(WPF.Window wpfWin) { return static_instance; }
+        GlobalData(Form1 form) { static_wpfOrForm = static_form = form; }               // private constructor: singleton pattern
     }
 #else
     partial class GlobalData
     {
-        internal static WPF.Window static_form = null;
+        internal static WPF.Window static_wpfOrForm = null;
+        internal static WPF.Window static_wpfWin = null;
+        internal static GlobalData GetInstance(WPF.Window wpfWin) { if (static_instance == null) static_instance = new GlobalData(wpfWin); return static_instance; }
+        GlobalData(WPF.Window wpfWin) { static_wpfOrForm = static_wpfWin = wpfWin; }    // private constructor: singleton pattern
     }
 #endif
 
@@ -2263,6 +2269,13 @@ namespace SearchDirLists
         internal readonly UList<SDL_TreeNode> m_listTreeNodes_Compare2 = new UList<SDL_TreeNode>();
         internal readonly List<SDL_TreeNode> m_listHistory = new List<SDL_TreeNode>();
         internal int m_nIxHistory = -1;
+
+        static GlobalData static_instance = null;
+
+        internal static GlobalData GetInstance()
+        {
+            return static_instance;
+        }
 
         internal void ClearMem_Form1()
         {

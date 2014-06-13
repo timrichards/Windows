@@ -79,9 +79,8 @@ namespace SearchDirLists
 
         internal VolumesTabVM(MainWindow app)
         {
-            gd = new GlobalData();
             m_app = app;
-            gd.m_blinky = new Blinky(m_app.xaml_cbFindbox);
+            gd = GlobalData.GetInstance();
             CBVolumeName = new ItemsControlVM(m_app.xaml_cbVolumeName, new Action(() => { gd.m_strVolumeName = CBVolumeName.S; }));
             CBPath = new ItemsControlVM(m_app.xaml_cbPath, new Action(() => { gd.m_strPath = CBPath.S; }));
             CBSaveAs = new ItemsControlVM(m_app.xaml_cbSaveAs, new Action(() => { gd.m_strSaveAs = CBSaveAs.S; }));

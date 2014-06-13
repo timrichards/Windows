@@ -11,11 +11,12 @@ namespace SearchDirLists
     /// </summary>
     public partial class MainWindow : Window
     {
+        internal readonly GlobalData gd = null;
+
         public MainWindow()
         {
-#if (WPF)
-            GlobalData.static_form = this;
-#endif
+            gd = GlobalData.GetInstance(this);
+            gd.m_blinky = new Blinky(xaml_cbFindbox);
             InitializeComponent();
         }
 

@@ -2244,19 +2244,19 @@ namespace SearchDirLists
 
     partial class GlobalData
     {
-        internal static Form1 static_wpfOrForm = null;
-        internal static Form1 static_form = null;
+        internal static Form1 static_wpfOrForm { get { return static_wpfOrForm_; } } static Form1 static_wpfOrForm_ = null;
+        internal static Form1 static_form { get { return static_form_; } } static Form1 static_form_ = null;
         internal static GlobalData GetInstance(Form1 form) { if (static_instance == null) static_instance = new GlobalData(form); return static_instance; }
         internal static GlobalData GetInstance(WPF.Window wpfWin) { return static_instance; }
-        GlobalData(Form1 form) { static_wpfOrForm = static_form = form; }               // private constructor: singleton pattern
+        GlobalData(Form1 form) { static_wpfOrForm_ = static_form_ = form; }               // private constructor: singleton pattern
     }
 #else
     partial class GlobalData
     {
-        internal static WPF.Window static_wpfOrForm = null;
-        internal static WPF.Window static_wpfWin = null;
+        internal static WPF.Window static_wpfOrForm { get { return static_wpfOrForm_; } } static WPF.Window static_wpfOrForm_ = null;
+        internal static WPF.Window static_wpfWin { get { return static_wpfWin_; } } static WPF.Window static_wpfWin_ = null;
         internal static GlobalData GetInstance(WPF.Window wpfWin) { if (static_instance == null) static_instance = new GlobalData(wpfWin); return static_instance; }
-        GlobalData(WPF.Window wpfWin) { static_wpfOrForm = static_wpfWin = wpfWin; }    // private constructor: singleton pattern
+        GlobalData(WPF.Window wpfWin) { static_wpfOrForm_ = static_wpfWin_ = wpfWin; }    // private constructor: singleton pattern
     }
 #endif
 

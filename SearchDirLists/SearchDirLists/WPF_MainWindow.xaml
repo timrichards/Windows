@@ -168,8 +168,8 @@
                                 <ListView Name="xaml_lvCopyScratchpad" Width="Auto">
                                     <ListView.View>
                                         <GridView>
-                                            <GridViewColumn Header="Folders selected for copy" Width="Auto"/>
-                                            <GridViewColumn Width="Auto" />
+                                            <GridViewColumn Header="Folders selected for copy" DisplayMemberBinding="{Binding Folders}" Width="{Binding WidthFolders}"/>
+                                            <GridViewColumn DisplayMemberBinding="{Binding Path}" Width="{Binding WidthPath}"/>
                                         </GridView>
                                     </ListView.View>
                                 </ListView>
@@ -188,8 +188,8 @@
                                 <ListView Name="xaml_lvIgnore" Width="Auto">
                                     <ListView.View>
                                         <GridView>
-                                            <GridViewColumn Header="Common folders to ignore" Width="Auto"/>
-                                            <GridViewColumn Header="Level" Width="Auto" />
+                                            <GridViewColumn Header="Common folders to ignore" DisplayMemberBinding="{Binding Folders}" Width="{Binding WidthFolders}"/>
+                                            <GridViewColumn Header="Level" DisplayMemberBinding="{Binding Level}" Width="{Binding WidthLevel}" />
                                         </GridView>
                                     </ListView.View>
                                 </ListView>
@@ -219,13 +219,13 @@
                                 <ListView Name="xaml_lvFiles" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0">
                                     <ListView.View>
                                         <GridView>
-                                            <GridViewColumn Header="Filename"/>
-                                            <GridViewColumn Header="Created"/>
-                                            <GridViewColumn Header="Modified"/>
-                                            <GridViewColumn Header="Attributes"/>
-                                            <GridViewColumn Header="Length"/>
-                                            <GridViewColumn Header="Error 1"/>
-                                            <GridViewColumn Header="Error 2"/>
+                                            <GridViewColumn Header="Filename" DisplayMemberBinding="{Binding Filename}" Width="{Binding WidthFilename}"/>
+                                            <GridViewColumn Header="Created" DisplayMemberBinding="{Binding Created}" Width="{Binding WidthCreated}"/>
+                                            <GridViewColumn Header="Modified" DisplayMemberBinding="{Binding Modified}" Width="{Binding WidthModified}"/>
+                                            <GridViewColumn Header="Attributes" DisplayMemberBinding="{Binding Attributes}" Width="{Binding WidthAttributes}"/>
+                                            <GridViewColumn Header="Length" DisplayMemberBinding="{Binding Length}" Width="{Binding WidthLength}"/>
+                                            <GridViewColumn Header="Error 1" DisplayMemberBinding="{Binding Error1}" Width="{Binding WidthError1}"/>
+                                            <GridViewColumn Header="Error 2" DisplayMemberBinding="{Binding Error2}" Width="{Binding WidthError2}"/>
                                         </GridView>
                                     </ListView.View>
                                 </ListView>
@@ -234,14 +234,16 @@
                         <ListView Name="xaml_lvDetail" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="0">
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="Directory detail"/>
+                                    <GridViewColumn Header="Directory detail" DisplayMemberBinding="{Binding Heading}" Width="{Binding WidthHeading}"/>
+                                    <GridViewColumn DisplayMemberBinding="{Binding Detail}" Width="{Binding WidthDetail}"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>
                         <ListView Name="xaml_lvDetailVol" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="2">
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="Volume detail"/>
+                                    <GridViewColumn Header="Volume detail" DisplayMemberBinding="{Binding Heading}" Width="{Binding WidthHeading}"/>
+                                    <GridViewColumn DisplayMemberBinding="{Binding Detail}" Width="{Binding WidthDetail}"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>
@@ -259,21 +261,23 @@
                         <ListView Name="xaml_lvUnique" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0">
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="Solitary"/>
+                                    <GridViewColumn Header="Solitary" DisplayMemberBinding="{Binding Folders}" Width="{Binding WidthFolders}"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>
                         <ListView Name="xaml_lvSameVol" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="0">
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="Same volume group"/>
+                                    <GridViewColumn Header="Same volume group" DisplayMemberBinding="{Binding Folders}" Width="{Binding WidthFolders}"/>
+                                    <GridViewColumn DisplayMemberBinding="{Binding Occurrences}" Width="{Binding WidthOccurrences}"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>
                         <ListView Name="xaml_lvClones" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="4" Grid.Column="0">
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="Clones"/>
+                                    <GridViewColumn Header="Clones" DisplayMemberBinding="{Binding Folders}" Width="{Binding WidthFolders}"/>
+                                    <GridViewColumn DisplayMemberBinding="{Binding Occurrences}" Width="{Binding WidthOccurrences}"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>

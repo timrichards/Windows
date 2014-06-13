@@ -61,10 +61,16 @@ namespace SearchDirLists
     // Used for two listviewers
     class FileLVitemVM : ListViewItemVM
     {
-        public String ColumnNameHere { get { return marr[0]; } set { SetProperty(0, value); } }
+        public String Filename { get { return marr[0]; } set { SetProperty(0, value); } }
+        public String Created { get { return marr[1]; } set { SetProperty(1, value); } }
+        public String Modified { get { return marr[2]; } set { SetProperty(2, value); } }
+        public String Attributes { get { return marr[3]; } set { SetProperty(3, value); } }
+        public String Length { get { return marr[4]; } set { SetProperty(4, value); } }
+        public String Error1 { get { return marr[5]; } set { SetProperty(5, value); } }
+        public String Error2 { get { return marr[6]; } set { SetProperty(6, value); } }
 
-        internal new const int NumCols = 0;
-        readonly new static String[] arrPropName = new String[] { };
+        internal new const int NumCols = 7;
+        readonly new static String[] arrPropName = new String[] { "Filename", "Created", "Modified", "Attributes", "Length", "Error1", "Error2"};
 
         FileLVitemVM(FileListViewVM LV)
             : base(LV, NumCols, arrPropName) { }
@@ -78,7 +84,13 @@ namespace SearchDirLists
 
     class FileListViewVM : ListViewVM
     {
-        public String WidthColumnNameHere { get { return SCW; } }
+        public String WidthFilename { get { return SCW; } }
+        public String WidthCreated { get { return SCW; } }
+        public String WidthModified { get { return SCW; } }
+        public String WidthAttributes { get { return SCW; } }
+        public String WidthLength { get { return SCW; } }
+        public String WidthError1 { get { return SCW; } }
+        public String WidthError2 { get { return SCW; } }
 
         internal FileListViewVM(ItemsControl itemsCtl) : base(itemsCtl) { }
     }

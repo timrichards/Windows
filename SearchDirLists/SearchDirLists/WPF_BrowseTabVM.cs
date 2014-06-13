@@ -57,17 +57,17 @@ namespace SearchDirLists
                 new RelayCommand(param => SearchFoldersAndFiles()),
                 new RelayCommand(param => SearchFiles()),
 
-                new RelayCommand(param => CopyScratchpad_Script()),
+                new RelayCommand(param => CopyScratchpad_Script(), param => LV_CopyScratchpad.Selected),
                 new RelayCommand(param => CopyScratchpad_Load()),
-                new RelayCommand(param => CopyScratchpad_Save()),
-                new RelayCommand(param => CopyScratchpad_Clear()),
+                new RelayCommand(param => CopyScratchpad_Save(), param => LV_CopyScratchpad.HasItems),
+                new RelayCommand(param => CopyScratchpad_Clear(), param => LV_CopyScratchpad.HasItems),
 
                 new RelayCommand(param => Ignore_Loose()),
                 new RelayCommand(param => Ignore_Add()),
-                new RelayCommand(param => Ignore_Delete()),
+                new RelayCommand(param => Ignore_Delete(), param => LV_Ignore.Selected),
                 new RelayCommand(param => Ignore_Load()),
-                new RelayCommand(param => Ignore_Save()),
-                new RelayCommand(param => Ignore_Clear())
+                new RelayCommand(param => Ignore_Save(), param => LV_Ignore.HasItems),
+                new RelayCommand(param => Ignore_Clear(), param => LV_Ignore.HasItems)
             };
         }
 

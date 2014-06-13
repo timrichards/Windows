@@ -171,7 +171,7 @@ namespace SearchDirLists
                 return false;
             }
 
-            if (HasItems)
+            if (LV.HasItems)
             {
                 m_app.xaml_tabControlMain.SelectedItem = m_app.xaml_tabItemBrowse;
             }
@@ -546,7 +546,7 @@ namespace SearchDirLists
 
         void SaveVolumeList()
         {
-            if (HasItems)
+            if (LV.HasItems)
             {
                 new SDL_VolumeFile().WriteList(LV.Items);
             }

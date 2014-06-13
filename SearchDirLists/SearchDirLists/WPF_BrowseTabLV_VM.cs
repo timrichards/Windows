@@ -27,7 +27,7 @@ namespace SearchDirLists
         public String WidthFolders { get { return SCW; } }
         public String WidthPath { get { return SCW; } }
 
-        internal CopyScratchpadListViewVM(ItemsControl itemsCtl) : base(itemsCtl) { }
+        internal CopyScratchpadListViewVM(ListView lv) : base(lv) { }
     }
 
 
@@ -54,7 +54,7 @@ namespace SearchDirLists
         public String WidthFolders { get { return SCW; } }
         public String WidthLevel { get { return SCW; } }
 
-        internal IgnoreListViewVM(ItemsControl itemsCtl) : base(itemsCtl) { }
+        internal IgnoreListViewVM(ListView lv) : base(lv) { }
     }
 
 
@@ -92,7 +92,7 @@ namespace SearchDirLists
         public String WidthError1 { get { return SCW; } }
         public String WidthError2 { get { return SCW; } }
 
-        internal FilesListViewVM(ItemsControl itemsCtl) : base(itemsCtl) { }
+        internal FilesListViewVM(ListView lv) : base(lv) { }
     }
 
 
@@ -120,7 +120,7 @@ namespace SearchDirLists
         public String WidthHeading { get { return SCW; } }
         public String WidthDetail { get { return SCW; } }
 
-        internal DetailListViewVM(ItemsControl itemsCtl) : base(itemsCtl) { }
+        internal DetailListViewVM(ListView lv) : base(lv) { }
     }
 
 
@@ -145,7 +145,7 @@ namespace SearchDirLists
     {
         public String WidthFolders { get { return SCW; } }
 
-        internal SolitaryListViewVM(ItemsControl itemsCtl) : base(itemsCtl) { }
+        internal SolitaryListViewVM(ListView lv) : base(lv) { }
     }
 
 
@@ -173,6 +173,6 @@ namespace SearchDirLists
         public String WidthFolders { get { return SCW; } }
         public String WidthOccurrences { get { return SCW; } }
 
-        internal ClonesListViewVM(ItemsControl itemsCtl) : base(itemsCtl) { }
+        internal ClonesListViewVM(ListView lv) : base(lv) { }
     }
 }

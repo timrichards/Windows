@@ -90,15 +90,15 @@ namespace SearchDirLists
     {
         public ObservableCollection<VolumeLVitemVM> Items { get { return m_items; } }
 
-        internal ListViewVM(ItemsControl itemsCtl)
+        internal ListViewVM(ListView lv)
         {
-            (m_itemsCtl = itemsCtl).DataContext = this;
+            (m_LV = lv).DataContext = this;
         }
 
         internal bool Add(VolumeLVitemVM item)
         {
             m_items.Add(item);
-            m_itemsCtl.Items.Refresh();
+            m_LV.Items.Refresh();
             RaisePropertyChanged("Items");
             return true;
         }
@@ -106,9 +106,12 @@ namespace SearchDirLists
         internal static String SCW = double.NaN.ToString();                                 // frankenhoek
 
         internal int Count { get { return m_items.Count; } }
+        internal bool HasItems { get { return m_items.Count > 0; } }
+        internal bool SelectedOne { get { return m_LV.SelectedItems.Count == 1; } }
+        internal bool Selected { get { return m_LV.SelectedItems.Count > 0; } }
 
         readonly protected ObservableCollection<VolumeLVitemVM> m_items = new ObservableCollection<VolumeLVitemVM>();
-        readonly ItemsControl m_itemsCtl = null;
+        readonly ListView m_LV = null;
     }
 }
 
@@ -137,6 +140,6 @@ namespace Template      // prevents smart tag rename command from renaming the t
     {
         public String WidthColumnNameHere { get { return SCW; } }
 
-        internal Template_ListViewVM(ItemsControl itemsCtl) : base(itemsCtl) { }
+        internal Template_ListViewVM(ListView lv) : base(lv) { }
     }
 }

@@ -56,7 +56,7 @@ namespace SearchDirLists
         public String WidthIncludeStr { get { return SCW; } }
         public String WidthVolumeGroup { get { return SCW; } }
 
-        internal VolumesListViewVM(ItemsControl itemsCtl) : base(itemsCtl) {}
+        internal VolumesListViewVM(ListView lv) : base(lv) {}
 
         internal bool ContainsVolumeName(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if (item.VolumeName.ToLower() == s) return true; return false; }
         internal bool ContainsUnsavedPath(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if ((item.Path.ToLower() == s) && (item.SaveAsExists == false)) return true; return false; }
@@ -91,13 +91,13 @@ namespace SearchDirLists
                 new RelayCommand(param => SetPath()),
                 new RelayCommand(param => SaveAs()),
                 new RelayCommand(param => LoadVolumeList_Click()),
-                new RelayCommand(param => SaveVolumeList()),
-                new RelayCommand(param => AddVolume()),
-                new RelayCommand(param => RemoveVolume(), param => Selected),
-                new RelayCommand(param => ToggleInclude(), param => Selected),
-                new RelayCommand(param => SetVolumeGroup(), param => Selected),
-                new RelayCommand(param => ModifyFile(), param => SelectedOne),
-                new RelayCommand(param => SaveDirLists(), param => HasItems)
+                new RelayCommand(param => SaveVolumeList(), param => LV.HasItems),
+                new RelayCommand(param => AddVolume(), param => (Utilities.NotNull(m_app.xaml_cbSaveAs.Text).Trim().Length > 0)),
+                new RelayCommand(param => RemoveVolume(), param => LV.Selected),
+                new RelayCommand(param => ToggleInclude(), param => LV.Selected),
+                new RelayCommand(param => SetVolumeGroup(), param => LV.Selected),
+                new RelayCommand(param => ModifyFile(), param => LV.SelectedOne),
+                new RelayCommand(param => SaveDirLists(), param => LV.HasItems)
             };
         }
 
@@ -106,10 +106,6 @@ namespace SearchDirLists
         readonly ItemsControlVM CBSaveAs = null;
         readonly VolumesListViewVM LV = null;
         readonly ICommand[] mIcommands = null;
-
-        bool SelectedOne { get { return m_app.xaml_lvVolumesMain.SelectedItems.Count == 1; } }
-        bool Selected { get { return m_app.xaml_lvVolumesMain.SelectedItems.Count > 0; } }
-        bool HasItems { get { return LV.Count > 0; } }
 
         static readonly Forms.FolderBrowserDialog folderBrowserDialog1 = new Forms.FolderBrowserDialog();
         readonly MainWindow m_app = null;

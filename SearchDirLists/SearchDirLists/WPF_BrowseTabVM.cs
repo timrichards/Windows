@@ -1,4 +1,5 @@
 ﻿using System.Windows.Input;
+using System;
 
 namespace SearchDirLists
 {
@@ -31,7 +32,9 @@ namespace SearchDirLists
         internal BrowseTabVM(MainWindow app)
         {
             m_app = app;
+            m_app.xaml_tabItemBrowse.DataContext = this;
             gd = GlobalData.GetInstance();
+            CBFindBox = new ItemsControlVM(m_app.xaml_cbFindbox, new Action(() => { }));
             LV_CopyScratchpad = new CopyScratchpadListViewVM(m_app.xaml_lvCopyScratchpad);
             LV_Ignore = new IgnoreListViewVM(m_app.xaml_lvIgnore);
             LV_Files = new FilesListViewVM(m_app.xaml_lvFiles);
@@ -67,6 +70,8 @@ namespace SearchDirLists
                 new RelayCommand(param => Ignore_Clear())
             };
         }
+
+        readonly ItemsControlVM CBFindBox = null;
 
         // In order of appearance on the form
         readonly CopyScratchpadListViewVM LV_CopyScratchpad = null;

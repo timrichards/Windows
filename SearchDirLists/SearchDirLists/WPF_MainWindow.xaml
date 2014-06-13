@@ -137,20 +137,20 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <StackPanel Orientation="Horizontal">
-                            <Button Content="Collapse" Name="xaml_btnCollapse" />
-                            <CheckBox Content="Compare 1" Name="xaml_chkCompare1" />
-                            <Button Content="Compare" Name="xaml_btnCompare" />
-                            <Button Content="Up" Name="xaml_btnUp" />
-                            <Button Content="&lt;--" Name="xaml_btnBack" />
-                            <Button Content="--&gt;" Name="xaml_btnForward" />
+                            <Button Content="Collapse" Name="xaml_btnCollapse" Command="{Binding Icmd_Collapse}"/>
+                            <CheckBox Content="Compare 1" Name="xaml_chkCompare1" Command="{Binding Icmd_CompareCheck}"/>
+                            <Button Content="Compare" Name="xaml_btnCompare" Command="{Binding Icmd_Compare}"/>
+                            <Button Content="Up" Name="xaml_btnUp" Command="{Binding Icmd_Up}"/>
+                            <Button Content="&lt;--" Name="xaml_btnBack" Command="{Binding Icmd_Back}"/>
+                            <Button Content="--&gt;" Name="xaml_btnForward" Command="{Binding Icmd_Forward}"/>
                         </StackPanel>
                         <ComboBox Name="xaml_cbFindbox" HorizontalAlignment="Stretch" Grid.Column="1"/>
                         <StackPanel Orientation="Horizontal" Grid.Column="2">
-                            <Button Content="Copy" Name="xaml_btnCopy" />
+                            <Button Content="Copy" Name="xaml_btnCopy" Command="{Binding Icmd_Copy}"/>
                             <Label Content="Search:" FontStyle="Italic" />
-                            <Button Content="Folders" Name="xaml_btnFolders" />
-                            <Button Content="Folders &amp; Files" Name="xaml_btnFoldersFiles" />
-                            <Button Content="Files" Name="xaml_btnFiles" />
+                            <Button Content="Folders" Name="xaml_btnFolders" Command="{Binding Icmd_SearchFolders}"/>
+                            <Button Content="Folders &amp; Files" Name="xaml_btnFoldersFiles" Command="{Binding Icmd_SearchFoldersAndFiles}"/>
+                            <Button Content="Files" Name="xaml_btnFiles" Command="{Binding Icmd_SearchFiles}"/>
                             <Label Content="Volume group" FontStyle="Italic" Name="xaml_labelVolumeGroup" />
                         </StackPanel>
                     </Grid>
@@ -160,10 +160,10 @@
                             <DockPanel>
                                 <StackPanel Height="Auto" Width="Auto" Orientation="Vertical" VerticalAlignment="Bottom">
                                     <CheckBox Content="Loose" Name="xaml_chkSpacer" Opacity="0" Height="0"/>
-                                    <Button Content="Script" Name="xaml_btnCopyScript" />
-                                    <Button Content="Load" Name="xaml_btnCopyLoad" />
-                                    <Button Content="Save" Name="xaml_btnCopySave" />
-                                    <Button Content="Clear" Name="xaml_btnCopyClear" />
+                                    <Button Content="Script" Name="xaml_btnCopyScript" Command="{Binding Icmd_CopyScratchpad_Script}"/>
+                                    <Button Content="Load" Name="xaml_btnCopyLoad" Command="{Binding Icmd_CopyScratchpad_Load}"/>
+                                    <Button Content="Save" Name="xaml_btnCopySave" Command="{Binding Icmd_CopyScratchpad_Save}"/>
+                                    <Button Content="Clear" Name="xaml_btnCopyClear" Command="{Binding Icmd_CopyScratchpad_Clear}"/>
                                 </StackPanel>
                                 <ListView Name="xaml_lvCopyScratchpad" Width="Auto">
                                     <ListView.View>
@@ -178,12 +178,12 @@
                         <TabItem Header="Ignore list" Name="xaml_tabItemIgnore">
                             <DockPanel>
                                 <StackPanel Height="Auto" Width="Auto" Orientation="Vertical" VerticalAlignment="Bottom">
-                                    <CheckBox Content="Loose" Name="xaml_chkLoose" />
-                                    <Button Content="Add" Name="xaml_btnIgnoreAdd" />
-                                    <Button Content="Del" Name="xaml_btnIgnoreDel" />
-                                    <Button Content="Load" Name="xaml_btnIgnoreLoad" />
-                                    <Button Content="Save" Name="xaml_btnIgnoreSave" />
-                                    <Button Content="Clear" Name="xaml_btnIgnoreClear" />
+                                    <CheckBox Content="Loose" Name="xaml_chkLoose" Command="{Binding Icmd_Ignore_Loose}"/>
+                                    <Button Content="Add" Name="xaml_btnIgnoreAdd" Command="{Binding Icmd_Ignore_Add}"/>
+                                    <Button Content="Del" Name="xaml_btnIgnoreDel" Command="{Binding Icmd_Ignore_Delete}"/>
+                                    <Button Content="Load" Name="xaml_btnIgnoreLoad" Command="{Binding Icmd_Ignore_Load}"/>
+                                    <Button Content="Save" Name="xaml_btnIgnoreSave" Command="{Binding Icmd_Ignore_Save}"/>
+                                    <Button Content="Clear" Name="xaml_btnIgnoreClear" Command="{Binding Icmd_Ignore_Clear}"/>
                                 </StackPanel>
                                 <ListView Name="xaml_lvIgnore" Width="Auto">
                                     <ListView.View>

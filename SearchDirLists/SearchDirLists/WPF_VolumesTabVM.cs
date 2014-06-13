@@ -80,6 +80,7 @@ namespace SearchDirLists
         internal VolumesTabVM(MainWindow app)
         {
             m_app = app;
+            m_app.xaml_tabControlMain.DataContext = this;
             gd = GlobalData.GetInstance();
             CBVolumeName = new ItemsControlVM(m_app.xaml_cbVolumeName, new Action(() => { gd.m_strVolumeName = CBVolumeName.S; }));
             CBPath = new ItemsControlVM(m_app.xaml_cbPath, new Action(() => { gd.m_strPath = CBPath.S; }));

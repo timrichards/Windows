@@ -6,11 +6,11 @@ namespace SearchDirLists
     // In order of appearance on the form
     class CopyScratchpadLVitemVM : ListViewItemVM
     {
-        public String Folder { get { return marr[0]; } set { SetProperty(0, value); } }
+        public String Folders { get { return marr[0]; } set { SetProperty(0, value); } }
         public String Path { get { return marr[1]; } set { SetProperty(1, value); } }
 
         internal new const int NumCols = 2;
-        readonly new static String[] arrPropName = new String[] { "Folder", "Path" };
+        readonly new static String[] arrPropName = new String[] { "Folders", "Path" };
 
         CopyScratchpadLVitemVM(CopyScratchpadListViewVM LV)
             : base(LV, NumCols, arrPropName) { }
@@ -24,7 +24,7 @@ namespace SearchDirLists
 
     class CopyScratchpadListViewVM : ListViewVM
     {
-        public String WidthFolder { get { return SCW; } }
+        public String WidthFolders { get { return SCW; } }
         public String WidthPath { get { return SCW; } }
 
         internal CopyScratchpadListViewVM(ItemsControl itemsCtl) : base(itemsCtl) { }
@@ -33,11 +33,11 @@ namespace SearchDirLists
 
     class IgnoreLVitemVM : ListViewItemVM
     {
-        public String Folder { get { return marr[0]; } set { SetProperty(0, value); } }
+        public String Folders { get { return marr[0]; } set { SetProperty(0, value); } }
         public String Level { get { return marr[1]; } set { SetProperty(1, value); } }
 
         internal new const int NumCols = 2;
-        readonly new static String[] arrPropName = new String[] { "Folder", "Level" };
+        readonly new static String[] arrPropName = new String[] { "Folders", "Level" };
 
         IgnoreLVitemVM(IgnoreListViewVM LV)
             : base(LV, NumCols, arrPropName) { }
@@ -51,7 +51,7 @@ namespace SearchDirLists
 
     class IgnoreListViewVM : ListViewVM
     {
-        public String WidthFolder { get { return SCW; } }
+        public String WidthFolders { get { return SCW; } }
         public String WidthLevel { get { return SCW; } }
 
         internal IgnoreListViewVM(ItemsControl itemsCtl) : base(itemsCtl) { }
@@ -126,10 +126,10 @@ namespace SearchDirLists
 
     class SolitaryLVitemVM : ListViewItemVM
     {
-        public String Folder { get { return marr[0]; } set { SetProperty(0, value); } }
+        public String Folders { get { return marr[0]; } set { SetProperty(0, value); } }
 
         internal new const int NumCols = 1;
-        readonly new static String[] arrPropName = new String[] { "Folder" };
+        readonly new static String[] arrPropName = new String[] { "Folders" };
 
         SolitaryLVitemVM(SolitaryListViewVM LV)
             : base(LV, NumCols, arrPropName) { }
@@ -143,7 +143,7 @@ namespace SearchDirLists
 
     class SolitaryListViewVM : ListViewVM
     {
-        public String WidthFolder { get { return SCW; } }
+        public String WidthFolders { get { return SCW; } }
 
         internal SolitaryListViewVM(ItemsControl itemsCtl) : base(itemsCtl) { }
     }
@@ -152,11 +152,11 @@ namespace SearchDirLists
     // Used for two listviewers
     class ClonesLVitemVM : ListViewItemVM
     {
-        public String Folder { get { return marr[0]; } set { SetProperty(0, value); } }
+        public String Folders { get { return marr[0]; } set { SetProperty(0, value); } }
         public String Occurrences { get { return marr[1]; } set { SetProperty(1, value); } }
 
         internal new const int NumCols = 2;
-        readonly new static String[] arrPropName = new String[] { "Folder", "Occurrences" };
+        readonly new static String[] arrPropName = new String[] { "Folders", "Occurrences" };
 
         ClonesLVitemVM(ClonesListViewVM LV)
             : base(LV, NumCols, arrPropName) { }
@@ -170,7 +170,7 @@ namespace SearchDirLists
 
     class ClonesListViewVM : ListViewVM
     {
-        public String WidthFolder { get { return SCW; } }
+        public String WidthFolders { get { return SCW; } }
         public String WidthOccurrences { get { return SCW; } }
 
         internal ClonesListViewVM(ItemsControl itemsCtl) : base(itemsCtl) { }

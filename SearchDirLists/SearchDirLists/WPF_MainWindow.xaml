@@ -258,7 +258,7 @@
                             <RowDefinition Height="3" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <ListView Name="xaml_lvUnique" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0">
+                        <ListView Name="xaml_lvSolitary" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Solitary" DisplayMemberBinding="{Binding Folders}" Width="{Binding WidthFolders}"/>

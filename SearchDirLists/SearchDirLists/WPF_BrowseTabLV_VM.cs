@@ -3,6 +3,7 @@ using System.Windows.Controls;
 
 namespace SearchDirLists
 {
+    // In order of appearance on the form
     class CopyScratchpadLVitemVM : ListViewItemVM
     {
         public String Folder { get { return marr[0]; } set { SetProperty(0, value); } }
@@ -27,6 +28,71 @@ namespace SearchDirLists
         public String WidthPath { get { return SCW; } }
 
         internal CopyScratchpadListViewVM(ItemsControl itemsCtl) : base(itemsCtl) { }
+    }
+
+
+    class IgnoreLVitemVM : ListViewItemVM
+    {
+        public String Folder { get { return marr[0]; } set { SetProperty(0, value); } }
+        public String Level { get { return marr[1]; } set { SetProperty(1, value); } }
+
+        internal new const int NumCols = 2;
+        readonly new static String[] arrPropName = new String[] { "Folder", "Level" };
+
+        IgnoreLVitemVM(IgnoreListViewVM LV)
+            : base(LV, NumCols, arrPropName) { }
+
+        internal IgnoreLVitemVM(IgnoreListViewVM LV, String[] arrStr)
+            : this(LV)
+        {
+            CopyInArray(arrStr);
+        }
+    }
+
+    class IgnoreListViewVM : ListViewVM
+    {
+        public String WidthFolder { get { return SCW; } }
+        public String WidthLevel { get { return SCW; } }
+
+        internal IgnoreListViewVM(ItemsControl itemsCtl) : base(itemsCtl) { }
+    }
+
+
+    // Used for two listviewers
+    class FilesLVitemVM : ListViewItemVM
+    {
+        public String Filename { get { return marr[0]; } set { SetProperty(0, value); } }
+        public String Created { get { return marr[1]; } set { SetProperty(1, value); } }
+        public String Modified { get { return marr[2]; } set { SetProperty(2, value); } }
+        public String Attributes { get { return marr[3]; } set { SetProperty(3, value); } }
+        public String Length { get { return marr[4]; } set { SetProperty(4, value); } }
+        public String Error1 { get { return marr[5]; } set { SetProperty(5, value); } }
+        public String Error2 { get { return marr[6]; } set { SetProperty(6, value); } }
+
+        internal new const int NumCols = 7;
+        readonly new static String[] arrPropName = new String[] { "Filename", "Created", "Modified", "Attributes", "Length", "Error1", "Error2"};
+
+        FilesLVitemVM(FilesListViewVM LV)
+            : base(LV, NumCols, arrPropName) { }
+
+        internal FilesLVitemVM(FilesListViewVM LV, String[] arrStr)
+            : this(LV)
+        {
+            CopyInArray(arrStr);
+        }
+    }
+
+    class FilesListViewVM : ListViewVM
+    {
+        public String WidthFilename { get { return SCW; } }
+        public String WidthCreated { get { return SCW; } }
+        public String WidthModified { get { return SCW; } }
+        public String WidthAttributes { get { return SCW; } }
+        public String WidthLength { get { return SCW; } }
+        public String WidthError1 { get { return SCW; } }
+        public String WidthError2 { get { return SCW; } }
+
+        internal FilesListViewVM(ItemsControl itemsCtl) : base(itemsCtl) { }
     }
 
 
@@ -55,71 +121,6 @@ namespace SearchDirLists
         public String WidthDetail { get { return SCW; } }
 
         internal DetailListViewVM(ItemsControl itemsCtl) : base(itemsCtl) { }
-    }
-
-
-    // Used for two listviewers
-    class FileLVitemVM : ListViewItemVM
-    {
-        public String Filename { get { return marr[0]; } set { SetProperty(0, value); } }
-        public String Created { get { return marr[1]; } set { SetProperty(1, value); } }
-        public String Modified { get { return marr[2]; } set { SetProperty(2, value); } }
-        public String Attributes { get { return marr[3]; } set { SetProperty(3, value); } }
-        public String Length { get { return marr[4]; } set { SetProperty(4, value); } }
-        public String Error1 { get { return marr[5]; } set { SetProperty(5, value); } }
-        public String Error2 { get { return marr[6]; } set { SetProperty(6, value); } }
-
-        internal new const int NumCols = 7;
-        readonly new static String[] arrPropName = new String[] { "Filename", "Created", "Modified", "Attributes", "Length", "Error1", "Error2"};
-
-        FileLVitemVM(FileListViewVM LV)
-            : base(LV, NumCols, arrPropName) { }
-
-        internal FileLVitemVM(FileListViewVM LV, String[] arrStr)
-            : this(LV)
-        {
-            CopyInArray(arrStr);
-        }
-    }
-
-    class FileListViewVM : ListViewVM
-    {
-        public String WidthFilename { get { return SCW; } }
-        public String WidthCreated { get { return SCW; } }
-        public String WidthModified { get { return SCW; } }
-        public String WidthAttributes { get { return SCW; } }
-        public String WidthLength { get { return SCW; } }
-        public String WidthError1 { get { return SCW; } }
-        public String WidthError2 { get { return SCW; } }
-
-        internal FileListViewVM(ItemsControl itemsCtl) : base(itemsCtl) { }
-    }
-
-
-    class IgnoreLVitemVM : ListViewItemVM
-    {
-        public String Folder { get { return marr[0]; } set { SetProperty(0, value); } }
-        public String Level { get { return marr[1]; } set { SetProperty(1, value); } }
-
-        internal new const int NumCols = 2;
-        readonly new static String[] arrPropName = new String[] { "Folder", "Level" };
-
-        IgnoreLVitemVM(IgnoreListViewVM LV)
-            : base(LV, NumCols, arrPropName) { }
-
-        internal IgnoreLVitemVM(IgnoreListViewVM LV, String[] arrStr)
-            : this(LV)
-        {
-            CopyInArray(arrStr);
-        }
-    }
-
-    class IgnoreListViewVM : ListViewVM
-    {
-        public String WidthFolder { get { return SCW; } }
-        public String WidthLevel { get { return SCW; } }
-
-        internal IgnoreListViewVM(ItemsControl itemsCtl) : base(itemsCtl) { }
     }
 
 

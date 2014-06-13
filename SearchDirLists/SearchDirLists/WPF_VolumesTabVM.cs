@@ -110,8 +110,8 @@ namespace SearchDirLists
         bool Selected { get { return m_app.xaml_lvVolumesMain.SelectedItems.Count > 0; } }
         bool HasItems { get { return LV.Count > 0; } }
 
-        readonly GlobalData gd = null;
-        readonly MainWindow m_app = null;
         static readonly Forms.FolderBrowserDialog folderBrowserDialog1 = new Forms.FolderBrowserDialog();
+        readonly MainWindow m_app = null;
+        readonly GlobalData gd = null;
     }
 }

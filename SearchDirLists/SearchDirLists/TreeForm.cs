@@ -343,14 +343,14 @@ namespace SearchDirLists
                 SDLWPF.treeViewMain.Enabled = false;
                 Utilities.Assert(1304.5312, gd.m_listRootNodes.Count == 0);
 
-                UList<LVvolStrings> listLVvolStrings = new UList<LVvolStrings>();
+                UList<LVvolStrings> list_lvVolStrings = new UList<LVvolStrings>();
 
                 foreach (SDL_ListViewItem lvItem in form_lvVolumesMain.Items)
                 {
-                    listLVvolStrings.Add(new LVvolStrings(lvItem));
+                    list_lvVolStrings.Add(new LVvolStrings(lvItem));
                 }
 
-                gd.m_tree = new Tree(listLVvolStrings, gd.m_dictNodes, gd.m_dictDriveInfo,
+                gd.m_tree = new Tree(list_lvVolStrings, gd.m_dictNodes, gd.m_dictDriveInfo,
                     new TreeStatusDelegate(TreeStatusCallback), new Action(TreeDoneCallback));
                 gd.m_tree.DoThreadFactory();
             }

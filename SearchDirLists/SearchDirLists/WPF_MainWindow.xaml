@@ -24,6 +24,7 @@
             </Style>
             <Style TargetType="ListView">
                 <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="ItemsSource" Value="{Binding Items}"/>
             </Style>
             <Style TargetType="GridSplitter">
                 <Setter Property="Width" Value="Auto"/>
@@ -96,7 +97,7 @@
                     <Button Content="Volume group" Name="xaml_btnVolumeGroup" Command="{Binding Icmd_VolumeGroup}"/>
                     <Button Content="Modify file" Name="xaml_btnModifyFile" Command="{Binding Icmd_ModifyFile}"/>
                 </StackPanel>
-                <ListView Grid.Row="4" Name="xaml_lvVolumesMain" ItemsSource="{Binding Items}">
+                <ListView Grid.Row="4" Name="xaml_lvVolumesMain">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Volume name" DisplayMemberBinding="{Binding VolumeName}" Width="{Binding WidthVolumeName}"/>

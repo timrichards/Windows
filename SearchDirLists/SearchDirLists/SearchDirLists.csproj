@@ -112,6 +112,8 @@
     <Compile Include="AboutBox1.Designer.cs">
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </Compile>
+    <Compile Include="WPF_BrowseTabVM.cs" />
+    <Compile Include="WPF_AbstractionsVM.cs" />
     <Compile Include="WPF_VolumesTabVM_Guts.cs" />
     <Compile Include="WPF_app.xaml.cs">
       <DependentUpon>WPF_app.xaml</DependentUpon>

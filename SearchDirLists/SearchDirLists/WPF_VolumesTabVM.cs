@@ -8,48 +8,7 @@ using Forms = System.Windows.Forms;
 
 namespace SearchDirLists
 {
-    // Class members are generally ordered public on down, which mixes constructors and types.
-
-    class ItemsControlVM : ObservableObject
-    {
-        public String S
-        {
-            set
-            {
-                if ((value != null) && (m_list.Contains(value) == false))
-                {
-                    m_list.Add(value);
-                    m_items.Refresh();
-                    RaisePropertyChanged("List");
-                }
-
-                if (value == m_strCurrent) return;
-
-                m_strCurrent = value;
-                m_Action();
-                RaisePropertyChanged("S");
-            }
-
-            get { return m_strCurrent; }
-        }
-    
-        public List<String> List { get { return m_list; } }
-        public override string ToString() { return m_strCurrent; }
-
-        internal ItemsControlVM(ItemsControl itemsCtl, Action action)
-        {
-            itemsCtl.DataContext = this;
-            m_items = itemsCtl.Items;
-            m_Action = action;
-        }
-
-        readonly List<String> m_list = new List<String>();
-        readonly ItemCollection m_items = null;
-        readonly Action m_Action = null;
-        String m_strCurrent = null;
-    }
-
-    class VolumeLVitemVM : ObservableObject
+    class VolumeLVitemVM : ListViewItemVM
     {
         public String VolumeName { get { return marr[0]; } set { SetProperty(0, value); } }
         public String Path { get { return marr[1]; } set { SetProperty(1, value); } }
@@ -58,12 +17,11 @@ namespace SearchDirLists
         public String IncludeStr { get { return marr[4]; } set { SetProperty(4, value); } }
         public String VolumeGroup { get { return marr[5]; } set { SetProperty(5, value); } }
 
+        internal new const int NumCols = 6;
+        readonly new static String[] arrPropName = new String[] { "VolumeName", "Path", "SaveAs", "Status", "IncludeStr", "VolumeGroup" };
+
         VolumeLVitemVM(VolumesListViewVM LV)
-        {
-            Index = LV.Count;
-            LV_RaisePropertyChanged = LV.RaisePropertyChanged;
-            marr = new string[NumCols];
-        }
+            : base(LV, NumCols, arrPropName) {}
 
         internal VolumeLVitemVM(VolumesListViewVM LV, String strVol, String strPath, String strSaveAs, String strStatus, bool bSaveAsExists)
             : this(LV)
@@ -76,43 +34,21 @@ namespace SearchDirLists
             SaveAsExists = bSaveAsExists;
         }
 
-        internal VolumeLVitemVM(VolumesListViewVM LV, String[] arrStr) : this(LV)
+        internal VolumeLVitemVM(VolumesListViewVM LV, String[] arrStr)
+            : this(LV)
         {
-            Utilities.Assert(1310.1001, arrStr.Length <= NumCols);
-            arrStr.CopyTo(marr, 0);
-            for (int i = 0; i < arrStr.Length; ++i) Raise(i);
+            CopyInArray(arrStr);
             SaveAsExists = (Status == Utilities.mSTRusingFile);                 // TODO: check dup drive letter, and if letter is mounted.
         }
 
-        internal String this[int i] { get { return marr[i]; } }
         internal bool Include { get { return (IncludeStr == "Yes"); } set { IncludeStr = (value ? "Yes" : "No"); } }
 
-        internal const int NumCols = 6;
-
-        internal int Index = -1;
         internal bool SaveAsExists = false;                                     // TODO: set back to false when fail Tree
         internal SDL_TreeNode treeNode = null;
-
-        void Raise(int nCol)
-        {
-            String strPropName = arrPropName[nCol];
-
-            RaisePropertyChanged(strPropName);
-            VolumesListViewVM.SCW = 50.ToString(); LV_RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there
-            VolumesListViewVM.SCW = double.NaN.ToString(); LV_RaisePropertyChanged("Width" + strPropName);
-        }
-
-        void SetProperty(int nCol, String s) { if (this[nCol] != s) { marr[nCol] = s; Raise(nCol); } }
-
-        readonly RaisePropertyChangedDelegate LV_RaisePropertyChanged = null;   // frankenhoek
-        readonly String[] arrPropName = new String[] { "VolumeName", "Path", "SaveAs", "Status", "IncludeStr", "VolumeGroup" };
-        String[] marr = null;                                                   // all properties (columns/items) get stored here
     }
 
-    class VolumesListViewVM : ObservableObject
+    class VolumesListViewVM : ListViewVM
     {
-        public ObservableCollection<VolumeLVitemVM> Items { get { return m_items; } }
-
         public String WidthVolumeName { get { return SCW; } }                   // franken all NaN
         public String WidthPath { get { return SCW; } }
         public String WidthSaveAs { get { return SCW; } }
@@ -120,28 +56,11 @@ namespace SearchDirLists
         public String WidthIncludeStr { get { return SCW; } }
         public String WidthVolumeGroup { get { return SCW; } }
 
-        internal static String SCW = double.NaN.ToString();                     // frankenhoek
+        internal VolumesListViewVM(ItemsControl itemsCtl) : base(itemsCtl) {}
 
-        internal VolumesListViewVM(ItemsControl itemsCtl)
-        {
-            (m_itemsCtl = itemsCtl).DataContext = this;
-        }
-
-        internal bool Add(VolumeLVitemVM item)
-        {
-            m_items.Add(item);
-            m_itemsCtl.Items.Refresh();
-            RaisePropertyChanged("Items");
-            return true;
-        }
-
-        internal int Count { get { return m_items.Count; } }
         internal bool ContainsVolumeName(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if (item.VolumeName.ToLower() == s) return true; return false; }
         internal bool ContainsUnsavedPath(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if ((item.Path.ToLower() == s) && (item.SaveAsExists == false)) return true; return false; }
         internal bool ContainsSaveAs(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if (item.SaveAs.ToLower() == s) return true; return false; }
-
-        readonly ObservableCollection<VolumeLVitemVM> m_items = new ObservableCollection<VolumeLVitemVM>();
-        readonly ItemsControl m_itemsCtl = null;
     }
 
     partial class VolumesTabVM : ObservableObject

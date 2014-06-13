@@ -57,7 +57,9 @@ namespace SearchDirLists
         {
             if (new Key[] {Key.Enter, Key.Return}.Contains(e.Key))
             {
+#if (WPF)
                 xaml_btnAddVolume.Command.Execute(null);
+#endif
             }
         }
     }

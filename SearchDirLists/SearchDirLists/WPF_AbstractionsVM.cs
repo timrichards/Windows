@@ -88,14 +88,14 @@ namespace SearchDirLists
 
     class ListViewVM : ObservableObject
     {
-        public ObservableCollection<VolumeLVitemVM> Items { get { return m_items; } }
+        public ObservableCollection<ListViewItemVM> Items { get { return m_items; } }
 
         internal ListViewVM(ListView lv)
         {
             (m_lv = lv).DataContext = this;
         }
 
-        internal bool Add(VolumeLVitemVM item)
+        internal bool Add(ListViewItemVM item)
         {
             m_items.Add(item);
             m_lv.Items.Refresh();
@@ -108,16 +108,20 @@ namespace SearchDirLists
         internal int Count { get { return m_items.Count; } }
         internal bool HasItems { get { return m_items.Count > 0; } }
         internal bool SelectedOne { get { return m_lv.SelectedItems.Count == 1; } }
-        internal bool Selected { get { return m_lv.SelectedItems.Count > 0; } }
+        internal bool SelectedAny { get { return m_lv.SelectedItems.Count > 0; } }
 
-        readonly protected ObservableCollection<VolumeLVitemVM> m_items = new ObservableCollection<VolumeLVitemVM>();
-        readonly ListView m_lv = null;
+        readonly protected ObservableCollection<ListViewItemVM> m_items = new ObservableCollection<ListViewItemVM>();
+        readonly protected ListView m_lv = null;
     }
 }
 
 namespace Template      // prevents smart tag rename command from renaming the templates after you've copied them and rename them
 {
     using SearchDirLists;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    // ListQ and SeleQ are query-only: a reminder that modifying these lists has zero effect
 
     class Template_LVitemVM : ListViewItemVM
     {
@@ -141,5 +145,7 @@ namespace Template      // prevents smart tag rename command from renaming the t
         public String WidthColumnNameHere { get { return SCW; } }
 
         internal Template_ListViewVM(ListView lv) : base(lv) { }
+        internal List<Template_LVitemVM> ListQ { get { return m_items.Cast<Template_LVitemVM>().ToList(); } }
+        internal List<Template_LVitemVM> SeleQ { get { return m_lv.SelectedItems.Cast<Template_LVitemVM>().ToList(); } }
     }
 }

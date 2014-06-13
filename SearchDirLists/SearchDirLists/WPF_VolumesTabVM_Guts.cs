@@ -189,21 +189,19 @@ namespace SearchDirLists
         {
             gd.InterruptTreeTimerWithAction(new BoolAction(() =>
             {
-                VolumeLVitemVM[] lvSelect = m_app.xaml_lvVolumesMain.SelectedItems.Cast<VolumeLVitemVM>().ToArray();
-
-                if (lvSelect.Length <= 0)
+                if (LV.SelectedAny == false)
                 {
                     return false;
                 }
 
-                if (lvSelect.Length > 1)
+                if (LV.SeleQ.Count > 1)
                 {
                     Utilities.Assert(1308.9311, false, bTraceOnly: true);    // guaranteed by selection logic
                     Utilities.MBox("Only one file can be modified at a time.", "Modify file");
                     return false;
                 }
 
-                VolumeLVitemVM lvItem = lvSelect[0];
+                VolumeLVitemVM lvItem = LV.SeleQ[0];
 
                 String strVolumeName_orig = lvItem.VolumeName;
                 String strVolumeName = null;
@@ -374,9 +372,7 @@ namespace SearchDirLists
 
         void RemoveVolume()
         {
-            VolumeLVitemVM[] lvSelect = m_app.xaml_lvVolumesMain.SelectedItems.Cast<VolumeLVitemVM>().ToArray();
-
-            if (lvSelect.Length <= 0)
+            if (LV.SelectedAny == false)
             {
                 return;
             }
@@ -390,7 +386,7 @@ namespace SearchDirLists
                 uint nNumFoldersKeep = 0;
                 uint nNumFoldersRemove = 0;
 
-                foreach (VolumeLVitemVM lvItem in LV.Items)
+                foreach (VolumeLVitemVM lvItem in LV.ListQ)
                 {
                     if (lvItem.treeNode == null)
                     {
@@ -400,7 +396,7 @@ namespace SearchDirLists
 
                     RootNodeDatum rootNodeDatum = (RootNodeDatum)lvItem.treeNode.Tag;
 
-                    if (lvSelect.Contains(lvItem))
+                    if (LV.SeleQ.Contains(lvItem))
                     {
                         nNumFoldersRemove += rootNodeDatum.nSubDirs;
                     }
@@ -421,7 +417,7 @@ namespace SearchDirLists
             {
                 List<VolumeLVitemVM> listLVvolItems = new List<VolumeLVitemVM>();
 
-                foreach (VolumeLVitemVM lvItem in lvSelect)
+                foreach (VolumeLVitemVM lvItem in LV.SeleQ)
                 {
                     if (lvItem.treeNode == null)
                     {
@@ -449,7 +445,7 @@ namespace SearchDirLists
                 .Start();
             }
 
-            foreach (VolumeLVitemVM lvItem in lvSelect)
+            foreach (VolumeLVitemVM lvItem in LV.SeleQ)
             {
                 LV.Items.Remove(lvItem);
             }
@@ -483,7 +479,7 @@ namespace SearchDirLists
 
             gd.timer_DoTree.Stop();
 
-            if ((gd.DoSaveDirListings(LV.Items, SaveDirListingsStatusCallback, SaveDirListingsDoneCallback)
+            if ((gd.DoSaveDirListings(LV.ListQ, SaveDirListingsStatusCallback, SaveDirListingsDoneCallback)
                 == false) && bRestartTreeTimer)   // cancelled
             {
                 gd.RestartTreeTimer();
@@ -554,7 +550,7 @@ namespace SearchDirLists
         {
             if (LV.HasItems)
             {
-                new SDL_VolumeFile().WriteList(LV.Items);
+                new SDL_VolumeFile().WriteList(LV.ListQ);
             }
             else
             {
@@ -592,7 +588,7 @@ namespace SearchDirLists
 
                 SortedDictionary<String, object> dictVolGroups = new SortedDictionary<String, object>();
 
-                foreach (VolumeLVitemVM lvItem in LV.Items)
+                foreach (VolumeLVitemVM lvItem in LV.ListQ)
                 {
                     if ((lvItem.VolumeGroup != null) && (dictVolGroups.ContainsKey(lvItem.VolumeGroup) == false))
                     {

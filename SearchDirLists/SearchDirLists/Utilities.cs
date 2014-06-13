@@ -24,7 +24,6 @@ using System.Security;
 using System.Windows.Threading;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace SearchDirLists
@@ -662,7 +661,7 @@ class Blinky
 
         protected virtual String WriteListItem(int nIndex, String str) { return str; }
 
-        internal bool WriteList(ObservableCollection<VolumeLVitemVM> lvItems)
+        internal bool WriteList(List<VolumeLVitemVM> lvItems)
 #if (WPF == false)
         { return false; }
         internal bool WriteList(Forms.ListView.ListViewItemCollection lvItems)

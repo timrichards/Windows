@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Drawing = System.Drawing;
 
 namespace SearchDirLists
 {
@@ -29,7 +30,29 @@ namespace SearchDirLists
 
         #region Ignore List
         void Ignore_Loose() { }
-        void Ignore_Add() { }
+
+        void Ignore_Add()
+        {
+            //SDL_TreeNode treeNode = (SDL_TreeNode)SDLWPF.treeViewMain.SelectedNode;
+
+            //if (treeNode == null)
+            //{
+            //    gd.m_blinky.Go(m_app.xaml_btnIgnoreAdd, clr: Drawing.Color.Red, Once: true);
+            //}
+            //else if (LV_Ignore.Contains(treeNode.Text))
+            //{
+            //    gd.m_blinky.SelectLVitem(lvItem: LV_Ignore[treeNode.Text]);
+            //}
+            //else
+            //{
+            //    ClonesLVitemVM lvItem = new ClonesLVitemVM(treeNode.Text, (treeNode.Level + 1).ToString());
+
+            //    LV_Ignore.Add(lvItem);
+            //    gd.m_bKillTree &= gd.timer_DoTree.IsEnabled;
+            //    gd.RestartTreeTimer();
+            //}
+        }
+
         void Ignore_Delete() { }
         void Ignore_Load() { }
         void Ignore_Save() { }

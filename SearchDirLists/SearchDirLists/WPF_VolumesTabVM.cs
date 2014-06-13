@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Input;
 using System.Windows.Controls;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 using Forms = System.Windows.Forms;
 
@@ -57,6 +58,8 @@ namespace SearchDirLists
         public String WidthVolumeGroup { get { return SCW; } }
 
         internal VolumesListViewVM(ListView lv) : base(lv) {}
+        internal List<VolumeLVitemVM> ListQ { get { return m_items.Cast<VolumeLVitemVM>().ToList(); } }
+        internal List<VolumeLVitemVM> SeleQ { get { return m_lv.SelectedItems.Cast<VolumeLVitemVM>().ToList(); } }
 
         internal bool ContainsVolumeName(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if (item.VolumeName.ToLower() == s) return true; return false; }
         internal bool ContainsUnsavedPath(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if ((item.Path.ToLower() == s) && (item.SaveAsExists == false)) return true; return false; }
@@ -93,9 +96,9 @@ namespace SearchDirLists
                 new RelayCommand(param => LoadVolumeList_Click()),
                 new RelayCommand(param => SaveVolumeList(), param => LV.HasItems),
                 new RelayCommand(param => AddVolume(), param => (Utilities.NotNull(m_app.xaml_cbSaveAs.Text).Trim().Length > 0)),
-                new RelayCommand(param => RemoveVolume(), param => LV.Selected),
-                new RelayCommand(param => ToggleInclude(), param => LV.Selected),
-                new RelayCommand(param => SetVolumeGroup(), param => LV.Selected),
+                new RelayCommand(param => RemoveVolume(), param => LV.SelectedAny),
+                new RelayCommand(param => ToggleInclude(), param => LV.SelectedAny),
+                new RelayCommand(param => SetVolumeGroup(), param => LV.SelectedAny),
                 new RelayCommand(param => ModifyFile(), param => LV.SelectedOne),
                 new RelayCommand(param => SaveDirLists(), param => LV.HasItems)
             };

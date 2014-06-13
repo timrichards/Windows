@@ -6,7 +6,6 @@ using System.IO;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Collections.Concurrent;
-using System.Collections.ObjectModel;
 
 namespace SearchDirLists
 {
@@ -110,11 +109,11 @@ namespace SearchDirLists
 
             lock (LV)
             {
-                LV.Items[nIndex].Status = strText;
+                LV.ListQ[nIndex].Status = strText;
 
                 if (bDone && (strText == Utilities.mSTRsaved))
                 {
-                    LV.Items[nIndex].SaveAsExists = true;    // indexing by path, only for unsaved volumes
+                    LV.ListQ[nIndex].SaveAsExists = true;    // indexing by path, only for unsaved volumes
                 }
             }
         }
@@ -481,7 +480,7 @@ namespace SearchDirLists
             m_saveDirListings = null;
         }
 
-        internal bool DoSaveDirListings(ObservableCollection<VolumeLVitemVM> lvItems, SaveDirListingsStatusDelegate statusCallback, Action doneCallback)
+        internal bool DoSaveDirListings(List<VolumeLVitemVM> lvItems, SaveDirListingsStatusDelegate statusCallback, Action doneCallback)
 #if (WPF == false)
         { return false; }
         internal bool DoSaveDirListings(ListView.ListViewItemCollection lvItems, SaveDirListingsStatusDelegate statusCallback, Action doneCallback)

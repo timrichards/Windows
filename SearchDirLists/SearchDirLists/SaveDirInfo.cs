@@ -109,11 +109,11 @@ namespace SearchDirLists
 
             lock (LV)
             {
-                LV.ListQ[nIndex].Status = strText;
+                LV.ItemsCast.ElementAt(nIndex).Status = strText;
 
                 if (bDone && (strText == Utilities.mSTRsaved))
                 {
-                    LV.ListQ[nIndex].SaveAsExists = true;    // indexing by path, only for unsaved volumes
+                    LV.ItemsCast.ElementAt(nIndex).SaveAsExists = true;    // indexing by path, only for unsaved volumes
                 }
             }
         }
@@ -480,7 +480,7 @@ namespace SearchDirLists
             m_saveDirListings = null;
         }
 
-        internal bool DoSaveDirListings(List<VolumeLVitemVM> lvItems, SaveDirListingsStatusDelegate statusCallback, Action doneCallback)
+        internal bool DoSaveDirListings(IEnumerable<VolumeLVitemVM> lvItems, SaveDirListingsStatusDelegate statusCallback, Action doneCallback)
 #if (WPF == false)
         { return false; }
         internal bool DoSaveDirListings(ListView.ListViewItemCollection lvItems, SaveDirListingsStatusDelegate statusCallback, Action doneCallback)

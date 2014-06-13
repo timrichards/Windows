@@ -661,7 +661,7 @@ class Blinky
 
         protected virtual String WriteListItem(int nIndex, String str) { return str; }
 
-        internal bool WriteList(List<VolumeLVitemVM> lvItems)
+        internal bool WriteList(IEnumerable<VolumeLVitemVM> lvItems)
 #if (WPF == false)
         { return false; }
         internal bool WriteList(Forms.ListView.ListViewItemCollection lvItems)

@@ -58,8 +58,8 @@ namespace SearchDirLists
         public String WidthVolumeGroup { get { return SCW; } }
 
         internal VolumesListViewVM(ListView lv) : base(lv) {}
-        internal List<VolumeLVitemVM> ListQ { get { return m_items.Cast<VolumeLVitemVM>().ToList(); } }
-        internal List<VolumeLVitemVM> SeleQ { get { return m_lv.SelectedItems.Cast<VolumeLVitemVM>().ToList(); } }
+        internal IEnumerable<VolumeLVitemVM> ItemsCast { get { return m_items.Cast<VolumeLVitemVM>(); } }
+        internal IEnumerable<VolumeLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<VolumeLVitemVM>(); } }
 
         internal bool ContainsVolumeName(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if (item.VolumeName.ToLower() == s) return true; return false; }
         internal bool ContainsUnsavedPath(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if ((item.Path.ToLower() == s) && (item.SaveAsExists == false)) return true; return false; }

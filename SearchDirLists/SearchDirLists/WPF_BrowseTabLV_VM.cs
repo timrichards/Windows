@@ -30,8 +30,8 @@ namespace SearchDirLists
         public String WidthPath { get { return SCW; } }
 
         internal CopyScratchpadListViewVM(ListView lv) : base(lv) { }
-        internal List<CopyScratchpadLVitemVM> ListQ { get { return m_items.Cast<CopyScratchpadLVitemVM>().ToList(); } }
-        internal List<CopyScratchpadLVitemVM> SeleQ { get { return m_lv.SelectedItems.Cast<CopyScratchpadLVitemVM>().ToList(); } }
+        internal IEnumerable<CopyScratchpadLVitemVM> ItemsCast { get { return m_items.Cast<CopyScratchpadLVitemVM>(); } }
+        internal IEnumerable<CopyScratchpadLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<CopyScratchpadLVitemVM>(); } }
     }
 
 
@@ -59,8 +59,8 @@ namespace SearchDirLists
         public String WidthLevel { get { return SCW; } }
 
         internal IgnoreListViewVM(ListView lv) : base(lv) { }
-        internal List<IgnoreLVitemVM> ListQ { get { return m_items.Cast<IgnoreLVitemVM>().ToList(); } }
-        internal List<IgnoreLVitemVM> SeleQ { get { return m_lv.SelectedItems.Cast<IgnoreLVitemVM>().ToList(); } }
+        internal IEnumerable<IgnoreLVitemVM> ItemsCast { get { return m_items.Cast<IgnoreLVitemVM>(); } }
+        internal IEnumerable<IgnoreLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<IgnoreLVitemVM>(); } }
     }
 
 
@@ -99,8 +99,8 @@ namespace SearchDirLists
         public String WidthError2 { get { return SCW; } }
 
         internal FilesListViewVM(ListView lv) : base(lv) { }
-        internal List<FilesLVitemVM> ListQ { get { return m_items.Cast<FilesLVitemVM>().ToList(); } }
-        internal List<FilesLVitemVM> SeleQ { get { return m_lv.SelectedItems.Cast<FilesLVitemVM>().ToList(); } }
+        internal IEnumerable<FilesLVitemVM> ItemsCast { get { return m_items.Cast<FilesLVitemVM>(); } }
+        internal IEnumerable<FilesLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<FilesLVitemVM>(); } }
     }
 
 
@@ -129,8 +129,8 @@ namespace SearchDirLists
         public String WidthDetail { get { return SCW; } }
 
         internal DetailListViewVM(ListView lv) : base(lv) { }
-        internal List<DetailLVitemVM> ListQ { get { return m_items.Cast<DetailLVitemVM>().ToList(); } }
-        internal List<DetailLVitemVM> SeleQ { get { return m_lv.SelectedItems.Cast<DetailLVitemVM>().ToList(); } }
+        internal IEnumerable<DetailLVitemVM> ItemsCast { get { return m_items.Cast<DetailLVitemVM>(); } }
+        internal IEnumerable<DetailLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<DetailLVitemVM>(); } }
     }
 
 
@@ -156,8 +156,8 @@ namespace SearchDirLists
         public String WidthFolders { get { return SCW; } }
 
         internal SolitaryListViewVM(ListView lv) : base(lv) { }
-        internal List<SolitaryLVitemVM> ListQ { get { return m_items.Cast<SolitaryLVitemVM>().ToList(); } }
-        internal List<SolitaryLVitemVM> SeleQ { get { return m_lv.SelectedItems.Cast<SolitaryLVitemVM>().ToList(); } }
+        internal IEnumerable<SolitaryLVitemVM> ItemsCast { get { return m_items.Cast<SolitaryLVitemVM>(); } }
+        internal IEnumerable<SolitaryLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<SolitaryLVitemVM>(); } }
     }
 
 
@@ -186,7 +186,7 @@ namespace SearchDirLists
         public String WidthOccurrences { get { return SCW; } }
 
         internal ClonesListViewVM(ListView lv) : base(lv) { }
-        internal List<ClonesLVitemVM> ListQ { get { return m_items.Cast<ClonesLVitemVM>().ToList(); } }
-        internal List<ClonesLVitemVM> SeleQ { get { return m_lv.SelectedItems.Cast<ClonesLVitemVM>().ToList(); } }
+        internal IEnumerable<ClonesLVitemVM> ItemsCast { get { return m_items.Cast<ClonesLVitemVM>(); } }
+        internal IEnumerable<ClonesLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<ClonesLVitemVM>(); } }
     }
 }

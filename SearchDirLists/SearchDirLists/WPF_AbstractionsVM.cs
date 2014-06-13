@@ -121,8 +121,6 @@ namespace Template      // prevents smart tag rename command from renaming the t
     using System.Collections.Generic;
     using System.Linq;
 
-    // ListQ and SeleQ are query-only: a reminder that modifying these lists has zero effect
-
     class Template_LVitemVM : ListViewItemVM
     {
         public String ColumnNameHere { get { return marr[0]; } set { SetProperty(0, value); } }
@@ -145,7 +143,7 @@ namespace Template      // prevents smart tag rename command from renaming the t
         public String WidthColumnNameHere { get { return SCW; } }
 
         internal Template_ListViewVM(ListView lv) : base(lv) { }
-        internal List<Template_LVitemVM> ListQ { get { return m_items.Cast<Template_LVitemVM>().ToList(); } }
-        internal List<Template_LVitemVM> SeleQ { get { return m_lv.SelectedItems.Cast<Template_LVitemVM>().ToList(); } }
+        internal IEnumerable<Template_LVitemVM> ItemsCast { get { return m_items.Cast<Template_LVitemVM>(); } }
+        internal IEnumerable<Template_LVitemVM> Selected { get { return m_lv.SelectedItems.Cast<Template_LVitemVM>(); } }
     }
 }

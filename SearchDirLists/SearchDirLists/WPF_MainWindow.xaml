@@ -18,7 +18,9 @@
             <Style TargetType="CheckBox" BasedOn="{StaticResource ControlStyle}"/>
             <Style TargetType="ComboBox" BasedOn="{StaticResource ControlStyle}">
                 <Setter Property="IsEditable" Value="True" />
-            </Style>
+                <Setter Property="ItemsSource" Value="{Binding List}" />
+                <Setter Property="SelectedValue" Value="{Binding S}" />
+            </Style> 
             <Style TargetType="GridViewColumnHeader">
                 <Setter Property="Width" Value="Auto"/>
             </Style>
@@ -73,16 +75,16 @@
                 </Grid.RowDefinitions>
                 <ItemsControl Style="{StaticResource ComboRows}">
                     <Label Content="Volume nickname" />
-                    <ComboBox Name="xaml_cbVolumeName" Grid.Column="1" ItemsSource="{Binding List}" SelectedValue="{Binding S}"/>
+                    <ComboBox Name="xaml_cbVolumeName" Grid.Column="1"/>
                 </ItemsControl>
                 <ItemsControl Grid.Row="1" Style="{StaticResource ComboRows}">
                     <Label Content="Path" />
-                    <ComboBox Name="xaml_cbPath" Grid.Column="1" ItemsSource="{Binding List}" SelectedValue="{Binding S}"/>
+                    <ComboBox Name="xaml_cbPath" Grid.Column="1"/>
                     <Button Content="..." Name="xaml_btnPath" Grid.Column="2" Command="{Binding Icmd_SetPath}"/>
                 </ItemsControl>
                 <ItemsControl Grid.Row="2" Style="{StaticResource ComboRows}">
                     <Label Content="Directory listing file" />
-                    <ComboBox Name="xaml_cbSaveAs" HorizontalAlignment="Stretch" Grid.Column="1" ItemsSource="{Binding List}" SelectedValue="{Binding S}" KeyDown="xaml_cbSaveAs_KeyDown"/>
+                    <ComboBox Name="xaml_cbSaveAs" HorizontalAlignment="Stretch" Grid.Column="1" KeyDown="xaml_cbSaveAs_KeyDown"/>
                     <Button Content="..." Name="xaml_btnSaveAs" Grid.Column="2" Command="{Binding Icmd_SaveAs}"/>
                 </ItemsControl>
                 <StackPanel Grid.Row="3" Orientation="Horizontal">

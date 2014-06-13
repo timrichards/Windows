@@ -66,27 +66,27 @@ namespace SearchDirLists
     partial class VolumesTabVM : ObservableObject
     {
         // In order of appearance on the form
-        public ICommand Icmd_SetPath { get { return mIcommands[0]; } }
-        public ICommand Icmd_SaveAs { get { return mIcommands[1]; } }
-        public ICommand Icmd_LoadVolumeList { get { return mIcommands[2]; } }
-        public ICommand Icmd_SaveVolumeList { get { return mIcommands[3]; } }
-        public ICommand Icmd_AddVolume { get { return mIcommands[4]; } }
-        public ICommand Icmd_RemoveVolume { get { return mIcommands[5]; } }
-        public ICommand Icmd_ToggleInclude { get { return mIcommands[6]; } }
-        public ICommand Icmd_VolumeGroup { get { return mIcommands[7]; } }
-        public ICommand Icmd_ModifyFile { get { return mIcommands[8]; } }
-        public ICommand Icmd_SaveDirLists { get { return mIcommands[9]; } }
+        public ICommand Icmd_SetPath { get { return marrIcmd[0]; } }
+        public ICommand Icmd_SaveAs { get { return marrIcmd[1]; } }
+        public ICommand Icmd_LoadVolumeList { get { return marrIcmd[2]; } }
+        public ICommand Icmd_SaveVolumeList { get { return marrIcmd[3]; } }
+        public ICommand Icmd_AddVolume { get { return marrIcmd[4]; } }
+        public ICommand Icmd_RemoveVolume { get { return marrIcmd[5]; } }
+        public ICommand Icmd_ToggleInclude { get { return marrIcmd[6]; } }
+        public ICommand Icmd_VolumeGroup { get { return marrIcmd[7]; } }
+        public ICommand Icmd_ModifyFile { get { return marrIcmd[8]; } }
+        public ICommand Icmd_SaveDirLists { get { return marrIcmd[9]; } }
 
         internal VolumesTabVM(MainWindow app)
         {
             m_app = app;
             m_app.xaml_tabControlMain.DataContext = this;
             gd = GlobalData.GetInstance();
-            CBVolumeName = new ItemsControlVM(m_app.xaml_cbVolumeName, new Action(() => { gd.m_strVolumeName = CBVolumeName.S; }));
-            CBPath = new ItemsControlVM(m_app.xaml_cbPath, new Action(() => { gd.m_strPath = CBPath.S; }));
-            CBSaveAs = new ItemsControlVM(m_app.xaml_cbSaveAs, new Action(() => { gd.m_strSaveAs = CBSaveAs.S; }));
+            CB_VolumeName = new ItemsControlVM(m_app.xaml_cbVolumeName, new Action(() => { gd.m_strVolumeName = CB_VolumeName.S; }));
+            CB_Path = new ItemsControlVM(m_app.xaml_cbPath, new Action(() => { gd.m_strPath = CB_Path.S; }));
+            CB_SaveAs = new ItemsControlVM(m_app.xaml_cbSaveAs, new Action(() => { gd.m_strSaveAs = CB_SaveAs.S; }));
             LV = new VolumesListViewVM(m_app.xaml_lvVolumesMain);
-            mIcommands = new ICommand[]
+            marrIcmd = new ICommand[]
             {
                 new RelayCommand(param => SetPath()),
                 new RelayCommand(param => SaveAs()),
@@ -101,11 +101,11 @@ namespace SearchDirLists
             };
         }
 
-        readonly ItemsControlVM CBVolumeName = null;
-        readonly ItemsControlVM CBPath = null;
-        readonly ItemsControlVM CBSaveAs = null;
+        readonly ItemsControlVM CB_VolumeName = null;
+        readonly ItemsControlVM CB_Path = null;
+        readonly ItemsControlVM CB_SaveAs = null;
         readonly VolumesListViewVM LV = null;
-        readonly ICommand[] mIcommands = null;
+        readonly ICommand[] marrIcmd = null;
 
         static readonly Forms.FolderBrowserDialog folderBrowserDialog1 = new Forms.FolderBrowserDialog();
         readonly MainWindow m_app = null;

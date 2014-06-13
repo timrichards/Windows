@@ -2274,6 +2274,7 @@ namespace SearchDirLists
 
         internal static GlobalData GetInstance()
         {
+            Utilities.Assert(1308.9329, static_instance != null);
             return static_instance;
         }
 

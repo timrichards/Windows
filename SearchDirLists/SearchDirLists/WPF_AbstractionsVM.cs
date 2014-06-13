@@ -92,13 +92,13 @@ namespace SearchDirLists
 
         internal ListViewVM(ListView lv)
         {
-            (m_LV = lv).DataContext = this;
+            (m_lv = lv).DataContext = this;
         }
 
         internal bool Add(VolumeLVitemVM item)
         {
             m_items.Add(item);
-            m_LV.Items.Refresh();
+            m_lv.Items.Refresh();
             RaisePropertyChanged("Items");
             return true;
         }
@@ -107,11 +107,11 @@ namespace SearchDirLists
 
         internal int Count { get { return m_items.Count; } }
         internal bool HasItems { get { return m_items.Count > 0; } }
-        internal bool SelectedOne { get { return m_LV.SelectedItems.Count == 1; } }
-        internal bool Selected { get { return m_LV.SelectedItems.Count > 0; } }
+        internal bool SelectedOne { get { return m_lv.SelectedItems.Count == 1; } }
+        internal bool Selected { get { return m_lv.SelectedItems.Count > 0; } }
 
         readonly protected ObservableCollection<VolumeLVitemVM> m_items = new ObservableCollection<VolumeLVitemVM>();
-        readonly ListView m_LV = null;
+        readonly ListView m_lv = null;
     }
 }
 

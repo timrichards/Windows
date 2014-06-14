@@ -33,28 +33,40 @@ namespace SearchDirLists
 
         void Ignore_Add()
         {
-            //SDL_TreeNode treeNode = (SDL_TreeNode)SDLWPF.treeViewMain.SelectedNode;
+            SDL_TreeNode treeNode = (SDL_TreeNode)SDLWPF.treeViewMain.SelectedNode;
 
-            //if (treeNode == null)
-            //{
-            //    gd.m_blinky.Go(m_app.xaml_btnIgnoreAdd, clr: Drawing.Color.Red, Once: true);
-            //}
-            //else if (LV_Ignore.Contains(treeNode.Text))
-            //{
-            //    gd.m_blinky.SelectLVitem(lvItem: LV_Ignore[treeNode.Text]);
-            //}
-            //else
-            //{
-            //    ClonesLVitemVM lvItem = new ClonesLVitemVM(treeNode.Text, (treeNode.Level + 1).ToString());
-
-            //    LV_Ignore.Add(lvItem);
-            //    gd.m_bKillTree &= gd.timer_DoTree.IsEnabled;
-            //    gd.RestartTreeTimer();
-            //}
+            if (treeNode == null)
+            {
+                gd.m_blinky.Go(m_app.xaml_btnIgnoreAdd, clr: Drawing.Color.Red, Once: true);
+            }
+            else if (LV_Ignore.Contains(treeNode.Text))
+            {
+        //        gd.m_blinky.SelectLVitem(lvItem: LV_Ignore[treeNode.Text]);
+            }
+            else
+            {
+                new IgnoreLVitemVM(LV_Ignore, new String[] { treeNode.Text, (treeNode.Level + 1).ToString() });
+                gd.m_bKillTree &= gd.timer_DoTree.IsEnabled;
+                gd.RestartTreeTimer();
+            }
         }
 
         void Ignore_Delete() { }
-        void Ignore_Load() { }
+
+        void Ignore_Load()
+        {
+            if (new SDL_IgnoreFile().ReadList(LV_Ignore) == false)
+            {
+                return;
+            }
+
+            if (LV_Ignore.HasItems)
+            {
+                gd.m_bKillTree &= gd.timer_DoTree.IsEnabled;
+                gd.RestartTreeTimer();
+            }
+        }
+
         void Ignore_Save() { }
         void Ignore_Clear() { }
         #endregion Ignore List

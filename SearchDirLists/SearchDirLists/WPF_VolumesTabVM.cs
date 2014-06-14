@@ -18,29 +18,21 @@ namespace SearchDirLists
         public String IncludeStr { get { return marr[4]; } set { SetProperty(4, value); } }
         public String VolumeGroup { get { return marr[5]; } set { SetProperty(5, value); } }
 
-        internal new const int NumCols = 6;
-        readonly new static String[] arrPropName = new String[] { "VolumeName", "Path", "SaveAs", "Status", "IncludeStr", "VolumeGroup" };
-
-        VolumeLVitemVM(VolumesListViewVM LV)
-            : base(LV, NumCols, arrPropName) {}
-
-        internal VolumeLVitemVM(VolumesListViewVM LV, String strVol, String strPath, String strSaveAs, String strStatus, bool bSaveAsExists)
-            : this(LV)
-        {
-            VolumeName = strVol;
-            Path = strPath;
-            SaveAs = strSaveAs;
-            Status = strStatus;
-            IncludeStr = "Yes";
-            SaveAsExists = bSaveAsExists;
-        }
+        readonly static String[] marrPropName = new String[] { "VolumeName", "Path", "SaveAs", "Status", "IncludeStr", "VolumeGroup" };
 
         internal VolumeLVitemVM(VolumesListViewVM LV, String[] arrStr)
-            : this(LV)
+            : base(LV)
         {
+            mPropChanged_LV = LV.RaisePropertyChanged;
             CopyInArray(arrStr);
             SaveAsExists = (Status == Utilities.mSTRusingFile);                 // TODO: check dup drive letter, and if letter is mounted.
         }
+
+        internal const int NumCols_ = 6;
+        internal override int NumCols { get { return NumCols_; } }
+        protected override String[] PropertyNames { get { return marrPropName; } }
+        protected override RaisePropertyChangedDelegate LV_RaisePropertyChanged { get { return mPropChanged_LV; } } RaisePropertyChangedDelegate mPropChanged_LV = null;
+        protected override int SearchCol { get { return 0; } }
 
         internal bool Include { get { return (IncludeStr == "Yes"); } set { IncludeStr = (value ? "Yes" : "No"); } }
 
@@ -58,6 +50,9 @@ namespace SearchDirLists
         public String WidthVolumeGroup { get { return SCW; } }
 
         internal VolumesListViewVM(ListView lv) : base(lv) {}
+        internal override void NewItem(String[] arrStr) { Add(new VolumeLVitemVM(this, arrStr)); }
+        internal override int NumCols { get { return VolumeLVitemVM.NumCols_; } }
+
         internal IEnumerable<VolumeLVitemVM> ItemsCast { get { return m_items.Cast<VolumeLVitemVM>(); } }
         internal IEnumerable<VolumeLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<VolumeLVitemVM>(); } }
 

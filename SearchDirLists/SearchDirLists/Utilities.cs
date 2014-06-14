@@ -606,12 +606,12 @@ class Blinky
         }
 
         protected virtual void ReadListItem(ListView lv, String[] strArray) { lv.Items.Add(new SDL_ListViewItem(strArray)); }
-        protected virtual void ReadListItem(VolumesListViewVM lv, String[] strArray) { lv.Items.Add(new VolumeLVitemVM(lv, strArray)); }
+        protected virtual void ReadListItem(ListViewVM lv, String[] strArray) { lv.NewItem(strArray); }
 
-        internal bool ReadList(VolumesListViewVM lv)
+        internal bool ReadList(ListViewVM lv)
 #if (WPF)
         {
-            int nCols = VolumeLVitemVM.NumCols;
+            int nCols = lv.NumCols;
 #else
         { return false; }
         internal bool ReadList(Forms.ListView lv_in)
@@ -661,7 +661,7 @@ class Blinky
 
         protected virtual String WriteListItem(int nIndex, String str) { return str; }
 
-        internal bool WriteList(IEnumerable<VolumeLVitemVM> lvItems)
+        internal bool WriteList(IEnumerable<ListViewItemVM> lvItems)
 #if (WPF == false)
         { return false; }
         internal bool WriteList(Forms.ListView.ListViewItemCollection lvItems)
@@ -683,11 +683,11 @@ class Blinky
             {
                 sw.WriteLine(Header);
 #if (WPF)
-                foreach (VolumeLVitemVM lvItem in lvItems)
+                foreach (ListViewItemVM lvItem in lvItems)
                 {
                     sw.Write(WriteListItem(0, lvItem[0]));
 
-                    for (int nIx = 1; nIx < VolumeLVitemVM.NumCols; ++nIx)
+                    for (int nIx = 1; nIx < lvItem.NumCols; ++nIx)
                     {
                         sw.Write('\t' + WriteListItem(nIx, lvItem[nIx]));
 #else
@@ -716,7 +716,7 @@ class Blinky
     {
         internal SDL_VolumeFile(String strFile = null) : base(mSTRvolListHeader, mSTRfileExt_Volume, "volume") { m_strFileNotDialog = strFile; }
 #if (WPF)
-        protected override void ReadListItem(VolumesListViewVM lv, String[] strArray)
+        protected override void ReadListItem(ListViewVM lv, String[] strArray)
 #else
         protected override void ReadListItem(ListView lv, String[] strArray)
 #endif
@@ -747,7 +747,7 @@ class Blinky
 
             strArray[1] = strArray[1].TrimEnd(Path.DirectorySeparatorChar);
 #if (WPF)
-            lv.Items.Add(new VolumeLVitemVM(lv, strArray));
+            lv.NewItem(strArray);
 #else
             lv.Items.Add(new SDL_ListViewItem(strArray));
 #endif

@@ -140,7 +140,7 @@ namespace SearchDirLists
                     }
                 }
 
-                LV.Add(new VolumeLVitemVM(LV, CB_VolumeName.S, CB_Path.S, CB_SaveAs.S, strStatus, bSaveAsExists));
+                LV.NewItem(new String[] { CB_VolumeName.S, CB_Path.S, CB_SaveAs.S, strStatus, "Yes" });
                 return bSaveAsExists;
             }));
         }

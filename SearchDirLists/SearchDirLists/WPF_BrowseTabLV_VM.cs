@@ -11,17 +11,20 @@ namespace SearchDirLists
         public String Folders { get { return marr[0]; } set { SetProperty(0, value); } }
         public String Path { get { return marr[1]; } set { SetProperty(1, value); } }
 
-        internal new const int NumCols = 2;
-        readonly new static String[] arrPropName = new String[] { "Folders", "Path" };
-
-        CopyScratchpadLVitemVM(CopyScratchpadListViewVM LV)
-            : base(LV, NumCols, arrPropName) { }
+        readonly static String[] marrPropName = new String[] { "Folders", "Path" };
 
         internal CopyScratchpadLVitemVM(CopyScratchpadListViewVM LV, String[] arrStr)
-            : this(LV)
+            : base(LV)
         {
+            mPropChanged_LV = LV.RaisePropertyChanged;
             CopyInArray(arrStr);
         }
+
+        internal const int NumCols_ = 2;
+        internal override int NumCols { get { return NumCols_; } }
+        protected override String[] PropertyNames { get { return marrPropName; } }
+        protected override RaisePropertyChangedDelegate LV_RaisePropertyChanged { get { return mPropChanged_LV; } } RaisePropertyChangedDelegate mPropChanged_LV = null;
+        protected override int SearchCol { get { return 0; } }
     }
 
     class CopyScratchpadListViewVM : ListViewVM
@@ -30,6 +33,9 @@ namespace SearchDirLists
         public String WidthPath { get { return SCW; } }
 
         internal CopyScratchpadListViewVM(ListView lv) : base(lv) { }
+        internal override void NewItem(String[] arrStr) { Add(new CopyScratchpadLVitemVM(this, arrStr)); }
+        internal override int NumCols { get { return CopyScratchpadLVitemVM.NumCols_; } }
+
         internal IEnumerable<CopyScratchpadLVitemVM> ItemsCast { get { return m_items.Cast<CopyScratchpadLVitemVM>(); } }
         internal IEnumerable<CopyScratchpadLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<CopyScratchpadLVitemVM>(); } }
     }
@@ -40,17 +46,20 @@ namespace SearchDirLists
         public String Folders { get { return marr[0]; } set { SetProperty(0, value); } }
         public String Level { get { return marr[1]; } set { SetProperty(1, value); } }
 
-        internal new const int NumCols = 2;
-        readonly new static String[] arrPropName = new String[] { "Folders", "Level" };
-
-        IgnoreLVitemVM(IgnoreListViewVM LV)
-            : base(LV, NumCols, arrPropName) { }
+        readonly static String[] marrPropName = new String[] { "Folders", "Level" };
 
         internal IgnoreLVitemVM(IgnoreListViewVM LV, String[] arrStr)
-            : this(LV)
+            : base(LV)
         {
+            mPropChanged_LV = LV.RaisePropertyChanged;
             CopyInArray(arrStr);
         }
+
+        internal const int NumCols_ = 2;
+        internal override int NumCols { get { return NumCols_; } }
+        protected override String[] PropertyNames { get { return marrPropName; } }
+        protected override RaisePropertyChangedDelegate LV_RaisePropertyChanged { get { return mPropChanged_LV; } } RaisePropertyChangedDelegate mPropChanged_LV = null;
+        protected override int SearchCol { get { return 0; } }
     }
 
     class IgnoreListViewVM : ListViewVM
@@ -59,6 +68,9 @@ namespace SearchDirLists
         public String WidthLevel { get { return SCW; } }
 
         internal IgnoreListViewVM(ListView lv) : base(lv) { }
+        internal override void NewItem(String[] arrStr) { Add(new IgnoreLVitemVM(this, arrStr)); }
+        internal override int NumCols { get { return IgnoreLVitemVM.NumCols_; } }
+
         internal IEnumerable<IgnoreLVitemVM> ItemsCast { get { return m_items.Cast<IgnoreLVitemVM>(); } }
         internal IEnumerable<IgnoreLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<IgnoreLVitemVM>(); } }
     }
@@ -75,17 +87,20 @@ namespace SearchDirLists
         public String Error1 { get { return marr[5]; } set { SetProperty(5, value); } }
         public String Error2 { get { return marr[6]; } set { SetProperty(6, value); } }
 
-        internal new const int NumCols = 7;
-        readonly new static String[] arrPropName = new String[] { "Filename", "Created", "Modified", "Attributes", "Length", "Error1", "Error2"};
-
-        FilesLVitemVM(FilesListViewVM LV)
-            : base(LV, NumCols, arrPropName) { }
+        readonly static String[] marrPropName = new String[] { "Filename", "Created", "Modified", "Attributes", "Length", "Error1", "Error2"};
 
         internal FilesLVitemVM(FilesListViewVM LV, String[] arrStr)
-            : this(LV)
+            : base(LV)
         {
+            mPropChanged_LV = LV.RaisePropertyChanged;
             CopyInArray(arrStr);
         }
+
+        internal const int NumCols_ = 7;
+        internal override int NumCols { get { return NumCols_; } }
+        protected override String[] PropertyNames { get { return marrPropName; } }
+        protected override RaisePropertyChangedDelegate LV_RaisePropertyChanged { get { return mPropChanged_LV; } } RaisePropertyChangedDelegate mPropChanged_LV = null;
+        protected override int SearchCol { get { return 0; } }
     }
 
     class FilesListViewVM : ListViewVM
@@ -99,6 +114,9 @@ namespace SearchDirLists
         public String WidthError2 { get { return SCW; } }
 
         internal FilesListViewVM(ListView lv) : base(lv) { }
+        internal override void NewItem(String[] arrStr) { Add(new FilesLVitemVM(this, arrStr)); }
+        internal override int NumCols { get { return FilesLVitemVM.NumCols_; } }
+
         internal IEnumerable<FilesLVitemVM> ItemsCast { get { return m_items.Cast<FilesLVitemVM>(); } }
         internal IEnumerable<FilesLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<FilesLVitemVM>(); } }
     }
@@ -110,17 +128,20 @@ namespace SearchDirLists
         public String Heading { get { return marr[0]; } set { SetProperty(0, value); } }
         public String Detail { get { return marr[1]; } set { SetProperty(1, value); } }
 
-        internal new const int NumCols = 2;
-        readonly new static String[] arrPropName = new String[] { "Heading", "Detail" };
-
-        DetailLVitemVM(DetailListViewVM LV)
-            : base(LV, NumCols, arrPropName) { }
+        readonly static String[] marrPropName = new String[] { "Heading", "Detail" };
 
         internal DetailLVitemVM(DetailListViewVM LV, String[] arrStr)
-            : this(LV)
+            : base(LV)
         {
+            mPropChanged_LV = LV.RaisePropertyChanged;
             CopyInArray(arrStr);
         }
+
+        internal const int NumCols_ = 2;
+        internal override int NumCols { get { return NumCols_; } }
+        protected override String[] PropertyNames { get { return marrPropName; } }
+        protected override RaisePropertyChangedDelegate LV_RaisePropertyChanged { get { return mPropChanged_LV; } } RaisePropertyChangedDelegate mPropChanged_LV = null;
+        protected override int SearchCol { get { return 0; } }
     }
 
     class DetailListViewVM : ListViewVM
@@ -129,6 +150,9 @@ namespace SearchDirLists
         public String WidthDetail { get { return SCW; } }
 
         internal DetailListViewVM(ListView lv) : base(lv) { }
+        internal override void NewItem(String[] arrStr) { Add(new DetailLVitemVM(this, arrStr)); }
+        internal override int NumCols { get { return DetailLVitemVM.NumCols_; } }
+
         internal IEnumerable<DetailLVitemVM> ItemsCast { get { return m_items.Cast<DetailLVitemVM>(); } }
         internal IEnumerable<DetailLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<DetailLVitemVM>(); } }
     }
@@ -138,17 +162,20 @@ namespace SearchDirLists
     {
         public String Folders { get { return marr[0]; } set { SetProperty(0, value); } }
 
-        internal new const int NumCols = 1;
-        readonly new static String[] arrPropName = new String[] { "Folders" };
-
-        SolitaryLVitemVM(SolitaryListViewVM LV)
-            : base(LV, NumCols, arrPropName) { }
+        readonly static String[] marrPropName = new String[] { "Folders" };
 
         internal SolitaryLVitemVM(SolitaryListViewVM LV, String[] arrStr)
-            : this(LV)
+            : base(LV)
         {
+            mPropChanged_LV = LV.RaisePropertyChanged;
             CopyInArray(arrStr);
         }
+
+        internal const int NumCols_ = 1;
+        internal override int NumCols { get { return NumCols_; } }
+        protected override String[] PropertyNames { get { return marrPropName; } }
+        protected override RaisePropertyChangedDelegate LV_RaisePropertyChanged { get { return mPropChanged_LV; } } RaisePropertyChangedDelegate mPropChanged_LV = null;
+        protected override int SearchCol { get { return 0; } }
     }
 
     class SolitaryListViewVM : ListViewVM
@@ -156,6 +183,9 @@ namespace SearchDirLists
         public String WidthFolders { get { return SCW; } }
 
         internal SolitaryListViewVM(ListView lv) : base(lv) { }
+        internal override void NewItem(String[] arrStr) { Add(new SolitaryLVitemVM(this, arrStr)); }
+        internal override int NumCols { get { return SolitaryLVitemVM.NumCols_; } }
+
         internal IEnumerable<SolitaryLVitemVM> ItemsCast { get { return m_items.Cast<SolitaryLVitemVM>(); } }
         internal IEnumerable<SolitaryLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<SolitaryLVitemVM>(); } }
     }
@@ -167,17 +197,20 @@ namespace SearchDirLists
         public String Folders { get { return marr[0]; } set { SetProperty(0, value); } }
         public String Occurrences { get { return marr[1]; } set { SetProperty(1, value); } }
 
-        internal new const int NumCols = 2;
-        readonly new static String[] arrPropName = new String[] { "Folders", "Occurrences" };
-
-        ClonesLVitemVM(ClonesListViewVM LV)
-            : base(LV, NumCols, arrPropName) { }
+        readonly static String[] marrPropName = new String[] { "Folders", "Occurrences" };
 
         internal ClonesLVitemVM(ClonesListViewVM LV, String[] arrStr)
-            : this(LV)
+            : base(LV)
         {
+            mPropChanged_LV = LV.RaisePropertyChanged;
             CopyInArray(arrStr);
         }
+
+        internal const int NumCols_ = 2;
+        internal override int NumCols { get { return NumCols_; } }
+        protected override String[] PropertyNames { get { return marrPropName; } }
+        protected override RaisePropertyChangedDelegate LV_RaisePropertyChanged { get { return mPropChanged_LV; } } RaisePropertyChangedDelegate mPropChanged_LV = null;
+        protected override int SearchCol { get { return 0; } }
     }
 
     class ClonesListViewVM : ListViewVM
@@ -186,6 +219,9 @@ namespace SearchDirLists
         public String WidthOccurrences { get { return SCW; } }
 
         internal ClonesListViewVM(ListView lv) : base(lv) { }
+        internal override void NewItem(String[] arrStr) { Add(new ClonesLVitemVM(this, arrStr)); }
+        internal override int NumCols { get { return ClonesLVitemVM.NumCols_; } }
+
         internal IEnumerable<ClonesLVitemVM> ItemsCast { get { return m_items.Cast<ClonesLVitemVM>(); } }
         internal IEnumerable<ClonesLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<ClonesLVitemVM>(); } }
     }

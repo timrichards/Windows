@@ -48,17 +48,14 @@ namespace SearchDirLists
         String m_strCurrent = null;
     }
 
-    class ListViewItemVM : ObservableObject
+    abstract class ListViewItemVM : ObservableObject
     {
-        internal readonly int NumCols = -1;
         internal String this[int i] { get { return marr[i]; } }
         internal int Index = -1;
 
-        protected ListViewItemVM(ListViewVM LV, int nNumCols, String[] arrPropName_in)
+        protected ListViewItemVM(ListViewVM LV)
         {
-            LV_RaisePropertyChanged = LV.RaisePropertyChanged;
-            marr = new string[NumCols = nNumCols];
-            arrPropName = arrPropName_in;
+            marr = new string[NumCols];
             Index = LV.Count;
         }
 
@@ -71,22 +68,25 @@ namespace SearchDirLists
 
         void Raise(int nCol)
         {
-            String strPropName = arrPropName[nCol];
+            String strPropName = PropertyNames[nCol];
 
             RaisePropertyChanged(strPropName);
             VolumesListViewVM.SCW = 50.ToString(); LV_RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there
             VolumesListViewVM.SCW = double.NaN.ToString(); LV_RaisePropertyChanged("Width" + strPropName);
         }
 
-        protected readonly String[] arrPropName = null;
-
+        internal String SearchValue { get { return marr[SearchCol].ToLower(); } }
         protected void SetProperty(int nCol, String s) { if (this[nCol] != s) { marr[nCol] = s; Raise(nCol); } }
 
-        readonly protected RaisePropertyChangedDelegate LV_RaisePropertyChanged = null;     // frankenhoek
+        internal abstract int NumCols { get; }
+        protected abstract String[] PropertyNames { get; }
+        protected abstract RaisePropertyChangedDelegate LV_RaisePropertyChanged { get; }    // frankenhoek
+        protected abstract int SearchCol { get; }
+
         protected String[] marr = null;                                                     // all properties (columns/items) get stored here
     }
 
-    class ListViewVM : ObservableObject
+    abstract class ListViewVM : ObservableObject
     {
         public ObservableCollection<ListViewItemVM> Items { get { return m_items; } }
 
@@ -94,6 +94,9 @@ namespace SearchDirLists
         {
             (m_lv = lv).DataContext = this;
         }
+
+        internal abstract void NewItem(String[] arrStr);
+        internal abstract int NumCols { get; }
 
         internal bool Add(ListViewItemVM item)
         {
@@ -109,6 +112,8 @@ namespace SearchDirLists
         internal bool HasItems { get { return m_items.Count > 0; } }
         internal bool SelectedOne { get { return m_lv.SelectedItems.Count == 1; } }
         internal bool SelectedAny { get { return m_lv.SelectedItems.Count > 0; } }
+        internal bool Contains(String s) { return (this[s] != null); }
+        internal ListViewItemVM this[String s_in] { get { String s = s_in.ToLower(); foreach (var o in m_items) if (o.SearchValue == s) return o; return null; } }
 
         readonly protected ObservableCollection<ListViewItemVM> m_items = new ObservableCollection<ListViewItemVM>();
         readonly protected ListView m_lv = null;
@@ -125,17 +130,20 @@ namespace Template      // prevents smart tag rename command from renaming the t
     {
         public String ColumnNameHere { get { return marr[0]; } set { SetProperty(0, value); } }
 
-        internal new const int NumCols = 0;
-        readonly new static String[] arrPropName = new String[] { };
-
-        Template_LVitemVM(Template_ListViewVM LV)
-            : base(LV, NumCols, arrPropName) { }
+        readonly static String[] marrPropName = new String[] { };
 
         internal Template_LVitemVM(Template_ListViewVM LV, String[] arrStr)
-            : this(LV)
+            : base(LV)
         {
+            mPropChanged_LV = LV.RaisePropertyChanged;
             CopyInArray(arrStr);
         }
+
+        internal const int NumCols_ = 0;
+        internal override int NumCols { get { return NumCols_; } }
+        protected override String[] PropertyNames { get { return marrPropName; } }
+        protected override RaisePropertyChangedDelegate LV_RaisePropertyChanged { get { return mPropChanged_LV; } } RaisePropertyChangedDelegate mPropChanged_LV = null;
+        protected override int SearchCol { get { return 0; } }
     }
 
     class Template_ListViewVM : ListViewVM
@@ -143,6 +151,9 @@ namespace Template      // prevents smart tag rename command from renaming the t
         public String WidthColumnNameHere { get { return SCW; } }
 
         internal Template_ListViewVM(ListView lv) : base(lv) { }
+        internal override void NewItem(String[] arrStr) { Add(new Template_LVitemVM(this, arrStr)); }
+        internal override int NumCols { get { return Template_LVitemVM.NumCols_; } }
+        
         internal IEnumerable<Template_LVitemVM> ItemsCast { get { return m_items.Cast<Template_LVitemVM>(); } }
         internal IEnumerable<Template_LVitemVM> Selected { get { return m_lv.SelectedItems.Cast<Template_LVitemVM>(); } }
     }

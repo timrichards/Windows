@@ -165,10 +165,10 @@
                                 <DockPanel>
                                     <StackPanel Height="Auto" Width="Auto" Orientation="Vertical" VerticalAlignment="Bottom">
                                         <CheckBox Content="Loose" Name="xaml_chkSpacer" Opacity="0" Height="0"/>
-                                        <Button Content="Script" Name="xaml_btnCopyScript" Command="{Binding Icmd_CopyScratchpad_Script}"/>
-                                        <Button Content="Load" Name="xaml_btnCopyLoad" Command="{Binding Icmd_CopyScratchpad_Load}"/>
-                                        <Button Content="Save" Name="xaml_btnCopySave" Command="{Binding Icmd_CopyScratchpad_Save}"/>
-                                        <Button Content="Clear" Name="xaml_btnCopyClear" Command="{Binding Icmd_CopyScratchpad_Clear}"/>
+                                        <Button Content="Script" Name="xaml_btnCopyScratchpadScript" Command="{Binding Icmd_CopyScratchpad_Script}"/>
+                                        <Button Content="Load" Name="xaml_btnCopyScratchpadLoad" Command="{Binding Icmd_CopyScratchpad_Load}"/>
+                                        <Button Content="Save" Name="xaml_btnCopyScratchpadSave" Command="{Binding Icmd_CopyScratchpad_Save}"/>
+                                        <Button Content="Clear" Name="xaml_btnCopyScratchpadClear" Command="{Binding Icmd_CopyScratchpad_Clear}"/>
                                     </StackPanel>
                                     <ListView Name="xaml_lvCopyScratchpad" Width="Auto">
                                         <ListView.View>

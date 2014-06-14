@@ -23,9 +23,50 @@ namespace SearchDirLists
 
         #region Copy Scratchpad
         void CopyScratchpad_Script() { }
-        void CopyScratchpad_Load() { }
-        void CopyScratchpad_Save() { }
-        void CopyScratchpad_Clear() { }
+
+        void CopyScratchpad_Load()
+        {
+            //ListView lvFake = new ListView();   // Hack: check changed event loads the real listviewer
+
+            //foreach (ColumnHeader col in form_lvCopyScratchpad.Columns)
+            //{
+            //    lvFake.Columns.Add(new ColumnHeader());
+            //}
+
+            //if (new SDL_CopyFile().ReadList(lvFake) == false)
+            //{
+            //    return;
+            //}
+
+            //LoadCopyScratchPad(lvFake);
+        }
+
+        void CopyScratchpad_Save()
+        {
+            if (LV_CopyScratchpad.HasItems)
+            {
+                new SDL_CopyFile().WriteList(LV_CopyScratchpad.ItemsCast);
+            }
+            else
+            {
+                gd.m_blinky.Go(ctl: m_app.xaml_btnCopyScratchpadSave, clr: Drawing.Color.Red, Once: true);
+            }
+        }
+
+        void CopyScratchpad_Clear()
+        {
+            //foreach (SDL_ListViewItem lvItem in LV_CopyScratchpad.ItemsCast)
+            //{
+            //    if (lvItem.treeNode != null)
+            //    {
+            //        lvItem.treeNode.Checked = false;
+            //    }
+            //    else
+            //    {
+            //        lvItem.Remove();    // 1. sorted by size. 2. ClearMem_TreeForm() does null lvItems.
+            //    }
+            //}
+        }
         #endregion Copy Scratchpad
 
         #region Ignore List
@@ -51,7 +92,22 @@ namespace SearchDirLists
             }
         }
 
-        void Ignore_Delete() { }
+        void Ignore_Delete()
+        {
+            if (LV_Ignore.HasItems == false)
+            {
+                gd.m_blinky.Go(m_app.xaml_btnIgnoreDel, clr: Drawing.Color.Red, Once: true);
+                return;
+            }
+
+            foreach (IgnoreLVitemVM lvItem in LV_Ignore.Selected.ToList())
+            {
+                LV_Ignore.Items.Remove(lvItem);
+            }
+
+            gd.m_bKillTree &= gd.timer_DoTree.IsEnabled;
+            gd.RestartTreeTimer();
+        }
 
         void Ignore_Load()
         {
@@ -67,8 +123,29 @@ namespace SearchDirLists
             }
         }
 
-        void Ignore_Save() { }
-        void Ignore_Clear() { }
+        void Ignore_Save()
+        {
+            if (LV_Ignore.HasItems)
+            {
+                new SDL_IgnoreFile().WriteList(LV_Ignore.ItemsCast);
+            }
+            else
+            {
+                gd.m_blinky.Go(ctl: m_app.xaml_btnIgnoreSave, clr: Drawing.Color.Red, Once: true);
+            }
+        }
+
+        void Ignore_Clear()
+        {
+            if (LV_Ignore.HasItems == false)
+            {
+                return;
+            }
+
+            LV_Ignore.Items.Clear();
+            gd.m_bKillTree &= gd.timer_DoTree.IsEnabled;
+            gd.RestartTreeTimer();
+        }
         #endregion Ignore List
     }
 }

@@ -53,7 +53,7 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" MinWidth="20"/>
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                     </Grid>
@@ -70,7 +70,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" MinHeight="20"/>
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <ItemsControl Style="{StaticResource ComboRows}">
@@ -119,21 +119,19 @@
                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="3" />
-                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" MinHeight="20"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" MinWidth="20"/>
                         <ColumnDefinition Width="3" />
-                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="2*" MinWidth="20"/>
                         <ColumnDefinition Width="3" />
-                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" MinWidth="20"/>
                     </Grid.ColumnDefinitions>
                     <Grid Grid.ColumnSpan="5" HorizontalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" MinWidth="20"/>
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <StackPanel Orientation="Horizontal">
@@ -154,62 +152,69 @@
                             <Label Content="Volume group" FontStyle="Italic" Name="xaml_labelVolumeGroup" />
                         </StackPanel>
                     </Grid>
-                    <TreeView HorizontalAlignment="Stretch" Name="xaml_treeViewBrowse" VerticalAlignment="Stretch" Grid.RowSpan="1" BorderThickness="0" Grid.Row="1"/>
-                    <TabControl HorizontalAlignment="Stretch" Name="tabControl1" VerticalAlignment="Stretch" TabStripPlacement="Bottom" Grid.Row="3">
-                        <TabItem Header="Copy scratchpad" Name="xaml_tabItemCopyScratchpad">
-                            <DockPanel>
-                                <StackPanel Height="Auto" Width="Auto" Orientation="Vertical" VerticalAlignment="Bottom">
-                                    <CheckBox Content="Loose" Name="xaml_chkSpacer" Opacity="0" Height="0"/>
-                                    <Button Content="Script" Name="xaml_btnCopyScript" Command="{Binding Icmd_CopyScratchpad_Script}"/>
-                                    <Button Content="Load" Name="xaml_btnCopyLoad" Command="{Binding Icmd_CopyScratchpad_Load}"/>
-                                    <Button Content="Save" Name="xaml_btnCopySave" Command="{Binding Icmd_CopyScratchpad_Save}"/>
-                                    <Button Content="Clear" Name="xaml_btnCopyClear" Command="{Binding Icmd_CopyScratchpad_Clear}"/>
-                                </StackPanel>
-                                <ListView Name="xaml_lvCopyScratchpad" Width="Auto">
-                                    <ListView.View>
-                                        <GridView>
-                                            <GridViewColumn Header="Folders selected for copy" DisplayMemberBinding="{Binding Folders}" Width="{Binding WidthFolders}"/>
-                                            <GridViewColumn DisplayMemberBinding="{Binding Path}" Width="{Binding WidthPath}"/>
-                                        </GridView>
-                                    </ListView.View>
-                                </ListView>
-                            </DockPanel>
-                        </TabItem>
-                        <TabItem Header="Ignore list" Name="xaml_tabItemIgnore">
-                            <DockPanel>
-                                <StackPanel Height="Auto" Width="Auto" Orientation="Vertical" VerticalAlignment="Bottom">
-                                    <CheckBox Content="Loose" Name="xaml_chkLoose" Command="{Binding Icmd_Ignore_Loose}"/>
-                                    <Button Content="Add" Name="xaml_btnIgnoreAdd" Command="{Binding Icmd_Ignore_Add}"/>
-                                    <Button Content="Del" Name="xaml_btnIgnoreDel" Command="{Binding Icmd_Ignore_Delete}"/>
-                                    <Button Content="Load" Name="xaml_btnIgnoreLoad" Command="{Binding Icmd_Ignore_Load}"/>
-                                    <Button Content="Save" Name="xaml_btnIgnoreSave" Command="{Binding Icmd_Ignore_Save}"/>
-                                    <Button Content="Clear" Name="xaml_btnIgnoreClear" Command="{Binding Icmd_Ignore_Clear}"/>
-                                </StackPanel>
-                                <ListView Name="xaml_lvIgnore" Width="Auto">
-                                    <ListView.View>
-                                        <GridView>
-                                            <GridViewColumn Header="Common folders to ignore" DisplayMemberBinding="{Binding Folders}" Width="{Binding WidthFolders}"/>
-                                            <GridViewColumn Header="Level" DisplayMemberBinding="{Binding Level}" Width="{Binding WidthLevel}" />
-                                        </GridView>
-                                    </ListView.View>
-                                </ListView>
-                            </DockPanel>
-                        </TabItem>
-                    </TabControl>
-                    <GridSplitter Grid.Row="2" ResizeDirection="Rows" Grid.Column="0" Height="2" HorizontalAlignment="Stretch" />
+                    <Grid Grid.Row="1" Grid.RowSpan="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" MinHeight="20"/>
+                            <RowDefinition Height="3" />
+                            <RowDefinition Height="*" MinHeight="20"/>
+                        </Grid.RowDefinitions>
+                        <TreeView HorizontalAlignment="Stretch" Name="xaml_treeViewBrowse" VerticalAlignment="Stretch" Grid.RowSpan="1" BorderThickness="0"/>
+                        <GridSplitter Grid.Row="1" ResizeDirection="Rows" Grid.Column="0" Height="2" HorizontalAlignment="Stretch" />
+                        <TabControl HorizontalAlignment="Stretch" Name="tabControl1" VerticalAlignment="Stretch" TabStripPlacement="Bottom" Grid.Row="2">
+                            <TabItem Header="Copy scratchpad" Name="xaml_tabItemCopyScratchpad">
+                                <DockPanel>
+                                    <StackPanel Height="Auto" Width="Auto" Orientation="Vertical" VerticalAlignment="Bottom">
+                                        <CheckBox Content="Loose" Name="xaml_chkSpacer" Opacity="0" Height="0"/>
+                                        <Button Content="Script" Name="xaml_btnCopyScript" Command="{Binding Icmd_CopyScratchpad_Script}"/>
+                                        <Button Content="Load" Name="xaml_btnCopyLoad" Command="{Binding Icmd_CopyScratchpad_Load}"/>
+                                        <Button Content="Save" Name="xaml_btnCopySave" Command="{Binding Icmd_CopyScratchpad_Save}"/>
+                                        <Button Content="Clear" Name="xaml_btnCopyClear" Command="{Binding Icmd_CopyScratchpad_Clear}"/>
+                                    </StackPanel>
+                                    <ListView Name="xaml_lvCopyScratchpad" Width="Auto">
+                                        <ListView.View>
+                                            <GridView>
+                                                <GridViewColumn Header="Folders selected for copy" DisplayMemberBinding="{Binding Folders}" Width="{Binding WidthFolders}"/>
+                                                <GridViewColumn DisplayMemberBinding="{Binding Path}" Width="{Binding WidthPath}"/>
+                                            </GridView>
+                                        </ListView.View>
+                                    </ListView>
+                                </DockPanel>
+                            </TabItem>
+                            <TabItem Header="Ignore list" Name="xaml_tabItemIgnore">
+                                <DockPanel>
+                                    <StackPanel Height="Auto" Width="Auto" Orientation="Vertical" VerticalAlignment="Bottom">
+                                        <CheckBox Content="Loose" Name="xaml_chkLoose" Command="{Binding Icmd_Ignore_Loose}"/>
+                                        <Button Content="Add" Name="xaml_btnIgnoreAdd" Command="{Binding Icmd_Ignore_Add}"/>
+                                        <Button Content="Del" Name="xaml_btnIgnoreDel" Command="{Binding Icmd_Ignore_Delete}"/>
+                                        <Button Content="Load" Name="xaml_btnIgnoreLoad" Command="{Binding Icmd_Ignore_Load}"/>
+                                        <Button Content="Save" Name="xaml_btnIgnoreSave" Command="{Binding Icmd_Ignore_Save}"/>
+                                        <Button Content="Clear" Name="xaml_btnIgnoreClear" Command="{Binding Icmd_Ignore_Clear}"/>
+                                    </StackPanel>
+                                    <ListView Name="xaml_lvIgnore" Width="Auto">
+                                        <ListView.View>
+                                            <GridView>
+                                                <GridViewColumn Header="Common folders to ignore" DisplayMemberBinding="{Binding Folders}" Width="{Binding WidthFolders}"/>
+                                                <GridViewColumn Header="Level" DisplayMemberBinding="{Binding Level}" Width="{Binding WidthLevel}" />
+                                            </GridView>
+                                        </ListView.View>
+                                    </ListView>
+                                </DockPanel>
+                            </TabItem>
+                        </TabControl>
+                    </Grid>
                     <GridSplitter Grid.Row="2" ResizeDirection="Rows" Grid.Column="2" Height="2" HorizontalAlignment="Stretch" />
                     <GridSplitter Grid.Row="1" ResizeDirection="Columns" Grid.Column="1" Width="2" Grid.RowSpan="3" HorizontalAlignment="Stretch" />
                     <GridSplitter Grid.Row="1" ResizeDirection="Columns" Grid.Column="3" Width="2" Grid.RowSpan="3" HorizontalAlignment="Stretch" />
                     <Grid Grid.Column="2" Grid.Row="1" Grid.RowSpan="3">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="2*" MinHeight="20" />
                             <RowDefinition Height="3" />
-                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" MinHeight="20" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" MinWidth="20" />
                             <ColumnDefinition Width="3" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" MinWidth="20"/>
                         </Grid.ColumnDefinitions>
                         <TabControl Grid.Column="0" HorizontalAlignment="Stretch" Name="tabControl2" VerticalAlignment="Stretch" Grid.Row="0" Grid.ColumnSpan="3">
                             <TabItem Header="Disk usage" Name="xaml_tabItemDiskUsage">
@@ -252,11 +257,11 @@
                     </Grid>
                     <Grid Grid.Column="4" Grid.RowSpan="3" Grid.Row="1">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" MinHeight="20"/>
                             <RowDefinition Height="3" />
-                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" MinHeight="20"/>
                             <RowDefinition Height="3" />
-                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" MinHeight="20"/>
                         </Grid.RowDefinitions>
                         <ListView Name="xaml_lvSolitary" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0">
                             <ListView.View>

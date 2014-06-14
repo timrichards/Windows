@@ -71,8 +71,8 @@ namespace SearchDirLists
             String strPropName = PropertyNames[nCol];
 
             RaisePropertyChanged(strPropName);
-            VolumesListViewVM.SCW = 50.ToString(); LV_RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there
-            VolumesListViewVM.SCW = double.NaN.ToString(); LV_RaisePropertyChanged("Width" + strPropName);
+            ListViewVM.SCW = 50.ToString(); LV_RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there
+            ListViewVM.SCW = double.NaN.ToString(); LV_RaisePropertyChanged("Width" + strPropName);
         }
 
         internal String SearchValue { get { return marr[SearchCol].ToLower(); } }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Drawing = System.Drawing;
+using System.Windows.Controls;
 
 namespace SearchDirLists
 {
@@ -13,12 +14,47 @@ namespace SearchDirLists
         void CompareCheck() { }
         void Compare() { }
         void Up() { }
-        void Back() { }
-        void Forward() { }
+        void Back()
+        {
+            gd.DoHistory(m_app.xaml_btnBack, -1);
+        }
+
+        void Forward()
+        {
+            gd.DoHistory(m_app.xaml_btnForward, +1);
+        }
+
         void Copy() { }
-        void SearchFolders() { }
-        void SearchFoldersAndFiles() { }
-        void SearchFiles() { }
+        void SearchFolders() { Search(m_app.xaml_btnFolders); }
+        void SearchFoldersAndFiles() { Search(m_app.xaml_btnFoldersFiles); }
+        void SearchFiles() { Search(m_app.xaml_btnFiles); }
+
+        void Search(Control ctl)
+        {
+            //gd.m_strSelectFile = null;
+
+            //if (Utilities.NotNull(m_app.xaml_cbFindbox.Text).Trim().Length > 0)
+            //{
+            //    if (m_ctlLastSearchSender != sender)
+            //    {
+            //        m_ctlLastSearchSender = (SDL_Control)sender;
+            //        gd.m_nSearchResultsIndexer = -1;
+            //    }
+
+            //    if ((gd.m_nSearchResultsIndexer < 0) && new Button[] { form_btnFoldersAndFiles, form_btnFiles }.Contains(sender))
+            //    {
+            //        DoSearchType2(form_cbFindbox.Text, bSearchFilesOnly: (sender == form_btnFiles));
+            //    }
+            //    else
+            //    {
+            //        DoSearch(sender);
+            //    }
+            //}
+            //else
+            //{
+            //    gd.m_blinky.Go(clr: Color.Red, Once: true);
+            //}
+        }
         #endregion Navbar
 
         #region Copy Scratchpad

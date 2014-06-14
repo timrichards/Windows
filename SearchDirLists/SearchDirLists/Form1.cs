@@ -2440,7 +2440,7 @@ namespace SearchDirLists
             }
             else
             {
-                m_blinky.Go((Forms.Control)sender, clr: Drawing.Color.Red, Once: true);
+                m_blinky.Go((SDL_Control)sender, clr: Drawing.Color.Red, Once: true);
             }
         }
 

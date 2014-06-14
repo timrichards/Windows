@@ -53,9 +53,9 @@ namespace SearchDirLists
                 new RelayCommand(param => Back()),
                 new RelayCommand(param => Forward()),
                 new RelayCommand(param => Copy()),
-                new RelayCommand(param => SearchFolders()),
-                new RelayCommand(param => SearchFoldersAndFiles()),
-                new RelayCommand(param => SearchFiles()),
+                new RelayCommand(param => SearchFolders(), param => (Utilities.NotNull(m_app.xaml_cbFindbox.Text).Trim().Length > 0)),
+                new RelayCommand(param => SearchFoldersAndFiles(), param => (Utilities.NotNull(m_app.xaml_cbFindbox.Text).Trim().Length > 0)),
+                new RelayCommand(param => SearchFiles(), param => (Utilities.NotNull(m_app.xaml_cbFindbox.Text).Trim().Length > 0)),
 
                 new RelayCommand(param => CopyScratchpad_Script(), param => LV_CopyScratchpad.SelectedAny),
                 new RelayCommand(param => CopyScratchpad_Load()),

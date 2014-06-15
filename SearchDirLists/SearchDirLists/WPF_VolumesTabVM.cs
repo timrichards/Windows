@@ -40,7 +40,7 @@ namespace SearchDirLists
         internal SDL_TreeNode treeNode = null;
     }
 
-    class VolumesListViewVM : ListViewVM
+    class VolumesListViewVM : ListViewVM_Generic<VolumeLVitemVM>
     {
         public String WidthVolumeName { get { return SCW; } }                   // franken all NaN
         public String WidthPath { get { return SCW; } }
@@ -52,9 +52,6 @@ namespace SearchDirLists
         internal VolumesListViewVM(ListView lv) : base(lv) {}
         internal override void NewItem(String[] arrStr) { Add(new VolumeLVitemVM(this, arrStr)); }
         internal override int NumCols { get { return VolumeLVitemVM.NumCols_; } }
-
-        internal IEnumerable<VolumeLVitemVM> ItemsCast { get { return m_items.Cast<VolumeLVitemVM>(); } }
-        internal IEnumerable<VolumeLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<VolumeLVitemVM>(); } }
 
         internal bool ContainsVolumeName(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if (item.VolumeName.ToLower() == s) return true; return false; }
         internal bool ContainsUnsavedPath(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if ((item.Path.ToLower() == s) && (item.SaveAsExists == false)) return true; return false; }

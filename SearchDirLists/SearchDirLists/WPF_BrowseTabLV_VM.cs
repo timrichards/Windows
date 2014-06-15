@@ -14,12 +14,11 @@ namespace SearchDirLists
         readonly static String[] marrPropName = new String[] { "Folders", "Path" };
 
         internal CopyScratchpadLVitemVM(CopyScratchpadListViewVM LV, String[] arrStr)
-            : base(LV, arrStr) {}
+            : base(LV, arrStr) { }
 
         internal const int NumCols_ = 2;
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
-        protected override int SearchCol { get { return 0; } }
 
         internal TreeViewItemVM treeNode = null;
     }
@@ -43,12 +42,11 @@ namespace SearchDirLists
         readonly static String[] marrPropName = new String[] { "Folders", "Level" };
 
         internal IgnoreLVitemVM(IgnoreListViewVM LV, String[] arrStr)
-            : base(LV, arrStr) {}
+            : base(LV, arrStr) { }
 
         internal const int NumCols_ = 2;
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
-        protected override int SearchCol { get { return 0; } }
     }
 
     class IgnoreListViewVM : ListViewVM_Generic<IgnoreLVitemVM>
@@ -76,12 +74,11 @@ namespace SearchDirLists
         readonly static String[] marrPropName = new String[] { "Filename", "Created", "Modified", "Attributes", "Length", "Error1", "Error2"};
 
         internal FilesLVitemVM(FilesListViewVM LV, String[] arrStr)
-            : base(LV, arrStr) {}
+            : base(LV, arrStr) { }
 
         internal const int NumCols_ = 7;
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
-        protected override int SearchCol { get { return 0; } }
     }
 
     class FilesListViewVM : ListViewVM_Generic<FilesLVitemVM>
@@ -109,12 +106,11 @@ namespace SearchDirLists
         readonly static String[] marrPropName = new String[] { "Heading", "Detail" };
 
         internal DetailLVitemVM(DetailListViewVM LV, String[] arrStr)
-            : base(LV, arrStr) {}
+            : base(LV, arrStr) { }
 
         internal const int NumCols_ = 2;
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
-        protected override int SearchCol { get { return 0; } }
     }
 
     class DetailListViewVM : ListViewVM_Generic<DetailLVitemVM>
@@ -135,12 +131,11 @@ namespace SearchDirLists
         readonly static String[] marrPropName = new String[] { "Folders" };
 
         internal SolitaryLVitemVM(SolitaryListViewVM LV, String[] arrStr)
-            : base(LV, arrStr) {}
+            : base(LV, arrStr) { }
 
         internal const int NumCols_ = 1;
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
-        protected override int SearchCol { get { return 0; } }
 
         internal TreeViewItemVM treeNode = null;
     }
@@ -164,12 +159,11 @@ namespace SearchDirLists
         readonly static String[] marrPropName = new String[] { "Folders", "Occurrences" };
 
         internal ClonesLVitemVM(ClonesListViewVM LV, String[] arrStr)
-            : base(LV, arrStr) {}
+            : base(LV, arrStr) { }
 
         internal const int NumCols_ = 2;
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
-        protected override int SearchCol { get { return 0; } }
 
         internal TreeViewItemVM treeNode = null;
     }

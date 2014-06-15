@@ -80,7 +80,7 @@ namespace SearchDirLists
 
         internal abstract int NumCols { get; }
         protected abstract String[] PropertyNames { get; }
-        protected abstract int SearchCol { get; }
+        protected virtual int SearchCol { get { return 0; } }
 
         protected String[] marr = null;                                                     // all properties (columns/items) get stored here
     }
@@ -138,12 +138,11 @@ namespace Template      // prevents smart tag rename command from renaming the t
         readonly static String[] marrPropName = new String[] { };
 
         internal Template_LVitemVM(Template_ListViewVM LV, String[] arrStr)
-            : base(LV, arrStr) {}
+            : base(LV, arrStr) { }
 
         internal const int NumCols_ = 0;
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
-        protected override int SearchCol { get { return 0; } }
     }
 
     class Template_ListViewVM : ListViewVM_Generic<Template_LVitemVM>
@@ -153,15 +152,5 @@ namespace Template      // prevents smart tag rename command from renaming the t
         internal Template_ListViewVM(ListView lv) : base(lv) { }
         internal override void NewItem(String[] arrStr) { Add(new Template_LVitemVM(this, arrStr)); }
         internal override int NumCols { get { return Template_LVitemVM.NumCols_; } }
-    }
-
-    class Test
-    {
-        Template_ListViewVM t = new Template_ListViewVM(null);
-
-        Test()
-        {
-            Template_LVitemVM t1 = t.ItemsCast.ElementAt(0);
-        }
     }
 }

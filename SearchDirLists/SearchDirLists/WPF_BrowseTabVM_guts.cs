@@ -62,19 +62,14 @@ namespace SearchDirLists
 
         void CopyScratchpad_Load()
         {
-            //ListView lvFake = new ListView();   // Hack: check changed event loads the real listviewer
+            CopyScratchpadListViewVM lvFake = new CopyScratchpadListViewVM(null);   // Hack: check changed event loads the real listviewer
 
-            //foreach (ColumnHeader col in form_lvCopyScratchpad.Columns)
-            //{
-            //    lvFake.Columns.Add(new ColumnHeader());
-            //}
+            if (new SDL_CopyFile().ReadList(lvFake) == false)
+            {
+                return;
+            }
 
-            //if (new SDL_CopyFile().ReadList(lvFake) == false)
-            //{
-            //    return;
-            //}
-
-            //LoadCopyScratchPad(lvFake);
+            LoadCopyScratchPad(lvFake);
         }
 
         void CopyScratchpad_Save()
@@ -91,17 +86,43 @@ namespace SearchDirLists
 
         void CopyScratchpad_Clear()
         {
-            //foreach (SDL_ListViewItem lvItem in LV_CopyScratchpad.ItemsCast)
-            //{
-            //    if (lvItem.treeNode != null)
-            //    {
-            //        lvItem.treeNode.Checked = false;
-            //    }
-            //    else
-            //    {
-            //        lvItem.Remove();    // 1. sorted by size. 2. ClearMem_TreeForm() does null lvItems.
-            //    }
-            //}
+            foreach (CopyScratchpadLVitemVM lvItem in LV_CopyScratchpad.ItemsCast.ToList())
+            {
+                if (lvItem.treeNode != null)
+                {
+     //               lvItem.treeNode.Checked = false;
+                }
+                else
+                {
+                    LV_CopyScratchpad.Items.Remove(lvItem);    // 1. sorted by size. 2. ClearMem_TreeForm() does null lvItems.
+                }
+            }
+        }
+
+        void LoadCopyScratchPad(CopyScratchpadListViewVM lvFake)
+        {
+            int nTotal = 0;
+            int nLoaded = 0;
+
+            foreach (CopyScratchpadLVitemVM lvItem in lvFake.Items)
+            {
+                SDL_TreeNode treeNode = null; // TV.GetNodeByPath(lvItem.Path);
+
+                if (treeNode != null)
+                {
+                    treeNode.Checked = true;
+                    ++nLoaded;
+                }
+
+                ++nTotal;
+            }
+
+            if (nLoaded != nTotal)
+            {
+                Utilities.MBox(nLoaded + " of " + nTotal + " scratchpad folders found in the tree.", "Load copy scratchpad");
+                m_app.xaml_tabControlCopyIgnore.SelectedItem = m_app.xaml_tabItemCopyScratchpad;
+                gd.m_blinky.Go(m_app.xaml_tabItemCopyScratchpad, clr: Drawing.Color.Yellow, Once: true);
+            }
         }
         #endregion Copy Scratchpad
 

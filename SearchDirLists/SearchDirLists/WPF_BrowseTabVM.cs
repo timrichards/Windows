@@ -1,8 +1,63 @@
 ﻿using System.Windows.Input;
 using System;
+using System.Collections.ObjectModel;
+using System.Windows.Controls;
 
 namespace SearchDirLists
 {
+    class TreeViewItemVM : ObservableObject
+    {
+  //      internal String this[int i] { get { return marr[i]; } }
+  //      internal int Index = -1;
+
+        internal TreeViewItemVM() { }
+        internal TreeViewItemVM(String strContent) { tvi.Header = strContent; }
+        //internal TreeViewItemVM(String strContent, SDL_TreeNode[] arrNodes) : this(strContent)
+        //{ foreach (SDL_TreeNode treeNode in arrNodes) { Items.Add(treeNode); } }
+
+        internal TreeViewItemVM(TreeViewVM TV)
+        {
+            treeView = TV;
+            //          Index = (TreeView = TV).Count;
+        }
+
+        internal String Header { get { return (String)tvi.Header; } }
+        internal void BringIntoView() { tvi.BringIntoView(); }
+  //      internal void Remove() { treeView.Remove(this); }
+  //      protected String[] marr = null;                                                     // all properties (columns/items) get stored here
+
+        TreeViewItem tvi = new TreeViewItem();
+        TreeViewVM treeView;
+    }
+
+    class TreeViewVM : ObservableObject
+    {
+        public ObservableCollection<TreeViewItemVM> Items { get { return m_items; } }
+
+        internal TreeViewVM(TreeView tv)
+        {
+            (m_tv = tv).DataContext = this;
+        }
+
+        internal bool Add(TreeViewItemVM item)
+        {
+            m_items.Add(item);
+            m_tv.Items.Refresh();
+            RaisePropertyChanged("Items");
+            return true;
+        }
+
+        internal int Count { get { return m_items.Count; } }
+        internal bool HasItems { get { return m_items.Count > 0; } }
+        internal bool SelectedOne { get { return m_tv.SelectedItem != null; } }
+   //     internal void Remove(TreeNodeItemVM item) { m_items.Remove(item); }
+   //     internal bool Contains(String s) { return (this[s] != null); }
+   //     internal TreeNodeItemVM this[String s_in] { get { String s = s_in.ToLower(); foreach (var o in m_items) if (o.SearchValue == s) return o; return null; } }
+
+        readonly protected ObservableCollection<TreeViewItemVM> m_items = new ObservableCollection<TreeViewItemVM>();
+        readonly protected TreeView m_tv = null;
+    }
+
     partial class BrowseTabVM
     {
         // In order of appearance on the form
@@ -35,6 +90,7 @@ namespace SearchDirLists
             m_app.xaml_tabItemBrowse.DataContext = this;
             gd = GlobalData.GetInstance();
             CB_FindBox = new ItemsControlVM(m_app.xaml_cbFindbox, new Action(() => { }));
+            TV = new TreeViewVM(m_app.xaml_treeViewBrowse);
             LV_CopyScratchpad = new CopyScratchpadListViewVM(m_app.xaml_lvCopyScratchpad);
             LV_Ignore = new IgnoreListViewVM(m_app.xaml_lvIgnore);
             LV_Files = new FilesListViewVM(m_app.xaml_lvFiles);
@@ -75,6 +131,7 @@ namespace SearchDirLists
 
         // In order of appearance on the form
         readonly CopyScratchpadListViewVM LV_CopyScratchpad = null;
+        readonly TreeViewVM TV = null;
         readonly IgnoreListViewVM LV_Ignore = null;
         readonly FilesListViewVM LV_Files = null;
      //   readonly FilesListViewVM LV_CompareFiles = null;

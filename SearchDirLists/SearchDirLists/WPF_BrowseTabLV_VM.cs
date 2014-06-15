@@ -25,9 +25,11 @@ namespace SearchDirLists
         protected override String[] PropertyNames { get { return marrPropName; } }
         protected override RaisePropertyChangedDelegate LV_RaisePropertyChanged { get { return mPropChanged_LV; } } RaisePropertyChangedDelegate mPropChanged_LV = null;
         protected override int SearchCol { get { return 0; } }
+
+        internal TreeViewItemVM treeNode = null;
     }
 
-    class CopyScratchpadListViewVM : ListViewVM
+    class CopyScratchpadListViewVM : ListViewVM_Generic<CopyScratchpadLVitemVM>
     {
         public String WidthFolders { get { return SCW; } }
         public String WidthPath { get { return SCW; } }
@@ -35,9 +37,6 @@ namespace SearchDirLists
         internal CopyScratchpadListViewVM(ListView lv) : base(lv) { }
         internal override void NewItem(String[] arrStr) { Add(new CopyScratchpadLVitemVM(this, arrStr)); }
         internal override int NumCols { get { return CopyScratchpadLVitemVM.NumCols_; } }
-
-        internal IEnumerable<CopyScratchpadLVitemVM> ItemsCast { get { return m_items.Cast<CopyScratchpadLVitemVM>(); } }
-        internal IEnumerable<CopyScratchpadLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<CopyScratchpadLVitemVM>(); } }
     }
 
 
@@ -62,7 +61,7 @@ namespace SearchDirLists
         protected override int SearchCol { get { return 0; } }
     }
 
-    class IgnoreListViewVM : ListViewVM
+    class IgnoreListViewVM : ListViewVM_Generic<IgnoreLVitemVM>
     {
         public String WidthFolders { get { return SCW; } }
         public String WidthLevel { get { return SCW; } }
@@ -70,9 +69,6 @@ namespace SearchDirLists
         internal IgnoreListViewVM(ListView lv) : base(lv) { }
         internal override void NewItem(String[] arrStr) { Add(new IgnoreLVitemVM(this, arrStr)); }
         internal override int NumCols { get { return IgnoreLVitemVM.NumCols_; } }
-
-        internal IEnumerable<IgnoreLVitemVM> ItemsCast { get { return m_items.Cast<IgnoreLVitemVM>(); } }
-        internal IEnumerable<IgnoreLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<IgnoreLVitemVM>(); } }
     }
 
 
@@ -103,7 +99,7 @@ namespace SearchDirLists
         protected override int SearchCol { get { return 0; } }
     }
 
-    class FilesListViewVM : ListViewVM
+    class FilesListViewVM : ListViewVM_Generic<FilesLVitemVM>
     {
         public String WidthFilename { get { return SCW; } }
         public String WidthCreated { get { return SCW; } }
@@ -116,9 +112,6 @@ namespace SearchDirLists
         internal FilesListViewVM(ListView lv) : base(lv) { }
         internal override void NewItem(String[] arrStr) { Add(new FilesLVitemVM(this, arrStr)); }
         internal override int NumCols { get { return FilesLVitemVM.NumCols_; } }
-
-        internal IEnumerable<FilesLVitemVM> ItemsCast { get { return m_items.Cast<FilesLVitemVM>(); } }
-        internal IEnumerable<FilesLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<FilesLVitemVM>(); } }
     }
 
 
@@ -144,7 +137,7 @@ namespace SearchDirLists
         protected override int SearchCol { get { return 0; } }
     }
 
-    class DetailListViewVM : ListViewVM
+    class DetailListViewVM : ListViewVM_Generic<DetailLVitemVM>
     {
         public String WidthHeading { get { return SCW; } }
         public String WidthDetail { get { return SCW; } }
@@ -152,9 +145,6 @@ namespace SearchDirLists
         internal DetailListViewVM(ListView lv) : base(lv) { }
         internal override void NewItem(String[] arrStr) { Add(new DetailLVitemVM(this, arrStr)); }
         internal override int NumCols { get { return DetailLVitemVM.NumCols_; } }
-
-        internal IEnumerable<DetailLVitemVM> ItemsCast { get { return m_items.Cast<DetailLVitemVM>(); } }
-        internal IEnumerable<DetailLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<DetailLVitemVM>(); } }
     }
 
 
@@ -176,18 +166,17 @@ namespace SearchDirLists
         protected override String[] PropertyNames { get { return marrPropName; } }
         protected override RaisePropertyChangedDelegate LV_RaisePropertyChanged { get { return mPropChanged_LV; } } RaisePropertyChangedDelegate mPropChanged_LV = null;
         protected override int SearchCol { get { return 0; } }
+
+        internal TreeViewItemVM treeNode = null;
     }
 
-    class SolitaryListViewVM : ListViewVM
+    class SolitaryListViewVM : ListViewVM_Generic<SolitaryLVitemVM>
     {
         public String WidthFolders { get { return SCW; } }
 
         internal SolitaryListViewVM(ListView lv) : base(lv) { }
         internal override void NewItem(String[] arrStr) { Add(new SolitaryLVitemVM(this, arrStr)); }
         internal override int NumCols { get { return SolitaryLVitemVM.NumCols_; } }
-
-        internal IEnumerable<SolitaryLVitemVM> ItemsCast { get { return m_items.Cast<SolitaryLVitemVM>(); } }
-        internal IEnumerable<SolitaryLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<SolitaryLVitemVM>(); } }
     }
 
 
@@ -211,9 +200,11 @@ namespace SearchDirLists
         protected override String[] PropertyNames { get { return marrPropName; } }
         protected override RaisePropertyChangedDelegate LV_RaisePropertyChanged { get { return mPropChanged_LV; } } RaisePropertyChangedDelegate mPropChanged_LV = null;
         protected override int SearchCol { get { return 0; } }
+
+        internal TreeViewItemVM treeNode = null;
     }
 
-    class ClonesListViewVM : ListViewVM
+    class ClonesListViewVM : ListViewVM_Generic<ClonesLVitemVM>
     {
         public String WidthFolders { get { return SCW; } }
         public String WidthOccurrences { get { return SCW; } }
@@ -221,8 +212,5 @@ namespace SearchDirLists
         internal ClonesListViewVM(ListView lv) : base(lv) { }
         internal override void NewItem(String[] arrStr) { Add(new ClonesLVitemVM(this, arrStr)); }
         internal override int NumCols { get { return ClonesLVitemVM.NumCols_; } }
-
-        internal IEnumerable<ClonesLVitemVM> ItemsCast { get { return m_items.Cast<ClonesLVitemVM>(); } }
-        internal IEnumerable<ClonesLVitemVM> Selected { get { return m_lv.SelectedItems.Cast<ClonesLVitemVM>(); } }
     }
 }

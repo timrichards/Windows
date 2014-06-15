@@ -42,7 +42,7 @@ namespace SearchDirLists
     }
 
     [System.ComponentModel.DesignerCategory("Code")]
-/**/    class SDL_TreeView : TreeView
+/**/    class SDL_TreeView : TreeView //TreeViewVM
 /**/    {
 /**/        internal SDL_TreeNode SelectedNode { get { return (SDL_TreeNode)SelectedItem; } set { } }
 /**/        internal bool CheckBoxes;
@@ -55,11 +55,11 @@ namespace SearchDirLists
 /**/        internal void Select() { }
 /**/    }
 /**/
-/**/    class SDL_TreeNode : TreeViewItem
+/**/    class SDL_TreeNode : TreeViewItem //TreeViewItemVM
 /**/    {
 /**/        internal SDL_TreeNode() { }
-/**/        internal SDL_TreeNode(String strContent) { Header = strContent; }
-/**/        internal SDL_TreeNode(String strContent, SDL_TreeNode[] arrNodes) { Header = strContent; foreach (SDL_TreeNode treeNode in arrNodes) { Items.Add(treeNode); } }
+/**/        internal SDL_TreeNode(String strContent) {} //: base(strContent) { }
+/**/        internal SDL_TreeNode(String strContent, SDL_TreeNode[] arrNodes) {} //: base(strContent, arrNodes) {}
 /**/        
 /**/        internal bool Checked;
 /**/        internal Drawing.Color ForeColor { get { return this.GetForeColor(); } set { this.SetForeColor(value); } }

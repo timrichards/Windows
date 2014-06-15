@@ -160,7 +160,7 @@
                         </Grid.RowDefinitions>
                         <TreeView HorizontalAlignment="Stretch" Name="xaml_treeViewBrowse" VerticalAlignment="Stretch" Grid.RowSpan="1" BorderThickness="0"/>
                         <GridSplitter Grid.Row="1" ResizeDirection="Rows" Grid.Column="0" Height="2" HorizontalAlignment="Stretch" />
-                        <TabControl HorizontalAlignment="Stretch" Name="tabControl1" VerticalAlignment="Stretch" TabStripPlacement="Bottom" Grid.Row="2">
+                        <TabControl HorizontalAlignment="Stretch" Name="xaml_tabControlCopyIgnore" VerticalAlignment="Stretch" TabStripPlacement="Bottom" Grid.Row="2">
                             <TabItem Header="Copy scratchpad" Name="xaml_tabItemCopyScratchpad">
                                 <DockPanel>
                                     <StackPanel Height="Auto" Width="Auto" Orientation="Vertical" VerticalAlignment="Bottom">
@@ -216,7 +216,7 @@
                             <ColumnDefinition Width="3" />
                             <ColumnDefinition Width="*" MinWidth="20"/>
                         </Grid.ColumnDefinitions>
-                        <TabControl Grid.Column="0" HorizontalAlignment="Stretch" Name="tabControl2" VerticalAlignment="Stretch" Grid.Row="0" Grid.ColumnSpan="3">
+                        <TabControl Grid.Column="0" HorizontalAlignment="Stretch" Name="xaml_tabControlFiles" VerticalAlignment="Stretch" Grid.Row="0" Grid.ColumnSpan="3">
                             <TabItem Header="Disk usage" Name="xaml_tabItemDiskUsage">
                                 <Grid />
                             </TabItem>

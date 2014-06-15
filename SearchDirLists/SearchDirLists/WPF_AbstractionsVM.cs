@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Controls;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SearchDirLists
 {
@@ -118,13 +120,19 @@ namespace SearchDirLists
         readonly protected ObservableCollection<ListViewItemVM> m_items = new ObservableCollection<ListViewItemVM>();
         readonly protected ListView m_lv = null;
     }
+
+    abstract class ListViewVM_Generic<T> : ListViewVM where T : ListViewItemVM
+    {
+        internal ListViewVM_Generic(ListView lv) : base(lv) { }
+
+        internal IEnumerable<T> ItemsCast { get { return m_items.Cast<T>(); } }
+        internal IEnumerable<T> Selected { get { return m_lv.SelectedItems.Cast<T>(); } }
+    }
 }
 
 namespace Template      // prevents smart tag rename command from renaming the templates after you've copied them and rename them
 {
     using SearchDirLists;
-    using System.Collections.Generic;
-    using System.Linq;
 
     class Template_LVitemVM : ListViewItemVM
     {
@@ -146,15 +154,22 @@ namespace Template      // prevents smart tag rename command from renaming the t
         protected override int SearchCol { get { return 0; } }
     }
 
-    class Template_ListViewVM : ListViewVM
+    class Template_ListViewVM : ListViewVM_Generic<Template_LVitemVM>
     {
         public String WidthColumnNameHere { get { return SCW; } }
 
         internal Template_ListViewVM(ListView lv) : base(lv) { }
         internal override void NewItem(String[] arrStr) { Add(new Template_LVitemVM(this, arrStr)); }
         internal override int NumCols { get { return Template_LVitemVM.NumCols_; } }
-        
-        internal IEnumerable<Template_LVitemVM> ItemsCast { get { return m_items.Cast<Template_LVitemVM>(); } }
-        internal IEnumerable<Template_LVitemVM> Selected { get { return m_lv.SelectedItems.Cast<Template_LVitemVM>(); } }
+    }
+
+    class Test
+    {
+        Template_ListViewVM t = new Template_ListViewVM(null);
+
+        Test()
+        {
+            Template_LVitemVM t1 = t.ItemsCast.ElementAt(0);
+        }
     }
 }

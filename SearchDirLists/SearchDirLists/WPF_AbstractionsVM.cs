@@ -55,14 +55,11 @@ namespace SearchDirLists
         internal String this[int i] { get { return marr[i]; } }
         internal int Index = -1;
 
-        protected ListViewItemVM(ListViewVM LV)
+        internal ListViewItemVM(ListViewVM LV, String[] arrStr)
         {
             marr = new string[NumCols];
             Index = LV.Count;
-        }
-
-        protected void CopyInArray(String[] arrStr)
-        {
+            LV_RaisePropertyChanged = LV.RaisePropertyChanged;
             Utilities.Assert(1310.1001, arrStr.Length <= NumCols);
             arrStr.CopyTo(marr, 0);
             for (int i = 0; i < arrStr.Length; ++i) Raise(i);
@@ -77,12 +74,12 @@ namespace SearchDirLists
             ListViewVM.SCW = double.NaN.ToString(); LV_RaisePropertyChanged("Width" + strPropName);
         }
 
+        RaisePropertyChangedDelegate LV_RaisePropertyChanged = null;
         internal String SearchValue { get { return marr[SearchCol].ToLower(); } }
         protected void SetProperty(int nCol, String s) { if (this[nCol] != s) { marr[nCol] = s; Raise(nCol); } }
 
         internal abstract int NumCols { get; }
         protected abstract String[] PropertyNames { get; }
-        protected abstract RaisePropertyChangedDelegate LV_RaisePropertyChanged { get; }    // frankenhoek
         protected abstract int SearchCol { get; }
 
         protected String[] marr = null;                                                     // all properties (columns/items) get stored here
@@ -141,16 +138,11 @@ namespace Template      // prevents smart tag rename command from renaming the t
         readonly static String[] marrPropName = new String[] { };
 
         internal Template_LVitemVM(Template_ListViewVM LV, String[] arrStr)
-            : base(LV)
-        {
-            mPropChanged_LV = LV.RaisePropertyChanged;
-            CopyInArray(arrStr);
-        }
+            : base(LV, arrStr) {}
 
         internal const int NumCols_ = 0;
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
-        protected override RaisePropertyChangedDelegate LV_RaisePropertyChanged { get { return mPropChanged_LV; } } RaisePropertyChangedDelegate mPropChanged_LV = null;
         protected override int SearchCol { get { return 0; } }
     }
 

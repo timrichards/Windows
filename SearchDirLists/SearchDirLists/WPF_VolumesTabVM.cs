@@ -21,17 +21,14 @@ namespace SearchDirLists
         readonly static String[] marrPropName = new String[] { "VolumeName", "Path", "SaveAs", "Status", "IncludeStr", "VolumeGroup" };
 
         internal VolumeLVitemVM(VolumesListViewVM LV, String[] arrStr)
-            : base(LV)
+            : base(LV, arrStr)
         {
-            mPropChanged_LV = LV.RaisePropertyChanged;
-            CopyInArray(arrStr);
             SaveAsExists = (Status == Utilities.mSTRusingFile);                 // TODO: check dup drive letter, and if letter is mounted.
         }
 
         internal const int NumCols_ = 6;
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
-        protected override RaisePropertyChangedDelegate LV_RaisePropertyChanged { get { return mPropChanged_LV; } } RaisePropertyChangedDelegate mPropChanged_LV = null;
         protected override int SearchCol { get { return 0; } }
 
         internal bool Include { get { return (IncludeStr == "Yes"); } set { IncludeStr = (value ? "Yes" : "No"); } }

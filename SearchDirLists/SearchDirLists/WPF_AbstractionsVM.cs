@@ -24,11 +24,12 @@ namespace SearchDirLists
                     RaisePropertyChanged("List");
                 }
 
-                if (value == m_strCurrent) return;
-
-                m_strCurrent = value;
-                m_Action();
-                RaisePropertyChanged("S");
+                if (value != m_strCurrent)
+                {
+                    m_strCurrent = value;
+                    m_Action();
+                    RaisePropertyChanged("S");
+                }
             }
 
             get { return m_strCurrent; }
@@ -57,12 +58,16 @@ namespace SearchDirLists
 
         internal ListViewItemVM(ListViewVM LV, String[] arrStr)
         {
-            marr = new string[NumCols];
             Index = LV.Count;
             LV_RaisePropertyChanged = LV.RaisePropertyChanged;
             Utilities.Assert(1310.1001, arrStr.Length <= NumCols);
+            marr = new string[NumCols];
             arrStr.CopyTo(marr, 0);
-            for (int i = 0; i < arrStr.Length; ++i) Raise(i);
+
+            for (int i = 0; i < arrStr.Length; ++i)
+            {
+                Raise(i);
+            }
         }
 
         void Raise(int nCol)
@@ -70,13 +75,30 @@ namespace SearchDirLists
             String strPropName = PropertyNames[nCol];
 
             RaisePropertyChanged(strPropName);
-            ListViewVM.SCW = 50.ToString(); LV_RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there
-            ListViewVM.SCW = double.NaN.ToString(); LV_RaisePropertyChanged("Width" + strPropName);
+            ListViewVM.SCW = 50.ToString();
+            LV_RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there
+            ListViewVM.SCW = double.NaN.ToString();
+            LV_RaisePropertyChanged("Width" + strPropName);
         }
 
         RaisePropertyChangedDelegate LV_RaisePropertyChanged = null;
-        internal String SearchValue { get { return marr[SearchCol].ToLower(); } }
-        protected void SetProperty(int nCol, String s) { if (this[nCol] != s) { marr[nCol] = s; Raise(nCol); } }
+
+        internal String SearchValue
+        {
+            get
+            {
+                return marr[SearchCol].ToLower();
+            }
+        }
+
+        protected void SetProperty(int nCol, String s)
+        {
+            if (this[nCol] != s)
+            {
+                marr[nCol] = s;
+                Raise(nCol);
+            }
+        }
 
         internal abstract int NumCols { get; }
         protected abstract String[] PropertyNames { get; }
@@ -112,7 +134,24 @@ namespace SearchDirLists
         internal bool SelectedOne { get { return m_lv.SelectedItems.Count == 1; } }
         internal bool SelectedAny { get { return m_lv.SelectedItems.Count > 0; } }
         internal bool Contains(String s) { return (this[s] != null); }
-        internal ListViewItemVM this[String s_in] { get { String s = s_in.ToLower(); foreach (var o in m_items) if (o.SearchValue == s) return o; return null; } }
+
+        internal ListViewItemVM this[String s_in]
+        {
+            get
+            {
+                String s = s_in.ToLower();
+
+                foreach (var o in m_items)
+                {
+                    if (o.SearchValue == s)
+                    {
+                        return o;
+                    }
+                }
+
+                return null;
+            }
+        }
 
         readonly protected ObservableCollection<ListViewItemVM> m_items = new ObservableCollection<ListViewItemVM>();
         readonly protected ListView m_lv = null;

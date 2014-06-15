@@ -41,6 +41,70 @@ namespace SearchDirLists
         internal bool IsDisposed { get { return false; } }
     }
 
+    class SDL_TreeView
+    {
+        internal SDL_TreeNodeCollection Nodes = null;
+        internal bool CheckBoxes;
+        internal bool Enabled;
+        internal Drawing.Font Font = null;
+        internal SDL_TreeNode SelectedNode = null;
+        internal SDL_TreeNode TopNode = null;
+        internal void CollapseAll() { }
+        internal int GetNodeCount(bool includeSubTrees = false) { return 0; }
+        internal void Select() { }
+    }
+
+    class SDL_TreeNodeCollection : IEnumerable<SDL_TreeNode>
+    {
+        internal bool ContainsKey(String s) { return false; }
+        internal SDL_TreeNode GetAt(String s) { return null; }
+        internal int Count = -1;
+        internal void Remove(SDL_TreeNode treeNode) { }
+        internal void Add(SDL_TreeNode treeNode) { }
+        internal void AddRange(SDL_TreeNode[] arrNodes) { }
+        internal void Clear() { }
+        internal SDL_TreeNode this[int i] { get { return null; } }
+
+        public IEnumerator<SDL_TreeNode> GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    class SDL_TreeNode 
+    {
+        public SDL_TreeNode() { }
+        internal SDL_TreeNode(String strContent) { }
+        internal SDL_TreeNode(String strContent, SDL_TreeNode[] arrNodes) { }
+
+        internal String Text;
+        internal Drawing.Color BackColor;
+        internal Drawing.Color ForeColor;
+        internal bool Checked;
+        internal String FullPath = null;
+        internal object Clone() { return null; }
+        internal SDL_TreeView TreeView = null;
+        internal void EnsureVisible() { }
+        internal SDL_TreeNode FirstNode = null;
+        internal SDL_TreeNode NextNode = null;
+        internal SDL_TreeNode Parent = null;
+        internal int Level = -1;
+        internal int SelectedImageIndex;
+        internal object Tag;
+        internal String Name;
+        internal Drawing.Font NodeFont = null;
+        internal SDL_TreeNodeCollection Nodes = null;
+        internal object GetTag() { return null; }
+        internal String ToolTipText = null;
+    }
+
+
+#if (false)
     [System.ComponentModel.DesignerCategory("Code")]
 /**/    class SDL_TreeView : TreeView //TreeViewVM
 /**/    {
@@ -75,6 +139,7 @@ namespace SearchDirLists
 /**/        internal String ToolTipText = null;
 /**/        internal SDL_TreeView TreeView = null;
 /**/    }
+#endif
 /**/
 /**/    class SDL_ListViewItem : ListViewItem
 /**/    {
@@ -99,11 +164,11 @@ namespace SearchDirLists
 /**/    static class SDLWPF
 /**/    {
 /**/        // TreeNode
-/**/        internal static object GetTag(this WPF.DependencyObject obj) { return ((TreeViewItem)obj).Tag; }
-/**/        internal static void SetTag(this WPF.DependencyObject obj, object o) { ((TreeViewItem)obj).Tag = o; }
-/**/        internal static TreeViewItem GetFirstNode(this SDL_TreeNode node) { return (node.Items.Count > 0) ? (TreeViewItem)node.Items[0] : null; }
-/**/        internal static String GetFullPath(this SDL_TreeNode node) { String s = ""; if (node.Parent != null) { s += ((SDL_TreeNode)node.Parent).GetFullPath() + Path.DirectorySeparatorChar; } s += node.Header; return s; }
-/**/        internal static void AddRange(this ItemCollection c, SDL_TreeNode[] a) { foreach (SDL_TreeNode i in a) { c.Add(i); } }
+///**/        internal static object GetTag(this WPF.DependencyObject obj) { return ((TreeViewItem)obj).Tag; }
+///**/        internal static void SetTag(this WPF.DependencyObject obj, object o) { ((TreeViewItem)obj).Tag = o; }
+///**/        internal static TreeViewItem GetFirstNode(this SDL_TreeNode node) { return (node.Items.Count > 0) ? (TreeViewItem)node.Items[0] : null; }
+///**/        internal static String GetFullPath(this SDL_TreeNode node) { String s = ""; if (node.Parent != null) { s += ((SDL_TreeNode)node.Parent).GetFullPath() + Path.DirectorySeparatorChar; } s += node.Header; return s; }
+///**/        internal static void AddRange(this ItemCollection c, SDL_TreeNode[] a) { foreach (SDL_TreeNode i in a) { c.Add(i); } }
 /**/
 /**/        // SDL_Control
 /**/        static Drawing.Color _BrushToClr(Media.Brush brush) { Media.Color c = ((SolidColorBrush)brush).Color; return Drawing.Color.FromArgb(c.A, c.R, c.G, c.B); }

@@ -584,7 +584,12 @@ namespace SearchDirLists
                             break;
                         }
 
-                        File.Delete(StrFile_01(strSaveAs));
+                        try
+                        {
+                            File.Delete(StrFile_01(strSaveAs));
+                        }
+                        catch { }
+
                         bAttemptConvert = true;
                     }
 

@@ -72,10 +72,8 @@ namespace SearchDirLists
                 Add(treeNode);
             }
 
-            foreach (SDL_TreeNode treeNode in this)
-            {
-                treeNode.SetLevel(m_treeView);
-            }
+            m_treeView.TopNode = this[0];
+            SDL_TreeNode.SetLevel(m_treeView, this);
         }
 
         internal bool ContainsKey(String s) { return this[s] != null; }
@@ -119,27 +117,30 @@ namespace SearchDirLists
         internal SDL_TreeNodeCollection Nodes = null;
         internal String ToolTipText = null;
 
-        internal void SetLevel(SDL_TreeView treeView, SDL_TreeNode nodeParent = null, int nLevel = 0)
+        internal static void SetLevel(SDL_TreeView treeView, SDL_TreeNodeCollection nodes, SDL_TreeNode nodeParent = null, int nLevel = 0)
         {
-            if (nodeParent == null)
-            {
-                treeView.TopNode = this;
-            }
+            SDL_TreeNode nodePrev = null;
+            SDL_TreeNode nodeFirst = nodes[0];
 
+            foreach (SDL_TreeNode treeNode in nodes)
+            {
+                if (nodePrev != null)
+                {
+                    nodePrev.NextNode = treeNode;
+                }
+
+                nodePrev = treeNode;
+                treeNode.FirstNode = nodeFirst;
+                treeNode.SetLevel(treeView, nodeParent, nLevel + 1);
+            }
+        }
+
+        void SetLevel(SDL_TreeView treeView, SDL_TreeNode nodeParent, int nLevel)
+        {
+            TreeView = treeView;
             Parent = nodeParent;
             Level = nLevel;
-            FirstNode = this;
-            TreeView = treeView;
-
-            SDL_TreeNode nodePrev = this;
-
-            foreach (SDL_TreeNode treeNode in Nodes)
-            {
-                treeNode.SetLevel(treeView, this, nLevel + 1);
-                treeNode.FirstNode = this;
-                nodePrev.NextNode = treeNode;
-                nodePrev = treeNode;
-            }
+            SetLevel(treeView, Nodes, this, nLevel + 1);
         }
     }
 

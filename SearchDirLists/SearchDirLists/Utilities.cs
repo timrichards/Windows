@@ -26,6 +26,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Windows.Input;
 using System.Collections;
+using System.Text;
 
 namespace SearchDirLists
 {
@@ -49,14 +50,7 @@ namespace SearchDirLists
             Nodes = new SDL_TreeNodeCollection(this);
         }
 
-        internal SDL_TreeNodeCollection Nodes = null;
-        internal bool CheckBoxes;
-        internal bool Enabled;
-        internal Drawing.Font Font = null;
-        internal SDL_TreeNode SelectedNode = null;
-        internal SDL_TreeNode TopNode = null;
-        internal void CollapseAll() { }
-        internal void Select() { }
+        readonly internal SDL_TreeNodeCollection Nodes = null;
 
         internal int GetNodeCount(bool includeSubTrees = false)
         {
@@ -69,6 +63,15 @@ namespace SearchDirLists
                 return Nodes.Count;
             }
         }
+
+        internal void CollapseAll() { }
+        internal void Select() { }
+
+        internal SDL_TreeNode SelectedNode = null;
+        internal SDL_TreeNode TopNode = null;
+        internal Drawing.Font Font = null;
+        internal bool CheckBoxes = false;
+        internal bool Enabled = false;
 
         int CountSubnodes(SDL_TreeNodeCollection nodes)
         {
@@ -87,6 +90,8 @@ namespace SearchDirLists
     class SDL_TreeNodeCollection : UList<SDL_TreeNode>
     {
         readonly SDL_TreeView m_treeView = null;
+        String strPrevQuery = null;
+        SDL_TreeNode nodePrevQuery = null;
 
         internal SDL_TreeNodeCollection(SDL_TreeView treeView)
         {
@@ -130,14 +135,29 @@ namespace SearchDirLists
 
         internal bool ContainsKey(String s)
         {
-            return this[s] != null;
+            if (s != strPrevQuery)
+            {
+                strPrevQuery = s;
+                nodePrevQuery = this[s];
+            }
+
+            return (nodePrevQuery != null);
         }
 
         internal SDL_TreeNode this[String s]
         {
             get
             {
-                return (SDL_TreeNode)Keys.Where(t => t.Text == s);              // TODO: Trim? ignore case? Probably neither.
+                if (s == strPrevQuery)
+                {
+                    return nodePrevQuery;
+                }
+                else
+                {
+                    strPrevQuery = s;
+                    nodePrevQuery = (SDL_TreeNode)Keys.Where(t => t.Text == s);
+                    return nodePrevQuery;                   // TODO: Trim? ignore case? Probably neither.
+                }
             }
         }
     }
@@ -148,6 +168,8 @@ namespace SearchDirLists
         {
             Nodes = new SDL_TreeNodeCollection(TreeView);
         }
+
+        readonly internal SDL_TreeNodeCollection Nodes = null;
 
         internal SDL_TreeNode(String strContent)
             : this()
@@ -161,23 +183,50 @@ namespace SearchDirLists
             Nodes.AddRange(arrNodes);
         }
 
-        internal String Text = null;
-        internal Drawing.Color BackColor;
-        internal Drawing.Color ForeColor;
-        internal bool Checked = false;
-        internal String FullPath = null;
-        internal SDL_TreeView TreeView = null;
         internal void EnsureVisible() { }
+
+        internal String FullPath
+        {
+            get
+            {
+                Stack<SDL_TreeNode> stack = new Stack<SDL_TreeNode>(8);
+                SDL_TreeNode nodeParent = Parent;
+
+                while (nodeParent != null)
+                {
+                    stack.Push(nodeParent);
+                    nodeParent = Parent;
+                }
+
+                StringBuilder sb = new StringBuilder();
+
+                nodeParent = stack.Pop();
+
+                while (nodeParent != null)
+                {
+                    sb.Append(nodeParent.Text + Path.DirectorySeparatorChar);
+                    nodeParent = stack.Pop();
+                }
+
+                sb.Append(Text);
+                return sb.ToString();
+            }
+        }
+
+        internal String Text = null;
+        internal String ToolTipText = null;
+        internal String Name = null;
+        internal SDL_TreeView TreeView = null;
         internal SDL_TreeNode FirstNode = null;
         internal SDL_TreeNode NextNode = null;
         internal SDL_TreeNode Parent = null;
         internal int Level = -1;
+        internal Drawing.Color BackColor;
+        internal Drawing.Color ForeColor;
+        internal Drawing.Font NodeFont = null;
+        internal bool Checked = false;
         internal int SelectedImageIndex = -1;
         internal object Tag = null;
-        internal String Name = null;
-        internal Drawing.Font NodeFont = null;
-        internal SDL_TreeNodeCollection Nodes = null;
-        internal String ToolTipText = null;
     }
 
 /**/    class SDL_ListViewItem : ListViewItem

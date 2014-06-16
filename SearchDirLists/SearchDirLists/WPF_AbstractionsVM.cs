@@ -113,7 +113,10 @@ namespace SearchDirLists
 
         internal ListViewVM(ListView lv)
         {
-            (m_lv = lv).DataContext = this;
+            if (lv != null)
+            {
+                (m_lv = lv).DataContext = this;
+            }
         }
 
         internal abstract void NewItem(String[] arrStr);

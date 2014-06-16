@@ -13,6 +13,71 @@ namespace SearchDirLists
 {
     partial class VolumesTabVM
     {
+        void DoTree()
+        {
+            UList<LVvolStrings> list_lvVolStrings = new UList<LVvolStrings>();
+
+            foreach (VolumeLVitemVM lvItem in LV.Items)
+            {
+                list_lvVolStrings.Add(new LVvolStrings(lvItem));
+            }
+
+            gd.m_tree = new Tree(list_lvVolStrings, gd.m_dictNodes, gd.m_dictDriveInfo,
+                new TreeStatusDelegate(TreeStatusCallback), new Action(TreeDoneCallback));
+            gd.m_tree.DoThreadFactory();
+        }
+
+        internal void TreeStatusCallback(LVvolStrings volStrings, SDL_TreeNode rootNode = null, bool bError = false)
+        {
+            if (GlobalData.AppExit || (gd.m_tree == null) || (gd.m_tree.IsAborted))
+            {
+                gd.TreeCleanup();
+                return;
+            }
+
+            if (m_app.CheckAccess() == false) { m_app.Dispatcher.Invoke(new TreeStatusDelegate(TreeStatusCallback), new object[] { volStrings, rootNode, bError }); return; }
+
+            if (bError)
+            {
+     //           volStrings.SetStatus_BadFile(LV);
+            }
+            else if (rootNode != null)
+            {
+                //lock (TV)
+                //{
+                //    TV.Nodes.Add(rootNode.Text);    // items added to show progress
+                //    volStrings.SetStatus_Done(LV, rootNode);
+                //}
+
+                lock (gd.m_listRootNodes)
+                {
+                    gd.m_listRootNodes.Add(rootNode);
+                }
+            }
+            else
+            {
+                Utilities.Assert(1304.5309, false);
+            }
+        }
+
+        void TreeDoneCallback()
+        {
+   //         DoCollation();
+
+            Utilities.CheckAndInvoke(m_app.Dispatcher, new Action(() =>
+            {
+                CopyScratchpadListViewVM lvFake = new CopyScratchpadListViewVM(null);   // Hack: check changed event loads the real listviewer
+
+            //    foreach (CopyScratchpadLVitemVM lvItem in m_Browse.LV_CopyScratchpad.Items)
+            //    {
+            //        lvFake.Items.Add(lvItem.Clone());
+            //    }
+
+            //    m_Browse.LV_CopyScratchpad.Items.Clear();
+            //    m_Browse.LoadCopyScratchPad(lvFake);
+            }));
+        }
+
         void AddVolume()
         {
             gd.InterruptTreeTimerWithAction(new BoolAction(() =>
@@ -168,7 +233,7 @@ namespace SearchDirLists
             return strPath.TrimEnd(Path.DirectorySeparatorChar);
         }
 
-        void LoadVolumeList_Click() { gd.InterruptTreeTimerWithAction(new BoolAction(() => { return LoadVolumeList(); })); }
+        void LoadVolumeList_Click() { gd.InterruptTreeTimerWithAction(new BoolAction(() => { return LoadVolumeList(); })); DoTree(); }
 
         bool LoadVolumeList(String strFile = null)
         {

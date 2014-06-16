@@ -130,17 +130,12 @@ namespace SearchDirLists
                 }
 
                 nodePrev = treeNode;
+                treeNode.TreeView = treeView;
+                treeNode.Parent = nodeParent;
                 treeNode.FirstNode = nodeFirst;
-                treeNode.SetLevel(treeView, nodeParent, nLevel + 1);
+                treeNode.Level = nLevel;
+                SetLevel(treeView, treeNode.Nodes, treeNode, nLevel + 1);
             }
-        }
-
-        void SetLevel(SDL_TreeView treeView, SDL_TreeNode nodeParent, int nLevel)
-        {
-            TreeView = treeView;
-            Parent = nodeParent;
-            Level = nLevel;
-            SetLevel(treeView, Nodes, this, nLevel + 1);
         }
     }
 

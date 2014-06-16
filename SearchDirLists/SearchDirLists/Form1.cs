@@ -2374,7 +2374,7 @@ namespace SearchDirLists
                 }
                 else if (t2.Nodes.ContainsKey(s1.Name))
                 {
-                    s2 = (SDL_TreeNode)t2.Nodes.GetAt(s1.Name);
+                    s2 = (SDL_TreeNode)t2.Nodes[s1.Name];
 
                     if (Compare(s1, s2, bReverse, nMin10M, nMin100K) == false)
                     {

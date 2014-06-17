@@ -137,9 +137,9 @@ namespace SearchDirLists
      //   readonly FilesListViewVM LV_CompareFiles = null;
         readonly DetailListViewVM LV_Detail = null;
         readonly DetailListViewVM LV_DetailVol = null;
-        readonly SolitaryListViewVM LV_Solitary = null;
-        readonly ClonesListViewVM LV_SameVol = null;
-        readonly ClonesListViewVM LV_Clones = null;
+        internal readonly SolitaryListViewVM LV_Solitary = null;
+        internal readonly ClonesListViewVM LV_SameVol = null;
+        internal readonly ClonesListViewVM LV_Clones = null;
 
         readonly ICommand[] marrIcmd = null;
 

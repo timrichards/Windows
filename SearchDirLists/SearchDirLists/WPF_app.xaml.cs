@@ -11,11 +11,7 @@ namespace SearchDirLists
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
-            MainWindow app = new MainWindow();
-            new VolumesTabVM(app);
-            new BrowseTabVM(app);
-            app.Show();
+            new MainWindow().Show();
         }
     }
 }

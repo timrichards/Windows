@@ -63,12 +63,8 @@ namespace SearchDirLists
         void TreeDoneCallback()
         {
 #if (WPF)
-            SDL_ListView form_lvClones = new SDL_ListView();
-            SDL_ListView form_lvSameVol = new SDL_ListView();
-            SDL_ListView form_lvUnique = new SDL_ListView();
-
             Collate collate = new Collate(gd.m_dictNodes,
-                form_lvClones, form_lvSameVol, form_lvUnique,
+                m_app.BrowseTab.LV_Clones.data, m_app.BrowseTab.LV_SameVol.data, m_app.BrowseTab.LV_Solitary.data,
                 gd.m_listRootNodes, gd.m_listTreeNodes, gd.m_bCheckboxes,
                 gd.m_listLVignore, true);
             DateTime dtStart = DateTime.Now;

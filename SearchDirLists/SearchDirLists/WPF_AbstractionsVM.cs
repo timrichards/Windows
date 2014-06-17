@@ -60,6 +60,7 @@ namespace SearchDirLists
         {
             Index = LV.Count;
             LV_RaisePropertyChanged = LV.RaisePropertyChanged;
+            data = LV.data;
             Utilities.Assert(1310.1001, arrStr.Length <= NumCols);
             marr = new string[NumCols];
             arrStr.CopyTo(marr, 0);
@@ -103,8 +104,9 @@ namespace SearchDirLists
         internal abstract int NumCols { get; }
         protected abstract String[] PropertyNames { get; }
         protected virtual int SearchCol { get { return 0; } }
+        protected readonly SDL_ListView data;
 
-        protected String[] marr = null;                                                     // all properties (columns/items) get stored here
+        protected String[] marr = null;                         // all properties (columns/items) get stored here
     }
 
     abstract class ListViewVM : ObservableObject
@@ -130,7 +132,7 @@ namespace SearchDirLists
             return true;
         }
 
-        internal static String SCW = double.NaN.ToString();                                 // frankenhoek
+        internal static String SCW = double.NaN.ToString();     // frankenhoek
 
         internal int Count { get { return m_items.Count; } }
         internal bool HasItems { get { return m_items.Count > 0; } }
@@ -156,6 +158,7 @@ namespace SearchDirLists
             }
         }
 
+        readonly internal SDL_ListView data = new SDL_ListView();
         readonly protected ObservableCollection<ListViewItemVM> m_items = new ObservableCollection<ListViewItemVM>();
         readonly protected ListView m_lv = null;
     }

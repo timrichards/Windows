@@ -20,7 +20,7 @@ namespace SearchDirLists
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
 
-        internal TreeViewItemVM treeNode = null;
+        internal SDL_TreeNode treeNode = null;
     }
 
     class CopyScratchpadListViewVM : ListViewVM_Generic<CopyScratchpadLVitemVM>
@@ -136,8 +136,6 @@ namespace SearchDirLists
         internal const int NumCols_ = 1;
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
-
-        internal TreeViewItemVM treeNode = null;
     }
 
     class SolitaryListViewVM : ListViewVM_Generic<SolitaryLVitemVM>
@@ -164,8 +162,6 @@ namespace SearchDirLists
         internal const int NumCols_ = 2;
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
-
-        internal TreeViewItemVM treeNode = null;
     }
 
     class ClonesListViewVM : ListViewVM_Generic<ClonesLVitemVM>

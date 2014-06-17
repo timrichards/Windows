@@ -1011,7 +1011,7 @@ namespace SearchDirLists
                 {
                     SDL_ListViewItem lvItem = (SDL_ListViewItem)form_lvVolumesMain.SelectedItems[0];
 
-                    lvItem.SubItems[1].SetText(strDriveLetter + ":");
+                    lvItem.SubItems[1].Text = (strDriveLetter + ":");
                 }
 
                 File.WriteAllText(strFileName, sbFileConts.ToString());
@@ -1237,7 +1237,7 @@ namespace SearchDirLists
             {
                 foreach (SDL_ListViewItem lvItem in lvSelect)
                 {
-                    lvItem.SubItems[4].SetText((lvItem.SubItems[4].Text != "Yes") ? "Yes" : "No");
+                    lvItem.SubItems[4].Text = ((lvItem.SubItems[4].Text != "Yes") ? "Yes" : "No");
                 }
 
                 gd.RestartTreeTimer();
@@ -1274,7 +1274,7 @@ namespace SearchDirLists
                 {
                     if (((SDL_TreeNode)treeNode.Parent).Parent == null)
                     {
-                        ((RootNodeDatum)treeNode.Parent.GetTag()).VolumeView = false;
+                        ((RootNodeDatum)treeNode.Parent.Tag).VolumeView = false;
                     }
 
                     treeNode.TreeView.SelectedNode = treeNode.Parent;
@@ -1353,12 +1353,12 @@ namespace SearchDirLists
 
                 foreach (SDL_ListViewItem lvItem in lvSelect)
                 {
-                    while (lvItem.SubItems.GetCount() <= 5)
+                    while (lvItem.SubItems.Count <= 5)
                     {
                         lvItem.SubItems.Add(new SDL_ListViewSubitem());
                     }
 
-                    lvItem.SubItems[5].SetText(inputBox.Entry);
+                    lvItem.SubItems[5].Text = inputBox.Entry;
 
                     if (lvItem.Tag == null)
                     {
@@ -2440,7 +2440,7 @@ namespace SearchDirLists
             }
             else
             {
-                m_blinky.Go((SDL_Control)sender, clr: Drawing.Color.Red, Once: true);
+                m_blinky.Go((Control)sender, clr: Drawing.Color.Red, Once: true);
             }
         }
 

@@ -229,7 +229,7 @@ namespace SearchDirLists
             {
                 SDL_ListViewItem lvItem = (SDL_ListViewItem)form_lvVolumesMain.FindItemWithText(gd.m_strVolumeName);
 
-                if ((lvItem != null) && (lvItem.Text() == gd.m_strVolumeName))
+                if ((lvItem != null) && (lvItem.Text == gd.m_strVolumeName))
                 {
                     gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red);
 
@@ -366,7 +366,7 @@ namespace SearchDirLists
 
             foreach (SDL_ListViewItem lvItem in lvFake.Items)
             {
-                SDL_TreeNode treeNode = gd.GetNodeByPath(lvItem.SubItems[1].Text(), SDLWPF.treeViewMain);
+                SDL_TreeNode treeNode = gd.GetNodeByPath(lvItem.SubItems[1].Text, SDLWPF.treeViewMain);
 
                 if (treeNode != null)
                 {
@@ -816,7 +816,7 @@ namespace SearchDirLists
             {
                 SDL_ListViewItem lvItem = new SDL_ListViewItem(new String[] { treeNode.Text, (treeNode.Level + 1).ToString() });
 
-                lvItem.Name = lvItem.Text();
+                lvItem.Name = lvItem.Text;
                 form_lvIgnoreList.Items.Add(lvItem);
                 gd.m_bKillTree &= gd.timer_DoTree.IsEnabled;
                 gd.RestartTreeTimer();
@@ -1237,7 +1237,7 @@ namespace SearchDirLists
             {
                 foreach (SDL_ListViewItem lvItem in lvSelect)
                 {
-                    lvItem.SubItems[4].SetText((lvItem.SubItems[4].Text() != "Yes") ? "Yes" : "No");
+                    lvItem.SubItems[4].SetText((lvItem.SubItems[4].Text != "Yes") ? "Yes" : "No");
                 }
 
                 gd.RestartTreeTimer();
@@ -1333,7 +1333,7 @@ namespace SearchDirLists
                         continue;
                     }
 
-                    String strVolGroup = lvItem.SubItems[5].Text();
+                    String strVolGroup = lvItem.SubItems[5].Text;
 
                     if (dictVolGroups.ContainsKey(strVolGroup) == false)
                     {
@@ -1740,7 +1740,7 @@ namespace SearchDirLists
                 case SortOrder.Ascending:
                 {
                     sortOrder = SortOrder.Descending;
-                    listItems.Sort((y, x) => x.Text().CompareTo(y.Text()));
+                    listItems.Sort((y, x) => x.Text.CompareTo(y.Text));
                     break;
                 }
 
@@ -1769,7 +1769,7 @@ namespace SearchDirLists
                 case SortOrder.None:
                 {
                     sortOrder = SortOrder.Ascending;
-                    listItems.Sort((x, y) => x.Text().CompareTo(y.Text()));
+                    listItems.Sort((x, y) => x.Text.CompareTo(y.Text));
                     break;
                 }
             }

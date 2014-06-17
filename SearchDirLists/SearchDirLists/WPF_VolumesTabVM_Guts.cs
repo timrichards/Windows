@@ -62,8 +62,33 @@ namespace SearchDirLists
 
         void TreeDoneCallback()
         {
-   //         DoCollation();
+#if (WPF)
+            SDL_ListView form_lvClones = new SDL_ListView();
+            SDL_ListView form_lvSameVol = new SDL_ListView();
+            SDL_ListView form_lvUnique = new SDL_ListView();
 
+            Collate collate = new Collate(gd.m_dictNodes,
+                form_lvClones, form_lvSameVol, form_lvUnique,
+                gd.m_listRootNodes, gd.m_listTreeNodes, gd.m_bCheckboxes,
+                gd.m_listLVignore, true);
+            DateTime dtStart = DateTime.Now;
+
+            collate.Step1_OnThread();
+            Utilities.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+
+            if (GlobalData.AppExit)
+            {
+                gd.TreeCleanup();
+                return;
+            }
+
+            gd.m_bPutPathInFindEditBox = true;
+            Utilities.CheckAndInvoke(m_app.Dispatcher, new Action(collate.Step2_OnForm));
+            Utilities.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+            collate = null;
+            gd.TreeCleanup();
+            GC.Collect();
+#endif
             Utilities.CheckAndInvoke(m_app.Dispatcher, new Action(() =>
             {
                 CopyScratchpadListViewVM lvFake = new CopyScratchpadListViewVM(null);   // Hack: check changed event loads the real listviewer

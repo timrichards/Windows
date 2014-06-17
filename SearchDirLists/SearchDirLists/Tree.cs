@@ -238,16 +238,16 @@ namespace SearchDirLists
         {
             foreach (SDL_ListViewItem item in list)
             {
-                item.Name = item.Text();
+                item.Name = item.Text;
 
-                if (item.SubItems.GetCount() > Utilities.mNcolLengthLV)
+                if (item.SubItems.Count > Utilities.mNcolLengthLV)
                 {
-                    item.Name += item.SubItems[Utilities.mNcolLengthLV].Text();         // name + size
+                    item.Name += item.SubItems[Utilities.mNcolLengthLV].Text;         // name + size
                 }
             }
         }
 
-        internal static void MarkItemsFrom1notIn2(ListView lv1, ListView lv2)
+        internal static void MarkItemsFrom1notIn2(SDL_ListView lv1, SDL_ListView lv2)
         {
             if ((lv1.Items.Count <= 0) || (lv2.Items.Count <= 0)) { return; }
 
@@ -255,7 +255,7 @@ namespace SearchDirLists
 
             if (list.Count > 0)
             {
-                lv1.TopItemSet(list[0]);
+                lv1.TopItem = list[0];
             }
 
             foreach (SDL_ListViewItem item in list)
@@ -264,13 +264,13 @@ namespace SearchDirLists
             }
         }
 
-        internal static void SetTopItem(ListView lv1, ListView lv2)
+        internal static void SetTopItem(SDL_ListView lv1, SDL_ListView lv2)
         {
-            if (lv1.TopItem() == null) { return; }
-            if (lv1.TopItem().Index > 0) { return; }
-            if (lv2.TopItem() == null) { return; }
+            if (lv1.TopItem == null) { return; }
+            if (lv1.TopItem.Index > 0) { return; }
+            if (lv2.TopItem == null) { return; }
 
-            int nIx = lv2.TopItem().Index - Math.Abs(lv2.Items.Count - lv1.Items.Count);
+            int nIx = lv2.TopItem.Index - Math.Abs(lv2.Items.Count - lv1.Items.Count);
 
             if (nIx < 0)
             {
@@ -279,7 +279,7 @@ namespace SearchDirLists
 
             if (lv1.Items.Count > nIx)
             {
-                lv1.TopItemSet(nIx);
+                lv1.TopItem = lv1.Items[nIx];
             }
         }
     }

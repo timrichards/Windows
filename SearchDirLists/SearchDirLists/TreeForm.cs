@@ -200,8 +200,8 @@ namespace SearchDirLists
                 return;
             }
 
-            ListView lv1 = bSecondComparePane ? form_lvFileCompare : form_lvFiles;
-            ListView lv2 = bSecondComparePane ? form_lvFiles : form_lvFileCompare;
+            SDL_ListView lv1 = (SDL_ListView) (bSecondComparePane ? form_lvFileCompare : form_lvFiles);
+            SDL_ListView lv2 = (SDL_ListView) (bSecondComparePane ? form_lvFiles : form_lvFileCompare);
 
             lock (lv1)
             {

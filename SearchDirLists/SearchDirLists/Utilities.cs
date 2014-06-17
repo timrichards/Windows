@@ -115,7 +115,11 @@ namespace SearchDirLists
         static void SetLevel(SDL_TreeView treeView, SDL_TreeNodeCollection nodes, SDL_TreeNode nodeParent = null, int nLevel = 0)
         {
             SDL_TreeNode nodePrev = null;
-            SDL_TreeNode nodeFirst = nodes[0];
+
+            if ((nodeParent != null) && (nodes.Count > 0))
+            {
+                nodeParent.FirstNode = nodes[0];
+            }
 
             foreach (SDL_TreeNode treeNode in nodes)
             {
@@ -124,10 +128,13 @@ namespace SearchDirLists
                     nodePrev.NextNode = treeNode;
                 }
 
+                // same assert that Forms generates: must remove it from the other tree first.
+                Utilities.Assert(0, (treeNode.TreeView == null) || (treeNode.TreeView == treeView));
+
                 nodePrev = treeNode;
+                treeNode.DetachFromTree();
                 treeNode.TreeView = treeView;
                 treeNode.Parent = nodeParent;
-                treeNode.FirstNode = nodeFirst;
                 treeNode.Level = nLevel;
                 SetLevel(treeView, treeNode.Nodes, treeNode, nLevel + 1);
             }
@@ -160,11 +167,33 @@ namespace SearchDirLists
                 }
             }
         }
+
+        internal new void Clear()
+        {
+            foreach (SDL_TreeNode treeNode in this)
+            {
+                treeNode.DetachFromTree();
+            }
+
+            base.Clear();
+        }
     }
 
     class SDL_TreeNode
     {
-        public SDL_TreeNode()
+        internal void DetachFromTree()
+        {
+            TreeView = null;
+            Level = -1;
+            m_strFullPath = null;
+
+            foreach (SDL_TreeNode treeNode in Nodes)
+            {
+                treeNode.DetachFromTree();
+            }
+        }
+
+        internal SDL_TreeNode()
         {
             Nodes = new SDL_TreeNodeCollection(TreeView);
         }
@@ -189,13 +218,18 @@ namespace SearchDirLists
         {
             get
             {
+                if (m_strFullPath != null)
+                {
+                    return m_strFullPath;
+                }
+
                 Stack<SDL_TreeNode> stack = new Stack<SDL_TreeNode>(8);
                 SDL_TreeNode nodeParent = Parent;
 
                 while (nodeParent != null)
                 {
                     stack.Push(nodeParent);
-                    nodeParent = Parent;
+                    nodeParent = nodeParent.Parent;
                 }
 
                 StringBuilder sb = new StringBuilder();
@@ -209,10 +243,12 @@ namespace SearchDirLists
                 }
 
                 sb.Append(Text);
-                return sb.ToString();
+                m_strFullPath = sb.ToString();
+                return m_strFullPath;
             }
         }
 
+        String m_strFullPath = null;
         internal String Text = null;
         internal String ToolTipText = null;
         internal String Name = null;
@@ -229,22 +265,102 @@ namespace SearchDirLists
         internal object Tag = null;
     }
 
-/**/    class SDL_ListViewItem : ListViewItem
-/**/    {
-/**/        public SDL_ListViewItem() : base() { }
-/**/        internal SDL_ListViewItem(String strContent) { AddText(strContent); }
-/**/        internal SDL_ListViewItem(String[] arrString) {} //{ int n = this. View.Columns.Count;  foreach (String s in arrString) { } }
-/**/        internal Drawing.Color ForeColor { get { return this.GetForeColor(); } set { this.SetForeColor(value); } }
-/**/        internal Drawing.Color BackColor { get { return this.GetBackColor(); } set { this.SetBackColor(value); } }
-/**/        internal void Select(bool bSel = true) {}
-/**/        internal bool Focused;
-/**/        internal Drawing.Font Font;
-/**/        internal int Index = -1;
-/**/        internal ListView ListView = null;
-/**/        internal void Remove() { }
-/**/        internal ListViewItem[] SubItems = null;
-/**/    }
-/**/
+    class SDL_ListViewItemCollection : UList<SDL_ListViewItem>
+    {
+        readonly SDL_ListView m_listView = null;
+        String strPrevQuery = null;
+        SDL_ListViewItem lvItemPrevQuery = null;
+
+        internal SDL_ListViewItemCollection(SDL_ListView listView)
+        {
+            m_listView = listView;
+        }
+
+        internal void AddRange(String[] arrItems)
+        {
+            foreach (String s in arrItems)
+            {
+                Add(new SDL_ListViewItem(s, m_listView));
+            }
+        }
+
+        internal void AddRange(SDL_ListViewItem[] arrItems)
+        {
+            foreach (SDL_ListViewItem lvItem in arrItems)
+            {
+                lvItem.ListView = m_listView;
+                Add(lvItem);
+            }
+        }
+
+        internal bool ContainsKey(String s)
+        {
+            if (s != strPrevQuery)
+            {
+                strPrevQuery = s;
+                lvItemPrevQuery = this[s];
+            }
+
+            return (lvItemPrevQuery != null);
+        }
+
+        internal SDL_ListViewItem this[String s]
+        {
+            get
+            {
+                if (s == strPrevQuery)
+                {
+                    return lvItemPrevQuery;
+                }
+                else
+                {
+                    strPrevQuery = s;
+                    lvItemPrevQuery = (SDL_ListViewItem)Keys.Where(t => t.Text == s);
+                    return lvItemPrevQuery;                   // TODO: Trim? ignore case? Probably neither.
+                }
+            }
+        }
+    }
+
+    class SDL_ListView
+    {
+        internal SDL_ListView() { Items = new SDL_ListViewItemCollection(this); }
+
+        internal SDL_ListViewItem TopItem = null;
+        internal SDL_ListViewItemCollection Items = null;
+        internal void Invalidate() { }
+    }
+
+    class SDL_ListViewItem
+    {
+        internal SDL_ListViewItem(SDL_ListView listView = null) { SubItems = new SDL_ListViewItemCollection(ListView); }
+        internal SDL_ListViewItem(String strContent, SDL_ListView listView = null) : this(listView) { Text = strContent; }
+
+        internal SDL_ListViewItem(String[] arrString, SDL_ListView listView = null) : this(listView)
+        {
+            Text = arrString[0];
+    
+            for (int i = 1; i < arrString.Length; ++i)
+            {
+                SubItems.Add(new SDL_ListViewItem(arrString[i], listView));
+            }
+        }
+    
+        internal String Text = null;
+        internal String Name = null;
+        internal object Tag = null;
+        internal Drawing.Color ForeColor;
+        internal Drawing.Color BackColor;
+        internal void Select(bool bSel = true) {}
+        internal bool Focused;
+        internal Drawing.Font Font = new Drawing.Font("Microsoft Sans Serif", 8.25F, Drawing.FontStyle.Regular, Drawing.GraphicsUnit.Point, ((byte)(0)));
+        internal int Index = -1;
+        internal UList<SDL_ListViewItem> SubItems = null;
+        internal object Clone() { return MemberwiseClone(); }
+        internal void EnsureVisible() { }
+        internal SDL_ListView ListView = null;
+    }
+    
 /**/    static class SDLWPF
 /**/    {
 /**/
@@ -263,15 +379,7 @@ namespace SearchDirLists
 /**/        // LV
 /**/        internal static bool ContainsKey(this ItemCollection c, String str) { return false; }
             internal static object GetAt(this ItemCollection c, String s) { return c[c.IndexOf(s)]; }
-/**/        internal static String Text(this ListViewItem l) { return null; }
-/**/        internal static void SetText(this ListViewItem l, String s) { }
-/**/        internal static int GetCount(this ListViewItem[] a) { return a.Length; }
-/**/        internal static void Add(this ListViewItem[] a, ListViewItem i) { List<ListViewItem> l = a.ToList(); l.Add(i); a = l.ToArray(); }
 //https://stackoverflow.com/questions/1077397/scroll-listviewitem-to-be-at-the-top-of-a-listview
-            internal static void TopItemSet(this ListView lv, int n) { }
-            internal static void TopItemSet(this ListView lv, ListViewItem l) { }
-            internal static SDL_ListViewItem TopItem(this ListView lv) { return null; }
-            internal static void AddRange(this ItemCollection c, object[] a) { }
 
             internal static bool InvokeRequired(this WPF.Window w) { return (w.Dispatcher.CheckAccess() == false); }
             internal static object Invoke(this WPF.Window w, Delegate m, params object[] a) { return w.Dispatcher.Invoke(m, a); }
@@ -280,7 +388,7 @@ namespace SearchDirLists
 
             internal static void Select(this WPF.Controls.Control c) { c.Focus(); }
 /**/
-/**/        internal static SDL_TreeView treeViewMain = null; //Form1.static_form.SDLWPF.treeViewMain;
+/**/        internal static SDL_TreeView treeViewMain = new SDL_TreeView();
 /**/        internal static SDL_TreeView treeViewCompare1 = null; //Form1.static_form.form_treeCompare1;
 /**/        internal static SDL_TreeView treeViewCompare2 = null; //Form1.static_form.form_treeCompare2;
 /**/    }
@@ -293,6 +401,11 @@ namespace SearchDirLists
     class SDL_Control : Control
     {
         public SDL_Control() : base() { }
+    }
+
+    class SDL_ListView : ListViewEmbeddedControls.ListViewEx
+    {
+        internal SDL_ListView() : base() { }
     }
 
     class SDL_ListViewItem : ListViewItem
@@ -651,15 +764,15 @@ class Blinky
         internal LVvolStrings(SDL_ListViewItem lvItem)
         {
             m_nIndex = lvItem.Index;
-            m_strVolumeName = lvItem.SubItems[0].Text();
-            m_strPath = lvItem.SubItems[1].Text();
-            m_strSaveAs = lvItem.SubItems[2].Text();
-            m_strStatus = lvItem.SubItems[3].Text();
-            m_strInclude = lvItem.SubItems[4].Text();
+            m_strVolumeName = lvItem.SubItems[0].Text;
+            m_strPath = lvItem.SubItems[1].Text;
+            m_strSaveAs = lvItem.SubItems[2].Text;
+            m_strStatus = lvItem.SubItems[3].Text;
+            m_strInclude = lvItem.SubItems[4].Text;
 
-            if ((lvItem.SubItems.GetCount() > 5) && StrValid(lvItem.SubItems[5].Text()))
+            if ((lvItem.SubItems.Count > 5) && StrValid(lvItem.SubItems[5].Text))
             {
-                m_strVolumeGroup = lvItem.SubItems[5].Text();
+                m_strVolumeGroup = lvItem.SubItems[5].Text;
             }
         }
 
@@ -831,7 +944,7 @@ class Blinky
 #else
                 foreach (SDL_ListViewItem lvItem in lvItems)
                 {
-                    sw.Write(WriteListItem(0, lvItem.SubItems[0].Text()));
+                    sw.Write(WriteListItem(0, lvItem.SubItems[0].Text));
 
                     int nIx = 1;
 
@@ -1020,11 +1133,13 @@ class Blinky
 
         internal static void Closure(Action action) { action(); }
 
-#if (WPF)
         internal static object CheckAndInvoke(Dispatcher dispatcher, Delegate action, object[] args = null)
         {
+#if (WPF)
             bool bInvoke = dispatcher.CheckAccess();
 #else
+            return null;
+        }
         internal static object CheckAndInvoke(Control dispatcher, Delegate action, object[] args = null)
         {
             bool bInvoke = dispatcher.InvokeRequired;

@@ -31,9 +31,9 @@ namespace SearchDirLists
 
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
         readonly SortedDictionary<Correlate, UList<SDL_TreeNode>> m_dictNodes = null;
-        readonly ListView form_lvClones = null;
-        readonly ListView form_lvSameVol = null;
-        readonly ListView form_lvUnique = null;
+        readonly SDL_ListView form_lvClones = null;
+        readonly SDL_ListView form_lvSameVol = null;
+        readonly SDL_ListView form_lvUnique = null;
         readonly List<SDL_TreeNode> m_listRootNodes = null;
         readonly UList<SDL_TreeNode> m_listTreeNodes = null;
         readonly bool m_bCheckboxes = false;
@@ -149,7 +149,7 @@ namespace SearchDirLists
 
                 SDL_ListViewItem lvItem = (SDL_ListViewItem)lvMarker.Clone();
 
-                lvItem.SetText((Utilities.FormatSize(((NodeDatum)((SDL_TreeNode)(bUnique ? listLVitems[nIx].Tag : ((UList<SDL_TreeNode>)listLVitems[nIx].Tag)[0])).Tag).nTotalLength, bNoDecimal: true)));
+                lvItem.Text = ((Utilities.FormatSize(((NodeDatum)((SDL_TreeNode)(bUnique ? listLVitems[nIx].Tag : ((UList<SDL_TreeNode>)listLVitems[nIx].Tag)[0])).Tag).nTotalLength, bNoDecimal: true)));
 
                 if (bAdd)
                 {
@@ -163,7 +163,7 @@ namespace SearchDirLists
         }
 
         public Collate(SortedDictionary<Correlate, UList<SDL_TreeNode>> dictNodes,
-            ListView lvClones, ListView lvSameVol, ListView lvUnique,
+            SDL_ListView lvClones, SDL_ListView lvSameVol, SDL_ListView lvUnique,
             List<SDL_TreeNode> listRootNodes, UList<SDL_TreeNode> listTreeNodes, bool bCheckboxes,
             List<SDL_ListViewItem> list_lvIgnore, bool bLoose)
         {
@@ -346,12 +346,12 @@ namespace SearchDirLists
                 {
                     foreach (SDL_ListViewItem lvItem in m_list_lvIgnore)
                     {
-                        if (treeNode.Level != (int.Parse(lvItem.SubItems[1].Text()) - 1))
+                        if (treeNode.Level != (int.Parse(lvItem.SubItems[1].Text) - 1))
                         {
                             continue;
                         }
 
-                        if (lvItem.Text().ToLower() == treeNode.Text.ToLower())
+                        if (lvItem.Text.ToLower() == treeNode.Text.ToLower())
                         {
                             IgnoreNodeAndSubnodes((SDL_ListViewItem)lvItem.Tag, treeNode);
                             break;
@@ -409,12 +409,12 @@ namespace SearchDirLists
             if (m_list_lvIgnore.Count > 0)
             {
                 DateTime dtStart = DateTime.Now;
-                int nMaxLevel = m_list_lvIgnore.Max(i => int.Parse(i.SubItems[1].Text()) - 1);
+                int nMaxLevel = m_list_lvIgnore.Max(i => int.Parse(i.SubItems[1].Text) - 1);
                 StringBuilder sbMatch = new StringBuilder();
 
                 foreach (SDL_ListViewItem lvItem in m_list_lvIgnore)
                 {
-                    sbMatch.AppendLine(lvItem.Text());
+                    sbMatch.AppendLine(lvItem.Text);
                 }
 
                 IgnoreNodeQuery(sbMatch.ToString().ToLower(), nMaxLevel, m_listRootNodes[0]);
@@ -583,8 +583,8 @@ namespace SearchDirLists
                     ((NodeDatum)treeNode.Tag).m_lvItem = lvItem;
                 }
 
-                lvItem.SetText(nameNode.Text);
-                Utilities.Assert(1305.6318, Utilities.StrValid(lvItem.Text()));
+                lvItem.Text = nameNode.Text;
+                Utilities.Assert(1305.6318, Utilities.StrValid(lvItem.Text));
                 listLVdiffVol.Add(lvItem);
             }
 

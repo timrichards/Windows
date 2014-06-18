@@ -2,6 +2,8 @@
 using System.Windows.Controls;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Media;
+using System.Windows;
 
 namespace SearchDirLists
 {
@@ -120,9 +122,19 @@ namespace SearchDirLists
     }
 
 
-    class SolitaryLVitemVM : ListViewItemVM
+    abstract class ClonesLVitemVM_Base : ListViewItemVM
     {
-        public String Folders { get { if (datum != null) return datum.Text; return null; } }
+        public String Folders { get { return datum.Text; } }
+
+        public Brush Foreground { get { return SDLWPF._ClrToBrush(datum.ForeColor); } }
+        public Brush Background { get { return SDLWPF._ClrToBrush(datum.BackColor); } }
+        public FontStyle Fontstyle { get { return ((datum.Font != null) && (datum.Font.Style == System.Drawing.FontStyle.Bold)) ? FontStyles.Oblique : FontStyles.Normal;} }
+        internal ClonesLVitemVM_Base(ListViewVM LV, SDL_ListViewItem datum_in)
+            : base(LV, datum_in) { }
+    }
+
+    class SolitaryLVitemVM : ClonesLVitemVM_Base
+    {
         readonly static String[] marrPropName = new String[] { "Folders" };
         internal const int NumCols_ = 1;
 
@@ -144,9 +156,8 @@ namespace SearchDirLists
 
 
     // Used for two listviewers
-    class ClonesLVitemVM : ListViewItemVM
+    class ClonesLVitemVM : ClonesLVitemVM_Base
     {
-        public String Folders { get { return datum.Text; } }
         public String Occurrences { get { return datum.SubItems[1].Text; } }
         readonly static String[] marrPropName = new String[] { "Folders", "Occurrences" };
         internal const int NumCols_ = 2;

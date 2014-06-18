@@ -263,6 +263,13 @@
                             <RowDefinition Height="3" />
                             <RowDefinition Height="*" MinHeight="20"/>
                         </Grid.RowDefinitions>
+                        <Grid.Resources>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="Foreground" Value="{Binding Foreground}"/>
+                                <Setter Property="Background" Value="{Binding Background}"/>
+                                <Setter Property="FontStyle" Value="{Binding FontStyle}"/>
+                            </Style>
+                        </Grid.Resources>
                         <ListView Name="xaml_lvSolitary" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0">
                             <ListView.View>
                                 <GridView>

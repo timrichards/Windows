@@ -60,7 +60,6 @@ namespace SearchDirLists
         {
             Index = LV.Count;
             LV_RaisePropertyChanged = LV.RaisePropertyChanged;
-            data = LV.data;
             Utilities.Assert(1310.1001, arrStr.Length <= NumCols);
             marr = new string[NumCols];
             arrStr.CopyTo(marr, 0);
@@ -75,7 +74,6 @@ namespace SearchDirLists
         {
             Index = LV.Count;
             LV_RaisePropertyChanged = LV.RaisePropertyChanged;
-            data = LV.data;
             datum = datum_in;
             // ListViewVM raises property changed after all items are added
         }
@@ -113,7 +111,6 @@ namespace SearchDirLists
         internal abstract int NumCols { get; }
         protected abstract String[] PropertyNames { get; }
         protected virtual int SearchCol { get { return 0; } }
-        protected readonly SDL_ListView data = null;
         protected readonly SDL_ListViewItem datum = null;
 
         protected String[] marr = null;                         // all properties (columns/items) get stored here
@@ -131,8 +128,8 @@ namespace SearchDirLists
             }
         }
 
-        internal virtual void NewItem(String[] arrStr) { }
-        internal virtual void NewItem(SDL_ListViewItem datum_in, bool bQuiet = false) { }
+        internal virtual void NewItem(String[] arrStr) { Utilities.Assert(0, false); }
+        internal virtual void NewItem(SDL_ListViewItem datum_in, bool bQuiet = false) { Utilities.Assert(0, false); }
         internal abstract int NumCols { get; }
 
         internal void Add(ListViewItemVM item, bool bQuiet = false)
@@ -174,6 +171,7 @@ namespace SearchDirLists
 
         internal void SyncData()
         {
+            Utilities.Assert(0, Items.Count == 0);
             Items.Clear();
 
             foreach (SDL_ListViewItem lvItem in data.Items)
@@ -181,6 +179,7 @@ namespace SearchDirLists
                 NewItem(lvItem, bQuiet: true);
             }
 
+            m_lv.Items.Refresh();
             RaisePropertyChanged("Items");
         }
 

@@ -246,12 +246,14 @@ namespace SearchDirLists
         internal SDL_TreeNode NextNode = null;
         internal SDL_TreeNode Parent = null;
         internal int Level = -1;
-        internal Drawing.Color BackColor;
-        internal Drawing.Color ForeColor;
-        internal Drawing.Font NodeFont = null;
         internal bool Checked = false;
         internal int SelectedImageIndex = -1;
         internal object Tag = null;
+
+        internal Drawing.Color BackColor;
+        internal Drawing.Color ForeColor;
+  //      internal Drawing.Font NodeFont = null;
+        
         String m_strFullPath = null;
     }
 
@@ -343,22 +345,25 @@ namespace SearchDirLists
         internal String Text = null;
         internal String Name = null;
         internal object Tag = null;
-        internal Drawing.Color ForeColor;
-        internal Drawing.Color BackColor;
         internal void Select(bool bSel = true) {}
         internal bool Focused;
-        internal Drawing.Font Font = new Drawing.Font("Microsoft Sans Serif", 8.25F, Drawing.FontStyle.Regular, Drawing.GraphicsUnit.Point, ((byte)(0)));
         internal int Index = -1;
         internal SDL_ListViewItemCollection SubItems = null;
         internal object Clone() { return MemberwiseClone(); }
         internal void EnsureVisible() { }
         internal SDL_ListView ListView = null;
+
+        internal Drawing.Color ForeColor = Drawing.Color.Empty;
+        internal Drawing.Color BackColor = Drawing.Color.Empty;
+
+        internal Drawing.Font Font { get { return new Drawing.Font("Microsoft Sans Serif", 18F); } set { m_Font = value; } }
+        Drawing.Font m_Font = null;
     }
     
     static class SDLWPF
     {
-        static Drawing.Color _BrushToClr(Media.Brush brush) { Media.Color c = ((SolidColorBrush)brush).Color; return Drawing.Color.FromArgb(c.A, c.R, c.G, c.B); }
-        static SolidColorBrush _ClrToBrush(Drawing.Color c) { return new SolidColorBrush(Media.Color.FromArgb(c.A, c.R, c.G, c.B)); }
+        internal static Drawing.Color _BrushToClr(Media.Brush brush) { Media.Color c = ((SolidColorBrush)brush ?? new Media.SolidColorBrush()).Color; return Drawing.Color.FromArgb(c.A, c.R, c.G, c.B); }
+        internal static SolidColorBrush _ClrToBrush(Drawing.Color c) { return new SolidColorBrush(Media.Color.FromArgb(c.A, c.R, c.G, c.B)); }
         internal static Drawing.Color GetBackColor(this Control ctl) { return _BrushToClr(ctl.Background); }
         internal static void SetBackColor(this Control ctl, Drawing.Color c) { ctl.Background = _ClrToBrush(c); }
         internal static object Clone(this Control ctl) { return XamlReader.Load(XmlReader.Create(new StringReader(XamlWriter.Save(ctl)))); }

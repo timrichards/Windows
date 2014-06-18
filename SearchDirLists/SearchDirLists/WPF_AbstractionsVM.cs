@@ -68,6 +68,8 @@ namespace SearchDirLists
             {
                 Raise(i);
             }
+
+            RaiseColumnWidths();
         }
 
         internal ListViewItemVM(ListViewVM LV, SDL_ListViewItem datum_in)
@@ -83,10 +85,19 @@ namespace SearchDirLists
             String strPropName = PropertyNames[nCol];
 
             RaisePropertyChanged(strPropName);
-            ListViewVM.SCW = 50.ToString();
-            LV_RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there
-            ListViewVM.SCW = double.NaN.ToString();
-            LV_RaisePropertyChanged("Width" + strPropName);
+        }
+
+        internal void RaiseColumnWidths()
+        {
+            for (int nCol = 0; nCol < NumCols; ++nCol)
+            {
+                String strPropName = PropertyNames[nCol];
+
+                ListViewVM.SCW = 50.ToString();
+                LV_RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there
+                ListViewVM.SCW = double.NaN.ToString();
+                LV_RaisePropertyChanged("Width" + strPropName);
+            }
         }
 
         RaisePropertyChangedDelegate LV_RaisePropertyChanged = null;
@@ -106,6 +117,8 @@ namespace SearchDirLists
                 marr[nCol] = s;
                 Raise(nCol);
             }
+
+            RaiseColumnWidths();
         }
 
         internal abstract int NumCols { get; }
@@ -138,8 +151,7 @@ namespace SearchDirLists
 
             if (bQuiet == false)
             {
-                m_lv.Items.Refresh();
-                RaisePropertyChanged("Items");
+                RaiseItems();
             }
         }
 
@@ -179,8 +191,18 @@ namespace SearchDirLists
                 NewItem(lvItem, bQuiet: true);
             }
 
+            RaiseItems();
+        }
+
+        void RaiseItems()
+        {
             m_lv.Items.Refresh();
             RaisePropertyChanged("Items");
+
+            if (Utilities.Assert(0, m_items.Count > 0))
+            {
+                m_items[0].RaiseColumnWidths();
+            }
         }
 
         readonly internal SDL_ListView data = new SDL_ListView();

@@ -128,7 +128,8 @@ namespace SearchDirLists
 
         public Brush Foreground { get { return SDLWPF._ClrToBrush(datum.ForeColor); } }
         public Brush Background { get { return SDLWPF._ClrToBrush(datum.BackColor); } }
-        public FontStyle Fontstyle { get { return ((datum.Font != null) && (datum.Font.Style == System.Drawing.FontStyle.Bold)) ? FontStyles.Oblique : FontStyles.Normal;} }
+        public FontWeight FontWeight { get { return datum.FontWeight; } }
+    
         internal ClonesLVitemVM_Base(ListViewVM LV, SDL_ListViewItem datum_in)
             : base(LV, datum_in) { }
     }
@@ -147,7 +148,7 @@ namespace SearchDirLists
 
     class SolitaryListViewVM : ListViewVM_Generic<SolitaryLVitemVM>
     {
-        public String WidthFolders { get { return SCW; } }
+        public String WidthFolders { get { return SCW; } }          // not used
 
         internal SolitaryListViewVM(ListView lv) : base(lv) { }
         internal override void NewItem(SDL_ListViewItem datum_in, bool bQuiet = false) { Add(new SolitaryLVitemVM(this, datum_in), bQuiet); }
@@ -171,8 +172,8 @@ namespace SearchDirLists
 
     class ClonesListViewVM : ListViewVM_Generic<ClonesLVitemVM>
     {
-        public String WidthFolders { get { return SCW; } }
-        public String WidthOccurrences { get { return SCW; } }
+        public String WidthFolders { get { return SCW; } }          // not used
+        public String WidthOccurrences { get { return SCW; } }      // not used
 
         internal ClonesListViewVM(ListView lv) : base(lv) { }
         internal override void NewItem(SDL_ListViewItem datum_in, bool bQuiet = false) { Add(new ClonesLVitemVM(this, datum_in), bQuiet); }

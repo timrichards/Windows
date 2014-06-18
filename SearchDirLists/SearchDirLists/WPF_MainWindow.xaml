@@ -267,32 +267,40 @@
                             <Style TargetType="ListViewItem">
                                 <Setter Property="Foreground" Value="{Binding Foreground}"/>
                                 <Setter Property="Background" Value="{Binding Background}"/>
-                                <Setter Property="FontStyle" Value="{Binding FontStyle}"/>
+                                <Setter Property="FontWeight" Value="{Binding FontWeight}"/>
                             </Style>
                         </Grid.Resources>
                         <ListView Name="xaml_lvSolitary" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0">
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="Solitary" DisplayMemberBinding="{Binding Folders}" Width="{Binding WidthFolders}"/>
+                                    <GridViewColumn Header="Solitary" DisplayMemberBinding="{Binding Folders}" Width="{Binding ActualWidth, ElementName=helperField}"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>
                         <ListView Name="xaml_lvSameVol" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="0">
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="Same volume group" DisplayMemberBinding="{Binding Folders}" Width="{Binding WidthFolders}"/>
-                                    <GridViewColumn DisplayMemberBinding="{Binding Occurrences}" Width="{Binding WidthOccurrences}"/>
+                                    <GridViewColumn Header="Same volume group" DisplayMemberBinding="{Binding Folders}" Width="{Binding ActualWidth, ElementName=helperField}"/>
+                                    <GridViewColumn DisplayMemberBinding="{Binding Occurrences}" Width="40" x:Name="helperWidth"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>
                         <ListView Name="xaml_lvClones" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="4" Grid.Column="0">
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="Clones" DisplayMemberBinding="{Binding Folders}" Width="{Binding WidthFolders}"/>
-                                    <GridViewColumn DisplayMemberBinding="{Binding Occurrences}" Width="{Binding WidthOccurrences}"/>
+                                    <GridViewColumn Header="Clones" DisplayMemberBinding="{Binding Folders}" Width="{Binding ActualWidth, ElementName=helperField}"/>
+                                    <GridViewColumn DisplayMemberBinding="{Binding Occurrences}" Width="40"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>
+                        <Grid Visibility="Hidden">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="{Binding ActualWidth, ElementName=helperWidth}"/>
+                                <ColumnDefinition Width="10"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Column="0" x:Name="helperField"/>
+                        </Grid>                        
                         <GridSplitter Grid.Row="1" ResizeDirection="Rows" Grid.Column="0" HorizontalAlignment="Stretch" />
                         <GridSplitter Grid.Row="3" ResizeDirection="Rows" Grid.Column="0" HorizontalAlignment="Stretch" />
                     </Grid>

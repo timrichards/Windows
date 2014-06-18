@@ -349,15 +349,16 @@ namespace SearchDirLists
         internal bool Focused;
         internal int Index = -1;
         internal SDL_ListViewItemCollection SubItems = null;
-        internal object Clone() { return MemberwiseClone(); }
         internal void EnsureVisible() { }
         internal SDL_ListView ListView = null;
 
         internal Drawing.Color ForeColor = Drawing.Color.Empty;
         internal Drawing.Color BackColor = Drawing.Color.Empty;
 
-        internal Drawing.Font Font { get { return new Drawing.Font("Microsoft Sans Serif", 18F); } set { m_Font = value; } }
-        Drawing.Font m_Font = null;
+        // Only used for colors and bold font weight, not subitems, in Collate.cs InsertSizeMarker(). Size 18 to show obvious fault in interpretation.
+        internal object Clone() { SDL_ListViewItem lvItem = (SDL_ListViewItem)MemberwiseClone(); lvItem.Font = (Drawing.Font)Font.Clone(); return lvItem; }
+        internal Drawing.Font Font { get { return new Drawing.Font("Microsoft Sans Serif", 18F, Drawing.FontStyle.Bold); } set { FontWeight = WPF.FontWeights.Bold; } }
+        internal WPF.FontWeight FontWeight = WPF.FontWeights.Normal;
     }
     
     static class SDLWPF

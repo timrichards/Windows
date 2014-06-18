@@ -290,6 +290,8 @@ namespace SearchDirLists
             return (lvItemPrevQuery != null);
         }
 
+        internal new SDL_ListViewItem this[int i] { get { if (i < Count) return base[i]; return NullValue; } }
+
         internal SDL_ListViewItem this[String s]
         {
             get
@@ -301,12 +303,13 @@ namespace SearchDirLists
                 else
                 {
                     strPrevQuery = s;
-                    lvItemPrevQuery = (SDL_ListViewItem)Keys.Where(t => t.Text == s);
+                    lvItemPrevQuery = (SDL_ListViewItem)Keys.Where(t => t.Text == s) ?? NullValue;
                     return lvItemPrevQuery;                   // TODO: Trim? ignore case? Probably neither.
                 }
             }
         }
 
+        static SDL_ListViewItem NullValue = new SDL_ListViewItem();
         readonly SDL_ListView m_listView = null;
         String strPrevQuery = null;
         SDL_ListViewItem lvItemPrevQuery = null;
@@ -329,6 +332,7 @@ namespace SearchDirLists
         internal SDL_ListViewItem(String[] arrString, SDL_ListView listView = null) : this(listView)
         {
             Text = arrString[0];
+            SubItems.Add(this);
     
             for (int i = 1; i < arrString.Length; ++i)
             {
@@ -345,7 +349,7 @@ namespace SearchDirLists
         internal bool Focused;
         internal Drawing.Font Font = new Drawing.Font("Microsoft Sans Serif", 8.25F, Drawing.FontStyle.Regular, Drawing.GraphicsUnit.Point, ((byte)(0)));
         internal int Index = -1;
-        internal UList<SDL_ListViewItem> SubItems = null;
+        internal SDL_ListViewItemCollection SubItems = null;
         internal object Clone() { return MemberwiseClone(); }
         internal void EnsureVisible() { }
         internal SDL_ListView ListView = null;
@@ -1089,7 +1093,7 @@ class Blinky
         internal static object CheckAndInvoke(Dispatcher dispatcher, Delegate action, object[] args = null)
         {
 #if (WPF)
-            bool bInvoke = dispatcher.CheckAccess();
+            bool bInvoke = (dispatcher.CheckAccess() == false);
 #else
             return null;
         }

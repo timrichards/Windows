@@ -87,6 +87,10 @@ namespace SearchDirLists
 #endif
             Utilities.CheckAndInvoke(m_app.Dispatcher, new Action(() =>
             {
+                m_app.BrowseTab.LV_Clones.SyncData();
+                m_app.BrowseTab.LV_SameVol.SyncData();
+                m_app.BrowseTab.LV_Solitary.SyncData();
+
                 CopyScratchpadListViewVM lvFake = new CopyScratchpadListViewVM(null);   // Hack: check changed event loads the real listviewer
 
             //    foreach (CopyScratchpadLVitemVM lvItem in m_Browse.LV_CopyScratchpad.Items)
@@ -110,21 +114,21 @@ namespace SearchDirLists
                     return false;
                 }
 
-                if (Utilities.StrValid(CB_SaveAs.S) == false)
+                if (Utilities.StrValid(CB_SaveAs.Current) == false)
                 {
                     gd.FormError(m_app.xaml_cbSaveAs, "Must have a file to load or save directory listing to.", "Volume Save As");
                     return false;
                 }
 
-                if (LV.ContainsSaveAs(CB_SaveAs.S))
+                if (LV.ContainsSaveAs(CB_SaveAs.Current))
                 {
                     gd.FormError(m_app.xaml_cbSaveAs, "File already in use in list of volumes.", "Volume Save As");
                     return false;
                 }
 
-                bool bOpenedFile = (Utilities.StrValid(CB_Path.S) == false);
+                bool bOpenedFile = (Utilities.StrValid(CB_Path.Current) == false);
 
-                if (File.Exists(CB_SaveAs.S) && Utilities.StrValid(CB_Path.S))
+                if (File.Exists(CB_SaveAs.Current) && Utilities.StrValid(CB_Path.Current))
                 {
                     gd.m_blinky.Go(m_app.xaml_cbSaveAs, clr: Drawing.Color.Red);
 
@@ -134,12 +138,12 @@ namespace SearchDirLists
                         gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Yellow, Once: true);
                         m_app.xaml_cbVolumeName.Text = String.Empty;
                         gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Yellow, Once: true);
-                        CB_Path.S = String.Empty;
+                        CB_Path.Current = String.Empty;
                         Utilities.Assert(1308.9306, SaveFields(false));
                     }
                 }
 
-                if ((File.Exists(CB_SaveAs.S) == false) && (Utilities.StrValid(CB_Path.S) == false))
+                if ((File.Exists(CB_SaveAs.Current) == false) && (Utilities.StrValid(CB_Path.Current) == false))
                 {
                     gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red);
                     Utilities.MBox("Must have a path or existing directory listing file.", "Volume Source Path");
@@ -147,7 +151,7 @@ namespace SearchDirLists
                     return false;
                 }
 
-                if (Utilities.StrValid(CB_Path.S) && (Directory.Exists(CB_Path.S) == false))
+                if (Utilities.StrValid(CB_Path.Current) && (Directory.Exists(CB_Path.Current) == false))
                 {
                     gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red);
                     Utilities.MBox("Path does not exist.", "Volume Source Path");
@@ -157,9 +161,9 @@ namespace SearchDirLists
 
                 String strStatus = "Not Saved";
 
-                if (File.Exists(CB_SaveAs.S))
+                if (File.Exists(CB_SaveAs.Current))
                 {
-                    if (Utilities.StrValid(CB_Path.S) == false)
+                    if (Utilities.StrValid(CB_Path.Current) == false)
                     {
                         bSaveAsExists = ReadHeader();
 
@@ -175,7 +179,7 @@ namespace SearchDirLists
                         }
                         else
                         {
-                            if (Utilities.StrValid(CB_Path.S))
+                            if (Utilities.StrValid(CB_Path.Current))
                             {
                                 strStatus = "File is bad. Will overwrite.";
                             }
@@ -194,15 +198,15 @@ namespace SearchDirLists
                     }
                 }
 
-                if ((bSaveAsExists == false) && (LV.ContainsUnsavedPath(CB_Path.S)))
+                if ((bSaveAsExists == false) && (LV.ContainsUnsavedPath(CB_Path.Current)))
                 {
                     gd.FormError(m_app.xaml_cbPath, "Path already added.", "Volume Source Path");
                     return false;
                 }
 
-                if (Utilities.StrValid(CB_VolumeName.S))
+                if (Utilities.StrValid(CB_VolumeName.Current))
                 {
-                    if (LV.ContainsVolumeName(CB_VolumeName.S))
+                    if (LV.ContainsVolumeName(CB_VolumeName.Current))
                     {
                         gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Red);
 
@@ -226,7 +230,7 @@ namespace SearchDirLists
                     }
                 }
 
-                LV.NewItem(new String[] { CB_VolumeName.S, CB_Path.S, CB_SaveAs.S, strStatus, "Yes" });
+                LV.NewItem(new String[] { CB_VolumeName.Current, CB_Path.Current, CB_SaveAs.Current, strStatus, "Yes" });
                 return bSaveAsExists;
             }));
         }
@@ -428,12 +432,12 @@ namespace SearchDirLists
 
         bool ReadHeader()
         {
-            if (Utilities.ValidateFile(CB_SaveAs.S) == false)
+            if (Utilities.ValidateFile(CB_SaveAs.Current) == false)
             {
                 return false;
             }
 
-            using (StreamReader file = new StreamReader(CB_SaveAs.S))
+            using (StreamReader file = new StreamReader(CB_SaveAs.Current))
             {
                 String line = null;
 
@@ -445,12 +449,12 @@ namespace SearchDirLists
                 String strName = String.Empty;
 
                 if (arrLine.Length > 2) strName = arrLine[2];
-                CB_VolumeName.S = strName;
+                CB_VolumeName.Current = strName;
                 if ((line = file.ReadLine()) == null) return false;
                 if (line.StartsWith(Utilities.mSTRlineType_Path) == false) return false;
                 arrLine = line.Split('\t');
                 if (arrLine.Length < 3) return false;
-                CB_Path.S = arrLine[2];
+                CB_Path.Current = arrLine[2];
             }
 
             return SaveFields(false);
@@ -542,19 +546,19 @@ namespace SearchDirLists
             SDL_File.Init();
             SDL_File.SFD.Filter = SDL_File.FileAndDirListFileFilter + "|" + SDL_File.BaseFilter;
 
-            if (Utilities.StrValid(CB_SaveAs.S))
+            if (Utilities.StrValid(CB_SaveAs.Current))
             {
-                SDL_File.SFD.InitialDirectory = Path.GetDirectoryName(CB_SaveAs.S);
+                SDL_File.SFD.InitialDirectory = Path.GetDirectoryName(CB_SaveAs.Current);
             }
 
             if (SDL_File.SFD.ShowDialog() == Forms.DialogResult.OK)
             {
-                CB_SaveAs.S = SDL_File.SFD.FileName;
+                CB_SaveAs.Current = SDL_File.SFD.FileName;
 
-                if (File.Exists(CB_SaveAs.S))
+                if (File.Exists(CB_SaveAs.Current))
                 {
-                    CB_VolumeName.S = null;
-                    CB_Path.S = null;
+                    CB_VolumeName.Current = null;
+                    CB_Path.Current = null;
                 }
             }
         }
@@ -574,18 +578,18 @@ namespace SearchDirLists
 
         bool SaveFields(bool bFailOnDirectory = true)
         {
-            CB_VolumeName.S = Utilities.NotNull(m_app.xaml_cbVolumeName.Text).Trim();
-            CB_Path.S = Utilities.NotNull(m_app.xaml_cbPath.Text).Trim();
+            CB_VolumeName.Current = Utilities.NotNull(m_app.xaml_cbVolumeName.Text).Trim();
+            CB_Path.Current = Utilities.NotNull(m_app.xaml_cbPath.Text).Trim();
 
-            if (Utilities.StrValid(CB_Path.S))
+            if (Utilities.StrValid(CB_Path.Current))
             {
-                CB_Path.S += Path.DirectorySeparatorChar;
+                CB_Path.Current += Path.DirectorySeparatorChar;
 
-                String str = FormatPath(CB_Path.S, m_app.xaml_cbPath, bFailOnDirectory);
+                String str = FormatPath(CB_Path.Current, m_app.xaml_cbPath, bFailOnDirectory);
 
                 if (str != null)
                 {
-                    CB_Path.S = str;
+                    CB_Path.Current = str;
                 }
                 else
                 {
@@ -597,7 +601,7 @@ namespace SearchDirLists
             {
                 try
                 {
-                    CB_SaveAs.S = Path.GetFullPath(m_app.xaml_cbSaveAs.Text.Trim());
+                    CB_SaveAs.Current = Path.GetFullPath(m_app.xaml_cbSaveAs.Text.Trim());
                 }
                 catch
                 {
@@ -605,23 +609,23 @@ namespace SearchDirLists
                     return false;
                 }
 
-                if (Directory.Exists(Path.GetDirectoryName(CB_SaveAs.S)) == false)
+                if (Directory.Exists(Path.GetDirectoryName(CB_SaveAs.Current)) == false)
                 {
                     gd.FormError(m_app.xaml_cbSaveAs, "Directory to save listings to doesn't exist.", "Save Fields");
                     return false;
                 }
 
-                if (Directory.Exists(CB_SaveAs.S))
+                if (Directory.Exists(CB_SaveAs.Current))
                 {
                     gd.FormError(m_app.xaml_cbSaveAs, "Must specify save filename. Only directory entered.", "Save Fields");
                     return false;
                 }
 
-                String str = FormatPath(CB_SaveAs.S, m_app.xaml_cbSaveAs, bFailOnDirectory);
+                String str = FormatPath(CB_SaveAs.Current, m_app.xaml_cbSaveAs, bFailOnDirectory);
 
                 if (str != null)
                 {
-                    CB_SaveAs.S = str;
+                    CB_SaveAs.Current = str;
                 }
                 else
                 {
@@ -649,7 +653,7 @@ namespace SearchDirLists
         {
             if (folderBrowserDialog1.ShowDialog() == Forms.DialogResult.OK)
             {
-                CB_Path.S = folderBrowserDialog1.SelectedPath;
+                CB_Path.Current = folderBrowserDialog1.SelectedPath;
             }
         }
 

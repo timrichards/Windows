@@ -18,8 +18,8 @@
             <Style TargetType="CheckBox" BasedOn="{StaticResource ControlStyle}"/>
             <Style TargetType="ComboBox" BasedOn="{StaticResource ControlStyle}">
                 <Setter Property="IsEditable" Value="True" />
-                <Setter Property="ItemsSource" Value="{Binding List}" />
-                <Setter Property="SelectedValue" Value="{Binding S}" />
+                <Setter Property="ItemsSource" Value="{Binding Items}" />
+                <Setter Property="SelectedValue" Value="{Binding Current}" />
             </Style> 
             <Style TargetType="GridViewColumnHeader">
                 <Setter Property="Width" Value="Auto"/>

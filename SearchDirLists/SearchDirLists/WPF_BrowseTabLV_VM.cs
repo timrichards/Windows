@@ -10,13 +10,12 @@ namespace SearchDirLists
     {
         public String Folders { get { return marr[0]; } set { SetProperty(0, value); } }
         public String Path { get { return marr[1]; } set { SetProperty(1, value); } }
-
         readonly static String[] marrPropName = new String[] { "Folders", "Path" };
+        internal const int NumCols_ = 2;
 
         internal CopyScratchpadLVitemVM(CopyScratchpadListViewVM LV, String[] arrStr)
             : base(LV, arrStr) { }
 
-        internal const int NumCols_ = 2;
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
 
@@ -38,13 +37,12 @@ namespace SearchDirLists
     {
         public String Folders { get { return marr[0]; } set { SetProperty(0, value); } }
         public String Level { get { return marr[1]; } set { SetProperty(1, value); } }
-
         readonly static String[] marrPropName = new String[] { "Folders", "Level" };
+        internal const int NumCols_ = 2;
 
         internal IgnoreLVitemVM(IgnoreListViewVM LV, String[] arrStr)
             : base(LV, arrStr) { }
 
-        internal const int NumCols_ = 2;
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
     }
@@ -70,13 +68,12 @@ namespace SearchDirLists
         public String Length { get { return marr[4]; } set { SetProperty(4, value); } }
         public String Error1 { get { return marr[5]; } set { SetProperty(5, value); } }
         public String Error2 { get { return marr[6]; } set { SetProperty(6, value); } }
-
         readonly static String[] marrPropName = new String[] { "Filename", "Created", "Modified", "Attributes", "Length", "Error1", "Error2"};
+        internal const int NumCols_ = 7;
 
         internal FilesLVitemVM(FilesListViewVM LV, String[] arrStr)
             : base(LV, arrStr) { }
 
-        internal const int NumCols_ = 7;
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
     }
@@ -102,13 +99,12 @@ namespace SearchDirLists
     {
         public String Heading { get { return marr[0]; } set { SetProperty(0, value); } }
         public String Detail { get { return marr[1]; } set { SetProperty(1, value); } }
-
         readonly static String[] marrPropName = new String[] { "Heading", "Detail" };
+        internal const int NumCols_ = 2;
 
         internal DetailLVitemVM(DetailListViewVM LV, String[] arrStr)
             : base(LV, arrStr) { }
 
-        internal const int NumCols_ = 2;
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
     }
@@ -126,14 +122,13 @@ namespace SearchDirLists
 
     class SolitaryLVitemVM : ListViewItemVM
     {
-        public String Folders { get { return marr[0]; } set { SetProperty(0, value); } }
-
+        public String Folders { get { if (datum != null) return datum.Text; return null; } }
         readonly static String[] marrPropName = new String[] { "Folders" };
-
-        internal SolitaryLVitemVM(SolitaryListViewVM LV, String[] arrStr)
-            : base(LV, arrStr) { }
-
         internal const int NumCols_ = 1;
+
+        internal SolitaryLVitemVM(ListViewVM LV, SDL_ListViewItem datum_in)
+            : base(LV, datum_in) { }
+
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
     }
@@ -143,7 +138,7 @@ namespace SearchDirLists
         public String WidthFolders { get { return SCW; } }
 
         internal SolitaryListViewVM(ListView lv) : base(lv) { }
-        internal override void NewItem(String[] arrStr) { Add(new SolitaryLVitemVM(this, arrStr)); }
+        internal override void NewItem(SDL_ListViewItem datum_in, bool bQuiet = false) { Add(new SolitaryLVitemVM(this, datum_in), bQuiet); }
         internal override int NumCols { get { return SolitaryLVitemVM.NumCols_; } }
     }
 
@@ -151,15 +146,14 @@ namespace SearchDirLists
     // Used for two listviewers
     class ClonesLVitemVM : ListViewItemVM
     {
-        public String Folders { get { return marr[0]; } set { SetProperty(0, value); } }
-        public String Occurrences { get { return marr[1]; } set { SetProperty(1, value); } }
-
+        public String Folders { get { return datum.Text; } }
+        public String Occurrences { get { return datum.SubItems[1].Text; } }
         readonly static String[] marrPropName = new String[] { "Folders", "Occurrences" };
-
-        internal ClonesLVitemVM(ClonesListViewVM LV, String[] arrStr)
-            : base(LV, arrStr) { }
-
         internal const int NumCols_ = 2;
+
+        internal ClonesLVitemVM(ListViewVM LV, SDL_ListViewItem datum_in)
+            : base(LV, datum_in) { }
+
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
     }
@@ -170,7 +164,7 @@ namespace SearchDirLists
         public String WidthOccurrences { get { return SCW; } }
 
         internal ClonesListViewVM(ListView lv) : base(lv) { }
-        internal override void NewItem(String[] arrStr) { Add(new ClonesLVitemVM(this, arrStr)); }
+        internal override void NewItem(SDL_ListViewItem datum_in, bool bQuiet = false) { Add(new ClonesLVitemVM(this, datum_in), bQuiet); }
         internal override int NumCols { get { return ClonesLVitemVM.NumCols_; } }
     }
 }

@@ -17,19 +17,17 @@ namespace SearchDirLists
         public String Status { get { return marr[3]; } set { SetProperty(3, value); } }
         public String IncludeStr { get { return marr[4]; } set { SetProperty(4, value); } }
         public String VolumeGroup { get { return marr[5]; } set { SetProperty(5, value); } }
-
         readonly static String[] marrPropName = new String[] { "VolumeName", "Path", "SaveAs", "Status", "IncludeStr", "VolumeGroup" };
+        internal const int NumCols_ = 6;
 
         internal VolumeLVitemVM(VolumesListViewVM LV, String[] arrStr)
             : base(LV, arrStr)
         {
-            SaveAsExists = (Status == Utilities.mSTRusingFile);                 // TODO: check dup drive letter, and if letter is mounted.
+            SaveAsExists = (Status == Utilities.mSTRusingFile);                 // TODO: check dup drive letter, and if drive is mounted.
         }
 
-        internal const int NumCols_ = 6;
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
-        protected override int SearchCol { get { return 0; } }
 
         internal bool Include { get { return (IncludeStr == "Yes"); } set { IncludeStr = (value ? "Yes" : "No"); } }
 
@@ -74,9 +72,9 @@ namespace SearchDirLists
             m_app = app;
             m_app.xaml_tabControlMain.DataContext = this;
             gd = GlobalData.GetInstance();
-            CB_VolumeName = new ItemsControlVM(m_app.xaml_cbVolumeName, new Action(() => { gd.m_strVolumeName = CB_VolumeName.S; }));
-            CB_Path = new ItemsControlVM(m_app.xaml_cbPath, new Action(() => { gd.m_strPath = CB_Path.S; }));
-            CB_SaveAs = new ItemsControlVM(m_app.xaml_cbSaveAs, new Action(() => { gd.m_strSaveAs = CB_SaveAs.S; }));
+            CB_VolumeName = new ItemsControlVM(m_app.xaml_cbVolumeName, new Action(() => { gd.m_strVolumeName = CB_VolumeName.Current; }));
+            CB_Path = new ItemsControlVM(m_app.xaml_cbPath, new Action(() => { gd.m_strPath = CB_Path.Current; }));
+            CB_SaveAs = new ItemsControlVM(m_app.xaml_cbSaveAs, new Action(() => { gd.m_strSaveAs = CB_SaveAs.Current; }));
             LV = new VolumesListViewVM(m_app.xaml_lvVolumesMain);
             marrIcmd = new ICommand[]
             {

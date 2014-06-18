@@ -13,40 +13,40 @@ namespace SearchDirLists
     // e.g. CBVolumeName = new ItemsControlVM(m_app.xaml_cbVolumeName, new Action(() => { gd.m_strVolumeName = CBVolumeName.S; }));
     class ItemsControlVM : ObservableObject
     {
-        public String S
+        public String Current
         {
             set
             {
-                if ((value != null) && (value.Trim().Length > 0) && (m_list.Contains(value) == false))      // TODO: ignore case
+                if ((value != null) && (value.Trim().Length > 0) && (m_items.Contains(value) == false))      // TODO: ignore case
                 {
-                    m_list.Add(value);
-                    m_items.Refresh();
-                    RaisePropertyChanged("List");
+                    m_items.Add(value);
+                    m_xaml.Refresh();
+                    RaisePropertyChanged("Items");
                 }
 
                 if (value != m_strCurrent)
                 {
                     m_strCurrent = value;
                     m_Action();
-                    RaisePropertyChanged("S");
+                    RaisePropertyChanged("Current");
                 }
             }
 
             get { return m_strCurrent; }
         }
 
-        public ObservableCollection<String> List { get { return m_list; } }
+        public ObservableCollection<String> Items { get { return m_items; } }
         public override string ToString() { return m_strCurrent; }
 
         internal ItemsControlVM(ItemsControl itemsCtl, Action action)
         {
             itemsCtl.DataContext = this;
-            m_items = itemsCtl.Items;
+            m_xaml = itemsCtl.Items;
             m_Action = action;
         }
 
-        readonly ObservableCollection<String> m_list = new ObservableCollection<String>();
-        readonly ItemCollection m_items = null;
+        readonly ObservableCollection<String> m_items = new ObservableCollection<String>();
+        readonly ItemCollection m_xaml = null;
         readonly Action m_Action = null;
         String m_strCurrent = null;
     }
@@ -69,6 +69,15 @@ namespace SearchDirLists
             {
                 Raise(i);
             }
+        }
+
+        internal ListViewItemVM(ListViewVM LV, SDL_ListViewItem datum_in)
+        {
+            Index = LV.Count;
+            LV_RaisePropertyChanged = LV.RaisePropertyChanged;
+            data = LV.data;
+            datum = datum_in;
+            // ListViewVM raises property changed after all items are added
         }
 
         void Raise(int nCol)
@@ -104,7 +113,8 @@ namespace SearchDirLists
         internal abstract int NumCols { get; }
         protected abstract String[] PropertyNames { get; }
         protected virtual int SearchCol { get { return 0; } }
-        protected readonly SDL_ListView data;
+        protected readonly SDL_ListView data = null;
+        protected readonly SDL_ListViewItem datum = null;
 
         protected String[] marr = null;                         // all properties (columns/items) get stored here
     }
@@ -121,15 +131,19 @@ namespace SearchDirLists
             }
         }
 
-        internal abstract void NewItem(String[] arrStr);
+        internal virtual void NewItem(String[] arrStr) { }
+        internal virtual void NewItem(SDL_ListViewItem datum_in, bool bQuiet = false) { }
         internal abstract int NumCols { get; }
 
-        internal bool Add(ListViewItemVM item)
+        internal void Add(ListViewItemVM item, bool bQuiet = false)
         {
             m_items.Add(item);
-            m_lv.Items.Refresh();
-            RaisePropertyChanged("Items");
-            return true;
+
+            if (bQuiet == false)
+            {
+                m_lv.Items.Refresh();
+                RaisePropertyChanged("Items");
+            }
         }
 
         internal static String SCW = double.NaN.ToString();     // frankenhoek
@@ -156,6 +170,18 @@ namespace SearchDirLists
 
                 return null;
             }
+        }
+
+        internal void SyncData()
+        {
+            Items.Clear();
+
+            foreach (SDL_ListViewItem lvItem in data.Items)
+            {
+                NewItem(lvItem, bQuiet: true);
+            }
+
+            RaisePropertyChanged("Items");
         }
 
         readonly internal SDL_ListView data = new SDL_ListView();

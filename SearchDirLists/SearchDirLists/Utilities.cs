@@ -250,8 +250,8 @@ namespace SearchDirLists
         internal int SelectedImageIndex = -1;
         internal object Tag = null;
 
-        internal Drawing.Color BackColor;
-        internal Drawing.Color ForeColor;
+        internal Drawing.Color BackColor = Drawing.Color.Empty;
+        internal Drawing.Color ForeColor = Drawing.Color.Empty;
   //      internal Drawing.Font NodeFont = null;
         
         String m_strFullPath = null;
@@ -365,6 +365,8 @@ namespace SearchDirLists
     {
         internal static Drawing.Color _BrushToClr(Media.Brush brush) { Media.Color c = ((SolidColorBrush)brush ?? new Media.SolidColorBrush()).Color; return Drawing.Color.FromArgb(c.A, c.R, c.G, c.B); }
         internal static SolidColorBrush _ClrToBrush(Drawing.Color c) { return new SolidColorBrush(Media.Color.FromArgb(c.A, c.R, c.G, c.B)); }
+        internal static SolidColorBrush _ForeClrToBrush(Drawing.Color a) { Drawing.Color c = a; if (a == Drawing.Color.Empty) c = Drawing.Color.Black; return _ClrToBrush(c); }
+        internal static SolidColorBrush _BackClrToBrush(Drawing.Color a) { Drawing.Color c = a; if (a == Drawing.Color.Empty) c = Drawing.Color.White; return _ClrToBrush(c); }
         internal static Drawing.Color GetBackColor(this Control ctl) { return _BrushToClr(ctl.Background); }
         internal static void SetBackColor(this Control ctl, Drawing.Color c) { ctl.Background = _ClrToBrush(c); }
         internal static object Clone(this Control ctl) { return XamlReader.Load(XmlReader.Create(new StringReader(XamlWriter.Save(ctl)))); }

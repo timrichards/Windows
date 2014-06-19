@@ -2,60 +2,100 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using System.Linq;
+using System.Collections.Generic;
+using System.Windows.Media;
 
 namespace SearchDirLists
 {
     class TreeViewItemVM : ObservableObject
     {
-  //      internal String this[int i] { get { return marr[i]; } }
-  //      internal int Index = -1;
+        public TreeViewItemVM Parent { get { return m_Parent; } }
+        public ObservableCollection<TreeViewItemVM> Items { get { return m_Items; } }
+        public String Content { get { return datum.Text; } }
+#if (WPF)
+        public Brush Foreground { get { return SDLWPF._ForeClrToBrush(datum.ForeColor); } }
+        public Brush Background { get { return SDLWPF._BackClrToBrush(datum.BackColor); } }
+#endif
 
-        internal TreeViewItemVM() { }
-        internal TreeViewItemVM(String strContent) { tvi.Header = strContent; }
-        //internal TreeViewItemVM(String strContent, SDL_TreeNode[] arrNodes) : this(strContent)
-        //{ foreach (SDL_TreeNode treeNode in arrNodes) { Items.Add(treeNode); } }
-
-        internal TreeViewItemVM(TreeViewVM TV)
+        public bool IsExpanded
         {
-            treeView = TV;
-            //          Index = (TreeView = TV).Count;
+            get { return m_bExpanded; }
+            set
+            {
+                if (value != m_bExpanded)
+                {
+                    m_bExpanded = value;
+                    RaisePropertyChanged("IsExpanded");
+                }
+
+                if (m_bExpanded && (m_Parent != null))
+                {
+                    // chain reaction
+                    m_Parent.IsExpanded = true;
+                }
+            }
         }
 
-        internal String Header { get { return (String)tvi.Header; } }
-        internal void BringIntoView() { tvi.BringIntoView(); }
-  //      internal void Remove() { treeView.Remove(this); }
-  //      protected String[] marr = null;                                                     // all properties (columns/items) get stored here
+        public bool IsSelected
+        {
+            get { return m_bSelected; }
+            set
+            {
+                if (value != m_bSelected)
+                {
+                    m_bSelected = value;
+                    RaisePropertyChanged("IsSelected");
+                }
+            }
+        }
 
-        TreeViewItem tvi = new TreeViewItem();
-        TreeViewVM treeView;
+        readonly ObservableCollection<TreeViewItemVM> m_Items = null;
+        readonly TreeViewItemVM m_Parent = null;
+        readonly SDL_TreeNode datum = null;
+
+        bool m_bExpanded = false;
+        bool m_bSelected = false;
+
+        internal TreeViewItemVM(SDL_TreeNode datum_in)
+            :this(datum_in, null)
+        { }
+
+        TreeViewItemVM(SDL_TreeNode datum_in, TreeViewItemVM parent)
+        {
+            datum = datum_in;
+            m_Parent = parent;
+#if (WPF)
+            m_Items = new ObservableCollection<TreeViewItemVM>(
+                (from child in datum.Nodes.Keys
+                 select new TreeViewItemVM(child, this))
+                .ToList<TreeViewItemVM>());
+#endif
+        }
     }
 
     class TreeViewVM : ObservableObject
     {
-        public ObservableCollection<TreeViewItemVM> Items { get { return m_items; } }
+        public ObservableCollection<TreeViewItemVM> Items { get { return m_Items; } }
 
         internal TreeViewVM(TreeView tv)
         {
             (m_tv = tv).DataContext = this;
         }
 
-        internal bool Add(TreeViewItemVM item)
+        internal void SetData(List<SDL_TreeNode> rootNodes)
         {
-            m_items.Add(item);
+            foreach (SDL_TreeNode treeNode in rootNodes)
+            {
+                m_Items.Add(new TreeViewItemVM(treeNode));
+            }
+
             m_tv.Items.Refresh();
             RaisePropertyChanged("Items");
-            return true;
         }
 
-        internal int Count { get { return m_items.Count; } }
-        internal bool HasItems { get { return m_items.Count > 0; } }
-        internal bool SelectedOne { get { return m_tv.SelectedItem != null; } }
-   //     internal void Remove(TreeNodeItemVM item) { m_items.Remove(item); }
-   //     internal bool Contains(String s) { return (this[s] != null); }
-   //     internal TreeNodeItemVM this[String s_in] { get { String s = s_in.ToLower(); foreach (var o in m_items) if (o.SearchValue == s) return o; return null; } }
-
-        readonly protected ObservableCollection<TreeViewItemVM> m_items = new ObservableCollection<TreeViewItemVM>();
-        readonly protected TreeView m_tv = null;
+        ObservableCollection<TreeViewItemVM> m_Items = new ObservableCollection<TreeViewItemVM>();
+        readonly TreeView m_tv = null;
     }
 
     partial class BrowseTabVM
@@ -131,7 +171,7 @@ namespace SearchDirLists
 
         // In order of appearance on the form
         readonly CopyScratchpadListViewVM LV_CopyScratchpad = null;
-        readonly TreeViewVM TV = null;
+        internal readonly TreeViewVM TV = null;
         readonly IgnoreListViewVM LV_Ignore = null;
         readonly FilesListViewVM LV_Files = null;
      //   readonly FilesListViewVM LV_CompareFiles = null;

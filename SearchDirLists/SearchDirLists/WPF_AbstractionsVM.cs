@@ -56,7 +56,7 @@ namespace SearchDirLists
         internal String this[int i] { get { return marr[i]; } }
         internal int Index = -1;
 
-        internal ListViewItemVM(ListViewVM LV, String[] arrStr)
+        internal ListViewItemVM(ListViewVM LV, String[] arrStr)     // e.g. Volumes LV: marr
         {
             Index = LV.Count;
             LV_RaisePropertyChanged = LV.RaisePropertyChanged;
@@ -72,12 +72,12 @@ namespace SearchDirLists
             RaiseColumnWidths();
         }
 
-        internal ListViewItemVM(ListViewVM LV, SDL_ListViewItem datum_in)
+        internal ListViewItemVM(ListViewVM LV, SDL_ListViewItem datum_in)   // e.g. Clones LVs: datum
         {
             Index = LV.Count;
             LV_RaisePropertyChanged = LV.RaisePropertyChanged;
             datum = datum_in;
-            // ListViewVM raises property changed after all items are added
+            // ListViewVM raises property changed after all items are added. Clones LVs do not use it.
         }
 
         void Raise(int nCol)
@@ -89,6 +89,8 @@ namespace SearchDirLists
 
         internal void RaiseColumnWidths()
         {
+            // Column widths are only set for visible rows in the listviewer.
+            // So far column widths are not set for datum: only marr, but they're not switched off for datum: Clones LVs do not use it.
             for (int nCol = 0; nCol < NumCols; ++nCol)
             {
                 String strPropName = PropertyNames[nCol];
@@ -183,8 +185,8 @@ namespace SearchDirLists
 
         internal void SyncData()
         {
-            Utilities.Assert(0, Items.Count == 0);
-            Items.Clear();
+            Utilities.Assert(0, m_items.Count == 0);
+            m_items.Clear();
 
             foreach (SDL_ListViewItem lvItem in data.Items)
             {

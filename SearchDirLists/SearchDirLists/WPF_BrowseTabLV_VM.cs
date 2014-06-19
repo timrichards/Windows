@@ -125,11 +125,11 @@ namespace SearchDirLists
     abstract class ClonesLVitemVM_Base : ListViewItemVM
     {
         public String Folders { get { return datum.Text; } }
-
-        public Brush Foreground { get { return SDLWPF._ClrToBrush(datum.ForeColor); } }
-        public Brush Background { get { return SDLWPF._ClrToBrush(datum.BackColor); } }
+#if (WPF)
+        public Brush Foreground { get { return SDLWPF._ForeClrToBrush(datum.ForeColor); } }
+        public Brush Background { get { return SDLWPF._BackClrToBrush(datum.BackColor); } }
         public FontWeight FontWeight { get { return datum.FontWeight; } }
-    
+#endif
         internal ClonesLVitemVM_Base(ListViewVM LV, SDL_ListViewItem datum_in)
             : base(LV, datum_in) { }
     }

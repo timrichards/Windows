@@ -11,7 +11,7 @@ namespace SearchDirLists
 
     // e.g. <ComboBox Name="xaml_cbVolumeName" Grid.Column="1" ItemsSource="{Binding List}" SelectedValue="{Binding S}"/>
     // e.g. CBVolumeName = new ItemsControlVM(m_app.xaml_cbVolumeName, new Action(() => { gd.m_strVolumeName = CBVolumeName.S; }));
-    class ItemsControlVM : ObservableObject
+    public class ItemsControlVM : ObservableObject
     {
         public String Current
         {
@@ -51,7 +51,7 @@ namespace SearchDirLists
         String m_strCurrent = null;
     }
 
-    abstract class ListViewItemVM : ObservableObject
+    public abstract class ListViewItemVM : ObservableObject
     {
         internal String this[int i] { get { return marr[i]; } }
         internal int Index = -1;
@@ -126,12 +126,12 @@ namespace SearchDirLists
         internal abstract int NumCols { get; }
         protected abstract String[] PropertyNames { get; }
         protected virtual int SearchCol { get { return 0; } }
-        protected readonly SDL_ListViewItem datum = null;
+        internal readonly SDL_ListViewItem datum = null;
 
         protected String[] marr = null;                         // all properties (columns/items) get stored here
     }
 
-    abstract class ListViewVM : ObservableObject
+    public abstract class ListViewVM : ObservableObject
     {
         public ObservableCollection<ListViewItemVM> Items { get { return m_items; } }
 
@@ -196,6 +196,8 @@ namespace SearchDirLists
             RaiseItems();
         }
 
+        internal virtual void SelectionChanged(SelectionChangedEventArgs e) { }
+
         void RaiseItems()
         {
             m_lv.Items.Refresh();
@@ -212,7 +214,7 @@ namespace SearchDirLists
         readonly protected ListView m_lv = null;
     }
 
-    abstract class ListViewVM_Generic<T> : ListViewVM where T : ListViewItemVM
+    public abstract class ListViewVM_Generic<T> : ListViewVM where T : ListViewItemVM
     {
         internal ListViewVM_Generic(ListView lv) : base(lv) { }
 
@@ -225,7 +227,7 @@ namespace Template      // prevents smart tag rename command from renaming the t
 {
     using SearchDirLists;
 
-    class Template_LVitemVM : ListViewItemVM
+    public class Template_LVitemVM : ListViewItemVM
     {
         public String ColumnNameHere { get { return marr[0]; } set { SetProperty(0, value); } }
 
@@ -239,7 +241,7 @@ namespace Template      // prevents smart tag rename command from renaming the t
         protected override String[] PropertyNames { get { return marrPropName; } }
     }
 
-    class Template_ListViewVM : ListViewVM_Generic<Template_LVitemVM>
+    public class Template_ListViewVM : ListViewVM_Generic<Template_LVitemVM>
     {
         public String WidthColumnNameHere { get { return SCW; } }
 

@@ -6,7 +6,7 @@ namespace SearchDirLists
 {
     delegate void RaisePropertyChangedDelegate(String propertyName);
 
-    internal abstract class ObservableObject : INotifyPropertyChanged
+    public abstract class ObservableObject : INotifyPropertyChanged
     {
         #region Debugging Aides
 
@@ -50,7 +50,6 @@ namespace SearchDirLists
         /// <param name="propertyName">Property name to update. Is case-sensitive.</param>
         public virtual void RaisePropertyChanged(string propertyName)
         {
-            this.VerifyPropertyName(propertyName);
             OnPropertyChanged(propertyName);
         }
 

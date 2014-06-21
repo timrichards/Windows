@@ -55,7 +55,6 @@ namespace SearchDirLists
             }
         }
 
-        internal void CollapseAll() { }
         internal void Select() { }
 
         readonly internal SDL_TreeNodeCollection Nodes = null;
@@ -170,8 +169,10 @@ namespace SearchDirLists
         SDL_TreeNode nodePrevQuery = null;
     }
 
-    class SDL_TreeNode
+    public class SDL_TreeNode
     {
+        internal TreeViewItemVM VM = null;
+
         internal SDL_TreeNode()
         {
             Nodes = new SDL_TreeNodeCollection(TreeView);
@@ -209,12 +210,10 @@ namespace SearchDirLists
 
                 StringBuilder sb = new StringBuilder();
 
-                nodeParent = stack.Pop();
-
-                while (nodeParent != null)
+                while (stack.Count > 0)
                 {
-                    sb.Append(nodeParent.Text + Path.DirectorySeparatorChar);
                     nodeParent = stack.Pop();
+                    sb.Append(nodeParent.Text + Path.DirectorySeparatorChar);
                 }
 
                 sb.Append(Text);
@@ -225,6 +224,7 @@ namespace SearchDirLists
 
         internal void DetachFromTree()
         {
+            VM = null;
             TreeView = null;
             Level = -1;
             m_strFullPath = null;
@@ -252,7 +252,6 @@ namespace SearchDirLists
 
         internal Drawing.Color BackColor = Drawing.Color.Empty;
         internal Drawing.Color ForeColor = Drawing.Color.Empty;
-  //      internal Drawing.Font NodeFont = null;
         
         String m_strFullPath = null;
     }

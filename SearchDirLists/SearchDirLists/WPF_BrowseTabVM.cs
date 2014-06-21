@@ -1,104 +1,9 @@
 ﻿using System.Windows.Input;
 using System;
-using System.Collections.ObjectModel;
-using System.Windows.Controls;
-using System.Linq;
-using System.Collections.Generic;
-using System.Windows.Media;
 
 namespace SearchDirLists
 {
-    class TreeViewItemVM : ObservableObject
-    {
-        public TreeViewItemVM Parent { get { return m_Parent; } }
-        public ObservableCollection<TreeViewItemVM> Items { get { return m_Items; } }
-        public String Content { get { return datum.Text; } }
-#if (WPF)
-        public Brush Foreground { get { return SDLWPF._ForeClrToBrush(datum.ForeColor); } }
-        public Brush Background { get { return SDLWPF._BackClrToBrush(datum.BackColor); } }
-#endif
-
-        public bool IsExpanded
-        {
-            get { return m_bExpanded; }
-            set
-            {
-                if (value != m_bExpanded)
-                {
-                    m_bExpanded = value;
-                    RaisePropertyChanged("IsExpanded");
-                }
-
-                if (m_bExpanded && (m_Parent != null))
-                {
-                    // chain reaction
-                    m_Parent.IsExpanded = true;
-                }
-            }
-        }
-
-        public bool IsSelected
-        {
-            get { return m_bSelected; }
-            set
-            {
-                if (value != m_bSelected)
-                {
-                    m_bSelected = value;
-                    RaisePropertyChanged("IsSelected");
-                }
-            }
-        }
-
-        readonly ObservableCollection<TreeViewItemVM> m_Items = null;
-        readonly TreeViewItemVM m_Parent = null;
-        readonly SDL_TreeNode datum = null;
-
-        bool m_bExpanded = false;
-        bool m_bSelected = false;
-
-        internal TreeViewItemVM(SDL_TreeNode datum_in)
-            :this(datum_in, null)
-        { }
-
-        TreeViewItemVM(SDL_TreeNode datum_in, TreeViewItemVM parent)
-        {
-            datum = datum_in;
-            m_Parent = parent;
-#if (WPF)
-            m_Items = new ObservableCollection<TreeViewItemVM>(
-                (from child in datum.Nodes.Keys
-                 select new TreeViewItemVM(child, this))
-                .ToList<TreeViewItemVM>());
-#endif
-        }
-    }
-
-    class TreeViewVM : ObservableObject
-    {
-        public ObservableCollection<TreeViewItemVM> Items { get { return m_Items; } }
-
-        internal TreeViewVM(TreeView tv)
-        {
-            (m_tv = tv).DataContext = this;
-        }
-
-        internal void SetData(List<SDL_TreeNode> rootNodes)
-        {
-            foreach (SDL_TreeNode treeNode in rootNodes)
-            {
-                m_Items.Add(new TreeViewItemVM(treeNode));
-            }
-
-            m_tv.Items.Refresh();
-            RaisePropertyChanged("Items");
-        }
-
-        ObservableCollection<TreeViewItemVM> m_Items = new ObservableCollection<TreeViewItemVM>();
-        readonly TreeView m_tv = null;
-    }
-
-    partial class BrowseTabVM
+    public partial class BrowseTabVM
     {
         // In order of appearance on the form
         public ICommand Icmd_Collapse { get { return marrIcmd[0]; } }
@@ -130,7 +35,7 @@ namespace SearchDirLists
             m_app.xaml_tabItemBrowse.DataContext = this;
             gd = GlobalData.GetInstance();
             CB_FindBox = new ItemsControlVM(m_app.xaml_cbFindbox, new Action(() => { }));
-            TV = new TreeViewVM(m_app.xaml_treeViewBrowse);
+            TV = new TreeViewVM();
             LV_CopyScratchpad = new CopyScratchpadListViewVM(m_app.xaml_lvCopyScratchpad);
             LV_Ignore = new IgnoreListViewVM(m_app.xaml_lvIgnore);
             LV_Files = new FilesListViewVM(m_app.xaml_lvFiles);

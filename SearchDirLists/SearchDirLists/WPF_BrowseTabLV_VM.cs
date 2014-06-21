@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
 using System.Windows;
+using System.Collections;
 
 namespace SearchDirLists
 {
     // In order of appearance on the form
-    class CopyScratchpadLVitemVM : ListViewItemVM
+    public class CopyScratchpadLVitemVM : ListViewItemVM
     {
         public String Folders { get { return marr[0]; } set { SetProperty(0, value); } }
         public String Path { get { return marr[1]; } set { SetProperty(1, value); } }
@@ -24,7 +25,7 @@ namespace SearchDirLists
         internal SDL_TreeNode treeNode = null;
     }
 
-    class CopyScratchpadListViewVM : ListViewVM_Generic<CopyScratchpadLVitemVM>
+    public class CopyScratchpadListViewVM : ListViewVM_Generic<CopyScratchpadLVitemVM>
     {
         public String WidthFolders { get { return SCW; } }
         public String WidthPath { get { return SCW; } }
@@ -35,7 +36,7 @@ namespace SearchDirLists
     }
 
 
-    class IgnoreLVitemVM : ListViewItemVM
+    public class IgnoreLVitemVM : ListViewItemVM
     {
         public String Folders { get { return marr[0]; } set { SetProperty(0, value); } }
         public String Level { get { return marr[1]; } set { SetProperty(1, value); } }
@@ -49,7 +50,7 @@ namespace SearchDirLists
         protected override String[] PropertyNames { get { return marrPropName; } }
     }
 
-    class IgnoreListViewVM : ListViewVM_Generic<IgnoreLVitemVM>
+    public class IgnoreListViewVM : ListViewVM_Generic<IgnoreLVitemVM>
     {
         public String WidthFolders { get { return SCW; } }
         public String WidthLevel { get { return SCW; } }
@@ -61,7 +62,7 @@ namespace SearchDirLists
 
 
     // Used for two listviewers
-    class FilesLVitemVM : ListViewItemVM
+    public class FilesLVitemVM : ListViewItemVM
     {
         public String Filename { get { return marr[0]; } set { SetProperty(0, value); } }
         public String Created { get { return marr[1]; } set { SetProperty(1, value); } }
@@ -80,7 +81,7 @@ namespace SearchDirLists
         protected override String[] PropertyNames { get { return marrPropName; } }
     }
 
-    class FilesListViewVM : ListViewVM_Generic<FilesLVitemVM>
+    public class FilesListViewVM : ListViewVM_Generic<FilesLVitemVM>
     {
         public String WidthFilename { get { return SCW; } }
         public String WidthCreated { get { return SCW; } }
@@ -97,7 +98,7 @@ namespace SearchDirLists
 
 
     // Used for two listviewers
-    class DetailLVitemVM : ListViewItemVM
+    public class DetailLVitemVM : ListViewItemVM
     {
         public String Heading { get { return marr[0]; } set { SetProperty(0, value); } }
         public String Detail { get { return marr[1]; } set { SetProperty(1, value); } }
@@ -111,7 +112,7 @@ namespace SearchDirLists
         protected override String[] PropertyNames { get { return marrPropName; } }
     }
 
-    class DetailListViewVM : ListViewVM_Generic<DetailLVitemVM>
+    public class DetailListViewVM : ListViewVM_Generic<DetailLVitemVM>
     {
         public String WidthHeading { get { return SCW; } }
         public String WidthDetail { get { return SCW; } }
@@ -122,7 +123,7 @@ namespace SearchDirLists
     }
 
 
-    abstract class ClonesLVitemVM_Base : ListViewItemVM
+    public abstract class ClonesLVitemVM_Base : ListViewItemVM
     {
         public String Folders { get { return datum.Text; } }
 #if (WPF)
@@ -134,7 +135,7 @@ namespace SearchDirLists
             : base(LV, datum_in) { }
     }
 
-    class SolitaryLVitemVM : ClonesLVitemVM_Base
+    public class SolitaryLVitemVM : ClonesLVitemVM_Base
     {
         readonly static String[] marrPropName = new String[] { "Folders" };
         internal const int NumCols_ = 1;
@@ -146,7 +147,7 @@ namespace SearchDirLists
         protected override String[] PropertyNames { get { return marrPropName; } }
     }
 
-    class SolitaryListViewVM : ListViewVM_Generic<SolitaryLVitemVM>
+    public class SolitaryListViewVM : ListViewVM_Generic<SolitaryLVitemVM>
     {
         public String WidthFolders { get { return SCW; } }          // not used
 
@@ -157,7 +158,7 @@ namespace SearchDirLists
 
 
     // Used for two listviewers
-    class ClonesLVitemVM : ClonesLVitemVM_Base
+    public class ClonesLVitemVM : ClonesLVitemVM_Base
     {
         public String Occurrences { get { return datum.SubItems[1].Text; } }
         readonly static String[] marrPropName = new String[] { "Folders", "Occurrences" };
@@ -170,7 +171,7 @@ namespace SearchDirLists
         protected override String[] PropertyNames { get { return marrPropName; } }
     }
 
-    class ClonesListViewVM : ListViewVM_Generic<ClonesLVitemVM>
+    public class ClonesListViewVM : ListViewVM_Generic<ClonesLVitemVM>
     {
         public String WidthFolders { get { return SCW; } }          // not used
         public String WidthOccurrences { get { return SCW; } }      // not used
@@ -178,5 +179,31 @@ namespace SearchDirLists
         internal ClonesListViewVM(ListView lv) : base(lv) { }
         internal override void NewItem(SDL_ListViewItem datum_in, bool bQuiet = false) { Add(new ClonesLVitemVM(this, datum_in), bQuiet); }
         internal override int NumCols { get { return ClonesLVitemVM.NumCols_; } }
+
+        void SetSelected(IList items, bool bSelect)
+        {
+            if (items.Count > 0)
+            {
+                UList<SDL_TreeNode> listNodes = ((UList<SDL_TreeNode>)((ListViewItemVM)items[0]).datum.Tag);
+
+                if (listNodes == null)
+                {
+                    return;
+                }
+
+                SDL_TreeNode treeNode = listNodes[0];
+
+                if (Utilities.Assert(0, treeNode.VM != null))
+                {
+                    treeNode.VM.IsSelected = bSelect;
+                }
+            }
+        }
+
+        internal override void SelectionChanged(SelectionChangedEventArgs e)
+        {
+            SetSelected(e.AddedItems, true);
+            SetSelected(e.RemovedItems, false);
+        }
     }
 }

@@ -87,7 +87,7 @@ namespace SearchDirLists
 #endif
             Utilities.CheckAndInvoke(m_app.Dispatcher, new Action(() =>
             {
-                m_app.BrowseTab.TV.SetData(gd.m_listRootNodes);
+                m_app.BrowseTab.TV.SetData(m_app.xaml_treeViewBrowse, gd.m_listRootNodes);
                 m_app.BrowseTab.LV_Clones.SyncData();
                 m_app.BrowseTab.LV_SameVol.SyncData();
                 m_app.BrowseTab.LV_Solitary.SyncData();

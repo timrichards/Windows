@@ -116,6 +116,7 @@
     <Compile Include="WPF_AbstractionsVM.cs" />
     <Compile Include="WPF_BrowseTabVM.cs" />
     <Compile Include="WPF_BrowseTabVM_Guts.cs" />
+    <Compile Include="WPF_TreeViewVM.cs" />
     <Compile Include="WPF_VolumesTabVM_Guts.cs" />
     <Compile Include="WPF_app.xaml.cs">
       <DependentUpon>WPF_app.xaml</DependentUpon>

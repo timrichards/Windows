@@ -33,5 +33,10 @@ namespace SearchDirLists
 #endif
             }
         }
+
+        private void xaml_lvSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ((ListViewVM)((ListView)sender).DataContext).SelectionChanged(e);
+        }
     }
 }

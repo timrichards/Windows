@@ -80,10 +80,66 @@ namespace SearchDirLists
             {
                 if (value != m_bExpanded)
                 {
-                    m_bExpanded = ExpandParents(value);
-                    RaisePropertyChanged("IsExpanded");
+                    Utilities.WriteLine("Set IsExpanded " + Text + " " + value);
+                    m_bExpanded = value;
+
+                    if (m_bExpanded)
+                    {
+                        TV.m_listExpanded.Add(this);
+                    }
                 }
             }
+        }
+
+        internal void SelectProgrammatic(bool bSelect)
+        {
+            if (m_bSelected == bSelect)
+            {
+                return;
+            }
+
+            m_bSelected = bSelect;
+            RaisePropertyChanged("IsSelected");
+
+            if (m_bSelected == false)
+            {
+                return;
+            }
+
+            TV.ScrollToHome();
+
+            Stack<TreeViewItemVM> stackParents = new Stack<TreeViewItemVM>(8);
+            UList<TreeViewItemVM> listParents = new UList<TreeViewItemVM>();
+            TreeViewItemVM parentItem = m_Parent;
+
+            while (parentItem != null)
+            {
+                stackParents.Push(parentItem);
+                listParents.Add(parentItem);
+                parentItem = parentItem.m_Parent;
+            }
+
+            foreach (TreeViewItemVM item in TV.m_listExpanded)
+            {
+                if (stackParents.Contains(item) == false)
+                {
+                    item.m_bExpanded = false;
+                    item.RaisePropertyChanged("IsExpanded");
+                }
+            }
+
+            while (stackParents.Count > 0)
+            {
+                parentItem = stackParents.Pop();
+
+                if (parentItem.m_bExpanded == false)
+                {
+                    parentItem.m_bExpanded = true;
+                    parentItem.RaisePropertyChanged("IsExpanded");
+                }
+            }
+
+            TV.m_listExpanded = listParents;
         }
 
         public bool IsSelected
@@ -93,42 +149,28 @@ namespace SearchDirLists
             {
                 if (value != m_bSelected)
                 {
-                    m_bSelected = ExpandParents(value);
-                    RaisePropertyChanged("IsSelected");
+                    m_bSelected = value;
+
+                    if (DateTime.Now - TV.dtProgrammaticExpand > TimeSpan.FromMilliseconds(50))
+                    {
+                        Utilities.WriteLine("-");
+                        TV.dtProgrammaticExpand = DateTime.Now;
+                    }
+
+                    Utilities.WriteLine("Set IsSelected " + Text + " " + value);
 
                     if (m_bSelected)
                     {
-                        TV.m_SelectedItem = this;
+                        TV.SelectedItem = this;
                     }
-                    else if (TV.m_SelectedItem == this)
+                    else if (TV.SelectedItem == this)
                     {
-                        TV.m_SelectedItem = null;
+                        TV.SelectedItem = null;
                     }
+
+                    Utilities.WriteLine("End IsSelected " + Text + " " + value);
                 }
             }
-        }
-
-        bool ExpandParents(bool bExpand)
-        {
-            if (bExpand)
-            {
-                Stack<TreeViewItemVM> stackItems = new Stack<TreeViewItemVM>(8);
-                TreeViewItemVM parentItem = m_Parent;
-
-                while (parentItem != null)
-                {
-                    stackItems.Push(parentItem);
-                    parentItem = parentItem.m_Parent;
-                }
-
-                while (stackItems.Count > 0)
-                {
-                    parentItem = stackItems.Pop();
-                    parentItem.IsExpanded = true;
-                }
-            }
-
-            return bExpand;
         }
 
         internal TreeViewItemVM(TreeViewVM tv, SDL_TreeNode datum_in)
@@ -162,6 +204,11 @@ namespace SearchDirLists
 
     class TreeViewVM
     {
+        internal void ScrollToHome()
+        {
+            scrollViewer.ScrollToHome();
+        }
+
         internal void SetData(TreeView tv, List<SDL_TreeNode> rootNodes)
         {
             foreach (SDL_TreeNode treeNode in rootNodes)
@@ -169,10 +216,14 @@ namespace SearchDirLists
                 m_Items.Add(new TreeViewItemVM(this, treeNode));
             }
 
+            scrollViewer = tv.Template.FindName("_tv_scrollviewer_", tv) as ScrollViewer;            
             tv.DataContext = m_Items;
         }
 
-        internal TreeViewItemVM m_SelectedItem = null;
+        internal TreeViewItemVM SelectedItem = null;
+        internal UList<TreeViewItemVM> m_listExpanded = new UList<TreeViewItemVM>();
+        internal DateTime dtProgrammaticExpand = DateTime.MinValue;
         readonly List<TreeViewItemVM> m_Items = new List<TreeViewItemVM>();
+        ScrollViewer scrollViewer = null;
     }
 }

@@ -169,7 +169,7 @@ namespace SearchDirLists
         SDL_TreeNode nodePrevQuery = null;
     }
 
-    public class SDL_TreeNode
+    class SDL_TreeNode
     {
         internal TreeViewItemVM VM = null;
 

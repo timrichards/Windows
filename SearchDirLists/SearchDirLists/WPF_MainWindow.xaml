@@ -287,9 +287,15 @@
                             <RowDefinition Height="3" />
                             <RowDefinition Height="*" MinHeight="20"/>
                         </Grid.RowDefinitions>
+
+
+                        <!-- Clone LVs ********************************************************************** -->
+
+
                         <Grid.Resources>
                             <Style TargetType="ListView" BasedOn="{StaticResource LVStyle}">
                                 <Setter Property="SelectionMode" Value="Single"/>
+                                <EventSetter Event="SelectionChanged" Handler="xaml_lvSelectionChanged"/>
                             </Style>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="Foreground" Value="{Binding Foreground}"/>
@@ -297,19 +303,14 @@
                                 <Setter Property="FontWeight" Value="{Binding FontWeight}"/>
                             </Style>
                         </Grid.Resources>
-
-
-                        <!-- Clone LVs ********************************************************************** -->
-
-
-                        <ListView Name="xaml_lvSolitary" SelectionChanged="xaml_lvSelectionChanged" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0">
+                        <ListView Name="xaml_lvSolitary" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Solitary" DisplayMemberBinding="{Binding Folders}" Width="{Binding ActualWidth, ElementName=helperField}"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>
-                        <ListView Name="xaml_lvSameVol" SelectionChanged="xaml_lvSelectionChanged" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="0">
+                        <ListView Name="xaml_lvSameVol" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="2" Grid.Column="0">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Same volume group" DisplayMemberBinding="{Binding Folders}" Width="{Binding ActualWidth, ElementName=helperField}"/>
@@ -317,7 +318,7 @@
                                 </GridView>
                             </ListView.View>
                         </ListView>
-                        <ListView Name="xaml_lvClones" SelectionChanged="xaml_lvSelectionChanged" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="4" Grid.Column="0">
+                        <ListView Name="xaml_lvClones" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="4" Grid.Column="0">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="Clones" DisplayMemberBinding="{Binding Folders}" Width="{Binding ActualWidth, ElementName=helperField}"/>

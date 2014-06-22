@@ -195,7 +195,7 @@ namespace SearchDirLists
 
                 if (Utilities.Assert(0, treeNode.VM != null))
                 {
-                    treeNode.VM.IsSelected = bSelect;
+                    treeNode.VM.SelectProgrammatic(bSelect);
                 }
             }
         }

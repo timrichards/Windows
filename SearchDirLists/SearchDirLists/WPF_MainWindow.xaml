@@ -44,6 +44,10 @@
             <Style TargetType="Panel">
                 <Setter Property="Focusable" Value="false"/>
             </Style>
+            <Style TargetType="TreeView">
+                <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
+                <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Standard"/>
+            </Style>
         </TabControl.Resources>
         <TabItem Header="Volumes" Name="xaml_tabItemVolumes">
             <Grid>

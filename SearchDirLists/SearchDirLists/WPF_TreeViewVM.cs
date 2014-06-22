@@ -98,6 +98,11 @@ namespace SearchDirLists
                 return;
             }
 
+            if (m_bSelected)
+            {
+                TV.ScrollToHome();
+            }
+
             m_bSelected = bSelect;
             RaisePropertyChanged("IsSelected");
 
@@ -105,8 +110,6 @@ namespace SearchDirLists
             {
                 return;
             }
-
-            TV.ScrollToHome();
 
             Stack<TreeViewItemVM> stackParents = new Stack<TreeViewItemVM>(8);
             UList<TreeViewItemVM> listParents = new UList<TreeViewItemVM>();

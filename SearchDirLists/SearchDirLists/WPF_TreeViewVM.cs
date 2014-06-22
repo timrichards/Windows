@@ -98,7 +98,7 @@ namespace SearchDirLists
                 return;
             }
 
-            if (m_bSelected)
+            if (bSelect)
             {
                 TV.ScrollToHome();
             }
@@ -106,7 +106,7 @@ namespace SearchDirLists
             m_bSelected = bSelect;
             RaisePropertyChanged("IsSelected");
 
-            if (m_bSelected == false)
+            if (bSelect == false)
             {
                 return;
             }

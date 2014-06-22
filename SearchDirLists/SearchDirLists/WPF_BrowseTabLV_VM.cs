@@ -154,6 +154,30 @@ namespace SearchDirLists
         internal SolitaryListViewVM(ListView lv) : base(lv) { }
         internal override void NewItem(SDL_ListViewItem datum_in, bool bQuiet = false) { Add(new SolitaryLVitemVM(this, datum_in), bQuiet); }
         internal override int NumCols { get { return SolitaryLVitemVM.NumCols_; } }
+
+        void SetSelected(IList items, bool bSelect)
+        {
+            if (items.Count > 0)
+            {
+                SDL_TreeNode treeNode = ((SDL_TreeNode)((ListViewItemVM)items[0]).datum.Tag);
+
+                if (treeNode == null)
+                {
+                    return;     // marker item
+                }
+
+                if (Utilities.Assert(0, treeNode.VM != null))
+                {
+                    treeNode.VM.SelectProgrammatic(bSelect);
+                }
+            }
+        }
+
+        internal override void SelectionChanged(SelectionChangedEventArgs e)
+        {
+            SetSelected(e.AddedItems, true);
+            SetSelected(e.RemovedItems, false);
+        }
     }
 
 
@@ -188,7 +212,7 @@ namespace SearchDirLists
 
                 if (listNodes == null)
                 {
-                    return;
+                    return;     // marker item
                 }
 
                 SDL_TreeNode treeNode = listNodes[0];

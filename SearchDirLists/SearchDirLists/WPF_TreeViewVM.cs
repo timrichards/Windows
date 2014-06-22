@@ -111,6 +111,8 @@ namespace SearchDirLists
                 return;
             }
 
+            TV.SelectedItem = this;
+
             Stack<TreeViewItemVM> stackParents = new Stack<TreeViewItemVM>(8);
             UList<TreeViewItemVM> listParents = new UList<TreeViewItemVM>();
             TreeViewItemVM parentItem = m_Parent;
@@ -152,15 +154,16 @@ namespace SearchDirLists
             {
                 if (value != m_bSelected)
                 {
-                    m_bSelected = value;
-
-                    if (DateTime.Now - TV.dtProgrammaticExpand > TimeSpan.FromMilliseconds(50))
+#if (DEBUG)
+                    if (DateTime.Now - TV.mDbg_dtProgrammaticExpand > TimeSpan.FromMilliseconds(50))
                     {
                         Utilities.WriteLine("-");
-                        TV.dtProgrammaticExpand = DateTime.Now;
+                        TV.mDbg_dtProgrammaticExpand = DateTime.Now;
                     }
 
                     Utilities.WriteLine("Set IsSelected " + Text + " " + value);
+#endif
+                    m_bSelected = value;
 
                     if (m_bSelected)
                     {
@@ -198,18 +201,19 @@ namespace SearchDirLists
 
         readonly ObservableCollection<TreeViewItemVM> m_Items = null;
         readonly TreeViewItemVM m_Parent = null;
+        readonly TreeViewVM TV = null;
+
         readonly SDL_TreeNode datum = null;
 
         bool m_bExpanded = false;
         bool m_bSelected = false;
-        TreeViewVM TV = null;
     }
 
     class TreeViewVM
     {
         internal void ScrollToHome()
         {
-            scrollViewer.ScrollToHome();
+            m_ScrollViewer.ScrollToHome();
         }
 
         internal void SetData(TreeView tv, List<SDL_TreeNode> rootNodes)
@@ -219,14 +223,16 @@ namespace SearchDirLists
                 m_Items.Add(new TreeViewItemVM(this, treeNode));
             }
 
-            scrollViewer = tv.Template.FindName("_tv_scrollviewer_", tv) as ScrollViewer;            
+            m_ScrollViewer = tv.Template.FindName("_tv_scrollviewer_", tv) as ScrollViewer;            
             tv.DataContext = m_Items;
         }
 
         internal TreeViewItemVM SelectedItem = null;
         internal UList<TreeViewItemVM> m_listExpanded = new UList<TreeViewItemVM>();
-        internal DateTime dtProgrammaticExpand = DateTime.MinValue;
+        
         readonly List<TreeViewItemVM> m_Items = new List<TreeViewItemVM>();
-        ScrollViewer scrollViewer = null;
+        ScrollViewer m_ScrollViewer = null;
+
+        internal DateTime mDbg_dtProgrammaticExpand = DateTime.MinValue;
     }
 }

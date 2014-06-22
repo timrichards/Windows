@@ -56,35 +56,26 @@ namespace SearchDirLists
         internal String this[int i] { get { return marr[i]; } }
         internal int Index = -1;
 
-        internal ListViewItemVM(ListViewVM LV, String[] arrStr)     // e.g. Volumes LV: marr
+        ListViewItemVM(ListViewVM LV)
         {
             Index = LV.Count;
             LV_RaisePropertyChanged = LV.RaisePropertyChanged;
+        }
+
+        internal ListViewItemVM(ListViewVM LV, String[] arrStr)     // e.g. Volumes LV: marr
+            : this(LV)
+        {
             Utilities.Assert(1310.1001, arrStr.Length <= NumCols);
             marr = new string[NumCols];
             arrStr.CopyTo(marr, 0);
-
-            for (int i = 0; i < arrStr.Length; ++i)
-            {
-                Raise(i);
-            }
-
             RaiseColumnWidths();
         }
 
         internal ListViewItemVM(ListViewVM LV, SDL_ListViewItem datum_in)   // e.g. Clones LVs: datum
+            : this(LV)
         {
-            Index = LV.Count;
-            LV_RaisePropertyChanged = LV.RaisePropertyChanged;
             datum = datum_in;
             // ListViewVM raises property changed after all items are added. Clones LVs do not use it.
-        }
-
-        void Raise(int nCol)
-        {
-            String strPropName = PropertyNames[nCol];
-
-            RaisePropertyChanged(strPropName);
         }
 
         internal void RaiseColumnWidths()
@@ -117,7 +108,7 @@ namespace SearchDirLists
             if (this[nCol] != s)
             {
                 marr[nCol] = s;
-                Raise(nCol);
+                RaisePropertyChanged(PropertyNames[nCol]);
             }
 
             RaiseColumnWidths();
@@ -126,9 +117,9 @@ namespace SearchDirLists
         internal abstract int NumCols { get; }
         protected abstract String[] PropertyNames { get; }
         protected virtual int SearchCol { get { return 0; } }
-        internal readonly SDL_ListViewItem datum = null;
 
-        protected String[] marr = null;                         // all properties (columns/items) get stored here
+        internal readonly SDL_ListViewItem datum = null;
+        protected String[] marr = null;                     // unless using datum, properties, cell values, get stored here
     }
 
     public abstract class ListViewVM : ObservableObject

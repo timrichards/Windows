@@ -1,70 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows.Controls;
-using System.Windows;
 using System.Windows.Media;
 using System.Collections.ObjectModel;
 
 namespace SearchDirLists
 {
-    public static partial class SDL_DependencyProperties
-    {
-        public static bool GetViewSel(TreeViewItem treeViewItem)
-        {
-            return (bool)treeViewItem.GetValue(ViewSelProperty);
-        }
-
-        public static void SetViewSel(TreeViewItem treeViewItem, bool value)
-        {
-            treeViewItem.SetValue(ViewSelProperty, value);
-        }
-
-        public static readonly DependencyProperty ViewSelProperty = DependencyProperty.RegisterAttached
-        (
-            "ViewSel",
-            typeof(bool),
-            typeof(SDL_DependencyProperties),
-            new UIPropertyMetadata(false, OnViewSelChanged)
-        );
-
-        static void OnViewSelChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
-        {
-            TreeViewItem item = depObj as TreeViewItem;
-
-            if (item == null)
-            {
-                return;
-            }
-
-            if (e.NewValue is bool)
-            {
-                if ((bool)e.NewValue)
-                {
-                    item.Selected += OnTreeViewItemSelected;
-                }
-                else
-                {
-                    item.Selected -= OnTreeViewItemSelected;
-                }
-            }
-        }
-
-        static void OnTreeViewItemSelected(object sender, RoutedEventArgs e)
-        {
-            if (Object.ReferenceEquals(sender, e.OriginalSource))
-            {
-                TreeViewItem item = e.OriginalSource as TreeViewItem;
-
-                if (item != null)
-                {
-                    item.BringIntoView();
-                }
-            }
-        }
-    }
-
     public class TreeViewItemVM : ObservableObject
     {
         public ObservableCollection<TreeViewItemVM> Items { get { return m_Items; } }
@@ -80,7 +22,7 @@ namespace SearchDirLists
             {
                 if (value != m_bExpanded)
                 {
-                    Utilities.WriteLine("Set IsExpanded " + Text + " " + value);
+//                    Utilities.WriteLine("Set IsExpanded " + Text + " " + value);
                     m_bExpanded = value;
 
                     if (m_bExpanded)
@@ -154,7 +96,7 @@ namespace SearchDirLists
             {
                 if (value != m_bSelected)
                 {
-#if (DEBUG)
+#if (DEBUG && false)
                     if (DateTime.Now - TV.mDbg_dtProgrammaticExpand > TimeSpan.FromMilliseconds(50))
                     {
                         Utilities.WriteLine("-");
@@ -165,6 +107,12 @@ namespace SearchDirLists
 #endif
                     m_bSelected = value;
 
+                    if (datum.LVIVM != null)
+                    {
+                        datum.LVIVM.LVVM.LVFE.ScrollIntoView(datum.LVIVM.LVVM.LVFE.Items[datum.LVIVM.Index]);
+                        datum.LVIVM.SelectProgrammatic(m_bSelected);
+                    }
+
                     if (m_bSelected)
                     {
                         TV.SelectedItem = this;
@@ -174,7 +122,7 @@ namespace SearchDirLists
                         TV.SelectedItem = null;
                     }
 
-                    Utilities.WriteLine("End IsSelected " + Text + " " + value);
+//                    Utilities.WriteLine("End IsSelected " + Text + " " + value);
                 }
             }
         }
@@ -189,7 +137,7 @@ namespace SearchDirLists
             datum = datum_in;
             m_Parent = parent;
 #if (WPF)
-            datum.VM = this;
+            datum.TVIVM = this;
 
             m_Items = new ObservableCollection<TreeViewItemVM>
             (

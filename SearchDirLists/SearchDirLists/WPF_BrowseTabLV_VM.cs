@@ -141,10 +141,35 @@ namespace SearchDirLists
         internal const int NumCols_ = 1;
 
         internal SolitaryLVitemVM(ListViewVM LV, SDL_ListViewItem datum_in)
-            : base(LV, datum_in) { }
+            : base(LV, datum_in)
+        {
+            SDL_TreeNode treeNode = ((SDL_TreeNode)datum.Tag);
+
+            if (treeNode == null)
+            {
+                return;     // marker item
+            }
+
+            treeNode.LVIVM = this;
+        }
 
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
+
+        protected override void ActOnDirectSelChange()
+        {
+            SDL_TreeNode treeNode = ((SDL_TreeNode)datum.Tag);
+
+            if (treeNode == null)
+            {
+                return;     // marker item
+            }
+
+            if (Utilities.Assert(0, treeNode.TVIVM != null))
+            {
+                treeNode.TVIVM.SelectProgrammatic(m_bSelected);
+            }
+        }
     }
 
     public class SolitaryListViewVM : ListViewVM_Generic<SolitaryLVitemVM>
@@ -154,30 +179,6 @@ namespace SearchDirLists
         internal SolitaryListViewVM(ListView lv) : base(lv) { }
         internal override void NewItem(SDL_ListViewItem datum_in, bool bQuiet = false) { Add(new SolitaryLVitemVM(this, datum_in), bQuiet); }
         internal override int NumCols { get { return SolitaryLVitemVM.NumCols_; } }
-
-        void SetSelected(IList items, bool bSelect)
-        {
-            if (items.Count > 0)
-            {
-                SDL_TreeNode treeNode = ((SDL_TreeNode)((ListViewItemVM)items[0]).datum.Tag);
-
-                if (treeNode == null)
-                {
-                    return;     // marker item
-                }
-
-                if (Utilities.Assert(0, treeNode.VM != null))
-                {
-                    treeNode.VM.SelectProgrammatic(bSelect);
-                }
-            }
-        }
-
-        internal override void SelectionChanged(SelectionChangedEventArgs e)
-        {
-            SetSelected(e.AddedItems, true);
-            SetSelected(e.RemovedItems, false);
-        }
     }
 
 
@@ -189,10 +190,41 @@ namespace SearchDirLists
         internal const int NumCols_ = 2;
 
         internal ClonesLVitemVM(ListViewVM LV, SDL_ListViewItem datum_in)
-            : base(LV, datum_in) { }
+            : base(LV, datum_in)
+        {
+            if (datum.Tag == null)
+            {
+                return;     // marker item
+            }
+
+            foreach (SDL_TreeNode treeNode in ((UList<SDL_TreeNode>)datum.Tag))
+            {
+                if (treeNode.LVIVM == null)        // TODO: take same vol items out of the clones LV?
+                {
+                    treeNode.LVIVM = this;
+                }
+            }
+        }
 
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
+
+        protected override void ActOnDirectSelChange()
+        {
+            UList<SDL_TreeNode> listNodes = ((UList<SDL_TreeNode>)datum.Tag);
+
+            if (listNodes == null)
+            {
+                return;     // marker item
+            }
+
+            SDL_TreeNode treeNode = listNodes[0];
+
+            if (Utilities.Assert(0, treeNode.TVIVM != null))
+            {
+                treeNode.TVIVM.SelectProgrammatic(m_bSelected);
+            }
+        }
     }
 
     public class ClonesListViewVM : ListViewVM_Generic<ClonesLVitemVM>
@@ -203,31 +235,5 @@ namespace SearchDirLists
         internal ClonesListViewVM(ListView lv) : base(lv) { }
         internal override void NewItem(SDL_ListViewItem datum_in, bool bQuiet = false) { Add(new ClonesLVitemVM(this, datum_in), bQuiet); }
         internal override int NumCols { get { return ClonesLVitemVM.NumCols_; } }
-
-        void SetSelected(IList items, bool bSelect)
-        {
-            if (items.Count > 0)
-            {
-                UList<SDL_TreeNode> listNodes = ((UList<SDL_TreeNode>)((ListViewItemVM)items[0]).datum.Tag);
-
-                if (listNodes == null)
-                {
-                    return;     // marker item
-                }
-
-                SDL_TreeNode treeNode = listNodes[0];
-
-                if (Utilities.Assert(0, treeNode.VM != null))
-                {
-                    treeNode.VM.SelectProgrammatic(bSelect);
-                }
-            }
-        }
-
-        internal override void SelectionChanged(SelectionChangedEventArgs e)
-        {
-            SetSelected(e.AddedItems, true);
-            SetSelected(e.RemovedItems, false);
-        }
     }
 }

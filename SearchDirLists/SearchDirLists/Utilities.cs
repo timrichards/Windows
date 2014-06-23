@@ -171,7 +171,8 @@ namespace SearchDirLists
 
     class SDL_TreeNode
     {
-        internal TreeViewItemVM VM = null;
+        internal TreeViewItemVM TVIVM = null;
+        internal ListViewItemVM LVIVM = null;
 
         internal SDL_TreeNode()
         {
@@ -224,7 +225,7 @@ namespace SearchDirLists
 
         internal void DetachFromTree()
         {
-            VM = null;
+            TVIVM = null;
             TreeView = null;
             Level = -1;
             m_strFullPath = null;

@@ -3,11 +3,46 @@ using System.Windows.Controls;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 
 namespace SearchDirLists
 {
     // Class members are generally ordered public on down, which mixes constructors and types.
     // XAML-binding properties are always public, which puts them at the top, and private storage is at the end. Sorta reverse of C.
+
+    public static class TVI_DepProperty
+    {
+        public static readonly DependencyProperty ViewSelProperty = DependencyProperty.RegisterAttached
+        (
+            "ViewSelected",
+            typeof(bool),
+            typeof(TVI_DepProperty),
+            new UIPropertyMetadata(false, OnViewSelChanged)
+        );
+
+        public static bool GetViewSelected(FrameworkElement element) { return (bool)element.GetValue(ViewSelProperty); }
+        public static void SetViewSelected(FrameworkElement element, bool value) { element.SetValue(ViewSelProperty, value); }
+
+        static void OnViewSelChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
+        {
+            TreeViewItem item = depObj as TreeViewItem;
+
+            if ((bool)e.NewValue) { item.Selected += OnFEselected; }
+            else { item.Selected -= OnFEselected; }
+        }
+
+        static void OnFEselected(object sender, RoutedEventArgs e)
+        {
+            if (Object.ReferenceEquals(sender, e.OriginalSource))
+            {
+                ((FrameworkElement)e.OriginalSource).BringIntoView();
+            }
+            else
+            {
+                //Utilities.WriteLine("Not original source: " + sender + " != " + e.OriginalSource + ". Source = " + e.Source);
+            }
+        }
+    }
 
     // e.g. <ComboBox Name="xaml_cbVolumeName" Grid.Column="1" ItemsSource="{Binding List}" SelectedValue="{Binding S}"/>
     // e.g. CBVolumeName = new ItemsControlVM(m_app.xaml_cbVolumeName, new Action(() => { gd.m_strVolumeName = CBVolumeName.S; }));
@@ -53,13 +88,37 @@ namespace SearchDirLists
 
     public abstract class ListViewItemVM : ObservableObject
     {
+        public bool IsSelected
+        {
+            get { return m_bSelected; }
+            set
+            {
+                if (value != m_bSelected)
+                {
+                    m_bSelected = value;
+                    ActOnDirectSelChange();
+                }
+            }
+        }
+
+        internal void SelectProgrammatic(bool bSelected)
+        {
+            if (m_bSelected != bSelected)
+            {
+                m_bSelected = bSelected;
+                RaisePropertyChanged("IsSelected");
+            }
+        }
+
+        protected virtual void ActOnDirectSelChange() { }
+
         internal String this[int i] { get { return marr[i]; } }
         internal int Index = -1;
 
         ListViewItemVM(ListViewVM LV)
         {
             Index = LV.Count;
-            LV_RaisePropertyChanged = LV.RaisePropertyChanged;
+            LVVM = LV;
         }
 
         internal ListViewItemVM(ListViewVM LV, String[] arrStr)     // e.g. Volumes LV: marr
@@ -87,13 +146,11 @@ namespace SearchDirLists
                 String strPropName = PropertyNames[nCol];
 
                 ListViewVM.SCW = 50.ToString();
-                LV_RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there
+                LVVM.RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there
                 ListViewVM.SCW = double.NaN.ToString();
-                LV_RaisePropertyChanged("Width" + strPropName);
+                LVVM.RaisePropertyChanged("Width" + strPropName);
             }
         }
-
-        RaisePropertyChangedDelegate LV_RaisePropertyChanged = null;
 
         internal String SearchValue
         {
@@ -114,12 +171,16 @@ namespace SearchDirLists
             RaiseColumnWidths();
         }
 
+        internal readonly ListViewVM LVVM = null;
+
         internal abstract int NumCols { get; }
         protected abstract String[] PropertyNames { get; }
         protected virtual int SearchCol { get { return 0; } }
 
         internal readonly SDL_ListViewItem datum = null;
-        protected String[] marr = null;                     // unless using datum, properties, cell values, get stored here
+        protected String[] marr = null;                     // unless using datum: properties (cell values) get stored here
+
+        protected bool m_bSelected = false;
     }
 
     public abstract class ListViewVM : ObservableObject
@@ -128,9 +189,9 @@ namespace SearchDirLists
 
         internal ListViewVM(ListView lv)
         {
-            if (lv != null)
+            if (lv != null)     // null e.g. fake LVs for loading and saving data
             {
-                (m_lv = lv).DataContext = this;
+                (LVFE = lv).DataContext = this;
             }
         }
 
@@ -149,11 +210,12 @@ namespace SearchDirLists
         }
 
         internal static String SCW = double.NaN.ToString();     // frankenhoek
+        internal readonly ListView LVFE = null;
 
         internal int Count { get { return m_items.Count; } }
         internal bool HasItems { get { return m_items.Count > 0; } }
-        internal bool SelectedOne { get { return m_lv.SelectedItems.Count == 1; } }
-        internal bool SelectedAny { get { return m_lv.SelectedItems.Count > 0; } }
+        internal bool SelectedOne { get { return LVFE.SelectedItems.Count == 1; } }
+        internal bool SelectedAny { get { return LVFE.SelectedItems.Count > 0; } }
         internal bool Contains(String s) { return (this[s] != null); }
 
         internal ListViewItemVM this[String s_in]
@@ -187,11 +249,9 @@ namespace SearchDirLists
             RaiseItems();
         }
 
-        internal virtual void SelectionChanged(SelectionChangedEventArgs e) { }
-
         void RaiseItems()
         {
-            m_lv.Items.Refresh();
+            LVFE.Items.Refresh();
             RaisePropertyChanged("Items");
 
             if (Utilities.Assert(0, m_items.Count > 0))
@@ -202,7 +262,6 @@ namespace SearchDirLists
 
         readonly internal SDL_ListView data = new SDL_ListView();
         readonly protected ObservableCollection<ListViewItemVM> m_items = new ObservableCollection<ListViewItemVM>();
-        readonly protected ListView m_lv = null;
     }
 
     public abstract class ListViewVM_Generic<T> : ListViewVM where T : ListViewItemVM
@@ -210,7 +269,7 @@ namespace SearchDirLists
         internal ListViewVM_Generic(ListView lv) : base(lv) { }
 
         internal IEnumerable<T> ItemsCast { get { return m_items.Cast<T>(); } }
-        internal IEnumerable<T> Selected { get { return m_lv.SelectedItems.Cast<T>(); } }
+        internal IEnumerable<T> Selected { get { return LVFE.SelectedItems.Cast<T>(); } }
     }
 }
 

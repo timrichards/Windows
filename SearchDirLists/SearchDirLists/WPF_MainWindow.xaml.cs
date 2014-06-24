@@ -23,15 +23,5 @@ namespace SearchDirLists
             VolumesTab = new VolumesTabVM(this);
             BrowseTab = new BrowseTabVM(this);
         }
-
-        private void xaml_cbSaveAs_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            if (new Key[] {Key.Enter, Key.Return}.Contains(e.Key))
-            {
-#if (WPF)
-                xaml_btnAddVolume.Command.Execute(null);
-#endif
-            }
-        }
     }
 }

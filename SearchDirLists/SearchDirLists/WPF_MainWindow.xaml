@@ -92,7 +92,7 @@
                 </ItemsControl>
                 <ItemsControl Grid.Row="2" Style="{StaticResource ComboRows}">
                     <Label Content="Directory listing file" />
-                    <ComboBox Name="xaml_cbSaveAs" HorizontalAlignment="Stretch" Grid.Column="1" KeyUp="xaml_cbSaveAs_KeyUp"/>
+                    <ComboBox Name="xaml_cbSaveAs" HorizontalAlignment="Stretch" Grid.Column="1" local:CB_DP_KeyUp.Event ="True"/>
                     <Button Content="..." Name="xaml_btnSaveAs" Grid.Column="2" Command="{Binding Icmd_SaveAs}"/>
                 </ItemsControl>
                 <StackPanel Grid.Row="3" Orientation="Horizontal">

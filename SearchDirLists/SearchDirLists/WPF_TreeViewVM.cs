@@ -188,7 +188,6 @@ namespace SearchDirLists
             m_Parent = parent;
 #if (WPF)
             datum.TVIVM = this;
-            Index = tv.TVFE.Items.Count;
 
             m_Items = new ObservableCollection<TreeViewItemVM>
             (
@@ -206,7 +205,6 @@ namespace SearchDirLists
 
         bool m_bExpanded = false;
         bool m_bSelected = false;
-        int Index = -1;
     }
 
     class TreeViewVM

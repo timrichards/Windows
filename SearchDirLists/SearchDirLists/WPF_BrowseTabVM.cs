@@ -1,8 +1,36 @@
 ﻿using System.Windows.Input;
 using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Linq;
 
 namespace SearchDirLists
 {
+    public static class CB_DP_KeyUp
+    {
+        public static readonly DependencyProperty EventProperty = DependencyProperty.RegisterAttached
+        ("Event", typeof(bool), typeof(CB_DP_KeyUp), new UIPropertyMetadata(false, OnDPchanged));
+
+        public static bool GetEvent(FrameworkElement element) { return (bool)element.GetValue(EventProperty); }
+        public static void SetEvent(FrameworkElement element, bool value) { element.SetValue(EventProperty, value); }
+
+        static void OnDPchanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
+        // This is where you modify (a) the type; and (b) the event handled.
+        { ComboBox item = depObj as ComboBox; if ((bool)e.NewValue) { item.KeyUp += OnEvent; } else { item.KeyUp -= OnEvent; } }
+
+        static void OnEvent(object sender, RoutedEventArgs e)
+        {
+            if (new Key[] { Key.Enter, Key.Return }.Contains(((KeyEventArgs)e).Key))
+            {
+#if (WPF)
+                btnAddVolume.Command.Execute(null);
+#endif
+            }
+        }
+
+        public static Button btnAddVolume = null;
+    }
+
     public partial class BrowseTabVM
     {
         // In order of appearance on the form
@@ -32,6 +60,7 @@ namespace SearchDirLists
         internal BrowseTabVM(MainWindow app)
         {
             m_app = app;
+            CB_DP_KeyUp.btnAddVolume = m_app.xaml_btnAddVolume;
             m_app.xaml_tabItemBrowse.DataContext = this;
             gd = GlobalData.GetInstance();
             CB_FindBox = new ItemsControlVM(m_app.xaml_cbFindbox, new Action(() => { }));

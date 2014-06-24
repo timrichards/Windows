@@ -24,7 +24,7 @@ namespace SearchDirLists
             BrowseTab = new BrowseTabVM(this);
         }
 
-        private void xaml_cbSaveAs_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void xaml_cbSaveAs_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (new Key[] {Key.Enter, Key.Return}.Contains(e.Key))
             {
@@ -32,6 +32,11 @@ namespace SearchDirLists
                 xaml_btnAddVolume.Command.Execute(null);
 #endif
             }
+        }
+
+        private void xaml_ClonesLV_KeyUp(object sender, KeyEventArgs e)
+        {
+            ((ListViewItemVM)((ListViewItem)sender).DataContext).KeyUp(e);
         }
 
         private void xaml_ClonesLV_MouseUp(object sender, MouseButtonEventArgs e)

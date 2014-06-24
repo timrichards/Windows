@@ -111,6 +111,7 @@ namespace SearchDirLists
             }
         }
 
+        internal virtual void KeyUp(KeyEventArgs e) { }
         internal virtual void MouseUp() { }
 
         protected virtual void ActOnDirectSelChange() { }

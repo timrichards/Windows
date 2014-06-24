@@ -207,11 +207,26 @@ namespace SearchDirLists
             }
         }
 
+        internal override void KeyUp(KeyEventArgs e)
+        {
+            if ((e.Key == Key.Left) && (m_nClonesIx > 0))
+            {
+                m_nClonesIx -=2;
+            }
+            else if (e.Key != Key.Right)
+            {
+                return;
+            }
+
+            SelectNextTreeNode();
+            e.Handled = true;
+        }
+
         internal override void MouseUp()
         {
             if (m_bSelChange == false)
             {
-                SelectTreeNode();
+                SelectNextTreeNode();
             }
 
             m_bSelChange = false;
@@ -224,10 +239,10 @@ namespace SearchDirLists
         {
             m_nClonesIx = -1;
             m_bSelChange = true;
-            SelectTreeNode();
+            SelectNextTreeNode();
         }
 
-        void SelectTreeNode()
+        void SelectNextTreeNode()
         {
             UList<SDL_TreeNode> listNodes = ((UList<SDL_TreeNode>)datum.Tag);
 

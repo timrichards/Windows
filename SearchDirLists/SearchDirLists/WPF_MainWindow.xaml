@@ -92,7 +92,7 @@
                 </ItemsControl>
                 <ItemsControl Grid.Row="2" Style="{StaticResource ComboRows}">
                     <Label Content="Directory listing file" />
-                    <ComboBox Name="xaml_cbSaveAs" HorizontalAlignment="Stretch" Grid.Column="1" KeyDown="xaml_cbSaveAs_KeyDown"/>
+                    <ComboBox Name="xaml_cbSaveAs" HorizontalAlignment="Stretch" Grid.Column="1" KeyUp="xaml_cbSaveAs_KeyUp"/>
                     <Button Content="..." Name="xaml_btnSaveAs" Grid.Column="2" Command="{Binding Icmd_SaveAs}"/>
                 </ItemsControl>
                 <StackPanel Grid.Row="3" Orientation="Horizontal">
@@ -307,6 +307,7 @@
                                 <Setter Property="FontWeight" Value="{Binding FontWeight}"/>
                                 <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                                 <EventSetter Event="MouseUp" Handler="xaml_ClonesLV_MouseUp" />
+                                <EventSetter Event="KeyUp" Handler="xaml_ClonesLV_KeyUp" />
                             </Style>
                         </Grid.Resources>
                         <ListView Name="xaml_lvSolitary" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0">

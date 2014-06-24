@@ -35,7 +35,7 @@ namespace SearchDirLists
             m_app.xaml_tabItemBrowse.DataContext = this;
             gd = GlobalData.GetInstance();
             CB_FindBox = new ItemsControlVM(m_app.xaml_cbFindbox, new Action(() => { }));
-            TV = new TreeViewVM();
+            TV = new TreeViewVM(m_app.xaml_treeViewBrowse);
             LV_CopyScratchpad = new CopyScratchpadListViewVM(m_app.xaml_lvCopyScratchpad);
             LV_Ignore = new IgnoreListViewVM(m_app.xaml_lvIgnore);
             LV_Files = new FilesListViewVM(m_app.xaml_lvFiles);

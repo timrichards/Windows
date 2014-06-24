@@ -11,40 +11,6 @@ namespace SearchDirLists
     // Class members are generally ordered public on down, which mixes constructors and types.
     // XAML-binding properties are always public, which puts them at the top, and private storage is at the end. Sorta reverse of C.
 
-    public static class TVI_DepProperty
-    {
-        public static readonly DependencyProperty ViewSelProperty = DependencyProperty.RegisterAttached
-        (
-            "ViewSelected",
-            typeof(bool),
-            typeof(TVI_DepProperty),
-            new UIPropertyMetadata(false, OnViewSelChanged)
-        );
-
-        public static bool GetViewSelected(FrameworkElement element) { return (bool)element.GetValue(ViewSelProperty); }
-        public static void SetViewSelected(FrameworkElement element, bool value) { element.SetValue(ViewSelProperty, value); }
-
-        static void OnViewSelChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
-        {
-            TreeViewItem item = depObj as TreeViewItem;
-
-            if ((bool)e.NewValue) { item.Selected += OnFEselected; }
-            else { item.Selected -= OnFEselected; }
-        }
-
-        static void OnFEselected(object sender, RoutedEventArgs e)
-        {
-            if (Object.ReferenceEquals(sender, e.OriginalSource))
-            {
-                ((FrameworkElement)e.OriginalSource).BringIntoView();
-            }
-            else
-            {
-                //Utilities.WriteLine("Not original source: " + sender + " != " + e.OriginalSource + ". Source = " + e.Source);
-            }
-        }
-    }
-
     // e.g. <ComboBox Name="xaml_cbVolumeName" Grid.Column="1" ItemsSource="{Binding List}" SelectedValue="{Binding S}"/>
     // e.g. CBVolumeName = new ItemsControlVM(m_app.xaml_cbVolumeName, new Action(() => { gd.m_strVolumeName = CBVolumeName.S; }));
     public class ItemsControlVM : ObservableObject

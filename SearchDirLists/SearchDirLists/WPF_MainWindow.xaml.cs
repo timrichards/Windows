@@ -33,15 +33,5 @@ namespace SearchDirLists
 #endif
             }
         }
-
-        private void xaml_ClonesLV_KeyUp(object sender, KeyEventArgs e)
-        {
-            ((ListViewItemVM)((ListViewItem)sender).DataContext).KeyUp(e);
-        }
-
-        private void xaml_ClonesLV_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            ((ListViewItemVM)((ListViewItem)sender).DataContext).MouseUp();
-        }
     }
 }

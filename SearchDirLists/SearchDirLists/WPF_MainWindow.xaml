@@ -306,6 +306,7 @@
                                 <Setter Property="Background" Value="{Binding Background}"/>
                                 <Setter Property="FontWeight" Value="{Binding FontWeight}"/>
                                 <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                                <EventSetter Event="MouseUp" Handler="xaml_ClonesLV_MouseUp" />
                             </Style>
                         </Grid.Resources>
                         <ListView Name="xaml_lvSolitary" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0">

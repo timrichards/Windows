@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 
 namespace SearchDirLists
 {
@@ -109,6 +110,8 @@ namespace SearchDirLists
                 RaisePropertyChanged("IsSelected");
             }
         }
+
+        internal virtual void MouseUp() { }
 
         protected virtual void ActOnDirectSelChange() { }
 

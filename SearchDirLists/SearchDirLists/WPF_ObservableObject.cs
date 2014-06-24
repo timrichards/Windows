@@ -76,10 +76,10 @@ namespace SearchDirLists
                 return true;
             }
 
-            Utilities.WriteLine(propertyName + " did not raise.");
+//            Utilities.WriteLine(propertyName + " did not raise.");
             return false;
         }
 
-        #endregion // INotifyPropertyChanged Members
+        #endregion // INotifyPropertyChanged Members    
     }
 }

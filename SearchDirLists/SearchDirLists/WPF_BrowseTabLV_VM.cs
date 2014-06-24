@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Media;
 using System.Windows;
 using System.Collections;
+using System.Windows.Input;
 
 namespace SearchDirLists
 {
@@ -206,10 +207,27 @@ namespace SearchDirLists
             }
         }
 
+        internal override void MouseUp()
+        {
+            if (m_bSelChange == false)
+            {
+                SelectTreeNode();
+            }
+
+            m_bSelChange = false;
+        }
+
         internal override int NumCols { get { return NumCols_; } }
         protected override String[] PropertyNames { get { return marrPropName; } }
 
         protected override void ActOnDirectSelChange()
+        {
+            m_nClonesIx = -1;
+            m_bSelChange = true;
+            SelectTreeNode();
+        }
+
+        void SelectTreeNode()
         {
             UList<SDL_TreeNode> listNodes = ((UList<SDL_TreeNode>)datum.Tag);
 
@@ -218,13 +236,26 @@ namespace SearchDirLists
                 return;     // marker item
             }
 
-            SDL_TreeNode treeNode = listNodes[0];
+            bool bSelected = m_bSelected;
 
-            if (Utilities.Assert(0, treeNode.TVIVM != null))
+            Action go = new Action(() =>
             {
-                treeNode.TVIVM.SelectProgrammatic(m_bSelected);
+                (listNodes[m_nClonesIx %= listNodes.Count]).TVIVM.SelectProgrammatic(bSelected);
+            });
+
+            if (m_nClonesIx >= 0)
+            {
+                bSelected = false;
+                go();
+                bSelected = true;
             }
+
+            ++m_nClonesIx;
+            go();
         }
+
+        int m_nClonesIx = -1;
+        bool m_bSelChange = false;
     }
 
     public class ClonesListViewVM : ListViewVM_Generic<ClonesLVitemVM>

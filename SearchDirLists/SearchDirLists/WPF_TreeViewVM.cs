@@ -9,7 +9,7 @@ using System.Windows.Threading;
 
 namespace SearchDirLists
 {
-    public static class TVI_DP_Selected     // This could all go into IsSelected if tvivm knew its tvi.
+    public static class TVI_DP_Selected     // This could all go into IsSelected if tvivm knew its tvife.
     {
         public static readonly DependencyProperty EventProperty = DependencyProperty.RegisterAttached
         ("Event", typeof(bool), typeof(TVI_DP_Selected), new UIPropertyMetadata(false, OnDPchanged));
@@ -25,35 +25,58 @@ namespace SearchDirLists
         {
             if (Object.ReferenceEquals(sender, e.OriginalSource))
             {
-                TreeViewItem tvi = e.OriginalSource as TreeViewItem;
-                TreeViewItemVM tvivm = (TreeViewItemVM)tvi.DataContext;
+                WaitingToSelect = false;
+
+                TreeViewItem tvife = e.OriginalSource as TreeViewItem;
+
+                HeaderHeightAttempt(tvife);
+
+                TreeViewItemVM tvivm = (TreeViewItemVM)tvife.DataContext;
 
                 if (tvivm.m_bProgrammaticSelect == false)
                 {
                     return;
                 }
 
-                ScrollViewer scrollViewer = tvivm.TVVM.TVFE.Template.FindName("_tv_scrollviewer_", tvivm.TVVM.TVFE) as ScrollViewer;
+                Point relativePosition = tvife.TranslatePoint(new Point(0, 0), scrollViewer);
 
-                if (scrollViewer == null)
-                {
-                    return;
-                }
-
-                Point relativePosition = tvi.TranslatePoint(new Point(0, 0), scrollViewer);
-
-                TVI_DP_Selected.WaitingToSelect = false;
-                tvi.BringIntoView();
+                tvife.BringIntoView();
                 scrollViewer.ScrollToVerticalOffset(relativePosition.Y);
                 tvivm.m_bProgrammaticSelect = false;
             }
+        }
+
+        internal static double HeaderHeightAttempt(TreeViewItem tvife)
+        {
+            if (HeaderHeight <= 0)
+            {
+                FrameworkElement header = (FrameworkElement)tvife.Template.FindName("PART_Header", tvife);
+
+                if (header != null)
+                {
+                    HeaderHeight = header.ActualHeight;
+                }
+            }
+
+            return HeaderHeight;
+        }
+
+        internal static bool ScrollToTVIVM(TreeViewItemVM tvivm)
+        {
+            if (tvivm.EphemeralExpandedPos > 0)
+            {
+                WaitingToSelect = false;
+                scrollViewer.ScrollToVerticalOffset(tvivm.EphemeralExpandedPos);
+                return true;
+            }
+            else { return false; }
         }
 
         internal static void OnTimer(object o, EventArgs e)
         {
             if (WaitingToSelect)
             {
-                ScrollViewer scrollViewer = TVFE.Template.FindName("_tv_scrollviewer_", TVFE) as ScrollViewer;
+                // Use the page down method since the height of each item is not known.
 
                 if (scrollViewer.VerticalOffset != nVerticalOffset)
                 {
@@ -67,11 +90,25 @@ namespace SearchDirLists
             }
         }
 
-        internal static bool WaitingToSelect { set { m_bWaitingToSelect = value; nVerticalOffset = -1; } get { return m_bWaitingToSelect; } }
-
-        static bool m_bWaitingToSelect = false;
         internal static TreeView TVFE = null;
+        internal static double HeaderHeight = -1;
+
+        internal static bool WaitingToSelect
+        {
+            get { return m_bWaitingToSelect; }
+            set
+            {
+                m_bWaitingToSelect = value;
+                nVerticalOffset = -1;
+                scrollViewer.ScrollToHome();
+            }
+        }
+        static bool m_bWaitingToSelect = false;
         static double nVerticalOffset = -1;
+
+        static ScrollViewer scrollViewer
+        { get { return m_scrollViewer_ ?? (m_scrollViewer_ = TVFE.Template.FindName("_tv_scrollviewer_", TVFE) as ScrollViewer); } }
+        static ScrollViewer m_scrollViewer_ = null;
     }
 
     public class TreeViewItemVM : ObservableObject
@@ -106,6 +143,7 @@ namespace SearchDirLists
             {
                 if (value != m_bSelected)
                 {
+                    TVI_DP_Selected.WaitingToSelect = false;
                     m_bSelected = value;
 
                     if (datum.LVIVM != null)
@@ -122,8 +160,6 @@ namespace SearchDirLists
                     {
                         TVVM.SelectedItem = null;
                     }
-
-                    TVI_DP_Selected.WaitingToSelect = false;
                 }
             }
         }
@@ -137,9 +173,6 @@ namespace SearchDirLists
 
             if (bSelect)
             {
-                ScrollViewer scrollViewer = TVVM.TVFE.Template.FindName("_tv_scrollviewer_", TVVM.TVFE) as ScrollViewer;
-
-                scrollViewer.ScrollToHome();
                 TVI_DP_Selected.WaitingToSelect = true;
                 m_bProgrammaticSelect = true;
             }
@@ -149,6 +182,7 @@ namespace SearchDirLists
 
             if (bSelect == false)
             {
+                EphemeralExpandedPos = -1;
                 return;
             }
 
@@ -174,6 +208,8 @@ namespace SearchDirLists
                 }
             }
 
+            EphemeralExpandedPos = (Index + 1);
+
             while (stackParents.Count > 0)
             {
                 parentItem = stackParents.Pop();
@@ -183,30 +219,35 @@ namespace SearchDirLists
                     parentItem.m_bExpanded = true;
                     parentItem.RaisePropertyChanged("IsExpanded");
                 }
+
+                EphemeralExpandedPos += (parentItem.Index + 1);
             }
 
+            EphemeralExpandedPos *= HeaderHeight;       // when implementing variable-height headers this calc will be wrong
             TVVM.m_listExpanded = listParents;
+            TVI_DP_Selected.ScrollToTVIVM(this);
         }
 
         internal bool m_bProgrammaticSelect = false;
 
-        internal TreeViewItemVM(TreeViewVM tv, SDL_TreeNode datum_in)
-            : this(tv, datum_in, null)
+        internal TreeViewItemVM(TreeViewVM tvvm, SDL_TreeNode datum_in, int nIndex)
+            : this(tvvm, datum_in, null, nIndex)
         { }
 
-        TreeViewItemVM(TreeViewVM tv, SDL_TreeNode datum_in, TreeViewItemVM parent)
+        TreeViewItemVM(TreeViewVM tvvm, SDL_TreeNode datum_in, TreeViewItemVM parent, int nIndex)
         {
-            TVVM = tv;
+            TVVM = tvvm;
             datum = datum_in;
             m_Parent = parent;
-            Index = tv.TVFE.Items.Count;
-            TVI_DP_Selected.TVFE = tv.TVFE;
+            Index = nIndex;
 #if (WPF)
             datum.TVIVM = this;
 
+            int nIndex_A = -1;
+
             m_Items = new ObservableCollection<TreeViewItemVM>
             (
-                (from item in datum.Nodes.Keys select new TreeViewItemVM(tv, item, this))
+                (from item in datum.Nodes.Keys select new TreeViewItemVM(tvvm, item, this, ++nIndex_A))
                 .ToList<TreeViewItemVM>()
             );
 #endif
@@ -215,6 +256,9 @@ namespace SearchDirLists
         readonly ObservableCollection<TreeViewItemVM> m_Items = null;
         readonly TreeViewItemVM m_Parent = null;
         internal readonly TreeViewVM TVVM = null;
+
+        double HeaderHeight { get { return TVI_DP_Selected.HeaderHeight; } }
+        internal double EphemeralExpandedPos = -1;
 
         readonly SDL_TreeNode datum = null;
 
@@ -227,15 +271,17 @@ namespace SearchDirLists
     {
         internal TreeViewVM(TreeView tvfe, Dispatcher dispatcher)
         {
-            TVFE = tvfe;
+            TVI_DP_Selected.TVFE = TVFE = tvfe;
             m_scrollTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(50), DispatcherPriority.Normal, new EventHandler(TVI_DP_Selected.OnTimer), dispatcher);
         }
 
         internal void SetData(List<SDL_TreeNode> rootNodes)
         {
+            int nIndex = -1;
+
             foreach (SDL_TreeNode treeNode in rootNodes)
             {
-                m_Items.Add(new TreeViewItemVM(this, treeNode));
+                m_Items.Add(new TreeViewItemVM(this, treeNode, ++nIndex));
             }
 
             TVFE.DataContext = m_Items;
@@ -248,6 +294,6 @@ namespace SearchDirLists
         internal readonly TreeView TVFE = null;
 
         internal DateTime mDbg_dtProgrammaticExpand = DateTime.MinValue;
-        DispatcherTimer m_scrollTimer = null; 
+        readonly DispatcherTimer m_scrollTimer = null; 
     }
 }

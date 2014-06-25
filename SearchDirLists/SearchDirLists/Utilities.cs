@@ -441,7 +441,8 @@ namespace SearchDirLists
         internal SDL_TreeNode(String strContent) : base(strContent) { }
         internal SDL_TreeNode(String strContent, SDL_TreeNode[] arrNodes) : base(strContent, arrNodes) { }
 
-        internal TreeViewItemVM VM = null;
+        internal TreeViewItemVM TVIVM = null;
+        internal ListViewItemVM LVIVM = null;
     }
 
     static class SDLWPF_Ext

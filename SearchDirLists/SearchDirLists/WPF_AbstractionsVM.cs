@@ -85,14 +85,14 @@ namespace SearchDirLists
         internal String this[int i] { get { return marr[i]; } }
         internal int Index = -1;
 
-        ListViewItemVM(ListViewVM LV)
+        ListViewItemVM(ListViewVM lvvm)
         {
-            Index = LV.Count;
-            LVVM = LV;
+            Index = lvvm.Count;
+            LVVM = lvvm;
         }
 
-        internal ListViewItemVM(ListViewVM LV, String[] arrStr)     // e.g. Volumes LV: marr
-            : this(LV)
+        internal ListViewItemVM(ListViewVM lvvm, String[] arrStr)     // e.g. Volumes LV: marr
+            : this(lvvm)
         {
             Utilities.Assert(1310.1001, arrStr.Length <= NumCols);
             marr = new string[NumCols];
@@ -100,8 +100,8 @@ namespace SearchDirLists
             RaiseColumnWidths();
         }
 
-        internal ListViewItemVM(ListViewVM LV, SDL_ListViewItem datum_in)   // e.g. Clones LVs: datum
-            : this(LV)
+        internal ListViewItemVM(ListViewVM lvvm, SDL_ListViewItem datum_in)   // e.g. Clones LVs: datum
+            : this(lvvm)
         {
             datum = datum_in;
             // ListViewVM raises property changed after all items are added. Clones LVs do not use it.

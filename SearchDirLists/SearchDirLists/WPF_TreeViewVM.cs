@@ -9,6 +9,61 @@ using System.Windows.Threading;
 
 namespace SearchDirLists
 {
+    public static class TVI_DP_Expanded
+    {
+        public static readonly DependencyProperty EventProperty = DependencyProperty.RegisterAttached
+        ("Event", typeof(bool), typeof(TVI_DP_Expanded), new UIPropertyMetadata(false, OnDPchanged));
+
+        public static bool GetEvent(FrameworkElement element) { return (bool)element.GetValue(EventProperty); }
+        public static void SetEvent(FrameworkElement element, bool value) { element.SetValue(EventProperty, value); }
+
+        static void OnDPchanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
+        // This is where you modify (a) the type; and (b) the event handled.
+        { TreeViewItem tvife = depObj as TreeViewItem; if ((bool)e.NewValue) { tvife.Expanded += OnEvent; } else { tvife.Expanded -= OnEvent; } }
+
+        static void OnEvent(object sender, RoutedEventArgs e)
+        {
+            if (Object.ReferenceEquals(sender, e.OriginalSource))
+            {
+                TreeViewItem tvife = sender as TreeViewItem;
+                TreeViewItemVM tvivm = (TreeViewItemVM)tvife.DataContext;
+
+                Utilities.WriteLine("Expanded " + tvivm.Text);
+                TVI_DP_Selected.scrollViewer.ScrollToHome();
+                TVI_DP_Selected.scrollViewer.ScrollToVerticalOffset(tvivm.EphemeralExpandedPos);
+            }
+        }
+    }
+
+    public static class TVI_DP_Loaded
+    {
+        public static readonly DependencyProperty EventProperty = DependencyProperty.RegisterAttached
+        ("Event", typeof(bool), typeof(TVI_DP_Loaded), new UIPropertyMetadata(false, OnDPchanged));
+
+        public static bool GetEvent(FrameworkElement element) { return (bool)element.GetValue(EventProperty); }
+        public static void SetEvent(FrameworkElement element, bool value) { element.SetValue(EventProperty, value); }
+
+        static void OnDPchanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
+        // This is where you modify (a) the type; and (b) the event handled.
+        { TreeViewItem tvife = depObj as TreeViewItem; if ((bool)e.NewValue) { tvife.Loaded += OnEvent; } else { tvife.Loaded -= OnEvent; } }
+
+        static void OnEvent(object sender, EventArgs e)
+        {
+            if (TVI_DP_Selected.HeaderHeight > 0)
+            {
+                return;
+            }
+
+            TreeViewItem tvife = sender as TreeViewItem;
+            FrameworkElement header = (FrameworkElement)tvife.Template.FindName("PART_Header", tvife);
+
+            if (header != null)
+            {
+                TVI_DP_Selected.HeaderHeight = header.ActualHeight;
+            }
+        }
+    }
+
     public static class TVI_DP_Selected     // This could all go into IsSelected if tvivm knew its tvife.
     {
         public static readonly DependencyProperty EventProperty = DependencyProperty.RegisterAttached
@@ -19,95 +74,40 @@ namespace SearchDirLists
 
         static void OnDPchanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
         // This is where you modify (a) the type; and (b) the event handled.
-        { TreeViewItem item = depObj as TreeViewItem; if ((bool)e.NewValue) { item.Selected += OnEvent; } else { item.Selected -= OnEvent; } }
+        { TreeViewItem tvife = depObj as TreeViewItem; if ((bool)e.NewValue) { tvife.Selected += OnEvent; } else { tvife.Selected -= OnEvent; } }
 
         static void OnEvent(object sender, RoutedEventArgs e)
         {
             if (Object.ReferenceEquals(sender, e.OriginalSource))
             {
-                WaitingToSelect = false;
-
-                TreeViewItem tvife = e.OriginalSource as TreeViewItem;
-
-                HeaderHeightAttempt(tvife);
-
-                TreeViewItemVM tvivm = (TreeViewItemVM)tvife.DataContext;
-
-                if (tvivm.m_bProgrammaticSelect == false)
-                {
-                    return;
-                }
-
-                Point relativePosition = tvife.TranslatePoint(new Point(0, 0), scrollViewer);
-
-                tvife.BringIntoView();
-                scrollViewer.ScrollToVerticalOffset(relativePosition.Y);
-                tvivm.m_bProgrammaticSelect = false;
+                WaitingToSelect = null;
+                ((TreeViewItem)e.OriginalSource).BringIntoView();
             }
-        }
-
-        internal static double HeaderHeightAttempt(TreeViewItem tvife)
-        {
-            if (HeaderHeight <= 0)
-            {
-                FrameworkElement header = (FrameworkElement)tvife.Template.FindName("PART_Header", tvife);
-
-                if (header != null)
-                {
-                    HeaderHeight = header.ActualHeight;
-                }
-            }
-
-            return HeaderHeight;
-        }
-
-        internal static bool ScrollToTVIVM(TreeViewItemVM tvivm)
-        {
-            if (tvivm.EphemeralExpandedPos > 0)
-            {
-                WaitingToSelect = false;
-                scrollViewer.ScrollToVerticalOffset(tvivm.EphemeralExpandedPos);
-                return true;
-            }
-            else { return false; }
         }
 
         internal static void OnTimer(object o, EventArgs e)
         {
-            if (WaitingToSelect)
+            if (WaitingToSelect == null)
             {
-                // Use the page down method since the height of each item is not known.
-
-                if (scrollViewer.VerticalOffset != nVerticalOffset)
-                {
-                    scrollViewer.PageDown();
-                    nVerticalOffset = scrollViewer.VerticalOffset;
-                }
-                else
-                {
-                    WaitingToSelect = false;
-                }
+                return;
             }
+
+            scrollViewer.ScrollToVerticalOffset(WaitingToSelect.EphemeralExpandedPos);
+            scrollViewer.ScrollToEnd();
+            scrollViewer.ScrollToHome();
+            scrollViewer.ScrollToVerticalOffset(WaitingToSelect.EphemeralExpandedPos);
+            WaitingToSelect = null;
         }
 
         internal static TreeView TVFE = null;
         internal static double HeaderHeight = -1;
 
-        internal static bool WaitingToSelect
-        {
-            get { return m_bWaitingToSelect; }
-            set
-            {
-                m_bWaitingToSelect = value;
-                nVerticalOffset = -1;
-                scrollViewer.ScrollToHome();
-            }
-        }
-        static bool m_bWaitingToSelect = false;
-        static double nVerticalOffset = -1;
+        internal static TreeViewItemVM WaitingToSelect = null;
 
-        static ScrollViewer scrollViewer
-        { get { return m_scrollViewer_ ?? (m_scrollViewer_ = TVFE.Template.FindName("_tv_scrollviewer_", TVFE) as ScrollViewer); } }
+        internal static ScrollViewer scrollViewer
+        {
+            get { return m_scrollViewer_ ?? (m_scrollViewer_ = TVFE.Template.FindName("_tv_scrollviewer_", TVFE) as ScrollViewer); }
+        }
         static ScrollViewer m_scrollViewer_ = null;
     }
 
@@ -124,14 +124,20 @@ namespace SearchDirLists
             get { return m_bExpanded; }
             set
             {
-                if (value != m_bExpanded)
+                if (value == m_bExpanded)
                 {
-                    m_bExpanded = value;
+                    return;
+                }
 
-                    if (m_bExpanded)
-                    {
-                        TVVM.m_listExpanded.Add(this);
-                    }
+                m_bExpanded = value;
+
+                if (m_bExpanded)
+                {
+                    TVVM.m_listExpanded.Add(this);
+                }
+                else
+                {
+                    TVVM.m_listExpanded.Remove(this);
                 }
             }
         }
@@ -141,25 +147,26 @@ namespace SearchDirLists
             get { return m_bSelected; }
             set
             {
-                if (value != m_bSelected)
+                if (value == m_bSelected)
                 {
-                    TVI_DP_Selected.WaitingToSelect = false;
-                    m_bSelected = value;
+                    return;
+                }
+                
+                m_bSelected = value;
 
-                    if (datum.LVIVM != null)
-                    {
-                        datum.LVIVM.LVVM.LVFE.ScrollIntoView(datum.LVIVM.LVVM.LVFE.Items[datum.LVIVM.Index]);
-                        datum.LVIVM.SelectProgrammatic(m_bSelected);
-                    }
+                if (datum.LVIVM != null)
+                {
+                    datum.LVIVM.LVVM.LVFE.ScrollIntoView(datum.LVIVM.LVVM.LVFE.Items[datum.LVIVM.Index]);
+                    datum.LVIVM.SelectProgrammatic(m_bSelected);
+                }
 
-                    if (m_bSelected)
-                    {
-                        TVVM.SelectedItem = this;
-                    }
-                    else if (TVVM.SelectedItem == this)
-                    {
-                        TVVM.SelectedItem = null;
-                    }
+                if (m_bSelected)
+                {
+                    TVVM.SelectedItem = this;
+                }
+                else if (TVVM.SelectedItem == this)
+                {
+                    TVVM.SelectedItem = null;
                 }
             }
         }
@@ -173,7 +180,7 @@ namespace SearchDirLists
 
             if (bSelect)
             {
-                TVI_DP_Selected.WaitingToSelect = true;
+                TVI_DP_Selected.WaitingToSelect = this;
                 m_bProgrammaticSelect = true;
             }
 
@@ -213,19 +220,20 @@ namespace SearchDirLists
             while (stackParents.Count > 0)
             {
                 parentItem = stackParents.Pop();
+                EphemeralExpandedPos += (parentItem.Index + 1);
+                parentItem.EphemeralExpandedPos = EphemeralExpandedPos * HeaderHeight;
 
                 if (parentItem.m_bExpanded == false)
                 {
+                    Utilities.WriteLine("Expanding " + parentItem.Text);
                     parentItem.m_bExpanded = true;
                     parentItem.RaisePropertyChanged("IsExpanded");
+                    TVVM.m_listExpanded.Add(parentItem);
                 }
-
-                EphemeralExpandedPos += (parentItem.Index + 1);
             }
 
             EphemeralExpandedPos *= HeaderHeight;       // when implementing variable-height headers this calc will be wrong
             TVVM.m_listExpanded = listParents;
-            TVI_DP_Selected.ScrollToTVIVM(this);
         }
 
         internal bool m_bProgrammaticSelect = false;
@@ -254,7 +262,7 @@ namespace SearchDirLists
         }
 
         readonly ObservableCollection<TreeViewItemVM> m_Items = null;
-        readonly TreeViewItemVM m_Parent = null;
+        internal readonly TreeViewItemVM m_Parent = null;
         internal readonly TreeViewVM TVVM = null;
 
         double HeaderHeight { get { return TVI_DP_Selected.HeaderHeight; } }
@@ -264,7 +272,7 @@ namespace SearchDirLists
 
         bool m_bExpanded = false;
         bool m_bSelected = false;
-        int Index = -1;
+        internal int Index = -1;
     }
 
     class TreeViewVM

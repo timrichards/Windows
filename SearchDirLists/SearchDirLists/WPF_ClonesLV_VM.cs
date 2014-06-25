@@ -23,10 +23,6 @@ namespace SearchDirLists
             {
                 ((ListViewItemVM)((ListViewItem)sender).DataContext).KeyUp((KeyEventArgs)e);
             }
-            else
-            {
-                //Utilities.WriteLine("Not original source: " + sender + " != " + e.OriginalSource + ". Source = " + e.Source);
-            }
         }
     }
 
@@ -47,10 +43,6 @@ namespace SearchDirLists
             if (Object.ReferenceEquals(sender, e.OriginalSource))
             {
                 ((ListViewItemVM)((ListViewItem)sender).DataContext).MouseUp();
-            }
-            else
-            {
-                //Utilities.WriteLine("Not original source: " + sender + " != " + e.OriginalSource + ". Source = " + e.Source);
             }
         }
     }

@@ -188,12 +188,14 @@ namespace SearchDirLists
             TVVM.SelectedItem = this;
 
             Stack<TreeViewItemVM> stackParents = new Stack<TreeViewItemVM>(8);
+            TVI_DependencyProperty.stackParents = new Stack<TreeViewItemVM>();
             UList<TreeViewItemVM> listParents = new UList<TreeViewItemVM>();
             TreeViewItemVM parentItem = m_Parent;
 
             while (parentItem != null)
             {
                 stackParents.Push(parentItem);
+                TVI_DependencyProperty.stackParents.Push(parentItem);
                 listParents.Add(parentItem);
                 parentItem = parentItem.m_Parent;
             }
@@ -207,10 +209,6 @@ namespace SearchDirLists
                     tvivm.RaisePropertyChanged("IsExpanded");
                 }
             }
-
-            EphemeralExpandedPos = (Index + 1);
-
-            TVI_DependencyProperty.stackParents = new Stack<TreeViewItemVM>(stackParents);
 
             while (stackParents.Count > 0)
             {
@@ -226,6 +224,7 @@ namespace SearchDirLists
                 }
             }
 
+            EphemeralExpandedPos += (Index + 1);
             EphemeralExpandedPos *= HeaderHeight;       // when implementing variable-height headers this calc will be wrong
             TVVM.m_listExpanded = listParents;
         }
@@ -262,7 +261,7 @@ namespace SearchDirLists
         double HeaderHeight { get { return TVI_DependencyProperty.HeaderHeight; } }
         internal double EphemeralExpandedPos = -1;
 
-        readonly SDL_TreeNode datum = null;
+        internal readonly SDL_TreeNode datum = null;
 
         bool m_bExpanded = false;
         bool m_bSelected = false;

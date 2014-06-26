@@ -302,8 +302,7 @@
                                 <Setter Property="SelectionMode" Value="Single"/>
                             </Style>
                             <Style TargetType="ListViewItem">
-                                <Setter Property="local:LVI_DP_KeyUp.Event" Value="True" />
-                                <Setter Property="local:LVI_DP_MouseUp.Event" Value="True" />
+                                <Setter Property="local:LVI_DependencyProperty.Event" Value="True" />
                                 <Setter Property="Foreground" Value="{Binding Foreground}"/>
                                 <Setter Property="Background" Value="{Binding Background}"/>
                                 <Setter Property="FontWeight" Value="{Binding FontWeight}"/>

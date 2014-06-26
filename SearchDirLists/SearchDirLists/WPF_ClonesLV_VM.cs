@@ -5,40 +5,41 @@ using System.Windows;
 
 namespace SearchDirLists
 {
-    public static class LVI_DP_KeyUp
+    public static class LVI_DependencyProperty
     {
         public static readonly DependencyProperty EventProperty = DependencyProperty.RegisterAttached
-        ("Event", typeof(bool), typeof(LVI_DP_KeyUp), new UIPropertyMetadata(false, OnDPchanged));
+        ("Event", typeof(bool), typeof(LVI_DependencyProperty), new UIPropertyMetadata(false, OnDPchanged));
 
         public static bool GetEvent(FrameworkElement element) { return (bool)element.GetValue(EventProperty); }
         public static void SetEvent(FrameworkElement element, bool value) { element.SetValue(EventProperty, value); }
 
-        static void OnDPchanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
         // This is where you modify (a) the type; and (b) the event handled.
-        { ListViewItem item = depObj as ListViewItem; if ((bool)e.NewValue) { item.KeyUp += OnEvent; } else { item.KeyUp -= OnEvent; } }
+        static void OnDPchanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
+        {
+            ListViewItem lvife = depObj as ListViewItem;
+            bool bAddEvt = (bool)e.NewValue;
 
-        static void OnEvent(object sender, RoutedEventArgs e)
+            if (bAddEvt)
+            {
+                lvife.KeyUp += OnKeyUp;
+                lvife.MouseUp += OnMouseUp;
+            }
+            else
+            {
+                lvife.KeyUp -= OnKeyUp;
+                lvife.MouseUp -= OnMouseUp;
+            }
+        }
+
+        static void OnKeyUp(object sender, RoutedEventArgs e)
         {
             if (Object.ReferenceEquals(sender, e.OriginalSource))
             {
                 ((ListViewItemVM)((ListViewItem)sender).DataContext).KeyUp((KeyEventArgs)e);
             }
         }
-    }
 
-    public static class LVI_DP_MouseUp
-    {
-        public static readonly DependencyProperty EventProperty = DependencyProperty.RegisterAttached
-        ("Event", typeof(bool), typeof(LVI_DP_MouseUp), new UIPropertyMetadata(false, OnDPchanged));
-
-        public static bool GetEvent(FrameworkElement element) { return (bool)element.GetValue(EventProperty); }
-        public static void SetEvent(FrameworkElement element, bool value) { element.SetValue(EventProperty, value); }
-
-        static void OnDPchanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
-        // This is where you modify (a) the type; and (b) the event handled.
-        { ListViewItem item = depObj as ListViewItem; if ((bool)e.NewValue) { item.MouseUp += OnEvent; } else { item.MouseUp -= OnEvent; } }
-
-        static void OnEvent(object sender, RoutedEventArgs e)
+        static void OnMouseUp(object sender, RoutedEventArgs e)
         {
             if (Object.ReferenceEquals(sender, e.OriginalSource))
             {

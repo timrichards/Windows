@@ -27,12 +27,14 @@ namespace SearchDirLists
             {
                 tvife.Expanded += OnExpand;
                 tvife.Loaded += OnLoaded;
+                tvife.Unselected += OnDeselect;
                 tvife.Selected += OnSelect;
             }
             else
             {
                 tvife.Expanded -= OnExpand;
                 tvife.Loaded -= OnLoaded;
+                tvife.Unselected -= OnDeselect;
                 tvife.Selected -= OnSelect;
             }
         }
@@ -66,6 +68,20 @@ namespace SearchDirLists
             }
         }
 
+        static void OnDeselect(object sender, RoutedEventArgs e)
+        {
+            if (Object.ReferenceEquals(sender, e.OriginalSource))
+            {
+                TreeViewItem tvife = sender as TreeViewItem;
+                TreeViewItemVM tvivm = (TreeViewItemVM)tvife.DataContext;
+
+                tvivm.m_bBringIntoViewWhenSel = false;
+                tvivm.RaisePropertyChanged("Foreground");
+                tvivm.RaisePropertyChanged("SelectedForeground");
+                tvivm.RaisePropertyChanged("FontWeight");
+            }
+        }
+
         static void OnSelect(object sender, RoutedEventArgs e)
         {
             if (Object.ReferenceEquals(sender, e.OriginalSource))
@@ -77,30 +93,23 @@ namespace SearchDirLists
 
                 if (tvivm.m_bBringIntoViewWhenSel)
                 {
-                    tvivm.m_bBringIntoViewWhenSel = false;
+                    tvivm.m_SelectedForeground = tvivm.Foreground;
                     scrollViewer.PageDown();
                     tvife.BringIntoView();
-                    nHorizLeftAttempts = 0;
-                    m_scrollTimer.Start();
                 }
+                else
+                {
+                    tvivm.m_SelectedForeground = Brushes.White;
+                }
+
+                tvivm.RaisePropertyChanged("Foreground");
+                tvivm.RaisePropertyChanged("SelectedForeground");
+                tvivm.RaisePropertyChanged("FontWeight");
             }
         }
 
         internal static void OnTimer(object o, EventArgs e)
         {
-            if (nHorizLeftAttempts >= 0)
-            {
-                scrollViewer.ScrollToHorizontalOffset(0);
-
-                if (++nHorizLeftAttempts > 2)
-                {
-                    nHorizLeftAttempts = -1;
-                    m_scrollTimer.Stop();
-                }
-
-                return;
-            }
-
             if (WaitingToSelect == null)
             {
                 return;
@@ -172,7 +181,7 @@ namespace SearchDirLists
                 }
                 else
                 {
-                    stackParents = stackParents_A = new Stack<TreeViewItemVM>();
+                    stackParents = stackParents_A = new Stack<TreeViewItemVM>(8);
                     nAttempts = -1;
                     m_scrollTimer.Stop();
                 }
@@ -191,7 +200,6 @@ namespace SearchDirLists
         static Stack<TreeViewItemVM> stackParents_A = null;
         static DispatcherTimer m_scrollTimer = null;
         static int nAttempts = -1;
-        static int nHorizLeftAttempts = -1;
     }
 
     public class TreeViewItemVM : ObservableObject
@@ -199,8 +207,10 @@ namespace SearchDirLists
         public ObservableCollection<TreeViewItemVM> Items { get { return m_Items; } }
         public String Text { get { return datum.Text.PadRight(200); } }
 #if (WPF)
-        public Brush Foreground { get { return SDLWPF._ForeClrToBrush(datum.ForeColor); } }
+        public Brush Foreground { get { return m_bSelected ? m_SelectedForeground : m_Foreground; } }
+        public Brush SelectedForeground { get { return m_bSelected ? m_SelectedForeground : m_Foreground; } }
         public Brush Background { get { return SDLWPF._BackClrToBrush(datum.BackColor); } }
+        public FontWeight FontWeight { get { return m_bSelected ? FontWeights.ExtraBold : FontWeights.Normal; } }
 #endif
         public bool IsExpanded
         {
@@ -239,6 +249,7 @@ namespace SearchDirLists
                 m_bBringIntoViewWhenSel = false;
                 TVI_DependencyProperty.WaitingToSelect = null;
                 Utilities.WriteLine("IsSelected " + Text);
+                m_SelectedForeground = Brushes.White;
                 m_bSelected = value;
 
                 if (datum.LVIVM != null)
@@ -283,7 +294,7 @@ namespace SearchDirLists
             TVVM.SelectedItem = this;
 
             Stack<TreeViewItemVM> stackParents = new Stack<TreeViewItemVM>(8);
-            TVI_DependencyProperty.stackParents = new Stack<TreeViewItemVM>();
+            TVI_DependencyProperty.stackParents = new Stack<TreeViewItemVM>(8);
             UList<TreeViewItemVM> listParents = new UList<TreeViewItemVM>();
             TreeViewItemVM parentItem = m_Parent;
 
@@ -341,6 +352,7 @@ namespace SearchDirLists
             Index = nIndex;
 #if (WPF)
             datum.TVIVM = this;
+            m_Foreground = SDLWPF._ForeClrToBrush(datum.ForeColor);
 
             int nIndex_A = -1;
 
@@ -358,6 +370,8 @@ namespace SearchDirLists
 
         double HeaderHeight { get { return TVI_DependencyProperty.HeaderHeight; } }
         internal double EphemeralExpandedPos = -1;
+        internal Brush m_SelectedForeground = Brushes.White;
+        readonly Brush m_Foreground = Brushes.DarkRed;
 
         internal readonly SDL_TreeNode datum = null;
 

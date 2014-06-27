@@ -80,12 +80,27 @@ namespace SearchDirLists
                     tvivm.m_bBringIntoViewWhenSel = false;
                     scrollViewer.PageDown();
                     tvife.BringIntoView();
+                    nHorizLeftAttempts = 0;
+                    m_scrollTimer.Start();
                 }
             }
         }
 
         internal static void OnTimer(object o, EventArgs e)
         {
+            if (nHorizLeftAttempts >= 0)
+            {
+                scrollViewer.ScrollToHorizontalOffset(0);
+
+                if (++nHorizLeftAttempts > 2)
+                {
+                    nHorizLeftAttempts = -1;
+                    m_scrollTimer.Stop();
+                }
+
+                return;
+            }
+
             if (WaitingToSelect == null)
             {
                 return;
@@ -176,12 +191,13 @@ namespace SearchDirLists
         static Stack<TreeViewItemVM> stackParents_A = null;
         static DispatcherTimer m_scrollTimer = null;
         static int nAttempts = -1;
+        static int nHorizLeftAttempts = -1;
     }
 
     public class TreeViewItemVM : ObservableObject
     {
         public ObservableCollection<TreeViewItemVM> Items { get { return m_Items; } }
-        public String Text { get { return datum.Text; } }
+        public String Text { get { return datum.Text.PadRight(200); } }
 #if (WPF)
         public Brush Foreground { get { return SDLWPF._ForeClrToBrush(datum.ForeColor); } }
         public Brush Background { get { return SDLWPF._BackClrToBrush(datum.BackColor); } }

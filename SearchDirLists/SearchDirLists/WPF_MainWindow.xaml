@@ -179,6 +179,12 @@
                                     <Setter Property="Background" Value="{Binding Background}"/>
                                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                                     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Foreground" Value="{Binding Foreground}"/>
+                                            <Setter Property="FontWeight" Value="UltraBold"/>
+                                        </Trigger>
+                                    </Style.Triggers>
                                 </Style>
                             </TreeView.ItemContainerStyle>
                             <TreeView.ItemTemplate>

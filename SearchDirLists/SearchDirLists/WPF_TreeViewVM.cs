@@ -80,7 +80,6 @@ namespace SearchDirLists
                     tvivm.m_bBringIntoViewWhenSel = false;
                     scrollViewer.PageDown();
                     tvife.BringIntoView();
-                    Utilities.WriteLine("BringIntoView " + tvivm.Text);
                 }
             }
         }
@@ -102,8 +101,13 @@ namespace SearchDirLists
             {
                 if (new double[] { WaitingToSelect.EphemeralExpandedPos, 0, scrollViewer.ScrollableHeight }.Contains(scrollViewer.VerticalOffset))
                 {
+                    if (++nAttempts > 3)
+                    {
+                        WaitingToSelect = null;
+                        return;
+                    }
+
                     stackParents = stackParents_A;
-     //               scrollViewer.ScrollToHome();
                 }
 
                 tvivm = WaitingToSelect;
@@ -133,7 +137,7 @@ namespace SearchDirLists
                     m_scrollTimer.IsEnabled = false;
                 }
 
-                m_scrollTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(10), DispatcherPriority.Normal, new EventHandler(TVI_DependencyProperty.OnTimer), TVFE.Dispatcher);
+                m_scrollTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(20), DispatcherPriority.Normal, new EventHandler(TVI_DependencyProperty.OnTimer), TVFE.Dispatcher);
                 m_scrollTimer.Stop();
             }
         }
@@ -141,11 +145,7 @@ namespace SearchDirLists
 
         internal static TreeViewItemVM WaitingToSelect
         {
-            get
-            {
-                return m_WaitingToSelect;
-            }
-
+            get { return m_WaitingToSelect; }
             set
             {
                 m_WaitingToSelect = value;
@@ -158,6 +158,7 @@ namespace SearchDirLists
                 else
                 {
                     stackParents = stackParents_A = new Stack<TreeViewItemVM>();
+                    nAttempts = -1;
                     m_scrollTimer.Stop();
                 }
             }
@@ -174,6 +175,7 @@ namespace SearchDirLists
         internal static Stack<TreeViewItemVM> stackParents = null;
         static Stack<TreeViewItemVM> stackParents_A = null;
         static DispatcherTimer m_scrollTimer = null;
+        static int nAttempts = -1;
     }
 
     public class TreeViewItemVM : ObservableObject
@@ -217,6 +219,9 @@ namespace SearchDirLists
                     return;
                 }
 
+                EphemeralExpandedPos = -1;
+                m_bBringIntoViewWhenSel = false;
+                TVI_DependencyProperty.WaitingToSelect = null;
                 Utilities.WriteLine("IsSelected " + Text);
                 m_bSelected = value;
 

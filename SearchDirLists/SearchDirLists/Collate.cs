@@ -550,11 +550,21 @@ namespace SearchDirLists
                     continue;
                 }
 
+                if (nClones == 1)
+                {
+                    continue;       // keep the same-vol
+                }
+
                 String str_nClones = null;
 
                 if (nClones > 2)        // includes the subject node: only note three clones or more
                 {
                     str_nClones = nClones.ToString("###,###");
+
+                    foreach (SDL_TreeNode node in listNodes.Value)
+                    {
+                        node.ForeColor = Drawing.Color.Blue;
+                    }
                 }
 
                 SDL_ListViewItem lvItem = new SDL_ListViewItem(new String[] { String.Empty, str_nClones });

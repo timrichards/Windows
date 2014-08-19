@@ -35,7 +35,7 @@ namespace SearchDirLists
         SDL_TreeNode m_prevNode = null;
         SDL_TreeNode m_deepNode = null;
         SDL_TreeNode m_deepNodeDrawn = null;
-        readonly DispatcherTimer m_timerAnim = new DispatcherTimer();
+        readonly SDL_Timer m_timerAnim = new SDL_Timer();
         int m_nAnimFrame = 0;
         DateTime m_dtHideGoofball = DateTime.MinValue;
         readonly Forms.ToolTip m_toolTip = new Forms.ToolTip();

@@ -316,10 +316,9 @@ namespace SearchDirLists
 
     class SearchResultsDir
     {
-        String m_strDir = null;
         readonly List<String> m_listFiles = new List<String>();
 
-        internal String StrDir { get { return m_strDir; } set { m_strDir = value; } }
+        internal String StrDir { get; set; }
         internal List<String> ListFiles { get { return m_listFiles; } }
 
         void AddFile(String strFile)

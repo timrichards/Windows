@@ -468,7 +468,7 @@ class Blinky
         internal static bool TreeSelect { get { return m_bTreeSelect; } }
 
         readonly Control m_defaultControl = null;
-        readonly DispatcherTimer m_timer = new DispatcherTimer();
+        readonly SDL_Timer m_timer = new SDL_Timer();
 
         Holder m_holder = new NullHolder();
         Drawing.Color m_clrBlink = Drawing.Color.DarkTurquoise;
@@ -997,6 +997,25 @@ class Blinky
 #error Locks up removing items.
         List<T> { }                  // uses less memory; faster iterator; locks up removing items.
 #endif
+
+    class SDL_Timer : DispatcherTimer
+    {
+        internal SDL_Timer()
+            : base()
+        { }
+
+        internal SDL_Timer(TimeSpan interval, DispatcherPriority priority, EventHandler callback, Dispatcher dispatcher)
+            : base(interval, priority, callback, dispatcher)
+        { }
+
+        internal new void Start()
+        {
+            if (Utilities.Assert(0, Interval.TotalMilliseconds > 0))
+            {
+                base.Start();
+            }
+        }
+    }
 
     class Utilities
     {

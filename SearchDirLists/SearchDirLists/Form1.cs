@@ -30,8 +30,8 @@ namespace SearchDirLists
     delegate MBoxRet MBoxDelegate(String strMessage, String strTitle = null, MBoxBtns? buttons = null);
 
 #if (WPF == false)
-    //    [System.ComponentModel.DesignerCategory("Designer")]
-    [System.ComponentModel.DesignerCategory("Code")]
+        [System.ComponentModel.DesignerCategory("Designer")]
+    //[System.ComponentModel.DesignerCategory("Code")]
     partial class Form1 : Form
     {
         readonly GlobalData gd = null;
@@ -2242,26 +2242,26 @@ namespace SearchDirLists
         }
     }
 
-    partial class GlobalData
+    partial class GlobalData : Utilities
     {
         internal static Form1 static_wpfOrForm { get { return static_form_; } }
         internal static Form1 static_form { get { return static_form_; } } static Form1 static_form_ = null;
         internal static GlobalData GetInstance(Form1 form) { if (static_instance == null) static_instance = new GlobalData(form); return static_instance; }
         internal static GlobalData GetInstance(WPF.Window wpfWin) { return static_instance; }
         GlobalData(Form1 form) { static_form_ = form; }               // private constructor: singleton pattern
-    }
 #else
-    partial class GlobalData
+    partial class GlobalData : Utilities
     {
         internal static WPF.Window static_wpfOrForm { get { return static_wpfWin_; } }
         internal static WPF.Window static_wpfWin { get { return static_wpfWin_; } } static WPF.Window static_wpfWin_ = null;
         internal static GlobalData GetInstance(WPF.Window wpfWin) { if (static_instance == null) static_instance = new GlobalData(wpfWin); return static_instance; }
-        GlobalData(WPF.Window wpfWin) { static_wpfWin_ = wpfWin; }    // private constructor: singleton pattern
-    }
-#endif
 
-    partial class GlobalData : Utilities
-    {
+        GlobalData(WPF.Window wpfWin)   // private constructor: singleton pattern
+        {
+            static_wpfWin_ = wpfWin;
+            timer_DoTree.Interval = new System.TimeSpan(0, 0, 3);
+        }
+#endif
         internal SDL_TreeView m_treeCopyToClipboard = null;
         internal SDL_TreeNode m_nodeCompare1 = null;
         internal readonly Dictionary<SDL_TreeNode, SDL_TreeNode> m_dictCompareDiffs = new Dictionary<SDL_TreeNode, SDL_TreeNode>();
@@ -2291,7 +2291,7 @@ namespace SearchDirLists
             SDLWPF.treeViewMain.Nodes.Clear();
         }
 
-        internal readonly DispatcherTimer timer_DoTree = new DispatcherTimer();
+        internal readonly SDL_Timer timer_DoTree = new SDL_Timer();
 
         internal String m_strVolumeName = null;
         internal String m_strPath = null;

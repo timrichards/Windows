@@ -149,8 +149,7 @@ namespace SearchDirLists
         ConcurrentBag<SaveDirListing> m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
         readonly UList<LVvolStrings> m_list_lvVolStrings = new UList<LVvolStrings>();
 
-        int m_nFilesWritten = 0;
-        internal int FilesWritten { get { return m_nFilesWritten; } set { m_nFilesWritten = value; } }
+        internal int FilesWritten { get; set; }
 
         class SaveDirListing : Utilities
         {

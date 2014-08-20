@@ -258,9 +258,11 @@ namespace SearchDirLists
                                     offset += read;
                                 }
 
+                                String strBlake2B = BitConverter.ToString(Blake2B.ComputeHash(data)).Replace("-", "");
+
                                 lock (dictBlake2B)
                                 {
-                                    dictBlake2B[t.strFileName] = BitConverter.ToString(Blake2B.ComputeHash(data)).Replace("-", "");
+                                    dictBlake2B[t.strFileName] = strBlake2B;
                                 }
                             }
                         }

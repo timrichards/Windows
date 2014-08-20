@@ -6,6 +6,8 @@ using System.IO;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Collections.Concurrent;
+using Blake2Sharp;
+using System.Threading.Tasks;
 
 namespace SearchDirLists
 {
@@ -150,8 +152,9 @@ namespace SearchDirLists
         readonly UList<LVvolStrings> m_list_lvVolStrings = new UList<LVvolStrings>();
 
         internal int FilesWritten { get; set; }
+        internal static bool ComputeBlake2B = true;
 
-        class SaveDirListing : Utilities
+        class SaveDirListing
         {
             readonly SaveDirListingsStatusDelegate m_statusCallback = null;
             Thread m_thread = null;
@@ -230,6 +233,44 @@ namespace SearchDirLists
                         continue;
                     }
 
+                    Dictionary<String, String> dictBlake2B = new Dictionary<string,string>();
+
+                    if (ComputeBlake2B) Parallel.ForEach(listFiles, t =>
+                    {
+                        try
+                        {
+                            using (Stream stream = (Stream)new BinaryReader(File.OpenRead(strFullPath + Path.DirectorySeparatorChar + t.strFileName)).BaseStream)
+                            {
+                                byte[] data = new byte[stream.Length];
+                                int offset = 0;
+                                int remaining = data.Length;
+
+                                while (remaining > 0)
+                                {
+                                    int read = stream.Read(data, offset, remaining);
+
+                                    if (read <= 0)
+                                    {
+                                        throw new EndOfStreamException(String.Format("End of stream reached with {0} bytes left to read", remaining));
+                                    }
+
+                                    remaining -= read;
+                                    offset += read;
+                                }
+
+                                lock (dictBlake2B)
+                                {
+                                    dictBlake2B[t.strFileName] = BitConverter.ToString(Blake2B.ComputeHash(data)).Replace("-", "");
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Utilities.WriteLine(ex.Message);
+                            FlashWindow.Go(Once: true);
+                        }
+                    });
+
                     foreach (Win32FindFile.DATUM winData in listFiles)
                     {
                         Win32FindFile.FileData fi = new Win32FindFile.FileData(winData);
@@ -258,14 +299,21 @@ namespace SearchDirLists
                             strError1 = "Path Length: " + winData.strAltFileName.Length.ToString();
                         }
 
-                        String strOut = FormatString(strFile: strFile, dtCreated: fi.CreationTime, strAttributes: fi.Attributes.ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File);
-
                         Utilities.Assert(1306.7307, fi.Size >= 0);
 
                         if (fi.Size > 0)
                         {
                             bHasLength = true;
                         }
+
+                        String strBlake2B = null;
+
+                        if (dictBlake2B.ContainsKey(strFile))
+                        {
+                            strBlake2B = dictBlake2B[strFile];
+                        }
+
+                        String strOut = FormatString(strFile: strFile, dtCreated: fi.CreationTime, strAttributes: fi.Attributes.ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File, strBlake2B: strBlake2B);
 
                         fs.WriteLine(strOut);
                     }

@@ -30,8 +30,8 @@ namespace SearchDirLists
     delegate MBoxRet MBoxDelegate(String strMessage, String strTitle = null, MBoxBtns? buttons = null);
 
 #if (WPF == false)
-        [System.ComponentModel.DesignerCategory("Designer")]
-    //[System.ComponentModel.DesignerCategory("Code")]
+        //[System.ComponentModel.DesignerCategory("Designer")]
+    [System.ComponentModel.DesignerCategory("Code")]
     partial class Form1 : Form
     {
         readonly GlobalData gd = null;

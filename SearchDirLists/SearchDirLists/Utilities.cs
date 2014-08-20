@@ -1449,7 +1449,7 @@ class Blinky
             }
         }
 
-        internal static String FormatString(String strDir = null, String strFile = null, DateTime? dtCreated = null, DateTime? dtModified = null, String strAttributes = null, long nLength = -1, String strError1 = null, String strError2 = null, int? nHeader = null)
+        internal static String FormatString(String strDir = null, String strFile = null, DateTime? dtCreated = null, DateTime? dtModified = null, String strAttributes = null, long nLength = -1, String strError1 = null, String strError2 = null, int? nHeader = null, String strBlake2B = null)
         {
             String strLength = null;
             String strCreated = null;
@@ -1470,17 +1470,17 @@ class Blinky
                 strModified = dtModified.ToString();
             }
 
-            if (StrValid(strDir + strFile + strCreated + strModified + strAttributes + strLength + strError1 + strError2) == false)
+            if (StrValid(strDir + strFile + strCreated + strModified + strAttributes + strLength + strError1 + strError2 + strBlake2B) == false)
             {
                 Utilities.Assert(1303.4314, nHeader is int);
 
                 if (nHeader == 0)
                 {
-                    return "2" + '\t' + "3" + '\t' + "4" + '\t' + "5" + '\t' + "6" + '\t' + "7" + '\t' + "8" + '\t' + "9";
+                    return "2" + '\t' + "3" + '\t' + "4" + '\t' + "5" + '\t' + "6" + '\t' + "7" + '\t' + "8" + '\t' + "9" + '\t' + "10";
                 }
                 else if (nHeader == 1)
                 {
-                    return "Dir" + '\t' + "File" + '\t' + "Created" + '\t' + "Modded" + '\t' + "Attrib" + '\t' + "Length" + '\t' + "Error1" + '\t' + "Error2";
+                    return "Dir" + '\t' + "File" + '\t' + "Created" + '\t' + "Modded" + '\t' + "Attrib" + '\t' + "Length" + '\t' + "Error1" + '\t' + "Error2" + '\t' + "Blake2B";
                 }
             }
 
@@ -1494,7 +1494,7 @@ class Blinky
                 bDbgCheck = true;
             }
 
-            String strRet = (strDir + '\t' + strFile + '\t' + strCreated + '\t' + strModified + '\t' + strAttributes + '\t' + strLength + '\t' + strError1 + '\t' + strError2).TrimEnd();
+            String strRet = (strDir + '\t' + strFile + '\t' + strCreated + '\t' + strModified + '\t' + strAttributes + '\t' + strLength + '\t' + strError1 + '\t' + strError2 + '\t' + strBlake2B).TrimEnd();
 
             if (bDbgCheck)
             {

@@ -6,7 +6,6 @@ using System.IO;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Collections.Concurrent;
-using Blake2Sharp;
 using System.Threading.Tasks;
 
 namespace SearchDirLists
@@ -203,6 +202,26 @@ namespace SearchDirLists
                 fs.WriteLine(driveInfo.VolumeLabel);
             }
 
+            class ResultItem
+            {
+                public bool Ready { get; private set; }
+                public String strChecksum { private get; set; }
+                public String strOut { get { return FormatString(strFile: strFile, dtCreated: fi.CreationTime, strAttributes: fi.Attributes.ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File, strChecksum: strChecksum); } }
+
+                String strFile;
+                Win32FindFile.FileData fi;
+                String strError1;
+                String strError2_File;
+
+                public ResultItem(String strFile_in, Win32FindFile.FileData fi_in, String strError1_in, String strError2_in)
+                {
+                    strFile = strFile_in;
+                    fi = fi_in;
+                    strError1 = strError1_in;
+                    strError2_File = strError2_in;
+                }
+            }
+
             void TraverseTree(TextWriter fs, String root)
             {
                 Stack<Win32FindFile.DATUM> stackDirs = new Stack<Win32FindFile.DATUM>(64);
@@ -212,6 +231,8 @@ namespace SearchDirLists
 
                 Win32FindFile.FileData.WinFile(root, out winRoot);
                 stackDirs.Push(winRoot);
+
+                Queue<Task<ResultItem>> queueTasks = new Queue<Task<ResultItem>>();
 
                 while (stackDirs.Count > 0)
                 {
@@ -243,40 +264,36 @@ namespace SearchDirLists
                             {
                                 using (Stream stream = new BufferedStream(File.OpenRead(strFullPath + Path.DirectorySeparatorChar + t.strFileName), 1024 * 1024))
                                 {
-                                    //const int nMAX = 1024 * 1024 * 16;
+                                    const int nMAX = 1024 * 1024 * 16;
                                     byte[] checksum = null;
 
-                                    //if (stream.Length <= nMAX)
-                                    //{
-                                    //    byte[] data = new byte[stream.Length];
-                                    //    int offset = 0;
-                                    //    int remaining = data.Length;
+                                    if (stream.Length <= nMAX)
+                                    {
+                                        byte[] data = new byte[stream.Length];
+                                        int offset = 0;
+                                        int remaining = data.Length;
 
-                                    //    while (remaining > 0)
-                                    //    {
-                                    //        int read = stream.Read(data, offset, remaining);
+                                        while (remaining > 0)
+                                        {
+                                            int read = stream.Read(data, offset, remaining);
 
-                                    //        if (read <= 0)
-                                    //        {
-                                    //            throw new EndOfStreamException(String.Format("End of stream reached with {0} bytes left to read", remaining));
-                                    //        }
+                                            if (read <= 0)
+                                            {
+                                                throw new EndOfStreamException(String.Format("End of stream reached with {0} bytes left to read", remaining));
+                                            }
 
-                                    //        remaining -= read;
-                                    //        offset += read;
-                                    //    }
+                                            remaining -= read;
+                                            offset += read;
+                                        }
 
-                                    //    // String strChecksum = BitConverter.ToString(Checksum.ComputeHash(data)).Replace("-", "");
-
-                                    //    checksum = md5.ComputeHash(data);
-                                    //}
-                                    //else
+                                        checksum = md5.ComputeHash(data);
+                                    }
+                                    else
                                     {
                                         checksum = md5.ComputeHash(stream);
                                     }
 
                                     String strChecksum = DRDigit.Fast.ToHexString(checksum);
-                                    //String strChecksumA = BitConverter.ToString(checksum).Replace("-", "");
-                                    //Utilities.Assert(0, strChecksum == strChecksumA);
 
                                     lock (dictChecksum)
                                     {

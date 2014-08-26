@@ -845,7 +845,12 @@ namespace SearchDirLists
 
             if (Keyboard.IsKeyDown(Key.LeftShift) == false)
             {
-                lv.Items.Clear();
+#if (WPF)
+                lv
+#else
+                lv_in
+#endif
+                .Items.Clear();
             }
 
             using (StreamReader sr = File.OpenText(m_strFileNotDialog))

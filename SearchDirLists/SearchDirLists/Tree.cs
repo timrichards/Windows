@@ -705,7 +705,7 @@ namespace SearchDirLists
                 if (nScannedLength != nTotalLength)
                 {
                     Utilities.WriteLine(nTotalLength.ToString());
-                    Utilities.Assert(1301.23101, false);
+                    Utilities.Assert(1301.23101, false, "nScannedLength != nTotalLength\n" + strSaveAs, bTraceOnly:true);
                 }
 
                 Utilities.WriteLine(strSaveAs + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");

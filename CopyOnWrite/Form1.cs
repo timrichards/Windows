@@ -272,10 +272,23 @@ namespace CopyOnWrite
         const String strDefaultWritablePackageFilter = "strDefaultWritablePackageFilter: None";
         public void FileSystemWatcherChanged(String strPath, string strEvent, int nTab, bool bMatch, String strWritablePackageFilter = strDefaultWritablePackageFilter)
         {
-            FileInfo fi = new FileInfo(strPath);
+            FileInfo fi = null;
             String strError = "";
 
-            if (bMatch == false)
+            try
+            {
+                fi = new FileInfo(strPath);
+            }
+            catch (Exception ex)
+            {
+                strError = ex.Message;
+            }
+
+            if (fi == null)
+            {
+                // no-op, but skip remaining tests
+            }
+            else if (bMatch == false)
             {
                 // no-op, but skip remaining tests
             }
@@ -353,7 +366,7 @@ namespace CopyOnWrite
                 strError = "Fut";
             }
 
-            if (bMatch && (strError.Length == 0))
+            if ((fi is FileInfo) && bMatch && (strError.Length == 0))
             {
                 if (m_dictionary_FileAttempted.ContainsKey(fi.FullName) == false)
                 {
@@ -379,8 +392,17 @@ namespace CopyOnWrite
                 }
 
                 strError += strTab;
-                
-                ListViewItem lvItem = new ListViewItem(new String[] { Path.GetFileName(fi.FullName), Path.GetDirectoryName(fi.FullName), DateTime.Now + " " + strEvent, strError });
+
+                String strFullName = null;
+                String strPathName = null;
+
+                if (fi is FileInfo)
+                {
+                    strFullName = Path.GetFileName(fi.FullName);
+                    strPathName = Path.GetDirectoryName(fi.FullName);
+                }
+
+                ListViewItem lvItem = new ListViewItem(new String[] { strFullName, strPathName, DateTime.Now + " " + strEvent, strError });
                 
                 lvItem.ForeColor = Color.LimeGreen;
                 lvItem.Name = strError;
@@ -828,7 +850,14 @@ namespace CopyOnWrite
             {
                 if (Directory.Exists(strPath))
                 {
-                    nNumFiles = (new DirectoryInfo(strPath)).GetFiles().Length;
+                    try
+                    {
+                        nNumFiles = (new DirectoryInfo(strPath)).GetFiles().Length;
+                    }
+                    catch
+                    {
+                        return Color.Red;
+                    }
                 }
                 else
                 {

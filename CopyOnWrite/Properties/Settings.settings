@@ -42,17 +42,6 @@
     <Setting Name="WindowPosition" Type="System.Drawing.Rectangle" Scope="User">
       <Value Profile="(Default)">1, 0, 667, 1080</Value>
     </Setting>
-    <Setting Name="Negative" Type="System.Collections.Specialized.StringCollection" Scope="User">
-      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
-&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;string&gt;qwapp\.c$|dlldata\.c$|(_p|_i|_h)\.(c|h)$|_manifest.rc$|\ \-\ Copy|Debug&lt;/string&gt;
-  &lt;string&gt;onecache$|application$|cache$|exe$|pdb$|tmp$|manifest$|tlog$|resources$|suo$|FileListAbsolute.txt|Debug|OFXLOG.DAT|mp3$|png$|dll$|msi$|cab$|appinfo$vmx$|vmxf$|cache&lt;/string&gt;
-  &lt;string&gt;qdf$|dat$|qdf-backup$|_sync_perf.txt$&lt;/string&gt;
-  &lt;string&gt;^Cookies|^ntuser|^SyncData|^Current|^~|^FavIcons|tmp$|^Preferences|winprf$|Default$&lt;/string&gt;
-  &lt;string&gt;onecache$|application$|cache$|exe$|pdb$|tmp$|manifest$|tlog$|resources$|suo$|FileListAbsolute.txt|Debug|OFXLOG.DAT|mp3$|png$|dll$|deploy$|publish&lt;/string&gt;
-  &lt;string /&gt;
-&lt;/ArrayOfString&gt;</Value>
-    </Setting>
     <Setting Name="Disable" Type="System.Boolean[]" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ArrayOfBoolean xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
@@ -77,6 +66,17 @@
     </Setting>
     <Setting Name="Col_Tab_Width" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">56</Value>
+    </Setting>
+    <Setting Name="Negative" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;qwapp\.c$|dlldata\.c$|(_p|_i|_h)\.(c|h)$|_manifest.rc$|\ \-\ Copy|Debug&lt;/string&gt;
+  &lt;string&gt;application$|cache$|exe$|pdb$|tmp$|manifest$|tlog$|resources$|suo$|FileListAbsolute.txt|Debug|OFXLOG.DAT|mp3$|png$|dll$|msi$|cab$|appinfo$vmx$|vmxf$|cache&lt;/string&gt;
+  &lt;string&gt;qdf$|dat$|qdf-backup$|_sync_perf.txt$&lt;/string&gt;
+  &lt;string&gt;^Cookies|^ntuser|^SyncData|^Current|^~|^FavIcons|tmp$|^Preferences|winprf$|Default$&lt;/string&gt;
+  &lt;string&gt;application$|cache$|exe$|pdb$|tmp$|manifest$|tlog$|resources$|suo$|FileListAbsolute.txt|Debug|OFXLOG.DAT|mp3$|png$|dll$|deploy$|publish&lt;/string&gt;
+  &lt;string /&gt;
+&lt;/ArrayOfString&gt;</Value>
     </Setting>
   </Settings>
 </SettingsFile>

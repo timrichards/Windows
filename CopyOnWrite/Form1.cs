@@ -270,14 +270,14 @@ namespace CopyOnWrite
 
         // match value is tab index (user base 1) <0 for no match due to negative rule, 0 for match, and >0 for no match entirely
         const String strDefaultWritablePackageFilter = "strDefaultWritablePackageFilter: None";
-        public void FileSystemWatcherChanged(String strPath, string strEvent, int nTab, bool bMatch, String strWritablePackageFilter = strDefaultWritablePackageFilter)
+        public void FileSystemWatcherChanged(String strPath_in, string strEvent, int nTab, bool bMatch, String strWritablePackageFilter = strDefaultWritablePackageFilter)
         {
             FileInfo fi = null;
             String strError = "";
 
             try
             {
-                fi = new FileInfo(strPath);
+                fi = new FileInfo(strPath_in);
             }
             catch (Exception ex)
             {
@@ -393,7 +393,7 @@ namespace CopyOnWrite
 
                 strError += strTab;
 
-                String strFullName = null;
+                String strFullName = strPath_in;
                 String strPathName = null;
 
                 if (fi is FileInfo)

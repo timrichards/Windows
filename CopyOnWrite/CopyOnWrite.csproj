@@ -27,7 +27,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ProductName>CopyOnWrite</ProductName>
     <PublisherName>Tim Richards</PublisherName>
-    <ApplicationRevision>89</ApplicationRevision>
+    <ApplicationRevision>91</ApplicationRevision>
     <ApplicationVersion>0.0.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>

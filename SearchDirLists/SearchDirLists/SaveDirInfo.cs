@@ -7,22 +7,23 @@ using System.Threading;
 using System.Runtime.InteropServices;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using System.Management;
 
 namespace SearchDirLists
 {
-    delegate void SaveDirListingsStatusDelegate(int nIndex, String strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0);
+    delegate void SaveDirListingsStatusDelegate(String strPath, String strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0);
 
 #if (WPF == false)
     partial class Form1
     {
-        void SaveDirListingsStatusCallback(int nIndex, String strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0)
+        void SaveDirListingsStatusCallback(String strPath, String strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0)
         {
             if (GlobalData.AppExit || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
             {
                 return;
             }
 
-            if (InvokeRequired) { Invoke(new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback), new object[] { nIndex, strText, bDone, nFilesTotal, nLengthTotal, nFilesDiff }); return; }
+            if (InvokeRequired) { Invoke(new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback), new object[] { strPath, strText, bDone, nFilesTotal, nLengthTotal, nFilesDiff }); return; }
 
             if (nLengthTotal > 0)
             {
@@ -42,14 +43,19 @@ namespace SearchDirLists
 
             lock (form_lvVolumesMain)
             {
-                form_lvVolumesMain.Items[nIndex].SubItems[3].Text = strText;
+                ListViewItem lvItem = form_lvVolumesMain.Items[strPath];
 
-                if (bDone && (strText == Utilities.mSTRsaved))
+                if (Utilities.Assert(0, lvItem != null))
                 {
-                    form_lvVolumesMain.Items[nIndex].Name = null;    // indexing by path, only for unsaved volumes
-                }
+                    lvItem.SubItems[3].Text = strText;
 
-                form_lvVolumesMain.Invalidate();
+                    if (bDone && (strText == Utilities.mSTRsaved))
+                    {
+                        lvItem.Name = null;    // indexing by path, only for unsaved volumes
+                    }
+
+                    form_lvVolumesMain.Invalidate();
+                }
             }
         }
 
@@ -77,7 +83,7 @@ namespace SearchDirLists
 #endif
     partial class VolumesTabVM
     {
-        void SaveDirListingsStatusCallback(int nIndex, String strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0)
+        void SaveDirListingsStatusCallback(String strPath, String strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0)
         {
 #if (WPF == false)
         }
@@ -108,13 +114,16 @@ namespace SearchDirLists
                 }
             }
 
-            lock (LV)
+            VolumeLVitemVM lvItem = LV.ItemsCast.Where(i => (i.datum != null) && (i.datum.ListView != null)).FirstOrDefault();
+
+            if (lvItem != null)     // e.g. user may have clicked "Remove Volume" while saving
+                lock (LV)
             {
-                LV.ItemsCast.ElementAt(nIndex).Status = strText;
+                lvItem.Status = strText;
 
                 if (bDone && (strText == Utilities.mSTRsaved))
                 {
-                    LV.ItemsCast.ElementAt(nIndex).SaveAsExists = true;    // indexing by path, only for unsaved volumes
+                    lvItem.SaveAsExists = true;    // copied code. non-WPF comment: "indexing by path, only for unsaved volumes"
                 }
             }
         }
@@ -151,7 +160,7 @@ namespace SearchDirLists
         readonly UList<LVvolStrings> m_list_lvVolStrings = new UList<LVvolStrings>();
 
         internal int FilesWritten { get; set; }
-        internal static bool ComputeChecksum = true;
+        internal static bool ComputeChecksum = false;
 
         class SaveDirListing
         {
@@ -189,11 +198,74 @@ namespace SearchDirLists
                 fs.WriteLine(strVolumeName);
                 fs.WriteLine(strPath);
 
-                DriveInfo driveInfo = new DriveInfo(strPath.Substring(0, strPath.IndexOf(Path.DirectorySeparatorChar)));
+                // device info
+
+                String strModel = null;
+                String strSerialNo = null;
+                object nSize = null;
+
+                var letter = strPath.Substring(0, 2);
+
+                new ManagementObjectSearcher(
+                        new ManagementScope("\\\\.\\ROOT\\cimv2"),
+                        new ObjectQuery("SELECT * FROM Win32_LogicalDisk WHERE DeviceID='" + letter + "'")
+                ).Get().Cast<ManagementObject>().FirstOnlyAssert(new Action<ManagementObject>((logicalDisk) =>
+                {
+                    logicalDisk.GetRelated("Win32_DiskPartition").Cast<ManagementObject>().FirstOnlyAssert(new Action<ManagementObject>((partition) =>
+                    {
+                        partition.GetRelated("Win32_DiskDrive").Cast<ManagementObject>().FirstOnlyAssert(new Action<ManagementObject>((diskDrive) =>
+                        {
+                            nSize = diskDrive["Size"];
+                            strModel = diskDrive["Model"].ToString();
+
+                            if (strModel == null)
+                            {
+                                strModel = diskDrive["Caption"].ToString();
+                            }
+
+                            strSerialNo = diskDrive["SerialNumber"].ToString();
+
+                            if (strSerialNo == null)
+                            {
+                                diskDrive.GetRelated("Win32_PhysicalMedia").Cast<ManagementObject>().FirstOnlyAssert(new Action<ManagementObject>((diskMedia) =>
+                                {
+                                    strSerialNo = diskMedia["SerialNumber"].ToString();
+                                }));
+                            }
+                        }));
+                    }));
+                }));
+
+                //         fs.WriteLine(strModel);
+                //         fs.WriteLine(strSerialNo);
+                //         fs.WriteLine(nSize);
+
+                /*
+                <header>
+                    <version = "SearchDirLists 0.3" />
+                    <nickname />
+                    <path = "C:\_VirtualBox" />
+                    <info>
+                        <diRootDirectory = "C:\" />
+                        <diVolumeLabel  />
+                        <diName = "C:\" />
+                        <cimModel />
+                        <cimSerialNumber />
+                        <diDriveFormat = "NTFS" />
+                        <diDriveType = "Fixed" />
+                        <cimSize />
+                        <diTotalSize = 239949836288 />
+                        <diTotalFreeSpace = 50990686208 />
+                        <diAvailableFreeSpace = 50990686208 />
+                    </info>
+                </header>
+                 */
 
                 fs.WriteLine(mSTRdrive01);
+                DriveInfo driveInfo = new DriveInfo(strPath.Substring(0, strPath.IndexOf(Path.DirectorySeparatorChar)));
+
                 fs.WriteLine(driveInfo.AvailableFreeSpace);
-                fs.WriteLine(driveInfo.DriveFormat);
+                fs.WriteLine(driveInfo.DriveFormat);        // misnomer. Should be VolumeFormat.
                 fs.WriteLine(driveInfo.DriveType);
                 fs.WriteLine(driveInfo.Name);
                 fs.WriteLine(driveInfo.RootDirectory);
@@ -398,20 +470,20 @@ namespace SearchDirLists
                 if (FormatPath(ref strPath, ref strSaveAs) == false)
                 {
                     // FormatPath() has its own message box
-                    m_statusCallback(m_volStrings.Index, mSTRnotSaved);
+                    m_statusCallback(m_volStrings.StrPath, mSTRnotSaved);
                     return;
                 }
 
                 if (Directory.Exists(strPath) == false)
                 {
-                    m_statusCallback(m_volStrings.Index, mSTRnotSaved);
+                    m_statusCallback(m_volStrings.StrPath, mSTRnotSaved);
                     MBox("Source Path does not exist.", "Save Directory Listing");
                     return;
                 }
 
                 if (StrValid(strSaveAs) == false)
                 {
-                    m_statusCallback(m_volStrings.Index, mSTRnotSaved);
+                    m_statusCallback(m_volStrings.StrPath, mSTRnotSaved);
                     MBox("Must specify save filename.", "Save Directory Listing");
                     return;
                 }
@@ -438,7 +510,7 @@ namespace SearchDirLists
                                 double nFilesDiff = m_nFilesDiff / StdDevSign(m_listFileDiffs);
 
                                 m_nFilesDiff = 0;
-                                m_statusCallback(m_volStrings.Index, nFilesTotal: m_nFilesTotal, nLengthTotal: m_nLengthTotal, nFilesDiff: nFilesDiff);
+                                m_statusCallback(m_volStrings.StrPath, nFilesTotal: m_nFilesTotal, nLengthTotal: m_nLengthTotal, nFilesDiff: nFilesDiff);
                             }
                         }), null, timeSpan, timeSpan);
 
@@ -458,13 +530,16 @@ namespace SearchDirLists
                     }
 
                     Directory.SetCurrentDirectory(strPathOrig);
-                    m_statusCallback(m_volStrings.Index, strText: mSTRsaved, bDone: true);
+                    m_statusCallback(m_volStrings.StrPath, strText: mSTRsaved, bDone: true);
                 }
+#if DEBUG == false
                 catch (Exception e)
                 {
-                    m_statusCallback(m_volStrings.Index, strText: mSTRnotSaved, bDone: true);
+                    m_statusCallback(m_volStrings.StrPath, strText: mSTRnotSaved, bDone: true);
                     MBox(strSaveAs.PadRight(100) + "\nException: " + e.Message, "Save Directory Listing");
                 }
+#endif
+                finally { }
             }
 
             internal SaveDirListing DoThreadFactory()
@@ -502,18 +577,15 @@ namespace SearchDirLists
             Utilities.WriteLine("Saving directory listings.");
 
             DateTime dtStart = DateTime.Now;
-            int nVolIx = -1;
 
             foreach (LVvolStrings volStrings in m_list_lvVolStrings)
             {
-                ++nVolIx;
-
                 if ((mSTRusingFile + mSTRsaved + mSTRcantSave).Contains(volStrings.Status))
                 {
                     continue;
                 }
 
-                m_statusCallback(nVolIx, "Saving...");
+                m_statusCallback(volStrings.StrPath, "Saving...");
                 m_cbagWorkers.Add(new SaveDirListing(volStrings, m_statusCallback).DoThreadFactory());
             }
 

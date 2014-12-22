@@ -603,6 +603,51 @@ namespace SearchDirLists
 
     static class ExtensionMethods
     {
+        public static int Count<T>(this IEnumerable<T> source)
+        {
+            ICollection<T> c = source as ICollection<T>;
+
+            if (c != null)
+            {
+                return c.Count;
+            }
+
+            using (IEnumerator<T> enumerator = source.GetEnumerator())
+            {
+                int result = 0;
+
+                while (enumerator.MoveNext())
+                {
+                    result++;
+                }
+
+                return result;
+            }
+        }
+
+        public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
+        {
+            foreach (var item in source)
+            {
+                action(item);
+            }
+        }
+
+        public static void FirstOnly<T>(this IEnumerable<T> source, Action<T> action)
+        {
+            foreach (var item in source)
+            {
+                action(item);
+                break;
+            }
+        }
+
+        public static void FirstOnlyAssert<T>(this IEnumerable<T> source, Action<T> action)
+        {
+            Utilities.Assert(0, source.Count() <= 1);
+            FirstOnly(source, action);
+        }
+
         internal static bool IsChildOf(this SDL_TreeNode child, SDL_TreeNode treeNode)
         {
             if (child.Level <= treeNode.Level)
@@ -703,14 +748,13 @@ namespace SearchDirLists
 
     class LVvolStrings : Utilities
     {
-        readonly int m_nIndex = -1;
         readonly String m_strVolumeName = null;
         readonly String m_strPath = null;
         readonly String m_strSaveAs = null;
         String m_strStatus = null;
         readonly String m_strInclude = null;
         readonly String m_strVolumeGroup = null;
-        internal int Index { get { return m_nIndex; } }
+        readonly SDL_ListViewItem m_lvItem = null;
         internal String VolumeName { get { return m_strVolumeName; } }
         internal String StrPath { get { return m_strPath; } }
         internal String SaveAs { get { return m_strSaveAs; } }
@@ -720,7 +764,6 @@ namespace SearchDirLists
 
         internal LVvolStrings(VolumeLVitemVM lvItem)
         {
-            m_nIndex = lvItem.Index;
             m_strVolumeName = lvItem.VolumeName;
             m_strPath = lvItem.Path;
             m_strSaveAs = lvItem.SaveAs;
@@ -731,7 +774,6 @@ namespace SearchDirLists
 
         internal LVvolStrings(SDL_ListViewItem lvItem)
         {
-            m_nIndex = lvItem.Index;
             m_strVolumeName = lvItem.SubItems[0].Text;
             m_strPath = lvItem.SubItems[1].Text;
             m_strSaveAs = lvItem.SubItems[2].Text;
@@ -742,6 +784,8 @@ namespace SearchDirLists
             {
                 m_strVolumeGroup = lvItem.SubItems[5].Text;
             }
+
+            m_lvItem = lvItem;
         }
 
         internal bool CanInclude { get { return Include == "Yes"; } }
@@ -756,13 +800,13 @@ namespace SearchDirLists
 
         internal void SetStatus_BadFile(Forms.ListView lv)
         {
-            lv.Items[Index].SubItems[3].Text =
+            m_lvItem.SubItems[3].Text =
                 m_strStatus = "Bad file. Will overwrite.";
         }
 
         internal void SetStatus_Done(Forms.ListView lv, SDL_TreeNode rootNode)
-        {
-            lv.Items[Index].Tag = rootNode;
+        {            
+            m_lvItem.Tag = rootNode;
         }
     }
 

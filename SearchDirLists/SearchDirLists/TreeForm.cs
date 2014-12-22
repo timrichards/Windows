@@ -53,7 +53,11 @@ namespace SearchDirLists
         {
             if (gd.m_listRootNodes.Count <= 0)
             {
-                SDLWPF.treeViewMain.Nodes.Clear();
+                Utilities.CheckAndInvoke(this, new Action(() =>
+                {
+                    SDLWPF.treeViewMain.Nodes.Clear();
+                }));
+                
                 return;
             }
 

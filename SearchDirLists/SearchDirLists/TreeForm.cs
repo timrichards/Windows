@@ -144,14 +144,14 @@ namespace SearchDirLists
             }
         }
 
-        internal void TreeSelectStatusCallback(SDL_ListViewItem[] lvItemDetails = null, SDL_ListViewItem[] itemArray = null, SDL_ListViewItem lvVol = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null)
+        internal void TreeSelectStatusCallback(SDL_ListViewItem[] lvItemDetails = null, SDL_ListViewItem[] itemArray = null, SDL_ListViewItem[] lvVolDetails = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null)
         {
             if (GlobalData.AppExit)
             {
                 return;
             }
 
-            if (InvokeRequired) { Invoke(new TreeSelectStatusDelegate(TreeSelectStatusCallback), new object[] { lvItemDetails, itemArray, lvVol, bSecondComparePane, lvFileItem }); return; }
+            if (InvokeRequired) { Invoke(new TreeSelectStatusDelegate(TreeSelectStatusCallback), new object[] { lvItemDetails, itemArray, lvVolDetails, bSecondComparePane, lvFileItem }); return; }
 
             if (lvItemDetails != null)
             {
@@ -165,9 +165,16 @@ namespace SearchDirLists
                 }
             }
 
-            if (lvVol != null)
+            if (lvVolDetails != null)
             {
-                lock (form_lvDetailVol) { form_lvDetailVol.Items.Add(lvVol); }
+                ListView lv = form_lvDetailVol;
+
+                lock (lv)
+                {
+                    lv.Items.Clear();
+                    lv.Items.AddRange(lvVolDetails);
+                    lv.Invalidate();
+                }
             }
 
             if (itemArray == null)

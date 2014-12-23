@@ -236,49 +236,35 @@ namespace SearchDirLists
                     }));
                 }));
 
-                //         fs.WriteLine(strModel);
-                //         fs.WriteLine(strSerialNo);
-                //         fs.WriteLine(nSize);
-
-                /*
-                <header>
-                    <version = "SearchDirLists 0.3" />
-                    <nickname />
-                    <path = "C:\_VirtualBox" />
-                    <info>
-                        <diRootDirectory = "C:\" />
-                        <diVolumeLabel  />
-                        <diName = "C:\" />
-                        <cimModel />
-                        <cimSerialNumber />
-                        <diDriveFormat = "NTFS" />
-                        <diDriveType = "Fixed" />
-                        <cimSize />
-                        <diTotalSize = 239949836288 />
-                        <diTotalFreeSpace = 50990686208 />
-                        <diAvailableFreeSpace = 50990686208 />
-                    </info>
-                </header>
-                 */
-
                 fs.WriteLine(mSTRdrive01);
                 DriveInfo driveInfo = new DriveInfo(strPath.Substring(0, strPath.IndexOf(Path.DirectorySeparatorChar)));
 
-                fs.WriteLine(driveInfo.AvailableFreeSpace);
-                fs.WriteLine(driveInfo.DriveFormat);        // misnomer. Should be VolumeFormat.
-                fs.WriteLine(driveInfo.DriveType);
-                fs.WriteLine(driveInfo.Name);
-                fs.WriteLine(driveInfo.RootDirectory);
-                fs.WriteLine(driveInfo.TotalFreeSpace);
-                fs.WriteLine(driveInfo.TotalSize);
-                fs.WriteLine(driveInfo.VolumeLabel);
+                var WriteLine = new Action<Object>((o) =>
+                {
+                    String s = (o != null) ? o.ToString() : null;
+
+                    // Hack. Prevent blank line continue in Utilities.Convert()
+                    fs.WriteLine(((s == null) || (s.Length <= 0)) ? " " : s.Trim());
+                });
+
+                WriteLine(driveInfo.AvailableFreeSpace); // These could all be named better, so mAstrDIlabels is different.
+                WriteLine(driveInfo.DriveFormat);        // Misnomer. Should be VolumeFormat.
+                WriteLine(driveInfo.DriveType);
+                WriteLine(driveInfo.Name);
+                WriteLine(driveInfo.RootDirectory);
+                WriteLine(driveInfo.TotalFreeSpace);
+                WriteLine(driveInfo.TotalSize);
+                WriteLine(driveInfo.VolumeLabel);
+                WriteLine(strModel);
+                WriteLine(strSerialNo);
+                WriteLine(nSize);
             }
 
             class ResultItem
             {
                 public bool Ready { get; private set; }
                 public String strChecksum { private get; set; }
-                public String strOut { get { return FormatString(strFile: strFile, dtCreated: fi.CreationTime, strAttributes: fi.Attributes.ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File, strChecksum: strChecksum); } }
+                public String strOut { get { return FormatString(strFile: strFile, dtCreated: fi.CreationTime, strAttributes: ((int)fi.Attributes).ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File, strChecksum: strChecksum); } }
 
                 String strFile;
                 Win32FindFile.FileData fi;
@@ -423,7 +409,7 @@ namespace SearchDirLists
                             strChecksum = dictChecksum[strFile];
                         }
 
-                        String strOut = FormatString(strFile: strFile, dtCreated: fi.CreationTime, strAttributes: fi.Attributes.ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File, strChecksum: strChecksum);
+                        String strOut = FormatString(strFile: strFile, dtCreated: fi.CreationTime, strAttributes: ((int)fi.Attributes).ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File, strChecksum: strChecksum);
 
                         fs.WriteLine(strOut);
                     }
@@ -450,7 +436,7 @@ namespace SearchDirLists
                         else
                         {
                             Utilities.Assert(1306.7304, di.IsValid);
-                            fs.WriteLine(FormatString(strDir: strFullPath, dtCreated: di.CreationTime, strAttributes: di.Attributes.ToString("X"), dtModified: di.LastWriteTime, nLength: nDirLength, strError1: strError1, strError2: strError2_Dir));
+                            fs.WriteLine(FormatString(strDir: strFullPath, dtCreated: di.CreationTime, strAttributes: ((int)di.Attributes).ToString("X"), dtModified: di.LastWriteTime, nLength: nDirLength, strError1: strError1, strError2: strError2_Dir));
                         }
                     }
 

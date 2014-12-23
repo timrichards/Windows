@@ -1113,6 +1113,34 @@ namespace SearchDirLists
         internal const String mSTRfileExt_Copy = "sdl_copy";
         internal const String mSTRfileExt_Ignore = "sdl_ignore";
 
+        const int knDriveInfoItems = 11;
+        internal static readonly String[] mAstrDIlabels = new String[knDriveInfoItems]
+        {
+            "Volume Free",
+            "Volume Format",
+            "Drive Type",           // DriveInfo
+            "Volume Name",
+            "Volume Root",
+            "Volume Free 2",
+            "Volume Size",
+            "Volume Label",
+            "Drive Model",          // These last three are CIM items
+            "Drive Serial",
+            "Drive Size"
+        };
+        internal static readonly bool[] mAbDIsizeType = new bool[knDriveInfoItems]
+        {
+            true, false, false, false, false, true, true, false, false, false, true
+        };
+        internal static readonly int[] mAnDIviewOrder = new int[knDriveInfoItems]
+        {
+            9, 5, 6, 2, 0, 10, 8, 1, 3, 4, 7
+        };
+        internal static readonly int[] mAnDIoptIfEqTo = new int[knDriveInfoItems]
+        {
+            -1, -1, -1, 4, -1, 0, -1, -1, -1, -1, -1
+        };
+
         static SDL_Win m_form1MessageBoxOwner = null;
         static double static_nLastAssertLoc = -1;
         static DateTime static_dtLastAssert = DateTime.MinValue;
@@ -1277,13 +1305,33 @@ namespace SearchDirLists
                             Utilities.Assert(1303.4308, nLineNo == 4);
                             file_out.WriteLine(FormatLine(mSTRlineType_Comment, nLineNo, mSTRdrive));
 
-                            for (int i = 0; i < 8; ++i)
+                            int ixDriveInfo = 0;
+                            for (; ixDriveInfo < mAstrDIlabels.Length; ++ixDriveInfo)
                             {
                                 strLine = file_in.ReadLine();
-                                file_out.WriteLine(FormatLine(mSTRlineType_DriveInfo, nLineNo, strLine));
                                 ++nLineNo;
+
+                                if (strLine.Length <= 0)
+                                {
+                                    break;
+                                }
+
+                                file_out.WriteLine(FormatLine(mSTRlineType_DriveInfo, nLineNo, mAstrDIlabels[ixDriveInfo] + '\t' + strLine));
                             }
 
+                            if (ixDriveInfo == mAstrDIlabels.Length)
+                            {
+                                strLine = file_in.ReadLine();
+                                ++nLineNo;
+                            }
+                            
+                            file_out.WriteLine(FormatLine(mSTRlineType_Blank, nLineNo));
+                            ++nLineNo;
+                            strLine = file_in.ReadLine();
+                            file_out.WriteLine(FormatLine(mSTRlineType_Comment, nLineNo, FormatString(nHeader: 0)));
+                            ++nLineNo;
+                            strLine = file_in.ReadLine();
+                            file_out.WriteLine(FormatLine(mSTRlineType_Comment, nLineNo, FormatString(nHeader: 1)));
                             continue;
                         }
                         else if (strLine.Length <= 0)
@@ -1291,19 +1339,8 @@ namespace SearchDirLists
                             file_out.WriteLine(FormatLine(mSTRlineType_Blank, nLineNo));
                             continue;
                         }
-                        else if (nLineNo == 14)
-                        {
-                            file_out.WriteLine(FormatLine(mSTRlineType_Comment, nLineNo, FormatString(nHeader: 0)));
-                            continue;
-                        }
-                        else if (nLineNo == 15)
-                        {
-                            file_out.WriteLine(FormatLine(mSTRlineType_Comment, nLineNo, FormatString(nHeader: 1)));
-                            continue;
-                        }
                         else if (strLine.StartsWith(mSTRstart01))
                         {
-                            Utilities.Assert(1303.4309, nLineNo == 16);
                             file_out.WriteLine(FormatLine(mSTRlineType_Start, nLineNo, mSTRstart));
                             continue;
                         }
@@ -1326,15 +1363,15 @@ namespace SearchDirLists
                             continue;
                         }
 
-                        String[] strArray = strLine.Split('\t');
-                        String strDir = strArray[0];
+                        String[] arrLine_A = strLine.Split('\t');
+                        String strDir = arrLine_A[0];
 
                         if (StrValid(strDir) == false)
                         {
                             DateTime dtParse;
                             String strTab = null;
 
-                            if ((strArray.Length > 5) && strArray[5].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
+                            if ((arrLine_A.Length > 5) && arrLine_A[5].Contains("Trailing whitespace") && DateTime.TryParse(arrLine_A[1], out dtParse))
                             {
                                 strTab = "\t";
                             }
@@ -1388,6 +1425,31 @@ namespace SearchDirLists
             while (bNextNode && ((treeNode = (SDL_TreeNode)treeNode.NextNode) != null));
 
             return nCount;
+        }
+
+        internal static String DecodeAttributes(String strAttr)
+        {
+            FileAttributes nAttr = (FileAttributes)Convert.ToInt32(strAttr, 16);
+            String str = " ";
+
+            if ((nAttr & FileAttributes.ReparsePoint) != 0) str += " ReparsePoint";
+            if ((nAttr & FileAttributes.Normal) != 0) str += " Normal";
+            if ((nAttr & FileAttributes.Hidden) != 0) str += " Hidden";
+            if ((nAttr & FileAttributes.ReadOnly) != 0) str += " Readonly";
+            if ((nAttr & FileAttributes.Archive) != 0) str += " Archive";
+            if ((nAttr & FileAttributes.Compressed) != 0) str += " Compressed";
+            if ((nAttr & FileAttributes.System) != 0) str += " System";
+            if ((nAttr & FileAttributes.Temporary) != 0) str += " Tempfile";
+            if ((nAttr & FileAttributes.Directory) != 0) str += " Directory";
+
+            str = str.TrimStart();
+
+            String zerox = "0x" + strAttr;
+            
+            if (str.Length == 0) str = zerox;
+            else str += " (" + zerox + ")";
+
+            return str;
         }
 
         internal static bool FormatPath(ref String strPath, bool bFailOnDirectory = true)

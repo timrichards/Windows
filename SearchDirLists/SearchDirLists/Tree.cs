@@ -24,7 +24,7 @@ using System.Collections.Concurrent;
 namespace SearchDirLists
 {
     delegate void TreeStatusDelegate(LVvolStrings volStrings, SDL_TreeNode rootNode = null, bool bError = false);
-    delegate void TreeSelectStatusDelegate(SDL_ListViewItem[] lvItemDetails = null, SDL_ListViewItem[] itemArray = null, SDL_ListViewItem lvVol = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null);
+    delegate void TreeSelectStatusDelegate(SDL_ListViewItem[] lvItemDetails = null, SDL_ListViewItem[] itemArray = null, SDL_ListViewItem[] lvVolDetails = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null);
     delegate void TreeSelectDoneDelegate(bool bSecondComparePane);
 
     class DetailsDatum
@@ -614,17 +614,34 @@ namespace SearchDirLists
                         String[] strArray = strLine.Split('\t');
                         ++nIx;
 
-                        if (strArray.Length > 2)
+                        if (strArray.Length > 3)
                         {
-                            strBuilder.AppendLine(strArray[2]);
+                            String s = strArray[3];
 
-                            if ((nIx == 5) && StrValid(strArray[2]))
+                            strBuilder.AppendLine(strArray[2] + '\t' + s);
+
+                            if ((strArray[2] == Utilities.mAstrDIlabels[5]) && StrValid(s))
                             {
-                                nVolFree = ulong.Parse(strArray[2]);
+                                nVolFree = ulong.Parse(s);
                             }
-                            else if ((nIx == 6) && StrValid(strArray[2]))
+                            else if ((strArray[2] == Utilities.mAstrDIlabels[6]) && StrValid(s))
                             {
-                                nVolLength = ulong.Parse(strArray[2]);
+                                nVolLength = ulong.Parse(s);
+                            }
+                        }
+                        else if (strArray.Length > 2)
+                        {
+                            String s = strArray[2];
+
+                            strBuilder.AppendLine(Utilities.mAstrDIlabels[nIx] + '\t' + s);
+
+                            if ((nIx == 5) && StrValid(s))
+                            {
+                                nVolFree = ulong.Parse(s);
+                            }
+                            else if ((nIx == 6) && StrValid(s))
+                            {
+                                nVolLength = ulong.Parse(s);
                             }
                         }
                     }
@@ -865,9 +882,9 @@ namespace SearchDirLists
 
             UList<SDL_ListViewItem> listItems = new UList<SDL_ListViewItem>();
 
-            nIx = 4; if ((strArray.Length > nIx) && StrValid(strArray[nIx])) { listItems.Add(new SDL_ListViewItem(new String[] { "Created\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() })); }
+            nIx = 4; if ((strArray.Length > nIx) && StrValid(strArray[nIx])) listItems.Add(new SDL_ListViewItem(new String[]{ "Created\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
             nIx = 5; if ((strArray.Length > nIx) && StrValid(strArray[nIx])) listItems.Add(new SDL_ListViewItem(new String[] { "Modified\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
-            nIx = 6; if ((strArray.Length > nIx) && StrValid(strArray[nIx])) listItems.Add(new SDL_ListViewItem(new String[] { "Attributes\t", strArray[nIx] }));
+            nIx = 6; if ((strArray.Length > nIx) && StrValid(strArray[nIx])) listItems.Add(new SDL_ListViewItem(new String[] { "Attributes\t", DecodeAttributes(strArray[nIx]) }));
             listItems.Add(new SDL_ListViewItem(new String[] { "Immediate Size\t", FormatSize(nodeDatum.nLength, bBytes: true) }));
             nIx = 8; if ((strArray.Length > nIx) && StrValid(strArray[nIx])) listItems.Add(new SDL_ListViewItem(new String[] { "Error 1\t", strArray[nIx] }));
             nIx = 9; if ((strArray.Length > nIx) && StrValid(strArray[nIx])) listItems.Add(new SDL_ListViewItem(new String[] { "Error 2\t", strArray[nIx] }));
@@ -969,6 +986,8 @@ namespace SearchDirLists
                 String[] strArrayFiles = strFileLine.Split('\t').Skip(3).ToArray();
                 ulong nLength = 0;
 
+                strArrayFiles[3] = DecodeAttributes(strArrayFiles[3]);
+
                 if ((strArrayFiles.Length > mNcolLengthLV) && StrValid(strArrayFiles[mNcolLengthLV]))
                 {
                     nLengthDebug += nLength = ulong.Parse(strArrayFiles[mNcolLengthLV]);
@@ -997,22 +1016,42 @@ namespace SearchDirLists
 
                 if (m_dictDriveInfo.ContainsKey(m_strFile))
                 {
-                    String strDriveInfo = m_dictDriveInfo[m_strFile];
-                    String[] arrDriveInfo = strDriveInfo.Split(new String[] { "\r\n", "\n" }, StringSplitOptions.None);
+                    String[] arrDriveInfo = m_dictDriveInfo[m_strFile].Split(new String[] { "\r\n", "\n" }, StringSplitOptions.None);
 
-                    Utilities.Assert(1301.2314, new int[] { 7, 8 }.Contains(arrDriveInfo.Length));
-                    m_statusCallback(lvVol: new SDL_ListViewItem(new String[] { "Available Free Space", FormatSize(arrDriveInfo[0], bBytes: true) }));
-                    m_statusCallback(lvVol: new SDL_ListViewItem(new String[] { "Drive Format", arrDriveInfo[1] }));
-                    m_statusCallback(lvVol: new SDL_ListViewItem(new String[] { "Drive Type", arrDriveInfo[2] }));
-                    m_statusCallback(lvVol: new SDL_ListViewItem(new String[] { "Name", arrDriveInfo[3] }));
-                    m_statusCallback(lvVol: new SDL_ListViewItem(new String[] { "Root Directory", arrDriveInfo[4] }));
-                    m_statusCallback(lvVol: new SDL_ListViewItem(new String[] { "Total Free Space", FormatSize(arrDriveInfo[5], bBytes: true) }));
-                    m_statusCallback(lvVol: new SDL_ListViewItem(new String[] { "Total Size", FormatSize(arrDriveInfo[6], bBytes: true) }));
+                    Utilities.Assert(1301.2314, new int[] { 7, 8, mAnDIviewOrder.Length }.Contains(arrDriveInfo.Length));
 
-                    if (arrDriveInfo.Length > 7)
+                    String[][] asItems = new String[arrDriveInfo.Length][];
+
+                    for (int i = 0; i < arrDriveInfo.Length; ++i)
                     {
-                        m_statusCallback(lvVol: new SDL_ListViewItem(new String[] { "Volume Label", arrDriveInfo[7] }));
+                        String[] a = arrDriveInfo[i].Split('\t');
+
+                        asItems[i] = new String[]
+                        {
+                            a[0],
+                            mAbDIsizeType[i] ? FormatSize(a[1], bBytes: true) : a[1]
+                        };
                     }
+
+                    SDL_ListViewItem[] lvItems = new SDL_ListViewItem[arrDriveInfo.Length];
+
+                    for (int ix = 0; ix < arrDriveInfo.Length; ++ix)
+                    {
+                        if ((mAnDIoptIfEqTo[ix] != -1) && (asItems[ix][1] == asItems[mAnDIoptIfEqTo[ix]][1]))
+                        {
+                            continue;
+                        }
+
+                        if (asItems[ix][1].Trim().Length == 0)
+                        {
+                            continue;
+                        }
+
+                        int ixA = (arrDriveInfo.Length == mAnDIviewOrder.Length) ? mAnDIviewOrder[ix] : ix;
+                        lvItems[ixA] = new SDL_ListViewItem(asItems[ix]);
+                    }
+
+                    m_statusCallback(lvVolDetails: lvItems.Where(i => i != null).ToArray());
                 }
             }
 

@@ -1195,7 +1195,7 @@ namespace SearchDirLists
             // columnHeader7
             // 
             this.columnHeader7.Text = "Attributes";
-            this.columnHeader7.Width = 80;
+            this.columnHeader7.Width = 100;
             // 
             // columnHeader8
             // 
@@ -1254,6 +1254,7 @@ namespace SearchDirLists
             // columnHeader21
             // 
             this.columnHeader21.Text = "Attributes";
+            this.columnHeader7.Width = 100;
             // 
             // columnHeader22
             // 
@@ -1335,7 +1336,7 @@ namespace SearchDirLists
             // form_colDirDetailCompare
             // 
             this.form_colDirDetailCompare.Text = "Volume detail";
-            this.form_colDirDetailCompare.Width = 150;
+            this.form_colDirDetailCompare.Width = 110;
             // 
             // form_colVolDetail
             // 

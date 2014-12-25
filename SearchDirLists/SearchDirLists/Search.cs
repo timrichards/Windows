@@ -128,9 +128,10 @@ namespace SearchDirLists
                 return;
             }
 
-            SDL_ListViewItem lvItem = (SDL_ListViewItem)form_lvFiles.FindItemWithText(gd.m_strSelectFile, includeSubItemsInSearch: true, startIndex: 0);
+            // Includes subitems in search
+            SDL_ListViewItem lvItem = (SDL_ListViewItem)form_lvFiles.FindItemWithText(gd.m_strSelectFile, true, 0, false);
 
-            if (lvItem != null)
+            if ((lvItem != null) && Utilities.Assert(0, lvItem.Text == gd.m_strSelectFile))
             {
                 form_tabControlFileList.SelectedTab = form_tabPageFileList;
                 gd.m_blinky.SelectLVitem(lvItem: lvItem);

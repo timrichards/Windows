@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using System.Management;
+using System.Security.AccessControl;
 
 namespace SearchDirLists
 {
@@ -160,7 +161,7 @@ namespace SearchDirLists
         readonly UList<LVvolStrings> m_list_lvVolStrings = new UList<LVvolStrings>();
 
         internal int FilesWritten { get; set; }
-        internal static bool ComputeChecksum = false;
+        internal static bool DoFakeChecksum = true;
 
         class SaveDirListing
         {
@@ -200,13 +201,22 @@ namespace SearchDirLists
 
                 // device info
 
+                var letter = strPath.Substring(0, 2);
+
                 String strModel = null;
                 String strSerialNo = null;
                 object nSize = null;
 
-                var letter = strPath.Substring(0, 2);
+                bool bWMI = false;
 
-                new ManagementObjectSearcher(
+                try
+                {
+                    bWMI = (new System.ServiceProcess.ServiceController("Winmgmt").Status == System.ServiceProcess.ServiceControllerStatus.Running);
+                }
+                catch (InvalidOperationException) { }
+
+                if (bWMI)
+                    new ManagementObjectSearcher(
                         new ManagementScope("\\\\.\\ROOT\\cimv2"),
                         new ObjectQuery("SELECT * FROM Win32_LogicalDisk WHERE DeviceID='" + letter + "'")
                 ).Get().Cast<ManagementObject>().FirstOnlyAssert(new Action<ManagementObject>((logicalDisk) =>
@@ -239,12 +249,14 @@ namespace SearchDirLists
                 fs.WriteLine(mSTRdrive01);
                 DriveInfo driveInfo = new DriveInfo(strPath.Substring(0, strPath.IndexOf(Path.DirectorySeparatorChar)));
 
+                var sb = new System.Text.StringBuilder();
+
                 var WriteLine = new Action<Object>((o) =>
                 {
                     String s = (o != null) ? o.ToString() : null;
 
                     // Hack. Prevent blank line continue in Utilities.Convert()
-                    fs.WriteLine(((s == null) || (s.Length <= 0)) ? " " : s.Trim());
+                    sb.AppendLine(((s == null) || (s.Length <= 0)) ? " " : s.Trim());
                 });
 
                 WriteLine(driveInfo.AvailableFreeSpace); // These could all be named better, so mAstrDIlabels is different.
@@ -255,9 +267,11 @@ namespace SearchDirLists
                 WriteLine(driveInfo.TotalFreeSpace);
                 WriteLine(driveInfo.TotalSize);
                 WriteLine(driveInfo.VolumeLabel);
-                WriteLine(strModel);
-                WriteLine(strSerialNo);
-                WriteLine(nSize);
+                if (strModel != null) WriteLine(strModel);
+                if (strSerialNo != null) WriteLine(strSerialNo);
+                if (nSize != null) WriteLine(nSize);
+
+                fs.WriteLine(sb.ToString().Trim());
             }
 
             class ResultItem
@@ -279,6 +293,18 @@ namespace SearchDirLists
                     strError2_File = strError2_in;
                 }
             }
+ 
+
+//[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, BestFitMapping = false), SuppressUnmanagedCodeSecurity]
+[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+internal static extern Microsoft.Win32.SafeHandles.SafeFileHandle CreateFile(
+    string lpFileName,
+    FileAccess dwDesiredAccess,
+    FileShare dwShareMode,
+    IntPtr lpSecurityAttributes,
+    int dwCreationDisposition,
+    FileAttributes dwFlagsAndAttributes,
+    IntPtr hTemplateFile);
 
             void TraverseTree(TextWriter fs, String root)
             {
@@ -290,7 +316,7 @@ namespace SearchDirLists
                 Win32FindFile.FileData.WinFile(root, out winRoot);
                 stackDirs.Push(winRoot);
 
-                Queue<Task<ResultItem>> queueTasks = new Queue<Task<ResultItem>>();
+                Queue<Task<ResultItem>> queueTasks = new Queue<Task<ResultItem>>();                 // TODO/WIP
 
                 while (stackDirs.Count > 0)
                 {
@@ -300,8 +326,6 @@ namespace SearchDirLists
                     }
 
                     Win32FindFile.DATUM winDir = stackDirs.Pop();
-                    long nDirLength = 0;
-                    bool bHasLength = false;
                     String strFullPath = winDir.strAltFileName;
                     String strError2_Dir = CheckNTFS_chars(ref strFullPath);
 
@@ -312,57 +336,48 @@ namespace SearchDirLists
                         continue;
                     }
 
-                    Dictionary<String, String> dictChecksum = new Dictionary<string,string>();
+                    long nDirLength = 0;
+                    bool bHasLength = false;
+                    Dictionary<String, String> dictChecksum = new Dictionary<string, string>();
+                    Dictionary<String, String> dictException_FileRead = new Dictionary<string, string>();
+                    String P = Path.DirectorySeparatorChar.ToString();
+                    String PP = P + P;
 
-                    if (ComputeChecksum) Parallel.ForEach(listFiles, t =>
+                    if (DoFakeChecksum)
+                        Parallel.ForEach(listFiles, winData =>
                     {
-                        using (var md5 = System.Security.Cryptography.MD5.Create())
+                        Win32FindFile.FileData fi = new Win32FindFile.FileData(winData);
+
+                        if ((fi.IsValid == false) || (fi.Size <= 0))
                         {
-                            try
+                            return;     // return from lambda
+                        }
+
+                        Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle =
+                            CreateFile(PP + '?' + P + winData.strAltFileName, FileAccess.Read, FileShare.ReadWrite, IntPtr.Zero, 3, 0, IntPtr.Zero);
+
+                        if (fileHandle.IsInvalid)
+                        {
+                            dictException_FileRead[winData.strFileName] = new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message;
+                            return;     // return from lambda
+                        }
+
+                        using (var fsA = new FileStream(fileHandle, FileAccess.Read))
+                        {
+                            const int kBufferSize = 4096;   // Checksum is fake because just reading in the first 4K of the file
+
+                            byte[] buffer = new byte[kBufferSize];
+
+                            fsA.Read(buffer, 0, kBufferSize);
+
+                            using (var md5 = System.Security.Cryptography.MD5.Create())
                             {
-                                using (Stream stream = new BufferedStream(File.OpenRead(strFullPath + Path.DirectorySeparatorChar + t.strFileName), 1024 * 1024))
+                                String strChecksum = DRDigit.Fast.ToHexString(md5.ComputeHash(buffer));
+
+                                lock (dictChecksum)
                                 {
-                                    const int nMAX = 1024 * 1024 * 16;
-                                    byte[] checksum = null;
-
-                                    if (stream.Length <= nMAX)
-                                    {
-                                        byte[] data = new byte[stream.Length];
-                                        int offset = 0;
-                                        int remaining = data.Length;
-
-                                        while (remaining > 0)
-                                        {
-                                            int read = stream.Read(data, offset, remaining);
-
-                                            if (read <= 0)
-                                            {
-                                                throw new EndOfStreamException(String.Format("End of stream reached with {0} bytes left to read", remaining));
-                                            }
-
-                                            remaining -= read;
-                                            offset += read;
-                                        }
-
-                                        checksum = md5.ComputeHash(data);
-                                    }
-                                    else
-                                    {
-                                        checksum = md5.ComputeHash(stream);
-                                    }
-
-                                    String strChecksum = DRDigit.Fast.ToHexString(checksum);
-
-                                    lock (dictChecksum)
-                                    {
-                                        dictChecksum[t.strFileName] = strChecksum;
-                                    }
+                                    dictChecksum[winData.strFileName] = strChecksum;
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                Utilities.WriteLine(ex.Message);
-                                FlashWindow.Go(Once: true);
                             }
                         }
                     });
@@ -371,7 +386,7 @@ namespace SearchDirLists
                     {
                         Win32FindFile.FileData fi = new Win32FindFile.FileData(winData);
                         String strFile = winData.strFileName;
-                        String strError2_File = CheckNTFS_chars(ref strFile, bFile: true);
+                        String strError2_File = CheckNTFS_chars(ref strFile, bFile: true) ?? "";
 
                         if (fi.IsValid == false)
                         {
@@ -407,6 +422,12 @@ namespace SearchDirLists
                         if (dictChecksum.ContainsKey(strFile))
                         {
                             strChecksum = dictChecksum[strFile];
+                        }
+
+                        if (dictException_FileRead.ContainsKey(strFile))
+                        {
+                            strError2_File += " " + dictException_FileRead[strFile];
+                            strError2_File = strError2_File.TrimStart();
                         }
 
                         String strOut = FormatString(strFile: strFile, dtCreated: fi.CreationTime, strAttributes: ((int)fi.Attributes).ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File, strChecksum: strChecksum);

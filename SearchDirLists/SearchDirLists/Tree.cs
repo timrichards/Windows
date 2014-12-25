@@ -345,6 +345,13 @@ namespace SearchDirLists
 
                 internal SDL_TreeNode AddToTree(String strVolumeName)
                 {
+                    var nodes = m_rootNode.Nodes.Values;
+
+                    if (nodes.Count <= 0)
+                    {
+                        return null;
+                    }
+
                     return m_rootNode.Nodes.Values.First().AddToTree(strVolumeName);
                 }
             }
@@ -616,33 +623,27 @@ namespace SearchDirLists
 
                         if (strArray.Length > 3)
                         {
-                            String s = strArray[3];
-
-                            strBuilder.AppendLine(strArray[2] + '\t' + s);
-
-                            if ((strArray[2] == Utilities.mAstrDIlabels[5]) && StrValid(s))
-                            {
-                                nVolFree = ulong.Parse(s);
-                            }
-                            else if ((strArray[2] == Utilities.mAstrDIlabels[6]) && StrValid(s))
-                            {
-                                nVolLength = ulong.Parse(s);
-                            }
+                            strBuilder.Append(strArray[2]);
                         }
                         else if (strArray.Length > 2)
                         {
-                            String s = strArray[2];
+                            strBuilder.Append(Utilities.mAstrDIlabels[nIx]);
+                        }
+                        else
+                        {
+                            continue;
+                        }
 
-                            strBuilder.AppendLine(Utilities.mAstrDIlabels[nIx] + '\t' + s);
+                        String s = strArray[strArray.Length - 1];
+                        strBuilder.AppendLine('\t' + s);
 
-                            if ((nIx == 5) && StrValid(s))
-                            {
-                                nVolFree = ulong.Parse(s);
-                            }
-                            else if ((nIx == 6) && StrValid(s))
-                            {
-                                nVolLength = ulong.Parse(s);
-                            }
+                        if ((nIx == 5) && StrValid(s))
+                        {
+                            nVolFree = ulong.Parse(s);
+                        }
+                        else if ((nIx == 6) && StrValid(s))
+                        {
+                            nVolLength = ulong.Parse(s);
                         }
                     }
 
@@ -654,7 +655,7 @@ namespace SearchDirLists
                             m_dictDriveInfo.Remove(strSaveAs);
                         }
 
-                        m_dictDriveInfo.Add(strSaveAs, strBuilder.ToString().Trim());
+                        m_dictDriveInfo.Add(strSaveAs, strBuilder.ToString().Trim(new char[] { '\r', '\n' }));
                     }
                 }
 
@@ -699,8 +700,12 @@ namespace SearchDirLists
 
                 SDL_TreeNode rootTreeNode = dirData.AddToTree(strVolumeName);
 
-                rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag, strSaveAs, m_volStrings.VolumeGroup, nVolFree, nVolLength);
-                TreeSubnodeDetails(rootTreeNode);
+                if (rootTreeNode != null)
+                {
+                    rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag, strSaveAs, m_volStrings.VolumeGroup, nVolFree, nVolLength);
+                    TreeSubnodeDetails(rootTreeNode);
+                }
+
                 m_statusCallback(m_volStrings, rootTreeNode);
 
                 if (bZeroLengthsWritten)
@@ -717,7 +722,12 @@ namespace SearchDirLists
 
                 Utilities.WriteLine(nScannedLength.ToString());
 
-                ulong nTotalLength = ((RootNodeDatum)rootTreeNode.Tag).nTotalLength;
+                ulong nTotalLength = 0;
+
+                if (rootTreeNode != null)
+                {
+                    nTotalLength = ((RootNodeDatum)rootTreeNode.Tag).nTotalLength;
+                }
 
                 if (nScannedLength != nTotalLength)
                 {
@@ -1026,6 +1036,11 @@ namespace SearchDirLists
                     {
                         String[] a = arrDriveInfo[i].Split('\t');
 
+                        if (a[1].Trim().Length == 0)
+                        {
+                            continue;
+                        }
+
                         asItems[i] = new String[]
                         {
                             a[0],
@@ -1037,17 +1052,18 @@ namespace SearchDirLists
 
                     for (int ix = 0; ix < arrDriveInfo.Length; ++ix)
                     {
+                        if ((asItems[ix] == null) || (asItems[ix].Length == 0) || (asItems[ix][1].Trim().Length == 0))
+                        {
+                            continue;
+                        }
+
                         if ((mAnDIoptIfEqTo[ix] != -1) && (asItems[ix][1] == asItems[mAnDIoptIfEqTo[ix]][1]))
                         {
                             continue;
                         }
 
-                        if (asItems[ix][1].Trim().Length == 0)
-                        {
-                            continue;
-                        }
-
                         int ixA = (arrDriveInfo.Length == mAnDIviewOrder.Length) ? mAnDIviewOrder[ix] : ix;
+
                         lvItems[ixA] = new SDL_ListViewItem(asItems[ix]);
                     }
 

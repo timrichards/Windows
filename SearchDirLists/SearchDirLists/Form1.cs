@@ -146,10 +146,15 @@ namespace SearchDirLists
                 return false;
             }
 
-            if (form_lvVolumesMain.FindItemWithText(gd.m_strSaveAs) != null)
+            if (form_lvVolumesMain.Items.Count > 0)
             {
-                gd.FormError(form_cbSaveAs, "File already in use in list of volumes.", "Volume Save As");
-                return false;
+                ListViewItem lvItem = form_lvVolumesMain.FindItemWithText(gd.m_strSaveAs, false, 0, false);
+
+                if ((lvItem != null) && Utilities.Assert(0, lvItem.Text == gd.m_strVolumeName))
+                {
+                    gd.FormError(form_cbSaveAs, "File already in use in list of volumes.", "Volume Save As");
+                    return false;
+                }
             }
 
             bool bOpenedFile = (Utilities.StrValid(gd.m_strPath) == false);
@@ -225,11 +230,11 @@ namespace SearchDirLists
                 return false;
             }
 
-            if (Utilities.StrValid(gd.m_strVolumeName))
+            if ((form_lvVolumesMain.Items.Count > 0) && (Utilities.StrValid(gd.m_strVolumeName)))
             {
-                SDL_ListViewItem lvItem = (SDL_ListViewItem)form_lvVolumesMain.FindItemWithText(gd.m_strVolumeName);
+                SDL_ListViewItem lvItem = (SDL_ListViewItem)form_lvVolumesMain.FindItemWithText(gd.m_strVolumeName, false, 0, false);
 
-                if ((lvItem != null) && (lvItem.Text == gd.m_strVolumeName))
+                if ((lvItem != null) && Utilities.Assert(0, lvItem.Text == gd.m_strVolumeName))
                 {
                     gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red);
 

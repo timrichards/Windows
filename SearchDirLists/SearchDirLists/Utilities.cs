@@ -612,6 +612,8 @@ namespace SearchDirLists
                 return c.Count;
             }
 
+            Utilities.WriteLine("Count<" + source + "> is not an ICollection: must GetEnumerator()");
+
             using (IEnumerator<T> enumerator = source.GetEnumerator())
             {
                 int result = 0;
@@ -1316,7 +1318,7 @@ namespace SearchDirLists
                                     break;
                                 }
 
-                                file_out.WriteLine(FormatLine(mSTRlineType_DriveInfo, nLineNo, mAstrDIlabels[ixDriveInfo] + '\t' + strLine));
+                                file_out.WriteLine(FormatLine(mSTRlineType_DriveInfo, nLineNo, strLine));
                             }
 
                             if (ixDriveInfo == mAstrDIlabels.Length)
@@ -1430,7 +1432,7 @@ namespace SearchDirLists
         internal static String DecodeAttributes(String strAttr)
         {
             FileAttributes nAttr = (FileAttributes)Convert.ToInt32(strAttr, 16);
-            String str = " ";
+            String str = "";
 
             if ((nAttr & FileAttributes.ReparsePoint) != 0) str += " ReparsePoint";
             if ((nAttr & FileAttributes.Normal) != 0) str += " Normal";
@@ -1444,10 +1446,8 @@ namespace SearchDirLists
 
             str = str.TrimStart();
 
-            String zerox = "0x" + strAttr;
-            
-            if (str.Length == 0) str = zerox;
-            else str += " (" + zerox + ")";
+            if (str.Length == 0) str = strAttr;
+            else str += " (" + strAttr + ")";
 
             return str;
         }
@@ -1591,7 +1591,7 @@ namespace SearchDirLists
                 }
                 else if (nHeader == 1)
                 {
-                    return "Dir" + '\t' + "File" + '\t' + "Created" + '\t' + "Modded" + '\t' + "Attrib" + '\t' + "Length" + '\t' + "Error1" + '\t' + "Error2" + '\t' + "Checksum";
+                    return "Dir" + '\t' + "File" + '\t' + "Created" + '\t' + "Modded" + '\t' + "Attrib" + '\t' + "Length" + '\t' + "Error1" + '\t' + "Error2" + '\t' + "FakeChecksum";
                 }
             }
 

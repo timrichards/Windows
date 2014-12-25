@@ -140,7 +140,7 @@ namespace SearchDirLists
             }
             else
             {
-                Utilities.Assert(1304.5309, false);
+                Utilities.Assert(1304.5309, false, "No data. Could be the directory is Access Denied.");
             }
         }
 

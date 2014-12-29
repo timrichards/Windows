@@ -214,7 +214,7 @@ namespace SearchDirLists
                 while (stack.Count > 0)
                 {
                     nodeParent = stack.Pop();
-                    sb.Append(nodeParent.Text + Path.DirectorySeparatorChar);
+                    sb.Append(nodeParent.Text + '\\');
                 }
 
                 sb.Append(Text);
@@ -603,6 +603,17 @@ namespace SearchDirLists
 
     static class ExtensionMethods
     {
+        public static String ToPrintString(this object source)
+        {
+            if (source == null) return null;
+
+            String s = String.Join("", source.ToString().Cast<char>().Where(c => Char.IsControl(c) == false)).Trim();
+
+            if (s.Length == 0) return null;                             // Returns null if empty
+
+            return s;
+        }
+
         public static int Count<T>(this IEnumerable<T> source)
         {
             ICollection<T> c = source as ICollection<T>;
@@ -750,41 +761,38 @@ namespace SearchDirLists
 
     class LVvolStrings : Utilities
     {
-        readonly String m_strVolumeName = null;
-        readonly String m_strPath = null;
-        readonly String m_strSaveAs = null;
-        String m_strStatus = null;
-        readonly String m_strInclude = null;
-        readonly String m_strVolumeGroup = null;
         readonly SDL_ListViewItem m_lvItem = null;
-        internal String VolumeName { get { return m_strVolumeName; } }
-        internal String StrPath { get { return m_strPath; } }
-        internal String SaveAs { get { return m_strSaveAs; } }
-        internal String Status { get { return m_strStatus; } }
-        internal String Include { get { return m_strInclude; } }
-        internal String VolumeGroup { get { return m_strVolumeGroup; } }
+        internal String VolumeName { get; private set; }
+        internal String StrPath { get; private set; }
+        internal String SaveAs { get; private set; }
+        internal String Status { get; private set; }
+        internal String Include { get; private set; }
+        internal String VolumeGroup { get; private set; }
+        internal String DriveModel { get; private set; }
+        internal String DriveSerial { get; private set; }
+        internal int DriveSize { get; private set; }
 
         internal LVvolStrings(VolumeLVitemVM lvItem)
         {
-            m_strVolumeName = lvItem.VolumeName;
-            m_strPath = lvItem.Path;
-            m_strSaveAs = lvItem.SaveAs;
-            m_strStatus = lvItem.Status;
-            m_strInclude = lvItem.IncludeStr;
-            m_strVolumeGroup = lvItem.VolumeGroup;
+            VolumeName = lvItem.VolumeName;
+            StrPath = lvItem.Path;
+            SaveAs = lvItem.SaveAs;
+            Status = lvItem.Status;
+            Include = lvItem.IncludeStr;
+            VolumeGroup = lvItem.VolumeGroup;
         }
 
         internal LVvolStrings(SDL_ListViewItem lvItem)
         {
-            m_strVolumeName = lvItem.SubItems[0].Text;
-            m_strPath = lvItem.SubItems[1].Text;
-            m_strSaveAs = lvItem.SubItems[2].Text;
-            m_strStatus = lvItem.SubItems[3].Text;
-            m_strInclude = lvItem.SubItems[4].Text;
+            VolumeName = lvItem.SubItems[0].Text;
+            StrPath = lvItem.SubItems[1].Text;
+            SaveAs = lvItem.SubItems[2].Text;
+            Status = lvItem.SubItems[3].Text;
+            Include = lvItem.SubItems[4].Text;
 
             if ((lvItem.SubItems.Count > 5) && StrValid(lvItem.SubItems[5].Text))
             {
-                m_strVolumeGroup = lvItem.SubItems[5].Text;
+                VolumeGroup = lvItem.SubItems[5].Text;
             }
 
             m_lvItem = lvItem;
@@ -803,7 +811,7 @@ namespace SearchDirLists
         internal void SetStatus_BadFile(Forms.ListView lv)
         {
             m_lvItem.SubItems[3].Text =
-                m_strStatus = "Bad file. Will overwrite.";
+                Status = "Bad file. Will overwrite.";
         }
 
         internal void SetStatus_Done(Forms.ListView lv, SDL_TreeNode rootNode)
@@ -1015,7 +1023,7 @@ namespace SearchDirLists
                 }
             }
 
-            strArray[1] = strArray[1].TrimEnd(Path.DirectorySeparatorChar);
+            strArray[1] = strArray[1].TrimEnd('\\');
 #if (WPF)
             lv.NewItem(strArray);
 #else
@@ -1025,7 +1033,7 @@ namespace SearchDirLists
 
         protected override String WriteListItem(int nIndex, String str)
         {
-            return (nIndex == 1) ? str.TrimEnd(Path.DirectorySeparatorChar) : str;
+            return (nIndex == 1) ? str.TrimEnd('\\') : str;
         }
     }
 
@@ -1381,18 +1389,14 @@ namespace SearchDirLists
                             file_out.WriteLine(FormatLine(bAtErrors ? mSTRlineType_ErrorFile : mSTRlineType_File, nLineNo, strTab + strLine));
                             continue;
                         }
-                        else if (strDir.Contains(":" + Path.DirectorySeparatorChar) == false)
+                        else if (strDir.Contains(@":\") == false)
                         {
                             Utilities.Assert(1303.4311, false);        // all that's left is directories
                             continue;
                         }
 
                         // directory
-                        String P = Path.DirectorySeparatorChar.ToString();
-                        String PP = P + P;
-                        String str = strLine.Replace(PP, P);
-
-                        file_out.WriteLine(FormatLine(bAtErrors ? mSTRlineType_ErrorDir : mSTRlineType_Directory, nLineNo, str));
+                        file_out.WriteLine(FormatLine(bAtErrors ? mSTRlineType_ErrorDir : mSTRlineType_Directory, nLineNo, strLine.Replace(@"\\", @"\")));
                     }
                 }
             }
@@ -1463,7 +1467,7 @@ namespace SearchDirLists
 
             if ((StrValid(strDirName) == false) || Directory.Exists(strDirName))
             {
-                String strCapDrive = strPath.Substring(0, strPath.IndexOf(":" + Path.DirectorySeparatorChar) + 2);
+                String strCapDrive = strPath.Substring(0, strPath.IndexOf(@":\") + 2);
 
                 strPath = Path.GetFullPath(strPath).Replace(strCapDrive, strCapDrive.ToUpper());
 
@@ -1473,7 +1477,7 @@ namespace SearchDirLists
                 }
                 else
                 {
-                    strPath = strPath.TrimEnd(Path.DirectorySeparatorChar);
+                    strPath = strPath.TrimEnd('\\');
                     Utilities.Assert(1303.4313, StrValid(strDirName));
                 }
             }
@@ -1489,7 +1493,7 @@ namespace SearchDirLists
         {
             if (StrValid(strPath))
             {
-                strPath += Path.DirectorySeparatorChar;
+                strPath += '\\';
 
                 if (FormatPath(ref strPath, bFailOnDirectory) == false)
                 {
@@ -1818,11 +1822,9 @@ namespace SearchDirLists
 
             internal static bool WinFile(String strFile, out DATUM winFindData)
             {
-                String P = Path.DirectorySeparatorChar.ToString();
-                String PP = P + P;
-                IntPtr handle = FindFirstFileExW(PP + '?' + P + strFile, IndexInfoLevels.FindExInfoBasic, out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
+                IntPtr handle = FindFirstFileExW(@"\\?\" + strFile, IndexInfoLevels.FindExInfoBasic, out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
 
-                winFindData.strAltFileName = strFile.Replace(PP, P);                        // 8.3 not used
+                winFindData.strAltFileName = strFile.Replace(@"\\", @"\");                        // 8.3 not used
                 return (handle != InvalidHandleValue);
             }
 
@@ -1865,10 +1867,8 @@ namespace SearchDirLists
 
         internal static bool GetDirectory(String strDir, ref List<DATUM> listDirs, ref List<DATUM> listFiles)
         {
-            String P = Path.DirectorySeparatorChar.ToString();
-            String PP = P + P;
             DATUM winFindData;
-            IntPtr handle = FindFirstFileExW(PP + '?' + P + strDir + P + '*', IndexInfoLevels.FindExInfoBasic, out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
+            IntPtr handle = FindFirstFileExW(@"\\?\" + strDir + @"\*", IndexInfoLevels.FindExInfoBasic, out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
 
             if (handle == InvalidHandleValue)
             {
@@ -1885,7 +1885,7 @@ namespace SearchDirLists
                     continue;
                 }
 
-                winFindData.strAltFileName = (strDir + P + winFindData.strFileName).Replace(PP, P);     // 8.3 not used
+                winFindData.strAltFileName = (strDir + '\\' + winFindData.strFileName).Replace(@"\\", @"\");     // 8.3 not used
 
                 if ((winFindData.fileAttributes & FileAttributes.Directory) != 0)
                 {

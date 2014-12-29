@@ -30,8 +30,8 @@ namespace SearchDirLists
     delegate MBoxRet MBoxDelegate(String strMessage, String strTitle = null, MBoxBtns? buttons = null);
 
 #if (WPF == false)
-        //[System.ComponentModel.DesignerCategory("Designer")]
-    [System.ComponentModel.DesignerCategory("Code")]
+        [System.ComponentModel.DesignerCategory("Designer")]
+   // [System.ComponentModel.DesignerCategory("Code")]
     partial class Form1 : Form
     {
         readonly GlobalData gd = null;
@@ -146,14 +146,22 @@ namespace SearchDirLists
                 return false;
             }
 
+            ListViewItem lvItem_Remove = null;
+
             if (form_lvVolumesMain.Items.Count > 0)
             {
                 ListViewItem lvItem = form_lvVolumesMain.FindItemWithText(gd.m_strSaveAs, false, 0, false);
 
                 if ((lvItem != null) && Utilities.Assert(0, lvItem.Text == gd.m_strVolumeName))
                 {
-                    gd.FormError(form_cbSaveAs, "File already in use in list of volumes.", "Volume Save As");
-                    return false;
+                    if (Utilities.MBox("Update existing item?", "Volume Save As", MBoxBtns.YesNo)
+                        != MBoxRet.Yes)
+                    {
+                        return false;
+                    }
+
+                    lvItem_Remove = lvItem;
+                    Utilities.Assert(1308.93055, SaveFields(false));
                 }
             }
 
@@ -230,15 +238,32 @@ namespace SearchDirLists
                 return false;
             }
 
-            if ((form_lvVolumesMain.Items.Count > 0) && (Utilities.StrValid(gd.m_strVolumeName)))
+            if (Utilities.StrValid(gd.m_strVolumeName))
             {
-                SDL_ListViewItem lvItem = (SDL_ListViewItem)form_lvVolumesMain.FindItemWithText(gd.m_strVolumeName, false, 0, false);
+                if (form_lvVolumesMain.Items.Count > 0)
+                {
+                    SDL_ListViewItem lvItem = (SDL_ListViewItem)form_lvVolumesMain.FindItemWithText(gd.m_strVolumeName, false, 0, false);
 
-                if ((lvItem != null) && Utilities.Assert(0, lvItem.Text == gd.m_strVolumeName))
+                    if ((lvItem != null) && Utilities.Assert(0, lvItem.Text == gd.m_strVolumeName))
+                    {
+                        gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red);
+
+                        if (Utilities.MBox("Nickname already in use. Use it for more than one volume?", "Volume Save As", MBoxBtns.YesNo)
+                            != MBoxRet.Yes)
+                        {
+                            gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red, Once: true);
+                            return false;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (bOpenedFile == false)
                 {
                     gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red);
 
-                    if (Utilities.MBox("Nickname already in use. Use it for more than one volume?", "Volume Save As", MBoxBtns.YesNo)
+                    if (Utilities.MBox("Continue without entering a nickname for this volume?", "Volume Save As", MBoxBtns.YesNo)
                         != MBoxRet.Yes)
                     {
                         gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red, Once: true);
@@ -246,16 +271,10 @@ namespace SearchDirLists
                     }
                 }
             }
-            else if (bOpenedFile == false)
-            {
-                gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red);
 
-                if (Utilities.MBox("Continue without entering a nickname for this volume?", "Volume Save As", MBoxBtns.YesNo)
-                    != MBoxRet.Yes)
-                {
-                    gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red, Once: true);
-                    return false;
-                }
+            if (lvItem_Remove != null)
+            {
+                lvItem_Remove.Remove();
             }
 
             {
@@ -342,13 +361,13 @@ namespace SearchDirLists
         {
             if (Directory.Exists(Path.GetFullPath(strPath)))
             {
-                String strCapDrive = strPath.Substring(0, strPath.IndexOf(":" + Path.DirectorySeparatorChar) + 2);
+                String strCapDrive = strPath.Substring(0, strPath.IndexOf(@":\") + 2);
 
                 strPath = Path.GetFullPath(strPath).Replace(strCapDrive, strCapDrive.ToUpper());
 
                 if (strPath != strCapDrive.ToUpper())
                 {
-                    strPath = strPath.TrimEnd(Path.DirectorySeparatorChar);
+                    strPath = strPath.TrimEnd('\\');
                 }
 
                 ctl.Text = strPath;
@@ -360,7 +379,7 @@ namespace SearchDirLists
                 return false;
             }
 
-            strPath = strPath.TrimEnd(Path.DirectorySeparatorChar);
+            strPath = strPath.TrimEnd('\\');
             return true;
         }
 
@@ -498,7 +517,7 @@ namespace SearchDirLists
 
             if (Utilities.StrValid(gd.m_strPath))
             {
-                gd.m_strPath += Path.DirectorySeparatorChar;
+                gd.m_strPath += '\\';
 
                 if (FormatPath(form_cbPath, ref gd.m_strPath, bFailOnDirectory) == false)
                 {
@@ -1797,11 +1816,6 @@ namespace SearchDirLists
             gd.LV_MarkerClick(form_lvUnique);
         }
 
-        void form_lvVolumesMain_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
-        {
-            EnableButtonsWhenVolsSel();
-        }
-
         void form_lvVolumesMain_KeyUp(object sender, KeyEventArgs e)
         {
             if (new Keys[] { Keys.Back, Keys.Delete }.Contains(e.KeyCode))
@@ -1947,9 +1961,9 @@ namespace SearchDirLists
                 String strDirAndVolume = strNode;
                 String strVolume = rootNode.ToolTipText;
 
-                if (strVolume.Contains(Path.DirectorySeparatorChar))
+                if (strVolume.Contains('\\'))
                 {
-                    strVolume = strVolume.Substring(0, strVolume.IndexOf(Path.DirectorySeparatorChar));
+                    strVolume = strVolume.Substring(0, strVolume.IndexOf('\\'));
                     strDirAndVolume += " (on " + strVolume + ")";
                 }
 
@@ -2150,6 +2164,7 @@ namespace SearchDirLists
 
         void Form1_Load(object sender, EventArgs e)
         {
+            new VolumeEdit().ShowDialog();
             form_tmapUserCtl.TooltipAnchor = (Control)form_cbFindbox;
 
 #if (DEBUG)
@@ -2244,6 +2259,41 @@ namespace SearchDirLists
             DoTree(bKill: gd.m_bKillTree);
             gd.m_bKillTree = true;
             gd.m_bRestartTreeTimer = false;
+        }
+
+        private void form_btnDriveSerial_Click(object sender, EventArgs e)
+        {
+            String strModel = null;
+            String strSerialNo = null;
+            int? nSize = null;
+
+            DriveSerial.Get(form_cbPath.Text, out strModel, out strSerialNo, out nSize);
+
+            form_cbDriveModel.Text = strModel;
+            form_cbDriveSerial.Text = strSerialNo;
+        }
+
+        private void form_cbPath_TextChanged(object sender, EventArgs e)
+        {
+            String str = form_cbPath.Text.Trim();
+
+            form_btnDriveSerial.Enabled = ((str.Length > 1) && (str[1] == ':'));
+        }
+
+        private void form_lvVolumesMain_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            EnableButtonsWhenVolsSel();
+
+            if (form_lvVolumesMain.SelectedItems.Count <= 0)
+            {
+                return;
+            }
+
+            ListViewItem lvItem = form_lvVolumesMain.SelectedItems[0];
+
+            form_cbVolumeName.Text = lvItem.Text;
+            form_cbPath.Text = lvItem.SubItems[1].Text;
+            form_cbSaveAs.Text = lvItem.SubItems[2].Text;
         }
     }
 
@@ -2468,34 +2518,32 @@ namespace SearchDirLists
                 return null;
             }
 
-            StringBuilder stbFullPath = null;
+            StringBuilder sbFullPath = null;
             SDL_TreeNode parentNode = (SDL_TreeNode)treeNode.Parent;
-            String P = Path.DirectorySeparatorChar.ToString();
-            String PP = P + P;
 
             if (parentNode == null)
             {
-                stbFullPath = new StringBuilder(treeNode.Name);
+                sbFullPath = new StringBuilder(treeNode.Name);
             }
             else
             {
-                stbFullPath = new StringBuilder(treeNode.Text);
+                sbFullPath = new StringBuilder(treeNode.Text);
             }
 
             while ((parentNode != null) && (parentNode.Parent != null))
             {
-                stbFullPath.Insert(0, P);
-                stbFullPath.Insert(0, parentNode.Text.TrimEnd(Path.DirectorySeparatorChar));
+                sbFullPath.Insert(0, '\\');
+                sbFullPath.Insert(0, parentNode.Text.TrimEnd('\\'));
                 parentNode = (SDL_TreeNode)parentNode.Parent;
             }
 
             if ((parentNode != null) && (parentNode.Parent == null))
             {
-                stbFullPath.Insert(0, P);
-                stbFullPath.Insert(0, parentNode.Name.TrimEnd(Path.DirectorySeparatorChar));
+                sbFullPath.Insert(0, '\\');
+                sbFullPath.Insert(0, parentNode.Name.TrimEnd('\\'));
             }
 
-            return stbFullPath.ToString().Replace(PP, P);
+            return sbFullPath.ToString().Replace(@"\\", @"\");
         }
 
         internal SDL_TreeNode History_GetAt(int n)

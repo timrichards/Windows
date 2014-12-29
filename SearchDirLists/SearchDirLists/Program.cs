@@ -12,6 +12,7 @@ namespace SearchDirLists
         static void Main()
         {
 #if (WPF)
+            new VolumeEdit().ShowDialog();
             new App().Run();
 #else
             if (Environment.OSVersion.Version.Major >= 6) SetProcessDPIAware();

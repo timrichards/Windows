@@ -283,11 +283,11 @@ namespace SearchDirLists
                     treeView = SDLWPF.treeViewCompare2;
                     continue;
                 }
-                else if (form_cbFindbox.Text.Contains(Path.DirectorySeparatorChar))
+                else if (form_cbFindbox.Text.Contains('\\'))
                 {
-                    Utilities.Assert(1307.8313, form_cbFindbox.Text.EndsWith(Path.DirectorySeparatorChar.ToString()) == false);
+                    Utilities.Assert(1307.8313, form_cbFindbox.Text.EndsWith(@"\") == false);
 
-                    int nPos = form_cbFindbox.Text.LastIndexOf(Path.DirectorySeparatorChar);
+                    int nPos = form_cbFindbox.Text.LastIndexOf('\\');
                     String strMaybePath = form_cbFindbox.Text.Substring(0, nPos);
                     SDL_TreeNode treeNode = gd.GetNodeByPath(strMaybePath, SDLWPF.treeViewMain);
 
@@ -439,7 +439,7 @@ namespace SearchDirLists
                         String strMatchDir = null;
                         String strMatchFile = null;
 
-                        if (bDir) { strMatchDir = arrLine[2].TrimEnd(Path.DirectorySeparatorChar); }
+                        if (bDir) { strMatchDir = arrLine[2].TrimEnd('\\'); }
                         if (bFile) { strMatchFile = arrLine[3]; }
 
                         if (m_bCaseSensitive == false)
@@ -465,7 +465,7 @@ namespace SearchDirLists
 
                         String strDir = null;
 
-                        if (bDir) { strDir = arrLine[2].TrimEnd(Path.DirectorySeparatorChar); }
+                        if (bDir) { strDir = arrLine[2].TrimEnd('\\'); }
 
                         if (bDir && (searchResultDir != null))
                         {
@@ -476,11 +476,11 @@ namespace SearchDirLists
                         }
 
                         // ...now just the last folder name for strMatchDir...      // "outermost"
-                        if (bDir && strMatchDir.Contains(Path.DirectorySeparatorChar))
+                        if (bDir && strMatchDir.Contains('\\'))
                         {
-                            if (strSearch.Contains(Path.DirectorySeparatorChar) == false)
+                            if (strSearch.Contains('\\') == false)
                             {
-                                strMatchDir = strMatchDir.Substring(strMatchDir.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+                                strMatchDir = strMatchDir.Substring(strMatchDir.LastIndexOf('\\') + 1);
                             }
                         }
 
@@ -627,8 +627,6 @@ namespace SearchDirLists
             }
 
             SDL_TreeNode nodeRet = null;
-            String P = Path.DirectorySeparatorChar.ToString();
-            String PP = P + P;
 
             foreach (Object obj in treeView.Nodes)
             {
@@ -636,25 +634,25 @@ namespace SearchDirLists
                 String[] arrPath = null;
                 int nPathLevelLength = 0;
                 int nLevel = 0;
-                String strNode = topNode.Name.TrimEnd(Path.DirectorySeparatorChar).Replace(PP, P);
+                String strNode = topNode.Name.TrimEnd('\\').Replace(@"\\", @"\");
 
                 if (bIgnoreCase)
                 {
                     strNode = strNode.ToLower();
                 }
 
-                arrPath = strPath.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+                arrPath = strPath.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
                 nPathLevelLength = arrPath.Length;
 
-                if (strNode.Contains(Path.DirectorySeparatorChar))
+                if (strNode.Contains('\\'))
                 {
-                    int nCount = strNode.Count(c => c == Path.DirectorySeparatorChar);
+                    int nCount = strNode.Count(c => c == '\\');
 
                     for (int n = 0; n < nPathLevelLength - 1; ++n)
                     {
                         if (n < nCount)
                         {
-                            arrPath[0] += Path.DirectorySeparatorChar + arrPath[n + 1];
+                            arrPath[0] += '\\' + arrPath[n + 1];
                         }
                     }
 

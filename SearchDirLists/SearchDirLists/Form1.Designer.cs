@@ -37,6 +37,8 @@ namespace SearchDirLists
             System.Windows.Forms.Label label2;
             System.Windows.Forms.Label label3;
             System.Windows.Forms.Label label5;
+            System.Windows.Forms.Label label6;
+            System.Windows.Forms.Label label7;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.form_chkSpacer = new System.Windows.Forms.CheckBox();
             this.form_tabControlMain = new System.Windows.Forms.TabControl();
@@ -62,6 +64,9 @@ namespace SearchDirLists
             this.form_btnToggleInclude = new System.Windows.Forms.Button();
             this.form_btnAddVolume = new System.Windows.Forms.Button();
             this.form_btnSaveAs = new System.Windows.Forms.Button();
+            this.form_cbDriveModel = new System.Windows.Forms.ComboBox();
+            this.form_cbDriveSerial = new System.Windows.Forms.ComboBox();
+            this.form_btnDriveSerial = new System.Windows.Forms.Button();
             this.form_tabPageBrowse = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel3 = new SearchDirLists.Form1.Form1LayoutPanel(this.components);
             this.form_splitFiles = new System.Windows.Forms.SplitContainer();
@@ -154,6 +159,8 @@ namespace SearchDirLists
             label2 = new System.Windows.Forms.Label();
             label3 = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
+            label6 = new System.Windows.Forms.Label();
+            label7 = new System.Windows.Forms.Label();
             this.form_tabControlMain.SuspendLayout();
             this.form_tabPageVolumes.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -272,6 +279,28 @@ namespace SearchDirLists
             label5.Text = "Volume list";
             label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Dock = System.Windows.Forms.DockStyle.Fill;
+            label6.Location = new System.Drawing.Point(673, 40);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(154, 40);
+            label6.TabIndex = 21;
+            label6.Text = "Drive model";
+            label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Dock = System.Windows.Forms.DockStyle.Fill;
+            label7.Location = new System.Drawing.Point(673, 80);
+            label7.Name = "label7";
+            label7.Size = new System.Drawing.Size(154, 40);
+            label7.TabIndex = 22;
+            label7.Text = "Drive serial";
+            label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // form_chkSpacer
             // 
             this.form_chkSpacer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -328,6 +357,8 @@ namespace SearchDirLists
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel1.Controls.Add(label7, 6, 2);
+            this.tableLayoutPanel1.Controls.Add(label6, 6, 1);
             this.tableLayoutPanel1.Controls.Add(this.form_cbVolumeName, 3, 0);
             this.tableLayoutPanel1.Controls.Add(this.form_btnSaveDirList, 0, 6);
             this.tableLayoutPanel1.Controls.Add(this.form_lvVolumesMain, 0, 5);
@@ -335,7 +366,7 @@ namespace SearchDirLists
             this.tableLayoutPanel1.Controls.Add(label1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.form_cbPath, 3, 1);
             this.tableLayoutPanel1.Controls.Add(this.form_cbSaveAs, 3, 2);
-            this.tableLayoutPanel1.Controls.Add(this.form_btnPath, 11, 1);
+            this.tableLayoutPanel1.Controls.Add(this.form_btnPath, 4, 1);
             this.tableLayoutPanel1.Controls.Add(label2, 0, 2);
             this.tableLayoutPanel1.Controls.Add(label5, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.form_btnVolGroup, 9, 4);
@@ -345,7 +376,10 @@ namespace SearchDirLists
             this.tableLayoutPanel1.Controls.Add(this.form_btnRemoveVolume, 7, 4);
             this.tableLayoutPanel1.Controls.Add(this.form_btnToggleInclude, 8, 4);
             this.tableLayoutPanel1.Controls.Add(this.form_btnAddVolume, 4, 3);
-            this.tableLayoutPanel1.Controls.Add(this.form_btnSaveAs, 11, 2);
+            this.tableLayoutPanel1.Controls.Add(this.form_btnSaveAs, 4, 2);
+            this.tableLayoutPanel1.Controls.Add(this.form_cbDriveModel, 7, 1);
+            this.tableLayoutPanel1.Controls.Add(this.form_cbDriveSerial, 7, 2);
+            this.tableLayoutPanel1.Controls.Add(this.form_btnDriveSerial, 10, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -363,13 +397,13 @@ namespace SearchDirLists
             // 
             // form_cbVolumeName
             // 
-            this.tableLayoutPanel1.SetColumnSpan(this.form_cbVolumeName, 8);
+            this.tableLayoutPanel1.SetColumnSpan(this.form_cbVolumeName, 3);
             this.form_cbVolumeName.Dock = System.Windows.Forms.DockStyle.Fill;
             this.form_cbVolumeName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_cbVolumeName.FormattingEnabled = true;
             this.form_cbVolumeName.Location = new System.Drawing.Point(193, 3);
             this.form_cbVolumeName.Name = "form_cbVolumeName";
-            this.form_cbVolumeName.Size = new System.Drawing.Size(945, 24);
+            this.form_cbVolumeName.Size = new System.Drawing.Size(474, 24);
             this.form_cbVolumeName.TabIndex = 1;
             this.form_cbVolumeName.SelectedIndexChanged += new System.EventHandler(this.form_cb_VolumeName_SelectedIndexChanged);
             // 
@@ -410,7 +444,8 @@ namespace SearchDirLists
             this.form_lvVolumesMain.TabIndex = 19;
             this.form_lvVolumesMain.UseCompatibleStateImageBehavior = false;
             this.form_lvVolumesMain.View = System.Windows.Forms.View.Details;
-            this.form_lvVolumesMain.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.form_lvVolumesMain_ItemSelectionChanged);
+            this.form_lvVolumesMain.SelectedIndexChanged += new System.EventHandler(this.form_lvVolumesMain_SelectedIndexChanged);
+            this.form_lvVolumesMain.KeyUp += new System.Windows.Forms.KeyEventHandler(this.form_lvVolumesMain_KeyUp);
             // 
             // form_lv_Volumes_col_Volume
             // 
@@ -444,25 +479,26 @@ namespace SearchDirLists
             // 
             // form_cbPath
             // 
-            this.tableLayoutPanel1.SetColumnSpan(this.form_cbPath, 8);
+            this.tableLayoutPanel1.SetColumnSpan(this.form_cbPath, 2);
             this.form_cbPath.Dock = System.Windows.Forms.DockStyle.Fill;
             this.form_cbPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_cbPath.FormattingEnabled = true;
             this.form_cbPath.Location = new System.Drawing.Point(193, 43);
             this.form_cbPath.Name = "form_cbPath";
-            this.form_cbPath.Size = new System.Drawing.Size(945, 24);
+            this.form_cbPath.Size = new System.Drawing.Size(433, 24);
             this.form_cbPath.TabIndex = 3;
             this.form_cbPath.SelectedIndexChanged += new System.EventHandler(this.form_cb_Path_SelectedIndexChanged);
+            this.form_cbPath.TextChanged += new System.EventHandler(this.form_cbPath_TextChanged);
             // 
             // form_cbSaveAs
             // 
-            this.tableLayoutPanel1.SetColumnSpan(this.form_cbSaveAs, 8);
+            this.tableLayoutPanel1.SetColumnSpan(this.form_cbSaveAs, 2);
             this.form_cbSaveAs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.form_cbSaveAs.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_cbSaveAs.FormattingEnabled = true;
             this.form_cbSaveAs.Location = new System.Drawing.Point(193, 83);
             this.form_cbSaveAs.Name = "form_cbSaveAs";
-            this.form_cbSaveAs.Size = new System.Drawing.Size(945, 24);
+            this.form_cbSaveAs.Size = new System.Drawing.Size(433, 24);
             this.form_cbSaveAs.TabIndex = 6;
             this.form_cbSaveAs.SelectedIndexChanged += new System.EventHandler(this.form_cb_SaveAs_SelectedIndexChanged);
             this.form_cbSaveAs.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_cbSaveAs_KeyPress);
@@ -471,7 +507,7 @@ namespace SearchDirLists
             // 
             this.form_btnPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btnPath.Location = new System.Drawing.Point(1144, 43);
+            this.form_btnPath.Location = new System.Drawing.Point(632, 43);
             this.form_btnPath.Name = "form_btnPath";
             this.form_btnPath.Size = new System.Drawing.Size(35, 24);
             this.form_btnPath.TabIndex = 4;
@@ -565,10 +601,10 @@ namespace SearchDirLists
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.form_btnAddVolume, 2);
             this.form_btnAddVolume.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_btnAddVolume.Location = new System.Drawing.Point(505, 123);
+            this.form_btnAddVolume.Location = new System.Drawing.Point(417, 123);
             this.form_btnAddVolume.Name = "form_btnAddVolume";
             this.tableLayoutPanel1.SetRowSpan(this.form_btnAddVolume, 2);
-            this.form_btnAddVolume.Size = new System.Drawing.Size(100, 86);
+            this.form_btnAddVolume.Size = new System.Drawing.Size(250, 86);
             this.form_btnAddVolume.TabIndex = 11;
             this.form_btnAddVolume.Text = "Add volume";
             this.form_btnAddVolume.UseVisualStyleBackColor = true;
@@ -578,13 +614,43 @@ namespace SearchDirLists
             // 
             this.form_btnSaveAs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btnSaveAs.Location = new System.Drawing.Point(1144, 83);
+            this.form_btnSaveAs.Location = new System.Drawing.Point(632, 83);
             this.form_btnSaveAs.Name = "form_btnSaveAs";
             this.form_btnSaveAs.Size = new System.Drawing.Size(35, 24);
             this.form_btnSaveAs.TabIndex = 7;
             this.form_btnSaveAs.Text = "...";
             this.form_btnSaveAs.UseVisualStyleBackColor = true;
             this.form_btnSaveAs.Click += new System.EventHandler(this.form_btnSaveAs_Click);
+            // 
+            // form_cbDriveModel
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.form_cbDriveModel, 3);
+            this.form_cbDriveModel.FormattingEnabled = true;
+            this.form_cbDriveModel.Location = new System.Drawing.Point(833, 43);
+            this.form_cbDriveModel.Name = "form_cbDriveModel";
+            this.form_cbDriveModel.Size = new System.Drawing.Size(275, 21);
+            this.form_cbDriveModel.TabIndex = 23;
+            // 
+            // form_cbDriveSerial
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.form_cbDriveSerial, 3);
+            this.form_cbDriveSerial.FormattingEnabled = true;
+            this.form_cbDriveSerial.Location = new System.Drawing.Point(833, 83);
+            this.form_cbDriveSerial.Name = "form_cbDriveSerial";
+            this.form_cbDriveSerial.Size = new System.Drawing.Size(275, 21);
+            this.form_cbDriveSerial.TabIndex = 24;
+            // 
+            // form_btnDriveSerial
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.form_btnDriveSerial, 2);
+            this.form_btnDriveSerial.Enabled = false;
+            this.form_btnDriveSerial.Location = new System.Drawing.Point(1114, 43);
+            this.form_btnDriveSerial.Name = "form_btnDriveSerial";
+            this.form_btnDriveSerial.Size = new System.Drawing.Size(63, 23);
+            this.form_btnDriveSerial.TabIndex = 25;
+            this.form_btnDriveSerial.Text = "Probe";
+            this.form_btnDriveSerial.UseVisualStyleBackColor = true;
+            this.form_btnDriveSerial.Click += new System.EventHandler(this.form_btnDriveSerial_Click);
             // 
             // form_tabPageBrowse
             // 
@@ -1254,7 +1320,6 @@ namespace SearchDirLists
             // columnHeader21
             // 
             this.columnHeader21.Text = "Attributes";
-            this.columnHeader7.Width = 100;
             // 
             // columnHeader22
             // 
@@ -1905,6 +1970,9 @@ namespace SearchDirLists
         private System.Windows.Forms.Button form_btnRemoveVolume;
         private System.Windows.Forms.Button form_btnToggleInclude;
         private System.Windows.Forms.CheckBox form_chkSpacer;
+        private System.Windows.Forms.ComboBox form_cbDriveModel;
+        private System.Windows.Forms.ComboBox form_cbDriveSerial;
+        private System.Windows.Forms.Button form_btnDriveSerial;
     }
 }
 

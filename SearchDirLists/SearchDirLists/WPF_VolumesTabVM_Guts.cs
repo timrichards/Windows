@@ -240,13 +240,13 @@ namespace SearchDirLists
         {
             if (Directory.Exists(Path.GetFullPath(strPath)))
             {
-                String strCapDrive = strPath.Substring(0, strPath.IndexOf(":" + Path.DirectorySeparatorChar) + 2);
+                String strCapDrive = strPath.Substring(0, strPath.IndexOf(@":\") + 2);
 
                 strPath = Path.GetFullPath(strPath).Replace(strCapDrive, strCapDrive.ToUpper());
 
                 if (strPath != strCapDrive.ToUpper())
                 {
-                    strPath = strPath.TrimEnd(Path.DirectorySeparatorChar);
+                    strPath = strPath.TrimEnd('\\');
                 }
             }
             else if (bFailOnDirectory)
@@ -256,7 +256,7 @@ namespace SearchDirLists
                 return null;
             }
 
-            return strPath.TrimEnd(Path.DirectorySeparatorChar);
+            return strPath.TrimEnd('\\');
         }
 
         void LoadVolumeList_Click() { gd.InterruptTreeTimerWithAction(new BoolAction(() => { return LoadVolumeList(); })); DoTree(); }
@@ -584,7 +584,7 @@ namespace SearchDirLists
 
             if (Utilities.StrValid(CB_Path.Current))
             {
-                CB_Path.Current += Path.DirectorySeparatorChar;
+                CB_Path.Current += '\\';
 
                 String str = FormatPath(CB_Path.Current, m_app.xaml_cbPath, bFailOnDirectory);
 

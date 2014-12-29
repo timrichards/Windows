@@ -9,6 +9,7 @@ using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using System.Management;
 using System.Security.AccessControl;
+using System.Text;
 
 namespace SearchDirLists
 {
@@ -97,7 +98,7 @@ namespace SearchDirLists
                 return;
             }
 
-            if (m_app.Dispatcher.CheckAccess() == false) { m_app.Dispatcher.Invoke(new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback), new object[] { nIndex, strText, bDone, nFilesTotal, nLengthTotal, nFilesDiff }); return; }
+            if (m_app.Dispatcher.CheckAccess() == false) { m_app.Dispatcher.Invoke(new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback), new object[] { strPath, strText, bDone, nFilesTotal, nLengthTotal, nFilesDiff }); return; }
 
             if (nLengthTotal > 0)
             {
@@ -199,57 +200,18 @@ namespace SearchDirLists
                 fs.WriteLine(strVolumeName);
                 fs.WriteLine(strPath);
 
-                // device info
-
-                var letter = strPath.Substring(0, 2);
-
                 String strModel = null;
                 String strSerialNo = null;
-                object nSize = null;
+                int? nSize = null;
 
-                bool bWMI = false;
+                DriveSerial.Get(strPath, out strModel, out strSerialNo, out nSize);
 
-                try
-                {
-                    bWMI = (new System.ServiceProcess.ServiceController("Winmgmt").Status == System.ServiceProcess.ServiceControllerStatus.Running);
-                }
-                catch (InvalidOperationException) { }
-
-                if (bWMI)
-                    new ManagementObjectSearcher(
-                        new ManagementScope("\\\\.\\ROOT\\cimv2"),
-                        new ObjectQuery("SELECT * FROM Win32_LogicalDisk WHERE DeviceID='" + letter + "'")
-                ).Get().Cast<ManagementObject>().FirstOnlyAssert(new Action<ManagementObject>((logicalDisk) =>
-                {
-                    logicalDisk.GetRelated("Win32_DiskPartition").Cast<ManagementObject>().FirstOnlyAssert(new Action<ManagementObject>((partition) =>
-                    {
-                        partition.GetRelated("Win32_DiskDrive").Cast<ManagementObject>().FirstOnlyAssert(new Action<ManagementObject>((diskDrive) =>
-                        {
-                            nSize = diskDrive["Size"];
-                            strModel = diskDrive["Model"].ToString();
-
-                            if (strModel == null)
-                            {
-                                strModel = diskDrive["Caption"].ToString();
-                            }
-
-                            strSerialNo = diskDrive["SerialNumber"].ToString();
-
-                            if (strSerialNo == null)
-                            {
-                                diskDrive.GetRelated("Win32_PhysicalMedia").Cast<ManagementObject>().FirstOnlyAssert(new Action<ManagementObject>((diskMedia) =>
-                                {
-                                    strSerialNo = diskMedia["SerialNumber"].ToString();
-                                }));
-                            }
-                        }));
-                    }));
-                }));
+            //    if ((strModel.ToPrintString() == null) && 
 
                 fs.WriteLine(mSTRdrive01);
-                DriveInfo driveInfo = new DriveInfo(strPath.Substring(0, strPath.IndexOf(Path.DirectorySeparatorChar)));
+                DriveInfo driveInfo = new DriveInfo(strPath.Substring(0, strPath.IndexOf('\\')));
 
-                var sb = new System.Text.StringBuilder();
+                var sb = new StringBuilder();
 
                 var WriteLine = new Action<Object>((o) =>
                 {
@@ -294,18 +256,6 @@ namespace SearchDirLists
                 }
             }
  
-
-//[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, BestFitMapping = false), SuppressUnmanagedCodeSecurity]
-[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-internal static extern Microsoft.Win32.SafeHandles.SafeFileHandle CreateFile(
-    string lpFileName,
-    FileAccess dwDesiredAccess,
-    FileShare dwShareMode,
-    IntPtr lpSecurityAttributes,
-    int dwCreationDisposition,
-    FileAttributes dwFlagsAndAttributes,
-    IntPtr hTemplateFile);
-
             void TraverseTree(TextWriter fs, String root)
             {
                 Stack<Win32FindFile.DATUM> stackDirs = new Stack<Win32FindFile.DATUM>(64);
@@ -340,8 +290,6 @@ internal static extern Microsoft.Win32.SafeHandles.SafeFileHandle CreateFile(
                     bool bHasLength = false;
                     Dictionary<String, String> dictChecksum = new Dictionary<string, string>();
                     Dictionary<String, String> dictException_FileRead = new Dictionary<string, string>();
-                    String P = Path.DirectorySeparatorChar.ToString();
-                    String PP = P + P;
 
                     if (DoFakeChecksum)
                         Parallel.ForEach(listFiles, winData =>
@@ -354,7 +302,7 @@ internal static extern Microsoft.Win32.SafeHandles.SafeFileHandle CreateFile(
                         }
 
                         Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle =
-                            CreateFile(PP + '?' + P + winData.strAltFileName, FileAccess.Read, FileShare.ReadWrite, IntPtr.Zero, 3, 0, IntPtr.Zero);
+                            DriveSerial.CreateFile(@"\\?\" + winData.strAltFileName, FileAccess.Read, FileShare.ReadWrite, IntPtr.Zero, 3, 0, IntPtr.Zero);
 
                         if (fileHandle.IsInvalid)
                         {
@@ -365,7 +313,6 @@ internal static extern Microsoft.Win32.SafeHandles.SafeFileHandle CreateFile(
                         using (var fsA = new FileStream(fileHandle, FileAccess.Read))
                         {
                             const int kBufferSize = 4096;   // Checksum is fake because just reading in the first 4K of the file
-
                             byte[] buffer = new byte[kBufferSize];
 
                             fsA.Read(buffer, 0, kBufferSize);
@@ -391,7 +338,7 @@ internal static extern Microsoft.Win32.SafeHandles.SafeFileHandle CreateFile(
                         if (fi.IsValid == false)
                         {
                             String strErrorFile = strFile;
-                            String strErrorDir = winData.strAltFileName.Substring(0, winData.strAltFileName.LastIndexOf(Path.DirectorySeparatorChar));
+                            String strErrorDir = winData.strAltFileName.Substring(0, winData.strAltFileName.LastIndexOf('\\'));
 
                             CheckNTFS_chars(ref strErrorDir);
                             m_list_Errors.Add(FormatString(strFile: strErrorFile, strDir: strErrorDir, strError2: strError2_File));

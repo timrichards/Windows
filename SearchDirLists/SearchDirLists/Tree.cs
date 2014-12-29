@@ -338,7 +338,7 @@ namespace SearchDirLists
                         Utilities.Assert(1301.2302, false);
                     }
 
-                    String str = str_in.TrimEnd(Path.DirectorySeparatorChar);
+                    String str = str_in.TrimEnd('\\');
 
                     m_rootNode.Nodes.Add(str, new Node(str, nLineNo, nLength, m_rootNode));
                 }
@@ -376,9 +376,9 @@ namespace SearchDirLists
                     Utilities.Assert(1301.2303, nLineNo != 0);
                     m_rootNode = rootNode;
 
-                    if (in_str.EndsWith(":" + Path.DirectorySeparatorChar) == false)
+                    if (in_str.EndsWith(@":\") == false)
                     {
-                        Utilities.Assert(1301.2304, in_str.Trim().EndsWith(Path.DirectorySeparatorChar.ToString()) == false);
+                        Utilities.Assert(1301.2304, in_str.Trim().EndsWith(@"\") == false);
                     }
 
                     m_strPath = in_str;
@@ -389,14 +389,14 @@ namespace SearchDirLists
                     // Path.GetDirectoryName() does not preserve filesystem root
 
                     String strParent = m_strPath;
-                    int nIndex = strParent.LastIndexOf(Path.DirectorySeparatorChar);
+                    int nIndex = strParent.LastIndexOf('\\');
 
                     if (nIndex < 0)
                     {
                         return;
                     }
 
-                    strParent = strParent.Remove(nIndex).TrimEnd(Path.DirectorySeparatorChar);
+                    strParent = strParent.Remove(nIndex).TrimEnd('\\');
 
                     if (m_rootNode.Nodes.ContainsKey(strParent) == false)
                     {
@@ -416,7 +416,7 @@ namespace SearchDirLists
                         return new SDL_TreeNode();
                     }
 
-                    int nIndex = m_strPath.LastIndexOf(Path.DirectorySeparatorChar);
+                    int nIndex = m_strPath.LastIndexOf('\\');
                     String strShortPath = bUseShortPath ? m_strPath.Substring(nIndex + 1) : m_strPath;
                     SDL_TreeNode treeNode = null;
 
@@ -428,7 +428,7 @@ namespace SearchDirLists
                         {
                             // cull all root node single-chains.
                             m_rootNode.Nodes = subNodes;
-                            subNode.m_strPath.Insert(0, m_strPath + Path.DirectorySeparatorChar);
+                            subNode.m_strPath.Insert(0, m_strPath + '\\');
                             subNode.bUseShortPath = false;
                             treeNode = subNode.AddToTree(strVolumeName);
 

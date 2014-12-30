@@ -61,6 +61,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="MVVM\AbstractionsVM.cs" />
+    <Compile Include="MVVM\ObservableObject.cs" />
+    <Compile Include="MVVM\RelayCommand.cs" />
+    <Compile Include="MVVM_VolumeList\VolumeListViewVM.cs" />
+    <Compile Include="MVVM_VolumeList\VolumeLVitemVM.cs" />
     <Compile Include="Utilities\DriveSerial.cs" />
     <Compile Include="Utilities\Utilities.cs" />
     <Compile Include="VolumeList.xaml.cs">
@@ -69,6 +74,9 @@
     <Compile Include="Utilities\ExtensionMethods.cs" />
     <Compile Include="VolumeEdit.xaml.cs">
       <DependentUpon>VolumeEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MVVM_VolumeList\VolumeListVM.cs">
+      <SubType>Code</SubType>
     </Compile>
     <Page Include="VolumeList.xaml">
       <SubType>Designer</SubType>
@@ -136,6 +144,7 @@
   <ItemGroup>
     <Resource Include="Resources\ic_create_black_18dp.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

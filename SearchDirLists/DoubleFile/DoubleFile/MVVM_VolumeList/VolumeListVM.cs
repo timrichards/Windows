@@ -1,55 +1,49 @@
 ﻿using System.Windows.Input;
 
-using Forms = System.Windows.Forms;
-
 namespace DoubleFile
 {
     partial class VolumeListVM : ObservableObject
     {
         // In order of appearance on the form
-        public ICommand Icmd_SetPath { get { return marrIcmd[0]; } }
-        public ICommand Icmd_SaveAs { get { return marrIcmd[1]; } }
-        public ICommand Icmd_LoadVolumeList { get { return marrIcmd[2]; } }
-        public ICommand Icmd_SaveVolumeList { get { return marrIcmd[3]; } }
-        public ICommand Icmd_AddVolume { get { return marrIcmd[4]; } }
-        public ICommand Icmd_RemoveVolume { get { return marrIcmd[5]; } }
-        public ICommand Icmd_ToggleInclude { get { return marrIcmd[6]; } }
-        public ICommand Icmd_VolumeGroup { get { return marrIcmd[7]; } }
-        public ICommand Icmd_ModifyFile { get { return marrIcmd[8]; } }
-        public ICommand Icmd_SaveDirLists { get { return marrIcmd[9]; } }
+        public ICommand Icmd_LoadProject { get { return mIcmd_LoadProject; } }
+        public ICommand Icmd_SaveProject { get { return mIcmd_SaveProject; } }
 
-        internal VolumeListVM(MainWindow app)
+        public ICommand Icmd_NewVolume { get { return mIcmd_NewVolume; } }
+        public ICommand Icmd_LoadVolume { get { return mIcmd_LoadVolume; } }
+        public ICommand Icmd_SaveVolume { get { return mIcmd_SaveVolume; } }
+
+        public ICommand Icmd_EditVolume { get { return mIcmd_EditVolume; } }
+        public ICommand Icmd_RemoveVolume { get { return mIcmd_RemoveVolume; } }
+
+        public ICommand Icmd_ToggleInclude { get { return mIcmd_ToggleInclude; } }
+
+        readonly ICommand mIcmd_LoadProject = null;
+        readonly ICommand mIcmd_SaveProject = null;
+
+        readonly ICommand mIcmd_NewVolume = null;
+        readonly ICommand mIcmd_LoadVolume = null;
+        readonly ICommand mIcmd_SaveVolume = null;
+
+        readonly ICommand mIcmd_EditVolume = null;
+        readonly ICommand mIcmd_RemoveVolume = null;
+
+        readonly ICommand mIcmd_ToggleInclude = null;
+
+        internal VolumeListVM(VolumeList window)
         {
-            m_app = app;
-            //m_app.xaml_tabControlMain.DataContext = this;
-            //gd = GlobalData.GetInstance();
-            //CB_VolumeName = new ItemsControlVM(m_app.xaml_cbVolumeName, new Action(() => { gd.m_strVolumeName = CB_VolumeName.Current; }));
-            //CB_Path = new ItemsControlVM(m_app.xaml_cbPath, new Action(() => { gd.m_strPath = CB_Path.Current; }));
-            //CB_SaveAs = new ItemsControlVM(m_app.xaml_cbSaveAs, new Action(() => { gd.m_strSaveAs = CB_SaveAs.Current; }));
-            //LV = new VolumesListViewVM(m_app.xaml_lvVolumesMain);
-            marrIcmd = new ICommand[]
-            {
-                //new RelayCommand(param => SetPath()),
-                //new RelayCommand(param => SaveAs()),
-                //new RelayCommand(param => LoadVolumeList_Click()),
-                //new RelayCommand(param => SaveVolumeList(), param => LV.HasItems),
-                //new RelayCommand(param => AddVolume(), param => (Utilities.NotNull(m_app.xaml_cbSaveAs.Text).Trim().Length > 0)),
-                //new RelayCommand(param => RemoveVolume(), param => LV.SelectedAny),
-                //new RelayCommand(param => ToggleInclude(), param => LV.SelectedAny),
-                //new RelayCommand(param => SetVolumeGroup(), param => LV.SelectedAny),
-                //new RelayCommand(param => ModifyFile(), param => LV.SelectedOne),
-                //new RelayCommand(param => SaveDirLists(), param => LV.HasItems)
-            };
+            window.form_VolumeList.DataContext = this;
+
+            mIcmd_LoadProject = new RelayCommand(param => { LoadProject(); });
+            mIcmd_SaveProject = new RelayCommand(param => { SaveProject(); });
+
+            mIcmd_NewVolume = new RelayCommand(param => { NewVolume(); });
+            mIcmd_LoadVolume = new RelayCommand(param => { LoadVolume(); });
+            mIcmd_SaveVolume = new RelayCommand(param => { SaveVolume(); });
+
+            mIcmd_EditVolume = new RelayCommand(param => { EditVolume(); });
+            mIcmd_RemoveVolume = new RelayCommand(param => { RemoveVolume(); });
+
+            mIcmd_ToggleInclude = new RelayCommand(param => { ToggleInclude(); });
         }
-
-        //readonly ItemsControlVM CB_VolumeName = null;
-        //readonly ItemsControlVM CB_Path = null;
-        //readonly ItemsControlVM CB_SaveAs = null;
-        //readonly VolumesListViewVM LV = null;
-        readonly ICommand[] marrIcmd = null;
-
-        static readonly Forms.FolderBrowserDialog folderBrowserDialog1 = new Forms.FolderBrowserDialog();
-        readonly MainWindow m_app = null;
-  //      readonly GlobalData gd = null;
     }
 }

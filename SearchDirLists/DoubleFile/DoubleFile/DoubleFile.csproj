@@ -64,7 +64,10 @@
     <Compile Include="MVVM\AbstractionsVM.cs" />
     <Compile Include="MVVM\ObservableObject.cs" />
     <Compile Include="MVVM\RelayCommand.cs" />
+    <Compile Include="MVVM_VolumeEdit\VolumeEditVM.cs" />
+    <Compile Include="MVVM_VolumeEdit\VolumeEditVM_Impl.cs" />
     <Compile Include="MVVM_VolumeList\VolumeListViewVM.cs" />
+    <Compile Include="MVVM_VolumeList\VolumeListVM_Impl.cs" />
     <Compile Include="MVVM_VolumeList\VolumeLVitemVM.cs" />
     <Compile Include="Utilities\DriveSerial.cs" />
     <Compile Include="Utilities\Utilities.cs" />

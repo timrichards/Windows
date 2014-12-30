@@ -13,31 +13,9 @@ namespace DoubleFile
             InitializeComponent();
         }
 
-        private void form_btnPath_Click(object sender, RoutedEventArgs e)
+        private void form_VolumeEdit_Initialized(object sender, EventArgs e)
         {
-            new System.Windows.Forms.FolderBrowserDialog().ShowDialog();
-        }
-
-        private void form_btnDirlistFile_Click(object sender, RoutedEventArgs e)
-        {
-            new Microsoft.Win32.SaveFileDialog().ShowDialog();
-        }
-
-        private void form_btnProbe_Click(object sender, RoutedEventArgs e)
-        {
-            String strPath = form_editPath.Text;
-
-            if ((strPath.Length>1) && (strPath[1]==':'))
-            {
-                String strModel;
-                String strSerialNo;
-                int? nSize;
-
-                DriveSerial.Get(strPath, out strModel, out strSerialNo, out nSize);
-
-                form_editModel.Text = strModel;
-                form_editSerialNo.Text = strSerialNo;
-            }
+            new VolumeEditVM(this);
         }
     }
 }

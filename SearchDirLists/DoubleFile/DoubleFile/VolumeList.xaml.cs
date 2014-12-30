@@ -13,9 +13,9 @@ namespace DoubleFile
             InitializeComponent();
         }
 
-        private void form_MenuAddVolume_Click(object sender, MouseButtonEventArgs e)
+        private void form_VolumeList_Initialized(object sender, System.EventArgs e)
         {
-            new VolumeEdit().ShowDialog();
+            new VolumeListVM(this);
         }
     }
 }

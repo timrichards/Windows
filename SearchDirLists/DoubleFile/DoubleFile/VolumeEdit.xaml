@@ -58,7 +58,7 @@
         <Button Grid.Row="0" Click="form_btnPath_Click" ToolTip="Click to open a folder browse dialog to enter the source path">
             <Image Source="resources/ic_folder_open_black_18dp.png" />
         </Button>
-        <TextBox Grid.Row="0">
+        <TextBox Grid.Row="0" Name="form_editPath">
             <TextBox.ToolTip>
                 <TextBlock>
 Source path of the directory for which a listing file is to be created.
@@ -73,13 +73,13 @@ folder browse dialog.
         <Border BorderBrush="DarkGray" BorderThickness="1" Grid.ColumnSpan="6" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch" Height="1" VerticalAlignment="Top" />
 
         <Label Grid.Row="2" Content="Drive model" />
-        <Button Grid.Row="2" Click="form_btnPath_Click" ToolTip="Click to try and probe your drive for the model and serial #">
-            <Image Source="resources/ic_dvr_black_18dp.png" />
+        <Button Grid.Row="2" Click="form_btnProbe_Click" ToolTip="Click to try and probe your drive for the model and serial #">
+            <Image Source="resources/ic_storage_black_18dp.png" />
         </Button>
-        <TextBox Grid.Row="2" ToolTip="Optional. Drive model helps to identify the drive this listing is for later on when reviewing." />
+        <TextBox Grid.Row="2" Name="form_editModel" ToolTip="Optional. Drive model helps to identify the drive this listing is for later on when reviewing." />
 
         <Label Grid.Row="3" Content="Drive serial #" />
-        <TextBox Grid.Row="3" ToolTip="Optional. Serial number helps to identify the drive this listing is for later on when reviewing." />
+        <TextBox Grid.Row="3" Name="form_editSerialNo" ToolTip="Optional. Serial number helps to identify the drive this listing is for later on when reviewing." />
 
         <Label Grid.Row="5" Content="Volume nickname" />
         <TextBox Grid.Row="5">

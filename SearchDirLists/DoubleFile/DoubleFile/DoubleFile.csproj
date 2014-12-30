@@ -23,6 +23,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,10 +34,15 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,21 +61,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DiskVolumeList.xaml.cs">
-      <DependentUpon>DiskVolumeList.xaml</DependentUpon>
+    <Compile Include="Utilities\DriveSerial.cs" />
+    <Compile Include="Utilities\Utilities.cs" />
+    <Compile Include="VolumeList.xaml.cs">
+      <DependentUpon>VolumeList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utilities.cs" />
-    <Compile Include="experiments\VolumeEdit_.xaml.cs">
-      <DependentUpon>VolumeEdit_.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Utilities\ExtensionMethods.cs" />
     <Compile Include="VolumeEdit.xaml.cs">
       <DependentUpon>VolumeEdit.xaml</DependentUpon>
     </Compile>
-    <Page Include="DiskVolumeList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="experiments\DiskVolumeMetaInfo.xaml">
+    <Page Include="VolumeList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -80,17 +82,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="experiments\DiskVolumeMetaInfo.xaml.cs">
-      <DependentUpon>DiskVolumeMetaInfo.xaml</DependentUpon>
-    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="experiments\VolumeEdit_.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="VolumeEdit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -124,51 +119,22 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\ic_report_black_48dp.png" />
-    <Resource Include="resources\ic_report_grey600_48dp.png" />
-    <Resource Include="resources\ic_report_white_48dp.png" />
+    <Resource Include="Resources\ic_add_circle_black_18dp.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\ic_add_circle_black_18dp.png" />
+    <Resource Include="Resources\ic_remove_circle_black_18dp.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\ic_add_circle_grey600_18dp.png" />
+    <Resource Include="Resources\ic_storage_black_18dp.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\ic_add_circle_white_18dp.png" />
+    <Resource Include="Resources\ic_save_black_18dp.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\ic_remove_circle_black_18dp.png" />
-    <Resource Include="resources\ic_remove_circle_grey600_18dp.png" />
-    <Resource Include="resources\ic_remove_circle_white_18dp.png" />
+    <Resource Include="Resources\ic_folder_open_black_18dp.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\ic_developer_mode_black_18dp.png" />
-    <Resource Include="resources\ic_developer_mode_grey600_18dp.png" />
-    <Resource Include="resources\ic_developer_mode_white_18dp.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="resources\ic_dvr_black_18dp.png" />
-    <Resource Include="resources\ic_dvr_grey600_18dp.png" />
-    <Resource Include="resources\ic_dvr_white_18dp.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="resources\ic_storage_black_18dp.png" />
-    <Resource Include="resources\ic_storage_grey600_18dp.png" />
-    <Resource Include="resources\ic_storage_white_18dp.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="resources\ic_save_black_18dp.png" />
-    <Resource Include="resources\ic_save_grey600_18dp.png" />
-    <Resource Include="resources\ic_save_white_18dp.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="resources\ic_folder_open_black_18dp.png" />
-    <Resource Include="resources\ic_folder_open_grey600_18dp.png" />
-    <Resource Include="resources\ic_folder_open_white_18dp.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="resources\ic_create_black_18dp.png" />
+    <Resource Include="Resources\ic_create_black_18dp.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,16 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace DoubleFile
 {
@@ -32,6 +21,23 @@ namespace DoubleFile
         private void form_btnDirlistFile_Click(object sender, RoutedEventArgs e)
         {
             new Microsoft.Win32.SaveFileDialog().ShowDialog();
+        }
+
+        private void form_btnProbe_Click(object sender, RoutedEventArgs e)
+        {
+            String strPath = form_editPath.Text;
+
+            if ((strPath.Length>1) && (strPath[1]==':'))
+            {
+                String strModel;
+                String strSerialNo;
+                int? nSize;
+
+                DriveSerial.Get(strPath, out strModel, out strSerialNo, out nSize);
+
+                form_editModel.Text = strModel;
+                form_editSerialNo.Text = strSerialNo;
+            }
         }
     }
 }

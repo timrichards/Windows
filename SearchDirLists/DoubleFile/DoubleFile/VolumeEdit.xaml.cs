@@ -15,7 +15,7 @@ namespace DoubleFile
 
         private void form_VolumeEdit_Initialized(object sender, EventArgs e)
         {
-            new VolumeEditVM(this);
+            form_VolumeEdit.DataContext = new VolumeEditVM();
         }
     }
 }

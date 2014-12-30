@@ -15,10 +15,8 @@ namespace DoubleFile
         readonly ICommand mIcmd_EditListingPath = null;
         readonly ICommand mIcmd_OK = null;
 
-        internal VolumeEditVM(VolumeEdit window)
+        internal VolumeEditVM()
         {
-            window.form_VolumeEdit.DataContext = this;
-
             mIcmd_EditSourcePath = new RelayCommand(param => { EditSourcePath(); });
             mIcmd_Probe = new RelayCommand(param => { Probe(); });
             mIcmd_EditListingPath = new RelayCommand(param => { EditListingPath(); });

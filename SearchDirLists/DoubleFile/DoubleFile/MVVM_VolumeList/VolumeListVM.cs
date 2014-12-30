@@ -29,10 +29,8 @@ namespace DoubleFile
 
         readonly ICommand mIcmd_ToggleInclude = null;
 
-        internal VolumeListVM(VolumeList window)
+        internal VolumeListVM()
         {
-            window.form_VolumeList.DataContext = this;
-
             mIcmd_LoadProject = new RelayCommand(param => { LoadProject(); });
             mIcmd_SaveProject = new RelayCommand(param => { SaveProject(); });
 

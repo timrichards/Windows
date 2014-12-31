@@ -156,12 +156,12 @@ namespace DoubleFile
     {
         public ObservableCollection<ListViewItemVM> Items { get { return m_items; } }
 
-        internal ListViewVM(ListView lv)
+        internal ListViewVM() //ListView lv)
         {
-            if (lv != null)     // null e.g. fake LVs for loading and saving data
-            {
-                (LVFE = lv).DataContext = this;
-            }
+            //if (lv != null)     // null e.g. fake LVs for loading and saving data
+            //{
+            //    (LVFE = lv).DataContext = this;
+            //}
         }
 
         internal virtual void NewItem(String[] arrStr) { System.Diagnostics.Debug.Assert(false); }
@@ -179,12 +179,12 @@ namespace DoubleFile
         }
 
         internal static String SCW = double.NaN.ToString();     // frankenhoek
-        internal readonly ListView LVFE = null;
+   //     internal readonly ListView LVFE = null;
 
         internal int Count { get { return m_items.Count; } }
         internal bool HasItems { get { return m_items.Count > 0; } }
-        internal bool SelectedOne { get { return LVFE.SelectedItems.Count == 1; } }
-        internal bool SelectedAny { get { return LVFE.SelectedItems.Count > 0; } }
+        //internal bool SelectedOne { get { return LVFE.SelectedItems.Count == 1; } }
+        //internal bool SelectedAny { get { return LVFE.SelectedItems.Count > 0; } }
         internal bool Contains(String s) { return (this[s] != null); }
 
         internal ListViewItemVM this[String s_in]
@@ -220,7 +220,7 @@ namespace DoubleFile
 
         void RaiseItems()
         {
-            LVFE.Items.Refresh();
+       //     LVFE.Items.Refresh();
             RaisePropertyChanged("Items");
 
             if (m_items.Count > 0)
@@ -239,10 +239,11 @@ namespace DoubleFile
 
     public abstract class ListViewVM_Generic<T> : ListViewVM where T : ListViewItemVM
     {
-        internal ListViewVM_Generic(ListView lv) : base(lv) { }
+        //internal ListViewVM_Generic(ListView lv) : base(lv) { }
+        internal ListViewVM_Generic() { }
 
         internal IEnumerable<T> ItemsCast { get { return m_items.Cast<T>(); } }
-        internal IEnumerable<T> Selected { get { return LVFE.SelectedItems.Cast<T>(); } }
+    //    internal IEnumerable<T> Selected { get { return LVFE.SelectedItems.Cast<T>(); } }
     }
 }
 
@@ -268,7 +269,7 @@ namespace Template      // prevents smart tag rename command from renaming the t
     {
         public String WidthColumnNameHere { get { return SCW; } }
 
-        internal Template_ListViewVM(ListView lv) : base(lv) { }
+     //   internal Template_ListViewVM(ListView lv) : base(lv) { }
         internal override void NewItem(String[] arrStr) { Add(new Template_LVitemVM(this, arrStr)); }
         internal override int NumCols { get { return Template_LVitemVM.NumCols_; } }
     }

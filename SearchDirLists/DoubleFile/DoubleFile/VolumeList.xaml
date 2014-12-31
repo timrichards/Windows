@@ -51,8 +51,18 @@
                 <Image Source="resources/ic_create_black_18dp.png" Width="18" />
             </Button>
         </Menu>
+        <ListView Name="form_lvVolumeList" Margin="10,30,10,61" Background="White" BorderBrush="#00000000">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Volume name" DisplayMemberBinding="{Binding VolumeName}" Width="{Binding WidthVolumeName}"/>
+                    <GridViewColumn Header="Path" DisplayMemberBinding="{Binding Path}" Width="{Binding WidthPath}"/>
+                    <GridViewColumn Header="Save to file" DisplayMemberBinding="{Binding SaveAs}" Width="{Binding WidthSaveAs}"/>
+                    <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="{Binding WidthStatus}"/>
+                    <GridViewColumn Header="Include in search" DisplayMemberBinding="{Binding IncludeStr}" Width="{Binding WidthIncludeStr}"/>
+                    <GridViewColumn Header="Volume group" DisplayMemberBinding="{Binding VolumeGroup}" Width="{Binding WidthVolumeGroup}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
         <Button Content="OK" Margin="0,0,10,10" IsCancel="True" IsDefault="True" Height="22" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75"/>
-        <ListBox Margin="10,30,10,61" Background="White" BorderBrush="#00000000"/>
-
     </Grid>
 </Window>

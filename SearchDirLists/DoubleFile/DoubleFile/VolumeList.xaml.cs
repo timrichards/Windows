@@ -15,7 +15,12 @@ namespace DoubleFile
 
         private void form_VolumeList_Initialized(object sender, System.EventArgs e)
         {
-            form_VolumeList.DataContext = new VolumeListVM();
+            var lv = new VolumeListViewVM();
+            var win = new VolumeListVM();
+            form_lvVolumeList.DataContext = lv;
+            form_VolumeList.DataContext = win;
+            lv.SetPartner(win);
+            win.SetPartner(lv);
         }
     }
 }

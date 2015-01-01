@@ -67,7 +67,7 @@ namespace SearchDirLists
                         }
                         else
                         {
-                            foreach (String strFile in resultDir.ListFiles)
+                            foreach (string strFile in resultDir.ListFiles)
                             {
                                 if (++nCounter <= gd.m_nSearchResultsIndexer)
                                 {
@@ -183,7 +183,7 @@ namespace SearchDirLists
             Utilities.MessageBoxKill(GlobalData.mSTRsearchTitle);
         }
 
-        private void DoSearchType2(String strSearch, bool bKill = false, bool bSearchFilesOnly = false)
+        private void DoSearchType2(string strSearch, bool bKill = false, bool bSearchFilesOnly = false)
         {
             if (gd.m_searchType2 != null)
             {
@@ -218,7 +218,7 @@ namespace SearchDirLists
             gd.m_SearchResultsType2_List.Clear();
 
             SearchBase.FolderSpecialHandling folderHandling = SearchBase.FolderSpecialHandling.None;    // not used
-            String strCurrentNode = null;
+            string strCurrentNode = null;
 
             if (SDLWPF.treeViewMain.SelectedNode != null)
             {
@@ -288,7 +288,7 @@ namespace SearchDirLists
                     Utilities.Assert(1307.8313, form_cbFindbox.Text.EndsWith(@"\") == false);
 
                     int nPos = form_cbFindbox.Text.LastIndexOf('\\');
-                    String strMaybePath = form_cbFindbox.Text.Substring(0, nPos);
+                    string strMaybePath = form_cbFindbox.Text.Substring(0, nPos);
                     SDL_TreeNode treeNode = gd.GetNodeByPath(strMaybePath, SDLWPF.treeViewMain);
 
                     gd.m_strSelectFile = form_cbFindbox.Text.Substring(nPos + 1);
@@ -317,12 +317,12 @@ namespace SearchDirLists
 
     class SearchResultsDir
     {
-        readonly List<String> m_listFiles = new List<String>();
+        readonly List<string> m_listFiles = new List<string>();
 
-        internal String StrDir { get; set; }
-        internal List<String> ListFiles { get { return m_listFiles; } }
+        internal string StrDir { get; set; }
+        internal List<string> ListFiles { get { return m_listFiles; } }
 
-        void AddFile(String strFile)
+        void AddFile(string strFile)
         {
             m_listFiles.Add(strFile);
         }
@@ -330,11 +330,11 @@ namespace SearchDirLists
 
     class SearchResults
     {
-        internal readonly String StrSearch = null;
+        internal readonly string StrSearch = null;
         internal readonly LVvolStrings VolStrings = null;
         internal readonly List<SearchResultsDir> Results = null;
 
-        internal SearchResults(String strSearch, LVvolStrings volStrings, List<SearchResultsDir> listResults)
+        internal SearchResults(string strSearch, LVvolStrings volStrings, List<SearchResultsDir> listResults)
         {
             StrSearch = strSearch;
             VolStrings = volStrings;
@@ -344,10 +344,10 @@ namespace SearchDirLists
 
     class SearchBase : Utilities
     {
-        protected String m_strSearch = null;
+        protected string m_strSearch = null;
         protected bool m_bCaseSensitive = true;
         protected bool m_bSearchFilesOnly = false;
-        protected String m_strCurrentNode = null;
+        protected string m_strCurrentNode = null;
         protected static SearchStatusDelegate m_statusCallback = null;
 
         internal enum FolderSpecialHandling { None, Outermost, Innermost };                     // not used
@@ -396,9 +396,9 @@ namespace SearchDirLists
                     return;
                 }
 
-                String strVolumeName = m_volStrings.VolumeName;
-                String strPath = m_volStrings.StrPath;
-                String strSaveAs = m_volStrings.SaveAs;
+                string strVolumeName = m_volStrings.VolumeName;
+                string strPath = m_volStrings.StrPath;
+                string strSaveAs = m_volStrings.SaveAs;
 
                 if (FormatPath(ref strPath, ref strSaveAs, bFailOnDirectory: false) == false)
                 {
@@ -407,12 +407,12 @@ namespace SearchDirLists
 
                 using (StreamReader file = new StreamReader(strSaveAs))
                 {
-                    String strLine = null;
+                    string strLine = null;
                     SearchResultsDir searchResultDir = null;
-                    String strSearch = m_strSearch;
+                    string strSearch = m_strSearch;
                     List<SearchResultsDir> listResults = new List<SearchResultsDir>();
                     bool bFirst = false;
-                    String strCurrentNode = m_strCurrentNode ?? String.Empty;
+                    string strCurrentNode = m_strCurrentNode ?? string.Empty;
 
                     if (m_bCaseSensitive == false)
                     {
@@ -435,9 +435,9 @@ namespace SearchDirLists
                             continue;
                         }
 
-                        String[] arrLine = strLine.Split('\t');
-                        String strMatchDir = null;
-                        String strMatchFile = null;
+                        string[] arrLine = strLine.Split('\t');
+                        string strMatchDir = null;
+                        string strMatchFile = null;
 
                         if (bDir) { strMatchDir = arrLine[2].TrimEnd('\\'); }
                         if (bFile) { strMatchFile = arrLine[3]; }
@@ -463,7 +463,7 @@ namespace SearchDirLists
 
                         // "redoing" this logic prevents bugs during code maintenance from leaking into the result strings
 
-                        String strDir = null;
+                        string strDir = null;
 
                         if (bDir) { strDir = arrLine[2].TrimEnd('\\'); }
 
@@ -497,7 +497,7 @@ namespace SearchDirLists
                         }
                         else if (bFile && strMatchFile.Contains(strSearch))
                         {
-                            String strFile = arrLine[3];
+                            string strFile = arrLine[3];
 
                             if (searchResultDir == null)
                             {
@@ -545,8 +545,8 @@ namespace SearchDirLists
             }
         }
 
-        internal SearchType2(UList<LVvolStrings> list_lvVolStrings, String strSearch, bool bCaseSensitive,
-            SearchBase.FolderSpecialHandling folderHandling, bool bSearchFilesOnly, String strCurrentNode,
+        internal SearchType2(UList<LVvolStrings> list_lvVolStrings, string strSearch, bool bCaseSensitive,
+            SearchBase.FolderSpecialHandling folderHandling, bool bSearchFilesOnly, string strCurrentNode,
             SearchStatusDelegate statusCallback, Action doneCallback) : base(statusCallback)
         {
             m_list_lvVolStrings = list_lvVolStrings;
@@ -576,7 +576,7 @@ namespace SearchDirLists
                 worker.Join();
             }
 
-            Utilities.WriteLine(String.Format("Completed Search for {0} in {1} seconds.", m_strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
+            Utilities.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", m_strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
             if (m_bThreadAbort || GlobalData.AppExit)
             {
@@ -609,12 +609,12 @@ namespace SearchDirLists
 
     partial class GlobalData    // Get one node by path
     {
-        internal SDL_TreeNode GetNodeByPath(String path, SDL_TreeView treeView)
+        internal SDL_TreeNode GetNodeByPath(string path, SDL_TreeView treeView)
         {
             return GetNodeByPath_A(path, treeView) ?? GetNodeByPath_A(path, treeView, bIgnoreCase: true);
         }
 
-        internal SDL_TreeNode GetNodeByPath_A(String strPath, SDL_TreeView treeView, bool bIgnoreCase = false)
+        internal SDL_TreeNode GetNodeByPath_A(string strPath, SDL_TreeView treeView, bool bIgnoreCase = false)
         {
             if (Utilities.StrValid(strPath) == false)
             {
@@ -631,10 +631,10 @@ namespace SearchDirLists
             foreach (Object obj in treeView.Nodes)
             {
                 SDL_TreeNode topNode = (SDL_TreeNode)obj;
-                String[] arrPath = null;
+                string[] arrPath = null;
                 int nPathLevelLength = 0;
                 int nLevel = 0;
-                String strNode = topNode.Name.TrimEnd('\\').Replace(@"\\", @"\");
+                string strNode = topNode.Name.TrimEnd('\\').Replace(@"\\", @"\");
 
                 if (bIgnoreCase)
                 {
@@ -691,11 +691,11 @@ namespace SearchDirLists
             return nodeRet;
         }
 
-        SDL_TreeNode GetSubNode(SDL_TreeNode node, String[] pathLevel, int i, int nPathLevelLength, bool bIgnoreCase)
+        SDL_TreeNode GetSubNode(SDL_TreeNode node, string[] pathLevel, int i, int nPathLevelLength, bool bIgnoreCase)
         {
             foreach (SDL_TreeNode subNode in node.Nodes)
             {
-                String strText = bIgnoreCase ? subNode.Text.ToLower() : subNode.Text;
+                string strText = bIgnoreCase ? subNode.Text.ToLower() : subNode.Text;
 
                 if (strText != pathLevel[i])
                 {
@@ -724,7 +724,7 @@ namespace SearchDirLists
         internal SearchType2 m_searchType2 = null;
         internal SearchResults m_firstSearchResults = null;
         internal SearchResults m_lastSearchResults = null;
-        internal String m_strSelectFile = null;
+        internal string m_strSelectFile = null;
 
         internal void ClearMem_Search()
         {
@@ -741,7 +741,7 @@ namespace SearchDirLists
             m_lastSearchResults = null;
         }
 
-        internal const String mSTRsearchTitle = "Search";
+        internal const string mSTRsearchTitle = "Search";
 
         internal void SearchFail()
         {
@@ -779,7 +779,7 @@ namespace SearchDirLists
             }
         }
 
-        internal SDL_TreeNode SearchType1_FindNode(String strSearch, SDL_TreeNode startNode = null, SDL_TreeView treeView = null)
+        internal SDL_TreeNode SearchType1_FindNode(string strSearch, SDL_TreeNode startNode = null, SDL_TreeView treeView = null)
         {
             ClearMem_Search();
 

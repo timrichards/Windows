@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace SearchDirLists
 {
-    delegate bool RaisePropertyChangedDelegate(String propertyName);
+    delegate bool RaisePropertyChangedDelegate(string propertyName);
 
     public abstract class ObservableObject : INotifyPropertyChanged
     {

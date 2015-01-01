@@ -143,7 +143,7 @@ namespace SearchDirLists
             }
             else
             {
-                new IgnoreLVitemVM(LV_Ignore, new String[] { treeNode.Text, (treeNode.Level + 1).ToString() });
+                new IgnoreLVitemVM(LV_Ignore, new string[] { treeNode.Text, (treeNode.Level + 1).ToString() });
                 gd.m_bKillTree &= gd.timer_DoTree.IsEnabled;
                 gd.RestartTreeTimer();
             }

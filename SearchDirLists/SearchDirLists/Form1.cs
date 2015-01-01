@@ -27,7 +27,7 @@ using System.Windows.Threading;
 namespace SearchDirLists
 {
     delegate bool BoolAction();
-    delegate MBoxRet MBoxDelegate(String strMessage, String strTitle = null, MBoxBtns? buttons = null);
+    delegate MBoxRet MBoxDelegate(string strMessage, string strTitle = null, MBoxBtns? buttons = null);
 
 #if (WPF == false)
         [System.ComponentModel.DesignerCategory("Designer")]
@@ -114,7 +114,7 @@ namespace SearchDirLists
                 gd.m_bRestartTreeTimer = false;
             });
 
-            // Assert String-lookup form items exist
+            // Assert string-lookup form items exist
             //    Utilities.Assert(1308.9305, context_rclick_node.Items[m_strMARKFORCOPY] != null);
 
             gd.m_blinky = new Blinky(form_cbFindbox);
@@ -175,9 +175,9 @@ namespace SearchDirLists
                     != MBoxRet.Yes)
                 {
                     gd.m_blinky.Go(form_cbVolumeName, clr: Color.Yellow, Once: true);
-                    form_cbVolumeName.Text = String.Empty;
+                    form_cbVolumeName.Text = string.Empty;
                     gd.m_blinky.Go(form_cbPath, clr: Color.Yellow, Once: true);
-                    form_cbPath.Text = String.Empty;
+                    form_cbPath.Text = string.Empty;
                     Utilities.Assert(1308.9306, SaveFields(false));
                 }
             }
@@ -198,7 +198,7 @@ namespace SearchDirLists
                 return false;
             }
 
-            String strStatus = "Not Saved";
+            string strStatus = "Not Saved";
             bool bFileOK = false;
 
             if (File.Exists(gd.m_strSaveAs))
@@ -278,7 +278,7 @@ namespace SearchDirLists
             }
 
             {
-                SDL_ListViewItem lvItem = new SDL_ListViewItem(new String[] { gd.m_strVolumeName, gd.m_strPath, gd.m_strSaveAs, strStatus, "Yes" });
+                SDL_ListViewItem lvItem = new SDL_ListViewItem(new string[] { gd.m_strVolumeName, gd.m_strPath, gd.m_strSaveAs, strStatus, "Yes" });
 
                 if (bFileOK == false)
                 {
@@ -357,11 +357,11 @@ namespace SearchDirLists
             form_tmapUserCtl.ClearSelection();
         }
 
-        bool FormatPath(Control ctl, ref String strPath, bool bFailOnDirectory = true)
+        bool FormatPath(Control ctl, ref string strPath, bool bFailOnDirectory = true)
         {
             if (Directory.Exists(Path.GetFullPath(strPath)))
             {
-                String strCapDrive = strPath.Substring(0, strPath.IndexOf(@":\") + 2);
+                string strCapDrive = strPath.Substring(0, strPath.IndexOf(@":\") + 2);
 
                 strPath = Path.GetFullPath(strPath).Replace(strCapDrive, strCapDrive.ToUpper());
 
@@ -409,7 +409,7 @@ namespace SearchDirLists
             }
         }
 
-        void LoadIgnoreList(String strFile = null)
+        void LoadIgnoreList(string strFile = null)
         {
             if (new SDL_IgnoreFile(strFile).ReadList(form_lvIgnoreList) == false)
             {
@@ -423,7 +423,7 @@ namespace SearchDirLists
             }
         }
 
-        bool LoadVolumeList(String strFile = null)
+        bool LoadVolumeList(string strFile = null)
         {
             if (new SDL_VolumeFile(strFile).ReadList(form_lvVolumesMain) == false)
             {
@@ -489,14 +489,14 @@ namespace SearchDirLists
 
             using (StreamReader file = new StreamReader(gd.m_strSaveAs))
             {
-                String line = null;
+                string line = null;
 
                 if ((line = file.ReadLine()) == null) return false;
                 if ((line = file.ReadLine()) == null) return false;
                 if (line.StartsWith(Utilities.mSTRlineType_Nickname) == false) return false;
 
-                String[] arrLine = line.Split('\t');
-                String strName = String.Empty;
+                string[] arrLine = line.Split('\t');
+                string strName = string.Empty;
 
                 if (arrLine.Length > 2) strName = arrLine[2];
                 form_cbVolumeName.Text = strName;
@@ -664,10 +664,10 @@ namespace SearchDirLists
 
             RootNodeDatum rootNodeDatum1 = (RootNodeDatum)gd.m_nodeCompare1.Root().Tag;
             RootNodeDatum rootNodeDatum2 = (RootNodeDatum)nodeCompare2.Root().Tag;
-            String strFullPath1 = GlobalData.FullPath(gd.m_nodeCompare1);
-            String strFullPath2 = GlobalData.FullPath(nodeCompare2);
-            String strFullPath1A = gd.m_nodeCompare1.FullPath;
-            String strFullPath2A = nodeCompare2.FullPath;
+            string strFullPath1 = GlobalData.FullPath(gd.m_nodeCompare1);
+            string strFullPath2 = GlobalData.FullPath(nodeCompare2);
+            string strFullPath1A = gd.m_nodeCompare1.FullPath;
+            string strFullPath2A = nodeCompare2.FullPath;
 
             gd.m_nodeCompare1 = (SDL_TreeNode)gd.m_nodeCompare1.Clone();
             nodeCompare2 = (SDL_TreeNode)nodeCompare2.Clone();
@@ -838,7 +838,7 @@ namespace SearchDirLists
             }
             else
             {
-                SDL_ListViewItem lvItem = new SDL_ListViewItem(new String[] { treeNode.Text, (treeNode.Level + 1).ToString() });
+                SDL_ListViewItem lvItem = new SDL_ListViewItem(new string[] { treeNode.Text, (treeNode.Level + 1).ToString() });
 
                 lvItem.Name = lvItem.Text;
                 form_lvIgnoreList.Items.Add(lvItem);
@@ -909,9 +909,9 @@ namespace SearchDirLists
                     return false;
                 }
 
-                String strVolumeName_orig = form_lvVolumesMain.SelectedItems[0].Text;
-                String strVolumeName = null;
-                String strFileName = form_lvVolumesMain.SelectedItems[0].SubItems[2].Text;
+                string strVolumeName_orig = form_lvVolumesMain.SelectedItems[0].Text;
+                string strVolumeName = null;
+                string strFileName = form_lvVolumesMain.SelectedItems[0].SubItems[2].Text;
 
                 try { using (new StreamReader(strFileName)) { } }
                 catch
@@ -946,8 +946,8 @@ namespace SearchDirLists
                     }
                 }
 
-                String strDriveLetter_orig = null;
-                String strDriveLetter = null;
+                string strDriveLetter_orig = null;
+                string strDriveLetter = null;
 
                 while (true)
                 {
@@ -956,7 +956,7 @@ namespace SearchDirLists
                     inputBox.Text = "Step 2 of 2: Drive letter";
                     inputBox.Prompt = "Enter a drive letter.";
 
-                    String str = form_lvVolumesMain.SelectedItems[0].SubItems[1].Text;
+                    string str = form_lvVolumesMain.SelectedItems[0].SubItems[1].Text;
 
                     if (str.Length <= 0)
                     {
@@ -999,7 +999,7 @@ namespace SearchDirLists
 
                 using (StringReader reader = new StringReader(File.ReadAllText(strFileName)))
                 {
-                    String strLine = null;
+                    string strLine = null;
                     bool bHitNickname = (Utilities.StrValid(strVolumeName) == false);
 
                     while ((strLine = reader.ReadLine()) != null)
@@ -1348,7 +1348,7 @@ namespace SearchDirLists
                     inputBox.Entry = form_lvVolumesMain.SelectedItems[0].SubItems[5].Text;
                 }
 
-                SortedDictionary<String, object> dictVolGroups = new SortedDictionary<String, object>();
+                SortedDictionary<string, object> dictVolGroups = new SortedDictionary<string, object>();
 
                 foreach (SDL_ListViewItem lvItem in form_lvVolumesMain.Items)
                 {
@@ -1357,7 +1357,7 @@ namespace SearchDirLists
                         continue;
                     }
 
-                    String strVolGroup = lvItem.SubItems[5].Text;
+                    string strVolGroup = lvItem.SubItems[5].Text;
 
                     if (dictVolGroups.ContainsKey(strVolGroup) == false)
                     {
@@ -1365,7 +1365,7 @@ namespace SearchDirLists
                     }
                 }
 
-                foreach (KeyValuePair<String, object> entry in dictVolGroups)
+                foreach (KeyValuePair<string, object> entry in dictVolGroups)
                 {
                     inputBox.AddSelector(entry.Key);
                 }
@@ -1874,11 +1874,11 @@ namespace SearchDirLists
 
         void form_treeViewBrowse_AfterCheck(object sender, TreeViewEventArgs e)
         {
-            String strPath = GlobalData.FullPath((SDL_TreeNode)e.Node);
+            string strPath = GlobalData.FullPath((SDL_TreeNode)e.Node);
 
             if (e.Node.Checked)
             {
-                SDL_ListViewItem lvItem = new SDL_ListViewItem(new String[] { e.Node.Text, strPath });
+                SDL_ListViewItem lvItem = new SDL_ListViewItem(new string[] { e.Node.Text, strPath });
 
                 lvItem.Name = strPath;
                 lvItem.Tag = e.Node;
@@ -1952,14 +1952,14 @@ namespace SearchDirLists
             Utilities.Assert(1308.9322, (new object[] { SDLWPF.treeViewCompare1, SDLWPF.treeViewCompare2 }.Contains(sender)) == gd.m_bCompareMode);
             gd.DoTreeSelect((SDL_TreeNode)e.Node, TreeSelectStatusCallback, TreeSelectDoneCallback);
 
-            String strNode = e.Node.Text;
+            string strNode = e.Node.Text;
 
             Utilities.Assert(1308.9323, Utilities.StrValid(strNode));
 
             if (gd.m_bCompareMode)
             {
-                String strDirAndVolume = strNode;
-                String strVolume = rootNode.ToolTipText;
+                string strDirAndVolume = strNode;
+                string strVolume = rootNode.ToolTipText;
 
                 if (strVolume.Contains('\\'))
                 {
@@ -1980,7 +1980,7 @@ namespace SearchDirLists
                 return;
             }
 
-            String strVolumeGroup = ((RootNodeDatum)rootNode.Tag).StrVolumeGroup;
+            string strVolumeGroup = ((RootNodeDatum)rootNode.Tag).StrVolumeGroup;
 
             form_lblVolGroup.Text = Utilities.StrValid(strVolumeGroup) ? strVolumeGroup : "(no volume group set)";
             form_colVolDetail.Text = rootNode.Text;
@@ -2184,7 +2184,7 @@ namespace SearchDirLists
                 return;
             }
 
-            String[] arrArgs = args.ActivationData;
+            string[] arrArgs = args.ActivationData;
 
             if (arrArgs == null)
             {
@@ -2197,7 +2197,7 @@ namespace SearchDirLists
                 return;
             }
 
-            String strFile = arrArgs[0];
+            string strFile = arrArgs[0];
 
             switch (Path.GetExtension(strFile).Substring(1))
             {
@@ -2263,8 +2263,8 @@ namespace SearchDirLists
 
         private void form_btnDriveSerial_Click(object sender, EventArgs e)
         {
-            String strModel = null;
-            String strSerialNo = null;
+            string strModel = null;
+            string strSerialNo = null;
             int? nSize = null;
 
             DriveSerial.Get(form_cbPath.Text, out strModel, out strSerialNo, out nSize);
@@ -2275,7 +2275,7 @@ namespace SearchDirLists
 
         private void form_cbPath_TextChanged(object sender, EventArgs e)
         {
-            String str = form_cbPath.Text.Trim();
+            string str = form_cbPath.Text.Trim();
 
             form_btnDriveSerial.Enabled = ((str.Length > 1) && (str[1] == ':'));
         }
@@ -2348,9 +2348,9 @@ namespace SearchDirLists
 
         internal readonly SDL_Timer timer_DoTree = new SDL_Timer();
 
-        internal String m_strVolumeName = null;
-        internal String m_strPath = null;
-        internal String m_strSaveAs = null;
+        internal string m_strVolumeName = null;
+        internal string m_strPath = null;
+        internal string m_strSaveAs = null;
 
         internal int m_nCompareIndex = 0;
         internal int m_nLVclonesClickIx = -1;
@@ -2377,17 +2377,17 @@ namespace SearchDirLists
 
         // initialized in Form1 constructor:
         internal Blinky m_blinky = null;
-        internal String m_strBtnTreeCollapseOrig = null;
-        internal String m_strColFilesOrig = null;
-        internal String m_strColFileCompareOrig = null;
-        internal String m_strColDirDetailCompareOrig = null;
-        internal String m_strColDirDetailOrig = null;
-        internal String m_strColVolDetailOrig = null;
-        internal String m_strBtnCompareOrig = null;
-        internal String m_strChkCompareOrig = null;
-        internal String m_strVolGroupOrig = null;
+        internal string m_strBtnTreeCollapseOrig = null;
+        internal string m_strColFilesOrig = null;
+        internal string m_strColFileCompareOrig = null;
+        internal string m_strColDirDetailCompareOrig = null;
+        internal string m_strColDirDetailOrig = null;
+        internal string m_strColVolDetailOrig = null;
+        internal string m_strBtnCompareOrig = null;
+        internal string m_strChkCompareOrig = null;
+        internal string m_strVolGroupOrig = null;
 
-        internal void ComboBoxItemsInsert(ComboBox comboBox, String strText = null, bool bTrimText = true)
+        internal void ComboBoxItemsInsert(ComboBox comboBox, string strText = null, bool bTrimText = true)
         {
             if (Utilities.StrValid(strText) == false)
             {
@@ -2500,18 +2500,18 @@ namespace SearchDirLists
         }
 
 #if (WPF)
-        internal void FormError(Forms.Control defaultControl, String strError, String strTitle){}
+        internal void FormError(Forms.Control defaultControl, string strError, string strTitle){}
 #else
-        internal void FormError(WPF.Controls.Control defaultControl, String strError, String strTitle){}
+        internal void FormError(WPF.Controls.Control defaultControl, string strError, string strTitle){}
 #endif
-        internal void FormError(Control control, String strError, String strTitle)
+        internal void FormError(Control control, string strError, string strTitle)
         {
             m_blinky.Go(control, clr: Drawing.Color.Red, Once: true);
             MBox(strError, strTitle);
             m_blinky.Go(control, clr: Drawing.Color.Red, Once: true);
         }
 
-        internal static String FullPath(SDL_TreeNode treeNode)
+        internal static string FullPath(SDL_TreeNode treeNode)
         {
             if (treeNode == null)
             {

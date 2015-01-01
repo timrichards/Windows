@@ -326,7 +326,7 @@ namespace SearchDirLists
             while (bContinue && ((treeNode = (SDL_TreeNode)treeNode.NextNode) != null));
         }
 
-        void IgnoreNodeQuery(String sbMatch, int nMaxLevel, SDL_TreeNode treeNode_in)
+        void IgnoreNodeQuery(string sbMatch, int nMaxLevel, SDL_TreeNode treeNode_in)
         {
             if (treeNode_in.Level > nMaxLevel)
             {
@@ -531,7 +531,7 @@ namespace SearchDirLists
                 DifferentVolsQuery(dictClones, treeNode);
             }
 
-            m_listRootNodes.Sort((x, y) => String.Compare(x.Text, y.Text));
+            m_listRootNodes.Sort((x, y) => string.Compare(x.Text, y.Text));
 
             foreach (KeyValuePair<Correlate, UList<SDL_TreeNode>> listNodes in dictClones)
             {
@@ -555,7 +555,7 @@ namespace SearchDirLists
                     continue;       // keep the same-vol
                 }
 
-                String str_nClones = null;
+                string str_nClones = null;
 
                 if (nClones > 2)        // includes the subject node: only note three clones or more
                 {
@@ -567,7 +567,7 @@ namespace SearchDirLists
                     }
                 }
 
-                SDL_ListViewItem lvItem = new SDL_ListViewItem(new String[] { String.Empty, str_nClones });
+                SDL_ListViewItem lvItem = new SDL_ListViewItem(new string[] { string.Empty, str_nClones });
 
                 lvItem.Tag = listNodes.Value;
                 lvItem.ForeColor = listNodes.Value[0].ForeColor;
@@ -683,7 +683,7 @@ namespace SearchDirLists
                     Utilities.Assert(1305.6328, false);
                 }
 
-                String str_nClones = null;
+                string str_nClones = null;
 
                 if (nClones > 2)
                 {
@@ -692,7 +692,7 @@ namespace SearchDirLists
 
                 Utilities.Assert(1305.6329, Utilities.StrValid(treeNode.Text));
 
-                SDL_ListViewItem lvItem = new SDL_ListViewItem(new String[] { treeNode.Text, str_nClones });
+                SDL_ListViewItem lvItem = new SDL_ListViewItem(new string[] { treeNode.Text, str_nClones });
 
                 lvItem.Tag = nodeDatum.m_listClones;
                 lvItem.ForeColor = Drawing.Color.Firebrick;

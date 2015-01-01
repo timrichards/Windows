@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Input;
 using System.Windows.Controls;
-using System.Collections.ObjectModel;
-using System.Linq;
 
 using Forms = System.Windows.Forms;
 
@@ -11,23 +8,23 @@ namespace SearchDirLists
 {
     class VolumeLVitemVM : ListViewItemVM
     {
-        public String VolumeName { get { return marr[0]; } set { SetProperty(0, value); } }
-        public String Path { get { return marr[1]; } set { SetProperty(1, value); } }
-        public String SaveAs { get { return marr[2]; } set { SetProperty(2, value); } }
-        public String Status { get { return marr[3]; } set { SetProperty(3, value); } }
-        public String IncludeStr { get { return marr[4]; } set { SetProperty(4, value); } }
-        public String VolumeGroup { get { return marr[5]; } set { SetProperty(5, value); } }
-        readonly static String[] marrPropName = new String[] { "VolumeName", "Path", "SaveAs", "Status", "IncludeStr", "VolumeGroup" };
+        public string VolumeName { get { return marr[0]; } set { SetProperty(0, value); } }
+        public string Path { get { return marr[1]; } set { SetProperty(1, value); } }
+        public string SaveAs { get { return marr[2]; } set { SetProperty(2, value); } }
+        public string Status { get { return marr[3]; } set { SetProperty(3, value); } }
+        public string IncludeStr { get { return marr[4]; } set { SetProperty(4, value); } }
+        public string VolumeGroup { get { return marr[5]; } set { SetProperty(5, value); } }
+        readonly static string[] marrPropName = new string[] { "VolumeName", "Path", "SaveAs", "Status", "IncludeStr", "VolumeGroup" };
         internal const int NumCols_ = 6;
 
-        internal VolumeLVitemVM(VolumesListViewVM LV, String[] arrStr)
+        internal VolumeLVitemVM(VolumesListViewVM LV, string[] arrStr)
             : base(LV, arrStr)
         {
             SaveAsExists = (Status == Utilities.mSTRusingFile);                 // TODO: check dup drive letter, and if drive is mounted.
         }
 
         internal override int NumCols { get { return NumCols_; } }
-        protected override String[] PropertyNames { get { return marrPropName; } }
+        protected override string[] PropertyNames { get { return marrPropName; } }
 
         internal bool Include { get { return (IncludeStr == "Yes"); } set { IncludeStr = (value ? "Yes" : "No"); } }
 
@@ -37,20 +34,20 @@ namespace SearchDirLists
 
     class VolumesListViewVM : ListViewVM_Generic<VolumeLVitemVM>
     {
-        public String WidthVolumeName { get { return SCW; } }                   // franken all NaN
-        public String WidthPath { get { return SCW; } }
-        public String WidthSaveAs { get { return SCW; } }
-        public String WidthStatus { get { return SCW; } }
-        public String WidthIncludeStr { get { return SCW; } }
-        public String WidthVolumeGroup { get { return SCW; } }
+        public string WidthVolumeName { get { return SCW; } }                   // franken all NaN
+        public string WidthPath { get { return SCW; } }
+        public string WidthSaveAs { get { return SCW; } }
+        public string WidthStatus { get { return SCW; } }
+        public string WidthIncludeStr { get { return SCW; } }
+        public string WidthVolumeGroup { get { return SCW; } }
 
         internal VolumesListViewVM(ListView lv) : base(lv) {}
-        internal override void NewItem(String[] arrStr) { Add(new VolumeLVitemVM(this, arrStr)); }
+        internal override void NewItem(string[] arrStr) { Add(new VolumeLVitemVM(this, arrStr)); }
         internal override int NumCols { get { return VolumeLVitemVM.NumCols_; } }
 
-        internal bool ContainsVolumeName(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if (item.VolumeName.ToLower() == s) return true; return false; }
-        internal bool ContainsUnsavedPath(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if ((item.Path.ToLower() == s) && (item.SaveAsExists == false)) return true; return false; }
-        internal bool ContainsSaveAs(String t) { String s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if (item.SaveAs.ToLower() == s) return true; return false; }
+        internal bool ContainsVolumeName(string t) { string s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if (item.VolumeName.ToLower() == s) return true; return false; }
+        internal bool ContainsUnsavedPath(string t) { string s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if ((item.Path.ToLower() == s) && (item.SaveAsExists == false)) return true; return false; }
+        internal bool ContainsSaveAs(string t) { string s = t.ToLower(); foreach (VolumeLVitemVM item in m_items) if (item.SaveAs.ToLower() == s) return true; return false; }
     }
 
     partial class VolumesTabVM : ObservableObject

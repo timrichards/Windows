@@ -301,7 +301,7 @@ namespace SearchDirLists
         }
         static TreeView m_TVFE = null;
 
-        static internal void StartTimer(String text) { m_scrollTimer.Stop(); m_scrollTimer.Start(); Utilities.WriteLine("StartTimer " + text); }
+        static internal void StartTimer(string text) { m_scrollTimer.Stop(); m_scrollTimer.Start(); Utilities.WriteLine("StartTimer " + text); }
         static internal void StopTimer(int nWhere) { m_scrollTimer.Stop(); Utilities.WriteLine("StopTimer " + nWhere); }
         internal static TreeViewItemVM WaitingToSelect { get { return m_WaitingToSelect; } }
         internal static void SetWaitingToSelect(TreeViewItemVM tvivm)
@@ -354,7 +354,7 @@ namespace SearchDirLists
     public class TreeViewItemVM : ObservableObject
     {
         public ObservableCollection<TreeViewItemVM> Items { get { return m_Items; } }
-        public String Text { get { return datum.Text.PadRight(200); } }
+        public string Text { get { return datum.Text.PadRight(200); } }
 #if (WPF)
         public Brush Foreground { get { return m_bSelected ? m_SelectedForeground : m_Foreground; } }
         public Brush SelectedForeground { get { return m_bSelected ? m_SelectedForeground : m_Foreground; } }

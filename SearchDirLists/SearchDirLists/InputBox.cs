@@ -11,15 +11,15 @@ namespace SearchDirLists
 {
     public partial class InputBox : Form
     {
-        public String Prompt { set { form_lbl_Prompt.Text = value; } }
-        public String Entry { get { return form_cb_Entry.Text; } set { form_cb_Entry.Text = value; } }
+        public string Prompt { set { form_lbl_Prompt.Text = value; } }
+        public string Entry { get { return form_cb_Entry.Text; } set { form_cb_Entry.Text = value; } }
 
         public InputBox()
         {
             InitializeComponent();
         }
 
-        public void AddSelector(String str)
+        public void AddSelector(string str)
         {
             form_cb_Entry.Items.Add(str);
             form_cb_Entry.SelectedIndex = 0;

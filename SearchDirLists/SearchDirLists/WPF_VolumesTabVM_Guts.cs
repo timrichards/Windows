@@ -137,9 +137,9 @@ namespace SearchDirLists
                         != MBoxRet.Yes)
                     {
                         gd.m_blinky.Go(m_app.xaml_cbVolumeName, clr: Drawing.Color.Yellow, Once: true);
-                        m_app.xaml_cbVolumeName.Text = String.Empty;
+                        m_app.xaml_cbVolumeName.Text = string.Empty;
                         gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Yellow, Once: true);
-                        CB_Path.Current = String.Empty;
+                        CB_Path.Current = string.Empty;
                         Utilities.Assert(1308.9306, SaveFields(false));
                     }
                 }
@@ -160,7 +160,7 @@ namespace SearchDirLists
                     return false;
                 }
 
-                String strStatus = "Not Saved";
+                string strStatus = "Not Saved";
 
                 if (File.Exists(CB_SaveAs.Current))
                 {
@@ -231,16 +231,16 @@ namespace SearchDirLists
                     }
                 }
 
-                LV.NewItem(new String[] { CB_VolumeName.Current, CB_Path.Current, CB_SaveAs.Current, strStatus, "Yes" });
+                LV.NewItem(new string[] { CB_VolumeName.Current, CB_Path.Current, CB_SaveAs.Current, strStatus, "Yes" });
                 return bSaveAsExists;
             }));
         }
 
-        String FormatPath(String strPath, Control ctl, bool bFailOnDirectory = true)
+        string FormatPath(string strPath, Control ctl, bool bFailOnDirectory = true)
         {
             if (Directory.Exists(Path.GetFullPath(strPath)))
             {
-                String strCapDrive = strPath.Substring(0, strPath.IndexOf(@":\") + 2);
+                string strCapDrive = strPath.Substring(0, strPath.IndexOf(@":\") + 2);
 
                 strPath = Path.GetFullPath(strPath).Replace(strCapDrive, strCapDrive.ToUpper());
 
@@ -261,7 +261,7 @@ namespace SearchDirLists
 
         void LoadVolumeList_Click() { gd.InterruptTreeTimerWithAction(new BoolAction(() => { return LoadVolumeList(); })); DoTree(); }
 
-        bool LoadVolumeList(String strFile = null)
+        bool LoadVolumeList(string strFile = null)
         {
             if (new SDL_VolumeFile(strFile).ReadList(LV) == false)
             {
@@ -294,9 +294,9 @@ namespace SearchDirLists
 
                 VolumeLVitemVM lvItem = LV.Selected.First();
 
-                String strVolumeName_orig = lvItem.VolumeName;
-                String strVolumeName = null;
-                String strSaveAs = lvItem.SaveAs;
+                string strVolumeName_orig = lvItem.VolumeName;
+                string strVolumeName = null;
+                string strSaveAs = lvItem.SaveAs;
 
                 try { using (new StreamReader(strSaveAs)) { } }
                 catch
@@ -331,8 +331,8 @@ namespace SearchDirLists
                     }
                 }
 
-                String strDriveLetter_orig = null;
-                String strDriveLetter = null;
+                string strDriveLetter_orig = null;
+                string strDriveLetter = null;
 
                 while (true)
                 {
@@ -382,7 +382,7 @@ namespace SearchDirLists
 
                 using (StringReader reader = new StringReader(File.ReadAllText(strSaveAs)))
                 {
-                    String strLine = null;
+                    string strLine = null;
                     bool bHitNickname = (Utilities.StrValid(strVolumeName) == false);
 
                     while ((strLine = reader.ReadLine()) != null)
@@ -440,14 +440,14 @@ namespace SearchDirLists
 
             using (StreamReader file = new StreamReader(CB_SaveAs.Current))
             {
-                String line = null;
+                string line = null;
 
                 if ((line = file.ReadLine()) == null) return false;
                 if ((line = file.ReadLine()) == null) return false;
                 if (line.StartsWith(Utilities.mSTRlineType_Nickname) == false) return false;
 
-                String[] arrLine = line.Split('\t');
-                String strName = String.Empty;
+                string[] arrLine = line.Split('\t');
+                string strName = string.Empty;
 
                 if (arrLine.Length > 2) strName = arrLine[2];
                 CB_VolumeName.Current = strName;
@@ -586,7 +586,7 @@ namespace SearchDirLists
             {
                 CB_Path.Current += '\\';
 
-                String str = FormatPath(CB_Path.Current, m_app.xaml_cbPath, bFailOnDirectory);
+                string str = FormatPath(CB_Path.Current, m_app.xaml_cbPath, bFailOnDirectory);
 
                 if (str != null)
                 {
@@ -622,7 +622,7 @@ namespace SearchDirLists
                     return false;
                 }
 
-                String str = FormatPath(CB_SaveAs.Current, m_app.xaml_cbSaveAs, bFailOnDirectory);
+                string str = FormatPath(CB_SaveAs.Current, m_app.xaml_cbSaveAs, bFailOnDirectory);
 
                 if (str != null)
                 {
@@ -677,7 +677,7 @@ namespace SearchDirLists
                 inputBox.Prompt = "Enter a volume group name";
                 inputBox.Entry = lvSelect[0].VolumeGroup;
 
-                SortedDictionary<String, object> dictVolGroups = new SortedDictionary<String, object>();
+                SortedDictionary<string, object> dictVolGroups = new SortedDictionary<string, object>();
 
                 foreach (VolumeLVitemVM lvItem in LV.ItemsCast)
                 {
@@ -687,7 +687,7 @@ namespace SearchDirLists
                     }
                 }
 
-                foreach (KeyValuePair<String, object> entry in dictVolGroups)
+                foreach (KeyValuePair<string, object> entry in dictVolGroups)
                 {
                     inputBox.AddSelector(entry.Key);
                 }

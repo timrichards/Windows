@@ -51,8 +51,8 @@ namespace SearchDirLists
     // Used for two listviewers
     public class ClonesLVitemVM : ClonesLVitemVM_Base
     {
-        public String Occurrences { get { return datum.SubItems[1].Text; } }
-        readonly static String[] marrPropName = new String[] { "Folders", "Occurrences" };
+        public string Occurrences { get { return datum.SubItems[1].Text; } }
+        readonly static string[] marrPropName = new string[] { "Folders", "Occurrences" };
         internal const int NumCols_ = 2;
 
         internal ClonesLVitemVM(ListViewVM LV, SDL_ListViewItem datum_in)
@@ -98,7 +98,7 @@ namespace SearchDirLists
         }
 
         internal override int NumCols { get { return NumCols_; } }
-        protected override String[] PropertyNames { get { return marrPropName; } }
+        protected override string[] PropertyNames { get { return marrPropName; } }
 
         protected override void ActOnDirectSelChange()
         {
@@ -140,8 +140,8 @@ namespace SearchDirLists
 
     public class ClonesListViewVM : ListViewVM_Generic<ClonesLVitemVM>
     {
-        public String WidthFolders { get { return SCW; } }          // not used
-        public String WidthOccurrences { get { return SCW; } }      // not used
+        public string WidthFolders { get { return SCW; } }          // not used
+        public string WidthOccurrences { get { return SCW; } }      // not used
 
         internal ClonesListViewVM(ListView lv) : base(lv) { }
         internal override void NewItem(SDL_ListViewItem datum_in, bool bQuiet = false) { Add(new ClonesLVitemVM(this, datum_in), bQuiet); }

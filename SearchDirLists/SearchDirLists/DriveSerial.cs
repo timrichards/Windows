@@ -144,12 +144,12 @@ namespace SearchDirLists
             FileAttributes dwFlagsAndAttributes,
             IntPtr hTemplateFile);
 
-        internal static void Get(String strPath, out String strModel_out, out String strSerialNo_out, out int? nSize_out)
+        internal static void Get(string strPath, out string strModel_out, out string strSerialNo_out, out int? nSize_out)
         {
             var letter = strPath.Substring(0, 2);
 
-            String strModel = null;
-            String strSerialNo = null;
+            string strModel = null;
+            string strSerialNo = null;
             object objSize = null;
 
             //var query = new STORAGE_PROPERTY_QUERY { PropertyId = 0, QueryType = 0 };
@@ -242,11 +242,11 @@ namespace SearchDirLists
             strModel_out = strModel;
             strSerialNo_out = strSerialNo;
 
-            if ((objSize as String) != null)
+            if ((objSize as string) != null)
             {
                 int n = 0;
 
-                int.TryParse(objSize as String, out n);
+                int.TryParse(objSize as string, out n);
                 nSize_out = n;
             }
         }

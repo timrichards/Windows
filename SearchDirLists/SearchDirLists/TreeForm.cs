@@ -401,7 +401,7 @@ namespace SearchDirLists
     partial class GlobalData
     {
         internal readonly SortedDictionary<Correlate, UList<SDL_TreeNode>> m_dictNodes = new SortedDictionary<Correlate, UList<SDL_TreeNode>>();
-        internal readonly Dictionary<String, String> m_dictDriveInfo = new Dictionary<String, String>();
+        internal readonly Dictionary<string, string> m_dictDriveInfo = new Dictionary<string, string>();
         internal Tree m_tree = null;
         internal Thread m_threadCollate = null;
         internal Thread m_threadSelect = null;
@@ -451,7 +451,7 @@ namespace SearchDirLists
         internal void DoTreeSelect(SDL_TreeNode treeNode, TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
         {
             SDL_TreeNode rootNode = treeNode.Root();
-            String strFile = ((RootNodeDatum)rootNode.Tag).StrFile;
+            string strFile = ((RootNodeDatum)rootNode.Tag).StrFile;
             bool bSecondComparePane = (m_bCompareMode && rootNode.Checked);
             Thread threadKill = bSecondComparePane ? m_threadSelectCompare : m_threadSelect;
 

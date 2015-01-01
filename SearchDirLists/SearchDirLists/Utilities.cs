@@ -99,7 +99,7 @@ namespace SearchDirLists
             }
         }
 
-        internal bool ContainsKey(String s)
+        internal bool ContainsKey(string s)
         {
             if (s != strPrevQuery)
             {
@@ -110,7 +110,7 @@ namespace SearchDirLists
             return (nodePrevQuery != null);
         }
 
-        internal SDL_TreeNode this[String s]
+        internal SDL_TreeNode this[string s]
         {
             get
             {
@@ -165,7 +165,7 @@ namespace SearchDirLists
         }
 
         readonly SDL_TreeView m_treeView = null;
-        String strPrevQuery = null;
+        string strPrevQuery = null;
         SDL_TreeNode nodePrevQuery = null;
     }
 
@@ -179,19 +179,19 @@ namespace SearchDirLists
             Nodes = new SDL_TreeNodeCollection(TreeView);
         }
 
-        internal SDL_TreeNode(String strContent)
+        internal SDL_TreeNode(string strContent)
             : this()
         {
             Text = strContent;
         }
 
-        internal SDL_TreeNode(String strContent, SDL_TreeNode[] arrNodes)
+        internal SDL_TreeNode(string strContent, SDL_TreeNode[] arrNodes)
             : this(strContent)
         {
             Nodes.AddRange(arrNodes);
         }
 
-        internal String FullPath
+        internal string FullPath
         {
             get
             {
@@ -239,9 +239,9 @@ namespace SearchDirLists
         internal void EnsureVisible() { }
 
         readonly internal SDL_TreeNodeCollection Nodes = null;
-        internal String Text = null;
-        internal String ToolTipText = null;
-        internal String Name = null;
+        internal string Text = null;
+        internal string ToolTipText = null;
+        internal string Name = null;
         internal SDL_TreeView TreeView = null;
         internal SDL_TreeNode FirstNode = null;
         internal SDL_TreeNode NextNode = null;
@@ -254,7 +254,7 @@ namespace SearchDirLists
         internal Drawing.Color BackColor = Drawing.Color.Empty;
         internal Drawing.Color ForeColor = Drawing.Color.Empty;
         
-        String m_strFullPath = null;
+        string m_strFullPath = null;
     }
 
     class SDL_ListViewItemCollection : UList<SDL_ListViewItem>
@@ -264,9 +264,9 @@ namespace SearchDirLists
             m_listView = listView;
         }
 
-        internal void AddRange(String[] arrItems)
+        internal void AddRange(string[] arrItems)
         {
-            foreach (String s in arrItems)
+            foreach (string s in arrItems)
             {
                 Add(new SDL_ListViewItem(s, m_listView));
             }
@@ -281,7 +281,7 @@ namespace SearchDirLists
             }
         }
 
-        internal bool ContainsKey(String s)
+        internal bool ContainsKey(string s)
         {
             if (s != strPrevQuery)
             {
@@ -294,7 +294,7 @@ namespace SearchDirLists
 
         internal new SDL_ListViewItem this[int i] { get { if (i < Count) return base[i]; return NullValue; } }
 
-        internal SDL_ListViewItem this[String s]
+        internal SDL_ListViewItem this[string s]
         {
             get
             {
@@ -313,7 +313,7 @@ namespace SearchDirLists
 
         static SDL_ListViewItem NullValue = new SDL_ListViewItem();
         readonly SDL_ListView m_listView = null;
-        String strPrevQuery = null;
+        string strPrevQuery = null;
         SDL_ListViewItem lvItemPrevQuery = null;
     }
 
@@ -329,9 +329,9 @@ namespace SearchDirLists
     class SDL_ListViewItem
     {
         internal SDL_ListViewItem(SDL_ListView listView = null) { SubItems = new SDL_ListViewItemCollection(ListView); }
-        internal SDL_ListViewItem(String strContent, SDL_ListView listView = null) : this(listView) { Text = strContent; }
+        internal SDL_ListViewItem(string strContent, SDL_ListView listView = null) : this(listView) { Text = strContent; }
 
-        internal SDL_ListViewItem(String[] arrString, SDL_ListView listView = null) : this(listView)
+        internal SDL_ListViewItem(string[] arrString, SDL_ListView listView = null) : this(listView)
         {
             Text = arrString[0];
             SubItems.Add(this);
@@ -342,8 +342,8 @@ namespace SearchDirLists
             }
         }
     
-        internal String Text = null;
-        internal String Name = null;
+        internal string Text = null;
+        internal string Name = null;
         internal object Tag = null;
         internal void Select(bool bSel = true) {}
         internal bool Focused;
@@ -373,8 +373,8 @@ namespace SearchDirLists
 
         internal static bool InvokeRequired(this WPF.Window w) { return (w.Dispatcher.CheckAccess() == false); }
         internal static object Invoke(this WPF.Window w, Delegate m, params object[] a) { return w.Dispatcher.Invoke(m, a); }
-        internal static void TitleSet(this WPF.Window w, String s) { w.Title = s; }
-        internal static String TitleGet(this WPF.Window w) { return w.Title; }
+        internal static void TitleSet(this WPF.Window w, string s) { w.Title = s; }
+        internal static string TitleGet(this WPF.Window w) { return w.Title; }
 
         internal static void Select(this WPF.Controls.Control c) { c.Focus(); }
 
@@ -399,8 +399,8 @@ namespace SearchDirLists
     class SDL_ListViewItem : ListViewItem
     {
         public SDL_ListViewItem() : base() { }
-        internal SDL_ListViewItem(String strContent) : base(strContent) { }
-        internal SDL_ListViewItem(String[] arrString) : base(arrString) { }
+        internal SDL_ListViewItem(string strContent) : base(strContent) { }
+        internal SDL_ListViewItem(string[] arrString) : base(arrString) { }
         internal void Select(bool bSel = true) { Selected = bSel; }
     }
 
@@ -438,8 +438,8 @@ namespace SearchDirLists
     class SDL_TreeNode : TreeNode
     {
         public SDL_TreeNode() : base() { }
-        internal SDL_TreeNode(String strContent) : base(strContent) { }
-        internal SDL_TreeNode(String strContent, SDL_TreeNode[] arrNodes) : base(strContent, arrNodes) { }
+        internal SDL_TreeNode(string strContent) : base(strContent) { }
+        internal SDL_TreeNode(string strContent, SDL_TreeNode[] arrNodes) : base(strContent, arrNodes) { }
 
         internal TreeViewItemVM TVIVM = null;
         internal ListViewItemVM LVIVM = null;
@@ -450,8 +450,8 @@ namespace SearchDirLists
         internal static Drawing.Color GetBackColor(this Control ctl) { return ctl.BackColor; }
         internal static void SetBackColor(this Control ctl, Drawing.Color c) { ctl.BackColor = c; }
         internal static bool InvokeRequired(this Control c) { return c.InvokeRequired; }
-        internal static void TitleSet(this Control c, String s) { c.Text = s; }
-        internal static String TitleGet(this Control c) { return c.Text; }
+        internal static void TitleSet(this Control c, string s) { c.Text = s; }
+        internal static string TitleGet(this Control c) { return c.Text; }
     }
 
     class SDLWPF
@@ -603,11 +603,11 @@ namespace SearchDirLists
 
     static class ExtensionMethods
     {
-        public static String ToPrintString(this object source)
+        public static string ToPrintString(this object source)
         {
             if (source == null) return null;
 
-            String s = String.Join("", source.ToString().Cast<char>().Where(c => Char.IsControl(c) == false)).Trim();
+            string s = string.Join("", source.ToString().Cast<char>().Where(c => Char.IsControl(c) == false)).Trim();
 
             if (s.Length == 0) return null;                             // Returns null if empty
 
@@ -762,14 +762,14 @@ namespace SearchDirLists
     class LVvolStrings : Utilities
     {
         readonly SDL_ListViewItem m_lvItem = null;
-        internal String VolumeName { get; private set; }
-        internal String StrPath { get; private set; }
-        internal String SaveAs { get; private set; }
-        internal String Status { get; private set; }
-        internal String Include { get; private set; }
-        internal String VolumeGroup { get; private set; }
-        internal String DriveModel { get; private set; }
-        internal String DriveSerial { get; private set; }
+        internal string VolumeName { get; private set; }
+        internal string StrPath { get; private set; }
+        internal string SaveAs { get; private set; }
+        internal string Status { get; private set; }
+        internal string Include { get; private set; }
+        internal string VolumeGroup { get; private set; }
+        internal string DriveModel { get; private set; }
+        internal string DriveSerial { get; private set; }
         internal int DriveSize { get; private set; }
 
         internal LVvolStrings(VolumeLVitemVM lvItem)
@@ -823,21 +823,21 @@ namespace SearchDirLists
     // SearchDirLists listing file|*.sdl_list|SearchDirLists volume list file|*.sdl_vol|SearchDirLists copy scratchpad file|*.sdl_copy|SearchDirLists ignore list file|*.sdl_ignore
     abstract class SDL_File : Utilities
     {
-        public static String BaseFilter = "Text files|*.txt|All files|*.*";
-        public static String FileAndDirListFileFilter = "SearchDirLists listing file|*." + mSTRfileExt_Listing;
+        public static string BaseFilter = "Text files|*.txt|All files|*.*";
+        public static string FileAndDirListFileFilter = "SearchDirLists listing file|*." + mSTRfileExt_Listing;
 
-        public readonly String Header = null;
+        public readonly string Header = null;
 
-        String m_strDescription = null;
-        public String Description { get { return m_strDescription + " list file"; } }
+        string m_strDescription = null;
+        public string Description { get { return m_strDescription + " list file"; } }
 
-        String m_strExt = null;
-        public String Filter { get { return "SearchDirLists " + Description + "|*." + m_strExt; } }
+        string m_strExt = null;
+        public string Filter { get { return "SearchDirLists " + Description + "|*." + m_strExt; } }
 
         internal static Forms.SaveFileDialog SFD = null;        // TODO: remove frankenSFD
 
-        protected String m_strPrevFile = null;
-        protected String m_strFileNotDialog = null;
+        protected string m_strPrevFile = null;
+        protected string m_strFileNotDialog = null;
 
         static bool bInited = false;
 
@@ -853,7 +853,7 @@ namespace SearchDirLists
             bInited = true;
         }
 
-        protected SDL_File(String strHeader, String strExt, String strDescription)
+        protected SDL_File(string strHeader, string strExt, string strDescription)
         {
             Init();
             Utilities.Assert(1303.4306, SFD != null);
@@ -878,8 +878,8 @@ namespace SearchDirLists
             return true;
         }
 
-        protected virtual void ReadListItem(ListView lv, String[] strArray) { lv.Items.Add(new SDL_ListViewItem(strArray)); }
-        protected virtual void ReadListItem(ListViewVM lv, String[] strArray) { lv.NewItem(strArray); }
+        protected virtual void ReadListItem(ListView lv, string[] strArray) { lv.Items.Add(new SDL_ListViewItem(strArray)); }
+        protected virtual void ReadListItem(ListViewVM lv, string[] strArray) { lv.NewItem(strArray); }
 
         internal bool ReadList(ListViewVM lv)
 #if (WPF)
@@ -909,7 +909,7 @@ namespace SearchDirLists
 
             using (StreamReader sr = File.OpenText(m_strFileNotDialog))
             {
-                String strLine = sr.ReadLine();
+                string strLine = sr.ReadLine();
 
                 if (strLine == Header)
                 {
@@ -937,7 +937,7 @@ namespace SearchDirLists
             }
         }
 
-        protected virtual String WriteListItem(int nIndex, String str) { return str; }
+        protected virtual string WriteListItem(int nIndex, string str) { return str; }
 
         internal bool WriteList(IEnumerable<ListViewItemVM> lvItems)
 #if (WPF == false)
@@ -992,11 +992,11 @@ namespace SearchDirLists
 
     class SDL_VolumeFile : SDL_File
     {
-        internal SDL_VolumeFile(String strFile = null) : base(mSTRvolListHeader, mSTRfileExt_Volume, "volume") { m_strFileNotDialog = strFile; }
+        internal SDL_VolumeFile(string strFile = null) : base(mSTRvolListHeader, mSTRfileExt_Volume, "volume") { m_strFileNotDialog = strFile; }
 #if (WPF)
-        protected override void ReadListItem(ListViewVM lv, String[] strArray)
+        protected override void ReadListItem(ListViewVM lv, string[] strArray)
 #else
-        protected override void ReadListItem(ListView lv, String[] strArray)
+        protected override void ReadListItem(ListView lv, string[] strArray)
 #endif
         {
             if (strArray.Length < 4)
@@ -1031,7 +1031,7 @@ namespace SearchDirLists
 #endif
         }
 
-        protected override String WriteListItem(int nIndex, String str)
+        protected override string WriteListItem(int nIndex, string str)
         {
             return (nIndex == 1) ? str.TrimEnd('\\') : str;
         }
@@ -1039,7 +1039,7 @@ namespace SearchDirLists
 
     class SDL_CopyFile : SDL_File { internal SDL_CopyFile() : base(mSTRcopyScratchpadHeader, mSTRfileExt_Copy, "copy") { } }
 
-    class SDL_IgnoreFile : SDL_File { internal SDL_IgnoreFile(String strFile = null) : base(mSTRignoreListHeader, mSTRfileExt_Ignore, "ignore") { m_strFileNotDialog = strFile; } }
+    class SDL_IgnoreFile : SDL_File { internal SDL_IgnoreFile(string strFile = null) : base(mSTRignoreListHeader, mSTRfileExt_Ignore, "ignore") { m_strFileNotDialog = strFile; } }
 
     class UList<T> :
 #if (true)
@@ -1078,53 +1078,53 @@ namespace SearchDirLists
 
     class Utilities
     {
-        internal const String mSTRheader01 = "SearchDirLists 0.1";
-        internal const String mSTRstart01 = mSTRheader01 + " START";
-        internal const String mSTRend01 = mSTRheader01 + " END";
-        internal const String mSTRerrorsLoc01 = mSTRheader01 + " ERRORS";
-        internal const String mSTRtotalLengthLoc01 = mSTRheader01 + " LENGTH";
-        internal const String mSTRdrive01 = mSTRheader01 + " DRIVE";
-        internal const String mSTRvolListHeader01 = mSTRheader01 + " VOLUME LIST";
+        internal const string mSTRheader01 = "SearchDirLists 0.1";
+        internal const string mSTRstart01 = mSTRheader01 + " START";
+        internal const string mSTRend01 = mSTRheader01 + " END";
+        internal const string mSTRerrorsLoc01 = mSTRheader01 + " ERRORS";
+        internal const string mSTRtotalLengthLoc01 = mSTRheader01 + " LENGTH";
+        internal const string mSTRdrive01 = mSTRheader01 + " DRIVE";
+        internal const string mSTRvolListHeader01 = mSTRheader01 + " VOLUME LIST";
 
-        internal const String mSTRheader = "SearchDirLists 0.2";
-        internal const String mSTRstart = mSTRheader + " START";
-        internal const String mSTRend = mSTRheader + " END";
-        internal const String mSTRerrorsLoc = mSTRheader + " ERRORS";
-        internal const String mSTRtotalLengthLoc = mSTRheader + " LENGTH";
-        internal const String mSTRdrive = mSTRheader + " DRIVE";
-        internal const String mSTRvolListHeader = mSTRheader + " VOLUME LIST";
-        internal const String mSTRcopyScratchpadHeader = mSTRheader + " COPYDIRS LIST";
-        internal const String mSTRignoreListHeader = mSTRheader + " IGNORE LIST";
-        internal const String mSTRusingFile = "Using file.";
-        internal const String mSTRsaved = "Saved.";
-        internal const String mSTRnotSaved = "Not saved.";
-        internal const String mSTRcantSave = "Can't save. Not mounted.";
+        internal const string mSTRheader = "SearchDirLists 0.2";
+        internal const string mSTRstart = mSTRheader + " START";
+        internal const string mSTRend = mSTRheader + " END";
+        internal const string mSTRerrorsLoc = mSTRheader + " ERRORS";
+        internal const string mSTRtotalLengthLoc = mSTRheader + " LENGTH";
+        internal const string mSTRdrive = mSTRheader + " DRIVE";
+        internal const string mSTRvolListHeader = mSTRheader + " VOLUME LIST";
+        internal const string mSTRcopyScratchpadHeader = mSTRheader + " COPYDIRS LIST";
+        internal const string mSTRignoreListHeader = mSTRheader + " IGNORE LIST";
+        internal const string mSTRusingFile = "Using file.";
+        internal const string mSTRsaved = "Saved.";
+        internal const string mSTRnotSaved = "Not saved.";
+        internal const string mSTRcantSave = "Can't save. Not mounted.";
 
         internal const int mNcolLength = 7;
         internal const int mNcolLength01 = 5;
         internal const int mNcolLengthLV = 4;
 
-        internal const String mSTRlineType_Version = "V";
-        internal const String mSTRlineType_Nickname = "N";
-        internal const String mSTRlineType_Path = "P";
-        internal const String mSTRlineType_DriveInfo = "I";
-        internal const String mSTRlineType_Comment = "C";
-        internal const String mSTRlineType_Start = "S";
-        internal const String mSTRlineType_Directory = "D";
-        internal const String mSTRlineType_File = "F";
-        internal const String mSTRlineType_End = "E";
-        internal const String mSTRlineType_Blank = "B";
-        internal const String mSTRlineType_ErrorDir = "R";
-        internal const String mSTRlineType_ErrorFile = "r";
-        internal const String mSTRlineType_Length = "L";
+        internal const string mSTRlineType_Version = "V";
+        internal const string mSTRlineType_Nickname = "N";
+        internal const string mSTRlineType_Path = "P";
+        internal const string mSTRlineType_DriveInfo = "I";
+        internal const string mSTRlineType_Comment = "C";
+        internal const string mSTRlineType_Start = "S";
+        internal const string mSTRlineType_Directory = "D";
+        internal const string mSTRlineType_File = "F";
+        internal const string mSTRlineType_End = "E";
+        internal const string mSTRlineType_Blank = "B";
+        internal const string mSTRlineType_ErrorDir = "R";
+        internal const string mSTRlineType_ErrorFile = "r";
+        internal const string mSTRlineType_Length = "L";
 
-        internal const String mSTRfileExt_Listing = "sdl_list";
-        internal const String mSTRfileExt_Volume = "sdl_vol";
-        internal const String mSTRfileExt_Copy = "sdl_copy";
-        internal const String mSTRfileExt_Ignore = "sdl_ignore";
+        internal const string mSTRfileExt_Listing = "sdl_list";
+        internal const string mSTRfileExt_Volume = "sdl_vol";
+        internal const string mSTRfileExt_Copy = "sdl_copy";
+        internal const string mSTRfileExt_Ignore = "sdl_ignore";
 
         const int knDriveInfoItems = 11;
-        internal static readonly String[] mAstrDIlabels = new String[knDriveInfoItems]
+        internal static readonly string[] mAstrDIlabels = new string[knDriveInfoItems]
         {
             "Volume Free",
             "Volume Format",
@@ -1159,7 +1159,7 @@ namespace SearchDirLists
         static bool static_bAssertUp = false;
 #endif
 
-        internal static bool Assert(double nLocation, bool bCondition, String strError_in = null, bool bTraceOnly = false)
+        internal static bool Assert(double nLocation, bool bCondition, string strError_in = null, bool bTraceOnly = false)
         {
             if (bCondition) return true;
 
@@ -1168,7 +1168,7 @@ namespace SearchDirLists
                 return false;
             }
 
-            String strError = "Assertion failed at location " + nLocation + ".";
+            string strError = "Assertion failed at location " + nLocation + ".";
 
             if (StrValid(strError_in))
             {
@@ -1253,14 +1253,14 @@ namespace SearchDirLists
             return null;
         }
 
-        internal static String CheckNTFS_chars(ref String strFile, bool bFile = false)
+        internal static string CheckNTFS_chars(ref string strFile, bool bFile = false)
         {
             char[] arrChar = bFile ? Path.GetInvalidFileNameChars() : Path.GetInvalidPathChars();
             int nIx = -1;
 
             if ((nIx = strFile.IndexOfAny(arrChar)) > -1)
             {
-                String strRet = "NTFS ASCII " + ((int)strFile[nIx]).ToString();
+                string strRet = "NTFS ASCII " + ((int)strFile[nIx]).ToString();
 
                 strFile = strFile.Replace("\n", "").Replace("\r", "").Replace("\t", "");    // program-incompatible
                 return strRet;
@@ -1271,9 +1271,9 @@ namespace SearchDirLists
             }
         }
 
-        internal static void ConvertFile(String strFile)
+        internal static void ConvertFile(string strFile)
         {
-            String strFile_01 = StrFile_01(strFile);
+            string strFile_01 = StrFile_01(strFile);
 
             if (File.Exists(strFile_01))
             {
@@ -1286,7 +1286,7 @@ namespace SearchDirLists
             {
                 using (StreamReader file_in = new StreamReader(strFile_01))
                 {
-                    String strLine = null;
+                    string strLine = null;
                     long nLineNo = 0;       // lines number from one
                     bool bAtErrors = false;
 
@@ -1367,19 +1367,19 @@ namespace SearchDirLists
                         }
                         else if (strLine.StartsWith(mSTRtotalLengthLoc01))
                         {
-                            String[] arrLine = strLine.Split('\t');
+                            string[] arrLine = strLine.Split('\t');
 
                             file_out.WriteLine(FormatLine(mSTRlineType_Length, nLineNo, FormatString(strDir: mSTRtotalLengthLoc, nLength: long.Parse(arrLine[mNcolLength01]))));
                             continue;
                         }
 
-                        String[] arrLine_A = strLine.Split('\t');
-                        String strDir = arrLine_A[0];
+                        string[] arrLine_A = strLine.Split('\t');
+                        string strDir = arrLine_A[0];
 
                         if (StrValid(strDir) == false)
                         {
                             DateTime dtParse;
-                            String strTab = null;
+                            string strTab = null;
 
                             if ((arrLine_A.Length > 5) && arrLine_A[5].Contains("Trailing whitespace") && DateTime.TryParse(arrLine_A[1], out dtParse))
                             {
@@ -1433,10 +1433,10 @@ namespace SearchDirLists
             return nCount;
         }
 
-        internal static String DecodeAttributes(String strAttr)
+        internal static string DecodeAttributes(string strAttr)
         {
             FileAttributes nAttr = (FileAttributes)Convert.ToInt32(strAttr, 16);
-            String str = "";
+            string str = "";
 
             if ((nAttr & FileAttributes.ReparsePoint) != 0) str += " ReparsePoint";
             if ((nAttr & FileAttributes.Normal) != 0) str += " Normal";
@@ -1456,18 +1456,18 @@ namespace SearchDirLists
             return str;
         }
 
-        internal static bool FormatPath(ref String strPath, bool bFailOnDirectory = true)
+        internal static bool FormatPath(ref string strPath, bool bFailOnDirectory = true)
         {
             while (strPath.Contains(@"\\"))
             {
                 strPath = strPath.Replace(@"\\", @"\");
             }
 
-            String strDirName = Path.GetDirectoryName(strPath);
+            string strDirName = Path.GetDirectoryName(strPath);
 
             if ((StrValid(strDirName) == false) || Directory.Exists(strDirName))
             {
-                String strCapDrive = strPath.Substring(0, strPath.IndexOf(@":\") + 2);
+                string strCapDrive = strPath.Substring(0, strPath.IndexOf(@":\") + 2);
 
                 strPath = Path.GetFullPath(strPath).Replace(strCapDrive, strCapDrive.ToUpper());
 
@@ -1489,7 +1489,7 @@ namespace SearchDirLists
             return true;
         }
 
-        internal static bool FormatPath(ref String strPath, ref String strSaveAs, bool bFailOnDirectory = true)
+        internal static bool FormatPath(ref string strPath, ref string strSaveAs, bool bFailOnDirectory = true)
         {
             if (StrValid(strPath))
             {
@@ -1516,9 +1516,9 @@ namespace SearchDirLists
             return true;
         }
 
-        static String FormatLine(String strLineType, long nLineNo, String strLine_in = null)
+        static string FormatLine(string strLineType, long nLineNo, string strLine_in = null)
         {
-            String strLine_out = strLineType + "\t" + nLineNo;
+            string strLine_out = strLineType + "\t" + nLineNo;
 
             if (StrValid(strLine_in))
             {
@@ -1528,25 +1528,25 @@ namespace SearchDirLists
             return strLine_out;
         }
 
-        internal static String FormatSize(String in_str, bool bBytes = false)
+        internal static string FormatSize(string in_str, bool bBytes = false)
         {
             return FormatSize(ulong.Parse(in_str), bBytes);
         }
 
-        internal static String FormatSize(long nLength, bool bBytes = false, bool bNoDecimal = false)
+        internal static string FormatSize(long nLength, bool bBytes = false, bool bNoDecimal = false)
         {
             return FormatSize((ulong)nLength, bBytes, bNoDecimal);
         }
 
-        internal static String FormatSize(ulong nLength, bool bBytes = false, bool bNoDecimal = false)
+        internal static string FormatSize(ulong nLength, bool bBytes = false, bool bNoDecimal = false)
         {
             double nT = nLength / 1024.0 / 1024.0 / 1024 / 1024 - .05;
             double nG = nLength / 1024.0 / 1024 / 1024 - .05;
             double nM = nLength / 1024.0 / 1024 - .05;
             double nK = nLength / 1024.0 - .05;     // Windows Explorer seems to not round
-            String strFmt_big = "###,##0.0";
-            String strFormat = bNoDecimal ? "###,###" : strFmt_big;
-            String strSz = null;
+            string strFmt_big = "###,##0.0";
+            string strFormat = bNoDecimal ? "###,###" : strFmt_big;
+            string strSz = null;
 
             if (((int)nT) > 0) strSz = nT.ToString(strFmt_big) + " TB";
             else if (((int)nG) > 0) strSz = nG.ToString(strFmt_big) + " GB";
@@ -1556,7 +1556,7 @@ namespace SearchDirLists
 
             if (nLength > 0)
             {
-                return strSz + (bBytes ? (" (" + nLength.ToString("###,###,###,###,###") + " bytes)") : String.Empty);
+                return strSz + (bBytes ? (" (" + nLength.ToString("###,###,###,###,###") + " bytes)") : string.Empty);
             }
             else
             {
@@ -1564,11 +1564,11 @@ namespace SearchDirLists
             }
         }
 
-        internal static String FormatString(String strDir = null, String strFile = null, DateTime? dtCreated = null, DateTime? dtModified = null, String strAttributes = null, long nLength = -1, String strError1 = null, String strError2 = null, int? nHeader = null, String strChecksum = null)
+        internal static string FormatString(string strDir = null, string strFile = null, DateTime? dtCreated = null, DateTime? dtModified = null, string strAttributes = null, long nLength = -1, string strError1 = null, string strError2 = null, int? nHeader = null, string strChecksum = null)
         {
-            String strLength = null;
-            String strCreated = null;
-            String strModified = null;
+            string strLength = null;
+            string strCreated = null;
+            string strModified = null;
 
             if (nLength > -1)
             {
@@ -1609,12 +1609,12 @@ namespace SearchDirLists
                 bDbgCheck = true;
             }
 
-            String strRet = (strDir + '\t' + strFile + '\t' + strCreated + '\t' + strModified + '\t' + strAttributes + '\t' + strLength + '\t' + strError1 + '\t' + strError2 + '\t' + strChecksum).TrimEnd();
+            string strRet = (strDir + '\t' + strFile + '\t' + strCreated + '\t' + strModified + '\t' + strAttributes + '\t' + strLength + '\t' + strError1 + '\t' + strError2 + '\t' + strChecksum).TrimEnd();
 
             if (bDbgCheck)
             {
 #if (DEBUG)
-                String[] strArray = strRet.Split('\t');
+                string[] strArray = strRet.Split('\t');
                 DateTime dtParse = DateTime.MinValue;
 
                 if (strArray[mNcolLength01].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
@@ -1628,7 +1628,7 @@ namespace SearchDirLists
         }
 
         // make MessageBox modal from a worker thread
-        internal static MBoxRet MBox(String strMessage, String strTitle = null, MBoxBtns? buttons_in = null)
+        internal static MBoxRet MBox(string strMessage, string strTitle = null, MBoxBtns? buttons_in = null)
         {
             if (GlobalData.AppExit)
             {
@@ -1659,9 +1659,9 @@ namespace SearchDirLists
             return MBoxRet.None;
         }
 
-        internal static void MessageBoxKill(String strMatch = null)
+        internal static void MessageBoxKill(string strMatch = null)
         {
-            if ((m_form1MessageBoxOwner != null) && new String[] { null, m_form1MessageBoxOwner.TitleGet() }.Contains(strMatch))
+            if ((m_form1MessageBoxOwner != null) && new string[] { null, m_form1MessageBoxOwner.TitleGet() }.Contains(strMatch))
             {
                 m_form1MessageBoxOwner.Close();
                 m_form1MessageBoxOwner = null;
@@ -1669,18 +1669,18 @@ namespace SearchDirLists
             }
         }
 
-        internal static String NotNull(String str)
+        internal static string NotNull(string str)
         {
-            return str ?? String.Empty;
+            return str ?? string.Empty;
         }
 
-        protected static String StrFile_01(String strFile)
+        protected static string StrFile_01(string strFile)
         {
             return Path.Combine(Path.GetDirectoryName(strFile),
                 Path.GetFileNameWithoutExtension(strFile) + "_01" + Path.GetExtension(strFile));
         }
 
-        internal static bool StrValid(String str)
+        internal static bool StrValid(string str)
         {
             return ((str != null) && (str.Length > 0));
         }
@@ -1695,11 +1695,11 @@ namespace SearchDirLists
             ((PropertyInfo)((MemberExpression)outExpr.Body).Member).SetValue(outObj, input, null);
         }
 
-        internal static bool ValidateFile(String strSaveAs)
+        internal static bool ValidateFile(string strSaveAs)
         {
             if (File.Exists(strSaveAs) == false) return false;
 
-            String[] arrLine = File.ReadLines(strSaveAs).Take(1).ToArray();
+            string[] arrLine = File.ReadLines(strSaveAs).Take(1).ToArray();
 
             if (arrLine.Length <= 0) return false;
 
@@ -1713,21 +1713,21 @@ namespace SearchDirLists
                 bConvertFile = true;
             }
 
-            String[] arrToken = File.ReadLines(strSaveAs).Take(1).ToArray()[0].Split('\t');
+            string[] arrToken = File.ReadLines(strSaveAs).Take(1).ToArray()[0].Split('\t');
 
             if (arrToken.Length < 3) return false;
             if (arrToken[2] != mSTRheader) return false;
 
-            String[] arrLine_A = File.ReadLines(strSaveAs).Where(s => s.StartsWith(mSTRlineType_Length)).ToArray();
+            string[] arrLine_A = File.ReadLines(strSaveAs).Where(s => s.StartsWith(mSTRlineType_Length)).ToArray();
 
             if (arrLine_A.Length <= 0) return false;
 
-            String[] arrToken_A = arrLine_A[0].Split('\t');
+            string[] arrToken_A = arrLine_A[0].Split('\t');
 
             if (arrToken_A.Length < 3) return false;
             if (arrToken_A[2] != mSTRtotalLengthLoc) return false;
 
-            String strFile_01 = StrFile_01(strSaveAs);
+            string strFile_01 = StrFile_01(strSaveAs);
 
             if (bConvertFile && File.Exists(strFile_01))
             {
@@ -1737,14 +1737,14 @@ namespace SearchDirLists
             return true;
         }
 
-        static internal void Write(String str)
+        static internal void Write(string str)
         {
 #if (DEBUG)
             Console.Write(str);
 #endif
         }
 
-        static internal void WriteLine(String str = null)
+        static internal void WriteLine(string str = null)
         {
 #if (DEBUG)
             Console.WriteLine(str);
@@ -1820,7 +1820,7 @@ namespace SearchDirLists
             internal long Size { get { return m_Size; } }
             internal bool IsValid { get { return m_bValid; } }
 
-            internal static bool WinFile(String strFile, out DATUM winFindData)
+            internal static bool WinFile(string strFile, out DATUM winFindData)
             {
                 IntPtr handle = FindFirstFileExW(@"\\?\" + strFile, IndexInfoLevels.FindExInfoBasic, out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
 
@@ -1865,7 +1865,7 @@ namespace SearchDirLists
             }
         }
 
-        internal static bool GetDirectory(String strDir, ref List<DATUM> listDirs, ref List<DATUM> listFiles)
+        internal static bool GetDirectory(string strDir, ref List<DATUM> listDirs, ref List<DATUM> listFiles)
         {
             DATUM winFindData;
             IntPtr handle = FindFirstFileExW(@"\\?\" + strDir + @"\*", IndexInfoLevels.FindExInfoBasic, out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
@@ -1921,7 +1921,7 @@ namespace SearchDirLists
 
     class WPF_Form
     {
-        internal static Forms.DialogResult WPFMessageBox(String strMessage, String strTitle = null, Forms.MessageBoxButtons? buttons = null)
+        internal static Forms.DialogResult WPFMessageBox(string strMessage, string strTitle = null, Forms.MessageBoxButtons? buttons = null)
         {
             Forms.DialogResult dlgRet = Forms.DialogResult.None;
 

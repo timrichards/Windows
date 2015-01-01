@@ -13,12 +13,12 @@ using System.Text;
 
 namespace SearchDirLists
 {
-    delegate void SaveDirListingsStatusDelegate(String strPath, String strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0);
+    delegate void SaveDirListingsStatusDelegate(string strPath, string strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0);
 
 #if (WPF == false)
     partial class Form1
     {
-        void SaveDirListingsStatusCallback(String strPath, String strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0)
+        void SaveDirListingsStatusCallback(string strPath, string strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0)
         {
             if (GlobalData.AppExit || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
             {
@@ -85,7 +85,7 @@ namespace SearchDirLists
 #endif
     partial class VolumesTabVM
     {
-        void SaveDirListingsStatusCallback(String strPath, String strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0)
+        void SaveDirListingsStatusCallback(string strPath, string strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0)
         {
 #if (WPF == false)
         }
@@ -174,7 +174,7 @@ namespace SearchDirLists
             long m_nFilesTotal = 0;
             long m_nFilesDiff = 0;
             readonly List<double> m_listFileDiffs = new List<double>();
-            readonly List<String> m_list_Errors = new List<String>();
+            readonly List<string> m_list_Errors = new List<string>();
 
             private double StdDevSign(List<double> values)
             {
@@ -193,15 +193,15 @@ namespace SearchDirLists
                 m_statusCallback = statusCallback;
             }
 
-            private void WriteHeader(TextWriter fs, String strVolumeName, String strPath)
+            private void WriteHeader(TextWriter fs, string strVolumeName, string strPath)
             {
                 fs.WriteLine(mSTRheader01);
                 // assume SaveFields() by caller because SaveFields() has already prompted user
                 fs.WriteLine(strVolumeName);
                 fs.WriteLine(strPath);
 
-                String strModel = null;
-                String strSerialNo = null;
+                string strModel = null;
+                string strSerialNo = null;
                 int? nSize = null;
 
                 DriveSerial.Get(strPath, out strModel, out strSerialNo, out nSize);
@@ -215,7 +215,7 @@ namespace SearchDirLists
 
                 var WriteLine = new Action<Object>((o) =>
                 {
-                    String s = (o != null) ? o.ToString() : null;
+                    string s = (o != null) ? o.ToString() : null;
 
                     // Hack. Prevent blank line continue in Utilities.Convert()
                     sb.AppendLine(((s == null) || (s.Length <= 0)) ? " " : s.Trim());
@@ -239,15 +239,15 @@ namespace SearchDirLists
             class ResultItem
             {
                 public bool Ready { get; private set; }
-                public String strChecksum { private get; set; }
-                public String strOut { get { return FormatString(strFile: strFile, dtCreated: fi.CreationTime, strAttributes: ((int)fi.Attributes).ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File, strChecksum: strChecksum); } }
+                public string strChecksum { private get; set; }
+                public string strOut { get { return FormatString(strFile: strFile, dtCreated: fi.CreationTime, strAttributes: ((int)fi.Attributes).ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File, strChecksum: strChecksum); } }
 
-                String strFile;
+                string strFile;
                 Win32FindFile.FileData fi;
-                String strError1;
-                String strError2_File;
+                string strError1;
+                string strError2_File;
 
-                public ResultItem(String strFile_in, Win32FindFile.FileData fi_in, String strError1_in, String strError2_in)
+                public ResultItem(string strFile_in, Win32FindFile.FileData fi_in, string strError1_in, string strError2_in)
                 {
                     strFile = strFile_in;
                     fi = fi_in;
@@ -256,7 +256,7 @@ namespace SearchDirLists
                 }
             }
  
-            void TraverseTree(TextWriter fs, String root)
+            void TraverseTree(TextWriter fs, string root)
             {
                 Stack<Win32FindFile.DATUM> stackDirs = new Stack<Win32FindFile.DATUM>(64);
                 List<Win32FindFile.DATUM> listSubDirs = new List<Win32FindFile.DATUM>();
@@ -276,8 +276,8 @@ namespace SearchDirLists
                     }
 
                     Win32FindFile.DATUM winDir = stackDirs.Pop();
-                    String strFullPath = winDir.strAltFileName;
-                    String strError2_Dir = CheckNTFS_chars(ref strFullPath);
+                    string strFullPath = winDir.strAltFileName;
+                    string strError2_Dir = CheckNTFS_chars(ref strFullPath);
 
                     if (Win32FindFile.GetDirectory(strFullPath, ref listSubDirs, ref listFiles) == false)
                     {
@@ -288,8 +288,8 @@ namespace SearchDirLists
 
                     long nDirLength = 0;
                     bool bHasLength = false;
-                    Dictionary<String, String> dictChecksum = new Dictionary<string, string>();
-                    Dictionary<String, String> dictException_FileRead = new Dictionary<string, string>();
+                    Dictionary<string, string> dictChecksum = new Dictionary<string, string>();
+                    Dictionary<string, string> dictException_FileRead = new Dictionary<string, string>();
 
                     if (DoFakeChecksum)
                         Parallel.ForEach(listFiles, winData =>
@@ -319,7 +319,7 @@ namespace SearchDirLists
 
                             using (var md5 = System.Security.Cryptography.MD5.Create())
                             {
-                                String strChecksum = DRDigit.Fast.ToHexString(md5.ComputeHash(buffer));
+                                string strChecksum = DRDigit.Fast.ToHexString(md5.ComputeHash(buffer));
 
                                 lock (dictChecksum)
                                 {
@@ -332,13 +332,13 @@ namespace SearchDirLists
                     foreach (Win32FindFile.DATUM winData in listFiles)
                     {
                         Win32FindFile.FileData fi = new Win32FindFile.FileData(winData);
-                        String strFile = winData.strFileName;
-                        String strError2_File = CheckNTFS_chars(ref strFile, bFile: true) ?? "";
+                        string strFile = winData.strFileName;
+                        string strError2_File = CheckNTFS_chars(ref strFile, bFile: true) ?? "";
 
                         if (fi.IsValid == false)
                         {
-                            String strErrorFile = strFile;
-                            String strErrorDir = winData.strAltFileName.Substring(0, winData.strAltFileName.LastIndexOf('\\'));
+                            string strErrorFile = strFile;
+                            string strErrorDir = winData.strAltFileName.Substring(0, winData.strAltFileName.LastIndexOf('\\'));
 
                             CheckNTFS_chars(ref strErrorDir);
                             m_list_Errors.Add(FormatString(strFile: strErrorFile, strDir: strErrorDir, strError2: strError2_File));
@@ -350,7 +350,7 @@ namespace SearchDirLists
                         ++m_nFilesTotal;
                         ++m_nFilesDiff;
 
-                        String strError1 = null;
+                        string strError1 = null;
 
                         if (winData.strAltFileName.Length > 260)
                         {
@@ -364,7 +364,7 @@ namespace SearchDirLists
                             bHasLength = true;
                         }
 
-                        String strChecksum = null;
+                        string strChecksum = null;
 
                         if (dictChecksum.ContainsKey(strFile))
                         {
@@ -377,13 +377,13 @@ namespace SearchDirLists
                             strError2_File = strError2_File.TrimStart();
                         }
 
-                        String strOut = FormatString(strFile: strFile, dtCreated: fi.CreationTime, strAttributes: ((int)fi.Attributes).ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File, strChecksum: strChecksum);
+                        string strOut = FormatString(strFile: strFile, dtCreated: fi.CreationTime, strAttributes: ((int)fi.Attributes).ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File, strChecksum: strChecksum);
 
                         fs.WriteLine(strOut);
                     }
 
                     {
-                        String strError1 = null;
+                        string strError1 = null;
 
                         if (strFullPath.Length > 240)
                         {
@@ -417,9 +417,9 @@ namespace SearchDirLists
 
             void Go()
             {
-                String strVolumeName = m_volStrings.VolumeName;
-                String strPath = m_volStrings.StrPath;
-                String strSaveAs = m_volStrings.SaveAs;
+                string strVolumeName = m_volStrings.VolumeName;
+                string strPath = m_volStrings.StrPath;
+                string strSaveAs = m_volStrings.SaveAs;
 
                 if (FormatPath(ref strPath, ref strSaveAs) == false)
                 {
@@ -442,7 +442,7 @@ namespace SearchDirLists
                     return;
                 }
 
-                String strPathOrig = Directory.GetCurrentDirectory();
+                string strPathOrig = Directory.GetCurrentDirectory();
 
                 try
                 {
@@ -474,7 +474,7 @@ namespace SearchDirLists
                         fs.WriteLine();
                         fs.WriteLine(mSTRerrorsLoc01);
 
-                        foreach (String strError in m_list_Errors)
+                        foreach (string strError in m_list_Errors)
                         {
                             fs.WriteLine(strError);
                         }
@@ -548,7 +548,7 @@ namespace SearchDirLists
                 worker.Join();
             }
 
-            Utilities.WriteLine(String.Format("Finished saving directory listings in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
+            Utilities.WriteLine(string.Format("Finished saving directory listings in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
             if (m_bThreadAbort || GlobalData.AppExit)
             {

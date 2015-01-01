@@ -253,7 +253,7 @@ namespace SearchDirLists
         SDL_TreeNode GetFileList(SDL_TreeNode parent)
         {
             List<ulong> listLengths = new List<ulong>();
-            List<String[]> listFiles = TreeSelect.GetFileList(parent, listLengths);
+            List<string[]> listFiles = TreeSelect.GetFileList(parent, listLengths);
 
             if (listFiles == null)
             {
@@ -264,7 +264,7 @@ namespace SearchDirLists
             ulong nTotalLength = 0;
             List<ulong>.Enumerator iterUlong = listLengths.GetEnumerator();
 
-            foreach (String[] arrLine in listFiles)
+            foreach (string[] arrLine in listFiles)
             {
                 Utilities.Assert(1302.3316, iterUlong.MoveNext());
                 NodeDatum nodeDatum_A = new NodeDatum();
@@ -408,7 +408,7 @@ namespace SearchDirLists
             }
         }
 
-        internal String Tooltip_Click()
+        internal string Tooltip_Click()
         {
             if (m_toolTip.Tag == null)
             {

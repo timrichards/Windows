@@ -36,12 +36,15 @@ namespace DoubleFile
 
             mIcmd_NewVolume = new RelayCommand(param => { NewVolume(); });
             mIcmd_LoadVolume = new RelayCommand(param => { LoadVolume(); });
-            mIcmd_SaveVolume = new RelayCommand(param => { m_lvVM.SaveVolume(); });
+            // probably not:
+            mIcmd_SaveVolume = new RelayCommand(param => { m_lvVM.SaveVolume(); }, param => m_lvVM.SelectedOne() );
 
-            mIcmd_EditVolume = new RelayCommand(param => { m_lvVM.EditVolume(); });
-            mIcmd_RemoveVolume = new RelayCommand(param => { m_lvVM.RemoveVolume(); });
+            mIcmd_EditVolume = new RelayCommand(param => { m_lvVM.EditVolume(); }, param => m_lvVM.SelectedOne());
+            mIcmd_RemoveVolume = new RelayCommand(param => { m_lvVM.RemoveVolume(); }, param => m_lvVM.SelectedAny());
 
-            mIcmd_ToggleInclude = new RelayCommand(param => { m_lvVM.ToggleInclude(); });
+            mIcmd_ToggleInclude = new RelayCommand(param => { m_lvVM.ToggleInclude(); }, param => m_lvVM.SelectedAny());
+        
+            // edit volume group selected any
         }
 
         internal void SetPartner(VolumeListViewVM lvVM)

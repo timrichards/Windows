@@ -12,9 +12,9 @@ namespace DoubleFile
 
     // e.g. <ComboBox Name="xaml_cbVolumeName" Grid.Column="1" ItemsSource="{Binding List}" SelectedValue="{Binding S}"/>
     // e.g. CBVolumeName = new ItemsControlVM(m_app.xaml_cbVolumeName, new Action(() => { gd.m_strVolumeName = CBVolumeName.S; }));
-    public class ItemsControlVM : ObservableObject
+    class ItemsControlVM : ObservableObject
     {
-        public String Current
+        public string Current
         {
             set
             {
@@ -36,7 +36,7 @@ namespace DoubleFile
             get { return m_strCurrent; }
         }
 
-        public ObservableCollection<String> Items { get { return m_items; } }
+        public ObservableCollection<string> Items { get { return m_items; } }
         public override string ToString() { return m_strCurrent; }
 
         internal ItemsControlVM(ItemsControl itemsCtl, Action action)
@@ -46,10 +46,10 @@ namespace DoubleFile
             m_Action = action;
         }
 
-        readonly ObservableCollection<String> m_items = new ObservableCollection<String>();
+        readonly ObservableCollection<string> m_items = new ObservableCollection<string>();
         readonly ItemCollection m_xaml = null;
         readonly Action m_Action = null;
-        String m_strCurrent = null;
+        string m_strCurrent = null;
     }
 
     public abstract class ListViewItemVM : ObservableObject
@@ -81,7 +81,7 @@ namespace DoubleFile
 
         protected virtual void ActOnDirectSelChange() { }
 
-        internal String this[int i] { get { return marr[i]; } }
+        internal string this[int i] { get { return marr[i]; } }
         internal int Index = -1;
 
         ListViewItemVM(ListViewVM lvvm)
@@ -90,7 +90,7 @@ namespace DoubleFile
             LVVM = lvvm;
         }
 
-        internal ListViewItemVM(ListViewVM lvvm, String[] arrStr)     // e.g. Volumes LV: marr
+        internal ListViewItemVM(ListViewVM lvvm, string[] arrStr)     // e.g. Volumes LV: marr
             : this(lvvm)
         {
             System.Diagnostics.Debug.Assert(arrStr.Length <= NumCols);
@@ -112,7 +112,7 @@ namespace DoubleFile
             // So far column widths are not set for datum: only marr, but they're not switched off for datum: Clones LVs do not use it.
             for (int nCol = 0; nCol < NumCols; ++nCol)
             {
-                String strPropName = PropertyNames[nCol];
+                string strPropName = PropertyNames[nCol];
 
                 ListViewVM.SCW = 50.ToString();
                 LVVM.RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there
@@ -121,7 +121,7 @@ namespace DoubleFile
             }
         }
 
-        internal String SearchValue
+        internal string SearchValue
         {
             get
             {
@@ -129,7 +129,7 @@ namespace DoubleFile
             }
         }
 
-        protected void SetProperty(int nCol, String s)
+        protected void SetProperty(int nCol, string s)
         {
             if (this[nCol] != s)
             {
@@ -143,11 +143,11 @@ namespace DoubleFile
         internal readonly ListViewVM LVVM = null;
 
         internal abstract int NumCols { get; }
-        protected abstract String[] PropertyNames { get; }
+        protected abstract string[] PropertyNames { get; }
         protected virtual int SearchCol { get { return 0; } }
 
         internal readonly ListViewItem datum = null;
-        protected String[] marr = null;                     // unless using datum: properties (cell values) get stored here
+        protected string[] marr = null;                     // unless using datum: properties (cell values) get stored here
 
         protected bool m_bSelected = false;
     }
@@ -162,7 +162,7 @@ namespace DoubleFile
 
         public ObservableCollection<ListViewItemVM> Items { get { return m_items; } }
 
-        internal virtual void NewItem(String[] arrStr) { System.Diagnostics.Debug.Assert(false); }
+        internal virtual void NewItem(string[] arrStr) { System.Diagnostics.Debug.Assert(false); }
         internal virtual void NewItem(ListViewItem datum_in, bool bQuiet = false) { System.Diagnostics.Debug.Assert(false); }
         internal abstract int NumCols { get; }
 
@@ -176,17 +176,17 @@ namespace DoubleFile
             }
         }
 
-        internal static String SCW = double.NaN.ToString();     // frankenhoek
+        internal static string SCW = double.NaN.ToString();     // frankenhoek
 
         internal int Count { get { return m_items.Count; } }
         internal bool HasItems { get { return m_items.Count > 0; } }
-        internal bool Contains(String s) { return (this[s] != null); }
+        internal bool Contains(string s) { return (this[s] != null); }
 
-        internal ListViewItemVM this[String s_in]
+        internal ListViewItemVM this[string s_in]
         {
             get
             {
-                String s = s_in.ToLower();
+                string s = s_in.ToLower();
 
                 foreach (var o in m_items)
                 {
@@ -248,25 +248,25 @@ namespace Template      // prevents smart tag rename command from renaming the t
 {
     using DoubleFile;
 
-    public class Template_LVitemVM : ListViewItemVM
+    class Template_LVitemVM : ListViewItemVM
     {
-        public String ColumnNameHere { get { return marr[0]; } set { SetProperty(0, value); } }
+        public string ColumnNameHere { get { return marr[0]; } set { SetProperty(0, value); } }
 
-        readonly static String[] marrPropName = new String[] { };
+        readonly static string[] marrPropName = new string[] { };
 
-        internal Template_LVitemVM(Template_ListViewVM LV, String[] arrStr)
+        internal Template_LVitemVM(Template_ListViewVM LV, string[] arrStr)
             : base(LV, arrStr) { }
 
         internal const int NumCols_ = 0;
         internal override int NumCols { get { return NumCols_; } }
-        protected override String[] PropertyNames { get { return marrPropName; } }
+        protected override string[] PropertyNames { get { return marrPropName; } }
     }
 
-    public class Template_ListViewVM : ListViewVM_Generic<Template_LVitemVM>
+    class Template_ListViewVM : ListViewVM_Generic<Template_LVitemVM>
     {
-        public String WidthColumnNameHere { get { return SCW; } }
+        public string WidthColumnNameHere { get { return SCW; } }
 
-        internal override void NewItem(String[] arrStr) { Add(new Template_LVitemVM(this, arrStr)); }
+        internal override void NewItem(string[] arrStr) { Add(new Template_LVitemVM(this, arrStr)); }
         internal override int NumCols { get { return Template_LVitemVM.NumCols_; } }
     }
 }

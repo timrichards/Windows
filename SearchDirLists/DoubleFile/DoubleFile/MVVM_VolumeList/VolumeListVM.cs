@@ -2,7 +2,7 @@
 
 namespace DoubleFile
 {
-    partial class VolumeListVM : ObservableObject
+    public partial class VolumeListVM : ObservableObject
     {
         // In order of appearance on the form
         public ICommand Icmd_LoadProject { get { return mIcmd_LoadProject; } }

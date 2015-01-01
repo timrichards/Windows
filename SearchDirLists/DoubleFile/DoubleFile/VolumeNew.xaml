@@ -1,8 +1,8 @@
-﻿<Window x:Class="DoubleFile.VolumeEdit"
+﻿<Window x:Class="DoubleFile.VolumeNew"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:UserControls="clr-namespace:DoubleFile.UserControls"
         ResizeMode="CanResizeWithGrip" ShowInTaskbar="False" WindowStartupLocation="CenterOwner"
-        Title="Edit Volume" Width="720" MinWidth="470" Height="474"  MinHeight="474" MaxHeight="474">
-    <UserControls:VolumeEdit IsVolumeNew="False" />
+        Title="New Volume" Width="720" MinWidth="470" Height="474"  MinHeight="474" MaxHeight="474">
+    <UserControls:VolumeEdit IsVolumeNew="True" />
 </Window>

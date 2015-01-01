@@ -3,11 +3,11 @@
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for VolumeEdit.xaml
+    /// Interaction logic for VolumeNew.xaml
     /// </summary>
-    public partial class VolumeEdit : Window
+    public partial class VolumeNew : Window
     {
-        public VolumeEdit()
+        public VolumeNew()
         {
             InitializeComponent();
         }

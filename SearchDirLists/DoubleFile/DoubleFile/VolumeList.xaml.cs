@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Input;
 using System.Linq;
 
 namespace DoubleFile
@@ -14,10 +13,11 @@ namespace DoubleFile
             InitializeComponent();
         }
 
-        private void form_VolumeList_Initialized(object sender, System.EventArgs e)
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             var lv = new VolumeListViewVM();
             var win = new VolumeListVM();
+
             form_lvVolumeList.DataContext = lv;
             form_VolumeList.DataContext = win;
             lv.SetPartner(win);
@@ -25,7 +25,7 @@ namespace DoubleFile
 
             lv.SelectedOne = new ListViewVM.BoolQuery(() => { return form_lvVolumeList.SelectedItems.Count == 1; });
             lv.SelectedAny = new ListViewVM.BoolQuery(() => { return form_lvVolumeList.SelectedItems.Count > 0; });
-            lv.Refresh = new System.Action(() => { form_lvVolumeList.Items.Refresh(); });
+            lv.Refresh = new System.Action(() => {});// form_lvVolumeList.Items.Refresh(); });
             lv.Selected = new VolumeListViewVM.IEnumerableQuery(() => { return form_lvVolumeList.SelectedItems.Cast<VolumeLVitemVM>(); });
         }
     }

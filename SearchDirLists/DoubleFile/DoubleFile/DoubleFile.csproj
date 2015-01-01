@@ -69,6 +69,9 @@
     <Compile Include="MVVM_VolumeList\VolumeListViewVM.cs" />
     <Compile Include="MVVM_VolumeList\VolumeListVM_Impl.cs" />
     <Compile Include="MVVM_VolumeList\VolumeLVitemVM.cs" />
+    <Compile Include="UserControls\VolumeEdit.xaml.cs">
+      <DependentUpon>VolumeEdit.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\DriveSerial.cs" />
     <Compile Include="Utilities\Utilities.cs" />
     <Compile Include="VolumeList.xaml.cs">
@@ -81,6 +84,13 @@
     <Compile Include="MVVM_VolumeList\VolumeListVM.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="VolumeNew.xaml.cs">
+      <DependentUpon>VolumeNew.xaml</DependentUpon>
+    </Compile>
+    <Page Include="UserControls\VolumeEdit.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="VolumeList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -98,6 +108,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="VolumeEdit.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="VolumeNew.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

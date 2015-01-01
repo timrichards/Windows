@@ -13,12 +13,12 @@ namespace DoubleFile
         { 
             System.Windows.MessageBox.Show("Probe");
 
-            //String strPath = form_editPath.Text;
+            //string strPath = form_editPath.Text;
 
             //if ((strPath.Length > 1) && (strPath[1] == ':'))
             //{
-            //    String strModel;
-            //    String strSerialNo;
+            //    string strModel;
+            //    string strSerialNo;
             //    int? nSize;
 
             //    DriveSerial.Get(strPath, out strModel, out strSerialNo, out nSize);

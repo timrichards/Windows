@@ -81,11 +81,11 @@ namespace DoubleFile
     }
     internal static partial class ExtensionMethods
     {
-        public static String ToPrintString(this object source)
+        public static string ToPrintString(this object source)
         {
             if (source == null) return null;
 
-            String s = String.Join("", source.ToString().Cast<char>().Where(c => Char.IsControl(c) == false)).Trim();
+            string s = string.Join("", source.ToString().Cast<char>().Where(c => Char.IsControl(c) == false)).Trim();
 
             if (s.Length == 0) return null;                             // Returns null if empty
 

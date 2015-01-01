@@ -11,7 +11,7 @@ namespace DoubleFile
     /// default return value for the CanExecute
     /// method is 'true'.
     /// </summary>
-    public class RelayCommand : ICommand
+    class RelayCommand : ICommand
     {
         #region Fields
 

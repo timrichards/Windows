@@ -2,7 +2,7 @@
 
 namespace DoubleFile
 {
-    public partial class VolumeListVM : ObservableObject
+    public partial class WinVolumeListVM : ObservableObject
     {
         // In order of appearance on the form
         public ICommand Icmd_LoadProject { get { return mIcmd_LoadProject; } }
@@ -29,7 +29,7 @@ namespace DoubleFile
 
         readonly ICommand mIcmd_ToggleInclude = null;
 
-        internal VolumeListVM()
+        internal WinVolumeListVM()
         {
             mIcmd_LoadProject = new RelayCommand(param => { LoadProject(); });
             mIcmd_SaveProject = new RelayCommand(param => { SaveProject(); });
@@ -47,11 +47,11 @@ namespace DoubleFile
             // edit volume group selected any
         }
 
-        internal void SetPartner(VolumeListViewVM lvVM)
+        internal void SetPartner(LV_VolumeVM lvVM)
         {
             m_lvVM = lvVM;
         }
 
-        VolumeListViewVM m_lvVM = null;
+        LV_VolumeVM m_lvVM = null;
     }
 }

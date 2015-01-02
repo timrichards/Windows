@@ -14,7 +14,7 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            new VolumeList().ShowDialog();
+            new WinVolumeList().ShowDialog();
         }
     }
 }

@@ -4,19 +4,19 @@ using System.Linq;
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for VolumeList.xaml
+    /// Interaction logic for WinVolumeList.xaml
     /// </summary>
-    public partial class VolumeList : Window
+    public partial class WinVolumeList : Window
     {
-        public VolumeList()
+        public WinVolumeList()
         {
             InitializeComponent();
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            var lv = new VolumeListViewVM();
-            var win = new VolumeListVM();
+            var lv = new LV_VolumeVM();
+            var win = new WinVolumeListVM();
 
             form_lvVolumeList.DataContext = lv;
             form_VolumeList.DataContext = win;
@@ -26,7 +26,7 @@ namespace DoubleFile
             lv.SelectedOne = new ListViewVM.BoolQuery(() => { return form_lvVolumeList.SelectedItems.Count == 1; });
             lv.SelectedAny = new ListViewVM.BoolQuery(() => { return form_lvVolumeList.SelectedItems.Count > 0; });
             lv.Refresh = new System.Action(() => {});// form_lvVolumeList.Items.Refresh(); });
-            lv.Selected = new VolumeListViewVM.IEnumerableQuery(() => { return form_lvVolumeList.SelectedItems.Cast<VolumeLVitemVM>(); });
+            lv.Selected = new LV_VolumeVM.IEnumerableQuery(() => { return form_lvVolumeList.SelectedItems.Cast<LVitem_VolumeVM>(); });
         }
     }
 }

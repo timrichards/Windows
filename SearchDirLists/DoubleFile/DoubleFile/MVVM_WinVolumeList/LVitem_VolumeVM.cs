@@ -1,7 +1,7 @@
 ﻿
 namespace DoubleFile
 {
-    class VolumeLVitemVM : ListViewItemVM
+    class LVitem_VolumeVM : ListViewItemVM
     {
         public string VolumeName { get { return marr[0]; } set { SetProperty(0, value); } }
         public string Path { get { return marr[1]; } set { SetProperty(1, value); } }
@@ -12,7 +12,7 @@ namespace DoubleFile
         readonly static string[] marrPropName = new string[] { "VolumeName", "Path", "SaveAs", "Status", "IncludeStr", "VolumeGroup" };
         internal const int NumCols_ = 6;
 
-        internal VolumeLVitemVM(VolumeListViewVM LV, string[] arrStr)
+        internal LVitem_VolumeVM(LV_VolumeVM LV, string[] arrStr)
             : base(LV, arrStr)
         {
             //        SaveAsExists = (Status == Utilities.mSTRusingFile);                 // TODO: check dup drive letter, and if drive is mounted.

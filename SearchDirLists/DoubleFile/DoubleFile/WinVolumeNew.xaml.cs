@@ -3,9 +3,9 @@
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for VolumeEdit.xaml
+    /// Interaction logic for WinVolumeNew.xaml
     /// </summary>
-    public partial class VolumeEdit : Window
+    public partial class WinVolumeNew : Window
     {
         public string[] StringValues
         {
@@ -13,14 +13,9 @@ namespace DoubleFile
             {
                 return uc_VolumeEdit.StringValues;
             }
-
-            set
-            {
-                uc_VolumeEdit.StringValues = value;
-            }
         }
 
-        public VolumeEdit()
+        public WinVolumeNew()
         {
             InitializeComponent();
         }

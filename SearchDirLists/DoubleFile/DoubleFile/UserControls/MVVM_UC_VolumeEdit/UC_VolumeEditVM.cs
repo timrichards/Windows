@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace DoubleFile
 {
-    partial class VolumeEditVM : ObservableObject
+    partial class UC_VolumeEditVM : ObservableObject
     {
         public delegate bool BoolQuery();
         public BoolQuery IsOKenabled = null;
@@ -26,7 +26,7 @@ namespace DoubleFile
         readonly ICommand mIcmd_EditListingPath = null;
         readonly ICommand mIcmd_IsOKenabled = null;
 
-        internal VolumeEditVM()
+        internal UC_VolumeEditVM()
         {
             mIcmd_EditSourcePath = new RelayCommand(param => { EditSourcePath(); });
             mIcmd_Probe = new RelayCommand(param => { Probe(); });

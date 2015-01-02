@@ -5,9 +5,9 @@ using System.Windows.Controls;
 namespace DoubleFile.UserControls
 {
     /// <summary>
-    /// Interaction logic for VolumeEdit.xaml
+    /// Interaction logic for UC_VolumeEdit.xaml
     /// </summary>
-    public partial class VolumeEdit : UserControl
+    public partial class UC_VolumeEdit : UserControl
     {
         [Description("User control supports choice"), Category("New or Edit Volume window")]
         public bool IsVolumeNew
@@ -45,21 +45,21 @@ namespace DoubleFile.UserControls
             }
         }
 
-        public VolumeEdit()
+        public UC_VolumeEdit()
         {
             InitializeComponent();
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            var vm = new VolumeEditVM();
+            var vm = new UC_VolumeEditVM();
 
             uc_VolumeEdit.DataContext = vm;
-            vm.IsOKenabled = new VolumeEditVM.BoolQuery(() => { return ((form_EditSourcePath.Text.Length > 1) && (form_EditSourcePath.Text[1] == ':')); });
-            vm.SourcePath_CurrentText = new VolumeEditVM.StringQuery(() => { return form_EditSourcePath.Text; });
-            vm.ListingPath_CurrentText = new VolumeEditVM.StringQuery(() => { return form_EditListingPath.Text; });
+            vm.IsOKenabled = new UC_VolumeEditVM.BoolQuery(() => { return ((form_EditSourcePath.Text.Length > 1) && (form_EditSourcePath.Text[1] == ':')); });
+            vm.SourcePath_CurrentText = new UC_VolumeEditVM.StringQuery(() => { return form_EditSourcePath.Text; });
+            vm.ListingPath_CurrentText = new UC_VolumeEditVM.StringQuery(() => { return form_EditListingPath.Text; });
             vm.FromSourcePathDlg = new System.Action<string>((s) => { form_EditSourcePath.Text = s; });
-            vm.FromProbe = new System.Action<VolumeEditVM.ProbeStruct>((t) => { form_EditDriveModel.Text = t.DriveModel; form_EditSerialNo.Text = t.DriveSerial; });
+            vm.FromProbe = new System.Action<UC_VolumeEditVM.ProbeStruct>((t) => { form_EditDriveModel.Text = t.DriveModel; form_EditSerialNo.Text = t.DriveSerial; });
             vm.FromListingPathDlg = new System.Action<string>((s) => { form_EditListingPath.Text = s; });
         }
 

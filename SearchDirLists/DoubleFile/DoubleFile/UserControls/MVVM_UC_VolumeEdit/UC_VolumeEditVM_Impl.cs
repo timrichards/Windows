@@ -1,7 +1,7 @@
 ﻿
 namespace DoubleFile
 {
-    partial class VolumeEditVM : ObservableObject
+    partial class UC_VolumeEditVM : ObservableObject
     {
         internal void EditSourcePath()
         {

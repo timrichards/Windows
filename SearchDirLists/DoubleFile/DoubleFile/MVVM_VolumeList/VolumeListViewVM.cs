@@ -35,7 +35,7 @@ namespace DoubleFile
 
             if (dlg.ShowDialog() ?? false)
             {
-                this.Selected().FirstOnlyAssert(t => { dlg.StringValues = t.StringValues; });
+                this.Selected().FirstOnlyAssert(t => { t.StringValues = dlg.StringValues; });
             }
         }
 

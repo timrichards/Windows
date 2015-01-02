@@ -7,6 +7,14 @@ namespace DoubleFile
     /// </summary>
     public partial class VolumeNew : Window
     {
+        public string[] StringValues
+        {
+            get
+            {
+                return uc_VolumeEdit.StringValues;
+            }
+        }
+
         public VolumeNew()
         {
             InitializeComponent();

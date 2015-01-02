@@ -4,5 +4,5 @@
         xmlns:UserControls="clr-namespace:DoubleFile.UserControls"
         ResizeMode="CanResizeWithGrip" ShowInTaskbar="False" WindowStartupLocation="CenterOwner"
         Title="New Volume" Width="720" MinWidth="470" Height="474"  MinHeight="474" MaxHeight="474">
-    <UserControls:VolumeEdit IsVolumeNew="True" />
+    <UserControls:VolumeEdit IsVolumeNew="True" x:Name="uc_VolumeEdit"/>
 </Window>

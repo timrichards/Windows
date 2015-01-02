@@ -11,8 +11,11 @@ namespace DoubleFile
 
         internal void NewVolume()
         {
-            m_lvVM.NewItem(new string[] { "Nickname", "Path", "Listing file", "Status", "Yes", "test" });
-       //     System.Windows.MessageBox.Show("NewVolume");
+            var newVolume = new VolumeNew();
+            if (newVolume.ShowDialog() ?? false)
+            {
+                m_lvVM.NewItem(newVolume.StringValues);
+            }
         }
         internal void LoadVolume() { System.Windows.MessageBox.Show("LoadVolume"); }
     }

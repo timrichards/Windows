@@ -5,35 +5,47 @@ namespace DoubleFile
     {
         internal void EditSourcePath()
         {
-            new System.Windows.Forms.FolderBrowserDialog().ShowDialog();
-            System.Windows.MessageBox.Show("EditSourcePath");
+            var dlg = new System.Windows.Forms.FolderBrowserDialog();
+
+            dlg.SelectedPath = SourcePath_CurrentText();
+
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                FromSourcePathDlg(dlg.SelectedPath);
+            }
         }
 
         internal void Probe()
         { 
-            System.Windows.MessageBox.Show("Probe");
+            string strPath = SourcePath_CurrentText();
 
-            //string strPath = form_editPath.Text;
+            if (IsOKenabled())
+            {
+                string strModel;
+                string strSerialNo;
+                int? nSize;
 
-            //if ((strPath.Length > 1) && (strPath[1] == ':'))
-            //{
-            //    string strModel;
-            //    string strSerialNo;
-            //    int? nSize;
+                DriveSerial.Get(strPath, out strModel, out strSerialNo, out nSize);
+                
+                ProbeStruct probeStruct = new ProbeStruct();
 
-            //    DriveSerial.Get(strPath, out strModel, out strSerialNo, out nSize);
-
-            //    form_editModel.Text = strModel;
-            //    form_editSerialNo.Text = strSerialNo;
-            //}
+                probeStruct.DriveModel = strModel;
+                probeStruct.DriveSerial = strSerialNo;
+                FromProbe(probeStruct);
+            }
         }
 
         internal void EditListingPath()
         {
-            new Microsoft.Win32.SaveFileDialog().ShowDialog();
-            System.Windows.MessageBox.Show("EditListingPath"); 
-        }
+            string strPath = ListingPath_CurrentText();
+            var dlg = new Microsoft.Win32.SaveFileDialog();
 
-        internal void OK() { System.Windows.MessageBox.Show("OK"); }
+            dlg.FileName = strPath;
+
+            if (dlg.ShowDialog() ?? false)
+            {
+                FromListingPathDlg(dlg.FileName);
+            }
+        }
     }
 }

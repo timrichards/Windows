@@ -40,7 +40,7 @@ namespace DoubleFile
             mIcmd_SaveVolume = new RelayCommand(param => { m_lvVM.SaveVolume(); }, param => m_lvVM.SelectedOne() );
 
             mIcmd_EditVolume = new RelayCommand(param => { m_lvVM.EditVolume(); }, param => m_lvVM.SelectedOne());
-            mIcmd_RemoveVolume = new RelayCommand(param => { m_lvVM.RemoveVolume(); }, param => m_lvVM.SelectedAny());
+            mIcmd_RemoveVolume = new RelayCommand(param => { RemoveVolume(); }, param => m_lvVM.SelectedAny());
 
             mIcmd_ToggleInclude = new RelayCommand(param => { m_lvVM.ToggleInclude(); }, param => m_lvVM.SelectedAny());
         

@@ -39,14 +39,6 @@ namespace DoubleFile
             }
         }
 
-        internal void RemoveVolume()
-        {
-            //foreach (VolumeLVitemVM lvItem in LV.Selected.ToArray())
-            //{
-            //    LV.Items.Remove(lvItem);
-            //}
-        }
-
         internal void ToggleInclude() { System.Windows.MessageBox.Show("ToggleInclude"); }
     }
 }

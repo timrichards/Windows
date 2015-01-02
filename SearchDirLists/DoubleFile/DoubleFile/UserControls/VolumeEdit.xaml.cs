@@ -35,6 +35,14 @@ namespace DoubleFile.UserControls
             {
                 return new string[] { form_EditNickname.Text, form_EditSourcePath.Text, form_EditListingPath.Text, "Not saved", "Yes" };
             }
+            set
+            {
+                int i = 0;
+
+                if (value.Length > i) { form_EditNickname.Text = value[i++]; } else { System.Diagnostics.Debug.Assert(false); }
+                if (value.Length > i) { form_EditSourcePath.Text = value[i++]; } else { System.Diagnostics.Debug.Assert(false); }
+                if (value.Length > i) { form_EditListingPath.Text = value[i++]; }
+            }
         }
 
         public VolumeEdit()

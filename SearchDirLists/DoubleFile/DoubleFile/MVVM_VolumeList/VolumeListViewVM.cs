@@ -27,9 +27,25 @@ namespace DoubleFile
         // these need to go in impl file but this whole file needs reorg
         internal void SaveVolume() { System.Windows.MessageBox.Show("SaveVolume"); }
 
-        internal void EditVolume() { new VolumeEdit().ShowDialog(); }
+        internal void EditVolume()
+        {
+            var dlg = new VolumeEdit();
 
-        internal void RemoveVolume() { System.Windows.MessageBox.Show("RemoveVolume"); }
+            this.Selected().FirstOnlyAssert(t => { dlg.StringValues = t.StringValues; });
+
+            if (dlg.ShowDialog() ?? false)
+            {
+                this.Selected().FirstOnlyAssert(t => { dlg.StringValues = t.StringValues; });
+            }
+        }
+
+        internal void RemoveVolume()
+        {
+            //foreach (VolumeLVitemVM lvItem in LV.Selected.ToArray())
+            //{
+            //    LV.Items.Remove(lvItem);
+            //}
+        }
 
         internal void ToggleInclude() { System.Windows.MessageBox.Show("ToggleInclude"); }
     }

@@ -84,6 +84,23 @@ namespace DoubleFile
         internal string this[int i] { get { return marr[i]; } }
         internal int Index = -1;
 
+        internal string[] StringValues
+        {
+            get { return marr; }
+            set
+            {
+                System.Diagnostics.Debug.Assert(value.Length <= NumCols);
+                marr = value; 
+
+                for (int nCol = 0; nCol < marr.Length; ++nCol)
+                {
+                    RaisePropertyChanged(PropertyNames[nCol]);
+                }
+
+                RaiseColumnWidths();
+            }
+        }
+
         ListViewItemVM(ListViewVM lvvm)
         {
             Index = lvvm.Count;

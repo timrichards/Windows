@@ -12,6 +12,7 @@ namespace DoubleFile
         internal void NewVolume()
         {
             var newVolume = new VolumeNew();
+
             if (newVolume.ShowDialog() ?? false)
             {
                 m_lvVM.NewItem(newVolume.StringValues);

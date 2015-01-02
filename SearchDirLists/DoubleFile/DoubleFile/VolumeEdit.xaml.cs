@@ -13,6 +13,11 @@ namespace DoubleFile
             {
                 return uc_VolumeEdit.StringValues;
             }
+
+            set
+            {
+                uc_VolumeEdit.StringValues = value;
+            }
         }
 
         public VolumeEdit()

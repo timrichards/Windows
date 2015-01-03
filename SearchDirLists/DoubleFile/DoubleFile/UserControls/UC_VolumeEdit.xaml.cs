@@ -56,12 +56,20 @@ namespace DoubleFile.UserControls
             InitializeComponent();
         }
 
+        bool IsOKenabled
+        {
+            get
+            {
+                return ((form_EditSourcePath.Text.Length > 1) && (form_EditSourcePath.Text[1] == ':'));
+            }
+        }
+
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             var vm = new UC_VolumeEditVM();
 
             uc_VolumeEdit.DataContext = vm;
-            vm.IsOKenabled = new UC_VolumeEditVM.BoolQuery(() => { return ((form_EditSourcePath.Text.Length > 1) && (form_EditSourcePath.Text[1] == ':')); });
+            vm.IsOKenabled = new UC_VolumeEditVM.BoolQuery(() => { return IsOKenabled; });
             vm.SourcePath_CurrentText = new UC_VolumeEditVM.StringQuery(() => { return form_EditSourcePath.Text; });
             vm.ListingPath_CurrentText = new UC_VolumeEditVM.StringQuery(() => { return form_EditListingPath.Text; });
             vm.FromSourcePathDlg = new System.Action<string>((s) => { form_EditSourcePath.Text = s; });
@@ -71,7 +79,14 @@ namespace DoubleFile.UserControls
 
         private void BtnOK_Click(object sender, RoutedEventArgs e)
         {
-            Window.GetWindow(uc_VolumeEdit).DialogResult = true;
+            if (IsOKenabled)
+            {
+                Window.GetWindow(uc_VolumeEdit).DialogResult = true;
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(false);
+            }
         }
     }
 }

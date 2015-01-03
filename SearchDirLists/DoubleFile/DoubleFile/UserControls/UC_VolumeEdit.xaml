@@ -87,7 +87,7 @@ folder browse dialog.
         <Border Name="form_Border" BorderBrush="DarkGray" BorderThickness="1" Grid.ColumnSpan="7" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Stretch" Height="1" VerticalAlignment="Center" />
 
         <Label Grid.Row="4" Content="Drive model" />
-        <Button Grid.Row="4" Name="form_BtnDriveModel" Command="{Binding Icmd_Probe}" IsEnabled="{Binding IsOKenabled}" ToolTip="Click to try and probe your drive for the model and serial #">
+        <Button Grid.Row="4" Name="form_BtnDriveModel" Command="{Binding Icmd_Probe}" ToolTip="Click to try and probe your drive for the model and serial #">
             <Image Source="/Resources/ic_storage_black_18dp.png" />
         </Button>
         <TextBox Grid.Row="4" Name="form_EditDriveModel" ToolTip="Optional. Drive model helps to identify the drive this listing is for later on when reviewing." />
@@ -150,7 +150,7 @@ being separate from other volumes.
         </Button>
         <TextBox Grid.Row="10" Name="form_EditListingPath" ToolTip="Where to save the directory listing." />
 
-        <Button Grid.Column="3" Content="OK" IsEnabled="{Binding IsOKenabled}" Grid.Row="11" Width="75" Height="Auto" IsDefault="True" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="BtnOK_Click"/>
+        <Button Grid.Column="3" Content="OK" Command="{Binding Icmd_IsOKenabled}" Grid.Row="11" Width="75" Height="Auto" IsDefault="True" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="BtnOK_Click"/>
         <Button Grid.Column="4" Content="Cancel" Grid.Row="11" Width="75" Grid.ColumnSpan="2" Height="Auto" IsCancel="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
     </Grid>
 </UserControl>

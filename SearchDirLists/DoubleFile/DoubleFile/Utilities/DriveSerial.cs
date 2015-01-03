@@ -142,12 +142,12 @@ namespace DoubleFile
             FileAttributes dwFlagsAndAttributes,
             IntPtr hTemplateFile);
 
-        internal static void Get(string strPath, out string strModel_out, out string strSerialNo_out, out int? nSize_out)
+        internal static void Get(string strPath, out string strDriveModel_out, out string strDriveSerial_out, out int? nSize_out)
         {
             var letter = strPath.Substring(0, 2);
 
-            string strModel = null;
-            string strSerialNo = null;
+            string strDriveModel = null;
+            string strDriveSerial = null;
             object objSize = null;
 
             //var query = new STORAGE_PROPERTY_QUERY { PropertyId = 0, QueryType = 0 };
@@ -208,17 +208,17 @@ namespace DoubleFile
                             Utilities.WriteLine(prop.Name + "\t\t\t" + prop.Value);
                         }
 
-                        objSize = diskDrive["Size"];
-                        strModel = diskDrive["Model"].ToPrintString();
+                        try { objSize = diskDrive["Size"]; } catch { }
+                        try { strDriveModel = diskDrive["DriveModel"].ToPrintString(); } catch { }
 
-                        if ((strModel == null) || (strModel.Trim().Length == 0))
+                        if ((strDriveModel == null) || (strDriveModel.Trim().Length == 0))
                         {
-                            strModel = diskDrive["Caption"].ToPrintString();
+                            try { strDriveModel = diskDrive["Caption"].ToPrintString(); } catch { }
                         }
 
-                        strSerialNo = diskDrive["SerialNumber"].ToPrintString();
+                        try { strDriveSerial = diskDrive["SerialNumber"].ToPrintString(); } catch { }
 
-                        if ((strSerialNo == null) || (strSerialNo.Trim().Length == 0))
+                        if ((strDriveSerial == null) || (strDriveSerial.Trim().Length == 0))
                         {
                             diskDrive.GetRelated("Win32_PhysicalMedia").Cast<ManagementObject>().FirstOnlyAssert(new Action<ManagementObject>((diskMedia) =>
                             {
@@ -227,7 +227,7 @@ namespace DoubleFile
                                     Utilities.WriteLine(prop.Name + "\t\t\t" + prop.Value);
                                 }
 
-                                strSerialNo = diskMedia["SerialNumber"].ToPrintString();
+                                try { strDriveSerial = diskMedia["SerialNumber"].ToPrintString(); } catch { }
                             }));
                         }
                     }));
@@ -237,8 +237,8 @@ namespace DoubleFile
             // out parameters can't be in lambda
             nSize_out = null;
 
-            strModel_out = strModel;
-            strSerialNo_out = strSerialNo;
+            strDriveModel_out = strDriveModel;
+            strDriveSerial_out = strDriveSerial;
 
             if ((objSize as string) != null)
             {

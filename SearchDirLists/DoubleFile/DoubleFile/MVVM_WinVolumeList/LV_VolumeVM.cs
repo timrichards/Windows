@@ -9,6 +9,8 @@ namespace DoubleFile
         public string WidthStatus { get { return SCW; } }
         public string WidthIncludeStr { get { return SCW; } }
         public string WidthVolumeGroup { get { return SCW; } }
+        public string WidthDriveModel { get { return SCW; } }
+        public string WidthDriveSerial { get { return SCW; } }
 
         internal override void NewItem(string[] arrStr) { Add(new LVitem_VolumeVM(this, arrStr)); }
         internal override int NumCols { get { return LVitem_VolumeVM.NumCols_; } }

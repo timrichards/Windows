@@ -9,8 +9,10 @@ namespace DoubleFile
         public string Status { get { return marr[3]; } set { SetProperty(3, value); } }
         public string IncludeStr { get { return marr[4]; } set { SetProperty(4, value); } }
         public string VolumeGroup { get { return marr[5]; } set { SetProperty(5, value); } }
-        readonly static string[] marrPropName = new string[] { "VolumeName", "Path", "SaveAs", "Status", "IncludeStr", "VolumeGroup" };
-        internal const int NumCols_ = 6;
+        public string DriveModel { get { return marr[6]; } set { SetProperty(6, value); } }
+        public string DriveSerial { get { return marr[7]; } set { SetProperty(7, value); } }
+        readonly static string[] marrPropName = new string[] { "VolumeName", "Path", "SaveAs", "Status", "IncludeStr", "VolumeGroup", "DriveModel", "DriveSerial" };
+        internal const int NumCols_ = 8;
 
         internal LVitem_VolumeVM(LV_VolumeVM LV, string[] arrStr)
             : base(LV, arrStr)

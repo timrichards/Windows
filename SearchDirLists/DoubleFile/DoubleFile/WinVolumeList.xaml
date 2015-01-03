@@ -72,6 +72,8 @@
                     <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="{Binding WidthStatus}"/>
                     <GridViewColumn Header="Include in search" DisplayMemberBinding="{Binding IncludeStr}" Width="{Binding WidthIncludeStr}"/>
                     <GridViewColumn Header="Volume group" DisplayMemberBinding="{Binding VolumeGroup}" Width="{Binding WidthVolumeGroup}"/>
+                    <GridViewColumn Header="Drive Model" DisplayMemberBinding="{Binding DriveModel}" Width="{Binding WidthDriveModel}"/>
+                    <GridViewColumn Header="Drive Serial" DisplayMemberBinding="{Binding DriveSerial}" Width="{Binding WidthDriveSerial}"/>
                 </GridView>
             </ListView.View>
         </ListView>

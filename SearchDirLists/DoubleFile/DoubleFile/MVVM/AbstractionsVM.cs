@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
+using System.Diagnostics;
 
 namespace DoubleFile
 {
@@ -52,7 +53,7 @@ namespace DoubleFile
         string m_strCurrent = null;
     }
 
-    public abstract class ListViewItemVM : ObservableObject
+    abstract class ListViewItemVM : ObservableObject
     {
         public bool IsSelected
         {
@@ -89,7 +90,7 @@ namespace DoubleFile
             get { return marr; }
             set
             {
-                System.Diagnostics.Debug.Assert(value.Length <= NumCols);
+                Debug.Assert(value.Length <= NumCols);
                 marr = value; 
 
                 for (int nCol = 0; nCol < marr.Length; ++nCol)
@@ -110,7 +111,7 @@ namespace DoubleFile
         internal ListViewItemVM(ListViewVM lvvm, string[] arrStr)     // e.g. Volumes LV: marr
             : this(lvvm)
         {
-            System.Diagnostics.Debug.Assert(arrStr.Length <= NumCols);
+            Debug.Assert(arrStr.Length <= NumCols);
             marr = new string[NumCols];
             arrStr.CopyTo(marr, 0);
             RaiseColumnWidths();
@@ -169,7 +170,7 @@ namespace DoubleFile
         protected bool m_bSelected = false;
     }
 
-    public abstract class ListViewVM : ObservableObject
+    abstract class ListViewVM : ObservableObject_OwnerWindow
     {
         internal delegate bool BoolQuery();
 
@@ -179,8 +180,8 @@ namespace DoubleFile
 
         public ObservableCollection<ListViewItemVM> Items { get { return m_items; } }
 
-        internal virtual void NewItem(string[] arrStr) { System.Diagnostics.Debug.Assert(false); }
-        internal virtual void NewItem(ListViewItem datum_in, bool bQuiet = false) { System.Diagnostics.Debug.Assert(false); }
+        internal virtual void NewItem(string[] arrStr) { Debug.Assert(false); }
+        internal virtual void NewItem(ListViewItem datum_in, bool bQuiet = false) { Debug.Assert(false); }
         internal abstract int NumCols { get; }
 
         internal void Add(ListViewItemVM item, bool bQuiet = false)
@@ -219,7 +220,7 @@ namespace DoubleFile
 
         internal void SyncData()
         {
-            System.Diagnostics.Debug.Assert(m_items.Count == 0);
+            Debug.Assert(m_items.Count == 0);
             m_items.Clear();
 
             foreach (ListViewItem lvItem in data.Items)
@@ -241,7 +242,7 @@ namespace DoubleFile
             }
             else
             {
-                System.Diagnostics.Debug.Assert(false);
+                Debug.Assert(false);
             }
         }
 
@@ -249,7 +250,7 @@ namespace DoubleFile
         readonly protected ObservableCollection<ListViewItemVM> m_items = new ObservableCollection<ListViewItemVM>();
     }
 
-    public abstract class ListViewVM_Generic<T> : ListViewVM where T : ListViewItemVM
+    abstract class ListViewVM_Generic<T> : ListViewVM where T : ListViewItemVM
     {
         internal delegate IEnumerable<T> IEnumerableQuery();
 

@@ -5,7 +5,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinVolumeEdit.xaml
     /// </summary>
-    public partial class WinVolumeEdit : Window
+    partial class WinVolumeEdit : Window
     {
         public string[] StringValues
         {

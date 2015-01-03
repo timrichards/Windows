@@ -1,7 +1,7 @@
 ﻿
 namespace DoubleFile
 {
-    partial class UC_VolumeEditVM : ObservableObject
+    partial class UC_VolumeEditVM
     {
         internal void EditSourcePath()
         {
@@ -41,7 +41,7 @@ namespace DoubleFile
 
             dlg.FileName = strPath;
 
-            if (dlg.ShowDialog() ?? false)
+            if (dlg.ShowDialog(GetWindow()) ?? false)
             {
                 FromListingPathDlg(dlg.FileName);
             }

@@ -63,7 +63,10 @@
     </ApplicationDefinition>
     <Compile Include="MVVM\AbstractionsVM.cs" />
     <Compile Include="MVVM\ObservableObject.cs" />
+    <Compile Include="MVVM\ObservableObject_OwnerWindow.cs" />
     <Compile Include="MVVM\RelayCommand.cs" />
+    <Compile Include="MVVM_WinSaveInProgress\LVitem_ProgressVM.cs" />
+    <Compile Include="MVVM_WinSaveInProgress\LV_ProgressVM.cs" />
     <Compile Include="UserControls\MVVM_UC_VolumeEdit\UC_VolumeEditVM.cs" />
     <Compile Include="UserControls\MVVM_UC_VolumeEdit\UC_VolumeEditVM_Impl.cs" />
     <Compile Include="MVVM_WinVolumeList\LV_VolumeVM.cs" />
@@ -74,6 +77,9 @@
     </Compile>
     <Compile Include="Utilities\DriveSerial.cs" />
     <Compile Include="Utilities\Utilities.cs" />
+    <Compile Include="WinSaveInProgress.xaml.cs">
+      <DependentUpon>WinSaveInProgress.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WinVolumeList.xaml.cs">
       <DependentUpon>WinVolumeList.xaml</DependentUpon>
     </Compile>
@@ -88,6 +94,10 @@
       <DependentUpon>WinVolumeNew.xaml</DependentUpon>
     </Compile>
     <Page Include="UserControls\UC_VolumeEdit.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WinSaveInProgress.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

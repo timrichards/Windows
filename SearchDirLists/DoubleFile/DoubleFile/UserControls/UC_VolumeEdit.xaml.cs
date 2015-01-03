@@ -7,7 +7,7 @@ namespace DoubleFile.UserControls
     /// <summary>
     /// Interaction logic for UC_VolumeEdit.xaml
     /// </summary>
-    public partial class UC_VolumeEdit : UserControl
+    partial class UC_VolumeEdit : UserControl
     {
         [Description("User control supports choice"), Category("New or Edit Volume window")]
         public bool IsVolumeNew
@@ -64,24 +64,28 @@ namespace DoubleFile.UserControls
             }
         }
 
+        Window window { get { return Window.GetWindow(uc_VolumeEdit); } }
+
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             var vm = new UC_VolumeEditVM();
 
             uc_VolumeEdit.DataContext = vm;
-            vm.IsOKenabled = new UC_VolumeEditVM.BoolQuery(() => { return IsOKenabled; });
-            vm.SourcePath_CurrentText = new UC_VolumeEditVM.StringQuery(() => { return form_EditSourcePath.Text; });
-            vm.ListingPath_CurrentText = new UC_VolumeEditVM.StringQuery(() => { return form_EditListingPath.Text; });
-            vm.FromSourcePathDlg = new System.Action<string>((s) => { form_EditSourcePath.Text = s; });
-            vm.FromProbe = new System.Action<UC_VolumeEditVM.ProbeStruct>((t) => { form_EditDriveModel.Text = t.DriveModel; form_EditDriveSerial.Text = t.DriveSerial; });
-            vm.FromListingPathDlg = new System.Action<string>((s) => { form_EditListingPath.Text = s; });
+            vm.IsOKenabled = () => { return IsOKenabled; };
+            vm.SourcePath_CurrentText = () => { return form_EditSourcePath.Text; };
+            vm.ListingPath_CurrentText = () => { return form_EditListingPath.Text; };
+            vm.FromSourcePathDlg = s => { form_EditSourcePath.Text = s; };
+            vm.FromProbe = t => { form_EditDriveModel.Text = t.DriveModel; form_EditDriveSerial.Text = t.DriveSerial; };
+            vm.FromListingPathDlg = s => { form_EditListingPath.Text = s; };
+
+            vm.GetWindow = () => { return window; };
         }
 
         private void BtnOK_Click(object sender, RoutedEventArgs e)
         {
             if (IsOKenabled)
             {
-                Window.GetWindow(uc_VolumeEdit).DialogResult = true;
+                window.DialogResult = true;
             }
             else
             {

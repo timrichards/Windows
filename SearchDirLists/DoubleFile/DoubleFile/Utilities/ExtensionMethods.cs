@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -53,6 +54,11 @@ namespace DoubleFile
             }
         }
 
+        public static bool? ShowDialog(this System.Windows.Window win, Window me)
+        {
+            win.Owner = me;
+            return win.ShowDialog();
+        }
     }
     internal static partial class ExtensionMethods
     {

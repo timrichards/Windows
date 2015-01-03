@@ -33,11 +33,11 @@ namespace DoubleFile
         {
             var dlg = new WinVolumeEdit();
 
-            this.Selected().FirstOnlyAssert(t => { dlg.StringValues = t.StringValues; });
+            Selected().FirstOnlyAssert(t => { dlg.StringValues = t.StringValues; });
 
-            if (dlg.ShowDialog() ?? false)
+            if (dlg.ShowDialog(GetWindow()) ?? false)
             {
-                this.Selected().FirstOnlyAssert(t => { t.StringValues = dlg.StringValues; });
+                Selected().FirstOnlyAssert(t => { t.StringValues = dlg.StringValues; });
             }
         }
 

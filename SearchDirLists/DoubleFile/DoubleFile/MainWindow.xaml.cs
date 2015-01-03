@@ -5,7 +5,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    partial class MainWindow : Window
     {
         public MainWindow()
         {
@@ -14,7 +14,7 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            new WinVolumeList().ShowDialog();
+            new WinVolumeList().ShowDialog(this);
         }
     }
 }

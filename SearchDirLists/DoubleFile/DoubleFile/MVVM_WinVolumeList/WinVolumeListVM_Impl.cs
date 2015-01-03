@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    public partial class WinVolumeListVM
+    partial class WinVolumeListVM
     {
         // Menu items
 
@@ -14,7 +14,7 @@ namespace DoubleFile
         {
             var newVolume = new WinVolumeNew();
 
-            if (newVolume.ShowDialog() ?? false)
+            if (newVolume.ShowDialog(GetWindow()) ?? false)
             {
                 m_lvVM.NewItem(newVolume.StringValues);
             }

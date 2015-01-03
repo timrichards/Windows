@@ -6,7 +6,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinVolumeList.xaml
     /// </summary>
-    public partial class WinVolumeList : Window
+    partial class WinVolumeList : Window
     {
         public WinVolumeList()
         {
@@ -23,10 +23,13 @@ namespace DoubleFile
             lv.SetPartner(win);
             win.SetPartner(lv);
 
-            lv.SelectedOne = new ListViewVM.BoolQuery(() => { return form_lvVolumeList.SelectedItems.Count == 1; });
-            lv.SelectedAny = new ListViewVM.BoolQuery(() => { return form_lvVolumeList.SelectedItems.Count > 0; });
-            lv.Refresh = new System.Action(() => {});// form_lvVolumeList.Items.Refresh(); });
-            lv.Selected = new LV_VolumeVM.IEnumerableQuery(() => { return form_lvVolumeList.SelectedItems.Cast<LVitem_VolumeVM>(); });
+            lv.SelectedOne = () => { return form_lvVolumeList.SelectedItems.Count == 1; };
+            lv.SelectedAny = () => { return form_lvVolumeList.SelectedItems.Count > 0; };
+            lv.Refresh = () => {};// form_lvVolumeList.Items.Refresh(); });
+            lv.Selected = () => { return form_lvVolumeList.SelectedItems.Cast<LVitem_VolumeVM>(); };
+
+            lv.GetWindow = () => { return this; };
+            win.GetWindow = () => { return this; };
         }
     }
 }

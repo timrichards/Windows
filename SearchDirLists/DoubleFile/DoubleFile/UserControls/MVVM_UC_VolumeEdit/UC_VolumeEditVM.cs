@@ -1,19 +1,20 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Input;
 
 namespace DoubleFile
 {
-    partial class UC_VolumeEditVM : ObservableObject
+    partial class UC_VolumeEditVM : ObservableObject_OwnerWindow
     {
         public delegate bool BoolQuery();
-        public BoolQuery IsOKenabled = null;
+        public BoolQuery IsOKenabled = () => { DesignModeOK();  return false; };
         public delegate string StringQuery();
-        public StringQuery SourcePath_CurrentText = null;
-        public StringQuery ListingPath_CurrentText = null;
-        public System.Action<string> FromSourcePathDlg = null;
+        public StringQuery SourcePath_CurrentText = () => { DesignModeOK(); return null; };
+        public StringQuery ListingPath_CurrentText = () => { DesignModeOK(); return null; };
+        public System.Action<string> FromSourcePathDlg = s => { DesignModeOK(); };
         public struct ProbeStruct { public string DriveModel; public string DriveSerial; };
-        public System.Action<ProbeStruct> FromProbe = null;
-        public System.Action<string> FromListingPathDlg = null;
+        public System.Action<ProbeStruct> FromProbe = s => { DesignModeOK(); };
+        public System.Action<string> FromListingPathDlg = s => { DesignModeOK(); };
 
         // In order of appearance on the form
         public ICommand Icmd_EditSourcePath { get { return mIcmd_EditSourcePath; } }

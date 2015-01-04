@@ -116,7 +116,7 @@ namespace SearchDirLists
                 return;
             }
 
-            if (Utilities.StrValid(gd.m_strSelectFile) == false)
+            if (string.IsNullOrWhiteSpace(gd.m_strSelectFile))
             {
                 return;
             }
@@ -616,7 +616,7 @@ namespace SearchDirLists
 
         internal SDL_TreeNode GetNodeByPath_A(string strPath, SDL_TreeView treeView, bool bIgnoreCase = false)
         {
-            if (Utilities.StrValid(strPath) == false)
+            if (string.IsNullOrWhiteSpace(strPath))
             {
                 return null;
             }
@@ -783,7 +783,7 @@ namespace SearchDirLists
         {
             ClearMem_Search();
 
-            if (Utilities.StrValid(strSearch) == false)
+            if (string.IsNullOrWhiteSpace(strSearch))
             {
                 return null;
             }

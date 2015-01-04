@@ -115,7 +115,7 @@ namespace SearchDirLists
                     return false;
                 }
 
-                if (Utilities.StrValid(CB_SaveAs.Current) == false)
+                if (string.IsNullOrWhiteSpace(CB_SaveAs.Current))
                 {
                     gd.FormError(m_app.xaml_cbSaveAs, "Must have a file to load or save directory listing to.", "Volume Save As");
                     return false;
@@ -127,9 +127,9 @@ namespace SearchDirLists
                     return false;
                 }
 
-                bool bOpenedFile = (Utilities.StrValid(CB_Path.Current) == false);
+                bool bOpenedFile = (string.IsNullOrWhiteSpace(CB_Path.Current));
 
-                if (File.Exists(CB_SaveAs.Current) && Utilities.StrValid(CB_Path.Current))
+                if (File.Exists(CB_SaveAs.Current) && (false == string.IsNullOrWhiteSpace(CB_Path.Current)))
                 {
                     gd.m_blinky.Go(m_app.xaml_cbSaveAs, clr: Drawing.Color.Red);
 
@@ -144,7 +144,7 @@ namespace SearchDirLists
                     }
                 }
 
-                if ((File.Exists(CB_SaveAs.Current) == false) && (Utilities.StrValid(CB_Path.Current) == false))
+                if ((File.Exists(CB_SaveAs.Current) == false) && string.IsNullOrWhiteSpace(CB_Path.Current))
                 {
                     gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red);
                     Utilities.MBox("Must have a path or existing directory listing file.", "Volume Source Path");
@@ -152,7 +152,7 @@ namespace SearchDirLists
                     return false;
                 }
 
-                if (Utilities.StrValid(CB_Path.Current) && (Directory.Exists(CB_Path.Current) == false))
+                if ((false == string.IsNullOrWhiteSpace(CB_Path.Current)) && (Directory.Exists(CB_Path.Current) == false))
                 {
                     gd.m_blinky.Go(m_app.xaml_cbPath, clr: Drawing.Color.Red);
                     Utilities.MBox("Path does not exist.", "Volume Source Path");
@@ -164,7 +164,7 @@ namespace SearchDirLists
 
                 if (File.Exists(CB_SaveAs.Current))
                 {
-                    if (Utilities.StrValid(CB_Path.Current) == false)
+                    if (string.IsNullOrWhiteSpace(CB_Path.Current))
                     {
                         bSaveAsExists = ReadHeader();
 
@@ -180,7 +180,7 @@ namespace SearchDirLists
                         }
                         else
                         {
-                            if (Utilities.StrValid(CB_Path.Current))
+                            if (false == string.IsNullOrWhiteSpace(CB_Path.Current))
                             {
                                 strStatus = "File is bad. Will overwrite.";
                             }
@@ -205,7 +205,7 @@ namespace SearchDirLists
                     return false;
                 }
 
-                if (Utilities.StrValid(CB_VolumeName.Current))
+                if (false == string.IsNullOrWhiteSpace(CB_VolumeName.Current))
                 {
                     if (LV.ContainsVolumeName(CB_VolumeName.Current))
                     {
@@ -325,7 +325,7 @@ namespace SearchDirLists
                     inputBox.Entry = strVolumeName_orig;
                     inputBox.SetNextButtons();
 
-                    if ((inputBox.ShowDialog() == Forms.DialogResult.OK) && (Utilities.StrValid(inputBox.Entry)))
+                    if ((inputBox.ShowDialog() == Forms.DialogResult.OK) && (false == string.IsNullOrWhiteSpace(inputBox.Entry)))
                     {
                         strVolumeName = inputBox.Entry;
                     }
@@ -365,25 +365,25 @@ namespace SearchDirLists
                     break;
                 }
 
-                if (((Utilities.StrValid(strVolumeName) == false) ||
-                    (Utilities.NotNull(strVolumeName) == Utilities.NotNull(strVolumeName_orig)))
+                if (((false == string.IsNullOrWhiteSpace(strVolumeName) == false) ||
+                    ((strVolumeName ?? "") == (strVolumeName_orig ?? "")))
                     &&
-                    ((Utilities.StrValid(strDriveLetter) == false) ||
-                    (Utilities.NotNull(strDriveLetter) == Utilities.NotNull(strDriveLetter_orig))))
+                    ((false == string.IsNullOrWhiteSpace(strDriveLetter) == false) ||
+                    ((strDriveLetter ?? "") == (strDriveLetter_orig ?? ""))))
                 {
                     Utilities.MBox("No changes made.", "Modify file");
                     return false;
                 }
 
                 StringBuilder sbFileConts = new StringBuilder();
-                bool bDriveLetter = Utilities.StrValid(strDriveLetter);
+                bool bDriveLetter = (false == string.IsNullOrWhiteSpace(strDriveLetter));
 
                 gd.KillTreeBuilder(bJoin: true);
 
                 using (StringReader reader = new StringReader(File.ReadAllText(strSaveAs)))
                 {
                     string strLine = null;
-                    bool bHitNickname = (Utilities.StrValid(strVolumeName) == false);
+                    bool bHitNickname = string.IsNullOrWhiteSpace(strVolumeName);
 
                     while ((strLine = reader.ReadLine()) != null)
                     {
@@ -391,9 +391,9 @@ namespace SearchDirLists
 
                         if ((bHitNickname == false) && strLine.StartsWith(Utilities.mSTRlineType_Nickname))
                         {
-                            if (Utilities.StrValid(strVolumeName_orig))
+                            if (false == string.IsNullOrWhiteSpace(strVolumeName_orig))
                             {
-                                sbLine.Replace(strVolumeName_orig, Utilities.NotNull(strVolumeName));
+                                sbLine.Replace(strVolumeName_orig, (strVolumeName ?? ""));
                             }
                             else
                             {
@@ -547,7 +547,7 @@ namespace SearchDirLists
             SDL_File.Init();
             SDL_File.SFD.Filter = SDL_File.FileAndDirListFileFilter + "|" + SDL_File.BaseFilter;
 
-            if (Utilities.StrValid(CB_SaveAs.Current))
+            if (false == string.IsNullOrWhiteSpace(CB_SaveAs.Current))
             {
                 SDL_File.SFD.InitialDirectory = Path.GetDirectoryName(CB_SaveAs.Current);
             }
@@ -579,10 +579,10 @@ namespace SearchDirLists
 
         bool SaveFields(bool bFailOnDirectory = true)
         {
-            CB_VolumeName.Current = Utilities.NotNull(m_app.xaml_cbVolumeName.Text).Trim();
-            CB_Path.Current = Utilities.NotNull(m_app.xaml_cbPath.Text).Trim();
+            CB_VolumeName.Current = (m_app.xaml_cbVolumeName.Text ?? "").Trim();
+            CB_Path.Current = (m_app.xaml_cbPath.Text ?? "").Trim();
 
-            if (Utilities.StrValid(CB_Path.Current))
+            if (false == string.IsNullOrWhiteSpace(CB_Path.Current))
             {
                 CB_Path.Current += '\\';
 
@@ -598,7 +598,7 @@ namespace SearchDirLists
                 }
             }
 
-            if (Utilities.StrValid(m_app.xaml_cbSaveAs.Text))
+            if (false == string.IsNullOrWhiteSpace(m_app.xaml_cbSaveAs.Text))
             {
                 try
                 {

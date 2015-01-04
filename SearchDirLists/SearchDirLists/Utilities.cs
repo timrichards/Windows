@@ -790,7 +790,7 @@ namespace SearchDirLists
             Status = lvItem.SubItems[3].Text;
             Include = lvItem.SubItems[4].Text;
 
-            if ((lvItem.SubItems.Count > 5) && StrValid(lvItem.SubItems[5].Text))
+            if ((lvItem.SubItems.Count > 5) && (false == string.IsNullOrWhiteSpace(lvItem.SubItems[5].Text)))
             {
                 VolumeGroup = lvItem.SubItems[5].Text;
             }
@@ -1170,7 +1170,7 @@ namespace SearchDirLists
 
             string strError = "Assertion failed at location " + nLocation + ".";
 
-            if (StrValid(strError_in))
+            if (false == string.IsNullOrWhiteSpace(strError_in))
             {
                 strError += "\n\nAdditional information: " + strError_in;
             }
@@ -1376,7 +1376,7 @@ namespace SearchDirLists
                         string[] arrLine_A = strLine.Split('\t');
                         string strDir = arrLine_A[0];
 
-                        if (StrValid(strDir) == false)
+                        if (string.IsNullOrWhiteSpace(strDir))
                         {
                             DateTime dtParse;
                             string strTab = null;
@@ -1465,7 +1465,7 @@ namespace SearchDirLists
 
             string strDirName = Path.GetDirectoryName(strPath);
 
-            if ((StrValid(strDirName) == false) || Directory.Exists(strDirName))
+            if (string.IsNullOrWhiteSpace(strDirName) || Directory.Exists(strDirName))
             {
                 string strCapDrive = strPath.Substring(0, strPath.IndexOf(@":\") + 2);
 
@@ -1478,7 +1478,7 @@ namespace SearchDirLists
                 else
                 {
                     strPath = strPath.TrimEnd('\\');
-                    Utilities.Assert(1303.4313, StrValid(strDirName));
+                    Utilities.Assert(1303.4313, false == string.IsNullOrWhiteSpace(strDirName));
                 }
             }
             else if (bFailOnDirectory)
@@ -1491,7 +1491,7 @@ namespace SearchDirLists
 
         internal static bool FormatPath(ref string strPath, ref string strSaveAs, bool bFailOnDirectory = true)
         {
-            if (StrValid(strPath))
+            if (false == string.IsNullOrWhiteSpace(strPath))
             {
                 strPath += '\\';
 
@@ -1502,7 +1502,7 @@ namespace SearchDirLists
                 }
             }
 
-            if (StrValid(strSaveAs))
+            if (false == string.IsNullOrWhiteSpace(strSaveAs))
             {
                 strSaveAs = Path.GetFullPath(strSaveAs.Trim());
 
@@ -1520,7 +1520,7 @@ namespace SearchDirLists
         {
             string strLine_out = strLineType + "\t" + nLineNo;
 
-            if (StrValid(strLine_in))
+            if (false == string.IsNullOrWhiteSpace(strLine_in))
             {
                 strLine_out += '\t' + strLine_in;
             }
@@ -1585,7 +1585,7 @@ namespace SearchDirLists
                 strModified = dtModified.ToString();
             }
 
-            if (StrValid(strDir + strFile + strCreated + strModified + strAttributes + strLength + strError1 + strError2 + strChecksum) == false)
+            if (string.IsNullOrWhiteSpace(strDir + strFile + strCreated + strModified + strAttributes + strLength + strError1 + strError2 + strChecksum))
             {
                 Utilities.Assert(1303.4314, nHeader is int);
 
@@ -1601,11 +1601,11 @@ namespace SearchDirLists
 
             bool bDbgCheck = false;
 
-            if ((NotNull(strDir).TrimEnd() != NotNull(strDir)) || (NotNull(strFile).TrimEnd() != NotNull(strFile)))
+            if (((strDir ?? "").TrimEnd() != (strDir ?? "")) || ((strFile ?? "").TrimEnd() != (strFile ?? "")))
             {
                 strError1 += " Trailing whitespace";
                 strError1.Trim();
-                Utilities.Assert(1303.4315, StrValid(strDir) || StrValid(strFile));
+                Utilities.Assert(1303.4315, (false == string.IsNullOrWhiteSpace(strDir)) || (false == string.IsNullOrWhiteSpace(strFile)));
                 bDbgCheck = true;
             }
 
@@ -1669,20 +1669,10 @@ namespace SearchDirLists
             }
         }
 
-        internal static string NotNull(string str)
-        {
-            return str ?? string.Empty;
-        }
-
         protected static string StrFile_01(string strFile)
         {
             return Path.Combine(Path.GetDirectoryName(strFile),
                 Path.GetFileNameWithoutExtension(strFile) + "_01" + Path.GetExtension(strFile));
-        }
-
-        internal static bool StrValid(string str)
-        {
-            return ((str != null) && (str.Length > 0));
         }
 
         internal static void SetProperty<T>(object input, T outObj, Expression<Func<T, object>> outExpr)

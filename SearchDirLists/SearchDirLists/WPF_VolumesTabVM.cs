@@ -79,7 +79,7 @@ namespace SearchDirLists
                 new RelayCommand(param => SaveAs()),
                 new RelayCommand(param => LoadVolumeList_Click()),
                 new RelayCommand(param => SaveVolumeList(), param => LV.HasItems),
-                new RelayCommand(param => AddVolume(), param => (Utilities.NotNull(m_app.xaml_cbSaveAs.Text).Trim().Length > 0)),
+                new RelayCommand(param => AddVolume(), param => ((m_app.xaml_cbSaveAs.Text ?? "").Trim().Length > 0)),
                 new RelayCommand(param => RemoveVolume(), param => LV.SelectedAny),
                 new RelayCommand(param => ToggleInclude(), param => LV.SelectedAny),
                 new RelayCommand(param => SetVolumeGroup(), param => LV.SelectedAny),

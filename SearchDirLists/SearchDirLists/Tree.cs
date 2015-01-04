@@ -222,7 +222,7 @@ namespace SearchDirLists
     {
         public bool Equals(SDL_ListViewItem x, SDL_ListViewItem y)
         {
-            return (x != null) && (y != null) && Utilities.StrValid(x.Name) && x.Name.Equals(y.Name);
+            return (x != null) && (y != null) && (false == string.IsNullOrWhiteSpace(x.Name)) && x.Name.Equals(y.Name);
         }
 
         public int GetHashCode(SDL_ListViewItem obj)
@@ -467,7 +467,7 @@ namespace SearchDirLists
                     {
                         treeNode.Name = treeNode.Text;
 
-                        if (StrValid(strVolumeName))
+                        if (false == string.IsNullOrWhiteSpace(strVolumeName))
                         {
                             if (strVolumeName.EndsWith(treeNode.Text))
                             {
@@ -637,11 +637,11 @@ namespace SearchDirLists
                         string s = strArray[strArray.Length - 1];
                         strBuilder.AppendLine('\t' + s);
 
-                        if ((nIx == 5) && StrValid(s))
+                        if ((nIx == 5) && (false == string.IsNullOrWhiteSpace(s)))
                         {
                             nVolFree = ulong.Parse(s);
                         }
-                        else if ((nIx == 6) && StrValid(s))
+                        else if ((nIx == 6) && (false == string.IsNullOrWhiteSpace(s)))
                         {
                             nVolLength = ulong.Parse(s);
                         }
@@ -684,7 +684,7 @@ namespace SearchDirLists
                     int nIx = mNcolLength;
                     ulong nLength = 0;
 
-                    if ((strArray.Length > nIx) && StrValid(strArray[nIx]))
+                    if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx])))
                     {
                         nLength = ulong.Parse(strArray[nIx]);
                     }
@@ -883,7 +883,7 @@ namespace SearchDirLists
             string strLine = File.ReadLines(m_strFile).Skip((int)nLineNo - 1).Take(1).ToArray()[0];
             string[] strArray = strLine.Split('\t');
 
-            Utilities.Assert(1301.2312, StrValid(strArray[2]));
+            Utilities.Assert(1301.2312, (false == string.IsNullOrWhiteSpace(strArray[2])));
 
             long nIx = 0;
             DateTime dt;
@@ -892,12 +892,12 @@ namespace SearchDirLists
 
             UList<SDL_ListViewItem> listItems = new UList<SDL_ListViewItem>();
 
-            nIx = 4; if ((strArray.Length > nIx) && StrValid(strArray[nIx])) listItems.Add(new SDL_ListViewItem(new string[]{ "Created\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
-            nIx = 5; if ((strArray.Length > nIx) && StrValid(strArray[nIx])) listItems.Add(new SDL_ListViewItem(new string[] { "Modified\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
-            nIx = 6; if ((strArray.Length > nIx) && StrValid(strArray[nIx])) listItems.Add(new SDL_ListViewItem(new string[] { "Attributes\t", DecodeAttributes(strArray[nIx]) }));
+            nIx = 4; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new SDL_ListViewItem(new string[]{ "Created\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
+            nIx = 5; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new SDL_ListViewItem(new string[] { "Modified\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
+            nIx = 6; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new SDL_ListViewItem(new string[] { "Attributes\t", DecodeAttributes(strArray[nIx]) }));
             listItems.Add(new SDL_ListViewItem(new string[] { "Immediate Size\t", FormatSize(nodeDatum.nLength, bBytes: true) }));
-            nIx = 8; if ((strArray.Length > nIx) && StrValid(strArray[nIx])) listItems.Add(new SDL_ListViewItem(new string[] { "Error 1\t", strArray[nIx] }));
-            nIx = 9; if ((strArray.Length > nIx) && StrValid(strArray[nIx])) listItems.Add(new SDL_ListViewItem(new string[] { "Error 2\t", strArray[nIx] }));
+            nIx = 8; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new SDL_ListViewItem(new string[] { "Error 1\t", strArray[nIx] }));
+            nIx = 9; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new SDL_ListViewItem(new string[] { "Error 2\t", strArray[nIx] }));
             listItems.Add(new SDL_ListViewItem(new string[] { "# Immediate Files", (nLineNo - nPrevDir - 1).ToString() }));
 
             // Tree subnode detail
@@ -998,7 +998,7 @@ namespace SearchDirLists
 
                 strArrayFiles[3] = DecodeAttributes(strArrayFiles[3]);
 
-                if ((strArrayFiles.Length > mNcolLengthLV) && StrValid(strArrayFiles[mNcolLengthLV]))
+                if ((strArrayFiles.Length > mNcolLengthLV) && (false == string.IsNullOrWhiteSpace(strArrayFiles[mNcolLengthLV])))
                 {
                     nLengthDebug += nLength = ulong.Parse(strArrayFiles[mNcolLengthLV]);
                     strArrayFiles[mNcolLengthLV] = FormatSize(strArrayFiles[mNcolLengthLV]);

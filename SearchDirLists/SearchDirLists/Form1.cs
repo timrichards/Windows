@@ -140,7 +140,7 @@ namespace SearchDirLists
                 return false;
             }
 
-            if (Utilities.StrValid(gd.m_strSaveAs) == false)
+            if (string.IsNullOrWhiteSpace(gd.m_strSaveAs))
             {
                 gd.FormError(form_cbSaveAs, "Must have a file to load or save directory listing to.", "Volume Save As");
                 return false;
@@ -165,9 +165,9 @@ namespace SearchDirLists
                 }
             }
 
-            bool bOpenedFile = (Utilities.StrValid(gd.m_strPath) == false);
+            bool bOpenedFile = string.IsNullOrWhiteSpace(gd.m_strPath);
 
-            if (File.Exists(gd.m_strSaveAs) && Utilities.StrValid(gd.m_strPath))
+            if (File.Exists(gd.m_strSaveAs) && (false == string.IsNullOrWhiteSpace(gd.m_strPath)))
             {
                 gd.m_blinky.Go(form_cbSaveAs, clr: Color.Red);
 
@@ -182,7 +182,7 @@ namespace SearchDirLists
                 }
             }
 
-            if ((File.Exists(gd.m_strSaveAs) == false) && (Utilities.StrValid(gd.m_strPath) == false))
+            if ((File.Exists(gd.m_strSaveAs) == false) && string.IsNullOrWhiteSpace(gd.m_strPath))
             {
                 gd.m_blinky.Go(form_cbPath, clr: Color.Red);
                 Utilities.MBox("Must have a path or existing directory listing file.", "Volume Source Path");
@@ -190,7 +190,7 @@ namespace SearchDirLists
                 return false;
             }
 
-            if (Utilities.StrValid(gd.m_strPath) && (Directory.Exists(gd.m_strPath) == false))
+            if ((false == string.IsNullOrWhiteSpace(gd.m_strPath)) && (Directory.Exists(gd.m_strPath) == false))
             {
                 gd.m_blinky.Go(form_cbPath, clr: Color.Red);
                 Utilities.MBox("Path does not exist.", "Volume Source Path");
@@ -203,7 +203,7 @@ namespace SearchDirLists
 
             if (File.Exists(gd.m_strSaveAs))
             {
-                if (Utilities.StrValid(gd.m_strPath) == false)
+                if (string.IsNullOrWhiteSpace(gd.m_strPath))
                 {
                     bFileOK = ReadHeader();
 
@@ -213,7 +213,7 @@ namespace SearchDirLists
                     }
                     else
                     {
-                        if (Utilities.StrValid(gd.m_strPath))
+                        if (false == string.IsNullOrWhiteSpace(gd.m_strPath))
                         {
                             strStatus = "File is bad. Will overwrite.";
                         }
@@ -238,7 +238,7 @@ namespace SearchDirLists
                 return false;
             }
 
-            if (Utilities.StrValid(gd.m_strVolumeName))
+            if (false == string.IsNullOrWhiteSpace(gd.m_strVolumeName))
             {
                 if (form_lvVolumesMain.Items.Count > 0)
                 {
@@ -314,7 +314,7 @@ namespace SearchDirLists
 
             SDL_TreeNode treeNode = gd.m_dictCompareDiffs.ToArray()[gd.m_nCompareIndex].Key;
 
-            if (Utilities.StrValid(treeNode.Name) == false)  // can't have a null key in the dictionary so there's a new SDL_TreeNode there
+            if (string.IsNullOrWhiteSpace(treeNode.Name))  // can't have a null key in the dictionary so there's a new SDL_TreeNode there
             {
                 treeNode = null;
             }
@@ -512,10 +512,10 @@ namespace SearchDirLists
 
         bool SaveFields(bool bFailOnDirectory = true)
         {
-            gd.m_strVolumeName = Utilities.NotNull(form_cbVolumeName.Text).Trim();
-            gd.m_strPath = Utilities.NotNull(form_cbPath.Text).Trim();
+            gd.m_strVolumeName = (form_cbVolumeName.Text ?? "").Trim();
+            gd.m_strPath = (form_cbPath.Text ?? "").Trim();
 
-            if (Utilities.StrValid(gd.m_strPath))
+            if (false == string.IsNullOrWhiteSpace(gd.m_strPath))
             {
                 gd.m_strPath += '\\';
 
@@ -525,7 +525,7 @@ namespace SearchDirLists
                 }
             }
 
-            if (Utilities.StrValid(form_cbSaveAs.Text))
+            if (false == string.IsNullOrWhiteSpace(form_cbSaveAs.Text))
             {
                 try
                 {
@@ -696,7 +696,7 @@ namespace SearchDirLists
             {
                 ulong l1 = 0, l2 = 0;
 
-                if (Utilities.StrValid(pair.Key.Text))
+                if (false == string.IsNullOrWhiteSpace(pair.Key.Text))
                 {
                     l1 = ((NodeDatum)pair.Key.Tag).nTotalLength;
                 }
@@ -920,7 +920,7 @@ namespace SearchDirLists
                     {
                         Utilities.MBox("Currently saving listings and can't open file yet. Please wait.", "Modify file");
                     }
-                    else if (Utilities.StrValid(lvSelect[0].Name))
+                    else if (false == string.IsNullOrWhiteSpace(lvSelect[0].Name))
                     {
                         Utilities.MBox("File hasn't been saved yet.", "Modify file");
                     }
@@ -940,7 +940,7 @@ namespace SearchDirLists
                     inputBox.Entry = strVolumeName_orig;
                     inputBox.SetNextButtons();
 
-                    if ((inputBox.ShowDialog() == DialogResult.OK) && (Utilities.StrValid(inputBox.Entry)))
+                    if ((inputBox.ShowDialog() == DialogResult.OK) && (false == string.IsNullOrWhiteSpace(inputBox.Entry)))
                     {
                         strVolumeName = inputBox.Entry;
                     }
@@ -982,25 +982,25 @@ namespace SearchDirLists
                     break;
                 }
 
-                if (((Utilities.StrValid(strVolumeName) == false) ||
-                    (Utilities.NotNull(strVolumeName) == Utilities.NotNull(strVolumeName_orig)))
+                if ((string.IsNullOrWhiteSpace(strVolumeName) ||
+                    ((strVolumeName ?? "") == (strVolumeName_orig ?? "")))
                     &&
-                    ((Utilities.StrValid(strDriveLetter) == false) ||
-                    (Utilities.NotNull(strDriveLetter) == Utilities.NotNull(strDriveLetter_orig))))
+                    (string.IsNullOrWhiteSpace(strDriveLetter) ||
+                    ((strDriveLetter ?? "") == (strDriveLetter_orig ?? ""))))
                 {
                     Utilities.MBox("No changes made.", "Modify file");
                     return false;
                 }
 
                 StringBuilder sbFileConts = new StringBuilder();
-                bool bDriveLetter = Utilities.StrValid(strDriveLetter);
+                bool bDriveLetter = (false == string.IsNullOrWhiteSpace(strDriveLetter));
 
                 gd.KillTreeBuilder(bJoin: true);
 
                 using (StringReader reader = new StringReader(File.ReadAllText(strFileName)))
                 {
                     string strLine = null;
-                    bool bHitNickname = (Utilities.StrValid(strVolumeName) == false);
+                    bool bHitNickname = string.IsNullOrWhiteSpace(strVolumeName);
 
                     while ((strLine = reader.ReadLine()) != null)
                     {
@@ -1008,9 +1008,9 @@ namespace SearchDirLists
 
                         if ((bHitNickname == false) && strLine.StartsWith(Utilities.mSTRlineType_Nickname))
                         {
-                            if (Utilities.StrValid(strVolumeName_orig))
+                            if (false == string.IsNullOrWhiteSpace(strVolumeName_orig))
                             {
-                                sbLine.Replace(strVolumeName_orig, Utilities.NotNull(strVolumeName));
+                                sbLine.Replace(strVolumeName_orig, (strVolumeName ?? ""));
                             }
                             else
                             {
@@ -1152,7 +1152,7 @@ namespace SearchDirLists
             SDL_File.Init();
             SDL_File.SFD.Filter = SDL_File.FileAndDirListFileFilter + "|" + SDL_File.BaseFilter;
 
-            if (Utilities.StrValid(gd.m_strSaveAs))
+            if (false == string.IsNullOrWhiteSpace(gd.m_strSaveAs))
             {
                 SDL_File.SFD.InitialDirectory = Path.GetDirectoryName(gd.m_strSaveAs);
             }
@@ -1954,7 +1954,7 @@ namespace SearchDirLists
 
             string strNode = e.Node.Text;
 
-            Utilities.Assert(1308.9323, Utilities.StrValid(strNode));
+            Utilities.Assert(1308.9323, false == string.IsNullOrWhiteSpace(strNode));
 
             if (gd.m_bCompareMode)
             {
@@ -1982,7 +1982,7 @@ namespace SearchDirLists
 
             string strVolumeGroup = ((RootNodeDatum)rootNode.Tag).StrVolumeGroup;
 
-            form_lblVolGroup.Text = Utilities.StrValid(strVolumeGroup) ? strVolumeGroup : "(no volume group set)";
+            form_lblVolGroup.Text = string.IsNullOrWhiteSpace(strVolumeGroup) ? "(no volume group set)" : strVolumeGroup;
             form_colVolDetail.Text = rootNode.Text;
             form_colDirDetail.Text = form_colFilename.Text = strNode;
 
@@ -2389,7 +2389,7 @@ namespace SearchDirLists
 
         internal void ComboBoxItemsInsert(ComboBox comboBox, string strText = null, bool bTrimText = true)
         {
-            if (Utilities.StrValid(strText) == false)
+            if (string.IsNullOrWhiteSpace(strText))
             {
                 strText = comboBox.Text;
             }
@@ -2399,7 +2399,7 @@ namespace SearchDirLists
                 strText = strText.Trim();
             }
 
-            if (Utilities.StrValid(strText) == false)
+            if (string.IsNullOrWhiteSpace(strText))
             {
                 return;
             }

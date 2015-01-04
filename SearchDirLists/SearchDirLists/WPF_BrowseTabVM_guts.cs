@@ -33,7 +33,7 @@ namespace SearchDirLists
         {
             //gd.m_strSelectFile = null;
 
-            //if (Utilities.NotNull(m_app.xaml_cbFindbox.Text).Trim().Length > 0)
+            //if ((m_app.xaml_cbFindbox.Text ?? "").Trim().Length > 0)
             //{
             //    if (m_ctlLastSearchSender != sender)
             //    {

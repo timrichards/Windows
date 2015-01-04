@@ -435,7 +435,7 @@ namespace SearchDirLists
                     return;
                 }
 
-                if (StrValid(strSaveAs) == false)
+                if (string.IsNullOrWhiteSpace(strSaveAs))
                 {
                     m_statusCallback(m_volStrings.StrPath, mSTRnotSaved);
                     MBox("Must specify save filename.", "Save Directory Listing");

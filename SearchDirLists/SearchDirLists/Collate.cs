@@ -238,7 +238,7 @@ namespace SearchDirLists
 
                         RootNodeDatum rootNodeDatum_A = (RootNodeDatum)rootNode_A.Tag;
 
-                        if (Utilities.StrValid(rootNodeDatum.StrVolumeGroup) &&
+                        if (false == string.IsNullOrWhiteSpace(rootNodeDatum.StrVolumeGroup) &&
                             (rootNodeDatum.StrVolumeGroup == rootNodeDatum_A.StrVolumeGroup))
                         {
                             continue;
@@ -594,7 +594,7 @@ namespace SearchDirLists
                 }
 
                 lvItem.Text = nameNode.Text;
-                Utilities.Assert(1305.6318, Utilities.StrValid(lvItem.Text));
+                Utilities.Assert(1305.6318, false == string.IsNullOrWhiteSpace(lvItem.Text));
                 listLVdiffVol.Add(lvItem);
             }
 
@@ -625,7 +625,7 @@ namespace SearchDirLists
 
                 SDL_TreeNode treeNode = listNodes.Value;
 
-                Utilities.Assert(1305.6321, Utilities.StrValid(treeNode.Text));
+                Utilities.Assert(1305.6321, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
                 SDL_ListViewItem lvItem = new SDL_ListViewItem(treeNode.Text);
 
@@ -690,7 +690,7 @@ namespace SearchDirLists
                     str_nClones = nClones.ToString("###,###");
                 }
 
-                Utilities.Assert(1305.6329, Utilities.StrValid(treeNode.Text));
+                Utilities.Assert(1305.6329, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
                 SDL_ListViewItem lvItem = new SDL_ListViewItem(new string[] { treeNode.Text, str_nClones });
 

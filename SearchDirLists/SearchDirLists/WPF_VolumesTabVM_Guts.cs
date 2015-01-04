@@ -365,10 +365,10 @@ namespace SearchDirLists
                     break;
                 }
 
-                if (((false == string.IsNullOrWhiteSpace(strVolumeName) == false) ||
+                if ((string.IsNullOrWhiteSpace(strVolumeName) ||
                     ((strVolumeName ?? "") == (strVolumeName_orig ?? "")))
                     &&
-                    ((false == string.IsNullOrWhiteSpace(strDriveLetter) == false) ||
+                    (string.IsNullOrWhiteSpace(strDriveLetter) ||
                     ((strDriveLetter ?? "") == (strDriveLetter_orig ?? ""))))
                 {
                     Utilities.MBox("No changes made.", "Modify file");

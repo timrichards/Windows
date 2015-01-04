@@ -7,7 +7,7 @@ namespace DoubleFile
     partial class UC_VolumeEditVM : ObservableObject_OwnerWindow
     {
         public delegate bool BoolQuery();
-        public BoolQuery IsOKenabled = () => { DesignModeOK();  return false; };
+        public BoolQuery IsOKenabled = () => { DesignModeOK(); return false; };
         public delegate string StringQuery();
         public StringQuery SourcePath_CurrentText = () => { DesignModeOK(); return null; };
         public StringQuery ListingPath_CurrentText = () => { DesignModeOK(); return null; };

@@ -1,35 +1,36 @@
 ﻿<Window x:Class="DoubleFile.WinSaveInProgress"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Saving Directory Listings" Height="300" Width="300" ShowInTaskbar="False">
-    <Grid>
-        <ListView>
-            <ListBox.ItemTemplate>
+        Title="Saving Directory Listings" Height="300" Width="300" ShowInTaskbar="False" MinWidth="300" MaxWidth="300" MinHeight="50" ResizeMode="NoResize" SizeToContent="Height" WindowStartupLocation="CenterOwner">
+    <Grid Loaded="Grid_Loaded">
+        <Grid.Resources>
+            <Style TargetType="ListView">
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="ItemsSource" Value="{Binding Items}"/>
+                <Setter Property="Margin" Value="5, 5, 5, 5"/>
+            </Style>
+            <Style TargetType="ListViewItem">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="Focusable" Value="False"/>
+            </Style>
+        </Grid.Resources>
+        <ListView Name="form_lvProgress" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
+            <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="{Binding Path=Title}" TextWrapping="Wrap" HorizontalAlignment="Left" Margin="5"/>
-                        <TextBlock Grid.Row="1" Text="{Binding Path=Name}" HorizontalAlignment="Right" Margin="5"/>
-                    </Grid>
+                    <Border
+                        Margin="5"
+                        Height="55"
+                        VerticalAlignment="Stretch"
+                        BorderBrush="ForestGreen"
+                        BorderThickness="2,0,0,0">
+                        <StackPanel Margin="10,0,0,0">
+                            <TextBlock FontWeight="Bold" Text="{Binding VolumeName}" />
+                            <TextBlock Text="{Binding Path}" />
+                            <ProgressBar Foreground="{Binding ProgressState}" Value="{Binding Progress}" Maximum="1" LargeChange="0.1" SmallChange="0.01" IsIndeterminate="{Binding Indeterminate}" Height="20" />
+                        </StackPanel>
+                    </Border>
                 </DataTemplate>
-            </ListBox.ItemTemplate>
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Volume name" DisplayMemberBinding="{Binding VolumeName}" Width="{Binding WidthVolumeName}"/>
-                    <GridViewColumn Header="Path" DisplayMemberBinding="{Binding Path}" Width="{Binding WidthPath}"/>
-                    <GridViewColumn Header="Progress" Width="{Binding WidthProgress}">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <ProgressBar Maximum="1" Value="{Binding Progress}" LargeChange="0.1" SmallChange="0.01" IsIndeterminate="True"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
+            </ListView.ItemTemplate>
         </ListView>
-
     </Grid>
 </Window>

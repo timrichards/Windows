@@ -9,7 +9,7 @@ namespace DoubleFile
     class ObservableObject_OwnerWindow : ObservableObject
     {
         internal delegate System.Windows.Window Delegate_GetWindow();
-        internal Delegate_GetWindow GetWindow = () => { System.Diagnostics.Debug.Assert(false); return null; };
+        internal Delegate_GetWindow GetWindow = () => { DesignModeOK(); return null; };
 
         static internal void DesignModeOK()
         {

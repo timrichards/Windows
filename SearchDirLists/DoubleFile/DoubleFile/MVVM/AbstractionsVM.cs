@@ -173,10 +173,9 @@ namespace DoubleFile
     abstract class ListViewVM : ObservableObject_OwnerWindow
     {
         internal delegate bool BoolQuery();
-
-        internal BoolQuery SelectedOne = null;
-        internal BoolQuery SelectedAny = null;
-        internal Action Refresh = null;
+        internal BoolQuery SelectedOne = () => { DesignModeOK(); return false; };
+        internal BoolQuery SelectedAny = () => { DesignModeOK(); return false; };
+        internal Action Refresh = () => { DesignModeOK(); };
 
         public ObservableCollection<ListViewItemVM> Items { get { return m_items; } }
 
@@ -253,10 +252,7 @@ namespace DoubleFile
     abstract class ListViewVM_Generic<T> : ListViewVM where T : ListViewItemVM
     {
         internal delegate IEnumerable<T> IEnumerableQuery();
-
-        internal IEnumerableQuery Selected = null;
-
-        internal ListViewVM_Generic() { }
+        internal IEnumerableQuery Selected = () => { DesignModeOK(); return null; };
 
         internal IEnumerable<T> ItemsCast { get { return m_items.Cast<T>(); } }
     }

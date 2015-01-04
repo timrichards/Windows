@@ -30,6 +30,8 @@ namespace DoubleFile
 
             lv.GetWindow = () => { return this; };
             win.GetWindow = () => { return this; };
+
+            new WinSaveInProgress().Show();
         }
     }
 }

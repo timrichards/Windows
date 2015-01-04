@@ -1,4 +1,5 @@
-﻿
+﻿using System.Linq;
+
 namespace DoubleFile
 {
     class LV_VolumeVM : ListViewVM_Generic<LVitem_VolumeVM>
@@ -27,20 +28,31 @@ namespace DoubleFile
         WinVolumeListVM m_windowVM = null;
 
         // these need to go in impl file but this whole file needs reorg
-        internal void SaveVolume() { System.Windows.MessageBox.Show("SaveVolume"); }
-
         internal void EditVolume()
         {
             var dlg = new WinVolumeEdit();
 
-            Selected().FirstOnlyAssert(t => { dlg.StringValues = t.StringValues; });
-
-            if (dlg.ShowDialog(GetWindow()) ?? false)
+            Selected().FirstOnlyAssert(lvItem =>
             {
-                Selected().FirstOnlyAssert(t => { t.StringValues = dlg.StringValues; });
-            }
+                dlg.StringValues = lvItem.StringValues;
+
+                if (dlg.ShowDialog(GetWindow()) ?? false)
+                {
+                    lvItem.StringValues = dlg.StringValues;
+                }
+            });
         }
 
-        internal void ToggleInclude() { System.Windows.MessageBox.Show("ToggleInclude"); }
+        internal void RemoveVolume()
+        {
+            Selected().ToArray().ForEach(lvItem => { Items.Remove(lvItem); });
+        }
+
+        internal void ToggleInclude()
+        {
+            Selected().ForEach(lvItem => { lvItem.Include = (lvItem.Include == false); });
+        }
+
+        internal void SetVolumeGroup() { System.Windows.MessageBox.Show("SetVolumeGroup"); }
     }
 }

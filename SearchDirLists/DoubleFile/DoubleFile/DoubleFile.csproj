@@ -61,6 +61,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Utilities\FileParse.cs" />
     <Compile Include="MVVM\AbstractionsVM.cs" />
     <Compile Include="MVVM\ObservableObject.cs" />
     <Compile Include="MVVM\ObservableObject_OwnerWindow.cs" />

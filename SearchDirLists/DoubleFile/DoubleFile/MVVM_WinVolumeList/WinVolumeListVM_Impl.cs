@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace DoubleFile
 {
@@ -20,11 +19,25 @@ namespace DoubleFile
             }
         }
 
-        internal void LoadVolume() { System.Windows.MessageBox.Show("LoadVolume"); }
-
-        internal void RemoveVolume()
+        internal void LoadVolume()
         {
-            m_lvVM.Selected().ToArray().ForEach(lvItem => { m_lvVM.Items.Remove(lvItem); });
+            var dlg = new Microsoft.Win32.OpenFileDialog();
+
+            if (dlg.ShowDialog(GetWindow()) ?? false)
+            {
+                string strVolumeName = null;
+                string strPath = null;
+
+                if (FileParse.ReadHeader(dlg.FileName, out strVolumeName, out strPath))
+                {
+                    m_lvVM.NewItem(new string[] {strVolumeName, strPath, dlg.FileName, "Using file.", "Yes"});
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show("Bad file.");
+                }
+            }
         }
+
     }
 }

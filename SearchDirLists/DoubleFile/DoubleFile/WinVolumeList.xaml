@@ -46,12 +46,12 @@
                 <Separator />
                 <MenuItem Header="New volume" Command="{Binding Icmd_NewVolume}"/>
                 <MenuItem Header="Load volume" Command="{Binding Icmd_LoadVolume}"/>
-                <MenuItem Header="Save volume" Command="{Binding Icmd_SaveVolume}"/>
                 <Separator />
                 <MenuItem Header="Edit volume" Command="{Binding Icmd_EditVolume}"/>
                 <MenuItem Header="Remove" Command="{Binding Icmd_RemoveVolume}"/>
                 <Separator />
                 <MenuItem Header="Toggle include" Command="{Binding Icmd_ToggleInclude}"/>
+                <MenuItem Header="Set volume group" Command="{Binding Icmd_VolumeGroup}"/>
             </MenuItem>
             <Button Command="{Binding Icmd_NewVolume}" Style="{StaticResource styleFlatButton}">
                 <Image Source="resources/ic_add_circle_black_18dp.png" Width="18" />

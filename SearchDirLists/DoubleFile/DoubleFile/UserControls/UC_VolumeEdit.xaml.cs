@@ -92,5 +92,16 @@ namespace DoubleFile.UserControls
                 System.Diagnostics.Debug.Assert(false);
             }
         }
+
+        private void form_EditSourcePath_LostFocus(object sender, RoutedEventArgs e)
+        {
+            char[] s = form_EditSourcePath.Text.ToCharArray();
+
+            if (s.Length > 0)
+            {
+                s[0] = s[0].ToString().ToUpper()[0];
+                form_EditSourcePath.Text = string.Join("", s);
+            }
+        }
     }
 }

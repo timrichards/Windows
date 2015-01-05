@@ -162,17 +162,17 @@ namespace DoubleFile
             //    bool ok = DeviceIoControl(handle, IOCTL_STORAGE_QUERY_PROPERTY, ref query, qsize, out header,
             //        Marshal.SizeOf(header), out written, IntPtr.Zero);
 
-            //    Utilities.Assert(0, ok);
-            //    Utilities.Assert(0, written == rsize);
+            //    MBox.Assert(0, ok);
+            //    MBox.Assert(0, written == rsize);
 
             //    STORAGE_DEVICE_DESCRIPTOR data = new STORAGE_DEVICE_DESCRIPTOR();
 
             //    ok = DeviceIoControl(handle, IOCTL_STORAGE_QUERY_PROPERTY, ref query, qsize, out data,
             //        header.Size, out written, IntPtr.Zero);
 
-            //    Utilities.Assert(0, ok);
-            //    Utilities.Assert(0, written == rsize);
-            //    Utilities.Assert(0, written == header.Size);
+            //    MBox.Assert(0, ok);
+            //    MBox.Assert(0, written == rsize);
+            //    MBox.Assert(0, written == header.Size);
 
             //    //MEDIA_SERIAL_NUMBER_DATA data = new MEDIA_SERIAL_NUMBER_DATA();
             //    //int rsize = Marshal.SizeOf(data);
@@ -181,8 +181,8 @@ namespace DoubleFile
             //    //bool ok = DeviceIoControl(handle, IOCTL_STORAGE_GET_MEDIA_SERIAL_NUMBER, ref foo, 0, out data,
             //    //    rsize, out written, IntPtr.Zero);
 
-            //    //Utilities.Assert(0, ok);
-            //    //Utilities.Assert(0, written == rsize);
+            //    //MBox.Assert(0, ok);
+            //    //MBox.Assert(0, written == rsize);
             //}
 
             bool bWMI = false;

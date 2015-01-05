@@ -54,6 +54,12 @@ namespace DoubleFile
             }
         }
 
+        public static void Show(this System.Windows.Window win, Window me)
+        {
+            win.Owner = me;
+            win.Show();
+        }
+
         public static bool? ShowDialog(this System.Windows.Window win, Window me)
         {
             win.Owner = me;

@@ -61,6 +61,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="GlobalData.cs" />
+    <Compile Include="Utilities\DRDigit.cs" />
     <Compile Include="Utilities\FileParse.cs" />
     <Compile Include="MVVM\AbstractionsVM.cs" />
     <Compile Include="MVVM\ObservableObject.cs" />
@@ -77,7 +79,13 @@
       <DependentUpon>UC_VolumeEdit.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utilities\DriveSerial.cs" />
+    <Compile Include="Utilities\FileUtil.cs" />
+    <Compile Include="Utilities\MBox.cs" />
+    <Compile Include="Utilities\SaveDirInfo.cs" />
+    <Compile Include="Utilities\SDL_Timer.cs" />
+    <Compile Include="Utilities\UList.cs" />
     <Compile Include="Utilities\Utilities.cs" />
+    <Compile Include="Utilities\Win32FindFile.cs" />
     <Compile Include="WinSaveInProgress.xaml.cs">
       <DependentUpon>WinSaveInProgress.xaml</DependentUpon>
     </Compile>

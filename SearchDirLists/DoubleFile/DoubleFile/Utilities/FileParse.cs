@@ -104,7 +104,7 @@ namespace DoubleFile
 
                         if (strLine == mSTRheader01)
                         {
-                            System.Diagnostics.Debug.Assert(nLineNo == 1);
+                            MBox.Assert(0, nLineNo == 1);
                             file_out.WriteLine(FormatLine(mSTRlineType_Version, nLineNo, mSTRheader));
                             continue;
                         }
@@ -120,7 +120,7 @@ namespace DoubleFile
                         }
                         else if (strLine == mSTRdrive01)
                         {
-                            System.Diagnostics.Debug.Assert(nLineNo == 4);
+                            MBox.Assert(0, nLineNo == 4);
                             file_out.WriteLine(FormatLine(mSTRlineType_Comment, nLineNo, mSTRdrive));
 
                             int ixDriveInfo = 0;
@@ -199,7 +199,7 @@ namespace DoubleFile
                         }
                         else if (strDir.Contains(@":\") == false)
                         {
-                            System.Diagnostics.Debug.Assert(false);        // all that's left is directories
+                            MBox.Assert(0, false);        // all that's left is directories
                             continue;
                         }
 
@@ -222,7 +222,7 @@ namespace DoubleFile
             return strLine_out;
         }
 
-        internal static string FormatString(string strDir = null, string strFile = null, DateTime? dtCreated = null, DateTime? dtModified = null, string strAttributes = null, long nLength = -1, string strError1 = null, string strError2 = null, int? nHeader = null, string strChecksum = null)
+        internal static string FormatString(string strDir = null, string strFile = null, DateTime? dtCreated = null, DateTime? dtModified = null, string strAttributes = null, long nLength = -1, string strError1 = null, string strError2 = null, int? nHeader = null, string strHash = null)
         {
             string strLength = null;
             string strCreated = null;
@@ -243,9 +243,9 @@ namespace DoubleFile
                 strModified = dtModified.ToString();
             }
 
-            if (false == string.IsNullOrWhiteSpace(strDir + strFile + strCreated + strModified + strAttributes + strLength + strError1 + strError2 + strChecksum) == false)
+            if (false == string.IsNullOrWhiteSpace(strDir + strFile + strCreated + strModified + strAttributes + strLength + strError1 + strError2 + strHash) == false)
             {
-                System.Diagnostics.Debug.Assert(nHeader is int);
+                MBox.Assert(0, nHeader is int);
 
                 if (nHeader == 0)
                 {
@@ -253,7 +253,7 @@ namespace DoubleFile
                 }
                 else if (nHeader == 1)
                 {
-                    return "Dir" + '\t' + "File" + '\t' + "Created" + '\t' + "Modded" + '\t' + "Attrib" + '\t' + "Length" + '\t' + "Error1" + '\t' + "Error2" + '\t' + "FakeChecksum";
+                    return "Dir" + '\t' + "File" + '\t' + "Created" + '\t' + "Modded" + '\t' + "Attrib" + '\t' + "Length" + '\t' + "Error1" + '\t' + "Error2" + '\t' + "Hash";
                 }
             }
 
@@ -263,11 +263,11 @@ namespace DoubleFile
             {
                 strError1 += " Trailing whitespace";
                 strError1.Trim();
-                System.Diagnostics.Debug.Assert(false == string.IsNullOrWhiteSpace(strDir) || false == string.IsNullOrWhiteSpace(strFile));
+                MBox.Assert(0, false == string.IsNullOrWhiteSpace(strDir) || false == string.IsNullOrWhiteSpace(strFile));
                 bDbgCheck = true;
             }
 
-            string strRet = (strDir + '\t' + strFile + '\t' + strCreated + '\t' + strModified + '\t' + strAttributes + '\t' + strLength + '\t' + strError1 + '\t' + strError2 + '\t' + strChecksum).TrimEnd();
+            string strRet = (strDir + '\t' + strFile + '\t' + strCreated + '\t' + strModified + '\t' + strAttributes + '\t' + strLength + '\t' + strError1 + '\t' + strError2 + '\t' + strHash).TrimEnd();
 
             if (bDbgCheck)
             {
@@ -277,7 +277,7 @@ namespace DoubleFile
 
                 if (strArray[mNcolLength01].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
                 {
-                    System.Diagnostics.Debug.Assert(false);
+                    MBox.Assert(0, false);
                 }
 #endif
             }

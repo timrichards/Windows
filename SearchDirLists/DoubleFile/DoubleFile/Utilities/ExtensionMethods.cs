@@ -42,7 +42,7 @@ namespace DoubleFile
 
         public static void FirstOnlyAssert<T>(this IEnumerable<T> source, Action<T> action)
         {
-            System.Diagnostics.Debug.Assert(source.Count() <= 1);
+            MBox.Assert(0, source.Count() <= 1);
             FirstOnly(source, action);
         }
 

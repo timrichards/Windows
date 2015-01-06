@@ -15,7 +15,7 @@ namespace DoubleFile
         {
             if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()) == false)
             {
-                System.Diagnostics.Debug.Assert(false);
+                MBox.Assert(0, false);
             }
         }
     }

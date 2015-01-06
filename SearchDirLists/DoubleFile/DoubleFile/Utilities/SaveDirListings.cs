@@ -1,131 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using System.IO;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
-using System.Management;
-using System.Security.AccessControl;
 using System.Text;
 
-namespace SearchDirLists
+namespace DoubleFile
 {
-    delegate void SaveDirListingsStatusDelegate(string strPath, string strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0);
+    delegate void SaveDirListingsStatusDelegate(string strPath, string strText = null, bool bDone = false, double nProgress = double.NaN);
 
-#if (WPF == false)
-    partial class Form1
+    partial class MainWindow
     {
-        void SaveDirListingsStatusCallback(string strPath, string strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0)
+        WinSaveInProgress m_winProgress = null;
+
+        void SaveDirListingsStatusCallback(string strPath, string strText = null, bool bDone = false, double nProgress = double.NaN)
         {
             if (GlobalData.AppExit || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
             {
                 return;
             }
 
-            if (InvokeRequired) { Invoke(new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback), new object[] { strPath, strText, bDone, nFilesTotal, nLengthTotal, nFilesDiff }); return; }
+            if (m_app.Dispatcher.CheckAccess() == false) { m_app.Dispatcher.Invoke(new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback), new object[] { strPath, strText, bDone, nProgress }); return; }
 
-            if (nLengthTotal > 0)
+            if (nProgress > 0)
             {
-                Utilities.Assert(1306.7305, strText == null);
-                Utilities.Assert(1306.7306, bDone == false);
+                MBox.Assert(1306.7305, strText == null);
+                MBox.Assert(1306.7306, bDone == false);
 
-                strText = nFilesTotal.ToString("###,###,###,###") + " (" + Utilities.FormatSize(nLengthTotal) + ") SD " + nFilesDiff.ToString("#0.0");
+                m_winProgress.SetProgress(strPath, nProgress);
             }
 
             if (bDone)
             {
+                m_winProgress.SetCompleted(strPath);
+
                 lock (gd.m_saveDirListings)
                 {
                     ++gd.m_saveDirListings.FilesWritten;
-                }
-            }
-
-            lock (form_lvVolumesMain)
-            {
-                ListViewItem lvItem = form_lvVolumesMain.Items[strPath];
-
-                if (Utilities.Assert(0, lvItem != null))
-                {
-                    lvItem.SubItems[3].Text = strText;
-
-                    if (bDone && (strText == Utilities.mSTRsaved))
-                    {
-                        lvItem.Name = null;    // indexing by path, only for unsaved volumes
-                    }
-
-                    form_lvVolumesMain.Invalidate();
-                }
-            }
-        }
-
-        void SaveDirListingsDoneCallback()
-        {
-            if (GlobalData.AppExit || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
-            {
-                return;
-            }
-
-            if (InvokeRequired) { Invoke(new Action(SaveDirListingsDoneCallback)); return; }
-
-            if (gd.m_saveDirListings.FilesWritten > 0)
-            {
-                gd.RestartTreeTimer();
-                form_tabControlMain.SelectedTab = form_tabPageBrowse;
-            }
-
-            int nFilesWritten = gd.m_saveDirListings.FilesWritten;
-
-            gd.m_saveDirListings = null;   // has to precede messagebox
-            Utilities.MBox("Completed. " + nFilesWritten + " files written.", "Save Directory Listings");
-        }
-    }
-#endif
-    partial class VolumesTabVM
-    {
-        void SaveDirListingsStatusCallback(string strPath, string strText = null, bool bDone = false, long nFilesTotal = 0, long nLengthTotal = 0, double nFilesDiff = 0)
-        {
-#if (WPF == false)
-        }
-        void SaveDirListingsDoneCallback()
-        { }
-    }
-#else
-            if (GlobalData.AppExit || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
-            {
-                return;
-            }
-
-            if (m_app.Dispatcher.CheckAccess() == false) { m_app.Dispatcher.Invoke(new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback), new object[] { strPath, strText, bDone, nFilesTotal, nLengthTotal, nFilesDiff }); return; }
-
-            if (nLengthTotal > 0)
-            {
-                Utilities.Assert(1306.7305, strText == null);
-                Utilities.Assert(1306.7306, bDone == false);
-
-                strText = nFilesTotal.ToString("###,###,###,###") + " (" + Utilities.FormatSize(nLengthTotal) + ") SD " + nFilesDiff.ToString("#0.0");
-            }
-
-            if (bDone)
-            {
-                lock (gd.m_saveDirListings)
-                {
-                    ++gd.m_saveDirListings.FilesWritten;
-                }
-            }
-
-            VolumeLVitemVM lvItem = LV.ItemsCast.Where(i => (i.datum != null) && (i.datum.ListView != null)).FirstOrDefault();
-
-            if (lvItem != null)     // e.g. user may have clicked "Remove Volume" while saving
-                lock (LV)
-            {
-                lvItem.Status = strText;
-
-                if (bDone && (strText == Utilities.mSTRsaved))
-                {
-                    lvItem.SaveAsExists = true;    // copied code. non-WPF comment: "indexing by path, only for unsaved volumes"
                 }
             }
         }
@@ -142,51 +56,40 @@ namespace SearchDirLists
             if (gd.m_saveDirListings.FilesWritten > 0)
             {
                 gd.RestartTreeTimer();
-                m_app.xaml_tabControlMain.SelectedItem = m_app.xaml_tabItemBrowse;
             }
 
             int nFilesWritten = gd.m_saveDirListings.FilesWritten;
 
             gd.m_saveDirListings = null;   // has to precede messagebox
-            Utilities.MBox("Completed. " + nFilesWritten + " files written.", "Save Directory Listings");
+            MBox.ShowDialog("Completed. " + nFilesWritten + " files written.", "Save Directory Listings");
         }
     }
-#endif
-    class SaveDirListings : Utilities
+
+    class SaveDirListings : FileParse
     {
         readonly SaveDirListingsStatusDelegate m_statusCallback = null;
         readonly Action m_doneCallback = null;
         Thread m_thread = null;
         bool m_bThreadAbort = false;
         ConcurrentBag<SaveDirListing> m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
-        readonly UList<LVvolStrings> m_list_lvVolStrings = new UList<LVvolStrings>();
+        readonly UList<LVitem_VolumeVM> m_list_LVitem_VolumeVM = new UList<LVitem_VolumeVM>();
 
         internal int FilesWritten { get; set; }
-        internal static bool DoFakeChecksum = true;
+        internal static bool DoHash = true;
 
-        class SaveDirListing
+        class SaveDirListing : FileUtil
         {
             readonly SaveDirListingsStatusDelegate m_statusCallback = null;
             Thread m_thread = null;
             bool m_bThreadAbort = false;
-            readonly LVvolStrings m_volStrings = null;
-            long m_nLengthTotal = 0;
+            readonly LVitem_VolumeVM m_volStrings = null;
+            long m_nLengthTotal_1 = 0;
+            long m_nLengthTotal_2 = 0;
             long m_nFilesTotal = 0;
             long m_nFilesDiff = 0;
-            readonly List<double> m_listFileDiffs = new List<double>();
             readonly List<string> m_list_Errors = new List<string>();
 
-            private double StdDevSign(List<double> values)
-            {
-                double nAvg = values.Average();
-                double nStdDev = Math.Sqrt(
-                    values.Sum(d => Math.Pow(d - nAvg, 2)) /
-                    (values.Count() - 1));
-
-                return nStdDev *= Math.Sign(values[values.Count - 1] - nAvg);
-            }
-
-            internal SaveDirListing(LVvolStrings volStrings,
+            internal SaveDirListing(LVitem_VolumeVM volStrings,
                 SaveDirListingsStatusDelegate statusCallback)
             {
                 m_volStrings = volStrings;
@@ -239,8 +142,8 @@ namespace SearchDirLists
             class ResultItem
             {
                 public bool Ready { get; private set; }
-                public string strChecksum { private get; set; }
-                public string strOut { get { return FormatString(strFile: strFile, dtCreated: fi.CreationTime, strAttributes: ((int)fi.Attributes).ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File, strChecksum: strChecksum); } }
+                public string strHash { private get; set; }
+                public string strOut { get { return FormatString(strFile: strFile, dtCreated: fi.CreationTime, strAttributes: ((int)fi.Attributes).ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File, strHash: strHash); } }
 
                 string strFile;
                 Win32FindFile.FileData fi;
@@ -255,44 +158,94 @@ namespace SearchDirLists
                     strError2_File = strError2_in;
                 }
             }
- 
-            void TraverseTree(TextWriter fs, string root)
+
+            struct DirData
             {
-                Stack<Win32FindFile.DATUM> stackDirs = new Stack<Win32FindFile.DATUM>(64);
-                List<Win32FindFile.DATUM> listSubDirs = new List<Win32FindFile.DATUM>();
-                List<Win32FindFile.DATUM> listFiles = new List<Win32FindFile.DATUM>();
+                internal Win32FindFile.DATUM winDir;
+                internal List<Win32FindFile.DATUM> listSubDirs;
+                internal List<Win32FindFile.DATUM> listFiles;
+                internal string strError2_Dir;
+
+                internal DirData(Win32FindFile.DATUM winDir_in)
+                {
+                    winDir = winDir_in;
+                    listSubDirs = new List<Win32FindFile.DATUM>();
+                    listFiles = new List<Win32FindFile.DATUM>();
+                    strError2_Dir = null;
+                }
+            }
+
+            List<DirData> TraverseTree(TextWriter fs, string root)
+            {
+                var stackDirs = new Stack<Win32FindFile.DATUM>(64);
+                var listAll = new List<DirData>();
                 Win32FindFile.DATUM winRoot;
 
                 Win32FindFile.FileData.WinFile(root, out winRoot);
                 stackDirs.Push(winRoot);
 
+                while (stackDirs.Count > 0)
+                {
+                    if (m_bThreadAbort || GlobalData.AppExit)
+                    {
+                        return null;
+                    }
+
+                    var dirData = new DirData(stackDirs.Pop());
+
+                    listAll.Add(dirData);
+
+                    if (Win32FindFile.GetDirectory(dirData.winDir.strAltFileName, ref dirData.listSubDirs, ref dirData.listFiles) == false)
+                    {
+                        m_list_Errors.Add(FormatString(strDir: dirData.winDir.strAltFileName,
+                            strError1: new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message, strError2: dirData.strError2_Dir));
+                        continue;
+                    }
+
+                    foreach (Win32FindFile.DATUM winData in dirData.listFiles)
+                    {
+                        Win32FindFile.FileData fi = new Win32FindFile.FileData(winData);
+
+                        if (fi.IsValid == false)
+                        {
+                            continue;
+                        }
+
+                        m_nLengthTotal_1 += fi.Size;
+                    }
+
+                    foreach (Win32FindFile.DATUM winData in dirData.listSubDirs)
+                    {
+                        stackDirs.Push(winData);
+                    }
+                }
+
+                return listAll;
+            }
+
+            void TraverseTree(TextWriter fs, List<DirData> listAll)
+            {
+                if (listAll == null)
+                {
+                    return;
+                }
+
                 Queue<Task<ResultItem>> queueTasks = new Queue<Task<ResultItem>>();                 // TODO/WIP
 
-                while (stackDirs.Count > 0)
+                foreach (var listItem in listAll)
                 {
                     if (m_bThreadAbort || GlobalData.AppExit)
                     {
                         return;
                     }
 
-                    Win32FindFile.DATUM winDir = stackDirs.Pop();
-                    string strFullPath = winDir.strAltFileName;
-                    string strError2_Dir = CheckNTFS_chars(ref strFullPath);
-
-                    if (Win32FindFile.GetDirectory(strFullPath, ref listSubDirs, ref listFiles) == false)
-                    {
-                        m_list_Errors.Add(FormatString(strDir: strFullPath,
-                            strError1: new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message, strError2: strError2_Dir));
-                        continue;
-                    }
-
                     long nDirLength = 0;
                     bool bHasLength = false;
-                    Dictionary<string, string> dictChecksum = new Dictionary<string, string>();
-                    Dictionary<string, string> dictException_FileRead = new Dictionary<string, string>();
+                    Dictionary<string, string> dictHash = new Dictionary<string, string>();
+                    Dictionary<string, string> dictInvalid_FileRead = new Dictionary<string, string>();
 
-                    if (DoFakeChecksum)
-                        Parallel.ForEach(listFiles, winData =>
+                    if (DoHash)
+                        Parallel.ForEach(listItem.listFiles, winData =>
                     {
                         Win32FindFile.FileData fi = new Win32FindFile.FileData(winData);
 
@@ -306,30 +259,30 @@ namespace SearchDirLists
 
                         if (fileHandle.IsInvalid)
                         {
-                            dictException_FileRead[winData.strFileName] = new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message;
+                            dictInvalid_FileRead[winData.strFileName] = new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message;
                             return;     // return from lambda
                         }
 
                         using (var fsA = new FileStream(fileHandle, FileAccess.Read))
                         {
-                            const int kBufferSize = 4096;   // Checksum is fake because just reading in the first 4K of the file
+                            const int kBufferSize = 4096;   // Hash in the first 4K of the file for speed
                             byte[] buffer = new byte[kBufferSize];
 
                             fsA.Read(buffer, 0, kBufferSize);
 
                             using (var md5 = System.Security.Cryptography.MD5.Create())
                             {
-                                string strChecksum = DRDigit.Fast.ToHexString(md5.ComputeHash(buffer));
+                                string strHash = DRDigit.Fast.ToHexString(md5.ComputeHash(buffer));
 
-                                lock (dictChecksum)
+                                lock (dictHash)
                                 {
-                                    dictChecksum[winData.strFileName] = strChecksum;
+                                    dictHash[winData.strFileName] = strHash;
                                 }
                             }
                         }
                     });
 
-                    foreach (Win32FindFile.DATUM winData in listFiles)
+                    foreach (Win32FindFile.DATUM winData in listItem.listFiles)
                     {
                         Win32FindFile.FileData fi = new Win32FindFile.FileData(winData);
                         string strFile = winData.strFileName;
@@ -345,7 +298,7 @@ namespace SearchDirLists
                             continue;
                         }
 
-                        m_nLengthTotal += fi.Size;
+                        m_nLengthTotal_2 += fi.Size;
                         nDirLength += fi.Size;
                         ++m_nFilesTotal;
                         ++m_nFilesDiff;
@@ -357,27 +310,27 @@ namespace SearchDirLists
                             strError1 = "Path Length: " + winData.strAltFileName.Length.ToString();
                         }
 
-                        Utilities.Assert(1306.7307, fi.Size >= 0);
+                        MBox.Assert(1306.7307, fi.Size >= 0);
 
                         if (fi.Size > 0)
                         {
                             bHasLength = true;
                         }
 
-                        string strChecksum = null;
+                        string strHash = null;
 
-                        if (dictChecksum.ContainsKey(strFile))
+                        if (dictHash.ContainsKey(strFile))
                         {
-                            strChecksum = dictChecksum[strFile];
+                            strHash = dictHash[strFile];
                         }
 
-                        if (dictException_FileRead.ContainsKey(strFile))
+                        if (dictInvalid_FileRead.ContainsKey(strFile))
                         {
-                            strError2_File += " " + dictException_FileRead[strFile];
+                            strError2_File += " " + dictInvalid_FileRead[strFile];
                             strError2_File = strError2_File.TrimStart();
                         }
 
-                        string strOut = FormatString(strFile: strFile, dtCreated: fi.CreationTime, strAttributes: ((int)fi.Attributes).ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File, strChecksum: strChecksum);
+                        string strOut = FormatString(strFile: strFile, dtCreated: fi.CreationTime, strAttributes: ((int)fi.Attributes).ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File, strHash: strHash);
 
                         fs.WriteLine(strOut);
                     }
@@ -385,32 +338,27 @@ namespace SearchDirLists
                     {
                         string strError1 = null;
 
-                        if (strFullPath.Length > 240)
+                        if (listItem.winDir.strAltFileName.Length > 240)
                         {
-                            strError1 = "Path Length: " + strFullPath.Length.ToString();
+                            strError1 = "Path Length: " + listItem.winDir.strAltFileName.Length.ToString();
                         }
 
-                        Utilities.Assert(1306.7308, bHasLength == (nDirLength > 0));
-                        Utilities.Assert(1306.7301, nDirLength >= 0);
+                        MBox.Assert(1306.7308, bHasLength == (nDirLength > 0));
+                        MBox.Assert(1306.7301, nDirLength >= 0);
 
-                        Win32FindFile.FileData di = new Win32FindFile.FileData(winDir);
+                        Win32FindFile.FileData di = new Win32FindFile.FileData(listItem.winDir);
 
-                        if (strFullPath.EndsWith(@":\"))                            // root directory
+                        if (listItem.winDir.strAltFileName.EndsWith(@":\"))                            // root directory
                         {
-                            Utilities.Assert(1306.7302, di.IsValid == false);       // yes, yes...
-                            Utilities.Assert(1306.7303, strFullPath.Length == 3);
-                            fs.WriteLine(FormatString(strDir: strFullPath, nLength: nDirLength, strError1: strError1, strError2: strError2_Dir));
+                            MBox.Assert(1306.7302, di.IsValid == false);            // yes, yes...
+                            MBox.Assert(1306.7303, listItem.winDir.strAltFileName.Length == 3);
+                            fs.WriteLine(FormatString(strDir: listItem.winDir.strAltFileName, nLength: nDirLength, strError1: strError1, strError2: listItem.strError2_Dir));
                         }
                         else
                         {
-                            Utilities.Assert(1306.7304, di.IsValid);
-                            fs.WriteLine(FormatString(strDir: strFullPath, dtCreated: di.CreationTime, strAttributes: ((int)di.Attributes).ToString("X"), dtModified: di.LastWriteTime, nLength: nDirLength, strError1: strError1, strError2: strError2_Dir));
+                            MBox.Assert(1306.7304, di.IsValid);
+                            fs.WriteLine(FormatString(strDir: listItem.winDir.strAltFileName, dtCreated: di.CreationTime, strAttributes: ((int)di.Attributes).ToString("X"), dtModified: di.LastWriteTime, nLength: nDirLength, strError1: strError1, strError2: listItem.strError2_Dir));
                         }
-                    }
-
-                    foreach (Win32FindFile.DATUM winData in listSubDirs)
-                    {
-                        stackDirs.Push(winData);
                     }
                 }
             }
@@ -418,27 +366,20 @@ namespace SearchDirLists
             void Go()
             {
                 string strVolumeName = m_volStrings.VolumeName;
-                string strPath = m_volStrings.StrPath;
+                string strPath = m_volStrings.Path;
                 string strSaveAs = m_volStrings.SaveAs;
-
-                if (FormatPath(ref strPath, ref strSaveAs) == false)
-                {
-                    // FormatPath() has its own message box
-                    m_statusCallback(m_volStrings.StrPath, mSTRnotSaved);
-                    return;
-                }
 
                 if (Directory.Exists(strPath) == false)
                 {
-                    m_statusCallback(m_volStrings.StrPath, mSTRnotSaved);
-                    MBox("Source Path does not exist.", "Save Directory Listing");
+                    m_statusCallback(m_volStrings.Path, mSTRnotSaved);
+                    MBox.ShowDialog("Source Path does not exist.", "Save Directory Listing");
                     return;
                 }
 
                 if (string.IsNullOrWhiteSpace(strSaveAs))
                 {
-                    m_statusCallback(m_volStrings.StrPath, mSTRnotSaved);
-                    MBox("Must specify save filename.", "Save Directory Listing");
+                    m_statusCallback(m_volStrings.Path, mSTRnotSaved);
+                    MBox.ShowDialog("Must specify save filename.", "Save Directory Listing");
                     return;
                 }
 
@@ -457,18 +398,10 @@ namespace SearchDirLists
                         TimeSpan timeSpan = new TimeSpan(0, 0, 0, 1);
                         System.Threading.Timer timer = new System.Threading.Timer(new TimerCallback((Object state) =>
                         {
-                            m_listFileDiffs.Add(m_nFilesDiff);
-
-                            if (m_listFileDiffs.Count >= 2)
-                            {
-                                double nFilesDiff = m_nFilesDiff / StdDevSign(m_listFileDiffs);
-
-                                m_nFilesDiff = 0;
-                                m_statusCallback(m_volStrings.StrPath, nFilesTotal: m_nFilesTotal, nLengthTotal: m_nLengthTotal, nFilesDiff: nFilesDiff);
-                            }
+                            m_statusCallback(m_volStrings.Path, nProgress: m_nLengthTotal_2 / (double)m_nLengthTotal_1);
                         }), null, timeSpan, timeSpan);
 
-                        TraverseTree(fs, strPath);
+                        TraverseTree(fs, TraverseTree(fs, strPath));
                         timer.Dispose();
                         fs.WriteLine(mSTRend01 + " " + DateTime.Now.ToString());
                         fs.WriteLine();
@@ -480,17 +413,17 @@ namespace SearchDirLists
                         }
 
                         fs.WriteLine();
-                        fs.WriteLine(FormatString(strDir: mSTRtotalLengthLoc01, nLength: m_nLengthTotal));
+                        fs.WriteLine(FormatString(strDir: mSTRtotalLengthLoc01, nLength: m_nLengthTotal_1));
                     }
 
                     Directory.SetCurrentDirectory(strPathOrig);
-                    m_statusCallback(m_volStrings.StrPath, strText: mSTRsaved, bDone: true);
+                    m_statusCallback(m_volStrings.Path, strText: mSTRsaved, bDone: true);
                 }
 #if DEBUG == false
                 catch (Exception e)
                 {
-                    m_statusCallback(m_volStrings.StrPath, strText: mSTRnotSaved, bDone: true);
-                    MBox(strSaveAs.PadRight(100) + "\nException: " + e.Message, "Save Directory Listing");
+                    m_statusCallback(m_volStrings.Path, strText: mSTRnotSaved, bDone: true);
+                    MBox.ShowDialog(strSaveAs.PadRight(100) + "\nException: " + e.Message, "Save Directory Listing");
                 }
 #endif
                 finally { }
@@ -516,11 +449,11 @@ namespace SearchDirLists
             }
         }
 
-        internal SaveDirListings(UList<LVvolStrings> list_lvVolStrings,
+        internal SaveDirListings(UList<LVitem_VolumeVM> list_LVitem_VolumeVM,
             SaveDirListingsStatusDelegate statusCallback,
             Action doneCallback)
         {
-            m_list_lvVolStrings = list_lvVolStrings;
+            m_list_LVitem_VolumeVM = list_LVitem_VolumeVM;
             m_statusCallback = statusCallback;
             m_doneCallback = doneCallback;
         }
@@ -532,14 +465,14 @@ namespace SearchDirLists
 
             DateTime dtStart = DateTime.Now;
 
-            foreach (LVvolStrings volStrings in m_list_lvVolStrings)
+            foreach (LVitem_VolumeVM volStrings in m_list_LVitem_VolumeVM)
             {
                 if ((mSTRusingFile + mSTRsaved + mSTRcantSave).Contains(volStrings.Status))
                 {
                     continue;
                 }
 
-                m_statusCallback(volStrings.StrPath, "Saving...");
+                m_statusCallback(volStrings.Path, "Saving...");
                 m_cbagWorkers.Add(new SaveDirListing(volStrings, m_statusCallback).DoThreadFactory());
             }
 
@@ -586,35 +519,27 @@ namespace SearchDirLists
 
         internal void ClearMem_SaveDirListings()
         {
-            Utilities.Assert(1306.73045, m_saveDirListings == null);
+            MBox.Assert(1306.73045, m_saveDirListings == null);
 
             m_saveDirListings = null;
         }
 
-        internal bool DoSaveDirListings(IEnumerable<VolumeLVitemVM> lvItems, SaveDirListingsStatusDelegate statusCallback, Action doneCallback)
-#if (WPF == false)
-        { return false; }
-        internal bool DoSaveDirListings(ListView.ListViewItemCollection lvItems, SaveDirListingsStatusDelegate statusCallback, Action doneCallback)
-#endif
+        internal bool DoSaveDirListings(IEnumerable<LVitem_VolumeVM> lvItems, SaveDirListingsStatusDelegate statusCallback, Action doneCallback)
         {
             if (m_saveDirListings != null)
             {
-                Utilities.MBox("Already in progress.", "Save Directory Listings");
+                MBox.ShowDialog("Already in progress.", "Save Directory Listings");
                 return false;
             }
 
-            UList<LVvolStrings> list_lvVolStrings = new UList<LVvolStrings>();
+            UList<LVitem_VolumeVM> list_LVitem_VolumeVM = new UList<LVitem_VolumeVM>();
 
-#if (WPF)
-            foreach (VolumeLVitemVM lvItem in lvItems)
-#else
-            foreach (SDL_ListViewItem lvItem in lvItems)
-#endif
+            foreach (LVitem_VolumeVM lvItem in lvItems)
             {
-                list_lvVolStrings.Add(new LVvolStrings(lvItem));
+                list_LVitem_VolumeVM.Add(lvItem);
             }
 
-            (m_saveDirListings = new SaveDirListings(list_lvVolStrings, statusCallback, doneCallback)).DoThreadFactory();
+            (m_saveDirListings = new SaveDirListings(list_LVitem_VolumeVM, statusCallback, doneCallback)).DoThreadFactory();
             return true;
         }
     }

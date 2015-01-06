@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace DoubleFile
 {
@@ -13,11 +14,35 @@ namespace DoubleFile
             InitializeComponent();
         }
 
-        System.Random rand = new System.Random();
-        void Demo(LV_ProgressVM lv, string strNickname, string strDemoPath)
-        {
-            lv.NewItem(new string[] { strNickname, strDemoPath });
+        LV_ProgressVM m_lv = new LV_ProgressVM();
 
+        internal void InitProgress(List<string> astrNicknames, List<string> astrPaths)
+        {
+            if (astrNicknames.Count != astrPaths.Count)
+            {
+                MBox.Assert(0, false);
+                return;
+            }
+
+            for (int i = 0; i < astrPaths.Count; ++i)
+            {
+                m_lv.NewItem(new string[] { astrNicknames[i], astrPaths[i] });
+            }
+        }
+
+        internal void SetProgress(string strPath, double nProgress)
+        {
+            (m_lv[strPath] as LVitem_ProgressVM).SetProgress(nProgress);
+        }
+
+        internal void SetCompleted(string strPath)
+        {
+            (m_lv[strPath] as LVitem_ProgressVM).SetCompleted();
+        }
+
+        System.Random rand = new System.Random();
+        void Demo(string strNickname, string strDemoPath)
+        {
             double nProgress = 0;
             var nIncrement = rand.NextDouble() / 10.0;
 
@@ -26,7 +51,7 @@ namespace DoubleFile
                 return;     // demo indeterminate state
             }
 
-            var act = new System.Action<double>(d => { (lv[strDemoPath] as LVitem_ProgressVM).SetProgress(d); });
+            var act = new System.Action<double>(d => { (m_lv[strDemoPath] as LVitem_ProgressVM).SetProgress(d); });
             var timer = new System.Windows.Threading.DispatcherTimer();
 
             timer.Tick += new System.EventHandler((s, e) =>
@@ -35,7 +60,7 @@ namespace DoubleFile
                  
                 if (nProgress > 1)
                 {
-                    (lv[strDemoPath] as LVitem_ProgressVM).SetCompleted();
+                    (m_lv[strDemoPath] as LVitem_ProgressVM).SetCompleted();
                     timer.Stop();
                 }
 
@@ -49,22 +74,20 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            var lv = new LV_ProgressVM();
+            form_lvProgress.DataContext = m_lv;
 
-            form_lvProgress.DataContext = lv;
+            m_lv.SelectedOne = () => { return form_lvProgress.SelectedItems.Count == 1; };
+            m_lv.SelectedAny = () => { return form_lvProgress.SelectedItems.Count > 0; };
+            m_lv.Refresh = () => { }; // { form_lvProgress.Items.Refresh(); };
+            m_lv.Selected = () => { return form_lvProgress.SelectedItems.Cast<LVitem_ProgressVM>(); };
 
-            lv.SelectedOne = () => { return form_lvProgress.SelectedItems.Count == 1; };
-            lv.SelectedAny = () => { return form_lvProgress.SelectedItems.Count > 0; };
-            lv.Refresh = () => { }; // { form_lvProgress.Items.Refresh(); };
-            lv.Selected = () => { return form_lvProgress.SelectedItems.Cast<LVitem_ProgressVM>(); };
+            m_lv.GetWindow = () => { return this; };
 
-            lv.GetWindow = () => { return this; };
-
-            Demo(lv, "Stuff at work", @"C:\My Documents");
-            Demo(lv, "", @"E:\Test");
-            Demo(lv, "Another test", @"C:\My Documents2");
-            Demo(lv, "", @"E:\Test2");
-            Demo(lv, "More stuff", @"E:\Test3");
+            //Demo(m_lv, "Stuff at work", @"C:\My Documents");
+            //Demo(m_lv, "", @"E:\Test");
+            //Demo(m_lv, "Another test", @"C:\My Documents2");
+            //Demo(m_lv, "", @"E:\Test2");
+            //Demo(m_lv, "More stuff", @"E:\Test3");
         }
     }
 }

@@ -40,8 +40,8 @@ namespace DoubleFile.UserControls
             {
                 int i = 0;
 
-                if (value.Length > i) { form_EditNickname.Text = value[i++]; } else { System.Diagnostics.Debug.Assert(false); }
-                if (value.Length > i) { form_EditSourcePath.Text = value[i++]; } else { System.Diagnostics.Debug.Assert(false); }
+                if (value.Length > i) { form_EditNickname.Text = value[i++]; } else { MBox.Assert(0, false); }
+                if (value.Length > i) { form_EditSourcePath.Text = value[i++]; } else { MBox.Assert(0, false); }
                 if (value.Length > i) { form_EditListingPath.Text = value[i++]; }
                 if (value.Length > i) { i++; }  // Status
                 if (value.Length > i) { i++; }  // Include
@@ -89,7 +89,7 @@ namespace DoubleFile.UserControls
             }
             else
             {
-                System.Diagnostics.Debug.Assert(false);
+                MBox.Assert(0, false);
             }
         }
 

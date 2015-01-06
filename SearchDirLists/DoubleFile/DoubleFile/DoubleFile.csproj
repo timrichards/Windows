@@ -81,7 +81,7 @@
     <Compile Include="Utilities\DriveSerial.cs" />
     <Compile Include="Utilities\FileUtil.cs" />
     <Compile Include="Utilities\MBox.cs" />
-    <Compile Include="Utilities\SaveDirInfo.cs" />
+    <Compile Include="Utilities\SaveDirListings.cs" />
     <Compile Include="Utilities\SDL_Timer.cs" />
     <Compile Include="Utilities\UList.cs" />
     <Compile Include="Utilities\Utilities.cs" />

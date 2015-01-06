@@ -90,7 +90,7 @@ namespace DoubleFile
             get { return marr; }
             set
             {
-                Debug.Assert(value.Length <= NumCols);
+                MBox.Assert(0, value.Length <= NumCols);
                 marr = value; 
 
                 for (int nCol = 0; nCol < marr.Length; ++nCol)
@@ -111,7 +111,7 @@ namespace DoubleFile
         internal ListViewItemVM(ListViewVM lvvm, string[] arrStr)     // e.g. Volumes LV: marr
             : this(lvvm)
         {
-            Debug.Assert(arrStr.Length <= NumCols);
+            MBox.Assert(0, arrStr.Length <= NumCols);
             marr = new string[NumCols];
             arrStr.CopyTo(marr, 0);
             RaiseColumnWidths();
@@ -179,8 +179,8 @@ namespace DoubleFile
 
         public ObservableCollection<ListViewItemVM> Items { get { return m_items; } }
 
-        internal virtual void NewItem(string[] arrStr) { Debug.Assert(false); }
-        internal virtual void NewItem(ListViewItem datum_in, bool bQuiet = false) { Debug.Assert(false); }
+        internal virtual void NewItem(string[] arrStr) { MBox.Assert(0, false); }
+        internal virtual void NewItem(ListViewItem datum_in, bool bQuiet = false) { MBox.Assert(0, false); }
         internal abstract int NumCols { get; }
 
         internal void Add(ListViewItemVM item, bool bQuiet = false)
@@ -219,7 +219,7 @@ namespace DoubleFile
 
         internal void SyncData()
         {
-            Debug.Assert(m_items.Count == 0);
+            MBox.Assert(0, m_items.Count == 0);
             m_items.Clear();
 
             foreach (ListViewItem lvItem in data.Items)
@@ -241,7 +241,7 @@ namespace DoubleFile
             }
             else
             {
-                Debug.Assert(false);
+                MBox.Assert(0, false);
             }
         }
 

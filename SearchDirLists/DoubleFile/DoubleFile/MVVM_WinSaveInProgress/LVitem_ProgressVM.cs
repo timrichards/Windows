@@ -37,6 +37,11 @@ namespace DoubleFile
 
         internal void SetProgress(double d)
         {
+            if (d == double.NaN)
+            {
+                return;
+            }
+
             if (m_bIndeterminate)
             {
                 SetIndeterminate(false);
@@ -48,6 +53,7 @@ namespace DoubleFile
 
         internal void SetCompleted()
         {
+            SetProgress(1);
             SetProgressState(Brushes.LimeGreen);
         }
 

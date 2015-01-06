@@ -11,8 +11,6 @@ namespace DoubleFile
         public WinVolumeList()
         {
             InitializeComponent();
-
-            gd = GlobalData.GetInstance(this);
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -24,7 +22,6 @@ namespace DoubleFile
             form_WinVolumeList.DataContext = win;
             lv.SetPartner(win);
             win.SetPartner(lv);
-            m_lvVM = lv;
 
             lv.SelectedOne = () => { return form_lvVolumeList.SelectedItems.Count == 1; };
             lv.SelectedAny = () => { return form_lvVolumeList.SelectedItems.Count > 0; };
@@ -33,27 +30,18 @@ namespace DoubleFile
 
             lv.GetWindow = () => { return this; };
             win.GetWindow = () => { return this; };
-
-            new WinSaveInProgress().Show(this);
         }
+
+        internal UList<LVitem_VolumeVM> list_lvVolStrings = new UList<LVitem_VolumeVM>();
 
         private void BtnOK_Click(object sender, RoutedEventArgs e)
         {
-            var list_lvVolStrings = new UList<LVitem_VolumeVM>();
-            var win = form_WinVolumeList.DataContext as WinVolumeListVM;
-
             foreach (var lvItem in (form_lvVolumeList.DataContext as LV_VolumeVM).ItemsCast)
             {
                 list_lvVolStrings.Add(lvItem);
             }
 
-            (new SaveDirListings(list_lvVolStrings, SaveDirListingsStatusCallback, SaveDirListingsDoneCallback)).DoThreadFactory();
-
             // IsDefault = "True" in xaml so that seems to take care of closing the window After this handler returns.
         }
-
-        LV_VolumeVM m_lvVM = null;
-        readonly GlobalData gd = null;
-        readonly MainWindow m_app = null;
     }
 }

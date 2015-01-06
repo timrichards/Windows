@@ -38,7 +38,7 @@ namespace DoubleFile
 
             Utilities.WriteLine(strError);
 #if (DEBUG)
-            System.Diagnostics.Debug.Assert(false, strError);
+            MBox.Assert(0, false, strError);
 #else
             if (static_bAssertUp == false)
             {

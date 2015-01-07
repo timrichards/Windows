@@ -28,12 +28,6 @@ namespace DoubleFile
                 string strVolumeName = null;
                 string strPath = null;
 
-                if (m_lvVM.ContainsSaveAs(dlg.FileName))
-                {
-                    System.Windows.MessageBox.Show("File already in list of volumes.");
-                    return;
-                }
-
                 if (FileParse.ReadHeader(dlg.FileName, out strVolumeName, out strPath))
                 {
                     m_lvVM.NewItem(new string[] {strVolumeName, strPath, dlg.FileName, "Using file.", "Yes"});

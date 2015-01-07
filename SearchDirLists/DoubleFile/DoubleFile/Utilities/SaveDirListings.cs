@@ -148,7 +148,7 @@ namespace DoubleFile
             //    if ((strModel.ToPrintString() == null) && 
 
                 fs.WriteLine(mSTRdrive01);
-                DriveInfo driveInfo = new DriveInfo(strPath.Substring(0, strPath.IndexOf('\\')));
+                DriveInfo driveInfo = new DriveInfo(strPath[0] + @":\");
 
                 var sb = new StringBuilder();
 
@@ -404,6 +404,11 @@ namespace DoubleFile
                 string strVolumeName = m_volStrings.VolumeName;
                 string strPath = m_volStrings.Path;
                 string strSaveAs = m_volStrings.SaveAs;
+
+                if ((strPath[1] != ':') || (strPath[2] != '\\'))
+                {
+                    MBox.ShowDialog("Bad source path syntax.", "Save Directory Listing");
+                }
 
                 if (Directory.Exists(strPath) == false)
                 {

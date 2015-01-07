@@ -12,7 +12,6 @@ namespace DoubleFile
         const string ksIndeterminate = "Indeterminate";
         const string ksProgressState = "ProgressState";
 
-        DateTime m_dtStart = DateTime.MinValue;
         double m_nProgress = 0;
         DateTime m_dtRollingProgress = DateTime.MinValue;
         double m_nRollingProgress = 0;
@@ -32,29 +31,35 @@ namespace DoubleFile
                     Indeterminate = false;
                 }
 
-                if (m_dtStart == DateTime.MinValue)
+                if (m_dtRollingProgress == DateTime.MinValue)
                 {
-                    m_dtStart = DateTime.Now;
-                    m_dtRollingProgress = m_dtStart;
+                    m_dtRollingProgress = DateTime.Now;
                 }
 
-                var tmSpan = DateTime.Now - m_dtStart;
+                var tmRolling = DateTime.Now - m_dtRollingProgress;
 
-                if (tmSpan > TimeSpan.FromMinutes(2))
+                if ((m_nRollingProgress == 0) && (tmRolling > TimeSpan.FromSeconds(15)))
                 {
-                    var tmRolling = DateTime.Now - m_dtRollingProgress;
+                    // The operating system caches reads so restarting the drive read sweeps
+                    // through the already-read data unreasonably fast.
+                    m_nRollingProgress = value;
 
-                    if (tmRolling > TimeSpan.FromMinutes(nRollingMinutes))
+                    if (m_nRollingProgress == 0)
                     {
-                        var tmRemaining = TimeSpan.FromTicks((long)((1 - value) * tmRolling.Ticks /
-                            (value - m_nRollingProgress) /
-                            nRollingMinutes));
-
-                        Remaining = tmRemaining.TotalMinutes.ToString("0") + " minutes remaining";
-
-                        m_nRollingProgress = value;
-                        m_dtRollingProgress = DateTime.Now;
+                        m_nRollingProgress = double.Epsilon;    // just in case
                     }
+
+                    m_dtRollingProgress = DateTime.Now;
+                }
+                else if (tmRolling > TimeSpan.FromMinutes(nRollingMinutes))
+                {
+                    Remaining = TimeSpan.FromTicks((long)((1 - value) * tmRolling.Ticks /
+                        (value - m_nRollingProgress) /
+                        nRollingMinutes))
+                        .Add(TimeSpan.FromMinutes(1))           // fudge factor 1
+                        .TotalMinutes.ToString("0") + " minutes remaining";
+                    m_nRollingProgress = value;
+                    m_dtRollingProgress = DateTime.Now;
                 }
 
                 m_nProgress = value;

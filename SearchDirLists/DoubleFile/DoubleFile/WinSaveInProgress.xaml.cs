@@ -92,16 +92,23 @@ namespace DoubleFile
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            var worker = GlobalData.GetInstance().m_saveDirListings;
+
+            if (worker == null)
+            {
+                return;
+            }
+
+            if (worker.IsAborted)
+            {
+                return;
+            }
+
             if (MBox.ShowDialog("Do you want to cancel?", "Saving directory listings",
                 MessageBoxButton.YesNo) ==
                 MessageBoxResult.Yes)
             {
-                var worker = GlobalData.GetInstance().m_saveDirListings;
-
-                if (worker != null)
-                {
-                    worker.EndThread();
-                }
+                worker.EndThread();
             }
             else
             {

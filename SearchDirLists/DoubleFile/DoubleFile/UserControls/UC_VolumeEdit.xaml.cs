@@ -60,7 +60,8 @@ namespace DoubleFile.UserControls
         {
             get
             {
-                return ((form_EditSourcePath.Text.Length > 1) && (form_EditSourcePath.Text[1] == ':'));
+                return ((form_EditSourcePath.Text.Length > 2) &&
+                    (form_EditSourcePath.Text.Substring(1, 2) == @":\"));
             }
         }
 

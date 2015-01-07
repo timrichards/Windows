@@ -32,7 +32,7 @@ namespace DoubleFile
 
         internal void SetProgress(string strPath, double nProgress)
         {
-            (m_lv[strPath] as LVitem_ProgressVM).SetProgress(nProgress);
+            (m_lv[strPath] as LVitem_ProgressVM).Progress = nProgress;
         }
 
         internal void SetCompleted(string strPath)
@@ -51,7 +51,7 @@ namespace DoubleFile
                 return;     // demo indeterminate state
             }
 
-            var act = new System.Action<double>(d => { (m_lv[strDemoPath] as LVitem_ProgressVM).SetProgress(d); });
+            var act = new System.Action<double>(d => { (m_lv[strDemoPath] as LVitem_ProgressVM).Progress = d; });
             var timer = new System.Windows.Threading.DispatcherTimer();
 
             timer.Tick += new System.EventHandler((s, e) =>
@@ -88,6 +88,25 @@ namespace DoubleFile
             //Demo(m_lv, "Another test", @"C:\My Documents2");
             //Demo(m_lv, "", @"E:\Test2");
             //Demo(m_lv, "More stuff", @"E:\Test3");
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (MBox.ShowDialog("Do you want to cancel?", "Saving directory listings",
+                MessageBoxButton.YesNo) ==
+                MessageBoxResult.Yes)
+            {
+                var worker = GlobalData.GetInstance().m_saveDirListings;
+
+                if (worker != null)
+                {
+                    worker.EndThread();
+                }
+            }
+            else
+            {
+                e.Cancel = true;
+            }
         }
     }
 }

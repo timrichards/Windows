@@ -4,10 +4,8 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    enum MBoxBtns { OK = MessageBoxButton.OK, YesNo = MessageBoxButton.YesNo, YesNoCancel = MessageBoxButton.YesNoCancel }
-    enum MBoxRet { None = MessageBoxResult.None, Yes = MessageBoxResult.Yes, No = MessageBoxResult.No }
 
-    delegate MBoxRet MBoxDelegate(string strMessage, string strTitle = null, MBoxBtns? buttons = null);
+    delegate MessageBoxResult MBoxDelegate(string strMessage, string strTitle = null, MessageBoxButton? buttons = null);
 
     class MBox
     {
@@ -38,7 +36,7 @@ namespace DoubleFile
 
             Utilities.WriteLine(strError);
 #if (DEBUG)
-            MBox.Assert(0, false, strError);
+            System.Diagnostics.Debug.Assert(false, strError);
 #else
             if (static_bAssertUp == false)
             {
@@ -77,14 +75,14 @@ namespace DoubleFile
         }
 
         // make MessageBox modal from a worker thread
-        internal static MBoxRet ShowDialog(string strMessage, string strTitle = null, MBoxBtns? buttons_in = null)
+        internal static MessageBoxResult ShowDialog(string strMessage, string strTitle = null, MessageBoxButton? buttons_in = null)
         {
             if (GlobalData.AppExit)
             {
-                return MBoxRet.None;
+                return MessageBoxResult.None;
             }
 
-            if (GlobalData.static_wpfOrForm.Dispatcher.CheckAccess() == false) { return (MBoxRet)GlobalData.static_wpfOrForm.Dispatcher.Invoke(new MBoxDelegate(ShowDialog), new object[] { strMessage, strTitle, buttons_in }); }
+            if (GlobalData.static_wpfOrForm.Dispatcher.CheckAccess() == false) { return (MessageBoxResult)GlobalData.static_wpfOrForm.Dispatcher.Invoke(new MBoxDelegate(ShowDialog), new object[] { strMessage, strTitle, buttons_in }); }
 
             MessageBoxKill();
             m_form1MessageBoxOwner = new Window();
@@ -92,8 +90,8 @@ namespace DoubleFile
             m_form1MessageBoxOwner.Title = strTitle;
             m_form1MessageBoxOwner.Icon = GlobalData.static_wpfOrForm.Icon;
 
-            MBoxBtns buttons = (buttons_in != null) ? buttons_in.Value : MBoxBtns.OK;
-            MBoxRet msgBoxRet = (MBoxRet)MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100), strTitle, (MessageBoxButton)buttons);
+            MessageBoxButton buttons = (buttons_in != null) ? buttons_in.Value : MessageBoxButton.OK;
+            MessageBoxResult msgBoxRet = (MessageBoxResult)MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100), strTitle, (MessageBoxButton)buttons);
 
             if (m_form1MessageBoxOwner != null)
             {
@@ -102,7 +100,7 @@ namespace DoubleFile
             }
 
             // cancelled externally
-            return MBoxRet.None;
+            return MessageBoxResult.None;
         }
     }
 }

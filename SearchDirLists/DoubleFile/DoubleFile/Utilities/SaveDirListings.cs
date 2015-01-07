@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
 using System.Threading;
 using System.Runtime.InteropServices;
@@ -12,11 +11,48 @@ namespace DoubleFile
 {
     delegate void SaveDirListingsStatusDelegate(string strPath, string strText = null, bool bDone = false, double nProgress = double.NaN);
 
-    partial class MainWindow
+    class SaveListingsCallback
     {
+        GlobalData gd = null;
         WinSaveInProgress m_winProgress = null;
+        System.Windows.Window m_app = null;
 
-        void SaveDirListingsStatusCallback(string strPath, string strText = null, bool bDone = false, double nProgress = double.NaN)
+        internal SaveListingsCallback(UList<LVitem_VolumeVM> list_lvVolStrings)
+        {
+            gd = GlobalData.GetInstance();
+            m_app = GlobalData.static_wpfWin;
+
+            var listNicknames = new List<string>();
+            var listPaths = new List<string>();
+
+            foreach (LVitem_VolumeVM volStrings in list_lvVolStrings)
+            {
+                if (SaveDirListings.WontSave(volStrings))
+                {
+                    continue;
+                }
+
+                listNicknames.Add(volStrings.VolumeName);
+                listPaths.Add(volStrings.Path);
+            }
+
+            if (listPaths.Count > 0)
+            {
+                (m_winProgress = new WinSaveInProgress()).Show(m_app);
+                m_winProgress.InitProgress(listNicknames, listPaths);
+
+                if ((gd.m_saveDirListings != null) && (gd.m_saveDirListings.IsAborted == false))
+                {
+                    MBox.Assert(0, false);
+                    gd.m_saveDirListings.EndThread();
+                }
+
+                (gd.m_saveDirListings = new SaveDirListings(list_lvVolStrings,
+                  SaveDirListingsStatusCallback, SaveDirListingsDoneCallback)).DoThreadFactory();
+            }
+        }
+
+        internal void SaveDirListingsStatusCallback(string strPath, string strText = null, bool bDone = false, double nProgress = double.NaN)
         {
             if (GlobalData.AppExit || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
             {
@@ -25,11 +61,10 @@ namespace DoubleFile
 
             if (m_app.Dispatcher.CheckAccess() == false) { m_app.Dispatcher.Invoke(new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback), new object[] { strPath, strText, bDone, nProgress }); return; }
 
-            if (nProgress > 0)
+            if (nProgress >= 0)
             {
                 MBox.Assert(1306.7305, strText == null);
                 MBox.Assert(1306.7306, bDone == false);
-
                 m_winProgress.SetProgress(strPath, nProgress);
             }
 
@@ -44,7 +79,7 @@ namespace DoubleFile
             }
         }
 
-        void SaveDirListingsDoneCallback()
+        internal void SaveDirListingsDoneCallback()
         {
             if (GlobalData.AppExit || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
             {
@@ -83,9 +118,9 @@ namespace DoubleFile
             Thread m_thread = null;
             bool m_bThreadAbort = false;
             readonly LVitem_VolumeVM m_volStrings = null;
-            long m_nLengthTotal_1 = 0;
-            long m_nLengthTotal_2 = 0;
-            long m_nFilesTotal = 0;
+            long m_nLengthTotal = 0;
+            long m_nFilesTotal_1 = 0;
+            long m_nFilesTotal_2 = 0;
             long m_nFilesDiff = 0;
             readonly List<string> m_list_Errors = new List<string>();
 
@@ -211,7 +246,7 @@ namespace DoubleFile
                             continue;
                         }
 
-                        m_nLengthTotal_1 += fi.Size;
+                        ++m_nFilesTotal_1;
                     }
 
                     foreach (Win32FindFile.DATUM winData in dirData.listSubDirs)
@@ -298,9 +333,9 @@ namespace DoubleFile
                             continue;
                         }
 
-                        m_nLengthTotal_2 += fi.Size;
+                        m_nLengthTotal += fi.Size;
                         nDirLength += fi.Size;
-                        ++m_nFilesTotal;
+                        ++m_nFilesTotal_2;
                         ++m_nFilesDiff;
 
                         string strError1 = null;
@@ -348,7 +383,7 @@ namespace DoubleFile
 
                         Win32FindFile.FileData di = new Win32FindFile.FileData(listItem.winDir);
 
-                        if (listItem.winDir.strAltFileName.EndsWith(@":\"))                            // root directory
+                        if (listItem.winDir.strAltFileName.EndsWith(@":\"))         // root directory
                         {
                             MBox.Assert(1306.7302, di.IsValid == false);            // yes, yes...
                             MBox.Assert(1306.7303, listItem.winDir.strAltFileName.Length == 3);
@@ -396,9 +431,10 @@ namespace DoubleFile
                         fs.WriteLine(mSTRstart01 + " " + DateTime.Now.ToString());
 
                         TimeSpan timeSpan = new TimeSpan(0, 0, 0, 1);
+
                         System.Threading.Timer timer = new System.Threading.Timer(new TimerCallback((Object state) =>
                         {
-                            m_statusCallback(m_volStrings.Path, nProgress: m_nLengthTotal_2 / (double)m_nLengthTotal_1);
+                            m_statusCallback(m_volStrings.Path, nProgress: m_nFilesTotal_2 / (double)m_nFilesTotal_1);
                         }), null, timeSpan, timeSpan);
 
                         TraverseTree(fs, TraverseTree(fs, strPath));
@@ -413,7 +449,7 @@ namespace DoubleFile
                         }
 
                         fs.WriteLine();
-                        fs.WriteLine(FormatString(strDir: mSTRtotalLengthLoc01, nLength: m_nLengthTotal_1));
+                        fs.WriteLine(FormatString(strDir: mSTRtotalLengthLoc01, nLength: m_nLengthTotal));
                     }
 
                     Directory.SetCurrentDirectory(strPathOrig);
@@ -458,6 +494,11 @@ namespace DoubleFile
             m_doneCallback = doneCallback;
         }
 
+        internal static bool WontSave(LVitem_VolumeVM volStrings)
+        {
+            return ((mSTRusingFile + mSTRsaved + mSTRcantSave).Contains(volStrings.Status));
+        }
+
         void Go()
         {
             Utilities.WriteLine();
@@ -467,7 +508,7 @@ namespace DoubleFile
 
             foreach (LVitem_VolumeVM volStrings in m_list_LVitem_VolumeVM)
             {
-                if ((mSTRusingFile + mSTRsaved + mSTRcantSave).Contains(volStrings.Status))
+                if (WontSave(volStrings))
                 {
                     continue;
                 }

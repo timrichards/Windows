@@ -11,37 +11,28 @@ namespace DoubleFile
         public MainWindow()
         {
             InitializeComponent();
-
-            gd = GlobalData.GetInstance(this);
-            m_app = this;
+            GlobalData.GetInstance(this);
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            var volumes = new WinVolumeList();
-
-            volumes.ShowDialog(this);
-
-            var listNicknames = new List<string>();
-            var listPaths = new List<string>();
-
-            foreach (LVitem_VolumeVM volStrings in volumes.list_lvVolStrings)
-            {
-                if ((FileParse.mSTRusingFile + FileParse.mSTRsaved + FileParse.mSTRcantSave).Contains(volStrings.Status))
-                {
-                    continue;
-                }
-
-                listNicknames.Add(volStrings.VolumeName);
-                listPaths.Add(volStrings.Path);
-            }
-
-            (m_winProgress = new WinSaveInProgress()).Show(this);
-            m_winProgress.InitProgress(listNicknames, listPaths);
-            (gd.m_saveDirListings = new SaveDirListings(volumes.list_lvVolStrings, SaveDirListingsStatusCallback, SaveDirListingsDoneCallback)).DoThreadFactory();
+            ShowVolumeList();
         }
 
-        readonly GlobalData gd = null;
-        readonly MainWindow m_app = null;
+        UList<LVitem_VolumeVM> m_list_lvVolStrings = null;
+
+        void ShowVolumeList()
+        {
+            var m_volumes = new WinVolumeList(m_list_lvVolStrings);
+
+            m_volumes.ShowDialog(this);
+            m_list_lvVolStrings = m_volumes.m_list_lvVolStrings;
+            new SaveListingsCallback(m_volumes.m_list_lvVolStrings);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            ShowVolumeList();
+        }
     }
 }

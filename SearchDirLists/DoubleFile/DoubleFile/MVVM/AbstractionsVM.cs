@@ -179,7 +179,7 @@ namespace DoubleFile
 
         public ObservableCollection<ListViewItemVM> Items { get { return m_items; } }
 
-        internal virtual void NewItem(string[] arrStr) { MBox.Assert(0, false); }
+        internal virtual void NewItem(string[] arrSt, bool bQuiet = false) { MBox.Assert(0, false); }
         internal virtual void NewItem(ListViewItem datum_in, bool bQuiet = false) { MBox.Assert(0, false); }
         internal abstract int NumCols { get; }
 
@@ -280,7 +280,7 @@ namespace Template      // prevents smart tag rename command from renaming the t
     {
         public string WidthColumnNameHere { get { return SCW; } }
 
-        internal override void NewItem(string[] arrStr) { Add(new Template_LVitemVM(this, arrStr)); }
+        internal override void NewItem(string[] arrStr, bool bQuiet = false) { Add(new Template_LVitemVM(this, arrStr), bQuiet); }
         internal override int NumCols { get { return Template_LVitemVM.NumCols_; } }
     }
 }

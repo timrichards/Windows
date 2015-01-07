@@ -13,7 +13,7 @@ namespace DoubleFile
         public string WidthDriveModel { get { return SCW; } }
         public string WidthDriveSerial { get { return SCW; } }
 
-        internal override void NewItem(string[] arrStr) { Add(new LVitem_VolumeVM(this, arrStr)); }
+        internal override void NewItem(string[] arrStr, bool bQuiet = false) { Add(new LVitem_VolumeVM(this, arrStr), bQuiet); }
         internal override int NumCols { get { return LVitem_VolumeVM.NumCols_; } }
 
         internal bool ContainsVolumeName(string t) { string s = t.ToLower(); foreach (LVitem_VolumeVM item in m_items) if (item.VolumeName.ToLower() == s) return true; return false; }

@@ -46,14 +46,15 @@ namespace DoubleFile
 
                     if (tmRolling > TimeSpan.FromMinutes(nRollingMinutes))
                     {
-                        // (1 - value) * (value - m_nRollingProgress) / tmRolling * nRollingMinutes
+                        var tmRemaining = TimeSpan.FromTicks((long)((1 - value) * tmRolling.Ticks /
+                            (value - m_nRollingProgress) /
+                            nRollingMinutes));
+
+                        Remaining = tmRemaining.TotalMinutes.ToString("0") + " minutes remaining";
+
                         m_nRollingProgress = value;
                         m_dtRollingProgress = DateTime.Now;
                     }
-
-                    var tmRemaining = TimeSpan.FromTicks((long)((tmSpan.Ticks / value) - (tmSpan.Ticks * value)));
-
-                    Remaining = tmRemaining.TotalMinutes.ToString("0") + " minutes remaining";
                 }
 
                 m_nProgress = value;

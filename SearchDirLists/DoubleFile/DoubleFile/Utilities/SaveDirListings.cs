@@ -38,7 +38,7 @@ namespace DoubleFile
 
             if (listPaths.Count > 0)
             {
-                (m_winProgress = new WinSaveInProgress()).Show(m_app);
+                m_winProgress = new WinSaveInProgress();
                 m_winProgress.InitProgress(listNicknames, listPaths);
 
                 if ((gd.m_saveDirListings != null) && (gd.m_saveDirListings.IsAborted == false))
@@ -49,6 +49,7 @@ namespace DoubleFile
 
                 (gd.m_saveDirListings = new SaveDirListings(list_lvVolStrings,
                   SaveDirListingsStatusCallback, SaveDirListingsDoneCallback)).DoThreadFactory();
+                m_winProgress.ShowDialog(m_app);
             }
         }
 

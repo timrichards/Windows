@@ -26,7 +26,7 @@ namespace DoubleFile
 
             for (int i = 0; i < astrPaths.Count; ++i)
             {
-                m_lv.NewItem(new string[] { astrNicknames[i], astrPaths[i] });
+                m_lv.NewItem(new string[] { astrNicknames[i], astrPaths[i] }, bQuiet: true);
             }
         }
 

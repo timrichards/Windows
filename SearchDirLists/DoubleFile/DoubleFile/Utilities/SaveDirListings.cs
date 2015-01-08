@@ -152,17 +152,14 @@ namespace DoubleFile
                     DriveSerial.Get(m_volStrings.Path, out strModel, out strSerialNo, out nSize);
                 }
 
-                if (string.IsNullOrWhiteSpace(m_volStrings.DriveSerial) == false)
+                if ((string.IsNullOrWhiteSpace(m_volStrings.DriveSerial) == false) &&
+                    (string.IsNullOrWhiteSpace(strSerialNo) == false) &&
+                    (strSerialNo != m_volStrings.DriveSerial) &&
+                    ((MBox.ShowDialog("Overwrite user-entered serial number for " + m_volStrings.Path + " ?", "Save Directory Listings",
+                        System.Windows.MessageBoxButton.YesNo) ==
+                        System.Windows.MessageBoxResult.No)))
                 {
-                    if (strSerialNo != m_volStrings.DriveSerial)
-                    {
-                        if ((MBox.ShowDialog("Overwrite user-entered serial number for " + m_volStrings.Path + " ?", "Save Directory Listings",
-                            System.Windows.MessageBoxButton.YesNo) ==
-                            System.Windows.MessageBoxResult.No))
-                        {
-                            strSerialNo = m_volStrings.DriveSerial;
-                        }
-                    }
+                    strSerialNo = m_volStrings.DriveSerial;
                 }
                 
                 fs.WriteLine(mSTRdrive01);

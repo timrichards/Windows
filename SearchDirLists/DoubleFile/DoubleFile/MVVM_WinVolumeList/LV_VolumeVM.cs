@@ -42,10 +42,12 @@ namespace DoubleFile
         // these need to go in impl file but this whole file needs reorg
         internal void EditVolume()
         {
-            var dlg = new WinVolumeEdit();
-
             Selected().FirstOnlyAssert(lvItem =>
             {
+                IWinVolumeEdit dlg = SaveDirListings.WontSave(lvItem) ?
+                    (IWinVolumeEdit)new WinVolumeEdit() :
+                    new WinVolumeNew();
+
                 dlg.StringValues = lvItem.StringValues;
 
                 if (dlg.ShowDialog(GetWindow()) ?? false)

@@ -27,7 +27,11 @@ namespace DoubleFile
 
             m_volumes.ShowDialog(this);
             m_list_lvVolStrings = m_volumes.m_list_lvVolStrings;
-            new SaveListingsCallback(m_volumes.m_list_lvVolStrings);
+
+            if (m_list_lvVolStrings != null)
+            {
+                new SaveListingsCallback(m_list_lvVolStrings);
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

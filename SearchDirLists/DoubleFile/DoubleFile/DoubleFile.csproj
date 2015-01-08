@@ -89,6 +89,7 @@
     <Compile Include="WinSaveInProgress.xaml.cs">
       <DependentUpon>WinSaveInProgress.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WinVolumeEdit\IWinVolumeEdit.cs" />
     <Compile Include="WinVolumeList.xaml.cs">
       <DependentUpon>WinVolumeList.xaml</DependentUpon>
     </Compile>

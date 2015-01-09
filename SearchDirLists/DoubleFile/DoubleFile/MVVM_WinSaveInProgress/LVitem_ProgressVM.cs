@@ -1,6 +1,6 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Media;
+
 namespace DoubleFile
 {
     class LVitem_ProgressVM : ListViewItemVM_Base

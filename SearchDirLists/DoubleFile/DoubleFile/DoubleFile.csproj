@@ -62,6 +62,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="GlobalData.cs" />
+    <Compile Include="SaveDirListings\SaveDirListing.cs" />
+    <Compile Include="SaveDirListings\SaveListingsProcess.cs" />
+    <Compile Include="SaveDirListings\TraverseTree.cs" />
     <Compile Include="Utilities\DRDigit.cs" />
     <Compile Include="Utilities\FileParse.cs" />
     <Compile Include="MVVM\AbstractionsVM.cs" />
@@ -81,7 +84,7 @@
     <Compile Include="Utilities\DriveSerial.cs" />
     <Compile Include="Utilities\FileUtil.cs" />
     <Compile Include="Utilities\MBox.cs" />
-    <Compile Include="Utilities\SaveDirListings.cs" />
+    <Compile Include="SaveDirListings\SaveDirListings.cs" />
     <Compile Include="Utilities\SDL_Timer.cs" />
     <Compile Include="Utilities\UList.cs" />
     <Compile Include="Utilities\Utilities.cs" />

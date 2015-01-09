@@ -11,11 +11,28 @@ namespace DoubleFile
 
         internal void NewVolume()
         {
-            var newVolume = new WinVolumeNew();
+            string[] stringValues = null;
 
-            if (newVolume.ShowDialog(GetWindow()) ?? false)
+            while (true)
             {
-                m_lvVM.NewItem(newVolume.StringValues);
+                var newVolume = new WinVolumeNew();
+
+                newVolume.StringValues = stringValues;
+
+                if ((newVolume.ShowDialog(GetWindow()) ?? false) == false)
+                {
+                    // user cancelled
+                    break;
+                }
+
+                // user accepted
+                if (m_lvVM.NewItem(newVolume.StringValues))
+                {
+                    break;
+                }
+
+                // volume file is in use
+                stringValues = newVolume.StringValues;
             }
         }
 

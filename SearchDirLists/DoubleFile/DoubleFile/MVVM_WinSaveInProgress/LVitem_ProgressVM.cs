@@ -63,7 +63,7 @@ namespace DoubleFile
                             .Add(TimeSpan.FromMinutes(1))
                             .TotalMinutes;
 
-                        Remaining = nRemaining.ToString("0") + " minute" + (nRemaining != 1 ? "s" : "") + " remaining";
+                        Remaining = "About " + nRemaining.ToString("0") + " Minute" + (nRemaining != 1 ? "s" : "") + " remaining";
                     }
                     
                     m_nRollingProgress = v;

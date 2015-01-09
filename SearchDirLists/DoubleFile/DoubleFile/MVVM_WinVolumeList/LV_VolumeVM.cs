@@ -13,24 +13,38 @@ namespace DoubleFile
         public string WidthDriveModel { get { return SCW; } }
         public string WidthDriveSerial { get { return SCW; } }
 
-        internal override void NewItem(string[] arrStr, bool bQuiet = false)
+        internal override bool NewItem(string[] arrStr, bool bQuiet = false)
         {
             var lvItem = new LVitem_VolumeVM(this, arrStr);
+            var bAlreadyInUse = AlreadyInUse(lvItem);
 
-            if (ContainsSaveAs(lvItem.SaveAs))
+            if (bAlreadyInUse == false)
             {
-                System.Windows.MessageBox.Show("File already in list of volumes.");
-                return;
+                Add(lvItem, bQuiet);
             }
 
-            Add(lvItem, bQuiet);
+            return (bAlreadyInUse == false);
         }
 
         internal override int NumCols { get { return LVitem_VolumeVM.NumCols_; } }
 
         internal bool ContainsVolumeName(string t) { string s = t.ToLower(); foreach (LVitem_VolumeVM item in m_items) if (item.VolumeName.ToLower() == s) return true; return false; }
         internal bool ContainsUnsavedPath(string t) { string s = t.ToLower(); foreach (LVitem_VolumeVM item in m_items) if ((item.Path.ToLower() == s) && (item.SaveAsExists == false)) return true; return false; }
-        internal bool ContainsSaveAs(string t) { string s = t.ToLower(); foreach (LVitem_VolumeVM item in m_items) if (item.SaveAs.ToLower() == s) return true; return false; }
+        internal LVitem_VolumeVM ContainsSaveAs(LVitem_VolumeVM currentItem, string t = null)
+        {
+            string s = (t ?? currentItem.SaveAs).ToLower();
+
+            foreach (LVitem_VolumeVM item in m_items)
+            {
+                if ((item.SaveAs.ToLower() == s)
+                    && ((t == null) || (currentItem != item)))
+                {
+                    return item;
+                }
+            }
+
+            return null;
+        }
 
         internal void SetPartner(WinVolumeListVM windowVM)
         {
@@ -44,15 +58,25 @@ namespace DoubleFile
         {
             Selected().FirstOnlyAssert(lvItem =>
             {
-                IWinVolumeEdit dlg = SaveDirListings.WontSave(lvItem) ?
-                    (IWinVolumeEdit)new WinVolumeEdit() :
-                    new WinVolumeNew();
-
-                dlg.StringValues = lvItem.StringValues;
-
-                if (dlg.ShowDialog(GetWindow()) ?? false)
+                while (true)
                 {
-                    lvItem.StringValues = dlg.StringValues;
+                    IWinVolumeEdit dlg = SaveDirListings.WontSave(lvItem) ?
+                        (IWinVolumeEdit)new WinVolumeEdit() :
+                        new WinVolumeNew();
+
+                    dlg.StringValues = lvItem.StringValues;
+
+                    if ((dlg.ShowDialog(GetWindow()) ?? false) == false)
+                    {
+                        // user cancelled
+                        break;
+                    }
+
+                    if (AlreadyInUse(lvItem, dlg.StringValues[2]) == false)
+                    {
+                        lvItem.StringValues = dlg.StringValues;
+                        break;
+                    }
                 }
             });
         }
@@ -68,5 +92,17 @@ namespace DoubleFile
         }
 
         internal void SetVolumeGroup() { System.Windows.MessageBox.Show("SetVolumeGroup"); }
+
+        bool AlreadyInUse(LVitem_VolumeVM lvCurrentItem, string strFilename = null)
+        {
+            bool bAlreadyInUse = (ContainsSaveAs(lvCurrentItem, strFilename) != null);
+
+            if (bAlreadyInUse)
+            {
+                System.Windows.MessageBox.Show("File already in list of volumes.");
+            }
+
+            return bAlreadyInUse;
+        }
     }
 }

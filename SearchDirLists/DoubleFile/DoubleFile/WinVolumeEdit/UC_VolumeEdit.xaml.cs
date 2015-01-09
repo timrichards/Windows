@@ -38,6 +38,11 @@ namespace DoubleFile.UserControls
             }
             set
             {
+                if (value == null)
+                {
+                    return;
+                }
+
                 int i = 0;
 
                 if (value.Length > i) { form_EditNickname.Text = value[i++]; } else { MBox.Assert(0, false); }

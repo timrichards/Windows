@@ -149,7 +149,7 @@ being separate from other volumes.
         <Button Name="form_BtnListingPath" Grid.Row="10" Command="{Binding Icmd_EditListingPath}" ToolTip="Click to open a file save dialog">
             <Image Source="/Resources/ic_save_black_18dp.png" />
         </Button>
-        <TextBox Grid.Row="10" Name="form_EditListingPath" ToolTip="Where to save the directory listing." />
+        <TextBox Grid.Row="10" Name="form_EditListingPath" ToolTip="Where to save the directory listing." LostFocus="form_EditListingPath_LostFocus" />
 
         <Button Grid.Column="3" Content="OK" Command="{Binding Icmd_IsOKenabled}" Grid.Row="11" Width="75" Height="Auto" IsDefault="True" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="BtnOK_Click"/>
         <Button Grid.Column="4" Content="Cancel" Grid.Row="11" Width="75" Grid.ColumnSpan="2" Height="Auto" IsCancel="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>

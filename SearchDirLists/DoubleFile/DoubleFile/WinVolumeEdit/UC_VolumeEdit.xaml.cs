@@ -98,15 +98,30 @@ namespace DoubleFile.UserControls
             }
         }
 
+        string CapDrive(string strPath)
+        {
+            var a = strPath.ToCharArray();
+
+            if (a.Length > 0)
+            {
+                a[0] = a[0].ToString().ToUpper()[0];
+                return string.Join("", a);
+            }
+
+            return strPath;
+        }
+
         private void form_EditSourcePath_LostFocus(object sender, RoutedEventArgs e)
         {
-            char[] s = form_EditSourcePath.Text.ToCharArray();
-
-            if (s.Length > 0)
+            if (IsOKenabled)
             {
-                s[0] = s[0].ToString().ToUpper()[0];
-                form_EditSourcePath.Text = string.Join("", s);
+                form_EditSourcePath.Text = CapDrive(form_EditSourcePath.Text);
             }
+        }
+
+        private void form_EditListingPath_LostFocus(object sender, RoutedEventArgs e)
+        {
+            form_EditListingPath.Text = CapDrive(System.IO.Path.GetFullPath(form_EditListingPath.Text));
         }
     }
 }

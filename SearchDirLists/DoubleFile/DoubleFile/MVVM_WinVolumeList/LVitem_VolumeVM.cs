@@ -24,17 +24,5 @@ namespace DoubleFile
         protected override string[] PropertyNames { get { return marrPropName; } }
 
         internal bool Include { get { return (IncludeStr == "Yes"); } set { IncludeStr = (value ? "Yes" : "No"); } }
-
-        internal bool CanLoad
-        {
-            get
-            {
-                return (Include &&
-                    ((FileParse.mSTRusingFile + FileParse.mSTRsaved).Contains(Status)));
-            }
-        }
-
-        internal bool SaveAsExists = false;                                     // TODO: set back to false when fail Tree
-        //    internal SDL_TreeNode treeNode = null;
     }
 }

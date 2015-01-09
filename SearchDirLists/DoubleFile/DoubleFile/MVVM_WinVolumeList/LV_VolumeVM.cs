@@ -28,8 +28,6 @@ namespace DoubleFile
 
         internal override int NumCols { get { return LVitem_VolumeVM.NumCols_; } }
 
-        internal bool ContainsVolumeName(string t) { string s = t.ToLower(); foreach (LVitem_VolumeVM item in m_items) if (item.VolumeName.ToLower() == s) return true; return false; }
-        internal bool ContainsUnsavedPath(string t) { string s = t.ToLower(); foreach (LVitem_VolumeVM item in m_items) if ((item.Path.ToLower() == s) && (item.SaveAsExists == false)) return true; return false; }
         internal LVitem_VolumeVM ContainsSaveAs(LVitem_VolumeVM currentItem, string t = null)
         {
             string s = (t ?? currentItem.SaveAs).ToLower();
@@ -83,6 +81,28 @@ namespace DoubleFile
 
         internal void RemoveVolume()
         {
+            bool bUnsaved = false;
+
+            Selected().ToArray().ForEach(lvItem =>
+            {
+                if (bUnsaved)
+                {
+                    return;     // from lambda
+                }
+
+                if (SaveDirListings.WontSave(lvItem) == false)
+                {
+                    bUnsaved = true;
+                }
+            });
+
+            if (bUnsaved && (MBox.ShowDialog("Selected listings have not been saved. Continue?", "Remove volume",
+                System.Windows.MessageBoxButton.YesNo) !=
+                System.Windows.MessageBoxResult.Yes))
+            {
+                return;
+            }
+
             Selected().ToArray().ForEach(lvItem => { Items.Remove(lvItem); });
         }
 

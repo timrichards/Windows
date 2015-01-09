@@ -3,6 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:UserControls="clr-namespace:DoubleFile.UserControls"
         ResizeMode="CanResizeWithGrip" ShowInTaskbar="False" WindowStartupLocation="CenterOwner"
-        Title="Edit Volume" Width="720" MinWidth="470" Height="474"  MinHeight="474" MaxHeight="474">
+        Title="Edit Volume" Width="720" MinWidth="470" Height="474"  MinHeight="474" MaxHeight="474" Icon="/DoubleFile;component/Resources/ic_people_white_18dp.png">
     <UserControls:UC_VolumeEdit IsVolumeNew="False" x:Name="uc_VolumeEdit"/>
 </Window>

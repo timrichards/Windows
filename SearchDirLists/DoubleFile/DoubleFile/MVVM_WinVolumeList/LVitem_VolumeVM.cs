@@ -1,7 +1,7 @@
 ﻿
 namespace DoubleFile
 {
-    class LVitem_VolumeVM : ListViewItemVM
+    class LVitem_VolumeVM : ListViewItemVM_Base
     {
         public string VolumeName { get { return marr[0]; } set { SetProperty(0, value); } }
         public string Path { get { return marr[1]; } set { SetProperty(1, value); } }

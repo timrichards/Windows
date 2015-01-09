@@ -6,7 +6,7 @@ namespace DoubleFile
 {
     delegate bool RaisePropertyChangedDelegate(string propertyName);
 
-    abstract class ObservableObject : INotifyPropertyChanged
+    abstract class ObservableObjectBase : INotifyPropertyChanged
     {
         #region Debugging Aides
 

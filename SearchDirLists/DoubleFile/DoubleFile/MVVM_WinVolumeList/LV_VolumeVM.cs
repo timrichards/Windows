@@ -2,7 +2,7 @@
 
 namespace DoubleFile
 {
-    class LV_VolumeVM : ListViewVM_Generic<LVitem_VolumeVM>
+    class LV_VolumeVM : ListViewVM_GenericBase<LVitem_VolumeVM>
     {
         public string WidthVolumeName { get { return SCW; } }                   // franken all NaN
         public string WidthPath { get { return SCW; } }

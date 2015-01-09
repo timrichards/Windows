@@ -65,7 +65,7 @@
     <Compile Include="Utilities\DRDigit.cs" />
     <Compile Include="Utilities\FileParse.cs" />
     <Compile Include="MVVM\AbstractionsVM.cs" />
-    <Compile Include="MVVM\ObservableObject.cs" />
+    <Compile Include="MVVM\ObservableObjectBase.cs" />
     <Compile Include="MVVM\ObservableObject_OwnerWindow.cs" />
     <Compile Include="MVVM\RelayCommand.cs" />
     <Compile Include="MVVM_WinSaveInProgress\LVitem_ProgressVM.cs" />

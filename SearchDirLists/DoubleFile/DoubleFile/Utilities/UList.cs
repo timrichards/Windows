@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    class UList<T> :
+    class UList<T> : 
 #if (true)
- Dictionary<T, object>       // guarantees uniqueness; faster random seek; removes items fast
+ Dictionary<T, object>, IEnumerable<T>       // Dictionary<T> guarantees uniqueness; faster random seek; removes items fast
     {
         public void Add(T t) { base.Add(t, null); }
         public T this[int i] { get { return base.Keys.ElementAt(i); } }
@@ -16,7 +16,7 @@ namespace DoubleFile
     }
 #else
 #error Locks up removing items.
-        List<T> { }                  // uses less memory; faster iterator; locks up removing items.
+        List<T> { }                         // List<T> uses less memory; faster iterator; locks up removing items.
 #endif
 
 }

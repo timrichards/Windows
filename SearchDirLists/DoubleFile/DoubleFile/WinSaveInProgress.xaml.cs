@@ -16,17 +16,17 @@ namespace DoubleFile
 
         LV_ProgressVM m_lv = new LV_ProgressVM();
 
-        internal void InitProgress(List<string> astrNicknames, List<string> astrPaths)
+        internal void InitProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths)
         {
-            if (astrNicknames.Count != astrPaths.Count)
+            if (astrNicknames.Count() != astrPaths.Count())
             {
                 MBox.Assert(0, false);
                 return;
             }
 
-            for (int i = 0; i < astrPaths.Count; ++i)
+            for (int i = 0; i < astrPaths.Count(); ++i)
             {
-                m_lv.NewItem(new string[] { astrNicknames[i], astrPaths[i] }, bQuiet: true);
+                m_lv.NewItem(new string[] { astrNicknames.ElementAt(i), astrPaths.ElementAt(i) }, bQuiet: true);
             }
         }
 

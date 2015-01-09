@@ -13,7 +13,7 @@ namespace DoubleFile
 
     // e.g. <ComboBox Name="xaml_cbVolumeName" Grid.Column="1" ItemsSource="{Binding List}" SelectedValue="{Binding S}"/>
     // e.g. CBVolumeName = new ItemsControlVM(m_app.xaml_cbVolumeName, new Action(() => { gd.m_strVolumeName = CBVolumeName.S; }));
-    class ItemsControlVM : ObservableObject
+    class ItemsControlVM : ObservableObjectBase
     {
         public string Current
         {
@@ -53,7 +53,7 @@ namespace DoubleFile
         string m_strCurrent = null;
     }
 
-    abstract class ListViewItemVM : ObservableObject
+    abstract class ListViewItemVM_Base : ObservableObjectBase
     {
         public bool IsSelected
         {
@@ -102,13 +102,13 @@ namespace DoubleFile
             }
         }
 
-        ListViewItemVM(ListViewVM lvvm)
+        ListViewItemVM_Base(ListViewVM_Base lvvm)
         {
             Index = lvvm.Count;
             LVVM = lvvm;
         }
 
-        internal ListViewItemVM(ListViewVM lvvm, string[] arrStr)     // e.g. Volumes LV: marr
+        internal ListViewItemVM_Base(ListViewVM_Base lvvm, string[] arrStr)     // e.g. Volumes LV: marr
             : this(lvvm)
         {
             MBox.Assert(0, arrStr.Length <= NumCols);
@@ -117,7 +117,7 @@ namespace DoubleFile
             RaiseColumnWidths();
         }
 
-        internal ListViewItemVM(ListViewVM lvvm, ListViewItem datum_in)   // e.g. Clones LVs: datum
+        internal ListViewItemVM_Base(ListViewVM_Base lvvm, ListViewItem datum_in)   // e.g. Clones LVs: datum
             : this(lvvm)
         {
             datum = datum_in;
@@ -132,9 +132,9 @@ namespace DoubleFile
             {
                 string strPropName = PropertyNames[nCol];
 
-                ListViewVM.SCW = 50.ToString();
+                ListViewVM_Base.SCW = 50.ToString();
                 LVVM.RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there
-                ListViewVM.SCW = double.NaN.ToString();
+                ListViewVM_Base.SCW = double.NaN.ToString();
                 LVVM.RaisePropertyChanged("Width" + strPropName);
             }
         }
@@ -158,7 +158,7 @@ namespace DoubleFile
             RaiseColumnWidths();
         }
 
-        internal readonly ListViewVM LVVM = null;
+        internal readonly ListViewVM_Base LVVM = null;
 
         internal abstract int NumCols { get; }
         protected abstract string[] PropertyNames { get; }
@@ -170,20 +170,20 @@ namespace DoubleFile
         protected bool m_bSelected = false;
     }
 
-    abstract class ListViewVM : ObservableObject_OwnerWindow
+    abstract class ListViewVM_Base : ObservableObject_OwnerWindow
     {
         internal delegate bool BoolQuery();
         internal BoolQuery SelectedOne = () => { DesignModeOK(); return false; };
         internal BoolQuery SelectedAny = () => { DesignModeOK(); return false; };
         internal Action Refresh = () => { DesignModeOK(); };
 
-        public ObservableCollection<ListViewItemVM> Items { get { return m_items; } }
+        public ObservableCollection<ListViewItemVM_Base> Items { get { return m_items; } }
 
         internal virtual void NewItem(string[] arrSt, bool bQuiet = false) { MBox.Assert(0, false); }
         internal virtual void NewItem(ListViewItem datum_in, bool bQuiet = false) { MBox.Assert(0, false); }
         internal abstract int NumCols { get; }
 
-        internal void Add(ListViewItemVM item, bool bQuiet = false)
+        internal void Add(ListViewItemVM_Base item, bool bQuiet = false)
         {
             m_items.Add(item);
 
@@ -199,7 +199,7 @@ namespace DoubleFile
         internal bool HasItems { get { return m_items.Count > 0; } }
         internal bool Contains(string s) { return (this[s] != null); }
 
-        internal ListViewItemVM this[string s_in]
+        internal ListViewItemVM_Base this[string s_in]
         {
             get
             {
@@ -246,10 +246,10 @@ namespace DoubleFile
         }
 
         readonly internal ListView data = new ListView();
-        readonly protected ObservableCollection<ListViewItemVM> m_items = new ObservableCollection<ListViewItemVM>();
+        readonly protected ObservableCollection<ListViewItemVM_Base> m_items = new ObservableCollection<ListViewItemVM_Base>();
     }
 
-    abstract class ListViewVM_Generic<T> : ListViewVM where T : ListViewItemVM
+    abstract class ListViewVM_GenericBase<T> : ListViewVM_Base where T : ListViewItemVM_Base
     {
         internal delegate IEnumerable<T> IEnumerableQuery();
         internal IEnumerableQuery Selected = () => { DesignModeOK(); return null; };
@@ -262,7 +262,7 @@ namespace Template      // prevents smart tag rename command from renaming the t
 {
     using DoubleFile;
 
-    class Template_LVitemVM : ListViewItemVM
+    class Template_LVitemVM : ListViewItemVM_Base
     {
         public string ColumnNameHere { get { return marr[0]; } set { SetProperty(0, value); } }
 
@@ -276,7 +276,7 @@ namespace Template      // prevents smart tag rename command from renaming the t
         protected override string[] PropertyNames { get { return marrPropName; } }
     }
 
-    class Template_ListViewVM : ListViewVM_Generic<Template_LVitemVM>
+    class Template_ListViewVM : ListViewVM_GenericBase<Template_LVitemVM>
     {
         public string WidthColumnNameHere { get { return SCW; } }
 

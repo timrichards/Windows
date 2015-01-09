@@ -11,13 +11,13 @@ namespace DoubleFile
 {
     delegate void SaveDirListingsStatusDelegate(string strPath, string strText = null, bool bDone = false, double nProgress = double.NaN);
 
-    class SaveListingsCallback
+    class SaveListingsProcess
     {
         GlobalData gd = null;
         WinSaveInProgress m_winProgress = null;
         System.Windows.Window m_app = null;
 
-        internal SaveListingsCallback(UList<LVitem_VolumeVM> list_lvVolStrings)
+        internal SaveListingsProcess(IEnumerable<LVitem_VolumeVM> list_lvVolStrings)
         {
             gd = GlobalData.GetInstance();
             m_app = GlobalData.static_wpfWin;
@@ -48,7 +48,7 @@ namespace DoubleFile
                 }
 
                 (gd.m_saveDirListings = new SaveDirListings(list_lvVolStrings,
-                  SaveDirListingsStatusCallback, SaveDirListingsDoneCallback)).DoThreadFactory();
+                    SaveDirListingsStatusCallback, SaveDirListingsDoneCallback)).DoThreadFactory();
                 m_winProgress.ShowDialog(m_app);
             }
         }
@@ -97,7 +97,7 @@ namespace DoubleFile
             int nFilesWritten = gd.m_saveDirListings.FilesWritten;
 
             gd.m_saveDirListings = null;   // has to precede messagebox
-            MBox.ShowDialog("Completed. " + nFilesWritten + " files written.", "Save Directory Listings");
+            MBox.ShowDialog("Completed. " + nFilesWritten + " file" + (nFilesWritten != 1 ? "s" : "") + " written.", "Save Directory Listings");
         }
     }
 
@@ -108,38 +108,208 @@ namespace DoubleFile
         Thread m_thread = null;
         bool m_bThreadAbort = false;
         ConcurrentBag<SaveDirListing> m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
-        readonly UList<LVitem_VolumeVM> m_list_LVitem_VolumeVM = new UList<LVitem_VolumeVM>();
+        IEnumerable<LVitem_VolumeVM> m_list_LVitem_VolumeVM = null;
 
         internal int FilesWritten { get; set; }
-        internal static bool DoHash = true;
 
         internal static bool IsGoodDriveSyntax(string strDrive)
         {
             return ((strDrive.Length > 2) && char.IsLetter(strDrive[0]) && (strDrive.Substring(1, 2) == @":\"));
         }
 
-        class SaveDirListing : FileUtil
+        class TraverseTree : FileUtil
+        {
+            protected long LengthRead { get; private set; }
+            protected long FilesRead { get; private set; }
+
+            List<string> m_listErrors = new List<string>();
+            protected IEnumerable<string> ErrorList { get { return m_listErrors; } }
+
+            protected bool m_bThreadAbort = false;
+            protected readonly LVitem_VolumeVM m_volStrings = null;
+
+            protected TraverseTree(LVitem_VolumeVM volStrings)
+            {
+                m_volStrings = volStrings;
+            }
+
+            /// <summary>
+            /// Two-pass private implementation. First to get file list; second to write to file.
+            /// </summary>
+            /// <param name="fs">If omitted then there can be no params and it returns the file list.</param>
+            /// <param name="dictHash"></param>
+            /// <param name="dictException_FileRead"></param>
+            /// <returns>File list if first pass</returns>
+            private IEnumerable<string> ImplementationDetails(
+                TextWriter fs = null,
+                Dictionary<string, string> dictHash = null,
+                Dictionary<string, string> dictException_FileRead = null)
+            {
+                var stackDirs = new Stack<Win32FindFile.DATUM>(64);
+                Win32FindFile.DATUM winRoot;
+
+                Win32FindFile.FileData.WinFile(m_volStrings.Path, out winRoot);
+                stackDirs.Push(winRoot);
+
+                var listFilePaths = new List<string>();
+
+                MBox.Assert(0, LengthRead == 0);
+                MBox.Assert(0, FilesRead == 0);
+                LengthRead = 0;
+                FilesRead = 0;
+
+                while (stackDirs.Count > 0)
+                {
+                    if (m_bThreadAbort || GlobalData.AppExit)
+                    {
+                        return null;
+                    }
+
+                    var winDir = stackDirs.Pop();
+                    var strFullPath = winDir.strAltFileName;
+                    var strError2_Dir = CheckNTFS_chars(ref strFullPath);
+                    var listSubDirs = new List<Win32FindFile.DATUM>();
+                    var listFiles = new List<Win32FindFile.DATUM>();
+
+                    if (Win32FindFile.GetDirectory(strFullPath, ref listSubDirs, ref listFiles) == false)
+                    {
+                        if (fs != null)
+                        {
+                            m_listErrors.Add(FormatString(strDir: strFullPath,
+                                strError1: new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message, strError2: strError2_Dir));
+                        }
+
+                        continue;
+                    }
+
+                    long nDirLength = 0;
+                    var bHasLength = false;
+
+                    foreach (var winFile in listFiles)
+                    {
+                        var fi = new Win32FindFile.FileData(winFile);
+                        var strFile = winFile.strFileName;
+                        var strError2_File = CheckNTFS_chars(ref strFile, bFile: true) ?? "";
+
+                        if (fi.IsValid == false)
+                        {
+                            if (fs != null)
+                            {
+                                var strErrorDir = winFile.strAltFileName.Substring(0, winFile.strAltFileName.LastIndexOf('\\'));
+
+                                CheckNTFS_chars(ref strErrorDir);
+                                m_listErrors.Add(FormatString(strFile: strFile, strDir: strErrorDir, strError2: strError2_File));
+                            }
+
+                            continue;
+                        }
+
+                        MBox.Assert(1306.7307, fi.Size >= 0);
+
+                        if (fs == null)
+                        {
+                            if (fi.Size > 0)
+                            {
+                                listFilePaths.Add(winFile.strAltFileName);
+                            }
+                        }
+                        else
+                        {
+                            if (fi.Size > 0)
+                            {
+                                bHasLength = true;
+                                LengthRead += fi.Size;
+                                nDirLength += fi.Size;
+                                ++FilesRead;
+                            }
+
+                            string strHash = null;
+
+                            if (dictHash.ContainsKey(winFile.strAltFileName))
+                            {
+                                strHash = dictHash[winFile.strAltFileName];
+                            }
+
+                            string strError1 = null;
+
+                            if (winFile.strAltFileName.Length > 260)
+                            {
+                                strError1 = "Path Length: " + winFile.strAltFileName.Length.ToString();
+                            }
+
+                            if (dictException_FileRead.ContainsKey(strFile))
+                            {
+                                strError2_File += " " + dictException_FileRead[strFile];
+                                strError2_File = strError2_File.TrimStart();
+                            }
+
+                            fs.WriteLine(FormatString(strFile: strFile, dtCreated: fi.CreationTime,
+                                strAttributes: ((int)fi.Attributes).ToString("X"), dtModified: fi.LastWriteTime,
+                                nLength: fi.Size, strError1: strError1, strError2: strError2_File, strHash: strHash));
+                        }
+                    }
+
+                    if (fs != null)
+                    {
+                        string strError1 = null;
+
+                        if (strFullPath.Length > 240)
+                        {
+                            strError1 = "Path Length: " + strFullPath.Length.ToString();
+                        }
+
+                        MBox.Assert(1306.7308, bHasLength == (nDirLength > 0));
+                        MBox.Assert(1306.7301, nDirLength >= 0);
+
+                        var di = new Win32FindFile.FileData(winDir);
+
+                        if (strFullPath.EndsWith(@":\"))                        // root directory
+                        {
+                            MBox.Assert(1306.7302, di.IsValid == false);        // yes, yes...
+                            MBox.Assert(1306.7303, strFullPath.Length == 3);
+                            fs.WriteLine(FormatString(strDir: strFullPath, nLength: nDirLength, strError1: strError1, strError2: strError2_Dir));
+                        }
+                        else
+                        {
+                            MBox.Assert(1306.7304, di.IsValid);
+                            fs.WriteLine(FormatString(strDir: strFullPath, dtCreated: di.CreationTime, strAttributes: ((int)di.Attributes).ToString("X"), dtModified: di.LastWriteTime, nLength: nDirLength, strError1: strError1, strError2: strError2_Dir));
+                        }
+                    }
+
+                    foreach (Win32FindFile.DATUM winData in listSubDirs)
+                    {
+                        stackDirs.Push(winData);
+                    }
+                }
+
+                return listFilePaths;
+            }
+
+            protected IEnumerable<string> GetFileList()
+            {
+                return ImplementationDetails();
+            }
+
+            protected void WriteFileList(TextWriter fs, Dictionary<string, string> dictHash, Dictionary<string, string> dictException_FileRead)
+            {
+                ImplementationDetails(fs, dictHash, dictException_FileRead);
+            }
+        }
+
+        class SaveDirListing : TraverseTree
         {
             readonly SaveDirListingsStatusDelegate m_statusCallback = null;
             Thread m_thread = null;
-            bool m_bThreadAbort = false;
-            readonly LVitem_VolumeVM m_volStrings = null;
-            long m_nLengthTotal = 0;
-            long m_nFilesTotal_1 = 0;
-            long m_nFilesTotal_2 = 0;
-            long m_nFilesDiff = 0;
-            readonly List<string> m_list_Errors = new List<string>();
 
             internal SaveDirListing(LVitem_VolumeVM volStrings, SaveDirListingsStatusDelegate statusCallback)
+                : base(volStrings)
             {
-                m_volStrings = volStrings;
                 m_statusCallback = statusCallback;
             }
 
             private void WriteHeader(TextWriter fs)
             {
                 fs.WriteLine(mSTRheader01);
-                // assume SaveFields() by caller because SaveFields() has already prompted user
                 fs.WriteLine(m_volStrings.VolumeName);
                 fs.WriteLine(m_volStrings.Path);
 
@@ -189,228 +359,64 @@ namespace DoubleFile
                 fs.WriteLine(sb.ToString().Trim());
             }
 
-            class ResultItem
+            void Hash(IEnumerable<string> listFilePaths,
+                out Dictionary<string, string> dictHash_out,
+                out Dictionary<string, string> dictException_FileRead_out)
             {
-                public bool Ready { get; private set; }
-                public string strHash { private get; set; }
-                public string strOut { get { return FormatString(strFile: strFile, dtCreated: fi.CreationTime, strAttributes: ((int)fi.Attributes).ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File, strHash: strHash); } }
-
-                string strFile;
-                Win32FindFile.FileData fi;
-                string strError1;
-                string strError2_File;
-
-                public ResultItem(string strFile_in, Win32FindFile.FileData fi_in, string strError1_in, string strError2_in)
+                if (listFilePaths == null)
                 {
-                    strFile = strFile_in;
-                    fi = fi_in;
-                    strError1 = strError1_in;
-                    strError2_File = strError2_in;
-                }
-            }
-
-            struct DirData
-            {
-                internal Win32FindFile.DATUM winDir;
-                internal List<Win32FindFile.DATUM> listSubDirs;
-                internal List<Win32FindFile.DATUM> listFiles;
-                internal string strError2_Dir;
-
-                internal DirData(Win32FindFile.DATUM winDir_in)
-                {
-                    winDir = winDir_in;
-                    listSubDirs = new List<Win32FindFile.DATUM>();
-                    listFiles = new List<Win32FindFile.DATUM>();
-                    strError2_Dir = null;
-                }
-            }
-
-            List<DirData> TraverseTree(TextWriter fs)
-            {
-                var stackDirs = new Stack<Win32FindFile.DATUM>(64);
-                var listAll = new List<DirData>();
-                Win32FindFile.DATUM winRoot;
-
-                Win32FindFile.FileData.WinFile(m_volStrings.Path, out winRoot);
-                stackDirs.Push(winRoot);
-
-                while (stackDirs.Count > 0)
-                {
-                    if (m_bThreadAbort || GlobalData.AppExit)
-                    {
-                        return null;
-                    }
-
-                    var dirData = new DirData(stackDirs.Pop());
-
-                    listAll.Add(dirData);
-
-                    if (Win32FindFile.GetDirectory(dirData.winDir.strAltFileName, ref dirData.listSubDirs, ref dirData.listFiles) == false)
-                    {
-                        m_list_Errors.Add(FormatString(strDir: dirData.winDir.strAltFileName,
-                            strError1: new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message, strError2: dirData.strError2_Dir));
-                        continue;
-                    }
-
-                    foreach (Win32FindFile.DATUM winData in dirData.listFiles)
-                    {
-                        Win32FindFile.FileData fi = new Win32FindFile.FileData(winData);
-
-                        if (fi.IsValid == false)
-                        {
-                            continue;
-                        }
-
-                        ++m_nFilesTotal_1;
-                    }
-
-                    foreach (Win32FindFile.DATUM winData in dirData.listSubDirs)
-                    {
-                        stackDirs.Push(winData);
-                    }
-                }
-
-                return listAll;
-            }
-
-            void TraverseTree(TextWriter fs, List<DirData> listAll)
-            {
-                if (listAll == null)
-                {
+                    dictHash_out = null;
+                    dictException_FileRead_out = null;
                     return;
                 }
 
-                Queue<Task<ResultItem>> queueTasks = new Queue<Task<ResultItem>>();                 // TODO/WIP
+                var nProgressNumerator = 0;
+                var timeSpan = new TimeSpan(0, 0, 0, 1);
+                double nProgressDenominator = listFilePaths.Count();        // double preserves mantissa
+                var dictHash = new Dictionary<string, string>();
+                var dictException_FileRead = new Dictionary<string, string>();
 
-                foreach (var listItem in listAll)
+                System.Threading.Timer timer = new System.Threading.Timer(new TimerCallback((Object state) =>
                 {
-                    if (m_bThreadAbort || GlobalData.AppExit)
+                    m_statusCallback(m_volStrings.Path, nProgress: nProgressNumerator / nProgressDenominator);
+                }), null, timeSpan, timeSpan);
+
+                Parallel.ForEach(listFilePaths, strFile =>
+                {
+                    Interlocked.Increment(ref nProgressNumerator);
+
+                    var fileHandle = DriveSerial.CreateFile(@"\\?\" + strFile, FileAccess.Read, FileShare.ReadWrite,
+                        IntPtr.Zero, 3, 0, IntPtr.Zero);
+
+                    if (fileHandle.IsInvalid)
                     {
-                        return;
+                        dictException_FileRead[strFile] = new System.ComponentModel.Win32Exception(
+                            Marshal.GetLastWin32Error()).Message;
+                        return;                         // return from lambda
                     }
 
-                    long nDirLength = 0;
-                    bool bHasLength = false;
-                    Dictionary<string, string> dictHash = new Dictionary<string, string>();
-                    Dictionary<string, string> dictInvalid_FileRead = new Dictionary<string, string>();
-
-                    if (DoHash)
-                        Parallel.ForEach(listItem.listFiles, winData =>
+                    using (var fsA = new FileStream(fileHandle, FileAccess.Read))
                     {
-                        Win32FindFile.FileData fi = new Win32FindFile.FileData(winData);
+                        const int kBufferSize = 4096;   // Hash the first 4K of the file for speed
+                        var buffer = new byte[kBufferSize];
 
-                        if ((fi.IsValid == false) || (fi.Size <= 0))
+                        fsA.Read(buffer, 0, kBufferSize);
+
+                        using (var md5 = System.Security.Cryptography.MD5.Create())
                         {
-                            return;     // return from lambda
-                        }
+                            var strHash = DRDigit.Fast.ToHexString(md5.ComputeHash(buffer));
 
-                        Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle =
-                            DriveSerial.CreateFile(@"\\?\" + winData.strAltFileName, FileAccess.Read, FileShare.ReadWrite, IntPtr.Zero, 3, 0, IntPtr.Zero);
-
-                        if (fileHandle.IsInvalid)
-                        {
-                            dictInvalid_FileRead[winData.strFileName] = new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message;
-                            return;     // return from lambda
-                        }
-
-                        using (var fsA = new FileStream(fileHandle, FileAccess.Read))
-                        {
-                            const int kBufferSize = 4096;   // Hash in the first 4K of the file for speed
-                            byte[] buffer = new byte[kBufferSize];
-
-                            fsA.Read(buffer, 0, kBufferSize);
-
-                            using (var md5 = System.Security.Cryptography.MD5.Create())
+                            lock (dictHash)
                             {
-                                string strHash = DRDigit.Fast.ToHexString(md5.ComputeHash(buffer));
-
-                                lock (dictHash)
-                                {
-                                    dictHash[winData.strFileName] = strHash;
-                                }
+                                dictHash[strFile] = strHash;
                             }
                         }
-                    });
-
-                    foreach (Win32FindFile.DATUM winData in listItem.listFiles)
-                    {
-                        Win32FindFile.FileData fi = new Win32FindFile.FileData(winData);
-                        string strFile = winData.strFileName;
-                        string strError2_File = CheckNTFS_chars(ref strFile, bFile: true) ?? "";
-
-                        if (fi.IsValid == false)
-                        {
-                            string strErrorFile = strFile;
-                            string strErrorDir = winData.strAltFileName.Substring(0, winData.strAltFileName.LastIndexOf('\\'));
-
-                            CheckNTFS_chars(ref strErrorDir);
-                            m_list_Errors.Add(FormatString(strFile: strErrorFile, strDir: strErrorDir, strError2: strError2_File));
-                            continue;
-                        }
-
-                        m_nLengthTotal += fi.Size;
-                        nDirLength += fi.Size;
-                        ++m_nFilesTotal_2;
-                        ++m_nFilesDiff;
-
-                        string strError1 = null;
-
-                        if (winData.strAltFileName.Length > 260)
-                        {
-                            strError1 = "Path Length: " + winData.strAltFileName.Length.ToString();
-                        }
-
-                        MBox.Assert(1306.7307, fi.Size >= 0);
-
-                        if (fi.Size > 0)
-                        {
-                            bHasLength = true;
-                        }
-
-                        string strHash = null;
-
-                        if (dictHash.ContainsKey(strFile))
-                        {
-                            strHash = dictHash[strFile];
-                        }
-
-                        if (dictInvalid_FileRead.ContainsKey(strFile))
-                        {
-                            strError2_File += " " + dictInvalid_FileRead[strFile];
-                            strError2_File = strError2_File.TrimStart();
-                        }
-
-                        string strOut = FormatString(strFile: strFile, dtCreated: fi.CreationTime, strAttributes: ((int)fi.Attributes).ToString("X"), dtModified: fi.LastWriteTime, nLength: fi.Size, strError1: strError1, strError2: strError2_File, strHash: strHash);
-
-                        fs.WriteLine(strOut);
                     }
+                });
 
-                    {
-                        string strError1 = null;
-
-                        if (listItem.winDir.strAltFileName.Length > 240)
-                        {
-                            strError1 = "Path Length: " + listItem.winDir.strAltFileName.Length.ToString();
-                        }
-
-                        MBox.Assert(1306.7308, bHasLength == (nDirLength > 0));
-                        MBox.Assert(1306.7301, nDirLength >= 0);
-
-                        Win32FindFile.FileData di = new Win32FindFile.FileData(listItem.winDir);
-
-                        if (listItem.winDir.strAltFileName.EndsWith(@":\"))         // root directory
-                        {
-                            MBox.Assert(1306.7302, di.IsValid == false);            // yes, yes...
-                            MBox.Assert(1306.7303, (listItem.winDir.strAltFileName.Length == 3) && IsGoodDriveSyntax(listItem.winDir.strAltFileName));
-                            fs.WriteLine(FormatString(strDir: listItem.winDir.strAltFileName, nLength: nDirLength, strError1: strError1, strError2: listItem.strError2_Dir));
-                        }
-                        else
-                        {
-                            MBox.Assert(1306.7304, di.IsValid);
-                            fs.WriteLine(FormatString(strDir: listItem.winDir.strAltFileName, dtCreated: di.CreationTime, strAttributes: ((int)di.Attributes).ToString("X"), dtModified: di.LastWriteTime, nLength: nDirLength, strError1: strError1, strError2: listItem.strError2_Dir));
-                        }
-                    }
-                }
+                timer.Dispose();
+                dictHash_out = dictHash;
+                dictException_FileRead_out = dictException_FileRead;
             }
 
             void Go()
@@ -440,33 +446,32 @@ namespace DoubleFile
                 {
                     using (TextWriter fs = File.CreateText(m_volStrings.SaveAs))
                     {
+                        Dictionary<string, string> dictHash = null;
+                        Dictionary<string, string> dictException_FileRead = null;
+
                         WriteHeader(fs);
                         fs.WriteLine();
                         fs.WriteLine(FormatString(nHeader: 0));
                         fs.WriteLine(FormatString(nHeader: 1));
                         fs.WriteLine(mSTRstart01 + " " + DateTime.Now.ToString());
-
-                        TimeSpan timeSpan = new TimeSpan(0, 0, 0, 1);
-
-                        System.Threading.Timer timer = new System.Threading.Timer(new TimerCallback((Object state) =>
-                        {
-                            m_statusCallback(m_volStrings.Path, nProgress: m_nFilesTotal_2 / (double)m_nFilesTotal_1);
-                        }), null, timeSpan, timeSpan);
-
-                        TraverseTree(fs, TraverseTree(fs));
-                        timer.Dispose();
+                        Hash(GetFileList(), out dictHash, out dictException_FileRead);
+                        WriteFileList(fs, dictHash, dictException_FileRead);
                         fs.WriteLine(mSTRend01 + " " + DateTime.Now.ToString());
                         fs.WriteLine();
                         fs.WriteLine(mSTRerrorsLoc01);
-                        MBox.Assert(0, m_nFilesTotal_1 == m_nFilesTotal_2);
 
-                        foreach (string strError in m_list_Errors)
+                        // Unit test metrix on non-system volume
+                        //MBox.Assert(0, nProgressDenominator >= nProgressNumerator);       file creation/deletion between times
+                        //MBox.Assert(0, nProgressDenominator == m_nFilesDiff);             ditto
+                        //MBox.Assert(0, nProgressDenominator == dictHash.Count);           ditto
+
+                        foreach (string strError in ErrorList)
                         {
                             fs.WriteLine(strError);
                         }
 
                         fs.WriteLine();
-                        fs.WriteLine(FormatString(strDir: mSTRtotalLengthLoc01, nLength: m_nLengthTotal));
+                        fs.WriteLine(FormatString(strDir: mSTRtotalLengthLoc01, nLength: LengthRead));
                     }
 
                     Directory.SetCurrentDirectory(strPathOrig);
@@ -502,7 +507,7 @@ namespace DoubleFile
             }
         }
 
-        internal SaveDirListings(UList<LVitem_VolumeVM> list_LVitem_VolumeVM,
+        internal SaveDirListings(IEnumerable<LVitem_VolumeVM> list_LVitem_VolumeVM,
             SaveDirListingsStatusDelegate statusCallback,
             Action doneCallback)
         {

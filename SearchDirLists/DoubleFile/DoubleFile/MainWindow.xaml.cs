@@ -30,7 +30,7 @@ namespace DoubleFile
 
             if (m_list_lvVolStrings != null)
             {
-                new SaveListingsCallback(m_list_lvVolStrings);
+                new SaveListingsProcess(m_list_lvVolStrings);
             }
         }
 

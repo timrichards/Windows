@@ -1,7 +1,7 @@
 ﻿
 namespace DoubleFile
 {
-    class LV_ProgressVM : ListViewVM_Generic<LVitem_ProgressVM>
+    class LV_ProgressVM : ListViewVM_GenericBase<LVitem_ProgressVM>
     {
         // queried by ObservableObject but not used for progress bar
         public string WidthVolumeName { get { return SCW; } }                   // franken all NaN

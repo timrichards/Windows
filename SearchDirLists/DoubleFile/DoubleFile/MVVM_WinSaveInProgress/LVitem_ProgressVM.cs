@@ -3,7 +3,7 @@ using System;
 using System.Windows.Media;
 namespace DoubleFile
 {
-    class LVitem_ProgressVM : ListViewItemVM
+    class LVitem_ProgressVM : ListViewItemVM_Base
     {
         public string VolumeName { get { return marr[0]; } set { SetProperty(0, value); } }
         public string Path { get { return marr[1]; } set { SetProperty(1, value); } }
@@ -46,19 +46,27 @@ namespace DoubleFile
 
                     if (m_nRollingProgress == 0)
                     {
-                        m_nRollingProgress = double.Epsilon;    // just in case
+                        m_nRollingProgress = double.Epsilon;
                     }
 
                     m_dtRollingProgress = DateTime.Now;
                 }
                 else if (tmRolling > TimeSpan.FromMinutes(nRollingMinutes))
                 {
-                    Remaining = TimeSpan.FromTicks((long)((1 - value) * tmRolling.Ticks /
-                        (value - m_nRollingProgress) /
-                        nRollingMinutes))
-                        .Add(TimeSpan.FromMinutes(1))           // fudge factor 1
-                        .TotalMinutes.ToString("0") + " minutes remaining";
-                    m_nRollingProgress = value;
+                    var v = Math.Min(1, value + double.Epsilon);
+                    var numerator = Math.Max(0, (1 - v) * tmRolling.Ticks);
+                    var denominator = (v - m_nRollingProgress) / nRollingMinutes;
+
+                    if (denominator > 0)
+                    {
+                        var nRemaining = TimeSpan.FromTicks((long)(numerator / denominator))
+                            .Add(TimeSpan.FromMinutes(1))
+                            .TotalMinutes;
+
+                        Remaining = nRemaining.ToString("0") + " minute" + (nRemaining != 1 ? "s" : "") + " remaining";
+                    }
+                    
+                    m_nRollingProgress = v;
                     m_dtRollingProgress = DateTime.Now;
                 }
 

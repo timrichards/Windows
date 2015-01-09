@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DoubleFile
 {
-    class ObservableObject_OwnerWindow : ObservableObject
+    class ObservableObject_OwnerWindow : ObservableObjectBase
     {
         internal delegate System.Windows.Window Delegate_GetWindow();
         internal Delegate_GetWindow GetWindow = () => { DesignModeOK(); return null; };

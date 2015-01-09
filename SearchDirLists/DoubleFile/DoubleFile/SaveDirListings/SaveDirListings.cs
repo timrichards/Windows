@@ -5,8 +5,6 @@ using System.Collections.Concurrent;
 
 namespace DoubleFile
 {
-    delegate void SaveDirListingsStatusDelegate(string strPath, string strText = null, bool bDone = false, double nProgress = double.NaN);
-
     partial class SaveDirListings : FileParse
     {
         readonly SaveDirListingsStatusDelegate m_statusCallback = null;
@@ -90,36 +88,5 @@ namespace DoubleFile
         }
 
         internal bool IsAborted { get { return m_bThreadAbort; } }
-    }
-
-    partial class GlobalData
-    {
-        internal SaveDirListings m_saveDirListings = null;
-
-        internal void ClearMem_SaveDirListings()
-        {
-            MBox.Assert(1306.73045, m_saveDirListings == null);
-
-            m_saveDirListings = null;
-        }
-
-        internal bool DoSaveDirListings(IEnumerable<LVitem_VolumeVM> lvItems, SaveDirListingsStatusDelegate statusCallback, Action doneCallback)
-        {
-            if (m_saveDirListings != null)
-            {
-                MBox.ShowDialog("Already in progress.", "Save Directory Listings");
-                return false;
-            }
-
-            UList<LVitem_VolumeVM> list_LVitem_VolumeVM = new UList<LVitem_VolumeVM>();
-
-            foreach (LVitem_VolumeVM lvItem in lvItems)
-            {
-                list_LVitem_VolumeVM.Add(lvItem);
-            }
-
-            (m_saveDirListings = new SaveDirListings(list_LVitem_VolumeVM, statusCallback, doneCallback)).DoThreadFactory();
-            return true;
-        }
     }
 }

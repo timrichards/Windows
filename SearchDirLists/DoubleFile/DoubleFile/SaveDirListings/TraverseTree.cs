@@ -179,7 +179,7 @@ namespace DoubleFile
                 return ImplementationDetails();
             }
 
-            protected void WriteFileList(TextWriter fs, Dictionary<string, string> dictHash, Dictionary<string, string> dictException_FileRead)
+            protected void WriteDirectoryListing(TextWriter fs, Dictionary<string, string> dictHash, Dictionary<string, string> dictException_FileRead)
             {
                 ImplementationDetails(fs, dictHash, dictException_FileRead);
             }

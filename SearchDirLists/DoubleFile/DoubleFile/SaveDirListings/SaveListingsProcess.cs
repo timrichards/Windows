@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace DoubleFile
 {
+    delegate void SaveDirListingsStatusDelegate(string strPath, string strText = null, bool bDone = false, double nProgress = double.NaN);
+
+    partial class GlobalData
+    {
+        internal SaveDirListings m_saveDirListings = null;
+    }
+
     class SaveListingsProcess
     {
         GlobalData gd = null;

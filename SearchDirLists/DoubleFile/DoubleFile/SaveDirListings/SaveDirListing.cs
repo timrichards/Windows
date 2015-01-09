@@ -169,7 +169,7 @@ namespace DoubleFile
                         fs.WriteLine(FormatString(nHeader: 1));
                         fs.WriteLine(mSTRstart01 + " " + DateTime.Now.ToString());
                         Hash(GetFileList(), out dictHash, out dictException_FileRead);
-                        WriteFileList(fs, dictHash, dictException_FileRead);
+                        WriteDirectoryListing(fs, dictHash, dictException_FileRead);
                         fs.WriteLine(mSTRend01 + " " + DateTime.Now.ToString());
                         fs.WriteLine();
                         fs.WriteLine(mSTRerrorsLoc01);

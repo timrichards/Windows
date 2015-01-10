@@ -87,11 +87,9 @@ namespace DoubleFile
             MessageBoxKill();
             m_form1MessageBoxOwner = new Window();
             m_form1MessageBoxOwner.Owner = GlobalData.static_wpfOrForm;
-            m_form1MessageBoxOwner.Title = strTitle;
-            m_form1MessageBoxOwner.Icon = GlobalData.static_wpfOrForm.Icon;
 
             MessageBoxButton buttons = (buttons_in != null) ? buttons_in.Value : MessageBoxButton.OK;
-            MessageBoxResult msgBoxRet = (MessageBoxResult)MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100), strTitle, (MessageBoxButton)buttons);
+            MessageBoxResult msgBoxRet = (MessageBoxResult)MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100), strTitle, (MessageBoxButton)buttons, MessageBoxImage.Information);
 
             if (m_form1MessageBoxOwner != null)
             {

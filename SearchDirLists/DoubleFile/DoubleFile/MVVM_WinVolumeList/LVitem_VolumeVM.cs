@@ -17,7 +17,6 @@ namespace DoubleFile
         internal LVitem_VolumeVM(LV_VolumeVM LV, string[] arrStr)
             : base(LV, arrStr)
         {
-            //        SaveAsExists = (Status == Utilities.mSTRusingFile);                 // TODO: check dup drive letter, and if drive is mounted.
         }
 
         internal override int NumCols { get { return NumCols_; } }

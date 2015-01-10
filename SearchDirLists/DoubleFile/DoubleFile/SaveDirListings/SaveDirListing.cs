@@ -84,15 +84,16 @@ namespace DoubleFile
                 }
 
                 var nProgressNumerator = 0;
-                var timeSpan = new TimeSpan(0, 0, 0, 1);
                 double nProgressDenominator = listFilePaths.Count();        // double preserves mantissa
-                var dictHash = new Dictionary<string, string>();
-                var dictException_FileRead = new Dictionary<string, string>();
+                var timeSpan = new TimeSpan(0, 0, 0, 1);
 
                 System.Threading.Timer timer = new System.Threading.Timer(new TimerCallback((Object state) =>
                 {
                     m_statusCallback(m_volStrings.Path, nProgress: nProgressNumerator / nProgressDenominator);
                 }), null, timeSpan, timeSpan);
+
+                var dictHash = new Dictionary<string, string>();
+                var dictException_FileRead = new Dictionary<string, string>();
 
                 Parallel.ForEach(listFilePaths, strFile =>
                 {

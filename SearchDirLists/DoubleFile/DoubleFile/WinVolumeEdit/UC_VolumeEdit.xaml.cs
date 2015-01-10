@@ -33,7 +33,8 @@ namespace DoubleFile.UserControls
         {
             get
             {
-                return new string[] { form_EditNickname.Text, form_EditSourcePath.Text, form_EditListingPath.Text, "Not saved", "Yes",
+                return new string[] { form_EditNickname.Text, form_EditSourcePath.Text, form_EditListingPath.Text,
+                    strStatus, strInclude,
                     form_EditVolumeGroup.Text, form_EditDriveModel.Text, form_EditDriveSerial.Text };
             }
             set
@@ -48,8 +49,8 @@ namespace DoubleFile.UserControls
                 if (value.Length > i) { form_EditNickname.Text = value[i++]; } else { MBox.Assert(0, false); }
                 if (value.Length > i) { form_EditSourcePath.Text = value[i++]; } else { MBox.Assert(0, false); }
                 if (value.Length > i) { form_EditListingPath.Text = value[i++]; }
-                if (value.Length > i) { i++; }  // Status
-                if (value.Length > i) { i++; }  // Include
+                if (value.Length > i) { strStatus = value[i++]; }
+                if (value.Length > i) { strInclude = value[i++]; }
                 if (value.Length > i) { form_EditVolumeGroup.Text = value[i++]; }
                 if (value.Length > i) { form_EditDriveModel.Text = value[i++]; }
                 if (value.Length > i) { form_EditDriveSerial.Text = value[i++]; }
@@ -60,6 +61,11 @@ namespace DoubleFile.UserControls
         {
             InitializeComponent();
         }
+
+        internal char DriveLetter { get { return (form_EditDriveLetter.Text + "\0")[0]; } }
+
+        string strStatus = "Not saved";
+        string strInclude = "Yes";
 
         bool IsOKenabled
         {

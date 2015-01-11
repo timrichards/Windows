@@ -4,11 +4,11 @@ namespace DoubleFile
 {
     partial class LV_VolumeVM : ListViewVM_GenericBase<LVitem_VolumeVM>
     {
-        public string WidthVolumeName { get { return SCW; } }                   // franken all NaN
-        public string WidthPath { get { return SCW; } }
-        public string WidthSaveAs { get { return SCW; } }
+        public string WidthNickname { get { return SCW; } }                   // franken all NaN
+        public string WidthSourcePath { get { return SCW; } }
+        public string WidthListingFile { get { return SCW; } }
         public string WidthStatus { get { return SCW; } }
-        public string WidthIncludeStr { get { return SCW; } }
+        public string WidthIncludeYN { get { return SCW; } }
         public string WidthVolumeGroup { get { return SCW; } }
         public string WidthDriveModel { get { return SCW; } }
         public string WidthDriveSerial { get { return SCW; } }

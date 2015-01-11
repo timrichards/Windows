@@ -43,6 +43,8 @@ namespace DoubleFile
                     lv.Add(lvItem);
                 }
             }
+
+            m_list_lvVolStrings = null;     // close box / cancel
         }
 
         internal UList<LVitem_VolumeVM> m_list_lvVolStrings = null;
@@ -55,6 +57,8 @@ namespace DoubleFile
             {
                 m_list_lvVolStrings.Add(lvItem);
             }
+
+            DialogResult = true;
 
             // IsDefault = "True" in xaml so that seems to take care of closing the window After this handler returns.
         }

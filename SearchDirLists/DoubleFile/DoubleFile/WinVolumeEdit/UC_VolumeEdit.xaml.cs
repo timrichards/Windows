@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Linq;
 
-namespace DoubleFile.UserControls
+namespace DoubleFile
 {
     /// <summary>
     /// Interaction logic for UC_VolumeEdit.xaml
@@ -20,40 +22,12 @@ namespace DoubleFile.UserControls
                 form_lblDriveLetter.Visibility = value ? Visibility.Hidden : Visibility.Visible;
                 form_EditDriveLetter.Visibility = value ? Visibility.Hidden : Visibility.Visible;
                 form_BtnDriveModel.IsEnabled = value;
-                form_BtnListingPath.IsEnabled = value;
-                form_EditListingPath.IsEnabled = value;
+                form_BtnListingFile.IsEnabled = value;
+                form_EditListingFile.IsEnabled = value;
             }
             get
             {
                 return form_EditSourcePath.IsEnabled;
-            }
-        }
-
-        public string[] StringValues
-        {
-            get
-            {
-                return new string[] { form_EditNickname.Text, form_EditSourcePath.Text, form_EditListingPath.Text,
-                    strStatus, strInclude,
-                    form_EditVolumeGroup.Text, form_EditDriveModel.Text, form_EditDriveSerial.Text };
-            }
-            set
-            {
-                if (value == null)
-                {
-                    return;
-                }
-
-                int i = 0;
-
-                if (value.Length > i) { form_EditNickname.Text = value[i++]; } else { MBox.Assert(0, false); }
-                if (value.Length > i) { form_EditSourcePath.Text = value[i++]; } else { MBox.Assert(0, false); }
-                if (value.Length > i) { form_EditListingPath.Text = value[i++]; }
-                if (value.Length > i) { strStatus = value[i++]; }
-                if (value.Length > i) { strInclude = value[i++]; }
-                if (value.Length > i) { form_EditVolumeGroup.Text = value[i++]; }
-                if (value.Length > i) { form_EditDriveModel.Text = value[i++]; }
-                if (value.Length > i) { form_EditDriveSerial.Text = value[i++]; }
             }
         }
 
@@ -64,14 +38,46 @@ namespace DoubleFile.UserControls
 
         internal char DriveLetter { get { return (form_EditDriveLetter.Text + "\0")[0]; } }
 
+        internal LVitem_VolumeVM LVitemVolumeTemp
+        {
+            get
+            {
+                return new LVitem_VolumeVM(new string[] {
+                    form_EditNickname.Text, form_EditSourcePath.Text, form_EditListingFile.Text,
+                    strStatus, strIncludeYN,
+                    form_EditVolumeGroup.Text, form_EditDriveModel.Text, form_EditDriveSerial.Text
+                });
+            }
+            set
+            {
+                if (value == null)
+                {
+                    return;
+                }
+
+                var astr = value.StringValues;
+                var i = 0;
+
+                if (astr.Length > i) { form_EditNickname.Text = value[i++]; } else { MBox.Assert(0, false); }
+                if (astr.Length > i) { form_EditSourcePath.Text = value[i++]; } else { MBox.Assert(0, false); }
+                if (astr.Length > i) { form_EditListingFile.Text = value[i++]; }
+                if (astr.Length > i) { var s = value[i++]; if (s != null) { strStatus = s; } }
+                if (astr.Length > i) { var s = value[i++]; if (s != null) { strIncludeYN = s; } }
+                if (astr.Length > i) { form_EditVolumeGroup.Text = value[i++]; }
+                if (astr.Length > i) { form_EditDriveModel.Text = value[i++]; }
+                if (astr.Length > i) { form_EditDriveSerial.Text = value[i++]; }
+            }
+        }
+
         string strStatus = "Not saved";
-        string strInclude = "Yes";
+        string strIncludeYN = "Yes";
 
         bool IsOKenabled
         {
             get
             {
-                return SaveDirListings.IsGoodDriveSyntax(form_EditSourcePath.Text);
+                return (SaveDirListings.IsGoodDriveSyntax(form_EditSourcePath.Text) &&
+                    System.IO.Directory.Exists(form_EditSourcePath.Text));
             }
         }
 
@@ -84,12 +90,14 @@ namespace DoubleFile.UserControls
             uc_VolumeEdit.DataContext = vm;
             vm.IsOKenabled = () => { return IsOKenabled; };
             vm.SourcePath_CurrentText = () => { return form_EditSourcePath.Text; };
-            vm.ListingPath_CurrentText = () => { return form_EditListingPath.Text; };
+            vm.ListingFile_CurrentText = () => { return form_EditListingFile.Text; };
             vm.FromSourcePathDlg = s => { form_EditSourcePath.Text = s; };
             vm.FromProbe = t => { form_EditDriveModel.Text = t.DriveModel; form_EditDriveSerial.Text = t.DriveSerial; };
-            vm.FromListingPathDlg = s => { form_EditListingPath.Text = s; };
+            vm.FromListingFileDlg = s => { form_EditListingFile.Text = s; };
 
             vm.GetWindow = () => { return window; };
+
+            form_EditDriveLetter.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (o, e1) => { e1.Handled = true; }));
         }
 
         private void BtnOK_Click(object sender, RoutedEventArgs e)
@@ -125,9 +133,41 @@ namespace DoubleFile.UserControls
             }
         }
 
-        private void form_EditListingPath_LostFocus(object sender, RoutedEventArgs e)
+        private void form_EditListingFile_LostFocus(object sender, RoutedEventArgs e)
         {
-            form_EditListingPath.Text = CapDrive(System.IO.Path.GetFullPath(form_EditListingPath.Text));
+            if (form_EditListingFile.Text.Length > 0)
+            {
+                try
+                {
+                    form_EditListingFile.Text = CapDrive(System.IO.Path.GetFullPath(form_EditListingFile.Text));
+                }
+                catch { }
+            }
+        }
+
+        private void form_EditDriveLetter_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (new Key[] {Key.Back, Key.Delete, Key.Left, Key.Right}.Contains(e.Key))
+            {
+                return;
+            }
+
+            if (form_EditDriveLetter.Text.Length > 0)
+            {
+                e.Handled = true;
+                return;
+            }
+            
+            if ((e.Key < Key.A) || (e.Key > Key.Z))
+            {
+                e.Handled = true;
+            }
+
+            if ((new KeyConverter().ConvertToString(e.Key) + "\0")[0] ==
+                form_EditSourcePath.Text[0])
+            {
+                e.Handled = true;
+            }
         }
     }
 }

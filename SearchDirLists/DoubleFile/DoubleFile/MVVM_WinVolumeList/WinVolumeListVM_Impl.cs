@@ -6,18 +6,18 @@ namespace DoubleFile
     {
         // Menu items
 
-        internal void LoadProject() { System.Windows.MessageBox.Show("LoadProject"); }
-        internal void SaveProject() { System.Windows.MessageBox.Show("SaveProject"); }
+        internal void LoadProject() { MBox.ShowDialog("LoadProject"); }
+        internal void SaveProject() { MBox.ShowDialog("SaveProject"); }
 
-        internal void NewVolume()
+        internal void NewListingFile()
         {
-            string[] stringValues = null;
+            var lvItemVolumeTemp = new LVitem_VolumeVM(new string[] { });
 
             while (true)
             {
                 var newVolume = new WinVolumeNew();
 
-                newVolume.StringValues = stringValues;
+                newVolume.LVitemVolumeTemp = new LVitem_VolumeVM(lvItemVolumeTemp);
 
                 if ((newVolume.ShowDialog(GetWindow()) ?? false) == false)
                 {
@@ -25,18 +25,18 @@ namespace DoubleFile
                     break;
                 }
 
-                // user accepted
-                if (m_lvVM.NewItem(newVolume.StringValues))
+                if ((false == m_lvVM.AlreadyInProject(null, newVolume.LVitemVolumeTemp.ListingFile)) &&
+                    (false == m_lvVM.FileExists(newVolume.LVitemVolumeTemp.ListingFile)))
                 {
+                    m_lvVM.NewItem(newVolume.LVitemVolumeTemp);
                     break;
                 }
 
-                // volume file is in use
-                stringValues = newVolume.StringValues;
+                lvItemVolumeTemp = new LVitem_VolumeVM(newVolume.LVitemVolumeTemp);
             }
         }
 
-        internal void LoadVolume()
+        internal void LoadListingFile()
         {
             var dlg = new Microsoft.Win32.OpenFileDialog();
 
@@ -51,7 +51,7 @@ namespace DoubleFile
                 }
                 else
                 {
-                    System.Windows.MessageBox.Show("Bad file.");
+                    MBox.ShowDialog("Bad listing file.", "Open Listing File");
                 }
             }
         }

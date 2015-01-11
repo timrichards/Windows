@@ -5,8 +5,8 @@ namespace DoubleFile
 {
     class LVitem_ProgressVM : ListViewItemVM_Base
     {
-        public string VolumeName { get { return marr[0]; } set { SetProperty(0, value); } }
-        public string Path { get { return marr[1]; } set { SetProperty(1, value); } }
+        public string Nickname { get { return marr[0]; } set { SetProperty(0, value); } }
+        public string SourcePath { get { return marr[1]; } set { SetProperty(1, value); } }
 
         const string ksProgress = "Progress";
         const string ksIndeterminate = "Indeterminate";
@@ -91,7 +91,7 @@ namespace DoubleFile
         public Brush ProgressState { get { return m_brushProgressState; } set { m_brushProgressState = value; RaisePropertyChanged(ksProgressState); } }
         public string Remaining { get { return marr[5]; } set { SetProperty(5, value); } }
 
-        readonly static string[] marrPropName = new string[] { "VolumeName", "Path", ksProgress, ksIndeterminate, ksProgressState, "Remaining" };
+        readonly static string[] marrPropName = new string[] { "Nickname", "SourcePath", ksProgress, ksIndeterminate, ksProgressState, "Remaining" };
         internal const int NumCols_ = 6;
 
         internal void SetCompleted()

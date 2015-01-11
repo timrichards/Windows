@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DoubleFile
 {
@@ -25,7 +22,7 @@ namespace DoubleFile
             m_app = GlobalData.static_wpfWin;
 
             var listNicknames = new List<string>();
-            var listPaths = new List<string>();
+            var listSourcePaths = new List<string>();
 
             foreach (LVitem_VolumeVM volStrings in list_lvVolStrings)
             {
@@ -34,14 +31,14 @@ namespace DoubleFile
                     continue;
                 }
 
-                listNicknames.Add(volStrings.VolumeName);
-                listPaths.Add(volStrings.Path);
+                listNicknames.Add(volStrings.Nickname);
+                listSourcePaths.Add(volStrings.SourcePath);
             }
 
-            if (listPaths.Count > 0)
+            if (listSourcePaths.Count > 0)
             {
                 m_winProgress = new WinSaveInProgress();
-                m_winProgress.InitProgress(listNicknames, listPaths);
+                m_winProgress.InitProgress(listNicknames, listSourcePaths);
 
                 if ((gd.m_saveDirListings != null) && (gd.m_saveDirListings.IsAborted == false))
                 {

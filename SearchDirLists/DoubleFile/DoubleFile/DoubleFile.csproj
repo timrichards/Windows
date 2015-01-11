@@ -127,7 +127,7 @@
     <Compile Include="WinSaveInProgress.xaml.cs">
       <DependentUpon>WinSaveInProgress.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinVolumeEdit\IWinVolumeEdit.cs" />
+    <Compile Include="WinVolumeEdit\WinVolumeEditBase.cs" />
     <Compile Include="WinVolumeList.xaml.cs">
       <DependentUpon>WinVolumeList.xaml</DependentUpon>
     </Compile>
@@ -191,6 +191,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="DoubleFile_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">

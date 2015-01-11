@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="DoubleFile.WinVolumeList"
-        Name="form_WinVolumeList" Title="Volume List" MinWidth="400" MinHeight="250" Width="624" Height="426" ShowInTaskbar="False" Icon="Resources/ic_people_black_18dp.png">
+        Name="form_WinVolumeList" Title="Volume List" MinWidth="400" MinHeight="250" Width="624" Height="426" ShowInTaskbar="False" Icon="/Double File;component/Resources/ic_people_black_18dp.png">
     <Grid Loaded="Grid_Loaded">
         <Grid.Resources>
             <ControlTemplate x:Key="templateFlatButton" TargetType="{x:Type Button}">
@@ -47,36 +47,36 @@
                 <MenuItem Header="Load project" Command="{Binding Icmd_LoadProject}" />
                 <MenuItem Header="Save project" Command="{Binding Icmd_SaveProject}"/>
                 <Separator />
-                <MenuItem Header="New volume" Command="{Binding Icmd_NewVolume}"/>
-                <MenuItem Header="Load volume" Command="{Binding Icmd_LoadVolume}"/>
+                <MenuItem Header="New listing file" Command="{Binding Icmd_NewListingFile}"/>
+                <MenuItem Header="Load listing file" Command="{Binding Icmd_LoadListingFile}"/>
                 <Separator />
-                <MenuItem Header="Edit volume" Command="{Binding Icmd_EditVolume}"/>
-                <MenuItem Header="Remove" Command="{Binding Icmd_RemoveVolume}"/>
+                <MenuItem Header="Edit listing file" Command="{Binding Icmd_EditListingFile}"/>
+                <MenuItem Header="Remove" Command="{Binding Icmd_RemoveListingFile}"/>
                 <Separator />
                 <MenuItem Header="Toggle include" Command="{Binding Icmd_ToggleInclude}"/>
                 <MenuItem Header="Set volume group" Command="{Binding Icmd_VolumeGroup}"/>
             </MenuItem>
-            <Button Command="{Binding Icmd_NewVolume}" Style="{StaticResource styleFlatButton}">
+            <Button Command="{Binding Icmd_NewListingFile}" Style="{StaticResource styleFlatButton}">
                 <Image Source="resources/ic_add_circle_black_18dp.png" Width="18" />
             </Button>
-            <Button Command="{Binding Icmd_RemoveVolume}" Style="{StaticResource styleFlatButton}">
+            <Button Command="{Binding Icmd_RemoveListingFile}" Style="{StaticResource styleFlatButton}">
                 <Image Source="resources/ic_remove_circle_black_18dp.png" Width="18" />
             </Button>
-            <Button Command="{Binding Icmd_EditVolume}" Style="{StaticResource styleFlatButton}">
+            <Button Command="{Binding Icmd_EditListingFile}" Style="{StaticResource styleFlatButton}">
                 <Image Source="resources/ic_create_black_18dp.png" Width="18" />
             </Button>
         </Menu>
         <ListView Name="form_lvVolumeList" Margin="10,30,10,60">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Volume name" DisplayMemberBinding="{Binding VolumeName}" Width="{Binding WidthVolumeName}"/>
-                    <GridViewColumn Header="Path" DisplayMemberBinding="{Binding Path}" Width="{Binding WidthPath}"/>
-                    <GridViewColumn Header="Save to file" DisplayMemberBinding="{Binding SaveAs}" Width="{Binding WidthSaveAs}"/>
+                    <GridViewColumn Header="Nickname" DisplayMemberBinding="{Binding Nickname}" Width="{Binding WidthNickname}"/>
+                    <GridViewColumn Header="Source path" DisplayMemberBinding="{Binding SourcePath}" Width="{Binding WidthSourcePath}"/>
+                    <GridViewColumn Header="Listing file" DisplayMemberBinding="{Binding ListingFile}" Width="{Binding WidthListingFile}"/>
                     <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="{Binding WidthStatus}"/>
-                    <GridViewColumn Header="Include in search" DisplayMemberBinding="{Binding IncludeStr}" Width="{Binding WidthIncludeStr}"/>
+                    <GridViewColumn Header="Include in search" DisplayMemberBinding="{Binding IncludeYN}" Width="{Binding WidthIncludeYN}"/>
                     <GridViewColumn Header="Volume group" DisplayMemberBinding="{Binding VolumeGroup}" Width="{Binding WidthVolumeGroup}"/>
-                    <GridViewColumn Header="Drive Model" DisplayMemberBinding="{Binding DriveModel}" Width="{Binding WidthDriveModel}"/>
-                    <GridViewColumn Header="Drive Serial" DisplayMemberBinding="{Binding DriveSerial}" Width="{Binding WidthDriveSerial}"/>
+                    <GridViewColumn Header="Drive model" DisplayMemberBinding="{Binding DriveModel}" Width="{Binding WidthDriveModel}"/>
+                    <GridViewColumn Header="Drive serial" DisplayMemberBinding="{Binding DriveSerial}" Width="{Binding WidthDriveSerial}"/>
                 </GridView>
             </ListView.View>
         </ListView>

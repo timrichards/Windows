@@ -49,7 +49,7 @@ namespace DoubleFile
                     continue;
                 }
 
-                m_statusCallback(volStrings.Path, "Saving...");
+                m_statusCallback(volStrings.SourcePath, "Saving...");
                 m_cbagWorkers.Add(new SaveDirListing(volStrings, m_statusCallback).DoThreadFactory());
             }
 

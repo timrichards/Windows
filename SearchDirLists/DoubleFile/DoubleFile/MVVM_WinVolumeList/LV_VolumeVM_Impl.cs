@@ -4,58 +4,25 @@ namespace DoubleFile
 {
     partial class LV_VolumeVM
     {
-        internal void EditVolume()
+        internal bool AlreadyInProject(LVitem_VolumeVM lvCurrentItem, string strFilename = null)
         {
-            Selected().FirstOnlyAssert(lvItem =>
+            bool bAlreadyInProject = (ContainsListingFile(lvCurrentItem, strFilename) != null);
+
+            if (bAlreadyInProject)
             {
-                while (true)
-                {
-                    IWinVolumeEdit dlg = SaveDirListings.WontSave(lvItem) ?
-                        (IWinVolumeEdit)new WinVolumeEdit() :
-                        new WinVolumeNew();
-
-                    dlg.StringValues = lvItem.StringValues;
-
-                    if ((dlg.ShowDialog(GetWindow()) ?? false) == false)
-                    {
-                        // user cancelled
-                        break;
-                    }
-
-                    if (AlreadyInUse(lvItem, dlg.StringValues[2]) == false)
-                    {
-                        if (dlg is WinVolumeEdit)
-                        {
-                            ModifyFile(lvItem.StringValues, dlg.StringValues, (dlg as WinVolumeEdit).uc_VolumeEdit.DriveLetter);
-                        }
-
-                        lvItem.StringValues = dlg.StringValues;
-                        break;
-                    }
-                }
-            });
-        }
-
-        internal override bool NewItem(string[] arrStr, bool bQuiet = false)
-        {
-            var lvItem = new LVitem_VolumeVM(this, arrStr);
-            var bAlreadyInUse = AlreadyInUse(lvItem);
-
-            if (bAlreadyInUse == false)
-            {
-                Add(lvItem, bQuiet);
+                MBox.ShowDialog("Listing file already in the project.", "Add Listing File");
             }
 
-            return (bAlreadyInUse == false);
+            return bAlreadyInProject;
         }
 
-        internal LVitem_VolumeVM ContainsSaveAs(LVitem_VolumeVM currentItem, string t = null)
+        internal LVitem_VolumeVM ContainsListingFile(LVitem_VolumeVM currentItem, string t = null)
         {
-            string s = (t ?? currentItem.SaveAs).ToLower();
+            string s = (t ?? currentItem.ListingFile).ToLower();
 
             foreach (LVitem_VolumeVM item in m_items)
             {
-                if ((item.SaveAs.ToLower() == s)
+                if ((item.ListingFile.ToLower() == s)
                     && ((t == null) || (currentItem != item)))
                 {
                     return item;
@@ -65,7 +32,77 @@ namespace DoubleFile
             return null;
         }
 
-        internal void RemoveVolume()
+        internal void EditListingFile()
+        {
+            Selected().FirstOnlyAssert(lvItem =>
+            {
+                LVitem_VolumeVM lvItemVolumeTemp = new LVitem_VolumeVM(lvItem);
+
+                while (true)
+                {
+                    WinVolumeEditBase dlg = SaveDirListings.WontSave(lvItem) ?
+                        (WinVolumeEditBase)new WinVolumeEdit() :
+                        new WinVolumeNew();
+
+                    dlg.LVitemVolumeTemp = new LVitem_VolumeVM(lvItemVolumeTemp);
+
+                    if (false == (dlg.ShowDialog(GetWindow()) ?? false))
+                    {
+                        // user cancelled
+                        break;
+                    }
+
+                    lvItemVolumeTemp = new LVitem_VolumeVM(dlg.LVitemVolumeTemp);
+
+                    if (false == AlreadyInProject(lvItem, lvItemVolumeTemp.ListingFile))
+                    {
+                        if (dlg is WinVolumeEdit)
+                        {
+                            ModifyFile(lvItem, lvItemVolumeTemp, (dlg as WinVolumeEdit).uc_VolumeEdit.DriveLetter);
+                        }
+                        else if (FileExists(lvItemVolumeTemp.ListingFile))
+                        {
+                            continue;
+                        }
+
+                        lvItem.StringValues = lvItemVolumeTemp.StringValues;
+                        break;
+                    }
+                }
+            });
+        }
+
+        internal bool FileExists(string strListingFile)
+        {
+            bool bFileExists = System.IO.File.Exists(strListingFile);
+
+            if (bFileExists)
+            {
+                MBox.ShowDialog("Listing file exists. Please manually delete it using the File Save dialog\nby clicking the icon button after this alert closes.", "New Listing File");
+            }
+
+            return bFileExists;
+        }
+
+        internal bool NewItem(LVitem_VolumeVM lvItem, bool bQuiet = false)
+        {
+            return NewItem(lvItem.StringValues, bQuiet);
+        }
+
+        internal override bool NewItem(string[] arrStr, bool bQuiet = false)
+        {
+            var lvItem = new LVitem_VolumeVM(arrStr);
+            var bAlreadyInProject = AlreadyInProject(lvItem);
+
+            if (false == bAlreadyInProject)
+            {
+                Add(lvItem, bQuiet);
+            }
+
+            return (false == bAlreadyInProject);
+        }
+
+        internal void RemoveListingFile()
         {
             bool bUnsaved = false;
 
@@ -76,13 +113,13 @@ namespace DoubleFile
                     return;     // from lambda
                 }
 
-                if (SaveDirListings.WontSave(lvItem) == false)
+                if (false == SaveDirListings.WontSave(lvItem))
                 {
                     bUnsaved = true;
                 }
             });
 
-            if (bUnsaved && (MBox.ShowDialog("Selected listings have not been saved. Continue?", "Remove volume",
+            if (bUnsaved && (MBox.ShowDialog("Selected listings have not been saved. Continue?", "Remove Listing File",
                 System.Windows.MessageBoxButton.YesNo) !=
                 System.Windows.MessageBoxResult.Yes))
             {
@@ -92,30 +129,18 @@ namespace DoubleFile
             Selected().ToArray().ForEach(lvItem => { Items.Remove(lvItem); });
         }
 
+        internal void SetVolumeGroup() { MBox.ShowDialog("SetVolumeGroup"); }
+
         internal void ToggleInclude()
         {
-            Selected().ForEach(lvItem => { lvItem.Include = (lvItem.Include == false); });
+            Selected().ForEach(lvItem => { lvItem.Include = (false == lvItem.Include); });
         }
 
-        internal void SetVolumeGroup() { System.Windows.MessageBox.Show("SetVolumeGroup"); }
-
-        bool AlreadyInUse(LVitem_VolumeVM lvCurrentItem, string strFilename = null)
+        void ModifyFile(LVitem_VolumeVM origLVitemVolume, LVitem_VolumeVM lvItemVolumeTemp, char driveLetter)
         {
-            bool bAlreadyInUse = (ContainsSaveAs(lvCurrentItem, strFilename) != null);
-
-            if (bAlreadyInUse)
+            if (false == FileParse.ValidateFile(origLVitemVolume.ListingFile))
             {
-                System.Windows.MessageBox.Show("File already in list of volumes.");
-            }
-
-            return bAlreadyInUse;
-        }
-
-        void ModifyFile(string[] origStringValues, string[] dlgStringValues, char driveLetter)
-        {
-            if (FileParse.ValidateFile(origStringValues[1]) == false)
-            {
-                MBox.ShowDialog("File is bad.", "Edit Listing File");
+                MBox.ShowDialog("Bad listing file.", "Edit Listing File");
                 return;
             }
 
@@ -124,7 +149,8 @@ namespace DoubleFile
 
             driveLetter = char.ToUpper(driveLetter);
 
-            var bDriveLetter = (char.IsLetter(driveLetter) && driveLetter != origStringValues[1][0]);
+            var bDriveLetter = (char.IsLetter(driveLetter) &&
+                driveLetter != origLVitemVolume.SourcePath.ToUpper()[0]);
             //else if (bDriveLetter)
             //{
             //sbLine.Replace("\t" + strDriveLetter_orig + @":\", "\t" + strDriveLetter + @":\");

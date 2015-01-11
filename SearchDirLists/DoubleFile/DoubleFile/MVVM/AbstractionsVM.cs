@@ -83,7 +83,6 @@ namespace DoubleFile
         protected virtual void ActOnDirectSelChange() { }
 
         internal string this[int i] { get { return marr[i]; } }
-        internal int Index = -1;
 
         internal string[] StringValues
         {
@@ -104,7 +103,6 @@ namespace DoubleFile
 
         ListViewItemVM_Base(ListViewVM_Base lvvm)
         {
-            Index = lvvm.Count;
             LVVM = lvvm;
         }
 
@@ -114,7 +112,11 @@ namespace DoubleFile
             MBox.Assert(0, arrStr.Length <= NumCols);
             marr = new string[NumCols];
             arrStr.CopyTo(marr, 0);
-            RaiseColumnWidths();
+
+            if (lvvm != null)
+            {
+                RaiseColumnWidths();
+            }
         }
 
         internal ListViewItemVM_Base(ListViewVM_Base lvvm, ListViewItem datum_in)   // e.g. Clones LVs: datum
@@ -158,7 +160,7 @@ namespace DoubleFile
             RaiseColumnWidths();
         }
 
-        internal readonly ListViewVM_Base LVVM = null;
+        internal ListViewVM_Base LVVM = null;
 
         internal abstract int NumCols { get; }
         protected abstract string[] PropertyNames { get; }
@@ -179,12 +181,13 @@ namespace DoubleFile
 
         public ObservableCollection<ListViewItemVM_Base> Items { get { return m_items; } }
 
-        internal virtual bool NewItem(string[] arrSt, bool bQuiet = false) { MBox.Assert(0, false); return false; }
+        internal virtual bool NewItem(string[] arrStr, bool bQuiet = false) { MBox.Assert(0, false); return false; }
         internal virtual bool NewItem(ListViewItem datum_in, bool bQuiet = false) { MBox.Assert(0, false); return false; }
         internal abstract int NumCols { get; }
 
         internal void Add(ListViewItemVM_Base item, bool bQuiet = false)
         {
+            item.LVVM = this;
             m_items.Add(item);
 
             if (bQuiet == false)

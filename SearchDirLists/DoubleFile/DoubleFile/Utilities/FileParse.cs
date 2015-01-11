@@ -128,12 +128,6 @@ namespace DoubleFile
                             {
                                 strLine = file_in.ReadLine();
                                 ++nLineNo;
-
-                                if (strLine.Length <= 0)
-                                {
-                                    break;
-                                }
-
                                 file_out.WriteLine(FormatLine(mSTRlineType_DriveInfo, nLineNo, strLine));
                             }
 

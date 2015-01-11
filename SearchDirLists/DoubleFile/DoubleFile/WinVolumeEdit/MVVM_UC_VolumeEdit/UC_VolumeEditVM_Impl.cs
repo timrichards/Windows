@@ -34,16 +34,17 @@ namespace DoubleFile
             }
         }
 
-        internal void EditListingPath()
+        internal void EditListingFile()
         {
-            string strPath = ListingPath_CurrentText();
+            string strPath = ListingFile_CurrentText();
             var dlg = new Microsoft.Win32.SaveFileDialog();
 
             dlg.FileName = strPath;
+            dlg.OverwritePrompt = false;
 
             if (dlg.ShowDialog(GetWindow()) ?? false)
             {
-                FromListingPathDlg(dlg.FileName);
+                FromListingFileDlg(dlg.FileName);
             }
         }
     }

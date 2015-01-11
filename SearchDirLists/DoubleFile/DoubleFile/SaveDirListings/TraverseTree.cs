@@ -36,7 +36,7 @@ namespace DoubleFile
                 var stackDirs = new Stack<Win32FindFile.DATUM>(64);
                 Win32FindFile.DATUM winRoot;
 
-                Win32FindFile.FileData.WinFile(m_volStrings.Path, out winRoot);
+                Win32FindFile.FileData.WinFile(m_volStrings.SourcePath, out winRoot);
                 stackDirs.Push(winRoot);
 
                 var listFilePaths = new List<string>();

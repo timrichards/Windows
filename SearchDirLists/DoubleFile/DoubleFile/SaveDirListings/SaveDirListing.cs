@@ -23,8 +23,8 @@ namespace DoubleFile
             void WriteHeader(TextWriter fs)
             {
                 fs.WriteLine(mSTRheader01);
-                fs.WriteLine(m_volStrings.VolumeName);
-                fs.WriteLine(m_volStrings.Path);
+                fs.WriteLine(m_volStrings.Nickname);
+                fs.WriteLine(m_volStrings.SourcePath);
 
                 var strModel = m_volStrings.DriveModel;
                 var strSerialNo = m_volStrings.DriveSerial;
@@ -32,13 +32,13 @@ namespace DoubleFile
 
                 if (string.IsNullOrWhiteSpace(strModel))
                 {
-                    DriveSerial.Get(m_volStrings.Path, out strModel, out strSerialNo, out nSize);
+                    DriveSerial.Get(m_volStrings.SourcePath, out strModel, out strSerialNo, out nSize);
                 }
 
                 if ((string.IsNullOrWhiteSpace(m_volStrings.DriveSerial) == false) &&
                     (string.IsNullOrWhiteSpace(strSerialNo) == false) &&
                     (strSerialNo != m_volStrings.DriveSerial) &&
-                    ((MBox.ShowDialog("Overwrite user-entered serial number for " + m_volStrings.Path + " ?", "Save Directory Listings",
+                    ((MBox.ShowDialog("Overwrite user-entered serial number for " + m_volStrings.SourcePath + " ?", "Save Directory Listings",
                         System.Windows.MessageBoxButton.YesNo) ==
                         System.Windows.MessageBoxResult.No)))
                 {
@@ -47,7 +47,7 @@ namespace DoubleFile
 
                 fs.WriteLine(mSTRdrive01);
 
-                var driveInfo = new DriveInfo(m_volStrings.Path[0] + @":\");
+                var driveInfo = new DriveInfo(m_volStrings.SourcePath[0] + @":\");
                 var sb = new StringBuilder();
                 var WriteLine = new Action<Object>((o) =>
                 {
@@ -65,9 +65,9 @@ namespace DoubleFile
                 WriteLine(driveInfo.TotalFreeSpace);
                 WriteLine(driveInfo.TotalSize);
                 WriteLine(driveInfo.VolumeLabel);
-                if (strModel != null) WriteLine(strModel);
-                if (strSerialNo != null) WriteLine(strSerialNo);
-                if (nSize != null) WriteLine(nSize);
+                WriteLine(strModel ?? "");
+                WriteLine(strSerialNo ?? "");
+                WriteLine(nSize ?? 0);
 
                 fs.WriteLine(sb.ToString().Trim());
             }
@@ -89,7 +89,7 @@ namespace DoubleFile
 
                 System.Threading.Timer timer = new System.Threading.Timer(new TimerCallback((Object state) =>
                 {
-                    m_statusCallback(m_volStrings.Path, nProgress: nProgressNumerator / nProgressDenominator);
+                    m_statusCallback(m_volStrings.SourcePath, nProgress: nProgressNumerator / nProgressDenominator);
                 }), null, timeSpan, timeSpan);
 
                 var dictHash = new Dictionary<string, string>();
@@ -131,26 +131,26 @@ namespace DoubleFile
                 timer.Dispose();
                 dictHash_out = dictHash;
                 dictException_FileRead_out = dictException_FileRead;
-                m_statusCallback(m_volStrings.Path, nProgress: 1);
+                m_statusCallback(m_volStrings.SourcePath, nProgress: 1);
             }
 
             void Go()
             {
-                if (IsGoodDriveSyntax(m_volStrings.Path) == false)
+                if (IsGoodDriveSyntax(m_volStrings.SourcePath) == false)
                 {
                     MBox.ShowDialog("Bad drive syntax.", "Save Directory Listing");
                 }
 
-                if (Directory.Exists(m_volStrings.Path) == false)
+                if (Directory.Exists(m_volStrings.SourcePath) == false)
                 {
-                    m_statusCallback(m_volStrings.Path, mSTRnotSaved);
+                    m_statusCallback(m_volStrings.SourcePath, mSTRnotSaved);
                     MBox.ShowDialog("Source Path does not exist.", "Save Directory Listing");
                     return;
                 }
 
-                if (string.IsNullOrWhiteSpace(m_volStrings.SaveAs))
+                if (string.IsNullOrWhiteSpace(m_volStrings.ListingFile))
                 {
-                    m_statusCallback(m_volStrings.Path, mSTRnotSaved);
+                    m_statusCallback(m_volStrings.SourcePath, mSTRnotSaved);
                     MBox.ShowDialog("Must specify save filename.", "Save Directory Listing");
                     return;
                 }
@@ -159,7 +159,7 @@ namespace DoubleFile
 
                 try
                 {
-                    using (TextWriter fs = File.CreateText(m_volStrings.SaveAs))
+                    using (TextWriter fs = File.CreateText(m_volStrings.ListingFile))
                     {
                         Dictionary<string, string> dictHash = null;
                         Dictionary<string, string> dictException_FileRead = null;
@@ -190,7 +190,7 @@ namespace DoubleFile
                     }
 
                     Directory.SetCurrentDirectory(strPathOrig);
-                    m_statusCallback(m_volStrings.Path, strText: mSTRsaved, bDone: true);
+                    m_statusCallback(m_volStrings.SourcePath, strText: mSTRsaved, bDone: true);
                 }
 #if DEBUG == false
                 catch (Exception e)

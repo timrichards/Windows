@@ -8,11 +8,11 @@ namespace DoubleFile
         public ICommand Icmd_LoadProject { get { return mIcmd_LoadProject; } }
         public ICommand Icmd_SaveProject { get { return mIcmd_SaveProject; } }
 
-        public ICommand Icmd_NewVolume { get { return mIcmd_NewVolume; } }
-        public ICommand Icmd_LoadVolume { get { return mIcmd_LoadVolume; } }
+        public ICommand Icmd_NewListingFile { get { return mIcmd_NewListingFile; } }
+        public ICommand Icmd_LoadListingFile { get { return mIcmd_LoadListingFile; } }
 
-        public ICommand Icmd_EditVolume { get { return mIcmd_EditVolume; } }
-        public ICommand Icmd_RemoveVolume { get { return mIcmd_RemoveVolume; } }
+        public ICommand Icmd_EditListingFile { get { return mIcmd_EditListingFile; } }
+        public ICommand Icmd_RemoveListingFile { get { return mIcmd_RemoveListingFile; } }
 
         public ICommand Icmd_ToggleInclude { get { return mIcmd_ToggleInclude; } }
         public ICommand Icmd_VolumeGroup { get { return mIcmd_VolumeGroup; } }
@@ -20,11 +20,11 @@ namespace DoubleFile
         readonly ICommand mIcmd_LoadProject = null;
         readonly ICommand mIcmd_SaveProject = null;
 
-        readonly ICommand mIcmd_NewVolume = null;
-        readonly ICommand mIcmd_LoadVolume = null;
+        readonly ICommand mIcmd_NewListingFile = null;
+        readonly ICommand mIcmd_LoadListingFile = null;
 
-        readonly ICommand mIcmd_EditVolume = null;
-        readonly ICommand mIcmd_RemoveVolume = null;
+        readonly ICommand mIcmd_EditListingFile = null;
+        readonly ICommand mIcmd_RemoveListingFile = null;
 
         readonly ICommand mIcmd_ToggleInclude = null;
         readonly ICommand mIcmd_VolumeGroup = null;
@@ -34,11 +34,11 @@ namespace DoubleFile
             mIcmd_LoadProject = new RelayCommand(param => { LoadProject(); });
             mIcmd_SaveProject = new RelayCommand(param => { SaveProject(); });
 
-            mIcmd_NewVolume = new RelayCommand(param => { NewVolume(); });
-            mIcmd_LoadVolume = new RelayCommand(param => { LoadVolume(); });
+            mIcmd_NewListingFile = new RelayCommand(param => { NewListingFile(); });
+            mIcmd_LoadListingFile = new RelayCommand(param => { LoadListingFile(); });
 
-            mIcmd_EditVolume = new RelayCommand(param => { m_lvVM.EditVolume(); }, param => m_lvVM.SelectedOne());
-            mIcmd_RemoveVolume = new RelayCommand(param => { m_lvVM.RemoveVolume(); }, param => m_lvVM.SelectedAny());
+            mIcmd_EditListingFile = new RelayCommand(param => { m_lvVM.EditListingFile(); }, param => m_lvVM.SelectedOne());
+            mIcmd_RemoveListingFile = new RelayCommand(param => { m_lvVM.RemoveListingFile(); }, param => m_lvVM.SelectedAny());
 
             mIcmd_ToggleInclude = new RelayCommand(param => { m_lvVM.ToggleInclude(); }, param => m_lvVM.SelectedAny());
             mIcmd_VolumeGroup = new RelayCommand(param => { m_lvVM.SetVolumeGroup(); }, param => m_lvVM.SelectedAny());

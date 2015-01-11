@@ -5,26 +5,24 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinVolumeEdit.xaml
     /// </summary>
-    partial class WinVolumeEdit : Window, IWinVolumeEdit
+    partial class WinVolumeEdit : WinVolumeEditBase
     {
-        public string[] StringValues
+        public WinVolumeEdit()
+        {
+            InitializeComponent();
+        }
+
+        internal override LVitem_VolumeVM LVitemVolumeTemp
         {
             get
             {
-                return uc_VolumeEdit.StringValues;
+                return new LVitem_VolumeVM(uc_VolumeEdit.LVitemVolumeTemp);
             }
 
             set
             {
-                uc_VolumeEdit.StringValues = value;
+                uc_VolumeEdit.LVitemVolumeTemp = new LVitem_VolumeVM(value);
             }
-        }
-
-        public bool? ShowDialog(System.Windows.Window me) { Owner = me; return base.ShowDialog(); }
-
-        public WinVolumeEdit()
-        {
-            InitializeComponent();
         }
     }
 }

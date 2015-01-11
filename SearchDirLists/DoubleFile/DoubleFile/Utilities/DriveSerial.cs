@@ -142,13 +142,13 @@ namespace DoubleFile
             FileAttributes dwFlagsAndAttributes,
             IntPtr hTemplateFile);
 
-        internal static void Get(string strPath, out string strDriveModel_out, out string strDriveSerial_out, out int? nSize_out)
+        internal static void Get(string strPath, out string strDriveModel_out, out string strDriveSerial_out, out ulong? nSize_out)
         {
             var letter = strPath.Substring(0, 2);
 
             string strDriveModel = null;
             string strDriveSerial = null;
-            object objSize = null;
+            ulong? nSize = null;
 
             //var query = new STORAGE_PROPERTY_QUERY { PropertyId = 0, QueryType = 0 };
             //var qsize = Marshal.SizeOf(query);
@@ -208,7 +208,7 @@ namespace DoubleFile
                             Utilities.WriteLine(prop.Name + "\t\t\t" + prop.Value);
                         }
 
-                        try { objSize = diskDrive["Size"]; } catch { }
+                        try { nSize = (ulong?)diskDrive["Size"]; } catch { }
                         try { strDriveModel = diskDrive["DriveModel"].ToPrintString(); } catch { }
 
                         if ((strDriveModel == null) || (strDriveModel.Trim().Length == 0))
@@ -235,18 +235,9 @@ namespace DoubleFile
             }));
 
             // out parameters can't be in lambda
-            nSize_out = null;
-
             strDriveModel_out = strDriveModel;
             strDriveSerial_out = strDriveSerial;
-
-            if ((objSize as string) != null)
-            {
-                int n = 0;
-
-                int.TryParse(objSize as string, out n);
-                nSize_out = n;
-            }
+            nSize_out = nSize;
         }
     }
 }

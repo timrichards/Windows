@@ -19,7 +19,7 @@ namespace DoubleFile
         internal const string mSTRend = mSTRheader + " END";
         internal const string mSTRerrorsLoc = mSTRheader + " ERRORS";
         internal const string mSTRtotalLengthLoc = mSTRheader + " LENGTH";
-        internal const string mSTRdrive = mSTRheader + " DRIVE";
+        internal const string mSTRvolume = mSTRheader + " VOLUME";
         internal const string mSTRvolListHeader = mSTRheader + " VOLUME LIST";
         internal const string mSTRcopyScratchpadHeader = mSTRheader + " COPYDIRS LIST";
         internal const string mSTRignoreListHeader = mSTRheader + " IGNORE LIST";
@@ -35,7 +35,18 @@ namespace DoubleFile
         internal const string mSTRlineType_Version = "V";
         internal const string mSTRlineType_Nickname = "N";
         internal const string mSTRlineType_Path = "P";
-        internal const string mSTRlineType_DriveInfo = "I";
+        internal const string mSTRlineType_VolumeInfo = "I";
+        internal const string mSTRlineType_VolumeInfo_Free = "Info: Free";
+        internal const string mSTRlineType_VolumeInfo_Format = "Info: Format";
+        internal const string mSTRlineType_VolumeInfo_DriveType = "Info: DriveType";
+        internal const string mSTRlineType_VolumeInfo_Name = "Info: Name";
+        internal const string mSTRlineType_VolumeInfo_Root = "Info: Root";
+        internal const string mSTRlineType_VolumeInfo_Free2 = "Info: Free2";
+        internal const string mSTRlineType_VolumeInfo_Size = "Info: Size";
+        internal const string mSTRlineType_VolumeInfo_Label = "Info: Label";
+        internal const string mSTRlineType_VolumeInfo_DriveModel = "Info: DriveModel";
+        internal const string mSTRlineType_VolumeInfo_DriveSerial = "Info: DriveSerial";
+        internal const string mSTRlineType_VolumeInfo_DriveSize = "Info: DriveSize";
         internal const string mSTRlineType_Comment = "C";
         internal const string mSTRlineType_Start = "S";
         internal const string mSTRlineType_Directory = "D";
@@ -121,14 +132,23 @@ namespace DoubleFile
                         else if (strLine == mSTRdrive01)
                         {
                             MBox.Assert(0, nLineNo == 4);
-                            file_out.WriteLine(FormatLine(mSTRlineType_Comment, nLineNo, mSTRdrive));
+                            file_out.WriteLine(FormatLine(mSTRlineType_Comment, nLineNo, mSTRvolume));
+
+                            string[] astrInfoLineTypes = new string[knDriveInfoItems]
+                            {
+                                mSTRlineType_VolumeInfo_Free, mSTRlineType_VolumeInfo_Format, mSTRlineType_VolumeInfo_DriveType,
+                                mSTRlineType_VolumeInfo_Name, mSTRlineType_VolumeInfo_Root, mSTRlineType_VolumeInfo_Free2,
+                                mSTRlineType_VolumeInfo_Size, mSTRlineType_VolumeInfo_Label,
+                                mSTRlineType_VolumeInfo_DriveModel, mSTRlineType_VolumeInfo_DriveSerial,
+                                mSTRlineType_VolumeInfo_DriveSize
+                            };
 
                             int ixDriveInfo = 0;
                             for (; ixDriveInfo < mAstrDIlabels.Length; ++ixDriveInfo)
                             {
                                 strLine = file_in.ReadLine();
                                 ++nLineNo;
-                                file_out.WriteLine(FormatLine(mSTRlineType_DriveInfo, nLineNo, strLine));
+                                file_out.WriteLine(FormatLine(astrInfoLineTypes[ixDriveInfo], nLineNo, strLine));
                             }
 
                             if (ixDriveInfo == mAstrDIlabels.Length)

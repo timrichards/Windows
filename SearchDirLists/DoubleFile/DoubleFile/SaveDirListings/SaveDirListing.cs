@@ -28,7 +28,7 @@ namespace DoubleFile
 
                 var strModel = m_volStrings.DriveModel;
                 var strSerialNo = m_volStrings.DriveSerial;
-                int? nSize = null;
+                ulong? nSize = null;
 
                 if (string.IsNullOrWhiteSpace(strModel))
                 {

@@ -21,7 +21,7 @@ namespace DoubleFile
 
             if (IsOKenabled())
             {
-                int? nSize;
+                ulong? nSize;
                 var probeStruct = new ProbeStruct();
 
                 DriveSerial.Get(strPath, out probeStruct.DriveModel, out probeStruct.DriveSerial, out nSize);

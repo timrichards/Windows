@@ -22,8 +22,8 @@ namespace DoubleFile
 
             foreach (LVitem_VolumeVM item in m_items)
             {
-                if ((item.ListingFile.ToLower() == s)
-                    && ((t == null) || (currentItem != item)))
+                if ((item.ListingFile.ToLower() == s) &&
+                    ((t == null) || (currentItem != item)))
                 {
                     return item;
                 }

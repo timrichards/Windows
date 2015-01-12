@@ -38,7 +38,7 @@ namespace DoubleFile
                 if ((string.IsNullOrWhiteSpace(m_volStrings.DriveSerial) == false) &&
                     (string.IsNullOrWhiteSpace(strSerialNo) == false) &&
                     (strSerialNo != m_volStrings.DriveSerial) &&
-                    ((MBox.ShowDialog("Overwrite user-entered serial number for " + m_volStrings.SourcePath + " ?", "Save Directory Listings",
+                    ((MBox.ShowDialog("Overwrite user-entered serial number for " + m_volStrings.SourcePath[0] + @":\ ?", "Save Directory Listings",
                         System.Windows.MessageBoxButton.YesNo) ==
                         System.Windows.MessageBoxResult.No)))
                 {
@@ -49,12 +49,15 @@ namespace DoubleFile
 
                 var driveInfo = new DriveInfo(m_volStrings.SourcePath[0] + @":\");
                 var sb = new StringBuilder();
+                int nCount = 0;
+
                 var WriteLine = new Action<Object>((o) =>
                 {
                     var s = (o != null) ? o.ToString() : null;
 
                     // Hack. Prevent blank line continue in Utilities.Convert()
                     sb.AppendLine(((s == null) || (s.Length <= 0)) ? " " : s.Trim());
+                    ++nCount;
                 });
 
                 WriteLine(driveInfo.AvailableFreeSpace); // These could all be named better, so mAstrDIlabels is different.
@@ -65,10 +68,10 @@ namespace DoubleFile
                 WriteLine(driveInfo.TotalFreeSpace);
                 WriteLine(driveInfo.TotalSize);
                 WriteLine(driveInfo.VolumeLabel);
-                WriteLine(strModel ?? "");
-                WriteLine(strSerialNo ?? "");
-                WriteLine(nSize ?? 0);
-
+                WriteLine(strModel);
+                WriteLine(strSerialNo);
+                WriteLine(nSize);
+                MBox.Assert(0, nCount == FileParse.knDriveInfoItems);
                 fs.WriteLine(sb.ToString().Trim());
             }
 

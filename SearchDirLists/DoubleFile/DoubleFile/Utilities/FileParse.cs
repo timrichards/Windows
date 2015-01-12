@@ -62,7 +62,7 @@ namespace DoubleFile
         internal const string mSTRfileExt_Copy = "sdl_copy";
         internal const string mSTRfileExt_Ignore = "sdl_ignore";
 
-        const int knDriveInfoItems = 11;
+        internal const int knDriveInfoItems = 11;
         internal static readonly string[] mAstrDIlabels = new string[knDriveInfoItems]
         {
             "Volume Free",
@@ -143,26 +143,35 @@ namespace DoubleFile
                                 mSTRlineType_VolumeInfo_DriveSize
                             };
 
-                            int ixDriveInfo = 0;
-                            for (; ixDriveInfo < mAstrDIlabels.Length; ++ixDriveInfo)
+                            var bHitBlankLine = false;
+                            
+                            for (var ixDriveInfo = 0; ixDriveInfo < knDriveInfoItems; ++ixDriveInfo)
                             {
-                                strLine = file_in.ReadLine();
+                                strLine = bHitBlankLine ? "" : file_in.ReadLine();
+
+                                if ((false == bHitBlankLine) && (strLine.Length <= 0))
+                                {
+                                    bHitBlankLine = true;
+                                }
+
                                 ++nLineNo;
                                 file_out.WriteLine(FormatLine(astrInfoLineTypes[ixDriveInfo], nLineNo, strLine));
                             }
 
-                            if (ixDriveInfo == mAstrDIlabels.Length)
+                            if (false == bHitBlankLine)
                             {
                                 strLine = file_in.ReadLine();
-                                ++nLineNo;
                             }
-
+                            
+                            ++nLineNo;
                             file_out.WriteLine(FormatLine(mSTRlineType_Blank, nLineNo));
-                            ++nLineNo;
+
                             strLine = file_in.ReadLine();
+                            ++nLineNo;
                             file_out.WriteLine(FormatLine(mSTRlineType_Comment, nLineNo, FormatString(nHeader: 0)));
-                            ++nLineNo;
+
                             strLine = file_in.ReadLine();
+                            ++nLineNo;
                             file_out.WriteLine(FormatLine(mSTRlineType_Comment, nLineNo, FormatString(nHeader: 1)));
                             continue;
                         }

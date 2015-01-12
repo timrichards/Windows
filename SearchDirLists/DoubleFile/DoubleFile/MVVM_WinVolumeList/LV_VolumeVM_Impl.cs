@@ -78,7 +78,7 @@ namespace DoubleFile
 
             if (bFileExists)
             {
-                MBox.ShowDialog("Listing file exists. Please manually delete it using the File Save dialog\nby clicking the icon button after this alert closes.", "New Listing File");
+                MBox.ShowDialog("Listing file exists. Please manually delete it using the Save As dialog\nby clicking the icon button after this alert closes.", "New Listing File");
             }
 
             return bFileExists;
@@ -158,8 +158,8 @@ namespace DoubleFile
 
         // volume group is part of the project file, not the listing file
 
-        // drive model; drive serial means adding new lines if they were omitted. Instead create two more line types and have
-        // them always in place after conversion. Otherwise the line numbers will be off.
+            // mSTRlineType_VolumeInfo_DriveModel
+            // mSTRlineType_VolumeInfo_DriveSerial
         }
 
 #if false

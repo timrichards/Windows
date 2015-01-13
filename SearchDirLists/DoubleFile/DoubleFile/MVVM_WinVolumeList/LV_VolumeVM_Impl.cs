@@ -193,48 +193,38 @@ namespace DoubleFile
 
                     var sbLine = new System.Text.StringBuilder(strLine);
 
-                    var Replace = new System.Action<string, string>((s1, s2) =>
+                    var Replace = new System.Action<string>((s2) =>
                     {
-                        if (false == string.IsNullOrWhiteSpace(s1))
-                        {
-                            sbLine.Replace(s1, (s2 ?? ""));
-                        }
-                        else
-                        {
-                            var astr = sbLine.ToString().Split('\t');
-                            var nCols = astr.Length;
+                        var astr = sbLine.ToString().Split('\t').ToList();
 
-                            MBox.Assert(1308.9313, astr.Length == 2);
+                        MBox.Assert(1308.9312, astr.Count == 3);
 
-                            if (astr.Length == 2)
-                            {
-                                sbLine.Append('\t');
-                                sbLine.Append(s2);
-                            }
-                            else if (astr.Length >= 3)
-                            {
-                                MBox.Assert(1308.9313, astr.Length == 3);
-                                sbLine.Replace(astr[2], s2);
-                            }
+                        while (astr.Count < 3)
+                        {
+                            astr.Add("");
                         }
+
+                        MBox.Assert(1308.9313, astr.Count == 3);
+                        astr[2] = s2;
+                        sbLine = new System.Text.StringBuilder(string.Join("\t", astr));
                     });
 
                     if (bDriveModel_Todo &&
                         strLine.StartsWith(FileParse.mSTRlineType_VolumeInfo_DriveModel))
                     {
-                        Replace(origLVitemVolume.DriveModel, lvItemVolumeTemp.DriveModel);
+                        Replace(lvItemVolumeTemp.DriveModel);
                         bDriveModel_Todo = false;
                     }
                     else if (bDriveSerial_Todo &&
                         strLine.StartsWith(FileParse.mSTRlineType_VolumeInfo_DriveSerial))
                     {
-                        Replace(origLVitemVolume.DriveSerial, lvItemVolumeTemp.DriveSerial);
+                        Replace(lvItemVolumeTemp.DriveSerial);
                         bDriveSerial_Todo = false;
                     }
                     else if (bNickname_Todo &&
                         strLine.StartsWith(FileParse.mSTRlineType_Nickname))
                     {
-                        Replace(origLVitemVolume.Nickname, lvItemVolumeTemp.Nickname);
+                        Replace(lvItemVolumeTemp.Nickname);
                         bNickname_Todo = false;
                     }
 

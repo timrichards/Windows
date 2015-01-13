@@ -27,6 +27,7 @@ namespace DoubleFile
         internal const string mSTRsaved = "Saved.";
         internal const string mSTRnotSaved = "Not saved.";
         internal const string mSTRcantSave = "Can't save. Not mounted.";
+        internal const string mSTRinclude = "Yes";
 
         internal const int mNcolLength = 7;
         internal const int mNcolLength01 = 5;
@@ -308,15 +309,20 @@ namespace DoubleFile
             return strRet;
         }
 
-        internal static bool ReadHeader(string strFile, out string strVolumeName, out string strPath)
+        internal static bool ReadHeader(string strFile, out LVitem_VolumeVM lvItem_out)
         {
-            strVolumeName = null;
-            strPath = null;
+            lvItem_out = null;
 
             if (ValidateFile(strFile) == false)
             {
                 return false;
             }
+
+            LVitem_VolumeVM lvItem = new LVitem_VolumeVM();
+
+            lvItem.ListingFile = strFile;
+            lvItem.Status = mSTRusingFile;
+            lvItem.Include = true;
 
             using (var sr = new System.IO.StreamReader(strFile))
             {
@@ -327,20 +333,54 @@ namespace DoubleFile
                 if (line.StartsWith(mSTRlineType_Nickname) == false) return false;
 
                 string[] arrLine = line.Split('\t');
-                strVolumeName = string.Empty;
 
-                if (arrLine.Length > 2) strVolumeName = arrLine[2];
+                if (arrLine.Length > 2) lvItem.Nickname = arrLine[2];
                 if ((line = sr.ReadLine()) == null) return false;
                 if (line.StartsWith(mSTRlineType_Path) == false) return false;
-                arrLine = line.Split('\t');
-                if (arrLine.Length < 3) return false;
-                strPath = arrLine[2];
+
+                // unkosher lambda "byref parameters"
+                bool bReadAttributeReturnValue = false;
+                string strReadAttributeReturnValue = null;
+                Action<string> ReadAttribute = new Action<string>(s =>
+                {
+                    bReadAttributeReturnValue = false;
+                    strReadAttributeReturnValue = null;
+
+                    var astr = s.Split('\t');
+
+                    MBox.Assert(0, astr.Length == 3);
+
+                    if (astr.Length < 3)
+                    {
+                        return; // from lambda
+                    }
+
+                    strReadAttributeReturnValue = astr[2];
+                    bReadAttributeReturnValue = true;
+                });
+
+                ReadAttribute(line);
+                if (bReadAttributeReturnValue == false) return false;
+                lvItem.SourcePath = strReadAttributeReturnValue;
+
+                File.ReadLines(strFile).Where(s => s.StartsWith(mSTRlineType_VolumeInfo_DriveModel)).FirstOnlyAssert(s =>
+                {
+                    ReadAttribute(s);
+                    if (bReadAttributeReturnValue) lvItem.DriveModel = strReadAttributeReturnValue;
+                });
+
+                File.ReadLines(strFile).Where(s => s.StartsWith(mSTRlineType_VolumeInfo_DriveSerial)).FirstOnlyAssert(s =>
+                {
+                    ReadAttribute(s);
+                    if (bReadAttributeReturnValue) lvItem.DriveSerial = strReadAttributeReturnValue;
+                });
             }
 
+            lvItem_out = lvItem;
             return true;
         }
 
-        protected static string StrFile_01(string strFile)
+        internal static string StrFile_01(string strFile)
         {
             return Path.Combine(Path.GetDirectoryName(strFile),
                 Path.GetFileNameWithoutExtension(strFile) + "_01" + Path.GetExtension(strFile));

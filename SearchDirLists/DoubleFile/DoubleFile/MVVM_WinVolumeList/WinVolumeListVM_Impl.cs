@@ -42,12 +42,11 @@ namespace DoubleFile
 
             if (dlg.ShowDialog(GetWindow()) ?? false)
             {
-                string strVolumeName = null;
-                string strPath = null;
+                LVitem_VolumeVM lvItem = null;
 
-                if (FileParse.ReadHeader(dlg.FileName, out strVolumeName, out strPath))
+                if (FileParse.ReadHeader(dlg.FileName, out lvItem))
                 {
-                    m_lvVM.NewItem(new string[] {strVolumeName, strPath, dlg.FileName, "Using file.", "Yes"});
+                    m_lvVM.NewItem(lvItem);
                 }
                 else
                 {

@@ -19,7 +19,7 @@ namespace DoubleFile
         {
         }
 
-        internal LVitem_VolumeVM(string[] arrStr)
+        internal LVitem_VolumeVM(string[] arrStr = null)
             : base(null, arrStr)
         {
         }
@@ -32,6 +32,10 @@ namespace DoubleFile
         internal override int NumCols { get { return NumCols_; } }
         protected override string[] PropertyNames { get { return marrPropName; } }
 
-        internal bool Include { get { return (IncludeYN == "Yes"); } set { IncludeYN = (value ? "Yes" : "No"); } }
+        internal bool Include
+        {
+            get { return (IncludeYN == FileParse.mSTRinclude); }
+            set { IncludeYN = (value ? FileParse.mSTRinclude : "No"); } 
+        }
     }
 }

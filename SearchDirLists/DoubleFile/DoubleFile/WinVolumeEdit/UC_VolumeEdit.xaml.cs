@@ -69,15 +69,15 @@ namespace DoubleFile
             }
         }
 
-        string strStatus = "Not saved";
-        string strIncludeYN = "Yes";
+        string strStatus = FileParse.mSTRnotSaved;
+        string strIncludeYN = FileParse.mSTRinclude;
 
         bool IsOKenabled
         {
             get
             {
                 return (SaveDirListings.IsGoodDriveSyntax(form_EditSourcePath.Text) &&
-                    System.IO.Directory.Exists(form_EditSourcePath.Text));
+                    ((IsVolumeNew == false) || System.IO.Directory.Exists(form_EditSourcePath.Text)));
             }
         }
 

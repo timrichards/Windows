@@ -109,9 +109,13 @@ namespace DoubleFile
         internal ListViewItemVM_Base(ListViewVM_Base lvvm, string[] arrStr)     // e.g. Volumes LV: marr
             : this(lvvm)
         {
-            MBox.Assert(0, arrStr.Length <= NumCols);
             marr = new string[NumCols];
-            arrStr.CopyTo(marr, 0);
+
+            if (arrStr != null)
+            {
+                MBox.Assert(0, arrStr.Length <= NumCols);
+                arrStr.CopyTo(marr, 0);
+            }
 
             if (lvvm != null)
             {
@@ -157,7 +161,10 @@ namespace DoubleFile
                 RaisePropertyChanged(PropertyNames[nCol]);
             }
 
-            RaiseColumnWidths();
+            if (LVVM != null)
+            {
+                RaiseColumnWidths();
+            }
         }
 
         internal ListViewVM_Base LVVM = null;

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -58,7 +59,14 @@ namespace DoubleFile
                     {
                         if (dlg is WinVolumeEdit)
                         {
-                            ModifyFile(lvItem, lvItemVolumeTemp, (dlg as WinVolumeEdit).uc_VolumeEdit.DriveLetter);
+                            if (ModifyListingFile(lvItem, lvItemVolumeTemp, (dlg as WinVolumeEdit).uc_VolumeEdit.DriveLetter))
+                            {
+                                //if (Utilities.MBox("Update the volume list?", "Modify file", MBoxBtns.YesNo) == MBoxRet.Yes)
+                                //{
+                                //    form_btnSaveVolumeList_Click();
+                                //}
+                                FileParse.ReadHeader(lvItemVolumeTemp.ListingFile, out lvItemVolumeTemp);
+                            }
                         }
                         else if (FileExists(lvItemVolumeTemp.ListingFile))
                         {
@@ -136,191 +144,116 @@ namespace DoubleFile
             Selected().ForEach(lvItem => { lvItem.Include = (false == lvItem.Include); });
         }
 
-        void ModifyFile(LVitem_VolumeVM origLVitemVolume, LVitem_VolumeVM lvItemVolumeTemp, char driveLetter)
+        bool ModifyListingFile(LVitem_VolumeVM origLVitemVolume, LVitem_VolumeVM lvItemVolumeTemp, char driveLetter)
         {
             if (false == FileParse.ValidateFile(origLVitemVolume.ListingFile))
             {
                 MBox.ShowDialog("Bad listing file.", "Edit Listing File");
-                return;
+                return false;
             }
 
-        // strings[0]
-            // strLine.StartsWith(Utilities.mSTRlineType_Nickname)
+            var bDriveModel_Todo = (origLVitemVolume.DriveModel != lvItemVolumeTemp.DriveModel);
+            var bDriveSerial_Todo = (origLVitemVolume.DriveSerial != lvItemVolumeTemp.DriveSerial);
+            var bNickname_Todo = (origLVitemVolume.Nickname != lvItemVolumeTemp.Nickname);
 
             driveLetter = char.ToUpper(driveLetter);
 
-            var bDriveLetter = (char.IsLetter(driveLetter) &&
-                driveLetter != origLVitemVolume.SourcePath.ToUpper()[0]);
-            //else if (bDriveLetter)
-            //{
-            //sbLine.Replace("\t" + strDriveLetter_orig + @":\", "\t" + strDriveLetter + @":\");
-            //}
+            var driveLetterOrig = origLVitemVolume.SourcePath.ToUpper()[0];
+            var bDriveLetter_Todo = (char.IsLetter(driveLetter) && (driveLetter != driveLetterOrig));
 
-        // volume group is part of the project file, not the listing file
-
-            // mSTRlineType_VolumeInfo_DriveModel
-            // mSTRlineType_VolumeInfo_DriveSerial
-        }
-
-#if false
-        internal void form_btnModifyFile_Click(object sender = null, EventArgs e = null)
-        {
-            gd.InterruptTreeTimerWithAction(new BoolAction(() =>
+            if (false == (bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo || bDriveLetter_Todo))
             {
-                ListView.SelectedListViewItemCollection lvSelect = form_lvVolumesMain.SelectedItems;
+                return false;
+            }
 
-                if (lvSelect.Count <= 0)
+            var strFile_01 = FileParse.StrFile_01(origLVitemVolume.ListingFile);
+
+            if (File.Exists(strFile_01))
+            {
+                File.Delete(strFile_01);
+            }
+
+            File.Move(origLVitemVolume.ListingFile, strFile_01);
+
+            using (var reader = new StringReader(File.ReadAllText(strFile_01)))
+            {
+                string strLine = null;
+                var sbOut = new System.Text.StringBuilder();
+
+                while ((bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo) &&
+                    (strLine = reader.ReadLine()) != null)
                 {
-                    return false;
-                }
-
-                if (lvSelect.Count > 1)
-                {
-                    Utilities.Assert(1308.9311, false, bTraceOnly: true);    // guaranteed by selection logic
-                    Utilities.MBox("Only one file can be modified at a time.", "Modify file");
-                    return false;
-                }
-
-                string strVolumeName_orig = form_lvVolumesMain.SelectedItems[0].Text;
-                string strVolumeName = null;
-                string strFileName = form_lvVolumesMain.SelectedItems[0].SubItems[2].Text;
-
-                try { using (new StreamReader(strFileName)) { } }
-                catch
-                {
-                    if (gd.m_saveDirListings != null)
+                    if (strLine.StartsWith(FileParse.mSTRlineType_Start))
                     {
-                        Utilities.MBox("Currently saving listings and can't open file yet. Please wait.", "Modify file");
-                    }
-                    else if (false == string.IsNullOrWhiteSpace(lvSelect[0].Name))
-                    {
-                        Utilities.MBox("File hasn't been saved yet.", "Modify file");
-                    }
-                    else
-                    {
-                        Utilities.MBox("Can't open file.", "Modify file");
-                    }
-
-                    return false;
-                }
-
-                {
-                    InputBox inputBox = new InputBox();
-
-                    inputBox.Text = "Step 1 of 2: Volume name";
-                    inputBox.Prompt = "Enter a volume name. (Next: drive letter)";
-                    inputBox.Entry = strVolumeName_orig;
-                    inputBox.SetNextButtons();
-
-                    if ((inputBox.ShowDialog() == DialogResult.OK) && (false == string.IsNullOrWhiteSpace(inputBox.Entry)))
-                    {
-                        strVolumeName = inputBox.Entry;
-                    }
-                }
-
-                string strDriveLetter_orig = null;
-                string strDriveLetter = null;
-
-                while (true)
-                {
-                    InputBox inputBox = new InputBox();
-
-                    inputBox.Text = "Step 2 of 2: Drive letter";
-                    inputBox.Prompt = "Enter a drive letter.";
-
-                    string str = form_lvVolumesMain.SelectedItems[0].SubItems[1].Text;
-
-                    if (str.Length <= 0)
-                    {
-                        Utilities.Assert(1308.9312, false, bTraceOnly: true);
+                        // already past the header: nothing left to replace.
+                        MBox.Assert(0, false);
+                        sbOut.AppendLine(strLine);
                         break;
                     }
 
-                    strDriveLetter_orig = str[0].ToString();
-                    inputBox.Entry = strDriveLetter_orig.ToUpper();
-                    inputBox.SetNextButtons();
+                    var sbLine = new System.Text.StringBuilder(strLine);
 
-                    if (inputBox.ShowDialog() == DialogResult.OK)
+                    var Replace = new System.Action<string, string>((s1, s2) =>
                     {
-                        if (inputBox.Entry.Length > 1)
+                        if (false == string.IsNullOrWhiteSpace(s1))
                         {
-                            Utilities.MBox("Drive letter must be one letter.", "Drive letter");
-                            continue;
+                            sbLine.Replace(s1, (s2 ?? ""));
                         }
-
-                        strDriveLetter = inputBox.Entry.ToUpper();
-                    }
-
-                    break;
-                }
-
-                if ((string.IsNullOrWhiteSpace(strVolumeName) ||
-                    ((strVolumeName ?? "") == (strVolumeName_orig ?? "")))
-                    &&
-                    (string.IsNullOrWhiteSpace(strDriveLetter) ||
-                    ((strDriveLetter ?? "") == (strDriveLetter_orig ?? ""))))
-                {
-                    Utilities.MBox("No changes made.", "Modify file");
-                    return false;
-                }
-
-                StringBuilder sbFileConts = new StringBuilder();
-                bool bDriveLetter = (false == string.IsNullOrWhiteSpace(strDriveLetter));
-
-                gd.KillTreeBuilder(bJoin: true);
-
-                using (StringReader reader = new StringReader(File.ReadAllText(strFileName)))
-                {
-                    string strLine = null;
-                    bool bHitNickname = string.IsNullOrWhiteSpace(strVolumeName);
-
-                    while ((strLine = reader.ReadLine()) != null)
-                    {
-                        StringBuilder sbLine = new StringBuilder(strLine);
-
-                        if ((bHitNickname == false) && strLine.StartsWith(Utilities.mSTRlineType_Nickname))
+                        else
                         {
-                            if (false == string.IsNullOrWhiteSpace(strVolumeName_orig))
+                            var astr = sbLine.ToString().Split('\t');
+                            var nCols = astr.Length;
+
+                            MBox.Assert(1308.9313, astr.Length == 2);
+
+                            if (astr.Length == 2)
                             {
-                                sbLine.Replace(strVolumeName_orig, (strVolumeName ?? ""));
-                            }
-                            else
-                            {
-                                Utilities.Assert(1308.9313, sbLine.ToString().Split('\t').Length == 2);
                                 sbLine.Append('\t');
-                                sbLine.Append(strVolumeName);
+                                sbLine.Append(s2);
                             }
-
-                            form_lvVolumesMain.SelectedItems[0].Text = strVolumeName;
-                            bHitNickname = true;
+                            else if (astr.Length >= 3)
+                            {
+                                MBox.Assert(1308.9313, astr.Length == 3);
+                                sbLine.Replace(astr[2], s2);
+                            }
                         }
-                        else if (bDriveLetter)
-                        {
-                            sbLine.Replace("\t" + strDriveLetter_orig + @":\", "\t" + strDriveLetter + @":\");
-                        }
+                    });
 
-                        sbFileConts.AppendLine(sbLine.ToString());
+                    if (bDriveModel_Todo &&
+                        strLine.StartsWith(FileParse.mSTRlineType_VolumeInfo_DriveModel))
+                    {
+                        Replace(origLVitemVolume.DriveModel, lvItemVolumeTemp.DriveModel);
+                        bDriveModel_Todo = false;
                     }
+                    else if (bDriveSerial_Todo &&
+                        strLine.StartsWith(FileParse.mSTRlineType_VolumeInfo_DriveSerial))
+                    {
+                        Replace(origLVitemVolume.DriveSerial, lvItemVolumeTemp.DriveSerial);
+                        bDriveSerial_Todo = false;
+                    }
+                    else if (bNickname_Todo &&
+                        strLine.StartsWith(FileParse.mSTRlineType_Nickname))
+                    {
+                        Replace(origLVitemVolume.Nickname, lvItemVolumeTemp.Nickname);
+                        bNickname_Todo = false;
+                    }
+
+                    sbOut.AppendLine(sbLine.ToString());
                 }
 
-                if (bDriveLetter)
+                sbOut.Append(reader.ReadToEnd());
+
+                if (bDriveLetter_Todo)
                 {
-                    SDL_ListViewItem lvItem = (SDL_ListViewItem)form_lvVolumesMain.SelectedItems[0];
-
-                    lvItem.SubItems[1].Text = (strDriveLetter + ":");
+                    sbOut.Replace("\t" + driveLetterOrig + @":\", "\t" + driveLetter + @":\");
+                    bDriveLetter_Todo = false;
                 }
 
-                File.WriteAllText(strFileName, sbFileConts.ToString());
-                gd.m_blinky.Go(form_btnSaveVolumeList);
+                File.WriteAllText(origLVitemVolume.ListingFile, sbOut.ToString());
+            }
 
-                if (Utilities.MBox("Update the volume list?", "Modify file", MBoxBtns.YesNo) == MBoxRet.Yes)
-                {
-                    form_btnSaveVolumeList_Click();
-                }
-
-                return true;
-            }));
+            MBox.Assert(0, (false == (bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo || bDriveLetter_Todo)));
+            return true;
         }
-#endif
     }
 }

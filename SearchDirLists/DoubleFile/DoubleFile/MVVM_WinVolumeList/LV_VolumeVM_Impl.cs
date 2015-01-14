@@ -137,7 +137,7 @@ namespace DoubleFile
             Selected().ToArray().ForEach(lvItem => { Items.Remove(lvItem); });
         }
 
-        internal void SetVolumeGroup()
+        internal void EditVolumeGroupLabel()
         {
             var dlg = new WinVolumeGroup();
 
@@ -149,7 +149,7 @@ namespace DoubleFile
                 }
             });
 
-            if (dlg.ShowDialog() ?? false)
+            if (dlg.ShowDialog(GetWindow()) ?? false)
             {
                 Selected().ToArray().ForEach(lvItem =>
                 {

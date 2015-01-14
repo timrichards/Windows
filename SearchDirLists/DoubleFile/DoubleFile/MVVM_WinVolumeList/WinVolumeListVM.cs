@@ -41,7 +41,7 @@ namespace DoubleFile
             mIcmd_RemoveListingFile = new RelayCommand(param => { m_lvVM.RemoveListingFile(); }, param => m_lvVM.SelectedAny());
 
             mIcmd_ToggleInclude = new RelayCommand(param => { m_lvVM.ToggleInclude(); }, param => m_lvVM.SelectedAny());
-            mIcmd_VolumeGroup = new RelayCommand(param => { m_lvVM.SetVolumeGroup(); }, param => m_lvVM.SelectedAny());
+            mIcmd_VolumeGroup = new RelayCommand(param => { m_lvVM.EditVolumeGroupLabel(); }, param => m_lvVM.SelectedAny());
         }
 
         internal void SetPartner(LV_VolumeVM lvVM)

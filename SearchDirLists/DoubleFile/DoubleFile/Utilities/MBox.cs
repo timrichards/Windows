@@ -57,7 +57,7 @@ namespace DoubleFile
                     static_nLastAssertLoc = nLocation;
                     static_dtLastAssert = DateTime.Now;
                     static_bAssertUp = true;
-                    new Thread(new ThreadStart(messageBox)).Start();
+                    new System.Threading.Thread(new System.Threading.ThreadStart(messageBox)).Start();
                 }
             }
 #endif

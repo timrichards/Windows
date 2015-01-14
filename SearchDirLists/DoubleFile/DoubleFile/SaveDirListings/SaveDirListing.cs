@@ -198,8 +198,8 @@ namespace DoubleFile
 #if DEBUG == false
                 catch (Exception e)
                 {
-                    m_statusCallback(m_volStrings.Path, strText: mSTRnotSaved, bDone: true);
-                    MBox.ShowDialog(strSaveAs.PadRight(100) + "\nException: " + e.Message, "Save Directory Listing");
+                    m_statusCallback(m_volStrings.SourcePath, strText: mSTRnotSaved, bDone: true);
+                    MBox.ShowDialog(m_volStrings.ListingFile.PadRight(100) + "\nException: " + e.Message, "Save Directory Listing");
                 }
 #endif
                 finally { }

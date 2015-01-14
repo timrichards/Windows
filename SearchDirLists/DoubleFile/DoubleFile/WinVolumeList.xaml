@@ -16,7 +16,7 @@
                 <MenuItem Header="Remove" Command="{Binding Icmd_RemoveListingFile}"/>
                 <Separator />
                 <MenuItem Header="Toggle include" Command="{Binding Icmd_ToggleInclude}"/>
-                <MenuItem Header="Set volume group" Command="{Binding Icmd_VolumeGroup}"/>
+                <MenuItem Header="Edit volume group label" Command="{Binding Icmd_VolumeGroup}"/>
             </MenuItem>
             <Button Command="{Binding Icmd_NewListingFile}" Style="{StaticResource styleFlatButton}" ToolTip="New listing file">
                 <Image Source="resources/ic_add_circle_black_18dp.png" Width="18" />
@@ -38,7 +38,7 @@
                     <GridViewColumn Header="Include in search" DisplayMemberBinding="{Binding IncludeYN}" Width="{Binding WidthIncludeYN}"/>
                     <GridViewColumn Header="Volume group" DisplayMemberBinding="{Binding VolumeGroup}" Width="{Binding WidthVolumeGroup}"/>
                     <GridViewColumn Header="Drive model" DisplayMemberBinding="{Binding DriveModel}" Width="{Binding WidthDriveModel}"/>
-                    <GridViewColumn Header="Drive serial" DisplayMemberBinding="{Binding DriveSerial}" Width="{Binding WidthDriveSerial}"/>
+                    <GridViewColumn Header="Drive serial #" DisplayMemberBinding="{Binding DriveSerial}" Width="{Binding WidthDriveSerial}"/>
                 </GridView>
             </ListView.View>
         </ListView>

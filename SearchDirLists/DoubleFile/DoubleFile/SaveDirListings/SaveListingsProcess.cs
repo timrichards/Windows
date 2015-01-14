@@ -19,7 +19,7 @@ namespace DoubleFile
         internal SaveListingsProcess(IEnumerable<LVitem_VolumeVM> list_lvVolStrings)
         {
             gd = GlobalData.GetInstance();
-            m_app = GlobalData.static_wpfWin;
+            m_app = GlobalData.static_MainWindow;
 
             var listNicknames = new List<string>();
             var listSourcePaths = new List<string>();

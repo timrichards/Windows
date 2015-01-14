@@ -63,7 +63,11 @@ namespace DoubleFile
         public static bool? ShowDialog(this System.Windows.Window win, Window me)
         {
             win.Owner = me;
-            return win.ShowDialog();
+            var oldWin = GlobalData.static_TopWindow;
+            GlobalData.static_TopWindow = win;
+            var retVal = win.ShowDialog();
+            GlobalData.static_TopWindow = oldWin;
+            return retVal;
         }
     }
     internal static partial class ExtensionMethods

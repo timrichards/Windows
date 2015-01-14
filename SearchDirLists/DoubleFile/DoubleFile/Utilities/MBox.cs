@@ -70,7 +70,7 @@ namespace DoubleFile
             {
                 m_form1MessageBoxOwner.Close();
                 m_form1MessageBoxOwner = null;
-                GlobalData.static_wpfOrForm.Activate();
+                GlobalData.static_TopWindow.Activate();
             }
         }
 
@@ -82,11 +82,11 @@ namespace DoubleFile
                 return MessageBoxResult.None;
             }
 
-            if (GlobalData.static_wpfOrForm.Dispatcher.CheckAccess() == false) { return (MessageBoxResult)GlobalData.static_wpfOrForm.Dispatcher.Invoke(new MBoxDelegate(ShowDialog), new object[] { strMessage, strTitle, buttons_in }); }
+            if (GlobalData.static_MainWindow.Dispatcher.CheckAccess() == false) { return (MessageBoxResult)GlobalData.static_MainWindow.Dispatcher.Invoke(new MBoxDelegate(ShowDialog), new object[] { strMessage, strTitle, buttons_in }); }
 
             MessageBoxKill();
             m_form1MessageBoxOwner = new Window();
-            m_form1MessageBoxOwner.Owner = GlobalData.static_wpfOrForm;
+            m_form1MessageBoxOwner.Owner = GlobalData.static_TopWindow;
 
             MessageBoxButton buttons = (buttons_in != null) ? buttons_in.Value : MessageBoxButton.OK;
             MessageBoxResult msgBoxRet = (MessageBoxResult)MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100), strTitle, (MessageBoxButton)buttons, MessageBoxImage.Information);

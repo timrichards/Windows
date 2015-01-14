@@ -4,44 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="DoubleFile.WinVolumeList"
         Name="form_WinVolumeList" Title="Volume List" MinWidth="400" MinHeight="250" Width="624" Height="426" ShowInTaskbar="False" Icon="/Double File;component/Resources/ic_people_black_18dp.png">
     <Grid Loaded="Grid_Loaded">
-        <Grid.Resources>
-            <ControlTemplate x:Key="templateFlatButton" TargetType="{x:Type Button}">
-                <Border Width="{TemplateBinding Width}"
-            Height="{TemplateBinding Height}"
-            Background="{TemplateBinding Background}"
-            BorderBrush="{TemplateBinding BorderBrush}"
-            BorderThickness="{TemplateBinding BorderThickness}">
-                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                          TextElement.Foreground="{TemplateBinding Foreground}"
-                          TextElement.FontFamily="{TemplateBinding FontFamily}"
-                          TextElement.FontSize="{TemplateBinding FontSize}"
-                          TextElement.FontStretch="{TemplateBinding FontStretch}"
-                          TextElement.FontWeight="{TemplateBinding FontWeight}"/>
-                </Border>
-            </ControlTemplate>
-            <Style x:Key="styleFlatButton" TargetType="{x:Type Button}">
-                <Setter Property="Background" Value="{x:Null}" />
-                <Setter Property="BorderBrush" Value="{x:Null}" />
-                <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="Template" Value="{StaticResource templateFlatButton}" />
-            </Style>
-            <Style TargetType="{x:Type Image}">
-                <Style.Triggers>
-                    <Trigger Property="IsEnabled" Value="False">
-                        <Setter Property="Opacity" Value="0.3" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-            <Style TargetType="ListView">
-                <Setter Property="BorderThickness" Value="0"/>
-                <Setter Property="ItemsSource" Value="{Binding Items}"/>
-                <Setter Property="IsSynchronizedWithCurrentItem" Value="True"/>
-            </Style>
-            <Style TargetType="{x:Type GridViewColumnHeader}">
-                <Setter Property="HorizontalContentAlignment" Value="Left" />
-            </Style>
-        </Grid.Resources>
         <Menu IsMainMenu="True">
             <MenuItem Header="File" VerticalAlignment="Center">
                 <MenuItem Header="Load project" Command="{Binding Icmd_LoadProject}" />

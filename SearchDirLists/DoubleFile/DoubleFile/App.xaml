@@ -3,6 +3,70 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Style x:Key="FrameworkElement" TargetType="FrameworkElement">
+            <Setter Property="ToolTipService.ShowDuration" Value="60000" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="Button" BasedOn="{StaticResource FrameworkElement}">
+            <Setter Property="Grid.Column" Value="2" />
+            <Setter Property="Width" Value="24" />
+            <Setter Property="Height" Value="24" />
+            <!--both only for client design view-->
+            <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="Label" BasedOn="{StaticResource FrameworkElement}">
+            <Setter Property="Grid.Column" Value="1" />
+            <Setter Property="Height" Value="26" />
+        </Style>
+        <Style TargetType="TextBox" BasedOn="{StaticResource FrameworkElement}">
+            <Setter Property="Grid.Column" Value="3" />
+            <Setter Property="Grid.ColumnSpan" Value="2" />
+            <Setter Property="Height" Value="22" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect ShadowDepth="1" Color="#FF494040"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="{x:Type Image}" BasedOn="{StaticResource FrameworkElement}">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.3" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style TargetType="ListView">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="ItemsSource" Value="{Binding Items}"/>
+            <Setter Property="IsSynchronizedWithCurrentItem" Value="True"/><!-- troublemaker -->
+        </Style>
+        <Style TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+        </Style>
+        
+        <ControlTemplate x:Key="templateFlatButton" TargetType="{x:Type Button}">
+            <Border Width="{TemplateBinding Width}"
+            Height="{TemplateBinding Height}"
+            Background="{TemplateBinding Background}"
+            BorderBrush="{TemplateBinding BorderBrush}"
+            BorderThickness="{TemplateBinding BorderThickness}">
+                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                          TextElement.Foreground="{TemplateBinding Foreground}"
+                          TextElement.FontFamily="{TemplateBinding FontFamily}"
+                          TextElement.FontSize="{TemplateBinding FontSize}"
+                          TextElement.FontStretch="{TemplateBinding FontStretch}"
+                          TextElement.FontWeight="{TemplateBinding FontWeight}"/>
+            </Border>
+        </ControlTemplate>
+        <Style x:Key="styleFlatButton" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{x:Null}" />
+            <Setter Property="BorderBrush" Value="{x:Null}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template" Value="{StaticResource templateFlatButton}" />
+        </Style>
     </Application.Resources>
 </Application>

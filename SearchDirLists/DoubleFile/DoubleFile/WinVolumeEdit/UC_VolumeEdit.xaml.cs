@@ -45,7 +45,7 @@ namespace DoubleFile
                 return new LVitem_VolumeVM(new string[] {
                     form_EditNickname.Text, form_EditSourcePath.Text, form_EditListingFile.Text,
                     strStatus, strIncludeYN,
-                    form_EditVolumeGroup.Text, form_EditDriveModel.Text, form_EditDriveSerial.Text
+                    form_UC_VolumeGroup.Text, form_EditDriveModel.Text, form_EditDriveSerial.Text
                 });
             }
             set
@@ -63,7 +63,7 @@ namespace DoubleFile
                 if (astr.Length > i) { form_EditListingFile.Text = value[i++]; }
                 if (astr.Length > i) { var s = value[i++]; if (s != null) { strStatus = s; } }
                 if (astr.Length > i) { var s = value[i++]; if (s != null) { strIncludeYN = s; } }
-                if (astr.Length > i) { form_EditVolumeGroup.Text = value[i++]; }
+                if (astr.Length > i) { form_UC_VolumeGroup.Text = value[i++]; }
                 if (astr.Length > i) { form_EditDriveModel.Text = value[i++]; }
                 if (astr.Length > i) { form_EditDriveSerial.Text = value[i++]; }
             }

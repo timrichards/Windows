@@ -127,6 +127,12 @@
     <Compile Include="WinSaveInProgress.xaml.cs">
       <DependentUpon>WinSaveInProgress.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WinVolumeEdit\UC_VolumeGroup.xaml.cs">
+      <DependentUpon>UC_VolumeGroup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WinVolumeEdit\WinVolumeGroup.xaml.cs">
+      <DependentUpon>WinVolumeGroup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WinVolumeEdit\WinVolumeEditBase.cs" />
     <Compile Include="WinVolumeList.xaml.cs">
       <DependentUpon>WinVolumeList.xaml</DependentUpon>
@@ -148,6 +154,14 @@
     <Page Include="WinSaveInProgress.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WinVolumeEdit\UC_VolumeGroup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WinVolumeEdit\WinVolumeGroup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="WinVolumeList.xaml">
       <SubType>Designer</SubType>

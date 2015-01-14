@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="DoubleFile.UC_VolumeEdit"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:DoubleFile"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" d:Height="474" d:Width="720" Background="White"
@@ -30,41 +31,6 @@
             <ColumnDefinition Width="40"/>
             <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
-        <Grid.Resources>
-            <Style x:Key="FrameworkElement" TargetType="FrameworkElement">
-                <Setter Property="ToolTipService.ShowDuration" Value="60000" />
-                <Setter Property="HorizontalAlignment" Value="Left" />
-                <Setter Property="VerticalAlignment" Value="Center" />
-            </Style>
-            <Style TargetType="Label" BasedOn="{StaticResource FrameworkElement}">
-                <Setter Property="Grid.Column" Value="1" />
-                <Setter Property="Height" Value="26" />
-            </Style>
-            <Style TargetType="Button" BasedOn="{StaticResource FrameworkElement}">
-                <Setter Property="Grid.Column" Value="2" />
-                <Setter Property="Width" Value="24" />
-                <Setter Property="Height" Value="24" />     <!--both only for client design view-->
-                <Setter Property="HorizontalAlignment" Value="Center" />
-            </Style>
-            <Style TargetType="TextBox" BasedOn="{StaticResource FrameworkElement}">
-                <Setter Property="Grid.Column" Value="3" />
-                <Setter Property="Grid.ColumnSpan" Value="2" />
-                <Setter Property="Height" Value="22" />
-                <Setter Property="HorizontalAlignment" Value="Stretch" />
-                <Setter Property="Effect">
-                    <Setter.Value>
-                        <DropShadowEffect ShadowDepth="1" Color="#FF494040"/>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <Style TargetType="{x:Type Image}" BasedOn="{StaticResource FrameworkElement}">
-                <Style.Triggers>
-                    <Trigger Property="IsEnabled" Value="False">
-                        <Setter Property="Opacity" Value="0.3" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-        </Grid.Resources>
 
         <Label Grid.Row="1" Content="Path" />
         <Button Grid.Row="1" Name="form_BtnSourcePath" Command="{Binding Icmd_EditSourcePath}" ToolTip="Click to open a folder browse dialog to enter the source path">
@@ -112,38 +78,7 @@ model/serial# do not.
             </TextBox.ToolTip>
         </TextBox>
 
-        <Label Grid.Row="8" Content="Volume group label" />
-        <TextBox Grid.Row="8" Name="form_EditVolumeGroup">
-            <TextBox.ToolTip>
-                <TextBlock>
-Lets you group volumes arbitrarily in the project. Since it's simple to save
-                    <LineBreak />
-multiple copies of the same project, you can have different views of the same
-                    <LineBreak />
-listings.
-                    <LineBreak />
-                    <LineBreak />
-Listings in the same volume group will be treated as if they are on the same
-                    <LineBreak />
-volume. Files at risk for being in the same geographic site can be identified
-                    <LineBreak />
-during correlation. Use the site as the volume group label, for example. Two
-                    <LineBreak />
-partitions on the same drive can be grouped together; as can drives at the
-                    <LineBreak />
-same site. A volume group label could be "Office", which includes all the
-                    <LineBreak />
-drives left at work. Another volume group could be "My drive" which has
-                    <LineBreak />
-more than one partition on it.
-                    <LineBreak />
-                    <LineBreak />
-If left blank, the volume group field is ignored and the volume is seen as
-                    <LineBreak />
-being separate from other volumes.
-                </TextBlock>
-            </TextBox.ToolTip>
-        </TextBox>
+        <local:UC_VolumeGroup Grid.Row="8" x:Name="form_UC_VolumeGroup" Grid.ColumnSpan="999"/>
 
         <Label Grid.Row="10" Content="Directory listing file" />
         <Button Name="form_BtnListingFile" Grid.Row="10" Command="{Binding Icmd_EditListingFile}" ToolTip="Click to open a file save dialog">

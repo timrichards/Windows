@@ -137,7 +137,26 @@ namespace DoubleFile
             Selected().ToArray().ForEach(lvItem => { Items.Remove(lvItem); });
         }
 
-        internal void SetVolumeGroup() { MBox.ShowDialog("SetVolumeGroup"); }
+        internal void SetVolumeGroup()
+        {
+            var dlg = new WinVolumeGroup();
+
+            Selected().ToArray().FirstOnly(lvItem =>
+            {
+                if (dlg.Text == string.Empty)
+                {
+                    dlg.Text = lvItem.VolumeGroup;
+                }
+            });
+
+            if (dlg.ShowDialog() ?? false)
+            {
+                Selected().ToArray().ForEach(lvItem =>
+                {
+                    lvItem.VolumeGroup = dlg.Text;
+                });
+            }
+        }
 
         internal void ToggleInclude()
         {
@@ -193,7 +212,7 @@ namespace DoubleFile
 
                     var sbLine = new System.Text.StringBuilder(strLine);
 
-                    var Replace = new System.Action<string>((s2) =>
+                    var Replace = new System.Action<string>((s) =>
                     {
                         var astr = sbLine.ToString().Split('\t').ToList();
 
@@ -204,8 +223,7 @@ namespace DoubleFile
                             astr.Add("");
                         }
 
-                        MBox.Assert(1308.9313, astr.Count == 3);
-                        astr[2] = s2;
+                        astr[2] = s;
                         sbLine = new System.Text.StringBuilder(string.Join("\t", astr));
                     });
 

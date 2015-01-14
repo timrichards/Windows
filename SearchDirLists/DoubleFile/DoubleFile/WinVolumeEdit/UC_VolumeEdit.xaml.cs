@@ -169,5 +169,10 @@ namespace DoubleFile
                 e.Handled = true;
             }
         }
+
+        private void uc_VolumeEdit_Loaded(object sender, RoutedEventArgs e)
+        {
+            (IsVolumeNew ? form_EditSourcePath : form_EditDriveLetter).Focus();
+        }
     }
 }

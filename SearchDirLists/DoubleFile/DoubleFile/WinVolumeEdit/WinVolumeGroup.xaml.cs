@@ -18,5 +18,10 @@ namespace DoubleFile
         {
             DialogResult = true;
         }
+
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
+            form_UC_VolumeGroup.IsWinVolumeGroup = true;
+        }
     }
 }

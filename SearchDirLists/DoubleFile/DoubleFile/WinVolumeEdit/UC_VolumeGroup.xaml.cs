@@ -13,5 +13,15 @@ namespace DoubleFile
         }
 
         public string Text { get { return form_EditVolumeGroup.Text; } set { form_EditVolumeGroup.Text = value; } }
+
+        internal bool IsWinVolumeGroup { set; private get; }
+
+        private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (IsWinVolumeGroup)
+            {
+                form_EditVolumeGroup.Focus();
+            }
+        }
     }
 }

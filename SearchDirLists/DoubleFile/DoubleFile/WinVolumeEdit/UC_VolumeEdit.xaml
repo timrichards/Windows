@@ -5,7 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" d:Height="474" d:Width="720" Background="White"
-             Name="uc_VolumeEdit">
+             Name="uc_VolumeEdit" Loaded="uc_VolumeEdit_Loaded">
     <Grid Loaded="Grid_Loaded">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -36,7 +36,7 @@
         <Button Grid.Row="1" Name="form_BtnSourcePath" Command="{Binding Icmd_EditSourcePath}" ToolTip="Click to open a folder browse dialog to enter the source path">
             <Image Source="/Double File;component/Resources/ic_folder_open_black_18dp.png" />
         </Button>
-        <TextBox Grid.Row="1" Name="form_EditSourcePath" LostFocus="form_EditSourcePath_LostFocus" >
+        <TextBox Grid.Row="1" x:Name="form_EditSourcePath" LostFocus="form_EditSourcePath_LostFocus" >
             <TextBox.ToolTip>
                 <TextBlock>
 Source path of the directory for which a listing file is to be created.

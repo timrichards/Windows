@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="170" d:DesignWidth="470">
+             d:DesignHeight="170" d:DesignWidth="470" Loaded="UserControl_Loaded">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="75"/>
@@ -17,7 +17,7 @@
         </Grid.ColumnDefinitions>
 
         <Label Content="Volume group label" />
-        <TextBox Name="form_EditVolumeGroup">
+        <TextBox x:Name="form_EditVolumeGroup">
             <TextBox.ToolTip>
                 <TextBlock>
 Lets you group volumes arbitrarily in the project. Since it's simple to save

@@ -143,10 +143,7 @@ namespace DoubleFile
 
             Selected().ToArray().FirstOnly(lvItem =>
             {
-                if (dlg.Text == string.Empty)
-                {
-                    dlg.Text = lvItem.VolumeGroup;
-                }
+                dlg.Text = lvItem.VolumeGroup;
             });
 
             if (dlg.ShowDialog(GetWindow()) ?? false)

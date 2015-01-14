@@ -9,7 +9,7 @@ namespace DoubleFile
 
     class MBox
     {
-        static System.Windows.Window m_form1MessageBoxOwner = null;
+        static Window m_form1MessageBoxOwner = null;
 
         static double static_nLastAssertLoc = -1;
         static DateTime static_dtLastAssert = DateTime.MinValue;

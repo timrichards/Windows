@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
 
 namespace DoubleFile
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    partial class MainWindow : Window
+    partial class MainWindow : LocalWindowBase
     {
         public MainWindow()
         {

@@ -1,8 +1,9 @@
-﻿<Window
+﻿<local:LocalWindowBase x:Class="DoubleFile.WinVolumeList"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="DoubleFile.WinVolumeList"
-        Name="form_WinVolumeList" Title="Volume List" MinWidth="400" MinHeight="250" Width="624" Height="426" ShowInTaskbar="False" Icon="/Double File;component/Resources/ic_people_black_18dp.png">
+        xmlns:local="clr-namespace:DoubleFile"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+        Title="Volume List" MinWidth="400" MinHeight="250" Width="624" Height="426" ShowInTaskbar="False" Icon="/Double File;component/Resources/ic_people_black_18dp.png">
     <Grid Loaded="Grid_Loaded">
         <Menu IsMainMenu="True">
             <MenuItem Header="File" VerticalAlignment="Center">
@@ -44,4 +45,4 @@
         </ListView>
         <Button Content="OK" Margin="0,0,10,10" IsCancel="True" IsDefault="True" Height="22" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Click="BtnOK_Click"/>
     </Grid>
-</Window>
+</local:LocalWindowBase>

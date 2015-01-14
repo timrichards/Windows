@@ -6,7 +6,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinVolumeList.xaml
     /// </summary>
-    partial class WinVolumeList : Window
+    partial class WinVolumeList : LocalWindowBase
     {
         public WinVolumeList()
         {
@@ -24,7 +24,7 @@ namespace DoubleFile
             var win = new WinVolumeListVM();
 
             form_lvVolumeList.DataContext = lv;
-            form_WinVolumeList.DataContext = win;
+            DataContext = win;
             lv.SetPartner(win);
             win.SetPartner(lv);
 

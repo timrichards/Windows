@@ -54,20 +54,16 @@ namespace DoubleFile
             }
         }
 
-        public static void Show(this System.Windows.Window win, Window me)
+        public static void Show(this Window win, Window me)
         {
             win.Owner = me;
             win.Show();
         }
 
-        public static bool? ShowDialog(this System.Windows.Window win, Window me)
+        public static bool? ShowDialog(this Window win, Window me)
         {
             win.Owner = me;
-            var oldWin = GlobalData.static_TopWindow;
-            GlobalData.static_TopWindow = win;
-            var retVal = win.ShowDialog();
-            GlobalData.static_TopWindow = oldWin;
-            return retVal;
+            return win.ShowDialog();
         }
     }
     internal static partial class ExtensionMethods

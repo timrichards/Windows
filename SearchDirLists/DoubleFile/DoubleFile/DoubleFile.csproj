@@ -96,6 +96,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="GlobalData.cs" />
+    <Compile Include="LocalWindowBase.cs" />
     <Compile Include="MVVM_WinVolumeList\LV_VolumeVM_Impl.cs" />
     <Compile Include="SaveDirListings\SaveDirListing.cs" />
     <Compile Include="SaveDirListings\SaveListingsProcess.cs" />

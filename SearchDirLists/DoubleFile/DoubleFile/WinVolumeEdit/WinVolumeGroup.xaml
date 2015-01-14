@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
         ResizeMode="CanResizeWithGrip" ShowInTaskbar="False" WindowStartupLocation="CenterOwner"
-        Title="Edit Volume Group" Width="720" MinWidth="470" Height="170"  MinHeight="170" MaxHeight="170" Icon="/Double File;component/Resources/ic_people_black_18dp.png">
+        Title="Edit Volume Group" Width="720" MinWidth="470" Height="180"  MinHeight="180" MaxHeight="180" Icon="/Double File;component/Resources/ic_people_black_18dp.png">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
@@ -23,7 +23,7 @@
 
         <local:UC_VolumeGroup Grid.Row="1" x:Name="form_UC_VolumeGroup" Grid.ColumnSpan="999"/>
 
-        <Button Grid.Column="3" Content="OK" Command="{Binding Icmd_IsOKenabled}" Grid.Row="2" Width="75" Height="Auto" IsDefault="True" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="BtnOK_Click"/>
+        <Button Grid.Column="3" Content="OK" Grid.Row="2" Width="75" Height="Auto" IsDefault="True" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="BtnOK_Click"/>
         <Button Grid.Column="4" Content="Cancel" Grid.Row="2" Width="75" Grid.ColumnSpan="2" Height="Auto" IsCancel="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
     </Grid>
 </Window>

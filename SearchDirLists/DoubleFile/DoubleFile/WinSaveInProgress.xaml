@@ -1,4 +1,4 @@
-﻿<local:LocalWindowBase x:Class="DoubleFile.WinSaveInProgress"
+﻿<local:LocalWindow x:Class="DoubleFile.WinSaveInProgress"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
@@ -30,4 +30,4 @@
             </ListView.ItemTemplate>
         </ListView>
     </Grid>
-</local:LocalWindowBase>
+</local:LocalWindow>

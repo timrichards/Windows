@@ -2,7 +2,7 @@
 {
     class ObservableObject_OwnerWindow : ObservableObjectBase
     {
-        internal delegate System.Windows.Window Delegate_GetWindow();
+        internal delegate LocalWindow Delegate_GetWindow();
         internal Delegate_GetWindow GetWindow = () => { DesignModeOK(); return null; };
 
         static internal void DesignModeOK()

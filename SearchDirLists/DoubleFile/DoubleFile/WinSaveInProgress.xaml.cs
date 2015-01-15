@@ -7,7 +7,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinSaveInProgress.xaml
     /// </summary>
-    partial class WinSaveInProgress : LocalWindowBase
+    partial class WinSaveInProgress : LocalWindow
     {
         public WinSaveInProgress()
         {

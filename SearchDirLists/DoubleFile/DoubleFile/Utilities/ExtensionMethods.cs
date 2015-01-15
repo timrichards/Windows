@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 
 namespace DoubleFile
 {
@@ -52,18 +51,6 @@ namespace DoubleFile
             {
                 action(item);
             }
-        }
-
-        public static void Show(this Window win, Window me)
-        {
-            win.Owner = me;
-            win.Show();
-        }
-
-        public static bool? ShowDialog(this Window win, Window me)
-        {
-            win.Owner = me;
-            return win.ShowDialog();
         }
     }
     internal static partial class ExtensionMethods

@@ -6,7 +6,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinVolumeList.xaml
     /// </summary>
-    partial class WinVolumeList : LocalWindowBase
+    partial class WinVolumeList : LocalWindow
     {
         public WinVolumeList()
         {

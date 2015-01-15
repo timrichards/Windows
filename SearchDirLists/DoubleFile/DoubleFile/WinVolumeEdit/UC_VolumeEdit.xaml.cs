@@ -81,7 +81,7 @@ namespace DoubleFile
             }
         }
 
-        Window window { get { return Window.GetWindow(uc_VolumeEdit); } }
+        LocalWindow window { get { return Window.GetWindow(uc_VolumeEdit) as LocalWindow; } }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {

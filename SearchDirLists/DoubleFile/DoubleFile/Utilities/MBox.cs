@@ -9,7 +9,7 @@ namespace DoubleFile
 
     class MBox
     {
-        static Window m_form1MessageBoxOwner = null;
+        static LocalWindow m_form1MessageBoxOwner = null;
 
         static double static_nLastAssertLoc = -1;
         static DateTime static_dtLastAssert = DateTime.MinValue;
@@ -85,7 +85,7 @@ namespace DoubleFile
             if (GlobalData.static_MainWindow.Dispatcher.CheckAccess() == false) { return (MessageBoxResult)GlobalData.static_MainWindow.Dispatcher.Invoke(new MBoxDelegate(ShowDialog), new object[] { strMessage, strTitle, buttons_in }); }
 
             MessageBoxKill();
-            m_form1MessageBoxOwner = new Window();
+            m_form1MessageBoxOwner = new LocalWindow();
             m_form1MessageBoxOwner.Owner = GlobalData.static_TopWindow;
 
             MessageBoxButton buttons = (buttons_in != null) ? buttons_in.Value : MessageBoxButton.OK;

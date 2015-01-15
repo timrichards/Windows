@@ -5,7 +5,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinVolumeEdit.xaml
     /// </summary>
-    partial class WinVolumeGroup : LocalWindowBase
+    partial class WinVolumeGroup : LocalWindow
     {
         public WinVolumeGroup()
         {

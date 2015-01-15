@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace DoubleFile
+﻿namespace DoubleFile
 {
     /// <summary>
     /// Interaction logic for WinVolumeNew.xaml

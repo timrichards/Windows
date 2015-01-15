@@ -14,7 +14,7 @@ namespace DoubleFile
     {
         GlobalData gd = null;
         WinSaveInProgress m_winProgress = null;
-        System.Windows.Window m_app = null;
+        LocalWindow m_app = null;
 
         internal SaveListingsProcess(IEnumerable<LVitem_VolumeVM> list_lvVolStrings)
         {

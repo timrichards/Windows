@@ -1,18 +1,16 @@
-﻿using System.Windows;
-
-namespace DoubleFile
+﻿namespace DoubleFile
 {
     partial class GlobalData
     {
         internal static bool AppExit = false;
-        internal static Window static_TopWindow { get { return static_topWindow_ ?? static_MainWindow; } set { static_topWindow_ = value; } } static Window static_topWindow_ = null;
-        internal static Window static_MainWindow { get; private set; }
-        internal static GlobalData GetInstance(Window wpfWin) { if (static_instance == null) { static_instance = new GlobalData(wpfWin); } return static_instance; }
+        internal static LocalWindow static_TopWindow { get { return static_topWindow_ ?? static_MainWindow; } set { static_topWindow_ = value; } } static LocalWindow static_topWindow_ = null;
+        internal static LocalWindow static_MainWindow { get; private set; }
+        internal static GlobalData GetInstance(LocalWindow wpfWin) { if (static_instance == null) { static_instance = new GlobalData(wpfWin); } return static_instance; }
         internal readonly SDL_Timer timer_DoTree = new SDL_Timer();
         internal bool m_bKillTree = true;
         internal bool m_bRestartTreeTimer = false;
 
-        GlobalData(Window wpfWin)   // private constructor: singleton pattern
+        GlobalData(LocalWindow wpfWin)   // private constructor: singleton pattern
         {
             static_MainWindow = wpfWin;
             timer_DoTree.Interval = new System.TimeSpan(0, 0, 3);

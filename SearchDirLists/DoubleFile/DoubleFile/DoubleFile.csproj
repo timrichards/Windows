@@ -96,11 +96,24 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="GlobalData.cs" />
-    <Compile Include="LocalWindowBase.cs" />
+    <Compile Include="LocalWindow.cs" />
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="MVVM_WinVolumeList\LV_VolumeVM_Impl.cs" />
-    <Compile Include="SaveDirListings\SaveDirListing.cs" />
-    <Compile Include="SaveDirListings\SaveListingsProcess.cs" />
-    <Compile Include="SaveDirListings\TraverseTree.cs" />
+    <Compile Include="SaveDirListings\SaveDirListing.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SaveDirListings\SaveDirListings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SaveDirListings\SaveListingsProcess.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SaveDirListings\TraverseTree.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Utilities\DRDigit.cs" />
     <Compile Include="Utilities\FileParse.cs" />
     <Compile Include="MVVM\AbstractionsVM.cs" />
@@ -109,85 +122,61 @@
     <Compile Include="MVVM\RelayCommand.cs" />
     <Compile Include="MVVM_WinSaveInProgress\LVitem_ProgressVM.cs" />
     <Compile Include="MVVM_WinSaveInProgress\LV_ProgressVM.cs" />
-    <Compile Include="WinVolumeEdit\MVVM_UC_VolumeEdit\UC_VolumeEditVM.cs" />
-    <Compile Include="WinVolumeEdit\MVVM_UC_VolumeEdit\UC_VolumeEditVM_Impl.cs" />
     <Compile Include="MVVM_WinVolumeList\LV_VolumeVM.cs" />
     <Compile Include="MVVM_WinVolumeList\WinVolumeListVM_Impl.cs" />
     <Compile Include="MVVM_WinVolumeList\LVitem_VolumeVM.cs" />
-    <Compile Include="WinVolumeEdit\UC_VolumeEdit.xaml.cs">
-      <DependentUpon>UC_VolumeEdit.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Utilities\DriveSerial.cs" />
     <Compile Include="Utilities\FileUtil.cs" />
     <Compile Include="Utilities\MBox.cs" />
-    <Compile Include="SaveDirListings\SaveDirListings.cs" />
     <Compile Include="Utilities\SDL_Timer.cs" />
     <Compile Include="Utilities\UList.cs" />
     <Compile Include="Utilities\Utilities.cs" />
     <Compile Include="Utilities\Win32FindFile.cs" />
-    <Compile Include="WinSaveInProgress.xaml.cs">
-      <DependentUpon>WinSaveInProgress.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="WinVolumeEdit\UC_VolumeGroup.xaml.cs">
-      <DependentUpon>UC_VolumeGroup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="WinVolumeEdit\WinVolumeGroup.xaml.cs">
-      <DependentUpon>WinVolumeGroup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="WinVolumeEdit\WinVolumeEditBase.cs" />
-    <Compile Include="WinVolumeList.xaml.cs">
-      <DependentUpon>WinVolumeList.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Utilities\ExtensionMethods.cs" />
-    <Compile Include="WinVolumeEdit\WinVolumeEdit.xaml.cs">
-      <DependentUpon>WinVolumeEdit.xaml</DependentUpon>
-    </Compile>
     <Compile Include="MVVM_WinVolumeList\WinVolumeListVM.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinVolumeEdit\WinVolumeNew.xaml.cs">
-      <DependentUpon>WinVolumeNew.xaml</DependentUpon>
-    </Compile>
-    <Page Include="WinVolumeEdit\UC_VolumeEdit.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="WinSaveInProgress.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="WinVolumeEdit\UC_VolumeGroup.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="WinVolumeEdit\WinVolumeGroup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="WinVolumeList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="WinSaveInProgress.xaml.cs">
+      <DependentUpon>WinSaveInProgress.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="WinVolumeEdit\WinVolumeEdit.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="WinVolumeEdit\WinVolumeNew.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <Compile Include="WinVolumeEdit\MVVM_UC_VolumeEdit\UC_VolumeEditVM.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WinVolumeEdit\MVVM_UC_VolumeEdit\UC_VolumeEditVM_Impl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WinVolumeEdit\UC_VolumeEdit.xaml.cs">
+      <DependentUpon>UC_VolumeEdit.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WinVolumeEdit\UC_VolumeGroup.xaml.cs">
+      <DependentUpon>UC_VolumeGroup.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WinVolumeEdit\WinVolumeEdit.xaml.cs">
+      <DependentUpon>WinVolumeEdit.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WinVolumeEdit\WinVolumeEditBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WinVolumeEdit\WinVolumeGroup.xaml.cs">
+      <DependentUpon>WinVolumeGroup.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WinVolumeEdit\WinVolumeNew.xaml.cs">
+      <DependentUpon>WinVolumeNew.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WinVolumeList.xaml.cs">
+      <DependentUpon>WinVolumeList.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -258,6 +247,40 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ic_people_black_18dp.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WinSaveInProgress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WinVolumeEdit\UC_VolumeEdit.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WinVolumeEdit\UC_VolumeGroup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WinVolumeEdit\WinVolumeEdit.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WinVolumeEdit\WinVolumeGroup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WinVolumeEdit\WinVolumeNew.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WinVolumeList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

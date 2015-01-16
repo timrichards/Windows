@@ -1,0 +1,5 @@
+C:\_vs\SearchDirLists\DoubleFile\7zip\bin\Release\7zip.dll
+C:\_vs\SearchDirLists\DoubleFile\7zip\bin\Release\7zip.pdb
+C:\_vs\SearchDirLists\DoubleFile\7zip\obj\Release\7zip.dll
+C:\_vs\SearchDirLists\DoubleFile\7zip\obj\Release\7zip.pdb
+C:\_vs\SearchDirLists\DoubleFile\7zip\obj\Release\7zip.csprojResolveAssemblyReference.cache

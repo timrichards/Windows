@@ -7,7 +7,15 @@ namespace DoubleFile
         // Menu items
 
         internal void LoadProject() { MBox.ShowDialog("LoadProject"); }
-        internal void SaveProject() { MBox.ShowDialog("SaveProject"); }
+        internal void SaveProject()
+        {
+            var dlg = new Microsoft.Win32.SaveFileDialog();
+
+            if (dlg.ShowDialog(GetWindow()) ?? false)
+            {
+                new ProjectFile().SaveProject(m_lvVM.ItemsCast, dlg.FileName);
+            }
+        }
 
         internal void NewListingFile()
         {

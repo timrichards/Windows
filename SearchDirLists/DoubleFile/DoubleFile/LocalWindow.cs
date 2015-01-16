@@ -7,8 +7,8 @@
             this.Activated += new System.EventHandler((o, e) => { GlobalData.static_TopWindow = this; });
         }
 
-        public new void Show() { MBox.Assert(0, false, "Pass in parent window."); }
-        public new void ShowDialog() { MBox.Assert(0, false, "Pass in parent window."); }
+        internal new void Show() { MBox.Assert(0, false, "Pass in parent window."); }
+        internal new bool? ShowDialog() { MBox.Assert(0, false, "Pass in parent window."); return null; }
 
         internal void Show(LocalWindow me)
         {

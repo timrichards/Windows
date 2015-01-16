@@ -14,12 +14,10 @@ namespace DoubleFile
     {
         GlobalData gd = null;
         WinSaveInProgress m_winProgress = null;
-        LocalWindow m_app = null;
 
         internal SaveListingsProcess(IEnumerable<LVitem_VolumeVM> list_lvVolStrings)
         {
             gd = GlobalData.GetInstance();
-            m_app = GlobalData.static_MainWindow;
 
             var listNicknames = new List<string>();
             var listSourcePaths = new List<string>();
@@ -48,7 +46,7 @@ namespace DoubleFile
 
                 (gd.m_saveDirListings = new SaveDirListings(list_lvVolStrings,
                     SaveDirListingsStatusCallback, SaveDirListingsDoneCallback)).DoThreadFactory();
-                m_winProgress.ShowDialog(m_app);
+                m_winProgress.ShowDialog(GlobalData.static_TopWindow);
             }
         }
 
@@ -59,7 +57,7 @@ namespace DoubleFile
                 return;
             }
 
-            if (m_app.Dispatcher.CheckAccess() == false) { m_app.Dispatcher.Invoke(new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback), new object[] { strPath, strText, bDone, nProgress }); return; }
+            if (GlobalData.static_TopWindow.Dispatcher.CheckAccess() == false) { GlobalData.static_TopWindow.Dispatcher.Invoke(new SaveDirListingsStatusDelegate(SaveDirListingsStatusCallback), new object[] { strPath, strText, bDone, nProgress }); return; }
 
             if (nProgress >= 0)
             {
@@ -86,7 +84,7 @@ namespace DoubleFile
                 return;
             }
 
-            if (m_app.Dispatcher.CheckAccess() == false) { m_app.Dispatcher.Invoke(new Action(SaveDirListingsDoneCallback)); return; }
+            if (GlobalData.static_TopWindow.Dispatcher.CheckAccess() == false) { GlobalData.static_TopWindow.Dispatcher.Invoke(new Action(SaveDirListingsDoneCallback)); return; }
 
             if (gd.m_saveDirListings.FilesWritten > 0)
             {

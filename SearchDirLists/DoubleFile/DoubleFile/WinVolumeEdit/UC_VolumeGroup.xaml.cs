@@ -21,6 +21,7 @@ namespace DoubleFile
             if (IsWinVolumeGroup)
             {
                 form_EditVolumeGroup.Focus();
+                form_EditVolumeGroup.CaretIndex = int.MaxValue;
             }
         }
     }

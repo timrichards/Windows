@@ -147,7 +147,7 @@ namespace DoubleFile
 
         private void form_EditDriveLetter_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (new Key[] {Key.Back, Key.Delete, Key.Left, Key.Right}.Contains(e.Key))
+            if (new Key[] {Key.Tab, Key.Back, Key.Delete, Key.Left, Key.Right}.Contains(e.Key))
             {
                 return;
             }
@@ -161,18 +161,23 @@ namespace DoubleFile
             if ((e.Key < Key.A) || (e.Key > Key.Z))
             {
                 e.Handled = true;
+                return;
             }
 
             if ((new KeyConverter().ConvertToString(e.Key) + "\0")[0] ==
                 form_EditSourcePath.Text[0])
             {
                 e.Handled = true;
+                return;
             }
         }
 
         private void uc_VolumeEdit_Loaded(object sender, RoutedEventArgs e)
         {
-            (IsVolumeNew ? form_EditSourcePath : form_EditDriveLetter).Focus();
+            var textBox = (IsVolumeNew ? form_EditSourcePath : form_EditDriveLetter);
+
+            textBox.Focus();
+            textBox.CaretIndex = int.MaxValue;
         }
     }
 }

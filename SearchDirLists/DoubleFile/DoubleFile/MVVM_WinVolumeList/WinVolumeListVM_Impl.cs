@@ -14,7 +14,7 @@ namespace DoubleFile
 
             if (dlg.ShowDialog(GetWindow()) ?? false)
             {
-                new ProjectFile().OpenProject(dlg.FileName);
+                new ProjectFile().OpenProject(dlg.FileName, OpenListingFiles);
             }
         }
 
@@ -66,29 +66,38 @@ namespace DoubleFile
 
             if (dlg.ShowDialog(GetWindow()) ?? false)
             {
-                LVitem_VolumeVM lvItem = null;
-                var sbBadFiles = new System.Text.StringBuilder();
-                bool bMultiBad = true;
-
-                foreach (var fileName in dlg.FileNames)
-                {
-                    if (FileParse.ReadHeader(fileName, out lvItem))
-                    {
-                        m_lvVM.NewItem(lvItem);
-                    }
-                    else
-                    {
-                        bMultiBad = (sbBadFiles.Length > 0);
-                        sbBadFiles.Append("• ").Append(System.IO.Path.GetFileName(fileName)).Append("\n");
-                    }
-                }
-
-                if (sbBadFiles.Length > 0)
-                {
-                    MBox.ShowDialog("Bad listing file" + (bMultiBad ? "s" : "") + ".\n" + sbBadFiles, "Open Listing File");
-                }
+                OpenListingFiles(dlg.FileNames);
             }
         }
 
+        internal void OpenListingFiles(IEnumerable<string> listFiles, bool bClearItems = false)
+        {
+            LVitem_VolumeVM lvItem = null;
+            var sbBadFiles = new System.Text.StringBuilder();
+            bool bMultiBad = true;
+
+            if (bClearItems)
+            {
+                m_lvVM.Items.Clear();
+            }
+
+            foreach (var fileName in listFiles)
+            {
+                if (FileParse.ReadHeader(fileName, out lvItem))
+                {
+                    m_lvVM.NewItem(lvItem);
+                }
+                else
+                {
+                    bMultiBad = (sbBadFiles.Length > 0);
+                    sbBadFiles.Append("• ").Append(System.IO.Path.GetFileName(fileName)).Append("\n");
+                }
+            }
+
+            if (sbBadFiles.Length > 0)
+            {
+                MBox.ShowDialog("Bad listing file" + (bMultiBad ? "s" : "") + ".\n" + sbBadFiles, "Open Listing File");
+            }
+        }
     }
 }

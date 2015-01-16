@@ -6,7 +6,7 @@ namespace DoubleFile
     {
         public string WidthNickname { get { return SCW; } }                   // franken all NaN
         public string WidthSourcePath { get { return SCW; } }
-        public string WidthListingFile { get { return SCW; } }
+        public string WidthListingFileNoPath { get { return SCW; } }
         public string WidthStatus { get { return SCW; } }
         public string WidthIncludeYN { get { return SCW; } }
         public string WidthVolumeGroup { get { return SCW; } }

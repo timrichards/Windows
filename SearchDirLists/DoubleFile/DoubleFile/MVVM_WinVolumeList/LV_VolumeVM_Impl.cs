@@ -168,9 +168,9 @@ namespace DoubleFile
                 return false;
             }
 
-            var bDriveModel_Todo = (origLVitemVolume.DriveModel != lvItemVolumeTemp.DriveModel);
-            var bDriveSerial_Todo = (origLVitemVolume.DriveSerial != lvItemVolumeTemp.DriveSerial);
-            var bNickname_Todo = (origLVitemVolume.Nickname != lvItemVolumeTemp.Nickname);
+            var bDriveModel_Todo = ((origLVitemVolume.DriveModel ?? "") != (lvItemVolumeTemp.DriveModel ?? ""));
+            var bDriveSerial_Todo = ((origLVitemVolume.DriveSerial ?? "") != (lvItemVolumeTemp.DriveSerial ?? ""));
+            var bNickname_Todo = ((origLVitemVolume.Nickname ?? "") != (lvItemVolumeTemp.Nickname ?? ""));
 
             driveLetter = char.ToUpper(driveLetter);
 

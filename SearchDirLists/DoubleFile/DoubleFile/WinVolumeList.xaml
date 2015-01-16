@@ -34,7 +34,7 @@
                 <GridView>
                     <GridViewColumn Header="Nickname" DisplayMemberBinding="{Binding Nickname}" Width="{Binding WidthNickname}"/>
                     <GridViewColumn Header="Source path" DisplayMemberBinding="{Binding SourcePath}" Width="{Binding WidthSourcePath}"/>
-                    <GridViewColumn Header="Listing file" DisplayMemberBinding="{Binding ListingFile}" Width="{Binding WidthListingFile}"/>
+                    <GridViewColumn Header="Listing file" DisplayMemberBinding="{Binding ListingFileNoPath}" Width="{Binding WidthListingFileNoPath}"/>
                     <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="{Binding WidthStatus}"/>
                     <GridViewColumn Header="Include in search" DisplayMemberBinding="{Binding IncludeYN}" Width="{Binding WidthIncludeYN}"/>
                     <GridViewColumn Header="Volume group" DisplayMemberBinding="{Binding VolumeGroup}" Width="{Binding WidthVolumeGroup}"/>

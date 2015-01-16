@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Windows;
 
 namespace DoubleFile
 {
@@ -11,7 +9,7 @@ namespace DoubleFile
         string m_strProjectFilename = null;
         IEnumerable<LVitem_VolumeVM> m_list_lvVolStrings = null;
         
-        internal void LoadProject(string strProjectFilename = null)
+        internal void OpenProject(string strProjectFilename = null)
         {
             List<LVitem_VolumeVM> list_lvVolStrings = new List<LVitem_VolumeVM>();
 
@@ -33,12 +31,35 @@ namespace DoubleFile
                 return;
             }
 
-            var winProgress = new WinSaveInProgress();
+            var strBasePath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Replace(@"file:\", "");
+            var process = new System.Diagnostics.Process();
+
+            process.StartInfo.FileName = strBasePath + @"\7z\7z.exe";
+            process.StartInfo.WorkingDirectory = Path.GetDirectoryName(m_strProjectFilename);
+            process.StartInfo.Arguments = "e " + m_strProjectFilename + " -y";
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.UseShellExecute = false;
+
             var strProgressTag = Path.GetFileName(strProjectFilename);
-            var listFiles = new List<string>();
+            var winProgress = new WinSaveInProgress();
 
-            winProgress.InitProgress(new string[] { "Loading project." }, new string[] { strProgressTag });
+            winProgress.InitProgress(new string[] { "Opening project." }, new string[] { strProgressTag });
 
+            bool bCompleted = false;
+
+            process.OutputDataReceived += (sender, args) =>
+            {
+                // process.Exited event wasn't working
+                if (bCompleted == false)
+                {
+                    bCompleted = true;
+                    winProgress.SetCompleted(strProgressTag);
+                }
+            };
+
+            process.StartInfo.CreateNoWindow = true;
+            process.Start();
+            process.BeginOutputReadLine();
             winProgress.ShowDialog(GlobalData.static_TopWindow);
         }
 
@@ -91,24 +112,43 @@ namespace DoubleFile
                 return;
             }
 
-            string strBasePath = System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase;
-            strBasePath = System.IO.Path.GetDirectoryName(strBasePath).Replace(@"file:\", "");
-            string strDest = "zipit.7z";      // "some.7z";
-            string strSource = @"zipit\";     // "one or more files";
-            var proc = new System.Diagnostics.Process();
-            //proc.StartInfo.FileName = @"C:\Windows\system32\cmd.exe";
-            //proc.StartInfo.Arguments = "/k " + strBasePath + @"\7z\7z.exe " + "a " + strDest + " " + strSource + " -mx=3 -md=64m";
-            proc.StartInfo.FileName = strBasePath + @"\7z\7z.exe";
-            proc.StartInfo.Arguments = "a " + strDest + " " + strSource + " -mx=3 -md=128m";
-            proc.Start();
-            proc.WaitForExit();
-            
-            if (proc != null) return;
+            var strBasePath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Replace(@"file:\", "");
+            var sbSource = new System.Text.StringBuilder();
 
-            var winProgress = new WinSaveInProgress();
+            foreach(var listingFile in listListingFiles)
+            {
+                sbSource.Append("\"").Append(Path.GetFileName(listingFile)).Append("\" ");
+            }
+
+            var process = new System.Diagnostics.Process();
+
+            process.StartInfo.FileName = strBasePath + @"\7z\7z.exe";
+            process.StartInfo.WorkingDirectory = Path.GetDirectoryName(listListingFiles[0]);
+            process.StartInfo.Arguments = "a " + m_strProjectFilename + " " + sbSource + " -mx=3 -md=128m";
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.UseShellExecute = false;
+
             var strProgressTag = Path.GetFileName(strProjectFilename);
+            var winProgress = new WinSaveInProgress();
 
             winProgress.InitProgress(new string[] { "Saving project." }, new string[] { strProgressTag });
+
+            bool bCompleted = false;
+
+            process.OutputDataReceived += (sender, args) => 
+            {
+                // process.Exited event wasn't working
+                if (bCompleted == false)
+                {
+                    bCompleted = true;
+                    File.Move(m_strProjectFilename + ".7z", m_strProjectFilename);
+                    winProgress.SetCompleted(strProgressTag);
+                }
+            };
+
+            process.StartInfo.CreateNoWindow = true;
+            process.Start();
+            process.BeginOutputReadLine();
             winProgress.ShowDialog(GlobalData.static_TopWindow);
         }
     }

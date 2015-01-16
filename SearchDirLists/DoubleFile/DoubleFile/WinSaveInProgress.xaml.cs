@@ -32,12 +32,30 @@ namespace DoubleFile
 
         internal void SetProgress(string strPath, double nProgress)
         {
-            (m_lv[strPath] as LVitem_ProgressVM).Progress = nProgress;
+            var lvItem = (m_lv[strPath] as LVitem_ProgressVM);
+
+            if (lvItem != null)
+            {
+                lvItem.Progress = nProgress;
+            }
+            else
+            {
+                MBox.Assert(0, false);
+            }
         }
 
         internal void SetCompleted(string strPath)
         {
-            (m_lv[strPath] as LVitem_ProgressVM).SetCompleted();
+            var lvItem = (m_lv[strPath] as LVitem_ProgressVM);
+
+            if (lvItem != null)
+            {
+                lvItem.SetCompleted();
+            }
+            else
+            {
+                MBox.Assert(0, false);
+            }
         }
 
         System.Random rand = new System.Random();
@@ -104,7 +122,7 @@ namespace DoubleFile
                 return;
             }
 
-            if (MBox.ShowDialog("Do you want to cancel?", "Saving directory listings",
+            if (MBox.ShowDialog("Do you want to cancel?", "Saving Directory Listings",
                 MessageBoxButton.YesNo) ==
                 MessageBoxResult.Yes)
             {

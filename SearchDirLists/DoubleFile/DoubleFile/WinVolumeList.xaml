@@ -7,11 +7,11 @@
     <Grid Loaded="Grid_Loaded">
         <Menu IsMainMenu="True">
             <MenuItem Header="File" VerticalAlignment="Center">
-                <MenuItem Header="Load project" Command="{Binding Icmd_LoadProject}" />
+                <MenuItem Header="Open project" Command="{Binding Icmd_OpenProject}" />
                 <MenuItem Header="Save project" Command="{Binding Icmd_SaveProject}"/>
                 <Separator />
                 <MenuItem Header="New listing file" Command="{Binding Icmd_NewListingFile}"/>
-                <MenuItem Header="Load listing file" Command="{Binding Icmd_LoadListingFile}"/>
+                <MenuItem Header="Open listing file" Command="{Binding Icmd_OpenListingFile}"/>
                 <Separator />
                 <MenuItem Header="Edit listing file" Command="{Binding Icmd_EditListingFile}"/>
                 <MenuItem Header="Remove" Command="{Binding Icmd_RemoveListingFile}"/>

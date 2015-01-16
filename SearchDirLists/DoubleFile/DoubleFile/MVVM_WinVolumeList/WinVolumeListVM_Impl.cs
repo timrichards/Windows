@@ -6,19 +6,23 @@ namespace DoubleFile
     {
         // Menu items
 
-        internal void LoadProject()
+        internal void OpenProject()
         {
             var dlg = new Microsoft.Win32.OpenFileDialog();
 
+            dlg.Title = "Open Project";
+
             if (dlg.ShowDialog(GetWindow()) ?? false)
             {
-                new ProjectFile().LoadProject(dlg.FileName);
+                new ProjectFile().OpenProject(dlg.FileName);
             }
         }
 
         internal void SaveProject()
         {
             var dlg = new Microsoft.Win32.SaveFileDialog();
+
+            dlg.Title = "Save Project";
 
             if (dlg.ShowDialog(GetWindow()) ?? false)
             {
@@ -53,21 +57,35 @@ namespace DoubleFile
             }
         }
 
-        internal void LoadListingFile()
+        internal void OpenListingFile()
         {
             var dlg = new Microsoft.Win32.OpenFileDialog();
+
+            dlg.Title = "Open Listing File";
+            dlg.Multiselect = true;
 
             if (dlg.ShowDialog(GetWindow()) ?? false)
             {
                 LVitem_VolumeVM lvItem = null;
+                var sbBadFiles = new System.Text.StringBuilder();
+                bool bMultiBad = true;
 
-                if (FileParse.ReadHeader(dlg.FileName, out lvItem))
+                foreach (var fileName in dlg.FileNames)
                 {
-                    m_lvVM.NewItem(lvItem);
+                    if (FileParse.ReadHeader(fileName, out lvItem))
+                    {
+                        m_lvVM.NewItem(lvItem);
+                    }
+                    else
+                    {
+                        bMultiBad = (sbBadFiles.Length > 0);
+                        sbBadFiles.Append("• ").Append(System.IO.Path.GetFileName(fileName)).Append("\n");
+                    }
                 }
-                else
+
+                if (sbBadFiles.Length > 0)
                 {
-                    MBox.ShowDialog("Bad listing file.", "Open Listing File");
+                    MBox.ShowDialog("Bad listing file" + (bMultiBad ? "s" : "") + ".\n" + sbBadFiles, "Open Listing File");
                 }
             }
         }

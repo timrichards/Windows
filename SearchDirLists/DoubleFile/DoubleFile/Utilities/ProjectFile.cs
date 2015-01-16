@@ -9,9 +9,95 @@ namespace DoubleFile
         string m_strProjectFilename = null;
         IEnumerable<LVitem_VolumeVM> m_list_lvVolStrings = null;
         
-        internal ProjectFile LoadProject(string strProjectFilename = null)
+        internal void LoadProject(string strProjectFilename = null)
         {
-            return this;
+            List<LVitem_VolumeVM> list_lvVolStrings = new List<LVitem_VolumeVM>();
+
+            if (strProjectFilename != null)
+            {
+                MBox.Assert(0, m_strProjectFilename == null);
+                m_strProjectFilename = strProjectFilename;
+            }
+
+            if (m_strProjectFilename == null)
+            {
+                MBox.Assert(0, false);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(m_strProjectFilename))
+            {
+                MBox.Assert(0, false);
+                return;
+            }
+
+            var winProgress = new WinSaveInProgress();
+            var strProgressTag = Path.GetFileName(strProjectFilename);
+            var listFiles = new List<string>();
+
+            winProgress.InitProgress(new string[] { "Loading project." }, new string[] { strProgressTag });
+
+            System.Threading.Tasks.Task.Run(() =>
+            {
+                using (var inStream = new FileStream(strProjectFilename, FileMode.Open, FileAccess.Read))
+                using (var zip = new ZipArchive(inStream, ZipArchiveMode.Read))
+                using (var reader = new StreamReader(zip.Entries[0].Open()))
+                {
+                    int kBufferSize = 4096;
+                    var buffer = new char[kBufferSize];
+                    var numerator = 0;
+                    double denominator = zip.Entries[0].Length;    // double preserves mantissa
+                    var nTransacted = 0;
+
+                    listFiles.Add(Path.GetTempFileName());
+                    Utilities.WriteLine("listFiles[listFiles.Count - 1] " + listFiles[listFiles.Count - 1]);
+
+                    var writer = new StreamWriter(listFiles[listFiles.Count - 1]);
+                    while ((nTransacted = reader.Read(buffer, 0, kBufferSize)) > 0)
+                    {
+                        bool bNewFile = false;
+
+                        for (int i = 0; i < buffer.Length; ++i)
+                        {
+                            if (buffer[i] == ConcatenatedStream.FileEndMarker)
+                            {
+                                writer.Write(buffer, 0, i - 1);
+                                writer.Close();
+
+                                if (numerator < denominator - 1)    // did I get that extra FileEndMarker?
+                                {
+                                    listFiles.Add(Path.GetTempFileName());
+                                    Utilities.WriteLine("listFiles[listFiles.Count - 1] " + listFiles[listFiles.Count - 1]);
+                                    writer = new StreamWriter(listFiles[listFiles.Count - 1]);
+                                    writer.Write(buffer, i + 1, nTransacted - i - 1);
+                                }
+
+                                bNewFile = true;
+                                break;
+                            }
+                        }
+
+                        if (bNewFile)
+                        {
+                            bNewFile = false;
+                        }
+                        else
+                        {
+                            writer.Write(buffer, 0, nTransacted);
+                        }
+
+                        numerator += nTransacted;
+                        winProgress.SetProgress(strProgressTag, numerator / denominator);
+                    }
+
+                    writer.Close();
+                    Utilities.WriteLine("numerator " + numerator);
+                    Utilities.WriteLine("zip.Entries[0].Length " + zip.Entries[0].Length);
+                    winProgress.SetCompleted(strProgressTag);
+                }
+            });
+
+            winProgress.ShowDialog(GlobalData.static_TopWindow);
         }
 
         internal void SaveProject(IEnumerable<LVitem_VolumeVM> list_lvVolStrings = null, string strProjectFilename = null)
@@ -46,7 +132,6 @@ namespace DoubleFile
                 return;
             }
 
-            var listNicknames = new List<string>();
             var listListingFiles = new List<string>();
 
             foreach (LVitem_VolumeVM volStrings in list_lvVolStrings)
@@ -56,8 +141,7 @@ namespace DoubleFile
                     continue;
                 }
 
-                listNicknames.Add(volStrings.Nickname);
-                listListingFiles.Add(Path.GetFileName(volStrings.ListingFile));
+                listListingFiles.Add(volStrings.ListingFile);
             }
 
             if (listListingFiles.Count <= 0)
@@ -66,44 +150,36 @@ namespace DoubleFile
             }
 
             var winProgress = new WinSaveInProgress();
+            var strProgressTag = Path.GetFileName(strProjectFilename);
 
-            winProgress.InitProgress(listNicknames, listListingFiles);
+            winProgress.InitProgress(new string[] { "Saving project." }, new string[] { strProgressTag });
 
             System.Threading.Tasks.Task.Run(() =>
             {
-                using (var outStream = new FileStream(strProjectFilename, FileMode.Create, FileAccess.ReadWrite))
+                using (var outStream = new FileStream(strProjectFilename, FileMode.Create, FileAccess.Write))
                 using (var zip = new ZipArchive(outStream, ZipArchiveMode.Create))
+                using (var concatenatedStream = new StreamReader(new ConcatenatedStream(listListingFiles)))
                 {
-                    foreach (var volStrings in m_list_lvVolStrings)
+                    var zipEntry = zip.CreateEntry(strProjectFilename, CompressionLevel.Optimal);
+
+                    using (var writer = new StreamWriter(zipEntry.Open()))
                     {
-                        if (string.IsNullOrWhiteSpace(volStrings.ListingFile))
+                        int kBufferSize = 4096;
+                        var buffer = new char[kBufferSize];
+                        var numerator = 0;
+                        double denominator = concatenatedStream.BaseStream.Length;    // double preserves mantissa
+                        var nTransacted = 0;
+
+                        while ((nTransacted = concatenatedStream.Read(buffer, 0, kBufferSize)) > 0)
                         {
-                            MBox.Assert(0, false);
-                            continue;
-                            // inFile = Path.GetRandomFileName();
+                            writer.Write(buffer, 0, nTransacted);
+                            numerator += nTransacted;
+                            winProgress.SetProgress(strProgressTag, numerator / denominator);
                         }
-
-                        var zipEntry = zip.CreateEntry(Path.GetFileName(volStrings.ListingFile), CompressionLevel.Optimal);
-
-                        using (var inStream = new StreamReader(volStrings.ListingFile))
-                        using (StreamWriter writer = new StreamWriter(zipEntry.Open()))
-                        {
-                            int kBufferSize = 4096;
-                            var buffer = new char[kBufferSize];
-                            var numerator = 0;
-                            double denominator = inStream.BaseStream.Length;    // double preserves mantissa
-                            var nTransacted = 0;
-
-                            while ((nTransacted = inStream.Read(buffer, 0, kBufferSize)) > 0)
-                            {
-                                writer.Write(buffer, 0, nTransacted);
-                                numerator += nTransacted;
-                                winProgress.SetProgress(Path.GetFileName(volStrings.ListingFile), numerator / denominator);
-                            }
-                        }
-
-                        winProgress.SetCompleted(Path.GetFileName(volStrings.ListingFile));
                     }
+
+                    Utilities.WriteLine("concatenatedStream.BaseStream.Length " + concatenatedStream.BaseStream.Length);
+                    winProgress.SetCompleted(strProgressTag);
                 }
             });
 

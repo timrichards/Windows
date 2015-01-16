@@ -6,7 +6,16 @@ namespace DoubleFile
     {
         // Menu items
 
-        internal void LoadProject() { MBox.ShowDialog("LoadProject"); }
+        internal void LoadProject()
+        {
+            var dlg = new Microsoft.Win32.OpenFileDialog();
+
+            if (dlg.ShowDialog(GetWindow()) ?? false)
+            {
+                new ProjectFile().LoadProject(dlg.FileName);
+            }
+        }
+
         internal void SaveProject()
         {
             var dlg = new Microsoft.Win32.SaveFileDialog();

@@ -117,7 +117,7 @@
     <Compile Include="SaveDirListings\TraverseTree.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Utilities\7zip.cs" />
+    <Compile Include="Utilities\ConcatenatedStream.cs" />
     <Compile Include="Utilities\DRDigit.cs" />
     <Compile Include="Utilities\FileParse.cs" />
     <Compile Include="MVVM\AbstractionsVM.cs" />
@@ -286,12 +286,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\7zip\7zip.csproj">
-      <Project>{a0e85b3d-485b-4384-8905-06cd61db9657}</Project>
-      <Name>7zip</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -36,66 +38,6 @@ namespace DoubleFile
             var listFiles = new List<string>();
 
             winProgress.InitProgress(new string[] { "Loading project." }, new string[] { strProgressTag });
-
-            System.Threading.Tasks.Task.Run(() =>
-            {
-                using (var inStream = new FileStream(strProjectFilename, FileMode.Open, FileAccess.Read))
-                using (var zip = new ZipArchive(inStream, ZipArchiveMode.Read))
-                using (var reader = new StreamReader(zip.Entries[0].Open()))
-                {
-                    int kBufferSize = 4096;
-                    var buffer = new char[kBufferSize];
-                    var numerator = 0;
-                    double denominator = zip.Entries[0].Length;    // double preserves mantissa
-                    var nTransacted = 0;
-
-                    listFiles.Add(Path.GetTempFileName());
-                    Utilities.WriteLine("listFiles[listFiles.Count - 1] " + listFiles[listFiles.Count - 1]);
-
-                    var writer = new StreamWriter(listFiles[listFiles.Count - 1]);
-                    while ((nTransacted = reader.Read(buffer, 0, kBufferSize)) > 0)
-                    {
-                        bool bNewFile = false;
-
-                        for (int i = 0; i < buffer.Length; ++i)
-                        {
-                            if (buffer[i] == ConcatenatedStream.FileEndMarker)
-                            {
-                                writer.Write(buffer, 0, i - 1);
-                                writer.Close();
-
-                                if (numerator < denominator - 1)    // did I get that extra FileEndMarker?
-                                {
-                                    listFiles.Add(Path.GetTempFileName());
-                                    Utilities.WriteLine("listFiles[listFiles.Count - 1] " + listFiles[listFiles.Count - 1]);
-                                    writer = new StreamWriter(listFiles[listFiles.Count - 1]);
-                                    writer.Write(buffer, i + 1, nTransacted - i - 1);
-                                }
-
-                                bNewFile = true;
-                                break;
-                            }
-                        }
-
-                        if (bNewFile)
-                        {
-                            bNewFile = false;
-                        }
-                        else
-                        {
-                            writer.Write(buffer, 0, nTransacted);
-                        }
-
-                        numerator += nTransacted;
-                        winProgress.SetProgress(strProgressTag, numerator / denominator);
-                    }
-
-                    writer.Close();
-                    Utilities.WriteLine("numerator " + numerator);
-                    Utilities.WriteLine("zip.Entries[0].Length " + zip.Entries[0].Length);
-                    winProgress.SetCompleted(strProgressTag);
-                }
-            });
 
             winProgress.ShowDialog(GlobalData.static_TopWindow);
         }
@@ -149,40 +91,24 @@ namespace DoubleFile
                 return;
             }
 
+            string strBasePath = System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase;
+            strBasePath = System.IO.Path.GetDirectoryName(strBasePath).Replace(@"file:\", "");
+            string strDest = "zipit.7z";      // "some.7z";
+            string strSource = @"zipit\";     // "one or more files";
+            var proc = new System.Diagnostics.Process();
+            //proc.StartInfo.FileName = @"C:\Windows\system32\cmd.exe";
+            //proc.StartInfo.Arguments = "/k " + strBasePath + @"\7z\7z.exe " + "a " + strDest + " " + strSource + " -mx=3 -md=64m";
+            proc.StartInfo.FileName = strBasePath + @"\7z\7z.exe";
+            proc.StartInfo.Arguments = "a " + strDest + " " + strSource + " -mx=3 -md=128m";
+            proc.Start();
+            proc.WaitForExit();
+            
+            if (proc != null) return;
+
             var winProgress = new WinSaveInProgress();
             var strProgressTag = Path.GetFileName(strProjectFilename);
 
             winProgress.InitProgress(new string[] { "Saving project." }, new string[] { strProgressTag });
-
-            System.Threading.Tasks.Task.Run(() =>
-            {
-                using (var outStream = new FileStream(strProjectFilename, FileMode.Create, FileAccess.Write))
-                using (var zip = new ZipArchive(outStream, ZipArchiveMode.Create))
-                using (var concatenatedStream = new StreamReader(new ConcatenatedStream(listListingFiles)))
-                {
-                    var zipEntry = zip.CreateEntry(strProjectFilename, CompressionLevel.Optimal);
-
-                    using (var writer = new StreamWriter(zipEntry.Open()))
-                    {
-                        int kBufferSize = 4096;
-                        var buffer = new char[kBufferSize];
-                        var numerator = 0;
-                        double denominator = concatenatedStream.BaseStream.Length;    // double preserves mantissa
-                        var nTransacted = 0;
-
-                        while ((nTransacted = concatenatedStream.Read(buffer, 0, kBufferSize)) > 0)
-                        {
-                            writer.Write(buffer, 0, nTransacted);
-                            numerator += nTransacted;
-                            winProgress.SetProgress(strProgressTag, numerator / denominator);
-                        }
-                    }
-
-                    Utilities.WriteLine("concatenatedStream.BaseStream.Length " + concatenatedStream.BaseStream.Length);
-                    winProgress.SetCompleted(strProgressTag);
-                }
-            });
-
             winProgress.ShowDialog(GlobalData.static_TopWindow);
         }
     }

@@ -43,8 +43,9 @@ namespace DoubleFile
             get
             {
                 return new LVitem_VolumeVM(new string[] {
-                    form_EditNickname.Text, form_EditSourcePath.Text, form_EditListingFile.Text,
-                    strStatus, strIncludeYN,
+                    form_EditNickname.Text, form_EditSourcePath.Text,
+                    (IsVolumeNew ? form_EditListingFile.Text : m_strListingFile),
+                    m_strStatus, m_strIncludeYN,
                     form_UC_VolumeGroup.Text, form_EditDriveModel.Text, form_EditDriveSerial.Text
                 });
             }
@@ -60,17 +61,18 @@ namespace DoubleFile
 
                 if (astr.Length > i) { form_EditNickname.Text = value[i++]; } else { MBox.Assert(0, false); }
                 if (astr.Length > i) { form_EditSourcePath.Text = value[i++]; } else { MBox.Assert(0, false); }
-                if (astr.Length > i) { form_EditListingFile.Text = value[i++]; }
-                if (astr.Length > i) { var s = value[i++]; if (s != null) { strStatus = s; } }
-                if (astr.Length > i) { var s = value[i++]; if (s != null) { strIncludeYN = s; } }
+                if (astr.Length > i) { m_strListingFile = value[i++]; form_EditListingFile.Text = (IsVolumeNew ? m_strListingFile : System.IO.Path.GetFileName(m_strListingFile)); }
+                if (astr.Length > i) { var s = value[i++]; if (s != null) { m_strStatus = s; } }
+                if (astr.Length > i) { var s = value[i++]; if (s != null) { m_strIncludeYN = s; } }
                 if (astr.Length > i) { form_UC_VolumeGroup.Text = value[i++]; }
                 if (astr.Length > i) { form_EditDriveModel.Text = value[i++]; }
                 if (astr.Length > i) { form_EditDriveSerial.Text = value[i++]; }
             }
         }
 
-        string strStatus = FileParse.mSTRnotSaved;
-        string strIncludeYN = FileParse.mSTRinclude;
+        string m_strListingFile = null;
+        string m_strStatus = FileParse.mSTRnotSaved;
+        string m_strIncludeYN = FileParse.mSTRinclude;
 
         bool IsOKenabled
         {

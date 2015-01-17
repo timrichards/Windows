@@ -8,15 +8,18 @@ namespace DoubleFile
 
     class ProjectFile
     {
+        internal static string TempPath { get { return System.IO.Path.GetTempPath() + @"DoubleFile\"; } }
+
         string m_strProjectFilename = null;
         IEnumerable<LVitem_VolumeVM> m_list_lvVolStrings = null;
         System.Diagnostics.ProcessStartInfo processStartInfo = new System.Diagnostics.ProcessStartInfo();
         
         internal ProjectFile()
         {
-            var strBasePath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Replace(@"file:\", "");
-
-            processStartInfo.FileName = strBasePath + @"\7z\7z.exe";
+            processStartInfo.FileName = System.IO.Path.GetDirectoryName(
+                System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)
+                .Replace(@"file:\", "") +
+                @"\7z920x86\7z.exe";
             processStartInfo.RedirectStandardOutput = true;
             processStartInfo.UseShellExecute = false;
             processStartInfo.CreateNoWindow = true;
@@ -44,19 +47,22 @@ namespace DoubleFile
                 return;
             }
 
-            var strTempPath = Path.GetTempPath() + Path.GetRandomFileName();
             var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
 
-            Directory.CreateDirectory(strTempPath);
-            File.Copy(m_strProjectFilename, m_strProjectFilename = strTempPath + strProjectFileNoPath);
+            if (Directory.Exists(TempPath))
+            {
+                Directory.Delete(TempPath, true);
+            }
+
+            Directory.CreateDirectory(TempPath);
 
             var process = new System.Diagnostics.Process();
 
             process.StartInfo = processStartInfo;
-            process.StartInfo.WorkingDirectory = strTempPath;
+            process.StartInfo.WorkingDirectory = TempPath;
             process.StartInfo.Arguments = "e " + m_strProjectFilename + " -y";
 
-            var winProgress = new WinSaveInProgress();
+            var winProgress = new WinProgress();
 
             winProgress.InitProgress(new string[] { "Opening project." }, new string[] { strProjectFileNoPath });
 
@@ -69,11 +75,16 @@ namespace DoubleFile
                 {
                     bCompleted = true;
 
-                    var listFiles = Directory.GetFiles(strTempPath).ToList();
+                    var listFiles = Directory.GetFiles(TempPath).ToList();
 
-                    listFiles.Remove(strTempPath + strProjectFileNoPath);
-                    GlobalData.static_TopWindow.Dispatcher.Invoke(() => OpenListingFiles(listFiles, true));
-                    winProgress.SetCompleted(strProjectFileNoPath);
+                    GlobalData.static_TopWindow.Dispatcher.Invoke(() =>
+                    {
+                        if (winProgress.IsLoaded)
+                        {
+                            OpenListingFiles(listFiles, true);
+                            winProgress.Close();
+                        }
+                    });
                 }
             };
 
@@ -142,10 +153,10 @@ namespace DoubleFile
 
             process.StartInfo = processStartInfo;
             process.StartInfo.WorkingDirectory = Path.GetDirectoryName(listListingFiles[0]);
-            process.StartInfo.Arguments = "a " + m_strProjectFilename + " " + sbSource + " -mx=3 -md=128m";
+            process.StartInfo.Arguments = "a " + m_strProjectFilename + ".7z " + sbSource + " -mx=3 -md=128m";
 
             var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
-            var winProgress = new WinSaveInProgress();
+            var winProgress = new WinProgress();
 
             winProgress.InitProgress(new string[] { "Saving project." }, new string[] { strProjectFileNoPath });
 

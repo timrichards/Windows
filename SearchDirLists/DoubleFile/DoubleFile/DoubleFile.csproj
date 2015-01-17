@@ -25,7 +25,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>8</ApplicationRevision>
+    <ApplicationRevision>10</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -144,8 +144,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinSaveInProgress.xaml.cs">
-      <DependentUpon>WinSaveInProgress.xaml</DependentUpon>
+    <Compile Include="WinProgress.xaml.cs">
+      <DependentUpon>WinProgress.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="WinVolumeEdit\MVVM_UC_VolumeEdit\UC_VolumeEditVM.cs">
@@ -257,7 +257,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WinSaveInProgress.xaml">
+    <Page Include="WinProgress.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -287,10 +287,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="7z\7z.dll">
+    <Content Include="7z920x86\7z.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="7z\7z.exe">
+    <Content Include="7z920x86\7z.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

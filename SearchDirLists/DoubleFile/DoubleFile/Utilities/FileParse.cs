@@ -58,12 +58,15 @@ namespace DoubleFile
         internal const string mSTRlineType_ErrorFile = "r";
         internal const string mSTRlineType_Length = "L";
 
-        internal const string mSTRfileExt_Listing = "sdl_list";
-        internal const string mSTRfileExt_Volume = "sdl_vol";
+        internal const string mSTRfileExt_Listing = "DFL";
+        internal const string mSTRfileExt_Project = "DFP";
         internal const string mSTRfileExt_Copy = "sdl_copy";
         internal const string mSTRfileExt_Ignore = "sdl_ignore";
 
         internal const int knDriveInfoItems = 11;
+        internal const int knDriveModel = 12;           // backwards compatibility when Info: isn't in the header
+        internal const int knDriveSerial = 13;          // ...line numbering starts at one in the file and zero in the program
+
         internal static readonly string[] mAstrDIlabels = new string[knDriveInfoItems]
         {
             "Volume Free",
@@ -363,13 +366,17 @@ namespace DoubleFile
                 if (bReadAttributeReturnValue == false) return false;
                 lvItem.SourcePath = strReadAttributeReturnValue;
 
-                File.ReadLines(strFile).Where(s => s.StartsWith(mSTRlineType_VolumeInfo_DriveModel)).FirstOnlyAssert(s =>
+                File.ReadLines(strFile).Skip(knDriveModel).Take(1)
+                //  .Where(s => s.StartsWith(mSTRlineType_VolumeInfo_DriveModel))
+                    .FirstOnlyAssert(s =>
                 {
                     ReadAttribute(s);
                     if (bReadAttributeReturnValue) lvItem.DriveModel = strReadAttributeReturnValue;
                 });
 
-                File.ReadLines(strFile).Where(s => s.StartsWith(mSTRlineType_VolumeInfo_DriveSerial)).FirstOnlyAssert(s =>
+                File.ReadLines(strFile).Skip(knDriveSerial).Take(1)
+                //   .Where(s => s.StartsWith(mSTRlineType_VolumeInfo_DriveSerial))
+                    .FirstOnlyAssert(s =>
                 {
                     ReadAttribute(s);
                     if (bReadAttributeReturnValue) lvItem.DriveSerial = strReadAttributeReturnValue;

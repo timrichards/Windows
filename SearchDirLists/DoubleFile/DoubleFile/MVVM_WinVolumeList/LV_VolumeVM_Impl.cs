@@ -82,7 +82,8 @@ namespace DoubleFile
 
         internal bool FileExists(string strListingFile)
         {
-            bool bFileExists = System.IO.File.Exists(strListingFile);
+            bool bFileExists = System.IO.File.Exists(strListingFile) &&
+                (false == strListingFile.StartsWith(ProjectFile.TempPath) || FileParse.ValidateFile(strListingFile));
 
             if (bFileExists)
             {
@@ -182,19 +183,11 @@ namespace DoubleFile
                 return false;
             }
 
-            var strFile_01 = FileParse.StrFile_01(origLVitemVolume.ListingFile);
+            var sbOut = new System.Text.StringBuilder();
 
-            if (File.Exists(strFile_01))
-            {
-                File.Delete(strFile_01);
-            }
-
-            File.Move(origLVitemVolume.ListingFile, strFile_01);
-
-            using (var reader = new StringReader(File.ReadAllText(strFile_01)))
+            using (var reader = new StringReader(File.ReadAllText(origLVitemVolume.ListingFile)))
             {
                 string strLine = null;
-                var sbOut = new System.Text.StringBuilder();
 
                 while ((bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo) &&
                     (strLine = reader.ReadLine()) != null)
@@ -253,10 +246,9 @@ namespace DoubleFile
                     sbOut.Replace("\t" + driveLetterOrig + @":\", "\t" + driveLetter + @":\");
                     bDriveLetter_Todo = false;
                 }
-
-                File.WriteAllText(origLVitemVolume.ListingFile, sbOut.ToString());
             }
 
+            File.WriteAllText(origLVitemVolume.ListingFile, sbOut.ToString());
             MBox.Assert(0, (false == (bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo || bDriveLetter_Todo)));
             return true;
         }

@@ -100,6 +100,11 @@ namespace DoubleFile
 
                 Parallel.ForEach(listFilePaths, strFile =>
                 {
+                    if (m_bThreadAbort)
+                    {
+                        return;                         // return from lambda
+                    }
+
                     Interlocked.Increment(ref nProgressNumerator);
 
                     var fileHandle = DriveSerial.CreateFile(@"\\?\" + strFile, FileAccess.Read, FileShare.ReadWrite,
@@ -153,12 +158,13 @@ namespace DoubleFile
 
                 if (string.IsNullOrWhiteSpace(m_volStrings.ListingFile))
                 {
-                    m_statusCallback(m_volStrings.SourcePath, mSTRnotSaved);
-                    MBox.ShowDialog("Must specify save filename.", "Save Directory Listing");
-                    return;
+                    m_volStrings.ListingFile = ProjectFile.TempPath + m_volStrings.SourcePath[0] + "_Listing_" +
+                        Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + mSTRfileExt_Listing;
                 }
 
                 string strPathOrig = Directory.GetCurrentDirectory();
+
+                Directory.CreateDirectory(Path.GetDirectoryName(m_volStrings.ListingFile));
 
                 try
                 {
@@ -192,7 +198,14 @@ namespace DoubleFile
                         fs.WriteLine(FormatString(strDir: mSTRtotalLengthLoc01, nLength: LengthRead));
                     }
 
+                    if (m_bThreadAbort || GlobalData.AppExit)
+                    {
+                        File.Delete(m_volStrings.ListingFile);
+                        return;
+                    }
+
                     Directory.SetCurrentDirectory(strPathOrig);
+                    m_volStrings.Status = mSTRsaved;
                     m_statusCallback(m_volStrings.SourcePath, strText: mSTRsaved, bDone: true);
                 }
 #if DEBUG == false

@@ -76,6 +76,11 @@ namespace DoubleFile
 
                     foreach (var winFile in listFiles)
                     {
+                        if (m_bThreadAbort || GlobalData.AppExit)
+                        {
+                            return null;
+                        }
+
                         var fi = new Win32FindFile.FileData(winFile);
                         var strFile = winFile.strFileName;
                         var strError2_File = CheckNTFS_chars(ref strFile, bFile: true) ?? "";

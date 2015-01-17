@@ -40,6 +40,7 @@ namespace DoubleFile
             var dlg = new Microsoft.Win32.SaveFileDialog();
 
             dlg.FileName = strPath;
+            dlg.Filter = WinVolumeListVM.ksListingFilter;
             dlg.OverwritePrompt = false;
 
             if (dlg.ShowDialog(GetWindow()) ?? false)

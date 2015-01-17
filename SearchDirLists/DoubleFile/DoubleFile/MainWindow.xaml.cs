@@ -41,5 +41,10 @@ namespace DoubleFile
         {
             ShowVolumeList();
         }
+
+        private void LocalWindow_Closed(object sender, System.EventArgs e)
+        {
+            System.IO.Directory.Delete(ProjectFile.TempPath, true);
+        }
     }
 }

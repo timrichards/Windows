@@ -13,7 +13,7 @@ namespace DoubleFile
     class SaveListingsProcess
     {
         GlobalData gd = null;
-        WinSaveInProgress m_winProgress = null;
+        WinProgress m_winProgress = null;
 
         internal SaveListingsProcess(IEnumerable<LVitem_VolumeVM> list_lvVolStrings)
         {
@@ -35,8 +35,9 @@ namespace DoubleFile
 
             if (listSourcePaths.Count > 0)
             {
-                m_winProgress = new WinSaveInProgress();
+                m_winProgress = new WinProgress();
                 m_winProgress.InitProgress(listNicknames, listSourcePaths);
+                m_winProgress.WindowTitle = "Saving Directory Listings";
 
                 if ((gd.m_saveDirListings != null) && (gd.m_saveDirListings.IsAborted == false))
                 {

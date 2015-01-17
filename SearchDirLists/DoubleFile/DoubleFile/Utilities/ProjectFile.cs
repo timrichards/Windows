@@ -9,6 +9,8 @@ namespace DoubleFile
     class ProjectFile
     {
         internal static string TempPath { get { return System.IO.Path.GetTempPath() + @"DoubleFile\"; } }
+        internal static string TempPath01 { get { return TempPath.TrimEnd(new char[] { '\\' }) + "01"; } }
+
         System.Diagnostics.ProcessStartInfo processStartInfo = new System.Diagnostics.ProcessStartInfo();
         
         internal ProjectFile()
@@ -16,7 +18,7 @@ namespace DoubleFile
             processStartInfo.FileName = System.IO.Path.GetDirectoryName(
                 System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)
                 .Replace(@"file:\", "") +
-                @"\7z920x86\7z.exe";
+                @"\Utilities\7z920x86\7z.exe";
             processStartInfo.RedirectStandardOutput = true;
             processStartInfo.UseShellExecute = false;
             processStartInfo.CreateNoWindow = true;
@@ -27,11 +29,15 @@ namespace DoubleFile
             List<LVitem_VolumeVM> list_lvVolStrings = new List<LVitem_VolumeVM>();
 
             var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
-            var strTempPath01 = TempPath.TrimEnd(new char[] {'\\'}) + "01";
 
             if (Directory.Exists(TempPath))
             {
-                Directory.Move(TempPath, strTempPath01);
+                if (Directory.Exists(TempPath01))
+                {
+                    Directory.Delete(TempPath01, true);
+                }
+
+                Directory.Move(TempPath, TempPath01);
             }
 
             Directory.CreateDirectory(TempPath);
@@ -64,15 +70,15 @@ namespace DoubleFile
                             OpenListingFiles(listFiles, true);
                             winProgress.Close();
 
-                            if (Directory.Exists(strTempPath01))
+                            if (Directory.Exists(TempPath01))
                             {
-                                Directory.Delete(strTempPath01, true);
+                                Directory.Delete(TempPath01, true);
                             }
                         }
-                        else if (Directory.Exists(strTempPath01))   // close box/cancel/undo
+                        else if (Directory.Exists(TempPath01))   // close box/cancel/undo
                         {
                             Directory.Delete(TempPath, true);
-                            Directory.Move(strTempPath01, TempPath);
+                            Directory.Move(TempPath01, TempPath);
                         }
                     });
                 }

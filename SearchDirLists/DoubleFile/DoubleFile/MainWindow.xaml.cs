@@ -45,6 +45,7 @@ namespace DoubleFile
         private void LocalWindow_Closed(object sender, System.EventArgs e)
         {
             System.IO.Directory.Delete(ProjectFile.TempPath, true);
+            System.IO.Directory.Delete(ProjectFile.TempPath01, true);
         }
     }
 }

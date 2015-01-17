@@ -83,18 +83,6 @@ namespace DoubleFile
             return true;
         }
 
-        static string FormatLine(string strLineType, long nLineNo, string strLine_in = null)
-        {
-            string strLine_out = strLineType + "\t" + nLineNo;
-
-            if (false == string.IsNullOrWhiteSpace(strLine_in))
-            {
-                strLine_out += '\t' + strLine_in;
-            }
-
-            return strLine_out;
-        }
-
         internal static string FormatSize(string in_str, bool bBytes = false)
         {
             return FormatSize(ulong.Parse(in_str), bBytes);

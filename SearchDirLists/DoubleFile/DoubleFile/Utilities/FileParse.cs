@@ -239,14 +239,7 @@ namespace DoubleFile
 
         static string FormatLine(string strLineType, long nLineNo, string strLine_in = null)
         {
-            string strLine_out = strLineType + "\t" + nLineNo;
-
-            if (string.IsNullOrWhiteSpace(strLine_in) == false)
-            {
-                strLine_out += '\t' + strLine_in;
-            }
-
-            return strLine_out;
+            return strLineType + "\t" + nLineNo + '\t' + (strLine_in ?? "").Trim();
         }
 
         internal static string FormatString(string strDir = null, string strFile = null, DateTime? dtCreated = null, DateTime? dtModified = null, string strAttributes = null, long nLength = -1, string strError1 = null, string strError2 = null, int? nHeader = null, string strHash = null)

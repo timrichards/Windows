@@ -9,9 +9,6 @@ namespace DoubleFile
     class ProjectFile
     {
         internal static string TempPath { get { return System.IO.Path.GetTempPath() + @"DoubleFile\"; } }
-
-        string m_strProjectFilename = null;
-        IEnumerable<LVitem_VolumeVM> m_list_lvVolStrings = null;
         System.Diagnostics.ProcessStartInfo processStartInfo = new System.Diagnostics.ProcessStartInfo();
         
         internal ProjectFile()
@@ -29,29 +26,12 @@ namespace DoubleFile
         {
             List<LVitem_VolumeVM> list_lvVolStrings = new List<LVitem_VolumeVM>();
 
-            if (strProjectFilename != null)
-            {
-                MBox.Assert(0, m_strProjectFilename == null);
-                m_strProjectFilename = strProjectFilename;
-            }
-
-            if (m_strProjectFilename == null)
-            {
-                MBox.Assert(0, false);
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(m_strProjectFilename))
-            {
-                MBox.Assert(0, false);
-                return;
-            }
-
             var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
+            var strTempPath01 = TempPath.TrimEnd(new char[] {'\\'}) + "01";
 
             if (Directory.Exists(TempPath))
             {
-                Directory.Delete(TempPath, true);
+                Directory.Move(TempPath, strTempPath01);
             }
 
             Directory.CreateDirectory(TempPath);
@@ -60,7 +40,7 @@ namespace DoubleFile
 
             process.StartInfo = processStartInfo;
             process.StartInfo.WorkingDirectory = TempPath;
-            process.StartInfo.Arguments = "e " + m_strProjectFilename + " -y";
+            process.StartInfo.Arguments = "e " + strProjectFilename + " -y";
 
             var winProgress = new WinProgress();
 
@@ -79,10 +59,20 @@ namespace DoubleFile
 
                     GlobalData.static_TopWindow.Dispatcher.Invoke(() =>
                     {
-                        if (winProgress.IsLoaded)
+                        if (winProgress.IsLoaded)                   // close box/cancel/undo
                         {
                             OpenListingFiles(listFiles, true);
                             winProgress.Close();
+
+                            if (Directory.Exists(strTempPath01))
+                            {
+                                Directory.Delete(strTempPath01, true);
+                            }
+                        }
+                        else if (Directory.Exists(strTempPath01))   // close box/cancel/undo
+                        {
+                            Directory.Delete(TempPath, true);
+                            Directory.Move(strTempPath01, TempPath);
                         }
                     });
                 }
@@ -93,38 +83,8 @@ namespace DoubleFile
             winProgress.ShowDialog(GlobalData.static_TopWindow);
         }
 
-        internal void SaveProject(IEnumerable<LVitem_VolumeVM> list_lvVolStrings = null, string strProjectFilename = null)
+        internal void SaveProject(IEnumerable<LVitem_VolumeVM> list_lvVolStrings, string strProjectFilename)
         {
-            if (strProjectFilename != null)
-            {
-                MBox.Assert(0, m_strProjectFilename == null);
-                m_strProjectFilename = strProjectFilename;
-            }
-
-            if (m_strProjectFilename == null)
-            {
-                MBox.Assert(0, false);
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(m_strProjectFilename))
-            {
-                MBox.Assert(0, false);
-                return;
-            }
-
-            if (list_lvVolStrings != null)
-            {
-                MBox.Assert(0, m_list_lvVolStrings == null);
-                m_list_lvVolStrings = list_lvVolStrings;
-            }
-
-            if (m_list_lvVolStrings == null)
-            {
-                MBox.Assert(0, false);
-                return;
-            }
-
             var listListingFiles = new List<string>();
 
             foreach (LVitem_VolumeVM volStrings in list_lvVolStrings)
@@ -153,7 +113,7 @@ namespace DoubleFile
 
             process.StartInfo = processStartInfo;
             process.StartInfo.WorkingDirectory = Path.GetDirectoryName(listListingFiles[0]);
-            process.StartInfo.Arguments = "a " + m_strProjectFilename + ".7z " + sbSource + " -mx=3 -md=128m";
+            process.StartInfo.Arguments = "a " + strProjectFilename + ".7z " + sbSource + " -mx=3 -md=128m";
 
             var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
             var winProgress = new WinProgress();
@@ -168,10 +128,10 @@ namespace DoubleFile
                 if (bCompleted == false)
                 {
                     bCompleted = true;
-                    try { File.Delete(m_strProjectFilename); } catch { }
+                    try { File.Delete(strProjectFilename); } catch { }
                     try
                     {
-                        File.Move(m_strProjectFilename + ".7z", m_strProjectFilename);
+                        File.Move(strProjectFilename + ".7z", strProjectFilename);
                         winProgress.SetCompleted(strProjectFileNoPath);
                     }
                     catch { MBox.ShowDialog("Couldn't save the project.", "Save Project"); }

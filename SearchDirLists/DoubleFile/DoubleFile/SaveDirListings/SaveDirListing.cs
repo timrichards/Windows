@@ -159,7 +159,7 @@ namespace DoubleFile
                 if (string.IsNullOrWhiteSpace(m_volStrings.ListingFile))
                 {
                     m_volStrings.ListingFile = ProjectFile.TempPath + m_volStrings.SourcePath[0] + "_Listing_" +
-                        Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + mSTRfileExt_Listing;
+                        Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + "." + mSTRfileExt_Listing;
                 }
 
                 string strPathOrig = Directory.GetCurrentDirectory();

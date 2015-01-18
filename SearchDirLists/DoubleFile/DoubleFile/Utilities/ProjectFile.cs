@@ -81,6 +81,7 @@ namespace DoubleFile
         internal void SaveProject(IEnumerable<LVitem_VolumeVM> list_lvVolStrings, string strProjectFilename)
         {
             var listListingFiles = new List<string>();
+            var listListingFiles_Check = new List<string>();
 
             foreach (LVitem_VolumeVM volStrings in list_lvVolStrings)
             {
@@ -89,16 +90,38 @@ namespace DoubleFile
                     continue;
                 }
 
-                string strNewName = volStrings.ListingFile;
-                int n = 0;
+                var strNewName = Path.GetFileName(volStrings.ListingFile);
 
-                while (listListingFiles.Contains(strNewName))
+                if (listListingFiles_Check.Contains(strNewName))
                 {
-                    MBox.Assert(0, false);          // TODO
-                    ++n;
+                    var strSuffix = "";
+                    var bSuccess = false;
+                    const int knMaxAttempts = 16;
+
+                    for (int n = 0; n < knMaxAttempts; ++n)
+                    {
+                        strNewName = Path.GetFileNameWithoutExtension(volStrings.ListingFile) +
+                            strSuffix + Path.GetExtension(volStrings.ListingFile);
+
+                        if (false == listListingFiles_Check.Contains(strNewName))
+                        {
+                            bSuccess = true;
+                            break;
+                        }
+
+                        strSuffix = "_" + n;
+                    }
+
+                    if (bSuccess)
+                    {
+                        strNewName = TempPath + strNewName;
+                        File.Copy(volStrings.ListingFile, strNewName);
+                        volStrings.ListingFile = strNewName;
+                    }
                 }
 
                 listListingFiles.Add(volStrings.ListingFile);
+                listListingFiles_Check.Add(Path.GetFileName(volStrings.ListingFile));
             }
 
             if (listListingFiles.Count <= 0)
@@ -119,9 +142,9 @@ namespace DoubleFile
             {
                 if (File.Exists(strProjectFilename))
                 {
-                    try { File.Delete(strProjectFilename); }
-                    catch { }
+                    File.Delete(strProjectFilename);
                 }
+
                 try
                 {
                     File.Move(strProjectFilename + ".7z", strProjectFilename);
@@ -130,8 +153,15 @@ namespace DoubleFile
                 catch
                 {
                     GlobalData.static_TopWindow.Dispatcher.Invoke(() => m_winProgress.Close());
-                    MBox.ShowDialog(string.Join("", m_sbError.ToString().Split('\n').SkipWhile(s => s.StartsWith("Error:") == false)),
-                        "Error Saving Project");
+
+                    var strError = string.Join("", m_sbError.ToString().Split('\n').SkipWhile(s => s.StartsWith("Error:") == false));
+
+                    if (string.IsNullOrWhiteSpace(strError))
+                    {
+                        strError = "Error saving project.";
+                    }
+
+                    MBox.ShowDialog( strError, "Error Saving Project");
                     File.AppendAllText(m_strErrorLogFile, m_sbError.ToString());
                 }
             };
@@ -141,16 +171,40 @@ namespace DoubleFile
 
             if (false == StartProcess("Saving project.", strProjectFileNoPath))
             {
-                string strDir = strProjectFilename + "_" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
+                var strDir = strProjectFilename;
+                var strMessage = "";
+                var bSuccess = false;
+                const int knMaxAttempts = 16;
 
-                Directory.CreateDirectory(strDir);
-
-                foreach (var listingFile in listListingFiles)
+                for (int n = 0; n < knMaxAttempts; ++n)
                 {
-                    File.Copy(listingFile, strDir + '\\' + Path.GetFileName(listingFile));
+                    if (n == knMaxAttempts - 1)
+                    {
+                        strDir = TempPath.TrimEnd('\\') + "_" + strProjectFileNoPath;
+                    }
+
+                    try
+                    {
+                        Directory.CreateDirectory(strDir);
+                        bSuccess = true;
+                        break;
+                    }
+                    catch { }
+
+                    strDir = strProjectFilename + "_" + n;
                 }
 
-                MBox.ShowDialog("Couldn't save the project. Copied the listing files to\n" + strDir, "Save Project");
+                if (bSuccess)
+                {
+                    foreach (var listingFile in listListingFiles)
+                    {
+                        File.Copy(listingFile, strDir + '\\' + Path.GetFileName(listingFile));
+                    }
+
+                    strMessage = " Copied the listing files to\n" + strDir;
+                }
+
+                MBox.ShowDialog("Couldn't save the project." + strMessage, "Save Project");
             }
         }
 

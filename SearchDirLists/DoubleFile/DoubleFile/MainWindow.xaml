@@ -4,6 +4,8 @@
         xmlns:local="clr-namespace:DoubleFile"
         Title="Double File" Height="350" Width="525" Icon="/Double File;component/Resources/ic_people_black_18dp.png" Closed="LocalWindow_Closed">
     <Grid Loaded="Grid_Loaded">
-        <Button Content="Volume list" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        <Button Content="Volume list" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="Button_VolumeList_Click" Grid.Column="0"/>
+        <Button Content="Open project" Grid.Column="0" HorizontalAlignment="Left" Margin="80,0,0,0" Click="Button_OpenProject_Click" VerticalAlignment="Top" Width="75"/>
+        <Button Content="Save project" Grid.Column="0" HorizontalAlignment="Left" Margin="160,0,0,0" Click="Button_SaveProject_Click" VerticalAlignment="Top" Width="75"/>
     </Grid>
 </local:LocalWindow>

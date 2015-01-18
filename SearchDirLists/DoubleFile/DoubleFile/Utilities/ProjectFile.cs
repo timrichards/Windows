@@ -123,7 +123,9 @@ namespace DoubleFile
 
             if (listListingFiles.Count <= 0)
             {
-                MBox.ShowDialog("No listing files in project.", "Save Project");
+                MBox.ShowDialog("Any listing files in project have not yet been saved." +
+                    " Click OK on the Volume List to start saving directory listings of your drives.",
+                    "Save Project");
                 return;
             }
 

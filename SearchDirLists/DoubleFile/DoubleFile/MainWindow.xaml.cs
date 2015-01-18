@@ -21,26 +21,21 @@ namespace DoubleFile
 
         UList<LVitem_VolumeVM> m_list_lvVolStrings = null;
 
-        void ShowVolumeList()
+        void ShowVolumeList(bool bOpenProject = false)
         {
-            var m_volumes = new WinVolumeList(m_list_lvVolStrings);
+            var volumes = new WinVolumeList(m_list_lvVolStrings, bOpenProject);
 
-            if (false == (m_volumes.ShowDialog() ?? false))
+            if (false == (volumes.ShowDialog() ?? false))
             {
                 return;
             }
 
-            m_list_lvVolStrings = m_volumes.m_list_lvVolStrings;
+            m_list_lvVolStrings = volumes.m_list_lvVolStrings;
 
             if (m_list_lvVolStrings != null)
             {
                 new SaveListingsProcess(m_list_lvVolStrings);
             }
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            ShowVolumeList();
         }
 
         private void LocalWindow_Closed(object sender, System.EventArgs e)
@@ -54,6 +49,21 @@ namespace DoubleFile
             {
                 Directory.Delete(ProjectFile.TempPath01, true);
             }
+        }
+
+        private void Button_VolumeList_Click(object sender, RoutedEventArgs e)
+        {
+            ShowVolumeList();
+        }
+
+        private void Button_OpenProject_Click(object sender, RoutedEventArgs e)
+        {
+            ShowVolumeList(bOpenProject: true);
+        }
+
+        private void Button_SaveProject_Click(object sender, RoutedEventArgs e)
+        {
+            new WinVolumeListVM().SaveProject(m_list_lvVolStrings);
         }
     }
 }

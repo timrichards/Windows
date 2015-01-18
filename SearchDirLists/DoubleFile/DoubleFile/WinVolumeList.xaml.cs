@@ -8,14 +8,18 @@ namespace DoubleFile
     /// </summary>
     partial class WinVolumeList : LocalWindow
     {
+        bool m_bOpenProject = false;
+
         public WinVolumeList()
         {
             InitializeComponent();
         }
 
-        internal WinVolumeList(UList<LVitem_VolumeVM> list_lvVolStrings) : this()
+        internal WinVolumeList(UList<LVitem_VolumeVM> list_lvVolStrings, bool bOpenProject = false)
+            : this()
         {
             m_list_lvVolStrings = list_lvVolStrings;
+            m_bOpenProject = bOpenProject;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -41,6 +45,11 @@ namespace DoubleFile
             }
 
             m_list_lvVolStrings = null;     // close box / cancel
+
+            if (m_bOpenProject)
+            {
+                win.OpenProject();
+            }
         }
 
         internal UList<LVitem_VolumeVM> m_list_lvVolStrings = null;

@@ -47,7 +47,7 @@ namespace DoubleFile
 
                     dlg.LVitemVolumeTemp = new LVitem_VolumeVM(lvItemVolumeTemp);
 
-                    if (false == (dlg.ShowDialog(GetWindow()) ?? false))
+                    if (false == (dlg.ShowDialog() ?? false))
                     {
                         // user cancelled
                         break;
@@ -147,7 +147,7 @@ namespace DoubleFile
                 dlg.Text = lvItem.VolumeGroup;
             });
 
-            if (dlg.ShowDialog(GetWindow()) ?? false)
+            if (dlg.ShowDialog() ?? false)
             {
                 Selected().ToArray().ForEach(lvItem =>
                 {

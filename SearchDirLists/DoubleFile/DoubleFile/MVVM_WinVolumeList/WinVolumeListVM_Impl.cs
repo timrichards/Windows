@@ -17,7 +17,7 @@ namespace DoubleFile
             dlg.Title = "Open Project";
             dlg.Filter = ksProjectFilter;
 
-            if (dlg.ShowDialog(GetWindow()) ?? false)
+            if (dlg.ShowDialog() ?? false)
             {
                 new ProjectFile().OpenProject(dlg.FileName, OpenListingFiles);
             }
@@ -30,7 +30,7 @@ namespace DoubleFile
             dlg.Title = "Save Project";
             dlg.Filter = ksProjectFilter;
 
-            if (dlg.ShowDialog(GetWindow()) ?? false)
+            if (dlg.ShowDialog() ?? false)
             {
                 new ProjectFile().SaveProject(m_lvVM.ItemsCast, dlg.FileName);
             }
@@ -46,7 +46,7 @@ namespace DoubleFile
 
                 newVolume.LVitemVolumeTemp = new LVitem_VolumeVM(lvItemVolumeTemp);
 
-                if ((newVolume.ShowDialog(GetWindow()) ?? false) == false)
+                if ((newVolume.ShowDialog() ?? false) == false)
                 {
                     // user cancelled
                     break;
@@ -71,7 +71,7 @@ namespace DoubleFile
             dlg.Filter = ksListingFilter;
             dlg.Multiselect = true;
 
-            if (dlg.ShowDialog(GetWindow()) ?? false)
+            if (dlg.ShowDialog() ?? false)
             {
                 OpenListingFiles(dlg.FileNames);
             }

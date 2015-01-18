@@ -25,7 +25,7 @@ namespace DoubleFile
         {
             var m_volumes = new WinVolumeList(m_list_lvVolStrings);
 
-            if (false == (m_volumes.ShowDialog(this) ?? false))
+            if (false == (m_volumes.ShowDialog() ?? false))
             {
                 return;
             }

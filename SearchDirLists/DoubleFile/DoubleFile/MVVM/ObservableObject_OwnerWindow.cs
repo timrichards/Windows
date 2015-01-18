@@ -2,9 +2,6 @@
 {
     class ObservableObject_OwnerWindow : ObservableObjectBase
     {
-        internal delegate LocalWindow Delegate_GetWindow();
-        internal Delegate_GetWindow GetWindow = () => { DesignModeOK(); return null; };
-
         static internal void DesignModeOK()
         {
             if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()) == false)

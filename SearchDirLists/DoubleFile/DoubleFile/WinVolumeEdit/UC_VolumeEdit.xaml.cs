@@ -97,8 +97,6 @@ namespace DoubleFile
             vm.FromProbe = t => { form_EditDriveModel.Text = t.DriveModel; form_EditDriveSerial.Text = t.DriveSerial; };
             vm.FromListingFileDlg = s => { form_EditListingFile.Text = s; };
 
-            vm.GetWindow = () => { return window; };
-
             form_EditDriveLetter.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (o, e1) => { e1.Handled = true; }));
         }
 

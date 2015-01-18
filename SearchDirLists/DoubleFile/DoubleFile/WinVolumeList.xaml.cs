@@ -30,11 +30,7 @@ namespace DoubleFile
 
             lv.SelectedOne = () => { return form_lvVolumeList.SelectedItems.Count == 1; };
             lv.SelectedAny = () => { return form_lvVolumeList.SelectedItems.Count > 0; };
-            lv.Refresh = () => { }; // form_lvVolumeList.Items.Refresh(); });
             lv.Selected = () => { return form_lvVolumeList.SelectedItems.Cast<LVitem_VolumeVM>(); };
-
-            lv.GetWindow = () => { return this; };
-            win.GetWindow = () => { return this; };
 
             if (m_list_lvVolStrings != null)
             {

@@ -94,22 +94,19 @@ namespace DoubleFile
 
                 if (listListingFiles_Check.Contains(strNewName))
                 {
-                    var strSuffix = "";
                     var bSuccess = false;
                     const int knMaxAttempts = 16;
 
                     for (int n = 0; n < knMaxAttempts; ++n)
                     {
                         strNewName = Path.GetFileNameWithoutExtension(volStrings.ListingFile) +
-                            strSuffix + Path.GetExtension(volStrings.ListingFile);
+                            "_" + n.ToString("00") + Path.GetExtension(volStrings.ListingFile);
 
                         if (false == listListingFiles_Check.Contains(strNewName))
                         {
                             bSuccess = true;
                             break;
                         }
-
-                        strSuffix = "_" + n;
                     }
 
                     if (bSuccess)
@@ -126,6 +123,7 @@ namespace DoubleFile
 
             if (listListingFiles.Count <= 0)
             {
+                MBox.ShowDialog("No listing files in project.", "Save Project");
                 return;
             }
 
@@ -191,7 +189,7 @@ namespace DoubleFile
                     }
                     catch { }
 
-                    strDir = strProjectFilename + "_" + n;
+                    strDir = strProjectFilename + "_" + n.ToString("00");
                 }
 
                 if (bSuccess)
@@ -221,7 +219,7 @@ namespace DoubleFile
                     m_process.BeginOutputReadLine();
                     m_winProgress = new WinProgress();
                     m_winProgress.InitProgress(new string[] { status }, new string[] { strProjectFileNoPath });
-                    m_winProgress.ShowDialog(GlobalData.static_TopWindow);
+                    m_winProgress.ShowDialog();
                     return true;
                 }
                 catch

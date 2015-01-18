@@ -43,7 +43,7 @@ namespace DoubleFile
             dlg.Filter = WinVolumeListVM.ksListingFilter;
             dlg.OverwritePrompt = false;
 
-            if (dlg.ShowDialog(GetWindow()) ?? false)
+            if (dlg.ShowDialog() ?? false)
             {
                 FromListingFileDlg(dlg.FileName);
             }

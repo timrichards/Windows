@@ -47,7 +47,7 @@ namespace DoubleFile
 
                 (gd.m_saveDirListings = new SaveDirListings(list_lvVolStrings,
                     SaveDirListingsStatusCallback, SaveDirListingsDoneCallback)).DoThreadFactory();
-                m_winProgress.ShowDialog(GlobalData.static_TopWindow);
+                m_winProgress.ShowDialog();
             }
         }
 

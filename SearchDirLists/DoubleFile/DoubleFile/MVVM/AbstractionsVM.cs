@@ -8,80 +8,8 @@ using System.Diagnostics;
 
 namespace DoubleFile
 {
-    // Class members are generally ordered public on down, which mixes constructors and types.
-    // XAML-binding properties are always public, which puts them at the top, and private storage is at the end. Sorta reverse of C.
-
-    // e.g. <ComboBox Name="xaml_cbVolumeName" Grid.Column="1" ItemsSource="{Binding List}" SelectedValue="{Binding S}"/>
-    // e.g. CBVolumeName = new ItemsControlVM(m_app.xaml_cbVolumeName, new Action(() => { gd.m_strVolumeName = CBVolumeName.S; }));
-    class ItemsControlVM : ObservableObjectBase
-    {
-        public string Current
-        {
-            set
-            {
-                if ((value != null) && (value.Trim().Length > 0) && (m_items.Contains(value) == false))      // TODO: ignore case
-                {
-                    m_items.Add(value);
-                    m_xaml.Refresh();
-                    RaisePropertyChanged("Items");
-                }
-
-                if (value != m_strCurrent)
-                {
-                    m_strCurrent = value;
-                    m_Action();
-                    RaisePropertyChanged("Current");
-                }
-            }
-
-            get { return m_strCurrent; }
-        }
-
-        public ObservableCollection<string> Items { get { return m_items; } }
-        public override string ToString() { return m_strCurrent; }
-
-        internal ItemsControlVM(ItemsControl itemsCtl, Action action)
-        {
-            itemsCtl.DataContext = this;
-            m_xaml = itemsCtl.Items;
-            m_Action = action;
-        }
-
-        readonly ObservableCollection<string> m_items = new ObservableCollection<string>();
-        readonly ItemCollection m_xaml = null;
-        readonly Action m_Action = null;
-        string m_strCurrent = null;
-    }
-
     abstract class ListViewItemVM_Base : ObservableObjectBase
     {
-        public bool IsSelected
-        {
-            get { return m_bSelected; }
-            set
-            {
-                if (value != m_bSelected)
-                {
-                    m_bSelected = value;
-                    ActOnDirectSelChange();
-                }
-            }
-        }
-
-        internal void SelectProgrammatic(bool bSelected)
-        {
-            if (m_bSelected != bSelected)
-            {
-                m_bSelected = bSelected;
-                RaisePropertyChanged("IsSelected");
-            }
-        }
-
-        internal virtual void KeyUp(KeyEventArgs e) { }
-        internal virtual void MouseUp() { }
-
-        protected virtual void ActOnDirectSelChange() { }
-
         internal string this[int i] { get { return marr[i]; } }
 
         internal string[] StringValues
@@ -121,13 +49,6 @@ namespace DoubleFile
             {
                 RaiseColumnWidths();
             }
-        }
-
-        internal ListViewItemVM_Base(ListViewVM_Base lvvm, ListViewItem datum_in)   // e.g. Clones LVs: datum
-            : this(lvvm)
-        {
-            datum = datum_in;
-            // ListViewVM raises property changed after all items are added. Clones LVs do not use it.
         }
 
         internal void RaiseColumnWidths()
@@ -173,10 +94,7 @@ namespace DoubleFile
         protected abstract string[] PropertyNames { get; }
         protected virtual int SearchCol { get { return 0; } }
 
-        internal readonly ListViewItem datum = null;
-        protected string[] marr = null;                     // unless using datum: properties (cell values) get stored here
-
-        protected bool m_bSelected = false;
+        protected string[] marr = null;
     }
 
     abstract class ListViewVM_Base : ObservableObject_OwnerWindow
@@ -184,12 +102,10 @@ namespace DoubleFile
         internal delegate bool BoolQuery();
         internal BoolQuery SelectedOne = () => { DesignModeOK(); return false; };
         internal BoolQuery SelectedAny = () => { DesignModeOK(); return false; };
-        internal Action Refresh = () => { DesignModeOK(); };
 
         public ObservableCollection<ListViewItemVM_Base> Items { get { return m_items; } }
 
         internal virtual bool NewItem(string[] arrStr, bool bQuiet = false) { MBox.Assert(0, false); return false; }
-        internal virtual bool NewItem(ListViewItem datum_in, bool bQuiet = false) { MBox.Assert(0, false); return false; }
         internal abstract int NumCols { get; }
 
         internal void Add(ListViewItemVM_Base item, bool bQuiet = false)
@@ -206,8 +122,6 @@ namespace DoubleFile
         internal static string SCW = double.NaN.ToString();     // frankenhoek
 
         internal int Count { get { return m_items.Count; } }
-        internal bool HasItems { get { return m_items.Count > 0; } }
-        internal bool Contains(string s) { return (this[s] != null); }
 
         internal ListViewItemVM_Base this[string s_in]
         {
@@ -227,22 +141,8 @@ namespace DoubleFile
             }
         }
 
-        internal void SyncData()
-        {
-            MBox.Assert(0, m_items.Count == 0);
-            m_items.Clear();
-
-            foreach (ListViewItem lvItem in data.Items)
-            {
-                NewItem(lvItem, bQuiet: true);
-            }
-
-            RaiseItems();
-        }
-
         void RaiseItems()
         {
-            Refresh();
             RaisePropertyChanged("Items");
 
             if (m_items.Count > 0)

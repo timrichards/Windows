@@ -85,7 +85,7 @@ namespace DoubleFile
                 return;
             }
 
-            if (GlobalData.static_TopWindow.Dispatcher.CheckAccess() == false) { GlobalData.static_TopWindow.Dispatcher.Invoke(new Action(SaveDirListingsDoneCallback)); return; }
+            if (GlobalData.static_TopWindow.Dispatcher.CheckAccess() == false) { GlobalData.static_TopWindow.Dispatcher.Invoke(SaveDirListingsDoneCallback); return; }
 
             if (gd.m_saveDirListings.FilesWritten > 0)
             {

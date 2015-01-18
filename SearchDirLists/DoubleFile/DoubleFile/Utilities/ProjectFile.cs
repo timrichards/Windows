@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 
 namespace DoubleFile
@@ -11,27 +11,30 @@ namespace DoubleFile
         internal static string TempPath { get { return System.IO.Path.GetTempPath() + @"DoubleFile\"; } }
         internal static string TempPath01 { get { return TempPath.TrimEnd(new char[] { '\\' }) + "01"; } }
 
-        System.Diagnostics.Process process = new System.Diagnostics.Process();
-        WinProgress winProgress = new WinProgress();
+        readonly string m_strErrorLogFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "ErrorLog";
+        System.Text.StringBuilder m_sbError = new System.Text.StringBuilder();
+
+        System.Diagnostics.Process m_process = new System.Diagnostics.Process();
+        WinProgress m_winProgress = null;
     
         internal ProjectFile()
         {
-            process.StartInfo.FileName = System.IO.Path.GetDirectoryName(
+            m_process.StartInfo.FileName = System.IO.Path.GetDirectoryName(
                 System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)
                 .Replace(@"file:\", "") +
                 @"\Utilities\7z920x86\7z.exe";
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = true;
+            m_process.StartInfo.CreateNoWindow = true;
+            m_process.StartInfo.UseShellExecute = false;
+            m_process.StartInfo.RedirectStandardOutput = true;
+            m_process.StartInfo.RedirectStandardError = true;
+            m_process.OutputDataReceived += (sender, args) => { Utilities.WriteLine(args.Data); m_sbError.AppendLine(args.Data); };
+            m_process.ErrorDataReceived += (sender, args) => { Utilities.WriteLine(args.Data); m_sbError.AppendLine(args.Data); };
+            m_process.EnableRaisingEvents = true;
         }
 
         internal void OpenProject(string strProjectFilename, System.Action<IEnumerable<string>, bool> OpenListingFiles)
         {
-            List<LVitem_VolumeVM> list_lvVolStrings = new List<LVitem_VolumeVM>();
-
-            var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
-
-            if (Directory.Exists(TempPath))
+            if (Directory.Exists(TempPath))                     // close box/cancel/undo
             {
                 if (Directory.Exists(TempPath01))
                 {
@@ -43,45 +46,35 @@ namespace DoubleFile
 
             Directory.CreateDirectory(TempPath);
 
-            process.StartInfo.WorkingDirectory = TempPath;
-            process.StartInfo.Arguments = "e " + strProjectFilename + " -y";
-            winProgress.InitProgress(new string[] { "Opening project." }, new string[] { strProjectFileNoPath });
-
-            bool bCompleted = false;
-
-            process.OutputDataReceived += (sender, args) =>
+            m_process.Exited += (sender, args) =>
             {
-                // process.Exited event wasn't working
-                if (bCompleted == false)
+                GlobalData.static_TopWindow.Dispatcher.Invoke(() =>
                 {
-                    bCompleted = true;
-
-                    var listFiles = Directory.GetFiles(TempPath).ToList();
-
-                    GlobalData.static_TopWindow.Dispatcher.Invoke(() =>
+                    if (m_winProgress.IsLoaded)                 // close box/cancel/undo
                     {
-                        if (winProgress.IsLoaded)                   // close box/cancel/undo
-                        {
-                            OpenListingFiles(listFiles, true);
-                            winProgress.Close();
+                        OpenListingFiles(Directory.GetFiles(TempPath).ToList(), true);
+                        m_winProgress.Close();
 
-                            if (Directory.Exists(TempPath01))
-                            {
-                                Directory.Delete(TempPath01, true);
-                            }
-                        }
-                        else if (Directory.Exists(TempPath01))      // close box/cancel/undo
+                        if (Directory.Exists(TempPath01))
                         {
-                            Directory.Delete(TempPath, true);
-                            Directory.Move(TempPath01, TempPath);
+                            Directory.Delete(TempPath01, true);
                         }
-                    });
-                }
+                    }
+                    else if (Directory.Exists(TempPath01))      // close box/cancel/undo
+                    {
+                        Directory.Delete(TempPath, true);
+                        Directory.Move(TempPath01, TempPath);
+                    }
+                });
             };
 
-            if (false == StartProcess())
+            m_process.StartInfo.WorkingDirectory = TempPath;
+            m_process.StartInfo.Arguments = "e " + strProjectFilename + " -y";
+
+            if (false == StartProcess("Opening project.", Path.GetFileName(strProjectFilename)))
             {
-                MBox.ShowDialog("Couldn't open the project. Reinstall Double File or download from 7-zip.org to open your project file and get to your listing files.", "Open Project");
+                MBox.ShowDialog("Couldn't open the project. Reinstall Double File or open your project file " +
+                    "and get to your listing files using a download from 7-zip.org.", "Open Project");
             }
         }
 
@@ -96,6 +89,15 @@ namespace DoubleFile
                     continue;
                 }
 
+                string strNewName = volStrings.ListingFile;
+                int n = 0;
+
+                while (listListingFiles.Contains(strNewName))
+                {
+                    MBox.Assert(0, false);          // TODO
+                    ++n;
+                }
+
                 listListingFiles.Add(volStrings.ListingFile);
             }
 
@@ -106,37 +108,38 @@ namespace DoubleFile
 
             var sbSource = new System.Text.StringBuilder();
 
-            foreach(var listingFile in listListingFiles)
+            foreach (var listingFile in listListingFiles)
             {
                 sbSource.Append("\"").Append(Path.GetFileName(listingFile)).Append("\" ");
             }
 
-            process.StartInfo.WorkingDirectory = Path.GetDirectoryName(listListingFiles[0]);
-            process.StartInfo.Arguments = "a " + strProjectFilename + ".7z " + sbSource + " -mx=3 -md=128m";
-
             var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
 
-            winProgress.InitProgress(new string[] { "Saving project." }, new string[] { strProjectFileNoPath });
-
-            bool bCompleted = false;
-
-            process.OutputDataReceived += (sender, args) => 
+            m_process.Exited += (sender, args) => 
             {
-                // process.Exited event wasn't working
-                if (bCompleted == false)
+                if (File.Exists(strProjectFilename))
                 {
-                    bCompleted = true;
-                    try { File.Delete(strProjectFilename); } catch { }
-                    try
-                    {
-                        File.Move(strProjectFilename + ".7z", strProjectFilename);
-                        winProgress.SetCompleted(strProjectFileNoPath);
-                    }
-                    catch { MBox.ShowDialog("Couldn't save the project.", "Save Project"); }
+                    try { File.Delete(strProjectFilename); }
+                    catch { }
+                }
+                try
+                {
+                    File.Move(strProjectFilename + ".7z", strProjectFilename);
+                    m_winProgress.SetCompleted(strProjectFileNoPath);
+                }
+                catch
+                {
+                    GlobalData.static_TopWindow.Dispatcher.Invoke(() => m_winProgress.Close());
+                    MBox.ShowDialog(string.Join("", m_sbError.ToString().Split('\n').SkipWhile(s => s.StartsWith("Error:") == false)),
+                        "Error Saving Project");
+                    File.AppendAllText(m_strErrorLogFile, m_sbError.ToString());
                 }
             };
 
-            if (false == StartProcess())
+            m_process.StartInfo.WorkingDirectory = Path.GetDirectoryName(listListingFiles[0]);
+            m_process.StartInfo.Arguments = "a " + strProjectFilename + ".7z " + sbSource + " -mx=3 -md=128m";
+
+            if (false == StartProcess("Saving project.", strProjectFileNoPath))
             {
                 string strDir = strProjectFilename + "_" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
 
@@ -151,39 +154,31 @@ namespace DoubleFile
             }
         }
 
-        bool StartProcess()
+        bool StartProcess(string status, string strProjectFileNoPath)
         {
-            if (StartProcess_())
-            {
-                return true;
-            }
-            else
-            {
-                // the WPF Application class won't exit the app until the window list is cleared,
-                // even though the window never opened.
-                winProgress.Close();
-                return false;
-            }
-        }
+            MBox.Assert(0, m_winProgress == null);
 
-        bool StartProcess_()
-        {
-            if (false == File.Exists(process.StartInfo.FileName))
+            if (File.Exists(m_process.StartInfo.FileName))
             {
-                return false;
+                try
+                {
+                    m_sbError.AppendLine(DateTime.Now.ToLongTimeString().PadRight(80, '-'));
+                    m_process.Start();
+                    m_process.BeginOutputReadLine();
+                    m_winProgress = new WinProgress();
+                    m_winProgress.InitProgress(new string[] { status }, new string[] { strProjectFileNoPath });
+                    m_winProgress.ShowDialog(GlobalData.static_TopWindow);
+                    return true;
+                }
+                catch
+                {
+                    // the WPF Application class won't exit the app until the window list is cleared,
+                    // even though the window never opened.
+                    m_winProgress.Close();
+                }
             }
 
-            try
-            {
-                process.Start();
-                process.BeginOutputReadLine();
-                winProgress.ShowDialog(GlobalData.static_TopWindow);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            return false;
         }
     }
 }

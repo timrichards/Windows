@@ -45,7 +45,6 @@ namespace DoubleFile
 
             process.StartInfo.WorkingDirectory = TempPath;
             process.StartInfo.Arguments = "e " + strProjectFilename + " -y";
-
             winProgress.InitProgress(new string[] { "Opening project." }, new string[] { strProjectFileNoPath });
 
             bool bCompleted = false;
@@ -116,7 +115,6 @@ namespace DoubleFile
             process.StartInfo.Arguments = "a " + strProjectFilename + ".7z " + sbSource + " -mx=3 -md=128m";
 
             var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
-            var winProgress = new WinProgress();
 
             winProgress.InitProgress(new string[] { "Saving project." }, new string[] { strProjectFileNoPath });
 

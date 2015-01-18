@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -44,8 +45,15 @@ namespace DoubleFile
 
         private void LocalWindow_Closed(object sender, System.EventArgs e)
         {
-            System.IO.Directory.Delete(ProjectFile.TempPath, true);
-            System.IO.Directory.Delete(ProjectFile.TempPath01, true);
+            if (Directory.Exists(ProjectFile.TempPath))
+            {
+                Directory.Delete(ProjectFile.TempPath, true);
+            }
+
+            if (Directory.Exists(ProjectFile.TempPath01))
+            {
+                Directory.Delete(ProjectFile.TempPath01, true);
+            }
         }
     }
 }

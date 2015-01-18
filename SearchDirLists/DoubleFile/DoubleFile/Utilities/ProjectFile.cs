@@ -11,17 +11,18 @@ namespace DoubleFile
         internal static string TempPath { get { return System.IO.Path.GetTempPath() + @"DoubleFile\"; } }
         internal static string TempPath01 { get { return TempPath.TrimEnd(new char[] { '\\' }) + "01"; } }
 
-        System.Diagnostics.ProcessStartInfo processStartInfo = new System.Diagnostics.ProcessStartInfo();
-        
+        System.Diagnostics.Process process = new System.Diagnostics.Process();
+        WinProgress winProgress = new WinProgress();
+    
         internal ProjectFile()
         {
-            processStartInfo.FileName = System.IO.Path.GetDirectoryName(
+            process.StartInfo.FileName = System.IO.Path.GetDirectoryName(
                 System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)
                 .Replace(@"file:\", "") +
                 @"\Utilities\7z920x86\7z.exe";
-            processStartInfo.RedirectStandardOutput = true;
-            processStartInfo.UseShellExecute = false;
-            processStartInfo.CreateNoWindow = true;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.CreateNoWindow = true;
         }
 
         internal void OpenProject(string strProjectFilename, System.Action<IEnumerable<string>, bool> OpenListingFiles)
@@ -42,13 +43,8 @@ namespace DoubleFile
 
             Directory.CreateDirectory(TempPath);
 
-            var process = new System.Diagnostics.Process();
-
-            process.StartInfo = processStartInfo;
             process.StartInfo.WorkingDirectory = TempPath;
             process.StartInfo.Arguments = "e " + strProjectFilename + " -y";
-
-            var winProgress = new WinProgress();
 
             winProgress.InitProgress(new string[] { "Opening project." }, new string[] { strProjectFileNoPath });
 
@@ -75,7 +71,7 @@ namespace DoubleFile
                                 Directory.Delete(TempPath01, true);
                             }
                         }
-                        else if (Directory.Exists(TempPath01))   // close box/cancel/undo
+                        else if (Directory.Exists(TempPath01))      // close box/cancel/undo
                         {
                             Directory.Delete(TempPath, true);
                             Directory.Move(TempPath01, TempPath);
@@ -84,9 +80,10 @@ namespace DoubleFile
                 }
             };
 
-            process.Start();
-            process.BeginOutputReadLine();
-            winProgress.ShowDialog(GlobalData.static_TopWindow);
+            if (false == StartProcess())
+            {
+                MBox.ShowDialog("Couldn't open the project. Reinstall Double File or download from 7-zip.org to open your project file and get to your listing files.", "Open Project");
+            }
         }
 
         internal void SaveProject(IEnumerable<LVitem_VolumeVM> list_lvVolStrings, string strProjectFilename)
@@ -115,9 +112,6 @@ namespace DoubleFile
                 sbSource.Append("\"").Append(Path.GetFileName(listingFile)).Append("\" ");
             }
 
-            var process = new System.Diagnostics.Process();
-
-            process.StartInfo = processStartInfo;
             process.StartInfo.WorkingDirectory = Path.GetDirectoryName(listListingFiles[0]);
             process.StartInfo.Arguments = "a " + strProjectFilename + ".7z " + sbSource + " -mx=3 -md=128m";
 
@@ -144,9 +138,54 @@ namespace DoubleFile
                 }
             };
 
-            process.Start();
-            process.BeginOutputReadLine();
-            winProgress.ShowDialog(GlobalData.static_TopWindow);
+            if (false == StartProcess())
+            {
+                string strDir = strProjectFilename + "_" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
+
+                Directory.CreateDirectory(strDir);
+
+                foreach (var listingFile in listListingFiles)
+                {
+                    File.Copy(listingFile, strDir + '\\' + Path.GetFileName(listingFile));
+                }
+
+                MBox.ShowDialog("Couldn't save the project. Copied the listing files to\n" + strDir, "Save Project");
+            }
+        }
+
+        bool StartProcess()
+        {
+            if (StartProcess_())
+            {
+                return true;
+            }
+            else
+            {
+                // the WPF Application class won't exit the app until the window list is cleared,
+                // even though the window never opened.
+                winProgress.Close();
+                return false;
+            }
+        }
+
+        bool StartProcess_()
+        {
+            if (false == File.Exists(process.StartInfo.FileName))
+            {
+                return false;
+            }
+
+            try
+            {
+                process.Start();
+                process.BeginOutputReadLine();
+                winProgress.ShowDialog(GlobalData.static_TopWindow);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

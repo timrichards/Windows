@@ -363,16 +363,30 @@ namespace DoubleFile
                 //  .Where(s => s.StartsWith(mSTRlineType_VolumeInfo_DriveModel))
                     .FirstOnlyAssert(s =>
                 {
-                    ReadAttribute(s);
-                    if (bReadAttributeReturnValue) lvItem.DriveModel = strReadAttributeReturnValue;
+                    if (s.StartsWith(mSTRlineType_VolumeInfo))
+                    {
+                        ReadAttribute(s);
+                        if (bReadAttributeReturnValue) lvItem.DriveModel = strReadAttributeReturnValue;
+                    }
+                    else
+                    {
+                        MBox.Assert(0, false);
+                    }
                 });
 
                 File.ReadLines(strFile).Skip(knDriveSerial).Take(1)
                 //   .Where(s => s.StartsWith(mSTRlineType_VolumeInfo_DriveSerial))
                     .FirstOnlyAssert(s =>
                 {
-                    ReadAttribute(s);
-                    if (bReadAttributeReturnValue) lvItem.DriveSerial = strReadAttributeReturnValue;
+                    if (s.StartsWith(mSTRlineType_VolumeInfo))
+                    {
+                        ReadAttribute(s);
+                        if (bReadAttributeReturnValue) lvItem.DriveSerial = strReadAttributeReturnValue;
+                    }
+                    else
+                    {
+                        MBox.Assert(0, false);
+                    }
                 });
             }
 

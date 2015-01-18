@@ -16,6 +16,7 @@ namespace DoubleFile
         DateTime m_dtRollingProgress = DateTime.MinValue;
         double m_nRollingProgress = 0;
         const int nRollingMinutes = 2;
+
         public double Progress
         {
             get { return m_nProgress; }

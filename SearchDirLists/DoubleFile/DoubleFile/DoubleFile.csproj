@@ -98,6 +98,57 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="SearchDirLists\AboutBox1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SearchDirLists\AboutBox1.Designer.cs">
+      <DependentUpon>AboutBox1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SearchDirLists\Collate.cs" />
+    <Compile Include="SearchDirLists\DriveSerial.cs" />
+    <Compile Include="SearchDirLists\Form1.cs">
+      <SubType>Designer</SubType>
+    </Compile>
+    <Compile Include="SearchDirLists\Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SearchDirLists\InputBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SearchDirLists\InputBox.Designer.cs">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SearchDirLists\ListViewEx.cs" />
+    <Compile Include="SearchDirLists\Program.cs" />
+    <Compile Include="SearchDirLists\ReadOnlyRichTextBox.cs" />
+    <Compile Include="SearchDirLists\SaveDirInfo.cs">
+      <SubType>Designer</SubType>
+    </Compile>
+    <Compile Include="SearchDirLists\Search.cs">
+      <SubType>Designer</SubType>
+    </Compile>
+    <Compile Include="SearchDirLists\Tree.cs" />
+    <Compile Include="SearchDirLists\TreeForm.cs">
+      <SubType>Designer</SubType>
+    </Compile>
+    <Compile Include="SearchDirLists\TreeMap.cs" />
+    <Compile Include="SearchDirLists\Utilities.cs" />
+    <Compile Include="SearchDirLists\WPF_AbstractionsVM.cs" />
+    <Compile Include="SearchDirLists\WPF_app.xaml.cs">
+      <DependentUpon>WPF_app.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SearchDirLists\WPF_BrowseTabLV_VM.cs" />
+    <Compile Include="SearchDirLists\WPF_BrowseTabVM.cs" />
+    <Compile Include="SearchDirLists\WPF_BrowseTabVM_guts.cs" />
+    <Compile Include="SearchDirLists\WPF_ClonesLV_VM.cs" />
+    <Compile Include="SearchDirLists\WPF_MainWindow.xaml.cs">
+      <DependentUpon>WPF_MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SearchDirLists\WPF_ObservableObject.cs" />
+    <Compile Include="SearchDirLists\WPF_RelayCommand.cs" />
+    <Compile Include="SearchDirLists\WPF_TreeViewVM.cs" />
+    <Compile Include="SearchDirLists\WPF_VolumesTabVM.cs" />
+    <Compile Include="SearchDirLists\WPF_VolumesTabVM_Guts.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\Correlate.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\DetailsDatum.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\DetailsDatum\NodeDatum.cs">
@@ -221,6 +272,15 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="SearchDirLists\AboutBox1.resx">
+      <DependentUpon>AboutBox1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SearchDirLists\Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SearchDirLists\InputBox.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="DoubleFile_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -277,6 +337,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="SearchDirLists\WPF_app.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SearchDirLists\WPF_MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="WinProgress.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -307,6 +375,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="SearchDirLists\ico_alpha_cmDisplayStartmenuForm_il_6_16x16.ico" />
+    <Resource Include="SearchDirLists\README.txt" />
     <Content Include="UtilProject\7z920x86\7z.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

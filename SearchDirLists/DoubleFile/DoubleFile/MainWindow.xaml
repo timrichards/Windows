@@ -7,5 +7,6 @@
         <Button Content="View project" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="Button_ViewProject_Click" Grid.Column="0"/>
         <Button Content="Open project" Grid.Column="0" HorizontalAlignment="Left" Margin="80,0,0,0" Click="Button_OpenProject_Click" VerticalAlignment="Top" Width="75"/>
         <Button Content="Save project" Grid.Column="0" HorizontalAlignment="Left" Margin="160,0,0,0" Click="Button_SaveProject_Click" VerticalAlignment="Top" Width="75"/>
+        <Button Content="SearchDirLists" Grid.Column="0" HorizontalAlignment="Left" Margin="240,0,0,0" Click="Button_SearchDirLists_Click" VerticalAlignment="Top" Width="90"/>
     </Grid>
 </local:LocalWindow>

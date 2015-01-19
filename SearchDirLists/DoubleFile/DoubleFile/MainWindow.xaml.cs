@@ -72,5 +72,10 @@ namespace DoubleFile
                 MBox.ShowDialog("No project to save.", "Save Project");
             }
         }
+
+        private void Button_SearchDirLists_Click(object sender, RoutedEventArgs e)
+        {
+            new SearchDirLists.Form1().Show();
+        }
     }
 }

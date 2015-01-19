@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace DoubleFile
 {
@@ -82,18 +84,9 @@ namespace DoubleFile
         {
             DateTime dtStart = DateTime.Now;
 
-            if (m_volStrings.CanLoad == false)
+            if (SaveDirListings.WontSave(m_volStrings) == false)
             {
                 MBox.Assert(1301.2307, false);    // guaranteed by caller
-                return;
-            }
-
-            string strVolumeName = m_volStrings.VolumeName;
-            string strPath = m_volStrings.StrPath;
-            string strSaveAs = m_volStrings.SaveAs;
-
-            if (FormatPath(ref strPath, ref strSaveAs, false) == false)
-            {
                 return;
             }
 
@@ -103,21 +96,21 @@ namespace DoubleFile
 
                 while (true)
                 {
-                    bValid = ValidateFile(strSaveAs);
+                    bValid = ValidateFile(m_volStrings.ListingFile);
 
                     if (bValid || bAttemptConvert)
                     {
                         break;
                     }
 
-                    if (File.Exists(StrFile_01(strSaveAs)) == false)
+                    if (File.Exists(StrFile_01(m_volStrings.ListingFile)) == false)
                     {
                         break;
                     }
 
                     try
                     {
-                        File.Delete(StrFile_01(strSaveAs));
+                        File.Delete(StrFile_01(m_volStrings.ListingFile));
                     }
                     catch { }
 
@@ -126,7 +119,7 @@ namespace DoubleFile
 
                 if (bValid == false)
                 {
-                    MBox("Bad file: " + strSaveAs, "Tree");
+                    MBox.ShowDialog("Bad file: " + m_volStrings.ListingFile, "Tree");
                     m_statusCallback(m_volStrings, bError: true);
                     return;
                 }
@@ -136,7 +129,7 @@ namespace DoubleFile
             ulong nVolLength = 0;
 
             {
-                string[] arrDriveInfo = File.ReadLines(strSaveAs).Where(s => s.StartsWith(ksLineType_DriveInfo)).ToArray();
+                string[] arrDriveInfo = File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_VolumeInfo)).ToArray();
                 StringBuilder strBuilder = new StringBuilder();
                 int nIx = -1;
 
@@ -151,7 +144,7 @@ namespace DoubleFile
                     }
                     else if (strArray.Length > 2)
                     {
-                        strBuilder.Append(Utilities.mAstrDIlabels[nIx]);
+                        strBuilder.Append(mAstrDIlabels[nIx]);
                     }
                     else
                     {
@@ -173,13 +166,13 @@ namespace DoubleFile
 
                 lock (m_dictDriveInfo)
                 {
-                    if (m_dictDriveInfo.ContainsKey(strSaveAs))
+                    if (m_dictDriveInfo.ContainsKey(m_volStrings.ListingFile))
                     {
                         MBox.Assert(1301.2308, false);
-                        m_dictDriveInfo.Remove(strSaveAs);
+                        m_dictDriveInfo.Remove(m_volStrings.ListingFile);
                     }
 
-                    m_dictDriveInfo.Add(strSaveAs, strBuilder.ToString().Trim(new char[] { '\r', '\n' }));
+                    m_dictDriveInfo.Add(m_volStrings.ListingFile, strBuilder.ToString().Trim(new char[] { '\r', '\n' }));
                 }
             }
 
@@ -187,14 +180,14 @@ namespace DoubleFile
 
             {
                 RootNode rootNode = new RootNode();
-                string strStart = File.ReadLines(strSaveAs).Where(s => s.StartsWith(ksLineType_Start)).ToArray()[0];
+                string strStart = File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Start)).ToArray()[0];
 
                 rootNode.FirstLineNo = uint.Parse(strStart.Split('\t')[1]);
                 dirData = new DirData(rootNode);
             }
 
             bool bZeroLengthsWritten = true;
-            List<string> listLines = File.ReadLines(strSaveAs).Where(s => s.StartsWith(ksLineType_Directory)).ToList();
+            List<string> listLines = File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory)).ToList();
 
             foreach (string strLine in listLines)
             {
@@ -222,11 +215,11 @@ namespace DoubleFile
                 dirData.AddToTree(strDir, nLineNo, nLength);
             }
 
-            TreeNode rootTreeNode = dirData.AddToTree(strVolumeName);
+            TreeNode rootTreeNode = dirData.AddToTree(m_volStrings.Nickname);
 
             if (rootTreeNode != null)
             {
-                rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag, strSaveAs, m_volStrings.VolumeGroup, nVolFree, nVolLength);
+                rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag, m_volStrings.ListingFile, m_volStrings.VolumeGroup, nVolFree, nVolLength);
                 TreeSubnodeDetails(rootTreeNode);
             }
 
@@ -235,13 +228,13 @@ namespace DoubleFile
             if (bZeroLengthsWritten)
             {
 #if (DEBUG)
-                UtilProject.WriteLine(File.ReadLines(strSaveAs).Where(s => s.StartsWith(ksLineType_File)).Sum(s => decimal.Parse(s.Split('\t')[knColLength])).ToString());
-                UtilProject.WriteLine(File.ReadLines(strSaveAs).Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => decimal.Parse(s.Split('\t')[knColLength])).ToString());
+                UtilProject.WriteLine(File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_File)).Sum(s => decimal.Parse(s.Split('\t')[knColLength])).ToString());
+                UtilProject.WriteLine(File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => decimal.Parse(s.Split('\t')[knColLength])).ToString());
 #endif
             }
 
             ulong nScannedLength = ulong.Parse(
-                File.ReadLines(strSaveAs).Where(s => s.StartsWith(ksLineType_Length)).ToArray()[0]
+                File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Length)).ToArray()[0]
                 .Split('\t')[knColLength]);
 
             UtilProject.WriteLine(nScannedLength.ToString());
@@ -256,10 +249,10 @@ namespace DoubleFile
             if (nScannedLength != nTotalLength)
             {
                 UtilProject.WriteLine(nTotalLength.ToString());
-                MBox.Assert(1301.23101, false, "nScannedLength != nTotalLength\n" + strSaveAs, bTraceOnly: true);
+                MBox.Assert(1301.23101, false, "nScannedLength != nTotalLength\n" + m_volStrings.ListingFile, bTraceOnly: true);
             }
 
-            UtilProject.WriteLine(strSaveAs + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
+            UtilProject.WriteLine(m_volStrings.ListingFile + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
         }
 
         internal TreeRootNodeBuilder DoThreadFactory()

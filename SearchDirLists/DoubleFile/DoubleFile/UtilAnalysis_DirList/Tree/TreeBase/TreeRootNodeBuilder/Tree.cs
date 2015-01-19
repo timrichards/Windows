@@ -18,7 +18,6 @@ using System.Windows.Forms;
 
 namespace DoubleFile
 {
-    delegate void TreeStatusDelegate(LVitem_ProjectVM volStrings, TreeNode rootNode = null, bool bError = false);
     delegate void TreeSelectStatusDelegate(SDL_ListViewItem[] lvItemDetails = null, SDL_ListViewItem[] itemArray = null, SDL_ListViewItem[] lvVolDetails = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null);
     delegate void TreeSelectDoneDelegate(bool bSecondComparePane);
 
@@ -49,7 +48,7 @@ namespace DoubleFile
 
             foreach (LVitem_ProjectVM volStrings in m_list_lvVolStrings)
             {
-                if (volStrings.CanLoad == false)
+                if (SaveDirListings.WontSave(volStrings) == false)
                 {
                     continue;
                 }

@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace DoubleFile
 {
     partial class TreeRootNodeBuilder
     {
-        class Node : Utilities
+        class Node
         {
             readonly RootNode m_rootNode = null;
             readonly SortedDictionary<string, Node> subNodes = new SortedDictionary<string, Node>();

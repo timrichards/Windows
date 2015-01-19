@@ -98,9 +98,26 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="UtilAnalysis_DirList\Correlate.cs" />
+    <Compile Include="UtilAnalysis_DirList\Tree\Correlate.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\DetailsDatum.cs" />
+    <Compile Include="UtilAnalysis_DirList\Tree\DetailsDatum\NodeDatum.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UtilAnalysis_DirList\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\LVitemFileTag.cs" />
+    <Compile Include="UtilAnalysis_DirList\Tree\TreeBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UtilAnalysis_DirList\Tree\TreeBase\TreeRootNodeBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UtilAnalysis_DirList\Tree\TreeBase\TreeRootNodeBuilder\DirData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UtilAnalysis_DirList\Tree\TreeBase\TreeRootNodeBuilder\Node.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UtilAnalysis_DirList\Tree\TreeBase\TreeRootNodeBuilder\RootNode.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis.cs" />
     <Compile Include="UtilProject\GlobalData.cs" />
     <Compile Include="UtilProject\LocalWindow.cs" />
@@ -298,8 +315,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="UtilAnalysis_DirList\Tree\DetailsDatum\NodeDatum\" />
-    <Folder Include="UtilAnalysis_DirList\Tree\TreeRootNodeBuilder\" />
     <Folder Include="UtilAnalysis_FileHash\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

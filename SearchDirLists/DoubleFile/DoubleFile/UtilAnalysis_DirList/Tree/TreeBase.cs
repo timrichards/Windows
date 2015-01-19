@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace DoubleFile
 {
-    class TreeBase : Utilities
+    delegate void TreeStatusDelegate(LVitem_ProjectVM volStrings, TreeNode rootNode = null, bool bError = false);
+
+    class TreeBase : FileParse
     {
         protected readonly SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = null;
         protected readonly Dictionary<string, string> m_dictDriveInfo = null;

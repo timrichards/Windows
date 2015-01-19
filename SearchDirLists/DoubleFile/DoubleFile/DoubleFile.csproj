@@ -98,9 +98,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="UtilAnalysis\Correlate.cs" />
-    <Compile Include="UtilAnalysis\Tree\DetailsDatum.cs" />
-    <Compile Include="UtilAnalysis\UtilAnalysis.cs" />
+    <Compile Include="UtilAnalysis_DirList\Correlate.cs" />
+    <Compile Include="UtilAnalysis_DirList\Tree\DetailsDatum.cs" />
+    <Compile Include="UtilAnalysis_DirList\Tree\LVitemFileTag.cs" />
+    <Compile Include="UtilAnalysis_DirList\UtilAnalysis.cs" />
     <Compile Include="UtilProject\GlobalData.cs" />
     <Compile Include="UtilProject\LocalWindow.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -295,6 +296,11 @@
     <Content Include="UtilProject\7z920x86\7z.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="UtilAnalysis_DirList\Tree\DetailsDatum\NodeDatum\" />
+    <Folder Include="UtilAnalysis_DirList\Tree\TreeRootNodeBuilder\" />
+    <Folder Include="UtilAnalysis_FileHash\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

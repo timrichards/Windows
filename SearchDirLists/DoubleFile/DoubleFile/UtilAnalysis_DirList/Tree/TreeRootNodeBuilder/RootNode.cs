@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DoubleFile
 {
-    partial class TreeRootNodeBuilder : TreeBase
+    partial class TreeRootNodeBuilder
     {
         class RootNode
         {

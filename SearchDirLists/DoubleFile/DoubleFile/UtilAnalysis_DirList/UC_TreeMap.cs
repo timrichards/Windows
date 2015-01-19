@@ -24,7 +24,7 @@ using System.Windows.Forms;
 namespace DoubleFile
 {
     [System.ComponentModel.DesignerCategory("Code")]
-    class TreeMapUserControl : Forms.UserControl
+    class UC_TreeMap : Forms.UserControl
     {
         public Forms.Control TooltipAnchor = null;
 
@@ -42,7 +42,7 @@ namespace DoubleFile
         DateTime m_dtHideGoofball = DateTime.MinValue;
         readonly Forms.ToolTip m_toolTip = new Forms.ToolTip();
 
-        public TreeMapUserControl()
+        public UC_TreeMap()
         {
             m_toolTip.UseFading = true;
             m_toolTip.UseAnimation = true;

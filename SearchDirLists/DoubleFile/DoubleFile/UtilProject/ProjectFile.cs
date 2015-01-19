@@ -27,8 +27,8 @@ namespace DoubleFile
             m_process.StartInfo.UseShellExecute = false;
             m_process.StartInfo.RedirectStandardOutput = true;
             m_process.StartInfo.RedirectStandardError = true;
-            m_process.OutputDataReceived += (sender, args) => { Utilities.WriteLine(args.Data); m_sbError.AppendLine(args.Data); };
-            m_process.ErrorDataReceived += (sender, args) => { Utilities.WriteLine(args.Data); m_sbError.AppendLine(args.Data); };
+            m_process.OutputDataReceived += (sender, args) => { UtilProject.WriteLine(args.Data); m_sbError.AppendLine(args.Data); };
+            m_process.ErrorDataReceived += (sender, args) => { UtilProject.WriteLine(args.Data); m_sbError.AppendLine(args.Data); };
             m_process.EnableRaisingEvents = true;
         }
 
@@ -149,6 +149,7 @@ namespace DoubleFile
                 {
                     File.Move(strProjectFilename + ".7z", strProjectFilename);
                     m_winProgress.SetCompleted(strProjectFileNoPath);
+                    MBox.ShowDialog("Todo: save volume group.");
                 }
                 catch
                 {

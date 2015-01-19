@@ -15,7 +15,7 @@ namespace DoubleFile
                 return c.Count;
             }
 
-            Utilities.WriteLine("Count<" + source + "> is not an ICollection: must GetEnumerator()");
+            UtilProject.WriteLine("Count<" + source + "> is not an ICollection: must GetEnumerator()");
 
             using (IEnumerator<T> enumerator = source.GetEnumerator())
             {
@@ -53,31 +53,7 @@ namespace DoubleFile
             }
         }
     }
-    internal static partial class ExtensionMethods
-    {
-        internal static System.Windows.Forms.IWin32Window GetIWin32Window(this System.Windows.Media.Visual visual)
-        {
-            var source = System.Windows.PresentationSource.FromVisual(visual) as System.Windows.Interop.HwndSource;
-            System.Windows.Forms.IWin32Window win = new OldWindow(source.Handle);
-            return win;
-        }
 
-        private class OldWindow : System.Windows.Forms.IWin32Window
-        {
-            private readonly System.IntPtr _handle;
-            public OldWindow(System.IntPtr handle)
-            {
-                _handle = handle;
-            }
-
-            #region IWin32Window Members
-            System.IntPtr System.Windows.Forms.IWin32Window.Handle
-            {
-                get { return _handle; }
-            }
-            #endregion
-        }
-    }
     internal static partial class ExtensionMethods
     {
         public static string ToPrintString(this object source)

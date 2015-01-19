@@ -37,8 +37,8 @@ namespace DoubleFile
 
         void Go()
         {
-            Utilities.WriteLine();
-            Utilities.WriteLine("Saving directory listings.");
+            UtilProject.WriteLine();
+            UtilProject.WriteLine("Saving directory listings.");
 
             DateTime dtStart = DateTime.Now;
 
@@ -58,7 +58,7 @@ namespace DoubleFile
                 worker.Join();
             }
 
-            Utilities.WriteLine(string.Format("Finished saving directory listings in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
+            UtilProject.WriteLine(string.Format("Finished saving directory listings in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
             if (m_bThreadAbort || GlobalData.AppExit)
             {

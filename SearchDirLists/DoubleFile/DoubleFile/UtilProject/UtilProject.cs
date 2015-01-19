@@ -1,13 +1,11 @@
-﻿using System;
-
-namespace DoubleFile
+﻿namespace DoubleFile
 {
-    internal partial class Utilities
+    internal class UtilProject
     {
         static internal void WriteLine(string str = null)
         {
 #if (DEBUG)
-            Console.WriteLine(str);
+            System.Console.WriteLine(str);
 #endif
         }
     }

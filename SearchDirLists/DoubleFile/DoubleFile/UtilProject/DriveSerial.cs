@@ -205,7 +205,7 @@ namespace DoubleFile
                     {
                         foreach (var prop in diskDrive.Properties)
                         {
-                            Utilities.WriteLine(prop.Name + "\t\t\t" + prop.Value);
+                            UtilProject.WriteLine(prop.Name + "\t\t\t" + prop.Value);
                         }
 
                         try { nSize = (ulong?)diskDrive["Size"]; } catch { }
@@ -224,7 +224,7 @@ namespace DoubleFile
                             {
                                 foreach (var prop in diskMedia.Properties)
                                 {
-                                    Utilities.WriteLine(prop.Name + "\t\t\t" + prop.Value);
+                                    UtilProject.WriteLine(prop.Name + "\t\t\t" + prop.Value);
                                 }
 
                                 try { strDriveSerial = diskMedia["SerialNumber"].ToPrintString(); } catch { }

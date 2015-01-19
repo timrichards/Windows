@@ -34,7 +34,7 @@ namespace DoubleFile
                 strError += "\n\nAdditional information: " + strError_in;
             }
 
-            Utilities.WriteLine(strError);
+            UtilProject.WriteLine(strError);
 #if (DEBUG)
             System.Diagnostics.Debug.Assert(false, strError);
 #else

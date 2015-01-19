@@ -148,7 +148,7 @@ namespace DoubleFile
                         const uint IO_REPARSE_TAG_MOUNT_POINT = 0xA0000003;
                         const uint IO_REPARSE_TAG_SYMLINK = 0xA000000C;
 
-                        // stay on source drive. Treat mount points and symlinks as files.
+                        // stay on source volume. Treat mount points and symlinks as files.
                         if (((winFindData.dwReserved0 & IO_REPARSE_TAG_MOUNT_POINT) != 0)
                             || ((winFindData.dwReserved0 & IO_REPARSE_TAG_SYMLINK) != 0))
                         {

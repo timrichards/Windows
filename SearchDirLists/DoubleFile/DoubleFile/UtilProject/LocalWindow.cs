@@ -10,13 +10,13 @@
         internal new void Show() { Show(GlobalData.static_TopWindow); }
         internal new bool? ShowDialog() { return ShowDialog(GlobalData.static_TopWindow); }
 
-        internal void Show(LocalWindow me)
+        void Show(LocalWindow me)
         {
             Owner = me;
             base.Show();
         }
 
-        internal bool? ShowDialog(LocalWindow me)
+        bool? ShowDialog(LocalWindow me)
         {
             Owner = me;
             return base.ShowDialog();

@@ -72,11 +72,11 @@ namespace DoubleFile
             {
                 var e = new PropertyChangedEventArgs(propertyName);
                 handler(this, e);
-//                Utilities.WriteLine(propertyName + " raised.");
+//                UtilProject.WriteLine(propertyName + " raised.");
                 return true;
             }
 
-//            Utilities.WriteLine(propertyName + " did not raise.");
+//            UtilProject.WriteLine(propertyName + " did not raise.");
             return false;
         }
 

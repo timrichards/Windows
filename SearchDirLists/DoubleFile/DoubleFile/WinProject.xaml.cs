@@ -29,7 +29,6 @@ namespace DoubleFile
 
             form_lvProject.DataContext = lv;
             DataContext = win;
-            lv.SetPartner(win);
             win.SetPartner(lv);
 
             lv.SelectedOne = () => { return form_lvProject.SelectedItems.Count == 1; };

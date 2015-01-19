@@ -14,12 +14,5 @@ namespace DoubleFile
         public string WidthDriveSerial { get { return SCW; } }
 
         internal override int NumCols { get { return LVitem_ProjectVM.NumCols_; } }
-
-        internal void SetPartner(WinProjectVM windowVM)
-        {
-            m_windowVM = windowVM;
-        }
-
-        WinProjectVM m_windowVM = null;
     }
 }

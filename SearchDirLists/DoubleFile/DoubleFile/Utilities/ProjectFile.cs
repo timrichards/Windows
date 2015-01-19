@@ -22,7 +22,7 @@ namespace DoubleFile
             m_process.StartInfo.FileName = System.IO.Path.GetDirectoryName(
                 System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)
                 .Replace(@"file:\", "") +
-                @"\Utilities\7z920x86\7z.exe";
+                @"\UtilProject\7z920x86\7z.exe";
             m_process.StartInfo.CreateNoWindow = true;
             m_process.StartInfo.UseShellExecute = false;
             m_process.StartInfo.RedirectStandardOutput = true;

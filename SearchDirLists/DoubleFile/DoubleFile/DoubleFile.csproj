@@ -98,8 +98,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="GlobalData.cs" />
-    <Compile Include="LocalWindow.cs" />
+    <Compile Include="Utilities\GlobalData.cs" />
+    <Compile Include="Utilities\LocalWindow.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

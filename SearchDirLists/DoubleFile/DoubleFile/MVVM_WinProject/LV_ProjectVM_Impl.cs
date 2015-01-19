@@ -61,7 +61,7 @@ namespace DoubleFile
                         {
                             if (ModifyListingFile(lvItem, lvItemVolumeTemp, (dlg as WinVolumeEdit).uc_VolumeEdit.DriveLetter))
                             {
-                                //if (Utilities.MBox("Update the project?", "Modify file", MBoxBtns.YesNo) == MBoxRet.Yes)
+                                //if (MBox.ShowDialog("Update the project?", "Modify file", MBoxBtns.YesNo) == MBoxRet.Yes)
                                 //{
                                 //    form_btnSaveProject_Click();
                                 //}

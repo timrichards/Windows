@@ -2,7 +2,7 @@
 
 namespace DoubleFile
 {
-    internal class Utilities
+    internal partial class Utilities
     {
         static internal void WriteLine(string str = null)
         {

@@ -17,11 +17,6 @@ namespace DoubleFile
         readonly static string[] marrPropName = new string[] { "Nickname", "SourcePath", "ListingFileNoPath", "Status", "IncludeYN", "VolumeGroup", "DriveModel", "DriveSerial" };
         internal const int NumCols_ = 8;
 
-        internal LVitem_ProjectVM(LV_ProjectVM LV, string[] arrStr)
-            : base(LV, arrStr)
-        {
-        }
-
         internal LVitem_ProjectVM(string[] arrStr = null)
             : base(null, arrStr)
         {

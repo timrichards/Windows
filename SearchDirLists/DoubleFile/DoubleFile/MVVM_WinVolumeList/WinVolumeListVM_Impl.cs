@@ -2,13 +2,13 @@
 
 namespace DoubleFile
 {
-    partial class WinVolumeListVM
+    partial class WinProjectVM
     {
         // Menu items
         
         static string ksAllFilesFilter = "|All files|*.*";
-        static string ksProjectFilter = "Double File project|*." + FileParse.mSTRfileExt_Project + ksAllFilesFilter;
-        internal static string ksListingFilter = "Double File Listing|*." + FileParse.mSTRfileExt_Listing + ksAllFilesFilter;
+        static string ksProjectFilter = "Double File project|*." + FileParse.ksFileExt_Project + ksAllFilesFilter;
+        internal static string ksListingFilter = "Double File Listing|*." + FileParse.ksFileExt_Listing + ksAllFilesFilter;
 
         internal void OpenProject()
         {
@@ -23,7 +23,12 @@ namespace DoubleFile
             }
         }
 
-        internal void SaveProject(IEnumerable<LVitem_VolumeVM> list_lvVolStrings = null)
+        internal void SaveProject()
+        {
+            SaveProject(m_lvVM.ItemsCast);
+        }
+
+        static internal void SaveProject(IEnumerable<LVitem_VolumeVM> list_lvVolStrings)
         {
             var dlg = new Microsoft.Win32.SaveFileDialog();
 
@@ -32,7 +37,7 @@ namespace DoubleFile
 
             if (dlg.ShowDialog() ?? false)
             {
-                new ProjectFile().SaveProject(list_lvVolStrings ?? m_lvVM.ItemsCast, dlg.FileName);
+                new ProjectFile().SaveProject(list_lvVolStrings, dlg.FileName);
             }
         }
 

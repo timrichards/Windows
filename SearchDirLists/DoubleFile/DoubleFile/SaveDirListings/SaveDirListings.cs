@@ -32,7 +32,7 @@ namespace DoubleFile
 
         internal static bool WontSave(LVitem_VolumeVM volStrings)
         {
-            return ((mSTRusingFile + mSTRsaved + mSTRcantSave).Contains(volStrings.Status));
+            return ((ksUsingFile + ksSaved + ksCantSave).Contains(volStrings.Status));
         }
 
         void Go()

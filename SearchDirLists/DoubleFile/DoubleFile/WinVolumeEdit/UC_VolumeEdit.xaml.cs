@@ -71,8 +71,8 @@ namespace DoubleFile
         }
 
         string m_strListingFile = null;
-        string m_strStatus = FileParse.mSTRnotSaved;
-        string m_strIncludeYN = FileParse.mSTRinclude;
+        string m_strStatus = FileParse.ksNotSaved;
+        string m_strIncludeYN = FileParse.ksInclude;
 
         bool IsOKenabled
         {

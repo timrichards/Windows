@@ -61,9 +61,9 @@ namespace DoubleFile
                         {
                             if (ModifyListingFile(lvItem, lvItemVolumeTemp, (dlg as WinVolumeEdit).uc_VolumeEdit.DriveLetter))
                             {
-                                //if (Utilities.MBox("Update the volume list?", "Modify file", MBoxBtns.YesNo) == MBoxRet.Yes)
+                                //if (Utilities.MBox("Update the project?", "Modify file", MBoxBtns.YesNo) == MBoxRet.Yes)
                                 //{
-                                //    form_btnSaveVolumeList_Click();
+                                //    form_btnSaveProject_Click();
                                 //}
                                 FileParse.ReadHeader(lvItemVolumeTemp.ListingFile, out lvItemVolumeTemp);
                             }
@@ -192,7 +192,7 @@ namespace DoubleFile
                 while ((bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo) &&
                     (strLine = reader.ReadLine()) != null)
                 {
-                    if (strLine.StartsWith(FileParse.mSTRlineType_Start))
+                    if (strLine.StartsWith(FileParse.ksLineType_Start))
                     {
                         // already past the header: nothing left to replace.
                         MBox.Assert(0, false);
@@ -218,19 +218,19 @@ namespace DoubleFile
                     });
 
                     if (bDriveModel_Todo &&
-                        strLine.StartsWith(FileParse.mSTRlineType_VolumeInfo_DriveModel))
+                        strLine.StartsWith(FileParse.ksLineType_VolumeInfo_DriveModel))
                     {
                         Replace(lvItemVolumeTemp.DriveModel);
                         bDriveModel_Todo = false;
                     }
                     else if (bDriveSerial_Todo &&
-                        strLine.StartsWith(FileParse.mSTRlineType_VolumeInfo_DriveSerial))
+                        strLine.StartsWith(FileParse.ksLineType_VolumeInfo_DriveSerial))
                     {
                         Replace(lvItemVolumeTemp.DriveSerial);
                         bDriveSerial_Todo = false;
                     }
                     else if (bNickname_Todo &&
-                        strLine.StartsWith(FileParse.mSTRlineType_Nickname))
+                        strLine.StartsWith(FileParse.ksLineType_Nickname))
                     {
                         Replace(lvItemVolumeTemp.Nickname);
                         bNickname_Todo = false;

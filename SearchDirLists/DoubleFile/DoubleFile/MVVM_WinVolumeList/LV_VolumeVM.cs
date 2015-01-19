@@ -15,11 +15,11 @@ namespace DoubleFile
 
         internal override int NumCols { get { return LVitem_VolumeVM.NumCols_; } }
 
-        internal void SetPartner(WinVolumeListVM windowVM)
+        internal void SetPartner(WinProjectVM windowVM)
         {
             m_windowVM = windowVM;
         }
 
-        WinVolumeListVM m_windowVM = null;
+        WinProjectVM m_windowVM = null;
     }
 }

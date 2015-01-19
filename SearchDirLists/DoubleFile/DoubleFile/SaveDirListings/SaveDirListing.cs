@@ -22,7 +22,7 @@ namespace DoubleFile
 
             void WriteHeader(TextWriter fs)
             {
-                fs.WriteLine(mSTRheader01);
+                fs.WriteLine(ksHeader01);
                 fs.WriteLine(m_volStrings.Nickname);
                 fs.WriteLine(m_volStrings.SourcePath);
 
@@ -45,7 +45,7 @@ namespace DoubleFile
                     strSerialNo = m_volStrings.DriveSerial;
                 }
 
-                fs.WriteLine(mSTRdrive01);
+                fs.WriteLine(ksDrive01);
 
                 var driveInfo = new DriveInfo(m_volStrings.SourcePath[0] + @":\");
                 var sb = new StringBuilder();
@@ -151,7 +151,7 @@ namespace DoubleFile
 
                 if (Directory.Exists(m_volStrings.SourcePath) == false)
                 {
-                    m_statusCallback(m_volStrings.SourcePath, mSTRnotSaved);
+                    m_statusCallback(m_volStrings.SourcePath, ksNotSaved);
                     MBox.ShowDialog("Source Path does not exist.", "Save Directory Listing");
                     return;
                 }
@@ -159,7 +159,7 @@ namespace DoubleFile
                 if (string.IsNullOrWhiteSpace(m_volStrings.ListingFile))
                 {
                     m_volStrings.ListingFile = ProjectFile.TempPath + m_volStrings.SourcePath[0] + "_Listing_" +
-                        Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + "." + mSTRfileExt_Listing;
+                        Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + "." + ksFileExt_Listing;
                 }
 
                 string strPathOrig = Directory.GetCurrentDirectory();
@@ -177,12 +177,12 @@ namespace DoubleFile
                         fs.WriteLine();
                         fs.WriteLine(FormatString(nHeader: 0));
                         fs.WriteLine(FormatString(nHeader: 1));
-                        fs.WriteLine(mSTRstart01 + " " + DateTime.Now.ToString());
+                        fs.WriteLine(ksStart01 + " " + DateTime.Now.ToString());
                         Hash(GetFileList(), out dictHash, out dictException_FileRead);
                         WriteDirectoryListing(fs, dictHash, dictException_FileRead);
-                        fs.WriteLine(mSTRend01 + " " + DateTime.Now.ToString());
+                        fs.WriteLine(ksEnd01 + " " + DateTime.Now.ToString());
                         fs.WriteLine();
-                        fs.WriteLine(mSTRerrorsLoc01);
+                        fs.WriteLine(ksErrorsLoc01);
 
                         // Unit test metrix on non-system volume
                         //MBox.Assert(0, nProgressDenominator >= nProgressNumerator);       file creation/deletion between times
@@ -195,7 +195,7 @@ namespace DoubleFile
                         }
 
                         fs.WriteLine();
-                        fs.WriteLine(FormatString(strDir: mSTRtotalLengthLoc01, nLength: LengthRead));
+                        fs.WriteLine(FormatString(strDir: ksTotalLengthLoc01, nLength: LengthRead));
                     }
 
                     if (m_bThreadAbort || GlobalData.AppExit)
@@ -205,13 +205,13 @@ namespace DoubleFile
                     }
 
                     Directory.SetCurrentDirectory(strPathOrig);
-                    m_volStrings.Status = mSTRsaved;
-                    m_statusCallback(m_volStrings.SourcePath, strText: mSTRsaved, bDone: true);
+                    m_volStrings.Status = ksSaved;
+                    m_statusCallback(m_volStrings.SourcePath, strText: ksSaved, bDone: true);
                 }
 #if DEBUG == false
                 catch (Exception e)
                 {
-                    m_statusCallback(m_volStrings.SourcePath, strText: mSTRnotSaved, bDone: true);
+                    m_statusCallback(m_volStrings.SourcePath, strText: ksNotSaved, bDone: true);
                     MBox.ShowDialog(m_volStrings.ListingFile.PadRight(100) + "\nException: " + e.Message, "Save Directory Listing");
                 }
 #endif

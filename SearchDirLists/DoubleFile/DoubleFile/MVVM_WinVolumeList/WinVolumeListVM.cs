@@ -2,7 +2,7 @@
 
 namespace DoubleFile
 {
-    partial class WinVolumeListVM : ObservableObject_OwnerWindow
+    partial class WinProjectVM : ObservableObject_OwnerWindow
     {
         // In order of appearance on the form
         public ICommand Icmd_OpenProject { get { return mIcmd_OpenProject; } }
@@ -29,7 +29,7 @@ namespace DoubleFile
         readonly ICommand mIcmd_ToggleInclude = null;
         readonly ICommand mIcmd_VolumeGroup = null;
 
-        internal WinVolumeListVM()
+        internal WinProjectVM()
         {
             mIcmd_OpenProject = new RelayCommand(param => { OpenProject(); });
             mIcmd_SaveProject = new RelayCommand(param => { SaveProject(); }, param => { return (m_lvVM.Count > 0); });

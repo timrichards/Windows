@@ -4,18 +4,18 @@ using System.Linq;
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinVolumeList.xaml
+    /// Interaction logic for WinProject.xaml
     /// </summary>
-    partial class WinVolumeList : LocalWindow
+    partial class WinProject : LocalWindow
     {
         bool m_bOpenProject = false;
 
-        public WinVolumeList()
+        public WinProject()
         {
             InitializeComponent();
         }
 
-        internal WinVolumeList(UList<LVitem_VolumeVM> list_lvVolStrings, bool bOpenProject = false)
+        internal WinProject(UList<LVitem_VolumeVM> list_lvVolStrings, bool bOpenProject = false)
             : this()
         {
             m_list_lvVolStrings = list_lvVolStrings;
@@ -25,16 +25,16 @@ namespace DoubleFile
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             var lv = new LV_VolumeVM();
-            var win = new WinVolumeListVM();
+            var win = new WinProjectVM();
 
-            form_lvVolumeList.DataContext = lv;
+            form_lvProject.DataContext = lv;
             DataContext = win;
             lv.SetPartner(win);
             win.SetPartner(lv);
 
-            lv.SelectedOne = () => { return form_lvVolumeList.SelectedItems.Count == 1; };
-            lv.SelectedAny = () => { return form_lvVolumeList.SelectedItems.Count > 0; };
-            lv.Selected = () => { return form_lvVolumeList.SelectedItems.Cast<LVitem_VolumeVM>(); };
+            lv.SelectedOne = () => { return form_lvProject.SelectedItems.Count == 1; };
+            lv.SelectedAny = () => { return form_lvProject.SelectedItems.Count > 0; };
+            lv.Selected = () => { return form_lvProject.SelectedItems.Cast<LVitem_VolumeVM>(); };
 
             if (m_list_lvVolStrings != null)
             {
@@ -58,7 +58,7 @@ namespace DoubleFile
         {
             m_list_lvVolStrings = new UList<LVitem_VolumeVM>();
 
-            foreach (var lvItem in (form_lvVolumeList.DataContext as LV_VolumeVM).ItemsCast)
+            foreach (var lvItem in (form_lvProject.DataContext as LV_VolumeVM).ItemsCast)
             {
                 m_list_lvVolStrings.Add(lvItem);
             }

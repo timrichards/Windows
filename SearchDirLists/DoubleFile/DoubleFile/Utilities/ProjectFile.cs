@@ -32,7 +32,7 @@ namespace DoubleFile
             m_process.EnableRaisingEvents = true;
         }
 
-        internal void OpenProject(string strProjectFilename, System.Action<IEnumerable<string>, bool> OpenListingFiles)
+        internal void OpenProject(string strProjectFilename, System.Action<IEnumerable<string>, bool> openListingFiles)
         {
             if (Directory.Exists(TempPath))                     // close box/cancel/undo
             {
@@ -52,7 +52,7 @@ namespace DoubleFile
                 {
                     if (m_winProgress.IsLoaded)                 // close box/cancel/undo
                     {
-                        OpenListingFiles(Directory.GetFiles(TempPath).ToList(), true);
+                        openListingFiles(Directory.GetFiles(TempPath).ToList(), true);
                         m_winProgress.Close();
 
                         if (Directory.Exists(TempPath01))
@@ -124,7 +124,7 @@ namespace DoubleFile
             if (listListingFiles.Count <= 0)
             {
                 MBox.ShowDialog("Any listing files in project have not yet been saved." +
-                    " Click OK on the Volume List to start saving directory listings of your drives.",
+                    " Click OK on the Project window to start saving directory listings of your drives.",
                     "Save Project");
                 return;
             }
@@ -161,7 +161,7 @@ namespace DoubleFile
                         strError = "Error saving project.";
                     }
 
-                    MBox.ShowDialog( strError, "Error Saving Project");
+                    MBox.ShowDialog(strError, "Error Saving Project");
                     File.AppendAllText(m_strErrorLogFile, m_sbError.ToString());
                 }
             };

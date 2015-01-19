@@ -37,8 +37,8 @@ namespace DoubleFile
 
         internal bool Include
         {
-            get { return (IncludeYN == FileParse.mSTRinclude); }
-            set { IncludeYN = (value ? FileParse.mSTRinclude : "No"); } 
+            get { return (IncludeYN == FileParse.ksInclude); }
+            set { IncludeYN = (value ? FileParse.ksInclude : "No"); } 
         }
     }
 }

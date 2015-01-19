@@ -16,14 +16,14 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            ShowVolumeList();
+            ShowProjectWindow();
         }
 
         UList<LVitem_VolumeVM> m_list_lvVolStrings = null;
 
-        void ShowVolumeList(bool bOpenProject = false)
+        void ShowProjectWindow(bool bOpenProject = false)
         {
-            var volumes = new WinVolumeList(m_list_lvVolStrings, bOpenProject);
+            var volumes = new WinProject(m_list_lvVolStrings, bOpenProject);
 
             if (false == (volumes.ShowDialog() ?? false))
             {
@@ -51,19 +51,26 @@ namespace DoubleFile
             }
         }
 
-        private void Button_VolumeList_Click(object sender, RoutedEventArgs e)
+        private void Button_ViewProject_Click(object sender, RoutedEventArgs e)
         {
-            ShowVolumeList();
+            ShowProjectWindow();
         }
 
         private void Button_OpenProject_Click(object sender, RoutedEventArgs e)
         {
-            ShowVolumeList(bOpenProject: true);
+            ShowProjectWindow(bOpenProject: true);
         }
 
         private void Button_SaveProject_Click(object sender, RoutedEventArgs e)
         {
-            new WinVolumeListVM().SaveProject(m_list_lvVolStrings);
+            if (m_list_lvVolStrings != null)
+            {
+                WinProjectVM.SaveProject(m_list_lvVolStrings);
+            }
+            else
+            {
+                MBox.ShowDialog("No project to save.", "Save Project");
+            }
         }
     }
 }

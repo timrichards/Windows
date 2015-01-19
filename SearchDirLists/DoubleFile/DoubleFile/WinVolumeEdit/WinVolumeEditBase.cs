@@ -2,6 +2,6 @@
 {
     public abstract class WinVolumeEditBase : LocalWindow
     {
-        internal abstract LVitem_VolumeVM LVitemVolumeTemp { get; set; }
+        internal abstract LVitem_ProjectVM LVitemVolumeTemp { get; set; }
     }
 }

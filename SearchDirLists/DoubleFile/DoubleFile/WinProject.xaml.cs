@@ -15,7 +15,7 @@ namespace DoubleFile
             InitializeComponent();
         }
 
-        internal WinProject(UList<LVitem_VolumeVM> list_lvVolStrings, bool bOpenProject = false)
+        internal WinProject(UList<LVitem_ProjectVM> list_lvVolStrings, bool bOpenProject = false)
             : this()
         {
             m_list_lvVolStrings = list_lvVolStrings;
@@ -24,7 +24,7 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            var lv = new LV_VolumeVM();
+            var lv = new LV_ProjectVM();
             var win = new WinProjectVM();
 
             form_lvProject.DataContext = lv;
@@ -34,7 +34,7 @@ namespace DoubleFile
 
             lv.SelectedOne = () => { return form_lvProject.SelectedItems.Count == 1; };
             lv.SelectedAny = () => { return form_lvProject.SelectedItems.Count > 0; };
-            lv.Selected = () => { return form_lvProject.SelectedItems.Cast<LVitem_VolumeVM>(); };
+            lv.Selected = () => { return form_lvProject.SelectedItems.Cast<LVitem_ProjectVM>(); };
 
             if (m_list_lvVolStrings != null)
             {
@@ -52,13 +52,13 @@ namespace DoubleFile
             }
         }
 
-        internal UList<LVitem_VolumeVM> m_list_lvVolStrings = null;
+        internal UList<LVitem_ProjectVM> m_list_lvVolStrings = null;
 
         private void BtnOK_Click(object sender, RoutedEventArgs e)
         {
-            m_list_lvVolStrings = new UList<LVitem_VolumeVM>();
+            m_list_lvVolStrings = new UList<LVitem_ProjectVM>();
 
-            foreach (var lvItem in (form_lvProject.DataContext as LV_VolumeVM).ItemsCast)
+            foreach (var lvItem in (form_lvProject.DataContext as LV_ProjectVM).ItemsCast)
             {
                 m_list_lvVolStrings.Add(lvItem);
             }

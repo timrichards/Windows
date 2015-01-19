@@ -15,14 +15,14 @@ namespace DoubleFile
         GlobalData gd = null;
         WinProgress m_winProgress = null;
 
-        internal SaveListingsProcess(IEnumerable<LVitem_VolumeVM> list_lvVolStrings)
+        internal SaveListingsProcess(IEnumerable<LVitem_ProjectVM> list_lvVolStrings)
         {
             gd = GlobalData.GetInstance();
 
             var listNicknames = new List<string>();
             var listSourcePaths = new List<string>();
 
-            foreach (LVitem_VolumeVM volStrings in list_lvVolStrings)
+            foreach (LVitem_ProjectVM volStrings in list_lvVolStrings)
             {
                 if (SaveDirListings.WontSave(volStrings))
                 {

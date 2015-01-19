@@ -14,7 +14,7 @@ namespace DoubleFile
             readonly SaveDirListingsStatusDelegate m_statusCallback = null;
             Thread m_thread = null;
 
-            internal SaveDirListing(LVitem_VolumeVM volStrings, SaveDirListingsStatusDelegate statusCallback)
+            internal SaveDirListing(LVitem_ProjectVM volStrings, SaveDirListingsStatusDelegate statusCallback)
                 : base(volStrings)
             {
                 m_statusCallback = statusCallback;

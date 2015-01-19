@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    partial class LV_VolumeVM
+    partial class LV_ProjectVM
     {
-        internal bool AlreadyInProject(LVitem_VolumeVM lvCurrentItem, string strFilename = null)
+        internal bool AlreadyInProject(LVitem_ProjectVM lvCurrentItem, string strFilename = null)
         {
             bool bAlreadyInProject = (ContainsListingFile(lvCurrentItem, strFilename) != null);
 
@@ -17,11 +17,11 @@ namespace DoubleFile
             return bAlreadyInProject;
         }
 
-        internal LVitem_VolumeVM ContainsListingFile(LVitem_VolumeVM currentItem, string t = null)
+        internal LVitem_ProjectVM ContainsListingFile(LVitem_ProjectVM currentItem, string t = null)
         {
             string s = (t ?? currentItem.ListingFile).ToLower();
 
-            foreach (LVitem_VolumeVM item in m_items)
+            foreach (LVitem_ProjectVM item in m_items)
             {
                 if ((item.ListingFile.ToLower() == s) &&
                     ((t == null) || (currentItem != item)))
@@ -37,7 +37,7 @@ namespace DoubleFile
         {
             Selected().FirstOnlyAssert(lvItem =>
             {
-                LVitem_VolumeVM lvItemVolumeTemp = new LVitem_VolumeVM(lvItem);
+                LVitem_ProjectVM lvItemVolumeTemp = new LVitem_ProjectVM(lvItem);
 
                 while (true)
                 {
@@ -45,7 +45,7 @@ namespace DoubleFile
                         (WinVolumeEditBase)new WinVolumeEdit() :
                         new WinVolumeNew();
 
-                    dlg.LVitemVolumeTemp = new LVitem_VolumeVM(lvItemVolumeTemp);
+                    dlg.LVitemVolumeTemp = new LVitem_ProjectVM(lvItemVolumeTemp);
 
                     if (false == (dlg.ShowDialog() ?? false))
                     {
@@ -53,7 +53,7 @@ namespace DoubleFile
                         break;
                     }
 
-                    lvItemVolumeTemp = new LVitem_VolumeVM(dlg.LVitemVolumeTemp);
+                    lvItemVolumeTemp = new LVitem_ProjectVM(dlg.LVitemVolumeTemp);
 
                     if (false == AlreadyInProject(lvItem, lvItemVolumeTemp.ListingFile))
                     {
@@ -93,14 +93,14 @@ namespace DoubleFile
             return bFileExists;
         }
 
-        internal bool NewItem(LVitem_VolumeVM lvItem, bool bQuiet = false)
+        internal bool NewItem(LVitem_ProjectVM lvItem, bool bQuiet = false)
         {
             return NewItem(lvItem.StringValues, bQuiet);
         }
 
         internal override bool NewItem(string[] arrStr, bool bQuiet = false)
         {
-            var lvItem = new LVitem_VolumeVM(arrStr);
+            var lvItem = new LVitem_ProjectVM(arrStr);
             var bAlreadyInProject = AlreadyInProject(lvItem);
 
             if (false == bAlreadyInProject)
@@ -161,7 +161,7 @@ namespace DoubleFile
             Selected().ForEach(lvItem => { lvItem.Include = (false == lvItem.Include); });
         }
 
-        bool ModifyListingFile(LVitem_VolumeVM origLVitemVolume, LVitem_VolumeVM lvItemVolumeTemp, char driveLetter)
+        bool ModifyListingFile(LVitem_ProjectVM origLVitemVolume, LVitem_ProjectVM lvItemVolumeTemp, char driveLetter)
         {
             if (false == FileParse.ValidateFile(origLVitemVolume.ListingFile))
             {

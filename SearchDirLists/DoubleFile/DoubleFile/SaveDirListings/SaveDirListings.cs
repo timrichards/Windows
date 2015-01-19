@@ -12,7 +12,7 @@ namespace DoubleFile
         Thread m_thread = null;
         bool m_bThreadAbort = false;
         ConcurrentBag<SaveDirListing> m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
-        IEnumerable<LVitem_VolumeVM> m_list_LVitem_VolumeVM = null;
+        IEnumerable<LVitem_ProjectVM> m_list_LVitem_VolumeVM = null;
 
         internal int FilesWritten { get; set; }
 
@@ -21,7 +21,7 @@ namespace DoubleFile
             return ((strDrive.Length > 2) && char.IsLetter(strDrive[0]) && (strDrive.Substring(1, 2) == @":\"));
         }
 
-        internal SaveDirListings(IEnumerable<LVitem_VolumeVM> list_LVitem_VolumeVM,
+        internal SaveDirListings(IEnumerable<LVitem_ProjectVM> list_LVitem_VolumeVM,
             SaveDirListingsStatusDelegate statusCallback,
             Action doneCallback)
         {
@@ -30,7 +30,7 @@ namespace DoubleFile
             m_doneCallback = doneCallback;
         }
 
-        internal static bool WontSave(LVitem_VolumeVM volStrings)
+        internal static bool WontSave(LVitem_ProjectVM volStrings)
         {
             return ((ksUsingFile + ksSaved + ksCantSave).Contains(volStrings.Status));
         }
@@ -42,7 +42,7 @@ namespace DoubleFile
 
             DateTime dtStart = DateTime.Now;
 
-            foreach (LVitem_VolumeVM volStrings in m_list_LVitem_VolumeVM)
+            foreach (LVitem_ProjectVM volStrings in m_list_LVitem_VolumeVM)
             {
                 if (WontSave(volStrings))
                 {

@@ -10,16 +10,16 @@
             InitializeComponent();
         }
 
-        internal override LVitem_VolumeVM LVitemVolumeTemp
+        internal override LVitem_ProjectVM LVitemVolumeTemp
         {
             get
             {
-                return new LVitem_VolumeVM(uc_VolumeEdit.LVitemVolumeTemp);
+                return new LVitem_ProjectVM(uc_VolumeEdit.LVitemVolumeTemp);
             }
 
             set
             {
-                uc_VolumeEdit.LVitemVolumeTemp = new LVitem_VolumeVM(value);
+                uc_VolumeEdit.LVitemVolumeTemp = new LVitem_ProjectVM(value);
             }
         }
     }

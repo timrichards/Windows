@@ -19,7 +19,7 @@ namespace DoubleFile
             ShowProjectWindow();
         }
 
-        UList<LVitem_VolumeVM> m_list_lvVolStrings = null;
+        UList<LVitem_ProjectVM> m_list_lvVolStrings = null;
 
         void ShowProjectWindow(bool bOpenProject = false)
         {

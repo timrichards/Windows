@@ -1,7 +1,7 @@
 ﻿
 namespace DoubleFile
 {
-    class LVitem_VolumeVM : ListViewItemVM_Base
+    class LVitem_ProjectVM : ListViewItemVM_Base
     {
         public string Nickname { get { return marr[0]; } set { SetProperty(0, value); } }
         public string SourcePath { get { return marr[1]; } set { SetProperty(1, value); } }
@@ -17,17 +17,17 @@ namespace DoubleFile
         readonly static string[] marrPropName = new string[] { "Nickname", "SourcePath", "ListingFileNoPath", "Status", "IncludeYN", "VolumeGroup", "DriveModel", "DriveSerial" };
         internal const int NumCols_ = 8;
 
-        internal LVitem_VolumeVM(LV_VolumeVM LV, string[] arrStr)
+        internal LVitem_ProjectVM(LV_ProjectVM LV, string[] arrStr)
             : base(LV, arrStr)
         {
         }
 
-        internal LVitem_VolumeVM(string[] arrStr = null)
+        internal LVitem_ProjectVM(string[] arrStr = null)
             : base(null, arrStr)
         {
         }
 
-        internal LVitem_VolumeVM(LVitem_VolumeVM lvItemTemp)
+        internal LVitem_ProjectVM(LVitem_ProjectVM lvItemTemp)
             : base(null, lvItemTemp.StringValues)
         {
         }

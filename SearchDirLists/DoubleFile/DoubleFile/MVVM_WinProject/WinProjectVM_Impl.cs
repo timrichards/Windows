@@ -28,7 +28,7 @@ namespace DoubleFile
             SaveProject(m_lvVM.ItemsCast);
         }
 
-        static internal void SaveProject(IEnumerable<LVitem_VolumeVM> list_lvVolStrings)
+        static internal void SaveProject(IEnumerable<LVitem_ProjectVM> list_lvVolStrings)
         {
             var dlg = new Microsoft.Win32.SaveFileDialog();
 
@@ -43,13 +43,13 @@ namespace DoubleFile
 
         internal void NewListingFile()
         {
-            var lvItemVolumeTemp = new LVitem_VolumeVM(new string[] { });
+            var lvItemVolumeTemp = new LVitem_ProjectVM(new string[] { });
 
             while (true)
             {
                 var newVolume = new WinVolumeNew();
 
-                newVolume.LVitemVolumeTemp = new LVitem_VolumeVM(lvItemVolumeTemp);
+                newVolume.LVitemVolumeTemp = new LVitem_ProjectVM(lvItemVolumeTemp);
 
                 if ((newVolume.ShowDialog() ?? false) == false)
                 {
@@ -64,7 +64,7 @@ namespace DoubleFile
                     break;
                 }
 
-                lvItemVolumeTemp = new LVitem_VolumeVM(newVolume.LVitemVolumeTemp);
+                lvItemVolumeTemp = new LVitem_ProjectVM(newVolume.LVitemVolumeTemp);
             }
         }
 
@@ -84,7 +84,7 @@ namespace DoubleFile
 
         internal void OpenListingFiles(IEnumerable<string> listFiles, bool bClearItems = false)
         {
-            LVitem_VolumeVM lvItem = null;
+            LVitem_ProjectVM lvItem = null;
             var sbBadFiles = new System.Text.StringBuilder();
             bool bMultiBad = true;
 

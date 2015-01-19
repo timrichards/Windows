@@ -78,12 +78,12 @@ namespace DoubleFile
             }
         }
 
-        internal void SaveProject(IEnumerable<LVitem_VolumeVM> list_lvVolStrings, string strProjectFilename)
+        internal void SaveProject(IEnumerable<LVitem_ProjectVM> list_lvVolStrings, string strProjectFilename)
         {
             var listListingFiles = new List<string>();
             var listListingFiles_Check = new List<string>();
 
-            foreach (LVitem_VolumeVM volStrings in list_lvVolStrings)
+            foreach (LVitem_ProjectVM volStrings in list_lvVolStrings)
             {
                 if (false == SaveDirListings.WontSave(volStrings))
                 {

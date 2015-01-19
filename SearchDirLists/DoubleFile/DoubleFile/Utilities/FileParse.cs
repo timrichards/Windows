@@ -94,6 +94,24 @@ namespace DoubleFile
             -1, -1, -1, 4, -1, 0, -1, -1, -1, -1, -1
         };
 
+        internal static string CheckNTFS_chars(ref string strFile, bool bFile = false)
+        {
+            char[] arrChar = bFile ? Path.GetInvalidFileNameChars() : Path.GetInvalidPathChars();
+            int nIx = -1;
+
+            if ((nIx = strFile.IndexOfAny(arrChar)) > -1)
+            {
+                string strRet = "NTFS ASCII " + ((int)strFile[nIx]).ToString();
+
+                strFile = strFile.Replace("\n", "").Replace("\r", "").Replace("\t", "");    // program-incompatible
+                return strRet;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         internal static void ConvertFile(string strFile)
         {
             string strFile_01 = StrFile_01(strFile);
@@ -305,7 +323,7 @@ namespace DoubleFile
             return strRet;
         }
 
-        internal static bool ReadHeader(string strFile, out LVitem_VolumeVM lvItem_out)
+        internal static bool ReadHeader(string strFile, out LVitem_ProjectVM lvItem_out)
         {
             lvItem_out = null;
 
@@ -314,7 +332,7 @@ namespace DoubleFile
                 return false;
             }
 
-            LVitem_VolumeVM lvItem = new LVitem_VolumeVM();
+            LVitem_ProjectVM lvItem = new LVitem_ProjectVM();
 
             lvItem.ListingFile = strFile;
             lvItem.Status = ksUsingFile;

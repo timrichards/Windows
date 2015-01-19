@@ -2,7 +2,7 @@
 
 namespace DoubleFile
 {
-    partial class LV_VolumeVM : ListViewVM_GenericBase<LVitem_VolumeVM>
+    partial class LV_ProjectVM : ListViewVM_GenericBase<LVitem_ProjectVM>
     {
         public string WidthNickname { get { return SCW; } }                   // franken all NaN
         public string WidthSourcePath { get { return SCW; } }
@@ -13,7 +13,7 @@ namespace DoubleFile
         public string WidthDriveModel { get { return SCW; } }
         public string WidthDriveSerial { get { return SCW; } }
 
-        internal override int NumCols { get { return LVitem_VolumeVM.NumCols_; } }
+        internal override int NumCols { get { return LVitem_ProjectVM.NumCols_; } }
 
         internal void SetPartner(WinProjectVM windowVM)
         {

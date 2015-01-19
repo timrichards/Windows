@@ -5,7 +5,7 @@ namespace DoubleFile
 {
     partial class SaveDirListings
     {
-        class TraverseTree : FileUtil
+        class TraverseTree
         {
             protected long LengthRead { get; private set; }
             protected long FilesRead { get; private set; }
@@ -14,9 +14,9 @@ namespace DoubleFile
             protected IEnumerable<string> ErrorList { get { return m_listErrors; } }
 
             protected bool m_bThreadAbort = false;
-            protected readonly LVitem_VolumeVM m_volStrings = null;
+            protected readonly LVitem_ProjectVM m_volStrings = null;
 
-            protected TraverseTree(LVitem_VolumeVM volStrings)
+            protected TraverseTree(LVitem_ProjectVM volStrings)
             {
                 m_volStrings = volStrings;
             }

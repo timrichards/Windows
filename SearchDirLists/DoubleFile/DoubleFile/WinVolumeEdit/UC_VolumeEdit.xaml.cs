@@ -38,11 +38,11 @@ namespace DoubleFile
 
         internal char DriveLetter { get { return (form_EditDriveLetter.Text + "\0")[0]; } }
 
-        internal LVitem_VolumeVM LVitemVolumeTemp
+        internal LVitem_ProjectVM LVitemVolumeTemp
         {
             get
             {
-                return new LVitem_VolumeVM(new string[] {
+                return new LVitem_ProjectVM(new string[] {
                     form_EditNickname.Text, form_EditSourcePath.Text,
                     (IsVolumeNew ? form_EditListingFile.Text : m_strListingFile),
                     m_strStatus, m_strIncludeYN,

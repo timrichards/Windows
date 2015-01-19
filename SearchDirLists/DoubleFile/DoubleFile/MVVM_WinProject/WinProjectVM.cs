@@ -44,11 +44,11 @@ namespace DoubleFile
             mIcmd_VolumeGroup = new RelayCommand(param => { m_lvVM.EditVolumeGroupLabel(); }, param => m_lvVM.SelectedAny());
         }
 
-        internal void SetPartner(LV_VolumeVM lvVM)
+        internal void SetPartner(LV_ProjectVM lvVM)
         {
             m_lvVM = lvVM;
         }
 
-        LV_VolumeVM m_lvVM = null;
+        LV_ProjectVM m_lvVM = null;
     }
 }

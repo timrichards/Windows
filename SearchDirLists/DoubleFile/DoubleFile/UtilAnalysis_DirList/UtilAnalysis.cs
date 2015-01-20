@@ -1,9 +1,43 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+
 namespace DoubleFile
 {
     internal class UtilAnalysis
     {
-        internal static void Closure(System.Action action) { action(); }
+        internal static void Closure(Action action) { action(); }
+
+        internal static int CountNodes(List<TreeNode> listNodes)
+        {
+            int nCount = 0;
+
+            foreach (TreeNode treeNode in listNodes)
+            {
+                nCount += CountNodes(treeNode, bNextNode: false);
+            }
+
+            return nCount;
+        }
+
+        internal static int CountNodes(TreeNode treeNode_in, bool bNextNode = true)
+        {
+            TreeNode treeNode = treeNode_in;
+            int nCount = 0;
+
+            do
+            {
+                if ((treeNode.Nodes != null) && (treeNode.Nodes.Count > 0))
+                {
+                    nCount += CountNodes(treeNode.Nodes[0]);
+                }
+
+                ++nCount;
+            }
+            while (bNextNode && ((treeNode = treeNode.NextNode) != null));
+
+            return nCount;
+        }
 
         internal static string FormatSize(string in_str, bool bBytes = false)
         {
@@ -39,6 +73,13 @@ namespace DoubleFile
             {
                 return "0 bytes";
             }
+        }
+
+        static internal void Write(string str)
+        {
+#if (DEBUG)
+            Console.Write(str);
+#endif
         }
     }
 }

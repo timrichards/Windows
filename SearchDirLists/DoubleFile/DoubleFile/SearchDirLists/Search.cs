@@ -631,7 +631,7 @@ namespace SearchDirLists
             m_blinky.Go(bProgress: true);
             m_SearchResultsType2_List = new List<SearchResults>();
 
-            SearchFile.FolderSpecialHandling folderHandling = SearchFile.FolderSpecialHandling.None;    // not used
+      //      SearchFile.FolderSpecialHandling folderHandling = SearchFile.FolderSpecialHandling.None;    // not used
             string strCurrentNode = null;
 
             if (form_treeViewBrowse.SelectedNode != null)
@@ -641,10 +641,10 @@ namespace SearchDirLists
 
             Utilities.Assert(1307.83047, m_searchType2 == null);
 
-            m_searchType2 = new SearchType2(form_lvVolumesMain.Items, strSearch, strSearch.ToLower() != strSearch,
-                folderHandling, bSearchFilesOnly, strCurrentNode,
-                new SearchStatusDelegate(SearchStatusCallback), new Action(SearchDoneCallback));
-            m_searchType2.DoThreadFactory();
+            //m_searchType2 = new SearchType2(form_lvVolumesMain.Items, strSearch, strSearch.ToLower() != strSearch,
+            //    folderHandling, bSearchFilesOnly, strCurrentNode,
+            //    new SearchStatusDelegate(SearchStatusCallback), new Action(SearchDoneCallback));
+            //m_searchType2.DoThreadFactory();
         }
 
         void DoSearch(object sender)

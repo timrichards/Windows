@@ -1,14 +1,6 @@
-﻿using System.Windows.Controls;
-using System.Windows.Media; using Media = System.Windows.Media;
-using System.Windows.Markup;
-using System.Xml;
-using System.Windows;
-
-using Forms = System.Windows.Forms;
-using Drawing = System.Drawing;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -33,13 +25,13 @@ namespace DoubleFile
         readonly List<TreeNode> m_listRootNodes = null;
         readonly UList<TreeNode> m_listTreeNodes = null;
         readonly bool m_bCheckboxes = false;
-        readonly List<SDL_ListViewItem> m_list_lvIgnore = null;
+        readonly List<LVitem_ProjectVM> m_list_lvIgnore = null;
 
         // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.
-        readonly List<SDL_ListViewItem> listLVunique = new List<SDL_ListViewItem>();
-        readonly List<SDL_ListViewItem> listLVsameVol = new List<SDL_ListViewItem>();
-        readonly List<SDL_ListViewItem> listLVdiffVol = new List<SDL_ListViewItem>();
-        readonly Dictionary<TreeNode, SDL_ListViewItem> dictIgnoreNodes = new Dictionary<TreeNode, SDL_ListViewItem>();
+        readonly List<LVitem_ProjectVM> listLVunique = new List<LVitem_ProjectVM>();
+        readonly List<LVitem_ProjectVM> listLVsameVol = new List<LVitem_ProjectVM>();
+        readonly List<LVitem_ProjectVM> listLVdiffVol = new List<LVitem_ProjectVM>();
+        readonly Dictionary<TreeNode, LVitem_ProjectVM> dictIgnoreNodes = new Dictionary<TreeNode, LVitem_ProjectVM>();
         readonly bool m_bLoose = false;
         bool m_bThreadAbort = false;
 
@@ -97,7 +89,7 @@ namespace DoubleFile
                         continue;
                     }
 
-                    if ((treeNode.ForeColor == Drawing.Color.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
+                    if ((treeNode.ForeColor == Color.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
                     {
                         MBox.Assert(1305.6304, (nodeDatum.m_listClones.Count > 0) && (nodeDatum.m_bDifferentVols == false));
                         m_listSameVol.Add(treeNode);
@@ -105,7 +97,7 @@ namespace DoubleFile
 
                     if (bCloneOK)
                     {
-                        treeNode.BackColor = Drawing.Color.LightGoldenrodYellow;
+                        treeNode.BackColor = Color.LightGoldenrodYellow;
 
                         if ((nodeDatum.m_lvItem != null) && (nodeDatum.m_lvItem.ListView == null))  // ignore LV
                         {
@@ -115,7 +107,7 @@ namespace DoubleFile
 
                     if (treeNode.FirstNode != null)
                     {
-                        Go((TreeNode)treeNode.FirstNode, bCloneOK || (new Drawing.Color[] { Drawing.Color.SteelBlue, Drawing.Color.DarkBlue }.Contains(treeNode.ForeColor)));
+                        Go((TreeNode)treeNode.FirstNode, bCloneOK || (new Color[] { Color.SteelBlue, Color.DarkBlue }.Contains(treeNode.ForeColor)));
                     }
                 }
                 while (bNextNode && ((treeNode = (TreeNode)treeNode.NextNode) != null));
@@ -124,28 +116,28 @@ namespace DoubleFile
 
         class InsertSizeMarker
         {
-            readonly static SDL_ListViewItem lvMarker = new SDL_ListViewItem();
+            readonly static LVitem_ProjectVM lvMarker = new LVitem_ProjectVM();
             static bool bInit = false;
 
             static void Init()
             {
                 if (bInit == false)
                 {
-                    lvMarker.BackColor = Drawing.Color.DarkSlateGray;
-                    lvMarker.ForeColor = Drawing.Color.White;
-                    lvMarker.Font = new Drawing.Font(lvMarker.Font, Drawing.FontStyle.Bold);
+                    lvMarker.BackColor = Color.DarkSlateGray;
+                    lvMarker.ForeColor = Color.White;
+                    lvMarker.Font = new Font(lvMarker.Font, FontStyle.Bold);
                     lvMarker.Tag = null;
                     bInit = true;
                 }
             }
 
-            public static void Go(List<SDL_ListViewItem> listLVitems, int nIx, bool bUnique, bool bAdd = false)
+            public static void Go(List<LVitem_ProjectVM> listLVitems, int nIx, bool bUnique, bool bAdd = false)
             {
                 Init();
 
-                SDL_ListViewItem lvItem = (SDL_ListViewItem)lvMarker.Clone();
+                LVitem_ProjectVM lvItem = (LVitem_ProjectVM)lvMarker.Clone();
 
-                lvItem.Text = ((Utilities.FormatSize(((NodeDatum)((TreeNode)(bUnique ? listLVitems[nIx].Tag : ((UList<TreeNode>)listLVitems[nIx].Tag)[0])).Tag).nTotalLength, bNoDecimal: true)));
+                lvItem.Text = ((UtilAnalysis.FormatSize(((NodeDatum)((TreeNode)(bUnique ? listLVitems[nIx].Tag : ((UList<TreeNode>)listLVitems[nIx].Tag)[0])).Tag).nTotalLength, bNoDecimal: true)));
 
                 if (bAdd)
                 {
@@ -161,7 +153,7 @@ namespace DoubleFile
         public Collate(SortedDictionary<Correlate, UList<TreeNode>> dictNodes,
             SDL_ListView lvClones, SDL_ListView lvSameVol, SDL_ListView lvUnique,
             List<TreeNode> listRootNodes, UList<TreeNode> listTreeNodes, bool bCheckboxes,
-            List<SDL_ListViewItem> list_lvIgnore, bool bLoose)
+            List<LVitem_ProjectVM> list_lvIgnore, bool bLoose)
         {
             static_this = this;
             m_dictNodes = dictNodes;
@@ -188,7 +180,7 @@ namespace DoubleFile
 
             if (nLength <= 100 * 1024)
             {
-                treeNode.ForeColor = Drawing.Color.LightGray;
+                treeNode.ForeColor = Color.LightGray;
                 nodeDatum.m_listClones.Clear();
             }
 
@@ -211,8 +203,8 @@ namespace DoubleFile
                     TreeNode rootNode = treeNode.Root();
                     RootNodeDatum rootNodeDatum = (RootNodeDatum)rootNode.Tag;
 
-                    MBox.Assert(1305.6308, new Drawing.Color[] { Drawing.Color.Empty, Drawing.Color.DarkBlue }.Contains(treeNode.ForeColor));
-                    treeNode.ForeColor = Drawing.Color.Firebrick;
+                    MBox.Assert(1305.6308, new Color[] { Color.Empty, Color.DarkBlue }.Contains(treeNode.ForeColor));
+                    treeNode.ForeColor = Color.Firebrick;
 
                     bool bDifferentVols = false;
 
@@ -240,10 +232,10 @@ namespace DoubleFile
                             continue;
                         }
 
-                        if (treeNode.ForeColor != Drawing.Color.DarkBlue)
+                        if (treeNode.ForeColor != Color.DarkBlue)
                         {
-                            MBox.Assert(1305.6311, treeNode.ForeColor == Drawing.Color.Firebrick);
-                            treeNode.ForeColor = Drawing.Color.SteelBlue;
+                            MBox.Assert(1305.6311, treeNode.ForeColor == Color.Firebrick);
+                            treeNode.ForeColor = Color.SteelBlue;
                         }
 
                         bDifferentVols = true;
@@ -269,7 +261,7 @@ namespace DoubleFile
             }
         }
 
-        public static void InsertSizeMarkers(List<SDL_ListViewItem> listLVitems)
+        public static void InsertSizeMarkers(List<LVitem_ProjectVM> listLVitems)
         {
             if (listLVitems.Count <= 0)
             {
@@ -300,7 +292,7 @@ namespace DoubleFile
             InsertSizeMarker.Go(listLVitems, 0, bUnique);            // Enter the Zeroth
         }
 
-        void IgnoreNodeAndSubnodes(SDL_ListViewItem lvItem, TreeNode treeNode_in, bool bContinue = false)
+        void IgnoreNodeAndSubnodes(LVitem_ProjectVM lvItem, TreeNode treeNode_in, bool bContinue = false)
         {
             TreeNode treeNode = treeNode_in;
 
@@ -340,7 +332,7 @@ namespace DoubleFile
 
                 if (sbMatch.Contains(treeNode.Text.ToLower()))
                 {
-                    foreach (SDL_ListViewItem lvItem in m_list_lvIgnore)
+                    foreach (LVitem_ProjectVM lvItem in m_list_lvIgnore)
                     {
                         if (treeNode.Level != (int.Parse(lvItem.SubItems[1].Text) - 1))
                         {
@@ -349,7 +341,7 @@ namespace DoubleFile
 
                         if (lvItem.Text.ToLower() == treeNode.Text.ToLower())
                         {
-                            IgnoreNodeAndSubnodes((SDL_ListViewItem)lvItem.Tag, treeNode);
+                            IgnoreNodeAndSubnodes((LVitem_ProjectVM)lvItem.Tag, treeNode);
                             break;
                         }
                     }
@@ -369,7 +361,7 @@ namespace DoubleFile
 
             while (parentNode != null)
             {
-                parentNode.BackColor = Drawing.Color.Snow;
+                parentNode.BackColor = Color.Snow;
 
                 NodeDatum nodeDatum = (NodeDatum)parentNode.Tag;
 
@@ -378,9 +370,9 @@ namespace DoubleFile
                     nodeDatum.m_lvItem.BackColor = parentNode.BackColor;
                 }
 
-                if (parentNode.ForeColor != Drawing.Color.DarkOrange)
+                if (parentNode.ForeColor != Color.DarkOrange)
                 {
-                    MBox.Assert(1305.6313, (parentNode.ForeColor == Drawing.Color.Empty) == (nodeDatum.m_lvItem == null));
+                    MBox.Assert(1305.6313, (parentNode.ForeColor == Color.Empty) == (nodeDatum.m_lvItem == null));
                 }
 
                 parentNode = (TreeNode)parentNode.Parent;
@@ -389,7 +381,7 @@ namespace DoubleFile
 
         public void Step1_OnThread()
         {
-            SDL_TreeView treeView = new SDL_TreeView();     // sets Level and NextNode
+            TreeView treeView = new TreeView();     // sets Level and NextNode
 
             if (m_listRootNodes.Count <= 0)
             {
@@ -408,7 +400,7 @@ namespace DoubleFile
                 int nMaxLevel = m_list_lvIgnore.Max(i => int.Parse(i.SubItems[1].Text) - 1);
                 StringBuilder sbMatch = new StringBuilder();
 
-                foreach (SDL_ListViewItem lvItem in m_list_lvIgnore)
+                foreach (LVitem_ProjectVM lvItem in m_list_lvIgnore)
                 {
                     sbMatch.AppendLine(lvItem.Text);
                 }
@@ -417,7 +409,7 @@ namespace DoubleFile
                 UtilProject.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             }
 
-            Dictionary<TreeNode, SDL_ListViewItem> dictIgnoreMark = new Dictionary<TreeNode, SDL_ListViewItem>();
+            Dictionary<TreeNode, LVitem_ProjectVM> dictIgnoreMark = new Dictionary<TreeNode, LVitem_ProjectVM>();
             SortedDictionary<Correlate, List<TreeNode>> dictNodes = new SortedDictionary<Correlate, List<TreeNode>>();
 
             foreach (KeyValuePair<Correlate, UList<TreeNode>> pair in m_dictNodes)  // clone to remove ignored
@@ -425,7 +417,7 @@ namespace DoubleFile
                 dictNodes.Add(pair.Key, pair.Value.ToList());                       // clone pair.Value to remove ignored, using ToList() 
             }
 
-            foreach (KeyValuePair<TreeNode, SDL_ListViewItem> pair in dictIgnoreNodes)
+            foreach (KeyValuePair<TreeNode, LVitem_ProjectVM> pair in dictIgnoreNodes)
             {
                 TreeNode treeNode = pair.Key;
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
@@ -559,11 +551,11 @@ namespace DoubleFile
 
                     foreach (TreeNode node in listNodes.Value)
                     {
-                        node.ForeColor = Drawing.Color.Blue;
+                        node.ForeColor = Color.Blue;
                     }
                 }
 
-                SDL_ListViewItem lvItem = new SDL_ListViewItem(new string[] { string.Empty, str_nClones });
+                LVitem_ProjectVM lvItem = new LVitem_ProjectVM(new string[] { string.Empty, str_nClones });
 
                 lvItem.Tag = listNodes.Value;
                 lvItem.ForeColor = listNodes.Value[0].ForeColor;
@@ -594,13 +586,13 @@ namespace DoubleFile
                 listLVdiffVol.Add(lvItem);
             }
 
-            foreach (KeyValuePair<TreeNode, SDL_ListViewItem> pair in dictIgnoreMark)
+            foreach (KeyValuePair<TreeNode, LVitem_ProjectVM> pair in dictIgnoreMark)
             {
                 TreeNode treeNode = pair.Key;
-                SDL_ListViewItem lvIgnoreItem = pair.Value;
+                LVitem_ProjectVM lvIgnoreItem = pair.Value;
 
-                treeNode.ForeColor = Drawing.Color.DarkGray;
-                treeNode.BackColor = Drawing.Color.Empty;
+                treeNode.ForeColor = Color.DarkGray;
+                treeNode.BackColor = Color.Empty;
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
@@ -623,7 +615,7 @@ namespace DoubleFile
 
                 MBox.Assert(1305.6321, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
-                SDL_ListViewItem lvItem = new SDL_ListViewItem(treeNode.Text);
+                LVitem_ProjectVM lvItem = new LVitem_ProjectVM(treeNode.Text);
 
                 lvItem.Tag = treeNode;
 
@@ -632,10 +624,10 @@ namespace DoubleFile
                 MBox.Assert(1305.6322, nodeDatum.nImmediateFiles > 0);
                 SnowUniqueParents(treeNode);
 
-                if (treeNode.ForeColor != Drawing.Color.DarkOrange)
+                if (treeNode.ForeColor != Color.DarkOrange)
                 {
-                    MBox.Assert(1305.6323, treeNode.ForeColor == Drawing.Color.Empty);
-                    treeNode.ForeColor = Drawing.Color.Red;
+                    MBox.Assert(1305.6323, treeNode.ForeColor == Color.Empty);
+                    treeNode.ForeColor = Color.Red;
                 }
 
                 lvItem.ForeColor = treeNode.ForeColor;
@@ -651,12 +643,12 @@ namespace DoubleFile
 
             if (m_listRootNodes.Count > 0)
             {
-                int nCount = Utilities.CountNodes(m_listRootNodes);
+                int nCount = UtilAnalysis.CountNodes(m_listRootNodes);
                 int nCount_A = new AddTreeToList(m_listTreeNodes, listSameVol).Go(m_listRootNodes).Count;
 
                 MBox.Assert(1305.6325, nCount_A == nCount);
                 MBox.Assert(1305.6326, m_listTreeNodes.Count == nCount);
-                MBox.Assert(1305.6327, Utilities.CountNodes(m_listRootNodes) == nCount);
+                MBox.Assert(1305.6327, UtilAnalysis.CountNodes(m_listRootNodes) == nCount);
                 UtilProject.WriteLine("Step1_OnThread " + nCount);
             }
 
@@ -688,10 +680,10 @@ namespace DoubleFile
 
                 MBox.Assert(1305.6329, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
-                SDL_ListViewItem lvItem = new SDL_ListViewItem(new string[] { treeNode.Text, str_nClones });
+                LVitem_ProjectVM lvItem = new LVitem_ProjectVM(new string[] { treeNode.Text, str_nClones });
 
                 lvItem.Tag = nodeDatum.m_listClones;
-                lvItem.ForeColor = Drawing.Color.Firebrick;
+                lvItem.ForeColor = Color.Firebrick;
                 lvItem.BackColor = treeNode.BackColor;
                 listLVsameVol.Add(lvItem);
                 nodeDatum.m_lvItem = lvItem;
@@ -704,7 +696,7 @@ namespace DoubleFile
 
         public void Step2_OnForm()
         {
-            Utilities.Closure(new Action(() =>
+            UtilAnalysis.Closure(new Action(() =>
             {
                 if (m_bThreadAbort || GlobalData.AppExit)
                 {
@@ -726,13 +718,13 @@ namespace DoubleFile
                     SDLWPF.treeViewMain.Enabled = true;
                     SDLWPF.treeViewMain.CheckBoxes = m_bCheckboxes;
 
-                    int nCount = Utilities.CountNodes(m_listRootNodes);
+                    int nCount = UtilAnalysis.CountNodes(m_listRootNodes);
 
-                    Utilities.Write("A");
+                    UtilAnalysis.Write("A");
                     SDLWPF.treeViewMain.Nodes.AddRange(m_listRootNodes.ToArray());
                     UtilProject.WriteLine("A");
 
-                    int nCount_A = Utilities.CountNodes(m_listRootNodes);
+                    int nCount_A = UtilAnalysis.CountNodes(m_listRootNodes);
 
                     MBox.Assert(1305.6331, nCount_A == nCount);
                     MBox.Assert(1305.6332, SDLWPF.treeViewMain.GetNodeCount(includeSubTrees: true) == nCount);
@@ -745,7 +737,7 @@ namespace DoubleFile
                 }
 
                 MBox.Assert(1305.6333, form_lvClones.Items.Count <= 0);
-                Utilities.Write("B");
+                UtilAnalysis.Write("B");
                 form_lvClones.Items.AddRange(listLVdiffVol.ToArray());
                 form_lvClones.Invalidate();
                 UtilProject.WriteLine("B");
@@ -756,7 +748,7 @@ namespace DoubleFile
                 }
 
                 MBox.Assert(1305.6334, form_lvUnique.Items.Count <= 0);
-                Utilities.Write("C");
+                UtilAnalysis.Write("C");
                 form_lvUnique.Items.AddRange(listLVunique.ToArray());
                 form_lvUnique.Invalidate();
                 UtilProject.WriteLine("C");
@@ -767,7 +759,7 @@ namespace DoubleFile
                 }
 
                 MBox.Assert(1305.6335, form_lvSameVol.Items.Count <= 0);
-                Utilities.Write("D");
+                UtilAnalysis.Write("D");
                 form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
                 form_lvSameVol.Invalidate();
                 UtilProject.WriteLine("D");

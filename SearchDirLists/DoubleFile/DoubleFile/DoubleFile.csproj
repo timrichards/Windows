@@ -137,9 +137,6 @@
     <Compile Include="SearchDirLists\ReadOnlyRichTextBox.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SearchDirLists\SaveDirInfo.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="SearchDirLists\Search.cs">
       <SubType>Form</SubType>
     </Compile>

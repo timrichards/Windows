@@ -138,14 +138,14 @@ namespace SearchDirLists
 
             if (bError)
             {
-                volStrings.SetStatus_BadFile(form_lvVolumesMain);
+      //          volStrings.SetStatus_BadFile(form_lvVolumesMain);
             }
             else if (rootNode != null)
             {
                 lock (form_treeViewBrowse)
                 {
                     form_treeViewBrowse.Nodes.Add(rootNode.Text);    // items added to show progress
-                    volStrings.SetStatus_Done(form_lvVolumesMain, rootNode);
+       //             volStrings.SetStatus_Done(form_lvVolumesMain, rootNode);
                 }
 
                 lock (m_listRootNodes)
@@ -360,10 +360,10 @@ namespace SearchDirLists
                 form_colDirDetail.Text = m_strColDirDetailOrig;
                 form_colVolDetail.Text = m_strColVolDetailOrig;
 
-                if (form_lvVolumesMain.Items.Count <= 0)
-                {
-                    return;
-                }
+                //if (form_lvVolumesMain.Items.Count <= 0)
+                //{
+                //    return;
+                //}
 
                 TreeNode treeNode = new TreeNode("Creating treeview...        ");
 
@@ -372,9 +372,9 @@ namespace SearchDirLists
                 form_treeViewBrowse.CheckBoxes = false;    // treeview items are faked to show progress
                 form_treeViewBrowse.Enabled = false;
                 Utilities.Assert(1304.5310, m_listRootNodes.Count == 0);
-                m_tree = new Tree(form_lvVolumesMain.Items, m_dictNodes, m_dictDriveInfo,
-                    new TreeStatusDelegate(TreeStatusCallback), new Action(TreeDoneCallback));
-                m_tree.DoThreadFactory();
+                //m_tree = new Tree(form_lvVolumesMain.Items, m_dictNodes, m_dictDriveInfo,
+                //    new TreeStatusDelegate(TreeStatusCallback), new Action(TreeDoneCallback));
+                //m_tree.DoThreadFactory();
             }
             else
             {

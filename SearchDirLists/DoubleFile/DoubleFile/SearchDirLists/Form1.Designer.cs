@@ -19,7 +19,6 @@ namespace SearchDirLists
             {
                 components.Dispose();
             }
-
             base.Dispose(disposing);
         }
 
@@ -37,8 +36,6 @@ namespace SearchDirLists
             System.Windows.Forms.Label label2;
             System.Windows.Forms.Label label3;
             System.Windows.Forms.Label label5;
-            System.Windows.Forms.Label label6;
-            System.Windows.Forms.Label label7;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.form_chkSpacer = new System.Windows.Forms.CheckBox();
             this.form_tabControlMain = new System.Windows.Forms.TabControl();
@@ -46,7 +43,7 @@ namespace SearchDirLists
             this.tableLayoutPanel1 = new SearchDirLists.Form1.Form1LayoutPanel(this.components);
             this.form_cbVolumeName = new System.Windows.Forms.ComboBox();
             this.form_btnSaveDirList = new System.Windows.Forms.Button();
-            this.form_lvVolumesMain = new SearchDirLists.SDL_ListView();
+            this.form_lvVolumesMain = new ListViewEmbeddedControls.ListViewEx();
             this.form_lv_Volumes_col_Volume = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_Volumes_col_Path = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_lv_Volumes_col_SaveToFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -64,22 +61,19 @@ namespace SearchDirLists
             this.form_btnToggleInclude = new System.Windows.Forms.Button();
             this.form_btnAddVolume = new System.Windows.Forms.Button();
             this.form_btnSaveAs = new System.Windows.Forms.Button();
-            this.form_cbDriveModel = new System.Windows.Forms.ComboBox();
-            this.form_cbDriveSerial = new System.Windows.Forms.ComboBox();
-            this.form_btnDriveSerial = new System.Windows.Forms.Button();
             this.form_tabPageBrowse = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel3 = new SearchDirLists.Form1.Form1LayoutPanel(this.components);
             this.form_splitFiles = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.form_splitTreeFind = new System.Windows.Forms.SplitContainer();
             this.form_splitCompare = new System.Windows.Forms.SplitContainer();
-            this.form_treeCompare1 = new SearchDirLists.SDL_TreeView();
-            this.form_treeCompare2 = new SearchDirLists.SDL_TreeView();
-            this.form_treeViewBrowse = new SearchDirLists.SDL_TreeView();
+            this.form_treeCompare1 = new SearchDirLists.Form1.Form1TreeView();
+            this.form_treeCompare2 = new SearchDirLists.Form1.Form1TreeView();
+            this.form_treeViewBrowse = new SearchDirLists.Form1.Form1TreeView();
             this.form_tabControlCopyIgnore = new System.Windows.Forms.TabControl();
             this.form_tabPageCopy = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel4 = new SearchDirLists.Form1.Form1LayoutPanel(this.components);
-            this.form_lvCopyScratchpad = new SearchDirLists.SDL_ListView();
+            this.form_lvCopyScratchpad = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tableLayoutPanel5 = new SearchDirLists.Form1.Form1LayoutPanel(this.components);
@@ -89,7 +83,7 @@ namespace SearchDirLists
             this.form_btnLoadCopyDirs = new System.Windows.Forms.Button();
             this.form_tabPageIgnore = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel6 = new SearchDirLists.Form1.Form1LayoutPanel(this.components);
-            this.form_lvIgnoreList = new SearchDirLists.SDL_ListView();
+            this.form_lvIgnoreList = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tableLayoutPanel7 = new SearchDirLists.Form1.Form1LayoutPanel(this.components);
@@ -106,7 +100,7 @@ namespace SearchDirLists
             this.form_tmapUserCtl = new SearchDirLists.TreeMapUserControl();
             this.form_tabPageFileList = new System.Windows.Forms.TabPage();
             this.form_splitCompareFiles = new System.Windows.Forms.SplitContainer();
-            this.form_lvFiles = new SearchDirLists.SDL_ListView();
+            this.form_lvFiles = new ListViewEmbeddedControls.ListViewEx();
             this.form_colFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -114,7 +108,7 @@ namespace SearchDirLists
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_lvFileCompare = new SearchDirLists.SDL_ListView();
+            this.form_lvFileCompare = new ListViewEmbeddedControls.ListViewEx();
             this.form_colFileCompare = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader19 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader20 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -123,20 +117,20 @@ namespace SearchDirLists
             this.columnHeader23 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader24 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_splitDetailVols = new System.Windows.Forms.SplitContainer();
-            this.form_lvDetail = new SearchDirLists.SDL_ListView();
+            this.form_lvDetail = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_colDirDetail = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_lvDetailVol = new SearchDirLists.SDL_ListView();
+            this.form_lvDetailVol = new ListViewEmbeddedControls.ListViewEx();
             this.form_colDirDetailCompare = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_colVolDetail = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_splitNonClones = new System.Windows.Forms.SplitContainer();
-            this.form_lvUnique = new SearchDirLists.SDL_ListView();
+            this.form_lvUnique = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader16 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_splitUnique = new System.Windows.Forms.SplitContainer();
-            this.form_lvSameVol = new SearchDirLists.SDL_ListView();
+            this.form_lvSameVol = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_lvClones = new SearchDirLists.SDL_ListView();
+            this.form_lvClones = new ListViewEmbeddedControls.ListViewEx();
             this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tableLayoutPanel2 = new SearchDirLists.Form1.Form1LayoutPanel(this.components);
@@ -153,14 +147,16 @@ namespace SearchDirLists
             this.form_cbFindbox = new System.Windows.Forms.ComboBox();
             this.form_chkCompare1 = new System.Windows.Forms.CheckBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.timer_blinky = new System.Windows.Forms.Timer(this.components);
+            this.timer_DoTree = new System.Windows.Forms.Timer(this.components);
             this.form_labelAbout = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             label3 = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
-            label6 = new System.Windows.Forms.Label();
-            label7 = new System.Windows.Forms.Label();
             this.form_tabControlMain.SuspendLayout();
             this.form_tabPageVolumes.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -279,33 +275,10 @@ namespace SearchDirLists
             label5.Text = "Volume list";
             label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Dock = System.Windows.Forms.DockStyle.Fill;
-            label6.Location = new System.Drawing.Point(673, 40);
-            label6.Name = "label6";
-            label6.Size = new System.Drawing.Size(154, 40);
-            label6.TabIndex = 21;
-            label6.Text = "Drive model";
-            label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Dock = System.Windows.Forms.DockStyle.Fill;
-            label7.Location = new System.Drawing.Point(673, 80);
-            label7.Name = "label7";
-            label7.Size = new System.Drawing.Size(154, 40);
-            label7.TabIndex = 22;
-            label7.Text = "Drive serial";
-            label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
             // form_chkSpacer
             // 
             this.form_chkSpacer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.form_chkSpacer.AutoSize = true;
-            this.form_chkSpacer.BackColor = System.Drawing.Color.Transparent;
             this.form_chkSpacer.CausesValidation = false;
             this.form_chkSpacer.Enabled = false;
             this.form_chkSpacer.ForeColor = System.Drawing.Color.Tomato;
@@ -314,7 +287,7 @@ namespace SearchDirLists
             this.form_chkSpacer.Size = new System.Drawing.Size(55, 17);
             this.form_chkSpacer.TabIndex = 2;
             this.form_chkSpacer.Text = "Loose";
-            this.form_chkSpacer.UseVisualStyleBackColor = false;
+            this.form_chkSpacer.UseVisualStyleBackColor = true;
             this.form_chkSpacer.Paint += new System.Windows.Forms.PaintEventHandler(this.form_chkSpacer_Paint);
             // 
             // form_tabControlMain
@@ -357,8 +330,6 @@ namespace SearchDirLists
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tableLayoutPanel1.Controls.Add(label7, 6, 2);
-            this.tableLayoutPanel1.Controls.Add(label6, 6, 1);
             this.tableLayoutPanel1.Controls.Add(this.form_cbVolumeName, 3, 0);
             this.tableLayoutPanel1.Controls.Add(this.form_btnSaveDirList, 0, 6);
             this.tableLayoutPanel1.Controls.Add(this.form_lvVolumesMain, 0, 5);
@@ -366,7 +337,7 @@ namespace SearchDirLists
             this.tableLayoutPanel1.Controls.Add(label1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.form_cbPath, 3, 1);
             this.tableLayoutPanel1.Controls.Add(this.form_cbSaveAs, 3, 2);
-            this.tableLayoutPanel1.Controls.Add(this.form_btnPath, 4, 1);
+            this.tableLayoutPanel1.Controls.Add(this.form_btnPath, 11, 1);
             this.tableLayoutPanel1.Controls.Add(label2, 0, 2);
             this.tableLayoutPanel1.Controls.Add(label5, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.form_btnVolGroup, 9, 4);
@@ -376,10 +347,7 @@ namespace SearchDirLists
             this.tableLayoutPanel1.Controls.Add(this.form_btnRemoveVolume, 7, 4);
             this.tableLayoutPanel1.Controls.Add(this.form_btnToggleInclude, 8, 4);
             this.tableLayoutPanel1.Controls.Add(this.form_btnAddVolume, 4, 3);
-            this.tableLayoutPanel1.Controls.Add(this.form_btnSaveAs, 4, 2);
-            this.tableLayoutPanel1.Controls.Add(this.form_cbDriveModel, 7, 1);
-            this.tableLayoutPanel1.Controls.Add(this.form_cbDriveSerial, 7, 2);
-            this.tableLayoutPanel1.Controls.Add(this.form_btnDriveSerial, 10, 1);
+            this.tableLayoutPanel1.Controls.Add(this.form_btnSaveAs, 11, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -397,13 +365,13 @@ namespace SearchDirLists
             // 
             // form_cbVolumeName
             // 
-            this.tableLayoutPanel1.SetColumnSpan(this.form_cbVolumeName, 3);
+            this.tableLayoutPanel1.SetColumnSpan(this.form_cbVolumeName, 8);
             this.form_cbVolumeName.Dock = System.Windows.Forms.DockStyle.Fill;
             this.form_cbVolumeName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_cbVolumeName.FormattingEnabled = true;
             this.form_cbVolumeName.Location = new System.Drawing.Point(193, 3);
             this.form_cbVolumeName.Name = "form_cbVolumeName";
-            this.form_cbVolumeName.Size = new System.Drawing.Size(474, 24);
+            this.form_cbVolumeName.Size = new System.Drawing.Size(945, 24);
             this.form_cbVolumeName.TabIndex = 1;
             this.form_cbVolumeName.SelectedIndexChanged += new System.EventHandler(this.form_cb_VolumeName_SelectedIndexChanged);
             // 
@@ -444,8 +412,7 @@ namespace SearchDirLists
             this.form_lvVolumesMain.TabIndex = 19;
             this.form_lvVolumesMain.UseCompatibleStateImageBehavior = false;
             this.form_lvVolumesMain.View = System.Windows.Forms.View.Details;
-            this.form_lvVolumesMain.SelectedIndexChanged += new System.EventHandler(this.form_lvVolumesMain_SelectedIndexChanged);
-            this.form_lvVolumesMain.KeyUp += new System.Windows.Forms.KeyEventHandler(this.form_lvVolumesMain_KeyUp);
+            this.form_lvVolumesMain.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.form_lvVolumesMain_ItemSelectionChanged);
             // 
             // form_lv_Volumes_col_Volume
             // 
@@ -479,26 +446,25 @@ namespace SearchDirLists
             // 
             // form_cbPath
             // 
-            this.tableLayoutPanel1.SetColumnSpan(this.form_cbPath, 2);
+            this.tableLayoutPanel1.SetColumnSpan(this.form_cbPath, 8);
             this.form_cbPath.Dock = System.Windows.Forms.DockStyle.Fill;
             this.form_cbPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_cbPath.FormattingEnabled = true;
             this.form_cbPath.Location = new System.Drawing.Point(193, 43);
             this.form_cbPath.Name = "form_cbPath";
-            this.form_cbPath.Size = new System.Drawing.Size(433, 24);
+            this.form_cbPath.Size = new System.Drawing.Size(945, 24);
             this.form_cbPath.TabIndex = 3;
             this.form_cbPath.SelectedIndexChanged += new System.EventHandler(this.form_cb_Path_SelectedIndexChanged);
-            this.form_cbPath.TextChanged += new System.EventHandler(this.form_cbPath_TextChanged);
             // 
             // form_cbSaveAs
             // 
-            this.tableLayoutPanel1.SetColumnSpan(this.form_cbSaveAs, 2);
+            this.tableLayoutPanel1.SetColumnSpan(this.form_cbSaveAs, 8);
             this.form_cbSaveAs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.form_cbSaveAs.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.form_cbSaveAs.FormattingEnabled = true;
             this.form_cbSaveAs.Location = new System.Drawing.Point(193, 83);
             this.form_cbSaveAs.Name = "form_cbSaveAs";
-            this.form_cbSaveAs.Size = new System.Drawing.Size(433, 24);
+            this.form_cbSaveAs.Size = new System.Drawing.Size(945, 24);
             this.form_cbSaveAs.TabIndex = 6;
             this.form_cbSaveAs.SelectedIndexChanged += new System.EventHandler(this.form_cb_SaveAs_SelectedIndexChanged);
             this.form_cbSaveAs.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.form_cbSaveAs_KeyPress);
@@ -507,7 +473,7 @@ namespace SearchDirLists
             // 
             this.form_btnPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btnPath.Location = new System.Drawing.Point(632, 43);
+            this.form_btnPath.Location = new System.Drawing.Point(1144, 43);
             this.form_btnPath.Name = "form_btnPath";
             this.form_btnPath.Size = new System.Drawing.Size(35, 24);
             this.form_btnPath.TabIndex = 4;
@@ -601,10 +567,10 @@ namespace SearchDirLists
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.form_btnAddVolume, 2);
             this.form_btnAddVolume.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_btnAddVolume.Location = new System.Drawing.Point(417, 123);
+            this.form_btnAddVolume.Location = new System.Drawing.Point(505, 123);
             this.form_btnAddVolume.Name = "form_btnAddVolume";
             this.tableLayoutPanel1.SetRowSpan(this.form_btnAddVolume, 2);
-            this.form_btnAddVolume.Size = new System.Drawing.Size(250, 86);
+            this.form_btnAddVolume.Size = new System.Drawing.Size(100, 86);
             this.form_btnAddVolume.TabIndex = 11;
             this.form_btnAddVolume.Text = "Add volume";
             this.form_btnAddVolume.UseVisualStyleBackColor = true;
@@ -614,43 +580,13 @@ namespace SearchDirLists
             // 
             this.form_btnSaveAs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.form_btnSaveAs.Location = new System.Drawing.Point(632, 83);
+            this.form_btnSaveAs.Location = new System.Drawing.Point(1144, 83);
             this.form_btnSaveAs.Name = "form_btnSaveAs";
             this.form_btnSaveAs.Size = new System.Drawing.Size(35, 24);
             this.form_btnSaveAs.TabIndex = 7;
             this.form_btnSaveAs.Text = "...";
             this.form_btnSaveAs.UseVisualStyleBackColor = true;
             this.form_btnSaveAs.Click += new System.EventHandler(this.form_btnSaveAs_Click);
-            // 
-            // form_cbDriveModel
-            // 
-            this.tableLayoutPanel1.SetColumnSpan(this.form_cbDriveModel, 3);
-            this.form_cbDriveModel.FormattingEnabled = true;
-            this.form_cbDriveModel.Location = new System.Drawing.Point(833, 43);
-            this.form_cbDriveModel.Name = "form_cbDriveModel";
-            this.form_cbDriveModel.Size = new System.Drawing.Size(275, 21);
-            this.form_cbDriveModel.TabIndex = 23;
-            // 
-            // form_cbDriveSerial
-            // 
-            this.tableLayoutPanel1.SetColumnSpan(this.form_cbDriveSerial, 3);
-            this.form_cbDriveSerial.FormattingEnabled = true;
-            this.form_cbDriveSerial.Location = new System.Drawing.Point(833, 83);
-            this.form_cbDriveSerial.Name = "form_cbDriveSerial";
-            this.form_cbDriveSerial.Size = new System.Drawing.Size(275, 21);
-            this.form_cbDriveSerial.TabIndex = 24;
-            // 
-            // form_btnDriveSerial
-            // 
-            this.tableLayoutPanel1.SetColumnSpan(this.form_btnDriveSerial, 2);
-            this.form_btnDriveSerial.Enabled = false;
-            this.form_btnDriveSerial.Location = new System.Drawing.Point(1114, 43);
-            this.form_btnDriveSerial.Name = "form_btnDriveSerial";
-            this.form_btnDriveSerial.Size = new System.Drawing.Size(63, 23);
-            this.form_btnDriveSerial.TabIndex = 25;
-            this.form_btnDriveSerial.Text = "Probe";
-            this.form_btnDriveSerial.UseVisualStyleBackColor = true;
-            this.form_btnDriveSerial.Click += new System.EventHandler(this.form_btnDriveSerial_Click);
             // 
             // form_tabPageBrowse
             // 
@@ -1261,7 +1197,7 @@ namespace SearchDirLists
             // columnHeader7
             // 
             this.columnHeader7.Text = "Attributes";
-            this.columnHeader7.Width = 100;
+            this.columnHeader7.Width = 80;
             // 
             // columnHeader8
             // 
@@ -1401,7 +1337,7 @@ namespace SearchDirLists
             // form_colDirDetailCompare
             // 
             this.form_colDirDetailCompare.Text = "Volume detail";
-            this.form_colDirDetailCompare.Width = 110;
+            this.form_colDirDetailCompare.Width = 150;
             // 
             // form_colVolDetail
             // 
@@ -1750,6 +1686,27 @@ namespace SearchDirLists
             this.form_chkCompare1.UseVisualStyleBackColor = true;
             this.form_chkCompare1.CheckedChanged += new System.EventHandler(this.form_chk_Compare1_CheckedChanged);
             // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.DefaultExt = "txt";
+            this.saveFileDialog1.Filter = "Text files|*.txt|All files|*.*";
+            this.saveFileDialog1.OverwritePrompt = false;
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.Filter = "Text files|*.txt|All files|*.*";
+            // 
+            // timer_blinky
+            // 
+            this.timer_blinky.Interval = 50;
+            this.timer_blinky.Tick += new System.EventHandler(this.timer_blinky_Tick);
+            // 
+            // timer_DoTree
+            // 
+            this.timer_DoTree.Interval = 3000;
+            this.timer_DoTree.Tick += new System.EventHandler(this.timer_DoTree_Tick);
+            // 
             // form_labelAbout
             // 
             this.form_labelAbout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -1862,7 +1819,7 @@ namespace SearchDirLists
         private System.Windows.Forms.TabControl form_tabControlMain;
         private System.Windows.Forms.TabPage form_tabPageVolumes;
         private System.Windows.Forms.ComboBox form_cbVolumeName;
-        private SDL_ListView form_lvVolumesMain;
+        private ListViewEx form_lvVolumesMain;
         private System.Windows.Forms.ColumnHeader form_lv_Volumes_col_Volume;
         private System.Windows.Forms.ColumnHeader form_lv_Volumes_col_Path;
         private System.Windows.Forms.ColumnHeader form_lv_Volumes_col_SaveToFile;
@@ -1874,12 +1831,14 @@ namespace SearchDirLists
         private System.Windows.Forms.ComboBox form_cbSaveAs;
         private System.Windows.Forms.ComboBox form_cbPath;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.TabPage form_tabPageBrowse;
-        public SDL_TreeView form_treeViewBrowse;
+        private Form1TreeView form_treeViewBrowse;
         private System.Windows.Forms.SplitContainer form_splitFiles;
-        private SDL_ListView form_lvDetail;
+        private ListViewEx form_lvDetail;
         private System.Windows.Forms.SplitContainer form_splitDetail;
-        private SDL_ListView form_lvFiles;
+        private ListViewEx form_lvFiles;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader form_colDirDetail;
         private System.Windows.Forms.ColumnHeader form_colFilename;
@@ -1890,27 +1849,28 @@ namespace SearchDirLists
         private System.Windows.Forms.ColumnHeader columnHeader9;
         private System.Windows.Forms.ColumnHeader columnHeader10;
         private System.Windows.Forms.SplitContainer form_splitClones;
-        private SDL_ListView form_lvClones;
+        private ListViewEx form_lvClones;
         private System.Windows.Forms.ColumnHeader columnHeader12;
         private System.Windows.Forms.ColumnHeader columnHeader13;
         private System.Windows.Forms.SplitContainer form_splitDetailVols;
-        private SDL_ListView form_lvDetailVol;
+        private ListViewEx form_lvDetailVol;
         private System.Windows.Forms.ColumnHeader form_colDirDetailCompare;
         private System.Windows.Forms.ColumnHeader form_colVolDetail;
         private System.Windows.Forms.Button form_btnFolder;
         private System.Windows.Forms.Button form_btnCollapse;
         private System.Windows.Forms.ComboBox form_cbFindbox;
         private System.Windows.Forms.SplitContainer form_splitUnique;
-        private SDL_ListView form_lvUnique;
+        private ListViewEx form_lvUnique;
         private System.Windows.Forms.ColumnHeader columnHeader16;
         private System.Windows.Forms.CheckBox form_chkCompare1;
         private System.Windows.Forms.Button form_btnCompare;
+        private System.Windows.Forms.Timer timer_blinky;
         private System.Windows.Forms.SplitContainer form_splitTreeFind;
-        public SDL_TreeView form_treeCompare1;
+        private Form1TreeView form_treeCompare1;
         private System.Windows.Forms.SplitContainer form_splitCompare;
-        public SDL_TreeView form_treeCompare2;
+        private Form1TreeView form_treeCompare2;
         private System.Windows.Forms.SplitContainer form_splitCompareFiles;
-        private SDL_ListView form_lvFileCompare;
+        private ListViewEx form_lvFileCompare;
         private System.Windows.Forms.ColumnHeader form_colFileCompare;
         private System.Windows.Forms.ColumnHeader columnHeader19;
         private System.Windows.Forms.ColumnHeader columnHeader20;
@@ -1920,12 +1880,13 @@ namespace SearchDirLists
         private System.Windows.Forms.ColumnHeader columnHeader24;
         private System.Windows.Forms.Button form_btnCopyToClipboard;
         private System.Windows.Forms.ColumnHeader columnHeader28;
+        private System.Windows.Forms.Timer timer_DoTree;
         private System.Windows.Forms.Label form_lblVolGroup;
         private System.Windows.Forms.SplitContainer form_splitNonClones;
-        private SDL_ListView form_lvSameVol;
+        private ListViewEx form_lvSameVol;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private SDL_ListView form_lvCopyScratchpad;
+        private ListViewEx form_lvCopyScratchpad;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.Button form_btnLoadCopyDirs;
@@ -1939,7 +1900,7 @@ namespace SearchDirLists
         private System.Windows.Forms.TabPage form_tabPageIgnore;
         private System.Windows.Forms.Button form_btnSaveIgnoreList;
         private System.Windows.Forms.Button form_btnLoadIgnoreList;
-        private SDL_ListView form_lvIgnoreList;
+        private ListViewEx form_lvIgnoreList;
         private System.Windows.Forms.ColumnHeader columnHeader11;
         private System.Windows.Forms.ColumnHeader columnHeader14;
         private System.Windows.Forms.Button form_btnIgnoreAdd;
@@ -1970,9 +1931,6 @@ namespace SearchDirLists
         private System.Windows.Forms.Button form_btnRemoveVolume;
         private System.Windows.Forms.Button form_btnToggleInclude;
         private System.Windows.Forms.CheckBox form_chkSpacer;
-        private System.Windows.Forms.ComboBox form_cbDriveModel;
-        private System.Windows.Forms.ComboBox form_cbDriveSerial;
-        private System.Windows.Forms.Button form_btnDriveSerial;
+
     }
 }
-

@@ -2,11 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+using System.Threading;
+using System.Drawing;
+using System.Collections.Concurrent;
 
 namespace DoubleFile
 {
-    class TreeSelect : Utilities
+    delegate void TreeSelectStatusDelegate(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem lvVol = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null);
+    delegate void TreeSelectDoneDelegate(bool bSecondComparePane);
+    
+    class TreeSelect
     {
         readonly TreeNode m_treeNode = null;
         readonly SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = null;

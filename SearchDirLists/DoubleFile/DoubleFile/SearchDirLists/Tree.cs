@@ -1,30 +1,17 @@
-﻿#if WPF
-using System.Windows.Controls;
-using System.Windows.Media;
-using Media = System.Windows.Media;
-using System.Windows.Markup;
-using System.Xml;
-using System.Windows;
-#else
-using System.Windows.Forms;
-using System.Drawing;
-#endif
-
-using Forms = System.Windows.Forms;
-using Drawing = System.Drawing;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using System.IO;
 using System.Threading;
+using System.Drawing;
 using System.Collections.Concurrent;
 
 namespace SearchDirLists
 {
-    delegate void TreeStatusDelegate(LVvolStrings volStrings, SDL_TreeNode rootNode = null, bool bError = false);
-    delegate void TreeSelectStatusDelegate(SDL_ListViewItem[] lvItemDetails = null, SDL_ListViewItem[] itemArray = null, SDL_ListViewItem[] lvVolDetails = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null);
+    delegate void TreeStatusDelegate(LVvolStrings volStrings, TreeNode rootNode = null, bool bError = false);
+    delegate void TreeSelectStatusDelegate(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem lvVol = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null);
     delegate void TreeSelectDoneDelegate(bool bSecondComparePane);
 
     class DetailsDatum
@@ -150,7 +137,7 @@ namespace SearchDirLists
 
         class NodeDatumLVitemHolder     // this was a way of setting the listview item in a different node after processing the first. Not used.
         {
-            internal SDL_ListViewItem m_lvItem = null;
+            internal ListViewItem m_lvItem = null;
         }
 
         internal Correlate Key
@@ -161,11 +148,11 @@ namespace SearchDirLists
             }
         }
 
-        internal UList<SDL_TreeNode> m_listClones = new UList<SDL_TreeNode>();
+        internal UList<TreeNode> m_listClones = new UList<TreeNode>();
 
         internal void SetLVitemHolder(NodeDatum holder) { m_lvItem_ = (holder != null) ? holder.m_lvItem_ : null; }
         NodeDatumLVitemHolder m_lvItem_ = new NodeDatumLVitemHolder();
-        internal SDL_ListViewItem m_lvItem
+        internal ListViewItem m_lvItem
         {
             get { return (m_lvItem_ != null) ? m_lvItem_.m_lvItem : null; }
             set { if (m_lvItem_ != null) m_lvItem_.m_lvItem = value; }
@@ -185,8 +172,8 @@ namespace SearchDirLists
             nLength = node.nLength;
         }
 
-        internal Drawing.Rectangle TreeMapRect = Drawing.Rectangle.Empty;
-        internal SDL_TreeNode TreeMapFiles = null;
+        internal Rectangle TreeMapRect = Rectangle.Empty;
+        internal TreeNode TreeMapFiles = null;
     }
 
     class RootNodeDatum : NodeDatum
@@ -218,53 +205,49 @@ namespace SearchDirLists
         }
     }
 
-    class LVitemNameComparer : IEqualityComparer<SDL_ListViewItem>
+    class LVitemNameComparer : IEqualityComparer<ListViewItem>
     {
-        public bool Equals(SDL_ListViewItem x, SDL_ListViewItem y)
+        public bool Equals(ListViewItem x, ListViewItem y)
         {
-            return (x != null) && (y != null) && (false == string.IsNullOrWhiteSpace(x.Name)) && x.Name.Equals(y.Name);
+            return (x != null) && (y != null) && Utilities.StrValid(x.Name) && x.Name.Equals(y.Name);
         }
 
-        public int GetHashCode(SDL_ListViewItem obj)
+        public int GetHashCode(ListViewItem obj)
         {
             return obj.Name == null ? 0 : obj.Name.GetHashCode();
         }
 
-#if (WPF)
-        internal static void NameItems(ItemCollection list)
-#else
         internal static void NameItems(ListView.ListViewItemCollection list)
-#endif
         {
-            foreach (SDL_ListViewItem item in list)
+            foreach (ListViewItem item in list)
             {
                 item.Name = item.Text;
 
                 if (item.SubItems.Count > Utilities.mNcolLengthLV)
                 {
-                    item.Name += item.SubItems[Utilities.mNcolLengthLV].Text;         // name + size
+                    item.Name += item.SubItems[Utilities.mNcolLengthLV].Text;      // name + size
                 }
             }
         }
 
-        internal static void MarkItemsFrom1notIn2(SDL_ListView lv1, SDL_ListView lv2)
+        internal static void MarkItemsFrom1notIn2(ListView lv1, ListView lv2)
         {
             if ((lv1.Items.Count <= 0) || (lv2.Items.Count <= 0)) { return; }
 
-            List<SDL_ListViewItem> list = lv1.Items.Cast<SDL_ListViewItem>().Except(lv2.Items.Cast<SDL_ListViewItem>(), new LVitemNameComparer()).ToList();
+            List<ListViewItem> list = lv1.Items.Cast<ListViewItem>().Except(lv2.Items.Cast<ListViewItem>(), new LVitemNameComparer()).ToList();
 
             if (list.Count > 0)
             {
                 lv1.TopItem = list[0];
             }
 
-            foreach (SDL_ListViewItem item in list)
+            foreach (ListViewItem item in list)
             {
-                item.ForeColor = Drawing.Color.Red;
+                item.ForeColor = Color.Red;
             }
         }
 
-        internal static void SetTopItem(SDL_ListView lv1, SDL_ListView lv2)
+        internal static void SetTopItem(ListView lv1, ListView lv2)
         {
             if (lv1.TopItem == null) { return; }
             if (lv1.TopItem.Index > 0) { return; }
@@ -286,11 +269,11 @@ namespace SearchDirLists
 
     class TreeBase : Utilities
     {
-        protected readonly SortedDictionary<Correlate, UList<SDL_TreeNode>> m_dictNodes = null;
-        protected readonly Dictionary<string, string> m_dictDriveInfo = null;
+        protected SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = null;
+        protected Dictionary<string, string> m_dictDriveInfo = null;
         protected static TreeStatusDelegate m_statusCallback = null;
 
-        internal TreeBase(SortedDictionary<Correlate, UList<SDL_TreeNode>> dictNodes, Dictionary<string, string> dictDriveInfo,
+        internal TreeBase(SortedDictionary<Correlate, UList<TreeNode>> dictNodes, Dictionary<string, string> dictDriveInfo,
             TreeStatusDelegate statusCallback)
         {
             m_dictNodes = dictNodes;
@@ -308,8 +291,8 @@ namespace SearchDirLists
 
     class Tree : TreeBase
     {
-        readonly UList<LVvolStrings> m_list_lvVolStrings = null;
-        readonly Action m_doneCallback = null;
+        UList<LVvolStrings> m_list_lvVolStrings = new UList<LVvolStrings>();
+        Action m_doneCallback = null;
         ConcurrentBag<TreeRootNodeBuilder> m_cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
         Thread m_thread = null;
         bool m_bThreadAbort = false;
@@ -338,20 +321,13 @@ namespace SearchDirLists
                         Utilities.Assert(1301.2302, false);
                     }
 
-                    string str = str_in.TrimEnd('\\');
+                    string str = str_in.TrimEnd(Path.DirectorySeparatorChar);
 
                     m_rootNode.Nodes.Add(str, new Node(str, nLineNo, nLength, m_rootNode));
                 }
 
-                internal SDL_TreeNode AddToTree(string strVolumeName)
+                internal TreeNode AddToTree(string strVolumeName)
                 {
-                    var nodes = m_rootNode.Nodes.Values;
-
-                    if (nodes.Count <= 0)
-                    {
-                        return null;
-                    }
-
                     return m_rootNode.Nodes.Values.First().AddToTree(strVolumeName);
                 }
             }
@@ -359,7 +335,7 @@ namespace SearchDirLists
             class Node : Utilities
             {
                 readonly RootNode m_rootNode = null;
-                readonly SortedDictionary<string, Node> subNodes = new SortedDictionary<string, Node>();
+                SortedDictionary<string, Node> subNodes = new SortedDictionary<string, Node>();
                 readonly string m_strPath = null;
                 uint m_nPrevLineNo = 0;
                 uint m_nLineNo = 0;
@@ -368,7 +344,7 @@ namespace SearchDirLists
 
                 internal Node(string in_str, uint nLineNo, ulong nLength, RootNode rootNode)
                 {
-                    if (GlobalData.AppExit)
+                    if (Form1.AppExit)
                     {
                         return;
                     }
@@ -376,9 +352,9 @@ namespace SearchDirLists
                     Utilities.Assert(1301.2303, nLineNo != 0);
                     m_rootNode = rootNode;
 
-                    if (in_str.EndsWith(@":\") == false)
+                    if (in_str.EndsWith(":" + Path.DirectorySeparatorChar) == false)
                     {
-                        Utilities.Assert(1301.2304, in_str.Trim().EndsWith(@"\") == false);
+                        Utilities.Assert(1301.2304, in_str.Trim().EndsWith(Path.DirectorySeparatorChar.ToString()) == false);
                     }
 
                     m_strPath = in_str;
@@ -389,14 +365,14 @@ namespace SearchDirLists
                     // Path.GetDirectoryName() does not preserve filesystem root
 
                     string strParent = m_strPath;
-                    int nIndex = strParent.LastIndexOf('\\');
+                    int nIndex = strParent.LastIndexOf(Path.DirectorySeparatorChar);
 
                     if (nIndex < 0)
                     {
                         return;
                     }
 
-                    strParent = strParent.Remove(nIndex).TrimEnd('\\');
+                    strParent = strParent.Remove(nIndex).TrimEnd(Path.DirectorySeparatorChar);
 
                     if (m_rootNode.Nodes.ContainsKey(strParent) == false)
                     {
@@ -409,16 +385,16 @@ namespace SearchDirLists
                     }
                 }
 
-                internal SDL_TreeNode AddToTree(string strVolumeName = null)
+                internal TreeNode AddToTree(string strVolumeName = null)
                 {
-                    if (GlobalData.AppExit)
+                    if (Form1.AppExit)
                     {
-                        return new SDL_TreeNode();
+                        return new TreeNode();
                     }
 
-                    int nIndex = m_strPath.LastIndexOf('\\');
+                    int nIndex = m_strPath.LastIndexOf(Path.DirectorySeparatorChar);
                     string strShortPath = bUseShortPath ? m_strPath.Substring(nIndex + 1) : m_strPath;
-                    SDL_TreeNode treeNode = null;
+                    TreeNode treeNode = null;
 
                     if (subNodes.Count == 1)
                     {
@@ -428,7 +404,7 @@ namespace SearchDirLists
                         {
                             // cull all root node single-chains.
                             m_rootNode.Nodes = subNodes;
-                            subNode.m_strPath.Insert(0, m_strPath + '\\');
+                            subNode.m_strPath.Insert(0, m_strPath + Path.DirectorySeparatorChar);
                             subNode.bUseShortPath = false;
                             treeNode = subNode.AddToTree(strVolumeName);
 
@@ -439,23 +415,23 @@ namespace SearchDirLists
                         }
                         else
                         {
-                            treeNode = new SDL_TreeNode(strShortPath, new SDL_TreeNode[] { subNode.AddToTree() });
+                            treeNode = new TreeNode(strShortPath, new TreeNode[] { subNode.AddToTree() });
                         }
                     }
                     else if (subNodes.Count > 1)
                     {
-                        UList<SDL_TreeNode> treeList = new UList<SDL_TreeNode>();
+                        UList<TreeNode> treeList = new UList<TreeNode>();
 
                         foreach (Node node in subNodes.Values)
                         {
                             treeList.Add(node.AddToTree());
                         }
 
-                        treeNode = new SDL_TreeNode(strShortPath, treeList.ToArray());
+                        treeNode = new TreeNode(strShortPath, treeList.ToArray());
                     }
                     else
                     {
-                        treeNode = new SDL_TreeNode(strShortPath);
+                        treeNode = new TreeNode(strShortPath);
                     }
 
                     //Utilities.Assert(1301.2305, treeNode.Text == strShortPath, "\"" + treeNode.Text + "\" != \"" + strShortPath + "\""); not true for non-root
@@ -467,7 +443,7 @@ namespace SearchDirLists
                     {
                         treeNode.Name = treeNode.Text;
 
-                        if (false == string.IsNullOrWhiteSpace(strVolumeName))
+                        if (StrValid(strVolumeName))
                         {
                             if (strVolumeName.EndsWith(treeNode.Text))
                             {
@@ -486,23 +462,25 @@ namespace SearchDirLists
 
             class RootNode
             {
-                internal SortedDictionary<string, Node> Nodes = new SortedDictionary<string, Node>();
-                internal uint FirstLineNo = 0;
+                SortedDictionary<string, Node> m_nodes = new SortedDictionary<string, Node>();
+                uint m_firstLineNo = 0;
+
+                internal SortedDictionary<string, Node> Nodes { get { return m_nodes; } set { m_nodes = value; } }
+                internal uint FirstLineNo { get { return m_firstLineNo; } set { m_firstLineNo = value; } }
             }
 
             internal TreeRootNodeBuilder(LVvolStrings volStrings, TreeBase base_in) : base(base_in)
             {
                 m_volStrings = volStrings;
-                Utilities.Assert(1301.2301, m_statusCallback != null);
             }
 
-            DetailsDatum TreeSubnodeDetails(SDL_TreeNode treeNode)
+            DetailsDatum TreeSubnodeDetails(TreeNode treeNode)
             {
                 DetailsDatum datum = new DetailsDatum();
 
-                foreach (SDL_TreeNode node in treeNode.Nodes)
+                foreach (TreeNode node in treeNode.Nodes)
                 {
-                    if (m_bThreadAbort || GlobalData.AppExit)
+                    if (m_bThreadAbort || Form1.AppExit)
                     {
                         return datum;
                     }
@@ -544,7 +522,7 @@ namespace SearchDirLists
                     }
                     else if (nodeDatum.nTotalLength > 100 * 1024)
                     {
-                        UList<SDL_TreeNode> listNodes = new UList<SDL_TreeNode>();
+                        UList<TreeNode> listNodes = new UList<TreeNode>();
 
                         listNodes.Add(treeNode);
                         m_dictNodes.Add(nKey, listNodes);
@@ -591,18 +569,13 @@ namespace SearchDirLists
                             break;
                         }
 
-                        try
-                        {
-                            File.Delete(StrFile_01(strSaveAs));
-                        }
-                        catch { }
-
+                        File.Delete(StrFile_01(strSaveAs));
                         bAttemptConvert = true;
                     }
 
                     if (bValid == false)
                     {
-                        MBox("Bad file: " + strSaveAs, "Tree");
+                        m_MessageboxCallback("Bad file: " + strSaveAs, "Tree");
                         m_statusCallback(m_volStrings, bError: true);
                         return;
                     }
@@ -621,29 +594,18 @@ namespace SearchDirLists
                         string[] strArray = strLine.Split('\t');
                         ++nIx;
 
-                        if (strArray.Length > 3)
+                        if (strArray.Length > 2)
                         {
-                            strBuilder.Append(strArray[2]);
-                        }
-                        else if (strArray.Length > 2)
-                        {
-                            strBuilder.Append(Utilities.mAstrDIlabels[nIx]);
-                        }
-                        else
-                        {
-                            continue;
-                        }
+                            strBuilder.AppendLine(strArray[2]);
 
-                        string s = strArray[strArray.Length - 1];
-                        strBuilder.AppendLine('\t' + s);
-
-                        if ((nIx == 5) && (false == string.IsNullOrWhiteSpace(s)))
-                        {
-                            nVolFree = ulong.Parse(s);
-                        }
-                        else if ((nIx == 6) && (false == string.IsNullOrWhiteSpace(s)))
-                        {
-                            nVolLength = ulong.Parse(s);
+                            if ((nIx == 5) && StrValid(strArray[2]))
+                            {
+                                nVolFree = ulong.Parse(strArray[2]);
+                            }
+                            else if ((nIx == 6) && StrValid(strArray[2]))
+                            {
+                                nVolLength = ulong.Parse(strArray[2]);
+                            }
                         }
                     }
 
@@ -655,7 +617,7 @@ namespace SearchDirLists
                             m_dictDriveInfo.Remove(strSaveAs);
                         }
 
-                        m_dictDriveInfo.Add(strSaveAs, strBuilder.ToString().Trim(new char[] { '\r', '\n' }));
+                        m_dictDriveInfo.Add(strSaveAs, strBuilder.ToString().Trim());
                     }
                 }
 
@@ -674,7 +636,7 @@ namespace SearchDirLists
 
                 foreach (string strLine in listLines)
                 {
-                    if (GlobalData.AppExit)
+                    if (Form1.AppExit)
                     {
                         return;
                     }
@@ -684,7 +646,7 @@ namespace SearchDirLists
                     int nIx = mNcolLength;
                     ulong nLength = 0;
 
-                    if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx])))
+                    if ((strArray.Length > nIx) && StrValid(strArray[nIx]))
                     {
                         nLength = ulong.Parse(strArray[nIx]);
                     }
@@ -698,14 +660,10 @@ namespace SearchDirLists
                     dirData.AddToTree(strDir, nLineNo, nLength);
                 }
 
-                SDL_TreeNode rootTreeNode = dirData.AddToTree(strVolumeName);
+                TreeNode rootTreeNode = dirData.AddToTree(strVolumeName);
 
-                if (rootTreeNode != null)
-                {
-                    rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag, strSaveAs, m_volStrings.VolumeGroup, nVolFree, nVolLength);
-                    TreeSubnodeDetails(rootTreeNode);
-                }
-
+                rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag, strSaveAs, m_volStrings.VolumeGroup, nVolFree, nVolLength);
+                TreeSubnodeDetails(rootTreeNode);
                 m_statusCallback(m_volStrings, rootTreeNode);
 
                 if (bZeroLengthsWritten)
@@ -722,17 +680,12 @@ namespace SearchDirLists
 
                 Utilities.WriteLine(nScannedLength.ToString());
 
-                ulong nTotalLength = 0;
-
-                if (rootTreeNode != null)
-                {
-                    nTotalLength = ((RootNodeDatum)rootTreeNode.Tag).nTotalLength;
-                }
+                ulong nTotalLength = ((RootNodeDatum)rootTreeNode.Tag).nTotalLength;
 
                 if (nScannedLength != nTotalLength)
                 {
                     Utilities.WriteLine(nTotalLength.ToString());
-                    Utilities.Assert(1301.23101, false, "nScannedLength != nTotalLength\n" + strSaveAs, bTraceOnly:true);
+                    Utilities.Assert(1301.23101, false);
                 }
 
                 Utilities.WriteLine(strSaveAs + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
@@ -758,14 +711,17 @@ namespace SearchDirLists
             }
         }
 
-        internal Tree(UList<LVvolStrings> listLVvolStrings,
-            SortedDictionary<Correlate, UList<SDL_TreeNode>> dictNodes, Dictionary<string, string> dictDriveInfo,
+        internal Tree(ListView.ListViewItemCollection lvVolItems,
+            SortedDictionary<Correlate, UList<TreeNode>> dictNodes, Dictionary<string, string> dictDriveInfo,
             TreeStatusDelegate statusCallback, Action doneCallback)
             : base(dictNodes, dictDriveInfo, statusCallback)
         {
-            m_list_lvVolStrings = listLVvolStrings;
+            foreach (ListViewItem lvItem in lvVolItems)
+            {
+                m_list_lvVolStrings.Add(new LVvolStrings(lvItem));
+            }
+
             m_doneCallback = doneCallback;
-            Utilities.Assert(1301.2301, m_statusCallback != null);
         }
 
         void Go()
@@ -794,7 +750,7 @@ namespace SearchDirLists
 
             Utilities.WriteLine(string.Format("Completed tree in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 10) / 100.0));
 
-            if (m_bThreadAbort || GlobalData.AppExit)
+            if (m_bThreadAbort || Form1.AppExit)
             {
                 return;
             }
@@ -834,17 +790,17 @@ namespace SearchDirLists
 
     class TreeSelect : Utilities
     {
-        readonly SDL_TreeNode m_treeNode = null;
-        readonly SortedDictionary<Correlate, UList<SDL_TreeNode>> m_dictNodes = null;
-        readonly Dictionary<string, string> m_dictDriveInfo = null;
-        readonly TreeSelectStatusDelegate m_statusCallback = null;
-        readonly TreeSelectDoneDelegate m_doneCallback = null;
+        TreeNode m_treeNode = null;
+        SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = null;
+        Dictionary<string, string> m_dictDriveInfo = null;
+        static TreeSelectStatusDelegate m_statusCallback = null;
+        static TreeSelectDoneDelegate m_doneCallback = null;
         Thread m_thread = null;
-        readonly string m_strFile = null;
-        readonly bool m_bCompareMode = false;
-        readonly bool m_bSecondComparePane = false;
+        string m_strFile = null;
+        bool m_bCompareMode = false;
+        bool m_bSecondComparePane = false;
 
-        internal TreeSelect(SDL_TreeNode node, SortedDictionary<Correlate, UList<SDL_TreeNode>> dictNodes, Dictionary<string, string> dictDriveInfo,
+        internal TreeSelect(TreeNode node, SortedDictionary<Correlate, UList<TreeNode>> dictNodes, Dictionary<string, string> dictDriveInfo,
             string strFile, bool bCompareMode, bool bSecondComparePane,
             TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
         {
@@ -883,29 +839,29 @@ namespace SearchDirLists
             string strLine = File.ReadLines(m_strFile).Skip((int)nLineNo - 1).Take(1).ToArray()[0];
             string[] strArray = strLine.Split('\t');
 
-            Utilities.Assert(1301.2312, (false == string.IsNullOrWhiteSpace(strArray[2])));
+            Utilities.Assert(1301.2312, StrValid(strArray[2]));
 
             long nIx = 0;
             DateTime dt;
 
             // Directory detail
 
-            UList<SDL_ListViewItem> listItems = new UList<SDL_ListViewItem>();
+            UList<ListViewItem> listItems = new UList<ListViewItem>();
 
-            nIx = 4; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new SDL_ListViewItem(new string[]{ "Created\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
-            nIx = 5; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new SDL_ListViewItem(new string[] { "Modified\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
-            nIx = 6; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new SDL_ListViewItem(new string[] { "Attributes\t", DecodeAttributes(strArray[nIx]) }));
-            listItems.Add(new SDL_ListViewItem(new string[] { "Immediate Size\t", FormatSize(nodeDatum.nLength, bBytes: true) }));
-            nIx = 8; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new SDL_ListViewItem(new string[] { "Error 1\t", strArray[nIx] }));
-            nIx = 9; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new SDL_ListViewItem(new string[] { "Error 2\t", strArray[nIx] }));
-            listItems.Add(new SDL_ListViewItem(new string[] { "# Immediate Files", (nLineNo - nPrevDir - 1).ToString() }));
+            nIx = 4; if ((strArray.Length > nIx) && StrValid(strArray[nIx])) { listItems.Add(new ListViewItem(new string[] { "Created\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() })); }
+            nIx = 5; if ((strArray.Length > nIx) && StrValid(strArray[nIx])) listItems.Add(new ListViewItem(new string[] { "Modified\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
+            nIx = 6; if ((strArray.Length > nIx) && StrValid(strArray[nIx])) listItems.Add(new ListViewItem(new string[] { "Attributes\t", strArray[nIx] }));
+            listItems.Add(new ListViewItem(new string[] { "Immediate Size\t", FormatSize(nodeDatum.nLength, bBytes: true) }));
+            nIx = 8; if ((strArray.Length > nIx) && StrValid(strArray[nIx])) listItems.Add(new ListViewItem(new string[] { "Error 1\t", strArray[nIx] }));
+            nIx = 9; if ((strArray.Length > nIx) && StrValid(strArray[nIx])) listItems.Add(new ListViewItem(new string[] { "Error 2\t", strArray[nIx] }));
+            listItems.Add(new ListViewItem(new string[] { "# Immediate Files", (nLineNo - nPrevDir - 1).ToString() }));
 
             // Tree subnode detail
 
             string NUMFMT = "###,###,###,##0";
 
-            listItems.Add(new SDL_ListViewItem(new string[] { "# Immediate Folders", m_treeNode.Nodes.Count.ToString(NUMFMT) }));
-            listItems.Add(new SDL_ListViewItem(new string[] { "Total # Files", nodeDatum.nFilesInSubdirs.ToString(NUMFMT) }));
+            listItems.Add(new ListViewItem(new string[] { "# Immediate Folders", m_treeNode.Nodes.Count.ToString(NUMFMT) }));
+            listItems.Add(new ListViewItem(new string[] { "Total # Files", nodeDatum.nFilesInSubdirs.ToString(NUMFMT) }));
 
             if (nodeDatum.nSubDirs > 0)
             {
@@ -926,10 +882,10 @@ namespace SearchDirLists
                     }
                 }
 
-                listItems.Add(new SDL_ListViewItem(new string[] { "# Subfolders", strItem }));
+                listItems.Add(new ListViewItem(new string[] { "# Subfolders", strItem }));
             }
 
-            listItems.Add(new SDL_ListViewItem(new string[] { "Total Size", FormatSize(nodeDatum.nTotalLength, bBytes: true) }));
+            listItems.Add(new ListViewItem(new string[] { "Total Size", FormatSize(nodeDatum.nTotalLength, bBytes: true) }));
             m_statusCallback(lvItemDetails: listItems.ToArray(), bSecondComparePane: m_bSecondComparePane);
             Utilities.WriteLine(strLine);
 
@@ -937,18 +893,18 @@ namespace SearchDirLists
 
             if (listFiles_A != null)
             {
-                UList<SDL_ListViewItem> listFiles = new UList<SDL_ListViewItem>();
+                UList<ListViewItem> listFiles = new UList<ListViewItem>();
 
                 foreach (string[] arrLine in listFiles_A)
                 {
-                    listFiles.Add(new SDL_ListViewItem(arrLine));
+                    listFiles.Add(new ListViewItem(arrLine));
                 }
 
                 m_statusCallback(itemArray: listFiles.ToArray(), bSecondComparePane: m_bSecondComparePane, lvFileItem: new LVitemFileTag(m_treeNode.Text, listFiles.Count));
             }
         }
 
-        internal static List<string[]> GetFileList(SDL_TreeNode parent, List<ulong> listLength = null)
+        internal static List<string[]> GetFileList(TreeNode parent, List<ulong> listLength = null)
         {
             string strFile = ((RootNodeDatum)parent.Root().Tag).StrFile;
 
@@ -996,9 +952,7 @@ namespace SearchDirLists
                 string[] strArrayFiles = strFileLine.Split('\t').Skip(3).ToArray();
                 ulong nLength = 0;
 
-                strArrayFiles[3] = DecodeAttributes(strArrayFiles[3]);
-
-                if ((strArrayFiles.Length > mNcolLengthLV) && (false == string.IsNullOrWhiteSpace(strArrayFiles[mNcolLengthLV])))
+                if ((strArrayFiles.Length > mNcolLengthLV) && StrValid(strArrayFiles[mNcolLengthLV]))
                 {
                     nLengthDebug += nLength = ulong.Parse(strArrayFiles[mNcolLengthLV]);
                     strArrayFiles[mNcolLengthLV] = FormatSize(strArrayFiles[mNcolLengthLV]);
@@ -1026,48 +980,22 @@ namespace SearchDirLists
 
                 if (m_dictDriveInfo.ContainsKey(m_strFile))
                 {
-                    string[] arrDriveInfo = m_dictDriveInfo[m_strFile].Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+                    string strDriveInfo = m_dictDriveInfo[m_strFile];
+                    string[] arrDriveInfo = strDriveInfo.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
 
-                    Utilities.Assert(1301.2314, new int[] { 7, 9, 10, mAnDIviewOrder.Length }.Contains(arrDriveInfo.Length));
+                    Utilities.Assert(1301.2314, new int[] { 7, 8 }.Contains(arrDriveInfo.Length));
+                    m_statusCallback(lvVol: new ListViewItem(new string[] { "Available Free Space", FormatSize(arrDriveInfo[0], bBytes: true) }));
+                    m_statusCallback(lvVol: new ListViewItem(new string[] { "Drive Format", arrDriveInfo[1] }));
+                    m_statusCallback(lvVol: new ListViewItem(new string[] { "Drive Type", arrDriveInfo[2] }));
+                    m_statusCallback(lvVol: new ListViewItem(new string[] { "Name", arrDriveInfo[3] }));
+                    m_statusCallback(lvVol: new ListViewItem(new string[] { "Root Directory", arrDriveInfo[4] }));
+                    m_statusCallback(lvVol: new ListViewItem(new string[] { "Total Free Space", FormatSize(arrDriveInfo[5], bBytes: true) }));
+                    m_statusCallback(lvVol: new ListViewItem(new string[] { "Total Size", FormatSize(arrDriveInfo[6], bBytes: true) }));
 
-                    string[][] asItems = new string[arrDriveInfo.Length][];
-
-                    for (int i = 0; i < arrDriveInfo.Length; ++i)
+                    if (arrDriveInfo.Length > 7)
                     {
-                        string[] a = arrDriveInfo[i].Split('\t');
-
-                        if (a[1].Trim().Length == 0)
-                        {
-                            continue;
-                        }
-
-                        asItems[i] = new string[]
-                        {
-                            a[0],
-                            mAbDIsizeType[i] ? FormatSize(a[1], bBytes: true) : a[1]
-                        };
+                        m_statusCallback(lvVol: new ListViewItem(new string[] { "Volume Label", arrDriveInfo[7] }));
                     }
-
-                    SDL_ListViewItem[] lvItems = new SDL_ListViewItem[arrDriveInfo.Length];
-
-                    for (int ix = 0; ix < arrDriveInfo.Length; ++ix)
-                    {
-                        if ((asItems[ix] == null) || (asItems[ix].Length == 0) || (asItems[ix][1].Trim().Length == 0))
-                        {
-                            continue;
-                        }
-
-                        if ((mAnDIoptIfEqTo[ix] != -1) && (asItems[ix][1] == asItems[mAnDIoptIfEqTo[ix]][1]))
-                        {
-                            continue;
-                        }
-
-                        int ixA = (arrDriveInfo.Length == mAnDIviewOrder.Length) ? mAnDIviewOrder[ix] : ix;
-
-                        lvItems[ixA] = new SDL_ListViewItem(asItems[ix]);
-                    }
-
-                    m_statusCallback(lvVolDetails: lvItems.Where(i => i != null).ToArray());
                 }
             }
 

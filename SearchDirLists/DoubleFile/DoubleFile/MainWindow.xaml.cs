@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 
 namespace DoubleFile
@@ -16,25 +17,96 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
+#if (DEBUG)
+            //#warning DEBUG is defined.
+            MBox.Assert(0, System.Diagnostics.Debugger.IsAttached, "Debugger is not attached!");
+#else
+            if (MBox.Assert(0, (System.Diagnostics.Debugger.IsAttached == false), "Debugger is attached but DEBUG is not defined.") == false)
+            {
+                return;
+            }
+
+            ActivationArguments args = AppDomain.CurrentDomain.SetupInformation.ActivationArguments;
+
+            if (MBox.Assert(1308.93165, args != null) == false)
+            {
+                return;
+            }
+
+            string[] arrArgs = args.ActivationData;
+
+            if (arrArgs == null)
+            {
+                // scenario: launched from Start menu
+                return;
+            }
+
+            if (MBox.Assert(1308.93165, arrArgs.Length > 0) == false)
+            {
+                return;
+            }
+
+            string strFile = arrArgs[0];
+
+            switch (Path.GetExtension(strFile).Substring(1))
+            {
+                case Utilities.mSTRfileExt_Listing:
+                {
+                    form_cbSaveAs.Text = strFile;
+                    AddVolume();
+                    form_tabControlMain.SelectedTab = form_tabPageBrowse;
+                    RestartTreeTimer();
+                    break;
+                }
+
+                case Utilities.mSTRfileExt_Volume:
+                {
+                    if (LoadVolumeList(strFile))
+                    {
+                        RestartTreeTimer();
+                    }
+
+                    break;
+                }
+
+                case Utilities.mSTRfileExt_Copy:
+                {
+                    form_tabControlMain.SelectedTab = form_tabPageBrowse;
+                    form_tabControlCopyIgnore.SelectedTab = form_tabPageCopy;
+                    m_blinky.Go(form_lvCopyScratchpad, clr: Color.Yellow, Once: true);
+                    Form1MessageBox("The Copy scratchpad cannot be loaded with no directory listings.", "Load Copy scratchpad externally");
+                    Application.Exit();
+                    break;
+                }
+
+                case Utilities.mSTRfileExt_Ignore:
+                {
+                    LoadIgnoreList(strFile);
+                    form_tabControlMain.SelectedTab = form_tabPageBrowse;
+                    form_tabControlCopyIgnore.SelectedTab = form_tabPageIgnore;
+                    break;
+                }
+            }
+#endif
             ShowProjectWindow();
         }
 
-        UList<LVitem_ProjectVM> m_list_lvVolStrings = null;
+        internal IEnumerable<LVitem_ProjectVM> ListLVvolStrings { get; private set; }
 
         void ShowProjectWindow(bool bOpenProject = false)
         {
-            var volumes = new WinProject(m_list_lvVolStrings, bOpenProject);
+            var volumes = new WinProject(ListLVvolStrings, bOpenProject);
 
             if (false == (volumes.ShowDialog() ?? false))
             {
                 return;
             }
 
-            m_list_lvVolStrings = volumes.m_list_lvVolStrings;
+            ListLVvolStrings = volumes.ListLVvolStrings;
 
-            if (m_list_lvVolStrings != null)
+            if (ListLVvolStrings != null)
             {
-                new SaveListingsProcess(m_list_lvVolStrings);
+                new SaveListingsProcess(ListLVvolStrings);
             }
         }
 
@@ -63,9 +135,9 @@ namespace DoubleFile
 
         private void Button_SaveProject_Click(object sender, RoutedEventArgs e)
         {
-            if (m_list_lvVolStrings != null)
+            if (ListLVvolStrings != null)
             {
-                WinProjectVM.SaveProject(m_list_lvVolStrings);
+                WinProjectVM.SaveProject(ListLVvolStrings);
             }
             else
             {
@@ -75,7 +147,7 @@ namespace DoubleFile
 
         private void Button_SearchDirLists_Click(object sender, RoutedEventArgs e)
         {
-            new SearchDirLists.Form1().Show();
+            new SearchDirLists.Form1(ListLVvolStrings).Show();
         }
     }
 }

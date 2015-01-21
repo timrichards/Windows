@@ -28,7 +28,7 @@ namespace DoubleFile
             SaveProject(m_lvVM.ItemsCast);
         }
 
-        static internal void SaveProject(IEnumerable<LVitem_ProjectVM> list_lvVolStrings)
+        static internal void SaveProject(IEnumerable<LVitem_ProjectVM> listLVvolStrings)
         {
             var dlg = new Microsoft.Win32.SaveFileDialog();
 
@@ -37,7 +37,7 @@ namespace DoubleFile
 
             if (dlg.ShowDialog() ?? false)
             {
-                new ProjectFile().SaveProject(list_lvVolStrings, dlg.FileName);
+                new ProjectFile().SaveProject(listLVvolStrings, dlg.FileName);
             }
         }
 

@@ -84,7 +84,7 @@ namespace DoubleFile
         {
             DateTime dtStart = DateTime.Now;
 
-            if (SaveDirListings.WontSave(m_volStrings) == false)
+            if (false == m_volStrings.CanLoad)
             {
                 MBox.Assert(1301.2307, false);    // guaranteed by caller
                 return;

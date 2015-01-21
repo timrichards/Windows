@@ -23,7 +23,7 @@ namespace DoubleFile
 
     partial class Tree : TreeBase
     {
-        readonly UList<LVitem_ProjectVM> m_list_lvVolStrings = null;
+        readonly UList<LVitem_ProjectVM> m_listLVvolStrings = null;
         readonly Action m_doneCallback = null;
         ConcurrentBag<TreeRootNodeBuilder> m_cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
         Thread m_thread = null;
@@ -34,7 +34,7 @@ namespace DoubleFile
             TreeStatusDelegate statusCallback, Action doneCallback)
             : base(dictNodes, dictDriveInfo, statusCallback)
         {
-            m_list_lvVolStrings = listLVvolStrings;
+            m_listLVvolStrings = listLVvolStrings;
             m_doneCallback = doneCallback;
             MBox.Assert(1301.2301, m_statusCallback != null);
         }
@@ -46,9 +46,9 @@ namespace DoubleFile
 
             DateTime dtStart = DateTime.Now;
 
-            foreach (LVitem_ProjectVM volStrings in m_list_lvVolStrings)
+            foreach (LVitem_ProjectVM volStrings in m_listLVvolStrings)
             {
-                if (SaveDirListings.WontSave(volStrings) == false)
+                if (volStrings.WouldSave)
                 {
                     continue;
                 }

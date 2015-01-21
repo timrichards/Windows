@@ -15,16 +15,16 @@ namespace DoubleFile
         GlobalData gd = null;
         WinProgress m_winProgress = null;
 
-        internal SaveListingsProcess(IEnumerable<LVitem_ProjectVM> list_lvVolStrings)
+        internal SaveListingsProcess(IEnumerable<LVitem_ProjectVM> listLVvolStrings)
         {
             gd = GlobalData.GetInstance();
 
             var listNicknames = new List<string>();
             var listSourcePaths = new List<string>();
 
-            foreach (LVitem_ProjectVM volStrings in list_lvVolStrings)
+            foreach (LVitem_ProjectVM volStrings in listLVvolStrings)
             {
-                if (SaveDirListings.WontSave(volStrings))
+                if (false == volStrings.WouldSave)
                 {
                     continue;
                 }
@@ -45,7 +45,7 @@ namespace DoubleFile
                     gd.m_saveDirListings.EndThread();
                 }
 
-                (gd.m_saveDirListings = new SaveDirListings(list_lvVolStrings,
+                (gd.m_saveDirListings = new SaveDirListings(listLVvolStrings,
                     SaveDirListingsStatusCallback, SaveDirListingsDoneCallback)).DoThreadFactory();
                 m_winProgress.ShowDialog();
             }

@@ -30,11 +30,6 @@ namespace DoubleFile
             m_doneCallback = doneCallback;
         }
 
-        internal static bool WontSave(LVitem_ProjectVM volStrings)
-        {
-            return ((ksUsingFile + ksSaved + ksCantSave).Contains(volStrings.Status));
-        }
-
         void Go()
         {
             UtilProject.WriteLine();
@@ -44,7 +39,7 @@ namespace DoubleFile
 
             foreach (LVitem_ProjectVM volStrings in m_list_LVitem_VolumeVM)
             {
-                if (WontSave(volStrings))
+                if (false == volStrings.WouldSave)
                 {
                     continue;
                 }

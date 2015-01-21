@@ -41,9 +41,9 @@ namespace DoubleFile
 
                 while (true)
                 {
-                    WinVolumeEditBase dlg = SaveDirListings.WontSave(lvItem) ?
-                        (WinVolumeEditBase)new WinVolumeEdit() :
-                        new WinVolumeNew();
+                    WinVolumeEditBase dlg = lvItem.WouldSave ?
+                        new WinVolumeNew() :
+                        (WinVolumeEditBase)new WinVolumeEdit();
 
                     dlg.LVitemVolumeTemp = new LVitem_ProjectVM(lvItemVolumeTemp);
 
@@ -122,7 +122,7 @@ namespace DoubleFile
                     return;     // from lambda
                 }
 
-                if (false == SaveDirListings.WontSave(lvItem))
+                if (lvItem.WouldSave)
                 {
                     bUnsaved = true;
                 }

@@ -140,15 +140,13 @@
     <Compile Include="SearchDirLists\Search.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SearchDirLists\Tree.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="SearchDirLists\TreeForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SearchDirLists\TreeMap.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="SearchDirLists\Tree_Current.cs" />
     <Compile Include="SearchDirLists\Utilities.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -6,7 +6,7 @@ namespace DoubleFile
 {
     internal static partial class ExtensionMethods
     {
-        public static int Count<T>(this IEnumerable<T> source)
+        internal static int Count<T>(this IEnumerable<T> source)
         {
             ICollection<T> c = source as ICollection<T>;
 
@@ -30,7 +30,7 @@ namespace DoubleFile
             }
         }
 
-        public static void FirstOnly<T>(this IEnumerable<T> source, Action<T> action)
+        internal static void FirstOnly<T>(this IEnumerable<T> source, Action<T> action)
         {
             foreach (var item in source)
             {
@@ -39,13 +39,13 @@ namespace DoubleFile
             }
         }
 
-        public static void FirstOnlyAssert<T>(this IEnumerable<T> source, Action<T> action)
+        internal static void FirstOnlyAssert<T>(this IEnumerable<T> source, Action<T> action)
         {
             MBox.Assert(0, source.Count() <= 1);
             FirstOnly(source, action);
         }
 
-        public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
+        internal static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
             foreach (var item in source)
             {
@@ -56,7 +56,7 @@ namespace DoubleFile
 
     internal static partial class ExtensionMethods
     {
-        public static string ToPrintString(this object source)
+        internal static string ToPrintString(this object source)
         {
             if (source == null) return null;
 

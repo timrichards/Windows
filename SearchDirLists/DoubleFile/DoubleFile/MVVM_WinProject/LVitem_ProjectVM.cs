@@ -35,5 +35,17 @@ namespace DoubleFile
             get { return (IncludeYN == FileParse.ksInclude); }
             set { IncludeYN = (value ? FileParse.ksInclude : "No"); } 
         }
+
+        const string ksFileExistsCheck = FileParse.ksUsingFile + FileParse.ksSaved;
+
+        internal bool WouldSave
+        {
+            get { return (false == (ksFileExistsCheck + FileParse.ksCantSave).Contains(Status)); }
+        }
+
+        internal bool CanLoad
+        {
+            get { return (Include && ksFileExistsCheck.Contains(Status)); }
+        }
     }
 }

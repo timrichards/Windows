@@ -217,11 +217,7 @@ namespace SearchDirLists
             return obj.Name == null ? 0 : obj.Name.GetHashCode();
         }
 
-#if (WPF)
-        internal static void NameItems(ItemCollection list)
-#else
         internal static void NameItems(ListView.ListViewItemCollection list)
-#endif
         {
             foreach (SDL_ListViewItem item in list)
             {

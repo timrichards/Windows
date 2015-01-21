@@ -2,12 +2,10 @@
 using System.Drawing;
 using System.Runtime.Hosting;       // release mode
 using System.Linq;
-using System.Threading;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using System.Windows.Threading;
 
 // TODO:
 //      compare file list

@@ -4,8 +4,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using System.Collections.Generic;
-using System.Linq;
 
 [EditorBrowsable(EditorBrowsableState.Never)]
 [System.ComponentModel.DesignerCategory("")]

@@ -1,17 +1,8 @@
-﻿#if WPF
-using System.Windows.Controls;
-#else
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using System.Drawing;
 using System.Runtime.Hosting;       // release mode
 using System.Linq;
 using System.Threading;
-#endif
-
-using WPF = System.Windows;
-using Forms = System.Windows.Forms;
-using Drawing = System.Drawing;
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -29,7 +20,6 @@ namespace SearchDirLists
     delegate bool BoolAction();
     delegate MBoxRet MBoxDelegate(string strMessage, string strTitle = null, MBoxBtns? buttons = null);
 
-#if (WPF == false)
         [System.ComponentModel.DesignerCategory("Designer")]
    // [System.ComponentModel.DesignerCategory("Code")]
     partial class Form1 : Form
@@ -1559,21 +1549,7 @@ namespace SearchDirLists
         internal static Form1 static_wpfOrForm { get { return static_form_; } }
         internal static Form1 static_form { get { return static_form_; } } static Form1 static_form_ = null;
         internal static GlobalData GetInstance(Form1 form) { if (static_instance == null) static_instance = new GlobalData(form); return static_instance; }
-        internal static GlobalData GetInstance(WPF.Window wpfWin) { return static_instance; }
         GlobalData(Form1 form) { static_form_ = form; }               // private constructor: singleton pattern
-#else
-    partial class GlobalData : Utilities
-    {
-        internal static WPF.Window static_wpfOrForm { get { return static_wpfWin_; } }
-        internal static WPF.Window static_wpfWin { get { return static_wpfWin_; } } static WPF.Window static_wpfWin_ = null;
-        internal static GlobalData GetInstance(WPF.Window wpfWin) { if (static_instance == null) static_instance = new GlobalData(wpfWin); return static_instance; }
-
-        GlobalData(WPF.Window wpfWin)   // private constructor: singleton pattern
-        {
-            static_wpfWin_ = wpfWin;
-            timer_DoTree.Interval = new System.TimeSpan(0, 0, 3);
-        }
-#endif
         internal SDL_TreeView m_treeCopyToClipboard = null;
         internal TreeNode m_nodeCompare1 = null;
         internal readonly Dictionary<TreeNode, TreeNode> m_dictCompareDiffs = new Dictionary<TreeNode, TreeNode>();
@@ -1682,7 +1658,7 @@ namespace SearchDirLists
 
                 if (n1.nTotalLength <= (nMin10M + nMin100K))
                 {
-                    s1.ForeColor = Drawing.Color.LightGray;
+                    s1.ForeColor = Color.LightGray;
                 }
                 else if (t2.Nodes.ContainsKey(s1.Name))
                 {
@@ -1698,8 +1674,8 @@ namespace SearchDirLists
                     bCompare &= (n1.nImmediateFiles == n2.nImmediateFiles);
                     bCompare &= (Math.Abs((long)(n1.nLength - n2.nLength)) <= (long)(nMin10M + nMin100K));
 
-                    if (bCompare == false) { s2.ForeColor = Drawing.Color.Red; }
-                    else if (s2.ForeColor == Drawing.Color.Empty) { s2.ForeColor = Drawing.Color.SteelBlue; }
+                    if (bCompare == false) { s2.ForeColor = Color.Red; }
+                    else if (s2.ForeColor == Color.Empty) { s2.ForeColor = Color.SteelBlue; }
                 }
                 else
                 {
@@ -1721,9 +1697,9 @@ namespace SearchDirLists
                     }
                 }
 
-                if (bCompare == false) { s1.ForeColor = Drawing.Color.Red; }
-                else if (bCompareSub == false) { s1.ForeColor = Drawing.Color.DarkRed; }
-                else if (s1.ForeColor == Drawing.Color.Empty) { s1.ForeColor = Drawing.Color.SteelBlue; }
+                if (bCompare == false) { s1.ForeColor = Color.Red; }
+                else if (bCompareSub == false) { s1.ForeColor = Color.DarkRed; }
+                else if (s1.ForeColor == Color.Empty) { s1.ForeColor = Color.SteelBlue; }
 
                 bRet &= (bCompare && bCompareSub);
             }
@@ -1752,20 +1728,15 @@ namespace SearchDirLists
             }
             else
             {
-                m_blinky.Go((Control)sender, clr: Drawing.Color.Red, Once: true);
+                m_blinky.Go((Control)sender, clr: Color.Red, Once: true);
             }
         }
 
-#if (WPF)
-        internal void FormError(Forms.Control defaultControl, string strError, string strTitle){}
-#else
-        internal void FormError(WPF.Controls.Control defaultControl, string strError, string strTitle){}
-#endif
         internal void FormError(Control control, string strError, string strTitle)
         {
-            m_blinky.Go(control, clr: Drawing.Color.Red, Once: true);
+            m_blinky.Go(control, clr: Color.Red, Once: true);
             MBox(strError, strTitle);
-            m_blinky.Go(control, clr: Drawing.Color.Red, Once: true);
+            m_blinky.Go(control, clr: Color.Red, Once: true);
         }
 
         internal static string FullPath(TreeNode treeNode)
@@ -1938,7 +1909,7 @@ namespace SearchDirLists
         internal void NameNodes(TreeNode treeNode, UList<TreeNode> listTreeNodes)
         {
             treeNode.Name = treeNode.Text;
-            treeNode.ForeColor = Drawing.Color.Empty;
+            treeNode.ForeColor = Color.Empty;
             listTreeNodes.Add(treeNode);
 
             foreach (TreeNode subNode in treeNode.Nodes)
@@ -2003,8 +1974,8 @@ namespace SearchDirLists
                     m_listTreeNodes.Remove(treeNode);
                 }
 
-                treeNode.ForeColor = Drawing.Color.Empty;
-                treeNode.BackColor = Drawing.Color.Empty;
+                treeNode.ForeColor = Color.Empty;
+                treeNode.BackColor = Color.Empty;
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 

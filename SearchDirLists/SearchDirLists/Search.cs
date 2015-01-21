@@ -1,17 +1,5 @@
-﻿#if WPF
-using System.Windows.Controls;
-using System.Windows.Media; using Media = System.Windows.Media;
-using System.Windows.Markup;
-using System.Xml;
-#else
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using System.Drawing;
-#endif
-
-using WPF = System.Windows;
-using Forms = System.Windows.Forms;
-using Drawing = System.Drawing;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +11,6 @@ namespace SearchDirLists
 {
     delegate void SearchStatusDelegate(SearchResults searchResults, bool bFirst = false, bool bLast = false);
 
-#if (WPF == false)
     partial class Form1
     {
         bool SearchResultsType2_Nav(SDL_TreeView treeView)
@@ -313,7 +300,6 @@ namespace SearchDirLists
             }
         }
     }
-#endif
 
     class SearchResultsDir
     {
@@ -750,7 +736,7 @@ namespace SearchDirLists
             m_SearchResultsType1_Array = null;
             m_bSearchResultsType2_List = false;
             m_strSelectFile = null;
-            m_blinky.Go(clr: Drawing.Color.Red, Once: true);
+            m_blinky.Go(clr: Color.Red, Once: true);
             MBox("Couldn't find the specified search parameter.", mSTRsearchTitle);
         }
 

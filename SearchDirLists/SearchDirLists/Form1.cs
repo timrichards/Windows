@@ -62,7 +62,6 @@ namespace SearchDirLists
         {
             Collate.ClearMem();
             ClearMem_Form1();
-            gd.ClearMem_SaveDirListings();
             gd.ClearMem_Search();
             ClearMem_TreeForm();
         }
@@ -133,165 +132,6 @@ namespace SearchDirLists
             m_clrVolGroupOrig = form_lblVolGroup.BackColor;
         }
 
-        bool AddVolume()
-        {
-            if (SaveFields(false) == false)
-            {
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(gd.m_strSaveAs))
-            {
-                gd.FormError(form_cbSaveAs, "Must have a file to load or save directory listing to.", "Volume Save As");
-                return false;
-            }
-
-            ListViewItem lvItem_Remove = null;
-
-            if (form_lvVolumesMain.Items.Count > 0)
-            {
-                ListViewItem lvItem = form_lvVolumesMain.FindItemWithText(gd.m_strSaveAs, false, 0, false);
-
-                if ((lvItem != null) && Utilities.Assert(0, lvItem.Text == gd.m_strVolumeName))
-                {
-                    if (Utilities.MBox("Update existing item?", "Volume Save As", MBoxBtns.YesNo)
-                        != MBoxRet.Yes)
-                    {
-                        return false;
-                    }
-
-                    lvItem_Remove = lvItem;
-                    Utilities.Assert(1308.93055, SaveFields(false));
-                }
-            }
-
-            bool bOpenedFile = string.IsNullOrWhiteSpace(gd.m_strPath);
-
-            if (File.Exists(gd.m_strSaveAs) && (false == string.IsNullOrWhiteSpace(gd.m_strPath)))
-            {
-                gd.m_blinky.Go(form_cbSaveAs, clr: Color.Red);
-
-                if (Utilities.MBox(gd.m_strSaveAs + " already exists. Overwrite?", "Volume Save As", MBoxBtns.YesNo)
-                    != MBoxRet.Yes)
-                {
-                    gd.m_blinky.Go(form_cbVolumeName, clr: Color.Yellow, Once: true);
-                    form_cbVolumeName.Text = string.Empty;
-                    gd.m_blinky.Go(form_cbPath, clr: Color.Yellow, Once: true);
-                    form_cbPath.Text = string.Empty;
-                    Utilities.Assert(1308.9306, SaveFields(false));
-                }
-            }
-
-            if ((File.Exists(gd.m_strSaveAs) == false) && string.IsNullOrWhiteSpace(gd.m_strPath))
-            {
-                gd.m_blinky.Go(form_cbPath, clr: Color.Red);
-                Utilities.MBox("Must have a path or existing directory listing file.", "Volume Source Path");
-                gd.m_blinky.Go(form_cbPath, clr: Color.Red, Once: true);
-                return false;
-            }
-
-            if ((false == string.IsNullOrWhiteSpace(gd.m_strPath)) && (Directory.Exists(gd.m_strPath) == false))
-            {
-                gd.m_blinky.Go(form_cbPath, clr: Color.Red);
-                Utilities.MBox("Path does not exist.", "Volume Source Path");
-                gd.m_blinky.Go(form_cbPath, clr: Color.Red, Once: true);
-                return false;
-            }
-
-            string strStatus = "Not Saved";
-            bool bFileOK = false;
-
-            if (File.Exists(gd.m_strSaveAs))
-            {
-                if (string.IsNullOrWhiteSpace(gd.m_strPath))
-                {
-                    bFileOK = ReadHeader();
-
-                    if (bFileOK)
-                    {
-                        strStatus = Utilities.mSTRusingFile;
-                    }
-                    else
-                    {
-                        if (false == string.IsNullOrWhiteSpace(gd.m_strPath))
-                        {
-                            strStatus = "File is bad. Will overwrite.";
-                        }
-                        else
-                        {
-                            gd.m_blinky.Go(form_cbPath, clr: Color.Red);
-                            Utilities.MBox("File is bad and path does not exist.", "Volume Source Path");
-                            gd.m_blinky.Go(form_cbPath, clr: Color.Red, Once: true);
-                            return false;
-                        }
-                    }
-                }
-                else
-                {
-                    strStatus = "Will overwrite.";
-                }
-            }
-
-            if ((bFileOK == false) && (form_lvVolumesMain.Items.ContainsKey(gd.m_strPath)))
-            {
-                gd.FormError(form_cbPath, "Path already added.", "Volume Source Path");
-                return false;
-            }
-
-            if (false == string.IsNullOrWhiteSpace(gd.m_strVolumeName))
-            {
-                if (form_lvVolumesMain.Items.Count > 0)
-                {
-                    SDL_ListViewItem lvItem = (SDL_ListViewItem)form_lvVolumesMain.FindItemWithText(gd.m_strVolumeName, false, 0, false);
-
-                    if ((lvItem != null) && Utilities.Assert(0, lvItem.Text == gd.m_strVolumeName))
-                    {
-                        gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red);
-
-                        if (Utilities.MBox("Nickname already in use. Use it for more than one volume?", "Volume Save As", MBoxBtns.YesNo)
-                            != MBoxRet.Yes)
-                        {
-                            gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red, Once: true);
-                            return false;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (bOpenedFile == false)
-                {
-                    gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red);
-
-                    if (Utilities.MBox("Continue without entering a nickname for this volume?", "Volume Save As", MBoxBtns.YesNo)
-                        != MBoxRet.Yes)
-                    {
-                        gd.m_blinky.Go(form_cbVolumeName, clr: Color.Red, Once: true);
-                        return false;
-                    }
-                }
-            }
-
-            if (lvItem_Remove != null)
-            {
-                lvItem_Remove.Remove();
-            }
-
-            {
-                SDL_ListViewItem lvItem = new SDL_ListViewItem(new string[] { gd.m_strVolumeName, gd.m_strPath, gd.m_strSaveAs, strStatus, "Yes" });
-
-                if (bFileOK == false)
-                {
-                    lvItem.Name = gd.m_strPath;    // indexing by path, only for unsaved volumes
-                }
-
-                form_lvVolumesMain.Items.Add(lvItem);
-            }
-
-            form_btnSaveDirList.Enabled = true;
-            return bFileOK;
-        }
-
         void CompareNav(bool bNext = true)
         {
             if (gd.m_dictCompareDiffs.Count <= 0)
@@ -312,9 +152,9 @@ namespace SearchDirLists
             SDLWPF.treeViewCompare1.SelectedNode = null;
             SDLWPF.treeViewCompare2.SelectedNode = null;
 
-            SDL_TreeNode treeNode = gd.m_dictCompareDiffs.ToArray()[gd.m_nCompareIndex].Key;
+            TreeNode treeNode = gd.m_dictCompareDiffs.ToArray()[gd.m_nCompareIndex].Key;
 
-            if (string.IsNullOrWhiteSpace(treeNode.Name))  // can't have a null key in the dictionary so there's a new SDL_TreeNode there
+            if (string.IsNullOrWhiteSpace(treeNode.Name))  // can't have a null key in the dictionary so there's a new TreeNode there
             {
                 treeNode = null;
             }
@@ -374,7 +214,7 @@ namespace SearchDirLists
             }
             else if (bFailOnDirectory)
             {
-                form_tabControlMain.SelectedTab = form_tabPageVolumes;
+      //          form_tabControlMain.SelectedTab = form_tabPageVolumes;
                 gd.FormError(ctl, "Path does not exist.", "Save Fields");
                 return false;
             }
@@ -390,7 +230,7 @@ namespace SearchDirLists
 
             foreach (SDL_ListViewItem lvItem in lvFake.Items)
             {
-                SDL_TreeNode treeNode = gd.GetNodeByPath(lvItem.SubItems[1].Text, SDLWPF.treeViewMain);
+                TreeNode treeNode = gd.GetNodeByPath(lvItem.SubItems[1].Text, SDLWPF.treeViewMain);
 
                 if (treeNode != null)
                 {
@@ -423,22 +263,6 @@ namespace SearchDirLists
             }
         }
 
-        bool LoadVolumeList(string strFile = null)
-        {
-            if (new SDL_VolumeFile(strFile).ReadList(form_lvVolumesMain) == false)
-            {
-                return false;
-            }
-
-            if (form_lvVolumesMain.Items.Count > 0)
-            {
-                form_btnSaveDirList.Enabled = true;
-                form_tabControlMain.SelectedTab = form_tabPageBrowse;
-            }
-
-            return true;    // this kicks off the tree
-        }
-
         void LV_CloneSelNode(ListView lv)
         {
             if (Utilities.Assert(1308.9307, lv.SelectedItems.Count > 0, bTraceOnly: true) == false)
@@ -446,7 +270,7 @@ namespace SearchDirLists
                 return;
             }
 
-            UList<SDL_TreeNode> listTreeNodes = (UList<SDL_TreeNode>)((SDL_ListViewItem)lv.SelectedItems[0]).Tag;
+            UList<TreeNode> listTreeNodes = (UList<TreeNode>)((SDL_ListViewItem)lv.SelectedItems[0]).Tag;
 
             if (Utilities.Assert(1308.9308, listTreeNodes != null, bTraceOnly: true) == false)
             {
@@ -477,85 +301,7 @@ namespace SearchDirLists
                 return;
             }
 
-            form_cbFindbox.Text = GlobalData.FullPath((SDL_TreeNode)((SDL_TreeView)treeView).SelectedNode);
-        }
-
-        bool ReadHeader()
-        {
-            if (Utilities.ValidateFile(gd.m_strSaveAs) == false)
-            {
-                return false;
-            }
-
-            using (StreamReader file = new StreamReader(gd.m_strSaveAs))
-            {
-                string line = null;
-
-                if ((line = file.ReadLine()) == null) return false;
-                if ((line = file.ReadLine()) == null) return false;
-                if (line.StartsWith(Utilities.mSTRlineType_Nickname) == false) return false;
-
-                string[] arrLine = line.Split('\t');
-                string strName = string.Empty;
-
-                if (arrLine.Length > 2) strName = arrLine[2];
-                form_cbVolumeName.Text = strName;
-                if ((line = file.ReadLine()) == null) return false;
-                if (line.StartsWith(Utilities.mSTRlineType_Path) == false) return false;
-                arrLine = line.Split('\t');
-                if (arrLine.Length < 3) return false;
-                form_cbPath.Text = arrLine[2];
-            }
-
-            return SaveFields(false);
-        }
-
-        bool SaveFields(bool bFailOnDirectory = true)
-        {
-            gd.m_strVolumeName = (form_cbVolumeName.Text ?? "").Trim();
-            gd.m_strPath = (form_cbPath.Text ?? "").Trim();
-
-            if (false == string.IsNullOrWhiteSpace(gd.m_strPath))
-            {
-                gd.m_strPath += '\\';
-
-                if (FormatPath(form_cbPath, ref gd.m_strPath, bFailOnDirectory) == false)
-                {
-                    return false;
-                }
-            }
-
-            if (false == string.IsNullOrWhiteSpace(form_cbSaveAs.Text))
-            {
-                try
-                {
-                    form_cbSaveAs.Text = gd.m_strSaveAs = Path.GetFullPath(form_cbSaveAs.Text.Trim());
-                }
-                catch
-                {
-                    gd.FormError(form_cbSaveAs, "Error in save listings filename.", "Save Fields");
-                    return false;
-                }
-
-                if (Directory.Exists(Path.GetDirectoryName(gd.m_strSaveAs)) == false)
-                {
-                    gd.FormError(form_cbSaveAs, "Directory to save listings to doesn't exist.", "Save Fields");
-                    return false;
-                }
-
-                if (Directory.Exists(gd.m_strSaveAs))
-                {
-                    gd.FormError(form_cbSaveAs, "Must specify save filename. Only directory entered.", "Save Fields");
-                    return false;
-                }
-
-                if (FormatPath(form_cbSaveAs, ref gd.m_strSaveAs, bFailOnDirectory) == false)
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            form_cbFindbox.Text = GlobalData.FullPath((TreeNode)((SDL_TreeView)treeView).SelectedNode);
         }
 
         void SelectedIndexChanged(object sender, EventArgs e)
@@ -580,30 +326,15 @@ namespace SearchDirLists
             gd.m_bPutPathInFindEditBox = true;
             gd.m_bTreeViewIndirectSelChange = true;
 
-            SDL_TreeNode treeNode = (SDL_TreeNode)(SDLWPF.treeViewMain.SelectedNode = (SDL_TreeNode)((SDL_ListViewItem)lv.SelectedItems[0]).Tag);
+            TreeNode treeNode = (TreeNode)(SDLWPF.treeViewMain.SelectedNode = (TreeNode)((SDL_ListViewItem)lv.SelectedItems[0]).Tag);
 
             if (treeNode == null)
             {
                 return;
             }
 
-            SDLWPF.treeViewMain.TopNode = (SDL_TreeNode)treeNode.Parent;
+            SDLWPF.treeViewMain.TopNode = (TreeNode)treeNode.Parent;
             treeNode.EnsureVisible();
-        }
-
-        void EnableButtonsWhenVolsSel()
-        {
-            bool bHasSelection = (form_lvVolumesMain.SelectedIndices.Count > 0);
-
-            form_btnVolGroup.Enabled = bHasSelection;
-            form_btnRemoveVolume.Enabled = bHasSelection;
-            form_btnToggleInclude.Enabled = bHasSelection;
-            form_btnModifyFile.Enabled = (form_lvVolumesMain.SelectedIndices.Count == 1);
-        }
-
-        internal void form_btnAddVolume_Click(object sender = null, EventArgs e = null)
-        {
-            gd.InterruptTreeTimerWithAction(new BoolAction(AddVolume));
         }
 
         void form_btnBack_Click(object sender, EventArgs e)
@@ -645,7 +376,7 @@ namespace SearchDirLists
                 return;
             }
 
-            SDL_TreeNode nodeCompare2 = (SDL_TreeNode)SDLWPF.treeViewMain.SelectedNode;
+            TreeNode nodeCompare2 = (TreeNode)SDLWPF.treeViewMain.SelectedNode;
 
             if (nodeCompare2 == gd.m_nodeCompare1)
             {
@@ -669,8 +400,8 @@ namespace SearchDirLists
             string strFullPath1A = gd.m_nodeCompare1.FullPath;
             string strFullPath2A = nodeCompare2.FullPath;
 
-            gd.m_nodeCompare1 = (SDL_TreeNode)gd.m_nodeCompare1.Clone();
-            nodeCompare2 = (SDL_TreeNode)nodeCompare2.Clone();
+            gd.m_nodeCompare1 = (TreeNode)gd.m_nodeCompare1.Clone();
+            nodeCompare2 = (TreeNode)nodeCompare2.Clone();
             gd.NameNodes(gd.m_nodeCompare1, gd.m_listTreeNodes_Compare1);
             gd.NameNodes(nodeCompare2, gd.m_listTreeNodes_Compare2);
             gd.Compare(gd.m_nodeCompare1, nodeCompare2);
@@ -690,9 +421,9 @@ namespace SearchDirLists
                 gd.Compare(nodeCompare2, gd.m_nodeCompare1, bReverse: true, nMin10M: 0, nMin100K: 0);
             }
 
-            SortedDictionary<ulong, KeyValuePair<SDL_TreeNode, SDL_TreeNode>> dictSort = new SortedDictionary<ulong, KeyValuePair<SDL_TreeNode, SDL_TreeNode>>();
+            SortedDictionary<ulong, KeyValuePair<TreeNode, TreeNode>> dictSort = new SortedDictionary<ulong, KeyValuePair<TreeNode, TreeNode>>();
 
-            foreach (KeyValuePair<SDL_TreeNode, SDL_TreeNode> pair in gd.m_dictCompareDiffs)
+            foreach (KeyValuePair<TreeNode, TreeNode> pair in gd.m_dictCompareDiffs)
             {
                 ulong l1 = 0, l2 = 0;
 
@@ -723,7 +454,7 @@ namespace SearchDirLists
                 gd.m_dictCompareDiffs.Add(gd.m_nodeCompare1, nodeCompare2);
             }
 
-            foreach (KeyValuePair<SDL_TreeNode, SDL_TreeNode> pair in dictSort.Values.Reverse())
+            foreach (KeyValuePair<TreeNode, TreeNode> pair in dictSort.Values.Reverse())
             {
                 gd.m_dictCompareDiffs.Add(pair.Key, pair.Value);
             }
@@ -753,9 +484,9 @@ namespace SearchDirLists
             gd.m_bCompareMode = true;
             form_tabControlFileList.SelectedTab = form_tabPageFileList;
             gd.m_bTreeViewIndirectSelChange = true;
-            SDLWPF.treeViewCompare1.SelectedNode = (SDL_TreeNode)SDLWPF.treeViewCompare1.Nodes[0];
+            SDLWPF.treeViewCompare1.SelectedNode = (TreeNode)SDLWPF.treeViewCompare1.Nodes[0];
             gd.m_bTreeViewIndirectSelChange = true;
-            SDLWPF.treeViewCompare2.SelectedNode = (SDL_TreeNode)SDLWPF.treeViewCompare2.Nodes[0];
+            SDLWPF.treeViewCompare2.SelectedNode = (TreeNode)SDLWPF.treeViewCompare2.Nodes[0];
         }
 
         void form_btnCopyToClipBoard_Click(object sender = null, EventArgs e = null)
@@ -784,11 +515,11 @@ namespace SearchDirLists
                 treeView = SDLWPF.treeViewMain;
             }
 
-            SDL_TreeNode treeNode = (SDL_TreeNode)treeView.SelectedNode;
+            TreeNode treeNode = (TreeNode)treeView.SelectedNode;
 
             if (treeNode == null)
             {
-                treeNode = gd.SearchType1_FindNode(form_cbFindbox.Text, (SDL_TreeNode)treeView.SelectedNode, treeView);
+                treeNode = gd.SearchType1_FindNode(form_cbFindbox.Text, (TreeNode)treeView.SelectedNode, treeView);
             }
 
             if (treeNode != null)
@@ -806,7 +537,7 @@ namespace SearchDirLists
         {
             foreach (SDL_ListViewItem lvItem in form_lvCopyScratchpad.Items)
             {
-                SDL_TreeNode treeNode = (SDL_TreeNode)lvItem.Tag;
+                TreeNode treeNode = (TreeNode)lvItem.Tag;
 
                 if (treeNode != null)
                 {
@@ -826,7 +557,7 @@ namespace SearchDirLists
 
         void form_btnIgnoreAdd_Click(object sender, EventArgs e)
         {
-            SDL_TreeNode treeNode = (SDL_TreeNode)SDLWPF.treeViewMain.SelectedNode;
+            TreeNode treeNode = (TreeNode)SDLWPF.treeViewMain.SelectedNode;
 
             if (treeNode == null)
             {
@@ -886,290 +617,6 @@ namespace SearchDirLists
             LoadIgnoreList();
         }
 
-        internal void form_btnLoadVolumeList_Click(object sender = null, EventArgs e = null)
-        {
-            gd.InterruptTreeTimerWithAction(new BoolAction(() => { return LoadVolumeList(); }));
-        }
-
-        internal void form_btnModifyFile_Click(object sender = null, EventArgs e = null)
-        {
-            gd.InterruptTreeTimerWithAction(new BoolAction(() =>
-            {
-                ListView.SelectedListViewItemCollection lvSelect = form_lvVolumesMain.SelectedItems;
-
-                if (lvSelect.Count <= 0)
-                {
-                    return false;
-                }
-
-                if (lvSelect.Count > 1)
-                {
-                    Utilities.Assert(1308.9311, false, bTraceOnly: true);    // guaranteed by selection logic
-                    Utilities.MBox("Only one file can be modified at a time.", "Modify file");
-                    return false;
-                }
-
-                string strVolumeName_orig = form_lvVolumesMain.SelectedItems[0].Text;
-                string strVolumeName = null;
-                string strFileName = form_lvVolumesMain.SelectedItems[0].SubItems[2].Text;
-
-                try { using (new StreamReader(strFileName)) { } }
-                catch
-                {
-                    if (gd.m_saveDirListings != null)
-                    {
-                        Utilities.MBox("Currently saving listings and can't open file yet. Please wait.", "Modify file");
-                    }
-                    else if (false == string.IsNullOrWhiteSpace(lvSelect[0].Name))
-                    {
-                        Utilities.MBox("File hasn't been saved yet.", "Modify file");
-                    }
-                    else
-                    {
-                        Utilities.MBox("Can't open file.", "Modify file");
-                    }
-
-                    return false;
-                }
-
-                {
-                    InputBox inputBox = new InputBox();
-
-                    inputBox.Text = "Step 1 of 2: Volume name";
-                    inputBox.Prompt = "Enter a volume name. (Next: drive letter)";
-                    inputBox.Entry = strVolumeName_orig;
-                    inputBox.SetNextButtons();
-
-                    if ((inputBox.ShowDialog() == DialogResult.OK) && (false == string.IsNullOrWhiteSpace(inputBox.Entry)))
-                    {
-                        strVolumeName = inputBox.Entry;
-                    }
-                }
-
-                string strDriveLetter_orig = null;
-                string strDriveLetter = null;
-
-                while (true)
-                {
-                    InputBox inputBox = new InputBox();
-
-                    inputBox.Text = "Step 2 of 2: Drive letter";
-                    inputBox.Prompt = "Enter a drive letter.";
-
-                    string str = form_lvVolumesMain.SelectedItems[0].SubItems[1].Text;
-
-                    if (str.Length <= 0)
-                    {
-                        Utilities.Assert(1308.9312, false, bTraceOnly: true);
-                        break;
-                    }
-
-                    strDriveLetter_orig = str[0].ToString();
-                    inputBox.Entry = strDriveLetter_orig.ToUpper();
-                    inputBox.SetNextButtons();
-
-                    if (inputBox.ShowDialog() == DialogResult.OK)
-                    {
-                        if (inputBox.Entry.Length > 1)
-                        {
-                            Utilities.MBox("Drive letter must be one letter.", "Drive letter");
-                            continue;
-                        }
-
-                        strDriveLetter = inputBox.Entry.ToUpper();
-                    }
-
-                    break;
-                }
-
-                if ((string.IsNullOrWhiteSpace(strVolumeName) ||
-                    ((strVolumeName ?? "") == (strVolumeName_orig ?? "")))
-                    &&
-                    (string.IsNullOrWhiteSpace(strDriveLetter) ||
-                    ((strDriveLetter ?? "") == (strDriveLetter_orig ?? ""))))
-                {
-                    Utilities.MBox("No changes made.", "Modify file");
-                    return false;
-                }
-
-                StringBuilder sbFileConts = new StringBuilder();
-                bool bDriveLetter = (false == string.IsNullOrWhiteSpace(strDriveLetter));
-
-                gd.KillTreeBuilder(bJoin: true);
-
-                using (StringReader reader = new StringReader(File.ReadAllText(strFileName)))
-                {
-                    string strLine = null;
-                    bool bHitNickname = string.IsNullOrWhiteSpace(strVolumeName);
-
-                    while ((strLine = reader.ReadLine()) != null)
-                    {
-                        StringBuilder sbLine = new StringBuilder(strLine);
-
-                        if ((bHitNickname == false) && strLine.StartsWith(Utilities.mSTRlineType_Nickname))
-                        {
-                            if (false == string.IsNullOrWhiteSpace(strVolumeName_orig))
-                            {
-                                sbLine.Replace(strVolumeName_orig, (strVolumeName ?? ""));
-                            }
-                            else
-                            {
-                                Utilities.Assert(1308.9313, sbLine.ToString().Split('\t').Length == 2);
-                                sbLine.Append('\t');
-                                sbLine.Append(strVolumeName);
-                            }
-
-                            form_lvVolumesMain.SelectedItems[0].Text = strVolumeName;
-                            bHitNickname = true;
-                        }
-                        else if (bDriveLetter)
-                        {
-                            sbLine.Replace("\t" + strDriveLetter_orig + @":\", "\t" + strDriveLetter + @":\");
-                        }
-
-                        sbFileConts.AppendLine(sbLine.ToString());
-                    }
-                }
-
-                if (bDriveLetter)
-                {
-                    SDL_ListViewItem lvItem = (SDL_ListViewItem)form_lvVolumesMain.SelectedItems[0];
-
-                    lvItem.SubItems[1].Text = (strDriveLetter + ":");
-                }
-
-                File.WriteAllText(strFileName, sbFileConts.ToString());
-                gd.m_blinky.Go(form_btnSaveVolumeList);
-
-                if (Utilities.MBox("Update the volume list?", "Modify file", MBoxBtns.YesNo) == MBoxRet.Yes)
-                {
-                    form_btnSaveVolumeList_Click();
-                }
-
-                return true;
-            }));
-        }
-
-        internal void form_btnPath_Click(object sender = null, EventArgs e = null)
-        {
-            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
-            {
-                gd.ComboBoxItemsInsert(form_cbPath);
-                gd.m_strPath = form_cbPath.Text = folderBrowserDialog1.SelectedPath;
-            }
-        }
-
-        internal void form_btnRemoveVolume_Click(object sender = null, EventArgs e = null)
-        {
-            ListView.SelectedListViewItemCollection lvSelect = form_lvVolumesMain.SelectedItems;
-
-            if (lvSelect.Count <= 0)
-            {
-                return;
-            }
-
-            gd.m_bKillTree = (gd.m_tree != null) || (gd.m_bKillTree && gd.timer_DoTree.IsEnabled);
-            gd.timer_DoTree.IsEnabled = false;
-            gd.KillTreeBuilder(bJoin: true);
-
-            if (gd.m_bKillTree == false)
-            {
-                uint nNumFoldersKeep = 0;
-                uint nNumFoldersRemove = 0;
-
-                foreach (SDL_ListViewItem lvItem in form_lvVolumesMain.Items)
-                {
-                    if (lvItem.Tag == null)
-                    {
-                        // scenario: unsaved file
-                        continue;
-                    }
-
-                    RootNodeDatum rootNodeDatum = (RootNodeDatum)((SDL_TreeNode)lvItem.Tag).Tag;
-
-                    if (lvSelect.Contains(lvItem))
-                    {
-                        nNumFoldersRemove += rootNodeDatum.nSubDirs;
-                    }
-                    else
-                    {
-                        nNumFoldersKeep += rootNodeDatum.nSubDirs;
-                    }
-                }
-
-                gd.m_bKillTree = (nNumFoldersRemove > nNumFoldersKeep);
-            }
-
-            if (gd.m_bKillTree)
-            {
-                gd.RestartTreeTimer();
-            }
-            else
-            {
-                List<SDL_ListViewItem> listLVvolItems = new List<SDL_ListViewItem>();
-
-                foreach (SDL_ListViewItem lvItem in lvSelect)
-                {
-                    if (lvItem.Tag == null)
-                    {
-                        // scenario: unsaved file
-                        continue;
-                    }
-
-                    listLVvolItems.Add(lvItem);
-                    SDLWPF.treeViewMain.Nodes.Remove((SDL_TreeNode)lvItem.Tag);
-                }
-
-                new Thread(new ThreadStart(() =>
-                {
-                    foreach (SDL_ListViewItem lvItem in listLVvolItems)
-                    {
-                        SDL_TreeNode rootNode = (SDL_TreeNode)lvItem.Tag;
-
-                        gd.RemoveCorrelation(rootNode);
-                        gd.m_listRootNodes.Remove(rootNode);
-                    }
-
-                    Invoke(new Action(() =>
-                    {
-                        gd.RestartTreeTimer();
-                    }));
-                }))
-                .Start();
-            }
-
-            foreach (SDL_ListViewItem lvItem in lvSelect)
-            {
-                lvItem.Remove();
-            }
-
-            EnableButtonsWhenVolsSel();
-            form_btnSaveDirList.Enabled = (form_lvVolumesMain.Items.Count > 0);
-        }
-
-        internal void form_btnSaveAs_Click(object sender = null, EventArgs e = null)
-        {
-            SDL_File.Init();
-            SDL_File.SFD.Filter = SDL_File.FileAndDirListFileFilter + "|" + SDL_File.BaseFilter;
-
-            if (false == string.IsNullOrWhiteSpace(gd.m_strSaveAs))
-            {
-                SDL_File.SFD.InitialDirectory = Path.GetDirectoryName(gd.m_strSaveAs);
-            }
-
-            if (SDL_File.SFD.ShowDialog() == DialogResult.OK)
-            {
-                gd.ComboBoxItemsInsert(form_cbSaveAs);
-                gd.m_strSaveAs = form_cbSaveAs.Text = SDL_File.SFD.FileName;
-
-                if (File.Exists(gd.m_strSaveAs))
-                {
-                    form_cbVolumeName.Text = null;
-                    form_cbPath.Text = null;
-                }
-            }
-        }
-
         void form_btnSaveCopyDirs_Click(object sender, EventArgs e)
         {
             if (form_lvCopyScratchpad.Items.Count > 0)
@@ -1182,24 +629,6 @@ namespace SearchDirLists
             }
         }
 
-        void form_btnSaveDirLists_Click(object sender, EventArgs e)
-        {
-            bool bRestartTreeTimer = gd.timer_DoTree.IsEnabled;
-
-            gd.timer_DoTree.Stop();
-
-            if ((gd.DoSaveDirListings(form_lvVolumesMain.Items, SaveDirListingsStatusCallback, SaveDirListingsDoneCallback)
-                == false) && bRestartTreeTimer)   // cancelled
-            {
-                gd.RestartTreeTimer();
-            }
-        }
-
-        void form_btnSaveDirLists_EnabledChanged(object sender, EventArgs e)
-        {
-            form_btnSaveVolumeList.Enabled = form_btnSaveDirList.Enabled;
-        }
-
         void form_btnSaveIgnoreList_Click(object sender, EventArgs e)
         {
             if (form_lvIgnoreList.Items.Count > 0)
@@ -1209,19 +638,6 @@ namespace SearchDirLists
             else
             {
                 gd.m_blinky.Go(ctl: form_btnSaveIgnoreList, clr: Color.Red, Once: true);
-            }
-        }
-
-        internal void form_btnSaveVolumeList_Click(object sender = null, EventArgs e = null)
-        {
-            if (form_lvVolumesMain.Items.Count > 0)
-            {
-                new SDL_VolumeFile().WriteList(form_lvVolumesMain.Items);
-            }
-            else
-            {
-                gd.m_blinky.Go(ctl: form_btnSaveVolumeList, clr: Color.Red, Once: true);
-                Utilities.Assert(1308.9314, false, bTraceOnly: true);    // shouldn't even be hit: this button gets dimmed
             }
         }
 
@@ -1253,21 +669,6 @@ namespace SearchDirLists
             }
         }
 
-        internal void form_btnToggleInclude_Click(object sender = null, EventArgs e = null)
-        {
-            ListView.SelectedListViewItemCollection lvSelect = form_lvVolumesMain.SelectedItems;
-
-            if (lvSelect.Count > 0)
-            {
-                foreach (SDL_ListViewItem lvItem in lvSelect)
-                {
-                    lvItem.SubItems[4].Text = ((lvItem.SubItems[4].Text != "Yes") ? "Yes" : "No");
-                }
-
-                gd.RestartTreeTimer();
-            }
-        }
-
         void form_btnTreeCollapse_Click(object sender, EventArgs e)
         {
             if (gd.m_bCompareMode)
@@ -1282,11 +683,11 @@ namespace SearchDirLists
 
         void form_btnUp_Click(object sender, EventArgs e)
         {
-            SDL_TreeNode treeNode = (SDL_TreeNode)SDLWPF.treeViewMain.SelectedNode;
+            TreeNode treeNode = (TreeNode)SDLWPF.treeViewMain.SelectedNode;
 
             if (gd.m_bCompareMode)
             {
-                treeNode = (SDL_TreeNode)((gd.m_treeCopyToClipboard != null) ? gd.m_treeCopyToClipboard : SDLWPF.treeViewCompare1).SelectedNode;
+                treeNode = (TreeNode)((gd.m_treeCopyToClipboard != null) ? gd.m_treeCopyToClipboard : SDLWPF.treeViewCompare1).SelectedNode;
             }
 
             if (treeNode != null)
@@ -1296,7 +697,7 @@ namespace SearchDirLists
 
                 if (treeNode.Parent != null)
                 {
-                    if (((SDL_TreeNode)treeNode.Parent).Parent == null)
+                    if (((TreeNode)treeNode.Parent).Parent == null)
                     {
                         ((RootNodeDatum)treeNode.Parent.Tag).VolumeView = false;
                     }
@@ -1323,79 +724,6 @@ namespace SearchDirLists
             {
                 gd.m_blinky.Go(form_btnUp, clr: Color.Red, Once: true);
             }
-        }
-
-        internal void form_btnVolGroup_Click(object sender = null, EventArgs e = null)
-        {
-            gd.m_bKillTree &= gd.timer_DoTree.IsEnabled;
-
-            gd.InterruptTreeTimerWithAction(new BoolAction(() =>
-            {
-                ListView.SelectedListViewItemCollection lvSelect = form_lvVolumesMain.SelectedItems;
-
-                if (lvSelect.Count <= 0)
-                {
-                    return false;
-                }
-
-                InputBox inputBox = new InputBox();
-
-                inputBox.Text = "Volume Group";
-                inputBox.Prompt = "Enter a volume group name";
-
-                if (form_lvVolumesMain.SelectedItems[0].SubItems.Count > 5)
-                {
-                    inputBox.Entry = form_lvVolumesMain.SelectedItems[0].SubItems[5].Text;
-                }
-
-                SortedDictionary<string, object> dictVolGroups = new SortedDictionary<string, object>();
-
-                foreach (SDL_ListViewItem lvItem in form_lvVolumesMain.Items)
-                {
-                    if (lvItem.SubItems.Count <= 5)
-                    {
-                        continue;
-                    }
-
-                    string strVolGroup = lvItem.SubItems[5].Text;
-
-                    if (dictVolGroups.ContainsKey(strVolGroup) == false)
-                    {
-                        dictVolGroups.Add(strVolGroup, null);
-                    }
-                }
-
-                foreach (KeyValuePair<string, object> entry in dictVolGroups)
-                {
-                    inputBox.AddSelector(entry.Key);
-                }
-
-                if (inputBox.ShowDialog() != DialogResult.OK)
-                {
-                    return false;
-                }
-
-                foreach (SDL_ListViewItem lvItem in lvSelect)
-                {
-                    while (lvItem.SubItems.Count <= 5)
-                    {
-                        lvItem.SubItems.Add(new SDL_ListViewSubitem());
-                    }
-
-                    lvItem.SubItems[5].Text = inputBox.Entry;
-
-                    if (lvItem.Tag == null)
-                    {
-                        gd.m_bKillTree = true;
-                    }
-                    else if (gd.m_bKillTree == false)
-                    {
-                        ((RootNodeDatum)((SDL_TreeNode)lvItem.Tag).Tag).StrVolumeGroup = inputBox.Entry;
-                    }
-                }
-
-                return true;
-            }));
         }
 
         void form_cbFindbox_DropDown(object sender, EventArgs e)
@@ -1462,33 +790,6 @@ namespace SearchDirLists
             gd.m_bSearchResultsType2_List = false;
         }
 
-        void form_cb_Path_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            gd.ComboBoxItemsInsert(form_cbPath, gd.m_strPath);
-            gd.m_strPath = form_cbPath.Text;
-        }
-
-        void form_cbSaveAs_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (new Keys[] { Keys.Enter, Keys.Return }.Contains((Keys)e.KeyChar))
-            {
-                form_btnAddVolume_Click();
-                e.Handled = true;
-            }
-        }
-
-        void form_cb_SaveAs_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            gd.ComboBoxItemsInsert(form_cbSaveAs, gd.m_strSaveAs);
-            gd.m_strSaveAs = form_cbSaveAs.Text;
-        }
-
-        void form_cb_VolumeName_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            gd.ComboBoxItemsInsert(form_cbVolumeName, gd.m_strPath);
-            gd.m_strPath = form_cbVolumeName.Text;
-        }
-
         void form_chk_Compare1_CheckedChanged(object sender, EventArgs e)
         {
             if (gd.m_bChkCompare1IndirectCheckChange)
@@ -1533,7 +834,7 @@ namespace SearchDirLists
             }
             else if (form_chkCompare1.Checked)
             {
-                gd.m_nodeCompare1 = (SDL_TreeNode)SDLWPF.treeViewMain.SelectedNode;
+                gd.m_nodeCompare1 = (TreeNode)SDLWPF.treeViewMain.SelectedNode;
 
                 if (gd.m_nodeCompare1 != null)
                 {
@@ -1716,7 +1017,7 @@ namespace SearchDirLists
                 return;
             }
 
-            form_cbFindbox.Text = GlobalData.FullPath((SDL_TreeNode)gd.m_treeCopyToClipboard.SelectedNode);
+            form_cbFindbox.Text = GlobalData.FullPath((TreeNode)gd.m_treeCopyToClipboard.SelectedNode);
         }
 
         void form_lvTreeNodes_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -1777,13 +1078,13 @@ namespace SearchDirLists
 
                     sortOrder = SortOrder.None;
 
-                    if (listItems[0].Tag is UList<SDL_TreeNode>)
+                    if (listItems[0].Tag is UList<TreeNode>)
                     {
-                        listItems.Sort((y, x) => ((NodeDatum)((UList<SDL_TreeNode>)x.Tag)[0].Tag).nTotalLength.CompareTo(((NodeDatum)((UList<SDL_TreeNode>)y.Tag)[0].Tag).nTotalLength));
+                        listItems.Sort((y, x) => ((NodeDatum)((UList<TreeNode>)x.Tag)[0].Tag).nTotalLength.CompareTo(((NodeDatum)((UList<TreeNode>)y.Tag)[0].Tag).nTotalLength));
                     }
                     else
                     {
-                        listItems.Sort((y, x) => ((NodeDatum)((SDL_TreeNode)x.Tag).Tag).nTotalLength.CompareTo(((NodeDatum)((SDL_TreeNode)y.Tag).Tag).nTotalLength));
+                        listItems.Sort((y, x) => ((NodeDatum)((TreeNode)x.Tag).Tag).nTotalLength.CompareTo(((NodeDatum)((TreeNode)y.Tag).Tag).nTotalLength));
                     }
 
                     Collate.InsertSizeMarkers(listItems);
@@ -1816,15 +1117,6 @@ namespace SearchDirLists
             gd.LV_MarkerClick(form_lvUnique);
         }
 
-        void form_lvVolumesMain_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (new Keys[] { Keys.Back, Keys.Delete }.Contains(e.KeyCode))
-            {
-                form_btnRemoveVolume.PerformClick();
-                e.Handled = true;
-            }
-        }
-
         void form_tmapUserCtl_Leave(object sender, EventArgs e)
         {
             //if (Form.ActiveForm == null)
@@ -1849,7 +1141,7 @@ namespace SearchDirLists
 
             gd.m_btmapUserCtl_MouseDown = false;
 
-            SDL_TreeNode treeNode = form_tmapUserCtl.DoToolTip(e.Location);
+            TreeNode treeNode = form_tmapUserCtl.DoToolTip(e.Location);
 
             if (treeNode == null)
             {
@@ -1869,12 +1161,12 @@ namespace SearchDirLists
             }
 
             form_SetCopyToClipboardTree(sender);
-            form_cbFindbox.Text = GlobalData.FullPath((SDL_TreeNode)((TreeView)sender).SelectedNode);
+            form_cbFindbox.Text = GlobalData.FullPath((TreeNode)((TreeView)sender).SelectedNode);
         }
 
         void form_treeViewBrowse_AfterCheck(object sender, TreeViewEventArgs e)
         {
-            string strPath = GlobalData.FullPath((SDL_TreeNode)e.Node);
+            string strPath = GlobalData.FullPath((TreeNode)e.Node);
 
             if (e.Node.Checked)
             {
@@ -1913,9 +1205,9 @@ namespace SearchDirLists
 
                 Utilities.Assert(1308.9319, gd.m_nIxHistory == (gd.m_listHistory.Count - 1));
 
-                if ((gd.m_nIxHistory < 0) || (gd.History_Equals((SDL_TreeNode)e.Node) == false))
+                if ((gd.m_nIxHistory < 0) || (gd.History_Equals((TreeNode)e.Node) == false))
                 {
-                    gd.History_Add((SDL_TreeNode)e.Node);
+                    gd.History_Add((TreeNode)e.Node);
                     ++gd.m_nIxHistory;
                 }
             }
@@ -1928,7 +1220,7 @@ namespace SearchDirLists
             }
 
             gd.m_bTreeViewIndirectSelChange = false;
-            form_tmapUserCtl.Render((SDL_TreeNode)e.Node);
+            form_tmapUserCtl.Render((TreeNode)e.Node);
 
             if (sender == SDLWPF.treeViewCompare2)
             {
@@ -1947,10 +1239,10 @@ namespace SearchDirLists
                 }
             }
 
-            SDL_TreeNode rootNode = ((SDL_TreeNode)e.Node).Root();
+            TreeNode rootNode = ((TreeNode)e.Node).Root();
 
             Utilities.Assert(1308.9322, (new object[] { SDLWPF.treeViewCompare1, SDLWPF.treeViewCompare2 }.Contains(sender)) == gd.m_bCompareMode);
-            gd.DoTreeSelect((SDL_TreeNode)e.Node, TreeSelectStatusCallback, TreeSelectDoneCallback);
+            gd.DoTreeSelect((TreeNode)e.Node, TreeSelectStatusCallback, TreeSelectDoneCallback);
 
             string strNode = e.Node.Text;
 
@@ -1976,7 +1268,7 @@ namespace SearchDirLists
                     form_colDirDetail.Text = form_colFilename.Text = strDirAndVolume;
                 }
 
-                form_cbFindbox.Text = GlobalData.FullPath((SDL_TreeNode)e.Node);
+                form_cbFindbox.Text = GlobalData.FullPath((TreeNode)e.Node);
                 return;
             }
 
@@ -1989,7 +1281,7 @@ namespace SearchDirLists
             if (gd.m_bPutPathInFindEditBox)
             {
                 gd.m_bPutPathInFindEditBox = false;
-                form_cbFindbox.Text = GlobalData.FullPath((SDL_TreeNode)e.Node);
+                form_cbFindbox.Text = GlobalData.FullPath((TreeNode)e.Node);
             }
 
             NodeDatum nodeDatum = (NodeDatum)e.Node.Tag;
@@ -2164,7 +1456,6 @@ namespace SearchDirLists
 
         void Form1_Load(object sender, EventArgs e)
         {
-            new VolumeEdit().ShowDialog();
             form_tmapUserCtl.TooltipAnchor = (Control)form_cbFindbox;
 
 #if (DEBUG)
@@ -2261,40 +1552,6 @@ namespace SearchDirLists
             gd.m_bRestartTreeTimer = false;
         }
 
-        private void form_btnDriveSerial_Click(object sender, EventArgs e)
-        {
-            string strModel = null;
-            string strSerialNo = null;
-            int? nSize = null;
-
-            DriveSerial.Get(form_cbPath.Text, out strModel, out strSerialNo, out nSize);
-
-            form_cbDriveModel.Text = strModel;
-            form_cbDriveSerial.Text = strSerialNo;
-        }
-
-        private void form_cbPath_TextChanged(object sender, EventArgs e)
-        {
-            string str = form_cbPath.Text.Trim();
-
-            form_btnDriveSerial.Enabled = ((str.Length > 1) && (str[1] == ':'));
-        }
-
-        private void form_lvVolumesMain_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            EnableButtonsWhenVolsSel();
-
-            if (form_lvVolumesMain.SelectedItems.Count <= 0)
-            {
-                return;
-            }
-
-            ListViewItem lvItem = form_lvVolumesMain.SelectedItems[0];
-
-            form_cbVolumeName.Text = lvItem.Text;
-            form_cbPath.Text = lvItem.SubItems[1].Text;
-            form_cbSaveAs.Text = lvItem.SubItems[2].Text;
-        }
     }
 
     partial class GlobalData : Utilities
@@ -2318,11 +1575,11 @@ namespace SearchDirLists
         }
 #endif
         internal SDL_TreeView m_treeCopyToClipboard = null;
-        internal SDL_TreeNode m_nodeCompare1 = null;
-        internal readonly Dictionary<SDL_TreeNode, SDL_TreeNode> m_dictCompareDiffs = new Dictionary<SDL_TreeNode, SDL_TreeNode>();
-        internal readonly UList<SDL_TreeNode> m_listTreeNodes_Compare1 = new UList<SDL_TreeNode>();
-        internal readonly UList<SDL_TreeNode> m_listTreeNodes_Compare2 = new UList<SDL_TreeNode>();
-        internal readonly List<SDL_TreeNode> m_listHistory = new List<SDL_TreeNode>();
+        internal TreeNode m_nodeCompare1 = null;
+        internal readonly Dictionary<TreeNode, TreeNode> m_dictCompareDiffs = new Dictionary<TreeNode, TreeNode>();
+        internal readonly UList<TreeNode> m_listTreeNodes_Compare1 = new UList<TreeNode>();
+        internal readonly UList<TreeNode> m_listTreeNodes_Compare2 = new UList<TreeNode>();
+        internal readonly List<TreeNode> m_listHistory = new List<TreeNode>();
         internal int m_nIxHistory = -1;
 
         static GlobalData static_instance = null;
@@ -2412,15 +1669,15 @@ namespace SearchDirLists
             comboBox.Items.Insert(0, strText);
         }
 
-        internal bool Compare(SDL_TreeNode t1, SDL_TreeNode t2, bool bReverse = false, ulong nMin10M = (10 * 1024 - 100) * 1024, ulong nMin100K = 100 * 1024)
+        internal bool Compare(TreeNode t1, TreeNode t2, bool bReverse = false, ulong nMin10M = (10 * 1024 - 100) * 1024, ulong nMin100K = 100 * 1024)
         {
             bool bRet = true;
 
-            foreach (SDL_TreeNode s1 in t1.Nodes)
+            foreach (TreeNode s1 in t1.Nodes)
             {
                 bool bCompare = true;
                 bool bCompareSub = true;
-                SDL_TreeNode s2 = null;
+                TreeNode s2 = null;
                 NodeDatum n1 = (NodeDatum)s1.Tag;
 
                 if (n1.nTotalLength <= (nMin10M + nMin100K))
@@ -2429,7 +1686,7 @@ namespace SearchDirLists
                 }
                 else if (t2.Nodes.ContainsKey(s1.Name))
                 {
-                    s2 = (SDL_TreeNode)t2.Nodes[s1.Name];
+                    s2 = (TreeNode)t2.Nodes[s1.Name];
 
                     if (Compare(s1, s2, bReverse, nMin10M, nMin100K) == false)
                     {
@@ -2451,8 +1708,8 @@ namespace SearchDirLists
 
                 if (bCompare == false)
                 {
-                    SDL_TreeNode r1 = bReverse ? s2 : s1;
-                    SDL_TreeNode r2 = bReverse ? s1 : s2;
+                    TreeNode r1 = bReverse ? s2 : s1;
+                    TreeNode r2 = bReverse ? s1 : s2;
 
                     if ((r1 != null) && (m_dictCompareDiffs.ContainsKey(r1) == false))
                     {
@@ -2460,7 +1717,7 @@ namespace SearchDirLists
                     }
                     else if (m_dictCompareDiffs.ContainsValue(r2) == false)
                     {
-                        m_dictCompareDiffs.Add(new SDL_TreeNode(), r2);
+                        m_dictCompareDiffs.Add(new TreeNode(), r2);
                     }
                 }
 
@@ -2480,7 +1737,7 @@ namespace SearchDirLists
 
             if ((nIxHistory >= 0) && (m_listHistory.Count > 0) && (nIxHistory <= (m_listHistory.Count - 1)))
             {
-                SDL_TreeNode treeNode = History_GetAt(nIxHistory);
+                TreeNode treeNode = History_GetAt(nIxHistory);
 
                 if (treeNode.TreeView.SelectedNode == treeNode)
                 {
@@ -2511,7 +1768,7 @@ namespace SearchDirLists
             m_blinky.Go(control, clr: Drawing.Color.Red, Once: true);
         }
 
-        internal static string FullPath(SDL_TreeNode treeNode)
+        internal static string FullPath(TreeNode treeNode)
         {
             if (treeNode == null)
             {
@@ -2519,7 +1776,7 @@ namespace SearchDirLists
             }
 
             StringBuilder sbFullPath = null;
-            SDL_TreeNode parentNode = (SDL_TreeNode)treeNode.Parent;
+            TreeNode parentNode = (TreeNode)treeNode.Parent;
 
             if (parentNode == null)
             {
@@ -2534,7 +1791,7 @@ namespace SearchDirLists
             {
                 sbFullPath.Insert(0, '\\');
                 sbFullPath.Insert(0, parentNode.Text.TrimEnd('\\'));
-                parentNode = (SDL_TreeNode)parentNode.Parent;
+                parentNode = (TreeNode)parentNode.Parent;
             }
 
             if ((parentNode != null) && (parentNode.Parent == null))
@@ -2546,13 +1803,13 @@ namespace SearchDirLists
             return sbFullPath.ToString().Replace(@"\\", @"\");
         }
 
-        internal SDL_TreeNode History_GetAt(int n)
+        internal TreeNode History_GetAt(int n)
         {
-            SDL_TreeNode treeNode = m_listHistory[n];
+            TreeNode treeNode = m_listHistory[n];
 
-            if (treeNode.Tag is SDL_TreeNode)
+            if (treeNode.Tag is TreeNode)
             {
-                SDL_TreeNode treeNode_A = (SDL_TreeNode)treeNode.Tag;
+                TreeNode treeNode_A = (TreeNode)treeNode.Tag;
 
                 ((RootNodeDatum)treeNode_A.Tag).VolumeView = treeNode.Checked;
                 return treeNode_A;
@@ -2563,13 +1820,13 @@ namespace SearchDirLists
             }
         }
 
-        internal bool History_Equals(SDL_TreeNode treeNode)
+        internal bool History_Equals(TreeNode treeNode)
         {
             if (treeNode.Tag is RootNodeDatum)
             {
-                SDL_TreeNode treeNode_A = (SDL_TreeNode)m_listHistory[m_listHistory.Count - 1];
+                TreeNode treeNode_A = (TreeNode)m_listHistory[m_listHistory.Count - 1];
 
-                if ((treeNode_A.Tag is SDL_TreeNode) == false)
+                if ((treeNode_A.Tag is TreeNode) == false)
                 {
                     return false;
                 }
@@ -2587,7 +1844,7 @@ namespace SearchDirLists
             }
         }
 
-        internal void History_Add(SDL_TreeNode treeNode)
+        internal void History_Add(TreeNode treeNode)
         {
             if (treeNode.TreeView == null)
             {
@@ -2596,7 +1853,7 @@ namespace SearchDirLists
 
             if (treeNode.Tag is RootNodeDatum)
             {
-                SDL_TreeNode treeNode_A = new SDL_TreeNode();   // checked means VolumeView mode and necessitates History_Add() etc.
+                TreeNode treeNode_A = new TreeNode();   // checked means VolumeView mode and necessitates History_Add() etc.
 
                 treeNode_A.Checked = ((RootNodeDatum)treeNode.Tag).VolumeView;
                 treeNode_A.Tag = treeNode;
@@ -2678,13 +1935,13 @@ namespace SearchDirLists
             return (((ListViewItem)lv.SelectedItems[0]).Tag != null);
         }
 
-        internal void NameNodes(SDL_TreeNode treeNode, UList<SDL_TreeNode> listTreeNodes)
+        internal void NameNodes(TreeNode treeNode, UList<TreeNode> listTreeNodes)
         {
             treeNode.Name = treeNode.Text;
             treeNode.ForeColor = Drawing.Color.Empty;
             listTreeNodes.Add(treeNode);
 
-            foreach (SDL_TreeNode subNode in treeNode.Nodes)
+            foreach (TreeNode subNode in treeNode.Nodes)
             {
                 NameNodes(subNode, listTreeNodes);
             }
@@ -2730,15 +1987,15 @@ namespace SearchDirLists
             timer_DoTree.Start();
         }
 
-        internal void RemoveCorrelation(SDL_TreeNode treeNode_in, bool bContinue = false)
+        internal void RemoveCorrelation(TreeNode treeNode_in, bool bContinue = false)
         {
-            SDL_TreeNode treeNode = treeNode_in;
+            TreeNode treeNode = treeNode_in;
 
             do
             {
                 if ((treeNode.Nodes != null) && (treeNode.Nodes.Count > 0))
                 {
-                    RemoveCorrelation((SDL_TreeNode)treeNode.Nodes[0], bContinue: true);
+                    RemoveCorrelation((TreeNode)treeNode.Nodes[0], bContinue: true);
                 }
 
                 if (m_listTreeNodes.Contains(treeNode))
@@ -2758,7 +2015,7 @@ namespace SearchDirLists
                     continue;
                 }
 
-                UList<SDL_TreeNode> listClones = m_dictNodes[nodeDatum.Key];
+                UList<TreeNode> listClones = m_dictNodes[nodeDatum.Key];
 
                 if (listClones.Contains(treeNode))
                 {
@@ -2770,7 +2027,7 @@ namespace SearchDirLists
                     }
                 }
             }
-            while (bContinue && ((treeNode = (SDL_TreeNode)treeNode.NextNode) != null));
+            while (bContinue && ((treeNode = (TreeNode)treeNode.NextNode) != null));
         }
     }
 }

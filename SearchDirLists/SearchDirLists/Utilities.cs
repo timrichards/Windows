@@ -58,8 +58,8 @@ namespace SearchDirLists
         internal void Select() { }
 
         readonly internal SDL_TreeNodeCollection Nodes = null;
-        internal SDL_TreeNode SelectedNode = null;
-        internal SDL_TreeNode TopNode = null;
+        internal TreeNode SelectedNode = null;
+        internal TreeNode TopNode = null;
         internal Drawing.Font Font = null;
         internal bool CheckBoxes = false;
         internal bool Enabled = false;
@@ -68,7 +68,7 @@ namespace SearchDirLists
         {
             int nRet = 0;
 
-            foreach (SDL_TreeNode treeNode in nodes)
+            foreach (TreeNode treeNode in nodes)
             {
                 nRet += CountSubnodes(treeNode.Nodes);
                 ++nRet;
@@ -78,16 +78,16 @@ namespace SearchDirLists
         }
     }
 
-    class SDL_TreeNodeCollection : UList<SDL_TreeNode>
+    class SDL_TreeNodeCollection : UList<TreeNode>
     {
         internal SDL_TreeNodeCollection(SDL_TreeView treeView)
         {
             m_treeView = treeView;
         }
 
-        internal void AddRange(SDL_TreeNode[] arrNodes)
+        internal void AddRange(TreeNode[] arrNodes)
         {
-            foreach (SDL_TreeNode treeNode in arrNodes)
+            foreach (TreeNode treeNode in arrNodes)
             {
                 Add(treeNode);
             }
@@ -110,7 +110,7 @@ namespace SearchDirLists
             return (nodePrevQuery != null);
         }
 
-        internal SDL_TreeNode this[string s]
+        internal TreeNode this[string s]
         {
             get
             {
@@ -121,7 +121,7 @@ namespace SearchDirLists
                 else
                 {
                     strPrevQuery = s;
-                    nodePrevQuery = (SDL_TreeNode)Keys.Where(t => t.Text == s);
+                    nodePrevQuery = (TreeNode)Keys.Where(t => t.Text == s);
                     return nodePrevQuery;                   // TODO: Trim? ignore case? Probably neither.
                 }
             }
@@ -129,7 +129,7 @@ namespace SearchDirLists
 
         internal new void Clear()
         {
-            foreach (SDL_TreeNode treeNode in this)
+            foreach (TreeNode treeNode in this)
             {
                 treeNode.DetachFromTree();
             }
@@ -137,16 +137,16 @@ namespace SearchDirLists
             base.Clear();
         }
 
-        static void SetLevel(SDL_TreeView treeView, SDL_TreeNodeCollection nodes, SDL_TreeNode nodeParent = null, int nLevel = 0)
+        static void SetLevel(SDL_TreeView treeView, SDL_TreeNodeCollection nodes, TreeNode nodeParent = null, int nLevel = 0)
         {
-            SDL_TreeNode nodePrev = null;
+            TreeNode nodePrev = null;
 
             if ((nodeParent != null) && (nodes.Count > 0))
             {
                 nodeParent.FirstNode = nodes[0];
             }
 
-            foreach (SDL_TreeNode treeNode in nodes)
+            foreach (TreeNode treeNode in nodes)
             {
                 if (nodePrev != null)
                 {
@@ -166,26 +166,26 @@ namespace SearchDirLists
 
         readonly SDL_TreeView m_treeView = null;
         string strPrevQuery = null;
-        SDL_TreeNode nodePrevQuery = null;
+        TreeNode nodePrevQuery = null;
     }
 
-    class SDL_TreeNode
+    class TreeNode
     {
         internal TreeViewItemVM TVIVM = null;
         internal ListViewItemVM LVIVM = null;
 
-        internal SDL_TreeNode()
+        internal TreeNode()
         {
             Nodes = new SDL_TreeNodeCollection(TreeView);
         }
 
-        internal SDL_TreeNode(string strContent)
+        internal TreeNode(string strContent)
             : this()
         {
             Text = strContent;
         }
 
-        internal SDL_TreeNode(string strContent, SDL_TreeNode[] arrNodes)
+        internal TreeNode(string strContent, TreeNode[] arrNodes)
             : this(strContent)
         {
             Nodes.AddRange(arrNodes);
@@ -200,8 +200,8 @@ namespace SearchDirLists
                     return m_strFullPath;
                 }
 
-                Stack<SDL_TreeNode> stack = new Stack<SDL_TreeNode>(8);
-                SDL_TreeNode nodeParent = Parent;
+                Stack<TreeNode> stack = new Stack<TreeNode>(8);
+                TreeNode nodeParent = Parent;
 
                 while (nodeParent != null)
                 {
@@ -230,7 +230,7 @@ namespace SearchDirLists
             Level = -1;
             m_strFullPath = null;
 
-            foreach (SDL_TreeNode treeNode in Nodes)
+            foreach (TreeNode treeNode in Nodes)
             {
                 treeNode.DetachFromTree();
             }
@@ -243,9 +243,9 @@ namespace SearchDirLists
         internal string ToolTipText = null;
         internal string Name = null;
         internal SDL_TreeView TreeView = null;
-        internal SDL_TreeNode FirstNode = null;
-        internal SDL_TreeNode NextNode = null;
-        internal SDL_TreeNode Parent = null;
+        internal TreeNode FirstNode = null;
+        internal TreeNode NextNode = null;
+        internal TreeNode Parent = null;
         internal int Level = -1;
         internal bool Checked = false;
         internal int SelectedImageIndex = -1;
@@ -435,16 +435,6 @@ namespace SearchDirLists
         }
     }
 
-    class SDL_TreeNode : TreeNode
-    {
-        public SDL_TreeNode() : base() { }
-        internal SDL_TreeNode(string strContent) : base(strContent) { }
-        internal SDL_TreeNode(string strContent, SDL_TreeNode[] arrNodes) : base(strContent, arrNodes) { }
-
-        internal TreeViewItemVM TVIVM = null;
-        internal ListViewItemVM LVIVM = null;
-    }
-
     static class SDLWPF_Ext
     {
         internal static Drawing.Color GetBackColor(this Control ctl) { return ctl.BackColor; }
@@ -485,8 +475,8 @@ namespace SearchDirLists
         class NullHolder : Holder { }
         class TreeNodeHolder : Holder
         {
-            readonly SDL_TreeNode m_obj = null;
-            internal TreeNodeHolder(SDL_TreeNode obj) { m_obj = obj; m_bTreeSelect = true; }
+            readonly TreeNode m_obj = null;
+            internal TreeNodeHolder(TreeNode obj) { m_obj = obj; m_bTreeSelect = true; }
             internal override Drawing.Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
             internal override void ResetHolder() { m_bTreeSelect = false; m_obj.TreeView.SelectedNode = m_obj; }
         }
@@ -525,7 +515,7 @@ namespace SearchDirLists
             });
         }
 
-        internal void SelectTreeNode(SDL_TreeNode treeNode, bool Once = true)
+        internal void SelectTreeNode(TreeNode treeNode, bool Once = true)
         {
             Reset();
             m_holder = new TreeNodeHolder(treeNode);
@@ -661,14 +651,14 @@ namespace SearchDirLists
             FirstOnly(source, action);
         }
 
-        internal static bool IsChildOf(this SDL_TreeNode child, SDL_TreeNode treeNode)
+        internal static bool IsChildOf(this TreeNode child, TreeNode treeNode)
         {
             if (child.Level <= treeNode.Level)
             {
                 return false;
             }
 
-            SDL_TreeNode parentNode = (SDL_TreeNode)child.Parent;
+            TreeNode parentNode = (TreeNode)child.Parent;
 
             while (parentNode != null)
             {
@@ -677,19 +667,19 @@ namespace SearchDirLists
                     return true;
                 }
 
-                parentNode = (SDL_TreeNode)parentNode.Parent;
+                parentNode = (TreeNode)parentNode.Parent;
             }
 
             return false;
         }
 
-        internal static SDL_TreeNode Root(this SDL_TreeNode treeNode)
+        internal static TreeNode Root(this TreeNode treeNode)
         {
-            SDL_TreeNode nodeParent = treeNode;
+            TreeNode nodeParent = treeNode;
 
             while (nodeParent.Parent != null)
             {
-                nodeParent = (SDL_TreeNode)nodeParent.Parent;
+                nodeParent = (TreeNode)nodeParent.Parent;
             }
 
             return nodeParent;
@@ -772,16 +762,6 @@ namespace SearchDirLists
         internal string DriveSerial { get; private set; }
         internal int DriveSize { get; private set; }
 
-        internal LVvolStrings(VolumeLVitemVM lvItem)
-        {
-            VolumeName = lvItem.VolumeName;
-            StrPath = lvItem.Path;
-            SaveAs = lvItem.SaveAs;
-            Status = lvItem.Status;
-            Include = lvItem.IncludeStr;
-            VolumeGroup = lvItem.VolumeGroup;
-        }
-
         internal LVvolStrings(SDL_ListViewItem lvItem)
         {
             VolumeName = lvItem.SubItems[0].Text;
@@ -814,7 +794,7 @@ namespace SearchDirLists
                 Status = "Bad file. Will overwrite.";
         }
 
-        internal void SetStatus_Done(Forms.ListView lv, SDL_TreeNode rootNode)
+        internal void SetStatus_Done(Forms.ListView lv, TreeNode rootNode)
         {            
             m_lvItem.Tag = rootNode;
         }
@@ -879,19 +859,11 @@ namespace SearchDirLists
         }
 
         protected virtual void ReadListItem(ListView lv, string[] strArray) { lv.Items.Add(new SDL_ListViewItem(strArray)); }
-        protected virtual void ReadListItem(ListViewVM lv, string[] strArray) { lv.NewItem(strArray); }
 
-        internal bool ReadList(ListViewVM lv)
-#if (WPF)
-        {
-            int nCols = lv.NumCols;
-#else
-        { return false; }
         internal bool ReadList(Forms.ListView lv_in)
         {
             int nCols = lv_in.Columns.Count;
             ListView lv = new ListView();       // fake
-#endif
             if ((m_strFileNotDialog == null) && (ShowDialog(new Forms.OpenFileDialog()) == false))
             {
                 return false;
@@ -899,11 +871,7 @@ namespace SearchDirLists
 
             if (Keyboard.IsKeyDown(Key.LeftShift) == false)
             {
-#if (WPF)
-                lv
-#else
                 lv_in
-#endif
                 .Items.Clear();
             }
 
@@ -939,11 +907,7 @@ namespace SearchDirLists
 
         protected virtual string WriteListItem(int nIndex, string str) { return str; }
 
-        internal bool WriteList(IEnumerable<ListViewItemVM> lvItems)
-#if (WPF == false)
-        { return false; }
         internal bool WriteList(Forms.ListView.ListViewItemCollection lvItems)
-#endif
         {
             if (ShowDialog(SFD) == false)
             {
@@ -1402,11 +1366,11 @@ namespace SearchDirLists
             }
         }
 
-        internal static int CountNodes(List<SDL_TreeNode> listNodes)
+        internal static int CountNodes(List<TreeNode> listNodes)
         {
             int nCount = 0;
 
-            foreach (SDL_TreeNode treeNode in listNodes)
+            foreach (TreeNode treeNode in listNodes)
             {
                 nCount += CountNodes(treeNode, bNextNode: false);
             }
@@ -1414,21 +1378,21 @@ namespace SearchDirLists
             return nCount;
         }
 
-        internal static int CountNodes(SDL_TreeNode treeNode_in, bool bNextNode = true)
+        internal static int CountNodes(TreeNode treeNode_in, bool bNextNode = true)
         {
-            SDL_TreeNode treeNode = treeNode_in;
+            TreeNode treeNode = treeNode_in;
             int nCount = 0;
 
             do
             {
                 if ((treeNode.Nodes != null) && (treeNode.Nodes.Count > 0))
                 {
-                    nCount += CountNodes((SDL_TreeNode)treeNode.Nodes[0]);
+                    nCount += CountNodes((TreeNode)treeNode.Nodes[0]);
                 }
 
                 ++nCount;
             }
-            while (bNextNode && ((treeNode = (SDL_TreeNode)treeNode.NextNode) != null));
+            while (bNextNode && ((treeNode = (TreeNode)treeNode.NextNode) != null));
 
             return nCount;
         }

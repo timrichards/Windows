@@ -100,7 +100,7 @@ namespace SearchDirLists
             GC.Collect();
 
             int nNodeCount = SDLWPF.treeViewMain.GetNodeCount(includeSubTrees: true);
-            int nNodeCount_A = Utilities.CountNodes((SDL_TreeNode)SDLWPF.treeViewMain.Nodes[0]);
+            int nNodeCount_A = Utilities.CountNodes((TreeNode)SDLWPF.treeViewMain.Nodes[0]);
 
             Utilities.Assert(1304.5307, Utilities.CountNodes(gd.m_listRootNodes) == nNodeCount);
             Utilities.Assert(1304.5308, gd.m_listTreeNodes.Count == nNodeCount);
@@ -111,7 +111,7 @@ namespace SearchDirLists
             }
         }
 
-        internal void TreeStatusCallback(LVvolStrings volStrings, SDL_TreeNode rootNode = null, bool bError = false)
+        internal void TreeStatusCallback(LVvolStrings volStrings, TreeNode rootNode = null, bool bError = false)
         {
             if (GlobalData.AppExit || (gd.m_tree == null) || (gd.m_tree.IsAborted))
             {
@@ -123,14 +123,14 @@ namespace SearchDirLists
 
             if (bError)
             {
-                volStrings.SetStatus_BadFile(form_lvVolumesMain);
+        //        volStrings.SetStatus_BadFile(form_lvVolumesMain);
             }
             else if (rootNode != null)
             {
                 lock (SDLWPF.treeViewMain)
                 {
                     SDLWPF.treeViewMain.Nodes.Add(rootNode.Text);    // items added to show progress
-                    volStrings.SetStatus_Done(form_lvVolumesMain, rootNode);
+       //             volStrings.SetStatus_Done(form_lvVolumesMain, rootNode);
                 }
 
                 lock (gd.m_listRootNodes)
@@ -224,8 +224,8 @@ namespace SearchDirLists
 
             Utilities.Write("B");
 
-            SDL_TreeNode treeNode1 = (SDL_TreeNode)t1.SelectedNode;
-            SDL_TreeNode treeNode2 = (SDL_TreeNode)t2.SelectedNode;
+            TreeNode treeNode1 = (TreeNode)t1.SelectedNode;
+            TreeNode treeNode2 = (TreeNode)t2.SelectedNode;
 
             if (treeNode2 == null)
             {
@@ -341,12 +341,12 @@ namespace SearchDirLists
                 form_colDirDetail.Text = gd.m_strColDirDetailOrig;
                 form_colVolDetail.Text = gd.m_strColVolDetailOrig;
 
-                if (form_lvVolumesMain.Items.Count <= 0)
-                {
-                    return;
-                }
+                //if (form_lvVolumesMain.Items.Count <= 0)
+                //{
+                //    return;
+                //}
 
-                SDL_TreeNode treeNode = new SDL_TreeNode("Creating treeview...        ");
+                TreeNode treeNode = new TreeNode("Creating treeview...        ");
 
                 treeNode.NodeFont = new Font(SDLWPF.treeViewMain.Font, FontStyle.Bold | FontStyle.Underline);
                 SDLWPF.treeViewMain.Nodes.Add(treeNode);
@@ -356,10 +356,10 @@ namespace SearchDirLists
 
                 UList<LVvolStrings> list_lvVolStrings = new UList<LVvolStrings>();
 
-                foreach (SDL_ListViewItem lvItem in form_lvVolumesMain.Items)
-                {
-                    list_lvVolStrings.Add(new LVvolStrings(lvItem));
-                }
+                //foreach (SDL_ListViewItem lvItem in form_lvVolumesMain.Items)
+                //{
+                //    list_lvVolStrings.Add(new LVvolStrings(lvItem));
+                //}
 
                 gd.m_tree = new Tree(list_lvVolStrings, gd.m_dictNodes, gd.m_dictDriveInfo,
                     new TreeStatusDelegate(TreeStatusCallback), new Action(TreeDoneCallback));
@@ -371,7 +371,7 @@ namespace SearchDirLists
 
                 Utilities.Assert(1304.5313, gd.m_listTreeNodes.Count == nNodeCount);
 
-                foreach (SDL_TreeNode treeNode in gd.m_listTreeNodes)
+                foreach (TreeNode treeNode in gd.m_listTreeNodes)
                 {
                     treeNode.ForeColor = Color.Empty;
                     treeNode.BackColor = Color.Empty;
@@ -400,7 +400,7 @@ namespace SearchDirLists
 
     partial class GlobalData
     {
-        internal readonly SortedDictionary<Correlate, UList<SDL_TreeNode>> m_dictNodes = new SortedDictionary<Correlate, UList<SDL_TreeNode>>();
+        internal readonly SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = new SortedDictionary<Correlate, UList<TreeNode>>();
         internal readonly Dictionary<string, string> m_dictDriveInfo = new Dictionary<string, string>();
         internal Tree m_tree = null;
         internal Thread m_threadCollate = null;
@@ -408,8 +408,8 @@ namespace SearchDirLists
         internal Thread m_threadSelectCompare = null;
 
         internal readonly List<SDL_ListViewItem> m_listLVignore = new List<SDL_ListViewItem>();
-        internal readonly UList<SDL_TreeNode> m_listTreeNodes = new UList<SDL_TreeNode>();
-        internal readonly List<SDL_TreeNode> m_listRootNodes = new List<SDL_TreeNode>();
+        internal readonly UList<TreeNode> m_listTreeNodes = new UList<TreeNode>();
+        internal readonly List<TreeNode> m_listRootNodes = new List<TreeNode>();
 
         internal void ClearMem_TreeForm()
         {
@@ -448,9 +448,9 @@ namespace SearchDirLists
             Collate.ClearMem();
         }
 
-        internal void DoTreeSelect(SDL_TreeNode treeNode, TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
+        internal void DoTreeSelect(TreeNode treeNode, TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
         {
-            SDL_TreeNode rootNode = treeNode.Root();
+            TreeNode rootNode = treeNode.Root();
             string strFile = ((RootNodeDatum)rootNode.Tag).StrFile;
             bool bSecondComparePane = (m_bCompareMode && rootNode.Checked);
             Thread threadKill = bSecondComparePane ? m_threadSelectCompare : m_threadSelect;

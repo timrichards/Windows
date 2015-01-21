@@ -48,7 +48,7 @@ namespace SearchDirLists
                                 continue;
                             }
 
-                            SDL_TreeNode treeNode = gd.GetNodeByPath(resultDir.StrDir, treeView);
+                            TreeNode treeNode = gd.GetNodeByPath(resultDir.StrDir, treeView);
 
                             if (treeNode == null)
                             {
@@ -76,7 +76,7 @@ namespace SearchDirLists
 
                                 gd.m_strSelectFile = strFile;
 
-                                SDL_TreeNode treeNode = gd.GetNodeByPath(resultDir.StrDir, treeView);
+                                TreeNode treeNode = gd.GetNodeByPath(resultDir.StrDir, treeView);
 
                                 if (treeNode == null)
                                 {
@@ -222,17 +222,17 @@ namespace SearchDirLists
 
             if (SDLWPF.treeViewMain.SelectedNode != null)
             {
-                strCurrentNode = GlobalData.FullPath((SDL_TreeNode)SDLWPF.treeViewMain.SelectedNode);
+                strCurrentNode = GlobalData.FullPath((TreeNode)SDLWPF.treeViewMain.SelectedNode);
             }
 
             Utilities.Assert(1307.8312, gd.m_searchType2 == null);
 
             UList<LVvolStrings> list_lvVolStrings = new UList<LVvolStrings>();
 
-            foreach (SDL_ListViewItem lvItem in form_lvVolumesMain.Items)
-            {
-                list_lvVolStrings.Add(new LVvolStrings(lvItem));
-            }
+            //foreach (SDL_ListViewItem lvItem in form_lvVolumesMain.Items)
+            //{
+            //    list_lvVolStrings.Add(new LVvolStrings(lvItem));
+            //}
 
             gd.m_searchType2 = new SearchType2(list_lvVolStrings, strSearch, strSearch.ToLower() != strSearch,
                 folderHandling, bSearchFilesOnly, strCurrentNode,
@@ -261,7 +261,7 @@ namespace SearchDirLists
             {
                 if (gd.m_nSearchResultsIndexer < 0)
                 {
-                    gd.SearchType1_FindNode(form_cbFindbox.Text, (SDL_TreeNode)treeView.SelectedNode, treeView);
+                    gd.SearchType1_FindNode(form_cbFindbox.Text, (TreeNode)treeView.SelectedNode, treeView);
                 }
 
                 if (gd.m_bSearchResultsType2_List)
@@ -272,7 +272,7 @@ namespace SearchDirLists
 
                 if ((gd.m_SearchResultsType1_Array != null) && (gd.m_SearchResultsType1_Array.Length > 0))
                 {
-                    SDL_TreeNode treeNode = gd.m_SearchResultsType1_Array[gd.m_nSearchResultsIndexer % gd.m_SearchResultsType1_Array.Length];
+                    TreeNode treeNode = gd.m_SearchResultsType1_Array[gd.m_nSearchResultsIndexer % gd.m_SearchResultsType1_Array.Length];
 
                     gd.m_bTreeViewIndirectSelChange = true;
                     gd.m_blinky.SelectTreeNode(treeNode);
@@ -289,7 +289,7 @@ namespace SearchDirLists
 
                     int nPos = form_cbFindbox.Text.LastIndexOf('\\');
                     string strMaybePath = form_cbFindbox.Text.Substring(0, nPos);
-                    SDL_TreeNode treeNode = gd.GetNodeByPath(strMaybePath, SDLWPF.treeViewMain);
+                    TreeNode treeNode = gd.GetNodeByPath(strMaybePath, SDLWPF.treeViewMain);
 
                     gd.m_strSelectFile = form_cbFindbox.Text.Substring(nPos + 1);
 
@@ -609,12 +609,12 @@ namespace SearchDirLists
 
     partial class GlobalData    // Get one node by path
     {
-        internal SDL_TreeNode GetNodeByPath(string path, SDL_TreeView treeView)
+        internal TreeNode GetNodeByPath(string path, SDL_TreeView treeView)
         {
             return GetNodeByPath_A(path, treeView) ?? GetNodeByPath_A(path, treeView, bIgnoreCase: true);
         }
 
-        internal SDL_TreeNode GetNodeByPath_A(string strPath, SDL_TreeView treeView, bool bIgnoreCase = false)
+        internal TreeNode GetNodeByPath_A(string strPath, SDL_TreeView treeView, bool bIgnoreCase = false)
         {
             if (string.IsNullOrWhiteSpace(strPath))
             {
@@ -626,11 +626,11 @@ namespace SearchDirLists
                 strPath = strPath.ToLower();
             }
 
-            SDL_TreeNode nodeRet = null;
+            TreeNode nodeRet = null;
 
             foreach (Object obj in treeView.Nodes)
             {
-                SDL_TreeNode topNode = (SDL_TreeNode)obj;
+                TreeNode topNode = (TreeNode)obj;
                 string[] arrPath = null;
                 int nPathLevelLength = 0;
                 int nLevel = 0;
@@ -673,7 +673,7 @@ namespace SearchDirLists
 
                 if (strNode == arrPath[nLevel])
                 {
-                    nodeRet = (SDL_TreeNode)topNode;
+                    nodeRet = (TreeNode)topNode;
                     nLevel++;
 
                     if ((nLevel < nPathLevelLength) && nodeRet != null)
@@ -691,9 +691,9 @@ namespace SearchDirLists
             return nodeRet;
         }
 
-        SDL_TreeNode GetSubNode(SDL_TreeNode node, string[] pathLevel, int i, int nPathLevelLength, bool bIgnoreCase)
+        TreeNode GetSubNode(TreeNode node, string[] pathLevel, int i, int nPathLevelLength, bool bIgnoreCase)
         {
-            foreach (SDL_TreeNode subNode in node.Nodes)
+            foreach (TreeNode subNode in node.Nodes)
             {
                 string strText = bIgnoreCase ? subNode.Text.ToLower() : subNode.Text;
 
@@ -718,7 +718,7 @@ namespace SearchDirLists
     {
         internal bool m_bSearchResultsType2_List = false;
         internal int m_nSearchResultsIndexer = -1;
-        internal SDL_TreeNode[] m_SearchResultsType1_Array = null;
+        internal TreeNode[] m_SearchResultsType1_Array = null;
         internal readonly List<SearchResults> m_SearchResultsType2_List = new List<SearchResults>();
 
         internal SearchType2 m_searchType2 = null;
@@ -779,7 +779,7 @@ namespace SearchDirLists
             }
         }
 
-        internal SDL_TreeNode SearchType1_FindNode(string strSearch, SDL_TreeNode startNode = null, SDL_TreeView treeView = null)
+        internal TreeNode SearchType1_FindNode(string strSearch, TreeNode startNode = null, SDL_TreeView treeView = null)
         {
             ClearMem_Search();
 
@@ -801,13 +801,13 @@ namespace SearchDirLists
                 treeView = SDLWPF.treeViewMain;
             }
 
-            SDL_TreeNode treeNode = GetNodeByPath(strSearch, treeView);
+            TreeNode treeNode = GetNodeByPath(strSearch, treeView);
 
             if (treeNode == null)
             {
                 // case sensitive only when user enters an uppercase character
 
-                List<SDL_TreeNode> listTreeNodes = m_listTreeNodes.ToList();
+                List<TreeNode> listTreeNodes = m_listTreeNodes.ToList();
 
                 if (m_bCompareMode)
                 {
@@ -825,7 +825,7 @@ namespace SearchDirLists
             }
             else
             {
-                m_SearchResultsType1_Array = new SDL_TreeNode[] { treeNode };
+                m_SearchResultsType1_Array = new TreeNode[] { treeNode };
             }
 
             if ((m_SearchResultsType1_Array != null) && (m_SearchResultsType1_Array.Length > 0))

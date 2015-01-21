@@ -31,10 +31,10 @@ namespace SearchDirLists
         Drawing.Rectangle m_rectCenter = Drawing.Rectangle.Empty;
         Drawing.SizeF m_sizeTranslate = Drawing.SizeF.Empty;
         Drawing.BufferedGraphics m_bg = null;
-        SDL_TreeNode m_treeNode = null;
-        SDL_TreeNode m_prevNode = null;
-        SDL_TreeNode m_deepNode = null;
-        SDL_TreeNode m_deepNodeDrawn = null;
+        TreeNode m_treeNode = null;
+        TreeNode m_prevNode = null;
+        TreeNode m_deepNode = null;
+        TreeNode m_deepNodeDrawn = null;
         readonly SDL_Timer m_timerAnim = new SDL_Timer();
         int m_nAnimFrame = 0;
         DateTime m_dtHideGoofball = DateTime.MinValue;
@@ -94,7 +94,7 @@ namespace SearchDirLists
             base.Dispose(disposing);
         }
 
-        internal SDL_TreeNode DoToolTip(Drawing.Point pt_in)
+        internal TreeNode DoToolTip(Drawing.Point pt_in)
         {
             ClearSelection();
 
@@ -120,7 +120,7 @@ namespace SearchDirLists
             m_dtHideGoofball = DateTime.MinValue;   // click anywhere else on the treemap and the goofball returns.
 
             Drawing.Point pt = Drawing.Point.Ceiling(new Drawing.PointF(pt_in.X / m_sizeTranslate.Width, pt_in.Y / m_sizeTranslate.Height));
-            SDL_TreeNode nodeRet = null;
+            TreeNode nodeRet = null;
             bool bImmediateFiles = false;
             bool bVolumeView = false;
 
@@ -138,14 +138,14 @@ namespace SearchDirLists
                     }
                 }
 
-                SDL_TreeNode m_prevNode_A = m_prevNode ?? m_treeNode;
+                TreeNode m_prevNode_A = m_prevNode ?? m_treeNode;
 
                 if ((nodeRet = FindMapNode(m_prevNode_A, pt)) != null)
                 {
                     return;
                 }
 
-                SDL_TreeNode nodeUplevel = (SDL_TreeNode)((m_prevNode != null) ? m_prevNode.Parent : null);
+                TreeNode nodeUplevel = (TreeNode)((m_prevNode != null) ? m_prevNode.Parent : null);
                 bool bFoundUplevel = false;
 
                 while (nodeUplevel != null)
@@ -156,7 +156,7 @@ namespace SearchDirLists
                         return;
                     }
 
-                    nodeUplevel = (SDL_TreeNode)nodeUplevel.Parent;
+                    nodeUplevel = (TreeNode)nodeUplevel.Parent;
                 }
 
                 if (bFoundUplevel)
@@ -174,7 +174,7 @@ namespace SearchDirLists
 
             if ((bVolumeView == false) && (bImmediateFiles == false))
             {
-                SDL_TreeNode nodeRet_A = FindMapNode(((NodeDatum)nodeRet.Tag).TreeMapFiles, pt);
+                TreeNode nodeRet_A = FindMapNode(((NodeDatum)nodeRet.Tag).TreeMapFiles, pt);
 
                 if (nodeRet_A != null && (nodeRet == m_treeNode))
                 {
@@ -210,9 +210,9 @@ namespace SearchDirLists
             return null;
         }
 
-        SDL_TreeNode FindMapNode(SDL_TreeNode treeNode_in, Drawing.Point pt, bool bNextNode = false)
+        TreeNode FindMapNode(TreeNode treeNode_in, Drawing.Point pt, bool bNextNode = false)
         {
-            SDL_TreeNode treeNode = treeNode_in;
+            TreeNode treeNode = treeNode_in;
 
             if (treeNode == null)
             {
@@ -238,19 +238,19 @@ namespace SearchDirLists
                     continue;
                 }
 
-                SDL_TreeNode foundNode = FindMapNode((SDL_TreeNode)treeNode.Nodes[0], pt, bNextNode: true);
+                TreeNode foundNode = FindMapNode((TreeNode)treeNode.Nodes[0], pt, bNextNode: true);
 
                 if (foundNode != null)
                 {
                     return foundNode;
                 }
             }
-            while (bNextNode && ((treeNode = (SDL_TreeNode)treeNode.NextNode) != null));
+            while (bNextNode && ((treeNode = (TreeNode)treeNode.NextNode) != null));
 
             return null;
         }
 
-        SDL_TreeNode GetFileList(SDL_TreeNode parent)
+        TreeNode GetFileList(TreeNode parent)
         {
             List<ulong> listLengths = new List<ulong>();
             List<string[]> listFiles = TreeSelect.GetFileList(parent, listLengths);
@@ -260,7 +260,7 @@ namespace SearchDirLists
                 return null;
             }
 
-            SDL_TreeNode nodeFileList = new SDL_TreeNode(parent.Text);
+            TreeNode nodeFileList = new TreeNode(parent.Text);
             ulong nTotalLength = 0;
             List<ulong>.Enumerator iterUlong = listLengths.GetEnumerator();
 
@@ -276,7 +276,7 @@ namespace SearchDirLists
                     continue;
                 }
 
-                SDL_TreeNode nodeFile = new SDL_TreeNode(arrLine[0]);
+                TreeNode nodeFile = new TreeNode(arrLine[0]);
 
                 nodeFile.Tag = nodeDatum_A;
                 nodeFile.ForeColor = Drawing.Color.OliveDrab;
@@ -357,7 +357,7 @@ namespace SearchDirLists
             ClearSelection();
         }
 
-        internal void Render(SDL_TreeNode treeNode)
+        internal void Render(TreeNode treeNode)
         {
             if ((m_deepNode == null) || (m_deepNode.IsChildOf(treeNode) == false))
             {
@@ -415,7 +415,7 @@ namespace SearchDirLists
                 return null;
             }
 
-            SDL_TreeNode treeNode_A = (SDL_TreeNode)m_toolTip.Tag;
+            TreeNode treeNode_A = (TreeNode)m_toolTip.Tag;
 
             if (treeNode_A.TreeView != null)    // null if fake file treenode (NodeDatum.TreeMapFiles)
             {
@@ -493,7 +493,7 @@ namespace SearchDirLists
         }
 
         void RecurseDrawGraph(
-	        SDL_TreeNode item, 
+	        TreeNode item, 
 	        Drawing.Rectangle rc,
             bool bStart = false
         )
@@ -551,10 +551,10 @@ namespace SearchDirLists
          //I learned this squarification style from the KDirStat executable.
          //It's the most complex one here but also the clearest, imho.
         
-        bool KDirStat_DrawChildren(Drawing.Graphics graphics, SDL_TreeNode parent_in, bool bStart = false)
+        bool KDirStat_DrawChildren(Drawing.Graphics graphics, TreeNode parent_in, bool bStart = false)
         {
-            List<SDL_TreeNode> listChildren = null;
-            SDL_TreeNode parent = null;
+            List<TreeNode> listChildren = null;
+            TreeNode parent = null;
 
             bool bVolumeNode = false;
 
@@ -573,14 +573,14 @@ namespace SearchDirLists
                 }
 
                 NodeDatum nodeDatumFree = new NodeDatum();
-                SDL_TreeNode nodeFree = new SDL_TreeNode(parent_in.Text + " (free space)");
+                TreeNode nodeFree = new TreeNode(parent_in.Text + " (free space)");
 
                 nodeDatumFree.nTotalLength = rootNodeDatum.VolumeFree;
                 nodeFree.Tag = nodeDatumFree;
                 nodeFree.ForeColor = Drawing.Color.MediumSpringGreen;
 
                 NodeDatum nodeDatumUnread = new NodeDatum();
-                SDL_TreeNode nodeUnread = new SDL_TreeNode(parent_in.Text + " (unread data)");
+                TreeNode nodeUnread = new TreeNode(parent_in.Text + " (unread data)");
                 ulong nVolumeLength = rootNodeDatum.VolumeLength;
                 long nUnreadLength = (long)nVolumeLength - (long)rootNodeDatum.VolumeFree - (long)rootNodeDatum.nTotalLength;
 
@@ -597,7 +597,7 @@ namespace SearchDirLists
                 nodeDatumUnread.nTotalLength = (ulong)nUnreadLength;
                 nodeUnread.Tag = nodeDatumUnread;
                 nodeUnread.ForeColor = Drawing.Color.MediumVioletRed;
-                listChildren = new List<SDL_TreeNode>();
+                listChildren = new List<TreeNode>();
                 listChildren.Add(parent_in);                                // parent added as child, with two other nodes:
                 listChildren.Add(nodeFree);                                 // free space (color: spring green); and
 
@@ -606,7 +606,7 @@ namespace SearchDirLists
                     listChildren.Add(nodeUnread);                           // unread guess, affected by compression and hard links (violet)
                 }
 
-                parent = new SDL_TreeNode(parent_in.Text + " (volume)");
+                parent = new TreeNode(parent_in.Text + " (volume)");
 
                 NodeDatum nodeDatumVolume = new NodeDatum();
 
@@ -620,7 +620,7 @@ namespace SearchDirLists
             if (bVolumeNode == false)
             {
                 parent = parent_in;
-                listChildren = parent.Nodes.Cast<SDL_TreeNode>().Where(t => ((NodeDatum)t.Tag).nTotalLength > 0).ToList();
+                listChildren = parent.Nodes.Cast<TreeNode>().Where(t => ((NodeDatum)t.Tag).nTotalLength > 0).ToList();
             }
 
             NodeDatum nodeDatum = (NodeDatum)parent.Tag;
@@ -638,7 +638,7 @@ namespace SearchDirLists
 
                 nodeFiles.nTotalLength = nodeDatum.nLength;
 
-                SDL_TreeNode treeNode = new SDL_TreeNode(parent.Text);
+                TreeNode treeNode = new TreeNode(parent.Text);
 
                 treeNode.Tag = nodeFiles;
                 treeNode.ForeColor = Drawing.Color.OliveDrab;
@@ -694,7 +694,7 @@ namespace SearchDirLists
 
                 for (int i=0; i < childrenPerRow[row]; i++, c++)
 		        {
-                    SDL_TreeNode child = listChildren[c];
+                    TreeNode child = listChildren[c];
                     Utilities.Assert(1302.3305, childWidth[c] >= 0);
 			        double fRight= left + childWidth[c] * width;
 			        int right= (int)fRight;
@@ -737,8 +737,8 @@ namespace SearchDirLists
             return true;
         }
 
-        double KDirStat_CalcutateNextRow(SDL_TreeNode parent, int nextChild, double width, ref int childrenUsed, double[] arrChildWidth,
-            List<SDL_TreeNode> listChildren)
+        double KDirStat_CalcutateNextRow(TreeNode parent, int nextChild, double width, ref int childrenUsed, double[] arrChildWidth,
+            List<TreeNode> listChildren)
         {
             const double _minProportion = 0.4;
             Utilities.Assert(1302.3308, _minProportion < 1);

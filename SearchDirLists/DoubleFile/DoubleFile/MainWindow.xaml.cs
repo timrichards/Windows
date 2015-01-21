@@ -9,6 +9,8 @@ namespace DoubleFile
     /// </summary>
     partial class MainWindow : LocalWindow
     {
+        internal IEnumerable<LVitem_ProjectVM> ListLVvolStrings { get; private set; }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -90,8 +92,6 @@ namespace DoubleFile
 #endif
             ShowProjectWindow();
         }
-
-        internal IEnumerable<LVitem_ProjectVM> ListLVvolStrings { get; private set; }
 
         void ShowProjectWindow(bool bOpenProject = false)
         {

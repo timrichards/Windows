@@ -113,43 +113,29 @@
     <Compile Include="SearchDirLists\AboutBox1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SearchDirLists\AboutBox1.Designer.cs">
-      <DependentUpon>AboutBox1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SearchDirLists\Collate.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="SearchDirLists\AboutBox1.Designer.cs" />
+    <Compile Include="SearchDirLists\Collate.cs" />
+    <Compile Include="SearchDirLists\DriveSerial.cs" />
     <Compile Include="SearchDirLists\Form1.cs">
-      <SubType>Form</SubType>
+      <SubType>Designer</SubType>
     </Compile>
-    <Compile Include="SearchDirLists\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </Compile>
+    <Compile Include="SearchDirLists\Form1.Designer.cs" />
     <Compile Include="SearchDirLists\InputBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SearchDirLists\InputBox.Designer.cs">
-      <DependentUpon>InputBox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SearchDirLists\ListViewEx.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="SearchDirLists\ReadOnlyRichTextBox.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="SearchDirLists\InputBox.Designer.cs" />
+    <Compile Include="SearchDirLists\ListViewEx.cs" />
+    <Compile Include="SearchDirLists\Program.cs" />
+    <Compile Include="SearchDirLists\ReadOnlyRichTextBox.cs" />
     <Compile Include="SearchDirLists\Search.cs">
-      <SubType>Form</SubType>
+      <SubType>Designer</SubType>
     </Compile>
+    <Compile Include="SearchDirLists\Tree.cs" />
     <Compile Include="SearchDirLists\TreeForm.cs">
-      <SubType>Form</SubType>
+      <SubType>Designer</SubType>
     </Compile>
-    <Compile Include="SearchDirLists\TreeMap.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SearchDirLists\Tree_Current.cs" />
-    <Compile Include="SearchDirLists\Utilities.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="SearchDirLists\TreeMap.cs" />
+    <Compile Include="SearchDirLists\Utilities.cs" />
     <Compile Include="UtilAnalysis_DirList\ExtensionMethods.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\Correlate.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\DetailsDatum.cs" />
@@ -277,15 +263,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="SearchDirLists\AboutBox1.resx">
-      <DependentUpon>AboutBox1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SearchDirLists\Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SearchDirLists\InputBox.resx">
-      <DependentUpon>InputBox.cs</DependentUpon>
-    </EmbeddedResource>
+    <EmbeddedResource Include="SearchDirLists\AboutBox1.resx" />
+    <EmbeddedResource Include="SearchDirLists\Form1.resx" />
+    <EmbeddedResource Include="SearchDirLists\InputBox.resx" />
     <None Include="DoubleFile_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -298,7 +278,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\ic_add_circle_black_18dp.png" />
-    <Resource Include="SearchDirLists\README.txt" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\ic_remove_circle_black_18dp.png" />

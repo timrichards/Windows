@@ -132,9 +132,13 @@
     <Compile Include="SearchDirLists\InputBox.Designer.cs" />
     <Compile Include="SearchDirLists\ListViewEx.cs" />
     <Compile Include="SearchDirLists\ReadOnlyRichTextBox.cs" />
-    <Compile Include="SearchDirLists\Search.cs" />
+    <Compile Include="SearchDirLists\Search.cs">
+      <SubType>Designer</SubType>
+    </Compile>
     <Compile Include="SearchDirLists\Tree.cs" />
-    <Compile Include="SearchDirLists\TreeForm.cs" />
+    <Compile Include="SearchDirLists\TreeForm.cs">
+      <SubType>Designer</SubType>
+    </Compile>
     <Compile Include="SearchDirLists\TreeMap.cs" />
     <Compile Include="SearchDirLists\Utilities.cs" />
     <Compile Include="UtilAnalysis_DirList\ExtensionMethods.cs" />

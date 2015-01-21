@@ -20,8 +20,24 @@ namespace SearchDirLists
   //  [System.ComponentModel.DesignerCategory("Code")]
     partial class Form1 : Form
     {
-        System.Windows.Window m_ownerWindow = null;
-        IEnumerable<LVitem_ProjectVM> ListLVvolStrings { get; set; }
+            System.Windows.Window m_ownerWindow = null;
+            IEnumerable<LVitem_ProjectVM> ListLVvolStrings { get; set; }
+
+            internal Form1(System.Windows.Window ownerWindow, IEnumerable<LVitem_ProjectVM> listLVvolStrings)
+                : this()
+            {
+                m_ownerWindow = ownerWindow;
+                ListLVvolStrings = listLVvolStrings;
+            }
+
+            static internal void RestartTreeTimer(Form1 form1, IEnumerable<LVitem_ProjectVM> listLVvolStrings)
+            {
+                if (form1 != null)
+                {
+                    form1.ListLVvolStrings = listLVvolStrings;
+                    form1.gd.RestartTreeTimer();
+                }
+            }
 
         readonly GlobalData gd = null;
 
@@ -79,12 +95,6 @@ namespace SearchDirLists
                 container.Add(this);
                 SetStyle();
             }
-        }
-
-        internal Form1(System.Windows.Window ownerWindow, IEnumerable<LVitem_ProjectVM> listLVvolStrings) : this()
-        {
-            m_ownerWindow = ownerWindow;
-            ListLVvolStrings = listLVvolStrings;
         }
 
         public Form1()
@@ -1335,7 +1345,7 @@ namespace SearchDirLists
             }
             else
             {
-                GlobalData.AppExit = true;
+   //             GlobalData.AppExit = true;
                 Utilities.MessageBoxKill();
             }
 

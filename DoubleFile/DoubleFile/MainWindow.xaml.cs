@@ -17,6 +17,17 @@ namespace DoubleFile
             GlobalData.GetInstance(this);
         }
 
+        SearchDirLists.Form1 m_searchDirListsForm1;
+        void SearchDirListsForm1Action(System.Action<SearchDirLists.Form1, IEnumerable<LVitem_ProjectVM>> action)
+        {
+            if ((m_searchDirListsForm1 == null) || (m_searchDirListsForm1.IsDisposed))
+            {
+                return;
+            }
+
+            action(m_searchDirListsForm1, ListLVvolStrings);
+        }
+
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
 #if (DEBUG)
@@ -102,6 +113,7 @@ namespace DoubleFile
             }
 
             ListLVvolStrings = volumes.ListLVvolStrings;
+            SearchDirListsForm1Action(SearchDirLists.Form1.RestartTreeTimer);
 
             if (ListLVvolStrings != null)
             {
@@ -146,7 +158,7 @@ namespace DoubleFile
 
         private void Button_SearchDirLists_Click(object sender, RoutedEventArgs e)
         {
-            new SearchDirLists.Form1(this, ListLVvolStrings).Show();
+            (m_searchDirListsForm1 = new SearchDirLists.Form1(this, ListLVvolStrings)).Show();
         }
     }
 }

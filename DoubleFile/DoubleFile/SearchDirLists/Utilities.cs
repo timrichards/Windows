@@ -17,6 +17,9 @@ using System.Drawing;
 
 namespace SearchDirLists
 {
+    delegate bool BoolAction();
+    delegate MBoxRet MBoxDelegate(string strMessage, string strTitle = null, MBoxBtns? buttons = null);
+
     [System.ComponentModel.DesignerCategory("Code")]
     class SDL_Win : Form { }
     enum MBoxBtns { OK = MessageBoxButtons.OK, YesNo = MessageBoxButtons.YesNo, YesNoCancel = MessageBoxButtons.YesNoCancel }

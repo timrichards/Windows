@@ -10,7 +10,8 @@ namespace SearchDirLists
     [System.ComponentModel.DesignerCategory("Code")]
     class TreeMapUserControl : UserControl
     {
-        public Control TooltipAnchor = null;
+        internal bool ToolTipActive { get { return m_toolTip.Active; } }
+        internal Control TooltipAnchor = null;
 
         Rectangle m_rectBitmap = Rectangle.Empty;
         Rectangle m_selRect = Rectangle.Empty;
@@ -26,7 +27,7 @@ namespace SearchDirLists
         DateTime m_dtHideGoofball = DateTime.MinValue;
         readonly ToolTip m_toolTip = new ToolTip();
 
-        public TreeMapUserControl()
+        internal TreeMapUserControl()
         {
             m_toolTip.UseFading = true;
             m_toolTip.UseAnimation = true;

@@ -90,7 +90,6 @@ namespace DoubleFile
                 }
             }
 #endif
-            ShowProjectWindow();
         }
 
         void ShowProjectWindow(bool bOpenProject = false)
@@ -147,7 +146,7 @@ namespace DoubleFile
 
         private void Button_SearchDirLists_Click(object sender, RoutedEventArgs e)
         {
-            new SearchDirLists.Form1(ListLVvolStrings).Show();
+            new SearchDirLists.Form1(this, ListLVvolStrings).Show();
         }
     }
 }

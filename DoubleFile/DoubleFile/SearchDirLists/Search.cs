@@ -224,7 +224,7 @@ namespace SearchDirLists
 
             gd.m_searchType2 = new SearchType2(list_lvVolStrings, strSearch, strSearch.ToLower() != strSearch,
                 folderHandling, bSearchFilesOnly, strCurrentNode,
-                new SearchStatusDelegate(gd.SearchStatusCallback), new Action(SearchDoneCallback));
+                new SearchStatusDelegate(gd.SearchStatusCallback), SearchDoneCallback);
             gd.m_searchType2.DoThreadFactory();
         }
 

@@ -16,13 +16,11 @@ using DoubleFile;
 
 namespace SearchDirLists
 {
-    delegate bool BoolAction();
-    delegate MBoxRet MBoxDelegate(string strMessage, string strTitle = null, MBoxBtns? buttons = null);
-
         [System.ComponentModel.DesignerCategory("Designer")]
-   // [System.ComponentModel.DesignerCategory("Code")]
+  //  [System.ComponentModel.DesignerCategory("Code")]
     partial class Form1 : Form
     {
+        System.Windows.Window m_ownerWindow = null;
         IEnumerable<LVitem_ProjectVM> ListLVvolStrings { get; set; }
 
         readonly GlobalData gd = null;
@@ -83,10 +81,14 @@ namespace SearchDirLists
             }
         }
 
-        internal Form1(IEnumerable<LVitem_ProjectVM> listLVvolStrings = null)
+        internal Form1(System.Windows.Window ownerWindow, IEnumerable<LVitem_ProjectVM> listLVvolStrings) : this()
         {
+            m_ownerWindow = ownerWindow;
             ListLVvolStrings = listLVvolStrings;
+        }
 
+        public Form1()
+        {
             gd = GlobalData.GetInstance(this);
             InitializeComponent();
 
@@ -94,6 +96,7 @@ namespace SearchDirLists
             gd.timer_DoTree.Tick += new System.EventHandler((object sender, EventArgs e) =>
             {
                 gd.timer_DoTree.Stop();
+                gd.m_bRestartTreeTimer = false;
 
                 if (gd.m_bCompareMode)
                 {
@@ -103,7 +106,6 @@ namespace SearchDirLists
 
                 DoTree(bKill: gd.m_bKillTree);
                 gd.m_bKillTree = true;
-                gd.m_bRestartTreeTimer = false;
             });
 
             // Assert string-lookup form items exist
@@ -749,7 +751,7 @@ namespace SearchDirLists
                 return;
             }
 
-            if (Cursor.Current != Cursors.Arrow)        // hack: clicked in tooltip
+            if (false == form_tmapUserCtl.ToolTipActive)
             {
                 return;
             }
@@ -937,9 +939,16 @@ namespace SearchDirLists
                 return;
             }
 
-            Utilities.Assert(1308.9318, gd.QueryLVselChange(sender) == false, bTraceOnly: true);
+       //     Utilities.Assert(1308.9318, gd.QueryLVselChange(sender) == false, bTraceOnly: true);
 
             if (gd.m_bLVclonesMouseDown == false)  // leave
+            {
+                return;
+            }
+
+            var lv = (ListView)sender;
+
+            if (lv.SelectedItems.Count <= 0)
             {
                 return;
             }
@@ -1329,6 +1338,8 @@ namespace SearchDirLists
                 GlobalData.AppExit = true;
                 Utilities.MessageBoxKill();
             }
+
+            m_ownerWindow.Activate();
         }
 
         void Form1_HelpRequested(object sender, HelpEventArgs hlpevent)
@@ -1338,11 +1349,6 @@ namespace SearchDirLists
 
         void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (form_tabControlMain.SelectedTab != form_tabPageBrowse)
-            {
-                return;
-            }
-
             if (e.KeyCode == Keys.F2)
             {
                 e.SuppressKeyPress = e.Handled = true;
@@ -1366,11 +1372,6 @@ namespace SearchDirLists
 
         void Form1_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (form_tabControlMain.SelectedTab != form_tabPageBrowse)
-            {
-                return;
-            }
-
             if (e.KeyChar == (char)0x3)                         // Ctrl-C
             {
                 form_btnCopyToClipBoard_Click();
@@ -1380,11 +1381,6 @@ namespace SearchDirLists
 
         void Form1_KeyUp(object sender, KeyEventArgs e)
         {
-            if (form_tabControlMain.SelectedTab != form_tabPageBrowse)
-            {
-                return;
-            }
-
             if (e.KeyCode == Keys.F2)
             {
                 if (gd.m_bCompareMode)
@@ -1678,9 +1674,9 @@ namespace SearchDirLists
             }
 
             StringBuilder sbFullPath = null;
-            TreeNode parentNode = (TreeNode)treeNode.Parent;
+            TreeNode ownerNode = (TreeNode)treeNode.Parent;
 
-            if (parentNode == null)
+            if (ownerNode == null)
             {
                 sbFullPath = new StringBuilder(treeNode.Name);
             }
@@ -1689,17 +1685,17 @@ namespace SearchDirLists
                 sbFullPath = new StringBuilder(treeNode.Text);
             }
 
-            while ((parentNode != null) && (parentNode.Parent != null))
+            while ((ownerNode != null) && (ownerNode.Parent != null))
             {
                 sbFullPath.Insert(0, '\\');
-                sbFullPath.Insert(0, parentNode.Text.TrimEnd('\\'));
-                parentNode = (TreeNode)parentNode.Parent;
+                sbFullPath.Insert(0, ownerNode.Text.TrimEnd('\\'));
+                ownerNode = (TreeNode)ownerNode.Parent;
             }
 
-            if ((parentNode != null) && (parentNode.Parent == null))
+            if ((ownerNode != null) && (ownerNode.Parent == null))
             {
                 sbFullPath.Insert(0, '\\');
-                sbFullPath.Insert(0, parentNode.Name.TrimEnd('\\'));
+                sbFullPath.Insert(0, ownerNode.Name.TrimEnd('\\'));
             }
 
             return sbFullPath.ToString().Replace(@"\\", @"\");
@@ -1912,7 +1908,7 @@ namespace SearchDirLists
 
                 if (m_dictNodes.ContainsKey(nodeDatum.Key) == false)
                 {
-                    // same scenario as empty parent:
+                    // same scenario as empty owner:
                     // Search "Parent folder may contain only its clone subfolder, in which case unmark the subfolder"
                     continue;
                 }

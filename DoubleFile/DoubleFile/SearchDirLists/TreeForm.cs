@@ -343,7 +343,7 @@ namespace SearchDirLists
                 Utilities.Assert(1304.5312, gd.m_listRootNodes.Count == 0);
 
                 gd.m_tree = new Tree(ListLVvolStrings, gd.m_dictNodes, gd.m_dictDriveInfo,
-                    new TreeStatusDelegate(TreeStatusCallback), new Action(TreeDoneCallback));
+                    TreeStatusCallback, TreeDoneCallback);
                 gd.m_tree.DoThreadFactory();
             }
             else

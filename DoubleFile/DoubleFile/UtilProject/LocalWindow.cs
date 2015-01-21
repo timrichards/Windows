@@ -5,6 +5,7 @@
         public LocalWindow()
         {
             this.Activated += new System.EventHandler((o, e) => { GlobalData.static_TopWindow = this; });
+         //   this.Closed += new System.EventHandler((o, e) => { GlobalData.static_TopWindow.Activate(); });
         }
 
         internal new void Show() { Show(GlobalData.static_TopWindow); }

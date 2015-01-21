@@ -53,7 +53,6 @@
             textBoxDescription.Size = new System.Drawing.Size(767, 378);
             textBoxDescription.TabIndex = 23;
             textBoxDescription.TabStop = false;
-            textBoxDescription.Text = resources.GetString("textBoxDescription.Text");
             // 
             // tableLayoutPanel
             // 

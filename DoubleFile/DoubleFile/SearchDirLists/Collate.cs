@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DoubleFile;
 
 namespace SearchDirLists
 {
@@ -19,6 +20,7 @@ namespace SearchDirLists
 
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
         readonly SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = null;
+        readonly TreeView m_treeViewBrowse = null;
         readonly SDL_ListView form_lvClones = null;
         readonly SDL_ListView form_lvSameVol = null;
         readonly SDL_ListView form_lvUnique = null;
@@ -151,12 +153,14 @@ namespace SearchDirLists
         }
 
         public Collate(SortedDictionary<Correlate, UList<TreeNode>> dictNodes,
+            TreeView treeViewBrowse,
             SDL_ListView lvClones, SDL_ListView lvSameVol, SDL_ListView lvUnique,
             List<TreeNode> listRootNodes, UList<TreeNode> listTreeNodes, bool bCheckboxes,
             List<SDL_ListViewItem> list_lvIgnore, bool bLoose)
         {
             static_this = this;
             m_dictNodes = dictNodes;
+            m_treeViewBrowse = treeViewBrowse;
             form_lvClones = lvClones;
             form_lvSameVol = lvSameVol;
             form_lvUnique = lvUnique;
@@ -703,9 +707,9 @@ namespace SearchDirLists
                     return;
                 }
 
-                if (SDLWPF.treeViewMain.Enabled == false)      // stays enabled when DoCollation() is called directly
+                if (m_treeViewBrowse.Enabled == false)      // stays enabled when DoCollation() is called directly
                 {
-                    SDLWPF.treeViewMain.Nodes.Clear();
+                    m_treeViewBrowse.Nodes.Clear();
                 }
 
                 if (m_listRootNodes.Count <= 0)
@@ -713,21 +717,21 @@ namespace SearchDirLists
                     return;
                 }
 
-                if (SDLWPF.treeViewMain.Enabled == false)
+                if (m_treeViewBrowse.Enabled == false)
                 {
-                    SDLWPF.treeViewMain.Enabled = true;
-                    SDLWPF.treeViewMain.CheckBoxes = m_bCheckboxes;
+                    m_treeViewBrowse.Enabled = true;
+                    m_treeViewBrowse.CheckBoxes = m_bCheckboxes;
 
                     int nCount = Utilities.CountNodes(m_listRootNodes);
 
                     Utilities.Write("A");
-                    SDLWPF.treeViewMain.Nodes.AddRange(m_listRootNodes.ToArray());
+                    m_treeViewBrowse.Nodes.AddRange(m_listRootNodes.ToArray());
                     Utilities.WriteLine("A");
 
                     int nCount_A = Utilities.CountNodes(m_listRootNodes);
 
                     Utilities.Assert(1305.6331, nCount_A == nCount);
-                    Utilities.Assert(1305.6332, SDLWPF.treeViewMain.GetNodeCount(includeSubTrees: true) == nCount);
+                    Utilities.Assert(1305.6332, m_treeViewBrowse.GetNodeCount(includeSubTrees: true) == nCount);
                     Utilities.WriteLine("Step2_OnForm_A " + nCount);
                 }
 
@@ -764,16 +768,16 @@ namespace SearchDirLists
                 form_lvSameVol.Invalidate();
                 Utilities.WriteLine("D");
 
-                if (SDLWPF.treeViewMain.SelectedNode != null)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
+                if (m_treeViewBrowse.SelectedNode != null)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
                 {
-                    TreeNode treeNode = (TreeNode)SDLWPF.treeViewMain.SelectedNode;
+                    TreeNode treeNode = (TreeNode)m_treeViewBrowse.SelectedNode;
 
-                    SDLWPF.treeViewMain.SelectedNode = null;
-                    SDLWPF.treeViewMain.SelectedNode = treeNode;   // reselect in repopulated collation listviewers
+                    m_treeViewBrowse.SelectedNode = null;
+                    m_treeViewBrowse.SelectedNode = treeNode;   // reselect in repopulated collation listviewers
                 }
                 else
                 {
-                    SDLWPF.treeViewMain.SelectedNode = m_listRootNodes[0];
+                    m_treeViewBrowse.SelectedNode = m_listRootNodes[0];
                 }
             }));
 

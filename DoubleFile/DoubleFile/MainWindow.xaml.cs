@@ -15,6 +15,7 @@ namespace DoubleFile
         {
             InitializeComponent();
             GlobalData.GetInstance(this);
+            this.Closing += (o, e) => { GlobalData.AppExit = true; };
         }
 
         SearchDirLists.Form1 m_searchDirListsForm1;
@@ -158,7 +159,14 @@ namespace DoubleFile
 
         private void Button_SearchDirLists_Click(object sender, RoutedEventArgs e)
         {
-            (m_searchDirListsForm1 = new SearchDirLists.Form1(this, ListLVvolStrings)).Show();
+            if ((m_searchDirListsForm1 == null) || (m_searchDirListsForm1.IsDisposed))
+            {
+                (m_searchDirListsForm1 = new SearchDirLists.Form1(this, ListLVvolStrings)).Show();
+            }
+            else
+            {
+                m_searchDirListsForm1.Activate();
+            }
         }
     }
 }

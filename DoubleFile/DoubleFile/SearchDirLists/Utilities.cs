@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Collections;
 using System.Text;
 using System.Drawing;
+using DoubleFile;
 
 namespace SearchDirLists
 {
@@ -26,7 +27,6 @@ namespace SearchDirLists
     enum MBoxRet { None = DialogResult.None, Yes = DialogResult.Yes, No = DialogResult.No }
 
     class SDL_ListView : ListViewEmbeddedControls.ListViewEx { }
-    class SDL_ListViewSubitem : ListViewItem.ListViewSubItem { }
 
     class SDL_LVItemCollection : ListView.ListViewItemCollection
     {
@@ -72,22 +72,6 @@ namespace SearchDirLists
         }
     }
 
-    static class SDLWPF_Ext
-    {
-        internal static Color GetBackColor(this Control ctl) { return ctl.BackColor; }
-        internal static void SetBackColor(this Control ctl, Color c) { ctl.BackColor = c; }
-        internal static bool InvokeRequired(this Control c) { return c.InvokeRequired; }
-        internal static void TitleSet(this Control c, string s) { c.Text = s; }
-        internal static string TitleGet(this Control c) { return c.Text; }
-    }
-
-    class SDLWPF
-    {
-        internal static SDL_TreeView treeViewMain = (SDL_TreeView)GlobalData.static_form.form_treeViewBrowse;
-        internal static SDL_TreeView treeViewCompare1 = (SDL_TreeView)GlobalData.static_form.form_treeCompare1;
-        internal static SDL_TreeView treeViewCompare2 = (SDL_TreeView)GlobalData.static_form.form_treeCompare2;
-    }
-
     class Blinky
     {
         static bool m_bTreeSelect = false;
@@ -127,7 +111,6 @@ namespace SearchDirLists
         {
             protected readonly Control m_obj = null;
             internal ControlHolder(Control obj) { m_obj = obj; }
-            internal override Color BackColor { get { return m_obj.GetBackColor(); } set { m_obj.SetBackColor(value); } }
         }
 
         internal Blinky(Control defaultControl)
@@ -245,14 +228,6 @@ namespace SearchDirLists
             }
         }
 
-        public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
-        {
-            foreach (var item in source)
-            {
-                action(item);
-            }
-        }
-
         public static void FirstOnly<T>(this IEnumerable<T> source, Action<T> action)
         {
             foreach (var item in source)
@@ -334,7 +309,7 @@ namespace SearchDirLists
 
         internal static void Go(Control ctl_in = null, bool Once = false)
         {
-            Control dispatcher = ctl_in ?? GlobalData.static_form;
+            Control dispatcher = ctl_in ?? GlobalDataSDL.static_form;
             Utilities.CheckAndInvoke(dispatcher, new Action(() =>
             {
                 FLASHWINFO fInfo = new FLASHWINFO();
@@ -347,7 +322,7 @@ namespace SearchDirLists
                 }
                 else
                 {
-                    fInfo.hwnd = GlobalData.static_form.Handle;
+                    fInfo.hwnd = GlobalDataSDL.static_form.Handle;
                 }
 
                 fInfo.dwFlags = FLASHW_ALL;
@@ -361,16 +336,16 @@ namespace SearchDirLists
     // SearchDirLists listing file|*.sdl_list|SearchDirLists volume list file|*.sdl_vol|SearchDirLists copy scratchpad file|*.sdl_copy|SearchDirLists ignore list file|*.sdl_ignore
     abstract class SDL_File : Utilities
     {
-        public static string BaseFilter = "Text files|*.txt|All files|*.*";
-        public static string FileAndDirListFileFilter = "SearchDirLists listing file|*." + mSTRfileExt_Listing;
+        internal const string BaseFilter = "Text files|*.txt|All files|*.*";
+        internal const string FileAndDirListFileFilter = "SearchDirLists listing file|*." + mSTRfileExt_Listing;
 
-        public readonly string Header = null;
+        internal readonly string Header = null;
 
         string m_strDescription = null;
-        public string Description { get { return m_strDescription + " list file"; } }
+        internal string Description { get { return m_strDescription + " list file"; } }
 
         string m_strExt = null;
-        public string Filter { get { return "SearchDirLists " + Description + "|*." + m_strExt; } }
+        internal string Filter { get { return "SearchDirLists " + Description + "|*." + m_strExt; } }
 
         internal static SaveFileDialog SFD = null;        // TODO: remove frankenSFD
 
@@ -709,10 +684,6 @@ namespace SearchDirLists
 
         internal static void Closure(Action action) { action(); }
 
-        internal static object CheckAndInvoke(Dispatcher dispatcher, Delegate action, object[] args = null)
-        {
-            return null;
-        }
         internal static object CheckAndInvoke(Control dispatcher, Delegate action, object[] args = null)
         {
             bool bInvoke = dispatcher.InvokeRequired;
@@ -749,24 +720,6 @@ namespace SearchDirLists
             }
 
             return null;
-        }
-
-        internal static string CheckNTFS_chars(ref string strFile, bool bFile = false)
-        {
-            char[] arrChar = bFile ? Path.GetInvalidFileNameChars() : Path.GetInvalidPathChars();
-            int nIx = -1;
-
-            if ((nIx = strFile.IndexOfAny(arrChar)) > -1)
-            {
-                string strRet = "NTFS ASCII " + ((int)strFile[nIx]).ToString();
-
-                strFile = strFile.Replace("\n", "").Replace("\r", "").Replace("\t", "");    // program-incompatible
-                return strRet;
-            }
-            else
-            {
-                return null;
-            }
         }
 
         internal static void ConvertFile(string strFile)
@@ -987,33 +940,6 @@ namespace SearchDirLists
             return true;
         }
 
-        internal static bool FormatPath(ref string strPath, ref string strSaveAs, bool bFailOnDirectory = true)
-        {
-            if (false == string.IsNullOrWhiteSpace(strPath))
-            {
-                strPath += '\\';
-
-                if (FormatPath(ref strPath, bFailOnDirectory) == false)
-                {
-                    MBox("Error in Source path.", "Save Directory Listing");
-                    return false;
-                }
-            }
-
-            if (false == string.IsNullOrWhiteSpace(strSaveAs))
-            {
-                strSaveAs = Path.GetFullPath(strSaveAs.Trim());
-
-                if (FormatPath(ref strSaveAs, bFailOnDirectory) == false)
-                {
-                    MBox("Error in Save filename.", "Save Directory Listing");
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         static string FormatLine(string strLineType, long nLineNo, string strLine_in = null)
         {
             string strLine_out = strLineType + "\t" + nLineNo;
@@ -1133,13 +1059,13 @@ namespace SearchDirLists
                 return MBoxRet.None;
             }
 
-            if (GlobalData.static_wpfOrForm.InvokeRequired()) { return (MBoxRet)GlobalData.static_wpfOrForm.Invoke(new MBoxDelegate(MBox), new object[] { strMessage, strTitle, buttons_in }); }
+            if (GlobalDataSDL.static_form.InvokeRequired) { return (MBoxRet)GlobalDataSDL.static_form.Invoke(new MBoxDelegate(MBox), new object[] { strMessage, strTitle, buttons_in }); }
 
             MessageBoxKill();
             m_form1MessageBoxOwner = new SDL_Win();
-            m_form1MessageBoxOwner.Owner = GlobalData.static_wpfOrForm;
-            m_form1MessageBoxOwner.TitleSet(strTitle);
-            m_form1MessageBoxOwner.Icon = GlobalData.static_wpfOrForm.Icon;
+            m_form1MessageBoxOwner.Owner = GlobalDataSDL.static_form;
+            m_form1MessageBoxOwner.Text = strTitle;
+            m_form1MessageBoxOwner.Icon = GlobalDataSDL.static_form.Icon;
 
             MBoxBtns buttons = (buttons_in != null) ? buttons_in.Value : MBoxBtns.OK;
             MBoxRet msgBoxRet = (MBoxRet)MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100), strTitle, (MessageBoxButtons)buttons);
@@ -1155,11 +1081,11 @@ namespace SearchDirLists
 
         internal static void MessageBoxKill(string strMatch = null)
         {
-            if ((m_form1MessageBoxOwner != null) && new string[] { null, m_form1MessageBoxOwner.TitleGet() }.Contains(strMatch))
+            if ((m_form1MessageBoxOwner != null) && new string[] { null, m_form1MessageBoxOwner.Text }.Contains(strMatch))
             {
                 m_form1MessageBoxOwner.Close();
                 m_form1MessageBoxOwner = null;
-                GlobalData.static_wpfOrForm.Activate();
+                GlobalDataSDL.static_form.Activate();
             }
         }
 
@@ -1234,273 +1160,5 @@ namespace SearchDirLists
             Console.WriteLine(str);
 #endif
         }
-    }
-
-    class Win32FindFile
-    {
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        internal struct DATUM
-        {
-            internal FileAttributes fileAttributes;
-            internal uint ftCreationTimeLow;
-            internal uint ftCreationTimeHigh;
-            internal uint ftLastAccessTimeLow;
-            internal uint ftLastAccessTimeHigh;
-            internal uint ftLastWriteTimeLow;
-            internal uint ftLastWriteTimeHigh;
-            internal uint nFileSizeHigh;
-            internal uint nFileSizeLow;
-            internal int dwReserved0;
-            internal int dwReserved1;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-            internal string strFileName;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
-            internal string strAltFileName;
-        }
-
-        internal enum IndexInfoLevels
-        {
-            FindExInfoStandard = 0,
-            FindExInfoBasic,
-            FindExInfoMaxInfoLevel
-        };
-
-        private enum IndexSearchOps
-        {
-            FindExSearchNameMatch = 0,
-            FindExSearchLimitToDirectories,
-            FindExSearchLimitToDevices
-        };
-
-        private const int FIND_FIRST_EX_LARGE_FETCH = 0x02;
-
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, BestFitMapping = false), SuppressUnmanagedCodeSecurity]
-        private static extern IntPtr FindFirstFileExW(string lpFileName, IndexInfoLevels infoLevel, out DATUM lpFindFileData, IndexSearchOps fSearchOp, IntPtr lpSearchFilter, int dwAdditionalFlag);
-
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, BestFitMapping = false), SuppressUnmanagedCodeSecurity]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool FindNextFileW(IntPtr handle, out DATUM lpFindFileData);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool FindClose(IntPtr hFindFile);
-
-        private static readonly IntPtr InvalidHandleValue = new IntPtr(-1);
-
-        [Serializable]
-        internal class FileData
-        {
-            FileAttributes m_Attributes;
-            DateTime m_CreationTimeUtc;
-            DateTime m_LastAccessTimeUtc;
-            DateTime m_LastWriteTimeUtc;
-            long m_Size;
-            bool m_bValid = false;
-
-            internal FileAttributes Attributes { get { return m_Attributes; } }
-            internal DateTime CreationTimeUtc { get { return m_CreationTimeUtc; } }
-            internal DateTime LastAccessTimeUtc { get { return m_LastAccessTimeUtc; } }
-            internal DateTime LastWriteTimeUtc { get { return m_LastWriteTimeUtc; } }
-            internal long Size { get { return m_Size; } }
-            internal bool IsValid { get { return m_bValid; } }
-
-            internal static bool WinFile(string strFile, out DATUM winFindData)
-            {
-                IntPtr handle = FindFirstFileExW(@"\\?\" + strFile, IndexInfoLevels.FindExInfoBasic, out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
-
-                winFindData.strAltFileName = strFile.Replace(@"\\", @"\");                        // 8.3 not used
-                return (handle != InvalidHandleValue);
-            }
-
-            internal FileData(DATUM findData)
-            {
-                m_Attributes = findData.fileAttributes;
-                m_CreationTimeUtc = ConvertDateTime(findData.ftCreationTimeHigh, findData.ftCreationTimeLow);
-                m_LastAccessTimeUtc = ConvertDateTime(findData.ftLastAccessTimeHigh, findData.ftLastAccessTimeLow);
-                m_LastWriteTimeUtc = ConvertDateTime(findData.ftLastWriteTimeHigh, findData.ftLastWriteTimeLow);
-                m_Size = CombineHighLowInts(findData.nFileSizeHigh, findData.nFileSizeLow);
-                m_bValid = (findData.ftCreationTimeHigh | findData.ftCreationTimeLow) != 0;
-            }
-
-            internal DateTime CreationTime
-            {
-                get { return CreationTimeUtc.ToLocalTime(); }
-            }
-
-            internal DateTime LastAccessTime
-            {
-                get { return LastAccessTimeUtc.ToLocalTime(); }
-            }
-
-            internal DateTime LastWriteTime
-            {
-                get { return LastWriteTimeUtc.ToLocalTime(); }
-            }
-
-            private static long CombineHighLowInts(uint high, uint low)
-            {
-                return (((long)high) << 0x20) | low;
-            }
-
-            private static DateTime ConvertDateTime(uint high, uint low)
-            {
-                long fileTime = CombineHighLowInts(high, low);
-                return DateTime.FromFileTimeUtc(fileTime);
-            }
-        }
-
-        internal static bool GetDirectory(string strDir, ref List<DATUM> listDirs, ref List<DATUM> listFiles)
-        {
-            DATUM winFindData;
-            IntPtr handle = FindFirstFileExW(@"\\?\" + strDir + @"\*", IndexInfoLevels.FindExInfoBasic, out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
-
-            if (handle == InvalidHandleValue)
-            {
-                return false;
-            }
-
-            listDirs.Clear();
-            listFiles.Clear();
-
-            do
-            {
-                if ("..".Contains(winFindData.strFileName))
-                {
-                    continue;
-                }
-
-                winFindData.strAltFileName = (strDir + '\\' + winFindData.strFileName).Replace(@"\\", @"\");     // 8.3 not used
-
-                if ((winFindData.fileAttributes & FileAttributes.Directory) != 0)
-                {
-                    if ((winFindData.fileAttributes & FileAttributes.ReparsePoint) != 0)
-                    {
-                        const uint IO_REPARSE_TAG_MOUNT_POINT = 0xA0000003;
-                        const uint IO_REPARSE_TAG_SYMLINK = 0xA000000C;
-
-                        // stay on source drive. Treat mount points and symlinks as files.
-                        if (((winFindData.dwReserved0 & IO_REPARSE_TAG_MOUNT_POINT) != 0)
-                            || ((winFindData.dwReserved0 & IO_REPARSE_TAG_SYMLINK) != 0))
-                        {
-                            listFiles.Add(winFindData);
-                            continue;
-                        }
-                    }
-
-                    listDirs.Add(winFindData);
-                }
-                else
-                {
-                    listFiles.Add(winFindData);
-                }
-            }
-            while (FindNextFileW(handle, out winFindData));
-
-            FindClose(handle);
-            listDirs.Sort((x, y) => x.strFileName.CompareTo(y.strFileName));
-            listFiles.Sort((x, y) => x.strFileName.CompareTo(y.strFileName));
-            return true;
-        }
-    }
-
-    class WPF_Form
-    {
-        internal static DialogResult WPFMessageBox(string strMessage, string strTitle = null, MessageBoxButtons? buttons = null)
-        {
-            DialogResult dlgRet = DialogResult.None;
-
-            if (buttons == null)
-            {
-                dlgRet = MessageBox.Show(strMessage.PadRight(100), strTitle);
-            }
-            else
-            {
-                dlgRet = MessageBox.Show(strMessage.PadRight(100), strTitle, buttons.Value);
-            }
-
-            return dlgRet;
-        }
-    }
-}
-
-//http://www.codeproject.com/Tips/447938/High-performance-Csharp-byte-array-to-hex-string-t
-namespace DRDigit
-{
-    // class is sealed and not static in my personal complete version
-    public unsafe sealed partial class Fast
-    {
-        #region from/to hex
-        // assigned int values for bytes (0-255)
-        static readonly int[] toHexTable = new int[] {
-            3145776, 3211312, 3276848, 3342384, 3407920, 3473456, 3538992, 3604528, 3670064, 3735600,
-            4259888, 4325424, 4390960, 4456496, 4522032, 4587568, 3145777, 3211313, 3276849, 3342385,
-            3407921, 3473457, 3538993, 3604529, 3670065, 3735601, 4259889, 4325425, 4390961, 4456497,
-            4522033, 4587569, 3145778, 3211314, 3276850, 3342386, 3407922, 3473458, 3538994, 3604530,
-            3670066, 3735602, 4259890, 4325426, 4390962, 4456498, 4522034, 4587570, 3145779, 3211315,
-            3276851, 3342387, 3407923, 3473459, 3538995, 3604531, 3670067, 3735603, 4259891, 4325427,
-            4390963, 4456499, 4522035, 4587571, 3145780, 3211316, 3276852, 3342388, 3407924, 3473460,
-            3538996, 3604532, 3670068, 3735604, 4259892, 4325428, 4390964, 4456500, 4522036, 4587572,
-            3145781, 3211317, 3276853, 3342389, 3407925, 3473461, 3538997, 3604533, 3670069, 3735605,
-            4259893, 4325429, 4390965, 4456501, 4522037, 4587573, 3145782, 3211318, 3276854, 3342390,
-            3407926, 3473462, 3538998, 3604534, 3670070, 3735606, 4259894, 4325430, 4390966, 4456502,
-            4522038, 4587574, 3145783, 3211319, 3276855, 3342391, 3407927, 3473463, 3538999, 3604535,
-            3670071, 3735607, 4259895, 4325431, 4390967, 4456503, 4522039, 4587575, 3145784, 3211320,
-            3276856, 3342392, 3407928, 3473464, 3539000, 3604536, 3670072, 3735608, 4259896, 4325432,
-            4390968, 4456504, 4522040, 4587576, 3145785, 3211321, 3276857, 3342393, 3407929, 3473465,
-            3539001, 3604537, 3670073, 3735609, 4259897, 4325433, 4390969, 4456505, 4522041, 4587577,
-            3145793, 3211329, 3276865, 3342401, 3407937, 3473473, 3539009, 3604545, 3670081, 3735617,
-            4259905, 4325441, 4390977, 4456513, 4522049, 4587585, 3145794, 3211330, 3276866, 3342402,
-            3407938, 3473474, 3539010, 3604546, 3670082, 3735618, 4259906, 4325442, 4390978, 4456514,
-            4522050, 4587586, 3145795, 3211331, 3276867, 3342403, 3407939, 3473475, 3539011, 3604547,
-            3670083, 3735619, 4259907, 4325443, 4390979, 4456515, 4522051, 4587587, 3145796, 3211332,
-            3276868, 3342404, 3407940, 3473476, 3539012, 3604548, 3670084, 3735620, 4259908, 4325444,
-            4390980, 4456516, 4522052, 4587588, 3145797, 3211333, 3276869, 3342405, 3407941, 3473477,
-            3539013, 3604549, 3670085, 3735621, 4259909, 4325445, 4390981, 4456517, 4522053, 4587589,
-            3145798, 3211334, 3276870, 3342406, 3407942, 3473478, 3539014, 3604550, 3670086, 3735622,
-            4259910, 4325446, 4390982, 4456518, 4522054, 4587590
-        };
-
-        public static string ToHexString(byte[] source)
-        {
-            return ToHexString(source, false);
-        }
-        
-        // hexIndicator: use prefix ("0x") or not
-        public static string ToHexString(byte[] source, bool hexIndicator)
-        {
-            // freeze toHexTable position in memory
-            fixed (int* hexRef = toHexTable)
-            // freeze source position in memory
-            fixed (byte* sourceRef = source)
-            {
-                // take first parsing position of source - allow inline pointer positioning
-                byte* s = sourceRef;
-                // calculate result length
-                int resultLen = (source.Length << 1);
-                // use prefix ("Ox")
-                if (hexIndicator)
-                    // adapt result length
-                    resultLen += 2;
-                // initialize result string with any character expect '\0'
-                string result = new string(' ', resultLen);
-                // take the first character address of result
-                fixed (char* resultRef = result)
-                {
-                    // pairs of characters explain the endianess of toHexTable
-                    // move on by pairs of characters (2 x 2 bytes) - allow inline pointer positioning
-                    int* pair = (int*)resultRef;
-                    // use prefix ("Ox") ?
-                    if (hexIndicator)
-                        // set first pair value
-                        *pair++ = 7864368;
-                    // more to go
-                    while (*pair != 0)
-                        // set the value of the current pair and move to next pair and source byte
-                        *pair++ = hexRef[*s++];
-                    return result;
-                }
-            }
-        }
-#endregion
     }
 }

@@ -39,7 +39,7 @@ namespace SearchDirLists
                 }
             }
 
-        readonly GlobalData gd = null;
+        readonly GlobalDataSDL gd = null;
 
         // Memory allocations occur just below all partial class Form1 : Form declarations, then ClearMem_...() for each.
         // Declarations continue below these two ClearMem() methods.
@@ -99,7 +99,7 @@ namespace SearchDirLists
 
         public Form1()
         {
-            gd = GlobalData.GetInstance(this);
+            gd = GlobalDataSDL.GetInstance(this);
             InitializeComponent();
 
             gd.timer_DoTree.Interval = new System.TimeSpan(0, 0, 3);
@@ -154,8 +154,8 @@ namespace SearchDirLists
             form_lvFileCompare.Items.Clear();
             form_lvDetail.Items.Clear();
             form_lvDetailVol.Items.Clear();
-            SDLWPF.treeViewCompare1.SelectedNode = null;
-            SDLWPF.treeViewCompare2.SelectedNode = null;
+            form_treeCompare1.SelectedNode = null;
+            form_treeCompare2.SelectedNode = null;
 
             TreeNode treeNode = gd.m_dictCompareDiffs.ToArray()[gd.m_nCompareIndex].Key;
 
@@ -165,30 +165,30 @@ namespace SearchDirLists
             }
 
             gd.m_bTreeViewIndirectSelChange = true;
-            SDLWPF.treeViewCompare1.TopNode = SDLWPF.treeViewCompare1.SelectedNode = treeNode;
+            form_treeCompare1.TopNode = form_treeCompare1.SelectedNode = treeNode;
             gd.m_bTreeViewIndirectSelChange = true;
-            SDLWPF.treeViewCompare2.TopNode = SDLWPF.treeViewCompare2.SelectedNode = gd.m_dictCompareDiffs.ToArray()[gd.m_nCompareIndex].Value;
+            form_treeCompare2.TopNode = form_treeCompare2.SelectedNode = gd.m_dictCompareDiffs.ToArray()[gd.m_nCompareIndex].Value;
 
-            if (SDLWPF.treeViewCompare1.SelectedNode == null)
+            if (form_treeCompare1.SelectedNode == null)
             {
                 form_colFilename.Text = gd.m_strColFilesOrig;
                 form_colDirDetail.Text = gd.m_strColDirDetailOrig;
-                SDLWPF.treeViewCompare1.CollapseAll();
+                form_treeCompare1.CollapseAll();
             }
             else
             {
-                SDLWPF.treeViewCompare1.SelectedNode.EnsureVisible();
+                form_treeCompare1.SelectedNode.EnsureVisible();
             }
 
-            if (SDLWPF.treeViewCompare2.SelectedNode == null)
+            if (form_treeCompare2.SelectedNode == null)
             {
                 form_colFileCompare.Text = gd.m_strColFileCompareOrig;
                 form_colVolDetail.Text = gd.m_strColVolDetailOrig;
-                SDLWPF.treeViewCompare2.CollapseAll();
+                form_treeCompare2.CollapseAll();
             }
             else
             {
-                SDLWPF.treeViewCompare2.SelectedNode.EnsureVisible();
+                form_treeCompare2.SelectedNode.EnsureVisible();
             }
         }
 
@@ -202,32 +202,6 @@ namespace SearchDirLists
             form_tmapUserCtl.ClearSelection();
         }
 
-        bool FormatPath(Control ctl, ref string strPath, bool bFailOnDirectory = true)
-        {
-            if (Directory.Exists(Path.GetFullPath(strPath)))
-            {
-                string strCapDrive = strPath.Substring(0, strPath.IndexOf(@":\") + 2);
-
-                strPath = Path.GetFullPath(strPath).Replace(strCapDrive, strCapDrive.ToUpper());
-
-                if (strPath != strCapDrive.ToUpper())
-                {
-                    strPath = strPath.TrimEnd('\\');
-                }
-
-                ctl.Text = strPath;
-            }
-            else if (bFailOnDirectory)
-            {
-      //          form_tabControlMain.SelectedTab = form_tabPageVolumes;
-                gd.FormError(ctl, "Path does not exist.", "Save Fields");
-                return false;
-            }
-
-            strPath = strPath.TrimEnd('\\');
-            return true;
-        }
-
         void LoadCopyScratchPad(ListView lvFake)
         {
             int nTotal = 0;
@@ -235,7 +209,7 @@ namespace SearchDirLists
 
             foreach (SDL_ListViewItem lvItem in lvFake.Items)
             {
-                TreeNode treeNode = gd.GetNodeByPath(lvItem.SubItems[1].Text, SDLWPF.treeViewMain);
+                TreeNode treeNode = gd.GetNodeByPath(lvItem.SubItems[1].Text, form_treeViewBrowse);
 
                 if (treeNode != null)
                 {
@@ -285,7 +259,7 @@ namespace SearchDirLists
             gd.m_bPutPathInFindEditBox = true;
             gd.m_bTreeViewIndirectSelChange = true;
             gd.m_bClonesLVindirectSelChange = true;                                        // TODO: Is this in the way or is it applicable?
-            SDLWPF.treeViewMain.SelectedNode = listTreeNodes[++gd.m_nLVclonesClickIx % listTreeNodes.Count];
+            form_treeViewBrowse.SelectedNode = listTreeNodes[++gd.m_nLVclonesClickIx % listTreeNodes.Count];
         }
 
         void LV_ClonesSelChange(ListView lv, bool bUp = false)
@@ -297,16 +271,6 @@ namespace SearchDirLists
 
             gd.m_nLVclonesClickIx = -1;
             LV_CloneSelNode(lv);
-        }
-
-        void PutTreeCompareNodePathIntoFindCombo(TreeView treeView)
-        {
-            if (treeView.SelectedNode == null)
-            {
-                return;
-            }
-
-            form_cbFindbox.Text = GlobalData.FullPath((TreeNode)((SDL_TreeView)treeView).SelectedNode);
         }
 
         void SelectedIndexChanged(object sender, EventArgs e)
@@ -331,14 +295,14 @@ namespace SearchDirLists
             gd.m_bPutPathInFindEditBox = true;
             gd.m_bTreeViewIndirectSelChange = true;
 
-            TreeNode treeNode = (TreeNode)(SDLWPF.treeViewMain.SelectedNode = (TreeNode)((SDL_ListViewItem)lv.SelectedItems[0]).Tag);
+            TreeNode treeNode = (TreeNode)(form_treeViewBrowse.SelectedNode = (TreeNode)((SDL_ListViewItem)lv.SelectedItems[0]).Tag);
 
             if (treeNode == null)
             {
                 return;
             }
 
-            SDLWPF.treeViewMain.TopNode = (TreeNode)treeNode.Parent;
+            form_treeViewBrowse.TopNode = (TreeNode)treeNode.Parent;
             treeNode.EnsureVisible();
         }
 
@@ -375,13 +339,13 @@ namespace SearchDirLists
 
             Utilities.Assert(1308.9309, form_chkCompare1.Checked);
 
-            if (SDLWPF.treeViewMain.SelectedNode == null)
+            if (form_treeViewBrowse.SelectedNode == null)
             {
                 gd.m_blinky.Go(clr: Color.Red, Once: true);
                 return;
             }
 
-            TreeNode nodeCompare2 = (TreeNode)SDLWPF.treeViewMain.SelectedNode;
+            TreeNode nodeCompare2 = (TreeNode)form_treeViewBrowse.SelectedNode;
 
             if (nodeCompare2 == gd.m_nodeCompare1)
             {
@@ -400,8 +364,8 @@ namespace SearchDirLists
 
             RootNodeDatum rootNodeDatum1 = (RootNodeDatum)gd.m_nodeCompare1.Root().Tag;
             RootNodeDatum rootNodeDatum2 = (RootNodeDatum)nodeCompare2.Root().Tag;
-            string strFullPath1 = GlobalData.FullPath(gd.m_nodeCompare1);
-            string strFullPath2 = GlobalData.FullPath(nodeCompare2);
+            string strFullPath1 = GlobalDataSDL.FullPath(gd.m_nodeCompare1);
+            string strFullPath2 = GlobalDataSDL.FullPath(nodeCompare2);
             string strFullPath1A = gd.m_nodeCompare1.FullPath;
             string strFullPath2A = nodeCompare2.FullPath;
 
@@ -471,8 +435,8 @@ namespace SearchDirLists
             gd.m_nodeCompare1.Tag = new RootNodeDatum((NodeDatum)gd.m_nodeCompare1.Tag, rootNodeDatum1);
             nodeCompare2.Tag = new RootNodeDatum((NodeDatum)nodeCompare2.Tag, rootNodeDatum2);
             nodeCompare2.Checked = true;    // hack to put it in the right file pane
-            SDLWPF.treeViewCompare1.Nodes.Add(gd.m_nodeCompare1);
-            SDLWPF.treeViewCompare2.Nodes.Add(nodeCompare2);
+            form_treeCompare1.Nodes.Add(gd.m_nodeCompare1);
+            form_treeCompare2.Nodes.Add(nodeCompare2);
             gd.m_nCompareIndex = 0;
             form_btnCompare.Select();
             form_btnCompare.Text = "> >";
@@ -489,9 +453,9 @@ namespace SearchDirLists
             gd.m_bCompareMode = true;
             form_tabControlFileList.SelectedTab = form_tabPageFileList;
             gd.m_bTreeViewIndirectSelChange = true;
-            SDLWPF.treeViewCompare1.SelectedNode = (TreeNode)SDLWPF.treeViewCompare1.Nodes[0];
+            form_treeCompare1.SelectedNode = (TreeNode)form_treeCompare1.Nodes[0];
             gd.m_bTreeViewIndirectSelChange = true;
-            SDLWPF.treeViewCompare2.SelectedNode = (TreeNode)SDLWPF.treeViewCompare2.Nodes[0];
+            form_treeCompare2.SelectedNode = (TreeNode)form_treeCompare2.Nodes[0];
         }
 
         void form_btnCopyToClipBoard_Click(object sender = null, EventArgs e = null)
@@ -502,22 +466,22 @@ namespace SearchDirLists
             {
                 if (treeView == null)
                 {
-                    treeView = SDLWPF.treeViewCompare1;
+                    treeView = form_treeCompare1;
                 }
 
-                if (treeView == SDLWPF.treeViewMain)
+                if (treeView == form_treeViewBrowse)
                 {
-                    treeView = SDLWPF.treeViewCompare1;
+                    treeView = form_treeCompare1;
                 }
 
                 if (treeView.SelectedNode == null)
                 {
-                    treeView = (treeView == SDLWPF.treeViewCompare1) ? SDLWPF.treeViewCompare2 : SDLWPF.treeViewCompare1;
+                    treeView = (treeView == form_treeCompare1) ? form_treeCompare2 : form_treeCompare1;
                 }
             }
             else
             {
-                treeView = SDLWPF.treeViewMain;
+                treeView = form_treeViewBrowse;
             }
 
             TreeNode treeNode = (TreeNode)treeView.SelectedNode;
@@ -530,7 +494,7 @@ namespace SearchDirLists
             if (treeNode != null)
             {
                 gd.m_blinky.SelectTreeNode(treeNode, Once: true);
-                Clipboard.SetText(GlobalData.FullPath(treeNode));
+                Clipboard.SetText(GlobalDataSDL.FullPath(treeNode));
             }
             else
             {
@@ -562,7 +526,7 @@ namespace SearchDirLists
 
         void form_btnIgnoreAdd_Click(object sender, EventArgs e)
         {
-            TreeNode treeNode = (TreeNode)SDLWPF.treeViewMain.SelectedNode;
+            TreeNode treeNode = (TreeNode)form_treeViewBrowse.SelectedNode;
 
             if (treeNode == null)
             {
@@ -682,17 +646,17 @@ namespace SearchDirLists
             }
             else
             {
-                SDLWPF.treeViewMain.CollapseAll();
+                form_treeViewBrowse.CollapseAll();
             }
         }
 
         void form_btnUp_Click(object sender, EventArgs e)
         {
-            TreeNode treeNode = (TreeNode)SDLWPF.treeViewMain.SelectedNode;
+            TreeNode treeNode = (TreeNode)form_treeViewBrowse.SelectedNode;
 
             if (gd.m_bCompareMode)
             {
-                treeNode = (TreeNode)((gd.m_treeCopyToClipboard != null) ? gd.m_treeCopyToClipboard : SDLWPF.treeViewCompare1).SelectedNode;
+                treeNode = (TreeNode)((gd.m_treeCopyToClipboard != null) ? gd.m_treeCopyToClipboard : form_treeCompare1).SelectedNode;
             }
 
             if (treeNode != null)
@@ -825,8 +789,8 @@ namespace SearchDirLists
                 gd.m_listTreeNodes_Compare1.Clear();
                 gd.m_listTreeNodes_Compare2.Clear();
                 gd.m_dictCompareDiffs.Clear();
-                SDLWPF.treeViewCompare1.Nodes.Clear();
-                SDLWPF.treeViewCompare2.Nodes.Clear();
+                form_treeCompare1.Nodes.Clear();
+                form_treeCompare2.Nodes.Clear();
                 gd.m_listHistory.Clear();
                 gd.m_nIxHistory = -1;
                 form_btnFolder.Enabled = true;
@@ -835,11 +799,11 @@ namespace SearchDirLists
                 form_tabControlFileList.SelectedTab = m_FileListTabPageBeforeCompare;
 
                 gd.m_bCompareMode = false;
-                form_treeView_AfterSelect(SDLWPF.treeViewMain, new TreeViewEventArgs(SDLWPF.treeViewMain.SelectedNode));
+                form_treeView_AfterSelect(form_treeViewBrowse, new TreeViewEventArgs(form_treeViewBrowse.SelectedNode));
             }
             else if (form_chkCompare1.Checked)
             {
-                gd.m_nodeCompare1 = (TreeNode)SDLWPF.treeViewMain.SelectedNode;
+                gd.m_nodeCompare1 = (TreeNode)form_treeViewBrowse.SelectedNode;
 
                 if (gd.m_nodeCompare1 != null)
                 {
@@ -885,11 +849,11 @@ namespace SearchDirLists
             }
             else if (sender == form_lvFileCompare)
             {
-                gd.m_treeCopyToClipboard = SDLWPF.treeViewCompare2;
+                gd.m_treeCopyToClipboard = form_treeCompare2;
             }
             else
             {
-                gd.m_treeCopyToClipboard = gd.m_bCompareMode ? SDLWPF.treeViewCompare1 : SDLWPF.treeViewMain;
+                gd.m_treeCopyToClipboard = gd.m_bCompareMode ? form_treeCompare1 : form_treeViewBrowse;
             }
         }
 
@@ -900,7 +864,7 @@ namespace SearchDirLists
             //    return;
             //}
 
-            form_SetCopyToClipboardTree(SDLWPF.treeViewMain);
+            form_SetCopyToClipboardTree(form_treeViewBrowse);
             gd.m_nLVclonesClickIx = -1;
         }
 
@@ -1022,14 +986,14 @@ namespace SearchDirLists
                 return;
             }
 
-            form_SetCopyToClipboardTree((sender == form_lvFiles) ? SDLWPF.treeViewCompare1 : SDLWPF.treeViewCompare2);
+            form_SetCopyToClipboardTree((sender == form_lvFiles) ? form_treeCompare1 : form_treeCompare2);
 
             if (gd.m_bCompareMode == false)
             {
                 return;
             }
 
-            form_cbFindbox.Text = GlobalData.FullPath((TreeNode)gd.m_treeCopyToClipboard.SelectedNode);
+            form_cbFindbox.Text = GlobalDataSDL.FullPath((TreeNode)gd.m_treeCopyToClipboard.SelectedNode);
         }
 
         void form_lvTreeNodes_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -1173,12 +1137,12 @@ namespace SearchDirLists
             }
 
             form_SetCopyToClipboardTree(sender);
-            form_cbFindbox.Text = GlobalData.FullPath((TreeNode)((TreeView)sender).SelectedNode);
+            form_cbFindbox.Text = GlobalDataSDL.FullPath((TreeNode)((TreeView)sender).SelectedNode);
         }
 
         void form_treeViewBrowse_AfterCheck(object sender, TreeViewEventArgs e)
         {
-            string strPath = GlobalData.FullPath((TreeNode)e.Node);
+            string strPath = GlobalDataSDL.FullPath((TreeNode)e.Node);
 
             if (e.Node.Checked)
             {
@@ -1234,7 +1198,7 @@ namespace SearchDirLists
             gd.m_bTreeViewIndirectSelChange = false;
             form_tmapUserCtl.Render((TreeNode)e.Node);
 
-            if (sender == SDLWPF.treeViewCompare2)
+            if (sender == form_treeCompare2)
             {
                 Utilities.Assert(1308.9321, gd.m_bCompareMode);
                 form_lvFileCompare.Items.Clear();
@@ -1253,7 +1217,7 @@ namespace SearchDirLists
 
             TreeNode rootNode = ((TreeNode)e.Node).Root();
 
-            Utilities.Assert(1308.9322, (new object[] { SDLWPF.treeViewCompare1, SDLWPF.treeViewCompare2 }.Contains(sender)) == gd.m_bCompareMode);
+            Utilities.Assert(1308.9322, (new object[] { form_treeCompare1, form_treeCompare2 }.Contains(sender)) == gd.m_bCompareMode);
             gd.DoTreeSelect((TreeNode)e.Node, TreeSelectStatusCallback, TreeSelectDoneCallback);
 
             string strNode = e.Node.Text;
@@ -1280,7 +1244,7 @@ namespace SearchDirLists
                     form_colDirDetail.Text = form_colFilename.Text = strDirAndVolume;
                 }
 
-                form_cbFindbox.Text = GlobalData.FullPath((TreeNode)e.Node);
+                form_cbFindbox.Text = GlobalDataSDL.FullPath((TreeNode)e.Node);
                 return;
             }
 
@@ -1293,7 +1257,7 @@ namespace SearchDirLists
             if (gd.m_bPutPathInFindEditBox)
             {
                 gd.m_bPutPathInFindEditBox = false;
-                form_cbFindbox.Text = GlobalData.FullPath((TreeNode)e.Node);
+                form_cbFindbox.Text = GlobalDataSDL.FullPath((TreeNode)e.Node);
             }
 
             NodeDatum nodeDatum = (NodeDatum)e.Node.Tag;
@@ -1458,35 +1422,17 @@ namespace SearchDirLists
             gd.RestartTreeTimer();
             form_tmapUserCtl.TooltipAnchor = (Control)form_cbFindbox;
         }
-
-        void label_About_Click(object sender, EventArgs e)
-        {
-            new AboutBox1().ShowDialog_Once(this);
-        }
-
-        void timer_DoTree_Tick(object sender, EventArgs e)
-        {
-            gd.timer_DoTree.Stop();
-
-            if (gd.m_bCompareMode)
-            {
-                Utilities.Assert(1308.9328, form_chkCompare1.Checked);
-                form_chkCompare1.Checked = false;
-            }
-
-            DoTree(bKill: gd.m_bKillTree);
-            gd.m_bKillTree = true;
-            gd.m_bRestartTreeTimer = false;
-        }
-
     }
 
-    partial class GlobalData : Utilities
+    partial class GlobalDataSDL : Utilities
     {
-        internal static Form1 static_wpfOrForm { get { return static_form_; } }
-        internal static Form1 static_form { get { return static_form_; } } static Form1 static_form_ = null;
-        internal static GlobalData GetInstance(Form1 form) { if (static_instance == null) static_instance = new GlobalData(form); return static_instance; }
-        GlobalData(Form1 form) { static_form_ = form; }               // private constructor: singleton pattern
+        internal static Form1 static_form { get; private set; }
+        internal static GlobalDataSDL GetInstance(Form1 form) { static_instance = new GlobalDataSDL(form); return static_instance; }
+        GlobalDataSDL(Form1 form)
+        {
+            static_form = form; 
+            ClearMem_Form1();
+        }
         internal SDL_TreeView m_treeCopyToClipboard = null;
         internal TreeNode m_nodeCompare1 = null;
         internal readonly Dictionary<TreeNode, TreeNode> m_dictCompareDiffs = new Dictionary<TreeNode, TreeNode>();
@@ -1495,9 +1441,9 @@ namespace SearchDirLists
         internal readonly List<TreeNode> m_listHistory = new List<TreeNode>();
         internal int m_nIxHistory = -1;
 
-        static GlobalData static_instance = null;
+        static GlobalDataSDL static_instance = null;
 
-        internal static GlobalData GetInstance()
+        internal static GlobalDataSDL GetInstance()
         {
             Utilities.Assert(1308.9329, static_instance != null);
             return static_instance;
@@ -1512,8 +1458,6 @@ namespace SearchDirLists
 
             m_listHistory.Clear();
             m_nIxHistory = -1;
-
-            SDLWPF.treeViewMain.Nodes.Clear();
         }
 
         internal readonly SDL_Timer timer_DoTree = new SDL_Timer();
@@ -1542,8 +1486,6 @@ namespace SearchDirLists
 
         internal bool m_bKillTree = true;
         internal bool m_bRestartTreeTimer = false;
-
-        internal static bool AppExit = false;
 
         // initialized in Form1 constructor:
         internal Blinky m_blinky = null;
@@ -1667,13 +1609,6 @@ namespace SearchDirLists
             {
                 m_blinky.Go((Control)sender, clr: Color.Red, Once: true);
             }
-        }
-
-        internal void FormError(Control control, string strError, string strTitle)
-        {
-            m_blinky.Go(control, clr: Color.Red, Once: true);
-            MBox(strError, strTitle);
-            m_blinky.Go(control, clr: Color.Red, Once: true);
         }
 
         internal static string FullPath(TreeNode treeNode)

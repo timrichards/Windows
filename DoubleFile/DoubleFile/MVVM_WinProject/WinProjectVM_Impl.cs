@@ -6,9 +6,9 @@ namespace DoubleFile
     {
         // Menu items
         
-        static string ksAllFilesFilter = "|All files|*.*";
-        static string ksProjectFilter = "Double File project|*." + FileParse.ksFileExt_Project + ksAllFilesFilter;
-        internal static string ksListingFilter = "Double File Listing|*." + FileParse.ksFileExt_Listing + ksAllFilesFilter;
+        const string ksAllFilesFilter = "|All files|*.*";
+        const string ksProjectFilter = "Double File project|*." + FileParse.ksFileExt_Project + ksAllFilesFilter;
+        internal const string ksListingFilter = "Double File Listing|*." + FileParse.ksFileExt_Listing + ksAllFilesFilter;
 
         internal void OpenProject()
         {

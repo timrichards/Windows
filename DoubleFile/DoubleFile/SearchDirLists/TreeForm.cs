@@ -43,7 +43,7 @@ namespace SearchDirLists
             {
                 Utilities.CheckAndInvoke(this, new Action(() =>
                 {
-                    SDLWPF.treeViewMain.Nodes.Clear();
+                    form_treeViewBrowse.Nodes.Clear();
                 }));
                 
                 return;
@@ -66,6 +66,7 @@ namespace SearchDirLists
             }));
 
             Collate collate = new Collate(gd.m_dictNodes,
+                form_treeViewBrowse,
                 form_lvClones, form_lvSameVol, form_lvUnique,
                 gd.m_listRootNodes, gd.m_listTreeNodes, gd.m_bCheckboxes,
                 gd.m_listLVignore, form_chkLoose.Checked);
@@ -87,8 +88,8 @@ namespace SearchDirLists
             gd.TreeCleanup();
             GC.Collect();
 
-            int nNodeCount = SDLWPF.treeViewMain.GetNodeCount(includeSubTrees: true);
-            int nNodeCount_A = Utilities.CountNodes((TreeNode)SDLWPF.treeViewMain.Nodes[0]);
+            int nNodeCount = form_treeViewBrowse.GetNodeCount(includeSubTrees: true);
+            int nNodeCount_A = Utilities.CountNodes((TreeNode)form_treeViewBrowse.Nodes[0]);
 
             Utilities.Assert(1304.5307, Utilities.CountNodes(gd.m_listRootNodes) == nNodeCount);
             Utilities.Assert(1304.5308, gd.m_listTreeNodes.Count == nNodeCount);
@@ -115,9 +116,9 @@ namespace SearchDirLists
             }
             else if (rootNode != null)
             {
-                lock (SDLWPF.treeViewMain)
+                lock (form_treeViewBrowse)
                 {
-                    SDLWPF.treeViewMain.Nodes.Add(rootNode.Text);    // items added to show progress
+                    form_treeViewBrowse.Nodes.Add(rootNode.Text);    // items added to show progress
        //             volStrings.SetStatus_Done(form_lvVolumesMain, rootNode);
                 }
 
@@ -182,8 +183,8 @@ namespace SearchDirLists
                 return;
             }
 
-            SDL_TreeView t1 = bSecondComparePane ? SDLWPF.treeViewCompare2 : SDLWPF.treeViewCompare1;
-            SDL_TreeView t2 = bSecondComparePane ? SDLWPF.treeViewCompare1 : SDLWPF.treeViewCompare2;
+            SDL_TreeView t1 = bSecondComparePane ? form_treeCompare2 : form_treeCompare1;
+            SDL_TreeView t2 = bSecondComparePane ? form_treeCompare1 : form_treeCompare2;
 
             if (t1.SelectedNode == null)
             {
@@ -336,10 +337,10 @@ namespace SearchDirLists
 
                 TreeNode treeNode = new TreeNode("Creating treeview...        ");
 
-                treeNode.NodeFont = new Font(SDLWPF.treeViewMain.Font, FontStyle.Bold | FontStyle.Underline);
-                SDLWPF.treeViewMain.Nodes.Add(treeNode);
-                SDLWPF.treeViewMain.CheckBoxes = false;    // treeview items are faked to show progress
-                SDLWPF.treeViewMain.Enabled = false;
+                treeNode.NodeFont = new Font(form_treeViewBrowse.Font, FontStyle.Bold | FontStyle.Underline);
+                form_treeViewBrowse.Nodes.Add(treeNode);
+                form_treeViewBrowse.CheckBoxes = false;    // treeview items are faked to show progress
+                form_treeViewBrowse.Enabled = false;
                 Utilities.Assert(1304.5312, gd.m_listRootNodes.Count == 0);
 
                 gd.m_tree = new Tree(ListLVvolStrings, gd.m_dictNodes, gd.m_dictDriveInfo,
@@ -348,7 +349,7 @@ namespace SearchDirLists
             }
             else
             {
-                int nNodeCount = SDLWPF.treeViewMain.GetNodeCount(includeSubTrees: true);
+                int nNodeCount = form_treeViewBrowse.GetNodeCount(includeSubTrees: true);
 
                 Utilities.Assert(1304.5313, gd.m_listTreeNodes.Count == nNodeCount);
 
@@ -378,7 +379,7 @@ namespace SearchDirLists
         }
     }
 
-    partial class GlobalData
+    partial class GlobalDataSDL
     {
         internal readonly SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = new SortedDictionary<Correlate, UList<TreeNode>>();
         internal readonly Dictionary<string, string> m_dictDriveInfo = new Dictionary<string, string>();
@@ -414,7 +415,7 @@ namespace SearchDirLists
             if (m_tree != null)
             {
                 m_tree.EndThread(bJoin: bJoin);
-                SDLWPF.treeViewMain.Nodes.Clear();
+                ((SDL_TreeView)GlobalDataSDL.static_form.form_treeViewBrowse).Nodes.Clear();
                 m_listRootNodes.Clear();
                 TreeCleanup();
             }

@@ -162,13 +162,13 @@ namespace SearchDirLists
 
             gd.m_bSearchResultsType2_List = true;
 
-            if (SearchResultsType2_Nav(SDLWPF.treeViewMain) == false)
+            if (SearchResultsType2_Nav(form_treeViewBrowse) == false)
             {
                 Utilities.Assert(1307.8311, false);
                 gd.SearchFail();
             }
 
-            Utilities.MessageBoxKill(GlobalData.mSTRsearchTitle);
+            Utilities.MessageBoxKill(GlobalDataSDL.mSTRsearchTitle);
         }
 
         private void DoSearchType2(string strSearch, bool bKill = false, bool bSearchFilesOnly = false)
@@ -179,7 +179,7 @@ namespace SearchDirLists
 
                 if (bKill == false)
                 {
-                    mboxRet = Utilities.MBox("Already in progress. Restart search?" + "\n(or Cancel search.)".PadRight(100), GlobalData.mSTRsearchTitle, MBoxBtns.YesNoCancel);
+                    mboxRet = Utilities.MBox("Already in progress. Restart search?" + "\n(or Cancel search.)".PadRight(100), GlobalDataSDL.mSTRsearchTitle, MBoxBtns.YesNoCancel);
 
                     if (mboxRet == MBoxRet.No)
                     {
@@ -208,9 +208,9 @@ namespace SearchDirLists
             SearchBase.FolderSpecialHandling folderHandling = SearchBase.FolderSpecialHandling.None;    // not used
             string strCurrentNode = null;
 
-            if (SDLWPF.treeViewMain.SelectedNode != null)
+            if (form_treeViewBrowse.SelectedNode != null)
             {
-                strCurrentNode = GlobalData.FullPath((TreeNode)SDLWPF.treeViewMain.SelectedNode);
+                strCurrentNode = GlobalDataSDL.FullPath((TreeNode)form_treeViewBrowse.SelectedNode);
             }
 
             Utilities.Assert(1307.8312, gd.m_searchType2 == null);
@@ -238,7 +238,7 @@ namespace SearchDirLists
 
             m_ctlLastSearchSender = (Control)sender;
 
-            SDL_TreeView treeView = SDLWPF.treeViewMain;
+            SDL_TreeView treeView = form_treeViewBrowse;
 
             if (gd.m_bCompareMode)
             {
@@ -266,9 +266,9 @@ namespace SearchDirLists
                     gd.m_blinky.SelectTreeNode(treeNode);
                     ++gd.m_nSearchResultsIndexer;
                 }
-                else if (treeView == SDLWPF.treeViewCompare1)
+                else if (treeView == form_treeCompare1)
                 {
-                    treeView = SDLWPF.treeViewCompare2;
+                    treeView = form_treeCompare2;
                     continue;
                 }
                 else if (form_cbFindbox.Text.Contains('\\'))
@@ -277,7 +277,7 @@ namespace SearchDirLists
 
                     int nPos = form_cbFindbox.Text.LastIndexOf('\\');
                     string strMaybePath = form_cbFindbox.Text.Substring(0, nPos);
-                    TreeNode treeNode = gd.GetNodeByPath(strMaybePath, SDLWPF.treeViewMain);
+                    TreeNode treeNode = gd.GetNodeByPath(strMaybePath, form_treeViewBrowse);
 
                     gd.m_strSelectFile = form_cbFindbox.Text.Substring(nPos + 1);
 
@@ -585,7 +585,7 @@ namespace SearchDirLists
         public bool IsAborted { get { return m_bThreadAbort; } }
     }
 
-    partial class GlobalData    // Get one node by path
+    partial class GlobalDataSDL    // Get one node by path
     {
         internal TreeNode GetNodeByPath(string path, SDL_TreeView treeView)
         {
@@ -692,7 +692,7 @@ namespace SearchDirLists
         }
     }
 
-    partial class GlobalData    // Search type 1: array of nodes (Search Folders button); and 2: list of nodes and files
+    partial class GlobalDataSDL    // Search type 1: array of nodes (Search Folders button); and 2: list of nodes and files
     {
         internal bool m_bSearchResultsType2_List = false;
         internal int m_nSearchResultsIndexer = -1;
@@ -772,11 +772,11 @@ namespace SearchDirLists
             }
             else if (m_bCompareMode)
             {
-                treeView = (m_treeCopyToClipboard is SDL_TreeView) ? (SDL_TreeView)m_treeCopyToClipboard : SDLWPF.treeViewCompare1;
+                treeView = (m_treeCopyToClipboard is SDL_TreeView) ? (SDL_TreeView)m_treeCopyToClipboard : (SDL_TreeView)GlobalDataSDL.static_form.form_treeCompare1;
             }
             else if (treeView == null)
             {
-                treeView = SDLWPF.treeViewMain;
+                treeView = ((SDL_TreeView)GlobalDataSDL.static_form.form_treeViewBrowse);
             }
 
             TreeNode treeNode = GetNodeByPath(strSearch, treeView);
@@ -789,7 +789,7 @@ namespace SearchDirLists
 
                 if (m_bCompareMode)
                 {
-                    listTreeNodes = ((treeView == SDLWPF.treeViewCompare2) ? m_listTreeNodes_Compare2 : m_listTreeNodes_Compare1).ToList();
+                    listTreeNodes = ((treeView == (SDL_TreeView)GlobalDataSDL.static_form.form_treeCompare2) ? m_listTreeNodes_Compare2 : m_listTreeNodes_Compare1).ToList();
                 }
 
                 if (strSearch.ToLower() == strSearch)

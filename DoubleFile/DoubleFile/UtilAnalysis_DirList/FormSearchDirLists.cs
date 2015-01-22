@@ -25,7 +25,6 @@ namespace DoubleFile
             {
                 m_ownerWindow = ownerWindow;
                 ListLVvolStrings = listLVvolStrings;
-                GlobalData.SearchDirListsFormClosing = false;
             }
 
             static internal void RestartTreeTimer(FormAnalysis_DirList form1, IEnumerable<LVitem_ProjectVM> listLVvolStrings)
@@ -39,12 +38,12 @@ namespace DoubleFile
 
         readonly GlobalData gd = null;
 
-        // Memory allocations occur just below all partial class Form1 : Form declarations, then ClearMem_...() for each.
+        // Memory allocations occur just below all partial class FormAnalysis_DirList : Form declarations, then ClearMem_...() for each.
         // Declarations continue below these two ClearMem() methods.
 
-        void ClearMem_Form1()
+        void ClearMem_FormAnalysis_DirList()
         {
-            gd.ClearMem_Form1();
+            gd.ClearMem_FormAnalysis_DirList();
 
             MBox.Assert(1308.9301, form_lvClones.Items.Count == 0, bTraceOnly: true);
             MBox.Assert(1308.9302, form_lvSameVol.Items.Count == 0, bTraceOnly: true);
@@ -64,7 +63,7 @@ namespace DoubleFile
         void ClearMem()
         {
             Collate.ClearMem();
-            ClearMem_Form1();
+            ClearMem_FormAnalysis_DirList();
             gd.ClearMem_Search();
             ClearMem_TreeForm();
         }
@@ -74,7 +73,7 @@ namespace DoubleFile
         internal readonly Color m_clrVolGroupOrig = Color.Empty;
         internal readonly Font m_FontVolGroupOrig = null;
 
-        public class Form1LayoutPanel : TableLayoutPanel
+        public class FormAnalysis_DirListLayoutPanel : TableLayoutPanel
         {
             void SetStyle()
             {
@@ -83,12 +82,12 @@ namespace DoubleFile
                   ControlStyles.UserPaint, true);
             }
 
-            public Form1LayoutPanel()
+            public FormAnalysis_DirListLayoutPanel()
             {
                 SetStyle();
             }
 
-            public Form1LayoutPanel(System.ComponentModel.IContainer container)
+            public FormAnalysis_DirListLayoutPanel(System.ComponentModel.IContainer container)
             {
                 container.Add(this);
                 SetStyle();
@@ -99,7 +98,7 @@ namespace DoubleFile
         {
             InitializeComponent();
 
-            gd = GlobalData.GetInstance();
+            gd = GlobalData.Instance;
             gd.m_tmrDoTree.Interval = new System.TimeSpan(0, 0, 3);
             gd.m_tmrDoTree.Tick += new System.EventHandler((object sender, EventArgs e) =>
             {
@@ -1163,7 +1162,7 @@ namespace DoubleFile
 
         void form_treeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            var gd = GlobalData.GetInstance();
+            var gd = GlobalData.Instance;
 
             if (gd.m_tree != null)
             {
@@ -1310,7 +1309,7 @@ namespace DoubleFile
             gd.m_bPutPathInFindEditBox = true;
         }
 
-        void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        void FormAnalysis_DirList_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (gd.m_bCompareMode)
             {
@@ -1323,11 +1322,11 @@ namespace DoubleFile
                 MBox.MessageBoxKill();
             }
 
-            gd.SearchDirListsClosing();
+            gd.FormAnalysis_DirList_Closing = true;
             m_ownerWindow.Activate();
         }
 
-        void Form1_KeyDown(object sender, KeyEventArgs e)
+        void FormAnalysis_DirList_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.F2)
             {
@@ -1350,7 +1349,7 @@ namespace DoubleFile
             }
         }
 
-        void Form1_KeyPress(object sender, KeyPressEventArgs e)
+        void FormAnalysis_DirList_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)0x3)                         // Ctrl-C
             {
@@ -1359,7 +1358,7 @@ namespace DoubleFile
             }
         }
 
-        void Form1_KeyUp(object sender, KeyEventArgs e)
+        void FormAnalysis_DirList_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.F2)
             {
@@ -1423,8 +1422,9 @@ namespace DoubleFile
             }
         }
 
-        void Form1_Load(object sender, EventArgs e)
+        void FormAnalysis_DirList_Load(object sender, EventArgs e)
         {
+            gd.FormAnalysis_DirList_Closing = false;
             gd.RestartTreeTimer();
             form_tmapUserCtl.TooltipAnchor = (Control)form_cbFindbox;
         }

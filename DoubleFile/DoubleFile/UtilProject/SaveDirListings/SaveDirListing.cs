@@ -198,7 +198,7 @@ namespace DoubleFile
                         fs.WriteLine(FormatString(strDir: ksTotalLengthLoc01, nLength: LengthRead));
                     }
 
-                    if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
+                    if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
                     {
                         File.Delete(m_volStrings.ListingFile);
                         return;

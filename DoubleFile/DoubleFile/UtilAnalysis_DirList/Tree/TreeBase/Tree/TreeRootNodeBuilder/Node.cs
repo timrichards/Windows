@@ -20,7 +20,7 @@ namespace DoubleFile
 
                 internal Node(string in_str, uint nLineNo, ulong nLength, RootNode rootNode)
                 {
-                    if (GlobalData.SearchDirListsFormClosing)
+                    if (GlobalData.Instance.FormAnalysis_DirList_Closing)
                     {
                         return;
                     }
@@ -63,7 +63,7 @@ namespace DoubleFile
 
                 internal TreeNode AddToTree(string strVolumeName = null)
                 {
-                    if (GlobalData.SearchDirListsFormClosing)
+                    if (GlobalData.Instance.FormAnalysis_DirList_Closing)
                     {
                         return new TreeNode();
                     }

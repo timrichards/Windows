@@ -2,7 +2,6 @@
 {
     partial class GlobalData
     {
-        internal static bool SearchDirListsFormClosing = false;
         internal static LocalWindow static_TopWindow { get { return static_topWindow_ ?? static_MainWindow; } set { static_topWindow_ = value; } } static LocalWindow static_topWindow_ = null;
         internal static MainWindow static_MainWindow { get; private set; }
         internal static GlobalData GetInstance(MainWindow wpfWin) { if (static_instance == null) { static_instance = new GlobalData(wpfWin); } return static_instance; }
@@ -18,10 +17,13 @@
             m_tmrDoTree.Interval = new System.TimeSpan(0, 0, 3);
         }
 
-        internal static GlobalData GetInstance()
+        internal static GlobalData Instance
         {
-            MBox.Assert(1308.9329, static_instance != null);
-            return static_instance;
+            get
+            {
+                MBox.Assert(1308.9329, static_instance != null);
+                return static_instance;
+            }
         }
 
         internal void RestartTreeTimer()

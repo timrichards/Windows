@@ -145,36 +145,54 @@ namespace DoubleFile
         internal static object CheckAndInvoke(Control dispatcher, Delegate action, object[] args = null)
         {
             bool bInvoke = dispatcher.InvokeRequired;
-            if (GlobalData.SearchDirListsFormClosing)
+
+            if (GlobalData.Instance.FormAnalysis_DirList_Closing)
             {
                 return null;
             }
 
-            if (bInvoke)
+            try
             {
-                if (args == null)
+                if (bInvoke)
                 {
-                    return dispatcher.Invoke(action);
+                    if (args == null)
+                    {
+                        return dispatcher.Invoke(action);
+                    }
+                    else
+                    {
+                        return dispatcher.Invoke(action, (object)args);
+                    }
                 }
                 else
                 {
-                    return dispatcher.Invoke(action, (object)args);
+                    if (action is Action)
+                    {
+                        ((Action)action)();
+                    }
+                    else if (action is BoolAction)
+                    {
+                        return ((BoolAction)action)();
+                    }
+                    else
+                    {
+                        return action.DynamicInvoke(args);     // late-bound and slow
+                    }
                 }
             }
-            else
+            catch (ObjectDisposedException)
             {
-                if (action is Action)
-                {
-                    ((Action)action)();
-                }
-                else if (action is BoolAction)
-                {
-                    return ((BoolAction)action)();
-                }
-                else
-                {
-                    return action.DynamicInvoke(args);     // late-bound and slow
-                }
+                if (false == GlobalData.Instance.FormAnalysis_DirList_Closing)
+                    throw;
+
+                return null;
+            }
+            catch (InvalidOperationException)
+            {
+                if (false == GlobalData.Instance.FormAnalysis_DirList_Closing)
+                    throw;
+
+                return null;
             }
 
             return null;

@@ -8,11 +8,22 @@ namespace DoubleFile
 {
     partial class GlobalData
     {
-        internal void SearchDirListsClosing()
+        internal bool FormAnalysis_DirList_Closing
         {
-            SearchDirListsFormClosing = true;
-            m_tmrDoTree.Stop();
+            set
+            {
+                _FormAnalysis_DirList_Closing = value;
+
+                if (value)
+                    m_tmrDoTree.Stop();
+            }
+
+            get
+            {
+                return _FormAnalysis_DirList_Closing;
+            }
         }
+        bool _FormAnalysis_DirList_Closing = false;
 
         internal SDL_TreeView m_treeCopyToClipboard = null;
         internal TreeNode m_nodeCompare1 = null;
@@ -22,7 +33,7 @@ namespace DoubleFile
         internal readonly List<TreeNode> m_listHistory = new List<TreeNode>();
         internal int m_nIxHistory = -1;
 
-        internal void ClearMem_Form1()
+        internal void ClearMem_FormAnalysis_DirList()
         {
             m_nodeCompare1 = null;
             m_dictCompareDiffs.Clear();
@@ -55,7 +66,7 @@ namespace DoubleFile
         internal bool m_bNavDropDown = false;
         internal bool m_btmapUserCtl_MouseDown = false;
 
-        // initialized in Form1 constructor:
+        // initialized in FormAnalysis_DirList constructor:
         internal Blinky m_blinky = null;
         internal string m_strBtnTreeCollapseOrig = null;
         internal string m_strColFilesOrig = null;

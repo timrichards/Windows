@@ -17,7 +17,7 @@ namespace DoubleFile
 
         internal SaveListingsProcess(IEnumerable<LVitem_ProjectVM> listLVvolStrings)
         {
-            gd = GlobalData.GetInstance();
+            gd = GlobalData.Instance;
 
             var listNicknames = new List<string>();
             var listSourcePaths = new List<string>();
@@ -53,7 +53,7 @@ namespace DoubleFile
 
         internal void SaveDirListingsStatusCallback(string strPath, string strText = null, bool bDone = false, double nProgress = double.NaN)
         {
-            if (GlobalData.SearchDirListsFormClosing || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
+            if (GlobalData.Instance.FormAnalysis_DirList_Closing || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
             {
                 return;
             }
@@ -80,7 +80,7 @@ namespace DoubleFile
 
         internal void SaveDirListingsDoneCallback()
         {
-            if (GlobalData.SearchDirListsFormClosing || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
+            if (GlobalData.Instance.FormAnalysis_DirList_Closing || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
             {
                 return;
             }

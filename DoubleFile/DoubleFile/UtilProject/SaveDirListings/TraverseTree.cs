@@ -48,7 +48,7 @@ namespace DoubleFile
 
                 while (stackDirs.Count > 0)
                 {
-                    if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
+                    if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
                     {
                         return null;
                     }
@@ -76,7 +76,7 @@ namespace DoubleFile
 
                     foreach (var winFile in listFiles)
                     {
-                        if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
+                        if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
                         {
                             return null;
                         }

@@ -99,7 +99,7 @@ namespace DoubleFile
 
         void SelectFoundFile()
         {
-            if (GlobalData.SearchDirListsFormClosing)
+            if (GlobalData.Instance.FormAnalysis_DirList_Closing)
             {
                 return;
             }
@@ -130,45 +130,46 @@ namespace DoubleFile
 
         void SearchDoneCallback()
         {
-            if (GlobalData.SearchDirListsFormClosing || (gd.m_searchType2 == null) || gd.m_searchType2.IsAborted)
+            UtilAnalysis_DirList.CheckAndInvoke(this, new Action(() =>
             {
-                return;
-            }
+                if ((gd.m_searchType2 == null) || gd.m_searchType2.IsAborted)
+                {
+                    return;
+                }
 
-            if (InvokeRequired) { Invoke(new Action(SearchDoneCallback)); return; }
+                gd.m_searchType2 = null;
+                gd.m_SearchResultsType2_List.Sort((x, y) => (x.VolStrings.Nickname.CompareTo(y.VolStrings.Nickname)));
 
-            gd.m_searchType2 = null;
-            gd.m_SearchResultsType2_List.Sort((x, y) => (x.VolStrings.Nickname.CompareTo(y.VolStrings.Nickname)));
+                if (gd.m_firstSearchResults != null)
+                {
+                    gd.m_SearchResultsType2_List.Insert(0, gd.m_firstSearchResults);
+                    gd.m_firstSearchResults = null;
+                }
 
-            if (gd.m_firstSearchResults != null)
-            {
-                gd.m_SearchResultsType2_List.Insert(0, gd.m_firstSearchResults);
-                gd.m_firstSearchResults = null;
-            }
+                if (gd.m_lastSearchResults != null)
+                {
+                    gd.m_SearchResultsType2_List.Add(gd.m_lastSearchResults);
+                    gd.m_lastSearchResults = null;
+                }
 
-            if (gd.m_lastSearchResults != null)
-            {
-                gd.m_SearchResultsType2_List.Add(gd.m_lastSearchResults);
-                gd.m_lastSearchResults = null;
-            }
+                gd.m_blinky.Reset();
 
-            gd.m_blinky.Reset();
+                if (gd.m_SearchResultsType2_List.Count <= 0)
+                {
+                    gd.SearchFail();
+                    return;
+                }
 
-            if (gd.m_SearchResultsType2_List.Count <= 0)
-            {
-                gd.SearchFail();
-                return;
-            }
+                gd.m_bSearchResultsType2_List = true;
 
-            gd.m_bSearchResultsType2_List = true;
+                if (SearchResultsType2_Nav(form_treeViewBrowse) == false)
+                {
+                    MBox.Assert(1307.8311, false);
+                    gd.SearchFail();
+                }
 
-            if (SearchResultsType2_Nav(form_treeViewBrowse) == false)
-            {
-                MBox.Assert(1307.8311, false);
-                gd.SearchFail();
-            }
-
-            MBox.MessageBoxKill(GlobalData.ksSearchTitle);
+                MBox.MessageBoxKill(GlobalData.ksSearchTitle);
+            }));
         }
 
         private void DoSearchType2(string strSearch, bool bKill = false, bool bSearchFilesOnly = false)
@@ -400,7 +401,7 @@ namespace DoubleFile
 
                     while ((strLine = file.ReadLine()) != null)
                     {
-                        if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
+                        if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
                         {
                             return;
                         }
@@ -556,7 +557,7 @@ namespace DoubleFile
 
             UtilAnalysis_DirList.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", m_strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
-            if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
+            if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
             {
                 return;
             }

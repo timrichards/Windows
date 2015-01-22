@@ -41,7 +41,7 @@ namespace DoubleFile
             if (m_tree != null)
             {
                 m_tree.EndThread(bJoin: bJoin);
-                ((SDL_TreeView)GlobalData.static_MainWindow.SearchDirListsForm.form_treeViewBrowse).Nodes.Clear();
+                ((SDL_TreeView)GlobalData.static_MainWindow.Analysis_DirListForm.form_treeViewBrowse).Nodes.Clear();
                 m_listRootNodes.Clear();
                 TreeCleanup();
             }
@@ -54,7 +54,7 @@ namespace DoubleFile
             m_listLVignore.Clear();
             Collate.ClearMem();
 
-            var formSDL = static_MainWindow.SearchDirListsForm;
+            var formSDL = static_MainWindow.Analysis_DirListForm;
 
             formSDL.Invoke(new Action(() =>
             {

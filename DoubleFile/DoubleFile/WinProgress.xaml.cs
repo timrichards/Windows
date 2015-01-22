@@ -71,7 +71,7 @@ namespace DoubleFile
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            var worker = GlobalData.GetInstance().m_saveDirListings;
+            var worker = GlobalData.Instance.m_saveDirListings;
 
             if (worker == null)
             {

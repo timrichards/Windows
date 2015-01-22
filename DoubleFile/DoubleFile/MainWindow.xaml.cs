@@ -16,16 +16,16 @@ namespace DoubleFile
         }
 
         internal IEnumerable<LVitem_ProjectVM> ListLVvolStrings { get; private set; }
-        internal FormAnalysis_DirList SearchDirListsForm { get; private set; }
+        internal FormAnalysis_DirList Analysis_DirListForm { get; private set; }
 
-        void SearchDirListsForm1Action(System.Action<FormAnalysis_DirList, IEnumerable<LVitem_ProjectVM>> action)
+        void FormAnalysis_DirListAction(System.Action<FormAnalysis_DirList, IEnumerable<LVitem_ProjectVM>> action)
         {
-            if ((SearchDirListsForm == null) || (SearchDirListsForm.IsDisposed))
+            if ((Analysis_DirListForm == null) || (Analysis_DirListForm.IsDisposed))
             {
                 return;
             }
 
-            action(SearchDirListsForm, ListLVvolStrings);
+            action(Analysis_DirListForm, ListLVvolStrings);
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -87,7 +87,7 @@ namespace DoubleFile
                     form_tabControlMain.SelectedTab = form_tabPageBrowse;
                     form_tabControlCopyIgnore.SelectedTab = form_tabPageCopy;
                     m_blinky.Go(form_lvCopyScratchpad, clr: Color.Yellow, Once: true);
-                    Form1MessageBox("The Copy scratchpad cannot be loaded with no directory listings.", "Load Copy scratchpad externally");
+                    FormAnalysis_DirListMessageBox("The Copy scratchpad cannot be loaded with no directory listings.", "Load Copy scratchpad externally");
                     Application.Exit();
                     break;
                 }
@@ -113,7 +113,7 @@ namespace DoubleFile
             }
 
             ListLVvolStrings = volumes.ListLVvolStrings;
-            SearchDirListsForm1Action(FormAnalysis_DirList.RestartTreeTimer);
+            FormAnalysis_DirListAction(FormAnalysis_DirList.RestartTreeTimer);
 
             if (ListLVvolStrings != null)
             {
@@ -158,13 +158,13 @@ namespace DoubleFile
 
         private void Button_SearchDirLists_Click(object sender, RoutedEventArgs e)
         {
-            if ((SearchDirListsForm == null) || (SearchDirListsForm.IsDisposed))
+            if ((Analysis_DirListForm == null) || (Analysis_DirListForm.IsDisposed))
             {
-                (SearchDirListsForm = new FormAnalysis_DirList(this, ListLVvolStrings)).Show();
+                (Analysis_DirListForm = new FormAnalysis_DirList(this, ListLVvolStrings)).Show();
             }
             else
             {
-                SearchDirListsForm.Activate();
+                Analysis_DirListForm.Activate();
             }
         }
     }

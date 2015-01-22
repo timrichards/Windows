@@ -213,7 +213,7 @@ namespace DoubleFile
 
                     foreach (TreeNode subnode in listClones)
                     {
-                        if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
+                        if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
                         {
                             return;
                         }
@@ -255,7 +255,7 @@ namespace DoubleFile
 
             foreach (TreeNode subNode in treeNode.Nodes)
             {
-                if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
+                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
                 {
                     return;
                 }
@@ -328,7 +328,7 @@ namespace DoubleFile
 
             do
             {
-                if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
+                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
                 {
                     return;     
                 }
@@ -455,7 +455,7 @@ namespace DoubleFile
 
             foreach (KeyValuePair<Correlate, List<TreeNode>> pair in dictNodes)
             {
-                if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
+                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
                 {
                     return;
                 }
@@ -476,7 +476,7 @@ namespace DoubleFile
 
                     foreach (TreeNode treeNode_A in listNodes)
                     {
-                        if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
+                        if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
                         {
                             return;
                         }
@@ -528,7 +528,7 @@ namespace DoubleFile
             {
                 // load up listLVdiffVol
 
-                if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
+                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
                 {
                     return;
                 }
@@ -568,7 +568,7 @@ namespace DoubleFile
 
                 foreach (TreeNode treeNode in listNodes.Value)
                 {
-                    if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
+                    if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
                     {
                         return;
                     }
@@ -609,7 +609,7 @@ namespace DoubleFile
 
             foreach (KeyValuePair<Correlate, TreeNode> listNodes in dictUnique)
             {
-                if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
+                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
                 {
                     return;
                 }
@@ -659,7 +659,7 @@ namespace DoubleFile
 
             foreach (TreeNode treeNode in listSameVol)
             {
-                if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
+                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
                 {
                     return;
                 }
@@ -701,7 +701,7 @@ namespace DoubleFile
         {
             UtilAnalysis_DirList.Closure(new Action(() =>
             {
-                if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
+                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
                 {
                     return;
                 }
@@ -734,7 +734,7 @@ namespace DoubleFile
                     UtilAnalysis_DirList.WriteLine("Step2_OnForm_A " + nCount);
                 }
 
-                if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
+                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
                 {
                     return;
                 }
@@ -745,7 +745,7 @@ namespace DoubleFile
                 form_lvClones.Invalidate();
                 UtilAnalysis_DirList.WriteLine("B");
 
-                if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
+                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
                 {
                     return;
                 }
@@ -756,7 +756,7 @@ namespace DoubleFile
                 form_lvUnique.Invalidate();
                 UtilAnalysis_DirList.WriteLine("C");
 
-                if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
+                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
                 {
                     return;
                 }

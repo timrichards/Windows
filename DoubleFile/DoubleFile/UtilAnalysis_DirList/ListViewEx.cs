@@ -5,6 +5,12 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
+namespace SearchDirLists
+{
+    [System.ComponentModel.DesignerCategory("Code")]
+    class SDL_ListView : ListViewEmbeddedControls.ListViewEx { }
+}
+
 [EditorBrowsable(EditorBrowsableState.Never)]
 [System.ComponentModel.DesignerCategory("")]
 public static class ListViewExtensions
@@ -58,13 +64,7 @@ public static class ListViewExtensions
 
     public static void SetSortIcon(this ListView listViewControl, int columnIndex, SortOrder order)
     {
-        IntPtr columnHeader = IntPtr.Zero;
-
-        try { columnHeader = SendMessage(listViewControl.Handle, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero); }
-        catch (System.ObjectDisposedException)
-        {
-            return;
-        }
+        IntPtr columnHeader = SendMessage(listViewControl.Handle, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
 
         for (int columnNumber = 0; columnNumber <= listViewControl.Columns.Count - 1; columnNumber++)
         {

@@ -70,7 +70,7 @@ namespace SearchDirLists
             this.form_splitDetail = new System.Windows.Forms.SplitContainer();
             this.form_tabControlFileList = new System.Windows.Forms.TabControl();
             this.form_tabPageDiskUsage = new System.Windows.Forms.TabPage();
-            this.form_tmapUserCtl = new SearchDirLists.TreeMapUserControl();
+            this.form_tmapUserCtl = new SearchDirLists.UC_TreeMap();
             this.form_tabPageFileList = new System.Windows.Forms.TabPage();
             this.form_splitCompareFiles = new System.Windows.Forms.SplitContainer();
             this.form_lvFiles = new SearchDirLists.SDL_ListView();
@@ -1452,7 +1452,7 @@ namespace SearchDirLists
         private System.Windows.Forms.TabControl form_tabControlFileList;
         private System.Windows.Forms.TabPage form_tabPageFileList;
         private System.Windows.Forms.TabPage form_tabPageDiskUsage;
-        private TreeMapUserControl form_tmapUserCtl;
+        private UC_TreeMap form_tmapUserCtl;
         private System.Windows.Forms.Button form_btnUp;
         private System.Windows.Forms.Button form_btnForward;
         private System.Windows.Forms.Button form_btnBack;

@@ -8,7 +8,7 @@ using System.Drawing.Drawing2D;
 namespace SearchDirLists
 {
     [System.ComponentModel.DesignerCategory("Code")]
-    class TreeMapUserControl : UserControl
+    class UC_TreeMap : UserControl
     {
         internal bool ToolTipActive { get { return m_toolTip.Active; } }
         internal Control TooltipAnchor = null;
@@ -27,7 +27,7 @@ namespace SearchDirLists
         DateTime m_dtHideGoofball = DateTime.MinValue;
         readonly ToolTip m_toolTip = new ToolTip();
 
-        internal TreeMapUserControl()
+        internal UC_TreeMap()
         {
             m_toolTip.UseFading = true;
             m_toolTip.UseAnimation = true;

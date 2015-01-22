@@ -1316,11 +1316,6 @@ namespace SearchDirLists
             m_ownerWindow.Activate();
         }
 
-        void Form1_HelpRequested(object sender, HelpEventArgs hlpevent)
-        {
-            new AboutBox1().ShowDialog_Once(this);
-        }
-
         void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.F2)

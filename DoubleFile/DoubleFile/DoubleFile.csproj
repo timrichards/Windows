@@ -110,28 +110,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="SearchDirLists\AboutBox1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SearchDirLists\AboutBox1.Designer.cs" />
     <Compile Include="SearchDirLists\Collate.cs" />
-    <Compile Include="SearchDirLists\DriveSerial.cs" />
     <Compile Include="SearchDirLists\Form1.cs">
       <SubType>Designer</SubType>
     </Compile>
     <Compile Include="SearchDirLists\Form1.Designer.cs" />
-    <Compile Include="SearchDirLists\Form2.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SearchDirLists\Form2.Designer.cs">
-      <DependentUpon>Form2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SearchDirLists\InputBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SearchDirLists\InputBox.Designer.cs" />
     <Compile Include="SearchDirLists\ListViewEx.cs" />
-    <Compile Include="SearchDirLists\ReadOnlyRichTextBox.cs" />
     <Compile Include="SearchDirLists\Search.cs">
       <SubType>Designer</SubType>
     </Compile>
@@ -139,7 +123,7 @@
     <Compile Include="SearchDirLists\TreeForm.cs">
       <SubType>Designer</SubType>
     </Compile>
-    <Compile Include="SearchDirLists\TreeMap.cs" />
+    <Compile Include="SearchDirLists\UC_TreeMap.cs" />
     <Compile Include="SearchDirLists\Utilities.cs" />
     <Compile Include="UtilAnalysis_DirList\ExtensionMethods.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\Correlate.cs" />
@@ -268,9 +252,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="SearchDirLists\AboutBox1.resx" />
     <EmbeddedResource Include="SearchDirLists\Form1.resx" />
-    <EmbeddedResource Include="SearchDirLists\InputBox.resx" />
     <None Include="DoubleFile_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -29,7 +29,7 @@ namespace DoubleFile
 
                 foreach (TreeNode node in treeNode.Nodes)
                 {
-                    if (m_bThreadAbort || GlobalData.AppExit)
+                    if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
                     {
                         return datum;
                     }
@@ -192,7 +192,7 @@ namespace DoubleFile
 
                 foreach (string strLine in listLines)
                 {
-                    if (GlobalData.AppExit)
+                    if (GlobalData.SearchDirListsFormClosing)
                     {
                         return;
                     }

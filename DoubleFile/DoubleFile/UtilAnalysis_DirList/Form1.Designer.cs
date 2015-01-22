@@ -2,7 +2,7 @@
 
 namespace DoubleFile
 {
-    partial class FormSearchDirLists
+    partial class FormAnalysis_DirList
     {
         /// <summary>
         /// Required designer variable.
@@ -33,9 +33,9 @@ namespace DoubleFile
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.Label label3;
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSearchDirLists));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAnalysis_DirList));
             this.form_chkSpacer = new System.Windows.Forms.CheckBox();
-            this.tableLayoutPanel3 = new FormSearchDirLists.Form1LayoutPanel(this.components);
+            this.tableLayoutPanel3 = new FormAnalysis_DirList.Form1LayoutPanel(this.components);
             this.form_splitFiles = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.form_splitTreeFind = new System.Windows.Forms.SplitContainer();
@@ -45,21 +45,21 @@ namespace DoubleFile
             this.form_treeViewBrowse = new SDL_TreeView();
             this.form_tabControlCopyIgnore = new System.Windows.Forms.TabControl();
             this.form_tabPageCopy = new System.Windows.Forms.TabPage();
-            this.tableLayoutPanel4 = new FormSearchDirLists.Form1LayoutPanel(this.components);
+            this.tableLayoutPanel4 = new FormAnalysis_DirList.Form1LayoutPanel(this.components);
             this.form_lvCopyScratchpad = new SDL_ListView();
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.tableLayoutPanel5 = new FormSearchDirLists.Form1LayoutPanel(this.components);
+            this.tableLayoutPanel5 = new FormAnalysis_DirList.Form1LayoutPanel(this.components);
             this.form_btnCopyClear = new System.Windows.Forms.Button();
             this.form_btnSaveCopyDirs = new System.Windows.Forms.Button();
             this.form_btnCopyGen = new System.Windows.Forms.Button();
             this.form_btnLoadCopyDirs = new System.Windows.Forms.Button();
             this.form_tabPageIgnore = new System.Windows.Forms.TabPage();
-            this.tableLayoutPanel6 = new FormSearchDirLists.Form1LayoutPanel(this.components);
+            this.tableLayoutPanel6 = new FormAnalysis_DirList.Form1LayoutPanel(this.components);
             this.form_lvIgnoreList = new SDL_ListView();
             this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.tableLayoutPanel7 = new FormSearchDirLists.Form1LayoutPanel(this.components);
+            this.tableLayoutPanel7 = new FormAnalysis_DirList.Form1LayoutPanel(this.components);
             this.form_btnClearIgnoreList = new System.Windows.Forms.Button();
             this.form_btnIgnoreAdd = new System.Windows.Forms.Button();
             this.form_btnIgnoreDel = new System.Windows.Forms.Button();
@@ -106,7 +106,7 @@ namespace DoubleFile
             this.form_lvClones = new SDL_ListView();
             this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.tableLayoutPanel2 = new FormSearchDirLists.Form1LayoutPanel(this.components);
+            this.tableLayoutPanel2 = new FormAnalysis_DirList.Form1LayoutPanel(this.components);
             this.form_btnCompare = new System.Windows.Forms.Button();
             this.form_btnCollapse = new System.Windows.Forms.Button();
             this.form_lblVolGroup = new System.Windows.Forms.Label();
@@ -1456,12 +1456,12 @@ namespace DoubleFile
         private System.Windows.Forms.Button form_btnUp;
         private System.Windows.Forms.Button form_btnForward;
         private System.Windows.Forms.Button form_btnBack;
-        private FormSearchDirLists.Form1LayoutPanel tableLayoutPanel2;
-        private FormSearchDirLists.Form1LayoutPanel tableLayoutPanel3;
-        private FormSearchDirLists.Form1LayoutPanel tableLayoutPanel4;
-        private FormSearchDirLists.Form1LayoutPanel tableLayoutPanel5;
-        private FormSearchDirLists.Form1LayoutPanel tableLayoutPanel6;
-        private FormSearchDirLists.Form1LayoutPanel tableLayoutPanel7;
+        private FormAnalysis_DirList.Form1LayoutPanel tableLayoutPanel2;
+        private FormAnalysis_DirList.Form1LayoutPanel tableLayoutPanel3;
+        private FormAnalysis_DirList.Form1LayoutPanel tableLayoutPanel4;
+        private FormAnalysis_DirList.Form1LayoutPanel tableLayoutPanel5;
+        private FormAnalysis_DirList.Form1LayoutPanel tableLayoutPanel6;
+        private FormAnalysis_DirList.Form1LayoutPanel tableLayoutPanel7;
         private System.Windows.Forms.Button form_btnClearIgnoreList;
         private System.Windows.Forms.CheckBox form_chkSpacer;
     }

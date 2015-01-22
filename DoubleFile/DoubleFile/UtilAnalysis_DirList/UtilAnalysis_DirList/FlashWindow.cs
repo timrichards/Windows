@@ -24,7 +24,7 @@ namespace DoubleFile
 
         internal static void Go(Control ctl_in = null, bool Once = false)
         {
-            Control dispatcher = ctl_in ?? GlobalDataSDL.static_form;
+            Control dispatcher = ctl_in ?? GlobalData.static_MainWindow.SearchDirListsForm;
             UtilAnalysis_DirList.CheckAndInvoke(dispatcher, new Action(() =>
             {
                 FLASHWINFO fInfo = new FLASHWINFO();
@@ -37,7 +37,7 @@ namespace DoubleFile
                 }
                 else
                 {
-                    fInfo.hwnd = GlobalDataSDL.static_form.Handle;
+                    fInfo.hwnd = GlobalData.static_MainWindow.SearchDirListsForm.Handle;
                 }
 
                 fInfo.dwFlags = FLASHW_ALL;

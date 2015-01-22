@@ -145,7 +145,7 @@ namespace DoubleFile
         internal static object CheckAndInvoke(Control dispatcher, Delegate action, object[] args = null)
         {
             bool bInvoke = dispatcher.InvokeRequired;
-            if (GlobalData.AppExit)
+            if (GlobalData.SearchDirListsFormClosing)
             {
                 return null;
             }

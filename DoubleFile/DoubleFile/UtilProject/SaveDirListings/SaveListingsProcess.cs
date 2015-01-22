@@ -53,7 +53,7 @@ namespace DoubleFile
 
         internal void SaveDirListingsStatusCallback(string strPath, string strText = null, bool bDone = false, double nProgress = double.NaN)
         {
-            if (GlobalData.AppExit || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
+            if (GlobalData.SearchDirListsFormClosing || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
             {
                 return;
             }
@@ -80,7 +80,7 @@ namespace DoubleFile
 
         internal void SaveDirListingsDoneCallback()
         {
-            if (GlobalData.AppExit || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
+            if (GlobalData.SearchDirListsFormClosing || (gd.m_saveDirListings == null) || gd.m_saveDirListings.IsAborted)
             {
                 return;
             }

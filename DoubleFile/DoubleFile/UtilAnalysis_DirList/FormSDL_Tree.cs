@@ -1,12 +1,11 @@
 ﻿using System.Windows.Forms;
 using System.Drawing;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 
 namespace DoubleFile
 {
-    partial class FormSearchDirLists
+    partial class FormAnalysis_DirList
     {
         internal void ClearMem_TreeForm()
         {
@@ -74,7 +73,7 @@ namespace DoubleFile
             collate.Step1_OnThread();
             UtilAnalysis_DirList.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
 
-            if (GlobalData.AppExit)
+            if (GlobalData.SearchDirListsFormClosing)
             {
                 gd.TreeCleanup();
                 return;
@@ -101,7 +100,7 @@ namespace DoubleFile
 
         internal void TreeStatusCallback(LVitem_ProjectVM volStrings, TreeNode rootNode = null, bool bError = false)
         {
-            if (GlobalData.AppExit || (gd.m_tree == null) || (gd.m_tree.IsAborted))
+            if (GlobalData.SearchDirListsFormClosing || (gd.m_tree == null) || (gd.m_tree.IsAborted))
             {
                 gd.TreeCleanup();
                 return;
@@ -134,7 +133,7 @@ namespace DoubleFile
 
         internal void TreeSelectStatusCallback(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem[] lvVolDetails = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null)
         {
-            if (GlobalData.AppExit)
+            if (GlobalData.SearchDirListsFormClosing)
             {
                 return;
             }
@@ -260,7 +259,7 @@ namespace DoubleFile
 
         void TreeSelectDoneCallback(bool bSecondComparePane)
         {
-            if (GlobalData.AppExit)
+            if (GlobalData.SearchDirListsFormClosing)
             {
                 return;
             }
@@ -334,17 +333,20 @@ namespace DoubleFile
                     return;
                 }
 
+                MBox.Assert(1304.5312, gd.m_listRootNodes.Count == 0);
+
+                gd.m_tree = new Tree(ListLVvolStrings, gd.m_dictNodes, gd.m_dictDriveInfo,
+                    TreeStatusCallback, TreeDoneCallback);
+                gd.m_tree.DoThreadFactory();
+
+                // m_tree has to be not-null for this to work
+                form_treeViewBrowse.Nodes.Clear();
                 TreeNode treeNode = new TreeNode("Creating treeview...        ");
 
                 treeNode.NodeFont = new Font(form_treeViewBrowse.Font, FontStyle.Bold | FontStyle.Underline);
                 form_treeViewBrowse.Nodes.Add(treeNode);
                 form_treeViewBrowse.CheckBoxes = false;    // treeview items are faked to show progress
                 form_treeViewBrowse.Enabled = false;
-                MBox.Assert(1304.5312, gd.m_listRootNodes.Count == 0);
-
-                gd.m_tree = new Tree(ListLVvolStrings, gd.m_dictNodes, gd.m_dictDriveInfo,
-                    TreeStatusCallback, TreeDoneCallback);
-                gd.m_tree.DoThreadFactory();
             }
             else
             {
@@ -374,88 +376,6 @@ namespace DoubleFile
                 gd.m_threadCollate = new Thread(new ThreadStart(DoCollation));
                 gd.m_threadCollate.IsBackground = true;
                 gd.m_threadCollate.Start();
-            }
-        }
-    }
-
-    partial class GlobalDataSDL
-    {
-        internal readonly SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = new SortedDictionary<Correlate, UList<TreeNode>>();
-        internal readonly Dictionary<string, string> m_dictDriveInfo = new Dictionary<string, string>();
-        internal Tree m_tree = null;
-        internal Thread m_threadCollate = null;
-        internal Thread m_threadSelect = null;
-        internal Thread m_threadSelectCompare = null;
-
-        internal readonly List<ListViewItem> m_listLVignore = new List<ListViewItem>();
-        internal readonly UList<TreeNode> m_listTreeNodes = new UList<TreeNode>();
-        internal readonly List<TreeNode> m_listRootNodes = new List<TreeNode>();
-
-        internal void ClearMem_TreeForm()
-        {
-            MBox.Assert(1304.5301, m_listLVignore.Count == 0);
-
-            m_listLVignore.Clear();
-            m_listTreeNodes.Clear();
-            m_listRootNodes.Clear();
-
-            MBox.Assert(1304.5302, m_tree == null);
-            m_tree = null;
-
-            m_dictDriveInfo.Clear();
-
-            // m_dictNodes is tested to recreate tree.
-            MBox.Assert(1304.5303, m_dictNodes.Count == 0);
-            m_dictNodes.Clear();
-        }
-
-        internal void KillTreeBuilder(bool bJoin = false)
-        {
-            if (m_tree != null)
-            {
-                m_tree.EndThread(bJoin: bJoin);
-                ((SDL_TreeView)GlobalDataSDL.static_form.form_treeViewBrowse).Nodes.Clear();
-                m_listRootNodes.Clear();
-                TreeCleanup();
-            }
-        }
-
-        internal void TreeCleanup()
-        {
-            m_tree = null;
-            m_threadCollate = null;
-            m_listLVignore.Clear();
-            Collate.ClearMem();
-        }
-
-        internal void DoTreeSelect(TreeNode treeNode, TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
-        {
-            TreeNode rootNode = treeNode.Root();
-            string strFile = ((RootNodeDatum)rootNode.Tag).StrFile;
-            bool bSecondComparePane = (m_bCompareMode && rootNode.Checked);
-            Thread threadKill = bSecondComparePane ? m_threadSelectCompare : m_threadSelect;
-
-            if ((threadKill != null) && threadKill.IsAlive)
-            {
-                threadKill.Abort();
-            }
-
-            m_threadSelectCompare = null;
-            m_threadSelect = null;
-
-            TreeSelect treeSelect = new TreeSelect(treeNode, m_dictNodes, m_dictDriveInfo,
-                strFile, m_bCompareMode, bSecondComparePane,
-                statusCallback, doneCallback);
-
-            Thread thread = treeSelect.DoThreadFactory();
-
-            if (bSecondComparePane)
-            {
-                m_threadSelectCompare = thread;
-            }
-            else
-            {
-                m_threadSelect = thread;
             }
         }
     }

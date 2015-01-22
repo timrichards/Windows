@@ -111,14 +111,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="UtilAnalysis_DirList\Collate.cs" />
-    <Compile Include="UtilAnalysis_DirList\FormSearchDirLists.cs">
-      <SubType>Designer</SubType>
-    </Compile>
+    <Compile Include="UtilAnalysis_DirList\FormSearchDirLists.cs" />
     <Compile Include="UtilAnalysis_DirList\Form1.Designer.cs" />
-    <Compile Include="UtilAnalysis_DirList\ListViewEx.cs" />
-    <Compile Include="UtilAnalysis_DirList\FormSDL_Search.cs">
-      <SubType>Designer</SubType>
-    </Compile>
+    <Compile Include="UtilAnalysis_DirList\Form\Form_Search_GlobalData.cs" />
+    <Compile Include="UtilAnalysis_DirList\Form\Form_Tree_GlobalData.cs" />
+    <Compile Include="UtilAnalysis_DirList\GlobalData.cs" />
+    <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\ListViewEx.cs" />
+    <Compile Include="UtilAnalysis_DirList\FormSDL_Search.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\Correlate.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\DetailsDatum.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\DetailsDatum\NodeDatum.cs" />
@@ -126,9 +125,7 @@
     <Compile Include="UtilAnalysis_DirList\Tree\LVitemFileTag.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\LVitemNameComparer.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\TreeBase\Tree.cs" />
-    <Compile Include="UtilAnalysis_DirList\FormSDL_Tree.cs">
-      <SubType>Designer</SubType>
-    </Compile>
+    <Compile Include="UtilAnalysis_DirList\FormSDL_Tree.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\TreeBase.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\TreeBase\Tree\TreeRootNodeBuilder.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\TreeBase\Tree\TreeRootNodeBuilder\DirData.cs" />
@@ -144,7 +141,9 @@
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_FileBase\SDL_CopyFile.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_FileBase\SDL_IgnoreFile.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_TreeView.cs" />
-    <Compile Include="UtilProject\GlobalData.cs" />
+    <Compile Include="UtilProject\GlobalData.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UtilProject\LocalWindow.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

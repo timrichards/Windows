@@ -55,7 +55,7 @@ namespace DoubleFile
 
             UtilProject.WriteLine(string.Format("Finished saving directory listings in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
-            if (m_bThreadAbort || GlobalData.AppExit)
+            if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
             {
                 return;
             }

@@ -9,24 +9,23 @@ namespace DoubleFile
     /// </summary>
     partial class MainWindow : LocalWindow
     {
-        internal IEnumerable<LVitem_ProjectVM> ListLVvolStrings { get; private set; }
-
         public MainWindow()
         {
             InitializeComponent();
             GlobalData.GetInstance(this);
-            this.Closing += (o, e) => { GlobalData.AppExit = true; };
         }
 
-        FormSearchDirLists m_searchDirListsForm1;
-        void SearchDirListsForm1Action(System.Action<FormSearchDirLists, IEnumerable<LVitem_ProjectVM>> action)
+        internal IEnumerable<LVitem_ProjectVM> ListLVvolStrings { get; private set; }
+        internal FormAnalysis_DirList SearchDirListsForm { get; private set; }
+
+        void SearchDirListsForm1Action(System.Action<FormAnalysis_DirList, IEnumerable<LVitem_ProjectVM>> action)
         {
-            if ((m_searchDirListsForm1 == null) || (m_searchDirListsForm1.IsDisposed))
+            if ((SearchDirListsForm == null) || (SearchDirListsForm.IsDisposed))
             {
                 return;
             }
 
-            action(m_searchDirListsForm1, ListLVvolStrings);
+            action(SearchDirListsForm, ListLVvolStrings);
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -114,7 +113,7 @@ namespace DoubleFile
             }
 
             ListLVvolStrings = volumes.ListLVvolStrings;
-            SearchDirListsForm1Action(FormSearchDirLists.RestartTreeTimer);
+            SearchDirListsForm1Action(FormAnalysis_DirList.RestartTreeTimer);
 
             if (ListLVvolStrings != null)
             {
@@ -159,13 +158,13 @@ namespace DoubleFile
 
         private void Button_SearchDirLists_Click(object sender, RoutedEventArgs e)
         {
-            if ((m_searchDirListsForm1 == null) || (m_searchDirListsForm1.IsDisposed))
+            if ((SearchDirListsForm == null) || (SearchDirListsForm.IsDisposed))
             {
-                (m_searchDirListsForm1 = new FormSearchDirLists(this, ListLVvolStrings)).Show();
+                (SearchDirListsForm = new FormAnalysis_DirList(this, ListLVvolStrings)).Show();
             }
             else
             {
-                m_searchDirListsForm1.Activate();
+                SearchDirListsForm.Activate();
             }
         }
     }

@@ -8,7 +8,7 @@ namespace DoubleFile
     {
         partial class TreeRootNodeBuilder
         {
-            class Node : UtilAnalysis_DirList
+            class Node
             {
                 readonly RootNode m_rootNode = null;
                 readonly SortedDictionary<string, Node> subNodes = new SortedDictionary<string, Node>();
@@ -20,7 +20,7 @@ namespace DoubleFile
 
                 internal Node(string in_str, uint nLineNo, ulong nLength, RootNode rootNode)
                 {
-                    if (GlobalData.AppExit)
+                    if (GlobalData.SearchDirListsFormClosing)
                     {
                         return;
                     }
@@ -63,7 +63,7 @@ namespace DoubleFile
 
                 internal TreeNode AddToTree(string strVolumeName = null)
                 {
-                    if (GlobalData.AppExit)
+                    if (GlobalData.SearchDirListsFormClosing)
                     {
                         return new TreeNode();
                     }

@@ -52,7 +52,7 @@ namespace DoubleFile
 
             UtilAnalysis_DirList.WriteLine(string.Format("Completed tree in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 10) / 100.0));
 
-            if (m_bThreadAbort || GlobalData.AppExit)
+            if (m_bThreadAbort || GlobalData.SearchDirListsFormClosing)
             {
                 return;
             }

@@ -60,7 +60,7 @@ namespace DoubleFile
                     ++nCount;
                 });
 
-                WriteLine(driveInfo.AvailableFreeSpace); // These could all be named better, so mAstrDIlabels is different.
+                WriteLine(driveInfo.AvailableFreeSpace); // These could all be named better, so kasDIlabels is different.
                 WriteLine(driveInfo.DriveFormat);        // Misnomer. Should be VolumeFormat.
                 WriteLine(driveInfo.DriveType);
                 WriteLine(driveInfo.Name);

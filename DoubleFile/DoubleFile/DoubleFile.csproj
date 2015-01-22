@@ -110,46 +110,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="SearchDirLists\Collate.cs" />
-    <Compile Include="SearchDirLists\Form1.cs">
+    <Compile Include="UtilAnalysis_DirList\Collate.cs" />
+    <Compile Include="UtilAnalysis_DirList\FormSearchDirLists.cs">
       <SubType>Designer</SubType>
     </Compile>
-    <Compile Include="SearchDirLists\Form1.Designer.cs" />
-    <Compile Include="SearchDirLists\ListViewEx.cs" />
-    <Compile Include="SearchDirLists\Search.cs">
+    <Compile Include="UtilAnalysis_DirList\Form1.Designer.cs" />
+    <Compile Include="UtilAnalysis_DirList\ListViewEx.cs" />
+    <Compile Include="UtilAnalysis_DirList\FormSDL_Search.cs">
       <SubType>Designer</SubType>
     </Compile>
-    <Compile Include="SearchDirLists\Tree.cs" />
-    <Compile Include="SearchDirLists\TreeForm.cs">
+    <Compile Include="UtilAnalysis_DirList\Tree.cs" />
+    <Compile Include="UtilAnalysis_DirList\FormSDL_Tree.cs">
       <SubType>Designer</SubType>
     </Compile>
-    <Compile Include="SearchDirLists\UC_TreeMap.cs" />
-    <Compile Include="SearchDirLists\Utilities.cs" />
-    <Compile Include="UtilAnalysis_DirList\ExtensionMethods.cs" />
-    <Compile Include="UtilAnalysis_DirList\Tree\Correlate.cs" />
-    <Compile Include="UtilAnalysis_DirList\Tree\DetailsDatum.cs" />
-    <Compile Include="UtilAnalysis_DirList\Tree\DetailsDatum\NodeDatum.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UtilAnalysis_DirList\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
-    <Compile Include="UtilAnalysis_DirList\Tree\LVitemFileTag.cs" />
-    <Compile Include="UtilAnalysis_DirList\Tree\TreeBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UtilAnalysis_DirList\Tree\TreeBase\TreeRootNodeBuilder.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UtilAnalysis_DirList\Tree\TreeBase\TreeRootNodeBuilder\DirData.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UtilAnalysis_DirList\Tree\TreeBase\TreeRootNodeBuilder\Node.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UtilAnalysis_DirList\Tree\TreeBase\TreeRootNodeBuilder\RootNode.cs" />
-    <Compile Include="UtilAnalysis_DirList\UC_TreeMap.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UtilAnalysis_DirList\UtilAnalysis.cs" />
+    <Compile Include="UtilAnalysis_DirList\UC_TreeMap.cs" />
+    <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList.cs" />
     <Compile Include="UtilProject\GlobalData.cs" />
     <Compile Include="UtilProject\LocalWindow.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -252,7 +227,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="SearchDirLists\Form1.resx" />
+    <EmbeddedResource Include="UtilAnalysis_DirList\Form1.resx" />
     <None Include="DoubleFile_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

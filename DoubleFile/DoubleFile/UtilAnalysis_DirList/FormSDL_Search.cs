@@ -7,12 +7,13 @@ using System.IO;
 using System.Threading;
 using System.Collections.Concurrent;
 using DoubleFile;
+using System.Windows;
 
 namespace SearchDirLists
 {
     delegate void SearchStatusDelegate(SearchResults searchResults, bool bFirst = false, bool bLast = false);
 
-    partial class Form1
+    partial class FormSearchDirLists
     {
         bool SearchResultsType2_Nav(SDL_TreeView treeView)
         {
@@ -41,7 +42,7 @@ namespace SearchDirLists
                             if (treeNode == null)
                             {
                                 // compare mode, or tree is not loaded yet
-                                Utilities.Assert(1307.8308, false);
+                                MBox.Assert(1307.8308, false);
                             }
 
                             if (treeNode != null)
@@ -69,7 +70,7 @@ namespace SearchDirLists
                                 if (treeNode == null)
                                 {
                                     // compare mode, or tree is not loaded yet
-                                    Utilities.Assert(1307.8309, false);
+                                    MBox.Assert(1307.8309, false);
                                 }
 
                                 if (treeNode != null)
@@ -117,9 +118,9 @@ namespace SearchDirLists
             }
 
             // Includes subitems in search
-            SDL_ListViewItem lvItem = (SDL_ListViewItem)form_lvFiles.FindItemWithText(gd.m_strSelectFile, true, 0, false);
+            ListViewItem lvItem = (ListViewItem)form_lvFiles.FindItemWithText(gd.m_strSelectFile, true, 0, false);
 
-            if ((lvItem != null) && Utilities.Assert(0, lvItem.Text == gd.m_strSelectFile))
+            if ((lvItem != null) && MBox.Assert(0, lvItem.Text == gd.m_strSelectFile))
             {
                 form_tabControlFileList.SelectedTab = form_tabPageFileList;
                 gd.m_blinky.SelectLVitem(lvItem: lvItem);
@@ -164,24 +165,24 @@ namespace SearchDirLists
 
             if (SearchResultsType2_Nav(form_treeViewBrowse) == false)
             {
-                Utilities.Assert(1307.8311, false);
+                MBox.Assert(1307.8311, false);
                 gd.SearchFail();
             }
 
-            Utilities.MessageBoxKill(GlobalDataSDL.ksSearchTitle);
+            MBox.MessageBoxKill(GlobalDataSDL.ksSearchTitle);
         }
 
         private void DoSearchType2(string strSearch, bool bKill = false, bool bSearchFilesOnly = false)
         {
             if (gd.m_searchType2 != null)
             {
-                MBoxRet mboxRet = MBoxRet.Yes;
+                MessageBoxResult mboxRet = MessageBoxResult.Yes;
 
                 if (bKill == false)
                 {
-                    mboxRet = Utilities.MBox("Already in progress. Restart search?" + "\n(or Cancel search.)".PadRight(100), GlobalDataSDL.ksSearchTitle, MBoxBtns.YesNoCancel);
+                    mboxRet = MBox.ShowDialog("Already in progress. Restart search?" + "\n(or Cancel search.)".PadRight(100), GlobalDataSDL.ksSearchTitle, MessageBoxButton.YesNoCancel);
 
-                    if (mboxRet == MBoxRet.No)
+                    if (mboxRet == MessageBoxResult.No)
                     {
                         return;
                     }
@@ -196,7 +197,7 @@ namespace SearchDirLists
                     gd.m_searchType2 = null;
                 }
 
-                if (mboxRet != MBoxRet.Yes)
+                if (mboxRet != MessageBoxResult.Yes)
                 {
                     return;
                 }
@@ -213,11 +214,11 @@ namespace SearchDirLists
                 strCurrentNode = GlobalDataSDL.FullPath((TreeNode)form_treeViewBrowse.SelectedNode);
             }
 
-            Utilities.Assert(1307.8312, gd.m_searchType2 == null);
+            MBox.Assert(1307.8312, gd.m_searchType2 == null);
 
             UList<LVitem_ProjectVM> list_lvVolStrings = new UList<LVitem_ProjectVM>();
 
-            //foreach (SDL_ListViewItem lvItem in form_lvVolumesMain.Items)
+            //foreach (ListViewItem lvItem in form_lvVolumesMain.Items)
             //{
             //    list_lvVolStrings.Add(new LVitem_ProjectVM(lvItem));
             //}
@@ -273,7 +274,7 @@ namespace SearchDirLists
                 }
                 else if (form_cbFindbox.Text.Contains('\\'))
                 {
-                    Utilities.Assert(1307.8313, form_cbFindbox.Text.EndsWith(@"\") == false);
+                    MBox.Assert(1307.8313, form_cbFindbox.Text.EndsWith(@"\") == false);
 
                     int nPos = form_cbFindbox.Text.LastIndexOf('\\');
                     string strMaybePath = form_cbFindbox.Text.Substring(0, nPos);
@@ -288,7 +289,7 @@ namespace SearchDirLists
                     }
                     else
                     {
-                        Utilities.Assert(1307.8314, gd.m_SearchResultsType2_List.Count <= 0);
+                        MBox.Assert(1307.8314, gd.m_SearchResultsType2_List.Count <= 0);
                         gd.SearchFail();
                     }
                 }
@@ -329,7 +330,7 @@ namespace SearchDirLists
         }
     }
 
-    class SearchBase : Utilities
+    class SearchBase : UtilAnalysis_DirList
     {
         protected string m_strSearch = null;
         protected bool m_bCaseSensitive = true;
@@ -352,7 +353,7 @@ namespace SearchDirLists
             m_bSearchFilesOnly = searchBase.m_bSearchFilesOnly;
             m_strCurrentNode = searchBase.m_strCurrentNode;
             m_folderHandling = searchBase.m_folderHandling;
-            Utilities.Assert(1307.8315, m_statusCallback != null);
+            MBox.Assert(1307.8315, m_statusCallback != null);
         }
     }
 
@@ -488,11 +489,11 @@ namespace SearchDirLists
 
                     if (searchResultDir != null)
                     {
-                        Utilities.Assert(1307.8301, searchResultDir.StrDir == null);
+                        MBox.Assert(1307.8301, searchResultDir.StrDir == null);
                     }
                     else
                     {
-                        Utilities.Assert(1307.8302, searchResultDir == null);
+                        MBox.Assert(1307.8302, searchResultDir == null);
                     }
 
                     if (listResults.Count > 0)
@@ -538,7 +539,7 @@ namespace SearchDirLists
 
         void Go()
         {
-            Utilities.WriteLine("Searching for '" + m_strSearch + "'");
+            UtilAnalysis_DirList.WriteLine("Searching for '" + m_strSearch + "'");
 
             DateTime dtStart = DateTime.Now;
 
@@ -554,7 +555,7 @@ namespace SearchDirLists
                 worker.Join();
             }
 
-            Utilities.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", m_strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
+            UtilAnalysis_DirList.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", m_strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
             if (m_bThreadAbort || GlobalData.AppExit)
             {
@@ -644,7 +645,7 @@ namespace SearchDirLists
 
                     if (nPathLevelLength > 1)
                     {
-                        Utilities.Assert(1308.9329, (nPathLevelLength - nCount) > 0);
+                        MBox.Assert(1308.9329, (nPathLevelLength - nCount) > 0);
                         nPathLevelLength -= nCount;
                     }
                 }
@@ -711,9 +712,9 @@ namespace SearchDirLists
             m_SearchResultsType1_Array = null;
             m_SearchResultsType2_List.Clear();
 
-            Utilities.Assert(1307.8303, m_searchType2 == null);
-            Utilities.Assert(1307.8304, m_firstSearchResults == null);
-            Utilities.Assert(1307.8305, m_lastSearchResults == null);
+            MBox.Assert(1307.8303, m_searchType2 == null);
+            MBox.Assert(1307.8304, m_firstSearchResults == null);
+            MBox.Assert(1307.8305, m_lastSearchResults == null);
             m_searchType2 = null;
             m_firstSearchResults = null;
             m_lastSearchResults = null;
@@ -724,19 +725,19 @@ namespace SearchDirLists
         internal void SearchFail()
         {
             m_nSearchResultsIndexer = -1;
-            Utilities.Assert(1307.8306, m_SearchResultsType1_Array == null, bTraceOnly: true);
+            MBox.Assert(1307.8306, m_SearchResultsType1_Array == null, bTraceOnly: true);
             m_SearchResultsType1_Array = null;
             m_bSearchResultsType2_List = false;
             m_strSelectFile = null;
             m_blinky.Go(clr: Color.Red, Once: true);
-            MBox("Couldn't find the specified search parameter.", ksSearchTitle);
+            MBox.ShowDialog("Couldn't find the specified search parameter.", ksSearchTitle);
         }
 
         internal void SearchStatusCallback(SearchResults searchResults, bool bFirst = false, bool bLast = false)
         {
             if (searchResults.Results.Count <= 0)
             {
-                Utilities.Assert(1307.8307, false); // caller takes care of this
+                MBox.Assert(1307.8307, false); // caller takes care of this
                 return;
             }
 

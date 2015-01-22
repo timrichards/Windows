@@ -18,8 +18,8 @@ namespace DoubleFile
             this.Closing += (o, e) => { GlobalData.AppExit = true; };
         }
 
-        SearchDirLists.Form1 m_searchDirListsForm1;
-        void SearchDirListsForm1Action(System.Action<SearchDirLists.Form1, IEnumerable<LVitem_ProjectVM>> action)
+        SearchDirLists.FormSearchDirLists m_searchDirListsForm1;
+        void SearchDirListsForm1Action(System.Action<SearchDirLists.FormSearchDirLists, IEnumerable<LVitem_ProjectVM>> action)
         {
             if ((m_searchDirListsForm1 == null) || (m_searchDirListsForm1.IsDisposed))
             {
@@ -64,7 +64,7 @@ namespace DoubleFile
 
             switch (Path.GetExtension(strFile).Substring(1))
             {
-                case Utilities.mSTRfileExt_Listing:
+                case Utilities.ksFileExt_Listing:
                 {
                     form_cbSaveAs.Text = strFile;
                     AddVolume();
@@ -73,7 +73,7 @@ namespace DoubleFile
                     break;
                 }
 
-                case Utilities.mSTRfileExt_Volume:
+                case Utilities.ksFileExt_Volume:
                 {
                     if (LoadVolumeList(strFile))
                     {
@@ -83,7 +83,7 @@ namespace DoubleFile
                     break;
                 }
 
-                case Utilities.mSTRfileExt_Copy:
+                case Utilities.ksFileExt_Copy:
                 {
                     form_tabControlMain.SelectedTab = form_tabPageBrowse;
                     form_tabControlCopyIgnore.SelectedTab = form_tabPageCopy;
@@ -93,7 +93,7 @@ namespace DoubleFile
                     break;
                 }
 
-                case Utilities.mSTRfileExt_Ignore:
+                case Utilities.ksFileExt_Ignore:
                 {
                     LoadIgnoreList(strFile);
                     form_tabControlMain.SelectedTab = form_tabPageBrowse;
@@ -114,7 +114,7 @@ namespace DoubleFile
             }
 
             ListLVvolStrings = volumes.ListLVvolStrings;
-            SearchDirListsForm1Action(SearchDirLists.Form1.RestartTreeTimer);
+            SearchDirListsForm1Action(SearchDirLists.FormSearchDirLists.RestartTreeTimer);
 
             if (ListLVvolStrings != null)
             {
@@ -161,7 +161,7 @@ namespace DoubleFile
         {
             if ((m_searchDirListsForm1 == null) || (m_searchDirListsForm1.IsDisposed))
             {
-                (m_searchDirListsForm1 = new SearchDirLists.Form1(this, ListLVvolStrings)).Show();
+                (m_searchDirListsForm1 = new SearchDirLists.FormSearchDirLists(this, ListLVvolStrings)).Show();
             }
             else
             {

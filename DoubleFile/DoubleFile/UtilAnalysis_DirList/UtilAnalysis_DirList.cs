@@ -13,30 +13,18 @@ using System.Windows.Input;
 using System.Collections;
 using System.Drawing;
 using DoubleFile;
+using System.Windows;
 
 namespace SearchDirLists
 {
     delegate bool BoolAction();
-    delegate MBoxRet MBoxDelegate(string strMessage, string strTitle = null, MBoxBtns? buttons = null);
 
     [System.ComponentModel.DesignerCategory("Code")]
-    class SDL_Win : Form { }
-    enum MBoxBtns { OK = MessageBoxButtons.OK, YesNo = MessageBoxButtons.YesNo, YesNoCancel = MessageBoxButtons.YesNoCancel }
-    enum MBoxRet { None = DialogResult.None, Yes = DialogResult.Yes, No = DialogResult.No }
-
     class SDL_ListView : ListViewEmbeddedControls.ListViewEx { }
 
     class SDL_LVItemCollection : ListView.ListViewItemCollection
     {
         internal SDL_LVItemCollection(ListView lv) : base(lv) { }
-    }
-
-    class SDL_ListViewItem : ListViewItem
-    {
-        public SDL_ListViewItem() : base() { }
-        internal SDL_ListViewItem(string strContent) : base(strContent) { }
-        internal SDL_ListViewItem(string[] arrString) : base(arrString) { }
-        internal void Select(bool bSel = true) { Selected = bSel; }
     }
 
     [System.ComponentModel.DesignerCategory("Code")]
@@ -100,10 +88,10 @@ namespace SearchDirLists
         }
         class ListViewItemHolder : Holder
         {
-            readonly SDL_ListViewItem m_obj = null;
-            internal ListViewItemHolder(SDL_ListViewItem obj) { m_obj = obj; }
+            readonly ListViewItem m_obj = null;
+            internal ListViewItemHolder(ListViewItem obj) { m_obj = obj; }
             internal override Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
-            internal override void ResetHolder() { m_obj.Select(); }
+            internal override void ResetHolder() { m_obj.Selected = true; }
         }
         class ControlHolder : Holder
         {
@@ -138,12 +126,12 @@ namespace SearchDirLists
             m_defaultControl.Select();      // search results UX, and selected treeview
         }
 
-        internal void SelectLVitem(SDL_ListViewItem lvItem)
+        internal void SelectLVitem(ListViewItem lvItem)
         {
             Reset();
             m_holder = new ListViewItemHolder(lvItem);
             lvItem.EnsureVisible();
-            lvItem.Select(false);
+            lvItem.Selected = false;
             Go_A(Once: true);
             m_defaultControl.Select();      // search results UX
         }
@@ -164,10 +152,10 @@ namespace SearchDirLists
 
         void Go_A(Color? clr = null, bool Once = false, bool bProgress = false)
         {
-            Utilities.Assert(1303.4301, m_timer.IsEnabled == false, bTraceOnly: true);
-            Utilities.Assert(1303.4302, m_nBlink == 0, bTraceOnly: true);
-            Utilities.Assert(1303.4303, (m_holder is NullHolder) == false, bTraceOnly: true);
-            Utilities.Assert(1303.4304, m_bProgress == false, bTraceOnly: true);
+            MBox.Assert(1303.4301, m_timer.IsEnabled == false, bTraceOnly: true);
+            MBox.Assert(1303.4302, m_nBlink == 0, bTraceOnly: true);
+            MBox.Assert(1303.4303, (m_holder is NullHolder) == false, bTraceOnly: true);
+            MBox.Assert(1303.4304, m_bProgress == false, bTraceOnly: true);
 
             m_holder.ClrOrig = m_holder.BackColor;
             m_bProgress = bProgress;
@@ -200,7 +188,7 @@ namespace SearchDirLists
                 return c.Count;
             }
 
-            Utilities.WriteLine("Count<" + source + "> is not an ICollection: must GetEnumerator()");
+            UtilAnalysis_DirList.WriteLine("Count<" + source + "> is not an ICollection: must GetEnumerator()");
 
             using (IEnumerator<T> enumerator = source.GetEnumerator())
             {
@@ -291,7 +279,7 @@ namespace SearchDirLists
         internal static void Go(Control ctl_in = null, bool Once = false)
         {
             Control dispatcher = ctl_in ?? GlobalDataSDL.static_form;
-            Utilities.CheckAndInvoke(dispatcher, new Action(() =>
+            UtilAnalysis_DirList.CheckAndInvoke(dispatcher, new Action(() =>
             {
                 FLASHWINFO fInfo = new FLASHWINFO();
 
@@ -315,7 +303,7 @@ namespace SearchDirLists
     }
 
     // SearchDirLists listing file|*.sdl_list|SearchDirLists volume list file|*.sdl_vol|SearchDirLists copy scratchpad file|*.sdl_copy|SearchDirLists ignore list file|*.sdl_ignore
-    abstract class SDL_File : Utilities
+    abstract class SDL_File : UtilAnalysis_DirList
     {
         internal const string BaseFilter = "Text files|*.txt|All files|*.*";
         internal const string FileAndDirListFileFilter = "SearchDirLists listing file|*." + ksFileExt_Listing;
@@ -350,7 +338,7 @@ namespace SearchDirLists
         protected SDL_File(string strHeader, string strExt, string strDescription)
         {
             Init();
-            Utilities.Assert(1303.4306, SFD != null);
+            MBox.Assert(1303.4306, SFD != null);
             Header = strHeader;
             m_strExt = strExt;
             m_strDescription = strDescription;
@@ -372,7 +360,7 @@ namespace SearchDirLists
             return true;
         }
 
-        protected virtual void ReadListItem(ListView lv, string[] strArray) { lv.Items.Add(new SDL_ListViewItem(strArray)); }
+        protected virtual void ReadListItem(ListView lv, string[] strArray) { lv.Items.Add(new ListViewItem(strArray)); }
 
         internal bool ReadList(ListView lv_in)
         {
@@ -412,7 +400,7 @@ namespace SearchDirLists
             }
             else
             {
-                MBox("Not a valid " + Description + ".", "Load " + Description);
+                MBox.ShowDialog("Not a valid " + Description + ".", "Load " + Description);
                 return false;
             }
         }
@@ -427,8 +415,8 @@ namespace SearchDirLists
             }
 
             if ((File.Exists(m_strPrevFile))
-                && (MBox(m_strPrevFile + " already exists. Overwrite?", Description, MBoxBtns.YesNo)
-                != MBoxRet.Yes))
+                && (MBox.ShowDialog(m_strPrevFile + " already exists. Overwrite?", Description, MessageBoxButton.YesNo)
+                != MessageBoxResult.Yes))
             {
                 return false;
             }
@@ -436,7 +424,7 @@ namespace SearchDirLists
             using (StreamWriter sw = File.CreateText(m_strPrevFile))
             {
                 sw.WriteLine(Header);
-                foreach (SDL_ListViewItem lvItem in lvItems)
+                foreach (ListViewItem lvItem in lvItems)
                 {
                     sw.Write(WriteListItem(0, lvItem.SubItems[0].Text));
 
@@ -488,14 +476,14 @@ namespace SearchDirLists
 
         internal new void Start()
         {
-            if (Utilities.Assert(0, Interval.TotalMilliseconds > 0))
+            if (MBox.Assert(0, Interval.TotalMilliseconds > 0))
             {
                 base.Start();
             }
         }
     }
 
-    class Utilities
+    class UtilAnalysis_DirList
     {
         internal const string ksHeader01 = "SearchDirLists 0.1";
         internal const string ksStart01 = ksHeader01 + " START";
@@ -570,7 +558,6 @@ namespace SearchDirLists
             -1, -1, -1, 4, -1, 0, -1, -1, -1, -1, -1
         };
 
-        static SDL_Win m_form1MessageBoxOwner = null;
         static double static_nLastAssertLoc = -1;
         static DateTime static_dtLastAssert = DateTime.MinValue;
 
@@ -594,7 +581,7 @@ namespace SearchDirLists
                 strError += "\n\nAdditional information: " + strError_in;
             }
 
-            Utilities.WriteLine(strError);
+            UtilAnalysis_DirList.WriteLine(strError);
 #if (DEBUG)
             Debug.Assert(false, strError);
 #else
@@ -604,7 +591,7 @@ namespace SearchDirLists
 
                 Action messageBox = new Action(() =>
                 {
-                    MBox(strError + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.".PadRight(100), "SearchDirLists Assertion Failure");
+                    MBox.ShowDialog(strError + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.".PadRight(100), "SearchDirLists Assertion Failure");
                     static_bAssertUp = false;
                 });
 
@@ -689,7 +676,7 @@ namespace SearchDirLists
 
                         if (strLine == ksHeader01)
                         {
-                            Utilities.Assert(1303.4307, nLineNo == 1);
+                            MBox.Assert(1303.4307, nLineNo == 1);
                             file_out.WriteLine(FormatLine(ksLineType_Version, nLineNo, ksHeader));
                             continue;
                         }
@@ -705,7 +692,7 @@ namespace SearchDirLists
                         }
                         else if (strLine == ksDrive01)
                         {
-                            Utilities.Assert(1303.4308, nLineNo == 4);
+                            MBox.Assert(1303.4308, nLineNo == 4);
                             file_out.WriteLine(FormatLine(ksLineType_Comment, nLineNo, ksVolume));
 
                             int ixDriveInfo = 0;
@@ -784,7 +771,7 @@ namespace SearchDirLists
                         }
                         else if (strDir.Contains(@":\") == false)
                         {
-                            Utilities.Assert(1303.4311, false);        // all that's left is directories
+                            MBox.Assert(1303.4311, false);        // all that's left is directories
                             continue;
                         }
 
@@ -920,7 +907,7 @@ namespace SearchDirLists
 
             if (string.IsNullOrWhiteSpace(strDir + strFile + strCreated + strModified + strAttributes + strLength + strError1 + strError2 + strChecksum))
             {
-                Utilities.Assert(1303.4314, nHeader is int);
+                MBox.Assert(1303.4314, nHeader is int);
 
                 if (nHeader == 0)
                 {
@@ -938,7 +925,7 @@ namespace SearchDirLists
             {
                 strError1 += " Trailing whitespace";
                 strError1.Trim();
-                Utilities.Assert(1303.4315, (false == string.IsNullOrWhiteSpace(strDir)) || (false == string.IsNullOrWhiteSpace(strFile)));
+                MBox.Assert(1303.4315, (false == string.IsNullOrWhiteSpace(strDir)) || (false == string.IsNullOrWhiteSpace(strFile)));
                 bDbgCheck = true;
             }
 
@@ -952,50 +939,12 @@ namespace SearchDirLists
 
                 if (strArray[knColLength01].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
                 {
-                    Utilities.Assert(1303.4316, false);
+                    MBox.Assert(1303.4316, false);
                 }
 #endif
             }
 
             return strRet;
-        }
-
-        // make MessageBox modal from a worker thread
-        internal static MBoxRet MBox(string strMessage, string strTitle = null, MBoxBtns? buttons_in = null)
-        {
-            if (GlobalData.AppExit)
-            {
-                return MBoxRet.None;
-            }
-
-            if (GlobalDataSDL.static_form.InvokeRequired) { return (MBoxRet)GlobalDataSDL.static_form.Invoke(new MBoxDelegate(MBox), new object[] { strMessage, strTitle, buttons_in }); }
-
-            MessageBoxKill();
-            m_form1MessageBoxOwner = new SDL_Win();
-            m_form1MessageBoxOwner.Owner = GlobalDataSDL.static_form;
-            m_form1MessageBoxOwner.Text = strTitle;
-            m_form1MessageBoxOwner.Icon = GlobalDataSDL.static_form.Icon;
-
-            MBoxBtns buttons = (buttons_in != null) ? buttons_in.Value : MBoxBtns.OK;
-            MBoxRet msgBoxRet = (MBoxRet)MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100), strTitle, (MessageBoxButtons)buttons);
-            if (m_form1MessageBoxOwner != null)
-            {
-                MessageBoxKill();
-                return msgBoxRet;
-            }
-
-            // cancelled externally
-            return MBoxRet.None;
-        }
-
-        internal static void MessageBoxKill(string strMatch = null)
-        {
-            if ((m_form1MessageBoxOwner != null) && new string[] { null, m_form1MessageBoxOwner.Text }.Contains(strMatch))
-            {
-                m_form1MessageBoxOwner.Close();
-                m_form1MessageBoxOwner = null;
-                GlobalDataSDL.static_form.Activate();
-            }
         }
 
         protected static string StrFile_01(string strFile)
@@ -1026,9 +975,9 @@ namespace SearchDirLists
 
             if (arrLine[0] == ksHeader01)
             {
-                Utilities.WriteLine("Converting " + strSaveAs);
+                UtilAnalysis_DirList.WriteLine("Converting " + strSaveAs);
                 ConvertFile(strSaveAs);
-                Utilities.WriteLine("File converted to " + ksHeader);
+                UtilAnalysis_DirList.WriteLine("File converted to " + ksHeader);
                 bConvertFile = true;
             }
 

@@ -67,7 +67,7 @@ namespace DoubleFile
         internal const int knDriveModel = 12;           // backwards compatibility when Info: isn't in the header
         internal const int knDriveSerial = 13;          // ...line numbering starts at one in the file and zero in the program
 
-        internal static readonly string[] mAstrDIlabels = new string[knDriveInfoItems]
+        internal static readonly string[] kasDIlabels = new string[knDriveInfoItems]
         {
             "Volume Free",
             "Volume Format",
@@ -81,15 +81,15 @@ namespace DoubleFile
             "Drive Serial",
             "Drive Size"
         };
-        internal static readonly bool[] mAbDIsizeType = new bool[knDriveInfoItems]
+        internal static readonly bool[] kabDIsizeType = new bool[knDriveInfoItems]
         {
             true, false, false, false, false, true, true, false, false, false, true
         };
-        internal static readonly int[] mAnDIviewOrder = new int[knDriveInfoItems]
+        internal static readonly int[] kanDIviewOrder = new int[knDriveInfoItems]
         {
             9, 5, 6, 2, 0, 10, 8, 1, 3, 4, 7
         };
-        internal static readonly int[] mAnDIoptIfEqTo = new int[knDriveInfoItems]
+        internal static readonly int[] kanDIoptIfEqTo = new int[knDriveInfoItems]
         {
             -1, -1, -1, 4, -1, 0, -1, -1, -1, -1, -1
         };

@@ -1,15 +1,18 @@
-﻿using System;
+﻿using System.Windows.Forms;
+using System.Drawing;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Windows.Forms;
+using DoubleFile;
 
-namespace DoubleFile
+namespace SearchDirLists
 {
-    class TreeMapUserControl : UserControl
+    [System.ComponentModel.DesignerCategory("Code")]
+    class UC_TreeMap : UserControl
     {
-    //    public Control TooltipAnchor;
+        internal bool ToolTipActive { get { return m_toolTip.Active; } }
+        internal Control TooltipAnchor = null;
 
         Rectangle m_rectBitmap = Rectangle.Empty;
         Rectangle m_selRect = Rectangle.Empty;
@@ -20,25 +23,27 @@ namespace DoubleFile
         TreeNode m_prevNode = null;
         TreeNode m_deepNode = null;
         TreeNode m_deepNodeDrawn = null;
-        System.Threading.Timer m_timerAnim = null;
+        readonly SDL_Timer m_timerAnim = new SDL_Timer();
         int m_nAnimFrame = 0;
         DateTime m_dtHideGoofball = DateTime.MinValue;
-        ToolTip m_toolTip = new ToolTip();
+        readonly ToolTip m_toolTip = new ToolTip();
 
-        void TimerAnim_Callback(object state)
-        {
-            if (m_rectCenter != Rectangle.Empty)
-            {
-                Invalidate(m_rectCenter);
-            }
-        }
-
-        public TreeMapUserControl()
+        internal UC_TreeMap()
         {
             m_toolTip.UseFading = true;
             m_toolTip.UseAnimation = true;
-            m_timerAnim = new System.Threading.Timer(TimerAnim_Callback, null, 33, 33);    // 30 FPS
-            this.SetStyle(ControlStyles.DoubleBuffer |
+            m_timerAnim.Interval = new TimeSpan(0, 0, 0, 0, 33);    // 30 FPS
+            m_timerAnim.Tick += new EventHandler((Object sender, EventArgs e) =>
+            {
+                if (m_rectCenter != Rectangle.Empty)
+                {
+                    ++m_nAnimFrame;
+                    Invalidate(m_rectCenter);
+                }
+            });
+            m_timerAnim.Start();
+
+            SetStyle(ControlStyles.DoubleBuffer |
                 ControlStyles.UserPaint |
                 ControlStyles.AllPaintingInWmPaint,
                 true);
@@ -56,7 +61,7 @@ namespace DoubleFile
 
         internal void ClearSelection()
         {
-            Control ctl = null; // TooltipAnchor;
+            Control ctl = TooltipAnchor;
             if ((ctl == null) || ctl.IsDisposed) ctl = this;
             if ((ctl == null) || ctl.IsDisposed) { return; }
 
@@ -74,7 +79,6 @@ namespace DoubleFile
             }
 
             m_toolTip.Dispose();
-            m_toolTip = null;
             base.Dispose(disposing);
         }
 
@@ -108,7 +112,7 @@ namespace DoubleFile
             bool bImmediateFiles = false;
             bool bVolumeView = false;
 
-            UtilAnalysis.Closure(new Action(() =>
+            UtilAnalysis_DirList.Closure(new Action(() =>
             {
                 {
                     NodeDatum nodeDatum = ((NodeDatum)m_treeNode.Tag);
@@ -129,7 +133,7 @@ namespace DoubleFile
                     return;
                 }
 
-                TreeNode nodeUplevel = (m_prevNode != null) ? m_prevNode.Parent : null;
+                TreeNode nodeUplevel = (TreeNode)((m_prevNode != null) ? m_prevNode.Parent : null);
                 bool bFoundUplevel = false;
 
                 while (nodeUplevel != null)
@@ -140,7 +144,7 @@ namespace DoubleFile
                         return;
                     }
 
-                    nodeUplevel = nodeUplevel.Parent;
+                    nodeUplevel = (TreeNode)nodeUplevel.Parent;
                 }
 
                 if (bFoundUplevel)
@@ -186,7 +190,7 @@ namespace DoubleFile
                 NodeDatum nodeDatum = (NodeDatum)nodeRet.Tag;
 
                 m_selRect = nodeDatum.TreeMapRect;
-         //       m_toolTip.Show(UtilAnalysis.FormatSize(nodeDatum.nTotalLength, bBytes: true), TooltipAnchor, new Point(0, 0));
+                m_toolTip.Show(UtilAnalysis_DirList.FormatSize(nodeDatum.nTotalLength, bBytes: true), TooltipAnchor, new Point(0, 0));
             }
 
             m_prevNode = nodeRet;
@@ -222,14 +226,14 @@ namespace DoubleFile
                     continue;
                 }
 
-                TreeNode foundNode = FindMapNode(treeNode.Nodes[0], pt, bNextNode: true);
+                TreeNode foundNode = FindMapNode((TreeNode)treeNode.Nodes[0], pt, bNextNode: true);
 
                 if (foundNode != null)
                 {
                     return foundNode;
                 }
             }
-            while (bNextNode && ((treeNode = treeNode.NextNode) != null));
+            while (bNextNode && ((treeNode = (TreeNode)treeNode.NextNode) != null));
 
             return null;
         }
@@ -237,7 +241,7 @@ namespace DoubleFile
         TreeNode GetFileList(TreeNode parent)
         {
             List<ulong> listLengths = new List<ulong>();
-            List<string[]> listFiles = null; // TreeSelect.GetFileList(parent, listLengths);
+            List<string[]> listFiles = TreeSelect.GetFileList(parent, listLengths);
 
             if (listFiles == null)
             {
@@ -331,7 +335,6 @@ namespace DoubleFile
             brush.SurroundColors = new Color[] { Color.White };
             e.Graphics.FillPie(brush, r_A, 0 + nAnimFrame, 90);
             e.Graphics.FillPie(brush, r_A, 180 + nAnimFrame, 90);
-            ++m_nAnimFrame;
         }
 
         protected override void OnSizeChanged(EventArgs e)
@@ -369,7 +372,7 @@ namespace DoubleFile
 
                 m_bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), m_rectBitmap);
                 TranslateSize();
-                UtilProject.WriteLine("Size bitmap " + nPxPerSide + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000.0 + " seconds.");
+                UtilAnalysis_DirList.WriteLine("Size bitmap " + nPxPerSide  + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000.0 + " seconds.");
             }
 
             DateTime dtStart = DateTime.Now;
@@ -450,36 +453,36 @@ namespace DoubleFile
         // Author: bseifert@users.sourceforge.net, bseifert@daccord.net
         //
         // Last modified: $Date: 2004/11/05 16:53:08 $
-
+        
         internal void DrawTreemap()
         {
             m_deepNodeDrawn = null;
             Graphics graphics = m_bg.Graphics;
             Rectangle rc = m_rectBitmap;
 
-            rc.Width--;
-            rc.Height--;
+	        rc.Width--;
+	        rc.Height--;
 
-            if (rc.Width <= 0 || rc.Height <= 0)
+	        if (rc.Width <= 0 || rc.Height <= 0)
             {
-                return;
+		        return;
             }
 
             NodeDatum nodeDatum = (NodeDatum)m_treeNode.Tag;
 
             if (nodeDatum.nTotalLength > 0)
-            {
+	        {
                 RecurseDrawGraph(m_treeNode, rc, bStart: true);
-            }
-            else
-            {
+	        }
+	        else
+	        {
                 graphics.FillRectangle(Brushes.Wheat, rc);
             }
         }
 
         void RecurseDrawGraph(
-            TreeNode item,
-            Rectangle rc,
+	        TreeNode item, 
+	        Rectangle rc,
             bool bStart = false
         )
         {
@@ -488,10 +491,10 @@ namespace DoubleFile
 
             Graphics graphics = m_bg.Graphics;
 
-            if (rc.Width <= 0 || rc.Height <= 0)
-            {
-                return;
-            }
+	        if (rc.Width <= 0 || rc.Height <= 0)
+	        {
+		        return;
+	        }
 
             if ((m_deepNode != null) &&
                 ((item == m_deepNode) || (m_deepNode.IsChildOf(item))))
@@ -528,14 +531,14 @@ namespace DoubleFile
             graphics.FillRectangle(brush, rc);
         }
 
-        //My first approach was to make this member pure virtual and have three
-        //classes derived from CTreemap. The disadvantage is then, that we cannot
-        //simply have a member variable of type CTreemap but have to deal with
-        //pointers, factory methods and explicit destruction. It's not worth.
+         //My first approach was to make this member pure virtual and have three
+         //classes derived from CTreemap. The disadvantage is then, that we cannot
+         //simply have a member variable of type CTreemap but have to deal with
+         //pointers, factory methods and explicit destruction. It's not worth.
 
-        //I learned this squarification style from the KDirStat executable.
-        //It's the most complex one here but also the clearest, imho.
-
+         //I learned this squarification style from the KDirStat executable.
+         //It's the most complex one here but also the clearest, imho.
+        
         bool KDirStat_DrawChildren(Graphics graphics, TreeNode parent_in, bool bStart = false)
         {
             List<TreeNode> listChildren = null;
@@ -543,7 +546,7 @@ namespace DoubleFile
 
             bool bVolumeNode = false;
 
-            UtilAnalysis.Closure(new Action(() =>
+            UtilAnalysis_DirList.Closure(new Action(() =>
             {
                 if ((bStart == false) || ((parent_in.Tag is RootNodeDatum) == false))
                 {
@@ -610,8 +613,8 @@ namespace DoubleFile
 
             NodeDatum nodeDatum = (NodeDatum)parent.Tag;
             Rectangle rc = nodeDatum.TreeMapRect;
-            List<double> rows = new List<double>();	// Our rectangle is divided into rows, each of which gets this height (fraction of total height).
-            List<int> childrenPerRow = new List<int>();// childrenPerRow[i] = # of children in rows[i]
+	        List<double> rows = new List<double>();	// Our rectangle is divided into rows, each of which gets this height (fraction of total height).
+	        List<int> childrenPerRow = new List<int>();// childrenPerRow[i] = # of children in rows[i]
 
             if (bStart && (nodeDatum.TreeMapFiles != null))
             {
@@ -664,61 +667,61 @@ namespace DoubleFile
                 nextChild += childrenUsed;
             }
 
-            int width = horizontalRows ? rc.Width : rc.Height;
-            int height = horizontalRows ? rc.Height : rc.Width;
+	        int width= horizontalRows ? rc.Width : rc.Height;
+	        int height= horizontalRows ? rc.Height : rc.Width;
 
-            int c = 0;
-            double top = horizontalRows ? rc.Top : rc.Left;
-            for (int row = 0; row < rows.Count; row++)
-            {
-                double fBottom = top + rows[row] * height;
-                int bottom = (int)fBottom;
-                if (row == rows.Count - 1)
-                    bottom = horizontalRows ? rc.Bottom : rc.Right;
-                double left = horizontalRows ? rc.Left : rc.Top;
+	        int c = 0;
+	        double top= horizontalRows ? rc.Top : rc.Left;
+	        for (int row=0; row < rows.Count; row++)
+	        {
+		        double fBottom= top + rows[row] * height;
+		        int bottom= (int)fBottom;
+		        if (row == rows.Count - 1)
+			        bottom= horizontalRows ? rc.Bottom : rc.Right;
+		        double left= horizontalRows ? rc.Left : rc.Top;
 
-                for (int i = 0; i < childrenPerRow[row]; i++, c++)
-                {
+                for (int i=0; i < childrenPerRow[row]; i++, c++)
+		        {
                     TreeNode child = listChildren[c];
                     MBox.Assert(1302.3305, childWidth[c] >= 0);
-                    double fRight = left + childWidth[c] * width;
-                    int right = (int)fRight;
+			        double fRight= left + childWidth[c] * width;
+			        int right= (int)fRight;
 
-                    bool lastChild = (i == childrenPerRow[row] - 1 || childWidth[c + 1] == 0);
+			        bool lastChild = (i == childrenPerRow[row] - 1 || childWidth[c + 1] == 0);
 
-                    if (lastChild)
-                        right = horizontalRows ? rc.Right : rc.Bottom;
+			        if (lastChild)
+				        right= horizontalRows ? rc.Right : rc.Bottom;
 
-                    Rectangle rcChild =
-                        (horizontalRows)
-                        ? new Rectangle((int)left, (int)top, right - (int)left, bottom - (int)top)
-                        : new Rectangle((int)top, (int)left, bottom - (int)top, right - (int)left);
-
-                    RecurseDrawGraph(child, rcChild);
+			        Rectangle rcChild = 
+			            (horizontalRows)
+                        ? new Rectangle((int)left, (int)top, right-(int)left, bottom-(int)top)
+                        : new Rectangle((int)top, (int)left, bottom-(int)top, right-(int)left);
+			
+			        RecurseDrawGraph(child, rcChild);
 
                     if (bStart)
                     {
                         graphics.DrawRectangle(new Pen(Color.Black, 2), rcChild);
                     }
-
+                    
                     if (lastChild)
-                    {
-                        i++;
+			        {
+				        i++;
                         c++;
 
-                        if (i < childrenPerRow[row])
+				        if (i < childrenPerRow[row])
                             ((NodeDatum)listChildren[c].Tag).TreeMapRect = new Rectangle(-1, -1, -1, -1);
+				
+				        c+= childrenPerRow[row] - i;
+				        break;
+			        }
 
-                        c += childrenPerRow[row] - i;
-                        break;
-                    }
-
-                    left = fRight;
-                }
-                // This asserts due to rounding error: MBox.Assert(1302.3306, left == (horizontalRows ? rc.Right : rc.Bottom));
-                top = fBottom;
-            }
-            // This asserts due to rounding error: MBox.Assert(1302.3307, top == (horizontalRows ? rc.Bottom : rc.Right));
+			        left= fRight;
+		        }
+                // This asserts due to rounding error: Utilities.Assert(1302.3306, left == (horizontalRows ? rc.Right : rc.Bottom));
+		        top= fBottom;
+	        }
+            // This asserts due to rounding error: Utilities.Assert(1302.3307, top == (horizontalRows ? rc.Bottom : rc.Right));
             return true;
         }
 
@@ -731,59 +734,59 @@ namespace DoubleFile
             MBox.Assert(1302.3309, nextChild < listChildren.Count);
             MBox.Assert(1302.33101, width >= 1.0);
 
-            double mySize = (double)((NodeDatum)parent.Tag).nTotalLength;
-            ulong sizeUsed = 0;
-            double rowHeight = 0;
+	        double mySize= (double)((NodeDatum)parent.Tag).nTotalLength;
+	        ulong sizeUsed= 0;
+	        double rowHeight= 0;
             int i = 0;
 
             for (i = nextChild; i < listChildren.Count; i++)
-            {
+	        {
                 ulong childSize = ((NodeDatum)listChildren[i].Tag).nTotalLength;
-                sizeUsed += childSize;
-                double virtualRowHeight = sizeUsed / mySize;
+		        sizeUsed+= childSize;
+		        double virtualRowHeight= sizeUsed / mySize;
                 MBox.Assert(1302.3311, virtualRowHeight > 0);
                 MBox.Assert(1302.3312, virtualRowHeight <= 1);
+		
+		        // Rectangle(mySize)    = width * 1.0
+		        // Rectangle(childSize) = childWidth * virtualRowHeight
+		        // Rectangle(childSize) = childSize / mySize * width
 
-                // Rectangle(mySize)    = width * 1.0
-                // Rectangle(childSize) = childWidth * virtualRowHeight
-                // Rectangle(childSize) = childSize / mySize * width
+		        double childWidth= childSize / mySize * width / virtualRowHeight;
 
-                double childWidth = childSize / mySize * width / virtualRowHeight;
-
-                if (childWidth / virtualRowHeight < _minProportion)
-                {
+		        if (childWidth / virtualRowHeight < _minProportion)
+		        {
                     MBox.Assert(1302.3313, i > nextChild); // because width >= 1 and _minProportion < 1.
-                    // For the first child we have:
-                    // childWidth / rowHeight
-                    // = childSize / mySize * width / rowHeight / rowHeight
-                    // = childSize * width / sizeUsed / sizeUsed * mySize
-                    // > childSize * mySize / sizeUsed / sizeUsed
-                    // > childSize * childSize / childSize / childSize 
-                    // = 1 > _minProportion.
-                    break;
-                }
-                rowHeight = virtualRowHeight;
-            }
+			        // For the first child we have:
+			        // childWidth / rowHeight
+			        // = childSize / mySize * width / rowHeight / rowHeight
+			        // = childSize * width / sizeUsed / sizeUsed * mySize
+			        // > childSize * mySize / sizeUsed / sizeUsed
+			        // > childSize * childSize / childSize / childSize 
+			        // = 1 > _minProportion.
+			        break;
+		        }
+		        rowHeight= virtualRowHeight;
+	        }
 
             MBox.Assert(1302.3314, i > nextChild);
 
-            // Now i-1 is the last child used
-            // and rowHeight is the height of the row.
+	        // Now i-1 is the last child used
+	        // and rowHeight is the height of the row.
 
-            childrenUsed = i - nextChild;
+	        childrenUsed= i - nextChild;
 
-            // Now as we know the rowHeight, we compute the widths of our children.
-            for (i = 0; i < childrenUsed; i++)
-            {
-                // Rectangle(1.0 * 1.0) = mySize
-                double rowSize = mySize * rowHeight;
+	        // Now as we know the rowHeight, we compute the widths of our children.
+	        for (i=0; i < childrenUsed; i++)
+	        {
+		        // Rectangle(1.0 * 1.0) = mySize
+		        double rowSize= mySize * rowHeight;
                 double childSize = (double)((NodeDatum)listChildren[nextChild + i].Tag).nTotalLength;
-                double cw = childSize / rowSize;
+		        double cw= childSize / rowSize;
                 MBox.Assert(1302.3315, cw >= 0);
-                arrChildWidth[nextChild + i] = cw;
-            }
+		        arrChildWidth[nextChild + i]= cw;
+	        }
 
-            return rowHeight;
+	        return rowHeight;
         }
     }
 }

@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Windows.Forms;
 using System.Drawing;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
+using DoubleFile;
 
-namespace DoubleFile
+namespace SearchDirLists
 {
-    class Collate
+    class Collate : UtilAnalysis_DirList
     {
         static Collate static_this = null;
 
@@ -19,19 +20,20 @@ namespace DoubleFile
 
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
         readonly SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = null;
+        readonly TreeView m_treeViewBrowse = null;
         readonly SDL_ListView form_lvClones = null;
         readonly SDL_ListView form_lvSameVol = null;
         readonly SDL_ListView form_lvUnique = null;
         readonly List<TreeNode> m_listRootNodes = null;
         readonly UList<TreeNode> m_listTreeNodes = null;
         readonly bool m_bCheckboxes = false;
-        readonly List<LVitem_ProjectVM> m_list_lvIgnore = null;
+        readonly List<ListViewItem> m_list_lvIgnore = null;
 
         // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.
-        readonly List<LVitem_ProjectVM> listLVunique = new List<LVitem_ProjectVM>();
-        readonly List<LVitem_ProjectVM> listLVsameVol = new List<LVitem_ProjectVM>();
-        readonly List<LVitem_ProjectVM> listLVdiffVol = new List<LVitem_ProjectVM>();
-        readonly Dictionary<TreeNode, LVitem_ProjectVM> dictIgnoreNodes = new Dictionary<TreeNode, LVitem_ProjectVM>();
+        readonly List<ListViewItem> listLVunique = new List<ListViewItem>();
+        readonly List<ListViewItem> listLVsameVol = new List<ListViewItem>();
+        readonly List<ListViewItem> listLVdiffVol = new List<ListViewItem>();
+        readonly Dictionary<TreeNode, ListViewItem> dictIgnoreNodes = new Dictionary<TreeNode, ListViewItem>();
         readonly bool m_bLoose = false;
         bool m_bThreadAbort = false;
 
@@ -116,7 +118,7 @@ namespace DoubleFile
 
         class InsertSizeMarker
         {
-            readonly static LVitem_ProjectVM lvMarker = new LVitem_ProjectVM();
+            readonly static ListViewItem lvMarker = new ListViewItem();
             static bool bInit = false;
 
             static void Init()
@@ -131,13 +133,13 @@ namespace DoubleFile
                 }
             }
 
-            public static void Go(List<LVitem_ProjectVM> listLVitems, int nIx, bool bUnique, bool bAdd = false)
+            public static void Go(List<ListViewItem> listLVitems, int nIx, bool bUnique, bool bAdd = false)
             {
                 Init();
 
-                LVitem_ProjectVM lvItem = (LVitem_ProjectVM)lvMarker.Clone();
+                ListViewItem lvItem = (ListViewItem)lvMarker.Clone();
 
-                lvItem.Text = ((UtilAnalysis.FormatSize(((NodeDatum)((TreeNode)(bUnique ? listLVitems[nIx].Tag : ((UList<TreeNode>)listLVitems[nIx].Tag)[0])).Tag).nTotalLength, bNoDecimal: true)));
+                lvItem.Text = ((UtilAnalysis_DirList.FormatSize(((NodeDatum)((TreeNode)(bUnique ? listLVitems[nIx].Tag : ((UList<TreeNode>)listLVitems[nIx].Tag)[0])).Tag).nTotalLength, bNoDecimal: true)));
 
                 if (bAdd)
                 {
@@ -151,12 +153,14 @@ namespace DoubleFile
         }
 
         public Collate(SortedDictionary<Correlate, UList<TreeNode>> dictNodes,
+            TreeView treeViewBrowse,
             SDL_ListView lvClones, SDL_ListView lvSameVol, SDL_ListView lvUnique,
             List<TreeNode> listRootNodes, UList<TreeNode> listTreeNodes, bool bCheckboxes,
-            List<LVitem_ProjectVM> list_lvIgnore, bool bLoose)
+            List<ListViewItem> list_lvIgnore, bool bLoose)
         {
             static_this = this;
             m_dictNodes = dictNodes;
+            m_treeViewBrowse = treeViewBrowse;
             form_lvClones = lvClones;
             form_lvSameVol = lvSameVol;
             form_lvUnique = lvUnique;
@@ -261,7 +265,7 @@ namespace DoubleFile
             }
         }
 
-        public static void InsertSizeMarkers(List<LVitem_ProjectVM> listLVitems)
+        public static void InsertSizeMarkers(List<ListViewItem> listLVitems)
         {
             if (listLVitems.Count <= 0)
             {
@@ -292,7 +296,7 @@ namespace DoubleFile
             InsertSizeMarker.Go(listLVitems, 0, bUnique);            // Enter the Zeroth
         }
 
-        void IgnoreNodeAndSubnodes(LVitem_ProjectVM lvItem, TreeNode treeNode_in, bool bContinue = false)
+        void IgnoreNodeAndSubnodes(ListViewItem lvItem, TreeNode treeNode_in, bool bContinue = false)
         {
             TreeNode treeNode = treeNode_in;
 
@@ -327,12 +331,12 @@ namespace DoubleFile
             {
                 if (m_bThreadAbort || GlobalData.AppExit)
                 {
-                    return;
+                    return;     
                 }
 
                 if (sbMatch.Contains(treeNode.Text.ToLower()))
                 {
-                    foreach (LVitem_ProjectVM lvItem in m_list_lvIgnore)
+                    foreach (ListViewItem lvItem in m_list_lvIgnore)
                     {
                         if (treeNode.Level != (int.Parse(lvItem.SubItems[1].Text) - 1))
                         {
@@ -341,7 +345,7 @@ namespace DoubleFile
 
                         if (lvItem.Text.ToLower() == treeNode.Text.ToLower())
                         {
-                            IgnoreNodeAndSubnodes((LVitem_ProjectVM)lvItem.Tag, treeNode);
+                            IgnoreNodeAndSubnodes((ListViewItem)lvItem.Tag, treeNode);
                             break;
                         }
                     }
@@ -381,7 +385,7 @@ namespace DoubleFile
 
         public void Step1_OnThread()
         {
-            TreeView treeView = new TreeView();     // sets Level and NextNode
+            SDL_TreeView treeView = new SDL_TreeView();     // sets Level and NextNode
 
             if (m_listRootNodes.Count <= 0)
             {
@@ -400,16 +404,16 @@ namespace DoubleFile
                 int nMaxLevel = m_list_lvIgnore.Max(i => int.Parse(i.SubItems[1].Text) - 1);
                 StringBuilder sbMatch = new StringBuilder();
 
-                foreach (LVitem_ProjectVM lvItem in m_list_lvIgnore)
+                foreach (ListViewItem lvItem in m_list_lvIgnore)
                 {
                     sbMatch.AppendLine(lvItem.Text);
                 }
 
                 IgnoreNodeQuery(sbMatch.ToString().ToLower(), nMaxLevel, m_listRootNodes[0]);
-                UtilProject.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+                UtilAnalysis_DirList.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             }
 
-            Dictionary<TreeNode, LVitem_ProjectVM> dictIgnoreMark = new Dictionary<TreeNode, LVitem_ProjectVM>();
+            Dictionary<TreeNode, ListViewItem> dictIgnoreMark = new Dictionary<TreeNode, ListViewItem>();
             SortedDictionary<Correlate, List<TreeNode>> dictNodes = new SortedDictionary<Correlate, List<TreeNode>>();
 
             foreach (KeyValuePair<Correlate, UList<TreeNode>> pair in m_dictNodes)  // clone to remove ignored
@@ -417,7 +421,7 @@ namespace DoubleFile
                 dictNodes.Add(pair.Key, pair.Value.ToList());                       // clone pair.Value to remove ignored, using ToList() 
             }
 
-            foreach (KeyValuePair<TreeNode, LVitem_ProjectVM> pair in dictIgnoreNodes)
+            foreach (KeyValuePair<TreeNode, ListViewItem> pair in dictIgnoreNodes)
             {
                 TreeNode treeNode = pair.Key;
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
@@ -464,7 +468,7 @@ namespace DoubleFile
                     MBox.Assert(1305.6315, false);
                     continue;
                 }
-
+                
                 if (listNodes.Count > 1)
                 {
                     // Parent folder may contain only its clone subfolder, in which case unmark the subfolder
@@ -555,7 +559,7 @@ namespace DoubleFile
                     }
                 }
 
-                LVitem_ProjectVM lvItem = new LVitem_ProjectVM(new string[] { string.Empty, str_nClones });
+                ListViewItem lvItem = new ListViewItem(new string[] { string.Empty, str_nClones });
 
                 lvItem.Tag = listNodes.Value;
                 lvItem.ForeColor = listNodes.Value[0].ForeColor;
@@ -586,10 +590,10 @@ namespace DoubleFile
                 listLVdiffVol.Add(lvItem);
             }
 
-            foreach (KeyValuePair<TreeNode, LVitem_ProjectVM> pair in dictIgnoreMark)
+            foreach (KeyValuePair<TreeNode, ListViewItem> pair in dictIgnoreMark)
             {
                 TreeNode treeNode = pair.Key;
-                LVitem_ProjectVM lvIgnoreItem = pair.Value;
+                ListViewItem lvIgnoreItem = pair.Value;
 
                 treeNode.ForeColor = Color.DarkGray;
                 treeNode.BackColor = Color.Empty;
@@ -615,7 +619,7 @@ namespace DoubleFile
 
                 MBox.Assert(1305.6321, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
-                LVitem_ProjectVM lvItem = new LVitem_ProjectVM(treeNode.Text);
+                ListViewItem lvItem = new ListViewItem(treeNode.Text);
 
                 lvItem.Tag = treeNode;
 
@@ -643,13 +647,13 @@ namespace DoubleFile
 
             if (m_listRootNodes.Count > 0)
             {
-                int nCount = UtilAnalysis.CountNodes(m_listRootNodes);
+                int nCount = UtilAnalysis_DirList.CountNodes(m_listRootNodes);
                 int nCount_A = new AddTreeToList(m_listTreeNodes, listSameVol).Go(m_listRootNodes).Count;
 
                 MBox.Assert(1305.6325, nCount_A == nCount);
                 MBox.Assert(1305.6326, m_listTreeNodes.Count == nCount);
-                MBox.Assert(1305.6327, UtilAnalysis.CountNodes(m_listRootNodes) == nCount);
-                UtilProject.WriteLine("Step1_OnThread " + nCount);
+                MBox.Assert(1305.6327, UtilAnalysis_DirList.CountNodes(m_listRootNodes) == nCount);
+                UtilAnalysis_DirList.WriteLine("Step1_OnThread " + nCount);
             }
 
             listSameVol.Sort((y, x) => ((NodeDatum)x.Tag).nTotalLength.CompareTo(((NodeDatum)y.Tag).nTotalLength));
@@ -680,7 +684,7 @@ namespace DoubleFile
 
                 MBox.Assert(1305.6329, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
-                LVitem_ProjectVM lvItem = new LVitem_ProjectVM(new string[] { treeNode.Text, str_nClones });
+                ListViewItem lvItem = new ListViewItem(new string[] { treeNode.Text, str_nClones });
 
                 lvItem.Tag = nodeDatum.m_listClones;
                 lvItem.ForeColor = Color.Firebrick;
@@ -696,16 +700,16 @@ namespace DoubleFile
 
         public void Step2_OnForm()
         {
-            UtilAnalysis.Closure(new Action(() =>
+            UtilAnalysis_DirList.Closure(new Action(() =>
             {
                 if (m_bThreadAbort || GlobalData.AppExit)
                 {
                     return;
                 }
 
-                if (SDLWPF.treeViewMain.Enabled == false)      // stays enabled when DoCollation() is called directly
+                if (m_treeViewBrowse.Enabled == false)      // stays enabled when DoCollation() is called directly
                 {
-                    SDLWPF.treeViewMain.Nodes.Clear();
+                    m_treeViewBrowse.Nodes.Clear();
                 }
 
                 if (m_listRootNodes.Count <= 0)
@@ -713,22 +717,22 @@ namespace DoubleFile
                     return;
                 }
 
-                if (SDLWPF.treeViewMain.Enabled == false)
+                if (m_treeViewBrowse.Enabled == false)
                 {
-                    SDLWPF.treeViewMain.Enabled = true;
-                    SDLWPF.treeViewMain.CheckBoxes = m_bCheckboxes;
+                    m_treeViewBrowse.Enabled = true;
+                    m_treeViewBrowse.CheckBoxes = m_bCheckboxes;
 
-                    int nCount = UtilAnalysis.CountNodes(m_listRootNodes);
+                    int nCount = UtilAnalysis_DirList.CountNodes(m_listRootNodes);
 
-                    UtilAnalysis.Write("A");
-                    SDLWPF.treeViewMain.Nodes.AddRange(m_listRootNodes.ToArray());
-                    UtilProject.WriteLine("A");
+                    UtilAnalysis_DirList.Write("A");
+                    m_treeViewBrowse.Nodes.AddRange(m_listRootNodes.ToArray());
+                    UtilAnalysis_DirList.WriteLine("A");
 
-                    int nCount_A = UtilAnalysis.CountNodes(m_listRootNodes);
+                    int nCount_A = UtilAnalysis_DirList.CountNodes(m_listRootNodes);
 
                     MBox.Assert(1305.6331, nCount_A == nCount);
-                    MBox.Assert(1305.6332, SDLWPF.treeViewMain.GetNodeCount(includeSubTrees: true) == nCount);
-                    UtilProject.WriteLine("Step2_OnForm_A " + nCount);
+                    MBox.Assert(1305.6332, m_treeViewBrowse.GetNodeCount(includeSubTrees: true) == nCount);
+                    UtilAnalysis_DirList.WriteLine("Step2_OnForm_A " + nCount);
                 }
 
                 if (m_bThreadAbort || GlobalData.AppExit)
@@ -737,10 +741,10 @@ namespace DoubleFile
                 }
 
                 MBox.Assert(1305.6333, form_lvClones.Items.Count <= 0);
-                UtilAnalysis.Write("B");
+                UtilAnalysis_DirList.Write("B");
                 form_lvClones.Items.AddRange(listLVdiffVol.ToArray());
                 form_lvClones.Invalidate();
-                UtilProject.WriteLine("B");
+                UtilAnalysis_DirList.WriteLine("B");
 
                 if (m_bThreadAbort || GlobalData.AppExit)
                 {
@@ -748,10 +752,10 @@ namespace DoubleFile
                 }
 
                 MBox.Assert(1305.6334, form_lvUnique.Items.Count <= 0);
-                UtilAnalysis.Write("C");
+                UtilAnalysis_DirList.Write("C");
                 form_lvUnique.Items.AddRange(listLVunique.ToArray());
                 form_lvUnique.Invalidate();
-                UtilProject.WriteLine("C");
+                UtilAnalysis_DirList.WriteLine("C");
 
                 if (m_bThreadAbort || GlobalData.AppExit)
                 {
@@ -759,21 +763,21 @@ namespace DoubleFile
                 }
 
                 MBox.Assert(1305.6335, form_lvSameVol.Items.Count <= 0);
-                UtilAnalysis.Write("D");
+                UtilAnalysis_DirList.Write("D");
                 form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
                 form_lvSameVol.Invalidate();
-                UtilProject.WriteLine("D");
+                UtilAnalysis_DirList.WriteLine("D");
 
-                if (SDLWPF.treeViewMain.SelectedNode != null)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
+                if (m_treeViewBrowse.SelectedNode != null)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
                 {
-                    TreeNode treeNode = (TreeNode)SDLWPF.treeViewMain.SelectedNode;
+                    TreeNode treeNode = (TreeNode)m_treeViewBrowse.SelectedNode;
 
-                    SDLWPF.treeViewMain.SelectedNode = null;
-                    SDLWPF.treeViewMain.SelectedNode = treeNode;   // reselect in repopulated collation listviewers
+                    m_treeViewBrowse.SelectedNode = null;
+                    m_treeViewBrowse.SelectedNode = treeNode;   // reselect in repopulated collation listviewers
                 }
                 else
                 {
-                    SDLWPF.treeViewMain.SelectedNode = m_listRootNodes[0];
+                    m_treeViewBrowse.SelectedNode = m_listRootNodes[0];
                 }
             }));
 

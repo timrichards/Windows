@@ -245,7 +245,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UtilAnalysis_DirList\Form1.resx" />
+    <EmbeddedResource Include="UtilAnalysis_DirList\FormAnalysis_DirList.resx" />
     <None Include="DoubleFile_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

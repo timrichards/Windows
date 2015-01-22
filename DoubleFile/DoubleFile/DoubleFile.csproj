@@ -119,10 +119,22 @@
     <Compile Include="UtilAnalysis_DirList\FormSDL_Search.cs">
       <SubType>Designer</SubType>
     </Compile>
-    <Compile Include="UtilAnalysis_DirList\Tree.cs" />
+    <Compile Include="UtilAnalysis_DirList\Tree\Correlate.cs" />
+    <Compile Include="UtilAnalysis_DirList\Tree\DetailsDatum.cs" />
+    <Compile Include="UtilAnalysis_DirList\Tree\DetailsDatum\NodeDatum.cs" />
+    <Compile Include="UtilAnalysis_DirList\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
+    <Compile Include="UtilAnalysis_DirList\Tree\LVitemFileTag.cs" />
+    <Compile Include="UtilAnalysis_DirList\Tree\LVitemNameComparer.cs" />
+    <Compile Include="UtilAnalysis_DirList\Tree\TreeBase\Tree.cs" />
     <Compile Include="UtilAnalysis_DirList\FormSDL_Tree.cs">
       <SubType>Designer</SubType>
     </Compile>
+    <Compile Include="UtilAnalysis_DirList\Tree\TreeBase.cs" />
+    <Compile Include="UtilAnalysis_DirList\Tree\TreeBase\Tree\TreeRootNodeBuilder.cs" />
+    <Compile Include="UtilAnalysis_DirList\Tree\TreeBase\Tree\TreeRootNodeBuilder\DirData.cs" />
+    <Compile Include="UtilAnalysis_DirList\Tree\TreeBase\Tree\TreeRootNodeBuilder\Node.cs" />
+    <Compile Include="UtilAnalysis_DirList\Tree\TreeBase\Tree\TreeRootNodeBuilder\RootNode.cs" />
+    <Compile Include="UtilAnalysis_DirList\Tree\TreeSelect.cs" />
     <Compile Include="UtilAnalysis_DirList\UC_TreeMap.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList.cs" />
     <Compile Include="UtilProject\GlobalData.cs" />

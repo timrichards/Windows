@@ -3,9 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Collections.Concurrent;
-using DoubleFile;
 
-namespace SearchDirLists
+namespace DoubleFile
 {
     delegate void TreeStatusDelegate(LVitem_ProjectVM volStrings, TreeNode rootNode = null, bool bError = false);
 

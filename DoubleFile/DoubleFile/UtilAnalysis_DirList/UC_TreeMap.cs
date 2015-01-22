@@ -4,9 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Drawing.Drawing2D;
-using DoubleFile;
 
-namespace SearchDirLists
+namespace DoubleFile
 {
     [System.ComponentModel.DesignerCategory("Code")]
     class UC_TreeMap : UserControl

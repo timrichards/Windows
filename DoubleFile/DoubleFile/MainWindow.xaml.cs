@@ -18,8 +18,8 @@ namespace DoubleFile
             this.Closing += (o, e) => { GlobalData.AppExit = true; };
         }
 
-        SearchDirLists.FormSearchDirLists m_searchDirListsForm1;
-        void SearchDirListsForm1Action(System.Action<SearchDirLists.FormSearchDirLists, IEnumerable<LVitem_ProjectVM>> action)
+        FormSearchDirLists m_searchDirListsForm1;
+        void SearchDirListsForm1Action(System.Action<FormSearchDirLists, IEnumerable<LVitem_ProjectVM>> action)
         {
             if ((m_searchDirListsForm1 == null) || (m_searchDirListsForm1.IsDisposed))
             {
@@ -114,7 +114,7 @@ namespace DoubleFile
             }
 
             ListLVvolStrings = volumes.ListLVvolStrings;
-            SearchDirListsForm1Action(SearchDirLists.FormSearchDirLists.RestartTreeTimer);
+            SearchDirListsForm1Action(FormSearchDirLists.RestartTreeTimer);
 
             if (ListLVvolStrings != null)
             {
@@ -161,7 +161,7 @@ namespace DoubleFile
         {
             if ((m_searchDirListsForm1 == null) || (m_searchDirListsForm1.IsDisposed))
             {
-                (m_searchDirListsForm1 = new SearchDirLists.FormSearchDirLists(this, ListLVvolStrings)).Show();
+                (m_searchDirListsForm1 = new FormSearchDirLists(this, ListLVvolStrings)).Show();
             }
             else
             {

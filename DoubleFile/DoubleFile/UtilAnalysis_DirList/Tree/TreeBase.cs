@@ -1,8 +1,7 @@
-﻿using DoubleFile;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace SearchDirLists
+namespace DoubleFile
 {
     class TreeBase : UtilAnalysis_DirList
     {

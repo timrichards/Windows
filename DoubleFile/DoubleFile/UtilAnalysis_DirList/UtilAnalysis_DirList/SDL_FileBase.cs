@@ -1,11 +1,10 @@
-﻿using DoubleFile;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 
-namespace SearchDirLists
+namespace DoubleFile
 {
     // SearchDirLists listing file|*.sdl_list|SearchDirLists volume list file|*.sdl_vol|SearchDirLists copy scratchpad file|*.sdl_copy|SearchDirLists ignore list file|*.sdl_ignore
     abstract class SDL_FileBase : UtilAnalysis_DirList

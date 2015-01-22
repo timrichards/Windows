@@ -143,9 +143,7 @@
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_FileBase.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_FileBase\SDL_CopyFile.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_FileBase\SDL_IgnoreFile.cs" />
-    <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_Timer.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_TreeView.cs" />
-    <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\UList.cs" />
     <Compile Include="UtilProject\GlobalData.cs" />
     <Compile Include="UtilProject\LocalWindow.cs" />
     <Compile Include="MainWindow.xaml.cs">

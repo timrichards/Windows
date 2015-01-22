@@ -2,7 +2,7 @@
 using System;
 using System.Windows.Threading;
 
-namespace SearchDirLists
+namespace DoubleFile
 {
     class SDL_Timer : DispatcherTimer
     {

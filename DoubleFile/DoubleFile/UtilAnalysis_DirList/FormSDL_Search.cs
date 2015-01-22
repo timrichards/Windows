@@ -6,10 +6,9 @@ using System.Linq;
 using System.IO;
 using System.Threading;
 using System.Collections.Concurrent;
-using DoubleFile;
 using System.Windows;
 
-namespace SearchDirLists
+namespace DoubleFile
 {
     delegate void SearchStatusDelegate(SearchResults searchResults, bool bFirst = false, bool bLast = false);
 

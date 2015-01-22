@@ -1,5 +1,5 @@
 ﻿
-namespace SearchDirLists
+namespace DoubleFile
 {
     // One tag at the first item, so the compare listviewer knows what the first listviewer's state is.
     class LVitemFileTag

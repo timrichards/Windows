@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SearchDirLists
+namespace DoubleFile
 {
     partial class Tree
     {

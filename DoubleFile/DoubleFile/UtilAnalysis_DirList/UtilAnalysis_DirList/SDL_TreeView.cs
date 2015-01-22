@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace SearchDirLists
+namespace DoubleFile
 {
     [System.ComponentModel.DesignerCategory("Code")]
     public class SDL_TreeView : TreeView

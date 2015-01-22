@@ -3,43 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace SearchDirLists
+namespace DoubleFile
 {
-    static class ExtensionMethods
+    static partial class ExtensionMethods
     {
-        public static int Count<T>(this IEnumerable<T> source)
-        {
-            ICollection<T> c = source as ICollection<T>;
-
-            if (c != null)
-            {
-                return c.Count;
-            }
-
-            UtilAnalysis_DirList.WriteLine("Count<" + source + "> is not an ICollection: must GetEnumerator()");
-
-            using (IEnumerator<T> enumerator = source.GetEnumerator())
-            {
-                int result = 0;
-
-                while (enumerator.MoveNext())
-                {
-                    result++;
-                }
-
-                return result;
-            }
-        }
-
-        public static void FirstOnly<T>(this IEnumerable<T> source, Action<T> action)
-        {
-            foreach (var item in source)
-            {
-                action(item);
-                break;
-            }
-        }
-
         internal static bool IsChildOf(this TreeNode child, TreeNode treeNode)
         {
             if (child.Level <= treeNode.Level)

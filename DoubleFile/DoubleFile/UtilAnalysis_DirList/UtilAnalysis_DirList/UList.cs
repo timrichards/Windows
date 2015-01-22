@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace SearchDirLists
+namespace DoubleFile
 {
     class UList<T> :
 #if (true)

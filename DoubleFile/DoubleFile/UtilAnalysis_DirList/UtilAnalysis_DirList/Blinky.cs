@@ -1,9 +1,8 @@
-﻿using DoubleFile;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace SearchDirLists
+namespace DoubleFile
 {
     class Blinky
     {

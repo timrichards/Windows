@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace SearchDirLists
+namespace DoubleFile
 {
     class NodeDatum : DetailsDatum
     {

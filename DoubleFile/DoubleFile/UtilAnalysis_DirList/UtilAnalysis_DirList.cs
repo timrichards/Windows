@@ -7,9 +7,8 @@ using System.Linq;
 using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
-using DoubleFile;
 
-namespace SearchDirLists
+namespace DoubleFile
 {
     delegate bool BoolAction();
 

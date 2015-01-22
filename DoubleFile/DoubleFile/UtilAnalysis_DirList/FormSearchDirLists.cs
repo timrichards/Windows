@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using DoubleFile;
 
 // TODO:
 //      compare file list
@@ -14,7 +13,7 @@ using DoubleFile;
 //      first compare item still doesn't go back
 //      save treeNode prior to null - file list redraw
 
-namespace SearchDirLists
+namespace DoubleFile
 {
         [System.ComponentModel.DesignerCategory("Designer")]
   //  [System.ComponentModel.DesignerCategory("Code")]

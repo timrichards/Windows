@@ -1,5 +1,5 @@
 ﻿
-namespace SearchDirLists
+namespace DoubleFile
 {
     class DetailsDatum
     {

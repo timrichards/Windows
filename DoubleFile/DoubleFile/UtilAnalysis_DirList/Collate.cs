@@ -4,9 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DoubleFile;
 
-namespace SearchDirLists
+namespace DoubleFile
 {
     class Collate : UtilAnalysis_DirList
     {

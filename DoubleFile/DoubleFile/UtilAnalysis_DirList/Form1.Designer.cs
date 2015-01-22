@@ -1,6 +1,6 @@
 ﻿using ListViewEmbeddedControls;
 
-namespace SearchDirLists
+namespace DoubleFile
 {
     partial class FormSearchDirLists
     {
@@ -35,31 +35,31 @@ namespace SearchDirLists
             System.Windows.Forms.Label label3;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSearchDirLists));
             this.form_chkSpacer = new System.Windows.Forms.CheckBox();
-            this.tableLayoutPanel3 = new SearchDirLists.FormSearchDirLists.Form1LayoutPanel(this.components);
+            this.tableLayoutPanel3 = new FormSearchDirLists.Form1LayoutPanel(this.components);
             this.form_splitFiles = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.form_splitTreeFind = new System.Windows.Forms.SplitContainer();
             this.form_splitCompare = new System.Windows.Forms.SplitContainer();
-            this.form_treeCompare1 = new SearchDirLists.SDL_TreeView();
-            this.form_treeCompare2 = new SearchDirLists.SDL_TreeView();
-            this.form_treeViewBrowse = new SearchDirLists.SDL_TreeView();
+            this.form_treeCompare1 = new SDL_TreeView();
+            this.form_treeCompare2 = new SDL_TreeView();
+            this.form_treeViewBrowse = new SDL_TreeView();
             this.form_tabControlCopyIgnore = new System.Windows.Forms.TabControl();
             this.form_tabPageCopy = new System.Windows.Forms.TabPage();
-            this.tableLayoutPanel4 = new SearchDirLists.FormSearchDirLists.Form1LayoutPanel(this.components);
-            this.form_lvCopyScratchpad = new SearchDirLists.SDL_ListView();
+            this.tableLayoutPanel4 = new FormSearchDirLists.Form1LayoutPanel(this.components);
+            this.form_lvCopyScratchpad = new SDL_ListView();
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.tableLayoutPanel5 = new SearchDirLists.FormSearchDirLists.Form1LayoutPanel(this.components);
+            this.tableLayoutPanel5 = new FormSearchDirLists.Form1LayoutPanel(this.components);
             this.form_btnCopyClear = new System.Windows.Forms.Button();
             this.form_btnSaveCopyDirs = new System.Windows.Forms.Button();
             this.form_btnCopyGen = new System.Windows.Forms.Button();
             this.form_btnLoadCopyDirs = new System.Windows.Forms.Button();
             this.form_tabPageIgnore = new System.Windows.Forms.TabPage();
-            this.tableLayoutPanel6 = new SearchDirLists.FormSearchDirLists.Form1LayoutPanel(this.components);
-            this.form_lvIgnoreList = new SearchDirLists.SDL_ListView();
+            this.tableLayoutPanel6 = new FormSearchDirLists.Form1LayoutPanel(this.components);
+            this.form_lvIgnoreList = new SDL_ListView();
             this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.tableLayoutPanel7 = new SearchDirLists.FormSearchDirLists.Form1LayoutPanel(this.components);
+            this.tableLayoutPanel7 = new FormSearchDirLists.Form1LayoutPanel(this.components);
             this.form_btnClearIgnoreList = new System.Windows.Forms.Button();
             this.form_btnIgnoreAdd = new System.Windows.Forms.Button();
             this.form_btnIgnoreDel = new System.Windows.Forms.Button();
@@ -70,10 +70,10 @@ namespace SearchDirLists
             this.form_splitDetail = new System.Windows.Forms.SplitContainer();
             this.form_tabControlFileList = new System.Windows.Forms.TabControl();
             this.form_tabPageDiskUsage = new System.Windows.Forms.TabPage();
-            this.form_tmapUserCtl = new SearchDirLists.UC_TreeMap();
+            this.form_tmapUserCtl = new UC_TreeMap();
             this.form_tabPageFileList = new System.Windows.Forms.TabPage();
             this.form_splitCompareFiles = new System.Windows.Forms.SplitContainer();
-            this.form_lvFiles = new SearchDirLists.SDL_ListView();
+            this.form_lvFiles = new SDL_ListView();
             this.form_colFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -81,7 +81,7 @@ namespace SearchDirLists
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_lvFileCompare = new SearchDirLists.SDL_ListView();
+            this.form_lvFileCompare = new SDL_ListView();
             this.form_colFileCompare = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader19 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader20 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -90,23 +90,23 @@ namespace SearchDirLists
             this.columnHeader23 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader24 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_splitDetailVols = new System.Windows.Forms.SplitContainer();
-            this.form_lvDetail = new SearchDirLists.SDL_ListView();
+            this.form_lvDetail = new SDL_ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_colDirDetail = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_lvDetailVol = new SearchDirLists.SDL_ListView();
+            this.form_lvDetailVol = new SDL_ListView();
             this.form_colDirDetailCompare = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_colVolDetail = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_splitNonClones = new System.Windows.Forms.SplitContainer();
-            this.form_lvUnique = new SearchDirLists.SDL_ListView();
+            this.form_lvUnique = new SDL_ListView();
             this.columnHeader16 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.form_splitUnique = new System.Windows.Forms.SplitContainer();
-            this.form_lvSameVol = new SearchDirLists.SDL_ListView();
+            this.form_lvSameVol = new SDL_ListView();
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.form_lvClones = new SearchDirLists.SDL_ListView();
+            this.form_lvClones = new SDL_ListView();
             this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.tableLayoutPanel2 = new SearchDirLists.FormSearchDirLists.Form1LayoutPanel(this.components);
+            this.tableLayoutPanel2 = new FormSearchDirLists.Form1LayoutPanel(this.components);
             this.form_btnCompare = new System.Windows.Forms.Button();
             this.form_btnCollapse = new System.Windows.Forms.Button();
             this.form_lblVolGroup = new System.Windows.Forms.Label();

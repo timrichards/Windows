@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
-namespace SearchDirLists
+namespace DoubleFile
 {
     [System.ComponentModel.DesignerCategory("Code")]
     class SDL_ListView : ListViewEmbeddedControls.ListViewEx { }

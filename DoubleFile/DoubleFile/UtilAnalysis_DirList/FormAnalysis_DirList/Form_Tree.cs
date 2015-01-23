@@ -328,7 +328,8 @@ namespace DoubleFile
 
                 MBox.Assert(1304.5312, gd.m_listRootNodes.Count == 0);
 
-                gd.m_tree = new Tree(ListLVvolStrings, gd.m_dictNodes, gd.m_dictDriveInfo,
+                gd.m_tree = Tree.Factory(new GlobalData_Form(this),
+                    ListLVvolStrings, gd.m_dictNodes, gd.m_dictDriveInfo,
                     TreeStatusCallback, TreeDoneCallback);
                 gd.m_tree.DoThreadFactory();
 

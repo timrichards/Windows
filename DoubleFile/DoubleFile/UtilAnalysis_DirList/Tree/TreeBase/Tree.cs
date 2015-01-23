@@ -16,10 +16,23 @@ namespace DoubleFile
         Thread m_thread = null;
         bool m_bThreadAbort = false;
 
-        internal Tree(IEnumerable<LVitem_ProjectVM> listLVvolStrings,
-            SortedDictionary<Correlate, UList<TreeNode>> dictNodes, Dictionary<string, string> dictDriveInfo,
-            TreeStatusDelegate statusCallback, Action doneCallback)
-            : base(dictNodes, dictDriveInfo, statusCallback)
+        internal static Tree Factory(GlobalDataBase gd_in,
+            IEnumerable<LVitem_ProjectVM> listLVvolStrings,
+            SortedDictionary<Correlate, UList<TreeNode>> dictNodes,
+            Dictionary<string, string> dictDriveInfo,
+            TreeStatusDelegate statusCallback,
+            Action doneCallback)
+        {
+            return new Tree(gd_in, listLVvolStrings, dictNodes, dictDriveInfo, statusCallback, doneCallback);
+        }
+
+        private Tree(GlobalDataBase gd_in,
+            IEnumerable<LVitem_ProjectVM> listLVvolStrings,
+            SortedDictionary<Correlate, UList<TreeNode>> dictNodes,
+            Dictionary<string, string> dictDriveInfo,
+            TreeStatusDelegate statusCallback,
+            Action doneCallback)
+            : base(gd_in, dictNodes, dictDriveInfo, statusCallback)
         {
             ListLVvolStrings = listLVvolStrings;
             m_doneCallback = doneCallback;

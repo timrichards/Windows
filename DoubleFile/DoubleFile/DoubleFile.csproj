@@ -110,6 +110,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="GlobalData\GlobalData.cs" />
     <Compile Include="UtilAnalysis_DirList\Collate.cs" />
     <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList.cs" />
     <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList.Designer.cs" />

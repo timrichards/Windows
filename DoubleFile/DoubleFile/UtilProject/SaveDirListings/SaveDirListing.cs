@@ -11,11 +11,10 @@ namespace DoubleFile
     {
         class SaveDirListing : TraverseTree
         {
-            readonly SaveDirListingsStatusDelegate m_statusCallback = null;
-            Thread m_thread = null;
-
-            internal SaveDirListing(LVitem_ProjectVM volStrings, SaveDirListingsStatusDelegate statusCallback)
-                : base(volStrings)
+            internal SaveDirListing(GlobalData_Base gd_in,
+                LVitem_ProjectVM volStrings, 
+                SaveDirListingsStatusDelegate statusCallback)
+                : base(gd_in, volStrings)
             {
                 m_statusCallback = statusCallback;
             }
@@ -198,7 +197,7 @@ namespace DoubleFile
                         fs.WriteLine(FormatString(strDir: ksTotalLengthLoc01, nLength: LengthRead));
                     }
 
-                    if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
+                    if (m_bThreadAbort || gd.WindowClosed)
                     {
                         File.Delete(m_volStrings.ListingFile);
                         return;
@@ -236,6 +235,9 @@ namespace DoubleFile
                 m_bThreadAbort = true;
                 m_thread.Abort();
             }
+
+            readonly SaveDirListingsStatusDelegate m_statusCallback = null;
+            Thread m_thread = null;
         }
     }
 }

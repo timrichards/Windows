@@ -19,7 +19,7 @@ namespace DoubleFile
 
         void TreeStatusCallback(LVitem_ProjectVM volStrings, TreeNode rootNode = null, bool bError = false)
         {
-            if (GlobalData.Instance.FormAnalysis_DirList_Closing || (gd.m_tree == null) || (gd.m_tree.IsAborted))
+            if (IsDisposed || (gd.m_tree == null) || (gd.m_tree.IsAborted))
             {
                 gd.TreeCleanup();
                 return;
@@ -108,7 +108,7 @@ namespace DoubleFile
             collate.Step1_OnThread();
             UtilAnalysis_DirList.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
 
-            if (GlobalData.Instance.FormAnalysis_DirList_Closing)
+            if (IsDisposed)
             {
                 gd.TreeCleanup();
                 return;

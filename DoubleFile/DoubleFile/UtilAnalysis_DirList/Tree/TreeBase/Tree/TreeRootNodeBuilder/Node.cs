@@ -133,7 +133,7 @@ namespace DoubleFile
                     return treeNode;
                 }
 
-                GlobalData_Base gd = null;
+                readonly GlobalData_Base gd = null;
                 readonly RootNode m_rootNode = null;
                 readonly SortedDictionary<string, Node> subNodes = new SortedDictionary<string, Node>();
                 readonly string m_strPath = null;

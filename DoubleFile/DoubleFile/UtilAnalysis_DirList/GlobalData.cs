@@ -8,23 +8,6 @@ namespace DoubleFile
 {
     partial class GlobalData
     {
-        internal bool FormAnalysis_DirList_Closing
-        {
-            set
-            {
-                _FormAnalysis_DirList_Closing = value;
-
-                if (value)
-                    m_tmrDoTree.Stop();
-            }
-
-            get
-            {
-                return _FormAnalysis_DirList_Closing;
-            }
-        }
-        bool _FormAnalysis_DirList_Closing = false;
-
         internal SDL_TreeView m_treeCopyToClipboard = null;
         internal TreeNode m_nodeCompare1 = null;
         internal readonly Dictionary<TreeNode, TreeNode> m_dictCompareDiffs = new Dictionary<TreeNode, TreeNode>();

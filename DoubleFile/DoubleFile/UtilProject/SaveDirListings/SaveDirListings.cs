@@ -7,13 +7,6 @@ namespace DoubleFile
 {
     partial class SaveDirListings : FileParse
     {
-        readonly SaveDirListingsStatusDelegate m_statusCallback = null;
-        readonly Action m_doneCallback = null;
-        Thread m_thread = null;
-        bool m_bThreadAbort = false;
-        ConcurrentBag<SaveDirListing> m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
-        IEnumerable<LVitem_ProjectVM> m_list_LVitem_VolumeVM = null;
-
         internal int FilesWritten { get; set; }
 
         internal static bool IsGoodDriveSyntax(string strDrive)
@@ -21,10 +14,12 @@ namespace DoubleFile
             return ((strDrive.Length > 2) && char.IsLetter(strDrive[0]) && (strDrive.Substring(1, 2) == @":\"));
         }
 
-        internal SaveDirListings(IEnumerable<LVitem_ProjectVM> list_LVitem_VolumeVM,
+        internal SaveDirListings(GlobalData_Base gd_in,
+            IEnumerable<LVitem_ProjectVM> list_LVitem_VolumeVM,
             SaveDirListingsStatusDelegate statusCallback,
             Action doneCallback)
         {
+            gd = gd_in;
             m_list_LVitem_VolumeVM = list_LVitem_VolumeVM;
             m_statusCallback = statusCallback;
             m_doneCallback = doneCallback;
@@ -45,7 +40,7 @@ namespace DoubleFile
                 }
 
                 m_statusCallback(volStrings.SourcePath, "Saving...");
-                m_cbagWorkers.Add(new SaveDirListing(volStrings, m_statusCallback).DoThreadFactory());
+                m_cbagWorkers.Add(new SaveDirListing(gd, volStrings, m_statusCallback).DoThreadFactory());
             }
 
             foreach (SaveDirListing worker in m_cbagWorkers)
@@ -55,7 +50,7 @@ namespace DoubleFile
 
             UtilProject.WriteLine(string.Format("Finished saving directory listings in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
-            if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
+            if (m_bThreadAbort || gd.WindowClosed)
             {
                 return;
             }
@@ -83,5 +78,13 @@ namespace DoubleFile
         }
 
         internal bool IsAborted { get { return m_bThreadAbort; } }
+
+        readonly GlobalData_Base gd = null;
+        readonly SaveDirListingsStatusDelegate m_statusCallback = null;
+        readonly Action m_doneCallback = null;
+        Thread m_thread = null;
+        bool m_bThreadAbort = false;
+        ConcurrentBag<SaveDirListing> m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
+        IEnumerable<LVitem_ProjectVM> m_list_LVitem_VolumeVM = null;
     }
 }

@@ -117,7 +117,7 @@ namespace DoubleFile
 
             if (ListLVvolStrings != null)
             {
-                new SaveListingsProcess(ListLVvolStrings);
+                new SaveListingsProcess(new GlobalData_Window(this), ListLVvolStrings);
             }
         }
 

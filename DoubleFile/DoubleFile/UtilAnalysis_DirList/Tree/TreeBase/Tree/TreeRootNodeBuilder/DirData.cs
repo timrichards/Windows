@@ -9,7 +9,7 @@ namespace DoubleFile
         {
             class DirData
             {
-                GlobalData_Base gd = null;
+                readonly GlobalData_Base gd = null;
                 RootNode m_rootNode = null;
 
                 internal DirData(GlobalData_Base gd_in,

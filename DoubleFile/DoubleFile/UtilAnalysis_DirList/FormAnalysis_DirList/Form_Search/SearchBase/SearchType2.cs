@@ -9,10 +9,16 @@ namespace DoubleFile
 {
     partial class SearchType2 : SearchBase
     {
-        internal SearchType2(UList<LVitem_ProjectVM> list_lvVolStrings, string strSearch, bool bCaseSensitive,
-            SearchBase.FolderSpecialHandling folderHandling, bool bSearchFilesOnly, string strCurrentNode,
-            SearchStatusDelegate statusCallback, Action doneCallback)
-            : base(statusCallback)
+        internal SearchType2(GlobalData_Base gd_in,
+            UList<LVitem_ProjectVM> list_lvVolStrings,
+            string strSearch, 
+            bool bCaseSensitive,
+            SearchBase.FolderSpecialHandling folderHandling,
+            bool bSearchFilesOnly,
+            string strCurrentNode,
+            SearchStatusDelegate statusCallback,
+            Action doneCallback)
+            : base(gd_in, statusCallback)
         {
             m_list_lvVolStrings = list_lvVolStrings;
             m_strSearch = strSearch;
@@ -43,7 +49,7 @@ namespace DoubleFile
 
             UtilAnalysis_DirList.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", m_strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
-            if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
+            if (m_bThreadAbort || gd.WindowClosed)
             {
                 return;
             }

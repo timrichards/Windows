@@ -682,6 +682,6 @@ namespace DoubleFile
 
         bool m_bThreadAbort = false;
         static Collate static_this = null;
-        GlobalData_Base gd = null;
+        readonly GlobalData_Base gd = null;
     }
 }

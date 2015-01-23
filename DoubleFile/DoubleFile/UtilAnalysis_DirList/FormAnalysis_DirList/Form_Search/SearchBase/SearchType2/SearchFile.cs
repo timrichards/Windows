@@ -56,7 +56,7 @@ namespace DoubleFile
 
                 while ((strLine = file.ReadLine()) != null)
                 {
-                    if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
+                    if (m_bThreadAbort || gd.WindowClosed)
                     {
                         return;
                     }

@@ -7,17 +7,10 @@ namespace DoubleFile
     {
         class TraverseTree
         {
-            protected long LengthRead { get; private set; }
-            protected long FilesRead { get; private set; }
-
-            List<string> m_listErrors = new List<string>();
-            protected IEnumerable<string> ErrorList { get { return m_listErrors; } }
-
-            protected bool m_bThreadAbort = false;
-            protected readonly LVitem_ProjectVM m_volStrings = null;
-
-            protected TraverseTree(LVitem_ProjectVM volStrings)
+            protected TraverseTree(GlobalData_Base gd_in,
+                LVitem_ProjectVM volStrings)
             {
+                gd = gd_in;
                 m_volStrings = volStrings;
             }
 
@@ -48,7 +41,7 @@ namespace DoubleFile
 
                 while (stackDirs.Count > 0)
                 {
-                    if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
+                    if (m_bThreadAbort || gd.WindowClosed)
                     {
                         return null;
                     }
@@ -76,7 +69,7 @@ namespace DoubleFile
 
                     foreach (var winFile in listFiles)
                     {
-                        if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
+                        if (m_bThreadAbort || gd.WindowClosed)
                         {
                             return null;
                         }
@@ -188,6 +181,16 @@ namespace DoubleFile
             {
                 ImplementationDetails(fs, dictHash, dictException_FileRead);
             }
+
+            protected readonly GlobalData_Base gd = null;
+            protected long LengthRead { get; private set; }
+            protected long FilesRead { get; private set; }
+
+            List<string> m_listErrors = new List<string>();
+            protected IEnumerable<string> ErrorList { get { return m_listErrors; } }
+
+            protected bool m_bThreadAbort = false;
+            protected readonly LVitem_ProjectVM m_volStrings = null;
         }
     }
 }

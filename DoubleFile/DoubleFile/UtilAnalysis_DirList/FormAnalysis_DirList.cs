@@ -1322,7 +1322,6 @@ namespace DoubleFile
                 MBox.MessageBoxKill();
             }
 
-            gd.FormAnalysis_DirList_Closing = true;
             m_ownerWindow.Activate();
         }
 
@@ -1424,7 +1423,6 @@ namespace DoubleFile
 
         void FormAnalysis_DirList_Load(object sender, EventArgs e)
         {
-            gd.FormAnalysis_DirList_Closing = false;
             gd.RestartTreeTimer();
             form_tmapUserCtl.TooltipAnchor = (Control)form_cbFindbox;
         }

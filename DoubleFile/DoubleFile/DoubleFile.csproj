@@ -120,7 +120,9 @@
     <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Search\SearchBase\SearchType2.cs" />
     <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Search\SearchBase\SearchType2\SearchFile.cs" />
     <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Search\SearchResults.cs" />
-    <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Search_GlobalData.cs" />
+    <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Search\SearchResultsDir.cs" />
+    <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Search_1_2_GlobalData.cs" />
+    <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Search_Path_GlobalData.cs" />
     <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Tree_GlobalData.cs" />
     <Compile Include="UtilAnalysis_DirList\GlobalData.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\ListViewEx.cs" />

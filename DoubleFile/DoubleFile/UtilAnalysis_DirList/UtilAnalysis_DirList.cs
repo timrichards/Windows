@@ -19,7 +19,7 @@ namespace DoubleFile
         {
             bool bInvoke = dispatcher.InvokeRequired;
 
-            if (GlobalData.Instance.FormAnalysis_DirList_Closing)
+            if (dispatcher.IsDisposed)
             {
                 return null;
             }
@@ -55,14 +55,14 @@ namespace DoubleFile
             }
             catch (ObjectDisposedException)
             {
-                if (false == GlobalData.Instance.FormAnalysis_DirList_Closing)
+                if (false == dispatcher.IsDisposed)
                     throw;
 
                 return null;
             }
             catch (InvalidOperationException)
             {
-                if (false == GlobalData.Instance.FormAnalysis_DirList_Closing)
+                if (false == dispatcher.IsDisposed)
                     throw;
 
                 return null;

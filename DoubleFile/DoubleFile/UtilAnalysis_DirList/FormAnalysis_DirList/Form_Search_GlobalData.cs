@@ -46,7 +46,7 @@ namespace DoubleFile
 
         internal void SearchStatusCallback(SearchResults searchResults, bool bFirst = false, bool bLast = false)
         {
-            if (searchResults.Results.Count <= 0)
+            if (searchResults.Results.Count() <= 0)
             {
                 MBox.Assert(1307.8307, false); // caller takes care of this
                 return;

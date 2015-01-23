@@ -97,7 +97,8 @@ namespace DoubleFile
                 }
             }));
 
-            Collate collate = new Collate(gd.m_dictNodes,
+            Collate collate = new Collate(new GlobalData_Form(this),
+                gd.m_dictNodes,
                 form_treeViewBrowse,
                 form_lvClones, form_lvSameVol, form_lvUnique,
                 gd.m_listRootNodes, gd.m_listTreeNodes, gd.m_bCheckboxes,
@@ -328,7 +329,7 @@ namespace DoubleFile
 
                 MBox.Assert(1304.5312, gd.m_listRootNodes.Count == 0);
 
-                gd.m_tree = Tree.Factory(new GlobalData_Form(this),
+                gd.m_tree = new Tree(new GlobalData_Form(this),
                     ListLVvolStrings, gd.m_dictNodes, gd.m_dictDriveInfo,
                     TreeStatusCallback, TreeDoneCallback);
                 gd.m_tree.DoThreadFactory();

@@ -12,16 +12,6 @@ namespace DoubleFile
 
     class TreeSelect : UtilAnalysis_DirList
     {
-        readonly TreeNode m_treeNode = null;
-        readonly SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = null;
-        readonly Dictionary<string, string> m_dictDriveInfo = null;
-        readonly TreeSelectStatusDelegate m_statusCallback = null;
-        readonly TreeSelectDoneDelegate m_doneCallback = null;
-        Thread m_thread = null;
-        readonly string m_strFile = null;
-        readonly bool m_bCompareMode = false;
-        readonly bool m_bSecondComparePane = false;
-
         internal TreeSelect(TreeNode node, SortedDictionary<Correlate, UList<TreeNode>> dictNodes, Dictionary<string, string> dictDriveInfo,
             string strFile, bool bCompareMode, bool bSecondComparePane,
             TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
@@ -34,6 +24,140 @@ namespace DoubleFile
             m_bSecondComparePane = bSecondComparePane;
             m_statusCallback = statusCallback;
             m_doneCallback = doneCallback;
+        }
+
+        internal static List<string[]> GetFileList(TreeNode parent, List<ulong> listLength = null)
+        {
+            string strFile = ((RootNodeDatum)parent.Root().Tag).StrFile;
+
+            if ((parent.Tag is NodeDatum) == false)
+            {
+                return null;
+            }
+
+            NodeDatum nodeDatum = (NodeDatum)parent.Tag;
+
+            if (nodeDatum.nLineNo <= 0)
+            {
+                return null;
+            }
+
+            long nPrevDir = nodeDatum.nPrevLineNo;
+            long nLineNo = nodeDatum.nLineNo;
+
+            if (nPrevDir <= 0)
+            {
+                return null;
+            }
+
+            if ((nLineNo - nPrevDir) <= 1)  // dir has no files
+            {
+                return null;
+            }
+
+            DateTime dtStart = DateTime.Now;
+            List<string> listLines = File.ReadLines(strFile)
+                .Skip((int)nPrevDir)
+                .Take((int)(nLineNo - nPrevDir - 1))
+                .ToList();
+
+            if (listLines.Count <= 0)
+            {
+                return null;
+            }
+
+            List<string[]> listFiles = new List<string[]>();
+            ulong nLengthDebug = 0;
+
+            foreach (string strFileLine in listLines)
+            {
+                string[] strArrayFiles = strFileLine.Split('\t').Skip(3).ToArray();
+                ulong nLength = 0;
+
+                strArrayFiles[3] = DecodeAttributes(strArrayFiles[3]);
+
+                if ((strArrayFiles.Length > knColLengthLV) && (false == string.IsNullOrWhiteSpace(strArrayFiles[knColLengthLV])))
+                {
+                    nLengthDebug += nLength = ulong.Parse(strArrayFiles[knColLengthLV]);
+                    strArrayFiles[knColLengthLV] = FormatSize(strArrayFiles[knColLengthLV]);
+                }
+
+                listFiles.Add(strArrayFiles);
+
+                if (listLength != null)
+                {
+                    listLength.Add(nLength);
+                }
+            }
+
+            MBox.Assert(1301.2313, nLengthDebug == nodeDatum.nLength);
+            return listFiles;
+        }
+
+        internal Thread DoThreadFactory()
+        {
+            m_thread = new Thread(new ThreadStart(Go));
+            m_thread.IsBackground = true;
+            m_thread.Start();
+            return m_thread;
+        }
+
+        void Go()
+        {
+            Go_A();
+
+            if (m_bCompareMode == false)
+            {
+                // Volume detail
+
+                if (m_dictDriveInfo.ContainsKey(m_strFile))
+                {
+                    string[] arrDriveInfo = m_dictDriveInfo[m_strFile].Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+
+                    MBox.Assert(1301.2314, new int[] { 7, 8, 10, kanDIviewOrder.Length }.Contains(arrDriveInfo.Length));
+
+                    string[][] asItems = new string[arrDriveInfo.Length][];
+
+                    for (int i = 0; i < arrDriveInfo.Length; ++i)
+                    {
+                        string[] a = arrDriveInfo[i].Split('\t');
+
+                        if (a[1].Trim().Length == 0)
+                        {
+                            continue;
+                        }
+
+                        asItems[i] = new string[]
+                        {
+                            a[0],
+                            kabDIsizeType[i] ? FormatSize(a[1], bBytes: true) : a[1]
+                        };
+                    }
+
+                    ListViewItem[] lvItems = new ListViewItem[arrDriveInfo.Length];
+
+                    for (int ix = 0; ix < arrDriveInfo.Length; ++ix)
+                    {
+                        if ((asItems[ix] == null) || (asItems[ix].Length == 0) || (asItems[ix][1].Trim().Length == 0))
+                        {
+                            continue;
+                        }
+
+                        if ((kanDIoptIfEqTo[ix] != -1) && (asItems[ix][1] == asItems[kanDIoptIfEqTo[ix]][1]))
+                        {
+                            continue;
+                        }
+
+                        int ixA = (arrDriveInfo.Length == kanDIviewOrder.Length) ? kanDIviewOrder[ix] : ix;
+
+                        lvItems[ixA] = new ListViewItem(asItems[ix]);
+                    }
+
+                    m_statusCallback(lvVolDetails: lvItems.Where(i => i != null).ToArray());
+                }
+            }
+
+            m_doneCallback(m_bSecondComparePane);
         }
 
         void Go_A()
@@ -126,138 +250,14 @@ namespace DoubleFile
             }
         }
 
-        internal static List<string[]> GetFileList(TreeNode parent, List<ulong> listLength = null)
-        {
-            string strFile = ((RootNodeDatum)parent.Root().Tag).StrFile;
-
-            if ((parent.Tag is NodeDatum) == false)
-            {
-                return null;
-            }
-
-            NodeDatum nodeDatum = (NodeDatum)parent.Tag;
-
-            if (nodeDatum.nLineNo <= 0)
-            {
-                return null;
-            }
-
-            long nPrevDir = nodeDatum.nPrevLineNo;
-            long nLineNo = nodeDatum.nLineNo;
-
-            if (nPrevDir <= 0)
-            {
-                return null;
-            }
-
-            if ((nLineNo - nPrevDir) <= 1)  // dir has no files
-            {
-                return null;
-            }
-
-            DateTime dtStart = DateTime.Now;
-            List<string> listLines = File.ReadLines(strFile)
-                .Skip((int)nPrevDir)
-                .Take((int)(nLineNo - nPrevDir - 1))
-                .ToList();
-
-            if (listLines.Count <= 0)
-            {
-                return null;
-            }
-
-            List<string[]> listFiles = new List<string[]>();
-            ulong nLengthDebug = 0;
-
-            foreach (string strFileLine in listLines)
-            {
-                string[] strArrayFiles = strFileLine.Split('\t').Skip(3).ToArray();
-                ulong nLength = 0;
-
-                strArrayFiles[3] = DecodeAttributes(strArrayFiles[3]);
-
-                if ((strArrayFiles.Length > knColLengthLV) && (false == string.IsNullOrWhiteSpace(strArrayFiles[knColLengthLV])))
-                {
-                    nLengthDebug += nLength = ulong.Parse(strArrayFiles[knColLengthLV]);
-                    strArrayFiles[knColLengthLV] = FormatSize(strArrayFiles[knColLengthLV]);
-                }
-
-                listFiles.Add(strArrayFiles);
-
-                if (listLength != null)
-                {
-                    listLength.Add(nLength);
-                }
-            }
-
-            MBox.Assert(1301.2313, nLengthDebug == nodeDatum.nLength);
-            return listFiles;
-        }
-
-        void Go()
-        {
-            Go_A();
-
-            if (m_bCompareMode == false)
-            {
-                // Volume detail
-
-                if (m_dictDriveInfo.ContainsKey(m_strFile))
-                {
-                    string[] arrDriveInfo = m_dictDriveInfo[m_strFile].Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
-
-                    MBox.Assert(1301.2314, new int[] { 7, 8, 10, kanDIviewOrder.Length }.Contains(arrDriveInfo.Length));
-
-                    string[][] asItems = new string[arrDriveInfo.Length][];
-
-                    for (int i = 0; i < arrDriveInfo.Length; ++i)
-                    {
-                        string[] a = arrDriveInfo[i].Split('\t');
-
-                        if (a[1].Trim().Length == 0)
-                        {
-                            continue;
-                        }
-
-                        asItems[i] = new string[]
-                        {
-                            a[0],
-                            kabDIsizeType[i] ? FormatSize(a[1], bBytes: true) : a[1]
-                        };
-                    }
-
-                    ListViewItem[] lvItems = new ListViewItem[arrDriveInfo.Length];
-
-                    for (int ix = 0; ix < arrDriveInfo.Length; ++ix)
-                    {
-                        if ((asItems[ix] == null) || (asItems[ix].Length == 0) || (asItems[ix][1].Trim().Length == 0))
-                        {
-                            continue;
-                        }
-
-                        if ((kanDIoptIfEqTo[ix] != -1) && (asItems[ix][1] == asItems[kanDIoptIfEqTo[ix]][1]))
-                        {
-                            continue;
-                        }
-
-                        int ixA = (arrDriveInfo.Length == kanDIviewOrder.Length) ? kanDIviewOrder[ix] : ix;
-
-                        lvItems[ixA] = new ListViewItem(asItems[ix]);
-                    }
-
-                    m_statusCallback(lvVolDetails: lvItems.Where(i => i != null).ToArray());
-                }
-            }
-
-            m_doneCallback(m_bSecondComparePane);
-        }
-
-        internal Thread DoThreadFactory()
-        {
-            m_thread = new Thread(new ThreadStart(Go));
-            m_thread.IsBackground = true;
-            m_thread.Start();
-            return m_thread;
-        }
+        readonly TreeNode m_treeNode = null;
+        readonly SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = null;
+        readonly Dictionary<string, string> m_dictDriveInfo = null;
+        readonly TreeSelectStatusDelegate m_statusCallback = null;
+        readonly TreeSelectDoneDelegate m_doneCallback = null;
+        Thread m_thread = null;
+        readonly string m_strFile = null;
+        readonly bool m_bCompareMode = false;
+        readonly bool m_bSecondComparePane = false;
     }
 }

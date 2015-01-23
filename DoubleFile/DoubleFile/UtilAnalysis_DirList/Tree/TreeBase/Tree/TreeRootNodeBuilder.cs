@@ -29,7 +29,7 @@ namespace DoubleFile
 
                 foreach (TreeNode node in treeNode.Nodes)
                 {
-                    if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
+                    if (m_bThreadAbort || gd.WindowClosed)
                     {
                         return datum;
                     }
@@ -184,7 +184,7 @@ namespace DoubleFile
                     string strStart = File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Start)).ToArray()[0];
 
                     rootNode.FirstLineNo = uint.Parse(strStart.Split('\t')[1]);
-                    dirData = new DirData(rootNode);
+                    dirData = new DirData(gd, rootNode);
                 }
 
                 bool bZeroLengthsWritten = true;
@@ -192,7 +192,7 @@ namespace DoubleFile
 
                 foreach (string strLine in listLines)
                 {
-                    if (GlobalData.Instance.FormAnalysis_DirList_Closing)
+                    if (gd.WindowClosed)
                     {
                         return;
                     }
@@ -247,7 +247,7 @@ namespace DoubleFile
                     nTotalLength = ((RootNodeDatum)rootTreeNode.Tag).nTotalLength;
                 }
 
-                if (GlobalData.Instance.FormAnalysis_DirList_Closing)
+                if (gd.WindowClosed)
                 {
                     return;     // to avoid the below assert box
                 }

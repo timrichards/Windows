@@ -7,156 +7,21 @@ using System.Text;
 
 namespace DoubleFile
 {
-    class Collate
+    partial class Collate
     {
-        static Collate static_this = null;
-
-        public static void ClearMem()
-        {
-            MBox.Assert(1305.6301, static_this == null);
-            static_this = null;
-        }
-
-        // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
-        readonly SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = null;
-        readonly TreeView m_treeViewBrowse = null;
-        readonly SDL_ListView form_lvClones = null;
-        readonly SDL_ListView form_lvSameVol = null;
-        readonly SDL_ListView form_lvUnique = null;
-        readonly List<TreeNode> m_listRootNodes = null;
-        readonly UList<TreeNode> m_listTreeNodes = null;
-        readonly bool m_bCheckboxes = false;
-        readonly List<ListViewItem> m_list_lvIgnore = null;
-
-        // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.
-        readonly List<ListViewItem> listLVunique = new List<ListViewItem>();
-        readonly List<ListViewItem> listLVsameVol = new List<ListViewItem>();
-        readonly List<ListViewItem> listLVdiffVol = new List<ListViewItem>();
-        readonly Dictionary<TreeNode, ListViewItem> dictIgnoreNodes = new Dictionary<TreeNode, ListViewItem>();
-        readonly bool m_bLoose = false;
-        bool m_bThreadAbort = false;
-
-        public static void Abort()
-        {
-            if (static_this != null)
-            {
-                static_this.m_bThreadAbort = true;
-            }
-        }
-
-        class AddTreeToList
-        {
-            UList<TreeNode> m_listTreeNodes = null;
-            List<TreeNode> m_listSameVol = null;
-
-            int m_nCount = 0;
-            internal int Count { get { return m_nCount; } }
-
-            public AddTreeToList(UList<TreeNode> listTreeNodes, List<TreeNode> listSameVol)
-            {
-                m_listTreeNodes = listTreeNodes;
-                m_listSameVol = listSameVol;
-            }
-
-            public AddTreeToList Go(List<TreeNode> listNodes)
-            {
-                foreach (TreeNode treeNode in listNodes)
-                {
-                    Go(treeNode, bNextNode: false);
-                }
-
-                return this;
-            }
-
-            void Go(TreeNode treeNode_in, bool bCloneOK = false, bool bNextNode = true)
-            {
-                if (treeNode_in == null)
-                {
-                    MBox.Assert(1305.6302, false);
-                }
-
-                TreeNode treeNode = treeNode_in;
-
-                do
-                {
-                    m_listTreeNodes.Add(treeNode);
-                    ++m_nCount;
-
-                    NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
-
-                    if (nodeDatum == null)
-                    {
-                        MBox.Assert(1305.6303, false);
-                        continue;
-                    }
-
-                    if ((treeNode.ForeColor == Color.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
-                    {
-                        MBox.Assert(1305.6304, (nodeDatum.m_listClones.Count > 0) && (nodeDatum.m_bDifferentVols == false));
-                        m_listSameVol.Add(treeNode);
-                    }
-
-                    if (bCloneOK)
-                    {
-                        treeNode.BackColor = Color.LightGoldenrodYellow;
-
-                        if ((nodeDatum.m_lvItem != null) && (nodeDatum.m_lvItem.ListView == null))  // ignore LV
-                        {
-                            nodeDatum.m_lvItem.BackColor = treeNode.BackColor;
-                        }
-                    }
-
-                    if (treeNode.FirstNode != null)
-                    {
-                        Go((TreeNode)treeNode.FirstNode, bCloneOK || (new Color[] { Color.SteelBlue, Color.DarkBlue }.Contains(treeNode.ForeColor)));
-                    }
-                }
-                while (bNextNode && ((treeNode = (TreeNode)treeNode.NextNode) != null));
-            }
-        }
-
-        class InsertSizeMarker
-        {
-            readonly static ListViewItem lvMarker = new ListViewItem();
-            static bool bInit = false;
-
-            static void Init()
-            {
-                if (bInit == false)
-                {
-                    lvMarker.BackColor = Color.DarkSlateGray;
-                    lvMarker.ForeColor = Color.White;
-                    lvMarker.Font = new Font(lvMarker.Font, FontStyle.Bold);
-                    lvMarker.Tag = null;
-                    bInit = true;
-                }
-            }
-
-            public static void Go(List<ListViewItem> listLVitems, int nIx, bool bUnique, bool bAdd = false)
-            {
-                Init();
-
-                ListViewItem lvItem = (ListViewItem)lvMarker.Clone();
-
-                lvItem.Text = ((UtilAnalysis_DirList.FormatSize(((NodeDatum)((TreeNode)(bUnique ? listLVitems[nIx].Tag : ((UList<TreeNode>)listLVitems[nIx].Tag)[0])).Tag).nTotalLength, bNoDecimal: true)));
-
-                if (bAdd)
-                {
-                    listLVitems.Add(lvItem);
-                }
-                else
-                {
-                    listLVitems.Insert(nIx, lvItem);
-                }
-            }
-        }
-
-        public Collate(SortedDictionary<Correlate, UList<TreeNode>> dictNodes,
+        internal Collate(GlobalData_Base gd_in,
+            SortedDictionary<Correlate, UList<TreeNode>> dictNodes,
             TreeView treeViewBrowse,
-            SDL_ListView lvClones, SDL_ListView lvSameVol, SDL_ListView lvUnique,
-            List<TreeNode> listRootNodes, UList<TreeNode> listTreeNodes, bool bCheckboxes,
-            List<ListViewItem> list_lvIgnore, bool bLoose)
+            SDL_ListView lvClones,
+            SDL_ListView lvSameVol,
+            SDL_ListView lvUnique,
+            List<TreeNode> listRootNodes,
+            UList<TreeNode> listTreeNodes,
+            bool bCheckboxes,
+            List<ListViewItem> list_lvIgnore,
+            bool bLoose)
         {
+            gd = gd_in;
             static_this = this;
             m_dictNodes = dictNodes;
             m_treeViewBrowse = treeViewBrowse;
@@ -170,101 +35,21 @@ namespace DoubleFile
             m_bLoose = bLoose;
         }
 
-        // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
-        // Breadth-first.
-        void DifferentVolsQuery(SortedDictionary<Correlate, UList<TreeNode>> dictClones, TreeNode treeNode, TreeNode rootClone = null)
+        internal static void ClearMem()
         {
-            // neither rootClone nor nMaxLength are used at all (rootClone is used as a bool).
-            // provisional.
+            MBox.Assert(1305.6301, static_this == null);
+            static_this = null;
+        }
 
-            NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
-            UList<TreeNode> listClones = nodeDatum.m_listClones;
-            ulong nLength = nodeDatum.nTotalLength;
-
-            if (nLength <= 100 * 1024)
+        internal static void Abort()
+        {
+            if (static_this != null)
             {
-                treeNode.ForeColor = Color.LightGray;
-                nodeDatum.m_listClones.Clear();
-            }
-
-            if ((listClones.Count > 0) && (rootClone == null))
-            {
-                rootClone = treeNode;
-
-                if (dictClones.ContainsKey(nodeDatum.Key))
-                {
-                    MBox.Assert(1305.6305, dictClones[nodeDatum.Key] == listClones);
-                    MBox.Assert(1305.6306, ((NodeDatum)dictClones[nodeDatum.Key][0].Tag).m_bDifferentVols == nodeDatum.m_bDifferentVols);
-                    MBox.Assert(1305.6307, dictClones[nodeDatum.Key][0].ForeColor == treeNode.ForeColor);
-                }
-                else
-                {
-                    dictClones.Add(nodeDatum.Key, listClones);
-
-                    // Test to see if clones are on separate volumes.
-
-                    TreeNode rootNode = treeNode.Root();
-                    RootNodeDatum rootNodeDatum = (RootNodeDatum)rootNode.Tag;
-
-                    MBox.Assert(1305.6308, new Color[] { Color.Empty, Color.DarkBlue }.Contains(treeNode.ForeColor));
-                    treeNode.ForeColor = Color.Firebrick;
-
-                    bool bDifferentVols = false;
-
-                    foreach (TreeNode subnode in listClones)
-                    {
-                        if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
-                        {
-                            return;
-                        }
-
-                        MBox.Assert(1305.6309, ((NodeDatum)subnode.Tag).Key == nodeDatum.Key);
-
-                        TreeNode rootNode_A = subnode.Root();
-
-                        if (rootNode == rootNode_A)
-                        {
-                            continue;
-                        }
-
-                        RootNodeDatum rootNodeDatum_A = (RootNodeDatum)rootNode_A.Tag;
-
-                        if (false == string.IsNullOrWhiteSpace(rootNodeDatum.StrVolumeGroup) &&
-                            (rootNodeDatum.StrVolumeGroup == rootNodeDatum_A.StrVolumeGroup))
-                        {
-                            continue;
-                        }
-
-                        if (treeNode.ForeColor != Color.DarkBlue)
-                        {
-                            MBox.Assert(1305.6311, treeNode.ForeColor == Color.Firebrick);
-                            treeNode.ForeColor = Color.SteelBlue;
-                        }
-
-                        bDifferentVols = true;
-                        break;
-                    }
-
-                    foreach (TreeNode subNode in listClones)
-                    {
-                        ((NodeDatum)subNode.Tag).m_bDifferentVols = bDifferentVols;
-                        subNode.ForeColor = treeNode.ForeColor;
-                    }
-                }
-            }
-
-            foreach (TreeNode subNode in treeNode.Nodes)
-            {
-                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
-                {
-                    return;
-                }
-
-                DifferentVolsQuery(dictClones, subNode, rootClone);
+                static_this.m_bThreadAbort = true;
             }
         }
 
-        public static void InsertSizeMarkers(List<ListViewItem> listLVitems)
+        internal static void InsertSizeMarkers(List<ListViewItem> listLVitems)
         {
             if (listLVitems.Count <= 0)
             {
@@ -295,94 +80,7 @@ namespace DoubleFile
             InsertSizeMarker.Go(listLVitems, 0, bUnique);            // Enter the Zeroth
         }
 
-        void IgnoreNodeAndSubnodes(ListViewItem lvItem, TreeNode treeNode_in, bool bContinue = false)
-        {
-            TreeNode treeNode = treeNode_in;
-
-            do
-            {
-                if (dictIgnoreNodes.ContainsKey(treeNode))
-                {
-                    continue;
-                }
-
-                MBox.Assert(1305.6312, lvItem != null);
-                dictIgnoreNodes.Add(treeNode, lvItem);
-
-                if (treeNode.Nodes.Count > 0)
-                {
-                    IgnoreNodeAndSubnodes(lvItem, (TreeNode)treeNode.Nodes[0], bContinue: true);
-                }
-            }
-            while (bContinue && ((treeNode = (TreeNode)treeNode.NextNode) != null));
-        }
-
-        void IgnoreNodeQuery(string sbMatch, int nMaxLevel, TreeNode treeNode_in)
-        {
-            if (treeNode_in.Level > nMaxLevel)
-            {
-                return;
-            }
-
-            TreeNode treeNode = treeNode_in;
-
-            do
-            {
-                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
-                {
-                    return;     
-                }
-
-                if (sbMatch.Contains(treeNode.Text.ToLower()))
-                {
-                    foreach (ListViewItem lvItem in m_list_lvIgnore)
-                    {
-                        if (treeNode.Level != (int.Parse(lvItem.SubItems[1].Text) - 1))
-                        {
-                            continue;
-                        }
-
-                        if (lvItem.Text.ToLower() == treeNode.Text.ToLower())
-                        {
-                            IgnoreNodeAndSubnodes((ListViewItem)lvItem.Tag, treeNode);
-                            break;
-                        }
-                    }
-                }
-
-                if (treeNode.Nodes.Count > 0)
-                {
-                    IgnoreNodeQuery(sbMatch, nMaxLevel, (TreeNode)treeNode.Nodes[0]);
-                }
-            }
-            while ((treeNode = (TreeNode)treeNode.NextNode) != null);
-        }
-
-        void SnowUniqueParents(TreeNode treeNode)
-        {
-            TreeNode parentNode = (TreeNode)treeNode.Parent;
-
-            while (parentNode != null)
-            {
-                parentNode.BackColor = Color.Snow;
-
-                NodeDatum nodeDatum = (NodeDatum)parentNode.Tag;
-
-                if (nodeDatum.m_lvItem != null)
-                {
-                    nodeDatum.m_lvItem.BackColor = parentNode.BackColor;
-                }
-
-                if (parentNode.ForeColor != Color.DarkOrange)
-                {
-                    MBox.Assert(1305.6313, (parentNode.ForeColor == Color.Empty) == (nodeDatum.m_lvItem == null));
-                }
-
-                parentNode = (TreeNode)parentNode.Parent;
-            }
-        }
-
-        public void Step1_OnThread()
+        internal void Step1_OnThread()
         {
             SDL_TreeView treeView = new SDL_TreeView();     // sets Level and NextNode
 
@@ -455,7 +153,7 @@ namespace DoubleFile
 
             foreach (KeyValuePair<Correlate, List<TreeNode>> pair in dictNodes)
             {
-                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
+                if (m_bThreadAbort || gd.WindowClosed)
                 {
                     return;
                 }
@@ -476,7 +174,7 @@ namespace DoubleFile
 
                     foreach (TreeNode treeNode_A in listNodes)
                     {
-                        if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
+                        if (m_bThreadAbort || gd.WindowClosed)
                         {
                             return;
                         }
@@ -528,7 +226,7 @@ namespace DoubleFile
             {
                 // load up listLVdiffVol
 
-                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
+                if (m_bThreadAbort || gd.WindowClosed)
                 {
                     return;
                 }
@@ -568,7 +266,7 @@ namespace DoubleFile
 
                 foreach (TreeNode treeNode in listNodes.Value)
                 {
-                    if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
+                    if (m_bThreadAbort || gd.WindowClosed)
                     {
                         return;
                     }
@@ -609,7 +307,7 @@ namespace DoubleFile
 
             foreach (KeyValuePair<Correlate, TreeNode> listNodes in dictUnique)
             {
-                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
+                if (m_bThreadAbort || gd.WindowClosed)
                 {
                     return;
                 }
@@ -659,7 +357,7 @@ namespace DoubleFile
 
             foreach (TreeNode treeNode in listSameVol)
             {
-                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
+                if (m_bThreadAbort || gd.WindowClosed)
                 {
                     return;
                 }
@@ -697,11 +395,11 @@ namespace DoubleFile
             treeView.Nodes.Clear();                             // prevents destroy nodes
         }
 
-        public void Step2_OnForm()
+        internal void Step2_OnForm()
         {
             UtilAnalysis_DirList.Closure(new Action(() =>
             {
-                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
+                if (m_bThreadAbort || gd.WindowClosed)
                 {
                     return;
                 }
@@ -734,7 +432,7 @@ namespace DoubleFile
                     UtilAnalysis_DirList.WriteLine("Step2_OnForm_A " + nCount);
                 }
 
-                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
+                if (m_bThreadAbort || gd.WindowClosed)
                 {
                     return;
                 }
@@ -745,7 +443,7 @@ namespace DoubleFile
                 form_lvClones.Invalidate();
                 UtilAnalysis_DirList.WriteLine("B");
 
-                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
+                if (m_bThreadAbort || gd.WindowClosed)
                 {
                     return;
                 }
@@ -756,7 +454,7 @@ namespace DoubleFile
                 form_lvUnique.Invalidate();
                 UtilAnalysis_DirList.WriteLine("C");
 
-                if (m_bThreadAbort || GlobalData.Instance.FormAnalysis_DirList_Closing)
+                if (m_bThreadAbort || gd.WindowClosed)
                 {
                     return;
                 }
@@ -782,5 +480,208 @@ namespace DoubleFile
 
             static_this = null;
         }
+
+        // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
+        // Breadth-first.
+        void DifferentVolsQuery(SortedDictionary<Correlate, UList<TreeNode>> dictClones, TreeNode treeNode, TreeNode rootClone = null)
+        {
+            // neither rootClone nor nMaxLength are used at all (rootClone is used as a bool).
+            // provisional.
+
+            NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+            UList<TreeNode> listClones = nodeDatum.m_listClones;
+            ulong nLength = nodeDatum.nTotalLength;
+
+            if (nLength <= 100 * 1024)
+            {
+                treeNode.ForeColor = Color.LightGray;
+                nodeDatum.m_listClones.Clear();
+            }
+
+            if ((listClones.Count > 0) && (rootClone == null))
+            {
+                rootClone = treeNode;
+
+                if (dictClones.ContainsKey(nodeDatum.Key))
+                {
+                    MBox.Assert(1305.6305, dictClones[nodeDatum.Key] == listClones);
+                    MBox.Assert(1305.6306, ((NodeDatum)dictClones[nodeDatum.Key][0].Tag).m_bDifferentVols == nodeDatum.m_bDifferentVols);
+                    MBox.Assert(1305.6307, dictClones[nodeDatum.Key][0].ForeColor == treeNode.ForeColor);
+                }
+                else
+                {
+                    dictClones.Add(nodeDatum.Key, listClones);
+
+                    // Test to see if clones are on separate volumes.
+
+                    TreeNode rootNode = treeNode.Root();
+                    RootNodeDatum rootNodeDatum = (RootNodeDatum)rootNode.Tag;
+
+                    MBox.Assert(1305.6308, new Color[] { Color.Empty, Color.DarkBlue }.Contains(treeNode.ForeColor));
+                    treeNode.ForeColor = Color.Firebrick;
+
+                    bool bDifferentVols = false;
+
+                    foreach (TreeNode subnode in listClones)
+                    {
+                        if (m_bThreadAbort || gd.WindowClosed)
+                        {
+                            return;
+                        }
+
+                        MBox.Assert(1305.6309, ((NodeDatum)subnode.Tag).Key == nodeDatum.Key);
+
+                        TreeNode rootNode_A = subnode.Root();
+
+                        if (rootNode == rootNode_A)
+                        {
+                            continue;
+                        }
+
+                        RootNodeDatum rootNodeDatum_A = (RootNodeDatum)rootNode_A.Tag;
+
+                        if (false == string.IsNullOrWhiteSpace(rootNodeDatum.StrVolumeGroup) &&
+                            (rootNodeDatum.StrVolumeGroup == rootNodeDatum_A.StrVolumeGroup))
+                        {
+                            continue;
+                        }
+
+                        if (treeNode.ForeColor != Color.DarkBlue)
+                        {
+                            MBox.Assert(1305.6311, treeNode.ForeColor == Color.Firebrick);
+                            treeNode.ForeColor = Color.SteelBlue;
+                        }
+
+                        bDifferentVols = true;
+                        break;
+                    }
+
+                    foreach (TreeNode subNode in listClones)
+                    {
+                        ((NodeDatum)subNode.Tag).m_bDifferentVols = bDifferentVols;
+                        subNode.ForeColor = treeNode.ForeColor;
+                    }
+                }
+            }
+
+            foreach (TreeNode subNode in treeNode.Nodes)
+            {
+                if (m_bThreadAbort || gd.WindowClosed)
+                {
+                    return;
+                }
+
+                DifferentVolsQuery(dictClones, subNode, rootClone);
+            }
+        }
+
+        void IgnoreNodeAndSubnodes(ListViewItem lvItem, TreeNode treeNode_in, bool bContinue = false)
+        {
+            TreeNode treeNode = treeNode_in;
+
+            do
+            {
+                if (dictIgnoreNodes.ContainsKey(treeNode))
+                {
+                    continue;
+                }
+
+                MBox.Assert(1305.6312, lvItem != null);
+                dictIgnoreNodes.Add(treeNode, lvItem);
+
+                if (treeNode.Nodes.Count > 0)
+                {
+                    IgnoreNodeAndSubnodes(lvItem, (TreeNode)treeNode.Nodes[0], bContinue: true);
+                }
+            }
+            while (bContinue && ((treeNode = (TreeNode)treeNode.NextNode) != null));
+        }
+
+        void IgnoreNodeQuery(string sbMatch, int nMaxLevel, TreeNode treeNode_in)
+        {
+            if (treeNode_in.Level > nMaxLevel)
+            {
+                return;
+            }
+
+            TreeNode treeNode = treeNode_in;
+
+            do
+            {
+                if (m_bThreadAbort || gd.WindowClosed)
+                {
+                    return;
+                }
+
+                if (sbMatch.Contains(treeNode.Text.ToLower()))
+                {
+                    foreach (ListViewItem lvItem in m_list_lvIgnore)
+                    {
+                        if (treeNode.Level != (int.Parse(lvItem.SubItems[1].Text) - 1))
+                        {
+                            continue;
+                        }
+
+                        if (lvItem.Text.ToLower() == treeNode.Text.ToLower())
+                        {
+                            IgnoreNodeAndSubnodes((ListViewItem)lvItem.Tag, treeNode);
+                            break;
+                        }
+                    }
+                }
+
+                if (treeNode.Nodes.Count > 0)
+                {
+                    IgnoreNodeQuery(sbMatch, nMaxLevel, (TreeNode)treeNode.Nodes[0]);
+                }
+            }
+            while ((treeNode = (TreeNode)treeNode.NextNode) != null);
+        }
+
+        void SnowUniqueParents(TreeNode treeNode)
+        {
+            TreeNode parentNode = (TreeNode)treeNode.Parent;
+
+            while (parentNode != null)
+            {
+                parentNode.BackColor = Color.Snow;
+
+                NodeDatum nodeDatum = (NodeDatum)parentNode.Tag;
+
+                if (nodeDatum.m_lvItem != null)
+                {
+                    nodeDatum.m_lvItem.BackColor = parentNode.BackColor;
+                }
+
+                if (parentNode.ForeColor != Color.DarkOrange)
+                {
+                    MBox.Assert(1305.6313, (parentNode.ForeColor == Color.Empty) == (nodeDatum.m_lvItem == null));
+                }
+
+                parentNode = (TreeNode)parentNode.Parent;
+            }
+        }
+
+        // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
+        readonly SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = null;
+        readonly TreeView m_treeViewBrowse = null;
+        readonly SDL_ListView form_lvClones = null;
+        readonly SDL_ListView form_lvSameVol = null;
+        readonly SDL_ListView form_lvUnique = null;
+        readonly List<TreeNode> m_listRootNodes = null;
+        readonly UList<TreeNode> m_listTreeNodes = null;
+        readonly bool m_bCheckboxes = false;
+        readonly List<ListViewItem> m_list_lvIgnore = null;
+
+        // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.
+        readonly List<ListViewItem> listLVunique = new List<ListViewItem>();
+        readonly List<ListViewItem> listLVsameVol = new List<ListViewItem>();
+        readonly List<ListViewItem> listLVdiffVol = new List<ListViewItem>();
+        readonly Dictionary<TreeNode, ListViewItem> dictIgnoreNodes = new Dictionary<TreeNode, ListViewItem>();
+        readonly bool m_bLoose = false;
+
+        bool m_bThreadAbort = false;
+        static Collate static_this = null;
+        GlobalData_Base gd = null;
     }
 }

@@ -112,8 +112,14 @@
     </ApplicationDefinition>
     <Compile Include="GlobalData\GlobalData.cs" />
     <Compile Include="UtilAnalysis_DirList\Collate.cs" />
+    <Compile Include="UtilAnalysis_DirList\Collate\AddTreeToList.cs" />
+    <Compile Include="UtilAnalysis_DirList\Collate\InsertSizeMarker.cs" />
     <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList.cs" />
     <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList.Designer.cs" />
+    <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Search\SearchBase.cs" />
+    <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Search\SearchBase\SearchType2.cs" />
+    <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Search\SearchBase\SearchType2\SearchFile.cs" />
+    <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Search\SearchResults.cs" />
     <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Search_GlobalData.cs" />
     <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Tree_GlobalData.cs" />
     <Compile Include="UtilAnalysis_DirList\GlobalData.cs" />

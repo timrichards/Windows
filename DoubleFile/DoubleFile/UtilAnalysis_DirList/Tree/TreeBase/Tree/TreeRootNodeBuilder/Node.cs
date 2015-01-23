@@ -10,17 +10,15 @@ namespace DoubleFile
         {
             class Node
             {
-                readonly RootNode m_rootNode = null;
-                readonly SortedDictionary<string, Node> subNodes = new SortedDictionary<string, Node>();
-                readonly string m_strPath = null;
-                uint m_nPrevLineNo = 0;
-                uint m_nLineNo = 0;
-                ulong m_nLength = 0;
-                bool bUseShortPath = true;
-
-                internal Node(string in_str, uint nLineNo, ulong nLength, RootNode rootNode)
+                internal Node(GlobalData_Base gd_in,
+                    string in_str,
+                    uint nLineNo,
+                    ulong nLength,
+                    RootNode rootNode)
                 {
-                    if (GlobalData.Instance.FormAnalysis_DirList_Closing)
+                    gd = gd_in;
+
+                    if (gd.WindowClosed)
                     {
                         return;
                     }
@@ -52,7 +50,7 @@ namespace DoubleFile
 
                     if (m_rootNode.Nodes.ContainsKey(strParent) == false)
                     {
-                        m_rootNode.Nodes.Add(strParent, new Node(strParent, m_rootNode.FirstLineNo, 0, m_rootNode));
+                        m_rootNode.Nodes.Add(strParent, new Node(gd, strParent, m_rootNode.FirstLineNo, 0, m_rootNode));
                     }
 
                     if (m_rootNode.Nodes[strParent].subNodes.ContainsKey(m_strPath) == false)
@@ -63,7 +61,7 @@ namespace DoubleFile
 
                 internal TreeNode AddToTree(string strVolumeName = null)
                 {
-                    if (GlobalData.Instance.FormAnalysis_DirList_Closing)
+                    if (gd.WindowClosed)
                     {
                         return new TreeNode();
                     }
@@ -134,6 +132,15 @@ namespace DoubleFile
 
                     return treeNode;
                 }
+
+                GlobalData_Base gd = null;
+                readonly RootNode m_rootNode = null;
+                readonly SortedDictionary<string, Node> subNodes = new SortedDictionary<string, Node>();
+                readonly string m_strPath = null;
+                uint m_nPrevLineNo = 0;
+                uint m_nLineNo = 0;
+                ulong m_nLength = 0;
+                bool bUseShortPath = true;
             }
         }
     }

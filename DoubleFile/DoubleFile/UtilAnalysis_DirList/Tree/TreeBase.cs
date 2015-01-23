@@ -5,12 +5,12 @@ namespace DoubleFile
 {
     abstract class TreeBase : UtilAnalysis_DirList
     {
-        protected readonly GlobalDataBase gd = null;
+        protected readonly GlobalData_Base gd = null;
         protected readonly SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = null;
         protected readonly Dictionary<string, string> m_dictDriveInfo = null;
         protected static TreeStatusDelegate m_statusCallback = null;
 
-        protected TreeBase(GlobalDataBase gd_in, 
+        protected TreeBase(GlobalData_Base gd_in, 
             SortedDictionary<Correlate, UList<TreeNode>> dictNodes,
             Dictionary<string, string> dictDriveInfo,
             TreeStatusDelegate statusCallback)

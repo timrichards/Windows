@@ -9,10 +9,13 @@ namespace DoubleFile
         {
             class DirData
             {
+                GlobalData_Base gd = null;
                 RootNode m_rootNode = null;
 
-                internal DirData(RootNode rootNode)
+                internal DirData(GlobalData_Base gd_in,
+                    RootNode rootNode)
                 {
+                    gd = gd_in;
                     m_rootNode = rootNode;
                 }
 
@@ -27,7 +30,7 @@ namespace DoubleFile
 
                     string str = str_in.TrimEnd('\\');
 
-                    m_rootNode.Nodes.Add(str, new Node(str, nLineNo, nLength, m_rootNode));
+                    m_rootNode.Nodes.Add(str, new Node(gd, str, nLineNo, nLength, m_rootNode));
                 }
 
                 internal TreeNode AddToTree(string strVolumeName)

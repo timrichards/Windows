@@ -4,10 +4,6 @@ namespace DoubleFile
 {
     class Correlate : IComparable
     {
-        internal readonly ulong nTotalLength;       //  found   41 bits
-        internal readonly uint nFilesInSubdirs;     //          23 bits
-        internal readonly uint nDirsWithFiles;      //          16 bits
-
         internal Correlate(ulong nTotalLength_in, uint nFilesInSubdirs_in, uint nDirsWithFiles_in)
         {
             nTotalLength = nTotalLength_in;
@@ -71,5 +67,9 @@ namespace DoubleFile
         public static bool operator <(Correlate x, Correlate y) { return ((x >= y) == false); }
         public static bool operator >=(Correlate x, Correlate y) { return ((x > y) || (x == y)); }
         public static bool operator <=(Correlate x, Correlate y) { return ((x > y) == false); }
+
+        readonly ulong nTotalLength;       //  found   41 bits
+        readonly uint nFilesInSubdirs;     //          23 bits
+        readonly uint nDirsWithFiles;      //          16 bits
     }
 }

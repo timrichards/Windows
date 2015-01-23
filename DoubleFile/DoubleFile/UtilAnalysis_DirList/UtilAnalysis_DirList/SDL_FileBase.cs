@@ -7,7 +7,7 @@ using System.Windows.Input;
 namespace DoubleFile
 {
     // SearchDirLists listing file|*.sdl_list|SearchDirLists volume list file|*.sdl_vol|SearchDirLists copy scratchpad file|*.sdl_copy|SearchDirLists ignore list file|*.sdl_ignore
-    abstract class SDL_FileBase : UtilAnalysis_DirList
+    abstract class SDL_FileBase : FileParse
     {
         internal const string BaseFilter = "Text files|*.txt|All files|*.*";
         internal const string FileAndDirListFileFilter = "SearchDirLists listing file|*." + ksFileExt_Listing;

@@ -17,6 +17,40 @@ namespace DoubleFile
             }
         }
 
+        void TreeStatusCallback(LVitem_ProjectVM volStrings, TreeNode rootNode = null, bool bError = false)
+        {
+            if (GlobalData.Instance.FormAnalysis_DirList_Closing || (gd.m_tree == null) || (gd.m_tree.IsAborted))
+            {
+                gd.TreeCleanup();
+                return;
+            }
+
+            UtilAnalysis_DirList.CheckAndInvoke(this, new Action(() =>
+            {
+                if (bError)
+                {
+                    //        volStrings.SetStatus_BadFile(form_lvVolumesMain);
+                }
+                else if (rootNode != null)
+                {
+                    lock (form_treeViewBrowse)
+                    {
+                        form_treeViewBrowse.Nodes.Add(rootNode.Text);    // items added to show progress
+                        //             volStrings.SetStatus_Done(form_lvVolumesMain, rootNode);
+                    }
+
+                    lock (gd.m_listRootNodes)
+                    {
+                        gd.m_listRootNodes.Add(rootNode);
+                    }
+                }
+                else
+                {
+                    MBox.Assert(1304.5309, false, "No data. Could be the directory is Access Denied.");
+                }
+            }));
+        }
+
         void TreeDoneCallback()
         {
             DoCollation();
@@ -98,41 +132,7 @@ namespace DoubleFile
             }
         }
 
-        internal void TreeStatusCallback(LVitem_ProjectVM volStrings, TreeNode rootNode = null, bool bError = false)
-        {
-            if (GlobalData.Instance.FormAnalysis_DirList_Closing || (gd.m_tree == null) || (gd.m_tree.IsAborted))
-            {
-                gd.TreeCleanup();
-                return;
-            }
-
-            UtilAnalysis_DirList.CheckAndInvoke(this, new Action(() =>
-            {
-                if (bError)
-                {
-                    //        volStrings.SetStatus_BadFile(form_lvVolumesMain);
-                }
-                else if (rootNode != null)
-                {
-                    lock (form_treeViewBrowse)
-                    {
-                        form_treeViewBrowse.Nodes.Add(rootNode.Text);    // items added to show progress
-                        //             volStrings.SetStatus_Done(form_lvVolumesMain, rootNode);
-                    }
-
-                    lock (gd.m_listRootNodes)
-                    {
-                        gd.m_listRootNodes.Add(rootNode);
-                    }
-                }
-                else
-                {
-                    MBox.Assert(1304.5309, false, "No data. Could be the directory is Access Denied.");
-                }
-            }));
-        }
-
-        internal void TreeSelectStatusCallback(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem[] lvVolDetails = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null)
+        void TreeSelectStatusCallback(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem[] lvVolDetails = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null)
         {
             UtilAnalysis_DirList.CheckAndInvoke(this, new Action(() =>
             {

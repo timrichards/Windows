@@ -11,7 +11,7 @@
         internal bool m_bRestartTreeTimer = false;
         internal bool m_bKillTree = true;
 
-        GlobalData(MainWindow wpfWin)   // private constructor: singleton pattern
+        GlobalData(MainWindow wpfWin)
         {
             static_MainWindow = wpfWin;
             m_tmrDoTree.Interval = new System.TimeSpan(0, 0, 3);

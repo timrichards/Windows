@@ -56,7 +56,7 @@ namespace DoubleFile
 
             var formSDL = static_MainWindow.Analysis_DirListForm;
 
-            formSDL.Invoke(new Action(() =>
+            UtilAnalysis_DirList.CheckAndInvoke(formSDL, new Action(() =>
             {
                 // Display the treemap after the tree is built
                 var treeViewBrowse = formSDL.form_treeViewBrowse;

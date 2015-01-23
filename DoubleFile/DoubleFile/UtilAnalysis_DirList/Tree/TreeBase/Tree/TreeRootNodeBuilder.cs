@@ -130,7 +130,7 @@ namespace DoubleFile
                 ulong nVolLength = 0;
 
                 {
-                    string[] arrDriveInfo = File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_DriveInfo)).ToArray();
+                    string[] arrDriveInfo = File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_VolumeInfo)).ToArray();
                     StringBuilder strBuilder = new StringBuilder();
                     int nIx = -1;
 
@@ -245,6 +245,11 @@ namespace DoubleFile
                 if (rootTreeNode != null)
                 {
                     nTotalLength = ((RootNodeDatum)rootTreeNode.Tag).nTotalLength;
+                }
+
+                if (GlobalData.Instance.FormAnalysis_DirList_Closing)
+                {
+                    return;     // to avoid the below assert box
                 }
 
                 if (nScannedLength != nTotalLength)

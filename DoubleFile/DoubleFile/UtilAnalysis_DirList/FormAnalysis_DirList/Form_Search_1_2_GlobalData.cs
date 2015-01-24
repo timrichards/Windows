@@ -15,6 +15,7 @@ namespace DoubleFile
         internal SearchResults m_firstSearchResults = null;
         internal SearchResults m_lastSearchResults = null;
         internal string m_strSelectFile = null;
+        internal const string ksSearchTitle = "Search";
 
         internal void ClearMem_Search()
         {
@@ -30,8 +31,6 @@ namespace DoubleFile
             m_firstSearchResults = null;
             m_lastSearchResults = null;
         }
-
-        internal const string ksSearchTitle = "Search";
 
         internal void SearchFail()
         {

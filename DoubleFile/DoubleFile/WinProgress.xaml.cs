@@ -60,6 +60,8 @@ namespace DoubleFile
             }
         }
 
+        internal bool Aborted { set; private get; }
+
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             form_lvProgress.DataContext = m_lv;
@@ -83,7 +85,7 @@ namespace DoubleFile
                 return;
             }
 
-            if (MBox.ShowDialog("Do you want to cancel?", "Saving Directory Listings",
+            if (Aborted || MBox.ShowDialog("Do you want to cancel?", "Saving Directory Listings",
                 MessageBoxButton.YesNo) ==
                 MessageBoxResult.Yes)
             {

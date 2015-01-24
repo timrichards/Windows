@@ -216,15 +216,8 @@ namespace DoubleFile
 
             MBox.Assert(1307.8312, gd.m_searchType2 == null);
 
-            UList<LVitem_ProjectVM> list_lvVolStrings = new UList<LVitem_ProjectVM>();
-
-            //foreach (ListViewItem lvItem in form_lvVolumesMain.Items)
-            //{
-            //    list_lvVolStrings.Add(new LVitem_ProjectVM(lvItem));
-            //}
-
             gd.m_searchType2 = new SearchType2(new GlobalData_Form(this),
-                list_lvVolStrings,
+                ListLVvolStrings,
                 strSearch,
                 strSearch.ToLower() != strSearch,
                 folderHandling,

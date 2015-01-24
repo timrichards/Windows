@@ -60,6 +60,12 @@ namespace DoubleFile
         {
             if (gd.WindowClosed || (gd_old.m_saveDirListings == null) || gd_old.m_saveDirListings.IsAborted)
             {
+                UtilProject.CheckAndInvoke(new Action(() =>
+                {
+                    m_winProgress.Aborted = true;
+                    m_winProgress.Close();
+                }));
+                
                 return;
             }
 

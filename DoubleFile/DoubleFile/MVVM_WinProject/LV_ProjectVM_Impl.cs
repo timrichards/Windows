@@ -19,6 +19,11 @@ namespace DoubleFile
 
         internal LVitem_ProjectVM ContainsListingFile(LVitem_ProjectVM currentItem, string t = null)
         {
+            if (string.IsNullOrEmpty(t))
+            {
+                return null;
+            }
+
             string s = (t ?? currentItem.ListingFile).ToLower();
 
             foreach (LVitem_ProjectVM item in m_items)

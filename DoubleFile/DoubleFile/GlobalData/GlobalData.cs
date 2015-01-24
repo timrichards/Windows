@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Forms;
 
 namespace DoubleFile
@@ -14,7 +15,19 @@ namespace DoubleFile
     {
         internal GlobalData_Window(Window mainWindow_in) { MainWindow = mainWindow_in; }
         internal Window MainWindow { get; private set; }
-        internal override bool WindowClosed { get { return (MainWindow == null) || (false == MainWindow.IsLoaded); } }
+        internal override bool WindowClosed
+        {
+            get
+            {
+                if (MainWindow == null)
+                {
+                    return true;
+                }
+
+                return (bool) UtilProject.CheckAndInvoke(MainWindow,
+                    new BoolAction(() => { return (false == MainWindow.IsLoaded); }));
+            }
+        }
     }
 
     class GlobalData_Form : GlobalData_Base

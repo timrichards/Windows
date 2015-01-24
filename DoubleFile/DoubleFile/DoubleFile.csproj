@@ -347,6 +347,7 @@
     <Content Include="UtilProject\7z920x86\7z.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="_Todo.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UtilAnalysis_FileHash\" />

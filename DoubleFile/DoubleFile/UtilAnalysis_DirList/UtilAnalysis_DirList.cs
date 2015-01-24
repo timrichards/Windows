@@ -17,7 +17,10 @@ namespace DoubleFile
 
         internal static object CheckAndInvoke(Control dispatcher, Delegate action, object[] args = null)
         {
-            bool bInvoke = dispatcher.InvokeRequired;
+            if (dispatcher == null)
+            {
+                return null;
+            }
 
             if (dispatcher.IsDisposed)
             {
@@ -26,7 +29,7 @@ namespace DoubleFile
 
             try
             {
-                if (bInvoke)
+                if (dispatcher.InvokeRequired)
                 {
                     if (args == null)
                     {

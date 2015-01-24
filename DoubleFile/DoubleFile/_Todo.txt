@@ -1,0 +1,5 @@
+﻿static Collate static_this = null;
+protected static SearchStatusDelegate m_statusCallback = null;
+protected static TreeStatusDelegate m_statusCallback = null;
+static bool m_bTreeSelect = false;
+static GlobalData static_instance = null;

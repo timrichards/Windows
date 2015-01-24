@@ -4,8 +4,24 @@ using System.Windows.Forms;
 
 namespace DoubleFile
 {
-    partial class GlobalData    // Get one node by path
+    partial class GlobalData_Search_Path    // Get one node by path
     {
+        GlobalData gd
+        {
+            get { return _gd; }
+            set
+            {
+                MBox.Assert(0, _gd == null);
+                _gd = value;
+            }
+        }
+        GlobalData _gd = null;
+
+        internal GlobalData_Search_Path(GlobalData gd_in)
+        {
+            gd = gd_in;
+        }
+
         internal TreeNode GetNodeByPath(string path, SDL_TreeView treeView)
         {
             return GetNodeByPath_A(path, treeView) ?? GetNodeByPath_A(path, treeView, bIgnoreCase: true);
@@ -65,6 +81,7 @@ namespace DoubleFile
                     {
                         MBox.Assert(1308.9329, (nPathLevelLength - nCount) > 0);
                         nPathLevelLength -= nCount;
+                        nPathLevelLength = Math.Max(0, nPathLevelLength);
                     }
                 }
 

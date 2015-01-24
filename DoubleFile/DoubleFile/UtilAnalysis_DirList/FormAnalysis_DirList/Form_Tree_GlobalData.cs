@@ -5,8 +5,19 @@ using System.Windows.Forms;
 
 namespace DoubleFile
 {
-    partial class GlobalData
+    class GlobalData_Tree
     {
+        GlobalData gd
+        {
+            get { return _gd; }
+            set
+            {
+                MBox.Assert(0, _gd == null);
+                _gd = value;
+            }
+        }
+        GlobalData _gd = null;
+
         internal readonly SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = new SortedDictionary<Correlate, UList<TreeNode>>();
         internal readonly Dictionary<string, string> m_dictDriveInfo = new Dictionary<string, string>();
         internal Tree m_tree = null;
@@ -17,6 +28,11 @@ namespace DoubleFile
         internal readonly List<ListViewItem> m_listLVignore = new List<ListViewItem>();
         internal readonly UList<TreeNode> m_listTreeNodes = new UList<TreeNode>();
         internal readonly List<TreeNode> m_listRootNodes = new List<TreeNode>();
+
+        internal GlobalData_Tree(GlobalData gd_in)
+        {
+            gd = gd_in;
+        }
 
         internal void ClearMem_TreeForm()
         {
@@ -54,7 +70,7 @@ namespace DoubleFile
             m_listLVignore.Clear();
             Collate.ClearMem();
 
-            var formSDL = static_MainWindow.Analysis_DirListForm;
+            var formSDL = GlobalData.static_MainWindow.Analysis_DirListForm;
 
             UtilAnalysis_DirList.CheckAndInvoke(formSDL, new Action(() =>
             {
@@ -74,7 +90,7 @@ namespace DoubleFile
         {
             TreeNode rootNode = treeNode.Root();
             string strFile = ((RootNodeDatum)rootNode.Tag).StrFile;
-            bool bSecondComparePane = (m_bCompareMode && rootNode.Checked);
+            bool bSecondComparePane = (gd.m_bCompareMode && rootNode.Checked);
             Thread threadKill = bSecondComparePane ? m_threadSelectCompare : m_threadSelect;
 
             if ((threadKill != null) && threadKill.IsAlive)
@@ -86,7 +102,7 @@ namespace DoubleFile
             m_threadSelect = null;
 
             TreeSelect treeSelect = new TreeSelect(treeNode, m_dictNodes, m_dictDriveInfo,
-                strFile, m_bCompareMode, bSecondComparePane,
+                strFile, gd.m_bCompareMode, bSecondComparePane,
                 statusCallback, doneCallback);
 
             Thread thread = treeSelect.DoThreadFactory();

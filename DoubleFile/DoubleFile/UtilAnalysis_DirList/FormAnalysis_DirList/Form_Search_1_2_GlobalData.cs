@@ -4,8 +4,41 @@ using System.Windows.Forms;
 
 namespace DoubleFile
 {
-    partial class GlobalData    // Search type 1: array of nodes (Search Folders button); and 2: list of nodes and files
+    class GlobalData_Search_1_2    // Search type 1: array of nodes (Search Folders button); and 2: list of nodes and files
     {
+        GlobalData gd
+        {
+            get { return _gd; }
+            set
+            {
+                MBox.Assert(0, _gd == null);
+                _gd = value;
+            }
+        }
+        GlobalData _gd = null;
+
+        GlobalData_Search_Path gd_Search_Path
+        {
+            get { return _gd_Search_Path; }
+            set
+            {
+                MBox.Assert(0, _gd_Search_Path == null);
+                _gd_Search_Path = value;
+            }
+        }
+        GlobalData_Search_Path _gd_Search_Path = null;
+
+        GlobalData_Tree gd_Tree
+        {
+            get { return _gd_Tree; }
+            set
+            {
+                MBox.Assert(0, gd_Tree == null);
+                _gd_Tree = value;
+            }
+        }
+        GlobalData_Tree _gd_Tree = null;
+
         internal bool m_bSearchResultsType2_List = false;
         internal int m_nSearchResultsIndexer = -1;
         internal TreeNode[] m_SearchResultsType1_Array = null;
@@ -16,6 +49,15 @@ namespace DoubleFile
         internal SearchResults m_lastSearchResults = null;
         internal string m_strSelectFile = null;
         internal const string ksSearchTitle = "Search";
+
+        internal GlobalData_Search_1_2(GlobalData gd_in, 
+            GlobalData_Search_Path gd_Search_Path_in,
+            GlobalData_Tree gd_Tree_in)
+        {
+            gd = gd_in;
+            gd_Search_Path = gd_Search_Path_in;
+            gd_Tree = gd_Tree_in;
+        }
 
         internal void ClearMem_Search()
         {
@@ -34,12 +76,12 @@ namespace DoubleFile
 
         internal void SearchFail()
         {
-            m_nSearchResultsIndexer = -1;
+       //     m_nSearchResultsIndexer = -1;
             MBox.Assert(1307.8306, m_SearchResultsType1_Array == null, bTraceOnly: true);
             m_SearchResultsType1_Array = null;
             m_bSearchResultsType2_List = false;
             m_strSelectFile = null;
-            m_blinky.Go(clr: System.Drawing.Color.Red, Once: true);
+            gd.m_blinky.Go(clr: System.Drawing.Color.Red, Once: true);
             MBox.ShowDialog("Couldn't find the specified search parameter.", ksSearchTitle);
         }
 
@@ -81,26 +123,26 @@ namespace DoubleFile
             {
                 treeView = (SDL_TreeView)startNode.TreeView;
             }
-            else if (m_bCompareMode)
+            else if (gd.m_bCompareMode)
             {
-                treeView = (m_treeCopyToClipboard is SDL_TreeView) ? (SDL_TreeView)m_treeCopyToClipboard : (SDL_TreeView)GlobalData.static_MainWindow.Analysis_DirListForm.form_treeCompare1;
+                treeView = (gd.m_treeCopyToClipboard is SDL_TreeView) ? (SDL_TreeView)gd.m_treeCopyToClipboard : (SDL_TreeView)GlobalData.static_MainWindow.Analysis_DirListForm.form_treeCompare1;
             }
             else if (treeView == null)
             {
                 treeView = ((SDL_TreeView)GlobalData.static_MainWindow.Analysis_DirListForm.form_treeViewBrowse);
             }
 
-            TreeNode treeNode = GetNodeByPath(strSearch, treeView);
+            TreeNode treeNode = gd_Search_Path.GetNodeByPath(strSearch, treeView);
 
             if (treeNode == null)
             {
                 // case sensitive only when user enters an uppercase character
 
-                List<TreeNode> listTreeNodes = m_listTreeNodes.ToList();
+                List<TreeNode> listTreeNodes = gd_Tree.m_listTreeNodes.ToList();
 
-                if (m_bCompareMode)
+                if (gd.m_bCompareMode)
                 {
-                    listTreeNodes = ((treeView == (SDL_TreeView)GlobalData.static_MainWindow.Analysis_DirListForm.form_treeCompare2) ? m_listTreeNodes_Compare2 : m_listTreeNodes_Compare1).ToList();
+                    listTreeNodes = ((treeView == (SDL_TreeView)GlobalData.static_MainWindow.Analysis_DirListForm.form_treeCompare2) ? gd.m_listTreeNodes_Compare2 : gd.m_listTreeNodes_Compare1).ToList();
                 }
 
                 if (strSearch.ToLower() == strSearch)

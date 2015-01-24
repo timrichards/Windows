@@ -9,7 +9,7 @@ namespace DoubleFile
     {
         internal void ClearMem_TreeForm()
         {
-            gd.ClearMem_TreeForm();
+            gd_Tree.ClearMem_TreeForm();
 
             foreach (ListViewItem lvItem in form_lvCopyScratchpad.Items)
             {
@@ -19,9 +19,9 @@ namespace DoubleFile
 
         void TreeStatusCallback(LVitem_ProjectVM volStrings, TreeNode rootNode = null, bool bError = false)
         {
-            if (IsDisposed || (gd.m_tree == null) || (gd.m_tree.IsAborted))
+            if (IsDisposed || (gd_Tree.m_tree == null) || (gd_Tree.m_tree.IsAborted))
             {
-                gd.TreeCleanup();
+                gd_Tree.TreeCleanup();
                 return;
             }
 
@@ -39,9 +39,9 @@ namespace DoubleFile
                         //             volStrings.SetStatus_Done(form_lvVolumesMain, rootNode);
                     }
 
-                    lock (gd.m_listRootNodes)
+                    lock (gd_Tree.m_listRootNodes)
                     {
-                        gd.m_listRootNodes.Add(rootNode);
+                        gd_Tree.m_listRootNodes.Add(rootNode);
                     }
                 }
                 else
@@ -71,7 +71,7 @@ namespace DoubleFile
 
         void DoCollation()
         {
-            if (gd.m_listRootNodes.Count <= 0)
+            if (gd_Tree.m_listRootNodes.Count <= 0)
             {
                 UtilAnalysis_DirList.CheckAndInvoke(this, new Action(() =>
                 {
@@ -81,28 +81,28 @@ namespace DoubleFile
                 return;
             }
 
-            MBox.Assert(1304.5304, gd.m_listTreeNodes.Count == 0);
+            MBox.Assert(1304.5304, gd_Tree.m_listTreeNodes.Count == 0);
             MBox.Assert(1304.5305, InvokeRequired);
 
             UtilAnalysis_DirList.CheckAndInvoke(this, new Action(() =>
             {
-                MBox.Assert(1304.5306, gd.m_listLVignore.Count == 0);
+                MBox.Assert(1304.5306, gd_Tree.m_listLVignore.Count == 0);
 
                 foreach (ListViewItem lvItem in form_lvIgnoreList.Items)
                 {
                     ListViewItem lvItem_A = (ListViewItem)lvItem.Clone();
 
                     lvItem_A.Tag = lvItem;
-                    gd.m_listLVignore.Add(lvItem_A);
+                    gd_Tree.m_listLVignore.Add(lvItem_A);
                 }
             }));
 
             Collate collate = new Collate(new GlobalData_Form(this),
-                gd.m_dictNodes,
+                gd_Tree.m_dictNodes,
                 form_treeViewBrowse,
                 form_lvClones, form_lvSameVol, form_lvUnique,
-                gd.m_listRootNodes, gd.m_listTreeNodes, gd.m_bCheckboxes,
-                gd.m_listLVignore, form_chkLoose.Checked);
+                gd_Tree.m_listRootNodes, gd_Tree.m_listTreeNodes, gd.m_bCheckboxes,
+                gd_Tree.m_listLVignore, form_chkLoose.Checked);
             DateTime dtStart = DateTime.Now;
 
             collate.Step1_OnThread();
@@ -110,7 +110,7 @@ namespace DoubleFile
 
             if (IsDisposed)
             {
-                gd.TreeCleanup();
+                gd_Tree.TreeCleanup();
                 return;
             }
 
@@ -118,14 +118,14 @@ namespace DoubleFile
             UtilAnalysis_DirList.CheckAndInvoke(this, new Action(collate.Step2_OnForm));
             UtilAnalysis_DirList.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             collate = null;
-            gd.TreeCleanup();
+            gd_Tree.TreeCleanup();
             GC.Collect();
 
             int nNodeCount = form_treeViewBrowse.GetNodeCount(includeSubTrees: true);
             int nNodeCount_A = UtilAnalysis_DirList.CountNodes((TreeNode)form_treeViewBrowse.Nodes[0]);
 
-            MBox.Assert(1304.5307, UtilAnalysis_DirList.CountNodes(gd.m_listRootNodes) == nNodeCount);
-            MBox.Assert(1304.5308, gd.m_listTreeNodes.Count == nNodeCount);
+            MBox.Assert(1304.5307, UtilAnalysis_DirList.CountNodes(gd_Tree.m_listRootNodes) == nNodeCount);
+            MBox.Assert(1304.5308, gd_Tree.m_listTreeNodes.Count == nNodeCount);
 
             if (Form.ActiveForm == null)
             {
@@ -261,11 +261,11 @@ namespace DoubleFile
             {
                 if (bSecondComparePane)
                 {
-                    gd.m_threadSelectCompare = null;
+                    gd_Tree.m_threadSelectCompare = null;
                 }
                 else
                 {
-                    gd.m_threadSelect = null;
+                    gd_Tree.m_threadSelect = null;
                 }
 
                 SelectFoundFile();
@@ -274,29 +274,29 @@ namespace DoubleFile
 
         void DoTree(bool bKill = false)
         {
-            if (gd.m_tree != null)
+            if (gd_Tree.m_tree != null)
             {
                 if (bKill == false)
                 {
                     return;
                 }
 
-                gd.KillTreeBuilder(bJoin: true);
+                gd_Tree.KillTreeBuilder(bJoin: true);
             }
 
-            if (gd.m_threadCollate != null)
+            if (gd_Tree.m_threadCollate != null)
             {
                 if (bKill == false)
                 {
                     return;
                 }
 
-                if (gd.m_threadCollate.IsAlive)
+                if (gd_Tree.m_threadCollate.IsAlive)
                 {
-                    gd.m_threadCollate.Abort();
+                    gd_Tree.m_threadCollate.Abort();
                 }
 
-                gd.TreeCleanup();
+                gd_Tree.TreeCleanup();
             }
 
             foreach (ListView lv in new ListView[] { form_lvClones, form_lvSameVol, form_lvUnique })
@@ -311,10 +311,10 @@ namespace DoubleFile
 
             if (bKill)
             {
-                gd.m_dictNodes.Clear();
+                gd_Tree.m_dictNodes.Clear();
             }
 
-            if (gd.m_dictNodes.Count <= 0)      // .Clear() to signal recreate. Ignore list only requires recorrelation
+            if (gd_Tree.m_dictNodes.Count <= 0)      // .Clear() to signal recreate. Ignore list only requires recollation
             {                                   // this works because gd.m_tree is not null during recreate.
                 ClearMem();
 
@@ -327,12 +327,12 @@ namespace DoubleFile
                     return;
                 }
 
-                MBox.Assert(1304.5312, gd.m_listRootNodes.Count == 0);
+                MBox.Assert(1304.5312, gd_Tree.m_listRootNodes.Count == 0);
 
-                gd.m_tree = new Tree(new GlobalData_Form(this),
-                    ListLVvolStrings, gd.m_dictNodes, gd.m_dictDriveInfo,
+                gd_Tree.m_tree = new Tree(new GlobalData_Form(this),
+                    ListLVvolStrings, gd_Tree.m_dictNodes, gd_Tree.m_dictDriveInfo,
                     TreeStatusCallback, TreeDoneCallback);
-                gd.m_tree.DoThreadFactory();
+                gd_Tree.m_tree.DoThreadFactory();
 
                 // m_tree has to be not-null for this to work
                 form_treeViewBrowse.Nodes.Clear();
@@ -347,9 +347,9 @@ namespace DoubleFile
             {
                 int nNodeCount = form_treeViewBrowse.GetNodeCount(includeSubTrees: true);
 
-                MBox.Assert(1304.5313, gd.m_listTreeNodes.Count == nNodeCount);
+                MBox.Assert(1304.5313, gd_Tree.m_listTreeNodes.Count == nNodeCount);
 
-                foreach (TreeNode treeNode in gd.m_listTreeNodes)
+                foreach (TreeNode treeNode in gd_Tree.m_listTreeNodes)
                 {
                     treeNode.ForeColor = Color.Empty;
                     treeNode.BackColor = Color.Empty;
@@ -367,10 +367,10 @@ namespace DoubleFile
                     nodeDatum.m_bDifferentVols = false;
                 }
 
-                gd.m_listTreeNodes.Clear();
-                gd.m_threadCollate = new Thread(new ThreadStart(DoCollation));
-                gd.m_threadCollate.IsBackground = true;
-                gd.m_threadCollate.Start();
+                gd_Tree.m_listTreeNodes.Clear();
+                gd_Tree.m_threadCollate = new Thread(new ThreadStart(DoCollation));
+                gd_Tree.m_threadCollate.IsBackground = true;
+                gd_Tree.m_threadCollate.Start();
             }
         }
     }

@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace DoubleFile
 {
-    abstract class TreeBase : UtilAnalysis_DirList
+    abstract class TreeBase : FileParse
     {
         protected readonly GlobalData_Base gd = null;
         protected readonly SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = null;

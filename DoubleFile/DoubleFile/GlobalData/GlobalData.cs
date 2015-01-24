@@ -24,8 +24,7 @@ namespace DoubleFile
                     return true;
                 }
 
-                return (bool) UtilProject.CheckAndInvoke(MainWindow,
-                    new BoolAction(() => { return (false == MainWindow.IsLoaded); }));
+                return (bool) UtilProject.CheckAndInvoke(new BoolAction(() => { return (false == MainWindow.IsLoaded); }));
             }
         }
     }

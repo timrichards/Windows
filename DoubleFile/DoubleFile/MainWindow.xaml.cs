@@ -11,8 +11,8 @@ namespace DoubleFile
     {
         public MainWindow()
         {
+            new GlobalData(this);
             InitializeComponent();
-            GlobalData.GetInstance(this);
         }
 
         internal IEnumerable<LVitem_ProjectVM> ListLVvolStrings { get; private set; }

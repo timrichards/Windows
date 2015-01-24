@@ -12,7 +12,6 @@ namespace DoubleFile
 #endif
         }
 
-
         internal static object CheckAndInvoke(Delegate action, object[] args = null)
         {
             return CheckAndInvoke(GlobalData.static_MainWindow, action, args);

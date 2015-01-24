@@ -82,23 +82,29 @@ namespace DoubleFile
                 return MessageBoxResult.None;
             }
 
-            if (GlobalData.static_MainWindow.Dispatcher.CheckAccess() == false) { return (MessageBoxResult)GlobalData.static_MainWindow.Dispatcher.Invoke(new MBoxDelegate(ShowDialog), new object[] { strMessage, strTitle, buttons_in }); }
+            var msgBoxRet = MessageBoxResult.None;
 
-            MessageBoxKill();
-            m_form1MessageBoxOwner = new LocalWindow();
-            m_form1MessageBoxOwner.Owner = GlobalData.static_TopWindow;
-
-            MessageBoxButton buttons = (buttons_in != null) ? buttons_in.Value : MessageBoxButton.OK;
-            MessageBoxResult msgBoxRet = (MessageBoxResult)MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100), strTitle, (MessageBoxButton)buttons, MessageBoxImage.Information);
-
-            if (m_form1MessageBoxOwner != null)
+            UtilProject.CheckAndInvoke(new Action(() =>
             {
                 MessageBoxKill();
-                return msgBoxRet;
-            }
+                m_form1MessageBoxOwner = new LocalWindow();
+                m_form1MessageBoxOwner.Owner = GlobalData.static_TopWindow;
 
-            // cancelled externally
-            return MessageBoxResult.None;
+                MessageBoxButton buttons = (buttons_in != null) ? buttons_in.Value : MessageBoxButton.OK;
+
+                msgBoxRet = (MessageBoxResult)MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100), strTitle, (MessageBoxButton)buttons, MessageBoxImage.Information);
+
+                if (m_form1MessageBoxOwner != null)
+                {
+                    MessageBoxKill();
+                    return;
+                }
+
+                // cancelled externally
+                msgBoxRet = MessageBoxResult.None;
+            }));
+
+            return msgBoxRet;
         }
     }
 }

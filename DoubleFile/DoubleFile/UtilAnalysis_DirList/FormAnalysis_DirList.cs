@@ -17,26 +17,36 @@ namespace DoubleFile
     [System.ComponentModel.DesignerCategory("Code")]
     partial class FormAnalysis_DirList : Form
     {
-            System.Windows.Window m_ownerWindow = null;
-            IEnumerable<LVitem_ProjectVM> ListLVvolStrings { get; set; }
-
-            internal FormAnalysis_DirList(System.Windows.Window ownerWindow, IEnumerable<LVitem_ProjectVM> listLVvolStrings)
-                : this()
-            {
-                m_ownerWindow = ownerWindow;
-                ListLVvolStrings = listLVvolStrings;
-            }
-
-            static internal void RestartTreeTimer(FormAnalysis_DirList form1, IEnumerable<LVitem_ProjectVM> listLVvolStrings)
-            {
-                if (form1 != null)
-                {
-                    form1.ListLVvolStrings = listLVvolStrings;
-                    form1.gd.RestartTreeTimer();
-                }
-            }
-
         readonly GlobalData gd = null;
+        readonly GlobalData_Tree gd_Tree = null;
+        readonly MainWindow m_ownerWindow = null;
+        IEnumerable<LVitem_ProjectVM> ListLVvolStrings { get; set; }
+
+        internal FormAnalysis_DirList(MainWindow ownerWindow, IEnumerable<LVitem_ProjectVM> listLVvolStrings)
+            : this()
+        {
+            m_ownerWindow = ownerWindow;
+            gd = GlobalData.Instance;
+            gd_Tree = new GlobalData_Tree(gd);
+            gd.gd_Tree = gd_Tree;
+            ListLVvolStrings = listLVvolStrings;
+        }
+
+        void FormAnalysis_DirList_Load(object sender, EventArgs e)
+        {
+            InitSearch(gd);
+            gd.RestartTreeTimer();
+            form_tmapUserCtl.TooltipAnchor = (Control)form_cbFindbox;
+        }
+
+        static internal void RestartTreeTimer(FormAnalysis_DirList form1, IEnumerable<LVitem_ProjectVM> listLVvolStrings)
+        {
+            if (form1 != null)
+            {
+                form1.ListLVvolStrings = listLVvolStrings;
+                form1.gd.RestartTreeTimer();
+            }
+        }
 
         // Memory allocations occur just below all partial class FormAnalysis_DirList : Form declarations, then ClearMem_...() for each.
         // Declarations continue below these two ClearMem() methods.
@@ -64,7 +74,7 @@ namespace DoubleFile
         {
             Collate.ClearMem();
             ClearMem_FormAnalysis_DirList();
-            gd.ClearMem_Search();
+            gd_Search_1_2.ClearMem_Search();
             ClearMem_TreeForm();
         }
 
@@ -211,7 +221,7 @@ namespace DoubleFile
 
             foreach (ListViewItem lvItem in lvFake.Items)
             {
-                TreeNode treeNode = gd.GetNodeByPath(lvItem.SubItems[1].Text, form_treeViewBrowse);
+                TreeNode treeNode = gd_Search_Path.GetNodeByPath(lvItem.SubItems[1].Text, form_treeViewBrowse);
 
                 if (treeNode != null)
                 {
@@ -356,7 +366,7 @@ namespace DoubleFile
             }
 
             gd.m_blinky.Go();
-            gd.ClearMem_Search();
+            gd_Search_1_2.ClearMem_Search();
             gd.m_listHistory.Clear();
             gd.m_nIxHistory = -1;
             form_splitTreeFind.Panel1Collapsed = false;
@@ -490,7 +500,7 @@ namespace DoubleFile
 
             if (treeNode == null)
             {
-                treeNode = gd.SearchType1_FindNode(form_cbFindbox.Text, (TreeNode)treeView.SelectedNode, treeView);
+                treeNode = gd_Search_1_2.SearchType1_FindNode(form_cbFindbox.Text, (TreeNode)treeView.SelectedNode, treeView);
             }
 
             if (treeNode != null)
@@ -615,17 +625,17 @@ namespace DoubleFile
         // form_btnFolder; form_btnFoldersAndFiles; form_btnFiles
         void form_btnFind_Click(object sender, EventArgs e = null)
         {
-            gd.m_strSelectFile = null;
+            gd_Search_1_2.m_strSelectFile = null;
 
             if (form_cbFindbox.Text.Length > 0)
             {
                 if (m_ctlLastSearchSender != sender)
                 {
                     m_ctlLastSearchSender = (Control)sender;
-                    gd.m_nSearchResultsIndexer = -1;
+                    gd_Search_1_2.m_nSearchResultsIndexer = -1;
                 }
 
-                if ((gd.m_nSearchResultsIndexer < 0) && new Button[] { form_btnFoldersAndFiles, form_btnFiles }.Contains(sender))
+                if ((gd_Search_1_2.m_nSearchResultsIndexer < 0) && new Button[] { form_btnFoldersAndFiles, form_btnFiles }.Contains(sender))
                 {
                     DoSearchType2(form_cbFindbox.Text, bSearchFilesOnly: (sender == form_btnFiles));
                 }
@@ -734,9 +744,9 @@ namespace DoubleFile
 
             gd.m_bPutPathInFindEditBox = true;
             gd.m_bTreeViewIndirectSelChange = true;
-            gd.m_strSelectFile = form_tmapUserCtl.Tooltip_Click();
+            gd_Search_1_2.m_strSelectFile = form_tmapUserCtl.Tooltip_Click();
 
-            if (gd.m_strSelectFile != null)
+            if (gd_Search_1_2.m_strSelectFile != null)
             {
                 gd.m_bTreeViewIndirectSelChange = false;   // didn't hit a sel change
                 form_tabControlFileList.SelectedTab = form_tabPageFileList;
@@ -751,14 +761,14 @@ namespace DoubleFile
 
         void form_cbFindbox_TextChanged(object sender, EventArgs e)
         {
-            if (gd.m_SearchResultsType2_List.Count > 0)
+            if (gd_Search_1_2.m_SearchResultsType2_List.Count > 0)
             {
-                gd.m_SearchResultsType2_List.Clear();
+                gd_Search_1_2.m_SearchResultsType2_List.Clear();
                 GC.Collect();
             }
 
-            gd.m_nSearchResultsIndexer = -1;
-            gd.m_bSearchResultsType2_List = false;
+            gd_Search_1_2.m_nSearchResultsIndexer = -1;
+            gd_Search_1_2.m_bSearchResultsType2_List = false;
         }
 
         void form_chk_Compare1_CheckedChanged(object sender, EventArgs e)
@@ -809,7 +819,7 @@ namespace DoubleFile
 
                 if (gd.m_nodeCompare1 != null)
                 {
-                    if (gd.m_nSearchResultsIndexer >= 0)
+                    if (gd_Search_1_2.m_nSearchResultsIndexer >= 0)
                     {
                         gd.m_blinky.SelectTreeNode(gd.m_nodeCompare1, Once: false);
                     }
@@ -1162,9 +1172,7 @@ namespace DoubleFile
 
         void form_treeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            var gd = GlobalData.Instance;
-
-            if (gd.m_tree != null)
+            if (gd_Tree.m_tree != null)
             {
                 // still building the tree: items added to show progress
                 return;
@@ -1228,7 +1236,7 @@ namespace DoubleFile
             TreeNode rootNode = ((TreeNode)e.Node).Root();
 
             MBox.Assert(1308.9322, (new object[] { form_treeCompare1, form_treeCompare2 }.Contains(sender)) == gd.m_bCompareMode);
-            gd.DoTreeSelect((TreeNode)e.Node, TreeSelectStatusCallback, TreeSelectDoneCallback);
+            gd_Tree.DoTreeSelect((TreeNode)e.Node, TreeSelectStatusCallback, TreeSelectDoneCallback);
 
             string strNode = e.Node.Text;
 
@@ -1284,7 +1292,7 @@ namespace DoubleFile
 
             if (nodeDatum.m_lvItem.ListView == null)    // during Corellate()
             {
-                MBox.Assert(1308.9324, gd.m_threadCollate != null, bTraceOnly: true);
+                MBox.Assert(1308.9324, gd_Tree.m_threadCollate != null, bTraceOnly: true);
                 return;
             }
 
@@ -1333,7 +1341,7 @@ namespace DoubleFile
             }
             else if (new Keys[] { Keys.Left, Keys.Right }.Contains(e.KeyCode))
             {
-                if (gd.m_bCompareMode || (gd.m_nSearchResultsIndexer >= 0))
+                if (gd.m_bCompareMode || (gd_Search_1_2.m_nSearchResultsIndexer >= 0))
                 {
                     // L and R prevent the text cursor from walking in the find box, (and the tab-order of controls doesn't work.)
                     e.SuppressKeyPress = e.Handled = true;
@@ -1341,7 +1349,7 @@ namespace DoubleFile
             }
             else if (new Keys[] { Keys.Enter, Keys.Return }.Contains(e.KeyCode))
             {
-                if (gd.m_nSearchResultsIndexer >= 0)
+                if (gd_Search_1_2.m_nSearchResultsIndexer >= 0)
                 {
                     e.SuppressKeyPress = e.Handled = true;
                 }
@@ -1391,19 +1399,19 @@ namespace DoubleFile
                         e.SuppressKeyPress = e.Handled = true;
                     }
                 }
-                else if (gd.m_nSearchResultsIndexer >= 0)
+                else if (gd_Search_1_2.m_nSearchResultsIndexer >= 0)
                 {
                     e.SuppressKeyPress = e.Handled = true;
 
                     if (e.KeyCode == Keys.Left)
                     {
-                        if (gd.m_nSearchResultsIndexer > 1)
+                        if (gd_Search_1_2.m_nSearchResultsIndexer > 1)
                         {
-                            gd.m_nSearchResultsIndexer -= 2;
+                            gd_Search_1_2.m_nSearchResultsIndexer -= 2;
                         }
-                        else if (gd.m_nSearchResultsIndexer == 1)
+                        else if (gd_Search_1_2.m_nSearchResultsIndexer == 1)
                         {
-                            gd.m_nSearchResultsIndexer = 0;
+                            gd_Search_1_2.m_nSearchResultsIndexer = 0;
                         }
                         else
                         {
@@ -1419,12 +1427,6 @@ namespace DoubleFile
 
                 // plenty of fall-through for form_cbFindbox etc.
             }
-        }
-
-        void FormAnalysis_DirList_Load(object sender, EventArgs e)
-        {
-            gd.RestartTreeTimer();
-            form_tmapUserCtl.TooltipAnchor = (Control)form_cbFindbox;
         }
     }
 }

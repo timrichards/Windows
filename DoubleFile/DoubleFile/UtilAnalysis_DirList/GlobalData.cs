@@ -8,6 +8,17 @@ namespace DoubleFile
 {
     partial class GlobalData
     {
+        internal GlobalData_Tree gd_Tree
+        {
+            private get { return _gd_Tree; }
+            set
+            {
+           //     MBox.Assert(0, gd_Tree == null);
+                _gd_Tree = value;
+            }
+        }
+        GlobalData_Tree _gd_Tree = null;
+
         internal SDL_TreeView m_treeCopyToClipboard = null;
         internal TreeNode m_nodeCompare1 = null;
         internal readonly Dictionary<TreeNode, TreeNode> m_dictCompareDiffs = new Dictionary<TreeNode, TreeNode>();
@@ -280,7 +291,7 @@ namespace DoubleFile
 
             if (bKillTree)
             {
-                KillTreeBuilder();
+                gd_Tree.KillTreeBuilder();
             }
 
             if (bKillTree || bTimer)
@@ -396,9 +407,9 @@ namespace DoubleFile
                     RemoveCorrelation((TreeNode)treeNode.Nodes[0], bContinue: true);
                 }
 
-                if (m_listTreeNodes.Contains(treeNode))
+                if (gd_Tree.m_listTreeNodes.Contains(treeNode))
                 {
-                    m_listTreeNodes.Remove(treeNode);
+                    gd_Tree.m_listTreeNodes.Remove(treeNode);
                 }
 
                 treeNode.ForeColor = Color.Empty;
@@ -406,14 +417,14 @@ namespace DoubleFile
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
-                if (m_dictNodes.ContainsKey(nodeDatum.Key) == false)
+                if (gd_Tree.m_dictNodes.ContainsKey(nodeDatum.Key) == false)
                 {
                     // same scenario as empty owner:
                     // Search "Parent folder may contain only its clone subfolder, in which case unmark the subfolder"
                     continue;
                 }
 
-                UList<TreeNode> listClones = m_dictNodes[nodeDatum.Key];
+                UList<TreeNode> listClones = gd_Tree.m_dictNodes[nodeDatum.Key];
 
                 if (listClones.Contains(treeNode))
                 {
@@ -421,7 +432,7 @@ namespace DoubleFile
 
                     if (listClones.Count <= 0)
                     {
-                        m_dictNodes.Remove(nodeDatum.Key);
+                        gd_Tree.m_dictNodes.Remove(nodeDatum.Key);
                     }
                 }
             }

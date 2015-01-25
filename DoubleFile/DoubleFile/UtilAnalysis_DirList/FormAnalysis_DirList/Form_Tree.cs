@@ -98,6 +98,11 @@ namespace DoubleFile
                 }
             }));
 
+            if (gd_Tree == null)
+            {
+                return;
+            }
+
             Collate collate = new Collate(new GlobalData_Form(this),
                 gd_Tree.m_dictNodes,
                 form_treeViewBrowse,
@@ -109,7 +114,12 @@ namespace DoubleFile
             collate.Step1_OnThread();
             UtilProject.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
 
-            if ((gd_Tree != null) && IsDisposed)
+            if (gd_Tree == null)
+            {
+                return;
+            }
+
+            if (IsDisposed)
             {
                 gd_Tree.TreeCleanup();
                 return;
@@ -119,8 +129,19 @@ namespace DoubleFile
             UtilAnalysis_DirList.CheckAndInvoke(this, new Action(collate.Step2_OnForm));
             UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             collate = null;
+
+            if (gd_Tree == null)
+            {
+                return;
+            }
+
             gd_Tree.TreeCleanup();
             GC.Collect();
+
+            if (IsDisposed)
+            {
+                return;
+            }
 
             int nNodeCount = form_treeViewBrowse.GetNodeCount(includeSubTrees: true);
             int nNodeCount_A = UtilAnalysis_DirList.CountNodes((TreeNode)form_treeViewBrowse.Nodes[0]);
@@ -315,8 +336,8 @@ namespace DoubleFile
                 gd_Tree.m_dictNodes.Clear();
             }
 
-            if (gd_Tree.m_dictNodes.Count <= 0)      // .Clear() to signal recreate. Ignore list only requires recollation
-            {                                   // this works because gd.m_tree is not null during recreate.
+            if (gd_Tree.m_dictNodes.Count <= 0)     // .Clear() to signal recreate. Ignore list only requires recollation
+            {                                       // this works because gd.m_tree is not null during recreate.
                 ClearMem();
 
                 form_colFilename.Text = gd.m_strColFilesOrig;

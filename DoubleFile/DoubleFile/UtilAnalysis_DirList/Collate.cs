@@ -37,7 +37,7 @@ namespace DoubleFile
 
         internal static void ClearMem()
         {
-            MBox.Assert(1305.6301, static_this == null);
+            Abort();
             static_this = null;
         }
 
@@ -217,6 +217,11 @@ namespace DoubleFile
 
             foreach (TreeNode treeNode in m_listRootNodes)
             {
+                if (m_bThreadAbort || gd.WindowClosed)
+                {
+                    return;
+                }
+
                 DifferentVolsQuery(dictClones, treeNode);
             }
 

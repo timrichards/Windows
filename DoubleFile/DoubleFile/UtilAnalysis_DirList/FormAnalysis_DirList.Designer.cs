@@ -1275,6 +1275,8 @@ namespace DoubleFile
             this.form_cbFindbox.SelectedIndexChanged += new System.EventHandler(this.form_cbFindbox_SelectedIndexChanged);
             this.form_cbFindbox.TextChanged += new System.EventHandler(this.form_cbFindbox_TextChanged);
             this.form_cbFindbox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.form_cbFindbox_KeyUp);
+            this.form_cbFindbox.MouseEnter += new System.EventHandler(this.form_cbFindbox_MouseEnter);
+            this.form_cbFindbox.MouseLeave += new System.EventHandler(this.form_cbFindbox_MouseLeave);
             this.form_cbFindbox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.form_cbFindbox_MouseUp);
             // 
             // form_chkCompare1

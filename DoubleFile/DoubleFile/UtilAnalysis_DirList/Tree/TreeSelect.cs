@@ -233,7 +233,7 @@ namespace DoubleFile
 
             listItems.Add(new ListViewItem(new string[] { "Total Size", FormatSize(nodeDatum.nTotalLength, bBytes: true) }));
             m_statusCallback(lvItemDetails: listItems.ToArray(), bSecondComparePane: m_bSecondComparePane);
-            UtilAnalysis_DirList.WriteLine(strLine);
+            UtilProject.WriteLine(strLine);
 
             List<string[]> listFiles_A = GetFileList(m_treeNode);
 

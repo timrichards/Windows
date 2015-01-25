@@ -10,7 +10,7 @@ namespace DoubleFile
     [System.ComponentModel.DesignerCategory("Code")]
     class UC_TreeMap : UserControl
     {
-        internal bool ToolTipActive { get { return m_toolTip.Active; } }
+        internal bool ToolTipActive { get; private set; }
         internal Control TooltipAnchor = null;
 
         Rectangle m_rectBitmap = Rectangle.Empty;
@@ -55,16 +55,28 @@ namespace DoubleFile
             m_deepNode = null;
             m_deepNodeDrawn = null;
             m_toolTip.Tag = null;
+            UtilProject.WriteLine(DateTime.Now + " Clear();");
             ClearSelection();
         }
 
-        internal void ClearSelection()
+        internal void ClearSelection(bool bKeepTooltipActive = false)
         {
             Control ctl = TooltipAnchor;
-            if ((ctl == null) || ctl.IsDisposed) ctl = this;
-            if ((ctl == null) || ctl.IsDisposed) { return; }
+
+            if ((ctl == null) || ctl.IsDisposed)
+                ctl = this;
+
+            if ((ctl == null) || ctl.IsDisposed)
+                return;
 
             m_toolTip.Hide(ctl);
+
+            if (bKeepTooltipActive == false)
+            {
+                ToolTipActive = false;
+                UtilProject.WriteLine(DateTime.Now + " b ToolTipActive = false;");
+            }
+
             m_selRect = Rectangle.Empty;
             Invalidate();
         }
@@ -78,11 +90,13 @@ namespace DoubleFile
             }
 
             m_toolTip.Dispose();
+            ToolTipActive = false; UtilProject.WriteLine(DateTime.Now + " c ToolTipActive = false;");
             base.Dispose(disposing);
         }
 
         internal TreeNode DoToolTip(Point pt_in)
         {
+            UtilProject.WriteLine(DateTime.Now + " DoToolTip();");
             ClearSelection();
 
             if (m_treeNode == null)
@@ -190,6 +204,7 @@ namespace DoubleFile
 
                 m_selRect = nodeDatum.TreeMapRect;
                 m_toolTip.Show(UtilAnalysis_DirList.FormatSize(nodeDatum.nTotalLength, bBytes: true), TooltipAnchor, new Point(0, 0));
+                ToolTipActive = true; UtilProject.WriteLine(DateTime.Now + " a ToolTipActive = true; ------");
             }
 
             m_prevNode = nodeRet;
@@ -341,6 +356,7 @@ namespace DoubleFile
             base.OnSizeChanged(e);
             TranslateSize();
             m_prevNode = null;
+            UtilProject.WriteLine(DateTime.Now + " OnSizeChanged();");
             ClearSelection();
         }
 
@@ -371,11 +387,12 @@ namespace DoubleFile
 
                 m_bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), m_rectBitmap);
                 TranslateSize();
-                UtilAnalysis_DirList.WriteLine("Size bitmap " + nPxPerSide  + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000.0 + " seconds.");
+                UtilProject.WriteLine("Size bitmap " + nPxPerSide  + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000.0 + " seconds.");
             }
 
             DateTime dtStart = DateTime.Now;
 
+            UtilProject.WriteLine(DateTime.Now + " Render();");
             ClearSelection();
             m_bg.Graphics.Clear(Color.DarkGray);
             m_treeNode = treeNode;

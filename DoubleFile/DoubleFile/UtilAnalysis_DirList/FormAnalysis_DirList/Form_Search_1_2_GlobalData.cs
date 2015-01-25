@@ -76,8 +76,8 @@ namespace DoubleFile
 
         internal void SearchFail()
         {
-       //     m_nSearchResultsIndexer = -1;
-            MBox.Assert(1307.8306, m_SearchResultsType1_Array == null, bTraceOnly: true);
+            m_nSearchResultsIndexer = -1;
+        //    MBox.Assert(1307.8306, m_SearchResultsType1_Array == null, bTraceOnly: true);
             m_SearchResultsType1_Array = null;
             m_bSearchResultsType2_List = false;
             m_strSelectFile = null;

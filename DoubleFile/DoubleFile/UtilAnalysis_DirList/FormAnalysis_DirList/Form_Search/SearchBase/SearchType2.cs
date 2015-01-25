@@ -31,7 +31,7 @@ namespace DoubleFile
 
         void Go()
         {
-            UtilAnalysis_DirList.WriteLine("Searching for '" + m_strSearch + "'");
+            UtilProject.WriteLine("Searching for '" + m_strSearch + "'");
 
             DateTime dtStart = DateTime.Now;
 
@@ -47,7 +47,7 @@ namespace DoubleFile
                 worker.Join();
             }
 
-            UtilAnalysis_DirList.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", m_strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
+            UtilProject.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", m_strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
             if (m_bThreadAbort || gd.WindowClosed)
             {

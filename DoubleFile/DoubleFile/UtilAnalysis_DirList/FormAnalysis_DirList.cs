@@ -17,19 +17,61 @@ namespace DoubleFile
     [System.ComponentModel.DesignerCategory("Code")]
     partial class FormAnalysis_DirList : Form
     {
+        bool m_bFindBoxMouseEnter = false;
+
         readonly GlobalData gd = null;
         readonly GlobalData_Tree gd_Tree = null;
         readonly MainWindow m_ownerWindow = null;
         IEnumerable<LVitem_ProjectVM> ListLVvolStrings { get; set; }
 
         internal FormAnalysis_DirList(MainWindow ownerWindow, IEnumerable<LVitem_ProjectVM> listLVvolStrings)
-            : this()
         {
+            InitializeComponent();
+
             m_ownerWindow = ownerWindow;
             gd = GlobalData.Instance;
             gd_Tree = new GlobalData_Tree(gd);
             gd.gd_Tree = gd_Tree;
             ListLVvolStrings = listLVvolStrings;
+
+            gd.m_tmrDoTree.Interval = new System.TimeSpan(0, 0, 3);
+            gd.m_tmrDoTree.Tick += new System.EventHandler((object sender, EventArgs e) =>
+            {
+                gd.m_tmrDoTree.Stop();
+                gd.m_bRestartTreeTimer = false;
+
+                if (IsDisposed)
+                {
+                    return;
+                }
+
+                if (gd.m_bCompareMode)
+                {
+                    MBox.Assert(1308.9304, form_chkCompare1.Checked);
+                    form_chkCompare1.Checked = false;
+                }
+
+                DoTree(bKill: gd.m_bKillTree);
+                gd.m_bKillTree = true;
+            });
+
+            // Assert string-lookup form items exist
+            //    Utilities.Assert(1308.9305, context_rclick_node.Items[m_strMARKFORCOPY] != null);
+
+            gd.m_blinky = new Blinky(form_cbFindbox);
+            gd.m_strBtnTreeCollapseOrig = form_btnCollapse.Text;
+            gd.m_strColFilesOrig = form_colFilename.Text;
+            gd.m_strColFileCompareOrig = form_colFileCompare.Text;
+            gd.m_strColDirDetailCompareOrig = form_colDirDetailCompare.Text;
+            gd.m_strColDirDetailOrig = form_colDirDetail.Text;
+            gd.m_strColVolDetailOrig = form_colVolDetail.Text;
+            gd.m_strBtnCompareOrig = form_btnCompare.Text;
+            gd.m_strChkCompareOrig = form_chkCompare1.Text;
+            gd.m_strVolGroupOrig = form_lblVolGroup.Text;
+            gd.m_bCheckboxes = form_treeViewBrowse.CheckBoxes;
+
+            m_FontVolGroupOrig = form_lblVolGroup.Font;
+            m_clrVolGroupOrig = form_lblVolGroup.BackColor;
         }
 
         void FormAnalysis_DirList_Load(object sender, EventArgs e)
@@ -104,51 +146,6 @@ namespace DoubleFile
             }
         }
 
-        public FormAnalysis_DirList()
-        {
-            InitializeComponent();
-
-            gd = GlobalData.Instance;
-            gd.m_tmrDoTree.Interval = new System.TimeSpan(0, 0, 3);
-            gd.m_tmrDoTree.Tick += new System.EventHandler((object sender, EventArgs e) =>
-            {
-                gd.m_tmrDoTree.Stop();
-                gd.m_bRestartTreeTimer = false;
-
-                if (IsDisposed)
-                {
-                    return;
-                }
-
-                if (gd.m_bCompareMode)
-                {
-                    MBox.Assert(1308.9304, form_chkCompare1.Checked);
-                    form_chkCompare1.Checked = false;
-                }
-
-                DoTree(bKill: gd.m_bKillTree);
-                gd.m_bKillTree = true;
-            });
-
-            // Assert string-lookup form items exist
-            //    Utilities.Assert(1308.9305, context_rclick_node.Items[m_strMARKFORCOPY] != null);
-
-            gd.m_blinky = new Blinky(form_cbFindbox);
-            gd.m_strBtnTreeCollapseOrig = form_btnCollapse.Text;
-            gd.m_strColFilesOrig = form_colFilename.Text;
-            gd.m_strColFileCompareOrig = form_colFileCompare.Text;
-            gd.m_strColDirDetailCompareOrig = form_colDirDetailCompare.Text;
-            gd.m_strColDirDetailOrig = form_colDirDetail.Text;
-            gd.m_strColVolDetailOrig = form_colVolDetail.Text;
-            gd.m_strBtnCompareOrig = form_btnCompare.Text;
-            gd.m_strChkCompareOrig = form_chkCompare1.Text;
-            gd.m_strVolGroupOrig = form_lblVolGroup.Text;
-            gd.m_bCheckboxes = form_treeViewBrowse.CheckBoxes;
-
-            m_FontVolGroupOrig = form_lblVolGroup.Font;
-            m_clrVolGroupOrig = form_lblVolGroup.BackColor;
-        }
-
         void CompareNav(bool bNext = true)
         {
             if (gd.m_dictCompareDiffs.Count <= 0)
@@ -160,7 +157,7 @@ namespace DoubleFile
                 Math.Min(gd.m_dictCompareDiffs.Count - 1, ++gd.m_nCompareIndex) :
                 Math.Max(0, --gd.m_nCompareIndex);
 
-            UtilAnalysis_DirList.WriteLine(gd.m_dictCompareDiffs.ToArray()[gd.m_nCompareIndex].ToString());
+            UtilProject.WriteLine(gd.m_dictCompareDiffs.ToArray()[gd.m_nCompareIndex].ToString());
             form_chkCompare1.Text = gd.m_nCompareIndex + 1 + " of " + gd.m_dictCompareDiffs.Count;
             form_lvFiles.Items.Clear();
             form_lvFileCompare.Items.Clear();
@@ -211,6 +208,7 @@ namespace DoubleFile
                 return;
             }
 
+            UtilProject.WriteLine(DateTime.Now + " ClearToolTip();");
             form_tmapUserCtl.ClearSelection();
         }
 
@@ -727,9 +725,24 @@ namespace DoubleFile
             }
         }
 
+        void form_cbFindbox_MouseEnter(object sender, EventArgs e)
+        {
+            UtilProject.WriteLine(DateTime.Now + " form_cbFindbox_MouseEnter");
+            m_bFindBoxMouseEnter = true;
+        }
+
+        void form_cbFindbox_MouseLeave(object sender, EventArgs e)
+        {
+            UtilProject.WriteLine(DateTime.Now + " form_cbFindbox_MouseLeave");
+            m_bFindBoxMouseEnter = false;
+        }
+
         void form_cbFindbox_MouseUp(object sender, MouseEventArgs e)
         {
-            form_tmapUserCtl.ClearSelection();
+            var bToolTip = form_tmapUserCtl.ToolTipActive;
+
+            UtilProject.WriteLine(DateTime.Now + " form_cbFindbox_MouseUp");
+            form_tmapUserCtl.ClearSelection();      // resets ToolTipActive
 
             if (gd.m_bNavDropDown)
             {
@@ -737,7 +750,7 @@ namespace DoubleFile
                 return;
             }
 
-            if (false == form_tmapUserCtl.ToolTipActive)
+            if (false == bToolTip)
             {
                 return;
             }
@@ -896,7 +909,7 @@ namespace DoubleFile
                 return;
             }
 
-            UtilAnalysis_DirList.WriteLine("form_lvClones_KeyUp");
+            UtilProject.WriteLine("form_lvClones_KeyUp");
             LV_CloneSelNode((ListView)sender);
         }
 
@@ -979,7 +992,7 @@ namespace DoubleFile
                 return;
             }
 
-            UtilAnalysis_DirList.WriteLine("form_lvClones_SelectedIndexChanged");
+            UtilProject.WriteLine("form_lvClones_SelectedIndexChanged");
 
             if (gd.m_bLVclonesMouseDown)
             {
@@ -1101,7 +1114,7 @@ namespace DoubleFile
 
         void form_lvUnique_MouseClick(object sender, MouseEventArgs e)
         {
-            UtilAnalysis_DirList.WriteLine("form_lvUnique_MouseClick");
+            UtilProject.WriteLine("form_lvUnique_MouseClick");
             gd.LV_MarkerClick(form_lvUnique);
         }
 
@@ -1112,7 +1125,8 @@ namespace DoubleFile
             //    return;
             //}
 
-            form_tmapUserCtl.ClearSelection();
+            UtilProject.WriteLine(DateTime.Now + " form_tmapUserCtl_Leave();");
+            form_tmapUserCtl.ClearSelection(m_bFindBoxMouseEnter);
         }
 
         void form_tmapUserCtl_MouseDown(object sender, MouseEventArgs e)

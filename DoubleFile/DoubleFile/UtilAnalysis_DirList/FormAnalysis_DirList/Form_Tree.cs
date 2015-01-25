@@ -106,7 +106,7 @@ namespace DoubleFile
             DateTime dtStart = DateTime.Now;
 
             collate.Step1_OnThread();
-            UtilAnalysis_DirList.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+            UtilProject.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
 
             if (IsDisposed)
             {
@@ -116,7 +116,7 @@ namespace DoubleFile
 
             gd.m_bPutPathInFindEditBox = true;
             UtilAnalysis_DirList.CheckAndInvoke(this, new Action(collate.Step2_OnForm));
-            UtilAnalysis_DirList.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+            UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             collate = null;
             gd_Tree.TreeCleanup();
             GC.Collect();
@@ -191,7 +191,7 @@ namespace DoubleFile
                 if (lvFileItem.StrCompareDir != t1.SelectedNode.Text)
                 {
                     // User is navigating faster than this thread.
-                    UtilAnalysis_DirList.WriteLine("Fast: " + lvFileItem.StrCompareDir + "\t\t" + t1.SelectedNode.Text);
+                    UtilProject.WriteLine("Fast: " + lvFileItem.StrCompareDir + "\t\t" + t1.SelectedNode.Text);
                     return;
                 }
 

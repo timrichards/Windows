@@ -229,8 +229,8 @@ namespace DoubleFile
                 if (bZeroLengthsWritten)
                 {
 #if (DEBUG)
-                    UtilAnalysis_DirList.WriteLine(File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_File)).Sum(s => decimal.Parse(s.Split('\t')[knColLength])).ToString());
-                    UtilAnalysis_DirList.WriteLine(File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => decimal.Parse(s.Split('\t')[knColLength])).ToString());
+                    UtilProject.WriteLine(File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_File)).Sum(s => decimal.Parse(s.Split('\t')[knColLength])).ToString());
+                    UtilProject.WriteLine(File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => decimal.Parse(s.Split('\t')[knColLength])).ToString());
 #endif
                 }
 
@@ -238,7 +238,7 @@ namespace DoubleFile
                     File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Length)).ToArray()[0]
                     .Split('\t')[knColLength]);
 
-                UtilAnalysis_DirList.WriteLine(nScannedLength.ToString());
+                UtilProject.WriteLine(nScannedLength.ToString());
 
                 ulong nTotalLength = 0;
 
@@ -254,11 +254,11 @@ namespace DoubleFile
 
                 if (nScannedLength != nTotalLength)
                 {
-                    UtilAnalysis_DirList.WriteLine(nTotalLength.ToString());
+                    UtilProject.WriteLine(nTotalLength.ToString());
                     MBox.Assert(1301.23101, false, "nScannedLength != nTotalLength\n" + m_volStrings.ListingFile, bTraceOnly: true);
                 }
 
-                UtilAnalysis_DirList.WriteLine(m_volStrings.ListingFile + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
+                UtilProject.WriteLine(m_volStrings.ListingFile + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
             }
 
             internal TreeRootNodeBuilder DoThreadFactory()

@@ -338,7 +338,7 @@ namespace DoubleFile
 
             m_bClonesLVindirectSelChange = true;
 
-            UtilAnalysis_DirList.WriteLine("LVMarkerClick");
+            UtilProject.WriteLine("LVMarkerClick");
             lvItem.EnsureVisible();
             lvItem.Selected = true;
             lvItem.Focused = true;

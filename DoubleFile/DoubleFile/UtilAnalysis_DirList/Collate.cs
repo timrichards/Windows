@@ -107,7 +107,7 @@ namespace DoubleFile
                 }
 
                 IgnoreNodeQuery(sbMatch.ToString().ToLower(), nMaxLevel, m_listRootNodes[0]);
-                UtilAnalysis_DirList.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+                UtilProject.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             }
 
             Dictionary<TreeNode, ListViewItem> dictIgnoreMark = new Dictionary<TreeNode, ListViewItem>();
@@ -350,7 +350,7 @@ namespace DoubleFile
                 MBox.Assert(1305.6325, nCount_A == nCount);
                 MBox.Assert(1305.6326, m_listTreeNodes.Count == nCount);
                 MBox.Assert(1305.6327, UtilAnalysis_DirList.CountNodes(m_listRootNodes) == nCount);
-                UtilAnalysis_DirList.WriteLine("Step1_OnThread " + nCount);
+                UtilProject.WriteLine("Step1_OnThread " + nCount);
             }
 
             listSameVol.Sort((y, x) => ((NodeDatum)x.Tag).nTotalLength.CompareTo(((NodeDatum)y.Tag).nTotalLength));
@@ -423,13 +423,13 @@ namespace DoubleFile
 
                     UtilAnalysis_DirList.Write("A");
                     m_treeViewBrowse.Nodes.AddRange(m_listRootNodes.ToArray());
-                    UtilAnalysis_DirList.WriteLine("A");
+                    UtilProject.WriteLine("A");
 
                     int nCount_A = UtilAnalysis_DirList.CountNodes(m_listRootNodes);
 
                     MBox.Assert(1305.6331, nCount_A == nCount);
                     MBox.Assert(1305.6332, m_treeViewBrowse.GetNodeCount(includeSubTrees: true) == nCount);
-                    UtilAnalysis_DirList.WriteLine("Step2_OnForm_A " + nCount);
+                    UtilProject.WriteLine("Step2_OnForm_A " + nCount);
                 }
 
                 if (m_bThreadAbort || gd.WindowClosed)
@@ -441,7 +441,7 @@ namespace DoubleFile
                 UtilAnalysis_DirList.Write("B");
                 form_lvClones.Items.AddRange(listLVdiffVol.ToArray());
                 form_lvClones.Invalidate();
-                UtilAnalysis_DirList.WriteLine("B");
+                UtilProject.WriteLine("B");
 
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
@@ -452,7 +452,7 @@ namespace DoubleFile
                 UtilAnalysis_DirList.Write("C");
                 form_lvUnique.Items.AddRange(listLVunique.ToArray());
                 form_lvUnique.Invalidate();
-                UtilAnalysis_DirList.WriteLine("C");
+                UtilProject.WriteLine("C");
 
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
@@ -463,7 +463,7 @@ namespace DoubleFile
                 UtilAnalysis_DirList.Write("D");
                 form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
                 form_lvSameVol.Invalidate();
-                UtilAnalysis_DirList.WriteLine("D");
+                UtilProject.WriteLine("D");
 
                 if (m_treeViewBrowse.SelectedNode != null)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
                 {

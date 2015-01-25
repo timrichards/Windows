@@ -54,8 +54,8 @@ namespace DoubleFile
 
         void Go()
         {
-            UtilAnalysis_DirList.WriteLine();
-            UtilAnalysis_DirList.WriteLine("Creating tree.");
+            UtilProject.WriteLine();
+            UtilProject.WriteLine("Creating tree.");
 
             DateTime dtStart = DateTime.Now;
 
@@ -76,7 +76,7 @@ namespace DoubleFile
                 worker.Join();
             }
 
-            UtilAnalysis_DirList.WriteLine(string.Format("Completed tree in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 10) / 100.0));
+            UtilProject.WriteLine(string.Format("Completed tree in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 10) / 100.0));
 
             if (m_bThreadAbort || gd.WindowClosed)
             {

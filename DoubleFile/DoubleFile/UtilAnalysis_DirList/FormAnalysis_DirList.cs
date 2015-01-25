@@ -20,7 +20,9 @@ namespace DoubleFile
         bool m_bFindBoxMouseEnter = false;
 
         readonly GlobalData gd = null;
-        readonly GlobalData_Tree gd_Tree = null;
+        GlobalData_Tree gd_Tree = null;
+        GlobalData_Search_Path gd_Search_Path = null;
+        GlobalData_Search_1_2 gd_Search_1_2 = null;
         readonly MainWindow m_ownerWindow = null;
         IEnumerable<LVitem_ProjectVM> ListLVvolStrings { get; set; }
 
@@ -29,10 +31,13 @@ namespace DoubleFile
             InitializeComponent();
 
             m_ownerWindow = ownerWindow;
+            ListLVvolStrings = listLVvolStrings;
+
             gd = GlobalData.Instance;
             gd_Tree = new GlobalData_Tree(gd);
             gd.gd_Tree = gd_Tree;
-            ListLVvolStrings = listLVvolStrings;
+            gd_Search_Path = new GlobalData_Search_Path(gd);
+            gd_Search_1_2 = new GlobalData_Search_1_2(gd, gd_Search_Path, gd_Tree);
 
             gd.m_tmrDoTree.Interval = new System.TimeSpan(0, 0, 3);
             gd.m_tmrDoTree.Tick += new System.EventHandler((object sender, EventArgs e) =>
@@ -76,7 +81,6 @@ namespace DoubleFile
 
         void FormAnalysis_DirList_Load(object sender, EventArgs e)
         {
-            InitSearch(gd);
             gd.RestartTreeTimer();
             form_tmapUserCtl.TooltipAnchor = (Control)form_cbFindbox;
         }
@@ -1344,6 +1348,10 @@ namespace DoubleFile
                 MBox.MessageBoxKill();
             }
 
+            gd.gd_Tree = null;
+            gd_Tree = null;
+            gd_Search_1_2 = null;
+            gd_Search_Path = null;
             m_ownerWindow.Activate();
         }
 

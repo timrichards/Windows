@@ -14,15 +14,6 @@ namespace DoubleFile
 
     partial class FormAnalysis_DirList
     {
-        GlobalData_Search_Path gd_Search_Path = null;
-        GlobalData_Search_1_2 gd_Search_1_2 = null;
-
-        void InitSearch(GlobalData gd)
-        {
-            gd_Search_Path = new GlobalData_Search_Path(gd);
-            gd_Search_1_2 = new GlobalData_Search_1_2(gd, gd_Search_Path, gd_Tree);
-        }
-
         bool SearchResultsType2_Nav(SDL_TreeView treeView)
         {
             int nCounter = -1;

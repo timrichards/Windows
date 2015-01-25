@@ -8,17 +8,6 @@ namespace DoubleFile
 {
     partial class GlobalData
     {
-        internal GlobalData_Tree gd_Tree
-        {
-            private get { return _gd_Tree; }
-            set
-            {
-           //     MBox.Assert(0, gd_Tree == null);
-                _gd_Tree = value;
-            }
-        }
-        GlobalData_Tree _gd_Tree = null;
-
         internal SDL_TreeView m_treeCopyToClipboard = null;
         internal TreeNode m_nodeCompare1 = null;
         internal readonly Dictionary<TreeNode, TreeNode> m_dictCompareDiffs = new Dictionary<TreeNode, TreeNode>();

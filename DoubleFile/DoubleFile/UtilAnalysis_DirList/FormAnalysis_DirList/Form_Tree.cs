@@ -19,7 +19,8 @@ namespace DoubleFile
 
         void TreeStatusCallback(LVitem_ProjectVM volStrings, TreeNode rootNode = null, bool bError = false)
         {
-            if (IsDisposed || (gd_Tree.m_tree == null) || (gd_Tree.m_tree.IsAborted))
+            if ((gd_Tree != null) &&
+                (IsDisposed || (gd_Tree.m_tree == null) || gd_Tree.m_tree.IsAborted))
             {
                 gd_Tree.TreeCleanup();
                 return;
@@ -108,7 +109,7 @@ namespace DoubleFile
             collate.Step1_OnThread();
             UtilProject.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
 
-            if (IsDisposed)
+            if ((gd_Tree != null) && IsDisposed)
             {
                 gd_Tree.TreeCleanup();
                 return;

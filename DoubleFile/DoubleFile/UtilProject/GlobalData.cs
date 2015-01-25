@@ -20,10 +20,22 @@
         }
         static GlobalData _Instance = null;
 
+        internal GlobalData_Tree gd_Tree
+        {
+            private get { return _gd_Tree; }
+            set
+            {
+                if (value != null)
+                    MBox.Assert(0, gd_Tree == null);
+                _gd_Tree = value;
+            }
+        }
+        GlobalData_Tree _gd_Tree = null;
+
         internal GlobalData(MainWindow wpfWin)
         {
             static_MainWindow = wpfWin;
-            _Instance = this;
+            Instance = this;
             m_tmrDoTree.Interval = new System.TimeSpan(0, 0, 3);
         }
 

@@ -229,8 +229,8 @@ namespace DoubleFile
                 if (bZeroLengthsWritten)
                 {
 #if (DEBUG)
-                    UtilProject.WriteLine(File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_File)).Sum(s => decimal.Parse(s.Split('\t')[knColLength])).ToString());
-                    UtilProject.WriteLine(File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => decimal.Parse(s.Split('\t')[knColLength])).ToString());
+                    UtilProject.WriteLine(File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_File)).Sum(s => double.Parse(s.Split('\t')[knColLength])).ToString());
+                    UtilProject.WriteLine(File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => double.Parse(s.Split('\t')[knColLength])).ToString());
 #endif
                 }
 

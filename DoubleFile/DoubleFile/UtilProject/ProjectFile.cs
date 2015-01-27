@@ -69,7 +69,7 @@ namespace DoubleFile
             };
 
             m_process.StartInfo.WorkingDirectory = TempPath;
-            m_process.StartInfo.Arguments = "e " + strProjectFilename + " -y";
+            m_process.StartInfo.Arguments = "e \"" + strProjectFilename + "\" -y";
 
             if (false == StartProcess("Opening project.", Path.GetFileName(strProjectFilename)))
             {
@@ -168,7 +168,7 @@ namespace DoubleFile
             };
 
             m_process.StartInfo.WorkingDirectory = Path.GetDirectoryName(listListingFiles[0]);
-            m_process.StartInfo.Arguments = "a " + strProjectFilename + ".7z " + sbSource + " -mx=3 -md=128m";
+            m_process.StartInfo.Arguments = "a \"" + strProjectFilename + ".7z\" " + sbSource + " -mx=3 -md=128m";
 
             if (false == StartProcess("Saving project.", strProjectFileNoPath))
             {

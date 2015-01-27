@@ -204,12 +204,12 @@ namespace DoubleFile
                         }
                         else if (strLine.StartsWith(ksStart01))
                         {
-                            file_out.WriteLine(FormatLine(ksLineType_Start, nLineNo, ksStart));
+                            file_out.WriteLine(FormatLine(ksLineType_Start, nLineNo, ksStart + strLine.Replace(ksStart01, "")));
                             continue;
                         }
                         else if (strLine.StartsWith(ksEnd01))
                         {
-                            file_out.WriteLine(FormatLine(ksLineType_End, nLineNo, ksEnd));
+                            file_out.WriteLine(FormatLine(ksLineType_End, nLineNo, ksEnd + strLine.Replace(ksEnd01, "")));
                             continue;
                         }
                         else if (strLine == ksErrorsLoc01)
@@ -257,7 +257,7 @@ namespace DoubleFile
 
         static string FormatLine(string strLineType, long nLineNo, string strLine_in = null)
         {
-            return strLineType + "\t" + nLineNo + '\t' + (strLine_in ?? "").Trim();
+            return strLineType + "\t" + nLineNo + '\t' + (strLine_in ?? "").TrimEnd();
         }
 
         internal static string FormatString(string strDir = null, string strFile = null, DateTime? dtCreated = null, DateTime? dtModified = null, string strAttributes = null, long nLength = -1, string strError1 = null, string strError2 = null, int? nHeader = null, string strHash = null)

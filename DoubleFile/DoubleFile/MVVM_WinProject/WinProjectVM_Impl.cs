@@ -30,14 +30,33 @@ namespace DoubleFile
 
         static internal void SaveProject(IEnumerable<LVitem_ProjectVM> listLVvolStrings)
         {
-            var dlg = new Microsoft.Win32.SaveFileDialog();
+            string strFilename = null;
 
-            dlg.Title = "Save Project";
-            dlg.Filter = ksProjectFilter;
-
-            if (dlg.ShowDialog() ?? false)
+            while (true)
             {
-                new ProjectFile().SaveProject(listLVvolStrings, dlg.FileName);
+                var dlg = new Microsoft.Win32.SaveFileDialog();
+
+                dlg.Title = "Save Project";
+                dlg.Filter = ksProjectFilter;
+                dlg.FileName = strFilename;
+                dlg.OverwritePrompt = false;
+
+                if (dlg.ShowDialog() ?? false)
+                {
+                    strFilename = dlg.FileName;
+
+                    if (System.IO.File.Exists(strFilename))
+                    {
+                        MBox.ShowDialog("Project file exists. Please manually delete it using the Save Project dialog after this alert closes.", "Save Project");
+                        continue;
+                    }
+                    else
+                    {
+                        new ProjectFile().SaveProject(listLVvolStrings, strFilename);
+                    }
+                }
+
+                break;
             }
         }
 

@@ -8,6 +8,7 @@ namespace DoubleFile
             var dlg = new System.Windows.Forms.FolderBrowserDialog();
 
             dlg.SelectedPath = SourcePath_CurrentText();
+            dlg.Description = "Source path of the directory for which a listing file is to be created.";
 
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -24,8 +25,7 @@ namespace DoubleFile
                 ulong? nSize;
                 var probeStruct = new ProbeStruct();
 
-                DriveSerial.Get(strPath, out probeStruct.DriveModel, out probeStruct.DriveSerial, out nSize);
-                
+                DriveSerial.Get(strPath, out probeStruct.DriveModel, out probeStruct.DriveSerial, out nSize);               
                 FromProbe(probeStruct);
             }
             else
@@ -42,6 +42,7 @@ namespace DoubleFile
             dlg.FileName = strPath;
             dlg.Filter = WinProjectVM.ksListingFilter;
             dlg.OverwritePrompt = false;
+            dlg.Title = "Save Listing File";
 
             if (dlg.ShowDialog() ?? false)
             {

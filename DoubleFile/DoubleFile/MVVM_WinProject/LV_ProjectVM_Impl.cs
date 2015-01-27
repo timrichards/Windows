@@ -87,12 +87,12 @@ namespace DoubleFile
 
         internal bool FileExists(string strListingFile)
         {
-            bool bFileExists = System.IO.File.Exists(strListingFile) &&
+            var bFileExists = System.IO.File.Exists(strListingFile) &&
                 (false == strListingFile.StartsWith(ProjectFile.TempPath) || FileParse.ValidateFile(strListingFile));
 
             if (bFileExists)
             {
-                MBox.ShowDialog("Listing file exists. Please manually delete it using the Save As dialog\nby clicking the icon button after this alert closes.", "New Listing File");
+                MBox.ShowDialog("Listing file exists. Please manually delete it using the Save Listing File dialog\nby clicking the icon button after this alert closes.", "New Listing File");
             }
 
             return bFileExists;

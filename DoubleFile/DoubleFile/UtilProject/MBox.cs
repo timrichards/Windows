@@ -77,15 +77,15 @@ namespace DoubleFile
         // make MessageBox modal from a worker thread
         internal static MessageBoxResult ShowDialog(string strMessage, string strTitle = null, MessageBoxButton? buttons_in = null)
         {
-            if (false == GlobalData.static_TopWindow.IsLoaded)
-            {
-                return MessageBoxResult.None;
-            }
-
             var msgBoxRet = MessageBoxResult.None;
 
             UtilProject.CheckAndInvoke(new Action(() =>
             {
+                if (false == GlobalData.static_TopWindow.IsLoaded)
+                {
+                    return;
+                }
+
                 MessageBoxKill();
                 m_form1MessageBoxOwner = new LocalWindow();
                 m_form1MessageBoxOwner.Owner = GlobalData.static_TopWindow;

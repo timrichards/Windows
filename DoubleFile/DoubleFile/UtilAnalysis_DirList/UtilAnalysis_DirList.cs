@@ -1,5 +1,4 @@
 ﻿using System.Windows.Forms;
-using System.Threading;         // release mode
 using System;
 using System.Collections.Generic;
 using System.Linq;

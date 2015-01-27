@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;                       // release mode
+using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Hosting;       // release mode
 using System.Windows;
 
 namespace DoubleFile
@@ -63,40 +65,40 @@ namespace DoubleFile
 
             switch (Path.GetExtension(strFile).Substring(1))
             {
-                case Utilities.ksFileExt_Listing:
+                case FileParse.ksFileExt_Listing:
                 {
-                    form_cbSaveAs.Text = strFile;
-                    AddVolume();
-                    form_tabControlMain.SelectedTab = form_tabPageBrowse;
-                    RestartTreeTimer();
+                    //form_cbSaveAs.Text = strFile;
+                    //AddVolume();
+                    //form_tabControlMain.SelectedTab = form_tabPageBrowse;
+                    //RestartTreeTimer();
                     break;
                 }
 
-                case Utilities.ksFileExt_Volume:
+                case FileParse.ksFileExt_Project:
                 {
-                    if (LoadVolumeList(strFile))
-                    {
-                        RestartTreeTimer();
-                    }
+                    //if (LoadVolumeList(strFile))
+                    //{
+                    //    RestartTreeTimer();
+                    //}
 
                     break;
                 }
 
-                case Utilities.ksFileExt_Copy:
+                case FileParse.ksFileExt_Copy:
                 {
-                    form_tabControlMain.SelectedTab = form_tabPageBrowse;
-                    form_tabControlCopyIgnore.SelectedTab = form_tabPageCopy;
-                    m_blinky.Go(form_lvCopyScratchpad, clr: Color.Yellow, Once: true);
-                    FormAnalysis_DirListMessageBox("The Copy scratchpad cannot be loaded with no directory listings.", "Load Copy scratchpad externally");
-                    Application.Exit();
+                    //form_tabControlMain.SelectedTab = form_tabPageBrowse;
+                    //form_tabControlCopyIgnore.SelectedTab = form_tabPageCopy;
+                    //m_blinky.Go(form_lvCopyScratchpad, clr: Color.Yellow, Once: true);
+                    //FormAnalysis_DirListMessageBox("The Copy scratchpad cannot be loaded with no directory listings.", "Load Copy scratchpad externally");
+                    //Application.Exit();
                     break;
                 }
 
-                case Utilities.ksFileExt_Ignore:
+                case FileParse.ksFileExt_Ignore:
                 {
-                    LoadIgnoreList(strFile);
-                    form_tabControlMain.SelectedTab = form_tabPageBrowse;
-                    form_tabControlCopyIgnore.SelectedTab = form_tabPageIgnore;
+                    //LoadIgnoreList(strFile);
+                    //form_tabControlMain.SelectedTab = form_tabPageBrowse;
+                    //form_tabControlCopyIgnore.SelectedTab = form_tabPageIgnore;
                     break;
                 }
             }

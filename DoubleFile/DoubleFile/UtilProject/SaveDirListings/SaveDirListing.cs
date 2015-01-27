@@ -25,23 +25,21 @@ namespace DoubleFile
                 fs.WriteLine(m_volStrings.Nickname);
                 fs.WriteLine(m_volStrings.SourcePath);
 
-                var strModel = m_volStrings.DriveModel;
-                var strSerialNo = m_volStrings.DriveSerial;
+                string strModel = null;
+                string strSerial = null;
                 ulong? nSize = null;
 
-                if (string.IsNullOrWhiteSpace(strModel))
-                {
-                    DriveSerial.Get(m_volStrings.SourcePath, out strModel, out strSerialNo, out nSize);
-                }
+                // at minimum get the drive size
+                DriveSerial.Get(m_volStrings.SourcePath, out strModel, out strSerial, out nSize);
 
-                if ((string.IsNullOrWhiteSpace(m_volStrings.DriveSerial) == false) &&
-                    (string.IsNullOrWhiteSpace(strSerialNo) == false) &&
-                    (strSerialNo != m_volStrings.DriveSerial) &&
-                    ((MBox.ShowDialog("Overwrite user-entered serial number for " + m_volStrings.SourcePath[0] + @":\ ?", "Save Directory Listings",
+                if ((((false == string.IsNullOrWhiteSpace(m_volStrings.DriveModel)) && (strModel != m_volStrings.DriveModel)) ||
+                    ((false == string.IsNullOrWhiteSpace(m_volStrings.DriveSerial)) && (strSerial != m_volStrings.DriveSerial))) &&
+                    ((MBox.ShowDialog("Overwrite user-entered drive model and serial # for " + m_volStrings.SourcePath[0] + @":\ ?", "Save Directory Listings",
                         System.Windows.MessageBoxButton.YesNo) ==
                         System.Windows.MessageBoxResult.No)))
                 {
-                    strSerialNo = m_volStrings.DriveSerial;
+                    strModel = m_volStrings.DriveModel;
+                    strSerial = m_volStrings.DriveSerial;
                 }
 
                 fs.WriteLine(ksDrive01);
@@ -68,7 +66,7 @@ namespace DoubleFile
                 WriteLine(driveInfo.TotalSize);
                 WriteLine(driveInfo.VolumeLabel);
                 WriteLine(strModel);
-                WriteLine(strSerialNo);
+                WriteLine(strSerial);
                 WriteLine(nSize);
                 MBox.Assert(0, nCount == FileParse.knDriveInfoItems);
                 fs.WriteLine(sb.ToString().Trim());

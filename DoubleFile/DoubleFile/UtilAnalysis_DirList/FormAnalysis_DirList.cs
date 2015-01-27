@@ -1,6 +1,5 @@
 ﻿using System.Windows.Forms;
 using System.Drawing;
-using System.Runtime.Hosting;       // release mode
 using System.Linq;
 using System;
 using System.Collections.Generic;

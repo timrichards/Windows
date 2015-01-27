@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management;
@@ -203,10 +204,10 @@ namespace DoubleFile
                 {
                     partition.GetRelated("Win32_DiskDrive").Cast<ManagementObject>().FirstOnlyAssert(new Action<ManagementObject>((diskDrive) =>
                     {
-                        foreach (var prop in diskDrive.Properties)
-                        {
-                            UtilProject.WriteLine(prop.Name + "\t\t\t" + prop.Value);
-                        }
+                        //foreach (var prop in diskDrive.Properties)
+                        //{
+                        //    UtilProject.WriteLine(prop.Name + "\t\t\t" + prop.Value);
+                        //}
 
                         try { nSize = (ulong?)diskDrive["Size"]; } catch { }
                         try { strDriveModel = diskDrive["DriveModel"].ToPrintString(); } catch { }
@@ -222,10 +223,10 @@ namespace DoubleFile
                         {
                             diskDrive.GetRelated("Win32_PhysicalMedia").Cast<ManagementObject>().FirstOnlyAssert(new Action<ManagementObject>((diskMedia) =>
                             {
-                                foreach (var prop in diskMedia.Properties)
-                                {
-                                    UtilProject.WriteLine(prop.Name + "\t\t\t" + prop.Value);
-                                }
+                                //foreach (var prop in diskMedia.Properties)
+                                //{
+                                //    UtilProject.WriteLine(prop.Name + "\t\t\t" + prop.Value);
+                                //}
 
                                 try { strDriveSerial = diskMedia["SerialNumber"].ToPrintString(); } catch { }
                             }));
@@ -234,10 +235,54 @@ namespace DoubleFile
                 }));
             }));
 
+            if (string.IsNullOrEmpty(strDriveModel))
+            {
+                var listDrives = GetAll();
+
+
+            }
+
             // out parameters can't be in lambda
             strDriveModel_out = strDriveModel;
             strDriveSerial_out = strDriveSerial;
             nSize_out = nSize;
+        }
+
+        static List<string> GetAll()
+        {
+            var listDrives = new List<string>();
+
+            new ManagementObjectSearcher(
+                new ManagementScope(@"\\.\ROOT\cimv2"),
+                new ObjectQuery("SELECT * FROM Win32_DiskDrive")
+            ).Get().Cast<ManagementObject>().ForEach(new Action<ManagementObject>((diskDrive) =>
+            {
+                string strDriveModel = null;
+                string strDriveSerial = null;
+                ulong? nSize = null;
+
+                try { nSize = (ulong?)diskDrive["Size"]; } catch { }
+                try { strDriveModel = diskDrive["DriveModel"].ToPrintString(); } catch { }
+
+                if ((strDriveModel == null) || (strDriveModel.Trim().Length == 0))
+                {
+                    try { strDriveModel = diskDrive["Caption"].ToPrintString(); } catch { }
+                }
+
+                try { strDriveSerial = diskDrive["SerialNumber"].ToPrintString(); } catch { }
+
+                if ((strDriveSerial == null) || (strDriveSerial.Trim().Length == 0))
+                {
+                    diskDrive.GetRelated("Win32_PhysicalMedia").Cast<ManagementObject>().FirstOnlyAssert(new Action<ManagementObject>((diskMedia) =>
+                    {
+                        try { strDriveSerial = diskMedia["SerialNumber"].ToPrintString(); } catch { }
+                    }));
+                }
+
+                listDrives.Add("\t\t\t" + strDriveModel + "\t\t\t" + strDriveSerial + "\t\t\t" + nSize);
+            }));
+
+            return listDrives;
         }
     }
 }

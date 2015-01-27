@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -9,9 +10,22 @@ namespace DoubleFile
         const string ksAllFilesFilter = "|All files|*.*";
         const string ksProjectFilter = "Double File project|*." + FileParse.ksFileExt_Project + ksAllFilesFilter;
         internal const string ksListingFilter = "Double File Listing|*." + FileParse.ksFileExt_Listing + ksAllFilesFilter;
+        internal const string ksUnsavedWarning = "You are about to lose changes to an unsaved project.";
 
-        internal void OpenProject()
+        internal void OpenProject(bool bUnaved = false)
         {
+            if (bUnaved)
+            {
+                m_lvVM.Unsaved = true;
+            }
+            
+            if (m_lvVM.Unsaved &&
+                (MessageBoxResult.Cancel ==
+                MBox.ShowDialog(ksUnsavedWarning, "Open Project", MessageBoxButton.OKCancel)))
+            {
+                return;
+            }
+
             var dlg = new Microsoft.Win32.OpenFileDialog();
 
             dlg.Title = "Open Project";
@@ -26,6 +40,7 @@ namespace DoubleFile
         internal void SaveProject()
         {
             SaveProject(m_lvVM.ItemsCast);
+            m_lvVM.Unsaved = false;
         }
 
         static internal void SaveProject(IEnumerable<LVitem_ProjectVM> listLVvolStrings)
@@ -116,7 +131,7 @@ namespace DoubleFile
             {
                 if (FileParse.ReadHeader(fileName, out lvItem))
                 {
-                    m_lvVM.NewItem(lvItem);
+                    m_lvVM.NewItem(lvItem, bFromDisk: true);
                 }
                 else
                 {

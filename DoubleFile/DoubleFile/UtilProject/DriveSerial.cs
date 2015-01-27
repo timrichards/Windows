@@ -279,7 +279,12 @@ namespace DoubleFile
                     }));
                 }
 
-                listDrives.Add("\t\t\t" + strDriveModel + "\t\t\t" + strDriveSerial + "\t\t\t" + nSize);
+                var strOut = "\t\t\t" + strDriveModel + "\t\t\t" + strDriveSerial + "\t\t\t" + nSize;
+
+                if (false == string.IsNullOrWhiteSpace(strOut))
+                {
+                    listDrives.Add(strOut);
+                }
             }));
 
             return listDrives;

@@ -109,11 +109,17 @@ namespace DoubleFile
         {
             var volumes = new WinProject(ListLVvolStrings, bOpenProject);
 
+            if (ListLVvolStrings != null)
+            {
+                volumes.Unsaved = m_bUnsaved;
+            }
+
             if (false == (volumes.ShowDialog() ?? false))
             {
                 return;
             }
 
+            m_bUnsaved = volumes.Unsaved;
             ListLVvolStrings = volumes.ListLVvolStrings;
             FormAnalysis_DirListAction(FormAnalysis_DirList.RestartTreeTimer);
 
@@ -123,8 +129,18 @@ namespace DoubleFile
             }
         }
 
-        private void LocalWindow_Closed(object sender, System.EventArgs e)
+        private void LocalWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if (m_bUnsaved)
+            {
+                if (MessageBoxResult.Cancel == 
+                    MBox.ShowDialog(WinProjectVM.ksUnsavedWarning, "Quit Double File", MessageBoxButton.OKCancel))
+                {
+                    e.Cancel = true;
+                    return;
+                }
+            }
+
             if (Directory.Exists(ProjectFile.TempPath))
             {
                 Directory.Delete(ProjectFile.TempPath, true);
@@ -151,6 +167,7 @@ namespace DoubleFile
             if (ListLVvolStrings != null)
             {
                 WinProjectVM.SaveProject(ListLVvolStrings);
+                m_bUnsaved = false;
             }
             else
             {
@@ -169,5 +186,7 @@ namespace DoubleFile
                 Analysis_DirListForm.Activate();
             }
         }
+
+        bool m_bUnsaved = false;
     }
 }

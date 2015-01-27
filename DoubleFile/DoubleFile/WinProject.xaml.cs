@@ -9,7 +9,7 @@ namespace DoubleFile
     /// </summary>
     partial class WinProject : LocalWindow
     {
-        bool m_bOpenProject = false;
+        internal bool Unsaved { get; set; }
         internal IEnumerable<LVitem_ProjectVM> ListLVvolStrings { get; private set; }
 
         public WinProject()
@@ -45,27 +45,31 @@ namespace DoubleFile
                 }
             }
 
-            ListLVvolStrings = null;     // close box / cancel
+            ListLVvolStrings = null;     // keep just one representation of state at a time.
 
             if (m_bOpenProject)
             {
-                win.OpenProject();
+                win.OpenProject(Unsaved);
             }
         }
 
         private void BtnOK_Click(object sender, RoutedEventArgs e)
         {
+            var lvProjectVM = form_lvProject.DataContext as LV_ProjectVM;
             var list = new UList<LVitem_ProjectVM>();
 
-            foreach (var lvItem in (form_lvProject.DataContext as LV_ProjectVM).ItemsCast)
+            foreach (var lvItem in lvProjectVM.ItemsCast)
             {
                 list.Add(lvItem);
             }
 
+            Unsaved = lvProjectVM.Unsaved;
             ListLVvolStrings = list;
             DialogResult = true;
 
             // IsDefault = "True" in xaml so that seems to take care of closing the window After this handler returns.
         }
+
+        bool m_bOpenProject = false;
     }
 }

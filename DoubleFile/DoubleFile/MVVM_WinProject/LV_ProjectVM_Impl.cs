@@ -5,6 +5,8 @@ namespace DoubleFile
 {
     partial class LV_ProjectVM
     {
+        internal bool Unsaved { get; set; }
+
         internal bool AlreadyInProject(LVitem_ProjectVM lvCurrentItem, string strFilename = null)
         {
             bool bAlreadyInProject = (ContainsListingFile(lvCurrentItem, strFilename) != null);
@@ -15,27 +17,6 @@ namespace DoubleFile
             }
 
             return bAlreadyInProject;
-        }
-
-        internal LVitem_ProjectVM ContainsListingFile(LVitem_ProjectVM currentItem, string t = null)
-        {
-            if (string.IsNullOrEmpty(t))
-            {
-                return null;
-            }
-
-            string s = (t ?? currentItem.ListingFile).ToLower();
-
-            foreach (LVitem_ProjectVM item in m_items)
-            {
-                if ((item.ListingFile.ToLower() == s) &&
-                    ((t == null) || (currentItem != item)))
-                {
-                    return item;
-                }
-            }
-
-            return null;
         }
 
         internal void EditListingFile()
@@ -71,6 +52,8 @@ namespace DoubleFile
                                 //    form_btnSaveProject_Click();
                                 //}
                                 FileParse.ReadHeader(lvItemVolumeTemp.ListingFile, out lvItemVolumeTemp);
+                                lvItem.StringValues = lvItemVolumeTemp.StringValues;
+                                Unsaved = true;
                             }
                         }
                         else if (FileExists(lvItemVolumeTemp.ListingFile))
@@ -78,7 +61,6 @@ namespace DoubleFile
                             continue;
                         }
 
-                        lvItem.StringValues = lvItemVolumeTemp.StringValues;
                         break;
                     }
                 }
@@ -98,12 +80,17 @@ namespace DoubleFile
             return bFileExists;
         }
 
-        internal bool NewItem(LVitem_ProjectVM lvItem, bool bQuiet = false)
+        internal bool NewItem(LVitem_ProjectVM lvItem, bool bQuiet = false, bool bFromDisk = false)
         {
-            return NewItem(lvItem.StringValues, bQuiet);
+            return NewItem(lvItem.StringValues, bQuiet, bFromDisk);
         }
 
-        internal override bool NewItem(string[] arrStr, bool bQuiet = false)
+        internal override bool NewItem(string[] arrStr, bool bQuiet = false)    // Huh. The compiler differentiates calls to this and the below method
+        {
+            return this.NewItem(arrStr, bQuiet, bFromDisk: false);
+        }
+
+        internal bool NewItem(string[] arrStr, bool bQuiet = false, bool bFromDisk = false)
         {
             var lvItem = new LVitem_ProjectVM(arrStr);
             var bAlreadyInProject = AlreadyInProject(lvItem);
@@ -111,6 +98,11 @@ namespace DoubleFile
             if (false == bAlreadyInProject)
             {
                 Add(lvItem, bQuiet);
+
+                if (bFromDisk == false)
+                {
+                    Unsaved = true;
+                }
             }
 
             return (false == bAlreadyInProject);
@@ -140,6 +132,7 @@ namespace DoubleFile
                 return;
             }
 
+            Unsaved = true;
             Selected().ToArray().ForEach(lvItem => { Items.Remove(lvItem); });
         }
 
@@ -158,12 +151,36 @@ namespace DoubleFile
                 {
                     lvItem.VolumeGroup = dlg.Text;
                 });
+
+                Unsaved = true;
             }
         }
 
         internal void ToggleInclude()
         {
             Selected().ForEach(lvItem => { lvItem.Include = (false == lvItem.Include); });
+            Unsaved = true;
+        }
+
+        LVitem_ProjectVM ContainsListingFile(LVitem_ProjectVM currentItem, string t = null)
+        {
+            if (string.IsNullOrEmpty(t))
+            {
+                return null;
+            }
+
+            string s = (t ?? currentItem.ListingFile).ToLower();
+
+            foreach (LVitem_ProjectVM item in m_items)
+            {
+                if ((item.ListingFile.ToLower() == s) &&
+                    ((t == null) || (currentItem != item)))
+                {
+                    return item;
+                }
+            }
+
+            return null;
         }
 
         bool ModifyListingFile(LVitem_ProjectVM origLVitemVolume, LVitem_ProjectVM lvItemVolumeTemp, char driveLetter)

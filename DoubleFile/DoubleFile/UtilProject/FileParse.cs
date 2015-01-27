@@ -64,8 +64,6 @@ namespace DoubleFile
         internal const string ksFileExt_Ignore = "sdl_ignore";
 
         internal const int knDriveInfoItems = 11;
-        internal const int knDriveModel = 12;           // backwards compatibility when Info: isn't in the header
-        internal const int knDriveSerial = 13;          // ...line numbering starts at one in the file and zero in the program
 
         internal static readonly string[] kasDIlabels = new string[knDriveInfoItems]
         {
@@ -342,15 +340,25 @@ namespace DoubleFile
             {
                 string line = null;
 
-                if ((line = sr.ReadLine()) == null) return false;
-                if ((line = sr.ReadLine()) == null) return false;
-                if (line.StartsWith(ksLineType_Nickname) == false) return false;
+                if ((line = sr.ReadLine()) == null)
+                    return false;
+
+                if ((line = sr.ReadLine()) == null)
+                    return false;
+
+                if (line.StartsWith(ksLineType_Nickname) == false)
+                    return false;
 
                 string[] arrLine = line.Split('\t');
 
-                if (arrLine.Length > 2) lvItem.Nickname = arrLine[2];
-                if ((line = sr.ReadLine()) == null) return false;
-                if (line.StartsWith(ksLineType_Path) == false) return false;
+                if (arrLine.Length > 2)
+                    lvItem.Nickname = arrLine[2];
+
+                if ((line = sr.ReadLine()) == null)
+                    return false;
+
+                if (line.StartsWith(ksLineType_Path) == false)
+                    return false;
 
                 // unkosher lambda "byref parameters"
                 bool bReadAttributeReturnValue = false;
@@ -374,37 +382,30 @@ namespace DoubleFile
                 });
 
                 ReadAttribute(line);
-                if (bReadAttributeReturnValue == false) return false;
+
+                if (bReadAttributeReturnValue == false)
+                    return false;
+
                 lvItem.SourcePath = strReadAttributeReturnValue;
 
-                File.ReadLines(strFile).Skip(knDriveModel).Take(1)
-                //  .Where(s => s.StartsWith(ksLineType_VolumeInfo_DriveModel))
+                File.ReadLines(strFile).Skip(4).Take(knDriveInfoItems)
+                    .Where(s => s.StartsWith(ksLineType_VolumeInfo_DriveModel))
                     .FirstOnlyAssert(s =>
                 {
-                    if (s.StartsWith(ksLineType_VolumeInfo))
-                    {
-                        ReadAttribute(s);
-                        if (bReadAttributeReturnValue) lvItem.DriveModel = strReadAttributeReturnValue;
-                    }
-                    else
-                    {
-                        MBox.Assert(0, false);
-                    }
+                    ReadAttribute(s);
+
+                    if (bReadAttributeReturnValue)
+                        lvItem.DriveModel = strReadAttributeReturnValue;
                 });
 
-                File.ReadLines(strFile).Skip(knDriveSerial).Take(1)
-                //   .Where(s => s.StartsWith(ksLineType_VolumeInfo_DriveSerial))
+                File.ReadLines(strFile).Skip(4).Take(knDriveInfoItems)
+                    .Where(s => s.StartsWith(ksLineType_VolumeInfo_DriveSerial))
                     .FirstOnlyAssert(s =>
                 {
-                    if (s.StartsWith(ksLineType_VolumeInfo))
-                    {
-                        ReadAttribute(s);
-                        if (bReadAttributeReturnValue) lvItem.DriveSerial = strReadAttributeReturnValue;
-                    }
-                    else
-                    {
-                        MBox.Assert(0, false);
-                    }
+                    ReadAttribute(s);
+
+                    if (bReadAttributeReturnValue)
+                        lvItem.DriveSerial = strReadAttributeReturnValue;
                 });
             }
 

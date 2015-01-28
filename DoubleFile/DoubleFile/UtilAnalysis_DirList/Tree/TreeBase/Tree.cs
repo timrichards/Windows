@@ -11,14 +11,14 @@ namespace DoubleFile
     partial class Tree : TreeBase
     {
         internal Tree(GlobalData_Base gd_in,
-            IEnumerable<LVitem_ProjectVM> listLVvolStrings,
+            LV_ProjectVM lvProjectVM,
             SortedDictionary<Correlate, UList<TreeNode>> dictNodes,
             Dictionary<string, string> dictDriveInfo,
             TreeStatusDelegate statusCallback,
             Action doneCallback)
             : base(gd_in, dictNodes, dictDriveInfo, statusCallback)
         {
-            ListLVvolStrings = listLVvolStrings;
+            LVprojectVM = lvProjectVM;
             m_doneCallback = doneCallback;
             MBox.Assert(1301.2301, m_doneCallback != null);
         }
@@ -59,7 +59,7 @@ namespace DoubleFile
 
             DateTime dtStart = DateTime.Now;
 
-            foreach (LVitem_ProjectVM volStrings in ListLVvolStrings)
+            foreach (var volStrings in LVprojectVM.ItemsCast)
             {
                 if (volStrings.CanLoad == false)
                 {
@@ -86,7 +86,7 @@ namespace DoubleFile
             m_doneCallback();
         }
 
-        IEnumerable<LVitem_ProjectVM> ListLVvolStrings { get; set; }
+        LV_ProjectVM LVprojectVM { get; set; }
         readonly Action m_doneCallback = null;
         ConcurrentBag<TreeRootNodeBuilder> m_cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
         Thread m_thread = null;

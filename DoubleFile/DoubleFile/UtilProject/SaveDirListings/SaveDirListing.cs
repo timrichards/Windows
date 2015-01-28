@@ -22,29 +22,29 @@ namespace DoubleFile
             void WriteHeader(TextWriter fs)
             {
                 fs.WriteLine(ksHeader01);
-                fs.WriteLine(m_volStrings.Nickname);
-                fs.WriteLine(m_volStrings.SourcePath);
+                fs.WriteLine(LVitemProjectVM.Nickname);
+                fs.WriteLine(LVitemProjectVM.SourcePath);
 
                 string strModel = null;
                 string strSerial = null;
                 ulong? nSize = null;
 
                 // at minimum get the drive size
-                DriveSerial.Get(m_volStrings.SourcePath, out strModel, out strSerial, out nSize);
+                DriveSerial.Get(LVitemProjectVM.SourcePath, out strModel, out strSerial, out nSize);
 
-                if ((((false == string.IsNullOrWhiteSpace(m_volStrings.DriveModel)) && (strModel != m_volStrings.DriveModel)) ||
-                    ((false == string.IsNullOrWhiteSpace(m_volStrings.DriveSerial)) && (strSerial != m_volStrings.DriveSerial))) &&
-                    ((MBox.ShowDialog("Overwrite user-entered drive model and serial # for " + m_volStrings.SourcePath[0] + @":\ ?", "Save Directory Listings",
+                if ((((false == string.IsNullOrWhiteSpace(LVitemProjectVM.DriveModel)) && (strModel != LVitemProjectVM.DriveModel)) ||
+                    ((false == string.IsNullOrWhiteSpace(LVitemProjectVM.DriveSerial)) && (strSerial != LVitemProjectVM.DriveSerial))) &&
+                    ((MBox.ShowDialog("Overwrite user-entered drive model and serial # for " + LVitemProjectVM.SourcePath[0] + @":\ ?", "Save Directory Listings",
                         System.Windows.MessageBoxButton.YesNo) ==
                         System.Windows.MessageBoxResult.No)))
                 {
-                    strModel = m_volStrings.DriveModel;
-                    strSerial = m_volStrings.DriveSerial;
+                    strModel = LVitemProjectVM.DriveModel;
+                    strSerial = LVitemProjectVM.DriveSerial;
                 }
 
                 fs.WriteLine(ksDrive01);
 
-                var driveInfo = new DriveInfo(m_volStrings.SourcePath[0] + @":\");
+                var driveInfo = new DriveInfo(LVitemProjectVM.SourcePath[0] + @":\");
                 var sb = new StringBuilder();
                 int nCount = 0;
 
@@ -89,7 +89,7 @@ namespace DoubleFile
 
                 System.Threading.Timer timer = new System.Threading.Timer(new TimerCallback((Object state) =>
                 {
-                    m_statusCallback(m_volStrings.SourcePath, nProgress: nProgressNumerator / nProgressDenominator);
+                    m_statusCallback(LVitemProjectVM, nProgress: nProgressNumerator / nProgressDenominator);
                 }), null, timeSpan, timeSpan);
 
                 var dictHash = new Dictionary<string, string>();
@@ -136,36 +136,36 @@ namespace DoubleFile
                 timer.Dispose();
                 dictHash_out = dictHash;
                 dictException_FileRead_out = dictException_FileRead;
-                m_statusCallback(m_volStrings.SourcePath, nProgress: 1);
+                m_statusCallback(LVitemProjectVM, nProgress: 1);
             }
 
             void Go()
             {
-                if (IsGoodDriveSyntax(m_volStrings.SourcePath) == false)
+                if (IsGoodDriveSyntax(LVitemProjectVM.SourcePath) == false)
                 {
                     MBox.ShowDialog("Bad drive syntax.", "Save Directory Listing");
                 }
 
-                if (Directory.Exists(m_volStrings.SourcePath) == false)
+                if (Directory.Exists(LVitemProjectVM.SourcePath) == false)
                 {
-                    m_statusCallback(m_volStrings.SourcePath, ksNotSaved);
+                    m_statusCallback(LVitemProjectVM, ksNotSaved);
                     MBox.ShowDialog("Source Path does not exist.", "Save Directory Listing");
                     return;
                 }
 
-                if (string.IsNullOrWhiteSpace(m_volStrings.ListingFile))
+                if (string.IsNullOrWhiteSpace(LVitemProjectVM.ListingFile))
                 {
-                    m_volStrings.ListingFile = ProjectFile.TempPath + m_volStrings.SourcePath[0] + "_Listing_" +
+                    LVitemProjectVM.ListingFile = ProjectFile.TempPath + LVitemProjectVM.SourcePath[0] + "_Listing_" +
                         Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + "." + ksFileExt_Listing;
                 }
 
                 string strPathOrig = Directory.GetCurrentDirectory();
 
-                Directory.CreateDirectory(Path.GetDirectoryName(m_volStrings.ListingFile));
+                Directory.CreateDirectory(Path.GetDirectoryName(LVitemProjectVM.ListingFile));
 
                 try
                 {
-                    using (TextWriter fs = File.CreateText(m_volStrings.ListingFile))
+                    using (TextWriter fs = File.CreateText(LVitemProjectVM.ListingFile))
                     {
                         Dictionary<string, string> dictHash = null;
                         Dictionary<string, string> dictException_FileRead = null;
@@ -197,13 +197,13 @@ namespace DoubleFile
 
                     if (m_bThreadAbort || gd.WindowClosed)
                     {
-                        File.Delete(m_volStrings.ListingFile);
+                        File.Delete(LVitemProjectVM.ListingFile);
                         return;
                     }
 
                     Directory.SetCurrentDirectory(strPathOrig);
-                    m_volStrings.Status = ksSaved;
-                    m_statusCallback(m_volStrings.SourcePath, strText: ksSaved, bDone: true);
+                    LVitemProjectVM.Status = ksSaved;
+                    m_statusCallback(LVitemProjectVM, strText: ksSaved, bDone: true);
                 }
 #if DEBUG == false
                 catch (Exception e)

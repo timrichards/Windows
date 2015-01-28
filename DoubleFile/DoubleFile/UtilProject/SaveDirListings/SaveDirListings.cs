@@ -15,12 +15,12 @@ namespace DoubleFile
         }
 
         internal SaveDirListings(GlobalData_Base gd_in,
-            IEnumerable<LVitem_ProjectVM> list_LVitem_VolumeVM,
+            LV_ProjectVM lvProjectVM,
             SaveDirListingsStatusDelegate statusCallback,
             Action doneCallback)
         {
             gd = gd_in;
-            m_list_LVitem_VolumeVM = list_LVitem_VolumeVM;
+            m_lvProjectVM = lvProjectVM;
             m_statusCallback = statusCallback;
             m_doneCallback = doneCallback;
         }
@@ -32,15 +32,15 @@ namespace DoubleFile
 
             DateTime dtStart = DateTime.Now;
 
-            foreach (LVitem_ProjectVM volStrings in m_list_LVitem_VolumeVM)
+            foreach (var lvItemProjectVM in m_lvProjectVM.ItemsCast)
             {
-                if (false == volStrings.WouldSave)
+                if (false == lvItemProjectVM.WouldSave)
                 {
                     continue;
                 }
 
-                m_statusCallback(volStrings.SourcePath, "Saving...");
-                m_cbagWorkers.Add(new SaveDirListing(gd, volStrings, m_statusCallback).DoThreadFactory());
+                m_statusCallback(lvItemProjectVM, "Saving...");
+                m_cbagWorkers.Add(new SaveDirListing(gd, lvItemProjectVM, m_statusCallback).DoThreadFactory());
             }
 
             foreach (SaveDirListing worker in m_cbagWorkers)
@@ -85,6 +85,6 @@ namespace DoubleFile
         Thread m_thread = null;
         bool m_bThreadAbort = false;
         ConcurrentBag<SaveDirListing> m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
-        IEnumerable<LVitem_ProjectVM> m_list_LVitem_VolumeVM = null;
+        LV_ProjectVM m_lvProjectVM = null;
     }
 }

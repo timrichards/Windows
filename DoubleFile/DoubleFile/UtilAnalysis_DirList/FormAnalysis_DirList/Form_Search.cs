@@ -217,7 +217,7 @@ namespace DoubleFile
             MBox.Assert(1307.8312, gd_Search_1_2.m_searchType2 == null);
 
             gd_Search_1_2.m_searchType2 = new SearchType2(new GlobalData_Form(this),
-                ListLVvolStrings,
+                LVprojectVM,
                 strSearch,
                 strSearch.ToLower() != strSearch,
                 folderHandling,

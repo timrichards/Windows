@@ -23,14 +23,14 @@ namespace DoubleFile
         GlobalData_Search_Path gd_Search_Path = null;
         GlobalData_Search_1_2 gd_Search_1_2 = null;
         readonly MainWindow m_ownerWindow = null;
-        IEnumerable<LVitem_ProjectVM> ListLVvolStrings { get; set; }
+        LV_ProjectVM LVprojectVM { get; set; }
 
-        internal FormAnalysis_DirList(MainWindow ownerWindow, IEnumerable<LVitem_ProjectVM> listLVvolStrings)
+        internal FormAnalysis_DirList(MainWindow ownerWindow, LV_ProjectVM lvProjectVM)
         {
             InitializeComponent();
 
             m_ownerWindow = ownerWindow;
-            ListLVvolStrings = listLVvolStrings;
+            LVprojectVM = new LV_ProjectVM(lvProjectVM);
 
             gd = GlobalData.Instance;
             gd_Tree = new GlobalData_Tree(gd);
@@ -84,11 +84,11 @@ namespace DoubleFile
             form_tmapUserCtl.TooltipAnchor = (Control)form_cbFindbox;
         }
 
-        static internal void RestartTreeTimer(FormAnalysis_DirList form1, IEnumerable<LVitem_ProjectVM> listLVvolStrings)
+        static internal void RestartTreeTimer(FormAnalysis_DirList form1, LV_ProjectVM lvProjectVM)
         {
             if (form1 != null)
             {
-                form1.ListLVvolStrings = listLVvolStrings;
+                form1.LVprojectVM = new LV_ProjectVM(lvProjectVM);
                 form1.gd.RestartTreeTimer();
             }
         }

@@ -344,7 +344,7 @@ namespace DoubleFile
                 form_colDirDetail.Text = gd.m_strColDirDetailOrig;
                 form_colVolDetail.Text = gd.m_strColVolDetailOrig;
 
-                if ((ListLVvolStrings == null) || (ListLVvolStrings.Count() <= 0))
+                if ((LVprojectVM == null) || (LVprojectVM.Items.Count() <= 0))
                 {
                     return;
                 }
@@ -352,7 +352,7 @@ namespace DoubleFile
                 MBox.Assert(1304.5312, gd_Tree.m_listRootNodes.Count == 0);
 
                 gd_Tree.m_tree = new Tree(new GlobalData_Form(this),
-                    ListLVvolStrings, gd_Tree.m_dictNodes, gd_Tree.m_dictDriveInfo,
+                    LVprojectVM, gd_Tree.m_dictNodes, gd_Tree.m_dictDriveInfo,
                     TreeStatusCallback, TreeDoneCallback);
                 gd_Tree.m_tree.DoThreadFactory();
 

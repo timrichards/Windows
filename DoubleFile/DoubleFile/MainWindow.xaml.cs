@@ -17,17 +17,17 @@ namespace DoubleFile
             InitializeComponent();
         }
 
-        internal IEnumerable<LVitem_ProjectVM> ListLVvolStrings { get; private set; }
+        internal LV_ProjectVM LVprojectVM { get; private set; }
         internal FormAnalysis_DirList Analysis_DirListForm { get; private set; }
 
-        void FormAnalysis_DirListAction(System.Action<FormAnalysis_DirList, IEnumerable<LVitem_ProjectVM>> action)
+        void FormAnalysis_DirListAction(System.Action<FormAnalysis_DirList, LV_ProjectVM> action)
         {
-            if ((Analysis_DirListForm == null) || (Analysis_DirListForm.IsDisposed))
+            if ((Analysis_DirListForm == null) || Analysis_DirListForm.IsDisposed)
             {
                 return;
             }
 
-            action(Analysis_DirListForm, ListLVvolStrings);
+            action(Analysis_DirListForm, new LV_ProjectVM(LVprojectVM));
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -107,38 +107,30 @@ namespace DoubleFile
 
         void ShowProjectWindow(bool bOpenProject = false)
         {
-            var volumes = new WinProject(ListLVvolStrings, bOpenProject);
-
-            if (ListLVvolStrings != null)
-            {
-                volumes.Unsaved = m_bUnsaved;
-            }
+            var volumes = new WinProject(LVprojectVM, bOpenProject);
 
             if (false == (volumes.ShowDialog() ?? false))
             {
                 return;
             }
 
-            m_bUnsaved = volumes.Unsaved;
-            ListLVvolStrings = volumes.ListLVvolStrings;
+            LVprojectVM = volumes.LVprojectVM;
             FormAnalysis_DirListAction(FormAnalysis_DirList.RestartTreeTimer);
 
-            if (ListLVvolStrings != null)
+            if (LVprojectVM != null)
             {
-                new SaveListingsProcess(new GlobalData_Window(this), ListLVvolStrings);
+                new SaveListingsProcess(new GlobalData_Window(this), LVprojectVM);
             }
         }
 
-        private void LocalWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (m_bUnsaved)
+            if ((LVprojectVM != null) && LVprojectVM.Unsaved &&
+                (MessageBoxResult.Cancel == 
+                MBox.ShowDialog(WinProjectVM.ksUnsavedWarning, "Quit Double File", MessageBoxButton.OKCancel)))
             {
-                if (MessageBoxResult.Cancel == 
-                    MBox.ShowDialog(WinProjectVM.ksUnsavedWarning, "Quit Double File", MessageBoxButton.OKCancel))
-                {
-                    e.Cancel = true;
-                    return;
-                }
+                e.Cancel = true;
+                return;
             }
 
             if (Directory.Exists(ProjectFile.TempPath))
@@ -164,10 +156,9 @@ namespace DoubleFile
 
         private void Button_SaveProject_Click(object sender, RoutedEventArgs e)
         {
-            if (ListLVvolStrings != null)
+            if (LVprojectVM != null)
             {
-                WinProjectVM.SaveProject(ListLVvolStrings);
-                m_bUnsaved = false;
+                WinProjectVM.SaveProject(LVprojectVM);
             }
             else
             {
@@ -179,14 +170,12 @@ namespace DoubleFile
         {
             if ((Analysis_DirListForm == null) || (Analysis_DirListForm.IsDisposed))
             {
-                (Analysis_DirListForm = new FormAnalysis_DirList(this, ListLVvolStrings)).Show();
+                (Analysis_DirListForm = new FormAnalysis_DirList(this, LVprojectVM)).Show();
             }
             else
             {
                 Analysis_DirListForm.Activate();
             }
         }
-
-        bool m_bUnsaved = false;
     }
 }

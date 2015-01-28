@@ -10,7 +10,7 @@ namespace DoubleFile
     partial class SearchType2 : SearchBase
     {
         internal SearchType2(GlobalData_Base gd_in,
-            IEnumerable<LVitem_ProjectVM> list_lvVolStrings,
+            LV_ProjectVM lvProjectVM,
             string strSearch, 
             bool bCaseSensitive,
             SearchBase.FolderSpecialHandling folderHandling,
@@ -20,7 +20,7 @@ namespace DoubleFile
             Action doneCallback)
             : base(gd_in, statusCallback)
         {
-            m_list_lvVolStrings = list_lvVolStrings;
+            m_lvProjectVM = lvProjectVM;
             m_strSearch = strSearch;
             m_bCaseSensitive = bCaseSensitive;
             m_folderHandling = folderHandling;          // not used
@@ -35,7 +35,7 @@ namespace DoubleFile
 
             DateTime dtStart = DateTime.Now;
 
-            foreach (LVitem_ProjectVM volStrings in m_list_lvVolStrings)
+            foreach (var volStrings in m_lvProjectVM.ItemsCast)
             {
                 SearchFile searchFile = new SearchFile((SearchBase)this, volStrings);
 
@@ -78,7 +78,7 @@ namespace DoubleFile
         internal bool IsAborted { get { return m_bThreadAbort; } }
 
         readonly Action m_doneCallback = null;
-        readonly IEnumerable<LVitem_ProjectVM> m_list_lvVolStrings = null;
+        readonly LV_ProjectVM m_lvProjectVM = null;
 
         Thread m_thread = null;
         bool m_bThreadAbort = false;

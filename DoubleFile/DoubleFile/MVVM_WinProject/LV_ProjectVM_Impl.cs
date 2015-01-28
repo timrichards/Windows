@@ -7,6 +7,19 @@ namespace DoubleFile
     {
         internal bool Unsaved { get; set; }
 
+        internal LV_ProjectVM(LV_ProjectVM lvProjectVM_in = null)
+        {
+            if (lvProjectVM_in != null)
+            {
+                foreach (var lvItemVM in lvProjectVM_in.ItemsCast)
+                {
+                    Add(lvItemVM, bQuiet: true);
+                }
+
+                Unsaved = lvProjectVM_in.Unsaved;
+            }
+        }
+
         internal bool AlreadyInProject(LVitem_ProjectVM lvCurrentItem, string strFilename = null)
         {
             bool bAlreadyInProject = (ContainsListingFile(lvCurrentItem, strFilename) != null);
@@ -162,19 +175,19 @@ namespace DoubleFile
             Unsaved = true;
         }
 
-        LVitem_ProjectVM ContainsListingFile(LVitem_ProjectVM currentItem, string t = null)
+        LVitem_ProjectVM ContainsListingFile(LVitem_ProjectVM lvItem_Current, string t = null)
         {
             if (string.IsNullOrEmpty(t))
             {
                 return null;
             }
 
-            string s = (t ?? currentItem.ListingFile).ToLower();
+            string s = (t ?? lvItem_Current.ListingFile).ToLower();
 
             foreach (LVitem_ProjectVM item in m_items)
             {
                 if ((item.ListingFile.ToLower() == s) &&
-                    ((t == null) || (currentItem != item)))
+                    ((t == null) || (lvItem_Current != item)))
                 {
                     return item;
                 }
@@ -183,21 +196,21 @@ namespace DoubleFile
             return null;
         }
 
-        bool ModifyListingFile(LVitem_ProjectVM origLVitemVolume, LVitem_ProjectVM lvItemVolumeTemp, char driveLetter)
+        bool ModifyListingFile(LVitem_ProjectVM lvItem_Orig, LVitem_ProjectVM lvItemVolumeTemp, char driveLetter)
         {
-            if (false == FileParse.ValidateFile(origLVitemVolume.ListingFile))
+            if (false == FileParse.ValidateFile(lvItem_Orig.ListingFile))
             {
                 MBox.ShowDialog("Bad listing file.", "Edit Listing File");
                 return false;
             }
 
-            var bDriveModel_Todo = ((origLVitemVolume.DriveModel ?? "") != (lvItemVolumeTemp.DriveModel ?? ""));
-            var bDriveSerial_Todo = ((origLVitemVolume.DriveSerial ?? "") != (lvItemVolumeTemp.DriveSerial ?? ""));
-            var bNickname_Todo = ((origLVitemVolume.Nickname ?? "") != (lvItemVolumeTemp.Nickname ?? ""));
+            var bDriveModel_Todo = ((lvItem_Orig.DriveModel ?? "") != (lvItemVolumeTemp.DriveModel ?? ""));
+            var bDriveSerial_Todo = ((lvItem_Orig.DriveSerial ?? "") != (lvItemVolumeTemp.DriveSerial ?? ""));
+            var bNickname_Todo = ((lvItem_Orig.Nickname ?? "") != (lvItemVolumeTemp.Nickname ?? ""));
 
             driveLetter = char.ToUpper(driveLetter);
 
-            var driveLetterOrig = origLVitemVolume.SourcePath.ToUpper()[0];
+            var driveLetterOrig = lvItem_Orig.SourcePath.ToUpper()[0];
             var bDriveLetter_Todo = (char.IsLetter(driveLetter) && (driveLetter != driveLetterOrig));
 
             if (false == (bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo || bDriveLetter_Todo))
@@ -207,7 +220,7 @@ namespace DoubleFile
 
             var sbOut = new System.Text.StringBuilder();
 
-            using (var reader = new StringReader(File.ReadAllText(origLVitemVolume.ListingFile)))
+            using (var reader = new StringReader(File.ReadAllText(lvItem_Orig.ListingFile)))
             {
                 string strLine = null;
 
@@ -270,7 +283,7 @@ namespace DoubleFile
                 }
             }
 
-            File.WriteAllText(origLVitemVolume.ListingFile, sbOut.ToString());
+            File.WriteAllText(lvItem_Orig.ListingFile, sbOut.ToString());
             MBox.Assert(0, (false == (bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo || bDriveLetter_Todo)));
             return true;
         }

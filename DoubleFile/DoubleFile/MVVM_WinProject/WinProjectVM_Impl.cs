@@ -12,13 +12,8 @@ namespace DoubleFile
         internal const string ksListingFilter = "Double File Listing|*." + FileParse.ksFileExt_Listing + ksAllFilesFilter;
         internal const string ksUnsavedWarning = "You are about to lose changes to an unsaved project.";
 
-        internal void OpenProject(bool bUnaved = false)
+        internal void OpenProject()
         {
-            if (bUnaved)
-            {
-                m_lvVM.Unsaved = true;
-            }
-            
             if (m_lvVM.Unsaved &&
                 (MessageBoxResult.Cancel ==
                 MBox.ShowDialog(ksUnsavedWarning, "Open Project", MessageBoxButton.OKCancel)))
@@ -39,11 +34,11 @@ namespace DoubleFile
 
         internal void SaveProject()
         {
-            SaveProject(m_lvVM.ItemsCast);
+            SaveProject(m_lvVM);
             m_lvVM.Unsaved = false;
         }
 
-        static internal void SaveProject(IEnumerable<LVitem_ProjectVM> listLVvolStrings)
+        static internal void SaveProject(LV_ProjectVM lvProjectVM)
         {
             string strFilename = null;
 
@@ -67,7 +62,7 @@ namespace DoubleFile
                     }
                     else
                     {
-                        new ProjectFile().SaveProject(listLVvolStrings, strFilename);
+                        lvProjectVM.Unsaved = (false == new ProjectFile().SaveProject(lvProjectVM, strFilename));
                     }
                 }
 

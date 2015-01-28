@@ -11,7 +11,7 @@ namespace DoubleFile
                 LVitem_ProjectVM volStrings)
             {
                 gd = gd_in;
-                m_volStrings = volStrings;
+                LVitemProjectVM = volStrings;
             }
 
             /// <summary>
@@ -29,7 +29,7 @@ namespace DoubleFile
                 var stackDirs = new Stack<Win32FindFile.DATUM>(64);
                 Win32FindFile.DATUM winRoot;
 
-                Win32FindFile.FileData.WinFile(m_volStrings.SourcePath, out winRoot);
+                Win32FindFile.FileData.WinFile(LVitemProjectVM.SourcePath, out winRoot);
                 stackDirs.Push(winRoot);
 
                 var listFilePaths = new List<string>();
@@ -190,7 +190,7 @@ namespace DoubleFile
             protected IEnumerable<string> ErrorList { get { return m_listErrors; } }
 
             protected bool m_bThreadAbort = false;
-            protected readonly LVitem_ProjectVM m_volStrings = null;
+            protected readonly LVitem_ProjectVM LVitemProjectVM = null;
         }
     }
 }

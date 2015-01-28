@@ -78,12 +78,12 @@ namespace DoubleFile
             }
         }
 
-        internal void SaveProject(IEnumerable<LVitem_ProjectVM> listLVvolStrings, string strProjectFilename)
+        internal bool SaveProject(LV_ProjectVM lvProjectVM, string strProjectFilename)
         {
             var listListingFiles = new List<string>();
             var listListingFiles_Check = new List<string>();
 
-            foreach (LVitem_ProjectVM volStrings in listLVvolStrings)
+            foreach (var volStrings in lvProjectVM.ItemsCast)
             {
                 if (volStrings.WouldSave)
                 {
@@ -126,7 +126,7 @@ namespace DoubleFile
                 MBox.ShowDialog("Any listing files in project have not yet been saved." +
                     " Click OK on the Project window to start saving directory listings of your drives.",
                     "Save Project");
-                return;
+                return false;
             }
 
             var sbSource = new System.Text.StringBuilder();
@@ -137,6 +137,7 @@ namespace DoubleFile
             }
 
             var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
+            var bRet = true;
 
             m_process.Exited += (sender, args) => 
             {
@@ -164,6 +165,7 @@ namespace DoubleFile
 
                     MBox.ShowDialog(strError, "Error Saving Project");
                     File.AppendAllText(m_strErrorLogFile, m_sbError.ToString());
+                    bRet = false;
                 }
             };
 
@@ -206,7 +208,10 @@ namespace DoubleFile
                 }
 
                 MBox.ShowDialog("Couldn't save the project." + strMessage, "Save Project");
+                bRet = false;
             }
+
+            return bRet;
         }
 
         bool StartProcess(string status, string strProjectFileNoPath)

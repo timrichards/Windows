@@ -143,13 +143,13 @@ namespace DoubleFile
             {
                 if (IsGoodDriveSyntax(LVitemProjectVM.SourcePath) == false)
                 {
-                    MBox.ShowDialog("Bad drive syntax.", "Save Directory Listing");
+                    m_statusCallback(LVitemProjectVM, strError: "Bad drive syntax.");
+                    return;
                 }
 
                 if (Directory.Exists(LVitemProjectVM.SourcePath) == false)
                 {
-                    m_statusCallback(LVitemProjectVM, ksNotSaved);
-                    MBox.ShowDialog("Source Path does not exist.", "Save Directory Listing");
+                    m_statusCallback(LVitemProjectVM, strError: "Source Path does not exist.");
                     return;
                 }
 
@@ -202,8 +202,7 @@ namespace DoubleFile
                     }
 
                     Directory.SetCurrentDirectory(strPathOrig);
-                    LVitemProjectVM.Status = ksSaved;
-                    m_statusCallback(LVitemProjectVM, strText: ksSaved, bDone: true);
+                    m_statusCallback(LVitemProjectVM, bDone: true);
                 }
 #if DEBUG == false
                 catch (Exception e)

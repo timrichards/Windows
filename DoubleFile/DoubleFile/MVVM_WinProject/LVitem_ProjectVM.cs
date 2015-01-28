@@ -36,16 +36,31 @@ namespace DoubleFile
             set { IncludeYN = (value ? FileParse.ksInclude : "No"); } 
         }
 
-        const string ksFileExistsCheck = FileParse.ksUsingFile + FileParse.ksSaved;
-
         internal bool WouldSave
         {
-            get { return (false == (ksFileExistsCheck + FileParse.ksCantSave).Contains(Status)); }
+            get { return (false == (ksFileExistsCheck + FileParse.ksError).Contains(Status)); }
         }
 
         internal bool CanLoad
         {
-            get { return (Include && ksFileExistsCheck.Contains(Status)); }
+            get { return (Include && ksFileExistsCheck.Contains(Status) && (FileParse.ksError != Status)); }
         }
+
+        internal void SetSaved()
+        {
+            LVitem_ProjectVM lvItem = null;
+
+            if (FileParse.ReadHeader(ListingFile, out lvItem))
+            {
+                StringValues = lvItem.StringValues;
+                Status = FileParse.ksSaved;
+            }
+            else
+            {
+                Status = FileParse.ksError;
+            }
+        }
+
+        const string ksFileExistsCheck = FileParse.ksUsingFile + FileParse.ksSaved;
     }
 }

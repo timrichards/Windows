@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DoubleFile
 {
-    delegate void SaveDirListingsStatusDelegate(LVitem_ProjectVM lvItemProjectVM, string strText = null, bool bDone = false, double nProgress = double.NaN);
+    delegate void SaveDirListingsStatusDelegate(LVitem_ProjectVM lvItemProjectVM, string strError = null, bool bDone = false, double nProgress = double.NaN);
 
     partial class GlobalData
     {
@@ -56,7 +56,7 @@ namespace DoubleFile
             }
         }
 
-        internal void SaveDirListingsStatusCallback(LVitem_ProjectVM lvItemProjectVM, string strText = null, bool bDone = false, double nProgress = double.NaN)
+        internal void SaveDirListingsStatusCallback(LVitem_ProjectVM lvItemProjectVM, string strError = null, bool bDone = false, double nProgress = double.NaN)
         {
             UtilProject.CheckAndInvoke(new Action(() =>
             {
@@ -67,22 +67,24 @@ namespace DoubleFile
                     return;
                 }
 
-                if (nProgress >= 0)
+                if (strError != null)
                 {
-                    MBox.Assert(1306.7305, strText == null);
-                    MBox.Assert(1306.7306, bDone == false);
-                    m_winProgress.SetProgress(lvItemProjectVM.SourcePath, nProgress);
+                    m_winProgress.SetError(lvItemProjectVM.SourcePath, strError);
+                    lvItemProjectVM.Status = FileParse.ksError;
                 }
-
-                if (bDone)
+                else if (bDone)
                 {
                     m_winProgress.SetCompleted(lvItemProjectVM.SourcePath);
-                    lvItemProjectVM.Status = FileParse.ksSaved;
+                    lvItemProjectVM.SetSaved();
 
                     lock (gd_old.m_saveDirListings)
                     {
                         ++gd_old.m_saveDirListings.FilesWritten;
                     }
+                }
+                else if (nProgress >= 0)
+                {
+                    m_winProgress.SetProgress(lvItemProjectVM.SourcePath, nProgress);
                 }
             }));
         }

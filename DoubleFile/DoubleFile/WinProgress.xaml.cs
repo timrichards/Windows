@@ -60,6 +60,20 @@ namespace DoubleFile
             }
         }
 
+        internal void SetError(string strPath, string strError)
+        {
+            var lvItem = (m_lv[strPath] as LVitem_ProgressVM);
+
+            if (lvItem != null)
+            {
+                lvItem.SetError(strError);
+            }
+            else
+            {
+                MBox.Assert(0, false);
+            }
+        }
+
         internal bool Aborted { set; private get; }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)

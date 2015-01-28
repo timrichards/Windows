@@ -39,7 +39,6 @@ namespace DoubleFile
                     continue;
                 }
 
-                m_statusCallback(lvItemProjectVM, "Saving...");
                 m_cbagWorkers.Add(new SaveDirListing(gd, lvItemProjectVM, m_statusCallback).DoThreadFactory());
             }
 

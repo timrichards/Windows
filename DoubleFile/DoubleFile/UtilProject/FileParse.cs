@@ -26,7 +26,7 @@ namespace DoubleFile
         internal const string ksUsingFile = "Using file.";
         internal const string ksSaved = "Saved.";
         internal const string ksNotSaved = "Not saved.";
-        internal const string ksCantSave = "Can't save. Not mounted.";
+        internal const string ksError = "Error during save.";
         internal const string ksInclude = "Yes";
 
         internal const int knColLength = 7;

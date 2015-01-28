@@ -55,7 +55,7 @@ namespace DoubleFile
 
         private void WinProject_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if ((DialogResult != null) && DialogResult.Value)
+            if (DialogResult ?? false)
             {
                 return;
             }

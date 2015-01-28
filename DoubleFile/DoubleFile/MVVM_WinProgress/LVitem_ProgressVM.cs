@@ -102,6 +102,13 @@ namespace DoubleFile
             Remaining = "Completed.";
         }
 
+        internal void SetError(string strError)
+        {
+            Progress = 1;
+            ProgressState = Brushes.Red;
+            Remaining = "Error. " + strError;
+        }
+
         internal LVitem_ProgressVM(LV_ProgressVM LV, string[] arrStr)
             : base(LV, arrStr)
         {

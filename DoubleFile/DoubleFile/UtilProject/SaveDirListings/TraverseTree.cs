@@ -8,10 +8,10 @@ namespace DoubleFile
         class TraverseTree
         {
             protected TraverseTree(GlobalData_Base gd_in,
-                LVitem_ProjectVM volStrings)
+                LVitem_ProjectVM lvProjectVM)
             {
                 gd = gd_in;
-                LVitemProjectVM = volStrings;
+                LVitemProjectVM = lvProjectVM;
             }
 
             /// <summary>

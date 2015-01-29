@@ -110,5 +110,11 @@ namespace DoubleFile
                 e.Cancel = true;
             }
         }
+
+        private void WinProgress_ContentRendered(object sender, System.EventArgs e)
+        {
+            MinHeight = ActualHeight;
+            MaxHeight = ActualHeight;
+        }
     }
 }

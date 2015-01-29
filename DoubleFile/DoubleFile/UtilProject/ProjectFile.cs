@@ -130,10 +130,18 @@ namespace DoubleFile
             }
 
             var sbSource = new System.Text.StringBuilder();
+            var strPath = Path.GetDirectoryName(listListingFiles[0]);
 
             foreach (var listingFile in listListingFiles)
             {
-                sbSource.Append("\"").Append(Path.GetFileName(listingFile)).Append("\" ");
+                var strFilename = listingFile;
+
+                if (strFilename.StartsWith(strPath))
+                {
+                    strFilename.Replace(strPath, "");
+                }
+                
+                sbSource.Append("\"").Append(strFilename).Append("\" ");
             }
 
             var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
@@ -169,7 +177,7 @@ namespace DoubleFile
                 }
             };
 
-            m_process.StartInfo.WorkingDirectory = Path.GetDirectoryName(listListingFiles[0]);
+            m_process.StartInfo.WorkingDirectory = strPath;
             m_process.StartInfo.Arguments = "a \"" + strProjectFilename + ".7z\" " + sbSource + " -mx=3 -md=128m";
 
             if (false == StartProcess("Saving project.", strProjectFileNoPath))

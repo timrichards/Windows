@@ -207,8 +207,7 @@ namespace DoubleFile
 #if DEBUG == false
                 catch (Exception e)
                 {
-                    m_statusCallback(m_volStrings.SourcePath, strText: ksNotSaved, bDone: true);
-                    MBox.ShowDialog(m_volStrings.ListingFile.PadRight(100) + "\nException: " + e.Message, "Save Directory Listing");
+                    m_statusCallback(LVitemProjectVM, strError: e.Message, bDone: true);
                 }
 #endif
                 finally { }

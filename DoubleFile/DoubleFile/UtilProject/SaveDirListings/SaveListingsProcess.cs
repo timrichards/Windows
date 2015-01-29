@@ -12,10 +12,6 @@ namespace DoubleFile
 
     class SaveListingsProcess
     {
-        readonly GlobalData_Base gd = null;
-        GlobalData gd_old = null;
-        WinProgress m_winProgress = null;
-
         internal SaveListingsProcess(GlobalData_Base gd_in,
             LV_ProjectVM lvProjectVM)
         {
@@ -27,13 +23,11 @@ namespace DoubleFile
 
             foreach (var volStrings in lvProjectVM.ItemsCast)
             {
-                if (false == volStrings.WouldSave)
+                if (volStrings.WouldSave)
                 {
-                    continue;
+                    listNicknames.Add(volStrings.Nickname);
+                    listSourcePaths.Add(volStrings.SourcePath);
                 }
-
-                listNicknames.Add(volStrings.Nickname);
-                listSourcePaths.Add(volStrings.SourcePath);
             }
 
             if (listSourcePaths.Count > 0)
@@ -63,7 +57,12 @@ namespace DoubleFile
                 if (gd.WindowClosed || (gd_old.m_saveDirListings == null) || gd_old.m_saveDirListings.IsAborted)
                 {
                     m_winProgress.Aborted = true;
-                    m_winProgress.Close();
+
+                    if (m_bKeepShowingError == false)
+                    {
+                        m_winProgress.Close();
+                    }
+                    
                     return;
                 }
 
@@ -71,6 +70,7 @@ namespace DoubleFile
                 {
                     m_winProgress.SetError(lvItemProjectVM.SourcePath, strError);
                     lvItemProjectVM.Status = FileParse.ksError;
+                    m_bKeepShowingError = true;
                 }
                 else if (bDone)
                 {
@@ -109,5 +109,10 @@ namespace DoubleFile
                 MBox.ShowDialog("Completed. " + nFilesWritten + " file" + (nFilesWritten != 1 ? "s" : "") + " written.", "Save Directory Listings");
             }));
         }
+
+        readonly GlobalData_Base gd = null;
+        GlobalData gd_old = null;
+        WinProgress m_winProgress = null;
+        bool m_bKeepShowingError = false;
     }
 }

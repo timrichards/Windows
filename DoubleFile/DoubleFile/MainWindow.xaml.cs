@@ -107,14 +107,23 @@ namespace DoubleFile
 
         void ShowProjectWindow(bool bOpenProject = false)
         {
-            if ((LVprojectVM != null) && LVprojectVM.Unsaved &&
-                (MessageBoxResult.Cancel ==
-                MBox.ShowDialog(WinProjectVM.ksUnsavedWarning, "Open Project", MessageBoxButton.OKCancel)))
-            {
-                return;
-            }
+            WinProject volumes = null;
 
-            var volumes = new WinProject(bOpenProject ? null : LVprojectVM, bOpenProject: bOpenProject);
+            if (bOpenProject)
+            {
+                if ((LVprojectVM != null) && LVprojectVM.Unsaved &&
+                    (MessageBoxResult.Cancel ==
+                    MBox.ShowDialog(WinProjectVM.ksUnsavedWarning, "Open Project", MessageBoxButton.OKCancel)))
+                {
+                    return;
+                }
+
+                volumes = new WinProject();
+            }
+            else
+            {
+                volumes = new WinProject(LVprojectVM ?? new LV_ProjectVM());
+            }
 
             if (false == (volumes.ShowDialog() ?? false))
             {

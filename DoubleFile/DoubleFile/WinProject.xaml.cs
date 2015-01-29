@@ -11,15 +11,15 @@ namespace DoubleFile
     {
         internal LV_ProjectVM LVprojectVM { get; private set; }
 
-        internal WinProject(LV_ProjectVM lvProjectVM = null, bool bOpenProject = false)
+        internal WinProject(LV_ProjectVM lvProjectVM = null)
         {
             InitializeComponent();
             LVprojectVM = lvProjectVM;
-            m_bOpenProject = bOpenProject;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
+            var bOpenProject = (null == LVprojectVM);
             var lvProjectVM = new LV_ProjectVM(LVprojectVM);
 
             LVprojectVM = null;         // only one representation of state at a time
@@ -34,7 +34,7 @@ namespace DoubleFile
             lvProjectVM.SelectedAny = () => { return form_lvProject.SelectedItems.Count > 0; };
             lvProjectVM.Selected = () => { return form_lvProject.SelectedItems.Cast<LVitem_ProjectVM>(); };
 
-            if (m_bOpenProject)
+            if (bOpenProject)
             {
                 win.OpenProject();
             }
@@ -65,7 +65,5 @@ namespace DoubleFile
                 return;
             }
         }
-
-        bool m_bOpenProject = false;
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace DoubleFile
@@ -115,7 +117,6 @@ namespace DoubleFile
 
         internal void OpenListingFiles(IEnumerable<string> listFiles, bool bClearItems = false)
         {
-            LVitem_ProjectVM lvItem = null;
             var sbBadFiles = new System.Text.StringBuilder();
             bool bMultiBad = true;
 
@@ -124,17 +125,30 @@ namespace DoubleFile
                 m_lvVM.Items.Clear();
             }
 
-            foreach (var fileName in listFiles)
+            var listItems = new ConcurrentBag<LVitem_ProjectVM>();
+
+            Parallel.ForEach(listFiles, strFilename =>
             {
-                if (FileParse.ReadHeader(fileName, out lvItem))
+                LVitem_ProjectVM lvItem = null;
+
+                if (FileParse.ReadHeader(strFilename, out lvItem))
                 {
-                    m_lvVM.NewItem(lvItem, bFromDisk: true);
+                    listItems.Add(lvItem);
                 }
                 else
                 {
                     bMultiBad = (sbBadFiles.Length > 0);
-                    sbBadFiles.Append("• ").Append(System.IO.Path.GetFileName(fileName)).Append("\n");
+
+                    lock (sbBadFiles)
+                    {
+                        sbBadFiles.Append("• ").Append(System.IO.Path.GetFileName(strFilename)).Append("\n");
+                    }
                 }
+            });
+
+            foreach (var lvItem in listItems)
+            {
+                m_lvVM.NewItem(lvItem);
             }
 
             if (sbBadFiles.Length > 0)

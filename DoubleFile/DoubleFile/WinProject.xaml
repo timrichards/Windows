@@ -35,6 +35,7 @@
                 <GridView>
                     <GridViewColumn Header="Nickname" DisplayMemberBinding="{Binding Nickname}" Width="{Binding WidthNickname}"/>
                     <GridViewColumn Header="Source path" DisplayMemberBinding="{Binding SourcePath}" Width="{Binding WidthSourcePath}"/>
+                    <GridViewColumn Header="Length" DisplayMemberBinding="{Binding ScannedLength}" Width="{Binding WidthScannedLength}"/>
                     <GridViewColumn Header="Drive model" DisplayMemberBinding="{Binding DriveModel}" Width="{Binding WidthDriveModel}"/>
                     <GridViewColumn Header="Drive serial #" DisplayMemberBinding="{Binding DriveSerial}" Width="{Binding WidthDriveSerial}"/>
                     <GridViewColumn Header="Volume group" DisplayMemberBinding="{Binding VolumeGroup}" Width="{Binding WidthVolumeGroup}"/>

@@ -93,17 +93,12 @@ namespace DoubleFile
             return bFileExists;
         }
 
-        internal bool NewItem(LVitem_ProjectVM lvItem, bool bQuiet = false, bool bFromDisk = false)
+        internal bool NewItem(LVitem_ProjectVM lvItem, bool bQuiet = false)
         {
-            return NewItem(lvItem.StringValues, bQuiet, bFromDisk);
+            return NewItem(lvItem.StringValues, bQuiet);
         }
 
-        internal override bool NewItem(string[] arrStr, bool bQuiet = false)    // Huh. The compiler differentiates calls to this and the below method
-        {
-            return this.NewItem(arrStr, bQuiet, bFromDisk: false);
-        }
-
-        internal bool NewItem(string[] arrStr, bool bQuiet = false, bool bFromDisk = false)
+        internal override bool NewItem(string[] arrStr, bool bQuiet = false)
         {
             var lvItem = new LVitem_ProjectVM(arrStr);
             var bAlreadyInProject = AlreadyInProject(lvItem);
@@ -111,11 +106,6 @@ namespace DoubleFile
             if (false == bAlreadyInProject)
             {
                 Add(lvItem, bQuiet);
-
-                if (bFromDisk == false)
-                {
-                    Unsaved = true;
-                }
             }
 
             return (false == bAlreadyInProject);
@@ -145,8 +135,8 @@ namespace DoubleFile
                 return;
             }
 
-            Unsaved = true;
             Selected().ToArray().ForEach(lvItem => { Items.Remove(lvItem); });
+            Unsaved = true;
         }
 
         internal void EditVolumeGroupLabel()

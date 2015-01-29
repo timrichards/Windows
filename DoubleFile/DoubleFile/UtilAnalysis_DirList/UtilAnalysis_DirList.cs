@@ -141,7 +141,7 @@ namespace DoubleFile
 
         internal static string FormatSize(string in_str, bool bBytes = false)
         {
-            return FormatSize(ulong.Parse(in_str), bBytes);
+            return FormatSize(ulong.Parse(in_str ?? "0"), bBytes);
         }
 
         internal static string FormatSize(long nLength, bool bBytes = false, bool bNoDecimal = false)

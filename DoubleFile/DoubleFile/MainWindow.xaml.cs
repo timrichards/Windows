@@ -109,16 +109,18 @@ namespace DoubleFile
         {
             var volumes = new WinProject(LVprojectVM, bOpenProject);
 
+            LVprojectVM = null;     // only one representation of state at a time
+
             if (false == (volumes.ShowDialog() ?? false))
             {
                 return;
             }
 
             LVprojectVM = volumes.LVprojectVM;
-            FormAnalysis_DirListAction(FormAnalysis_DirList.RestartTreeTimer);
 
             if (LVprojectVM != null)
             {
+                FormAnalysis_DirListAction(FormAnalysis_DirList.RestartTreeTimer);
                 new SaveListingsProcess(new GlobalData_Window(this), LVprojectVM);
             }
         }

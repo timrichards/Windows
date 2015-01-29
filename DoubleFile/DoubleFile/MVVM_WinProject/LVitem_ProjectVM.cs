@@ -14,8 +14,9 @@ namespace DoubleFile
         public string VolumeGroup { get { return marr[5]; } set { SetProperty(5, value); } }
         public string DriveModel { get { return marr[6]; } set { SetProperty(6, value); } }
         public string DriveSerial { get { return marr[7]; } set { SetProperty(7, value); } }
-        readonly static string[] marrPropName = new string[] { "Nickname", "SourcePath", "ListingFileNoPath", "Status", "IncludeYN", "VolumeGroup", "DriveModel", "DriveSerial" };
-        internal const int NumCols_ = 8;
+        public string ScannedLength { get { return UtilAnalysis_DirList.FormatSize(marr[8]); } set { SetProperty(8, value); } }
+        readonly static string[] marrPropName = new string[] { "Nickname", "SourcePath", "ListingFileNoPath", "Status", "IncludeYN", "VolumeGroup", "DriveModel", "DriveSerial", "ScannedLength" };
+        internal const int NumCols_ = 9;
 
         internal LVitem_ProjectVM(string[] arrStr = null)
             : base(null, arrStr)

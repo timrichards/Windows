@@ -407,6 +407,17 @@ namespace DoubleFile
                     if (bReadAttributeReturnValue)
                         lvItem.DriveSerial = strReadAttributeReturnValue;
                 });
+
+                try
+                {
+                    lvItem.ScannedLength = ulong.Parse(     // redundant parse confirms it's a number
+                        File.ReadLines(strFile).Where(s => s.StartsWith(ksLineType_Length)).ToArray()[0]
+                        .Split('\t')[knColLength]).ToString();
+                }
+                catch
+                {
+                    return false;
+                }
             }
 
             lvItem_out = lvItem;

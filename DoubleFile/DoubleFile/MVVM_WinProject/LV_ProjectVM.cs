@@ -12,6 +12,7 @@ namespace DoubleFile
         public string WidthVolumeGroup { get { return SCW; } }
         public string WidthDriveModel { get { return SCW; } }
         public string WidthDriveSerial { get { return SCW; } }
+        public string WidthScannedLength { get { return SCW; } }
 
         internal override int NumCols { get { return LVitem_ProjectVM.NumCols_; } }
     }

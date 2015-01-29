@@ -127,6 +127,14 @@ namespace DoubleFile
 
             var listItems = new ConcurrentBag<LVitem_ProjectVM>();
 
+            //foreach (var test in listFiles.Select(async strFilename => await Task.Run(() =>
+            //{
+            //    LVitem_ProjectVM lvItem = null;
+
+            //    if (FileParse.ReadHeader(strFilename, out lvItem))
+            //        listItems.Add(lvItem);
+            //}))) { UtilProject.WriteLine("a"); }
+
             Parallel.ForEach(listFiles, strFilename =>
             {
                 LVitem_ProjectVM lvItem = null;

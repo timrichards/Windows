@@ -11,14 +11,9 @@ namespace DoubleFile
     {
         internal LV_ProjectVM LVprojectVM { get; private set; }
 
-        public WinProject()
+        internal WinProject(LV_ProjectVM lvProjectVM = null, bool bOpenProject = false)
         {
             InitializeComponent();
-        }
-
-        internal WinProject(LV_ProjectVM lvProjectVM, bool bOpenProject = false)
-            : this()
-        {
             LVprojectVM = lvProjectVM;
             m_bOpenProject = bOpenProject;
         }

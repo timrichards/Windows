@@ -38,9 +38,14 @@ namespace DoubleFile
             {
                 LVitem_ProjectVM lvItemVolumeTemp = new LVitem_ProjectVM(lvItem);
 
+                if (lvItemVolumeTemp.Status == FileParse.ksError)
+                {
+                    lvItemVolumeTemp.Status = FileParse.ksNotSaved;
+                }
+
                 while (true)
                 {
-                    WinVolumeEditBase dlg = lvItem.WouldSave ?
+                    WinVolumeEditBase dlg = lvItemVolumeTemp.WouldSave ?
                         new WinVolumeNew() :
                         (WinVolumeEditBase)new WinVolumeEdit();
 

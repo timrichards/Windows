@@ -207,7 +207,7 @@ namespace DoubleFile
 #if DEBUG == false
                 catch (Exception e)
                 {
-                    m_statusCallback(LVitemProjectVM, strError: e.Message, bDone: true);
+                    m_statusCallback(LVitemProjectVM, strError: (e.GetBaseException() ?? e.InnerException ?? e).Message, bDone: true);
                 }
 #endif
                 finally { }

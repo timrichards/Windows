@@ -130,7 +130,7 @@ namespace DoubleFile
             }
 
             var sbSource = new System.Text.StringBuilder();
-            var strPath = Path.GetDirectoryName(listListingFiles[0]);
+            var strPath = Path.GetDirectoryName(listListingFiles[0]) + '\\';
 
             foreach (var listingFile in listListingFiles)
             {
@@ -138,7 +138,7 @@ namespace DoubleFile
 
                 if (strFilename.StartsWith(strPath))
                 {
-                    strFilename.Replace(strPath, "");
+                    strFilename = strFilename.Replace(strPath, "");
                 }
                 
                 sbSource.Append("\"").Append(strFilename).Append("\" ");

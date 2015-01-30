@@ -269,7 +269,14 @@ namespace DoubleFile
                     sbOut.AppendLine(sbLine.ToString());
                 }
 
-                File.WriteAllText(lvItem_Orig.ListingFile, sbOut.ToString());
+                if (sbOut.Length > 0)
+                {
+                    File.WriteAllText(lvItem_Orig.ListingFile, sbOut.ToString());
+                }
+                else
+                {
+                    MBox.Assert(0, false == File.Exists(lvItem_Orig.ListingFile));
+                }
 
                 using (var fileWriter = File.AppendText(lvItem_Orig.ListingFile))
                 {

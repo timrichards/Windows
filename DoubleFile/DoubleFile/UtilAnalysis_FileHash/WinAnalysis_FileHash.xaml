@@ -1,0 +1,16 @@
+﻿<Window x:Class="DoubleFile.UtilAnalysis_FileHash.WinAnalysis_FileHash"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="WinAnalysis_FileHash" Height="300" Width="300">
+    <Grid>
+        <TreeView HorizontalAlignment="Left" Height="270" VerticalAlignment="Top" Width="120"/>
+        <ListView HorizontalAlignment="Left" Height="280" Margin="120,0,0,-10" VerticalAlignment="Top" Width="172">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+    </Grid>
+</Window>

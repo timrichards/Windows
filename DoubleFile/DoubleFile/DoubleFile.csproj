@@ -150,6 +150,9 @@
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_FileBase\SDL_CopyFile.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_FileBase\SDL_IgnoreFile.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_TreeView.cs" />
+    <Compile Include="UtilAnalysis_FileHash\WinAnalysis_FileHash.xaml.cs">
+      <DependentUpon>WinAnalysis_FileHash.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UtilProject\GlobalData.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -314,6 +317,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UtilAnalysis_FileHash\WinAnalysis_FileHash.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UtilProject\WinChooseDrive.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -356,9 +363,7 @@
     </Content>
     <Resource Include="_Todo.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UtilAnalysis_FileHash\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

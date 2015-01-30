@@ -31,15 +31,26 @@ namespace DoubleFile
 
                 // at minimum get the drive size
                 DriveSerial.Get(LVitemProjectVM.SourcePath, out strModel, out strSerial, out nSize);
+                
+                var bAsk_DriveModel = ((false == string.IsNullOrWhiteSpace(strModel)) &&
+                    ((false == string.IsNullOrWhiteSpace(LVitemProjectVM.DriveModel)) &&
+                    (strModel != LVitemProjectVM.DriveModel)));
 
-                if ((((false == string.IsNullOrWhiteSpace(LVitemProjectVM.DriveModel)) && (strModel != LVitemProjectVM.DriveModel)) ||
-                    ((false == string.IsNullOrWhiteSpace(LVitemProjectVM.DriveSerial)) && (strSerial != LVitemProjectVM.DriveSerial))) &&
-                    ((MBox.ShowDialog("Overwrite user-entered drive model and serial # for " + LVitemProjectVM.SourcePath[0] + @":\ ?", "Save Directory Listings",
+                var bAsk_DriveSerial = ((false == string.IsNullOrWhiteSpace(strSerial)) &&
+                    ((false == string.IsNullOrWhiteSpace(LVitemProjectVM.DriveSerial)) &&
+                    (strSerial != LVitemProjectVM.DriveSerial)));
+
+                if ((bAsk_DriveModel || bAsk_DriveSerial) &&
+                    ((MBox.ShowDialog("Overwrite user-entered drive model and/or serial # for " + LVitemProjectVM.SourcePath[0] + @":\ ?", "Save Directory Listings",
                         System.Windows.MessageBoxButton.YesNo) ==
                         System.Windows.MessageBoxResult.No)))
                 {
-                    strModel = LVitemProjectVM.DriveModel;
-                    strSerial = LVitemProjectVM.DriveSerial;
+                    // separating these allows one user value to substitute blank robo-get, while keeping the other one
+                    if (bAsk_DriveModel)
+                        strModel = LVitemProjectVM.DriveModel;
+
+                    if (bAsk_DriveSerial)
+                        strSerial = LVitemProjectVM.DriveSerial;
                 }
 
                 fs.WriteLine(ksDrive01);

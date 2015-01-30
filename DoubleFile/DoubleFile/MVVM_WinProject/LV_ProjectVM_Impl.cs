@@ -269,16 +269,31 @@ namespace DoubleFile
                     sbOut.AppendLine(sbLine.ToString());
                 }
 
-                sbOut.Append(reader.ReadToEnd());
+                File.WriteAllText(lvItem_Orig.ListingFile, sbOut.ToString());
 
-                if (bDriveLetter_Todo)
+                using (var fileWriter = File.AppendText(lvItem_Orig.ListingFile))
                 {
-                    sbOut.Replace("\t" + driveLetterOrig + @":\", "\t" + driveLetter + @":\");
-                    bDriveLetter_Todo = false;
+                    var kBufSize = 1024 * 1024 * 4;
+                    var buffer = new char[kBufSize];
+                    var nRead = 0;
+
+                    while ((nRead = reader.Read(buffer, 0, kBufSize)) > 0)
+                    {
+                        sbOut.Clear();
+                        sbOut.Append(buffer, 0, nRead);
+
+                        if (bDriveLetter_Todo)
+                        {
+                            sbOut.Replace("\t" + driveLetterOrig + @":\", "\t" + driveLetter + @":\");
+                        }
+
+                        fileWriter.Write(sbOut.ToString());
+                    }
                 }
+
+                bDriveLetter_Todo = false;
             }
 
-            File.WriteAllText(lvItem_Orig.ListingFile, sbOut.ToString());
             MBox.Assert(0, (false == (bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo || bDriveLetter_Todo)));
             return true;
         }

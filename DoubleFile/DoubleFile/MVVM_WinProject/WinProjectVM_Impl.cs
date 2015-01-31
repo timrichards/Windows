@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -135,24 +136,32 @@ namespace DoubleFile
             //        listItems.Add(lvItem);
             //}))) { UtilProject.WriteLine("a"); }
 
-            Parallel.ForEach(listFiles, strFilename =>
             {
-                LVitem_ProjectVM lvItem = null;
-
-                if (FileParse.ReadHeader(strFilename, out lvItem))
+                var thread = new Thread(new ThreadStart(() =>
                 {
-                    listItems.Add(lvItem);
-                }
-                else
-                {
-                    bMultiBad = (sbBadFiles.Length > 0);
-
-                    lock (sbBadFiles)
+                    Parallel.ForEach(listFiles, strFilename =>
                     {
-                        sbBadFiles.Append("• ").Append(System.IO.Path.GetFileName(strFilename)).Append("\n");
-                    }
-                }
-            });
+                        LVitem_ProjectVM lvItem = null;
+
+                        if (FileParse.ReadHeader(strFilename, out lvItem))
+                        {
+                            listItems.Add(lvItem);
+                        }
+                        else
+                        {
+                            bMultiBad = (sbBadFiles.Length > 0);
+
+                            lock (sbBadFiles)
+                            {
+                                sbBadFiles.Append("• ").Append(System.IO.Path.GetFileName(strFilename)).Append("\n");
+                            }
+                        }
+                    });
+                }));
+
+                thread.Start();
+                thread.Join();
+            }
 
             foreach (var lvItem in listItems)
             {

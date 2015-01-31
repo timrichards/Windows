@@ -193,5 +193,10 @@ namespace DoubleFile
                 Analysis_DirListForm.Activate();
             }
         }
+
+        private void Button_FileHashExplorer_Click(object sender, RoutedEventArgs e)
+        {
+            new WinAnalysis_FileHash().Show();
+        }
     }
 }

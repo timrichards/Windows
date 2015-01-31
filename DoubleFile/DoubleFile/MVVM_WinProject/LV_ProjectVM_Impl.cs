@@ -276,6 +276,15 @@ namespace DoubleFile
                 else
                 {
                     MBox.Assert(0, false == File.Exists(lvItem_Orig.ListingFile));
+                    try
+                    {
+                        File.Delete(lvItem_Orig.ListingFile);
+                    }
+                    catch (System.Exception e)
+                    {
+                        MBox.ShowDialog("Bad listing file.\n" + (e.GetBaseException() ?? e.InnerException ?? e).Message, "Edit Listing File");
+                        return false;
+                    }
                 }
 
                 using (var fileWriter = File.AppendText(lvItem_Orig.ListingFile))

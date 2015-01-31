@@ -9,7 +9,7 @@ namespace DoubleFile
 {
     partial class SaveDirListings
     {
-        class SaveDirListing : TraverseTree
+        class SaveDirListing : TraverseTreeBase
         {
             internal SaveDirListing(GlobalData_Base gd_in,
                 LVitem_ProjectVM volStrings, 
@@ -17,6 +17,25 @@ namespace DoubleFile
                 : base(gd_in, volStrings)
             {
                 m_statusCallback = statusCallback;
+            }
+
+            internal SaveDirListing DoThreadFactory()
+            {
+                m_thread = new Thread(new ThreadStart(Go));
+                m_thread.IsBackground = true;
+                m_thread.Start();
+                return this;
+            }
+
+            internal void Join()
+            {
+                m_thread.Join();
+            }
+
+            internal void Abort()
+            {
+                m_bThreadAbort = true;
+                m_thread.Abort();
             }
 
             void WriteHeader(TextWriter fs)
@@ -31,7 +50,7 @@ namespace DoubleFile
 
                 // at minimum get the drive size
                 DriveSerial.Get(LVitemProjectVM.SourcePath, out strModel, out strSerial, out nSize);
-                
+
                 var bAsk_DriveModel = ((false == string.IsNullOrWhiteSpace(strModel)) &&
                     ((false == string.IsNullOrWhiteSpace(LVitemProjectVM.DriveModel)) &&
                     (strModel != LVitemProjectVM.DriveModel)));
@@ -222,25 +241,6 @@ namespace DoubleFile
                 }
 #endif
                 finally { }
-            }
-
-            internal SaveDirListing DoThreadFactory()
-            {
-                m_thread = new Thread(new ThreadStart(Go));
-                m_thread.IsBackground = true;
-                m_thread.Start();
-                return this;
-            }
-
-            internal void Join()
-            {
-                m_thread.Join();
-            }
-
-            internal void Abort()
-            {
-                m_bThreadAbort = true;
-                m_thread.Abort();
             }
 
             readonly SaveDirListingsStatusDelegate m_statusCallback = null;

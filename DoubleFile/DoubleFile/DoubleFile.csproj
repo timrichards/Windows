@@ -150,6 +150,7 @@
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_FileBase\SDL_CopyFile.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_FileBase\SDL_IgnoreFile.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_TreeView.cs" />
+    <Compile Include="UtilAnalysis_FileHash\SaveDirListing.cs" />
     <Compile Include="UtilAnalysis_FileHash\WinAnalysis_FileHash.xaml.cs">
       <DependentUpon>WinAnalysis_FileHash.xaml</DependentUpon>
     </Compile>

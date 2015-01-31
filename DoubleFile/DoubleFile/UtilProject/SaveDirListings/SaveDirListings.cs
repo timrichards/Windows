@@ -25,6 +25,27 @@ namespace DoubleFile
             m_doneCallback = doneCallback;
         }
 
+        internal void EndThread()
+        {
+            foreach (SaveDirListing worker in m_cbagWorkers)
+            {
+                worker.Abort();
+            }
+
+            m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
+            m_bThreadAbort = true;
+            m_thread = null;
+        }
+
+        internal void DoThreadFactory()
+        {
+            m_thread = new Thread(new ThreadStart(Go));
+            m_thread.IsBackground = true;
+            m_thread.Start();
+        }
+
+        internal bool IsAborted { get { return m_bThreadAbort; } }
+
         void Go()
         {
             UtilProject.WriteLine();
@@ -56,27 +77,6 @@ namespace DoubleFile
 
             m_doneCallback();
         }
-
-        internal void EndThread()
-        {
-            foreach (SaveDirListing worker in m_cbagWorkers)
-            {
-                worker.Abort();
-            }
-
-            m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
-            m_bThreadAbort = true;
-            m_thread = null;
-        }
-
-        internal void DoThreadFactory()
-        {
-            m_thread = new Thread(new ThreadStart(Go));
-            m_thread.IsBackground = true;
-            m_thread.Start();
-        }
-
-        internal bool IsAborted { get { return m_bThreadAbort; } }
 
         readonly GlobalData_Base gd = null;
         readonly SaveDirListingsStatusDelegate m_statusCallback = null;

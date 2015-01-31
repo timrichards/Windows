@@ -1,4 +1,4 @@
-﻿<Window x:Class="DoubleFile.UtilAnalysis_FileHash.WinAnalysis_FileHash"
+﻿<Window x:Class="DoubleFile.WinAnalysis_FileHash"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="WinAnalysis_FileHash" Height="300" Width="300">

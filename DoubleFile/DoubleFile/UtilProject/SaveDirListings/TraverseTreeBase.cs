@@ -5,13 +5,23 @@ namespace DoubleFile
 {
     partial class SaveDirListings
     {
-        class TraverseTree
+        abstract class TraverseTreeBase
         {
-            protected TraverseTree(GlobalData_Base gd_in,
+            protected TraverseTreeBase(GlobalData_Base gd_in,
                 LVitem_ProjectVM lvProjectVM)
             {
                 gd = gd_in;
                 LVitemProjectVM = lvProjectVM;
+            }
+
+            protected IEnumerable<string> GetFileList()
+            {
+                return ImplementationDetails();
+            }
+
+            protected void WriteDirectoryListing(TextWriter fs, Dictionary<string, string> dictHash, Dictionary<string, string> dictException_FileRead)
+            {
+                ImplementationDetails(fs, dictHash, dictException_FileRead);
             }
 
             /// <summary>
@@ -58,7 +68,8 @@ namespace DoubleFile
                         {
                             m_listErrors.Add(FormatString(strDir: strFullPath,
                                 strError1: new System.ComponentModel.Win32Exception(
-                                    System.Runtime.InteropServices.Marshal.GetLastWin32Error()).Message, strError2: strError2_Dir));
+                                    System.Runtime.InteropServices.Marshal.GetLastWin32Error()).Message,
+                                strError2: strError2_Dir));
                         }
 
                         continue;
@@ -170,16 +181,6 @@ namespace DoubleFile
                 }
 
                 return listFilePaths;
-            }
-
-            protected IEnumerable<string> GetFileList()
-            {
-                return ImplementationDetails();
-            }
-
-            protected void WriteDirectoryListing(TextWriter fs, Dictionary<string, string> dictHash, Dictionary<string, string> dictException_FileRead)
-            {
-                ImplementationDetails(fs, dictHash, dictException_FileRead);
             }
 
             protected readonly GlobalData_Base gd = null;

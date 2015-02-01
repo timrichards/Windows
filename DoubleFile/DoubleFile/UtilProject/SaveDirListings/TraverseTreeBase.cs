@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace DoubleFile
 {
@@ -19,7 +21,7 @@ namespace DoubleFile
                 return ImplementationDetails();
             }
 
-            protected void WriteDirectoryListing(TextWriter fs, Dictionary<string, string> dictHash, Dictionary<string, string> dictException_FileRead)
+            protected void WriteDirectoryListing(TextWriter fs, Dictionary<string, byte[]> dictHash, Dictionary<string, string> dictException_FileRead)
             {
                 ImplementationDetails(fs, dictHash, dictException_FileRead);
             }
@@ -33,7 +35,7 @@ namespace DoubleFile
             /// <returns>File list if first pass</returns>
             private IEnumerable<string> ImplementationDetails(
                 TextWriter fs = null,
-                Dictionary<string, string> dictHash = null,
+                Dictionary<string, byte[]> dictHash = null,
                 Dictionary<string, string> dictException_FileRead = null)
             {
                 var stackDirs = new Stack<Win32FindFile.DATUM>(64);
@@ -125,7 +127,7 @@ namespace DoubleFile
 
                             if (dictHash.ContainsKey(winFile.strAltFileName))
                             {
-                                strHash = dictHash[winFile.strAltFileName];
+                                strHash = DRDigit.Fast.ToHexString(dictHash[winFile.strAltFileName]);
                             }
 
                             string strError1 = null;

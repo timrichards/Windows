@@ -58,14 +58,14 @@ namespace DoubleFile
                 return;
             }
 
-            {
-                int nLineNumber = 0;
+            int nLVitems = 0;
 
-                foreach (var lvItem in LVprojectVM.ItemsCast)
-                {
-                    DictLVitemNumber.Add(lvItem, nLineNumber++);
-                }
+            foreach (var lvItem in LVprojectVM.ItemsCast)
+            {
+                DictLVitemNumber.Add(lvItem, nLVitems++);
             }
+
+            int nLVitems_A = 0;
 
             Parallel.ForEach(LVprojectVM.ItemsCast, (lvItem => 
             {
@@ -74,6 +74,7 @@ namespace DoubleFile
                 var nLVitem = DictLVitemNumber[lvItem];
 
                 Interlocked.Add(ref m_nFilesTotal, ieLines.Count());
+                Interlocked.Increment(ref nLVitems_A);
 
                 ieLines.ForEach(strLine =>
                 {
@@ -102,7 +103,10 @@ namespace DoubleFile
                         }
                     }
 
-                    m_statusCallback(nProgress: m_nFilesProgress / (double)m_nFilesTotal);
+                    if (nLVitems == nLVitems_A)
+                    {
+                        m_statusCallback(nProgress: m_nFilesProgress / (double)m_nFilesTotal);
+                    }
                 });
             }));
 

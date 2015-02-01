@@ -8,8 +8,23 @@ namespace DoubleFile
 {
     delegate void CreateFileDictStatusDelegate(bool bDone = false, double nProgress = double.NaN);
 
+    struct FileDictLookup
+    {
+        internal int nLVitemProjectVM;
+        internal ulong nLine;
+
+        internal FileDictLookup(int nLVitemProjectVM_in, ulong nLine_in)
+        {
+            nLVitemProjectVM = nLVitemProjectVM_in;
+            nLine = nLine_in;
+        }
+    }
+
     class CreateFileDictionary : FileParse
     {
+        internal Dictionary<LVitem_ProjectVM, int> DictLVitemNumber = new Dictionary<LVitem_ProjectVM, int>();
+        internal Dictionary<string, UList<FileDictLookup>> DictFiles = new Dictionary<string, UList<FileDictLookup>>();
+        
         internal CreateFileDictionary(LV_ProjectVM lvProjectVM, CreateFileDictStatusDelegate statusCallback)
         {
             LVprojectVM = lvProjectVM;
@@ -37,10 +52,20 @@ namespace DoubleFile
 
         void Go()
         {
+            {
+                int nLineNumber = 0;
+
+                foreach (var lvItem in LVprojectVM.ItemsCast)
+                {
+                    DictLVitemNumber.Add(lvItem, nLineNumber++);
+                }
+            }
+
             Parallel.ForEach(LVprojectVM.ItemsCast, (lvItem => 
             {
                 var ieLines = File.ReadLines(lvItem.ListingFile).Skip(4)
                     .Where(strLine => strLine.StartsWith(ksLineType_File));
+                var nLVitem = DictLVitemNumber[lvItem];
 
                 Interlocked.Add(ref m_nFilesTotal, ieLines.Count());
 
@@ -53,18 +78,18 @@ namespace DoubleFile
                     if (arrLine.Length > 10)
                     {
                         var strKey = arrLine[10] + arrLine[7];                      // key is hash concat length
-                        var strLookup = lvItem.ListingFile + '\t' + strLine[1];     // lookup is ListingFile tab linenumber
+                        var lookup = new FileDictLookup(nLVitem, ulong.Parse(arrLine[1]));
 
-                        if (false == m_dictFiles.ContainsKey(strKey))
+                        if (false == DictFiles.ContainsKey(strKey))
                         {
-                            var listFiles = new UList<string>();
+                            var listFiles = new UList<FileDictLookup>();
 
-                            listFiles.Add(strLookup);
-                            m_dictFiles.Add(strKey, listFiles);
+                            listFiles.Add(lookup);
+                            DictFiles.Add(strKey, listFiles);
                         }
                         else
                         {
-                            m_dictFiles[strKey].Add(strLookup);
+                            DictFiles[strKey].Add(lookup);
                         }
                     }
 
@@ -77,8 +102,7 @@ namespace DoubleFile
         Thread m_thread = null;
         protected bool m_bThreadAbort = false;
         LV_ProjectVM LVprojectVM = null;
-        Dictionary<string, UList<string>> m_dictFiles = new Dictionary<string, UList<string>>();
-        int m_nFilesTotal = 0;
-        int m_nFilesProgress = 0;
+        long m_nFilesTotal = 0;
+        long m_nFilesProgress = 0;
     }
 }

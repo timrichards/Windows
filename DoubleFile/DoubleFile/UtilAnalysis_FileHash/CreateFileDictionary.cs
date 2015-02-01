@@ -19,21 +19,6 @@ namespace DoubleFile
         }
     }
 
-    internal struct FileKey
-    {
-        internal byte[] abHash;
-        internal ulong nLength;
-
-        internal FileKey(string strHash, string strLength)
-        {
-            abHash = Enumerable.Range(0, strHash.Length)
-                .Where(x => x % 2 == 0)
-                .Select(x => Convert.ToByte(strHash.Substring(x, 2), 16))
-                .ToArray();
-            nLength = ulong.Parse(strLength);
-        }
-    }
-
     class CreateFileDictionary : FileParse
     {
         internal Dictionary<LVitem_ProjectVM, int> DictLVitemNumber = new Dictionary<LVitem_ProjectVM, int>();
@@ -101,22 +86,27 @@ namespace DoubleFile
                         var key = new FileKey(arrLine[10], arrLine[7]);
                         var lookup = new FileDictLookup(nLVitem, ulong.Parse(arrLine[1]));
 
-                        if (false == DictFiles.ContainsKey(key))
+                        lock (DictFiles)
                         {
-                            var listFiles = new UList<FileDictLookup>();
+                            if (false == DictFiles.ContainsKey(key))
+                            {
+                                var listFiles = new UList<FileDictLookup>();
 
-                            listFiles.Add(lookup);
-                            DictFiles.Add(key, listFiles);
-                        }
-                        else
-                        {
-                            DictFiles[key].Add(lookup);
+                                listFiles.Add(lookup);
+                                DictFiles.Add(key, listFiles);
+                            }
+                            else
+                            {
+                                DictFiles[key].Add(lookup);
+                            }
                         }
                     }
 
                     m_statusCallback(nProgress: m_nFilesProgress / (double)m_nFilesTotal);
                 });
             }));
+
+            m_statusCallback(bDone: true);
         }
 
         readonly CreateFileDictStatusDelegate m_statusCallback = null;

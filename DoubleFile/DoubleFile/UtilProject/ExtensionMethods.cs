@@ -15,7 +15,7 @@ namespace DoubleFile
                 return c.Count;
             }
 
-            UtilProject.WriteLine("Count<" + source + "> is not an ICollection: must GetEnumerator()");
+   //         UtilProject.WriteLine("Count<" + source + "> is not an ICollection: must GetEnumerator()");
 
             using (IEnumerator<T> enumerator = source.GetEnumerator())
             {

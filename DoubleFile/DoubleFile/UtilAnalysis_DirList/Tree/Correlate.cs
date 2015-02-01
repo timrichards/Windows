@@ -37,6 +37,7 @@ namespace DoubleFile
             result += nFilesInSubdirs.GetHashCode();
             result *= 397;
             result += nDirsWithFiles.GetHashCode();
+            result *= 397;
             return result;
         }
 

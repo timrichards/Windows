@@ -152,6 +152,7 @@
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_TreeView.cs" />
     <Compile Include="UtilAnalysis_FileHash\CreateFileDictionary.cs" />
     <Compile Include="UtilAnalysis_FileHash\CreateFileDictProcess.cs" />
+    <Compile Include="UtilAnalysis_FileHash\FileKey.cs" />
     <Compile Include="UtilAnalysis_FileHash\WinAnalysis_FileHash.xaml.cs">
       <DependentUpon>WinAnalysis_FileHash.xaml</DependentUpon>
     </Compile>

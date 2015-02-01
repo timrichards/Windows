@@ -7,9 +7,10 @@ namespace DoubleFile
     /// </summary>
     public partial class WinAnalysis_FileHash : Window
     {
-        public WinAnalysis_FileHash()
+        internal WinAnalysis_FileHash(GlobalData_Base gd_in, LV_ProjectVM lvProjectVM_in)
         {
             InitializeComponent();
+            new CreateFileDictProcess(gd_in, lvProjectVM_in);
         }
     }
 }

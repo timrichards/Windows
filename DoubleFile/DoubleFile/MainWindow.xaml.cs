@@ -32,6 +32,8 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
+            gd = new GlobalData_Window(this);
+
 #if (DEBUG)
             //#warning DEBUG is defined.
             MBox.Assert(0, System.Diagnostics.Debugger.IsAttached, "Debugger is not attached!");
@@ -135,7 +137,7 @@ namespace DoubleFile
             if (LVprojectVM != null)
             {
                 FormAnalysis_DirListAction(FormAnalysis_DirList.RestartTreeTimer);
-                new SaveListingsProcess(new GlobalData_Window(this), LVprojectVM);
+                new SaveListingsProcess(gd, LVprojectVM);
             }
         }
 
@@ -151,7 +153,8 @@ namespace DoubleFile
 
             if (Directory.Exists(ProjectFile.TempPath))
             {
-                Directory.Delete(ProjectFile.TempPath, true);
+                try { Directory.Delete(ProjectFile.TempPath, true); }
+                catch { }
             }
 
             if (Directory.Exists(ProjectFile.TempPath01))
@@ -196,7 +199,9 @@ namespace DoubleFile
 
         private void Button_FileHashExplorer_Click(object sender, RoutedEventArgs e)
         {
-            new WinAnalysis_FileHash().Show();
+            new WinAnalysis_FileHash(gd, LVprojectVM).Show();
         }
+
+        GlobalData_Base gd = null;
     }
 }

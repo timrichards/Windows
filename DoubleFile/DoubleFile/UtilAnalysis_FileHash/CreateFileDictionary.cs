@@ -3,27 +3,41 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.IO;
 using System.Linq;
+using System;
 
 namespace DoubleFile
 {
-    delegate void CreateFileDictStatusDelegate(bool bDone = false, double nProgress = double.NaN);
-
-    struct FileDictLookup
+    internal struct FileDictLookup
     {
         internal int nLVitemProjectVM;
-        internal ulong nLine;
+        internal ulong nLVitem;
 
-        internal FileDictLookup(int nLVitemProjectVM_in, ulong nLine_in)
+        internal FileDictLookup(int nLVitemProjectVM_in, ulong nLVitem_in)
         {
             nLVitemProjectVM = nLVitemProjectVM_in;
-            nLine = nLine_in;
+            nLVitem = nLVitem_in;
+        }
+    }
+
+    internal struct FileKey
+    {
+        internal byte[] abHash;
+        internal ulong nLength;
+
+        internal FileKey(string strHash, string strLength)
+        {
+            abHash = Enumerable.Range(0, strHash.Length)
+                .Where(x => x % 2 == 0)
+                .Select(x => Convert.ToByte(strHash.Substring(x, 2), 16))
+                .ToArray();
+            nLength = ulong.Parse(strLength);
         }
     }
 
     class CreateFileDictionary : FileParse
     {
         internal Dictionary<LVitem_ProjectVM, int> DictLVitemNumber = new Dictionary<LVitem_ProjectVM, int>();
-        internal Dictionary<string, UList<FileDictLookup>> DictFiles = new Dictionary<string, UList<FileDictLookup>>();
+        internal Dictionary<FileKey, UList<FileDictLookup>> DictFiles = new Dictionary<FileKey, UList<FileDictLookup>>();
         
         internal CreateFileDictionary(LV_ProjectVM lvProjectVM, CreateFileDictStatusDelegate statusCallback)
         {
@@ -50,8 +64,15 @@ namespace DoubleFile
             m_thread.Abort();
         }
 
+        internal bool IsAborted { get { return m_bThreadAbort; } }
+
         void Go()
         {
+            if (LVprojectVM == null)
+            {
+                return;
+            }
+
             {
                 int nLineNumber = 0;
 
@@ -77,19 +98,19 @@ namespace DoubleFile
 
                     if (arrLine.Length > 10)
                     {
-                        var strKey = arrLine[10] + arrLine[7];                      // key is hash concat length
+                        var key = new FileKey(arrLine[10], arrLine[7]);
                         var lookup = new FileDictLookup(nLVitem, ulong.Parse(arrLine[1]));
 
-                        if (false == DictFiles.ContainsKey(strKey))
+                        if (false == DictFiles.ContainsKey(key))
                         {
                             var listFiles = new UList<FileDictLookup>();
 
                             listFiles.Add(lookup);
-                            DictFiles.Add(strKey, listFiles);
+                            DictFiles.Add(key, listFiles);
                         }
                         else
                         {
-                            DictFiles[strKey].Add(lookup);
+                            DictFiles[key].Add(lookup);
                         }
                     }
 

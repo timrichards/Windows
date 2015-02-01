@@ -8,15 +8,6 @@ namespace DoubleFile
         public string Nickname { get { return marr[0]; } set { SetProperty(0, value); } }
         public string SourcePath { get { return marr[1]; } set { SetProperty(1, value); } }
 
-        const string ksProgress = "Progress";
-        const string ksIndeterminate = "Indeterminate";
-        const string ksProgressState = "ProgressState";
-
-        double m_nProgress = 0;
-        DateTime m_dtRollingProgress = DateTime.MinValue;
-        double m_nRollingProgress = 0;
-        const int nRollingMinutes = 2;
-
         public double Progress
         {
             get { return m_nProgress; }
@@ -72,7 +63,6 @@ namespace DoubleFile
                 }
 
                 m_nProgress = value;
-                RaisePropertyChanged(ksProgress);
             }
         }
 
@@ -112,11 +102,34 @@ namespace DoubleFile
         internal LVitem_ProgressVM(LV_ProgressVM LV, string[] arrStr)
             : base(LV, arrStr)
         {
+            m_tmrUpdate.Interval = new TimeSpan(0, 0, 0, 0, 100);
+            m_tmrUpdate.Tick += new EventHandler((Object sender, EventArgs e) =>
+            {
+                if (m_nLastProgress != m_nProgress)
+                {
+                    RaisePropertyChanged(ksProgress);
+                    m_nLastProgress = m_nProgress;
+                }
+            });
+            m_tmrUpdate.Start();
         }
 
         internal override int NumCols { get { return NumCols_; } }
         protected override string[] PropertyNames { get { return marrPropName; } }
 
         protected override int SearchCol { get { return 1; } }
+
+        const string ksProgress = "Progress";
+        const string ksIndeterminate = "Indeterminate";
+        const string ksProgressState = "ProgressState";
+
+        double m_nProgress = 0;
+        double m_nLastProgress = 0;
+
+        DateTime m_dtRollingProgress = DateTime.MinValue;
+        double m_nRollingProgress = 0;
+        const int nRollingMinutes = 2;
+
+        SDL_Timer m_tmrUpdate = new SDL_Timer();
     }
 }

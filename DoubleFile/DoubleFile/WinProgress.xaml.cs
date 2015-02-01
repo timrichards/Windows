@@ -9,14 +9,13 @@ namespace DoubleFile
     /// </summary>
     partial class WinProgress : LocalWindow
     {
+        internal BoolAction WindowClosingCallback = null;
         internal string WindowTitle { set { Title = value; } }
 
-        public WinProgress()
+        internal WinProgress()
         {
             InitializeComponent();
         }
-
-        LV_ProgressVM m_lv = new LV_ProgressVM();
 
         internal void InitProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths)
         {
@@ -87,27 +86,14 @@ namespace DoubleFile
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            var worker = GlobalData.Instance.m_saveDirListings;
-
-            if (worker == null)
+            if (Aborted)
             {
                 return;
             }
 
-            if (worker.IsAborted)
+            if (WindowClosingCallback != null)
             {
-                return;
-            }
-
-            if (Aborted || MBox.ShowDialog("Do you want to cancel?", "Saving Directory Listings",
-                MessageBoxButton.YesNo) ==
-                MessageBoxResult.Yes)
-            {
-                worker.EndThread();
-            }
-            else
-            {
-                e.Cancel = true;
+                e.Cancel = (false == WindowClosingCallback());
             }
         }
 
@@ -116,5 +102,7 @@ namespace DoubleFile
             MinHeight = ActualHeight;
             MaxHeight = ActualHeight;
         }
+
+        LV_ProgressVM m_lv = new LV_ProgressVM();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -16,11 +17,33 @@ namespace DoubleFile
             }
 
             gd = gd_in;
-            gd_old = GlobalData.Instance;
 
             m_winProgress = new WinProgress();
             m_winProgress.InitProgress(new string[] { ksProgressKey }, new string[] { ksProgressKey });
             m_winProgress.WindowTitle = ksProgressKey;
+            m_winProgress.WindowClosingCallback = (() =>
+            {
+                if (gd.FileDictionary == null)
+                {
+                    return true;
+                }
+
+                if (gd.FileDictionary.IsAborted)
+                {
+                    return true;
+                }
+
+                if (MBox.ShowDialog("Do you want to cancel?", ksProgressKey,
+                    MessageBoxButton.YesNo) ==
+                    MessageBoxResult.Yes)
+                {
+                    gd.FileDictionary.Abort();
+                    return true;
+                }
+
+                return false;
+            });
+
 
             gd.FileDictionary = new CreateFileDictionary(lvProjectVM, 
                 CreateFileDictStatusCallback).DoThreadFactory();
@@ -49,8 +72,7 @@ namespace DoubleFile
         }
 
         readonly GlobalData_Base gd = null;
-        GlobalData gd_old = null;
         WinProgress m_winProgress = null;
-        const string ksProgressKey = "Creating file dictionary...";
+        const string ksProgressKey = "Creating file dictionary";
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -35,6 +36,28 @@ namespace DoubleFile
                 m_winProgress = new WinProgress();
                 m_winProgress.InitProgress(listNicknames, listSourcePaths);
                 m_winProgress.WindowTitle = "Saving Directory Listings";
+                m_winProgress.WindowClosingCallback = (() =>
+                {
+                    if (gd_old.m_saveDirListings == null)
+                    {
+                        return true;
+                    }
+
+                    if (gd_old.m_saveDirListings.IsAborted)
+                    {
+                        return true;
+                    }
+
+                    if (MBox.ShowDialog("Do you want to cancel?", "Saving Directory Listings",
+                        MessageBoxButton.YesNo) ==
+                        MessageBoxResult.Yes)
+                    {
+                        gd_old.m_saveDirListings.EndThread();
+                        return true;
+                    }
+
+                    return false;
+                });
 
                 if ((gd_old.m_saveDirListings != null) && (gd_old.m_saveDirListings.IsAborted == false))
                 {

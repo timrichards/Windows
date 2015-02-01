@@ -50,60 +50,62 @@ namespace DoubleFile
 
         internal void TimerTick()
         {
-            if (m_nLastProgress != Progress)
+            if (m_nLastProgress == Progress)
             {
-                if (Progress == double.NaN)
-                {
-                    return;
-                }
-
-                if (m_bIndeterminate)
-                {
-                    Indeterminate = false;
-                }
-
-                if (m_dtRollingProgress == DateTime.MinValue)
-                {
-                    m_dtRollingProgress = DateTime.Now;
-                }
-
-                var tmRolling = DateTime.Now - m_dtRollingProgress;
-
-                if ((m_nRollingProgress == 0) && (tmRolling > TimeSpan.FromSeconds(15)))
-                {
-                    // The operating system caches reads so restarting the drive read sweeps
-                    // through the already-read data unreasonably fast.
-                    m_nRollingProgress = Progress;
-
-                    if (m_nRollingProgress == 0)
-                    {
-                        m_nRollingProgress = double.Epsilon;
-                    }
-
-                    m_dtRollingProgress = DateTime.Now;
-                }
-                else if (tmRolling > TimeSpan.FromMinutes(nRollingMinutes))
-                {
-                    var v = Math.Min(1, Progress + double.Epsilon);
-                    var numerator = Math.Max(0, (1 - v) * tmRolling.Ticks);
-                    var denominator = (v - m_nRollingProgress) / nRollingMinutes;
-
-                    if (denominator > 0)
-                    {
-                        var nRemaining = TimeSpan.FromTicks((long)(numerator / denominator))
-                            .Add(TimeSpan.FromMinutes(1))
-                            .TotalMinutes;
-
-                        Remaining = "About " + nRemaining.ToString("0") + " Minute" + (nRemaining != 1 ? "s" : "") + " remaining";
-                    }
-
-                    m_nRollingProgress = v;
-                    m_dtRollingProgress = DateTime.Now;
-                }
-
-                RaisePropertyChanged(ksProgress);
-                m_nLastProgress = Progress;
+                return;
             }
+
+            if (Progress == double.NaN)
+            {
+                return;
+            }
+
+            if (m_bIndeterminate)
+            {
+                Indeterminate = false;
+            }
+
+            if (m_dtRollingProgress == DateTime.MinValue)
+            {
+                m_dtRollingProgress = DateTime.Now;
+            }
+
+            var tmRolling = DateTime.Now - m_dtRollingProgress;
+
+            if ((m_nRollingProgress == 0) && (tmRolling > TimeSpan.FromSeconds(15)))
+            {
+                // The operating system caches reads so restarting the drive read sweeps
+                // through the already-read data unreasonably fast.
+                m_nRollingProgress = Progress;
+
+                if (m_nRollingProgress == 0)
+                {
+                    m_nRollingProgress = double.Epsilon;
+                }
+
+                m_dtRollingProgress = DateTime.Now;
+            }
+            else if (tmRolling > TimeSpan.FromMinutes(nRollingMinutes))
+            {
+                var v = Math.Min(1, Progress + double.Epsilon);
+                var numerator = Math.Max(0, (1 - v) * tmRolling.Ticks);
+                var denominator = (v - m_nRollingProgress) / nRollingMinutes;
+
+                if (denominator > 0)
+                {
+                    var nRemaining = TimeSpan.FromTicks((long)(numerator / denominator))
+                        .Add(TimeSpan.FromMinutes(1))
+                        .TotalMinutes;
+
+                    Remaining = "About " + nRemaining.ToString("0") + " Minute" + (nRemaining != 1 ? "s" : "") + " remaining";
+                }
+
+                m_nRollingProgress = v;
+                m_dtRollingProgress = DateTime.Now;
+            }
+
+            RaisePropertyChanged(ksProgress);
+            m_nLastProgress = Progress;
         }
 
         internal override int NumCols { get { return NumCols_; } }

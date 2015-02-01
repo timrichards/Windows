@@ -1,4 +1,5 @@
 ﻿
+using System;
 namespace DoubleFile
 {
     class LV_ProgressVM : ListViewVM_GenericBase<LVitem_ProgressVM>
@@ -13,5 +14,20 @@ namespace DoubleFile
 
         internal override bool NewItem(string[] arrStr, bool bQuiet = false) { Add(new LVitem_ProgressVM(this, arrStr), bQuiet); return true; }
         internal override int NumCols { get { return LVitem_ProgressVM.NumCols_; } }
+
+        internal LV_ProgressVM()
+        {
+            m_tmrUpdate.Interval = new TimeSpan(0, 0, 0, 0, 200);
+            m_tmrUpdate.Tick += new EventHandler((Object sender, EventArgs e) =>
+            {
+                foreach (var lvItem in ItemsCast)
+                {
+                    lvItem.TimerTick();
+                }
+            });
+            m_tmrUpdate.Start();
+        }
+
+        SDL_Timer m_tmrUpdate = new SDL_Timer();
     }
 }

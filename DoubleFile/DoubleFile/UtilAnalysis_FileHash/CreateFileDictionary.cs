@@ -22,7 +22,7 @@ namespace DoubleFile
     class CreateFileDictionary : FileParse
     {
         internal Dictionary<LVitem_ProjectVM, int> DictLVitemNumber = new Dictionary<LVitem_ProjectVM, int>();
-        internal Dictionary<FileKey, UList<FileDictLookup>> DictFiles = new Dictionary<FileKey, UList<FileDictLookup>>();
+        internal Dictionary<FileKey, List<FileDictLookup>> DictFiles = new Dictionary<FileKey, List<FileDictLookup>>();
         
         internal CreateFileDictionary(LV_ProjectVM lvProjectVM, CreateFileDictStatusDelegate statusCallback)
         {
@@ -69,7 +69,7 @@ namespace DoubleFile
 
             Parallel.ForEach(LVprojectVM.ItemsCast, (lvItem => 
             {
-                var ieLines = File.ReadLines(lvItem.ListingFile).Skip(4)
+                var ieLines = File.ReadLines(lvItem.ListingFile)
                     .Where(strLine => strLine.StartsWith(ksLineType_File));
                 var nLVitem = DictLVitemNumber[lvItem];
 
@@ -90,7 +90,7 @@ namespace DoubleFile
                         {
                             if (false == DictFiles.ContainsKey(key))
                             {
-                                var listFiles = new UList<FileDictLookup>();
+                                var listFiles = new List<FileDictLookup>();
 
                                 listFiles.Add(lookup);
                                 DictFiles.Add(key, listFiles);

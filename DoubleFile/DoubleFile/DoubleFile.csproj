@@ -154,6 +154,19 @@
     <Compile Include="UtilAnalysis_FileHash\CreateFileDictProcess.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary\Duplicate.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary\FileKey.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\LVitem_FileHashVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\LV_FileHashVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\LV_FileHashVM_Impl.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\TreeView\SDL_TreeNode.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\TreeView\SDL_TreeNodeCollection.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\TreeView\TreeViewItem_FileHashVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\TreeView\TreeViewVMhack.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\TreeView\TreeView_FileHashVM.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UtilAnalysis_FileHash\MVVM\TreeView\TVI_DependencyProperty.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\WinFileHashVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\WinFileHashVM_Impl.cs" />
     <Compile Include="UtilAnalysis_FileHash\WinAnalysis_FileHash.xaml.cs">
       <DependentUpon>WinAnalysis_FileHash.xaml</DependentUpon>
     </Compile>

@@ -7,37 +7,56 @@ using System.Collections.Concurrent;
 
 namespace DoubleFile
 {
-    internal struct FileDictLookup
+    struct FileDuplicate
     {
-        internal int LVitemProjectVM { get { return (int)(nData & 0xFF000000) >> 24; } set { nData = LineNumber + (value << 24); } }
-        internal int LineNumber { get { return nData & 0xFFFFFF; } set { nData = (int)(nData & 0xFF000000) + value; } }
-
-        internal FileDictLookup(int nLVitemProjectVM_in, int nLineNumber_in)
-        {
-
-            nData = 0;
-            LVitemProjectVM = nLVitemProjectVM_in;
-            LineNumber = nLineNumber_in;
-            //MBox.Assert(0, LVitemProjectVM == nLVitemProjectVM_in);
-            //MBox.Assert(0, LineNumber == nLineNumber_in);
-        }
-
-        int nData;
+        internal LVitem_ProjectVM LVitemProjectVM;
+        internal int LineNumber;
     }
 
-    class CreateFileDictionary : FileParse
+    class FileDictionary : FileParse
     {
-        internal Dictionary<LVitem_ProjectVM, int> DictLVtoItemNumber = new Dictionary<LVitem_ProjectVM, int>();
-        internal Dictionary<int, LVitem_ProjectVM> DictItemNumberToLV = new Dictionary<int, LVitem_ProjectVM>();
-        internal Dictionary<FileKey, List<FileDictLookup>> DictFiles = new Dictionary<FileKey, List<FileDictLookup>>();
-        
-        internal CreateFileDictionary(LV_ProjectVM lvProjectVM, CreateFileDictStatusDelegate statusCallback)
+        internal IEnumerable<FileDuplicate> GetDuplicates(LVitem_ProjectVM lvItem, string strLine)
+        {
+            if (false == strLine.StartsWith(ksLineType_File))
+            {
+                MBox.Assert(0, false);
+                return null;
+            }
+
+            var asLine = strLine.Split('\t');
+            var key = new FileKey(asLine[10], asLine[7]);
+
+            if (false == DictFiles.ContainsKey(key))
+            {
+                return null;
+            }
+
+            var lsRet = new List<FileDuplicate>();
+            var lsDupes = DictFiles[key];
+
+            foreach (var lookup in lsDupes)
+            {
+                FileDuplicate dupe = new FileDuplicate();
+
+                dupe.LVitemProjectVM = DictItemNumberToLV[GetLVitemProjectVM(lookup)];
+                dupe.LineNumber = GetLineNumber(lookup);
+
+                if ((dupe.LVitemProjectVM != lvItem) || (dupe.LineNumber != int.Parse(asLine[1])))  // exactly once every query
+                {
+                    lsRet.Add(dupe);
+                }
+            }
+
+            return lsRet;
+        }
+
+        internal FileDictionary(LV_ProjectVM lvProjectVM, CreateFileDictStatusDelegate statusCallback)
         {
             LVprojectVM = lvProjectVM;
             m_statusCallback = statusCallback;
         }
 
-        internal CreateFileDictionary DoThreadFactory()
+        internal FileDictionary DoThreadFactory()
         {
             m_thread = new Thread(new ThreadStart(Go));
             m_thread.IsBackground = true;
@@ -75,7 +94,7 @@ namespace DoubleFile
             }
 
             int nLVitems_A = 0;
-            ConcurrentDictionary<FileKey, List<FileDictLookup>> dictFiles = new ConcurrentDictionary<FileKey, List<FileDictLookup>>();
+            ConcurrentDictionary<FileKey, List<int>> dictFiles = new ConcurrentDictionary<FileKey, List<int>>();
 
             Parallel.ForEach(LVprojectVM.ItemsCast, (lvItem => 
             {
@@ -90,16 +109,19 @@ namespace DoubleFile
                 {
                     Interlocked.Increment(ref m_nFilesProgress);
 
-                    var arrLine = strLine.Split('\t');
+                    var asLine = strLine.Split('\t');
 
-                    if (arrLine.Length > 10)
+                    if (asLine.Length > 10)
                     {
-                        var key = new FileKey(arrLine[10], arrLine[7]);
-                        var lookup = new FileDictLookup(nLVitem, int.Parse(arrLine[1]));
+                        var key = new FileKey(asLine[10], asLine[7]);
+                        int lookup = 0;
+
+                        SetLVitemProjectVM(ref lookup, nLVitem);
+                        SetLineNumber(ref lookup, int.Parse(asLine[1]));
 
                         if (false == dictFiles.ContainsKey(key))
                         {
-                            var listFiles = new List<FileDictLookup>();
+                            var listFiles = new List<int>();
 
                             listFiles.Add(lookup);
                             dictFiles[key] = listFiles;
@@ -117,8 +139,13 @@ namespace DoubleFile
                 });
             }));
 
-            //m_nFilesProgress = 0;
-            //m_nFilesTotal = dictFiles.Count;
+            bool bCheck = false;
+
+            if (bCheck)
+            {
+                m_nFilesProgress = 0;
+                m_nFilesTotal = dictFiles.Count;
+            }
 
             foreach (var keyValuePair in dictFiles)
             {
@@ -129,29 +156,42 @@ namespace DoubleFile
                 {
                     DictFiles[keyValuePair.Key] = ls;
 
-                    // check the dictionary. Extremely slow but it worked for the first 89.
+                    if (bCheck)
+                    {
+                        // check the dictionary. Extremely slow but it worked for the first 89.
 
-                    //var lookup = ls[0];
-                    //var arrLine = File.ReadLines(DictItemNumberToLV[lookup.LVitemProjectVM].ListingFile)
-                    //    .Skip(lookup.LineNumber - 1).Take(1).ToArray()[0]
-                    //    .Split('\t');
+                        var lookup = ls[0];
+                        var asLine = File.ReadLines(DictItemNumberToLV[GetLVitemProjectVM(lookup)].ListingFile)
+                            .Skip(GetLineNumber(lookup) - 1).Take(1).ToArray()[0]
+                            .Split('\t');
 
-                    //for (int n = 1; n < nLength; ++n)
-                    //{
-                    //    var lookup_A = ls[n];
-                    //    var arrLine_A = File.ReadLines(DictItemNumberToLV[lookup_A.LVitemProjectVM].ListingFile)
-                    //        .Skip(lookup_A.LineNumber - 1).Take(1).ToArray()[0]
-                    //        .Split('\t');
-                    //    MBox.Assert(0, arrLine_A[10] == arrLine[10]);
-                    //    MBox.Assert(0, arrLine_A[7] == arrLine[7]);
-                    //}
+                        for (int n = 1; n < nLength; ++n)
+                        {
+                            var lookup_A = ls[n];
+                            var asLine_A = File.ReadLines(DictItemNumberToLV[GetLVitemProjectVM(lookup_A)].ListingFile)
+                                .Skip(GetLineNumber(lookup_A) - 1).Take(1).ToArray()[0]
+                                .Split('\t');
+                            MBox.Assert(0, asLine_A[10] == asLine[10]);
+                            MBox.Assert(0, asLine_A[7] == asLine[7]);
+                        }
+                    }
                 }
 
-                //m_statusCallback(nProgress: m_nFilesProgress++ / (double)m_nFilesTotal);
+                m_statusCallback(nProgress: m_nFilesProgress++ / (double)m_nFilesTotal);
             }
 
             m_statusCallback(bDone: true);
         }
+
+        Dictionary<LVitem_ProjectVM, int> DictLVtoItemNumber = new Dictionary<LVitem_ProjectVM, int>();
+        Dictionary<int, LVitem_ProjectVM> DictItemNumberToLV = new Dictionary<int, LVitem_ProjectVM>();
+        Dictionary<FileKey, IEnumerable<int>> DictFiles = new Dictionary<FileKey, IEnumerable<int>>();
+
+        const uint knItemVMmask = 0xFF000000;
+        int GetLVitemProjectVM(int n) { return (int)(n & knItemVMmask) >> 24; }
+        int SetLVitemProjectVM(ref int n, int v) { return n = n + (v << 24); }
+        int GetLineNumber(int n) { return n & 0xFFFFFF; }
+        int SetLineNumber(ref int n, int v) { return n = (int)(n & knItemVMmask) + v; }
 
         readonly CreateFileDictStatusDelegate m_statusCallback = null;
         Thread m_thread = null;

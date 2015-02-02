@@ -10,7 +10,7 @@ namespace DoubleFile
 
         internal abstract bool WindowClosed { get; }
 
-        internal CreateFileDictionary FileDictionary = null;
+        internal FileDictionary FileDictionary = null;
     }
 
     class GlobalData_Window : GlobalData_Base

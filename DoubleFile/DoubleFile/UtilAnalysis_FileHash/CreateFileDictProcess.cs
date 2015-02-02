@@ -50,7 +50,7 @@ namespace DoubleFile
             });
 
 
-            gd.FileDictionary = new CreateFileDictionary(lvProjectVM, 
+            gd.FileDictionary = new FileDictionary(lvProjectVM, 
                 CreateFileDictStatusCallback).DoThreadFactory();
             m_winProgress.ShowDialog();
         }

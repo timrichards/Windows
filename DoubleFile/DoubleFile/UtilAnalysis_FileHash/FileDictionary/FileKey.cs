@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    partial class FileDictionary : FileParse
+    partial class FileDictionary
     {
         class FileKey : IComparable
         {

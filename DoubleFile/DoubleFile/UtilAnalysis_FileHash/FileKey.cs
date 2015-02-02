@@ -3,91 +3,94 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    internal class FileKey : IComparable
+    partial class FileDictionary : FileParse
     {
-        internal byte[] abHash;
-        internal ulong nLength;
-
-        internal FileKey(string strHash, string strLength)
+        class FileKey : IComparable
         {
-            abHash = Enumerable.Range(0, strHash.Length)
-                .Where(x => x % 2 == 0)
-                .Select(x => Convert.ToByte(strHash.Substring(x, 2), 16))
-                .ToArray();
-            nLength = ulong.Parse(strLength);
-        }
+            internal byte[] abHash;
+            internal ulong nLength;
 
-        public int CompareTo(object obj)
-        {
-            FileKey that = (FileKey)obj;
-
-            if (this > that) return -1;             // reverse sort
-            if (this == that) return 0;
-            return 1;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if ((obj is FileKey) == false) return false;
-            return (((FileKey)obj) == this);
-        }
-
-        public override int GetHashCode()
-        {
-            // any overflow mixes the bits a bit better.
-            int result = 37;    // prime
-            result *= 397;      // also prime
-
-            foreach (var b in abHash)
+            internal FileKey(string strHash, string strLength)
             {
-                result += b;
+                abHash = Enumerable.Range(0, strHash.Length)
+                    .Where(x => x % 2 == 0)
+                    .Select(x => Convert.ToByte(strHash.Substring(x, 2), 16))
+                    .ToArray();
+                nLength = ulong.Parse(strLength);
+            }
+
+            public int CompareTo(object obj)
+            {
+                FileKey that = (FileKey)obj;
+
+                if (this > that) return -1;             // reverse sort
+                if (this == that) return 0;
+                return 1;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if ((obj is FileKey) == false) return false;
+                return (((FileKey)obj) == this);
+            }
+
+            public override int GetHashCode()
+            {
+                // any overflow mixes the bits a bit better.
+                int result = 37;    // prime
+                result *= 397;      // also prime
+
+                foreach (var b in abHash)
+                {
+                    result += b;
+                    result *= 397;
+                }
+
+                result += nLength.GetHashCode();
                 result *= 397;
+                return result;
             }
 
-            result += nLength.GetHashCode();
-            result *= 397;
-            return result;
-        }
-
-        public override string ToString()
-        {
-            return "abHash: " + abHash + "\n" +
-                "nLength: " + nLength + "\n";
-        }
-
-        public static bool operator ==(FileKey x, FileKey y)
-        {
-            var q = from a in x.abHash
-                    join b in y.abHash on a equals b
-                    select a;
-
-            return (x.abHash.Length == y.abHash.Length) &&
-                (q.Count() == x.abHash.Length) &&
-                (x.nLength == y.nLength);
-        }
-
-        public static bool operator >(FileKey x, FileKey y)
-        {
-            if (x.abHash.Length < y.abHash.Length) return false;
-            if (x.abHash.Length > y.abHash.Length) return true;
-
-            for (int n = 0; n < x.abHash.Length; ++n)
+            public override string ToString()
             {
-                if (x.abHash[n] < y.abHash[n])
-                    return false;
-
-                if (x.abHash[n] > y.abHash[n])
-                    return true;
+                return "abHash: " + abHash + "\n" +
+                    "nLength: " + nLength + "\n";
             }
 
-            if (x.nLength < y.nLength) return false;
-            if (x.nLength > y.nLength) return true;
-            return false;
-        }
+            public static bool operator ==(FileKey x, FileKey y)
+            {
+                var q = from a in x.abHash
+                        join b in y.abHash on a equals b
+                        select a;
 
-        public static bool operator !=(FileKey x, FileKey y) { return ((x == y) == false); }
-        public static bool operator <(FileKey x, FileKey y) { return ((x >= y) == false); }
-        public static bool operator >=(FileKey x, FileKey y) { return ((x > y) || (x == y)); }
-        public static bool operator <=(FileKey x, FileKey y) { return ((x > y) == false); }
+                return (x.abHash.Length == y.abHash.Length) &&
+                    (q.Count() == x.abHash.Length) &&
+                    (x.nLength == y.nLength);
+            }
+
+            public static bool operator >(FileKey x, FileKey y)
+            {
+                if (x.abHash.Length < y.abHash.Length) return false;
+                if (x.abHash.Length > y.abHash.Length) return true;
+
+                for (int n = 0; n < x.abHash.Length; ++n)
+                {
+                    if (x.abHash[n] < y.abHash[n])
+                        return false;
+
+                    if (x.abHash[n] > y.abHash[n])
+                        return true;
+                }
+
+                if (x.nLength < y.nLength) return false;
+                if (x.nLength > y.nLength) return true;
+                return false;
+            }
+
+            public static bool operator !=(FileKey x, FileKey y) { return ((x == y) == false); }
+            public static bool operator <(FileKey x, FileKey y) { return ((x >= y) == false); }
+            public static bool operator >=(FileKey x, FileKey y) { return ((x > y) || (x == y)); }
+            public static bool operator <=(FileKey x, FileKey y) { return ((x > y) == false); }
+        }
     }
 }

@@ -7,15 +7,15 @@ using System.Collections.Concurrent;
 
 namespace DoubleFile
 {
-    struct FileDuplicate
+    partial class FileDictionary : FileParse
     {
-        internal LVitem_ProjectVM LVitemProjectVM;
-        internal int LineNumber;
-    }
-
-    class FileDictionary : FileParse
-    {
-        internal IEnumerable<FileDuplicate> GetDuplicates(LVitem_ProjectVM lvItem, string strLine)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="strLine"></param>
+        /// <param name="strListingFile">Only used to prevent adding queried item to the returned list.</param>
+        /// <returns>null if bad strLine. Otherwise always non-null, even if empty.</returns>
+        internal IEnumerable<Duplicate> GetDuplicates(string strLine, string strListingFile = null)
         {
             if (false == strLine.StartsWith(ksLineType_File))
             {
@@ -25,23 +25,25 @@ namespace DoubleFile
 
             var asLine = strLine.Split('\t');
             var key = new FileKey(asLine[10], asLine[7]);
+            var lsRet = new List<Duplicate>();
 
-            if (false == DictFiles.ContainsKey(key))
+            if (false == m_DictFiles.ContainsKey(key))
             {
-                return null;
+                return lsRet;
             }
 
-            var lsRet = new List<FileDuplicate>();
-            var lsDupes = DictFiles[key];
+            var lsDupes = m_DictFiles[key];
+            var nLine = int.Parse(asLine[1]);
 
             foreach (var lookup in lsDupes)
             {
-                FileDuplicate dupe = new FileDuplicate();
+                Duplicate dupe = new Duplicate();
 
                 dupe.LVitemProjectVM = DictItemNumberToLV[GetLVitemProjectVM(lookup)];
                 dupe.LineNumber = GetLineNumber(lookup);
 
-                if ((dupe.LVitemProjectVM != lvItem) || (dupe.LineNumber != int.Parse(asLine[1])))  // exactly once every query
+                if ((dupe.LVitemProjectVM.ListingFile != strListingFile) ||     // exactly once every query
+                    (dupe.LineNumber != nLine))
                 {
                     lsRet.Add(dupe);
                 }
@@ -154,7 +156,7 @@ namespace DoubleFile
 
                 if (nLength > 1)
                 {
-                    DictFiles[keyValuePair.Key] = ls;
+                    m_DictFiles[keyValuePair.Key] = ls;
 
                     if (bCheck)
                     {
@@ -185,7 +187,7 @@ namespace DoubleFile
 
         Dictionary<LVitem_ProjectVM, int> DictLVtoItemNumber = new Dictionary<LVitem_ProjectVM, int>();
         Dictionary<int, LVitem_ProjectVM> DictItemNumberToLV = new Dictionary<int, LVitem_ProjectVM>();
-        Dictionary<FileKey, IEnumerable<int>> DictFiles = new Dictionary<FileKey, IEnumerable<int>>();
+        Dictionary<FileKey, IEnumerable<int>> m_DictFiles = new Dictionary<FileKey, IEnumerable<int>>();
 
         const uint knItemVMmask = 0xFF000000;
         int GetLVitemProjectVM(int n) { return (int)(n & knItemVMmask) >> 24; }

@@ -33,6 +33,11 @@ namespace DoubleFile
                     return true;
                 }
 
+                if (m_bCompleted)
+                {
+                    return true;
+                }
+
                 if (MBox.ShowDialog("Do you want to cancel?", ksProgressKey,
                     MessageBoxButton.YesNo) ==
                     MessageBoxResult.Yes)
@@ -63,6 +68,7 @@ namespace DoubleFile
                 if (bDone)
                 {
                     m_winProgress.SetCompleted(ksProgressKey);
+                    m_bCompleted = true;
                 }
                 else if (nProgress >= 0)
                 {
@@ -71,6 +77,7 @@ namespace DoubleFile
             }));
         }
 
+        bool m_bCompleted = false;
         readonly GlobalData_Base gd = null;
         WinProgress m_winProgress = null;
         const string ksProgressKey = "Creating file dictionary";

@@ -23,7 +23,7 @@ namespace DoubleFile
     class CreateFileDictionary : FileParse
     {
         internal Dictionary<LVitem_ProjectVM, int> DictLVitemNumber = new Dictionary<LVitem_ProjectVM, int>();
-        internal ConcurrentDictionary<FileKey, List<FileDictLookup>> DictFiles = new ConcurrentDictionary<FileKey, List<FileDictLookup>>();
+        internal Dictionary<FileKey, List<FileDictLookup>> DictFiles = new Dictionary<FileKey, List<FileDictLookup>>();
         
         internal CreateFileDictionary(LV_ProjectVM lvProjectVM, CreateFileDictStatusDelegate statusCallback)
         {
@@ -67,6 +67,7 @@ namespace DoubleFile
             }
 
             int nLVitems_A = 0;
+            ConcurrentDictionary<FileKey, List<FileDictLookup>> dictFiles = new ConcurrentDictionary<FileKey, List<FileDictLookup>>();
 
             Parallel.ForEach(LVprojectVM.ItemsCast, (lvItem => 
             {
@@ -88,16 +89,16 @@ namespace DoubleFile
                         var key = new FileKey(arrLine[10], arrLine[7]);
                         var lookup = new FileDictLookup(nLVitem, ulong.Parse(arrLine[1]));
 
-                        if (false == DictFiles.ContainsKey(key))
+                        if (false == dictFiles.ContainsKey(key))
                         {
                             var listFiles = new List<FileDictLookup>();
 
                             listFiles.Add(lookup);
-                            DictFiles[key] = listFiles;
+                            dictFiles[key] = listFiles;
                         }
                         else
                         {
-                            DictFiles[key].Add(lookup);
+                            dictFiles[key].Add(lookup);
                         }
                     }
 
@@ -107,6 +108,14 @@ namespace DoubleFile
                     }
                 });
             }));
+
+            foreach (var keyValuePair in dictFiles)
+            {
+                if (keyValuePair.Value.Count > 1)
+                {
+                    DictFiles[keyValuePair.Key] = keyValuePair.Value;
+                }
+            }
 
             m_statusCallback(bDone: true);
         }

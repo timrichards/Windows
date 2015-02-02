@@ -213,9 +213,18 @@ namespace DoubleFile
                 return false;
             }
 
+            string strFile_01 = FileParse.StrFile_01(lvItem_Orig.ListingFile);
+
+            if (File.Exists(strFile_01))
+            {
+                File.Delete(strFile_01);
+            }
+
+            File.Move(lvItem_Orig.ListingFile, strFile_01);
+
             var sbOut = new System.Text.StringBuilder();
 
-            using (var reader = new StringReader(File.ReadAllText(lvItem_Orig.ListingFile)))
+            using (var reader = File.OpenText(strFile_01))
             {
                 string strLine = null;
 

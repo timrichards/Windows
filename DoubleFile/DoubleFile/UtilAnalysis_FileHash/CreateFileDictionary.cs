@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Linq;
 using System;
+using System.Collections.Concurrent;
 
 namespace DoubleFile
 {
@@ -22,7 +23,7 @@ namespace DoubleFile
     class CreateFileDictionary : FileParse
     {
         internal Dictionary<LVitem_ProjectVM, int> DictLVitemNumber = new Dictionary<LVitem_ProjectVM, int>();
-        internal Dictionary<FileKey, List<FileDictLookup>> DictFiles = new Dictionary<FileKey, List<FileDictLookup>>();
+        internal ConcurrentDictionary<FileKey, List<FileDictLookup>> DictFiles = new ConcurrentDictionary<FileKey, List<FileDictLookup>>();
         
         internal CreateFileDictionary(LV_ProjectVM lvProjectVM, CreateFileDictStatusDelegate statusCallback)
         {
@@ -87,19 +88,16 @@ namespace DoubleFile
                         var key = new FileKey(arrLine[10], arrLine[7]);
                         var lookup = new FileDictLookup(nLVitem, ulong.Parse(arrLine[1]));
 
-                        lock (DictFiles)
+                        if (false == DictFiles.ContainsKey(key))
                         {
-                            if (false == DictFiles.ContainsKey(key))
-                            {
-                                var listFiles = new List<FileDictLookup>();
+                            var listFiles = new List<FileDictLookup>();
 
-                                listFiles.Add(lookup);
-                                DictFiles.Add(key, listFiles);
-                            }
-                            else
-                            {
-                                DictFiles[key].Add(lookup);
-                            }
+                            listFiles.Add(lookup);
+                            DictFiles[key] = listFiles;
+                        }
+                        else
+                        {
+                            DictFiles[key].Add(lookup);
                         }
                     }
 

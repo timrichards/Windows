@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -103,7 +104,7 @@ namespace DoubleFile
             }
 
             void Hash(IEnumerable<string> listFilePaths,
-                out Dictionary<string, byte[]> dictHash_out,
+                out ConcurrentDictionary<string, byte[]> dictHash_out,
                 out Dictionary<string, string> dictException_FileRead_out)
             {
                 if (listFilePaths == null)
@@ -122,7 +123,7 @@ namespace DoubleFile
                     m_statusCallback(LVitemProjectVM, nProgress: nProgressNumerator / nProgressDenominator);
                 }), null, timeSpan, timeSpan);
 
-                var dictHash = new Dictionary<string, byte[]>();
+                var dictHash = new ConcurrentDictionary<string, byte[]>();
                 var dictException_FileRead = new Dictionary<string, string>();
 
                 Parallel.ForEach(listFilePaths, strFile =>
@@ -153,10 +154,7 @@ namespace DoubleFile
 
                         using (var md5 = System.Security.Cryptography.MD5.Create())
                         {
-                            lock (dictHash)
-                            {
-                                dictHash[strFile] = md5.ComputeHash(buffer);
-                            }
+                            dictHash[strFile] = md5.ComputeHash(buffer);
                         }
                     }
                 });
@@ -195,7 +193,7 @@ namespace DoubleFile
                 {
                     using (TextWriter fs = File.CreateText(LVitemProjectVM.ListingFile))
                     {
-                        Dictionary<string, byte[]> dictHash = null;
+                        ConcurrentDictionary<string, byte[]> dictHash = null;
                         Dictionary<string, string> dictException_FileRead = null;
 
                         WriteHeader(fs);

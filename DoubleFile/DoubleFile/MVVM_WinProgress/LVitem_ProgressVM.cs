@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Media;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -18,7 +19,10 @@ namespace DoubleFile
             set
             {
                 m_bIndeterminate = value;
-                ProgressState = m_bIndeterminate ? Brushes.Yellow : Brushes.Blue;
+
+                if (new Brush[] { Brushes.Yellow, Brushes.Blue }.Contains(ProgressState))
+                    ProgressState = m_bIndeterminate ? Brushes.Yellow : Brushes.Blue;
+
                 RaisePropertyChanged(ksIndeterminate);
             }
         }

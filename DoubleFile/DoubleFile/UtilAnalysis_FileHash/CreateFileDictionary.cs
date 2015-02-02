@@ -10,9 +10,9 @@ namespace DoubleFile
     internal struct FileDictLookup
     {
         internal int nLVitemProjectVM;
-        internal ulong nLineNumber;
+        internal int nLineNumber;
 
-        internal FileDictLookup(int nLVitemProjectVM_in, ulong nLineNumber_in)
+        internal FileDictLookup(int nLVitemProjectVM_in, int nLineNumber_in)
         {
             nLVitemProjectVM = nLVitemProjectVM_in;
             nLineNumber = nLineNumber_in;
@@ -89,7 +89,7 @@ namespace DoubleFile
                     if (arrLine.Length > 10)
                     {
                         var key = new FileKey(arrLine[10], arrLine[7]);
-                        var lookup = new FileDictLookup(nLVitem, ulong.Parse(arrLine[1]));
+                        var lookup = new FileDictLookup(nLVitem, int.Parse(arrLine[1]));
 
                         if (false == dictFiles.ContainsKey(key))
                         {
@@ -127,14 +127,14 @@ namespace DoubleFile
 
                     //var lookup = ls[0];
                     //var arrLine = File.ReadLines(DictItemNumberToLV[lookup.nLVitemProjectVM].ListingFile)
-                    //    .Skip((int)lookup.nLineNumber - 1).Take(1).ToArray()[0]
+                    //    .Skip(lookup.nLineNumber - 1).Take(1).ToArray()[0]
                     //    .Split('\t');
 
                     //for (int n=1; n<nLength; ++n)
                     //{
                     //    var lookup_A = ls[n];
                     //    var arrLine_A = File.ReadLines(DictItemNumberToLV[lookup_A.nLVitemProjectVM].ListingFile)
-                    //        .Skip((int)lookup_A.nLineNumber - 1).Take(1).ToArray()[0]
+                    //        .Skip(lookup_A.nLineNumber - 1).Take(1).ToArray()[0]
                     //        .Split('\t');
                     //    MBox.Assert(0, arrLine_A[10] == arrLine[10]);
                     //    MBox.Assert(0, arrLine_A[7] == arrLine[7]);

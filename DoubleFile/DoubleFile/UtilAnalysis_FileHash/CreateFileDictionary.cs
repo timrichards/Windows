@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.IO;
 using System.Linq;
-using System;
 using System.Collections.Concurrent;
 
 namespace DoubleFile
@@ -11,18 +10,19 @@ namespace DoubleFile
     internal struct FileDictLookup
     {
         internal int nLVitemProjectVM;
-        internal ulong nLVitem;
+        internal ulong nLineNumber;
 
-        internal FileDictLookup(int nLVitemProjectVM_in, ulong nLVitem_in)
+        internal FileDictLookup(int nLVitemProjectVM_in, ulong nLineNumber_in)
         {
             nLVitemProjectVM = nLVitemProjectVM_in;
-            nLVitem = nLVitem_in;
+            nLineNumber = nLineNumber_in;
         }
     }
 
     class CreateFileDictionary : FileParse
     {
-        internal Dictionary<LVitem_ProjectVM, int> DictLVitemNumber = new Dictionary<LVitem_ProjectVM, int>();
+        internal Dictionary<LVitem_ProjectVM, int> DictLVtoItemNumber = new Dictionary<LVitem_ProjectVM, int>();
+        internal Dictionary<int, LVitem_ProjectVM> DictItemNumberToLV = new Dictionary<int, LVitem_ProjectVM>();
         internal Dictionary<FileKey, List<FileDictLookup>> DictFiles = new Dictionary<FileKey, List<FileDictLookup>>();
         
         internal CreateFileDictionary(LV_ProjectVM lvProjectVM, CreateFileDictStatusDelegate statusCallback)
@@ -63,7 +63,9 @@ namespace DoubleFile
 
             foreach (var lvItem in LVprojectVM.ItemsCast)
             {
-                DictLVitemNumber.Add(lvItem, nLVitems++);
+                DictLVtoItemNumber.Add(lvItem, nLVitems);
+                DictItemNumberToLV.Add(nLVitems, lvItem);
+                ++nLVitems;
             }
 
             int nLVitems_A = 0;
@@ -73,7 +75,7 @@ namespace DoubleFile
             {
                 var ieLines = File.ReadLines(lvItem.ListingFile)
                     .Where(strLine => strLine.StartsWith(ksLineType_File));
-                var nLVitem = DictLVitemNumber[lvItem];
+                var nLVitem = DictLVtoItemNumber[lvItem];
 
                 Interlocked.Add(ref m_nFilesTotal, ieLines.Count());
                 Interlocked.Increment(ref nLVitems_A);
@@ -109,12 +111,37 @@ namespace DoubleFile
                 });
             }));
 
+            //m_nFilesProgress = 0;
+            //m_nFilesTotal = dictFiles.Count;
+
             foreach (var keyValuePair in dictFiles)
             {
-                if (keyValuePair.Value.Count > 1)
+                var ls = keyValuePair.Value;
+                var nLength = ls.Count;
+
+                if (nLength > 1)
                 {
-                    DictFiles[keyValuePair.Key] = keyValuePair.Value;
+                    DictFiles[keyValuePair.Key] = ls;
+
+                    // check the dictionary. Extremely slow but it worked for the first 89.
+
+                    //var lookup = ls[0];
+                    //var arrLine = File.ReadLines(DictItemNumberToLV[lookup.nLVitemProjectVM].ListingFile)
+                    //    .Skip((int)lookup.nLineNumber - 1).Take(1).ToArray()[0]
+                    //    .Split('\t');
+
+                    //for (int n=1; n<nLength; ++n)
+                    //{
+                    //    var lookup_A = ls[n];
+                    //    var arrLine_A = File.ReadLines(DictItemNumberToLV[lookup_A.nLVitemProjectVM].ListingFile)
+                    //        .Skip((int)lookup_A.nLineNumber - 1).Take(1).ToArray()[0]
+                    //        .Split('\t');
+                    //    MBox.Assert(0, arrLine_A[10] == arrLine[10]);
+                    //    MBox.Assert(0, arrLine_A[7] == arrLine[7]);
+                    //}
                 }
+
+                //m_statusCallback(nProgress: m_nFilesProgress++ / (double)m_nFilesTotal);
             }
 
             m_statusCallback(bDone: true);

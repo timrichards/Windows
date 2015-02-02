@@ -9,14 +9,20 @@ namespace DoubleFile
 {
     internal struct FileDictLookup
     {
-        internal int nLVitemProjectVM;
-        internal int nLineNumber;
+        internal int LVitemProjectVM { get { return (int)(nData & 0xFF000000) >> 24; } set { nData = LineNumber + (value << 24); } }
+        internal int LineNumber { get { return nData & 0xFFFFFF; } set { nData = (int)(nData & 0xFF000000) + value; } }
 
         internal FileDictLookup(int nLVitemProjectVM_in, int nLineNumber_in)
         {
-            nLVitemProjectVM = nLVitemProjectVM_in;
-            nLineNumber = nLineNumber_in;
+
+            nData = 0;
+            LVitemProjectVM = nLVitemProjectVM_in;
+            LineNumber = nLineNumber_in;
+            //MBox.Assert(0, LVitemProjectVM == nLVitemProjectVM_in);
+            //MBox.Assert(0, LineNumber == nLineNumber_in);
         }
+
+        int nData;
     }
 
     class CreateFileDictionary : FileParse
@@ -126,15 +132,15 @@ namespace DoubleFile
                     // check the dictionary. Extremely slow but it worked for the first 89.
 
                     //var lookup = ls[0];
-                    //var arrLine = File.ReadLines(DictItemNumberToLV[lookup.nLVitemProjectVM].ListingFile)
-                    //    .Skip(lookup.nLineNumber - 1).Take(1).ToArray()[0]
+                    //var arrLine = File.ReadLines(DictItemNumberToLV[lookup.LVitemProjectVM].ListingFile)
+                    //    .Skip(lookup.LineNumber - 1).Take(1).ToArray()[0]
                     //    .Split('\t');
 
-                    //for (int n=1; n<nLength; ++n)
+                    //for (int n = 1; n < nLength; ++n)
                     //{
                     //    var lookup_A = ls[n];
-                    //    var arrLine_A = File.ReadLines(DictItemNumberToLV[lookup_A.nLVitemProjectVM].ListingFile)
-                    //        .Skip(lookup_A.nLineNumber - 1).Take(1).ToArray()[0]
+                    //    var arrLine_A = File.ReadLines(DictItemNumberToLV[lookup_A.LVitemProjectVM].ListingFile)
+                    //        .Skip(lookup_A.LineNumber - 1).Take(1).ToArray()[0]
                     //        .Split('\t');
                     //    MBox.Assert(0, arrLine_A[10] == arrLine[10]);
                     //    MBox.Assert(0, arrLine_A[7] == arrLine[7]);

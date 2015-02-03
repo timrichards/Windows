@@ -14,7 +14,8 @@ namespace DoubleFile
             gd = gd_in;
             m_lvProjectVM = lvProjectVM_in;
             new CreateFileDictProcess(gd, lvProjectVM_in);
-
+            gd.FileDictionary.Deserialize();
+            gd.FileDictionary.Serialize();
             if (gd.FileDictionary == null)
             {
                 return;

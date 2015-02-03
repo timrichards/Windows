@@ -4,11 +4,18 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Linq;
 using System.Collections.Concurrent;
+using System;
 
 namespace DoubleFile
 {
     partial class FileDictionary : FileParse
     {
+        internal FileDictionary(LV_ProjectVM lvProjectVM, CreateFileDictStatusDelegate statusCallback)
+        {
+            LVprojectVM = lvProjectVM;
+            m_statusCallback = statusCallback;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -52,10 +59,40 @@ namespace DoubleFile
             return lsRet;
         }
 
-        internal FileDictionary(LV_ProjectVM lvProjectVM, CreateFileDictStatusDelegate statusCallback)
+        internal void Serialize()
         {
-            LVprojectVM = lvProjectVM;
-            m_statusCallback = statusCallback;
+            using (var writer = new StreamWriter(ProjectFile.TempPath + @"_DuplicateFiles2_", false))
+            {
+                foreach (var keyValuePair in m_DictFiles)
+                {
+                    writer.Write(keyValuePair.Key);
+
+                    foreach (var ls in keyValuePair.Value)
+                    {
+                        writer.Write("\t" + ls);
+                    }
+
+                    writer.WriteLine();
+                }
+            }
+        }
+
+        internal void Deserialize()
+        {
+            using (var reader = new StreamReader(ProjectFile.TempPath + @"_DuplicateFiles_", false))
+            {
+                string strLine = null;
+                m_DictFiles.Clear();
+
+                while ((strLine = reader.ReadLine()) != null)
+                {
+                    var asLine = strLine.Split('\t');
+                    var asKey = asLine[0].Split(' ');
+
+                    m_DictFiles[new FileKey(asKey[0], asKey[1])] =
+                        asLine.Skip(1).Select(s => Convert.ToInt32(s)).ToList();
+                }
+            }
         }
 
         internal FileDictionary DoThreadFactory()

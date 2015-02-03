@@ -53,8 +53,7 @@ namespace DoubleFile
 
             public override string ToString()
             {
-                return "abHash: " + abHash + "\n" +
-                    "nLength: " + nLength + "\n";
+                return DRDigit.Fast.ToHexString(abHash) + " " + nLength;
             }
 
             public static bool operator ==(FileKey x, FileKey y)

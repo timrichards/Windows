@@ -5,7 +5,6 @@ using System.Windows.Threading;
 
 namespace DoubleFile
 {
-
     class TreeView_FileHashVM
     {
         internal TreeView_FileHashVM(TreeView tvfe, Dispatcher dispatcher)

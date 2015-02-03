@@ -8,13 +8,22 @@ using System;
 
 namespace DoubleFile
 {
-    partial class FileDictionary : FileParse
+    partial class FileDictionary : IDisposable
     {
-        internal FileDictionary(LV_ProjectVM lvProjectVM, CreateFileDictStatusDelegate statusCallback)
+        internal FileDictionary()
         {
-            LVprojectVM = lvProjectVM;
-            m_statusCallback = statusCallback;
+            ProjectFile.OnOpenedProject += Deserialize;
+            ProjectFile.OnSavingProject += Serialize;
         }
+
+        public void Dispose()
+        {
+            ProjectFile.OnOpenedProject -= Deserialize;
+            ProjectFile.OnSavingProject -= Serialize;
+        }
+
+        internal void Clear() { m_DictFiles.Clear(); }
+        internal bool IsEmpty { get { return m_DictFiles.Count == 0; } }
 
         /// <summary>
         /// 
@@ -24,7 +33,7 @@ namespace DoubleFile
         /// <returns>null if bad strLine. Otherwise always non-null, even if empty.</returns>
         internal IEnumerable<Duplicate> GetDuplicates(string strLine, string strListingFile = null)
         {
-            if (false == strLine.StartsWith(ksLineType_File))
+            if (false == strLine.StartsWith(FileParse.ksLineType_File))
             {
                 MBox.Assert(0, false);
                 return null;
@@ -59,9 +68,9 @@ namespace DoubleFile
             return lsRet;
         }
 
-        internal void Serialize()
+        internal string Serialize()
         {
-            using (var writer = new StreamWriter(ProjectFile.TempPath + @"_DuplicateFiles2_", false))
+            using (var writer = new StreamWriter(ksSerializeFile, false))
             {
                 foreach (var keyValuePair in m_DictFiles)
                 {
@@ -75,11 +84,18 @@ namespace DoubleFile
                     writer.WriteLine();
                 }
             }
+
+            return ksSerializeFile;
         }
 
         internal void Deserialize()
         {
-            using (var reader = new StreamReader(ProjectFile.TempPath + @"_DuplicateFiles_", false))
+            if (false == File.Exists(ksSerializeFile))
+            {
+                return;
+            }
+
+            using (var reader = new StreamReader(ksSerializeFile, false))
             {
                 string strLine = null;
                 m_DictFiles.Clear();
@@ -87,16 +103,17 @@ namespace DoubleFile
                 while ((strLine = reader.ReadLine()) != null)
                 {
                     var asLine = strLine.Split('\t');
-                    var asKey = asLine[0].Split(' ');
 
-                    m_DictFiles[new FileKey(asKey[0], asKey[1])] =
+                    m_DictFiles[new FileKey(asLine[0])] =
                         asLine.Skip(1).Select(s => Convert.ToInt32(s)).ToList();
                 }
             }
         }
 
-        internal FileDictionary DoThreadFactory()
+        internal FileDictionary DoThreadFactory(LV_ProjectVM lvProjectVM, CreateFileDictStatusDelegate statusCallback)
         {
+            LVprojectVM = lvProjectVM;
+            m_statusCallback = statusCallback;
             m_thread = new Thread(new ThreadStart(Go));
             m_thread.IsBackground = true;
             m_thread.Start();
@@ -138,7 +155,7 @@ namespace DoubleFile
             Parallel.ForEach(LVprojectVM.ItemsCast, (lvItem => 
             {
                 var ieLines = File.ReadLines(lvItem.ListingFile)
-                    .Where(strLine => strLine.StartsWith(ksLineType_File));
+                    .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File));
                 var nLVitem = DictLVtoItemNumber[lvItem];
 
                 Interlocked.Add(ref m_nFilesTotal, ieLines.Count());
@@ -222,6 +239,8 @@ namespace DoubleFile
             m_statusCallback(bDone: true);
         }
 
+        readonly string ksSerializeFile = ProjectFile.TempPath + "_DuplicateFiles_";
+
         Dictionary<LVitem_ProjectVM, int> DictLVtoItemNumber = new Dictionary<LVitem_ProjectVM, int>();
         Dictionary<int, LVitem_ProjectVM> DictItemNumberToLV = new Dictionary<int, LVitem_ProjectVM>();
         Dictionary<FileKey, IEnumerable<int>> m_DictFiles = new Dictionary<FileKey, IEnumerable<int>>();
@@ -232,7 +251,7 @@ namespace DoubleFile
         int GetLineNumber(int n) { return n & 0xFFFFFF; }
         int SetLineNumber(ref int n, int v) { return n = (int)(n & knItemVMmask) + v; }
 
-        readonly CreateFileDictStatusDelegate m_statusCallback = null;
+        CreateFileDictStatusDelegate m_statusCallback = null;
         Thread m_thread = null;
         protected bool m_bThreadAbort = false;
         LV_ProjectVM LVprojectVM = null;

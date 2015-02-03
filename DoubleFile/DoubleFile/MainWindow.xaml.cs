@@ -27,7 +27,7 @@ namespace DoubleFile
                 return;
             }
 
-            action(Analysis_DirListForm, new LV_ProjectVM(LVprojectVM));
+            action(Analysis_DirListForm, new LV_ProjectVM(gd, LVprojectVM));
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -120,11 +120,11 @@ namespace DoubleFile
                     return;
                 }
 
-                volumes = new WinProject();
+                volumes = new WinProject(gd);
             }
             else
             {
-                volumes = new WinProject(LVprojectVM ?? new LV_ProjectVM());
+                volumes = new WinProject(gd, LVprojectVM ?? new LV_ProjectVM());
             }
 
             if (false == (volumes.ShowDialog() ?? false))

@@ -11,20 +11,21 @@ namespace DoubleFile
     {
         internal LV_ProjectVM LVprojectVM { get; private set; }
 
-        internal WinProject(LV_ProjectVM lvProjectVM = null)
+        internal WinProject(GlobalData_Base gd_in, LV_ProjectVM lvProjectVM = null)
         {
             InitializeComponent();
+            gd = gd_in;
             LVprojectVM = lvProjectVM;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             var bOpenProject = (null == LVprojectVM);
-            var lvProjectVM = new LV_ProjectVM(LVprojectVM);
+            var lvProjectVM = new LV_ProjectVM(gd, LVprojectVM);
 
             LVprojectVM = null;         // only one representation of state at a time
 
-            var win = new WinProjectVM();
+            var win = new WinProjectVM(gd);
 
             form_lvProject.DataContext = lvProjectVM;
             DataContext = win;
@@ -65,5 +66,7 @@ namespace DoubleFile
                 return;
             }
         }
+
+        GlobalData_Base gd = null;
     }
 }

@@ -5,9 +5,13 @@ using System.Linq;
 
 namespace DoubleFile
 {
+    delegate string StringAction();
 
     class ProjectFile
     {
+        internal static event StringAction OnSavingProject = null;
+        internal static event Action OnOpenedProject = null;
+
         internal static string TempPath { get { return System.IO.Path.GetTempPath() + @"DoubleFile\"; } }
         internal static string TempPath01 { get { return TempPath.TrimEnd(new char[] { '\\' }) + "01"; } }
 
@@ -52,13 +56,22 @@ namespace DoubleFile
                 {
                     if (m_winProgress.IsLoaded)                 // close box/cancel/undo
                     {
-                        openListingFiles(Directory.GetFiles(TempPath).ToList(), true);
-                        m_winProgress.Close();
+                        openListingFiles(Directory.GetFiles(TempPath)
+                            .Where(s => s.EndsWith(FileParse.ksFileExt_Listing))
+                            .OrderBy(s => s)
+                            .ToList(), true);
+
+                        if (null != OnOpenedProject)
+                        {
+                            OnOpenedProject();
+                        }
 
                         if (Directory.Exists(TempPath01))
                         {
                             Directory.Delete(TempPath01, true);
                         }
+
+                        m_winProgress.Close();
                     }
                     else if (Directory.Exists(TempPath01))      // close box/cancel/undo
                     {
@@ -132,6 +145,8 @@ namespace DoubleFile
             var sbSource = new System.Text.StringBuilder();
             var strPath = Path.GetDirectoryName(listListingFiles[0]) + '\\';
 
+            listListingFiles.Sort();
+
             foreach (var listingFile in listListingFiles)
             {
                 var strFilename = listingFile;
@@ -142,6 +157,21 @@ namespace DoubleFile
                 }
                 
                 sbSource.Append("\"").Append(strFilename).Append("\" ");
+            }
+
+            if (null != OnSavingProject)
+            {
+                foreach (var onSavingProject in OnSavingProject.GetInvocationList())
+                {
+                    var strFilename = (string) onSavingProject.DynamicInvoke();
+
+                    if (strFilename.StartsWith(strPath))
+                    {
+                        strFilename = strFilename.Replace(strPath, "");
+                    }
+
+                    sbSource.Append("\"").Append(strFilename).Append("\" ");
+                }
             }
 
             var strProjectFileNoPath = Path.GetFileName(strProjectFilename);

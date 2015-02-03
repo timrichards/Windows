@@ -7,10 +7,17 @@ namespace DoubleFile
     {
         internal bool Unsaved { get; set; }
 
-        internal LV_ProjectVM(LV_ProjectVM lvProjectVM_in = null)
+        internal LV_ProjectVM(GlobalData_Base gd_in = null, LV_ProjectVM lvProjectVM_in = null)
         {
+            gd = gd_in;
+
             if (lvProjectVM_in != null)
             {
+                if (gd == null)
+                {
+                    gd = lvProjectVM_in.gd;
+                }
+
                 foreach (var lvItemVM in lvProjectVM_in.ItemsCast)
                 {
                     Add(lvItemVM, bQuiet: true);
@@ -141,6 +148,7 @@ namespace DoubleFile
             }
 
             Selected().ToArray().ForEach(lvItem => { Items.Remove(lvItem); });
+            gd.FileDictionary.Clear();
             Unsaved = true;
         }
 
@@ -167,6 +175,7 @@ namespace DoubleFile
         internal void ToggleInclude()
         {
             Selected().ForEach(lvItem => { lvItem.Include = (false == lvItem.Include); });
+            gd.FileDictionary.Clear();
             Unsaved = true;
         }
 
@@ -322,5 +331,7 @@ namespace DoubleFile
             MBox.Assert(0, (false == (bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo || bDriveLetter_Todo)));
             return true;
         }
+
+        GlobalData_Base gd = null;
     }
 }

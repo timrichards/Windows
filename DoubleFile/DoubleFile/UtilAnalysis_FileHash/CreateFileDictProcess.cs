@@ -18,6 +18,11 @@ namespace DoubleFile
 
             gd = gd_in;
 
+            if (false == gd.FileDictionary.IsEmpty)
+            {
+                return;
+            }
+
             m_winProgress = new WinProgress();
             m_winProgress.InitProgress(new string[] { ksProgressKey }, new string[] { ksProgressKey });
             m_winProgress.WindowTitle = ksProgressKey;
@@ -50,8 +55,7 @@ namespace DoubleFile
             });
 
 
-            gd.FileDictionary = new FileDictionary(lvProjectVM, 
-                CreateFileDictStatusCallback).DoThreadFactory();
+            gd.FileDictionary.DoThreadFactory(lvProjectVM, CreateFileDictStatusCallback);
             m_winProgress.ShowDialog();
         }
 

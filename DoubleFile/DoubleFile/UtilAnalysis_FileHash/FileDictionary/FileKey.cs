@@ -10,13 +10,16 @@ namespace DoubleFile
             internal byte[] abHash;
             internal ulong nLength;
 
+            internal FileKey(string deSerialize)
+            {
+                var asKey = deSerialize.Split(' ');
+
+                Init(asKey[0], asKey[1]);
+            }
+
             internal FileKey(string strHash, string strLength)
             {
-                abHash = Enumerable.Range(0, strHash.Length)
-                    .Where(x => x % 2 == 0)
-                    .Select(x => Convert.ToByte(strHash.Substring(x, 2), 16))
-                    .ToArray();
-                nLength = ulong.Parse(strLength);
+                Init(strHash, strLength);
             }
 
             public int CompareTo(object obj)
@@ -90,6 +93,15 @@ namespace DoubleFile
             public static bool operator <(FileKey x, FileKey y) { return ((x >= y) == false); }
             public static bool operator >=(FileKey x, FileKey y) { return ((x > y) || (x == y)); }
             public static bool operator <=(FileKey x, FileKey y) { return ((x > y) == false); }
+
+            void Init(string strHash, string strLength)
+            {
+                abHash = Enumerable.Range(0, strHash.Length)
+                    .Where(x => x % 2 == 0)
+                    .Select(x => Convert.ToByte(strHash.Substring(x, 2), 16))
+                    .ToArray();
+                nLength = ulong.Parse(strLength);
+            }
         }
     }
 }

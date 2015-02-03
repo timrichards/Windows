@@ -142,7 +142,10 @@ namespace DoubleFile
 
             int nLVitems = 0;
 
-            foreach (var lvItem in LVprojectVM.ItemsCast)
+            DictLVtoItemNumber.Clear();
+            DictItemNumberToLV.Clear();
+
+            foreach (var lvItem in LVprojectVM.ItemsCast.OrderBy(lvItem => lvItem.SourcePath))
             {
                 DictLVtoItemNumber.Add(lvItem, nLVitems);
                 DictItemNumberToLV.Add(nLVitems, lvItem);
@@ -152,40 +155,37 @@ namespace DoubleFile
             int nLVitems_A = 0;
             ConcurrentDictionary<FileKey, List<int>> dictFiles = new ConcurrentDictionary<FileKey, List<int>>();
 
-            Parallel.ForEach(LVprojectVM.ItemsCast, (lvItem => 
+            Parallel.ForEach(LVprojectVM.ItemsCast, (lvItem =>
             {
-                var ieLines = File.ReadLines(lvItem.ListingFile)
-                    .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File));
+                var iesLines = File.ReadLines(lvItem.ListingFile)
+                    .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
+                    .Select(strLine => strLine.Split('\t'))
+                    .Where(asLine => asLine.Length > 10);
                 var nLVitem = DictLVtoItemNumber[lvItem];
 
-                Interlocked.Add(ref m_nFilesTotal, ieLines.Count());
+                Interlocked.Add(ref m_nFilesTotal, iesLines.Count());
                 Interlocked.Increment(ref nLVitems_A);
 
-                ieLines.ForEach(strLine =>
+                iesLines.ForEach(asLine =>
                 {
                     Interlocked.Increment(ref m_nFilesProgress);
 
-                    var asLine = strLine.Split('\t');
+                    var key = new FileKey(asLine[10], asLine[7]);
+                    int lookup = 0;
 
-                    if (asLine.Length > 10)
+                    SetLVitemProjectVM(ref lookup, nLVitem);
+                    SetLineNumber(ref lookup, int.Parse(asLine[1]));
+
+                    if (false == dictFiles.ContainsKey(key))
                     {
-                        var key = new FileKey(asLine[10], asLine[7]);
-                        int lookup = 0;
+                        var listFiles = new List<int>();
 
-                        SetLVitemProjectVM(ref lookup, nLVitem);
-                        SetLineNumber(ref lookup, int.Parse(asLine[1]));
-
-                        if (false == dictFiles.ContainsKey(key))
-                        {
-                            var listFiles = new List<int>();
-
-                            listFiles.Add(lookup);
-                            dictFiles[key] = listFiles;
-                        }
-                        else
-                        {
-                            dictFiles[key].Add(lookup);
-                        }
+                        listFiles.Add(lookup);
+                        dictFiles[key] = listFiles;
+                    }
+                    else
+                    {
+                        dictFiles[key].Add(lookup);
                     }
 
                     if (nLVitems == nLVitems_A)
@@ -210,7 +210,7 @@ namespace DoubleFile
 
                 if (nLength > 1)
                 {
-                    m_DictFiles[keyValuePair.Key] = ls;
+                    m_DictFiles[keyValuePair.Key] = ls.OrderBy(i => i);
 
                     if (bCheck)
                     {

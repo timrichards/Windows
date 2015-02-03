@@ -58,7 +58,6 @@ namespace DoubleFile
                     {
                         openListingFiles(Directory.GetFiles(TempPath)
                             .Where(s => s.EndsWith(FileParse.ksFileExt_Listing))
-                            .OrderBy(s => s)
                             .ToList(), true);
 
                         if (null != OnOpenedProject)
@@ -144,8 +143,6 @@ namespace DoubleFile
 
             var sbSource = new System.Text.StringBuilder();
             var strPath = Path.GetDirectoryName(listListingFiles[0]) + '\\';
-
-            listListingFiles.Sort();
 
             foreach (var listingFile in listListingFiles)
             {

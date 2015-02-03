@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -122,12 +123,17 @@ namespace DoubleFile
             var sbBadFiles = new System.Text.StringBuilder();
             bool bMultiBad = true;
 
-            if (bClearItems)
+            var listItems = new ConcurrentBag<LVitem_ProjectVM>();
+
+            if (false == bClearItems)
             {
-                m_lvVM.Items.Clear();
+                foreach (var lvItem in m_lvVM.ItemsCast)
+                {
+                    listItems.Add(lvItem);
+                }
             }
 
-            var listItems = new ConcurrentBag<LVitem_ProjectVM>();
+            m_lvVM.Items.Clear();
 
             //foreach (var test in listFiles.Select(async strFilename => await Task.Run(() =>
             //{
@@ -164,7 +170,7 @@ namespace DoubleFile
                 thread.Join();
             }
 
-            foreach (var lvItem in listItems)
+            foreach (var lvItem in listItems.OrderBy(lvItem => lvItem.SourcePath))
             {
                 m_lvVM.NewItem(lvItem);
             }

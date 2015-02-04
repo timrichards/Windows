@@ -17,17 +17,10 @@ namespace DoubleFile
 
    //         UtilProject.WriteLine("Count<" + source + "> is not an ICollection: must GetEnumerator()");
 
-            using (IEnumerator<T> enumerator = source.GetEnumerator())
-            {
-                int result = 0;
+            int result = 0;
 
-                while (enumerator.MoveNext())
-                {
-                    result++;
-                }
-
-                return result;
-            }
+            source.ForEach(item => ++result);
+            return result;
         }
 
         internal static void FirstOnly<T>(this IEnumerable<T> source, Action<T> action)

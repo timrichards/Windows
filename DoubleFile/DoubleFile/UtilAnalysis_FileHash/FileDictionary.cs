@@ -72,11 +72,11 @@ namespace DoubleFile
         {
             using (var writer = new StreamWriter(ksSerializeFile, false))
             {
-                foreach (var keyValuePair in m_DictFiles)
+                foreach (var kvp in m_DictFiles)
                 {
-                    writer.Write(keyValuePair.Key);
+                    writer.Write(kvp.Key);
 
-                    foreach (var ls in keyValuePair.Value)
+                    foreach (var ls in kvp.Value)
                     {
                         writer.Write("\t" + ls);
                     }
@@ -155,88 +155,153 @@ namespace DoubleFile
             int nLVitems_A = 0;
             ConcurrentDictionary<FileKey, List<int>> dictFiles = new ConcurrentDictionary<FileKey, List<int>>();
 
+            bool bLinq = false;
+
+            if (bLinq)
+            {
+                var lsieKVP = new List<IEnumerable<KeyValuePair<FileKey, int>>>();
+
+                Parallel.ForEach(LVprojectVM.ItemsCast, (lvItem =>
+                {
+                    var nLVitem = DictLVtoItemNumber[lvItem];
+
+                    var iesLines = File.ReadLines(lvItem.ListingFile)
+                         .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
+                         .Select(strLine => strLine.Split('\t'))
+                         .Where(asLine => asLine.Length > 10)
+                         .Select(asLine =>
+                         {
+                             Interlocked.Increment(ref m_nFilesTotal);
+
+                             int lookup = 0;
+
+                             SetLVitemProjectVM(ref lookup, nLVitem);
+                             SetLineNumber(ref lookup, int.Parse(asLine[1]));
+
+                             return new KeyValuePair<FileKey, int>
+                             (
+                                  new FileKey(asLine[10], asLine[7]),
+                                  lookup
+                             );
+                         });
+                    //                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+                    lsieKVP.Add(iesLines);
+                }));
+
+                m_DictFiles = lsieKVP
+                    .SelectMany(g => g)
+                    .GroupBy(kvp => kvp.Key)
+                    .Select(g =>
+                    {
+                        Interlocked.Increment(ref m_nFilesProgress);
+
+                        return new KeyValuePair<FileKey, IEnumerable<int>>
+                        (
+                            g.Key,
+                            g.Select(kvp => kvp.Value)
+                        );
+                    })
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
+
+            var tsStatus = new TimeSpan(0, 0, 0, 0, 200);
+            var tmrStatus = new Timer(new TimerCallback((Object state) =>
+            {
+                if (nLVitems == nLVitems_A)
+                {
+                    m_statusCallback(nProgress: m_nFilesProgress / (double)m_nFilesTotal);
+                }
+            }), null, tsStatus, tsStatus);
+
+            TimeSpan[] aTimeSpan = new TimeSpan[8];
+
             Parallel.ForEach(LVprojectVM.ItemsCast, (lvItem =>
             {
+                // very low-cost block, even with the Count() iterator
                 var iesLines = File.ReadLines(lvItem.ListingFile)
-                    .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
-                    .Select(strLine => strLine.Split('\t'))
-                    .Where(asLine => asLine.Length > 10);
+                     .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
+                     .Select(strLine => strLine.Split('\t'))
+                     .Where(asLine => asLine.Length > 10);
+
                 var nLVitem = DictLVtoItemNumber[lvItem];
 
                 Interlocked.Add(ref m_nFilesTotal, iesLines.Count());
                 Interlocked.Increment(ref nLVitems_A);
 
-                iesLines.ForEach(asLine =>
+                iesLines.Select(asLine =>
                 {
+                    DateTime dt0 = DateTime.Now;
                     Interlocked.Increment(ref m_nFilesProgress);
+                    aTimeSpan[0] += DateTime.Now - dt0;
 
+                    DateTime dt1 = DateTime.Now;
                     var key = new FileKey(asLine[10], asLine[7]);
+                    aTimeSpan[1] += DateTime.Now - dt1;
                     int lookup = 0;
 
+                    DateTime dt2 = DateTime.Now;
                     SetLVitemProjectVM(ref lookup, nLVitem);
+                    aTimeSpan[2] += DateTime.Now - dt2;
+                    DateTime dt3 = DateTime.Now;
                     SetLineNumber(ref lookup, int.Parse(asLine[1]));
+                    aTimeSpan[3] += DateTime.Now - dt3;
+                    DateTime dt4 = DateTime.Now;
+                    var bContains = dictFiles.ContainsKey(key);             // this takes the most time by far
+                    aTimeSpan[4] += DateTime.Now - dt4;
 
-                    if (false == dictFiles.ContainsKey(key))
+                    if (false == bContains)
                     {
+                        DateTime dt5 = DateTime.Now;
                         var listFiles = new List<int>();
+                        aTimeSpan[5] += DateTime.Now - dt5;
 
+                        DateTime dt6 = DateTime.Now;
                         listFiles.Add(lookup);
-                        dictFiles[key] = listFiles;
+                        aTimeSpan[6] += DateTime.Now - dt6;
+                        DateTime dt7 = DateTime.Now;
+                        dictFiles[key] = listFiles;                         // this takes the most time by far
+                        aTimeSpan[7] += DateTime.Now - dt7;
                     }
                     else
                     {
-                        dictFiles[key].Add(lookup);
-                    }
+                        // This section takes no time at all: sure beats sorting the list afterward
+                        var ls = dictFiles[key];
 
-                    if (nLVitems == nLVitems_A)
-                    {
-                        m_statusCallback(nProgress: m_nFilesProgress / (double)m_nFilesTotal);
-                    }
-                });
-            }));
-
-            bool bCheck = false;
-
-            if (bCheck)
-            {
-                m_nFilesProgress = 0;
-                m_nFilesTotal = dictFiles.Count;
-            }
-
-            foreach (var keyValuePair in dictFiles)
-            {
-                var ls = keyValuePair.Value;
-                var nLength = ls.Count;
-
-                if (nLength > 1)
-                {
-                    m_DictFiles[keyValuePair.Key] = ls.OrderBy(i => i);
-
-                    if (bCheck)
-                    {
-                        // check the dictionary. Extremely slow but it worked for the first 89.
-
-                        var lookup = ls[0];
-                        var asLine = File.ReadLines(DictItemNumberToLV[GetLVitemProjectVM(lookup)].ListingFile)
-                            .Skip(GetLineNumber(lookup) - 1).Take(1).ToArray()[0]
-                            .Split('\t');
-
-                        for (int n = 1; n < nLength; ++n)
+                        lock (ls)
                         {
-                            var lookup_A = ls[n];
-                            var asLine_A = File.ReadLines(DictItemNumberToLV[GetLVitemProjectVM(lookup_A)].ListingFile)
-                                .Skip(GetLineNumber(lookup_A) - 1).Take(1).ToArray()[0]
-                                .Split('\t');
-                            MBox.Assert(0, asLine_A[10] == asLine[10]);
-                            MBox.Assert(0, asLine_A[7] == asLine[7]);
+                            var nIndex = 0;
+
+                            foreach (var nLookup in ls)
+                            {
+                                if (lookup < nLookup)
+                                    break;
+
+                                ++nIndex;
+                            }
+
+                            ls.Insert(nIndex, lookup);
                         }
                     }
-                }
 
-                m_statusCallback(nProgress: m_nFilesProgress++ / (double)m_nFilesTotal);
-            }
+                    return false;   // must return something from select lambda
+                }).Count();         // must kick it in the butt
+            }));
+
+            m_nFilesProgress = 0;
+            m_nFilesTotal = dictFiles.Count;
+            m_statusCallback(nProgress: m_nFilesProgress++ / (double)m_nFilesTotal);
+
+            m_DictFiles = dictFiles
+                .Where(kvp => kvp.Value.Count > 1)
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.AsEnumerable());
 
             m_statusCallback(bDone: true);
+
+            foreach (var ts in aTimeSpan)
+            {
+                UtilProject.WriteLine(ts.ToString());
+            }
         }
 
         readonly string ksSerializeFile = ProjectFile.TempPath + "_DuplicateFiles_";

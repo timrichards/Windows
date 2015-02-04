@@ -35,16 +35,20 @@ namespace DoubleFile
 
         internal void SetCompleted()
         {
-            Progress = 1;
+            Indeterminate = false;
             ProgressState = Brushes.LimeGreen;
             Remaining = "Completed.";
+            Progress = 1;
+            RaisePropertyChanged(ksProgress);
         }
 
         internal void SetError(string strError)
         {
-            Progress = 1;
+            Indeterminate = false;
             ProgressState = Brushes.Red;
             Remaining = "Error. " + strError;
+            Progress = 1;
+            RaisePropertyChanged(ksProgress);
         }
 
         internal LVitem_ProgressVM(LV_ProgressVM LV, string[] arrStr)
@@ -61,6 +65,13 @@ namespace DoubleFile
 
             if (Progress == double.NaN)
             {
+                return;
+            }
+
+            if (m_nLastProgress > Progress)
+            {
+                Indeterminate = true;
+                Remaining = "Evaluating...";
                 return;
             }
 

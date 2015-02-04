@@ -9,6 +9,7 @@ namespace DoubleFile
         {
             internal byte[] abHash;
             internal ulong nLength;
+            int nHashCode = 0;
 
             internal FileKey(string deSerialize)
             {
@@ -33,25 +34,15 @@ namespace DoubleFile
 
             public override bool Equals(object obj)
             {
-                if ((obj is FileKey) == false) return false;
+                if ((obj is FileKey) == false)
+                    return false;
+
                 return (((FileKey)obj) == this);
             }
 
             public override int GetHashCode()
             {
-                // any overflow mixes the bits a bit better.
-                int result = 37;    // prime
-                result *= 397;      // also prime
-
-                foreach (var b in abHash)
-                {
-                    result += b;
-                    result *= 397;
-                }
-
-                result += nLength.GetHashCode();
-                result *= 397;
-                return result;
+                return nHashCode;
             }
 
             public override string ToString()
@@ -61,26 +52,26 @@ namespace DoubleFile
 
             public static bool operator ==(FileKey x, FileKey y)
             {
-                var q = from a in x.abHash
-                        join b in y.abHash on a equals b
-                        select a;
+                if (x.nLength != y.nLength)
+                    return false;
 
-                return (x.abHash.Length == y.abHash.Length) &&
-                    (q.Count() == x.abHash.Length) &&
-                    (x.nLength == y.nLength);
+                for (int i = 0; i < x.abHash.Length; ++i)
+                {
+                    if (x.abHash[i] != y.abHash[i])
+                        return false;
+                }
+
+                return true;
             }
 
             public static bool operator >(FileKey x, FileKey y)
             {
-                if (x.abHash.Length < y.abHash.Length) return false;
-                if (x.abHash.Length > y.abHash.Length) return true;
-
-                for (int n = 0; n < x.abHash.Length; ++n)
+                for (int i = 0; i < x.abHash.Length; ++i)
                 {
-                    if (x.abHash[n] < y.abHash[n])
+                    if (x.abHash[i] < y.abHash[i])
                         return false;
 
-                    if (x.abHash[n] > y.abHash[n])
+                    if (x.abHash[i] > y.abHash[i])
                         return true;
                 }
 
@@ -96,11 +87,28 @@ namespace DoubleFile
 
             void Init(string strHash, string strLength)
             {
+                MBox.Assert(0, strHash.Length == 32);
+
                 abHash = Enumerable.Range(0, strHash.Length)
                     .Where(x => x % 2 == 0)
                     .Select(x => Convert.ToByte(strHash.Substring(x, 2), 16))
                     .ToArray();
                 nLength = ulong.Parse(strLength);
+
+                // overflow mixes the bits
+                nHashCode = 37;         // prime
+                nHashCode *= 397;       // prime
+
+                foreach (var b in abHash)
+                {
+                    nHashCode += b;
+                    nHashCode *= 397;
+                }
+
+                nHashCode += (int)nLength;
+                nHashCode *= 397;
+                nHashCode += (int)(nLength >> 32);
+                nHashCode *= 397;
             }
         }
     }

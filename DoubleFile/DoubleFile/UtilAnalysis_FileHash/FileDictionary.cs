@@ -155,11 +155,8 @@ namespace DoubleFile
             int nLVitems_A = 0;
             ConcurrentDictionary<FileKey, List<int>> dictFiles = new ConcurrentDictionary<FileKey, List<int>>();
 
-            bool bLinq = false;
-
-            if (bLinq)
-            {
-                var lsieKVP = new List<IEnumerable<KeyValuePair<FileKey, int>>>();
+#if (false)
+            var lsieKVP = new List<IEnumerable<KeyValuePair<FileKey, int>>>();
 
                 Parallel.ForEach(LVprojectVM.ItemsCast, (lvItem =>
                 {
@@ -203,7 +200,58 @@ namespace DoubleFile
                         );
                     })
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+#endif
+
+#if (false)
+
+            var tsStatus = new TimeSpan(0, 0, 0, 0, 200);
+            var tmrStatus = new Timer(new TimerCallback((Object state) =>
+            {
+                m_statusCallback(nProgress: m_nFilesProgress / (double)m_nFilesTotal);
+            }), null, tsStatus, tsStatus);
+
+            var lsieKVP = new ConcurrentBag<IEnumerable<KeyValuePair<FileKey, int>>>();
+
+            Parallel.ForEach(LVprojectVM.ItemsCast, (lvItem =>
+            {
+                var nLVitem = DictLVtoItemNumber[lvItem];
+
+                // very low-cost block, even with the Count() iterator
+                var iesLines = File.ReadLines(lvItem.ListingFile)
+                    .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
+                    .Select(strLine => strLine.Split('\t'))
+                    .Where(asLine => asLine.Length > 10);
+
+                Interlocked.Add(ref m_nFilesTotal, iesLines.Count());
+
+                var ieKVP = iesLines
+                    .Select(asLine =>
+                    {
+                        int lookup = 0;
+
+                        SetLVitemProjectVM(ref lookup, nLVitem);
+                        SetLineNumber(ref lookup, int.Parse(asLine[1]));
+
+                        return new KeyValuePair<FileKey, int>
+                        (
+                            new FileKey(asLine[10], asLine[7]),
+                            lookup
+                        );
+                    })
+                    .OrderBy(kvp => kvp.Key);
+
+                lsieKVP.Add(ieKVP);
+            }));
+
+            foreach (var g in lsieKVP
+                .SelectMany(g => g)
+                .GroupBy(kvp => kvp.Key)
+                .Where(g => g.Count() > 1))
+            {
+                m_nFilesProgress += g.Count();
+                m_DictFiles[g.Key] = g.OrderBy(kvp => kvp.Value).Select(kvp => kvp.Value);
             }
+#endif
 
             var tsStatus = new TimeSpan(0, 0, 0, 0, 200);
             var tmrStatus = new Timer(new TimerCallback((Object state) =>

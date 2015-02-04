@@ -72,6 +72,7 @@ namespace DoubleFile
             {
                 Indeterminate = true;
                 Remaining = "Evaluating...";
+                m_nLastProgress = Math.Min(1, Progress);
                 return;
             }
 

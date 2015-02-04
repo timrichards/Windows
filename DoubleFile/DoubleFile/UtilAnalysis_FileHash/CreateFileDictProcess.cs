@@ -71,8 +71,8 @@ namespace DoubleFile
 
                 if (bDone)
                 {
-                    m_winProgress.SetCompleted(ksProgressKey);
                     m_bCompleted = true;
+                    m_winProgress.Close();
                 }
                 else if (nProgress >= 0)
                 {

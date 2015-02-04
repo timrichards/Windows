@@ -66,6 +66,9 @@ namespace DoubleFile
 
             public static bool operator >(FileKey x, FileKey y)
             {
+                if (x.nLength < y.nLength) return false;
+                if (x.nLength > y.nLength) return true;
+
                 for (int i = 0; i < x.abHash.Length; ++i)
                 {
                     if (x.abHash[i] < y.abHash[i])
@@ -74,9 +77,6 @@ namespace DoubleFile
                     if (x.abHash[i] > y.abHash[i])
                         return true;
                 }
-
-                if (x.nLength < y.nLength) return false;
-                if (x.nLength > y.nLength) return true;
                 return false;
             }
 

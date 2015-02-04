@@ -20,9 +20,7 @@ namespace DoubleFile
             {
                 m_bIndeterminate = value;
 
-                if (new Brush[] { Brushes.Yellow, Brushes.Blue }.Contains(ProgressState))
-                    ProgressState = m_bIndeterminate ? Brushes.Yellow : Brushes.Blue;
-
+                ProgressState = m_bIndeterminate ? Brushes.Yellow : Brushes.Blue;
                 RaisePropertyChanged(ksIndeterminate);
             }
         }
@@ -65,14 +63,6 @@ namespace DoubleFile
 
             if (Progress == double.NaN)
             {
-                return;
-            }
-
-            if (m_nLastProgress > Progress)
-            {
-                Indeterminate = true;
-                Remaining = "Evaluating...";
-                m_nLastProgress = Math.Min(1, Progress);
                 return;
             }
 

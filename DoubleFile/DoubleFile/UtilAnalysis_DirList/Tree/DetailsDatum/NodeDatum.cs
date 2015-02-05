@@ -16,11 +16,11 @@ namespace DoubleFile
         internal Rectangle TreeMapRect = Rectangle.Empty;
         internal TreeNode TreeMapFiles = null;
 
-        internal CorrelateStruct Key
+        internal FolderKeyStruct Key
         {
             get
             {
-                return new CorrelateStruct((ulong)nTotalLength, nFilesInSubdirs, nDirsWithFiles);
+                return new FolderKeyStruct((ulong)nTotalLength, nFilesInSubdirs, nDirsWithFiles);
             }
         }
 

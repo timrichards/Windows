@@ -10,7 +10,7 @@ namespace DoubleFile
     partial class Collate
     {
         internal Collate(GlobalData_Base gd_in,
-            SortedDictionary<CorrelateStruct, UList<TreeNode>> dictNodes,
+            SortedDictionary<FolderKeyStruct, UList<TreeNode>> dictNodes,
             TreeView treeViewBrowse,
             SDL_ListView lvClones,
             SDL_ListView lvSameVol,
@@ -111,9 +111,9 @@ namespace DoubleFile
             }
 
             Dictionary<TreeNode, ListViewItem> dictIgnoreMark = new Dictionary<TreeNode, ListViewItem>();
-            SortedDictionary<CorrelateStruct, List<TreeNode>> dictNodes = new SortedDictionary<CorrelateStruct, List<TreeNode>>();
+            SortedDictionary<FolderKeyStruct, List<TreeNode>> dictNodes = new SortedDictionary<FolderKeyStruct, List<TreeNode>>();
 
-            foreach (KeyValuePair<CorrelateStruct, UList<TreeNode>> pair in m_dictNodes)  // clone to remove ignored
+            foreach (KeyValuePair<FolderKeyStruct, UList<TreeNode>> pair in m_dictNodes)  // clone to remove ignored
             {                                                                       // m_ vs local check is via List vs UList
                 dictNodes.Add(pair.Key, pair.Value.ToList());                       // clone pair.Value to remove ignored, using ToList() 
             }
@@ -149,9 +149,9 @@ namespace DoubleFile
                 }
             }
 
-            SortedDictionary<CorrelateStruct, TreeNode> dictUnique = new SortedDictionary<CorrelateStruct, TreeNode>();
+            SortedDictionary<FolderKeyStruct, TreeNode> dictUnique = new SortedDictionary<FolderKeyStruct, TreeNode>();
 
-            foreach (KeyValuePair<CorrelateStruct, List<TreeNode>> pair in dictNodes)
+            foreach (KeyValuePair<FolderKeyStruct, List<TreeNode>> pair in dictNodes)
             {
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
@@ -213,7 +213,7 @@ namespace DoubleFile
                 }
             }
 
-            SortedDictionary<CorrelateStruct, UList<TreeNode>> dictClones = new SortedDictionary<CorrelateStruct, UList<TreeNode>>();
+            SortedDictionary<FolderKeyStruct, UList<TreeNode>> dictClones = new SortedDictionary<FolderKeyStruct, UList<TreeNode>>();
 
             foreach (TreeNode treeNode in m_listRootNodes)
             {
@@ -227,7 +227,7 @@ namespace DoubleFile
 
             m_listRootNodes.Sort((x, y) => string.Compare(x.Text, y.Text));
 
-            foreach (KeyValuePair<CorrelateStruct, UList<TreeNode>> listNodes in dictClones)
+            foreach (KeyValuePair<FolderKeyStruct, UList<TreeNode>> listNodes in dictClones)
             {
                 // load up listLVdiffVol
 
@@ -310,7 +310,7 @@ namespace DoubleFile
             dictClones = null;
             InsertSizeMarkers(listLVdiffVol);
 
-            foreach (KeyValuePair<CorrelateStruct, TreeNode> listNodes in dictUnique)
+            foreach (KeyValuePair<FolderKeyStruct, TreeNode> listNodes in dictUnique)
             {
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
@@ -488,7 +488,7 @@ namespace DoubleFile
 
         // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
         // Breadth-first.
-        void DifferentVolsQuery(SortedDictionary<CorrelateStruct, UList<TreeNode>> dictClones, TreeNode treeNode, TreeNode rootClone = null)
+        void DifferentVolsQuery(SortedDictionary<FolderKeyStruct, UList<TreeNode>> dictClones, TreeNode treeNode, TreeNode rootClone = null)
         {
             // neither rootClone nor nMaxLength are used at all (rootClone is used as a bool).
             // provisional.
@@ -668,7 +668,7 @@ namespace DoubleFile
         }
 
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
-        readonly SortedDictionary<CorrelateStruct, UList<TreeNode>> m_dictNodes = null;
+        readonly SortedDictionary<FolderKeyStruct, UList<TreeNode>> m_dictNodes = null;
         readonly TreeView m_treeViewBrowse = null;
         readonly SDL_ListView form_lvClones = null;
         readonly SDL_ListView form_lvSameVol = null;

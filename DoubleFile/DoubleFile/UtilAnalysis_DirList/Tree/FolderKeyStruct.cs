@@ -2,9 +2,9 @@
 
 namespace DoubleFile
 {
-    struct CorrelateStruct : IComparable
+    struct FolderKeyStruct : IComparable
     {
-        internal CorrelateStruct(ulong nTotalLength_in, uint nFilesInSubdirs_in, uint nDirsWithFiles_in)
+        internal FolderKeyStruct(ulong nTotalLength_in, uint nFilesInSubdirs_in, uint nDirsWithFiles_in)
         {
             m_nTotalLength = nTotalLength_in;
             m_nFilesInSubdirs = nFilesInSubdirs_in;
@@ -25,7 +25,7 @@ namespace DoubleFile
 
         public int CompareTo(object obj)
         {
-            var that = (CorrelateStruct)obj;
+            var that = (FolderKeyStruct)obj;
 
             if (this > that) return -1;             // reverse sort
             if (this == that) return 0;
@@ -34,10 +34,10 @@ namespace DoubleFile
 
         public override bool Equals(object obj)
         {
-            if ((obj is CorrelateStruct) == false)
+            if ((obj is FolderKeyStruct) == false)
                 return false;
 
-            return (((CorrelateStruct)obj) == this);
+            return (((FolderKeyStruct)obj) == this);
         }
 
         public override int GetHashCode()
@@ -52,14 +52,14 @@ namespace DoubleFile
                 "nDirsWithFiles: " + m_nDirsWithFiles + "\n";
         }
 
-        public static bool operator ==(CorrelateStruct x, CorrelateStruct y)
+        public static bool operator ==(FolderKeyStruct x, FolderKeyStruct y)
         {
             return (x.m_nTotalLength == y.m_nTotalLength) &&
                 (x.m_nFilesInSubdirs == y.m_nFilesInSubdirs) &&
                 (x.m_nDirsWithFiles == y.m_nDirsWithFiles);
         }
 
-        public static bool operator >(CorrelateStruct x, CorrelateStruct y)
+        public static bool operator >(FolderKeyStruct x, FolderKeyStruct y)
         {
             if (x.m_nTotalLength < y.m_nTotalLength) return false;
             if (x.m_nTotalLength > y.m_nTotalLength) return true;
@@ -70,10 +70,10 @@ namespace DoubleFile
             return false;
         }
 
-        public static bool operator !=(CorrelateStruct x, CorrelateStruct y) { return ((x == y) == false); }
-        public static bool operator <(CorrelateStruct x, CorrelateStruct y) { return ((x >= y) == false); }
-        public static bool operator >=(CorrelateStruct x, CorrelateStruct y) { return ((x > y) || (x == y)); }
-        public static bool operator <=(CorrelateStruct x, CorrelateStruct y) { return ((x > y) == false); }
+        public static bool operator !=(FolderKeyStruct x, FolderKeyStruct y) { return ((x == y) == false); }
+        public static bool operator <(FolderKeyStruct x, FolderKeyStruct y) { return ((x >= y) == false); }
+        public static bool operator >=(FolderKeyStruct x, FolderKeyStruct y) { return ((x > y) || (x == y)); }
+        public static bool operator <=(FolderKeyStruct x, FolderKeyStruct y) { return ((x > y) == false); }
 
         readonly ulong m_nTotalLength;       //  found   41 bits
         readonly uint m_nFilesInSubdirs;     //          23 bits

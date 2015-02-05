@@ -153,7 +153,7 @@
     <Compile Include="UtilAnalysis_FileHash\FileDictionary.cs" />
     <Compile Include="UtilAnalysis_FileHash\CreateFileDictProcess.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary\Duplicate.cs" />
-    <Compile Include="UtilAnalysis_FileHash\FileDictionary\FileKey.cs" />
+    <Compile Include="UtilAnalysis_FileHash\FileDictionary\FileKeyStruct.cs" />
     <Compile Include="UtilAnalysis_FileHash\HashStruct.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\LVitem_FileHashVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\LV_FileHashVM.cs" />

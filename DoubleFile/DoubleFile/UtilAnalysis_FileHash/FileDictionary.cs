@@ -40,7 +40,7 @@ namespace DoubleFile
             }
 
             var asLine = strLine.Split('\t');
-            var key = new FileKey(asLine[10], asLine[7]);
+            var key = new FileKeyStruct(asLine[10], asLine[7]);
             var lsRet = new List<Duplicate>();
 
             if (false == m_DictFiles.ContainsKey(key))
@@ -111,7 +111,7 @@ namespace DoubleFile
             }
 
             int nLVitems_A = 0;
-            var dictFiles = new ConcurrentDictionary<FileKey, List<int>>();
+            var dictFiles = new ConcurrentDictionary<FileKeyStruct, List<int>>();
             var tsStatus = new TimeSpan(0, 0, 0, 0, 200);
             var tmrStatus = new Timer(new TimerCallback((Object state) =>
             {
@@ -137,7 +137,7 @@ namespace DoubleFile
                 {
                     Interlocked.Increment(ref m_nFilesProgress);
 
-                    var key = new FileKey(asLine[10], asLine[7]);
+                    var key = new FileKeyStruct(asLine[10], asLine[7]);
                     int lookup = 0;
 
                     SetLVitemProjectVM(ref lookup, nLVitem);
@@ -215,7 +215,7 @@ namespace DoubleFile
                 {
                     var asLine = strLine.Split('\t');
 
-                    m_DictFiles[new FileKey(asLine[0])] =
+                    m_DictFiles[new FileKeyStruct(asLine[0])] =
                         asLine.Skip(1).Select(s => Convert.ToInt32(s)).ToList();
                 }
             }
@@ -230,7 +230,7 @@ namespace DoubleFile
 
         Dictionary<LVitem_ProjectVM, int> DictLVtoItemNumber = new Dictionary<LVitem_ProjectVM, int>();
         Dictionary<int, LVitem_ProjectVM> DictItemNumberToLV = new Dictionary<int, LVitem_ProjectVM>();
-        Dictionary<FileKey, IEnumerable<int>> m_DictFiles = new Dictionary<FileKey, IEnumerable<int>>();
+        Dictionary<FileKeyStruct, IEnumerable<int>> m_DictFiles = new Dictionary<FileKeyStruct, IEnumerable<int>>();
 
         const uint knItemVMmask = 0xFF000000;
         int GetLVitemProjectVM(int n) { return (int)(n & knItemVMmask) >> 24; }

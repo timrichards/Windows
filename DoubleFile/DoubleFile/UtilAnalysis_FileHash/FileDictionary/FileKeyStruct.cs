@@ -4,17 +4,17 @@ namespace DoubleFile
 {
     partial class FileDictionary
     {
-        class FileKey : IComparable
+        struct FileKeyStruct : IComparable
         {
             internal readonly HashStruct hash;
-            internal readonly ulong nLength = 0;
+            internal readonly ulong nLength;
 
             /// <summary>
             /// Parameter trickery allows one constructor and readonly member vars.
             /// </summary>
             /// <param name="deSerialize">when strLength is provided, this is strHash</param>
             /// <param name="strLength">only used when not deserializing</param>
-            internal FileKey(string deSerialize, string strLength = null)
+            internal FileKeyStruct(string deSerialize, string strLength = null)
             {
                 string strHash = deSerialize;
 
@@ -42,7 +42,7 @@ namespace DoubleFile
 
             public int CompareTo(object obj)
             {
-                var that = (FileKey)obj;
+                var that = (FileKeyStruct)obj;
 
                 if (this > that) return -1;             // reverse sort
                 if (this == that) return 0;
@@ -51,10 +51,10 @@ namespace DoubleFile
 
             public override bool Equals(object obj)
             {
-                if ((obj is FileKey) == false)
+                if ((obj is FileKeyStruct) == false)
                     return false;
 
-                return (((FileKey)obj) == this);
+                return (((FileKeyStruct)obj) == this);
             }
 
             public override int GetHashCode()
@@ -67,7 +67,7 @@ namespace DoubleFile
                 return hash.ToString() + " " + nLength;
             }
 
-            public static bool operator ==(FileKey x, FileKey y)
+            public static bool operator ==(FileKeyStruct x, FileKeyStruct y)
             {
                 if (x.nLength != y.nLength)
                     return false;
@@ -78,7 +78,7 @@ namespace DoubleFile
                 return true;
             }
 
-            public static bool operator >(FileKey x, FileKey y)
+            public static bool operator >(FileKeyStruct x, FileKeyStruct y)
             {
                 if (x.nLength < y.nLength) return false;
                 if (x.nLength > y.nLength) return true;
@@ -89,12 +89,12 @@ namespace DoubleFile
                 return false;
             }
 
-            public static bool operator !=(FileKey x, FileKey y) { return ((x == y) == false); }
-            public static bool operator <(FileKey x, FileKey y) { return ((x >= y) == false); }
-            public static bool operator >=(FileKey x, FileKey y) { return ((x > y) || (x == y)); }
-            public static bool operator <=(FileKey x, FileKey y) { return ((x > y) == false); }
+            public static bool operator !=(FileKeyStruct x, FileKeyStruct y) { return ((x == y) == false); }
+            public static bool operator <(FileKeyStruct x, FileKeyStruct y) { return ((x >= y) == false); }
+            public static bool operator >=(FileKeyStruct x, FileKeyStruct y) { return ((x > y) || (x == y)); }
+            public static bool operator <=(FileKeyStruct x, FileKeyStruct y) { return ((x > y) == false); }
 
-            int m_nHashCode = 0;
+            int m_nHashCode;
         }
     }
 }

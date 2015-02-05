@@ -313,7 +313,7 @@ namespace DoubleFile
 
                 if (strArray[knColLength01].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
                 {
-                    MBox.Assert(0, false);
+                    MBoxStatic.Assert(0, false);
                 }
 #endif
             }

@@ -36,7 +36,7 @@ namespace DoubleFile
 
 #if (DEBUG)
             //#warning DEBUG is defined.
-            MBox.Assert(0, System.Diagnostics.Debugger.IsAttached, "Debugger is not attached!");
+            MBoxStatic.Assert(0, System.Diagnostics.Debugger.IsAttached, "Debugger is not attached!");
 #else
             if (MBoxStatic.Assert(0, (System.Diagnostics.Debugger.IsAttached == false), "Debugger is attached but DEBUG is not defined.") == false)
             {

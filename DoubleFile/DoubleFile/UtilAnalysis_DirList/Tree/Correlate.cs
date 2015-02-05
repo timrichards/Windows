@@ -25,7 +25,7 @@ namespace DoubleFile
 
         public int CompareTo(object obj)
         {
-            Correlate that = (Correlate)obj;
+            var that = (Correlate)obj;
 
             if (this > that) return -1;             // reverse sort
             if (this == that) return 0;

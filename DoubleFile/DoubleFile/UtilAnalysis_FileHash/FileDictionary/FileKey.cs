@@ -7,8 +7,7 @@ namespace DoubleFile
     {
         class FileKey : IComparable
         {
-            internal readonly ulong nHash0 = 0;
-            internal readonly ulong nHash1 = 0;
+            internal readonly HashStruct hash;
             internal readonly ulong nLength = 0;
 
             /// <summary>
@@ -28,31 +27,13 @@ namespace DoubleFile
                     strLength = asKey[1];
                 }
 
-                MBox.Assert(0, strHash.Length == 32);
-
-                {
-                    var abHash = Enumerable.Range(0, strHash.Length)
-                        .Where(x => x % 2 == 0)
-                        .Select(x => Convert.ToByte(strHash.Substring(x, 2), 16))
-                        .Reverse()
-                        .ToArray();
-
-                    nHash0 = BitConverter.ToUInt64(abHash, 8);
-                    nHash1 = BitConverter.ToUInt64(abHash, 0);
-                }
-
+                hash = new HashStruct(strHash);
                 nLength = ulong.Parse(strLength);
 
                 // overflow mixes the bits
                 m_nHashCode = 37;         // prime
                 m_nHashCode *= 397;       // prime
-                m_nHashCode += (int)nHash0;
-                m_nHashCode *= 397;
-                m_nHashCode += (int)(nHash0 >> 32);
-                m_nHashCode *= 397;
-                m_nHashCode += (int)nHash1;
-                m_nHashCode *= 397;
-                m_nHashCode += (int)(nHash1 >> 32);
+                m_nHashCode += hash.GetHashCode();
                 m_nHashCode *= 397;
                 m_nHashCode += (int)nLength;
                 m_nHashCode *= 397;
@@ -62,7 +43,7 @@ namespace DoubleFile
 
             public int CompareTo(object obj)
             {
-                FileKey that = (FileKey)obj;
+                var that = (FileKey)obj;
 
                 if (this > that) return -1;             // reverse sort
                 if (this == that) return 0;
@@ -84,7 +65,7 @@ namespace DoubleFile
 
             public override string ToString()
             {
-                return nHash0.ToString("X8") + nHash1.ToString("X8") + " " + nLength;
+                return hash.ToString() + " " + nLength;
             }
 
             public static bool operator ==(FileKey x, FileKey y)
@@ -92,10 +73,7 @@ namespace DoubleFile
                 if (x.nLength != y.nLength)
                     return false;
 
-                if (x.nHash0 != y.nHash0)
-                    return false;
-
-                if (x.nHash1 != y.nHash1)
+                if (x.hash != y.hash)
                     return false;
 
                 return true;
@@ -106,11 +84,9 @@ namespace DoubleFile
                 if (x.nLength < y.nLength) return false;
                 if (x.nLength > y.nLength) return true;
 
-                if (x.nHash0 < y.nHash0) return false;
-                if (x.nHash0 > y.nHash0) return true;
+                if (x.hash < y.hash) return false;
+                if (x.hash > y.hash) return true;
 
-                if (x.nHash1 < y.nHash1) return false;
-                if (x.nHash1 > y.nHash1) return true;
                 return false;
             }
 

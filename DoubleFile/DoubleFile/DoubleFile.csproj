@@ -25,7 +25,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>26</ApplicationRevision>
+    <ApplicationRevision>28</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -154,6 +154,7 @@
     <Compile Include="UtilAnalysis_FileHash\CreateFileDictProcess.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary\Duplicate.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary\FileKey.cs" />
+    <Compile Include="UtilAnalysis_FileHash\HashStruct.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\LVitem_FileHashVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\LV_FileHashVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\LV_FileHashVM_Impl.cs" />
@@ -191,7 +192,6 @@
     <Compile Include="UtilProject\SaveDirListings\TraverseTreeBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UtilProject\DRDigit.cs" />
     <Compile Include="UtilProject\FileParse.cs" />
     <Compile Include="MVVM\AbstractionsVM.cs" />
     <Compile Include="MVVM\ObservableObjectBase.cs" />

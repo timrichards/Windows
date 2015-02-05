@@ -4,10 +4,9 @@ using System.Windows;
 
 namespace DoubleFile
 {
-
     delegate MessageBoxResult MBoxDelegate(string strMessage, string strTitle = null, MessageBoxButton? buttons = null);
 
-    class MBox
+    static class MBoxStatic
     {
         static LocalWindow m_form1MessageBoxOwner = null;
 
@@ -44,7 +43,7 @@ namespace DoubleFile
 
                 Action messageBox = new Action(() =>
                 {
-                    MBox.ShowDialog(strError + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.".PadRight(100), "SearchDirLists Assertion Failure");
+                    MBoxStatic.ShowDialog(strError + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.".PadRight(100), "SearchDirLists Assertion Failure");
                     static_bAssertUp = false;
                 });
 

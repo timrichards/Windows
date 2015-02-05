@@ -20,7 +20,7 @@ namespace DoubleFile
                 : base(base_in)
             {
                 m_volStrings = volStrings;
-                MBox.Assert(1301.2301, m_statusCallback != null);
+                MBoxStatic.Assert(1301.2301, m_statusCallback != null);
             }
 
             DetailsDatum TreeSubnodeDetails(TreeNode treeNode)
@@ -87,7 +87,7 @@ namespace DoubleFile
 
                 if (m_volStrings.CanLoad == false)
                 {
-                    MBox.Assert(1301.2307, false);    // guaranteed by caller
+                    MBoxStatic.Assert(1301.2307, false);    // guaranteed by caller
                     return;
                 }
 
@@ -120,7 +120,7 @@ namespace DoubleFile
 
                     if (bValid == false)
                     {
-                        MBox.ShowDialog("Bad file: " + m_volStrings.ListingFile, "Tree");
+                        MBoxStatic.ShowDialog("Bad file: " + m_volStrings.ListingFile, "Tree");
                         m_statusCallback(m_volStrings, bError: true);
                         return;
                     }
@@ -169,7 +169,7 @@ namespace DoubleFile
                     {
                         if (m_dictDriveInfo.ContainsKey(m_volStrings.ListingFile))
                         {
-                            MBox.Assert(1301.2308, false);
+                            MBoxStatic.Assert(1301.2308, false);
                             m_dictDriveInfo.Remove(m_volStrings.ListingFile);
                         }
 
@@ -255,7 +255,7 @@ namespace DoubleFile
                 if (nScannedLength != nTotalLength)
                 {
                     UtilProject.WriteLine(nTotalLength.ToString());
-                    MBox.Assert(1301.23101, false, "nScannedLength != nTotalLength\n" + m_volStrings.ListingFile, bTraceOnly: true);
+                    MBoxStatic.Assert(1301.23101, false, "nScannedLength != nTotalLength\n" + m_volStrings.ListingFile, bTraceOnly: true);
                 }
 
                 UtilProject.WriteLine(m_volStrings.ListingFile + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");

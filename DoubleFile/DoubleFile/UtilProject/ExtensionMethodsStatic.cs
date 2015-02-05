@@ -34,7 +34,7 @@ namespace DoubleFile
 
         internal static void FirstOnlyAssert<T>(this IEnumerable<T> source, Action<T> action)
         {
-            MBox.Assert(0, source.Count() <= 1);
+            MBoxStatic.Assert(0, source.Count() <= 1);
             FirstOnly(source, action);
         }
 

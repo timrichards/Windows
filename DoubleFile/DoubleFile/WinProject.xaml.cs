@@ -60,7 +60,7 @@ namespace DoubleFile
             
             if ((lvProjectVM != null) && lvProjectVM.Unsaved
                 && (MessageBoxResult.Cancel ==
-                MBox.ShowDialog(WinProjectVM.ksUnsavedWarning, "Close Project", MessageBoxButton.OKCancel)))
+                MBoxStatic.ShowDialog(WinProjectVM.ksUnsavedWarning, "Close Project", MessageBoxButton.OKCancel)))
             {
                 e.Cancel = true;
                 return;

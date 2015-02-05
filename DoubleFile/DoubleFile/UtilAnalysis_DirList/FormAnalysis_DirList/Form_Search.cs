@@ -41,7 +41,7 @@ namespace DoubleFile
                             if (treeNode == null)
                             {
                                 // compare mode, or tree is not loaded yet
-                                MBox.Assert(1307.8308, false);
+                                MBoxStatic.Assert(1307.8308, false);
                             }
 
                             if (treeNode != null)
@@ -69,7 +69,7 @@ namespace DoubleFile
                                 if (treeNode == null)
                                 {
                                     // compare mode, or tree is not loaded yet
-                                    MBox.Assert(1307.8309, false);
+                                    MBoxStatic.Assert(1307.8309, false);
                                 }
 
                                 if (treeNode != null)
@@ -119,7 +119,7 @@ namespace DoubleFile
             // Includes subitems in search
             ListViewItem lvItem = (ListViewItem)form_lvFiles.FindItemWithText(gd_Search_1_2.m_strSelectFile, true, 0, false);
 
-            if ((lvItem != null) && MBox.Assert(0, lvItem.Text == gd_Search_1_2.m_strSelectFile))
+            if ((lvItem != null) && MBoxStatic.Assert(0, lvItem.Text == gd_Search_1_2.m_strSelectFile))
             {
                 form_tabControlFileList.SelectedTab = form_tabPageFileList;
                 gd.m_blinky.SelectLVitem(lvItem: lvItem);
@@ -164,11 +164,11 @@ namespace DoubleFile
 
                 if (SearchResultsType2_Nav(form_treeViewBrowse) == false)
                 {
-                    MBox.Assert(1307.8311, false);
+                    MBoxStatic.Assert(1307.8311, false);
                     gd_Search_1_2.SearchFail();
                 }
 
-                MBox.MessageBoxKill(GlobalData_Search_1_2.ksSearchTitle);
+                MBoxStatic.MessageBoxKill(GlobalData_Search_1_2.ksSearchTitle);
             }));
         }
 
@@ -180,7 +180,7 @@ namespace DoubleFile
 
                 if (bKill == false)
                 {
-                    mboxRet = MBox.ShowDialog("Already in progress. Restart search?" + "\n(or Cancel search.)".PadRight(100), GlobalData_Search_1_2.ksSearchTitle, MessageBoxButton.YesNoCancel);
+                    mboxRet = MBoxStatic.ShowDialog("Already in progress. Restart search?" + "\n(or Cancel search.)".PadRight(100), GlobalData_Search_1_2.ksSearchTitle, MessageBoxButton.YesNoCancel);
 
                     if (mboxRet == MessageBoxResult.No)
                     {
@@ -214,7 +214,7 @@ namespace DoubleFile
                 strCurrentNode = GlobalData.FullPath((TreeNode)form_treeViewBrowse.SelectedNode);
             }
 
-            MBox.Assert(1307.8312, gd_Search_1_2.m_searchType2 == null);
+            MBoxStatic.Assert(1307.8312, gd_Search_1_2.m_searchType2 == null);
 
             gd_Search_1_2.m_searchType2 = new SearchType2(new GlobalData_Form(this),
                 LVprojectVM,
@@ -275,7 +275,7 @@ namespace DoubleFile
                 {
                     if (form_cbFindbox.Text.EndsWith(@"\"))
                     {
-                        MBox.Assert(1307.8313, false);
+                        MBoxStatic.Assert(1307.8313, false);
                         form_cbFindbox.Text = form_cbFindbox.Text.TrimEnd('\\');
                     }
 
@@ -292,7 +292,7 @@ namespace DoubleFile
                     }
                     else
                     {
-                        MBox.Assert(1307.8314, gd_Search_1_2.m_SearchResultsType2_List.Count <= 0);
+                        MBoxStatic.Assert(1307.8314, gd_Search_1_2.m_SearchResultsType2_List.Count <= 0);
                         gd_Search_1_2.SearchFail();
                     }
                 }

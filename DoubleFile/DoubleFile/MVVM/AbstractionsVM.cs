@@ -17,7 +17,7 @@ namespace DoubleFile
             get { return marr; }
             set
             {
-                MBox.Assert(0, value.Length <= NumCols);
+                MBoxStatic.Assert(0, value.Length <= NumCols);
                 marr = value; 
 
                 for (int nCol = 0; nCol < marr.Length; ++nCol)
@@ -41,7 +41,7 @@ namespace DoubleFile
 
             if (arrStr != null)
             {
-                MBox.Assert(0, arrStr.Length <= NumCols);
+                MBoxStatic.Assert(0, arrStr.Length <= NumCols);
                 arrStr.CopyTo(marr, 0);
             }
 
@@ -105,7 +105,7 @@ namespace DoubleFile
 
         public ObservableCollection<ListViewItemVM_Base> Items { get { return m_items; } }
 
-        internal virtual bool NewItem(string[] arrStr, bool bQuiet = false) { MBox.Assert(0, false); return false; }
+        internal virtual bool NewItem(string[] arrStr, bool bQuiet = false) { MBoxStatic.Assert(0, false); return false; }
         internal abstract int NumCols { get; }
 
         internal void Add(ListViewItemVM_Base item, bool bQuiet = false)
@@ -151,7 +151,7 @@ namespace DoubleFile
             }
             else
             {
-                MBox.Assert(0, false);
+                MBoxStatic.Assert(0, false);
             }
         }
 

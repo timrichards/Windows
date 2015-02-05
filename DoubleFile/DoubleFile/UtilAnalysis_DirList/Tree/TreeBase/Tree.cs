@@ -20,7 +20,7 @@ namespace DoubleFile
         {
             LVprojectVM = lvProjectVM;
             m_doneCallback = doneCallback;
-            MBox.Assert(1301.2301, m_doneCallback != null);
+            MBoxStatic.Assert(1301.2301, m_doneCallback != null);
         }
 
         internal void EndThread(bool bJoin = false)     // bJoin is not used because it induces lag.

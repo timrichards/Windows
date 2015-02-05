@@ -50,7 +50,7 @@ namespace DoubleFile
         internal bool m_btmapUserCtl_MouseDown = false;
 
         // initialized in FormAnalysis_DirList constructor:
-        internal Blinky m_blinky = null;
+        internal BlinkyStruct m_blinky;
         internal string m_strBtnTreeCollapseOrig = null;
         internal string m_strColFilesOrig = null;
         internal string m_strColFileCompareOrig = null;
@@ -313,14 +313,14 @@ namespace DoubleFile
                 }
                 else if (bGt)
                 {
-                    MBox.Assert(1308.9331, false, bTraceOnly: true);
+                    MBoxStatic.Assert(1308.9331, false, bTraceOnly: true);
                     return false;   // LV with just a marker item?
                 }
             }
 
             ListViewItem lvItem = (ListViewItem)lv.Items[nIx];
 
-            if (MBox.Assert(1308.9332, lvItem.Tag != null, bTraceOnly: true) == false)
+            if (MBoxStatic.Assert(1308.9332, lvItem.Tag != null, bTraceOnly: true) == false)
             {
                 return false;
             }
@@ -365,7 +365,7 @@ namespace DoubleFile
 
             if ((sender is ListView) == false)
             {
-                MBox.Assert(1308.9333, false, bTraceOnly: true);
+                MBoxStatic.Assert(1308.9333, false, bTraceOnly: true);
                 return false;
             }
 

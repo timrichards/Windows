@@ -90,7 +90,7 @@ namespace DoubleFile
                 }
             }
 
-            MBox.Assert(1301.2313, nLengthDebug == nodeDatum.nLength);
+            MBoxStatic.Assert(1301.2313, nLengthDebug == nodeDatum.nLength);
             return listFiles;
         }
 
@@ -114,7 +114,7 @@ namespace DoubleFile
                 {
                     string[] arrDriveInfo = m_dictDriveInfo[m_strFile].Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
 
-                    MBox.Assert(1301.2314, new int[] { 7, 8, 10, kanDIviewOrder.Length }.Contains(arrDriveInfo.Length));
+                    MBoxStatic.Assert(1301.2314, new int[] { 7, 8, 10, kanDIviewOrder.Length }.Contains(arrDriveInfo.Length));
 
                     string[][] asItems = new string[arrDriveInfo.Length][];
 
@@ -164,7 +164,7 @@ namespace DoubleFile
         {
             if (File.Exists(m_strFile) == false)
             {
-                MBox.Assert(1301.2311, false);
+                MBoxStatic.Assert(1301.2311, false);
                 return;
             }
 
@@ -185,7 +185,7 @@ namespace DoubleFile
             string strLine = File.ReadLines(m_strFile).Skip((int)nLineNo - 1).Take(1).ToArray()[0];
             string[] strArray = strLine.Split('\t');
 
-            MBox.Assert(1301.2312, (false == string.IsNullOrWhiteSpace(strArray[2])));
+            MBoxStatic.Assert(1301.2312, (false == string.IsNullOrWhiteSpace(strArray[2])));
 
             long nIx = 0;
             DateTime dt;

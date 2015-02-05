@@ -51,7 +51,7 @@ namespace DoubleFile
 
                 if (gd.m_bCompareMode)
                 {
-                    MBox.Assert(1308.9304, form_chkCompare1.Checked);
+                    MBoxStatic.Assert(1308.9304, form_chkCompare1.Checked);
                     form_chkCompare1.Checked = false;
                 }
 
@@ -62,7 +62,7 @@ namespace DoubleFile
             // Assert string-lookup form items exist
             //    Utilities.Assert(1308.9305, context_rclick_node.Items[m_strMARKFORCOPY] != null);
 
-            gd.m_blinky = new Blinky(form_cbFindbox);
+            gd.m_blinky = new BlinkyStruct(form_cbFindbox);
             gd.m_strBtnTreeCollapseOrig = form_btnCollapse.Text;
             gd.m_strColFilesOrig = form_colFilename.Text;
             gd.m_strColFileCompareOrig = form_colFileCompare.Text;
@@ -100,9 +100,9 @@ namespace DoubleFile
         {
             gd.ClearMem_FormAnalysis_DirList();
 
-            MBox.Assert(1308.9301, form_lvClones.Items.Count == 0, bTraceOnly: true);
-            MBox.Assert(1308.9302, form_lvSameVol.Items.Count == 0, bTraceOnly: true);
-            MBox.Assert(1308.9303, form_lvUnique.Items.Count == 0, bTraceOnly: true);
+            MBoxStatic.Assert(1308.9301, form_lvClones.Items.Count == 0, bTraceOnly: true);
+            MBoxStatic.Assert(1308.9302, form_lvSameVol.Items.Count == 0, bTraceOnly: true);
+            MBoxStatic.Assert(1308.9303, form_lvUnique.Items.Count == 0, bTraceOnly: true);
 
             form_lvClones.Items.Clear();
             form_lvSameVol.Items.Clear();
@@ -235,7 +235,7 @@ namespace DoubleFile
 
             if (nLoaded != nTotal)
             {
-                MBox.ShowDialog(nLoaded + " of " + nTotal + " scratchpad folders found in the tree.", "Load copy scratchpad");
+                MBoxStatic.ShowDialog(nLoaded + " of " + nTotal + " scratchpad folders found in the tree.", "Load copy scratchpad");
                 form_tabControlCopyIgnore.SelectedTab = form_tabPageCopy;
                 gd.m_blinky.Go(form_lvCopyScratchpad, clr: Color.Yellow, Once: true);
             }
@@ -257,14 +257,14 @@ namespace DoubleFile
 
         void LV_CloneSelNode(ListView lv)
         {
-            if (MBox.Assert(1308.9307, lv.SelectedItems.Count > 0, bTraceOnly: true) == false)
+            if (MBoxStatic.Assert(1308.9307, lv.SelectedItems.Count > 0, bTraceOnly: true) == false)
             {
                 return;
             }
 
             UList<TreeNode> listTreeNodes = (UList<TreeNode>)((ListViewItem)lv.SelectedItems[0]).Tag;
 
-            if (MBox.Assert(1308.9308, listTreeNodes != null, bTraceOnly: true) == false)
+            if (MBoxStatic.Assert(1308.9308, listTreeNodes != null, bTraceOnly: true) == false)
             {
                 return;
             }
@@ -350,7 +350,7 @@ namespace DoubleFile
                 return;
             }
 
-            MBox.Assert(1308.9309, form_chkCompare1.Checked);
+            MBoxStatic.Assert(1308.9309, form_chkCompare1.Checked);
 
             if (form_treeViewBrowse.SelectedNode == null)
             {
@@ -797,7 +797,7 @@ namespace DoubleFile
 
             if (gd.m_bCompareMode)
             {
-                MBox.Assert(1308.9315, form_chkCompare1.Checked == false);
+                MBoxStatic.Assert(1308.9315, form_chkCompare1.Checked == false);
                 form_chkCompare1.Text = gd.m_strChkCompareOrig;
                 form_btnCollapse.Text = gd.m_strBtnTreeCollapseOrig;
                 form_btnCompare.Text = gd.m_strBtnCompareOrig;
@@ -898,7 +898,7 @@ namespace DoubleFile
 
         void form_lvClones_KeyDown(object sender, KeyEventArgs e)
         {
-            MBox.Assert(1308.9316, gd.QueryLVselChange(sender) == false, bTraceOnly: true);
+            MBoxStatic.Assert(1308.9316, gd.QueryLVselChange(sender) == false, bTraceOnly: true);
         }
 
         void form_lvClones_KeyUp(object sender, KeyEventArgs e)
@@ -919,7 +919,7 @@ namespace DoubleFile
         void form_lvClones_MouseDown(object sender, MouseEventArgs e)
         {
             gd.m_bLVclonesMouseDown = true;
-            MBox.Assert(1308.9317, gd.m_bLVclonesMouseSelChg == false, bTraceOnly: true);
+            MBoxStatic.Assert(1308.9317, gd.m_bLVclonesMouseSelChg == false, bTraceOnly: true);
             gd.m_bLVclonesMouseSelChg = false;
         }
 
@@ -1195,7 +1195,7 @@ namespace DoubleFile
                 return;
             }
 
-            if (Blinky.TreeSelect)
+            if (BlinkyStruct.TreeSelect)
             {
                 return;
             }
@@ -1214,7 +1214,7 @@ namespace DoubleFile
                     gd.m_listHistory.RemoveRange(gd.m_nIxHistory, gd.m_listHistory.Count - gd.m_nIxHistory - 1);
                 }
 
-                MBox.Assert(1308.9319, gd.m_nIxHistory == (gd.m_listHistory.Count - 1));
+                MBoxStatic.Assert(1308.9319, gd.m_nIxHistory == (gd.m_listHistory.Count - 1));
 
                 if ((gd.m_nIxHistory < 0) || (gd.History_Equals((TreeNode)e.Node) == false))
                 {
@@ -1235,7 +1235,7 @@ namespace DoubleFile
 
             if (sender == form_treeCompare2)
             {
-                MBox.Assert(1308.9321, gd.m_bCompareMode);
+                MBoxStatic.Assert(1308.9321, gd.m_bCompareMode);
                 form_lvFileCompare.Items.Clear();
                 form_lvDetailVol.Items.Clear();
             }
@@ -1252,12 +1252,12 @@ namespace DoubleFile
 
             TreeNode rootNode = ((TreeNode)e.Node).Root();
 
-            MBox.Assert(1308.9322, (new object[] { form_treeCompare1, form_treeCompare2 }.Contains(sender)) == gd.m_bCompareMode);
+            MBoxStatic.Assert(1308.9322, (new object[] { form_treeCompare1, form_treeCompare2 }.Contains(sender)) == gd.m_bCompareMode);
             gd_Tree.DoTreeSelect((TreeNode)e.Node, TreeSelectStatusCallback, TreeSelectDoneCallback);
 
             string strNode = e.Node.Text;
 
-            MBox.Assert(1308.9323, false == string.IsNullOrWhiteSpace(strNode));
+            MBoxStatic.Assert(1308.9323, false == string.IsNullOrWhiteSpace(strNode));
 
             if (gd.m_bCompareMode)
             {
@@ -1309,7 +1309,7 @@ namespace DoubleFile
 
             if (nodeDatum.m_lvItem.ListView == null)    // during Corellate()
             {
-                MBox.Assert(1308.9324, gd_Tree.m_threadCollate != null, bTraceOnly: true);
+                MBoxStatic.Assert(1308.9324, gd_Tree.m_threadCollate != null, bTraceOnly: true);
                 return;
             }
 
@@ -1338,13 +1338,13 @@ namespace DoubleFile
         {
             if (gd.m_bCompareMode)
             {
-                MBox.Assert(1308.9325, form_chkCompare1.Checked == true);
+                MBoxStatic.Assert(1308.9325, form_chkCompare1.Checked == true);
                 form_chkCompare1.Checked = false;
                 e.Cancel = true;
             }
             else
             {
-                MBox.MessageBoxKill();
+                MBoxStatic.MessageBoxKill();
             }
 
             gd.gd_Tree = null;

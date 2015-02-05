@@ -45,8 +45,8 @@ namespace DoubleFile
 
                 var listFilePaths = new List<string>();
 
-                MBox.Assert(0, LengthRead == 0);
-                MBox.Assert(0, FilesRead == 0);
+                MBoxStatic.Assert(0, LengthRead == 0);
+                MBoxStatic.Assert(0, FilesRead == 0);
                 LengthRead = 0;
                 FilesRead = 0;
 
@@ -103,7 +103,7 @@ namespace DoubleFile
                             continue;
                         }
 
-                        MBox.Assert(1306.7307, fi.Size >= 0);
+                        MBoxStatic.Assert(1306.7307, fi.Size >= 0);
 
                         if (fs == null)
                         {
@@ -157,20 +157,20 @@ namespace DoubleFile
                             strError1 = "Path Length: " + strFullPath.Length.ToString();
                         }
 
-                        MBox.Assert(1306.7308, bHasLength == (nDirLength > 0));
-                        MBox.Assert(1306.7301, nDirLength >= 0);
+                        MBoxStatic.Assert(1306.7308, bHasLength == (nDirLength > 0));
+                        MBoxStatic.Assert(1306.7301, nDirLength >= 0);
 
                         var di = new Win32FindFileStatic.FileData(winDir);
 
                         if (strFullPath.EndsWith(@":\"))                        // root directory
                         {
-                            MBox.Assert(1306.7302, di.IsValid == false);        // yes, yes...
-                            MBox.Assert(1306.7303, strFullPath.Length == 3);
+                            MBoxStatic.Assert(1306.7302, di.IsValid == false);        // yes, yes...
+                            MBoxStatic.Assert(1306.7303, strFullPath.Length == 3);
                             fs.WriteLine(FormatString(strDir: strFullPath, nLength: nDirLength, strError1: strError1, strError2: strError2_Dir));
                         }
                         else
                         {
-                            MBox.Assert(1306.7304, di.IsValid);
+                            MBoxStatic.Assert(1306.7304, di.IsValid);
                             fs.WriteLine(FormatString(strDir: strFullPath, dtCreated: di.CreationTime, strAttributes: ((int)di.Attributes).ToString("X"), dtModified: di.LastWriteTime, nLength: nDirLength, strError1: strError1, strError2: strError2_Dir));
                         }
                     }

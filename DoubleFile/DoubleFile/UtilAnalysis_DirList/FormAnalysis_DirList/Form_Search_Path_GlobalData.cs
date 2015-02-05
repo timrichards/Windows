@@ -11,7 +11,7 @@ namespace DoubleFile
             get { return _gd; }
             set
             {
-                MBox.Assert(0, _gd == null);
+                MBoxStatic.Assert(0, _gd == null);
                 _gd = value;
             }
         }
@@ -79,7 +79,7 @@ namespace DoubleFile
 
                     if (nPathLevelLength > 1)
                     {
-                        MBox.Assert(1308.9329, (nPathLevelLength - nCount) > 0);
+                        MBoxStatic.Assert(1308.9329, (nPathLevelLength - nCount) > 0);
                         nPathLevelLength -= nCount;
                         nPathLevelLength = Math.Max(0, nPathLevelLength);
                     }

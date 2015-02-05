@@ -26,7 +26,7 @@ namespace DoubleFile
                     {
                         Node node = m_rootNode.Nodes[str_in];
 
-                        MBox.Assert(1301.2302, false);
+                        MBoxStatic.Assert(1301.2302, false);
                     }
 
                     string str = str_in.TrimEnd('\\');

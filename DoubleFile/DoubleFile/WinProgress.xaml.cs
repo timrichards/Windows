@@ -21,7 +21,7 @@ namespace DoubleFile
         {
             if (astrNicknames.Count() != astrPaths.Count())
             {
-                MBox.Assert(0, false);
+                MBoxStatic.Assert(0, false);
                 return;
             }
 
@@ -41,7 +41,7 @@ namespace DoubleFile
             }
             else
             {
-                MBox.Assert(0, false);
+                MBoxStatic.Assert(0, false);
             }
         }
 
@@ -55,7 +55,7 @@ namespace DoubleFile
             }
             else
             {
-                MBox.Assert(0, false);
+                MBoxStatic.Assert(0, false);
             }
         }
 
@@ -69,7 +69,7 @@ namespace DoubleFile
             }
             else
             {
-                MBox.Assert(0, false);
+                MBoxStatic.Assert(0, false);
             }
         }
 

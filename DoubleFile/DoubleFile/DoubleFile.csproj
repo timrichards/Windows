@@ -25,7 +25,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>29</ApplicationRevision>
+    <ApplicationRevision>31</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -143,7 +143,7 @@
     <Compile Include="UtilAnalysis_DirList\Tree\TreeSelect.cs" />
     <Compile Include="UtilAnalysis_DirList\UC_TreeMap.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList.cs" />
-    <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\Blinky.cs" />
+    <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\BlinkyStruct.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\ExtensionMethodsStatic.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\FlashWindowStatic.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_FileBase.cs" />
@@ -203,7 +203,7 @@
     <Compile Include="MVVM_WinProject\WinProjectVM_Impl.cs" />
     <Compile Include="MVVM_WinProject\LVitem_ProjectVM.cs" />
     <Compile Include="UtilProject\DriveSerialStatic.cs" />
-    <Compile Include="UtilProject\MBox.cs" />
+    <Compile Include="UtilProject\MBoxStatic.cs" />
     <Compile Include="UtilProject\ProjectFile.cs" />
     <Compile Include="UtilProject\SDL_Timer.cs" />
     <Compile Include="UtilProject\UList.cs" />

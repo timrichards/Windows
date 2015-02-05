@@ -38,14 +38,14 @@ namespace DoubleFile
             //#warning DEBUG is defined.
             MBox.Assert(0, System.Diagnostics.Debugger.IsAttached, "Debugger is not attached!");
 #else
-            if (MBox.Assert(0, (System.Diagnostics.Debugger.IsAttached == false), "Debugger is attached but DEBUG is not defined.") == false)
+            if (MBoxStatic.Assert(0, (System.Diagnostics.Debugger.IsAttached == false), "Debugger is attached but DEBUG is not defined.") == false)
             {
                 return;
             }
 
             ActivationArguments args = AppDomain.CurrentDomain.SetupInformation.ActivationArguments;
 
-            if (MBox.Assert(1308.93165, args != null) == false)
+            if (MBoxStatic.Assert(1308.93165, args != null) == false)
             {
                 return;
             }
@@ -58,7 +58,7 @@ namespace DoubleFile
                 return;
             }
 
-            if (MBox.Assert(1308.93165, arrArgs.Length > 0) == false)
+            if (MBoxStatic.Assert(1308.93165, arrArgs.Length > 0) == false)
             {
                 return;
             }
@@ -115,7 +115,7 @@ namespace DoubleFile
             {
                 if ((LVprojectVM != null) && LVprojectVM.Unsaved &&
                     (MessageBoxResult.Cancel ==
-                    MBox.ShowDialog(WinProjectVM.ksUnsavedWarning, "Open Project", MessageBoxButton.OKCancel)))
+                    MBoxStatic.ShowDialog(WinProjectVM.ksUnsavedWarning, "Open Project", MessageBoxButton.OKCancel)))
                 {
                     return;
                 }
@@ -145,7 +145,7 @@ namespace DoubleFile
         {
             if ((LVprojectVM != null) && LVprojectVM.Unsaved &&
                 (MessageBoxResult.Cancel == 
-                MBox.ShowDialog(WinProjectVM.ksUnsavedWarning, "Quit Double File", MessageBoxButton.OKCancel)))
+                MBoxStatic.ShowDialog(WinProjectVM.ksUnsavedWarning, "Quit Double File", MessageBoxButton.OKCancel)))
             {
                 e.Cancel = true;
                 return;
@@ -181,7 +181,7 @@ namespace DoubleFile
             }
             else
             {
-                MBox.ShowDialog("No project to save.", "Save Project");
+                MBoxStatic.ShowDialog("No project to save.", "Save Project");
             }
         }
 

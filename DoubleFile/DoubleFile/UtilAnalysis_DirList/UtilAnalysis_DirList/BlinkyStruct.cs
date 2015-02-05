@@ -4,20 +4,19 @@ using System.Windows.Forms;
 
 namespace DoubleFile
 {
-    // can't be struct because it has lambda; anonymous methods; query expressions accessing 'this'
-    class Blinky
+    struct BlinkyStruct
     {
         static bool m_bTreeSelect = false;
         internal static bool TreeSelect { get { return m_bTreeSelect; } }
 
-        readonly Control m_defaultControl = null;
-        readonly SDL_Timer m_timer = new SDL_Timer();
+        readonly Control m_defaultControl;
+        readonly SDL_Timer m_timer;
 
-        Holder m_holder = new NullHolder();
-        Color m_clrBlink = Color.DarkTurquoise;
-        int m_nBlink = 0;
-        int m_nNumBlinks = 10;
-        bool m_bProgress = false;
+        Holder m_holder;
+        Color m_clrBlink;
+        int m_nBlink;
+        int m_nNumBlinks;
+        bool m_bProgress;   
 
         abstract class Holder
         {
@@ -46,18 +45,26 @@ namespace DoubleFile
             internal ControlHolder(Control obj) { m_obj = obj; }
         }
 
-        internal Blinky(Control defaultControl)
+        internal BlinkyStruct(Control defaultControl)
         {
+            m_timer = new SDL_Timer();
+            m_holder = new NullHolder();
+            m_clrBlink = Color.DarkTurquoise;
+            m_nBlink = 0;
+            m_nNumBlinks = 10;
+            m_bProgress = false;
             m_defaultControl = defaultControl;
+            BlinkyStruct local = this;
+
             m_timer.Tick += new EventHandler((object sender, EventArgs e) =>
             {
-                if (m_bProgress || (++m_nBlink < m_nNumBlinks))
+                if (local.m_bProgress || (++local.m_nBlink < local.m_nNumBlinks))
                 {
-                    m_holder.BackColor = (m_nBlink % 2 == 0) ? m_holder.ClrOrig : m_clrBlink;
+                    local.m_holder.BackColor = (local.m_nBlink % 2 == 0) ? local.m_holder.ClrOrig : local.m_clrBlink;
                 }
                 else
                 {
-                    Reset();
+                    local.Reset();
                 }
             });
         }
@@ -99,10 +106,10 @@ namespace DoubleFile
 
         void Go_A(Color? clr = null, bool Once = false, bool bProgress = false)
         {
-            MBox.Assert(1303.4301, m_timer.IsEnabled == false, bTraceOnly: true);
-            MBox.Assert(1303.4302, m_nBlink == 0, bTraceOnly: true);
-            MBox.Assert(1303.4303, (m_holder is NullHolder) == false, bTraceOnly: true);
-            MBox.Assert(1303.4304, m_bProgress == false, bTraceOnly: true);
+            MBoxStatic.Assert(1303.4301, m_timer.IsEnabled == false, bTraceOnly: true);
+            MBoxStatic.Assert(1303.4302, m_nBlink == 0, bTraceOnly: true);
+            MBoxStatic.Assert(1303.4303, (m_holder is NullHolder) == false, bTraceOnly: true);
+            MBoxStatic.Assert(1303.4304, m_bProgress == false, bTraceOnly: true);
 
             m_holder.ClrOrig = m_holder.BackColor;
             m_bProgress = bProgress;

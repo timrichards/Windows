@@ -33,7 +33,7 @@ namespace DoubleFile
 
             if (bAlreadyInProject)
             {
-                MBox.ShowDialog("Listing file already in the project.", "Add Listing File");
+                MBoxStatic.ShowDialog("Listing file already in the project.", "Add Listing File");
             }
 
             return bAlreadyInProject;
@@ -99,7 +99,7 @@ namespace DoubleFile
 
             if (bFileExists)
             {
-                MBox.ShowDialog("Listing file exists. Please manually delete it using the Save Listing File dialog\nby clicking the icon button after this alert closes.", "New Listing File");
+                MBoxStatic.ShowDialog("Listing file exists. Please manually delete it using the Save Listing File dialog\nby clicking the icon button after this alert closes.", "New Listing File");
             }
 
             return bFileExists;
@@ -140,7 +140,7 @@ namespace DoubleFile
                 }
             });
 
-            if (bUnsaved && (MBox.ShowDialog("Selected listings have not been saved. Continue?", "Remove Listing File",
+            if (bUnsaved && (MBoxStatic.ShowDialog("Selected listings have not been saved. Continue?", "Remove Listing File",
                 System.Windows.MessageBoxButton.YesNo) !=
                 System.Windows.MessageBoxResult.Yes))
             {
@@ -204,7 +204,7 @@ namespace DoubleFile
         {
             if (false == FileParse.ValidateFile(lvItem_Orig.ListingFile))
             {
-                MBox.ShowDialog("Bad listing file.", "Edit Listing File");
+                MBoxStatic.ShowDialog("Bad listing file.", "Edit Listing File");
                 return false;
             }
 
@@ -243,7 +243,7 @@ namespace DoubleFile
                     if (strLine.StartsWith(FileParse.ksLineType_Start))
                     {
                         // already past the header: nothing left to replace.
-                        MBox.Assert(0, false);
+                        MBoxStatic.Assert(0, false);
                         sbOut.AppendLine(strLine);
                         break;
                     }
@@ -254,7 +254,7 @@ namespace DoubleFile
                     {
                         var astr = sbLine.ToString().Split('\t').ToList();
 
-                        MBox.Assert(1308.9312, astr.Count == 3);
+                        MBoxStatic.Assert(1308.9312, astr.Count == 3);
 
                         while (astr.Count < 3)
                         {
@@ -293,14 +293,14 @@ namespace DoubleFile
                 }
                 else
                 {
-                    MBox.Assert(0, false == File.Exists(lvItem_Orig.ListingFile));
+                    MBoxStatic.Assert(0, false == File.Exists(lvItem_Orig.ListingFile));
                     try
                     {
                         File.Delete(lvItem_Orig.ListingFile);
                     }
                     catch (System.Exception e)
                     {
-                        MBox.ShowDialog("Bad listing file.\n" + (e.GetBaseException() ?? e.InnerException ?? e).Message, "Edit Listing File");
+                        MBoxStatic.ShowDialog("Bad listing file.\n" + (e.GetBaseException() ?? e.InnerException ?? e).Message, "Edit Listing File");
                         return false;
                     }
                 }
@@ -328,7 +328,7 @@ namespace DoubleFile
                 bDriveLetter_Todo = false;
             }
 
-            MBox.Assert(0, (false == (bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo || bDriveLetter_Todo)));
+            MBoxStatic.Assert(0, (false == (bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo || bDriveLetter_Todo)));
             return true;
         }
 

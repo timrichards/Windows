@@ -61,7 +61,7 @@ namespace DoubleFile
                     (strSerial != LVitemProjectVM.DriveSerial)));
 
                 if ((bAsk_DriveModel || bAsk_DriveSerial) &&
-                    ((MBox.ShowDialog("Overwrite user-entered drive model and/or serial # for " + LVitemProjectVM.SourcePath[0] + @":\ ?", "Save Directory Listings",
+                    ((MBoxStatic.ShowDialog("Overwrite user-entered drive model and/or serial # for " + LVitemProjectVM.SourcePath[0] + @":\ ?", "Save Directory Listings",
                         System.Windows.MessageBoxButton.YesNo) ==
                         System.Windows.MessageBoxResult.No)))
                 {
@@ -99,7 +99,7 @@ namespace DoubleFile
                 WriteLine(strModel);
                 WriteLine(strSerial);
                 WriteLine(nSize);
-                MBox.Assert(0, nCount == FileParse.knDriveInfoItems);
+                MBoxStatic.Assert(0, nCount == FileParse.knDriveInfoItems);
                 fs.WriteLine(sb.ToString().Trim());
             }
 

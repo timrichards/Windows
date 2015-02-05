@@ -20,7 +20,7 @@ namespace DoubleFile
         {
             if (m_lvVM.Unsaved &&
                 (MessageBoxResult.Cancel ==
-                MBox.ShowDialog(ksUnsavedWarning, "Open Project", MessageBoxButton.OKCancel)))
+                MBoxStatic.ShowDialog(ksUnsavedWarning, "Open Project", MessageBoxButton.OKCancel)))
             {
                 return;
             }
@@ -61,7 +61,7 @@ namespace DoubleFile
 
                     if (System.IO.File.Exists(strFilename))
                     {
-                        MBox.ShowDialog("Project file exists. Please manually delete it using the Save Project dialog after this alert closes.", "Save Project");
+                        MBoxStatic.ShowDialog("Project file exists. Please manually delete it using the Save Project dialog after this alert closes.", "Save Project");
                         continue;
                     }
                     else
@@ -177,7 +177,7 @@ namespace DoubleFile
 
             if (sbBadFiles.Length > 0)
             {
-                MBox.ShowDialog("Bad listing file" + (bMultiBad ? "s" : "") + ".\n" + sbBadFiles, "Open Listing File");
+                MBoxStatic.ShowDialog("Bad listing file" + (bMultiBad ? "s" : "") + ".\n" + sbBadFiles, "Open Listing File");
             }
         }
     }

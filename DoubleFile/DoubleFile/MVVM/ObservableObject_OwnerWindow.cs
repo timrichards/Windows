@@ -6,7 +6,7 @@
         {
             if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()) == false)
             {
-                MBox.Assert(0, false);
+                MBoxStatic.Assert(0, false);
             }
         }
     }

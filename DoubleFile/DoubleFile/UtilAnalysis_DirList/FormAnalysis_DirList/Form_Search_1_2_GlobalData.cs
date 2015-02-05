@@ -11,7 +11,7 @@ namespace DoubleFile
             get { return _gd; }
             set
             {
-                MBox.Assert(0, _gd == null);
+                MBoxStatic.Assert(0, _gd == null);
                 _gd = value;
             }
         }
@@ -22,7 +22,7 @@ namespace DoubleFile
             get { return _gd_Search_Path; }
             set
             {
-                MBox.Assert(0, _gd_Search_Path == null);
+                MBoxStatic.Assert(0, _gd_Search_Path == null);
                 _gd_Search_Path = value;
             }
         }
@@ -33,7 +33,7 @@ namespace DoubleFile
             get { return _gd_Tree; }
             set
             {
-                MBox.Assert(0, gd_Tree == null);
+                MBoxStatic.Assert(0, gd_Tree == null);
                 _gd_Tree = value;
             }
         }
@@ -66,9 +66,9 @@ namespace DoubleFile
             m_SearchResultsType1_Array = null;
             m_SearchResultsType2_List.Clear();
 
-            MBox.Assert(1307.8303, m_searchType2 == null);
-            MBox.Assert(1307.8304, m_firstSearchResults == null);
-            MBox.Assert(1307.8305, m_lastSearchResults == null);
+            MBoxStatic.Assert(1307.8303, m_searchType2 == null);
+            MBoxStatic.Assert(1307.8304, m_firstSearchResults == null);
+            MBoxStatic.Assert(1307.8305, m_lastSearchResults == null);
             m_searchType2 = null;
             m_firstSearchResults = null;
             m_lastSearchResults = null;
@@ -82,14 +82,14 @@ namespace DoubleFile
             m_bSearchResultsType2_List = false;
             m_strSelectFile = null;
             gd.m_blinky.Go(clr: System.Drawing.Color.Red, Once: true);
-            MBox.ShowDialog("Couldn't find the specified search parameter.", ksSearchTitle);
+            MBoxStatic.ShowDialog("Couldn't find the specified search parameter.", ksSearchTitle);
         }
 
         internal void SearchStatusCallback(SearchResults searchResults, bool bFirst = false, bool bLast = false)
         {
             if (searchResults.Results.Count() <= 0)
             {
-                MBox.Assert(1307.8307, false); // caller takes care of this
+                MBoxStatic.Assert(1307.8307, false); // caller takes care of this
                 return;
             }
 

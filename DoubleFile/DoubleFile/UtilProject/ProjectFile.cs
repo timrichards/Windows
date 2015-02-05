@@ -85,7 +85,7 @@ namespace DoubleFile
 
             if (false == StartProcess("Opening project.", Path.GetFileName(strProjectFilename)))
             {
-                MBox.ShowDialog("Couldn't open the project. Reinstall Double File or open your project file " +
+                MBoxStatic.ShowDialog("Couldn't open the project. Reinstall Double File or open your project file " +
                     "and get to your listing files using a download from 7-zip.org.", "Open Project");
             }
         }
@@ -135,7 +135,7 @@ namespace DoubleFile
 
             if (listListingFiles.Count <= 0)
             {
-                MBox.ShowDialog("Any listing files in project have not yet been saved." +
+                MBoxStatic.ShowDialog("Any listing files in project have not yet been saved." +
                     " Click OK on the Project window to start saving directory listings of your drives.",
                     "Save Project");
                 return false;
@@ -185,7 +185,7 @@ namespace DoubleFile
                 {
                     File.Move(strProjectFilename + ".7z", strProjectFilename);
                     m_winProgress.SetCompleted(strProjectFileNoPath);
-                    MBox.ShowDialog("Todo: save volume group.");
+                    MBoxStatic.ShowDialog("Todo: save volume group.");
                 }
                 catch
                 {
@@ -198,7 +198,7 @@ namespace DoubleFile
                         strError = "Error saving project.";
                     }
 
-                    MBox.ShowDialog(strError, "Error Saving Project");
+                    MBoxStatic.ShowDialog(strError, "Error Saving Project");
                     File.AppendAllText(m_strErrorLogFile, m_sbError.ToString());
                     bRet = false;
                 }
@@ -242,7 +242,7 @@ namespace DoubleFile
                     strMessage = " Copied the listing files to\n" + strDir;
                 }
 
-                MBox.ShowDialog("Couldn't save the project." + strMessage, "Save Project");
+                MBoxStatic.ShowDialog("Couldn't save the project." + strMessage, "Save Project");
                 bRet = false;
             }
 
@@ -251,7 +251,7 @@ namespace DoubleFile
 
         bool StartProcess(string status, string strProjectFileNoPath)
         {
-            MBox.Assert(0, m_winProgress == null);
+            MBoxStatic.Assert(0, m_winProgress == null);
 
             if (File.Exists(m_process.StartInfo.FileName))
             {

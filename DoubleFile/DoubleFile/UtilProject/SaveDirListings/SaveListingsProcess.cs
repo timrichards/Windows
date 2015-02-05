@@ -48,7 +48,7 @@ namespace DoubleFile
                         return true;
                     }
 
-                    if (MBox.ShowDialog("Do you want to cancel?", "Saving Directory Listings",
+                    if (MBoxStatic.ShowDialog("Do you want to cancel?", "Saving Directory Listings",
                         MessageBoxButton.YesNo) ==
                         MessageBoxResult.Yes)
                     {
@@ -61,7 +61,7 @@ namespace DoubleFile
 
                 if ((gd_old.m_saveDirListings != null) && (gd_old.m_saveDirListings.IsAborted == false))
                 {
-                    MBox.Assert(0, false);
+                    MBoxStatic.Assert(0, false);
                     gd_old.m_saveDirListings.EndThread();
                 }
 
@@ -129,7 +129,7 @@ namespace DoubleFile
                 int nFilesWritten = gd_old.m_saveDirListings.FilesWritten;
 
                 gd_old.m_saveDirListings = null;   // has to precede messagebox
-                MBox.ShowDialog("Completed. " + nFilesWritten + " file" + (nFilesWritten != 1 ? "s" : "") + " written.", "Save Directory Listings");
+                MBoxStatic.ShowDialog("Completed. " + nFilesWritten + " file" + (nFilesWritten != 1 ? "s" : "") + " written.", "Save Directory Listings");
             }));
         }
 

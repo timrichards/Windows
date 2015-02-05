@@ -32,7 +32,7 @@ namespace DoubleFile
             {
                 if (treeNode_in == null)
                 {
-                    MBox.Assert(1305.6302, false);
+                    MBoxStatic.Assert(1305.6302, false);
                 }
 
                 TreeNode treeNode = treeNode_in;
@@ -46,13 +46,13 @@ namespace DoubleFile
 
                     if (nodeDatum == null)
                     {
-                        MBox.Assert(1305.6303, false);
+                        MBoxStatic.Assert(1305.6303, false);
                         continue;
                     }
 
                     if ((treeNode.ForeColor == Color.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
                     {
-                        MBox.Assert(1305.6304, (nodeDatum.m_listClones.Count > 0) && (nodeDatum.m_bDifferentVols == false));
+                        MBoxStatic.Assert(1305.6304, (nodeDatum.m_listClones.Count > 0) && (nodeDatum.m_bDifferentVols == false));
                         m_listSameVol.Add(treeNode);
                     }
 

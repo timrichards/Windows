@@ -21,7 +21,7 @@ namespace DoubleFile
             m_bSearchFilesOnly = searchBase.m_bSearchFilesOnly;
             m_strCurrentNode = searchBase.m_strCurrentNode;
             m_folderHandling = searchBase.m_folderHandling;
-            MBox.Assert(1307.8315, m_statusCallback != null);
+            MBoxStatic.Assert(1307.8315, m_statusCallback != null);
         }
 
         protected readonly GlobalData_Base gd = null;

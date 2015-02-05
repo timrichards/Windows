@@ -135,7 +135,7 @@ namespace DoubleFile
 
                         if (strLine == ksHeader01)
                         {
-                            MBox.Assert(0, nLineNo == 1);
+                            MBoxStatic.Assert(0, nLineNo == 1);
                             file_out.WriteLine(FormatLine(ksLineType_Version, nLineNo, ksHeader));
                             continue;
                         }
@@ -151,7 +151,7 @@ namespace DoubleFile
                         }
                         else if (strLine == ksDrive01)
                         {
-                            MBox.Assert(0, nLineNo == 4);
+                            MBoxStatic.Assert(0, nLineNo == 4);
                             file_out.WriteLine(FormatLine(ksLineType_Comment, nLineNo, ksVolume));
 
                             string[] astrInfoLineTypes = new string[knDriveInfoItems]
@@ -242,7 +242,7 @@ namespace DoubleFile
                         }
                         else if (strDir.Contains(@":\") == false)
                         {
-                            MBox.Assert(0, false);        // all that's left is directories
+                            MBoxStatic.Assert(0, false);        // all that's left is directories
                             continue;
                         }
 
@@ -281,7 +281,7 @@ namespace DoubleFile
 
             if (false == string.IsNullOrWhiteSpace(strDir + strFile + strCreated + strModified + strAttributes + strLength + strError1 + strError2 + strHash) == false)
             {
-                MBox.Assert(0, nHeader is int);
+                MBoxStatic.Assert(0, nHeader is int);
 
                 if (nHeader == 0)
                 {
@@ -299,7 +299,7 @@ namespace DoubleFile
             {
                 strError1 += " Trailing whitespace";
                 strError1.Trim();
-                MBox.Assert(0, false == string.IsNullOrWhiteSpace(strDir) || false == string.IsNullOrWhiteSpace(strFile));
+                MBoxStatic.Assert(0, false == string.IsNullOrWhiteSpace(strDir) || false == string.IsNullOrWhiteSpace(strFile));
                 bDbgCheck = true;
             }
 
@@ -370,7 +370,7 @@ namespace DoubleFile
 
                     var astr = s.Split('\t');
 
-                    MBox.Assert(0, astr.Length == 3);
+                    MBoxStatic.Assert(0, astr.Length == 3);
 
                     if (astr.Length < 3)
                     {

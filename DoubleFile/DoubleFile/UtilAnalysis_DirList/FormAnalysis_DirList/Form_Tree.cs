@@ -47,7 +47,7 @@ namespace DoubleFile
                 }
                 else
                 {
-                    MBox.Assert(1304.5309, false, "No data. Could be the directory is Access Denied.");
+                    MBoxStatic.Assert(1304.5309, false, "No data. Could be the directory is Access Denied.");
                 }
             }));
         }
@@ -82,12 +82,12 @@ namespace DoubleFile
                 return;
             }
 
-            MBox.Assert(1304.5304, gd_Tree.m_listTreeNodes.Count == 0);
-            MBox.Assert(1304.5305, InvokeRequired);
+            MBoxStatic.Assert(1304.5304, gd_Tree.m_listTreeNodes.Count == 0);
+            MBoxStatic.Assert(1304.5305, InvokeRequired);
 
             UtilAnalysis_DirList.CheckAndInvoke(this, new Action(() =>
             {
-                MBox.Assert(1304.5306, gd_Tree.m_listLVignore.Count == 0);
+                MBoxStatic.Assert(1304.5306, gd_Tree.m_listLVignore.Count == 0);
 
                 foreach (ListViewItem lvItem in form_lvIgnoreList.Items)
                 {
@@ -146,8 +146,8 @@ namespace DoubleFile
             int nNodeCount = form_treeViewBrowse.GetNodeCount(includeSubTrees: true);
             int nNodeCount_A = UtilAnalysis_DirList.CountNodes((TreeNode)form_treeViewBrowse.Nodes[0]);
 
-            MBox.Assert(1304.5307, UtilAnalysis_DirList.CountNodes(gd_Tree.m_listRootNodes) == nNodeCount);
-            MBox.Assert(1304.5308, gd_Tree.m_listTreeNodes.Count == nNodeCount);
+            MBoxStatic.Assert(1304.5307, UtilAnalysis_DirList.CountNodes(gd_Tree.m_listRootNodes) == nNodeCount);
+            MBoxStatic.Assert(1304.5308, gd_Tree.m_listTreeNodes.Count == nNodeCount);
 
             if (Form.ActiveForm == null)
             {
@@ -256,7 +256,7 @@ namespace DoubleFile
                 if ((lv2.Items.Count > 0) &&
                     (((LVitemFileTag)((ListViewItem)lv2.Items[0]).Tag).StrCompareDir != treeNode2.Text))
                 {
-                    MBox.Assert(1304.5311, false);
+                    MBoxStatic.Assert(1304.5311, false);
                     return;
                 }
 
@@ -349,7 +349,7 @@ namespace DoubleFile
                     return;
                 }
 
-                MBox.Assert(1304.5312, gd_Tree.m_listRootNodes.Count == 0);
+                MBoxStatic.Assert(1304.5312, gd_Tree.m_listRootNodes.Count == 0);
 
                 gd_Tree.m_tree = new Tree(new GlobalData_Form(this),
                     LVprojectVM, gd_Tree.m_dictNodes, gd_Tree.m_dictDriveInfo,
@@ -369,7 +369,7 @@ namespace DoubleFile
             {
                 int nNodeCount = form_treeViewBrowse.GetNodeCount(includeSubTrees: true);
 
-                MBox.Assert(1304.5313, gd_Tree.m_listTreeNodes.Count == nNodeCount);
+                MBoxStatic.Assert(1304.5313, gd_Tree.m_listTreeNodes.Count == nNodeCount);
 
                 foreach (TreeNode treeNode in gd_Tree.m_listTreeNodes)
                 {
@@ -380,7 +380,7 @@ namespace DoubleFile
 
                     if (nodeDatum == null)
                     {
-                        MBox.Assert(1304.5314, false);
+                        MBoxStatic.Assert(1304.5314, false);
                         continue;
                     }
 

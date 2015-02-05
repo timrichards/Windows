@@ -43,7 +43,7 @@ namespace DoubleFile
                     return true;
                 }
 
-                if (MBox.ShowDialog("Do you want to cancel?", ksProgressKey,
+                if (MBoxStatic.ShowDialog("Do you want to cancel?", ksProgressKey,
                     MessageBoxButton.YesNo) ==
                     MessageBoxResult.Yes)
                 {

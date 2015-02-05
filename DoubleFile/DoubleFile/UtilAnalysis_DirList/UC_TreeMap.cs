@@ -268,7 +268,7 @@ namespace DoubleFile
 
             foreach (string[] arrLine in listFiles)
             {
-                MBox.Assert(1302.3316, iterUlong.MoveNext());
+                MBoxStatic.Assert(1302.3316, iterUlong.MoveNext());
                 NodeDatum nodeDatum_A = new NodeDatum();
 
                 nTotalLength += nodeDatum_A.nTotalLength = iterUlong.Current;
@@ -293,11 +293,11 @@ namespace DoubleFile
             NodeDatum nodeDatum = (NodeDatum)parent.Tag;
             NodeDatum nodeDatum_B = new NodeDatum();
 
-            MBox.Assert(1302.3301, nTotalLength == nodeDatum.nLength);
+            MBoxStatic.Assert(1302.3301, nTotalLength == nodeDatum.nLength);
             nodeDatum_B.nTotalLength = nTotalLength;
             nodeDatum_B.TreeMapRect = nodeDatum.TreeMapRect;
             nodeFileList.Tag = nodeDatum_B;
-            MBox.Assert(1302.3302, nodeFileList.SelectedImageIndex == -1);              // sets the bitmap size
+            MBoxStatic.Assert(1302.3302, nodeFileList.SelectedImageIndex == -1);              // sets the bitmap size
             nodeFileList.SelectedImageIndex = -1;
             return nodeFileList;
         }
@@ -502,8 +502,8 @@ namespace DoubleFile
             bool bStart = false
         )
         {
-            MBox.Assert(1302.3303, rc.Width >= 0);
-            MBox.Assert(1302.3304, rc.Height >= 0);
+            MBoxStatic.Assert(1302.3303, rc.Width >= 0);
+            MBoxStatic.Assert(1302.3304, rc.Height >= 0);
 
             Graphics graphics = m_bg.Graphics;
 
@@ -699,7 +699,7 @@ namespace DoubleFile
                 for (int i=0; i < childrenPerRow[row]; i++, c++)
 		        {
                     TreeNode child = listChildren[c];
-                    MBox.Assert(1302.3305, childWidth[c] >= 0);
+                    MBoxStatic.Assert(1302.3305, childWidth[c] >= 0);
 			        double fRight= left + childWidth[c] * width;
 			        int right= (int)fRight;
 
@@ -745,10 +745,10 @@ namespace DoubleFile
             List<TreeNode> listChildren)
         {
             const double _minProportion = 0.4;
-            MBox.Assert(1302.3308, _minProportion < 1);
+            MBoxStatic.Assert(1302.3308, _minProportion < 1);
 
-            MBox.Assert(1302.3309, nextChild < listChildren.Count);
-            MBox.Assert(1302.33101, width >= 1.0);
+            MBoxStatic.Assert(1302.3309, nextChild < listChildren.Count);
+            MBoxStatic.Assert(1302.33101, width >= 1.0);
 
 	        double mySize= (double)((NodeDatum)parent.Tag).nTotalLength;
 	        ulong sizeUsed= 0;
@@ -760,8 +760,8 @@ namespace DoubleFile
                 ulong childSize = ((NodeDatum)listChildren[i].Tag).nTotalLength;
 		        sizeUsed+= childSize;
 		        double virtualRowHeight= sizeUsed / mySize;
-                MBox.Assert(1302.3311, virtualRowHeight > 0);
-                MBox.Assert(1302.3312, virtualRowHeight <= 1);
+                MBoxStatic.Assert(1302.3311, virtualRowHeight > 0);
+                MBoxStatic.Assert(1302.3312, virtualRowHeight <= 1);
 		
 		        // Rectangle(mySize)    = width * 1.0
 		        // Rectangle(childSize) = childWidth * virtualRowHeight
@@ -771,7 +771,7 @@ namespace DoubleFile
 
 		        if (childWidth / virtualRowHeight < _minProportion)
 		        {
-                    MBox.Assert(1302.3313, i > nextChild); // because width >= 1 and _minProportion < 1.
+                    MBoxStatic.Assert(1302.3313, i > nextChild); // because width >= 1 and _minProportion < 1.
 			        // For the first child we have:
 			        // childWidth / rowHeight
 			        // = childSize / mySize * width / rowHeight / rowHeight
@@ -784,7 +784,7 @@ namespace DoubleFile
 		        rowHeight= virtualRowHeight;
 	        }
 
-            MBox.Assert(1302.3314, i > nextChild);
+            MBoxStatic.Assert(1302.3314, i > nextChild);
 
 	        // Now i-1 is the last child used
 	        // and rowHeight is the height of the row.
@@ -798,7 +798,7 @@ namespace DoubleFile
 		        double rowSize= mySize * rowHeight;
                 double childSize = (double)((NodeDatum)listChildren[nextChild + i].Tag).nTotalLength;
 		        double cw= childSize / rowSize;
-                MBox.Assert(1302.3315, cw >= 0);
+                MBoxStatic.Assert(1302.3315, cw >= 0);
 		        arrChildWidth[nextChild + i]= cw;
 	        }
 

@@ -42,7 +42,7 @@ namespace DoubleFile
         protected SDL_FileBase(string strHeader, string strExt, string strDescription)
         {
             Init();
-            MBox.Assert(1303.4306, SFD != null);
+            MBoxStatic.Assert(1303.4306, SFD != null);
             Header = strHeader;
             m_strExt = strExt;
             m_strDescription = strDescription;
@@ -104,7 +104,7 @@ namespace DoubleFile
             }
             else
             {
-                MBox.ShowDialog("Not a valid " + Description + ".", "Load " + Description);
+                MBoxStatic.ShowDialog("Not a valid " + Description + ".", "Load " + Description);
                 return false;
             }
         }
@@ -119,7 +119,7 @@ namespace DoubleFile
             }
 
             if ((File.Exists(m_strPrevFile))
-                && (MBox.ShowDialog(m_strPrevFile + " already exists. Overwrite?", Description, MessageBoxButton.YesNo)
+                && (MBoxStatic.ShowDialog(m_strPrevFile + " already exists. Overwrite?", Description, MessageBoxButton.YesNo)
                 != MessageBoxResult.Yes))
             {
                 return false;

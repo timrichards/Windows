@@ -15,7 +15,7 @@ namespace DoubleFile
 
         internal new void Start()
         {
-            if (MBox.Assert(0, Interval.TotalMilliseconds > 0))
+            if (MBoxStatic.Assert(0, Interval.TotalMilliseconds > 0))
             {
                 base.Start();
             }

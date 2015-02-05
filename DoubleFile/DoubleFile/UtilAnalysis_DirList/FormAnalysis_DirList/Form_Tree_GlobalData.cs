@@ -12,7 +12,7 @@ namespace DoubleFile
             get { return _gd; }
             set
             {
-                MBox.Assert(0, _gd == null);
+                MBoxStatic.Assert(0, _gd == null);
                 _gd = value;
             }
         }
@@ -36,19 +36,19 @@ namespace DoubleFile
 
         internal void ClearMem_TreeForm()
         {
-            MBox.Assert(1304.5301, m_listLVignore.Count == 0);
+            MBoxStatic.Assert(1304.5301, m_listLVignore.Count == 0);
 
             m_listLVignore.Clear();
             m_listTreeNodes.Clear();
             m_listRootNodes.Clear();
 
-            MBox.Assert(1304.5302, m_tree == null);
+            MBoxStatic.Assert(1304.5302, m_tree == null);
             m_tree = null;
 
             m_dictDriveInfo.Clear();
 
             // m_dictNodes is tested to recreate tree.
-            MBox.Assert(1304.5303, m_dictNodes.Count == 0);
+            MBoxStatic.Assert(1304.5303, m_dictNodes.Count == 0);
             m_dictNodes.Clear();
         }
 

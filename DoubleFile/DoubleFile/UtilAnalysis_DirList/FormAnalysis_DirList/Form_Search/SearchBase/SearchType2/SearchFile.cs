@@ -146,11 +146,11 @@ namespace DoubleFile
 
                     if (searchResultDir != null)
                     {
-                        MBox.Assert(1307.8301, searchResultDir.StrDir == null);
+                        MBoxStatic.Assert(1307.8301, searchResultDir.StrDir == null);
                     }
                     else
                     {
-                        MBox.Assert(1307.8302, searchResultDir == null);
+                        MBoxStatic.Assert(1307.8302, searchResultDir == null);
                     }
 
                     if (listResults.Count > 0)

@@ -26,7 +26,7 @@ namespace DoubleFile
             gd = base_in.gd;
             m_dictNodes = base_in.m_dictNodes;
             m_dictDriveInfo = base_in.m_dictDriveInfo;
-            MBox.Assert(1301.2301, m_statusCallback != null);
+            MBoxStatic.Assert(1301.2301, m_statusCallback != null);
         }
     }
 }

@@ -12,14 +12,14 @@ namespace DoubleFile
     {
         internal FileDictionary()
         {
-            //ProjectFile.OnOpenedProject += Deserialize;
+            ProjectFile.OnOpenedProject += OpenedProject;
             //ProjectFile.OnSavingProject += Serialize;
         }
 
         public void Dispose()
         {
-            ProjectFile.OnOpenedProject -= Deserialize;
-            ProjectFile.OnSavingProject -= Serialize;
+            ProjectFile.OnOpenedProject -= OpenedProject;
+           // ProjectFile.OnSavingProject -= Serialize;
         }
 
         internal void Clear() { m_DictFiles.Clear(); }
@@ -66,48 +66,6 @@ namespace DoubleFile
             }
 
             return lsRet;
-        }
-
-        internal string Serialize()
-        {
-            using (var writer = new StreamWriter(ksSerializeFile, false))
-            {
-                foreach (var kvp in m_DictFiles)
-                {
-                    writer.Write(kvp.Key);
-
-                    foreach (var ls in kvp.Value)
-                    {
-                        writer.Write("\t" + ls);
-                    }
-
-                    writer.WriteLine();
-                }
-            }
-
-            return ksSerializeFile;
-        }
-
-        internal void Deserialize()
-        {
-            if (false == File.Exists(ksSerializeFile))
-            {
-                return;
-            }
-
-            using (var reader = new StreamReader(ksSerializeFile, false))
-            {
-                string strLine = null;
-                m_DictFiles.Clear();
-
-                while ((strLine = reader.ReadLine()) != null)
-                {
-                    var asLine = strLine.Split('\t');
-
-                    m_DictFiles[new FileKey(asLine[0])] =
-                        asLine.Skip(1).Select(s => Convert.ToInt32(s)).ToList();
-                }
-            }
         }
 
         internal FileDictionary DoThreadFactory(LV_ProjectVM lvProjectVM, CreateFileDictStatusDelegate statusCallback)
@@ -219,6 +177,53 @@ namespace DoubleFile
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.AsEnumerable());
 
             m_statusCallback(bDone: true);
+        }
+
+        string Serialize()
+        {
+            using (var writer = new StreamWriter(ksSerializeFile, false))
+            {
+                foreach (var kvp in m_DictFiles)
+                {
+                    writer.Write(kvp.Key);
+
+                    foreach (var ls in kvp.Value)
+                    {
+                        writer.Write("\t" + ls);
+                    }
+
+                    writer.WriteLine();
+                }
+            }
+
+            return ksSerializeFile;
+        }
+
+        void Deserialize()
+        {
+            if (false == File.Exists(ksSerializeFile))
+            {
+                return;
+            }
+
+            using (var reader = new StreamReader(ksSerializeFile, false))
+            {
+                string strLine = null;
+                m_DictFiles.Clear();
+
+                while ((strLine = reader.ReadLine()) != null)
+                {
+                    var asLine = strLine.Split('\t');
+
+                    m_DictFiles[new FileKey(asLine[0])] =
+                        asLine.Skip(1).Select(s => Convert.ToInt32(s)).ToList();
+                }
+            }
+        }
+
+        void OpenedProject()
+        {
+            m_DictFiles.Clear();
         }
 
         readonly string ksSerializeFile = ProjectFile.TempPath + "_DuplicateFiles_";

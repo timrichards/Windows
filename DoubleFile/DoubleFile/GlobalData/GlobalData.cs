@@ -6,18 +6,33 @@ namespace DoubleFile
 {
     abstract class GlobalData_Base
     {
-   //     GlobalData gd;
-
         internal abstract bool WindowClosed { get; }
 
-        internal FileDictionary FileDictionary = new FileDictionary();
+        internal FileDictionary FileDictionary = null;
     }
 
     class GlobalData_Window : GlobalData_Base
     {
         internal readonly MainWindow Main_Window = null;
 
-        internal GlobalData_Window(MainWindow mainWindow_in) { Main_Window = mainWindow_in; }
+        internal GlobalData_Window(MainWindow mainWindow_in)
+        {
+            Main_Window = mainWindow_in;
+
+            EventHandler closedEvent = null;
+            EventHandler closedEvent_ = (o, e) =>
+            {
+                FileDictionary.Dispose();
+                FileDictionary = null;
+                Main_Window.Closed -= closedEvent;
+            };
+
+            closedEvent = closedEvent_;
+            Main_Window.Closed += closedEvent;
+
+            FileDictionary = new FileDictionary();
+        }
+
         internal override bool WindowClosed
         {
             get

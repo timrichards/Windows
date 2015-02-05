@@ -61,7 +61,7 @@ namespace DoubleFile
 
                 nodeDatum.nDirsWithFiles = datum.nDirsWithFiles;
 
-                Correlate nKey = nodeDatum.Key;
+                CorrelateStruct nKey = nodeDatum.Key;
 
                 lock (m_dictNodes)
                 {

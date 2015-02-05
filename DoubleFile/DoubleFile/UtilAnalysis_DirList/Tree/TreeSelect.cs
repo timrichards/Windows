@@ -12,7 +12,7 @@ namespace DoubleFile
 
     class TreeSelect : UtilAnalysis_DirList
     {
-        internal TreeSelect(TreeNode node, SortedDictionary<Correlate, UList<TreeNode>> dictNodes, Dictionary<string, string> dictDriveInfo,
+        internal TreeSelect(TreeNode node, SortedDictionary<CorrelateStruct, UList<TreeNode>> dictNodes, Dictionary<string, string> dictDriveInfo,
             string strFile, bool bCompareMode, bool bSecondComparePane,
             TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
         {
@@ -251,7 +251,7 @@ namespace DoubleFile
         }
 
         readonly TreeNode m_treeNode = null;
-        readonly SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = null;
+        readonly SortedDictionary<CorrelateStruct, UList<TreeNode>> m_dictNodes = null;
         readonly Dictionary<string, string> m_dictDriveInfo = null;
         readonly TreeSelectStatusDelegate m_statusCallback = null;
         readonly TreeSelectDoneDelegate m_doneCallback = null;

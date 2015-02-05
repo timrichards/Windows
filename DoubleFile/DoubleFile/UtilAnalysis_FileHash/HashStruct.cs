@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DoubleFile
 {
@@ -17,6 +15,7 @@ namespace DoubleFile
                 .Reverse()
                 .ToArray();
 
+            MBox.Assert(0, abHash.Length == 16);
             n0 = BitConverter.ToUInt64(abHash, 8);
             n1 = BitConverter.ToUInt64(abHash, 0);
         }
@@ -26,7 +25,6 @@ namespace DoubleFile
                 .Where(x => x % 2 == 0)
                 .Select(x => Convert.ToByte(strHash.Substring(x, 2), 16)))
         {
-            MBox.Assert(0, strHash.Length == 32);
         }
 
         public int CompareTo(object obj)

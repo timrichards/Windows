@@ -18,7 +18,7 @@ namespace DoubleFile
         }
         GlobalData _gd = null;
 
-        internal readonly SortedDictionary<Correlate, UList<TreeNode>> m_dictNodes = new SortedDictionary<Correlate, UList<TreeNode>>();
+        internal readonly SortedDictionary<CorrelateStruct, UList<TreeNode>> m_dictNodes = new SortedDictionary<CorrelateStruct, UList<TreeNode>>();
         internal readonly Dictionary<string, string> m_dictDriveInfo = new Dictionary<string, string>();
         internal Tree m_tree = null;
         internal Thread m_threadCollate = null;

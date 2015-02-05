@@ -112,7 +112,7 @@ namespace DoubleFile
             if (form_lvFiles.Items.Count <= 0)
             {
                 // expected a file but got an empty listviewer
-                FlashWindow.Go(Once: true);
+                FlashWindowStatic.Go(Once: true);
                 return;
             }
 

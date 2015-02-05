@@ -6,7 +6,7 @@ namespace DoubleFile
 {
     partial class Collate
     {
-        class InsertSizeMarker
+        static class InsertSizeMarkerStatic
         {
             internal static void Go(List<ListViewItem> listLVitems, int nIx, bool bUnique, bool bAdd = false)
             {

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    internal static partial class ExtensionMethods
+    internal static partial class ExtensionMethodsStatic
     {
         internal static int Count<T>(this IEnumerable<T> source)
         {
@@ -47,7 +47,7 @@ namespace DoubleFile
         }
     }
 
-    internal static partial class ExtensionMethods
+    internal static partial class ExtensionMethodsStatic
     {
         internal static string ToPrintString(this object source)
         {

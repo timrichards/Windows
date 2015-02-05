@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace DoubleFile
 {
-    class LVitemNameComparer : IEqualityComparer<ListViewItem>
+    struct LVitemNameComparerStruct : IEqualityComparer<ListViewItem>
     {
         public bool Equals(ListViewItem x, ListViewItem y)
         {
@@ -35,7 +35,7 @@ namespace DoubleFile
         {
             if ((lv1.Items.Count <= 0) || (lv2.Items.Count <= 0)) { return; }
 
-            List<ListViewItem> list = lv1.Items.Cast<ListViewItem>().Except(lv2.Items.Cast<ListViewItem>(), new LVitemNameComparer()).ToList();
+            List<ListViewItem> list = lv1.Items.Cast<ListViewItem>().Except(lv2.Items.Cast<ListViewItem>(), new LVitemNameComparerStruct()).ToList();
 
             if (list.Count > 0)
             {

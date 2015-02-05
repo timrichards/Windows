@@ -4,6 +4,7 @@ using System.Windows.Forms;
 
 namespace DoubleFile
 {
+    // can't be struct because it has lambda; anonymous methods; query expressions accessing 'this'
     class Blinky
     {
         static bool m_bTreeSelect = false;

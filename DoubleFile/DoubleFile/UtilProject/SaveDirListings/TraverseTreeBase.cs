@@ -37,10 +37,10 @@ namespace DoubleFile
                 ConcurrentDictionary<string, HashStruct> dictHash = null,
                 Dictionary<string, string> dictException_FileRead = null)
             {
-                var stackDirs = new Stack<Win32FindFile.DATUM>(64);
-                Win32FindFile.DATUM winRoot;
+                var stackDirs = new Stack<Win32FindFileStatic.DATUM>(64);
+                Win32FindFileStatic.DATUM winRoot;
 
-                Win32FindFile.FileData.WinFile(LVitemProjectVM.SourcePath, out winRoot);
+                Win32FindFileStatic.FileData.WinFile(LVitemProjectVM.SourcePath, out winRoot);
                 stackDirs.Push(winRoot);
 
                 var listFilePaths = new List<string>();
@@ -60,10 +60,10 @@ namespace DoubleFile
                     var winDir = stackDirs.Pop();
                     var strFullPath = winDir.strAltFileName;
                     var strError2_Dir = CheckNTFS_chars(ref strFullPath);
-                    var listSubDirs = new List<Win32FindFile.DATUM>();
-                    var listFiles = new List<Win32FindFile.DATUM>();
+                    var listSubDirs = new List<Win32FindFileStatic.DATUM>();
+                    var listFiles = new List<Win32FindFileStatic.DATUM>();
 
-                    if (Win32FindFile.GetDirectory(strFullPath, ref listSubDirs, ref listFiles) == false)
+                    if (Win32FindFileStatic.GetDirectory(strFullPath, ref listSubDirs, ref listFiles) == false)
                     {
                         if (fs != null)
                         {
@@ -86,7 +86,7 @@ namespace DoubleFile
                             return null;
                         }
 
-                        var fi = new Win32FindFile.FileData(winFile);
+                        var fi = new Win32FindFileStatic.FileData(winFile);
                         var strFile = winFile.strFileName;
                         var strError2_File = CheckNTFS_chars(ref strFile, bFile: true) ?? "";
 
@@ -160,7 +160,7 @@ namespace DoubleFile
                         MBox.Assert(1306.7308, bHasLength == (nDirLength > 0));
                         MBox.Assert(1306.7301, nDirLength >= 0);
 
-                        var di = new Win32FindFile.FileData(winDir);
+                        var di = new Win32FindFileStatic.FileData(winDir);
 
                         if (strFullPath.EndsWith(@":\"))                        // root directory
                         {
@@ -175,7 +175,7 @@ namespace DoubleFile
                         }
                     }
 
-                    foreach (Win32FindFile.DATUM winData in listSubDirs)
+                    foreach (Win32FindFileStatic.DATUM winData in listSubDirs)
                     {
                         stackDirs.Push(winData);
                     }

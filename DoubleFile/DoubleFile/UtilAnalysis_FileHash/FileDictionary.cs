@@ -31,7 +31,7 @@ namespace DoubleFile
         /// <param name="strLine"></param>
         /// <param name="strListingFile">Only used to prevent adding queried item to the returned list.</param>
         /// <returns>null if bad strLine. Otherwise always non-null, even if empty.</returns>
-        internal IEnumerable<Duplicate> GetDuplicates(string strLine, string strListingFile = null)
+        internal IEnumerable<DuplicateStruct> GetDuplicates(string strLine, string strListingFile = null)
         {
             if (false == strLine.StartsWith(FileParse.ksLineType_File))
             {
@@ -41,7 +41,7 @@ namespace DoubleFile
 
             var asLine = strLine.Split('\t');
             var key = new FileKeyStruct(asLine[10], asLine[7]);
-            var lsRet = new List<Duplicate>();
+            var lsRet = new List<DuplicateStruct>();
 
             if (false == m_DictFiles.ContainsKey(key))
             {
@@ -53,7 +53,7 @@ namespace DoubleFile
 
             foreach (var lookup in lsDupes)
             {
-                Duplicate dupe = new Duplicate();
+                DuplicateStruct dupe = new DuplicateStruct();
 
                 dupe.LVitemProjectVM = DictItemNumberToLV[GetLVitemProjectVM(lookup)];
                 dupe.LineNumber = GetLineNumber(lookup);

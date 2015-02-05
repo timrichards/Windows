@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace DoubleFile
 {
-    class FlashWindow
+    static class FlashWindowStatic
     {
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]

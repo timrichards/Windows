@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace DoubleFile
 {
-    internal class DriveSerial
+    internal static class DriveSerialStatic
     {
         // winddk.h
         const int FILE_DEVICE_MASS_STORAGE = 0x0000002d;

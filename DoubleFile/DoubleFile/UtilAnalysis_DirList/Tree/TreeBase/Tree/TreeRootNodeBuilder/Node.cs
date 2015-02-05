@@ -10,6 +10,7 @@ namespace DoubleFile
         {
             class Node
             {
+                // can't be struct because of object ==
                 internal Node(GlobalData_Base gd_in,
                     string in_str,
                     uint nLineNo,

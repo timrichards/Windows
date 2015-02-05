@@ -151,7 +151,7 @@ namespace DoubleFile
 
             if (Form.ActiveForm == null)
             {
-                FlashWindow.Go();
+                FlashWindowStatic.Go();
             }
         }
 
@@ -266,12 +266,12 @@ namespace DoubleFile
                 {
                     lock (lv2)
                     {
-                        LVitemNameComparer.NameItems(lv1.Items);
-                        LVitemNameComparer.NameItems(lv2.Items);
-                        LVitemNameComparer.MarkItemsFrom1notIn2(lv1, lv2);
-                        LVitemNameComparer.MarkItemsFrom1notIn2(lv2, lv1);
-                        LVitemNameComparer.SetTopItem(lv1, lv2);
-                        LVitemNameComparer.SetTopItem(lv2, lv1);
+                        LVitemNameComparerStruct.NameItems(lv1.Items);
+                        LVitemNameComparerStruct.NameItems(lv2.Items);
+                        LVitemNameComparerStruct.MarkItemsFrom1notIn2(lv1, lv2);
+                        LVitemNameComparerStruct.MarkItemsFrom1notIn2(lv2, lv1);
+                        LVitemNameComparerStruct.SetTopItem(lv1, lv2);
+                        LVitemNameComparerStruct.SetTopItem(lv2, lv1);
                     }
                 }
             }));

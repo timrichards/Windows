@@ -50,7 +50,7 @@ namespace DoubleFile
                 ulong? nSize = null;
 
                 // at minimum get the drive size
-                DriveSerial.Get(LVitemProjectVM.SourcePath, out strModel, out strSerial, out nSize);
+                DriveSerialStatic.Get(LVitemProjectVM.SourcePath, out strModel, out strSerial, out nSize);
 
                 var bAsk_DriveModel = ((false == string.IsNullOrWhiteSpace(strModel)) &&
                     ((false == string.IsNullOrWhiteSpace(LVitemProjectVM.DriveModel)) &&
@@ -135,7 +135,7 @@ namespace DoubleFile
 
                     Interlocked.Increment(ref nProgressNumerator);
 
-                    var fileHandle = DriveSerial.CreateFile(@"\\?\" + strFile, FileAccess.Read, FileShare.ReadWrite,
+                    var fileHandle = DriveSerialStatic.CreateFile(@"\\?\" + strFile, FileAccess.Read, FileShare.ReadWrite,
                         IntPtr.Zero, 3, 0, IntPtr.Zero);
 
                     if (fileHandle.IsInvalid)

@@ -60,7 +60,7 @@ namespace DoubleFile
             int nCount = listLVitems.Count;
             int nInterval = (nCount < 100) ? 10 : (nCount < 1000) ? 25 : 50;
 
-            InsertSizeMarker.Go(listLVitems, nCount - 1, bUnique, bAdd: true);
+            InsertSizeMarkerStatic.Go(listLVitems, nCount - 1, bUnique, bAdd: true);
 
             int nInitial = nCount % nInterval;
 
@@ -73,11 +73,11 @@ namespace DoubleFile
             {
                 for (int i = nCount - nInitial; i > nInterval / 2; i -= nInterval)
                 {
-                    InsertSizeMarker.Go(listLVitems, i, bUnique);
+                    InsertSizeMarkerStatic.Go(listLVitems, i, bUnique);
                 }
             }
 
-            InsertSizeMarker.Go(listLVitems, 0, bUnique);            // Enter the Zeroth
+            InsertSizeMarkerStatic.Go(listLVitems, 0, bUnique);            // Enter the Zeroth
         }
 
         internal void Step1_OnThread()

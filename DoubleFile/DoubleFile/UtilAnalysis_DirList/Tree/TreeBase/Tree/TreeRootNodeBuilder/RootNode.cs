@@ -6,6 +6,7 @@ namespace DoubleFile
     {
         partial class TreeRootNodeBuilder
         {
+            // can't be struct because of null
             class RootNode
             {
                 internal SortedDictionary<string, Node> Nodes = new SortedDictionary<string, Node>();

@@ -2,6 +2,7 @@
 namespace DoubleFile
 {
     // One tag at the first item, so the compare listviewer knows what the first listviewer's state is.
+    // can't be struct because of null
     class LVitemFileTag
     {
         internal readonly string StrCompareDir = null;

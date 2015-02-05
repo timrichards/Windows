@@ -113,7 +113,7 @@
     <Compile Include="GlobalData\GlobalData.cs" />
     <Compile Include="UtilAnalysis_DirList\Collate.cs" />
     <Compile Include="UtilAnalysis_DirList\Collate\AddTreeToList.cs" />
-    <Compile Include="UtilAnalysis_DirList\Collate\InsertSizeMarker.cs" />
+    <Compile Include="UtilAnalysis_DirList\Collate\InsertSizeMarkerStatic.cs" />
     <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList.cs" />
     <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList.Designer.cs" />
     <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Search\SearchBase.cs" />
@@ -127,12 +127,12 @@
     <Compile Include="UtilAnalysis_DirList\GlobalData.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\ListViewEx.cs" />
     <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Search.cs" />
-    <Compile Include="UtilAnalysis_DirList\Tree\CorrelateStruct.cs" />
+    <Compile Include="UtilAnalysis_DirList\Tree\FolderKeyStruct.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\DetailsDatum.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\DetailsDatum\NodeDatum.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\LVitemFileTag.cs" />
-    <Compile Include="UtilAnalysis_DirList\Tree\LVitemNameComparer.cs" />
+    <Compile Include="UtilAnalysis_DirList\Tree\LVitemNameComparerStruct.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\TreeBase\Tree.cs" />
     <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Tree.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\TreeBase.cs" />
@@ -144,15 +144,15 @@
     <Compile Include="UtilAnalysis_DirList\UC_TreeMap.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\Blinky.cs" />
-    <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\ExtensionMethods.cs" />
-    <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\FlashWindow.cs" />
+    <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\ExtensionMethodsStatic.cs" />
+    <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\FlashWindowStatic.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_FileBase.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_FileBase\SDL_CopyFile.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_FileBase\SDL_IgnoreFile.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\SDL_TreeView.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary.cs" />
     <Compile Include="UtilAnalysis_FileHash\CreateFileDictProcess.cs" />
-    <Compile Include="UtilAnalysis_FileHash\FileDictionary\Duplicate.cs" />
+    <Compile Include="UtilAnalysis_FileHash\FileDictionary\DuplicateStruct.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary\FileKeyStruct.cs" />
     <Compile Include="UtilAnalysis_FileHash\HashStruct.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\LVitem_FileHashVM.cs" />
@@ -202,14 +202,14 @@
     <Compile Include="MVVM_WinProject\LV_ProjectVM.cs" />
     <Compile Include="MVVM_WinProject\WinProjectVM_Impl.cs" />
     <Compile Include="MVVM_WinProject\LVitem_ProjectVM.cs" />
-    <Compile Include="UtilProject\DriveSerial.cs" />
+    <Compile Include="UtilProject\DriveSerialStatic.cs" />
     <Compile Include="UtilProject\MBox.cs" />
     <Compile Include="UtilProject\ProjectFile.cs" />
     <Compile Include="UtilProject\SDL_Timer.cs" />
     <Compile Include="UtilProject\UList.cs" />
     <Compile Include="UtilProject\UtilProject.cs" />
-    <Compile Include="UtilProject\Win32FindFile.cs" />
-    <Compile Include="UtilProject\ExtensionMethods.cs" />
+    <Compile Include="UtilProject\Win32FindFileStatic.cs" />
+    <Compile Include="UtilProject\ExtensionMethodsStatic.cs" />
     <Compile Include="MVVM_WinProject\WinProjectVM.cs">
       <SubType>Code</SubType>
     </Compile>

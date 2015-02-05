@@ -25,7 +25,7 @@ namespace DoubleFile
                 ulong? nSize;
                 var probeStruct = new ProbeStruct();
 
-                DriveSerial.Get(strPath, out probeStruct.DriveModel, out probeStruct.DriveSerial, out nSize);               
+                DriveSerialStatic.Get(strPath, out probeStruct.DriveModel, out probeStruct.DriveSerial, out nSize);               
                 FromProbe(probeStruct);
             }
             else

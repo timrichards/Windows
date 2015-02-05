@@ -6,7 +6,7 @@ using System.Security;
 
 namespace DoubleFile
 {
-    class Win32FindFile
+    static class Win32FindFileStatic
     {
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct DATUM

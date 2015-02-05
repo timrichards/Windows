@@ -7,6 +7,7 @@ namespace DoubleFile
     {
         partial class TreeRootNodeBuilder
         {
+            // can't be struct because of null
             class DirData
             {
                 readonly GlobalData_Base gd = null;

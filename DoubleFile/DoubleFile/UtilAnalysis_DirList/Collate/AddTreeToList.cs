@@ -7,6 +7,7 @@ namespace DoubleFile
 {
     partial class Collate
     {
+        // can't be struct because it has an auto-implemented property
         class AddTreeToList
         {
             internal int Count { get; private set; }

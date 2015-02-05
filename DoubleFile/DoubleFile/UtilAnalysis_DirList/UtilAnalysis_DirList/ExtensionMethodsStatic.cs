@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace DoubleFile
 {
-    static partial class ExtensionMethods
+    static partial class ExtensionMethodsStatic
     {
         internal static bool IsChildOf(this TreeNode child, TreeNode treeNode)
         {

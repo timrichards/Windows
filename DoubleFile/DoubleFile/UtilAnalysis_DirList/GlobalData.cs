@@ -9,11 +9,11 @@ namespace DoubleFile
     partial class GlobalData
     {
         internal SDL_TreeView m_treeCopyToClipboard = null;
-        internal BothNodes m_nodeCompare1 = null;
-        internal readonly Dictionary<BothNodes, BothNodes> m_dictCompareDiffs = new Dictionary<BothNodes, BothNodes>();
-        internal readonly UList<BothNodes> m_listTreeNodes_Compare1 = new UList<BothNodes>();
-        internal readonly UList<BothNodes> m_listTreeNodes_Compare2 = new UList<BothNodes>();
-        internal readonly List<BothNodes> m_listHistory = new List<BothNodes>();
+        internal TreeNode m_nodeCompare1 = null;
+        internal readonly Dictionary<TreeNode, TreeNode> m_dictCompareDiffs = new Dictionary<TreeNode, TreeNode>();
+        internal readonly UList<TreeNode> m_listTreeNodes_Compare1 = new UList<TreeNode>();
+        internal readonly UList<TreeNode> m_listTreeNodes_Compare2 = new UList<TreeNode>();
+        internal readonly List<TreeNode> m_listHistory = new List<TreeNode>();
         internal int m_nIxHistory = -1;
 
         internal void ClearMem_FormAnalysis_DirList()
@@ -86,15 +86,15 @@ namespace DoubleFile
             comboBox.Items.Insert(0, strText);
         }
 
-        internal bool Compare(BothNodes t1, BothNodes t2, bool bReverse = false, ulong nMin10M = (10 * 1024 - 100) * 1024, ulong nMin100K = 100 * 1024)
+        internal bool Compare(TreeNode t1, TreeNode t2, bool bReverse = false, ulong nMin10M = (10 * 1024 - 100) * 1024, ulong nMin100K = 100 * 1024)
         {
             bool bRet = true;
 
-            foreach (var s1 in t1.Nodes)
+            foreach (TreeNode s1 in t1.Nodes)
             {
                 bool bCompare = true;
                 bool bCompareSub = true;
-                BothNodes s2 = null;
+                TreeNode s2 = null;
                 NodeDatum n1 = (NodeDatum)s1.Tag;
 
                 if (n1.nTotalLength <= (nMin10M + nMin100K))
@@ -103,7 +103,7 @@ namespace DoubleFile
                 }
                 else if (t2.Nodes.ContainsKey(s1.Name))
                 {
-                    s2 = (BothNodes)t2.Nodes[s1.Name];
+                    s2 = (TreeNode)t2.Nodes[s1.Name];
 
                     if (Compare(s1, s2, bReverse, nMin10M, nMin100K) == false)
                     {
@@ -125,8 +125,8 @@ namespace DoubleFile
 
                 if (bCompare == false)
                 {
-                    BothNodes r1 = bReverse ? s2 : s1;
-                    BothNodes r2 = bReverse ? s1 : s2;
+                    TreeNode r1 = bReverse ? s2 : s1;
+                    TreeNode r2 = bReverse ? s1 : s2;
 
                     if ((r1 != null) && (m_dictCompareDiffs.ContainsKey(r1) == false))
                     {
@@ -134,7 +134,7 @@ namespace DoubleFile
                     }
                     else if (m_dictCompareDiffs.ContainsValue(r2) == false)
                     {
-                        m_dictCompareDiffs.Add(new BothNodes(), r2);
+                        m_dictCompareDiffs.Add(new TreeNode(), r2);
                     }
                 }
 
@@ -154,7 +154,7 @@ namespace DoubleFile
 
             if ((nIxHistory >= 0) && (m_listHistory.Count > 0) && (nIxHistory <= (m_listHistory.Count - 1)))
             {
-                BothNodes treeNode = History_GetAt(nIxHistory);
+                TreeNode treeNode = History_GetAt(nIxHistory);
 
                 if (treeNode.TreeView.SelectedNode == treeNode)
                 {
@@ -173,7 +173,7 @@ namespace DoubleFile
             }
         }
 
-        internal static string FullPath(BothNodes treeNode)
+        internal static string FullPath(TreeNode treeNode)
         {
             if (treeNode == null)
             {
@@ -181,7 +181,7 @@ namespace DoubleFile
             }
 
             StringBuilder sbFullPath = null;
-            BothNodes ownerNode = (BothNodes)treeNode.Parent;
+            TreeNode ownerNode = (TreeNode)treeNode.Parent;
 
             if (ownerNode == null)
             {
@@ -196,7 +196,7 @@ namespace DoubleFile
             {
                 sbFullPath.Insert(0, '\\');
                 sbFullPath.Insert(0, ownerNode.Text.TrimEnd('\\'));
-                ownerNode = (BothNodes)ownerNode.Parent;
+                ownerNode = (TreeNode)ownerNode.Parent;
             }
 
             if ((ownerNode != null) && (ownerNode.Parent == null))
@@ -208,13 +208,13 @@ namespace DoubleFile
             return sbFullPath.ToString().Replace(@"\\", @"\");
         }
 
-        internal BothNodes History_GetAt(int n)
+        internal TreeNode History_GetAt(int n)
         {
-            BothNodes treeNode = m_listHistory[n];
+            TreeNode treeNode = m_listHistory[n];
 
-            if (treeNode.Tag is BothNodes)
+            if (treeNode.Tag is TreeNode)
             {
-                BothNodes treeNode_A = (BothNodes)treeNode.Tag;
+                TreeNode treeNode_A = (TreeNode)treeNode.Tag;
 
                 ((RootNodeDatum)treeNode_A.Tag).VolumeView = treeNode.Checked;
                 return treeNode_A;
@@ -225,13 +225,13 @@ namespace DoubleFile
             }
         }
 
-        internal bool History_Equals(BothNodes treeNode)
+        internal bool History_Equals(TreeNode treeNode)
         {
             if (treeNode.Tag is RootNodeDatum)
             {
-                BothNodes treeNode_A = (BothNodes)m_listHistory[m_listHistory.Count - 1];
+                TreeNode treeNode_A = (TreeNode)m_listHistory[m_listHistory.Count - 1];
 
-                if ((treeNode_A.Tag is BothNodes) == false)
+                if ((treeNode_A.Tag is TreeNode) == false)
                 {
                     return false;
                 }
@@ -249,7 +249,7 @@ namespace DoubleFile
             }
         }
 
-        internal void History_Add(BothNodes treeNode)
+        internal void History_Add(TreeNode treeNode)
         {
             if (treeNode.TreeView == null)
             {
@@ -258,7 +258,7 @@ namespace DoubleFile
 
             if (treeNode.Tag is RootNodeDatum)
             {
-                BothNodes treeNode_A = new BothNodes();   // checked means VolumeView mode and necessitates History_Add() etc.
+                TreeNode treeNode_A = new TreeNode();   // checked means VolumeView mode and necessitates History_Add() etc.
 
                 treeNode_A.Checked = ((RootNodeDatum)treeNode.Tag).VolumeView;
                 treeNode_A.Tag = treeNode;
@@ -340,13 +340,13 @@ namespace DoubleFile
             return (((ListViewItem)lv.SelectedItems[0]).Tag != null);
         }
 
-        internal void NameNodes(BothNodes treeNode, UList<BothNodes> listTreeNodes)
+        internal void NameNodes(TreeNode treeNode, UList<TreeNode> listTreeNodes)
         {
             treeNode.Name = treeNode.Text;
             treeNode.ForeColor = Color.Empty;
             listTreeNodes.Add(treeNode);
 
-            foreach (BothNodes subNode in treeNode.Nodes)
+            foreach (TreeNode subNode in treeNode.Nodes)
             {
                 NameNodes(subNode, listTreeNodes);
             }
@@ -385,13 +385,15 @@ namespace DoubleFile
             return nNow != nPrev;
         }
 
-        internal void RemoveCorrelation(BothNodes treeNode, bool bContinue = false)
+        internal void RemoveCorrelation(TreeNode treeNode_in, bool bContinue = false)
         {
+            TreeNode treeNode = treeNode_in;
+
             do
             {
                 if ((treeNode.Nodes != null) && (treeNode.Nodes.Count > 0))
                 {
-                    RemoveCorrelation((BothNodes)treeNode.Nodes[0], bContinue: true);
+                    RemoveCorrelation((TreeNode)treeNode.Nodes[0], bContinue: true);
                 }
 
                 if (gd_Tree.m_listTreeNodes.Contains(treeNode))
@@ -411,7 +413,7 @@ namespace DoubleFile
                     continue;
                 }
 
-                UList<BothNodes> listClones = gd_Tree.m_dictNodes[nodeDatum.Key];
+                UList<TreeNode> listClones = gd_Tree.m_dictNodes[nodeDatum.Key];
 
                 if (listClones.Contains(treeNode))
                 {
@@ -423,7 +425,7 @@ namespace DoubleFile
                     }
                 }
             }
-            while (bContinue && ((treeNode = (BothNodes)treeNode.NextNode) != null));
+            while (bContinue && ((treeNode = (TreeNode)treeNode.NextNode) != null));
         }
     }
 }

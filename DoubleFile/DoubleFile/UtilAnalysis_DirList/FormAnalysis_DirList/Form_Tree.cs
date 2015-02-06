@@ -17,7 +17,7 @@ namespace DoubleFile
             }
         }
 
-        void TreeStatusCallback(LVitem_ProjectVM volStrings, BothNodes rootNode = null, bool bError = false)
+        void TreeStatusCallback(LVitem_ProjectVM volStrings, TreeNode rootNode = null, bool bError = false)
         {
             if ((gd_Tree != null) &&
                 (IsDisposed || (gd_Tree.m_tree == null) || gd_Tree.m_tree.IsAborted))

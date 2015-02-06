@@ -41,7 +41,7 @@ namespace DoubleFile
 
         internal bool m_bSearchResultsType2_List = false;
         internal int m_nSearchResultsIndexer = -1;
-        internal BothNodes[] m_SearchResultsType1_Array = null;
+        internal TreeNode[] m_SearchResultsType1_Array = null;
         internal readonly List<SearchResults> m_SearchResultsType2_List = new List<SearchResults>();
 
         internal SearchType2 m_searchType2 = null;
@@ -110,7 +110,7 @@ namespace DoubleFile
             }
         }
 
-        internal BothNodes SearchType1_FindNode(string strSearch, BothNodes startNode = null, SDL_TreeView treeView = null)
+        internal TreeNode SearchType1_FindNode(string strSearch, TreeNode startNode = null, SDL_TreeView treeView = null)
         {
             ClearMem_Search();
 
@@ -132,13 +132,13 @@ namespace DoubleFile
                 treeView = ((SDL_TreeView)GlobalData.static_MainWindow.Analysis_DirListForm.form_treeViewBrowse);
             }
 
-            BothNodes treeNode = gd_Search_Path.GetNodeByPath(strSearch, treeView);
+            TreeNode treeNode = gd_Search_Path.GetNodeByPath(strSearch, treeView);
 
             if (treeNode == null)
             {
                 // case sensitive only when user enters an uppercase character
 
-                List<BothNodes> listTreeNodes = gd_Tree.m_listTreeNodes.ToList();
+                List<TreeNode> listTreeNodes = gd_Tree.m_listTreeNodes.ToList();
 
                 if (gd.m_bCompareMode)
                 {
@@ -156,7 +156,7 @@ namespace DoubleFile
             }
             else
             {
-                m_SearchResultsType1_Array = new BothNodes[] { treeNode };
+                m_SearchResultsType1_Array = new TreeNode[] { treeNode };
             }
 
             if ((m_SearchResultsType1_Array != null) && (m_SearchResultsType1_Array.Length > 0))

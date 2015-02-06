@@ -67,13 +67,13 @@ namespace DoubleFile
                 {
                     if (m_dictNodes.ContainsKey(nKey))
                     {
-                        m_dictNodes[nKey].Add((BothNodes)treeNode);
+                        m_dictNodes[nKey].Add(treeNode);
                     }
                     else if (nodeDatum.nTotalLength > 100 * 1024)
                     {
-                        var listNodes = new UList<BothNodes>();
+                        UList<TreeNode> listNodes = new UList<TreeNode>();
 
-                        listNodes.Add((BothNodes)treeNode);
+                        listNodes.Add(treeNode);
                         m_dictNodes.Add(nKey, listNodes);
                     }
                 }
@@ -224,7 +224,7 @@ namespace DoubleFile
                     TreeSubnodeDetails(rootTreeNode);
                 }
 
-                m_statusCallback(m_volStrings, (BothNodes)rootTreeNode);
+                m_statusCallback(m_volStrings, rootTreeNode);
 
                 if (bZeroLengthsWritten)
                 {

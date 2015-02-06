@@ -18,7 +18,7 @@ namespace DoubleFile
         }
         GlobalData _gd = null;
 
-        internal readonly SortedDictionary<FolderKeyStruct, UList<BothNodes>> m_dictNodes = new SortedDictionary<FolderKeyStruct, UList<BothNodes>>();
+        internal readonly SortedDictionary<FolderKeyStruct, UList<TreeNode>> m_dictNodes = new SortedDictionary<FolderKeyStruct, UList<TreeNode>>();
         internal readonly Dictionary<string, string> m_dictDriveInfo = new Dictionary<string, string>();
         internal Tree m_tree = null;
         internal Thread m_threadCollate = null;
@@ -26,8 +26,8 @@ namespace DoubleFile
         internal Thread m_threadSelectCompare = null;
 
         internal readonly List<ListViewItem> m_listLVignore = new List<ListViewItem>();
-        internal readonly UList<BothNodes> m_listTreeNodes = new UList<BothNodes>();
-        internal readonly List<BothNodes> m_listRootNodes = new List<BothNodes>();
+        internal readonly UList<TreeNode> m_listTreeNodes = new UList<TreeNode>();
+        internal readonly List<TreeNode> m_listRootNodes = new List<TreeNode>();
 
         internal GlobalData_Tree(GlobalData gd_in)
         {
@@ -86,9 +86,9 @@ namespace DoubleFile
             }));
         }
 
-        internal void DoTreeSelect(BothNodes treeNode, TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
+        internal void DoTreeSelect(TreeNode treeNode, TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
         {
-            BothNodes rootNode = treeNode.Root;
+            TreeNode rootNode = treeNode.Root();
             string strFile = ((RootNodeDatum)rootNode.Tag).StrFile;
             bool bSecondComparePane = (gd.m_bCompareMode && rootNode.Checked);
             Thread threadKill = bSecondComparePane ? m_threadSelectCompare : m_threadSelect;

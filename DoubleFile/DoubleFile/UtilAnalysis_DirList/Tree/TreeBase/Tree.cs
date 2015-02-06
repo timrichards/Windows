@@ -6,13 +6,13 @@ using System.Collections.Concurrent;
 
 namespace DoubleFile
 {
-    delegate void TreeStatusDelegate(LVitem_ProjectVM volStrings, TreeNode rootNode = null, bool bError = false);
+    delegate void TreeStatusDelegate(LVitem_ProjectVM volStrings, BothNodes rootNode = null, bool bError = false);
 
     partial class Tree : TreeBase
     {
         internal Tree(GlobalData_Base gd_in,
             LV_ProjectVM lvProjectVM,
-            SortedDictionary<FolderKeyStruct, UList<TreeNode>> dictNodes,
+            SortedDictionary<FolderKeyStruct, UList<BothNodes>> dictNodes,
             Dictionary<string, string> dictDriveInfo,
             TreeStatusDelegate statusCallback,
             Action doneCallback)

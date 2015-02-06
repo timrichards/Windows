@@ -12,15 +12,15 @@ namespace DoubleFile
         {
             internal int Count { get; private set; }
 
-            internal AddTreeToList(UList<TreeNode> listTreeNodes, List<TreeNode> listSameVol)
+            internal AddTreeToList(UList<BothNodes> listTreeNodes, List<BothNodes> listSameVol)
             {
                 m_listTreeNodes = listTreeNodes;
                 m_listSameVol = listSameVol;
             }
 
-            internal AddTreeToList Go(List<TreeNode> listNodes)
+            internal AddTreeToList Go(List<BothNodes> listNodes)
             {
-                foreach (TreeNode treeNode in listNodes)
+                foreach (BothNodes treeNode in listNodes)
                 {
                     Go(treeNode, bNextNode: false);
                 }
@@ -28,14 +28,14 @@ namespace DoubleFile
                 return this;
             }
 
-            void Go(TreeNode treeNode_in, bool bCloneOK = false, bool bNextNode = true)
+            void Go(BothNodes treeNode_in, bool bCloneOK = false, bool bNextNode = true)
             {
                 if (treeNode_in == null)
                 {
                     MBoxStatic.Assert(1305.6302, false);
                 }
 
-                TreeNode treeNode = treeNode_in;
+                BothNodes treeNode = treeNode_in;
 
                 do
                 {
@@ -68,14 +68,14 @@ namespace DoubleFile
 
                     if (treeNode.FirstNode != null)
                     {
-                        Go((TreeNode)treeNode.FirstNode, bCloneOK || (new Color[] { Color.SteelBlue, Color.DarkBlue }.Contains(treeNode.ForeColor)));
+                        Go((BothNodes)treeNode.FirstNode, bCloneOK || (new Color[] { Color.SteelBlue, Color.DarkBlue }.Contains(treeNode.ForeColor)));
                     }
                 }
-                while (bNextNode && ((treeNode = (TreeNode)treeNode.NextNode) != null));
+                while (bNextNode && ((treeNode = (BothNodes)treeNode.NextNode) != null));
             }
 
-            UList<TreeNode> m_listTreeNodes = null;
-            List<TreeNode> m_listSameVol = null;
+            UList<BothNodes> m_listTreeNodes = null;
+            List<BothNodes> m_listSameVol = null;
         }
     }
 }

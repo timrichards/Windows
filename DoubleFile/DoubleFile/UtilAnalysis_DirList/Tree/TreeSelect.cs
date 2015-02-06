@@ -12,7 +12,7 @@ namespace DoubleFile
 
     class TreeSelect : UtilAnalysis_DirList
     {
-        internal TreeSelect(TreeNode node, SortedDictionary<FolderKeyStruct, UList<TreeNode>> dictNodes, Dictionary<string, string> dictDriveInfo,
+        internal TreeSelect(BothNodes node, SortedDictionary<FolderKeyStruct, UList<BothNodes>> dictNodes, Dictionary<string, string> dictDriveInfo,
             string strFile, bool bCompareMode, bool bSecondComparePane,
             TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
         {
@@ -26,9 +26,9 @@ namespace DoubleFile
             m_doneCallback = doneCallback;
         }
 
-        internal static List<string[]> GetFileList(TreeNode parent, List<ulong> listLength = null)
+        internal static List<string[]> GetFileList(BothNodes parent, List<ulong> listLength = null)
         {
-            string strFile = ((RootNodeDatum)parent.Root().Tag).StrFile;
+            string strFile = ((RootNodeDatum)parent.Root.Tag).StrFile;
 
             if ((parent.Tag is NodeDatum) == false)
             {
@@ -250,8 +250,8 @@ namespace DoubleFile
             }
         }
 
-        readonly TreeNode m_treeNode = null;
-        readonly SortedDictionary<FolderKeyStruct, UList<TreeNode>> m_dictNodes = null;
+        readonly BothNodes m_treeNode = null;
+        readonly SortedDictionary<FolderKeyStruct, UList<BothNodes>> m_dictNodes = null;
         readonly Dictionary<string, string> m_dictDriveInfo = null;
         readonly TreeSelectStatusDelegate m_statusCallback = null;
         readonly TreeSelectDoneDelegate m_doneCallback = null;

@@ -9,12 +9,12 @@ namespace DoubleFile
         internal readonly uint nLineNo = 0;
         internal readonly ulong nLength = 0;
 
-        internal UList<TreeNode> m_listClones = new UList<TreeNode>();
+        internal UList<BothNodes> m_listClones = new UList<BothNodes>();
         internal ListViewItem m_lvItem = null;
         internal bool m_bDifferentVols = false;
 
         internal Rectangle TreeMapRect = Rectangle.Empty;
-        internal TreeNode TreeMapFiles = null;
+        internal BothNodes TreeMapFiles = null;
 
         internal FolderKeyStruct Key
         {

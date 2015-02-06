@@ -18,10 +18,10 @@ namespace DoubleFile
         Rectangle m_rectCenter = Rectangle.Empty;
         SizeF m_sizeTranslate = SizeF.Empty;
         BufferedGraphics m_bg = null;
-        TreeNode m_treeNode = null;
-        TreeNode m_prevNode = null;
-        TreeNode m_deepNode = null;
-        TreeNode m_deepNodeDrawn = null;
+        BothNodes m_treeNode = null;
+        BothNodes m_prevNode = null;
+        BothNodes m_deepNode = null;
+        BothNodes m_deepNodeDrawn = null;
         readonly SDL_Timer m_timerAnim = new SDL_Timer();
         int m_nAnimFrame = 0;
         DateTime m_dtHideGoofball = DateTime.MinValue;
@@ -94,7 +94,7 @@ namespace DoubleFile
             base.Dispose(disposing);
         }
 
-        internal TreeNode DoToolTip(Point pt_in)
+        internal BothNodes DoToolTip(Point pt_in)
         {
             UtilProject.WriteLine(DateTime.Now + " DoToolTip();");
             ClearSelection();
@@ -121,7 +121,7 @@ namespace DoubleFile
             m_dtHideGoofball = DateTime.MinValue;   // click anywhere else on the treemap and the goofball returns.
 
             Point pt = Point.Ceiling(new PointF(pt_in.X / m_sizeTranslate.Width, pt_in.Y / m_sizeTranslate.Height));
-            TreeNode nodeRet = null;
+            BothNodes nodeRet = null;
             bool bImmediateFiles = false;
             bool bVolumeView = false;
 
@@ -139,14 +139,14 @@ namespace DoubleFile
                     }
                 }
 
-                TreeNode m_prevNode_A = m_prevNode ?? m_treeNode;
+                BothNodes m_prevNode_A = m_prevNode ?? m_treeNode;
 
                 if ((nodeRet = FindMapNode(m_prevNode_A, pt)) != null)
                 {
                     return;
                 }
 
-                TreeNode nodeUplevel = (TreeNode)((m_prevNode != null) ? m_prevNode.Parent : null);
+                BothNodes nodeUplevel = (BothNodes)((m_prevNode != null) ? m_prevNode.Parent : null);
                 bool bFoundUplevel = false;
 
                 while (nodeUplevel != null)
@@ -157,7 +157,7 @@ namespace DoubleFile
                         return;
                     }
 
-                    nodeUplevel = (TreeNode)nodeUplevel.Parent;
+                    nodeUplevel = (BothNodes)nodeUplevel.Parent;
                 }
 
                 if (bFoundUplevel)
@@ -175,7 +175,7 @@ namespace DoubleFile
 
             if ((bVolumeView == false) && (bImmediateFiles == false))
             {
-                TreeNode nodeRet_A = FindMapNode(((NodeDatum)nodeRet.Tag).TreeMapFiles, pt);
+                BothNodes nodeRet_A = FindMapNode(((NodeDatum)nodeRet.Tag).TreeMapFiles, pt);
 
                 if (nodeRet_A != null && (nodeRet == m_treeNode))
                 {
@@ -212,9 +212,9 @@ namespace DoubleFile
             return null;
         }
 
-        TreeNode FindMapNode(TreeNode treeNode_in, Point pt, bool bNextNode = false)
+        BothNodes FindMapNode(BothNodes treeNode_in, Point pt, bool bNextNode = false)
         {
-            TreeNode treeNode = treeNode_in;
+            BothNodes treeNode = treeNode_in;
 
             if (treeNode == null)
             {
@@ -240,19 +240,19 @@ namespace DoubleFile
                     continue;
                 }
 
-                TreeNode foundNode = FindMapNode((TreeNode)treeNode.Nodes[0], pt, bNextNode: true);
+                BothNodes foundNode = FindMapNode((BothNodes)treeNode.Nodes[0], pt, bNextNode: true);
 
                 if (foundNode != null)
                 {
                     return foundNode;
                 }
             }
-            while (bNextNode && ((treeNode = (TreeNode)treeNode.NextNode) != null));
+            while (bNextNode && ((treeNode = (BothNodes)treeNode.NextNode) != null));
 
             return null;
         }
 
-        TreeNode GetFileList(TreeNode parent)
+        BothNodes GetFileList(BothNodes parent)
         {
             List<ulong> listLengths = new List<ulong>();
             List<string[]> listFiles = TreeSelect.GetFileList(parent, listLengths);
@@ -262,7 +262,7 @@ namespace DoubleFile
                 return null;
             }
 
-            TreeNode nodeFileList = new TreeNode(parent.Text);
+            BothNodes nodeFileList = new BothNodes(parent.Text);
             ulong nTotalLength = 0;
             List<ulong>.Enumerator iterUlong = listLengths.GetEnumerator();
 
@@ -278,7 +278,7 @@ namespace DoubleFile
                     continue;
                 }
 
-                TreeNode nodeFile = new TreeNode(arrLine[0]);
+                BothNodes nodeFile = new BothNodes(arrLine[0]);
 
                 nodeFile.Tag = nodeDatum_A;
                 nodeFile.ForeColor = Color.OliveDrab;
@@ -360,7 +360,7 @@ namespace DoubleFile
             ClearSelection();
         }
 
-        internal void Render(TreeNode treeNode)
+        internal void Render(BothNodes treeNode)
         {
             if ((m_deepNode == null) || (m_deepNode.IsChildOf(treeNode) == false))
             {
@@ -419,7 +419,7 @@ namespace DoubleFile
                 return null;
             }
 
-            TreeNode treeNode_A = (TreeNode)m_toolTip.Tag;
+            BothNodes treeNode_A = (BothNodes)m_toolTip.Tag;
 
             if (treeNode_A.TreeView != null)    // null if fake file treenode (NodeDatum.TreeMapFiles)
             {
@@ -497,7 +497,7 @@ namespace DoubleFile
         }
 
         void RecurseDrawGraph(
-	        TreeNode item, 
+	        BothNodes item, 
 	        Rectangle rc,
             bool bStart = false
         )
@@ -555,10 +555,10 @@ namespace DoubleFile
          //I learned this squarification style from the KDirStat executable.
          //It's the most complex one here but also the clearest, imho.
         
-        bool KDirStat_DrawChildren(Graphics graphics, TreeNode parent_in, bool bStart = false)
+        bool KDirStat_DrawChildren(Graphics graphics, BothNodes parent_in, bool bStart = false)
         {
-            List<TreeNode> listChildren = null;
-            TreeNode parent = null;
+            List<BothNodes> listChildren = null;
+            BothNodes parent = null;
 
             bool bVolumeNode = false;
 
@@ -577,14 +577,14 @@ namespace DoubleFile
                 }
 
                 NodeDatum nodeDatumFree = new NodeDatum();
-                TreeNode nodeFree = new TreeNode(parent_in.Text + " (free space)");
+                BothNodes nodeFree = new BothNodes(parent_in.Text + " (free space)");
 
                 nodeDatumFree.nTotalLength = rootNodeDatum.VolumeFree;
                 nodeFree.Tag = nodeDatumFree;
                 nodeFree.ForeColor = Color.MediumSpringGreen;
 
                 NodeDatum nodeDatumUnread = new NodeDatum();
-                TreeNode nodeUnread = new TreeNode(parent_in.Text + " (unread data)");
+                BothNodes nodeUnread = new BothNodes(parent_in.Text + " (unread data)");
                 ulong nVolumeLength = rootNodeDatum.VolumeLength;
                 long nUnreadLength = (long)nVolumeLength - (long)rootNodeDatum.VolumeFree - (long)rootNodeDatum.nTotalLength;
 
@@ -601,7 +601,7 @@ namespace DoubleFile
                 nodeDatumUnread.nTotalLength = (ulong)nUnreadLength;
                 nodeUnread.Tag = nodeDatumUnread;
                 nodeUnread.ForeColor = Color.MediumVioletRed;
-                listChildren = new List<TreeNode>();
+                listChildren = new List<BothNodes>();
                 listChildren.Add(parent_in);                                // parent added as child, with two other nodes:
                 listChildren.Add(nodeFree);                                 // free space (color: spring green); and
 
@@ -610,7 +610,7 @@ namespace DoubleFile
                     listChildren.Add(nodeUnread);                           // unread guess, affected by compression and hard links (violet)
                 }
 
-                parent = new TreeNode(parent_in.Text + " (volume)");
+                parent = new BothNodes(parent_in.Text + " (volume)");
 
                 NodeDatum nodeDatumVolume = new NodeDatum();
 
@@ -624,7 +624,7 @@ namespace DoubleFile
             if (bVolumeNode == false)
             {
                 parent = parent_in;
-                listChildren = parent.Nodes.Cast<TreeNode>().Where(t => ((NodeDatum)t.Tag).nTotalLength > 0).ToList();
+                listChildren = parent.Nodes.Cast<BothNodes>().Where(t => ((NodeDatum)t.Tag).nTotalLength > 0).ToList();
             }
 
             NodeDatum nodeDatum = (NodeDatum)parent.Tag;
@@ -642,7 +642,7 @@ namespace DoubleFile
 
                 nodeFiles.nTotalLength = nodeDatum.nLength;
 
-                TreeNode treeNode = new TreeNode(parent.Text);
+                BothNodes treeNode = new BothNodes(parent.Text);
 
                 treeNode.Tag = nodeFiles;
                 treeNode.ForeColor = Color.OliveDrab;
@@ -698,7 +698,7 @@ namespace DoubleFile
 
                 for (int i=0; i < childrenPerRow[row]; i++, c++)
 		        {
-                    TreeNode child = listChildren[c];
+                    BothNodes child = listChildren[c];
                     MBoxStatic.Assert(1302.3305, childWidth[c] >= 0);
 			        double fRight= left + childWidth[c] * width;
 			        int right= (int)fRight;
@@ -741,8 +741,8 @@ namespace DoubleFile
             return true;
         }
 
-        double KDirStat_CalcutateNextRow(TreeNode parent, int nextChild, double width, ref int childrenUsed, double[] arrChildWidth,
-            List<TreeNode> listChildren)
+        double KDirStat_CalcutateNextRow(BothNodes parent, int nextChild, double width, ref int childrenUsed, double[] arrChildWidth,
+            List<BothNodes> listChildren)
         {
             const double _minProportion = 0.4;
             MBoxStatic.Assert(1302.3308, _minProportion < 1);

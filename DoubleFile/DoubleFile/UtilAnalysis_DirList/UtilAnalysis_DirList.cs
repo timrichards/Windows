@@ -73,11 +73,11 @@ namespace DoubleFile
             return null;
         }
 
-        internal static int CountNodes(List<TreeNode> listNodes)
+        internal static int CountNodes(List<BothNodes> listNodes)
         {
             int nCount = 0;
 
-            foreach (TreeNode treeNode in listNodes)
+            foreach (var treeNode in listNodes)
             {
                 nCount += CountNodes(treeNode, bNextNode: false);
             }
@@ -85,21 +85,20 @@ namespace DoubleFile
             return nCount;
         }
 
-        internal static int CountNodes(TreeNode treeNode_in, bool bNextNode = true)
+        internal static int CountNodes(BothNodes treeNode, bool bNextNode = true)
         {
-            TreeNode treeNode = treeNode_in;
             int nCount = 0;
 
             do
             {
                 if ((treeNode.Nodes != null) && (treeNode.Nodes.Count > 0))
                 {
-                    nCount += CountNodes((TreeNode)treeNode.Nodes[0]);
+                    nCount += CountNodes(treeNode.Nodes[0]);
                 }
 
                 ++nCount;
             }
-            while (bNextNode && ((treeNode = (TreeNode)treeNode.NextNode) != null));
+            while (bNextNode && ((treeNode = treeNode.NextNode) != null));
 
             return nCount;
         }

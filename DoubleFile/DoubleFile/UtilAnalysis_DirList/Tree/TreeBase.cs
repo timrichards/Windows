@@ -6,12 +6,12 @@ namespace DoubleFile
     abstract class TreeBase : FileParse
     {
         protected readonly GlobalData_Base gd = null;
-        protected readonly SortedDictionary<FolderKeyStruct, UList<TreeNode>> m_dictNodes = null;
+        protected readonly SortedDictionary<FolderKeyStruct, UList<BothNodes>> m_dictNodes = null;
         protected readonly Dictionary<string, string> m_dictDriveInfo = null;
         protected static TreeStatusDelegate m_statusCallback = null;
 
-        protected TreeBase(GlobalData_Base gd_in, 
-            SortedDictionary<FolderKeyStruct, UList<TreeNode>> dictNodes,
+        protected TreeBase(GlobalData_Base gd_in,
+            SortedDictionary<FolderKeyStruct, UList<BothNodes>> dictNodes,
             Dictionary<string, string> dictDriveInfo,
             TreeStatusDelegate statusCallback)
         {

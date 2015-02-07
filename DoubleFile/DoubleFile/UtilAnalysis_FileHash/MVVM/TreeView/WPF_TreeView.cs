@@ -2,9 +2,9 @@
 
 namespace DoubleFile
 {
-    class TreeViewVMhack
+    class WPF_TreeView
     {
-        internal TreeViewVMhack()
+        internal WPF_TreeView()
         {
             Nodes = new SDL_TreeNodeCollection(this);
         }

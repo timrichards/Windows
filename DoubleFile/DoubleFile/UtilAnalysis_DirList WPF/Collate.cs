@@ -4,19 +4,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DoubleFile;
 
-namespace DoubleFile
+namespace WPF
 {
     partial class Collate
     {
         internal Collate(GlobalData_Base gd_in,
-            SortedDictionary<FolderKeyStruct, UList<TreeNode>> dictNodes,
+            SortedDictionary<FolderKeyStruct, UList<SDL_TreeNode>> dictNodes,
             TreeView treeViewBrowse,
             SDL_ListView lvClones,
             SDL_ListView lvSameVol,
             SDL_ListView lvUnique,
-            List<TreeNode> listRootNodes,
-            UList<TreeNode> listTreeNodes,
+            List<SDL_TreeNode> listRootNodes,
+            UList<SDL_TreeNode> listTreeNodes,
             bool bCheckboxes,
             List<ListViewItem> list_lvIgnore,
             bool bLoose)
@@ -56,7 +57,7 @@ namespace DoubleFile
                 return;
             }
 
-            bool bUnique = (listLVitems[0].Tag is TreeNode);
+            bool bUnique = (listLVitems[0].Tag is SDL_TreeNode);
             int nCount = listLVitems.Count;
             int nInterval = (nCount < 100) ? 10 : (nCount < 1000) ? 25 : 50;
 
@@ -82,7 +83,7 @@ namespace DoubleFile
 
         internal void Step1_OnThread()
         {
-            SDL_TreeView treeView = new SDL_TreeView();     // sets Level and NextNode
+            WPF_TreeView treeView = new WPF_TreeView();     // sets Level and NextNode
 
             if (m_listRootNodes.Count <= 0)
             {
@@ -110,17 +111,17 @@ namespace DoubleFile
                 UtilProject.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             }
 
-            Dictionary<TreeNode, ListViewItem> dictIgnoreMark = new Dictionary<TreeNode, ListViewItem>();
-            SortedDictionary<FolderKeyStruct, List<TreeNode>> dictNodes = new SortedDictionary<FolderKeyStruct, List<TreeNode>>();
+            Dictionary<SDL_TreeNode, ListViewItem> dictIgnoreMark = new Dictionary<SDL_TreeNode, ListViewItem>();
+            SortedDictionary<FolderKeyStruct, List<SDL_TreeNode>> dictNodes = new SortedDictionary<FolderKeyStruct, List<SDL_TreeNode>>();
 
-            foreach (KeyValuePair<FolderKeyStruct, UList<TreeNode>> pair in m_dictNodes)  // clone to remove ignored
+            foreach (KeyValuePair<FolderKeyStruct, UList<SDL_TreeNode>> pair in m_dictNodes)  // clone to remove ignored
             {                                                                       // m_ vs local check is via List vs UList
                 dictNodes.Add(pair.Key, pair.Value.ToList());                       // clone pair.Value to remove ignored, using ToList() 
             }
 
-            foreach (KeyValuePair<TreeNode, ListViewItem> pair in dictIgnoreNodes)
+            foreach (KeyValuePair<SDL_TreeNode, ListViewItem> pair in dictIgnoreNodes)
             {
-                TreeNode treeNode = pair.Key;
+                SDL_TreeNode treeNode = pair.Key;
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
                 if (dictNodes.ContainsKey(nodeDatum.Key) == false)
@@ -130,7 +131,7 @@ namespace DoubleFile
 
                 if (m_bLoose)
                 {
-                    foreach (TreeNode treeNode_A in dictNodes[nodeDatum.Key])
+                    foreach (SDL_TreeNode treeNode_A in dictNodes[nodeDatum.Key])
                     {
                         dictIgnoreMark.Add(treeNode_A, pair.Value);
                     }
@@ -149,16 +150,16 @@ namespace DoubleFile
                 }
             }
 
-            SortedDictionary<FolderKeyStruct, TreeNode> dictUnique = new SortedDictionary<FolderKeyStruct, TreeNode>();
+            SortedDictionary<FolderKeyStruct, SDL_TreeNode> dictUnique = new SortedDictionary<FolderKeyStruct, SDL_TreeNode>();
 
-            foreach (KeyValuePair<FolderKeyStruct, List<TreeNode>> pair in dictNodes)
+            foreach (KeyValuePair<FolderKeyStruct, List<SDL_TreeNode>> pair in dictNodes)
             {
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
                     return;
                 }
 
-                List<TreeNode> listNodes = (List<TreeNode>)pair.Value;
+                List<SDL_TreeNode> listNodes = (List<SDL_TreeNode>)pair.Value;
 
                 if (listNodes.Count < 1)
                 {
@@ -170,9 +171,9 @@ namespace DoubleFile
                 {
                     // Parent folder may contain only its clone subfolder, in which case unmark the subfolder
 
-                    UList<TreeNode> listKeep = new UList<TreeNode>();
+                    UList<SDL_TreeNode> listKeep = new UList<SDL_TreeNode>();
 
-                    foreach (TreeNode treeNode_A in listNodes)
+                    foreach (SDL_TreeNode treeNode_A in listNodes)
                     {
                         if (m_bThreadAbort || gd.WindowClosed)
                         {
@@ -191,7 +192,7 @@ namespace DoubleFile
 
                     if (listKeep.Count > 1)
                     {
-                        foreach (TreeNode treeNode_A in listKeep)
+                        foreach (SDL_TreeNode treeNode_A in listKeep)
                         {
                             ((NodeDatum)treeNode_A.Tag).m_listClones = listKeep;
                         }
@@ -204,7 +205,7 @@ namespace DoubleFile
 
                 if (listNodes.Count == 1)               // "else"
                 {
-                    TreeNode treeNode = listNodes[0];
+                    SDL_TreeNode treeNode = listNodes[0];
 
                     if (((NodeDatum)treeNode.Tag).nImmediateFiles > 0)
                     {
@@ -213,9 +214,9 @@ namespace DoubleFile
                 }
             }
 
-            SortedDictionary<FolderKeyStruct, UList<TreeNode>> dictClones = new SortedDictionary<FolderKeyStruct, UList<TreeNode>>();
+            SortedDictionary<FolderKeyStruct, UList<SDL_TreeNode>> dictClones = new SortedDictionary<FolderKeyStruct, UList<SDL_TreeNode>>();
 
-            foreach (TreeNode treeNode in m_listRootNodes)
+            foreach (SDL_TreeNode treeNode in m_listRootNodes)
             {
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
@@ -227,7 +228,7 @@ namespace DoubleFile
 
             m_listRootNodes.Sort((x, y) => string.Compare(x.Text, y.Text));
 
-            foreach (KeyValuePair<FolderKeyStruct, UList<TreeNode>> listNodes in dictClones)
+            foreach (KeyValuePair<FolderKeyStruct, UList<SDL_TreeNode>> listNodes in dictClones)
             {
                 // load up listLVdiffVol
 
@@ -255,7 +256,7 @@ namespace DoubleFile
                 {
                     str_nClones = nClones.ToString("###,###");
 
-                    foreach (TreeNode node in listNodes.Value)
+                    foreach (SDL_TreeNode node in listNodes.Value)
                     {
                         node.ForeColor = Color.Blue;
                     }
@@ -266,17 +267,17 @@ namespace DoubleFile
                 lvItem.Tag = listNodes.Value;
                 lvItem.ForeColor = listNodes.Value[0].ForeColor;
 
-                TreeNode nameNode = null;
+                SDL_TreeNode nameNode = null;
                 int nLevel = int.MaxValue;
 
-                foreach (TreeNode treeNode in listNodes.Value)
+                foreach (SDL_TreeNode treeNode in listNodes.Value)
                 {
                     if (m_bThreadAbort || gd.WindowClosed)
                     {
                         return;
                     }
 
-                    TreeNode parentNode = (TreeNode)treeNode.Parent;
+                    SDL_TreeNode parentNode = (SDL_TreeNode)treeNode.Parent;
 
                     if (treeNode.Level < nLevel)
                     {
@@ -292,9 +293,9 @@ namespace DoubleFile
                 listLVdiffVol.Add(lvItem);
             }
 
-            foreach (KeyValuePair<TreeNode, ListViewItem> pair in dictIgnoreMark)
+            foreach (KeyValuePair<SDL_TreeNode, ListViewItem> pair in dictIgnoreMark)
             {
-                TreeNode treeNode = pair.Key;
+                SDL_TreeNode treeNode = pair.Key;
                 ListViewItem lvIgnoreItem = pair.Value;
 
                 treeNode.ForeColor = Color.DarkGray;
@@ -310,14 +311,14 @@ namespace DoubleFile
             dictClones = null;
             InsertSizeMarkers(listLVdiffVol);
 
-            foreach (KeyValuePair<FolderKeyStruct, TreeNode> listNodes in dictUnique)
+            foreach (KeyValuePair<FolderKeyStruct, SDL_TreeNode> listNodes in dictUnique)
             {
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
                     return;
                 }
 
-                TreeNode treeNode = listNodes.Value;
+                SDL_TreeNode treeNode = listNodes.Value;
 
                 MBoxStatic.Assert(1305.6321, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
@@ -345,7 +346,7 @@ namespace DoubleFile
             dictUnique = null;
             InsertSizeMarkers(listLVunique);
 
-            List<TreeNode> listSameVol = new List<TreeNode>();
+            List<SDL_TreeNode> listSameVol = new List<SDL_TreeNode>();
 
             if (m_listRootNodes.Count > 0)
             {
@@ -360,7 +361,7 @@ namespace DoubleFile
 
             listSameVol.Sort((y, x) => ((NodeDatum)x.Tag).nTotalLength.CompareTo(((NodeDatum)y.Tag).nTotalLength));
 
-            foreach (TreeNode treeNode in listSameVol)
+            foreach (SDL_TreeNode treeNode in listSameVol)
             {
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
@@ -427,7 +428,7 @@ namespace DoubleFile
                     int nCount = CountNodes.Go(m_listRootNodes);
 
                     UtilAnalysis_DirList.Write("A");
-                    m_treeViewBrowse.Nodes.AddRange(m_listRootNodes.ToArray());
+                    gd.WPF_TreeView.Nodes.AddRange(m_listRootNodes.ToArray());
                     UtilProject.WriteLine("A");
 
                     int nCount_A = CountNodes.Go(m_listRootNodes);
@@ -470,16 +471,16 @@ namespace DoubleFile
                 form_lvSameVol.Invalidate();
                 UtilProject.WriteLine("D");
 
-                if (m_treeViewBrowse.SelectedNode != null)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
+                if (gd.WPF_TreeView.SelectedNode != null)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
                 {
-                    TreeNode treeNode = (TreeNode)m_treeViewBrowse.SelectedNode;
+                    SDL_TreeNode treeNode = gd.WPF_TreeView.SelectedNode;
 
-                    m_treeViewBrowse.SelectedNode = null;
-                    m_treeViewBrowse.SelectedNode = treeNode;   // reselect in repopulated collation listviewers
+                    gd.WPF_TreeView.SelectedNode = null;
+                    gd.WPF_TreeView.SelectedNode = treeNode;   // reselect in repopulated collation listviewers
                 }
                 else
                 {
-                    m_treeViewBrowse.SelectedNode = m_listRootNodes[0];
+                    gd.WPF_TreeView.SelectedNode = m_listRootNodes[0];
                 }
             }));
 
@@ -488,13 +489,13 @@ namespace DoubleFile
 
         // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
         // Breadth-first.
-        void DifferentVolsQuery(SortedDictionary<FolderKeyStruct, UList<TreeNode>> dictClones, TreeNode treeNode, TreeNode rootClone = null)
+        void DifferentVolsQuery(SortedDictionary<FolderKeyStruct, UList<SDL_TreeNode>> dictClones, SDL_TreeNode treeNode, SDL_TreeNode rootClone = null)
         {
             // neither rootClone nor nMaxLength are used at all (rootClone is used as a bool).
             // provisional.
 
             NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
-            UList<TreeNode> listClones = nodeDatum.m_listClones;
+            UList<SDL_TreeNode> listClones = nodeDatum.m_listClones;
             ulong nLength = nodeDatum.nTotalLength;
 
             if (nLength <= 100 * 1024)
@@ -519,7 +520,7 @@ namespace DoubleFile
 
                     // Test to see if clones are on separate volumes.
 
-                    TreeNode rootNode = treeNode.Root();
+                    SDL_TreeNode rootNode = treeNode.Root();
                     RootNodeDatum rootNodeDatum = (RootNodeDatum)rootNode.Tag;
 
                     MBoxStatic.Assert(1305.6308, new Color[] { Color.Empty, Color.DarkBlue }.Contains(treeNode.ForeColor));
@@ -527,7 +528,7 @@ namespace DoubleFile
 
                     bool bDifferentVols = false;
 
-                    foreach (TreeNode subnode in listClones)
+                    foreach (SDL_TreeNode subnode in listClones)
                     {
                         if (m_bThreadAbort || gd.WindowClosed)
                         {
@@ -536,7 +537,7 @@ namespace DoubleFile
 
                         MBoxStatic.Assert(1305.6309, ((NodeDatum)subnode.Tag).Key == nodeDatum.Key);
 
-                        TreeNode rootNode_A = subnode.Root();
+                        SDL_TreeNode rootNode_A = subnode.Root();
 
                         if (rootNode == rootNode_A)
                         {
@@ -561,7 +562,7 @@ namespace DoubleFile
                         break;
                     }
 
-                    foreach (TreeNode subNode in listClones)
+                    foreach (SDL_TreeNode subNode in listClones)
                     {
                         ((NodeDatum)subNode.Tag).m_bDifferentVols = bDifferentVols;
                         subNode.ForeColor = treeNode.ForeColor;
@@ -569,7 +570,7 @@ namespace DoubleFile
                 }
             }
 
-            foreach (TreeNode subNode in treeNode.Nodes)
+            foreach (SDL_TreeNode subNode in treeNode.Nodes)
             {
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
@@ -580,9 +581,9 @@ namespace DoubleFile
             }
         }
 
-        void IgnoreNodeAndSubnodes(ListViewItem lvItem, TreeNode treeNode_in, bool bContinue = false)
+        void IgnoreNodeAndSubnodes(ListViewItem lvItem, SDL_TreeNode treeNode_in, bool bContinue = false)
         {
-            TreeNode treeNode = treeNode_in;
+            SDL_TreeNode treeNode = treeNode_in;
 
             do
             {
@@ -596,20 +597,20 @@ namespace DoubleFile
 
                 if (treeNode.Nodes.Count > 0)
                 {
-                    IgnoreNodeAndSubnodes(lvItem, (TreeNode)treeNode.Nodes[0], bContinue: true);
+                    IgnoreNodeAndSubnodes(lvItem, (SDL_TreeNode)treeNode.Nodes[0], bContinue: true);
                 }
             }
-            while (bContinue && ((treeNode = (TreeNode)treeNode.NextNode) != null));
+            while (bContinue && ((treeNode = (SDL_TreeNode)treeNode.NextNode) != null));
         }
 
-        void IgnoreNodeQuery(string sbMatch, int nMaxLevel, TreeNode treeNode_in)
+        void IgnoreNodeQuery(string sbMatch, int nMaxLevel, SDL_TreeNode treeNode_in)
         {
             if (treeNode_in.Level > nMaxLevel)
             {
                 return;
             }
 
-            TreeNode treeNode = treeNode_in;
+            SDL_TreeNode treeNode = treeNode_in;
 
             do
             {
@@ -637,15 +638,15 @@ namespace DoubleFile
 
                 if (treeNode.Nodes.Count > 0)
                 {
-                    IgnoreNodeQuery(sbMatch, nMaxLevel, (TreeNode)treeNode.Nodes[0]);
+                    IgnoreNodeQuery(sbMatch, nMaxLevel, (SDL_TreeNode)treeNode.Nodes[0]);
                 }
             }
-            while ((treeNode = (TreeNode)treeNode.NextNode) != null);
+            while ((treeNode = (SDL_TreeNode)treeNode.NextNode) != null);
         }
 
-        void SnowUniqueParents(TreeNode treeNode)
+        void SnowUniqueParents(SDL_TreeNode treeNode)
         {
-            TreeNode parentNode = (TreeNode)treeNode.Parent;
+            SDL_TreeNode parentNode = (SDL_TreeNode)treeNode.Parent;
 
             while (parentNode != null)
             {
@@ -663,18 +664,18 @@ namespace DoubleFile
                     MBoxStatic.Assert(1305.6313, (parentNode.ForeColor == Color.Empty) == (nodeDatum.m_lvItem == null));
                 }
 
-                parentNode = (TreeNode)parentNode.Parent;
+                parentNode = (SDL_TreeNode)parentNode.Parent;
             }
         }
 
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
-        readonly SortedDictionary<FolderKeyStruct, UList<TreeNode>> m_dictNodes = null;
+        readonly SortedDictionary<FolderKeyStruct, UList<SDL_TreeNode>> m_dictNodes = null;
         readonly TreeView m_treeViewBrowse = null;
         readonly SDL_ListView form_lvClones = null;
         readonly SDL_ListView form_lvSameVol = null;
         readonly SDL_ListView form_lvUnique = null;
-        readonly List<TreeNode> m_listRootNodes = null;
-        readonly UList<TreeNode> m_listTreeNodes = null;
+        readonly List<SDL_TreeNode> m_listRootNodes = null;
+        readonly UList<SDL_TreeNode> m_listTreeNodes = null;
         readonly bool m_bCheckboxes = false;
         readonly List<ListViewItem> m_list_lvIgnore = null;
 
@@ -682,7 +683,7 @@ namespace DoubleFile
         readonly List<ListViewItem> listLVunique = new List<ListViewItem>();
         readonly List<ListViewItem> listLVsameVol = new List<ListViewItem>();
         readonly List<ListViewItem> listLVdiffVol = new List<ListViewItem>();
-        readonly Dictionary<TreeNode, ListViewItem> dictIgnoreNodes = new Dictionary<TreeNode, ListViewItem>();
+        readonly Dictionary<SDL_TreeNode, ListViewItem> dictIgnoreNodes = new Dictionary<SDL_TreeNode, ListViewItem>();
         readonly bool m_bLoose = false;
 
         bool m_bThreadAbort = false;

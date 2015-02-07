@@ -73,37 +73,6 @@ namespace DoubleFile
             return null;
         }
 
-        internal static int CountNodes(List<TreeNode> listNodes)
-        {
-            int nCount = 0;
-
-            foreach (TreeNode treeNode in listNodes)
-            {
-                nCount += CountNodes(treeNode, bNextNode: false);
-            }
-
-            return nCount;
-        }
-
-        internal static int CountNodes(TreeNode treeNode_in, bool bNextNode = true)
-        {
-            TreeNode treeNode = treeNode_in;
-            int nCount = 0;
-
-            do
-            {
-                if ((treeNode.Nodes != null) && (treeNode.Nodes.Count > 0))
-                {
-                    nCount += CountNodes((TreeNode)treeNode.Nodes[0]);
-                }
-
-                ++nCount;
-            }
-            while (bNextNode && ((treeNode = (TreeNode)treeNode.NextNode) != null));
-
-            return nCount;
-        }
-
         internal static string DecodeAttributes(string strAttr)
         {
             FileAttributes nAttr = (FileAttributes)Convert.ToInt32(strAttr, 16);

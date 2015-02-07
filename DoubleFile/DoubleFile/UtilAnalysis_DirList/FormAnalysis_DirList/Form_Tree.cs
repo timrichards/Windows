@@ -144,9 +144,9 @@ namespace DoubleFile
             }
 
             int nNodeCount = form_treeViewBrowse.GetNodeCount(includeSubTrees: true);
-            int nNodeCount_A = UtilAnalysis_DirList.CountNodes((TreeNode)form_treeViewBrowse.Nodes[0]);
+            int nNodeCount_A = CountNodes.Go((TreeNode)form_treeViewBrowse.Nodes[0]);
 
-            MBoxStatic.Assert(1304.5307, UtilAnalysis_DirList.CountNodes(gd_Tree.m_listRootNodes) == nNodeCount);
+            MBoxStatic.Assert(1304.5307, CountNodes.Go(gd_Tree.m_listRootNodes) == nNodeCount);
             MBoxStatic.Assert(1304.5308, gd_Tree.m_listTreeNodes.Count == nNodeCount);
 
             if (Form.ActiveForm == null)

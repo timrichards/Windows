@@ -111,6 +111,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="GlobalData\GlobalData.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\Collate.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\Collate\AddTreeToList.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\Collate\InsertSizeMarkerStatic.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\CountNodes.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\UC_TreeMap.cs" />
     <Compile Include="UtilAnalysis_DirList\Collate.cs" />
     <Compile Include="UtilAnalysis_DirList\Collate\AddTreeToList.cs" />
     <Compile Include="UtilAnalysis_DirList\Collate\InsertSizeMarkerStatic.cs" />
@@ -125,6 +130,20 @@
     <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Search_Path_GlobalData.cs" />
     <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Tree_GlobalData.cs" />
     <Compile Include="UtilAnalysis_DirList\GlobalData.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\Tree\DetailsDatum.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\Tree\DetailsDatum\NodeDatum.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\Tree\FolderKeyStruct.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\Tree\LVitemFileTag.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\Tree\LVitemNameComparerStruct.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\Tree\TreeBase.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\Tree\TreeBase\Tree.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\Tree\TreeBase\Tree\TreeRootNodeBuilder.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\Tree\TreeBase\Tree\TreeRootNodeBuilder\DirData.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\Tree\TreeBase\Tree\TreeRootNodeBuilder\Node.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\Tree\TreeBase\Tree\TreeRootNodeBuilder\RootNode.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\Tree\TreeSelect.cs" />
+    <Compile Include="UtilAnalysis_DirList\CountNodes.cs" />
     <Compile Include="UtilAnalysis_DirList\UtilAnalysis_DirList\ListViewEx.cs" />
     <Compile Include="UtilAnalysis_DirList\FormAnalysis_DirList\Form_Search.cs" />
     <Compile Include="UtilAnalysis_DirList\Tree\FolderKeyStruct.cs" />
@@ -161,7 +180,7 @@
     <Compile Include="UtilAnalysis_FileHash\MVVM\TreeView\SDL_TreeNode.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\TreeView\SDL_TreeNodeCollection.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\TreeView\TreeViewItem_FileHashVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM\TreeView\TreeViewVMhack.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\TreeView\WPF_TreeView.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\TreeView\TreeView_FileHashVM.cs">
       <SubType>Code</SubType>
     </Compile>

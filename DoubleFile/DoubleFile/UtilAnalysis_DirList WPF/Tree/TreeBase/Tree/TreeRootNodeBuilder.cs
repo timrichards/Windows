@@ -5,8 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using DoubleFile;
 
-namespace DoubleFile
+namespace WPF
 {
     partial class Tree
     {
@@ -23,11 +24,11 @@ namespace DoubleFile
                 MBoxStatic.Assert(1301.2301, m_statusCallback != null);
             }
 
-            DetailsDatum TreeSubnodeDetails(TreeNode treeNode)
+            DetailsDatum TreeSubnodeDetails(SDL_TreeNode treeNode)
             {
                 DetailsDatum datum = new DetailsDatum();
 
-                foreach (TreeNode node in treeNode.Nodes)
+                foreach (SDL_TreeNode node in treeNode.Nodes)
                 {
                     if (m_bThreadAbort || gd.WindowClosed)
                     {
@@ -71,7 +72,7 @@ namespace DoubleFile
                     }
                     else if (nodeDatum.nTotalLength > 100 * 1024)
                     {
-                        UList<TreeNode> listNodes = new UList<TreeNode>();
+                        UList<SDL_TreeNode> listNodes = new UList<SDL_TreeNode>();
 
                         listNodes.Add(treeNode);
                         m_dictNodes.Add(nKey, listNodes);
@@ -216,7 +217,7 @@ namespace DoubleFile
                     dirData.AddToTree(strDir, nLineNo, nLength);
                 }
 
-                TreeNode rootTreeNode = dirData.AddToTree(m_volStrings.Nickname);
+                SDL_TreeNode rootTreeNode = dirData.AddToTree(m_volStrings.Nickname);
 
                 if (rootTreeNode != null)
                 {

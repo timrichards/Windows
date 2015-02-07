@@ -1,0 +1,82 @@
+﻿using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using DoubleFile;
+
+namespace WPF
+{
+    partial class Collate
+    {
+        // can't be struct because it has an auto-implemented property
+        class AddTreeToList
+        {
+            internal int Count { get; private set; }
+
+            internal AddTreeToList(UList<SDL_TreeNode> listTreeNodes, List<SDL_TreeNode> listSameVol)
+            {
+                m_listTreeNodes = listTreeNodes;
+                m_listSameVol = listSameVol;
+            }
+
+            internal AddTreeToList Go(List<SDL_TreeNode> listNodes)
+            {
+                foreach (SDL_TreeNode treeNode in listNodes)
+                {
+                    Go(treeNode, bNextNode: false);
+                }
+
+                return this;
+            }
+
+            void Go(SDL_TreeNode treeNode_in, bool bCloneOK = false, bool bNextNode = true)
+            {
+                if (treeNode_in == null)
+                {
+                    MBoxStatic.Assert(1305.6302, false);
+                }
+
+                SDL_TreeNode treeNode = treeNode_in;
+
+                do
+                {
+                    m_listTreeNodes.Add(treeNode);
+                    ++Count;
+
+                    NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+
+                    if (nodeDatum == null)
+                    {
+                        MBoxStatic.Assert(1305.6303, false);
+                        continue;
+                    }
+
+                    if ((treeNode.ForeColor == Color.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
+                    {
+                        MBoxStatic.Assert(1305.6304, (nodeDatum.m_listClones.Count > 0) && (nodeDatum.m_bDifferentVols == false));
+                        m_listSameVol.Add(treeNode);
+                    }
+
+                    if (bCloneOK)
+                    {
+                        treeNode.BackColor = Color.LightGoldenrodYellow;
+
+                        if ((nodeDatum.m_lvItem != null) && (nodeDatum.m_lvItem.ListView == null))  // ignore LV
+                        {
+                            nodeDatum.m_lvItem.BackColor = treeNode.BackColor;
+                        }
+                    }
+
+                    if (treeNode.FirstNode != null)
+                    {
+                        Go((SDL_TreeNode)treeNode.FirstNode, bCloneOK || (new Color[] { Color.SteelBlue, Color.DarkBlue }.Contains(treeNode.ForeColor)));
+                    }
+                }
+                while (bNextNode && ((treeNode = (SDL_TreeNode)treeNode.NextNode) != null));
+            }
+
+            UList<SDL_TreeNode> m_listTreeNodes = null;
+            List<SDL_TreeNode> m_listSameVol = null;
+        }
+    }
+}

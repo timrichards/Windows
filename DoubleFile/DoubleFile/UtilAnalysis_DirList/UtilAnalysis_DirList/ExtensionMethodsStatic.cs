@@ -14,7 +14,7 @@ namespace DoubleFile
                 return false;
             }
 
-            TreeNode parentNode = (TreeNode)child.Parent;
+            var parentNode = child.Parent;
 
             while (parentNode != null)
             {
@@ -23,7 +23,7 @@ namespace DoubleFile
                     return true;
                 }
 
-                parentNode = (TreeNode)parentNode.Parent;
+                parentNode = parentNode.Parent;
             }
 
             return false;

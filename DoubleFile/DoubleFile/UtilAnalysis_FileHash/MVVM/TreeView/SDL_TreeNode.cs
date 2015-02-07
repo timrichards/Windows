@@ -73,11 +73,45 @@ namespace DoubleFile
 
         internal void EnsureVisible() { }
 
+        internal bool IsChildOf(SDL_TreeNode treeNode)
+        {
+            if (Level <= treeNode.Level)
+            {
+                return false;
+            }
+
+            var parentNode = Parent;
+
+            while (parentNode != null)
+            {
+                if (parentNode == treeNode)
+                {
+                    return true;
+                }
+
+                parentNode = parentNode.Parent;
+            }
+
+            return false;
+        }
+
+        internal SDL_TreeNode Root()
+        {
+            var nodeParent = this;
+
+            while (nodeParent.Parent != null)
+            {
+                nodeParent = nodeParent.Parent;
+            }
+
+            return nodeParent;
+        }
+
         readonly internal SDL_TreeNodeCollection Nodes = null;
         internal string Text = null;
         internal string ToolTipText = null;
         internal string Name = null;
-        internal TreeViewVMhack TreeView = null;
+        internal WPF_TreeView TreeView = null;
         internal SDL_TreeNode FirstNode = null;
         internal SDL_TreeNode NextNode = null;
         internal SDL_TreeNode Parent = null;

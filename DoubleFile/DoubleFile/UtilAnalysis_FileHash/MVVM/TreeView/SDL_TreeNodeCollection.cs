@@ -4,7 +4,7 @@ namespace DoubleFile
 {
     class SDL_TreeNodeCollection : UList<SDL_TreeNode>
     {
-        internal SDL_TreeNodeCollection(TreeViewVMhack treeView)
+        internal SDL_TreeNodeCollection(WPF_TreeView treeView)
         {
             m_treeView = treeView;
         }
@@ -61,7 +61,7 @@ namespace DoubleFile
             base.Clear();
         }
 
-        static void SetLevel(TreeViewVMhack treeView, SDL_TreeNodeCollection nodes, SDL_TreeNode nodeParent = null, int nLevel = 0)
+        static void SetLevel(WPF_TreeView treeView, SDL_TreeNodeCollection nodes, SDL_TreeNode nodeParent = null, int nLevel = 0)
         {
             SDL_TreeNode nodePrev = null;
 
@@ -88,7 +88,7 @@ namespace DoubleFile
             }
         }
 
-        readonly TreeViewVMhack m_treeView = null;
+        readonly WPF_TreeView m_treeView = null;
         string strPrevQuery = null;
         SDL_TreeNode nodePrevQuery = null;
     }

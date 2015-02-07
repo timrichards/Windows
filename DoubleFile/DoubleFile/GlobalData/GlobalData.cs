@@ -9,7 +9,6 @@ namespace DoubleFile
         internal abstract bool WindowClosed { get; }
 
         internal FileDictionary FileDictionary = null;
-        internal WPF_TreeView WPF_TreeView = new WPF_TreeView();
     }
 
     class GlobalData_Window : GlobalData_Base

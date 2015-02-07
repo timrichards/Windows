@@ -11,7 +11,7 @@ namespace WPF
         internal readonly ulong nLength = 0;
 
         internal UList<SDL_TreeNode> m_listClones = new UList<SDL_TreeNode>();
-        internal ListViewItem m_lvItem = null;
+        internal WPF_LVitem m_lvItem = null;
         internal bool m_bDifferentVols = false;
 
         internal Rectangle TreeMapRect = Rectangle.Empty;

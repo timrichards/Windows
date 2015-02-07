@@ -116,6 +116,9 @@
     <Compile Include="UtilAnalysis_DirList WPF\Collate\InsertSizeMarkerStatic.cs" />
     <Compile Include="UtilAnalysis_DirList WPF\CountNodes.cs" />
     <Compile Include="UtilAnalysis_DirList WPF\UC_TreeMap.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\WPF_ListView.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\WPF_LVitem.cs" />
+    <Compile Include="UtilAnalysis_DirList WPF\WPF_LVitemCollection.cs" />
     <Compile Include="UtilAnalysis_DirList\Collate.cs" />
     <Compile Include="UtilAnalysis_DirList\Collate\AddTreeToList.cs" />
     <Compile Include="UtilAnalysis_DirList\Collate\InsertSizeMarkerStatic.cs" />

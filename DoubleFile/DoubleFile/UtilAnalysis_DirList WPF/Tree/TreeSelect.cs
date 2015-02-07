@@ -8,7 +8,7 @@ using DoubleFile;
 
 namespace WPF
 {
-    delegate void TreeSelectStatusDelegate(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem[] lvVolDetails = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null);
+    delegate void TreeSelectStatusDelegate(WPF_LVitem[] lvItemDetails = null, WPF_LVitem[] itemArray = null, WPF_LVitem[] lvVolDetails = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null);
     delegate void TreeSelectDoneDelegate(bool bSecondComparePane);
 
     class TreeSelect : UtilAnalysis_DirList
@@ -135,7 +135,7 @@ namespace WPF
                         };
                     }
 
-                    ListViewItem[] lvItems = new ListViewItem[arrDriveInfo.Length];
+                    WPF_LVitem[] lvItems = new WPF_LVitem[arrDriveInfo.Length];
 
                     for (int ix = 0; ix < arrDriveInfo.Length; ++ix)
                     {
@@ -151,7 +151,7 @@ namespace WPF
 
                         int ixA = (arrDriveInfo.Length == kanDIviewOrder.Length) ? kanDIviewOrder[ix] : ix;
 
-                        lvItems[ixA] = new ListViewItem(asItems[ix]);
+                        lvItems[ixA] = new WPF_LVitem(asItems[ix]);
                     }
 
                     m_statusCallback(lvVolDetails: lvItems.Where(i => i != null).ToArray());
@@ -193,22 +193,22 @@ namespace WPF
 
             // Directory detail
 
-            UList<ListViewItem> listItems = new UList<ListViewItem>();
+            UList<WPF_LVitem> listItems = new UList<WPF_LVitem>();
 
-            nIx = 4; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new ListViewItem(new string[] { "Created\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
-            nIx = 5; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new ListViewItem(new string[] { "Modified\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
-            nIx = 6; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new ListViewItem(new string[] { "Attributes\t", DecodeAttributes(strArray[nIx]) }));
-            listItems.Add(new ListViewItem(new string[] { "Immediate Size\t", FormatSize(nodeDatum.nLength, bBytes: true) }));
-            nIx = 8; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new ListViewItem(new string[] { "Error 1\t", strArray[nIx] }));
-            nIx = 9; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new ListViewItem(new string[] { "Error 2\t", strArray[nIx] }));
-            listItems.Add(new ListViewItem(new string[] { "# Immediate Files", (nLineNo - nPrevDir - 1).ToString() }));
+            nIx = 4; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new WPF_LVitem(new string[] { "Created\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
+            nIx = 5; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new WPF_LVitem(new string[] { "Modified\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
+            nIx = 6; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new WPF_LVitem(new string[] { "Attributes\t", DecodeAttributes(strArray[nIx]) }));
+            listItems.Add(new WPF_LVitem(new string[] { "Immediate Size\t", FormatSize(nodeDatum.nLength, bBytes: true) }));
+            nIx = 8; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new WPF_LVitem(new string[] { "Error 1\t", strArray[nIx] }));
+            nIx = 9; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new WPF_LVitem(new string[] { "Error 2\t", strArray[nIx] }));
+            listItems.Add(new WPF_LVitem(new string[] { "# Immediate Files", (nLineNo - nPrevDir - 1).ToString() }));
 
             // Tree subnode detail
 
             string NUMFMT = "###,###,###,##0";
 
-            listItems.Add(new ListViewItem(new string[] { "# Immediate Folders", m_treeNode.Nodes.Count.ToString(NUMFMT) }));
-            listItems.Add(new ListViewItem(new string[] { "Total # Files", nodeDatum.nFilesInSubdirs.ToString(NUMFMT) }));
+            listItems.Add(new WPF_LVitem(new string[] { "# Immediate Folders", m_treeNode.Nodes.Count.ToString(NUMFMT) }));
+            listItems.Add(new WPF_LVitem(new string[] { "Total # Files", nodeDatum.nFilesInSubdirs.ToString(NUMFMT) }));
 
             if (nodeDatum.nSubDirs > 0)
             {
@@ -229,10 +229,10 @@ namespace WPF
                     }
                 }
 
-                listItems.Add(new ListViewItem(new string[] { "# Subfolders", strItem }));
+                listItems.Add(new WPF_LVitem(new string[] { "# Subfolders", strItem }));
             }
 
-            listItems.Add(new ListViewItem(new string[] { "Total Size", FormatSize(nodeDatum.nTotalLength, bBytes: true) }));
+            listItems.Add(new WPF_LVitem(new string[] { "Total Size", FormatSize(nodeDatum.nTotalLength, bBytes: true) }));
             m_statusCallback(lvItemDetails: listItems.ToArray(), bSecondComparePane: m_bSecondComparePane);
             UtilProject.WriteLine(strLine);
 
@@ -240,11 +240,11 @@ namespace WPF
 
             if (listFiles_A != null)
             {
-                UList<ListViewItem> listFiles = new UList<ListViewItem>();
+                UList<WPF_LVitem> listFiles = new UList<WPF_LVitem>();
 
                 foreach (string[] arrLine in listFiles_A)
                 {
-                    listFiles.Add(new ListViewItem(arrLine));
+                    listFiles.Add(new WPF_LVitem(arrLine));
                 }
 
                 m_statusCallback(itemArray: listFiles.ToArray(), bSecondComparePane: m_bSecondComparePane, lvFileItem: new LVitemFileTag(m_treeNode.Text, listFiles.Count));

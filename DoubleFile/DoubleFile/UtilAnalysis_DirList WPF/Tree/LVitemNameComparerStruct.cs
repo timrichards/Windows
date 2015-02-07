@@ -7,21 +7,21 @@ using DoubleFile;
 
 namespace WPF
 {
-    struct LVitemNameComparerStruct : IEqualityComparer<ListViewItem>
+    struct LVitemNameComparerStruct : IEqualityComparer<WPF_LVitem>
     {
-        public bool Equals(ListViewItem x, ListViewItem y)
+        public bool Equals(WPF_LVitem x, WPF_LVitem y)
         {
             return (x != null) && (y != null) && (false == string.IsNullOrWhiteSpace(x.Name)) && x.Name.Equals(y.Name);
         }
 
-        public int GetHashCode(ListViewItem obj)
+        public int GetHashCode(WPF_LVitem obj)
         {
             return obj.Name == null ? 0 : obj.Name.GetHashCode();
         }
 
         internal static void NameItems(ListView.ListViewItemCollection list)
         {
-            foreach (ListViewItem item in list)
+            foreach (WPF_LVitem item in list)
             {
                 item.Name = item.Text;
 
@@ -32,24 +32,24 @@ namespace WPF
             }
         }
 
-        internal static void MarkItemsFrom1notIn2(SDL_ListView lv1, SDL_ListView lv2)
+        internal static void MarkItemsFrom1notIn2(WPF_ListView lv1, WPF_ListView lv2)
         {
             if ((lv1.Items.Count <= 0) || (lv2.Items.Count <= 0)) { return; }
 
-            List<ListViewItem> list = lv1.Items.Cast<ListViewItem>().Except(lv2.Items.Cast<ListViewItem>(), new LVitemNameComparerStruct()).ToList();
+            List<WPF_LVitem> list = lv1.Items.Cast<WPF_LVitem>().Except(lv2.Items.Cast<WPF_LVitem>(), new LVitemNameComparerStruct()).ToList();
 
             if (list.Count > 0)
             {
                 lv1.TopItem = list[0];
             }
 
-            foreach (ListViewItem item in list)
+            foreach (WPF_LVitem item in list)
             {
                 item.ForeColor = Color.Red;
             }
         }
 
-        internal static void SetTopItem(SDL_ListView lv1, SDL_ListView lv2)
+        internal static void SetTopItem(WPF_ListView lv1, WPF_ListView lv2)
         {
             if (lv1.TopItem == null) { return; }
             if (lv1.TopItem.Index > 0) { return; }

@@ -12,23 +12,23 @@ namespace WPF
     {
         internal Collate(GlobalData_Base gd_in,
             SortedDictionary<FolderKeyStruct, UList<SDL_TreeNode>> dictNodes,
-            TreeView treeViewBrowse,
-            SDL_ListView lvClones,
-            SDL_ListView lvSameVol,
-            SDL_ListView lvUnique,
+            WPF_TreeView tvBrowseWPF,
+            WPF_ListView lvClones,
+            WPF_ListView lvSameVol,
+            WPF_ListView lvUnique,
             List<SDL_TreeNode> listRootNodes,
             UList<SDL_TreeNode> listTreeNodes,
             bool bCheckboxes,
-            List<ListViewItem> list_lvIgnore,
+            List<WPF_LVitem> list_lvIgnore,
             bool bLoose)
         {
             gd = gd_in;
             static_this = this;
             m_dictNodes = dictNodes;
-            m_treeViewBrowse = treeViewBrowse;
-            form_lvClones = lvClones;
-            form_lvSameVol = lvSameVol;
-            form_lvUnique = lvUnique;
+            m_tvBrowseWPF = tvBrowseWPF;
+            wpf_lvClones = lvClones;
+            wpf_lvSameVol = lvSameVol;
+            wpf_lvUnique = lvUnique;
             m_listRootNodes = listRootNodes;
             m_listTreeNodes = listTreeNodes;
             m_bCheckboxes = bCheckboxes;
@@ -50,7 +50,7 @@ namespace WPF
             }
         }
 
-        internal static void InsertSizeMarkers(List<ListViewItem> listLVitems)
+        internal static void InsertSizeMarkers(List<WPF_LVitem> listLVitems)
         {
             if (listLVitems.Count <= 0)
             {
@@ -102,7 +102,7 @@ namespace WPF
                 int nMaxLevel = m_list_lvIgnore.Max(i => int.Parse(i.SubItems[1].Text) - 1);
                 StringBuilder sbMatch = new StringBuilder();
 
-                foreach (ListViewItem lvItem in m_list_lvIgnore)
+                foreach (WPF_LVitem lvItem in m_list_lvIgnore)
                 {
                     sbMatch.AppendLine(lvItem.Text);
                 }
@@ -111,7 +111,7 @@ namespace WPF
                 UtilProject.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             }
 
-            Dictionary<SDL_TreeNode, ListViewItem> dictIgnoreMark = new Dictionary<SDL_TreeNode, ListViewItem>();
+            Dictionary<SDL_TreeNode, WPF_LVitem> dictIgnoreMark = new Dictionary<SDL_TreeNode, WPF_LVitem>();
             SortedDictionary<FolderKeyStruct, List<SDL_TreeNode>> dictNodes = new SortedDictionary<FolderKeyStruct, List<SDL_TreeNode>>();
 
             foreach (KeyValuePair<FolderKeyStruct, UList<SDL_TreeNode>> pair in m_dictNodes)  // clone to remove ignored
@@ -119,7 +119,7 @@ namespace WPF
                 dictNodes.Add(pair.Key, pair.Value.ToList());                       // clone pair.Value to remove ignored, using ToList() 
             }
 
-            foreach (KeyValuePair<SDL_TreeNode, ListViewItem> pair in dictIgnoreNodes)
+            foreach (KeyValuePair<SDL_TreeNode, WPF_LVitem> pair in dictIgnoreNodes)
             {
                 SDL_TreeNode treeNode = pair.Key;
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
@@ -262,7 +262,7 @@ namespace WPF
                     }
                 }
 
-                ListViewItem lvItem = new ListViewItem(new string[] { string.Empty, str_nClones });
+                WPF_LVitem lvItem = new WPF_LVitem(new string[] { string.Empty, str_nClones });
 
                 lvItem.Tag = listNodes.Value;
                 lvItem.ForeColor = listNodes.Value[0].ForeColor;
@@ -293,10 +293,10 @@ namespace WPF
                 listLVdiffVol.Add(lvItem);
             }
 
-            foreach (KeyValuePair<SDL_TreeNode, ListViewItem> pair in dictIgnoreMark)
+            foreach (KeyValuePair<SDL_TreeNode, WPF_LVitem> pair in dictIgnoreMark)
             {
                 SDL_TreeNode treeNode = pair.Key;
-                ListViewItem lvIgnoreItem = pair.Value;
+                WPF_LVitem lvIgnoreItem = pair.Value;
 
                 treeNode.ForeColor = Color.DarkGray;
                 treeNode.BackColor = Color.Empty;
@@ -322,7 +322,7 @@ namespace WPF
 
                 MBoxStatic.Assert(1305.6321, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
-                ListViewItem lvItem = new ListViewItem(treeNode.Text);
+                WPF_LVitem lvItem = new WPF_LVitem(treeNode.Text);
 
                 lvItem.Tag = treeNode;
 
@@ -387,7 +387,7 @@ namespace WPF
 
                 MBoxStatic.Assert(1305.6329, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
-                ListViewItem lvItem = new ListViewItem(new string[] { treeNode.Text, str_nClones });
+                WPF_LVitem lvItem = new WPF_LVitem(new string[] { treeNode.Text, str_nClones });
 
                 lvItem.Tag = nodeDatum.m_listClones;
                 lvItem.ForeColor = Color.Firebrick;
@@ -410,9 +410,9 @@ namespace WPF
                     return;
                 }
 
-                if (m_treeViewBrowse.Enabled == false)      // stays enabled when DoCollation() is called directly
+                if (m_tvBrowseWPF.Enabled == false)      // stays enabled when DoCollation() is called directly
                 {
-                    m_treeViewBrowse.Nodes.Clear();
+                    m_tvBrowseWPF.Nodes.Clear();
                 }
 
                 if (m_listRootNodes.Count <= 0)
@@ -420,21 +420,21 @@ namespace WPF
                     return;
                 }
 
-                if (m_treeViewBrowse.Enabled == false)
+                if (m_tvBrowseWPF.Enabled == false)
                 {
-                    m_treeViewBrowse.Enabled = true;
-                    m_treeViewBrowse.CheckBoxes = m_bCheckboxes;
+                    m_tvBrowseWPF.Enabled = true;
+                    m_tvBrowseWPF.CheckBoxes = m_bCheckboxes;
 
                     int nCount = CountNodes.Go(m_listRootNodes);
 
                     UtilAnalysis_DirList.Write("A");
-                    gd.WPF_TreeView.Nodes.AddRange(m_listRootNodes.ToArray());
+                    m_tvBrowseWPF.Nodes.AddRange(m_listRootNodes.ToArray());
                     UtilProject.WriteLine("A");
 
                     int nCount_A = CountNodes.Go(m_listRootNodes);
 
                     MBoxStatic.Assert(1305.6331, nCount_A == nCount);
-                    MBoxStatic.Assert(1305.6332, m_treeViewBrowse.GetNodeCount(includeSubTrees: true) == nCount);
+                    MBoxStatic.Assert(1305.6332, m_tvBrowseWPF.GetNodeCount(includeSubTrees: true) == nCount);
                     UtilProject.WriteLine("Step2_OnForm_A " + nCount);
                 }
 
@@ -443,10 +443,10 @@ namespace WPF
                     return;
                 }
 
-                MBoxStatic.Assert(1305.6333, form_lvClones.Items.Count <= 0);
+                MBoxStatic.Assert(1305.6333, wpf_lvClones.Items.Count <= 0);
                 UtilAnalysis_DirList.Write("B");
-                form_lvClones.Items.AddRange(listLVdiffVol.ToArray());
-                form_lvClones.Invalidate();
+                wpf_lvClones.Items.AddRange(listLVdiffVol.ToArray());
+                wpf_lvClones.Invalidate();
                 UtilProject.WriteLine("B");
 
                 if (m_bThreadAbort || gd.WindowClosed)
@@ -454,10 +454,10 @@ namespace WPF
                     return;
                 }
 
-                MBoxStatic.Assert(1305.6334, form_lvUnique.Items.Count <= 0);
+                MBoxStatic.Assert(1305.6334, wpf_lvUnique.Items.Count <= 0);
                 UtilAnalysis_DirList.Write("C");
-                form_lvUnique.Items.AddRange(listLVunique.ToArray());
-                form_lvUnique.Invalidate();
+                wpf_lvUnique.Items.AddRange(listLVunique.ToArray());
+                wpf_lvUnique.Invalidate();
                 UtilProject.WriteLine("C");
 
                 if (m_bThreadAbort || gd.WindowClosed)
@@ -465,22 +465,22 @@ namespace WPF
                     return;
                 }
 
-                MBoxStatic.Assert(1305.6335, form_lvSameVol.Items.Count <= 0);
+                MBoxStatic.Assert(1305.6335, wpf_lvSameVol.Items.Count <= 0);
                 UtilAnalysis_DirList.Write("D");
-                form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
-                form_lvSameVol.Invalidate();
+                wpf_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
+                wpf_lvSameVol.Invalidate();
                 UtilProject.WriteLine("D");
 
-                if (gd.WPF_TreeView.SelectedNode != null)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
+                if (m_tvBrowseWPF.SelectedNode != null)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
                 {
-                    SDL_TreeNode treeNode = gd.WPF_TreeView.SelectedNode;
+                    SDL_TreeNode treeNode = m_tvBrowseWPF.SelectedNode;
 
-                    gd.WPF_TreeView.SelectedNode = null;
-                    gd.WPF_TreeView.SelectedNode = treeNode;   // reselect in repopulated collation listviewers
+                    m_tvBrowseWPF.SelectedNode = null;
+                    m_tvBrowseWPF.SelectedNode = treeNode;   // reselect in repopulated collation listviewers
                 }
                 else
                 {
-                    gd.WPF_TreeView.SelectedNode = m_listRootNodes[0];
+                    m_tvBrowseWPF.SelectedNode = m_listRootNodes[0];
                 }
             }));
 
@@ -581,7 +581,7 @@ namespace WPF
             }
         }
 
-        void IgnoreNodeAndSubnodes(ListViewItem lvItem, SDL_TreeNode treeNode_in, bool bContinue = false)
+        void IgnoreNodeAndSubnodes(WPF_LVitem lvItem, SDL_TreeNode treeNode_in, bool bContinue = false)
         {
             SDL_TreeNode treeNode = treeNode_in;
 
@@ -621,7 +621,7 @@ namespace WPF
 
                 if (sbMatch.Contains(treeNode.Text.ToLower()))
                 {
-                    foreach (ListViewItem lvItem in m_list_lvIgnore)
+                    foreach (WPF_LVitem lvItem in m_list_lvIgnore)
                     {
                         if (treeNode.Level != (int.Parse(lvItem.SubItems[1].Text) - 1))
                         {
@@ -630,7 +630,7 @@ namespace WPF
 
                         if (lvItem.Text.ToLower() == treeNode.Text.ToLower())
                         {
-                            IgnoreNodeAndSubnodes((ListViewItem)lvItem.Tag, treeNode);
+                            IgnoreNodeAndSubnodes((WPF_LVitem)lvItem.Tag, treeNode);
                             break;
                         }
                     }
@@ -670,20 +670,20 @@ namespace WPF
 
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
         readonly SortedDictionary<FolderKeyStruct, UList<SDL_TreeNode>> m_dictNodes = null;
-        readonly TreeView m_treeViewBrowse = null;
-        readonly SDL_ListView form_lvClones = null;
-        readonly SDL_ListView form_lvSameVol = null;
-        readonly SDL_ListView form_lvUnique = null;
+        readonly WPF_TreeView m_tvBrowseWPF = null;
+        readonly WPF_ListView wpf_lvClones = null;
+        readonly WPF_ListView wpf_lvSameVol = null;
+        readonly WPF_ListView wpf_lvUnique = null;
         readonly List<SDL_TreeNode> m_listRootNodes = null;
         readonly UList<SDL_TreeNode> m_listTreeNodes = null;
         readonly bool m_bCheckboxes = false;
-        readonly List<ListViewItem> m_list_lvIgnore = null;
+        readonly List<WPF_LVitem> m_list_lvIgnore = null;
 
         // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.
-        readonly List<ListViewItem> listLVunique = new List<ListViewItem>();
-        readonly List<ListViewItem> listLVsameVol = new List<ListViewItem>();
-        readonly List<ListViewItem> listLVdiffVol = new List<ListViewItem>();
-        readonly Dictionary<SDL_TreeNode, ListViewItem> dictIgnoreNodes = new Dictionary<SDL_TreeNode, ListViewItem>();
+        readonly List<WPF_LVitem> listLVunique = new List<WPF_LVitem>();
+        readonly List<WPF_LVitem> listLVsameVol = new List<WPF_LVitem>();
+        readonly List<WPF_LVitem> listLVdiffVol = new List<WPF_LVitem>();
+        readonly Dictionary<SDL_TreeNode, WPF_LVitem> dictIgnoreNodes = new Dictionary<SDL_TreeNode, WPF_LVitem>();
         readonly bool m_bLoose = false;
 
         bool m_bThreadAbort = false;

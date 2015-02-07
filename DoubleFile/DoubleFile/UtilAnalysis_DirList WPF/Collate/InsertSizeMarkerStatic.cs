@@ -9,11 +9,11 @@ namespace WPF
     {
         static class InsertSizeMarkerStatic
         {
-            internal static void Go(List<ListViewItem> listLVitems, int nIx, bool bUnique, bool bAdd = false)
+            internal static void Go(List<WPF_LVitem> listLVitems, int nIx, bool bUnique, bool bAdd = false)
             {
                 Init();
 
-                ListViewItem lvItem = (ListViewItem)lvMarker.Clone();
+                WPF_LVitem lvItem = (WPF_LVitem)lvMarker.Clone();
 
                 lvItem.Text = ((UtilAnalysis_DirList.FormatSize(((NodeDatum)((SDL_TreeNode)(bUnique ? listLVitems[nIx].Tag : ((UList<SDL_TreeNode>)listLVitems[nIx].Tag)[0])).Tag).nTotalLength, bNoDecimal: true)));
 
@@ -39,7 +39,7 @@ namespace WPF
                 }
             }
 
-            readonly static ListViewItem lvMarker = new ListViewItem();
+            readonly static WPF_LVitem lvMarker = new WPF_LVitem();
             static bool bInit = false;
         }
     }

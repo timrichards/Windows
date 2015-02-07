@@ -150,11 +150,11 @@ namespace DoubleFile
             TVI_DependencyProperty.SetWaitingToSelect(this);
         }
 
-        internal TreeViewItem_FileHashVM(TreeView_FileHashVM tvvm, SDL_TreeNode datum_in, int nIndex)
+        internal TreeViewItem_FileHashVM(TreeView_FileHashVM tvvm, LocalTreeNode datum_in, int nIndex)
             : this(tvvm, datum_in, null, nIndex)
         { }
 
-        TreeViewItem_FileHashVM(TreeView_FileHashVM tvvm, SDL_TreeNode datum_in, TreeViewItem_FileHashVM parent, int nIndex)
+        TreeViewItem_FileHashVM(TreeView_FileHashVM tvvm, LocalTreeNode datum_in, TreeViewItem_FileHashVM parent, int nIndex)
         {
             TVVM = tvvm;
             datum = datum_in;
@@ -181,7 +181,7 @@ namespace DoubleFile
         internal Brush m_SelectedForeground = Brushes.White;
         readonly Brush m_Foreground = Brushes.DarkRed;
 
-        internal readonly SDL_TreeNode datum = null;
+        internal readonly LocalTreeNode datum = null;
 
         bool m_bExpanded = false;
         bool m_bSelected = false;

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows.Forms;
 using DoubleFile;
 
-namespace WPF
+namespace Local
 {
     partial class Tree
     {
@@ -61,16 +61,16 @@ namespace WPF
                     }
                 }
 
-                internal SDL_TreeNode AddToTree(string strVolumeName = null)
+                internal LocalTreeNode AddToTree(string strVolumeName = null)
                 {
                     if (gd.WindowClosed)
                     {
-                        return new SDL_TreeNode();
+                        return new LocalTreeNode();
                     }
 
                     int nIndex = m_strPath.LastIndexOf('\\');
                     string strShortPath = bUseShortPath ? m_strPath.Substring(nIndex + 1) : m_strPath;
-                    SDL_TreeNode treeNode = null;
+                    LocalTreeNode treeNode = null;
 
                     if (subNodes.Count == 1)
                     {
@@ -91,23 +91,23 @@ namespace WPF
                         }
                         else
                         {
-                            treeNode = new SDL_TreeNode(strShortPath, new SDL_TreeNode[] { subNode.AddToTree() });
+                            treeNode = new LocalTreeNode(strShortPath, new LocalTreeNode[] { subNode.AddToTree() });
                         }
                     }
                     else if (subNodes.Count > 1)
                     {
-                        UList<SDL_TreeNode> treeList = new UList<SDL_TreeNode>();
+                        UList<LocalTreeNode> treeList = new UList<LocalTreeNode>();
 
                         foreach (Node node in subNodes.Values)
                         {
                             treeList.Add(node.AddToTree());
                         }
 
-                        treeNode = new SDL_TreeNode(strShortPath, treeList.ToArray());
+                        treeNode = new LocalTreeNode(strShortPath, treeList.ToArray());
                     }
                     else
                     {
-                        treeNode = new SDL_TreeNode(strShortPath);
+                        treeNode = new LocalTreeNode(strShortPath);
                     }
 
                     //Utilities.Assert(1301.2305, treeNode.Text == strShortPath, "\"" + treeNode.Text + "\" != \"" + strShortPath + "\""); not true for non-root

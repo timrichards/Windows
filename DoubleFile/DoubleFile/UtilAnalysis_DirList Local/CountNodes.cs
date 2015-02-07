@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using DoubleFile;
 
-namespace WPF
+namespace Local
 {
     static class CountNodes
     {
-        internal static int Go(List<SDL_TreeNode> listNodes)
+        internal static int Go(List<LocalTreeNode> listNodes)
         {
             int nCount = 0;
 
-            foreach (SDL_TreeNode treeNode in listNodes)
+            foreach (LocalTreeNode treeNode in listNodes)
             {
                 nCount += Go(treeNode, bNextNode: false);
             }
@@ -17,21 +17,21 @@ namespace WPF
             return nCount;
         }
 
-        internal static int Go(SDL_TreeNode treeNode_in, bool bNextNode = true)
+        internal static int Go(LocalTreeNode treeNode_in, bool bNextNode = true)
         {
-            SDL_TreeNode treeNode = treeNode_in;
+            LocalTreeNode treeNode = treeNode_in;
             int nCount = 0;
 
             do
             {
                 if ((treeNode.Nodes != null) && (treeNode.Nodes.Count > 0))
                 {
-                    nCount += Go((SDL_TreeNode)treeNode.Nodes[0]);
+                    nCount += Go((LocalTreeNode)treeNode.Nodes[0]);
                 }
 
                 ++nCount;
             }
-            while (bNextNode && ((treeNode = (SDL_TreeNode)treeNode.NextNode) != null));
+            while (bNextNode && ((treeNode = (LocalTreeNode)treeNode.NextNode) != null));
 
             return nCount;
         }

@@ -3,19 +3,19 @@ using System.Drawing;
 using System.Windows.Forms;
 using DoubleFile;
 
-namespace WPF
+namespace Local
 {
     partial class Collate
     {
         static class InsertSizeMarkerStatic
         {
-            internal static void Go(List<WPF_LVitem> listLVitems, int nIx, bool bUnique, bool bAdd = false)
+            internal static void Go(List<LocalLVitem> listLVitems, int nIx, bool bUnique, bool bAdd = false)
             {
                 Init();
 
-                WPF_LVitem lvItem = (WPF_LVitem)lvMarker.Clone();
+                LocalLVitem lvItem = (LocalLVitem)lvMarker.Clone();
 
-                lvItem.Text = ((UtilAnalysis_DirList.FormatSize(((NodeDatum)((SDL_TreeNode)(bUnique ? listLVitems[nIx].Tag : ((UList<SDL_TreeNode>)listLVitems[nIx].Tag)[0])).Tag).nTotalLength, bNoDecimal: true)));
+                lvItem.Text = ((UtilAnalysis_DirList.FormatSize(((NodeDatum)((LocalTreeNode)(bUnique ? listLVitems[nIx].Tag : ((UList<LocalTreeNode>)listLVitems[nIx].Tag)[0])).Tag).nTotalLength, bNoDecimal: true)));
 
                 if (bAdd)
                 {
@@ -39,7 +39,7 @@ namespace WPF
                 }
             }
 
-            readonly static WPF_LVitem lvMarker = new WPF_LVitem();
+            readonly static LocalLVitem lvMarker = new LocalLVitem();
             static bool bInit = false;
         }
     }

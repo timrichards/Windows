@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using DoubleFile;
 
-namespace WPF
+namespace Local
 {
     partial class Collate
     {
@@ -13,15 +13,15 @@ namespace WPF
         {
             internal int Count { get; private set; }
 
-            internal AddTreeToList(UList<SDL_TreeNode> listTreeNodes, List<SDL_TreeNode> listSameVol)
+            internal AddTreeToList(UList<LocalTreeNode> listTreeNodes, List<LocalTreeNode> listSameVol)
             {
                 m_listTreeNodes = listTreeNodes;
                 m_listSameVol = listSameVol;
             }
 
-            internal AddTreeToList Go(List<SDL_TreeNode> listNodes)
+            internal AddTreeToList Go(List<LocalTreeNode> listNodes)
             {
-                foreach (SDL_TreeNode treeNode in listNodes)
+                foreach (LocalTreeNode treeNode in listNodes)
                 {
                     Go(treeNode, bNextNode: false);
                 }
@@ -29,14 +29,14 @@ namespace WPF
                 return this;
             }
 
-            void Go(SDL_TreeNode treeNode_in, bool bCloneOK = false, bool bNextNode = true)
+            void Go(LocalTreeNode treeNode_in, bool bCloneOK = false, bool bNextNode = true)
             {
                 if (treeNode_in == null)
                 {
                     MBoxStatic.Assert(1305.6302, false);
                 }
 
-                SDL_TreeNode treeNode = treeNode_in;
+                LocalTreeNode treeNode = treeNode_in;
 
                 do
                 {
@@ -69,14 +69,14 @@ namespace WPF
 
                     if (treeNode.FirstNode != null)
                     {
-                        Go((SDL_TreeNode)treeNode.FirstNode, bCloneOK || (new Color[] { Color.SteelBlue, Color.DarkBlue }.Contains(treeNode.ForeColor)));
+                        Go((LocalTreeNode)treeNode.FirstNode, bCloneOK || (new Color[] { Color.SteelBlue, Color.DarkBlue }.Contains(treeNode.ForeColor)));
                     }
                 }
-                while (bNextNode && ((treeNode = (SDL_TreeNode)treeNode.NextNode) != null));
+                while (bNextNode && ((treeNode = (LocalTreeNode)treeNode.NextNode) != null));
             }
 
-            UList<SDL_TreeNode> m_listTreeNodes = null;
-            List<SDL_TreeNode> m_listSameVol = null;
+            UList<LocalTreeNode> m_listTreeNodes = null;
+            List<LocalTreeNode> m_listSameVol = null;
         }
     }
 }

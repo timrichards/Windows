@@ -7,7 +7,7 @@ using System.Drawing.Drawing2D;
 using System.Windows.Threading;
 using DoubleFile;
 
-namespace WPF
+namespace Local
 {
     [System.ComponentModel.DesignerCategory("Code")]
     class TreeMapUserControl : UserControl
@@ -19,10 +19,10 @@ namespace WPF
         Rectangle m_rectCenter = Rectangle.Empty;
         SizeF m_sizeTranslate = SizeF.Empty;
         BufferedGraphics m_bg = null;
-        SDL_TreeNode m_treeNode = null;
-        SDL_TreeNode m_prevNode = null;
-        SDL_TreeNode m_deepNode = null;
-        SDL_TreeNode m_deepNodeDrawn = null;
+        LocalTreeNode m_treeNode = null;
+        LocalTreeNode m_prevNode = null;
+        LocalTreeNode m_deepNode = null;
+        LocalTreeNode m_deepNodeDrawn = null;
         readonly DispatcherTimer m_timerAnim = new DispatcherTimer();
         int m_nAnimFrame = 0;
         DateTime m_dtHideGoofball = DateTime.MinValue;
@@ -82,7 +82,7 @@ namespace WPF
             base.Dispose(disposing);
         }
 
-        internal SDL_TreeNode DoToolTip(Point pt_in)
+        internal LocalTreeNode DoToolTip(Point pt_in)
         {
             ClearSelection();
 
@@ -108,7 +108,7 @@ namespace WPF
             m_dtHideGoofball = DateTime.MinValue;   // click anywhere else on the treemap and the goofball returns.
 
             Point pt = Point.Ceiling(new PointF(pt_in.X / m_sizeTranslate.Width, pt_in.Y / m_sizeTranslate.Height));
-            SDL_TreeNode nodeRet = null;
+            LocalTreeNode nodeRet = null;
             bool bImmediateFiles = false;
             bool bVolumeView = false;
 
@@ -126,14 +126,14 @@ namespace WPF
                     }
                 }
 
-                SDL_TreeNode m_prevNode_A = m_prevNode ?? m_treeNode;
+                LocalTreeNode m_prevNode_A = m_prevNode ?? m_treeNode;
 
                 if ((nodeRet = FindMapNode(m_prevNode_A, pt)) != null)
                 {
                     return;
                 }
 
-                SDL_TreeNode nodeUplevel = (SDL_TreeNode)((m_prevNode != null) ? m_prevNode.Parent : null);
+                LocalTreeNode nodeUplevel = (LocalTreeNode)((m_prevNode != null) ? m_prevNode.Parent : null);
                 bool bFoundUplevel = false;
 
                 while (nodeUplevel != null)
@@ -144,7 +144,7 @@ namespace WPF
                         return;
                     }
 
-                    nodeUplevel = (SDL_TreeNode)nodeUplevel.Parent;
+                    nodeUplevel = (LocalTreeNode)nodeUplevel.Parent;
                 }
 
                 if (bFoundUplevel)
@@ -162,7 +162,7 @@ namespace WPF
 
             if ((bVolumeView == false) && (bImmediateFiles == false))
             {
-                SDL_TreeNode nodeRet_A = FindMapNode(((NodeDatum)nodeRet.Tag).TreeMapFiles, pt);
+                LocalTreeNode nodeRet_A = FindMapNode(((NodeDatum)nodeRet.Tag).TreeMapFiles, pt);
 
                 if (nodeRet_A != null && (nodeRet == m_treeNode))
                 {
@@ -198,9 +198,9 @@ namespace WPF
             return null;
         }
 
-        SDL_TreeNode FindMapNode(SDL_TreeNode treeNode_in, Point pt, bool bNextNode = false)
+        LocalTreeNode FindMapNode(LocalTreeNode treeNode_in, Point pt, bool bNextNode = false)
         {
-            SDL_TreeNode treeNode = treeNode_in;
+            LocalTreeNode treeNode = treeNode_in;
 
             if (treeNode == null)
             {
@@ -226,19 +226,19 @@ namespace WPF
                     continue;
                 }
 
-                SDL_TreeNode foundNode = FindMapNode((SDL_TreeNode)treeNode.Nodes[0], pt, bNextNode: true);
+                LocalTreeNode foundNode = FindMapNode((LocalTreeNode)treeNode.Nodes[0], pt, bNextNode: true);
 
                 if (foundNode != null)
                 {
                     return foundNode;
                 }
             }
-            while (bNextNode && ((treeNode = (SDL_TreeNode)treeNode.NextNode) != null));
+            while (bNextNode && ((treeNode = (LocalTreeNode)treeNode.NextNode) != null));
 
             return null;
         }
 
-        SDL_TreeNode GetFileList(SDL_TreeNode parent)
+        LocalTreeNode GetFileList(LocalTreeNode parent)
         {
             List<ulong> listLengths = new List<ulong>();
             List<string[]> listFiles = TreeSelect.GetFileList(parent, listLengths);
@@ -248,7 +248,7 @@ namespace WPF
                 return null;
             }
 
-            SDL_TreeNode nodeFileList = new SDL_TreeNode(parent.Text);
+            LocalTreeNode nodeFileList = new LocalTreeNode(parent.Text);
             ulong nTotalLength = 0;
             List<ulong>.Enumerator iterUlong = listLengths.GetEnumerator();
 
@@ -264,7 +264,7 @@ namespace WPF
                     continue;
                 }
 
-                SDL_TreeNode nodeFile = new SDL_TreeNode(arrLine[0]);
+                LocalTreeNode nodeFile = new LocalTreeNode(arrLine[0]);
 
                 nodeFile.Tag = nodeDatum_A;
                 nodeFile.ForeColor = Color.OliveDrab;
@@ -345,7 +345,7 @@ namespace WPF
             ClearSelection();
         }
 
-        internal void Render(SDL_TreeNode treeNode)
+        internal void Render(LocalTreeNode treeNode)
         {
             if ((m_deepNode == null) || (m_deepNode.IsChildOf(treeNode) == false))
             {
@@ -403,7 +403,7 @@ namespace WPF
                 return null;
             }
 
-            SDL_TreeNode treeNode_A = (SDL_TreeNode)m_toolTip.Tag;
+            LocalTreeNode treeNode_A = (LocalTreeNode)m_toolTip.Tag;
 
             if (treeNode_A.TreeView != null)    // null if fake file treenode (NodeDatum.TreeMapFiles)
             {
@@ -481,7 +481,7 @@ namespace WPF
         }
 
         void RecurseDrawGraph(
-            SDL_TreeNode item,
+            LocalTreeNode item,
             Rectangle rc,
             bool bStart = false
         )
@@ -539,10 +539,10 @@ namespace WPF
         //I learned this squarification style from the KDirStat executable.
         //It's the most complex one here but also the clearest, imho.
 
-        bool KDirStat_DrawChildren(Graphics graphics, SDL_TreeNode parent_in, bool bStart = false)
+        bool KDirStat_DrawChildren(Graphics graphics, LocalTreeNode parent_in, bool bStart = false)
         {
-            List<SDL_TreeNode> listChildren = null;
-            SDL_TreeNode parent = null;
+            List<LocalTreeNode> listChildren = null;
+            LocalTreeNode parent = null;
 
             bool bVolumeNode = false;
 
@@ -561,14 +561,14 @@ namespace WPF
                 }
 
                 NodeDatum nodeDatumFree = new NodeDatum();
-                SDL_TreeNode nodeFree = new SDL_TreeNode(parent_in.Text + " (free space)");
+                LocalTreeNode nodeFree = new LocalTreeNode(parent_in.Text + " (free space)");
 
                 nodeDatumFree.nTotalLength = rootNodeDatum.VolumeFree;
                 nodeFree.Tag = nodeDatumFree;
                 nodeFree.ForeColor = Color.MediumSpringGreen;
 
                 NodeDatum nodeDatumUnread = new NodeDatum();
-                SDL_TreeNode nodeUnread = new SDL_TreeNode(parent_in.Text + " (unread data)");
+                LocalTreeNode nodeUnread = new LocalTreeNode(parent_in.Text + " (unread data)");
                 ulong nVolumeLength = rootNodeDatum.VolumeLength;
                 long nUnreadLength = (long)nVolumeLength - (long)rootNodeDatum.VolumeFree - (long)rootNodeDatum.nTotalLength;
 
@@ -585,7 +585,7 @@ namespace WPF
                 nodeDatumUnread.nTotalLength = (ulong)nUnreadLength;
                 nodeUnread.Tag = nodeDatumUnread;
                 nodeUnread.ForeColor = Color.MediumVioletRed;
-                listChildren = new List<SDL_TreeNode>();
+                listChildren = new List<LocalTreeNode>();
                 listChildren.Add(parent_in);                                // parent added as child, with two other nodes:
                 listChildren.Add(nodeFree);                                 // free space (color: spring green); and
 
@@ -594,7 +594,7 @@ namespace WPF
                     listChildren.Add(nodeUnread);                           // unread guess, affected by compression and hard links (violet)
                 }
 
-                parent = new SDL_TreeNode(parent_in.Text + " (volume)");
+                parent = new LocalTreeNode(parent_in.Text + " (volume)");
 
                 NodeDatum nodeDatumVolume = new NodeDatum();
 
@@ -608,7 +608,7 @@ namespace WPF
             if (bVolumeNode == false)
             {
                 parent = parent_in;
-                listChildren = parent.Nodes.Cast<SDL_TreeNode>().Where(t => ((NodeDatum)t.Tag).nTotalLength > 0).ToList();
+                listChildren = parent.Nodes.Cast<LocalTreeNode>().Where(t => ((NodeDatum)t.Tag).nTotalLength > 0).ToList();
             }
 
             NodeDatum nodeDatum = (NodeDatum)parent.Tag;
@@ -626,7 +626,7 @@ namespace WPF
 
                 nodeFiles.nTotalLength = nodeDatum.nLength;
 
-                SDL_TreeNode treeNode = new SDL_TreeNode(parent.Text);
+                LocalTreeNode treeNode = new LocalTreeNode(parent.Text);
 
                 treeNode.Tag = nodeFiles;
                 treeNode.ForeColor = Color.OliveDrab;
@@ -682,7 +682,7 @@ namespace WPF
 
                 for (int i = 0; i < childrenPerRow[row]; i++, c++)
                 {
-                    SDL_TreeNode child = listChildren[c];
+                    LocalTreeNode child = listChildren[c];
                     MBoxStatic.Assert(1302.3305, childWidth[c] >= 0);
                     double fRight = left + childWidth[c] * width;
                     int right = (int)fRight;
@@ -725,8 +725,8 @@ namespace WPF
             return true;
         }
 
-        double KDirStat_CalcutateNextRow(SDL_TreeNode parent, int nextChild, double width, ref int childrenUsed, double[] arrChildWidth,
-            List<SDL_TreeNode> listChildren)
+        double KDirStat_CalcutateNextRow(LocalTreeNode parent, int nextChild, double width, ref int childrenUsed, double[] arrChildWidth,
+            List<LocalTreeNode> listChildren)
         {
             const double _minProportion = 0.4;
             MBoxStatic.Assert(1302.3308, _minProportion < 1);

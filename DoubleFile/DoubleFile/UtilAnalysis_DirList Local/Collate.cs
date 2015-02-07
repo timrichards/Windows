@@ -6,20 +6,20 @@ using System.Linq;
 using System.Text;
 using DoubleFile;
 
-namespace WPF
+namespace Local
 {
     partial class Collate
     {
         internal Collate(GlobalData_Base gd_in,
-            SortedDictionary<FolderKeyStruct, UList<SDL_TreeNode>> dictNodes,
-            WPF_TreeView tvBrowseWPF,
-            WPF_ListView lvClones,
-            WPF_ListView lvSameVol,
-            WPF_ListView lvUnique,
-            List<SDL_TreeNode> listRootNodes,
-            UList<SDL_TreeNode> listTreeNodes,
+            SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>> dictNodes,
+            LocalTV tvBrowseWPF,
+            LocalLV lvClones,
+            LocalLV lvSameVol,
+            LocalLV lvUnique,
+            List<LocalTreeNode> listRootNodes,
+            UList<LocalTreeNode> listTreeNodes,
             bool bCheckboxes,
-            List<WPF_LVitem> list_lvIgnore,
+            List<LocalLVitem> list_lvIgnore,
             bool bLoose)
         {
             gd = gd_in;
@@ -50,14 +50,14 @@ namespace WPF
             }
         }
 
-        internal static void InsertSizeMarkers(List<WPF_LVitem> listLVitems)
+        internal static void InsertSizeMarkers(List<LocalLVitem> listLVitems)
         {
             if (listLVitems.Count <= 0)
             {
                 return;
             }
 
-            bool bUnique = (listLVitems[0].Tag is SDL_TreeNode);
+            bool bUnique = (listLVitems[0].Tag is LocalTreeNode);
             int nCount = listLVitems.Count;
             int nInterval = (nCount < 100) ? 10 : (nCount < 1000) ? 25 : 50;
 
@@ -83,7 +83,7 @@ namespace WPF
 
         internal void Step1_OnThread()
         {
-            WPF_TreeView treeView = new WPF_TreeView();     // sets Level and NextNode
+            LocalTV treeView = new LocalTV();     // sets Level and NextNode
 
             if (m_listRootNodes.Count <= 0)
             {
@@ -102,7 +102,7 @@ namespace WPF
                 int nMaxLevel = m_list_lvIgnore.Max(i => int.Parse(i.SubItems[1].Text) - 1);
                 StringBuilder sbMatch = new StringBuilder();
 
-                foreach (WPF_LVitem lvItem in m_list_lvIgnore)
+                foreach (LocalLVitem lvItem in m_list_lvIgnore)
                 {
                     sbMatch.AppendLine(lvItem.Text);
                 }
@@ -111,17 +111,17 @@ namespace WPF
                 UtilProject.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             }
 
-            Dictionary<SDL_TreeNode, WPF_LVitem> dictIgnoreMark = new Dictionary<SDL_TreeNode, WPF_LVitem>();
-            SortedDictionary<FolderKeyStruct, List<SDL_TreeNode>> dictNodes = new SortedDictionary<FolderKeyStruct, List<SDL_TreeNode>>();
+            Dictionary<LocalTreeNode, LocalLVitem> dictIgnoreMark = new Dictionary<LocalTreeNode, LocalLVitem>();
+            SortedDictionary<FolderKeyStruct, List<LocalTreeNode>> dictNodes = new SortedDictionary<FolderKeyStruct, List<LocalTreeNode>>();
 
-            foreach (KeyValuePair<FolderKeyStruct, UList<SDL_TreeNode>> pair in m_dictNodes)  // clone to remove ignored
+            foreach (KeyValuePair<FolderKeyStruct, UList<LocalTreeNode>> pair in m_dictNodes)  // clone to remove ignored
             {                                                                       // m_ vs local check is via List vs UList
                 dictNodes.Add(pair.Key, pair.Value.ToList());                       // clone pair.Value to remove ignored, using ToList() 
             }
 
-            foreach (KeyValuePair<SDL_TreeNode, WPF_LVitem> pair in dictIgnoreNodes)
+            foreach (KeyValuePair<LocalTreeNode, LocalLVitem> pair in dictIgnoreNodes)
             {
-                SDL_TreeNode treeNode = pair.Key;
+                LocalTreeNode treeNode = pair.Key;
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
                 if (dictNodes.ContainsKey(nodeDatum.Key) == false)
@@ -131,7 +131,7 @@ namespace WPF
 
                 if (m_bLoose)
                 {
-                    foreach (SDL_TreeNode treeNode_A in dictNodes[nodeDatum.Key])
+                    foreach (LocalTreeNode treeNode_A in dictNodes[nodeDatum.Key])
                     {
                         dictIgnoreMark.Add(treeNode_A, pair.Value);
                     }
@@ -150,16 +150,16 @@ namespace WPF
                 }
             }
 
-            SortedDictionary<FolderKeyStruct, SDL_TreeNode> dictUnique = new SortedDictionary<FolderKeyStruct, SDL_TreeNode>();
+            SortedDictionary<FolderKeyStruct, LocalTreeNode> dictUnique = new SortedDictionary<FolderKeyStruct, LocalTreeNode>();
 
-            foreach (KeyValuePair<FolderKeyStruct, List<SDL_TreeNode>> pair in dictNodes)
+            foreach (KeyValuePair<FolderKeyStruct, List<LocalTreeNode>> pair in dictNodes)
             {
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
                     return;
                 }
 
-                List<SDL_TreeNode> listNodes = (List<SDL_TreeNode>)pair.Value;
+                List<LocalTreeNode> listNodes = (List<LocalTreeNode>)pair.Value;
 
                 if (listNodes.Count < 1)
                 {
@@ -171,9 +171,9 @@ namespace WPF
                 {
                     // Parent folder may contain only its clone subfolder, in which case unmark the subfolder
 
-                    UList<SDL_TreeNode> listKeep = new UList<SDL_TreeNode>();
+                    UList<LocalTreeNode> listKeep = new UList<LocalTreeNode>();
 
-                    foreach (SDL_TreeNode treeNode_A in listNodes)
+                    foreach (LocalTreeNode treeNode_A in listNodes)
                     {
                         if (m_bThreadAbort || gd.WindowClosed)
                         {
@@ -192,7 +192,7 @@ namespace WPF
 
                     if (listKeep.Count > 1)
                     {
-                        foreach (SDL_TreeNode treeNode_A in listKeep)
+                        foreach (LocalTreeNode treeNode_A in listKeep)
                         {
                             ((NodeDatum)treeNode_A.Tag).m_listClones = listKeep;
                         }
@@ -205,7 +205,7 @@ namespace WPF
 
                 if (listNodes.Count == 1)               // "else"
                 {
-                    SDL_TreeNode treeNode = listNodes[0];
+                    LocalTreeNode treeNode = listNodes[0];
 
                     if (((NodeDatum)treeNode.Tag).nImmediateFiles > 0)
                     {
@@ -214,9 +214,9 @@ namespace WPF
                 }
             }
 
-            SortedDictionary<FolderKeyStruct, UList<SDL_TreeNode>> dictClones = new SortedDictionary<FolderKeyStruct, UList<SDL_TreeNode>>();
+            SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>> dictClones = new SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>>();
 
-            foreach (SDL_TreeNode treeNode in m_listRootNodes)
+            foreach (LocalTreeNode treeNode in m_listRootNodes)
             {
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
@@ -228,7 +228,7 @@ namespace WPF
 
             m_listRootNodes.Sort((x, y) => string.Compare(x.Text, y.Text));
 
-            foreach (KeyValuePair<FolderKeyStruct, UList<SDL_TreeNode>> listNodes in dictClones)
+            foreach (KeyValuePair<FolderKeyStruct, UList<LocalTreeNode>> listNodes in dictClones)
             {
                 // load up listLVdiffVol
 
@@ -256,28 +256,28 @@ namespace WPF
                 {
                     str_nClones = nClones.ToString("###,###");
 
-                    foreach (SDL_TreeNode node in listNodes.Value)
+                    foreach (LocalTreeNode node in listNodes.Value)
                     {
                         node.ForeColor = Color.Blue;
                     }
                 }
 
-                WPF_LVitem lvItem = new WPF_LVitem(new string[] { string.Empty, str_nClones });
+                LocalLVitem lvItem = new LocalLVitem(new string[] { string.Empty, str_nClones });
 
                 lvItem.Tag = listNodes.Value;
                 lvItem.ForeColor = listNodes.Value[0].ForeColor;
 
-                SDL_TreeNode nameNode = null;
+                LocalTreeNode nameNode = null;
                 int nLevel = int.MaxValue;
 
-                foreach (SDL_TreeNode treeNode in listNodes.Value)
+                foreach (LocalTreeNode treeNode in listNodes.Value)
                 {
                     if (m_bThreadAbort || gd.WindowClosed)
                     {
                         return;
                     }
 
-                    SDL_TreeNode parentNode = (SDL_TreeNode)treeNode.Parent;
+                    LocalTreeNode parentNode = (LocalTreeNode)treeNode.Parent;
 
                     if (treeNode.Level < nLevel)
                     {
@@ -293,10 +293,10 @@ namespace WPF
                 listLVdiffVol.Add(lvItem);
             }
 
-            foreach (KeyValuePair<SDL_TreeNode, WPF_LVitem> pair in dictIgnoreMark)
+            foreach (KeyValuePair<LocalTreeNode, LocalLVitem> pair in dictIgnoreMark)
             {
-                SDL_TreeNode treeNode = pair.Key;
-                WPF_LVitem lvIgnoreItem = pair.Value;
+                LocalTreeNode treeNode = pair.Key;
+                LocalLVitem lvIgnoreItem = pair.Value;
 
                 treeNode.ForeColor = Color.DarkGray;
                 treeNode.BackColor = Color.Empty;
@@ -311,18 +311,18 @@ namespace WPF
             dictClones = null;
             InsertSizeMarkers(listLVdiffVol);
 
-            foreach (KeyValuePair<FolderKeyStruct, SDL_TreeNode> listNodes in dictUnique)
+            foreach (KeyValuePair<FolderKeyStruct, LocalTreeNode> listNodes in dictUnique)
             {
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
                     return;
                 }
 
-                SDL_TreeNode treeNode = listNodes.Value;
+                LocalTreeNode treeNode = listNodes.Value;
 
                 MBoxStatic.Assert(1305.6321, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
-                WPF_LVitem lvItem = new WPF_LVitem(treeNode.Text);
+                LocalLVitem lvItem = new LocalLVitem(treeNode.Text);
 
                 lvItem.Tag = treeNode;
 
@@ -346,7 +346,7 @@ namespace WPF
             dictUnique = null;
             InsertSizeMarkers(listLVunique);
 
-            List<SDL_TreeNode> listSameVol = new List<SDL_TreeNode>();
+            List<LocalTreeNode> listSameVol = new List<LocalTreeNode>();
 
             if (m_listRootNodes.Count > 0)
             {
@@ -361,7 +361,7 @@ namespace WPF
 
             listSameVol.Sort((y, x) => ((NodeDatum)x.Tag).nTotalLength.CompareTo(((NodeDatum)y.Tag).nTotalLength));
 
-            foreach (SDL_TreeNode treeNode in listSameVol)
+            foreach (LocalTreeNode treeNode in listSameVol)
             {
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
@@ -387,7 +387,7 @@ namespace WPF
 
                 MBoxStatic.Assert(1305.6329, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
-                WPF_LVitem lvItem = new WPF_LVitem(new string[] { treeNode.Text, str_nClones });
+                LocalLVitem lvItem = new LocalLVitem(new string[] { treeNode.Text, str_nClones });
 
                 lvItem.Tag = nodeDatum.m_listClones;
                 lvItem.ForeColor = Color.Firebrick;
@@ -473,7 +473,7 @@ namespace WPF
 
                 if (m_tvBrowseWPF.SelectedNode != null)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
                 {
-                    SDL_TreeNode treeNode = m_tvBrowseWPF.SelectedNode;
+                    LocalTreeNode treeNode = m_tvBrowseWPF.SelectedNode;
 
                     m_tvBrowseWPF.SelectedNode = null;
                     m_tvBrowseWPF.SelectedNode = treeNode;   // reselect in repopulated collation listviewers
@@ -489,13 +489,13 @@ namespace WPF
 
         // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
         // Breadth-first.
-        void DifferentVolsQuery(SortedDictionary<FolderKeyStruct, UList<SDL_TreeNode>> dictClones, SDL_TreeNode treeNode, SDL_TreeNode rootClone = null)
+        void DifferentVolsQuery(SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>> dictClones, LocalTreeNode treeNode, LocalTreeNode rootClone = null)
         {
             // neither rootClone nor nMaxLength are used at all (rootClone is used as a bool).
             // provisional.
 
             NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
-            UList<SDL_TreeNode> listClones = nodeDatum.m_listClones;
+            UList<LocalTreeNode> listClones = nodeDatum.m_listClones;
             ulong nLength = nodeDatum.nTotalLength;
 
             if (nLength <= 100 * 1024)
@@ -520,7 +520,7 @@ namespace WPF
 
                     // Test to see if clones are on separate volumes.
 
-                    SDL_TreeNode rootNode = treeNode.Root();
+                    LocalTreeNode rootNode = treeNode.Root();
                     RootNodeDatum rootNodeDatum = (RootNodeDatum)rootNode.Tag;
 
                     MBoxStatic.Assert(1305.6308, new Color[] { Color.Empty, Color.DarkBlue }.Contains(treeNode.ForeColor));
@@ -528,7 +528,7 @@ namespace WPF
 
                     bool bDifferentVols = false;
 
-                    foreach (SDL_TreeNode subnode in listClones)
+                    foreach (LocalTreeNode subnode in listClones)
                     {
                         if (m_bThreadAbort || gd.WindowClosed)
                         {
@@ -537,7 +537,7 @@ namespace WPF
 
                         MBoxStatic.Assert(1305.6309, ((NodeDatum)subnode.Tag).Key == nodeDatum.Key);
 
-                        SDL_TreeNode rootNode_A = subnode.Root();
+                        LocalTreeNode rootNode_A = subnode.Root();
 
                         if (rootNode == rootNode_A)
                         {
@@ -562,7 +562,7 @@ namespace WPF
                         break;
                     }
 
-                    foreach (SDL_TreeNode subNode in listClones)
+                    foreach (LocalTreeNode subNode in listClones)
                     {
                         ((NodeDatum)subNode.Tag).m_bDifferentVols = bDifferentVols;
                         subNode.ForeColor = treeNode.ForeColor;
@@ -570,7 +570,7 @@ namespace WPF
                 }
             }
 
-            foreach (SDL_TreeNode subNode in treeNode.Nodes)
+            foreach (LocalTreeNode subNode in treeNode.Nodes)
             {
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
@@ -581,9 +581,9 @@ namespace WPF
             }
         }
 
-        void IgnoreNodeAndSubnodes(WPF_LVitem lvItem, SDL_TreeNode treeNode_in, bool bContinue = false)
+        void IgnoreNodeAndSubnodes(LocalLVitem lvItem, LocalTreeNode treeNode_in, bool bContinue = false)
         {
-            SDL_TreeNode treeNode = treeNode_in;
+            LocalTreeNode treeNode = treeNode_in;
 
             do
             {
@@ -597,20 +597,20 @@ namespace WPF
 
                 if (treeNode.Nodes.Count > 0)
                 {
-                    IgnoreNodeAndSubnodes(lvItem, (SDL_TreeNode)treeNode.Nodes[0], bContinue: true);
+                    IgnoreNodeAndSubnodes(lvItem, (LocalTreeNode)treeNode.Nodes[0], bContinue: true);
                 }
             }
-            while (bContinue && ((treeNode = (SDL_TreeNode)treeNode.NextNode) != null));
+            while (bContinue && ((treeNode = (LocalTreeNode)treeNode.NextNode) != null));
         }
 
-        void IgnoreNodeQuery(string sbMatch, int nMaxLevel, SDL_TreeNode treeNode_in)
+        void IgnoreNodeQuery(string sbMatch, int nMaxLevel, LocalTreeNode treeNode_in)
         {
             if (treeNode_in.Level > nMaxLevel)
             {
                 return;
             }
 
-            SDL_TreeNode treeNode = treeNode_in;
+            LocalTreeNode treeNode = treeNode_in;
 
             do
             {
@@ -621,7 +621,7 @@ namespace WPF
 
                 if (sbMatch.Contains(treeNode.Text.ToLower()))
                 {
-                    foreach (WPF_LVitem lvItem in m_list_lvIgnore)
+                    foreach (LocalLVitem lvItem in m_list_lvIgnore)
                     {
                         if (treeNode.Level != (int.Parse(lvItem.SubItems[1].Text) - 1))
                         {
@@ -630,7 +630,7 @@ namespace WPF
 
                         if (lvItem.Text.ToLower() == treeNode.Text.ToLower())
                         {
-                            IgnoreNodeAndSubnodes((WPF_LVitem)lvItem.Tag, treeNode);
+                            IgnoreNodeAndSubnodes((LocalLVitem)lvItem.Tag, treeNode);
                             break;
                         }
                     }
@@ -638,15 +638,15 @@ namespace WPF
 
                 if (treeNode.Nodes.Count > 0)
                 {
-                    IgnoreNodeQuery(sbMatch, nMaxLevel, (SDL_TreeNode)treeNode.Nodes[0]);
+                    IgnoreNodeQuery(sbMatch, nMaxLevel, (LocalTreeNode)treeNode.Nodes[0]);
                 }
             }
-            while ((treeNode = (SDL_TreeNode)treeNode.NextNode) != null);
+            while ((treeNode = (LocalTreeNode)treeNode.NextNode) != null);
         }
 
-        void SnowUniqueParents(SDL_TreeNode treeNode)
+        void SnowUniqueParents(LocalTreeNode treeNode)
         {
-            SDL_TreeNode parentNode = (SDL_TreeNode)treeNode.Parent;
+            LocalTreeNode parentNode = (LocalTreeNode)treeNode.Parent;
 
             while (parentNode != null)
             {
@@ -664,26 +664,26 @@ namespace WPF
                     MBoxStatic.Assert(1305.6313, (parentNode.ForeColor == Color.Empty) == (nodeDatum.m_lvItem == null));
                 }
 
-                parentNode = (SDL_TreeNode)parentNode.Parent;
+                parentNode = (LocalTreeNode)parentNode.Parent;
             }
         }
 
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
-        readonly SortedDictionary<FolderKeyStruct, UList<SDL_TreeNode>> m_dictNodes = null;
-        readonly WPF_TreeView m_tvBrowseWPF = null;
-        readonly WPF_ListView wpf_lvClones = null;
-        readonly WPF_ListView wpf_lvSameVol = null;
-        readonly WPF_ListView wpf_lvUnique = null;
-        readonly List<SDL_TreeNode> m_listRootNodes = null;
-        readonly UList<SDL_TreeNode> m_listTreeNodes = null;
+        readonly SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>> m_dictNodes = null;
+        readonly LocalTV m_tvBrowseWPF = null;
+        readonly LocalLV wpf_lvClones = null;
+        readonly LocalLV wpf_lvSameVol = null;
+        readonly LocalLV wpf_lvUnique = null;
+        readonly List<LocalTreeNode> m_listRootNodes = null;
+        readonly UList<LocalTreeNode> m_listTreeNodes = null;
         readonly bool m_bCheckboxes = false;
-        readonly List<WPF_LVitem> m_list_lvIgnore = null;
+        readonly List<LocalLVitem> m_list_lvIgnore = null;
 
         // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.
-        readonly List<WPF_LVitem> listLVunique = new List<WPF_LVitem>();
-        readonly List<WPF_LVitem> listLVsameVol = new List<WPF_LVitem>();
-        readonly List<WPF_LVitem> listLVdiffVol = new List<WPF_LVitem>();
-        readonly Dictionary<SDL_TreeNode, WPF_LVitem> dictIgnoreNodes = new Dictionary<SDL_TreeNode, WPF_LVitem>();
+        readonly List<LocalLVitem> listLVunique = new List<LocalLVitem>();
+        readonly List<LocalLVitem> listLVsameVol = new List<LocalLVitem>();
+        readonly List<LocalLVitem> listLVdiffVol = new List<LocalLVitem>();
+        readonly Dictionary<LocalTreeNode, LocalLVitem> dictIgnoreNodes = new Dictionary<LocalTreeNode, LocalLVitem>();
         readonly bool m_bLoose = false;
 
         bool m_bThreadAbort = false;

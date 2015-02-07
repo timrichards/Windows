@@ -5,15 +5,15 @@ using System.Threading;
 using System.Collections.Concurrent;
 using DoubleFile;
 
-namespace WPF
+namespace Local
 {
-    delegate void TreeStatusDelegate(LVitem_ProjectVM volStrings, SDL_TreeNode rootNode = null, bool bError = false);
+    delegate void TreeStatusDelegate(LVitem_ProjectVM volStrings, LocalTreeNode rootNode = null, bool bError = false);
 
     partial class Tree : TreeBase
     {
         internal Tree(GlobalData_Base gd_in,
             LV_ProjectVM lvProjectVM,
-            SortedDictionary<FolderKeyStruct, UList<SDL_TreeNode>> dictNodes,
+            SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>> dictNodes,
             Dictionary<string, string> dictDriveInfo,
             TreeStatusDelegate statusCallback,
             Action doneCallback)

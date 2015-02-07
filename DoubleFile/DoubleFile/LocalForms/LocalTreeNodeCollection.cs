@@ -2,16 +2,16 @@
 
 namespace DoubleFile
 {
-    class SDL_TreeNodeCollection : UList<SDL_TreeNode>
+    class LocalTreeNodeCollection : UList<LocalTreeNode>
     {
-        internal SDL_TreeNodeCollection(WPF_TreeView treeView)
+        internal LocalTreeNodeCollection(LocalTV treeView)
         {
             m_treeView = treeView;
         }
 
-        internal void AddRange(SDL_TreeNode[] arrNodes)
+        internal void AddRange(LocalTreeNode[] arrNodes)
         {
-            foreach (SDL_TreeNode treeNode in arrNodes)
+            foreach (LocalTreeNode treeNode in arrNodes)
             {
                 Add(treeNode);
             }
@@ -34,7 +34,7 @@ namespace DoubleFile
             return (nodePrevQuery != null);
         }
 
-        internal SDL_TreeNode this[string s]
+        internal LocalTreeNode this[string s]
         {
             get
             {
@@ -45,7 +45,7 @@ namespace DoubleFile
                 else
                 {
                     strPrevQuery = s;
-                    nodePrevQuery = (SDL_TreeNode)Keys.Where(t => t.Text == s);
+                    nodePrevQuery = (LocalTreeNode)Keys.Where(t => t.Text == s);
                     return nodePrevQuery;                   // TODO: Trim? ignore case? Probably neither.
                 }
             }
@@ -53,7 +53,7 @@ namespace DoubleFile
 
         internal new void Clear()
         {
-            foreach (SDL_TreeNode treeNode in this)
+            foreach (LocalTreeNode treeNode in this)
             {
                 treeNode.DetachFromTree();
             }
@@ -61,16 +61,16 @@ namespace DoubleFile
             base.Clear();
         }
 
-        static void SetLevel(WPF_TreeView treeView, SDL_TreeNodeCollection nodes, SDL_TreeNode nodeParent = null, int nLevel = 0)
+        static void SetLevel(LocalTV treeView, LocalTreeNodeCollection nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
         {
-            SDL_TreeNode nodePrev = null;
+            LocalTreeNode nodePrev = null;
 
             if ((nodeParent != null) && (nodes.Count > 0))
             {
                 nodeParent.FirstNode = nodes[0];
             }
 
-            foreach (SDL_TreeNode treeNode in nodes)
+            foreach (LocalTreeNode treeNode in nodes)
             {
                 if (nodePrev != null)
                 {
@@ -88,8 +88,8 @@ namespace DoubleFile
             }
         }
 
-        readonly WPF_TreeView m_treeView = null;
+        readonly LocalTV m_treeView = null;
         string strPrevQuery = null;
-        SDL_TreeNode nodePrevQuery = null;
+        LocalTreeNode nodePrevQuery = null;
     }
 }

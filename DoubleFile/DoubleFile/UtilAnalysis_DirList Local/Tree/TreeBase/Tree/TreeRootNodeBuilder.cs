@@ -7,7 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 using DoubleFile;
 
-namespace WPF
+namespace Local
 {
     partial class Tree
     {
@@ -24,11 +24,11 @@ namespace WPF
                 MBoxStatic.Assert(1301.2301, m_statusCallback != null);
             }
 
-            DetailsDatum TreeSubnodeDetails(SDL_TreeNode treeNode)
+            DetailsDatum TreeSubnodeDetails(LocalTreeNode treeNode)
             {
                 DetailsDatum datum = new DetailsDatum();
 
-                foreach (SDL_TreeNode node in treeNode.Nodes)
+                foreach (LocalTreeNode node in treeNode.Nodes)
                 {
                     if (m_bThreadAbort || gd.WindowClosed)
                     {
@@ -72,7 +72,7 @@ namespace WPF
                     }
                     else if (nodeDatum.nTotalLength > 100 * 1024)
                     {
-                        UList<SDL_TreeNode> listNodes = new UList<SDL_TreeNode>();
+                        UList<LocalTreeNode> listNodes = new UList<LocalTreeNode>();
 
                         listNodes.Add(treeNode);
                         m_dictNodes.Add(nKey, listNodes);
@@ -217,7 +217,7 @@ namespace WPF
                     dirData.AddToTree(strDir, nLineNo, nLength);
                 }
 
-                SDL_TreeNode rootTreeNode = dirData.AddToTree(m_volStrings.Nickname);
+                LocalTreeNode rootTreeNode = dirData.AddToTree(m_volStrings.Nickname);
 
                 if (rootTreeNode != null)
                 {

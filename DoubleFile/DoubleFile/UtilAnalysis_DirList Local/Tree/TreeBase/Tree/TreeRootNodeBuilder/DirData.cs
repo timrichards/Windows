@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using DoubleFile;
 
-namespace WPF
+namespace Local
 {
     partial class Tree
     {
@@ -35,7 +35,7 @@ namespace WPF
                     m_rootNode.Nodes.Add(str, new Node(gd, str, nLineNo, nLength, m_rootNode));
                 }
 
-                internal SDL_TreeNode AddToTree(string strVolumeName)
+                internal LocalTreeNode AddToTree(string strVolumeName)
                 {
                     var nodes = m_rootNode.Nodes.Values;
 

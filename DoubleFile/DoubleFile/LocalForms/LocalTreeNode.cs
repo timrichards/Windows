@@ -4,23 +4,23 @@ using System.Text;
 
 namespace DoubleFile
 {
-    class SDL_TreeNode
+    class LocalTreeNode
     {
         internal TreeViewItem_FileHashVM TVIVM = null;
         internal LVitem_FileHashVM LVIVM = null;
 
-        internal SDL_TreeNode()
+        internal LocalTreeNode()
         {
-            Nodes = new SDL_TreeNodeCollection(TreeView);
+            Nodes = new LocalTreeNodeCollection(TreeView);
         }
 
-        internal SDL_TreeNode(string strContent)
+        internal LocalTreeNode(string strContent)
             : this()
         {
             Text = strContent;
         }
 
-        internal SDL_TreeNode(string strContent, SDL_TreeNode[] arrNodes)
+        internal LocalTreeNode(string strContent, LocalTreeNode[] arrNodes)
             : this(strContent)
         {
             Nodes.AddRange(arrNodes);
@@ -35,8 +35,8 @@ namespace DoubleFile
                     return m_strFullPath;
                 }
 
-                Stack<SDL_TreeNode> stack = new Stack<SDL_TreeNode>(8);
-                SDL_TreeNode nodeParent = Parent;
+                Stack<LocalTreeNode> stack = new Stack<LocalTreeNode>(8);
+                LocalTreeNode nodeParent = Parent;
 
                 while (nodeParent != null)
                 {
@@ -65,7 +65,7 @@ namespace DoubleFile
             Level = -1;
             m_strFullPath = null;
 
-            foreach (SDL_TreeNode treeNode in Nodes)
+            foreach (LocalTreeNode treeNode in Nodes)
             {
                 treeNode.DetachFromTree();
             }
@@ -73,7 +73,7 @@ namespace DoubleFile
 
         internal void EnsureVisible() { }
 
-        internal bool IsChildOf(SDL_TreeNode treeNode)
+        internal bool IsChildOf(LocalTreeNode treeNode)
         {
             if (Level <= treeNode.Level)
             {
@@ -95,7 +95,7 @@ namespace DoubleFile
             return false;
         }
 
-        internal SDL_TreeNode Root()
+        internal LocalTreeNode Root()
         {
             var nodeParent = this;
 
@@ -107,14 +107,14 @@ namespace DoubleFile
             return nodeParent;
         }
 
-        readonly internal SDL_TreeNodeCollection Nodes = null;
+        readonly internal LocalTreeNodeCollection Nodes = null;
         internal string Text = null;
         internal string ToolTipText = null;
         internal string Name = null;
-        internal WPF_TreeView TreeView = null;
-        internal SDL_TreeNode FirstNode = null;
-        internal SDL_TreeNode NextNode = null;
-        internal SDL_TreeNode Parent = null;
+        internal LocalTV TreeView = null;
+        internal LocalTreeNode FirstNode = null;
+        internal LocalTreeNode NextNode = null;
+        internal LocalTreeNode Parent = null;
         internal int Level = -1;
         internal bool Checked = false;
         internal int SelectedImageIndex = -1;

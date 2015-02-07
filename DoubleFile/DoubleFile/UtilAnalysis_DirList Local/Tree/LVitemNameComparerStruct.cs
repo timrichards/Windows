@@ -5,23 +5,23 @@ using System.Linq;
 using System.Windows.Forms;
 using DoubleFile;
 
-namespace WPF
+namespace Local
 {
-    struct LVitemNameComparerStruct : IEqualityComparer<WPF_LVitem>
+    struct LVitemNameComparerStruct : IEqualityComparer<LocalLVitem>
     {
-        public bool Equals(WPF_LVitem x, WPF_LVitem y)
+        public bool Equals(LocalLVitem x, LocalLVitem y)
         {
             return (x != null) && (y != null) && (false == string.IsNullOrWhiteSpace(x.Name)) && x.Name.Equals(y.Name);
         }
 
-        public int GetHashCode(WPF_LVitem obj)
+        public int GetHashCode(LocalLVitem obj)
         {
             return obj.Name == null ? 0 : obj.Name.GetHashCode();
         }
 
         internal static void NameItems(ListView.ListViewItemCollection list)
         {
-            foreach (WPF_LVitem item in list)
+            foreach (LocalLVitem item in list)
             {
                 item.Name = item.Text;
 
@@ -32,24 +32,24 @@ namespace WPF
             }
         }
 
-        internal static void MarkItemsFrom1notIn2(WPF_ListView lv1, WPF_ListView lv2)
+        internal static void MarkItemsFrom1notIn2(LocalLV lv1, LocalLV lv2)
         {
             if ((lv1.Items.Count <= 0) || (lv2.Items.Count <= 0)) { return; }
 
-            List<WPF_LVitem> list = lv1.Items.Cast<WPF_LVitem>().Except(lv2.Items.Cast<WPF_LVitem>(), new LVitemNameComparerStruct()).ToList();
+            List<LocalLVitem> list = lv1.Items.Cast<LocalLVitem>().Except(lv2.Items.Cast<LocalLVitem>(), new LVitemNameComparerStruct()).ToList();
 
             if (list.Count > 0)
             {
                 lv1.TopItem = list[0];
             }
 
-            foreach (WPF_LVitem item in list)
+            foreach (LocalLVitem item in list)
             {
                 item.ForeColor = Color.Red;
             }
         }
 
-        internal static void SetTopItem(WPF_ListView lv1, WPF_ListView lv2)
+        internal static void SetTopItem(LocalLV lv1, LocalLV lv2)
         {
             if (lv1.TopItem == null) { return; }
             if (lv1.TopItem.Index > 0) { return; }

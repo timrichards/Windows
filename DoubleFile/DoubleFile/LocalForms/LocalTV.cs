@@ -2,11 +2,11 @@
 
 namespace DoubleFile
 {
-    class WPF_TreeView
+    class LocalTV
     {
-        internal WPF_TreeView()
+        internal LocalTV()
         {
-            Nodes = new SDL_TreeNodeCollection(this);
+            Nodes = new LocalTreeNodeCollection(this);
         }
 
         internal int GetNodeCount(bool includeSubTrees = false)
@@ -23,18 +23,18 @@ namespace DoubleFile
 
         internal void Select() { }
 
-        readonly internal SDL_TreeNodeCollection Nodes = null;
-        internal SDL_TreeNode SelectedNode = null;
-        internal SDL_TreeNode TopNode = null;
+        readonly internal LocalTreeNodeCollection Nodes = null;
+        internal LocalTreeNode SelectedNode = null;
+        internal LocalTreeNode TopNode = null;
         internal Font Font = null;
         internal bool CheckBoxes = false;
         internal bool Enabled = false;
 
-        int CountSubnodes(SDL_TreeNodeCollection nodes)
+        int CountSubnodes(LocalTreeNodeCollection nodes)
         {
             int nRet = 0;
 
-            foreach (SDL_TreeNode treeNode in nodes)
+            foreach (LocalTreeNode treeNode in nodes)
             {
                 nRet += CountSubnodes(treeNode.Nodes);
                 ++nRet;

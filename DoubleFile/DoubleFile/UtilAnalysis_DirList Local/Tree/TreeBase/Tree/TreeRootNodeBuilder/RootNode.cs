@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace WPF
+namespace Local
 {
     partial class Tree
     {

@@ -1,5 +1,5 @@
 ﻿
-namespace WPF
+namespace Local
 {
     class RootNodeDatum : NodeDatum
     {

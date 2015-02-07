@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DoubleFile;
 
-namespace WPF
+namespace DoubleFile
 {
-    class WPF_LVitemCollection : UList<WPF_LVitem>
+    class LocalLVitemCollection : UList<LocalLVitem>
     {
-        internal WPF_LVitemCollection(WPF_ListView listView)
+        internal LocalLVitemCollection(LocalLV listView)
         {
             m_listView = listView;
         }
@@ -18,13 +17,13 @@ namespace WPF
         {
             foreach (string s in arrItems)
             {
-                Add(new WPF_LVitem(s, m_listView));
+                Add(new LocalLVitem(s, m_listView));
             }
         }
 
-        internal void AddRange(WPF_LVitem[] arrItems)
+        internal void AddRange(LocalLVitem[] arrItems)
         {
-            foreach (WPF_LVitem lvItem in arrItems)
+            foreach (LocalLVitem lvItem in arrItems)
             {
                 lvItem.ListView = m_listView;
                 Add(lvItem);
@@ -42,9 +41,9 @@ namespace WPF
             return (lvItemPrevQuery != null);
         }
 
-        internal new WPF_LVitem this[int i] { get { if (i < Count) return base[i]; return NullValue; } }
+        internal new LocalLVitem this[int i] { get { if (i < Count) return base[i]; return NullValue; } }
 
-        internal WPF_LVitem this[string s]
+        internal LocalLVitem this[string s]
         {
             get
             {
@@ -55,15 +54,15 @@ namespace WPF
                 else
                 {
                     strPrevQuery = s;
-                    lvItemPrevQuery = (WPF_LVitem)Keys.Where(t => t.Text == s) ?? NullValue;
+                    lvItemPrevQuery = (LocalLVitem)Keys.Where(t => t.Text == s) ?? NullValue;
                     return lvItemPrevQuery;                   // TODO: Trim? ignore case? Probably neither.
                 }
             }
         }
 
-        static WPF_LVitem NullValue = new WPF_LVitem();
-        readonly WPF_ListView m_listView = null;
+        static LocalLVitem NullValue = new LocalLVitem();
+        readonly LocalLV m_listView = null;
         string strPrevQuery = null;
-        WPF_LVitem lvItemPrevQuery = null;
+        LocalLVitem lvItemPrevQuery = null;
     }
 }

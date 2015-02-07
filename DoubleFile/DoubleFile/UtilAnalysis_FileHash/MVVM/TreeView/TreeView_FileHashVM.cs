@@ -12,11 +12,11 @@ namespace DoubleFile
             TVI_DependencyProperty.TVFE = TVFE = tvfe;
         }
 
-        internal void SetData(List<SDL_TreeNode> rootNodes)
+        internal void SetData(List<LocalTreeNode> rootNodes)
         {
             int nIndex = -1;
 
-            foreach (SDL_TreeNode treeNode in rootNodes)
+            foreach (LocalTreeNode treeNode in rootNodes)
             {
                 m_Items.Add(new TreeViewItem_FileHashVM(this, treeNode, ++nIndex));
             }

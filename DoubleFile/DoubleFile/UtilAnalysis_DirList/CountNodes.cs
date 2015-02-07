@@ -26,12 +26,12 @@ namespace DoubleFile
             {
                 if ((treeNode.Nodes != null) && (treeNode.Nodes.Count > 0))
                 {
-                    nCount += Go((TreeNode)treeNode.Nodes[0]);
+                    nCount += Go(treeNode.Nodes[0]);
                 }
 
                 ++nCount;
             }
-            while (bNextNode && ((treeNode = (TreeNode)treeNode.NextNode) != null));
+            while (bNextNode && ((treeNode = treeNode.NextNode) != null));
 
             return nCount;
         }

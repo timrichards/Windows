@@ -263,7 +263,7 @@ namespace DoubleFile
 
             internal TreeRootNodeBuilder DoThreadFactory()
             {
-                m_thread = new Thread(new ThreadStart(Go));
+                m_thread = new Thread(Go);
                 m_thread.IsBackground = true;
                 m_thread.Start();
                 return this;

@@ -403,7 +403,7 @@ namespace Local
 
         internal void Step2_OnForm()
         {
-            UtilAnalysis_DirList.Closure(() =>
+            UtilProject.CheckAndInvoke(() =>
             {
                 if (m_bThreadAbort || gd.WindowClosed)
                 {

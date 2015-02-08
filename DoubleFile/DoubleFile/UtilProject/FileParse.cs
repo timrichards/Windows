@@ -363,7 +363,7 @@ namespace DoubleFile
                 // unkosher lambda "byref parameters"
                 bool bReadAttributeReturnValue = false;
                 string strReadAttributeReturnValue = null;
-                Action<string> ReadAttribute = new Action<string>(s =>
+                Action<string> ReadAttribute = s =>
                 {
                     bReadAttributeReturnValue = false;
                     strReadAttributeReturnValue = null;
@@ -379,7 +379,7 @@ namespace DoubleFile
 
                     strReadAttributeReturnValue = astr[2];
                     bReadAttributeReturnValue = true;
-                });
+                };
 
                 ReadAttribute(line);
 

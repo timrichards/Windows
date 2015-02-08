@@ -18,13 +18,13 @@ namespace DoubleFile
         internal LV_ProgressVM()
         {
             m_tmrUpdate.Interval = new TimeSpan(0, 0, 0, 0, 200);
-            m_tmrUpdate.Tick += new EventHandler((Object sender, EventArgs e) =>
+            m_tmrUpdate.Tick += (o, e) =>
             {
                 foreach (var lvItem in ItemsCast)
                 {
                     lvItem.TimerTick();
                 }
-            });
+            };
             m_tmrUpdate.Start();
         }
 

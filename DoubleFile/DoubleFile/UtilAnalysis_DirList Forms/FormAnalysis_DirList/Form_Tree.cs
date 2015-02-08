@@ -126,7 +126,7 @@ namespace DoubleFile
             }
 
             gd.m_bPutPathInFindEditBox = true;
-            UtilAnalysis_DirList.CheckAndInvoke(this, new Action(collate.Step2_OnForm));
+            UtilAnalysis_DirList.CheckAndInvoke(this, collate.Step2_OnForm);
             UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             collate = null;
 
@@ -389,7 +389,7 @@ namespace DoubleFile
                 }
 
                 gd_Tree.m_listTreeNodes.Clear();
-                gd_Tree.m_threadCollate = new Thread(new ThreadStart(DoCollation));
+                gd_Tree.m_threadCollate = new Thread(DoCollation);
                 gd_Tree.m_threadCollate.IsBackground = true;
                 gd_Tree.m_threadCollate.Start();
             }

@@ -131,7 +131,10 @@ namespace Local
                 ulong nVolLength = 0;
 
                 {
-                    string[] arrDriveInfo = File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_VolumeInfo)).ToArray();
+                    string[] arrDriveInfo = File
+                        .ReadLines(m_volStrings.ListingFile)
+                        .Where(s => s.StartsWith(ksLineType_VolumeInfo))
+                        .ToArray();
                     StringBuilder strBuilder = new StringBuilder();
                     int nIx = -1;
 
@@ -182,14 +185,20 @@ namespace Local
 
                 {
                     RootNode rootNode = new RootNode();
-                    string strStart = File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Start)).ToArray()[0];
+                    string strStart = File
+                        .ReadLines(m_volStrings.ListingFile)
+                        .Where(s => s.StartsWith(ksLineType_Start))
+                        .ToArray()[0];
 
                     rootNode.FirstLineNo = uint.Parse(strStart.Split('\t')[1]);
                     dirData = new DirData(gd, rootNode);
                 }
 
                 bool bZeroLengthsWritten = true;
-                List<string> listLines = File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory)).ToList();
+                List<string> listLines = File
+                    .ReadLines(m_volStrings.ListingFile)
+                    .Where(s => s.StartsWith(ksLineType_Directory))
+                    .ToList();
 
                 foreach (string strLine in listLines)
                 {
@@ -264,7 +273,7 @@ namespace Local
 
             internal TreeRootNodeBuilder DoThreadFactory()
             {
-                m_thread = new Thread(new ThreadStart(Go));
+                m_thread = new Thread(Go);
                 m_thread.IsBackground = true;
                 m_thread.Start();
                 return this;

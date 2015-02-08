@@ -96,7 +96,7 @@ namespace DoubleFile
 
         internal Thread DoThreadFactory()
         {
-            m_thread = new Thread(new ThreadStart(Go));
+            m_thread = new Thread(Go);
             m_thread.IsBackground = true;
             m_thread.Start();
             return m_thread;

@@ -39,7 +39,7 @@ namespace DoubleFile
             gd_Search_1_2 = new GlobalData_Search_1_2(gd, gd_Search_Path, gd_Tree);
 
             gd.m_tmrDoTree.Interval = new System.TimeSpan(0, 0, 3);
-            gd.m_tmrDoTree.Tick += new System.EventHandler((object sender, EventArgs e) =>
+            gd.m_tmrDoTree.Tick += (o, e) =>
             {
                 gd.m_tmrDoTree.Stop();
                 gd.m_bRestartTreeTimer = false;
@@ -57,7 +57,7 @@ namespace DoubleFile
 
                 DoTree(bKill: gd.m_bKillTree);
                 gd.m_bKillTree = true;
-            });
+            };
 
             // Assert string-lookup form items exist
             //    Utilities.Assert(1308.9305, context_rclick_node.Items[m_strMARKFORCOPY] != null);

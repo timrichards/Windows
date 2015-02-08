@@ -56,7 +56,7 @@ namespace DoubleFile
             m_defaultControl = defaultControl;
             BlinkyStruct local = this;
 
-            m_timer.Tick += new EventHandler((object sender, EventArgs e) =>
+            m_timer.Tick += (o, e) =>
             {
                 if (local.m_bProgress || (++local.m_nBlink < local.m_nNumBlinks))
                 {
@@ -66,7 +66,7 @@ namespace DoubleFile
                 {
                     local.Reset();
                 }
-            });
+            };
         }
 
         internal void SelectTreeNode(TreeNode treeNode, bool Once = true)

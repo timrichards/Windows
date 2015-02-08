@@ -250,7 +250,7 @@ namespace DoubleFile
 
                     var sbLine = new System.Text.StringBuilder(strLine);
 
-                    var Replace = new System.Action<string>((s) =>
+                    System.Action<string> Replace = s =>
                     {
                         var astr = sbLine.ToString().Split('\t').ToList();
 
@@ -263,7 +263,7 @@ namespace DoubleFile
 
                         astr[2] = s;
                         sbLine = new System.Text.StringBuilder(string.Join("\t", astr));
-                    });
+                    };
 
                     if (bDriveModel_Todo &&
                         strLine.StartsWith(FileParse.ksLineType_VolumeInfo_DriveModel))

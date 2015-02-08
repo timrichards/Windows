@@ -32,14 +32,14 @@ namespace DoubleFile
             m_toolTip.UseFading = true;
             m_toolTip.UseAnimation = true;
             m_timerAnim.Interval = new TimeSpan(0, 0, 0, 0, 33);    // 30 FPS
-            m_timerAnim.Tick += new EventHandler((Object sender, EventArgs e) =>
+            m_timerAnim.Tick += (o, e) =>
             {
                 if (m_rectCenter != Rectangle.Empty)
                 {
                     ++m_nAnimFrame;
                     Invalidate(m_rectCenter);
                 }
-            });
+            };
             m_timerAnim.Start();
 
             SetStyle(ControlStyles.DoubleBuffer |

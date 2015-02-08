@@ -24,7 +24,12 @@ namespace DoubleFile
 
         internal static object CheckAndInvoke(Control owner, Delegate action, object[] args = null)
         {
-            if ((owner != null) && (false == owner.Dispatcher.CheckAccess()))
+            if (owner == null)
+            {
+                return null;
+            }
+
+            if (false == owner.Dispatcher.CheckAccess())
             {
                 if (args == null)
                 {

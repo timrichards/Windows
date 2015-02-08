@@ -72,7 +72,7 @@ namespace DoubleFile
         {
             LVprojectVM = lvProjectVM;
             m_statusCallback = statusCallback;
-            m_thread = new Thread(new ThreadStart(Go));
+            m_thread = new Thread(Go);
             m_thread.IsBackground = true;
             m_thread.Start();
             return this;
@@ -113,15 +113,15 @@ namespace DoubleFile
             int nLVitems_A = 0;
             var dictFiles = new ConcurrentDictionary<FileKeyStruct, List<int>>();
             var tsStatus = new TimeSpan(0, 0, 0, 0, 200);
-            var tmrStatus = new Timer(new TimerCallback((Object state) =>
+            var tmrStatus = new Timer(state =>
             {
                 if (nLVitems == nLVitems_A)
                 {
                     m_statusCallback(nProgress: m_nFilesProgress / (double)m_nFilesTotal);
                 }
-            }), null, tsStatus, tsStatus);
+            }, null, tsStatus, tsStatus);
 
-            Parallel.ForEach(LVprojectVM.ItemsCast, (lvItem =>
+            Parallel.ForEach(LVprojectVM.ItemsCast, lvItem =>
             {
                 var iesLines = File.ReadLines(lvItem.ListingFile)
                      .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
@@ -170,7 +170,7 @@ namespace DoubleFile
                         }
                     }
                 }
-            }));
+            });
 
             m_DictFiles = dictFiles
                 .Where(kvp => kvp.Value.Count > 1)

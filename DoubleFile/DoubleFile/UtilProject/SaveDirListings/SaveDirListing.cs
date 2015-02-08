@@ -22,7 +22,7 @@ namespace DoubleFile
 
             internal SaveDirListing DoThreadFactory()
             {
-                m_thread = new Thread(new ThreadStart(Go));
+                m_thread = new Thread(Go);
                 m_thread.IsBackground = true;
                 m_thread.Start();
                 return this;
@@ -79,14 +79,14 @@ namespace DoubleFile
                 var sb = new StringBuilder();
                 int nCount = 0;
 
-                var WriteLine = new Action<Object>((o) =>
+                Action<Object> WriteLine = o =>
                 {
                     var s = (o != null) ? o.ToString() : null;
 
                     // Hack. Prevent blank line continue in FileParse.ConvertFile()
                     sb.AppendLine(((s == null) || (s.Length <= 0)) ? " " : s.Trim());
                     ++nCount;
-                });
+                };
 
                 WriteLine(driveInfo.AvailableFreeSpace); // These could all be named better, so kasDIlabels is different.
                 WriteLine(driveInfo.DriveFormat);        // Misnomer. Should be VolumeFormat.
@@ -118,10 +118,10 @@ namespace DoubleFile
                 double nProgressDenominator = listFilePaths.Count();        // double preserves mantissa
                 var timeSpan = new TimeSpan(0, 0, 0, 1);
 
-                System.Threading.Timer timer = new System.Threading.Timer(new TimerCallback((Object state) =>
+                System.Threading.Timer timer = new System.Threading.Timer(state =>
                 {
                     m_statusCallback(LVitemProjectVM, nProgress: nProgressNumerator / nProgressDenominator);
-                }), null, timeSpan, timeSpan);
+                }, null, timeSpan, timeSpan);
 
                 var dictHash = new ConcurrentDictionary<string, HashStruct>();
                 var dictException_FileRead = new Dictionary<string, string>();

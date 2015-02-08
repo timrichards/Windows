@@ -61,7 +61,7 @@ namespace DoubleFile
 
         internal void CreateFileDictStatusCallback(bool bDone = false, double nProgress = double.NaN)
         {
-            UtilProject.CheckAndInvoke(new Action(() =>
+            UtilProject.CheckAndInvoke(() =>
             {
                 if (gd.WindowClosed || (gd.FileDictionary == null) || gd.FileDictionary.IsAborted)
                 {
@@ -78,7 +78,7 @@ namespace DoubleFile
                 {
                     m_winProgress.SetProgress(ksProgressKey, nProgress);
                 }
-            }));
+            });
         }
 
         bool m_bCompleted = false;

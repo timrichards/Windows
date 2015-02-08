@@ -41,11 +41,11 @@ namespace DoubleFile
             {
                 bool bTrace = false; // Trace.Listeners.Cast<TraceListener>().Any(i => i is DefaultTraceListener);
 
-                Action messageBox = new Action(() =>
+                Action messageBox = () =>
                 {
                     MBoxStatic.ShowDialog(strError + "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.".PadRight(100), "SearchDirLists Assertion Failure");
                     static_bAssertUp = false;
-                });
+                };
 
                 if (bTrace)
                 {
@@ -78,7 +78,7 @@ namespace DoubleFile
         {
             var msgBoxRet = MessageBoxResult.None;
 
-            UtilProject.CheckAndInvoke(new Action(() =>
+            UtilProject.CheckAndInvoke(() =>
             {
                 if (false == GlobalData.static_TopWindow.IsLoaded)
                 {
@@ -101,7 +101,7 @@ namespace DoubleFile
 
                 // cancelled externally
                 msgBoxRet = MessageBoxResult.None;
-            }));
+            });
 
             return msgBoxRet;
         }

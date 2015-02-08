@@ -403,7 +403,7 @@ namespace Local
 
         internal void Step2_OnForm()
         {
-            UtilAnalysis_DirList.Closure(new Action(() =>
+            UtilAnalysis_DirList.Closure(() =>
             {
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
@@ -482,7 +482,7 @@ namespace Local
                 {
                     m_tvBrowseWPF.SelectedNode = m_listRootNodes[0];
                 }
-            }));
+            });
 
             static_this = null;
         }

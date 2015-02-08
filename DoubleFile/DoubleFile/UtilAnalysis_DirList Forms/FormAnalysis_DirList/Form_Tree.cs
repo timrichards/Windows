@@ -26,7 +26,7 @@ namespace DoubleFile
                 return;
             }
 
-            UtilAnalysis_DirList.CheckAndInvoke(this, new Action(() =>
+            UtilAnalysis_DirList.CheckAndInvoke(this, () =>
             {
                 if (bError)
                 {
@@ -49,14 +49,14 @@ namespace DoubleFile
                 {
                     MBoxStatic.Assert(1304.5309, false, "No data. Could be the directory is Access Denied.");
                 }
-            }));
+            });
         }
 
         void TreeDoneCallback()
         {
             DoCollation();
 
-            UtilAnalysis_DirList.CheckAndInvoke(this, new Action(() =>
+            UtilAnalysis_DirList.CheckAndInvoke(this, () =>
             {
                 ListView lvFake = new ListView();
 
@@ -67,17 +67,17 @@ namespace DoubleFile
 
                 form_lvCopyScratchpad.Items.Clear();
                 LoadCopyScratchPad(lvFake);
-            }));
+            });
         }
 
         void DoCollation()
         {
             if (gd_Tree.m_listRootNodes.Count <= 0)
             {
-                UtilAnalysis_DirList.CheckAndInvoke(this, new Action(() =>
+                UtilAnalysis_DirList.CheckAndInvoke(this, () =>
                 {
                     form_treeViewBrowse.Nodes.Clear();
-                }));
+                });
                 
                 return;
             }
@@ -85,7 +85,7 @@ namespace DoubleFile
             MBoxStatic.Assert(1304.5304, gd_Tree.m_listTreeNodes.Count == 0);
             MBoxStatic.Assert(1304.5305, InvokeRequired);
 
-            UtilAnalysis_DirList.CheckAndInvoke(this, new Action(() =>
+            UtilAnalysis_DirList.CheckAndInvoke(this, () =>
             {
                 MBoxStatic.Assert(1304.5306, gd_Tree.m_listLVignore.Count == 0);
 
@@ -96,7 +96,7 @@ namespace DoubleFile
                     lvItem_A.Tag = lvItem;
                     gd_Tree.m_listLVignore.Add(lvItem_A);
                 }
-            }));
+            });
 
             if (gd_Tree == null)
             {
@@ -136,7 +136,6 @@ namespace DoubleFile
             }
 
             gd_Tree.TreeCleanup();
-            GC.Collect();
 
             if (IsDisposed)
             {
@@ -157,7 +156,7 @@ namespace DoubleFile
 
         void TreeSelectStatusCallback(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem[] lvVolDetails = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null)
         {
-            UtilAnalysis_DirList.CheckAndInvoke(this, new Action(() =>
+            UtilAnalysis_DirList.CheckAndInvoke(this, () =>
             {
                 if (lvItemDetails != null)
                 {
@@ -274,12 +273,12 @@ namespace DoubleFile
                         LVitemNameComparerStruct.SetTopItem(lv2, lv1);
                     }
                 }
-            }));
+            });
         }
 
         void TreeSelectDoneCallback(bool bSecondComparePane)
         {
-            UtilAnalysis_DirList.CheckAndInvoke(this, new Action(() =>
+            UtilAnalysis_DirList.CheckAndInvoke(this, () =>
             {
                 if (bSecondComparePane)
                 {
@@ -291,7 +290,7 @@ namespace DoubleFile
                 }
 
                 SelectFoundFile();
-            }));
+            });
         }
 
         void DoTree(bool bKill = false)

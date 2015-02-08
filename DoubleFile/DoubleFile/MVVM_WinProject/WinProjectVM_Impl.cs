@@ -144,7 +144,7 @@ namespace DoubleFile
             //}))) { UtilProject.WriteLine("a"); }
 
             {
-                var thread = new Thread(new ThreadStart(() =>
+                var thread = new Thread(() =>
                 {
                     Parallel.ForEach(listFiles, strFilename =>
                     {
@@ -164,7 +164,7 @@ namespace DoubleFile
                             }
                         }
                     });
-                }));
+                });
 
                 thread.Start();
                 thread.Join();

@@ -72,7 +72,7 @@ namespace DoubleFile
 
             var formSDL = GlobalData.static_MainWindow.Analysis_DirListForm;
 
-            UtilAnalysis_DirList.CheckAndInvoke(formSDL, new Action(() =>
+            UtilAnalysis_DirList.CheckAndInvoke(formSDL, () =>
             {
                 // Display the treemap after the tree is built
                 var treeViewBrowse = formSDL.form_treeViewBrowse;
@@ -83,7 +83,7 @@ namespace DoubleFile
                 {
                     treeViewBrowse.SelectedNode = treeViewBrowse.Nodes[0];
                 }
-            }));
+            });
         }
 
         internal void DoTreeSelect(TreeNode treeNode, TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)

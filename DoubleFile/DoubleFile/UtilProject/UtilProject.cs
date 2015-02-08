@@ -12,19 +12,19 @@ namespace DoubleFile
 #endif
         }
 
-        internal static object CheckAndInvoke(Delegate action, object[] args = null)
+        internal static object CheckAndInvoke(Action action, object[] args = null)
         {
-            return CheckAndInvoke(GlobalData.static_MainWindow, action, args);
+            return CheckAndInvoke(GlobalData.static_MainWindow, action as Delegate, args);
+        }
+
+        internal static object CheckAndInvoke(BoolAction action, object[] args = null)
+        {
+            return CheckAndInvoke(GlobalData.static_MainWindow, action as Delegate, args);
         }
 
         internal static object CheckAndInvoke(Control owner, Delegate action, object[] args = null)
         {
-            if (owner == null)
-            {
-                return null;
-            }
-
-            if (false == owner.Dispatcher.CheckAccess())
+            if ((owner != null) && (false == owner.Dispatcher.CheckAccess()))
             {
                 if (args == null)
                 {
@@ -39,11 +39,11 @@ namespace DoubleFile
             {
                 if (action is Action)
                 {
-                    ((Action)action)();
+                    (action as Action)();
                 }
                 else if (action is BoolAction)
                 {
-                    return ((BoolAction)action)();
+                    return (action as BoolAction)();
                 }
                 else
                 {

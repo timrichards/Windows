@@ -780,7 +780,6 @@ namespace DoubleFile
             if (gd_Search_1_2.m_SearchResultsType2_List.Count > 0)
             {
                 gd_Search_1_2.m_SearchResultsType2_List.Clear();
-                GC.Collect();
             }
 
             gd_Search_1_2.m_nSearchResultsIndexer = -1;

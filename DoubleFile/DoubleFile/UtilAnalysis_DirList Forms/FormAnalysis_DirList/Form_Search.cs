@@ -130,7 +130,7 @@ namespace DoubleFile
 
         void SearchDoneCallback()
         {
-            UtilAnalysis_DirList.CheckAndInvoke(this, new Action(() =>
+            UtilAnalysis_DirList.CheckAndInvoke(this, () =>
             {
                 if ((gd_Search_1_2.m_searchType2 == null) || gd_Search_1_2.m_searchType2.IsAborted)
                 {
@@ -169,7 +169,7 @@ namespace DoubleFile
                 }
 
                 MBoxStatic.MessageBoxKill(GlobalData_Search_1_2.ksSearchTitle);
-            }));
+            });
         }
 
         private void DoSearchType2(string strSearch, bool bKill = false, bool bSearchFilesOnly = false)

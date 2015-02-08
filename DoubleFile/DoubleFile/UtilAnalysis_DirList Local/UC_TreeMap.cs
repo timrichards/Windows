@@ -126,7 +126,7 @@ namespace Local
             bool bImmediateFiles = false;
             bool bVolumeView = false;
 
-            UtilAnalysis_DirList.Closure(new Action(() =>
+            UtilAnalysis_DirList.Closure(() =>
             {
                 {
                     NodeDatum nodeDatum = ((NodeDatum)m_treeNode.Tag);
@@ -172,7 +172,7 @@ namespace Local
                 }
 
                 nodeRet = m_treeNode;
-            }));
+            });
 
             if ((bVolumeView == false) && (bImmediateFiles == false))
             {
@@ -563,7 +563,7 @@ namespace Local
 
             bool bVolumeNode = false;
 
-            UtilAnalysis_DirList.Closure(new Action(() =>
+            UtilAnalysis_DirList.Closure(() =>
             {
                 if ((bStart == false) || ((parent_in.Tag is RootNodeDatum) == false))
                 {
@@ -620,7 +620,7 @@ namespace Local
                 parent.Tag = nodeDatumVolume;
                 bVolumeNode = true;
                 rootNodeDatum.VolumeView = true;
-            }));
+            });
 
             if (bVolumeNode == false)
             {

@@ -125,7 +125,7 @@ namespace DoubleFile
             bool bImmediateFiles = false;
             bool bVolumeView = false;
 
-            UtilAnalysis_DirList.Closure(new Action(() =>
+            UtilAnalysis_DirList.Closure(() =>
             {
                 {
                     NodeDatum nodeDatum = ((NodeDatum)m_treeNode.Tag);
@@ -171,7 +171,7 @@ namespace DoubleFile
                 }
 
                 nodeRet = m_treeNode;
-            }));
+            });
 
             if ((bVolumeView == false) && (bImmediateFiles == false))
             {
@@ -562,7 +562,7 @@ namespace DoubleFile
 
             bool bVolumeNode = false;
 
-            UtilAnalysis_DirList.Closure(new Action(() =>
+            UtilAnalysis_DirList.Closure(() =>
             {
                 if ((bStart == false) || ((parent_in.Tag is RootNodeDatum) == false))
                 {
@@ -619,7 +619,7 @@ namespace DoubleFile
                 parent.Tag = nodeDatumVolume;
                 bVolumeNode = true;
                 rootNodeDatum.VolumeView = true;
-            }));
+            });
 
             if (bVolumeNode == false)
             {

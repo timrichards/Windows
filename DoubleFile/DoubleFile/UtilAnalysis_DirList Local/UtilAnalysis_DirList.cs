@@ -14,6 +14,11 @@ namespace DoubleFile
     {
         internal static void Closure(Action action) { action(); }
 
+        internal static object CheckAndInvoke(Control dispatcher, Action action, object[] args = null)
+        {
+            return CheckAndInvoke(dispatcher, action as Delegate, args);
+        }
+
         internal static object CheckAndInvoke(Control dispatcher, Delegate action, object[] args = null)
         {
             if (dispatcher == null)

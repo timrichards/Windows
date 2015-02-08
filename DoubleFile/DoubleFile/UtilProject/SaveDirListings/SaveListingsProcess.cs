@@ -75,7 +75,7 @@ namespace DoubleFile
 
         internal void SaveDirListingsStatusCallback(LVitem_ProjectVM lvItemProjectVM, string strError = null, bool bDone = false, double nProgress = double.NaN)
         {
-            UtilProject.CheckAndInvoke(new Action(() =>
+            UtilProject.CheckAndInvoke(() =>
             {
                 if (gd.WindowClosed || (gd_old.m_saveDirListings == null) || gd_old.m_saveDirListings.IsAborted)
                 {
@@ -109,7 +109,7 @@ namespace DoubleFile
                 {
                     m_winProgress.SetProgress(lvItemProjectVM.SourcePath, nProgress);
                 }
-            }));
+            });
         }
 
         internal void SaveDirListingsDoneCallback()
@@ -119,7 +119,7 @@ namespace DoubleFile
                 return;
             }
 
-            UtilProject.CheckAndInvoke(new Action(() =>
+            UtilProject.CheckAndInvoke(() =>
             {
                 if (gd_old.m_saveDirListings.FilesWritten > 0)
                 {
@@ -130,7 +130,7 @@ namespace DoubleFile
 
                 gd_old.m_saveDirListings = null;   // has to precede messagebox
                 MBoxStatic.ShowDialog("Completed. " + nFilesWritten + " file" + (nFilesWritten != 1 ? "s" : "") + " written.", "Save Directory Listings");
-            }));
+            });
         }
 
         readonly GlobalData_Base gd = null;

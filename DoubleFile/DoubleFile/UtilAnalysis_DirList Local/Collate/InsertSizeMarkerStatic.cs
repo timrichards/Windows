@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using System.Windows.Forms;
 using DoubleFile;
+using System.Windows.Media;
 
 namespace Local
 {
@@ -31,9 +31,9 @@ namespace Local
             {
                 if (bInit == false)
                 {
-                    lvMarker.BackColor = Color.DarkSlateGray;
-                    lvMarker.ForeColor = Color.White;
-                    lvMarker.Font = new Font(lvMarker.Font, FontStyle.Bold);
+                    lvMarker.BackBrush = Brushes.DarkSlateGray;
+                    lvMarker.FrontBrush = Brushes.White;
+                    lvMarker.Font = new System.Drawing.Font(lvMarker.Font, System.Drawing.FontStyle.Bold);
                     lvMarker.Tag = null;
                     bInit = true;
                 }

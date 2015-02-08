@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Linq;
 using System.Windows;
+using System.Windows.Media;
 
 namespace DoubleFile
 {
@@ -10,9 +10,9 @@ namespace DoubleFile
     {
         public ObservableCollection<TreeViewItem_FileHashVM> Items { get { return m_Items; } }
         public string Text { get { return datum.Text.PadRight(200); } }
-        public Brush Foreground { get { return m_bSelected ? m_SelectedForeground : m_Foreground; } }
-        public Brush SelectedForeground { get { return m_bSelected ? m_SelectedForeground : m_Foreground; } }
-        //    public Brush Background { get { return SDLWPF._BackClrToBrush(datum.BackColor); } }
+        public Brush Foreground { get { return m_bSelected ? m_SelectedForeground : FrontBrush; } }
+        public Brush SelectedForeground { get { return m_bSelected ? m_SelectedForeground : FrontBrush; } }
+        public Brush Background { get { return datum.BackBrush; } }
         public FontWeight FontWeight { get { return m_bSelected ? FontWeights.ExtraBold : FontWeights.Normal; } }
         public bool IsExpanded
         {
@@ -179,7 +179,7 @@ namespace DoubleFile
         double HeaderHeight { get { return TVI_DependencyProperty.HeaderHeight; } }
         internal double EphemeralExpandedPos = -1;
         internal Brush m_SelectedForeground = Brushes.White;
-        readonly Brush m_Foreground = Brushes.DarkRed;
+        Brush FrontBrush { get { return (datum.FrontBrush == Brushes.Transparent) ? Brushes.DarkRed : datum.FrontBrush; } }
 
         internal readonly LocalTreeNode datum = null;
 

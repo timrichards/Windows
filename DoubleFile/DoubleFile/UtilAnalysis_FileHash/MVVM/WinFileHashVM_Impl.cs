@@ -65,9 +65,49 @@ namespace DoubleFile
         {
             TreeCleanup();
 
+            var localTV = new LocalTV();
+            var localLVclones = new LocalLV();
+            var localLVsameVol = new LocalLV();
+            var localLVsolitary = new LocalLV();
+            var lsLocalLVignore = new List<LocalLVitem>();
+
+            var collate = new Local.Collate(gd, m_dictNodes,
+                localTV,
+                localLVclones, localLVsameVol, localLVsolitary,
+                m_listRootNodes, m_listTreeNodes, bCheckboxes: true,
+                list_lvIgnore: lsLocalLVignore, bLoose: true);
+            DateTime dtStart = DateTime.Now;
+
+            collate.Step1_OnThread();
+            UtilProject.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+
+            if (gd.WindowClosed)
+            {
+                TreeCleanup();
+                return;
+            }
+
+            UtilProject.CheckAndInvoke(() => collate.Step2_OnForm());
+            UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+            collate = null;
+            TreeCleanup();
+
             UtilProject.CheckAndInvoke(() =>
             {
                 m_tvVM.SetData(m_listRootNodes);
+                //m_app.BrowseTab.LV_Clones.SyncData();
+                //m_app.BrowseTab.LV_SameVol.SyncData();
+                //m_app.BrowseTab.LV_Solitary.SyncData();
+
+                //CopyScratchpadListViewVM lvFake = new CopyScratchpadListViewVM(null);   // Hack: check changed event loads the real listviewer
+
+                //    foreach (CopyScratchpadLVitemVM lvItem in m_Browse.LV_CopyScratchpad.Items)
+                //    {
+                //        lvFake.Items.Add(lvItem.Clone());
+                //    }
+
+                //    m_Browse.LV_CopyScratchpad.Items.Clear();
+                //    m_Browse.LoadCopyScratchPad(lvFake);
             });
         }
 

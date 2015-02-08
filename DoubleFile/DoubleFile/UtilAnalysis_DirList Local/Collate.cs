@@ -1,10 +1,10 @@
 ﻿using System.Windows.Forms;
-using System.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DoubleFile;
+using System.Windows.Media;
 
 namespace Local
 {
@@ -258,14 +258,14 @@ namespace Local
 
                     foreach (LocalTreeNode node in listNodes.Value)
                     {
-                        node.ForeColor = Color.Blue;
+                        node.FrontBrush = Brushes.Blue;
                     }
                 }
 
                 LocalLVitem lvItem = new LocalLVitem(new string[] { string.Empty, str_nClones });
 
                 lvItem.Tag = listNodes.Value;
-                lvItem.ForeColor = listNodes.Value[0].ForeColor;
+                lvItem.FrontBrush = listNodes.Value[0].FrontBrush;
 
                 LocalTreeNode nameNode = null;
                 int nLevel = int.MaxValue;
@@ -298,8 +298,8 @@ namespace Local
                 LocalTreeNode treeNode = pair.Key;
                 LocalLVitem lvIgnoreItem = pair.Value;
 
-                treeNode.ForeColor = Color.DarkGray;
-                treeNode.BackColor = Color.Empty;
+                treeNode.FrontBrush = Brushes.DarkGray;
+                treeNode.BackBrush = Brushes.Transparent;
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
@@ -331,13 +331,13 @@ namespace Local
                 MBoxStatic.Assert(1305.6322, nodeDatum.nImmediateFiles > 0);
                 SnowUniqueParents(treeNode);
 
-                if (treeNode.ForeColor != Color.DarkOrange)
+                if (treeNode.FrontBrush != Brushes.DarkOrange)
                 {
-                    MBoxStatic.Assert(1305.6323, treeNode.ForeColor == Color.Empty);
-                    treeNode.ForeColor = Color.Red;
+                    MBoxStatic.Assert(1305.6323, treeNode.FrontBrush == Brushes.Transparent);
+                    treeNode.FrontBrush = Brushes.Red;
                 }
 
-                lvItem.ForeColor = treeNode.ForeColor;
+                lvItem.FrontBrush = treeNode.FrontBrush;
                 listLVunique.Add(lvItem);
                 MBoxStatic.Assert(1305.6324, nodeDatum.m_lvItem == null);
                 nodeDatum.m_lvItem = lvItem;
@@ -390,8 +390,8 @@ namespace Local
                 LocalLVitem lvItem = new LocalLVitem(new string[] { treeNode.Text, str_nClones });
 
                 lvItem.Tag = nodeDatum.m_listClones;
-                lvItem.ForeColor = Color.Firebrick;
-                lvItem.BackColor = treeNode.BackColor;
+                lvItem.FrontBrush = Brushes.Firebrick;
+                lvItem.BackBrush = treeNode.BackBrush;
                 listLVsameVol.Add(lvItem);
                 nodeDatum.m_lvItem = lvItem;
             }
@@ -500,7 +500,7 @@ namespace Local
 
             if (nLength <= 100 * 1024)
             {
-                treeNode.ForeColor = Color.LightGray;
+                treeNode.FrontBrush = Brushes.LightGray;
                 nodeDatum.m_listClones.Clear();
             }
 
@@ -512,7 +512,7 @@ namespace Local
                 {
                     MBoxStatic.Assert(1305.6305, dictClones[nodeDatum.Key] == listClones);
                     MBoxStatic.Assert(1305.6306, ((NodeDatum)dictClones[nodeDatum.Key][0].Tag).m_bDifferentVols == nodeDatum.m_bDifferentVols);
-                    MBoxStatic.Assert(1305.6307, dictClones[nodeDatum.Key][0].ForeColor == treeNode.ForeColor);
+                    MBoxStatic.Assert(1305.6307, dictClones[nodeDatum.Key][0].FrontBrush == treeNode.FrontBrush);
                 }
                 else
                 {
@@ -523,8 +523,8 @@ namespace Local
                     LocalTreeNode rootNode = treeNode.Root();
                     RootNodeDatum rootNodeDatum = (RootNodeDatum)rootNode.Tag;
 
-                    MBoxStatic.Assert(1305.6308, new Color[] { Color.Empty, Color.DarkBlue }.Contains(treeNode.ForeColor));
-                    treeNode.ForeColor = Color.Firebrick;
+                    MBoxStatic.Assert(1305.6308, new Brush[] { Brushes.Transparent, Brushes.DarkBlue }.Contains(treeNode.FrontBrush));
+                    treeNode.FrontBrush = Brushes.Firebrick;
 
                     bool bDifferentVols = false;
 
@@ -552,10 +552,10 @@ namespace Local
                             continue;
                         }
 
-                        if (treeNode.ForeColor != Color.DarkBlue)
+                        if (treeNode.FrontBrush != Brushes.DarkBlue)
                         {
-                            MBoxStatic.Assert(1305.6311, treeNode.ForeColor == Color.Firebrick);
-                            treeNode.ForeColor = Color.SteelBlue;
+                            MBoxStatic.Assert(1305.6311, treeNode.FrontBrush == Brushes.Firebrick);
+                            treeNode.FrontBrush = Brushes.SteelBlue;
                         }
 
                         bDifferentVols = true;
@@ -565,7 +565,7 @@ namespace Local
                     foreach (LocalTreeNode subNode in listClones)
                     {
                         ((NodeDatum)subNode.Tag).m_bDifferentVols = bDifferentVols;
-                        subNode.ForeColor = treeNode.ForeColor;
+                        subNode.FrontBrush = treeNode.FrontBrush;
                     }
                 }
             }
@@ -650,18 +650,18 @@ namespace Local
 
             while (parentNode != null)
             {
-                parentNode.BackColor = Color.Snow;
+                parentNode.BackBrush = Brushes.Snow;
 
                 NodeDatum nodeDatum = (NodeDatum)parentNode.Tag;
 
                 if (nodeDatum.m_lvItem != null)
                 {
-                    nodeDatum.m_lvItem.BackColor = parentNode.BackColor;
+                    nodeDatum.m_lvItem.BackBrush = parentNode.BackBrush;
                 }
 
-                if (parentNode.ForeColor != Color.DarkOrange)
+                if (parentNode.FrontBrush != Brushes.DarkOrange)
                 {
-                    MBoxStatic.Assert(1305.6313, (parentNode.ForeColor == Color.Empty) == (nodeDatum.m_lvItem == null));
+                    MBoxStatic.Assert(1305.6313, (parentNode.FrontBrush == Brushes.Transparent) == (nodeDatum.m_lvItem == null));
                 }
 
                 parentNode = (LocalTreeNode)parentNode.Parent;

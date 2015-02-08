@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using DoubleFile;
+using System.Windows.Media;
 
 namespace Local
 {
@@ -45,7 +45,7 @@ namespace Local
 
             foreach (LocalLVitem item in list)
             {
-                item.ForeColor = Color.Red;
+                item.FrontBrush = Brushes.Red;
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using System.Text;
+using System.Windows.Media;
 
 namespace DoubleFile
 {
@@ -120,8 +120,8 @@ namespace DoubleFile
         internal int SelectedImageIndex = -1;
         internal object Tag = null;
 
-        internal Color BackColor = Color.Empty;
-        internal Color ForeColor = Color.Empty;
+        internal Brush BackBrush = Brushes.Transparent;
+        internal Brush FrontBrush = Brushes.Transparent;
 
         string m_strFullPath = null;
     }

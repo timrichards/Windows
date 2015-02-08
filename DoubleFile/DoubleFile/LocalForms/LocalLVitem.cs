@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace DoubleFile
 {
@@ -34,12 +34,12 @@ namespace DoubleFile
         internal void EnsureVisible() { }
         internal LocalLV ListView = null;
 
-        internal Color ForeColor = Color.Empty;
-        internal Color BackColor = Color.Empty;
+        internal Brush BackBrush = Brushes.Transparent;
+        internal Brush FrontBrush = Brushes.Transparent;
 
         // Only used for colors and bold font weight, not subitems, in Collate.cs InsertSizeMarker(). Size 18 to show obvious fault in interpretation.
-        internal object Clone() { LocalLVitem lvItem = (LocalLVitem)MemberwiseClone(); lvItem.Font = (Font)Font.Clone(); return lvItem; }
-        internal Font Font { get { return new Font("Microsoft Sans Serif", 18F, FontStyle.Bold); } set { FontWeight = System.Windows.FontWeights.Bold; } }
+        internal object Clone() { LocalLVitem lvItem = (LocalLVitem)MemberwiseClone(); lvItem.Font = (System.Drawing.Font)Font.Clone(); return lvItem; }
+        internal System.Drawing.Font Font { get { return new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold); } set { FontWeight = System.Windows.FontWeights.Bold; } }
         internal System.Windows.FontWeight FontWeight = System.Windows.FontWeights.Normal;
     }
 }

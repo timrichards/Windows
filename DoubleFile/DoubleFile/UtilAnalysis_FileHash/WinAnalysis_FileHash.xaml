@@ -3,15 +3,28 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
         Title="WinAnalysis_FileHash" Height="300" Width="300">
-    <Grid>
-        <TreeView HorizontalAlignment="Left" Height="270" VerticalAlignment="Top" Width="120"/>
-        <ListView HorizontalAlignment="Left" Height="280" Margin="120,0,0,-10" VerticalAlignment="Top" Width="172">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-
+    <Grid Loaded="Grid_Loaded">
+        <TreeView ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding}" Name="form_tv" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.RowSpan="1" BorderThickness="0">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="local:TVI_DependencyProperty.Event" Value="True" />
+                    <Setter Property="Foreground" Value="{Binding Foreground}"/>
+                    <Setter Property="Background" Value="{Binding Background}"/>
+                    <Setter Property="FontWeight" Value="{Binding FontWeight}"/>
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                    <!--<Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True" >
+                                            <Setter Property="Foreground" Value="{Binding SelectedForeground}"/>
+                                        </Trigger>
+                                    </Style.Triggers>-->
+                </Style>
+            </TreeView.ItemContainerStyle>
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Items}">
+                    <TextBlock Text="{Binding Text}" />
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
     </Grid>
 </local:LocalWindow>

@@ -29,9 +29,10 @@ namespace DoubleFile
         readonly ICommand mIcmd_ToggleInclude = null;
         readonly ICommand mIcmd_VolumeGroup = null;
 
-        internal WinProjectVM(GlobalData_Base gd_in)
+        internal WinProjectVM(GlobalData_Base gd_in, LV_ProjectVM lvVM)
         {
             gd = gd_in;
+            m_lvVM = lvVM;
 
             mIcmd_OpenProject = new RelayCommand(param => { OpenProject(); });
             mIcmd_SaveProject = new RelayCommand(param => { SaveProject(); }, param => { return (m_lvVM.Count > 0); });
@@ -44,11 +45,6 @@ namespace DoubleFile
 
             mIcmd_ToggleInclude = new RelayCommand(param => { m_lvVM.ToggleInclude(); }, param => m_lvVM.SelectedAny());
             mIcmd_VolumeGroup = new RelayCommand(param => { m_lvVM.EditVolumeGroupLabel(); }, param => m_lvVM.SelectedAny());
-        }
-
-        internal void SetPartner(LV_ProjectVM lvVM)
-        {
-            m_lvVM = lvVM;
         }
 
         LV_ProjectVM m_lvVM = null;

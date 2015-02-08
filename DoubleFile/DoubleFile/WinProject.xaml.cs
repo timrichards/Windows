@@ -25,11 +25,10 @@ namespace DoubleFile
 
             LVprojectVM = null;         // only one representation of state at a time
 
-            var win = new WinProjectVM(gd);
+            var win = new WinProjectVM(gd, lvProjectVM);
 
             form_lvProject.DataContext = lvProjectVM;
             DataContext = win;
-            win.SetPartner(lvProjectVM);
 
             lvProjectVM.SelectedOne = () => { return form_lvProject.SelectedItems.Count == 1; };
             lvProjectVM.SelectedAny = () => { return form_lvProject.SelectedItems.Count > 0; };

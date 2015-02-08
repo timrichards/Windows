@@ -73,8 +73,8 @@ namespace DoubleFile
 
         void DoTree(bool bKill = false)
         {
-            //m_tree = new Local.Tree(LVvolumesVM, m_dictNodes, m_dictDriveInfo,
-            //    TreeStatusCallback, TreeDoneCallback);
+            m_tree = new Local.Tree(gd, m_lvProjectVM, m_dictNodes, m_dictDriveInfo,
+                TreeStatusCallback, TreeDoneCallback);
             m_tree.DoThreadFactory();
         }
     }

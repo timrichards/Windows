@@ -4,16 +4,16 @@ namespace DoubleFile
 {
     partial class WinFileHashVM : ObservableObject_OwnerWindow
     {
-        internal WinFileHashVM()
+        internal WinFileHashVM(GlobalData_Base gd_in, TreeView_FileHashVM tvVM, LV_ProjectVM lvProjectVM_in)
         {
-     //       m_tvVM = new TreeView_FileHashVM(m_app.xaml_treeViewBrowse, m_app.Dispatcher);
-        }
-
-        internal void SetPartner(TreeView_FileHashVM tvVM)
-        {
+            gd = gd_in;
             m_tvVM = tvVM;
+            m_lvProjectVM = lvProjectVM_in;
+            DoTree();
         }
 
+        GlobalData_Base gd = null;
         TreeView_FileHashVM m_tvVM = null;
+        LV_ProjectVM m_lvProjectVM = null;
     }
 }

@@ -10,20 +10,22 @@ namespace DoubleFile
         internal WinAnalysis_FileHash(GlobalData_Base gd_in, LV_ProjectVM lvProjectVM_in)
         {
             InitializeComponent();
-
             gd = gd_in;
             m_lvProjectVM = lvProjectVM_in;
-            new CreateFileDictProcess(gd, lvProjectVM_in);
+        }
+
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
+            new CreateFileDictProcess(gd, m_lvProjectVM);
 
             if (gd.FileDictionary == null)
             {
                 return;
             }
 
-            foreach (var lvItem in m_lvProjectVM.ItemsCast)
-            {
-
-            }
+            DataContext = new WinFileHashVM(gd,
+                new TreeView_FileHashVM(form_tv, Dispatcher),
+                m_lvProjectVM);
         }
 
         GlobalData_Base gd = null;

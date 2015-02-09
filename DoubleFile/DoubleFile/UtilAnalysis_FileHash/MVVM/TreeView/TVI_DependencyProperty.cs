@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows;
 using System.Windows.Threading;
 
 namespace DoubleFile
@@ -91,7 +91,6 @@ namespace DoubleFile
                     return;
                 }
 
-                tvivm.m_bBringIntoViewWhenSel = false;
                 tvivm.RaisePropertyChanged("Foreground");
                 tvivm.RaisePropertyChanged("SelectedForeground");
                 tvivm.RaisePropertyChanged("FontWeight");
@@ -104,41 +103,55 @@ namespace DoubleFile
             {
             }
 
-            WaitingToSelect = null;
-            m_tvife = sender as TreeViewItem;
+            TreeViewItem tvife = sender as TreeViewItem;
 
-            if (m_tvife == null)
+            if (tvife == null)
             {
                 return;
             }
 
-            TreeViewItem_FileHashVM tvivm = m_tvife.DataContext as TreeViewItem_FileHashVM;
+            TreeViewItem_FileHashVM tvivm = tvife.DataContext as TreeViewItem_FileHashVM;
 
             if (tvivm == null)      // DisconnectedItem
             {
+                tvife.BringIntoView();
                 return;
             }
 
-            if (tvivm.m_bBringIntoViewWhenSel || (tvivm.IsExpanded == false))
-            {
-                tvivm.m_SelectedForeground = tvivm.Foreground;
-                scrollViewer.PageDown();
-                m_tvife.BringIntoView();
+            TreeViewItem_FileHashVM waitingToSelect = WaitingToSelect;
 
-                Point ptTVI = m_tvife.TranslatePoint(new Point(0, 0), scrollViewer);
+            if (tvivm == waitingToSelect)   // LV programmatic
+            {
+                tvife.BringIntoView();
+                SetWaitingToSelect(null);
+                nBringIntoViewAttempts = -1;
+
+                System.Windows.Point ptTVI = tvife.TranslatePoint(new System.Windows.Point(0, 0), scrollViewer);
 
                 if ((ptTVI.Y >= 0) && (ptTVI.Y < scrollViewer.ViewportHeight))
                 {
+                    UtilProject.WriteLine("ViewportHeight A " + tvivm.Text);
                     tvivmSelected = tvivm;
+                    nBringIntoViewAttempts = -1;
+                    m_tvife = null;
+                    return;
                 }
-                else
-                {
-                    nBringIntoViewAttempts = 0;
-                    m_scrollTimer.Start();
-                }
+
+                tvivm.m_SelectedForeground = tvivm.Foreground;
+                UtilProject.WriteLine("Set nBringIntoViewAttempts " + tvivm.Text);
+                m_tvife = tvife;
+                nBringIntoViewAttempts = 0;
+                StartTimer("5 " + tvivm.Text);
             }
-            else
+            else if (Object.ReferenceEquals(sender, e.OriginalSource) == false)
             {
+                return;
+            }
+            else    // direct treeview selection
+            {
+                SetWaitingToSelect(null);
+                m_tvife = null;
+                nBringIntoViewAttempts = -1;
                 tvivm.m_SelectedForeground = Brushes.White;
             }
 
@@ -149,94 +162,124 @@ namespace DoubleFile
 
         internal static void OnTimer(object o, EventArgs e)
         {
+            StopTimer(1);
+
             if (nBringIntoViewAttempts >= 0)
             {
-                m_scrollTimer.Stop();
-
                 if (m_tvife == null)
                 {
+                    UtilProject.WriteLine("OnTimer m_tvife == null");
                     return;
                 }
 
-                if (m_tvife.IsVisible)
+                TreeViewItem_FileHashVM tvivm = m_tvivm;
+
+                if (tvivm == null)      // DisconnectedItem
                 {
-                    tvivmSelected = (TreeViewItem_FileHashVM)m_tvife.DataContext;
+                    UtilProject.WriteLine("OnTimer tvivm == null");
+                    return;
+                }
+
+                System.Windows.Point ptTVI = m_tvife.TranslatePoint(new System.Windows.Point(0, 0), scrollViewer);
+
+                if ((ptTVI.Y >= 0) && (ptTVI.Y < scrollViewer.ViewportHeight))
+                {
+                    UtilProject.WriteLine("ViewportHeight " + nBringIntoViewAttempts + " " + tvivm.Text);
+                    tvivmSelected = tvivm;
                     nBringIntoViewAttempts = -1;
                     m_tvife = null;
                     return;
                 }
 
+                if (nBringIntoViewAttempts < 20)
+                {
+                    nBringIntoViewAttempts += 20;
+                }
+
                 switch (nBringIntoViewAttempts)
                 {
-                    case 0:
+                    case 20:
+                        scrollViewer.ScrollToTop();
+                        break;
+
+                    case 21:
+                        m_tvife.BringIntoView();
+                        break;
+
+                    case 22:
                         scrollViewer.PageUp();
                         break;
 
-                    case 1:
+                    case 23:
                         m_tvife.BringIntoView();
                         break;
 
-                    case 2:
+                    case 24:
                         scrollViewer.PageDown();
                         break;
 
-                    case 3:
+                    case 25:
                         scrollViewer.PageDown();
                         break;
 
-                    case 4:
+                    case 26:
                         m_tvife.BringIntoView();
                         break;
 
-                    case 5:
+                    case 27:
                     default:
+                        UtilProject.WriteLine("default " + tvivm.Text);
                         m_tvife = null;
                         nBringIntoViewAttempts = -1;
                         return;
                 }
 
                 ++nBringIntoViewAttempts;
-                m_scrollTimer.Start();
+                StartTimer("1 " + tvivm.Text);
+                UtilProject.WriteLine("nBringIntoViewAttempts " + nBringIntoViewAttempts + " " + tvivm.Text);
                 return;
             }
 
             if (WaitingToSelect == null)
             {
+                UtilProject.WriteLine("OnTimer WaitingToSelect == null");
                 return;
             }
 
-            TreeViewItem_FileHashVM tvivm = null;
+            TreeViewItem_FileHashVM tvivm_A = null;
 
             if (stackParents.Count > 0)
             {
-                tvivm = stackParents.Pop();
+                tvivm_A = stackParents.Pop();
             }
             else
             {
                 if (new double[] { WaitingToSelect.EphemeralExpandedPos, 0, scrollViewer.ScrollableHeight }.Contains(scrollViewer.VerticalOffset))
                 {
-                    if (++nAttempts > 3)
+                    if (++nAttempts > 0)
                     {
-                        WaitingToSelect = null;
+                        SetWaitingToSelect(null);
+                        UtilProject.WriteLine("OnTimer SetWaitingToSelect(null)");
                         return;
                     }
 
                     stackParents = stackParents_A;
                 }
 
-                tvivm = WaitingToSelect;
+                tvivm_A = WaitingToSelect;
             }
 
-            Scroll(tvivm);
+            Scroll(tvivm_A);
+            UtilProject.WriteLine("OnTimer end");
         }
 
         static void Scroll(TreeViewItem_FileHashVM tvivm)
         {
-            m_scrollTimer.Stop();
-            //Utilities.WriteLine(tvivm.datum.Level + " " + tvivm.Text + " " + tvivm.EphemeralExpandedPos);
+            StopTimer(3);
+            UtilProject.WriteLine(tvivm.datum.Level + " " + tvivm.Text + " " + tvivm.EphemeralExpandedPos);
             scrollViewer.ScrollToTop();
             scrollViewer.ScrollToVerticalOffset(tvivm.EphemeralExpandedPos);
-            m_scrollTimer.Start();
+            StartTimer("3 " + tvivm.Text);
         }
 
         internal static TreeView TVFE
@@ -251,32 +294,32 @@ namespace DoubleFile
                     m_scrollTimer.IsEnabled = false;
                 }
 
-                m_scrollTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(20), DispatcherPriority.Normal, new EventHandler(TVI_DependencyProperty.OnTimer), TVFE.Dispatcher);
-                m_scrollTimer.Stop();
+                m_scrollTimer = new SDL_Timer(TimeSpan.FromMilliseconds(1000), DispatcherPriority.Normal, new EventHandler(TVI_DependencyProperty.OnTimer), TVFE.Dispatcher);
+                StopTimer(2);
             }
         }
         static TreeView m_TVFE = null;
 
-        internal static TreeViewItem_FileHashVM WaitingToSelect
+        static internal void StartTimer(string text) { m_scrollTimer.Stop(); m_scrollTimer.Start(); UtilProject.WriteLine("StartTimer " + text); }
+        static internal void StopTimer(int nWhere) { m_scrollTimer.Stop(); UtilProject.WriteLine("StopTimer " + nWhere); }
+        internal static TreeViewItem_FileHashVM WaitingToSelect { get { return m_WaitingToSelect; } }
+        internal static void SetWaitingToSelect(TreeViewItem_FileHashVM tvivm)
         {
-            get { return m_WaitingToSelect; }
-            set
-            {
-                m_WaitingToSelect = value;
+            m_WaitingToSelect = tvivm;
 
-                if (m_WaitingToSelect != null)
-                {
-                    stackParents_A = new Stack<TreeViewItem_FileHashVM>(stackParents.Reverse());
-                    m_scrollTimer.Start();
-                }
-                else
-                {
-                    stackParents = stackParents_A = new Stack<TreeViewItem_FileHashVM>(8);
-                    nAttempts = -1;
-                    m_scrollTimer.Stop();
-                }
+            if (m_WaitingToSelect != null)
+            {
+                stackParents_A = new Stack<TreeViewItem_FileHashVM>(stackParents.Reverse());
+                StartTimer("0 " + tvivm.Text);
+            }
+            else
+            {
+                stackParents = stackParents_A = new Stack<TreeViewItem_FileHashVM>(8);
+                nAttempts = -1;
+                StopTimer(0);
             }
         }
+
         static TreeViewItem_FileHashVM m_WaitingToSelect = null;
 
         internal static ScrollViewer scrollViewer
@@ -289,9 +332,21 @@ namespace DoubleFile
         internal static double HeaderHeight = -1;
         internal static Stack<TreeViewItem_FileHashVM> stackParents = null;
         static Stack<TreeViewItem_FileHashVM> stackParents_A = null;
-        static DispatcherTimer m_scrollTimer = null;
+        static SDL_Timer m_scrollTimer = null;
         static int nAttempts = -1;
         static int nBringIntoViewAttempts = -1;
-        static TreeViewItem m_tvife = null;
+
+        static TreeViewItem m_tvife
+        {
+            get { return m_tvife_; }
+            set
+            {
+                m_tvife_ = value;
+
+                m_tvivm_ = (m_tvife_ != null) ? (m_tvife_.DataContext as TreeViewItem_FileHashVM) : null;
+            }
+        }
+        static TreeViewItem m_tvife_ = null;
+        static TreeViewItem_FileHashVM m_tvivm { get { return m_tvivm_; } } static TreeViewItem_FileHashVM m_tvivm_ = null;
     }
 }

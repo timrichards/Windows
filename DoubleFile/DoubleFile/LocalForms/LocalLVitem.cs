@@ -34,8 +34,8 @@ namespace DoubleFile
         internal void EnsureVisible() { }
         internal LocalLV ListView = null;
 
-        internal Brush BackBrush = Brushes.Transparent;
-        internal Brush FrontBrush = Brushes.Transparent;
+        internal int BackColor = UtilColor.Empty;
+        internal int ForeColor = UtilColor.Empty;
 
         // Only used for colors and bold font weight, not subitems, in Collate.cs InsertSizeMarker(). Size 18 to show obvious fault in interpretation.
         internal object Clone() { LocalLVitem lvItem = (LocalLVitem)MemberwiseClone(); lvItem.Font = (System.Drawing.Font)Font.Clone(); return lvItem; }

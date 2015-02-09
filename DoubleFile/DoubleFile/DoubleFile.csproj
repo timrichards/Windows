@@ -170,6 +170,7 @@
     <Compile Include="UtilAnalysis_DirList Forms\UtilAnalysis_DirList\SDL_TreeView.cs" />
     <Compile Include="UtilAnalysis_DirList Local\UtilAnalysis_DirList\SDL_FileBase\SDL_CopyFile.cs" />
     <Compile Include="UtilAnalysis_DirList Local\UtilAnalysis_DirList\SDL_FileBase\SDL_IgnoreFile.cs" />
+    <Compile Include="UtilAnalysis_DirList Local\UtilColor.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary\DuplicateStruct.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary\FileKeyStruct.cs" />

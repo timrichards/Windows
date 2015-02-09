@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -12,7 +13,7 @@ namespace DoubleFile
         public string Text { get { return datum.Text.PadRight(200); } }
         public Brush Foreground { get { return m_bSelected ? m_SelectedForeground : FrontBrush; } }
         public Brush SelectedForeground { get { return m_bSelected ? m_SelectedForeground : FrontBrush; } }
-        public Brush Background { get { return datum.BackBrush; } }
+        public Brush Background { get { return UtilColor.ARGBtoBrush(datum.BackColor); } }
         public FontWeight FontWeight { get { return m_bSelected ? FontWeights.ExtraBold : FontWeights.Normal; } }
         public bool IsExpanded
         {
@@ -179,7 +180,15 @@ namespace DoubleFile
         double HeaderHeight { get { return TVI_DependencyProperty.HeaderHeight; } }
         internal double EphemeralExpandedPos = -1;
         internal Brush m_SelectedForeground = Brushes.White;
-        Brush FrontBrush { get { return (datum.FrontBrush == Brushes.Transparent) ? Brushes.DarkRed : datum.FrontBrush; } }
+        Brush FrontBrush
+        {
+            get
+            {
+                return UtilColor.ARGBtoBrush(
+                    (datum.ForeColor == UtilColor.Empty) ? UtilColor.DarkRed : datum.ForeColor
+                );
+            }
+        }
 
         internal readonly LocalTreeNode datum = null;
 

@@ -45,7 +45,7 @@ namespace Local
 
             foreach (LocalLVitem item in list)
             {
-                item.FrontBrush = Brushes.Red;
+                item.ForeColor = UtilColor.Red;
             }
         }
 

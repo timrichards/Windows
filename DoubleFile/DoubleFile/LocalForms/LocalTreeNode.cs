@@ -120,8 +120,8 @@ namespace DoubleFile
         internal int SelectedImageIndex = -1;
         internal object Tag = null;
 
-        internal Brush BackBrush = Brushes.Transparent;
-        internal Brush FrontBrush = Brushes.Transparent;
+        internal int BackColor = UtilColor.Empty;
+        internal int ForeColor = UtilColor.Empty;
 
         string m_strFullPath = null;
     }

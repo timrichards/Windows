@@ -280,7 +280,7 @@ namespace Local
                 LocalTreeNode nodeFile = new LocalTreeNode(arrLine[0]);
 
                 nodeFile.Tag = nodeDatum_A;
-                nodeFile.FrontBrush = System.Windows.Media.Brushes.OliveDrab;
+                nodeFile.ForeColor = UtilColor.OliveDrab;
                 nodeFileList.Nodes.Add(nodeFile);
             }
 
@@ -543,18 +543,11 @@ namespace Local
 
             brush.CenterColor = Color.Wheat;
             brush.SurroundColors = new Color[] { ControlPaint.Dark(
-                (item.FrontBrush == System.Windows.Media.Brushes.Transparent) ?
+                (item.ForeColor == UtilColor.Empty) ?
                 Color.SandyBrown :
-                _BrushToClr(item.FrontBrush)
+                Color.FromArgb(item.ForeColor)
             )};
             graphics.FillRectangle(brush, rc);
-        }
-        internal static Color _BrushToClr(System.Windows.Media.Brush brush)
-        {
-            System.Windows.Media.Color c =
-                (brush as System.Windows.Media.SolidColorBrush ?? new System.Windows.Media.SolidColorBrush()).Color;
-
-            return Color.FromArgb(c.A, c.R, c.G, c.B);
         }
 
          //My first approach was to make this member pure virtual and have three
@@ -591,7 +584,7 @@ namespace Local
 
                 nodeDatumFree.nTotalLength = rootNodeDatum.VolumeFree;
                 nodeFree.Tag = nodeDatumFree;
-                nodeFree.FrontBrush = System.Windows.Media.Brushes.MediumSpringGreen;
+                nodeFree.ForeColor = UtilColor.MediumSpringGreen;
 
                 NodeDatum nodeDatumUnread = new NodeDatum();
                 LocalTreeNode nodeUnread = new LocalTreeNode(parent_in.Text + " (unread data)");
@@ -610,7 +603,7 @@ namespace Local
 
                 nodeDatumUnread.nTotalLength = (ulong)nUnreadLength;
                 nodeUnread.Tag = nodeDatumUnread;
-                nodeUnread.FrontBrush = System.Windows.Media.Brushes.MediumVioletRed;
+                nodeUnread.ForeColor = UtilColor.MediumVioletRed;
                 listChildren = new List<LocalTreeNode>();
                 listChildren.Add(parent_in);                                // parent added as child, with two other nodes:
                 listChildren.Add(nodeFree);                                 // free space (color: spring green); and
@@ -655,7 +648,7 @@ namespace Local
                 LocalTreeNode treeNode = new LocalTreeNode(parent.Text);
 
                 treeNode.Tag = nodeFiles;
-                treeNode.FrontBrush = System.Windows.Media.Brushes.OliveDrab;
+                treeNode.ForeColor = UtilColor.OliveDrab;
                 listChildren.Add(treeNode);
             }
 

@@ -31,8 +31,8 @@ namespace Local
             {
                 if (bInit == false)
                 {
-                    lvMarker.BackBrush = Brushes.DarkSlateGray;
-                    lvMarker.FrontBrush = Brushes.White;
+                    lvMarker.BackColor = UtilColor.DarkSlateGray;
+                    lvMarker.ForeColor = UtilColor.White;
                     lvMarker.Font = new System.Drawing.Font(lvMarker.Font, System.Drawing.FontStyle.Bold);
                     lvMarker.Tag = null;
                     bInit = true;

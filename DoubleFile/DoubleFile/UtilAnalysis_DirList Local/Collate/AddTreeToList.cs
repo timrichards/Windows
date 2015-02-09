@@ -51,7 +51,7 @@ namespace Local
                         continue;
                     }
 
-                    if ((treeNode.FrontBrush == Brushes.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
+                    if ((treeNode.ForeColor == UtilColor.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
                     {
                         MBoxStatic.Assert(1305.6304, (nodeDatum.m_listClones.Count > 0) && (nodeDatum.m_bDifferentVols == false));
                         m_listSameVol.Add(treeNode);
@@ -59,17 +59,17 @@ namespace Local
 
                     if (bCloneOK)
                     {
-                        treeNode.BackBrush = Brushes.LightGoldenrodYellow;
+                        treeNode.BackColor = UtilColor.LightGoldenrodYellow;
 
                         if ((nodeDatum.m_lvItem != null) && (nodeDatum.m_lvItem.ListView == null))  // ignore LV
                         {
-                            nodeDatum.m_lvItem.BackBrush = treeNode.BackBrush;
+                            nodeDatum.m_lvItem.BackColor = treeNode.BackColor;
                         }
                     }
 
                     if (treeNode.FirstNode != null)
                     {
-                        Go((LocalTreeNode)treeNode.FirstNode, bCloneOK || (new Brush[] { Brushes.SteelBlue, Brushes.DarkBlue }.Contains(treeNode.FrontBrush)));
+                        Go((LocalTreeNode)treeNode.FirstNode, bCloneOK || (new int[] { UtilColor.SteelBlue, UtilColor.DarkBlue }.Contains(treeNode.ForeColor)));
                     }
                 }
                 while (bNextNode && ((treeNode = (LocalTreeNode)treeNode.NextNode) != null));

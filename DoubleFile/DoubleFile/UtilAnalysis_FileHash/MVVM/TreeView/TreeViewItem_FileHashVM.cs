@@ -10,8 +10,8 @@ namespace DoubleFile
     {
         public ObservableCollection<TreeViewItem_FileHashVM> Items { get { return m_Items; } }
         public string Text { get { return datum.Text.PadRight(200); } }
-        public Brush Foreground { get { return m_bSelected ? m_SelectedForeground : FrontBrush; } }
-        public Brush SelectedForeground { get { return m_bSelected ? m_SelectedForeground : FrontBrush; } }
+        public Brush Foreground { get { return m_bSelected ? m_SelectedForeground : m_Foreground; } }
+        public Brush SelectedForeground { get { return m_bSelected ? m_SelectedForeground : m_Foreground; } }
         public Brush Background { get { return datum.BackBrush; } }
         public FontWeight FontWeight { get { return m_bSelected ? FontWeights.ExtraBold : FontWeights.Normal; } }
         public bool IsExpanded
@@ -49,9 +49,9 @@ namespace DoubleFile
 
                 m_bSelected = value;
                 EphemeralExpandedPos = -1;
-                TVI_DependencyProperty.SetWaitingToSelect(null);
+                m_bBringIntoViewWhenSel = false;
                 m_SelectedForeground = Brushes.White;
-                UtilProject.WriteLine("IsSelected " + Text);
+                //UtilProject.WriteLine("IsSelected " + Text);
 
                 if (TVI_DependencyProperty.WaitingToSelect != null)
                 {
@@ -89,8 +89,9 @@ namespace DoubleFile
             m_bSelected = bSelect;
             RaisePropertyChanged("IsSelected");
 
-            UtilProject.WriteLine("SelectProgrammatic");
-            TVI_DependencyProperty.SetWaitingToSelect(null);
+            TVI_DependencyProperty.WaitingToSelect = null;
+
+            m_bBringIntoViewWhenSel = bSelect;
 
             if (bSelect == false)
             {
@@ -147,8 +148,10 @@ namespace DoubleFile
             EphemeralExpandedPos += (Index + 1);
             EphemeralExpandedPos *= HeaderHeight;       // when implementing variable-height headers this calc will be wrong
             TVVM.m_listExpanded = listParents;
-            TVI_DependencyProperty.SetWaitingToSelect(this);
+            TVI_DependencyProperty.WaitingToSelect = this;
         }
+
+        internal bool m_bBringIntoViewWhenSel = false;
 
         internal TreeViewItem_FileHashVM(TreeView_FileHashVM tvvm, LocalTreeNode datum_in, int nIndex)
             : this(tvvm, datum_in, null, nIndex)
@@ -161,7 +164,7 @@ namespace DoubleFile
             m_Parent = parent;
             Index = nIndex;
             datum.TVIVM = this;
-         //   m_Foreground = SDLWPF._ForeClrToBrush(datum.ForeColor);
+            m_Foreground = (datum.FrontBrush == Brushes.Transparent) ? Brushes.DarkRed : datum.FrontBrush;
 
             int nIndex_A = -1;
 
@@ -179,7 +182,7 @@ namespace DoubleFile
         double HeaderHeight { get { return TVI_DependencyProperty.HeaderHeight; } }
         internal double EphemeralExpandedPos = -1;
         internal Brush m_SelectedForeground = Brushes.White;
-        Brush FrontBrush { get { return (datum.FrontBrush == Brushes.Transparent) ? Brushes.DarkRed : datum.FrontBrush; } }
+        Brush m_Foreground = Brushes.DarkRed;
 
         internal readonly LocalTreeNode datum = null;
 

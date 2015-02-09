@@ -71,25 +71,27 @@ namespace DoubleFile
             var localLVsolitary = new LocalLV();
             var lsLocalLVignore = new List<LocalLVitem>();
 
-            var collate = new Local.Collate(gd, m_dictNodes,
-                localTV,
-                localLVclones, localLVsameVol, localLVsolitary,
-                m_listRootNodes, m_listTreeNodes, bCheckboxes: true,
-                list_lvIgnore: lsLocalLVignore, bLoose: true);
-            DateTime dtStart = DateTime.Now;
-
-            collate.Step1_OnThread();
-            UtilProject.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
-
-            if (gd.WindowClosed)
             {
-                TreeCleanup();
-                return;
-            }
+                var collate = new Local.Collate(gd, m_dictNodes,
+                    localTV,
+                    localLVclones, localLVsameVol, localLVsolitary,
+                    m_listRootNodes, m_listTreeNodes, bCheckboxes: true,
+                    list_lvIgnore: lsLocalLVignore, bLoose: true);
+                var dtStart = DateTime.Now;
 
-            UtilProject.CheckAndInvoke(() => collate.Step2_OnForm());
-            UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
-            collate = null;
+                collate.Step1_OnThread();
+                UtilProject.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+
+                if (gd.WindowClosed)
+                {
+                    TreeCleanup();
+                    return;
+                }
+
+                UtilProject.CheckAndInvoke(() => collate.Step2_OnForm());
+                UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+            }
+            
             TreeCleanup();
 
             UtilProject.CheckAndInvoke(() =>
@@ -113,6 +115,20 @@ namespace DoubleFile
 
         void DoTree(bool bKill = false)
         {
+            if (m_tree != null)
+            {
+                if (bKill)
+                {
+                    m_tree.EndThread();
+                    m_tree = null;
+                }
+                else
+                {
+                    MBoxStatic.Assert(0, false);
+                    return;
+                }
+            }
+
             m_tree = new Local.Tree(gd, m_lvProjectVM, m_dictNodes, m_dictDriveInfo,
                 TreeStatusCallback, TreeDoneCallback);
             m_tree.DoThreadFactory();

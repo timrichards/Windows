@@ -171,7 +171,6 @@
     <Compile Include="UtilAnalysis_DirList Local\UtilAnalysis_DirList\SDL_FileBase\SDL_CopyFile.cs" />
     <Compile Include="UtilAnalysis_DirList Local\UtilAnalysis_DirList\SDL_FileBase\SDL_IgnoreFile.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary.cs" />
-    <Compile Include="UtilAnalysis_FileHash\CreateFileDictProcess.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary\DuplicateStruct.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary\FileKeyStruct.cs" />
     <Compile Include="UtilAnalysis_FileHash\HashStruct.cs" />

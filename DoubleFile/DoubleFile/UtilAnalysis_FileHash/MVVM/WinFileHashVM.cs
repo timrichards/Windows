@@ -9,6 +9,13 @@ namespace DoubleFile
             gd = gd_in;
             m_tvVM = tvVM;
             m_lvProjectVM = lvProjectVM_in;
+
+            if (m_lvProjectVM == null)
+            {
+                return;
+            }
+
+            m_nCorrelateProgressDenominator = m_lvProjectVM.Count;
             DoTree();
         }
 

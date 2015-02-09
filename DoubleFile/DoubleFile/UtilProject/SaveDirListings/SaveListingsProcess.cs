@@ -35,7 +35,7 @@ namespace DoubleFile
             {
                 m_winProgress = new WinProgress();
                 m_winProgress.InitProgress(listNicknames, listSourcePaths);
-                m_winProgress.WindowTitle = "Saving Directory Listings";
+                m_winProgress.Title = "Saving Directory Listings";
                 m_winProgress.WindowClosingCallback = (() =>
                 {
                     if (gd_old.m_saveDirListings == null)

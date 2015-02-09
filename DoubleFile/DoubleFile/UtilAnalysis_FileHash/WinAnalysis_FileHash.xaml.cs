@@ -16,13 +16,6 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            new CreateFileDictProcess(gd, m_lvProjectVM);
-
-            if (gd.FileDictionary == null)
-            {
-                return;
-            }
-
             DataContext = new WinFileHashVM(gd,
                 new TreeView_FileHashVM(form_tv, Dispatcher),
                 m_lvProjectVM);

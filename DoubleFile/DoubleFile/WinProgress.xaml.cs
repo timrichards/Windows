@@ -10,7 +10,6 @@ namespace DoubleFile
     partial class WinProgress : LocalWindow
     {
         internal BoolAction WindowClosingCallback = null;
-        internal string WindowTitle { set { Title = value; } }
 
         internal WinProgress()
         {
@@ -74,6 +73,20 @@ namespace DoubleFile
         }
 
         internal bool Aborted { set; private get; }
+
+        internal void CloseIfNatural()
+        {
+            foreach (var lvItem in m_lv.ItemsCast)
+            {
+                if (lvItem.Progress < 1)
+                {
+                    return;
+                }
+            }
+
+            Aborted = true;
+            UtilProject.CheckAndInvoke(() => Close());
+        }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {

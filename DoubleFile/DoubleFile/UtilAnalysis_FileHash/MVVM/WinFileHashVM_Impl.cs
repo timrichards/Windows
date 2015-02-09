@@ -3,9 +3,12 @@ using System.Drawing;
 using System;
 using System.Threading;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace DoubleFile
 {
+    delegate void CreateFileDictStatusDelegate(bool bDone = false, double nProgress = double.NaN);
+    
     partial class WinFileHashVM
     {
         internal readonly SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>> m_dictNodes = new SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>>();
@@ -33,26 +36,48 @@ namespace DoubleFile
             Local.Collate.ClearMem();
         }
 
-        void TreeStatusCallback(LVitem_ProjectVM volStrings, LocalTreeNode rootNode = null, bool bError = false)
+        internal void CreateFileDictStatusCallback(bool bDone = false, double nProgress = double.NaN)
         {
-            //if (GlobalData.AppExit || (m_tree == null) || (m_tree.IsAborted))
-            //{
-            //    TreeCleanup();
-            //    return;
-            //}
-
             UtilProject.CheckAndInvoke(() =>
             {
+                if (gd.WindowClosed || (gd.FileDictionary == null) || gd.FileDictionary.IsAborted)
+                {
+                    m_winProgress.Aborted = true;
+                    return;
+                }
+
+                if (bDone)
+                {
+                    m_winProgress.SetCompleted(ksFileDictKey);
+                    m_winProgress.CloseIfNatural();
+                    m_bFileDictDone = true;
+                }
+                else if (nProgress >= 0)
+                {
+                    m_winProgress.SetProgress(ksFileDictKey, nProgress);
+                }
+            });
+        }
+        
+        void TreeStatusCallback(LVitem_ProjectVM volStrings, LocalTreeNode rootNode = null, bool bError = false)
+        {
+            UtilProject.CheckAndInvoke(() =>
+            {
+                if (gd.WindowClosed || (gd.FileDictionary == null) || gd.FileDictionary.IsAborted ||
+                    ((m_tree != null) && (m_tree.IsAborted)))
+                {
+                    m_winProgress.Aborted = true;
+                    return;
+                }
+
                 if (bError)
                 {
                     //           volStrings.SetStatus_BadFile(LV);
                 }
                 else if (rootNode != null)
                 {
-                    lock (m_listRootNodes)
-                    {
-                        m_listRootNodes.Add(rootNode);
-                    }
+                    m_listRootNodes.Add(rootNode);
+                    m_winProgress.SetProgress(ksCorrelatingKey, m_listRootNodes.Count / m_nCorrelateProgressDenominator);
                 }
                 else
                 {
@@ -63,6 +88,14 @@ namespace DoubleFile
 
         void TreeDoneCallback()
         {
+            if (m_listRootNodes.Count == 0)
+            {
+                m_winProgress.Aborted = true;
+                UtilProject.CheckAndInvoke(() => m_winProgress.Close());
+                return;
+            }
+
+            m_winProgress.SetCompleted(ksCorrelatingKey);
             TreeCleanup();
 
             var localTV = new LocalTV();
@@ -79,7 +112,7 @@ namespace DoubleFile
                     list_lvIgnore: lsLocalLVignore, bLoose: true);
                 var dtStart = DateTime.Now;
 
-                collate.Step1_OnThread();
+                collate.Step1_OnThread(d => m_winProgress.SetProgress(ksCollatingKey, d));
                 UtilProject.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
 
                 if (gd.WindowClosed)
@@ -88,6 +121,7 @@ namespace DoubleFile
                     return;
                 }
 
+                m_winProgress.SetCompleted(ksCollatingKey);
                 UtilProject.CheckAndInvoke(() => collate.Step2_OnForm());
                 UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             }
@@ -111,6 +145,8 @@ namespace DoubleFile
                 //    m_Browse.LV_CopyScratchpad.Items.Clear();
                 //    m_Browse.LoadCopyScratchPad(lvFake);
             });
+
+            m_winProgress.CloseIfNatural();
         }
 
         void DoTree(bool bKill = false)
@@ -129,9 +165,58 @@ namespace DoubleFile
                 }
             }
 
+            m_winProgress.Title = "Initializing File Hash Explorer";
+            m_winProgress.WindowClosingCallback = (() =>
+            {
+                if (gd.FileDictionary == null)
+                {
+                    return true;
+                }
+
+                if (gd.FileDictionary.IsAborted)
+                {
+                    return true;
+                }
+
+                if (m_bFileDictDone && (m_tree == null))
+                {
+                    return true;
+                }
+
+                if (MBoxStatic.ShowDialog("Do you want to cancel?", m_winProgress.Title,
+                    MessageBoxButton.YesNo) ==
+                    MessageBoxResult.Yes)
+                {
+                    gd.FileDictionary.Abort();
+                    return true;
+                }
+
+                return false;
+            });
+
+            var lssProgressItems = new List<string>();
+
+            if (gd.FileDictionary.IsEmpty)
+            {
+                lssProgressItems.Add(ksFileDictKey);
+                gd.FileDictionary.DoThreadFactory(m_lvProjectVM, CreateFileDictStatusCallback);
+            }
+
             m_tree = new Local.Tree(gd, m_lvProjectVM, m_dictNodes, m_dictDriveInfo,
                 TreeStatusCallback, TreeDoneCallback);
             m_tree.DoThreadFactory();
+
+            lssProgressItems.Add(ksCorrelatingKey);
+            lssProgressItems.Add(ksCollatingKey);
+            m_winProgress.InitProgress(lssProgressItems, lssProgressItems);
+            m_winProgress.ShowDialog();
         }
+
+        WinProgress m_winProgress = new WinProgress();
+        const string ksFileDictKey = "Creating file dictionary";
+        const string ksCorrelatingKey = "Correlating folders";
+        const string ksCollatingKey = "Collating folders";
+        bool m_bFileDictDone = false;
+        readonly double m_nCorrelateProgressDenominator = 0;
     }
 }

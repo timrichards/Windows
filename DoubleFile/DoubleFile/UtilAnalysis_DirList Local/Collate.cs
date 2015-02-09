@@ -81,8 +81,13 @@ namespace Local
             InsertSizeMarkerStatic.Go(listLVitems, 0, bUnique);            // Enter the Zeroth
         }
 
-        internal void Step1_OnThread()
+        internal void Step1_OnThread(Action<double> reportProgress)
         {
+            double nProgressNumerator = 0;
+            double nProgressDenominator = 0;
+            double nProgressItem = 0;
+            const double nTotalProgressItems = 6;
+
             LocalTV treeView = new LocalTV();     // sets Level and NextNode
 
             if (m_listRootNodes.Count <= 0)
@@ -119,8 +124,12 @@ namespace Local
                 dictNodes.Add(pair.Key, pair.Value.ToList());                       // clone pair.Value to remove ignored, using ToList() 
             }
 
+            nProgressDenominator += dictIgnoreNodes.Count;
+            ++nProgressItem;
+
             foreach (KeyValuePair<LocalTreeNode, LocalLVitem> pair in dictIgnoreNodes)
             {
+                reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem/nTotalProgressItems);
                 LocalTreeNode treeNode = pair.Key;
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
@@ -151,9 +160,13 @@ namespace Local
             }
 
             SortedDictionary<FolderKeyStruct, LocalTreeNode> dictUnique = new SortedDictionary<FolderKeyStruct, LocalTreeNode>();
+            nProgressDenominator += dictNodes.Count;
+            ++nProgressItem;
 
             foreach (KeyValuePair<FolderKeyStruct, List<LocalTreeNode>> pair in dictNodes)
             {
+                reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
+
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
                     return;
@@ -216,8 +229,12 @@ namespace Local
 
             SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>> dictClones = new SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>>();
 
+            nProgressDenominator += m_listRootNodes.Count;
+            ++nProgressItem;
+
             foreach (LocalTreeNode treeNode in m_listRootNodes)
             {
+                reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
                     return;
@@ -227,9 +244,13 @@ namespace Local
             }
 
             m_listRootNodes.Sort((x, y) => string.Compare(x.Text, y.Text));
+            nProgressDenominator += dictClones.Count;
+            ++nProgressItem;
 
             foreach (KeyValuePair<FolderKeyStruct, UList<LocalTreeNode>> listNodes in dictClones)
             {
+                reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
+
                 // load up listLVdiffVol
 
                 if (m_bThreadAbort || gd.WindowClosed)
@@ -293,8 +314,13 @@ namespace Local
                 listLVdiffVol.Add(lvItem);
             }
 
+            nProgressDenominator += dictIgnoreMark.Count;
+            ++nProgressItem;
+
             foreach (KeyValuePair<LocalTreeNode, LocalLVitem> pair in dictIgnoreMark)
             {
+                reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
+
                 LocalTreeNode treeNode = pair.Key;
                 LocalLVitem lvIgnoreItem = pair.Value;
 
@@ -310,9 +336,12 @@ namespace Local
 
             dictClones = null;
             InsertSizeMarkers(listLVdiffVol);
+            nProgressDenominator += dictUnique.Count;
 
             foreach (KeyValuePair<FolderKeyStruct, LocalTreeNode> listNodes in dictUnique)
             {
+                reportProgress(++nProgressNumerator / nProgressDenominator);
+
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
                     return;
@@ -360,9 +389,13 @@ namespace Local
             }
 
             listSameVol.Sort((y, x) => ((NodeDatum)x.Tag).nTotalLength.CompareTo(((NodeDatum)y.Tag).nTotalLength));
+            nProgressDenominator += listSameVol.Count;
+            ++nProgressItem;
 
             foreach (LocalTreeNode treeNode in listSameVol)
             {
+                reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
+
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
                     return;

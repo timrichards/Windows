@@ -1,24 +1,37 @@
 ﻿using System;
-using System.Windows.Threading;
+using System.Timers;
 
 namespace DoubleFile
 {
-    class SDL_Timer : DispatcherTimer
+    class SDL_Timer : Timer
     {
         internal SDL_Timer()
             : base()
         { }
 
-        internal SDL_Timer(TimeSpan interval, DispatcherPriority priority, EventHandler callback, Dispatcher dispatcher)
-            : base(interval, priority, callback, dispatcher)
+        internal SDL_Timer(Action callback)
+            : this(500.0, callback)
         { }
 
-        internal new void Start()
+        internal SDL_Timer(int seconds, Action callback)
+            : this(seconds * 1000.0, callback)
+        { }
+
+        internal SDL_Timer(double milliseconds, Action callback)
+            : base(milliseconds)
         {
-            if (MBoxStatic.Assert(0, Interval.TotalMilliseconds > 0))
+            Elapsed += (o, e) => callback();
+        }
+
+        internal new SDL_Timer Start()
+        {
+            if (MBoxStatic.Assert(0, Interval >= 33))
             {
                 base.Start();
+                return this;
             }
+
+            return null;
         }
     }
 

@@ -17,7 +17,7 @@ namespace DoubleFile
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = new WinFileHashVM(gd,
-                new TreeView_FileHashVM(form_tv, Dispatcher),
+                new TreeView_FileHashVM(form_tv),
                 m_lvProjectVM);
         }
 

@@ -98,7 +98,7 @@ namespace DoubleFile
                 return;
             }
 
-            int nLVitems = 0;
+            var nLVitems = 0;
 
             DictLVtoItemNumber.Clear();
             DictItemNumberToLV.Clear();
@@ -110,16 +110,15 @@ namespace DoubleFile
                 ++nLVitems;
             }
 
-            int nLVitems_A = 0;
+            var nLVitems_A = 0;
             var dictFiles = new ConcurrentDictionary<FileKeyStruct, List<int>>();
-            var tsStatus = new TimeSpan(0, 0, 0, 0, 200);
-            var tmrStatus = new Timer(state =>
+            new SDL_Timer(() =>
             {
                 if (nLVitems == nLVitems_A)
                 {
                     m_statusCallback(nProgress: m_nFilesProgress / (double)m_nFilesTotal);
                 }
-            }, null, tsStatus, tsStatus);
+            }).Start();
 
             Parallel.ForEach(LVprojectVM.ItemsCast, lvItem =>
             {
@@ -138,7 +137,7 @@ namespace DoubleFile
                     Interlocked.Increment(ref m_nFilesProgress);
 
                     var key = new FileKeyStruct(asLine[10], asLine[7]);
-                    int lookup = 0;
+                    var lookup = 0;
 
                     SetLVitemProjectVM(ref lookup, nLVitem);
                     SetLineNumber(ref lookup, int.Parse(asLine[1]));

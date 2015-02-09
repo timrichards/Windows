@@ -19,7 +19,7 @@ namespace Local
                 m_listSameVol = listSameVol;
             }
 
-            internal AddTreeToList Go(List<LocalTreeNode> listNodes)
+            internal AddTreeToList Go(IEnumerable<LocalTreeNode> listNodes)
             {
                 foreach (LocalTreeNode treeNode in listNodes)
                 {

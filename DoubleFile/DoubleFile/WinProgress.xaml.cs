@@ -76,6 +76,11 @@ namespace DoubleFile
 
         internal void CloseIfNatural()
         {
+            if (Aborted)
+            {
+                return;     // don't close: there may be an error message
+            }
+
             foreach (var lvItem in m_lv.ItemsCast)
             {
                 if (lvItem.Progress < 1)
@@ -101,7 +106,7 @@ namespace DoubleFile
         {
             if (Aborted)
             {
-                return;
+                return;     // close
             }
 
             if (WindowClosingCallback != null)

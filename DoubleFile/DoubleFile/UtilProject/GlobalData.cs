@@ -5,7 +5,7 @@
         internal static LocalWindow static_TopWindow { get { return static_topWindow_ ?? static_MainWindow; } set { static_topWindow_ = value; } } static LocalWindow static_topWindow_ = null;
         internal static MainWindow static_MainWindow { get; private set; }
 
-        internal readonly SDL_Timer m_tmrDoTree = new SDL_Timer();
+        internal readonly SDL_Timer m_tmrDoTree = null;
         internal bool m_bRestartTreeTimer = false;
         internal bool m_bKillTree = true;
 
@@ -36,7 +36,8 @@
         {
             static_MainWindow = wpfWin;
             Instance = this;
-            m_tmrDoTree.Interval = new System.TimeSpan(0, 0, 3);
+            m_tmrDoTree = new SDL_Timer();
+            m_tmrDoTree.Interval = 3000;
         }
 
         internal void RestartTreeTimer()

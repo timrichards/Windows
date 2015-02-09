@@ -160,7 +160,7 @@ namespace DoubleFile
             tvivm.RaisePropertyChanged("FontWeight");
         }
 
-        internal static void OnTimer(object o, EventArgs e)
+        internal static void OnTimer()
         {
             StopTimer(1);
 
@@ -291,10 +291,10 @@ namespace DoubleFile
 
                 if (m_scrollTimer != null)
                 {
-                    m_scrollTimer.IsEnabled = false;
+                    m_scrollTimer.Enabled = false;
                 }
 
-                m_scrollTimer = new SDL_Timer(TimeSpan.FromMilliseconds(1000), DispatcherPriority.Normal, new EventHandler(TVI_DependencyProperty.OnTimer), TVFE.Dispatcher);
+                m_scrollTimer = new SDL_Timer(1, () => OnTimer()); ;
                 StopTimer(2);
             }
         }

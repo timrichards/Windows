@@ -77,7 +77,7 @@ namespace DoubleFile
                 else if (rootNode != null)
                 {
                     m_listRootNodes.Add(rootNode);
-                    m_winProgress.SetProgress(ksCorrelatingKey, m_listRootNodes.Count / m_nCorrelateProgressDenominator);
+                    m_winProgress.SetProgress(ksFolderTreeKey, m_listRootNodes.Count / m_nCorrelateProgressDenominator/2);
                 }
                 else
                 {
@@ -95,7 +95,6 @@ namespace DoubleFile
                 return;
             }
 
-            m_winProgress.SetCompleted(ksCorrelatingKey);
             TreeCleanup();
 
             var localTV = new LocalTV();
@@ -111,8 +110,13 @@ namespace DoubleFile
                     m_listRootNodes, m_listTreeNodes, bCheckboxes: true,
                     list_lvIgnore: lsLocalLVignore, bLoose: true);
                 var dtStart = DateTime.Now;
+                var nProgress = 0.0;
+                new SDL_Timer(() =>
+                {
+                    m_winProgress.SetProgress(ksFolderTreeKey, (1 + nProgress) / 2.0);
+                }).Start();
 
-                collate.Step1_OnThread(d => m_winProgress.SetProgress(ksCollatingKey, d));
+                collate.Step1_OnThread(d => nProgress = d);
                 UtilProject.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
 
                 if (gd.WindowClosed)
@@ -121,7 +125,7 @@ namespace DoubleFile
                     return;
                 }
 
-                m_winProgress.SetCompleted(ksCollatingKey);
+                m_winProgress.SetCompleted(ksFolderTreeKey);
                 UtilProject.CheckAndInvoke(() => collate.Step2_OnForm());
                 UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             }
@@ -206,16 +210,14 @@ namespace DoubleFile
                 TreeStatusCallback, TreeDoneCallback);
             m_tree.DoThreadFactory();
 
-            lssProgressItems.Add(ksCorrelatingKey);
-            lssProgressItems.Add(ksCollatingKey);
+            lssProgressItems.Add(ksFolderTreeKey);
             m_winProgress.InitProgress(lssProgressItems, lssProgressItems);
             m_winProgress.ShowDialog();
         }
 
         WinProgress m_winProgress = new WinProgress();
         const string ksFileDictKey = "Creating file dictionary";
-        const string ksCorrelatingKey = "Correlating folders";
-        const string ksCollatingKey = "Collating folders";
+        const string ksFolderTreeKey = "Creating folder tree browser";
         bool m_bFileDictDone = false;
         readonly double m_nCorrelateProgressDenominator = 0;
     }

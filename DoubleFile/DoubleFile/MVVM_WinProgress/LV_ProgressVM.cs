@@ -17,17 +17,15 @@ namespace DoubleFile
 
         internal LV_ProgressVM()
         {
-            m_tmrUpdate.Interval = new TimeSpan(0, 0, 0, 0, 200);
-            m_tmrUpdate.Tick += (o, e) =>
+            m_tmrUpdate = new SDL_Timer(() =>
             {
                 foreach (var lvItem in ItemsCast)
                 {
                     lvItem.TimerTick();
                 }
-            };
-            m_tmrUpdate.Start();
+            }).Start();
         }
 
-        SDL_Timer m_tmrUpdate = new SDL_Timer();
+        readonly SDL_Timer m_tmrUpdate = null;
     }
 }

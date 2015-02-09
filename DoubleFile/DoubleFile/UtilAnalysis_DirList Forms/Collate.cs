@@ -158,7 +158,7 @@ namespace DoubleFile
                     return;
                 }
 
-                List<TreeNode> listNodes = (List<TreeNode>)pair.Value;
+                var listNodes = pair.Value;
 
                 if (listNodes.Count < 1)
                 {

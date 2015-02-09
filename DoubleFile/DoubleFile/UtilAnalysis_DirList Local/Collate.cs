@@ -172,7 +172,7 @@ namespace Local
                     return;
                 }
 
-                List<LocalTreeNode> listNodes = (List<LocalTreeNode>)pair.Value;
+                var listNodes = pair.Value;
 
                 if (listNodes.Count < 1)
                 {

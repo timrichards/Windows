@@ -38,8 +38,7 @@ namespace DoubleFile
             gd_Search_Path = new GlobalData_Search_Path(gd);
             gd_Search_1_2 = new GlobalData_Search_1_2(gd, gd_Search_Path, gd_Tree);
 
-            gd.m_tmrDoTree.Interval = new System.TimeSpan(0, 0, 3);
-            gd.m_tmrDoTree.Tick += (o, e) =>
+            gd.m_tmrDoTree.Elapsed += (o, e) =>
             {
                 gd.m_tmrDoTree.Stop();
                 gd.m_bRestartTreeTimer = false;
@@ -49,13 +48,16 @@ namespace DoubleFile
                     return;
                 }
 
-                if (gd.m_bCompareMode)
+                UtilAnalysis_DirList.CheckAndInvoke(this, () =>
                 {
-                    MBoxStatic.Assert(1308.9304, form_chkCompare1.Checked);
-                    form_chkCompare1.Checked = false;
-                }
+                    if (gd.m_bCompareMode)
+                    {
+                        MBoxStatic.Assert(1308.9304, form_chkCompare1.Checked);
+                        form_chkCompare1.Checked = false;
+                    }
 
-                DoTree(bKill: gd.m_bKillTree);
+                    DoTree(bKill: gd.m_bKillTree);
+                });
                 gd.m_bKillTree = true;
             };
 
@@ -250,7 +252,7 @@ namespace DoubleFile
 
             if (form_lvIgnoreList.Items.Count > 0)
             {
-                gd.m_bKillTree &= gd.m_tmrDoTree.IsEnabled;
+                gd.m_bKillTree &= gd.m_tmrDoTree.Enabled;
                 gd.RestartTreeTimer();
             }
         }
@@ -332,7 +334,7 @@ namespace DoubleFile
             }
 
             form_lvIgnoreList.Items.Clear();
-            gd.m_bKillTree &= gd.m_tmrDoTree.IsEnabled;
+            gd.m_bKillTree &= gd.m_tmrDoTree.Enabled;
             gd.RestartTreeTimer();
         }
 
@@ -555,7 +557,7 @@ namespace DoubleFile
 
                 lvItem.Name = lvItem.Text;
                 form_lvIgnoreList.Items.Add(lvItem);
-                gd.m_bKillTree &= gd.m_tmrDoTree.IsEnabled;
+                gd.m_bKillTree &= gd.m_tmrDoTree.Enabled;
                 gd.RestartTreeTimer();
             }
         }
@@ -573,7 +575,7 @@ namespace DoubleFile
                 lvItem.Remove();
             }
 
-            gd.m_bKillTree &= gd.m_tmrDoTree.IsEnabled;
+            gd.m_bKillTree &= gd.m_tmrDoTree.Enabled;
             gd.RestartTreeTimer();
         }
 
@@ -859,7 +861,7 @@ namespace DoubleFile
                 return;
             }
 
-            gd.m_bKillTree &= gd.m_tmrDoTree.IsEnabled;
+            gd.m_bKillTree &= gd.m_tmrDoTree.Enabled;
             gd.RestartTreeTimer();
         }
 

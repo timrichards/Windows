@@ -116,12 +116,11 @@ namespace DoubleFile
 
                 var nProgressNumerator = 0;
                 double nProgressDenominator = listFilePaths.Count();        // double preserves mantissa
-                var timeSpan = new TimeSpan(0, 0, 0, 1);
 
-                System.Threading.Timer timer = new System.Threading.Timer(state =>
+                new SDL_Timer(() =>
                 {
                     m_statusCallback(LVitemProjectVM, nProgress: nProgressNumerator / nProgressDenominator);
-                }, null, timeSpan, timeSpan);
+                }).Start();
 
                 var dictHash = new ConcurrentDictionary<string, HashStruct>();
                 var dictException_FileRead = new Dictionary<string, string>();
@@ -159,7 +158,6 @@ namespace DoubleFile
                     }
                 });
 
-                timer.Dispose();
                 dictHash_out = dictHash;
                 dictException_FileRead_out = dictException_FileRead;
                 m_statusCallback(LVitemProjectVM, nProgress: 1);

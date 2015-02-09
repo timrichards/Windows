@@ -23,7 +23,7 @@ namespace Local
         LocalTreeNode m_prevNode = null;
         LocalTreeNode m_deepNode = null;
         LocalTreeNode m_deepNodeDrawn = null;
-        readonly SDL_Timer m_timerAnim = new SDL_Timer();
+        readonly SDL_Timer m_timerAnim = null;
         int m_nAnimFrame = 0;
         DateTime m_dtHideGoofball = DateTime.MinValue;
         readonly ToolTip m_toolTip = new ToolTip();
@@ -32,16 +32,14 @@ namespace Local
         {
             m_toolTip.UseFading = true;
             m_toolTip.UseAnimation = true;
-            m_timerAnim.Interval = new TimeSpan(0, 0, 0, 0, 33);    // 30 FPS
-            m_timerAnim.Tick += (o, e) =>
+            m_timerAnim = new SDL_Timer(33.0, () =>   // 30 FPS
             {
                 if (m_rectCenter != Rectangle.Empty)
                 {
                     ++m_nAnimFrame;
                     Invalidate(m_rectCenter);
                 }
-            };
-            m_timerAnim.Start();
+            }).Start();
 
             SetStyle(ControlStyles.DoubleBuffer |
                 ControlStyles.UserPaint |

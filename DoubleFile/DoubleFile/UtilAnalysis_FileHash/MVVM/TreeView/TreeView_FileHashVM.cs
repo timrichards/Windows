@@ -7,12 +7,12 @@ namespace DoubleFile
 {
     class TreeView_FileHashVM
     {
-        internal TreeView_FileHashVM(TreeView tvfe, Dispatcher dispatcher)
+        internal TreeView_FileHashVM(TreeView tvfe)
         {
             TVI_DependencyProperty.TVFE = TVFE = tvfe;
         }
 
-        internal void SetData(List<LocalTreeNode> rootNodes)
+        internal void SetData(IEnumerable<LocalTreeNode> rootNodes)
         {
             int nIndex = -1;
 
@@ -26,10 +26,8 @@ namespace DoubleFile
 
         internal TreeViewItem_FileHashVM SelectedItem = null;
         internal UList<TreeViewItem_FileHashVM> m_listExpanded = new UList<TreeViewItem_FileHashVM>();
-        
-        readonly List<TreeViewItem_FileHashVM> m_Items = new List<TreeViewItem_FileHashVM>();
         internal readonly TreeView TVFE = null;
 
-        internal DateTime mDbg_dtProgrammaticExpand = DateTime.MinValue;
+        readonly List<TreeViewItem_FileHashVM> m_Items = new List<TreeViewItem_FileHashVM>();
     }
 }

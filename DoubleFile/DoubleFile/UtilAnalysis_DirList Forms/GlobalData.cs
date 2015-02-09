@@ -272,7 +272,7 @@ namespace DoubleFile
 
         internal void InterruptTreeTimerWithAction(BoolAction boolAction)
         {
-            bool bTimer = m_tmrDoTree.IsEnabled;
+            bool bTimer = m_tmrDoTree.Enabled;
 
             m_tmrDoTree.Stop();
 

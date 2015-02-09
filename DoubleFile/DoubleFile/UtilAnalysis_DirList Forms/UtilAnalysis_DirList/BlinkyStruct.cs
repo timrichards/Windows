@@ -47,16 +47,16 @@ namespace DoubleFile
 
         internal BlinkyStruct(Control defaultControl)
         {
-            m_timer = new SDL_Timer();
             m_holder = new NullHolder();
             m_clrBlink = Color.DarkTurquoise;
             m_nBlink = 0;
             m_nNumBlinks = 10;
             m_bProgress = false;
             m_defaultControl = defaultControl;
-            BlinkyStruct local = this;
 
-            m_timer.Tick += (o, e) =>
+            m_timer = null;     // bootstrap
+            BlinkyStruct local = this;
+            m_timer = new SDL_Timer(33.0, () =>
             {
                 if (local.m_bProgress || (++local.m_nBlink < local.m_nNumBlinks))
                 {
@@ -66,7 +66,7 @@ namespace DoubleFile
                 {
                     local.Reset();
                 }
-            };
+            });
         }
 
         internal void SelectTreeNode(TreeNode treeNode, bool Once = true)
@@ -106,7 +106,7 @@ namespace DoubleFile
 
         void Go_A(Color? clr = null, bool Once = false, bool bProgress = false)
         {
-            MBoxStatic.Assert(1303.4301, m_timer.IsEnabled == false, bTraceOnly: true);
+            MBoxStatic.Assert(1303.4301, m_timer.Enabled == false, bTraceOnly: true);
             MBoxStatic.Assert(1303.4302, m_nBlink == 0, bTraceOnly: true);
             MBoxStatic.Assert(1303.4303, (m_holder is NullHolder) == false, bTraceOnly: true);
             MBoxStatic.Assert(1303.4304, m_bProgress == false, bTraceOnly: true);
@@ -116,7 +116,7 @@ namespace DoubleFile
             m_clrBlink = clr ?? (bProgress ? Color.LightSalmon : Color.Turquoise);
             m_nBlink = 0;
             m_nNumBlinks = Once ? 2 : 10;
-            m_timer.Interval = new TimeSpan(0, 0, 0, 0, bProgress ? 500 : (Once ? 100 : 50));
+            m_timer.Interval = bProgress ? 500 : (Once ? 100 : 50);
             m_timer.Start();
         }
 

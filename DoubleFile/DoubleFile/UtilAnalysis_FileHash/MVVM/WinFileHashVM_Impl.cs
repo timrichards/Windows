@@ -91,7 +91,7 @@ namespace DoubleFile
                 UtilProject.CheckAndInvoke(() => collate.Step2_OnForm());
                 UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             }
-            
+
             TreeCleanup();
 
             UtilProject.CheckAndInvoke(() =>

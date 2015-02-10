@@ -40,6 +40,16 @@ namespace Local
 
                 do
                 {
+                    if (m_listTreeNodes.Contains(treeNode))
+                    {
+                        var kvp_A = (m_listTreeNodes as Dictionary<LocalTreeNode, object>)
+                            .Where(kvp => kvp.Key == treeNode)
+                            .ToArray()[0];
+
+                        UtilProject.WriteLine(kvp_A.Key.ToString());
+                        MBoxStatic.Assert(0, false);
+                    }
+
                     m_listTreeNodes.Add(treeNode);
                     ++Count;
 

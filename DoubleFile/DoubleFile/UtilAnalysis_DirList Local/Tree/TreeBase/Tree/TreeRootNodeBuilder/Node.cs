@@ -65,7 +65,7 @@ namespace Local
                 {
                     if (gd.WindowClosed)
                     {
-                        return new LocalTreeNode();
+                        return new LocalTreeNode("");
                     }
 
                     int nIndex = m_strPath.LastIndexOf('\\');

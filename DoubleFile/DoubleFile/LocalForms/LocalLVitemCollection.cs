@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DoubleFile
 {
-    class LocalLVitemCollection : UList<LocalLVitem>
+    class LocalLVitemCollection : List<LocalLVitem>
     {
         internal LocalLVitemCollection(LocalLV listView)
         {
@@ -54,7 +54,7 @@ namespace DoubleFile
                 else
                 {
                     strPrevQuery = s;
-                    lvItemPrevQuery = (LocalLVitem)Keys.Where(t => t.Text == s) ?? NullValue;
+                    lvItemPrevQuery = (LocalLVitem)this.Where(t => t.Text == s) ?? NullValue;
                     return lvItemPrevQuery;                   // TODO: Trim? ignore case? Probably neither.
                 }
             }

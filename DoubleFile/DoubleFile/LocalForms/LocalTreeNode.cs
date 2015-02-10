@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Text;
-using System.Threading;
 using System.Windows.Media;
 
 namespace DoubleFile
 {
-    class LocalTreeNode : IEqualityComparer<int>
+    class LocalTreeNode
     {
         internal TreeViewItem_FileHashVM TVIVM = null;
         internal LVitem_FileHashVM LVIVM = null;
@@ -13,7 +12,6 @@ namespace DoubleFile
         internal LocalTreeNode()
         {
             Nodes = new LocalTreeNodeCollection(TreeView);
-            m_nHashCode = Interlocked.Increment(ref HashCodeGenerator);
         }
 
         internal LocalTreeNode(string strContent)
@@ -108,69 +106,6 @@ namespace DoubleFile
 
             return nodeParent;
         }
-
-        public bool Equals(int x, int y)
-        {
-            return (x == y);
-        }
-
-        public int GetHashCode(int obj)
-        {
-            return obj;
-        }
-
-        public override int GetHashCode()
-        {
-            return m_nHashCode;
-        }
-
-        public override bool Equals(object o)
-        {
-            if (false == (o is LocalTreeNode))
-            {
-                return false;
-            }
-
-            if (o as object == null)
-            {
-                return false;
-            }
-
-            return (o as LocalTreeNode).m_nHashCode == m_nHashCode;
-        }
-
-        static public bool operator ==(LocalTreeNode x, LocalTreeNode y)
-        {
-            if ((x as object == null) && (y as object == null))
-            {
-                return true;
-            }
-
-            if ((x as object == null) || (y as object == null))
-            {
-                return false;
-            }
-
-            return (x.m_nHashCode == y.m_nHashCode);
-        }
-
-        static public bool operator !=(LocalTreeNode x, LocalTreeNode y)
-        {
-            if ((x as object == null) && (y as object == null))
-            {
-                return false;
-            }
-
-            if ((x as object == null) || (y as object == null))
-            {
-                return true;
-            }
-
-            return (x.m_nHashCode != y.m_nHashCode);
-        }
-
-        static int HashCodeGenerator = 0;
-        int m_nHashCode = 0;
 
         readonly internal LocalTreeNodeCollection Nodes = null;
         internal string Text = null;

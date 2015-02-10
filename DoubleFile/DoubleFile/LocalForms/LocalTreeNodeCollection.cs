@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 
 namespace DoubleFile
 {
-    class LocalTreeNodeCollection : List<LocalTreeNode>
+    class LocalTreeNodeCollection : UList<LocalTreeNode>
     {
         internal LocalTreeNodeCollection(LocalTV treeView)
         {
@@ -46,7 +45,7 @@ namespace DoubleFile
                 else
                 {
                     strPrevQuery = s;
-                    nodePrevQuery = (LocalTreeNode)this.Where(t => t.Text == s);
+                    nodePrevQuery = (LocalTreeNode)Keys.Where(t => t.Text == s);
                     return nodePrevQuery;                   // TODO: Trim? ignore case? Probably neither.
                 }
             }

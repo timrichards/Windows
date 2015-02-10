@@ -4,6 +4,7 @@ using System;
 using System.Threading;
 using System.Collections.Generic;
 using System.Windows;
+using System.Collections.Concurrent;
 
 namespace DoubleFile
 {
@@ -11,7 +12,7 @@ namespace DoubleFile
     
     partial class WinFileHashVM
     {
-        internal readonly SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>> m_dictNodes = new SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>>();
+        internal readonly ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>> m_dictNodes = new ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>>();
         internal readonly Dictionary<string, string> m_dictDriveInfo = new Dictionary<string, string>();
         internal Local.Tree m_tree = null;
 
@@ -111,23 +112,29 @@ namespace DoubleFile
                     list_lvIgnore: lsLocalLVignore, bLoose: true);
                 var dtStart = DateTime.Now;
                 var nProgress = 0.0;
-                new SDL_Timer(() =>
-                {
-                    m_winProgress.SetProgress(ksFolderTreeKey, (1 + nProgress) / 2.0);
-                }).Start();
 
-                collate.Step1_OnThread(d => nProgress = d);
-                UtilProject.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
-
-                if (gd.WindowClosed)
+                using (new SDL_Timer(() =>
                 {
-                    TreeCleanup();
-                    return;
+                    m_winProgress.SetProgress(ksFolderTreeKey, (1 + nProgress)/2.0);
+                }).Start())
+                {
+                    collate.Step1_OnThread(d => nProgress = d);
+                    UtilProject.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds/1000.0 +
+                                          " seconds.");
+                    dtStart = DateTime.Now;
+
+                    if (gd.WindowClosed)
+                    {
+                        TreeCleanup();
+                        return;
+                    }
+
+                    m_winProgress.SetCompleted(ksFolderTreeKey);
+                    UtilProject.CheckAndInvoke(() => collate.Step2_OnForm());
+                    UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds/1000.0 +
+                                          " seconds.");
+                    dtStart = DateTime.Now;
                 }
-
-                m_winProgress.SetCompleted(ksFolderTreeKey);
-                UtilProject.CheckAndInvoke(() => collate.Step2_OnForm());
-                UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             }
 
             TreeCleanup();
@@ -215,7 +222,7 @@ namespace DoubleFile
             m_winProgress.ShowDialog();
         }
 
-        WinProgress m_winProgress = new WinProgress();
+        readonly WinProgress m_winProgress = new WinProgress();
         const string ksFileDictKey = "Creating file dictionary";
         const string ksFolderTreeKey = "Creating folder tree browser";
         bool m_bFileDictDone = false;

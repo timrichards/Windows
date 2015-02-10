@@ -71,17 +71,33 @@ namespace DoubleFile
                     }
                     else if (nodeDatum.nTotalLength > 100 * 1024)
                     {
-                        UList<TreeNode> listNodes = new UList<TreeNode>();
-
-                        listNodes.Add(treeNode);
-                        m_dictNodes.Add(nKey, listNodes);
+                        m_dictNodes.Add(nKey, new UList<TreeNode> { treeNode });
                     }
                 }
 
                 return datum;
             }
 
-            internal void Go()
+            internal TreeRootNodeBuilder DoThreadFactory()
+            {
+                m_thread = new Thread(Go);
+                m_thread.IsBackground = true;
+                m_thread.Start();
+                return this;
+            }
+
+            internal void Join()
+            {
+                m_thread.Join();
+            }
+
+            internal void Abort()
+            {
+                m_bThreadAbort = true;
+                m_thread.Abort();
+            }
+
+            void Go()
             {
                 DateTime dtStart = DateTime.Now;
 
@@ -180,17 +196,19 @@ namespace DoubleFile
                 DirData dirData = null;
 
                 {
-                    RootNode rootNode = new RootNode();
-                    string strStart = File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Start)).ToArray()[0];
-
-                    rootNode.FirstLineNo = uint.Parse(strStart.Split('\t')[1]);
+                    var rootNode = new RootNode();
+                    
+                    File
+                        .ReadLines(m_volStrings.ListingFile)
+                        .Where(s => s.StartsWith(ksLineType_Start))
+                        .FirstOnlyAssert(s => rootNode.FirstLineNo = uint.Parse(s.Split('\t')[1]));
                     dirData = new DirData(gd, rootNode);
                 }
 
-                bool bZeroLengthsWritten = true;
-                List<string> listLines = File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory)).ToList();
+                var bZeroLengthsWritten = true;
+                var ieLines = File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory));
 
-                foreach (string strLine in listLines)
+                foreach (var strLine in ieLines)
                 {
                     if (gd.WindowClosed)
                     {
@@ -199,7 +217,7 @@ namespace DoubleFile
 
                     string[] strArray = strLine.Split('\t');
                     uint nLineNo = uint.Parse(strArray[1]);
-                    int nIx = knColLength;
+                    const int nIx = knColLength;
                     ulong nLength = 0;
 
                     if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx])))
@@ -234,9 +252,12 @@ namespace DoubleFile
 #endif
                 }
 
-                ulong nScannedLength = ulong.Parse(
-                    File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Length)).ToArray()[0]
-                    .Split('\t')[knColLength]);
+                ulong nScannedLength = 0;
+
+                File
+                    .ReadLines(m_volStrings.ListingFile)
+                    .Where(s => s.StartsWith(ksLineType_Length))
+                    .FirstOnlyAssert(s => nScannedLength = ulong.Parse(s.Split('\t')[knColLength]));
 
                 UtilProject.WriteLine(nScannedLength.ToString());
 
@@ -259,25 +280,6 @@ namespace DoubleFile
                 }
 
                 UtilProject.WriteLine(m_volStrings.ListingFile + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
-            }
-
-            internal TreeRootNodeBuilder DoThreadFactory()
-            {
-                m_thread = new Thread(Go);
-                m_thread.IsBackground = true;
-                m_thread.Start();
-                return this;
-            }
-
-            internal void Join()
-            {
-                m_thread.Join();
-            }
-
-            internal void Abort()
-            {
-                m_bThreadAbort = true;
-                m_thread.Abort();
             }
         }
     }

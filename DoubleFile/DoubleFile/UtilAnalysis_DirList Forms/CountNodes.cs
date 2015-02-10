@@ -5,7 +5,7 @@ namespace DoubleFile
 {
     static class CountNodes
     {
-        internal static int Go(IEnumerable<TreeNode> listNodes)
+        internal static int Go(IReadOnlyList<TreeNode> listNodes)
         {
             int nCount = 0;
 

@@ -225,9 +225,7 @@
     <Compile Include="UtilProject\DriveSerialStatic.cs" />
     <Compile Include="UtilProject\MBoxStatic.cs" />
     <Compile Include="UtilProject\ProjectFile.cs" />
-    <Compile Include="UtilProject\SDL_Timer.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="UtilProject\SDL_Timer.cs" />
     <Compile Include="UtilProject\UList.cs" />
     <Compile Include="UtilProject\UtilProject.cs" />
     <Compile Include="UtilProject\Win32FindFileStatic.cs" />

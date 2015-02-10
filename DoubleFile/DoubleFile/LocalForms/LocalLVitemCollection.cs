@@ -13,17 +13,17 @@ namespace DoubleFile
             m_listView = listView;
         }
 
-        internal void AddRange(string[] arrItems)
+        internal void AddRange(IReadOnlyList<string> lsItems)
         {
-            foreach (string s in arrItems)
+            foreach (string s in lsItems)
             {
                 Add(new LocalLVitem(s, m_listView));
             }
         }
 
-        internal void AddRange(LocalLVitem[] arrItems)
+        internal void AddRange(IReadOnlyList<LocalLVitem> lsItems)
         {
-            foreach (LocalLVitem lvItem in arrItems)
+            foreach (LocalLVitem lvItem in lsItems)
             {
                 lvItem.ListView = m_listView;
                 Add(lvItem);
@@ -41,7 +41,7 @@ namespace DoubleFile
             return (lvItemPrevQuery != null);
         }
 
-        internal new LocalLVitem this[int i] { get { if (i < Count) return base[i]; return NullValue; } }
+        internal new LocalLVitem this[int i] { get { return (i < Count) ? base[i] : NullValue; } }
 
         internal LocalLVitem this[string s]
         {
@@ -60,7 +60,7 @@ namespace DoubleFile
             }
         }
 
-        static LocalLVitem NullValue = new LocalLVitem();
+        static readonly LocalLVitem NullValue = new LocalLVitem();
         readonly LocalLV m_listView = null;
         string strPrevQuery = null;
         LocalLVitem lvItemPrevQuery = null;

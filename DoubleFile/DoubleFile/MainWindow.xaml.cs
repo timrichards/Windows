@@ -13,7 +13,7 @@ namespace DoubleFile
     {
         public MainWindow()
         {
-            new GlobalData(this);
+            gd_old = new GlobalData(this);
             InitializeComponent();
         }
 
@@ -161,6 +161,8 @@ namespace DoubleFile
             {
                 Directory.Delete(ProjectFile.TempPath01, true);
             }
+
+            gd_old.Dispose();
         }
 
         private void Button_ViewProject_Click(object sender, RoutedEventArgs e)
@@ -203,5 +205,6 @@ namespace DoubleFile
         }
 
         GlobalData_Base gd = null;
+        GlobalData gd_old = null;
     }
 }

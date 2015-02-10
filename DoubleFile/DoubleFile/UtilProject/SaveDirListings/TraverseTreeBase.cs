@@ -15,7 +15,7 @@ namespace DoubleFile
                 LVitemProjectVM = lvProjectVM;
             }
 
-            protected IEnumerable<string> GetFileList()
+            protected IReadOnlyList<string> GetFileList()
             {
                 return ImplementationDetails();
             }
@@ -32,7 +32,7 @@ namespace DoubleFile
             /// <param name="dictHash"></param>
             /// <param name="dictException_FileRead"></param>
             /// <returns>File list if first pass</returns>
-            private IEnumerable<string> ImplementationDetails(
+            private IReadOnlyList<string> ImplementationDetails(
                 TextWriter fs = null,
                 ConcurrentDictionary<string, HashStruct> dictHash = null,
                 Dictionary<string, string> dictException_FileRead = null)
@@ -189,7 +189,7 @@ namespace DoubleFile
             protected long FilesRead { get; private set; }
 
             List<string> m_listErrors = new List<string>();
-            protected IEnumerable<string> ErrorList { get { return m_listErrors; } }
+            protected IReadOnlyList<string> ErrorList { get { return m_listErrors; } }
 
             protected bool m_bThreadAbort = false;
             protected readonly LVitem_ProjectVM LVitemProjectVM = null;

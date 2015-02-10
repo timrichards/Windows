@@ -61,7 +61,7 @@ namespace DoubleFile
                 return;
             }
 
-            if (Progress == double.NaN)
+            if (double.IsNaN(Progress))
             {
                 return;
             }

@@ -9,13 +9,16 @@ namespace Local
     {
         static class InsertSizeMarkerStatic
         {
-            internal static void Go(List<LocalLVitem> listLVitems, int nIx, bool bUnique, bool bAdd = false)
+            internal static void Go(IList<LocalLVitem> listLVitems, int nIx, bool bUnique, bool bAdd = false)
             {
                 Init();
 
-                LocalLVitem lvItem = (LocalLVitem)lvMarker.Clone();
+                var lvItem = (LocalLVitem)lvMarker.Clone();
 
-                lvItem.Text = ((UtilAnalysis_DirList.FormatSize(((NodeDatum)((LocalTreeNode)(bUnique ? listLVitems[nIx].Tag : ((UList<LocalTreeNode>)listLVitems[nIx].Tag)[0])).Tag).nTotalLength, bNoDecimal: true)));
+                lvItem.Text = ((UtilAnalysis_DirList.FormatSize(
+                    ((NodeDatum)((LocalTreeNode)(bUnique ? listLVitems[nIx].Tag :
+                    ((UList<LocalTreeNode>)listLVitems[nIx].Tag)[0])).Tag).nTotalLength,
+                    bNoDecimal: true)));
 
                 if (bAdd)
                 {

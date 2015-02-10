@@ -11,14 +11,7 @@ namespace DoubleFile
 
         internal int GetNodeCount(bool includeSubTrees = false)
         {
-            if (includeSubTrees)
-            {
-                return CountSubnodes(Nodes);
-            }
-            else
-            {
-                return Nodes.Count;
-            }
+            return includeSubTrees ? CountSubnodes(Nodes) : Nodes.Count;
         }
 
         internal void Select() { }
@@ -30,11 +23,11 @@ namespace DoubleFile
         internal bool CheckBoxes = false;
         internal bool Enabled = false;
 
-        int CountSubnodes(LocalTreeNodeCollection nodes)
+        static int CountSubnodes(LocalTreeNodeCollection nodes)
         {
-            int nRet = 0;
+            var nRet = 0;
 
-            foreach (LocalTreeNode treeNode in nodes)
+            foreach (var treeNode in nodes)
             {
                 nRet += CountSubnodes(treeNode.Nodes);
                 ++nRet;

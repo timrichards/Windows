@@ -5,7 +5,7 @@ namespace Local
 {
     static class CountNodes
     {
-        internal static int Go(IEnumerable<LocalTreeNode> listNodes)
+        internal static int Go(IReadOnlyList<LocalTreeNode> listNodes)
         {
             int nCount = 0;
 

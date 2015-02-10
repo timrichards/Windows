@@ -12,15 +12,17 @@ namespace DoubleFile
         internal LocalLVitem(LocalLV listView = null) { SubItems = new LocalLVitemCollection(ListView); }
         internal LocalLVitem(string strContent, LocalLV listView = null) : this(listView) { Text = strContent; }
 
-        internal LocalLVitem(string[] arrString, LocalLV listView = null)
+        internal LocalLVitem(IReadOnlyList<string> asString, LocalLV listView = null)
             : this(listView)
         {
-            Text = arrString[0];
+            Text = asString[0];
             SubItems.Add(this);
 
-            for (int i = 1; i < arrString.Length; ++i)
+            var i = 1;
+
+            foreach (var s in asString.Skip(1))
             {
-                SubItems.Add(new LocalLVitem(arrString[i], listView));
+                SubItems.Add(new LocalLVitem(asString[i++], listView));
             }
         }
 
@@ -38,7 +40,7 @@ namespace DoubleFile
         internal int ForeColor = UtilColor.Empty;
 
         // Only used for colors and bold font weight, not subitems, in Collate.cs InsertSizeMarker(). Size 18 to show obvious fault in interpretation.
-        internal object Clone() { LocalLVitem lvItem = (LocalLVitem)MemberwiseClone(); lvItem.Font = (System.Drawing.Font)Font.Clone(); return lvItem; }
+        internal object Clone() { var lvItem = (LocalLVitem)MemberwiseClone(); lvItem.Font = (System.Drawing.Font)Font.Clone(); return lvItem; }
         internal System.Drawing.Font Font { get { return new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold); } set { FontWeight = System.Windows.FontWeights.Bold; } }
         internal System.Windows.FontWeight FontWeight = System.Windows.FontWeights.Normal;
     }

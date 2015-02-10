@@ -1,18 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using DoubleFile;
+using System.Collections.Concurrent;
 
 namespace Local
 {
     abstract class TreeBase : FileParse
     {
         protected readonly GlobalData_Base gd = null;
-        protected readonly SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>> m_dictNodes = null;
+        protected readonly ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>> m_dictNodes = null;
         protected readonly Dictionary<string, string> m_dictDriveInfo = null;
         protected static TreeStatusDelegate m_statusCallback = null;
 
-        protected TreeBase(GlobalData_Base gd_in, 
-            SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>> dictNodes,
+        protected TreeBase(GlobalData_Base gd_in,
+            ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>> dictNodes,
             Dictionary<string, string> dictDriveInfo,
             TreeStatusDelegate statusCallback)
         {

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -9,9 +10,9 @@ namespace DoubleFile
             m_treeView = treeView;
         }
 
-        internal void AddRange(LocalTreeNode[] arrNodes)
+        internal void AddRange(IReadOnlyList<LocalTreeNode> lsNodes)
         {
-            foreach (LocalTreeNode treeNode in arrNodes)
+            foreach (var treeNode in lsNodes)
             {
                 Add(treeNode);
             }
@@ -45,7 +46,7 @@ namespace DoubleFile
                 else
                 {
                     strPrevQuery = s;
-                    nodePrevQuery = (LocalTreeNode)Keys.Where(t => t.Text == s);
+                    Keys.Where(t => t.Text == s).FirstOnlyAssert(t => nodePrevQuery = t);
                     return nodePrevQuery;                   // TODO: Trim? ignore case? Probably neither.
                 }
             }
@@ -53,7 +54,7 @@ namespace DoubleFile
 
         internal new void Clear()
         {
-            foreach (LocalTreeNode treeNode in this)
+            foreach (var treeNode in this)
             {
                 treeNode.DetachFromTree();
             }
@@ -70,7 +71,7 @@ namespace DoubleFile
                 nodeParent.FirstNode = nodes[0];
             }
 
-            foreach (LocalTreeNode treeNode in nodes)
+            foreach (var treeNode in nodes)
             {
                 if (nodePrev != null)
                 {

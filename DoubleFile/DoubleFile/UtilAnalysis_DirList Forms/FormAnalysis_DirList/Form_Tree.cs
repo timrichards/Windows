@@ -34,7 +34,7 @@ namespace DoubleFile
                 }
                 else if (rootNode != null)
                 {
-                    lock (form_treeViewBrowse)
+                    lock (form_treeViewBrowse.Nodes)
                     {
                         form_treeViewBrowse.Nodes.Add(rootNode.Text);    // items added to show progress
                         //             volStrings.SetStatus_Done(form_lvVolumesMain, rootNode);
@@ -162,7 +162,7 @@ namespace DoubleFile
                 {
                     ListView lv = bSecondComparePane ? form_lvDetailVol : form_lvDetail;
 
-                    lock (lv)
+                    lock (lv.Items)
                     {
                         lv.Items.Clear();
                         lv.Items.AddRange(lvItemDetails);
@@ -174,7 +174,7 @@ namespace DoubleFile
                 {
                     ListView lv = form_lvDetailVol;
 
-                    lock (lv)
+                    lock (lv.Items)
                     {
                         lv.Items.Clear();
                         lv.Items.AddRange(lvVolDetails);
@@ -189,7 +189,7 @@ namespace DoubleFile
 
                 if (gd.m_bCompareMode == false)
                 {
-                    lock (form_lvFiles)
+                    lock (form_lvFiles.Items)
                     {
                         form_lvFiles.Items.Clear();
                         form_lvFiles.Items.AddRange(itemArray);
@@ -219,7 +219,7 @@ namespace DoubleFile
                 SDL_ListView lv1 = (SDL_ListView)(bSecondComparePane ? form_lvFileCompare : form_lvFiles);
                 SDL_ListView lv2 = (SDL_ListView)(bSecondComparePane ? form_lvFiles : form_lvFileCompare);
 
-                lock (lv1)
+                lock (lv1.Items)
                 {
                     lv1.Items.Clear();
                     lv1.Items.AddRange(itemArray);
@@ -261,9 +261,9 @@ namespace DoubleFile
 
                 UtilAnalysis_DirList.Write("E");
 
-                lock (lv1)
+                lock (lv1.Items)
                 {
-                    lock (lv2)
+                    lock (lv2.Items)
                     {
                         LVitemNameComparerStruct.NameItems(lv1.Items);
                         LVitemNameComparerStruct.NameItems(lv2.Items);

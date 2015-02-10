@@ -2,10 +2,10 @@
 using System;
 namespace DoubleFile
 {
-    class LV_ProgressVM : ListViewVM_GenericBase<LVitem_ProgressVM>
+    class LV_ProgressVM : ListViewVM_GenericBase<LVitem_ProgressVM>, IDisposable    // Timer so IDisposable
     {
         // queried by ObservableObject but not used for progress bar
-        public string WidthNickname { get { return SCW; } }                   // franken all NaN
+        public string WidthNickname { get { return SCW; } }                         // franken all NaN
         public string WidthSourcePath { get { return SCW; } }
         public string WidthProgress { get { return SCW; } }
         public string WidthIndeterminate { get { return SCW; } }
@@ -24,6 +24,11 @@ namespace DoubleFile
                     lvItem.TimerTick();
                 }
             }).Start();
+        }
+
+        public void Dispose()
+        {
+            m_tmrUpdate.Dispose();
         }
 
         readonly SDL_Timer m_tmrUpdate = null;

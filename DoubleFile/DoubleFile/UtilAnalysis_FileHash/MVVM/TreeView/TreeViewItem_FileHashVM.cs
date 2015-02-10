@@ -168,8 +168,9 @@ namespace DoubleFile
 
             m_Items = new ObservableCollection<TreeViewItem_FileHashVM>
             (
-                (from item in datum.Nodes.Keys select new TreeViewItem_FileHashVM(tvvm, item, this, ++nIndex_A))
-                .ToList<TreeViewItem_FileHashVM>()
+                from item 
+                     in datum.Nodes.Keys 
+                 select new TreeViewItem_FileHashVM(tvvm, item, this, ++nIndex_A)
             );
         }
 

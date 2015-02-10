@@ -12,7 +12,7 @@ namespace DoubleFile
             TVI_DependencyProperty.TVFE = TVFE = tvfe;
         }
 
-        internal void SetData(IEnumerable<LocalTreeNode> rootNodes)
+        internal void SetData(IReadOnlyList<LocalTreeNode> rootNodes)
         {
             int nIndex = -1;
 

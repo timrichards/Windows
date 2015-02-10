@@ -19,9 +19,9 @@ namespace Local
                 m_listSameVol = listSameVol;
             }
 
-            internal AddTreeToList Go(IEnumerable<LocalTreeNode> listNodes)
+            internal AddTreeToList Go(IReadOnlyList<LocalTreeNode> listNodes)
             {
-                foreach (LocalTreeNode treeNode in listNodes)
+                foreach (var treeNode in listNodes)
                 {
                     Go(treeNode, bNextNode: false);
                 }
@@ -36,14 +36,14 @@ namespace Local
                     MBoxStatic.Assert(1305.6302, false);
                 }
 
-                LocalTreeNode treeNode = treeNode_in;
+                var treeNode = treeNode_in;
 
                 do
                 {
                     m_listTreeNodes.Add(treeNode);
                     ++Count;
 
-                    NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+                    var nodeDatum = (NodeDatum)treeNode.Tag;
 
                     if (nodeDatum == null)
                     {
@@ -75,8 +75,8 @@ namespace Local
                 while (bNextNode && ((treeNode = (LocalTreeNode)treeNode.NextNode) != null));
             }
 
-            UList<LocalTreeNode> m_listTreeNodes = null;
-            List<LocalTreeNode> m_listSameVol = null;
+            readonly UList<LocalTreeNode> m_listTreeNodes = null;
+            readonly List<LocalTreeNode> m_listSameVol = null;
         }
     }
 }

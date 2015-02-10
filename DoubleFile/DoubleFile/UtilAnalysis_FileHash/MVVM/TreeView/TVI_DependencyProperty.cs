@@ -294,14 +294,14 @@ namespace DoubleFile
                     m_scrollTimer.Enabled = false;
                 }
 
-                m_scrollTimer = new SDL_Timer(1, () => OnTimer()); ;
+           //     m_scrollTimer = new SDL_Timer(1, OnTimer);    // 1 evil: static and not disposed. Works otherwise.
                 StopTimer(2);
             }
         }
         static TreeView m_TVFE = null;
 
-        static internal void StartTimer(string text) { m_scrollTimer.Stop(); m_scrollTimer.Start(); UtilProject.WriteLine("StartTimer " + text); }
-        static internal void StopTimer(int nWhere) { m_scrollTimer.Stop(); UtilProject.WriteLine("StopTimer " + nWhere); }
+        static internal void StartTimer(string text) {} // m_scrollTimer.Stop(); m_scrollTimer.Start(); UtilProject.WriteLine("StartTimer " + text); }
+        static internal void StopTimer(int nWhere) {}   // m_scrollTimer.Stop(); UtilProject.WriteLine("StopTimer " + nWhere); }
         internal static TreeViewItem_FileHashVM WaitingToSelect { get { return m_WaitingToSelect; } }
         internal static void SetWaitingToSelect(TreeViewItem_FileHashVM tvivm)
         {

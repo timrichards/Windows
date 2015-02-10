@@ -18,9 +18,9 @@ namespace DoubleFile
                 m_listSameVol = listSameVol;
             }
 
-            internal AddTreeToList Go(IEnumerable<TreeNode> listNodes)
+            internal AddTreeToList Go(IReadOnlyList<TreeNode> listNodes)
             {
-                foreach (TreeNode treeNode in listNodes)
+                foreach (var treeNode in listNodes)
                 {
                     Go(treeNode, bNextNode: false);
                 }
@@ -35,7 +35,7 @@ namespace DoubleFile
                     MBoxStatic.Assert(1305.6302, false);
                 }
 
-                TreeNode treeNode = treeNode_in;
+                var treeNode = treeNode_in;
 
                 do
                 {

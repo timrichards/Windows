@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace DoubleFile
 {
-    struct BlinkyStruct
+    struct BlinkyStruct : IDisposable
     {
         static bool m_bTreeSelect = false;
         internal static bool TreeSelect { get { return m_bTreeSelect; } }
@@ -67,6 +67,11 @@ namespace DoubleFile
                     local.Reset();
                 }
             });
+        }
+
+        public void Dispose()
+        {
+            m_timer.Dispose();
         }
 
         internal void SelectTreeNode(TreeNode treeNode, bool Once = true)

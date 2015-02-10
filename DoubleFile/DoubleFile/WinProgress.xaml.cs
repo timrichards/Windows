@@ -16,7 +16,7 @@ namespace DoubleFile
             InitializeComponent();
         }
 
-        internal void InitProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths)
+        internal void InitProgress(IReadOnlyList<string> astrNicknames, IReadOnlyList<string> astrPaths)
         {
             if (astrNicknames.Count() != astrPaths.Count())
             {
@@ -121,6 +121,11 @@ namespace DoubleFile
             MaxHeight = ActualHeight;
         }
 
-        LV_ProgressVM m_lv = new LV_ProgressVM();
+        private void Window_Closed(object sender, System.EventArgs e)
+        {
+            m_lv.Dispose();
+        }
+
+        readonly LV_ProgressVM m_lv = new LV_ProgressVM();
     }
 }

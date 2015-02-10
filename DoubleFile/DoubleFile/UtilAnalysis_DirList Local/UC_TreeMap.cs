@@ -47,6 +47,12 @@ namespace Local
                 true);
         }
 
+        public new void Dispose()
+        {
+            m_timerAnim.Dispose();
+            base.Dispose();
+        }
+
         internal void Clear()
         {
             m_treeNode = null;

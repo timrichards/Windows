@@ -23,7 +23,7 @@ namespace DoubleFile
     
         internal ProjectFile()
         {
-            m_process.StartInfo.FileName = System.IO.Path.GetDirectoryName(
+            m_process.StartInfo.FileName = Path.GetDirectoryName(
                 System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)
                 .Replace(@"file:\", "") +
                 @"\UtilProject\7z920x86\7z.exe";
@@ -57,8 +57,7 @@ namespace DoubleFile
                     if (m_winProgress.IsLoaded)                 // close box/cancel/undo
                     {
                         openListingFiles(Directory.GetFiles(TempPath)
-                            .Where(s => s.EndsWith(FileParse.ksFileExt_Listing))
-                            .ToList(), true);
+                            .Where(s => s.EndsWith(FileParse.ksFileExt_Listing)), true);
 
                         if (null != OnOpenedProject)
                         {
@@ -88,6 +87,8 @@ namespace DoubleFile
                 MBoxStatic.ShowDialog("Couldn't open the project. Reinstall Double File or open your project file " +
                     "and get to your listing files using a download from 7-zip.org.", "Open Project");
             }
+
+            m_process.Dispose();
         }
 
         internal bool SaveProject(LV_ProjectVM lvProjectVM, string strProjectFilename)
@@ -138,6 +139,7 @@ namespace DoubleFile
                 MBoxStatic.ShowDialog("Any listing files in project have not yet been saved." +
                     " Click OK on the Project window to start saving directory listings of your drives.",
                     "Save Project");
+                m_process.Dispose();
                 return false;
             }
 
@@ -246,6 +248,7 @@ namespace DoubleFile
                 bRet = false;
             }
 
+            m_process.Dispose();
             return bRet;
         }
 

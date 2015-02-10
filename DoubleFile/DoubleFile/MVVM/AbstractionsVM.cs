@@ -161,8 +161,8 @@ namespace DoubleFile
 
     abstract class ListViewVM_GenericBase<T> : ListViewVM_Base where T : ListViewItemVM_Base
     {
-        internal delegate IEnumerable<T> IEnumerableQuery();
-        internal IEnumerableQuery Selected = () => { DesignModeOK(); return null; };
+        internal delegate IEnumerable<T> EnumerableQuery();
+        internal EnumerableQuery Selected = () => { DesignModeOK(); return null; };
 
         internal IEnumerable<T> ItemsCast { get { return m_items.Cast<T>(); } }
     }

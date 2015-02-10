@@ -20,10 +20,10 @@ namespace DoubleFile
             Text = strContent;
         }
 
-        internal LocalTreeNode(string strContent, LocalTreeNode[] arrNodes)
+        internal LocalTreeNode(string strContent, IReadOnlyList<LocalTreeNode> lsNodes)
             : this(strContent)
         {
-            Nodes.AddRange(arrNodes);
+            Nodes.AddRange(lsNodes);
         }
 
         internal string FullPath
@@ -35,8 +35,8 @@ namespace DoubleFile
                     return m_strFullPath;
                 }
 
-                Stack<LocalTreeNode> stack = new Stack<LocalTreeNode>(8);
-                LocalTreeNode nodeParent = Parent;
+                var stack = new Stack<LocalTreeNode>(8);
+                var nodeParent = Parent;
 
                 while (nodeParent != null)
                 {
@@ -44,7 +44,7 @@ namespace DoubleFile
                     nodeParent = nodeParent.Parent;
                 }
 
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
 
                 while (stack.Count > 0)
                 {

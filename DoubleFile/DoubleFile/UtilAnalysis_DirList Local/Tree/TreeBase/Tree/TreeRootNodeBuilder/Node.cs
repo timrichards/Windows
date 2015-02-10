@@ -40,8 +40,8 @@ namespace Local
 
                     // Path.GetDirectoryName() does not preserve filesystem root
 
-                    string strParent = m_strPath;
-                    int nIndex = strParent.LastIndexOf('\\');
+                    var strParent = m_strPath;
+                    var nIndex = strParent.LastIndexOf('\\');
 
                     if (nIndex < 0)
                     {
@@ -68,13 +68,13 @@ namespace Local
                         return new LocalTreeNode();
                     }
 
-                    int nIndex = m_strPath.LastIndexOf('\\');
-                    string strShortPath = bUseShortPath ? m_strPath.Substring(nIndex + 1) : m_strPath;
+                    var nIndex = m_strPath.LastIndexOf('\\');
+                    var strShortPath = bUseShortPath ? m_strPath.Substring(nIndex + 1) : m_strPath;
                     LocalTreeNode treeNode = null;
 
                     if (subNodes.Count == 1)
                     {
-                        Node subNode = subNodes.Values.First();
+                        var subNode = subNodes.Values.First();
 
                         if (this == m_rootNode.Nodes.Values.First())
                         {
@@ -96,9 +96,9 @@ namespace Local
                     }
                     else if (subNodes.Count > 1)
                     {
-                        UList<LocalTreeNode> treeList = new UList<LocalTreeNode>();
+                        var treeList = new UList<LocalTreeNode>();
 
-                        foreach (Node node in subNodes.Values)
+                        foreach (var node in subNodes.Values)
                         {
                             treeList.Add(node.AddToTree());
                         }
@@ -115,21 +115,25 @@ namespace Local
                     treeNode.SelectedImageIndex = -1;
                     treeNode.Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo, m_nLength);  // this is almost but not quite always newly assigned here.
 
-                    if (this == m_rootNode.Nodes.Values.First())
+                    if (this != m_rootNode.Nodes.Values.First())
                     {
-                        treeNode.Name = treeNode.Text;
+                        return treeNode;
+                    }
 
-                        if (false == string.IsNullOrWhiteSpace(strVolumeName))
-                        {
-                            if (strVolumeName.EndsWith(treeNode.Text))
-                            {
-                                treeNode.Text = strVolumeName;
-                            }
-                            else
-                            {
-                                treeNode.Text = strVolumeName + " (" + treeNode.Text + ")";
-                            }
-                        }
+                    treeNode.Name = treeNode.Text;
+
+                    if (string.IsNullOrWhiteSpace(strVolumeName))
+                    {
+                        return treeNode;
+                    }
+
+                    if (strVolumeName.EndsWith(treeNode.Text))
+                    {
+                        treeNode.Text = strVolumeName;
+                    }
+                    else
+                    {
+                        treeNode.Text = strVolumeName + " (" + treeNode.Text + ")";
                     }
 
                     return treeNode;

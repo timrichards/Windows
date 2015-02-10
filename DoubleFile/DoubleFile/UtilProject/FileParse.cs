@@ -410,9 +410,10 @@ namespace DoubleFile
 
                 try
                 {
-                    lvItem.ScannedLength = ulong.Parse(     // redundant parse confirms it's a number
-                        File.ReadLines(strFile).Where(s => s.StartsWith(ksLineType_Length)).ToArray()[0]
-                        .Split('\t')[knColLength]).ToString();
+                    File.ReadLines(strFile)
+                        .Where(s => s.StartsWith(ksLineType_Length))
+                        .FirstOnlyAssert(strLine =>     // redundant parse confirms it's a number
+                            lvItem.ScannedLength = ulong.Parse(strLine.Split('\t')[knColLength]).ToString());
                 }
                 catch
                 {
@@ -448,21 +449,43 @@ namespace DoubleFile
                 bConvertFile = true;
             }
 
-            string[] arrToken = File.ReadLines(strFile).Take(1).ToArray()[0].Split('\t');
+            bool bRet = false;
 
-            if (arrToken.Length < 3) return false;
-            if (arrToken[2] != ksHeader) return false;
+            File.ReadLines(strFile)
+                .Take(1)
+                .FirstOnlyAssert(strLine =>
+                {
+                    var arrToken = strLine.Split('\t');
 
-            string[] arrLine_A = File.ReadLines(strFile).Where(s => s.StartsWith(ksLineType_Length)).ToArray();
+                    if (arrToken.Length < 3) return;
+                    if (arrToken[2] != ksHeader) return;
+                    bRet = true;
+                });
 
-            if (arrLine_A.Length <= 0) return false;
+            if (bRet == false)
+            {
+                return false;
+            }
 
-            string[] arrToken_A = arrLine_A[0].Split('\t');
+            bRet = false;
 
-            if (arrToken_A.Length < 3) return false;
-            if (arrToken_A[2] != ksTotalLengthLoc) return false;
+            File.ReadLines(strFile)
+                .Where(s => s.StartsWith(ksLineType_Length))
+                .FirstOnlyAssert(strLine =>
+                {
+                    var arrToken = strLine.Split('\t');
 
-            string strFile_01 = StrFile_01(strFile);
+                    if (arrToken.Length < 3) return;
+                    if (arrToken[2] != ksTotalLengthLoc) return;
+                    bRet = true;
+                });
+
+            if (bRet == false)
+            {
+                return false;
+            }
+
+            var strFile_01 = StrFile_01(strFile);
 
             if (bConvertFile && File.Exists(strFile_01))
             {

@@ -13,10 +13,6 @@ namespace Local
     {
         partial class TreeRootNodeBuilder : TreeBase
         {
-            Thread m_thread = null;
-            bool m_bThreadAbort = false;
-            LVitem_ProjectVM m_volStrings = null;
-
             internal TreeRootNodeBuilder(LVitem_ProjectVM volStrings, TreeBase base_in)
                 : base(base_in)
             {
@@ -26,9 +22,9 @@ namespace Local
 
             DetailsDatum TreeSubnodeDetails(LocalTreeNode treeNode)
             {
-                DetailsDatum datum = new DetailsDatum();
+                var datum = new DetailsDatum();
 
-                foreach (LocalTreeNode node in treeNode.Nodes)
+                foreach (var node in treeNode.Nodes)
                 {
                     if (m_bThreadAbort || gd.WindowClosed)
                     {
@@ -43,7 +39,7 @@ namespace Local
                     return datum;
                 }
 
-                NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+                var nodeDatum = (NodeDatum)treeNode.Tag;
 
                 if (nodeDatum.nLineNo <= 0)
                 {
@@ -62,29 +58,40 @@ namespace Local
 
                 nodeDatum.nDirsWithFiles = datum.nDirsWithFiles;
 
-                FolderKeyStruct nKey = nodeDatum.Key;
-
-                lock (m_dictNodes)
+                if (m_dictNodes.ContainsKey(nodeDatum.Key))
                 {
-                    if (m_dictNodes.ContainsKey(nKey))
-                    {
-                        m_dictNodes[nKey].Add(treeNode);
-                    }
-                    else if (nodeDatum.nTotalLength > 100 * 1024)
-                    {
-                        UList<LocalTreeNode> listNodes = new UList<LocalTreeNode>();
-
-                        listNodes.Add(treeNode);
-                        m_dictNodes.Add(nKey, listNodes);
-                    }
+                    m_dictNodes[nodeDatum.Key].Add(treeNode);
+                }
+                else if (nodeDatum.nTotalLength > 100 * 1024)
+                {
+                    m_dictNodes[nodeDatum.Key] = new UList<LocalTreeNode> { treeNode };
                 }
 
                 return datum;
             }
 
-            internal void Go()
+            internal TreeRootNodeBuilder DoThreadFactory()
             {
-                DateTime dtStart = DateTime.Now;
+                m_thread = new Thread(Go);
+                m_thread.IsBackground = true;
+                m_thread.Start();
+                return this;
+            }
+
+            internal void Join()
+            {
+                m_thread.Join();
+            }
+
+            internal void Abort()
+            {
+                m_bThreadAbort = true;
+                m_thread.Abort();
+            }
+
+            void Go()
+            {
+                var dtStart = DateTime.Now;
 
                 if (m_volStrings.CanLoad == false)
                 {
@@ -93,8 +100,8 @@ namespace Local
                 }
 
                 {
-                    bool bValid = false;
-                    bool bAttemptConvert = false;
+                    var bValid = false;
+                    var bAttemptConvert = false;
 
                     while (true)
                     {
@@ -131,16 +138,16 @@ namespace Local
                 ulong nVolLength = 0;
 
                 {
-                    string[] arrDriveInfo = File
+                    var ieDriveInfo = File
                         .ReadLines(m_volStrings.ListingFile)
-                        .Where(s => s.StartsWith(ksLineType_VolumeInfo))
-                        .ToArray();
-                    StringBuilder strBuilder = new StringBuilder();
-                    int nIx = -1;
+                        .Where(s => s.StartsWith(ksLineType_VolumeInfo));
+                    var strBuilder = new StringBuilder();
+                    var nIx = -1;
 
-                    foreach (string strLine in arrDriveInfo)
+                    foreach (var strLine in ieDriveInfo)
                     {
-                        string[] strArray = strLine.Split('\t');
+                        var strArray = strLine.Split('\t');
+
                         ++nIx;
 
                         if (strArray.Length > 3)
@@ -156,7 +163,8 @@ namespace Local
                             continue;
                         }
 
-                        string s = strArray[strArray.Length - 1];
+                        var s = strArray[strArray.Length - 1];
+
                         strBuilder.AppendLine('\t' + s);
 
                         if ((nIx == 5) && (false == string.IsNullOrWhiteSpace(s)))
@@ -184,32 +192,30 @@ namespace Local
                 DirData dirData = null;
 
                 {
-                    RootNode rootNode = new RootNode();
-                    string strStart = File
+                    var rootNode = new RootNode();
+                    
+                    File
                         .ReadLines(m_volStrings.ListingFile)
                         .Where(s => s.StartsWith(ksLineType_Start))
-                        .ToArray()[0];
-
-                    rootNode.FirstLineNo = uint.Parse(strStart.Split('\t')[1]);
+                        .FirstOnlyAssert(s => rootNode.FirstLineNo = uint.Parse(s.Split('\t')[1]));
                     dirData = new DirData(gd, rootNode);
                 }
 
-                bool bZeroLengthsWritten = true;
-                List<string> listLines = File
+                var bZeroLengthsWritten = true;
+                var ieLines = File
                     .ReadLines(m_volStrings.ListingFile)
-                    .Where(s => s.StartsWith(ksLineType_Directory))
-                    .ToList();
+                    .Where(s => s.StartsWith(ksLineType_Directory));
 
-                foreach (string strLine in listLines)
+                foreach (var strLine in ieLines)
                 {
                     if (gd.WindowClosed)
                     {
                         return;
                     }
 
-                    string[] strArray = strLine.Split('\t');
-                    uint nLineNo = uint.Parse(strArray[1]);
-                    int nIx = knColLength;
+                    var strArray = strLine.Split('\t');
+                    var nLineNo = uint.Parse(strArray[1]);
+                    const int nIx = knColLength;
                     ulong nLength = 0;
 
                     if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx])))
@@ -221,12 +227,12 @@ namespace Local
                         bZeroLengthsWritten = false;     // files created before 140509 Fri drop zeroes from the end of the line
                     }
 
-                    string strDir = strArray[2];
+                    var strDir = strArray[2];
 
                     dirData.AddToTree(strDir, nLineNo, nLength);
                 }
 
-                LocalTreeNode rootTreeNode = dirData.AddToTree(m_volStrings.Nickname);
+                var rootTreeNode = dirData.AddToTree(m_volStrings.Nickname);
 
                 if (rootTreeNode != null)
                 {
@@ -244,9 +250,12 @@ namespace Local
 #endif
                 }
 
-                ulong nScannedLength = ulong.Parse(
-                    File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Length)).ToArray()[0]
-                    .Split('\t')[knColLength]);
+                ulong nScannedLength = 0;
+
+                File
+                    .ReadLines(m_volStrings.ListingFile)
+                    .Where(s => s.StartsWith(ksLineType_Length))
+                    .FirstOnlyAssert(s => nScannedLength = ulong.Parse(s.Split('\t')[knColLength]));
 
                 UtilProject.WriteLine(nScannedLength.ToString());
 
@@ -271,24 +280,9 @@ namespace Local
                 UtilProject.WriteLine(m_volStrings.ListingFile + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
             }
 
-            internal TreeRootNodeBuilder DoThreadFactory()
-            {
-                m_thread = new Thread(Go);
-                m_thread.IsBackground = true;
-                m_thread.Start();
-                return this;
-            }
-
-            internal void Join()
-            {
-                m_thread.Join();
-            }
-
-            internal void Abort()
-            {
-                m_bThreadAbort = true;
-                m_thread.Abort();
-            }
+            Thread m_thread = null;
+            bool m_bThreadAbort = false;
+            readonly LVitem_ProjectVM m_volStrings = null;
         }
     }
 }

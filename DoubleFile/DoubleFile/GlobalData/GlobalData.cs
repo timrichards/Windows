@@ -42,7 +42,7 @@ namespace DoubleFile
                     return true;
                 }
 
-                return (bool) UtilProject.CheckAndInvoke(() => { return (false == Main_Window.IsLoaded); });
+                return (bool) UtilProject.CheckAndInvoke(() => false == Main_Window.IsLoaded);
             }
         }
     }

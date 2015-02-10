@@ -22,14 +22,14 @@ namespace DoubleFile
 
         static public DetailsDatum operator +(DetailsDatum in_datum1, DetailsDatum in_datum2)
         {
-            DetailsDatum datum = new DetailsDatum();
-
-            datum.nTotalLength = in_datum1.nTotalLength + in_datum2.nTotalLength;
-            datum.nFilesInSubdirs = in_datum1.nFilesInSubdirs + in_datum2.nFilesInSubdirs;
-            datum.nSubDirs = in_datum1.nSubDirs + in_datum2.nSubDirs;
-            datum.nImmediateFiles = in_datum1.nImmediateFiles + in_datum2.nImmediateFiles;
-            datum.nDirsWithFiles = in_datum1.nDirsWithFiles + in_datum2.nDirsWithFiles;
-            return datum;
+            return new DetailsDatum
+            {
+                nTotalLength = in_datum1.nTotalLength + in_datum2.nTotalLength,
+                nFilesInSubdirs = in_datum1.nFilesInSubdirs + in_datum2.nFilesInSubdirs,
+                nSubDirs = in_datum1.nSubDirs + in_datum2.nSubDirs,
+                nImmediateFiles = in_datum1.nImmediateFiles + in_datum2.nImmediateFiles,
+                nDirsWithFiles = in_datum1.nDirsWithFiles + in_datum2.nDirsWithFiles,
+            };
         }
     }
 }

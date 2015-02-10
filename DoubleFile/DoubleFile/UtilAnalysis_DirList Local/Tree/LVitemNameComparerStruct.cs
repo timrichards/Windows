@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using DoubleFile;
-using System.Windows.Media;
 
 namespace Local
 {
@@ -36,14 +35,11 @@ namespace Local
         {
             if ((lv1.Items.Count <= 0) || (lv2.Items.Count <= 0)) { return; }
 
-            List<LocalLVitem> list = lv1.Items.Cast<LocalLVitem>().Except(lv2.Items.Cast<LocalLVitem>(), new LVitemNameComparerStruct()).ToList();
+            var list = lv1.Items.Except(lv2.Items, new LVitemNameComparerStruct());
 
-            if (list.Count > 0)
-            {
-                lv1.TopItem = list[0];
-            }
+            list.Take(1).FirstOnly(item => lv1.TopItem = item);
 
-            foreach (LocalLVitem item in list)
+            foreach (var item in list)
             {
                 item.ForeColor = UtilColor.Red;
             }

@@ -3,6 +3,7 @@ using System.Timers;
 
 namespace DoubleFile
 {
+    [System.ComponentModel.DesignerCategory("Code")]
     class SDL_Timer : Timer
     {
         internal SDL_Timer()

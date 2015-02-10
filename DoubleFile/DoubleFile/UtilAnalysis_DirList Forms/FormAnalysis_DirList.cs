@@ -1355,6 +1355,11 @@ namespace DoubleFile
             m_ownerWindow.Activate();
         }
 
+        private void FormAnalysis_DirList_FormDisposed(object sender, EventArgs e)
+        {
+            form_tmapUserCtl.Dispose();
+        }
+
         void FormAnalysis_DirList_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.F2)

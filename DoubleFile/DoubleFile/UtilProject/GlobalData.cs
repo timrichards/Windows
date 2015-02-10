@@ -1,6 +1,8 @@
-﻿namespace DoubleFile
+﻿using System;
+
+namespace DoubleFile
 {
-    partial class GlobalData
+    partial class GlobalData : IDisposable
     {
         internal static LocalWindow static_TopWindow { get { return static_topWindow_ ?? static_MainWindow; } set { static_topWindow_ = value; } } static LocalWindow static_topWindow_ = null;
         internal static MainWindow static_MainWindow { get; private set; }
@@ -38,6 +40,19 @@
             Instance = this;
             m_tmrDoTree = new SDL_Timer();
             m_tmrDoTree.Interval = 3000;
+        }
+
+        public void Dispose()
+        {
+            if (m_tmrDoTree != null)
+            {
+                m_tmrDoTree.Dispose();
+            }
+
+            m_blinky.Dispose();
+            _Instance = null;
+            static_TopWindow = null;
+            static_MainWindow = null;
         }
 
         internal void RestartTreeTimer()

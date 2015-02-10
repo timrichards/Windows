@@ -103,7 +103,7 @@ namespace DoubleFile
                 fs.WriteLine(sb.ToString().Trim());
             }
 
-            void Hash(IEnumerable<string> listFilePaths,
+            void Hash(IReadOnlyList<string> listFilePaths,
                 out ConcurrentDictionary<string, HashStruct> dictHash_out,
                 out Dictionary<string, string> dictException_FileRead_out)
             {
@@ -117,49 +117,52 @@ namespace DoubleFile
                 var nProgressNumerator = 0;
                 double nProgressDenominator = listFilePaths.Count();        // double preserves mantissa
 
-                new SDL_Timer(() =>
+                using (new SDL_Timer(() =>
                 {
-                    m_statusCallback(LVitemProjectVM, nProgress: nProgressNumerator / nProgressDenominator);
-                }).Start();
-
-                var dictHash = new ConcurrentDictionary<string, HashStruct>();
-                var dictException_FileRead = new Dictionary<string, string>();
-
-                Parallel.ForEach(listFilePaths, strFile =>
+                    m_statusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator);
+                }).Start())
                 {
-                    if (m_bThreadAbort)
+                    var dictHash = new ConcurrentDictionary<string, HashStruct>();
+                    var dictException_FileRead = new Dictionary<string, string>();
+
+                    Parallel.ForEach(listFilePaths, strFile =>
                     {
-                        return;                         // return from lambda
-                    }
-
-                    Interlocked.Increment(ref nProgressNumerator);
-
-                    var fileHandle = DriveSerialStatic.CreateFile(@"\\?\" + strFile, FileAccess.Read, FileShare.ReadWrite,
-                        IntPtr.Zero, 3, 0, IntPtr.Zero);
-
-                    if (fileHandle.IsInvalid)
-                    {
-                        dictException_FileRead[strFile] = new System.ComponentModel.Win32Exception(
-                            System.Runtime.InteropServices.Marshal.GetLastWin32Error()).Message;
-                        return;                         // return from lambda
-                    }
-
-                    using (var fsA = new FileStream(fileHandle, FileAccess.Read))
-                    {
-                        const int kBufferSize = 4096;   // Hash the first 4K of the file for speed
-                        var buffer = new byte[kBufferSize];
-
-                        fsA.Read(buffer, 0, kBufferSize);
-
-                        using (var md5 = System.Security.Cryptography.MD5.Create())
+                        if (m_bThreadAbort)
                         {
-                            dictHash[strFile] = new HashStruct(md5.ComputeHash(buffer));
+                            return; // return from lambda
                         }
-                    }
-                });
 
-                dictHash_out = dictHash;
-                dictException_FileRead_out = dictException_FileRead;
+                        Interlocked.Increment(ref nProgressNumerator);
+
+                        var fileHandle = DriveSerialStatic.CreateFile(@"\\?\" + strFile, FileAccess.Read,
+                            FileShare.ReadWrite,
+                            IntPtr.Zero, 3, 0, IntPtr.Zero);
+
+                        if (fileHandle.IsInvalid)
+                        {
+                            dictException_FileRead[strFile] = new System.ComponentModel.Win32Exception(
+                                System.Runtime.InteropServices.Marshal.GetLastWin32Error()).Message;
+                            return; // return from lambda
+                        }
+
+                        using (var fsA = new FileStream(fileHandle, FileAccess.Read))
+                        {
+                            const int kBufferSize = 4096; // Hash the first 4K of the file for speed
+                            var buffer = new byte[kBufferSize];
+
+                            fsA.Read(buffer, 0, kBufferSize);
+
+                            using (var md5 = System.Security.Cryptography.MD5.Create())
+                            {
+                                dictHash[strFile] = new HashStruct(md5.ComputeHash(buffer));
+                            }
+                        }
+                    });
+
+                    dictHash_out = dictHash;
+                    dictException_FileRead_out = dictException_FileRead;
+                }
+
                 m_statusCallback(LVitemProjectVM, nProgress: 1);
             }
 

@@ -173,17 +173,26 @@ namespace Local
                 return;
             }
 
-            NodeDatum nodeDatum = (NodeDatum)m_treeNode.Tag;
+            var nodeDatum = (NodeDatum)m_treeNode.Tag;
 
             if (nodeDatum.nLineNo <= 0)
             {
                 return;
             }
 
-            long nPrevDir = nodeDatum.nPrevLineNo;
-            long nLineNo = nodeDatum.nLineNo;
-            string strLine = File.ReadLines(m_strFile).Skip((int)nLineNo - 1).Take(1).ToArray()[0];
-            string[] strArray = strLine.Split('\t');
+            var nPrevDir = nodeDatum.nPrevLineNo;
+            var nLineNo = nodeDatum.nLineNo;
+            string[] strArray = null;
+
+            File
+                .ReadLines(m_strFile)
+                .Skip((int)nLineNo - 1)
+                .Take(1)
+                .FirstOnlyAssert(strLine =>
+                {
+                    strArray = strLine.Split('\t');
+                    UtilProject.WriteLine(strLine);
+                });
 
             MBoxStatic.Assert(1301.2312, (false == string.IsNullOrWhiteSpace(strArray[2])));
 
@@ -233,7 +242,6 @@ namespace Local
 
             listItems.Add(new LocalLVitem(new string[] { "Total Size", FormatSize(nodeDatum.nTotalLength, bBytes: true) }));
             m_statusCallback(lvItemDetails: listItems.ToArray(), bSecondComparePane: m_bSecondComparePane);
-            UtilProject.WriteLine(strLine);
 
             List<string[]> listFiles_A = GetFileList(m_treeNode);
 

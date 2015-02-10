@@ -5,13 +5,14 @@ using System.Linq;
 using System.Text;
 using DoubleFile;
 using System.Windows.Media;
+using System.Collections.Concurrent;
 
 namespace Local
 {
     partial class Collate
     {
         internal Collate(GlobalData_Base gd_in,
-            SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>> dictNodes,
+            ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>> dictNodes,
             LocalTV tvBrowseWPF,
             LocalLV lvClones,
             LocalLV lvSameVol,
@@ -116,21 +117,21 @@ namespace Local
                 UtilProject.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             }
 
-            Dictionary<LocalTreeNode, LocalLVitem> dictIgnoreMark = new Dictionary<LocalTreeNode, LocalLVitem>();
-            SortedDictionary<FolderKeyStruct, List<LocalTreeNode>> dictNodes = new SortedDictionary<FolderKeyStruct, List<LocalTreeNode>>();
+            var dictIgnoreMark = new Dictionary<LocalTreeNode, LocalLVitem>();
+            var dictNodes = new SortedDictionary<FolderKeyStruct, List<LocalTreeNode>>();
 
-            foreach (KeyValuePair<FolderKeyStruct, UList<LocalTreeNode>> pair in m_dictNodes)  // clone to remove ignored
-            {                                                                       // m_ vs local check is via List vs UList
-                dictNodes.Add(pair.Key, pair.Value.ToList());                       // clone pair.Value to remove ignored, using ToList() 
+            foreach (var kvp in m_dictNodes)                    // clone to remove ignored
+            {                                                   // m_ vs local check is via List vs UList
+                dictNodes.Add(kvp.Key, kvp.Value.ToList());     // clone pair.Value to remove ignored, using ToList() 
             }
 
             nProgressDenominator += dictIgnoreNodes.Count;
             ++nProgressItem;
 
-            foreach (KeyValuePair<LocalTreeNode, LocalLVitem> pair in dictIgnoreNodes)
+            foreach (var kvp in dictIgnoreNodes)
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem/nTotalProgressItems);
-                LocalTreeNode treeNode = pair.Key;
+                LocalTreeNode treeNode = kvp.Key;
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
                 if (dictNodes.ContainsKey(nodeDatum.Key) == false)
@@ -142,14 +143,14 @@ namespace Local
                 {
                     foreach (LocalTreeNode treeNode_A in dictNodes[nodeDatum.Key])
                     {
-                        dictIgnoreMark.Add(treeNode_A, pair.Value);
+                        dictIgnoreMark.Add(treeNode_A, kvp.Value);
                     }
 
                     dictNodes.Remove(nodeDatum.Key);
                 }
                 else if (dictNodes[nodeDatum.Key].Contains(treeNode))
                 {
-                    dictIgnoreMark.Add(treeNode, pair.Value);
+                    dictIgnoreMark.Add(treeNode, kvp.Value);
                     dictNodes[nodeDatum.Key].Remove(treeNode);
 
                     if (dictNodes[nodeDatum.Key].Count <= 0)
@@ -702,7 +703,7 @@ namespace Local
         }
 
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
-        readonly SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>> m_dictNodes = null;
+        readonly ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>> m_dictNodes = null;
         readonly LocalTV m_tvBrowseWPF = null;
         readonly LocalLV wpf_lvClones = null;
         readonly LocalLV wpf_lvSameVol = null;

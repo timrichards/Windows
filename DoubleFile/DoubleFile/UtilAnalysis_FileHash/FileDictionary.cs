@@ -125,7 +125,9 @@ namespace DoubleFile
 
                 Parallel.ForEach(LVprojectVM.ItemsCast, lvItem =>
                 {
-                    var iesLines = File.ReadLines(lvItem.ListingFile)
+                    var iesLines =
+                        File
+                        .ReadLines(lvItem.ListingFile)
                         .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
                         .Select(strLine => strLine.Split('\t'))
                         .Where(asLine => asLine.Length > 10);

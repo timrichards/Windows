@@ -6,36 +6,20 @@ namespace DoubleFile
 {
     internal static partial class ExtensionMethodsStatic
     {
-        internal static int Count<T>(this IEnumerable<T> source)
+        internal static IEnumerator<T> FirstOnly<T>(this IEnumerable<T> source, Action<T> action)
         {
-            ICollection<T> c = source as ICollection<T>;
+            var enumerator = source.GetEnumerator();
 
-            if (c != null)
-            {
-                return c.Count;
-            }
+            if (enumerator.MoveNext())
+                action(enumerator.Current);
 
-   //         UtilProject.WriteLine("Count<" + source + "> is not an ICollection: must GetEnumerator()");
-
-            int result = 0;
-
-            source.ForEach(item => ++result);
-            return result;
-        }
-
-        internal static void FirstOnly<T>(this IEnumerable<T> source, Action<T> action)
-        {
-            foreach (var item in source)
-            {
-                action(item);
-                break;
-            }
+            return enumerator;
         }
 
         internal static void FirstOnlyAssert<T>(this IEnumerable<T> source, Action<T> action)
         {
-            MBoxStatic.Assert(0, source.Count() <= 1);
-            FirstOnly(source, action);
+            var enumerator = FirstOnly(source, action);
+            MBoxStatic.Assert(0, false == enumerator.MoveNext());
         }
 
         internal static void ForEach<T>(this IEnumerable<T> source, Action<T> action)

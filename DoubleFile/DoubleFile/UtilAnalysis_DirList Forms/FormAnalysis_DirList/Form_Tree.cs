@@ -2,6 +2,7 @@
 using System.Drawing;
 using System;
 using System.Threading;
+using System.Linq;
 
 namespace DoubleFile
 {

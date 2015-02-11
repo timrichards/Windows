@@ -131,8 +131,8 @@ namespace Local
             foreach (var kvp in dictIgnoreNodes)
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem/nTotalProgressItems);
-                LocalTreeNode treeNode = kvp.Key;
-                NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+                var treeNode = kvp.Key;
+                var nodeDatum = (NodeDatum)treeNode.Tag;
 
                 if (dictNodes.ContainsKey(nodeDatum.Key) == false)
                 {
@@ -160,11 +160,11 @@ namespace Local
                 }
             }
 
-            SortedDictionary<FolderKeyStruct, LocalTreeNode> dictUnique = new SortedDictionary<FolderKeyStruct, LocalTreeNode>();
+            var dictUnique = new SortedDictionary<FolderKeyStruct, LocalTreeNode>();
             nProgressDenominator += dictNodes.Count;
             ++nProgressItem;
 
-            foreach (KeyValuePair<FolderKeyStruct, List<LocalTreeNode>> pair in dictNodes)
+            foreach (var kvp in dictNodes)
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
 
@@ -173,7 +173,7 @@ namespace Local
                     return;
                 }
 
-                var listNodes = pair.Value;
+                var listNodes = kvp.Value;
 
                 if (listNodes.Count < 1)
                 {
@@ -223,19 +223,20 @@ namespace Local
 
                     if (((NodeDatum)treeNode.Tag).nImmediateFiles > 0)
                     {
-                        dictUnique.Add(pair.Key, treeNode);
+                        dictUnique.Add(kvp.Key, treeNode);
                     }
                 }
             }
 
-            SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>> dictClones = new SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>>();
+            var dictClones = new SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>>();
 
             nProgressDenominator += m_listRootNodes.Count;
             ++nProgressItem;
 
-            foreach (LocalTreeNode treeNode in m_listRootNodes)
+            foreach (var treeNode in m_listRootNodes)
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
+                
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
                     return;
@@ -248,7 +249,7 @@ namespace Local
             nProgressDenominator += dictClones.Count;
             ++nProgressItem;
 
-            foreach (KeyValuePair<FolderKeyStruct, UList<LocalTreeNode>> listNodes in dictClones)
+            foreach (var listNodes in dictClones)
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
 
@@ -523,14 +524,17 @@ namespace Local
 
         // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
         // Breadth-first.
-        void DifferentVolsQuery(SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>> dictClones, LocalTreeNode treeNode, LocalTreeNode rootClone = null)
+        void DifferentVolsQuery(
+            IDictionary<FolderKeyStruct, UList<LocalTreeNode>> dictClones,
+            LocalTreeNode treeNode,
+            LocalTreeNode rootClone = null)
         {
             // neither rootClone nor nMaxLength are used at all (rootClone is used as a bool).
             // provisional.
 
-            NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
-            UList<LocalTreeNode> listClones = nodeDatum.m_listClones;
-            ulong nLength = nodeDatum.nTotalLength;
+            var nodeDatum = (NodeDatum)treeNode.Tag;
+            var listClones = nodeDatum.m_listClones;
+            var nLength = nodeDatum.nTotalLength;
 
             if (nLength <= 100 * 1024)
             {
@@ -554,15 +558,15 @@ namespace Local
 
                     // Test to see if clones are on separate volumes.
 
-                    LocalTreeNode rootNode = treeNode.Root();
-                    RootNodeDatum rootNodeDatum = (RootNodeDatum)rootNode.Tag;
+                    var rootNode = treeNode.Root();
+                    var rootNodeDatum = (RootNodeDatum)rootNode.Tag;
 
                     MBoxStatic.Assert(1305.6308, new int[] { UtilColor.Empty, UtilColor.DarkBlue }.Contains(treeNode.ForeColor));
                     treeNode.ForeColor = UtilColor.Firebrick;
 
-                    bool bDifferentVols = false;
+                    var bDifferentVols = false;
 
-                    foreach (LocalTreeNode subnode in listClones)
+                    foreach (var subnode in listClones)
                     {
                         if (m_bThreadAbort || gd.WindowClosed)
                         {
@@ -571,14 +575,14 @@ namespace Local
 
                         MBoxStatic.Assert(1305.6309, ((NodeDatum)subnode.Tag).Key == nodeDatum.Key);
 
-                        LocalTreeNode rootNode_A = subnode.Root();
+                        var rootNode_A = subnode.Root();
 
                         if (rootNode == rootNode_A)
                         {
                             continue;
                         }
 
-                        RootNodeDatum rootNodeDatum_A = (RootNodeDatum)rootNode_A.Tag;
+                        var rootNodeDatum_A = (RootNodeDatum)rootNode_A.Tag;
 
                         if (false == string.IsNullOrWhiteSpace(rootNodeDatum.StrVolumeGroup) &&
                             (rootNodeDatum.StrVolumeGroup == rootNodeDatum_A.StrVolumeGroup))
@@ -596,7 +600,7 @@ namespace Local
                         break;
                     }
 
-                    foreach (LocalTreeNode subNode in listClones)
+                    foreach (var subNode in listClones)
                     {
                         ((NodeDatum)subNode.Tag).m_bDifferentVols = bDifferentVols;
                         subNode.ForeColor = treeNode.ForeColor;

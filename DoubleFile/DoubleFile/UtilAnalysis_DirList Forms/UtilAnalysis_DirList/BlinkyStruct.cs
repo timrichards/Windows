@@ -71,7 +71,10 @@ namespace DoubleFile
 
         public void Dispose()
         {
-            m_timer.Dispose();
+            if (m_timer != null)
+            {
+                m_timer.Dispose();
+            }
         }
 
         internal void SelectTreeNode(TreeNode treeNode, bool Once = true)

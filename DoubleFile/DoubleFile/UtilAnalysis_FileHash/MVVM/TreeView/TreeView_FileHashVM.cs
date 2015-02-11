@@ -14,9 +14,9 @@ namespace DoubleFile
 
         internal void SetData(IReadOnlyList<LocalTreeNode> rootNodes)
         {
-            int nIndex = -1;
+            var nIndex = -1;
 
-            foreach (LocalTreeNode treeNode in rootNodes)
+            foreach (var treeNode in rootNodes)
             {
                 m_Items.Add(new TreeViewItem_FileHashVM(this, treeNode, ++nIndex));
             }

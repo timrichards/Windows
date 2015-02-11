@@ -222,10 +222,8 @@ namespace DoubleFile
             m_winProgress.ShowDialog();
         }
 
-        readonly WinProgress m_winProgress = new WinProgress();
         const string ksFileDictKey = "Creating file dictionary";
         const string ksFolderTreeKey = "Creating folder tree browser";
         bool m_bFileDictDone = false;
-        readonly double m_nCorrelateProgressDenominator = 0;
     }
 }

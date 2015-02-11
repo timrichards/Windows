@@ -21,7 +21,7 @@ namespace DoubleFile
                 m_lvProjectVM);
         }
 
-        GlobalData_Base gd = null;
-        LV_ProjectVM m_lvProjectVM = null;
+        readonly GlobalData_Base gd = null;
+        readonly LV_ProjectVM m_lvProjectVM = null;
     }
 }

@@ -14,5 +14,4 @@ namespace DoubleFile
         internal LocalLVitem TopItem = null;
         internal LocalLVitemCollection Items = null;
     }
-
 }

@@ -6,7 +6,7 @@ namespace DoubleFile
 {
     abstract class GlobalData_Base
     {
-        internal abstract bool WindowClosed { get; }
+        internal bool WindowClosed;
 
         internal FileDictionary FileDictionary = null;
     }
@@ -22,6 +22,7 @@ namespace DoubleFile
             EventHandler closedEvent = null;
             EventHandler closedEvent_ = (o, e) =>
             {
+                WindowClosed = true;
                 FileDictionary.Dispose();
                 FileDictionary = null;
                 Main_Window.Closed -= closedEvent;
@@ -32,26 +33,25 @@ namespace DoubleFile
 
             FileDictionary = new FileDictionary();
         }
-
-        internal override bool WindowClosed
-        {
-            get
-            {
-                if (Main_Window == null)
-                {
-                    return true;
-                }
-
-                return (bool) UtilProject.CheckAndInvoke(() => false == Main_Window.IsLoaded);
-            }
-        }
     }
 
     class GlobalData_Form : GlobalData_Base
     {
         internal readonly FormAnalysis_DirList Main_Form = null;
 
-        internal GlobalData_Form(FormAnalysis_DirList mainForm_in) { Main_Form = mainForm_in; }
-        internal override bool WindowClosed { get { return (Main_Form == null) || (Main_Form.IsDisposed); } }
+        internal GlobalData_Form(FormAnalysis_DirList mainForm_in)
+        {
+            Main_Form = mainForm_in;
+
+            EventHandler closedEvent = null;
+            EventHandler closedEvent_ = (o, e) =>
+            {
+                WindowClosed = true;
+                Main_Form.Closed -= closedEvent;
+            };
+
+            closedEvent = closedEvent_;
+            Main_Form.Closed += closedEvent;
+        }
     }
 }

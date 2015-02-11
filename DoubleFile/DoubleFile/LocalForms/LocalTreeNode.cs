@@ -6,6 +6,22 @@ namespace DoubleFile
 {
     class LocalTreeNode
     {
+        internal readonly LocalTreeNodeCollection Nodes = null;
+        internal string Text = null;
+        internal string ToolTipText = null;
+        internal string Name = null;
+        internal LocalTV TreeView = null;
+        internal LocalTreeNode FirstNode = null;
+        internal LocalTreeNode NextNode = null;
+        internal LocalTreeNode Parent = null;
+        internal int Level = -1;
+        internal bool Checked = false;
+        internal int SelectedImageIndex = -1;
+        internal object Tag = null;
+
+        internal int BackColor = UtilColor.Empty;
+        internal int ForeColor = UtilColor.Empty;
+
         internal TreeViewItem_FileHashVM TVIVM = null;
         internal LVitem_FileHashVM LVIVM = null;
 
@@ -65,7 +81,7 @@ namespace DoubleFile
             Level = -1;
             m_strFullPath = null;
 
-            foreach (LocalTreeNode treeNode in Nodes)
+            foreach (var treeNode in Nodes)
             {
                 treeNode.DetachFromTree();
             }
@@ -106,22 +122,6 @@ namespace DoubleFile
 
             return nodeParent;
         }
-
-        readonly internal LocalTreeNodeCollection Nodes = null;
-        internal string Text = null;
-        internal string ToolTipText = null;
-        internal string Name = null;
-        internal LocalTV TreeView = null;
-        internal LocalTreeNode FirstNode = null;
-        internal LocalTreeNode NextNode = null;
-        internal LocalTreeNode Parent = null;
-        internal int Level = -1;
-        internal bool Checked = false;
-        internal int SelectedImageIndex = -1;
-        internal object Tag = null;
-
-        internal int BackColor = UtilColor.Empty;
-        internal int ForeColor = UtilColor.Empty;
 
         string m_strFullPath = null;
     }

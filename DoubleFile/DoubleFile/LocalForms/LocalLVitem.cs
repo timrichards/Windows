@@ -9,7 +9,12 @@ namespace DoubleFile
 {
     class LocalLVitem
     {
-        internal LocalLVitem(LocalLV listView = null) { SubItems = new LocalLVitemCollection(ListView); }
+        internal LocalLVitem(LocalLV listView = null)
+        {
+            ListView = listView;
+            SubItems = new LocalLVitemCollection(ListView);
+        }
+
         internal LocalLVitem(string strContent, LocalLV listView = null) : this(listView) { Text = strContent; }
 
         internal LocalLVitem(IReadOnlyList<string> asString, LocalLV listView = null)

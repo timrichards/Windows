@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 
 namespace DoubleFile
 {
@@ -23,7 +24,7 @@ namespace DoubleFile
         internal bool CheckBoxes = false;
         internal bool Enabled = false;
 
-        static int CountSubnodes(LocalTreeNodeCollection nodes)
+        static int CountSubnodes(IReadOnlyList<LocalTreeNode> nodes)
         {
             var nRet = 0;
 

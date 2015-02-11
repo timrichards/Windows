@@ -10,17 +10,183 @@ namespace DoubleFile
 {
     public static class TVI_DependencyProperty
     {
-        public static readonly DependencyProperty EventProperty = DependencyProperty.RegisterAttached
+        static public readonly DependencyProperty EventProperty = DependencyProperty.RegisterAttached
         ("Event", typeof(bool), typeof(TVI_DependencyProperty), new UIPropertyMetadata(false, OnDPchanged));
 
-        public static bool GetEvent(FrameworkElement element) { return (bool)element.GetValue(EventProperty); }
-        public static void SetEvent(FrameworkElement element, bool value) { element.SetValue(EventProperty, value); }
+        static public bool GetEvent(FrameworkElement element) { return (bool)element.GetValue(EventProperty); }
+        static public void SetEvent(FrameworkElement element, bool value) { element.SetValue(EventProperty, value); }
+
+        static internal TreeView TVFE
+        {
+            get { return _TVFE; }
+            set
+            {
+                _TVFE = value;
+
+                if (m_scrollTimer != null)
+                {
+                    m_scrollTimer.Enabled = false;
+                }
+
+                //     m_scrollTimer = new SDL_Timer(1, OnTimer);    // 1 evil: static and not disposed. Works otherwise.
+                StopTimer(2);
+            }
+        }
+        static TreeView _TVFE = null;
+
+        static internal void StartTimer(string text) { } // m_scrollTimer.Stop(); m_scrollTimer.Start(); UtilProject.WriteLine("StartTimer " + text); }
+        static internal void StopTimer(int nWhere) { }   // m_scrollTimer.Stop(); UtilProject.WriteLine("StopTimer " + nWhere); }
+        static internal TreeViewItem_FileHashVM WaitingToSelect { get; private set; }
+        static internal void SetWaitingToSelect(TreeViewItem_FileHashVM tvivm)
+        {
+            WaitingToSelect = tvivm;
+
+            if (WaitingToSelect != null)
+            {
+                stackParents_A = new Stack<TreeViewItem_FileHashVM>(stackParents.Reverse());
+                StartTimer("0 " + tvivm.Text);
+            }
+            else
+            {
+                stackParents = stackParents_A = new Stack<TreeViewItem_FileHashVM>(8);
+                nAttempts = -1;
+                StopTimer(0);
+            }
+        }
+
+        static internal ScrollViewer ScrollViewer
+        {
+            get { return _scrollViewer ?? (_scrollViewer = TVFE.Template.FindName("_tv_scrollviewer_", TVFE) as ScrollViewer); }
+        }
+        static ScrollViewer _scrollViewer = null;
+
+        static internal TreeViewItem_FileHashVM tvivmSelected = null;
+        static internal double HeaderHeight = -1;
+        static internal Stack<TreeViewItem_FileHashVM> stackParents = null;
+
+        static internal void OnTimer()
+        {
+            StopTimer(1);
+
+            if (nBringIntoViewAttempts >= 0)
+            {
+                if (TVIFE == null)
+                {
+                    UtilProject.WriteLine("OnTimer m_tvife == null");
+                    return;
+                }
+
+                TreeViewItem_FileHashVM tvivm = m_TVIVM;
+
+                if (tvivm == null)      // DisconnectedItem
+                {
+                    UtilProject.WriteLine("OnTimer tvivm == null");
+                    return;
+                }
+
+                System.Windows.Point ptTVI = TVIFE.TranslatePoint(new System.Windows.Point(0, 0), ScrollViewer);
+
+                if ((ptTVI.Y >= 0) && (ptTVI.Y < ScrollViewer.ViewportHeight))
+                {
+                    UtilProject.WriteLine("ViewportHeight " + nBringIntoViewAttempts + " " + tvivm.Text);
+                    tvivmSelected = tvivm;
+                    nBringIntoViewAttempts = -1;
+                    TVIFE = null;
+                    return;
+                }
+
+                if (nBringIntoViewAttempts < 20)
+                {
+                    nBringIntoViewAttempts += 20;
+                }
+
+                switch (nBringIntoViewAttempts)
+                {
+                    case 20:
+                        ScrollViewer.ScrollToTop();
+                        break;
+
+                    case 21:
+                        TVIFE.BringIntoView();
+                        break;
+
+                    case 22:
+                        ScrollViewer.PageUp();
+                        break;
+
+                    case 23:
+                        TVIFE.BringIntoView();
+                        break;
+
+                    case 24:
+                        ScrollViewer.PageDown();
+                        break;
+
+                    case 25:
+                        ScrollViewer.PageDown();
+                        break;
+
+                    case 26:
+                        TVIFE.BringIntoView();
+                        break;
+
+                    case 27:
+                    default:
+                        UtilProject.WriteLine("default " + tvivm.Text);
+                        TVIFE = null;
+                        nBringIntoViewAttempts = -1;
+                        return;
+                }
+
+                ++nBringIntoViewAttempts;
+                StartTimer("1 " + tvivm.Text);
+                UtilProject.WriteLine("nBringIntoViewAttempts " + nBringIntoViewAttempts + " " + tvivm.Text);
+                return;
+            }
+
+            if (WaitingToSelect == null)
+            {
+                UtilProject.WriteLine("OnTimer WaitingToSelect == null");
+                return;
+            }
+
+            TreeViewItem_FileHashVM tvivm_A = null;
+
+            if (stackParents.Count > 0)
+            {
+                tvivm_A = stackParents.Pop();
+            }
+            else
+            {
+                if (new double[] { WaitingToSelect.EphemeralExpandedPos, 0, ScrollViewer.ScrollableHeight }.Contains(ScrollViewer.VerticalOffset))
+                {
+                    if (++nAttempts > 0)
+                    {
+                        SetWaitingToSelect(null);
+                        UtilProject.WriteLine("OnTimer SetWaitingToSelect(null)");
+                        return;
+                    }
+
+                    stackParents = stackParents_A;
+                }
+
+                tvivm_A = WaitingToSelect;
+            }
+
+            Scroll(tvivm_A);
+            UtilProject.WriteLine("OnTimer end");
+        }
 
         // This is where you modify (a) the type; and (b) the event handled.
         static void OnDPchanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
         {
-            TreeViewItem tvife = depObj as TreeViewItem;
-            bool bAddEvt = (bool)e.NewValue;
+            var tvife = depObj as TreeViewItem;
+            var bAddEvt = (bool)e.NewValue;
+
+            if (tvife == null)
+            {
+                return;
+            }
 
             if (bAddEvt)
             {
@@ -126,20 +292,20 @@ namespace DoubleFile
                 SetWaitingToSelect(null);
                 nBringIntoViewAttempts = -1;
 
-                System.Windows.Point ptTVI = tvife.TranslatePoint(new System.Windows.Point(0, 0), scrollViewer);
+                System.Windows.Point ptTVI = tvife.TranslatePoint(new System.Windows.Point(0, 0), ScrollViewer);
 
-                if ((ptTVI.Y >= 0) && (ptTVI.Y < scrollViewer.ViewportHeight))
+                if ((ptTVI.Y >= 0) && (ptTVI.Y < ScrollViewer.ViewportHeight))
                 {
                     UtilProject.WriteLine("ViewportHeight A " + tvivm.Text);
                     tvivmSelected = tvivm;
                     nBringIntoViewAttempts = -1;
-                    m_tvife = null;
+                    TVIFE = null;
                     return;
                 }
 
                 tvivm.m_SelectedForeground = tvivm.Foreground;
                 UtilProject.WriteLine("Set nBringIntoViewAttempts " + tvivm.Text);
-                m_tvife = tvife;
+                TVIFE = tvife;
                 nBringIntoViewAttempts = 0;
                 StartTimer("5 " + tvivm.Text);
             }
@@ -150,7 +316,7 @@ namespace DoubleFile
             else    // direct treeview selection
             {
                 SetWaitingToSelect(null);
-                m_tvife = null;
+                TVIFE = null;
                 nBringIntoViewAttempts = -1;
                 tvivm.m_SelectedForeground = Brushes.White;
             }
@@ -160,193 +326,32 @@ namespace DoubleFile
             tvivm.RaisePropertyChanged("FontWeight");
         }
 
-        internal static void OnTimer()
-        {
-            StopTimer(1);
-
-            if (nBringIntoViewAttempts >= 0)
-            {
-                if (m_tvife == null)
-                {
-                    UtilProject.WriteLine("OnTimer m_tvife == null");
-                    return;
-                }
-
-                TreeViewItem_FileHashVM tvivm = m_tvivm;
-
-                if (tvivm == null)      // DisconnectedItem
-                {
-                    UtilProject.WriteLine("OnTimer tvivm == null");
-                    return;
-                }
-
-                System.Windows.Point ptTVI = m_tvife.TranslatePoint(new System.Windows.Point(0, 0), scrollViewer);
-
-                if ((ptTVI.Y >= 0) && (ptTVI.Y < scrollViewer.ViewportHeight))
-                {
-                    UtilProject.WriteLine("ViewportHeight " + nBringIntoViewAttempts + " " + tvivm.Text);
-                    tvivmSelected = tvivm;
-                    nBringIntoViewAttempts = -1;
-                    m_tvife = null;
-                    return;
-                }
-
-                if (nBringIntoViewAttempts < 20)
-                {
-                    nBringIntoViewAttempts += 20;
-                }
-
-                switch (nBringIntoViewAttempts)
-                {
-                    case 20:
-                        scrollViewer.ScrollToTop();
-                        break;
-
-                    case 21:
-                        m_tvife.BringIntoView();
-                        break;
-
-                    case 22:
-                        scrollViewer.PageUp();
-                        break;
-
-                    case 23:
-                        m_tvife.BringIntoView();
-                        break;
-
-                    case 24:
-                        scrollViewer.PageDown();
-                        break;
-
-                    case 25:
-                        scrollViewer.PageDown();
-                        break;
-
-                    case 26:
-                        m_tvife.BringIntoView();
-                        break;
-
-                    case 27:
-                    default:
-                        UtilProject.WriteLine("default " + tvivm.Text);
-                        m_tvife = null;
-                        nBringIntoViewAttempts = -1;
-                        return;
-                }
-
-                ++nBringIntoViewAttempts;
-                StartTimer("1 " + tvivm.Text);
-                UtilProject.WriteLine("nBringIntoViewAttempts " + nBringIntoViewAttempts + " " + tvivm.Text);
-                return;
-            }
-
-            if (WaitingToSelect == null)
-            {
-                UtilProject.WriteLine("OnTimer WaitingToSelect == null");
-                return;
-            }
-
-            TreeViewItem_FileHashVM tvivm_A = null;
-
-            if (stackParents.Count > 0)
-            {
-                tvivm_A = stackParents.Pop();
-            }
-            else
-            {
-                if (new double[] { WaitingToSelect.EphemeralExpandedPos, 0, scrollViewer.ScrollableHeight }.Contains(scrollViewer.VerticalOffset))
-                {
-                    if (++nAttempts > 0)
-                    {
-                        SetWaitingToSelect(null);
-                        UtilProject.WriteLine("OnTimer SetWaitingToSelect(null)");
-                        return;
-                    }
-
-                    stackParents = stackParents_A;
-                }
-
-                tvivm_A = WaitingToSelect;
-            }
-
-            Scroll(tvivm_A);
-            UtilProject.WriteLine("OnTimer end");
-        }
-
         static void Scroll(TreeViewItem_FileHashVM tvivm)
         {
             StopTimer(3);
             UtilProject.WriteLine(tvivm.datum.Level + " " + tvivm.Text + " " + tvivm.EphemeralExpandedPos);
-            scrollViewer.ScrollToTop();
-            scrollViewer.ScrollToVerticalOffset(tvivm.EphemeralExpandedPos);
+            ScrollViewer.ScrollToTop();
+            ScrollViewer.ScrollToVerticalOffset(tvivm.EphemeralExpandedPos);
             StartTimer("3 " + tvivm.Text);
         }
 
-        internal static TreeView TVFE
-        {
-            get { return m_TVFE; }
-            set
-            {
-                m_TVFE = value;
-
-                if (m_scrollTimer != null)
-                {
-                    m_scrollTimer.Enabled = false;
-                }
-
-           //     m_scrollTimer = new SDL_Timer(1, OnTimer);    // 1 evil: static and not disposed. Works otherwise.
-                StopTimer(2);
-            }
-        }
-        static TreeView m_TVFE = null;
-
-        static internal void StartTimer(string text) {} // m_scrollTimer.Stop(); m_scrollTimer.Start(); UtilProject.WriteLine("StartTimer " + text); }
-        static internal void StopTimer(int nWhere) {}   // m_scrollTimer.Stop(); UtilProject.WriteLine("StopTimer " + nWhere); }
-        internal static TreeViewItem_FileHashVM WaitingToSelect { get { return m_WaitingToSelect; } }
-        internal static void SetWaitingToSelect(TreeViewItem_FileHashVM tvivm)
-        {
-            m_WaitingToSelect = tvivm;
-
-            if (m_WaitingToSelect != null)
-            {
-                stackParents_A = new Stack<TreeViewItem_FileHashVM>(stackParents.Reverse());
-                StartTimer("0 " + tvivm.Text);
-            }
-            else
-            {
-                stackParents = stackParents_A = new Stack<TreeViewItem_FileHashVM>(8);
-                nAttempts = -1;
-                StopTimer(0);
-            }
-        }
-
-        static TreeViewItem_FileHashVM m_WaitingToSelect = null;
-
-        internal static ScrollViewer scrollViewer
-        {
-            get { return m_scrollViewer_ ?? (m_scrollViewer_ = TVFE.Template.FindName("_tv_scrollviewer_", TVFE) as ScrollViewer); }
-        }
-        static ScrollViewer m_scrollViewer_ = null;
-
-        internal static TreeViewItem_FileHashVM tvivmSelected = null;
-        internal static double HeaderHeight = -1;
-        internal static Stack<TreeViewItem_FileHashVM> stackParents = null;
         static Stack<TreeViewItem_FileHashVM> stackParents_A = null;
-        static SDL_Timer m_scrollTimer = null;
+        static readonly SDL_Timer m_scrollTimer = null;
         static int nAttempts = -1;
         static int nBringIntoViewAttempts = -1;
 
-        static TreeViewItem m_tvife
+        static TreeViewItem TVIFE
         {
-            get { return m_tvife_; }
+            get { return _tvife; }
             set
             {
-                m_tvife_ = value;
+                _tvife = value;
 
-                m_tvivm_ = (m_tvife_ != null) ? (m_tvife_.DataContext as TreeViewItem_FileHashVM) : null;
+                m_TVIVM = (_tvife != null) ? (_tvife.DataContext as TreeViewItem_FileHashVM) : null;
             }
         }
-        static TreeViewItem m_tvife_ = null;
-        static TreeViewItem_FileHashVM m_tvivm { get { return m_tvivm_; } } static TreeViewItem_FileHashVM m_tvivm_ = null;
+        static TreeViewItem _tvife = null;
+
+        static TreeViewItem_FileHashVM m_TVIVM = null;
     }
 }

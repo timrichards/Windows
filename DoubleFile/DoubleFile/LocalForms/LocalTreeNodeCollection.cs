@@ -46,7 +46,9 @@ namespace DoubleFile
                 else
                 {
                     strPrevQuery = s;
-                    Keys.Where(t => t.Text == s).FirstOnlyAssert(t => nodePrevQuery = t);
+                    Keys
+                        .Where(t => t.Text == s)
+                        .FirstOnlyAssert(t => nodePrevQuery = t);
                     return nodePrevQuery;                   // TODO: Trim? ignore case? Probably neither.
                 }
             }
@@ -62,7 +64,8 @@ namespace DoubleFile
             base.Clear();
         }
 
-        static void SetLevel(LocalTV treeView, LocalTreeNodeCollection nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
+        static void SetLevel(LocalTV treeView,
+            IReadOnlyList<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
         {
             LocalTreeNode nodePrev = null;
 

@@ -15,12 +15,15 @@ namespace DoubleFile
                 return;
             }
 
+            m_winProgress = new WinProgress(); 
             m_nCorrelateProgressDenominator = m_lvProjectVM.Count;
             DoTree();
         }
 
-        GlobalData_Base gd = null;
-        TreeView_FileHashVM m_tvVM = null;
-        LV_ProjectVM m_lvProjectVM = null;
+        readonly GlobalData_Base gd = null;
+        readonly TreeView_FileHashVM m_tvVM = null;
+        readonly LV_ProjectVM m_lvProjectVM = null;
+        readonly WinProgress m_winProgress = null;
+        readonly double m_nCorrelateProgressDenominator = 0;
     }
 }

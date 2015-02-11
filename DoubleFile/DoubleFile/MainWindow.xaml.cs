@@ -163,6 +163,22 @@ namespace DoubleFile
             }
 
             gd_old.Dispose();
+
+            var n = 0;
+            TimeSpan dtA_Count = TimeSpan.Zero;
+            TimeSpan dtA_Enumerator = TimeSpan.Zero;
+
+            foreach (var dt in ExtensionMethodsStatic.atsDT)
+            {
+                UtilProject.WriteLine(dt.Count + " " + n + " Count");
+                UtilProject.WriteLine(dt.Enumerator + " " + n + " Enumerator");
+                ++n;
+                dtA_Count += dt.Count;
+                dtA_Enumerator += dt.Enumerator;
+            }
+
+            UtilProject.WriteLine(dtA_Count + " " + n + " Total Count");
+            UtilProject.WriteLine(dtA_Enumerator + " " + n + " Total Enumerator");
         }
 
         private void Button_ViewProject_Click(object sender, RoutedEventArgs e)

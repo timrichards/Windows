@@ -7,14 +7,6 @@ namespace DoubleFile
 {
     internal static partial class ExtensionMethodsStatic
     {
-        internal struct dt
-        {
-            internal TimeSpan CountLE;
-            internal TimeSpan CountEQ;
-        }
-
-        static internal dt[] atsDT = new dt[5];
-
         internal static bool IsEmpty<T>(this IEnumerable<T> source)
         {
             return (false == source.GetEnumerator().MoveNext());
@@ -22,67 +14,27 @@ namespace DoubleFile
 
         internal static bool IsEmpty<T>(this UList<T> source)
         {
-            var dtCount = DateTime.Now;
-            var bRetA = (source.Count <= 0);
-            atsDT[0].CountLE += DateTime.Now - dtCount;
-
-            var dtEnumerator = DateTime.Now;
-            var bRetB = (source.Count == 0);
-            atsDT[0].CountEQ += DateTime.Now - dtEnumerator;
-
-            return bRetA;
+            return (source.Count <= 0);
         }
 
         internal static bool IsEmpty(this ListView.ListViewItemCollection source)
         {
-            var dtCount = DateTime.Now;
-            var bRetA = (source.Count <= 0);
-            atsDT[1].CountLE += DateTime.Now - dtCount;
-
-            var dtEnumerator = DateTime.Now;
-            var bRetB = (source.Count == 0);
-            atsDT[1].CountEQ += DateTime.Now - dtEnumerator;
-
-            return bRetA;
+            return (source.Count <= 0);
         }
 
         internal static bool IsEmpty(this ListView.SelectedListViewItemCollection source)
         {
-            var dtCount = DateTime.Now;
-            var bRetA = (source.Count <= 0);
-            atsDT[2].CountLE += DateTime.Now - dtCount;
-
-            var dtEnumerator = DateTime.Now;
-            var bRetB = (source.Count == 0);
-            atsDT[2].CountEQ += DateTime.Now - dtEnumerator;
-
-            return bRetA;
+            return (source.Count <= 0);
         }
 
         internal static bool IsEmpty(this TreeNodeCollection source)
         {
-            var dtCount = DateTime.Now;
-            var bRetA = (source.Count <= 0);
-            atsDT[3].CountLE += DateTime.Now - dtCount;
-
-            var dtEnumerator = DateTime.Now;
-            var bRetB = (source.Count == 0);
-            atsDT[3].CountEQ += DateTime.Now - dtEnumerator;
-
-            return bRetA;
+            return (source.Count <= 0);
         }
 
         internal static bool IsEmptyA(this System.Collections.IList source)
         {
-            var dtCount = DateTime.Now;
-            var bRetA = (source.Count <= 0);
-            atsDT[4].CountLE += DateTime.Now - dtCount;
-
-            var dtEnumerator = DateTime.Now;
-            var bRetB = (source.Count == 0);
-            atsDT[4].CountEQ += DateTime.Now - dtEnumerator;
-
-            return bRetA;
+            return (source.Count <= 0);
         }
 
         internal static IEnumerator<T> First<T>(this IEnumerable<T> source, Action<T> action)

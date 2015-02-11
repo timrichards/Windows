@@ -30,9 +30,9 @@ namespace DoubleFile
             form_lvProject.DataContext = lvProjectVM;
             DataContext = win;
 
-            lvProjectVM.SelectedOne = () => { return form_lvProject.SelectedItems.Count == 1; };
-            lvProjectVM.SelectedAny = () => { return form_lvProject.SelectedItems.Count > 0; };
-            lvProjectVM.Selected = () => { return form_lvProject.SelectedItems.Cast<LVitem_ProjectVM>(); };
+            lvProjectVM.SelectedOne = () => form_lvProject.SelectedItems.HasOnlyOne();
+            lvProjectVM.SelectedAny = () => (false == form_lvProject.SelectedItems.IsEmptyA());
+            lvProjectVM.Selected = () => form_lvProject.SelectedItems.Cast<LVitem_ProjectVM>();
 
             if (bOpenProject)
             {

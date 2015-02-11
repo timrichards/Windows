@@ -73,7 +73,7 @@ namespace DoubleFile
 
         void DoCollation()
         {
-            if (gd_Tree.m_listRootNodes.Count <= 0)
+            if (gd_Tree.m_listRootNodes.IsEmpty())
             {
                 UtilAnalysis_DirList.CheckAndInvoke(this, () =>
                 {
@@ -83,12 +83,12 @@ namespace DoubleFile
                 return;
             }
 
-            MBoxStatic.Assert(1304.5304, gd_Tree.m_listTreeNodes.Count == 0);
+            MBoxStatic.Assert(1304.5304, gd_Tree.m_listTreeNodes.IsEmpty());
             MBoxStatic.Assert(1304.5305, InvokeRequired);
 
             UtilAnalysis_DirList.CheckAndInvoke(this, () =>
             {
-                MBoxStatic.Assert(1304.5306, gd_Tree.m_listLVignore.Count == 0);
+                MBoxStatic.Assert(1304.5306, gd_Tree.m_listLVignore.IsEmpty());
 
                 foreach (ListViewItem lvItem in form_lvIgnoreList.Items)
                 {
@@ -253,7 +253,7 @@ namespace DoubleFile
 
                 UtilAnalysis_DirList.Write("D");
 
-                if ((lv2.Items.Count > 0) &&
+                if ((false == lv2.Items.IsEmpty()) &&
                     (((LVitemFileTag)((ListViewItem)lv2.Items[0]).Tag).StrCompareDir != treeNode2.Text))
                 {
                     MBoxStatic.Assert(1304.5311, false);
@@ -336,7 +336,7 @@ namespace DoubleFile
                 gd_Tree.m_dictNodes.Clear();
             }
 
-            if (gd_Tree.m_dictNodes.Count <= 0)     // .Clear() to signal recreate. Ignore list only requires recollation
+            if (gd_Tree.m_dictNodes.IsEmpty())     // .Clear() to signal recreate. Ignore list only requires recollation
             {                                       // this works because gd.m_tree is not null during recreate.
                 ClearMem();
 
@@ -344,12 +344,12 @@ namespace DoubleFile
                 form_colDirDetail.Text = gd.m_strColDirDetailOrig;
                 form_colVolDetail.Text = gd.m_strColVolDetailOrig;
 
-                if ((LVprojectVM == null) || (LVprojectVM.Items.Count() <= 0))
+                if ((LVprojectVM == null) || (LVprojectVM.Items.IsEmpty()))
                 {
                     return;
                 }
 
-                MBoxStatic.Assert(1304.5312, gd_Tree.m_listRootNodes.Count == 0);
+                MBoxStatic.Assert(1304.5312, gd_Tree.m_listRootNodes.IsEmpty());
 
                 gd_Tree.m_tree = new Tree(new GlobalData_Form(this),
                     LVprojectVM, gd_Tree.m_dictNodes, gd_Tree.m_dictDriveInfo,

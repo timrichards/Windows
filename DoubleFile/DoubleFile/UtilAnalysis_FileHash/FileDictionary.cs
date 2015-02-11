@@ -23,7 +23,7 @@ namespace DoubleFile
         }
 
         internal void Clear() { m_DictFiles.Clear(); }
-        internal bool IsEmpty { get { return m_DictFiles.Count == 0; } }
+        internal bool IsEmpty { get { return m_DictFiles.IsEmpty(); } }
 
         /// <summary>
         /// 

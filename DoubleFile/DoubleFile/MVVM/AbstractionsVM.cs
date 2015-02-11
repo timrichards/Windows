@@ -145,7 +145,7 @@ namespace DoubleFile
         {
             RaisePropertyChanged("Items");
 
-            if (m_items.Count > 0)
+            if (false == m_items.IsEmpty())
             {
                 m_items[0].RaiseColumnWidths();
             }

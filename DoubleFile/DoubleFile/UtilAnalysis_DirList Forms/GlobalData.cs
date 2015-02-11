@@ -152,7 +152,7 @@ namespace DoubleFile
         {
             int nIxHistory = m_nIxHistory + (nDirection > 0 ? 1 : -1);
 
-            if ((nIxHistory >= 0) && (m_listHistory.Count > 0) && (nIxHistory <= (m_listHistory.Count - 1)))
+            if ((nIxHistory >= 0) && (false == m_listHistory.IsEmpty()) && (nIxHistory <= (m_listHistory.Count - 1)))
             {
                 TreeNode treeNode = History_GetAt(nIxHistory);
 
@@ -291,7 +291,7 @@ namespace DoubleFile
 
         internal bool LV_MarkerClick(ListView lv, bool bUp = false)     // returns true when selected tag is not null, and may change selection.
         {
-            if (lv.SelectedItems.Count <= 0)
+            if (lv.SelectedItems.IsEmpty())
             {
                 return false;
             }
@@ -332,7 +332,7 @@ namespace DoubleFile
             lvItem.Selected = true;
             lvItem.Focused = true;
 
-            if (lv.SelectedItems.Count <= 0)
+            if (lv.SelectedItems.IsEmpty())
             {
                 return false;
             }
@@ -371,7 +371,7 @@ namespace DoubleFile
 
             ListView lv = (ListView)sender;
 
-            if (lv.SelectedItems.Count <= 0)
+            if (lv.SelectedItems.IsEmpty())
             {
                 return false;
             }
@@ -391,7 +391,7 @@ namespace DoubleFile
 
             do
             {
-                if ((treeNode.Nodes != null) && (treeNode.Nodes.Count > 0))
+                if (false == treeNode.Nodes.IsEmpty())
                 {
                     RemoveCorrelation((TreeNode)treeNode.Nodes[0], bContinue: true);
                 }
@@ -419,7 +419,7 @@ namespace DoubleFile
                 {
                     listClones.Remove(treeNode);
 
-                    if (listClones.Count <= 0)
+                    if (listClones.IsEmpty())
                     {
                         gd_Tree.m_dictNodes.Remove(nodeDatum.Key);
                     }

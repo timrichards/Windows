@@ -50,7 +50,7 @@ namespace DoubleFile
                 LengthRead = 0;
                 FilesRead = 0;
 
-                while (stackDirs.Count > 0)
+                while (false == stackDirs.IsEmpty())
                 {
                     if (m_bThreadAbort || gd.WindowClosed)
                     {

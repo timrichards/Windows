@@ -125,7 +125,7 @@ namespace DoubleFile
                 }
             }
 
-            while (stackParents.Count > 0)
+            while (false == stackParents.IsEmpty())
             {
                 parentItem = stackParents.Pop();
                 EphemeralExpandedPos += (parentItem.Index + 1);

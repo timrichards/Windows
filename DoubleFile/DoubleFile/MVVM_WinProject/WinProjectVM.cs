@@ -35,7 +35,7 @@ namespace DoubleFile
             m_lvVM = lvVM;
 
             mIcmd_OpenProject = new RelayCommand(param => { OpenProject(); });
-            mIcmd_SaveProject = new RelayCommand(param => { SaveProject(); }, param => { return (m_lvVM.Count > 0); });
+            mIcmd_SaveProject = new RelayCommand(param => { SaveProject(); }, param => (false == m_lvVM.Items.IsEmpty()));
 
             mIcmd_NewListingFile = new RelayCommand(param => { NewListingFile(); });
             mIcmd_OpenListingFile = new RelayCommand(param => { OpenListingFile(); });

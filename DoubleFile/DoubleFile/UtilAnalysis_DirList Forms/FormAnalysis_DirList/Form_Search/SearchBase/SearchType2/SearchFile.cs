@@ -87,7 +87,7 @@ namespace DoubleFile
                         // strMatchDir gets set to just the folder name after this, but first check the full path
                         if (bDir && (strMatchDir == strCurrentNode))
                         {
-                            if (listResults.Count > 0)
+                            if (false == listResults.IsEmpty())
                             {
                                 listResults.Sort((x, y) => x.StrDir.CompareTo(y.StrDir));
                                 m_statusCallback(new SearchResults(m_strSearch, m_volStrings, listResults), bLast: true);
@@ -153,7 +153,7 @@ namespace DoubleFile
                         MBoxStatic.Assert(1307.8302, searchResultDir == null);
                     }
 
-                    if (listResults.Count > 0)
+                    if (false == listResults.IsEmpty())
                     {
                         listResults.Sort((x, y) => x.StrDir.CompareTo(y.StrDir));
                         m_statusCallback(new SearchResults(m_strSearch, m_volStrings, listResults), bFirst: bFirst);

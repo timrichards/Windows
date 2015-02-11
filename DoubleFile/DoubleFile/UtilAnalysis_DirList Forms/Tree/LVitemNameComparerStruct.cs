@@ -33,11 +33,11 @@ namespace DoubleFile
 
         internal static void MarkItemsFrom1notIn2(SDL_ListView lv1, SDL_ListView lv2)
         {
-            if ((lv1.Items.Count <= 0) || (lv2.Items.Count <= 0)) { return; }
+            if ((lv1.Items.IsEmpty()) || (lv2.Items.IsEmpty())) { return; }
 
             List<ListViewItem> list = lv1.Items.Cast<ListViewItem>().Except(lv2.Items.Cast<ListViewItem>(), new LVitemNameComparerStruct()).ToList();
 
-            if (list.Count > 0)
+            if (false == list.IsEmpty())
             {
                 lv1.TopItem = list[0];
             }

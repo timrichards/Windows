@@ -97,9 +97,9 @@ namespace DoubleFile
         {
             form_lvProgress.DataContext = m_lv;
 
-            m_lv.SelectedOne = () => { return form_lvProgress.SelectedItems.Count == 1; };
-            m_lv.SelectedAny = () => { return form_lvProgress.SelectedItems.Count > 0; };
-            m_lv.Selected = () => { return form_lvProgress.SelectedItems.Cast<LVitem_ProgressVM>(); };
+            m_lv.SelectedOne = () => form_lvProgress.SelectedItems.HasOnlyOne();
+            m_lv.SelectedAny = () => (false == form_lvProgress.SelectedItems.IsEmptyA());
+            m_lv.Selected = () => form_lvProgress.SelectedItems.Cast<LVitem_ProgressVM>();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

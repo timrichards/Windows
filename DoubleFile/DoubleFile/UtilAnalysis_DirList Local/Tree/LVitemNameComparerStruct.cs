@@ -33,11 +33,11 @@ namespace Local
 
         internal static void MarkItemsFrom1notIn2(LocalLV lv1, LocalLV lv2)
         {
-            if ((lv1.Items.Count <= 0) || (lv2.Items.Count <= 0)) { return; }
+            if ((lv1.Items.IsEmpty()) || (lv2.Items.IsEmpty())) { return; }
 
             var list = lv1.Items.Except(lv2.Items, new LVitemNameComparerStruct());
 
-            list.Take(1).FirstOnly(item => lv1.TopItem = item);
+            list.Take(1).First(item => lv1.TopItem = item);
 
             foreach (var item in list)
             {

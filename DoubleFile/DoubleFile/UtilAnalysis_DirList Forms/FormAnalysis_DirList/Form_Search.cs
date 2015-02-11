@@ -20,7 +20,7 @@ namespace DoubleFile
 
             while (true)
             {
-                if (gd_Search_1_2.m_SearchResultsType2_List.Count <= 0)       // torturing the UX
+                if (gd_Search_1_2.m_SearchResultsType2_List.IsEmpty())       // torturing the UX
                 {
                     return false;
                 }
@@ -29,7 +29,7 @@ namespace DoubleFile
                 {
                     foreach (SearchResultsDir resultDir in searchResults.Results)
                     {
-                        if (resultDir.ListFiles.Count <= 0)
+                        if (resultDir.ListFiles.IsEmpty())
                         {
                             if (++nCounter <= gd_Search_1_2.m_nSearchResultsIndexer)
                             {
@@ -109,7 +109,7 @@ namespace DoubleFile
                 return;
             }
 
-            if (form_lvFiles.Items.Count <= 0)
+            if (form_lvFiles.Items.IsEmpty())
             {
                 // expected a file but got an empty listviewer
                 FlashWindowStatic.Go(Once: true);
@@ -154,7 +154,7 @@ namespace DoubleFile
 
                 gd.m_blinky.Reset();
 
-                if (gd_Search_1_2.m_SearchResultsType2_List.Count <= 0)
+                if (gd_Search_1_2.m_SearchResultsType2_List.IsEmpty())
                 {
                     gd_Search_1_2.SearchFail();
                     return;
@@ -292,7 +292,7 @@ namespace DoubleFile
                     }
                     else
                     {
-                        MBoxStatic.Assert(1307.8314, gd_Search_1_2.m_SearchResultsType2_List.Count <= 0);
+                        MBoxStatic.Assert(1307.8314, gd_Search_1_2.m_SearchResultsType2_List.IsEmpty());
                         gd_Search_1_2.SearchFail();
                     }
                 }

@@ -94,7 +94,7 @@ namespace DoubleFile
                 }
             }
 
-            if (lv.Items.Count > 0)
+            if (false == lv.Items.IsEmpty())
             {
                 ListViewItem[] lvItems = lv.Items.Cast<ListViewItem>().ToArray();
                 lv.Items.Clear();

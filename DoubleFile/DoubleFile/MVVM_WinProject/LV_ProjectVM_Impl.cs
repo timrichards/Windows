@@ -127,7 +127,8 @@ namespace DoubleFile
         {
             bool bUnsaved = false;
 
-            Selected().ToArray().ForEach(lvItem =>
+            Selected()
+                .ForEach(lvItem =>
             {
                 if (bUnsaved)
                 {
@@ -147,7 +148,8 @@ namespace DoubleFile
                 return;
             }
 
-            Selected().ToArray().ForEach(lvItem => { Items.Remove(lvItem); });
+            Selected()
+                .ForEach(lvItem => Items.Remove(lvItem));
             gd.FileDictionary.Clear();
             Unsaved = true;
         }
@@ -156,17 +158,15 @@ namespace DoubleFile
         {
             var dlg = new WinVolumeGroup();
 
-            Selected().ToArray().FirstOnly(lvItem =>
+            Selected().ToArray().First(lvItem =>
             {
                 dlg.Text = lvItem.VolumeGroup;
             });
 
             if (dlg.ShowDialog() ?? false)
             {
-                Selected().ToArray().ForEach(lvItem =>
-                {
-                    lvItem.VolumeGroup = dlg.Text;
-                });
+                Selected()
+                    .ForEach(lvItem => lvItem.VolumeGroup = dlg.Text);
 
                 Unsaved = true;
             }

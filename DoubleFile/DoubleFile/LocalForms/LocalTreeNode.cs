@@ -62,7 +62,7 @@ namespace DoubleFile
 
                 var sb = new StringBuilder();
 
-                while (stack.Count > 0)
+                while (false == stack.IsEmpty())
                 {
                     nodeParent = stack.Pop();
                     sb.Append(nodeParent.Text + '\\');

@@ -9,7 +9,7 @@ namespace Local
         {
             int nCount = 0;
 
-            foreach (LocalTreeNode treeNode in listNodes)
+            foreach (var treeNode in listNodes)
             {
                 nCount += Go(treeNode, bNextNode: false);
             }
@@ -19,19 +19,19 @@ namespace Local
 
         internal static int Go(LocalTreeNode treeNode_in, bool bNextNode = true)
         {
-            LocalTreeNode treeNode = treeNode_in;
-            int nCount = 0;
+            var treeNode = treeNode_in;
+            var nCount = 0;
 
             do
             {
-                if ((treeNode.Nodes != null) && (treeNode.Nodes.Count > 0))
+                if (false == treeNode.Nodes.IsEmpty())
                 {
-                    nCount += Go((LocalTreeNode)treeNode.Nodes[0]);
+                    nCount += Go(treeNode.Nodes[0]);
                 }
 
                 ++nCount;
             }
-            while (bNextNode && ((treeNode = (LocalTreeNode)treeNode.NextNode) != null));
+            while (bNextNode && ((treeNode = treeNode.NextNode) != null));
 
             return nCount;
         }

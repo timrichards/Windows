@@ -134,7 +134,7 @@ namespace DoubleFile
                 listListingFiles_Check.Add(Path.GetFileName(volStrings.ListingFile));
             }
 
-            if (listListingFiles.Count <= 0)
+            if (listListingFiles.IsEmpty())
             {
                 MBoxStatic.ShowDialog("Any listing files in project have not yet been saved." +
                     " Click OK on the Project window to start saving directory listings of your drives.",

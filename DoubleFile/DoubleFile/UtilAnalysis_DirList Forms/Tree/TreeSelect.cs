@@ -61,7 +61,7 @@ namespace DoubleFile
                 .Take((int)(nLineNo - nPrevDir - 1))
                 .ToList();
 
-            if (listLines.Count <= 0)
+            if (listLines.IsEmpty())
             {
                 return null;
             }

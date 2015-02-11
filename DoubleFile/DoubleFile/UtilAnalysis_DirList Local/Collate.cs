@@ -53,7 +53,7 @@ namespace Local
 
         internal static void InsertSizeMarkers(List<LocalLVitem> listLVitems)
         {
-            if (listLVitems.Count <= 0)
+            if (listLVitems.IsEmpty())
             {
                 return;
             }
@@ -91,7 +91,7 @@ namespace Local
 
             LocalTV treeView = new LocalTV();     // sets Level and NextNode
 
-            if (m_listRootNodes.Count <= 0)
+            if (m_listRootNodes.IsEmpty())
             {
                 MBoxStatic.Assert(1305.6314, false);
                 return;
@@ -102,7 +102,7 @@ namespace Local
                 treeView.Nodes.AddRange(m_listRootNodes.ToArray());
             }
 
-            if (m_list_lvIgnore.Count > 0)
+            if (false == m_list_lvIgnore.IsEmpty())
             {
                 DateTime dtStart = DateTime.Now;
                 int nMaxLevel = m_list_lvIgnore.Max(i => int.Parse(i.SubItems[1].Text) - 1);
@@ -153,7 +153,7 @@ namespace Local
                     dictIgnoreMark.Add(treeNode, kvp.Value);
                     dictNodes[nodeDatum.Key].Remove(treeNode);
 
-                    if (dictNodes[nodeDatum.Key].Count <= 0)
+                    if (dictNodes[nodeDatum.Key].IsEmpty())
                     {
                         dictNodes.Remove(nodeDatum.Key);
                     }
@@ -185,7 +185,7 @@ namespace Local
                 {
                     // Parent folder may contain only its clone subfolder, in which case unmark the subfolder
 
-                    UList<LocalTreeNode> listKeep = new UList<LocalTreeNode>();
+                    var listKeep = new UList<LocalTreeNode>();
 
                     foreach (LocalTreeNode treeNode_A in listNodes)
                     {
@@ -377,12 +377,12 @@ namespace Local
             dictUnique = null;
             InsertSizeMarkers(listLVunique);
 
-            List<LocalTreeNode> listSameVol = new List<LocalTreeNode>();
+            var listSameVol = new List<LocalTreeNode>();
 
-            if (m_listRootNodes.Count > 0)
+            if (false == m_listRootNodes.IsEmpty())
             {
-                int nCount = CountNodes.Go(m_listRootNodes);
-                int nCount_A = new AddTreeToList(m_listTreeNodes, listSameVol).Go(m_listRootNodes).Count;
+                var nCount = CountNodes.Go(m_listRootNodes);
+                var nCount_A = new AddTreeToList(m_listTreeNodes, listSameVol).Go(m_listRootNodes).Count;
 
                 MBoxStatic.Assert(1305.6325, nCount_A == nCount);
                 MBoxStatic.Assert(1305.6326, m_listTreeNodes.Count == nCount);
@@ -394,7 +394,7 @@ namespace Local
             nProgressDenominator += listSameVol.Count;
             ++nProgressItem;
 
-            foreach (LocalTreeNode treeNode in listSameVol)
+            foreach (var treeNode in listSameVol)
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
 
@@ -450,7 +450,7 @@ namespace Local
                     m_tvBrowseWPF.Nodes.Clear();
                 }
 
-                if (m_listRootNodes.Count <= 0)
+                if (m_listRootNodes.IsEmpty())
                 {
                     return;
                 }
@@ -478,7 +478,7 @@ namespace Local
                     return;
                 }
 
-                MBoxStatic.Assert(1305.6333, wpf_lvClones.Items.Count <= 0);
+                MBoxStatic.Assert(1305.6333, wpf_lvClones.Items.IsEmpty());
                 UtilAnalysis_DirList.Write("B");
                 wpf_lvClones.Items.AddRange(listLVdiffVol.ToArray());
                 wpf_lvClones.Invalidate();
@@ -489,7 +489,7 @@ namespace Local
                     return;
                 }
 
-                MBoxStatic.Assert(1305.6334, wpf_lvUnique.Items.Count <= 0);
+                MBoxStatic.Assert(1305.6334, wpf_lvUnique.Items.IsEmpty());
                 UtilAnalysis_DirList.Write("C");
                 wpf_lvUnique.Items.AddRange(listLVunique.ToArray());
                 wpf_lvUnique.Invalidate();
@@ -500,7 +500,7 @@ namespace Local
                     return;
                 }
 
-                MBoxStatic.Assert(1305.6335, wpf_lvSameVol.Items.Count <= 0);
+                MBoxStatic.Assert(1305.6335, wpf_lvSameVol.Items.IsEmpty());
                 UtilAnalysis_DirList.Write("D");
                 wpf_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
                 wpf_lvSameVol.Invalidate();
@@ -542,7 +542,7 @@ namespace Local
                 nodeDatum.m_listClones.Clear();
             }
 
-            if ((listClones.Count > 0) && (rootClone == null))
+            if ((false == listClones.IsEmpty()) && (rootClone == null))
             {
                 rootClone = treeNode;
 
@@ -621,7 +621,7 @@ namespace Local
 
         void IgnoreNodeAndSubnodes(LocalLVitem lvItem, LocalTreeNode treeNode_in, bool bContinue = false)
         {
-            LocalTreeNode treeNode = treeNode_in;
+            var treeNode = treeNode_in;
 
             do
             {
@@ -633,12 +633,12 @@ namespace Local
                 MBoxStatic.Assert(1305.6312, lvItem != null);
                 dictIgnoreNodes.Add(treeNode, lvItem);
 
-                if (treeNode.Nodes.Count > 0)
+                if (false == treeNode.Nodes.IsEmpty())
                 {
-                    IgnoreNodeAndSubnodes(lvItem, (LocalTreeNode)treeNode.Nodes[0], bContinue: true);
+                    IgnoreNodeAndSubnodes(lvItem, treeNode.Nodes[0], bContinue: true);
                 }
             }
-            while (bContinue && ((treeNode = (LocalTreeNode)treeNode.NextNode) != null));
+            while (bContinue && ((treeNode = treeNode.NextNode) != null));
         }
 
         void IgnoreNodeQuery(string sbMatch, int nMaxLevel, LocalTreeNode treeNode_in)
@@ -648,7 +648,7 @@ namespace Local
                 return;
             }
 
-            LocalTreeNode treeNode = treeNode_in;
+            var treeNode = treeNode_in;
 
             do
             {
@@ -666,7 +666,7 @@ namespace Local
                             continue;
                         }
 
-                        if (lvItem.Text.ToLower() == treeNode.Text.ToLower())
+                        if (lvItem.Text.Equals(treeNode.Text, StringComparison.InvariantCultureIgnoreCase))
                         {
                             IgnoreNodeAndSubnodes((LocalLVitem)lvItem.Tag, treeNode);
                             break;
@@ -674,17 +674,17 @@ namespace Local
                     }
                 }
 
-                if (treeNode.Nodes.Count > 0)
+                if (false == treeNode.Nodes.IsEmpty())
                 {
-                    IgnoreNodeQuery(sbMatch, nMaxLevel, (LocalTreeNode)treeNode.Nodes[0]);
+                    IgnoreNodeQuery(sbMatch, nMaxLevel, treeNode.Nodes[0]);
                 }
             }
-            while ((treeNode = (LocalTreeNode)treeNode.NextNode) != null);
+            while ((treeNode = treeNode.NextNode) != null);
         }
 
-        void SnowUniqueParents(LocalTreeNode treeNode)
+        static void SnowUniqueParents(LocalTreeNode treeNode)
         {
-            LocalTreeNode parentNode = (LocalTreeNode)treeNode.Parent;
+            LocalTreeNode parentNode = treeNode.Parent;
 
             while (parentNode != null)
             {

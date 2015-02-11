@@ -27,7 +27,7 @@ namespace DoubleFile
             m_dictDriveInfo.Clear();
 
             // m_dictNodes is tested to recreate tree.
-            MBoxStatic.Assert(1304.5303, m_dictNodes.Count == 0);
+            MBoxStatic.Assert(1304.5303, m_dictNodes.IsEmpty());
             m_dictNodes.Clear();
         }
 
@@ -89,7 +89,7 @@ namespace DoubleFile
 
         void TreeDoneCallback()
         {
-            if (m_listRootNodes.Count == 0)
+            if (m_listRootNodes.IsEmpty())
             {
                 m_winProgress.Aborted = true;
                 UtilProject.CheckAndInvoke(() => m_winProgress.Close());

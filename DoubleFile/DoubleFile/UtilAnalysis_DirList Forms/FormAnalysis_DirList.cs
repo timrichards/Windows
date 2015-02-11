@@ -102,9 +102,9 @@ namespace DoubleFile
         {
             gd.ClearMem_FormAnalysis_DirList();
 
-            MBoxStatic.Assert(1308.9301, form_lvClones.Items.Count == 0, bTraceOnly: true);
-            MBoxStatic.Assert(1308.9302, form_lvSameVol.Items.Count == 0, bTraceOnly: true);
-            MBoxStatic.Assert(1308.9303, form_lvUnique.Items.Count == 0, bTraceOnly: true);
+            MBoxStatic.Assert(1308.9301, form_lvClones.Items.IsEmpty(), bTraceOnly: true);
+            MBoxStatic.Assert(1308.9302, form_lvSameVol.Items.IsEmpty(), bTraceOnly: true);
+            MBoxStatic.Assert(1308.9303, form_lvUnique.Items.IsEmpty(), bTraceOnly: true);
 
             form_lvClones.Items.Clear();
             form_lvSameVol.Items.Clear();
@@ -153,7 +153,7 @@ namespace DoubleFile
 
         void CompareNav(bool bNext = true)
         {
-            if (gd.m_dictCompareDiffs.Count <= 0)
+            if (gd.m_dictCompareDiffs.IsEmpty())
             {
                 return;
             }
@@ -250,7 +250,7 @@ namespace DoubleFile
                 return;
             }
 
-            if (form_lvIgnoreList.Items.Count > 0)
+            if (false == form_lvIgnoreList.Items.IsEmpty())
             {
                 gd.m_bKillTree &= gd.m_tmrDoTree.Enabled;
                 gd.RestartTreeTimer();
@@ -259,7 +259,7 @@ namespace DoubleFile
 
         void LV_CloneSelNode(ListView lv)
         {
-            if (MBoxStatic.Assert(1308.9307, lv.SelectedItems.Count > 0, bTraceOnly: true) == false)
+            if (MBoxStatic.Assert(1308.9307, false == lv.SelectedItems.IsEmpty(), bTraceOnly: true) == false)
             {
                 return;
             }
@@ -297,7 +297,7 @@ namespace DoubleFile
                 return;
             }
 
-            if (lv.SelectedItems.Count <= 0)
+            if (lv.SelectedItems.IsEmpty())
             {
                 return;
             }
@@ -328,7 +328,7 @@ namespace DoubleFile
 
         void form_btnClearIgnoreList_Click(object sender, EventArgs e)
         {
-            if (form_lvIgnoreList.Items.Count <= 0)
+            if (form_lvIgnoreList.Items.IsEmpty())
             {
                 return;
             }
@@ -564,7 +564,7 @@ namespace DoubleFile
 
         void form_btnIgnoreDel_Click(object sender, EventArgs e)
         {
-            if (form_lvIgnoreList.SelectedItems.Count <= 0)
+            if (form_lvIgnoreList.SelectedItems.IsEmpty())
             {
                 gd.m_blinky.Go(form_btnIgnoreDel, clr: Color.Red, Once: true);
                 return;
@@ -603,7 +603,7 @@ namespace DoubleFile
 
         void form_btnSaveCopyDirs_Click(object sender, EventArgs e)
         {
-            if (form_lvCopyScratchpad.Items.Count > 0)
+            if (false == form_lvCopyScratchpad.Items.IsEmpty())
             {
                 new SDL_CopyFile().WriteList(form_lvCopyScratchpad.Items);
             }
@@ -615,7 +615,7 @@ namespace DoubleFile
 
         void form_btnSaveIgnoreList_Click(object sender, EventArgs e)
         {
-            if (form_lvIgnoreList.Items.Count > 0)
+            if (false == form_lvIgnoreList.Items.IsEmpty())
             {
                 new SDL_IgnoreFile().WriteList(form_lvIgnoreList.Items);
             }
@@ -779,7 +779,7 @@ namespace DoubleFile
 
         void form_cbFindbox_TextChanged(object sender, EventArgs e)
         {
-            if (gd_Search_1_2.m_SearchResultsType2_List.Count > 0)
+            if (false == gd_Search_1_2.m_SearchResultsType2_List.IsEmpty())
             {
                 gd_Search_1_2.m_SearchResultsType2_List.Clear();
             }
@@ -856,7 +856,7 @@ namespace DoubleFile
 
         void form_chkLoose_CheckedChanged(object sender, EventArgs e)
         {
-            if (form_lvIgnoreList.Items.Count <= 0)
+            if (form_lvIgnoreList.Items.IsEmpty())
             {
                 return;
             }
@@ -951,7 +951,7 @@ namespace DoubleFile
 
             var lv = (ListView)sender;
 
-            if (lv.SelectedItems.Count <= 0)
+            if (lv.SelectedItems.IsEmpty())
             {
                 return;
             }
@@ -1034,7 +1034,7 @@ namespace DoubleFile
                 lv.Tag = SortOrder.None;
             }
 
-            if (lv.Items.Count <= 0)
+            if (lv.Items.IsEmpty())
             {
                 return;
             }
@@ -1051,12 +1051,12 @@ namespace DoubleFile
 
             ListViewItem lvSelectedItem = null;
 
-            if ((lv.SelectedItems != null) && (lv.SelectedItems.Count > 0))
+            if (false == lv.SelectedItems.IsEmpty())
             {
                 lvSelectedItem = (ListViewItem)lv.SelectedItems[0];
             }
 
-            bool bNullTags = (listItems.Count <= 0);
+            bool bNullTags = (listItems.IsEmpty());
 
             if (bNullTags)
             {
@@ -1210,7 +1210,7 @@ namespace DoubleFile
             {
                 gd.m_bHistoryDefer = true;
 
-                if ((gd.m_listHistory.Count > 0) && (gd.m_nIxHistory > -1) && ((gd.m_listHistory.Count - 1) > gd.m_nIxHistory))
+                if ((false == gd.m_listHistory.IsEmpty()) && (gd.m_nIxHistory > -1) && ((gd.m_listHistory.Count - 1) > gd.m_nIxHistory))
                 {
                     gd.m_listHistory.RemoveRange(gd.m_nIxHistory, gd.m_listHistory.Count - gd.m_nIxHistory - 1);
                 }

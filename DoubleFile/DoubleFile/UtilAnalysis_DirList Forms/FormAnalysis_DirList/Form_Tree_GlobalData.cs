@@ -36,7 +36,7 @@ namespace DoubleFile
 
         internal void ClearMem_TreeForm()
         {
-            MBoxStatic.Assert(1304.5301, m_listLVignore.Count == 0);
+            MBoxStatic.Assert(1304.5301, m_listLVignore.IsEmpty());
 
             m_listLVignore.Clear();
             m_listTreeNodes.Clear();
@@ -48,7 +48,7 @@ namespace DoubleFile
             m_dictDriveInfo.Clear();
 
             // m_dictNodes is tested to recreate tree.
-            MBoxStatic.Assert(1304.5303, m_dictNodes.Count == 0);
+            MBoxStatic.Assert(1304.5303, m_dictNodes.IsEmpty());
             m_dictNodes.Clear();
         }
 
@@ -79,7 +79,7 @@ namespace DoubleFile
 
                 treeViewBrowse.SelectedNode = null;
 
-                if (treeViewBrowse.Nodes.Count > 0)
+                if (false == treeViewBrowse.Nodes.IsEmpty())
                 {
                     treeViewBrowse.SelectedNode = treeViewBrowse.Nodes[0];
                 }

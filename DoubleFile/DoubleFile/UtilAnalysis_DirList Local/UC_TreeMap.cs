@@ -240,7 +240,7 @@ namespace Local
                     return treeNode;
                 }
 
-                if ((treeNode.Nodes == null) || (treeNode.Nodes.Count <= 0))
+                if ((treeNode.Nodes == null) || (treeNode.Nodes.IsEmpty()))
                 {
                     continue;
                 }
@@ -532,7 +532,7 @@ namespace Local
                 nodeDatum.TreeMapFiles = GetFileList(item);
             }
 
-            if (((item.Nodes.Count > 0) || (bStart && (nodeDatum.TreeMapFiles != null)))
+            if (((false == item.Nodes.IsEmpty()) || (bStart && (nodeDatum.TreeMapFiles != null)))
                 && KDirStat_DrawChildren(graphics, item, bStart))
             {
                 // example scenario: empty folder when there are immediate files and bStart is not true
@@ -660,7 +660,7 @@ namespace Local
 
             listChildren.Sort((y, x) => ((NodeDatum)x.Tag).nTotalLength.CompareTo(((NodeDatum)y.Tag).nTotalLength));
 
-            if (listChildren.Count <= 0)
+            if (listChildren.IsEmpty())
             {
                 // any files are zero in length
                 return false;

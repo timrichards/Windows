@@ -53,7 +53,7 @@ namespace Local
 
                     if ((treeNode.ForeColor == UtilColor.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
                     {
-                        MBoxStatic.Assert(1305.6304, (nodeDatum.m_listClones.Count > 0) && (nodeDatum.m_bDifferentVols == false));
+                        MBoxStatic.Assert(1305.6304, (false == nodeDatum.m_listClones.IsEmpty()) && (nodeDatum.m_bDifferentVols == false));
                         m_listSameVol.Add(treeNode);
                     }
 

@@ -17,7 +17,7 @@ namespace DoubleFile
                 Add(treeNode);
             }
 
-            if ((Count > 0) && (m_treeView != null))
+            if ((false == this.IsEmpty()) && (m_treeView != null))
             {
                 m_treeView.TopNode = this[0];
                 SetLevel(m_treeView, this);
@@ -69,7 +69,7 @@ namespace DoubleFile
         {
             LocalTreeNode nodePrev = null;
 
-            if ((nodeParent != null) && (nodes.Count > 0))
+            if ((nodeParent != null) && (false == nodes.IsEmpty()))
             {
                 nodeParent.FirstNode = nodes[0];
             }

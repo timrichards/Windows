@@ -31,7 +31,7 @@ namespace DoubleFile
                 }
             }
 
-            if (listSourcePaths.Count > 0)
+            if (false == listSourcePaths.IsEmpty())
             {
                 m_winProgress = new WinProgress();
                 m_winProgress.InitProgress(listNicknames, listSourcePaths);

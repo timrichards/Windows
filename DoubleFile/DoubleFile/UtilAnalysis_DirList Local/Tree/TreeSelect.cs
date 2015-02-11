@@ -56,12 +56,11 @@ namespace Local
             }
 
             DateTime dtStart = DateTime.Now;
-            List<string> listLines = File.ReadLines(strFile)
-                .Skip((int)nPrevDir)
-                .Take((int)(nLineNo - nPrevDir - 1))
-                .ToList();
+            var ieLines = File.ReadLines(strFile)
+                .Skip((int) nPrevDir)
+                .Take((int) (nLineNo - nPrevDir - 1));
 
-            if (listLines.Count <= 0)
+            if (ieLines.IsEmpty())
             {
                 return null;
             }
@@ -69,7 +68,7 @@ namespace Local
             List<string[]> listFiles = new List<string[]>();
             ulong nLengthDebug = 0;
 
-            foreach (string strFileLine in listLines)
+            foreach (var strFileLine in ieLines)
             {
                 string[] strArrayFiles = strFileLine.Split('\t').Skip(3).ToArray();
                 ulong nLength = 0;

@@ -31,7 +31,7 @@ namespace Local
                 {
                     var nodes = m_rootNode.Nodes.Values;
 
-                    return (nodes.Count <= 0) ? null :
+                    return (nodes.IsEmpty()) ? null :
                         m_rootNode.Nodes.Values.First().AddToTree(strVolumeName);
                 }
             }

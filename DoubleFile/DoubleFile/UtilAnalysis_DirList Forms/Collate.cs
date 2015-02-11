@@ -51,7 +51,7 @@ namespace DoubleFile
 
         internal static void InsertSizeMarkers(List<ListViewItem> listLVitems)
         {
-            if (listLVitems.Count <= 0)
+            if (listLVitems.IsEmpty())
             {
                 return;
             }
@@ -84,7 +84,7 @@ namespace DoubleFile
         {
             SDL_TreeView treeView = new SDL_TreeView();     // sets Level and NextNode
 
-            if (m_listRootNodes.Count <= 0)
+            if (m_listRootNodes.IsEmpty())
             {
                 MBoxStatic.Assert(1305.6314, false);
                 return;
@@ -95,7 +95,7 @@ namespace DoubleFile
                 treeView.Nodes.AddRange(m_listRootNodes.ToArray());
             }
 
-            if (m_list_lvIgnore.Count > 0)
+            if (false == m_list_lvIgnore.IsEmpty())
             {
                 DateTime dtStart = DateTime.Now;
                 int nMaxLevel = m_list_lvIgnore.Max(i => int.Parse(i.SubItems[1].Text) - 1);
@@ -142,7 +142,7 @@ namespace DoubleFile
                     dictIgnoreMark.Add(treeNode, pair.Value);
                     dictNodes[nodeDatum.Key].Remove(treeNode);
 
-                    if (dictNodes[nodeDatum.Key].Count <= 0)
+                    if (dictNodes[nodeDatum.Key].IsEmpty())
                     {
                         dictNodes.Remove(nodeDatum.Key);
                     }
@@ -347,7 +347,7 @@ namespace DoubleFile
 
             List<TreeNode> listSameVol = new List<TreeNode>();
 
-            if (m_listRootNodes.Count > 0)
+            if (false == m_listRootNodes.IsEmpty())
             {
                 int nCount = CountNodes.Go(m_listRootNodes);
                 int nCount_A = new AddTreeToList(m_listTreeNodes, listSameVol).Go(m_listRootNodes).Count;
@@ -414,7 +414,7 @@ namespace DoubleFile
                     m_treeViewBrowse.Nodes.Clear();
                 }
 
-                if (m_listRootNodes.Count <= 0)
+                if (m_listRootNodes.IsEmpty())
                 {
                     return;
                 }
@@ -442,7 +442,7 @@ namespace DoubleFile
                     return;
                 }
 
-                MBoxStatic.Assert(1305.6333, form_lvClones.Items.Count <= 0);
+                MBoxStatic.Assert(1305.6333, form_lvClones.Items.IsEmpty());
                 UtilAnalysis_DirList.Write("B");
                 form_lvClones.Items.AddRange(listLVdiffVol.ToArray());
                 form_lvClones.Invalidate();
@@ -453,7 +453,7 @@ namespace DoubleFile
                     return;
                 }
 
-                MBoxStatic.Assert(1305.6334, form_lvUnique.Items.Count <= 0);
+                MBoxStatic.Assert(1305.6334, form_lvUnique.Items.IsEmpty());
                 UtilAnalysis_DirList.Write("C");
                 form_lvUnique.Items.AddRange(listLVunique.ToArray());
                 form_lvUnique.Invalidate();
@@ -464,7 +464,7 @@ namespace DoubleFile
                     return;
                 }
 
-                MBoxStatic.Assert(1305.6335, form_lvSameVol.Items.Count <= 0);
+                MBoxStatic.Assert(1305.6335, form_lvSameVol.Items.IsEmpty());
                 UtilAnalysis_DirList.Write("D");
                 form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
                 form_lvSameVol.Invalidate();
@@ -503,7 +503,7 @@ namespace DoubleFile
                 nodeDatum.m_listClones.Clear();
             }
 
-            if ((listClones.Count > 0) && (rootClone == null))
+            if ((false == listClones.IsEmpty()) && (rootClone == null))
             {
                 rootClone = treeNode;
 
@@ -594,7 +594,7 @@ namespace DoubleFile
                 MBoxStatic.Assert(1305.6312, lvItem != null);
                 dictIgnoreNodes.Add(treeNode, lvItem);
 
-                if (treeNode.Nodes.Count > 0)
+                if (false == treeNode.Nodes.IsEmpty())
                 {
                     IgnoreNodeAndSubnodes(lvItem, (TreeNode)treeNode.Nodes[0], bContinue: true);
                 }
@@ -635,7 +635,7 @@ namespace DoubleFile
                     }
                 }
 
-                if (treeNode.Nodes.Count > 0)
+                if (false == treeNode.Nodes.IsEmpty())
                 {
                     IgnoreNodeQuery(sbMatch, nMaxLevel, (TreeNode)treeNode.Nodes[0]);
                 }

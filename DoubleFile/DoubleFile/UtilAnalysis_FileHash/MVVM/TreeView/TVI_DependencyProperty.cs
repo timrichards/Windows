@@ -152,7 +152,7 @@ namespace DoubleFile
 
             TreeViewItem_FileHashVM tvivm_A = null;
 
-            if (stackParents.Count > 0)
+            if (false == stackParents.IsEmpty())
             {
                 tvivm_A = stackParents.Pop();
             }
@@ -211,7 +211,7 @@ namespace DoubleFile
                 return;
             }
 
-            if (stackParents.Count > 0)
+            if (false == stackParents.IsEmpty())
             {
                 Scroll(stackParents.Pop());
             }

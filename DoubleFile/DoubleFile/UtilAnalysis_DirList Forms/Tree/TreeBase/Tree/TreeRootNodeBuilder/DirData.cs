@@ -38,7 +38,7 @@ namespace DoubleFile
                 {
                     var nodes = m_rootNode.Nodes.Values;
 
-                    if (nodes.Count <= 0)
+                    if (nodes.IsEmpty())
                     {
                         return null;
                     }

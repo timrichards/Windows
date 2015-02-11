@@ -281,6 +281,11 @@ namespace DoubleFile
         {
             UtilAnalysis_DirList.CheckAndInvoke(this, () =>
             {
+                if (null == gd_Tree)
+                {
+                    return;
+                }
+
                 if (bSecondComparePane)
                 {
                     gd_Tree.m_threadSelectCompare = null;

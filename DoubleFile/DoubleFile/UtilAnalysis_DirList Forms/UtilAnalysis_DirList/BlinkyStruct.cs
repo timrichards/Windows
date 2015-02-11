@@ -130,7 +130,9 @@ namespace DoubleFile
 
         internal void Reset()
         {
-            m_timer.Stop();
+            if (m_timer != null)
+                m_timer.Stop();
+
             m_nBlink = 0;
             m_bProgress = false;
             m_holder.BackColor = m_holder.ClrOrig;

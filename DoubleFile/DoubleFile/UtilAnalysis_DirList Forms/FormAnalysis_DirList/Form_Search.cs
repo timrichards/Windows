@@ -104,6 +104,11 @@ namespace DoubleFile
                 return;
             }
 
+            if (null == gd_Search_1_2)
+            {
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(gd_Search_1_2.m_strSelectFile))
             {
                 return;

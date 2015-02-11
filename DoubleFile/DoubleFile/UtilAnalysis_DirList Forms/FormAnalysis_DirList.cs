@@ -1190,6 +1190,11 @@ namespace DoubleFile
 
         void form_treeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            if (gd_Tree == null)
+            {
+                return;
+            }
+
             if (gd_Tree.m_tree != null)
             {
                 // still building the tree: items added to show progress

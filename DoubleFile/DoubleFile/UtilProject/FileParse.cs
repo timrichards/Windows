@@ -154,7 +154,7 @@ namespace DoubleFile
                             MBoxStatic.Assert(0, nLineNo == 4);
                             file_out.WriteLine(FormatLine(ksLineType_Comment, nLineNo, ksVolume));
 
-                            string[] astrInfoLineTypes = new string[knDriveInfoItems]
+                            var astrInfoLineTypes = new string[knDriveInfoItems]
                             {
                                 ksLineType_VolumeInfo_Free, ksLineType_VolumeInfo_Format, ksLineType_VolumeInfo_DriveType,
                                 ksLineType_VolumeInfo_Name, ksLineType_VolumeInfo_Root, ksLineType_VolumeInfo_Free2,
@@ -169,7 +169,13 @@ namespace DoubleFile
                             {
                                 strLine = bHitBlankLine ? "" : file_in.ReadLine();
 
-                                if ((false == bHitBlankLine) && (strLine.Length <= 0))
+                                if (strLine == null)
+                                {
+                                    MBoxStatic.Assert(0, false);
+                                    return;
+                                }
+
+                                if ((false == bHitBlankLine) && (strLine.Length == 0))
                                 {
                                     bHitBlankLine = true;
                                 }
@@ -180,22 +186,22 @@ namespace DoubleFile
 
                             if (false == bHitBlankLine)
                             {
-                                strLine = file_in.ReadLine();
+                                file_in.ReadLine();
                             }
                             
                             ++nLineNo;
                             file_out.WriteLine(FormatLine(ksLineType_Blank, nLineNo));
 
-                            strLine = file_in.ReadLine();
+                            file_in.ReadLine();
                             ++nLineNo;
                             file_out.WriteLine(FormatLine(ksLineType_Comment, nLineNo, FormatString(nHeader: 0)));
 
-                            strLine = file_in.ReadLine();
+                            file_in.ReadLine();
                             ++nLineNo;
                             file_out.WriteLine(FormatLine(ksLineType_Comment, nLineNo, FormatString(nHeader: 1)));
                             continue;
                         }
-                        else if (strLine.Length <= 0)
+                        else if (strLine.Length == 0)
                         {
                             file_out.WriteLine(FormatLine(ksLineType_Blank, nLineNo));
                             continue;
@@ -437,7 +443,7 @@ namespace DoubleFile
 
             string[] arrLine = File.ReadLines(strFile).Take(1).ToArray();
 
-            if (arrLine.Length <= 0) return false;
+            if (arrLine.Length == 0) return false;
 
             bool bConvertFile = false;
 

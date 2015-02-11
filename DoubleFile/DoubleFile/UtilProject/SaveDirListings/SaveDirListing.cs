@@ -85,7 +85,7 @@ namespace DoubleFile
                     var s = (o != null) ? o.ToString() : null;
 
                     // Hack. Prevent blank line continue in FileParse.ConvertFile()
-                    sb.AppendLine(((s == null) || (s.Length <= 0)) ? " " : s.Trim());
+                    sb.AppendLine(string.IsNullOrWhiteSpace(s) ? " " : s.Trim());
                     ++nCount;
                 };
 

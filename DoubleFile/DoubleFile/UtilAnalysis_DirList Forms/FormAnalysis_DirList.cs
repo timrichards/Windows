@@ -717,7 +717,7 @@ namespace DoubleFile
 
         void form_cbFindbox_KeyUp(object sender, KeyEventArgs e)
         {
-            if (form_cbFindbox.Text.Length <= 0)
+            if (form_cbFindbox.Text.Length == 0)
             {
                 return;
             }
@@ -1303,7 +1303,7 @@ namespace DoubleFile
 
             NodeDatum nodeDatum = (NodeDatum)e.Node.Tag;
 
-            if (nodeDatum.nImmediateFiles <= 0)
+            if (nodeDatum.nImmediateFiles == 0)
             {
                 form_colFilename.Text = gd.m_strColFilesOrig;
             }

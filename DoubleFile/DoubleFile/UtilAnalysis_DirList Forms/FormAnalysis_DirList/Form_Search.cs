@@ -235,7 +235,7 @@ namespace DoubleFile
 
         void DoSearch(object sender)
         {
-            if (form_cbFindbox.Text.Length <= 0)
+            if (form_cbFindbox.Text.Length == 0)
             {
                 gd.m_blinky.Go(clr: Color.Red, Once: true);
                 return;

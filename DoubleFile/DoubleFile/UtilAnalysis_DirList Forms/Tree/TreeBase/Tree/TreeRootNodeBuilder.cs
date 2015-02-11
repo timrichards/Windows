@@ -44,7 +44,7 @@ namespace DoubleFile
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
-                if (nodeDatum.nLineNo <= 0)
+                if (nodeDatum.nLineNo == 0)
                 {
                     return datum;
                 }

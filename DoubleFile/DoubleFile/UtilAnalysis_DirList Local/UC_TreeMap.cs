@@ -278,7 +278,7 @@ namespace Local
 
                 nTotalLength += nodeDatum_A.nTotalLength = iterUlong.Current;
 
-                if (iterUlong.Current <= 0)
+                if (iterUlong.Current == 0)
                 {
                     continue;
                 }
@@ -290,7 +290,7 @@ namespace Local
                 nodeFileList.Nodes.Add(nodeFile);
             }
 
-            if (nTotalLength <= 0)
+            if (nTotalLength == 0)
             {
                 return null;
             }

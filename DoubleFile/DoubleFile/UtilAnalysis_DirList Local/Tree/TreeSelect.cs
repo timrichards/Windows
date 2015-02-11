@@ -37,7 +37,7 @@ namespace Local
 
             NodeDatum nodeDatum = (NodeDatum)parent.Tag;
 
-            if (nodeDatum.nLineNo <= 0)
+            if (nodeDatum.nLineNo == 0)
             {
                 return null;
             }
@@ -45,7 +45,7 @@ namespace Local
             long nPrevDir = nodeDatum.nPrevLineNo;
             long nLineNo = nodeDatum.nLineNo;
 
-            if (nPrevDir <= 0)
+            if (nPrevDir == 0)
             {
                 return null;
             }
@@ -174,7 +174,7 @@ namespace Local
 
             var nodeDatum = (NodeDatum)m_treeNode.Tag;
 
-            if (nodeDatum.nLineNo <= 0)
+            if (nodeDatum.nLineNo == 0)
             {
                 return;
             }

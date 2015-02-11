@@ -66,7 +66,7 @@ namespace Local
 
             int nInitial = nCount % nInterval;
 
-            if (nInitial <= 0)
+            if (nInitial == 0)
             {
                 nInitial = nInterval;
             }
@@ -262,7 +262,7 @@ namespace Local
 
                 int nClones = listNodes.Value.Count;
 
-                if (nClones <= 0)
+                if (nClones == 0)
                 {
                     MBoxStatic.Assert(1305.6317, false);
                     continue;
@@ -408,7 +408,7 @@ namespace Local
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
                 int nClones = nodeDatum.m_listClones.Count;
 
-                if (nClones <= 0)
+                if (nClones == 0)
                 {
                     MBoxStatic.Assert(1305.6328, false);
                 }

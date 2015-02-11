@@ -30,7 +30,18 @@ namespace DoubleFile
             readonly TreeNode m_obj = null;
             internal TreeNodeHolder(TreeNode obj) { m_obj = obj; m_bTreeSelect = true; }
             internal override Color BackColor { get { return m_obj.BackColor; } set { m_obj.BackColor = value; } }
-            internal override void ResetHolder() { m_bTreeSelect = false; m_obj.TreeView.SelectedNode = m_obj; }
+            internal override void ResetHolder()
+            {
+                m_bTreeSelect = false;
+
+                if (m_obj == null)
+                    return;
+
+                if (m_obj.TreeView == null)
+                    return;
+
+                m_obj.TreeView.SelectedNode = m_obj; 
+            }
         }
         class ListViewItemHolder : Holder
         {

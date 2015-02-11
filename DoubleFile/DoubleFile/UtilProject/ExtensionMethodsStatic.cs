@@ -14,27 +14,27 @@ namespace DoubleFile
 
         internal static bool IsEmpty<T>(this UList<T> source)
         {
-            return (source.Count <= 0);
+            return (source.Count == 0);
         }
 
         internal static bool IsEmpty(this ListView.ListViewItemCollection source)
         {
-            return (source.Count <= 0);
+            return (source.Count == 0);
         }
 
         internal static bool IsEmpty(this ListView.SelectedListViewItemCollection source)
         {
-            return (source.Count <= 0);
+            return (source.Count == 0);
         }
 
         internal static bool IsEmpty(this TreeNodeCollection source)
         {
-            return (source.Count <= 0);
+            return (source.Count == 0);
         }
 
         internal static bool IsEmptyA(this System.Collections.IList source)
         {
-            return (source.Count <= 0);
+            return (source.Count == 0);
         }
 
         internal static IEnumerator<T> First<T>(this IEnumerable<T> source, Action<T> action)

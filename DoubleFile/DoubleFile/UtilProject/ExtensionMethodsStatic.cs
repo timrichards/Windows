@@ -62,12 +62,7 @@ namespace DoubleFile
 
         internal static bool HasOnlyOne(this System.Collections.IList source)
         {
-            var enumerator = source.GetEnumerator();
-
-            if (false == enumerator.MoveNext())
-                return false;
-
-            return (false == enumerator.MoveNext());
+            return (source.Count == 1);
         }
     }
 

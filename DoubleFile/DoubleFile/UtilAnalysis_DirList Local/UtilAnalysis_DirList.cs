@@ -11,6 +11,7 @@ namespace DoubleFile
     class UtilAnalysis_DirList : FileParse
     {
         internal static void Closure(Action action) { action(); }
+        internal static bool Closure(BoolAction action) { return action(); }
 
         internal static object CheckAndInvoke(Control dispatcher, Action action, object[] args = null)
         {

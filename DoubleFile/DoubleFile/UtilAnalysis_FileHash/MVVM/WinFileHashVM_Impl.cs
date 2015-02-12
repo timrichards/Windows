@@ -21,14 +21,16 @@ namespace DoubleFile
 
         internal void ClearMem_TreeForm()
         {
-            MBoxStatic.Assert(1304.5302, m_tree == null);
             m_tree = null;
+            Local.Collate.ClearMem();
 
             m_dictDriveInfo.Clear();
 
             // m_dictNodes is tested to recreate tree.
-            MBoxStatic.Assert(1304.5303, m_dictNodes.IsEmpty());
             m_dictNodes.Clear();
+
+            m_listTreeNodes.Clear();
+            m_listRootNodes.Clear();
         }
 
         internal void TreeCleanup()
@@ -67,6 +69,7 @@ namespace DoubleFile
                 if (gd.WindowClosed || (gd.FileDictionary == null) || gd.FileDictionary.IsAborted ||
                     ((m_tree != null) && (m_tree.IsAborted)))
                 {
+                    ClearMem_TreeForm();
                     m_winProgress.Aborted = true;
                     return;
                 }
@@ -168,6 +171,7 @@ namespace DoubleFile
                 {
                     m_tree.EndThread();
                     m_tree = null;
+                    ClearMem_TreeForm();
                 }
                 else
                 {
@@ -179,33 +183,44 @@ namespace DoubleFile
             m_winProgress.Title = "Initializing File Hash Explorer";
             m_winProgress.WindowClosingCallback = (() =>
             {
-                if (gd.FileDictionary == null)
+                var bRet = UtilAnalysis_DirList.Closure(() =>
                 {
-                    return true;
-                }
+                    if (gd.FileDictionary.IsAborted)
+                    {
+                        return true;
+                    }
 
-                if (gd.FileDictionary.IsAborted)
-                {
-                    return true;
-                }
+                    if (m_bFileDictDone && (m_tree == null))
+                    {
+                        return true;
+                    }
 
-                if (m_bFileDictDone && (m_tree == null))
-                {
-                    return true;
-                }
+                    if (MBoxStatic.ShowDialog("Do you want to cancel?", m_winProgress.Title,
+                        MessageBoxButton.YesNo) ==
+                        MessageBoxResult.Yes)
+                    {
+                        return true;
+                    }
 
-                if (MBoxStatic.ShowDialog("Do you want to cancel?", m_winProgress.Title,
-                    MessageBoxButton.YesNo) ==
-                    MessageBoxResult.Yes)
+                    return false;
+                });
+
+                if (bRet)
                 {
                     gd.FileDictionary.Abort();
-                    return true;
+                    
+                    if (m_tree != null)
+                        m_tree.EndThread();
+
+                    TreeCleanup();
                 }
 
-                return false;
+                return bRet;
             });
 
             var lssProgressItems = new List<string>();
+
+            gd.FileDictionary.ResetAbortFlag();
 
             if (gd.FileDictionary.IsEmpty)
             {
@@ -218,7 +233,7 @@ namespace DoubleFile
             m_tree.DoThreadFactory();
 
             lssProgressItems.Add(ksFolderTreeKey);
-            m_winProgress.InitProgress(lssProgressItems, lssProgressItems);
+            m_winProgress.InitProgress(new string[lssProgressItems.Count], lssProgressItems);
             m_winProgress.ShowDialog();
         }
 

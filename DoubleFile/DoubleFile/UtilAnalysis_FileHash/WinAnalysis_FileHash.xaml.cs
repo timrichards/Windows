@@ -5,7 +5,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinAnalysis_FileHash.xaml
     /// </summary>
-    public partial class WinAnalysis_FileHash : LocalWindow
+    public partial class WinAnalysis_FileHash
     {
         internal WinAnalysis_FileHash(GlobalData_Base gd_in, LV_ProjectVM lvProjectVM_in)
         {

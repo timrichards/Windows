@@ -24,6 +24,7 @@ namespace DoubleFile
 
         internal void Clear() { m_DictFiles.Clear(); }
         internal bool IsEmpty { get { return m_DictFiles.IsEmpty(); } }
+        internal void ResetAbortFlag() { m_bThreadAbort = false; }
 
         /// <summary>
         /// 
@@ -73,6 +74,7 @@ namespace DoubleFile
         {
             LVprojectVM = lvProjectVM;
             m_statusCallback = statusCallback;
+            m_bThreadAbort = false;
             m_thread = new Thread(Go);
             m_thread.IsBackground = true;
             m_thread.Start();

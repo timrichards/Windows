@@ -6,9 +6,6 @@ namespace DoubleFile
 {
     struct HashStruct : IComparable
     {
-        internal ulong n0;
-        internal ulong n1;
-
         internal HashStruct(IEnumerable<byte> abHash_in)
         {
             var abHash = abHash_in
@@ -87,6 +84,8 @@ namespace DoubleFile
         public static bool operator <(HashStruct x, HashStruct y) { return ((x >= y) == false); }
         public static bool operator >=(HashStruct x, HashStruct y) { return ((x > y) || (x == y)); }
         public static bool operator <=(HashStruct x, HashStruct y) { return ((x > y) == false); }
-    }
 
+        ulong n0;
+        ulong n1;
+    }
 }

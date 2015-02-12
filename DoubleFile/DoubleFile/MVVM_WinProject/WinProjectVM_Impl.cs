@@ -121,7 +121,7 @@ namespace DoubleFile
         internal void OpenListingFiles(IEnumerable<string> listFiles, bool bClearItems = false)
         {
             var sbBadFiles = new System.Text.StringBuilder();
-            bool bMultiBad = true;
+            var bMultiBad = true;
 
             var listItems = new ConcurrentBag<LVitem_ProjectVM>();
 

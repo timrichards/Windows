@@ -7,7 +7,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinSaveInProgress.xaml
     /// </summary>
-    partial class WinProgress : LocalWindow
+    partial class WinProgress
     {
         internal BoolAction WindowClosingCallback = null;
 
@@ -90,7 +90,7 @@ namespace DoubleFile
             }
 
             Aborted = true;
-            UtilProject.CheckAndInvoke(() => Close());
+            UtilProject.UIthread(() => Close());
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)

@@ -438,7 +438,7 @@ namespace Local
 
         internal void Step2_OnForm()
         {
-            UtilProject.CheckAndInvoke(() =>
+            UtilProject.UIthread(() =>
             {
                 if (m_bThreadAbort || gd.WindowClosed)
                 {

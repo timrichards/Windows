@@ -75,7 +75,7 @@ namespace DoubleFile
 
         internal void SaveDirListingsStatusCallback(LVitem_ProjectVM lvItemProjectVM, string strError = null, bool bDone = false, double nProgress = double.NaN)
         {
-            UtilProject.CheckAndInvoke(() =>
+            UtilProject.UIthread(() =>
             {
                 if (gd.WindowClosed || (gd_old.m_saveDirListings == null) || gd_old.m_saveDirListings.IsAborted)
                 {
@@ -119,7 +119,7 @@ namespace DoubleFile
                 return;
             }
 
-            UtilProject.CheckAndInvoke(() =>
+            UtilProject.UIthread(() =>
             {
                 if (gd_old.m_saveDirListings.FilesWritten > 0)
                 {

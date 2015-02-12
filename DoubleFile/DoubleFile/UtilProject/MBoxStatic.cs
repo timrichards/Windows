@@ -78,7 +78,7 @@ namespace DoubleFile
         {
             var msgBoxRet = MessageBoxResult.None;
 
-            UtilProject.CheckAndInvoke(() =>
+            UtilProject.UIthread(() =>
             {
                 if (false == GlobalData.static_TopWindow.IsLoaded)
                 {

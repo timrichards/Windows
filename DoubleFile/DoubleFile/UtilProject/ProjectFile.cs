@@ -57,7 +57,17 @@ namespace DoubleFile
                     if (m_winProgress.IsLoaded)                 // close box/cancel/undo
                     {
                         openListingFiles(Directory.GetFiles(TempPath)
-                            .Where(s => s.EndsWith(FileParse.ksFileExt_Listing)), true);
+                            .Where(s =>
+                            {
+                                var strFileName = Path.GetFileName(s);
+
+                                if (null == strFileName)
+                                    return false;
+
+                                return ((false == strFileName.Contains('.')) ||
+                                        strFileName.EndsWith(FileParse.ksFileExt_Listing));
+                            }),
+                                true);
 
                         if (null != OnOpenedProject)
                         {

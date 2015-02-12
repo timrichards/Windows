@@ -41,7 +41,7 @@ namespace DoubleFile
 
         internal void CreateFileDictStatusCallback(bool bDone = false, double nProgress = double.NaN)
         {
-            UtilProject.CheckAndInvoke(() =>
+            UtilProject.UIthread(() =>
             {
                 if (gd.WindowClosed || (gd.FileDictionary == null) || gd.FileDictionary.IsAborted)
                 {
@@ -64,7 +64,7 @@ namespace DoubleFile
         
         void TreeStatusCallback(LVitem_ProjectVM volStrings, LocalTreeNode rootNode = null, bool bError = false)
         {
-            UtilProject.CheckAndInvoke(() =>
+            UtilProject.UIthread(() =>
             {
                 if (gd.WindowClosed || (gd.FileDictionary == null) || gd.FileDictionary.IsAborted ||
                     ((m_tree != null) && (m_tree.IsAborted)))
@@ -95,7 +95,7 @@ namespace DoubleFile
             if (m_listRootNodes.IsEmpty())
             {
                 m_winProgress.Aborted = true;
-                UtilProject.CheckAndInvoke(() => m_winProgress.Close());
+                UtilProject.UIthread(() => m_winProgress.Close());
                 return;
             }
 
@@ -106,7 +106,9 @@ namespace DoubleFile
             var localLVsameVol = new LocalLV();
             var localLVsolitary = new LocalLV();
             var lsLocalLVignore = new List<LocalLVitem>();
+            var nProgress = 0.0;
 
+            using (new SDL_Timer(() => { m_winProgress.SetProgress(ksFolderTreeKey, (1 + nProgress)/2.0); }).Start())
             {
                 var collate = new Local.Collate(gd, m_dictNodes,
                     localTV,
@@ -114,50 +116,29 @@ namespace DoubleFile
                     m_listRootNodes, m_listTreeNodes, bCheckboxes: true,
                     list_lvIgnore: lsLocalLVignore, bLoose: true);
                 var dtStart = DateTime.Now;
-                var nProgress = 0.0;
 
-                using (new SDL_Timer(() =>
+                collate.Step1_OnThread(d => nProgress = d);
+                UtilProject.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds/1000.0 +
+                                      " seconds.");
+                dtStart = DateTime.Now;
+
+                if (gd.WindowClosed)
                 {
-                    m_winProgress.SetProgress(ksFolderTreeKey, (1 + nProgress)/2.0);
-                }).Start())
-                {
-                    collate.Step1_OnThread(d => nProgress = d);
-                    UtilProject.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds/1000.0 +
-                                          " seconds.");
-                    dtStart = DateTime.Now;
-
-                    if (gd.WindowClosed)
-                    {
-                        TreeCleanup();
-                        return;
-                    }
-
-                    m_winProgress.SetCompleted(ksFolderTreeKey);
-                    UtilProject.CheckAndInvoke(() => collate.Step2_OnForm());
-                    UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds/1000.0 +
-                                          " seconds.");
-                    dtStart = DateTime.Now;
+                    TreeCleanup();
+                    return;
                 }
+
+                m_winProgress.SetCompleted(ksFolderTreeKey);
+                UtilProject.UIthread(() => collate.Step2_OnForm());
+                UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds/1000.0 +
+                                      " seconds.");
             }
 
             TreeCleanup();
 
-            UtilProject.CheckAndInvoke(() =>
+            UtilProject.UIthread(() =>
             {
                 m_tvVM.SetData(m_listRootNodes);
-                //m_app.BrowseTab.LV_Clones.SyncData();
-                //m_app.BrowseTab.LV_SameVol.SyncData();
-                //m_app.BrowseTab.LV_Solitary.SyncData();
-
-                //CopyScratchpadListViewVM lvFake = new CopyScratchpadListViewVM(null);   // Hack: check changed event loads the real listviewer
-
-                //    foreach (CopyScratchpadLVitemVM lvItem in m_Browse.LV_CopyScratchpad.Items)
-                //    {
-                //        lvFake.Items.Add(lvItem.Clone());
-                //    }
-
-                //    m_Browse.LV_CopyScratchpad.Items.Clear();
-                //    m_Browse.LoadCopyScratchPad(lvFake);
             });
 
             m_winProgress.CloseIfNatural();
@@ -183,7 +164,7 @@ namespace DoubleFile
             m_winProgress.Title = "Initializing File Hash Explorer";
             m_winProgress.WindowClosingCallback = (() =>
             {
-                var bRet = UtilAnalysis_DirList.Closure(() =>
+                if (false == UtilAnalysis_DirList.Closure(() =>
                 {
                     if (gd.FileDictionary.IsAborted)
                     {
@@ -195,27 +176,21 @@ namespace DoubleFile
                         return true;
                     }
 
-                    if (MBoxStatic.ShowDialog("Do you want to cancel?", m_winProgress.Title,
+                    return (MBoxStatic.ShowDialog("Do you want to cancel?", m_winProgress.Title,
                         MessageBoxButton.YesNo) ==
-                        MessageBoxResult.Yes)
-                    {
-                        return true;
-                    }
-
-                    return false;
-                });
-
-                if (bRet)
+                        MessageBoxResult.Yes);
+                }))
                 {
-                    gd.FileDictionary.Abort();
-                    
-                    if (m_tree != null)
-                        m_tree.EndThread();
-
-                    TreeCleanup();
+                    return false;
                 }
 
-                return bRet;
+                gd.FileDictionary.Abort();
+                    
+                if (m_tree != null)
+                    m_tree.EndThread();
+
+                TreeCleanup();
+                return true;
             });
 
             var lssProgressItems = new List<string>();

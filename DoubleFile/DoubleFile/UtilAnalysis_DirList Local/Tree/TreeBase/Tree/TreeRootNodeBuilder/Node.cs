@@ -52,7 +52,8 @@ namespace Local
 
                     if (m_rootNode.Nodes.ContainsKey(strParent) == false)
                     {
-                        m_rootNode.Nodes.Add(strParent, new Node(gd, strParent, m_rootNode.FirstLineNo, 0, m_rootNode));
+                        m_rootNode.Nodes.Add(strParent,
+                            new Node(gd, strParent, m_rootNode.FirstLineNo, 0, m_rootNode));
                     }
 
                     if (m_rootNode.Nodes[strParent].subNodes.ContainsKey(m_strPath) == false)
@@ -80,7 +81,6 @@ namespace Local
                         {
                             // cull all root node single-chains.
                             m_rootNode.Nodes = subNodes;
-                            subNode.m_strPath.Insert(0, m_strPath + '\\');
                             subNode.bUseShortPath = false;
                             treeNode = subNode.AddToTree(strVolumeName);
 
@@ -91,7 +91,7 @@ namespace Local
                         }
                         else
                         {
-                            treeNode = new LocalTreeNode(strShortPath, new LocalTreeNode[] { subNode.AddToTree() });
+                            treeNode = new LocalTreeNode(strShortPath, new[] { subNode.AddToTree() });
                         }
                     }
                     else if (subNodes.Count > 1)

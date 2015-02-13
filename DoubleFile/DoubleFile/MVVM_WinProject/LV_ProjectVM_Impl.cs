@@ -66,28 +66,30 @@ namespace DoubleFile
 
                     lvItemVolumeTemp = new LVitem_ProjectVM(dlg.LVitemVolumeTemp);
 
-                    if (false == AlreadyInProject(lvItem, lvItemVolumeTemp.ListingFile))
+                    if (AlreadyInProject(lvItem, lvItemVolumeTemp.ListingFile))
                     {
-                        if (dlg is WinVolumeEdit)
-                        {
-                            if (ModifyListingFile(lvItem, lvItemVolumeTemp, (dlg as WinVolumeEdit).uc_VolumeEdit.DriveLetter))
-                            {
-                                //if (MBox.ShowDialog("Update the project?", "Modify file", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                                //{
-                                //    form_btnSaveProject_Click();
-                                //}
-                                FileParse.ReadHeader(lvItemVolumeTemp.ListingFile, out lvItemVolumeTemp);
-                                lvItem.StringValues = lvItemVolumeTemp.StringValues;
-                                Unsaved = true;
-                            }
-                        }
-                        else if (FileExists(lvItemVolumeTemp.ListingFile))
-                        {
-                            continue;
-                        }
-
-                        break;
+                        continue;
                     }
+
+                    var edit = dlg as WinVolumeEdit;
+
+                    if ((edit != null) &&
+                        ModifyListingFile(lvItem, lvItemVolumeTemp, edit.uc_VolumeEdit.DriveLetter))
+                    {
+                        //if (MBox.ShowDialog("Update the project?", "Modify file", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        //{
+                        //    form_btnSaveProject_Click();
+                        //}
+                        FileParse.ReadHeader(lvItemVolumeTemp.ListingFile, out lvItemVolumeTemp);
+                        lvItem.StringValues = lvItemVolumeTemp.StringValues;
+                        Unsaved = true;
+                    }
+                    else if (FileExists(lvItemVolumeTemp.ListingFile))
+                    {
+                        continue;
+                    }
+
+                    break;
                 }
             });
         }
@@ -179,19 +181,19 @@ namespace DoubleFile
             Unsaved = true;
         }
 
-        LVitem_ProjectVM ContainsListingFile(LVitem_ProjectVM lvItem_Current, string t = null)
+        LVitem_ProjectVM ContainsListingFile(LVitem_ProjectVM lvItem_Current, string t)
         {
             if (string.IsNullOrEmpty(t))
             {
                 return null;
             }
 
-            string s = (t ?? lvItem_Current.ListingFile).ToLower();
+            var s = t.ToLower();
 
             foreach (LVitem_ProjectVM item in m_items)
             {
                 if ((item.ListingFile.ToLower() == s) &&
-                    ((t == null) || (lvItem_Current != item)))
+                    (lvItem_Current != item))
                 {
                     return item;
                 }
@@ -222,7 +224,7 @@ namespace DoubleFile
                 return false;
             }
 
-            string strFile_01 = FileParse.StrFile_01(lvItem_Orig.ListingFile);
+            var strFile_01 = FileParse.StrFile_01(lvItem_Orig.ListingFile);
 
             if (File.Exists(strFile_01))
             {
@@ -307,7 +309,7 @@ namespace DoubleFile
 
                 using (var fileWriter = File.AppendText(lvItem_Orig.ListingFile))
                 {
-                    var kBufSize = 1024 * 1024 * 4;
+                    const int kBufSize = 1024 * 1024 * 4;
                     var buffer = new char[kBufSize];
                     var nRead = 0;
 

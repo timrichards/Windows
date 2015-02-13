@@ -24,7 +24,7 @@ namespace DoubleFile
         internal bool CheckBoxes = false;
         internal bool Enabled = false;
 
-        static int CountSubnodes(IReadOnlyList<LocalTreeNode> nodes)
+        static int CountSubnodes(IEnumerable<LocalTreeNode> nodes)
         {
             var nRet = 0;
 

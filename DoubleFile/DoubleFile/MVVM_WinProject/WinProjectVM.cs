@@ -47,7 +47,7 @@ namespace DoubleFile
             mIcmd_VolumeGroup = new RelayCommand(param => { m_lvVM.EditVolumeGroupLabel(); }, param => m_lvVM.SelectedAny());
         }
 
-        LV_ProjectVM m_lvVM = null;
-        GlobalData_Base gd = null;
+        readonly LV_ProjectVM m_lvVM = null;
+        readonly GlobalData_Base gd = null;
     }
 }

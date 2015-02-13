@@ -94,25 +94,23 @@ namespace DoubleFile
 
         internal static string CheckNTFS_chars(ref string strFile, bool bFile = false)
         {
-            char[] arrChar = bFile ? Path.GetInvalidFileNameChars() : Path.GetInvalidPathChars();
-            int nIx = -1;
+            var arrChar = bFile ? Path.GetInvalidFileNameChars() : Path.GetInvalidPathChars();
+            var nIx = -1;
 
             if ((nIx = strFile.IndexOfAny(arrChar)) > -1)
             {
-                string strRet = "NTFS ASCII " + ((int)strFile[nIx]).ToString();
+                var strRet = "NTFS ASCII " + ((int)strFile[nIx]).ToString();
 
                 strFile = strFile.Replace("\n", "").Replace("\r", "").Replace("\t", "");    // program-incompatible
                 return strRet;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         internal static void ConvertFile(string strFile)
         {
-            string strFile_01 = StrFile_01(strFile);
+            var strFile_01 = StrFile_01(strFile);
 
             if (File.Exists(strFile_01))
             {
@@ -121,13 +119,13 @@ namespace DoubleFile
 
             File.Move(strFile, strFile_01);
 
-            using (StreamWriter file_out = new StreamWriter(strFile))
+            using (var file_out = new StreamWriter(strFile))
             {
-                using (StreamReader file_in = new StreamReader(strFile_01))
+                using (var file_in = new StreamReader(strFile_01))
                 {
                     string strLine = null;
                     long nLineNo = 0;       // lines number from one
-                    bool bAtErrors = false;
+                    var bAtErrors = false;
 
                     while ((strLine = file_in.ReadLine()) != null)
                     {
@@ -224,14 +222,14 @@ namespace DoubleFile
                         }
                         else if (strLine.StartsWith(ksTotalLengthLoc01))
                         {
-                            string[] arrLine = strLine.Split('\t');
+                            var arrLine = strLine.Split('\t');
 
                             file_out.WriteLine(FormatLine(ksLineType_Length, nLineNo, FormatString(strDir: ksTotalLengthLoc, nLength: long.Parse(arrLine[knColLength01]))));
                             continue;
                         }
 
-                        string[] arrLine_A = strLine.Split('\t');
-                        string strDir = arrLine_A[0];
+                        var arrLine_A = strLine.Split('\t');
+                        var strDir = arrLine_A[0];
 
                         if (string.IsNullOrWhiteSpace(strDir))
                         {
@@ -253,7 +251,8 @@ namespace DoubleFile
                         }
 
                         // directory
-                        file_out.WriteLine(FormatLine(bAtErrors ? ksLineType_ErrorDir : ksLineType_Directory, nLineNo, strLine.Replace(@"\\", @"\")));
+                        file_out.WriteLine(FormatLine(bAtErrors ? ksLineType_ErrorDir : ksLineType_Directory,
+                            nLineNo, strLine.Replace(@"\\", @"\")));
                     }
                 }
             }
@@ -264,7 +263,10 @@ namespace DoubleFile
             return strLineType + "\t" + nLineNo + '\t' + (strLine_in ?? "").TrimEnd();
         }
 
-        internal static string FormatString(string strDir = null, string strFile = null, DateTime? dtCreated = null, DateTime? dtModified = null, string strAttributes = null, long nLength = -1, string strError1 = null, string strError2 = null, int? nHeader = null, string strHash = null)
+        internal static string FormatString(string strDir = null, string strFile = null,
+            DateTime? dtCreated = null, DateTime? dtModified = null,
+            string strAttributes = null, long nLength = -1,
+            string strError1 = null, string strError2 = null, int? nHeader = null, string strHash = null)
         {
             string strLength = null;
             string strCreated = null;
@@ -285,31 +287,35 @@ namespace DoubleFile
                 strModified = dtModified.ToString();
             }
 
-            if (false == string.IsNullOrWhiteSpace(strDir + strFile + strCreated + strModified + strAttributes + strLength + strError1 + strError2 + strHash) == false)
+            if (string.IsNullOrWhiteSpace(strDir + strFile + strCreated + strModified +
+                strAttributes + strLength + strError1 + strError2 + strHash))
             {
-                MBoxStatic.Assert(0, nHeader is int);
-
                 if (nHeader == 0)
                 {
-                    return "2" + '\t' + "3" + '\t' + "4" + '\t' + "5" + '\t' + "6" + '\t' + "7" + '\t' + "8" + '\t' + "9" + '\t' + "10";
+                    return "2" + '\t' + "3" + '\t' + "4" + '\t' + "5" + '\t' +
+                        "6" + '\t' + "7" + '\t' +
+                        "8" + '\t' + "9" + '\t' + "10";
                 }
-                else if (nHeader == 1)
-                {
-                    return "Dir" + '\t' + "File" + '\t' + "Created" + '\t' + "Modded" + '\t' + "Attrib" + '\t' + "Length" + '\t' + "Error1" + '\t' + "Error2" + '\t' + "Hash";
-                }
+
+                return "Dir" + '\t' + "File" + '\t' + "Created" + '\t' + "Modded" +'\t' +
+                    "Attrib" + '\t' + "Length" + '\t' +
+                    "Error1" + '\t' + "Error2" + '\t' + "Hash";
             }
 
-            bool bDbgCheck = false;
+            var bDbgCheck = false;
 
-            if (((strDir ?? "").TrimEnd() != (strDir ?? "")) || ((strFile ?? "").TrimEnd() != (strFile ?? "")))
+            if (((strDir ?? "").TrimEnd() != (strDir ?? "")) ||
+                ((strFile ?? "").TrimEnd() != (strFile ?? "")))
             {
                 strError1 += " Trailing whitespace";
-                strError1.Trim();
-                MBoxStatic.Assert(0, false == string.IsNullOrWhiteSpace(strDir) || false == string.IsNullOrWhiteSpace(strFile));
+                MBoxStatic.Assert(0, (false == string.IsNullOrWhiteSpace(strDir)) ||
+                    (false == string.IsNullOrWhiteSpace(strFile)));
                 bDbgCheck = true;
             }
 
-            string strRet = (strDir + '\t' + strFile + '\t' + strCreated + '\t' + strModified + '\t' + strAttributes + '\t' + strLength + '\t' + strError1 + '\t' + strError2 + '\t' + strHash).TrimEnd();
+            var strRet = (strDir + '\t' + strFile + '\t' + strCreated + '\t' + strModified + '\t' +
+                strAttributes + '\t' + strLength + '\t' +
+                strError1 + '\t' + strError2 + '\t' + strHash).TrimEnd();
 
             if (bDbgCheck)
             {
@@ -336,17 +342,14 @@ namespace DoubleFile
                 return false;
             }
 
-            LVitem_ProjectVM lvItem = new LVitem_ProjectVM();
+            var lvItem = new LVitem_ProjectVM {ListingFile = strFile, Status = ksUsingFile, Include = true};
 
-            lvItem.ListingFile = strFile;
-            lvItem.Status = ksUsingFile;
-            lvItem.Include = true;
 
             using (var sr = new System.IO.StreamReader(strFile))
             {
                 string line = null;
 
-                if ((line = sr.ReadLine()) == null)
+                if (sr.ReadLine() == null)
                     return false;
 
                 if ((line = sr.ReadLine()) == null)
@@ -355,7 +358,7 @@ namespace DoubleFile
                 if (line.StartsWith(ksLineType_Nickname) == false)
                     return false;
 
-                string[] arrLine = line.Split('\t');
+                var arrLine = line.Split('\t');
 
                 if (arrLine.Length > 2)
                     lvItem.Nickname = arrLine[2];
@@ -367,7 +370,7 @@ namespace DoubleFile
                     return false;
 
                 // unkosher lambda "byref parameters"
-                bool bReadAttributeReturnValue = false;
+                var bReadAttributeReturnValue = false;
                 string strReadAttributeReturnValue = null;
                 Action<string> ReadAttribute = s =>
                 {
@@ -439,13 +442,17 @@ namespace DoubleFile
 
         internal static bool ValidateFile(string strFile)
         {
-            if (File.Exists(strFile) == false) return false;
+            if (false == File.Exists(strFile))
+                return false;
 
-            string[] arrLine = File.ReadLines(strFile).Take(1).ToArray();
+            var arrLine = File.ReadLines(strFile)
+                .Take(1)
+                .ToArray();
 
-            if (arrLine.Length == 0) return false;
+            if (arrLine.Length == 0)
+                return false;
 
-            bool bConvertFile = false;
+            var bConvertFile = false;
 
             if (arrLine[0] == ksHeader01)
             {
@@ -455,7 +462,7 @@ namespace DoubleFile
                 bConvertFile = true;
             }
 
-            bool bRet = false;
+            var bRet = false;
 
             File.ReadLines(strFile)
                 .Take(1)
@@ -493,7 +500,8 @@ namespace DoubleFile
 
             var strFile_01 = StrFile_01(strFile);
 
-            if (bConvertFile && File.Exists(strFile_01))
+            if (bConvertFile &&
+                File.Exists(strFile_01))
             {
                 File.Delete(strFile_01);
             }

@@ -28,7 +28,7 @@ namespace DoubleFile
         public Brush ProgressState { get { return m_brushProgressState; } set { m_brushProgressState = value; RaisePropertyChanged(ksProgressState); } }
         public string Remaining { get { return marr[5]; } set { SetProperty(5, value); } }
 
-        readonly static string[] marrPropName = new string[] { "Nickname", "SourcePath", ksProgress, ksIndeterminate, ksProgressState, "Remaining" };
+        readonly static string[] marrPropName = { "Nickname", "SourcePath", ksProgress, ksIndeterminate, ksProgressState, "Remaining" };
         internal const int NumCols_ = 6;
 
         internal void SetCompleted()
@@ -56,7 +56,7 @@ namespace DoubleFile
 
         internal void TimerTick()
         {
-            if (m_nLastProgress == Progress)
+            if (m_nLastProgress.Equals(Progress))
             {
                 return;
             }
@@ -78,13 +78,13 @@ namespace DoubleFile
 
             var tmRolling = DateTime.Now - m_dtRollingProgress;
 
-            if ((m_nRollingProgress == 0) && (tmRolling > TimeSpan.FromSeconds(15)))
+            if ((m_nRollingProgress.Equals(0)) && (tmRolling > TimeSpan.FromSeconds(15)))
             {
                 // The operating system caches reads so restarting the drive read sweeps
                 // through the already-read data unreasonably fast.
                 m_nRollingProgress = Progress;
 
-                if (m_nRollingProgress == 0)
+                if (m_nRollingProgress.Equals(0))
                 {
                     m_nRollingProgress = double.Epsilon;
                 }
@@ -99,11 +99,15 @@ namespace DoubleFile
 
                 if (denominator > 0)
                 {
-                    int nRemaining = (int) TimeSpan.FromTicks((long)(numerator / denominator))
+                    var nRemaining = (int) TimeSpan.FromTicks((long)(numerator / denominator))
                         .Add(TimeSpan.FromMinutes(1))
                         .TotalMinutes;
 
-                    Remaining = "About " + nRemaining.ToString("0") + " Minute" + (nRemaining != 1 ? "s" : "") + " remaining";
+                    Remaining = "About " +
+                        nRemaining.ToString("0") +
+                        " Minute" +
+                        (nRemaining != 1 ? "s" : "") +
+                        " remaining";
                 }
 
                 m_nRollingProgress = v;

@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 
 namespace DoubleFile
 {
-    delegate void SaveDirListingsStatusDelegate(LVitem_ProjectVM lvItemProjectVM, string strError = null, bool bDone = false, double nProgress = double.NaN);
+    delegate void SaveDirListingsStatusDelegate(
+        LVitem_ProjectVM lvItemProjectVM,
+        string strError = null,
+        bool bDone = false,
+        double nProgress = double.NaN);
 
     partial class GlobalData
     {
@@ -22,58 +27,61 @@ namespace DoubleFile
             var listNicknames = new List<string>();
             var listSourcePaths = new List<string>();
 
-            foreach (var volStrings in lvProjectVM.ItemsCast)
+            foreach (var volStrings
+                in lvProjectVM.ItemsCast
+                .Where(volStrings => volStrings.WouldSave))
             {
-                if (volStrings.WouldSave)
-                {
-                    listNicknames.Add(volStrings.Nickname);
-                    listSourcePaths.Add(volStrings.SourcePath);
-                }
+                listNicknames.Add(volStrings.Nickname);
+                listSourcePaths.Add(volStrings.SourcePath);
             }
 
-            if (false == listSourcePaths.IsEmpty())
+            if (listSourcePaths.IsEmpty())
             {
-                m_winProgress = new WinProgress();
-                m_winProgress.InitProgress(listNicknames, listSourcePaths);
-                m_winProgress.Title = "Saving Directory Listings";
-                m_winProgress.WindowClosingCallback = (() =>
+                return;
+            }
+
+            m_winProgress = new WinProgress();
+            m_winProgress.InitProgress(listNicknames, listSourcePaths);
+            m_winProgress.Title = "Saving Directory Listings";
+            m_winProgress.WindowClosingCallback = () =>
+            {
+                if (gd_old.m_saveDirListings == null)
                 {
-                    if (gd_old.m_saveDirListings == null)
-                    {
-                        return true;
-                    }
+                    return true;
+                }
 
-                    if (gd_old.m_saveDirListings.IsAborted)
-                    {
-                        return true;
-                    }
-
-                    if (MBoxStatic.ShowDialog("Do you want to cancel?", "Saving Directory Listings",
-                        MessageBoxButton.YesNo) ==
-                        MessageBoxResult.Yes)
-                    {
-                        gd_old.m_saveDirListings.EndThread();
-                        return true;
-                    }
-
-                    return false;
-                });
-
-                if ((gd_old.m_saveDirListings != null) && (gd_old.m_saveDirListings.IsAborted == false))
+                if (gd_old.m_saveDirListings.IsAborted)
                 {
-                    MBoxStatic.Assert(0, false);
+                    return true;
+                }
+
+                if (MBoxStatic.ShowDialog("Do you want to cancel?", "Saving Directory Listings",
+                    MessageBoxButton.YesNo) ==
+                    MessageBoxResult.Yes)
+                {
                     gd_old.m_saveDirListings.EndThread();
+                    return true;
                 }
 
-                (gd_old.m_saveDirListings = new SaveDirListings(gd,
-                    lvProjectVM,
-                    SaveDirListingsStatusCallback,
-                    SaveDirListingsDoneCallback)).DoThreadFactory();
-                m_winProgress.ShowDialog();
+                return false;
+            };
+
+            if ((null != gd_old.m_saveDirListings) &&
+                (false == gd_old.m_saveDirListings.IsAborted))
+            {
+                MBoxStatic.Assert(0, false);
+                gd_old.m_saveDirListings.EndThread();
             }
+
+            (gd_old.m_saveDirListings = new SaveDirListings(gd,
+                lvProjectVM,
+                SaveDirListingsStatusCallback,
+                SaveDirListingsDoneCallback)).DoThreadFactory();
+            m_winProgress.ShowDialog();
         }
 
-        internal void SaveDirListingsStatusCallback(LVitem_ProjectVM lvItemProjectVM, string strError = null, bool bDone = false, double nProgress = double.NaN)
+        internal void SaveDirListingsStatusCallback(LVitem_ProjectVM lvItemProjectVM,
+            string strError = null, bool bDone = false, double nProgress = double.NaN)
         {
             UtilProject.UIthread(() =>
             {
@@ -126,10 +134,11 @@ namespace DoubleFile
                     gd_old.RestartTreeTimer();
                 }
 
-                int nFilesWritten = gd_old.m_saveDirListings.FilesWritten;
+                var nFilesWritten = gd_old.m_saveDirListings.FilesWritten;
 
                 gd_old.m_saveDirListings = null;   // has to precede messagebox
-                MBoxStatic.ShowDialog("Completed. " + nFilesWritten + " file" + (nFilesWritten != 1 ? "s" : "") + " written.", "Save Directory Listings");
+                MBoxStatic.ShowDialog("Completed. " + nFilesWritten + " file" +
+                    (nFilesWritten != 1 ? "s" : "") + " written.", "Save Directory Listings");
             });
         }
 

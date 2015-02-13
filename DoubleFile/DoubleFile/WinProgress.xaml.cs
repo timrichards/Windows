@@ -24,9 +24,9 @@ namespace DoubleFile
                 return;
             }
 
-            for (int i = 0; i < astrPaths.Count(); ++i)
+            for (var i = 0; i < astrPaths.Count(); ++i)
             {
-                m_lv.NewItem(new string[] { astrNicknames.ElementAt(i), astrPaths.ElementAt(i) }, bQuiet: true);
+                m_lv.NewItem(new[] { astrNicknames.ElementAt(i), astrPaths.ElementAt(i) }, bQuiet: true);
             }
         }
 
@@ -81,12 +81,11 @@ namespace DoubleFile
                 return;     // don't close: there may be an error message
             }
 
-            foreach (var lvItem in m_lv.ItemsCast)
+            if (m_lv
+                .ItemsCast
+                .Any(lvItem => lvItem.Progress < 1))
             {
-                if (lvItem.Progress < 1)
-                {
-                    return;
-                }
+                return;
             }
 
             Aborted = true;

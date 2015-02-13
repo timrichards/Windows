@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
@@ -14,10 +15,10 @@ namespace DoubleFile
 
         internal readonly string Header = null;
 
-        string m_strDescription = null;
+        readonly string m_strDescription = null;
         internal string Description { get { return m_strDescription + " list file"; } }
 
-        string m_strExt = null;
+        readonly string m_strExt = null;
         internal string Filter { get { return "SearchDirLists " + Description + "|*." + m_strExt; } }
 
         internal static SaveFileDialog SFD = null;        // TODO: remove frankenSFD
@@ -34,8 +35,7 @@ namespace DoubleFile
                 return;
             }
 
-            SFD = new SaveFileDialog();
-            SFD.OverwritePrompt = false;
+            SFD = new SaveFileDialog {OverwritePrompt = false};
             bInited = true;
         }
 
@@ -64,41 +64,60 @@ namespace DoubleFile
             return true;
         }
 
-        protected virtual void ReadListItem(ListView lv, string[] strArray) { lv.Items.Add(new ListViewItem(strArray)); }
+        protected virtual void ReadListItem(ListView lv,
+            IEnumerable<string> strArray)
+        {
+            lv.Items.Add(new ListViewItem(strArray.ToArray()));
+        }
 
         internal bool ReadList(ListView lv_in)
         {
-            int nCols = lv_in.Columns.Count;
-            ListView lv = new ListView();       // fake
-            if ((m_strFileNotDialog == null) && (ShowDialog(new OpenFileDialog()) == false))
+            var nCols = lv_in.Columns.Count;
+            var lv = new ListView();       // fake
+
+            if ((null == m_strFileNotDialog) &&
+                (false == ShowDialog(new OpenFileDialog())))
             {
                 return false;
             }
 
-            if (Keyboard.IsKeyDown(Key.LeftShift) == false)
+            if (null == m_strFileNotDialog)
             {
-                lv_in
-                .Items.Clear();
+                return false;
             }
 
-            using (StreamReader sr = File.OpenText(m_strFileNotDialog))
+            if (false == Keyboard.IsKeyDown(Key.LeftShift))
             {
-                string strLine = sr.ReadLine();
+                lv_in
+                    .Items
+                    .Clear();
+            }
+
+            using (var sr = File.OpenText(m_strFileNotDialog))
+            {
+                var strLine = sr.ReadLine();
 
                 if (strLine == Header)
                 {
                     while ((strLine = sr.ReadLine()) != null)
                     {
-                        ReadListItem(lv, strLine.TrimEnd(new char[] { '\t' }).Split('\t').Take(nCols).ToArray());
+                        ReadListItem(lv,
+                            strLine
+                            .TrimEnd(new char[] { '\t' })
+                            .Split('\t')
+                            .Take(nCols));
                     }
                 }
             }
 
             if (false == lv.Items.IsEmpty())
             {
-                ListViewItem[] lvItems = lv.Items.Cast<ListViewItem>().ToArray();
+                var lvItems = lv
+                    .Items
+                    .Cast<ListViewItem>();
+
                 lv.Items.Clear();
-                lv_in.Items.AddRange(lvItems);
+                lv_in.Items.AddRange(lvItems.ToArray());
                 lv_in.Invalidate();
                 return true;
             }
@@ -119,22 +138,26 @@ namespace DoubleFile
             }
 
             if ((File.Exists(m_strPrevFile))
-                && (MBoxStatic.ShowDialog(m_strPrevFile + " already exists. Overwrite?", Description, MessageBoxButton.YesNo)
+                && (MBoxStatic.ShowDialog(m_strPrevFile + " already exists. Overwrite?",
+                    Description,
+                    MessageBoxButton.YesNo)
                 != MessageBoxResult.Yes))
             {
                 return false;
             }
 
-            using (StreamWriter sw = File.CreateText(m_strPrevFile))
+            using (var sw = File.CreateText(m_strPrevFile))
             {
                 sw.WriteLine(Header);
+
                 foreach (ListViewItem lvItem in lvItems)
                 {
                     sw.Write(WriteListItem(0, lvItem.SubItems[0].Text));
 
-                    int nIx = 1;
+                    var nIx = 1;
 
-                    foreach (ListViewItem.ListViewSubItem lvSubitem in lvItem.SubItems.Cast<ListViewItem.ListViewSubItem>().Skip(1))
+                    foreach (var lvSubitem in lvItem.SubItems.Cast<ListViewItem.ListViewSubItem>()
+                        .Skip(1))
                     {
                         sw.Write('\t' + WriteListItem(nIx, lvSubitem.Text));
                         ++nIx;

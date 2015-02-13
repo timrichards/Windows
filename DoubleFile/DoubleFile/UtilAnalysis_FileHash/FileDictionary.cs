@@ -70,7 +70,8 @@ namespace DoubleFile
             return lsRet;
         }
 
-        internal FileDictionary DoThreadFactory(LV_ProjectVM lvProjectVM, CreateFileDictStatusDelegate statusCallback)
+        internal FileDictionary DoThreadFactory(LV_ProjectVM lvProjectVM,
+            CreateFileDictStatusDelegate statusCallback)
         {
             LVprojectVM = lvProjectVM;
             m_statusCallback = statusCallback;
@@ -151,7 +152,7 @@ namespace DoubleFile
 
                         if (false == dictFiles.ContainsKey(key))
                         {
-                            dictFiles[key] = new List<int>() {lookup};
+                            dictFiles[key] = new List<int> {lookup};
                         }
                         else
                         {
@@ -230,7 +231,7 @@ namespace DoubleFile
             m_DictFiles.Clear();
         }
 
-        readonly string ksSerializeFile = ProjectFile.TempPath + "_DuplicateFiles_";
+        readonly string ksSerializeFile = ProjectFile.TempPath + "_DuplicateFiles._";
 
         readonly Dictionary<LVitem_ProjectVM, int> DictLVtoItemNumber = new Dictionary<LVitem_ProjectVM, int>();
         readonly Dictionary<int, LVitem_ProjectVM> DictItemNumberToLV = new Dictionary<int, LVitem_ProjectVM>();

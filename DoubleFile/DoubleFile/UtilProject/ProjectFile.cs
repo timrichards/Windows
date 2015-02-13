@@ -56,18 +56,23 @@ namespace DoubleFile
                 {
                     if (m_winProgress.IsLoaded)                 // close box/cancel/undo
                     {
-                        openListingFiles(Directory.GetFiles(TempPath)
+                        openListingFiles(
+                            Directory.GetFiles(TempPath)
                             .Where(s =>
                             {
-                                var strFileName = Path.GetFileName(s);
+                                var strExt = Path.GetExtension(Path.GetFileName(s) ?? "");
 
-                                if (null == strFileName)
+                                if (strExt.Length == 0)
+                                {
                                     return false;
+                                }
 
-                                return ((false == strFileName.Contains('.')) ||
-                                        strFileName.EndsWith(FileParse.ksFileExt_Listing));
+                                return 
+                                    strExt.Remove(0, 1)
+                                    .Equals(FileParse.ksFileExt_Listing,
+                                    StringComparison.InvariantCultureIgnoreCase);
                             }),
-                                true);
+                            true);
 
                         if (null != OnOpenedProject)
                         {

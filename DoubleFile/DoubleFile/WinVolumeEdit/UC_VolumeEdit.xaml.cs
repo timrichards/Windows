@@ -1,8 +1,10 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Linq;
+using System.IO;
 
 namespace DoubleFile
 {
@@ -74,28 +76,48 @@ namespace DoubleFile
         string m_strStatus = FileParse.ksNotSaved;
         string m_strIncludeYN = FileParse.ksInclude;
 
-        bool IsOKenabled
+        bool IsValidListingEdit
+        {
+            get
+            {
+                var strListingFile = form_EditListingFile.Text;
+
+                try { strListingFile = Path.GetFullPath(strListingFile); }
+                catch (ArgumentException) { return false; }
+
+                return (Path.GetFileName(strListingFile).Length > 0);
+            }
+        }
+
+        bool IsValidSourcePathEdit
         {
             get
             {
                 return (SaveDirListings.IsGoodDriveSyntax(form_EditSourcePath.Text) &&
-                    ((IsVolumeNew == false) || System.IO.Directory.Exists(form_EditSourcePath.Text)));
+                    ((IsVolumeNew == false) || Directory.Exists(form_EditSourcePath.Text)));
             }
         }
 
-        LocalWindow window { get { return Window.GetWindow(uc_VolumeEdit) as LocalWindow; } }
+        bool IsOKenabled
+        {
+            get
+            {
+                return ((string.IsNullOrWhiteSpace(form_EditListingFile.Text) || IsValidListingEdit) &&
+                    IsValidSourcePathEdit);
+            }
+        }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             var vm = new UC_VolumeEditVM();
 
             uc_VolumeEdit.DataContext = vm;
-            vm.IsOKenabled = () => { return IsOKenabled; };
-            vm.SourcePath_CurrentText = () => { return form_EditSourcePath.Text; };
-            vm.ListingFile_CurrentText = () => { return form_EditListingFile.Text; };
-            vm.FromSourcePathDlg = s => { form_EditSourcePath.Text = s; };
+            vm.IsOKenabled = () => IsOKenabled;
+            vm.SourcePath_CurrentText = () => form_EditSourcePath.Text;
+            vm.ListingFile_CurrentText = () => form_EditListingFile.Text;
+            vm.FromSourcePathDlg = s => form_EditSourcePath.Text = s;
             vm.FromProbe = t => { form_EditDriveModel.Text = t.DriveModel; form_EditDriveSerial.Text = t.DriveSerial; };
-            vm.FromListingFileDlg = s => { form_EditListingFile.Text = s; };
+            vm.FromListingFileDlg = s => form_EditListingFile.Text = s;
 
             form_EditDriveLetter.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (o, e1) => { e1.Handled = true; }));
         }
@@ -104,7 +126,10 @@ namespace DoubleFile
         {
             if (IsOKenabled)
             {
-                window.DialogResult = true;
+                var window = Window.GetWindow(uc_VolumeEdit);
+
+                if (window != null)
+                    window.DialogResult = true;
             }
             else
             {
@@ -112,7 +137,7 @@ namespace DoubleFile
             }
         }
 
-        string CapDrive(string strPath)
+        static string CapDrive(string strPath)
         {
             var a = strPath.ToCharArray();
 
@@ -127,7 +152,7 @@ namespace DoubleFile
 
         private void form_EditSourcePath_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (IsOKenabled)
+            if (IsValidSourcePathEdit)
             {
                 form_EditSourcePath.Text = CapDrive(form_EditSourcePath.Text);
             }
@@ -135,14 +160,24 @@ namespace DoubleFile
 
         private void form_EditListingFile_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (form_EditListingFile.Text.Length > 0)
+            if (string.IsNullOrWhiteSpace(form_EditListingFile.Text) ||
+                (false == IsValidListingEdit))
             {
-                try
-                {
-                    form_EditListingFile.Text = CapDrive(System.IO.Path.GetFullPath(form_EditListingFile.Text));
-                }
-                catch { }
+                return;
             }
+
+            var strListingFile = CapDrive(Path.GetFullPath(form_EditListingFile.Text));
+            var strExt = Path.GetExtension(strListingFile) ?? "";
+
+            if ((strExt.Length == 0) || (false ==
+                strExt.Remove(0, 1)
+                .Equals(FileParse.ksFileExt_Listing,
+                StringComparison.InvariantCultureIgnoreCase)))
+            {
+                strListingFile += "." + FileParse.ksFileExt_Listing;
+            }
+
+            form_EditListingFile.Text = strListingFile;
         }
 
         private void form_EditDriveLetter_PreviewKeyDown(object sender, KeyEventArgs e)

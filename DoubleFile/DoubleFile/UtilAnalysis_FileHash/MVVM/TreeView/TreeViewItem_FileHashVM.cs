@@ -9,6 +9,13 @@ namespace DoubleFile
 {
     internal class TreeViewItem_FileHashVM : ObservableObjectBase
     {
+        internal readonly TreeViewItem_FileHashVM m_Parent = null;
+        internal readonly TreeView_FileHashVM TVVM = null;
+        internal double EphemeralExpandedPos = -1;
+        internal Brush m_SelectedForeground = Brushes.White;
+        internal readonly LocalTreeNode datum = null;
+        internal int Index = -1;
+
         public ObservableCollection<TreeViewItem_FileHashVM> Items { get { return m_Items; } }
         public string Text { get { return datum.Text.PadRight(200); } }
         public Brush Foreground { get { return m_bSelected ? m_SelectedForeground : FrontBrush; } }
@@ -101,10 +108,10 @@ namespace DoubleFile
 
             TVVM.SelectedItem = this;
 
-            Stack<TreeViewItem_FileHashVM> stackParents = new Stack<TreeViewItem_FileHashVM>(8);
+            var stackParents = new Stack<TreeViewItem_FileHashVM>(8);
             TVI_DependencyProperty.stackParents = new Stack<TreeViewItem_FileHashVM>(8);
-            UList<TreeViewItem_FileHashVM> listParents = new UList<TreeViewItem_FileHashVM>();
-            TreeViewItem_FileHashVM parentItem = m_Parent;
+            var listParents = new UList<TreeViewItem_FileHashVM>();
+            var parentItem = m_Parent;
 
             while (parentItem != null)
             {
@@ -114,15 +121,14 @@ namespace DoubleFile
                 parentItem = parentItem.m_Parent;
             }
 
-            foreach (TreeViewItem_FileHashVM tvivm in TVVM.m_listExpanded.ToArray())
+            foreach (var tvivm in TVVM.m_listExpanded.ToArray()
+                .Where(tvivm => (stackParents.Contains(tvivm) == false) &&
+                    tvivm.m_bExpanded))
             {
-                if ((stackParents.Contains(tvivm) == false) && tvivm.m_bExpanded)
-                {
-                    tvivm.EphemeralExpandedPos = -1;
-                    tvivm.m_bExpanded = false;
-                    tvivm.RaisePropertyChanged("IsExpanded");
-                    TVVM.m_listExpanded.Remove(tvivm);
-                }
+                tvivm.EphemeralExpandedPos = -1;
+                tvivm.m_bExpanded = false;
+                tvivm.RaisePropertyChanged("IsExpanded");
+                TVVM.m_listExpanded.Remove(tvivm);
             }
 
             while (false == stackParents.IsEmpty())
@@ -155,7 +161,8 @@ namespace DoubleFile
             : this(tvvm, datum_in, null, nIndex)
         { }
 
-        TreeViewItem_FileHashVM(TreeView_FileHashVM tvvm, LocalTreeNode datum_in, TreeViewItem_FileHashVM parent, int nIndex)
+        TreeViewItem_FileHashVM(TreeView_FileHashVM tvvm, LocalTreeNode datum_in,
+            TreeViewItem_FileHashVM parent, int nIndex)
         {
             TVVM = tvvm;
             datum = datum_in;
@@ -164,7 +171,7 @@ namespace DoubleFile
             datum.TVIVM = this;
          //   m_Foreground = SDLWPF._ForeClrToBrush(datum.ForeColor);
 
-            int nIndex_A = -1;
+            var nIndex_A = -1;
 
             m_Items = new ObservableCollection<TreeViewItem_FileHashVM>
             (
@@ -175,12 +182,8 @@ namespace DoubleFile
         }
 
         readonly ObservableCollection<TreeViewItem_FileHashVM> m_Items = null;
-        internal readonly TreeViewItem_FileHashVM m_Parent = null;
-        internal readonly TreeView_FileHashVM TVVM = null;
 
-        double HeaderHeight { get { return TVI_DependencyProperty.HeaderHeight; } }
-        internal double EphemeralExpandedPos = -1;
-        internal Brush m_SelectedForeground = Brushes.White;
+        static double HeaderHeight { get { return TVI_DependencyProperty.HeaderHeight; } }
         Brush FrontBrush
         {
             get
@@ -191,10 +194,7 @@ namespace DoubleFile
             }
         }
 
-        internal readonly LocalTreeNode datum = null;
-
         bool m_bExpanded = false;
         bool m_bSelected = false;
-        internal int Index = -1;
     }
 }

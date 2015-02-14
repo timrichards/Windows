@@ -21,7 +21,7 @@ namespace Local
         {
             get
             {
-                return new FolderKeyStruct((ulong)nTotalLength, nFilesInSubdirs, nDirsWithFiles);
+                return new FolderKeyStruct(nTotalLength, nFilesInSubdirs, nDirsWithFiles);
             }
         }
 

@@ -24,9 +24,9 @@ namespace DoubleFile
                 return;
             }
 
-            for (int i = 0; i < astrPaths.Count(); ++i)
+            for (var i = 0; i < astrPaths.Count(); ++i)
             {
-                m_lv.NewItem(new string[] { astrNicknames.ElementAt(i), astrPaths.ElementAt(i) }, bQuiet: true);
+                m_lv.NewItem(new[] { astrNicknames.ElementAt(i), astrPaths.ElementAt(i) }, bQuiet: true);
             }
         }
 
@@ -76,22 +76,16 @@ namespace DoubleFile
 
         internal void CloseIfNatural()
         {
-            if (m_bClosing)
-            {
-                return;     // get an error otherwise
-            }
-
             if (Aborted)
             {
                 return;     // don't close: there may be an error message
             }
 
-            foreach (var lvItem in m_lv.ItemsCast)
+            if (m_lv
+                .ItemsCast
+                .Any(lvItem => lvItem.Progress < 1))
             {
-                if (lvItem.Progress < 1)
-                {
-                    return;
-                }
+                return;
             }
 
             Aborted = true;
@@ -109,8 +103,6 @@ namespace DoubleFile
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            m_bClosing = true;
-
             if (Aborted)
             {
                 return;     // close
@@ -118,7 +110,7 @@ namespace DoubleFile
 
             if (WindowClosingCallback != null)
             {
-                e.Cancel = (false == (m_bClosing = WindowClosingCallback()));
+                e.Cancel = (false == WindowClosingCallback());
             }
         }
 
@@ -134,6 +126,5 @@ namespace DoubleFile
         }
 
         readonly LV_ProgressVM m_lv = new LV_ProgressVM();
-        bool m_bClosing = false;
     }
 }

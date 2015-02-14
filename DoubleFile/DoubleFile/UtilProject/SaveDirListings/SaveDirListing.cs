@@ -23,8 +23,7 @@ namespace DoubleFile
 
             internal SaveDirListing DoThreadFactory()
             {
-                m_thread = new Thread(Go);
-                m_thread.IsBackground = true;
+                m_thread = new Thread(Go) {IsBackground = true};
                 m_thread.Start();
                 return this;
             }
@@ -62,7 +61,8 @@ namespace DoubleFile
                     (strSerial != LVitemProjectVM.DriveSerial)));
 
                 if ((bAsk_DriveModel || bAsk_DriveSerial) &&
-                    ((MBoxStatic.ShowDialog("Overwrite user-entered drive model and/or serial # for " + LVitemProjectVM.SourcePath[0] + @":\ ?", "Save Directory Listings",
+                    ((MBoxStatic.ShowDialog("Overwrite user-entered drive model and/or serial # for " +
+                        LVitemProjectVM.SourcePath[0] + @":\ ?", "Save Directory Listings",
                         System.Windows.MessageBoxButton.YesNo) ==
                         System.Windows.MessageBoxResult.No)))
                 {
@@ -78,7 +78,7 @@ namespace DoubleFile
 
                 var driveInfo = new DriveInfo(LVitemProjectVM.SourcePath[0] + @":\");
                 var sb = new StringBuilder();
-                int nCount = 0;
+                var nCount = 0;
 
                 Action<Object> WriteLine = o =>
                 {
@@ -100,7 +100,7 @@ namespace DoubleFile
                 WriteLine(strModel);
                 WriteLine(strSerial);
                 WriteLine(nSize);
-                MBoxStatic.Assert(0, nCount == FileParse.knDriveInfoItems);
+                MBoxStatic.Assert(0, nCount == knDriveInfoItems);
                 fs.WriteLine(sb.ToString().Trim());
             }
 
@@ -183,11 +183,12 @@ namespace DoubleFile
 
                 if (string.IsNullOrWhiteSpace(LVitemProjectVM.ListingFile))
                 {
-                    LVitemProjectVM.ListingFile = ProjectFile.TempPath + LVitemProjectVM.SourcePath[0] + "_Listing_" +
+                    LVitemProjectVM.ListingFile = ProjectFile.TempPath +
+                        LVitemProjectVM.SourcePath[0] + "_Listing_" +
                         Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + "." + ksFileExt_Listing;
                 }
 
-                string strPathOrig = Directory.GetCurrentDirectory();
+                var strPathOrig = Directory.GetCurrentDirectory();
 
                 Directory.CreateDirectory(Path.GetDirectoryName(LVitemProjectVM.ListingFile));
 
@@ -202,10 +203,10 @@ namespace DoubleFile
                         fs.WriteLine();
                         fs.WriteLine(FormatString(nHeader: 0));
                         fs.WriteLine(FormatString(nHeader: 1));
-                        fs.WriteLine(ksStart01 + " " + DateTime.Now.ToString());
+                        fs.WriteLine(ksStart01 + " " + DateTime.Now);
                         Hash(GetFileList(), out dictHash, out dictException_FileRead);
                         WriteDirectoryListing(fs, dictHash, dictException_FileRead);
-                        fs.WriteLine(ksEnd01 + " " + DateTime.Now.ToString());
+                        fs.WriteLine(ksEnd01 + " " + DateTime.Now);
                         fs.WriteLine();
                         fs.WriteLine(ksErrorsLoc01);
 
@@ -214,7 +215,7 @@ namespace DoubleFile
                         //MBox.Assert(0, nProgressDenominator == m_nFilesDiff);             ditto
                         //MBox.Assert(0, nProgressDenominator == dictHash.Count);           ditto
 
-                        foreach (string strError in ErrorList)
+                        foreach (var strError in ErrorList)
                         {
                             fs.WriteLine(strError);
                         }
@@ -235,7 +236,7 @@ namespace DoubleFile
 #if DEBUG == false
                 catch (Exception e)
                 {
-                    m_statusCallback(LVitemProjectVM, strError: (e.GetBaseException() ?? e.InnerException ?? e).Message, bDone: true);
+                    m_statusCallback(LVitemProjectVM, strError: e.GetBaseException().Message, bDone: true);
                 }
 #endif
                 finally { }

@@ -46,9 +46,9 @@ namespace DoubleFile
         {
             get
             {
-                if (m_strFullPath != null)
+                if (_strFullPath != null)
                 {
-                    return m_strFullPath;
+                    return _strFullPath;
                 }
 
                 var stack = new Stack<LocalTreeNode>(8);
@@ -69,8 +69,8 @@ namespace DoubleFile
                 }
 
                 sb.Append(Text);
-                m_strFullPath = sb.ToString();
-                return m_strFullPath;
+                _strFullPath = sb.ToString();
+                return _strFullPath;
             }
         }
 
@@ -79,7 +79,7 @@ namespace DoubleFile
             TVIVM = null;
             TreeView = null;
             Level = -1;
-            m_strFullPath = null;
+            _strFullPath = null;
 
             foreach (var treeNode in Nodes)
             {
@@ -123,6 +123,6 @@ namespace DoubleFile
             return nodeParent;
         }
 
-        string m_strFullPath = null;
+        string _strFullPath = null;
     }
 }

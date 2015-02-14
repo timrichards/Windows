@@ -20,7 +20,8 @@ namespace DoubleFile
             FileAttributes dwFlagsAndAttributes,
             IntPtr hTemplateFile);
 
-        internal static void Get(string strPath, out string strDriveModel_out, out string strDriveSerial_out, out ulong? nSize_out)
+        internal static void Get(string strPath, out string strDriveModel_out,
+            out string strDriveSerial_out, out ulong? nSize_out)
         {
             var letter = strPath.Substring(0, 2);
 
@@ -28,7 +29,7 @@ namespace DoubleFile
             string strDriveSerial = null;
             ulong? nSize = null;
 
-            bool bWMI = false;
+            var bWMI = false;
 
             try
             {
@@ -89,7 +90,7 @@ namespace DoubleFile
             nSize_out = nSize;
         }
 
-        static List<string> GetAll()
+        static IEnumerable<string> GetAll()
         {
             var listDrives = new List<string>();
 

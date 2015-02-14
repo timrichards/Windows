@@ -101,7 +101,7 @@ namespace DoubleFile
             m_threadSelectCompare = null;
             m_threadSelect = null;
 
-            TreeSelect treeSelect = new TreeSelect(treeNode, m_dictNodes, m_dictDriveInfo,
+            TreeSelect treeSelect = new TreeSelect(treeNode, m_dictDriveInfo,
                 strFile, gd.m_bCompareMode, bSecondComparePane,
                 statusCallback, doneCallback);
 

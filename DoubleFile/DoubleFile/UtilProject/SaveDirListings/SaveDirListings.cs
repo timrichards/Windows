@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Collections.Concurrent;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -19,6 +20,7 @@ namespace DoubleFile
             SaveDirListingsStatusDelegate statusCallback,
             Action doneCallback)
         {
+            IsAborted = false;
             gd = gd_in;
             m_lvProjectVM = lvProjectVM;
             m_statusCallback = statusCallback;
@@ -27,50 +29,47 @@ namespace DoubleFile
 
         internal void EndThread()
         {
-            foreach (SaveDirListing worker in m_cbagWorkers)
+            foreach (var worker in m_cbagWorkers)
             {
                 worker.Abort();
             }
 
             m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
-            m_bThreadAbort = true;
+            IsAborted = true;
             m_thread = null;
         }
 
         internal void DoThreadFactory()
         {
-            m_thread = new Thread(Go);
-            m_thread.IsBackground = true;
+            m_thread = new Thread(Go) {IsBackground = true};
             m_thread.Start();
         }
 
-        internal bool IsAborted { get { return m_bThreadAbort; } }
+        internal bool IsAborted { get; private set; }
 
         void Go()
         {
             UtilProject.WriteLine();
             UtilProject.WriteLine("Saving directory listings.");
 
-            DateTime dtStart = DateTime.Now;
+            var dtStart = DateTime.Now;
 
-            foreach (var lvItemProjectVM in m_lvProjectVM.ItemsCast)
+            foreach (var lvItemProjectVM
+                in m_lvProjectVM.ItemsCast
+                .Where(lvItemProjectVM => lvItemProjectVM.WouldSave))
             {
-                if (false == lvItemProjectVM.WouldSave)
-                {
-                    continue;
-                }
-
                 m_cbagWorkers.Add(new SaveDirListing(gd, lvItemProjectVM, m_statusCallback).DoThreadFactory());
             }
 
-            foreach (SaveDirListing worker in m_cbagWorkers)
+            foreach (var worker in m_cbagWorkers)
             {
                 worker.Join();
             }
 
-            UtilProject.WriteLine(string.Format("Finished saving directory listings in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
+            UtilProject.WriteLine(string.Format("Finished saving directory listings in {0} seconds.",
+                ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
-            if (m_bThreadAbort || gd.WindowClosed)
+            if (IsAborted || gd.WindowClosed)
             {
                 return;
             }
@@ -82,7 +81,6 @@ namespace DoubleFile
         readonly SaveDirListingsStatusDelegate m_statusCallback = null;
         readonly Action m_doneCallback = null;
         Thread m_thread = null;
-        bool m_bThreadAbort = false;
         ConcurrentBag<SaveDirListing> m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
         LV_ProjectVM m_lvProjectVM = null;
     }

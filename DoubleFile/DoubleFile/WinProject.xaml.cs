@@ -62,10 +62,9 @@ namespace DoubleFile
                 MBoxStatic.ShowDialog(WinProjectVM.ksUnsavedWarning, "Close Project", MessageBoxButton.OKCancel)))
             {
                 e.Cancel = true;
-                return;
             }
         }
 
-        GlobalData_Base gd = null;
+        readonly GlobalData_Base gd = null;
     }
 }

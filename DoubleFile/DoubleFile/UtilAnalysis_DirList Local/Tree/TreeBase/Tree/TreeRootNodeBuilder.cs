@@ -72,7 +72,8 @@ namespace Local
 
             internal TreeRootNodeBuilder DoThreadFactory()
             {
-                m_thread = new Thread(Go) {IsBackground = true};
+                m_thread = new Thread(Go);
+                m_thread.IsBackground = true;
                 m_thread.Start();
                 return this;
             }
@@ -120,7 +121,7 @@ namespace Local
                         {
                             File.Delete(StrFile_01(m_volStrings.ListingFile));
                         }
-                        catch (IOException) { }
+                        catch { }
 
                         bAttemptConvert = true;
                     }
@@ -143,9 +144,10 @@ namespace Local
                     var strBuilder = new StringBuilder();
                     var nIx = -1;
 
-                    foreach (var strArray
-                        in ieDriveInfo.Select(strLine => strLine.Split('\t')))
+                    foreach (var strLine in ieDriveInfo)
                     {
+                        var strArray = strLine.Split('\t');
+
                         ++nIx;
 
                         if (strArray.Length > 3)
@@ -183,7 +185,7 @@ namespace Local
                             m_dictDriveInfo.Remove(m_volStrings.ListingFile);
                         }
 
-                        m_dictDriveInfo.Add(m_volStrings.ListingFile, strBuilder.ToString().Trim('\r', '\n'));
+                        m_dictDriveInfo.Add(m_volStrings.ListingFile, strBuilder.ToString().Trim(new char[] { '\r', '\n' }));
                     }
                 }
 

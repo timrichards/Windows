@@ -7,6 +7,7 @@ namespace DoubleFile
     class SDL_Timer : Timer
     {
         internal SDL_Timer()
+            : base()
         { }
 
         internal SDL_Timer(Action callback)

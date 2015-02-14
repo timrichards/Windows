@@ -11,6 +11,9 @@ namespace Local
             // can't be struct because of null
             class DirData
             {
+                readonly GlobalData_Base gd = null;
+                readonly RootNode m_rootNode = null;
+
                 internal DirData(GlobalData_Base gd_in, RootNode rootNode)
                 {
                     gd = gd_in;
@@ -31,9 +34,6 @@ namespace Local
                     return (nodes.IsEmpty()) ? null :
                         m_rootNode.Nodes.Values.First().AddToTree(strVolumeName);
                 }
-
-                readonly GlobalData_Base gd = null;
-                readonly RootNode m_rootNode = null;
             }
         }
     }

@@ -9,10 +9,10 @@ namespace DoubleFile
         public delegate string StringQuery();
         public StringQuery SourcePath_CurrentText = () => { DesignModeOK(); return null; };
         public StringQuery ListingFile_CurrentText = () => { DesignModeOK(); return null; };
-        public System.Action<string> FromSourcePathDlg = s => DesignModeOK();
+        public System.Action<string> FromSourcePathDlg = s => { DesignModeOK(); };
         public struct ProbeStruct { public string DriveModel; public string DriveSerial; };
-        public System.Action<ProbeStruct> FromProbe = s => DesignModeOK();
-        public System.Action<string> FromListingFileDlg = s => DesignModeOK();
+        public System.Action<ProbeStruct> FromProbe = s => { DesignModeOK(); };
+        public System.Action<string> FromListingFileDlg = s => { DesignModeOK(); };
 
         // In order of appearance on the form
         public ICommand Icmd_EditSourcePath { get { return mIcmd_EditSourcePath; } }
@@ -28,9 +28,9 @@ namespace DoubleFile
         internal UC_VolumeEditVM()
         {
             mIcmd_EditSourcePath = new RelayCommand(param => { EditSourcePath(); });
-            mIcmd_Probe = new RelayCommand(param => { Probe(); }, param => IsOKenabled());
+            mIcmd_Probe = new RelayCommand(param => { Probe(); }, param => { return IsOKenabled(); });
             mIcmd_EditListingFile = new RelayCommand(param => { EditListingFile(); });
-            mIcmd_IsOKenabled = new RelayCommand(param => { }, param => IsOKenabled());
+            mIcmd_IsOKenabled = new RelayCommand(param => { }, param => { return IsOKenabled(); });
         }
     }
 }

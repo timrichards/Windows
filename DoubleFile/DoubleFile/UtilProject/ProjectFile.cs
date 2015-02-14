@@ -15,10 +15,16 @@ namespace DoubleFile
         internal static string TempPath { get { return System.IO.Path.GetTempPath() + @"DoubleFile\"; } }
         internal static string TempPath01 { get { return TempPath.TrimEnd(new char[] { '\\' }) + "01"; } }
 
+        readonly string m_strErrorLogFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "ErrorLog";
+        System.Text.StringBuilder m_sbError = new System.Text.StringBuilder();
+
+        System.Diagnostics.Process m_process = new System.Diagnostics.Process();
+        WinProgress m_winProgress = null;
+    
         internal ProjectFile()
         {
-            m_process.StartInfo.FileName = (Path.GetDirectoryName(
-                System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase) ?? "")
+            m_process.StartInfo.FileName = Path.GetDirectoryName(
+                System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)
                 .Replace(@"file:\", "") +
                 @"\UtilProject\7z920x86\7z.exe";
             m_process.StartInfo.CreateNoWindow = true;
@@ -119,7 +125,7 @@ namespace DoubleFile
                     var bSuccess = false;
                     const int knMaxAttempts = 16;
 
-                    for (var n = 0; n < knMaxAttempts; ++n)
+                    for (int n = 0; n < knMaxAttempts; ++n)
                     {
                         strNewName = Path.GetFileNameWithoutExtension(volStrings.ListingFile) +
                             "_" + n.ToString("00") + Path.GetExtension(volStrings.ListingFile);
@@ -169,18 +175,16 @@ namespace DoubleFile
 
             if (null != OnSavingProject)
             {
-                foreach (var strFilename
-                    in OnSavingProject.GetInvocationList()
-                    .Select(onSavingProject => (string) onSavingProject.DynamicInvoke()))
+                foreach (var onSavingProject in OnSavingProject.GetInvocationList())
                 {
-                    var s = strFilename;
+                    var strFilename = (string) onSavingProject.DynamicInvoke();
 
-                    if (s.StartsWith(strPath))
+                    if (strFilename.StartsWith(strPath))
                     {
-                        s = strFilename.Replace(strPath, "");
+                        strFilename = strFilename.Replace(strPath, "");
                     }
 
-                    sbSource.Append("\"").Append(s).Append("\" ");
+                    sbSource.Append("\"").Append(strFilename).Append("\" ");
                 }
             }
 
@@ -227,7 +231,7 @@ namespace DoubleFile
                 var bSuccess = false;
                 const int knMaxAttempts = 16;
 
-                for (var n = 0; n < knMaxAttempts; ++n)
+                for (int n = 0; n < knMaxAttempts; ++n)
                 {
                     if (n == knMaxAttempts - 1)
                     {
@@ -275,7 +279,7 @@ namespace DoubleFile
                     m_process.Start();
                     m_process.BeginOutputReadLine();
                     m_winProgress = new WinProgress();
-                    m_winProgress.InitProgress(new[] { status }, new[] { strProjectFileNoPath });
+                    m_winProgress.InitProgress(new string[] { status }, new string[] { strProjectFileNoPath });
                     m_winProgress.ShowDialog();
                     return true;
                 }
@@ -283,18 +287,11 @@ namespace DoubleFile
                 {
                     // the WPF Application class won't exit the app until the window list is cleared,
                     // even though the window never opened.
-                    if (m_winProgress != null)
-                        m_winProgress.Close();
+                    m_winProgress.Close();
                 }
             }
 
             return false;
         }
-
-        readonly string m_strErrorLogFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "ErrorLog";
-        readonly System.Text.StringBuilder m_sbError = new System.Text.StringBuilder();
-
-        readonly System.Diagnostics.Process m_process = new System.Diagnostics.Process();
-        WinProgress m_winProgress = null;
     }
 }

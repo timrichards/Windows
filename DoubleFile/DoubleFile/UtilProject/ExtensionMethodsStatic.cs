@@ -57,7 +57,7 @@ namespace DoubleFile
         internal static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
             source
-                .All(item => { action(item); return false; });
+                .All(item => { action(item); return true; });
         }
 
         internal static bool HasOnlyOne(this System.Collections.IList source)
@@ -72,12 +72,11 @@ namespace DoubleFile
         {
             if (source == null) return null;
 
-            var s = string
-                .Join("", source.ToString()
-                .Where(c => Char.IsControl(c) == false))
-                .Trim();
+            string s = string.Join("", source.ToString().Cast<char>().Where(c => Char.IsControl(c) == false)).Trim();
 
-            return (s.Length > 0) ? s : null;
+            if (s.Length == 0) return null;                             // Returns null if empty
+
+            return s;
         }
     }
 }

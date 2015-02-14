@@ -20,7 +20,7 @@ namespace DoubleFile
         internal LV_ProjectVM LVprojectVM { get; private set; }
         internal FormAnalysis_DirList Analysis_DirListForm { get; private set; }
 
-        void FormAnalysis_DirListAction(Action<FormAnalysis_DirList, LV_ProjectVM> action)
+        void FormAnalysis_DirListAction(System.Action<FormAnalysis_DirList, LV_ProjectVM> action)
         {
             if ((Analysis_DirListForm == null) || Analysis_DirListForm.IsDisposed)
             {
@@ -43,15 +43,14 @@ namespace DoubleFile
                 return;
             }
 
-            var args = AppDomain.CurrentDomain.SetupInformation.ActivationArguments;
+            ActivationArguments args = AppDomain.CurrentDomain.SetupInformation.ActivationArguments;
 
-            if (null == args)
+            if (MBoxStatic.Assert(1308.93165, args != null) == false)
             {
-                MBoxStatic.Assert(1308.93165, false);
                 return;
             }
 
-            var arrArgs = args.ActivationData;
+            string[] arrArgs = args.ActivationData;
 
             if (arrArgs == null)
             {
@@ -64,10 +63,7 @@ namespace DoubleFile
                 return;
             }
 
-            var strFile = arrArgs[0];
-
-            if (strFile.Length < 2)
-                return;
+            string strFile = arrArgs[0];
 
             switch (Path.GetExtension(strFile).Substring(1))
             {
@@ -209,6 +205,6 @@ namespace DoubleFile
         }
 
         GlobalData_Base gd = null;
-        readonly GlobalData gd_old = null;
+        GlobalData gd_old = null;
     }
 }

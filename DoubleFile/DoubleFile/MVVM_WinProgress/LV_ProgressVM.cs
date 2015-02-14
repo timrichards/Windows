@@ -12,12 +12,7 @@ namespace DoubleFile
         public string WidthProgressState { get { return SCW; } }
         public string WidthRemaining { get { return SCW; } }
 
-        internal override bool NewItem(string[] arrStr, bool bQuiet = false)
-        {
-            Add(new LVitem_ProgressVM(this, arrStr), bQuiet);
-            return true;
-        }
-
+        internal override bool NewItem(string[] arrStr, bool bQuiet = false) { Add(new LVitem_ProgressVM(this, arrStr), bQuiet); return true; }
         internal override int NumCols { get { return LVitem_ProgressVM.NumCols_; } }
 
         internal LV_ProgressVM()

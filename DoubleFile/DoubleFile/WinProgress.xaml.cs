@@ -108,6 +108,8 @@ namespace DoubleFile
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            m_bClosing = true;
+
             if (Aborted)
             {
                 return;     // close
@@ -131,6 +133,6 @@ namespace DoubleFile
         }
 
         readonly LV_ProgressVM m_lv = new LV_ProgressVM();
-        private bool m_bClosing = false;
+        bool m_bClosing = false;
     }
 }

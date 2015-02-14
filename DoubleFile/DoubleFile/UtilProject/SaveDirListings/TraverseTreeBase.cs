@@ -11,7 +11,8 @@ namespace DoubleFile
             protected readonly GlobalData_Base gd = null;
             protected long LengthRead { get; private set; }
 
-            protected List<string> ErrorList { get; private set; }
+            protected List<string> ErrorList { get { return _errorList; } }
+            readonly List<string> _errorList = new List<string>();
 
             protected bool m_bThreadAbort = false;
             protected readonly LVitem_ProjectVM LVitemProjectVM = null;

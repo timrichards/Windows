@@ -71,17 +71,16 @@ namespace DoubleFile
                         continue;
                     }
 
-                    var edit = dlg as WinVolumeEdit;
+                    var dlgEdit = dlg as WinVolumeEdit;
 
-                    if ((edit != null) &&
-                        ModifyListingFile(lvItem, lvItemVolumeTemp, edit.uc_VolumeEdit.DriveLetter))
+                    if ((dlgEdit != null) &&
+                        ModifyListingFile(lvItem, lvItemVolumeTemp, dlgEdit.uc_VolumeEdit.DriveLetter))
                     {
                         //if (MBox.ShowDialog("Update the project?", "Modify file", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                         //{
                         //    form_btnSaveProject_Click();
                         //}
                         FileParse.ReadHeader(lvItemVolumeTemp.ListingFile, out lvItemVolumeTemp);
-                        lvItem.StringValues = lvItemVolumeTemp.StringValues;
                         Unsaved = true;
                     }
                     else if (FileExists(lvItemVolumeTemp.ListingFile))
@@ -89,6 +88,7 @@ namespace DoubleFile
                         continue;
                     }
 
+                    lvItem.StringValues = lvItemVolumeTemp.StringValues;
                     break;
                 }
             });

@@ -372,7 +372,7 @@ namespace Local
             InsertSizeMarkers(listLVdiffVol);
             nProgressDenominator += dictUnique.Count;
 
-            foreach (var listNodes in dictUnique)
+            foreach (var kvp in dictUnique)
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator);
 
@@ -381,7 +381,7 @@ namespace Local
                     return;
                 }
 
-                var treeNode = listNodes.Value;
+                var treeNode = kvp.Value;
 
                 MBoxStatic.Assert(1305.6321, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
@@ -611,7 +611,8 @@ namespace Local
                     }
 
 
-                    MBoxStatic.Assert(1305.6308, new int[] { UtilColor.Empty, UtilColor.DarkBlue }.Contains(treeNode.ForeColor));
+                    MBoxStatic.Assert(1305.6308, new[] { UtilColor.Empty, UtilColor.DarkBlue }
+                        .Contains(treeNode.ForeColor));
                     treeNode.ForeColor = UtilColor.Firebrick;
 
                     var bDifferentVols = false;
@@ -632,7 +633,7 @@ namespace Local
                             continue;
                         }
 
-                        var rootNodeDatum_A = (treeNode.Tag as RootNodeDatum);
+                        var rootNodeDatum_A = (rootNode_A.Tag as RootNodeDatum);
 
                         if (null == rootNodeDatum_A)      // this check is new 2/13/15 and has never been hit
                         {

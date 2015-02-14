@@ -57,7 +57,7 @@ namespace DoubleFile
         internal static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
             source
-                .All(item => { action(item); return false; });
+                .All(item => { action(item); return true; });
         }
 
         internal static bool HasOnlyOne(this System.Collections.IList source)

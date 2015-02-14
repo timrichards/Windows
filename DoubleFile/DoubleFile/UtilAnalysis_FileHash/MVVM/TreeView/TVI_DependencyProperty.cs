@@ -76,7 +76,7 @@ namespace DoubleFile
                     return;
                 }
 
-                var tvivm = m_TVIVM;
+                TreeViewItem_FileHashVM tvivm = m_TVIVM;
 
                 if (tvivm == null)      // DisconnectedItem
                 {
@@ -84,10 +84,9 @@ namespace DoubleFile
                     return;
                 }
 
-                var ptTVI = TVIFE.TranslatePoint(new Point(0, 0), ScrollViewer);
+                System.Windows.Point ptTVI = TVIFE.TranslatePoint(new System.Windows.Point(0, 0), ScrollViewer);
 
-                if ((ptTVI.Y >= 0) &&
-                    (ptTVI.Y < ScrollViewer.ViewportHeight))
+                if ((ptTVI.Y >= 0) && (ptTVI.Y < ScrollViewer.ViewportHeight))
                 {
                     UtilProject.WriteLine("ViewportHeight " + nBringIntoViewAttempts + " " + tvivm.Text);
                     tvivmSelected = tvivm;
@@ -159,8 +158,7 @@ namespace DoubleFile
             }
             else
             {
-                if (new[] { WaitingToSelect.EphemeralExpandedPos, 0, ScrollViewer.ScrollableHeight }
-                    .Contains(ScrollViewer.VerticalOffset))
+                if (new double[] { WaitingToSelect.EphemeralExpandedPos, 0, ScrollViewer.ScrollableHeight }.Contains(ScrollViewer.VerticalOffset))
                 {
                     if (++nAttempts > 0)
                     {
@@ -221,38 +219,38 @@ namespace DoubleFile
 
         static void OnLoaded(object sender, EventArgs e)
         {
-            if (HeaderHeight > 0)
+            if (TVI_DependencyProperty.HeaderHeight > 0)
             {
                 return;
             }
 
-            var tvife = sender as TreeViewItem;
+            TreeViewItem tvife = sender as TreeViewItem;
 
             if (tvife == null)
             {
                 return;
             }
 
-            var header = tvife.Template.FindName("PART_Header", tvife) as FrameworkElement;
+            FrameworkElement header = (FrameworkElement)tvife.Template.FindName("PART_Header", tvife);
 
             if (header != null)
             {
-                HeaderHeight = header.ActualHeight;
+                TVI_DependencyProperty.HeaderHeight = header.ActualHeight;
             }
         }
 
         static void OnDeselect(object sender, RoutedEventArgs e)
         {
-            if (ReferenceEquals(sender, e.OriginalSource))
+            if (Object.ReferenceEquals(sender, e.OriginalSource))
             {
-                var tvife = sender as TreeViewItem;
+                TreeViewItem tvife = sender as TreeViewItem;
 
                 if (tvife == null)
                 {
                     return;
                 }
 
-                var tvivm = tvife.DataContext as TreeViewItem_FileHashVM;
+                TreeViewItem_FileHashVM tvivm = tvife.DataContext as TreeViewItem_FileHashVM;
 
                 if (tvivm == null)      // DisconnectedItem
                 {
@@ -267,18 +265,18 @@ namespace DoubleFile
 
         static void OnSelect(object sender, RoutedEventArgs e)
         {
-            if (ReferenceEquals(sender, e.OriginalSource) == false)
+            if (Object.ReferenceEquals(sender, e.OriginalSource) == false)
             {
             }
 
-            var tvife = sender as TreeViewItem;
+            TreeViewItem tvife = sender as TreeViewItem;
 
             if (tvife == null)
             {
                 return;
             }
 
-            var tvivm = tvife.DataContext as TreeViewItem_FileHashVM;
+            TreeViewItem_FileHashVM tvivm = tvife.DataContext as TreeViewItem_FileHashVM;
 
             if (tvivm == null)      // DisconnectedItem
             {
@@ -286,7 +284,7 @@ namespace DoubleFile
                 return;
             }
 
-            var waitingToSelect = WaitingToSelect;
+            TreeViewItem_FileHashVM waitingToSelect = WaitingToSelect;
 
             if (tvivm == waitingToSelect)   // LV programmatic
             {
@@ -294,10 +292,9 @@ namespace DoubleFile
                 SetWaitingToSelect(null);
                 nBringIntoViewAttempts = -1;
 
-                var ptTVI = tvife.TranslatePoint(new Point(0, 0), ScrollViewer);
+                System.Windows.Point ptTVI = tvife.TranslatePoint(new System.Windows.Point(0, 0), ScrollViewer);
 
-                if ((ptTVI.Y >= 0) &&
-                    (ptTVI.Y < ScrollViewer.ViewportHeight))
+                if ((ptTVI.Y >= 0) && (ptTVI.Y < ScrollViewer.ViewportHeight))
                 {
                     UtilProject.WriteLine("ViewportHeight A " + tvivm.Text);
                     tvivmSelected = tvivm;
@@ -312,7 +309,7 @@ namespace DoubleFile
                 nBringIntoViewAttempts = 0;
                 StartTimer("5 " + tvivm.Text);
             }
-            else if (false == ReferenceEquals(sender, e.OriginalSource))
+            else if (Object.ReferenceEquals(sender, e.OriginalSource) == false)
             {
                 return;
             }

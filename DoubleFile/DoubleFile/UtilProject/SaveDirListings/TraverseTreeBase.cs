@@ -8,14 +8,6 @@ namespace DoubleFile
     {
         abstract class TraverseTreeBase
         {
-            protected readonly GlobalData_Base gd = null;
-            protected long LengthRead { get; private set; }
-
-            protected List<string> ErrorList { get; private set; }
-
-            protected bool m_bThreadAbort = false;
-            protected readonly LVitem_ProjectVM LVitemProjectVM = null;
-
             protected TraverseTreeBase(GlobalData_Base gd_in,
                 LVitem_ProjectVM lvProjectVM)
             {
@@ -28,9 +20,7 @@ namespace DoubleFile
                 return ImplementationDetails();
             }
 
-            protected void WriteDirectoryListing(TextWriter fs,
-                IDictionary<string, HashStruct> dictHash,
-                IReadOnlyDictionary<string, string> dictException_FileRead)
+            protected void WriteDirectoryListing(TextWriter fs, ConcurrentDictionary<string, HashStruct> dictHash, Dictionary<string, string> dictException_FileRead)
             {
                 ImplementationDetails(fs, dictHash, dictException_FileRead);
             }
@@ -44,8 +34,8 @@ namespace DoubleFile
             /// <returns>File list if first pass</returns>
             private IReadOnlyList<string> ImplementationDetails(
                 TextWriter fs = null,
-                IDictionary<string, HashStruct> dictHash = null,
-                IReadOnlyDictionary<string, string> dictException_FileRead = null)
+                ConcurrentDictionary<string, HashStruct> dictHash = null,
+                Dictionary<string, string> dictException_FileRead = null)
             {
                 var stackDirs = new Stack<Win32FindFileStatic.DATUM>(64);
                 Win32FindFileStatic.DATUM winRoot;
@@ -56,9 +46,9 @@ namespace DoubleFile
                 var listFilePaths = new List<string>();
 
                 MBoxStatic.Assert(0, LengthRead == 0);
-                MBoxStatic.Assert(0, m_nFilesRead == 0);
+                MBoxStatic.Assert(0, FilesRead == 0);
                 LengthRead = 0;
-                m_nFilesRead = 0;
+                FilesRead = 0;
 
                 while (false == stackDirs.IsEmpty())
                 {
@@ -73,11 +63,11 @@ namespace DoubleFile
                     var listSubDirs = new List<Win32FindFileStatic.DATUM>();
                     var listFiles = new List<Win32FindFileStatic.DATUM>();
 
-                    if (false == Win32FindFileStatic.GetDirectory(strFullPath, ref listSubDirs, ref listFiles))
+                    if (Win32FindFileStatic.GetDirectory(strFullPath, ref listSubDirs, ref listFiles) == false)
                     {
                         if (fs != null)
                         {
-                            ErrorList.Add(FormatString(strDir: strFullPath,
+                            m_listErrors.Add(FormatString(strDir: strFullPath,
                                 strError1: new System.ComponentModel.Win32Exception(
                                     System.Runtime.InteropServices.Marshal.GetLastWin32Error()).Message,
                                 strError2: strError2_Dir));
@@ -104,12 +94,10 @@ namespace DoubleFile
                         {
                             if (fs != null)
                             {
-                                var strErrorDir = winFile.strAltFileName.Substring(0,
-                                    winFile.strAltFileName.LastIndexOf('\\'));
+                                var strErrorDir = winFile.strAltFileName.Substring(0, winFile.strAltFileName.LastIndexOf('\\'));
 
                                 CheckNTFS_chars(ref strErrorDir);
-                                ErrorList.Add(FormatString(strFile: strFile, strDir: strErrorDir,
-                                    strError2: strError2_File));
+                                m_listErrors.Add(FormatString(strFile: strFile, strDir: strErrorDir, strError2: strError2_File));
                             }
 
                             continue;
@@ -131,13 +119,12 @@ namespace DoubleFile
                                 bHasLength = true;
                                 LengthRead += fi.Size;
                                 nDirLength += fi.Size;
-                                ++m_nFilesRead;
+                                ++FilesRead;
                             }
 
                             string strHash = null;
 
-                            if ((null != dictHash) &&
-                                dictHash.ContainsKey(winFile.strAltFileName))
+                            if (dictHash.ContainsKey(winFile.strAltFileName))
                             {
                                 strHash = dictHash[winFile.strAltFileName].ToString();
                             }
@@ -149,8 +136,7 @@ namespace DoubleFile
                                 strError1 = "Path Length: " + winFile.strAltFileName.Length.ToString();
                             }
 
-                            if ((null != dictException_FileRead) &&
-                                (dictException_FileRead.ContainsKey(strFile)))
+                            if (dictException_FileRead.ContainsKey(strFile))
                             {
                                 strError2_File += " " + dictException_FileRead[strFile];
                                 strError2_File = strError2_File.TrimStart();
@@ -168,7 +154,7 @@ namespace DoubleFile
 
                         if (strFullPath.Length > 240)
                         {
-                            strError1 = "Path Length: " + strFullPath.Length;
+                            strError1 = "Path Length: " + strFullPath.Length.ToString();
                         }
 
                         MBoxStatic.Assert(1306.7308, bHasLength == (nDirLength > 0));
@@ -176,24 +162,20 @@ namespace DoubleFile
 
                         var di = new Win32FindFileStatic.FileData(winDir);
 
-                        if (strFullPath.EndsWith(@":\"))                            // root directory
+                        if (strFullPath.EndsWith(@":\"))                        // root directory
                         {
-                            MBoxStatic.Assert(1306.7302, di.IsValid == false);      // yes, yes...
+                            MBoxStatic.Assert(1306.7302, di.IsValid == false);        // yes, yes...
                             MBoxStatic.Assert(1306.7303, strFullPath.Length == 3);
-                            fs.WriteLine(FormatString(strDir: strFullPath, nLength: nDirLength,
-                                strError1: strError1, strError2: strError2_Dir));
+                            fs.WriteLine(FormatString(strDir: strFullPath, nLength: nDirLength, strError1: strError1, strError2: strError2_Dir));
                         }
                         else
                         {
                             MBoxStatic.Assert(1306.7304, di.IsValid);
-                            fs.WriteLine(FormatString(strDir: strFullPath, dtCreated: di.CreationTime,
-                                strAttributes: ((int)di.Attributes).ToString("X"),
-                                dtModified: di.LastWriteTime, nLength: nDirLength,
-                                strError1: strError1, strError2: strError2_Dir));
+                            fs.WriteLine(FormatString(strDir: strFullPath, dtCreated: di.CreationTime, strAttributes: ((int)di.Attributes).ToString("X"), dtModified: di.LastWriteTime, nLength: nDirLength, strError1: strError1, strError2: strError2_Dir));
                         }
                     }
 
-                    foreach (var winData in listSubDirs)
+                    foreach (Win32FindFileStatic.DATUM winData in listSubDirs)
                     {
                         stackDirs.Push(winData);
                     }
@@ -202,7 +184,15 @@ namespace DoubleFile
                 return listFilePaths;
             }
 
-            long m_nFilesRead = 0;
+            protected readonly GlobalData_Base gd = null;
+            protected long LengthRead { get; private set; }
+            protected long FilesRead { get; private set; }
+
+            List<string> m_listErrors = new List<string>();
+            protected IReadOnlyList<string> ErrorList { get { return m_listErrors; } }
+
+            protected bool m_bThreadAbort = false;
+            protected readonly LVitem_ProjectVM LVitemProjectVM = null;
         }
     }
 }

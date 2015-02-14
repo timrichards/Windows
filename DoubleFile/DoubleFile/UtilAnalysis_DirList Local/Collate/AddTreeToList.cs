@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using DoubleFile;
+using System.Windows.Media;
 
 namespace Local
 {
@@ -32,7 +34,6 @@ namespace Local
                 if (treeNode_in == null)
                 {
                     MBoxStatic.Assert(1305.6302, false);
-                    return;
                 }
 
                 var treeNode = treeNode_in;
@@ -42,7 +43,7 @@ namespace Local
                     m_listTreeNodes.Add(treeNode);
                     ++Count;
 
-                    var nodeDatum = treeNode.Tag as NodeDatum;
+                    var nodeDatum = (NodeDatum)treeNode.Tag;
 
                     if (nodeDatum == null)
                     {
@@ -52,8 +53,7 @@ namespace Local
 
                     if ((treeNode.ForeColor == UtilColor.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
                     {
-                        MBoxStatic.Assert(1305.6304, (false == nodeDatum.m_listClones.IsEmpty()) &&
-                            (false == nodeDatum.m_bDifferentVols));
+                        MBoxStatic.Assert(1305.6304, (false == nodeDatum.m_listClones.IsEmpty()) && (nodeDatum.m_bDifferentVols == false));
                         m_listSameVol.Add(treeNode);
                     }
 
@@ -69,11 +69,10 @@ namespace Local
 
                     if (treeNode.FirstNode != null)
                     {
-                        Go(treeNode.FirstNode, bCloneOK ||
-                            (new[] { UtilColor.SteelBlue, UtilColor.DarkBlue }.Contains(treeNode.ForeColor)));
+                        Go((LocalTreeNode)treeNode.FirstNode, bCloneOK || (new int[] { UtilColor.SteelBlue, UtilColor.DarkBlue }.Contains(treeNode.ForeColor)));
                     }
                 }
-                while (bNextNode && ((treeNode = treeNode.NextNode) != null));
+                while (bNextNode && ((treeNode = (LocalTreeNode)treeNode.NextNode) != null));
             }
 
             readonly UList<LocalTreeNode> m_listTreeNodes = null;

@@ -60,12 +60,12 @@ namespace DoubleFile
         [Serializable]
         internal class FileData
         {
-            readonly FileAttributes m_Attributes;
-            readonly DateTime m_CreationTimeUtc;
-            readonly DateTime m_LastAccessTimeUtc;
-            readonly DateTime m_LastWriteTimeUtc;
-            readonly long m_Size;
-            readonly bool m_bValid = false;
+            FileAttributes m_Attributes;
+            DateTime m_CreationTimeUtc;
+            DateTime m_LastAccessTimeUtc;
+            DateTime m_LastWriteTimeUtc;
+            long m_Size;
+            bool m_bValid = false;
 
             internal FileAttributes Attributes { get { return m_Attributes; } }
             internal DateTime CreationTimeUtc { get { return m_CreationTimeUtc; } }
@@ -76,11 +76,9 @@ namespace DoubleFile
 
             internal static bool WinFile(string strFile, out DATUM winFindData)
             {
-                var handle = FindFirstFileExW(@"\\?\" + strFile, IndexInfoLevels.FindExInfoBasic,
-                    out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero,
-                    FIND_FIRST_EX_LARGE_FETCH);
+                IntPtr handle = FindFirstFileExW(@"\\?\" + strFile, IndexInfoLevels.FindExInfoBasic, out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
 
-                winFindData.strAltFileName = strFile.Replace(@"\\", @"\");          // 8.3 not used
+                winFindData.strAltFileName = strFile.Replace(@"\\", @"\");                        // 8.3 not used
                 return (handle != InvalidHandleValue);
             }
 
@@ -124,9 +122,7 @@ namespace DoubleFile
         internal static bool GetDirectory(string strDir, ref List<DATUM> listDirs, ref List<DATUM> listFiles)
         {
             DATUM winFindData;
-            var handle = FindFirstFileExW(@"\\?\" + strDir + @"\*", IndexInfoLevels.FindExInfoBasic,
-                out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero,
-                FIND_FIRST_EX_LARGE_FETCH);
+            IntPtr handle = FindFirstFileExW(@"\\?\" + strDir + @"\*", IndexInfoLevels.FindExInfoBasic, out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero, FIND_FIRST_EX_LARGE_FETCH);
 
             if (handle == InvalidHandleValue)
             {
@@ -143,8 +139,7 @@ namespace DoubleFile
                     continue;
                 }
 
-                winFindData.strAltFileName = (strDir + '\\' +
-                    winFindData.strFileName).Replace(@"\\", @"\");    // 8.3 not used
+                winFindData.strAltFileName = (strDir + '\\' + winFindData.strFileName).Replace(@"\\", @"\");     // 8.3 not used
 
                 if ((winFindData.fileAttributes & FileAttributes.Directory) != 0)
                 {
@@ -154,8 +149,8 @@ namespace DoubleFile
                         const uint IO_REPARSE_TAG_SYMLINK = 0xA000000C;
 
                         // stay on source volume. Treat mount points and symlinks as files.
-                        if (((winFindData.dwReserved0 & IO_REPARSE_TAG_MOUNT_POINT) != 0) ||
-                            ((winFindData.dwReserved0 & IO_REPARSE_TAG_SYMLINK) != 0))
+                        if (((winFindData.dwReserved0 & IO_REPARSE_TAG_MOUNT_POINT) != 0)
+                            || ((winFindData.dwReserved0 & IO_REPARSE_TAG_SYMLINK) != 0))
                         {
                             listFiles.Add(winFindData);
                             continue;

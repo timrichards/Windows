@@ -26,30 +26,30 @@ namespace DoubleFile
 
         internal bool ContainsKey(string s)
         {
-            if (s != m_strPrevQuery)
+            if (s != strPrevQuery)
             {
-                m_strPrevQuery = s;
-                m_nodePrevQuery = this[s];
+                strPrevQuery = s;
+                nodePrevQuery = this[s];
             }
 
-            return (m_nodePrevQuery != null);
+            return (nodePrevQuery != null);
         }
 
         internal LocalTreeNode this[string s]
         {
             get
             {
-                if (s == m_strPrevQuery)
+                if (s == strPrevQuery)
                 {
-                    return m_nodePrevQuery;
+                    return nodePrevQuery;
                 }
                 else
                 {
-                    m_strPrevQuery = s;
+                    strPrevQuery = s;
                     Keys
                         .Where(t => t.Text == s)
-                        .FirstOnlyAssert(t => m_nodePrevQuery = t);
-                    return m_nodePrevQuery;                   // TODO: Trim? ignore case? Probably neither.
+                        .FirstOnlyAssert(t => nodePrevQuery = t);
+                    return nodePrevQuery;                   // TODO: Trim? ignore case? Probably neither.
                 }
             }
         }
@@ -93,7 +93,7 @@ namespace DoubleFile
         }
 
         readonly LocalTV m_treeView = null;
-        string m_strPrevQuery = null;
-        LocalTreeNode m_nodePrevQuery = null;
+        string strPrevQuery = null;
+        LocalTreeNode nodePrevQuery = null;
     }
 }

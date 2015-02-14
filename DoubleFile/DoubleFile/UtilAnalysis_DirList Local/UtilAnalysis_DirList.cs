@@ -34,24 +34,29 @@ namespace DoubleFile
             {
                 if (dispatcher.InvokeRequired)
                 {
-                    return args == null ?
-                        dispatcher.Invoke(action) :
-                        dispatcher.Invoke(action, (object)args);
-                }
-
-                var action1 = action as Action;
-
-                if (action1 != null)
-                {
-                    action1();
+                    if (args == null)
+                    {
+                        return dispatcher.Invoke(action);
+                    }
+                    else
+                    {
+                        return dispatcher.Invoke(action, (object)args);
+                    }
                 }
                 else
                 {
-                    var boolAction = action as BoolAction;
-
-                    return boolAction != null ?
-                        boolAction() :
-                        action.DynamicInvoke(args);     // late-bound and slow
+                    if (action is Action)
+                    {
+                        ((Action)action)();
+                    }
+                    else if (action is BoolAction)
+                    {
+                        return ((BoolAction)action)();
+                    }
+                    else
+                    {
+                        return action.DynamicInvoke(args);     // late-bound and slow
+                    }
                 }
             }
             catch (ObjectDisposedException)
@@ -74,8 +79,8 @@ namespace DoubleFile
 
         internal static string DecodeAttributes(string strAttr)
         {
-            var nAttr = (FileAttributes)Convert.ToInt32(strAttr, 16);
-            var str = "";
+            FileAttributes nAttr = (FileAttributes)Convert.ToInt32(strAttr, 16);
+            string str = "";
 
             if ((nAttr & FileAttributes.ReparsePoint) != 0) str += " ReparsePoint";
             if ((nAttr & FileAttributes.Normal) != 0) str += " Normal";
@@ -95,35 +100,62 @@ namespace DoubleFile
             return str;
         }
 
+        static string FormatLine(string strLineType, long nLineNo, string strLine_in = null)
+        {
+            string strLine_out = strLineType + "\t" + nLineNo;
+
+            if (false == string.IsNullOrWhiteSpace(strLine_in))
+            {
+                strLine_out += '\t' + strLine_in;
+            }
+
+            return strLine_out;
+        }
+
         internal static string FormatSize(string in_str, bool bBytes = false)
         {
             return FormatSize(ulong.Parse(in_str ?? "0"), bBytes);
         }
 
+        internal static string FormatSize(long nLength, bool bBytes = false, bool bNoDecimal = false)
+        {
+            return FormatSize((ulong)nLength, bBytes, bNoDecimal);
+        }
+
         internal static string FormatSize(ulong nLength, bool bBytes = false, bool bNoDecimal = false)
         {
-            var nT = nLength / 1024.0 / 1024.0 / 1024 / 1024 - .05;
-            var nG = nLength / 1024.0 / 1024 / 1024 - .05;
-            var nM = nLength / 1024.0 / 1024 - .05;
-            var nK = nLength / 1024.0 - .05;     // Windows Explorer seems to not round
-            const string kStrFmt_big = "###,##0.0";
-            var strFormat = bNoDecimal ? "###,###" : kStrFmt_big;
+            double nT = nLength / 1024.0 / 1024.0 / 1024 / 1024 - .05;
+            double nG = nLength / 1024.0 / 1024 / 1024 - .05;
+            double nM = nLength / 1024.0 / 1024 - .05;
+            double nK = nLength / 1024.0 - .05;     // Windows Explorer seems to not round
+            string strFmt_big = "###,##0.0";
+            string strFormat = bNoDecimal ? "###,###" : strFmt_big;
             string strSz = null;
 
-            if (((int)nT) > 0) strSz = nT.ToString(kStrFmt_big) + " TB";
-            else if (((int)nG) > 0) strSz = nG.ToString(kStrFmt_big) + " GB";
+            if (((int)nT) > 0) strSz = nT.ToString(strFmt_big) + " TB";
+            else if (((int)nG) > 0) strSz = nG.ToString(strFmt_big) + " GB";
             else if (((int)nM) > 0) strSz = nM.ToString(strFormat) + " MB";
             else if (((int)nK) > 0) strSz = nK.ToString(strFormat) + " KB";
             else strSz = "1 KB";                    // Windows Explorer mins at 1K
 
             if (nLength > 0)
             {
-                return strSz + (bBytes ?
-                    (" (" + nLength.ToString("###,###,###,###,###") + " bytes)") :
-                    string.Empty);
+                return strSz + (bBytes ? (" (" + nLength.ToString("###,###,###,###,###") + " bytes)") : string.Empty);
+            }
+            else
+            {
+                return "0 bytes";
+            }
+        }
+
+        internal static void SetProperty<T>(object input, T outObj, Expression<Func<T, object>> outExpr)
+        {
+            if (input == null)
+            {
+                return;
             }
 
-            return "0 bytes";
+            ((PropertyInfo)((MemberExpression)outExpr.Body).Member).SetValue(outObj, input, null);
         }
 
         static internal void Write(string str)

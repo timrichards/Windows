@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using DoubleFile;
 
 namespace Local
@@ -8,7 +7,14 @@ namespace Local
     {
         internal static int Go(IReadOnlyList<LocalTreeNode> listNodes)
         {
-            return listNodes.Sum(treeNode => Go(treeNode, bNextNode: false));
+            int nCount = 0;
+
+            foreach (var treeNode in listNodes)
+            {
+                nCount += Go(treeNode, bNextNode: false);
+            }
+
+            return nCount;
         }
 
         internal static int Go(LocalTreeNode treeNode_in, bool bNextNode = true)

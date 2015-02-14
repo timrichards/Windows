@@ -72,12 +72,11 @@ namespace DoubleFile
         {
             if (source == null) return null;
 
-            var s = string
-                .Join("", source.ToString()
-                .Where(c => Char.IsControl(c) == false))
-                .Trim();
+            string s = string.Join("", source.ToString().Cast<char>().Where(c => Char.IsControl(c) == false)).Trim();
 
-            return (s.Length > 0) ? s : null;
+            if (s.Length == 0) return null;                             // Returns null if empty
+
+            return s;
         }
     }
 }

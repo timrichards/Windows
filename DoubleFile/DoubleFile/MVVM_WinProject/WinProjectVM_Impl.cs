@@ -25,7 +25,10 @@ namespace DoubleFile
                 return;
             }
 
-            var dlg = new Microsoft.Win32.OpenFileDialog {Title = "Open Project", Filter = ksProjectFilter};
+            var dlg = new Microsoft.Win32.OpenFileDialog();
+
+            dlg.Title = "Open Project";
+            dlg.Filter = ksProjectFilter;
 
             if (dlg.ShowDialog() ?? false)
             {
@@ -45,13 +48,12 @@ namespace DoubleFile
 
             while (true)
             {
-                var dlg = new Microsoft.Win32.SaveFileDialog
-                {
-                    Title = "Save Project",
-                    Filter = ksProjectFilter,
-                    FileName = strFilename,
-                    OverwritePrompt = false
-                };
+                var dlg = new Microsoft.Win32.SaveFileDialog();
+
+                dlg.Title = "Save Project";
+                dlg.Filter = ksProjectFilter;
+                dlg.FileName = strFilename;
+                dlg.OverwritePrompt = false;
 
                 if (dlg.ShowDialog() ?? false)
                 {
@@ -103,12 +105,11 @@ namespace DoubleFile
 
         internal void OpenListingFile()
         {
-            var dlg = new Microsoft.Win32.OpenFileDialog
-            {
-                Title = "Open Listing File",
-                Filter = ksListingFilter,
-                Multiselect = true
-            };
+            var dlg = new Microsoft.Win32.OpenFileDialog();
+
+            dlg.Title = "Open Listing File";
+            dlg.Filter = ksListingFilter;
+            dlg.Multiselect = true;
 
             if (dlg.ShowDialog() ?? false)
             {

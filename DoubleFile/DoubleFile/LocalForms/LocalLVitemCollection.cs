@@ -15,7 +15,7 @@ namespace DoubleFile
 
         internal void AddRange(IReadOnlyList<string> lsItems)
         {
-            foreach (var s in lsItems)
+            foreach (string s in lsItems)
             {
                 Add(new LocalLVitem(s, m_listView));
             }
@@ -23,7 +23,7 @@ namespace DoubleFile
 
         internal void AddRange(IReadOnlyList<LocalLVitem> lsItems)
         {
-            foreach (var lvItem in lsItems)
+            foreach (LocalLVitem lvItem in lsItems)
             {
                 lvItem.ListView = m_listView;
                 Add(lvItem);
@@ -32,13 +32,13 @@ namespace DoubleFile
 
         internal bool ContainsKey(string s)
         {
-            if (s != m_strPrevQuery)
+            if (s != strPrevQuery)
             {
-                m_strPrevQuery = s;
-                m_lvItemPrevQuery = this[s];
+                strPrevQuery = s;
+                lvItemPrevQuery = this[s];
             }
 
-            return (m_lvItemPrevQuery != null);
+            return (lvItemPrevQuery != null);
         }
 
         internal new LocalLVitem this[int i] { get { return (i < Count) ? base[i] : NullValue; } }
@@ -47,26 +47,22 @@ namespace DoubleFile
         {
             get
             {
-                if (s == m_strPrevQuery)
+                if (s == strPrevQuery)
                 {
-                    return m_lvItemPrevQuery;
+                    return lvItemPrevQuery;
                 }
                 else
                 {
-                    m_strPrevQuery = s;
-                    m_lvItemPrevQuery = NullValue;
-                    Keys
-                        .Where(t => t.Text == s)
-                        .FirstOnlyAssert(lvItem => m_lvItemPrevQuery = lvItem);
-                    return m_lvItemPrevQuery;                   // TODO: Trim? ignore case? Probably neither.
+                    strPrevQuery = s;
+                    lvItemPrevQuery = (LocalLVitem)Keys.Where(t => t.Text == s) ?? NullValue;
+                    return lvItemPrevQuery;                   // TODO: Trim? ignore case? Probably neither.
                 }
             }
         }
 
         static readonly LocalLVitem NullValue = new LocalLVitem();
-
         readonly LocalLV m_listView = null;
-        string m_strPrevQuery = null;
-        LocalLVitem m_lvItemPrevQuery = null;
+        string strPrevQuery = null;
+        LocalLVitem lvItemPrevQuery = null;
     }
 }

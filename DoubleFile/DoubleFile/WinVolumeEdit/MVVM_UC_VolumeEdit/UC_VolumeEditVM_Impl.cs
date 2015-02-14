@@ -5,12 +5,10 @@ namespace DoubleFile
     {
         internal void EditSourcePath()
         {
-            var dlg = new System.Windows.Forms.FolderBrowserDialog
-            {
-                SelectedPath = SourcePath_CurrentText(),
-                Description = "Source path of the directory for which a listing file is to be created."
-            };
+            var dlg = new System.Windows.Forms.FolderBrowserDialog();
 
+            dlg.SelectedPath = SourcePath_CurrentText();
+            dlg.Description = "Source path of the directory for which a listing file is to be created.";
 
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -20,7 +18,7 @@ namespace DoubleFile
 
         internal void Probe()
         { 
-            var strPath = SourcePath_CurrentText();
+            string strPath = SourcePath_CurrentText();
 
             if (IsOKenabled())
             {
@@ -38,14 +36,13 @@ namespace DoubleFile
 
         internal void EditListingFile()
         {
-            var strPath = ListingFile_CurrentText();
-            var dlg = new Microsoft.Win32.SaveFileDialog
-            {
-                FileName = strPath,
-                Filter = WinProjectVM.ksListingFilter,
-                OverwritePrompt = false,
-                Title = "Save Listing File"
-            };
+            string strPath = ListingFile_CurrentText();
+            var dlg = new Microsoft.Win32.SaveFileDialog();
+
+            dlg.FileName = strPath;
+            dlg.Filter = WinProjectVM.ksListingFilter;
+            dlg.OverwritePrompt = false;
+            dlg.Title = "Save Listing File";
 
             if (dlg.ShowDialog() ?? false)
             {

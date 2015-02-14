@@ -52,12 +52,20 @@ namespace DoubleFile
             var lsDupes = m_DictFiles[key];
             var nLine = int.Parse(asLine[1]);
 
-            lsRet.AddRange(lsDupes.Select(lookup => new DuplicateStruct
+            foreach (var lookup in lsDupes)
             {
-                LVitemProjectVM = DictItemNumberToLV[GetLVitemProjectVM(lookup)],
-                LineNumber = GetLineNumber(lookup)
-            }).Where(dupe => (dupe.LVitemProjectVM.ListingFile != strListingFile) || // exactly once every query
-                             (dupe.LineNumber != nLine)));
+                var dupe = new DuplicateStruct
+                {
+                    LVitemProjectVM = DictItemNumberToLV[GetLVitemProjectVM(lookup)],
+                    LineNumber = GetLineNumber(lookup)
+                };
+
+                if ((dupe.LVitemProjectVM.ListingFile != strListingFile) ||     // exactly once every query
+                    (dupe.LineNumber != nLine))
+                {
+                    lsRet.Add(dupe);
+                }
+            }
 
             return lsRet;
         }
@@ -152,8 +160,17 @@ namespace DoubleFile
 
                             lock (ls)
                             {
-                                ls.Insert(ls.TakeWhile(nLookup => lookup >= nLookup).Count(),
-                                    lookup);
+                                var nIndex = 0;
+
+                                foreach (var nLookup in ls)
+                                {
+                                    if (lookup < nLookup)
+                                        break;
+
+                                    ++nIndex;
+                                }
+
+                                ls.Insert(nIndex, lookup);
                             }
                         }
                     }

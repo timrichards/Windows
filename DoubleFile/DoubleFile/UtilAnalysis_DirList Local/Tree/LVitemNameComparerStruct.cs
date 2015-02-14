@@ -10,10 +10,7 @@ namespace Local
     {
         public bool Equals(LocalLVitem x, LocalLVitem y)
         {
-            return (x != null) &&
-                (y != null) &&
-                (false == string.IsNullOrWhiteSpace(x.Name)) &&
-                x.Name.Equals(y.Name);
+            return (x != null) && (y != null) && (false == string.IsNullOrWhiteSpace(x.Name)) && x.Name.Equals(y.Name);
         }
 
         public int GetHashCode(LocalLVitem obj)
@@ -54,7 +51,7 @@ namespace Local
             if (lv1.TopItem.Index > 0) { return; }
             if (lv2.TopItem == null) { return; }
 
-            var nIx = lv2.TopItem.Index - Math.Abs(lv2.Items.Count - lv1.Items.Count);
+            int nIx = lv2.TopItem.Index - Math.Abs(lv2.Items.Count - lv1.Items.Count);
 
             if (nIx < 0)
             {

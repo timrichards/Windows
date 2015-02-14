@@ -20,7 +20,7 @@ namespace DoubleFile
                 MBoxStatic.Assert(0, value.Length <= NumCols);
                 marr = value; 
 
-                for (var nCol = 0; nCol < marr.Length; ++nCol)
+                for (int nCol = 0; nCol < marr.Length; ++nCol)
                 {
                     RaisePropertyChanged(PropertyNames[nCol]);
                 }
@@ -127,7 +127,7 @@ namespace DoubleFile
         {
             get
             {
-                var s = s_in.ToLower();
+                string s = s_in.ToLower();
 
                 foreach (var o in m_items)
                 {

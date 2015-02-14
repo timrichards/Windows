@@ -63,7 +63,7 @@ namespace DoubleFile
                         continue;
                     }
 
-                    lvProjectVM.Unsaved = (false == new ProjectFile().SaveProject(lvProjectVM, strFilename));
+                    lvProjectVM.Unsaved |= (false == new ProjectFile().SaveProject(lvProjectVM, strFilename));
                 }
 
                 break;
@@ -108,7 +108,7 @@ namespace DoubleFile
 
             if (dlg.ShowDialog() ?? false)
             {
-                m_lvVM.Unsaved = OpenListingFiles(dlg.FileNames);
+                m_lvVM.Unsaved |= OpenListingFiles(dlg.FileNames);
             }
         }
 

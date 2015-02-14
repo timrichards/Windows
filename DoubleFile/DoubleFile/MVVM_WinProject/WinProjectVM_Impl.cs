@@ -63,7 +63,9 @@ namespace DoubleFile
                         continue;
                     }
 
-                    lvProjectVM.Unsaved = (false == new ProjectFile().SaveProject(lvProjectVM, strFilename));
+                    // if it's saved, don't set it to unsaved if SaveProject() bails.
+                    if (new ProjectFile().SaveProject(lvProjectVM, strFilename))
+                        lvProjectVM.Unsaved = false;
                 }
 
                 break;

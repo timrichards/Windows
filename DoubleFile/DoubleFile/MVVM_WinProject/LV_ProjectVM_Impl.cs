@@ -101,7 +101,7 @@ namespace DoubleFile
 
             if (bFileExists)
             {
-                MBoxStatic.ShowDialog("Listing file exists. Please manually delete it using the Save Listing File dialog\nby clicking the icon button after this alert closes.", "New Listing File");
+                MBoxStatic.ShowDialog("Listing file exists. Please manually delete it using the Save Listing\nFile dialog by clicking the icon button after this alert closes.", "New Listing File");
             }
 
             return bFileExists;

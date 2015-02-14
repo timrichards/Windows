@@ -30,7 +30,7 @@ namespace DoubleFile
             m_process.EnableRaisingEvents = true;
         }
 
-        internal void OpenProject(string strProjectFilename, System.Action<IEnumerable<string>, bool> openListingFiles)
+        internal void OpenProject(string strProjectFilename, Action<IEnumerable<string>, bool> openListingFiles)
         {
             if (Directory.Exists(TempPath))                     // close box/cancel/undo
             {

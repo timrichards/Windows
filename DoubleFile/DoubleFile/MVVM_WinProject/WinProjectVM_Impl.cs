@@ -29,14 +29,14 @@ namespace DoubleFile
 
             if (dlg.ShowDialog() ?? false)
             {
-                new ProjectFile().OpenProject(dlg.FileName, OpenListingFiles);
+                new ProjectFile().OpenProject(dlg.FileName,
+                    (listFiles, bClearItems) => OpenListingFiles(listFiles, bClearItems));
             }
         }
 
         internal void SaveProject()
         {
             SaveProject(m_lvVM);
-            m_lvVM.Unsaved = false;
         }
 
         static internal void SaveProject(LV_ProjectVM lvProjectVM)
@@ -62,10 +62,8 @@ namespace DoubleFile
                         MBoxStatic.ShowDialog("Project file exists. Please manually delete it using the Save Project dialog after this alert closes.", "Save Project");
                         continue;
                     }
-                    else
-                    {
-                        lvProjectVM.Unsaved = (false == new ProjectFile().SaveProject(lvProjectVM, strFilename));
-                    }
+
+                    lvProjectVM.Unsaved = (false == new ProjectFile().SaveProject(lvProjectVM, strFilename));
                 }
 
                 break;
@@ -78,9 +76,7 @@ namespace DoubleFile
 
             while (true)
             {
-                var newVolume = new WinVolumeNew();
-
-                newVolume.LVitemVolumeTemp = new LVitem_ProjectVM(lvItemVolumeTemp);
+                var newVolume = new WinVolumeNew {LVitemVolumeTemp = new LVitem_ProjectVM(lvItemVolumeTemp)};
 
                 if ((newVolume.ShowDialog() ?? false) == false)
                 {
@@ -112,16 +108,14 @@ namespace DoubleFile
 
             if (dlg.ShowDialog() ?? false)
             {
-                OpenListingFiles(dlg.FileNames);
-                m_lvVM.Unsaved = true;
+                m_lvVM.Unsaved = OpenListingFiles(dlg.FileNames);
             }
         }
 
-        internal void OpenListingFiles(IEnumerable<string> listFiles, bool bClearItems = false)
+        internal bool OpenListingFiles(IEnumerable<string> listFiles, bool bClearItems = false)
         {
             var sbBadFiles = new System.Text.StringBuilder();
             var bMultiBad = true;
-
             var listItems = new ConcurrentBag<LVitem_ProjectVM>();
 
             if (false == bClearItems)
@@ -169,15 +163,16 @@ namespace DoubleFile
                 thread.Join();
             }
 
-            foreach (var lvItem in listItems.OrderBy(lvItem => lvItem.SourcePath))
-            {
-                m_lvVM.NewItem(lvItem);
-            }
+            var bOpenedFiles = listItems
+                .OrderBy(lvItem => lvItem.SourcePath)
+                .Aggregate(false, (current, lvItem) => m_lvVM.NewItem(lvItem) || current);
 
             if (sbBadFiles.Length > 0)
             {
                 MBoxStatic.ShowDialog("Bad listing file" + (bMultiBad ? "s" : "") + ".\n" + sbBadFiles, "Open Listing File");
             }
+
+            return bOpenedFiles;
         }
     }
 }

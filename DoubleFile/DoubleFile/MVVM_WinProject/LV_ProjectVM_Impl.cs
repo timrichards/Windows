@@ -154,7 +154,7 @@ namespace DoubleFile
                 .ToList()
                 .ForEach(lvItem => Items.Remove(lvItem));
             gd.FileDictionary.Clear();
-            Unsaved = true;
+            Unsaved = (false == Items.IsEmpty());
         }
 
         internal void EditVolumeGroupLabel()
@@ -170,14 +170,14 @@ namespace DoubleFile
             {
                 Selected()
                     .ForEach(lvItem => lvItem.VolumeGroup = dlg.Text);
-
                 Unsaved = true;
             }
         }
 
         internal void ToggleInclude()
         {
-            Selected().ForEach(lvItem => { lvItem.Include = (false == lvItem.Include); });
+            Selected()
+                .ForEach(lvItem => { lvItem.Include = (false == lvItem.Include); });
             gd.FileDictionary.Clear();
             Unsaved = true;
         }

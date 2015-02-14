@@ -76,6 +76,11 @@ namespace DoubleFile
 
         internal void CloseIfNatural()
         {
+            if (m_bClosing)
+            {
+                return;     // get an error otherwise
+            }
+
             if (Aborted)
             {
                 return;     // don't close: there may be an error message
@@ -104,6 +109,8 @@ namespace DoubleFile
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            m_bClosing = true;
+
             if (Aborted)
             {
                 return;     // close
@@ -111,7 +118,7 @@ namespace DoubleFile
 
             if (WindowClosingCallback != null)
             {
-                e.Cancel = (false == WindowClosingCallback());
+                e.Cancel = (false == (m_bClosing = WindowClosingCallback()));
             }
         }
 
@@ -127,5 +134,6 @@ namespace DoubleFile
         }
 
         readonly LV_ProgressVM m_lv = new LV_ProgressVM();
+        bool m_bClosing = false;
     }
 }

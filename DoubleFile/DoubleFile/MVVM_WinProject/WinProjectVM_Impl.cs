@@ -31,6 +31,7 @@ namespace DoubleFile
             {
                 new ProjectFile().OpenProject(dlg.FileName,
                     (listFiles, bClearItems) => OpenListingFiles(listFiles, bClearItems));
+                m_lvVM.Unsaved = false;
             }
         }
 

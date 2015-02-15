@@ -43,7 +43,7 @@ namespace DoubleFile
         {
             Selected().FirstOnlyAssert(lvItem =>
             {
-                LVitem_ProjectVM lvItemVolumeTemp = new LVitem_ProjectVM(lvItem);
+                var lvItemVolumeTemp = new LVitem_ProjectVM(lvItem);
 
                 if (lvItemVolumeTemp.Status == FileParse.ksError)
                 {
@@ -52,7 +52,7 @@ namespace DoubleFile
 
                 while (true)
                 {
-                    WinVolumeEditBase dlg = lvItemVolumeTemp.WouldSave ?
+                    var dlg = lvItemVolumeTemp.WouldSave ?
                         new WinVolumeNew() :
                         (WinVolumeEditBase)new WinVolumeEdit();
 
@@ -96,12 +96,14 @@ namespace DoubleFile
 
         internal bool FileExists(string strListingFile)
         {
-            var bFileExists = System.IO.File.Exists(strListingFile) &&
-                (false == strListingFile.StartsWith(ProjectFile.TempPath) || FileParse.ValidateFile(strListingFile));
+            var bFileExists = File.Exists(strListingFile) &&
+                (false == strListingFile.StartsWith(ProjectFile.TempPath) ||
+                    FileParse.ValidateFile(strListingFile));
 
             if (bFileExists)
             {
-                MBoxStatic.ShowDialog("Listing file exists. Please manually delete it using the Save Listing\nFile dialog by clicking the icon button after this alert closes.", "New Listing File");
+                MBoxStatic.ShowDialog("Listing file exists. Please manually delete it using the Save Listing\n" +
+                    "File dialog by clicking the icon button after this alert closes.", "New Listing File");
             }
 
             return bFileExists;
@@ -191,16 +193,10 @@ namespace DoubleFile
 
             var s = t.ToLower();
 
-            foreach (LVitem_ProjectVM item in m_items)
-            {
-                if ((item.ListingFile.ToLower() == s) &&
-                    (lvItem_Current != item))
-                {
-                    return item;
-                }
-            }
-
-            return null;
+            return m_items.Cast<LVitem_ProjectVM>()
+                .FirstOrDefault(item =>
+                    (item.ListingFile.ToLower() == s) &&
+                    (lvItem_Current != item));
         }
 
         bool ModifyListingFile(LVitem_ProjectVM lvItem_Orig, LVitem_ProjectVM lvItemVolumeTemp, char driveLetter)

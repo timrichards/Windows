@@ -24,7 +24,7 @@ namespace DoubleFile
 
         internal void Clear() { m_DictFiles.Clear(); }
         internal bool IsEmpty { get { return m_DictFiles.IsEmpty(); } }
-        internal void ResetAbortFlag() { m_bThreadAbort = false; }
+        internal void ResetAbortFlag() { IsAborted = false; }
 
         /// <summary>
         /// 
@@ -67,9 +67,9 @@ namespace DoubleFile
         {
             LVprojectVM = lvProjectVM;
             m_statusCallback = statusCallback;
-            m_bThreadAbort = false;
-            m_thread = new Thread(Go);
-            m_thread.IsBackground = true;
+            m_DictFiles.Clear();
+            IsAborted = false;
+            m_thread = new Thread(Go) { IsBackground = true };
             m_thread.Start();
             return this;
         }
@@ -81,11 +81,11 @@ namespace DoubleFile
 
         internal void Abort()
         {
-            m_bThreadAbort = true;
+            IsAborted = true;
             m_thread.Abort();
         }
 
-        internal bool IsAborted { get { return m_bThreadAbort; } }
+        internal bool IsAborted { get; private set; }
 
         void Go()
         {
@@ -120,6 +120,9 @@ namespace DoubleFile
 
                 Parallel.ForEach(LVprojectVM.ItemsCast, lvItem =>
                 {
+                    if (IsAborted)
+                        return;
+
                     var iesLines =
                         File
                         .ReadLines(lvItem.ListingFile)
@@ -134,6 +137,9 @@ namespace DoubleFile
 
                     foreach (var asLine in iesLines)
                     {
+                        if (IsAborted)
+                            return;
+
                         Interlocked.Increment(ref m_nFilesProgress);
 
                         var key = new FileKeyStruct(asLine[10], asLine[7]);
@@ -159,7 +165,13 @@ namespace DoubleFile
                     }
                 });
 
-                m_DictFiles = dictFiles
+                if (IsAborted)
+                {
+                    return;
+                }
+
+                m_DictFiles =
+                    dictFiles
                     .Where(kvp => kvp.Value.Count > 1)
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.AsEnumerable());
             }
@@ -204,7 +216,9 @@ namespace DoubleFile
                     var asLine = strLine.Split('\t');
 
                     m_DictFiles[new FileKeyStruct(asLine[0])] =
-                        asLine.Skip(1).Select(s => Convert.ToInt32(s));
+                        asLine
+                        .Skip(1)
+                        .Select(s => Convert.ToInt32(s));
                 }
             }
         }
@@ -228,7 +242,6 @@ namespace DoubleFile
 
         CreateFileDictStatusDelegate m_statusCallback = null;
         Thread m_thread = null;
-        protected bool m_bThreadAbort = false;
         LV_ProjectVM LVprojectVM = null;
         long m_nFilesTotal = 0;
         long m_nFilesProgress = 0;

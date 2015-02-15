@@ -32,6 +32,7 @@ namespace DoubleFile
                 new ProjectFile().OpenProject(dlg.FileName,
                     (listFiles, bClearItems) => OpenListingFiles(listFiles, bClearItems));
                 m_lvVM.Unsaved = false;
+                gd.FileDictionary.Clear();
             }
         }
 
@@ -109,9 +110,11 @@ namespace DoubleFile
                 Multiselect = true
             };
 
-            if (dlg.ShowDialog() ?? false)
+            if ((dlg.ShowDialog() ?? false) &&
+                OpenListingFiles(dlg.FileNames))
             {
-                m_lvVM.Unsaved |= OpenListingFiles(dlg.FileNames);
+                gd.FileDictionary.Clear();
+                m_lvVM.Unsaved = true;
             }
         }
 

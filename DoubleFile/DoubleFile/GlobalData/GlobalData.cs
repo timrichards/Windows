@@ -6,8 +6,7 @@ namespace DoubleFile
 {
     abstract class GlobalData_Base
     {
-        internal bool WindowClosed;
-
+        internal bool WindowClosed = false;
         internal FileDictionary FileDictionary = null;
     }
 

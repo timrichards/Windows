@@ -117,14 +117,14 @@ namespace DoubleFile
         internal override bool NewItem(string[] arrStr, bool bQuiet = false)
         {
             var lvItem = new LVitem_ProjectVM(arrStr);
-            var bAlreadyInProject = AlreadyInProject(lvItem);
+            var bNotInProject = (false == AlreadyInProject(lvItem));
 
-            if (false == bAlreadyInProject)
+            if (bNotInProject)
             {
                 Add(lvItem, bQuiet);
             }
 
-            return (false == bAlreadyInProject);
+            return (bNotInProject);
         }
 
         internal void RemoveListingFile()
@@ -163,7 +163,8 @@ namespace DoubleFile
         {
             var dlg = new WinVolumeGroup();
 
-            Selected().ToArray().First(lvItem =>
+            Selected()
+                .First(lvItem =>
             {
                 dlg.Text = lvItem.VolumeGroup;
             });
@@ -193,7 +194,7 @@ namespace DoubleFile
 
             var s = t.ToLower();
 
-            return m_items.Cast<LVitem_ProjectVM>()
+            return ItemsCast
                 .FirstOrDefault(item =>
                     (item.ListingFile.ToLower() == s) &&
                     (lvItem_Current != item));

@@ -32,7 +32,7 @@ namespace DoubleFile
             m_ownerWindow = ownerWindow;
             LVprojectVM = new LV_ProjectVM(lvProjectVM_in: lvProjectVM);
 
-            gd = GlobalData.Instance;
+            gd = GlobalData.Reset();
             gd_Tree = new GlobalData_Tree(gd);
             gd.gd_Tree = gd_Tree;
             gd_Search_Path = new GlobalData_Search_Path(gd);
@@ -40,6 +40,11 @@ namespace DoubleFile
 
             gd.m_tmrDoTree.Elapsed += (o, e) =>
             {
+                if (null == gd)
+                {
+                    return;
+                }
+
                 gd.m_tmrDoTree.Stop();
                 gd.m_bRestartTreeTimer = false;
 
@@ -58,6 +63,7 @@ namespace DoubleFile
 
                     DoTree(bKill: gd.m_bKillTree);
                 });
+
                 gd.m_bKillTree = true;
             };
 
@@ -1357,12 +1363,14 @@ namespace DoubleFile
             gd_Tree = null;
             gd_Search_1_2 = null;
             gd_Search_Path = null;
+            Collate.ClearMem();
             m_ownerWindow.Activate();
         }
 
         private void FormAnalysis_DirList_FormDisposed(object sender, EventArgs e)
         {
             form_tmapUserCtl.Dispose();
+            GlobalData.Reset();
         }
 
         void FormAnalysis_DirList_KeyDown(object sender, KeyEventArgs e)

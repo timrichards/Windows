@@ -301,6 +301,11 @@ namespace DoubleFile
 
         void DoTree(bool bKill = false)
         {
+            if (null == gd_Tree)
+            {
+                return;
+            }
+
             if (gd_Tree.m_tree != null)
             {
                 if (bKill == false)

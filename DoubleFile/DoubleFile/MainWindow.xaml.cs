@@ -210,5 +210,10 @@ namespace DoubleFile
 
         GlobalData_Base gd = null;
         readonly GlobalData gd_old = null;
+
+        private void Button_GCcollect_Click(object sender, RoutedEventArgs e)
+        {
+            GC.Collect();
+        }
     }
 }

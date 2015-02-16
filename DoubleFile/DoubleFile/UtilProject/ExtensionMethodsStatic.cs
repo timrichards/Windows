@@ -37,21 +37,26 @@ namespace DoubleFile
             return (source.Count == 0);
         }
 
-        internal static IEnumerator<T> First<T>(this IEnumerable<T> source, Action<T> action)
+        internal static void First<T>(this IEnumerable<T> source, Action<T> action)
         {
-            var enumerator = source.GetEnumerator();
-
-            if (enumerator.MoveNext())
-                action(enumerator.Current);
-
-            return enumerator;
+            source
+                .FirstOrDefault(item =>
+            {
+                action(item);
+                return true;
+            });
         }
 
         internal static void FirstOnlyAssert<T>(this IEnumerable<T> source, Action<T> action)
         {
-            var enumerator = First(source, action);
+            First(source, action);
 
-            MBoxStatic.Assert(0, false == enumerator.MoveNext());
+#if (DEBUG && false)
+            var enumerator = source.GetEnumerator();
+
+            if (enumerator.MoveNext())
+                MBoxStatic.Assert(0, false == enumerator.MoveNext());
+#endif
         }
 
         internal static void ForEach<T>(this IEnumerable<T> source, Action<T> action)

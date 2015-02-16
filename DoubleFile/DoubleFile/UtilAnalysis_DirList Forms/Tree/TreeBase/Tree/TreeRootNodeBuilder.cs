@@ -205,8 +205,9 @@ namespace DoubleFile
                     dirData = new DirData(gd, rootNode);
                 }
 
-                var bZeroLengthsWritten = true;
-                var ieLines = File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory));
+                var ieLines = File
+                    .ReadLines(m_volStrings.ListingFile)
+                    .Where(s => s.StartsWith(ksLineType_Directory));
 
                 foreach (var strLine in ieLines)
                 {
@@ -215,42 +216,25 @@ namespace DoubleFile
                         return;
                     }
 
-                    string[] strArray = strLine.Split('\t');
-                    uint nLineNo = uint.Parse(strArray[1]);
-                    const int nIx = knColLength;
-                    ulong nLength = 0;
+                    var strArray = strLine.Split('\t');
 
-                    if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx])))
-                    {
-                        nLength = ulong.Parse(strArray[nIx]);
-                    }
-                    else
-                    {
-                        bZeroLengthsWritten = false;     // files created before 140509 Fri drop zeroes from the end of the line
-                    }
-
-                    string strDir = strArray[2];
-
-                    dirData.AddToTree(strDir, nLineNo, nLength);
+                    dirData.AddToTree(strArray[2], uint.Parse(strArray[1]), ulong.Parse(strArray[knColLength]));
                 }
 
-                TreeNode rootTreeNode = dirData.AddToTree(m_volStrings.Nickname);
+                var rootTreeNode = dirData.AddToTree(m_volStrings.Nickname);
 
                 if (rootTreeNode != null)
                 {
-                    rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag, m_volStrings.ListingFile, m_volStrings.VolumeGroup, nVolFree, nVolLength);
+                    rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag, 
+                        m_volStrings.ListingFile, m_volStrings.VolumeGroup, nVolFree, nVolLength);
                     TreeSubnodeDetails(rootTreeNode);
                 }
 
                 m_statusCallback(m_volStrings, rootTreeNode);
 
-                if (bZeroLengthsWritten)
-                {
-#if (DEBUG)
-                    UtilProject.WriteLine(File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_File)).Sum(s => double.Parse(s.Split('\t')[knColLength])).ToString());
-                    UtilProject.WriteLine(File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => double.Parse(s.Split('\t')[knColLength])).ToString());
-#endif
-                }
+#if (DEBUG && FOOBAR)
+                UtilProject.WriteLine(File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_File)).Sum(s => double.Parse(s.Split('\t')[knColLength])).ToString());
+                UtilProject.WriteLine(File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => double.Parse(s.Split('\t')[knColLength])).ToString());
 
                 ulong nScannedLength = 0;
 
@@ -280,6 +264,7 @@ namespace DoubleFile
                 }
 
                 UtilProject.WriteLine(m_volStrings.ListingFile + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
+#endif
             }
         }
     }

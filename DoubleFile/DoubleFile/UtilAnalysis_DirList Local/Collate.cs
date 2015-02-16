@@ -192,6 +192,12 @@ namespace Local
                             return;
                         }
 
+                        if (null == treeNode_A)
+                        {
+                            MBoxStatic.Assert(0, false);
+                            continue;
+                        }
+
                         var nodeDatum = (treeNode_A.Tag as NodeDatum);
 
                         if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit

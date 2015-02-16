@@ -47,7 +47,6 @@ namespace DoubleFile
 
             if (null == args)
             {
-                MBoxStatic.Assert(1308.93165, false);
                 return;
             }
 

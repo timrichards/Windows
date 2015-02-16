@@ -51,7 +51,7 @@ namespace DoubleFile
         {
             First(source, action);
 
-#if (DEBUG && false)
+#if (DEBUG && FOOBAR)
             var enumerator = source.GetEnumerator();
 
             if (enumerator.MoveNext())

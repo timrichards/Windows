@@ -8,7 +8,7 @@ namespace DoubleFile
         protected readonly GlobalData_Base gd = null;
         protected readonly SortedDictionary<FolderKeyStruct, UList<TreeNode>> m_dictNodes = null;
         protected readonly Dictionary<string, string> m_dictDriveInfo = null;
-        protected static TreeStatusDelegate m_statusCallback = null;
+        protected readonly TreeStatusDelegate m_statusCallback = null;
 
         protected TreeBase(GlobalData_Base gd_in, 
             SortedDictionary<FolderKeyStruct, UList<TreeNode>> dictNodes,
@@ -26,7 +26,7 @@ namespace DoubleFile
             gd = base_in.gd;
             m_dictNodes = base_in.m_dictNodes;
             m_dictDriveInfo = base_in.m_dictDriveInfo;
-            MBoxStatic.Assert(1301.2301, m_statusCallback != null);
+            m_statusCallback = base_in.m_statusCallback;
         }
     }
 }

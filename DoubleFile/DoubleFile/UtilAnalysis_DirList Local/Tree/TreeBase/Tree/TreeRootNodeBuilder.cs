@@ -32,12 +32,12 @@ namespace Local
                     datum += TreeSubnodeDetails(node);
                 }
 
-                if ((treeNode.Tag is NodeDatum) == false)
+                var nodeDatum = treeNode.Tag as NodeDatum;
+
+                if (null == nodeDatum)
                 {
                     return datum;
                 }
-
-                var nodeDatum = (NodeDatum)treeNode.Tag;
 
                 if (nodeDatum.nLineNo == 0)
                 {
@@ -224,7 +224,7 @@ namespace Local
 
                 m_statusCallback(m_volStrings, rootTreeNode);
 
-#if (DEBUG && false)
+#if (DEBUG && FOOBAR)
                 UtilProject.WriteLine(File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_File)).Sum(s => double.Parse(s.Split('\t')[knColLength])).ToString());
                 UtilProject.WriteLine(File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => double.Parse(s.Split('\t')[knColLength])).ToString());
 

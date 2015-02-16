@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Controls;
-using System.Windows.Threading;
 
 namespace DoubleFile
 {
@@ -9,7 +7,7 @@ namespace DoubleFile
     {
         internal TreeView_FileHashVM(TreeView tvfe)
         {
-            TVI_DependencyProperty.TVFE = TVFE = tvfe;
+            TVFE = tvfe;
         }
 
         internal void SetData(IReadOnlyList<LocalTreeNode> rootNodes)

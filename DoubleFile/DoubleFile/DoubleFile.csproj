@@ -185,7 +185,6 @@
     <Compile Include="UtilAnalysis_FileHash\MVVM\TreeView\TreeView_FileHashVM.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UtilAnalysis_FileHash\MVVM\TreeView\TVI_DependencyProperty.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\WinFileHashVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\WinFileHashVM_Impl.cs" />
     <Compile Include="UtilAnalysis_FileHash\WinAnalysis_FileHash.xaml.cs">

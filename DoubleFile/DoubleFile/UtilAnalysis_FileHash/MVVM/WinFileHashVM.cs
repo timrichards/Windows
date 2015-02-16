@@ -1,5 +1,4 @@
-﻿using System.Windows.Input;
-
+﻿
 namespace DoubleFile
 {
     partial class WinFileHashVM : ObservableObject_OwnerWindow

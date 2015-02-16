@@ -1,7 +1,4 @@
-﻿using System.Windows.Forms;
-using System.Drawing;
-using System;
-using System.Threading;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Collections.Concurrent;
@@ -19,10 +16,15 @@ namespace DoubleFile
         internal readonly UList<LocalTreeNode> m_listTreeNodes = new UList<LocalTreeNode>();
         internal readonly List<LocalTreeNode> m_listRootNodes = new List<LocalTreeNode>();
 
-        internal void ClearMem_TreeForm()
+        internal void TreeCleanup()
         {
             m_tree = null;
             Local.Collate.ClearMem();
+        }
+
+        internal void ClearMem_TreeForm()
+        {
+            TreeCleanup();
 
             m_dictDriveInfo.Clear();
 
@@ -31,12 +33,6 @@ namespace DoubleFile
 
             m_listTreeNodes.Clear();
             m_listRootNodes.Clear();
-        }
-
-        internal void TreeCleanup()
-        {
-            m_tree = null;
-            Local.Collate.ClearMem();
         }
 
         internal void CreateFileDictStatusCallback(bool bDone = false, double nProgress = double.NaN)

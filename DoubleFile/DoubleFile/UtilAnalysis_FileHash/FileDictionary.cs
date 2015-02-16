@@ -56,7 +56,7 @@ namespace DoubleFile
             {
                 LVitemProjectVM = DictItemNumberToLV[GetLVitemProjectVM(lookup)],
                 LineNumber = GetLineNumber(lookup)
-            }).Where(dupe => (dupe.LVitemProjectVM.ListingFile != strListingFile) || // exactly once every query
+            }).Where(dupe => (dupe.LVitemProjectVM.ListingFile != strListingFile) ||    // exactly once every query
                              (dupe.LineNumber != nLine)));
 
             return lsRet;

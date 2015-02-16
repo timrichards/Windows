@@ -1359,18 +1359,14 @@ namespace DoubleFile
                 MBoxStatic.MessageBoxKill();
             }
 
-            gd.gd_Tree = null;
-            gd_Tree = null;
-            gd_Search_1_2 = null;
-            gd_Search_Path = null;
             Collate.ClearMem();
+            GlobalData.Reset();
             m_ownerWindow.Activate();
         }
 
         private void FormAnalysis_DirList_FormDisposed(object sender, EventArgs e)
         {
             form_tmapUserCtl.Dispose();
-            GlobalData.Reset();
         }
 
         void FormAnalysis_DirList_KeyDown(object sender, KeyEventArgs e)

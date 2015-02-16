@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -57,24 +56,7 @@ namespace DoubleFile
 
                 m_bSelected = value;
                 EphemeralExpandedPos = -1;
-                TVI_DependencyProperty.SetWaitingToSelect(null);
                 m_SelectedForeground = Brushes.White;
-                UtilProject.WriteLine("IsSelected " + Text);
-
-                if (TVI_DependencyProperty.WaitingToSelect != null)
-                {
-                    return;     // hack: Why does expanding a node select it?
-                }
-
-                if (datum.LVIVM != null)
-                {
-                    //if (m_bSelected)
-                    //{
-                    //    datum.LVIVM.LVVM.LVFE.ScrollIntoView(datum.LVIVM.LVVM.LVFE.Items[datum.LVIVM.Index]);
-                    //}
-
-                    //datum.LVIVM.SelectProgrammatic(m_bSelected);
-                }
 
                 if (m_bSelected)
                 {
@@ -98,7 +80,6 @@ namespace DoubleFile
             RaisePropertyChanged("IsSelected");
 
             UtilProject.WriteLine("SelectProgrammatic");
-            TVI_DependencyProperty.SetWaitingToSelect(null);
 
             if (bSelect == false)
             {
@@ -109,14 +90,12 @@ namespace DoubleFile
             TVVM.SelectedItem = this;
 
             var stackParents = new Stack<TreeViewItem_FileHashVM>(8);
-            TVI_DependencyProperty.stackParents = new Stack<TreeViewItem_FileHashVM>(8);
             var listParents = new UList<TreeViewItem_FileHashVM>();
             var parentItem = m_Parent;
 
             while (parentItem != null)
             {
                 stackParents.Push(parentItem);
-                TVI_DependencyProperty.stackParents.Push(parentItem);
                 listParents.Add(parentItem);
                 parentItem = parentItem.m_Parent;
             }
@@ -145,16 +124,9 @@ namespace DoubleFile
                 }
             }
 
-            if (TVI_DependencyProperty.tvivmSelected == this)
-            {
-                //      UtilProject.WriteLine("tvivmSelected == " + Text);
-                return;
-            }
-
             EphemeralExpandedPos += (Index + 1);
             EphemeralExpandedPos *= HeaderHeight;       // when implementing variable-height headers this calc will be wrong
             TVVM.m_listExpanded = listParents;
-            TVI_DependencyProperty.SetWaitingToSelect(this);
         }
 
         internal TreeViewItem_FileHashVM(TreeView_FileHashVM tvvm, LocalTreeNode datum_in, int nIndex)
@@ -183,7 +155,7 @@ namespace DoubleFile
 
         readonly ObservableCollection<TreeViewItem_FileHashVM> m_Items = null;
 
-        static double HeaderHeight { get { return TVI_DependencyProperty.HeaderHeight; } }
+        static double HeaderHeight { get { return -1; } }
         Brush FrontBrush
         {
             get

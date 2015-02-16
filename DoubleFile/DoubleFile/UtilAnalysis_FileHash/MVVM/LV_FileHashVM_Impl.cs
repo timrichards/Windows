@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Linq;
-
+﻿
 namespace DoubleFile
 {
     partial class LV_FileHashVM

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-
+﻿
 namespace DoubleFile
 {
     partial class LV_FileHashVM : ListViewVM_GenericBase<LVitem_FileHashVM>

@@ -5,7 +5,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinChooseDrive.xaml
     /// </summary>
-    public partial class WinChooseDrive : LocalWindow
+    public partial class WinChooseDrive
     {
         public WinChooseDrive()
         {

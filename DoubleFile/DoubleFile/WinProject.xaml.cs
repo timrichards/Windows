@@ -7,7 +7,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinProject.xaml
     /// </summary>
-    partial class WinProject : LocalWindow
+    partial class WinProject
     {
         internal LV_ProjectVM LVprojectVM { get; private set; }
 

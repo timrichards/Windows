@@ -9,7 +9,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    partial class MainWindow : LocalWindow
+    partial class MainWindow
     {
         public MainWindow()
         {

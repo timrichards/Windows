@@ -7,6 +7,9 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinSaveInProgress.xaml
     /// </summary>
+
+    // Window_Closed() calls Dispose() on the LV_ProgressVM member.
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     partial class WinProgress
     {
         internal BoolAction WindowClosingCallback = null;

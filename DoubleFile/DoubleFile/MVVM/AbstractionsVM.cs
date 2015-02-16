@@ -34,6 +34,8 @@ namespace DoubleFile
             LVVM = lvvm;
         }
 
+        // NumCols, and columns, are covariant. While all subclasses have columns; the subclasses vary in the number of columns.
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         internal ListViewItemVM_Base(ListViewVM_Base lvvm, string[] arrStr)     // e.g. Volumes LV: marr
             : this(lvvm)
         {

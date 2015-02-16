@@ -13,19 +13,15 @@ namespace DoubleFile
         internal static void Closure(Action action) { action(); }
         internal static bool Closure(BoolAction action) { return action(); }
 
-        internal static object CheckAndInvoke(Control dispatcher, Action action, object[] args = null)
+        internal static object UIthread(Control dispatcher, Action action, object[] args = null)
         {
-            return CheckAndInvoke(dispatcher, action as Delegate, args);
+            return UIthread(dispatcher, action as Delegate, args);
         }
 
-        internal static object CheckAndInvoke(Control dispatcher, Delegate action, object[] args = null)
+        internal static object UIthread(Control dispatcher, Delegate action, object[] args = null)
         {
-            if (dispatcher == null)
-            {
-                return null;
-            }
-
-            if (dispatcher.IsDisposed)
+            if ((null == dispatcher) ||
+                (dispatcher.IsDisposed))
             {
                 return null;
             }
@@ -34,9 +30,9 @@ namespace DoubleFile
             {
                 if (dispatcher.InvokeRequired)
                 {
-                    return args == null ?
-                        dispatcher.Invoke(action) :
-                        dispatcher.Invoke(action, (object)args);
+                    return args == null
+                        ? dispatcher.Invoke(action)
+                        : dispatcher.Invoke(action, (object)args);
                 }
 
                 var action1 = action as Action;
@@ -49,24 +45,28 @@ namespace DoubleFile
                 {
                     var boolAction = action as BoolAction;
 
-                    return boolAction != null ?
-                        boolAction() :
-                        action.DynamicInvoke(args);     // late-bound and slow
+                    return (boolAction != null)
+                        ? boolAction()
+                        : action.DynamicInvoke(args);     // late-bound and slow
                 }
             }
-            catch (ObjectDisposedException)
+            catch (ObjectDisposedException e)
             {
+                MBoxStatic.Assert(0, false, e.GetBaseException().Message);
+
+#if (false == PUBLISH)
                 if (false == dispatcher.IsDisposed)
                     throw;
-
-                return null;
+#endif
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException e)
             {
+                MBoxStatic.Assert(0, false, e.GetBaseException().Message);
+
+#if (false == PUBLISH)
                 if (false == dispatcher.IsDisposed)
                     throw;
-
-                return null;
+#endif
             }
 
             return null;

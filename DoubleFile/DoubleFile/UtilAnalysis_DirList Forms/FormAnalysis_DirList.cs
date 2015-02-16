@@ -53,7 +53,7 @@ namespace DoubleFile
                     return;
                 }
 
-                UtilAnalysis_DirList.CheckAndInvoke(this, () =>
+                UtilAnalysis_DirList.UIthread(this, () =>
                 {
                     if (gd.m_bCompareMode)
                     {

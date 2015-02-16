@@ -7,6 +7,8 @@ namespace DoubleFile
 {
     delegate string StringAction();
 
+    // The Process disposable field is managed by wrapper functions that dispose it once control returns.
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     class ProjectFile
     {
         internal static event StringAction OnSavingProject = null;
@@ -15,8 +17,9 @@ namespace DoubleFile
         internal static string TempPath { get { return System.IO.Path.GetTempPath() + @"DoubleFile\"; } }
         internal static string TempPath01 { get { return TempPath.TrimEnd(new char[] { '\\' }) + "01"; } }
 
-        internal ProjectFile()
+        void Init()
         {
+            m_process = new System.Diagnostics.Process(); 
             m_process.StartInfo.FileName = (Path.GetDirectoryName(
                 System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase) ?? "")
                 .Replace(@"file:\", "") +
@@ -31,6 +34,13 @@ namespace DoubleFile
         }
 
         internal void OpenProject(string strProjectFilename, Action<IEnumerable<string>, bool> openListingFiles)
+        {
+            Init();
+            OpenProject_(strProjectFilename, openListingFiles);
+            m_process.Dispose();
+        }
+
+        void OpenProject_(string strProjectFilename, Action<IEnumerable<string>, bool> openListingFiles)
         {
             if (Directory.Exists(TempPath))                     // close box/cancel/undo
             {
@@ -96,11 +106,17 @@ namespace DoubleFile
                 MBoxStatic.ShowDialog("Couldn't open the project. Reinstall Double File or open your project file " +
                     "and get to your listing files using a download from 7-zip.org.", "Open Project");
             }
-
-            m_process.Dispose();
         }
 
         internal bool SaveProject(LV_ProjectVM lvProjectVM, string strProjectFilename)
+        {
+            Init();
+            bool bRet = SaveProject_(lvProjectVM, strProjectFilename);
+            m_process.Dispose();
+            return bRet;
+        }
+
+        bool SaveProject_(LV_ProjectVM lvProjectVM, string strProjectFilename)
         {
             var listListingFiles = new List<string>();
             var listListingFiles_Check = new List<string>();
@@ -148,7 +164,6 @@ namespace DoubleFile
                 MBoxStatic.ShowDialog("Any listing files in project have not yet been saved." +
                     " Click OK on the Project window to start saving directory listings of your drives.",
                     "Save Project");
-                m_process.Dispose();
                 return false;
             }
 
@@ -259,7 +274,6 @@ namespace DoubleFile
                 bRet = false;
             }
 
-            m_process.Dispose();
             return bRet;
         }
 
@@ -294,7 +308,7 @@ namespace DoubleFile
         readonly string m_strErrorLogFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "ErrorLog";
         readonly System.Text.StringBuilder m_sbError = new System.Text.StringBuilder();
 
-        readonly System.Diagnostics.Process m_process = new System.Diagnostics.Process();
+        System.Diagnostics.Process m_process = null;
         WinProgress m_winProgress = null;
     }
 }

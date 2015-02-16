@@ -72,7 +72,7 @@ namespace DoubleFile
 
             var formSDL = GlobalData.static_MainWindow.Analysis_DirListForm;
 
-            UtilAnalysis_DirList.CheckAndInvoke(formSDL, () =>
+            UtilAnalysis_DirList.UIthread(formSDL, () =>
             {
                 // Display the treemap after the tree is built
                 var treeViewBrowse = formSDL.form_treeViewBrowse;

@@ -135,7 +135,7 @@ namespace DoubleFile
 
         void SearchDoneCallback()
         {
-            UtilAnalysis_DirList.CheckAndInvoke(this, () =>
+            UtilAnalysis_DirList.UIthread(this, () =>
             {
                 if ((gd_Search_1_2.m_searchType2 == null) || gd_Search_1_2.m_searchType2.IsAborted)
                 {

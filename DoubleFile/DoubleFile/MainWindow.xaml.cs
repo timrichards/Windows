@@ -1,7 +1,5 @@
-﻿using System;                       // release mode
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Runtime.Hosting;       // release mode
 using System.Windows;
 
 namespace DoubleFile
@@ -9,6 +7,9 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+
+    // MainWindow_Closing has gd_old.Dispose();
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     partial class MainWindow
     {
         public MainWindow()

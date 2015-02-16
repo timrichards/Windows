@@ -25,7 +25,7 @@ namespace DoubleFile
         internal static void Go(Control ctl_in = null, bool Once = false)
         {
             Control dispatcher = ctl_in ?? GlobalData.static_MainWindow.Analysis_DirListForm;
-            UtilAnalysis_DirList.CheckAndInvoke(dispatcher, () =>
+            UtilAnalysis_DirList.UIthread(dispatcher, () =>
             {
                 FLASHWINFO fInfo = new FLASHWINFO();
 

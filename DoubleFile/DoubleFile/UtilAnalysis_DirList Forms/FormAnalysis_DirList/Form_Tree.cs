@@ -21,13 +21,14 @@ namespace DoubleFile
         void TreeStatusCallback(LVitem_ProjectVM volStrings, TreeNode rootNode = null, bool bError = false)
         {
             if ((gd_Tree != null) &&
-                (IsDisposed || (gd_Tree.m_tree == null) || gd_Tree.m_tree.IsAborted))
+                (IsDisposed || (form_treeViewBrowse.IsDisposed) ||
+                (gd_Tree.m_tree == null) || gd_Tree.m_tree.IsAborted))
             {
                 gd_Tree.TreeCleanup();
                 return;
             }
 
-            UtilAnalysis_DirList.CheckAndInvoke(this, () =>
+            UtilAnalysis_DirList.UIthread(this, () =>
             {
                 if (bError)
                 {
@@ -57,7 +58,7 @@ namespace DoubleFile
         {
             DoCollation();
 
-            UtilAnalysis_DirList.CheckAndInvoke(this, () =>
+            UtilAnalysis_DirList.UIthread(this, () =>
             {
                 ListView lvFake = new ListView();
 
@@ -75,7 +76,7 @@ namespace DoubleFile
         {
             if (gd_Tree.m_listRootNodes.IsEmpty())
             {
-                UtilAnalysis_DirList.CheckAndInvoke(this, () =>
+                UtilAnalysis_DirList.UIthread(this, () =>
                 {
                     form_treeViewBrowse.Nodes.Clear();
                 });
@@ -86,7 +87,7 @@ namespace DoubleFile
             MBoxStatic.Assert(1304.5304, gd_Tree.m_listTreeNodes.IsEmpty());
             MBoxStatic.Assert(1304.5305, InvokeRequired);
 
-            UtilAnalysis_DirList.CheckAndInvoke(this, () =>
+            UtilAnalysis_DirList.UIthread(this, () =>
             {
                 MBoxStatic.Assert(1304.5306, gd_Tree.m_listLVignore.IsEmpty());
 
@@ -127,7 +128,7 @@ namespace DoubleFile
             }
 
             gd.m_bPutPathInFindEditBox = true;
-            UtilAnalysis_DirList.CheckAndInvoke(this, collate.Step2_OnForm);
+            UtilAnalysis_DirList.UIthread(this, collate.Step2_OnForm);
             UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             collate = null;
 
@@ -157,7 +158,7 @@ namespace DoubleFile
 
         void TreeSelectStatusCallback(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem[] lvVolDetails = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null)
         {
-            UtilAnalysis_DirList.CheckAndInvoke(this, () =>
+            UtilAnalysis_DirList.UIthread(this, () =>
             {
                 if (lvItemDetails != null)
                 {
@@ -279,7 +280,7 @@ namespace DoubleFile
 
         void TreeSelectDoneCallback(bool bSecondComparePane)
         {
-            UtilAnalysis_DirList.CheckAndInvoke(this, () =>
+            UtilAnalysis_DirList.UIthread(this, () =>
             {
                 if (null == gd_Tree)
                 {

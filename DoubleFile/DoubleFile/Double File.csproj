@@ -140,7 +140,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="GlobalData\GlobalData.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="UtilProject\LocalMbox.xaml.cs">
       <DependentUpon>LocalMbox.xaml</DependentUpon>
     </Compile>
@@ -187,9 +186,7 @@
     <Compile Include="UtilAnalysis_DirList Local\Tree\LVitemFileTag.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Tree\LVitemNameComparerStruct.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Tree\TreeBase\Tree.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList\Form_Tree.cs">
-      <SubType>Designer</SubType>
-    </Compile>
+    <Compile Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList\Form_Tree.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Tree\TreeBase.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Tree\TreeBase\Tree\TreeRootNodeBuilder.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Tree\TreeBase\Tree\TreeRootNodeBuilder\DirData.cs" />

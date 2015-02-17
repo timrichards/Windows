@@ -61,7 +61,7 @@ namespace DoubleFile
         internal string m_strChkCompareOrig = null;
         internal string m_strVolGroupOrig = null;
 
-        internal void ComboBoxItemsInsert(ComboBox comboBox, string strText = null, bool bTrimText = true)
+        static internal void ComboBoxItemsInsert(ComboBox comboBox, string strText = null, bool bTrimText = true)
         {
             if (string.IsNullOrWhiteSpace(strText))
             {

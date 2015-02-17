@@ -34,6 +34,9 @@ namespace DoubleFile
 
         public override bool Equals(object obj)
         {
+            // The as operator must be used with a reference type or nullable type
+            // ('DoubleFile.FolderKeyStruct' is a non-nullable value type)
+
             if ((obj is FolderKeyStruct) == false)
                 return false;
 

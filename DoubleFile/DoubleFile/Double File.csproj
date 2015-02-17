@@ -25,7 +25,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>53</ApplicationRevision>
+    <ApplicationRevision>54</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -42,7 +42,8 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>ruleset.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -54,6 +55,7 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>ic_people_black_18dp.ico</ApplicationIcon>
@@ -96,6 +98,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'FOOBAR|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -137,6 +140,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="GlobalData\GlobalData.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="UtilProject\LocalMbox.xaml.cs">
+      <DependentUpon>LocalMbox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UtilAnalysis_DirList Local\Collate.cs" />
     <Compile Include="UtilAnalysis_DirList Local\Collate\AddTreeToList.cs" />
     <Compile Include="UtilAnalysis_DirList Local\Collate\InsertSizeMarkerStatic.cs" />
@@ -180,7 +187,9 @@
     <Compile Include="UtilAnalysis_DirList Local\Tree\LVitemFileTag.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Tree\LVitemNameComparerStruct.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Tree\TreeBase\Tree.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList\Form_Tree.cs" />
+    <Compile Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList\Form_Tree.cs">
+      <SubType>Designer</SubType>
+    </Compile>
     <Compile Include="UtilAnalysis_DirList Forms\Tree\TreeBase.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Tree\TreeBase\Tree\TreeRootNodeBuilder.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Tree\TreeBase\Tree\TreeRootNodeBuilder\DirData.cs" />
@@ -322,7 +331,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList.resx" />
+    <EmbeddedResource Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <None Include="DoubleFile_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -375,6 +386,10 @@
     <Resource Include="ic_people_black_18dp.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="UtilProject\LocalMbox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -417,6 +432,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\ic_error_black_18dp.png" />
     <Content Include="UtilProject\7z920x86\7z.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

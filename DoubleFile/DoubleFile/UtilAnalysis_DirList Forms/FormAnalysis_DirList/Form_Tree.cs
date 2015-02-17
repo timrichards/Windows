@@ -20,9 +20,8 @@ namespace DoubleFile
 
         void TreeStatusCallback(LVitem_ProjectVM volStrings, TreeNode rootNode = null, bool bError = false)
         {
-            if ((gd_Tree != null) &&
-                (IsDisposed || (form_treeViewBrowse.IsDisposed) ||
-                (gd_Tree.m_tree == null) || gd_Tree.m_tree.IsAborted))
+            if (IsDisposed || form_treeViewBrowse.IsDisposed ||
+                ((gd_Tree != null) && ((gd_Tree.m_tree == null) || gd_Tree.m_tree.IsAborted)))
             {
                 gd_Tree.TreeCleanup();
                 return;
@@ -145,7 +144,6 @@ namespace DoubleFile
             }
 
             int nNodeCount = form_treeViewBrowse.GetNodeCount(includeSubTrees: true);
-            int nNodeCount_A = CountNodes.Go((TreeNode)form_treeViewBrowse.Nodes[0]);
 
             MBoxStatic.Assert(1304.5307, CountNodes.Go(gd_Tree.m_listRootNodes) == nNodeCount);
             MBoxStatic.Assert(1304.5308, gd_Tree.m_listTreeNodes.Count == nNodeCount);

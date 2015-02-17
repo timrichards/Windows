@@ -77,33 +77,41 @@ namespace DoubleFile
             {
                 m_form1MessageBoxOwner.Close();
                 m_form1MessageBoxOwner = null;
-                GlobalData.static_TopWindow.Activate();
             }
         }
 
         // make MessageBox modal from a worker thread
         internal static MessageBoxResult ShowDialog(string strMessage, string strTitle = null,
-            MessageBoxButton? buttons_in = null)
+            MessageBoxButton? buttons_in = null, LocalWindow owner = null)
         {
             var msgBoxRet = MessageBoxResult.None;
 
             UtilProject.UIthread(() =>
             {
-                if (false == GlobalData.static_TopWindow.IsLoaded)
+                if (false == GlobalData.static_MainWindow.IsLoaded)
                 {
                     return;
                 }
 
                 MessageBoxKill();
-                m_form1MessageBoxOwner = new LocalWindow();
-                m_form1MessageBoxOwner.Owner = GlobalData.static_TopWindow;
+
+                if (null == owner)
+                {
+                    m_form1MessageBoxOwner = new LocalWindow();
+                    m_form1MessageBoxOwner.Owner = GlobalData.static_MainWindow;
+                    m_form1MessageBoxOwner.Visibility = Visibility.Hidden;
+                    m_form1MessageBoxOwner.Show();
+                }
 
                 var buttons = buttons_in ?? MessageBoxButton.OK;
 
-                msgBoxRet = MessageBox.Show(m_form1MessageBoxOwner, strMessage.PadRight(100),
-                    strTitle, buttons, MessageBoxImage.Information);
+                msgBoxRet = new LocalMbox(owner ?? m_form1MessageBoxOwner, strMessage,
+                    strTitle, buttons).ShowDialog();
 
-                if (m_form1MessageBoxOwner != null)
+                //msgBoxRet = MessageBox.Show(owner ?? m_form1MessageBoxOwner, strMessage.PadRight(100),
+                //    strTitle, buttons, MessageBoxImage.Information);
+
+                if (null != (owner ?? m_form1MessageBoxOwner))
                 {
                     MessageBoxKill();
                     return;

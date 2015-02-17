@@ -173,7 +173,8 @@ namespace DoubleFile
                     }
 
                     return (MBoxStatic.ShowDialog("Do you want to cancel?", m_winProgress.Title,
-                        MessageBoxButton.YesNo) ==
+                        MessageBoxButton.YesNo,
+                        m_winProgress) ==
                         MessageBoxResult.Yes);
                 }))
                 {

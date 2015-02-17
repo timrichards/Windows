@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:DoubleFile"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
         Title="Double File Project" MinWidth="400" MinHeight="250" Width="624" Height="426" ShowInTaskbar="False" Icon="/Double File;component/Resources/ic_people_black_18dp.png"
-        Closing="WinProject_Closing">
+        Closing="WinProject_Closing" WindowStartupLocation="CenterOwner">
     <Grid Loaded="Grid_Loaded">
         <Menu IsMainMenu="True">
             <MenuItem Header="File" VerticalAlignment="Center">

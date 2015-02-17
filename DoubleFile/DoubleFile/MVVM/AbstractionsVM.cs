@@ -34,7 +34,7 @@ namespace DoubleFile
             LVVM = lvvm;
         }
 
-        // NumCols, and columns, are covariant. While all subclasses have columns; the subclasses vary in the number of columns.
+        // NumCols, and columns, are covariant: while all subclasses have columns; the subclasses vary in the number of columns.
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         internal ListViewItemVM_Base(ListViewVM_Base lvvm, string[] arrStr)     // e.g. Volumes LV: marr
             : this(lvvm)
@@ -157,7 +157,6 @@ namespace DoubleFile
             }
         }
 
-        readonly internal ListView data = new ListView();
         readonly protected ObservableCollection<ListViewItemVM_Base> m_items = new ObservableCollection<ListViewItemVM_Base>();
     }
 
@@ -176,6 +175,7 @@ namespace Template      // prevents smart tag rename command from renaming the t
 
     class Template_LVitemVM : ListViewItemVM_Base
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         public string ColumnNameHere { get { return marr[0]; } set { SetProperty(0, value); } }
 
         readonly static string[] marrPropName = new string[] { };
@@ -188,8 +188,10 @@ namespace Template      // prevents smart tag rename command from renaming the t
         protected override string[] PropertyNames { get { return marrPropName; } }
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     class Template_ListViewVM : ListViewVM_GenericBase<Template_LVitemVM>
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public string WidthColumnNameHere { get { return SCW; } }
 
         internal override bool NewItem(string[] arrStr, bool bQuiet = false) { Add(new Template_LVitemVM(this, arrStr), bQuiet); return true; }

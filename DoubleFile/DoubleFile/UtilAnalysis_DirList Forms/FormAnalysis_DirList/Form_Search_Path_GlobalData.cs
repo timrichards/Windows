@@ -8,7 +8,6 @@ namespace DoubleFile
     {
         GlobalData gd
         {
-            get { return _gd; }
             set
             {
                 MBoxStatic.Assert(0, _gd == null);

@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace DoubleFile
 {
-   //     [System.ComponentModel.DesignerCategory("Designer")]
+    //    [System.ComponentModel.DesignerCategory("Designer")]
     [System.ComponentModel.DesignerCategory("Code")]
     partial class FormAnalysis_DirList : Form
     {
@@ -588,8 +588,9 @@ namespace DoubleFile
         void form_btnLoadCopyScratchpad_Click(object sender, EventArgs e)
         {
             ListView lvFake = new ListView();   // Hack: check changed event loads the real listviewer
+            var nCount = form_lvCopyScratchpad.Columns.Count;
 
-            foreach (ColumnHeader col in form_lvCopyScratchpad.Columns)
+            for (int i = 0; i < nCount; ++i)
             {
                 lvFake.Columns.Add(new ColumnHeader());
             }
@@ -780,7 +781,7 @@ namespace DoubleFile
 
         void form_cbFindbox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            gd.ComboBoxItemsInsert(form_cbFindbox, bTrimText: false);
+            GlobalData.ComboBoxItemsInsert(form_cbFindbox, bTrimText: false);
         }
 
         void form_cbFindbox_TextChanged(object sender, EventArgs e)

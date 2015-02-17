@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace DoubleFile
 {
-    internal class UtilProject
+    static internal class UtilProject
     {
         static internal void WriteLine(string str = null)
         {

@@ -56,7 +56,8 @@ namespace DoubleFile
                 }
 
                 if (MBoxStatic.ShowDialog("Do you want to cancel?", "Saving Directory Listings",
-                    MessageBoxButton.YesNo) ==
+                    MessageBoxButton.YesNo,
+                    m_winProgress) ==
                     MessageBoxResult.Yes)
                 {
                     gd_old.m_saveDirListings.EndThread();

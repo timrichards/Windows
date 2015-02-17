@@ -52,12 +52,15 @@ namespace DoubleFile
             }
             catch (ObjectDisposedException e)
             {
-                MBoxStatic.Assert(0, false, e.GetBaseException().Message);
+                if (false == dispatcher.IsDisposed)
+                {
+                    MBoxStatic.Assert(0, false, e.GetBaseException().Message);
 
 #if (false == PUBLISH)
-                if (false == dispatcher.IsDisposed)
-                    throw;
+                    if (false == dispatcher.IsDisposed)
+                        throw;
 #endif
+                }
             }
             catch (InvalidOperationException e)
             {

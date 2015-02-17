@@ -77,6 +77,16 @@ namespace DoubleFile
 
         internal bool Aborted { set; private get; }
 
+        internal new void Close()
+        {
+            if (m_bClosing)
+            {
+                return;     // some sort of lockup?
+            }
+
+            base.Close();
+        }
+
         internal void CloseIfNatural()
         {
             if (m_bClosing)
@@ -111,17 +121,46 @@ namespace DoubleFile
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            m_bClosing = true;
-
             if (Aborted)
             {
+                m_bClosing = true;
                 return;     // close
             }
 
-            if (WindowClosingCallback != null)
+            if (null == WindowClosingCallback)
             {
-                e.Cancel = (false == (m_bClosing = WindowClosingCallback()));
+                return;
             }
+
+            e.Cancel = true;
+
+            // Return without closing, yet set a timer to go off very soon.
+            // This is a bunch of bootstrapping stuff.
+            // WindowClosingCallback needs to be called separate from the Window_Closing event;
+            // otherwise when the process that called the progress window completes, and
+            // WindowClosingCallback hasn't returned yet (from a messagebox), then it will
+            // blockade and freeze up.
+
+            var windowClosingCallback = WindowClosingCallback;
+
+            WindowClosingCallback = null;
+
+            SDL_Timer tmr = null;
+            var tmr_ = new SDL_Timer(33.0, () =>
+            {
+                tmr.Dispose();
+
+                if ((bool)UtilProject.UIthread(windowClosingCallback))
+                {
+                    Aborted = true;
+                    UtilProject.UIthread(() => Close());
+                }
+                else
+                {
+                    WindowClosingCallback = windowClosingCallback;
+                }
+            }).Start();
+            tmr = tmr_;
         }
 
         private void WinProgress_ContentRendered(object sender, System.EventArgs e)

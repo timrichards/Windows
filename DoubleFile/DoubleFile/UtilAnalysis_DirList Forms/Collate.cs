@@ -276,8 +276,6 @@ namespace DoubleFile
                         return;
                     }
 
-                    TreeNode parentNode = (TreeNode)treeNode.Parent;
-
                     if (treeNode.Level < nLevel)
                     {
                         nLevel = treeNode.Level;
@@ -643,7 +641,7 @@ namespace DoubleFile
             while ((treeNode = (TreeNode)treeNode.NextNode) != null);
         }
 
-        void SnowUniqueParents(TreeNode treeNode)
+        static void SnowUniqueParents(TreeNode treeNode)
         {
             TreeNode parentNode = (TreeNode)treeNode.Parent;
 

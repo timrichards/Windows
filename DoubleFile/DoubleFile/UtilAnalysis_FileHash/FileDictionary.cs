@@ -74,11 +74,6 @@ namespace DoubleFile
             return this;
         }
 
-        internal void Join()
-        {
-            m_thread.Join();
-        }
-
         internal void Abort()
         {
             IsAborted = true;
@@ -179,6 +174,7 @@ namespace DoubleFile
             m_statusCallback(bDone: true);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         string Serialize()
         {
             using (var writer = new StreamWriter(ksSerializeFile, false))
@@ -199,6 +195,7 @@ namespace DoubleFile
             return ksSerializeFile;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         void Deserialize()
         {
             if (false == File.Exists(ksSerializeFile))

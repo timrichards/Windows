@@ -37,14 +37,10 @@ namespace DoubleFile
                     datum += TreeSubnodeDetails(node);
                 }
 
-                if ((treeNode.Tag is NodeDatum) == false)
-                {
-                    return datum;
-                }
+                var nodeDatum = (treeNode.Tag as NodeDatum);
 
-                NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
-
-                if (nodeDatum.nLineNo == 0)
+                if ((null == nodeDatum) ||
+                    (nodeDatum.nLineNo == 0))
                 {
                     return datum;
                 }

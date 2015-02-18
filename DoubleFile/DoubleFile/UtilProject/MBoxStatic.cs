@@ -75,7 +75,7 @@ namespace DoubleFile
             if ((m_form1MessageBoxOwner != null) &&
                 new[] { null, m_form1MessageBoxOwner.Title }.Contains(strMatch))
             {
-                m_form1MessageBoxOwner.Close();
+                UtilProject.UIthread(() => m_form1MessageBoxOwner.Close());
                 m_form1MessageBoxOwner = null;
             }
         }
@@ -84,42 +84,34 @@ namespace DoubleFile
         internal static MessageBoxResult ShowDialog(string strMessage, string strTitle = null,
             MessageBoxButton? buttons_in = null, LocalWindow owner = null)
         {
+            if (GlobalData.static_MainWindow.IsClosed)
+            {
+                return MessageBoxResult.None;
+            }
+
             var msgBoxRet = MessageBoxResult.None;
 
-            UtilProject.UIthread(() =>
-            {
-                if (false == GlobalData.static_MainWindow.IsLoaded)
-                {
-                    return;
-                }
+            MessageBoxKill();
+            UtilProject.UIthread(() => m_form1MessageBoxOwner = new LocalWindow());
+            m_form1MessageBoxOwner.Owner = owner ?? GlobalData.static_Dialog;
+            m_form1MessageBoxOwner.Visibility = Visibility.Hidden;
+            UtilProject.UIthread(() => m_form1MessageBoxOwner.Show());
 
-                MessageBoxKill();
+            var buttons = buttons_in ?? MessageBoxButton.OK;
 
-                if (null == owner)
-                {
-                    m_form1MessageBoxOwner = new LocalWindow();
-                    m_form1MessageBoxOwner.Owner = GlobalData.static_MainWindow;
-                    m_form1MessageBoxOwner.Visibility = Visibility.Hidden;
-                    m_form1MessageBoxOwner.Show();
-                }
-
-                var buttons = buttons_in ?? MessageBoxButton.OK;
-
+            UtilProject.UIthread(() => 
                 msgBoxRet = new LocalMbox(owner ?? m_form1MessageBoxOwner, strMessage,
-                    strTitle, buttons).ShowDialog();
+                    strTitle, buttons).ShowDialog());
 
-                //msgBoxRet = MessageBox.Show(owner ?? m_form1MessageBoxOwner, strMessage.PadRight(100),
-                //    strTitle, buttons, MessageBoxImage.Information);
-
-                if (null != (owner ?? m_form1MessageBoxOwner))
-                {
-                    MessageBoxKill();
-                    return;
-                }
-
+            if (null == m_form1MessageBoxOwner)
+            {
                 // cancelled externally
                 msgBoxRet = MessageBoxResult.None;
-            });
+            }
+            else
+            {
+                MessageBoxKill();
+            }
 
             return msgBoxRet;
         }

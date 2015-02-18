@@ -52,6 +52,7 @@ namespace DoubleFile
         }
         class ControlHolder : Holder
         {
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
             protected readonly Control m_obj = null;
             internal ControlHolder(Control obj) { m_obj = obj; }
         }

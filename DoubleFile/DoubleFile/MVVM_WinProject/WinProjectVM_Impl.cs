@@ -132,46 +132,30 @@ namespace DoubleFile
                 }
             }
 
-            m_lvVM.Items.Clear();
+            UtilProject.UIthread(() => m_lvVM.Items.Clear());
 
-            //foreach (var test in listFiles.Select(async strFilename => await Task.Run(() =>
-            //{
-            //    LVitem_ProjectVM lvItem = null;
-
-            //    if (FileParse.ReadHeader(strFilename, out lvItem))
-            //        listItems.Add(lvItem);
-            //}))) { UtilProject.WriteLine("a"); }
-
+            Parallel.ForEach(listFiles, strFilename =>
             {
-                var thread = new Thread(() =>
+                LVitem_ProjectVM lvItem = null;
+
+                if (FileParse.ReadHeader(strFilename, out lvItem))
                 {
-                    Parallel.ForEach(listFiles, strFilename =>
+                    listItems.Add(lvItem);
+                }
+                else
+                {
+                    bMultiBad = (sbBadFiles.Length > 0);
+
+                    lock (sbBadFiles)
                     {
-                        LVitem_ProjectVM lvItem = null;
-
-                        if (FileParse.ReadHeader(strFilename, out lvItem))
-                        {
-                            listItems.Add(lvItem);
-                        }
-                        else
-                        {
-                            bMultiBad = (sbBadFiles.Length > 0);
-
-                            lock (sbBadFiles)
-                            {
-                                sbBadFiles.Append("• ").Append(System.IO.Path.GetFileName(strFilename)).Append("\n");
-                            }
-                        }
-                    });
-                });
-
-                thread.Start();
-                thread.Join();
-            }
+                        sbBadFiles.Append("• ").Append(System.IO.Path.GetFileName(strFilename)).Append("\n");
+                    }
+                }
+            });
 
             var bOpenedFiles = listItems
                 .OrderBy(lvItem => lvItem.SourcePath)
-                .Aggregate(false, (current, lvItem) => m_lvVM.NewItem(lvItem) || current);
+                .Aggregate(false, (current, lvItem) => (bool)UtilProject.UIthread(() => m_lvVM.NewItem(lvItem)) || current);
 
             if (sbBadFiles.Length > 0)
             {

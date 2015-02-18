@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace DoubleFile
 {
@@ -81,6 +82,7 @@ namespace DoubleFile
         {
             if (m_bClosing)
             {
+                MBoxStatic.Assert(0, false, bTraceOnly: true);
                 return;     // some sort of lockup?
             }
 
@@ -134,7 +136,7 @@ namespace DoubleFile
 
             e.Cancel = true;
 
-            // Return without closing, yet set a timer to go off very soon.
+            // Squib load: return without closing.
             // This is a bunch of bootstrapping stuff.
             // WindowClosingCallback needs to be called separate from the Window_Closing event;
             // otherwise when the process that called the progress window completes, and
@@ -145,11 +147,8 @@ namespace DoubleFile
 
             WindowClosingCallback = null;
 
-            SDL_Timer tmr = null;
-            var tmr_ = new SDL_Timer(33.0, () =>
+            new Thread(() =>
             {
-                tmr.Dispose();
-
                 if ((bool)UtilProject.UIthread(windowClosingCallback))
                 {
                     Aborted = true;
@@ -160,7 +159,6 @@ namespace DoubleFile
                     WindowClosingCallback = windowClosingCallback;
                 }
             }).Start();
-            tmr = tmr_;
         }
 
         private void WinProgress_ContentRendered(object sender, System.EventArgs e)

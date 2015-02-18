@@ -132,11 +132,21 @@ namespace DoubleFile
             UtilAnalysis_DirList.Closure(() =>
             {
                 {
-                    NodeDatum nodeDatum = ((NodeDatum)m_treeNode.Tag);
+                    var nodeDatum = (m_treeNode.Tag as NodeDatum);
 
-                    bVolumeView = ((nodeDatum is RootNodeDatum) && ((RootNodeDatum)nodeDatum).VolumeView);
+                    if (null == nodeDatum)      // this check is new 2/17/15 and has never been hit
+                    {
+                        MBoxStatic.Assert(0, false);
+                        return;
+                    }
 
-                    if ((bVolumeView == false) && ((nodeRet = FindMapNode(nodeDatum.TreeMapFiles, pt)) != null))
+                    var rootNodeDatum = (m_treeNode.Tag as RootNodeDatum);
+
+                    bVolumeView = (null != rootNodeDatum) &&
+                        (rootNodeDatum.VolumeView);
+
+                    if ((bVolumeView == false) &&
+                        ((nodeRet = FindMapNode(nodeDatum.TreeMapFiles, pt)) != null))
                     {
                         bImmediateFiles = true;
                         return;

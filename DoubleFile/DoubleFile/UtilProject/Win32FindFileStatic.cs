@@ -69,6 +69,7 @@ namespace DoubleFile
 
             internal FileAttributes Attributes { get { return m_Attributes; } }
             internal DateTime CreationTimeUtc { get { return m_CreationTimeUtc; } }
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
             internal DateTime LastAccessTimeUtc { get { return m_LastAccessTimeUtc; } }
             internal DateTime LastWriteTimeUtc { get { return m_LastWriteTimeUtc; } }
             internal long Size { get { return m_Size; } }
@@ -99,6 +100,7 @@ namespace DoubleFile
                 get { return CreationTimeUtc.ToLocalTime(); }
             }
 
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
             internal DateTime LastAccessTime
             {
                 get { return LastAccessTimeUtc.ToLocalTime(); }

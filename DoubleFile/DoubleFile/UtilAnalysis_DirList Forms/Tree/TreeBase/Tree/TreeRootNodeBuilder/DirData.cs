@@ -22,13 +22,6 @@ namespace DoubleFile
 
                 internal void AddToTree(string str_in, uint nLineNo, ulong nLength)
                 {
-                    if (m_rootNode.Nodes.ContainsKey(str_in))
-                    {
-                        Node node = m_rootNode.Nodes[str_in];
-
-                        MBoxStatic.Assert(1301.2302, false);
-                    }
-
                     string str = str_in.TrimEnd('\\');
 
                     m_rootNode.Nodes.Add(str, new Node(gd, str, nLineNo, nLength, m_rootNode));

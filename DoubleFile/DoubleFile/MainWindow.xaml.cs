@@ -14,6 +14,7 @@ namespace DoubleFile
     {
         public MainWindow()
         {
+            Init();
             gd_old = new GlobalData(this);
             InitializeComponent();
         }

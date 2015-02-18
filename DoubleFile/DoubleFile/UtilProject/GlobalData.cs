@@ -4,15 +4,8 @@ namespace DoubleFile
 {
     partial class GlobalData : IDisposable
     {
-        internal static LocalWindow static_TopWindow
-        {
-            get { return _static_topWindow_ ?? static_MainWindow; }
-            set { _static_topWindow_ = value; }
-        }
-
-        static LocalWindow _static_topWindow_ = null;
-
         internal static MainWindow static_MainWindow { get; private set; }
+        internal static LocalWindow static_Dialog { get; set; }
 
         internal readonly SDL_Timer m_tmrDoTree = null;
         internal bool m_bRestartTreeTimer = false;
@@ -43,7 +36,9 @@ namespace DoubleFile
 
         internal GlobalData(MainWindow wpfWin)
         {
-            static_MainWindow = wpfWin;
+            static_Dialog = 
+                static_MainWindow = 
+                wpfWin;
             Instance = this;
             m_tmrDoTree = new SDL_Timer { Interval = 3000 };
         }
@@ -57,10 +52,11 @@ namespace DoubleFile
 
             m_blinky.Dispose();
             _Instance = null;
-            static_TopWindow = null;
             static_MainWindow = null;
+            static_Dialog = null;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "DoubleFile.GlobalData")]
         internal static GlobalData Reset()
         {
             var win = static_MainWindow;

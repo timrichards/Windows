@@ -75,7 +75,7 @@ namespace DoubleFile
             if ((m_form1MessageBoxOwner != null) &&
                 new[] { null, m_form1MessageBoxOwner.Title }.Contains(strMatch))
             {
-                UtilProject.UIthread(() => m_form1MessageBoxOwner.Close());
+                m_form1MessageBoxOwner.Close();
                 m_form1MessageBoxOwner = null;
             }
         }
@@ -89,19 +89,17 @@ namespace DoubleFile
                 return MessageBoxResult.None;
             }
 
+            UtilProject.UIthread(() => MessageBoxKill());
+
             var msgBoxRet = MessageBoxResult.None;
-
-            MessageBoxKill();
-            UtilProject.UIthread(() => m_form1MessageBoxOwner = new LocalWindow());
-            m_form1MessageBoxOwner.Owner = owner ?? GlobalData.static_Dialog;
-            m_form1MessageBoxOwner.Visibility = Visibility.Hidden;
-            UtilProject.UIthread(() => m_form1MessageBoxOwner.Show());
-
             var buttons = buttons_in ?? MessageBoxButton.OK;
+            LocalMbox mbox = null;
+            
+            UtilProject.UIthread(() =>
+                mbox = new LocalMbox(owner ?? m_form1MessageBoxOwner, strMessage, strTitle, buttons));
 
-            UtilProject.UIthread(() => 
-                msgBoxRet = new LocalMbox(owner ?? m_form1MessageBoxOwner, strMessage,
-                    strTitle, buttons).ShowDialog());
+            m_form1MessageBoxOwner = owner ?? mbox;
+            UtilProject.UIthread(() => msgBoxRet = mbox.ShowDialog());
 
             if (null == m_form1MessageBoxOwner)
             {
@@ -110,7 +108,7 @@ namespace DoubleFile
             }
             else
             {
-                MessageBoxKill();
+                UtilProject.UIthread(() => MessageBoxKill());
             }
 
             return msgBoxRet;

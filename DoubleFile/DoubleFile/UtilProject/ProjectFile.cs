@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -17,30 +21,32 @@ namespace DoubleFile
         internal static string TempPath { get { return System.IO.Path.GetTempPath() + @"DoubleFile\"; } }
         internal static string TempPath01 { get { return TempPath.TrimEnd(new char[] { '\\' }) + "01"; } }
 
-        void Init()
+        Process Init(Process process)
         {
-            m_process = new System.Diagnostics.Process(); 
-            m_process.StartInfo.FileName = (Path.GetDirectoryName(
-                System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase) ?? "")
-                .Replace(@"file:\", "") +
+            process.StartInfo.FileName = Path.GetDirectoryName(
+                new Uri(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)
+                .LocalPath) +
                 @"\UtilProject\7z920x86\7z.exe";
-            m_process.StartInfo.CreateNoWindow = true;
-            m_process.StartInfo.UseShellExecute = false;
-            m_process.StartInfo.RedirectStandardOutput = true;
-            m_process.StartInfo.RedirectStandardError = true;
-            m_process.OutputDataReceived += (sender, args) => { UtilProject.WriteLine(args.Data); m_sbError.AppendLine(args.Data); };
-            m_process.ErrorDataReceived += (sender, args) => { UtilProject.WriteLine(args.Data); m_sbError.AppendLine(args.Data); };
-            m_process.EnableRaisingEvents = true;
+            process.StartInfo.CreateNoWindow = true;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.OutputDataReceived += (sender, args) => { UtilProject.WriteLine(args.Data); m_sbError.AppendLine(args.Data); };
+            process.ErrorDataReceived += (sender, args) => { UtilProject.WriteLine(args.Data); m_sbError.AppendLine(args.Data); };
+            process.EnableRaisingEvents = true;
+            return process;
         }
 
         internal void OpenProject(string strProjectFilename, Action<IEnumerable<string>, bool> openListingFiles)
         {
-            Init();
-            OpenProject_(strProjectFilename, openListingFiles);
-            m_process.Dispose();
+            OpenProject_(strProjectFilename, openListingFiles,
+                Init(new Process()))
+                .Dispose();
         }
 
-        void OpenProject_(string strProjectFilename, Action<IEnumerable<string>, bool> openListingFiles)
+        Process OpenProject_(string strProjectFilename,
+            Action<IEnumerable<string>, bool> openListingFiles,
+            Process process)
         {
             if (Directory.Exists(TempPath))                     // close box/cancel/undo
             {
@@ -54,69 +60,82 @@ namespace DoubleFile
 
             Directory.CreateDirectory(TempPath);
 
-            m_process.Exited += (sender, args) =>
+            process.Exited += (sender, args) =>
             {
-                GlobalData.static_TopWindow.Dispatcher.Invoke(() =>
+                var bErr = ReportAnyErrors(process, "Opening");
+
+                if (bErr || m_bUserCancelled)
                 {
-                    if (m_winProgress.IsLoaded)                 // close box/cancel/undo
-                    {
-                        openListingFiles(
-                            Directory.GetFiles(TempPath)
-                            .Where(s =>
-                            {
-                                var strExt = Path.GetExtension(Path.GetFileName(s) ?? "");
-
-                                if (strExt.Length == 0)
-                                {
-                                    return false;
-                                }
-
-                                return 
-                                    strExt.Remove(0, 1)
-                                    .Equals(FileParse.ksFileExt_Listing,
-                                    StringComparison.InvariantCultureIgnoreCase);
-                            }),
-                            true);
-
-                        if (null != OnOpenedProject)
-                        {
-                            OnOpenedProject();
-                        }
-
-                        if (Directory.Exists(TempPath01))
-                        {
-                            Directory.Delete(TempPath01, true);
-                        }
-
-                        m_winProgress.Close();
-                    }
-                    else if (Directory.Exists(TempPath01))      // close box/cancel/undo
+                    if (Directory.Exists(TempPath01))
                     {
                         Directory.Delete(TempPath, true);
                         Directory.Move(TempPath01, TempPath);
                     }
-                });
+
+                    m_bProcessing = false;
+                    return;
+                }
+
+                openListingFiles(
+                    Directory
+                        .GetFiles(TempPath)
+                        .Where(s =>
+                        {
+                            var strExt = Path.GetExtension(Path.GetFileName(s) ?? "");
+
+                            if (strExt.Length == 0)
+                            {
+                                return false;
+                            }
+
+                            return 
+                                strExt
+                                .Remove(0, 1)
+                                .Equals(FileParse.ksFileExt_Listing,
+                                StringComparison.InvariantCultureIgnoreCase);
+                        }),
+                    true);
+
+                if (null != OnOpenedProject)
+                {
+                    OnOpenedProject();
+                }
+
+                if (Directory.Exists(TempPath01))
+                {
+                    Directory.Delete(TempPath01, true);
+                }
+
+                UtilProject.UIthread(() => m_winProgress.Close());
+                m_bProcessing = false;
             };
 
-            m_process.StartInfo.WorkingDirectory = TempPath;
-            m_process.StartInfo.Arguments = "e \"" + strProjectFilename + "\" -y";
+            process.StartInfo.WorkingDirectory = TempPath;
+            process.StartInfo.Arguments = "e \"" + strProjectFilename + "\" -y";
 
-            if (false == StartProcess("Opening project.", Path.GetFileName(strProjectFilename)))
+            if (false == StartProcess("Opening project", Path.GetFileName(strProjectFilename), process))
             {
                 MBoxStatic.ShowDialog("Couldn't open the project. Reinstall Double File or open your project file " +
                     "and get to your listing files using a download from 7-zip.org.", "Open Project");
             }
+
+            return process;
         }
 
         internal bool SaveProject(LV_ProjectVM lvProjectVM, string strProjectFilename)
         {
-            Init();
-            bool bRet = SaveProject_(lvProjectVM, strProjectFilename);
-            m_process.Dispose();
+            var bRet = false;
+
+            SaveProject_(lvProjectVM, strProjectFilename, out bRet,
+                Init(new Process()))
+                .Dispose();
             return bRet;
         }
 
-        bool SaveProject_(LV_ProjectVM lvProjectVM, string strProjectFilename)
+        Process SaveProject_(LV_ProjectVM lvProjectVM,
+            string strProjectFilename,
+            out bool bRet_out,
+            Process process)
         {
             var listListingFiles = new List<string>();
             var listListingFiles_Check = new List<string>();
@@ -164,7 +183,8 @@ namespace DoubleFile
                 MBoxStatic.ShowDialog("Any listing files in project have not yet been saved." +
                     " Click OK on the Project window to start saving directory listings of your drives.",
                     "Save Project");
-                return false;
+                bRet_out = false;
+                return process;
             }
 
             var sbSource = new System.Text.StringBuilder();
@@ -188,54 +208,38 @@ namespace DoubleFile
                     in OnSavingProject.GetInvocationList()
                     .Select(onSavingProject => (string) onSavingProject.DynamicInvoke()))
                 {
-                    var s = strFilename;
-
-                    if (s.StartsWith(strPath))
-                    {
-                        s = strFilename.Replace(strPath, "");
-                    }
-
-                    sbSource.Append("\"").Append(s).Append("\" ");
+                    sbSource.Append("\"").Append(strFilename.Replace(strPath, "")).Append("\" ");
                 }
             }
 
             var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
             var bRet = true;
 
-            m_process.Exited += (sender, args) => 
+            process.Exited += (sender, args) => 
             {
+                var bErr = ReportAnyErrors(process, "Saving");
+
+                if (bErr || m_bUserCancelled)
+                {
+                    bRet = false;
+                    return;
+                }
+
                 if (File.Exists(strProjectFilename))
                 {
                     File.Delete(strProjectFilename);
                 }
 
-                try
-                {
-                    File.Move(strProjectFilename + ".7z", strProjectFilename);
-                    m_winProgress.SetCompleted(strProjectFileNoPath);
-                    MBoxStatic.ShowDialog("Todo: save volume group.");
-                }
-                catch
-                {
-                    GlobalData.static_TopWindow.Dispatcher.Invoke(() => m_winProgress.Close());
-
-                    var strError = string.Join("", m_sbError.ToString().Split('\n').SkipWhile(s => s.StartsWith("Error:") == false));
-
-                    if (string.IsNullOrWhiteSpace(strError))
-                    {
-                        strError = "Error saving project.";
-                    }
-
-                    MBoxStatic.ShowDialog(strError, "Error Saving Project");
-                    File.AppendAllText(m_strErrorLogFile, m_sbError.ToString());
-                    bRet = false;
-                }
+                File.Move(strProjectFilename + ".7z", strProjectFilename);
+                m_winProgress.SetCompleted(strProjectFileNoPath);
+                MBoxStatic.ShowDialog("Todo: save volume group.");
+                m_bProcessing = false;
             };
 
-            m_process.StartInfo.WorkingDirectory = strPath;
-            m_process.StartInfo.Arguments = "a \"" + strProjectFilename + ".7z\" " + sbSource + " -mx=3 -md=128m";
+            process.StartInfo.WorkingDirectory = strPath;
+            process.StartInfo.Arguments = "a \"" + strProjectFilename + ".7z\" " + sbSource + " -mx=3 -md=128m";
 
-            if (false == StartProcess("Saving project.", strProjectFileNoPath))
+            if (false == StartProcess("Saving project", strProjectFileNoPath, process))
             {
                 var strDir = strProjectFilename;
                 var strMessage = "";
@@ -274,41 +278,129 @@ namespace DoubleFile
                 bRet = false;
             }
 
-            return bRet;
+            bRet_out = bRet;
+            return process;
         }
 
-        bool StartProcess(string status, string strProjectFileNoPath)
+        bool StartProcess(string status,
+            string strProjectFileNoPath,
+            Process process)
         {
             MBoxStatic.Assert(0, m_winProgress == null);
 
-            if (File.Exists(m_process.StartInfo.FileName))
+            if (File.Exists(process.StartInfo.FileName))
             {
-                try
-                {
+                //try
+                //{
                     m_sbError.AppendLine(DateTime.Now.ToLongTimeString().PadRight(80, '-'));
-                    m_process.Start();
-                    m_process.BeginOutputReadLine();
+                    m_bProcessing = true;
+                    process.Start();
+                    process.BeginOutputReadLine();
                     m_winProgress = new WinProgress();
                     m_winProgress.InitProgress(new[] { status }, new[] { strProjectFileNoPath });
+                    m_winProgress.WindowClosingCallback = () =>
+                    {
+                        if (false == m_bProcessing)
+                        {
+                            return true;
+                        }
+
+                        var bRet = false;
+
+                        UtilProject.UIthread(() =>
+                        {
+                            if (MBoxStatic.ShowDialog("Do you want to cancel?", status,
+                                MessageBoxButton.YesNo, m_winProgress) ==
+                                MessageBoxResult.Yes)
+                            {
+                                m_bUserCancelled = true;
+                                bRet = true;
+
+                                if (false == process.HasExited)
+                                {
+                                    process.Kill();
+                                }                                
+                            }
+                        });
+
+                        return bRet;
+                    };
+
                     m_winProgress.ShowDialog();
                     return true;
-                }
-                catch
-                {
-                    // the WPF Application class won't exit the app until the window list is cleared,
-                    // even though the window never opened.
-                    if (m_winProgress != null)
-                        m_winProgress.Close();
-                }
+                //}
+                //catch
+                //{
+                //    // the WPF Application class won't exit the app until the window list is cleared,
+                //    // even though the window never opened.
+                //    if (m_winProgress != null)
+                //        m_winProgress.Close();
+                //}
             }
 
             return false;
         }
 
+        bool ReportAnyErrors(Process process, string strMode)
+        {
+            m_winProgress.Aborted = true;
+
+            var strWin32Error = new Win32Exception(Marshal.GetLastWin32Error()).Message;
+            var bExitCode = -1;
+
+            try { bExitCode = process.ExitCode; } catch (InvalidOperationException) {}
+
+            if (bExitCode == 0)
+            {
+                return false;
+            }
+
+            m_bProcessing = false;
+
+            if (m_bUserCancelled)
+            {
+                return false;
+            }
+
+            var strError =
+                string
+                .Join("", m_sbError
+                    .ToString()
+                    .Split('\n')
+                    .SkipWhile(s => false == s.StartsWith("Error:")))
+                .Trim();
+
+            if (string.IsNullOrWhiteSpace(strError))
+            {
+                strError = strWin32Error;
+            }
+
+            if (string.IsNullOrWhiteSpace(strError))
+            {
+                strError = "Error " + strMode.ToLower() + " project.";
+            }
+
+            File.AppendAllText(m_strErrorLogFile, m_sbError.ToString());
+
+            // bootstrap the window close with a delay then messagebox
+            // otherwise it freezes
+            UtilProject.UIthread(() => m_winProgress.Close());
+
+            SDL_Timer tmr = null;
+            var tmr_ = new SDL_Timer(33.0, () =>
+            {
+                tmr.Dispose();
+                MBoxStatic.ShowDialog(strError, "Error " + strMode + " Project");
+            }).Start();
+            tmr = tmr_;
+            return true;
+        }
+
         readonly string m_strErrorLogFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "ErrorLog";
         readonly System.Text.StringBuilder m_sbError = new System.Text.StringBuilder();
 
-        System.Diagnostics.Process m_process = null;
         WinProgress m_winProgress = null;
+        bool m_bProcessing = false;
+        bool m_bUserCancelled = false;
     }
 }

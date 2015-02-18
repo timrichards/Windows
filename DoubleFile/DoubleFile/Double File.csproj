@@ -140,6 +140,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="GlobalData\GlobalData.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="UtilProject\LocalMbox.xaml.cs">
       <DependentUpon>LocalMbox.xaml</DependentUpon>
     </Compile>

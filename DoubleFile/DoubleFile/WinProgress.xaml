@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
         Title="Double File" Height="300" Width="300" ShowInTaskbar="False" MinWidth="300" MinHeight="50" ResizeMode="CanResizeWithGrip" SizeToContent="Height" WindowStartupLocation="CenterOwner" Icon="/Double File;component/Resources/ic_people_black_18dp.png"
-        Closing="Window_Closing" Closed="Window_Closed" ContentRendered="WinProgress_ContentRendered" >
+        Closing="Window_Closing" Closed="Window_Closed" ContentRendered="WinProgress_ContentRendered" WindowStyle="ToolWindow" >
     <Grid Loaded="Grid_Loaded">
         <ListView Name="form_lvProgress" IsSynchronizedWithCurrentItem="False"  ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
             <ListView.Resources>

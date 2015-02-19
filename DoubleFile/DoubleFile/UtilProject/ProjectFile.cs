@@ -313,6 +313,8 @@ namespace DoubleFile
                             return true;
                         }
 
+                        var bRet = false;
+
                         UtilProject.UIthread(() =>
                         {
                             if (MBoxStatic.ShowDialog("Do you want to cancel?", status,
@@ -326,10 +328,11 @@ namespace DoubleFile
                                     process.Kill();
                                 }
 
+                                bRet = true;
                             }
                         });
 
-                        return false;
+                        return bRet;
                     };
 
                     m_winProgress.ShowDialog();

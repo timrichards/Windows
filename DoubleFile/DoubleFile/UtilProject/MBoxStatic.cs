@@ -11,7 +11,7 @@ namespace DoubleFile
 
     static class MBoxStatic
     {
-        static LocalWindow m_LocalMbox = null;
+        static LocalMbox m_LocalMbox = null;
 
         static double static_nLastAssertLoc = -1;
         static DateTime static_dtLastAssert = DateTime.MinValue;
@@ -93,13 +93,11 @@ namespace DoubleFile
 
             var msgBoxRet = MessageBoxResult.None;
             var buttons = buttons_in ?? MessageBoxButton.OK;
-            LocalMbox mbox = null;
             
             UtilProject.UIthread(() =>
-                mbox = new LocalMbox(owner ?? GlobalData.static_Dialog, strMessage, strTitle, buttons));
+                m_LocalMbox = new LocalMbox(owner ?? GlobalData.static_Dialog, strMessage, strTitle, buttons));
 
-            m_LocalMbox = mbox;
-            UtilProject.UIthread(() => msgBoxRet = mbox.ShowDialog());
+            UtilProject.UIthread(() => msgBoxRet = m_LocalMbox.ShowDialog());
 
             if (null == m_LocalMbox)
             {

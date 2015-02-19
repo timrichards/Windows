@@ -1,4 +1,6 @@
-﻿using System.Windows.Threading;
+﻿using System;
+using System.Windows;
+using System.Windows.Threading;
 namespace DoubleFile
 {
     public class LocalWindow : System.Windows.Window
@@ -28,6 +30,7 @@ namespace DoubleFile
 
         protected void Init()
         {
+            ShowActivated = true;
             Loaded += (o, e) => IsClosed = false;
             Closed += (o, e) => IsClosed = true;
         }
@@ -46,11 +49,33 @@ namespace DoubleFile
 
         bool? ShowDialog(LocalWindow me)
         {
-            _simulatingModal = true;              // This is the switch to control simulated dialog
+            _simulatingModal = true;           // Change it here to switch to simulated dialog
             GlobalData.static_Dialog = this;
             Owner = me;
 
             bool? bResult = null;
+            DispatcherFrame blockingFrame = null;
+
+            Action<WindowCollection, bool> SetEnabled = null;
+            Action<WindowCollection, bool> SetEnabled_ = (windowCollection, bEnabled) =>
+            {
+                foreach (var window_ in windowCollection)
+                {
+                    var window = window_ as Window;
+
+                    if (null == window)
+                    {
+                        MBoxStatic.Assert(0, false);
+                        continue;
+                    }
+
+                    window.IsEnabled = bEnabled;
+                    window.IsManipulationEnabled = bEnabled;
+                    window.Focusable = bEnabled;
+                    SetEnabled(window.OwnedWindows, bEnabled);
+                }
+            };
+            SetEnabled = SetEnabled_;
 
             Closed += (o, e) =>
             {
@@ -59,22 +84,31 @@ namespace DoubleFile
 
                 if (_simulatingModal)
                 {
+                    Owner.IsEnabled = true;
+                    Owner.IsManipulationEnabled = true;
+                    Owner.Focusable = true;
+                    SetEnabled(Owner.OwnedWindows, true);
                     bResult = LocalDialogResult;
-                    _blockingFrame.Continue = false;
+                    blockingFrame.Continue = false;
                 }
             };
 
             if ( _simulatingModal)
             {
+                Owner.IsEnabled = false;
+                Owner.IsManipulationEnabled = false;
+                Owner.Focusable = false;
+                SetEnabled(Owner.OwnedWindows, false);
+
+                IsEnabled = true;
                 base.Show();
-                Dispatcher.PushFrame(_blockingFrame = new DispatcherFrame(true));
+                Dispatcher.PushFrame(blockingFrame = new DispatcherFrame(true));
                 return bResult;
             }
 
             return base.ShowDialog();
         }
 
-        DispatcherFrame _blockingFrame;
         bool _simulatingModal = false;      // NO. Must be false. Look up. (this class also controls plain windows.)
     }
 }

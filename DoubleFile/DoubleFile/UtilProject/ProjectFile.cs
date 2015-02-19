@@ -62,7 +62,8 @@ namespace DoubleFile
 
             process.Exited += (sender, args) =>
             {
-                var bErr = ReportAnyErrors(process, "Opening");
+                var bErr = ReportAnyErrors(process, "Opening",
+                    new Win32Exception(Marshal.GetLastWin32Error()).Message);
 
                 if (bErr || m_bUserCancelled)
                 {
@@ -217,7 +218,8 @@ namespace DoubleFile
 
             process.Exited += (sender, args) =>
             {
-                var bErr = ReportAnyErrors(process, "Saving");
+                var bErr = ReportAnyErrors(process, "Saving",
+                    new Win32Exception(Marshal.GetLastWin32Error()).Message);
 
                 if (bErr || m_bUserCancelled)
                 {
@@ -340,11 +342,10 @@ namespace DoubleFile
             return false;
         }
 
-        bool ReportAnyErrors(Process process, string strMode)
+        bool ReportAnyErrors(Process process, string strMode, string strWin32Error)
         {
             m_winProgress.Aborted = true;
 
-            var strWin32Error = new Win32Exception(Marshal.GetLastWin32Error()).Message;
             var bExitCode = -1;
 
             try { bExitCode = process.ExitCode; } catch (InvalidOperationException) {}

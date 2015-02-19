@@ -54,15 +54,15 @@ namespace DoubleFile
                         .Cast<ManagementObject>()
                         .FirstOnlyAssert(diskDrive =>
                     {
-                        try { nSize = (ulong?)diskDrive["Size"]; } catch { }
-                        try { strDriveModel = diskDrive["DriveModel"].ToPrintString(); } catch { }
+                        try { nSize = (ulong?)diskDrive["Size"]; } catch (ManagementException) {}
+                        try { strDriveModel = diskDrive["DriveModel"].ToPrintString(); } catch (ManagementException) {}
 
                         if (string.IsNullOrWhiteSpace(strDriveModel))
                         {
-                            try { strDriveModel = diskDrive["Caption"].ToPrintString(); } catch { }
+                            try { strDriveModel = diskDrive["Caption"].ToPrintString(); } catch (ManagementException) {}
                         }
 
-                        try { strDriveSerial = diskDrive["SerialNumber"].ToPrintString(); } catch { }
+                        try { strDriveSerial = diskDrive["SerialNumber"].ToPrintString(); } catch (ManagementException) {}
 
                         if (string.IsNullOrWhiteSpace(strDriveSerial))
                         {
@@ -71,7 +71,7 @@ namespace DoubleFile
                                 .Cast<ManagementObject>()
                                 .FirstOnlyAssert(diskMedia =>
                             {
-                                try { strDriveSerial = diskMedia["SerialNumber"].ToPrintString(); } catch { }
+                                try { strDriveSerial = diskMedia["SerialNumber"].ToPrintString(); } catch (ManagementException) {}
                             });
                         }
                     });
@@ -106,15 +106,15 @@ namespace DoubleFile
                 string strDriveSerial = null;
                 ulong? nSize = null;
 
-                try { nSize = (ulong?)diskDrive["Size"]; } catch { }
-                try { strDriveModel = diskDrive["DriveModel"].ToPrintString(); } catch { }
+                try { nSize = (ulong?)diskDrive["Size"]; } catch (ManagementException) {}
+                try { strDriveModel = diskDrive["DriveModel"].ToPrintString(); } catch (ManagementException) {}
 
                 if (string.IsNullOrWhiteSpace(strDriveModel))
                 {
-                    try { strDriveModel = diskDrive["Caption"].ToPrintString(); } catch { }
+                    try { strDriveModel = diskDrive["Caption"].ToPrintString(); } catch (ManagementException) {}
                 }
 
-                try { strDriveSerial = diskDrive["SerialNumber"].ToPrintString(); } catch { }
+                try { strDriveSerial = diskDrive["SerialNumber"].ToPrintString(); } catch (ManagementException) {}
 
                 if (string.IsNullOrWhiteSpace(strDriveSerial))
                 {
@@ -123,7 +123,7 @@ namespace DoubleFile
                         .Cast<ManagementObject>()
                         .FirstOnlyAssert(diskMedia =>
                     {
-                        try { strDriveSerial = diskMedia["SerialNumber"].ToPrintString(); } catch { }
+                        try { strDriveSerial = diskMedia["SerialNumber"].ToPrintString(); } catch (ManagementException) {}
                     });
                 }
 

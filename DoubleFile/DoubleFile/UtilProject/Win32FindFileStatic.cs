@@ -123,8 +123,11 @@ namespace DoubleFile
             }
         }
 
-        internal static bool GetDirectory(string strDir, ref List<DATUM> listDirs, ref List<DATUM> listFiles)
+        internal static bool GetDirectory(string strDir, ref List<DATUM> listDirs, ref List<DATUM> listFiles,
+            out string strWin32Error)
         {
+            strWin32Error = null;
+
             DATUM winFindData;
             var handle = FindFirstFileExW(@"\\?\" + strDir + @"\*", IndexInfoLevels.FindExInfoBasic,
                 out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero,
@@ -132,6 +135,9 @@ namespace DoubleFile
 
             if (handle == InvalidHandleValue)
             {
+                strWin32Error = new System.ComponentModel.Win32Exception(
+                        System.Runtime.InteropServices.Marshal.GetLastWin32Error()).Message;
+
                 return false;
             }
 

@@ -73,14 +73,14 @@ namespace DoubleFile
                     var strError2_Dir = CheckNTFS_chars(ref strFullPath);
                     var listSubDirs = new List<Win32FindFileStatic.DATUM>();
                     var listFiles = new List<Win32FindFileStatic.DATUM>();
+                    string strWin32Error = null;
 
-                    if (false == Win32FindFileStatic.GetDirectory(strFullPath, ref listSubDirs, ref listFiles))
+                    if (false == Win32FindFileStatic.GetDirectory(strFullPath, ref listSubDirs, ref listFiles, out strWin32Error))
                     {
                         if (fs != null)
                         {
                             ErrorList.Add(FormatString(strDir: strFullPath,
-                                strError1: new System.ComponentModel.Win32Exception(
-                                    System.Runtime.InteropServices.Marshal.GetLastWin32Error()).Message,
+                                strError1: strWin32Error,
                                 strError2: strError2_Dir));
                         }
 

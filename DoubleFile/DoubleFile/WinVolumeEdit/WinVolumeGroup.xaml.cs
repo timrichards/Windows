@@ -16,7 +16,7 @@ namespace DoubleFile
 
         private void BtnOK_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = true;
+            LocalDialogResult = true;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)

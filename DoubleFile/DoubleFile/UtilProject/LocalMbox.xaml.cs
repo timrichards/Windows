@@ -111,9 +111,16 @@ namespace DoubleFile
                     }
             }
 
-            DialogResult = true;
+            LocalDialogResult = true;
 
             // IsDefault = "True" in xaml so that seems to take care of closing the window After this handler returns.
+            // Not when simulating modal.
+            CloseIfSimulatingModal();
+        }
+
+        private void BtnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            CloseIfSimulatingModal();
         }
 
         MessageBoxResult Result = MessageBoxResult.Cancel;

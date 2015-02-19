@@ -198,7 +198,7 @@ namespace DoubleFile
                 {
                     strFilename = strFilename.Replace(strPath, "");
                 }
-                
+
                 sbSource.Append("\"").Append(strFilename).Append("\" ");
             }
 
@@ -206,7 +206,7 @@ namespace DoubleFile
             {
                 foreach (var strFilename
                     in OnSavingProject.GetInvocationList()
-                    .Select(onSavingProject => (string) onSavingProject.DynamicInvoke()))
+                    .Select(onSavingProject => (string)onSavingProject.DynamicInvoke()))
                 {
                     sbSource.Append("\"").Append(strFilename.Replace(strPath, "")).Append("\" ");
                 }
@@ -215,7 +215,7 @@ namespace DoubleFile
             var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
             var bRet = true;
 
-            process.Exited += (sender, args) => 
+            process.Exited += (sender, args) =>
             {
                 var bErr = ReportAnyErrors(process, "Saving");
 
@@ -237,7 +237,15 @@ namespace DoubleFile
             };
 
             process.StartInfo.WorkingDirectory = strPath;
-            process.StartInfo.Arguments = "a \"" + strProjectFilename + ".7z\" " + sbSource + " -mx=3 -md=128m";
+
+            var str7z = strProjectFilename + ".7z";
+
+            if (File.Exists(str7z))
+            {
+                File.Delete(str7z);
+            }
+
+            process.StartInfo.Arguments = "a \"" + str7z + "\" " + sbSource + " -mx=3 -md=128m";
 
             if (false == StartProcess("Saving project", strProjectFileNoPath, process))
             {
@@ -305,8 +313,6 @@ namespace DoubleFile
                             return true;
                         }
 
-                        var bRet = false;
-
                         UtilProject.UIthread(() =>
                         {
                             if (MBoxStatic.ShowDialog("Do you want to cancel?", status,
@@ -314,16 +320,16 @@ namespace DoubleFile
                                 MessageBoxResult.Yes)
                             {
                                 m_bUserCancelled = true;
-                                bRet = true;
 
                                 if (false == process.HasExited)
                                 {
                                     process.Kill();
-                                }                                
+                                }
+
                             }
                         });
 
-                        return bRet;
+                        return false;
                     };
 
                     m_winProgress.ShowDialog();

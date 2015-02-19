@@ -43,14 +43,16 @@ namespace DoubleFile
         private void BtnOK_Click(object sender, RoutedEventArgs e)
         {
             LVprojectVM = form_lvProject.DataContext as LV_ProjectVM;
-            DialogResult = true;
+            LocalDialogResult = true;
 
             // IsDefault = "True" in xaml so that seems to take care of closing the window After this handler returns.
+            // Not when simulating modal.
+            CloseIfSimulatingModal();
         }
 
         private void WinProject_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (DialogResult ?? false)
+            if (LocalDialogResult ?? false)
             {
                 return;
             }

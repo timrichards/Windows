@@ -122,10 +122,10 @@ namespace DoubleFile
         {
             if (IsOKenabled)
             {
-                var window = Window.GetWindow(uc_VolumeEdit);
+                var window = Window.GetWindow(uc_VolumeEdit) as LocalWindow;
 
                 if (window != null)
-                    window.DialogResult = true;
+                    window.LocalDialogResult = true;
             }
             else
             {

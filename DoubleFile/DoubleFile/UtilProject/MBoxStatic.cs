@@ -11,7 +11,7 @@ namespace DoubleFile
 
     static class MBoxStatic
     {
-        static LocalWindow m_form1MessageBoxOwner = null;
+        static LocalWindow m_LocalMbox = null;
 
         static double static_nLastAssertLoc = -1;
         static DateTime static_dtLastAssert = DateTime.MinValue;
@@ -72,11 +72,11 @@ namespace DoubleFile
 
         internal static void MessageBoxKill(string strMatch = null)
         {
-            if ((m_form1MessageBoxOwner != null) &&
-                new[] { null, m_form1MessageBoxOwner.Title }.Contains(strMatch))
+            if ((m_LocalMbox != null) &&
+                new[] { null, m_LocalMbox.Title }.Contains(strMatch))
             {
-                m_form1MessageBoxOwner.Close();
-                m_form1MessageBoxOwner = null;
+                m_LocalMbox.Close();
+                m_LocalMbox = null;
             }
         }
 
@@ -96,12 +96,12 @@ namespace DoubleFile
             LocalMbox mbox = null;
             
             UtilProject.UIthread(() =>
-                mbox = new LocalMbox(owner ?? m_form1MessageBoxOwner, strMessage, strTitle, buttons));
+                mbox = new LocalMbox(owner ?? GlobalData.static_Dialog, strMessage, strTitle, buttons));
 
-            m_form1MessageBoxOwner = owner ?? mbox;
+            m_LocalMbox = mbox;
             UtilProject.UIthread(() => msgBoxRet = mbox.ShowDialog());
 
-            if (null == m_form1MessageBoxOwner)
+            if (null == m_LocalMbox)
             {
                 // cancelled externally
                 msgBoxRet = MessageBoxResult.None;

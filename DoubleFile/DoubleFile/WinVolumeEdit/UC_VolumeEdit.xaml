@@ -87,6 +87,6 @@ model/serial# do not.
         <TextBox Grid.Row="10" Name="form_EditListingFile" ToolTip="Where to save the directory listing." LostFocus="form_EditListingFile_LostFocus" />
 
         <Button Grid.Column="3" Content="OK" Command="{Binding Icmd_IsOKenabled}" Grid.Row="11" Width="75" Height="Auto" IsDefault="True" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="BtnOK_Click"/>
-        <Button Grid.Column="4" Content="Cancel" Grid.Row="11" Width="75" Grid.ColumnSpan="2" Height="Auto" IsCancel="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+        <Button Grid.Column="4" Content="Cancel" Grid.Row="11" Width="75" Grid.ColumnSpan="2" Height="Auto" IsCancel="True" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="BtnCancel_Click"/>
     </Grid>
 </UserControl>

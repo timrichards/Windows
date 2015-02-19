@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Windows.Interop;
 
 namespace DoubleFile
 {
@@ -45,6 +46,21 @@ namespace DoubleFile
                 fInfo.dwTimeout = 0;
                 FlashWindowEx(ref fInfo);
             });
+        }
+
+
+        internal static void Go(System.Windows.Window window_in)
+        {
+            System.Windows.Window window = window_in ?? GlobalData.static_MainWindow;
+
+            FLASHWINFO fInfo = new FLASHWINFO();
+
+            fInfo.cbSize = Convert.ToUInt32(Marshal.SizeOf(fInfo));
+            fInfo.hwnd = new WindowInteropHelper(window).Handle;
+            fInfo.dwFlags = FLASHW_ALL;
+            fInfo.uCount = 5;
+            fInfo.dwTimeout = 50;
+            UtilProject.UIthread(() => FlashWindowEx(ref fInfo));
         }
     }
 }

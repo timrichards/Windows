@@ -28,17 +28,27 @@ namespace DoubleFile
         internal new void Show() { Init(); Show(GlobalData.static_Dialog); }
         internal new bool? ShowDialog() { Init(); return ShowDialog(GlobalData.static_Dialog); }
 
-        protected void Init()
-        {
-            ShowActivated = true;
-            Loaded += (o, e) => IsClosed = false;
-            Closed += (o, e) => IsClosed = true;
-        }
-
-        protected void CloseIfSimulatingModal()
+        internal void CloseIfSimulatingModal()
         {
             if (_simulatingModal)
                 Close();
+        }
+
+        protected void Init()
+        {
+            Activated += (o, e) =>
+            {
+                if (GlobalData.static_Dialog._simulatingModal &&
+                    (this != GlobalData.static_Dialog))
+                {
+                    GlobalData.static_Dialog.Activate();
+                    FlashWindowStatic.Go(GlobalData.static_Dialog);
+                }
+            };
+
+            ShowActivated = true;
+            Loaded += (o, e) => IsClosed = false;
+            Closed += (o, e) => IsClosed = true;
         }
 
         void Show(LocalWindow me)
@@ -56,27 +66,6 @@ namespace DoubleFile
             bool? bResult = null;
             DispatcherFrame blockingFrame = null;
 
-            Action<WindowCollection, bool> SetEnabled = null;
-            Action<WindowCollection, bool> SetEnabled_ = (windowCollection, bEnabled) =>
-            {
-                foreach (var window_ in windowCollection)
-                {
-                    var window = window_ as Window;
-
-                    if (null == window)
-                    {
-                        MBoxStatic.Assert(0, false);
-                        continue;
-                    }
-
-                    window.IsEnabled = bEnabled;
-                    window.IsManipulationEnabled = bEnabled;
-                    window.Focusable = bEnabled;
-                    SetEnabled(window.OwnedWindows, bEnabled);
-                }
-            };
-            SetEnabled = SetEnabled_;
-
             Closed += (o, e) =>
             {
                 GlobalData.static_Dialog = me;
@@ -84,10 +73,6 @@ namespace DoubleFile
 
                 if (_simulatingModal)
                 {
-                    Owner.IsEnabled = true;
-                    Owner.IsManipulationEnabled = true;
-                    Owner.Focusable = true;
-                    SetEnabled(Owner.OwnedWindows, true);
                     bResult = LocalDialogResult;
                     blockingFrame.Continue = false;
                 }
@@ -95,14 +80,9 @@ namespace DoubleFile
 
             if ( _simulatingModal)
             {
-                Owner.IsEnabled = false;
-                Owner.IsManipulationEnabled = false;
-                Owner.Focusable = false;
-                SetEnabled(Owner.OwnedWindows, false);
-
-                IsEnabled = true;
                 base.Show();
                 Dispatcher.PushFrame(blockingFrame = new DispatcherFrame(true));
+                _simulatingModal = false;
                 return bResult;
             }
 

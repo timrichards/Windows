@@ -125,11 +125,24 @@ namespace DoubleFile
                 var window = Window.GetWindow(uc_VolumeEdit) as LocalWindow;
 
                 if (window != null)
+                {
                     window.LocalDialogResult = true;
+                    window.CloseIfSimulatingModal();
+                }
             }
             else
             {
                 MBoxStatic.Assert(0, false);
+            }
+        }
+
+        private void BtnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            var window = Window.GetWindow(uc_VolumeEdit) as LocalWindow;
+
+            if (window != null)
+            {
+                window.CloseIfSimulatingModal();
             }
         }
 

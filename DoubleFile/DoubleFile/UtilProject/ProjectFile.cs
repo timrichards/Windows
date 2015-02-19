@@ -232,7 +232,7 @@ namespace DoubleFile
 
                 File.Move(strProjectFilename + ".7z", strProjectFilename);
                 m_winProgress.SetCompleted(strProjectFileNoPath);
-                MBoxStatic.ShowDialog("Todo: save volume group.");
+                MBoxStatic.ShowDialog("Todo: save volume group.\nTodo: save include y/n");
                 m_bProcessing = false;
             };
 
@@ -298,53 +298,43 @@ namespace DoubleFile
 
             if (File.Exists(process.StartInfo.FileName))
             {
-                //try
-                //{
-                    m_sbError.AppendLine(DateTime.Now.ToLongTimeString().PadRight(80, '-'));
-                    m_bProcessing = true;
-                    process.Start();
-                    process.BeginOutputReadLine();
-                    m_winProgress = new WinProgress();
-                    m_winProgress.InitProgress(new[] { status }, new[] { strProjectFileNoPath });
-                    m_winProgress.WindowClosingCallback = () =>
+                m_sbError.AppendLine(DateTime.Now.ToLongTimeString().PadRight(80, '-'));
+                m_bProcessing = true;
+                process.Start();
+                process.BeginOutputReadLine();
+                m_winProgress = new WinProgress();
+                m_winProgress.InitProgress(new[] { status }, new[] { strProjectFileNoPath });
+                m_winProgress.WindowClosingCallback = () =>
+                {
+                    if (false == m_bProcessing)
                     {
-                        if (false == m_bProcessing)
-                        {
-                            return true;
-                        }
+                        return true;
+                    }
 
-                        var bRet = false;
+                    var bRet = false;
 
-                        UtilProject.UIthread(() =>
+                    UtilProject.UIthread(() =>
+                    {
+                        if (MBoxStatic.ShowDialog("Do you want to cancel?", status,
+                            MessageBoxButton.YesNo, m_winProgress) ==
+                            MessageBoxResult.Yes)
                         {
-                            if (MBoxStatic.ShowDialog("Do you want to cancel?", status,
-                                MessageBoxButton.YesNo, m_winProgress) ==
-                                MessageBoxResult.Yes)
+                            m_bUserCancelled = true;
+
+                            if (false == process.HasExited)
                             {
-                                m_bUserCancelled = true;
-
-                                if (false == process.HasExited)
-                                {
-                                    process.Kill();
-                                }
-
-                                bRet = true;
+                                process.Kill();
                             }
-                        });
 
-                        return bRet;
-                    };
+                            bRet = true;
+                        }
+                    });
 
-                    m_winProgress.ShowDialog();
-                    return true;
-                //}
-                //catch
-                //{
-                //    // the WPF Application class won't exit the app until the window list is cleared,
-                //    // even though the window never opened.
-                //    if (m_winProgress != null)
-                //        m_winProgress.Close();
-                //}
+                    return bRet;
+                };
+
+                m_winProgress.ShowDialog();
+                return true;
             }
 
             return false;

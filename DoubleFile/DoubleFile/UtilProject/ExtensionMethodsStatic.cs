@@ -7,12 +7,27 @@ namespace DoubleFile
 {
     internal static partial class ExtensionMethodsStatic
     {
-        internal static bool IsEmpty<T>(this IEnumerable<T> source)
+        internal static bool IsEmpty<T>(this ICollection<T> source)
         {
-            return (false == source.GetEnumerator().MoveNext());
+            return (source.Count == 0);
         }
 
-        internal static bool IsEmpty<T>(this UList<T> source)
+        internal static bool IsEmpty<T1, T2>(this IDictionary<T1, T2> source)
+        {
+            return (source.Count == 0);
+        }
+
+        internal static bool IsEmptyA(this System.Collections.IList source)
+        {
+            return (source.Count == 0);
+        }
+
+        internal static bool IsEmpty<T>(this IList<T> source)
+        {
+            return (source.Count == 0);
+        }
+
+        internal static bool IsEmptyA<T>(this IReadOnlyList<T> source)
         {
             return (source.Count == 0);
         }
@@ -27,12 +42,17 @@ namespace DoubleFile
             return (source.Count == 0);
         }
 
-        internal static bool IsEmpty(this TreeNodeCollection source)
+        internal static bool IsEmpty<T>(this Stack<T> source)
         {
             return (source.Count == 0);
         }
 
-        internal static bool IsEmptyA(this System.Collections.IList source)
+        internal static bool IsEmpty<T>(this UList<T> source)
+        {
+            return (source.Count == 0);
+        }
+
+        internal static bool IsEmpty(this TreeNodeCollection source)
         {
             return (source.Count == 0);
         }
@@ -51,7 +71,7 @@ namespace DoubleFile
         {
             First(source, action);
 
-#if (DEBUG && FOOBAR)
+#if (DEBUG)
             var enumerator = source.GetEnumerator();
 
             if (enumerator.MoveNext())

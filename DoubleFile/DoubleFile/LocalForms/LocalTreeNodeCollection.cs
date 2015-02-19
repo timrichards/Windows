@@ -69,7 +69,7 @@ namespace DoubleFile
         {
             LocalTreeNode nodePrev = null;
 
-            if ((nodeParent != null) && (false == nodes.IsEmpty()))
+            if ((nodeParent != null) && (false == nodes.IsEmptyA()))
             {
                 nodeParent.FirstNode = nodes[0];
             }

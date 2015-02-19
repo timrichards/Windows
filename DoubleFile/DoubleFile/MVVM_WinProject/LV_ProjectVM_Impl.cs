@@ -73,19 +73,18 @@ namespace DoubleFile
 
                     var dlgEdit = dlg as WinVolumeEdit;
 
-                    if ((dlgEdit != null) &&
-                        ModifyListingFile(lvItem, lvItemVolumeTemp, dlgEdit.uc_VolumeEdit.DriveLetter))
+                    if (dlgEdit != null)
                     {
-                        //if (MBox.ShowDialog("Update the project?", "Modify file", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                        //{
-                        //    form_btnSaveProject_Click();
-                        //}
+                        if (false == ModifyListingFile(lvItem, lvItemVolumeTemp, dlgEdit.uc_VolumeEdit.DriveLetter))
+                            break;
+
                         FileParse.ReadHeader(lvItemVolumeTemp.ListingFile, out lvItemVolumeTemp);
                         Unsaved = true;
                     }
-                    else if (FileExists(lvItemVolumeTemp.ListingFile))
+                    else    // WinVolumeNew
                     {
-                        continue;
+                        if (FileExists(lvItemVolumeTemp.ListingFile))
+                            continue;
                     }
 
                     lvItem.StringValues = lvItemVolumeTemp.StringValues;

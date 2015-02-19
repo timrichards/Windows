@@ -118,6 +118,11 @@ namespace DoubleFile
             CloseIfSimulatingModal();
         }
 
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
+            FlashWindowStatic.Go(this);
+        }
+
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
         {
             CloseIfSimulatingModal();

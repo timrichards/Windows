@@ -25,41 +25,33 @@ namespace DoubleFile
 
         internal static void Go(Control ctl_in = null, bool Once = false)
         {
-            Control dispatcher = ctl_in ?? GlobalData.static_MainWindow.Analysis_DirListForm;
-            UtilAnalysis_DirList.UIthread(dispatcher, () =>
+            var fInfo = new FLASHWINFO
             {
-                FLASHWINFO fInfo = new FLASHWINFO();
+                hwnd = (ctl_in != null)
+                    ? ctl_in.Handle
+                    : GlobalData.static_MainWindow.Analysis_DirListForm.Handle,
+                dwFlags = FLASHW_ALL,
+                uCount = (uint)(Once ? 1 : 3),
+                dwTimeout = 0,
+            };
+            fInfo.cbSize = Convert.ToUInt32(Marshal.SizeOf(fInfo));
 
-                fInfo.cbSize = Convert.ToUInt32(Marshal.SizeOf(fInfo));
-
-                if (ctl_in != null)
-                {
-                    fInfo.hwnd = ctl_in.Handle;
-                }
-                else
-                {
-                    fInfo.hwnd = GlobalData.static_MainWindow.Analysis_DirListForm.Handle;
-                }
-
-                fInfo.dwFlags = FLASHW_ALL;
-                fInfo.uCount = (uint)(Once ? 1 : 3);
-                fInfo.dwTimeout = 0;
-                FlashWindowEx(ref fInfo);
-            });
+            UtilAnalysis_DirList.UIthread(ctl_in ?? GlobalData.static_MainWindow.Analysis_DirListForm,
+                () => FlashWindowEx(ref fInfo));
         }
 
-
-        internal static void Go(System.Windows.Window window_in)
+        internal static void Go(System.Windows.Window window_in, bool Once = false)
         {
-            System.Windows.Window window = window_in ?? GlobalData.static_MainWindow;
-
-            FLASHWINFO fInfo = new FLASHWINFO();
-
+            var window = window_in ?? GlobalData.static_MainWindow;
+            var fInfo = new FLASHWINFO
+            {
+                hwnd = new WindowInteropHelper(window).Handle,
+                dwFlags = FLASHW_ALL,
+                uCount = (uint)(Once ? 1 : 5),
+                dwTimeout = 50,
+            };
             fInfo.cbSize = Convert.ToUInt32(Marshal.SizeOf(fInfo));
-            fInfo.hwnd = new WindowInteropHelper(window).Handle;
-            fInfo.dwFlags = FLASHW_ALL;
-            fInfo.uCount = 5;
-            fInfo.dwTimeout = 50;
+
             UtilProject.UIthread(() => FlashWindowEx(ref fInfo));
         }
     }

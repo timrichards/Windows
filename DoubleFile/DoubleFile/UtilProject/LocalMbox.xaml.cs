@@ -120,7 +120,7 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            FlashWindowStatic.Go(this);
+            FlashWindowStatic.Go(this, Once: true);
         }
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)

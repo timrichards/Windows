@@ -19,7 +19,7 @@ namespace DoubleFile
                 m_Items.Add(new TreeViewItem_FileHashVM(this, treeNode, ++nIndex));
             }
 
-            TVFE.DataContext = m_Items;
+            UtilProject.UIthread(() => TVFE.DataContext = m_Items);
         }
 
         internal TreeViewItem_FileHashVM SelectedItem = null;

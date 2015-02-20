@@ -36,16 +36,21 @@ namespace DoubleFile
 
         protected void Init()
         {
-            Activated += (o, e) =>
+            Action<Action> notTopDialog = (action) =>
             {
                 if (GlobalData.static_Dialog._simulatingModal &&
                     (this != GlobalData.static_Dialog))
                 {
-                    GlobalData.static_Dialog.Activate();
-                    FlashWindowStatic.Go(GlobalData.static_Dialog);
+                    action();
                 }
             };
 
+            Activated += (o, e) => notTopDialog(() =>
+            {
+                GlobalData.static_Dialog.Activate();
+                FlashWindowStatic.Go(GlobalData.static_Dialog);
+            });
+            Closing += (o, e) => notTopDialog(() => e.Cancel = true);    // just in case
             ShowActivated = true;
             Loaded += (o, e) => IsClosed = false;
             Closed += (o, e) => IsClosed = true;

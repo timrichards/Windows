@@ -113,7 +113,7 @@ namespace DoubleFile
                     list_lvIgnore: lsLocalLVignore, bLoose: true);
                 var dtStart = DateTime.Now;
 
-                collate.Step1_OnThread(d => nProgress = d);
+                collate.Step1(d => nProgress = d);
                 UtilProject.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds/1000.0 +
                                       " seconds.");
                 dtStart = DateTime.Now;
@@ -125,18 +125,13 @@ namespace DoubleFile
                 }
 
                 m_winProgress.SetCompleted(ksFolderTreeKey);
-                UtilProject.UIthread(() => collate.Step2_OnForm());
+                collate.Step2();
                 UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds/1000.0 +
                                       " seconds.");
             }
 
             TreeCleanup();
-
-            UtilProject.UIthread(() =>
-            {
-                m_tvVM.SetData(m_listRootNodes);
-            });
-
+            m_tvVM.SetData(m_listRootNodes);
             m_winProgress.CloseIfNatural();
         }
 

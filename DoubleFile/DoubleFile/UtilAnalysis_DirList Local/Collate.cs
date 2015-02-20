@@ -80,7 +80,7 @@ namespace Local
             InsertSizeMarkerStatic.Go(listLVitems, 0, bUnique);            // Enter the Zeroth
         }
 
-        internal void Step1_OnThread(Action<double> reportProgress)
+        internal void Step1(Action<double> reportProgress)
         {
             double nProgressNumerator = 0;
             double nProgressDenominator = 0;
@@ -426,7 +426,6 @@ namespace Local
 
                 MBoxStatic.Assert(1305.6325, nCount_A == nCount);
                 MBoxStatic.Assert(1305.6326, m_listTreeNodes.Count == nCount);
-                MBoxStatic.Assert(1305.6327, CountNodes.Go(m_listRootNodes) == nCount);
                 UtilProject.WriteLine("Step1_OnThread " + nCount);
             }
 
@@ -484,88 +483,70 @@ namespace Local
             treeView.Nodes.Clear();                             // prevents destroy nodes
         }
 
-        internal void Step2_OnForm()
+        internal void Step2()
         {
-            UtilProject.UIthread(() =>
+            if (m_tvBrowseWPF.Enabled == false)
             {
-                if (m_bThreadAbort || gd.WindowClosed)
-                {
-                    return;
-                }
+                m_tvBrowseWPF.Enabled = true;
+                m_tvBrowseWPF.CheckBoxes = m_bCheckboxes;
 
-                if (m_tvBrowseWPF.Enabled == false)      // stays enabled when DoCollation() is called directly
-                {
-                    m_tvBrowseWPF.Nodes.Clear();
-                }
+                var nCount = CountNodes.Go(m_listRootNodes);
 
-                if (m_listRootNodes.IsEmpty())
-                {
-                    return;
-                }
+                UtilAnalysis_DirList.Write("A");
+                m_tvBrowseWPF.Nodes.AddRange(m_listRootNodes.ToArray());
+                UtilProject.WriteLine("A");
 
-                if (m_tvBrowseWPF.Enabled == false)
-                {
-                    m_tvBrowseWPF.Enabled = true;
-                    m_tvBrowseWPF.CheckBoxes = m_bCheckboxes;
+                var nCount_A = CountNodes.Go(m_listRootNodes);
 
-                    var nCount = CountNodes.Go(m_listRootNodes);
+                MBoxStatic.Assert(1305.6331, nCount_A == nCount);
+                MBoxStatic.Assert(1305.6332, m_tvBrowseWPF.GetNodeCount(includeSubTrees: true) == nCount);
+                UtilProject.WriteLine("Step2_OnForm_A " + nCount);
+            }
 
-                    UtilAnalysis_DirList.Write("A");
-                    m_tvBrowseWPF.Nodes.AddRange(m_listRootNodes.ToArray());
-                    UtilProject.WriteLine("A");
+            if (m_bThreadAbort || gd.WindowClosed)
+            {
+                return;
+            }
 
-                    var nCount_A = CountNodes.Go(m_listRootNodes);
+            MBoxStatic.Assert(1305.6333, wpf_lvClones.Items.IsEmpty());
+            UtilAnalysis_DirList.Write("B");
+            wpf_lvClones.Items.AddRange(listLVdiffVol.ToArray());
+            wpf_lvClones.Invalidate();
+            UtilProject.WriteLine("B");
 
-                    MBoxStatic.Assert(1305.6331, nCount_A == nCount);
-                    MBoxStatic.Assert(1305.6332, m_tvBrowseWPF.GetNodeCount(includeSubTrees: true) == nCount);
-                    UtilProject.WriteLine("Step2_OnForm_A " + nCount);
-                }
+            if (m_bThreadAbort || gd.WindowClosed)
+            {
+                return;
+            }
 
-                if (m_bThreadAbort || gd.WindowClosed)
-                {
-                    return;
-                }
+            MBoxStatic.Assert(1305.6334, wpf_lvUnique.Items.IsEmpty());
+            UtilAnalysis_DirList.Write("C");
+            wpf_lvUnique.Items.AddRange(listLVunique.ToArray());
+            wpf_lvUnique.Invalidate();
+            UtilProject.WriteLine("C");
 
-                MBoxStatic.Assert(1305.6333, wpf_lvClones.Items.IsEmpty());
-                UtilAnalysis_DirList.Write("B");
-                wpf_lvClones.Items.AddRange(listLVdiffVol.ToArray());
-                wpf_lvClones.Invalidate();
-                UtilProject.WriteLine("B");
+            if (m_bThreadAbort || gd.WindowClosed)
+            {
+                return;
+            }
 
-                if (m_bThreadAbort || gd.WindowClosed)
-                {
-                    return;
-                }
+            MBoxStatic.Assert(1305.6335, wpf_lvSameVol.Items.IsEmpty());
+            UtilAnalysis_DirList.Write("D");
+            wpf_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
+            wpf_lvSameVol.Invalidate();
+            UtilProject.WriteLine("D");
 
-                MBoxStatic.Assert(1305.6334, wpf_lvUnique.Items.IsEmpty());
-                UtilAnalysis_DirList.Write("C");
-                wpf_lvUnique.Items.AddRange(listLVunique.ToArray());
-                wpf_lvUnique.Invalidate();
-                UtilProject.WriteLine("C");
+            if (m_tvBrowseWPF.SelectedNode != null)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
+            {
+                var treeNode = m_tvBrowseWPF.SelectedNode;
 
-                if (m_bThreadAbort || gd.WindowClosed)
-                {
-                    return;
-                }
-
-                MBoxStatic.Assert(1305.6335, wpf_lvSameVol.Items.IsEmpty());
-                UtilAnalysis_DirList.Write("D");
-                wpf_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
-                wpf_lvSameVol.Invalidate();
-                UtilProject.WriteLine("D");
-
-                if (m_tvBrowseWPF.SelectedNode != null)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
-                {
-                    var treeNode = m_tvBrowseWPF.SelectedNode;
-
-                    m_tvBrowseWPF.SelectedNode = null;
-                    m_tvBrowseWPF.SelectedNode = treeNode;   // reselect in repopulated collation listviewers
-                }
-                else
-                {
-                    m_tvBrowseWPF.SelectedNode = m_listRootNodes[0];
-                }
-            });
+                m_tvBrowseWPF.SelectedNode = null;
+                m_tvBrowseWPF.SelectedNode = treeNode;   // reselect in repopulated collation listviewers
+            }
+            else
+            {
+                m_tvBrowseWPF.SelectedNode = m_listRootNodes[0];
+            }
 
             static_this = null;
         }

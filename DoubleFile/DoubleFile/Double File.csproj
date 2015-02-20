@@ -198,7 +198,7 @@
     <Compile Include="UtilAnalysis_DirList Local\UtilAnalysis_DirList.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\UtilAnalysis_DirList\BlinkyStruct.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\UtilAnalysis_DirList\ExtensionMethodsStatic.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\UtilAnalysis_DirList\FlashWindowStatic.cs" />
+    <Compile Include="UtilAnalysis_DirList Local\UtilAnalysis_DirList\FlashWindowStatic.cs" />
     <Compile Include="UtilAnalysis_DirList Local\UtilAnalysis_DirList\SDL_FileBase.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\UtilAnalysis_DirList\SDL_TreeView.cs" />
     <Compile Include="UtilAnalysis_DirList Local\UtilAnalysis_DirList\SDL_FileBase\SDL_CopyFile.cs" />

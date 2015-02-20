@@ -1,7 +1,8 @@
 ﻿<Application x:Class="DoubleFile.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="MainWindow.xaml">
+             StartupUri="MainWindow.xaml"
+             Activated="Application_Activated">
     <Application.Resources>
         <Style x:Key="FrameworkElement" TargetType="FrameworkElement">
             <Setter Property="ToolTipService.ShowDuration" Value="60000" />

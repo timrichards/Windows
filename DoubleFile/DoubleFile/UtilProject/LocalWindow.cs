@@ -6,6 +6,9 @@ namespace DoubleFile
     public class LocalWindow : System.Windows.Window
     {
         internal bool IsClosed = true;
+
+        static protected bool AppActivated = false;
+
         internal bool? LocalDialogResult
         {
             get
@@ -36,6 +39,9 @@ namespace DoubleFile
 
         protected void Init()
         {
+            // You can comment this stuff out all you want: the flashing close box on the
+            // system file dialogs isn't going away...
+
             Action<Action> notTopDialog = (action) =>
             {
                 if (GlobalData.static_Dialog._simulatingModal &&
@@ -45,13 +51,26 @@ namespace DoubleFile
                 }
             };
 
-            Activated += (o, e) => notTopDialog(() =>
+            Action activateTopDialog = () =>
             {
                 GlobalData.static_Dialog.Activate();
-                FlashWindowStatic.Go(GlobalData.static_Dialog);
-            });
+
+                if (false == AppActivated)
+                    FlashWindowStatic.Go(GlobalData.static_Dialog);
+
+                AppActivated = false;
+            };
+
+            Activated += (o, e) => notTopDialog(activateTopDialog);
             Closing += (o, e) => notTopDialog(() => e.Cancel = true);    // just in case
+
+            if (_simulatingModal)    // just in case
+            {
+                Deactivated += (o, e) => { if (this == GlobalData.static_Dialog) activateTopDialog(); };
+            }
+
             ShowActivated = true;
+            ShowInTaskbar = (this == GlobalData.static_MainWindow);
             Loaded += (o, e) => IsClosed = false;
             Closed += (o, e) => IsClosed = true;
         }

@@ -32,7 +32,7 @@ namespace DoubleFile
                     : GlobalData.static_MainWindow.Analysis_DirListForm.Handle,
                 dwFlags = FLASHW_ALL,
                 uCount = (uint)(Once ? 1 : 3),
-                dwTimeout = 0,
+                dwTimeout = 0
             };
             fInfo.cbSize = Convert.ToUInt32(Marshal.SizeOf(fInfo));
 
@@ -47,8 +47,8 @@ namespace DoubleFile
             {
                 hwnd = new WindowInteropHelper(window).Handle,
                 dwFlags = FLASHW_ALL,
-                uCount = (uint)(Once ? 1 : 5),
-                dwTimeout = 50,
+                uCount = (uint)(Once ? 1 : 7),
+                dwTimeout = 75
             };
             fInfo.cbSize = Convert.ToUInt32(Marshal.SizeOf(fInfo));
 

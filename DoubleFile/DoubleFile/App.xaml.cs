@@ -7,5 +7,14 @@ namespace DoubleFile
     /// </summary>
     public partial class App : Application
     {
+        internal static event System.Action OnAppActivated = null;
+
+        private void Application_Activated(object sender, System.EventArgs e)
+        {
+            if (null != OnAppActivated)
+            {
+                OnAppActivated();
+            }
+        }
     }
 }

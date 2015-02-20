@@ -29,16 +29,7 @@ namespace DoubleFile
         }
         bool? _LocalDialogResult = null;
 
-        internal new void Show() { Init(); Show(GlobalData.static_Dialog); }
-        internal new bool? ShowDialog() { Init(); return ShowDialog(GlobalData.static_Dialog); }
-
-        internal void CloseIfSimulatingModal()
-        {
-            if (_simulatingModal)
-                Close();
-        }
-
-        protected void Init()
+        protected LocalWindow(bool bIsMainWindow = false)
         {
             // You can comment this stuff out all you want: the flashing close box on the
             // system file dialogs isn't going away...
@@ -65,15 +56,10 @@ namespace DoubleFile
             Activated += (o, e) => notTopDialog(activateTopDialog);
             Closing += (o, e) => notTopDialog(() => e.Cancel = true);   // just in case
 
-            if (_simulatingModal)                                       // just in case
-            {
-                Deactivated += (o, e) => { if (this == GlobalData.static_Dialog) activateTopDialog(); };
-            }
-
             // Keep this around so you see how it's done
             // Icon = BitmapFrame.Create(new Uri(@"pack://application:,,/Resources/ic_people_black_18dp.png"));
 
-            if (this != GlobalData.static_MainWindow)
+            if (false == bIsMainWindow)
             {
                 Icon = GlobalData.static_MainWindow.Icon;
                 WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -85,6 +71,15 @@ namespace DoubleFile
             Loaded += (o, e) => IsClosed = false;
             Closed += (o, e) => IsClosed = true;
         }
+
+        internal void CloseIfSimulatingModal()
+        {
+            if (_simulatingModal)
+                Close();
+        }
+
+        internal new void Show() { Show(GlobalData.static_Dialog); }
+        internal new bool? ShowDialog() { return ShowDialog(GlobalData.static_Dialog); }
 
         void Show(LocalWindow me)
         {

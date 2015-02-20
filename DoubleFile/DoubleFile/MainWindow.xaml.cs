@@ -13,9 +13,9 @@ namespace DoubleFile
     partial class MainWindow
     {
         public MainWindow()
+            : base(bIsMainWindow: true)
         {
             gd_old = new GlobalData(this);
-            Init();     // has to come after new GlobalData for the taskbar icon
 
             App.OnAppActivated += () =>
             {

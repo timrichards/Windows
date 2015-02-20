@@ -18,17 +18,12 @@ namespace DoubleFile
         {
             Main_Window = mainWindow_in;
 
-            EventHandler closedEvent = null;
-            EventHandler closedEvent_ = (o, e) =>
+            Main_Window.Closed += (o, e) =>
             {
                 WindowClosed = true;
                 FileDictionary.Dispose();
                 FileDictionary = null;
-                Main_Window.Closed -= closedEvent;
             };
-
-            closedEvent = closedEvent_;
-            Main_Window.Closed += closedEvent;
 
             FileDictionary = new FileDictionary();
         }
@@ -41,16 +36,7 @@ namespace DoubleFile
         internal GlobalData_Form(FormAnalysis_DirList mainForm_in)
         {
             Main_Form = mainForm_in;
-
-            EventHandler closedEvent = null;
-            EventHandler closedEvent_ = (o, e) =>
-            {
-                WindowClosed = true;
-                Main_Form.Closed -= closedEvent;
-            };
-
-            closedEvent = closedEvent_;
-            Main_Form.Closed += closedEvent;
+            Main_Form.Closed += (o, e) => WindowClosed = true;
         }
     }
 }

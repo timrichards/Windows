@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Windows;
 using System.Windows.Threading;
+using System.Windows;
+
 namespace DoubleFile
 {
     public class LocalWindow : System.Windows.Window
@@ -62,15 +63,25 @@ namespace DoubleFile
             };
 
             Activated += (o, e) => notTopDialog(activateTopDialog);
-            Closing += (o, e) => notTopDialog(() => e.Cancel = true);    // just in case
+            Closing += (o, e) => notTopDialog(() => e.Cancel = true);   // just in case
 
-            if (_simulatingModal)    // just in case
+            if (_simulatingModal)                                       // just in case
             {
                 Deactivated += (o, e) => { if (this == GlobalData.static_Dialog) activateTopDialog(); };
             }
 
+            // Keep this around so you see how it's done
+            // Icon = BitmapFrame.Create(new Uri(@"pack://application:,,/Resources/ic_people_black_18dp.png"));
+
+            if (this != GlobalData.static_MainWindow)
+            {
+                Icon = GlobalData.static_MainWindow.Icon;
+                WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                ShowInTaskbar = false;
+            }
+
+            ResizeMode = ResizeMode.CanResizeWithGrip;
             ShowActivated = true;
-            ShowInTaskbar = (this == GlobalData.static_MainWindow);
             Loaded += (o, e) => IsClosed = false;
             Closed += (o, e) => IsClosed = true;
         }

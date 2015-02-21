@@ -27,10 +27,6 @@ namespace DoubleFile
             m_nIxHistory = -1;
         }
 
-        internal string m_strVolumeName = null;
-        internal string m_strPath = null;
-        internal string m_strSaveAs = null;
-
         internal int m_nCompareIndex = 0;
         internal int m_nLVclonesClickIx = -1;
         internal readonly int[] m_arrSelChgIx = new int[2];
@@ -212,11 +208,19 @@ namespace DoubleFile
         {
             TreeNode treeNode = m_listHistory[n];
 
-            if (treeNode.Tag is TreeNode)
-            {
-                TreeNode treeNode_A = (TreeNode)treeNode.Tag;
+            var treeNode_A = treeNode.Tag as TreeNode;
 
-                ((RootNodeDatum)treeNode_A.Tag).VolumeView = treeNode.Checked;
+            if (null != treeNode_A)
+            {
+                var rootNodeDatum = (treeNode_A.Tag as RootNodeDatum);
+
+                if (null == rootNodeDatum)      // this check is new 2/17/15 and has never been hit
+                {
+                    MBoxStatic.Assert(0, false);
+                    return treeNode;
+                }
+
+                rootNodeDatum.VolumeView = treeNode.Checked;
                 return treeNode_A;
             }
             else
@@ -227,7 +231,9 @@ namespace DoubleFile
 
         internal bool History_Equals(TreeNode treeNode)
         {
-            if (treeNode.Tag is RootNodeDatum)
+            var rootNodeDatum = (treeNode.Tag as RootNodeDatum);
+
+            if (null != rootNodeDatum)
             {
                 TreeNode treeNode_A = (TreeNode)m_listHistory[m_listHistory.Count - 1];
 
@@ -236,7 +242,7 @@ namespace DoubleFile
                     return false;
                 }
 
-                if (((RootNodeDatum)treeNode.Tag).VolumeView != treeNode_A.Checked)
+                if (rootNodeDatum.VolumeView != treeNode_A.Checked)
                 {
                     return false;
                 }
@@ -256,13 +262,15 @@ namespace DoubleFile
                 return;
             }
 
-            if (treeNode.Tag is RootNodeDatum)
-            {
-                TreeNode treeNode_A = new TreeNode();   // checked means VolumeView mode and necessitates History_Add() etc.
+            var rootNodeDatum = (treeNode.Tag as RootNodeDatum);
 
-                treeNode_A.Checked = ((RootNodeDatum)treeNode.Tag).VolumeView;
-                treeNode_A.Tag = treeNode;
-                m_listHistory.Add(treeNode_A);
+            if (null != rootNodeDatum)
+            {
+                m_listHistory.Add(new TreeNode()   // checked means VolumeView mode and necessitates History_Add() etc.
+                {
+                    Checked = rootNodeDatum.VolumeView,
+                    Tag = treeNode
+                });
             }
             else
             {
@@ -270,6 +278,7 @@ namespace DoubleFile
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal void InterruptTreeTimerWithAction(BoolAction boolAction)
         {
             bool bTimer = m_tmrDoTree.Enabled;
@@ -363,13 +372,13 @@ namespace DoubleFile
         {
             bUp = false;
 
-            if ((sender is ListView) == false)
+            var lv = (sender as ListView);
+
+            if (null == lv)
             {
                 MBoxStatic.Assert(1308.9333, false, bTraceOnly: true);
                 return false;
             }
-
-            ListView lv = (ListView)sender;
 
             if (lv.SelectedItems.IsEmpty())
             {
@@ -385,6 +394,7 @@ namespace DoubleFile
             return nNow != nPrev;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal void RemoveCorrelation(TreeNode treeNode_in, bool bContinue = false)
         {
             TreeNode treeNode = treeNode_in;

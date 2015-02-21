@@ -33,8 +33,11 @@ namespace DoubleFile
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAnalysis_DirList)); 
+            //this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.ShowInTaskbar = false;
+
             System.Windows.Forms.Label label3;
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAnalysis_DirList));
             this.form_chkSpacer = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel3 = new FormAnalysis_DirList.FormAnalysis_DirListLayoutPanel(this.components);
             this.form_splitFiles = new System.Windows.Forms.SplitContainer();
@@ -120,7 +123,6 @@ namespace DoubleFile
             this.form_btnCopyToClipboard = new System.Windows.Forms.Button();
             this.form_cbFindbox = new System.Windows.Forms.ComboBox();
             this.form_chkCompare1 = new System.Windows.Forms.CheckBox();
-            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             label3 = new System.Windows.Forms.Label();
             this.tableLayoutPanel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.form_splitFiles)).BeginInit();
@@ -1382,7 +1384,6 @@ namespace DoubleFile
 
         #endregion
 
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         public SDL_TreeView form_treeViewBrowse;
         private System.Windows.Forms.SplitContainer form_splitFiles;
         private SDL_ListView form_lvDetail;

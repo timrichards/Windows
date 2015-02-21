@@ -12,21 +12,19 @@ namespace DoubleFile
     {
         internal FileDictionary()
         {
-            ProjectFile.OnOpenedProject += OpenedProject;
+            //ProjectFile.OnOpenedProject += Deserialize;
             //ProjectFile.OnSavingProject += Serialize;
         }
 
         public void Dispose()
         {
-            ProjectFile.OnOpenedProject -= OpenedProject;
+            //ProjectFile.OnOpenedProject -= Deserialize;
            // ProjectFile.OnSavingProject -= Serialize;
         }
 
         internal void Clear()
         {
             m_DictFiles.Clear();
-            GC.Collect();
-            UtilProject.WriteLine("FileDictionary.Clear()");
         }
 
         internal bool IsEmpty { get { return m_DictFiles.IsEmpty(); } }
@@ -178,6 +176,9 @@ namespace DoubleFile
             }
 
             m_statusCallback(bDone: true);
+            m_statusCallback = null;
+            LVprojectVM = null;
+            m_thread = null;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
@@ -224,11 +225,6 @@ namespace DoubleFile
                         .Select(s => Convert.ToInt32(s));
                 }
             }
-        }
-
-        void OpenedProject()
-        {
-            m_DictFiles.Clear();
         }
 
         readonly string ksSerializeFile = ProjectFile.TempPath + "_DuplicateFiles._";

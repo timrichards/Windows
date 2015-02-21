@@ -27,16 +27,19 @@ namespace DoubleFile
 
         internal static List<string[]> GetFileList(TreeNode parent, List<ulong> listLength = null)
         {
-            string strFile = ((RootNodeDatum)parent.Root().Tag).StrFile;
+            var rootNodeDatum = (parent.Root().Tag as RootNodeDatum);
 
-            if ((parent.Tag is NodeDatum) == false)
+            if (null == rootNodeDatum)
             {
                 return null;
             }
 
-            NodeDatum nodeDatum = (NodeDatum)parent.Tag;
+            string strFile = rootNodeDatum.StrFile;
 
-            if (nodeDatum.nLineNo == 0)
+            var nodeDatum = parent.Tag as NodeDatum;
+
+            if ((null == nodeDatum) ||
+                (nodeDatum.nLineNo == 0))
             {
                 return null;
             }
@@ -167,14 +170,10 @@ namespace DoubleFile
                 return;
             }
 
-            if ((m_treeNode.Tag is NodeDatum) == false)
-            {
-                return;
-            }
+            var nodeDatum = m_treeNode.Tag as NodeDatum;
 
-            var nodeDatum = (NodeDatum)m_treeNode.Tag;
-
-            if (nodeDatum.nLineNo == 0)
+            if ((null == nodeDatum) ||
+                (nodeDatum.nLineNo == 0))
             {
                 return;
             }

@@ -53,7 +53,7 @@ namespace DoubleFile
             }
         }
 
-        public bool Equals(ListViewItemVM_Base other)
+        public virtual bool Equals(ListViewItemVM_Base other)
         {
             if (null == other)
                 return false;
@@ -172,7 +172,7 @@ namespace DoubleFile
             }
         }
 
-        public bool Equals(ListViewVM_Base other)
+        public virtual bool Equals(ListViewVM_Base other)
         {
             if (null == other)
             {

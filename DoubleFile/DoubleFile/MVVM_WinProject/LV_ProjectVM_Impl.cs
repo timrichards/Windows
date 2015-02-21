@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    partial class LV_ProjectVM : IEquatable<LV_ProjectVM>
+    partial class LV_ProjectVM
     {
         internal bool Unsaved { get; set; }
 
@@ -26,36 +26,6 @@ namespace DoubleFile
 
                 Unsaved = lvProjectVM_in.Unsaved;
             }
-        }
-
-        public bool Equals(LV_ProjectVM other)
-        {
-            if (null == other)
-            {
-                return false;
-            }
-
-            if (Items.Count != other.Items.Count)
-            {
-                return false;
-            }
-            
-            foreach (var item in Items)
-            {
-                var otherItem = other[item.SearchValue];
-
-                if (null == otherItem)
-                    return false;
-
-                if (0 !=
-                    string.Join("", item.StringValues).CompareTo(
-                    string.Join("", otherItem.StringValues)))
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         internal bool AlreadyInProject(LVitem_ProjectVM lvCurrentItem, string strFilename = null)
@@ -106,10 +76,17 @@ namespace DoubleFile
 
                     if (dlgEdit != null)
                     {
-                        if (false == ModifyListingFile(lvItem, lvItemVolumeTemp, dlgEdit.uc_VolumeEdit.DriveLetter))
+                        if (ModifyListingFile(lvItem, lvItemVolumeTemp, dlgEdit.uc_VolumeEdit.DriveLetter))
+                        {
+                            FileParse.ReadHeader(lvItemVolumeTemp.ListingFile, out lvItemVolumeTemp);
+                        }
+                        else if (lvItem.Equals(lvItemVolumeTemp))
+                        {
+                            // volume group; include y/n: columns that aren't in the listing file
+                            // no change
                             break;
+                        }
 
-                        FileParse.ReadHeader(lvItemVolumeTemp.ListingFile, out lvItemVolumeTemp);
                         Unsaved = true;
                     }
                     else    // WinVolumeNew

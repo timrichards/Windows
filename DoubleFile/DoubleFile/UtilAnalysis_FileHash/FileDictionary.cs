@@ -22,7 +22,13 @@ namespace DoubleFile
            // ProjectFile.OnSavingProject -= Serialize;
         }
 
-        internal void Clear() { m_DictFiles.Clear(); }
+        internal void Clear()
+        {
+            m_DictFiles.Clear();
+            GC.Collect();
+            UtilProject.WriteLine("FileDictionary.Clear()");
+        }
+
         internal bool IsEmpty { get { return m_DictFiles.IsEmpty(); } }
         internal void ResetAbortFlag() { IsAborted = false; }
 

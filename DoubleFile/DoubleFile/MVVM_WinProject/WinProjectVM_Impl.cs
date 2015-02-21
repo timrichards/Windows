@@ -92,7 +92,6 @@ namespace DoubleFile
                     (false == m_lvVM.FileExists(newVolume.LVitemVolumeTemp.ListingFile)))
                 {
                     m_lvVM.NewItem(newVolume.LVitemVolumeTemp);
-                    gd.FileDictionary.Clear();
                     m_lvVM.Unsaved = true;
                     break;
                 }
@@ -113,7 +112,6 @@ namespace DoubleFile
             if ((dlg.ShowDialog() ?? false) &&
                 OpenListingFiles(dlg.FileNames))
             {
-                gd.FileDictionary.Clear();
                 m_lvVM.Unsaved = true;
             }
         }

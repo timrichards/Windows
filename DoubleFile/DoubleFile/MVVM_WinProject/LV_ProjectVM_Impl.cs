@@ -1,9 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 
 namespace DoubleFile
 {
-    partial class LV_ProjectVM
+    partial class LV_ProjectVM : IEquatable<LV_ProjectVM>
     {
         internal bool Unsaved { get; set; }
 
@@ -25,6 +26,36 @@ namespace DoubleFile
 
                 Unsaved = lvProjectVM_in.Unsaved;
             }
+        }
+
+        public bool Equals(LV_ProjectVM other)
+        {
+            if (null == other)
+            {
+                return false;
+            }
+
+            if (Items.Count != other.Items.Count)
+            {
+                return false;
+            }
+            
+            foreach (var item in Items)
+            {
+                var otherItem = other[item.SearchValue];
+
+                if (null == otherItem)
+                    return false;
+
+                if (0 !=
+                    string.Join("", item.StringValues).CompareTo(
+                    string.Join("", otherItem.StringValues)))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         internal bool AlreadyInProject(LVitem_ProjectVM lvCurrentItem, string strFilename = null)
@@ -154,7 +185,6 @@ namespace DoubleFile
             Selected()
                 .ToList()
                 .ForEach(lvItem => Items.Remove(lvItem));
-            gd.FileDictionary.Clear();
             Unsaved = (false == Items.IsEmpty());
         }
 
@@ -180,7 +210,6 @@ namespace DoubleFile
         {
             Selected()
                 .ForEach(lvItem => { lvItem.Include = (false == lvItem.Include); });
-            gd.FileDictionary.Clear();
             Unsaved = true;
         }
 

@@ -21,7 +21,7 @@ namespace DoubleFile
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             var bOpenProject = (null == LVprojectVM);
-            var lvProjectVM = new LV_ProjectVM(gd, LVprojectVM);
+            var lvProjectVM = LVprojectVM ?? new LV_ProjectVM();
 
             LVprojectVM = null;         // only one representation of state at a time
 

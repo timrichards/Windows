@@ -135,7 +135,7 @@ namespace DoubleFile
             }
             else
             {
-                volumes = new WinProject(gd, LVprojectVM ?? new LV_ProjectVM());
+                volumes = new WinProject(gd, new LV_ProjectVM(gd, LVprojectVM));
             }
 
             if (false == (volumes.ShowDialog() ?? false))
@@ -143,12 +143,17 @@ namespace DoubleFile
                 return;
             }
 
-            LVprojectVM = volumes.LVprojectVM;
-
-            if (LVprojectVM != null)
+            if (volumes.LVprojectVM != null)
             {
+                if (volumes.LVprojectVM.Equals(LVprojectVM))
+                {
+                    return;
+                }
+
                 FormAnalysis_DirListAction(FormAnalysis_DirList.RestartTreeTimer);
-                new SaveListingsProcess(gd, LVprojectVM);
+                new SaveListingsProcess(gd, volumes.LVprojectVM);
+                LVprojectVM = volumes.LVprojectVM;
+                gd.FileDictionary.Clear();
             }
         }
 

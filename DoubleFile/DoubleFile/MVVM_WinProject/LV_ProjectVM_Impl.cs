@@ -21,7 +21,7 @@ namespace DoubleFile
 
                 foreach (var lvItemVM in lvProjectVM_in.ItemsCast)
                 {
-                    Add(lvItemVM, bQuiet: true);
+                    Add(new LVitem_ProjectVM(lvItemVM), bQuiet: true);
                 }
 
                 Unsaved = lvProjectVM_in.Unsaved;

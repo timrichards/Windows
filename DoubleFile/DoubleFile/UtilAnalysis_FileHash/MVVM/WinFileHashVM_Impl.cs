@@ -152,7 +152,7 @@ namespace DoubleFile
                 }
             }
 
-            m_winProgress.Title = "Initializing File Hash Explorer";
+            m_winProgress.Title = "Initializing Duplicate File Explorer";
             m_winProgress.WindowClosingCallback = (() =>
             {
                 if (false == UtilAnalysis_DirList.Closure(() =>

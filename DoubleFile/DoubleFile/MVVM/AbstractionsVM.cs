@@ -128,7 +128,7 @@ namespace DoubleFile
         protected string[] marr = null;
     }
 
-    abstract class ListViewVM_Base : ObservableObject_OwnerWindow, IEquatable<ListViewVM_Base>
+    abstract class ListViewVM_Base : ObservableObject_OwnerWindow
     {
         internal delegate bool BoolQuery();
         internal BoolQuery SelectedOne = () => { DesignModeOK(); return false; };
@@ -172,27 +172,6 @@ namespace DoubleFile
             }
         }
 
-        public virtual bool Equals(ListViewVM_Base other)
-        {
-            if (null == other)
-            {
-                return false;
-            }
-
-            if (Items.Count != other.Items.Count)
-            {
-                return false;
-            }
-
-            foreach (var item in Items)
-            {
-                if (false == item.Equals(other[item.SearchValue]))
-                    return false;
-            }
-
-            return true;
-        }
-
         void RaiseItems()
         {
             RaisePropertyChanged("Items");
@@ -210,12 +189,40 @@ namespace DoubleFile
         readonly protected ObservableCollection<ListViewItemVM_Base> m_items = new ObservableCollection<ListViewItemVM_Base>();
     }
 
-    abstract class ListViewVM_GenericBase<T> : ListViewVM_Base where T : ListViewItemVM_Base
+    abstract class ListViewVM_GenericBase<T> : ListViewVM_Base, IEquatable<ListViewVM_GenericBase<T>>
+        where T : ListViewItemVM_Base
     {
         internal delegate IEnumerable<T> EnumerableQuery();
         internal EnumerableQuery Selected = () => { DesignModeOK(); return null; };
 
         internal IEnumerable<T> ItemsCast { get { return m_items.Cast<T>(); } }
+
+        public virtual bool Equals(ListViewVM_GenericBase<T> other)
+        {
+            if (null == other)
+            {
+                return false;
+            }
+
+            MBoxStatic.Assert(0, (false == object.ReferenceEquals(this, other)));
+
+            if (Items.Count != other.Items.Count)
+            {
+                return false;
+            }
+
+            foreach (var item in ItemsCast)
+            {
+                var otherItem = other[item.SearchValue];
+
+                MBoxStatic.Assert(0, (false == object.ReferenceEquals(item, otherItem)));
+
+                if (false == item.Equals(otherItem))
+                    return false;
+            }
+
+            return true;
+        }
     }
 }
 

@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace DoubleFile
 {
-    abstract class ListViewItemVM_Base : ObservableObjectBase, IEquatable<ListViewItemVM_Base>
+    abstract class ListViewItemVM_Base : ObservableObjectBase
     {
         internal string this[int i] { get { return marr[i]; } }
 
@@ -51,35 +51,6 @@ namespace DoubleFile
             {
                 RaiseColumnWidths();
             }
-        }
-
-        public bool Equals(ListViewItemVM_Base other)
-        {
-            if (null == other)
-                return false;
-
-            if (NumCols != other.NumCols)
-                return false;
-
-            if (SearchCol != other.SearchCol)
-                return false;
-
-            if (0 !=
-                string.Join("", marr).CompareTo(
-                string.Join("", other.marr)))
-            {
-                return false;
-            }
-
-            if (0 !=
-                string.Join("", PropertyNames).CompareTo(
-                string.Join("", other.PropertyNames)))
-            {
-                return false;
-            }
-
-            // ignore the LVVM
-            return true;
         }
 
         internal void RaiseColumnWidths()
@@ -128,7 +99,7 @@ namespace DoubleFile
         protected string[] marr = null;
     }
 
-    abstract class ListViewVM_Base : ObservableObject_OwnerWindow, IEquatable<ListViewVM_Base>
+    abstract class ListViewVM_Base : ObservableObject_OwnerWindow
     {
         internal delegate bool BoolQuery();
         internal BoolQuery SelectedOne = () => { DesignModeOK(); return false; };
@@ -170,27 +141,6 @@ namespace DoubleFile
 
                 return null;
             }
-        }
-
-        public bool Equals(ListViewVM_Base other)
-        {
-            if (null == other)
-            {
-                return false;
-            }
-
-            if (Items.Count != other.Items.Count)
-            {
-                return false;
-            }
-
-            foreach (var item in Items)
-            {
-                if (false == item.Equals(other[item.SearchValue]))
-                    return false;
-            }
-
-            return true;
         }
 
         void RaiseItems()

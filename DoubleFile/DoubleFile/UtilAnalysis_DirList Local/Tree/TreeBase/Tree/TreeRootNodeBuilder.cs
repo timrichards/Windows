@@ -70,7 +70,7 @@ namespace Local
 
             internal TreeRootNodeBuilder DoThreadFactory()
             {
-                m_thread = new Thread(Go) { IsBackground = true };
+                m_thread = new Thread(Go) {IsBackground = true};
                 m_thread.Start();
                 return this;
             }
@@ -109,7 +109,7 @@ namespace Local
                             break;
                         }
 
-                        if (false == File.Exists(StrFile_01(m_volStrings.ListingFile)))
+                        if (File.Exists(StrFile_01(m_volStrings.ListingFile)) == false)
                         {
                             break;
                         }
@@ -142,8 +142,7 @@ namespace Local
                     var nIx = -1;
 
                     foreach (var strArray
-                        in ieDriveInfo
-                        .Select(strLine => strLine.Split('\t')))
+                        in ieDriveInfo.Select(strLine => strLine.Split('\t')))
                     {
                         ++nIx;
 

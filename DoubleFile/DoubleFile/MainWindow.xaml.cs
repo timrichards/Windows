@@ -143,18 +143,20 @@ namespace DoubleFile
                 return;
             }
 
-            if (volumes.LVprojectVM != null)
+            if (null == volumes.LVprojectVM)
             {
-                if (volumes.LVprojectVM.Equals(LVprojectVM))
-                {
-                    return;
-                }
-
-                FormAnalysis_DirListAction(FormAnalysis_DirList.RestartTreeTimer);
-                new SaveListingsProcess(gd, volumes.LVprojectVM);
-                LVprojectVM = volumes.LVprojectVM;
-                gd.FileDictionary.Clear();
+                return;
             }
+
+            if (volumes.LVprojectVM.Equals(LVprojectVM))
+            {
+                return;
+            }
+
+            FormAnalysis_DirListAction(FormAnalysis_DirList.RestartTreeTimer);
+            new SaveListingsProcess(gd, volumes.LVprojectVM);
+            LVprojectVM = volumes.LVprojectVM;
+            gd.FileDictionary.Clear();
         }
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)

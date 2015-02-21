@@ -8,22 +8,22 @@ namespace DoubleFile
     {
         internal readonly LocalTreeNodeCollection Nodes = null;
         internal string Text = null;
-        internal string ToolTipText = null;
-        internal string Name = null;
+ //       internal string ToolTipText = null;
+ //       internal string Name = null;
         internal LocalTV TreeView = null;
         internal LocalTreeNode FirstNode = null;
         internal LocalTreeNode NextNode = null;
         internal LocalTreeNode Parent = null;
         internal int Level = -1;
-        internal bool Checked = false;
+ //       internal bool Checked = false;
         internal int SelectedImageIndex = -1;
         internal object Tag = null;
 
         internal int BackColor = UtilColor.Empty;
         internal int ForeColor = UtilColor.Empty;
 
-        internal TreeViewItem_FileHashVM TVIVM = null;
-        internal LVitem_FileHashVM LVIVM = null;
+ //       internal TreeViewItem_FileHashVM TVIVM = null;
+ //       internal LVitem_FileHashVM LVIVM = null;
 
         internal LocalTreeNode()
         {
@@ -42,44 +42,44 @@ namespace DoubleFile
             Nodes.AddRange(lsNodes);
         }
 
-        internal string FullPath
-        {
-            get
-            {
-                if (_strFullPath != null)
-                {
-                    return _strFullPath;
-                }
+        //internal string FullPath
+        //{
+        //    get
+        //    {
+        //        if (_strFullPath != null)
+        //        {
+        //            return _strFullPath;
+        //        }
 
-                var stack = new Stack<LocalTreeNode>(8);
-                var nodeParent = Parent;
+        //        var stack = new Stack<LocalTreeNode>(8);
+        //        var nodeParent = Parent;
 
-                while (nodeParent != null)
-                {
-                    stack.Push(nodeParent);
-                    nodeParent = nodeParent.Parent;
-                }
+        //        while (nodeParent != null)
+        //        {
+        //            stack.Push(nodeParent);
+        //            nodeParent = nodeParent.Parent;
+        //        }
 
-                var sb = new StringBuilder();
+        //        var sb = new StringBuilder();
 
-                while (false == stack.IsEmpty())
-                {
-                    nodeParent = stack.Pop();
-                    sb.Append(nodeParent.Text + '\\');
-                }
+        //        while (false == stack.IsEmpty())
+        //        {
+        //            nodeParent = stack.Pop();
+        //            sb.Append(nodeParent.Text + '\\');
+        //        }
 
-                sb.Append(Text);
-                _strFullPath = sb.ToString();
-                return _strFullPath;
-            }
-        }
+        //        sb.Append(Text);
+        //        _strFullPath = sb.ToString();
+        //        return _strFullPath;
+        //    }
+        //}
 
         internal void DetachFromTree()
         {
-            TVIVM = null;
+ //           TVIVM = null;
             TreeView = null;
             Level = -1;
-            _strFullPath = null;
+ //           _strFullPath = null;
 
             foreach (var treeNode in Nodes)
             {
@@ -87,7 +87,7 @@ namespace DoubleFile
             }
         }
 
-        internal void EnsureVisible() { }
+  //      internal void EnsureVisible() { }
 
         internal bool IsChildOf(LocalTreeNode treeNode)
         {
@@ -123,6 +123,6 @@ namespace DoubleFile
             return nodeParent;
         }
 
-        string _strFullPath = null;
+    //    string _strFullPath = null;
     }
 }

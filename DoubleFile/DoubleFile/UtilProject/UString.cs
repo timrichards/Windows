@@ -8,7 +8,7 @@ namespace DoubleFile
     class UString : IComparable<string>
     {
         public static implicit operator UString(string value){ return (value == null) ? null : new UString { nIndex = Set(value) }; }
-        public static implicit operator string(UString value) { if (value == null) return null; return Get(value.nIndex); }
+        public static implicit operator string(UString value) { return (value == null) ? null : Get(value.nIndex); }
         public int CompareTo(string other) { return Get(nIndex).CompareTo(other); }
 
         internal bool Contains(UString ustr) { return Get(nIndex).Contains(Get(ustr.nIndex)); }
@@ -41,11 +41,22 @@ namespace DoubleFile
             {
                 _dictStrings.Clear();
                 _dictStringsRev.Clear();
+                _acStrings = null;
             }
         }
 
         static internal void GenerationEnded()
         {
+            MBoxStatic.Assert(99922, _indexGenerator == _dictStrings.Count);
+            _acStrings = new string[_dictStrings.Count];
+            
+            foreach (var kvp in _dictStrings)
+            {
+                MBoxStatic.Assert(99917, kvp.Key != null);
+                _acStrings[kvp.Value] = kvp.Key;
+            }
+
+            _dictStrings.Clear();
             _dictStringsRev.Clear();
             _bGenerating = false;
         }
@@ -54,12 +65,37 @@ namespace DoubleFile
         {
             int nValue = 0;
 
+            if (null != _acStrings)
+            {
+                lock (_acStrings)
+                lock (_dictStrings)
+                lock (_dictStringsRev)
+                {
+                    if (null != _acStrings)     // another thread set it up
+                    {
+                        MBoxStatic.Assert(99921, _bGenerating == false);
+                        MBoxStatic.Assert(99920, _dictStrings.Count == 0);
+                        MBoxStatic.Assert(99919, _dictStringsRev.Count == 0);
+                        MBoxStatic.Assert(99918, _indexGenerator == _acStrings.Length);
+
+                        for (int nIx = 0; nIx < _acStrings.Length; ++nIx)
+                        {
+                            _dictStrings[_acStrings[nIx]] = nIx;
+                            _dictStringsRev[nIx] = _acStrings[nIx];
+                        }
+
+                        _bGenerating = true;
+                    }
+
+                    _acStrings = null;
+                }
+            }
+
             if (false == _dictStrings.TryGetValue(str, out nValue))
             {
                 _dictStrings[str] = _indexGenerator;
-                _bGenerating = true;
                 _dictStringsRev[_indexGenerator] = str;
-                return _indexGenerator++;
+                return _indexGenerator++;                   // note that auto post-increment is compatible with return
             }
 
             return nValue;
@@ -72,13 +108,7 @@ namespace DoubleFile
 
         static string GetA(int nIndex)
         {
-            string sRet = null;
-
-            _dictStrings
-                .Where(kvp => kvp.Value == nIndex)
-                .FirstOnlyAssert(kvp => sRet = kvp.Key);
-
-            return sRet;
+            return _acStrings[nIndex];
         }
 
         static string GetB(int nIndex)
@@ -100,5 +130,6 @@ namespace DoubleFile
         static int _refCount = 0;
         static int _indexGenerator = 0;
         static bool _bGenerating = true;
+        static string[] _acStrings = null;
     }
 }

@@ -37,53 +37,47 @@ namespace DoubleFile
 
         internal void CreateFileDictStatusCallback(bool bDone = false, double nProgress = double.NaN)
         {
-            UtilProject.UIthread(() =>
+            if (gd.WindowClosed || (gd.FileDictionary == null) || gd.FileDictionary.IsAborted)
             {
-                if (gd.WindowClosed || (gd.FileDictionary == null) || gd.FileDictionary.IsAborted)
-                {
-                    m_winProgress.Aborted = true;
-                    return;
-                }
+                m_winProgress.Aborted = true;
+                return;
+            }
 
-                if (bDone)
-                {
-                    m_winProgress.SetCompleted(ksFileDictKey);
-                    m_winProgress.CloseIfNatural();
-                    m_bFileDictDone = true;
-                }
-                else if (nProgress >= 0)
-                {
-                    m_winProgress.SetProgress(ksFileDictKey, nProgress);
-                }
-            });
+            if (bDone)
+            {
+                m_winProgress.SetCompleted(ksFileDictKey);
+                m_winProgress.CloseIfNatural();
+                m_bFileDictDone = true;
+            }
+            else if (nProgress >= 0)
+            {
+                m_winProgress.SetProgress(ksFileDictKey, nProgress);
+            }
         }
         
         void TreeStatusCallback(LVitem_ProjectVM volStrings, LocalTreeNode rootNode = null, bool bError = false)
         {
-            UtilProject.UIthread(() =>
+            if (gd.WindowClosed || (gd.FileDictionary == null) || gd.FileDictionary.IsAborted ||
+                ((m_tree != null) && (m_tree.IsAborted)))
             {
-                if (gd.WindowClosed || (gd.FileDictionary == null) || gd.FileDictionary.IsAborted ||
-                    ((m_tree != null) && (m_tree.IsAborted)))
-                {
-                    ClearMem_TreeForm();
-                    m_winProgress.Aborted = true;
-                    return;
-                }
+                ClearMem_TreeForm();
+                m_winProgress.Aborted = true;
+                return;
+            }
 
-                if (bError)
-                {
-                    //           volStrings.SetStatus_BadFile(LV);
-                }
-                else if (rootNode != null)
-                {
-                    m_listRootNodes.Add(rootNode);
-                    m_winProgress.SetProgress(ksFolderTreeKey, m_listRootNodes.Count / m_nCorrelateProgressDenominator/2);
-                }
-                else
-                {
-                    MBoxStatic.Assert(1304.5309, false);
-                }
-            });
+            if (bError)
+            {
+                //           volStrings.SetStatus_BadFile(LV);
+            }
+            else if (rootNode != null)
+            {
+                m_listRootNodes.Add(rootNode);
+                m_winProgress.SetProgress(ksFolderTreeKey, m_listRootNodes.Count / m_nCorrelateProgressDenominator/2);
+            }
+            else
+            {
+                MBoxStatic.Assert(1304.5309, false);
+            }
         }
 
         void TreeDoneCallback()

@@ -25,16 +25,6 @@ namespace DoubleFile
 
                 m_hash = new HashStruct(strHash);
                 m_nLength = ulong.Parse(strLength);
-
-                // overflow mixes the bits
-                m_nHashCode = 37;         // prime
-                m_nHashCode *= 397;       // prime
-                m_nHashCode += m_hash.GetHashCode();
-                m_nHashCode *= 397;
-                m_nHashCode += (int)m_nLength;
-                m_nHashCode *= 397;
-                m_nHashCode += (int)(m_nLength >> 32);
-                m_nHashCode *= 397;
             }
 
             public int CompareTo(object obj)
@@ -59,7 +49,16 @@ namespace DoubleFile
 
             public override int GetHashCode()
             {
-                return m_nHashCode;
+                // overflow mixes the bits
+                int nHashCode = 37;         // prime
+                nHashCode *= 397;       // prime
+                nHashCode += m_hash.GetHashCode();
+                nHashCode *= 397;
+                nHashCode += (int)m_nLength;
+                nHashCode *= 397;
+                nHashCode += (int)(m_nLength >> 32);
+                nHashCode *= 397;
+                return nHashCode;
             }
 
             public override string ToString()
@@ -93,7 +92,6 @@ namespace DoubleFile
 
             readonly HashStruct m_hash;
             readonly ulong m_nLength;
-            readonly int m_nHashCode;
         }
     }
 }

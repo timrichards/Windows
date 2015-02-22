@@ -7,7 +7,7 @@ using System.Windows.Media;
 
 namespace DoubleFile
 {
-    class LocalLVitem
+    class LocalLVitem : LocalColorItemBase
     {
         internal LocalLVitem(LocalLV listView = null)
         {
@@ -40,9 +40,6 @@ namespace DoubleFile
         internal LocalLVitemCollection SubItems = null;
         internal void EnsureVisible() { }
         internal LocalLV ListView = null;
-
-        internal int BackColor = UtilColor.Empty;
-        internal int ForeColor = UtilColor.Empty;
 
         // Only used for colors and bold font weight, not subitems, in Collate.cs InsertSizeMarker(). Size 18 to show obvious fault in interpretation.
         internal object Clone() { var lvItem = (LocalLVitem)MemberwiseClone(); lvItem.Font = (System.Drawing.Font)Font.Clone(); return lvItem; }

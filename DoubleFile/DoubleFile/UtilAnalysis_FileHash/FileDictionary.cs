@@ -12,14 +12,14 @@ namespace DoubleFile
     {
         internal FileDictionary()
         {
-            //ProjectFile.OnOpenedProject += Deserialize;
-            //ProjectFile.OnSavingProject += Serialize;
+            // ProjectFile.OnOpenedProject += Deserialize;
+            // ProjectFile.OnSavingProject += Serialize;
         }
 
         public void Dispose()
         {
-            //ProjectFile.OnOpenedProject -= Deserialize;
-           // ProjectFile.OnSavingProject -= Serialize;
+            // ProjectFile.OnOpenedProject -= Deserialize;
+            // ProjectFile.OnSavingProject -= Serialize;
         }
 
         internal void Clear()
@@ -235,7 +235,7 @@ namespace DoubleFile
 
         const uint knItemVMmask = 0xFF000000;
         static int GetLVitemProjectVM(int n) { return (int)(n & knItemVMmask) >> 24; }
-        static int SetLVitemProjectVM(ref int n, int v) { return n = n + (v << 24); }
+        static int SetLVitemProjectVM(ref int n, int v) { return n = GetLineNumber(n) + (v << 24); }
         static int GetLineNumber(int n) { return n & 0xFFFFFF; }
         static int SetLineNumber(ref int n, int v) { return n = (int)(n & knItemVMmask) + v; }
 

@@ -310,8 +310,8 @@ namespace Local
             nodeDatum_B.nTotalLength = nTotalLength;
             nodeDatum_B.TreeMapRect = nodeDatum.TreeMapRect;
             nodeFileList.Tag = nodeDatum_B;
-            MBoxStatic.Assert(1302.3302, nodeFileList.SelectedImageIndex == -1);              // sets the bitmap size
-            nodeFileList.SelectedImageIndex = -1;
+            //MBoxStatic.Assert(1302.3302, nodeFileList.SelectedImageIndex == -1);              // sets the bitmap size
+            //nodeFileList.SelectedImageIndex = -1;
             return nodeFileList;
         }
 
@@ -395,9 +395,10 @@ namespace Local
                 m_deepNode = treeNode;
             }
 
-            var nPxPerSide = (treeNode.SelectedImageIndex < 0) ?
-                1024 :
-                treeNode.SelectedImageIndex;
+            var nPxPerSide = 1024;
+            //var nPxPerSide = (treeNode.SelectedImageIndex < 0) ?
+            //    1024 :
+            //    treeNode.SelectedImageIndex;
 
             if (nPxPerSide != m_rectBitmap.Size.Width)
             {
@@ -436,9 +437,9 @@ namespace Local
 
             if ((DateTime.Now - dtStart) > TimeSpan.FromSeconds(1))
             {
-                treeNode.SelectedImageIndex = Math.Max((int)
-                    (((treeNode.SelectedImageIndex < 0) ? m_rectBitmap.Size.Width : treeNode.SelectedImageIndex)
-                    * .75), 256);
+                //treeNode.SelectedImageIndex = Math.Max((int)
+                //    (((treeNode.SelectedImageIndex < 0) ? m_rectBitmap.Size.Width : treeNode.SelectedImageIndex)
+                //    * .75), 256);
             }
         }
 

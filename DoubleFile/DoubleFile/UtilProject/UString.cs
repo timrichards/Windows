@@ -56,6 +56,7 @@ namespace DoubleFile
             if (false == _dictStrings.TryGetValue(str, out nValue))
             {
                 _dictStrings[str] = _indexGenerator;
+                _bGenerating = true;
                 _dictStringsRev[_indexGenerator] = str;
                 return _indexGenerator++;
             }

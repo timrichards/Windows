@@ -429,7 +429,7 @@ namespace DoubleFile
 
                 ulong lMax = Math.Max(l1, l2);
 
-                while (dictSort.ContainsKey(lMax))
+                while (dictSort.ContainsKeyA(lMax))
                 {
                     --lMax;
                 }

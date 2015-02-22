@@ -123,7 +123,7 @@ namespace DoubleFile
                 TreeNode treeNode = pair.Key;
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
-                if (dictNodes.ContainsKey(nodeDatum.Key) == false)
+                if (dictNodes.ContainsKeyA(nodeDatum.Key) == false)
                 {
                     continue;
                 }
@@ -505,7 +505,7 @@ namespace DoubleFile
             {
                 rootClone = treeNode;
 
-                if (dictClones.ContainsKey(nodeDatum.Key))
+                if (dictClones.ContainsKeyA(nodeDatum.Key))
                 {
                     MBoxStatic.Assert(1305.6305, dictClones[nodeDatum.Key] == listClones);
                     MBoxStatic.Assert(1305.6306, ((NodeDatum)dictClones[nodeDatum.Key][0].Tag).m_bDifferentVols == nodeDatum.m_bDifferentVols);
@@ -584,7 +584,7 @@ namespace DoubleFile
 
             do
             {
-                if (dictIgnoreNodes.ContainsKey(treeNode))
+                if (dictIgnoreNodes.ContainsKeyA(treeNode))
                 {
                     continue;
                 }

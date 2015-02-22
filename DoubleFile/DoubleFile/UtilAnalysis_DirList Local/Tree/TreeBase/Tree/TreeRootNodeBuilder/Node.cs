@@ -49,13 +49,13 @@ namespace Local
 
                     strParent = strParent.Remove(nIndex).TrimEnd('\\');
 
-                    if (m_rootNode.Nodes.ContainsKey(strParent) == false)
+                    if (m_rootNode.Nodes.ContainsKeyA(strParent) == false)
                     {
                         m_rootNode.Nodes.Add(strParent,
                             new Node(gd, strParent, m_rootNode.FirstLineNo, 0, m_rootNode));
                     }
 
-                    if (m_rootNode.Nodes[strParent].subNodes.ContainsKey(m_strPath) == false)
+                    if (m_rootNode.Nodes[strParent].subNodes.ContainsKeyA(m_strPath) == false)
                     {
                         m_rootNode.Nodes[strParent].subNodes.Add(m_strPath, this);
                     }
@@ -119,7 +119,7 @@ namespace Local
                         return treeNode;
                     }
 
-                    treeNode.Name = treeNode.Text;
+                    //treeNode.Name = treeNode.Text;    Name is now a get accessor for Text in LocalTreeNode 2/22/15
 
                     if (string.IsNullOrWhiteSpace(strVolumeName))
                     {

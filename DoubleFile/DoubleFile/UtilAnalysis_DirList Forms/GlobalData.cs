@@ -124,7 +124,7 @@ namespace DoubleFile
                     TreeNode r1 = bReverse ? s2 : s1;
                     TreeNode r2 = bReverse ? s1 : s2;
 
-                    if ((r1 != null) && (m_dictCompareDiffs.ContainsKey(r1) == false))
+                    if ((r1 != null) && (m_dictCompareDiffs.ContainsKeyA(r1) == false))
                     {
                         m_dictCompareDiffs.Add(r1, r2);
                     }
@@ -416,7 +416,7 @@ namespace DoubleFile
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
 
-                if (gd_Tree.m_dictNodes.ContainsKey(nodeDatum.Key) == false)
+                if (gd_Tree.m_dictNodes.ContainsKeyA(nodeDatum.Key) == false)
                 {
                     // same scenario as empty owner:
                     // Search "Parent folder may contain only its clone subfolder, in which case unmark the subfolder"

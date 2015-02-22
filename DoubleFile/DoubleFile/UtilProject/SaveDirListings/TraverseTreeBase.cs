@@ -138,7 +138,7 @@ namespace DoubleFile
                             string strHash = null;
 
                             if ((null != dictHash) &&
-                                dictHash.ContainsKey(winFile.strAltFileName))
+                                dictHash.ContainsKeyA(winFile.strAltFileName))
                             {
                                 strHash = dictHash[winFile.strAltFileName].ToString();
                             }
@@ -151,7 +151,7 @@ namespace DoubleFile
                             }
 
                             if ((null != dictException_FileRead) &&
-                                (dictException_FileRead.ContainsKey(strFile)))
+                                (dictException_FileRead.ContainsKeyB(strFile)))
                             {
                                 strError2_File += " " + dictException_FileRead[strFile];
                                 strError2_File = strError2_File.TrimStart();

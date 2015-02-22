@@ -48,7 +48,7 @@ namespace DoubleFile
             var key = new FileKeyStruct(asLine[10], asLine[7]);
             var lsRet = new List<DuplicateStruct>();
 
-            if (false == m_DictFiles.ContainsKey(key))
+            if (false == m_DictFiles.ContainsKeyA(key))
             {
                 return lsRet;
             }
@@ -147,7 +147,7 @@ namespace DoubleFile
                         SetLVitemProjectVM(ref lookup, nLVitem);
                         SetLineNumber(ref lookup, int.Parse(asLine[1]));
 
-                        if (false == dictFiles.ContainsKey(key))
+                        if (false == dictFiles.ContainsKeyA(key))
                         {
                             dictFiles[key] = new List<int> {lookup};
                         }

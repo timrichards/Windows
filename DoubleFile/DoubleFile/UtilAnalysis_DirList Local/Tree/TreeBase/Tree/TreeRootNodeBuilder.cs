@@ -56,7 +56,7 @@ namespace Local
 
                 nodeDatum.nDirsWithFiles = datum.nDirsWithFiles;
 
-                if (m_dictNodes.ContainsKey(nodeDatum.Key))
+                if (m_dictNodes.ContainsKeyA(nodeDatum.Key))
                 {
                     m_dictNodes[nodeDatum.Key].Add(treeNode);
                 }
@@ -176,7 +176,7 @@ namespace Local
 
                     lock (m_dictDriveInfo)
                     {
-                        if (m_dictDriveInfo.ContainsKey(m_volStrings.ListingFile))
+                        if (m_dictDriveInfo.ContainsKeyA(m_volStrings.ListingFile))
                         {
                             MBoxStatic.Assert(1301.2308, false);
                             m_dictDriveInfo.Remove(m_volStrings.ListingFile);

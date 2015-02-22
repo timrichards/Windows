@@ -112,7 +112,7 @@ namespace DoubleFile
             {
                 // Volume detail
 
-                if (m_dictDriveInfo.ContainsKey(m_strFile))
+                if (m_dictDriveInfo.ContainsKeyA(m_strFile))
                 {
                     string[] arrDriveInfo = m_dictDriveInfo[m_strFile].Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
 

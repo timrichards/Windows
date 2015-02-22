@@ -61,7 +61,7 @@ namespace DoubleFile
 
                 lock (m_dictNodes)
                 {
-                    if (m_dictNodes.ContainsKey(nKey))
+                    if (m_dictNodes.ContainsKeyA(nKey))
                     {
                         m_dictNodes[nKey].Add(treeNode);
                     }
@@ -179,7 +179,7 @@ namespace DoubleFile
 
                     lock (m_dictDriveInfo)
                     {
-                        if (m_dictDriveInfo.ContainsKey(m_volStrings.ListingFile))
+                        if (m_dictDriveInfo.ContainsKeyA(m_volStrings.ListingFile))
                         {
                             MBoxStatic.Assert(1301.2308, false);
                             m_dictDriveInfo.Remove(m_volStrings.ListingFile);

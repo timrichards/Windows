@@ -24,7 +24,7 @@ namespace DoubleFile
             }
         }
 
-        internal bool ContainsKey(string s)
+        internal bool ContainsKeyA(string s)
         {
             if (s != m_strPrevQuery)
             {

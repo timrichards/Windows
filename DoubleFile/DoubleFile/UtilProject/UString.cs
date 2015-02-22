@@ -23,7 +23,7 @@ namespace DoubleFile
 
         static internal int Set(string str)
         {
-            if (false == _dictStrings.ContainsKey(str))
+            if (false == _dictStrings.ContainsKeyA(str))
             {
                 _dictStrings[str] = _dictStrings.Count - 1;
             }

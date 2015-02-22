@@ -15,7 +15,7 @@ namespace DoubleFile
             SubItems = new LocalLVitemCollection(ListView);
         }
 
-        internal LocalLVitem(string strContent, LocalLV listView = null) : this(listView) { Text = strContent; }
+        internal LocalLVitem(string strContent, LocalLV listView = null) : this(listView) { Text = strContent; Index = -1; }
 
         internal LocalLVitem(IReadOnlyList<string> asString, LocalLV listView = null)
             : this(listView)
@@ -36,7 +36,7 @@ namespace DoubleFile
         internal object Tag = null;
         internal void Select(bool bSel = true) { }
   //      internal bool Focused;
-        internal int Index = -1;
+        internal int Index { get { return Datum16bits; } set { Datum16bits = value; } }
         internal LocalLVitemCollection SubItems = null;
         internal void EnsureVisible() { }
         internal LocalLV ListView = null;

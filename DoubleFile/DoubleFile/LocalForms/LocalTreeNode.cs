@@ -15,9 +15,9 @@ namespace DoubleFile
         internal LocalTreeNode FirstNode = null;
         internal LocalTreeNode NextNode = null;
         internal LocalTreeNode Parent = null;
-        internal int Level = -1;
+        internal int Level { get { return Datum6bits; } set { Datum6bits = value; } }
  //       internal bool Checked = false;
- //       internal int SelectedImageIndex = -1;
+        internal int SelectedImageIndex { get { return Datum16bits; } set { Datum16bits = value; } }
         internal object Tag = null;
 
  //       internal TreeViewItem_FileHashVM TVIVM = null;
@@ -31,6 +31,8 @@ namespace DoubleFile
         internal LocalTreeNode(string strContent)
             : this()
         {
+            Level = -1;
+            SelectedImageIndex = -1;
             Text = strContent;
         }
 

@@ -25,19 +25,21 @@ namespace DoubleFile
 
         internal static void Go(Control ctl_in = null, bool Once = false)
         {
-            var fInfo = new FLASHWINFO
+            UtilAnalysis_DirList.UIthread(ctl_in ?? GlobalData.static_MainWindow.Analysis_DirListForm, () =>
             {
-                hwnd = (ctl_in != null)
-                    ? ctl_in.Handle
-                    : GlobalData.static_MainWindow.Analysis_DirListForm.Handle,
-                dwFlags = FLASHW_ALL,
-                uCount = (uint)(Once ? 1 : 3),
-                dwTimeout = 0
-            };
-            fInfo.cbSize = Convert.ToUInt32(Marshal.SizeOf(fInfo));
+                var fInfo = new FLASHWINFO
+                {
+                    hwnd = (ctl_in != null)
+                        ? ctl_in.Handle
+                        : GlobalData.static_MainWindow.Analysis_DirListForm.Handle,
+                    dwFlags = FLASHW_ALL,
+                    uCount = (uint)(Once ? 1 : 3),
+                    dwTimeout = 0
+                };
+                fInfo.cbSize = Convert.ToUInt32(Marshal.SizeOf(fInfo));
 
-            UtilAnalysis_DirList.UIthread(ctl_in ?? GlobalData.static_MainWindow.Analysis_DirListForm,
-                () => FlashWindowEx(ref fInfo));
+                FlashWindowEx(ref fInfo);
+            });
         }
 
         internal static void Go(System.Windows.Window window_in, bool Once = false)

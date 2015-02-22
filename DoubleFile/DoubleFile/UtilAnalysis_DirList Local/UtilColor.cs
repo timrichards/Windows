@@ -83,7 +83,8 @@ namespace DoubleFile
         const int knNumColors = 17;
 
         const uint knCLUT_FGmask = 0x0000001F;
-        const uint knCLUT_BGmask = 0x000003E0;
+        const uint knCLUT_BGmask = knCLUTmask - knCLUT_FGmask;
+        internal const uint knCLUTmask = 0x000003FF;
 
         static Dictionary<int, int> RevCLUT = new Dictionary<int, int>();
     }

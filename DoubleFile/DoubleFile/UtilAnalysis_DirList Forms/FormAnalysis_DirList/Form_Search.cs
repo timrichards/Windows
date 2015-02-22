@@ -124,7 +124,7 @@ namespace DoubleFile
             // Includes subitems in search
             ListViewItem lvItem = (ListViewItem)form_lvFiles.FindItemWithText(gd_Search_1_2.m_strSelectFile, true, 0, false);
 
-            if ((lvItem != null) && MBoxStatic.Assert(0, lvItem.Text == gd_Search_1_2.m_strSelectFile))
+            if ((lvItem != null) && MBoxStatic.Assert(99986, lvItem.Text == gd_Search_1_2.m_strSelectFile))
             {
                 form_tabControlFileList.SelectedTab = form_tabPageFileList;
                 gd.m_blinky.SelectLVitem(lvItem: lvItem);

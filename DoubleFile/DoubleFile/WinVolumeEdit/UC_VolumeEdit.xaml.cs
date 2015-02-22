@@ -61,8 +61,8 @@ namespace DoubleFile
                 var astr = value.StringValues;
                 var i = 0;
 
-                if (astr.Length > i) { form_EditNickname.Text = value[i++]; } else { MBoxStatic.Assert(0, false); }
-                if (astr.Length > i) { form_EditSourcePath.Text = value[i++]; } else { MBoxStatic.Assert(0, false); }
+                if (astr.Length > i) { form_EditNickname.Text = value[i++]; } else { MBoxStatic.Assert(99926, false); }
+                if (astr.Length > i) { form_EditSourcePath.Text = value[i++]; } else { MBoxStatic.Assert(99925, false); }
                 if (astr.Length > i) { m_strListingFile = value[i++]; form_EditListingFile.Text = (IsVolumeNew ? m_strListingFile : Path.GetFileName(m_strListingFile)); }
                 if (astr.Length > i) { var s = value[i++]; if (s != null) { m_strStatus = s; } }
                 if (astr.Length > i) { var s = value[i++]; if (s != null) { m_strIncludeYN = s; } }
@@ -132,7 +132,7 @@ namespace DoubleFile
             }
             else
             {
-                MBoxStatic.Assert(0, false);
+                MBoxStatic.Assert(99924, false);
             }
         }
 

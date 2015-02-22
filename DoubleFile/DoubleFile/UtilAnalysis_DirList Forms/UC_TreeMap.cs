@@ -136,7 +136,7 @@ namespace DoubleFile
 
                     if (null == nodeDatum)      // this check is new 2/17/15 and has never been hit
                     {
-                        MBoxStatic.Assert(0, false);
+                        MBoxStatic.Assert(99979, false);
                         return;
                     }
 

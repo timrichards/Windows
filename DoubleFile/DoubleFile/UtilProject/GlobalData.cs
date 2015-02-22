@@ -16,7 +16,7 @@ namespace DoubleFile
             get { return _Instance; }
             private set
             {
-                MBoxStatic.Assert(0, _Instance == null);
+                MBoxStatic.Assert(99945, _Instance == null);
                 _Instance = value;
             }
         }
@@ -28,7 +28,7 @@ namespace DoubleFile
             set
             {
                 if (value != null)
-                    MBoxStatic.Assert(0, gd_Tree == null);
+                    MBoxStatic.Assert(99944, gd_Tree == null);
                 _gd_Tree = value;
             }
         }

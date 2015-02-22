@@ -70,7 +70,7 @@ namespace DoubleFile
             if ((null != gd_old.m_saveDirListings) &&
                 (false == gd_old.m_saveDirListings.IsAborted))
             {
-                MBoxStatic.Assert(0, false);
+                MBoxStatic.Assert(99940, false);
                 gd_old.m_saveDirListings.EndThread();
             }
 

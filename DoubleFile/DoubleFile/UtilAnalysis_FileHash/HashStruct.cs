@@ -12,7 +12,7 @@ namespace DoubleFile
                 .Reverse()
                 .ToArray();
 
-            MBoxStatic.Assert(0, abHash.Length == 16);
+            MBoxStatic.Assert(99955, abHash.Length == 16);
             m_nHash0 = BitConverter.ToUInt64(abHash, 8);
             m_nHash1 = BitConverter.ToUInt64(abHash, 0);
         }

@@ -40,7 +40,7 @@ namespace DoubleFile
         {
             if (false == strLine.StartsWith(FileParse.ksLineType_File))
             {
-                MBoxStatic.Assert(0, false);
+                MBoxStatic.Assert(99956, false);
                 return null;
             }
 

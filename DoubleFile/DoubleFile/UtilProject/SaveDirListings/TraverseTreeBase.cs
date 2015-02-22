@@ -56,8 +56,8 @@ namespace DoubleFile
 
                 var listFilePaths = new List<string>();
 
-                MBoxStatic.Assert(0, LengthRead == 0);
-                MBoxStatic.Assert(0, m_nFilesRead == 0);
+                MBoxStatic.Assert(99939, LengthRead == 0);
+                MBoxStatic.Assert(99938, m_nFilesRead == 0);
                 LengthRead = 0;
                 m_nFilesRead = 0;
 

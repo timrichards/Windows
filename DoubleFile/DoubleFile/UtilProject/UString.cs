@@ -25,7 +25,8 @@ namespace DoubleFile
         {
             if (_refCount == 0)
             {
-                MBoxStatic.Assert(0, _dictStrings.Count == 0);
+                MBoxStatic.Assert(99936, _dictStrings.Count == 0);
+                MBoxStatic.Assert(99935, _dictStringsRev.Count == 0);
             }
 
             ++_refCount;
@@ -34,7 +35,7 @@ namespace DoubleFile
         static internal void DropRef()
         {
             --_refCount;
-            MBoxStatic.Assert(0, _refCount >= 0);
+            MBoxStatic.Assert(99934, _refCount >= 0);
 
             if (_refCount == 0)
             {
@@ -86,7 +87,7 @@ namespace DoubleFile
 
             if (false == _dictStringsRev.TryGetValue(nIndex, out strValue))
             {
-                MBoxStatic.Assert(0, false);
+                MBoxStatic.Assert(99933, false);
                 return null;
             }
 

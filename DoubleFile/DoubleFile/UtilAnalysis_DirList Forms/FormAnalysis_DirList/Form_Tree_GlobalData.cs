@@ -12,7 +12,7 @@ namespace DoubleFile
             get { return _gd; }
             set
             {
-                MBoxStatic.Assert(0, _gd == null);
+                MBoxStatic.Assert(99981, _gd == null);
                 _gd = value;
             }
         }

@@ -82,7 +82,7 @@ namespace DoubleFile
                 }
 
                 // same assert that Forms generates: must remove it from the other tree first.
-                MBoxStatic.Assert(0, (treeNode.TreeView == null) || (treeNode.TreeView == treeView));
+                MBoxStatic.Assert(99999, (treeNode.TreeView == null) || (treeNode.TreeView == treeView));
 
                 nodePrev = treeNode;
                 treeNode.TreeView = treeView;

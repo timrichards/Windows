@@ -296,7 +296,7 @@ namespace DoubleFile
             string strProjectFileNoPath,
             Process process)
         {
-            MBoxStatic.Assert(0, m_winProgress == null);
+            MBoxStatic.Assert(99942, m_winProgress == null);
 
             if (File.Exists(process.StartInfo.FileName))
             {

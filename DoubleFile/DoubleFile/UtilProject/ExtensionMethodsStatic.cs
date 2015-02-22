@@ -75,7 +75,7 @@ namespace DoubleFile
             var enumerator = source.GetEnumerator();
 
             if (enumerator.MoveNext())
-                MBoxStatic.Assert(0, false == enumerator.MoveNext());
+                MBoxStatic.Assert(99953, false == enumerator.MoveNext());
 #endif
         }
 

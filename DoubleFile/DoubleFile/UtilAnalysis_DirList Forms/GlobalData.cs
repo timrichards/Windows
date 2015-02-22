@@ -216,7 +216,7 @@ namespace DoubleFile
 
                 if (null == rootNodeDatum)      // this check is new 2/17/15 and has never been hit
                 {
-                    MBoxStatic.Assert(0, false);
+                    MBoxStatic.Assert(99980, false);
                     return treeNode;
                 }
 

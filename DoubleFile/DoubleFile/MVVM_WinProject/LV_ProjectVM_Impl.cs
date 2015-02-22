@@ -248,7 +248,7 @@ namespace DoubleFile
                     if (strLine.StartsWith(FileParse.ksLineType_Start))
                     {
                         // already past the header: nothing left to replace.
-                        MBoxStatic.Assert(0, false);
+                        MBoxStatic.Assert(99989, false);
                         sbOut.AppendLine(strLine);
                         break;
                     }
@@ -298,7 +298,7 @@ namespace DoubleFile
                 }
                 else
                 {
-                    MBoxStatic.Assert(0, false == File.Exists(lvItem_Orig.ListingFile));
+                    MBoxStatic.Assert(99988, false == File.Exists(lvItem_Orig.ListingFile));
                     try
                     {
                         File.Delete(lvItem_Orig.ListingFile);
@@ -333,7 +333,7 @@ namespace DoubleFile
                 bDriveLetter_Todo = false;
             }
 
-            MBoxStatic.Assert(0, (false == (bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo || bDriveLetter_Todo)));
+            MBoxStatic.Assert(99987, (false == (bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo || bDriveLetter_Todo)));
             return true;
         }
 

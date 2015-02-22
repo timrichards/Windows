@@ -17,7 +17,7 @@ namespace DoubleFile
             get { return marr; }
             set
             {
-                MBoxStatic.Assert(0, value.Length <= NumCols);
+                MBoxStatic.Assert(99996, value.Length <= NumCols);
                 marr = value; 
 
                 for (var nCol = 0; nCol < marr.Length; ++nCol)
@@ -43,7 +43,7 @@ namespace DoubleFile
 
             if (arrStr != null)
             {
-                MBoxStatic.Assert(0, arrStr.Length <= NumCols);
+                MBoxStatic.Assert(99995, arrStr.Length <= NumCols);
                 arrStr.CopyTo(marr, 0);
             }
 
@@ -136,7 +136,7 @@ namespace DoubleFile
 
         public ObservableCollection<ListViewItemVM_Base> Items { get { return m_items; } }
 
-        internal virtual bool NewItem(string[] arrStr, bool bQuiet = false) { MBoxStatic.Assert(0, false); return false; }
+        internal virtual bool NewItem(string[] arrStr, bool bQuiet = false) { MBoxStatic.Assert(99994, false); return false; }
         internal abstract int NumCols { get; }
 
         internal void Add(ListViewItemVM_Base item, bool bQuiet = false)
@@ -182,7 +182,7 @@ namespace DoubleFile
             }
             else
             {
-                MBoxStatic.Assert(0, false);
+                MBoxStatic.Assert(99993, false);
             }
         }
 
@@ -204,7 +204,7 @@ namespace DoubleFile
                 return false;
             }
 
-            MBoxStatic.Assert(0, (false == object.ReferenceEquals(this, other)));
+            MBoxStatic.Assert(99992, (false == object.ReferenceEquals(this, other)));
 
             if (Items.Count != other.Items.Count)
             {
@@ -215,7 +215,7 @@ namespace DoubleFile
             {
                 var otherItem = other[item.SearchValue];
 
-                MBoxStatic.Assert(0, (false == object.ReferenceEquals(item, otherItem)));
+                MBoxStatic.Assert(99991, (false == object.ReferenceEquals(item, otherItem)));
 
                 if (false == item.Equals(otherItem))
                     return false;

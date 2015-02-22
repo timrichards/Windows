@@ -77,7 +77,7 @@ namespace DoubleFile
             RevCLUT[Snow] = nIx++;
             RevCLUT[SteelBlue] = nIx++;
 
-            MBoxStatic.Assert(0, nIx == knNumColors);
+            MBoxStatic.Assert(99957, nIx == knNumColors);
         }
 
         const int knNumColors = 17;

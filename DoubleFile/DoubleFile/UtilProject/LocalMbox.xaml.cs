@@ -38,7 +38,7 @@ namespace DoubleFile
 
                     case MessageBoxButton.YesNoCancel:
                         {
-                            MBoxStatic.Assert(0, false);
+                            MBoxStatic.Assert(99943, false);
                             break;
                         }
                 }

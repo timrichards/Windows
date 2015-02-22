@@ -100,7 +100,7 @@ namespace DoubleFile
                 WriteLine(strModel);
                 WriteLine(strSerial);
                 WriteLine(nSize);
-                MBoxStatic.Assert(0, nCount == knDriveInfoItems);
+                MBoxStatic.Assert(99941, nCount == knDriveInfoItems);
                 fs.WriteLine(sb.ToString().Trim());
             }
 

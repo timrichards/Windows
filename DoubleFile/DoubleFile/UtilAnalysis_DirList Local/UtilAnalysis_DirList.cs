@@ -54,7 +54,7 @@ namespace DoubleFile
             {
                 if (false == dispatcher.IsDisposed)
                 {
-                    MBoxStatic.Assert(0, false, e.GetBaseException().Message);
+                    MBoxStatic.Assert(99959, false, e.GetBaseException().Message);
 
 #if (false == PUBLISH)
                     if (false == dispatcher.IsDisposed)
@@ -64,7 +64,7 @@ namespace DoubleFile
             }
             catch (InvalidOperationException e)
             {
-                MBoxStatic.Assert(0, false, e.GetBaseException().Message);
+                MBoxStatic.Assert(99958, false, e.GetBaseException().Message);
 
 #if (false == PUBLISH)
                 if (false == dispatcher.IsDisposed)

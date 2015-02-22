@@ -25,7 +25,7 @@ namespace DoubleFile
 
         internal new SDL_Timer Start()
         {
-            if (MBoxStatic.Assert(0, Interval >= 33))
+            if (MBoxStatic.Assert(99937, Interval >= 33))
             {
                 base.Start();
                 return this;

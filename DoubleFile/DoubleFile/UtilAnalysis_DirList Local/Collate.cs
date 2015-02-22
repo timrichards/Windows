@@ -194,7 +194,7 @@ namespace Local
 
                         if (null == treeNode_A)
                         {
-                            MBoxStatic.Assert(0, false);
+                            MBoxStatic.Assert(99978, false);
                             continue;
                         }
 
@@ -202,7 +202,7 @@ namespace Local
 
                         if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
                         {
-                            MBoxStatic.Assert(0, false);
+                            MBoxStatic.Assert(99977, false);
                             return;
                         }
 
@@ -222,7 +222,7 @@ namespace Local
 
                             if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
                             {
-                                MBoxStatic.Assert(0, false);
+                                MBoxStatic.Assert(99976, false);
                                 return;
                             }
 
@@ -243,7 +243,7 @@ namespace Local
 
                     if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
                     {
-                        MBoxStatic.Assert(0, false);
+                        MBoxStatic.Assert(99975, false);
                         return;
                     }
 
@@ -337,7 +337,7 @@ namespace Local
 
                     if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
                     {
-                        MBoxStatic.Assert(0, false);
+                        MBoxStatic.Assert(99974, false);
                         return;
                     }
 
@@ -366,7 +366,7 @@ namespace Local
 
                 if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
                 {
-                    MBoxStatic.Assert(0, false);
+                    MBoxStatic.Assert(99973, false);
                     return;
                 }
 
@@ -396,7 +396,7 @@ namespace Local
 
                 if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
                 {
-                    MBoxStatic.Assert(0, false);
+                    MBoxStatic.Assert(99972, false);
                     return;
                 }
 
@@ -448,7 +448,7 @@ namespace Local
 
                 if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
                 {
-                    MBoxStatic.Assert(0, false);
+                    MBoxStatic.Assert(99971, false);
                     return;
                 }
 
@@ -593,7 +593,7 @@ namespace Local
 
                     if (null == rootNodeDatum)      // this check is new 2/13/15 and has never been hit
                     {
-                        MBoxStatic.Assert(0, false);
+                        MBoxStatic.Assert(99970, false);
                         return;
                     }
 
@@ -624,7 +624,7 @@ namespace Local
 
                         if (null == rootNodeDatum_A)      // this check is new 2/13/15 and has never been hit
                         {
-                            MBoxStatic.Assert(0, false);
+                            MBoxStatic.Assert(99969, false);
                             return;
                         }
 
@@ -650,7 +650,7 @@ namespace Local
 
                         if (null == nodeDatum_A)      // this check is new 2/13/15 and has never been hit
                         {
-                            MBoxStatic.Assert(0, false);
+                            MBoxStatic.Assert(99968, false);
                             return;
                         }
 

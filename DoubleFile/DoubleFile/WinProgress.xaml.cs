@@ -24,7 +24,7 @@ namespace DoubleFile
         {
             if (astrNicknames.Count() != astrPaths.Count())
             {
-                MBoxStatic.Assert(0, false);
+                MBoxStatic.Assert(99932, false);
                 return;
             }
 
@@ -44,7 +44,7 @@ namespace DoubleFile
             }
             else
             {
-                MBoxStatic.Assert(0, false);
+                MBoxStatic.Assert(99931, false);
             }
         }
 
@@ -58,7 +58,7 @@ namespace DoubleFile
             }
             else
             {
-                MBoxStatic.Assert(0, false);
+                MBoxStatic.Assert(99930, false);
             }
         }
 
@@ -72,7 +72,7 @@ namespace DoubleFile
             }
             else
             {
-                MBoxStatic.Assert(0, false);
+                MBoxStatic.Assert(99929, false);
             }
         }
 
@@ -82,7 +82,7 @@ namespace DoubleFile
         {
             if (m_bClosing)
             {
-                MBoxStatic.Assert(0, false, bTraceOnly: true);
+                MBoxStatic.Assert(99928, false, bTraceOnly: true);
                 return;     // some sort of lockup?
             }
 

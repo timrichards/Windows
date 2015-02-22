@@ -133,7 +133,7 @@ namespace DoubleFile
 
                         if (strLine == ksHeader01)
                         {
-                            MBoxStatic.Assert(0, nLineNo == 1);
+                            MBoxStatic.Assert(99952, nLineNo == 1);
                             file_out.WriteLine(FormatLine(ksLineType_Version, nLineNo, ksHeader));
                             continue;
                         }
@@ -149,7 +149,7 @@ namespace DoubleFile
                         }
                         else if (strLine == ksDrive01)
                         {
-                            MBoxStatic.Assert(0, nLineNo == 4);
+                            MBoxStatic.Assert(99951, nLineNo == 4);
                             file_out.WriteLine(FormatLine(ksLineType_Comment, nLineNo, ksVolume));
 
                             var astrInfoLineTypes = new string[knDriveInfoItems]
@@ -169,7 +169,7 @@ namespace DoubleFile
 
                                 if (strLine == null)
                                 {
-                                    MBoxStatic.Assert(0, false);
+                                    MBoxStatic.Assert(99950, false);
                                     return;
                                 }
 
@@ -246,7 +246,7 @@ namespace DoubleFile
                         }
                         else if (strDir.Contains(@":\") == false)
                         {
-                            MBoxStatic.Assert(0, false);        // all that's left is directories
+                            MBoxStatic.Assert(99949, false);        // all that's left is directories
                             continue;
                         }
 
@@ -308,7 +308,7 @@ namespace DoubleFile
                 ((strFile ?? "").TrimEnd() != (strFile ?? "")))
             {
                 strError1 += " Trailing whitespace";
-                MBoxStatic.Assert(0, (false == string.IsNullOrWhiteSpace(strDir)) ||
+                MBoxStatic.Assert(99948, (false == string.IsNullOrWhiteSpace(strDir)) ||
                     (false == string.IsNullOrWhiteSpace(strFile)));
                 bDbgCheck = true;
             }
@@ -325,7 +325,7 @@ namespace DoubleFile
 
                 if (strArray[knColLength01].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
                 {
-                    MBoxStatic.Assert(0, false);
+                    MBoxStatic.Assert(99947, false);
                 }
 #endif
             }
@@ -379,7 +379,7 @@ namespace DoubleFile
 
                     var astr = s.Split('\t');
 
-                    MBoxStatic.Assert(0, astr.Length == 3);
+                    MBoxStatic.Assert(99946, astr.Length == 3);
 
                     if (astr.Length < 3)
                     {

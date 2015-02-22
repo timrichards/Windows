@@ -11,7 +11,7 @@ namespace DoubleFile
             get { return _gd; }
             set
             {
-                MBoxStatic.Assert(0, _gd == null);
+                MBoxStatic.Assert(99985, _gd == null);
                 _gd = value;
             }
         }
@@ -22,7 +22,7 @@ namespace DoubleFile
             get { return _gd_Search_Path; }
             set
             {
-                MBoxStatic.Assert(0, _gd_Search_Path == null);
+                MBoxStatic.Assert(99984, _gd_Search_Path == null);
                 _gd_Search_Path = value;
             }
         }
@@ -33,7 +33,7 @@ namespace DoubleFile
             get { return _gd_Tree; }
             set
             {
-                MBoxStatic.Assert(0, gd_Tree == null);
+                MBoxStatic.Assert(99983, gd_Tree == null);
                 _gd_Tree = value;
             }
         }

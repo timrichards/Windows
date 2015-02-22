@@ -93,14 +93,14 @@ namespace DoubleFile
 
     internal static partial class ExtensionMethodsStatic
     {
-        internal new static bool ContainsKeyA<T1, T2>(this IDictionary<T1, T2> dict, T1 key)
+        internal static bool ContainsKeyA<T1, T2>(this IDictionary<T1, T2> dict, T1 key)
         {
             T2 outValue;
 
             return dict.TryGetValue(key, out outValue);
         }
 
-        internal new static bool ContainsKeyB<T1, T2>(this IReadOnlyDictionary<T1, T2> dict, T1 key)
+        internal static bool ContainsKeyB<T1, T2>(this IReadOnlyDictionary<T1, T2> dict, T1 key)
         {
             T2 outValue;
 

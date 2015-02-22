@@ -35,9 +35,9 @@ namespace DoubleFile
         }
 
         static internal int GetFG_ARGB(int n) { return CLUT[(n & knCLUT_FGmask)]; }
-        static internal int GetBG_ARGB(int n) { return CLUT[(n & knCLUT_BGmask) >> 8]; }
+        static internal int GetBG_ARGB(int n) { return CLUT[(n & knCLUT_BGmask) >> 5]; }
         static internal int SetFG_ARGB(ref int n, int argb) { return n = (int)(n & knCLUT_BGmask) + RevCLUT[argb]; }
-        static internal int SetBG_ARGB(ref int n, int argb) { return n = (int)(n & knCLUT_FGmask) + (RevCLUT[argb] << 8); }
+        static internal int SetBG_ARGB(ref int n, int argb) { return n = (int)(n & knCLUT_FGmask) + (RevCLUT[argb] << 5); }
 
         readonly static int[] CLUT = new int[knNumColors]
         {
@@ -45,6 +45,15 @@ namespace DoubleFile
             Firebrick, LightGoldenrodYellow, LightGray, MediumSpringGreen, MediumVioletRed,
             OliveDrab, Red, Snow, SteelBlue
         };
+
+        internal static System.Windows.Media.Brush ARGBtoBrush(int nFormsARGB)
+        {
+            var abARGB = BitConverter.GetBytes(nFormsARGB);
+
+            return new System.Windows.Media.SolidColorBrush(
+                System.Windows.Media.Color.FromArgb(abARGB[3], abARGB[2], abARGB[1], abARGB[0])
+            );
+        }
 
         static UtilColor()
         {
@@ -71,19 +80,10 @@ namespace DoubleFile
             MBoxStatic.Assert(0, nIx == knNumColors);
         }
 
-        internal static System.Windows.Media.Brush ARGBtoBrush(int nFormsARGB)
-        {
-            var abARGB = BitConverter.GetBytes(nFormsARGB);
-
-            return new System.Windows.Media.SolidColorBrush(
-                System.Windows.Media.Color.FromArgb(abARGB[3], abARGB[2], abARGB[1], abARGB[0])
-            );
-        }
-
         const int knNumColors = 17;
 
-        const uint knCLUT_FGmask = 0x000000FF;
-        const uint knCLUT_BGmask = 0x0000FF00;
+        const uint knCLUT_FGmask = 0x0000001F;
+        const uint knCLUT_BGmask = 0x000003E0;
 
         static Dictionary<int, int> RevCLUT = new Dictionary<int, int>();
     }

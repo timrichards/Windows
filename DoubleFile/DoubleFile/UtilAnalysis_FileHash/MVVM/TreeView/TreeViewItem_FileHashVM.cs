@@ -16,7 +16,7 @@ namespace DoubleFile
         internal int Index = -1;
 
         public ObservableCollection<TreeViewItem_FileHashVM> Items { get { return m_Items; } }
-        public string Text { get { return datum.Text.PadRight(200); } }
+        public string Text { get { return ((string)datum.Text).PadRight(200); } }
         public Brush Foreground { get { return m_bSelected ? m_SelectedForeground : FrontBrush; } }
         public Brush SelectedForeground { get { return m_bSelected ? m_SelectedForeground : FrontBrush; } }
         public Brush Background { get { return UtilColor.ARGBtoBrush(datum.BackColor); } }
@@ -140,7 +140,7 @@ namespace DoubleFile
             datum = datum_in;
             m_Parent = parent;
             Index = nIndex;
-            datum.TVIVM = this;
+         //   datum.TVIVM = this;
          //   m_Foreground = SDLWPF._ForeClrToBrush(datum.ForeColor);
 
             var nIndex_A = -1;

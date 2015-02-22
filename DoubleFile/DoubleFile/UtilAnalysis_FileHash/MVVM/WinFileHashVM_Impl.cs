@@ -127,6 +127,7 @@ namespace DoubleFile
             TreeCleanup();
             m_tvVM.SetData(m_listRootNodes);
             m_winProgress.CloseIfNatural();
+            UString.GenerationEnded();
         }
 
         void DoTree(bool bKill = false)

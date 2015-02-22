@@ -7,7 +7,7 @@ namespace DoubleFile
     class LocalTreeNode : LocalColorItemBase
     {
         internal readonly LocalTreeNodeCollection Nodes = null;
-        internal string Text = null;
+        internal UString Text = null;
  //       internal string ToolTipText = null;
         internal string Name { get { return Text; } }
 

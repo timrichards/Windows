@@ -468,7 +468,7 @@ namespace Local
 
                 MBoxStatic.Assert(1305.6329, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
-                var lvItem = new LocalLVitem(new[] {treeNode.Text, str_nClones})
+                var lvItem = new LocalLVitem(new[] {(string)treeNode.Text, str_nClones})
                 {
                     Tag = nodeDatum.m_listClones,
                     ForeColor = UtilColor.Firebrick,
@@ -714,7 +714,7 @@ namespace Local
                     foreach (var lvItem
                         in m_list_lvIgnore
                         .Where(lvItem => treeNode.Level == (int.Parse(lvItem.SubItems[1].Text) - 1))
-                        .Where(lvItem => lvItem.Text.Equals(treeNode.Text,
+                        .Where(lvItem => ((string)lvItem.Text).Equals(treeNode.Text,
                             StringComparison.InvariantCultureIgnoreCase)))
                     {
                         IgnoreNodeAndSubnodes((LocalLVitem)lvItem.Tag, treeNode);

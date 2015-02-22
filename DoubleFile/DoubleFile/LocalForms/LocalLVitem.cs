@@ -31,8 +31,8 @@ namespace DoubleFile
             }
         }
 
-        internal string Text = null;
-        internal string Name = null;
+        internal UString Text = null;
+        internal UString Name = null;
         internal object Tag = null;
         internal void Select(bool bSel = true) { }
   //      internal bool Focused;

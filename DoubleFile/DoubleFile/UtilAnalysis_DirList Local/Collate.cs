@@ -129,6 +129,7 @@ namespace Local
             foreach (var kvp in dictIgnoreNodes)
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem/nTotalProgressItems);
+
                 var treeNode = kvp.Key;
                 var nodeDatum = (NodeDatum)treeNode.Tag;
                 List<LocalTreeNode> lsTreeNodes = null;
@@ -373,7 +374,9 @@ namespace Local
 
                 nodeDatum.m_lvItem = lvIgnoreItem;
                 MBoxStatic.Assert(1305.6319, nodeDatum.m_lvItem != null);
-                nodeDatum.m_listClones.Remove(treeNode);
+
+                if (null != nodeDatum.m_listClones)
+                    nodeDatum.m_listClones.Remove(treeNode);
             }
 
             InsertSizeMarkers(listLVdiffVol);
@@ -453,7 +456,10 @@ namespace Local
                     return;
                 }
 
-                var nClones = nodeDatum.m_listClones.Count;
+                int nClones = 0;
+
+                if (null != nodeDatum.m_listClones)
+                    nClones = nodeDatum.m_listClones.Count;
 
                 if (nClones == 0)
                 {
@@ -562,17 +568,25 @@ namespace Local
             // neither rootClone nor nMaxLength are used at all (rootClone is used as a bool).
             // provisional.
 
-            var nodeDatum = (NodeDatum)treeNode.Tag;
+            var nodeDatum = treeNode.Tag as NodeDatum;
+
+            if (null == nodeDatum)
+            {
+                MBoxStatic.Assert(99913, false);    // This check is new 2/23/15 and has never been hit
+                return;
+            }
+
             var listClones = nodeDatum.m_listClones;
             var nLength = nodeDatum.nTotalLength;
 
             if (nLength <= 100 * 1024)
             {
                 treeNode.ForeColor = UtilColor.LightGray;
-                nodeDatum.m_listClones = new UList<LocalTreeNode>();
+                nodeDatum.m_listClones = null;
             }
 
-            if ((false == listClones.IsEmpty()) &&
+            if ((null != listClones) &&
+                (false == listClones.IsEmpty()) &&
                 (null == rootClone))
             {
                 rootClone = treeNode;

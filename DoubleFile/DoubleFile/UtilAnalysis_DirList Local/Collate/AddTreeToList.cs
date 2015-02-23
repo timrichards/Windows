@@ -50,10 +50,10 @@ namespace Local
                         continue;
                     }
 
-                    if ((treeNode.ForeColor == UtilColor.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
+                    if ((treeNode.ForeColor == UtilColor.Firebrick) &&
+                        (treeNode == nodeDatum.m_listClones[0]))
                     {
-                        MBoxStatic.Assert(1305.6304, (false == nodeDatum.m_listClones.IsEmpty()) &&
-                            (false == nodeDatum.m_bDifferentVols));
+                        MBoxStatic.Assert(1305.6304, false == nodeDatum.m_bDifferentVols);
                         m_listSameVol.Add(treeNode);
                     }
 

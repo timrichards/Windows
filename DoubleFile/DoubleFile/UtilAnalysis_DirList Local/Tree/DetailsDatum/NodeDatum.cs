@@ -9,7 +9,7 @@ namespace Local
         internal readonly uint nLineNo = 0;
         internal readonly ulong nLength = 0;
 
-        internal UList<LocalTreeNode> m_listClones = new UList<LocalTreeNode>();
+        internal UList<LocalTreeNode> m_listClones = null;
         internal LocalLVitem m_lvItem = null;
         internal bool m_bDifferentVols = false;
 

@@ -63,6 +63,8 @@ namespace Local
 
             var dtStart = DateTime.Now;
 
+            UString.GenerationStarting();
+
             foreach (var treeRoot
                 in from volStrings
                 in LVprojectVM.ItemsCast

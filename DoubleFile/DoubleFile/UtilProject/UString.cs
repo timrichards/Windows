@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading;
 
 namespace DoubleFile
 {
@@ -25,8 +26,16 @@ namespace DoubleFile
         {
             if (_refCount == 0)
             {
-                MBoxStatic.Assert(99936, _dictStrings.Count == 0);
-                MBoxStatic.Assert(99935, _dictStringsRev.Count == 0);
+                MBoxStatic.Assert(99936, null == _dictStrings);
+                MBoxStatic.Assert(99935, null == _dictStringsRev);
+                MBoxStatic.Assert(99912, null == _acStrings);
+                MBoxStatic.Assert(99911, _bGenerating);
+                MBoxStatic.Assert(99914, 0 == _indexGenerator);
+                _dictStrings = new ConcurrentDictionary<string, int>(GlobalData.static_MainWindow.LVprojectVM.Count, 16384);
+                _dictStringsRev = new ConcurrentDictionary<int, string>(GlobalData.static_MainWindow.LVprojectVM.Count, 16384);
+                _acStrings = null;
+                _bGenerating = true;
+                _indexGenerator = 0;
             }
 
             ++_refCount;
@@ -34,102 +43,104 @@ namespace DoubleFile
 
         static internal void DropRef()
         {
+            MBoxStatic.Assert(99934, 0 < _refCount);
             --_refCount;
-            MBoxStatic.Assert(99934, _refCount >= 0);
 
-            if (_refCount == 0)
+            if (0 == _refCount)
             {
-                _dictStrings.Clear();
-                _dictStringsRev.Clear();
+                _dictStrings = null;
+                _dictStringsRev = null;
                 _acStrings = null;
+                _bGenerating = true;
+                _indexGenerator = 0;
             }
+        }
+
+        static internal void GenerationStarting()
+        {
+            if (null == _acStrings)
+            {
+                MBoxStatic.Assert(99915, _bGenerating);
+                return;
+            }
+
+            lock (_acStrings)               // this thread stuff shouldn't be necessary
+            {
+                if (null != _acStrings)     // another thread set it up
+                {
+                    MBoxStatic.Assert(99921, false == _bGenerating);
+                    MBoxStatic.Assert(99920, null == _dictStrings);
+                    MBoxStatic.Assert(99919, null == _dictStringsRev);
+                    MBoxStatic.Assert(99918, _indexGenerator == _acStrings.Length);
+                    MBoxStatic.Assert(99916, 1 < _refCount);
+
+                    _dictStrings = new ConcurrentDictionary<string, int>(GlobalData.static_MainWindow.LVprojectVM.Count, _acStrings.Length);
+                    _dictStringsRev = new ConcurrentDictionary<int, string>(GlobalData.static_MainWindow.LVprojectVM.Count, _acStrings.Length);
+
+                    for (int nIx = 0; nIx < _acStrings.Length; ++nIx)
+                    {
+                        var strA = _acStrings[nIx];
+
+                        _dictStrings[strA] = nIx;
+                        _dictStringsRev[nIx] = strA;
+                    }
+
+                    _bGenerating = true;
+                }
+            }
+
+            _acStrings = null;
         }
 
         static internal void GenerationEnded()
         {
             MBoxStatic.Assert(99922, _indexGenerator == _dictStrings.Count);
             _acStrings = new string[_dictStrings.Count];
-            
+
             foreach (var kvp in _dictStrings)
             {
-                MBoxStatic.Assert(99917, kvp.Key != null);
                 _acStrings[kvp.Value] = kvp.Key;
             }
 
-            _dictStrings.Clear();
-            _dictStringsRev.Clear();
+            _dictStrings = null;
+            _dictStringsRev = null;
             _bGenerating = false;
         }
 
         static internal int Set(string str)
         {
-            int nValue = 0;
-
-            if (null != _acStrings)
+            if (false == _bGenerating)
             {
-                lock (_acStrings)
-                lock (_dictStrings)
-                lock (_dictStringsRev)
-                {
-                    if (null != _acStrings)     // another thread set it up
-                    {
-                        MBoxStatic.Assert(99921, _bGenerating == false);
-                        MBoxStatic.Assert(99920, _dictStrings.Count == 0);
-                        MBoxStatic.Assert(99919, _dictStringsRev.Count == 0);
-                        MBoxStatic.Assert(99918, _indexGenerator == _acStrings.Length);
-
-                        for (int nIx = 0; nIx < _acStrings.Length; ++nIx)
-                        {
-                            _dictStrings[_acStrings[nIx]] = nIx;
-                            _dictStringsRev[nIx] = _acStrings[nIx];
-                        }
-
-                        _bGenerating = true;
-                    }
-
-                    _acStrings = null;
-                }
+                MBoxStatic.Assert(99917, false);
+                return -1;
             }
+
+            int nValue = 0;
 
             if (false == _dictStrings.TryGetValue(str, out nValue))
             {
-                _dictStrings[str] = _indexGenerator;
-                _dictStringsRev[_indexGenerator] = str;
-                return _indexGenerator++;                   // note that auto post-increment is compatible with return
+                var nIx = Interlocked.Increment(ref _indexGenerator) - 1;
+
+                _dictStrings[str] = nIx;
+                _dictStringsRev[nIx] = str;
+                return nIx;
             }
 
             return nValue;
         }
 
-        static internal string Get(int nIndex)
+        static string Get(int nIndex)
         {
-            return _bGenerating ? GetB(nIndex) : GetA(nIndex);
+            return _bGenerating ? _dictStringsRev[nIndex] : _acStrings[nIndex];
         }
 
-        static string GetA(int nIndex)
-        {
-            return _acStrings[nIndex];
-        }
-
-        static string GetB(int nIndex)
-        {
-            string strValue = null;
-
-            if (false == _dictStringsRev.TryGetValue(nIndex, out strValue))
-            {
-                MBoxStatic.Assert(99933, false);
-                return null;
-            }
-
-            return strValue;
-        }
-
-        int nIndex;
-        static ConcurrentDictionary<string, int> _dictStrings = new ConcurrentDictionary<string, int>();
-        static ConcurrentDictionary<int, string> _dictStringsRev = new ConcurrentDictionary<int, string>();
+        static ConcurrentDictionary<string, int> _dictStrings = null;
+        static ConcurrentDictionary<int, string> _dictStringsRev = null;
         static int _refCount = 0;
         static int _indexGenerator = 0;
         static bool _bGenerating = true;
         static string[] _acStrings = null;
+
+        int nIndex = -1;
     }
 }

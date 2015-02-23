@@ -49,17 +49,17 @@ namespace Local
 
                     strParent = strParent.Remove(nIndex).TrimEnd('\\');
 
-                    Node node = null;
+                    Node nodeParent = null;
 
-                    if (false == m_rootNode.Nodes.TryGetValue(strParent, out node))
+                    if (false == m_rootNode.Nodes.TryGetValue(strParent, out nodeParent))
                     {
-                        m_rootNode.Nodes.Add(strParent,
-                            new Node(gd, strParent, m_rootNode.FirstLineNo, 0, m_rootNode));
+                        nodeParent = new Node(gd, strParent, m_rootNode.FirstLineNo, 0, m_rootNode);
+                        m_rootNode.Nodes.Add(strParent, nodeParent);
                     }
 
-                    if (node.subNodes.ContainsKeyA(m_strPath) == false)
+                    if (nodeParent.subNodes.ContainsKeyA(m_strPath) == false)
                     {
-                        node.subNodes.Add(m_strPath, this);
+                        nodeParent.subNodes.Add(m_strPath, this);
                     }
                 }
 

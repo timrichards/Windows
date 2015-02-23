@@ -53,7 +53,8 @@ namespace DoubleFile
 
                     if (false == m_rootNode.Nodes.TryGetValue(strParent, out nodeParent))
                     {
-                        m_rootNode.Nodes.Add(strParent, new Node(gd, strParent, m_rootNode.FirstLineNo, 0, m_rootNode));
+                        nodeParent = new Node(gd, strParent, m_rootNode.FirstLineNo, 0, m_rootNode);
+                        m_rootNode.Nodes.Add(strParent, nodeParent);
                     }
 
                     if (nodeParent.subNodes.ContainsKeyA(m_strPath) == false)

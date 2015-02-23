@@ -24,10 +24,10 @@ namespace DoubleFile
 
         internal void Clear()
         {
-            m_DictFiles.Clear();
+            m_DictFiles = null;
         }
 
-        internal bool IsEmpty { get { return m_DictFiles.IsEmpty(); } }
+        internal bool IsEmpty { get { return null == m_DictFiles; } }
         internal void ResetAbortFlag() { IsAborted = false; }
 
         /// <summary>
@@ -48,12 +48,18 @@ namespace DoubleFile
             var key = new FileKeyStruct(asLine[10], asLine[7]);
             var lsRet = new List<DuplicateStruct>();
 
-            if (false == m_DictFiles.ContainsKeyA(key))
+            if (null == m_DictFiles)
             {
                 return lsRet;
             }
 
-            var lsDupes = m_DictFiles[key];
+            IEnumerable<int> lsDupes = null;
+
+            if (false == m_DictFiles.TryGetValue(key, out lsDupes))
+            {
+                return lsRet;
+            }
+
             var nLine = int.Parse(asLine[1]);
 
             lsRet.AddRange(lsDupes.Select(lookup => new DuplicateStruct
@@ -71,7 +77,7 @@ namespace DoubleFile
         {
             LVprojectVM = lvProjectVM;
             m_statusCallback = statusCallback;
-            m_DictFiles.Clear();
+            m_DictFiles = null;
             IsAborted = false;
             m_thread = new Thread(Go) { IsBackground = true };
             m_thread.Start();
@@ -147,14 +153,14 @@ namespace DoubleFile
                         SetLVitemProjectVM(ref lookup, nLVitem);
                         SetLineNumber(ref lookup, int.Parse(asLine[1]));
 
-                        if (false == dictFiles.ContainsKeyA(key))
+                        List<int> ls = null;
+
+                        if (false == dictFiles.TryGetValue(key, out ls))
                         {
                             dictFiles[key] = new List<int> {lookup};
                         }
                         else
                         {
-                            var ls = dictFiles[key];
-
                             lock (ls)
                             {
                                 ls.Insert(ls.TakeWhile(nLookup => lookup >= nLookup).Count(),
@@ -213,7 +219,7 @@ namespace DoubleFile
             using (var reader = new StreamReader(ksSerializeFile, false))
             {
                 string strLine = null;
-                m_DictFiles.Clear();
+                m_DictFiles = new Dictionary<FileKeyStruct,IEnumerable<int>>();
 
                 while ((strLine = reader.ReadLine()) != null)
                 {
@@ -231,7 +237,7 @@ namespace DoubleFile
 
         readonly Dictionary<LVitem_ProjectVM, int> DictLVtoItemNumber = new Dictionary<LVitem_ProjectVM, int>();
         readonly Dictionary<int, LVitem_ProjectVM> DictItemNumberToLV = new Dictionary<int, LVitem_ProjectVM>();
-        Dictionary<FileKeyStruct, IEnumerable<int>> m_DictFiles = new Dictionary<FileKeyStruct, IEnumerable<int>>();
+        Dictionary<FileKeyStruct, IEnumerable<int>> m_DictFiles = null;
 
         const uint knItemVMmask = 0xFF000000;
         static int GetLVitemProjectVM(int n) { return (int)(n & knItemVMmask) >> 24; }

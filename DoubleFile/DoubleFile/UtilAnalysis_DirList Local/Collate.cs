@@ -131,27 +131,28 @@ namespace Local
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem/nTotalProgressItems);
                 var treeNode = kvp.Key;
                 var nodeDatum = (NodeDatum)treeNode.Tag;
+                List<LocalTreeNode> lsTreeNodes = null;
 
-                if (dictNodes.ContainsKeyA(nodeDatum.Key) == false)
+                if (false == dictNodes.TryGetValue(nodeDatum.Key, out lsTreeNodes))
                 {
                     continue;
                 }
 
                 if (m_bLoose)
                 {
-                    foreach (var treeNode_A in dictNodes[nodeDatum.Key])
+                    foreach (var treeNode_A in lsTreeNodes)
                     {
                         dictIgnoreMark.Add(treeNode_A, kvp.Value);
                     }
 
                     dictNodes.Remove(nodeDatum.Key);
                 }
-                else if (dictNodes[nodeDatum.Key].Contains(treeNode))
+                else if (lsTreeNodes.Contains(treeNode))
                 {
                     dictIgnoreMark.Add(treeNode, kvp.Value);
-                    dictNodes[nodeDatum.Key].Remove(treeNode);
+                    lsTreeNodes.Remove(treeNode);
 
-                    if (dictNodes[nodeDatum.Key].IsEmpty())
+                    if (lsTreeNodes.IsEmpty())
                     {
                         dictNodes.Remove(nodeDatum.Key);
                     }
@@ -568,7 +569,7 @@ namespace Local
             if (nLength <= 100 * 1024)
             {
                 treeNode.ForeColor = UtilColor.LightGray;
-                nodeDatum.m_listClones.Clear();
+                nodeDatum.m_listClones = new UList<LocalTreeNode>();
             }
 
             if ((false == listClones.IsEmpty()) &&
@@ -576,11 +577,13 @@ namespace Local
             {
                 rootClone = treeNode;
 
-                if (dictClones.ContainsKeyA(nodeDatum.Key))
+                UList<LocalTreeNode> lsTreeNodes = null;
+
+                if (dictClones.TryGetValue(nodeDatum.Key, out lsTreeNodes))
                 {
-                    MBoxStatic.Assert(1305.6305, dictClones[nodeDatum.Key] == listClones);
-                    MBoxStatic.Assert(1305.6306, ((NodeDatum)dictClones[nodeDatum.Key][0].Tag).m_bDifferentVols == nodeDatum.m_bDifferentVols);
-                    MBoxStatic.Assert(1305.6307, dictClones[nodeDatum.Key][0].ForeColor == treeNode.ForeColor);
+                    MBoxStatic.Assert(1305.6305, lsTreeNodes == listClones);
+                    MBoxStatic.Assert(1305.6306, ((NodeDatum)lsTreeNodes[0].Tag).m_bDifferentVols == nodeDatum.m_bDifferentVols);
+                    MBoxStatic.Assert(1305.6307, lsTreeNodes[0].ForeColor == treeNode.ForeColor);
                 }
                 else
                 {

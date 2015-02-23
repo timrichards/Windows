@@ -415,15 +415,14 @@ namespace DoubleFile
                 treeNode.BackColor = Color.Empty;
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+                UList<TreeNode> listClones = null;
 
-                if (gd_Tree.m_dictNodes.ContainsKeyA(nodeDatum.Key) == false)
+                if (false == gd_Tree.m_dictNodes.TryGetValue(nodeDatum.Key, out listClones))
                 {
                     // same scenario as empty owner:
                     // Search "Parent folder may contain only its clone subfolder, in which case unmark the subfolder"
                     continue;
                 }
-
-                UList<TreeNode> listClones = gd_Tree.m_dictNodes[nodeDatum.Key];
 
                 if (listClones.Contains(treeNode))
                 {

@@ -56,9 +56,11 @@ namespace Local
 
                 nodeDatum.nDirsWithFiles = datum.nDirsWithFiles;
 
-                if (m_dictNodes.ContainsKeyA(nodeDatum.Key))
+                UList<LocalTreeNode> lsTreeNodes = null;
+
+                if (m_dictNodes.TryGetValue(nodeDatum.Key, out lsTreeNodes))
                 {
-                    m_dictNodes[nodeDatum.Key].Add(treeNode);
+                    lsTreeNodes.Add(treeNode);
                 }
                 else if (nodeDatum.nTotalLength > 100 * 1024)
                 {

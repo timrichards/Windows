@@ -112,9 +112,11 @@ namespace DoubleFile
             {
                 // Volume detail
 
-                if (m_dictDriveInfo.ContainsKeyA(m_strFile))
+                string strDriveInfo = null;
+
+                if (m_dictDriveInfo.TryGetValue(m_strFile, out strDriveInfo))
                 {
-                    string[] arrDriveInfo = m_dictDriveInfo[m_strFile].Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+                    string[] arrDriveInfo = strDriveInfo.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
 
                     MBoxStatic.Assert(1301.2314, new int[] { 7, 8, 10, kanDIviewOrder.Length }.Contains(arrDriveInfo.Length));
 

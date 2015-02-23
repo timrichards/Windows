@@ -61,9 +61,11 @@ namespace DoubleFile
 
                 lock (m_dictNodes)
                 {
-                    if (m_dictNodes.ContainsKeyA(nKey))
+                    UList<TreeNode> lsNodes = null;
+
+                    if (m_dictNodes.TryGetValue(nKey, out lsNodes))
                     {
-                        m_dictNodes[nKey].Add(treeNode);
+                        lsNodes.Add(treeNode);
                     }
                     else if (nodeDatum.nTotalLength > 100 * 1024)
                     {

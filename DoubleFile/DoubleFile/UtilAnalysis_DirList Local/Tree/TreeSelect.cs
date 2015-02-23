@@ -106,9 +106,12 @@ namespace Local
             {
                 // Volume detail
 
-                if (m_dictDriveInfo.ContainsKeyA(m_strFile))
+                string strDriveInfo = null;
+
+                if (m_dictDriveInfo.TryGetValue(m_strFile, out strDriveInfo))
                 {
-                    var arrDriveInfo = m_dictDriveInfo[m_strFile]
+                    var arrDriveInfo =
+                        strDriveInfo
                         .Split(new[] { "\r\n", "\n" },
                         StringSplitOptions.None);
 

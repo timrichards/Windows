@@ -122,27 +122,28 @@ namespace DoubleFile
             {
                 TreeNode treeNode = pair.Key;
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
+                List<TreeNode> lsTreeNodes = null;
 
-                if (dictNodes.ContainsKeyA(nodeDatum.Key) == false)
+                if (false == dictNodes.TryGetValue(nodeDatum.Key, out lsTreeNodes))
                 {
                     continue;
                 }
 
                 if (m_bLoose)
                 {
-                    foreach (TreeNode treeNode_A in dictNodes[nodeDatum.Key])
+                    foreach (TreeNode treeNode_A in lsTreeNodes)
                     {
                         dictIgnoreMark.Add(treeNode_A, pair.Value);
                     }
 
                     dictNodes.Remove(nodeDatum.Key);
                 }
-                else if (dictNodes[nodeDatum.Key].Contains(treeNode))
+                else if (lsTreeNodes.Contains(treeNode))
                 {
                     dictIgnoreMark.Add(treeNode, pair.Value);
-                    dictNodes[nodeDatum.Key].Remove(treeNode);
+                    lsTreeNodes.Remove(treeNode);
 
-                    if (dictNodes[nodeDatum.Key].IsEmpty())
+                    if (lsTreeNodes.IsEmpty())
                     {
                         dictNodes.Remove(nodeDatum.Key);
                     }
@@ -505,11 +506,13 @@ namespace DoubleFile
             {
                 rootClone = treeNode;
 
-                if (dictClones.ContainsKeyA(nodeDatum.Key))
+                UList<TreeNode> lsTreeNodes = null;
+
+                if (dictClones.TryGetValue(nodeDatum.Key, out lsTreeNodes))
                 {
-                    MBoxStatic.Assert(1305.6305, dictClones[nodeDatum.Key] == listClones);
-                    MBoxStatic.Assert(1305.6306, ((NodeDatum)dictClones[nodeDatum.Key][0].Tag).m_bDifferentVols == nodeDatum.m_bDifferentVols);
-                    MBoxStatic.Assert(1305.6307, dictClones[nodeDatum.Key][0].ForeColor == treeNode.ForeColor);
+                    MBoxStatic.Assert(1305.6305, lsTreeNodes == listClones);
+                    MBoxStatic.Assert(1305.6306, ((NodeDatum)lsTreeNodes[0].Tag).m_bDifferentVols == nodeDatum.m_bDifferentVols);
+                    MBoxStatic.Assert(1305.6307, lsTreeNodes[0].ForeColor == treeNode.ForeColor);
                 }
                 else
                 {

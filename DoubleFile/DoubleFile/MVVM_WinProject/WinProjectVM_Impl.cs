@@ -32,7 +32,6 @@ namespace DoubleFile
                 new ProjectFile().OpenProject(dlg.FileName,
                     (listFiles, bClearItems) => OpenListingFiles(listFiles, bClearItems));
                 m_lvVM.Unsaved = false;
-                // gd.FileDictionary.Clear();   Don't call this here. FileDictionary subscribes to the OnOpenedProject event.
             }
         }
 

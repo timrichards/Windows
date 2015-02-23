@@ -49,14 +49,16 @@ namespace DoubleFile
 
                     strParent = strParent.Remove(nIndex).TrimEnd('\\');
 
-                    if (m_rootNode.Nodes.ContainsKeyA(strParent) == false)
+                    Node nodeParent = null;
+
+                    if (false == m_rootNode.Nodes.TryGetValue(strParent, out nodeParent))
                     {
                         m_rootNode.Nodes.Add(strParent, new Node(gd, strParent, m_rootNode.FirstLineNo, 0, m_rootNode));
                     }
 
-                    if (m_rootNode.Nodes[strParent].subNodes.ContainsKeyA(m_strPath) == false)
+                    if (nodeParent.subNodes.ContainsKeyA(m_strPath) == false)
                     {
-                        m_rootNode.Nodes[strParent].subNodes.Add(m_strPath, this);
+                        nodeParent.subNodes.Add(m_strPath, this);
                     }
                 }
 

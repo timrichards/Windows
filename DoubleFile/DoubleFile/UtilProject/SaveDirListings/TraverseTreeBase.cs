@@ -136,11 +136,12 @@ namespace DoubleFile
                             }
 
                             string strHash = null;
+                            HashStruct hash;
 
                             if ((null != dictHash) &&
-                                dictHash.ContainsKeyA(winFile.strAltFileName))
+                                dictHash.TryGetValue(winFile.strAltFileName, out hash))
                             {
-                                strHash = dictHash[winFile.strAltFileName].ToString();
+                                strHash = hash.ToString();
                             }
 
                             string strError1 = null;

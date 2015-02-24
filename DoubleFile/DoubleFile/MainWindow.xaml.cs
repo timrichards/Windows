@@ -30,7 +30,7 @@ namespace DoubleFile
 
         void FormAnalysis_DirListAction(Action<FormAnalysis_DirList, LV_ProjectVM> action)
         {
-            if ((Analysis_DirListForm == null) || Analysis_DirListForm.IsDisposed)
+            if ((null == Analysis_DirListForm) || Analysis_DirListForm.IsDisposed)
             {
                 return;
             }
@@ -124,7 +124,8 @@ namespace DoubleFile
 
             if (bOpenProject)
             {
-                if ((LVprojectVM != null) && LVprojectVM.Unsaved &&
+                if ((null != LVprojectVM) &&
+                    LVprojectVM.Unsaved &&
                     (MessageBoxResult.Cancel ==
                     MBoxStatic.ShowDialog(WinProjectVM.ksUnsavedWarning, "Open Project", MessageBoxButton.OKCancel)))
                 {
@@ -161,7 +162,8 @@ namespace DoubleFile
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if ((LVprojectVM != null) && LVprojectVM.Unsaved &&
+            if ((null != LVprojectVM) &&
+                LVprojectVM.Unsaved &&
                 (MessageBoxResult.Cancel == 
                 MBoxStatic.ShowDialog(WinProjectVM.ksUnsavedWarning, "Quit Double File", MessageBoxButton.OKCancel)))
             {
@@ -219,10 +221,14 @@ namespace DoubleFile
 
         private void Button_FileHashExplorer_Click(object sender, RoutedEventArgs e)
         {
-            new WinAnalysis_FileHash(gd, LVprojectVM).Show();
+            if ((null == _winAnalysis_FileHash) || (_winAnalysis_FileHash.IsClosed))
+                _winAnalysis_FileHash = (WinAnalysis_FileHash)new WinAnalysis_FileHash(gd, LVprojectVM).Show();
+            else
+                _winAnalysis_FileHash.Activate();
         }
 
         GlobalData_Base gd = null;
         readonly GlobalData gd_old = null;
+        WinAnalysis_FileHash _winAnalysis_FileHash = null;
     }
 }

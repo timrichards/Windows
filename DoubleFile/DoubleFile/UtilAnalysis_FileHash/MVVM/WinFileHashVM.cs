@@ -3,26 +3,27 @@ namespace DoubleFile
 {
     partial class WinFileHashVM : ObservableObject_OwnerWindow
     {
-        internal WinFileHashVM(GlobalData_Base gd_in, TreeView_FileHashVM tvVM, LV_ProjectVM lvProjectVM_in)
+        internal WinFileHashVM(GlobalData_Base gd, TreeView_FileHashVM tvVM, LV_ProjectVM lvProjectVM)
         {
-            gd = gd_in;
-            m_tvVM = tvVM;
-            m_lvProjectVM = lvProjectVM_in;
+            _lvProjectVM = lvProjectVM;
 
-            if (m_lvProjectVM == null)
+            if ((null == _lvProjectVM) ||
+                (0 == _lvProjectVM.Count))
             {
                 return;
             }
 
-            m_winProgress = new WinProgress(); 
-            m_nCorrelateProgressDenominator = m_lvProjectVM.Count;
+            _nCorrelateProgressDenominator = _lvProjectVM.Count;
+            _gd = gd;
+            _tvVM = tvVM;
+            _winProgress = new WinProgress(); 
             DoTree();
         }
 
-        readonly GlobalData_Base gd = null;
-        readonly TreeView_FileHashVM m_tvVM = null;
-        readonly LV_ProjectVM m_lvProjectVM = null;
-        readonly WinProgress m_winProgress = null;
-        readonly double m_nCorrelateProgressDenominator = 0;
+        readonly GlobalData_Base _gd = null;
+        readonly TreeView_FileHashVM _tvVM = null;
+        readonly LV_ProjectVM _lvProjectVM = null;
+        readonly WinProgress _winProgress = null;
+        readonly double _nCorrelateProgressDenominator = 0;
     }
 }

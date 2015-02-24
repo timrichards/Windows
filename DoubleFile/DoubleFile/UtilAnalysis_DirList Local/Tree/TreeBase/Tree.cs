@@ -48,10 +48,11 @@ namespace Local
             m_dictNodes.Clear();
         }
 
-        internal void DoThreadFactory()
+        internal Tree DoThreadFactory()
         {
             m_thread = new Thread(Go) {IsBackground = true};
             m_thread.Start();
+            return this;
         }
 
         internal bool IsAborted { get; private set; }

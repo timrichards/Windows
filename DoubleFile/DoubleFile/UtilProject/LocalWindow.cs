@@ -78,7 +78,7 @@ namespace DoubleFile
                 Close();
         }
 
-        internal new void Show() { Show(GlobalData.static_Dialog); }
+        internal new LocalWindow Show() { Show(GlobalData.static_Dialog); return this; }
         internal new bool? ShowDialog() { return ShowDialog(GlobalData.static_Dialog); }
 
         void Show(LocalWindow me)

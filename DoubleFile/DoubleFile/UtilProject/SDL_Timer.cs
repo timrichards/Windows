@@ -20,7 +20,13 @@ namespace DoubleFile
         internal SDL_Timer(double milliseconds, Action callback)
             : base(milliseconds)
         {
-            Elapsed += (o, e) => callback();
+            Elapsed += m_Elapsed = (o, e) => callback();
+        }
+
+        public new void Dispose()
+        {
+            Elapsed -= m_Elapsed;
+            base.Dispose();
         }
 
         internal new SDL_Timer Start()
@@ -33,6 +39,8 @@ namespace DoubleFile
 
             return null;
         }
+
+        ElapsedEventHandler m_Elapsed = null;
     }
 
 }

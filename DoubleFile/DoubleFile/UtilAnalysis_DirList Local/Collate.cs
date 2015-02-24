@@ -9,43 +9,41 @@ namespace Local
 {
     partial class Collate
     {
-        internal Collate(GlobalData_Base gd_in,
+        internal Collate(GlobalData_Base gd,
             ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>> dictNodes,
-            LocalTV tvBrowseWPF,
+            LocalTV tvBrowse,
             LocalLV lvClones,
             LocalLV lvSameVol,
             LocalLV lvUnique,
-            List<LocalTreeNode> listRootNodes,
-            UList<LocalTreeNode> listTreeNodes,
-            bool bCheckboxes,
-            List<LocalLVitem> list_lvIgnore,
+            List<LocalTreeNode> lsRootNodes,
+            UList<LocalTreeNode> lsTreeNodes,
+            List<LocalLVitem> lsLVignore,
             bool bLoose)
         {
-            gd = gd_in;
-            static_this = this;
-            m_dictNodes = dictNodes;
-            m_tvBrowseWPF = tvBrowseWPF;
-            wpf_lvClones = lvClones;
-            wpf_lvSameVol = lvSameVol;
-            wpf_lvUnique = lvUnique;
-            m_listRootNodes = listRootNodes;
-            m_listTreeNodes = listTreeNodes;
-            m_bCheckboxes = bCheckboxes;
-            m_list_lvIgnore = list_lvIgnore;
-            m_bLoose = bLoose;
+            _gd = gd;
+            _static_this = this;
+            _dictNodes = dictNodes;
+            _tvBrowse = tvBrowse;
+            _lvClones = lvClones;
+            _lvSameVol = lvSameVol;
+            _lvUnique = lvUnique;
+            _lsRootNodes = lsRootNodes;
+            _lsTreeNodes = lsTreeNodes;
+            _lsLVignore = lsLVignore;
+            _bLoose = bLoose;
         }
 
         internal static void ClearMem()
         {
             Abort();
-            static_this = null;
+            _static_this = null;
         }
 
         internal static void Abort()
         {
-            if (static_this != null)
+            if (_static_this != null)
             {
-                static_this.m_bThreadAbort = true;
+                _static_this._bThreadAbort = true;
             }
         }
 
@@ -89,44 +87,44 @@ namespace Local
 
             var treeView = new LocalTV();     // sets Level and NextNode
 
-            if (m_listRootNodes.IsEmpty())
+            if (_lsRootNodes.IsEmpty())
             {
                 MBoxStatic.Assert(1305.6314, false);
                 return;
             }
 
-            if (m_listRootNodes[0].TreeView == null)
+            if (_lsRootNodes[0].TreeView == null)
             {
-                treeView.Nodes.AddRange(m_listRootNodes.ToArray());
+                treeView.Nodes.AddRange(_lsRootNodes.ToArray());
             }
 
-            if (false == m_list_lvIgnore.IsEmpty())
+            if (false == _lsLVignore.IsEmpty())
             {
                 var dtStart = DateTime.Now;
-                var nMaxLevel = m_list_lvIgnore.Max(i => int.Parse(i.SubItems[1].Text) - 1);
+                var nMaxLevel = _lsLVignore.Max(i => int.Parse(i.SubItems[1].Text) - 1);
                 var sbMatch = new StringBuilder();
 
-                foreach (var lvItem in m_list_lvIgnore)
+                foreach (var lvItem in _lsLVignore)
                 {
                     sbMatch.AppendLine(lvItem.Text);
                 }
 
-                IgnoreNodeQuery(sbMatch.ToString().ToLower(), nMaxLevel, m_listRootNodes[0]);
+                IgnoreNodeQuery(sbMatch.ToString().ToLower(), nMaxLevel, _lsRootNodes[0]);
                 UtilProject.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             }
 
             var dictIgnoreMark = new Dictionary<LocalTreeNode, LocalLVitem>();
             var dictNodes = new SortedDictionary<FolderKeyStruct, List<LocalTreeNode>>();
 
-            foreach (var kvp in m_dictNodes)                    // clone to remove ignored
+            foreach (var kvp in _dictNodes)                     // clone to remove ignored
             {                                                   // m_ vs local check is via List vs UList
                 dictNodes.Add(kvp.Key, kvp.Value.ToList());     // clone pair.Value to remove ignored, using ToList() 
             }
 
-            nProgressDenominator += dictIgnoreNodes.Count;
+            nProgressDenominator += _dictIgnoreNodes.Count;
             ++nProgressItem;
 
-            foreach (var kvp in dictIgnoreNodes)
+            foreach (var kvp in _dictIgnoreNodes)
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem/nTotalProgressItems);
 
@@ -139,7 +137,7 @@ namespace Local
                     continue;
                 }
 
-                if (m_bLoose)
+                if (_bLoose)
                 {
                     foreach (var treeNode_A in lsTreeNodes)
                     {
@@ -168,7 +166,7 @@ namespace Local
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
 
-                if (m_bThreadAbort || gd.WindowClosed)
+                if (_bThreadAbort || _gd.WindowClosed)
                 {
                     return;
                 }
@@ -189,7 +187,7 @@ namespace Local
 
                     foreach (var treeNode_A in listNodes)
                     {
-                        if (m_bThreadAbort || gd.WindowClosed)
+                        if (_bThreadAbort || _gd.WindowClosed)
                         {
                             return;
                         }
@@ -258,14 +256,14 @@ namespace Local
 
             var dictClones = new SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>>();
 
-            nProgressDenominator += m_listRootNodes.Count;
+            nProgressDenominator += _lsRootNodes.Count;
             ++nProgressItem;
 
-            foreach (var treeNode in m_listRootNodes)
+            foreach (var treeNode in _lsRootNodes)
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
                 
-                if (m_bThreadAbort || gd.WindowClosed)
+                if (_bThreadAbort || _gd.WindowClosed)
                 {
                     return;
                 }
@@ -273,7 +271,7 @@ namespace Local
                 DifferentVolsQuery(dictClones, treeNode);
             }
 
-            m_listRootNodes.Sort((x, y) => string.Compare(x.Text, y.Text));
+            _lsRootNodes.Sort((x, y) => string.Compare(x.Text, y.Text));
             nProgressDenominator += dictClones.Count;
             ++nProgressItem;
 
@@ -283,7 +281,7 @@ namespace Local
 
                 // load up listLVdiffVol
 
-                if (m_bThreadAbort || gd.WindowClosed)
+                if (_bThreadAbort || _gd.WindowClosed)
                 {
                     return;
                 }
@@ -324,7 +322,7 @@ namespace Local
 
                 foreach (var treeNode in listNodes.Value)
                 {
-                    if (m_bThreadAbort || gd.WindowClosed)
+                    if (_bThreadAbort || _gd.WindowClosed)
                     {
                         return;
                     }
@@ -348,7 +346,7 @@ namespace Local
 
                 lvItem.Text = nameNode.Text;
                 MBoxStatic.Assert(1305.6318, false == string.IsNullOrWhiteSpace(lvItem.Text));
-                listLVdiffVol.Add(lvItem);
+                _lsLVdiffVol.Add(lvItem);
             }
 
             nProgressDenominator += dictIgnoreMark.Count;
@@ -379,14 +377,14 @@ namespace Local
                     nodeDatum.m_listClones.Remove(treeNode);
             }
 
-            InsertSizeMarkers(listLVdiffVol);
+            InsertSizeMarkers(_lsLVdiffVol);
             nProgressDenominator += dictUnique.Count;
 
             foreach (var kvp in dictUnique)
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator);
 
-                if (m_bThreadAbort || gd.WindowClosed)
+                if (_bThreadAbort || _gd.WindowClosed)
                 {
                     return;
                 }
@@ -414,22 +412,22 @@ namespace Local
                 }
 
                 lvItem.ForeColor = treeNode.ForeColor;
-                listLVunique.Add(lvItem);
+                _lsLVunique.Add(lvItem);
                 MBoxStatic.Assert(1305.6324, nodeDatum.m_lvItem == null);
                 nodeDatum.m_lvItem = lvItem;
             }
 
-            InsertSizeMarkers(listLVunique);
+            InsertSizeMarkers(_lsLVunique);
 
             var listSameVol = new List<LocalTreeNode>();
 
-            if (false == m_listRootNodes.IsEmpty())
+            if (false == _lsRootNodes.IsEmpty())
             {
-                var nCount = CountNodes.Go(m_listRootNodes);
-                var nCount_A = new AddTreeToList(m_listTreeNodes, listSameVol).Go(m_listRootNodes).Count;
+                var nCount = CountNodes.Go(_lsRootNodes);
+                var nCount_A = new AddTreeToList(_lsTreeNodes, listSameVol).Go(_lsRootNodes).Count;
 
                 MBoxStatic.Assert(1305.6325, nCount_A == nCount);
-                MBoxStatic.Assert(1305.6326, m_listTreeNodes.Count == nCount);
+                MBoxStatic.Assert(1305.6326, _lsTreeNodes.Count == nCount);
                 UtilProject.WriteLine("Step1_OnThread " + nCount);
             }
 
@@ -441,7 +439,7 @@ namespace Local
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
 
-                if (m_bThreadAbort || gd.WindowClosed)
+                if (_bThreadAbort || _gd.WindowClosed)
                 {
                     return;
                 }
@@ -482,80 +480,79 @@ namespace Local
                     BackColor = treeNode.BackColor
                 };
 
-                listLVsameVol.Add(lvItem);
+                _lsLVsameVol.Add(lvItem);
                 nodeDatum.m_lvItem = lvItem;
             }
 
-            InsertSizeMarkers(listLVsameVol);
+            InsertSizeMarkers(_lsLVsameVol);
             treeView.Nodes.Clear();                             // prevents destroy nodes
         }
 
         internal void Step2()
         {
-            if (m_tvBrowseWPF.Enabled == false)
+            if (_tvBrowse.Enabled == false)
             {
-                m_tvBrowseWPF.Enabled = true;
-                m_tvBrowseWPF.CheckBoxes = m_bCheckboxes;
+                _tvBrowse.Enabled = true;
 
-                var nCount = CountNodes.Go(m_listRootNodes);
+                var nCount = CountNodes.Go(_lsRootNodes);
 
                 UtilAnalysis_DirList.Write("A");
-                m_tvBrowseWPF.Nodes.AddRange(m_listRootNodes.ToArray());
+                _tvBrowse.Nodes.AddRange(_lsRootNodes.ToArray());
                 UtilProject.WriteLine("A");
 
-                var nCount_A = CountNodes.Go(m_listRootNodes);
+                var nCount_A = CountNodes.Go(_lsRootNodes);
 
                 MBoxStatic.Assert(1305.6331, nCount_A == nCount);
-                MBoxStatic.Assert(1305.6332, m_tvBrowseWPF.GetNodeCount(includeSubTrees: true) == nCount);
+                MBoxStatic.Assert(1305.6332, _tvBrowse.GetNodeCount(includeSubTrees: true) == nCount);
                 UtilProject.WriteLine("Step2_OnForm_A " + nCount);
             }
 
-            if (m_bThreadAbort || gd.WindowClosed)
+            if (_bThreadAbort || _gd.WindowClosed)
             {
                 return;
             }
 
-            MBoxStatic.Assert(1305.6333, wpf_lvClones.Items.IsEmpty());
+            MBoxStatic.Assert(1305.6333, _lvClones.Items.IsEmpty());
             UtilAnalysis_DirList.Write("B");
-            wpf_lvClones.Items.AddRange(listLVdiffVol.ToArray());
-            wpf_lvClones.Invalidate();
+            _lvClones.Items.AddRange(_lsLVdiffVol.ToArray());
+            _lvClones.Invalidate();
             UtilProject.WriteLine("B");
 
-            if (m_bThreadAbort || gd.WindowClosed)
+            if (_bThreadAbort || _gd.WindowClosed)
             {
                 return;
             }
 
-            MBoxStatic.Assert(1305.6334, wpf_lvUnique.Items.IsEmpty());
+            MBoxStatic.Assert(1305.6334, _lvUnique.Items.IsEmpty());
             UtilAnalysis_DirList.Write("C");
-            wpf_lvUnique.Items.AddRange(listLVunique.ToArray());
-            wpf_lvUnique.Invalidate();
+            _lvUnique.Items.AddRange(_lsLVunique.ToArray());
+            _lvUnique.Invalidate();
             UtilProject.WriteLine("C");
 
-            if (m_bThreadAbort || gd.WindowClosed)
+            if (_bThreadAbort || _gd.WindowClosed)
             {
                 return;
             }
 
-            MBoxStatic.Assert(1305.6335, wpf_lvSameVol.Items.IsEmpty());
+            MBoxStatic.Assert(1305.6335, _lvSameVol.Items.IsEmpty());
             UtilAnalysis_DirList.Write("D");
-            wpf_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
-            wpf_lvSameVol.Invalidate();
+            _lvSameVol.Items.AddRange(_lsLVsameVol.ToArray());
+            _lvSameVol.Invalidate();
             UtilProject.WriteLine("D");
 
-            if (m_tvBrowseWPF.SelectedNode != null)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
+            if (_tvBrowse.SelectedNode != null)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
             {
-                var treeNode = m_tvBrowseWPF.SelectedNode;
+                var treeNode = _tvBrowse.SelectedNode;
 
-                m_tvBrowseWPF.SelectedNode = null;
-                m_tvBrowseWPF.SelectedNode = treeNode;   // reselect in repopulated collation listviewers
+                _tvBrowse.SelectedNode = null;
+                _tvBrowse.SelectedNode = treeNode;   // reselect in repopulated collation listviewers
             }
             else
             {
-                m_tvBrowseWPF.SelectedNode = m_listRootNodes[0];
+                _tvBrowse.SelectedNode = _lsRootNodes[0];
             }
 
-            static_this = null;
+            _static_this = null;
         }
 
         // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
@@ -623,7 +620,7 @@ namespace Local
 
                     foreach (var subnode in listClones)
                     {
-                        if (m_bThreadAbort || gd.WindowClosed)
+                        if (_bThreadAbort || _gd.WindowClosed)
                         {
                             return;
                         }
@@ -679,7 +676,7 @@ namespace Local
 
             foreach (var subNode in treeNode.Nodes)
             {
-                if (m_bThreadAbort || gd.WindowClosed)
+                if (_bThreadAbort || _gd.WindowClosed)
                 {
                     return;
                 }
@@ -694,13 +691,13 @@ namespace Local
 
             do
             {
-                if (dictIgnoreNodes.ContainsKeyA(treeNode))
+                if (_dictIgnoreNodes.ContainsKeyA(treeNode))
                 {
                     continue;
                 }
 
                 MBoxStatic.Assert(1305.6312, lvItem != null);
-                dictIgnoreNodes.Add(treeNode, lvItem);
+                _dictIgnoreNodes.Add(treeNode, lvItem);
 
                 if (false == treeNode.Nodes.IsEmpty())
                 {
@@ -721,7 +718,7 @@ namespace Local
 
             do
             {
-                if (m_bThreadAbort || gd.WindowClosed)
+                if (_bThreadAbort || _gd.WindowClosed)
                 {
                     return;
                 }
@@ -729,7 +726,7 @@ namespace Local
                 if (sbMatch.Contains(treeNode.Text.ToLower()))
                 {
                     foreach (var lvItem
-                        in m_list_lvIgnore
+                        in _lsLVignore
                         .Where(lvItem => treeNode.Level == (int.Parse(lvItem.SubItems[1].Text) - 1))
                         .Where(lvItem => ((string)lvItem.Text).Equals(treeNode.Text,
                             StringComparison.InvariantCultureIgnoreCase)))
@@ -774,25 +771,25 @@ namespace Local
         }
 
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
-        readonly ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>> m_dictNodes = null;
-        readonly LocalTV m_tvBrowseWPF = null;
-        readonly LocalLV wpf_lvClones = null;
-        readonly LocalLV wpf_lvSameVol = null;
-        readonly LocalLV wpf_lvUnique = null;
-        readonly List<LocalTreeNode> m_listRootNodes = null;
-        readonly UList<LocalTreeNode> m_listTreeNodes = null;
-        readonly bool m_bCheckboxes = false;
-        readonly List<LocalLVitem> m_list_lvIgnore = null;
+        readonly ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>>
+            _dictNodes = null;
+        readonly LocalTV _tvBrowse = null;
+        readonly LocalLV _lvClones = null;
+        readonly LocalLV _lvSameVol = null;
+        readonly LocalLV _lvUnique = null;
+        readonly List<LocalTreeNode> _lsRootNodes = null;
+        readonly UList<LocalTreeNode> _lsTreeNodes = null;
+        readonly List<LocalLVitem> _lsLVignore = null;
 
         // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.
-        readonly List<LocalLVitem> listLVunique = new List<LocalLVitem>();
-        readonly List<LocalLVitem> listLVsameVol = new List<LocalLVitem>();
-        readonly List<LocalLVitem> listLVdiffVol = new List<LocalLVitem>();
-        readonly Dictionary<LocalTreeNode, LocalLVitem> dictIgnoreNodes = new Dictionary<LocalTreeNode, LocalLVitem>();
-        readonly bool m_bLoose = false;
+        readonly List<LocalLVitem> _lsLVunique = new List<LocalLVitem>();
+        readonly List<LocalLVitem> _lsLVsameVol = new List<LocalLVitem>();
+        readonly List<LocalLVitem> _lsLVdiffVol = new List<LocalLVitem>();
+        readonly Dictionary<LocalTreeNode, LocalLVitem> _dictIgnoreNodes = new Dictionary<LocalTreeNode, LocalLVitem>();
+        readonly bool _bLoose = false;
 
-        bool m_bThreadAbort = false;
-        static Collate static_this = null;
-        readonly GlobalData_Base gd = null;
+        bool _bThreadAbort = false;
+        static Collate _static_this = null;
+        readonly GlobalData_Base _gd = null;
     }
 }

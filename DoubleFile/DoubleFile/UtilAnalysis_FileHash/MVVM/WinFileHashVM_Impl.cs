@@ -9,16 +9,21 @@ namespace DoubleFile
     
     partial class WinFileHashVM
     {
-        internal ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>> m_dictNodes { get; private set; }
-        internal readonly Dictionary<string, string> m_dictDriveInfo = new Dictionary<string, string>();
-        internal Local.Tree m_tree = null;
+        internal ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>>
+            _dictNodes { get; private set; }
+        internal readonly Dictionary<string, string>
+            _dictDriveInfo = new Dictionary<string, string>();
+        internal Local.Tree
+            _tree = null;
 
-        internal readonly UList<LocalTreeNode> m_listTreeNodes = new UList<LocalTreeNode>();
-        internal readonly List<LocalTreeNode> m_listRootNodes = new List<LocalTreeNode>();
+        internal readonly UList<LocalTreeNode>
+            _listTreeNodes = new UList<LocalTreeNode>();
+        internal readonly List<LocalTreeNode>
+            _listRootNodes = new List<LocalTreeNode>();
 
         internal void TreeCleanup()
         {
-            m_tree = null;
+            _tree = null;
             Local.Collate.ClearMem();
         }
 
@@ -26,42 +31,46 @@ namespace DoubleFile
         {
             TreeCleanup();
 
-            m_dictDriveInfo.Clear();
+            _dictDriveInfo.Clear();
 
             // m_dictNodes is tested to recreate tree.
-            m_dictNodes = null;
+            _dictNodes = null;
 
-            m_listTreeNodes.Clear();
-            m_listRootNodes.Clear();
+            _listTreeNodes.Clear();
+            _listRootNodes.Clear();
         }
 
         internal void CreateFileDictStatusCallback(bool bDone = false, double nProgress = double.NaN)
         {
-            if (gd.WindowClosed || (gd.FileDictionary == null) || gd.FileDictionary.IsAborted)
+            if (_gd.WindowClosed ||
+                (_gd.FileDictionary == null) ||
+                _gd.FileDictionary.IsAborted)
             {
-                m_winProgress.Aborted = true;
+                _winProgress.Aborted = true;
                 return;
             }
 
             if (bDone)
             {
-                m_winProgress.SetCompleted(ksFileDictKey);
-                m_winProgress.CloseIfNatural();
-                m_bFileDictDone = true;
+                _winProgress.SetCompleted(_ksFileDictKey);
+                _winProgress.CloseIfNatural();
+                _bFileDictDone = true;
             }
             else if (nProgress >= 0)
             {
-                m_winProgress.SetProgress(ksFileDictKey, nProgress);
+                _winProgress.SetProgress(_ksFileDictKey, nProgress);
             }
         }
         
         void TreeStatusCallback(LVitem_ProjectVM volStrings, LocalTreeNode rootNode = null, bool bError = false)
         {
-            if (gd.WindowClosed || (gd.FileDictionary == null) || gd.FileDictionary.IsAborted ||
-                ((m_tree != null) && (m_tree.IsAborted)))
+            if (_gd.WindowClosed ||
+                (_gd.FileDictionary == null) ||
+                _gd.FileDictionary.IsAborted ||
+                ((_tree != null) && (_tree.IsAborted)))
             {
                 ClearMem_TreeForm();
-                m_winProgress.Aborted = true;
+                _winProgress.Aborted = true;
                 return;
             }
 
@@ -71,8 +80,8 @@ namespace DoubleFile
             }
             else if (rootNode != null)
             {
-                m_listRootNodes.Add(rootNode);
-                m_winProgress.SetProgress(ksFolderTreeKey, m_listRootNodes.Count / m_nCorrelateProgressDenominator/2);
+                _listRootNodes.Add(rootNode);
+                _winProgress.SetProgress(_ksFolderTreeKey, _listRootNodes.Count / _nCorrelateProgressDenominator*3/4.0);
             }
             else
             {
@@ -82,10 +91,10 @@ namespace DoubleFile
 
         void TreeDoneCallback()
         {
-            if (m_listRootNodes.IsEmpty())
+            if (_listRootNodes.IsEmpty())
             {
-                m_winProgress.Aborted = true;
-                UtilProject.UIthread(() => m_winProgress.Close());
+                _winProgress.Aborted = true;
+                UtilProject.UIthread(() => _winProgress.Close());
                 return;
             }
 
@@ -98,49 +107,47 @@ namespace DoubleFile
             var lsLocalLVignore = new List<LocalLVitem>();
             var nProgress = 0.0;
 
-            using (new SDL_Timer(() => { m_winProgress.SetProgress(ksFolderTreeKey, (1 + nProgress)/2.0); }).Start())
+            using (new SDL_Timer(() => { _winProgress.SetProgress(_ksFolderTreeKey, (3 + nProgress)/4.0); }).Start())
             {
-                var collate = new Local.Collate(gd, m_dictNodes,
+                var collate = new Local.Collate(_gd, _dictNodes,
                     localTV,
                     localLVclones, localLVsameVol, localLVsolitary,
-                    m_listRootNodes, m_listTreeNodes, bCheckboxes: true,
-                    list_lvIgnore: lsLocalLVignore, bLoose: true);
+                    _listRootNodes, _listTreeNodes,
+                    lsLVignore: lsLocalLVignore, bLoose: true);
                 var dtStart = DateTime.Now;
 
                 collate.Step1(d => nProgress = d);
-                UtilProject.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds/1000.0 +
-                                      " seconds.");
+                UtilProject.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds/1000.0 + " seconds.");
                 dtStart = DateTime.Now;
 
-                if (gd.WindowClosed)
+                if (_gd.WindowClosed)
                 {
                     TreeCleanup();
                     return;
                 }
 
-                m_winProgress.SetCompleted(ksFolderTreeKey);
+                _winProgress.SetCompleted(_ksFolderTreeKey);
                 collate.Step2();
-                UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds/1000.0 +
-                                      " seconds.");
+                UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds/1000.0 + " seconds.");
             }
 
             TreeCleanup();
-            m_tvVM.SetData(m_listRootNodes);
-            m_winProgress.CloseIfNatural();
+            _tvVM.SetData(_listRootNodes);
+            _winProgress.CloseIfNatural();
             UString.GenerationEnded();
 
             // saving memory here.
-            m_dictNodes = null;
+            _dictNodes = null;
         }
 
         void DoTree(bool bKill = false)
         {
-            if (m_tree != null)
+            if (null != _tree)
             {
                 if (bKill)
                 {
-                    m_tree.EndThread();
-                    m_tree = null;
+                    _tree.EndThread();
+                    _tree = null;
                     ClearMem_TreeForm();
                 }
                 else
@@ -150,67 +157,68 @@ namespace DoubleFile
                 }
             }
 
-            m_winProgress.Title = "Initializing Duplicate File Explorer";
-            m_winProgress.WindowClosingCallback = (() =>
+            _winProgress.Title = "Initializing Duplicate File Explorer";
+            _winProgress.WindowClosingCallback = (() =>
             {
                 if (false == UtilAnalysis_DirList.Closure(() =>
                 {
-                    if (gd.FileDictionary.IsAborted)
+                    if (_gd.FileDictionary
+                        .IsAborted)
                     {
                         return true;
                     }
 
-                    if (m_bFileDictDone && (m_tree == null))
+                    if (_bFileDictDone &&
+                        (null == _tree))
                     {
                         return true;
                     }
 
-                    return (MBoxStatic.ShowDialog("Do you want to cancel?", m_winProgress.Title,
-                        MessageBoxButton.YesNo,
-                        m_winProgress) ==
-                        MessageBoxResult.Yes);
+                    return
+                        (MessageBoxResult.Yes ==
+                        MBoxStatic.ShowDialog("Do you want to cancel?", _winProgress.Title, MessageBoxButton.YesNo, _winProgress));
                 }))
                 {
                     return false;
                 }
 
-                gd.FileDictionary.Abort();
+                _gd.FileDictionary
+                    .Abort();
                     
-                if (m_tree != null)
-                    m_tree.EndThread();
+                if (_tree != null)
+                    _tree.EndThread();
 
                 TreeCleanup();
                 return true;
             });
 
-            var lssProgressItems = new List<string>();
+            var lsProgressItems = new List<string>();
 
-            gd.FileDictionary.ResetAbortFlag();
+            _gd.FileDictionary.ResetAbortFlag();
 
-            if (gd.FileDictionary.IsEmpty)
+            if (_gd.FileDictionary.IsEmpty)
             {
-                lssProgressItems.Add(ksFileDictKey);
-                gd.FileDictionary.DoThreadFactory(m_lvProjectVM, CreateFileDictStatusCallback);
+                lsProgressItems.Add(_ksFileDictKey);
+                _gd.FileDictionary.DoThreadFactory(_lvProjectVM, CreateFileDictStatusCallback);
             }
 
             UString.GenerationStarting();
 
-            if (null == m_dictNodes)
-            {
-                m_dictNodes = new ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>>();
-            }
+            if (null == _dictNodes)
+                _dictNodes = new ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>>();
 
-            m_tree = new Local.Tree(gd, m_lvProjectVM, m_dictNodes, m_dictDriveInfo,
-                TreeStatusCallback, TreeDoneCallback);
-            m_tree.DoThreadFactory();
+            _tree =
+                new Local.Tree(_gd, _lvProjectVM, _dictNodes, _dictDriveInfo, TreeStatusCallback, TreeDoneCallback)
+                .DoThreadFactory();
 
-            lssProgressItems.Add(ksFolderTreeKey);
-            m_winProgress.InitProgress(new string[lssProgressItems.Count], lssProgressItems);
-            m_winProgress.ShowDialog();
+            lsProgressItems.Add(_ksFolderTreeKey);
+            _winProgress.InitProgress(new string[lsProgressItems.Count], lsProgressItems);
+            _winProgress.ShowDialog();
         }
 
-        const string ksFileDictKey = "Creating file dictionary";
-        const string ksFolderTreeKey = "Creating folder tree browser";
-        bool m_bFileDictDone = false;
+        const string _ksFileDictKey = "Creating file dictionary";
+        const string _ksFolderTreeKey = "Creating folder tree browser";
+
+        bool _bFileDictDone = false;
     }
 }

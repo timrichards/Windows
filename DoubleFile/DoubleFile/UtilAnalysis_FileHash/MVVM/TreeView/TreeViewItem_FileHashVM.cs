@@ -10,12 +10,35 @@ namespace DoubleFile
     {
         internal readonly TreeViewItem_FileHashVM m_Parent = null;
         internal readonly TreeView_FileHashVM TVVM = null;
-        internal double EphemeralExpandedPos = -1;
-        internal Brush m_SelectedForeground = Brushes.White;
         internal readonly LocalTreeNode datum = null;
-        internal int Index = -1;
 
-        public ObservableCollection<TreeViewItem_FileHashVM> Items { get { return m_Items; } }
+        internal Brush m_SelectedForeground { get { return Brushes.White; } set { } }
+
+        // turned these dependency property hacks into properties that are always -1
+        internal double EphemeralExpandedPos { get { return -1; } set { } }
+        internal int Index { get { return -1; } set { } }
+
+        public ObservableCollection<TreeViewItem_FileHashVM> Items
+        {
+            get
+            {
+                if (null == _Items)
+                {
+                    var nIndex = -1;
+
+                    _Items = new ObservableCollection<TreeViewItem_FileHashVM>
+                    (
+                        from item
+                            in datum.Nodes.Keys
+                        select new TreeViewItem_FileHashVM(TVVM, item, this, ++nIndex)
+                    );
+                }
+
+                return _Items;
+            }
+        }
+        ObservableCollection<TreeViewItem_FileHashVM> _Items = null;
+
         public string Text { get { return ((string)datum.Text).PadRight(200); } }
         public Brush Foreground { get { return m_bSelected ? m_SelectedForeground : FrontBrush; } }
         public Brush SelectedForeground { get { return m_bSelected ? m_SelectedForeground : FrontBrush; } }
@@ -142,20 +165,8 @@ namespace DoubleFile
             Index = nIndex;
          //   datum.TVIVM = this;
          //   m_Foreground = SDLWPF._ForeClrToBrush(datum.ForeColor);
-
-            var nIndex_A = -1;
-
-            m_Items = new ObservableCollection<TreeViewItem_FileHashVM>
-            (
-                from item
-                    in datum.Nodes.Keys
-                    select new TreeViewItem_FileHashVM(tvvm, item, this, ++nIndex_A)
-            );
         }
 
-        readonly ObservableCollection<TreeViewItem_FileHashVM> m_Items = null;
-
-        static double HeaderHeight { get { return -1; } }
         Brush FrontBrush
         {
             get
@@ -165,6 +176,8 @@ namespace DoubleFile
                 );
             }
         }
+
+        static double HeaderHeight { get { return -1; } }
 
         bool m_bExpanded = false;
         bool m_bSelected = false;

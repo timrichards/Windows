@@ -42,8 +42,11 @@ namespace DoubleFile
         internal LocalLV ListView = null;
 
         // Only used for colors and bold font weight, not subitems, in Collate.cs InsertSizeMarker(). Size 18 to show obvious fault in interpretation.
-        internal object Clone() { var lvItem = (LocalLVitem)MemberwiseClone(); lvItem.Font = (System.Drawing.Font)Font.Clone(); return lvItem; }
-        internal System.Drawing.Font Font { get { return new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold); } set { FontWeight = System.Windows.FontWeights.Bold; } }
-        internal System.Windows.FontWeight FontWeight = System.Windows.FontWeights.Normal;
+        internal object Clone() { var lvItem = (LocalLVitem)MemberwiseClone(); lvItem.FontWeight = FontWeight; return lvItem; }
+        internal System.Windows.FontWeight FontWeight
+        {
+            get { return (Datum6bits != 0) ? System.Windows.FontWeights.Bold : System.Windows.FontWeights.Normal; }
+            set { Datum6bits = (value == System.Windows.FontWeights.Normal) ? 0 : -1; }
+        }
     }
 }

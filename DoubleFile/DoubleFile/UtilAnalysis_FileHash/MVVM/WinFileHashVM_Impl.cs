@@ -9,7 +9,7 @@ namespace DoubleFile
     
     partial class WinFileHashVM
     {
-        internal readonly ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>> m_dictNodes = new ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>>();
+        internal ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>> m_dictNodes { get; private set; }
         internal readonly Dictionary<string, string> m_dictDriveInfo = new Dictionary<string, string>();
         internal Local.Tree m_tree = null;
 
@@ -29,7 +29,7 @@ namespace DoubleFile
             m_dictDriveInfo.Clear();
 
             // m_dictNodes is tested to recreate tree.
-            m_dictNodes.Clear();
+            m_dictNodes = null;
 
             m_listTreeNodes.Clear();
             m_listRootNodes.Clear();
@@ -128,6 +128,9 @@ namespace DoubleFile
             m_tvVM.SetData(m_listRootNodes);
             m_winProgress.CloseIfNatural();
             UString.GenerationEnded();
+
+            // saving memory here.
+            m_dictNodes = null;
         }
 
         void DoTree(bool bKill = false)
@@ -188,6 +191,13 @@ namespace DoubleFile
             {
                 lssProgressItems.Add(ksFileDictKey);
                 gd.FileDictionary.DoThreadFactory(m_lvProjectVM, CreateFileDictStatusCallback);
+            }
+
+            UString.GenerationStarting();
+
+            if (null == m_dictNodes)
+            {
+                m_dictNodes = new ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>>();
             }
 
             m_tree = new Local.Tree(gd, m_lvProjectVM, m_dictNodes, m_dictDriveInfo,

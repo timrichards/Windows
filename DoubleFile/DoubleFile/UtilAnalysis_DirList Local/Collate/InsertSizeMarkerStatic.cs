@@ -34,7 +34,7 @@ namespace Local
                 {
                     lvMarker.BackColor = UtilColor.DarkSlateGray;
                     lvMarker.ForeColor = UtilColor.White;
-                    lvMarker.Font = new System.Drawing.Font(lvMarker.Font, System.Drawing.FontStyle.Bold);
+                    lvMarker.FontWeight = System.Windows.FontWeights.Bold;
                     lvMarker.Tag = null;
                     bInit = true;
                 }

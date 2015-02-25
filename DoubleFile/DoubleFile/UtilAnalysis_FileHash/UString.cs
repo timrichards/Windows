@@ -8,8 +8,8 @@ namespace DoubleFile
     // can't be struct because of null
     class UString : IComparable<string>
     {
-        public static implicit operator UString(string value){ return (value == null) ? null : new UString { nIndex = Set(value) }; }
-        public static implicit operator string(UString value) { return (value == null) ? null : Get(value.nIndex); }
+        public static implicit operator UString(string value) { return (null == value) ? null : new UString { nIndex = Set(value) }; }
+        public static implicit operator string(UString value) { return (null == value) ? null : Get(value.nIndex); }
         public int CompareTo(string other) { return Get(nIndex).CompareTo(other); }
 
         internal bool Contains(UString ustr) { return Get(nIndex).Contains(Get(ustr.nIndex)); }
@@ -120,9 +120,11 @@ namespace DoubleFile
             if (false == _dictStrings.TryGetValue(str, out nValue))
             {
                 var nIx = Interlocked.Increment(ref _indexGenerator) - 1;
+                var b1 = _dictStrings.TryAdd(str, nIx);
+                var b2 = _dictStringsRev.TryAdd(nIx, str);
 
-                _dictStrings[str] = nIx;
-                _dictStringsRev[nIx] = str;
+                MBoxStatic.Assert(99910, b1);
+                MBoxStatic.Assert(99909, b2);
                 return nIx;
             }
 
@@ -134,12 +136,18 @@ namespace DoubleFile
             return _bGenerating ? _dictStringsRev[nIndex] : _acStrings[nIndex];
         }
 
-        static ConcurrentDictionary<string, int> _dictStrings = null;
-        static ConcurrentDictionary<int, string> _dictStringsRev = null;
-        static int _refCount = 0;
-        static int _indexGenerator = 0;
-        static bool _bGenerating = true;
-        static string[] _acStrings = null;
+        static ConcurrentDictionary<string, int>
+            _dictStrings = null;
+        static ConcurrentDictionary<int, string>
+            _dictStringsRev = null;
+        static int
+            _refCount = 0;
+        static int
+            _indexGenerator = 0;
+        static bool
+            _bGenerating = true;
+        static string[]
+            _acStrings = null;
 
         int nIndex = -1;
     }

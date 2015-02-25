@@ -23,7 +23,10 @@ namespace DoubleFile
         internal static bool Assert(double nLocation, bool bCondition, string strError_in = null,
             bool bTraceOnly = false)
         {
-            if (bCondition) return true;
+            if (bCondition)
+            {
+                return true;
+            }
 
             if ((static_nLastAssertLoc == nLocation) &&
                 ((DateTime.Now - static_dtLastAssert).Seconds < 1))

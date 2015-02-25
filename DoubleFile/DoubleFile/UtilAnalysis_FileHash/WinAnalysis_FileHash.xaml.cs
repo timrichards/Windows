@@ -7,23 +7,32 @@ namespace DoubleFile
     /// </summary>
     public partial class WinAnalysis_FileHash
     {
-        internal WinAnalysis_FileHash(GlobalData_Base gd_in, LV_ProjectVM lvProjectVM_in)
+        internal WinAnalysis_FileHash(GlobalData_Base gd, LV_ProjectVM lvProjectVM)
         {
             InitializeComponent();
-            gd = gd_in;
-            m_lvProjectVM = lvProjectVM_in;
+            _gd = gd;
+            _lvProjectVM = lvProjectVM;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             UString.AddRef();
-            Closed += (o, a) => UString.DropRef();
-            DataContext = new WinFileHashVM(gd,
+            Closed += (o, a) =>
+            {
+                UString.DropRef();
+                DataContext = null;
+                _lvProjectVM = null;
+                _gd = null;
+            };
+
+            DataContext = new WinFileHashVM(_gd,
                 new TreeView_FileHashVM(form_tv),
-                m_lvProjectVM);
+                _lvProjectVM);
         }
 
-        readonly GlobalData_Base gd = null;
-        readonly LV_ProjectVM m_lvProjectVM = null;
+        GlobalData_Base
+            _gd = null;
+        LV_ProjectVM
+            _lvProjectVM = null;
     }
 }

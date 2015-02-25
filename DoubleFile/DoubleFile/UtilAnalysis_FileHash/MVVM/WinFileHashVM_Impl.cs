@@ -43,7 +43,7 @@ namespace DoubleFile
         internal void CreateFileDictStatusCallback(bool bDone = false, double nProgress = double.NaN)
         {
             if (_gd.WindowClosed ||
-                (_gd.FileDictionary == null) ||
+                (null == _gd.FileDictionary) ||
                 _gd.FileDictionary.IsAborted)
             {
                 _winProgress.Aborted = true;
@@ -65,9 +65,9 @@ namespace DoubleFile
         void TreeStatusCallback(LVitem_ProjectVM volStrings, LocalTreeNode rootNode = null, bool bError = false)
         {
             if (_gd.WindowClosed ||
-                (_gd.FileDictionary == null) ||
+                (null == _gd.FileDictionary) ||
                 _gd.FileDictionary.IsAborted ||
-                ((_tree != null) && (_tree.IsAborted)))
+                ((null != _tree) && (_tree.IsAborted)))
             {
                 ClearMem_TreeForm();
                 _winProgress.Aborted = true;
@@ -185,7 +185,7 @@ namespace DoubleFile
                 _gd.FileDictionary
                     .Abort();
                     
-                if (_tree != null)
+                if (null != _tree)
                     _tree.EndThread();
 
                 TreeCleanup();

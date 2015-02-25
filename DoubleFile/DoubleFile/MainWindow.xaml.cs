@@ -15,7 +15,7 @@ namespace DoubleFile
         public MainWindow()
             : base(bIsMainWindow: true)
         {
-            gd_old = new GlobalData(this);
+            _gd_old = new GlobalData(this);
 
             App.OnAppActivated += () =>
             {
@@ -35,12 +35,12 @@ namespace DoubleFile
                 return;
             }
 
-            action(Analysis_DirListForm, new LV_ProjectVM(gd, LVprojectVM));
+            action(Analysis_DirListForm, new LV_ProjectVM(_gd, LVprojectVM));
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            gd = new GlobalData_Window(this);
+            _gd = new GlobalData_Window(this);
 
 #if (DEBUG)
             //#warning DEBUG is defined.
@@ -132,11 +132,11 @@ namespace DoubleFile
                     return;
                 }
 
-                volumes = new WinProject(gd);
+                volumes = new WinProject(_gd);
             }
             else
             {
-                volumes = new WinProject(gd, new LV_ProjectVM(gd, LVprojectVM));
+                volumes = new WinProject(_gd, new LV_ProjectVM(_gd, LVprojectVM));
             }
 
             if (false == (volumes.ShowDialog() ?? false))
@@ -155,9 +155,9 @@ namespace DoubleFile
             }
 
             FormAnalysis_DirListAction(FormAnalysis_DirList.RestartTreeTimer);
-            new SaveListingsProcess(gd, volumes.LVprojectVM);
+            new SaveListingsProcess(_gd, volumes.LVprojectVM);
             LVprojectVM = volumes.LVprojectVM;
-            gd.FileDictionary.Clear();
+            _gd.FileDictionary.Clear();
         }
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -182,7 +182,7 @@ namespace DoubleFile
                 Directory.Delete(ProjectFile.TempPath01, true);
             }
 
-            gd_old.Dispose();
+            _gd_old.Dispose();
         }
 
         private void Button_ViewProject_Click(object sender, RoutedEventArgs e)
@@ -212,6 +212,7 @@ namespace DoubleFile
             if ((Analysis_DirListForm == null) || (Analysis_DirListForm.IsDisposed))
             {
                 (Analysis_DirListForm = new FormAnalysis_DirList(this, LVprojectVM)).Show();
+                Analysis_DirListForm.Closed += (o, a) => Analysis_DirListForm = null;
             }
             else
             {
@@ -222,13 +223,16 @@ namespace DoubleFile
         private void Button_FileHashExplorer_Click(object sender, RoutedEventArgs e)
         {
             if ((null == _winAnalysis_FileHash) || (_winAnalysis_FileHash.IsClosed))
-                _winAnalysis_FileHash = (WinAnalysis_FileHash)new WinAnalysis_FileHash(gd, LVprojectVM).Show();
+            {
+                (_winAnalysis_FileHash = new WinAnalysis_FileHash(_gd, LVprojectVM)).Show();
+                _winAnalysis_FileHash.Closed += (o, a) => _winAnalysis_FileHash = null;
+            }
             else
                 _winAnalysis_FileHash.Activate();
         }
 
-        GlobalData_Base gd = null;
-        readonly GlobalData gd_old = null;
+        GlobalData_Base _gd = null;
+        readonly GlobalData _gd_old = null;
         WinAnalysis_FileHash _winAnalysis_FileHash = null;
     }
 }

@@ -512,9 +512,9 @@ namespace Local
                 return;
             }
 
-            MBoxStatic.Assert(1305.6333, _lvClones.Items.IsEmpty());
+            MBoxStatic.Assert(1305.6333, _lvClones._Items.IsEmpty());
             UtilAnalysis_DirList.Write("B");
-            _lvClones.Items.AddRange(_lsLVdiffVol.ToArray());
+            _lvClones._Items.AddRange(_lsLVdiffVol.ToArray());
             _lvClones.Invalidate();
             UtilProject.WriteLine("B");
 
@@ -523,9 +523,9 @@ namespace Local
                 return;
             }
 
-            MBoxStatic.Assert(1305.6334, _lvUnique.Items.IsEmpty());
+            MBoxStatic.Assert(1305.6334, _lvUnique._Items.IsEmpty());
             UtilAnalysis_DirList.Write("C");
-            _lvUnique.Items.AddRange(_lsLVunique.ToArray());
+            _lvUnique._Items.AddRange(_lsLVunique.ToArray());
             _lvUnique.Invalidate();
             UtilProject.WriteLine("C");
 
@@ -534,9 +534,9 @@ namespace Local
                 return;
             }
 
-            MBoxStatic.Assert(1305.6335, _lvSameVol.Items.IsEmpty());
+            MBoxStatic.Assert(1305.6335, _lvSameVol._Items.IsEmpty());
             UtilAnalysis_DirList.Write("D");
-            _lvSameVol.Items.AddRange(_lsLVsameVol.ToArray());
+            _lvSameVol._Items.AddRange(_lsLVsameVol.ToArray());
             _lvSameVol.Invalidate();
             UtilProject.WriteLine("D");
 

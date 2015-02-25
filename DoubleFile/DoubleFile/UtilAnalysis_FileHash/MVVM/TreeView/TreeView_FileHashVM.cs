@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows.Controls;
 
 namespace DoubleFile
@@ -7,7 +8,7 @@ namespace DoubleFile
     {
         internal TreeView_FileHashVM(TreeView tvfe)
         {
-            TVFE = tvfe;
+            _TVFE = tvfe;
         }
 
         internal void SetData(IReadOnlyList<LocalTreeNode> rootNodes)
@@ -16,16 +17,20 @@ namespace DoubleFile
 
             foreach (var treeNode in rootNodes)
             {
-                m_Items.Add(new TreeViewItem_FileHashVM(this, treeNode, ++nIndex));
+                _Items.Add(new TreeViewItem_FileHashVM(this, treeNode, ++nIndex));
             }
 
-            UtilProject.UIthread(() => TVFE.DataContext = m_Items);
+            UtilProject.UIthread(() => _TVFE.DataContext = _Items);
         }
 
-        internal TreeViewItem_FileHashVM SelectedItem = null;
-        internal UList<TreeViewItem_FileHashVM> m_listExpanded = new UList<TreeViewItem_FileHashVM>();
-        internal readonly TreeView TVFE = null;
+        internal TreeViewItem_FileHashVM
+            _SelectedItem = null;
+        internal UList<TreeViewItem_FileHashVM>
+            _listExpanded = new UList<TreeViewItem_FileHashVM>();
+        internal readonly TreeView
+            _TVFE = null;
 
-        readonly List<TreeViewItem_FileHashVM> m_Items = new List<TreeViewItem_FileHashVM>();
+        readonly ObservableCollection<TreeViewItem_FileHashVM>
+            _Items = new ObservableCollection<TreeViewItem_FileHashVM>();
     }
 }

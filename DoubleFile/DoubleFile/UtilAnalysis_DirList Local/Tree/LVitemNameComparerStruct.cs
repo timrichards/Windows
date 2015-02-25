@@ -36,11 +36,11 @@ namespace Local
 
         internal static void MarkItemsFrom1notIn2(LocalLV lv1, LocalLV lv2)
         {
-            if ((lv1.Items.IsEmpty()) || (lv2.Items.IsEmpty())) { return; }
+            if ((lv1._Items.IsEmpty()) || (lv2._Items.IsEmpty())) { return; }
 
-            var list = lv1.Items.Except(lv2.Items, new LVitemNameComparerStruct());
+            var list = lv1._Items.Except(lv2._Items, new LVitemNameComparerStruct());
 
-            list.Take(1).First(item => lv1.TopItem = item);
+            list.Take(1).First(item => lv1._TopItem = item);
 
             foreach (var item in list)
             {
@@ -50,20 +50,20 @@ namespace Local
 
         internal static void SetTopItem(LocalLV lv1, LocalLV lv2)
         {
-            if (lv1.TopItem == null) { return; }
-            if (lv1.TopItem.Index > 0) { return; }
-            if (lv2.TopItem == null) { return; }
+            if (lv1._TopItem == null) { return; }
+            if (lv1._TopItem.Index > 0) { return; }
+            if (lv2._TopItem == null) { return; }
 
-            var nIx = lv2.TopItem.Index - Math.Abs(lv2.Items.Count - lv1.Items.Count);
+            var nIx = lv2._TopItem.Index - Math.Abs(lv2._Items.Count - lv1._Items.Count);
 
             if (nIx < 0)
             {
                 return;
             }
 
-            if (lv1.Items.Count > nIx)
+            if (lv1._Items.Count > nIx)
             {
-                lv1.TopItem = lv1.Items[nIx];
+                lv1._TopItem = lv1._Items[nIx];
             }
         }
     }

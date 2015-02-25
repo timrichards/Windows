@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DoubleFile
 {
@@ -10,14 +7,14 @@ namespace DoubleFile
     {
         internal LocalLVitemCollection(LocalLV listView)
         {
-            m_listView = listView;
+            _listView = listView;
         }
 
         internal void AddRange(IReadOnlyList<string> lsItems)
         {
             foreach (var s in lsItems)
             {
-                Add(new LocalLVitem(s, m_listView));
+                Add(new LocalLVitem(s, _listView));
             }
         }
 
@@ -25,48 +22,49 @@ namespace DoubleFile
         {
             foreach (var lvItem in lsItems)
             {
-                lvItem.ListView = m_listView;
+                lvItem.ListView = _listView;
                 Add(lvItem);
             }
         }
 
         internal bool ContainsKeyA(string s)
         {
-            if (s != m_strPrevQuery)
+            if (s != _strPrevQuery)
             {
-                m_strPrevQuery = s;
-                m_lvItemPrevQuery = this[s];
+                _strPrevQuery = s;
+                _lvItemPrevQuery = this[s];
             }
 
-            return (m_lvItemPrevQuery != null);
+            return (_lvItemPrevQuery != null);
         }
 
-        internal new LocalLVitem this[int i] { get { return (i < Count) ? base[i] : NullValue; } }
+        internal new LocalLVitem this[int i] { get { return (i < Count) ? base[i] : null; } }
 
         internal LocalLVitem this[string s]
         {
             get
             {
-                if (s == m_strPrevQuery)
+                if (s == _strPrevQuery)
                 {
-                    return m_lvItemPrevQuery;
+                    return _lvItemPrevQuery;
                 }
                 else
                 {
-                    m_strPrevQuery = s;
-                    m_lvItemPrevQuery = NullValue;
+                    _strPrevQuery = s;
+                    _lvItemPrevQuery = null;
                     Keys
                         .Where(t => t.Text == s)
-                        .FirstOnlyAssert(lvItem => m_lvItemPrevQuery = lvItem);
-                    return m_lvItemPrevQuery;                   // TODO: Trim? ignore case? Probably neither.
+                        .FirstOnlyAssert(lvItem => _lvItemPrevQuery = lvItem);
+                    return _lvItemPrevQuery;                   // TODO: Trim? ignore case? Probably neither.
                 }
             }
         }
 
-        static readonly LocalLVitem NullValue = new LocalLVitem();
-
-        readonly LocalLV m_listView = null;
-        string m_strPrevQuery = null;
-        LocalLVitem m_lvItemPrevQuery = null;
+        readonly LocalLV
+            _listView = null;
+        string
+            _strPrevQuery = null;
+        LocalLVitem
+            _lvItemPrevQuery = null;
     }
 }

@@ -42,7 +42,7 @@ namespace Local
                     m_listTreeNodes.Add(treeNode);
                     ++Count;
 
-                    var nodeDatum = treeNode.Tag as NodeDatum;
+                    var nodeDatum = treeNode._Tag as NodeDatum;
 
                     if (nodeDatum == null)
                     {
@@ -61,19 +61,19 @@ namespace Local
                     {
                         treeNode.BackColor = UtilColor.LightGoldenrodYellow;
 
-                        if ((nodeDatum.m_lvItem != null) && (nodeDatum.m_lvItem.ListView == null))  // ignore LV
+                        if ((nodeDatum.m_lvItem != null) && (nodeDatum.m_lvItem._ListView == null))  // ignore LV
                         {
                             nodeDatum.m_lvItem.BackColor = treeNode.BackColor;
                         }
                     }
 
-                    if (treeNode.FirstNode != null)
+                    if (treeNode._FirstNode != null)
                     {
-                        Go(treeNode.FirstNode, bCloneOK ||
+                        Go(treeNode._FirstNode, bCloneOK ||
                             (new[] { UtilColor.SteelBlue, UtilColor.DarkBlue }.Contains(treeNode.ForeColor)));
                     }
                 }
-                while (bNextNode && ((treeNode = treeNode.NextNode) != null));
+                while (bNextNode && ((treeNode = treeNode._NextNode) != null));
             }
 
             readonly UList<LocalTreeNode> m_listTreeNodes = null;

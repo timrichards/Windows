@@ -8,13 +8,18 @@ namespace DoubleFile
 {
     internal class TreeViewItem_FileHashVM : ObservableObjectBase
     {
-        internal readonly TreeViewItem_FileHashVM _Parent = null;
-        internal readonly TreeView_FileHashVM _TVVM = null;
-        internal readonly LocalTreeNode _datum = null;
+        internal readonly TreeViewItem_FileHashVM
+            _Parent = null;
+        internal readonly TreeView_FileHashVM
+            _TVVM = null;
+        internal readonly LocalTreeNode
+            _datum = null;
 
         // turned these dependency property hacks into properties that are always -1
-        internal double EphemeralExpandedPos { get { return -1; } set { } }
-        internal int Index { get { return -1; } set { } }
+        internal double
+            EphemeralExpandedPos { get { return -1; } set { } }
+        internal int
+            Index { get { return -1; } set { } }
 
         public ObservableCollection<TreeViewItem_FileHashVM> Items
         {
@@ -27,7 +32,7 @@ namespace DoubleFile
                     _Items = new ObservableCollection<TreeViewItem_FileHashVM>
                     (
                         from item
-                            in _datum.Nodes.Keys
+                            in _datum._Nodes.Keys
                         select new TreeViewItem_FileHashVM(_TVVM, item, this, ++nIndex)
                     );
                 }
@@ -37,7 +42,7 @@ namespace DoubleFile
         }
         ObservableCollection<TreeViewItem_FileHashVM> _Items = null;
 
-        public string Text { get { return ((string)_datum.Text).PadRight(200); } }
+        public string Text { get { return ((string)_datum._Text).PadRight(200); } }
         public Brush Foreground { get { return _bSelected ? _SelectedForeground : FrontBrush; } }
         public Brush SelectedForeground { get { return _bSelected ? _SelectedForeground : FrontBrush; } }
         Brush _SelectedForeground { get { return Brushes.White; } set { } }
@@ -177,7 +182,8 @@ namespace DoubleFile
             }
         }
 
-        static double _HeaderHeight { get { return -1; } }
+        static double
+            _HeaderHeight { get { return -1; } }
 
         bool _bExpanded = false;
         bool _bSelected = false;

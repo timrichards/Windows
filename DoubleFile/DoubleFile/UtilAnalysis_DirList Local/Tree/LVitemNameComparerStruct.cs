@@ -12,24 +12,24 @@ namespace Local
         {
             return (x != null) &&
                 (y != null) &&
-                (false == string.IsNullOrWhiteSpace(x.Name)) &&
-                x.Name.Equals(y.Name);
+                (false == string.IsNullOrWhiteSpace(x._Name)) &&
+                x._Name.Equals(y._Name);
         }
 
         public int GetHashCode(LocalLVitem obj)
         {
-            return obj.Name == null ? 0 : obj.Name.GetHashCode();
+            return obj._Name == null ? 0 : obj._Name.GetHashCode();
         }
 
         internal static void NameItems(ListView.ListViewItemCollection list)
         {
             foreach (LocalLVitem item in list)
             {
-                item.Name = item.Text;
+                item._Name = item._Text;
 
-                if (item.SubItems.Count > FileParse.knColLengthLV)
+                if (item._SubItems.Count > FileParse.knColLengthLV)
                 {
-                    item.Name += item.SubItems[FileParse.knColLengthLV].Text;         // name + size
+                    item._Name += item._SubItems[FileParse.knColLengthLV]._Text;         // name + size
                 }
             }
         }

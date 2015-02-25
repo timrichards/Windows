@@ -5,24 +5,30 @@ namespace DoubleFile
 {
     class LocalTV
     {
+        readonly internal LocalTreeNodeCollection
+            _Nodes = null;
+        internal LocalTreeNode
+            _SelectedNode = null;
+        internal LocalTreeNode
+            _TopNode = null;
+        internal Font
+            _Font = null;
+        internal bool
+            _CheckBoxes = false;
+        internal bool
+            _Enabled = false;
+        
         internal LocalTV()
         {
-            Nodes = new LocalTreeNodeCollection(this);
+            _Nodes = new LocalTreeNodeCollection(this);
         }
 
         internal int GetNodeCount(bool includeSubTrees = false)
         {
-            return includeSubTrees ? CountSubnodes(Nodes) : Nodes.Count;
+            return includeSubTrees ? CountSubnodes(_Nodes) : _Nodes.Count;
         }
 
         internal void Select() { }
-
-        readonly internal LocalTreeNodeCollection Nodes = null;
-        internal LocalTreeNode SelectedNode = null;
-        internal LocalTreeNode TopNode = null;
-        internal Font Font = null;
-        internal bool CheckBoxes = false;
-        internal bool Enabled = false;
 
         static int CountSubnodes(IEnumerable<LocalTreeNode> nodes)
         {
@@ -30,7 +36,7 @@ namespace DoubleFile
 
             foreach (var treeNode in nodes)
             {
-                nRet += CountSubnodes(treeNode.Nodes);
+                nRet += CountSubnodes(treeNode._Nodes);
                 ++nRet;
             }
 

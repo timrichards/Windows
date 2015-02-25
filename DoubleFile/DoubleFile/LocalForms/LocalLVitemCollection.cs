@@ -22,7 +22,7 @@ namespace DoubleFile
         {
             foreach (var lvItem in lsItems)
             {
-                lvItem.ListView = _listView;
+                lvItem._ListView = _listView;
                 Add(lvItem);
             }
         }
@@ -53,7 +53,7 @@ namespace DoubleFile
                     _strPrevQuery = s;
                     _lvItemPrevQuery = null;
                     Keys
-                        .Where(t => t.Text == s)
+                        .Where(t => t._Text == s)
                         .FirstOnlyAssert(lvItem => _lvItemPrevQuery = lvItem);
                     return _lvItemPrevQuery;                   // TODO: Trim? ignore case? Probably neither.
                 }

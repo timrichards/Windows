@@ -142,6 +142,11 @@
     <Compile Include="GlobalData\GlobalData.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="LocalForms\LocalColorItemBase.cs" />
+    <Compile Include="MVVM\MVVM Base\ListViewItemVM_Base.cs" />
+    <Compile Include="MVVM\MVVM Base\ListViewVM_Base.cs" />
+    <Compile Include="MVVM\MVVM Base\ListViewVM_GenericBase.cs" />
+    <Compile Include="MVVM\Template\Template_ListViewVM.cs" />
+    <Compile Include="MVVM\Template\Template_LVitemVM.cs" />
     <Compile Include="UtilProject\LocalMbox.xaml.cs">
       <DependentUpon>LocalMbox.xaml</DependentUpon>
     </Compile>
@@ -246,7 +251,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UtilProject\FileParse.cs" />
-    <Compile Include="MVVM\AbstractionsVM.cs" />
     <Compile Include="MVVM\ObservableObjectBase.cs" />
     <Compile Include="MVVM\ObservableObject_OwnerWindow.cs" />
     <Compile Include="MVVM\RelayCommand.cs" />

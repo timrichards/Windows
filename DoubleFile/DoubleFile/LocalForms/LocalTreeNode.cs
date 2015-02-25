@@ -6,26 +6,36 @@ namespace DoubleFile
 {
     class LocalTreeNode : LocalColorItemBase
     {
-        internal readonly LocalTreeNodeCollection Nodes = null;
-        internal UString Text = null;
- //       internal string ToolTipText = null;
-        internal string Name { get { return Text; } }
+        internal readonly LocalTreeNodeCollection
+            _Nodes = null;
+        internal UString
+            _Text = null;
+        internal LocalTV
+            _TreeView = null;
+        internal LocalTreeNode
+            _FirstNode = null;
+        internal LocalTreeNode
+            _NextNode = null;
+        internal LocalTreeNode
+            _Parent = null;
+        internal object
+            _Tag = null;
 
-        internal LocalTV TreeView = null;
-        internal LocalTreeNode FirstNode = null;
-        internal LocalTreeNode NextNode = null;
-        internal LocalTreeNode Parent = null;
-        internal int Level { get { return Datum6bits; } set { Datum6bits = value; } }
- //       internal bool Checked = false;
-        internal int SelectedImageIndex { get { return Datum16bits; } set { Datum16bits = value; } }
-        internal object Tag = null;
+        internal string
+            Name { get { return _Text; } }
+        internal int
+            Level { get { return Datum6bits; } set { Datum6bits = value; } }
+        internal int
+            SelectedImageIndex { get { return Datum16bits; } set { Datum16bits = value; } }
 
- //       internal TreeViewItem_FileHashVM TVIVM = null;
- //       internal LVitem_FileHashVM LVIVM = null;
+//       internal TreeViewItem_FileHashVM TVIVM = null;
+//       internal LVitem_FileHashVM LVIVM = null;
+//       internal string ToolTipText = null;
+//       internal bool Checked = false;
 
         internal LocalTreeNode()
         {
-            Nodes = new LocalTreeNodeCollection(TreeView);
+            _Nodes = new LocalTreeNodeCollection(_TreeView);
         }
 
         internal LocalTreeNode(string strContent)
@@ -33,13 +43,13 @@ namespace DoubleFile
         {
             Level = -1;
             SelectedImageIndex = -1;
-            Text = strContent;
+            _Text = strContent;
         }
 
         internal LocalTreeNode(string strContent, IReadOnlyList<LocalTreeNode> lsNodes)
             : this(strContent)
         {
-            Nodes.AddRange(lsNodes);
+            _Nodes.AddRange(lsNodes);
         }
 
         //internal string FullPath
@@ -77,11 +87,11 @@ namespace DoubleFile
         internal void DetachFromTree()
         {
  //           TVIVM = null;
-            TreeView = null;
+            _TreeView = null;
             Level = -1;
  //           _strFullPath = null;
 
-            foreach (var treeNode in Nodes)
+            foreach (var treeNode in _Nodes)
             {
                 treeNode.DetachFromTree();
             }
@@ -96,7 +106,7 @@ namespace DoubleFile
                 return false;
             }
 
-            var parentNode = Parent;
+            var parentNode = _Parent;
 
             while (parentNode != null)
             {
@@ -105,7 +115,7 @@ namespace DoubleFile
                     return true;
                 }
 
-                parentNode = parentNode.Parent;
+                parentNode = parentNode._Parent;
             }
 
             return false;
@@ -115,9 +125,9 @@ namespace DoubleFile
         {
             var nodeParent = this;
 
-            while (nodeParent.Parent != null)
+            while (nodeParent._Parent != null)
             {
-                nodeParent = nodeParent.Parent;
+                nodeParent = nodeParent._Parent;
             }
 
             return nodeParent;

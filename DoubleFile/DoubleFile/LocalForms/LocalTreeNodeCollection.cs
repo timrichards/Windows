@@ -7,7 +7,7 @@ namespace DoubleFile
     {
         internal LocalTreeNodeCollection(LocalTV treeView)
         {
-            m_treeView = treeView;
+            _treeView = treeView;
         }
 
         internal void AddRange(IReadOnlyList<LocalTreeNode> lsNodes)
@@ -17,39 +17,39 @@ namespace DoubleFile
                 Add(treeNode);
             }
 
-            if ((false == this.IsEmpty()) && (m_treeView != null))
+            if ((false == this.IsEmpty()) && (_treeView != null))
             {
-                m_treeView.TopNode = this[0];
-                SetLevel(m_treeView, this);
+                _treeView._TopNode = this[0];
+                SetLevel(_treeView, this);
             }
         }
 
         internal bool ContainsKeyA(string s)
         {
-            if (s != m_strPrevQuery)
+            if (s != _strPrevQuery)
             {
-                m_strPrevQuery = s;
-                m_nodePrevQuery = this[s];
+                _strPrevQuery = s;
+                _nodePrevQuery = this[s];
             }
 
-            return (m_nodePrevQuery != null);
+            return (_nodePrevQuery != null);
         }
 
         internal LocalTreeNode this[string s]
         {
             get
             {
-                if (s == m_strPrevQuery)
+                if (s == _strPrevQuery)
                 {
-                    return m_nodePrevQuery;
+                    return _nodePrevQuery;
                 }
                 else
                 {
-                    m_strPrevQuery = s;
+                    _strPrevQuery = s;
                     Keys
-                        .Where(t => t.Text == s)
-                        .FirstOnlyAssert(t => m_nodePrevQuery = t);
-                    return m_nodePrevQuery;                   // TODO: Trim? ignore case? Probably neither.
+                        .Where(t => t._Text == s)
+                        .FirstOnlyAssert(t => _nodePrevQuery = t);
+                    return _nodePrevQuery;                   // TODO: Trim? ignore case? Probably neither.
                 }
             }
         }
@@ -71,29 +71,32 @@ namespace DoubleFile
 
             if ((nodeParent != null) && (false == nodes.IsEmptyA()))
             {
-                nodeParent.FirstNode = nodes[0];
+                nodeParent._FirstNode = nodes[0];
             }
 
             foreach (var treeNode in nodes)
             {
                 if (nodePrev != null)
                 {
-                    nodePrev.NextNode = treeNode;
+                    nodePrev._NextNode = treeNode;
                 }
 
                 // same assert that Forms generates: must remove it from the other tree first.
-                MBoxStatic.Assert(99999, (treeNode.TreeView == null) || (treeNode.TreeView == treeView));
+                MBoxStatic.Assert(99999, (treeNode._TreeView == null) || (treeNode._TreeView == treeView));
 
                 nodePrev = treeNode;
-                treeNode.TreeView = treeView;
-                treeNode.Parent = nodeParent;
+                treeNode._TreeView = treeView;
+                treeNode._Parent = nodeParent;
                 treeNode.Level = nLevel;
-                SetLevel(treeView, treeNode.Nodes, treeNode, nLevel + 1);
+                SetLevel(treeView, treeNode._Nodes, treeNode, nLevel + 1);
             }
         }
 
-        readonly LocalTV m_treeView = null;
-        string m_strPrevQuery = null;
-        LocalTreeNode m_nodePrevQuery = null;
+        readonly LocalTV
+            _treeView = null;
+        string
+            _strPrevQuery = null;
+        LocalTreeNode
+            _nodePrevQuery = null;
     }
 }

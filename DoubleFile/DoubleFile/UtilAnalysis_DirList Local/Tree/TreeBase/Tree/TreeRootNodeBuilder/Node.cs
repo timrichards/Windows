@@ -114,7 +114,7 @@ namespace Local
                     //Utilities.Assert(1301.2305, treeNode.Text == strShortPath, "\"" + treeNode.Text + "\" != \"" + strShortPath + "\""); not true for non-root
                     MBoxStatic.Assert(1301.2306, treeNode.SelectedImageIndex == -1);     // sets the bitmap size
                     treeNode.SelectedImageIndex = -1;
-                    treeNode.Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo, m_nLength);  // this is almost but not quite always newly assigned here.
+                    treeNode._Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo, m_nLength);  // this is almost but not quite always newly assigned here.
 
                     if (this != m_rootNode.Nodes.Values.First())
                     {
@@ -128,13 +128,13 @@ namespace Local
                         return treeNode;
                     }
 
-                    if (strVolumeName.EndsWith(treeNode.Text))
+                    if (strVolumeName.EndsWith(treeNode._Text))
                     {
-                        treeNode.Text = strVolumeName;
+                        treeNode._Text = strVolumeName;
                     }
                     else
                     {
-                        treeNode.Text = strVolumeName + " (" + treeNode.Text + ")";
+                        treeNode._Text = strVolumeName + " (" + treeNode._Text + ")";
                     }
 
                     return treeNode;

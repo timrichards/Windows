@@ -9,37 +9,47 @@ namespace DoubleFile
 {
     class LocalLVitem : LocalColorItemBase
     {
+        internal UString
+            _Text = null;
+        internal UString
+            _Name = null;
+        internal object
+            _Tag = null;
+        internal LocalLVitemCollection
+            _SubItems = null;
+        internal LocalLV
+            _ListView = null;
+
+//      internal bool Focused;
+
+        internal void
+            Select(bool bSel = true) { }
+        internal int
+            Index { get { return Datum16bits; } set { Datum16bits = value; } }
+        internal void
+            EnsureVisible() { }
+
         internal LocalLVitem(LocalLV listView = null)
         {
-            ListView = listView;
-            SubItems = new LocalLVitemCollection(ListView);
+            _ListView = listView;
+            _SubItems = new LocalLVitemCollection(_ListView);
         }
 
-        internal LocalLVitem(string strContent, LocalLV listView = null) : this(listView) { Text = strContent; Index = -1; }
+        internal LocalLVitem(string strContent, LocalLV listView = null) : this(listView) { _Text = strContent; Index = -1; }
 
         internal LocalLVitem(IReadOnlyList<string> asString, LocalLV listView = null)
             : this(listView)
         {
-            Text = asString[0];
-            SubItems.Add(this);
+            _Text = asString[0];
+            _SubItems.Add(this);
 
             var i = 1;
 
             foreach (var s in asString.Skip(1))
             {
-                SubItems.Add(new LocalLVitem(asString[i++], listView));
+                _SubItems.Add(new LocalLVitem(asString[i++], listView));
             }
         }
-
-        internal UString Text = null;
-        internal UString Name = null;
-        internal object Tag = null;
-        internal void Select(bool bSel = true) { }
-  //      internal bool Focused;
-        internal int Index { get { return Datum16bits; } set { Datum16bits = value; } }
-        internal LocalLVitemCollection SubItems = null;
-        internal void EnsureVisible() { }
-        internal LocalLV ListView = null;
 
         // Only used for colors and bold font weight, not subitems, in Collate.cs InsertSizeMarker(). Size 18 to show obvious fault in interpretation.
         internal object Clone() { var lvItem = (LocalLVitem)MemberwiseClone(); lvItem.FontWeight = FontWeight; return lvItem; }

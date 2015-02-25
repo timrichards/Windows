@@ -6,6 +6,13 @@ namespace DoubleFile
 {
     class TreeView_FileHashVM
     {
+        internal TreeViewItem_FileHashVM
+            _SelectedItem = null;
+        internal UList<TreeViewItem_FileHashVM>
+            _listExpanded = new UList<TreeViewItem_FileHashVM>();
+        internal readonly TreeView
+            _TVFE = null;
+
         internal TreeView_FileHashVM(TreeView tvfe)
         {
             _TVFE = tvfe;
@@ -22,13 +29,6 @@ namespace DoubleFile
 
             UtilProject.UIthread(() => _TVFE.DataContext = _Items);
         }
-
-        internal TreeViewItem_FileHashVM
-            _SelectedItem = null;
-        internal UList<TreeViewItem_FileHashVM>
-            _listExpanded = new UList<TreeViewItem_FileHashVM>();
-        internal readonly TreeView
-            _TVFE = null;
 
         readonly ObservableCollection<TreeViewItem_FileHashVM>
             _Items = new ObservableCollection<TreeViewItem_FileHashVM>();

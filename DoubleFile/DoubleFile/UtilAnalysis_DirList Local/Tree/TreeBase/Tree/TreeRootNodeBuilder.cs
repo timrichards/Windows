@@ -22,7 +22,7 @@ namespace Local
             {
                 var datum = new DetailsDatum();
 
-                foreach (var node in treeNode.Nodes)
+                foreach (var node in treeNode._Nodes)
                 {
                     if (m_bThreadAbort || gd.WindowClosed)
                     {
@@ -32,7 +32,7 @@ namespace Local
                     datum += TreeSubnodeDetails(node);
                 }
 
-                var nodeDatum = treeNode.Tag as NodeDatum;
+                var nodeDatum = treeNode._Tag as NodeDatum;
 
                 if (null == nodeDatum)
                 {
@@ -47,7 +47,7 @@ namespace Local
                 nodeDatum.nTotalLength = (datum.nTotalLength += nodeDatum.nLength);
                 nodeDatum.nImmediateFiles = (nodeDatum.nLineNo - nodeDatum.nPrevLineNo - 1);
                 nodeDatum.nFilesInSubdirs = (datum.nFilesInSubdirs += nodeDatum.nImmediateFiles);
-                nodeDatum.nSubDirs = (datum.nSubDirs += (uint)treeNode.Nodes.Count);
+                nodeDatum.nSubDirs = (datum.nSubDirs += (uint)treeNode._Nodes.Count);
 
                 if (nodeDatum.nImmediateFiles > 0)
                 {
@@ -220,7 +220,7 @@ namespace Local
 
                 if (rootTreeNode != null)
                 {
-                    rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag, 
+                    rootTreeNode._Tag = new RootNodeDatum((NodeDatum)rootTreeNode._Tag, 
                         m_volStrings.ListingFile, m_volStrings.VolumeGroup, nVolFree, nVolLength);
                     TreeSubnodeDetails(rootTreeNode);
                 }

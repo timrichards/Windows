@@ -13,14 +13,14 @@ namespace DoubleFile
 
         protected int Datum6bits
         {
-            get { return (int)(_datum & knDatum6bitMask) >> 10; }
-            set { _datum = (int)(_datum & (-1 - knDatum6bitMask)) + (value << 10); }
+            get { return (int)(_datum & _knDatum6bitMask) >> 10; }
+            set { _datum = (int)(_datum & (-1 - _knDatum6bitMask)) + (value << 10); }
         }
 
         protected int Datum16bits
         {
-            get { return (int)(_datum & knDatum16bitMask) >> 16; }
-            set { _datum = (int)(_datum & (-1 - knDatum16bitMask)) + (value << 16); }
+            get { return (int)(_datum & _knDatum16bitMask) >> 16; }
+            set { _datum = (int)(_datum & (-1 - _knDatum16bitMask)) + (value << 16); }
         }
 
         int Color
@@ -29,8 +29,8 @@ namespace DoubleFile
             set { _datum = (int)(_datum & (-1 - UtilColor.knCLUTmask)) + value; }
         }
 
-        const uint knDatum6bitMask =  0x0000FFFF - UtilColor.knCLUTmask;
-        const uint knDatum16bitMask = 0xFFFF0000;
+        const uint _knDatum6bitMask =  0x0000FFFF - UtilColor.knCLUTmask;
+        const uint _knDatum16bitMask = 0xFFFF0000;
 
         int _datum = 0;
     }

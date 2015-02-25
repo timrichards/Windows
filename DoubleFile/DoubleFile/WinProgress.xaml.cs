@@ -78,17 +78,6 @@ namespace DoubleFile
 
         internal bool Aborted { set; private get; }
 
-        internal new void Close()
-        {
-            if (_bClosing)
-            {
-                MBoxStatic.Assert(99928, false, bTraceOnly: true);
-                return;     // some sort of lockup?
-            }
-
-            base.Close();
-        }
-
         internal void CloseIfNatural()
         {
             if (_bClosing)

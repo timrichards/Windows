@@ -33,7 +33,7 @@ namespace DoubleFile
             if (dlg.ShowDialog() ?? false)
             {
                 new ProjectFile().OpenProject(dlg.FileName,
-                    (listFiles, bClearItems) => OpenListingFiles(listFiles, bClearItems));
+                    (listFiles, bClearItems, userCancelled) => OpenListingFiles(listFiles, bClearItems, userCancelled));
                 _lvVM.Unsaved = false;
             }
         }
@@ -118,7 +118,7 @@ namespace DoubleFile
             }
         }
 
-        internal bool OpenListingFiles(IEnumerable<string> listFiles, bool bClearItems = false)
+        internal bool OpenListingFiles(IEnumerable<string> listFiles, bool bClearItems = false, BoolAction userCancelled = null)
         {
             var sbBadFiles = new System.Text.StringBuilder();
             var bMultiBad = true;
@@ -132,10 +132,13 @@ namespace DoubleFile
                 }
             }
 
-            UtilProject.UIthread(() => _lvVM.Items.Clear());
-
             Parallel.ForEach(listFiles, strFilename =>
             {
+                if ((null != userCancelled) && userCancelled())
+                {
+                    return;
+                }
+
                 LVitem_ProjectVM lvItem = null;
 
                 if (FileParse.ReadHeader(strFilename, out lvItem))
@@ -153,9 +156,24 @@ namespace DoubleFile
                 }
             });
 
+            if ((null != userCancelled) && userCancelled())
+            {
+                return false;
+            }
+
+            UtilProject.UIthread(() => _lvVM.Items.Clear());
+
             var bOpenedFiles = listItems
                 .OrderBy(lvItem => lvItem.SourcePath)
-                .Aggregate(false, (current, lvItem) => (bool)UtilProject.UIthread(() => _lvVM.NewItem(lvItem)) || current);
+                .Aggregate(false, (current, lvItem) =>
+            {
+                if ((null != userCancelled) && userCancelled())
+                {
+                    return false;
+                }
+
+                return (bool)UtilProject.UIthread(() => _lvVM.NewItem(lvItem)) || current;
+            });
 
             if (sbBadFiles.Length > 0)
             {

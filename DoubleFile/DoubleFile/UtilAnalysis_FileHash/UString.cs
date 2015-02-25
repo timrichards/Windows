@@ -115,20 +115,14 @@ namespace DoubleFile
                 return -1;
             }
 
-            int nValue = 0;
-
-            if (false == _dictStrings.TryGetValue(str, out nValue))
+            return _dictStrings.GetOrAdd(str, (q) =>
             {
                 var nIx = Interlocked.Increment(ref _indexGenerator) - 1;
-                var b1 = _dictStrings.TryAdd(str, nIx);
-                var b2 = _dictStringsRev.TryAdd(nIx, str);
 
-                MBoxStatic.Assert(99910, b1);
-                MBoxStatic.Assert(99909, b2);
+                _dictStringsRev[nIx] = q;
+
                 return nIx;
-            }
-
-            return nValue;
+            });
         }
 
         static string Get(int nIndex)

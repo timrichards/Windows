@@ -29,13 +29,13 @@ namespace DoubleFile
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
-            process.OutputDataReceived += (sender, args) => { UtilProject.WriteLine(args.Data); m_sbError.AppendLine(args.Data); };
-            process.ErrorDataReceived += (sender, args) => { UtilProject.WriteLine(args.Data); m_sbError.AppendLine(args.Data); };
+            process.OutputDataReceived += (sender, args) => { UtilProject.WriteLine(args.Data); _sbError.AppendLine(args.Data); };
+            process.ErrorDataReceived += (sender, args) => { UtilProject.WriteLine(args.Data); _sbError.AppendLine(args.Data); };
             process.EnableRaisingEvents = true;
             return process;
         }
 
-        internal void OpenProject(string strProjectFilename, Action<IEnumerable<string>, bool> openListingFiles)
+        internal void OpenProject(string strProjectFilename, Action<IEnumerable<string>, bool, BoolAction> openListingFiles)
         {
             OpenProject_(strProjectFilename, openListingFiles,
                 Init(new Process()))
@@ -43,7 +43,7 @@ namespace DoubleFile
         }
 
         Process OpenProject_(string strProjectFilename,
-            Action<IEnumerable<string>, bool> openListingFiles,
+            Action<IEnumerable<string>, bool, BoolAction> openListingFiles,
             Process process)
         {
             if (Directory.Exists(TempPath))                     // close box/cancel/undo
@@ -63,7 +63,7 @@ namespace DoubleFile
                 var bErr = ReportAnyErrors(process, "Opening",
                     new Win32Exception(Marshal.GetLastWin32Error()).Message);
 
-                if (bErr || m_bUserCancelled)
+                if (bErr || _bUserCancelled)
                 {
                     if (Directory.Exists(TempPath01))
                     {
@@ -71,7 +71,7 @@ namespace DoubleFile
                         Directory.Move(TempPath01, TempPath);
                     }
 
-                    m_bProcessing = false;
+                    _bProcessing = false;
                     return;
                 }
 
@@ -93,7 +93,7 @@ namespace DoubleFile
                                 .Equals(FileParse.ksFileExt_Listing,
                                 StringComparison.InvariantCultureIgnoreCase);
                         }),
-                    true);
+                    true, () => _bUserCancelled);
 
                 if (null != OnOpenedProject)
                 {
@@ -105,8 +105,13 @@ namespace DoubleFile
                     Directory.Delete(TempPath01, true);
                 }
 
-                UtilProject.UIthread(() => m_winProgress.Close());
-                m_bProcessing = false;
+                if (false == _winProgress.IsClosed)
+                {
+                    _winProgress.Aborted = true;
+                    UtilProject.UIthread(() => _winProgress.Close());
+                }
+                
+                _bProcessing = false;
             };
 
             process.StartInfo.WorkingDirectory = TempPath;
@@ -219,7 +224,7 @@ namespace DoubleFile
                 var bErr = ReportAnyErrors(process, "Saving",
                     new Win32Exception(Marshal.GetLastWin32Error()).Message);
 
-                if (bErr || m_bUserCancelled)
+                if (bErr || _bUserCancelled)
                 {
                     bRet = false;
                     return;
@@ -231,9 +236,9 @@ namespace DoubleFile
                 }
 
                 File.Move(strProjectFilename + ".7z", strProjectFilename);
-                m_winProgress.SetCompleted(strProjectFileNoPath);
+                _winProgress.SetCompleted(strProjectFileNoPath);
                 MBoxStatic.ShowDialog("Todo: save volume group.\nTodo: save include y/n");
-                m_bProcessing = false;
+                _bProcessing = false;
             };
 
             process.StartInfo.WorkingDirectory = strPath;
@@ -294,19 +299,19 @@ namespace DoubleFile
             string strProjectFileNoPath,
             Process process)
         {
-            MBoxStatic.Assert(99942, m_winProgress == null);
+            MBoxStatic.Assert(99942, null == _winProgress);
 
             if (File.Exists(process.StartInfo.FileName))
             {
-                m_sbError.AppendLine(DateTime.Now.ToLongTimeString().PadRight(80, '-'));
-                m_bProcessing = true;
+                _sbError.AppendLine(DateTime.Now.ToLongTimeString().PadRight(80, '-'));
+                _bProcessing = true;
                 process.Start();
                 process.BeginOutputReadLine();
-                m_winProgress = new WinProgress();
-                m_winProgress.InitProgress(new[] { status }, new[] { strProjectFileNoPath });
-                m_winProgress.WindowClosingCallback = () =>
+                _winProgress = new WinProgress();
+                _winProgress.InitProgress(new[] { status }, new[] { strProjectFileNoPath });
+                _winProgress.WindowClosingCallback = () =>
                 {
-                    if (false == m_bProcessing)
+                    if (false == _bProcessing)
                     {
                         return true;
                     }
@@ -315,11 +320,10 @@ namespace DoubleFile
 
                     UtilProject.UIthread(() =>
                     {
-                        if (MBoxStatic.ShowDialog("Do you want to cancel?", status,
-                            MessageBoxButton.YesNo, m_winProgress) ==
-                            MessageBoxResult.Yes)
+                        if (MessageBoxResult.Yes ==
+                            MBoxStatic.ShowDialog("Do you want to cancel?", status, MessageBoxButton.YesNo, _winProgress))
                         {
-                            m_bUserCancelled = true;
+                            _bUserCancelled = true;
 
                             if (false == process.HasExited)
                             {
@@ -333,7 +337,7 @@ namespace DoubleFile
                     return bRet;
                 };
 
-                m_winProgress.ShowDialog();
+                _winProgress.ShowDialog();
                 return true;
             }
 
@@ -342,8 +346,6 @@ namespace DoubleFile
 
         bool ReportAnyErrors(Process process, string strMode, string strWin32Error)
         {
-            m_winProgress.Aborted = true;
-
             var bExitCode = -1;
 
             try { bExitCode = process.ExitCode; } catch (InvalidOperationException) {}
@@ -353,16 +355,16 @@ namespace DoubleFile
                 return false;
             }
 
-            m_bProcessing = false;
+            _bProcessing = false;
 
-            if (m_bUserCancelled)
+            if (_bUserCancelled)
             {
                 return false;
             }
 
             var strError =
                 string
-                .Join("", m_sbError
+                .Join("", _sbError
                     .ToString()
                     .Split('\n')
                     .SkipWhile(s => false == s.StartsWith("Error:")))
@@ -378,11 +380,15 @@ namespace DoubleFile
                 strError = "Error " + strMode.ToLower() + " project.";
             }
 
-            File.AppendAllText(m_strErrorLogFile, m_sbError.ToString());
+            File.AppendAllText(_strErrorLogFile, _sbError.ToString());
 
             // bootstrap the window close with a delay then messagebox
             // otherwise it freezes
-            UtilProject.UIthread(() => m_winProgress.Close());
+            if (false == _winProgress.IsClosed)
+            {
+                _winProgress.Aborted = true;
+                UtilProject.UIthread(() => _winProgress.Close());
+            }
 
             SDL_Timer tmr = null;
             var tmr_ = new SDL_Timer(33.0, () =>
@@ -394,11 +400,16 @@ namespace DoubleFile
             return true;
         }
 
-        readonly string m_strErrorLogFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "ErrorLog";
-        readonly System.Text.StringBuilder m_sbError = new System.Text.StringBuilder();
+        readonly string
+            _strErrorLogFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "ErrorLog";
+        readonly System.Text.StringBuilder 
+            _sbError = new System.Text.StringBuilder();
 
-        WinProgress m_winProgress = null;
-        bool m_bProcessing = false;
-        bool m_bUserCancelled = false;
+        WinProgress
+            _winProgress = null;
+        bool
+            _bProcessing = false;
+        bool
+            _bUserCancelled = false;
     }
 }

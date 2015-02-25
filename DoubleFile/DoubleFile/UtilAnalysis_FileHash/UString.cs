@@ -115,12 +115,13 @@ namespace DoubleFile
                 return -1;
             }
 
+            lock (_dictStrings)
+            lock (_dictStringsRev)
             return _dictStrings.GetOrAdd(str, (q) =>
             {
                 var nIx = Interlocked.Increment(ref _indexGenerator) - 1;
 
                 _dictStringsRev[nIx] = q;
-
                 return nIx;
             });
         }

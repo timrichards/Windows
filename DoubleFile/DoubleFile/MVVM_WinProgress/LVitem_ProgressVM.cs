@@ -6,30 +6,50 @@ namespace DoubleFile
 {
     class LVitem_ProgressVM : ListViewItemVM_Base
     {
-        public string Nickname { get { return marr[0]; } set { SetProperty(0, value); } }
-        public string SourcePath { get { return marr[1]; } set { SetProperty(1, value); } }
+        public string
+            Nickname { get { return marr[0]; } set { SetProperty(0, value); } }
+        public string
+            SourcePath { get { return marr[1]; } set { SetProperty(1, value); } }
+        public double
+            Progress { get; set; }
 
-        public double Progress { get; set; }
-
-        bool m_bIndeterminate = true;
-        Brush m_brushProgressState = Brushes.Yellow;
-        public bool Indeterminate
+        public bool
+            Indeterminate
         {
-            get { return m_bIndeterminate; }
+            get { return _bIndeterminate; }
             set
             {
-                m_bIndeterminate = value;
+                _bIndeterminate = value;
 
-                ProgressState = m_bIndeterminate ? Brushes.Yellow : Brushes.Blue;
-                RaisePropertyChanged(ksIndeterminate);
+                ProgressState = _bIndeterminate ? Brushes.Yellow : Brushes.Blue;
+                RaisePropertyChanged(_ksIndeterminate);
             }
         }
+        bool _bIndeterminate = true;
 
-        public Brush ProgressState { get { return m_brushProgressState; } set { m_brushProgressState = value; RaisePropertyChanged(ksProgressState); } }
-        public string Remaining { get { return marr[5]; } set { SetProperty(5, value); } }
+        public Brush
+            ProgressState { get { return _brushProgressState; } set { _brushProgressState = value; RaisePropertyChanged(_ksProgressState); } }
+        Brush _brushProgressState = Brushes.Yellow;
+        
+        public string
+            Remaining { get { return marr[5]; } set { SetProperty(5, value); } }
 
-        readonly static string[] marrPropName = { "Nickname", "SourcePath", ksProgress, ksIndeterminate, ksProgressState, "Remaining" };
-        internal const int NumCols_ = 6;
+        protected override string[]
+            PropertyNames { get { return marrPropName; } }
+        readonly static string[]
+            marrPropName = { "Nickname", "SourcePath", _ksProgress, _ksIndeterminate, _ksProgressState, "Remaining" };
+
+        internal override int
+            NumCols { get { return NumCols_; } }
+        internal const int
+            NumCols_ = 6;
+
+        protected override int SearchCol { get { return 1; } }
+
+        internal LVitem_ProgressVM(LV_ProgressVM LV, string[] arrStr)
+            : base(LV, arrStr)
+        {
+        }
 
         internal void SetCompleted()
         {
@@ -37,7 +57,7 @@ namespace DoubleFile
             ProgressState = Brushes.LimeGreen;
             Remaining = "Completed.";
             Progress = 1;
-            RaisePropertyChanged(ksProgress);
+            RaisePropertyChanged(_ksProgress);
         }
 
         internal void SetError(string strError)
@@ -46,17 +66,12 @@ namespace DoubleFile
             ProgressState = Brushes.Red;
             Remaining = "Error. " + strError;
             Progress = 1;
-            RaisePropertyChanged(ksProgress);
-        }
-
-        internal LVitem_ProgressVM(LV_ProgressVM LV, string[] arrStr)
-            : base(LV, arrStr)
-        {
+            RaisePropertyChanged(_ksProgress);
         }
 
         internal void TimerTick()
         {
-            if (m_nLastProgress.Equals(Progress))
+            if (_nLastProgress.Equals(Progress))
             {
                 return;
             }
@@ -66,36 +81,36 @@ namespace DoubleFile
                 return;
             }
 
-            if (m_bIndeterminate)
+            if (_bIndeterminate)
             {
                 Indeterminate = false;
             }
 
-            if (m_dtRollingProgress == DateTime.MinValue)
+            if (_dtRollingProgress == DateTime.MinValue)
             {
-                m_dtRollingProgress = DateTime.Now;
+                _dtRollingProgress = DateTime.Now;
             }
 
-            var tmRolling = DateTime.Now - m_dtRollingProgress;
+            var tmRolling = DateTime.Now - _dtRollingProgress;
 
-            if ((m_nRollingProgress.Equals(0)) && (tmRolling > TimeSpan.FromSeconds(15)))
+            if ((_nRollingProgress.Equals(0)) && (tmRolling > TimeSpan.FromSeconds(15)))
             {
                 // The operating system caches reads so restarting the drive read sweeps
                 // through the already-read data unreasonably fast.
-                m_nRollingProgress = Progress;
+                _nRollingProgress = Progress;
 
-                if (m_nRollingProgress.Equals(0))
+                if (_nRollingProgress.Equals(0))
                 {
-                    m_nRollingProgress = double.Epsilon;
+                    _nRollingProgress = double.Epsilon;
                 }
 
-                m_dtRollingProgress = DateTime.Now;
+                _dtRollingProgress = DateTime.Now;
             }
-            else if (tmRolling > TimeSpan.FromMinutes(nRollingMinutes))
+            else if (tmRolling > TimeSpan.FromMinutes(_knRollingMinutes))
             {
                 var v = Math.Min(1, Progress + double.Epsilon);
                 var numerator = Math.Max(0, (1 - v) * tmRolling.Ticks);
-                var denominator = (v - m_nRollingProgress) / nRollingMinutes;
+                var denominator = (v - _nRollingProgress) / _knRollingMinutes;
 
                 if (denominator > 0)
                 {
@@ -110,27 +125,21 @@ namespace DoubleFile
                         " remaining";
                 }
 
-                m_nRollingProgress = v;
-                m_dtRollingProgress = DateTime.Now;
+                _nRollingProgress = v;
+                _dtRollingProgress = DateTime.Now;
             }
 
-            RaisePropertyChanged(ksProgress);
-            m_nLastProgress = Progress;
+            RaisePropertyChanged(_ksProgress);
+            _nLastProgress = Progress;
         }
 
-        internal override int NumCols { get { return NumCols_; } }
-        protected override string[] PropertyNames { get { return marrPropName; } }
+        const string _ksProgress = "Progress";
+        const string _ksIndeterminate = "Indeterminate";
+        const string _ksProgressState = "ProgressState";
+        const int _knRollingMinutes = 2;
 
-        protected override int SearchCol { get { return 1; } }
-
-        const string ksProgress = "Progress";
-        const string ksIndeterminate = "Indeterminate";
-        const string ksProgressState = "ProgressState";
-
-        double m_nLastProgress = 0;
-
-        DateTime m_dtRollingProgress = DateTime.MinValue;
-        double m_nRollingProgress = 0;
-        const int nRollingMinutes = 2;
+        DateTime _dtRollingProgress = DateTime.MinValue;
+        double _nRollingProgress = 0;
+        double _nLastProgress = 0;
     }
 }

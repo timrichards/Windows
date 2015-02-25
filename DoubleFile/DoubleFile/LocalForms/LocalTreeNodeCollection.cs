@@ -19,8 +19,8 @@ namespace DoubleFile
 
             if ((false == this.IsEmpty()) && (_treeView != null))
             {
-                _treeView._TopNode = this[0];
-                SetLevel(_treeView, this);
+                _treeView.TopNode = this[0];
+                LocalTreeNode.SetLevel(_treeView, this);
             }
         }
 
@@ -47,7 +47,7 @@ namespace DoubleFile
                 {
                     _strPrevQuery = s;
                     Keys
-                        .Where(t => t._Text == s)
+                        .Where(t => t.Text == s)
                         .FirstOnlyAssert(t => _nodePrevQuery = t);
                     return _nodePrevQuery;                   // TODO: Trim? ignore case? Probably neither.
                 }
@@ -62,34 +62,6 @@ namespace DoubleFile
             }
 
             base.Clear();
-        }
-
-        static void SetLevel(LocalTV treeView,
-            IReadOnlyList<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
-        {
-            LocalTreeNode nodePrev = null;
-
-            if ((nodeParent != null) && (false == nodes.IsEmptyA()))
-            {
-                nodeParent._FirstNode = nodes[0];
-            }
-
-            foreach (var treeNode in nodes)
-            {
-                if (nodePrev != null)
-                {
-                    nodePrev._NextNode = treeNode;
-                }
-
-                // same assert that Forms generates: must remove it from the other tree first.
-                MBoxStatic.Assert(99999, (treeNode._TreeView == null) || (treeNode._TreeView == treeView));
-
-                nodePrev = treeNode;
-                treeNode._TreeView = treeView;
-                treeNode._Parent = nodeParent;
-                treeNode.Level = nLevel;
-                SetLevel(treeView, treeNode._Nodes, treeNode, nLevel + 1);
-            }
         }
 
         readonly LocalTV

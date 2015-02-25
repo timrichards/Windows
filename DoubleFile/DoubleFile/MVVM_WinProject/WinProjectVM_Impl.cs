@@ -11,33 +11,36 @@ namespace DoubleFile
     {
         // Menu items
         
-        const string ksAllFilesFilter = "|All files|*.*";
-        const string ksProjectFilter = "Double File project|*." + FileParse.ksFileExt_Project + ksAllFilesFilter;
-        internal const string ksListingFilter = "Double File Listing|*." + FileParse.ksFileExt_Listing + ksAllFilesFilter;
-        internal const string ksUnsavedWarning = "You are about to lose changes to an unsaved project.";
+        internal static string
+            ListingFilter { get { return "Double File Listing|*." + FileParse.ksFileExt_Listing + _ksAllFilesFilter; } }
+        const string _ksProjectFilter = "Double File project|*." + FileParse.ksFileExt_Project + _ksAllFilesFilter;
+        const string _ksAllFilesFilter = "|All files|*.*";
+
+        internal static string
+            UnsavedWarning { get { return "You are about to lose changes to an unsaved project."; } }
 
         internal void OpenProject()
         {
-            if (m_lvVM.Unsaved &&
+            if (_lvVM.Unsaved &&
                 (MessageBoxResult.Cancel ==
-                MBoxStatic.ShowDialog(ksUnsavedWarning, "Open Project", MessageBoxButton.OKCancel)))
+                MBoxStatic.ShowDialog(UnsavedWarning, "Open Project", MessageBoxButton.OKCancel)))
             {
                 return;
             }
 
-            var dlg = new Microsoft.Win32.OpenFileDialog {Title = "Open Project", Filter = ksProjectFilter};
+            var dlg = new Microsoft.Win32.OpenFileDialog {Title = "Open Project", Filter = _ksProjectFilter};
 
             if (dlg.ShowDialog() ?? false)
             {
                 new ProjectFile().OpenProject(dlg.FileName,
                     (listFiles, bClearItems) => OpenListingFiles(listFiles, bClearItems));
-                m_lvVM.Unsaved = false;
+                _lvVM.Unsaved = false;
             }
         }
 
         internal void SaveProject()
         {
-            SaveProject(m_lvVM);
+            SaveProject(_lvVM);
         }
 
         static internal void SaveProject(LV_ProjectVM lvProjectVM)
@@ -49,7 +52,7 @@ namespace DoubleFile
                 var dlg = new Microsoft.Win32.SaveFileDialog
                 {
                     Title = "Save Project",
-                    Filter = ksProjectFilter,
+                    Filter = _ksProjectFilter,
                     FileName = strFilename,
                     OverwritePrompt = false
                 };
@@ -87,11 +90,11 @@ namespace DoubleFile
                     break;
                 }
 
-                if ((false == m_lvVM.AlreadyInProject(null, newVolume.LVitemVolumeTemp.ListingFile)) &&
-                    (false == m_lvVM.FileExists(newVolume.LVitemVolumeTemp.ListingFile)))
+                if ((false == _lvVM.AlreadyInProject(null, newVolume.LVitemVolumeTemp.ListingFile)) &&
+                    (false == _lvVM.FileExists(newVolume.LVitemVolumeTemp.ListingFile)))
                 {
-                    m_lvVM.NewItem(newVolume.LVitemVolumeTemp);
-                    m_lvVM.Unsaved = true;
+                    _lvVM.NewItem(newVolume.LVitemVolumeTemp);
+                    _lvVM.Unsaved = true;
                     break;
                 }
 
@@ -104,14 +107,14 @@ namespace DoubleFile
             var dlg = new Microsoft.Win32.OpenFileDialog
             {
                 Title = "Open Listing File",
-                Filter = ksListingFilter,
+                Filter = ListingFilter,
                 Multiselect = true
             };
 
             if ((dlg.ShowDialog() ?? false) &&
                 OpenListingFiles(dlg.FileNames))
             {
-                m_lvVM.Unsaved = true;
+                _lvVM.Unsaved = true;
             }
         }
 
@@ -123,13 +126,13 @@ namespace DoubleFile
 
             if (false == bClearItems)
             {
-                foreach (var lvItem in m_lvVM.ItemsCast)
+                foreach (var lvItem in _lvVM.ItemsCast)
                 {
                     listItems.Add(lvItem);
                 }
             }
 
-            UtilProject.UIthread(() => m_lvVM.Items.Clear());
+            UtilProject.UIthread(() => _lvVM.Items.Clear());
 
             Parallel.ForEach(listFiles, strFilename =>
             {
@@ -152,7 +155,7 @@ namespace DoubleFile
 
             var bOpenedFiles = listItems
                 .OrderBy(lvItem => lvItem.SourcePath)
-                .Aggregate(false, (current, lvItem) => (bool)UtilProject.UIthread(() => m_lvVM.NewItem(lvItem)) || current);
+                .Aggregate(false, (current, lvItem) => (bool)UtilProject.UIthread(() => _lvVM.NewItem(lvItem)) || current);
 
             if (sbBadFiles.Length > 0)
             {

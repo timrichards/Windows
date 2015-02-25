@@ -8,12 +8,12 @@ namespace DoubleFile
 {
     class LocalLV
     {
-        internal LocalLV() { _Items = new LocalLVitemCollection(this); }
-        internal void Invalidate() { }
-
         internal LocalLVitem
-            _TopItem = null;
+            TopItem { get; set; }
         internal LocalLVitemCollection
-            _Items = null;
+            Items { get; set; }
+        
+        internal LocalLV() { Items = new LocalLVitemCollection(this); }
+        internal void Invalidate() { }
     }
 }

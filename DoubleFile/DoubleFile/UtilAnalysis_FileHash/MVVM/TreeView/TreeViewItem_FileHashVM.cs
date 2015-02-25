@@ -32,7 +32,7 @@ namespace DoubleFile
                     _Items = new ObservableCollection<TreeViewItem_FileHashVM>
                     (
                         from item
-                            in _datum._Nodes.Keys
+                            in _datum.Nodes.Keys
                         select new TreeViewItem_FileHashVM(_TVVM, item, this, ++nIndex)
                     );
                 }
@@ -42,7 +42,7 @@ namespace DoubleFile
         }
         ObservableCollection<TreeViewItem_FileHashVM> _Items = null;
 
-        public string Text { get { return ((string)_datum._Text).PadRight(200); } }
+        public string Text { get { return ((string)_datum.Text).PadRight(200); } }
         public Brush Foreground { get { return _bSelected ? _SelectedForeground : FrontBrush; } }
         public Brush SelectedForeground { get { return _bSelected ? _SelectedForeground : FrontBrush; } }
         Brush _SelectedForeground { get { return Brushes.White; } set { } }

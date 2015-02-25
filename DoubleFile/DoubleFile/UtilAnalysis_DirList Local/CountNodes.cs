@@ -18,14 +18,14 @@ namespace Local
 
             do
             {
-                if (false == treeNode._Nodes.IsEmpty())
+                if (false == treeNode.Nodes.IsEmpty())
                 {
-                    nCount += Go(treeNode._Nodes[0]);
+                    nCount += Go(treeNode.Nodes[0]);
                 }
 
                 ++nCount;
             }
-            while (bNextNode && ((treeNode = treeNode._NextNode) != null));
+            while (bNextNode && ((treeNode = treeNode.NextNode) != null));
 
             return nCount;
         }

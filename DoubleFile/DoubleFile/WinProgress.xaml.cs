@@ -13,7 +13,7 @@ namespace DoubleFile
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     partial class WinProgress
     {
-        internal BoolAction WindowClosingCallback = null;
+        internal BoolAction WindowClosingCallback { get; set; }
 
         internal WinProgress()
         {
@@ -30,13 +30,13 @@ namespace DoubleFile
 
             for (var i = 0; i < astrPaths.Count(); ++i)
             {
-                m_lv.NewItem(new[] { astrNicknames.ElementAt(i), astrPaths.ElementAt(i) }, bQuiet: true);
+                _lv.NewItem(new[] { astrNicknames.ElementAt(i), astrPaths.ElementAt(i) }, bQuiet: true);
             }
         }
 
         internal void SetProgress(string strPath, double nProgress)
         {
-            var lvItem = (m_lv[strPath] as LVitem_ProgressVM);
+            var lvItem = (_lv[strPath] as LVitem_ProgressVM);
 
             if (lvItem != null)
             {
@@ -50,7 +50,7 @@ namespace DoubleFile
 
         internal void SetCompleted(string strPath)
         {
-            var lvItem = (m_lv[strPath] as LVitem_ProgressVM);
+            var lvItem = (_lv[strPath] as LVitem_ProgressVM);
 
             if (lvItem != null)
             {
@@ -64,7 +64,7 @@ namespace DoubleFile
 
         internal void SetError(string strPath, string strError)
         {
-            var lvItem = (m_lv[strPath] as LVitem_ProgressVM);
+            var lvItem = (_lv[strPath] as LVitem_ProgressVM);
 
             if (lvItem != null)
             {
@@ -80,7 +80,7 @@ namespace DoubleFile
 
         internal new void Close()
         {
-            if (m_bClosing)
+            if (_bClosing)
             {
                 MBoxStatic.Assert(99928, false, bTraceOnly: true);
                 return;     // some sort of lockup?
@@ -91,7 +91,7 @@ namespace DoubleFile
 
         internal void CloseIfNatural()
         {
-            if (m_bClosing)
+            if (_bClosing)
             {
                 return;     // get an error otherwise
             }
@@ -101,7 +101,7 @@ namespace DoubleFile
                 return;     // don't close: there may be an error message
             }
 
-            if (m_lv
+            if (_lv
                 .ItemsCast
                 .Any(lvItem => lvItem.Progress < 1))
             {
@@ -114,18 +114,18 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            form_lvProgress.DataContext = m_lv;
+            form_lvProgress.DataContext = _lv;
 
-            m_lv.SelectedOne = () => form_lvProgress.SelectedItems.HasOnlyOne();
-            m_lv.SelectedAny = () => (false == form_lvProgress.SelectedItems.IsEmptyA());
-            m_lv.Selected = () => form_lvProgress.SelectedItems.Cast<LVitem_ProgressVM>();
+            _lv.SelectedOne = () => form_lvProgress.SelectedItems.HasOnlyOne();
+            _lv.SelectedAny = () => (false == form_lvProgress.SelectedItems.IsEmptyA());
+            _lv.Selected = () => form_lvProgress.SelectedItems.Cast<LVitem_ProgressVM>();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (Aborted)
             {
-                m_bClosing = true;
+                _bClosing = true;
                 return;     // close
             }
 
@@ -169,10 +169,10 @@ namespace DoubleFile
 
         private void Window_Closed(object sender, System.EventArgs e)
         {
-            m_lv.Dispose();
+            _lv.Dispose();
         }
 
-        readonly LV_ProgressVM m_lv = new LV_ProgressVM();
-        bool m_bClosing = false;
+        readonly LV_ProgressVM _lv = new LV_ProgressVM();
+        bool _bClosing = false;
     }
 }

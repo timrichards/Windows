@@ -142,11 +142,11 @@
     <Compile Include="GlobalData\GlobalData.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="LocalForms\LocalColorItemBase.cs" />
-    <Compile Include="MVVM\MVVM Base\ListViewItemVM_Base.cs" />
-    <Compile Include="MVVM\MVVM Base\ListViewVM_Base.cs" />
-    <Compile Include="MVVM\MVVM Base\ListViewVM_GenericBase.cs" />
-    <Compile Include="MVVM\Template\Template_ListViewVM.cs" />
-    <Compile Include="MVVM\Template\Template_LVitemVM.cs" />
+    <Compile Include="MVVM\ListView Base\ListViewItemVM_Base.cs" />
+    <Compile Include="MVVM\ListView Base\ListViewVM_Base.cs" />
+    <Compile Include="MVVM\ListView Base\ListViewVM_GenericBase.cs" />
+    <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
+    <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
     <Compile Include="UtilProject\LocalMbox.xaml.cs">
       <DependentUpon>LocalMbox.xaml</DependentUpon>
     </Compile>

@@ -6,23 +6,23 @@ namespace DoubleFile
 {
     class LocalTreeNode : LocalColorItemBase
     {
-        internal readonly LocalTreeNodeCollection
-            _Nodes = null;
+        internal LocalTreeNodeCollection
+            Nodes { get; private set; }
         internal UString
-            _Text = null;
+            Text { get; set; }
         internal LocalTV
-            _TreeView = null;
+            TreeView { get; private set; }
         internal LocalTreeNode
-            _FirstNode = null;
+            FirstNode { get; private set; }
         internal LocalTreeNode
-            _NextNode = null;
+            NextNode { get; private set; }
         internal LocalTreeNode
-            _Parent = null;
+            Parent { get; private set; }
         internal object
-            _Tag = null;
+            Tag { get; set; }
 
         internal string
-            Name { get { return _Text; } }
+            Name { get { return Text; } }
         internal int
             Level { get { return Datum6bits; } set { Datum6bits = value; } }
         internal int
@@ -35,7 +35,7 @@ namespace DoubleFile
 
         internal LocalTreeNode()
         {
-            _Nodes = new LocalTreeNodeCollection(_TreeView);
+            Nodes = new LocalTreeNodeCollection(TreeView);
         }
 
         internal LocalTreeNode(string strContent)
@@ -43,13 +43,13 @@ namespace DoubleFile
         {
             Level = -1;
             SelectedImageIndex = -1;
-            _Text = strContent;
+            Text = strContent;
         }
 
         internal LocalTreeNode(string strContent, IReadOnlyList<LocalTreeNode> lsNodes)
             : this(strContent)
         {
-            _Nodes.AddRange(lsNodes);
+            Nodes.AddRange(lsNodes);
         }
 
         //internal string FullPath
@@ -87,11 +87,11 @@ namespace DoubleFile
         internal void DetachFromTree()
         {
  //           TVIVM = null;
-            _TreeView = null;
+            TreeView = null;
             Level = -1;
  //           _strFullPath = null;
 
-            foreach (var treeNode in _Nodes)
+            foreach (var treeNode in Nodes)
             {
                 treeNode.DetachFromTree();
             }
@@ -106,7 +106,7 @@ namespace DoubleFile
                 return false;
             }
 
-            var parentNode = _Parent;
+            var parentNode = Parent;
 
             while (parentNode != null)
             {
@@ -115,7 +115,7 @@ namespace DoubleFile
                     return true;
                 }
 
-                parentNode = parentNode._Parent;
+                parentNode = parentNode.Parent;
             }
 
             return false;
@@ -125,14 +125,42 @@ namespace DoubleFile
         {
             var nodeParent = this;
 
-            while (nodeParent._Parent != null)
+            while (nodeParent.Parent != null)
             {
-                nodeParent = nodeParent._Parent;
+                nodeParent = nodeParent.Parent;
             }
 
             return nodeParent;
         }
 
-    //    string _strFullPath = null;
+        internal static void SetLevel(LocalTV treeView,
+            IReadOnlyList<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
+        {
+            LocalTreeNode nodePrev = null;
+
+            if ((nodeParent != null) && (false == nodes.IsEmptyA()))
+            {
+                nodeParent.FirstNode = nodes[0];
+            }
+
+            foreach (var treeNode in nodes)
+            {
+                if (nodePrev != null)
+                {
+                    nodePrev.NextNode = treeNode;
+                }
+
+                // same assert that Forms generates: must remove it from the other tree first.
+                MBoxStatic.Assert(99999, (treeNode.TreeView == null) || (treeNode.TreeView == treeView));
+
+                nodePrev = treeNode;
+                treeNode.TreeView = treeView;
+                treeNode.Parent = nodeParent;
+                treeNode.Level = nLevel;
+                SetLevel(treeView, treeNode.Nodes, treeNode, nLevel + 1);
+            }
+        }
+
+        //    string _strFullPath = null;
     }
 }

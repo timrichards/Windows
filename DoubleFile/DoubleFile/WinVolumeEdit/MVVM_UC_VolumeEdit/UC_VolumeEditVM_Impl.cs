@@ -25,10 +25,11 @@ namespace DoubleFile
             if (IsOKenabled())
             {
                 ulong? nSize;
-                var probeStruct = new ProbeStruct();
+                string strDriveModel = null;
+                string strDriveSerial = null;
 
-                DriveSerialStatic.Get(strPath, out probeStruct.DriveModel, out probeStruct.DriveSerial, out nSize);               
-                FromProbe(probeStruct);
+                DriveSerialStatic.Get(strPath, out strDriveModel, out strDriveSerial, out nSize);
+                FromProbe(strDriveModel, strDriveSerial);
             }
             else
             {
@@ -42,7 +43,7 @@ namespace DoubleFile
             var dlg = new Microsoft.Win32.SaveFileDialog
             {
                 FileName = strPath,
-                Filter = WinProjectVM.ksListingFilter,
+                Filter = WinProjectVM.ListingFilter,
                 OverwritePrompt = false,
                 Title = "Save Listing File"
             };

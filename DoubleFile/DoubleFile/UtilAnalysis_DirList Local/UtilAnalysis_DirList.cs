@@ -6,8 +6,6 @@ using System.Reflection;
 
 namespace DoubleFile
 {
-    delegate bool BoolAction();
-
     class UtilAnalysis_DirList : FileParse
     {
         internal static void Closure(Action action) { action(); }

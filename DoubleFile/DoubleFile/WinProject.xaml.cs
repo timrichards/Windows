@@ -14,18 +14,18 @@ namespace DoubleFile
         internal WinProject(GlobalData_Base gd_in, LV_ProjectVM lvProjectVM = null)
         {
             InitializeComponent();
-            gd = gd_in;
+            _gd = gd_in;
             LVprojectVM = lvProjectVM;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             var bOpenProject = (null == LVprojectVM);
-            var lvProjectVM = LVprojectVM ?? new LV_ProjectVM(gd);
+            var lvProjectVM = LVprojectVM ?? new LV_ProjectVM(_gd);
 
             LVprojectVM = null;         // only one representation of state at a time
 
-            var win = new WinProjectVM(gd, lvProjectVM);
+            var win = new WinProjectVM(_gd, lvProjectVM);
 
             form_lvProject.DataContext = lvProjectVM;
             DataContext = win;
@@ -61,12 +61,12 @@ namespace DoubleFile
             
             if ((lvProjectVM != null) && lvProjectVM.Unsaved
                 && (MessageBoxResult.Cancel ==
-                MBoxStatic.ShowDialog(WinProjectVM.ksUnsavedWarning, "Close Project", MessageBoxButton.OKCancel)))
+                MBoxStatic.ShowDialog(WinProjectVM.UnsavedWarning, "Close Project", MessageBoxButton.OKCancel)))
             {
                 e.Cancel = true;
             }
         }
 
-        readonly GlobalData_Base gd = null;
+        readonly GlobalData_Base _gd = null;
     }
 }

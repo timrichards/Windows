@@ -6,9 +6,8 @@ namespace DoubleFile
 {
     public class LocalWindow : System.Windows.Window
     {
-        internal bool IsClosed = true;
-
-        static protected bool AppActivated = false;
+        internal bool IsClosed { get; private set; }
+        static protected bool AppActivated { private get; set; }
 
         internal bool? LocalDialogResult
         {
@@ -70,6 +69,7 @@ namespace DoubleFile
             ShowActivated = true;
             Loaded += (o, e) => IsClosed = false;
             Closed += (o, e) => IsClosed = true;
+            IsClosed = true;
         }
 
         internal void CloseIfSimulatingModal()

@@ -13,9 +13,9 @@ namespace Local
 
                 var lvItem = (LocalLVitem)lvMarker.Clone();
 
-                lvItem._Text = ((UtilAnalysis_DirList.FormatSize(
-                    ((NodeDatum)((LocalTreeNode)(bUnique ? listLVitems[nIx]._Tag :
-                    ((UList<LocalTreeNode>)listLVitems[nIx]._Tag)[0]))._Tag).nTotalLength,
+                lvItem.Text = ((UtilAnalysis_DirList.FormatSize(
+                    ((NodeDatum)((LocalTreeNode)(bUnique ? listLVitems[nIx].Tag :
+                    ((UList<LocalTreeNode>)listLVitems[nIx].Tag)[0])).Tag).nTotalLength,
                     bNoDecimal: true)));
 
                 if (bAdd)
@@ -35,7 +35,7 @@ namespace Local
                     lvMarker.BackColor = UtilColor.DarkSlateGray;
                     lvMarker.ForeColor = UtilColor.White;
                     lvMarker.FontWeight = System.Windows.FontWeights.Bold;
-                    lvMarker._Tag = null;
+                    lvMarker.Tag = null;
                     bInit = true;
                 }
             }

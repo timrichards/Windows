@@ -9,8 +9,6 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    delegate string StringAction();
-
     // The Process disposable field is managed by wrapper functions that dispose it once control returns.
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     class ProjectFile

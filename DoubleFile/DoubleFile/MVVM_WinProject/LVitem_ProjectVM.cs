@@ -15,7 +15,11 @@ namespace DoubleFile
         public string DriveModel { get { return marr[6]; } set { SetProperty(6, value); } }
         public string DriveSerial { get { return marr[7]; } set { SetProperty(7, value); } }
         public string ScannedLength { get { return UtilAnalysis_DirList.FormatSize(marr[8]); } set { SetProperty(8, value); } }
+        
+        protected override string[] PropertyNames { get { return marrPropName; } }
         readonly static string[] marrPropName = new string[] { "Nickname", "SourcePath", "ListingFileNoPath", "Status", "IncludeYN", "VolumeGroup", "DriveModel", "DriveSerial", "ScannedLength" };
+
+        internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 9;
 
         internal LVitem_ProjectVM(string[] arrStr = null)
@@ -28,9 +32,6 @@ namespace DoubleFile
         {
         }
 
-        internal override int NumCols { get { return NumCols_; } }
-        protected override string[] PropertyNames { get { return marrPropName; } }
-
         internal bool Include
         {
             get { return (IncludeYN == FileParse.ksInclude); }
@@ -39,12 +40,12 @@ namespace DoubleFile
 
         internal bool WouldSave
         {
-            get { return (false == (ksFileExistsCheck + FileParse.ksError).Contains(Status)); }
+            get { return (false == (_ksFileExistsCheck + FileParse.ksError).Contains(Status)); }
         }
 
         internal bool CanLoad
         {
-            get { return (Include && ksFileExistsCheck.Contains(Status) && (FileParse.ksError != Status)); }
+            get { return (Include && _ksFileExistsCheck.Contains(Status) && (FileParse.ksError != Status)); }
         }
 
         internal void SetSaved()
@@ -62,6 +63,6 @@ namespace DoubleFile
             }
         }
 
-        const string ksFileExistsCheck = FileParse.ksUsingFile + FileParse.ksSaved;
+        const string _ksFileExistsCheck = FileParse.ksUsingFile + FileParse.ksSaved;
     }
 }

@@ -10,15 +10,15 @@ namespace DoubleFile
     class LocalLVitem : LocalColorItemBase
     {
         internal UString
-            _Text = null;
+            Text { get; set; }
         internal UString
-            _Name = null;
+            Name { get; set; }
         internal object
-            _Tag = null;
+            Tag { get; set; }
         internal LocalLVitemCollection
-            _SubItems = null;
+            SubItems { get; set; }
         internal LocalLV
-            _ListView = null;
+            ListView { get; set; }
 
 //      internal bool Focused;
 
@@ -31,23 +31,23 @@ namespace DoubleFile
 
         internal LocalLVitem(LocalLV listView = null)
         {
-            _ListView = listView;
-            _SubItems = new LocalLVitemCollection(_ListView);
+            ListView = listView;
+            SubItems = new LocalLVitemCollection(ListView);
         }
 
-        internal LocalLVitem(string strContent, LocalLV listView = null) : this(listView) { _Text = strContent; Index = -1; }
+        internal LocalLVitem(string strContent, LocalLV listView = null) : this(listView) { Text = strContent; Index = -1; }
 
         internal LocalLVitem(IReadOnlyList<string> asString, LocalLV listView = null)
             : this(listView)
         {
-            _Text = asString[0];
-            _SubItems.Add(this);
+            Text = asString[0];
+            SubItems.Add(this);
 
             var i = 1;
 
             foreach (var s in asString.Skip(1))
             {
-                _SubItems.Add(new LocalLVitem(asString[i++], listView));
+                SubItems.Add(new LocalLVitem(asString[i++], listView));
             }
         }
 

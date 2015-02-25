@@ -5,49 +5,37 @@ namespace DoubleFile
     partial class WinProjectVM : ObservableObject_OwnerWindow
     {
         // In order of appearance on the form
-        public ICommand Icmd_OpenProject { get { return mIcmd_OpenProject; } }
-        public ICommand Icmd_SaveProject { get { return mIcmd_SaveProject; } }
+        public ICommand Icmd_OpenProject { get; private set; }
+        public ICommand Icmd_SaveProject { get; private set; }
 
-        public ICommand Icmd_NewListingFile { get { return mIcmd_NewListingFile; } }
-        public ICommand Icmd_OpenListingFile { get { return mIcmd_OpenListingFile; } }
+        public ICommand Icmd_NewListingFile { get; private set; }
+        public ICommand Icmd_OpenListingFile { get; private set; }
 
-        public ICommand Icmd_EditListingFile { get { return mIcmd_EditListingFile; } }
-        public ICommand Icmd_RemoveListingFile { get { return mIcmd_RemoveListingFile; } }
+        public ICommand Icmd_EditListingFile { get; private set; }
+        public ICommand Icmd_RemoveListingFile { get; private set; }
 
-        public ICommand Icmd_ToggleInclude { get { return mIcmd_ToggleInclude; } }
-        public ICommand Icmd_VolumeGroup { get { return mIcmd_VolumeGroup; } }
-
-        readonly ICommand mIcmd_OpenProject = null;
-        readonly ICommand mIcmd_SaveProject = null;
-
-        readonly ICommand mIcmd_NewListingFile = null;
-        readonly ICommand mIcmd_OpenListingFile = null;
-
-        readonly ICommand mIcmd_EditListingFile = null;
-        readonly ICommand mIcmd_RemoveListingFile = null;
-
-        readonly ICommand mIcmd_ToggleInclude = null;
-        readonly ICommand mIcmd_VolumeGroup = null;
+        public ICommand Icmd_ToggleInclude { get; private set; }
+        public ICommand Icmd_VolumeGroup { get; private set; }
 
         internal WinProjectVM(GlobalData_Base gd_in, LV_ProjectVM lvVM)
         {
-            gd = gd_in;
-            m_lvVM = lvVM;
+            _gd = gd_in;
+            _lvVM = lvVM;
 
-            mIcmd_OpenProject = new RelayCommand(param => { OpenProject(); });
-            mIcmd_SaveProject = new RelayCommand(param => { SaveProject(); }, param => (false == m_lvVM.Items.IsEmpty()));
+            Icmd_OpenProject = new RelayCommand(param => { OpenProject(); });
+            Icmd_SaveProject = new RelayCommand(param => { SaveProject(); }, param => (false == _lvVM.Items.IsEmpty()));
 
-            mIcmd_NewListingFile = new RelayCommand(param => { NewListingFile(); });
-            mIcmd_OpenListingFile = new RelayCommand(param => { OpenListingFile(); });
+            Icmd_NewListingFile = new RelayCommand(param => { NewListingFile(); });
+            Icmd_OpenListingFile = new RelayCommand(param => { OpenListingFile(); });
 
-            mIcmd_EditListingFile = new RelayCommand(param => { m_lvVM.EditListingFile(); }, param => m_lvVM.SelectedOne());
-            mIcmd_RemoveListingFile = new RelayCommand(param => { m_lvVM.RemoveListingFile(); }, param => m_lvVM.SelectedAny());
+            Icmd_EditListingFile = new RelayCommand(param => { _lvVM.EditListingFile(); }, param => _lvVM.SelectedOne());
+            Icmd_RemoveListingFile = new RelayCommand(param => { _lvVM.RemoveListingFile(); }, param => _lvVM.SelectedAny());
 
-            mIcmd_ToggleInclude = new RelayCommand(param => { m_lvVM.ToggleInclude(); }, param => m_lvVM.SelectedAny());
-            mIcmd_VolumeGroup = new RelayCommand(param => { m_lvVM.EditVolumeGroupLabel(); }, param => m_lvVM.SelectedAny());
+            Icmd_ToggleInclude = new RelayCommand(param => { _lvVM.ToggleInclude(); }, param => _lvVM.SelectedAny());
+            Icmd_VolumeGroup = new RelayCommand(param => { _lvVM.EditVolumeGroupLabel(); }, param => _lvVM.SelectedAny());
         }
 
-        readonly LV_ProjectVM m_lvVM = null;
-        readonly GlobalData_Base gd = null;
+        readonly LV_ProjectVM _lvVM = null;
+        readonly GlobalData_Base _gd = null;
     }
 }

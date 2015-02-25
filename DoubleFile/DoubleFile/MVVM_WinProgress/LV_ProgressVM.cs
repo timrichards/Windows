@@ -22,7 +22,7 @@ namespace DoubleFile
 
         internal LV_ProgressVM()
         {
-            m_tmrUpdate = new SDL_Timer(() =>
+            _tmrUpdate = new SDL_Timer(() =>
             {
                 foreach (var lvItem in ItemsCast)
                 {
@@ -33,9 +33,9 @@ namespace DoubleFile
 
         public void Dispose()
         {
-            m_tmrUpdate.Dispose();
+            _tmrUpdate.Dispose();
         }
 
-        readonly SDL_Timer m_tmrUpdate = null;
+        readonly SDL_Timer _tmrUpdate = null;
     }
 }

@@ -10,13 +10,13 @@ namespace DoubleFile
 
         internal LV_ProjectVM(GlobalData_Base gd_in = null, LV_ProjectVM lvProjectVM_in = null)
         {
-            gd = gd_in;
+            _gd = gd_in;
 
             if (lvProjectVM_in != null)
             {
-                if (gd == null)
+                if (_gd == null)
                 {
-                    gd = lvProjectVM_in.gd;
+                    _gd = lvProjectVM_in._gd;
                 }
 
                 foreach (var lvItemVM in lvProjectVM_in.ItemsCast)
@@ -337,6 +337,6 @@ namespace DoubleFile
             return true;
         }
 
-        GlobalData_Base gd = null;
+        GlobalData_Base _gd = null;
     }
 }

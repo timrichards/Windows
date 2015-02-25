@@ -46,8 +46,8 @@ namespace DoubleFile
             {
                 return new LVitem_ProjectVM(new string[] {
                     form_EditNickname.Text, form_EditSourcePath.Text,
-                    (IsVolumeNew ? form_EditListingFile.Text : m_strListingFile),
-                    m_strStatus, m_strIncludeYN,
+                    (IsVolumeNew ? form_EditListingFile.Text : _strListingFile),
+                    _strStatus, _strIncludeYN,
                     form_UC_VolumeGroup.Text, form_EditDriveModel.Text, form_EditDriveSerial.Text
                 });
             }
@@ -63,9 +63,9 @@ namespace DoubleFile
 
                 if (astr.Length > i) { form_EditNickname.Text = value[i++]; } else { MBoxStatic.Assert(99926, false); }
                 if (astr.Length > i) { form_EditSourcePath.Text = value[i++]; } else { MBoxStatic.Assert(99925, false); }
-                if (astr.Length > i) { m_strListingFile = value[i++]; form_EditListingFile.Text = (IsVolumeNew ? m_strListingFile : Path.GetFileName(m_strListingFile)); }
-                if (astr.Length > i) { var s = value[i++]; if (s != null) { m_strStatus = s; } }
-                if (astr.Length > i) { var s = value[i++]; if (s != null) { m_strIncludeYN = s; } }
+                if (astr.Length > i) { _strListingFile = value[i++]; form_EditListingFile.Text = (IsVolumeNew ? _strListingFile : Path.GetFileName(_strListingFile)); }
+                if (astr.Length > i) { var s = value[i++]; if (s != null) { _strStatus = s; } }
+                if (astr.Length > i) { var s = value[i++]; if (s != null) { _strIncludeYN = s; } }
                 if (astr.Length > i) { form_UC_VolumeGroup.Text = value[i++]; }
                 if (astr.Length > i) { form_EditDriveModel.Text = value[i++]; }
                 if (astr.Length > i) { form_EditDriveSerial.Text = value[i++]; }
@@ -112,7 +112,7 @@ namespace DoubleFile
             vm.SourcePath_CurrentText = () => form_EditSourcePath.Text;
             vm.ListingFile_CurrentText = () => form_EditListingFile.Text;
             vm.FromSourcePathDlg = s => form_EditSourcePath.Text = s;
-            vm.FromProbe = t => { form_EditDriveModel.Text = t.DriveModel; form_EditDriveSerial.Text = t.DriveSerial; };
+            vm.FromProbe = (strDriveModel, strDriveSerial) => { form_EditDriveModel.Text = strDriveModel; form_EditDriveSerial.Text = strDriveSerial; };
             vm.FromListingFileDlg = s => form_EditListingFile.Text = s;
 
             form_EditDriveLetter.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (o, e1) => { e1.Handled = true; }));
@@ -224,8 +224,8 @@ namespace DoubleFile
             textBox.CaretIndex = int.MaxValue;
         }
 
-        string m_strListingFile = null;
-        string m_strStatus = FileParse.ksNotSaved;
-        string m_strIncludeYN = FileParse.ksInclude;
+        string _strListingFile = null;
+        string _strStatus = FileParse.ksNotSaved;
+        string _strIncludeYN = FileParse.ksInclude;
     }
 }

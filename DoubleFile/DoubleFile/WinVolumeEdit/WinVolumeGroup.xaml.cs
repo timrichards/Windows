@@ -7,12 +7,12 @@ namespace DoubleFile
     /// </summary>
     partial class WinVolumeGroup
     {
+        public string Text { get { return form_UC_VolumeGroup.Text; } set { form_UC_VolumeGroup.Text = value; } }
+
         public WinVolumeGroup()
         {
             InitializeComponent();
         }
-
-        public string Text { get { return form_UC_VolumeGroup.Text; } set { form_UC_VolumeGroup.Text = value; } }
 
         private void BtnOK_Click(object sender, RoutedEventArgs e)
         {

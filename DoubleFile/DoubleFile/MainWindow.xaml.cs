@@ -12,6 +12,9 @@ namespace DoubleFile
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     partial class MainWindow
     {
+        internal LV_ProjectVM LVprojectVM { get; private set; }
+        internal FormAnalysis_DirList Analysis_DirListForm { get; private set; }
+
         public MainWindow()
             : base(bIsMainWindow: true)
         {
@@ -24,9 +27,6 @@ namespace DoubleFile
 
             InitializeComponent();
         }
-
-        internal LV_ProjectVM LVprojectVM { get; private set; }
-        internal FormAnalysis_DirList Analysis_DirListForm { get; private set; }
 
         void FormAnalysis_DirListAction(Action<FormAnalysis_DirList, LV_ProjectVM> action)
         {
@@ -127,7 +127,7 @@ namespace DoubleFile
                 if ((null != LVprojectVM) &&
                     LVprojectVM.Unsaved &&
                     (MessageBoxResult.Cancel ==
-                    MBoxStatic.ShowDialog(WinProjectVM.ksUnsavedWarning, "Open Project", MessageBoxButton.OKCancel)))
+                    MBoxStatic.ShowDialog(WinProjectVM.UnsavedWarning, "Open Project", MessageBoxButton.OKCancel)))
                 {
                     return;
                 }
@@ -165,7 +165,7 @@ namespace DoubleFile
             if ((null != LVprojectVM) &&
                 LVprojectVM.Unsaved &&
                 (MessageBoxResult.Cancel == 
-                MBoxStatic.ShowDialog(WinProjectVM.ksUnsavedWarning, "Quit Double File", MessageBoxButton.OKCancel)))
+                MBoxStatic.ShowDialog(WinProjectVM.UnsavedWarning, "Quit Double File", MessageBoxButton.OKCancel)))
             {
                 e.Cancel = true;
                 return;

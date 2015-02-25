@@ -3,6 +3,9 @@ using System.Windows.Controls;
 
 namespace DoubleFile
 {
+    delegate bool BoolAction();
+    delegate string StringAction();
+
     static internal class UtilProject
     {
         static internal void WriteLine(string str = null)

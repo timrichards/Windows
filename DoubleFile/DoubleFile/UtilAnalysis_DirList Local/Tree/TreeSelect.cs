@@ -33,8 +33,8 @@ namespace Local
 
         internal static List<string[]> GetFileList(LocalTreeNode parent, List<ulong> listLength = null)
         {
-            var nodeDatum = parent._Tag as NodeDatum;
-            var rootNodeDatum = parent.Root()._Tag as RootNodeDatum;
+            var nodeDatum = parent.Tag as NodeDatum;
+            var rootNodeDatum = parent.Root().Tag as RootNodeDatum;
             var listFiles = new List<string[]>();
 
             if ((null == nodeDatum) ||
@@ -178,7 +178,7 @@ namespace Local
                 return;
             }
 
-            var nodeDatum = m_treeNode._Tag as NodeDatum;
+            var nodeDatum = m_treeNode.Tag as NodeDatum;
 
             if ((null == nodeDatum) || 
                 (nodeDatum.nLineNo == 0))
@@ -221,7 +221,7 @@ namespace Local
 
             const string NUMFMT = "###,###,###,##0";
 
-            listItems.Add(new LocalLVitem(new[] { "# Immediate Folders", m_treeNode._Nodes.Count.ToString(NUMFMT) }));
+            listItems.Add(new LocalLVitem(new[] { "# Immediate Folders", m_treeNode.Nodes.Count.ToString(NUMFMT) }));
             listItems.Add(new LocalLVitem(new[] { "Total # Files", nodeDatum.nFilesInSubdirs.ToString(NUMFMT) }));
 
             if (nodeDatum.nSubDirs > 0)
@@ -265,7 +265,7 @@ namespace Local
 
             m_statusCallback(itemArray: listFiles.ToArray(),
                 bSecondComparePane: m_bSecondComparePane,
-                lvFileItem: new LVitemFileTag(m_treeNode._Text, listFiles.Count));
+                lvFileItem: new LVitemFileTag(m_treeNode.Text, listFiles.Count));
         }
 
         readonly LocalTreeNode m_treeNode = null;

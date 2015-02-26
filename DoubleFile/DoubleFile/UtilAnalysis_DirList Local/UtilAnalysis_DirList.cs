@@ -25,45 +25,6 @@ namespace DoubleFile
                 action();
         }
 
-        internal static T UIthread<T>(Control dispatcher, Func<T> action)
-        {
-            if ((null == dispatcher) ||
-                (dispatcher.IsDisposed))
-            {
-                return default(T);
-            }
-
-            try
-            {
-                return (dispatcher.InvokeRequired)
-                    ? (T)dispatcher.Invoke(action)
-                    : action();
-            }
-            catch (ObjectDisposedException e)
-            {
-                if (false == dispatcher.IsDisposed)
-                {
-                    MBoxStatic.Assert(99959, false, e.GetBaseException().Message);
-
-#if (false == PUBLISH)
-                    if (false == dispatcher.IsDisposed)
-                        throw;
-#endif
-                }
-            }
-            catch (InvalidOperationException e)
-            {
-                MBoxStatic.Assert(99958, false, e.GetBaseException().Message);
-
-#if (false == PUBLISH)
-                if (false == dispatcher.IsDisposed)
-                    throw;
-#endif
-            }
-
-            return default(T);
-        }
-
         internal static string DecodeAttributes(string strAttr)
         {
             var nAttr = (FileAttributes)Convert.ToInt32(strAttr, 16);

@@ -138,7 +138,7 @@ namespace DoubleFile
 
             new Thread(() =>
             {
-                if ((bool)UtilProject.UIthread(windowClosingCallback))
+                if (UtilProject.UIthread(windowClosingCallback))
                 {
                     Aborted = true;
                     UtilProject.UIthread(Close);

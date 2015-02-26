@@ -132,7 +132,7 @@ namespace DoubleFile
                     return;
                 }
 
-                volumes = new WinProject(_gd);
+                volumes = new WinProject(_gd, bOpenProject: true);
             }
             else
             {

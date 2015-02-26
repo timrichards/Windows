@@ -22,7 +22,7 @@ namespace DoubleFile
                 owner.Dispatcher.Invoke(action);
         }
 
-        internal static object UIthread<T>(System.Func<T> action, Control owner = null)
+        internal static object UIthread<T>(Func<T> action, Control owner = null)
         {
             if (null == owner)
             {

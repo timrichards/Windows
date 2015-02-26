@@ -5,11 +5,11 @@ namespace DoubleFile
 {
     partial class UC_VolumeEditVM : ObservableObject_OwnerWindow
     {
-        public System.Func<bool>
+        public Func<bool>
             IsOKenabled = () => { DesignModeOK(); return false; };
-        public System.Func<string>
+        public Func<string>
             SourcePath_CurrentText = () => { DesignModeOK(); return null; };
-        public System.Func<string>
+        public Func<string>
             ListingFile_CurrentText = () => { DesignModeOK(); return null; };
         public Action<string>
             FromSourcePathDlg = s => DesignModeOK();

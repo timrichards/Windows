@@ -9,14 +9,23 @@ namespace DoubleFile
     class UtilAnalysis_DirList : FileParse
     {
         internal static void Closure(Action action) { action(); }
-        internal static bool Closure(System.Func<bool> action) { return action(); }
+        internal static T Closure<T>(Func<T> action) { return (T)action(); }
 
-        internal static object UIthread(Control dispatcher, Action action, object[] args = null)
+        internal static void UIthread(Control dispatcher, Action action, object[] args = null)
         {
-            return UIthread(dispatcher, action as Delegate, args);
+            if ((null == dispatcher) ||
+                (dispatcher.IsDisposed))
+            {
+                return;
+            }
+
+            if (dispatcher.InvokeRequired)
+                dispatcher.Invoke(action);
+            else
+                action();
         }
 
-        internal static object UIthread(Control dispatcher, Delegate action, object[] args = null)
+        internal static object UIthread<T>(Control dispatcher, Func<T> action)
         {
             if ((null == dispatcher) ||
                 (dispatcher.IsDisposed))
@@ -26,27 +35,9 @@ namespace DoubleFile
 
             try
             {
-                if (dispatcher.InvokeRequired)
-                {
-                    return args == null
-                        ? dispatcher.Invoke(action)
-                        : dispatcher.Invoke(action, (object)args);
-                }
-
-                var action1 = action as Action;
-
-                if (action1 != null)
-                {
-                    action1();
-                }
-                else
-                {
-                    var boolAction = action as System.Func<bool>;
-
-                    return (boolAction != null)
-                        ? boolAction()
-                        : action.DynamicInvoke(args);     // late-bound and slow
-                }
+                return (dispatcher.InvokeRequired)
+                    ? dispatcher.Invoke(action)
+                    : action();
             }
             catch (ObjectDisposedException e)
             {

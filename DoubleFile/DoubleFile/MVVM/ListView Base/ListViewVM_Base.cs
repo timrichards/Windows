@@ -1,12 +1,13 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 
 namespace DoubleFile
 {
     abstract class ListViewVM_Base : ObservableObject_OwnerWindow
     {
-        internal System.Func<bool>
+        internal Func<bool>
             SelectedOne = () => { DesignModeOK(); return false; };
-        internal System.Func<bool>
+        internal Func<bool>
             SelectedAny = () => { DesignModeOK(); return false; };
 
         public ObservableCollection<ListViewItemVM_Base>

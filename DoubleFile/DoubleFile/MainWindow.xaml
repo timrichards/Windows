@@ -5,6 +5,7 @@
         Title="Double File" Height="96" Width="254" Icon="/Double File;component/Resources/ic_people_black_18dp.png"
         Closing="MainWindow_Closing" Left="120" Top="20">
     <Grid Loaded="Grid_Loaded">
+        <Menu IsMainMenu="True" Grid.ColumnSpan="999" Grid.RowSpan="999"/>
         <Button Content="View project" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="Button_ViewProject_Click" Grid.Column="0"/>
         <Button Content="Open project" Grid.Column="0" HorizontalAlignment="Left" Margin="80,0,0,0" Click="Button_OpenProject_Click" VerticalAlignment="Top" Width="75"/>
         <Button Content="Save project" Grid.Column="0" HorizontalAlignment="Left" Margin="160,0,0,0" Click="Button_SaveProject_Click" VerticalAlignment="Top" Width="75"/>

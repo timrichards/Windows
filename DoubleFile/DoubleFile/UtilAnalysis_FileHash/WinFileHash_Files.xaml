@@ -4,6 +4,7 @@
         xmlns:local="clr-namespace:DoubleFile"
         Title="WinFileHash_Files" Height="300" Width="300">
     <Grid Loaded="Grid_Loaded">
+        <Menu IsMainMenu="True" Grid.ColumnSpan="999" Grid.RowSpan="999"/>
         <ListView Name="form_lvProject" Margin="10,10,10,10">
             <ListView.View>
                 <GridView>

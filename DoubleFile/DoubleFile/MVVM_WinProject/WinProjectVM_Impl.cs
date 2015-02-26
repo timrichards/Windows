@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Linq;
@@ -78,13 +77,13 @@ namespace DoubleFile
 
         internal void NewListingFile()
         {
-            var lvItemVolumeTemp = new LVitem_ProjectVM(new string[] { });
+            var lvItemVolumeTemp = new LVitem_ProjectVM();
 
             while (true)
             {
                 var newVolume = new WinVolumeNew {LVitemVolumeTemp = new LVitem_ProjectVM(lvItemVolumeTemp)};
 
-                if ((newVolume.ShowDialog() ?? false) == false)
+                if (false == (newVolume.ShowDialog() ?? false))
                 {
                     // user cancelled
                     break;
@@ -137,7 +136,8 @@ namespace DoubleFile
 
             Parallel.ForEach(listFiles, strFilename =>
             {
-                if ((null != userCancelled) && userCancelled())
+                if ((null != userCancelled) &&
+                    userCancelled())
                 {
                     return;
                 }
@@ -159,7 +159,8 @@ namespace DoubleFile
                 }
             });
 
-            if ((null != userCancelled) && userCancelled())
+            if ((null != userCancelled) &&
+                userCancelled())
             {
                 return false;
             }
@@ -170,7 +171,8 @@ namespace DoubleFile
                 .OrderBy(lvItem => lvItem.SourcePath)
                 .Aggregate(false, (current, lvItem) =>
             {
-                if ((null != userCancelled) && userCancelled())
+                if ((null != userCancelled) &&
+                    userCancelled())
                 {
                     return false;
                 }

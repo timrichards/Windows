@@ -8,13 +8,13 @@ namespace Template      // prevents smart tag rename command from renaming the t
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         public string ColumnNameHere { get { return marr[0]; } set { SetProperty(0, value); } }
 
-        readonly static string[] marrPropName = new string[] { };
+        protected override string[] PropertyNames { get { return new[] { "" }; } }
+
+        internal override int NumCols { get { return NumCols_; } }
+        internal const int NumCols_ = 0;
 
         internal Template_LVitemVM(Template_ListViewVM LV, string[] arrStr)
             : base(LV, arrStr) { }
 
-        internal const int NumCols_ = 0;
-        internal override int NumCols { get { return NumCols_; } }
-        protected override string[] PropertyNames { get { return marrPropName; } }
     }
 }

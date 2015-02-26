@@ -8,29 +8,32 @@ namespace DoubleFile
     {
         internal bool Unsaved { get; set; }
 
-        internal LV_ProjectVM(GlobalData_Base gd_in = null, LV_ProjectVM lvProjectVM_in = null)
+        internal LV_ProjectVM(GlobalData_Base gd = null, LV_ProjectVM lvProjectVM = null)
         {
-            _gd = gd_in;
+            _gd = gd;
 
-            if (lvProjectVM_in != null)
+            if (null == lvProjectVM)
             {
-                if (_gd == null)
-                {
-                    _gd = lvProjectVM_in._gd;
-                }
-
-                foreach (var lvItemVM in lvProjectVM_in.ItemsCast)
-                {
-                    Add(new LVitem_ProjectVM(lvItemVM), bQuiet: true);
-                }
-
-                Unsaved = lvProjectVM_in.Unsaved;
+                return;
             }
+
+            if (null == _gd)
+            {
+                _gd = lvProjectVM._gd;
+            }
+
+            foreach (var lvItemVM in lvProjectVM.ItemsCast)
+            {
+                Add(new LVitem_ProjectVM(lvItemVM), bQuiet: true);
+            }
+
+            Unsaved = lvProjectVM.Unsaved;
         }
 
         internal bool AlreadyInProject(LVitem_ProjectVM lvCurrentItem, string strFilename = null)
         {
-            bool bAlreadyInProject = (ContainsListingFile(lvCurrentItem, strFilename) != null);
+            bool bAlreadyInProject =
+                (null != ContainsListingFile(lvCurrentItem, strFilename));
 
             if (bAlreadyInProject)
             {
@@ -53,9 +56,10 @@ namespace DoubleFile
 
                 while (true)
                 {
-                    var dlg = lvItemVolumeTemp.WouldSave ?
-                        new WinVolumeNew() :
-                        (WinVolumeEditBase)new WinVolumeEdit();
+                    var dlg =
+                        lvItemVolumeTemp.WouldSave
+                        ? new WinVolumeNew()
+                        : (WinVolumeEditBase)new WinVolumeEdit();
 
                     dlg.LVitemVolumeTemp = new LVitem_ProjectVM(lvItemVolumeTemp);
 
@@ -74,7 +78,7 @@ namespace DoubleFile
 
                     var dlgEdit = dlg as WinVolumeEdit;
 
-                    if (dlgEdit != null)
+                    if (null != dlgEdit)
                     {
                         if (ModifyListingFile(lvItem, lvItemVolumeTemp, dlgEdit.uc_VolumeEdit.DriveLetter))
                         {
@@ -105,7 +109,7 @@ namespace DoubleFile
         {
             var bFileExists = File.Exists(strListingFile) &&
                 (false == strListingFile.StartsWith(ProjectFile.TempPath) ||
-                    FileParse.ValidateFile(strListingFile));
+                FileParse.ValidateFile(strListingFile));
 
             if (bFileExists)
             {
@@ -184,9 +188,9 @@ namespace DoubleFile
                     .Aggregate(Unsaved, (current, lvItem) => 
                 {
                     var bRet =
-                        false == (lvItem.VolumeGroup ?? "").Equals(strLabel);
+                        (false == (lvItem.VolumeGroup ?? "").Equals(strLabel));
 
-                    lvItem.VolumeGroup = dlg.Text;
+                    lvItem.VolumeGroup = strLabel;
                     return bRet || current;
                 });
             }
@@ -252,7 +256,8 @@ namespace DoubleFile
                 string strLine = null;
 
                 while ((bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo) &&
-                    (strLine = reader.ReadLine()) != null)
+                    (null != 
+                    (strLine = reader.ReadLine())))
                 {
                     if (strLine.StartsWith(FileParse.ksLineType_Start))
                     {
@@ -308,13 +313,14 @@ namespace DoubleFile
                 else
                 {
                     MBoxStatic.Assert(99988, false == File.Exists(lvItem_Orig.ListingFile));
+
                     try
                     {
                         File.Delete(lvItem_Orig.ListingFile);
                     }
                     catch (System.Exception e)
                     {
-                        MBoxStatic.ShowDialog("Bad listing file.\n" + (e.GetBaseException() ?? e.InnerException ?? e).Message, "Edit Listing File");
+                        MBoxStatic.ShowDialog("Couldn't overwrite file.\n" + e.GetBaseException().Message, "Edit Listing File");
                         return false;
                     }
                 }
@@ -325,7 +331,8 @@ namespace DoubleFile
                     var buffer = new char[kBufSize];
                     var nRead = 0;
 
-                    while ((nRead = reader.Read(buffer, 0, kBufSize)) > 0)
+                    while (0 <
+                        (nRead = reader.Read(buffer, 0, kBufSize)))
                     {
                         sbOut.Clear();
                         sbOut.Append(buffer, 0, nRead);

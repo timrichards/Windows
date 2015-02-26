@@ -30,7 +30,7 @@ namespace DoubleFile
             InitializeComponent();
 
             m_ownerWindow = ownerWindow;
-            LVprojectVM = new LV_ProjectVM(lvProjectVM_in: lvProjectVM);
+            LVprojectVM = new LV_ProjectVM(lvProjectVM: lvProjectVM);
 
             gd = GlobalData.Reset();
             gd_Tree = new GlobalData_Tree(gd);
@@ -96,7 +96,7 @@ namespace DoubleFile
         {
             if (form1 != null)
             {
-                form1.LVprojectVM = new LV_ProjectVM(lvProjectVM_in: lvProjectVM);
+                form1.LVprojectVM = new LV_ProjectVM(lvProjectVM: lvProjectVM);
                 form1.gd.RestartTreeTimer();
             }
         }

@@ -25,7 +25,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>61</ApplicationRevision>
+    <ApplicationRevision>62</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -147,6 +147,9 @@
     <Compile Include="MVVM\ListView Base\ListViewVM_GenericBase.cs" />
     <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
     <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\WinFileHash_Files.xaml.cs">
+      <DependentUpon>WinFileHash_Files.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UtilProject\LocalMbox.xaml.cs">
       <DependentUpon>LocalMbox.xaml</DependentUpon>
     </Compile>
@@ -226,8 +229,8 @@
     </Compile>
     <Compile Include="UtilAnalysis_FileHash\MVVM\WinFileHashVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\WinFileHashVM_Impl.cs" />
-    <Compile Include="UtilAnalysis_FileHash\WinAnalysis_FileHash.xaml.cs">
-      <DependentUpon>WinAnalysis_FileHash.xaml</DependentUpon>
+    <Compile Include="UtilAnalysis_FileHash\WinFileHash_Folders.xaml.cs">
+      <DependentUpon>WinFileHash_Folders.xaml</DependentUpon>
     </Compile>
     <Compile Include="UtilProject\GlobalData.cs">
       <SubType>Code</SubType>
@@ -390,6 +393,10 @@
     <Resource Include="ic_people_black_18dp.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="UtilAnalysis_FileHash\WinFileHash_Files.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UtilProject\LocalMbox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -398,7 +405,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UtilAnalysis_FileHash\WinAnalysis_FileHash.xaml">
+    <Page Include="UtilAnalysis_FileHash\WinFileHash_Folders.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

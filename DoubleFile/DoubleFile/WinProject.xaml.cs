@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace DoubleFile
 {
@@ -22,7 +21,6 @@ namespace DoubleFile
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             var lvProjectVM = new LV_ProjectVM(_gd, LVprojectVM);
-
             var win = new WinProjectVM(_gd, lvProjectVM);
 
             form_lvProject.DataContext = lvProjectVM;
@@ -59,7 +57,7 @@ namespace DoubleFile
             
             if ((null != lvProjectVM) &&
                 lvProjectVM.Unsaved &&
-                ((null == LVprojectVM ) || (false == LVprojectVM.Equals(lvProjectVM))) &&
+                ((null == LVprojectVM) || (false == LVprojectVM.Equals(lvProjectVM))) &&
                 (MessageBoxResult.Cancel ==
                 MBoxStatic.ShowDialog(WinProjectVM.UnsavedWarning, "Close Project", MessageBoxButton.OKCancel)))
             {

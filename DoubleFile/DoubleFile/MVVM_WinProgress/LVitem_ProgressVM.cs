@@ -35,9 +35,7 @@ namespace DoubleFile
             Remaining { get { return marr[5]; } set { SetProperty(5, value); } }
 
         protected override string[]
-            PropertyNames { get { return marrPropName; } }
-        readonly static string[]
-            marrPropName = { "Nickname", "SourcePath", _ksProgress, _ksIndeterminate, _ksProgressState, "Remaining" };
+            PropertyNames { get { return new[] { "Nickname", "SourcePath", _ksProgress, _ksIndeterminate, _ksProgressState, "Remaining" }; } }
 
         internal override int
             NumCols { get { return NumCols_; } }

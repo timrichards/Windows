@@ -1,15 +1,13 @@
 ﻿using System.Windows.Forms;
 using System;
 using System.IO;
-using System.Linq.Expressions;
-using System.Reflection;
 
 namespace DoubleFile
 {
     class UtilAnalysis_DirList : FileParse
     {
         internal static void Closure(Action action) { action(); }
-        internal static T Closure<T>(Func<T> action) { return (T)action(); }
+        internal static T Closure<T>(Func<T> action) { return action(); }
 
         internal static void UIthread(Control dispatcher, Action action, object[] args = null)
         {

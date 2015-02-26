@@ -15,9 +15,8 @@ namespace DoubleFile
         public string DriveModel { get { return marr[6]; } set { SetProperty(6, value); } }
         public string DriveSerial { get { return marr[7]; } set { SetProperty(7, value); } }
         public string ScannedLength { get { return UtilAnalysis_DirList.FormatSize(marr[8]); } set { SetProperty(8, value); } }
-        
-        protected override string[] PropertyNames { get { return marrPropName; } }
-        readonly static string[] marrPropName = new string[] { "Nickname", "SourcePath", "ListingFileNoPath", "Status", "IncludeYN", "VolumeGroup", "DriveModel", "DriveSerial", "ScannedLength" };
+
+        protected override string[] PropertyNames { get { return new[] { "Nickname", "SourcePath", "ListingFileNoPath", "Status", "IncludeYN", "VolumeGroup", "DriveModel", "DriveSerial", "ScannedLength" }; } }
 
         internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 9;

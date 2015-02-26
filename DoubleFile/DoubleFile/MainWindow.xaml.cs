@@ -222,17 +222,17 @@ namespace DoubleFile
 
         private void Button_FileHashExplorer_Click(object sender, RoutedEventArgs e)
         {
-            if ((null == _winAnalysis_FileHash) || (_winAnalysis_FileHash.IsClosed))
+            if ((null == _winFileHash_Folders) || (_winFileHash_Folders.IsClosed))
             {
-                (_winAnalysis_FileHash = new WinAnalysis_FileHash(_gd, LVprojectVM)).Show();
-                _winAnalysis_FileHash.Closed += (o, a) => _winAnalysis_FileHash = null;
+                (_winFileHash_Folders = new WinFileHash_Folders(_gd, LVprojectVM)).Show();
+                _winFileHash_Folders.Closed += (o, a) => _winFileHash_Folders = null;
             }
             else
-                _winAnalysis_FileHash.Activate();
+                _winFileHash_Folders.Activate();
         }
 
         GlobalData_Base _gd = null;
         readonly GlobalData _gd_old = null;
-        WinAnalysis_FileHash _winAnalysis_FileHash = null;
+        WinFileHash_Folders _winFileHash_Folders = null;
     }
 }

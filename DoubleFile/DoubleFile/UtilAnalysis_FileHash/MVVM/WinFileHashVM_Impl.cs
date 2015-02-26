@@ -132,12 +132,17 @@ namespace DoubleFile
             }
 
             TreeCleanup();
+            UString.GenerationEnded();
             _tvVM.SetData(_listRootNodes);
             _winProgress.CloseIfNatural();
-            UString.GenerationEnded();
 
             // saving memory here.
             _dictNodes = null;
+
+            while (false == _winProgress.IsClosed)
+                System.Threading.Thread.Sleep(200);
+
+            UtilProject.UIthread(() => (_winFileHash_Files = new WinFileHash_Files()).Show());
         }
 
         void DoTree(bool bKill = false)
@@ -220,5 +225,6 @@ namespace DoubleFile
         const string _ksFolderTreeKey = "Creating folder tree browser";
 
         bool _bFileDictDone = false;
+        WinFileHash_Files _winFileHash_Files = null;
     }
 }

@@ -3,11 +3,11 @@
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinAnalysis_FileHash.xaml
+    /// Interaction logic for WinFileHash_Folders.xaml
     /// </summary>
-    public partial class WinAnalysis_FileHash
+    public partial class WinFileHash_Folders
     {
-        internal WinAnalysis_FileHash(GlobalData_Base gd, LV_ProjectVM lvProjectVM)
+        internal WinFileHash_Folders(GlobalData_Base gd, LV_ProjectVM lvProjectVM)
         {
             InitializeComponent();
             _gd = gd;

@@ -25,18 +25,18 @@ namespace DoubleFile
                 action();
         }
 
-        internal static object UIthread<T>(Control dispatcher, Func<T> action)
+        internal static T UIthread<T>(Control dispatcher, Func<T> action)
         {
             if ((null == dispatcher) ||
                 (dispatcher.IsDisposed))
             {
-                return null;
+                return default(T);
             }
 
             try
             {
                 return (dispatcher.InvokeRequired)
-                    ? dispatcher.Invoke(action)
+                    ? (T)dispatcher.Invoke(action)
                     : action();
             }
             catch (ObjectDisposedException e)
@@ -61,7 +61,7 @@ namespace DoubleFile
 #endif
             }
 
-            return null;
+            return default(T);
         }
 
         internal static string DecodeAttributes(string strAttr)

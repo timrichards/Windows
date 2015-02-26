@@ -22,12 +22,12 @@ namespace DoubleFile
                 owner.Dispatcher.Invoke(action);
         }
 
-        internal static object UIthread<T>(Func<T> action, Control owner = null)
+        internal static T UIthread<T>(Func<T> action, Control owner = null)
         {
             if (null == owner)
             {
                 if (GlobalData.static_MainWindow.IsClosed)
-                    return null;
+                    return default(T);
 
                 owner = GlobalData.static_MainWindow;
             }
@@ -37,7 +37,7 @@ namespace DoubleFile
                 owner.Dispatcher.HasShutdownStarted ||
                 owner.Dispatcher.HasShutdownFinished)
             {
-                return null;
+                return default(T);
             }
 
             return

@@ -1,31 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 
 namespace DoubleFile
 {
     static class UtilColor
     {
-        readonly static internal int Empty = Color.Empty.ToArgb();
-        readonly static internal int White = Color.White.ToArgb();
-        readonly static internal int Blue = Color.Blue.ToArgb();
-        readonly static internal int DarkBlue = Color.DarkBlue.ToArgb();
-        readonly static internal int DarkGray = Color.DarkGray.ToArgb();
-        readonly static internal int DarkOrange = Color.DarkOrange.ToArgb();
-        readonly static internal int DarkRed = Color.DarkRed.ToArgb();
-        readonly static internal int DarkSlateGray = Color.DarkSlateGray.ToArgb();
-        readonly static internal int Firebrick = Color.Firebrick.ToArgb();
-        readonly static internal int LightGoldenrodYellow = Color.LightGoldenrodYellow.ToArgb();
-        readonly static internal int LightGray = Color.LightGray.ToArgb();
-        readonly static internal int MediumSpringGreen = Color.MediumSpringGreen.ToArgb();
-        readonly static internal int MediumVioletRed = Color.MediumVioletRed.ToArgb();
-        readonly static internal int OliveDrab = Color.OliveDrab.ToArgb();
-        readonly static internal int Red = Color.Red.ToArgb();
-        readonly static internal int Snow = Color.Snow.ToArgb();
-        readonly static internal int SteelBlue = Color.SteelBlue.ToArgb();
+        internal static int Empty { get { return Color.Empty.ToArgb(); } }
+        internal static int White { get { return Color.White.ToArgb(); } }
+        internal static int Blue { get { return Color.Blue.ToArgb(); } }
+        internal static int DarkBlue { get { return Color.DarkBlue.ToArgb(); } }
+        internal static int DarkGray { get { return Color.DarkGray.ToArgb(); } }
+        internal static int DarkOrange { get { return Color.DarkOrange.ToArgb(); } }
+        internal static int DarkRed { get { return Color.DarkRed.ToArgb(); } }
+        internal static int DarkSlateGray { get { return Color.DarkSlateGray.ToArgb(); } }
+        internal static int Firebrick { get { return Color.Firebrick.ToArgb(); } }
+        internal static int LightGoldenrodYellow { get { return Color.LightGoldenrodYellow.ToArgb(); } }
+        internal static int LightGray { get { return Color.LightGray.ToArgb(); } }
+        internal static int MediumSpringGreen { get { return Color.MediumSpringGreen.ToArgb(); } }
+        internal static int MediumVioletRed { get { return Color.MediumVioletRed.ToArgb(); } }
+        internal static int OliveDrab { get { return Color.OliveDrab.ToArgb(); } }
+        internal static int Red { get { return Color.Red.ToArgb(); } }
+        internal static int Snow { get { return Color.Snow.ToArgb(); } }
+        internal static int SteelBlue { get { return Color.SteelBlue.ToArgb(); } }
 
-        static internal int Set_ARGB(int fg, int bg)
+        internal static uint
+            CLUT_Mask { get { return 0x000003FF; } }
+        internal static int
+            CLUT_Shift { get { return (int)Math.Log(CLUT_Mask + 1, 2); } }
+
+        internal static int Set_ARGB(int fg, int bg)
         {
             int ret = 0;
 
@@ -34,17 +38,10 @@ namespace DoubleFile
             return ret;
         }
 
-        static internal int GetFG_ARGB(int n) { return CLUT[(n & knCLUT_FGmask)]; }
-        static internal int GetBG_ARGB(int n) { return CLUT[(n & knCLUT_BGmask) >> 5]; }
-        static internal int SetFG_ARGB(ref int n, int argb) { return n = (int)(n & knCLUT_BGmask) + RevCLUT[argb]; }
-        static internal int SetBG_ARGB(ref int n, int argb) { return n = (int)(n & knCLUT_FGmask) + (RevCLUT[argb] << 5); }
-
-        readonly static int[] CLUT = new int[knNumColors]
-        {
-            Empty, White, Blue, DarkBlue, DarkGray, DarkOrange, DarkRed, DarkSlateGray,
-            Firebrick, LightGoldenrodYellow, LightGray, MediumSpringGreen, MediumVioletRed,
-            OliveDrab, Red, Snow, SteelBlue
-        };
+        internal static int GetFG_ARGB(int n) { return CLUT[(n & _knCLUT_FGmask)]; }
+        internal static int GetBG_ARGB(int n) { return CLUT[(n & _knCLUT_BGmask) >> 5]; }
+        internal static int SetFG_ARGB(ref int n, int argb) { return n = (int)(n & _knCLUT_BGmask) + _RevCLUT[argb]; }
+        internal static int SetBG_ARGB(ref int n, int argb) { return n = (int)(n & _knCLUT_FGmask) + (_RevCLUT[argb] << 5); }
 
         internal static System.Windows.Media.Brush ARGBtoBrush(int nFormsARGB)
         {
@@ -55,37 +52,46 @@ namespace DoubleFile
             );
         }
 
+        readonly static int[] CLUT = new int[_knNumColors]
+        {
+            Empty, White, Blue, DarkBlue, DarkGray, DarkOrange, DarkRed, DarkSlateGray,
+            Firebrick, LightGoldenrodYellow, LightGray, MediumSpringGreen, MediumVioletRed,
+            OliveDrab, Red, Snow, SteelBlue
+        };
+
         static UtilColor()
         {
             int nIx = 0;
 
-            RevCLUT[Empty] = nIx++;
-            RevCLUT[White] = nIx++;
-            RevCLUT[Blue] = nIx++;
-            RevCLUT[DarkBlue] = nIx++;
-            RevCLUT[DarkGray] = nIx++;
-            RevCLUT[DarkOrange] = nIx++;
-            RevCLUT[DarkRed] = nIx++;
-            RevCLUT[DarkSlateGray] = nIx++;
-            RevCLUT[Firebrick] = nIx++;
-            RevCLUT[LightGoldenrodYellow] = nIx++;
-            RevCLUT[LightGray] = nIx++;
-            RevCLUT[MediumSpringGreen] = nIx++;
-            RevCLUT[MediumVioletRed] = nIx++;
-            RevCLUT[OliveDrab] = nIx++;
-            RevCLUT[Red] = nIx++;
-            RevCLUT[Snow] = nIx++;
-            RevCLUT[SteelBlue] = nIx++;
+            _RevCLUT[Empty] = nIx++;
+            _RevCLUT[White] = nIx++;
+            _RevCLUT[Blue] = nIx++;
+            _RevCLUT[DarkBlue] = nIx++;
+            _RevCLUT[DarkGray] = nIx++;
+            _RevCLUT[DarkOrange] = nIx++;
+            _RevCLUT[DarkRed] = nIx++;
+            _RevCLUT[DarkSlateGray] = nIx++;
+            _RevCLUT[Firebrick] = nIx++;
+            _RevCLUT[LightGoldenrodYellow] = nIx++;
+            _RevCLUT[LightGray] = nIx++;
+            _RevCLUT[MediumSpringGreen] = nIx++;
+            _RevCLUT[MediumVioletRed] = nIx++;
+            _RevCLUT[OliveDrab] = nIx++;
+            _RevCLUT[Red] = nIx++;
+            _RevCLUT[Snow] = nIx++;
+            _RevCLUT[SteelBlue] = nIx++;
 
-            MBoxStatic.Assert(99957, nIx == knNumColors);
+            MBoxStatic.Assert(99957, nIx == _knNumColors);
+            MBoxStatic.Assert(99910, 16 > CLUT_Shift);
         }
 
-        const int knNumColors = 17;
-
-        const uint knCLUT_FGmask = 0x0000001F;
-        const uint knCLUT_BGmask = knCLUTmask - knCLUT_FGmask;
-        internal const uint knCLUTmask = 0x000003FF;
-
-        static Dictionary<int, int> RevCLUT = new Dictionary<int, int>();
+        const int
+            _knNumColors = 17;
+        const uint
+            _knCLUT_FGmask = 0x0000001F;
+        static readonly uint
+            _knCLUT_BGmask = CLUT_Mask - _knCLUT_FGmask;
+        static Dictionary<int, int>
+            _RevCLUT = new Dictionary<int, int>();
     }
 }

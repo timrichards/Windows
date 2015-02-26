@@ -23,8 +23,8 @@ namespace DoubleFile
                     strLength = asKey[1];
                 }
 
-                m_hash = new HashStruct(strHash);
-                m_nLength = ulong.Parse(strLength);
+                _hash = new HashStruct(strHash);
+                _nLength = ulong.Parse(strLength);
             }
 
             public int CompareTo(object obj)
@@ -52,35 +52,35 @@ namespace DoubleFile
                 // overflow mixes the bits
                 int nHashCode = 37;         // prime
                 nHashCode *= 397;       // prime
-                nHashCode += m_hash.GetHashCode();
+                nHashCode += _hash.GetHashCode();
                 nHashCode *= 397;
-                nHashCode += (int)m_nLength;
+                nHashCode += (int)_nLength;
                 nHashCode *= 397;
-                nHashCode += (int)(m_nLength >> 32);
+                nHashCode += (int)(_nLength >> 32);
                 nHashCode *= 397;
                 return nHashCode;
             }
 
             public override string ToString()
             {
-                return m_hash + " " + m_nLength;
+                return _hash + " " + _nLength;
             }
 
             public static bool operator ==(FileKeyStruct x, FileKeyStruct y)
             {
-                if (x.m_nLength != y.m_nLength)
+                if (x._nLength != y._nLength)
                     return false;
 
-                return (x.m_hash == y.m_hash);
+                return (x._hash == y._hash);
             }
 
             public static bool operator >(FileKeyStruct x, FileKeyStruct y)
             {
-                if (x.m_nLength < y.m_nLength) return false;
-                if (x.m_nLength > y.m_nLength) return true;
+                if (x._nLength < y._nLength) return false;
+                if (x._nLength > y._nLength) return true;
 
-                if (x.m_hash < y.m_hash) return false;
-                if (x.m_hash > y.m_hash) return true;
+                if (x._hash < y._hash) return false;
+                if (x._hash > y._hash) return true;
 
                 return false;
             }
@@ -90,8 +90,8 @@ namespace DoubleFile
             public static bool operator >=(FileKeyStruct x, FileKeyStruct y) { return ((x > y) || (x == y)); }
             public static bool operator <=(FileKeyStruct x, FileKeyStruct y) { return ((x > y) == false); }
 
-            readonly HashStruct m_hash;
-            readonly ulong m_nLength;
+            readonly HashStruct _hash;
+            readonly ulong _nLength;
         }
     }
 }

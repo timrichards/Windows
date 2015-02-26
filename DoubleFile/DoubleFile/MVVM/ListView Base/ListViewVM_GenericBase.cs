@@ -10,7 +10,7 @@ namespace DoubleFile
         internal delegate IEnumerable<T> EnumerableQuery();
         internal EnumerableQuery Selected = () => { DesignModeOK(); return null; };
 
-        internal IEnumerable<T> ItemsCast { get { return m_items.Cast<T>(); } }
+        internal IEnumerable<T> ItemsCast { get { return _items.Cast<T>(); } }
 
         public virtual bool Equals(ListViewVM_GenericBase<T> other)
         {

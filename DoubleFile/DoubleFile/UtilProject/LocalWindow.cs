@@ -53,7 +53,9 @@ namespace DoubleFile
             };
 
             Activated += (o, e) => notTopDialog(activateTopDialog);
-            Closing += (o, e) => notTopDialog(() => e.Cancel = true);   // just in case
+
+            if (false == (this is WinProgress))
+                Closing += (o, e) => notTopDialog(() => e.Cancel = true);   // just in case
 
             // Keep this around so you see how it's done
             // Icon = BitmapFrame.Create(new Uri(@"pack://application:,,/Resources/ic_people_black_18dp.png"));

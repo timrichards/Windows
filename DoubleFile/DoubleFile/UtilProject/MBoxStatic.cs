@@ -29,7 +29,7 @@ namespace DoubleFile
             }
 
             if ((static_nLastAssertLoc == nLocation) &&
-                ((DateTime.Now - static_dtLastAssert).Seconds < 1))
+                (1 > (DateTime.Now - static_dtLastAssert).Seconds))
             {
                 return false;
             }

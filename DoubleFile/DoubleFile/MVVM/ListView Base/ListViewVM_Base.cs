@@ -4,9 +4,9 @@ namespace DoubleFile
 {
     abstract class ListViewVM_Base : ObservableObject_OwnerWindow
     {
-        internal BoolAction
+        internal System.Func<bool>
             SelectedOne = () => { DesignModeOK(); return false; };
-        internal BoolAction
+        internal System.Func<bool>
             SelectedAny = () => { DesignModeOK(); return false; };
 
         public ObservableCollection<ListViewItemVM_Base>

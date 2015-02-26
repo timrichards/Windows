@@ -118,7 +118,7 @@ namespace DoubleFile
             }
         }
 
-        internal bool OpenListingFiles(IEnumerable<string> listFiles, bool bClearItems = false, BoolAction userCancelled = null)
+        internal bool OpenListingFiles(IEnumerable<string> listFiles, bool bClearItems = false, System.Func<bool> userCancelled = null)
         {
             var sbBadFiles = new System.Text.StringBuilder();
             var bMultiBad = true;
@@ -161,7 +161,7 @@ namespace DoubleFile
                 return false;
             }
 
-            UtilProject.UIthread(() => _lvVM.Items.Clear());
+            UtilProject.UIthread(_lvVM.Items.Clear);
 
             var bOpenedFiles = listItems
                 .OrderBy(lvItem => lvItem.SourcePath)

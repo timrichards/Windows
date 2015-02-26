@@ -3,9 +3,6 @@ using System.Windows.Controls;
 
 namespace DoubleFile
 {
-    delegate bool BoolAction();
-    delegate string StringAction();
-
     static internal class UtilProject
     {
         static internal void WriteLine(string str = null)
@@ -15,43 +12,38 @@ namespace DoubleFile
 #endif
         }
 
-        internal static object UIthread(Action action, object[] args = null)
+        internal static void UIthread(Action action)
         {
-            return UIthread(GlobalData.static_MainWindow, action as Delegate, args);
+            var owner = GlobalData.static_MainWindow;
+
+            if (owner.Dispatcher.CheckAccess())
+                action();
+            else
+                owner.Dispatcher.Invoke(action);
         }
 
-        internal static object UIthread(BoolAction action, object[] args = null)
+        internal static object UIthread<T>(System.Func<T> action, Control owner = null)
         {
-            return UIthread(GlobalData.static_MainWindow, action as Delegate, args);
-        }
+            if (null == owner)
+            {
+                if (GlobalData.static_MainWindow.IsClosed)
+                    return null;
 
-        internal static object UIthread(Control owner, Delegate action, object[] args = null)
-        {
-            if (owner == null)
+                owner = GlobalData.static_MainWindow;
+            }
+
+            if ((null == owner) ||
+                (null == owner.Dispatcher) ||
+                owner.Dispatcher.HasShutdownStarted ||
+                owner.Dispatcher.HasShutdownFinished)
             {
                 return null;
             }
 
-            if (false == owner.Dispatcher.CheckAccess())
-            {
-                return (args == null)
-                    ? owner.Dispatcher.Invoke(action)
-                    : owner.Dispatcher.Invoke(action, (object) args);
-            }
-
-            var action1 = action as Action;
-
-            if (action1 != null)
-            {
-                action1();
-                return null;
-            }
-
-            var boolAction = action as BoolAction;
-
-            return boolAction != null
-                ? boolAction()
-                : action.DynamicInvoke(args); // late-bound and slow
+            return
+                owner.Dispatcher.CheckAccess()
+                ? action()
+                : owner.Dispatcher.Invoke(action);      // cancellationToken? timeout?
         }
     }
 }

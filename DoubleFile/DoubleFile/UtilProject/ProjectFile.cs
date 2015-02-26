@@ -13,7 +13,7 @@ namespace DoubleFile
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     class ProjectFile
     {
-        internal static event StringAction OnSavingProject = null;
+        internal static event System.Func<string> OnSavingProject = null;
         internal static event Action OnOpenedProject = null;
 
         internal static string TempPath { get { return System.IO.Path.GetTempPath() + @"DoubleFile\"; } }
@@ -35,7 +35,7 @@ namespace DoubleFile
             return process;
         }
 
-        internal void OpenProject(string strProjectFilename, Action<IEnumerable<string>, bool, BoolAction> openListingFiles)
+        internal void OpenProject(string strProjectFilename, Action<IEnumerable<string>, bool, System.Func<bool>> openListingFiles)
         {
             OpenProject_(strProjectFilename, openListingFiles,
                 Init(new Process()))
@@ -43,7 +43,7 @@ namespace DoubleFile
         }
 
         Process OpenProject_(string strProjectFilename,
-            Action<IEnumerable<string>, bool, BoolAction> openListingFiles,
+            Action<IEnumerable<string>, bool, System.Func<bool>> openListingFiles,
             Process process)
         {
             if (Directory.Exists(TempPath))                     // close box/cancel/undo
@@ -108,7 +108,7 @@ namespace DoubleFile
                 if (false == _winProgress.IsClosed)
                 {
                     _winProgress.Aborted = true;
-                    UtilProject.UIthread(() => _winProgress.Close());
+                    UtilProject.UIthread(_winProgress.Close);
                 }
                 
                 _bProcessing = false;
@@ -387,7 +387,7 @@ namespace DoubleFile
             if (false == _winProgress.IsClosed)
             {
                 _winProgress.Aborted = true;
-                UtilProject.UIthread(() => _winProgress.Close());
+                UtilProject.UIthread(_winProgress.Close);
             }
 
             SDL_Timer tmr = null;

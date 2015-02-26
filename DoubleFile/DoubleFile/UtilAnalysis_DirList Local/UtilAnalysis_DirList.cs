@@ -9,7 +9,7 @@ namespace DoubleFile
     class UtilAnalysis_DirList : FileParse
     {
         internal static void Closure(Action action) { action(); }
-        internal static bool Closure(BoolAction action) { return action(); }
+        internal static bool Closure(System.Func<bool> action) { return action(); }
 
         internal static object UIthread(Control dispatcher, Action action, object[] args = null)
         {
@@ -41,7 +41,7 @@ namespace DoubleFile
                 }
                 else
                 {
-                    var boolAction = action as BoolAction;
+                    var boolAction = action as System.Func<bool>;
 
                     return (boolAction != null)
                         ? boolAction()

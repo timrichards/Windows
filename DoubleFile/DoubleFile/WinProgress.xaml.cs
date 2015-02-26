@@ -13,7 +13,7 @@ namespace DoubleFile
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     partial class WinProgress
     {
-        internal BoolAction WindowClosingCallback { get; set; }
+        internal System.Func<bool> WindowClosingCallback { get; set; }
 
         internal WinProgress()
         {
@@ -98,7 +98,7 @@ namespace DoubleFile
             }
 
             Aborted = true;
-            UtilProject.UIthread(() => Close());
+            UtilProject.UIthread(Close);
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -141,7 +141,7 @@ namespace DoubleFile
                 if ((bool)UtilProject.UIthread(windowClosingCallback))
                 {
                     Aborted = true;
-                    UtilProject.UIthread(() => Close());
+                    UtilProject.UIthread(Close);
                 }
                 else
                 {

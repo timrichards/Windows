@@ -279,7 +279,7 @@ namespace DoubleFile
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal void InterruptTreeTimerWithAction(BoolAction boolAction)
+        internal void InterruptTreeTimerWithAction(System.Func<bool> boolAction)
         {
             bool bTimer = m_tmrDoTree.Enabled;
 

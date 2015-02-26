@@ -94,7 +94,7 @@ namespace DoubleFile
             if (_listRootNodes.IsEmpty())
             {
                 _winProgress.Aborted = true;
-                UtilProject.UIthread(() => _winProgress.Close());
+                UtilProject.UIthread(_winProgress.Close);
                 return;
             }
 

@@ -175,7 +175,7 @@ namespace DoubleFile
                     return false;
                 }
 
-                return (bool)UtilProject.UIthread(() => _lvVM.NewItem(lvItem)) || current;
+                return UtilProject.UIthread(() => _lvVM.NewItem(lvItem)) || current;
             });
 
             if (sbBadFiles.Length > 0)

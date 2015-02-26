@@ -21,9 +21,7 @@ namespace DoubleFile
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             var bOpenProject = (null == LVprojectVM);
-            var lvProjectVM = LVprojectVM ?? new LV_ProjectVM(_gd);
-
-            LVprojectVM = null;         // only one representation of state at a time
+            var lvProjectVM = new LV_ProjectVM(_gd, LVprojectVM);
 
             var win = new WinProjectVM(_gd, lvProjectVM);
 
@@ -59,8 +57,10 @@ namespace DoubleFile
 
             var lvProjectVM = form_lvProject.DataContext as LV_ProjectVM;
             
-            if ((lvProjectVM != null) && lvProjectVM.Unsaved
-                && (MessageBoxResult.Cancel ==
+            if ((null != lvProjectVM) &&
+                lvProjectVM.Unsaved &&
+                ((null == LVprojectVM ) || (false == LVprojectVM.Equals(lvProjectVM))) &&
+                (MessageBoxResult.Cancel ==
                 MBoxStatic.ShowDialog(WinProjectVM.UnsavedWarning, "Close Project", MessageBoxButton.OKCancel)))
             {
                 e.Cancel = true;

@@ -136,7 +136,7 @@ namespace DoubleFile
             }
             else
             {
-                volumes = new WinProject(_gd, new LV_ProjectVM(_gd, LVprojectVM));
+                volumes = new WinProject(_gd, LVprojectVM);
             }
 
             if (false == (volumes.ShowDialog() ?? false))

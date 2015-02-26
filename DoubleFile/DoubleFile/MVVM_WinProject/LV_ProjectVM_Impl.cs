@@ -177,9 +177,18 @@ namespace DoubleFile
 
             if (dlg.ShowDialog() ?? false)
             {
-                Selected()
-                    .ForEach(lvItem => lvItem.VolumeGroup = dlg.Text);
-                Unsaved = true;
+                var strLabel = dlg.Text.Trim();
+
+                Unsaved =
+                    Selected()
+                    .Aggregate(Unsaved, (current, lvItem) => 
+                {
+                    var bRet =
+                        false == (lvItem.VolumeGroup ?? "").Equals(strLabel);
+
+                    lvItem.VolumeGroup = dlg.Text;
+                    return bRet || current;
+                });
             }
         }
 

@@ -17,6 +17,12 @@ namespace DoubleFile
         private void BtnOK_Click(object sender, RoutedEventArgs e)
         {
             LocalDialogResult = true;
+            CloseIfSimulatingModal();
+        }
+
+        private void BtnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            CloseIfSimulatingModal();
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)

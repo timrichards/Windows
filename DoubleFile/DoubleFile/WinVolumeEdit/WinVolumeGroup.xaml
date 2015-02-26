@@ -22,7 +22,7 @@
 
         <local:UC_VolumeGroup Grid.Row="1" x:Name="form_UC_VolumeGroup" Grid.ColumnSpan="999"/>
 
-        <Button Grid.Column="3" Content="OK" Grid.Row="2" Width="75" Height="Auto" IsDefault="True" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="BtnOK_Click"/>
-        <Button Grid.Column="4" Content="Cancel" Grid.Row="2" Width="75" Grid.ColumnSpan="2" Height="Auto" IsCancel="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+        <Button Grid.Column="3" Content="OK" Click="BtnOK_Click" Grid.Row="2" Width="75" Height="Auto" IsDefault="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+        <Button Grid.Column="4" Content="Cancel" Click="BtnCancel_Click" Grid.Row="2" Width="75" Grid.ColumnSpan="2" Height="Auto" IsCancel="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
     </Grid>
 </local:LocalWindow>

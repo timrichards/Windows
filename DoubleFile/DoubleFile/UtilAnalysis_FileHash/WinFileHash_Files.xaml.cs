@@ -12,6 +12,7 @@ namespace DoubleFile
             _gd = gd;
 
             InitializeComponent();
+            form_grid.Loaded += Grid_Loaded;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)

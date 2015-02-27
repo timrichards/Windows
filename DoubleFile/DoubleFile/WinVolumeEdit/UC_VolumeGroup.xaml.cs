@@ -13,9 +13,10 @@ namespace DoubleFile
         public UC_VolumeGroup()
         {
             InitializeComponent();
+            form_grid.Loaded += Grid_Loaded;
         }
 
-        private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        private void Grid_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
             if (IsWinVolumeGroup)
             {

@@ -14,12 +14,12 @@
         {
             get
             {
-                return new LVitem_ProjectVM(uc_VolumeEdit.LVitemVolumeTemp);
+                return new LVitem_ProjectVM(form_ucVolumeEdit.LVitemVolumeTemp);
             }
 
             set
             {
-                uc_VolumeEdit.LVitemVolumeTemp = new LVitem_ProjectVM(value);
+                form_ucVolumeEdit.LVitemVolumeTemp = new LVitem_ProjectVM(value);
             }
         }
     }

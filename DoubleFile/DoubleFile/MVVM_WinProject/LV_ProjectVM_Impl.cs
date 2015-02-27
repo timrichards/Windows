@@ -80,7 +80,7 @@ namespace DoubleFile
 
                     if (null != dlgEdit)
                     {
-                        if (ModifyListingFile(lvItem, lvItemVolumeTemp, dlgEdit.uc_VolumeEdit.DriveLetter))
+                        if (ModifyListingFile(lvItem, lvItemVolumeTemp, dlgEdit.form_ucVolumeEdit.DriveLetter))
                         {
                             FileParse.ReadHeader(lvItemVolumeTemp.ListingFile, out lvItemVolumeTemp);
                         }

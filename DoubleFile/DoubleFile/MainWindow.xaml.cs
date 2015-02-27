@@ -26,6 +26,13 @@ namespace DoubleFile
             };
 
             InitializeComponent();
+            form_grid.Loaded += Grid_Loaded;
+            Closing += MainWindow_Closing;
+            form_btnViewProject.Click += Button_ViewProject_Click;
+            form_btnOpenProject.Click += Button_OpenProject_Click;
+            form_btnSaveProject.Click += Button_SaveProject_Click;
+            form_btnSearchDirLists.Click += Button_SearchDirLists_Click;
+            form_btnDuplicateFileExplorer.Click += Button_DuplicateFileExplorer_Click;
         }
 
         void FormAnalysis_DirListAction(Action<FormAnalysis_DirList, LV_ProjectVM> action)
@@ -38,6 +45,49 @@ namespace DoubleFile
             action(Analysis_DirListForm, new LV_ProjectVM(_gd, LVprojectVM));
         }
 
+        void ShowProjectWindow(bool bOpenProject = false)
+        {
+            WinProject volumes = null;
+
+            if (bOpenProject)
+            {
+                if ((null != LVprojectVM) &&
+                    LVprojectVM.Unsaved &&
+                    (MessageBoxResult.Cancel ==
+                    MBoxStatic.ShowDialog(WinProjectVM.UnsavedWarning, "Open Project", MessageBoxButton.OKCancel)))
+                {
+                    return;
+                }
+
+                volumes = new WinProject(_gd, bOpenProject: true);
+            }
+            else
+            {
+                volumes = new WinProject(_gd, LVprojectVM);
+            }
+
+            if (false == (volumes.ShowDialog() ?? false))
+            {
+                return;
+            }
+
+            if (null == volumes.LVprojectVM)
+            {
+                return;
+            }
+
+            if (volumes.LVprojectVM.Equals(LVprojectVM))
+            {
+                return;
+            }
+
+            FormAnalysis_DirListAction(FormAnalysis_DirList.RestartTreeTimer);
+            new SaveListingsProcess(_gd, volumes.LVprojectVM);
+            LVprojectVM = volumes.LVprojectVM;
+            _gd.FileDictionary.Clear();
+        }
+
+        #region form_handlers
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             _gd = new GlobalData_Window(this);
@@ -118,48 +168,6 @@ namespace DoubleFile
 #endif
         }
 
-        void ShowProjectWindow(bool bOpenProject = false)
-        {
-            WinProject volumes = null;
-
-            if (bOpenProject)
-            {
-                if ((null != LVprojectVM) &&
-                    LVprojectVM.Unsaved &&
-                    (MessageBoxResult.Cancel ==
-                    MBoxStatic.ShowDialog(WinProjectVM.UnsavedWarning, "Open Project", MessageBoxButton.OKCancel)))
-                {
-                    return;
-                }
-
-                volumes = new WinProject(_gd, bOpenProject: true);
-            }
-            else
-            {
-                volumes = new WinProject(_gd, LVprojectVM);
-            }
-
-            if (false == (volumes.ShowDialog() ?? false))
-            {
-                return;
-            }
-
-            if (null == volumes.LVprojectVM)
-            {
-                return;
-            }
-
-            if (volumes.LVprojectVM.Equals(LVprojectVM))
-            {
-                return;
-            }
-
-            FormAnalysis_DirListAction(FormAnalysis_DirList.RestartTreeTimer);
-            new SaveListingsProcess(_gd, volumes.LVprojectVM);
-            LVprojectVM = volumes.LVprojectVM;
-            _gd.FileDictionary.Clear();
-        }
-
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if ((null != LVprojectVM) &&
@@ -220,7 +228,7 @@ namespace DoubleFile
             }
         }
 
-        private void Button_FileHashExplorer_Click(object sender, RoutedEventArgs e)
+        private void Button_DuplicateFileExplorer_Click(object sender, RoutedEventArgs e)
         {
             if ((null == _winFileHash_Folders) || (_winFileHash_Folders.IsClosed))
             {
@@ -230,6 +238,7 @@ namespace DoubleFile
             else
                 _winFileHash_Folders.Activate();
         }
+        #endregion form_handlers
 
         GlobalData_Base _gd = null;
         readonly GlobalData _gd_old = null;

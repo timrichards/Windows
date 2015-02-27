@@ -7,27 +7,14 @@ namespace DoubleFile
     /// </summary>
     partial class WinVolumeGroup
     {
-        public string Text { get { return form_UC_VolumeGroup.Text; } set { form_UC_VolumeGroup.Text = value; } }
+        public string Text { get { return form_ucVolumeGroup.Text; } set { form_ucVolumeGroup.Text = value; } }
 
         public WinVolumeGroup()
         {
             InitializeComponent();
-        }
-
-        private void BtnOK_Click(object sender, RoutedEventArgs e)
-        {
-            LocalDialogResult = true;
-            CloseIfSimulatingModal();
-        }
-
-        private void BtnCancel_Click(object sender, RoutedEventArgs e)
-        {
-            CloseIfSimulatingModal();
-        }
-
-        private void Grid_Loaded(object sender, RoutedEventArgs e)
-        {
-            form_UC_VolumeGroup.IsWinVolumeGroup = true;
+            form_grid.Loaded += (o, e) => form_ucVolumeGroup.IsWinVolumeGroup = true;
+            form_btnOK.Click += (o, e) => { LocalDialogResult = true; CloseIfSimulatingModal(); };
+            form_btnCancel.Click += (o, e) => CloseIfSimulatingModal();
         }
     }
 }

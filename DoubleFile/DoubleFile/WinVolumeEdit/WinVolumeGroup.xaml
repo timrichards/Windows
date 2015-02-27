@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
         Title="Edit Volume Group Label" Width="520" MinWidth="470" Height="180"  MinHeight="180" MaxHeight="180">
-    <Grid Loaded="Grid_Loaded">
+    <Grid Name="form_grid">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
             <RowDefinition Height="32"/>
@@ -20,9 +20,9 @@
             <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
 
-        <local:UC_VolumeGroup Grid.Row="1" x:Name="form_UC_VolumeGroup" Grid.ColumnSpan="999"/>
+        <local:UC_VolumeGroup Grid.Row="1" x:Name="form_ucVolumeGroup" Grid.ColumnSpan="999"/>
 
-        <Button Grid.Column="3" Content="OK" Click="BtnOK_Click" Grid.Row="2" Width="75" Height="Auto" IsDefault="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
-        <Button Grid.Column="4" Content="Cancel" Click="BtnCancel_Click" Grid.Row="2" Width="75" Grid.ColumnSpan="2" Height="Auto" IsCancel="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+        <Button Grid.Column="3" Content="OK" Name="form_btnOK" Grid.Row="2" Width="75" Height="Auto" IsDefault="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+        <Button Grid.Column="4" Content="Cancel" Name="form_btnCancel" Grid.Row="2" Width="75" Grid.ColumnSpan="2" Height="Auto" IsCancel="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
     </Grid>
 </local:LocalWindow>

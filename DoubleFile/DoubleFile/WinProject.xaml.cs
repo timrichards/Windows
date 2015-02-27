@@ -12,10 +12,14 @@ namespace DoubleFile
 
         internal WinProject(GlobalData_Base gd_in, LV_ProjectVM lvProjectVM = null, bool bOpenProject = false)
         {
-            InitializeComponent();
             _gd = gd_in;
-            LVprojectVM = lvProjectVM;
             _bOpenProject = bOpenProject;
+            LVprojectVM = lvProjectVM;
+
+            InitializeComponent();
+            form_grid.Loaded += Grid_Loaded;
+            form_btnOK.Click += BtnOK_Click;
+            Closing += WinProject_Closing;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)

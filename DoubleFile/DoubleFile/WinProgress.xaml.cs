@@ -18,6 +18,10 @@ namespace DoubleFile
         internal WinProgress()
         {
             InitializeComponent();
+            form_grid.Loaded += Grid_Loaded;
+            ContentRendered += WinProgress_ContentRendered;
+            Closing += Window_Closing;
+            Closed += Window_Closed;
         }
 
         internal void InitProgress(IReadOnlyList<string> astrNicknames, IReadOnlyList<string> astrPaths)
@@ -101,6 +105,7 @@ namespace DoubleFile
             UtilProject.UIthread(Close);
         }
 
+        #region form_handlers
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             form_lvProgress.DataContext = _lv;
@@ -108,6 +113,12 @@ namespace DoubleFile
             _lv.SelectedOne = () => form_lvProgress.SelectedItems.HasOnlyOne();
             _lv.SelectedAny = () => (false == form_lvProgress.SelectedItems.IsEmptyA());
             _lv.Selected = () => form_lvProgress.SelectedItems.Cast<LVitem_ProgressVM>();
+        }
+
+        private void WinProgress_ContentRendered(object sender, System.EventArgs e)
+        {
+            MinHeight = ActualHeight;
+            MaxHeight = ActualHeight;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -150,16 +161,11 @@ namespace DoubleFile
             }).Start();
         }
 
-        private void WinProgress_ContentRendered(object sender, System.EventArgs e)
-        {
-            MinHeight = ActualHeight;
-            MaxHeight = ActualHeight;
-        }
-
         private void Window_Closed(object sender, System.EventArgs e)
         {
             _lv.Dispose();
         }
+        #endregion form_handlers
 
         readonly LV_ProgressVM _lv = new LV_ProgressVM();
         bool _bClosing = false;

@@ -13,8 +13,10 @@ namespace DoubleFile
     /// </summary>
     partial class UC_VolumeEdit : UserControl
     {
+        internal char DriveLetter { get { return (form_EditDriveLetter.Text + "\0")[0]; } }
+
         [Description("User control supports choice"), Category("New or Edit Volume window")]
-        public bool IsVolumeNew
+        internal bool IsVolumeNew
         {
             set
             {
@@ -36,9 +38,13 @@ namespace DoubleFile
         public UC_VolumeEdit()
         {
             InitializeComponent();
+            form_grid.Loaded += Grid_Loaded;
+            form_EditSourcePath.LostFocus += form_EditSourcePath_LostFocus;
+            form_EditDriveLetter.PreviewKeyDown += form_EditDriveLetter_PreviewKeyDown;
+            form_EditListingFile.LostFocus += form_EditListingFile_LostFocus;
+            form_btnOK.Click += BtnOK_Click;
+            form_btnCancel.Click += BtnCancel_Click;
         }
-
-        internal char DriveLetter { get { return (form_EditDriveLetter.Text + "\0")[0]; } }
 
         internal LVitem_ProjectVM LVitemVolumeTemp
         {
@@ -48,7 +54,7 @@ namespace DoubleFile
                     form_EditNickname.Text, form_EditSourcePath.Text,
                     (IsVolumeNew ? form_EditListingFile.Text : _strListingFile),
                     _strStatus, _strIncludeYN,
-                    form_UC_VolumeGroup.Text, form_EditDriveModel.Text, form_EditDriveSerial.Text
+                    form_ucVolumeGroup.Text, form_EditDriveModel.Text, form_EditDriveSerial.Text
                 });
             }
             set
@@ -66,7 +72,7 @@ namespace DoubleFile
                 if (astr.Length > i) { _strListingFile = value[i++]; form_EditListingFile.Text = (IsVolumeNew ? _strListingFile : Path.GetFileName(_strListingFile)); }
                 if (astr.Length > i) { var s = value[i++]; if (s != null) { _strStatus = s; } }
                 if (astr.Length > i) { var s = value[i++]; if (s != null) { _strIncludeYN = s; } }
-                if (astr.Length > i) { form_UC_VolumeGroup.Text = value[i++]; }
+                if (astr.Length > i) { form_ucVolumeGroup.Text = value[i++]; }
                 if (astr.Length > i) { form_EditDriveModel.Text = value[i++]; }
                 if (astr.Length > i) { form_EditDriveSerial.Text = value[i++]; }
             }
@@ -103,49 +109,6 @@ namespace DoubleFile
             }
         }
 
-        private void Grid_Loaded(object sender, RoutedEventArgs e)
-        {
-            var vm = new UC_VolumeEditVM();
-
-            uc_VolumeEdit.DataContext = vm;
-            vm.IsOKenabled = () => IsOKenabled;
-            vm.SourcePath_CurrentText = () => form_EditSourcePath.Text;
-            vm.ListingFile_CurrentText = () => form_EditListingFile.Text;
-            vm.FromSourcePathDlg = s => form_EditSourcePath.Text = s;
-            vm.FromProbe = (strDriveModel, strDriveSerial) => { form_EditDriveModel.Text = strDriveModel; form_EditDriveSerial.Text = strDriveSerial; };
-            vm.FromListingFileDlg = s => form_EditListingFile.Text = s;
-
-            form_EditDriveLetter.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (o, e1) => { e1.Handled = true; }));
-        }
-
-        private void BtnOK_Click(object sender, RoutedEventArgs e)
-        {
-            if (IsOKenabled)
-            {
-                var window = Window.GetWindow(uc_VolumeEdit) as LocalWindow;
-
-                if (window != null)
-                {
-                    window.LocalDialogResult = true;
-                    window.CloseIfSimulatingModal();
-                }
-            }
-            else
-            {
-                MBoxStatic.Assert(99924, false);
-            }
-        }
-
-        private void BtnCancel_Click(object sender, RoutedEventArgs e)
-        {
-            var window = Window.GetWindow(uc_VolumeEdit) as LocalWindow;
-
-            if (window != null)
-            {
-                window.CloseIfSimulatingModal();
-            }
-        }
-
         static string CapDrive(string strPath)
         {
             var a = strPath.ToCharArray();
@@ -159,34 +122,33 @@ namespace DoubleFile
             return strPath;
         }
 
+        #region form_handlers
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
+            var vm = new UC_VolumeEditVM();
+
+            uc_VolumeEdit.DataContext = vm;
+            vm.IsOKenabled = () => IsOKenabled;
+            vm.SourcePath_CurrentText = () => form_EditSourcePath.Text;
+            vm.ListingFile_CurrentText = () => form_EditListingFile.Text;
+            vm.FromSourcePathDlg = s => form_EditSourcePath.Text = s;
+            vm.FromProbe = (strDriveModel, strDriveSerial) => { form_EditDriveModel.Text = strDriveModel; form_EditDriveSerial.Text = strDriveSerial; };
+            vm.FromListingFileDlg = s => form_EditListingFile.Text = s;
+
+            form_EditDriveLetter.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (o, e1) => { e1.Handled = true; }));
+
+            var textBox = (IsVolumeNew ? form_EditSourcePath : form_EditDriveLetter);
+
+            textBox.Focus();
+            textBox.CaretIndex = int.MaxValue;
+        }
+
         private void form_EditSourcePath_LostFocus(object sender, RoutedEventArgs e)
         {
             if (IsValidSourcePathEdit)
             {
                 form_EditSourcePath.Text = CapDrive(form_EditSourcePath.Text);
             }
-        }
-
-        private void form_EditListingFile_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(form_EditListingFile.Text) ||
-                (false == IsValidListingEdit))
-            {
-                return;
-            }
-
-            var strListingFile = CapDrive(Path.GetFullPath(form_EditListingFile.Text));
-            var strExt = Path.GetExtension(strListingFile) ?? "";
-
-            if ((strExt.Length == 0) || (false ==
-                strExt.Remove(0, 1)
-                .Equals(FileParse.ksFileExt_Listing,
-                StringComparison.InvariantCultureIgnoreCase)))
-            {
-                strListingFile += "." + FileParse.ksFileExt_Listing;
-            }
-
-            form_EditListingFile.Text = strListingFile;
         }
 
         private void form_EditDriveLetter_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -216,13 +178,56 @@ namespace DoubleFile
             }
         }
 
-        private void uc_VolumeEdit_Loaded(object sender, RoutedEventArgs e)
+        private void form_EditListingFile_LostFocus(object sender, RoutedEventArgs e)
         {
-            var textBox = (IsVolumeNew ? form_EditSourcePath : form_EditDriveLetter);
+            if (string.IsNullOrWhiteSpace(form_EditListingFile.Text) ||
+                (false == IsValidListingEdit))
+            {
+                return;
+            }
 
-            textBox.Focus();
-            textBox.CaretIndex = int.MaxValue;
+            var strListingFile = CapDrive(Path.GetFullPath(form_EditListingFile.Text));
+            var strExt = Path.GetExtension(strListingFile) ?? "";
+
+            if ((strExt.Length == 0) || (false ==
+                strExt.Remove(0, 1)
+                .Equals(FileParse.ksFileExt_Listing,
+                StringComparison.InvariantCultureIgnoreCase)))
+            {
+                strListingFile += "." + FileParse.ksFileExt_Listing;
+            }
+
+            form_EditListingFile.Text = strListingFile;
         }
+
+        private void BtnOK_Click(object sender, RoutedEventArgs e)
+        {
+            if (IsOKenabled)
+            {
+                var window = Window.GetWindow(uc_VolumeEdit) as LocalWindow;
+
+                if (window != null)
+                {
+                    window.LocalDialogResult = true;
+                    window.CloseIfSimulatingModal();
+                }
+            }
+            else
+            {
+                MBoxStatic.Assert(99924, false);
+            }
+        }
+
+        private void BtnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            var window = Window.GetWindow(uc_VolumeEdit) as LocalWindow;
+
+            if (window != null)
+            {
+                window.CloseIfSimulatingModal();
+            }
+        }
+        #endregion form_handlers
 
         string _strListingFile = null;
         string _strStatus = FileParse.ksNotSaved;

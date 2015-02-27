@@ -3,10 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
         Title="Double File" Height="300" Width="300" MinWidth="300" MinHeight="50"
-        SizeToContent="Height"
-        Closing="Window_Closing" Closed="Window_Closed" ContentRendered="WinProgress_ContentRendered"
-        WindowStyle="ToolWindow">
-    <Grid Loaded="Grid_Loaded">
+        SizeToContent="Height" WindowStyle="ToolWindow">
+    <Grid Name="form_grid">
         <ListView Name="form_lvProgress" IsSynchronizedWithCurrentItem="False"  ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
             <ListView.Resources>
                 <Style TargetType="ListViewItem">

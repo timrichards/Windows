@@ -10,8 +10,8 @@ namespace DoubleFile
     {
         internal string Message
         {
-            get { return Message_.Text; }
-            private set { Message_.Text = value; }
+            get { return form_textBlock_Message.Text; }
+            private set { form_textBlock_Message.Text = value; }
         }
 
         MessageBoxButton Buttons
@@ -23,38 +23,36 @@ namespace DoubleFile
                 switch (_buttons)
                 {
                     case MessageBoxButton.OK:
-                        {
-                            form_btnCancel.Visibility = Visibility.Hidden;
-                            form_btnOK.SetValue(Grid.ColumnProperty, form_btnCancel.GetValue(Grid.ColumnProperty));
-                            break;
-                        }
+                    {
+                        form_btnCancel.Visibility = Visibility.Hidden;
+                        form_btnOK.SetValue(Grid.ColumnProperty, form_btnCancel.GetValue(Grid.ColumnProperty));
+                        break;
+                    }
 
                     case MessageBoxButton.YesNo:
-                        {
-                            form_btnOK.Content = "Yes";
-                            form_btnCancel.Content = "No";
-                            break;
-                        }
+                    {
+                        form_btnOK.Content = "Yes";
+                        form_btnCancel.Content = "No";
+                        break;
+                    }
 
                     case MessageBoxButton.YesNoCancel:
-                        {
-                            MBoxStatic.Assert(99943, false);
-                            break;
-                        }
+                    {
+                        MBoxStatic.Assert(99943, false);
+                        break;
+                    }
                 }
             }
         }
         MessageBoxButton _buttons = MessageBoxButton.OKCancel;
 
-        internal LocalMbox(LocalWindow owner, string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
-            : this(strMessage, strTitle, buttons)
-        {
-            Owner = owner;
-        }
-
         internal LocalMbox(string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
         {
             InitializeComponent();
+            form_grid.Loaded += (o, e) => FlashWindowStatic.Go(this, Once: true);
+            form_btnOK.Click += BtnOK_Click;
+            form_btnCancel.Click += (o, e) => CloseIfSimulatingModal();
+
             Message = strMessage;
 
             if (null != strTitle)
@@ -64,6 +62,12 @@ namespace DoubleFile
                 Buttons = buttons.Value;
         }
 
+        internal LocalMbox(LocalWindow owner, string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
+            : this(strMessage, strTitle, buttons)
+        {
+            Owner = owner;
+        }
+
         internal new MessageBoxResult ShowDialog()
         {
             switch (_buttons)
@@ -71,25 +75,25 @@ namespace DoubleFile
                 case MessageBoxButton.OKCancel:
                 case MessageBoxButton.YesNoCancel:
                     {
-                        Result = MessageBoxResult.Cancel;
+                        _Result = MessageBoxResult.Cancel;
                         break;
                     }
 
                 case MessageBoxButton.OK:
                     {
-                        Result = MessageBoxResult.OK;
+                        _Result = MessageBoxResult.OK;
                         break;
                     }
 
                 case MessageBoxButton.YesNo:
                     {
-                        Result = MessageBoxResult.No;
+                        _Result = MessageBoxResult.No;
                         break;
                     }
             }
 
             base.ShowDialog();
-            return Result;
+            return _Result;
         }
 
         private void BtnOK_Click(object sender, RoutedEventArgs e)
@@ -99,14 +103,14 @@ namespace DoubleFile
                 case MessageBoxButton.OKCancel:
                 case MessageBoxButton.OK:
                     {
-                        Result = MessageBoxResult.OK;
+                        _Result = MessageBoxResult.OK;
                         break;
                     }
 
                 case MessageBoxButton.YesNo:
                 case MessageBoxButton.YesNoCancel:
                     {
-                        Result = MessageBoxResult.Yes;
+                        _Result = MessageBoxResult.Yes;
                         break;
                     }
             }
@@ -118,16 +122,6 @@ namespace DoubleFile
             CloseIfSimulatingModal();
         }
 
-        private void Grid_Loaded(object sender, RoutedEventArgs e)
-        {
-            FlashWindowStatic.Go(this, Once: true);
-        }
-
-        private void BtnCancel_Click(object sender, RoutedEventArgs e)
-        {
-            CloseIfSimulatingModal();
-        }
-
-        MessageBoxResult Result = MessageBoxResult.Cancel;
+        MessageBoxResult _Result = MessageBoxResult.Cancel;
     }
 }

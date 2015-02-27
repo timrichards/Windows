@@ -18,7 +18,8 @@ namespace DoubleFile
                 foreach (var strFile in lsFiles)
                 {
                     var lsDuplicates = gd.FileDictionary.GetDuplicates(strFile, strListingFile);
-                    var strCount = (null != lsDuplicates) ? "" + (lsDuplicates.Count - 1) : "";
+                    var nCount = (null != lsDuplicates) ? (lsDuplicates.Count - 1) : 0;
+                    var strCount = (nCount > 1) ? "" + nCount : "";
                     var asFile = strFile.Split('\t');
 
                     UtilProject.UIthread(() => Add(new LVitem_FileHashVM(new[] { asFile[3], strCount })));

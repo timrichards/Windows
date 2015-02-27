@@ -108,11 +108,8 @@ namespace Local
             _thread = new Thread(() =>
             {
                 string strListingFile = null;
-
                 var nodeDatum = _treeNode.Tag as NodeDatum;
                 var rootNodeDatum = _treeNode.Root().Tag as RootNodeDatum;
-
-                strListingFile = null;
                 IEnumerable<string> lsFiles = null;
 
                 do

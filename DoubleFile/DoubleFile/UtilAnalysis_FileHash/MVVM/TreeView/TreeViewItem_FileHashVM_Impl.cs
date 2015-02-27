@@ -4,7 +4,7 @@ namespace DoubleFile
 {
     partial class TreeViewItem_FileHashVM
     {
-        static internal event System.Action<IReadOnlyList<string[]>> SelectedItemChanged;
+        static internal event System.Action<IEnumerable<string>, string> SelectedItemChanged;
 
         void DoTreeSelect()
         {
@@ -18,9 +18,9 @@ namespace DoubleFile
 
             new Local.TreeSelect(_datum, dictDriveInfo, false, false,
                 (lvItemDetails, itemArray, lvVolDetails, bSecondComparePane, lvFileItem) => { },
-                (lsaFiles) =>
+                (lsFiles, strListingFile) =>
             {
-                SelectedItemChanged(lsaFiles);
+                SelectedItemChanged(lsFiles, strListingFile);
             }
                 ).DoThreadFactory();
         }

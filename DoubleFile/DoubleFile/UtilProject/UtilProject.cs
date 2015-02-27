@@ -14,7 +14,18 @@ namespace DoubleFile
 
         internal static void UIthread(Action action)
         {
+            if (GlobalData.static_MainWindow.IsClosed)
+                return;
+
             var owner = GlobalData.static_MainWindow;
+
+            if ((null == owner) ||
+                (null == owner.Dispatcher) ||
+                owner.Dispatcher.HasShutdownStarted ||
+                owner.Dispatcher.HasShutdownFinished)
+            {
+                return;
+            }
 
             if (owner.Dispatcher.CheckAccess())
                 action();

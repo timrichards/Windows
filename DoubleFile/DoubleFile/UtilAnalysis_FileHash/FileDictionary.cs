@@ -45,6 +45,10 @@ namespace DoubleFile
             }
 
             var asLine = strLine.Split('\t');
+
+            if (10 >= asLine.Length)
+                return null;
+
             var key = new FileKeyStruct(asLine[10], asLine[7]);
             var lsRet = new List<DuplicateStruct>();
 

@@ -14,7 +14,7 @@ namespace Local
         bool bSecondComparePane = false,
         LVitemFileTag lvFileItem = null);
     //delegate void TreeSelectDoneDelegate(bool bSecondComparePane);
-    delegate void TreeSelectDoneDelegate(IReadOnlyList<string[]> strFiles);
+    delegate void TreeSelectDoneDelegate(IEnumerable<string> lsFiles, string strListingFile);
 
     class TreeSelect : UtilAnalysis_DirList
     {
@@ -40,7 +40,9 @@ namespace Local
 
         }
 
-        internal static List<string[]> GetFileList(LocalTreeNode parent, List<ulong> listLength = null)
+        internal static List<string[]> GetFileList(
+            LocalTreeNode parent,
+            List<ulong> listLength = null)
         {
             var nodeDatum = parent.Tag as NodeDatum;
             var rootNodeDatum = parent.Root().Tag as RootNodeDatum;
@@ -53,7 +55,8 @@ namespace Local
                 return listFiles;
             }
 
-            var strFile = rootNodeDatum.StrFile;
+            var strListingFile = rootNodeDatum.StrFile;
+
             var nPrevDir = (int) nodeDatum.nPrevLineNo;
             var nLineNo = (int) nodeDatum.nLineNo;
 
@@ -70,7 +73,7 @@ namespace Local
             ulong nLengthDebug = 0;
 
             foreach (var strFileLine
-                in File.ReadLines(strFile)
+                in File.ReadLines(strListingFile)
                 .Skip(nPrevDir)
                 .Take((nLineNo - nPrevDir - 1)))
             {
@@ -102,7 +105,49 @@ namespace Local
 
         internal Thread DoThreadFactory()
         {
-            _thread = new Thread(() => { _doneCallback(GetFileList(_treeNode)); }) { IsBackground = true };
+            _thread = new Thread(() =>
+            {
+                string strListingFile = null;
+
+                var nodeDatum = _treeNode.Tag as NodeDatum;
+                var rootNodeDatum = _treeNode.Root().Tag as RootNodeDatum;
+
+                strListingFile = null;
+                IEnumerable<string> lsFiles = null;
+
+                do
+                {
+                    if ((null == nodeDatum) ||
+                        (0 == nodeDatum.nLineNo) ||
+                        (null == rootNodeDatum))
+                    {
+                        break;
+                    }
+
+                    strListingFile = rootNodeDatum.StrFile;
+
+                    var nPrevDir = (int)nodeDatum.nPrevLineNo;
+                    var nLineNo = (int)nodeDatum.nLineNo;
+
+                    if (0 == nPrevDir)
+                    {
+                        break;
+                    }
+
+                    if (1 >= (nLineNo - nPrevDir))  // dir has no files
+                    {
+                        break;
+                    }
+
+                    lsFiles =
+                        File.ReadLines(strListingFile)
+                        .Skip(nPrevDir)
+                        .Take((nLineNo - nPrevDir - 1));
+                } while (false);
+
+                _doneCallback(lsFiles, strListingFile);
+            }) { IsBackground = true };
+
             //_thread = new Thread(Go) { IsBackground = true };
             _thread.Start();
             return _thread;

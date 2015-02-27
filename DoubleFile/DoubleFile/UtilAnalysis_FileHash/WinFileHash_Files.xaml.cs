@@ -7,14 +7,18 @@ namespace DoubleFile
     /// </summary>
     public partial class WinFileHash_Files
     {
-        public WinFileHash_Files()
+        internal WinFileHash_Files(GlobalData_Base gd)
         {
+            _gd = gd;
+
             InitializeComponent();
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            DataContext = new LV_FileHashVM();
+            DataContext = new LV_FileHashVM(_gd);
         }
+
+        GlobalData_Base _gd = null;
     }
 }

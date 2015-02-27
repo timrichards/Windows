@@ -1,36 +1,29 @@
 ﻿
+using System.Collections.Generic;
 namespace DoubleFile
 {
     partial class LV_FileHashVM
     {
-        internal LV_FileHashVM(GlobalData_Base gd = null, LV_FileHashVM lvFileHashVM = null)
+        internal LV_FileHashVM(GlobalData_Base gd)
         {
             _gd = gd;
 
-            TreeViewItem_FileHashVM.SelectedItemChanged += (lasFiles) =>
+            TreeViewItem_FileHashVM.SelectedItemChanged += (lsFiles, strListingFile) =>
             {
                 UtilProject.UIthread(Items.Clear);
 
-                foreach (var asFile in lasFiles)
+                if (null == lsFiles)
+                    return;
+
+                foreach (var strFile in lsFiles)
                 {
-                    UtilProject.UIthread(() => Add(new LVitem_FileHashVM(new[] { (string)asFile[0] })));
+                    var lsDuplicates = gd.FileDictionary.GetDuplicates(strFile, strListingFile);
+                    var strCount = (null != lsDuplicates) ? "" + (lsDuplicates.Count - 1) : "";
+                    var asFile = strFile.Split('\t');
+
+                    UtilProject.UIthread(() => Add(new LVitem_FileHashVM(new[] { asFile[3], strCount })));
                 }
             };
-
-            if (null == lvFileHashVM)
-            {
-                return;
-            }
-
-            if (null == _gd)
-            {
-                _gd = lvFileHashVM._gd;
-            }
-
-            foreach (var lvItemVM in lvFileHashVM.ItemsCast)
-            {
-                Add(new LVitem_FileHashVM(lvItemVM), bQuiet: true);
-            }
         }
 
         GlobalData_Base _gd = null;

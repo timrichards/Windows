@@ -142,7 +142,7 @@ namespace DoubleFile
             while (false == _winProgress.IsClosed)
                 System.Threading.Thread.Sleep(200);
 
-            UtilProject.UIthread(() => (_winFileHash_Files = new WinFileHash_Files()).Show());
+            UtilProject.UIthread(() => (_winFileHash_Files = new WinFileHash_Files(_gd)).Show());
         }
 
         void DoTree(bool bKill = false)

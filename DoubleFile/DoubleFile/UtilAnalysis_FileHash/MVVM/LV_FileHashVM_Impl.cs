@@ -8,35 +8,39 @@ namespace DoubleFile
         internal LV_FileHashVM(GlobalData_Base gd)
         {
             _gd = gd;
+            TreeViewItem_FileHashVM.SelectedItemChanged += SelectedItemChanged;
+        }
 
-            _selectedItemChanged = (lsFiles, strListingFile) =>
+        public void Dispose()
+        {
+            TreeViewItem_FileHashVM.SelectedItemChanged -= SelectedItemChanged;
+        }
+
+        void SelectedItemChanged(IEnumerable<string> lsFiles, string strListingFile)
+        {
+            UtilProject.UIthread(() =>
             {
-                UtilProject.UIthread(Items.Clear);
+                Items.Clear();
+                //WidthFilename = double.NaN;
+                //WidthDuplicates = double.NaN;
 
                 if (null == lsFiles)
                     return;
 
                 foreach (var strFile in lsFiles)
                 {
-                    var lsDuplicates = gd.FileDictionary.GetDuplicates(strFile, strListingFile);
+                    string strFilename = null;
+                    var lsDuplicates = _gd.FileDictionary.GetDuplicates(strFile, out strFilename, strListingFile);
                     var nCount = (null != lsDuplicates) ? (lsDuplicates.Count - 1) : 0;
-                    var strCount = (nCount > 1) ? "" + nCount : "";
-                    var asFile = strFile.Split('\t');
+                    var strCount = (nCount > 0) ? "" + nCount : null;
 
-                    UtilProject.UIthread(() => Add(new LVitem_FileHashVM(new[] { asFile[3], strCount })));
+                    Add(new LVitem_FileHashVM(new[] { strFilename, strCount }), bQuiet: true);
                 }
-            };
 
-            TreeViewItem_FileHashVM.SelectedItemChanged += _selectedItemChanged;
-            
-        }
-
-        public void Dispose()
-        {
-            TreeViewItem_FileHashVM.SelectedItemChanged -= _selectedItemChanged;
+                RaiseItems();
+            });
         }
 
         GlobalData_Base _gd = null;
-        Action<IEnumerable<string>, string> _selectedItemChanged = null;
     }
 }

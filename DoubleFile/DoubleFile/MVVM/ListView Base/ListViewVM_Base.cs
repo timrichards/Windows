@@ -53,7 +53,7 @@ namespace DoubleFile
             }
         }
 
-        void RaiseItems()
+        protected void RaiseItems()
         {
             RaisePropertyChanged("Items");
 

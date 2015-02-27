@@ -16,7 +16,10 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            DataContext = new LV_FileHashVM(_gd);
+            var lvFileHashVM = new LV_FileHashVM(_gd);
+
+            DataContext = lvFileHashVM;
+            Closed += (o, a) => lvFileHashVM.Dispose();
         }
 
         GlobalData_Base _gd = null;

@@ -13,22 +13,31 @@ namespace Local
         IEnumerable<LocalLVitem> lvVolDetails = null,
         bool bSecondComparePane = false,
         LVitemFileTag lvFileItem = null);
-    delegate void TreeSelectDoneDelegate(bool bSecondComparePane);
+    //delegate void TreeSelectDoneDelegate(bool bSecondComparePane);
+    delegate void TreeSelectDoneDelegate(IReadOnlyList<string[]> strFiles);
 
     class TreeSelect : UtilAnalysis_DirList
     {
         internal TreeSelect(LocalTreeNode node,
             Dictionary<string, string> dictDriveInfo,
-            string strFile, bool bCompareMode, bool bSecondComparePane,
+            bool bCompareMode, bool bSecondComparePane,
             TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
         {
-            m_treeNode = node;
-            m_dictDriveInfo = dictDriveInfo;
-            m_strFile = strFile;
-            m_bCompareMode = bCompareMode;
-            m_bSecondComparePane = bSecondComparePane;
-            m_statusCallback = statusCallback;
-            m_doneCallback = doneCallback;
+            _treeNode = node;
+            _dictDriveInfo = dictDriveInfo;
+            _bCompareMode = bCompareMode;
+            _bSecondComparePane = bSecondComparePane;
+            _statusCallback = statusCallback;
+            _doneCallback = doneCallback;
+
+            var rootNode = node;
+
+            while (null != rootNode.Parent)
+                rootNode = rootNode.Parent;
+
+            _strFile = ((RootNodeDatum)rootNode.Tag).StrFile;
+
+
         }
 
         internal static List<string[]> GetFileList(LocalTreeNode parent, List<ulong> listLength = null)
@@ -93,22 +102,23 @@ namespace Local
 
         internal Thread DoThreadFactory()
         {
-            m_thread = new Thread(Go) {IsBackground = true};
-            m_thread.Start();
-            return m_thread;
+            _thread = new Thread(() => { _doneCallback(GetFileList(_treeNode)); }) { IsBackground = true };
+            //_thread = new Thread(Go) { IsBackground = true };
+            _thread.Start();
+            return _thread;
         }
 
         void Go()
         {
             Go_A();
 
-            if (m_bCompareMode == false)
+            if (_bCompareMode == false)
             {
                 // Volume detail
 
                 string strDriveInfo = null;
 
-                if (m_dictDriveInfo.TryGetValue(m_strFile, out strDriveInfo))
+                if (_dictDriveInfo.TryGetValue(_strFile, out strDriveInfo))
                 {
                     var arrDriveInfo =
                         strDriveInfo
@@ -163,22 +173,22 @@ namespace Local
                         lvItems[ixA] = new LocalLVitem(asItems[ix]);
                     }
 
-                    m_statusCallback(lvVolDetails: lvItems.Where(i => i != null));
+                    _statusCallback(lvVolDetails: lvItems.Where(i => i != null));
                 }
             }
 
-            m_doneCallback(m_bSecondComparePane);
+//            _doneCallback(_bSecondComparePane);
         }
 
         void Go_A()
         {
-            if (false == File.Exists(m_strFile))
+            if (false == File.Exists(_strFile))
             {
                 MBoxStatic.Assert(1301.2311, false);
                 return;
             }
 
-            var nodeDatum = m_treeNode.Tag as NodeDatum;
+            var nodeDatum = _treeNode.Tag as NodeDatum;
 
             if ((null == nodeDatum) || 
                 (nodeDatum.nLineNo == 0))
@@ -191,7 +201,7 @@ namespace Local
             string[] strArray = null;
 
             File
-                .ReadLines(m_strFile)
+                .ReadLines(_strFile)
                 .Skip(nLineNo - 1)
                 .Take(1)
                 .FirstOnlyAssert(strLine =>
@@ -221,7 +231,7 @@ namespace Local
 
             const string NUMFMT = "###,###,###,##0";
 
-            listItems.Add(new LocalLVitem(new[] { "# Immediate Folders", m_treeNode.Nodes.Count.ToString(NUMFMT) }));
+            listItems.Add(new LocalLVitem(new[] { "# Immediate Folders", _treeNode.Nodes.Count.ToString(NUMFMT) }));
             listItems.Add(new LocalLVitem(new[] { "Total # Files", nodeDatum.nFilesInSubdirs.ToString(NUMFMT) }));
 
             if (nodeDatum.nSubDirs > 0)
@@ -247,9 +257,9 @@ namespace Local
             }
 
             listItems.Add(new LocalLVitem(new string[] { "Total Size", FormatSize(nodeDatum.nTotalLength, bBytes: true) }));
-            m_statusCallback(lvItemDetails: listItems.ToArray(), bSecondComparePane: m_bSecondComparePane);
+            _statusCallback(lvItemDetails: listItems.ToArray(), bSecondComparePane: _bSecondComparePane);
 
-            var listFiles_A = GetFileList(m_treeNode);
+            var listFiles_A = GetFileList(_treeNode);
 
             if (listFiles_A.IsEmpty())
             {
@@ -263,18 +273,26 @@ namespace Local
                 listFiles.Add(new LocalLVitem(arrLine));
             }
 
-            m_statusCallback(itemArray: listFiles.ToArray(),
-                bSecondComparePane: m_bSecondComparePane,
-                lvFileItem: new LVitemFileTag(m_treeNode.Text, listFiles.Count));
+            _statusCallback(itemArray: listFiles.ToArray(),
+                bSecondComparePane: _bSecondComparePane,
+                lvFileItem: new LVitemFileTag(_treeNode.Text, listFiles.Count));
         }
 
-        readonly LocalTreeNode m_treeNode = null;
-        readonly Dictionary<string, string> m_dictDriveInfo = null;
-        readonly TreeSelectStatusDelegate m_statusCallback = null;
-        readonly TreeSelectDoneDelegate m_doneCallback = null;
-        Thread m_thread = null;
-        readonly string m_strFile = null;
-        readonly bool m_bCompareMode = false;
-        readonly bool m_bSecondComparePane = false;
+        readonly LocalTreeNode
+            _treeNode = null;
+        readonly Dictionary<string, string>
+            _dictDriveInfo = null;
+        readonly TreeSelectStatusDelegate
+            _statusCallback = null;
+        readonly TreeSelectDoneDelegate
+            _doneCallback = null;
+        Thread
+            _thread = null;
+        readonly string
+            _strFile = null;
+        readonly bool
+            _bCompareMode = false;
+        readonly bool
+            _bSecondComparePane = false;
     }
 }

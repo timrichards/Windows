@@ -6,8 +6,16 @@ using System.Windows.Media;
 
 namespace DoubleFile
 {
-    internal class TreeViewItem_FileHashVM : ObservableObjectBase
+    partial class TreeViewItem_FileHashVM : ObservableObjectBase
     {
+        public string Text { get { return ((string)_datum.Text).PadRight(200); } }
+        public Brush Foreground { get { return _bSelected ? _SelectedForeground : FrontBrush; } }
+        public Brush SelectedForeground { get { return _bSelected ? _SelectedForeground : FrontBrush; } }
+        Brush _SelectedForeground { get { return Brushes.White; } set { } }
+
+        public Brush Background { get { return UtilColor.ARGBtoBrush(_datum.BackColor); } }
+        public FontWeight FontWeight { get { return _bSelected ? FontWeights.ExtraBold : FontWeights.Normal; } }
+
         internal readonly TreeViewItem_FileHashVM
             _Parent = null;
         internal readonly TreeView_FileHashVM
@@ -31,9 +39,10 @@ namespace DoubleFile
 
                     _Items = new ObservableCollection<TreeViewItem_FileHashVM>
                     (
-                        from item
+                        from
+                            item
                             in _datum.Nodes.Keys
-                        select new TreeViewItem_FileHashVM(_TVVM, item, this, ++nIndex)
+                            select new TreeViewItem_FileHashVM(_TVVM, item, this, ++nIndex)
                     );
                 }
 
@@ -42,13 +51,6 @@ namespace DoubleFile
         }
         ObservableCollection<TreeViewItem_FileHashVM> _Items = null;
 
-        public string Text { get { return ((string)_datum.Text).PadRight(200); } }
-        public Brush Foreground { get { return _bSelected ? _SelectedForeground : FrontBrush; } }
-        public Brush SelectedForeground { get { return _bSelected ? _SelectedForeground : FrontBrush; } }
-        Brush _SelectedForeground { get { return Brushes.White; } set { } }
-
-        public Brush Background { get { return UtilColor.ARGBtoBrush(_datum.BackColor); } }
-        public FontWeight FontWeight { get { return _bSelected ? FontWeights.ExtraBold : FontWeights.Normal; } }
         public bool IsExpanded
         {
             get { return _bExpanded; }
@@ -94,6 +96,8 @@ namespace DoubleFile
                 {
                     _TVVM._SelectedItem = null;
                 }
+
+                DoTreeSelect();
             }
         }
 
@@ -177,7 +181,9 @@ namespace DoubleFile
             get
             {
                 return UtilColor.ARGBtoBrush(
-                    (_datum.ForeColor == UtilColor.Empty) ? UtilColor.DarkRed : _datum.ForeColor
+                    (UtilColor.Empty == _datum.ForeColor)
+                    ? UtilColor.DarkRed
+                    : _datum.ForeColor
                 );
             }
         }

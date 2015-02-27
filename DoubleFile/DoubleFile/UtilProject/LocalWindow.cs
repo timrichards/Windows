@@ -33,26 +33,19 @@ namespace DoubleFile
             // You can comment this stuff out all you want: the flashing close box on the
             // system file dialogs isn't going away...
 
-            Action<Action> notTopDialog = (action) =>
+            Activated += (o, e) =>
             {
                 if (GlobalData.static_Dialog._simulatingModal &&
                     (this != GlobalData.static_Dialog))
                 {
-                    action();
+                    GlobalData.static_Dialog.Activate();
+
+                    if (false == AppActivated)
+                        FlashWindowStatic.Go(GlobalData.static_Dialog);
+
+                    AppActivated = false;
                 }
             };
-
-            Action activateTopDialog = () =>
-            {
-                GlobalData.static_Dialog.Activate();
-
-                if (false == AppActivated)
-                    FlashWindowStatic.Go(GlobalData.static_Dialog);
-
-                AppActivated = false;
-            };
-
-            Activated += (o, e) => notTopDialog(activateTopDialog);
 
             // Keep this around so you see how it's done
             // Icon = BitmapFrame.Create(new Uri(@"pack://application:,,/Resources/ic_people_black_18dp.png"));

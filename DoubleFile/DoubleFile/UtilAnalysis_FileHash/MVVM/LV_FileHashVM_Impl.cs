@@ -7,6 +7,16 @@ namespace DoubleFile
         {
             _gd = gd;
 
+            TreeViewItem_FileHashVM.SelectedItemChanged += (lasFiles) =>
+            {
+                UtilProject.UIthread(Items.Clear);
+
+                foreach (var asFile in lasFiles)
+                {
+                    UtilProject.UIthread(() => Add(new LVitem_FileHashVM(new[] { (string)asFile[0] })));
+                }
+            };
+
             if (null == lvFileHashVM)
             {
                 return;

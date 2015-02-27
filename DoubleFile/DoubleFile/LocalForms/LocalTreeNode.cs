@@ -52,37 +52,37 @@ namespace DoubleFile
             Nodes.AddRange(lsNodes);
         }
 
-        //internal string FullPath
-        //{
-        //    get
-        //    {
-        //        if (_strFullPath != null)
-        //        {
-        //            return _strFullPath;
-        //        }
+        internal string FullPath
+        {
+            get
+            {
+                if (_strFullPath != null)
+                {
+                    return _strFullPath;
+                }
 
-        //        var stack = new Stack<LocalTreeNode>(8);
-        //        var nodeParent = Parent;
+                var stack = new Stack<LocalTreeNode>(8);
+                var nodeParent = Parent;
 
-        //        while (nodeParent != null)
-        //        {
-        //            stack.Push(nodeParent);
-        //            nodeParent = nodeParent.Parent;
-        //        }
+                while (nodeParent != null)
+                {
+                    stack.Push(nodeParent);
+                    nodeParent = nodeParent.Parent;
+                }
 
-        //        var sb = new StringBuilder();
+                var sb = new StringBuilder();
 
-        //        while (false == stack.IsEmpty())
-        //        {
-        //            nodeParent = stack.Pop();
-        //            sb.Append(nodeParent.Text + '\\');
-        //        }
+                while (false == stack.IsEmpty())
+                {
+                    nodeParent = stack.Pop();
+                    sb.Append(nodeParent.Text + '\\');
+                }
 
-        //        sb.Append(Text);
-        //        _strFullPath = sb.ToString();
-        //        return _strFullPath;
-        //    }
-        //}
+                sb.Append(Text);
+                _strFullPath = sb.ToString();
+                return _strFullPath;
+            }
+        }
 
         internal void DetachFromTree()
         {
@@ -161,6 +161,6 @@ namespace DoubleFile
             }
         }
 
-        //    string _strFullPath = null;
+        string _strFullPath = null;
     }
 }

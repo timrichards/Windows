@@ -1266,7 +1266,7 @@ namespace DoubleFile
             TreeNode rootNode = ((TreeNode)e.Node).Root();
 
             MBoxStatic.Assert(1308.9322, (new object[] { form_treeCompare1, form_treeCompare2 }.Contains(sender)) == gd.m_bCompareMode);
-            gd_Tree.DoTreeSelect((TreeNode)e.Node, TreeSelectStatusCallback, TreeSelectDoneCallback);
+            gd_Tree.DoTreeSelect(e.Node, TreeSelectStatusCallback, TreeSelectDoneCallback);
 
             string strNode = e.Node.Text;
 

@@ -147,6 +147,7 @@
     <Compile Include="MVVM\ListView Base\ListViewVM_GenericBase.cs" />
     <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
     <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\TreeView\TreeViewItem_FileHashVM_Impl.cs" />
     <Compile Include="UtilAnalysis_FileHash\WinFileHash_Files.xaml.cs">
       <DependentUpon>WinFileHash_Files.xaml</DependentUpon>
     </Compile>

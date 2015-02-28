@@ -14,6 +14,7 @@ namespace DoubleFile
 
             InitializeComponent();
             form_grid.Loaded += Grid_Loaded;
+            Closed += (o, e) => _lvFileDuplicatesVM.Dispose();
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)

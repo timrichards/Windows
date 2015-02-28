@@ -3,15 +3,20 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace DoubleFile
 {
-    partial class LV_FileDuplicatesVM
+    partial class LV_FileDuplicatesVM : IDisposable
     {
         internal LV_FileDuplicatesVM(GlobalData_Base gd)
         {
             _gd = gd;
+            TreeViewItem_FileHashVM.SelectedItemChanged += DuplicateFileSelChanged;
+        }
+
+        public void Dispose()
+        {
+            TreeViewItem_FileHashVM.SelectedItemChanged -= DuplicateFileSelChanged;
         }
 
         internal void TreeFileSelChanged(IReadOnlyList<FileDictionary.DuplicateStruct> lsDuplicates)
@@ -41,6 +46,7 @@ namespace DoubleFile
 
                 int nLine = 0;
                 string strDirLine = null;
+                var bRootTest = true;
 
                 foreach (var strLine
                     in File.ReadLines(g.Key))
@@ -51,8 +57,12 @@ namespace DoubleFile
                         break;
 
                     var nMatchLine = lsLineNumbers[0];
+                    var bRoot = (bRootTest && 
+                        strLine.StartsWith(FileParse.ksLineType_VolumeInfo_Root));
 
-                    if (strLine.StartsWith(FileParse.ksLineType_Directory))
+                    bRootTest &= (false == bRoot);
+
+                    if (bRoot || strLine.StartsWith(FileParse.ksLineType_Directory))
                     {
                         if (nLine == nMatchLine)
                         {
@@ -84,6 +94,11 @@ namespace DoubleFile
 
                 RaiseItems();
             });
+        }
+
+        void DuplicateFileSelChanged(IEnumerable<string> lsFiles, string strListingFile)
+        {
+             UtilProject.UIthread(Items.Clear);
         }
 
         GlobalData_Base _gd = null;

@@ -43,12 +43,10 @@ namespace DoubleFile
         {
             strFilename = null;
 
-            var lsRet = new List<DuplicateStruct>();
-
             if (false == strLine.StartsWith(FileParse.ksLineType_File))
             {
                 MBoxStatic.Assert(99956, false);
-                return lsRet;
+                return null;
             }
 
             var asLine = strLine.Split('\t');
@@ -56,32 +54,31 @@ namespace DoubleFile
             strFilename = asLine[3];
 
             if (10 >= asLine.Length)
-                return lsRet;
+                return null;
 
             var key = new FileKeyStruct(asLine[10], asLine[7]);
 
             if (null == _DictFiles)
-            {
-                return lsRet;
-            }
+                return null;
 
             IEnumerable<int> lsDupes = null;
 
             if (false == _DictFiles.TryGetValue(key, out lsDupes))
-            {
-                return lsRet;
-            }
+                return null;
 
             var nLine = int.Parse(asLine[1]);
 
-            lsRet.AddRange(lsDupes.Select(lookup => new DuplicateStruct
-            {
-                LVitemProjectVM = _DictItemNumberToLV[GetLVitemProjectVM(lookup)],
-                LineNumber = GetLineNumber(lookup)
-            }).Where(dupe => (dupe.LVitemProjectVM.ListingFile != strListingFile) ||    // exactly once every query
-                             (dupe.LineNumber != nLine)));
-
-            return lsRet;
+            return new List<DuplicateStruct>(
+                lsDupes
+                    .Select(lookup => new DuplicateStruct
+                    {
+                        LVitemProjectVM = _DictItemNumberToLV[GetLVitemProjectVM(lookup)],
+                        LineNumber = GetLineNumber(lookup)
+                    })
+                    .Where(dupe =>
+                        (dupe.LVitemProjectVM.ListingFile != strListingFile) ||    // exactly once every query
+                        (dupe.LineNumber != nLine))
+            );
         }
 
         internal FileDictionary DoThreadFactory(LV_ProjectVM lvProjectVM,
@@ -116,7 +113,9 @@ namespace DoubleFile
             _DictLVtoItemNumber.Clear();
             _DictItemNumberToLV.Clear();
 
-            foreach (var lvItem in _LVprojectVM.ItemsCast.OrderBy(lvItem => lvItem.SourcePath))
+            foreach (var lvItem
+                in _LVprojectVM.ItemsCast
+                    .OrderBy(lvItem => lvItem.SourcePath))
             {
                 _DictLVtoItemNumber.Add(lvItem, nLVitems);
                 _DictItemNumberToLV.Add(nLVitems, lvItem);
@@ -171,17 +170,17 @@ namespace DoubleFile
 
                         List<int> ls = null;
 
-                        if (false == dictFiles.TryGetValue(key, out ls))
+                        if (dictFiles.TryGetValue(key, out ls))
                         {
-                            dictFiles[key] = new List<int> { lookup };
-                        }
-                        else
-                        {
-                            lock (ls)
+                            lock (ls)                      // jic sorting downstream too at A
                             {
                                 ls.Insert(ls.TakeWhile(nLookup => lookup >= nLookup).Count(),
                                     lookup);
                             }
+                        }
+                        else
+                        {
+                            dictFiles[key] = new List<int> { lookup };
                         }
                     }
                 });

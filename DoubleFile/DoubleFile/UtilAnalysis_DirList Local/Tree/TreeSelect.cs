@@ -125,17 +125,14 @@ namespace Local
                     var nLineNo = (int)nodeDatum.nLineNo;
 
                     if (0 == nPrevDir)
-                    {
                         break;
-                    }
 
                     if (1 >= (nLineNo - nPrevDir))  // dir has no files
-                    {
                         break;
-                    }
 
                     lsFiles =
-                        File.ReadLines(strListingFile)
+                        File
+                        .ReadLines(strListingFile)
                         .Skip(nPrevDir)
                         .Take((nLineNo - nPrevDir - 1))
                         .ToList();

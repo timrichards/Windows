@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:DoubleFile"
         Title="Duplicate File Explorer" Height="300" Width="300">
     <Grid Name="form_grid">
-        <Menu IsMainMenu="True" Grid.ColumnSpan="999" Grid.RowSpan="999"/>
+        <Menu IsMainMenu="True" Grid.ColumnSpan="999" Grid.RowSpan="999"/>  <!--sets content background-->
         <TreeView Name="form_tv" Margin="10,10,10,10" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding}" BorderThickness="0">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">

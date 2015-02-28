@@ -5,7 +5,7 @@
         Title="Double File" Height="96" Width="254" Icon="/Double File;component/Resources/ic_people_black_18dp.png"
         Left="120" Top="20">
     <Grid Name="form_grid">
-        <Menu IsMainMenu="True" Grid.ColumnSpan="999" Grid.RowSpan="999"/>
+        <Menu IsMainMenu="True" Grid.ColumnSpan="999" Grid.RowSpan="999"/>  <!--sets content background-->
         <Button Content="View project" Name ="form_btnViewProject" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Grid.Column="0"/>
         <Button Content="Open project" Name ="form_btnOpenProject" Grid.Column="0" HorizontalAlignment="Left" Margin="80,0,0,0" VerticalAlignment="Top" Width="75"/>
         <Button Content="Save project" Name ="form_btnSaveProject" Grid.Column="0" HorizontalAlignment="Left" Margin="160,0,0,0" VerticalAlignment="Top" Width="75"/>

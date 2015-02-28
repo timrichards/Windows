@@ -43,10 +43,12 @@ namespace DoubleFile
         {
             strFilename = null;
 
+            var lsRet = new List<DuplicateStruct>();
+
             if (false == strLine.StartsWith(FileParse.ksLineType_File))
             {
                 MBoxStatic.Assert(99956, false);
-                return null;
+                return lsRet;
             }
 
             var asLine = strLine.Split('\t');
@@ -54,10 +56,9 @@ namespace DoubleFile
             strFilename = asLine[3];
 
             if (10 >= asLine.Length)
-                return null;
+                return lsRet;
 
             var key = new FileKeyStruct(asLine[10], asLine[7]);
-            var lsRet = new List<DuplicateStruct>();
 
             if (null == _DictFiles)
             {

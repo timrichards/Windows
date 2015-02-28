@@ -90,11 +90,11 @@ namespace DoubleFile
 
                 if (_bSelected)
                 {
-                    _TVVM._SelectedItem = this;
+                    _TVVM.SelectedItem = this;
                 }
-                else if (_TVVM._SelectedItem == this)
+                else if (_TVVM.SelectedItem == this)
                 {
-                    _TVVM._SelectedItem = null;
+                    _TVVM.SelectedItem = null;
                 }
 
                 DoTreeSelect();
@@ -119,7 +119,7 @@ namespace DoubleFile
                 return;
             }
 
-            _TVVM._SelectedItem = this;
+            _TVVM.SelectedItem = this;
 
             var stackParents = new Stack<TreeViewItem_FileHashVM>(8);
             var listParents = new UList<TreeViewItem_FileHashVM>();

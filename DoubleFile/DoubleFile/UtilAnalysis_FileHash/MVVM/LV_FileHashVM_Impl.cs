@@ -21,8 +21,6 @@ namespace DoubleFile
             UtilProject.UIthread(() =>
             {
                 Items.Clear();
-                //WidthFilename = double.NaN;
-                //WidthDuplicates = double.NaN;
 
                 if (null == lsFiles)
                     return;
@@ -33,8 +31,14 @@ namespace DoubleFile
                     var lsDuplicates = _gd.FileDictionary.GetDuplicates(strFile, out strFilename, strListingFile);
                     var nCount = (null != lsDuplicates) ? (lsDuplicates.Count - 1) : 0;
                     var strCount = (nCount > 0) ? "" + nCount : null;
+                    var lvItem = new LVitem_FileHashVM(new[] { strFilename, strCount });
 
-                    Add(new LVitem_FileHashVM(new[] { strFilename, strCount }), bQuiet: true);
+                    if (nCount > 0)
+                    {
+                        lvItem.LSduplicates = lsDuplicates;
+                    }
+                    
+                    Add(lvItem, bQuiet: true);
                 }
 
                 RaiseItems();

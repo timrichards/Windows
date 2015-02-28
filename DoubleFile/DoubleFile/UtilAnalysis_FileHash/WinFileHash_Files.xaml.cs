@@ -1,11 +1,13 @@
 ﻿using System.Windows;
+using System.Linq;
+using System.Windows.Controls;
 
 namespace DoubleFile
 {
     /// <summary>
     /// Interaction logic for WinFileHash_Files.xaml
     /// </summary>
-    public partial class WinFileHash_Files
+    partial class WinFileHash_Files
     {
         internal WinFileHash_Files(GlobalData_Base gd)
         {
@@ -17,12 +19,37 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            var lvFileHashVM = new LV_FileHashVM(_gd);
+            _lvFileHashVM = new LV_FileHashVM(_gd);
+            DataContext = _lvFileHashVM;
+            (_winFileHash_Duplicates = new WinFileHash_Duplicates(_gd)).Show();
+            form_lv.SelectionChanged += SelectionChanged;
+            Closed += Window_Closed;
+        }
 
-            DataContext = lvFileHashVM;
-            Closed += (o, a) => lvFileHashVM.Dispose();
+        void SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (0 == e.AddedItems.Count)
+                return;
+
+            var lvItem = e.AddedItems[0] as LVitem_FileHashVM;
+
+            if (null == lvItem)
+            {
+                MBoxStatic.Assert(99909, false);
+                return;
+            }
+
+            _winFileHash_Duplicates.TreeFileSelChanged(lvItem.LSduplicates);
+        }
+
+        void Window_Closed(object sender, System.EventArgs e)
+        {
+            _lvFileHashVM.Dispose();
+            _winFileHash_Duplicates.Close();
         }
 
         GlobalData_Base _gd = null;
+        LV_FileHashVM _lvFileHashVM = null;
+        WinFileHash_Duplicates _winFileHash_Duplicates = null;
     }
 }

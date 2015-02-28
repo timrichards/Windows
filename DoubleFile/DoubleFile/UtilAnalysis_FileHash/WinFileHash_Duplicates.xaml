@@ -1,4 +1,4 @@
-﻿<local:LocalWindow x:Class="DoubleFile.WinFileHash_Files"
+﻿<local:LocalWindow x:Class="DoubleFile.WinFileHash_Duplicates"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
@@ -9,7 +9,7 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="File name" DisplayMemberBinding="{Binding Filename}" Width="{Binding WidthFilename}"/>
-                    <GridViewColumn Header="Duplicates" DisplayMemberBinding="{Binding Duplicates}" Width="{Binding WidthDuplicates}"/>
+                    <GridViewColumn Header="Path" DisplayMemberBinding="{Binding Path}" Width="{Binding WidthPath}"/>
                 </GridView>
             </ListView.View>
         </ListView>

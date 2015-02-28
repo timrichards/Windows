@@ -27,12 +27,12 @@ namespace DoubleFile
             var lvProjectVM = new LV_ProjectVM(_gd, LVprojectVM);
             var win = new WinProjectVM(_gd, lvProjectVM);
 
-            form_lvProject.DataContext = lvProjectVM;
+            form_lv.DataContext = lvProjectVM;
             DataContext = win;
 
-            lvProjectVM.SelectedOne = () => form_lvProject.SelectedItems.HasOnlyOne();
-            lvProjectVM.SelectedAny = () => (false == form_lvProject.SelectedItems.IsEmptyA());
-            lvProjectVM.Selected = () => form_lvProject.SelectedItems.Cast<LVitem_ProjectVM>();
+            lvProjectVM.SelectedOne = () => form_lv.SelectedItems.HasOnlyOne();
+            lvProjectVM.SelectedAny = () => (false == form_lv.SelectedItems.IsEmptyA());
+            lvProjectVM.Selected = () => form_lv.SelectedItems.Cast<LVitem_ProjectVM>();
 
             if (_bOpenProject)
             {
@@ -42,7 +42,7 @@ namespace DoubleFile
 
         private void BtnOK_Click(object sender, RoutedEventArgs e)
         {
-            LVprojectVM = form_lvProject.DataContext as LV_ProjectVM;
+            LVprojectVM = form_lv.DataContext as LV_ProjectVM;
             LocalDialogResult = true;
 
             // IsDefault = "True" in xaml so that seems to take care of closing the window After this handler returns.
@@ -57,7 +57,7 @@ namespace DoubleFile
                 return;
             }
 
-            var lvProjectVM = form_lvProject.DataContext as LV_ProjectVM;
+            var lvProjectVM = form_lv.DataContext as LV_ProjectVM;
             
             if ((null != lvProjectVM) &&
                 lvProjectVM.Unsaved &&

@@ -36,8 +36,6 @@ namespace Local
                 rootNode = rootNode.Parent;
 
             _strFile = ((RootNodeDatum)rootNode.Tag).StrFile;
-
-
         }
 
         internal static List<string[]> GetFileList(

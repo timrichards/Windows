@@ -5,7 +5,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinFileHash_Folders.xaml
     /// </summary>
-    public partial class WinFileHash_Folders
+    partial class WinFileHash_Folders
     {
         internal WinFileHash_Folders(GlobalData_Base gd, LV_ProjectVM lvProjectVM)
         {
@@ -20,7 +20,6 @@ namespace DoubleFile
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             UString.AddRef();
-
             DataContext = new WinFileHashVM(_gd,
                 new TreeView_FileHashVM(form_tv),
                 _lvProjectVM);
@@ -29,6 +28,7 @@ namespace DoubleFile
         private void Window_Closed(object sender, System.EventArgs e)
         {
             UString.DropRef();
+            ((WinFileHashVM)DataContext).Dispose();     // closes the file list (domino/chain) when this tree view closes
             DataContext = null;
             _lvProjectVM = null;
             _gd = null;

@@ -3,6 +3,9 @@ namespace DoubleFile
 {
     class LVitem_FileHashVM : ListViewItemVM_Base
     {
+        internal System.Collections.Generic.IReadOnlyList<FileDictionary.DuplicateStruct>
+            LSduplicates = null;
+
         public string Filename { get { return marr[0]; } set { SetProperty(0, value); } }
         public string Duplicates { get { return marr[1]; } set { SetProperty(1, value); } }
 

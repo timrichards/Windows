@@ -7,7 +7,7 @@ namespace DoubleFile
     class TreeView_FileHashVM
     {
         internal TreeViewItem_FileHashVM
-            _SelectedItem = null;
+            SelectedItem { get; set; }
         internal UList<TreeViewItem_FileHashVM>
             _listExpanded = new UList<TreeViewItem_FileHashVM>();
         internal readonly TreeView

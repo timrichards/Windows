@@ -28,7 +28,7 @@
                 <Image Source="resources/ic_create_black_18dp.png" Width="18" />
             </Button>
         </Menu>
-        <ListView Name="form_lvProject" Margin="10,30,10,60">
+        <ListView Name="form_lv" Margin="10,30,10,60">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Nickname" DisplayMemberBinding="{Binding Nickname}" Width="{Binding WidthNickname}"/>

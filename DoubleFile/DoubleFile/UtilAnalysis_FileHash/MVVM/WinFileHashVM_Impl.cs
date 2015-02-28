@@ -10,11 +10,11 @@ namespace DoubleFile
     partial class WinFileHashVM
     {
         internal ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>>
-            _dictNodes { get; private set; }
+            DictNodes { get; private set; }
         internal readonly Dictionary<string, string>
             _dictDriveInfo = new Dictionary<string, string>();
         internal Local.Tree
-            _tree = null;
+            Tree { get; private set; }
 
         internal readonly UList<LocalTreeNode>
             _listTreeNodes = new UList<LocalTreeNode>();
@@ -23,7 +23,7 @@ namespace DoubleFile
 
         internal void TreeCleanup()
         {
-            _tree = null;
+            Tree = null;
             Local.Collate.ClearMem();
         }
 
@@ -34,7 +34,7 @@ namespace DoubleFile
             _dictDriveInfo.Clear();
 
             // m_dictNodes is tested to recreate tree.
-            _dictNodes = null;
+            DictNodes = null;
 
             _listTreeNodes.Clear();
             _listRootNodes.Clear();
@@ -67,7 +67,7 @@ namespace DoubleFile
             if (_gd.WindowClosed ||
                 (null == _gd.FileDictionary) ||
                 _gd.FileDictionary.IsAborted ||
-                ((null != _tree) && (_tree.IsAborted)))
+                ((null != Tree) && (Tree.IsAborted)))
             {
                 ClearMem_TreeForm();
                 _winProgress.Aborted = true;
@@ -109,7 +109,7 @@ namespace DoubleFile
 
             using (new SDL_Timer(() => { _winProgress.SetProgress(_ksFolderTreeKey, (3 + nProgress)/4.0); }).Start())
             {
-                var collate = new Local.Collate(_gd, _dictNodes,
+                var collate = new Local.Collate(_gd, DictNodes,
                     localTV,
                     localLVclones, localLVsameVol, localLVsolitary,
                     _listRootNodes, _listTreeNodes,
@@ -137,7 +137,7 @@ namespace DoubleFile
             _winProgress.CloseIfNatural();
 
             // saving memory here.
-            _dictNodes = null;
+            DictNodes = null;
 
             while (false == _winProgress.IsClosed)
                 System.Threading.Thread.Sleep(200);
@@ -147,12 +147,12 @@ namespace DoubleFile
 
         void DoTree(bool bKill = false)
         {
-            if (null != _tree)
+            if (null != Tree)
             {
                 if (bKill)
                 {
-                    _tree.EndThread();
-                    _tree = null;
+                    Tree.EndThread();
+                    Tree = null;
                     ClearMem_TreeForm();
                 }
                 else
@@ -174,7 +174,7 @@ namespace DoubleFile
                     }
 
                     if (_bFileDictDone &&
-                        (null == _tree))
+                        (null == Tree))
                     {
                         return true;
                     }
@@ -190,8 +190,8 @@ namespace DoubleFile
                 _gd.FileDictionary
                     .Abort();
                     
-                if (null != _tree)
-                    _tree.EndThread();
+                if (null != Tree)
+                    Tree.EndThread();
 
                 TreeCleanup();
                 return true;
@@ -209,11 +209,11 @@ namespace DoubleFile
 
             UString.GenerationStarting();
 
-            if (null == _dictNodes)
-                _dictNodes = new ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>>();
+            if (null == DictNodes)
+                DictNodes = new ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>>();
 
-            _tree =
-                new Local.Tree(_gd, _lvProjectVM, _dictNodes, _dictDriveInfo, TreeStatusCallback, TreeDoneCallback)
+            Tree =
+                new Local.Tree(_gd, _lvProjectVM, DictNodes, _dictDriveInfo, TreeStatusCallback, TreeDoneCallback)
                 .DoThreadFactory();
 
             lsProgressItems.Add(_ksFolderTreeKey);
@@ -225,6 +225,5 @@ namespace DoubleFile
         const string _ksFolderTreeKey = "Creating folder tree browser";
 
         bool _bFileDictDone = false;
-        WinFileHash_Files _winFileHash_Files = null;
     }
 }

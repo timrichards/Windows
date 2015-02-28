@@ -137,7 +137,8 @@ namespace Local
                     lsFiles =
                         File.ReadLines(strListingFile)
                         .Skip(nPrevDir)
-                        .Take((nLineNo - nPrevDir - 1));
+                        .Take((nLineNo - nPrevDir - 1))
+                        .ToList();
                 } while (false);
 
                 _doneCallback(lsFiles, strListingFile);

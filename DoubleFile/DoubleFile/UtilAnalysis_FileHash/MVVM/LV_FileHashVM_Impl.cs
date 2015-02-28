@@ -35,7 +35,7 @@ namespace DoubleFile
 
                     if (nCount > 0)
                     {
-                        lvItem.LSduplicates = lsDuplicates;
+                        lvItem.LSduplicates = new List<FileDictionary.DuplicateStruct>(lsDuplicates);
                     }
                     
                     Add(lvItem, bQuiet: true);

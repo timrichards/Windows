@@ -23,13 +23,25 @@ namespace DoubleFile
             var lsLine = new List<string>();
             var lsDirLine = new List<string>();
 
-            Parallel.ForEach(lsDuplicates, duplicate =>
+            lsDuplicates
+                .GroupBy(duplicate => duplicate.LVitemProjectVM)
+                .AsParallel()
+                .ForEach(g =>
             {
+                List<int> lsLineNumbers = new List<int>();
+
+                foreach (var duplicate in g)
+                {
+                    lsLineNumbers.Add(duplicate.LineNumber);
+                }
+
+                lsLineNumbers.Sort();
+
                 int nLine = 0;
                 string strDirLine = null;
 
                 foreach (var strLine
-                    in File.ReadLines(duplicate.LVitemProjectVM.ListingFile))
+                    in File.ReadLines(g.Key.ListingFile))
                 {
                     ++nLine;
 
@@ -37,15 +49,21 @@ namespace DoubleFile
                     {
                         strDirLine = strLine;       // clobber
                     }
-                    else if (nLine == duplicate.LineNumber - 1)
+                    else if (nLine + 1 == lsLineNumbers[0])
                     {
+#if (DEBUG)
+                        MBoxStatic.Assert(99905, "" + nLine == strLine.Split('\t')[1]);
+#endif
+                        lsLineNumbers.RemoveAt(0);
+
                         lock (lsLine)
                             lsLine.Add(strLine);
                         
                         lock (lsDirLine)
                             lsDirLine.Add(strDirLine);
-
-                        break;
+                        
+                        if (0 == lsLineNumbers.Count)
+                            break;
                     }
                 }
             });

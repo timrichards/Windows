@@ -161,15 +161,19 @@ namespace DoubleFile
 
                         var key = new FileKeyStruct(asLine[10], asLine[7]);
                         var lookup = 0;
+                        var nLineNumber = int.Parse(asLine[1]);
 
                         SetLVitemProjectVM(ref lookup, nLVitem);
-                        SetLineNumber(ref lookup, int.Parse(asLine[1]));
+                        SetLineNumber(ref lookup, nLineNumber);
+
+                        MBoxStatic.Assert(99907, _DictItemNumberToLV[GetLVitemProjectVM(lookup)] == lvItem);
+                        MBoxStatic.Assert(99906, GetLineNumber(lookup) == nLineNumber);
 
                         List<int> ls = null;
 
                         if (false == dictFiles.TryGetValue(key, out ls))
                         {
-                            dictFiles[key] = new List<int> {lookup};
+                            dictFiles[key] = new List<int> { lookup };
                         }
                         else
                         {
@@ -247,7 +251,7 @@ namespace DoubleFile
 
         static int GetLVitemProjectVM(int n) { return (int)(n & _knItemVMmask) >> 24; }
         static int SetLVitemProjectVM(ref int n, int v) { return n = GetLineNumber(n) + (v << 24); }
-        static int GetLineNumber(int n) { return n & 0xFFFFFF; }
+        static int GetLineNumber(int n) { return n & 0x00FFFFFF; }
         static int SetLineNumber(ref int n, int v) { return n = (int)(n & _knItemVMmask) + v; }
 
         const uint

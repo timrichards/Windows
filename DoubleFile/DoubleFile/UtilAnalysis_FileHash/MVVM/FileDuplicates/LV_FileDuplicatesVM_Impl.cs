@@ -37,49 +37,69 @@ namespace DoubleFile
                 List<int> lsLineNumbers = new List<int>();
 
                 foreach (var duplicate in g)
-                {
                     lsLineNumbers.Add(duplicate.LineNumber);
-                }
 
-                MBoxStatic.Assert(99902, 0 < lsLineNumbers.Count);
+                MBoxStatic.Assert(99903, 0 < lsLineNumbers.Count);
                 lsLineNumbers.Sort();               // jic already sorted upstream at A
 
-                int nLine = 0;
-                string strDirLine = null;
-                var bRootTest = true;
+                var ieMain =
+                    File
+                    .ReadLines(g.Key)
+                    .Skip(lsLineNumbers[0] - 1);
+                List<string> lsFilesInDir = new List<string>();
 
-                foreach (var strLine
-                    in File.ReadLines(g.Key))
+                while (true)
                 {
-                    ++nLine;
+                    lsFilesInDir.Add(
+                        ieMain
+                        .Take(1)
+                        .ToArray()[0]);
 
-                    if (0 == lsLineNumbers.Count)
-                        break;
+                    var nLineNumber = lsLineNumbers[0];
+                    var nNextFileLineNumber = -1;
 
-                    var nMatchLine = lsLineNumbers[0];
-                    var bRoot = (bRootTest && 
-                        strLine.StartsWith(FileParse.ksLineType_VolumeInfo_Root));
+                    lsLineNumbers.RemoveAt(0);
 
-                    bRootTest &= (false == bRoot);
+                    if (0 < lsLineNumbers.Count)
+                        nNextFileLineNumber = lsLineNumbers[0];
 
-                    if (bRoot || strLine.StartsWith(FileParse.ksLineType_Directory))
+                    ieMain =
+                        ieMain
+                        .SkipWhile(strLine =>
+                            (false == strLine.StartsWith(FileParse.ksLineType_Directory) &&
+                            (nLineNumber++ < nNextFileLineNumber - 1)));
+
+                    var bBreak = false;
+
+                    ieMain
+                        .First(strLine =>
                     {
-                        if (nLine == nMatchLine)
+                        if (strLine.StartsWith(FileParse.ksLineType_Directory))
                         {
-                            MBoxStatic.Assert(99903, false);
-                            lsLineNumbers.RemoveAt(0);
+#if (DEBUG)
+                            MBoxStatic.Assert(99905, strLine.Split('\t')[1] == "" + nLineNumber);
+#endif
+                            foreach (var strLineOut in lsFilesInDir)
+                                lsLines.Add(new[] { strLineOut.Split('\t')[3], strLine.Split('\t')[2] });
+
+                            lsFilesInDir.Clear();
+
+                            if (0 < lsLineNumbers.Count)
+                            {
+                                ieMain =
+                                    ieMain
+                                    .Skip(nNextFileLineNumber - nLineNumber);
+
+                                nLineNumber = nNextFileLineNumber;
+                            }
                         }
 
-                        strDirLine = strLine;       // clobber
-                    }
-                    else if (nLine == nMatchLine)
-                    {
-#if (DEBUG)
-                        MBoxStatic.Assert(99905, "" + nLine == strLine.Split('\t')[1]);
-#endif
-                        lsLines.Add(new[] { strLine, strDirLine });
-                        lsLineNumbers.RemoveAt(0);
-                    }
+                        if (0 == lsLineNumbers.Count)
+                            bBreak = true;
+                    });
+
+                    if (bBreak)
+                        break;
                 }
 
                 MBoxStatic.Assert(99904, 0 == lsLineNumbers.Count);
@@ -89,7 +109,7 @@ namespace DoubleFile
             {
                 foreach (var strLine in lsLines)
                 {
-                    Add(new LVitem_FileDuplicatesVM(new[] { strLine[0].Split('\t')[3], strLine[1].Split('\t')[2] }), bQuiet: true);
+                    Add(new LVitem_FileDuplicatesVM(new[] { strLine[0], strLine[1] }), bQuiet: true);
                 }
 
                 RaiseItems();

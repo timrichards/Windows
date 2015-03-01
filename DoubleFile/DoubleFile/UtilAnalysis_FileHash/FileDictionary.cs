@@ -164,10 +164,10 @@ namespace DoubleFile
 
                         SetLVitemProjectVM(ref lookup, nLVitem);
                         SetLineNumber(ref lookup, nLineNumber);
-
+#if (DEBUG)
                         MBoxStatic.Assert(99907, _DictItemNumberToLV[GetLVitemProjectVM(lookup)] == lvItem);
-                        MBoxStatic.Assert(99906, GetLineNumber(lookup) == nLineNumber);
-
+                        MBoxStatic.Assert(99908, GetLineNumber(lookup) == nLineNumber);
+#endif
                         List<int> ls = null;
 
                         if (dictFiles.TryGetValue(key, out ls))

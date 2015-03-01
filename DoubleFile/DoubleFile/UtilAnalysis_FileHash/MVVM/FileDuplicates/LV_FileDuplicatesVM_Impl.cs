@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DoubleFile
 {
@@ -21,7 +22,6 @@ namespace DoubleFile
 
         internal void TreeFileSelChanged(IReadOnlyList<FileDictionary.DuplicateStruct> lsDuplicates)
         {
-            UtilProject.WriteLine("TreeFileSelChanged");
             UtilProject.UIthread(Items.Clear);
 
             if (null == lsDuplicates)
@@ -29,22 +29,19 @@ namespace DoubleFile
 
             var lsLines = new ConcurrentBag<string[]>();
 
-            lsDuplicates
-                .GroupBy(duplicate => duplicate.LVitemProjectVM.ListingFile)
-                .AsParallel()
-                .ForEach(g =>
+            Parallel.ForEach(
+                lsDuplicates
+                    .GroupBy(duplicate => duplicate.LVitemProjectVM.ListingFile), g =>
             {
                 List<int> lsLineNumbers = new List<int>();
 
                 foreach (var duplicate in g)
-                {
                     lsLineNumbers.Add(duplicate.LineNumber);
-                }
 
                 lsLineNumbers.Sort();               // jic already sorted upstream at A
 
-                int nLine = 0;
-                List<string> lsFilesInDir = new List<string>();
+                var nLine = 0;
+                var lsFilesInDir = new List<string>();
                 var nMatchLine = lsLineNumbers[0];
 
                 foreach (var strLine
@@ -69,16 +66,12 @@ namespace DoubleFile
                             break;
                    }
                 }
-
-                MBoxStatic.Assert(99908, 0 == lsLineNumbers.Count);
             });
 
             UtilProject.UIthread(() => 
             {
                 foreach (var strLine in lsLines)
-                {
                     Add(new LVitem_FileDuplicatesVM(new[] { strLine[0], strLine[1] }), bQuiet: true);
-                }
 
                 RaiseItems();
             });

@@ -55,7 +55,8 @@ namespace DoubleFile
                         lsLineNumbers.RemoveAt(0);
                         nMatchLine = (lsLineNumbers.Count > 0) ? lsLineNumbers[0] : -1;
                     }
-                    else if (strLine.StartsWith(FileParse.ksLineType_Directory))
+                    else if ((0 < lsFilesInDir.Count) &&
+                        strLine.StartsWith(FileParse.ksLineType_Directory))
                     {
                         foreach (var strFileLine in lsFilesInDir)
                             lasLines.Add(new[] { strFileLine.Split('\t')[3], strLine.Split('\t')[2] });

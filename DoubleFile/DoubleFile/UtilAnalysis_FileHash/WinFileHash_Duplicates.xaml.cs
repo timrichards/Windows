@@ -23,7 +23,7 @@ namespace DoubleFile
             DataContext = _lvFileDuplicatesVM;
         }
 
-        internal void TreeFileSelChanged(IReadOnlyList<FileDictionary.DuplicateStruct> lsDuplicates)
+        internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates)
         {
             _lvFileDuplicatesVM.TreeFileSelChanged(lsDuplicates);
         }

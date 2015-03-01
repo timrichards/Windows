@@ -48,8 +48,11 @@ namespace DoubleFile
             _winFileHash_Duplicates.Close();
         }
 
-        GlobalData_Base _gd = null;
-        LV_FileHashVM _lvFileHashVM = null;
-        WinFileHash_Duplicates _winFileHash_Duplicates = null;
+        GlobalData_Base
+            _gd = null;
+        LV_FileHashVM
+            _lvFileHashVM = null;
+        WinFileHash_Duplicates
+            _winFileHash_Duplicates = null;
     }
 }

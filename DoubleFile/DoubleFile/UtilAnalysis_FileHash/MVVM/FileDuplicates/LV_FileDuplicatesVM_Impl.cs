@@ -20,18 +20,18 @@ namespace DoubleFile
             TreeViewItem_FileHashVM.SelectedItemChanged -= DuplicateFileSelChanged;
         }
 
-        internal void TreeFileSelChanged(IReadOnlyList<FileDictionary.DuplicateStruct> lsDuplicates)
+        internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates)
         {
             UtilProject.UIthread(Items.Clear);
 
             if (null == lsDuplicates)
                 return;
 
-            var lsLines = new ConcurrentBag<string[]>();
+            var lasLines = new ConcurrentBag<string[]>();
 
             Parallel.ForEach(
                 lsDuplicates
-                    .GroupBy(duplicate => duplicate.LVitemProjectVM.ListingFile), g =>
+                .GroupBy(duplicate => duplicate.LVitemProjectVM.ListingFile), g =>
             {
                 List<int> lsLineNumbers = new List<int>();
 
@@ -58,7 +58,7 @@ namespace DoubleFile
                     else if (strLine.StartsWith(FileParse.ksLineType_Directory))
                     {
                         foreach (var strFileLine in lsFilesInDir)
-                            lsLines.Add(new[] { strFileLine.Split('\t')[3], strLine.Split('\t')[2] });
+                            lasLines.Add(new[] { strFileLine.Split('\t')[3], strLine.Split('\t')[2] });
 
                         lsFilesInDir.Clear();
  
@@ -68,13 +68,10 @@ namespace DoubleFile
                 }
             });
 
-            UtilProject.UIthread(() => 
-            {
-                foreach (var strLine in lsLines)
-                    Add(new LVitem_FileDuplicatesVM(new[] { strLine[0], strLine[1] }), bQuiet: true);
+            foreach (var asLine in lasLines)
+                Add(new LVitem_FileDuplicatesVM(asLine), bQuiet: true);
 
-                RaiseItems();
-            });
+            UtilProject.UIthread(RaiseItems);
         }
 
         void DuplicateFileSelChanged(IEnumerable<string> lsFiles, string strListingFile)

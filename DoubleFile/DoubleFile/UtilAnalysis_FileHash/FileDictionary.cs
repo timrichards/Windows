@@ -36,7 +36,7 @@ namespace DoubleFile
         /// <param name="strLine"></param>
         /// <param name="strListingFile">Only used to prevent adding queried item to the returned list.</param>
         /// <returns>null if bad strLine. Otherwise always non-null, even if empty.</returns>
-        internal IReadOnlyList<DuplicateStruct> GetDuplicates(
+        internal IEnumerable<DuplicateStruct> GetDuplicates(
             string strLine,
             out string strFilename,
             string strListingFile = null)
@@ -68,16 +68,16 @@ namespace DoubleFile
 
             var nLine = int.Parse(asLine[1]);
 
-            return new List<DuplicateStruct>(
+            return
                 lsDupes
-                    .Select(lookup => new DuplicateStruct
-                    {
-                        LVitemProjectVM = _DictItemNumberToLV[GetLVitemProjectVM(lookup)],
-                        LineNumber = GetLineNumber(lookup)
-                    })
-                    .Where(dupe =>
-                        (dupe.LVitemProjectVM.ListingFile != strListingFile) ||    // exactly once every query
-                        (dupe.LineNumber != nLine))
+                .Select(lookup => new DuplicateStruct
+                {
+                    LVitemProjectVM = _DictItemNumberToLV[GetLVitemProjectVM(lookup)],
+                    LineNumber = GetLineNumber(lookup)
+                })
+                .Where(dupe =>
+                    (dupe.LVitemProjectVM.ListingFile != strListingFile) ||    // exactly once every query
+                    (dupe.LineNumber != nLine)
             );
         }
 

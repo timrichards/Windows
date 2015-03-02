@@ -81,10 +81,19 @@ namespace DoubleFile
                 return;
             }
 
-            FormAnalysis_DirListAction(FormAnalysis_DirList.RestartTreeTimer);
-            new SaveListingsProcess(_gd, volumes.LVprojectVM);
             LVprojectVM = volumes.LVprojectVM;
+
+            new SaveListingsProcess(_gd, LVprojectVM);
+
             _gd.FileDictionary.Clear();
+            FormAnalysis_DirListAction(FormAnalysis_DirList.RestartTreeTimer);
+
+            if ((null != _winFileHash_Folders) && (false == _winFileHash_Folders.IsClosed))
+            {
+                _winFileHash_Folders.Close();
+                (_winFileHash_Folders = new WinFileHash_Folders(_gd, LVprojectVM)).Show();
+                _winFileHash_Folders.Closed += (o, a) => _winFileHash_Folders = null;
+            }
         }
 
         #region form_handlers

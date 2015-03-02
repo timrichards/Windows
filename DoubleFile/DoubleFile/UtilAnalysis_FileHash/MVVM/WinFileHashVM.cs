@@ -18,13 +18,33 @@ namespace DoubleFile
             _gd = gd;
             _tvVM = tvVM;
             _winProgress = new WinProgress(); 
+            UString.AddRef();
             DoTree();
+        }
+
+        internal void ShowFilesBrowser()
+        {
+            if ((null == _winFileHash_Files) ||
+                _winFileHash_Files.IsClosed)
+            {
+                (_winFileHash_Files = new WinFileHash_Files(_gd)).Show();
+            }
+
+            _winFileHash_Files.ShowFilesBrowser();
         }
 
         public void Dispose()
         {
             if (null != _winFileHash_Files)
                 _winFileHash_Files.Close();
+
+            if ((null == _lvProjectVM) ||
+                (0 == _lvProjectVM.Count))
+            {
+                return;
+            }
+
+            UString.DropRef();
         }
 
         readonly GlobalData_Base

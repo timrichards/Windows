@@ -134,7 +134,9 @@ namespace DoubleFile
             {
                 var dictFiles = new ConcurrentDictionary<FileKeyStruct, List<int>>();
 
-                Parallel.ForEach(_LVprojectVM.ItemsCast, lvItem =>
+                Parallel.ForEach(
+                    _LVprojectVM.ItemsCast
+                    .Where(lvItem => lvItem.CanLoad), lvItem =>
                 {
                     if (IsAborted)
                         return;

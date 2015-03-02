@@ -14,7 +14,7 @@ namespace DoubleFile
 
             InitializeComponent();
             form_grid.Loaded += Grid_Loaded;
-            Closed += (o, e) => _lvFileDuplicatesVM.Dispose();
+            Closed += Window_Closed;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -28,7 +28,30 @@ namespace DoubleFile
             _lvFileDuplicatesVM.TreeFileSelChanged(lsDuplicates);
         }
 
-        LV_FileDuplicatesVM _lvFileDuplicatesVM = null;
-        GlobalData_Base _gd = null;
+        internal new void Show()
+        {
+            base.Show();
+            
+            if (_nWantsLeft > -1)
+            {
+                Left = _nWantsLeft;
+                Top = _nWantsTop;
+            }
+        }
+
+        private void Window_Closed(object sender, System.EventArgs e)
+        {
+            _lvFileDuplicatesVM.Dispose();
+            _nWantsLeft = Left;
+            _nWantsTop = Top;
+        }
+
+        LV_FileDuplicatesVM
+            _lvFileDuplicatesVM = null;
+        GlobalData_Base
+            _gd = null;
+
+        static double _nWantsLeft = -1;
+        static double _nWantsTop = -1;
     }
 }

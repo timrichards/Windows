@@ -77,6 +77,30 @@ namespace DoubleFile
         {
             Owner = me;
             base.Show();
+
+            var lastWin = GlobalData.static_lastPlacementWindow;
+            var mainWin = GlobalData.static_MainWindow;
+
+            if (null != lastWin)
+            {
+                Left = lastWin.Left + lastWin.Width + 5;
+                Top = lastWin.Top;
+
+                if (Left + Width > System.Windows.SystemParameters.PrimaryScreenWidth)
+                {
+                    Left = mainWin.Left;
+                    Top = lastWin.Top + lastWin.Height + 5;
+                }
+            }
+            else if (this != mainWin)
+            {
+                Left = mainWin.Left;
+                Top = mainWin.Top + mainWin.Height + 5;
+            }
+
+            GlobalData.static_lastPlacementWindow = this;
+
+            Closed += (o, e) => GlobalData.static_lastPlacementWindow = null;
         }
 
         bool? ShowDialog(LocalWindow me)

@@ -6,6 +6,7 @@ namespace DoubleFile
     {
         internal static MainWindow static_MainWindow { get; private set; }
         internal static LocalWindow static_Dialog { get; set; }
+        internal static LocalWindow static_lastPlacementWindow { get; set; }
 
         internal readonly SDL_Timer m_tmrDoTree = null;
         internal bool m_bRestartTreeTimer = false;

@@ -21,7 +21,6 @@ namespace DoubleFile
         {
             _lvFileHashVM = new LV_FileHashVM(_gd);
             DataContext = _lvFileHashVM;
-            (_winFileHash_Duplicates = new WinFileHash_Duplicates(_gd)).Show();
             form_lv.SelectionChanged += SelectionChanged;
             Closed += Window_Closed;
         }
@@ -42,10 +41,34 @@ namespace DoubleFile
             _winFileHash_Duplicates.TreeFileSelChanged(lvItem.LSduplicates);
         }
 
-        void Window_Closed(object sender, System.EventArgs e)
+        internal void ShowFilesBrowser()
+        {
+            if ((null != _winFileHash_Duplicates) &&
+                (false == _winFileHash_Duplicates.IsClosed))
+            {
+                return;
+            }
+
+            (_winFileHash_Duplicates = new WinFileHash_Duplicates(_gd)).Show();
+        }
+
+        internal new void Show()
+        {
+            base.Show();
+            
+            if (_nWantsLeft > -1)
+            {
+                Left = _nWantsLeft;
+                Top = _nWantsTop;
+            }
+        }
+
+        private void Window_Closed(object sender, System.EventArgs e)
         {
             _lvFileHashVM.Dispose();
             _winFileHash_Duplicates.Close();
+            _nWantsLeft = Left;
+            _nWantsTop = Top;
         }
 
         GlobalData_Base
@@ -54,5 +77,8 @@ namespace DoubleFile
             _lvFileHashVM = null;
         WinFileHash_Duplicates
             _winFileHash_Duplicates = null;
+
+        static double _nWantsLeft = -1;
+        static double _nWantsTop = -1;
     }
 }

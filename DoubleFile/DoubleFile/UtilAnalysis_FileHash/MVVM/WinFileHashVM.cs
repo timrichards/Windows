@@ -27,11 +27,17 @@ namespace DoubleFile
                 _winFileHash_Files.Close();
         }
 
-        readonly GlobalData_Base _gd = null;
-        readonly TreeView_FileHashVM _tvVM = null;
-        readonly LV_ProjectVM _lvProjectVM = null;
-        readonly WinProgress _winProgress = null;
-        readonly double _nCorrelateProgressDenominator = 0;
-        WinFileHash_Files _winFileHash_Files = null;
+        readonly GlobalData_Base
+            _gd = null;
+        readonly TreeView_FileHashVM
+            _tvVM = null;
+        readonly LV_ProjectVM
+            _lvProjectVM = null;
+        readonly WinProgress
+            _winProgress = null;
+        readonly double
+            _nCorrelateProgressDenominator = 0;
+        WinFileHash_Files
+            _winFileHash_Files = null;
     }
 }

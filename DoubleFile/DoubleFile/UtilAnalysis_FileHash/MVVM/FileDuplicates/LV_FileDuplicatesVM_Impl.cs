@@ -33,7 +33,7 @@ namespace DoubleFile
                 lsDuplicates
                 .GroupBy(duplicate => duplicate.LVitemProjectVM.ListingFile), g =>
             {
-                List<int> lsLineNumbers = new List<int>();
+                var lsLineNumbers = new List<int>();
 
                 foreach (var duplicate in g)
                     lsLineNumbers.Add(duplicate.LineNumber);
@@ -45,7 +45,8 @@ namespace DoubleFile
                 var nMatchLine = lsLineNumbers[0];
 
                 foreach (var strLine
-                    in File.ReadLines(g.Key))
+                    in File
+                    .ReadLines(g.Key))
                 {
                     ++nLine;
 

@@ -40,12 +40,14 @@ namespace DoubleFile
 
                 lsLineNumbers.Sort();               // jic already sorted upstream at A
 
-                var nLine = 0;
                 var lsFilesInDir = new List<string>();
                 var nMatchLine = lsLineNumbers[0];
+                var nLine = nMatchLine - 1;
 
                 foreach (var strLine
-                    in File.ReadLines(g.Key))
+                    in File
+                    .ReadLines(g.Key)
+                    .Skip(nLine))
                 {
                     ++nLine;
 

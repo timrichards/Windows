@@ -3,8 +3,8 @@ namespace DoubleFile
 {
     class LVitem_FileDetailVM : ListViewItemVM_Base
     {
-        public string Header { get { return marr[0]; } set { SetProperty(0, value); } }
-        public string Detail { get { return marr[1]; } set { SetProperty(1, value); } }
+        public string Header { get { return marr[0]; } internal set { SetProperty(0, value); } }
+        public string Detail { get { return marr[1]; } internal set { SetProperty(1, value); } }
 
         protected override string[] PropertyNames { get { return new[] { "Header", "Detail" }; } }
 

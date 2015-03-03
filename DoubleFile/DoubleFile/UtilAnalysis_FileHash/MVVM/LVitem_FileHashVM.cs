@@ -6,8 +6,30 @@ namespace DoubleFile
         internal System.Collections.Generic.IEnumerable<FileDictionary.DuplicateStruct>
             LSduplicates = null;
 
-        public string Filename { get { return marr[0]; } set { SetProperty(0, value); } }
-        public string Duplicates { get { return marr[1]; } set { SetProperty(1, value); } }
+        public bool SameVolume
+        {
+            get { return _SameVolume; }
+            internal set
+            {
+                _SameVolume = value;
+                RaisePropertyChanged("SameVolume");
+            }
+        }
+        bool _SameVolume = false;
+
+        public bool Solitary
+        {
+            get { return _Solitary; }
+            internal set
+            {
+                _Solitary = value;
+                RaisePropertyChanged("Solitary");
+            }
+        }
+        bool _Solitary = false;
+
+        public string Filename { get { return marr[0]; } internal set { SetProperty(0, value); } }
+        public string Duplicates { get { return marr[1]; } internal set { SetProperty(1, value); } }
 
         protected override string[] PropertyNames { get { return new[] { "Filename", "Duplicates" }; } }
 

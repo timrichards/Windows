@@ -34,11 +34,18 @@ namespace DoubleFile
                     var strCount = (nCount > 0) ? "" + nCount : null;
                     var lvItem = new LVitem_FileHashVM(new[] { strFilename, strCount });
 
-                    if (nCount > 0)
+                    lvItem.Solitary = (0 == nCount);
+
+                    if (false == lvItem.Solitary)
                     {
                         lvItem.LSduplicates = lsDuplicates;
+                        lvItem.SameVolume =
+                            (1 ==
+                            lsDuplicates
+                                .GroupBy(duplicate => duplicate.LVitemProjectVM.ListingFile)
+                                .Count());
                     }
-                    
+
                     Add(lvItem, bQuiet: true);
                 }
 

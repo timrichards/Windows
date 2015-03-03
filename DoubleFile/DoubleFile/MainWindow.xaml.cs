@@ -101,6 +101,8 @@ namespace DoubleFile
         {
             _gd = new GlobalData_Window(this);
 
+            MinWidth = Width;
+            MinHeight = Height;
 #if (DEBUG)
             //#warning DEBUG is defined.
             MBoxStatic.Assert(99998, System.Diagnostics.Debugger.IsAttached, "Debugger is not attached!");

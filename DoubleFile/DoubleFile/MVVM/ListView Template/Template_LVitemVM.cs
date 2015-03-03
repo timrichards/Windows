@@ -6,7 +6,7 @@ namespace Template      // prevents smart tag rename command from renaming the t
     class Template_LVitemVM : ListViewItemVM_Base
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public string ColumnNameHere { get { return marr[0]; } set { SetProperty(0, value); } }
+        public string ColumnNameHere { get { return marr[0]; } internal set { SetProperty(0, value); } }
 
         protected override string[] PropertyNames { get { return new[] { "" }; } }
 

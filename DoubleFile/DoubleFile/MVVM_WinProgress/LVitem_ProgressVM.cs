@@ -7,17 +7,17 @@ namespace DoubleFile
     class LVitem_ProgressVM : ListViewItemVM_Base
     {
         public string
-            Nickname { get { return marr[0]; } set { SetProperty(0, value); } }
+            Nickname { get { return marr[0]; } internal set { SetProperty(0, value); } }
         public string
-            SourcePath { get { return marr[1]; } set { SetProperty(1, value); } }
+            SourcePath { get { return marr[1]; } internal set { SetProperty(1, value); } }
         public double
-            Progress { get; set; }
+            Progress { get; internal set; }
 
         public bool
             Indeterminate
         {
             get { return _bIndeterminate; }
-            set
+            internal set
             {
                 _bIndeterminate = value;
 
@@ -28,11 +28,15 @@ namespace DoubleFile
         bool _bIndeterminate = true;
 
         public Brush
-            ProgressState { get { return _brushProgressState; } set { _brushProgressState = value; RaisePropertyChanged(_ksProgressState); } }
+            ProgressState
+        {
+            get { return _brushProgressState; }
+            internal set { _brushProgressState = value; RaisePropertyChanged(_ksProgressState); }
+        }
         Brush _brushProgressState = Brushes.Yellow;
         
         public string
-            Remaining { get { return marr[5]; } set { SetProperty(5, value); } }
+            Remaining { get { return marr[5]; } internal set { SetProperty(5, value); } }
 
         protected override string[]
             PropertyNames { get { return new[] { "Nickname", "SourcePath", _ksProgress, _ksIndeterminate, _ksProgressState, "Remaining" }; } }

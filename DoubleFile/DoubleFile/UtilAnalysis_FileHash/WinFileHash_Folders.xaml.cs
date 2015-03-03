@@ -21,6 +21,8 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
+            MinWidth = Width;
+            MinHeight = Height;
             _winFileHashVM = new WinFileHashVM(_gd,
                 new TreeView_FileHashVM(form_tv),
                 _lvProjectVM);

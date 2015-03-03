@@ -3,8 +3,8 @@ namespace DoubleFile
 {
     class LVitem_FileDuplicatesVM : ListViewItemVM_Base
     {
-        public string Filename { get { return marr[0]; } set { SetProperty(0, value); } }
-        public string Path { get { return marr[1]; } set { SetProperty(1, value); } }
+        public string Filename { get { return marr[0]; } internal set { SetProperty(0, value); } }
+        public string Path { get { return marr[1]; } internal set { SetProperty(1, value); } }
 
         protected override string[] PropertyNames { get { return new[] { "Filename", "Path" }; } }
 

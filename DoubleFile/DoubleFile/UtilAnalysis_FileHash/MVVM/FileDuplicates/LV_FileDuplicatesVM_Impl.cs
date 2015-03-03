@@ -12,12 +12,12 @@ namespace DoubleFile
         internal LV_FileDuplicatesVM(GlobalData_Base gd)
         {
             _gd = gd;
-            TreeViewItem_FileHashVM.TreeSelect_FileList += DuplicateFileSelChanged;
+            TreeViewItem_FileHashVM.TreeSelect_FileList += TreeSelect_FileList;
         }
 
         public void Dispose()
         {
-            TreeViewItem_FileHashVM.TreeSelect_FileList -= DuplicateFileSelChanged;
+            TreeViewItem_FileHashVM.TreeSelect_FileList -= TreeSelect_FileList;
         }
 
         internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates)
@@ -76,9 +76,9 @@ namespace DoubleFile
             UtilProject.UIthread(RaiseItems);
         }
 
-        void DuplicateFileSelChanged(IEnumerable<string> lsFiles, string strListingFile)
+        void TreeSelect_FileList(IEnumerable<string> lsFiles, string strListingFile)
         {
-             UtilProject.UIthread(Items.Clear);
+            UtilProject.UIthread(Items.Clear);
         }
 
         GlobalData_Base _gd = null;

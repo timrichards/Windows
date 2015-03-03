@@ -167,8 +167,8 @@ namespace Local
         readonly TreeSelectDelegate_FileList
             _callback_1_FileList = null;
         readonly TreeSelectDelegate_FolderDetail
-            _callback_2_FolderDetail;
+            _callback_2_FolderDetail = null;
         readonly TreeSelectDelegate_VolumeDetail
-            _callback_3_VolumeDetail;
+            _callback_3_VolumeDetail = null;
     }
 }

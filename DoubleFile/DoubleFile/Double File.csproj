@@ -148,10 +148,16 @@
     <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
     <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
     <Compile Include="UtilAnalysis_DirList Local\Tree\TreeSelect_Local.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\Detail\LVitem_FileDetailVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\Detail\LV_FileDetailVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\Detail\LV_FileDetailVM_Impl.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\FileDuplicates\LVitem_FileDuplicatesVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\FileDuplicates\LV_FileDuplicatesVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\FileDuplicates\LV_FileDuplicatesVM_Impl.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\TreeView\TreeViewItem_FileHashVM_Impl.cs" />
+    <Compile Include="UtilAnalysis_FileHash\WinFileHash_Detail.xaml.cs">
+      <DependentUpon>WinFileHash_Detail.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UtilAnalysis_FileHash\WinFileHash_Duplicates.xaml.cs">
       <DependentUpon>WinFileHash_Duplicates.xaml</DependentUpon>
     </Compile>
@@ -403,6 +409,10 @@
     <Resource Include="ic_people_black_18dp.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="UtilAnalysis_FileHash\WinFileHash_Detail.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UtilAnalysis_FileHash\WinFileHash_Duplicates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

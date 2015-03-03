@@ -9,15 +9,15 @@ namespace DoubleFile
         internal LV_FileHashVM(GlobalData_Base gd)
         {
             _gd = gd;
-            TreeViewItem_FileHashVM.TreeSelect_FileList += SelectedItemChanged;
+            TreeViewItem_FileHashVM.TreeSelect_FileList += TreeSelect_FileList;
         }
 
         public void Dispose()
         {
-            TreeViewItem_FileHashVM.TreeSelect_FileList -= SelectedItemChanged;
+            TreeViewItem_FileHashVM.TreeSelect_FileList -= TreeSelect_FileList;
         }
 
-        void SelectedItemChanged(IEnumerable<string> lsFiles, string strListingFile)
+        void TreeSelect_FileList(IEnumerable<string> lsFiles, string strListingFile)
         {
             UtilProject.UIthread(() =>
             {

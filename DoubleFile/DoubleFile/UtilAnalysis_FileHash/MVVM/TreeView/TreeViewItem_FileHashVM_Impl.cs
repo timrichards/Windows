@@ -1,6 +1,6 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
+
 namespace DoubleFile
 {
     partial class TreeViewItem_FileHashVM
@@ -21,7 +21,7 @@ namespace DoubleFile
                 (lsFiles, strListingFile) => { if (null != TreeSelect_FileList) TreeSelect_FileList(lsFiles, strListingFile); },
                 (lsDetail) => { if (null != TreeSelect_FolderDetail) TreeSelect_FolderDetail(lsDetail); },
                 (lsDetail) => { if (null != TreeSelect_VolumeDetail) TreeSelect_VolumeDetail(lsDetail); }
-                ).DoThreadFactory();
+            ).DoThreadFactory();
         }
     }
 }

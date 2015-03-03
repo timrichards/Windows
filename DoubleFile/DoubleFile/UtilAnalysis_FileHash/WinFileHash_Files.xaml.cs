@@ -46,6 +46,7 @@ namespace DoubleFile
             if ((null != _winFileHash_Duplicates) &&
                 (false == _winFileHash_Duplicates.IsClosed))
             {
+                Activate();
                 return;
             }
 

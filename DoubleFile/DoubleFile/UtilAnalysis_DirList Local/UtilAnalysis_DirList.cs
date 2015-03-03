@@ -18,7 +18,13 @@ namespace DoubleFile
             }
 
             if (dispatcher.InvokeRequired)
-                dispatcher.Invoke(action);
+            {
+                try
+                {
+                    dispatcher.Invoke(action);
+                }
+                catch (ObjectDisposedException) { }
+            }
             else
                 action();
         }

@@ -6,20 +6,28 @@ using DoubleFile;
 
 namespace Local
 {
-    delegate void TreeSelectDelegate_FileList(IEnumerable<string> lsFiles, string strListingFile);
-    delegate void TreeSelectDelegate_FolderDetail(IEnumerable<string[]> lsDetail);
-    delegate void TreeSelectDelegate_VolumeDetail(IEnumerable<string[]> lsDetail);
-    
     partial class TreeSelect
     {
+        static internal event Action<IEnumerable<string>, string> FileListUpdated;
+        static internal event Action<IEnumerable<string[]>> FolderDetailUpdated;
+        static internal event Action<IEnumerable<string[]>> VolumeDetailUpdated;
+
         void Go()
         {
-            GetFileList();
-            GetFolderDetail();
-            GetVolumeDetail();
+            if (null != FileListUpdated)
+                GetFileList();
+
+            if (null != FolderDetailUpdated)
+                GetFolderDetail();
+
+            if (null != VolumeDetailUpdated)
+                GetVolumeDetail();
         }
 
-        // There is an older GetFileList() that returns multiple info columns
+        // The main file has the original GetFileList() that returns multiple info columns
+        // That one is static and is used by the treemap.
+        // However it deprecatedly splits each line and formats it:
+        // unused and too far upstream
         void GetFileList()
         {
             string strListingFile = null;
@@ -55,7 +63,7 @@ namespace Local
                     .ToList();
             } while (false);
 
-            _callback_1_FileList(lsFiles, strListingFile);
+            FileListUpdated(lsFiles, strListingFile);
         }
 
         void GetFolderDetail()
@@ -66,7 +74,7 @@ namespace Local
             if ((null == nodeDatum) ||
                 (0 == nodeDatum.nLineNo))
             {
-                _callback_2_FolderDetail(lasItems);
+                FolderDetailUpdated(lasItems);
                 return;
             }
 
@@ -98,7 +106,7 @@ namespace Local
             }
 
             lasItems.Add(new string[] { "Total Size", FormatSize(nodeDatum.nTotalLength, bBytes: true) });
-            _callback_2_FolderDetail(lasItems);
+            FolderDetailUpdated(lasItems);
         }
 
         void GetVolumeDetail()
@@ -160,15 +168,8 @@ namespace Local
                     lasItems.Add(asItems[ix]);
                 }
 
-                _callback_3_VolumeDetail(lasItems.Where(i => i != null));
+                VolumeDetailUpdated(lasItems.Where(i => i != null));
             }
         }
-
-        readonly TreeSelectDelegate_FileList
-            _callback_1_FileList = null;
-        readonly TreeSelectDelegate_FolderDetail
-            _callback_2_FolderDetail = null;
-        readonly TreeSelectDelegate_VolumeDetail
-            _callback_3_VolumeDetail = null;
     }
 }

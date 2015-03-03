@@ -7,30 +7,16 @@ using DoubleFile;
 
 namespace Local
 {
-    delegate void TreeSelectStatusDelegate_Deprecated(
-        IReadOnlyList<LocalLVitem> lvItemDetails = null,
-        IReadOnlyList<LocalLVitem> itemArray = null,
-        IEnumerable<LocalLVitem> lvVolDetails = null,
-        bool bSecondComparePane = false,
-        LVitemFileTag lvFileItem = null);
-    delegate void TreeSelectDoneDelegate_Deprecated(bool bSecondComparePane);
-
     partial class TreeSelect : UtilAnalysis_DirList
     {
         internal TreeSelect(LocalTreeNode node,
             Dictionary<string, string> dictDriveInfo,
-            bool bCompareMode, bool bSecondComparePane,
-            TreeSelectDelegate_FileList callback_1_FileList,
-            TreeSelectDelegate_FolderDetail callback_2_FolderDetail,
-            TreeSelectDelegate_VolumeDetail callback_3_VolumeDetail)
+            bool bCompareMode, bool bSecondComparePane)
         {
             _treeNode = node;
             _dictVolumeInfo = dictDriveInfo;
             _bCompareMode = bCompareMode;
             _bSecondComparePane = bSecondComparePane;
-            _callback_1_FileList = callback_1_FileList;
-            _callback_2_FolderDetail = callback_2_FolderDetail;
-            _callback_3_VolumeDetail = callback_3_VolumeDetail;
 
             var rootNode = node;
 
@@ -40,6 +26,10 @@ namespace Local
             _strFile = ((RootNodeDatum)rootNode.Tag).StrFile;
         }
 
+        // This is the original GetFileList() that returns multiple info columns
+        // Static and is used by the treemap.
+        // However it deprecatedly splits each line and formats it:
+        // unused and too far upstream
         internal static List<string[]> GetFileList(
             LocalTreeNode parent,
             List<ulong> listLength = null)
@@ -110,176 +100,6 @@ namespace Local
             return _thread;
         }
 
-        void Go_Deprecated()
-        {
-            Go_A_Deprecated();
-
-            if (_bCompareMode == false)
-            {
-                // Volume detail
-
-                string strDriveInfo = null;
-
-                if (_dictVolumeInfo.TryGetValue(_strFile, out strDriveInfo))
-                {
-                    var arrDriveInfo =
-                        strDriveInfo
-                        .Split(new[] { "\r\n", "\n" },
-                        StringSplitOptions.None);
-
-                    MBoxStatic.Assert(1301.2314,
-                        new[] { 7, 8, 10, kanDIviewOrder.Length }
-                        .Contains(arrDriveInfo.Length));
-
-                    var asItems = new string[arrDriveInfo.Length][];
-
-                    for (var i = 0; i < arrDriveInfo.Length; ++i)
-                    {
-                        var a = arrDriveInfo[i].Split('\t');
-
-                        if (a[1].Trim().Length == 0)
-                        {
-                            continue;
-                        }
-
-                        asItems[i] = new[]
-                        {
-                            a[0],
-                            kabDIsizeType[i] ?
-                                FormatSize(a[1], bBytes: true) :
-                                a[1]
-                        };
-                    }
-
-                    var lvItems = new LocalLVitem[arrDriveInfo.Length];
-
-                    for (var ix = 0; ix < arrDriveInfo.Length; ++ix)
-                    {
-                        if ((asItems[ix] == null) ||
-                            (asItems[ix].Length == 0) ||
-                            (asItems[ix][1].Trim().Length == 0))
-                        {
-                            continue;
-                        }
-
-                        if ((kanDIoptIfEqTo[ix] != -1) &&
-                            (asItems[ix][1] == asItems[kanDIoptIfEqTo[ix]][1]))
-                        {
-                            continue;
-                        }
-
-                        var ixA = (arrDriveInfo.Length == kanDIviewOrder.Length) ?
-                            kanDIviewOrder[ix] :
-                            ix;
-
-                        lvItems[ixA] = new LocalLVitem(asItems[ix]);
-                    }
-
-                    _statusCallback_Deprecated(lvVolDetails: lvItems.Where(i => i != null));
-                }
-            }
-
-//            _doneCallback(_bSecondComparePane);
-        }
-
-        void Go_A_Deprecated()
-        {
-            if (false == File.Exists(_strFile))
-            {
-                MBoxStatic.Assert(1301.2311, false);
-                return;
-            }
-
-            var nodeDatum = _treeNode.Tag as NodeDatum;
-
-            if ((null == nodeDatum) || 
-                (nodeDatum.nLineNo == 0))
-            {
-                return;
-            }
-
-            var nPrevDir = nodeDatum.nPrevLineNo;
-            var nLineNo = (int)nodeDatum.nLineNo;
-            string[] strArray = null;
-
-            File
-                .ReadLines(_strFile)
-                .Skip(nLineNo - 1)
-                .Take(1)
-                .FirstOnlyAssert(strLine =>
-                {
-                    strArray = strLine.Split('\t');
-                    UtilProject.WriteLine(strLine);
-                });
-
-            MBoxStatic.Assert(1301.2312, (false == string.IsNullOrWhiteSpace(strArray[2])));
-
-            var nIx = 0;
-            DateTime dt;
-
-            // Directory detail
-
-            var listItems = new UList<LocalLVitem>();
-
-            nIx = 4; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new LocalLVitem(new[] { "Created\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
-            nIx = 5; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new LocalLVitem(new[] { "Modified\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
-            nIx = 6; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new LocalLVitem(new[] { "Attributes\t", DecodeAttributes(strArray[nIx]) }));
-            listItems.Add(new LocalLVitem(new[] { "Immediate Size\t", FormatSize(nodeDatum.nLength, bBytes: true) }));
-            nIx = 8; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new LocalLVitem(new[] { "Error 1\t", strArray[nIx] }));
-            nIx = 9; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new LocalLVitem(new[] { "Error 2\t", strArray[nIx] }));
-            listItems.Add(new LocalLVitem(new[] { "# Immediate Files", (nLineNo - nPrevDir - 1).ToString() }));
-
-            // Tree subnode detail
-
-            const string NUMFMT = "###,###,###,##0";
-
-            listItems.Add(new LocalLVitem(new[] { "# Immediate Folders", _treeNode.Nodes.Count.ToString(NUMFMT) }));
-            listItems.Add(new LocalLVitem(new[] { "Total # Files", nodeDatum.nFilesInSubdirs.ToString(NUMFMT) }));
-
-            if (nodeDatum.nSubDirs > 0)
-            {
-                var strItem = nodeDatum.nSubDirs.ToString(NUMFMT);
-
-                if (nodeDatum.nDirsWithFiles > 0)
-                {
-                    var nDirsWithFiles = nodeDatum.nDirsWithFiles;
-
-                    if (nodeDatum.nImmediateFiles > 0)
-                    {
-                        --nDirsWithFiles;
-                    }
-
-                    if (nDirsWithFiles > 0)
-                    {
-                        strItem += " (" + nDirsWithFiles.ToString(NUMFMT) + " with files)";
-                    }
-                }
-
-                listItems.Add(new LocalLVitem(new string[] { "# Subfolders", strItem }));
-            }
-
-            listItems.Add(new LocalLVitem(new string[] { "Total Size", FormatSize(nodeDatum.nTotalLength, bBytes: true) }));
-            _statusCallback_Deprecated(lvItemDetails: listItems.ToArray(), bSecondComparePane: _bSecondComparePane);
-
-            var listFiles_A = GetFileList(_treeNode);
-
-            if (listFiles_A.IsEmpty())
-            {
-                return;
-            }
-
-            var listFiles = new UList<LocalLVitem>();
-
-            foreach (var arrLine in listFiles_A)
-            {
-                listFiles.Add(new LocalLVitem(arrLine));
-            }
-
-            _statusCallback_Deprecated(itemArray: listFiles.ToArray(),
-                bSecondComparePane: _bSecondComparePane,
-                lvFileItem: new LVitemFileTag(_treeNode.Text, listFiles.Count));
-        }
-
         readonly LocalTreeNode
             _treeNode = null;
         readonly Dictionary<string, string>
@@ -292,8 +112,5 @@ namespace Local
             _bCompareMode = false;
         readonly bool
             _bSecondComparePane = false;
-
-        readonly TreeSelectStatusDelegate_Deprecated
-            _statusCallback_Deprecated = null;
     }
 }

@@ -12,12 +12,12 @@ namespace DoubleFile
         internal LV_FileDetailVM(GlobalData_Base gd)
         {
             _gd = gd;
-            TreeViewItem_FileHashVM.TreeSelect_FolderDetail += TreeSelect_FolderDetail;
+            Local.TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetail;
         }
 
         public void Dispose()
         {
-            TreeViewItem_FileHashVM.TreeSelect_FolderDetail -= TreeSelect_FolderDetail;
+            Local.TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetail;
         }
 
         void TreeSelect_FolderDetail(IEnumerable<string[]> lasDetail)

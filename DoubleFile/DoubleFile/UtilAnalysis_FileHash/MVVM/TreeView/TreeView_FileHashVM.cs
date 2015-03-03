@@ -12,6 +12,8 @@ namespace DoubleFile
             _listExpanded = new UList<TreeViewItem_FileHashVM>();
         internal readonly TreeView
             _TVFE = null;
+        internal Dictionary<string, string>
+            _dictVolumeInfo = new Dictionary<string, string>();
 
         internal TreeView_FileHashVM(TreeView tvfe)
         {

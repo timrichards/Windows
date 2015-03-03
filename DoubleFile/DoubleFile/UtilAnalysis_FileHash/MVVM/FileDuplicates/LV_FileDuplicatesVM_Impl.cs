@@ -12,12 +12,12 @@ namespace DoubleFile
         internal LV_FileDuplicatesVM(GlobalData_Base gd)
         {
             _gd = gd;
-            TreeViewItem_FileHashVM.SelectedItemChanged += DuplicateFileSelChanged;
+            TreeViewItem_FileHashVM.TreeSelect_FileList += DuplicateFileSelChanged;
         }
 
         public void Dispose()
         {
-            TreeViewItem_FileHashVM.SelectedItemChanged -= DuplicateFileSelChanged;
+            TreeViewItem_FileHashVM.TreeSelect_FileList -= DuplicateFileSelChanged;
         }
 
         internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates)
@@ -54,7 +54,7 @@ namespace DoubleFile
                     {
                         lsFilesInDir.Add(strLine);
                         lsLineNumbers.RemoveAt(0);
-                        nMatchLine = (lsLineNumbers.Count > 0) ? lsLineNumbers[0] : -1;
+                        nMatchLine = (0 < lsLineNumbers.Count) ? lsLineNumbers[0] : -1;
                     }
                     else if ((0 < lsFilesInDir.Count) &&
                         strLine.StartsWith(FileParse.ksLineType_Directory))

@@ -11,8 +11,6 @@ namespace DoubleFile
     {
         internal ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>>
             DictNodes { get; private set; }
-        internal readonly Dictionary<string, string>
-            _dictDriveInfo = new Dictionary<string, string>();
         internal Local.Tree
             Tree { get; private set; }
 
@@ -31,7 +29,7 @@ namespace DoubleFile
         {
             TreeCleanup();
 
-            _dictDriveInfo.Clear();
+            _tvVM._dictVolumeInfo.Clear();
 
             // m_dictNodes is tested to recreate tree.
             DictNodes = null;
@@ -213,7 +211,8 @@ namespace DoubleFile
                 DictNodes = new ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>>();
 
             Tree =
-                new Local.Tree(_gd, _lvProjectVM, DictNodes, _dictDriveInfo, TreeStatusCallback, TreeDoneCallback)
+                new Local.Tree(_gd, _lvProjectVM, DictNodes, _tvVM._dictVolumeInfo,
+                    TreeStatusCallback, TreeDoneCallback)
                 .DoThreadFactory();
 
             lsProgressItems.Add(_ksFolderTreeKey);

@@ -147,6 +147,7 @@
     <Compile Include="MVVM\ListView Base\ListViewVM_GenericBase.cs" />
     <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
     <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
+    <Compile Include="UtilAnalysis_DirList Local\Tree\TreeSelect_Local.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\FileDuplicates\LVitem_FileDuplicatesVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\FileDuplicates\LV_FileDuplicatesVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\FileDuplicates\LV_FileDuplicatesVM_Impl.cs" />

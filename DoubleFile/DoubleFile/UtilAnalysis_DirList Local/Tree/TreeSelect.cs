@@ -7,28 +7,30 @@ using DoubleFile;
 
 namespace Local
 {
-    delegate void TreeSelectStatusDelegate(
+    delegate void TreeSelectStatusDelegate_Deprecated(
         IReadOnlyList<LocalLVitem> lvItemDetails = null,
         IReadOnlyList<LocalLVitem> itemArray = null,
         IEnumerable<LocalLVitem> lvVolDetails = null,
         bool bSecondComparePane = false,
         LVitemFileTag lvFileItem = null);
-    //delegate void TreeSelectDoneDelegate(bool bSecondComparePane);
-    delegate void TreeSelectDoneDelegate(IEnumerable<string> lsFiles, string strListingFile);
+    delegate void TreeSelectDoneDelegate_Deprecated(bool bSecondComparePane);
 
-    class TreeSelect : UtilAnalysis_DirList
+    partial class TreeSelect : UtilAnalysis_DirList
     {
         internal TreeSelect(LocalTreeNode node,
             Dictionary<string, string> dictDriveInfo,
             bool bCompareMode, bool bSecondComparePane,
-            TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
+            TreeSelectDelegate_FileList callback_1_FileList,
+            TreeSelectDelegate_FolderDetail callback_2_FolderDetail,
+            TreeSelectDelegate_VolumeDetail callback_3_VolumeDetail)
         {
             _treeNode = node;
-            _dictDriveInfo = dictDriveInfo;
+            _dictVolumeInfo = dictDriveInfo;
             _bCompareMode = bCompareMode;
             _bSecondComparePane = bSecondComparePane;
-            _statusCallback = statusCallback;
-            _doneCallback = doneCallback;
+            _callback_1_FileList = callback_1_FileList;
+            _callback_2_FolderDetail = callback_2_FolderDetail;
+            _callback_3_VolumeDetail = callback_3_VolumeDetail;
 
             var rootNode = node;
 
@@ -103,52 +105,14 @@ namespace Local
 
         internal Thread DoThreadFactory()
         {
-            _thread = new Thread(() =>
-            {
-                string strListingFile = null;
-                var nodeDatum = _treeNode.Tag as NodeDatum;
-                var rootNodeDatum = _treeNode.Root().Tag as RootNodeDatum;
-                IEnumerable<string> lsFiles = null;
-
-                do
-                {
-                    if ((null == nodeDatum) ||
-                        (0 == nodeDatum.nLineNo) ||
-                        (null == rootNodeDatum))
-                    {
-                        break;
-                    }
-
-                    strListingFile = rootNodeDatum.StrFile;
-
-                    var nPrevDir = (int)nodeDatum.nPrevLineNo;
-                    var nLineNo = (int)nodeDatum.nLineNo;
-
-                    if (0 == nPrevDir)
-                        break;
-
-                    if (1 >= (nLineNo - nPrevDir))  // dir has no files
-                        break;
-
-                    lsFiles =
-                        File
-                        .ReadLines(strListingFile)
-                        .Skip(nPrevDir)
-                        .Take((nLineNo - nPrevDir - 1))
-                        .ToList();
-                } while (false);
-
-                _doneCallback(lsFiles, strListingFile);
-            }) { IsBackground = true };
-
-            //_thread = new Thread(Go) { IsBackground = true };
+            _thread = new Thread(Go) { IsBackground = true };
             _thread.Start();
             return _thread;
         }
 
-        void Go()
+        void Go_Deprecated()
         {
-            Go_A();
+            Go_A_Deprecated();
 
             if (_bCompareMode == false)
             {
@@ -156,7 +120,7 @@ namespace Local
 
                 string strDriveInfo = null;
 
-                if (_dictDriveInfo.TryGetValue(_strFile, out strDriveInfo))
+                if (_dictVolumeInfo.TryGetValue(_strFile, out strDriveInfo))
                 {
                     var arrDriveInfo =
                         strDriveInfo
@@ -211,14 +175,14 @@ namespace Local
                         lvItems[ixA] = new LocalLVitem(asItems[ix]);
                     }
 
-                    _statusCallback(lvVolDetails: lvItems.Where(i => i != null));
+                    _statusCallback_Deprecated(lvVolDetails: lvItems.Where(i => i != null));
                 }
             }
 
 //            _doneCallback(_bSecondComparePane);
         }
 
-        void Go_A()
+        void Go_A_Deprecated()
         {
             if (false == File.Exists(_strFile))
             {
@@ -295,7 +259,7 @@ namespace Local
             }
 
             listItems.Add(new LocalLVitem(new string[] { "Total Size", FormatSize(nodeDatum.nTotalLength, bBytes: true) }));
-            _statusCallback(lvItemDetails: listItems.ToArray(), bSecondComparePane: _bSecondComparePane);
+            _statusCallback_Deprecated(lvItemDetails: listItems.ToArray(), bSecondComparePane: _bSecondComparePane);
 
             var listFiles_A = GetFileList(_treeNode);
 
@@ -311,7 +275,7 @@ namespace Local
                 listFiles.Add(new LocalLVitem(arrLine));
             }
 
-            _statusCallback(itemArray: listFiles.ToArray(),
+            _statusCallback_Deprecated(itemArray: listFiles.ToArray(),
                 bSecondComparePane: _bSecondComparePane,
                 lvFileItem: new LVitemFileTag(_treeNode.Text, listFiles.Count));
         }
@@ -319,11 +283,7 @@ namespace Local
         readonly LocalTreeNode
             _treeNode = null;
         readonly Dictionary<string, string>
-            _dictDriveInfo = null;
-        readonly TreeSelectStatusDelegate
-            _statusCallback = null;
-        readonly TreeSelectDoneDelegate
-            _doneCallback = null;
+            _dictVolumeInfo = null;
         Thread
             _thread = null;
         readonly string
@@ -332,5 +292,8 @@ namespace Local
             _bCompareMode = false;
         readonly bool
             _bSecondComparePane = false;
+
+        readonly TreeSelectStatusDelegate_Deprecated
+            _statusCallback_Deprecated = null;
     }
 }

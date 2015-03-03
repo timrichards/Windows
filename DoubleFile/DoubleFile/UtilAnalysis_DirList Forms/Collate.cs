@@ -408,33 +408,27 @@ namespace DoubleFile
                     return;
                 }
 
-                if (m_treeViewBrowse.Enabled == false)      // stays enabled when DoCollation() is called directly
-                {
                     m_treeViewBrowse.Nodes.Clear();
-                }
 
                 if (m_listRootNodes.IsEmpty())
                 {
                     return;
                 }
 
-                if (m_treeViewBrowse.Enabled == false)
-                {
-                    m_treeViewBrowse.Enabled = true;
-                    m_treeViewBrowse.CheckBoxes = m_bCheckboxes;
+                m_treeViewBrowse.Enabled = true;
+                m_treeViewBrowse.CheckBoxes = m_bCheckboxes;
 
-                    int nCount = CountNodes.Go(m_listRootNodes);
+                int nCount = CountNodes.Go(m_listRootNodes);
 
-                    UtilAnalysis_DirList.Write("A");
-                    m_treeViewBrowse.Nodes.AddRange(m_listRootNodes.ToArray());
-                    UtilProject.WriteLine("A");
+                UtilAnalysis_DirList.Write("A");
+                m_treeViewBrowse.Nodes.AddRange(m_listRootNodes.ToArray());
+                UtilProject.WriteLine("A");
 
-                    int nCount_A = CountNodes.Go(m_listRootNodes);
+                int nCount_A = CountNodes.Go(m_listRootNodes);
 
-                    MBoxStatic.Assert(1305.6331, nCount_A == nCount);
-                    MBoxStatic.Assert(1305.6332, m_treeViewBrowse.GetNodeCount(includeSubTrees: true) == nCount);
-                    UtilProject.WriteLine("Step2_OnForm_A " + nCount);
-                }
+                MBoxStatic.Assert(1305.6331, nCount_A == nCount);
+                MBoxStatic.Assert(1305.6332, m_treeViewBrowse.GetNodeCount(includeSubTrees: true) == nCount);
+                UtilProject.WriteLine("Step2_OnForm_A " + nCount);
 
                 if (m_bThreadAbort || gd.WindowClosed)
                 {

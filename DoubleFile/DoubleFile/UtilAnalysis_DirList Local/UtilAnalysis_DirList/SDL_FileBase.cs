@@ -103,7 +103,7 @@ namespace DoubleFile
                     {
                         ReadListItem(lv,
                             strLine
-                            .TrimEnd(new char[] { '\t' })
+                            .TrimEnd('\t')
                             .Split('\t')
                             .Take(nCols));
                     }
@@ -112,12 +112,14 @@ namespace DoubleFile
 
             if (false == lv.Items.IsEmpty())
             {
-                var lvItems = lv
+                var lvItems =
+                    lv
                     .Items
-                    .Cast<ListViewItem>();
+                    .Cast<ListViewItem>()
+                    .ToArray();
 
                 lv.Items.Clear();
-                lv_in.Items.AddRange(lvItems.ToArray());
+                lv_in.Items.AddRange(lvItems);
                 lv_in.Invalidate();
                 return true;
             }

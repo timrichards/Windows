@@ -380,6 +380,8 @@ namespace DoubleFile
 
                 MBoxStatic.Assert(1304.5313, gd_Tree.m_listTreeNodes.Count == nNodeCount);
 
+                form_treeViewBrowse.Nodes.Clear();
+
                 foreach (TreeNode treeNode in gd_Tree.m_listTreeNodes)
                 {
                     treeNode.ForeColor = Color.Empty;

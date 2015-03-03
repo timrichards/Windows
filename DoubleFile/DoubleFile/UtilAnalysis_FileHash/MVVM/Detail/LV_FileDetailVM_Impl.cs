@@ -7,27 +7,42 @@ using System.Threading.Tasks;
 
 namespace DoubleFile
 {
-    partial class LV_FileDetailVM : IDisposable
+    partial class LV_FileDetailVM
     {
         internal LV_FileDetailVM(GlobalData_Base gd)
         {
             _gd = gd;
-            Local.TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetail;
         }
 
-        public void Dispose()
+        internal void Update(string strFileLine = null)
         {
-            Local.TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetail;
-        }
+            UtilProject.UIthread(Items.Clear);
 
-        void TreeSelect_FolderDetail(IEnumerable<string[]> lasDetail)
-        {
+            if (string.IsNullOrWhiteSpace(strFileLine))
+                return;
+
+            string[] kasHeader = new[] { "Filename", "Created", "Modified", "Attributes", "Length", "Error 1", "Error 2" };
+            var asFile = strFileLine.Split('\t')
+                .Skip(3)
+                .ToArray();
+
+            asFile[3] = UtilAnalysis_DirList.DecodeAttributes(asFile[3]);
+
+            if ((asFile.Length > FileParse.knColLengthLV) &&
+                (false == string.IsNullOrWhiteSpace(asFile[FileParse.knColLengthLV])))
+            {
+                asFile[FileParse.knColLengthLV] = UtilAnalysis_DirList.FormatSize(asFile[FileParse.knColLengthLV]);
+            }
+
             UtilProject.UIthread(() =>
             {
-                Items.Clear();
+                for (int i = 0; i < Math.Min(asFile.Length, kasHeader.Length); ++i)
+                {
+                    if (string.IsNullOrWhiteSpace(asFile[i]))
+                        continue;
 
-                foreach (var asLine in lasDetail)
-                    Add(new LVitem_FileDetailVM(asLine), bQuiet: true);
+                    Add(new LVitem_FileDetailVM(new[] { kasHeader[i], asFile[i] }), bQuiet: true);
+                }
 
                 RaiseItems();
             });

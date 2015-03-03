@@ -7,17 +7,11 @@ using System.Threading.Tasks;
 
 namespace DoubleFile
 {
-    partial class LV_FileDuplicatesVM : IDisposable
+    partial class LV_FileDuplicatesVM
     {
         internal LV_FileDuplicatesVM(GlobalData_Base gd)
         {
             _gd = gd;
-            Local.TreeSelect.FileListUpdated += TreeSelect_FileList;
-        }
-
-        public void Dispose()
-        {
-            Local.TreeSelect.FileListUpdated -= TreeSelect_FileList;
         }
 
         internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates)
@@ -60,7 +54,7 @@ namespace DoubleFile
                         strLine.StartsWith(FileParse.ksLineType_Directory))
                     {
                         foreach (var strFileLine in lsFilesInDir)
-                            lasLines.Add(new[] { strFileLine.Split('\t')[3], strLine.Split('\t')[2] });
+                            lasLines.Add(new[] { strFileLine, strLine.Split('\t')[2] });
 
                         lsFilesInDir.Clear();
  
@@ -71,12 +65,17 @@ namespace DoubleFile
             });
 
             foreach (var asLine in lasLines)
-                Add(new LVitem_FileDuplicatesVM(asLine), bQuiet: true);
+            {
+                var lvItem = new LVitem_FileDuplicatesVM(new[] { asLine[0].Split('\t')[3], asLine[1] });
+
+                lvItem.FileLine = asLine[0];
+                Add(lvItem, bQuiet: true);
+            }
 
             RaiseItems();
         }
 
-        void TreeSelect_FileList(IEnumerable<string> lsFiles, string strListingFile)
+        internal void ClearItems()
         {
             UtilProject.UIthread(Items.Clear);
         }

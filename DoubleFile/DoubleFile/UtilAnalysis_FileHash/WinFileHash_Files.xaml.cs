@@ -15,14 +15,13 @@ namespace DoubleFile
 
             InitializeComponent();
             form_grid.Loaded += Grid_Loaded;
+            form_lv.SelectionChanged += SelectionChanged;
+            Closed += Window_Closed;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            _lvFileHashVM = new LV_FileHashVM(_gd);
-            DataContext = _lvFileHashVM;
-            form_lv.SelectionChanged += SelectionChanged;
-            Closed += Window_Closed;
+            DataContext = _lvFileHashVM = new LV_FileHashVM(_gd);
         }
 
         void SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -38,7 +37,7 @@ namespace DoubleFile
                 return;
             }
 
-            _winFileHash_Duplicates.TreeFileSelChanged(lvItem.LSduplicates);
+            _winFileHash_Duplicates.TreeFileSelChanged(lvItem.LSduplicates, lvItem.FileLine);
         }
 
         internal void ShowFilesBrowser()

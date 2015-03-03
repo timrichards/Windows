@@ -18,8 +18,14 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            _lvFileDetailVM = new LV_FileDetailVM(_gd);
-            DataContext = _lvFileDetailVM;
+            form_lvFile.DataContext = _lvFileDetailVM = new LV_FileDetailVM(_gd);          
+            form_lvFolder.DataContext = _lvFolderDetailVM = new LV_FolderDetailVM(_gd);
+            form_lvVolume.DataContext = _lvVolumeDetailVM = new LV_VolumeDetailVM(_gd);
+        }
+
+        internal void UpdateFileDetail(string strFileLine = null)
+        {
+            _lvFileDetailVM.Update(strFileLine);
         }
 
         internal new void Show()
@@ -41,13 +47,19 @@ namespace DoubleFile
 
         private void Window_Closed(object sender, System.EventArgs e)
         {
-            _lvFileDetailVM.Dispose();
+            _lvFolderDetailVM.Dispose();
+            _lvVolumeDetailVM.Dispose();
             _nWantsLeft = Left;
             _nWantsTop = Top;
         }
 
         LV_FileDetailVM
             _lvFileDetailVM = null;
+        LV_FolderDetailVM
+            _lvFolderDetailVM = null;
+        LV_VolumeDetailVM
+            _lvVolumeDetailVM = null;
+
         GlobalData_Base
             _gd = null;
 

@@ -17,23 +17,24 @@ namespace DoubleFile
             Local.TreeSelect.FileListUpdated -= TreeSelect_FileList;
         }
 
-        void TreeSelect_FileList(IEnumerable<string> lsFiles, string strListingFile)
+        void TreeSelect_FileList(IEnumerable<string> lsFileLines, string strListingFile)
         {
             UtilProject.UIthread(() =>
             {
                 Items.Clear();
 
-                if (null == lsFiles)
+                if (null == lsFileLines)
                     return;
 
-                foreach (var strFile in lsFiles)
+                foreach (var strFileLine in lsFileLines)
                 {
                     string strFilename = null;
-                    var lsDuplicates = _gd.FileDictionary.GetDuplicates(strFile, out strFilename, strListingFile);
+                    var lsDuplicates = _gd.FileDictionary.GetDuplicates(strFileLine, out strFilename, strListingFile);
                     var nCount = (null != lsDuplicates) ? lsDuplicates.Count() : 0;
                     var strCount = (nCount > 0) ? "" + nCount : null;
                     var lvItem = new LVitem_FileHashVM(new[] { strFilename, strCount });
 
+                    lvItem.FileLine = strFileLine;
                     lvItem.Solitary = (0 == nCount);
 
                     if (false == lvItem.Solitary)

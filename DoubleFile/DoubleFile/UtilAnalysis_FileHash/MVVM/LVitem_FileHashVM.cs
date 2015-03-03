@@ -6,6 +6,8 @@ namespace DoubleFile
         internal System.Collections.Generic.IEnumerable<FileDictionary.DuplicateStruct>
             LSduplicates = null;
 
+        internal string FileLine { get; set; }
+
         public bool SameVolume
         {
             get { return _SameVolume; }

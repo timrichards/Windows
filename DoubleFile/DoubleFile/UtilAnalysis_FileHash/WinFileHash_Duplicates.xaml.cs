@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace DoubleFile
 {
@@ -14,18 +15,42 @@ namespace DoubleFile
 
             InitializeComponent();
             form_grid.Loaded += Grid_Loaded;
+            form_lv.SelectionChanged += SelectionChanged;
             Closed += Window_Closed;
+            Local.TreeSelect.FileListUpdated += TreeSelect_FileList;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            _lvFileDuplicatesVM = new LV_FileDuplicatesVM(_gd);
-            DataContext = _lvFileDuplicatesVM;
+            DataContext = _lvFileDuplicatesVM = new LV_FileDuplicatesVM(_gd);
         }
 
-        internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates)
+        void SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (0 == e.AddedItems.Count)
+                return;
+
+            var lvItem = e.AddedItems[0] as LVitem_FileDuplicatesVM;
+
+            if (null == lvItem)
+            {
+                MBoxStatic.Assert(99902, false);
+                return;
+            }
+
+            _winFileHash_Detail.UpdateFileDetail(lvItem.FileLine);
+        }
+
+        internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, string strFileLine)
         {
             _lvFileDuplicatesVM.TreeFileSelChanged(lsDuplicates);
+            _winFileHash_Detail.UpdateFileDetail(strFileLine);
+        }
+
+        void TreeSelect_FileList(IEnumerable<string> lsFileLines, string strListingFile)
+        {
+            _lvFileDuplicatesVM.ClearItems();
+            _winFileHash_Detail.UpdateFileDetail(/*clear items*/);
         }
 
         internal new void Show()
@@ -66,7 +91,7 @@ namespace DoubleFile
                 _winFileHash_Detail.Close();
             }
 
-            _lvFileDuplicatesVM.Dispose();
+            Local.TreeSelect.FileListUpdated -= TreeSelect_FileList;
             _nWantsLeft = Left;
             _nWantsTop = Top;
         }

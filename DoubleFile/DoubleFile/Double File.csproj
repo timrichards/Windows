@@ -148,8 +148,14 @@
     <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
     <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
     <Compile Include="UtilAnalysis_DirList Local\Tree\TreeSelect_Local.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\Detail\LVitem_FolderDetailVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\Detail\LVitem_VolumeDetail.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\Detail\LVitem_FileDetailVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\Detail\LV_FolderDetailVM_Impl.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\Detail\LV_FolderDetailVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\Detail\LV_VolumeDetailVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\Detail\LV_FileDetailVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\Detail\LV_VolumeDetail_Impl.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\Detail\LV_FileDetailVM_Impl.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\FileDuplicates\LVitem_FileDuplicatesVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\FileDuplicates\LV_FileDuplicatesVM.cs" />

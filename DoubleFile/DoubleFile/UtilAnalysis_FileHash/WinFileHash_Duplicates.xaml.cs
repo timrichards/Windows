@@ -30,6 +30,12 @@ namespace DoubleFile
 
         internal new void Show()
         {
+            if (false == IsClosed)
+            {
+                MBoxStatic.Assert(99905, false, bTraceOnly: true);
+                return;
+            }
+
             base.Show();
             
             if (_nWantsLeft > -1)
@@ -37,10 +43,29 @@ namespace DoubleFile
                 Left = _nWantsLeft;
                 Top = _nWantsTop;
             }
+
+            ShowDetailsWindow();
+        }
+
+        internal void ShowDetailsWindow()
+        {
+            if ((null != _winFileHash_Detail) &&
+                (false == _winFileHash_Detail.IsClosed))
+            {
+                return;
+            }
+
+            (_winFileHash_Detail = new WinFileHash_Detail(_gd)).Show();
         }
 
         private void Window_Closed(object sender, System.EventArgs e)
         {
+            if ((null != _winFileHash_Detail) &&
+                (false == _winFileHash_Detail.IsClosed))
+            {
+                _winFileHash_Detail.Close();
+            }
+
             _lvFileDuplicatesVM.Dispose();
             _nWantsLeft = Left;
             _nWantsTop = Top;
@@ -50,6 +75,8 @@ namespace DoubleFile
             _lvFileDuplicatesVM = null;
         GlobalData_Base
             _gd = null;
+        WinFileHash_Detail
+            _winFileHash_Detail = null;
 
         static double _nWantsLeft = -1;
         static double _nWantsTop = -1;

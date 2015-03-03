@@ -47,6 +47,11 @@ namespace DoubleFile
             get { return (Include && _ksFileExistsCheck.Contains(Status) && (FileParse.ksError != Status)); }
         }
 
+        internal string Volume
+        {
+            get { return string.IsNullOrWhiteSpace(VolumeGroup) ? SourcePath : VolumeGroup; }
+        }
+
         internal void SetSaved()
         {
             LVitem_ProjectVM lvItem = null;

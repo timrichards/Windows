@@ -22,12 +22,15 @@ namespace DoubleFile
 
         void TreeSelect_FolderDetail(IEnumerable<string[]> lasDetail)
         {
-            UtilProject.UIthread(Items.Clear);
+            UtilProject.UIthread(() =>
+            {
+                Items.Clear();
 
-            foreach (var asLine in lasDetail)
-                Add(new LVitem_FileDetailVM(asLine), bQuiet: true);
+                foreach (var asLine in lasDetail)
+                    Add(new LVitem_FileDetailVM(asLine), bQuiet: true);
 
-            UtilProject.UIthread(RaiseItems);
+                RaiseItems();
+            });
         }
 
         GlobalData_Base _gd = null;

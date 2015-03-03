@@ -37,6 +37,12 @@ namespace DoubleFile
 
         internal new void Show()
         {
+            if (false == IsClosed)
+            {
+                MBoxStatic.Assert(99903, false, bTraceOnly: true);
+                return;
+            }
+
             base.Show();
             
             if (_nWantsLeft > -1)

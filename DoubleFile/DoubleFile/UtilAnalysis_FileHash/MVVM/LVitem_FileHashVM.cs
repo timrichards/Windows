@@ -29,7 +29,7 @@ namespace DoubleFile
         bool _Solitary = false;
 
         public string Filename { get { return marr[0]; } internal set { SetProperty(0, value); } }
-        public string Duplicates { get { return marr[1]; } internal set { SetProperty(1, value); } }
+        public string Duplicates { get { return marr[1] + (_SameVolume ? " all on the same volume." : ""); } internal set { SetProperty(1, value); } }
 
         protected override string[] PropertyNames { get { return new[] { "Filename", "Duplicates" }; } }
 

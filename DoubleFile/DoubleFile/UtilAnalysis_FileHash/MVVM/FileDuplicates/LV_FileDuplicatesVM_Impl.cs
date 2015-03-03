@@ -22,7 +22,7 @@ namespace DoubleFile
 
         internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates)
         {
-            UtilProject.UIthread(Items.Clear);
+            Items.Clear();
 
             if (null == lsDuplicates)
                 return;
@@ -73,7 +73,7 @@ namespace DoubleFile
             foreach (var asLine in lasLines)
                 Add(new LVitem_FileDuplicatesVM(asLine), bQuiet: true);
 
-            UtilProject.UIthread(RaiseItems);
+            RaiseItems();
         }
 
         void TreeSelect_FileList(IEnumerable<string> lsFiles, string strListingFile)

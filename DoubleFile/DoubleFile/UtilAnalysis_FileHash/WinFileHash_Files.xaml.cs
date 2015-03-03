@@ -46,6 +46,7 @@ namespace DoubleFile
             if ((null != _winFileHash_Duplicates) &&
                 (false == _winFileHash_Duplicates.IsClosed))
             {
+                _winFileHash_Duplicates.ShowDetailsWindow();
                 Activate();
                 return;
             }
@@ -55,6 +56,12 @@ namespace DoubleFile
 
         internal new void Show()
         {
+            if (false == IsClosed)
+            {
+                MBoxStatic.Assert(99904, false, bTraceOnly: true);
+                return;
+            }
+
             base.Show();
             
             if (_nWantsLeft > -1)

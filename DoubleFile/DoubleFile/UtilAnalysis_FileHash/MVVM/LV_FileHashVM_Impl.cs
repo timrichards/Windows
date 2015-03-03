@@ -42,7 +42,7 @@ namespace DoubleFile
                         lvItem.SameVolume =
                             (1 ==
                             lsDuplicates
-                                .GroupBy(duplicate => duplicate.LVitemProjectVM.ListingFile)
+                                .GroupBy(duplicate => duplicate.LVitemProjectVM.Volume)
                                 .Count());
                     }
 

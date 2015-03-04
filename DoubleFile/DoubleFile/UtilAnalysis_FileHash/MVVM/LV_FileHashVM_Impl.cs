@@ -29,8 +29,9 @@ namespace DoubleFile
                 foreach (var strFileLine in lsFileLines)
                 {
                     string strFilename = null;
-                    var lsDuplicates = _gd.FileDictionary.GetDuplicates(strFileLine, out strFilename, strListingFile);
-                    var nCount = (null != lsDuplicates) ? lsDuplicates.Count() : 0;
+                    var nLine = -1;
+                    var lsDuplicates = _gd.FileDictionary.GetDuplicates(strFileLine, out strFilename, out nLine);
+                    var nCount = (null != lsDuplicates) ? lsDuplicates.Count() - 1 : 0;
                     var strCount = (nCount > 0) ? "" + nCount : null;
                     var lvItem = new LVitem_FileHashVM(new[] { strFilename, strCount });
 
@@ -39,7 +40,13 @@ namespace DoubleFile
 
                     if (false == lvItem.Solitary)
                     {
-                        lvItem.LSduplicates = lsDuplicates;
+                        lvItem.LSduplicates =
+                            lsDuplicates
+                            .Where(dupe =>
+                                (dupe.LVitemProjectVM.ListingFile != strListingFile) ||    // exactly once every query
+                                (dupe.LineNumber != nLine)
+                            );
+
                         lvItem.SameVolume =
                             (1 ==
                             lsDuplicates

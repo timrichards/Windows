@@ -39,9 +39,10 @@ namespace DoubleFile
         internal IEnumerable<DuplicateStruct> GetDuplicates(
             string strLine,
             out string strFilename,
-            string strListingFile = null)
+            out int nLine)
         {
             strFilename = null;
+            nLine = -1;
 
             if (false == strLine.StartsWith(FileParse.ksLineType_File))
             {
@@ -66,7 +67,7 @@ namespace DoubleFile
             if (false == _DictFiles.TryGetValue(key, out lsDupes))
                 return null;
 
-            var nLine = int.Parse(asLine[1]);
+            nLine = int.Parse(asLine[1]);
 
             return
                 lsDupes
@@ -74,11 +75,7 @@ namespace DoubleFile
                 {
                     LVitemProjectVM = _DictItemNumberToLV[GetLVitemProjectVM(lookup)],
                     LineNumber = GetLineNumber(lookup)
-                })
-                .Where(dupe =>
-                    (dupe.LVitemProjectVM.ListingFile != strListingFile) ||    // exactly once every query
-                    (dupe.LineNumber != nLine)
-            );
+                });
         }
 
         internal FileDictionary DoThreadFactory(LV_ProjectVM lvProjectVM,

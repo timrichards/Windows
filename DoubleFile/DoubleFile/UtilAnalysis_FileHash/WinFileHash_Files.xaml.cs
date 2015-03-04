@@ -21,7 +21,7 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            DataContext = _lvFileHashVM = new LV_FileHashVM(_gd);
+            DataContext = _lvFileHash_FilesVM = new LV_FileHash_FilesVM(_gd);
         }
 
         void SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -29,7 +29,7 @@ namespace DoubleFile
             if (0 == e.AddedItems.Count)
                 return;
 
-            var lvItem = e.AddedItems[0] as LVitem_FileHashVM;
+            var lvItem = e.AddedItems[0] as LVitem_FileHash_FilesVM;
 
             if (null == lvItem)
             {
@@ -72,7 +72,7 @@ namespace DoubleFile
 
         private void Window_Closed(object sender, System.EventArgs e)
         {
-            _lvFileHashVM.Dispose();
+            _lvFileHash_FilesVM.Dispose();
             _winFileHash_Duplicates.Close();
             _nWantsLeft = Left;
             _nWantsTop = Top;
@@ -80,8 +80,8 @@ namespace DoubleFile
 
         GlobalData_Base
             _gd = null;
-        LV_FileHashVM
-            _lvFileHashVM = null;
+        LV_FileHash_FilesVM
+            _lvFileHash_FilesVM = null;
         WinFileHash_Duplicates
             _winFileHash_Duplicates = null;
 

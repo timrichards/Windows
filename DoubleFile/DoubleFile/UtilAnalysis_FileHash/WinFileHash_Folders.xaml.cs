@@ -23,16 +23,16 @@ namespace DoubleFile
         {
             MinWidth = Width;
             MinHeight = Height;
-            _winFileHashVM = new WinFileHashVM(_gd,
+            _winFileHash_FoldersVM = new WinFileHash_FoldersVM(_gd,
                 new TreeView_FileHashVM(form_tv),
                 _lvProjectVM);
-            DataContext = _winFileHashVM;
+            DataContext = _winFileHash_FoldersVM;
         }
 
         void Form_ButtonFilesWindowClick(object sender, EventArgs e)
         {
-            if (null != _winFileHashVM)
-                _winFileHashVM.ShowFilesBrowser();
+            if (null != _winFileHash_FoldersVM)
+                _winFileHash_FoldersVM.ShowFilesBrowser();
         }
 
         internal new void Show()
@@ -54,8 +54,8 @@ namespace DoubleFile
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            if (null != _winFileHashVM)
-                _winFileHashVM.Dispose();     // closes the file list (domino/chain) when this tree view closes
+            if (null != _winFileHash_FoldersVM)
+                _winFileHash_FoldersVM.Dispose();     // closes the file list (domino/chain) when this tree view closes
 
             DataContext = null;
             _lvProjectVM = null;
@@ -68,8 +68,8 @@ namespace DoubleFile
             _gd = null;
         LV_ProjectVM
             _lvProjectVM = null;
-        WinFileHashVM
-            _winFileHashVM = null;
+        WinFileHash_FoldersVM
+            _winFileHash_FoldersVM = null;
 
         static double _nWantsLeft = -1;
         static double _nWantsTop = -1;

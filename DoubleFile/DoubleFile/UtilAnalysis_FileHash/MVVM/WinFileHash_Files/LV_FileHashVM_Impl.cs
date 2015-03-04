@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    partial class LV_FileHashVM : IDisposable
+    partial class LV_FileHash_FilesVM : IDisposable
     {
-        internal LV_FileHashVM(GlobalData_Base gd)
+        internal LV_FileHash_FilesVM(GlobalData_Base gd)
         {
             _gd = gd;
             Local.TreeSelect.FileListUpdated += TreeSelect_FileList;
@@ -33,7 +33,7 @@ namespace DoubleFile
                     var lsDuplicates = _gd.FileDictionary.GetDuplicates(strFileLine, out strFilename, out nLine);
                     var nCount = (null != lsDuplicates) ? lsDuplicates.Count() - 1 : 0;
                     var strCount = (nCount > 0) ? "" + nCount : null;
-                    var lvItem = new LVitem_FileHashVM(new[] { strFilename, strCount });
+                    var lvItem = new LVitem_FileHash_FilesVM(new[] { strFilename, strCount });
 
                     lvItem.FileLine = strFileLine;
                     lvItem.Solitary = (0 == nCount);

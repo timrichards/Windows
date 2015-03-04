@@ -2,9 +2,9 @@
 
 namespace DoubleFile
 {
-    partial class WinFileHashVM : ObservableObject_OwnerWindow, IDisposable
+    partial class WinFileHash_FoldersVM : ObservableObject_OwnerWindow, IDisposable
     {
-        internal WinFileHashVM(GlobalData_Base gd, TreeView_FileHashVM tvVM, LV_ProjectVM lvProjectVM)
+        internal WinFileHash_FoldersVM(GlobalData_Base gd, TreeView_FileHashVM tvVM, LV_ProjectVM lvProjectVM)
         {
             _lvProjectVM = lvProjectVM;
 

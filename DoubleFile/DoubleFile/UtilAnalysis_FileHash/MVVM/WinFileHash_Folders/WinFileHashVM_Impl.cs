@@ -7,7 +7,7 @@ namespace DoubleFile
 {
     delegate void CreateFileDictStatusDelegate(bool bDone = false, double nProgress = double.NaN);
     
-    partial class WinFileHashVM
+    partial class WinFileHash_FoldersVM
     {
         internal ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>>
             DictNodes { get; private set; }

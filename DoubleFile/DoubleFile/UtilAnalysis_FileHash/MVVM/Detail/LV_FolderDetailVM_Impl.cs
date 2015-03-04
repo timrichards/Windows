@@ -20,7 +20,7 @@ namespace DoubleFile
             Local.TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetail;
         }
 
-        void TreeSelect_FolderDetail(IEnumerable<string[]> lasDetail, string strTitle)
+        void TreeSelect_FolderDetail(IEnumerable<string[]> lasDetail, LocalTreeNode treeNode)
         {
             UtilProject.UIthread(() =>
             {
@@ -30,8 +30,17 @@ namespace DoubleFile
                 foreach (var asLine in lasDetail)
                     Add(new LVitem_FolderDetailVM(asLine), bQuiet: true);
 
+                var strFG_Description = UtilColor.Description[treeNode.ForeColor];
+                var strBG_Description = UtilColor.Description[treeNode.BackColor];
+
+                if (false == string.IsNullOrEmpty(strFG_Description))
+                    Add(new LVitem_FolderDetailVM(new[] { "", strFG_Description }), bQuiet: true);
+
+                if (false == string.IsNullOrEmpty(strBG_Description))
+                    Add(new LVitem_FolderDetailVM(new[] { "", strBG_Description }), bQuiet: true);
+
                 Add(new LVitem_FolderDetailVM(), bQuiet: true);
-                Title = strTitle;
+                Title = treeNode.Text;
                 RaiseItems();
             });
         }

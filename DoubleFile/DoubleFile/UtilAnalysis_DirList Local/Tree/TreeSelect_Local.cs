@@ -9,7 +9,7 @@ namespace Local
     partial class TreeSelect
     {
         static internal event Action<IEnumerable<string>, string> FileListUpdated;
-        static internal event Action<IEnumerable<string[]>, string> FolderDetailUpdated;
+        static internal event Action<IEnumerable<string[]>, LocalTreeNode> FolderDetailUpdated;
         static internal event Action<IEnumerable<string[]>, string> VolumeDetailUpdated;
 
         void Go()
@@ -106,7 +106,7 @@ namespace Local
             }
 
             lasItems.Add(new string[] { "Total Size", FormatSize(nodeDatum.nTotalLength, bBytes: true) });
-            FolderDetailUpdated(lasItems, _treeNode.Text);
+            FolderDetailUpdated(lasItems, _treeNode);
         }
 
         void GetVolumeDetail()

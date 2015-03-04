@@ -6,6 +6,9 @@ namespace DoubleFile
 {
     static class UtilColor
     {
+        internal static Dictionary<int, string>
+            Description = new Dictionary<int, string>();
+
         internal static int Empty { get { return Color.Empty.ToArgb(); } }
         internal static int White { get { return Color.White.ToArgb(); } }
         internal static int Blue { get { return Color.Blue.ToArgb(); } }
@@ -83,6 +86,24 @@ namespace DoubleFile
 
             MBoxStatic.Assert(99957, nIx == _knNumColors);
             MBoxStatic.Assert(99910, 16 > CLUT_Shift);
+
+            Description[Empty] = "";
+            Description[White] = "";
+            Description[Blue] = "This folder has multiple copies on at least two separate volumes.";
+            Description[DarkBlue] = "";             // not used
+            Description[DarkGray] = "";             // ignore list
+            Description[DarkOrange] = "";           // not used
+            Description[DarkRed] = "";              // not used
+            Description[DarkSlateGray] = "";        // LV marker item back color
+            Description[Firebrick] = "All copies of this folder reside on one volume.";
+            Description[LightGoldenrodYellow] = "This folder and its parent have a copy on a separate volume.";
+            Description[LightGray] = "This folder has less than 100K of data.";
+            Description[MediumSpringGreen] = "";    // Treemap
+            Description[MediumVioletRed] = "";      // Treemap
+            Description[OliveDrab] = "";            // Treemap
+            Description[Red] = "This folder has no exact copy.";
+            Description[Snow] = "Contains folders that have no copy or are on the same volume.";
+            Description[SteelBlue] = "This folder has a copy on a different volume.";
         }
 
         const int

@@ -180,11 +180,10 @@ namespace DoubleFile
         {
             get
             {
-                return UtilColor.ARGBtoBrush(
+                return
                     (UtilColor.Empty == _datum.ForeColor)
-                    ? UtilColor.DarkRed
-                    : _datum.ForeColor
-                );
+                    ? Brushes.Black
+                    : UtilColor.ARGBtoBrush(_datum.ForeColor);
             }
         }
 

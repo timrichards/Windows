@@ -22,17 +22,17 @@ namespace DoubleFile
             _gd = gd_in;
             _lvVM = lvVM;
 
-            Icmd_OpenProject = new RelayCommand(param => { OpenProject(); });
-            Icmd_SaveProject = new RelayCommand(param => { SaveProject(); }, param => (false == _lvVM.Items.IsEmpty()));
+            Icmd_OpenProject = new RelayCommand(param => OpenProject());
+            Icmd_SaveProject = new RelayCommand(param => SaveProject(), param => (false == _lvVM.Items.IsEmpty()));
 
-            Icmd_NewListingFile = new RelayCommand(param => { NewListingFile(); });
-            Icmd_OpenListingFile = new RelayCommand(param => { OpenListingFile(); });
+            Icmd_NewListingFile = new RelayCommand(param => NewListingFile());
+            Icmd_OpenListingFile = new RelayCommand(param => OpenListingFile());
 
-            Icmd_EditListingFile = new RelayCommand(param => { _lvVM.EditListingFile(); }, param => _lvVM.SelectedOne());
-            Icmd_RemoveListingFile = new RelayCommand(param => { _lvVM.RemoveListingFile(); }, param => _lvVM.SelectedAny());
+            Icmd_EditListingFile = new RelayCommand(param => _lvVM.EditListingFile(), param => _lvVM.SelectedOne());
+            Icmd_RemoveListingFile = new RelayCommand(param => _lvVM.RemoveListingFile(), param => _lvVM.SelectedAny());
 
-            Icmd_ToggleInclude = new RelayCommand(param => { _lvVM.ToggleInclude(); }, param => _lvVM.SelectedAny());
-            Icmd_VolumeGroup = new RelayCommand(param => { _lvVM.EditVolumeGroupLabel(); }, param => _lvVM.SelectedAny());
+            Icmd_ToggleInclude = new RelayCommand(param => _lvVM.ToggleInclude(), param => _lvVM.SelectedAny());
+            Icmd_VolumeGroup = new RelayCommand(param => _lvVM.EditVolumeGroupLabel(), param => _lvVM.SelectedAny());
         }
 
         readonly LV_ProjectVM _lvVM = null;

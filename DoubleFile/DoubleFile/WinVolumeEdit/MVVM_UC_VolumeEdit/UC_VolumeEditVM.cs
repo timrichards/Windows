@@ -26,9 +26,9 @@ namespace DoubleFile
 
         internal UC_VolumeEditVM()
         {
-            Icmd_EditSourcePath = new RelayCommand(param => { EditSourcePath(); });
-            Icmd_Probe = new RelayCommand(param => { Probe(); }, param => IsOKenabled());
-            Icmd_EditListingFile = new RelayCommand(param => { EditListingFile(); });
+            Icmd_EditSourcePath = new RelayCommand(param => EditSourcePath());
+            Icmd_Probe = new RelayCommand(param => Probe(), param => IsOKenabled());
+            Icmd_EditListingFile = new RelayCommand(param => EditListingFile());
             Icmd_IsOKenabled = new RelayCommand(param => { }, param => IsOKenabled());
         }
     }

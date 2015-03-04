@@ -4,8 +4,12 @@
         xmlns:local="clr-namespace:DoubleFile"
         Title="Duplicate Files" Height="250" Width="1000">
     <Grid Name="form_grid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
         <Menu IsMainMenu="True" Grid.ColumnSpan="999" Grid.RowSpan="999"/>  <!--sets content background-->
-        <ListView Name="form_lv" Margin="10,10,10,10">
+        <ListView Name="form_lv" Margin="10,10,10,0" Grid.Column="0">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="File name" DisplayMemberBinding="{Binding Filename}" Width="{Binding WidthFilename}"/>
@@ -13,5 +17,6 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        <Button Command="{Binding Icmd_Goto}" Content="Go To" Margin="0,0,10,10" Grid.Column="1" Width="70" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
     </Grid>
 </local:LocalWindow>

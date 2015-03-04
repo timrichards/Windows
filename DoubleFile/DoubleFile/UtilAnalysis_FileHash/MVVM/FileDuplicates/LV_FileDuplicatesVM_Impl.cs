@@ -12,6 +12,7 @@ namespace DoubleFile
         internal LV_FileDuplicatesVM(GlobalData_Base gd)
         {
             _gd = gd;
+            Icmd_Goto = new RelayCommand(param => Goto(), param => SelectedAny());
         }
 
         internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates)
@@ -21,11 +22,11 @@ namespace DoubleFile
             if (null == lsDuplicates)
                 return;
 
-            var lasLines = new ConcurrentBag<string[]>();
+            var laoLines = new ConcurrentBag<object[]>();
 
             Parallel.ForEach(
                 lsDuplicates
-                .GroupBy(duplicate => duplicate.LVitemProjectVM.ListingFile), g =>
+                .GroupBy(duplicate => duplicate.LVitemProjectVM), g =>
             {
                 var lsLineNumbers = new List<int>();
 
@@ -40,7 +41,7 @@ namespace DoubleFile
 
                 foreach (var strLine
                     in File
-                    .ReadLines(g.Key))
+                    .ReadLines(g.Key.ListingFile))
                 {
                     ++nLine;
 
@@ -54,7 +55,7 @@ namespace DoubleFile
                         strLine.StartsWith(FileParse.ksLineType_Directory))
                     {
                         foreach (var strFileLine in lsFilesInDir)
-                            lasLines.Add(new[] { strFileLine, strLine.Split('\t')[2] });
+                            laoLines.Add(new object[] { strFileLine, strLine.Split('\t')[2], g.Key });
 
                         lsFilesInDir.Clear();
  
@@ -64,11 +65,12 @@ namespace DoubleFile
                 }
             });
 
-            foreach (var asLine in lasLines)
+            foreach (var aoLine in laoLines)
             {
-                var lvItem = new LVitem_FileDuplicatesVM(new[] { asLine[0].Split('\t')[3], asLine[1] });
+                var lvItem = new LVitem_FileDuplicatesVM(new[] { ((string)aoLine[0]).Split('\t')[3], (string)aoLine[1] });
 
-                lvItem.FileLine = asLine[0];
+                lvItem.FileLine = (string)aoLine[0];
+                lvItem.LVitem_ProjectVM = (LVitem_ProjectVM)aoLine[2];
                 Add(lvItem, bQuiet: true);
             }
 
@@ -78,6 +80,17 @@ namespace DoubleFile
         internal void ClearItems()
         {
             UtilProject.UIthread(Items.Clear);
+        }
+
+        internal void Goto()
+        {
+            Selected().FirstOnlyAssert(lvItem =>
+            {
+                //lvItem.LVitem_ProjectVM;
+                //lvItem.Path;
+                //lvItem.Filename;
+                MBoxStatic.ShowDialog("Goto()");
+            });
         }
 
         GlobalData_Base _gd = null;

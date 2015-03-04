@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -15,14 +16,18 @@ namespace DoubleFile
 
             InitializeComponent();
             form_grid.Loaded += Grid_Loaded;
+            Local.TreeSelect.FileListUpdated += TreeSelect_FileList;
             form_lv.SelectionChanged += SelectionChanged;
             Closed += Window_Closed;
-            Local.TreeSelect.FileListUpdated += TreeSelect_FileList;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = _lvFileDuplicatesVM = new LV_FileDuplicatesVM(_gd);
+
+            _lvFileDuplicatesVM.SelectedOne = () => form_lv.SelectedItems.HasOnlyOne();
+            _lvFileDuplicatesVM.SelectedAny = () => (false == form_lv.SelectedItems.IsEmptyA());
+            _lvFileDuplicatesVM.Selected = () => form_lv.SelectedItems.Cast<LVitem_FileDuplicatesVM>();
         }
 
         void SelectionChanged(object sender, SelectionChangedEventArgs e)

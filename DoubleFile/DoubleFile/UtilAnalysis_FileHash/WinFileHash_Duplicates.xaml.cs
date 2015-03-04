@@ -23,11 +23,11 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            DataContext = _lvFileDuplicatesVM = new LV_FileDuplicatesVM(_gd);
+            DataContext = _winFileHash_DuplicatesVM = new WinFileHash_DuplicatesVM(_gd);
 
-            _lvFileDuplicatesVM.SelectedOne = () => form_lv.SelectedItems.HasOnlyOne();
-            _lvFileDuplicatesVM.SelectedAny = () => (false == form_lv.SelectedItems.IsEmptyA());
-            _lvFileDuplicatesVM.Selected = () => form_lv.SelectedItems.Cast<LVitem_FileDuplicatesVM>();
+            _winFileHash_DuplicatesVM.SelectedOne = () => form_lv.SelectedItems.HasOnlyOne();
+            _winFileHash_DuplicatesVM.SelectedAny = () => (false == form_lv.SelectedItems.IsEmptyA());
+            _winFileHash_DuplicatesVM.Selected = () => form_lv.SelectedItems.Cast<LVitem_FileDuplicatesVM>();
         }
 
         void SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -48,13 +48,13 @@ namespace DoubleFile
 
         internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, string strFileLine)
         {
-            _lvFileDuplicatesVM.TreeFileSelChanged(lsDuplicates);
+            _winFileHash_DuplicatesVM.TreeFileSelChanged(lsDuplicates);
             _winFileHash_Detail.UpdateFileDetail(strFileLine);
         }
 
         void TreeSelect_FileList(IEnumerable<string> lsFileLines, string strListingFile)
         {
-            _lvFileDuplicatesVM.ClearItems();
+            _winFileHash_DuplicatesVM.ClearItems();
             _winFileHash_Detail.UpdateFileDetail(/*clear items*/);
         }
 
@@ -101,8 +101,8 @@ namespace DoubleFile
             _nWantsTop = Top;
         }
 
-        LV_FileDuplicatesVM
-            _lvFileDuplicatesVM = null;
+        WinFileHash_DuplicatesVM
+            _winFileHash_DuplicatesVM = null;
         GlobalData_Base
             _gd = null;
         WinFileHash_Detail

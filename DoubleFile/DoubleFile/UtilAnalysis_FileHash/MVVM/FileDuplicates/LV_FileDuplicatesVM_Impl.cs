@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace DoubleFile
 {
-    partial class LV_FileDuplicatesVM
+    partial class WinFileHash_DuplicatesVM
     {
-        internal LV_FileDuplicatesVM(GlobalData_Base gd)
+        internal WinFileHash_DuplicatesVM(GlobalData_Base gd)
         {
             _gd = gd;
             Icmd_Goto = new RelayCommand(param => Goto(), param => SelectedAny());

@@ -237,9 +237,9 @@
     <Compile Include="UtilAnalysis_FileHash\FileDictionary\DuplicateStruct.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary\FileKeyStruct.cs" />
     <Compile Include="UtilAnalysis_FileHash\HashStruct.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM\WinFileHash_Files\LVitem_FileHashVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM\WinFileHash_Files\LV_FileHashVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM\WinFileHash_Files\LV_FileHashVM_Impl.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\WinFileHash_Files\LVitem_FileHash_FilesVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\WinFileHash_Files\LV_FileHash_FilesVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\WinFileHash_Files\LV_FileHash_FilesVM_Impl.cs" />
     <Compile Include="LocalForms\LocalTreeNode.cs" />
     <Compile Include="LocalForms\LocalTreeNodeCollection.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\WinFileHash_Folders\TreeViewItem_FileHashVM.cs" />
@@ -247,8 +247,8 @@
     <Compile Include="UtilAnalysis_FileHash\MVVM\WinFileHash_Folders\TreeView_FileHashVM.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UtilAnalysis_FileHash\MVVM\WinFileHash_Folders\WinFileHashVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM\WinFileHash_Folders\WinFileHashVM_Impl.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\WinFileHash_Folders\WinFileHash_FoldersVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\WinFileHash_Folders\WinFileHash_FoldersVM_Impl.cs" />
     <Compile Include="UtilAnalysis_FileHash\WinFileHash_Folders.xaml.cs">
       <DependentUpon>WinFileHash_Folders.xaml</DependentUpon>
     </Compile>

@@ -17,13 +17,6 @@ namespace Local
             _dictVolumeInfo = dictDriveInfo;
             _bCompareMode = bCompareMode;
             _bSecondComparePane = bSecondComparePane;
-
-            var rootNode = node;
-
-            while (null != rootNode.Parent)
-                rootNode = rootNode.Parent;
-
-            _strFile = ((RootNodeDatum)rootNode.Tag).StrFile;
         }
 
         // This is the original GetFileList() that returns multiple info columns
@@ -106,8 +99,6 @@ namespace Local
             _dictVolumeInfo = null;
         Thread
             _thread = null;
-        readonly string
-            _strFile = null;
         readonly bool
             _bCompareMode = false;
         readonly bool

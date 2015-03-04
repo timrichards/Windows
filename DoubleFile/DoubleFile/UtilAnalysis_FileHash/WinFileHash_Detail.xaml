@@ -5,16 +5,16 @@
         Title="Detail" Height="505" Width="500">
     <Grid Name="form_grid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Menu IsMainMenu="True" Grid.ColumnSpan="999" Grid.RowSpan="999"/>  <!--sets content background-->
         <ListView Name="form_lvFile" Grid.Row="0">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="File Detail" DisplayMemberBinding="{Binding Header}" Width="{Binding WidthHeader}"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Detail}" Width="{Binding WidthDetail}"/>
+                    <GridViewColumn Header="{Binding Title}" DisplayMemberBinding="{Binding Detail}" Width="{Binding WidthDetail}"/>
                 </GridView>
             </ListView.View>
         </ListView>
@@ -22,7 +22,7 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Folder Detail" DisplayMemberBinding="{Binding Header}" Width="{Binding WidthHeader}"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Detail}" Width="{Binding WidthDetail}"/>
+                    <GridViewColumn Header="{Binding Title}" DisplayMemberBinding="{Binding Detail}" Width="{Binding WidthDetail}"/>
                 </GridView>
             </ListView.View>
         </ListView>
@@ -30,7 +30,7 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Volume Detail" DisplayMemberBinding="{Binding Header}" Width="{Binding WidthHeader}"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Detail}" Width="{Binding WidthDetail}"/>
+                    <GridViewColumn Header="{Binding Title}" DisplayMemberBinding="{Binding Detail}" Width="{Binding WidthDetail}"/>
                 </GridView>
             </ListView.View>
         </ListView>

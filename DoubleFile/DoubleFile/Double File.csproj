@@ -25,7 +25,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>71</ApplicationRevision>
+    <ApplicationRevision>72</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -155,7 +155,7 @@
     <Compile Include="UtilAnalysis_FileHash\MVVM\Detail\LV_FolderDetailVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\Detail\LV_VolumeDetailVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\Detail\LV_FileDetailVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM\Detail\LV_VolumeDetail_Impl.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM\Detail\LV_VolumeDetailVM_Impl.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\Detail\LV_FileDetailVM_Impl.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\FileDuplicates\LVitem_FileDuplicatesVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM\FileDuplicates\LV_FileDuplicatesVM.cs" />

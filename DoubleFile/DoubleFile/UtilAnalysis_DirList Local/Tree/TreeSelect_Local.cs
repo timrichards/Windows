@@ -9,8 +9,8 @@ namespace Local
     partial class TreeSelect
     {
         static internal event Action<IEnumerable<string>, string> FileListUpdated;
-        static internal event Action<IEnumerable<string[]>> FolderDetailUpdated;
-        static internal event Action<IEnumerable<string[]>> VolumeDetailUpdated;
+        static internal event Action<IEnumerable<string[]>, string> FolderDetailUpdated;
+        static internal event Action<IEnumerable<string[]>, string> VolumeDetailUpdated;
 
         void Go()
         {
@@ -74,7 +74,7 @@ namespace Local
             if ((null == nodeDatum) ||
                 (0 == nodeDatum.nLineNo))
             {
-                FolderDetailUpdated(lasItems);
+                FolderDetailUpdated(lasItems, null);
                 return;
             }
 
@@ -106,14 +106,19 @@ namespace Local
             }
 
             lasItems.Add(new string[] { "Total Size", FormatSize(nodeDatum.nTotalLength, bBytes: true) });
-            FolderDetailUpdated(lasItems);
+            FolderDetailUpdated(lasItems, _treeNode.Text);
         }
 
         void GetVolumeDetail()
         {
             string strDriveInfo = null;
 
-            if (_dictVolumeInfo.TryGetValue(_strFile, out strDriveInfo))
+            var rootNode = _treeNode;
+
+            while (null != rootNode.Parent)
+                rootNode = rootNode.Parent;
+
+            if (_dictVolumeInfo.TryGetValue(((RootNodeDatum)rootNode.Tag).StrFile, out strDriveInfo))
             {
                 var arrDriveInfo =
                     strDriveInfo
@@ -130,7 +135,7 @@ namespace Local
                 {
                     var a = arrDriveInfo[i].Split('\t');
 
-                    if (a[1].Trim().Length == 0)
+                    if (0 == a[1].Trim().Length)
                     {
                         continue;
                     }
@@ -138,9 +143,9 @@ namespace Local
                     asItems[i] = new[]
                     {
                         a[0],
-                        kabDIsizeType[i] ?
-                            FormatSize(a[1], bBytes: true) :
-                            a[1]
+                        kabDIsizeType[i]
+                            ? FormatSize(a[1], bBytes: true) 
+                            : a[1]
                     };
                 }
 
@@ -148,9 +153,9 @@ namespace Local
 
                 for (var ix = 0; ix < arrDriveInfo.Length; ++ix)
                 {
-                    if ((asItems[ix] == null) ||
-                        (asItems[ix].Length == 0) ||
-                        (asItems[ix][1].Trim().Length == 0))
+                    if ((null == asItems[ix]) ||
+                        (0 == asItems[ix].Length) ||
+                        (0 == asItems[ix][1].Trim().Length))
                     {
                         continue;
                     }
@@ -161,14 +166,14 @@ namespace Local
                         continue;
                     }
 
-                    var ixA = (arrDriveInfo.Length == kanDIviewOrder.Length) ?
-                        kanDIviewOrder[ix] :
-                        ix;
+                    var ixA = (arrDriveInfo.Length == kanDIviewOrder.Length)
+                        ? kanDIviewOrder[ix]
+                        : ix;
 
                     lasItems.Add(asItems[ix]);
                 }
 
-                VolumeDetailUpdated(lasItems.Where(i => i != null));
+                VolumeDetailUpdated(lasItems.Where(i => i != null), rootNode.Text);
             }
         }
     }

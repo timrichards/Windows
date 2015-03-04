@@ -16,7 +16,11 @@ namespace DoubleFile
 
         internal void Update(string strFileLine = null)
         {
-            UtilProject.UIthread(Items.Clear);
+            UtilProject.UIthread(() =>
+            {
+                Title = null;
+                Items.Clear();
+            });
 
             if (string.IsNullOrWhiteSpace(strFileLine))
                 return;
@@ -36,7 +40,7 @@ namespace DoubleFile
 
             UtilProject.UIthread(() =>
             {
-                for (int i = 0; i < Math.Min(asFile.Length, kasHeader.Length); ++i)
+                for (int i = 1; i < Math.Min(asFile.Length, kasHeader.Length); ++i)
                 {
                     if (string.IsNullOrWhiteSpace(asFile[i]))
                         continue;
@@ -44,6 +48,8 @@ namespace DoubleFile
                     Add(new LVitem_FileDetailVM(new[] { kasHeader[i], asFile[i] }), bQuiet: true);
                 }
 
+                Add(new LVitem_FileDetailVM(), bQuiet: true);
+                Title = asFile[0];
                 RaiseItems();
             });
         }

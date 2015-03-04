@@ -20,15 +20,17 @@ namespace DoubleFile
             Local.TreeSelect.VolumeDetailUpdated -= TreeSelect_VolumeDetail;
         }
 
-        void TreeSelect_VolumeDetail(IEnumerable<string[]> lasDetail)
+        void TreeSelect_VolumeDetail(IEnumerable<string[]> lasDetail, string strTitle)
         {
             UtilProject.UIthread(() =>
             {
+                Title = null;
                 Items.Clear();
 
                 foreach (var asLine in lasDetail)
                     Add(new LVitem_VolumeDetailVM(asLine), bQuiet: true);
 
+                Title = strTitle;
                 RaiseItems();
             });
         }

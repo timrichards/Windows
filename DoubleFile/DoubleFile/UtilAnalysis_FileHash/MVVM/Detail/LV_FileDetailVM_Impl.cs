@@ -35,7 +35,7 @@ namespace DoubleFile
             if ((asFile.Length > FileParse.knColLengthLV) &&
                 (false == string.IsNullOrWhiteSpace(asFile[FileParse.knColLengthLV])))
             {
-                asFile[FileParse.knColLengthLV] = UtilAnalysis_DirList.FormatSize(asFile[FileParse.knColLengthLV]);
+                asFile[FileParse.knColLengthLV] = UtilAnalysis_DirList.FormatSize(asFile[FileParse.knColLengthLV], bBytes: true);
             }
 
             UtilProject.UIthread(() =>

@@ -109,12 +109,10 @@ namespace DoubleFile
             }
 
             _bSelected = bSelect;
-            RaisePropertyChanged("IsSelected");
-
-            UtilProject.WriteLine("SelectProgrammatic");
 
             if (bSelect == false)
             {
+                RaisePropertyChanged("IsSelected");
                 EphemeralExpandedPos = -1;
                 return;
             }
@@ -159,6 +157,7 @@ namespace DoubleFile
             EphemeralExpandedPos += (Index + 1);
             EphemeralExpandedPos *= _HeaderHeight;       // when implementing variable-height headers this calc will be wrong
             _TVVM._listExpanded = listParents;
+            RaisePropertyChanged("IsSelected");
         }
 
         internal TreeViewItem_FileHashVM(TreeView_FileHashVM tvvm, LocalTreeNode datum_in, int nIndex)

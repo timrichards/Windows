@@ -63,7 +63,29 @@ namespace Local
                     }
                 }
 
-                internal LocalTreeNode AddToTree(string strVolumeName = null)
+                internal LocalTreeNode AddToTree(string strVolumeName, out string strRootPath)
+                {
+                    var rootNode = AddToTree();
+
+                    strRootPath = rootNode.Text;
+
+                    //treeNode.Name = treeNode.Text;    Name is now a get accessor for Text in LocalTreeNode 2/22/15
+
+                    if (string.IsNullOrWhiteSpace(strVolumeName))
+                    {
+                        return rootNode;
+                    }
+
+                    rootNode.Text = strVolumeName +
+                        (strVolumeName.EndsWith(rootNode.Text)
+                            ? ""
+                            : strVolumeName + " (" + rootNode.Text + ")"
+                        );
+
+                    return rootNode;
+                }
+
+                LocalTreeNode AddToTree()
                 {
                     if (gd.WindowClosed)
                     {
@@ -83,7 +105,7 @@ namespace Local
                             // cull all root node single-chains.
                             m_rootNode.Nodes = subNodes;
                             subNode.bUseShortPath = false;
-                            treeNode = subNode.AddToTree(strVolumeName);
+                            treeNode = subNode.AddToTree();
 
                             // further down at new NodeDatum...
                             m_nPrevLineNo = subNode.m_nPrevLineNo;
@@ -115,29 +137,6 @@ namespace Local
                     MBoxStatic.Assert(1301.2306, treeNode.SelectedImageIndex == -1);     // sets the bitmap size
                     treeNode.SelectedImageIndex = -1;
                     treeNode.Tag = new NodeDatum(m_nPrevLineNo, m_nLineNo, m_nLength);  // this is almost but not quite always newly assigned here.
-
-                    if (this != m_rootNode.Nodes.Values.First())
-                    {
-                        return treeNode;
-                    }
-
-                    //treeNode.Name = treeNode.Text;    Name is now a get accessor for Text in LocalTreeNode 2/22/15
-
-                    if (string.IsNullOrWhiteSpace(strVolumeName))
-                    {
-                        return treeNode;
-                    }
-
-                    if (strVolumeName.EndsWith(treeNode.Text))
-                    {
-                        treeNode.Text = strVolumeName;
-                    }
-                    else
-                    {
-                        treeNode.RootPath = treeNode.Text;
-                        treeNode.Text = strVolumeName + " (" + treeNode.Text + ")";
-                    }
-
                     return treeNode;
                 }
 

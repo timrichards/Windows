@@ -43,13 +43,16 @@ namespace DoubleFile
         private void GoToFile(LVitem_ProjectVM lvItem_ProjectVM, string strPath, string strFile)
         {
             _Items
-                .Where(item =>
-                    lvItem_ProjectVM.ListingFile ==
+                .Where(item => lvItem_ProjectVM.ListingFile == 
                     ((Local.RootNodeDatum)item._datum.Tag).ListingFile)
                 .FirstOnlyAssert(item =>
-                {
-                    item.GoToFile(strPath.Replace(item._datum.RootPath, "").TrimStart('\\').Split('\\'), strFile);
-                });
+                    item.GoToFile(
+                        strPath
+                            .Replace(((Local.RootNodeDatum)item._datum.Tag).RootPath, "")
+                            .TrimStart('\\')
+                            .Split('\\'),
+                        strFile)
+                );
         }
 
         readonly ObservableCollection<TreeViewItem_FileHashVM>

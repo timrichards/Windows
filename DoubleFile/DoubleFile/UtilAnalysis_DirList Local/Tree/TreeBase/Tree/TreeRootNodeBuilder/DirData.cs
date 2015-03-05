@@ -12,27 +12,35 @@ namespace Local
             {
                 internal DirData(GlobalData_Base gd_in, RootNode rootNode)
                 {
-                    gd = gd_in;
-                    m_rootNode = rootNode;
+                    _gd = gd_in;
+                    _rootNode = rootNode;
                 }
 
                 internal void AddToTree(string str_in, uint nLineNo, ulong nLength)
                 {
                     var str = str_in.TrimEnd('\\');
 
-                    m_rootNode.Nodes.Add(str, new Node(gd, str, nLineNo, nLength, m_rootNode));
+                    _rootNode.Nodes.Add(str, new Node(_gd, str, nLineNo, nLength, _rootNode));
                 }
 
-                internal LocalTreeNode AddToTree(string strVolumeName)
+                internal LocalTreeNode AddToTree(string strVolumeName, out string strRootPath)
                 {
-                    var nodes = m_rootNode.Nodes.Values;
+                    LocalTreeNode rootTreeNode = null;
+                    string strRootPath_out = null;
 
-                    return (nodes.IsEmpty()) ? null :
-                        m_rootNode.Nodes.Values.First().AddToTree(strVolumeName);
+                    _rootNode.Nodes.Values
+                        .First(rootNode =>
+                            rootTreeNode =
+                                rootNode
+                                .AddToTree(strVolumeName, out strRootPath_out)
+                        );
+
+                    strRootPath = strRootPath_out;
+                    return rootTreeNode;
                 }
 
-                readonly GlobalData_Base gd = null;
-                readonly RootNode m_rootNode = null;
+                readonly GlobalData_Base _gd = null;
+                readonly RootNode _rootNode = null;
             }
         }
     }

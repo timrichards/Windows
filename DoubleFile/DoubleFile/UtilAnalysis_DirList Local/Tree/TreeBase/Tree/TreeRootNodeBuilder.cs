@@ -216,12 +216,18 @@ namespace Local
                     dirData.AddToTree(strArray[2], uint.Parse(strArray[1]), ulong.Parse(strArray[knColLength]));
                 }
 
-                var rootTreeNode = dirData.AddToTree(m_volStrings.Nickname);
+                string strRootPath = null;
+                var rootTreeNode = dirData.AddToTree(m_volStrings.Nickname, out strRootPath);
 
                 if (rootTreeNode != null)
                 {
-                    rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag,
-                        m_volStrings.ListingFile, m_volStrings.VolumeGroup, nVolFree, nVolLength);
+                    rootTreeNode.Tag = new RootNodeDatum(
+                        (NodeDatum)rootTreeNode.Tag,
+                        m_volStrings.ListingFile, m_volStrings.VolumeGroup,
+                        nVolFree, nVolLength,
+                        strRootPath
+                    );
+
                     TreeSubnodeDetails(rootTreeNode);
                 }
 

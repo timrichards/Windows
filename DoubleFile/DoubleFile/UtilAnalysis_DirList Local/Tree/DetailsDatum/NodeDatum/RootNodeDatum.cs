@@ -1,25 +1,29 @@
 ﻿
+using DoubleFile;
 namespace Local
 {
     class RootNodeDatum : NodeDatum
     {
-        internal string ListingFile { get; private set; }
-        internal string VolumeGroup { get; set; }
-        internal string Root { get; set; }
+        internal UString ListingFile { get; private set; }
+        internal UString VolumeGroup { get; set; }
+        internal UString Root { get; private set; }
+
+        internal UString RootPath { get; private set; }
 
         internal bool VolumeView = true;
 
         internal readonly ulong VolumeFree = 0;
         internal readonly ulong VolumeLength = 0;
 
-        internal RootNodeDatum(NodeDatum node, string listingFile, string strVolGroup_in,
-            ulong nVolumeFree_in, ulong nVolumeLength_in)
+        internal RootNodeDatum(NodeDatum node, string listingFile, string strVolGroup,
+            ulong nVolumeFree, ulong nVolumeLength, string strRootPath)
             : base(node)
         {
             ListingFile = listingFile;
-            VolumeGroup = strVolGroup_in;
-            VolumeLength = nVolumeLength_in;
-            VolumeFree = nVolumeFree_in;
+            VolumeGroup = strVolGroup;
+            VolumeLength = nVolumeLength;
+            VolumeFree = nVolumeFree;
+            RootPath = strRootPath;
         }
 
         internal RootNodeDatum(NodeDatum node, RootNodeDatum rootNode)

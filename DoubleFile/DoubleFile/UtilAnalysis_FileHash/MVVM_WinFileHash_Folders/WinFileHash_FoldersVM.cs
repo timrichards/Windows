@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Windows.Input;
 
 namespace DoubleFile
 {
     partial class WinFileHash_FoldersVM : ObservableObject_OwnerWindow, IDisposable
     {
+        public ICommand Icmd_ShowFiles { get; private set; }
+
         internal WinFileHash_FoldersVM(GlobalData_Base gd, TreeView_FileHashVM tvVM, LV_ProjectVM lvProjectVM)
         {
             _lvProjectVM = lvProjectVM;
+            Icmd_ShowFiles = new RelayCommand(param => ShowFileWindows());
 
             if ((null == _lvProjectVM) ||
                 (0 == _lvProjectVM.Count))
@@ -22,7 +26,7 @@ namespace DoubleFile
             DoTree();
         }
 
-        internal void ShowFilesBrowser()
+        internal void ShowFileWindows()
         {
             if ((null == _winFileHash_Files) ||
                 _winFileHash_Files.IsClosed)

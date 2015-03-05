@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,6 +8,8 @@ namespace DoubleFile
 {
     partial class WinFileHash_DuplicatesVM
     {
+        static internal event System.Action<LVitem_ProjectVM, string, string> GoToFile;
+
         internal WinFileHash_DuplicatesVM(GlobalData_Base gd)
         {
             _gd = gd;
@@ -84,12 +85,12 @@ namespace DoubleFile
 
         internal void Goto()
         {
+            if (null == GoToFile)
+                return;
+
             Selected().FirstOnlyAssert(lvItem =>
             {
-                //lvItem.LVitem_ProjectVM;
-                //lvItem.Path;
-                //lvItem.Filename;
-                MBoxStatic.ShowDialog("Goto()");
+                GoToFile(lvItem.LVitem_ProjectVM, lvItem.Path, lvItem.Filename);
             });
         }
 

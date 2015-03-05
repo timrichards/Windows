@@ -140,7 +140,7 @@ namespace DoubleFile
             while (false == _winProgress.IsClosed)
                 System.Threading.Thread.Sleep(200);
 
-            UtilProject.UIthread(ShowFilesBrowser);
+            UtilProject.UIthread(ShowFileWindows);
         }
 
         void DoTree(bool bKill = false)

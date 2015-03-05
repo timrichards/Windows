@@ -38,7 +38,7 @@ namespace Local
                 return listFiles;
             }
 
-            var strListingFile = rootNodeDatum.StrFile;
+            var strListingFile = rootNodeDatum.ListingFile;
 
             var nPrevDir = (int) nodeDatum.nPrevLineNo;
             var nLineNo = (int) nodeDatum.nLineNo;

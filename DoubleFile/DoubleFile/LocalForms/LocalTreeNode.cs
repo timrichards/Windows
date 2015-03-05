@@ -10,6 +10,8 @@ namespace DoubleFile
             Nodes { get; private set; }
         internal UString
             Text { get; set; }
+        internal UString
+            RootPath { get; set; }
         internal LocalTV
             TreeView { get; private set; }
         internal LocalTreeNode

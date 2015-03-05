@@ -220,7 +220,7 @@ namespace Local
 
                 if (rootTreeNode != null)
                 {
-                    rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag, 
+                    rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag,
                         m_volStrings.ListingFile, m_volStrings.VolumeGroup, nVolFree, nVolLength);
                     TreeSubnodeDetails(rootTreeNode);
                 }

@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using System.Linq;
 
 namespace DoubleFile
 {
-    class TreeView_FileHashVM
+    class TreeView_FileHashVM : IDisposable
     {
         internal TreeViewItem_FileHashVM
             SelectedItem { get; set; }
@@ -18,6 +20,12 @@ namespace DoubleFile
         internal TreeView_FileHashVM(TreeView tvfe)
         {
             _TVFE = tvfe;
+            WinFileHash_DuplicatesVM.GoToFile += GoToFile;
+        }
+
+        public void Dispose()
+        {
+            WinFileHash_DuplicatesVM.GoToFile -= GoToFile;
         }
 
         internal void SetData(IReadOnlyList<LocalTreeNode> rootNodes)
@@ -30,6 +38,18 @@ namespace DoubleFile
             }
 
             UtilProject.UIthread(() => _TVFE.DataContext = _Items);
+        }
+
+        private void GoToFile(LVitem_ProjectVM lvItem_ProjectVM, string strPath, string strFile)
+        {
+            _Items
+                .Where(item =>
+                    lvItem_ProjectVM.ListingFile ==
+                    ((Local.RootNodeDatum)item._datum.Tag).ListingFile)
+                .FirstOnlyAssert(item =>
+                {
+                    item.GoToFile(strPath.Replace(item._datum.RootPath, "").TrimStart('\\').Split('\\'), strFile);
+                });
         }
 
         readonly ObservableCollection<TreeViewItem_FileHashVM>

@@ -44,7 +44,7 @@ namespace Local
                     break;
                 }
 
-                strListingFile = rootNodeDatum.StrFile;
+                strListingFile = rootNodeDatum.ListingFile;
 
                 var nPrevDir = (int)nodeDatum.nPrevLineNo;
                 var nLineNo = (int)nodeDatum.nLineNo;
@@ -118,7 +118,7 @@ namespace Local
             while (null != rootNode.Parent)
                 rootNode = rootNode.Parent;
 
-            if (_dictVolumeInfo.TryGetValue(((RootNodeDatum)rootNode.Tag).StrFile, out strDriveInfo))
+            if (_dictVolumeInfo.TryGetValue(((RootNodeDatum)rootNode.Tag).ListingFile, out strDriveInfo))
             {
                 var arrDriveInfo =
                     strDriveInfo

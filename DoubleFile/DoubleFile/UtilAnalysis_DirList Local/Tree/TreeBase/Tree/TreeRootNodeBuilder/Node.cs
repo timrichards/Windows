@@ -134,6 +134,7 @@ namespace Local
                     }
                     else
                     {
+                        treeNode.RootPath = treeNode.Text;
                         treeNode.Text = strVolumeName + " (" + treeNode.Text + ")";
                     }
 

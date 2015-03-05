@@ -642,8 +642,8 @@ namespace Local
                             return;
                         }
 
-                        if (false == string.IsNullOrWhiteSpace(rootNodeDatum.StrVolumeGroup) &&
-                            (rootNodeDatum.StrVolumeGroup == rootNodeDatum_A.StrVolumeGroup))
+                        if (false == string.IsNullOrWhiteSpace(rootNodeDatum.VolumeGroup) &&
+                            (rootNodeDatum.VolumeGroup == rootNodeDatum_A.VolumeGroup))
                         {
                             continue;
                         }

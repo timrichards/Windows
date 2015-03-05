@@ -8,11 +8,6 @@ namespace DoubleFile
     {
         void DoTreeSelect()
         {
-            if (_bSelectProgrammatic)
-            {
-                return;
-            }
-
             if (false == _bSelected)
             {
                 return;
@@ -26,10 +21,7 @@ namespace DoubleFile
             if ((0 == asPath.Count()) ||
                 (1 == asPath.Count()) && string.IsNullOrWhiteSpace(asPath.ElementAt(0)))
             {
-                _bSelectProgrammatic = true;
                 SelectProgrammatic(true);
-                new Local.TreeSelect(_datum, _TVVM._dictVolumeInfo, false, false).DoThreadFactory();
-                _bSelectProgrammatic = false;
                 return;
             }
 
@@ -43,7 +35,5 @@ namespace DoubleFile
                         item.GoToFile(asPath.Skip(1), strFile);
                     }));
         }
-
-        bool _bSelectProgrammatic = false;
     }
 }

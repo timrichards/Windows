@@ -102,8 +102,8 @@ namespace DoubleFile
             Description[MediumVioletRed] = "";      // Treemap
             Description[OliveDrab] = "";            // Treemap
             Description[Red] = "This folder has no exact copy.";
-            Description[Snow] = "Contains folders that have no copy or are on the same volume.";
-            Description[SteelBlue] = "This folder has a copy on a different volume.";
+            Description[Snow] = "Contains folders that have no copy; or copies are on one volume.";
+            Description[SteelBlue] = "This folder has a copy on a separate volume.";
         }
 
         const int

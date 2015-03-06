@@ -27,13 +27,9 @@ namespace DoubleFile
 
             asPath.First(strPath =>
                 Items
-                    .Where(item =>
-                        strPath ==
-                        item._datum.Text)           // that 200 char padding for the selection hack
+                    .Where(item => strPath == item._datum.Text)     // that 200 char padding for the selection hack
                     .FirstOnlyAssert(item =>
-                    {
-                        item.GoToFile(asPath.Skip(1), strFile);
-                    }));
+                        item.GoToFile(asPath.Skip(1), strFile)));
         }
     }
 }

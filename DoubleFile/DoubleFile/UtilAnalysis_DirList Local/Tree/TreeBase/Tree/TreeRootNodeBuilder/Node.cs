@@ -79,7 +79,7 @@ namespace Local
                     rootNode.Text = strVolumeName +
                         (strVolumeName.EndsWith(rootNode.Text)
                             ? ""
-                            : strVolumeName + " (" + rootNode.Text + ")"
+                            : " (" + rootNode.Text + ")"
                         );
 
                     return rootNode;

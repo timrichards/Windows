@@ -17,6 +17,6 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button Command="{Binding Icmd_Goto}" Content="Go To" Margin="0,0,10,10" Grid.Column="1" Width="70" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+        <!--<Button Command="{Binding Icmd_Goto}" Content="Go To" Margin="0,0,10,10" Grid.Column="1" Width="70" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>-->
     </Grid>
 </local:LocalWindow>

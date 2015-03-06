@@ -18,16 +18,16 @@
         }
         bool _SameVolume = false;
 
-        public bool Solitary
+        public bool SolitaryOrZero
         {
-            get { return _Solitary; }
+            get { return _SolitaryOrZero; }
             internal set
             {
-                _Solitary = value;
-                RaisePropertyChanged("Solitary");
+                _SolitaryOrZero = value;
+                RaisePropertyChanged("SolitaryOrZero");
             }
         }
-        bool _Solitary = false;
+        bool _SolitaryOrZero = false;
 
         public string Filename { get { return marr[0]; } internal set { SetProperty(0, value); } }
         public string Duplicates { get { return marr[1] + (_SameVolume ? " all on the same volume." : ""); } internal set { SetProperty(1, value); } }

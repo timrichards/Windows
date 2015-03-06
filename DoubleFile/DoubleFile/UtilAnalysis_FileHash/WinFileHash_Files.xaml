@@ -9,10 +9,7 @@
             <ListView.Resources>
                 <Style TargetType="{x:Type ListViewItem}">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding Duplicates}" Value="0">
-                            <Setter Property="Foreground" Value="Red" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding Solitary}" Value="True"><!--redundancy with above for flexibility-->
+                        <DataTrigger Binding="{Binding SolitaryOrZero}" Value="True">
                             <Setter Property="Foreground" Value="Red" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding SameVolume}" Value="True">

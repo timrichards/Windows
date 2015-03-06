@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace DoubleFile
@@ -24,6 +25,17 @@ namespace DoubleFile
         {
             item.LVVM = this;
             _items.Add(item);
+
+            if (bQuiet == false)
+            {
+                RaiseItems();
+            }
+        }
+
+        internal void Add(IEnumerable<ListViewItemVM_Base> lsItems, bool bQuiet = false)
+        {
+            foreach (var item in lsItems)
+                Add(item, bQuiet: true);
 
             if (bQuiet == false)
             {

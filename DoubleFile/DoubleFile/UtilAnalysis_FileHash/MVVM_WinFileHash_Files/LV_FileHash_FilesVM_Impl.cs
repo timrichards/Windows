@@ -33,55 +33,53 @@ namespace DoubleFile
 
         void TreeSelect_FileList(IEnumerable<string> lsFileLines, string strListingFile)
         {
-            UtilProject.UIthread(() =>
+            UtilProject.UIthread(Items.Clear);
+
+            if (null == lsFileLines)
+                return;
+
+            var lsItems = new List<LVitem_FileHash_FilesVM>();
+
+            foreach (var strFileLine in lsFileLines)
             {
-                Items.Clear();
+                string strFilename = null;
+                var nLine = -1;
+                var lsDuplicates = _gd.FileDictionary.GetDuplicates(strFileLine, out strFilename, out nLine);
+                var nCount = (null != lsDuplicates) ? lsDuplicates.Count() - 1 : 0;
+                var strCount = (nCount > 0) ? "" + nCount : null;
+                var lvItem = new LVitem_FileHash_FilesVM(new[] { strFilename, strCount });
 
-                if (null == lsFileLines)
-                    return;
+                lvItem.FileLine = strFileLine;
 
-                foreach (var strFileLine in lsFileLines)
+                if (0 < nCount)
                 {
-                    string strFilename = null;
-                    var nLine = -1;
-                    var lsDuplicates = _gd.FileDictionary.GetDuplicates(strFileLine, out strFilename, out nLine);
-                    var nCount = (null != lsDuplicates) ? lsDuplicates.Count() - 1 : 0;
-                    var strCount = (nCount > 0) ? "" + nCount : null;
-                    var lvItem = new LVitem_FileHash_FilesVM(new[] { strFilename, strCount });
+                    lvItem.LSduplicates =
+                        lsDuplicates
+                        .Where(dupe =>
+                            (dupe.LVitemProjectVM.ListingFile != strListingFile) ||    // exactly once every query
+                            (dupe.LineNumber != nLine)
+                        );
 
-                    lvItem.FileLine = strFileLine;
+                    lvItem.SameVolume =
+                        (1 ==
+                        lsDuplicates
+                            .GroupBy(duplicate => duplicate.LVitemProjectVM.Volume)
+                            .Count());
+                }
+                else
+                {
+                    var asFile = strFileLine.Split('\t');
 
-                    if (0 == nCount)
-                    {
-                        var asFile = strFileLine.Split('\t');
-
-                        lvItem.Solitary =
-                            (asFile.Length <= FileParse.knColLength) ||                       // doesn't happen
-                            string.IsNullOrWhiteSpace(asFile[FileParse.knColLength]) ||       // doesn't happen
-                            ulong.Parse(asFile[FileParse.knColLength]) > 0;   // don't report on zero-length files
-                    }
-
-                    if (false == lvItem.Solitary)
-                    {
-                        lvItem.LSduplicates =
-                            lsDuplicates
-                            .Where(dupe =>
-                                (dupe.LVitemProjectVM.ListingFile != strListingFile) ||    // exactly once every query
-                                (dupe.LineNumber != nLine)
-                            );
-
-                        lvItem.SameVolume =
-                            (1 ==
-                            lsDuplicates
-                                .GroupBy(duplicate => duplicate.LVitemProjectVM.Volume)
-                                .Count());
-                    }
-
-                    Add(lvItem, bQuiet: true);
+                    lvItem.SolitaryOrZero =
+                        (asFile.Length <= FileParse.knColLength) ||                       // doesn't happen
+                        string.IsNullOrWhiteSpace(asFile[FileParse.knColLength]) ||       // doesn't happen
+                        ulong.Parse(asFile[FileParse.knColLength]) > 0;   // don't report on zero-length files
                 }
 
-                RaiseItems();
-            });
+                lsItems.Add(lvItem);
+            }
+
+            UtilProject.UIthread(() => Add(lsItems));
         }
 
         GlobalData_Base

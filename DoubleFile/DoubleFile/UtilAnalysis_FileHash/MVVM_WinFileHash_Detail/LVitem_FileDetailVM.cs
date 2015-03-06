@@ -16,7 +16,7 @@
         }
 
         internal LVitem_FileDetailVM(LVitem_FileDetailVM lvItemTemp)
-            : base(null, lvItemTemp.StringValues)
+            : this(lvItemTemp.StringValues)
         {
         }
     }

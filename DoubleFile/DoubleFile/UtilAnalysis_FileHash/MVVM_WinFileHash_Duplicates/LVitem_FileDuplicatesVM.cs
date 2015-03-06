@@ -19,7 +19,7 @@
         }
 
         internal LVitem_FileDuplicatesVM(LVitem_FileDuplicatesVM lvItemTemp)
-            : base(null, lvItemTemp.StringValues)
+            : this(lvItemTemp.StringValues)
         {
         }
     }

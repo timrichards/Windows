@@ -22,6 +22,12 @@
             </Border>
             <Border Style="{StaticResource styleBorder}">
                 <ListView Name="form_lvFolder">
+                    <ListView.Resources>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Foreground" Value="{Binding Foreground}"/>
+                            <Setter Property="Background" Value="{Binding Background}"/>
+                        </Style>
+                    </ListView.Resources>
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Folder Detail" DisplayMemberBinding="{Binding Header}" Width="{Binding WidthHeader}"/>

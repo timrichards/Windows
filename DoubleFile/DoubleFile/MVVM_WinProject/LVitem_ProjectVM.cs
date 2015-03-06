@@ -27,7 +27,7 @@ namespace DoubleFile
         }
 
         internal LVitem_ProjectVM(LVitem_ProjectVM lvItemTemp)
-            : base(null, lvItemTemp.StringValues)
+            : this(lvItemTemp.StringValues)
         {
         }
 

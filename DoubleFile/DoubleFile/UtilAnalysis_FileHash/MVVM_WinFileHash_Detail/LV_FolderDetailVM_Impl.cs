@@ -30,10 +30,21 @@ namespace DoubleFile
                 var strBG_Description = UtilColor.Description[treeNode.BackColor];
 
                 if (false == string.IsNullOrEmpty(strFG_Description))
-                    Add(new LVitem_FolderDetailVM(new[] { "", strFG_Description }), bQuiet: true);
+                {
+                    var lvItem = new LVitem_FolderDetailVM(new[] { "", strFG_Description });
+
+                    lvItem.Foreground = UtilColor.ARGBtoBrush(treeNode.ForeColor);
+                    Add(lvItem, bQuiet: true);
+                }
 
                 if (false == string.IsNullOrEmpty(strBG_Description))
-                    Add(new LVitem_FolderDetailVM(new[] { "", strBG_Description }), bQuiet: true);
+                {
+                    var lvItem = new LVitem_FolderDetailVM(new[] { "", strBG_Description });
+
+                    lvItem.Background = UtilColor.ARGBtoBrush(treeNode.BackColor);
+                    Add(lvItem, bQuiet: true);
+                }
+
 
                 Title = treeNode.Text;
                 RaiseItems();

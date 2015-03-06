@@ -16,7 +16,7 @@
         }
 
         internal LVitem_VolumeDetailVM(LVitem_VolumeDetailVM lvItemTemp)
-            : base(null, lvItemTemp.StringValues)
+            : this(lvItemTemp.StringValues)
         {
         }
     }

@@ -43,7 +43,7 @@
         }
 
         internal LVitem_FileHash_FilesVM(LVitem_FileHash_FilesVM lvItemTemp)
-            : base(null, lvItemTemp.StringValues)
+            : this(lvItemTemp.StringValues)
         {
         }
     }

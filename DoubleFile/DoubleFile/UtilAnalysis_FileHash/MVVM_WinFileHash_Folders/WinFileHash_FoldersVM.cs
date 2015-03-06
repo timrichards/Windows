@@ -10,7 +10,7 @@ namespace DoubleFile
         internal WinFileHash_FoldersVM(GlobalData_Base gd, TreeView_FileHashVM tvVM, LV_ProjectVM lvProjectVM)
         {
             _lvProjectVM = lvProjectVM;
-            Icmd_ShowFiles = new RelayCommand(param => ShowFileWindows());
+            Icmd_ShowFiles = new RelayCommand(param => ShowWindows());
 
             if ((null == _lvProjectVM) ||
                 (0 == _lvProjectVM.Count))
@@ -26,15 +26,18 @@ namespace DoubleFile
             DoTree();
         }
 
-        internal void ShowFileWindows()
+        internal bool ShowWindows()     // returns true if it created a window
         {
+            bool bRet = false;
+
             if ((null == _winFileHash_Files) ||
                 _winFileHash_Files.IsClosed)
             {
                 (_winFileHash_Files = new WinFileHash_Files(_gd)).Show();
+                bRet = true;
             }
 
-            _winFileHash_Files.ShowFilesBrowser();
+            return _winFileHash_Files.ShowWindows() || bRet;
         }
 
         public void Dispose()

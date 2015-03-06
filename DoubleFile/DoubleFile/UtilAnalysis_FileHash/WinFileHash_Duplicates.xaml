@@ -8,7 +8,7 @@
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <ListView Name="form_lv" Margin="0,0,0,0" Grid.Column="0" SelectedItem="{Binding SelectedItem}">
+        <ListView Name="form_lv" Margin="0" Grid.Column="0" SelectedItem="{Binding SelectedItem}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="File name" DisplayMemberBinding="{Binding Filename}" Width="{Binding WidthFilename}"/>

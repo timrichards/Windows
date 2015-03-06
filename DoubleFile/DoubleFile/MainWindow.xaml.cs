@@ -246,13 +246,16 @@ namespace DoubleFile
                 (_winFileHash_Folders = new WinFileHash_Folders(_gd, LVprojectVM)).Show();
                 _winFileHash_Folders.Closed += (o, a) => _winFileHash_Folders = null;
             }
-            else
-                _winFileHash_Folders.Activate();
+            else if (false == _winFileHash_Folders.ShowWindows())       // returns true if it created a window
+                _winFileHash_Folders.Activate();                        // UX feedback
         }
         #endregion form_handlers
 
-        GlobalData_Base _gd = null;
-        readonly GlobalData _gd_old = null;
-        WinFileHash_Folders _winFileHash_Folders = null;
+        WinFileHash_Folders
+            _winFileHash_Folders = null;
+        GlobalData_Base
+            _gd = null;
+        readonly GlobalData
+            _gd_old = null;
     }
 }

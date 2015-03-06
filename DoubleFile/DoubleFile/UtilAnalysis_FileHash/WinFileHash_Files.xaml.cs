@@ -21,10 +21,9 @@ namespace DoubleFile
             DataContext = _lvFileHash_FilesVM = new LV_FileHash_FilesVM(_gd);
         }
 
-        internal void ShowFilesBrowser()                            // Show Files button
+        internal bool ShowWindows()
         {
-            if (false == _lvFileHash_FilesVM.ShowFileWindows())    // did not create a window
-                Activate();                                         // UX feedback
+            return _lvFileHash_FilesVM.ShowWindows();
         }
 
         internal new void Show()

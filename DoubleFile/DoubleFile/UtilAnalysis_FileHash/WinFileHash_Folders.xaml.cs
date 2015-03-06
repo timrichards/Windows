@@ -44,6 +44,11 @@ namespace DoubleFile
             }
         }
 
+        internal bool ShowWindows()
+        {
+            return _winFileHash_FoldersVM.ShowWindows();
+        }
+
         private void Window_Closed(object sender, EventArgs e)
         {
             _winFileHash_FoldersVM.Dispose();     // closes the file list (domino/chain) when this tree view closes

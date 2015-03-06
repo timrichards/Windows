@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:DoubleFile"
         Title="Files in Folder" Height="250" Width="545" WindowStyle="ToolWindow">
     <Grid Name="form_grid">
-        <ListView Name="form_lv" Margin="0,0,0,0" SelectedItem="{Binding SelectedItem}">
+        <ListView Name="form_lv" Margin="0" SelectedItem="{Binding SelectedItem}">
             <ListView.Resources>
                 <Style TargetType="{x:Type ListViewItem}">
                     <Style.Triggers>

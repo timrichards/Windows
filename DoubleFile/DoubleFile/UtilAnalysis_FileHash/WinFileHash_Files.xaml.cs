@@ -1,6 +1,4 @@
 ﻿using System.Windows;
-using System.Linq;
-using System.Windows.Controls;
 
 namespace DoubleFile
 {
@@ -15,7 +13,6 @@ namespace DoubleFile
 
             InitializeComponent();
             form_grid.Loaded += Grid_Loaded;
-            form_lv.SelectionChanged += SelectionChanged;
             Closed += Window_Closed;
         }
 
@@ -24,33 +21,10 @@ namespace DoubleFile
             DataContext = _lvFileHash_FilesVM = new LV_FileHash_FilesVM(_gd);
         }
 
-        void SelectionChanged(object sender, SelectionChangedEventArgs e)
+        internal void ShowFilesBrowser()                            // Show Files button
         {
-            if (0 == e.AddedItems.Count)
-                return;
-
-            var lvItem = e.AddedItems[0] as LVitem_FileHash_FilesVM;
-
-            if (null == lvItem)
-            {
-                MBoxStatic.Assert(99909, false);
-                return;
-            }
-
-            _winFileHash_Duplicates.TreeFileSelChanged(lvItem.LSduplicates, lvItem.FileLine);
-        }
-
-        internal void ShowFilesBrowser()
-        {
-            if ((null != _winFileHash_Duplicates) &&
-                (false == _winFileHash_Duplicates.IsClosed))
-            {
-                _winFileHash_Duplicates.ShowDetailsWindow();
-                Activate();
-                return;
-            }
-
-            (_winFileHash_Duplicates = new WinFileHash_Duplicates(_gd)).Show();
+            if (false == _lvFileHash_FilesVM.ShowFilesBrowser())    // did not create a window
+                Activate();                                         // UX feedback
         }
 
         internal new void Show()
@@ -73,17 +47,14 @@ namespace DoubleFile
         private void Window_Closed(object sender, System.EventArgs e)
         {
             _lvFileHash_FilesVM.Dispose();
-            _winFileHash_Duplicates.Close();
             _nWantsLeft = Left;
             _nWantsTop = Top;
         }
 
-        GlobalData_Base
-            _gd = null;
         LV_FileHash_FilesVM
             _lvFileHash_FilesVM = null;
-        WinFileHash_Duplicates
-            _winFileHash_Duplicates = null;
+        GlobalData_Base
+            _gd = null;
 
         static double _nWantsLeft = -1;
         static double _nWantsTop = -1;

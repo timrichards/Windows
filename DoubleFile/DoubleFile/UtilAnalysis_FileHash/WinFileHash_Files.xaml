@@ -5,7 +5,7 @@
         Title="Files in Folder" Height="250" Width="545">
     <Grid Name="form_grid">
         <Menu IsMainMenu="True" Grid.ColumnSpan="999" Grid.RowSpan="999"/>  <!--sets content background-->
-        <ListView Name="form_lv" Margin="10,10,10,10">
+        <ListView Name="form_lv" Margin="10,10,10,10" SelectedItem="{Binding SelectedItem}">
             <ListView.Resources>
                 <Style TargetType="{x:Type ListViewItem}">
                     <Style.Triggers>

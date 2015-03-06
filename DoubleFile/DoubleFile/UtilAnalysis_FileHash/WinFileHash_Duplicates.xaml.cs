@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
-using System.Linq;
 
 namespace DoubleFile
 {
@@ -16,46 +14,12 @@ namespace DoubleFile
 
             InitializeComponent();
             form_grid.Loaded += Grid_Loaded;
-            Local.TreeSelect.FileListUpdated += TreeSelect_FileList;
-            form_lv.SelectionChanged += SelectionChanged;
             Closed += Window_Closed;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = _winFileHash_DuplicatesVM = new WinFileHash_DuplicatesVM(_gd);
-
-            _winFileHash_DuplicatesVM.SelectedOne = () => form_lv.SelectedItems.HasOnlyOne();
-            _winFileHash_DuplicatesVM.SelectedAny = () => (false == form_lv.SelectedItems.IsEmptyA());
-            _winFileHash_DuplicatesVM.Selected = () => form_lv.SelectedItems.Cast<LVitem_FileDuplicatesVM>();
-        }
-
-        void SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (0 == e.AddedItems.Count)
-                return;
-
-            var lvItem = e.AddedItems[0] as LVitem_FileDuplicatesVM;
-
-            if (null == lvItem)
-            {
-                MBoxStatic.Assert(99902, false);
-                return;
-            }
-
-            _winFileHash_Detail.UpdateFileDetail(lvItem.FileLine);
-        }
-
-        internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, string strFileLine)
-        {
-            _winFileHash_DuplicatesVM.TreeFileSelChanged(lsDuplicates);
-            _winFileHash_Detail.UpdateFileDetail(strFileLine);
-        }
-
-        void TreeSelect_FileList(IEnumerable<string> lsFileLines, string strListingFile)
-        {
-            _winFileHash_DuplicatesVM.ClearItems();
-            _winFileHash_Detail.UpdateFileDetail(/*clear items*/);
         }
 
         internal new void Show()
@@ -79,24 +43,17 @@ namespace DoubleFile
 
         internal void ShowDetailsWindow()
         {
-            if ((null != _winFileHash_Detail) &&
-                (false == _winFileHash_Detail.IsClosed))
-            {
-                return;
-            }
+            _winFileHash_DuplicatesVM.ShowDetailsWindow();
+        }
 
-            (_winFileHash_Detail = new WinFileHash_Detail(_gd)).Show();
+        internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, string strFileLine)
+        {
+            _winFileHash_DuplicatesVM.TreeFileSelChanged(lsDuplicates, strFileLine);
         }
 
         private void Window_Closed(object sender, System.EventArgs e)
         {
-            if ((null != _winFileHash_Detail) &&
-                (false == _winFileHash_Detail.IsClosed))
-            {
-                _winFileHash_Detail.Close();
-            }
-
-            Local.TreeSelect.FileListUpdated -= TreeSelect_FileList;
+            _winFileHash_DuplicatesVM.Dispose();
             _nWantsLeft = Left;
             _nWantsTop = Top;
         }
@@ -105,8 +62,6 @@ namespace DoubleFile
             _winFileHash_DuplicatesVM = null;
         GlobalData_Base
             _gd = null;
-        WinFileHash_Detail
-            _winFileHash_Detail = null;
 
         static double _nWantsLeft = -1;
         static double _nWantsTop = -1;

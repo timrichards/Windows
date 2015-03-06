@@ -15,6 +15,20 @@ namespace DoubleFile
         public void Dispose()
         {
             Local.TreeSelect.FileListUpdated -= TreeSelect_FileList;
+            _winFileHash_Duplicates.Close();
+        }
+
+        internal bool ShowFilesBrowser()    // returns true if it created a window
+        {
+            if ((null != _winFileHash_Duplicates) &&
+                (false == _winFileHash_Duplicates.IsClosed))
+            {
+                _winFileHash_Duplicates.ShowDetailsWindow();
+                return false;
+            }
+
+            (_winFileHash_Duplicates = new WinFileHash_Duplicates(_gd)).Show();
+            return true;
         }
 
         void TreeSelect_FileList(IEnumerable<string> lsFileLines, string strListingFile)
@@ -61,6 +75,9 @@ namespace DoubleFile
             });
         }
 
-        GlobalData_Base _gd = null;
+        GlobalData_Base
+            _gd = null;
+        WinFileHash_Duplicates
+            _winFileHash_Duplicates = null;
     }
 }

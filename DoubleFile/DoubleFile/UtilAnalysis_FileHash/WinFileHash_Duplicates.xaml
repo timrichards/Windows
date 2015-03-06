@@ -9,7 +9,7 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Menu IsMainMenu="True" Grid.ColumnSpan="999" Grid.RowSpan="999"/>  <!--sets content background-->
-        <ListView Name="form_lv" Margin="10,10,10,0" Grid.Column="0">
+        <ListView Name="form_lv" Margin="10,10,10,0" Grid.Column="0" SelectedItem="{Binding SelectedItem}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="File name" DisplayMemberBinding="{Binding Filename}" Width="{Binding WidthFilename}"/>

@@ -6,6 +6,23 @@ namespace DoubleFile
     {
         public ICommand Icmd_Goto { get; private set; }
 
+        public LVitem_FileDuplicatesVM SelectedItem
+        {
+            get { return _selectedItem; }
+            set
+            {
+                _selectedItem = value;
+
+                if (null == value)
+                {
+                    return;
+                }
+
+                _winFileHash_Detail.UpdateFileDetail(value.FileLine);
+            }
+        }
+        LVitem_FileDuplicatesVM _selectedItem = null;
+
         public string WidthFilename { get { return SCW; } }                   // franken all NaN
         public string WidthPath { get { return SCW; } }
 

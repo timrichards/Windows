@@ -55,14 +55,14 @@ namespace DoubleFile
             _nWantsTop = Top;
         }
 
-        GlobalData_Base
-            _gd = null;
         LV_ProjectVM
             _lvProjectVM = null;
         TreeView_FileHashVM
             _treeView_FileHashVM = null;
         WinFileHash_FoldersVM
             _winFileHash_FoldersVM = null;
+        GlobalData_Base
+            _gd = null;
 
         static double _nWantsLeft = -1;
         static double _nWantsTop = -1;

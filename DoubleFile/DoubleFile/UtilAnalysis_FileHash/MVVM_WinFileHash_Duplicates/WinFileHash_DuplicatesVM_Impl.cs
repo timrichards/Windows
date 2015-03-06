@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,18 +7,49 @@ using System.Threading.Tasks;
 
 namespace DoubleFile
 {
-    partial class WinFileHash_DuplicatesVM
+    partial class WinFileHash_DuplicatesVM : IDisposable
     {
         static internal event System.Action<LVitem_ProjectVM, string, string> GoToFile;
 
         internal WinFileHash_DuplicatesVM(GlobalData_Base gd)
         {
             _gd = gd;
-            Icmd_Goto = new RelayCommand(param => Goto(), param => SelectedAny());
+            Icmd_Goto = new RelayCommand(param => Goto(), param => null != SelectedItem);
+            Local.TreeSelect.FileListUpdated += TreeSelect_FileList;
         }
 
-        internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates)
+        public void Dispose()
         {
+            if ((null != _winFileHash_Detail) &&
+                (false == _winFileHash_Detail.IsClosed))
+            {
+                _winFileHash_Detail.Close();
+            }
+
+            Local.TreeSelect.FileListUpdated -= TreeSelect_FileList;
+        }
+
+        internal void ShowDetailsWindow()
+        {
+            if ((null != _winFileHash_Detail) &&
+                (false == _winFileHash_Detail.IsClosed))
+            {
+                return;
+            }
+
+            (_winFileHash_Detail = new WinFileHash_Detail(_gd)).Show();
+        }
+
+        void TreeSelect_FileList(IEnumerable<string> lsFileLines, string strListingFile)
+        {
+            UtilProject.UIthread(Items.Clear);
+            _winFileHash_Detail.UpdateFileDetail(/*clear items*/);
+        }
+
+        internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, string strFileLine)
+        {
+            _winFileHash_Detail.UpdateFileDetail(strFileLine);
+
             Items.Clear();
 
             if (null == lsDuplicates)
@@ -55,8 +87,8 @@ namespace DoubleFile
                     else if ((0 < lsFilesInDir.Count) &&
                         strLine.StartsWith(FileParse.ksLineType_Directory))
                     {
-                        foreach (var strFileLine in lsFilesInDir)
-                            laoLines.Add(new object[] { strFileLine, strLine.Split('\t')[2], g.Key });
+                        foreach (var strFileLineA in lsFilesInDir)
+                            laoLines.Add(new object[] { strFileLineA, strLine.Split('\t')[2], g.Key });
 
                         lsFilesInDir.Clear();
  
@@ -78,22 +110,18 @@ namespace DoubleFile
             RaiseItems();
         }
 
-        internal void ClearItems()
-        {
-            UtilProject.UIthread(Items.Clear);
-        }
-
         internal void Goto()
         {
             if (null == GoToFile)
                 return;
 
             Selected().FirstOnlyAssert(lvItem =>
-            {
-                GoToFile(lvItem.LVitem_ProjectVM, lvItem.Path, lvItem.Filename);
-            });
+                GoToFile(lvItem.LVitem_ProjectVM, lvItem.Path, lvItem.Filename));
         }
 
-        GlobalData_Base _gd = null;
+        WinFileHash_Detail
+            _winFileHash_Detail = null;
+        GlobalData_Base
+            _gd = null;
     }
 }

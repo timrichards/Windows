@@ -115,8 +115,12 @@ namespace DoubleFile
             if (null == GoToFile)
                 return;
 
-            Selected().FirstOnlyAssert(lvItem =>
-                GoToFile(lvItem.LVitem_ProjectVM, lvItem.Path, lvItem.Filename));
+            if (null == SelectedItem)
+            {
+                MBoxStatic.Assert(99901, false);    // binding should dim the button
+            }
+
+            GoToFile(SelectedItem.LVitem_ProjectVM, SelectedItem.Path, SelectedItem.Filename);
         }
 
         WinFileHash_Detail

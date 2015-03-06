@@ -1,5 +1,4 @@
-﻿
-namespace DoubleFile
+﻿namespace DoubleFile
 {
     partial class LV_VolumeDetailVM : ListViewVM_GenericBase<LVitem_VolumeDetailVM>
     {

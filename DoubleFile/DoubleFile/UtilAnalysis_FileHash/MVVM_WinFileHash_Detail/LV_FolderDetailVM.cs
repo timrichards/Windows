@@ -1,5 +1,4 @@
-﻿
-namespace DoubleFile
+﻿namespace DoubleFile
 {
     partial class LV_FolderDetailVM : ListViewVM_GenericBase<LVitem_FolderDetailVM>
     {

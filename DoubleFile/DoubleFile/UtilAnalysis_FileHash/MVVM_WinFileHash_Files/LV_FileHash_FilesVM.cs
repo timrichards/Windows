@@ -1,5 +1,4 @@
-﻿
-namespace DoubleFile
+﻿namespace DoubleFile
 {
     partial class LV_FileHash_FilesVM : ListViewVM_GenericBase<LVitem_FileHash_FilesVM>
     {

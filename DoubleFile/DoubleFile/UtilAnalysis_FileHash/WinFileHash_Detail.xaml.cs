@@ -59,7 +59,6 @@ namespace DoubleFile
             _lvFolderDetailVM = null;
         LV_VolumeDetailVM
             _lvVolumeDetailVM = null;
-
         GlobalData_Base
             _gd = null;
 

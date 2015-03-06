@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace DoubleFile
 {
@@ -27,7 +23,7 @@ namespace DoubleFile
 
             string[] kasHeader = new[] { "Filename", "Created", "Modified", "Attributes", "Length", "Error 1", "Error 2" };
             var asFile = strFileLine.Split('\t')
-                .Skip(3)
+                .Skip(3)                            // makes this an LV line: knColLengthLV
                 .ToArray();
 
             asFile[3] = UtilAnalysis_DirList.DecodeAttributes(asFile[3]);

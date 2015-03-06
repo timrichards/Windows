@@ -50,7 +50,16 @@ namespace DoubleFile
                     var lvItem = new LVitem_FileHash_FilesVM(new[] { strFilename, strCount });
 
                     lvItem.FileLine = strFileLine;
-                    lvItem.Solitary = (0 == nCount);
+
+                    if (0 == nCount)
+                    {
+                        var asFile = strFileLine.Split('\t');
+
+                        lvItem.Solitary =
+                            (asFile.Length <= FileParse.knColLength) ||                       // doesn't happen
+                            string.IsNullOrWhiteSpace(asFile[FileParse.knColLength]) ||       // doesn't happen
+                            ulong.Parse(asFile[FileParse.knColLength]) > 0;   // don't report on zero-length files
+                    }
 
                     if (false == lvItem.Solitary)
                     {

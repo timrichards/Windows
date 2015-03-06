@@ -1,5 +1,4 @@
-﻿
-namespace DoubleFile
+﻿namespace DoubleFile
 {
     class LVitem_FileDuplicatesVM : ListViewItemVM_Base
     {

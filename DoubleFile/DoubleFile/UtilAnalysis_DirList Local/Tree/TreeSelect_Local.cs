@@ -80,8 +80,8 @@ namespace Local
 
             const string NUMFMT = "###,###,###,##0";
 
-            lasItems.Add(new[] { "# Immediate Folders", _treeNode.Nodes.Count.ToString(NUMFMT) });
             lasItems.Add(new[] { "Total # Files", nodeDatum.nFilesInSubdirs.ToString(NUMFMT) });
+            lasItems.Add(new[] { "# Folders Here", _treeNode.Nodes.Count.ToString(NUMFMT) });
 
             if (nodeDatum.nSubDirs > 0)
             {

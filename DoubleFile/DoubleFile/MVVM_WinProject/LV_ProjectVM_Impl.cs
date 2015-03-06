@@ -22,7 +22,11 @@ namespace DoubleFile
                 _gd = lvProjectVM._gd;
             }
 
-            Add(lvProjectVM.Items, bQuiet: true);
+            foreach (var lvItemVM in lvProjectVM.ItemsCast)
+            {
+                Add(new LVitem_ProjectVM(lvItemVM), bQuiet: true);
+            }
+
             Unsaved = lvProjectVM.Unsaved;
         }
 

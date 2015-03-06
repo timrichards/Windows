@@ -43,6 +43,18 @@ namespace DoubleFile
             }
         }
 
+        //internal void Add<T>(IEnumerable<T> lsItems, bool bQuiet = false)
+        //    where T : ListViewItemVM_Base, new()
+        //{
+        //    foreach (var item in lsItems)
+        //        Add(new T(item), bQuiet: true);
+
+        //    if (bQuiet == false)
+        //    {
+        //        RaiseItems();
+        //    }
+        //}
+
         internal static string SCW = double.NaN.ToString();     // frankenhoek
 
         internal int Count { get { return _items.Count; } }

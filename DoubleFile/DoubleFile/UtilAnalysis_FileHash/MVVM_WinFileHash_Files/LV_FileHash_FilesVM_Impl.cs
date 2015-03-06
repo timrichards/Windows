@@ -18,7 +18,7 @@ namespace DoubleFile
             _winFileHash_Duplicates.Close();
         }
 
-        internal bool ShowFilesBrowser()    // returns true if it created a window
+        internal bool ShowFileWindows()    // returns true if it created a window
         {
             if ((null != _winFileHash_Duplicates) &&
                 (false == _winFileHash_Duplicates.IsClosed))
@@ -66,14 +66,14 @@ namespace DoubleFile
                             .GroupBy(duplicate => duplicate.LVitemProjectVM.Volume)
                             .Count());
                 }
-                else
+                else    // solitary file
                 {
                     var asFile = strFileLine.Split('\t');
 
-                    lvItem.SolitaryOrZero =
+                    lvItem.SolitaryAndNonEmpty =
                         (asFile.Length <= FileParse.knColLength) ||                       // doesn't happen
                         string.IsNullOrWhiteSpace(asFile[FileParse.knColLength]) ||       // doesn't happen
-                        ulong.Parse(asFile[FileParse.knColLength]) > 0;   // don't report on zero-length files
+                        ulong.Parse(asFile[FileParse.knColLength]) > 0;
                 }
 
                 lsItems.Add(lvItem);

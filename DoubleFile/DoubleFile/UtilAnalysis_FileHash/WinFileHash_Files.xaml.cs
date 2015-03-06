@@ -23,7 +23,7 @@ namespace DoubleFile
 
         internal void ShowFilesBrowser()                            // Show Files button
         {
-            if (false == _lvFileHash_FilesVM.ShowFilesBrowser())    // did not create a window
+            if (false == _lvFileHash_FilesVM.ShowFileWindows())    // did not create a window
                 Activate();                                         // UX feedback
         }
 

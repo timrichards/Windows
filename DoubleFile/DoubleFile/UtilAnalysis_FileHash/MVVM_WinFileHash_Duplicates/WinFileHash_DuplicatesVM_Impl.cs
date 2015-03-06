@@ -9,7 +9,7 @@ namespace DoubleFile
 {
     partial class WinFileHash_DuplicatesVM : IDisposable
     {
-        static internal event System.Action<LVitem_ProjectVM, string, string> GoToFile;
+        static internal event Action<LVitem_ProjectVM, string, string> GoToFile;
 
         internal WinFileHash_DuplicatesVM(GlobalData_Base gd)
         {

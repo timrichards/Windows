@@ -14,12 +14,7 @@
             </ListView.Resources>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Border
-                        Margin="5"
-                        Height="70"
-                        VerticalAlignment="Stretch"
-                        BorderBrush="ForestGreen"
-                        BorderThickness="2,0,0,0">
+                    <Border Style="{StaticResource styleBorder}" Height="70" Margin="5">
                         <StackPanel Margin="10,0,0,0">
                             <TextBlock FontWeight="Bold" Text="{Binding Nickname}" />
                             <TextBlock Text="{Binding SourcePath}" />

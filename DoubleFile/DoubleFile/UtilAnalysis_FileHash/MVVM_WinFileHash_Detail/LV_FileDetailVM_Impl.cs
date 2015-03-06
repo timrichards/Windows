@@ -45,7 +45,6 @@ namespace DoubleFile
                     Add(new LVitem_FileDetailVM(new[] { kasHeader[i], asFile[i] }), bQuiet: true);
                 }
 
-                Add(new LVitem_FileDetailVM(), bQuiet: true);
                 Title = asFile[0];
                 RaiseItems();
             });

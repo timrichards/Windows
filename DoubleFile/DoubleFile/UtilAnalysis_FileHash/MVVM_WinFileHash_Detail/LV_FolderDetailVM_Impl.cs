@@ -35,7 +35,6 @@ namespace DoubleFile
                 if (false == string.IsNullOrEmpty(strBG_Description))
                     Add(new LVitem_FolderDetailVM(new[] { "", strBG_Description }), bQuiet: true);
 
-                Add(new LVitem_FolderDetailVM(), bQuiet: true);
                 Title = treeNode.Text;
                 RaiseItems();
             });

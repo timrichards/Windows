@@ -25,7 +25,7 @@ namespace DoubleFile
 
             DetailsDatum TreeSubnodeDetails(TreeNode treeNode)
             {
-                DetailsDatum datum = new DetailsDatum();
+                var datum = new DetailsDatum();
 
                 foreach (TreeNode node in treeNode.Nodes)
                 {

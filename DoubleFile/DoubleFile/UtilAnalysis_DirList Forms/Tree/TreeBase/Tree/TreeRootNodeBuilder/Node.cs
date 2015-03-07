@@ -71,7 +71,7 @@ namespace DoubleFile
 
                     strRootPath = rootNode.Text;
 
-                    //treeNode.Name = treeNode.Text;    Name is now a get accessor for Text in LocalTreeNode 2/22/15
+                    rootNode.Name = rootNode.Text;
 
                     if (string.IsNullOrWhiteSpace(strVolumeName))
                     {
@@ -114,6 +114,7 @@ namespace DoubleFile
                             _nPrevLineNo = subNode._nPrevLineNo;
                             _nLength = subNode._nLength;
                             _nLineNo = subNode._nLineNo;
+                            _nHashParity = subNode._nHashParity;
                         }
                         else
                         {
@@ -139,7 +140,7 @@ namespace DoubleFile
                     //Utilities.Assert(1301.2305, treeNode.Text == strShortPath, "\"" + treeNode.Text + "\" != \"" + strShortPath + "\""); not true for non-root
                     MBoxStatic.Assert(1301.2306, treeNode.SelectedImageIndex == -1);     // sets the bitmap size
                     treeNode.SelectedImageIndex = -1;
-                    treeNode.Tag = new NodeDatum(_nPrevLineNo, _nLineNo, _nLength);  // this is almost but not quite always newly assigned here.
+                    treeNode.Tag = new NodeDatum(_nPrevLineNo, _nLineNo, _nLength, _nHashParity);  // this is almost but not quite always newly assigned here.
                     return treeNode;
                 }
 

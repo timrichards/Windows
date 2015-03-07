@@ -31,8 +31,8 @@ namespace Local
         void GetFileList()
         {
             string strListingFile = null;
-            var nodeDatum = _treeNode.Tag as NodeDatum;
-            var rootNodeDatum = _treeNode.Root().Tag as RootNodeDatum;
+            var nodeDatum = _treeNode.NodeDatum;
+            var rootNodeDatum = _treeNode.Root().NodeDatum as RootNodeDatum;
             IEnumerable<string> lsFiles = null;
 
             do
@@ -68,7 +68,7 @@ namespace Local
 
         void GetFolderDetail()
         {
-            var nodeDatum = _treeNode.Tag as NodeDatum;
+            var nodeDatum = _treeNode.NodeDatum;
             var lasItems = new List<string[]>();
 
             if ((null == nodeDatum) ||
@@ -118,7 +118,7 @@ namespace Local
             while (null != rootNode.Parent)
                 rootNode = rootNode.Parent;
 
-            if (_dictVolumeInfo.TryGetValue(((RootNodeDatum)rootNode.Tag).ListingFile, out strDriveInfo))
+            if (_dictVolumeInfo.TryGetValue(((RootNodeDatum)rootNode.NodeDatum).ListingFile, out strDriveInfo))
             {
                 var arrDriveInfo =
                     strDriveInfo

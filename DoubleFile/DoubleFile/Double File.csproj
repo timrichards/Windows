@@ -147,6 +147,7 @@
     <Compile Include="MVVM\ListView Base\ListViewVM_GenericBase.cs" />
     <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
     <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
+    <Compile Include="UtilAnalysis_DirList Local\Tree\DetailsDatum.cs" />
     <Compile Include="UtilAnalysis_DirList Local\Tree\TreeSelect_Local.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Detail\LVitem_FolderDetailVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Detail\LVitem_VolumeDetail.cs" />
@@ -210,7 +211,6 @@
     <Compile Include="UtilAnalysis_DirList Forms\UtilAnalysis_DirList\ListViewEx.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList\Form_Search.cs" />
     <Compile Include="UtilAnalysis_DirList Local\Tree\FolderKeyStruct.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\Tree\DetailsDatum.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Tree\DetailsDatum\NodeDatum.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
     <Compile Include="UtilAnalysis_DirList Local\Tree\LVitemFileTag.cs" />

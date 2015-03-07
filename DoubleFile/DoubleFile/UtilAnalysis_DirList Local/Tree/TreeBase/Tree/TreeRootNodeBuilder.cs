@@ -32,7 +32,7 @@ namespace Local
                     datum += TreeSubnodeDetails(node);
                 }
 
-                var nodeDatum = treeNode.Tag as NodeDatum;
+                var nodeDatum = treeNode.NodeDatum;
 
                 if (null == nodeDatum)
                 {
@@ -202,8 +202,9 @@ namespace Local
                 }
 
                 var ieLines = File
-                    .ReadLines(m_volStrings.ListingFile)
-                    .Where(s => s.StartsWith(ksLineType_Directory));
+                    .ReadLines(m_volStrings.ListingFile);
+
+                var nHashParity = 0;
 
                 foreach (var strLine in ieLines)
                 {
@@ -213,14 +214,18 @@ namespace Local
                     }
 
                     var asLine = strLine.Split('\t');
-                    var nHashParity = 0;
-                    var strLength = asLine[knColLength];
 
-                    if (10 < asLine.Length)
-                        nHashParity = new FileKeyStruct(asLine[10], strLength).GetHashCode();
-
-                    dirData.AddToTree(asLine[2], uint.Parse(asLine[1]), ulong.Parse(strLength),
-                        nHashParity);
+                    if ((10 < asLine.Length) &&
+                        (strLine.StartsWith(ksLineType_File)))
+                    {
+                        nHashParity += new FileKeyStruct(asLine[10], asLine[knColLength]).GetHashCode();
+                    }
+                    else if (strLine.StartsWith(ksLineType_Directory))
+                    {
+                        dirData.AddToTree(asLine[2], uint.Parse(asLine[1]), ulong.Parse(asLine[knColLength]),
+                            nHashParity);
+                        nHashParity = 0;
+                    }
                 }
 
                 string strRootPath = null;
@@ -228,8 +233,8 @@ namespace Local
 
                 if (rootTreeNode != null)
                 {
-                    rootTreeNode.Tag = new RootNodeDatum(
-                        (NodeDatum)rootTreeNode.Tag,
+                    rootTreeNode.NodeDatum = new RootNodeDatum(
+                        rootTreeNode.NodeDatum,
                         m_volStrings.ListingFile, m_volStrings.VolumeGroup,
                         nVolFree, nVolLength,
                         strRootPath

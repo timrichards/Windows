@@ -20,7 +20,7 @@
         internal ulong
             VolumeLength { get; private set; }
 
-        internal RootNodeDatum(NodeDatum node, string listingFile, string strVolGroup,
+        internal RootNodeDatum(DetailsDatum node, string listingFile, string strVolGroup,
             ulong nVolumeFree, ulong nVolumeLength, string strRootPath)
             : base(node)
         {

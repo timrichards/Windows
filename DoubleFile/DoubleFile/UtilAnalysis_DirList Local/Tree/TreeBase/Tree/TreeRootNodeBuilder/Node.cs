@@ -55,7 +55,7 @@ namespace Local
 
                     if (false == _rootNode.Nodes.TryGetValue(strParent, out nodeParent))
                     {
-                        nodeParent = new Node(_gd, strParent, _rootNode.FirstLineNo, 0, nHashParity, _rootNode);
+                        nodeParent = new Node(_gd, strParent, _rootNode.FirstLineNo, 0, _nHashParity, _rootNode);
                         _rootNode.Nodes.Add(strParent, nodeParent);
                     }
 
@@ -114,6 +114,7 @@ namespace Local
                             _nPrevLineNo = subNode._nPrevLineNo;
                             _nLength = subNode._nLength;
                             _nLineNo = subNode._nLineNo;
+                            _nHashParity = subNode._nHashParity;
                         }
                         else
                         {
@@ -139,7 +140,7 @@ namespace Local
                     //Utilities.Assert(1301.2305, treeNode.Text == strShortPath, "\"" + treeNode.Text + "\" != \"" + strShortPath + "\""); not true for non-root
                     MBoxStatic.Assert(1301.2306, treeNode.SelectedImageIndex == -1);     // sets the bitmap size
                     treeNode.SelectedImageIndex = -1;
-                    treeNode.Tag = new NodeDatum(_nPrevLineNo, _nLineNo, _nLength);  // this is almost but not quite always newly assigned here.
+                    treeNode.NodeDatum = new NodeDatum(_nPrevLineNo, _nLineNo, _nLength, _nHashParity);  // this is almost but not quite always newly assigned here.
                     return treeNode;
                 }
 

@@ -26,8 +26,8 @@ namespace Local
             LocalTreeNode parent,
             List<ulong> listLength = null)
         {
-            var nodeDatum = parent.Tag as NodeDatum;
-            var rootNodeDatum = parent.Root().Tag as RootNodeDatum;
+            var nodeDatum = parent.NodeDatum;
+            var rootNodeDatum = parent.Root().NodeDatum as RootNodeDatum;
             var listFiles = new List<string[]>();
 
             if ((null == nodeDatum) ||

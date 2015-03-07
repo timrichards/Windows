@@ -44,8 +44,9 @@ namespace DoubleFile
                     lvItem.Background = UtilColor.ARGBtoBrush(treeNode.BackColor);
                     Add(lvItem, bQuiet: true);
                 }
-
-
+#if DEBUG
+                Add(new LVitem_FolderDetailVM(new[] { "Hash Parity", "" + treeNode.NodeDatum.HashParity }), bQuiet: true);
+#endif
                 Title = treeNode.Text;
                 RaiseItems();
             });

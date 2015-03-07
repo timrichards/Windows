@@ -18,8 +18,8 @@ namespace DoubleFile
             NextNode { get; private set; }
         internal LocalTreeNode
             Parent { get; private set; }
-        internal object
-            Tag { get; set; }
+        internal Local.NodeDatum
+            NodeDatum { get; set; }
 
         internal string
             Name { get { return Text; } }

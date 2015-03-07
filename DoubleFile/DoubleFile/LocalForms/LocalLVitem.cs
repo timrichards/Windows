@@ -13,8 +13,13 @@ namespace DoubleFile
             Text { get; set; }
         internal UString
             Name { get; set; }
-        internal object
-            Tag { get; set; }
+        //internal LocalLVitem
+        //    IgnoreLVItem { get; set; }
+        internal UList<LocalTreeNode>
+            TreeNodes { get; set; }
+        internal LocalTreeNode
+            LocalTreeNode { get; set; }
+
         internal LocalLVitemCollection
             SubItems { get; set; }
         internal LocalLV

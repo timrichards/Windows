@@ -44,11 +44,11 @@ namespace DoubleFile
         {
             _Items
                 .Where(item => lvItem_ProjectVM.ListingFile == 
-                    ((Local.RootNodeDatum)item._datum.Tag).ListingFile)
+                    ((Local.RootNodeDatum)item._datum.NodeDatum).ListingFile)
                 .FirstOnlyAssert(item =>
                     item.GoToFile(
                         strPath
-                            .Replace(((Local.RootNodeDatum)item._datum.Tag).RootPath, "")
+                            .Replace(((Local.RootNodeDatum)item._datum.NodeDatum).RootPath, "")
                             .TrimStart('\\')
                             .Split('\\'),
                         strFile)

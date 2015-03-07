@@ -73,7 +73,7 @@ namespace DoubleFile
         internal bool ReadList(ListView lv_in)
         {
             var nCols = lv_in.Columns.Count;
-            var lv = new ListView();       // fake
+            var lvFake = new ListView();
 
             if ((null == m_strFileNotDialog) &&
                 (false == ShowDialog(new OpenFileDialog())))
@@ -101,7 +101,7 @@ namespace DoubleFile
                 {
                     while ((strLine = sr.ReadLine()) != null)
                     {
-                        ReadListItem(lv,
+                        ReadListItem(lvFake,
                             strLine
                             .TrimEnd('\t')
                             .Split('\t')
@@ -110,15 +110,15 @@ namespace DoubleFile
                 }
             }
 
-            if (false == lv.Items.IsEmpty())
+            if (false == lvFake.Items.IsEmpty())
             {
                 var lvItems =
-                    lv
+                    lvFake
                     .Items
                     .Cast<ListViewItem>()
-                    .ToArray();
+                    .ToArray();         // ToArray() makes a copy so that Clear() doesn't clear lvItems
 
-                lv.Items.Clear();
+                lvFake.Items.Clear();   // removes items from the fake lv so they can be added to the real one
                 lv_in.Items.AddRange(lvItems);
                 lv_in.Invalidate();
                 return true;

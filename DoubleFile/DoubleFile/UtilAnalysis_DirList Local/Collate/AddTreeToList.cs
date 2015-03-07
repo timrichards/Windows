@@ -42,7 +42,7 @@ namespace Local
                     m_listTreeNodes.Add(treeNode);
                     ++Count;
 
-                    var nodeDatum = treeNode.Tag as NodeDatum;
+                    var nodeDatum = treeNode.NodeDatum;
 
                     if (nodeDatum == null)
                     {

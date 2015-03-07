@@ -54,7 +54,7 @@ namespace Local
                 return;
             }
 
-            var bUnique = (listLVitems[0].Tag is LocalTreeNode);
+            var bUnique = (null != listLVitems[0].LocalTreeNode);
             var nCount = listLVitems.Count;
             var nInterval = (nCount < 100) ? 10 : (nCount < 1000) ? 25 : 50;
 
@@ -129,7 +129,13 @@ namespace Local
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem/nTotalProgressItems);
 
                 var treeNode = kvp.Key;
-                var nodeDatum = (NodeDatum)treeNode.Tag;
+                var nodeDatum = treeNode.NodeDatum;
+
+                if (null == nodeDatum)
+                {
+                    MBoxStatic.Assert(99900, false);    // This check is new 3/7/15 and has never been hit
+                }
+
                 List<LocalTreeNode> lsTreeNodes = null;
 
                 if (false == dictNodes.TryGetValue(nodeDatum.Key, out lsTreeNodes))
@@ -198,7 +204,7 @@ namespace Local
                             continue;
                         }
 
-                        var nodeDatum = (treeNode_A.Tag as NodeDatum);
+                        var nodeDatum = treeNode_A.NodeDatum;
 
                         if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
                         {
@@ -218,7 +224,7 @@ namespace Local
                     {
                         foreach (var treeNode_A in listKeep)
                         {
-                            var nodeDatum = (treeNode_A.Tag as NodeDatum);
+                            var nodeDatum = treeNode_A.NodeDatum;
 
                             if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
                             {
@@ -239,7 +245,7 @@ namespace Local
                 {
                     var treeNode = listNodes[0];
 
-                    var nodeDatum = (treeNode.Tag as NodeDatum);
+                    var nodeDatum = treeNode.NodeDatum;
 
                     if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
                     {
@@ -313,7 +319,7 @@ namespace Local
 
                 var lvItem = new LocalLVitem(new[] {string.Empty, str_nClones})
                 {
-                    Tag = listNodes.Value,
+                    TreeNodes = listNodes.Value,
                     ForeColor = listNodes.Value[0].ForeColor
                 };
 
@@ -333,7 +339,7 @@ namespace Local
                         nameNode = treeNode;
                     }
 
-                    var nodeDatum = (treeNode.Tag as NodeDatum);
+                    var nodeDatum = treeNode.NodeDatum;
 
                     if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
                     {
@@ -362,7 +368,7 @@ namespace Local
                 treeNode.ForeColor = UtilColor.DarkGray;
                 treeNode.BackColor = UtilColor.Empty;
 
-                var nodeDatum = (treeNode.Tag as NodeDatum);
+                var nodeDatum = treeNode.NodeDatum;
 
                 if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
                 {
@@ -393,8 +399,8 @@ namespace Local
 
                 MBoxStatic.Assert(1305.6321, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
-                var lvItem = new LocalLVitem(treeNode.Text) {Tag = treeNode};
-                var nodeDatum = (treeNode.Tag as NodeDatum);
+                var lvItem = new LocalLVitem(treeNode.Text) { LocalTreeNode = treeNode };
+                var nodeDatum = treeNode.NodeDatum;
 
                 if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
                 {
@@ -431,7 +437,7 @@ namespace Local
                 UtilProject.WriteLine("Step1_OnThread " + nCount);
             }
 
-            listSameVol.Sort((y, x) => ((NodeDatum)x.Tag).TotalLength.CompareTo(((NodeDatum)y.Tag).TotalLength));
+            listSameVol.Sort((y, x) => x.NodeDatum.TotalLength.CompareTo(y.NodeDatum.TotalLength));
             nProgressDenominator += listSameVol.Count;
             ++nProgressItem;
 
@@ -446,7 +452,7 @@ namespace Local
 
                 SnowUniqueParents(treeNode);
 
-                var nodeDatum = (treeNode.Tag as NodeDatum);
+                var nodeDatum = treeNode.NodeDatum;
 
                 if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
                 {
@@ -475,7 +481,7 @@ namespace Local
 
                 var lvItem = new LocalLVitem(new[] {(string)treeNode.Text, str_nClones})
                 {
-                    Tag = nodeDatum.Clones,
+                    TreeNodes = nodeDatum.Clones,
                     ForeColor = UtilColor.Firebrick,
                     BackColor = treeNode.BackColor
                 };
@@ -565,7 +571,7 @@ namespace Local
             // neither rootClone nor nMaxLength are used at all (rootClone is used as a bool).
             // provisional.
 
-            var nodeDatum = treeNode.Tag as NodeDatum;
+            var nodeDatum = treeNode.NodeDatum;
 
             if (null == nodeDatum)
             {
@@ -593,7 +599,7 @@ namespace Local
                 if (dictClones.TryGetValue(nodeDatum.Key, out lsTreeNodes))
                 {
                     MBoxStatic.Assert(1305.6305, lsTreeNodes == listClones);
-                    MBoxStatic.Assert(1305.6306, ((NodeDatum)lsTreeNodes[0].Tag).SeparateVols == nodeDatum.SeparateVols);
+                    MBoxStatic.Assert(1305.6306, lsTreeNodes[0].NodeDatum.SeparateVols == nodeDatum.SeparateVols);
                     MBoxStatic.Assert(1305.6307, lsTreeNodes[0].ForeColor == treeNode.ForeColor);
                 }
                 else
@@ -603,7 +609,7 @@ namespace Local
                     // Test to see if clones are on separate volumes.
 
                     var rootNode = treeNode.Root();
-                    var rootNodeDatum = (rootNode.Tag as RootNodeDatum);
+                    var rootNodeDatum = rootNode.NodeDatum as RootNodeDatum;
 
                     if (null == rootNodeDatum)      // this check is new 2/13/15 and has never been hit
                     {
@@ -624,7 +630,7 @@ namespace Local
                             return;
                         }
 
-                        MBoxStatic.Assert(1305.6309, ((NodeDatum)subnode.Tag).Key == nodeDatum.Key);
+                        MBoxStatic.Assert(1305.6309, subnode.NodeDatum.Key == nodeDatum.Key);
 
                         var rootNode_A = subnode.Root();
 
@@ -633,7 +639,7 @@ namespace Local
                             continue;
                         }
 
-                        var rootNodeDatum_A = (rootNode_A.Tag as RootNodeDatum);
+                        var rootNodeDatum_A = (rootNode_A.NodeDatum as RootNodeDatum);
 
                         if (null == rootNodeDatum_A)      // this check is new 2/13/15 and has never been hit
                         {
@@ -656,7 +662,7 @@ namespace Local
 
                     foreach (var subNode in listClones)
                     {
-                        var nodeDatum_A = (subNode.Tag as NodeDatum);
+                        var nodeDatum_A = subNode.NodeDatum;
 
                         if (null == nodeDatum_A)      // this check is new 2/13/15 and has never been hit
                         {
@@ -727,7 +733,8 @@ namespace Local
                         .Where(lvItem => ((string)lvItem.Text).Equals(treeNode.Text,
                             StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        IgnoreNodeAndSubnodes((LocalLVitem)lvItem.Tag, treeNode);
+                        MBoxStatic.Assert(99898, false);    // replace the Tag field with an LVitem
+                  //      IgnoreNodeAndSubnodes((LocalLVitem)lvItem.Tag, treeNode);
                         break;
                     }
                 }
@@ -748,7 +755,7 @@ namespace Local
             {
                 parentNode.BackColor = UtilColor.Snow;
 
-                var nodeDatum = (NodeDatum)parentNode.Tag;
+                var nodeDatum = parentNode.NodeDatum;
 
                 if (nodeDatum.LVitem != null)
                 {

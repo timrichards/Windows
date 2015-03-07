@@ -102,7 +102,7 @@ namespace DoubleFile
             var localLVclones = new LocalLV();
             var localLVsameVol = new LocalLV();
             var localLVsolitary = new LocalLV();
-            var lsLocalLVignore = new List<LocalLVitem>();
+            var lsLocalLVignore = new List<LocalLVitem>();  // when implementing, replace the Forms ListViewItem.Tag in LocalLVItem
             var nProgress = 0.0;
 
             using (new SDL_Timer(() => { _winProgress.SetProgress(_ksFolderTreeKey, (3 + nProgress)/4.0); }).Start())

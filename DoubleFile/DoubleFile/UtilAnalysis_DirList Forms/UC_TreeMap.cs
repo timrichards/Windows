@@ -217,7 +217,7 @@ namespace DoubleFile
                 NodeDatum nodeDatum = (NodeDatum)nodeRet.Tag;
 
                 m_selRect = nodeDatum.TreeMapRect;
-                m_toolTip.Show(UtilAnalysis_DirList.FormatSize(nodeDatum.nTotalLength, bBytes: true), TooltipAnchor, new Point(0, 0));
+                m_toolTip.Show(UtilAnalysis_DirList.FormatSize(nodeDatum.TotalLength, bBytes: true), TooltipAnchor, new Point(0, 0));
                 ToolTipActive = true; UtilProject.WriteLine(DateTime.Now + " a ToolTipActive = true; ------");
             }
 
@@ -285,7 +285,7 @@ namespace DoubleFile
                 MBoxStatic.Assert(1302.3316, iterUlong.MoveNext());
                 NodeDatum nodeDatum_A = new NodeDatum();
 
-                nTotalLength += nodeDatum_A.nTotalLength = iterUlong.Current;
+                nTotalLength += nodeDatum_A.TotalLength = iterUlong.Current;
 
                 if (iterUlong.Current == 0)
                 {
@@ -307,8 +307,8 @@ namespace DoubleFile
             NodeDatum nodeDatum = (NodeDatum)parent.Tag;
             NodeDatum nodeDatum_B = new NodeDatum();
 
-            MBoxStatic.Assert(1302.3301, nTotalLength == nodeDatum.nLength);
-            nodeDatum_B.nTotalLength = nTotalLength;
+            MBoxStatic.Assert(1302.3301, nTotalLength == nodeDatum.Length);
+            nodeDatum_B.TotalLength = nTotalLength;
             nodeDatum_B.TreeMapRect = nodeDatum.TreeMapRect;
             nodeFileList.Tag = nodeDatum_B;
             MBoxStatic.Assert(1302.3302, nodeFileList.SelectedImageIndex == -1);              // sets the bitmap size
@@ -500,7 +500,7 @@ namespace DoubleFile
 
             NodeDatum nodeDatum = (NodeDatum)m_treeNode.Tag;
 
-            if (nodeDatum.nTotalLength > 0)
+            if (nodeDatum.TotalLength > 0)
 	        {
                 RecurseDrawGraph(m_treeNode, rc, bStart: true);
 	        }
@@ -593,26 +593,26 @@ namespace DoubleFile
                 NodeDatum nodeDatumFree = new NodeDatum();
                 TreeNode nodeFree = new TreeNode(parent_in.Text + " (free space)");
 
-                nodeDatumFree.nTotalLength = rootNodeDatum.VolumeFree;
+                nodeDatumFree.TotalLength = rootNodeDatum.VolumeFree;
                 nodeFree.Tag = nodeDatumFree;
                 nodeFree.ForeColor = Color.MediumSpringGreen;
 
                 NodeDatum nodeDatumUnread = new NodeDatum();
                 TreeNode nodeUnread = new TreeNode(parent_in.Text + " (unread data)");
                 ulong nVolumeLength = rootNodeDatum.VolumeLength;
-                long nUnreadLength = (long)nVolumeLength - (long)rootNodeDatum.VolumeFree - (long)rootNodeDatum.nTotalLength;
+                long nUnreadLength = (long)nVolumeLength - (long)rootNodeDatum.VolumeFree - (long)rootNodeDatum.TotalLength;
 
                 if (nUnreadLength < 0)
                 {
-                    nVolumeLength = rootNodeDatum.VolumeFree + rootNodeDatum.nTotalLength;      // Faked length to make up for compression and hard links
-                    nodeDatumUnread.nTotalLength = 0;
+                    nVolumeLength = rootNodeDatum.VolumeFree + rootNodeDatum.TotalLength;      // Faked length to make up for compression and hard links
+                    nodeDatumUnread.TotalLength = 0;
                 }
                 else
                 {
-                    nodeDatumUnread.nTotalLength = nVolumeLength - rootNodeDatum.VolumeFree - rootNodeDatum.nTotalLength;
+                    nodeDatumUnread.TotalLength = nVolumeLength - rootNodeDatum.VolumeFree - rootNodeDatum.TotalLength;
                 }
 
-                nodeDatumUnread.nTotalLength = (ulong)nUnreadLength;
+                nodeDatumUnread.TotalLength = (ulong)nUnreadLength;
                 nodeUnread.Tag = nodeDatumUnread;
                 nodeUnread.ForeColor = Color.MediumVioletRed;
                 listChildren = new List<TreeNode>();
@@ -628,7 +628,7 @@ namespace DoubleFile
 
                 NodeDatum nodeDatumVolume = new NodeDatum();
 
-                nodeDatumVolume.nTotalLength = nVolumeLength;
+                nodeDatumVolume.TotalLength = nVolumeLength;
                 nodeDatumVolume.TreeMapRect = ((NodeDatum)parent_in.Tag).TreeMapRect;
                 parent.Tag = nodeDatumVolume;
                 bVolumeNode = true;
@@ -638,7 +638,7 @@ namespace DoubleFile
             if (bVolumeNode == false)
             {
                 parent = parent_in;
-                listChildren = parent.Nodes.Cast<TreeNode>().Where(t => ((NodeDatum)t.Tag).nTotalLength > 0).ToList();
+                listChildren = parent.Nodes.Cast<TreeNode>().Where(t => ((NodeDatum)t.Tag).TotalLength > 0).ToList();
             }
 
             NodeDatum nodeDatum = (NodeDatum)parent.Tag;
@@ -650,11 +650,11 @@ namespace DoubleFile
             {
                 listChildren.Add(nodeDatum.TreeMapFiles);
             }
-            else if (nodeDatum.nLength > 0)
+            else if (nodeDatum.Length > 0)
             {
                 NodeDatum nodeFiles = new NodeDatum();
 
-                nodeFiles.nTotalLength = nodeDatum.nLength;
+                nodeFiles.TotalLength = nodeDatum.Length;
 
                 TreeNode treeNode = new TreeNode(parent.Text);
 
@@ -663,7 +663,7 @@ namespace DoubleFile
                 listChildren.Add(treeNode);
             }
 
-            listChildren.Sort((y, x) => ((NodeDatum)x.Tag).nTotalLength.CompareTo(((NodeDatum)y.Tag).nTotalLength));
+            listChildren.Sort((y, x) => ((NodeDatum)x.Tag).TotalLength.CompareTo(((NodeDatum)y.Tag).TotalLength));
 
             if (listChildren.IsEmpty())
             {
@@ -764,14 +764,14 @@ namespace DoubleFile
             MBoxStatic.Assert(1302.3309, nextChild < listChildren.Count);
             MBoxStatic.Assert(1302.33101, width >= 1.0);
 
-	        double mySize= (double)((NodeDatum)parent.Tag).nTotalLength;
+	        double mySize= (double)((NodeDatum)parent.Tag).TotalLength;
 	        ulong sizeUsed= 0;
 	        double rowHeight= 0;
             int i = 0;
 
             for (i = nextChild; i < listChildren.Count; i++)
 	        {
-                ulong childSize = ((NodeDatum)listChildren[i].Tag).nTotalLength;
+                ulong childSize = ((NodeDatum)listChildren[i].Tag).TotalLength;
 		        sizeUsed+= childSize;
 		        double virtualRowHeight= sizeUsed / mySize;
                 MBoxStatic.Assert(1302.3311, virtualRowHeight > 0);
@@ -810,7 +810,7 @@ namespace DoubleFile
 	        {
 		        // Rectangle(1.0 * 1.0) = mySize
 		        double rowSize= mySize * rowHeight;
-                double childSize = (double)((NodeDatum)listChildren[nextChild + i].Tag).nTotalLength;
+                double childSize = (double)((NodeDatum)listChildren[nextChild + i].Tag).TotalLength;
 		        double cw= childSize / rowSize;
                 MBoxStatic.Assert(1302.3315, cw >= 0);
 		        arrChildWidth[nextChild + i]= cw;

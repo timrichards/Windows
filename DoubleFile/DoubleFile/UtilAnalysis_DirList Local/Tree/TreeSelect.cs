@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -32,7 +31,7 @@ namespace Local
             var listFiles = new List<string[]>();
 
             if ((null == nodeDatum) ||
-                (nodeDatum.nLineNo == 0) ||
+                (nodeDatum.LineNo == 0) ||
                 (null == rootNodeDatum))
             {
                 return listFiles;
@@ -40,8 +39,8 @@ namespace Local
 
             var strListingFile = rootNodeDatum.ListingFile;
 
-            var nPrevDir = (int) nodeDatum.nPrevLineNo;
-            var nLineNo = (int) nodeDatum.nLineNo;
+            var nPrevDir = (int) nodeDatum.PrevLineNo;
+            var nLineNo = (int) nodeDatum.LineNo;
 
             if (nPrevDir == 0)
             {
@@ -82,7 +81,7 @@ namespace Local
                 }
             }
 
-            MBoxStatic.Assert(1301.2313, nLengthDebug == nodeDatum.nLength);
+            MBoxStatic.Assert(1301.2313, nLengthDebug == nodeDatum.Length);
             return listFiles;
         }
 

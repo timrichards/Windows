@@ -89,7 +89,7 @@ namespace DoubleFile
         internal void DoTreeSelect(TreeNode treeNode, TreeSelectStatusDelegate statusCallback, TreeSelectDoneDelegate doneCallback)
         {
             TreeNode rootNode = treeNode.Root();
-            string strFile = ((RootNodeDatum)rootNode.Tag).StrFile;
+            string strFile = ((RootNodeDatum)rootNode.Tag).ListingFile;
             bool bSecondComparePane = (gd.m_bCompareMode && rootNode.Checked);
             Thread threadKill = bSecondComparePane ? m_threadSelectCompare : m_threadSelect;
 

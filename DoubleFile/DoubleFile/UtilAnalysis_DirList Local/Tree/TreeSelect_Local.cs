@@ -38,7 +38,7 @@ namespace Local
             do
             {
                 if ((null == nodeDatum) ||
-                    (0 == nodeDatum.nLineNo) ||
+                    (0 == nodeDatum.LineNo) ||
                     (null == rootNodeDatum))
                 {
                     break;
@@ -46,8 +46,8 @@ namespace Local
 
                 strListingFile = rootNodeDatum.ListingFile;
 
-                var nPrevDir = (int)nodeDatum.nPrevLineNo;
-                var nLineNo = (int)nodeDatum.nLineNo;
+                var nPrevDir = (int)nodeDatum.PrevLineNo;
+                var nLineNo = (int)nodeDatum.LineNo;
 
                 if (0 == nPrevDir)
                     break;
@@ -72,7 +72,7 @@ namespace Local
             var lasItems = new List<string[]>();
 
             if ((null == nodeDatum) ||
-                (0 == nodeDatum.nLineNo))
+                (0 == nodeDatum.LineNo))
             {
                 FolderDetailUpdated(lasItems, null);
                 return;
@@ -80,18 +80,18 @@ namespace Local
 
             const string NUMFMT = "###,###,###,##0";
 
-            lasItems.Add(new[] { "Total # Files", nodeDatum.nFilesInSubdirs.ToString(NUMFMT) });
+            lasItems.Add(new[] { "Total # Files", nodeDatum.FilesInSubdirs.ToString(NUMFMT) });
             lasItems.Add(new[] { "# Folders Here", _treeNode.Nodes.Count.ToString(NUMFMT) });
 
-            if (nodeDatum.nSubDirs > 0)
+            if (nodeDatum.SubDirs > 0)
             {
-                var strItem = nodeDatum.nSubDirs.ToString(NUMFMT);
+                var strItem = nodeDatum.SubDirs.ToString(NUMFMT);
 
-                if (nodeDatum.nDirsWithFiles > 0)
+                if (nodeDatum.DirsWithFiles > 0)
                 {
-                    var nDirsWithFiles = nodeDatum.nDirsWithFiles;
+                    var nDirsWithFiles = nodeDatum.DirsWithFiles;
 
-                    if (nodeDatum.nImmediateFiles > 0)
+                    if (nodeDatum.ImmediateFiles > 0)
                     {
                         --nDirsWithFiles;
                     }
@@ -105,7 +105,7 @@ namespace Local
                 lasItems.Add(new string[] { "# Subfolders", strItem });
             }
 
-            lasItems.Add(new string[] { "Total Size", FormatSize(nodeDatum.nTotalLength, bBytes: true) });
+            lasItems.Add(new string[] { "Total Size", FormatSize(nodeDatum.TotalLength, bBytes: true) });
             FolderDetailUpdated(lasItems, _treeNode);
         }
 

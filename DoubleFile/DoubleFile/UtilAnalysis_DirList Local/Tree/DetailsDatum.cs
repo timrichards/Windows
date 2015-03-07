@@ -1,34 +1,42 @@
-﻿
-namespace DoubleFile
+﻿namespace DoubleFile
 {
     // can't be struct because it serves covariance; has parameterless constructor
     class DetailsDatum
     {
-        internal ulong nTotalLength = 0;
-        internal uint nFilesInSubdirs = 0;
-        internal uint nSubDirs = 0;
-        internal uint nImmediateFiles = 0;
-        internal uint nDirsWithFiles = 0;
+        internal ulong
+            TotalLength { get; set; }
+        internal uint
+            FilesInSubdirs { get; set; }
+        internal uint
+            SubDirs { get; set; }
+        internal uint
+            ImmediateFiles { get; set; }
+        internal uint
+            DirsWithFiles { get; set; }
+        internal int
+            HashParity { get; set; }
 
         internal DetailsDatum() { }
-        internal DetailsDatum(DetailsDatum in_datum)
+        internal DetailsDatum(DetailsDatum datum)
         {
-            nTotalLength = in_datum.nTotalLength;
-            nFilesInSubdirs = in_datum.nFilesInSubdirs;
-            nSubDirs = in_datum.nSubDirs;
-            nImmediateFiles = in_datum.nImmediateFiles;
-            nDirsWithFiles = in_datum.nDirsWithFiles;
+            TotalLength = datum.TotalLength;
+            FilesInSubdirs = datum.FilesInSubdirs;
+            SubDirs = datum.SubDirs;
+            ImmediateFiles = datum.ImmediateFiles;
+            DirsWithFiles = datum.DirsWithFiles;
+            HashParity = datum.HashParity;
         }
 
-        static public DetailsDatum operator +(DetailsDatum in_datum1, DetailsDatum in_datum2)
+        static public DetailsDatum operator +(DetailsDatum datum1, DetailsDatum datum2)
         {
             return new DetailsDatum
             {
-                nTotalLength = in_datum1.nTotalLength + in_datum2.nTotalLength,
-                nFilesInSubdirs = in_datum1.nFilesInSubdirs + in_datum2.nFilesInSubdirs,
-                nSubDirs = in_datum1.nSubDirs + in_datum2.nSubDirs,
-                nImmediateFiles = in_datum1.nImmediateFiles + in_datum2.nImmediateFiles,
-                nDirsWithFiles = in_datum1.nDirsWithFiles + in_datum2.nDirsWithFiles,
+                TotalLength = datum1.TotalLength + datum2.TotalLength,
+                FilesInSubdirs = datum1.FilesInSubdirs + datum2.FilesInSubdirs,
+                SubDirs = datum1.SubDirs + datum2.SubDirs,
+                ImmediateFiles = datum1.ImmediateFiles + datum2.ImmediateFiles,
+                DirsWithFiles = datum1.DirsWithFiles + datum2.DirsWithFiles,
+                HashParity = datum1.HashParity + datum2.HashParity
             };
         }
     }

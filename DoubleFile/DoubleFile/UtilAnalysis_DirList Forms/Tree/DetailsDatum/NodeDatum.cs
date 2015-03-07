@@ -5,35 +5,47 @@ namespace DoubleFile
 {
     class NodeDatum : DetailsDatum
     {
-        internal readonly uint nPrevLineNo = 0;
-        internal readonly uint nLineNo = 0;
-        internal readonly ulong nLength = 0;
+        internal uint
+            PrevLineNo { get; private set; }
+        internal uint
+            LineNo { get; private set; }
+        internal ulong
+            Length { get; private set; }
 
-        internal UList<TreeNode> m_listClones = new UList<TreeNode>();
-        internal ListViewItem m_lvItem = null;
-        internal bool m_bDifferentVols = false;
+        internal UList<TreeNode>
+            Clones = new UList<TreeNode>();
+        internal ListViewItem 
+            LVitem { get; set; }
+        internal bool 
+            SeparateVols { get; set; }
 
-        internal Rectangle TreeMapRect = Rectangle.Empty;
-        internal TreeNode TreeMapFiles = null;
+        internal Rectangle
+            TreeMapRect { get; set; }
+        internal TreeNode
+            TreeMapFiles { get; set; }
 
         internal FolderKeyStruct Key
         {
             get
             {
-                return new FolderKeyStruct((ulong)nTotalLength, nFilesInSubdirs, nDirsWithFiles);
+                return new FolderKeyStruct(TotalLength, FilesInSubdirs, DirsWithFiles, HashParity);
             }
         }
 
         internal NodeDatum() { }
-        internal NodeDatum(uint nPrevLineNo_in, uint nLineNo_in, ulong nLength_in)
-        { nPrevLineNo = nPrevLineNo_in; nLineNo = nLineNo_in; nLength = nLength_in; }
+        internal NodeDatum(uint nPrevLineNo, uint nLineNo, ulong nLength)
+        {
+            PrevLineNo = nPrevLineNo;
+            LineNo = nLineNo;
+            Length = nLength;
+        }
 
         protected NodeDatum(NodeDatum node)
             : base(node)
         {
-            nPrevLineNo = node.nPrevLineNo;
-            nLineNo = node.nLineNo;
-            nLength = node.nLength;
+            PrevLineNo = node.PrevLineNo;
+            LineNo = node.LineNo;
+            Length = node.Length;
         }
     }
 }

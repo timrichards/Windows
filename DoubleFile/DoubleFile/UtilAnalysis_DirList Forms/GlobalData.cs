@@ -93,7 +93,7 @@ namespace DoubleFile
                 TreeNode s2 = null;
                 NodeDatum n1 = (NodeDatum)s1.Tag;
 
-                if (n1.nTotalLength <= (nMin10M + nMin100K))
+                if (n1.TotalLength <= (nMin10M + nMin100K))
                 {
                     s1.ForeColor = Color.LightGray;
                 }
@@ -108,8 +108,8 @@ namespace DoubleFile
 
                     NodeDatum n2 = (NodeDatum)s2.Tag;
 
-                    bCompare &= (n1.nImmediateFiles == n2.nImmediateFiles);
-                    bCompare &= (Math.Abs((long)(n1.nLength - n2.nLength)) <= (long)(nMin10M + nMin100K));
+                    bCompare &= (n1.ImmediateFiles == n2.ImmediateFiles);
+                    bCompare &= (Math.Abs((long)(n1.Length - n2.Length)) <= (long)(nMin10M + nMin100K));
 
                     if (bCompare == false) { s2.ForeColor = Color.Red; }
                     else if (s2.ForeColor == Color.Empty) { s2.ForeColor = Color.SteelBlue; }

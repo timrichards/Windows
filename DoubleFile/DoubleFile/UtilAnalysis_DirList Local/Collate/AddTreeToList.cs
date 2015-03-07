@@ -51,9 +51,9 @@ namespace Local
                     }
 
                     if ((treeNode.ForeColor == UtilColor.Firebrick) &&
-                        (treeNode == nodeDatum.m_listClones[0]))
+                        (treeNode == nodeDatum.Clones[0]))
                     {
-                        MBoxStatic.Assert(1305.6304, false == nodeDatum.m_bDifferentVols);
+                        MBoxStatic.Assert(1305.6304, false == nodeDatum.SeparateVols);
                         m_listSameVol.Add(treeNode);
                     }
 
@@ -61,9 +61,9 @@ namespace Local
                     {
                         treeNode.BackColor = UtilColor.LightGoldenrodYellow;
 
-                        if ((nodeDatum.m_lvItem != null) && (nodeDatum.m_lvItem.ListView == null))  // ignore LV
+                        if ((nodeDatum.LVitem != null) && (nodeDatum.LVitem.ListView == null))  // ignore LV
                         {
-                            nodeDatum.m_lvItem.BackColor = treeNode.BackColor;
+                            nodeDatum.LVitem.BackColor = treeNode.BackColor;
                         }
                     }
 

@@ -39,22 +39,23 @@ namespace Local
                     return datum;
                 }
 
-                if (nodeDatum.nLineNo == 0)
+                if (nodeDatum.LineNo == 0)
                 {
                     return datum;
                 }
 
-                nodeDatum.nTotalLength = (datum.nTotalLength += nodeDatum.nLength);
-                nodeDatum.nImmediateFiles = (nodeDatum.nLineNo - nodeDatum.nPrevLineNo - 1);
-                nodeDatum.nFilesInSubdirs = (datum.nFilesInSubdirs += nodeDatum.nImmediateFiles);
-                nodeDatum.nSubDirs = (datum.nSubDirs += (uint)treeNode.Nodes.Count);
+                nodeDatum.TotalLength = (datum.TotalLength += nodeDatum.Length);
+                nodeDatum.ImmediateFiles = (nodeDatum.LineNo - nodeDatum.PrevLineNo - 1);
+                nodeDatum.FilesInSubdirs = (datum.FilesInSubdirs += nodeDatum.ImmediateFiles);
+                nodeDatum.SubDirs = (datum.SubDirs += (uint)treeNode.Nodes.Count);
+                nodeDatum.HashParity = (datum.HashParity += nodeDatum.HashParity);
 
-                if (nodeDatum.nImmediateFiles > 0)
+                if (nodeDatum.ImmediateFiles > 0)
                 {
-                    ++datum.nDirsWithFiles;
+                    ++datum.DirsWithFiles;
                 }
 
-                nodeDatum.nDirsWithFiles = datum.nDirsWithFiles;
+                nodeDatum.DirsWithFiles = datum.DirsWithFiles;
 
                 UList<LocalTreeNode> lsTreeNodes = null;
 
@@ -62,7 +63,7 @@ namespace Local
                 {
                     lsTreeNodes.Add(treeNode);
                 }
-                else if (nodeDatum.nTotalLength > 100 * 1024)
+                else if (nodeDatum.TotalLength > 100 * 1024)
                 {
                     m_dictNodes[nodeDatum.Key] = new UList<LocalTreeNode> { treeNode };
                 }
@@ -211,9 +212,15 @@ namespace Local
                         return;
                     }
 
-                    var strArray = strLine.Split('\t');
+                    var asLine = strLine.Split('\t');
 
-                    dirData.AddToTree(strArray[2], uint.Parse(strArray[1]), ulong.Parse(strArray[knColLength]));
+                    int nHashParity = 0;
+
+                    if (asLine.Length > 10)
+                        nHashParity = new HashStruct(asLine[10]).GetHashCode();
+
+                    dirData.AddToTree(asLine[2], uint.Parse(asLine[1]), ulong.Parse(asLine[knColLength]),
+                        nHashParity);
                 }
 
                 string strRootPath = null;

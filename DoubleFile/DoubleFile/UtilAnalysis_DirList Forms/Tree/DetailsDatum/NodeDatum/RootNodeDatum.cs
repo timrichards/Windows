@@ -1,32 +1,42 @@
-﻿
-namespace DoubleFile
+﻿namespace DoubleFile
 {
     class RootNodeDatum : NodeDatum
     {
-        internal string StrVolumeGroup = null;
-        internal bool VolumeView = true;
+        internal string
+            ListingFile { get; private set; }
+        internal string
+            VolumeGroup { get; set; }
+        internal string
+            Root { get; private set; }
 
-        internal readonly string StrFile = null;
-        internal readonly ulong VolumeFree = 0;
-        internal readonly ulong VolumeLength = 0;
+        internal string
+            RootPath { get; private set; }
 
-        internal RootNodeDatum(NodeDatum node, string strFile_in, string strVolGroup_in,
-            ulong nVolumeFree_in, ulong nVolumeLength_in)
+        internal bool
+            VolumeView { get; set; }
+
+        internal ulong
+            VolumeFree { get; private set; }
+        internal ulong
+            VolumeLength { get; private set; }
+
+        internal RootNodeDatum(NodeDatum node, string listingFile, string strVolGroup,
+            ulong nVolumeFree, ulong nVolumeLength, string strRootPath)
             : base(node)
         {
-            StrFile = strFile_in;
-            StrVolumeGroup = strVolGroup_in;
-            VolumeLength = nVolumeLength_in;
-            VolumeFree = nVolumeFree_in;
+            VolumeView = true;
+
+            ListingFile = listingFile;
+            VolumeGroup = strVolGroup;
+            VolumeLength = nVolumeLength;
+            VolumeFree = nVolumeFree;
+            RootPath = strRootPath;
         }
 
         internal RootNodeDatum(NodeDatum node, RootNodeDatum rootNode)
-            : base(node)
+            : this(node, rootNode.ListingFile, rootNode.VolumeGroup, rootNode.VolumeLength, rootNode.VolumeFree,
+            rootNode.RootPath)
         {
-            StrFile = rootNode.StrFile;
-            StrVolumeGroup = rootNode.StrVolumeGroup;
-            VolumeLength = rootNode.VolumeLength;
-            VolumeFree = rootNode.VolumeFree;
         }
     }
 }

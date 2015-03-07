@@ -210,7 +210,7 @@ namespace Local
                 var nodeDatum = (NodeDatum)nodeRet.Tag;
 
                 m_selRect = nodeDatum.TreeMapRect;
-                m_toolTip.Show(UtilAnalysis_DirList.FormatSize(nodeDatum.nTotalLength, bBytes: true),
+                m_toolTip.Show(UtilAnalysis_DirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
                     TooltipAnchor,
                     new Point(0, 0));
                 ToolTipActive = true; UtilProject.WriteLine(DateTime.Now + " a ToolTipActive = true; ------");
@@ -284,7 +284,7 @@ namespace Local
                 MBoxStatic.Assert(1302.3316, iterUlong.MoveNext());
                 var nodeDatum_A = new NodeDatum();
 
-                nTotalLength += nodeDatum_A.nTotalLength = iterUlong.Current;
+                nTotalLength += nodeDatum_A.TotalLength = iterUlong.Current;
 
                 if (iterUlong.Current == 0)
                 {
@@ -306,8 +306,8 @@ namespace Local
             var nodeDatum = (NodeDatum)parent.Tag;
             var nodeDatum_B = new NodeDatum();
 
-            MBoxStatic.Assert(1302.3301, nTotalLength == nodeDatum.nLength);
-            nodeDatum_B.nTotalLength = nTotalLength;
+            MBoxStatic.Assert(1302.3301, nTotalLength == nodeDatum.Length);
+            nodeDatum_B.TotalLength = nTotalLength;
             nodeDatum_B.TreeMapRect = nodeDatum.TreeMapRect;
             nodeFileList.Tag = nodeDatum_B;
             MBoxStatic.Assert(1302.3302, nodeFileList.SelectedImageIndex == -1);              // sets the bitmap size
@@ -530,7 +530,7 @@ namespace Local
                 return;
             }
 
-            if (nodeDatum.nTotalLength > 0)
+            if (nodeDatum.TotalLength > 0)
 	        {
                 RecurseDrawGraph(m_treeNode, rc, bStart: true);
 	        }
@@ -637,7 +637,7 @@ namespace Local
                 var nodeDatumFree = new NodeDatum();
                 var nodeFree = new LocalTreeNode(parent_in.Text + " (free space)");
 
-                nodeDatumFree.nTotalLength = rootNodeDatum.VolumeFree;
+                nodeDatumFree.TotalLength = rootNodeDatum.VolumeFree;
                 nodeFree.Tag = nodeDatumFree;
                 nodeFree.ForeColor = UtilColor.MediumSpringGreen;
 
@@ -646,23 +646,23 @@ namespace Local
                 var nVolumeLength = rootNodeDatum.VolumeLength;
                 var nUnreadLength = (long)nVolumeLength -
                     (long)rootNodeDatum.VolumeFree -
-                    (long)rootNodeDatum.nTotalLength;
+                    (long)rootNodeDatum.TotalLength;
 
                 if (nUnreadLength < 0)
                 {
                     // Faked length to make up for compression and hard links
                     nVolumeLength = rootNodeDatum.VolumeFree +
-                        rootNodeDatum.nTotalLength;
-                    nodeDatumUnread.nTotalLength = 0;
+                        rootNodeDatum.TotalLength;
+                    nodeDatumUnread.TotalLength = 0;
                 }
                 else
                 {
-                    nodeDatumUnread.nTotalLength = nVolumeLength -
+                    nodeDatumUnread.TotalLength = nVolumeLength -
                         rootNodeDatum.VolumeFree -
-                        rootNodeDatum.nTotalLength;
+                        rootNodeDatum.TotalLength;
                 }
 
-                nodeDatumUnread.nTotalLength = (ulong)nUnreadLength;
+                nodeDatumUnread.TotalLength = (ulong)nUnreadLength;
                 nodeUnread.Tag = nodeDatumUnread;
                 nodeUnread.ForeColor = UtilColor.MediumVioletRed;
 
@@ -680,7 +680,7 @@ namespace Local
 
                 var nodeDatumVolume = new NodeDatum
                 {
-                    nTotalLength = nVolumeLength,
+                    TotalLength = nVolumeLength,
                     TreeMapRect = rootNodeDatum.TreeMapRect
                 };
 
@@ -696,7 +696,7 @@ namespace Local
                     .Nodes
                     .Cast<LocalTreeNode>()
                     .Where(t => ((NodeDatum)t.Tag)
-                    .nTotalLength > 0)
+                    .TotalLength > 0)
                     .ToList();
             }
 
@@ -710,18 +710,18 @@ namespace Local
             {
                 listChildren.Add(nodeDatum.TreeMapFiles);
             }
-            else if (nodeDatum.nLength > 0)
+            else if (nodeDatum.Length > 0)
             {
                 listChildren.Add(new LocalTreeNode(parent.Text)
                 {
-                    Tag = new NodeDatum { nTotalLength = nodeDatum.nLength },
+                    Tag = new NodeDatum { TotalLength = nodeDatum.Length },
                     ForeColor = UtilColor.OliveDrab
                 });
             }
 
             listChildren.Sort((y, x) => (
-                (NodeDatum)x.Tag).nTotalLength.CompareTo((
-                (NodeDatum)y.Tag).nTotalLength));
+                (NodeDatum)x.Tag).TotalLength.CompareTo((
+                (NodeDatum)y.Tag).TotalLength));
 
             if (listChildren.IsEmpty())
             {
@@ -832,14 +832,14 @@ namespace Local
                 return 0;
             }
 
-            var mySize = (double)nodeDatum.nTotalLength;
+            var mySize = (double)nodeDatum.TotalLength;
 	        ulong sizeUsed= 0;
 	        double rowHeight= 0;
             var i = 0;
 
             for (i = nextChild; i < listChildren.Count; i++)
 	        {
-                var childSize = ((NodeDatum)listChildren[i].Tag).nTotalLength;
+                var childSize = ((NodeDatum)listChildren[i].Tag).TotalLength;
 		        sizeUsed+= childSize;
 		        var virtualRowHeight= sizeUsed / mySize;
                 MBoxStatic.Assert(1302.3311, virtualRowHeight > 0);
@@ -886,7 +886,7 @@ namespace Local
                     return 0;
                 }
 
-                var childSize = (double)nodeDatum_A.nTotalLength;
+                var childSize = (double)nodeDatum_A.TotalLength;
 		        var cw= childSize / rowSize;
                 MBoxStatic.Assert(1302.3315, cw >= 0);
 		        arrChildWidth[nextChild + i]= cw;

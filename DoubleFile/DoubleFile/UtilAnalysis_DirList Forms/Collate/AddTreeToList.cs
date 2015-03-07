@@ -50,9 +50,9 @@ namespace DoubleFile
                         continue;
                     }
 
-                    if ((treeNode.ForeColor == Color.Firebrick) && (treeNode == nodeDatum.m_listClones[0]))
+                    if ((treeNode.ForeColor == Color.Firebrick) && (treeNode == nodeDatum.Clones[0]))
                     {
-                        MBoxStatic.Assert(1305.6304, (false == nodeDatum.m_listClones.IsEmpty()) && (nodeDatum.m_bDifferentVols == false));
+                        MBoxStatic.Assert(1305.6304, (false == nodeDatum.Clones.IsEmpty()) && (nodeDatum.SeparateVols == false));
                         m_listSameVol.Add(treeNode);
                     }
 
@@ -60,9 +60,9 @@ namespace DoubleFile
                     {
                         treeNode.BackColor = Color.LightGoldenrodYellow;
 
-                        if ((nodeDatum.m_lvItem != null) && (nodeDatum.m_lvItem.ListView == null))  // ignore LV
+                        if ((nodeDatum.LVitem != null) && (nodeDatum.LVitem.ListView == null))  // ignore LV
                         {
-                            nodeDatum.m_lvItem.BackColor = treeNode.BackColor;
+                            nodeDatum.LVitem.BackColor = treeNode.BackColor;
                         }
                     }
 

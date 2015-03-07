@@ -395,9 +395,9 @@ namespace DoubleFile
                         continue;
                     }
 
-                    nodeDatum.m_lvItem = null;
-                    nodeDatum.m_listClones.Clear();
-                    nodeDatum.m_bDifferentVols = false;
+                    nodeDatum.LVitem = null;
+                    nodeDatum.Clones.Clear();
+                    nodeDatum.SeparateVols = false;
                 }
 
                 gd_Tree.m_listTreeNodes.Clear();

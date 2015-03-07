@@ -34,18 +34,18 @@ namespace DoubleFile
                 return null;
             }
 
-            string strFile = rootNodeDatum.StrFile;
+            string strFile = rootNodeDatum.ListingFile;
 
             var nodeDatum = parent.Tag as NodeDatum;
 
             if ((null == nodeDatum) ||
-                (nodeDatum.nLineNo == 0))
+                (nodeDatum.LineNo == 0))
             {
                 return null;
             }
 
-            long nPrevDir = nodeDatum.nPrevLineNo;
-            long nLineNo = nodeDatum.nLineNo;
+            long nPrevDir = nodeDatum.PrevLineNo;
+            long nLineNo = nodeDatum.LineNo;
 
             if (nPrevDir == 0)
             {
@@ -92,7 +92,7 @@ namespace DoubleFile
                 }
             }
 
-            MBoxStatic.Assert(1301.2313, nLengthDebug == nodeDatum.nLength);
+            MBoxStatic.Assert(1301.2313, nLengthDebug == nodeDatum.Length);
             return listFiles;
         }
 
@@ -175,13 +175,13 @@ namespace DoubleFile
             var nodeDatum = m_treeNode.Tag as NodeDatum;
 
             if ((null == nodeDatum) ||
-                (nodeDatum.nLineNo == 0))
+                (nodeDatum.LineNo == 0))
             {
                 return;
             }
 
-            var nPrevDir = nodeDatum.nPrevLineNo;
-            var nLineNo = nodeDatum.nLineNo;
+            var nPrevDir = nodeDatum.PrevLineNo;
+            var nLineNo = nodeDatum.LineNo;
             string[] strArray = null;
 
             File
@@ -206,7 +206,7 @@ namespace DoubleFile
             nIx = 4; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new ListViewItem(new string[] { "Created\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
             nIx = 5; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new ListViewItem(new string[] { "Modified\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
             nIx = 6; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new ListViewItem(new string[] { "Attributes\t", DecodeAttributes(strArray[nIx]) }));
-            listItems.Add(new ListViewItem(new string[] { "Immediate Size\t", FormatSize(nodeDatum.nLength, bBytes: true) }));
+            listItems.Add(new ListViewItem(new string[] { "Immediate Size\t", FormatSize(nodeDatum.Length, bBytes: true) }));
             nIx = 8; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new ListViewItem(new string[] { "Error 1\t", strArray[nIx] }));
             nIx = 9; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new ListViewItem(new string[] { "Error 2\t", strArray[nIx] }));
             listItems.Add(new ListViewItem(new string[] { "# Immediate Files", (nLineNo - nPrevDir - 1).ToString() }));
@@ -216,17 +216,17 @@ namespace DoubleFile
             string NUMFMT = "###,###,###,##0";
 
             listItems.Add(new ListViewItem(new string[] { "# Immediate Folders", m_treeNode.Nodes.Count.ToString(NUMFMT) }));
-            listItems.Add(new ListViewItem(new string[] { "Total # Files", nodeDatum.nFilesInSubdirs.ToString(NUMFMT) }));
+            listItems.Add(new ListViewItem(new string[] { "Total # Files", nodeDatum.FilesInSubdirs.ToString(NUMFMT) }));
 
-            if (nodeDatum.nSubDirs > 0)
+            if (nodeDatum.SubDirs > 0)
             {
-                string strItem = nodeDatum.nSubDirs.ToString(NUMFMT);
+                string strItem = nodeDatum.SubDirs.ToString(NUMFMT);
 
-                if (nodeDatum.nDirsWithFiles > 0)
+                if (nodeDatum.DirsWithFiles > 0)
                 {
-                    long nDirsWithFiles = nodeDatum.nDirsWithFiles;
+                    long nDirsWithFiles = nodeDatum.DirsWithFiles;
 
-                    if (nodeDatum.nImmediateFiles > 0)
+                    if (nodeDatum.ImmediateFiles > 0)
                     {
                         --nDirsWithFiles;
                     }
@@ -240,7 +240,7 @@ namespace DoubleFile
                 listItems.Add(new ListViewItem(new string[] { "# Subfolders", strItem }));
             }
 
-            listItems.Add(new ListViewItem(new string[] { "Total Size", FormatSize(nodeDatum.nTotalLength, bBytes: true) }));
+            listItems.Add(new ListViewItem(new string[] { "Total Size", FormatSize(nodeDatum.TotalLength, bBytes: true) }));
             m_statusCallback(lvItemDetails: listItems.ToArray(), bSecondComparePane: m_bSecondComparePane);
 
             List<string[]> listFiles_A = GetFileList(m_treeNode);

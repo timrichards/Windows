@@ -419,12 +419,12 @@ namespace DoubleFile
 
                 if (false == string.IsNullOrWhiteSpace(pair.Key.Text))
                 {
-                    l1 = ((NodeDatum)pair.Key.Tag).nTotalLength;
+                    l1 = ((NodeDatum)pair.Key.Tag).TotalLength;
                 }
 
                 if (pair.Value != null)
                 {
-                    l2 = ((NodeDatum)pair.Value.Tag).nTotalLength;
+                    l2 = ((NodeDatum)pair.Value.Tag).TotalLength;
                 }
 
                 ulong lMax = Math.Max(l1, l2);
@@ -439,7 +439,7 @@ namespace DoubleFile
 
             gd.m_dictCompareDiffs.Clear();
 
-            if (rootNodeDatum1.nLength != rootNodeDatum2.nLength)
+            if (rootNodeDatum1.Length != rootNodeDatum2.Length)
             {
                 gd.m_dictCompareDiffs.Add(gd.m_nodeCompare1, nodeCompare2);
             }
@@ -1092,11 +1092,11 @@ namespace DoubleFile
 
                     if (listItems[0].Tag is UList<TreeNode>)
                     {
-                        listItems.Sort((y, x) => ((NodeDatum)((UList<TreeNode>)x.Tag)[0].Tag).nTotalLength.CompareTo(((NodeDatum)((UList<TreeNode>)y.Tag)[0].Tag).nTotalLength));
+                        listItems.Sort((y, x) => ((NodeDatum)((UList<TreeNode>)x.Tag)[0].Tag).TotalLength.CompareTo(((NodeDatum)((UList<TreeNode>)y.Tag)[0].Tag).TotalLength));
                     }
                     else
                     {
-                        listItems.Sort((y, x) => ((NodeDatum)((TreeNode)x.Tag).Tag).nTotalLength.CompareTo(((NodeDatum)((TreeNode)y.Tag).Tag).nTotalLength));
+                        listItems.Sort((y, x) => ((NodeDatum)((TreeNode)x.Tag).Tag).TotalLength.CompareTo(((NodeDatum)((TreeNode)y.Tag).Tag).TotalLength));
                     }
 
                     Collate.InsertSizeMarkers(listItems);
@@ -1296,7 +1296,7 @@ namespace DoubleFile
                 return;
             }
 
-            string strVolumeGroup = ((RootNodeDatum)rootNode.Tag).StrVolumeGroup;
+            string strVolumeGroup = ((RootNodeDatum)rootNode.Tag).VolumeGroup;
 
             form_lblVolGroup.Text = string.IsNullOrWhiteSpace(strVolumeGroup) ? "(no volume group set)" : strVolumeGroup;
             form_colVolDetail.Text = rootNode.Text;
@@ -1310,35 +1310,35 @@ namespace DoubleFile
 
             NodeDatum nodeDatum = (NodeDatum)e.Node.Tag;
 
-            if (nodeDatum.nImmediateFiles == 0)
+            if (nodeDatum.ImmediateFiles == 0)
             {
                 form_colFilename.Text = gd.m_strColFilesOrig;
             }
 
-            if (nodeDatum.m_lvItem == null)
+            if (nodeDatum.LVitem == null)
             {
                 return;
             }
 
-            if (nodeDatum.m_lvItem.ListView == null)    // during Corellate()
+            if (nodeDatum.LVitem.ListView == null)    // during Corellate()
             {
                 MBoxStatic.Assert(1308.9324, gd_Tree.m_threadCollate != null, bTraceOnly: true);
                 return;
             }
 
-            if (nodeDatum.m_lvItem.ListView == form_lvIgnoreList)
+            if (nodeDatum.LVitem.ListView == form_lvIgnoreList)
             {
-                foreach (ListViewItem lvItem in nodeDatum.m_lvItem.ListView.SelectedItems)
+                foreach (ListViewItem lvItem in nodeDatum.LVitem.ListView.SelectedItems)
                 {
                     lvItem.Selected = false;
                 }
             }
-            else if (nodeDatum.m_lvItem.Selected == false)
+            else if (nodeDatum.LVitem.Selected == false)
             {
                 gd.m_bClonesLVindirectSelChange = true;
-                nodeDatum.m_lvItem.Selected = true;
-                nodeDatum.m_lvItem.Focused = true;
-                nodeDatum.m_lvItem.EnsureVisible();
+                nodeDatum.LVitem.Selected = true;
+                nodeDatum.LVitem.Focused = true;
+                nodeDatum.LVitem.EnsureVisible();
             }
         }
 

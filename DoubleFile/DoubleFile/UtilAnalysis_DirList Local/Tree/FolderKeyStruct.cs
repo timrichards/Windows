@@ -4,23 +4,15 @@ namespace DoubleFile
 {
     struct FolderKeyStruct : IComparable
     {
-        internal FolderKeyStruct(ulong nTotalLength_in, uint nFilesInSubdirs_in, uint nDirsWithFiles_in)
+        internal FolderKeyStruct(ulong nTotalLength,
+            uint nFilesInSubdirs,
+            uint nDirsWithFiles,
+            int nHashParity)
         {
-            m_nTotalLength = nTotalLength_in;
-            m_nFilesInSubdirs = nFilesInSubdirs_in;
-            m_nDirsWithFiles = nDirsWithFiles_in;
-
-            // overflow mixes the bits
-            m_nHashCode = 37;       // prime
-            m_nHashCode *= 397;     // prime
-            m_nHashCode += (int)m_nTotalLength;
-            m_nHashCode *= 397;
-            m_nHashCode += (int)(m_nTotalLength >> 32);
-            m_nHashCode *= 397;
-            m_nHashCode += (int)m_nFilesInSubdirs;
-            m_nHashCode *= 397;
-            m_nHashCode += (int)m_nDirsWithFiles;
-            m_nHashCode *= 397;
+            _nTotalLength = nTotalLength;
+            _nFilesInSubdirs = nFilesInSubdirs;
+            _nDirsWithFiles = nDirsWithFiles;
+            _nHashParity = nHashParity;
         }
 
         public int CompareTo(object obj)
@@ -45,31 +37,48 @@ namespace DoubleFile
 
         public override int GetHashCode()
         {
-            return m_nHashCode;
+            // overflow mixes the bits
+            int nHashCode = 37;     // prime
+            nHashCode *= 397;       // prime
+            nHashCode += (int)_nTotalLength;
+            nHashCode *= 397;
+            nHashCode += (int)(_nTotalLength >> 32);
+            nHashCode *= 397;
+            nHashCode += (int)_nFilesInSubdirs;
+            nHashCode *= 397;
+            nHashCode += (int)_nDirsWithFiles;
+            nHashCode *= 397;
+            nHashCode += _nHashParity;
+            nHashCode *= 397;
+            return nHashCode;
         }
 
         public override string ToString()
         {
-            return "nTotalLength: " + m_nTotalLength + "\n" +
-                "nFilesInSubdirs: " + m_nFilesInSubdirs + "\n" +
-                "nDirsWithFiles: " + m_nDirsWithFiles + "\n";
+            return "_nTotalLength: " + _nTotalLength + "\n" +
+                "_nFilesInSubdirs: " + _nFilesInSubdirs + "\n" +
+                "_nDirsWithFiles: " + _nDirsWithFiles + "\n" +
+                "_nHashParity: " + _nHashParity + "\n";
         }
 
         public static bool operator ==(FolderKeyStruct x, FolderKeyStruct y)
         {
-            return (x.m_nTotalLength == y.m_nTotalLength) &&
-                (x.m_nFilesInSubdirs == y.m_nFilesInSubdirs) &&
-                (x.m_nDirsWithFiles == y.m_nDirsWithFiles);
+            return (x._nTotalLength == y._nTotalLength) &&
+                (x._nFilesInSubdirs == y._nFilesInSubdirs) &&
+                (x._nDirsWithFiles == y._nDirsWithFiles) &&
+                (x._nHashParity == y._nHashParity);
         }
 
         public static bool operator >(FolderKeyStruct x, FolderKeyStruct y)
         {
-            if (x.m_nTotalLength < y.m_nTotalLength) return false;
-            if (x.m_nTotalLength > y.m_nTotalLength) return true;
-            if (x.m_nFilesInSubdirs < y.m_nFilesInSubdirs) return false;
-            if (x.m_nFilesInSubdirs > y.m_nFilesInSubdirs) return true;
-            if (x.m_nDirsWithFiles < y.m_nDirsWithFiles) return false;
-            if (x.m_nDirsWithFiles > y.m_nDirsWithFiles) return true;
+            if (x._nTotalLength < y._nTotalLength) return false;
+            if (x._nTotalLength > y._nTotalLength) return true;
+            if (x._nFilesInSubdirs < y._nFilesInSubdirs) return false;
+            if (x._nFilesInSubdirs > y._nFilesInSubdirs) return true;
+            if (x._nDirsWithFiles < y._nDirsWithFiles) return false;
+            if (x._nDirsWithFiles > y._nDirsWithFiles) return true;
+            if (x._nHashParity < y._nHashParity) return false;
+            if (x._nHashParity > y._nHashParity) return true;
             return false;
         }
 
@@ -78,9 +87,9 @@ namespace DoubleFile
         public static bool operator >=(FolderKeyStruct x, FolderKeyStruct y) { return ((x > y) || (x == y)); }
         public static bool operator <=(FolderKeyStruct x, FolderKeyStruct y) { return ((x > y) == false); }
 
-        readonly ulong m_nTotalLength;       //  found   41 bits
-        readonly uint m_nFilesInSubdirs;     //          23 bits
-        readonly uint m_nDirsWithFiles;      //          16 bits
-        readonly int m_nHashCode;
+        readonly ulong _nTotalLength;       //  found   41 bits
+        readonly uint _nFilesInSubdirs;     //          23 bits
+        readonly uint _nDirsWithFiles;      //          16 bits
+        readonly int _nHashParity;
     }
 }

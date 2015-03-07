@@ -206,7 +206,7 @@ namespace Local
                             return;
                         }
 
-                        MBoxStatic.Assert(1305.6316, nodeDatum.nTotalLength > 100 * 1024);
+                        MBoxStatic.Assert(1305.6316, nodeDatum.TotalLength > 100 * 1024);
 
                         if (listNodes.Contains(treeNode_A.Parent) == false)
                         {
@@ -226,7 +226,7 @@ namespace Local
                                 return;
                             }
 
-                            nodeDatum.m_listClones = listKeep;
+                            nodeDatum.Clones = listKeep;
                         }
                     }
                     else
@@ -247,7 +247,7 @@ namespace Local
                         return;
                     }
 
-                    if (nodeDatum.nImmediateFiles > 0)
+                    if (nodeDatum.ImmediateFiles > 0)
                     {
                         dictUnique.Add(kvp.Key, treeNode);
                     }
@@ -341,7 +341,7 @@ namespace Local
                         return;
                     }
 
-                    nodeDatum.m_lvItem = lvItem;
+                    nodeDatum.LVitem = lvItem;
                 }
 
                 lvItem.Text = nameNode.Text;
@@ -370,11 +370,11 @@ namespace Local
                     return;
                 }
 
-                nodeDatum.m_lvItem = lvIgnoreItem;
-                MBoxStatic.Assert(1305.6319, nodeDatum.m_lvItem != null);
+                nodeDatum.LVitem = lvIgnoreItem;
+                MBoxStatic.Assert(1305.6319, nodeDatum.LVitem != null);
 
-                if (null != nodeDatum.m_listClones)
-                    nodeDatum.m_listClones.Remove(treeNode);
+                if (null != nodeDatum.Clones)
+                    nodeDatum.Clones.Remove(treeNode);
             }
 
             InsertSizeMarkers(_lsLVdiffVol);
@@ -402,7 +402,7 @@ namespace Local
                     return;
                 }
 
-                MBoxStatic.Assert(1305.6322, nodeDatum.nImmediateFiles > 0);
+                MBoxStatic.Assert(1305.6322, nodeDatum.ImmediateFiles > 0);
                 SnowUniqueParents(treeNode);
 
                 if (treeNode.ForeColor != UtilColor.DarkOrange)
@@ -413,8 +413,8 @@ namespace Local
 
                 lvItem.ForeColor = treeNode.ForeColor;
                 _lsLVunique.Add(lvItem);
-                MBoxStatic.Assert(1305.6324, nodeDatum.m_lvItem == null);
-                nodeDatum.m_lvItem = lvItem;
+                MBoxStatic.Assert(1305.6324, nodeDatum.LVitem == null);
+                nodeDatum.LVitem = lvItem;
             }
 
             InsertSizeMarkers(_lsLVunique);
@@ -431,7 +431,7 @@ namespace Local
                 UtilProject.WriteLine("Step1_OnThread " + nCount);
             }
 
-            listSameVol.Sort((y, x) => ((NodeDatum)x.Tag).nTotalLength.CompareTo(((NodeDatum)y.Tag).nTotalLength));
+            listSameVol.Sort((y, x) => ((NodeDatum)x.Tag).TotalLength.CompareTo(((NodeDatum)y.Tag).TotalLength));
             nProgressDenominator += listSameVol.Count;
             ++nProgressItem;
 
@@ -456,8 +456,8 @@ namespace Local
 
                 int nClones = 0;
 
-                if (null != nodeDatum.m_listClones)
-                    nClones = nodeDatum.m_listClones.Count;
+                if (null != nodeDatum.Clones)
+                    nClones = nodeDatum.Clones.Count;
 
                 if (nClones == 0)
                 {
@@ -475,13 +475,13 @@ namespace Local
 
                 var lvItem = new LocalLVitem(new[] {(string)treeNode.Text, str_nClones})
                 {
-                    Tag = nodeDatum.m_listClones,
+                    Tag = nodeDatum.Clones,
                     ForeColor = UtilColor.Firebrick,
                     BackColor = treeNode.BackColor
                 };
 
                 _lsLVsameVol.Add(lvItem);
-                nodeDatum.m_lvItem = lvItem;
+                nodeDatum.LVitem = lvItem;
             }
 
             InsertSizeMarkers(_lsLVsameVol);
@@ -573,13 +573,13 @@ namespace Local
                 return;
             }
 
-            var listClones = nodeDatum.m_listClones;
-            var nLength = nodeDatum.nTotalLength;
+            var listClones = nodeDatum.Clones;
+            var nLength = nodeDatum.TotalLength;
 
             if (nLength <= 100 * 1024)
             {
                 treeNode.ForeColor = UtilColor.LightGray;
-                nodeDatum.m_listClones = null;
+                nodeDatum.Clones = null;
             }
 
             if ((null != listClones) &&
@@ -593,7 +593,7 @@ namespace Local
                 if (dictClones.TryGetValue(nodeDatum.Key, out lsTreeNodes))
                 {
                     MBoxStatic.Assert(1305.6305, lsTreeNodes == listClones);
-                    MBoxStatic.Assert(1305.6306, ((NodeDatum)lsTreeNodes[0].Tag).m_bDifferentVols == nodeDatum.m_bDifferentVols);
+                    MBoxStatic.Assert(1305.6306, ((NodeDatum)lsTreeNodes[0].Tag).SeparateVols == nodeDatum.SeparateVols);
                     MBoxStatic.Assert(1305.6307, lsTreeNodes[0].ForeColor == treeNode.ForeColor);
                 }
                 else
@@ -664,7 +664,7 @@ namespace Local
                             return;
                         }
 
-                        nodeDatum_A.m_bDifferentVols = bDifferentVols;
+                        nodeDatum_A.SeparateVols = bDifferentVols;
                         subNode.ForeColor = treeNode.ForeColor;
                     }
                 }
@@ -750,16 +750,16 @@ namespace Local
 
                 var nodeDatum = (NodeDatum)parentNode.Tag;
 
-                if (nodeDatum.m_lvItem != null)
+                if (nodeDatum.LVitem != null)
                 {
-                    nodeDatum.m_lvItem.BackColor = parentNode.BackColor;
+                    nodeDatum.LVitem.BackColor = parentNode.BackColor;
                 }
 
                 if (parentNode.ForeColor != UtilColor.DarkOrange)
                 {
                     MBoxStatic.Assert(1305.6313,
                         (parentNode.ForeColor == UtilColor.Empty) ==
-                        (nodeDatum.m_lvItem == null));
+                        (nodeDatum.LVitem == null));
                 }
 
                 parentNode = parentNode.Parent;

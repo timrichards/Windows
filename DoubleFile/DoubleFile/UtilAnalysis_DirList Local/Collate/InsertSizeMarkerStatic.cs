@@ -15,7 +15,7 @@ namespace Local
 
                 lvItem.Text = ((UtilAnalysis_DirList.FormatSize(
                     ((NodeDatum)((LocalTreeNode)(bUnique ? listLVitems[nIx].Tag :
-                    ((UList<LocalTreeNode>)listLVitems[nIx].Tag)[0])).Tag).nTotalLength,
+                    ((UList<LocalTreeNode>)listLVitems[nIx].Tag)[0])).Tag).TotalLength,
                     bNoDecimal: true)));
 
                 if (bAdd)

@@ -40,22 +40,23 @@ namespace DoubleFile
                 var nodeDatum = (treeNode.Tag as NodeDatum);
 
                 if ((null == nodeDatum) ||
-                    (nodeDatum.nLineNo == 0))
+                    (nodeDatum.LineNo == 0))
                 {
                     return datum;
                 }
 
-                nodeDatum.nTotalLength = (datum.nTotalLength += nodeDatum.nLength);
-                nodeDatum.nImmediateFiles = (nodeDatum.nLineNo - nodeDatum.nPrevLineNo - 1);
-                nodeDatum.nFilesInSubdirs = (datum.nFilesInSubdirs += nodeDatum.nImmediateFiles);
-                nodeDatum.nSubDirs = (datum.nSubDirs += (uint)treeNode.Nodes.Count);
+                nodeDatum.TotalLength = (datum.TotalLength += nodeDatum.Length);
+                nodeDatum.ImmediateFiles = (nodeDatum.LineNo - nodeDatum.PrevLineNo - 1);
+                nodeDatum.FilesInSubdirs = (datum.FilesInSubdirs += nodeDatum.ImmediateFiles);
+                nodeDatum.SubDirs = (datum.SubDirs += (uint)treeNode.Nodes.Count);
+                nodeDatum.HashParity = (datum.HashParity += nodeDatum.HashParity);
 
-                if (nodeDatum.nImmediateFiles > 0)
+                if (nodeDatum.ImmediateFiles > 0)
                 {
-                    ++datum.nDirsWithFiles;
+                    ++datum.DirsWithFiles;
                 }
 
-                nodeDatum.nDirsWithFiles = datum.nDirsWithFiles;
+                nodeDatum.DirsWithFiles = datum.DirsWithFiles;
 
                 FolderKeyStruct nKey = nodeDatum.Key;
 
@@ -67,7 +68,7 @@ namespace DoubleFile
                     {
                         lsNodes.Add(treeNode);
                     }
-                    else if (nodeDatum.nTotalLength > 100 * 1024)
+                    else if (nodeDatum.TotalLength > 100 * 1024)
                     {
                         m_dictNodes.Add(nKey, new UList<TreeNode> { treeNode });
                     }
@@ -214,17 +215,29 @@ namespace DoubleFile
                         return;
                     }
 
-                    var strArray = strLine.Split('\t');
+                    var asLine = strLine.Split('\t');
 
-                    dirData.AddToTree(strArray[2], uint.Parse(strArray[1]), ulong.Parse(strArray[knColLength]));
+                    int nHashParity = 0;
+
+                    if (asLine.Length > 10)
+                        nHashParity = new HashStruct(asLine[10]).GetHashCode();
+
+                    dirData.AddToTree(asLine[2], uint.Parse(asLine[1]), ulong.Parse(asLine[knColLength]),
+                        nHashParity);
                 }
 
-                var rootTreeNode = dirData.AddToTree(m_volStrings.Nickname);
+                string strRootPath = null;
+                var rootTreeNode = dirData.AddToTree(m_volStrings.Nickname, out strRootPath);
 
                 if (rootTreeNode != null)
                 {
-                    rootTreeNode.Tag = new RootNodeDatum((NodeDatum)rootTreeNode.Tag, 
-                        m_volStrings.ListingFile, m_volStrings.VolumeGroup, nVolFree, nVolLength);
+                    rootTreeNode.Tag = new RootNodeDatum(
+                        (NodeDatum)rootTreeNode.Tag,
+                        m_volStrings.ListingFile, m_volStrings.VolumeGroup,
+                        nVolFree, nVolLength,
+                        strRootPath
+                    );
+
                     TreeSubnodeDetails(rootTreeNode);
                 }
 

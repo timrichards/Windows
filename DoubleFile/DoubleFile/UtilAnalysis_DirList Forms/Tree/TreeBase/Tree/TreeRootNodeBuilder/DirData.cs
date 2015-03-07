@@ -10,34 +10,40 @@ namespace DoubleFile
             // can't be struct because of null
             class DirData
             {
-                readonly GlobalData_Base gd = null;
-                RootNode m_rootNode = null;
-
-                internal DirData(GlobalData_Base gd_in,
+                internal DirData(GlobalData_Base gd,
                     RootNode rootNode)
                 {
-                    gd = gd_in;
-                    m_rootNode = rootNode;
+                    _gd = gd;
+                    _rootNode = rootNode;
                 }
 
-                internal void AddToTree(string str_in, uint nLineNo, ulong nLength)
+                internal void AddToTree(string str_in, uint nLineNo, ulong nLength, int nHashParity)
                 {
                     string str = str_in.TrimEnd('\\');
 
-                    m_rootNode.Nodes.Add(str, new Node(gd, str, nLineNo, nLength, m_rootNode));
+                    _rootNode.Nodes.Add(str, new Node(_gd, str, nLineNo, nLength, nHashParity, _rootNode));
                 }
 
-                internal TreeNode AddToTree(string strVolumeName)
+                internal TreeNode AddToTree(string strVolumeName, out string strRootPath)
                 {
-                    var nodes = m_rootNode.Nodes.Values;
+                    TreeNode rootTreeNode = null;
+                    string strRootPath_out = null;
 
-                    if (nodes.IsEmpty())
-                    {
-                        return null;
-                    }
+                    _rootNode.Nodes.Values
+                        .First(rootNode =>
+                            rootTreeNode =
+                                rootNode
+                                .AddToTree(strVolumeName, out strRootPath_out)
+                        );
 
-                    return m_rootNode.Nodes.Values.First().AddToTree(strVolumeName);
+                    strRootPath = strRootPath_out;
+                    return rootTreeNode;
                 }
+
+                RootNode
+                    _rootNode = null;
+                readonly GlobalData_Base
+                    _gd = null;
             }
         }
     }

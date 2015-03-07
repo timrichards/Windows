@@ -235,7 +235,7 @@
     <Compile Include="UtilAnalysis_DirList Local\UtilColor.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary\DuplicateStruct.cs" />
-    <Compile Include="UtilAnalysis_FileHash\FileDictionary\FileKeyStruct.cs" />
+    <Compile Include="UtilAnalysis_FileHash\FileKeyStruct.cs" />
     <Compile Include="UtilAnalysis_FileHash\HashStruct.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Files\LVitem_FileHash_FilesVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Files\LV_FileHash_FilesVM.cs" />

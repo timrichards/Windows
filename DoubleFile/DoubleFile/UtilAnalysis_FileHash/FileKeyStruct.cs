@@ -2,9 +2,7 @@
 
 namespace DoubleFile
 {
-    partial class FileDictionary
-    {
-        struct FileKeyStruct : IComparable
+    internal struct FileKeyStruct : IComparable
         {
             /// <summary>
             /// Parameter trickery allows one constructor and readonly member vars.
@@ -93,5 +91,4 @@ namespace DoubleFile
             readonly HashStruct _hash;
             readonly ulong _nLength;
         }
-    }
 }

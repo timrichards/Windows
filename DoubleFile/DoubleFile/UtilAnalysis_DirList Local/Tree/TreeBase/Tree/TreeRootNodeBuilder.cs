@@ -213,13 +213,13 @@ namespace Local
                     }
 
                     var asLine = strLine.Split('\t');
+                    var nHashParity = 0;
+                    var strLength = asLine[knColLength];
 
-                    int nHashParity = 0;
+                    if (10 < asLine.Length)
+                        nHashParity = new FileKeyStruct(asLine[10], strLength).GetHashCode();
 
-                    if (asLine.Length > 10)
-                        nHashParity = new HashStruct(asLine[10]).GetHashCode();
-
-                    dirData.AddToTree(asLine[2], uint.Parse(asLine[1]), ulong.Parse(asLine[knColLength]),
+                    dirData.AddToTree(asLine[2], uint.Parse(asLine[1]), ulong.Parse(strLength),
                         nHashParity);
                 }
 

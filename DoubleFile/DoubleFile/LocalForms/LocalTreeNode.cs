@@ -24,7 +24,7 @@ namespace DoubleFile
         internal string
             Name { get { return Text; } }
         internal int
-            Level { get { return Datum6bits; } set { Datum6bits = value; } }
+            Level { get { return Datum8bits; } set { Datum8bits = value; } }
         internal int
             SelectedImageIndex { get { return Datum16bits; } set { Datum16bits = value; } }
 

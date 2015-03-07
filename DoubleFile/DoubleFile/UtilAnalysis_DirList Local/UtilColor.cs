@@ -12,7 +12,6 @@ namespace DoubleFile
         internal static int Empty { get { return Color.Empty.ToArgb(); } }
         internal static int White { get { return Color.White.ToArgb(); } }
         internal static int Blue { get { return Color.Blue.ToArgb(); } }
-        internal static int DarkBlue { get { return Color.DarkBlue.ToArgb(); } }
         internal static int DarkGray { get { return Color.DarkGray.ToArgb(); } }
         internal static int DarkOrange { get { return Color.DarkOrange.ToArgb(); } }
         internal static int DarkRed { get { return Color.DarkRed.ToArgb(); } }
@@ -28,7 +27,7 @@ namespace DoubleFile
         internal static int SteelBlue { get { return Color.SteelBlue.ToArgb(); } }
 
         internal static uint
-            CLUT_Mask { get { return 0x000003FF; } }
+            CLUT_Mask { get { return 0x000000FF; } }
         internal static int
             CLUT_Shift { get { return (int)Math.Log(CLUT_Mask + 1, 2); } }
 
@@ -42,9 +41,9 @@ namespace DoubleFile
         }
 
         internal static int GetFG_ARGB(int n) { return CLUT[(n & _knCLUT_FGmask)]; }
-        internal static int GetBG_ARGB(int n) { return CLUT[(n & _knCLUT_BGmask) >> 5]; }
+        internal static int GetBG_ARGB(int n) { return CLUT[(n & _knCLUT_BGmask) >> (CLUT_Shift / 2)]; }
         internal static int SetFG_ARGB(ref int n, int argb) { return n = (int)(n & _knCLUT_BGmask) + _RevCLUT[argb]; }
-        internal static int SetBG_ARGB(ref int n, int argb) { return n = (int)(n & _knCLUT_FGmask) + (_RevCLUT[argb] << 5); }
+        internal static int SetBG_ARGB(ref int n, int argb) { return n = (int)(n & _knCLUT_FGmask) + (_RevCLUT[argb] << (CLUT_Shift / 2)); }
 
         internal static System.Windows.Media.Brush ARGBtoBrush(int nFormsARGB)
         {
@@ -57,7 +56,7 @@ namespace DoubleFile
 
         readonly static int[] CLUT = new int[_knNumColors]
         {
-            Empty, White, Blue, DarkBlue, DarkGray, DarkOrange, DarkRed, DarkSlateGray,
+            Empty, White, Blue, DarkGray, DarkOrange, DarkRed, DarkSlateGray,
             Firebrick, LightGoldenrodYellow, LightGray, MediumSpringGreen, MediumVioletRed,
             OliveDrab, Red, Snow, SteelBlue
         };
@@ -69,7 +68,6 @@ namespace DoubleFile
             _RevCLUT[Empty] = nIx++;
             _RevCLUT[White] = nIx++;
             _RevCLUT[Blue] = nIx++;
-            _RevCLUT[DarkBlue] = nIx++;
             _RevCLUT[DarkGray] = nIx++;
             _RevCLUT[DarkOrange] = nIx++;
             _RevCLUT[DarkRed] = nIx++;
@@ -85,12 +83,11 @@ namespace DoubleFile
             _RevCLUT[SteelBlue] = nIx++;
 
             MBoxStatic.Assert(99957, nIx == _knNumColors);
-            MBoxStatic.Assert(99910, 16 > CLUT_Shift);
+            MBoxStatic.Assert(99910, 16 > CLUT_Shift);          // 16 bits, not _knNumColors
 
             Description[Empty] = "";
             Description[White] = "";
             Description[Blue] = "This folder has multiple copies on at least two separate volumes.";
-            Description[DarkBlue] = "";             // not used
             Description[DarkGray] = "";             // ignore list
             Description[DarkOrange] = "";           // not used
             Description[DarkRed] = "";              // not used
@@ -107,9 +104,9 @@ namespace DoubleFile
         }
 
         const int
-            _knNumColors = 17;
+            _knNumColors = 16;
         const uint
-            _knCLUT_FGmask = 0x0000001F;
+            _knCLUT_FGmask = 0x0000000F;
         static readonly uint
             _knCLUT_BGmask = CLUT_Mask - _knCLUT_FGmask;
         static Dictionary<int, int>

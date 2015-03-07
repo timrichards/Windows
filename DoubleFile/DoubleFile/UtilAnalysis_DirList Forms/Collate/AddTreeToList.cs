@@ -68,7 +68,7 @@ namespace DoubleFile
 
                     if (treeNode.FirstNode != null)
                     {
-                        Go((TreeNode)treeNode.FirstNode, bCloneOK || (new Color[] { Color.SteelBlue, Color.DarkBlue }.Contains(treeNode.ForeColor)));
+                        Go((TreeNode)treeNode.FirstNode, bCloneOK || (new Color[] { Color.SteelBlue, Color.Blue }.Contains(treeNode.ForeColor)));
                     }
                 }
                 while (bNextNode && ((treeNode = (TreeNode)treeNode.NextNode) != null));

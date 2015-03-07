@@ -6,7 +6,7 @@
     <Grid Name="form_grid">
         <TreeView Name="form_tv" Margin="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding}" BorderThickness="0">
             <TreeView.ItemContainerStyle>
-                <Style TargetType="{x:Type TreeViewItem}">
+                <Style TargetType="TreeViewItem">
                     <Setter Property="Foreground" Value="{Binding Foreground}"/>
                     <Setter Property="Background" Value="{Binding Background}"/>
                     <Setter Property="FontWeight" Value="{Binding FontWeight}"/>

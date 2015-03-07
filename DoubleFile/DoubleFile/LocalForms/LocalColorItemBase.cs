@@ -11,10 +11,10 @@ namespace DoubleFile
             Color = UtilColor.Set_ARGB(UtilColor.Empty, UtilColor.Empty);
         }
 
-        protected int Datum6bits
+        protected int Datum8bits
         {
-            get { return (int)(_datum & _knDatum6bitMask) >> UtilColor.CLUT_Shift; }
-            set { _datum = (int)(_datum & (-1 - _knDatum6bitMask)) + (value << UtilColor.CLUT_Shift); }
+            get { return (int)(_datum & _knDatum8bitMask) >> UtilColor.CLUT_Shift; }
+            set { _datum = (int)(_datum & (-1 - _knDatum8bitMask)) + (value << UtilColor.CLUT_Shift); }
         }
 
         protected int Datum16bits
@@ -29,7 +29,7 @@ namespace DoubleFile
             set { _datum = (int)(_datum & (-1 - UtilColor.CLUT_Mask)) + value; }
         }
 
-        static readonly uint _knDatum6bitMask =  0x0000FFFF - UtilColor.CLUT_Mask;
+        static readonly uint _knDatum8bitMask =  0x0000FFFF - UtilColor.CLUT_Mask;
         static readonly uint _knDatum16bitMask = 0xFFFF0000;
 
         int _datum = 0;

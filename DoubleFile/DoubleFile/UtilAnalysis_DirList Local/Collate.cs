@@ -612,8 +612,7 @@ namespace Local
                     }
 
 
-                    MBoxStatic.Assert(1305.6308, new[] { UtilColor.Empty, UtilColor.DarkBlue }
-                        .Contains(treeNode.ForeColor));
+                    MBoxStatic.Assert(1305.6308, UtilColor.Empty == treeNode.ForeColor);
                     treeNode.ForeColor = UtilColor.Firebrick;
 
                     var bDifferentVols = false;
@@ -648,11 +647,8 @@ namespace Local
                             continue;
                         }
 
-                        if (treeNode.ForeColor != UtilColor.DarkBlue)
-                        {
-                            MBoxStatic.Assert(1305.6311, treeNode.ForeColor == UtilColor.Firebrick);
-                            treeNode.ForeColor = UtilColor.SteelBlue;
-                        }
+                        MBoxStatic.Assert(1305.6311, treeNode.ForeColor == UtilColor.Firebrick);
+                        treeNode.ForeColor = UtilColor.SteelBlue;
 
                         bDifferentVols = true;
                         break;

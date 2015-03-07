@@ -70,7 +70,7 @@ namespace Local
                     if (treeNode.FirstNode != null)
                     {
                         Go(treeNode.FirstNode, bCloneOK ||
-                            (new[] { UtilColor.SteelBlue, UtilColor.DarkBlue }.Contains(treeNode.ForeColor)));
+                            (new[] { UtilColor.SteelBlue, UtilColor.Blue }.Contains(treeNode.ForeColor)));
                     }
                 }
                 while (bNextNode && ((treeNode = treeNode.NextNode) != null));

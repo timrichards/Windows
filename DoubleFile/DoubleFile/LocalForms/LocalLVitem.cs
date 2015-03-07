@@ -55,8 +55,8 @@ namespace DoubleFile
         internal object Clone() { var lvItem = (LocalLVitem)MemberwiseClone(); lvItem.FontWeight = FontWeight; return lvItem; }
         internal System.Windows.FontWeight FontWeight
         {
-            get { return (Datum6bits != 0) ? System.Windows.FontWeights.Bold : System.Windows.FontWeights.Normal; }
-            set { Datum6bits = (value == System.Windows.FontWeights.Normal) ? 0 : -1; }
+            get { return (Datum8bits != 0) ? System.Windows.FontWeights.Bold : System.Windows.FontWeights.Normal; }
+            set { Datum8bits = (value == System.Windows.FontWeights.Normal) ? 0 : -1; }
         }
     }
 }

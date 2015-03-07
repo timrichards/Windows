@@ -517,7 +517,7 @@ namespace DoubleFile
                     TreeNode rootNode = treeNode.Root();
                     RootNodeDatum rootNodeDatum = (RootNodeDatum)rootNode.Tag;
 
-                    MBoxStatic.Assert(1305.6308, new Color[] { Color.Empty, Color.DarkBlue }.Contains(treeNode.ForeColor));
+                    MBoxStatic.Assert(1305.6308, Color.Empty == treeNode.ForeColor);
                     treeNode.ForeColor = Color.Firebrick;
 
                     bool bDifferentVols = false;
@@ -546,11 +546,8 @@ namespace DoubleFile
                             continue;
                         }
 
-                        if (treeNode.ForeColor != Color.DarkBlue)
-                        {
-                            MBoxStatic.Assert(1305.6311, treeNode.ForeColor == Color.Firebrick);
-                            treeNode.ForeColor = Color.SteelBlue;
-                        }
+                        MBoxStatic.Assert(1305.6311, treeNode.ForeColor == Color.Firebrick);
+                        treeNode.ForeColor = Color.SteelBlue;
 
                         bDifferentVols = true;
                         break;

@@ -20,6 +20,7 @@ namespace DoubleFile
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = _winFileHash_DuplicatesVM = new WinFileHash_DuplicatesVM(_gd);
+            ResizeMode = ResizeMode.CanResize;
         }
 
         internal new void Show()

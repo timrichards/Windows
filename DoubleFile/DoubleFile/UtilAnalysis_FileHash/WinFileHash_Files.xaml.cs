@@ -19,6 +19,7 @@ namespace DoubleFile
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = _lvFileHash_FilesVM = new LV_FileHash_FilesVM(_gd);
+            ResizeMode = ResizeMode.CanResize;
         }
 
         internal bool ShowWindows()

@@ -25,6 +25,7 @@ namespace DoubleFile
             _treeView_FileHashVM = new TreeView_FileHashVM(form_tv);
             _winFileHash_FoldersVM = new WinFileHash_FoldersVM(_gd, _treeView_FileHashVM, _lvProjectVM);
             DataContext = _winFileHash_FoldersVM;
+            ResizeMode = ResizeMode.CanResize;
         }
 
         internal new void Show()

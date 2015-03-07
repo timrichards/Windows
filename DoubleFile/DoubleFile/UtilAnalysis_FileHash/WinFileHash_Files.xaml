@@ -6,7 +6,8 @@
     <Grid Name="form_grid">
         <ListView Name="form_lv" Margin="0" SelectedItem="{Binding SelectedItem}">
             <ListView.Resources>
-                <Style TargetType="{x:Type ListViewItem}">
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Foreground" Value="Black"/>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding SolitaryAndNonEmpty}" Value="True">
                             <Setter Property="Foreground" Value="Red" />

@@ -30,7 +30,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style TargetType="{x:Type Image}" BasedOn="{StaticResource FrameworkElement}">
+        <Style TargetType="Image" BasedOn="{StaticResource FrameworkElement}">
             <Style.Triggers>
                 <Trigger Property="IsEnabled" Value="False">
                     <Setter Property="Opacity" Value="0.3" />
@@ -43,11 +43,14 @@
             <Setter Property="ItemsSource" Value="{Binding Items}"/>
             <Setter Property="IsSynchronizedWithCurrentItem" Value="True"/><!-- troublemaker -->
         </Style>
-        <Style TargetType="{x:Type GridViewColumnHeader}">
+        <Style TargetType="GridViewColumnHeader">
             <Setter Property="HorizontalContentAlignment" Value="Left" />
         </Style>
-        
-        <ControlTemplate x:Key="templateFlatButton" TargetType="{x:Type Button}">
+        <Style TargetType="ListViewItem">
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+
+        <ControlTemplate x:Key="templateFlatButton" TargetType="Button">
             <Border Width="{TemplateBinding Width}"
             Height="{TemplateBinding Height}"
             Background="{TemplateBinding Background}"
@@ -62,14 +65,14 @@
                           TextElement.FontWeight="{TemplateBinding FontWeight}"/>
             </Border>
         </ControlTemplate>
-        <Style x:Key="styleFlatButton" TargetType="{x:Type Button}">
+        <Style x:Key="styleFlatButton" TargetType="Button">
             <Setter Property="Background" Value="{x:Null}" />
             <Setter Property="BorderBrush" Value="{x:Null}" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Template" Value="{StaticResource templateFlatButton}" />
         </Style>
 
-        <Style x:Key="styleBorder" TargetType="{x:Type Border}">
+        <Style x:Key="styleBorder" TargetType="Border">
             <Setter Property="Margin" Value="0,0,0,2" />
             <Setter Property="VerticalAlignment" Value="Stretch" />
             <Setter Property="BorderBrush" Value="ForestGreen" />

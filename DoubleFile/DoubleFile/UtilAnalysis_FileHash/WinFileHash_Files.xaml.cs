@@ -14,12 +14,12 @@ namespace DoubleFile
             InitializeComponent();
             form_grid.Loaded += Grid_Loaded;
             Closed += Window_Closed;
+            ResizeMode = ResizeMode.CanResize;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = _lvFileHash_FilesVM = new LV_FileHash_FilesVM(_gd);
-            ResizeMode = ResizeMode.CanResize;
         }
 
         internal bool ShowWindows()

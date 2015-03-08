@@ -215,7 +215,7 @@
     <Compile Include="UtilAnalysis_DirList Forms\CountNodes.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\UtilAnalysis_DirList\ListViewEx.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList\Form_Search.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\Tree\FolderKeyStruct.cs" />
+    <Compile Include="UtilAnalysis_DirList Local\Tree\FolderKeyTuple.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Tree\DetailsDatum\NodeDatum.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
     <Compile Include="UtilAnalysis_DirList Local\Tree\LVitemFileTag.cs" />
@@ -240,8 +240,8 @@
     <Compile Include="UtilAnalysis_DirList Local\UtilColor.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary\DuplicateStruct.cs" />
-    <Compile Include="UtilAnalysis_FileHash\FileKeyStruct.cs" />
-    <Compile Include="UtilAnalysis_FileHash\HashStruct.cs" />
+    <Compile Include="UtilAnalysis_FileHash\FileKeyTuple.cs" />
+    <Compile Include="UtilAnalysis_FileHash\HashTuple.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Files\LVitem_FileHash_FilesVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Files\LV_FileHash_FilesVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Files\LV_FileHash_FilesVM_Impl.cs" />

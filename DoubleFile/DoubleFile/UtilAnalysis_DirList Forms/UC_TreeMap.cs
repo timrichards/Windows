@@ -266,24 +266,24 @@ namespace DoubleFile
             return null;
         }
 
-        TreeNode GetFileList(TreeNode parent)
+        static TreeNode GetFileList(TreeNode parent)
         {
-            List<ulong> listLengths = new List<ulong>();
-            List<string[]> listFiles = TreeSelect.GetFileList(parent, listLengths);
+            var listLengths = new List<ulong>();
+            var listFiles = TreeSelect.GetFileList(parent, listLengths);
 
             if (listFiles == null)
             {
                 return null;
             }
 
-            TreeNode nodeFileList = new TreeNode(parent.Text);
+            var nodeFileList = new TreeNode(parent.Text);
             ulong nTotalLength = 0;
-            List<ulong>.Enumerator iterUlong = listLengths.GetEnumerator();
+            var iterUlong = listLengths.GetEnumerator();
 
-            foreach (string[] arrLine in listFiles)
+            foreach (var arrLine in listFiles)
             {
                 MBoxStatic.Assert(1302.3316, iterUlong.MoveNext());
-                NodeDatum nodeDatum_A = new NodeDatum();
+                var nodeDatum_A = new NodeDatum();
 
                 nTotalLength += nodeDatum_A.TotalLength = iterUlong.Current;
 
@@ -292,11 +292,11 @@ namespace DoubleFile
                     continue;
                 }
 
-                TreeNode nodeFile = new TreeNode(arrLine[0]);
-
-                nodeFile.Tag = nodeDatum_A;
-                nodeFile.ForeColor = Color.OliveDrab;
-                nodeFileList.Nodes.Add(nodeFile);
+                nodeFileList.Nodes.Add(new TreeNode(arrLine[0])
+                {
+                    Tag = nodeDatum_A,
+                    ForeColor = Color.OliveDrab
+                });
             }
 
             if (nTotalLength == 0)

@@ -87,7 +87,9 @@ namespace DoubleFile
         internal static MessageBoxResult ShowDialog(string strMessage, string strTitle = null,
             MessageBoxButton? buttons_in = null, LocalWindow owner = null)
         {
-            if (GlobalData.static_MainWindow.LocalIsClosed)
+            if (App.LocalExit ||
+                (null == GlobalData.static_MainWindow) || 
+                GlobalData.static_MainWindow.LocalIsClosed)
             {
                 return MessageBoxResult.None;
             }

@@ -14,7 +14,7 @@ namespace Local
         internal bool ToolTipActive { get; private set; }
         internal Control TooltipAnchor = null;
 
-        internal UC_TreeMap()
+        public UC_TreeMap()
         {
             m_toolTip.UseFading = true;
             m_toolTip.UseAnimation = true;
@@ -31,13 +31,21 @@ namespace Local
                 ControlStyles.UserPaint |
                 ControlStyles.AllPaintingInWmPaint,
                 true);
+            Local.TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
+        }
+
+        void TreeSelect_FolderDetailUpdated(IEnumerable<string[]> lasDetail, LocalTreeNode treeNode)
+        {
+            Render(treeNode);
         }
 
         public new void Dispose()
         {
             m_timerAnim.Dispose();
+            Local.TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
             base.Dispose();
         }
+
 
         internal void Clear()
         {
@@ -60,7 +68,7 @@ namespace Local
             if (ctl.IsDisposed)
                 return;
 
-            m_toolTip.Hide(ctl);
+            UtilProject.UIthread(() => m_toolTip.Hide(ctl));
 
             if (bKeepTooltipActive == false)
             {
@@ -273,13 +281,18 @@ namespace Local
         static LocalTreeNode GetFileList(LocalTreeNode parent)
         {
             var listLengths = new List<ulong>();
+            var listFiles = TreeSelect.GetFileList(parent, listLengths);
 
-            var nodeFileList = new LocalTreeNode(parent.Text);
+            if (listFiles == null)
+            {
+                return null;
+            }
+
+            var nodeFileList = new LocalTreeMapNode(parent.Text);
             ulong nTotalLength = 0;
             var iterUlong = listLengths.GetEnumerator();
 
-            foreach (var arrLine
-                in TreeSelect.GetFileList(parent, listLengths))
+            foreach (var arrLine in listFiles)
             {
                 MBoxStatic.Assert(1302.3316, iterUlong.MoveNext());
                 var nodeDatum_A = new NodeDatum();
@@ -291,7 +304,7 @@ namespace Local
                     continue;
                 }
 
-                nodeFileList.Nodes.Add(new LocalTreeNode(arrLine[0])
+                nodeFileList.Nodes.Add(new LocalTreeMapNode(arrLine[0])
                 {
                     NodeDatum = nodeDatum_A,
                     ForeColor = UtilColor.OliveDrab
@@ -378,9 +391,8 @@ namespace Local
             e.Graphics.FillPie(brush, r_A, 180 + nAnimFrame, 90);
         }
 
-        protected override void OnSizeChanged(EventArgs e)
+        internal void WinTreeMap_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
         {
-            base.OnSizeChanged(e);
             TranslateSize();
             m_prevNode = null;
             UtilProject.WriteLine(DateTime.Now + " OnSizeChanged();");
@@ -635,14 +647,14 @@ namespace Local
                 }
 
                 var nodeDatumFree = new NodeDatum();
-                var nodeFree = new LocalTreeNode(parent_in.Text + " (free space)");
+                var nodeFree = new LocalTreeMapNode(parent_in.Text + " (free space)");
 
                 nodeDatumFree.TotalLength = rootNodeDatum.VolumeFree;
                 nodeFree.NodeDatum = nodeDatumFree;
                 nodeFree.ForeColor = UtilColor.MediumSpringGreen;
 
                 var nodeDatumUnread = new NodeDatum();
-                var nodeUnread = new LocalTreeNode(parent_in.Text + " (unread data)");
+                var nodeUnread = new LocalTreeMapNode(parent_in.Text + " (unread data)");
                 var nVolumeLength = rootNodeDatum.VolumeLength;
                 var nUnreadLength = (long)nVolumeLength -
                     (long)rootNodeDatum.VolumeFree -
@@ -676,7 +688,7 @@ namespace Local
                     listChildren.Add(nodeUnread);
                 }
 
-                parent = new LocalTreeNode(parent_in.Text + " (volume)");
+                parent = new LocalTreeMapNode(parent_in.Text + " (volume)");
 
                 var nodeDatumVolume = new NodeDatum
                 {
@@ -712,7 +724,7 @@ namespace Local
             }
             else if (nodeDatum.Length > 0)
             {
-                listChildren.Add(new LocalTreeNode(parent.Text)
+                listChildren.Add(new LocalTreeMapNode(parent.Text)
                 {
                     NodeDatum = new NodeDatum { TotalLength = nodeDatum.Length },
                     ForeColor = UtilColor.OliveDrab

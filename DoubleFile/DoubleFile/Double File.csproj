@@ -151,8 +151,12 @@
     <Compile Include="UtilAnalysis_DirList Forms\WinFormAnalysis_DirList.xaml.cs">
       <DependentUpon>WinFormAnalysis_DirList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UtilAnalysis_DirList Local\LocalTreeMapNode.cs" />
     <Compile Include="UtilAnalysis_DirList Local\Tree\DetailsDatum.cs" />
     <Compile Include="UtilAnalysis_DirList Local\Tree\TreeSelect_Local.cs" />
+    <Compile Include="UtilAnalysis_DirList Local\WinTreeMap.xaml.cs">
+      <DependentUpon>WinTreeMap.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UtilAnalysis_FileHash\LocalWindow_FileHash.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Detail\LVitem_FolderDetailVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Detail\LVitem_VolumeDetail.cs" />
@@ -423,6 +427,10 @@
     <Page Include="UtilAnalysis_DirList Forms\WinFormAnalysis_DirList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UtilAnalysis_DirList Local\WinTreeMap.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UtilAnalysis_FileHash\WinFileHash_Detail.xaml">
       <Generator>MSBuild:Compile</Generator>

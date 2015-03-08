@@ -532,7 +532,7 @@ namespace DoubleFile
                             return;
                         }
 
-                        MBoxStatic.Assert(1305.6309, ((NodeDatum)subnode.Tag).Key == nodeDatum.Key);
+                        MBoxStatic.Assert(1305.6309, ((NodeDatum)subnode.Tag).Key.Equals(nodeDatum.Key));
 
                         TreeNode rootNode_A = subnode.Root();
 

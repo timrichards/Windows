@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
-        Title="Duplicate File Explorer" Height="250" Width="300" WindowStyle="ToolWindow">
+        Title="Duplicate File Explorer" Height="250" Width="300">
     <Grid Name="form_grid">
         <TreeView Name="form_tv" Margin="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding}" BorderThickness="0">
             <TreeView.ItemContainerStyle>

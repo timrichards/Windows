@@ -166,6 +166,9 @@ namespace DoubleFile
 
         void Go_A()
         {
+            if (App.LocalExit)
+                return;
+
             if (File.Exists(m_strFile) == false)
             {
                 MBoxStatic.Assert(1301.2311, false);

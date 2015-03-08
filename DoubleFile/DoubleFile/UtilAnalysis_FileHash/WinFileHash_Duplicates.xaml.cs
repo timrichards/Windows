@@ -39,12 +39,12 @@ namespace DoubleFile
                 Top = _nWantsTop;
             }
 
-            ShowDetailsWindow();
+            ShowWindows();
         }
 
-        internal void ShowDetailsWindow()
+        internal bool ShowWindows()
         {
-            _winFileHash_DuplicatesVM.ShowDetailsWindow();
+            return _winFileHash_DuplicatesVM.ShowWindows();
         }
 
         internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, string strFileLine)

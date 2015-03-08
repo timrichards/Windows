@@ -43,16 +43,37 @@ namespace DoubleFile
                 Left = _nWantsLeft;
                 Top = _nWantsTop;
             }
+
+            ShowWindows();
+        }
+
+        internal void ShowWindows()
+        {
+            if ((null != _winTreeMap) &&
+                (false == _winTreeMap.LocalIsClosed))
+            {
+                return;
+            }
+
+            (_winTreeMap = new WinTreeMap()).Show();
         }
 
         private void Window_Closed(object sender, System.EventArgs e)
         {
+            if ((null != _winTreeMap) &&
+                (false == _winTreeMap.LocalIsClosed))
+            {
+                _winTreeMap.Close();
+            }
+
             _lvFolderDetailVM.Dispose();
             _lvVolumeDetailVM.Dispose();
             _nWantsLeft = Left;
             _nWantsTop = Top;
         }
 
+        WinTreeMap
+            _winTreeMap = null;
         LV_FileDetailVM
             _lvFileDetailVM = null;
         LV_FolderDetailVM

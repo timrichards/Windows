@@ -23,8 +23,7 @@ namespace DoubleFile
             if ((null != _winFileHash_Duplicates) &&
                 (false == _winFileHash_Duplicates.LocalIsClosed))
             {
-                _winFileHash_Duplicates.ShowDetailsWindow();
-                return false;
+                return _winFileHash_Duplicates.ShowWindows();
             }
 
             (_winFileHash_Duplicates = new WinFileHash_Duplicates(_gd)).Show();

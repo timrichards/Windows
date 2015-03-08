@@ -8,15 +8,15 @@ namespace DoubleFile
         internal LV_FolderDetailVM(GlobalData_Base gd)
         {
             _gd = gd;
-            Local.TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetail;
+            Local.TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
         }
 
         public void Dispose()
         {
-            Local.TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetail;
+            Local.TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
         }
 
-        void TreeSelect_FolderDetail(IEnumerable<string[]> lasDetail, LocalTreeNode treeNode)
+        void TreeSelect_FolderDetailUpdated(IEnumerable<string[]> lasDetail, LocalTreeNode treeNode)
         {
             UtilProject.UIthread(() =>
             {

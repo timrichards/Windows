@@ -29,15 +29,17 @@ namespace DoubleFile
             Local.TreeSelect.FileListUpdated -= TreeSelect_FileList;
         }
 
-        internal void ShowDetailsWindow()
+        internal bool ShowWindows()
         {
             if ((null != _winFileHash_Detail) &&
                 (false == _winFileHash_Detail.LocalIsClosed))
             {
-                return;
+                _winFileHash_Detail.ShowWindows();
+                return false;
             }
 
             (_winFileHash_Detail = new WinFileHash_Detail(_gd)).Show();
+            return true;
         }
 
         void TreeSelect_FileList(IEnumerable<string> lsFileLines, string strListingFile)

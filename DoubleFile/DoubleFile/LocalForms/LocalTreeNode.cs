@@ -35,14 +35,20 @@ namespace DoubleFile
 
         internal LocalTreeNode()
         {
+            Level = -1;
+            SelectedImageIndex = -1;
             Nodes = new LocalTreeNodeCollection(TreeView);
         }
 
         internal LocalTreeNode(string strContent)
             : this()
         {
-            Level = -1;
-            SelectedImageIndex = -1;
+            Text = strContent;
+        }
+
+        internal LocalTreeNode(UString strContent)
+            : this()
+        {
             Text = strContent;
         }
 

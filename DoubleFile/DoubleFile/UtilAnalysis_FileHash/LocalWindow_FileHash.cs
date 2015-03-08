@@ -4,6 +4,11 @@
     {
         protected override void PositionWindow()
         {
+            //var chrome = new System.Windows.Shell.WindowChrome();
+            //chrome.CornerRadius = new System.Windows.CornerRadius(0);
+            //chrome.GlassFrameThickness = new System.Windows.Thickness(1);
+            WindowStyle = System.Windows.WindowStyle.ToolWindow;
+
             var lastWin = GlobalData.static_lastPlacementWindow ?? GlobalData.static_MainWindow;
 
             if (_nWantsLeft > -1)

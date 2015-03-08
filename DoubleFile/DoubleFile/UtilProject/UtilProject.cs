@@ -14,7 +14,8 @@ namespace DoubleFile
 
         internal static void UIthread(Action action)
         {
-            if (GlobalData.static_MainWindow.LocalIsClosed)
+            if (App.LocalExit ||
+                GlobalData.static_MainWindow.LocalIsClosed)
                 return;
 
             var owner = GlobalData.static_MainWindow;
@@ -37,8 +38,11 @@ namespace DoubleFile
         {
             if (null == owner)
             {
-                if (GlobalData.static_MainWindow.LocalIsClosed)
+                if (App.LocalExit ||
+                    GlobalData.static_MainWindow.LocalIsClosed)
+                {
                     return default(T);
+                }
 
                 owner = GlobalData.static_MainWindow;
             }

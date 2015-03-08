@@ -66,11 +66,11 @@ namespace DoubleFile
             };
         }
 
-        internal FolderKeyStruct Key
+        internal FolderKeyTuple Key
         {
             get
             {
-                return new FolderKeyStruct(TotalLength, FilesInSubdirs, DirsWithFiles, HashParity);
+                return new FolderKeyTuple(TotalLength, FilesInSubdirs, DirsWithFiles, HashParity);
             }
         }
     }

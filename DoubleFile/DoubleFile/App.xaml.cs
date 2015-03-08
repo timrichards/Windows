@@ -7,16 +7,16 @@ namespace DoubleFile
     /// </summary>
     public partial class App : Application
     {
-        internal static bool AppActivated { get; private set; }
+        internal static bool LocalActivated { get; private set; }
 
         private void Application_Activated(object sender, System.EventArgs e)
         {
-            AppActivated = true;
+            LocalActivated = true;
         }
 
         private void Application_Deactivated(object sender, System.EventArgs e)
         {
-            AppActivated = false;
+            LocalActivated = false;
         }
     }
 }

@@ -116,7 +116,7 @@ namespace DoubleFile
                     lvFake
                     .Items
                     .Cast<ListViewItem>()
-                    .ToArray();         // ToArray() makes a copy so that Clear() doesn't clear lvItems
+                    .ToArray();         // ToArray() makes a copy so that Clear() doesn't gc lvItems
 
                 lvFake.Items.Clear();   // removes items from the fake lv so they can be added to the real one
                 lv_in.Items.AddRange(lvItems);

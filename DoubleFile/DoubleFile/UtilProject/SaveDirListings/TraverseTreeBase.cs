@@ -30,7 +30,7 @@ namespace DoubleFile
             }
 
             protected void WriteDirectoryListing(TextWriter fs,
-                IDictionary<string, HashStruct> dictHash,
+                IDictionary<string, HashTuple> dictHash,
                 IReadOnlyDictionary<string, string> dictException_FileRead)
             {
                 ImplementationDetails(fs, dictHash, dictException_FileRead);
@@ -45,7 +45,7 @@ namespace DoubleFile
             /// <returns>File list if first pass</returns>
             private IReadOnlyList<string> ImplementationDetails(
                 TextWriter fs = null,
-                IDictionary<string, HashStruct> dictHash = null,
+                IDictionary<string, HashTuple> dictHash = null,
                 IReadOnlyDictionary<string, string> dictException_FileRead = null)
             {
                 var stackDirs = new Stack<Win32FindFileStatic.DATUM>(64);
@@ -136,7 +136,7 @@ namespace DoubleFile
                             }
 
                             string strHash = null;
-                            HashStruct hash;
+                            HashTuple hash;
 
                             if ((null != dictHash) &&
                                 dictHash.TryGetValue(winFile.strAltFileName, out hash))

@@ -148,7 +148,7 @@ namespace DoubleFile
             MBoxStatic.Assert(1304.5307, CountNodes.Go(gd_Tree.m_listRootNodes) == nNodeCount);
             MBoxStatic.Assert(1304.5308, gd_Tree.m_listTreeNodes.Count == nNodeCount);
 
-            if (false == App.AppActivated)
+            if (false == App.LocalActivated)
             {
                 FlashWindowStatic.Go(m_ownerWindow);
             }

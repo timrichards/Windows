@@ -57,7 +57,7 @@ namespace DoubleFile
             if (10 >= asLine.Length)
                 return null;
 
-            var key = new FileKeyStruct(asLine[10], asLine[7]);
+            var key = new FileKeyTuple(asLine[10], asLine[7]);
 
             if (null == _DictFiles)
                 return null;
@@ -129,7 +129,7 @@ namespace DoubleFile
                 }
             }).Start())
             {
-                var dictFiles = new ConcurrentDictionary<FileKeyStruct, List<int>>();
+                var dictFiles = new ConcurrentDictionary<FileKeyTuple, List<int>>();
 
                 Parallel.ForEach(
                     _LVprojectVM.ItemsCast
@@ -157,7 +157,7 @@ namespace DoubleFile
 
                         Interlocked.Increment(ref _nFilesProgress);
 
-                        var key = new FileKeyStruct(asLine[10], asLine[7]);
+                        var key = new FileKeyTuple(asLine[10], asLine[7]);
                         var lookup = 0;
                         var nLineNumber = int.Parse(asLine[1]);
 
@@ -233,13 +233,13 @@ namespace DoubleFile
             using (var reader = new StreamReader(_ksSerializeFile, false))
             {
                 string strLine = null;
-                _DictFiles = new Dictionary<FileKeyStruct,IEnumerable<int>>();
+                _DictFiles = new Dictionary<FileKeyTuple,IEnumerable<int>>();
 
                 while ((strLine = reader.ReadLine()) != null)
                 {
                     var asLine = strLine.Split('\t');
 
-                    _DictFiles[new FileKeyStruct(asLine[0])] =
+                    _DictFiles[new FileKeyTuple(asLine[0])] =
                         asLine
                         .Skip(1)
                         .Select(s => Convert.ToInt32(s));
@@ -262,7 +262,7 @@ namespace DoubleFile
             _DictLVtoItemNumber = new Dictionary<LVitem_ProjectVM, int>();
         readonly Dictionary<int, LVitem_ProjectVM>
             _DictItemNumberToLV = new Dictionary<int, LVitem_ProjectVM>();
-        Dictionary<FileKeyStruct, IEnumerable<int>>
+        Dictionary<FileKeyTuple, IEnumerable<int>>
             _DictFiles = null;
 
         CreateFileDictStatusDelegate

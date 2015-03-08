@@ -55,7 +55,7 @@ namespace DoubleFile
             if (null == lsDuplicates)
                 return;
 
-            var laoLines = new ConcurrentBag<object[]>();
+            var laoLines = new ConcurrentBag<Tuple<string, string, LVitem_ProjectVM>>();
 
             Parallel.ForEach(
                 lsDuplicates
@@ -88,7 +88,7 @@ namespace DoubleFile
                         strLine.StartsWith(FileParse.ksLineType_Directory))
                     {
                         foreach (var strFileLineA in lsFilesInDir)
-                            laoLines.Add(new object[] { strFileLineA, strLine.Split('\t')[2], g.Key });
+                            laoLines.Add(Tuple.Create(strFileLineA, strLine.Split('\t')[2], g.Key));
 
                         lsFilesInDir.Clear();
  
@@ -100,10 +100,10 @@ namespace DoubleFile
 
             foreach (var aoLine in laoLines)
             {
-                var lvItem = new LVitem_FileDuplicatesVM(new[] { ((string)aoLine[0]).Split('\t')[3], (string)aoLine[1] });
+                var lvItem = new LVitem_FileDuplicatesVM(new[] { aoLine.Item1.Split('\t')[3], aoLine.Item2 });
 
-                lvItem.FileLine = (string)aoLine[0];
-                lvItem.LVitem_ProjectVM = (LVitem_ProjectVM)aoLine[2];
+                lvItem.FileLine = aoLine.Item1;
+                lvItem.LVitem_ProjectVM = aoLine.Item3;
                 Add(lvItem, bQuiet: true);
             }
 

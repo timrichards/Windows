@@ -10,7 +10,7 @@ namespace Local
     partial class Collate
     {
         internal Collate(GlobalData_Base gd,
-            ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>> dictNodes,
+            ConcurrentDictionary<FolderKeyTuple, UList<LocalTreeNode>> dictNodes,
             LocalTV tvBrowse,
             LocalLV lvClones,
             LocalLV lvSameVol,
@@ -114,7 +114,7 @@ namespace Local
             }
 
             var dictIgnoreMark = new Dictionary<LocalTreeNode, LocalLVitem>();
-            var dictNodes = new SortedDictionary<FolderKeyStruct, List<LocalTreeNode>>();
+            var dictNodes = new SortedDictionary<FolderKeyTuple, List<LocalTreeNode>>();
 
             foreach (var kvp in _dictNodes)                     // clone to remove ignored
             {                                                   // m_ vs local check is via List vs UList
@@ -164,7 +164,7 @@ namespace Local
                 }
             }
 
-            var dictUnique = new SortedDictionary<FolderKeyStruct, LocalTreeNode>();
+            var dictUnique = new SortedDictionary<FolderKeyTuple, LocalTreeNode>();
             nProgressDenominator += dictNodes.Count;
             ++nProgressItem;
 
@@ -260,7 +260,7 @@ namespace Local
                 }
             }
 
-            var dictClones = new SortedDictionary<FolderKeyStruct, UList<LocalTreeNode>>();
+            var dictClones = new SortedDictionary<FolderKeyTuple, UList<LocalTreeNode>>();
 
             nProgressDenominator += _lsRootNodes.Count;
             ++nProgressItem;
@@ -564,7 +564,7 @@ namespace Local
         // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
         // Breadth-first.
         void DifferentVolsQuery(
-            IDictionary<FolderKeyStruct, UList<LocalTreeNode>> dictClones,
+            IDictionary<FolderKeyTuple, UList<LocalTreeNode>> dictClones,
             LocalTreeNode treeNode,
             LocalTreeNode rootClone = null)
         {
@@ -630,7 +630,7 @@ namespace Local
                             return;
                         }
 
-                        MBoxStatic.Assert(1305.6309, subnode.NodeDatum.Key == nodeDatum.Key);
+                        MBoxStatic.Assert(1305.6309, subnode.NodeDatum.Key.Equals(nodeDatum.Key));
 
                         var rootNode_A = subnode.Root();
 
@@ -774,7 +774,7 @@ namespace Local
         }
 
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
-        readonly ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>>
+        readonly ConcurrentDictionary<FolderKeyTuple, UList<LocalTreeNode>>
             _dictNodes = null;
         readonly LocalTV _tvBrowse = null;
         readonly LocalLV _lvClones = null;

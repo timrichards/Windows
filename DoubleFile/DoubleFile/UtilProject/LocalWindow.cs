@@ -39,7 +39,7 @@ namespace DoubleFile
                 {
                     GlobalData.static_Dialog.Activate();
 
-                    if (false == App.AppActivated)
+                    if (false == App.LocalActivated)
                         FlashWindowStatic.Go(GlobalData.static_Dialog);
                 }
             };

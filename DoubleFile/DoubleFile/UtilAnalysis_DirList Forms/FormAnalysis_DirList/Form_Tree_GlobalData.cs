@@ -18,7 +18,7 @@ namespace DoubleFile
         }
         GlobalData _gd = null;
 
-        internal readonly SortedDictionary<FolderKeyStruct, UList<TreeNode>> m_dictNodes = new SortedDictionary<FolderKeyStruct, UList<TreeNode>>();
+        internal readonly SortedDictionary<FolderKeyTuple, UList<TreeNode>> m_dictNodes = new SortedDictionary<FolderKeyTuple, UList<TreeNode>>();
         internal readonly Dictionary<string, string> m_dictDriveInfo = new Dictionary<string, string>();
         internal Tree m_tree = null;
         internal Thread m_threadCollate = null;

@@ -16,7 +16,7 @@ namespace Local
     {
         internal Tree(GlobalData_Base gd_in,
             LV_ProjectVM lvProjectVM,
-            ConcurrentDictionary<FolderKeyStruct, UList<LocalTreeNode>> dictNodes,
+            ConcurrentDictionary<FolderKeyTuple, UList<LocalTreeNode>> dictNodes,
             Dictionary<string, string> dictDriveInfo,
             TreeStatusDelegate statusCallback,
             Action doneCallback)

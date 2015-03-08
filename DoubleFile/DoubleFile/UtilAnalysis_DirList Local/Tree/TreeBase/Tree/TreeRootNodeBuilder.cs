@@ -218,7 +218,7 @@ namespace Local
                     if ((10 < asLine.Length) &&
                         (strLine.StartsWith(ksLineType_File)))
                     {
-                        nHashParity += new FileKeyStruct(asLine[10], asLine[knColLength]).GetHashCode();
+                        nHashParity += new FileKeyTuple(asLine[10], asLine[knColLength]).GetHashCode();
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {

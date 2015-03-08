@@ -936,7 +936,7 @@ namespace DoubleFile
 
         void form_lvClones_MouseLeave(object sender, EventArgs e)
         {
-            if (false == App.AppActivated)
+            if (false == App.LocalActivated)
             {
                 return;
             }
@@ -947,7 +947,7 @@ namespace DoubleFile
 
         void form_lvClones_MouseUp(object sender, MouseEventArgs e = null)
         {
-            if (false == App.AppActivated)
+            if (false == App.LocalActivated)
             {
                 return;
             }
@@ -1020,7 +1020,7 @@ namespace DoubleFile
 
         void form_lvFiles_Enter(object sender, EventArgs e)     // both file listviewers
         {
-            if (false == App.AppActivated)
+            if (false == App.LocalActivated)
             {
                 return;
             }
@@ -1171,7 +1171,7 @@ namespace DoubleFile
 
         void form_treeCompare_Enter(object sender, EventArgs e)
         {
-            if (false == App.AppActivated)
+            if (false == App.LocalActivated)
             {
                 return;
             }

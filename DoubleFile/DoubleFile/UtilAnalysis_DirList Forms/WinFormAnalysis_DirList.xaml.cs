@@ -7,9 +7,6 @@
     {
         internal WinFormAnalysis_DirList(MainWindow mainWindow, LV_ProjectVM LVprojectVM)
         {
-            _mainWindow = mainWindow;
-            _LVprojectVM = LVprojectVM;
-
             InitializeComponent();
             _form.Init(mainWindow, LVprojectVM);
             Activated += _form.ClearToolTip;
@@ -17,12 +14,9 @@
             Closing += _form.FormAnalysis_DirList_FormClosing;
         }
 
-        internal static void RestartTreeTimer(WinFormAnalysis_DirList arg1, LV_ProjectVM arg2)
+        internal static void RestartTreeTimer(WinFormAnalysis_DirList form1, LV_ProjectVM lvProjectVM)
         {
-            FormAnalysis_DirList.RestartTreeTimer(arg1._form, arg2);
+            FormAnalysis_DirList.RestartTreeTimer(form1._form, lvProjectVM);
         }
-
-        MainWindow _mainWindow = null;
-        LV_ProjectVM _LVprojectVM = null;
     }
 }

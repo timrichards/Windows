@@ -58,7 +58,7 @@ namespace DoubleFile
 
                 nodeDatum.DirsWithFiles = datum.DirsWithFiles;
 
-                FolderKeyStruct nKey = nodeDatum.Key;
+                FolderKeyTuple nKey = nodeDatum.Key;
 
                 lock (m_dictNodes)
                 {
@@ -220,7 +220,7 @@ namespace DoubleFile
                     var strLength = asLine[knColLength];
 
                     if (10 < asLine.Length)
-                        nHashParity = new FileKeyStruct(asLine[10], strLength).GetHashCode();
+                        nHashParity = new FileKeyTuple(asLine[10], strLength).GetHashCode();
 
                     dirData.AddToTree(asLine[2], uint.Parse(asLine[1]), ulong.Parse(strLength),
                         nHashParity);

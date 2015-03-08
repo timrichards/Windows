@@ -22,11 +22,6 @@ namespace DoubleFile
             _gd = new GlobalData_Window(this);
             _gd_old = new GlobalData(this);
 
-            App.OnAppActivated += () =>
-            {
-                AppActivated = true;
-            };
-
             InitializeComponent();
             form_grid.Loaded += Grid_Loaded;
             Closing += MainWindow_Closing;
@@ -40,7 +35,7 @@ namespace DoubleFile
         void FormAnalysis_DirListAction(Action<WinFormAnalysis_DirList, LV_ProjectVM> action)
         {
             if ((null == Analysis_DirListForm) ||
-                Analysis_DirListForm.IsClosed)
+                Analysis_DirListForm.LocalIsClosed)
             {
                 return;
             }
@@ -91,7 +86,7 @@ namespace DoubleFile
             _gd.FileDictionary.Clear();
             FormAnalysis_DirListAction(WinFormAnalysis_DirList.RestartTreeTimer);
 
-            if ((null != _winFileHash_Folders) && (false == _winFileHash_Folders.IsClosed))
+            if ((null != _winFileHash_Folders) && (false == _winFileHash_Folders.LocalIsClosed))
             {
                 _winFileHash_Folders.Close();
                 (_winFileHash_Folders = new WinFileHash_Folders(_gd, LVprojectVM)).Show();
@@ -230,7 +225,7 @@ namespace DoubleFile
         private void Button_SearchDirLists_Click(object sender, RoutedEventArgs e)
         {
             if ((null == Analysis_DirListForm) ||
-                Analysis_DirListForm.IsClosed)
+                Analysis_DirListForm.LocalIsClosed)
             {
                 (Analysis_DirListForm = new WinFormAnalysis_DirList(this, LVprojectVM)).Show();
                 Analysis_DirListForm.Closed += (o, a) => Analysis_DirListForm = null;
@@ -243,7 +238,7 @@ namespace DoubleFile
 
         private void Button_DuplicateFileExplorer_Click(object sender, RoutedEventArgs e)
         {
-            if ((null == _winFileHash_Folders) || (_winFileHash_Folders.IsClosed))
+            if ((null == _winFileHash_Folders) || (_winFileHash_Folders.LocalIsClosed))
             {
                 (_winFileHash_Folders = new WinFileHash_Folders(_gd, LVprojectVM)).Show();
                 _winFileHash_Folders.Closed += (o, a) => _winFileHash_Folders = null;

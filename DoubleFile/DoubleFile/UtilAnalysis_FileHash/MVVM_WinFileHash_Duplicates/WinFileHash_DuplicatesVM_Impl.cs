@@ -21,7 +21,7 @@ namespace DoubleFile
         public void Dispose()
         {
             if ((null != _winFileHash_Detail) &&
-                (false == _winFileHash_Detail.IsClosed))
+                (false == _winFileHash_Detail.LocalIsClosed))
             {
                 _winFileHash_Detail.Close();
             }
@@ -32,7 +32,7 @@ namespace DoubleFile
         internal void ShowDetailsWindow()
         {
             if ((null != _winFileHash_Detail) &&
-                (false == _winFileHash_Detail.IsClosed))
+                (false == _winFileHash_Detail.LocalIsClosed))
             {
                 return;
             }

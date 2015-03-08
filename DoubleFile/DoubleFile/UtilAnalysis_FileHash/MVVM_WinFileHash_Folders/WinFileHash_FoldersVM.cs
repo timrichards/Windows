@@ -31,7 +31,7 @@ namespace DoubleFile
             bool bRet = false;
 
             if ((null == _winFileHash_Files) ||
-                _winFileHash_Files.IsClosed)
+                _winFileHash_Files.LocalIsClosed)
             {
                 (_winFileHash_Files = new WinFileHash_Files(_gd)).Show();
                 bRet = true;

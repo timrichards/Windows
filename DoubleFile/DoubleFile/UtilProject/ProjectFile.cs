@@ -105,7 +105,7 @@ namespace DoubleFile
                     Directory.Delete(TempPath01, true);
                 }
 
-                if (false == _winProgress.IsClosed)
+                if (false == _winProgress.LocalIsClosed)
                 {
                     _winProgress.Aborted = true;
                     UtilProject.UIthread(_winProgress.Close);
@@ -384,7 +384,7 @@ namespace DoubleFile
 
             // bootstrap the window close with a delay then messagebox
             // otherwise it freezes
-            if (false == _winProgress.IsClosed)
+            if (false == _winProgress.LocalIsClosed)
             {
                 _winProgress.Aborted = true;
                 UtilProject.UIthread(_winProgress.Close);

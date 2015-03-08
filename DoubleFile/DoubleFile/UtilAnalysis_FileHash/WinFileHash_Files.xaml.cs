@@ -29,7 +29,7 @@ namespace DoubleFile
 
         internal new void Show()
         {
-            if (false == IsClosed)
+            if (false == LocalIsClosed)
             {
                 MBoxStatic.Assert(99904, false, bTraceOnly: true);
                 return;

@@ -6,8 +6,7 @@ namespace DoubleFile
 {
     public class LocalWindow : Window
     {
-        internal bool IsClosed { get; private set; }
-        static protected bool AppActivated { private get; set; }
+        internal bool LocalIsClosed { get; private set; }
 
         internal bool? LocalDialogResult
         {
@@ -40,10 +39,8 @@ namespace DoubleFile
                 {
                     GlobalData.static_Dialog.Activate();
 
-                    if (false == AppActivated)
+                    if (false == App.AppActivated)
                         FlashWindowStatic.Go(GlobalData.static_Dialog);
-
-                    AppActivated = false;
                 }
             };
 
@@ -59,9 +56,9 @@ namespace DoubleFile
 
             ResizeMode = ResizeMode.CanResizeWithGrip;
             ShowActivated = true;
-            Loaded += (o, e) => IsClosed = false;
-            Closed += (o, e) => IsClosed = true;
-            IsClosed = true;
+            Loaded += (o, e) => LocalIsClosed = false;
+            Closed += (o, e) => LocalIsClosed = true;
+            LocalIsClosed = true;
         }
 
         internal void CloseIfSimulatingModal()

@@ -21,7 +21,7 @@ namespace DoubleFile
         internal bool ShowWindows()    // returns true if it created a window
         {
             if ((null != _winFileHash_Duplicates) &&
-                (false == _winFileHash_Duplicates.IsClosed))
+                (false == _winFileHash_Duplicates.LocalIsClosed))
             {
                 _winFileHash_Duplicates.ShowDetailsWindow();
                 return false;

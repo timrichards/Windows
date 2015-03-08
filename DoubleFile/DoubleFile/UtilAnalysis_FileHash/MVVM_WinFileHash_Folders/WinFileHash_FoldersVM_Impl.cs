@@ -137,7 +137,7 @@ namespace DoubleFile
             // saving memory here.
             DictNodes = null;
 
-            while (false == _winProgress.IsClosed)
+            while (false == _winProgress.LocalIsClosed)
                 System.Threading.Thread.Sleep(200);
 
             UtilProject.UIthread<bool>(ShowWindows);

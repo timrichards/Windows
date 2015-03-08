@@ -7,14 +7,16 @@ namespace DoubleFile
     /// </summary>
     public partial class App : Application
     {
-        internal static event System.Action OnAppActivated = null;
+        internal static bool AppActivated { get; private set; }
 
         private void Application_Activated(object sender, System.EventArgs e)
         {
-            if (null != OnAppActivated)
-            {
-                OnAppActivated();
-            }
+            AppActivated = true;
+        }
+
+        private void Application_Deactivated(object sender, System.EventArgs e)
+        {
+            AppActivated = false;
         }
     }
 }

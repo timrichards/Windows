@@ -117,7 +117,7 @@ namespace DoubleFile
             if (form_lvFiles.Items.IsEmpty())
             {
                 // expected a file but got an empty listviewer
-                FlashWindowStatic.Go(Once: true);
+                FlashWindowStatic.Go(m_ownerWindow, Once: true);
                 return;
             }
 
@@ -221,7 +221,7 @@ namespace DoubleFile
 
             MBoxStatic.Assert(1307.8312, gd_Search_1_2.m_searchType2 == null);
 
-            gd_Search_1_2.m_searchType2 = new SearchType2(new GlobalData_Form(this),
+            gd_Search_1_2.m_searchType2 = new SearchType2(m_ownerWindow._gd,
                 LVprojectVM,
                 strSearch,
                 strSearch.ToLower() != strSearch,

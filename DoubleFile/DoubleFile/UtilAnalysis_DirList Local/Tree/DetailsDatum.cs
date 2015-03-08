@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+
 namespace DoubleFile
 {
     // can't be struct because it serves covariance; has parameterless constructor

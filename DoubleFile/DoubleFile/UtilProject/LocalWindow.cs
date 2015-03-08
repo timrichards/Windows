@@ -4,7 +4,7 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    public class LocalWindow : System.Windows.Window
+    public class LocalWindow : Window
     {
         internal bool IsClosed { get; private set; }
         static protected bool AppActivated { private get; set; }
@@ -70,38 +70,18 @@ namespace DoubleFile
                 Close();
         }
 
-        internal new LocalWindow Show() { Show(GlobalData.static_Dialog); return this; }
+        internal new LocalWindow Show()
+        {
+            Owner = GlobalData.static_Dialog;
+            base.Show();
+            PositionWindow();
+            return this;
+        }
+
         internal new bool? ShowDialog() { return ShowDialog(GlobalData.static_Dialog); }
 
-        void Show(LocalWindow me)
+        protected virtual void PositionWindow()
         {
-            Owner = me;
-            base.Show();
-
-            var lastWin = GlobalData.static_lastPlacementWindow ?? GlobalData.static_MainWindow;
-
-            if (_nWantsLeft > -1)
-            {
-                Left = _nWantsLeft;
-                Top = _nWantsTop;
-                _nWantsLeft = _nWantsTop = -1;
-            }
-            else if (null != lastWin)
-            {
-                Left = lastWin.Left + lastWin.Width + 5;
-                Top = lastWin.Top;
-
-                if (Left + Width > System.Windows.SystemParameters.PrimaryScreenWidth)
-                {
-                    _nWantsLeft = Left;
-                    _nWantsTop = Top;
-                    Left = GlobalData.static_MainWindow.Left;
-                    Top = lastWin.Top + lastWin.Height + 5;
-                }
-            }
-
-            GlobalData.static_lastPlacementWindow = this;
-            Closed += (o, e) => GlobalData.static_lastPlacementWindow = null;
         }
 
         bool? ShowDialog(LocalWindow me)
@@ -137,8 +117,5 @@ namespace DoubleFile
         }
 
         bool _simulatingModal = false;      // NO. Must be false. Look up. (this class also controls plain windows.)
-
-        static double _nWantsLeft = -1;
-        static double _nWantsTop = -1;
     }
 }

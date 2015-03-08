@@ -1,5 +1,4 @@
-﻿1.0.0.86
-99898 is the lowest assert 2/22/15
+﻿99898 is the lowest assert 2/22/15
 
 UList overused?
 

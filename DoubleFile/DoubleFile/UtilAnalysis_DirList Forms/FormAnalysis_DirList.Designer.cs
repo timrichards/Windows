@@ -35,7 +35,7 @@ namespace DoubleFile
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAnalysis_DirList)); 
             //this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.ShowInTaskbar = false;
+     //       this.ShowInTaskbar = false;
 
             System.Windows.Forms.Label label3;
             this.form_chkSpacer = new System.Windows.Forms.CheckBox();
@@ -1303,15 +1303,15 @@ namespace DoubleFile
             this.ClientSize = new System.Drawing.Size(1196, 621);
             this.Controls.Add(this.tableLayoutPanel3);
             this.DoubleBuffered = true;
-            this.KeyPreview = true;
+       //     this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(875, 420);
             this.Name = "FormAnalysis_DirList";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+       //     this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Search Directory Listings";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            this.Activated += new System.EventHandler(this.ClearToolTip);
-            this.Deactivate += new System.EventHandler(this.ClearToolTip);
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormAnalysis_DirList_FormClosing);
+            //this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            //this.Activated += new System.EventHandler(this.ClearToolTip);
+            //this.Deactivate += new System.EventHandler(this.ClearToolTip);
+            //this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormAnalysis_DirList_FormClosing);
             this.Disposed += new EventHandler(this.FormAnalysis_DirList_FormDisposed);
             this.Load += new System.EventHandler(this.FormAnalysis_DirList_Load);
             this.Enter += new System.EventHandler(this.ClearToolTip);

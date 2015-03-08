@@ -25,7 +25,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>86</ApplicationRevision>
+    <ApplicationRevision>87</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -133,6 +133,7 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -147,8 +148,12 @@
     <Compile Include="MVVM\ListView Base\ListViewVM_GenericBase.cs" />
     <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
     <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
+    <Compile Include="UtilAnalysis_DirList Forms\WinFormAnalysis_DirList.xaml.cs">
+      <DependentUpon>WinFormAnalysis_DirList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UtilAnalysis_DirList Local\Tree\DetailsDatum.cs" />
     <Compile Include="UtilAnalysis_DirList Local\Tree\TreeSelect_Local.cs" />
+    <Compile Include="UtilAnalysis_FileHash\LocalWindow_FileHash.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Detail\LVitem_FolderDetailVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Detail\LVitem_VolumeDetail.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Detail\LVitem_FileDetailVM.cs" />
@@ -415,6 +420,10 @@
     <Resource Include="ic_people_black_18dp.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="UtilAnalysis_DirList Forms\WinFormAnalysis_DirList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UtilAnalysis_FileHash\WinFileHash_Detail.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

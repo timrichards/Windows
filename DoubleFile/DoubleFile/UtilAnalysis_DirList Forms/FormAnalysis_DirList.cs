@@ -14,7 +14,7 @@ namespace DoubleFile
 {
     //    [System.ComponentModel.DesignerCategory("Designer")]
     [System.ComponentModel.DesignerCategory("Code")]
-    partial class FormAnalysis_DirList : Form
+    partial class FormAnalysis_DirList : UserControl
     {
         bool m_bFindBoxMouseEnter = false;
 
@@ -22,15 +22,18 @@ namespace DoubleFile
         GlobalData_Tree gd_Tree = null;
         GlobalData_Search_Path gd_Search_Path = null;
         GlobalData_Search_1_2 gd_Search_1_2 = null;
-        readonly MainWindow m_ownerWindow = null;
+        MainWindow m_ownerWindow = null;
         LV_ProjectVM LVprojectVM { get; set; }
 
-        internal FormAnalysis_DirList(MainWindow ownerWindow, LV_ProjectVM lvProjectVM)
+        internal void Init(MainWindow ownerWindow, LV_ProjectVM lvProjectVM)
         {
-            InitializeComponent();
-
             m_ownerWindow = ownerWindow;
             LVprojectVM = new LV_ProjectVM(lvProjectVM: lvProjectVM);
+        }
+
+        public FormAnalysis_DirList()
+        {
+            InitializeComponent();
 
             gd = GlobalData.Reset();
             gd_Tree = new GlobalData_Tree(gd);
@@ -212,7 +215,7 @@ namespace DoubleFile
             }
         }
 
-        void ClearToolTip(object sender, EventArgs e)
+        internal void ClearToolTip(object sender, EventArgs e)
         {
             if (form_tmapUserCtl.IsDisposed)
             {
@@ -1347,19 +1350,8 @@ namespace DoubleFile
             gd.m_bPutPathInFindEditBox = true;
         }
 
-        void FormAnalysis_DirList_FormClosing(object sender, FormClosingEventArgs e)
+        internal void FormAnalysis_DirList_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (gd.m_bCompareMode)
-            {
-                MBoxStatic.Assert(1308.9325, form_chkCompare1.Checked == true);
-                form_chkCompare1.Checked = false;
-                e.Cancel = true;
-            }
-            else
-            {
-                MBoxStatic.MessageBoxKill();
-            }
-
             Collate.ClearMem();
             GlobalData.Reset();
             m_ownerWindow.Activate();

@@ -1,0 +1,12 @@
+﻿<local:LocalWindow x:Class="DoubleFile.WinFormAnalysis_DirList"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+        xmlns:local="clr-namespace:DoubleFile"
+        Title="Search Directory Listings" Width="1024" Height="768">
+    <Grid>
+        <WindowsFormsHost>
+            <local:FormAnalysis_DirList x:Name="_form"/>
+        </WindowsFormsHost>
+    </Grid>
+</local:LocalWindow>

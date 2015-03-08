@@ -13,11 +13,13 @@ namespace DoubleFile
     partial class MainWindow
     {
         internal LV_ProjectVM LVprojectVM { get; private set; }
-        internal FormAnalysis_DirList Analysis_DirListForm { get; private set; }
+        internal WinFormAnalysis_DirList Analysis_DirListForm { get; private set; }
+        internal GlobalData_Base _gd { get; private set; }
 
         public MainWindow()
             : base(bIsMainWindow: true)
         {
+            _gd = new GlobalData_Window(this);
             _gd_old = new GlobalData(this);
 
             App.OnAppActivated += () =>
@@ -35,9 +37,10 @@ namespace DoubleFile
             form_btnDuplicateFileExplorer.Click += Button_DuplicateFileExplorer_Click;
         }
 
-        void FormAnalysis_DirListAction(Action<FormAnalysis_DirList, LV_ProjectVM> action)
+        void FormAnalysis_DirListAction(Action<WinFormAnalysis_DirList, LV_ProjectVM> action)
         {
-            if ((null == Analysis_DirListForm) || Analysis_DirListForm.IsDisposed)
+            if ((null == Analysis_DirListForm) ||
+                Analysis_DirListForm.IsClosed)
             {
                 return;
             }
@@ -86,7 +89,7 @@ namespace DoubleFile
             new SaveListingsProcess(_gd, LVprojectVM);
 
             _gd.FileDictionary.Clear();
-            FormAnalysis_DirListAction(FormAnalysis_DirList.RestartTreeTimer);
+            FormAnalysis_DirListAction(WinFormAnalysis_DirList.RestartTreeTimer);
 
             if ((null != _winFileHash_Folders) && (false == _winFileHash_Folders.IsClosed))
             {
@@ -99,8 +102,6 @@ namespace DoubleFile
         #region form_handlers
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            _gd = new GlobalData_Window(this);
-
             MinWidth = Width;
             MinHeight = Height;
 #if (DEBUG)
@@ -228,9 +229,10 @@ namespace DoubleFile
 
         private void Button_SearchDirLists_Click(object sender, RoutedEventArgs e)
         {
-            if ((Analysis_DirListForm == null) || (Analysis_DirListForm.IsDisposed))
+            if ((null == Analysis_DirListForm) ||
+                Analysis_DirListForm.IsClosed)
             {
-                (Analysis_DirListForm = new FormAnalysis_DirList(this, LVprojectVM)).Show();
+                (Analysis_DirListForm = new WinFormAnalysis_DirList(this, LVprojectVM)).Show();
                 Analysis_DirListForm.Closed += (o, a) => Analysis_DirListForm = null;
             }
             else
@@ -253,8 +255,6 @@ namespace DoubleFile
 
         WinFileHash_Folders
             _winFileHash_Folders = null;
-        GlobalData_Base
-            _gd = null;
         readonly GlobalData
             _gd_old = null;
     }

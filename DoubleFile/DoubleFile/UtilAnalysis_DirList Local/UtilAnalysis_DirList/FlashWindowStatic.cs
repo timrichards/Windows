@@ -23,38 +23,22 @@ namespace DoubleFile
 
         public const UInt32 FLASHW_ALL = 3;
 
-        internal static void Go(Control ctl_in = null, bool Once = false)
+        internal static void Go(System.Windows.Window window_in, bool Once = false)
         {
-            UtilAnalysis_DirList.UIthread(ctl_in ?? GlobalData.static_MainWindow.Analysis_DirListForm, () =>
+            UtilProject.UIthread(() =>
             {
+                var window = window_in ?? GlobalData.static_MainWindow;
                 var fInfo = new FLASHWINFO
                 {
-                    hwnd = (ctl_in != null)
-                        ? ctl_in.Handle
-                        : GlobalData.static_MainWindow.Analysis_DirListForm.Handle,
+                    hwnd = new WindowInteropHelper(window).Handle,
                     dwFlags = FLASHW_ALL,
-                    uCount = (uint)(Once ? 1 : 3),
-                    dwTimeout = 0
+                    uCount = (uint)(Once ? 1 : 7),
+                    dwTimeout = 75
                 };
                 fInfo.cbSize = Convert.ToUInt32(Marshal.SizeOf(fInfo));
 
                 FlashWindowEx(ref fInfo);
             });
-        }
-
-        internal static void Go(System.Windows.Window window_in, bool Once = false)
-        {
-            var window = window_in ?? GlobalData.static_MainWindow;
-            var fInfo = new FLASHWINFO
-            {
-                hwnd = new WindowInteropHelper(window).Handle,
-                dwFlags = FLASHW_ALL,
-                uCount = (uint)(Once ? 1 : 7),
-                dwTimeout = 75
-            };
-            fInfo.cbSize = Convert.ToUInt32(Marshal.SizeOf(fInfo));
-
-            UtilProject.UIthread(() => FlashWindowEx(ref fInfo));
         }
     }
 }

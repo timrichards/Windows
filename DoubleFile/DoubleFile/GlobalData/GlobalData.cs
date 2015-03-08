@@ -28,15 +28,4 @@ namespace DoubleFile
             FileDictionary = new FileDictionary();
         }
     }
-
-    class GlobalData_Form : GlobalData_Base
-    {
-        internal readonly FormAnalysis_DirList Main_Form = null;
-
-        internal GlobalData_Form(FormAnalysis_DirList mainForm_in)
-        {
-            Main_Form = mainForm_in;
-            Main_Form.Closed += (o, e) => WindowClosed = true;
-        }
-    }
 }

@@ -57,7 +57,7 @@ namespace DoubleFile
             if (m_tree != null)
             {
                 m_tree.EndThread(bJoin: bJoin);
-                ((SDL_TreeView)GlobalData.static_MainWindow.Analysis_DirListForm.form_treeViewBrowse).Nodes.Clear();
+                ((SDL_TreeView)GlobalData.static_MainWindow.Analysis_DirListForm._form.form_treeViewBrowse).Nodes.Clear();
                 m_listRootNodes.Clear();
                 TreeCleanup();
             }
@@ -72,10 +72,10 @@ namespace DoubleFile
 
             var formSDL = GlobalData.static_MainWindow.Analysis_DirListForm;
 
-            UtilAnalysis_DirList.UIthread(formSDL, () =>
+            UtilProject.UIthread(() =>
             {
                 // Display the treemap after the tree is built
-                var treeViewBrowse = formSDL.form_treeViewBrowse;
+                var treeViewBrowse = formSDL._form.form_treeViewBrowse;
 
                 treeViewBrowse.SelectedNode = null;
 

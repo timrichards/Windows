@@ -217,9 +217,6 @@ namespace DoubleFile
 
         internal void ClearToolTip(object sender, EventArgs e)
         {
-            if (App.LocalExit)
-                return;
-
             if (form_tmapUserCtl.IsDisposed)
             {
                 return;

@@ -9,9 +9,11 @@
         {
             InitializeComponent();
             Closed += Window_Closed;
-            Activated += (o, e) => form_ucTreeMap.ClearSelection();
-            Deactivated += (o, e) => form_ucTreeMap.ClearSelection();
-            SizeChanged += (o, e) => form_ucTreeMap.ClearSelection();
+            SizeChanged += _form.WinTreeMap_SizeChanged;
+
+        //    _form.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+        //    _form.Controls.Add(_treeMap);
+        //Local.UC_TreeMap _treeMap = new Local.UC_TreeMap
         }
 
         internal new void Show()

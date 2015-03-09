@@ -720,10 +720,6 @@ namespace DoubleFile
             // 
             // form_tmapUserCtl
             // 
-            this.form_tmapUserCtl.BackColor = System.Drawing.Color.Transparent;
-            this.form_tmapUserCtl.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.form_tmapUserCtl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form_tmapUserCtl.Location = new System.Drawing.Point(0, 0);
             this.form_tmapUserCtl.Name = "form_tmapUserCtl";
             this.form_tmapUserCtl.Size = new System.Drawing.Size(549, 233);
             this.form_tmapUserCtl.TabIndex = 0;

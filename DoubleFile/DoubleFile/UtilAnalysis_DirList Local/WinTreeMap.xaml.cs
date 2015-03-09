@@ -12,6 +12,7 @@
             Activated += (o, e) => form_ucTreeMap.ClearSelection();
             Deactivated += (o, e) => form_ucTreeMap.ClearSelection();
             SizeChanged += (o, e) => form_ucTreeMap.ClearSelection();
+            LocationChanged += (o, e) => form_ucTreeMap.ClearSelection();
         }
 
         internal new void Show()

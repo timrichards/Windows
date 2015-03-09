@@ -23,10 +23,13 @@ namespace Local
                 if (_rectCenter != Rectangle.Empty)
                 {
                     ++_nAnimFrame;
-                    Invalidate(_rectCenter);
+
+                    if (0 == _nInvalidateRef)
+                        Invalidate(_rectCenter);
                 }
             }).Start();
 
+            DoubleBuffered = true;
             SetStyle(ControlStyles.DoubleBuffer |
                 ControlStyles.UserPaint |
                 ControlStyles.AllPaintingInWmPaint,
@@ -40,6 +43,16 @@ namespace Local
 
             if (null == TooltipAnchor)
                 TooltipAnchor = this;
+        }
+
+        void InvalidateWrapper(Action action)
+        {
+            ++_nInvalidateRef;
+            action();
+            --_nInvalidateRef;
+
+            if (0 == _nInvalidateRef)
+                Invalidate();
         }
 
         void form_tmapUserCtl_MouseDown(object sender, MouseEventArgs e)
@@ -68,11 +81,6 @@ namespace Local
             //treeNode.TreeView.SelectedNode = treeNode;
         }
 
-        void TreeSelect_FolderDetailUpdated(IEnumerable<string[]> lasDetail, LocalTreeNode treeNode)
-        {
-            Render(treeNode);
-        }
-
         public new void Dispose()
         {
             _timerAnim.Dispose();
@@ -93,27 +101,29 @@ namespace Local
 
         internal void ClearSelection(bool bKeepTooltipActive = false)
         {
-            if (App.LocalExit)
-                return;
-
-            var ctl = TooltipAnchor;
-
-            if ((ctl == null) || ctl.IsDisposed)
-                ctl = this;
-
-            if (ctl.IsDisposed)
-                return;
-
-            UtilProject.UIthread(() => _toolTip.Hide(ctl));
-
-            if (bKeepTooltipActive == false)
+            InvalidateWrapper(() =>
             {
-                ToolTipActive = false;
-                UtilProject.WriteLine(DateTime.Now + " b ToolTipActive = false;");
-            }
+                if (App.LocalExit)
+                    return;
 
-            _selRect = Rectangle.Empty;
-            Invalidate();
+                var ctl = TooltipAnchor;
+
+                if ((ctl == null) || ctl.IsDisposed)
+                    ctl = this;
+
+                if (ctl.IsDisposed)
+                    return;
+
+                UtilProject.UIthread(() => _toolTip.Hide(ctl));
+
+                if (bKeepTooltipActive == false)
+                {
+                    ToolTipActive = false;
+                    UtilProject.WriteLine(DateTime.Now + " b ToolTipActive = false;");
+                }
+
+                _selRect = Rectangle.Empty;
+            });
         }
 
         protected override void Dispose(bool disposing)
@@ -261,7 +271,10 @@ namespace Local
             }
 
             _prevNode = nodeRet;
-            Invalidate();
+
+            if (0 == _nInvalidateRef)   // jic
+                Invalidate();
+
             return null;
         }
 
@@ -436,59 +449,60 @@ namespace Local
             ClearSelection();
         }
 
-        internal void Render(LocalTreeNode treeNode)
+        void TreeSelect_FolderDetailUpdated(IEnumerable<string[]> lasDetail, LocalTreeNode treeNode)
         {
-            if ((null == _deepNode) ||
-                (false == _deepNode.IsChildOf(treeNode)))
+            InvalidateWrapper(() =>
             {
-                _deepNode = treeNode;
-            }
-
-            var nPxPerSide = (treeNode.SelectedImageIndex < 0) ?
-                1024 :
-                treeNode.SelectedImageIndex;
-
-            if (nPxPerSide != _rectBitmap.Size.Width)
-            {
-                var dtStart_A = DateTime.Now;
-
-                _rectBitmap = new Rectangle(0, 0, nPxPerSide, nPxPerSide);
-                BackgroundImage = new Bitmap(_rectBitmap.Size.Width, _rectBitmap.Size.Height);
-
-                var bgcontext = BufferedGraphicsManager.Current;
-
-                bgcontext.MaximumBuffer = _rectBitmap.Size;
-
-                if (_bg != null)
+                if ((null == _deepNode) ||
+                    (false == _deepNode.IsChildOf(treeNode)))
                 {
-                    _bg.Dispose();
+                    _deepNode = treeNode;
                 }
 
-                _bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), _rectBitmap);
-                TranslateSize();
-                UtilProject.WriteLine("Size bitmap " + nPxPerSide  + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000.0 + " seconds.");
-            }
+                var nPxPerSide = (treeNode.SelectedImageIndex < 0) ?
+                    1024 :
+                    treeNode.SelectedImageIndex;
 
-            var dtStart = DateTime.Now;
+                if (nPxPerSide != _rectBitmap.Size.Width)
+                {
+                    var dtStart_A = DateTime.Now;
 
-            UtilProject.WriteLine(DateTime.Now + " Render();");
-            ClearSelection();
-            _bg.Graphics.Clear(Color.DarkGray);
-            _treeNode = treeNode;
-            DrawTreemap();
-            _bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), _rectBitmap);
-            _bg.Render();
-            _selRect = Rectangle.Empty;
-            _prevNode = null;
-            Invalidate();
-            _dtHideGoofball = DateTime.MinValue;
+                    _rectBitmap = new Rectangle(0, 0, nPxPerSide, nPxPerSide);
+                    BackgroundImage = new Bitmap(_rectBitmap.Size.Width, _rectBitmap.Size.Height);
 
-            if ((DateTime.Now - dtStart) > TimeSpan.FromSeconds(1))
-            {
-                treeNode.SelectedImageIndex = Math.Max((int)
-                    (((treeNode.SelectedImageIndex < 0) ? _rectBitmap.Size.Width : treeNode.SelectedImageIndex)
-                    * .75), 256);
-            }
+                    var bgcontext = BufferedGraphicsManager.Current;
+
+                    bgcontext.MaximumBuffer = _rectBitmap.Size;
+
+                    if (_bg != null)
+                    {
+                        _bg.Dispose();
+                    }
+
+                    _bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), _rectBitmap);
+                    TranslateSize();
+                    UtilProject.WriteLine("Size bitmap " + nPxPerSide + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000.0 + " seconds.");
+                }
+
+                var dtStart = DateTime.Now;
+
+                ClearSelection();
+                _bg.Graphics.Clear(Color.DarkGray);
+                _treeNode = treeNode;
+                DrawTreemap();
+                _bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), _rectBitmap);
+                _bg.Render();
+                _selRect = Rectangle.Empty;
+                _prevNode = null;
+                _dtHideGoofball = DateTime.MinValue;
+
+                if ((DateTime.Now - dtStart) > TimeSpan.FromSeconds(1))
+                {
+                    treeNode.SelectedImageIndex = Math.Max((int)
+                        (((treeNode.SelectedImageIndex < 0) ? _rectBitmap.Size.Width : treeNode.SelectedImageIndex)
+                        * .75), 256);
+                }
+            });
         }
 
         internal string Tooltip_Click()
@@ -972,5 +986,7 @@ namespace Local
             _toolTip = new ToolTip();
         bool
             _bMouseDown = false;
+        int
+            _nInvalidateRef = 0;
     }
 }

@@ -32,6 +32,23 @@ namespace DoubleFile
             // You can comment this stuff out all you want: the flashing close box on the
             // system file dialogs isn't going away...
 
+            //Activated += (o, e) =>
+            //{
+            //    if ((this != GlobalData.static_Dialog) ||
+            //        GlobalData.static_Dialog._simulatingModal)
+            //    {
+            //        var dontFlashWindow = App.DontFlashWindow;
+
+            //        if (this != GlobalData.static_Dialog)
+            //        {
+            //            GlobalData.static_Dialog.Activate();
+
+            //            if (false == dontFlashWindow)
+            //                FlashWindowStatic.Go(GlobalData.static_Dialog);
+            //        }
+            //    }
+            //};
+
             Activated += (o, e) =>
             {
                 if (GlobalData.static_Dialog._simulatingModal &&

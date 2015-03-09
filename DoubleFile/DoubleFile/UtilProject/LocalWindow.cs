@@ -32,31 +32,16 @@ namespace DoubleFile
             // You can comment this stuff out all you want: the flashing close box on the
             // system file dialogs isn't going away...
 
-            //Activated += (o, e) =>
-            //{
-            //    if ((this != GlobalData.static_Dialog) ||
-            //        GlobalData.static_Dialog._simulatingModal)
-            //    {
-            //        var dontFlashWindow = App.DontFlashWindow;
-
-            //        if (this != GlobalData.static_Dialog)
-            //        {
-            //            GlobalData.static_Dialog.Activate();
-
-            //            if (false == dontFlashWindow)
-            //                FlashWindowStatic.Go(GlobalData.static_Dialog);
-            //        }
-            //    }
-            //};
-
             Activated += (o, e) =>
             {
+                var bCanFlashWindow = App.CanFlashWindow_ResetsIt;     // querying it resets it
+
                 if (GlobalData.static_Dialog._simulatingModal &&
                     (this != GlobalData.static_Dialog))
                 {
                     GlobalData.static_Dialog.Activate();
 
-                    if (false == App.LocalActivated)
+                    if (bCanFlashWindow)
                         FlashWindowStatic.Go(GlobalData.static_Dialog);
                 }
             };
@@ -75,6 +60,12 @@ namespace DoubleFile
             ShowActivated = true;
             Loaded += (o, e) => LocalIsClosed = false;
             Closed += (o, e) => LocalIsClosed = true;
+#if (DEBUG)
+            Activated += (o, e) => UtilProject.WriteLine(this + " Activated");
+            Deactivated += (o, e) => UtilProject.WriteLine(this + " Deactivated");
+            GotFocus += (o, e) => UtilProject.WriteLine(this + " GotFocus");
+            LostFocus += (o, e) => UtilProject.WriteLine(this + " LostFocus");
+#endif
             LocalIsClosed = true;
         }
 
@@ -100,7 +91,9 @@ namespace DoubleFile
 
         bool? ShowDialog(LocalWindow me)
         {
-            _simulatingModal = true;           // Change it here to switch to simulated dialog
+            // 3/9/15 This is false because e.g. bringing up a New Listing File dialog does not
+            // properly focus: a second click is needed to move the window or do anything in it.
+            _simulatingModal = false;           // Change it here to switch to simulated dialog
             GlobalData.static_Dialog = this;
             Owner = me;
 

@@ -10,12 +10,18 @@ namespace DoubleFile
         internal static bool LocalActivated { get; private set; }
         internal static bool LocalExit { get; private set; }
 
-        internal static bool DontFlashWindow
+        internal static bool CanFlashWindow_ResetsIt
         {
-            get { if (false == _DontFlashWindow) return false; _DontFlashWindow = false; return true; }
-            private set { _DontFlashWindow = value; }
+            get
+            {
+                if (_canFlashWindow_ResetsIt)
+                    return true;
+
+                _canFlashWindow_ResetsIt = true;
+                return false;
+            }
         }
-        static bool _DontFlashWindow = false;
+        static bool _canFlashWindow_ResetsIt = true;
 
         public App()
         {
@@ -27,7 +33,7 @@ namespace DoubleFile
         {
             if (false == LocalActivated)
             {
-                DontFlashWindow = true;
+                _canFlashWindow_ResetsIt = false;
             }
             
             LocalActivated = true;

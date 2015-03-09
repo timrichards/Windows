@@ -45,7 +45,7 @@ namespace Local
                 TooltipAnchor = this;
         }
 
-        void InvalidateWrapper(Action action)
+        void InvalidatePushRef(Action action)
         {
             ++_nInvalidateRef;
             action();
@@ -101,7 +101,7 @@ namespace Local
 
         internal void ClearSelection(bool bKeepTooltipActive = false)
         {
-            InvalidateWrapper(() =>
+            InvalidatePushRef(() =>
             {
                 if (App.LocalExit)
                     return;
@@ -451,7 +451,7 @@ namespace Local
 
         void TreeSelect_FolderDetailUpdated(IEnumerable<string[]> lasDetail, LocalTreeNode treeNode)
         {
-            InvalidateWrapper(() =>
+            InvalidatePushRef(() =>
             {
                 if ((null == _deepNode) ||
                     (false == _deepNode.IsChildOf(treeNode)))

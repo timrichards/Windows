@@ -38,12 +38,6 @@ namespace DoubleFile
                 TooltipAnchor = this;
         }
 
-        public new void Dispose()
-        {
-            _timerAnim.Dispose();
-            base.Dispose();
-        }
-
         internal void Clear()
         {
             _treeNode = null;
@@ -89,6 +83,7 @@ namespace DoubleFile
             }
 
             _toolTip.Dispose();
+            _timerAnim.Dispose();
             ToolTipActive = false; UtilProject.WriteLine(DateTime.Now + " c ToolTipActive = false;");
             base.Dispose(disposing);
         }

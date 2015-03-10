@@ -6,7 +6,7 @@
         xmlns:localLocal="clr-namespace:Local"
         Title="Double File" Width="300" Height="250">
     <Grid>
-        <WindowsFormsHost HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <WindowsFormsHost Name="_host" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <localLocal:UC_TreeMap x:Name="form_ucTreeMap" />
         </WindowsFormsHost>
     </Grid>

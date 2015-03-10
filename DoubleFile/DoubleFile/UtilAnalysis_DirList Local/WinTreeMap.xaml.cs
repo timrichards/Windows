@@ -34,6 +34,8 @@
 
         private void Window_Closed(object sender, System.EventArgs e)
         {
+            _host.Dispose();
+            form_ucTreeMap.Dispose();
             _nWantsLeft = Left;
             _nWantsTop = Top;
         }

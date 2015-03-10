@@ -1308,7 +1308,7 @@ namespace DoubleFile
             //this.Activated += new System.EventHandler(this.ClearToolTip);
             //this.Deactivate += new System.EventHandler(this.ClearToolTip);
             //this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormAnalysis_DirList_FormClosing);
-            this.Disposed += new EventHandler(this.FormAnalysis_DirList_FormDisposed);
+            //this.Disposed += new EventHandler(this.FormDisposed);
             this.Load += new System.EventHandler(this.FormAnalysis_DirList_Load);
             this.Enter += new System.EventHandler(this.ClearToolTip);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormAnalysis_DirList_KeyDown);

@@ -5,7 +5,7 @@
         xmlns:local="clr-namespace:DoubleFile"
         Title="Search Directory Listings" Width="1024" Height="768">
     <Grid>
-        <WindowsFormsHost>
+        <WindowsFormsHost Name="_host">
             <local:FormAnalysis_DirList x:Name="_form"/>
         </WindowsFormsHost>
     </Grid>

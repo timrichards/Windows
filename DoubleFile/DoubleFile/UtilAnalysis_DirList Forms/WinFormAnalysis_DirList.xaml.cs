@@ -11,7 +11,8 @@
             _form.Init(mainWindow, LVprojectVM);
             Activated += _form.ClearToolTip;
             Deactivated += _form.ClearToolTip;
-            Closing += _form.FormAnalysis_DirList_FormClosing;
+            Closing += _form.HostClosing;
+            Closed += (o,e) => _host.Dispose();
         }
 
         internal static void RestartTreeTimer(WinFormAnalysis_DirList form1, LV_ProjectVM lvProjectVM)

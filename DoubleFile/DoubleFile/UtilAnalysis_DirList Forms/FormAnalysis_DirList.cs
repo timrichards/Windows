@@ -19,9 +19,9 @@ namespace DoubleFile
         bool m_bFindBoxMouseEnter = false;
 
         readonly GlobalData gd = null;
-        GlobalData_Tree gd_Tree = null;
-        GlobalData_Search_Path gd_Search_Path = null;
-        GlobalData_Search_1_2 gd_Search_1_2 = null;
+        readonly GlobalData_Tree gd_Tree = null;
+        readonly GlobalData_Search_Path gd_Search_Path = null;
+        readonly GlobalData_Search_1_2 gd_Search_1_2 = null;
         MainWindow m_ownerWindow = null;
         LV_ProjectVM LVprojectVM { get; set; }
 
@@ -102,6 +102,13 @@ namespace DoubleFile
                 form1.LVprojectVM = new LV_ProjectVM(lvProjectVM: lvProjectVM);
                 form1.gd.RestartTreeTimer();
             }
+        }
+
+        internal void HostClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Collate.ClearMem();
+            GlobalData.Reset();
+            m_ownerWindow.Activate();
         }
 
         // Memory allocations occur just below all partial class FormAnalysis_DirList : Form declarations, then ClearMem_...() for each.
@@ -1351,18 +1358,6 @@ namespace DoubleFile
         void form_treeViewBrowse_MouseClick(object sender, MouseEventArgs e)
         {
             gd.m_bPutPathInFindEditBox = true;
-        }
-
-        internal void FormAnalysis_DirList_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            Collate.ClearMem();
-            GlobalData.Reset();
-            m_ownerWindow.Activate();
-        }
-
-        private void FormAnalysis_DirList_FormDisposed(object sender, EventArgs e)
-        {
-            form_tmapUserCtl.Dispose();
         }
 
         void FormAnalysis_DirList_KeyDown(object sender, KeyEventArgs e)

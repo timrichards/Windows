@@ -81,13 +81,6 @@ namespace Local
             //treeNode.TreeView.SelectedNode = treeNode;
         }
 
-        public new void Dispose()
-        {
-            _timerAnim.Dispose();
-            Local.TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
-            base.Dispose();
-        }
-
         internal void Clear()
         {
             _treeNode = null;
@@ -135,7 +128,9 @@ namespace Local
             }
 
             _toolTip.Dispose();
+            _timerAnim.Dispose();
             ToolTipActive = false; UtilProject.WriteLine(DateTime.Now + " c ToolTipActive = false;");
+            Local.TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
             base.Dispose(disposing);
         }
 
@@ -202,9 +197,10 @@ namespace Local
                     return;
                 }
 
-                var nodeUplevel = ((_prevNode != null) ?
-                    _prevNode.Parent :
-                    null);
+                var nodeUplevel = 
+                    (_prevNode != null)
+                    ? _prevNode.Parent
+                    : null;
 
                 while (nodeUplevel != null)
                 {

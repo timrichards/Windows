@@ -490,7 +490,6 @@ namespace Local
 
             ClearSelection();
             _treeNode = treeNode;
-            _lsRenderActions = new ConcurrentBag<RenderAction>();
             DrawTreemap();              // populates _lsRenderActions
 
             UtilProject.UIthread(() =>
@@ -605,365 +604,396 @@ namespace Local
             }
 
             if (nodeDatum.TotalLength > 0)
-                RecurseDrawGraph(_treeNode, rc, bStart: true);
+                _lsRenderActions = new Recurse().Render(_treeNode, rc, _deepNode, out _deepNodeDrawn);
             else
                 _lsRenderActions.Add(new FillRectangle() { Brush = Brushes.Wheat, rc = rc });
         }
 
-        void RecurseDrawGraph(
-	        LocalTreeNode item, 
-	        Rectangle rc,
-            bool bStart = false)
+        class Recurse
         {
-            MBoxStatic.Assert(1302.3303, rc.Width >= 0);
-            MBoxStatic.Assert(1302.3304, rc.Height >= 0);
-
-	        if (rc.Width <= 0 || rc.Height <= 0)
-	        {
-		        return;
-	        }
-
-            if ((null != _deepNode) &&
-                ((item == _deepNode) || (_deepNode.IsChildOf(item))))
+            internal ConcurrentBag<RenderAction> Render(
+                LocalTreeNode item,
+                Rectangle rc,
+                LocalTreeNode deepNode,
+                out LocalTreeNode deepNodeDrawn_out)
             {
-                _deepNodeDrawn = item;
+                _lsRenderActions = new ConcurrentBag<RenderAction>();
+                _deepNode = deepNode;
+                RecurseDrawGraph(item, rc, true);
+                deepNodeDrawn_out = _deepNodeDrawn;
+                return _lsRenderActions;
             }
 
-            var nodeDatum = item.NodeDatum;
-
-            if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
+            void RecurseDrawGraph(
+                LocalTreeNode item,
+                Rectangle rc,
+                bool bStart = false)
             {
-                MBoxStatic.Assert(99962, false);
-                return;
-            }
+                MBoxStatic.Assert(1302.3303, rc.Width >= 0);
+                MBoxStatic.Assert(1302.3304, rc.Height >= 0);
 
-            nodeDatum.TreeMapRect = rc;
-
-            if (bStart &&
-                (null == nodeDatum.TreeMapFiles) &&
-                (null != item.TreeView))
-            {
-                nodeDatum.TreeMapFiles = GetFileList(item);
-            }
-
-            if (((false == item.Nodes.IsEmpty()) || (bStart && (null != nodeDatum.TreeMapFiles))) &&
-                KDirStat_DrawChildren(item, bStart))
-            {
-                // example scenario: empty folder when there are immediate files and bStart is not true
-                return;
-            }
-
-            var path = new GraphicsPath();
-            var r = rc;
-
-            r.Inflate(r.Width / 2, r.Height / 2);
-            path.AddEllipse(r);
-
-            var brush = new PathGradientBrush(path)
-            {
-                CenterColor = Color.Wheat,
-                SurroundColors = new[] { ControlPaint.Dark((item.ForeColor == UtilColor.Empty) ?
-                    Color.SandyBrown :
-                    Color.FromArgb(item.ForeColor)
-                )}
-            };
-
-            _lsRenderActions.Add(new FillRectangle() { Brush = brush, rc = rc });
-        }
-
-         //My first approach was to make this member pure virtual and have three
-         //classes derived from CTreemap. The disadvantage is then, that we cannot
-         //simply have a member variable of type CTreemap but have to deal with
-         //pointers, factory methods and explicit destruction. It's not worth.
-
-         //I learned this squarification style from the KDirStat executable.
-         //It's the most complex one here but also the clearest, imho.
-        
-        bool KDirStat_DrawChildren(LocalTreeNode parent_in, bool bStart = false)
-        {
-            List<LocalTreeNode> listChildren = null;
-            LocalTreeNode parent = null;
-
-            var bVolumeNode = false;
-
-            UtilAnalysis_DirList.Closure(() =>
-            {
-                var rootNodeDatum = parent_in.NodeDatum as RootNodeDatum;
-
-                if ((false == bStart) ||
-                    (null == rootNodeDatum))
+                if (rc.Width <= 0 || rc.Height <= 0)
                 {
                     return;
                 }
 
-                if (rootNodeDatum.VolumeView == false)
+                if ((null != _deepNode) &&
+                    ((item == _deepNode) || (_deepNode.IsChildOf(item))))
                 {
+                    _deepNodeDrawn = item;
+                }
+
+                var nodeDatum = item.NodeDatum;
+
+                if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
+                {
+                    MBoxStatic.Assert(99962, false);
                     return;
                 }
 
-                var nodeDatumFree = new NodeDatum();
-                var nodeFree = new LocalTreeMapNode(parent_in.Text + " (free space)");
+                nodeDatum.TreeMapRect = rc;
 
-                nodeDatumFree.TotalLength = rootNodeDatum.VolumeFree;
-                nodeFree.NodeDatum = nodeDatumFree;
-                nodeFree.ForeColor = UtilColor.MediumSpringGreen;
-
-                var nodeDatumUnread = new NodeDatum();
-                var nodeUnread = new LocalTreeMapNode(parent_in.Text + " (unread data)");
-                var nVolumeLength = rootNodeDatum.VolumeLength;
-                var nUnreadLength = (long)nVolumeLength -
-                    (long)rootNodeDatum.VolumeFree -
-                    (long)rootNodeDatum.TotalLength;
-
-                if (nUnreadLength > 0)
+                if (bStart &&
+                    (null == nodeDatum.TreeMapFiles) &&
+                    (null != item.TreeView))
                 {
-                    nodeDatumUnread.TotalLength = (ulong)nUnreadLength;
+                    nodeDatum.TreeMapFiles = GetFileList(item);
+                }
+
+                if (((false == item.Nodes.IsEmpty()) || (bStart && (null != nodeDatum.TreeMapFiles))) &&
+                    KDirStat_DrawChildren(item, bStart))
+                {
+                    // example scenario: empty folder when there are immediate files and bStart is not true
+                    return;
+                }
+
+                var path = new GraphicsPath();
+                var r = rc;
+
+                r.Inflate(r.Width / 2, r.Height / 2);
+                path.AddEllipse(r);
+
+                var brush = new PathGradientBrush(path)
+                {
+                    CenterColor = Color.Wheat,
+                    SurroundColors = new[] { ControlPaint.Dark((item.ForeColor == UtilColor.Empty)
+                        ? Color.SandyBrown
+                        : Color.FromArgb(item.ForeColor)
+                    )}
+                };
+
+                _lsRenderActions.Add(new FillRectangle() { Brush = brush, rc = rc });
+            }
+
+            //My first approach was to make this member pure virtual and have three
+            //classes derived from CTreemap. The disadvantage is then, that we cannot
+            //simply have a member variable of type CTreemap but have to deal with
+            //pointers, factory methods and explicit destruction. It's not worth.
+
+            //I learned this squarification style from the KDirStat executable.
+            //It's the most complex one here but also the clearest, imho.
+
+            bool KDirStat_DrawChildren(LocalTreeNode parent_in, bool bStart = false)
+            {
+                List<LocalTreeNode> listChildren = null;
+                LocalTreeNode parent = null;
+
+                var bVolumeNode = false;
+
+                UtilAnalysis_DirList.Closure(() =>
+                {
+                    var rootNodeDatum = parent_in.NodeDatum as RootNodeDatum;
+
+                    if ((false == bStart) ||
+                        (null == rootNodeDatum))
+                    {
+                        return;
+                    }
+
+                    if (rootNodeDatum.VolumeView == false)
+                    {
+                        return;
+                    }
+
+                    var nodeDatumFree = new NodeDatum();
+                    var nodeFree = new LocalTreeMapNode(parent_in.Text + " (free space)");
+
+                    nodeDatumFree.TotalLength = rootNodeDatum.VolumeFree;
+                    nodeFree.NodeDatum = nodeDatumFree;
+                    nodeFree.ForeColor = UtilColor.MediumSpringGreen;
+
+                    var nodeDatumUnread = new NodeDatum();
+                    var nodeUnread = new LocalTreeMapNode(parent_in.Text + " (unread data)");
+                    var nVolumeLength = rootNodeDatum.VolumeLength;
+                    var nUnreadLength = (long)nVolumeLength -
+                        (long)rootNodeDatum.VolumeFree -
+                        (long)rootNodeDatum.TotalLength;
+
+                    if (nUnreadLength > 0)
+                    {
+                        nodeDatumUnread.TotalLength = (ulong)nUnreadLength;
+                    }
+                    else
+                    {
+                        // Faked length to make up for compression and hard links
+                        nVolumeLength = rootNodeDatum.VolumeFree +
+                            rootNodeDatum.TotalLength;
+                        nodeDatumUnread.TotalLength = 0;
+                    }
+
+                    nodeUnread.NodeDatum = nodeDatumUnread;
+                    nodeUnread.ForeColor = UtilColor.MediumVioletRed;
+
+                    // parent added as child, with two other nodes:
+                    // free space (color: spring green); and...
+                    listChildren = new List<LocalTreeNode> { parent_in, nodeFree };
+
+                    if (nUnreadLength > 0)
+                    {
+                        // ...unread guess, affected by compression and hard links (violet)
+                        listChildren.Add(nodeUnread);
+                    }
+
+                    parent = new LocalTreeMapNode(parent_in.Text + " (volume)");
+
+                    var nodeDatumVolume = new NodeDatum
+                    {
+                        TotalLength = nVolumeLength,
+                        TreeMapRect = rootNodeDatum.TreeMapRect
+                    };
+
+                    parent.NodeDatum = nodeDatumVolume;
+                    bVolumeNode = true;
+                });
+
+                if (bVolumeNode == false)
+                {
+                    parent = parent_in;
+                    listChildren =
+                        parent
+                        .Nodes
+                        .Cast<LocalTreeNode>()
+                        .Where(t => 0 < t.NodeDatum.TotalLength)
+                        .ToList();
+                }
+
+                var nodeDatum = parent.NodeDatum;
+                var rc = nodeDatum.TreeMapRect;
+                var rows = new List<RowStruct>();
+
+                if (bStart &&
+                    (null != nodeDatum.TreeMapFiles))
+                {
+                    listChildren.Add(nodeDatum.TreeMapFiles);
+                }
+                else if (nodeDatum.Length > 0)
+                {
+                    listChildren.Add(new LocalTreeMapNode(parent.Text)
+                    {
+                        NodeDatum = new NodeDatum { TotalLength = nodeDatum.Length },
+                        ForeColor = UtilColor.OliveDrab
+                    });
+                }
+
+                listChildren.Sort((y, x) =>
+                    x.NodeDatum.TotalLength.CompareTo(
+                    y.NodeDatum.TotalLength));
+
+                if (listChildren.IsEmpty())
+                {
+                    // any files are zero in length
+                    return false;
+                }
+
+                var childWidth = // Widths of the children (fraction of row width).
+                    new Double[listChildren.Count];
+
+                var horizontalRows = (rc.Width >= rc.Height);
+                var width_A = 1.0;
+                if (horizontalRows)
+                {
+                    if (rc.Height > 0)
+                        width_A = (double)rc.Width / rc.Height;
                 }
                 else
                 {
-                    // Faked length to make up for compression and hard links
-                    nVolumeLength = rootNodeDatum.VolumeFree +
-                        rootNodeDatum.TotalLength;
-                    nodeDatumUnread.TotalLength = 0;
+                    if (rc.Width > 0)
+                        width_A = (double)rc.Height / rc.Width;
                 }
 
-                nodeUnread.NodeDatum = nodeDatumUnread;
-                nodeUnread.ForeColor = UtilColor.MediumVioletRed;
-
-                // parent added as child, with two other nodes:
-                // free space (color: spring green); and...
-                listChildren = new List<LocalTreeNode> { parent_in, nodeFree };
-
-                if (nUnreadLength > 0)
                 {
-                    // ...unread guess, affected by compression and hard links (violet)
-                    listChildren.Add(nodeUnread);
-                }
+                    var childrenUsed = 0;
 
-                parent = new LocalTreeMapNode(parent_in.Text + " (volume)");
-
-                var nodeDatumVolume = new NodeDatum
-                {
-                    TotalLength = nVolumeLength,
-                    TreeMapRect = rootNodeDatum.TreeMapRect
-                };
-
-                parent.NodeDatum = nodeDatumVolume;
-                bVolumeNode = true;
-            });
-
-            if (bVolumeNode == false)
-            {
-                parent = parent_in;
-                listChildren =
-                    parent
-                    .Nodes
-                    .Cast<LocalTreeNode>()
-                    .Where(t => 0 < t.NodeDatum.TotalLength)
-                    .ToList();
-            }
-
-            var nodeDatum = parent.NodeDatum;
-            var rc = nodeDatum.TreeMapRect;
-            //var rows = new List<double>();	// Our rectangle is divided into rows, each of which gets this height (fraction of total height).
-            //var childrenPerRow = new List<int>();// childrenPerRow[i] = # of children in rows[i]
-            var rowsA = new List<Tuple<double, int>>();
-
-            if (bStart &&
-                (null != nodeDatum.TreeMapFiles))
-            {
-                listChildren.Add(nodeDatum.TreeMapFiles);
-            }
-            else if (nodeDatum.Length > 0)
-            {
-                listChildren.Add(new LocalTreeMapNode(parent.Text)
-                {
-                    NodeDatum = new NodeDatum { TotalLength = nodeDatum.Length },
-                    ForeColor = UtilColor.OliveDrab
-                });
-            }
-
-            listChildren.Sort((y, x) => 
-                x.NodeDatum.TotalLength.CompareTo(
-                y.NodeDatum.TotalLength));
-
-            if (listChildren.IsEmpty())
-            {
-                // any files are zero in length
-                return false;
-            }
-
-            var childWidth = // Widths of the children (fraction of row width).
-                new Double[listChildren.Count];
-
-            var horizontalRows = (rc.Width >= rc.Height);
-            var width_A = 1.0;
-            if (horizontalRows)
-            {
-                if (rc.Height > 0)
-                    width_A = (double)rc.Width / rc.Height;
-            }
-            else
-            {
-                if (rc.Width > 0)
-                    width_A = (double)rc.Height / rc.Width;
-            }
-
-            var nextChild = 0;
-            while (nextChild < listChildren.Count)
-            {
-                var childrenUsed = 0;
-
-                rowsA.Add(Tuple.Create(
-                    KDirStat_CalcutateNextRow(parent, nextChild, width_A, ref childrenUsed, childWidth, listChildren),
-                    childrenUsed));
-
-                nextChild += childrenUsed;
-            }
-
-	        var width= horizontalRows ? rc.Width : rc.Height;
-	        var height= horizontalRows ? rc.Height : rc.Width;
-
-	        var c = 0;
-	        double top= horizontalRows ? rc.Top : rc.Left;
-//	        for (var row=0; row < rows.Count; row++)
-            rowsA.ForEach(row =>
-            {
-                var fBottom = top + row.Item1 * height;
-                var bottom = (int)fBottom;
-                if (object.ReferenceEquals(row, rowsA[rowsA.Count - 1]))
-                    bottom = horizontalRows ? rc.Bottom : rc.Right;
-                double left = horizontalRows ? rc.Left : rc.Top;
-
-                for (var i = 0; i < row.Item2; i++, c++)
-                {
-                    var child = listChildren[c];
-                    MBoxStatic.Assert(1302.3305, childWidth[c] >= 0);
-                    var fRight = left + childWidth[c] * width;
-                    var right = (int)fRight;
-
-                    var lastChild = (
-                        (i == row.Item2 - 1) ||
-                        childWidth[c + 1].Equals(0));
-
-                    if (lastChild)
-                        right = horizontalRows ? rc.Right : rc.Bottom;
-
-                    var rcChild =
-                        (horizontalRows)
-                        ? new Rectangle((int)left, (int)top, right - (int)left, bottom - (int)top)
-                        : new Rectangle((int)top, (int)left, bottom - (int)top, right - (int)left);
-
-                    RecurseDrawGraph(child, rcChild);
-
-                    if (bStart)
-                        _lsRenderActions.Add(new DrawRectangle() { rc = rc });
-
-                    if (lastChild)
+                    for (var nextChild = 0; nextChild < listChildren.Count; nextChild += childrenUsed)
                     {
-                        i++;
-                        c++;
-
-                        if (i < row.Item2)
-                            listChildren[c].NodeDatum.TreeMapRect = new Rectangle(-1, -1, -1, -1);
-
-                        c += row.Item2 - i;
-                        break;
+                        rows.Add(new RowStruct()
+                        {
+                            RowHeight = KDirStat_CalculateNextRow(parent, nextChild, width_A, out childrenUsed, childWidth, listChildren),
+                            ChildrenPerRow = childrenUsed
+                        });
                     }
-
-                    left = fRight;
                 }
-                // This asserts due to rounding error: Utilities.Assert(1302.3306, left == (horizontalRows ? rc.Right : rc.Bottom));
-                top = fBottom;
-            });
-            // This asserts due to rounding error: Utilities.Assert(1302.3307, top == (horizontalRows ? rc.Bottom : rc.Right));
-            return true;
-        }
 
-        static double KDirStat_CalcutateNextRow(LocalTreeNode parent, int nextChild, double width, ref int childrenUsed, double[] arrChildWidth,
-            List<LocalTreeNode> listChildren)
-        {
-            const double kdMinProportion = 0.4;
-            MBoxStatic.Assert(1302.3308, kdMinProportion < 1);
+                var width = horizontalRows ? rc.Width : rc.Height;
+                var height = horizontalRows ? rc.Height : rc.Width;
 
-            MBoxStatic.Assert(1302.3309, nextChild < listChildren.Count);
-            MBoxStatic.Assert(1302.33101, width >= 1.0);
+                var c = 0;
+                double top = horizontalRows ? rc.Top : rc.Left;
 
-            var nodeDatum = parent.NodeDatum;
+                rows.ForEach(row =>
+                {
+                    var fBottom = top + row.RowHeight * height;
+                    var bottom = (int)fBottom;
+                    if (object.ReferenceEquals(row, rows[rows.Count - 1]))
+                        bottom = horizontalRows ? rc.Bottom : rc.Right;
+                    double left = horizontalRows ? rc.Left : rc.Top;
 
-            if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
-            {
-                MBoxStatic.Assert(99961, false);
-                return 0;
+                    for (var i = 0; i < row.ChildrenPerRow; i++, c++)
+                    {
+                        var child = listChildren[c];
+                        MBoxStatic.Assert(1302.3305, childWidth[c] >= 0);
+                        var fRight = left + childWidth[c] * width;
+                        var right = (int)fRight;
+
+                        var lastChild = (
+                            (i == row.ChildrenPerRow - 1) ||
+                            childWidth[c + 1].Equals(0));
+
+                        if (lastChild)
+                            right = horizontalRows ? rc.Right : rc.Bottom;
+
+                        var rcChild =
+                            (horizontalRows)
+                            ? new Rectangle((int)left, (int)top, right - (int)left, bottom - (int)top)
+                            : new Rectangle((int)top, (int)left, bottom - (int)top, right - (int)left);
+
+                        RecurseDrawGraph(child, rcChild);
+
+                        if (bStart)
+                            _lsRenderActions.Add(new DrawRectangle() { rc = rc });
+
+                        if (lastChild)
+                        {
+                            i++;
+                            c++;
+
+                            if (i < row.ChildrenPerRow)
+                                listChildren[c].NodeDatum.TreeMapRect = new Rectangle(-1, -1, -1, -1);
+
+                            c += row.ChildrenPerRow - i;
+                            break;
+                        }
+
+                        left = fRight;
+                    }
+                    // This asserts due to rounding error: Utilities.Assert(1302.3306, left == (horizontalRows ? rc.Right : rc.Bottom));
+                    top = fBottom;
+                });
+                // This asserts due to rounding error: Utilities.Assert(1302.3307, top == (horizontalRows ? rc.Bottom : rc.Right));
+                return true;
             }
 
-            var mySize = (double)nodeDatum.TotalLength;
-	        ulong sizeUsed= 0;
-	        double rowHeight= 0;
-            var i = 0;
+            static double KDirStat_CalculateNextRow(LocalTreeNode parent, int nextChild, double width,
+                out int childrenUsed, double[] arrChildWidth,
+                List<LocalTreeNode> listChildren)
+            {
+                childrenUsed = 0;
+                const double kdMinProportion = 0.4;
+                MBoxStatic.Assert(1302.3308, kdMinProportion < 1);
 
-            for (i = nextChild; i < listChildren.Count; i++)
-	        {
-                var childSize = listChildren[i].NodeDatum.TotalLength;
-		        sizeUsed+= childSize;
-		        var virtualRowHeight= sizeUsed / mySize;
-                MBoxStatic.Assert(1302.3311, virtualRowHeight > 0);
-                MBoxStatic.Assert(1302.3312, virtualRowHeight <= 1);
-		
-		        // Rectangle(mySize)    = width * 1.0
-		        // Rectangle(childSize) = childWidth * virtualRowHeight
-		        // Rectangle(childSize) = childSize / mySize * width
+                MBoxStatic.Assert(1302.3309, nextChild < listChildren.Count);
+                MBoxStatic.Assert(1302.33101, width >= 1.0);
 
-		        double childWidth= childSize / mySize * width / virtualRowHeight;
+                var nodeDatum = parent.NodeDatum;
 
-		        if (childWidth / virtualRowHeight < kdMinProportion)
-		        {
-                    MBoxStatic.Assert(1302.3313, i > nextChild); // because width >= 1 and _minProportion < 1.
-			        // For the first child we have:
-			        // childWidth / rowHeight
-			        // = childSize / mySize * width / rowHeight / rowHeight
-			        // = childSize * width / sizeUsed / sizeUsed * mySize
-			        // > childSize * mySize / sizeUsed / sizeUsed
-			        // > childSize * childSize / childSize / childSize 
-			        // = 1 > _minProportion.
-			        break;
-		        }
-		        rowHeight= virtualRowHeight;
-	        }
-
-            MBoxStatic.Assert(1302.3314, i > nextChild);
-
-	        // Now i-1 is the last child used
-	        // and rowHeight is the height of the row.
-
-	        childrenUsed= i - nextChild;
-
-	        // Now as we know the rowHeight, we compute the widths of our children.
-	        for (i=0; i < childrenUsed; i++)
-	        {
-		        // Rectangle(1.0 * 1.0) = mySize
-		        var rowSize= mySize * rowHeight;
-                var nodeDatum_A = listChildren[nextChild + i].NodeDatum;
-
-                if (null == nodeDatum_A)      // this check is new 2/13/15 and has never been hit
+                if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
                 {
-                    MBoxStatic.Assert(99960, false);
+                    MBoxStatic.Assert(99961, false);
                     return 0;
                 }
 
-                var childSize = (double)nodeDatum_A.TotalLength;
-		        var cw= childSize / rowSize;
-                MBoxStatic.Assert(1302.3315, cw >= 0);
-		        arrChildWidth[nextChild + i]= cw;
-	        }
+                var mySize = (double)nodeDatum.TotalLength;
+                ulong sizeUsed = 0;
+                double rowHeight = 0;
+                var i = 0;
 
-	        return rowHeight;
+                for (i = nextChild; i < listChildren.Count; i++)
+                {
+                    var childSize = listChildren[i].NodeDatum.TotalLength;
+                    sizeUsed += childSize;
+                    var virtualRowHeight = sizeUsed / mySize;
+                    MBoxStatic.Assert(1302.3311, virtualRowHeight > 0);
+                    MBoxStatic.Assert(1302.3312, virtualRowHeight <= 1);
+
+                    // Rectangle(mySize)    = width * 1.0
+                    // Rectangle(childSize) = childWidth * virtualRowHeight
+                    // Rectangle(childSize) = childSize / mySize * width
+
+                    double childWidth = childSize / mySize * width / virtualRowHeight;
+
+                    if (childWidth / virtualRowHeight < kdMinProportion)
+                    {
+                        MBoxStatic.Assert(1302.3313, i > nextChild); // because width >= 1 and _minProportion < 1.
+                        // For the first child we have:
+                        // childWidth / rowHeight
+                        // = childSize / mySize * width / rowHeight / rowHeight
+                        // = childSize * width / sizeUsed / sizeUsed * mySize
+                        // > childSize * mySize / sizeUsed / sizeUsed
+                        // > childSize * childSize / childSize / childSize 
+                        // = 1 > _minProportion.
+                        break;
+                    }
+                    rowHeight = virtualRowHeight;
+                }
+
+                MBoxStatic.Assert(1302.3314, i > nextChild);
+
+                // Now i-1 is the last child used
+                // and rowHeight is the height of the row.
+
+                childrenUsed = i - nextChild;
+
+                // Now as we know the rowHeight, we compute the widths of our children.
+                for (i = 0; i < childrenUsed; i++)
+                {
+                    // Rectangle(1.0 * 1.0) = mySize
+                    var rowSize = mySize * rowHeight;
+                    var nodeDatum_A = listChildren[nextChild + i].NodeDatum;
+
+                    if (null == nodeDatum_A)      // this check is new 2/13/15 and has never been hit
+                    {
+                        MBoxStatic.Assert(99960, false);
+                        return 0;
+                    }
+
+                    var childSize = (double)nodeDatum_A.TotalLength;
+                    var cw = childSize / rowSize;
+                    MBoxStatic.Assert(1302.3315, cw >= 0);
+                    arrChildWidth[nextChild + i] = cw;
+                }
+
+                return rowHeight;
+            }
+
+            ConcurrentBag<RenderAction>
+                _lsRenderActions = null;
+            LocalTreeNode
+                _deepNode = null;
+            LocalTreeNode
+                _deepNodeDrawn = null;
         }
 
+        struct RowStruct { internal double RowHeight; internal int ChildrenPerRow; }
         abstract class RenderAction { internal Rectangle rc; internal abstract void Stroke(Graphics g); }
         class FillRectangle : RenderAction { internal Brush Brush; internal override void Stroke(Graphics g) { g.FillRectangle(Brush, rc); } }
         class DrawRectangle : RenderAction { internal static Pen Pen = new Pen(Color.Black, 2); internal override void Stroke(Graphics g) { g.DrawRectangle(Pen, rc); } }
-        ConcurrentBag<RenderAction> _lsRenderActions = null;
+
+        ConcurrentBag<RenderAction>
+            _lsRenderActions = null;
+        LocalTreeNode
+            _deepNode = null;
+        LocalTreeNode
+            _deepNodeDrawn = null;
 
         Rectangle
             _rectBitmap = Rectangle.Empty;
@@ -979,10 +1009,6 @@ namespace Local
             _treeNode = null;
         LocalTreeNode
             _prevNode = null;
-        LocalTreeNode
-            _deepNode = null;
-        LocalTreeNode
-            _deepNodeDrawn = null;
         readonly SDL_Timer
             _timerAnim = null;
         int

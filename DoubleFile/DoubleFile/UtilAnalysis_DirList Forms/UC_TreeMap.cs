@@ -124,7 +124,7 @@ namespace DoubleFile
                 {
                     var nodeDatum = (_treeNode.Tag as NodeDatum);
 
-                    if (null == nodeDatum)      // this check is new 2/17/15 and has never been hit
+                    if (null == nodeDatum)      // added 2/17/15 as safety
                     {
                         MBoxStatic.Assert(99979, false);
                         return;

@@ -173,7 +173,7 @@ namespace Local
                 {
                     var nodeDatum = _treeNode.NodeDatum;
 
-                    if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
+                    if (null == nodeDatum)      // added 2/13/15 as safety
                     {
                         MBoxStatic.Assert(99967, false);
                         return;
@@ -228,7 +228,7 @@ namespace Local
             {
                 var nodeDatum = nodeRet.NodeDatum;
 
-                if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
+                if (null == nodeDatum)      // added 2/13/15 as safety
                 {
                     MBoxStatic.Assert(99923, false);
                     return null;
@@ -290,7 +290,7 @@ namespace Local
             {
                 var nodeDatum = treeNode.NodeDatum;
 
-                if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
+                if (null == nodeDatum)      // added 2/13/15 as safety
                 {
                     MBoxStatic.Assert(99966, false);
                     return null;
@@ -401,7 +401,7 @@ namespace Local
 
             var nodeDatum = _deepNodeDrawn.NodeDatum;
 
-            if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
+            if (null == nodeDatum)      // added 2/13/15 as safety
             {
                 MBoxStatic.Assert(99965, false);
                 return;
@@ -496,7 +496,17 @@ namespace Local
             {
                 _bg.Graphics.Clear(Color.DarkGray);
 
+                List<RenderAction> lsFrames = new List<RenderAction>();
+
                 foreach (var stroke in _lsRenderActions)
+                {
+                    if (stroke is DrawRectangle)
+                        lsFrames.Add(stroke);
+                    else
+                        stroke.Stroke(_bg.Graphics);
+                }
+
+                foreach (var stroke in lsFrames)
                     stroke.Stroke(_bg.Graphics);
 
                 _lsRenderActions = null;
@@ -525,7 +535,7 @@ namespace Local
 
             var treeNode_A = (_toolTip.Tag as LocalTreeNode);
 
-            if (null == treeNode_A)      // this check is new 2/13/15 and has never been hit
+            if (null == treeNode_A)      // added 2/13/15 as safety
             {
                 MBoxStatic.Assert(99964, false);
                 return null;
@@ -597,7 +607,7 @@ namespace Local
 
             var nodeDatum = _treeNode.NodeDatum;
 
-            if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
+            if (null == nodeDatum)      // added 2/13/15 as safety
             {
                 MBoxStatic.Assert(99963, false);
                 return;
@@ -606,7 +616,7 @@ namespace Local
             if (nodeDatum.TotalLength > 0)
                 _lsRenderActions = new Recurse().Render(_treeNode, rc, _deepNode, out _deepNodeDrawn);
             else
-                _lsRenderActions = new ConcurrentBag<RenderAction>() { new FillRectangle() { Brush = Brushes.Wheat, rc = rc } };
+                _lsRenderActions = new ConcurrentBag<RenderAction> { new FillRectangle() { Brush = Brushes.Wheat, rc = rc } };
         }
 
         class Recurse
@@ -620,10 +630,16 @@ namespace Local
                 _lsRenderActions = new ConcurrentBag<RenderAction>();
                 _deepNode = deepNode;
                 RecurseDrawGraph(item, rc, true);
+
+                while (_nWorkerCount > 0)
+                    Thread.Sleep(20);
+
                 deepNodeDrawn_out = _deepNodeDrawn;
                 return _lsRenderActions;
             }
 
+            int _nWorkerCount = 0;
+            
             void RecurseDrawGraph(
                 LocalTreeNode item,
                 Rectangle rc,
@@ -645,7 +661,7 @@ namespace Local
 
                 var nodeDatum = item.NodeDatum;
 
-                if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
+                if (null == nodeDatum)      // added 2/13/15 as safety
                 {
                     MBoxStatic.Assert(99962, false);
                     return;
@@ -662,8 +678,8 @@ namespace Local
 
                 if (
                     (false == item.Nodes.IsEmpty()) ||
-                    (bStart && (null != nodeDatum.TreeMapFiles))
-                ){
+                    (bStart && (null != nodeDatum.TreeMapFiles)))
+                {
                     List<LocalTreeNode> listChildren = null;
                     LocalTreeNode parent = null;
                     var bVolumeNode = false;
@@ -678,7 +694,7 @@ namespace Local
                             return;     // from lambda
                         }
 
-                        if (rootNodeDatum.VolumeView == false)
+                        if (false == rootNodeDatum.VolumeView)
                         {
                             return;     // from lambda
                         }
@@ -734,13 +750,26 @@ namespace Local
                         bVolumeNode = true;
                     });
 
+                    if (bVolumeNode == false)
+                    {
+                        parent = item;
+
+                        listChildren =
+                            item.Nodes
+                            .Cast<LocalTreeNode>()
+                            .Where(t => 0 < t.NodeDatum.TotalLength)
+                            .ToList();
+                    }
+
                     // returns true if there are children
-                    if (KDirStat_DrawChildren(item, listChildren, parent, bVolumeNode, bStart))
+                    if (KDirStat_DrawChildren(parent, listChildren, bStart))
                     {
                         // example scenario: empty folder when there are immediate files and bStart is not true
                         return;
                     }
                 }
+
+                // There are no children. Draw a file or an empty folder.
 
                 var path = new GraphicsPath();
                 var r = rc;
@@ -758,7 +787,7 @@ namespace Local
                     )}
                 };
 
-                _lsRenderActions.Add(new FillRectangle() { Brush = brush, rc = rc });
+                _lsRenderActions.Add(new FillRectangle { Brush = brush, rc = rc });
             }
 
             //My first approach was to make this member pure virtual and have three
@@ -769,23 +798,8 @@ namespace Local
             //I learned this squarification style from the KDirStat executable.
             //It's the most complex one here but also the clearest, imho.
 
-            bool KDirStat_DrawChildren(LocalTreeNode item,
-                    List<LocalTreeNode> listChildren,
-                    LocalTreeNode parent,
-                    bool bVolumeNode,
-                    bool bStart = false)
+            bool KDirStat_DrawChildren(LocalTreeNode parent, List<LocalTreeNode> listChildren, bool bStart)
             {
-                if (bVolumeNode == false)
-                {
-                    parent = item;
-                    listChildren =
-                        parent
-                        .Nodes
-                        .Cast<LocalTreeNode>()
-                        .Where(t => 0 < t.NodeDatum.TotalLength)
-                        .ToList();
-                }
-
                 var nodeDatum = parent.NodeDatum;
                 var rc = nodeDatum.TreeMapRect;
                 var rows = new List<RowStruct>();
@@ -804,9 +818,7 @@ namespace Local
                     });
                 }
 
-                listChildren.Sort((y, x) =>
-                    x.NodeDatum.TotalLength.CompareTo(
-                    y.NodeDatum.TotalLength));
+                listChildren.Sort((y, x) => x.NodeDatum.TotalLength.CompareTo(y.NodeDatum.TotalLength));
 
                 if (listChildren.IsEmpty())
                 {
@@ -814,7 +826,9 @@ namespace Local
                     return false;
                 }
 
-                var childWidth = // Widths of the children (fraction of row width).
+                Interlocked.Add(ref _nWorkerCount, listChildren.Count);
+
+                var anChildWidth = // Widths of the children (fraction of row width).
                     new Double[listChildren.Count];
 
                 var horizontalRows = (rc.Width >= rc.Height);
@@ -835,9 +849,9 @@ namespace Local
 
                     for (var nextChild = 0; nextChild < listChildren.Count; nextChild += childrenUsed)
                     {
-                        rows.Add(new RowStruct()
+                        rows.Add(new RowStruct
                         {
-                            RowHeight = KDirStat_CalculateNextRow(parent, nextChild, width_A, out childrenUsed, childWidth, listChildren),
+                            RowHeight = KDirStat_CalculateNextRow(parent, nextChild, width_A, out childrenUsed, anChildWidth, listChildren),
                             ChildrenPerRow = childrenUsed
                         });
                     }
@@ -853,33 +867,44 @@ namespace Local
                 {
                     var fBottom = top + row.RowHeight * height;
                     var bottom = (int)fBottom;
+
                     if (object.ReferenceEquals(row, rows[rows.Count - 1]))
                         bottom = horizontalRows ? rc.Bottom : rc.Right;
+
                     double left = horizontalRows ? rc.Left : rc.Top;
 
                     for (var i = 0; i < row.ChildrenPerRow; i++, c++)
                     {
                         var child = listChildren[c];
-                        MBoxStatic.Assert(1302.3305, childWidth[c] >= 0);
-                        var fRight = left + childWidth[c] * width;
+                        MBoxStatic.Assert(1302.3305, anChildWidth[c] >= 0);
+                        var fRight = left + anChildWidth[c] * width;
                         var right = (int)fRight;
 
                         var lastChild = 
                             ((i == row.ChildrenPerRow - 1) ||
-                            childWidth[c + 1].Equals(0));
+                            anChildWidth[c + 1].Equals(0));
 
                         if (lastChild)
                             right = horizontalRows ? rc.Right : rc.Bottom;
 
                         var rcChild =
-                            (horizontalRows)
+                            horizontalRows
                             ? new Rectangle((int)left, (int)top, right - (int)left, bottom - (int)top)
                             : new Rectangle((int)top, (int)left, bottom - (int)top, right - (int)left);
 
-                        RecurseDrawGraph(child, rcChild);
+                        ThreadPool.QueueUserWorkItem(
+                            new WaitCallback(state =>
+                            {
+                                var param = (Tuple<LocalTreeNode, Rectangle>)state;
+
+                                RecurseDrawGraph(param.Item1, param.Item2);
+                                Interlocked.Decrement(ref _nWorkerCount);
+                            }),
+                            new Tuple<LocalTreeNode, Rectangle>(child, rcChild)
+                        );
 
                         if (bStart)
-                            _lsRenderActions.Add(new DrawRectangle() { rc = rc });
+                            _lsRenderActions.Add(new DrawRectangle { rc = rcChild });
 
                         if (lastChild)
                         {
@@ -903,8 +928,8 @@ namespace Local
             }
 
             static double KDirStat_CalculateNextRow(LocalTreeNode parent, int nextChild, double width,
-                out int childrenUsed, double[] arrChildWidth,
-                List<LocalTreeNode> listChildren)
+                out int childrenUsed, double[] anChildWidth,
+                IReadOnlyList<LocalTreeNode> listChildren)
             {
                 childrenUsed = 0;
                 const double kdMinProportion = 0.4;
@@ -915,7 +940,7 @@ namespace Local
 
                 var nodeDatum = parent.NodeDatum;
 
-                if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
+                if (null == nodeDatum)      // added 2/13/15 as safety
                 {
                     MBoxStatic.Assert(99961, false);
                     return 0;
@@ -969,7 +994,7 @@ namespace Local
                     var rowSize = mySize * rowHeight;
                     var nodeDatum_A = listChildren[nextChild + i].NodeDatum;
 
-                    if (null == nodeDatum_A)      // this check is new 2/13/15 and has never been hit
+                    if (null == nodeDatum_A)      // added 2/13/15 as safety
                     {
                         MBoxStatic.Assert(99960, false);
                         return 0;
@@ -978,7 +1003,7 @@ namespace Local
                     var childSize = (double)nodeDatum_A.TotalLength;
                     var cw = childSize / rowSize;
                     MBoxStatic.Assert(1302.3315, cw >= 0);
-                    arrChildWidth[nextChild + i] = cw;
+                    anChildWidth[nextChild + i] = cw;
                 }
 
                 return rowHeight;
@@ -992,10 +1017,14 @@ namespace Local
                 _deepNodeDrawn = null;
         }
 
-        struct RowStruct { internal double RowHeight; internal int ChildrenPerRow; }
-        abstract class RenderAction { internal Rectangle rc; internal abstract void Stroke(Graphics g); }
-        class FillRectangle : RenderAction { internal Brush Brush; internal override void Stroke(Graphics g) { g.FillRectangle(Brush, rc); } }
-        class DrawRectangle : RenderAction { static Pen Pen = new Pen(Color.Black, 2); internal override void Stroke(Graphics g) { g.DrawRectangle(Pen, rc); } }
+        struct
+            RowStruct { internal double RowHeight; internal int ChildrenPerRow; }
+        abstract class
+            RenderAction { internal Rectangle rc; internal abstract void Stroke(Graphics g); }
+        class
+            FillRectangle : RenderAction { internal Brush Brush; internal override void Stroke(Graphics g) { g.FillRectangle(Brush, rc); } }
+        class
+            DrawRectangle : RenderAction { static Pen Pen = new Pen(Color.Black, 2); internal override void Stroke(Graphics g) { g.DrawRectangle(Pen, rc); } }
 
         ConcurrentBag<RenderAction>
             _lsRenderActions = null;

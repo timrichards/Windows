@@ -133,7 +133,7 @@ namespace Local
 
                 if (null == nodeDatum)
                 {
-                    MBoxStatic.Assert(99900, false);    // This check is new 3/7/15 and has never been hit
+                    MBoxStatic.Assert(99900, false);    // This check is new 3/7/15 as safety
                 }
 
                 List<LocalTreeNode> lsTreeNodes = null;
@@ -206,7 +206,7 @@ namespace Local
 
                         var nodeDatum = treeNode_A.NodeDatum;
 
-                        if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
+                        if (null == nodeDatum)      // added 2/13/15 as safety
                         {
                             MBoxStatic.Assert(99977, false);
                             return;
@@ -226,7 +226,7 @@ namespace Local
                         {
                             var nodeDatum = treeNode_A.NodeDatum;
 
-                            if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
+                            if (null == nodeDatum)      // added 2/13/15 as safety
                             {
                                 MBoxStatic.Assert(99976, false);
                                 return;
@@ -247,7 +247,7 @@ namespace Local
 
                     var nodeDatum = treeNode.NodeDatum;
 
-                    if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
+                    if (null == nodeDatum)      // added 2/13/15 as safety
                     {
                         MBoxStatic.Assert(99975, false);
                         return;
@@ -341,7 +341,7 @@ namespace Local
 
                     var nodeDatum = treeNode.NodeDatum;
 
-                    if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
+                    if (null == nodeDatum)      // added 2/13/15 as safety
                     {
                         MBoxStatic.Assert(99974, false);
                         return;
@@ -370,7 +370,7 @@ namespace Local
 
                 var nodeDatum = treeNode.NodeDatum;
 
-                if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
+                if (null == nodeDatum)      // added 2/13/15 as safety
                 {
                     MBoxStatic.Assert(99973, false);
                     return;
@@ -402,7 +402,7 @@ namespace Local
                 var lvItem = new LocalLVitem(treeNode.Text) { LocalTreeNode = treeNode };
                 var nodeDatum = treeNode.NodeDatum;
 
-                if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
+                if (null == nodeDatum)      // added 2/13/15 as safety
                 {
                     MBoxStatic.Assert(99972, false);
                     return;
@@ -454,7 +454,7 @@ namespace Local
 
                 var nodeDatum = treeNode.NodeDatum;
 
-                if (null == nodeDatum)      // this check is new 2/13/15 and has never been hit
+                if (null == nodeDatum)      // added 2/13/15 as safety
                 {
                     MBoxStatic.Assert(99971, false);
                     return;
@@ -575,7 +575,7 @@ namespace Local
 
             if (null == nodeDatum)
             {
-                MBoxStatic.Assert(99913, false);    // This check is new 2/23/15 and has never been hit
+                MBoxStatic.Assert(99913, false);    // This check is new 2/23/15 as safety
                 return;
             }
 
@@ -611,7 +611,7 @@ namespace Local
                     var rootNode = treeNode.Root();
                     var rootNodeDatum = rootNode.NodeDatum as RootNodeDatum;
 
-                    if (null == rootNodeDatum)      // this check is new 2/13/15 and has never been hit
+                    if (null == rootNodeDatum)      // added 2/13/15 as safety
                     {
                         MBoxStatic.Assert(99970, false);
                         return;
@@ -641,7 +641,7 @@ namespace Local
 
                         var rootNodeDatum_A = (rootNode_A.NodeDatum as RootNodeDatum);
 
-                        if (null == rootNodeDatum_A)      // this check is new 2/13/15 and has never been hit
+                        if (null == rootNodeDatum_A)      // added 2/13/15 as safety
                         {
                             MBoxStatic.Assert(99969, false);
                             return;
@@ -664,7 +664,7 @@ namespace Local
                     {
                         var nodeDatum_A = subNode.NodeDatum;
 
-                        if (null == nodeDatum_A)      // this check is new 2/13/15 and has never been hit
+                        if (null == nodeDatum_A)      // added 2/13/15 as safety
                         {
                             MBoxStatic.Assert(99968, false);
                             return;

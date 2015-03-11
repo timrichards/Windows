@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Drawing.Drawing2D;
 using DoubleFile;
+using System.Threading;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace Local
 {
@@ -487,8 +490,8 @@ namespace Local
 
             ClearSelection();
             _treeNode = treeNode;
-            _lsRenderActions.Clear();
-            DrawTreemap();
+            _lsRenderActions = new ConcurrentBag<RenderAction>();
+            DrawTreemap();              // populates _lsRenderActions
 
             UtilProject.UIthread(() =>
             {
@@ -497,7 +500,7 @@ namespace Local
                 foreach (var stroke in _lsRenderActions)
                     stroke.Stroke(_bg.Graphics);
 
-                _lsRenderActions.Clear();
+                _lsRenderActions = null;
                 _bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), _rectBitmap);
                 _bg.Render();
             });
@@ -610,8 +613,7 @@ namespace Local
         void RecurseDrawGraph(
 	        LocalTreeNode item, 
 	        Rectangle rc,
-            bool bStart = false
-        )
+            bool bStart = false)
         {
             MBoxStatic.Assert(1302.3303, rc.Width >= 0);
             MBoxStatic.Assert(1302.3304, rc.Height >= 0);
@@ -763,8 +765,9 @@ namespace Local
 
             var nodeDatum = parent.NodeDatum;
             var rc = nodeDatum.TreeMapRect;
-	        var rows = new List<double>();	// Our rectangle is divided into rows, each of which gets this height (fraction of total height).
-	        var childrenPerRow = new List<int>();// childrenPerRow[i] = # of children in rows[i]
+            //var rows = new List<double>();	// Our rectangle is divided into rows, each of which gets this height (fraction of total height).
+            //var childrenPerRow = new List<int>();// childrenPerRow[i] = # of children in rows[i]
+            var rowsA = new List<Tuple<double, int>>();
 
             if (bStart &&
                 (null != nodeDatum.TreeMapFiles))
@@ -811,8 +814,10 @@ namespace Local
             {
                 var childrenUsed = 0;
 
-                rows.Add(KDirStat_CalcutateNextRow(parent, nextChild, width_A, ref childrenUsed, childWidth, listChildren));
-                childrenPerRow.Add(childrenUsed);
+                rowsA.Add(Tuple.Create(
+                    KDirStat_CalcutateNextRow(parent, nextChild, width_A, ref childrenUsed, childWidth, listChildren),
+                    childrenUsed));
+
                 nextChild += childrenUsed;
             }
 
@@ -821,55 +826,56 @@ namespace Local
 
 	        var c = 0;
 	        double top= horizontalRows ? rc.Top : rc.Left;
-	        for (var row=0; row < rows.Count; row++)
-	        {
-		        var fBottom= top + rows[row] * height;
-		        var bottom= (int)fBottom;
-		        if (row == rows.Count - 1)
-			        bottom= horizontalRows ? rc.Bottom : rc.Right;
-		        double left= horizontalRows ? rc.Left : rc.Top;
+//	        for (var row=0; row < rows.Count; row++)
+            rowsA.ForEach(row =>
+            {
+                var fBottom = top + row.Item1 * height;
+                var bottom = (int)fBottom;
+                if (object.ReferenceEquals(row, rowsA[rowsA.Count - 1]))
+                    bottom = horizontalRows ? rc.Bottom : rc.Right;
+                double left = horizontalRows ? rc.Left : rc.Top;
 
-                for (var i=0; i < childrenPerRow[row]; i++, c++)
-		        {
+                for (var i = 0; i < row.Item2; i++, c++)
+                {
                     var child = listChildren[c];
                     MBoxStatic.Assert(1302.3305, childWidth[c] >= 0);
-			        var fRight= left + childWidth[c] * width;
-			        var right= (int)fRight;
+                    var fRight = left + childWidth[c] * width;
+                    var right = (int)fRight;
 
-			        var lastChild = (
-                        (i == childrenPerRow[row] - 1) ||
+                    var lastChild = (
+                        (i == row.Item2 - 1) ||
                         childWidth[c + 1].Equals(0));
 
-			        if (lastChild)
-				        right= horizontalRows ? rc.Right : rc.Bottom;
+                    if (lastChild)
+                        right = horizontalRows ? rc.Right : rc.Bottom;
 
-			        var rcChild = 
-			            (horizontalRows)
-                        ? new Rectangle((int)left, (int)top, right-(int)left, bottom-(int)top)
-                        : new Rectangle((int)top, (int)left, bottom-(int)top, right-(int)left);
+                    var rcChild =
+                        (horizontalRows)
+                        ? new Rectangle((int)left, (int)top, right - (int)left, bottom - (int)top)
+                        : new Rectangle((int)top, (int)left, bottom - (int)top, right - (int)left);
 
                     RecurseDrawGraph(child, rcChild);
 
                     if (bStart)
                         _lsRenderActions.Add(new DrawRectangle() { rc = rc });
-                    
+
                     if (lastChild)
-			        {
-				        i++;
+                    {
+                        i++;
                         c++;
 
-				        if (i < childrenPerRow[row])
+                        if (i < row.Item2)
                             listChildren[c].NodeDatum.TreeMapRect = new Rectangle(-1, -1, -1, -1);
-				
-				        c+= childrenPerRow[row] - i;
-				        break;
-			        }
 
-			        left= fRight;
-		        }
+                        c += row.Item2 - i;
+                        break;
+                    }
+
+                    left = fRight;
+                }
                 // This asserts due to rounding error: Utilities.Assert(1302.3306, left == (horizontalRows ? rc.Right : rc.Bottom));
-		        top= fBottom;
-	        }
+                top = fBottom;
+            });
             // This asserts due to rounding error: Utilities.Assert(1302.3307, top == (horizontalRows ? rc.Bottom : rc.Right));
             return true;
         }
@@ -957,7 +963,7 @@ namespace Local
         abstract class RenderAction { internal Rectangle rc; internal abstract void Stroke(Graphics g); }
         class FillRectangle : RenderAction { internal Brush Brush; internal override void Stroke(Graphics g) { g.FillRectangle(Brush, rc); } }
         class DrawRectangle : RenderAction { internal static Pen Pen = new Pen(Color.Black, 2); internal override void Stroke(Graphics g) { g.DrawRectangle(Pen, rc); } }
-        List<RenderAction> _lsRenderActions = new List<RenderAction>();
+        ConcurrentBag<RenderAction> _lsRenderActions = null;
 
         Rectangle
             _rectBitmap = Rectangle.Empty;

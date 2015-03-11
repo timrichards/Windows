@@ -477,7 +477,6 @@ namespace DoubleFile
         internal void DrawTreemap()
         {
             _deepNodeDrawn = null;
-            Graphics graphics = _bg.Graphics;
             Rectangle rc = _rectBitmap;
 
 	        rc.Width--;
@@ -496,7 +495,7 @@ namespace DoubleFile
 	        }
 	        else
 	        {
-                graphics.FillRectangle(Brushes.Wheat, rc);
+                _bg.Graphics.FillRectangle(Brushes.Wheat, rc);
             }
         }
 
@@ -508,8 +507,6 @@ namespace DoubleFile
         {
             MBoxStatic.Assert(1302.3303, rc.Width >= 0);
             MBoxStatic.Assert(1302.3304, rc.Height >= 0);
-
-            Graphics graphics = _bg.Graphics;
 
 	        if (rc.Width <= 0 || rc.Height <= 0)
 	        {
@@ -532,7 +529,7 @@ namespace DoubleFile
             }
 
             if (((false == item.Nodes.IsEmpty()) || (bStart && (nodeDatum.TreeMapFiles != null)))
-                && KDirStat_DrawChildren(graphics, item, bStart))
+                && KDirStat_DrawChildren(item, bStart))
             {
                 // example scenario: empty folder when there are immediate files and bStart is not true
                 return;
@@ -548,7 +545,7 @@ namespace DoubleFile
 
             brush.CenterColor = Color.Wheat;
             brush.SurroundColors = new Color[] { ControlPaint.Dark((item.ForeColor == Color.Empty) ? Color.SandyBrown : item.ForeColor) };
-            graphics.FillRectangle(brush, rc);
+            _bg.Graphics.FillRectangle(brush, rc);
         }
 
          //My first approach was to make this member pure virtual and have three
@@ -559,7 +556,7 @@ namespace DoubleFile
          //I learned this squarification style from the KDirStat executable.
          //It's the most complex one here but also the clearest, imho.
         
-        bool KDirStat_DrawChildren(Graphics graphics, TreeNode parent_in, bool bStart = false)
+        bool KDirStat_DrawChildren(TreeNode parent_in, bool bStart = false)
         {
             List<TreeNode> listChildren = null;
             TreeNode parent = null;
@@ -721,7 +718,7 @@ namespace DoubleFile
 
                     if (bStart)
                     {
-                        graphics.DrawRectangle(new Pen(Color.Black, 2), rcChild);
+                        _bg.Graphics.DrawRectangle(new Pen(Color.Black, 2), rcChild);
                     }
                     
                     if (lastChild)

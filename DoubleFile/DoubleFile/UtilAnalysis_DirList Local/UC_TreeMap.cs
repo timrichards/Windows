@@ -101,7 +101,7 @@ namespace Local
 
                 var ctl = TooltipAnchor;
 
-                if ((ctl == null) || ctl.IsDisposed)
+                if ((null == ctl) || ctl.IsDisposed)
                     ctl = this;
 
                 if (ctl.IsDisposed)
@@ -109,7 +109,7 @@ namespace Local
 
                 UtilProject.UIthread(() => _toolTip.Hide(ctl));
 
-                if (bKeepTooltipActive == false)
+                if (false == bKeepTooltipActive)
                 {
                     ToolTipActive = false;
                     UtilProject.WriteLine(DateTime.Now + " b ToolTipActive = false;");
@@ -483,11 +483,11 @@ namespace Local
                 var dtStart = DateTime.Now;
 
                 ClearSelection();
-                _bg.Graphics.Clear(Color.DarkGray);
+                UtilProject.UIthread(() => _bg.Graphics.Clear(Color.DarkGray));
                 _treeNode = treeNode;
                 DrawTreemap();
-                _bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), _rectBitmap);
-                _bg.Render();
+                UtilProject.UIthread(() => _bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), _rectBitmap));
+                UtilProject.UIthread(_bg.Render);
                 _selRect = Rectangle.Empty;
                 _prevNode = null;
                 _dtHideGoofball = DateTime.MinValue;
@@ -570,7 +570,6 @@ namespace Local
         internal void DrawTreemap()
         {
             _deepNodeDrawn = null;
-            var graphics = _bg.Graphics;
             var rc = _rectBitmap;
 
 	        rc.Width--;
@@ -595,7 +594,7 @@ namespace Local
 	        }
 	        else
 	        {
-                graphics.FillRectangle(Brushes.Wheat, rc);
+                UtilProject.UIthread(() => _bg.Graphics.FillRectangle(Brushes.Wheat, rc));
             }
         }
 
@@ -607,8 +606,6 @@ namespace Local
         {
             MBoxStatic.Assert(1302.3303, rc.Width >= 0);
             MBoxStatic.Assert(1302.3304, rc.Height >= 0);
-
-            var graphics = _bg.Graphics;
 
 	        if (rc.Width <= 0 || rc.Height <= 0)
 	        {
@@ -639,7 +636,7 @@ namespace Local
             }
 
             if (((false == item.Nodes.IsEmpty()) || (bStart && (null != nodeDatum.TreeMapFiles))) &&
-                KDirStat_DrawChildren(graphics, item, bStart))
+                KDirStat_DrawChildren(item, bStart))
             {
                 // example scenario: empty folder when there are immediate files and bStart is not true
                 return;
@@ -660,7 +657,7 @@ namespace Local
                 )}
             };
 
-            graphics.FillRectangle(brush, rc);
+            UtilProject.UIthread(() => _bg.Graphics.FillRectangle(brush, rc));
         }
 
          //My first approach was to make this member pure virtual and have three
@@ -671,7 +668,7 @@ namespace Local
          //I learned this squarification style from the KDirStat executable.
          //It's the most complex one here but also the clearest, imho.
         
-        bool KDirStat_DrawChildren(Graphics graphics, LocalTreeNode parent_in, bool bStart = false)
+        bool KDirStat_DrawChildren(LocalTreeNode parent_in, bool bStart = false)
         {
             List<LocalTreeNode> listChildren = null;
             LocalTreeNode parent = null;
@@ -745,7 +742,6 @@ namespace Local
 
                 parent.NodeDatum = nodeDatumVolume;
                 bVolumeNode = true;
-                rootNodeDatum.VolumeView = true;
             });
 
             if (bVolumeNode == false)
@@ -845,12 +841,12 @@ namespace Local
 			            (horizontalRows)
                         ? new Rectangle((int)left, (int)top, right-(int)left, bottom-(int)top)
                         : new Rectangle((int)top, (int)left, bottom-(int)top, right-(int)left);
-			
-			        RecurseDrawGraph(child, rcChild);
+
+                    RecurseDrawGraph(child, rcChild);
 
                     if (bStart)
                     {
-                        graphics.DrawRectangle(new Pen(Color.Black, 2), rcChild);
+                        UtilProject.UIthread(() => _bg.Graphics.DrawRectangle(new Pen(Color.Black, 2), rcChild));
                     }
                     
                     if (lastChild)

@@ -606,7 +606,7 @@ namespace Local
             if (nodeDatum.TotalLength > 0)
                 _lsRenderActions = new Recurse().Render(_treeNode, rc, _deepNode, out _deepNodeDrawn);
             else
-                _lsRenderActions.Add(new FillRectangle() { Brush = Brushes.Wheat, rc = rc });
+                _lsRenderActions = new ConcurrentBag<RenderAction>() { new FillRectangle() { Brush = Brushes.Wheat, rc = rc } };
         }
 
         class Recurse
@@ -660,11 +660,86 @@ namespace Local
                     nodeDatum.TreeMapFiles = GetFileList(item);
                 }
 
-                if (((false == item.Nodes.IsEmpty()) || (bStart && (null != nodeDatum.TreeMapFiles))) &&
-                    KDirStat_DrawChildren(item, bStart))
-                {
-                    // example scenario: empty folder when there are immediate files and bStart is not true
-                    return;
+                if (
+                    (false == item.Nodes.IsEmpty()) ||
+                    (bStart && (null != nodeDatum.TreeMapFiles))
+                ){
+                    List<LocalTreeNode> listChildren = null;
+                    LocalTreeNode parent = null;
+                    var bVolumeNode = false;
+
+                    UtilAnalysis_DirList.Closure(() =>
+                    {
+                        var rootNodeDatum = item.NodeDatum as RootNodeDatum;
+
+                        if ((false == bStart) ||
+                            (null == rootNodeDatum))
+                        {
+                            return;     // from lambda
+                        }
+
+                        if (rootNodeDatum.VolumeView == false)
+                        {
+                            return;     // from lambda
+                        }
+
+                        var nodeDatumFree = new NodeDatum();
+                        var nodeFree = new LocalTreeMapNode(item.Text + " (free space)");
+
+                        nodeDatumFree.TotalLength = rootNodeDatum.VolumeFree;
+                        nodeFree.NodeDatum = nodeDatumFree;
+                        nodeFree.ForeColor = UtilColor.MediumSpringGreen;
+
+                        var nodeDatumUnread = new NodeDatum();
+                        var nodeUnread = new LocalTreeMapNode(item.Text + " (unread data)");
+                        var nVolumeLength = rootNodeDatum.VolumeLength;
+                        var nUnreadLength = (long)nVolumeLength -
+                            (long)rootNodeDatum.VolumeFree -
+                            (long)rootNodeDatum.TotalLength;
+
+                        if (nUnreadLength > 0)
+                        {
+                            nodeDatumUnread.TotalLength = (ulong)nUnreadLength;
+                        }
+                        else
+                        {
+                            // Faked length to make up for compression and hard links
+                            nVolumeLength = rootNodeDatum.VolumeFree +
+                                rootNodeDatum.TotalLength;
+                            nodeDatumUnread.TotalLength = 0;
+                        }
+
+                        nodeUnread.NodeDatum = nodeDatumUnread;
+                        nodeUnread.ForeColor = UtilColor.MediumVioletRed;
+
+                        // parent added as child, with two other nodes:
+                        // free space (color: spring green); and...
+                        listChildren = new List<LocalTreeNode> { item, nodeFree };
+
+                        if (nUnreadLength > 0)
+                        {
+                            // ...unread guess, affected by compression and hard links (violet)
+                            listChildren.Add(nodeUnread);
+                        }
+
+                        parent = new LocalTreeMapNode(item.Text + " (volume)");
+
+                        var nodeDatumVolume = new NodeDatum
+                        {
+                            TotalLength = nVolumeLength,
+                            TreeMapRect = rootNodeDatum.TreeMapRect
+                        };
+
+                        parent.NodeDatum = nodeDatumVolume;
+                        bVolumeNode = true;
+                    });
+
+                    // returns true if there are children
+                    if (KDirStat_DrawChildren(item, listChildren, parent, bVolumeNode, bStart))
+                    {
+                        // example scenario: empty folder when there are immediate files and bStart is not true
+                        return;
+                    }
                 }
 
                 var path = new GraphicsPath();
@@ -676,7 +751,8 @@ namespace Local
                 var brush = new PathGradientBrush(path)
                 {
                     CenterColor = Color.Wheat,
-                    SurroundColors = new[] { ControlPaint.Dark((item.ForeColor == UtilColor.Empty)
+                    SurroundColors = new[] { ControlPaint.Dark(
+                        (item.ForeColor == UtilColor.Empty)
                         ? Color.SandyBrown
                         : Color.FromArgb(item.ForeColor)
                     )}
@@ -693,82 +769,15 @@ namespace Local
             //I learned this squarification style from the KDirStat executable.
             //It's the most complex one here but also the clearest, imho.
 
-            bool KDirStat_DrawChildren(LocalTreeNode parent_in, bool bStart = false)
+            bool KDirStat_DrawChildren(LocalTreeNode item,
+                    List<LocalTreeNode> listChildren,
+                    LocalTreeNode parent,
+                    bool bVolumeNode,
+                    bool bStart = false)
             {
-                List<LocalTreeNode> listChildren = null;
-                LocalTreeNode parent = null;
-
-                var bVolumeNode = false;
-
-                UtilAnalysis_DirList.Closure(() =>
-                {
-                    var rootNodeDatum = parent_in.NodeDatum as RootNodeDatum;
-
-                    if ((false == bStart) ||
-                        (null == rootNodeDatum))
-                    {
-                        return;
-                    }
-
-                    if (rootNodeDatum.VolumeView == false)
-                    {
-                        return;
-                    }
-
-                    var nodeDatumFree = new NodeDatum();
-                    var nodeFree = new LocalTreeMapNode(parent_in.Text + " (free space)");
-
-                    nodeDatumFree.TotalLength = rootNodeDatum.VolumeFree;
-                    nodeFree.NodeDatum = nodeDatumFree;
-                    nodeFree.ForeColor = UtilColor.MediumSpringGreen;
-
-                    var nodeDatumUnread = new NodeDatum();
-                    var nodeUnread = new LocalTreeMapNode(parent_in.Text + " (unread data)");
-                    var nVolumeLength = rootNodeDatum.VolumeLength;
-                    var nUnreadLength = (long)nVolumeLength -
-                        (long)rootNodeDatum.VolumeFree -
-                        (long)rootNodeDatum.TotalLength;
-
-                    if (nUnreadLength > 0)
-                    {
-                        nodeDatumUnread.TotalLength = (ulong)nUnreadLength;
-                    }
-                    else
-                    {
-                        // Faked length to make up for compression and hard links
-                        nVolumeLength = rootNodeDatum.VolumeFree +
-                            rootNodeDatum.TotalLength;
-                        nodeDatumUnread.TotalLength = 0;
-                    }
-
-                    nodeUnread.NodeDatum = nodeDatumUnread;
-                    nodeUnread.ForeColor = UtilColor.MediumVioletRed;
-
-                    // parent added as child, with two other nodes:
-                    // free space (color: spring green); and...
-                    listChildren = new List<LocalTreeNode> { parent_in, nodeFree };
-
-                    if (nUnreadLength > 0)
-                    {
-                        // ...unread guess, affected by compression and hard links (violet)
-                        listChildren.Add(nodeUnread);
-                    }
-
-                    parent = new LocalTreeMapNode(parent_in.Text + " (volume)");
-
-                    var nodeDatumVolume = new NodeDatum
-                    {
-                        TotalLength = nVolumeLength,
-                        TreeMapRect = rootNodeDatum.TreeMapRect
-                    };
-
-                    parent.NodeDatum = nodeDatumVolume;
-                    bVolumeNode = true;
-                });
-
                 if (bVolumeNode == false)
                 {
-                    parent = parent_in;
+                    parent = item;
                     listChildren =
                         parent
                         .Nodes
@@ -855,8 +864,8 @@ namespace Local
                         var fRight = left + childWidth[c] * width;
                         var right = (int)fRight;
 
-                        var lastChild = (
-                            (i == row.ChildrenPerRow - 1) ||
+                        var lastChild = 
+                            ((i == row.ChildrenPerRow - 1) ||
                             childWidth[c + 1].Equals(0));
 
                         if (lastChild)
@@ -986,7 +995,7 @@ namespace Local
         struct RowStruct { internal double RowHeight; internal int ChildrenPerRow; }
         abstract class RenderAction { internal Rectangle rc; internal abstract void Stroke(Graphics g); }
         class FillRectangle : RenderAction { internal Brush Brush; internal override void Stroke(Graphics g) { g.FillRectangle(Brush, rc); } }
-        class DrawRectangle : RenderAction { internal static Pen Pen = new Pen(Color.Black, 2); internal override void Stroke(Graphics g) { g.DrawRectangle(Pen, rc); } }
+        class DrawRectangle : RenderAction { static Pen Pen = new Pen(Color.Black, 2); internal override void Stroke(Graphics g) { g.DrawRectangle(Pen, rc); } }
 
         ConcurrentBag<RenderAction>
             _lsRenderActions = null;

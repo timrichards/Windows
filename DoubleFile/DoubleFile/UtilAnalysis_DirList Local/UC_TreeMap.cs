@@ -447,58 +447,71 @@ namespace Local
 
         void TreeSelect_FolderDetailUpdated(IEnumerable<string[]> lasDetail, LocalTreeNode treeNode)
         {
-            InvalidatePushRef(() =>
+            InvalidatePushRef(() => Render(treeNode));
+        }
+
+        void Render(LocalTreeNode treeNode)
+        {
+            if ((null == _deepNode) ||
+                (false == _deepNode.IsChildOf(treeNode)))
             {
-                if ((null == _deepNode) ||
-                    (false == _deepNode.IsChildOf(treeNode)))
+                _deepNode = treeNode;
+            }
+
+            var nPxPerSide = (treeNode.SelectedImageIndex < 0) ?
+                1024 :
+                treeNode.SelectedImageIndex;
+
+            if (nPxPerSide != _rectBitmap.Size.Width)
+            {
+                var dtStart_A = DateTime.Now;
+
+                _rectBitmap = new Rectangle(0, 0, nPxPerSide, nPxPerSide);
+                BackgroundImage = new Bitmap(_rectBitmap.Size.Width, _rectBitmap.Size.Height);
+
+                var bgcontext = BufferedGraphicsManager.Current;
+
+                bgcontext.MaximumBuffer = _rectBitmap.Size;
+
+                if (_bg != null)
                 {
-                    _deepNode = treeNode;
+                    _bg.Dispose();
                 }
 
-                var nPxPerSide = (treeNode.SelectedImageIndex < 0) ?
-                    1024 :
-                    treeNode.SelectedImageIndex;
+                _bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), _rectBitmap);
+                TranslateSize();
+                UtilProject.WriteLine("Size bitmap " + nPxPerSide + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000.0 + " seconds.");
+            }
 
-                if (nPxPerSide != _rectBitmap.Size.Width)
-                {
-                    var dtStart_A = DateTime.Now;
+            var dtStart = DateTime.Now;
 
-                    _rectBitmap = new Rectangle(0, 0, nPxPerSide, nPxPerSide);
-                    BackgroundImage = new Bitmap(_rectBitmap.Size.Width, _rectBitmap.Size.Height);
+            ClearSelection();
+            _treeNode = treeNode;
+            _lsRenderActions.Clear();
+            DrawTreemap();
 
-                    var bgcontext = BufferedGraphicsManager.Current;
+            UtilProject.UIthread(() =>
+            {
+                _bg.Graphics.Clear(Color.DarkGray);
 
-                    bgcontext.MaximumBuffer = _rectBitmap.Size;
+                foreach (var stroke in _lsRenderActions)
+                    stroke.Stroke(_bg.Graphics);
 
-                    if (_bg != null)
-                    {
-                        _bg.Dispose();
-                    }
-
-                    _bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), _rectBitmap);
-                    TranslateSize();
-                    UtilProject.WriteLine("Size bitmap " + nPxPerSide + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000.0 + " seconds.");
-                }
-
-                var dtStart = DateTime.Now;
-
-                ClearSelection();
-                UtilProject.UIthread(() => _bg.Graphics.Clear(Color.DarkGray));
-                _treeNode = treeNode;
-                DrawTreemap();
-                UtilProject.UIthread(() => _bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), _rectBitmap));
-                UtilProject.UIthread(_bg.Render);
-                _selRect = Rectangle.Empty;
-                _prevNode = null;
-                _dtHideGoofball = DateTime.MinValue;
-
-                if ((DateTime.Now - dtStart) > TimeSpan.FromSeconds(1))
-                {
-                    treeNode.SelectedImageIndex = Math.Max((int)
-                        (((treeNode.SelectedImageIndex < 0) ? _rectBitmap.Size.Width : treeNode.SelectedImageIndex)
-                        * .75), 256);
-                }
+                _lsRenderActions.Clear();
+                _bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), _rectBitmap);
+                _bg.Render();
             });
+
+            _selRect = Rectangle.Empty;
+            _prevNode = null;
+            _dtHideGoofball = DateTime.MinValue;
+
+            if ((DateTime.Now - dtStart) > TimeSpan.FromSeconds(1))
+            {
+                treeNode.SelectedImageIndex = Math.Max((int)
+                    (((treeNode.SelectedImageIndex < 0) ? _rectBitmap.Size.Width : treeNode.SelectedImageIndex)
+                    * .75), 256);
+            }
         }
 
         internal string Tooltip_Click()
@@ -589,13 +602,9 @@ namespace Local
             }
 
             if (nodeDatum.TotalLength > 0)
-	        {
                 RecurseDrawGraph(_treeNode, rc, bStart: true);
-	        }
-	        else
-	        {
-                UtilProject.UIthread(() => _bg.Graphics.FillRectangle(Brushes.Wheat, rc));
-            }
+            else
+                _lsRenderActions.Add(new FillRectangle() { Brush = Brushes.Wheat, rc = rc });
         }
 
         void RecurseDrawGraph(
@@ -657,7 +666,7 @@ namespace Local
                 )}
             };
 
-            UtilProject.UIthread(() => _bg.Graphics.FillRectangle(brush, rc));
+            _lsRenderActions.Add(new FillRectangle() { Brush = brush, rc = rc });
         }
 
          //My first approach was to make this member pure virtual and have three
@@ -704,21 +713,18 @@ namespace Local
                     (long)rootNodeDatum.VolumeFree -
                     (long)rootNodeDatum.TotalLength;
 
-                if (nUnreadLength < 0)
+                if (nUnreadLength > 0)
+                {
+                    nodeDatumUnread.TotalLength = (ulong)nUnreadLength;
+                }
+                else
                 {
                     // Faked length to make up for compression and hard links
                     nVolumeLength = rootNodeDatum.VolumeFree +
                         rootNodeDatum.TotalLength;
                     nodeDatumUnread.TotalLength = 0;
                 }
-                else
-                {
-                    nodeDatumUnread.TotalLength = nVolumeLength -
-                        rootNodeDatum.VolumeFree -
-                        rootNodeDatum.TotalLength;
-                }
 
-                nodeDatumUnread.TotalLength = (ulong)nUnreadLength;
                 nodeUnread.NodeDatum = nodeDatumUnread;
                 nodeUnread.ForeColor = UtilColor.MediumVioletRed;
 
@@ -845,9 +851,7 @@ namespace Local
                     RecurseDrawGraph(child, rcChild);
 
                     if (bStart)
-                    {
-                        UtilProject.UIthread(() => _bg.Graphics.DrawRectangle(new Pen(Color.Black, 2), rcChild));
-                    }
+                        _lsRenderActions.Add(new DrawRectangle() { rc = rc });
                     
                     if (lastChild)
 			        {
@@ -949,6 +953,11 @@ namespace Local
 
 	        return rowHeight;
         }
+
+        abstract class RenderAction { internal Rectangle rc; internal abstract void Stroke(Graphics g); }
+        class FillRectangle : RenderAction { internal Brush Brush; internal override void Stroke(Graphics g) { g.FillRectangle(Brush, rc); } }
+        class DrawRectangle : RenderAction { internal static Pen Pen = new Pen(Color.Black, 2); internal override void Stroke(Graphics g) { g.DrawRectangle(Pen, rc); } }
+        List<RenderAction> _lsRenderActions = new List<RenderAction>();
 
         Rectangle
             _rectBitmap = Rectangle.Empty;

@@ -130,7 +130,7 @@ namespace DoubleFile
             }
 
             TreeCleanup();
-            UString.GenerationEnded();
+            TabledString.GenerationEnded();
             _winProgress.CloseIfNatural();
 
             // saving memory here.
@@ -205,7 +205,7 @@ namespace DoubleFile
                 _gd.FileDictionary.DoThreadFactory(_lvProjectVM, CreateFileDictStatusCallback);
             }
 
-            UString.GenerationStarting();
+            TabledString.GenerationStarting();
 
             if (null == DictNodes)
                 DictNodes = new ConcurrentDictionary<FolderKeyTuple, UList<LocalTreeNode>>();

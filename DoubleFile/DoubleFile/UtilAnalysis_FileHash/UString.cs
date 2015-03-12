@@ -6,21 +6,21 @@ using System.Threading;
 namespace DoubleFile
 {
     // can't be struct because of null
-    class UString : IComparable<string>
+    class TabledString : IComparable<string>
     {
-        public static implicit operator UString(string value) { return (null == value) ? null : new UString { nIndex = Set(value) }; }
-        public static implicit operator string(UString value) { return (null == value) ? null : Get(value.nIndex); }
+        public static implicit operator TabledString(string value) { return (null == value) ? null : new TabledString { nIndex = Set(value) }; }
+        public static implicit operator string(TabledString value) { return (null == value) ? null : Get(value.nIndex); }
         public int CompareTo(string other) { return Get(nIndex).CompareTo(other); }
 
-        internal bool Contains(UString ustr) { return Get(nIndex).Contains(Get(ustr.nIndex)); }
+        internal bool Contains(TabledString ustr) { return Get(nIndex).Contains(Get(ustr.nIndex)); }
         internal bool Contains(char ch) { return Get(nIndex).Contains(ch); }
         internal bool EndsWith(string str) { return Get(nIndex).EndsWith(str); }
         internal string[] Split(char ch) { return Get(nIndex).Split(ch); }
         internal string[] Split(string[] arrStr, StringSplitOptions opts) { return Get(nIndex).Split(arrStr, opts); }
         internal bool StartsWith(string str) { return Get(nIndex).StartsWith(str); }
-        internal UString ToLower() { return Get(nIndex).ToLower(); }
+        internal TabledString ToLower() { return Get(nIndex).ToLower(); }
 
-        static internal UString Empty { get { return string.Empty; } }
+        static internal TabledString Empty { get { return string.Empty; } }
 
         static internal void AddRef()
         {

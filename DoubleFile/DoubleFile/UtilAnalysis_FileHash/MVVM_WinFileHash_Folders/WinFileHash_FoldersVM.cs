@@ -22,7 +22,7 @@ namespace DoubleFile
             _gd = gd;
             _tvVM = tvVM;
             _winProgress = new WinProgress(); 
-            UString.AddRef();
+            TabledString.AddRef();
             DoTree();
         }
 
@@ -51,7 +51,7 @@ namespace DoubleFile
                 return;
             }
 
-            UString.DropRef();
+            TabledString.DropRef();
         }
 
         readonly GlobalData_Base

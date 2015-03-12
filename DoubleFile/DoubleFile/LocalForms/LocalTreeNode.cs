@@ -8,7 +8,7 @@ namespace DoubleFile
     {
         internal LocalTreeNodeCollection
             Nodes { get; private set; }
-        internal UString
+        internal TabledString
             Text { get; set; }
         internal LocalTV
             TreeView { get; private set; }
@@ -46,7 +46,7 @@ namespace DoubleFile
             Text = strContent;
         }
 
-        internal LocalTreeNode(UString strContent)
+        internal LocalTreeNode(TabledString strContent)
             : this()
         {
             Text = strContent;

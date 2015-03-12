@@ -4,14 +4,14 @@ namespace Local
 {
     class RootNodeDatum : NodeDatum
     {
-        internal UString
+        internal TabledString
             ListingFile { get; private set; }
-        internal UString
+        internal TabledString
             VolumeGroup { get; set; }
-        internal UString
+        internal TabledString
             Root { get; private set; }
 
-        internal UString
+        internal TabledString
             RootPath { get; private set; }
 
         internal bool

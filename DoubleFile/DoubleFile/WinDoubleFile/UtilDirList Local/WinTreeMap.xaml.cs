@@ -9,8 +9,8 @@
         {
             InitializeComponent();
             Closed += Window_Closed;
-            Activated += (o, e) => form_ucTreeMap.ClearSelection();
-            Deactivated += (o, e) => form_ucTreeMap.ClearSelection();
+          //  Activated += (o, e) => form_ucTreeMap.ClearSelection();
+          //  Deactivated += (o, e) => form_ucTreeMap.ClearSelection();
             SizeChanged += (o, e) => form_ucTreeMap.ClearSelection();
             LocationChanged += (o, e) => form_ucTreeMap.ClearSelection();
             form_ucTreeMap.TooltipAnchor = this;

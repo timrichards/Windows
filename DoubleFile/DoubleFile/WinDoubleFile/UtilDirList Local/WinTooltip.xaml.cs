@@ -20,17 +20,22 @@ namespace DoubleFile
             _winTooltip.Size = strSize;
             _winTooltip.Show();
 
-            if (null != winAnchor)
+            var winOwner = winAnchor as LocalWindow;
+
+            if (null != winOwner)
             {
-                _winTooltip.Owner = winAnchor;
-                _winTooltip.Left = winAnchor.Left;
-                _winTooltip.Top = winAnchor.Top;
+                _winTooltip.Owner = winOwner;
+                _winTooltip.Left = winOwner.Left;
+                _winTooltip.Top = winOwner.Top + winOwner.Height;
+
+                winOwner.MouseDown += CloseTooltip;
+                winOwner.Closed += CloseTooltip;
             }
             
             return _winTooltip;
         }
 
-        internal static void CloseTooltip()
+        internal static void CloseTooltip(object sender = null, EventArgs e = null)
         {
             if ((null != _winTooltip) &&
                 (false == _winTooltip.LocalIsClosing) &&
@@ -38,15 +43,56 @@ namespace DoubleFile
             {
                 _winTooltip.Close();
             }
+
+            LocalWindow winOwner = null;
+            
+            if (null != _winTooltip)
+                winOwner = _winTooltip.Owner as LocalWindow;
+
+            if ((null != winOwner) &&
+                (false == winOwner.LocalIsClosing) &&
+                (false == winOwner.LocalIsClosed))
+            {
+                winOwner.MouseDown -= CloseTooltip;
+                winOwner.Closed -= CloseTooltip;
+
+                winOwner.Activate();
+            }
         }
 
         WinTooltip()
         {
             InitializeComponent();
+  //          Visibility = System.Windows.Visibility.Hidden;
             Loaded += (o, e) => ++form_folder.FontSize;
-            Deactivated += (o, e) => CloseTooltip();
+            ContentRendered += WinTooltip_ContentRendered;
             MouseDown += (o, e) => _bMouseDown = true;
             MouseUp += (o, e) => { if ((null != MouseClicked) && _bMouseDown) MouseClicked(); };
+        }
+
+        void WinTooltip_ContentRendered(object sender, EventArgs e)
+        {
+            if (Top + Height > System.Windows.SystemParameters.PrimaryScreenHeight)
+            {
+                var winOwner = Owner as LocalWindow;
+
+                if (null != winOwner)
+                {
+                    Top = winOwner.Top;
+                    Left = winOwner.Left + winOwner.Width;
+
+                    if (Left + Width > System.Windows.SystemParameters.PrimaryScreenWidth)
+                    {
+                        Top = winOwner.Top - Height;
+                        Left = winOwner.Left;
+                    }
+
+                    if (Top < 0)
+                        Top = winOwner.Top;
+                }
+            }
+
+            Visibility = System.Windows.Visibility.Visible;
         }
 
         bool _bMouseDown = false;

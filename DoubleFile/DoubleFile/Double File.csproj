@@ -151,120 +151,120 @@
     <Compile Include="MVVM\ListView Base\ListViewVM_GenericBase.cs" />
     <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
     <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\WinFormAnalysis_DirList.xaml.cs">
+    <Compile Include="WinFormDirList\WinFormAnalysis_DirList.xaml.cs">
       <DependentUpon>WinFormAnalysis_DirList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UtilAnalysis_DirList Local\LocalTreeMapNode.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\Tree\DetailsDatum.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\Tree\TreeSelect_Local.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\WinTooltip.xaml.cs">
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\LocalTreeMapNode.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Tree\DetailsDatum.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Tree\TreeSelect_Local.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\WinTooltip.xaml.cs">
       <DependentUpon>WinTooltip.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UtilAnalysis_DirList Local\WinTreeMap.xaml.cs">
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\WinTreeMap.xaml.cs">
       <DependentUpon>WinTreeMap.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UtilAnalysis_FileHash\LocalWindow_DoubleFile.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Detail\LVitem_FolderDetailVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Detail\LVitem_VolumeDetail.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Detail\LVitem_FileDetailVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Detail\LV_FolderDetailVM_Impl.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Detail\LV_FolderDetailVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Detail\LV_VolumeDetailVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Detail\LV_FileDetailVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Detail\LV_VolumeDetailVM_Impl.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Detail\LV_FileDetailVM_Impl.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Duplicates\LVitem_FileDuplicatesVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Duplicates\WinDoubleFile_DuplicatesVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Duplicates\WinDoubleFile_DuplicatesVM_Impl.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Folders\TreeViewItem_DoubleFileVM_Impl.cs" />
-    <Compile Include="UtilAnalysis_FileHash\WinDoubleFile_Detail.xaml.cs">
+    <Compile Include="WinDoubleFile\LocalWindow_DoubleFile.cs" />
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LVitem_FolderDetailVM.cs" />
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LVitem_VolumeDetail.cs" />
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LVitem_FileDetailVM.cs" />
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LV_FolderDetailVM_Impl.cs" />
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LV_FolderDetailVM.cs" />
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LV_VolumeDetailVM.cs" />
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LV_FileDetailVM.cs" />
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LV_VolumeDetailVM_Impl.cs" />
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LV_FileDetailVM_Impl.cs" />
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Duplicates\LVitem_FileDuplicatesVM.cs" />
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Duplicates\WinDoubleFile_DuplicatesVM.cs" />
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Duplicates\WinDoubleFile_DuplicatesVM_Impl.cs" />
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Folders\TreeViewItem_DoubleFileVM_Impl.cs" />
+    <Compile Include="WinDoubleFile\WinDoubleFile_Detail.xaml.cs">
       <DependentUpon>WinDoubleFile_Detail.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UtilAnalysis_FileHash\WinDoubleFile_Duplicates.xaml.cs">
+    <Compile Include="WinDoubleFile\WinDoubleFile_Duplicates.xaml.cs">
       <DependentUpon>WinDoubleFile_Duplicates.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UtilAnalysis_FileHash\WinDoubleFile_Files.xaml.cs">
+    <Compile Include="WinDoubleFile\WinDoubleFile_Files.xaml.cs">
       <DependentUpon>WinDoubleFile_Files.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utilities\LocalMbox.xaml.cs">
       <DependentUpon>LocalMbox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UtilAnalysis_DirList Local\Collate.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\Collate\AddTreeToList.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\Collate\InsertSizeMarkerStatic.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\CountNodes.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Collate.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Collate\AddTreeToList.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Collate\InsertSizeMarkerStatic.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\CountNodes.cs" />
     <Compile Include="LocalForms\LocalLV.cs" />
     <Compile Include="LocalForms\LocalLVitem.cs" />
     <Compile Include="LocalForms\LocalLVitemCollection.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\UtilAnalysis_DirList\ExtensionMethodsStatic.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\UC_TreeMap.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\Collate.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\Collate\AddTreeToList.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\Collate\InsertSizeMarkerStatic.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList.Designer.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList\Form_Search\SearchBase.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList\Form_Search\SearchBase\SearchType2.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList\Form_Search\SearchBase\SearchType2\SearchFile.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList\Form_Search\SearchResults.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList\Form_Search\SearchResultsDir.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList\Form_Search_1_2_GlobalData.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList\Form_Search_Path_GlobalData.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList\Form_Tree_GlobalData.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\GlobalData.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\Tree\DetailsDatum\NodeDatum.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\Tree\LVitemNameComparerStruct.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\Tree\TreeBase.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\Tree\TreeBase\Tree.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\Tree\TreeBase\Tree\TreeRootNodeBuilder.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\Tree\TreeBase\Tree\TreeRootNodeBuilder\DirData.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\Tree\TreeBase\Tree\TreeRootNodeBuilder\Node.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\Tree\TreeBase\Tree\TreeRootNodeBuilder\RootNode.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\Tree\TreeSelect.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\CountNodes.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\UtilAnalysis_DirList\ListViewEx.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList\Form_Search.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\UtilAnalysis_DirList\ExtensionMethodsStatic.cs" />
+    <Compile Include="WinFormDirList\UC_TreeMap.cs" />
+    <Compile Include="WinFormDirList\Collate.cs" />
+    <Compile Include="WinFormDirList\Collate\AddTreeToList.cs" />
+    <Compile Include="WinFormDirList\Collate\InsertSizeMarkerStatic.cs" />
+    <Compile Include="WinFormDirList\FormAnalysis_DirList.cs" />
+    <Compile Include="WinFormDirList\FormAnalysis_DirList.Designer.cs" />
+    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Search\SearchBase.cs" />
+    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Search\SearchBase\SearchType2.cs" />
+    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Search\SearchBase\SearchType2\SearchFile.cs" />
+    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Search\SearchResults.cs" />
+    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Search\SearchResultsDir.cs" />
+    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Search_1_2_GlobalData.cs" />
+    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Search_Path_GlobalData.cs" />
+    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Tree_GlobalData.cs" />
+    <Compile Include="WinFormDirList\GlobalData.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Tree\DetailsDatum\NodeDatum.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Tree\LVitemNameComparerStruct.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Tree\TreeBase.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Tree\TreeBase\Tree.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Tree\TreeBase\Tree\TreeRootNodeBuilder.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Tree\TreeBase\Tree\TreeRootNodeBuilder\DirData.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Tree\TreeBase\Tree\TreeRootNodeBuilder\Node.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Tree\TreeBase\Tree\TreeRootNodeBuilder\RootNode.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Tree\TreeSelect.cs" />
+    <Compile Include="WinFormDirList\CountNodes.cs" />
+    <Compile Include="WinFormDirList\UtilAnalysis_DirList\ListViewEx.cs" />
+    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Search.cs" />
     <Compile Include="Utilities\FolderKeyTuple.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\Tree\DetailsDatum\NodeDatum.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\Tree\LVitemFileTag.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\Tree\LVitemNameComparerStruct.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\Tree\TreeBase\Tree.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList\Form_Tree.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\Tree\TreeBase.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\Tree\TreeBase\Tree\TreeRootNodeBuilder.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\Tree\TreeBase\Tree\TreeRootNodeBuilder\DirData.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\Tree\TreeBase\Tree\TreeRootNodeBuilder\Node.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\Tree\TreeBase\Tree\TreeRootNodeBuilder\RootNode.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\Tree\TreeSelect.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\UC_TreeMap.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\UtilAnalysis_DirList.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\UtilAnalysis_DirList\BlinkyStruct.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\UtilAnalysis_DirList\ExtensionMethodsStatic.cs" />
+    <Compile Include="WinFormDirList\Tree\DetailsDatum\NodeDatum.cs" />
+    <Compile Include="WinFormDirList\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Tree\LVitemFileTag.cs" />
+    <Compile Include="WinFormDirList\Tree\LVitemNameComparerStruct.cs" />
+    <Compile Include="WinFormDirList\Tree\TreeBase\Tree.cs" />
+    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Tree.cs" />
+    <Compile Include="WinFormDirList\Tree\TreeBase.cs" />
+    <Compile Include="WinFormDirList\Tree\TreeBase\Tree\TreeRootNodeBuilder.cs" />
+    <Compile Include="WinFormDirList\Tree\TreeBase\Tree\TreeRootNodeBuilder\DirData.cs" />
+    <Compile Include="WinFormDirList\Tree\TreeBase\Tree\TreeRootNodeBuilder\Node.cs" />
+    <Compile Include="WinFormDirList\Tree\TreeBase\Tree\TreeRootNodeBuilder\RootNode.cs" />
+    <Compile Include="WinFormDirList\Tree\TreeSelect.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\UC_TreeMap.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\UtilAnalysis_DirList.cs" />
+    <Compile Include="WinFormDirList\UtilAnalysis_DirList\BlinkyStruct.cs" />
+    <Compile Include="WinFormDirList\UtilAnalysis_DirList\ExtensionMethodsStatic.cs" />
     <Compile Include="Utilities\FlashWindowStatic.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\UtilAnalysis_DirList\SDL_FileBase.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\UtilAnalysis_DirList\SDL_TreeView.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\UtilAnalysis_DirList\SDL_FileBase\SDL_CopyFile.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\UtilAnalysis_DirList\SDL_FileBase\SDL_IgnoreFile.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\UtilColor.cs" />
-    <Compile Include="UtilAnalysis_FileHash\FileDictionary.cs" />
-    <Compile Include="UtilAnalysis_FileHash\FileDictionary\DuplicateStruct.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\UtilAnalysis_DirList\SDL_FileBase.cs" />
+    <Compile Include="WinFormDirList\UtilAnalysis_DirList\SDL_TreeView.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\UtilAnalysis_DirList\SDL_FileBase\SDL_CopyFile.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\UtilAnalysis_DirList\SDL_FileBase\SDL_IgnoreFile.cs" />
+    <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\UtilColor.cs" />
+    <Compile Include="WinDoubleFile\FileDictionary.cs" />
+    <Compile Include="WinDoubleFile\FileDictionary\DuplicateStruct.cs" />
     <Compile Include="Utilities\FileKeyTuple.cs" />
     <Compile Include="Utilities\HashTuple.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Files\LVitem_DoubleFile_FilesVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Files\LV_DoubleFile_FilesVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Files\LV_DoubleFile_FilesVM_Impl.cs" />
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Files\LVitem_DoubleFile_FilesVM.cs" />
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Files\LV_DoubleFile_FilesVM.cs" />
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Files\LV_DoubleFile_FilesVM_Impl.cs" />
     <Compile Include="LocalForms\LocalTreeNode.cs" />
     <Compile Include="LocalForms\LocalTreeNodeCollection.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Folders\TreeViewItem_DoubleFileVM.cs" />
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Folders\TreeViewItem_DoubleFileVM.cs" />
     <Compile Include="LocalForms\LocalTV.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Folders\TreeView_DoubleFileVM.cs">
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Folders\TreeView_DoubleFileVM.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Folders\WinDoubleFile_FoldersVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Folders\WinDoubleFile_FoldersVM_Impl.cs" />
-    <Compile Include="UtilAnalysis_FileHash\WinDoubleFile_Folders.xaml.cs">
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Folders\WinDoubleFile_FoldersVM.cs" />
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Folders\WinDoubleFile_FoldersVM_Impl.cs" />
+    <Compile Include="WinDoubleFile\WinDoubleFile_Folders.xaml.cs">
       <DependentUpon>WinDoubleFile_Folders.xaml</DependentUpon>
     </Compile>
     <Compile Include="UtilProject\GlobalData.cs">
@@ -373,7 +373,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList.resx">
+    <EmbeddedResource Include="WinFormDirList\FormAnalysis_DirList.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="DoubleFile_TemporaryKey.pfx" />
@@ -430,27 +430,27 @@
     <Resource Include="ic_people_black_18dp.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="UtilAnalysis_DirList Forms\WinFormAnalysis_DirList.xaml">
+    <Page Include="WinFormDirList\WinFormAnalysis_DirList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UtilAnalysis_DirList Local\WinTooltip.xaml">
+    <Page Include="WinDoubleFile\UtilAnalysis_DirList Local\WinTooltip.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UtilAnalysis_DirList Local\WinTreeMap.xaml">
+    <Page Include="WinDoubleFile\UtilAnalysis_DirList Local\WinTreeMap.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UtilAnalysis_FileHash\WinDoubleFile_Detail.xaml">
+    <Page Include="WinDoubleFile\WinDoubleFile_Detail.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UtilAnalysis_FileHash\WinDoubleFile_Duplicates.xaml">
+    <Page Include="WinDoubleFile\WinDoubleFile_Duplicates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UtilAnalysis_FileHash\WinDoubleFile_Files.xaml">
+    <Page Include="WinDoubleFile\WinDoubleFile_Files.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -462,7 +462,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UtilAnalysis_FileHash\WinDoubleFile_Folders.xaml">
+    <Page Include="WinDoubleFile\WinDoubleFile_Folders.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

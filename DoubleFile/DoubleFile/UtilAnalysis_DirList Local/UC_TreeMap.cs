@@ -14,12 +14,10 @@ namespace Local
     class UC_TreeMap : UserControl
     {
         internal bool ToolTipActive { get; private set; }
-        internal Control TooltipAnchor = null;
+        internal System.Windows.Window TooltipAnchor = null;
 
         public UC_TreeMap()
         {
-            _toolTip.UseFading = true;
-            _toolTip.UseAnimation = true;
             _timerAnim = new SDL_Timer(33.0, () =>   // 30 FPS
             {
                 if (_rectCenter != Rectangle.Empty)
@@ -42,9 +40,7 @@ namespace Local
             Local.TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
             MouseDown += form_tmapUserCtl_MouseDown;
             MouseUp += form_tmapUserCtl_MouseUp;
-
-            if (null == TooltipAnchor)
-                TooltipAnchor = this;
+            //WinTooltip.MouseClicked += Tooltip_Click;
         }
 
         void InvalidatePushRef(Action action)
@@ -97,15 +93,7 @@ namespace Local
             if (App.LocalExit)
                 return;
 
-            var ctl = TooltipAnchor;
-
-            if ((null == ctl) || ctl.IsDisposed)
-                ctl = this;
-
-            if (ctl.IsDisposed)
-                return;
-
-            UtilProject.UIthread(() => _toolTip.Hide(ctl));
+            UtilProject.UIthread(() => WinTooltip.CloseTooltip());
 
             if (false == bKeepTooltipActive)
             {
@@ -124,10 +112,11 @@ namespace Local
                 _bg = null;
             }
 
-            _toolTip.Dispose();
+            WinTooltip.CloseTooltip();
             _timerAnim.Dispose();
             ToolTipActive = false; UtilProject.WriteLine(DateTime.Now + " c ToolTipActive = false;");
             Local.TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
+            //WinTooltip.MouseClicked -= Tooltip_Click;
             base.Dispose(disposing);
         }
 
@@ -244,22 +233,22 @@ namespace Local
                 bImmediateFiles = false;
             }
 
-            _toolTip.ToolTipTitle = nodeRet.Text;
+            var strFolder = nodeRet.Text;
 
             if (bImmediateFiles)
             {
-                _toolTip.ToolTipTitle += " (immediate files)";
+                strFolder += " (immediate files)";
             }
-
-            _toolTip.Tag = nodeRet;
 
             {
                 var nodeDatum = nodeRet.NodeDatum;
 
                 _selRect = nodeDatum.TreeMapRect;
-                _toolTip.Show(UtilAnalysis_DirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
-                    TooltipAnchor,
-                    new Point(0, 0));
+                _toolTip = WinTooltip.ShowTooltip(
+                    strFolder,
+                    UtilAnalysis_DirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
+                    TooltipAnchor);
+                _toolTip.Tag = nodeRet;
                 ToolTipActive = true; UtilProject.WriteLine(DateTime.Now + " a ToolTipActive = true; ------");
             }
 
@@ -896,13 +885,13 @@ namespace Local
                             : new Rectangle((int)top, (int)left, bottom - (int)top, right - (int)left);
 
                         ThreadPool.QueueUserWorkItem(
-                            new WaitCallback(state =>
+                            state =>
                             {
                                 var param = (Tuple<LocalTreeNode, Rectangle>)state;
 
                                 RecurseDrawGraph(param.Item1, param.Item2);
                                 Interlocked.Decrement(ref _nWorkerCount);
-                            }),
+                            },
                             new Tuple<LocalTreeNode, Rectangle>(child, rcChild)
                         );
 
@@ -1059,8 +1048,8 @@ namespace Local
             _nAnimFrame = 0;
         DateTime
             _dtHideGoofball = DateTime.MinValue;
-        readonly ToolTip
-            _toolTip = new ToolTip();
+        WinTooltip
+            _toolTip = null;
         bool
             _bMouseDown = false;
         int

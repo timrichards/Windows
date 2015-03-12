@@ -7,6 +7,7 @@ namespace DoubleFile
     public class LocalWindow : Window
     {
         internal bool LocalIsClosed { get; private set; }
+        internal bool LocalIsClosing { get; private set; }
 
         internal bool? LocalDialogResult
         {
@@ -60,6 +61,7 @@ namespace DoubleFile
             ShowActivated = true;
             Loaded += (o, e) => LocalIsClosed = false;
             Closed += (o, e) => LocalIsClosed = true;
+            Closing += (o, e) => LocalIsClosing = true;
 #if (DEBUG)
             Activated += (o, e) => UtilProject.WriteLine(this + " Activated");
             Deactivated += (o, e) => UtilProject.WriteLine(this + " Deactivated");

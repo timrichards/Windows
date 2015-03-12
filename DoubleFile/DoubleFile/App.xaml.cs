@@ -27,6 +27,18 @@ namespace DoubleFile
         {
             LocalActivated = true;      // seemed to work but jic
             LocalExit = false;
+
+            Activated += Application_Activated;
+            Deactivated += (o, e) => LocalActivated = false;
+            Exit += (o, e) => LocalExit = true;
+
+            DispatcherUnhandledException += (o, e) =>
+            {
+                e.Handled = true;
+                MBoxStatic.Assert(-1, false, e.Exception.GetBaseException().Message);
+            };
+
+            ShutdownMode = System.Windows.ShutdownMode.OnMainWindowClose;
         }
 
         private void Application_Activated(object sender, System.EventArgs e)
@@ -37,16 +49,6 @@ namespace DoubleFile
             }
             
             LocalActivated = true;
-        }
-
-        private void Application_Deactivated(object sender, System.EventArgs e)
-        {
-            LocalActivated = false;
-        }
-
-        private void Application_Exit(object sender, ExitEventArgs e)
-        {
-            LocalExit = true;
         }
     }
 }

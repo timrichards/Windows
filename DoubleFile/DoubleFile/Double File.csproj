@@ -151,8 +151,8 @@
     <Compile Include="MVVM\ListView Base\ListViewVM_GenericBase.cs" />
     <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
     <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
-    <Compile Include="WinFormDirList\WinFormAnalysis_DirList.xaml.cs">
-      <DependentUpon>WinFormAnalysis_DirList.xaml</DependentUpon>
+    <Compile Include="WinFormDirList\WinFormDirList.xaml.cs">
+      <DependentUpon>WinFormDirList.xaml</DependentUpon>
     </Compile>
     <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\LocalTreeMapNode.cs" />
     <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Tree\DetailsDatum.cs" />
@@ -201,16 +201,16 @@
     <Compile Include="WinFormDirList\Collate.cs" />
     <Compile Include="WinFormDirList\Collate\AddTreeToList.cs" />
     <Compile Include="WinFormDirList\Collate\InsertSizeMarkerStatic.cs" />
-    <Compile Include="WinFormDirList\FormAnalysis_DirList.cs" />
-    <Compile Include="WinFormDirList\FormAnalysis_DirList.Designer.cs" />
-    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Search\SearchBase.cs" />
-    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Search\SearchBase\SearchType2.cs" />
-    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Search\SearchBase\SearchType2\SearchFile.cs" />
-    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Search\SearchResults.cs" />
-    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Search\SearchResultsDir.cs" />
-    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Search_1_2_GlobalData.cs" />
-    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Search_Path_GlobalData.cs" />
-    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Tree_GlobalData.cs" />
+    <Compile Include="WinFormDirList\FormDirList.cs" />
+    <Compile Include="WinFormDirList\FormDirList.Designer.cs" />
+    <Compile Include="WinFormDirList\FormDirList\Form_Search\SearchBase.cs" />
+    <Compile Include="WinFormDirList\FormDirList\Form_Search\SearchBase\SearchType2.cs" />
+    <Compile Include="WinFormDirList\FormDirList\Form_Search\SearchBase\SearchType2\SearchFile.cs" />
+    <Compile Include="WinFormDirList\FormDirList\Form_Search\SearchResults.cs" />
+    <Compile Include="WinFormDirList\FormDirList\Form_Search\SearchResultsDir.cs" />
+    <Compile Include="WinFormDirList\FormDirList\Form_Search_1_2_GlobalData.cs" />
+    <Compile Include="WinFormDirList\FormDirList\Form_Search_Path_GlobalData.cs" />
+    <Compile Include="WinFormDirList\FormDirList\Form_Tree_GlobalData.cs" />
     <Compile Include="WinFormDirList\GlobalData.cs" />
     <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Tree\DetailsDatum\NodeDatum.cs" />
     <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
@@ -223,15 +223,15 @@
     <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Tree\TreeBase\Tree\TreeRootNodeBuilder\RootNode.cs" />
     <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Tree\TreeSelect.cs" />
     <Compile Include="WinFormDirList\CountNodes.cs" />
-    <Compile Include="WinFormDirList\UtilAnalysis_DirList\ListViewEx.cs" />
-    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Search.cs" />
+    <Compile Include="WinFormDirList\UtilDirList\ListViewEx.cs" />
+    <Compile Include="WinFormDirList\FormDirList\Form_Search.cs" />
     <Compile Include="Utilities\FolderKeyTuple.cs" />
     <Compile Include="WinFormDirList\Tree\DetailsDatum\NodeDatum.cs" />
     <Compile Include="WinFormDirList\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
     <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\Tree\LVitemFileTag.cs" />
     <Compile Include="WinFormDirList\Tree\LVitemNameComparerStruct.cs" />
     <Compile Include="WinFormDirList\Tree\TreeBase\Tree.cs" />
-    <Compile Include="WinFormDirList\FormAnalysis_DirList\Form_Tree.cs" />
+    <Compile Include="WinFormDirList\FormDirList\Form_Tree.cs" />
     <Compile Include="WinFormDirList\Tree\TreeBase.cs" />
     <Compile Include="WinFormDirList\Tree\TreeBase\Tree\TreeRootNodeBuilder.cs" />
     <Compile Include="WinFormDirList\Tree\TreeBase\Tree\TreeRootNodeBuilder\DirData.cs" />
@@ -240,11 +240,11 @@
     <Compile Include="WinFormDirList\Tree\TreeSelect.cs" />
     <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\UC_TreeMap.cs" />
     <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\UtilAnalysis_DirList.cs" />
-    <Compile Include="WinFormDirList\UtilAnalysis_DirList\BlinkyStruct.cs" />
-    <Compile Include="WinFormDirList\UtilAnalysis_DirList\ExtensionMethodsStatic.cs" />
+    <Compile Include="WinFormDirList\UtilDirList\BlinkyStruct.cs" />
+    <Compile Include="WinFormDirList\UtilDirList\ExtensionMethodsStatic.cs" />
     <Compile Include="Utilities\FlashWindowStatic.cs" />
     <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\UtilAnalysis_DirList\SDL_FileBase.cs" />
-    <Compile Include="WinFormDirList\UtilAnalysis_DirList\SDL_TreeView.cs" />
+    <Compile Include="WinFormDirList\UtilDirList\SDL_TreeView.cs" />
     <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\UtilAnalysis_DirList\SDL_FileBase\SDL_CopyFile.cs" />
     <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\UtilAnalysis_DirList\SDL_FileBase\SDL_IgnoreFile.cs" />
     <Compile Include="WinDoubleFile\UtilAnalysis_DirList Local\UtilColor.cs" />
@@ -373,7 +373,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="WinFormDirList\FormAnalysis_DirList.resx">
+    <EmbeddedResource Include="WinFormDirList\FormDirList.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="DoubleFile_TemporaryKey.pfx" />
@@ -430,7 +430,7 @@
     <Resource Include="ic_people_black_18dp.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="WinFormDirList\WinFormAnalysis_DirList.xaml">
+    <Page Include="WinFormDirList\WinFormDirList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

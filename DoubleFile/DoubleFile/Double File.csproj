@@ -320,32 +320,32 @@
       <DependentUpon>WinProgress.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinVolumeEdit\MVVM_UC_VolumeEdit\UC_VolumeEditVM.cs">
+    <Compile Include="WinProject\WinVolumeEdit\MVVM_UC_VolumeEdit\UC_VolumeEditVM.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinVolumeEdit\MVVM_UC_VolumeEdit\UC_VolumeEditVM_Impl.cs">
+    <Compile Include="WinProject\WinVolumeEdit\MVVM_UC_VolumeEdit\UC_VolumeEditVM_Impl.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinVolumeEdit\UC_VolumeEdit.xaml.cs">
+    <Compile Include="WinProject\WinVolumeEdit\UC_VolumeEdit.xaml.cs">
       <DependentUpon>UC_VolumeEdit.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinVolumeEdit\UC_VolumeGroup.xaml.cs">
+    <Compile Include="WinProject\WinVolumeEdit\UC_VolumeGroup.xaml.cs">
       <DependentUpon>UC_VolumeGroup.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinVolumeEdit\WinVolumeEdit.xaml.cs">
+    <Compile Include="WinProject\WinVolumeEdit\WinVolumeEdit.xaml.cs">
       <DependentUpon>WinVolumeEdit.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinVolumeEdit\WinVolumeEditBase.cs">
+    <Compile Include="WinProject\WinVolumeEdit\WinVolumeEditBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinVolumeEdit\WinVolumeGroup.xaml.cs">
+    <Compile Include="WinProject\WinVolumeEdit\WinVolumeGroup.xaml.cs">
       <DependentUpon>WinVolumeGroup.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinVolumeEdit\WinVolumeNew.xaml.cs">
+    <Compile Include="WinProject\WinVolumeEdit\WinVolumeNew.xaml.cs">
       <DependentUpon>WinVolumeNew.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -474,23 +474,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WinVolumeEdit\UC_VolumeEdit.xaml">
+    <Page Include="WinProject\WinVolumeEdit\UC_VolumeEdit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WinVolumeEdit\UC_VolumeGroup.xaml">
+    <Page Include="WinProject\WinVolumeEdit\UC_VolumeGroup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WinVolumeEdit\WinVolumeEdit.xaml">
+    <Page Include="WinProject\WinVolumeEdit\WinVolumeEdit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WinVolumeEdit\WinVolumeGroup.xaml">
+    <Page Include="WinProject\WinVolumeEdit\WinVolumeGroup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WinVolumeEdit\WinVolumeNew.xaml">
+    <Page Include="WinProject\WinVolumeEdit\WinVolumeNew.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

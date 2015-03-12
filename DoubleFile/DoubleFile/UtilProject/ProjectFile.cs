@@ -390,8 +390,8 @@ namespace DoubleFile
                 UtilProject.UIthread(_winProgress.Close);
             }
 
-            SDL_Timer tmr = null;
-            var tmr_ = new SDL_Timer(33.0, () =>
+            LocalTimer tmr = null;
+            var tmr_ = new LocalTimer(33.0, () =>
             {
                 tmr.Dispose();
                 MBoxStatic.ShowDialog(strError, "Error " + strMode + " Project");

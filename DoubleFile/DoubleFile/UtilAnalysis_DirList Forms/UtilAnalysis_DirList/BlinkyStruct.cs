@@ -10,7 +10,7 @@ namespace DoubleFile
         internal static bool TreeSelect { get { return m_bTreeSelect; } }
 
         readonly Control m_defaultControl;
-        readonly SDL_Timer m_timer;
+        readonly LocalTimer m_timer;
 
         Holder m_holder;
         Color m_clrBlink;
@@ -68,7 +68,7 @@ namespace DoubleFile
 
             m_timer = null;     // bootstrap
             BlinkyStruct local = this;
-            m_timer = new SDL_Timer(33.0, () =>
+            m_timer = new LocalTimer(33.0, () =>
             {
                 if (local.m_bProgress || (++local.m_nBlink < local.m_nNumBlinks))
                 {

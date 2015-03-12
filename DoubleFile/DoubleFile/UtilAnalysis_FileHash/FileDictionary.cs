@@ -121,7 +121,7 @@ namespace DoubleFile
 
             var nLVitems_A = 0;
 
-            using (new SDL_Timer(() =>
+            using (new LocalTimer(() =>
             {
                 if (nLVitems == nLVitems_A)
                 {

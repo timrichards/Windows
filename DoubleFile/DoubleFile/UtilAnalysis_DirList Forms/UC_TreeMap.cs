@@ -19,7 +19,7 @@ namespace DoubleFile
         {
             _toolTip.UseFading = true;
             _toolTip.UseAnimation = true;
-            _timerAnim = new SDL_Timer(33.0, () =>   // 30 FPS
+            _timerAnim = new LocalTimer(33.0, () =>   // 30 FPS
             {
                 if (_rectCenter != Rectangle.Empty)
                 {
@@ -1029,7 +1029,7 @@ namespace DoubleFile
             _treeNode = null;
         TreeNode
             _prevNode = null;
-        readonly SDL_Timer
+        readonly LocalTimer
             _timerAnim = null;
         int
             _nAnimFrame = 0;

@@ -118,7 +118,7 @@ namespace DoubleFile
                 var nProgressNumerator = 0;
                 double nProgressDenominator = listFilePaths.Count();        // double preserves mantissa
 
-                using (new SDL_Timer(() =>
+                using (new LocalTimer(() =>
                 {
                     m_statusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator);
                 }).Start())

@@ -105,7 +105,7 @@ namespace DoubleFile
             var lsLocalLVignore = new List<LocalLVitem>();  // when implementing, replace the Forms ListViewItem.Tag in LocalLVItem
             var nProgress = 0.0;
 
-            using (new SDL_Timer(() => { _winProgress.SetProgress(_ksFolderTreeKey, (3 + nProgress)/4.0); }).Start())
+            using (new LocalTimer(() => { _winProgress.SetProgress(_ksFolderTreeKey, (3 + nProgress)/4.0); }).Start())
             {
                 var collate = new Local.Collate(_gd, DictNodes,
                     localTV,

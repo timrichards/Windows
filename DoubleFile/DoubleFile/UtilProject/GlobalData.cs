@@ -8,7 +8,7 @@ namespace DoubleFile
         internal static LocalWindow static_Dialog { get; set; }
         internal static LocalWindow static_lastPlacementWindow { get; set; }
 
-        internal readonly SDL_Timer m_tmrDoTree = null;
+        internal readonly LocalTimer m_tmrDoTree = null;
         internal bool m_bRestartTreeTimer = false;
         internal bool m_bKillTree = true;
 
@@ -41,7 +41,7 @@ namespace DoubleFile
                 static_MainWindow = 
                 wpfWin;
             Instance = this;
-            m_tmrDoTree = new SDL_Timer { Interval = 3000 };
+            m_tmrDoTree = new LocalTimer { Interval = 3000 };
         }
 
         public void Dispose()

@@ -4,20 +4,20 @@ using System.Timers;
 namespace DoubleFile
 {
     [System.ComponentModel.DesignerCategory("Code")]
-    class SDL_Timer : Timer
+    class LocalTimer : Timer
     {
-        internal SDL_Timer()
+        internal LocalTimer()
         { }
 
-        internal SDL_Timer(Action callback)
+        internal LocalTimer(Action callback)
             : this(500.0, callback)
         { }
 
-        internal SDL_Timer(int seconds, Action callback)
+        internal LocalTimer(int seconds, Action callback)
             : this(seconds * 1000.0, callback)
         { }
 
-        internal SDL_Timer(double milliseconds, Action callback)
+        internal LocalTimer(double milliseconds, Action callback)
             : base(milliseconds)
         {
             Elapsed += _ElapsedHandler = (o, e) => callback();
@@ -30,7 +30,7 @@ namespace DoubleFile
             _bDisposed = true;
         }
 
-        internal new SDL_Timer Start()
+        internal new LocalTimer Start()
         {
             if (_bDisposed)
             {

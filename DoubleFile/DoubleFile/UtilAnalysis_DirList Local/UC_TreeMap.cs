@@ -18,7 +18,7 @@ namespace Local
 
         public UC_TreeMap()
         {
-            _timerAnim = new SDL_Timer(33.0, () =>   // 30 FPS
+            _timerAnim = new LocalTimer(33.0, () =>   // 30 FPS
             {
                 if (_rectCenter != Rectangle.Empty)
                 {
@@ -1042,7 +1042,7 @@ namespace Local
             _treeNode = null;
         LocalTreeNode
             _prevNode = null;
-        readonly SDL_Timer
+        readonly LocalTimer
             _timerAnim = null;
         int
             _nAnimFrame = 0;

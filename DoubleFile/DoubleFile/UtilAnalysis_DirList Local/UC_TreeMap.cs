@@ -7,7 +7,6 @@ using System.Drawing.Drawing2D;
 using DoubleFile;
 using System.Threading;
 using System.Collections.Concurrent;
-using System.Threading.Tasks;
 
 namespace Local
 {
@@ -81,7 +80,7 @@ namespace Local
 
             //gd.m_bPutPathInFindEditBox = true;
             //gd.m_bTreeViewIndirectSelChange = true;
-            //treeNode.TreeView.SelectedNode = treeNode;
+            treeNode.TreeView.SelectedNode = treeNode;
         }
 
         internal void Clear()
@@ -97,29 +96,26 @@ namespace Local
 
         internal void ClearSelection(bool bKeepTooltipActive = false)
         {
-            InvalidatePushRef(() =>
+            if (App.LocalExit)
+                return;
+
+            var ctl = TooltipAnchor;
+
+            if ((null == ctl) || ctl.IsDisposed)
+                ctl = this;
+
+            if (ctl.IsDisposed)
+                return;
+
+            UtilProject.UIthread(() => _toolTip.Hide(ctl));
+
+            if (false == bKeepTooltipActive)
             {
-                if (App.LocalExit)
-                    return;
+                ToolTipActive = false;
+                UtilProject.WriteLine(DateTime.Now + " b ToolTipActive = false;");
+            }
 
-                var ctl = TooltipAnchor;
-
-                if ((null == ctl) || ctl.IsDisposed)
-                    ctl = this;
-
-                if (ctl.IsDisposed)
-                    return;
-
-                UtilProject.UIthread(() => _toolTip.Hide(ctl));
-
-                if (false == bKeepTooltipActive)
-                {
-                    ToolTipActive = false;
-                    UtilProject.WriteLine(DateTime.Now + " b ToolTipActive = false;");
-                }
-
-                _selRect = Rectangle.Empty;
-            });
+            InvalidatePushRef(() => _selRect = Rectangle.Empty);
         }
 
         protected override void Dispose(bool disposing)
@@ -338,16 +334,17 @@ namespace Local
 
             var nodeFileList = new LocalTreeMapNode(parent.Text);
             ulong nTotalLength = 0;
-            var iterUlong = listLengths.GetEnumerator();
+            var enumerator = listLengths.GetEnumerator();
 
             foreach (var arrLine in listFiles)
             {
-                MBoxStatic.Assert(1302.3316, iterUlong.MoveNext());
                 var nodeDatum_A = new NodeDatum();
+                var bMoveNext = enumerator.MoveNext();
 
-                nTotalLength += nodeDatum_A.TotalLength = iterUlong.Current;
+                MBoxStatic.Assert(1302.3316, bMoveNext);
+                nTotalLength += nodeDatum_A.TotalLength = enumerator.Current;
 
-                if (iterUlong.Current == 0)
+                if (enumerator.Current == 0)
                 {
                     continue;
                 }
@@ -496,7 +493,7 @@ namespace Local
             {
                 _bg.Graphics.Clear(Color.DarkGray);
 
-                List<RenderAction> lsFrames = new List<RenderAction>();
+                var lsFrames = new List<RenderAction>();
 
                 foreach (var stroke in _lsRenderActions)
                 {
@@ -637,19 +634,27 @@ namespace Local
                 deepNodeDrawn_out = _deepNodeDrawn;
                 return _lsRenderActions;
             }
-
-            int _nWorkerCount = 0;
             
             void RecurseDrawGraph(
                 LocalTreeNode item,
                 Rectangle rc,
                 bool bStart = false)
             {
+#if (DEBUG)
                 MBoxStatic.Assert(1302.3303, rc.Width >= 0);
                 MBoxStatic.Assert(1302.3304, rc.Height >= 0);
-
-                if (rc.Width <= 0 || rc.Height <= 0)
+#endif
+                if (rc.Width < 1 ||
+                    rc.Height < 1)
                 {
+                    return;
+                }
+
+                if (rc.Width < 4 ||
+                    rc.Height < 4)
+                {
+                    // Speedup. Draw an "empty" folder in place of too much detail
+                    DrawNode(item, rc);
                     return;
                 }
 
@@ -676,8 +681,7 @@ namespace Local
                     nodeDatum.TreeMapFiles = GetFileList(item);
                 }
 
-                if (
-                    (false == item.Nodes.IsEmpty()) ||
+                if ((false == item.Nodes.IsEmpty()) ||
                     (bStart && (null != nodeDatum.TreeMapFiles)))
                 {
                     List<LocalTreeNode> listChildren = null;
@@ -770,7 +774,11 @@ namespace Local
                 }
 
                 // There are no children. Draw a file or an empty folder.
+                DrawNode(item, rc);
+            }
 
+            void DrawNode(LocalTreeNode item, Rectangle rc)
+            {
                 var path = new GraphicsPath();
                 var r = rc;
 
@@ -833,6 +841,7 @@ namespace Local
 
                 var horizontalRows = (rc.Width >= rc.Height);
                 var width_A = 1.0;
+
                 if (horizontalRows)
                 {
                     if (rc.Height > 0)
@@ -1015,10 +1024,13 @@ namespace Local
                 _deepNode = null;
             LocalTreeNode
                 _deepNodeDrawn = null;
+
+            struct
+                RowStruct { internal double RowHeight; internal int ChildrenPerRow; }
+            int
+                _nWorkerCount = 0;
         }
 
-        struct
-            RowStruct { internal double RowHeight; internal int ChildrenPerRow; }
         abstract class
             RenderAction { internal Rectangle rc; internal abstract void Stroke(Graphics g); }
         class

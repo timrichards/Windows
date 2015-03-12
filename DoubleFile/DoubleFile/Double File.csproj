@@ -26,7 +26,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>96</ApplicationRevision>
+    <ApplicationRevision>99</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -194,7 +194,7 @@
     <Compile Include="LocalForms\LocalLVitem.cs" />
     <Compile Include="LocalForms\LocalLVitemCollection.cs" />
     <Compile Include="UtilAnalysis_DirList Local\UtilAnalysis_DirList\ExtensionMethodsStatic.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\UC_TreeMap.cs" />
+    <Compile Include="UtilAnalysis_DirList Forms\UC_TreeMap.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Collate.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Collate\AddTreeToList.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Collate\InsertSizeMarkerStatic.cs" />
@@ -235,7 +235,7 @@
     <Compile Include="UtilAnalysis_DirList Forms\Tree\TreeBase\Tree\TreeRootNodeBuilder\Node.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Tree\TreeBase\Tree\TreeRootNodeBuilder\RootNode.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Tree\TreeSelect.cs" />
-    <Compile Include="UtilAnalysis_DirList Forms\UC_TreeMap.cs" />
+    <Compile Include="UtilAnalysis_DirList Local\UC_TreeMap.cs" />
     <Compile Include="UtilAnalysis_DirList Local\UtilAnalysis_DirList.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\UtilAnalysis_DirList\BlinkyStruct.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\UtilAnalysis_DirList\ExtensionMethodsStatic.cs" />

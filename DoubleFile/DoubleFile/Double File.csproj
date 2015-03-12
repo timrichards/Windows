@@ -301,7 +301,7 @@
     <Compile Include="UtilProject\MBoxStatic.cs" />
     <Compile Include="UtilProject\ProjectFile.cs" />
     <Compile Include="UtilProject\SDL_Timer.cs" />
-    <Compile Include="UtilProject\UList.cs" />
+    <Compile Include="UtilProject\KeyList.cs" />
     <Compile Include="UtilAnalysis_FileHash\TabledString.cs" />
     <Compile Include="UtilProject\UtilProject.cs" />
     <Compile Include="UtilProject\Win32FindFileStatic.cs" />

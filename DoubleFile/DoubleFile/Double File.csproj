@@ -267,7 +267,7 @@
     <Compile Include="WinDoubleFile\WinDoubleFile_Folders.xaml.cs">
       <DependentUpon>WinDoubleFile_Folders.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UtilProject\GlobalData.cs">
+    <Compile Include="WinProject\UtilProject\GlobalData.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utilities\LocalWindow.cs" />
@@ -275,48 +275,48 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MVVM_WinProject\LV_ProjectVM_Impl.cs" />
-    <Compile Include="UtilProject\SaveDirListings\SaveDirListing.cs">
+    <Compile Include="WinProject\MVVM_WinProject\LV_ProjectVM_Impl.cs" />
+    <Compile Include="WinProject\UtilProject\SaveDirListings\SaveDirListing.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UtilProject\SaveDirListings\SaveDirListings.cs">
+    <Compile Include="WinProject\UtilProject\SaveDirListings\SaveDirListings.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UtilProject\SaveDirListings\SaveListingsProcess.cs">
+    <Compile Include="WinProject\UtilProject\SaveDirListings\SaveListingsProcess.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UtilProject\SaveDirListings\TraverseTreeBase.cs">
+    <Compile Include="WinProject\UtilProject\SaveDirListings\TraverseTreeBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UtilProject\FileParse.cs" />
+    <Compile Include="WinProject\UtilProject\FileParse.cs" />
     <Compile Include="MVVM\ObservableObjectBase.cs" />
     <Compile Include="MVVM\ObservableObject_OwnerWindow.cs" />
     <Compile Include="MVVM\RelayCommand.cs" />
-    <Compile Include="MVVM_WinProgress\LVitem_ProgressVM.cs" />
-    <Compile Include="MVVM_WinProgress\LV_ProgressVM.cs" />
-    <Compile Include="MVVM_WinProject\LV_ProjectVM.cs" />
-    <Compile Include="MVVM_WinProject\WinProjectVM_Impl.cs" />
-    <Compile Include="MVVM_WinProject\LVitem_ProjectVM.cs" />
-    <Compile Include="UtilProject\DriveSerialStatic.cs" />
+    <Compile Include="Utilities\MVVM_WinProgress\LVitem_ProgressVM.cs" />
+    <Compile Include="Utilities\MVVM_WinProgress\LV_ProgressVM.cs" />
+    <Compile Include="WinProject\MVVM_WinProject\LV_ProjectVM.cs" />
+    <Compile Include="WinProject\MVVM_WinProject\WinProjectVM_Impl.cs" />
+    <Compile Include="WinProject\MVVM_WinProject\LVitem_ProjectVM.cs" />
+    <Compile Include="WinProject\UtilProject\DriveSerialStatic.cs" />
     <Compile Include="Utilities\MBoxStatic.cs" />
-    <Compile Include="UtilProject\ProjectFile.cs" />
+    <Compile Include="WinProject\UtilProject\ProjectFile.cs" />
     <Compile Include="Utilities\LocalTimer.cs" />
     <Compile Include="Utilities\KeyList.cs" />
     <Compile Include="Utilities\TabledString.cs" />
-    <Compile Include="UtilProject\UtilProject.cs" />
-    <Compile Include="UtilProject\Win32FindFileStatic.cs" />
-    <Compile Include="UtilProject\ExtensionMethodsStatic.cs" />
-    <Compile Include="MVVM_WinProject\WinProjectVM.cs">
+    <Compile Include="WinProject\UtilProject\UtilProject.cs" />
+    <Compile Include="WinProject\UtilProject\Win32FindFileStatic.cs" />
+    <Compile Include="WinProject\UtilProject\ExtensionMethodsStatic.cs" />
+    <Compile Include="WinProject\MVVM_WinProject\WinProjectVM.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UtilProject\WinChooseDrive.xaml.cs">
+    <Compile Include="WinProject\UtilProject\WinChooseDrive.xaml.cs">
       <DependentUpon>WinChooseDrive.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinProgress.xaml.cs">
+    <Compile Include="Utilities\WinProgress.xaml.cs">
       <DependentUpon>WinProgress.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -349,7 +349,7 @@
       <DependentUpon>WinVolumeNew.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinProject.xaml.cs">
+    <Compile Include="WinProject\WinProject.xaml.cs">
       <DependentUpon>WinProject.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -466,11 +466,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UtilProject\WinChooseDrive.xaml">
+    <Page Include="WinProject\UtilProject\WinChooseDrive.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WinProgress.xaml">
+    <Page Include="Utilities\WinProgress.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -494,7 +494,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WinProject.xaml">
+    <Page Include="WinProject\WinProject.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

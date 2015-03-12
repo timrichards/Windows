@@ -57,7 +57,7 @@ namespace DoubleFile
             if (m_tree != null)
             {
                 m_tree.EndThread(bJoin: bJoin);
-                ((SDL_TreeView)GlobalData.static_MainWindow.Analysis_DirListForm._form.form_treeViewBrowse).Nodes.Clear();
+                ((SDL_TreeView)GlobalData.static_MainWindow.DirListForm._form.form_treeViewBrowse).Nodes.Clear();
                 m_listRootNodes.Clear();
                 TreeCleanup();
             }
@@ -70,7 +70,7 @@ namespace DoubleFile
             m_listLVignore.Clear();
             Collate.ClearMem();
 
-            var formSDL = GlobalData.static_MainWindow.Analysis_DirListForm;
+            var formSDL = GlobalData.static_MainWindow.DirListForm;
 
             UtilProject.UIthread(() =>
             {

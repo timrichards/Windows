@@ -4,7 +4,7 @@ using System.IO;
 
 namespace DoubleFile
 {
-    class UtilAnalysis_DirList : FileParse
+    class UtilDirList : FileParse
     {
         internal static void Closure(Action action) { action(); }
         internal static T Closure<T>(Func<T> action) { return action(); }

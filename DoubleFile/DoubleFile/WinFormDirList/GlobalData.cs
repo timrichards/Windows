@@ -16,7 +16,7 @@ namespace DoubleFile
         internal readonly List<TreeNode> m_listHistory = new List<TreeNode>();
         internal int m_nIxHistory = -1;
 
-        internal void ClearMem_FormAnalysis_DirList()
+        internal void ClearMem_FormDirList()
         {
             m_nodeCompare1 = null;
             m_dictCompareDiffs.Clear();
@@ -45,7 +45,7 @@ namespace DoubleFile
         internal bool m_bNavDropDown = false;
         internal bool m_btmapUserCtl_MouseDown = false;
 
-        // initialized in FormAnalysis_DirList constructor:
+        // initialized in FormDirList constructor:
         internal BlinkyStruct m_blinky;
         internal string m_strBtnTreeCollapseOrig = null;
         internal string m_strColFilesOrig = null;

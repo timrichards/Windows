@@ -14,7 +14,7 @@ namespace DoubleFile
 {
     //    [System.ComponentModel.DesignerCategory("Designer")]
     [System.ComponentModel.DesignerCategory("Code")]
-    partial class FormAnalysis_DirList : UserControl
+    partial class FormDirList : UserControl
     {
         bool m_bFindBoxMouseEnter = false;
 
@@ -31,7 +31,7 @@ namespace DoubleFile
             LVprojectVM = new LV_ProjectVM(lvProjectVM: lvProjectVM);
         }
 
-        public FormAnalysis_DirList()
+        public FormDirList()
         {
             InitializeComponent();
 
@@ -56,7 +56,7 @@ namespace DoubleFile
                     return;
                 }
 
-                UtilAnalysis_DirList.UIthread(this, () =>
+                UtilDirList.UIthread(this, () =>
                 {
                     if (gd.m_bCompareMode)
                     {
@@ -89,13 +89,13 @@ namespace DoubleFile
             m_clrVolGroupOrig = form_lblVolGroup.BackColor;
         }
 
-        internal void FormAnalysis_DirList_Load(object sender, EventArgs e)
+        internal void FormDirList_Load(object sender, EventArgs e)
         {
             gd.RestartTreeTimer();
             form_tmapUserCtl.TooltipAnchor = (Control)form_cbFindbox;
         }
 
-        static internal void RestartTreeTimer(FormAnalysis_DirList form1, LV_ProjectVM lvProjectVM)
+        static internal void RestartTreeTimer(FormDirList form1, LV_ProjectVM lvProjectVM)
         {
             if (form1 != null)
             {
@@ -111,12 +111,12 @@ namespace DoubleFile
             m_ownerWindow.Activate();
         }
 
-        // Memory allocations occur just below all partial class FormAnalysis_DirList : Form declarations, then ClearMem_...() for each.
+        // Memory allocations occur just below all partial class FormDirList : Form declarations, then ClearMem_...() for each.
         // Declarations continue below these two ClearMem() methods.
 
-        void ClearMem_FormAnalysis_DirList()
+        void ClearMem_FormDirList()
         {
-            gd.ClearMem_FormAnalysis_DirList();
+            gd.ClearMem_FormDirList();
 
             MBoxStatic.Assert(1308.9301, form_lvClones.Items.IsEmpty(), bTraceOnly: true);
             MBoxStatic.Assert(1308.9302, form_lvSameVol.Items.IsEmpty(), bTraceOnly: true);
@@ -136,7 +136,7 @@ namespace DoubleFile
         void ClearMem()
         {
             Collate.ClearMem();
-            ClearMem_FormAnalysis_DirList();
+            ClearMem_FormDirList();
             gd_Search_1_2.ClearMem_Search();
             ClearMem_TreeForm();
         }
@@ -146,7 +146,7 @@ namespace DoubleFile
         internal readonly Color m_clrVolGroupOrig = Color.Empty;
         internal readonly Font m_FontVolGroupOrig = null;
 
-        public class FormAnalysis_DirListLayoutPanel : TableLayoutPanel
+        public class FormDirListLayoutPanel : TableLayoutPanel
         {
             void SetStyle()
             {
@@ -155,12 +155,12 @@ namespace DoubleFile
                   ControlStyles.UserPaint, true);
             }
 
-            public FormAnalysis_DirListLayoutPanel()
+            public FormDirListLayoutPanel()
             {
                 SetStyle();
             }
 
-            public FormAnalysis_DirListLayoutPanel(System.ComponentModel.IContainer container)
+            public FormDirListLayoutPanel(System.ComponentModel.IContainer container)
             {
                 container.Add(this);
                 SetStyle();
@@ -1360,7 +1360,7 @@ namespace DoubleFile
             gd.m_bPutPathInFindEditBox = true;
         }
 
-        void FormAnalysis_DirList_KeyDown(object sender, KeyEventArgs e)
+        void FormDirList_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.F2)
             {
@@ -1383,7 +1383,7 @@ namespace DoubleFile
             }
         }
 
-        void FormAnalysis_DirList_KeyPress(object sender, KeyPressEventArgs e)
+        void FormDirList_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)0x3)                         // Ctrl-C
             {
@@ -1392,7 +1392,7 @@ namespace DoubleFile
             }
         }
 
-        void FormAnalysis_DirList_KeyUp(object sender, KeyEventArgs e)
+        void FormDirList_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.F2)
             {

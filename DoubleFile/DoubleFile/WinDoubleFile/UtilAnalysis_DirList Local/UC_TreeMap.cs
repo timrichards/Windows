@@ -151,7 +151,7 @@ namespace Local
             var bImmediateFiles = false;
             var bVolumeView = false;
 
-            UtilAnalysis_DirList.Closure(() =>
+            UtilDirList.Closure(() =>
             {
                 {
                     var nodeDatum = _treeNode.NodeDatum;
@@ -246,7 +246,7 @@ namespace Local
                 _selRect = nodeDatum.TreeMapRect;
                 _toolTip = WinTooltip.ShowTooltip(
                     strFolder,
-                    UtilAnalysis_DirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
+                    UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
                     TooltipAnchor);
                 _toolTip.Tag = nodeRet;
                 ToolTipActive = true; UtilProject.WriteLine(DateTime.Now + " a ToolTipActive = true; ------");
@@ -671,7 +671,7 @@ namespace Local
                     LocalTreeNode parent = null;
                     var bVolumeNode = false;
 
-                    UtilAnalysis_DirList.Closure(() =>
+                    UtilDirList.Closure(() =>
                     {
                         var rootNodeDatum = item.NodeDatum as RootNodeDatum;
 

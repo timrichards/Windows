@@ -125,11 +125,11 @@ namespace DoubleFile
             }
             else if (gd.m_bCompareMode)
             {
-                treeView = (gd.m_treeCopyToClipboard is SDL_TreeView) ? (SDL_TreeView)gd.m_treeCopyToClipboard : (SDL_TreeView)GlobalData.static_MainWindow.Analysis_DirListForm._form.form_treeCompare1;
+                treeView = (gd.m_treeCopyToClipboard is SDL_TreeView) ? (SDL_TreeView)gd.m_treeCopyToClipboard : (SDL_TreeView)GlobalData.static_MainWindow.DirListForm._form.form_treeCompare1;
             }
             else if (treeView == null)
             {
-                treeView = ((SDL_TreeView)GlobalData.static_MainWindow.Analysis_DirListForm._form.form_treeViewBrowse);
+                treeView = ((SDL_TreeView)GlobalData.static_MainWindow.DirListForm._form.form_treeViewBrowse);
             }
 
             TreeNode treeNode = gd_Search_Path.GetNodeByPath(strSearch, treeView);
@@ -142,7 +142,7 @@ namespace DoubleFile
 
                 if (gd.m_bCompareMode)
                 {
-                    listTreeNodes = ((treeView == (SDL_TreeView)GlobalData.static_MainWindow.Analysis_DirListForm._form.form_treeCompare2) ? gd.m_listTreeNodes_Compare2 : gd.m_listTreeNodes_Compare1).ToList();
+                    listTreeNodes = ((treeView == (SDL_TreeView)GlobalData.static_MainWindow.DirListForm._form.form_treeCompare2) ? gd.m_listTreeNodes_Compare2 : gd.m_listTreeNodes_Compare1).ToList();
                 }
 
                 if (strSearch.ToLower() == strSearch)

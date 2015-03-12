@@ -13,7 +13,7 @@ namespace DoubleFile
     partial class MainWindow
     {
         internal LV_ProjectVM LVprojectVM { get; private set; }
-        internal WinFormAnalysis_DirList Analysis_DirListForm { get; private set; }
+        internal WinFormDirList DirListForm { get; private set; }
         internal GlobalData_Base _gd { get; private set; }
 
         public MainWindow()
@@ -32,15 +32,15 @@ namespace DoubleFile
             form_btnDuplicateFileExplorer.Click += Button_DuplicateFileExplorer_Click;
         }
 
-        void FormAnalysis_DirListAction(Action<WinFormAnalysis_DirList, LV_ProjectVM> action)
+        void FormDirListAction(Action<WinFormDirList, LV_ProjectVM> action)
         {
-            if ((null == Analysis_DirListForm) ||
-                Analysis_DirListForm.LocalIsClosed)
+            if ((null == DirListForm) ||
+                DirListForm.LocalIsClosed)
             {
                 return;
             }
 
-            action(Analysis_DirListForm, new LV_ProjectVM(_gd, LVprojectVM));
+            action(DirListForm, new LV_ProjectVM(_gd, LVprojectVM));
         }
 
         void ShowProjectWindow(bool bOpenProject = false)
@@ -84,7 +84,7 @@ namespace DoubleFile
             new SaveListingsProcess(_gd, LVprojectVM);
 
             _gd.FileDictionary.Clear();
-            FormAnalysis_DirListAction(WinFormAnalysis_DirList.RestartTreeTimer);
+            FormDirListAction(WinFormDirList.RestartTreeTimer);
 
             if ((null != _winDoubleFile_Folders) && (false == _winDoubleFile_Folders.LocalIsClosed))
             {
@@ -159,7 +159,7 @@ namespace DoubleFile
                     //form_tabControlMain.SelectedTab = form_tabPageBrowse;
                     //form_tabControlCopyIgnore.SelectedTab = form_tabPageCopy;
                     //m_blinky.Go(form_lvCopyScratchpad, clr: Color.Yellow, Once: true);
-                    //FormAnalysis_DirListMessageBox("The Copy scratchpad cannot be loaded with no directory listings.", "Load Copy scratchpad externally");
+                    //FormDirListMessageBox("The Copy scratchpad cannot be loaded with no directory listings.", "Load Copy scratchpad externally");
                     //Application.Exit();
                     break;
                 }
@@ -224,15 +224,15 @@ namespace DoubleFile
 
         private void Button_SearchDirLists_Click(object sender, RoutedEventArgs e)
         {
-            if ((null == Analysis_DirListForm) ||
-                Analysis_DirListForm.LocalIsClosed)
+            if ((null == DirListForm) ||
+                DirListForm.LocalIsClosed)
             {
-                (Analysis_DirListForm = new WinFormAnalysis_DirList(this, LVprojectVM)).Show();
-                Analysis_DirListForm.Closed += (o, a) => Analysis_DirListForm = null;
+                (DirListForm = new WinFormDirList(this, LVprojectVM)).Show();
+                DirListForm.Closed += (o, a) => DirListForm = null;
             }
             else
             {
-                Analysis_DirListForm.Activate();
+                DirListForm.Activate();
             }
         }
 

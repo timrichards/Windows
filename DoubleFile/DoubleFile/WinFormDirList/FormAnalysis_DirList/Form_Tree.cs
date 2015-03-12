@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    partial class FormAnalysis_DirList
+    partial class FormDirList
     {
         internal void ClearMem_TreeForm()
         {
@@ -27,7 +27,7 @@ namespace DoubleFile
                 return;
             }
 
-            UtilAnalysis_DirList.UIthread(this, () =>
+            UtilDirList.UIthread(this, () =>
             {
                 if (bError)
                 {
@@ -57,7 +57,7 @@ namespace DoubleFile
         {
             DoCollation();
 
-            UtilAnalysis_DirList.UIthread(this, () =>
+            UtilDirList.UIthread(this, () =>
             {
                 ListView lvFake = new ListView();
 
@@ -75,7 +75,7 @@ namespace DoubleFile
         {
             if (gd_Tree.m_listRootNodes.IsEmpty())
             {
-                UtilAnalysis_DirList.UIthread(this, () =>
+                UtilDirList.UIthread(this, () =>
                 {
                     form_treeViewBrowse.Nodes.Clear();
                 });
@@ -86,7 +86,7 @@ namespace DoubleFile
             MBoxStatic.Assert(1304.5304, gd_Tree.m_listTreeNodes.IsEmpty());
             MBoxStatic.Assert(1304.5305, InvokeRequired);
 
-            UtilAnalysis_DirList.UIthread(this, () =>
+            UtilDirList.UIthread(this, () =>
             {
                 MBoxStatic.Assert(1304.5306, gd_Tree.m_listLVignore.IsEmpty());
 
@@ -127,7 +127,7 @@ namespace DoubleFile
             }
 
             gd.m_bPutPathInFindEditBox = true;
-            UtilAnalysis_DirList.UIthread(this, collate.Step2_OnForm);
+            UtilDirList.UIthread(this, collate.Step2_OnForm);
             UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             collate = null;
 
@@ -156,7 +156,7 @@ namespace DoubleFile
 
         void TreeSelectStatusCallback(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem[] lvVolDetails = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null)
         {
-            UtilAnalysis_DirList.UIthread(this, () =>
+            UtilDirList.UIthread(this, () =>
             {
                 if (lvItemDetails != null)
                 {
@@ -207,7 +207,7 @@ namespace DoubleFile
                     return;
                 }
 
-                UtilAnalysis_DirList.Write("A");
+                UtilDirList.Write("A");
 
                 if (lvFileItem.StrCompareDir != t1.SelectedNode.Text)
                 {
@@ -227,7 +227,7 @@ namespace DoubleFile
                     ((ListViewItem)lv1.Items[0]).Tag = lvFileItem;
                 }
 
-                UtilAnalysis_DirList.Write("B");
+                UtilDirList.Write("B");
 
                 TreeNode treeNode1 = (TreeNode)t1.SelectedNode;
                 TreeNode treeNode2 = (TreeNode)t2.SelectedNode;
@@ -237,7 +237,7 @@ namespace DoubleFile
                     return;
                 }
 
-                UtilAnalysis_DirList.Write("C");
+                UtilDirList.Write("C");
 
                 if (treeNode1.Level != treeNode2.Level)
                 {
@@ -250,7 +250,7 @@ namespace DoubleFile
                     return;
                 }
 
-                UtilAnalysis_DirList.Write("D");
+                UtilDirList.Write("D");
 
                 if ((false == lv2.Items.IsEmpty()) &&
                     (((LVitemFileTag)((ListViewItem)lv2.Items[0]).Tag).StrCompareDir != treeNode2.Text))
@@ -259,7 +259,7 @@ namespace DoubleFile
                     return;
                 }
 
-                UtilAnalysis_DirList.Write("E");
+                UtilDirList.Write("E");
 
                 lock (lv1.Items)
                 {
@@ -278,7 +278,7 @@ namespace DoubleFile
 
         void TreeSelectDoneCallback(bool bSecondComparePane)
         {
-            UtilAnalysis_DirList.UIthread(this, () =>
+            UtilDirList.UIthread(this, () =>
             {
                 if (null == gd_Tree)
                 {

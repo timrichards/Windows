@@ -502,7 +502,7 @@ namespace Local
 
                 var nCount = CountNodes.Go(_lsRootNodes);
 
-                UtilAnalysis_DirList.Write("A");
+                UtilDirList.Write("A");
                 _tvBrowse.Nodes.AddRange(_lsRootNodes.ToArray());
                 UtilProject.WriteLine("A");
 
@@ -519,7 +519,7 @@ namespace Local
             }
 
             MBoxStatic.Assert(1305.6333, _lvClones.Items.IsEmpty());
-            UtilAnalysis_DirList.Write("B");
+            UtilDirList.Write("B");
             _lvClones.Items.AddRange(_lsLVdiffVol.ToArray());
             _lvClones.Invalidate();
             UtilProject.WriteLine("B");
@@ -530,7 +530,7 @@ namespace Local
             }
 
             MBoxStatic.Assert(1305.6334, _lvUnique.Items.IsEmpty());
-            UtilAnalysis_DirList.Write("C");
+            UtilDirList.Write("C");
             _lvUnique.Items.AddRange(_lsLVunique.ToArray());
             _lvUnique.Invalidate();
             UtilProject.WriteLine("C");
@@ -541,7 +541,7 @@ namespace Local
             }
 
             MBoxStatic.Assert(1305.6335, _lvSameVol.Items.IsEmpty());
-            UtilAnalysis_DirList.Write("D");
+            UtilDirList.Write("D");
             _lvSameVol.Items.AddRange(_lsLVsameVol.ToArray());
             _lvSameVol.Invalidate();
             UtilProject.WriteLine("D");

@@ -12,7 +12,7 @@ namespace DoubleFile
 {
     delegate void SearchStatusDelegate(SearchResults searchResults, bool bFirst = false, bool bLast = false);
 
-    partial class FormAnalysis_DirList
+    partial class FormDirList
     {
         bool SearchResultsType2_Nav(SDL_TreeView treeView)
         {
@@ -135,7 +135,7 @@ namespace DoubleFile
 
         void SearchDoneCallback()
         {
-            UtilAnalysis_DirList.UIthread(this, () =>
+            UtilDirList.UIthread(this, () =>
             {
                 if ((gd_Search_1_2.m_searchType2 == null) || gd_Search_1_2.m_searchType2.IsAborted)
                 {

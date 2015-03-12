@@ -163,7 +163,7 @@ namespace DoubleFile
             _winProgress.Title = "Initializing Duplicate File Explorer";
             _winProgress.WindowClosingCallback = (() =>
             {
-                if (false == UtilAnalysis_DirList.Closure(() =>
+                if (false == UtilDirList.Closure(() =>
                 {
                     if (_gd.FileDictionary
                         .IsAborted)

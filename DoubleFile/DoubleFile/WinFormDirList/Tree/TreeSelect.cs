@@ -10,7 +10,7 @@ namespace DoubleFile
     delegate void TreeSelectStatusDelegate(ListViewItem[] lvItemDetails = null, ListViewItem[] itemArray = null, ListViewItem[] lvVolDetails = null, bool bSecondComparePane = false, LVitemFileTag lvFileItem = null);
     delegate void TreeSelectDoneDelegate(bool bSecondComparePane);
 
-    class TreeSelect : UtilAnalysis_DirList
+    class TreeSelect : UtilDirList
     {
         internal TreeSelect(TreeNode node, Dictionary<string, string> dictDriveInfo,
             string strFile, bool bCompareMode, bool bSecondComparePane,

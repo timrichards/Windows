@@ -404,7 +404,7 @@ namespace DoubleFile
 
         internal void Step2_OnForm()
         {
-            UtilAnalysis_DirList.Closure(() =>
+            UtilDirList.Closure(() =>
             {
                 if (m_bThreadAbort || gd.WindowClosed)
                 {
@@ -423,7 +423,7 @@ namespace DoubleFile
 
                 int nCount = CountNodes.Go(m_listRootNodes);
 
-                UtilAnalysis_DirList.Write("A");
+                UtilDirList.Write("A");
                 m_treeViewBrowse.Nodes.AddRange(m_listRootNodes.ToArray());
                 UtilProject.WriteLine("A");
 
@@ -439,7 +439,7 @@ namespace DoubleFile
                 }
 
                 MBoxStatic.Assert(1305.6333, form_lvClones.Items.IsEmpty());
-                UtilAnalysis_DirList.Write("B");
+                UtilDirList.Write("B");
                 form_lvClones.Items.AddRange(listLVdiffVol.ToArray());
                 form_lvClones.Invalidate();
                 UtilProject.WriteLine("B");
@@ -450,7 +450,7 @@ namespace DoubleFile
                 }
 
                 MBoxStatic.Assert(1305.6334, form_lvUnique.Items.IsEmpty());
-                UtilAnalysis_DirList.Write("C");
+                UtilDirList.Write("C");
                 form_lvUnique.Items.AddRange(listLVunique.ToArray());
                 form_lvUnique.Invalidate();
                 UtilProject.WriteLine("C");
@@ -461,7 +461,7 @@ namespace DoubleFile
                 }
 
                 MBoxStatic.Assert(1305.6335, form_lvSameVol.Items.IsEmpty());
-                UtilAnalysis_DirList.Write("D");
+                UtilDirList.Write("D");
                 form_lvSameVol.Items.AddRange(listLVsameVol.ToArray());
                 form_lvSameVol.Invalidate();
                 UtilProject.WriteLine("D");

@@ -13,7 +13,7 @@ namespace Local
 
                 var lvItem = (LocalLVitem)lvMarker.Clone();
 
-                lvItem.Text = ((UtilAnalysis_DirList.FormatSize(
+                lvItem.Text = ((UtilDirList.FormatSize(
                     (bUnique
                         ? listLVitems[nIx].LocalTreeNode
                         : ((LocalTreeNode)(listLVitems[nIx].TreeNodes)[0]))

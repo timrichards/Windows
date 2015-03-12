@@ -4,7 +4,7 @@ using System.Windows;
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinFormAnalysis_DirList.xaml
+    /// Interaction logic for WinFormDirList.xaml
     /// </summary>
     public partial class WinTooltip
     {

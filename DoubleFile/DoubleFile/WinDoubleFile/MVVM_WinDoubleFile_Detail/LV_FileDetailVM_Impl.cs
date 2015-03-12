@@ -26,13 +26,13 @@ namespace DoubleFile
                 .Skip(3)                            // makes this an LV line: knColLengthLV
                 .ToArray();
 
-            asFile[3] = UtilAnalysis_DirList.DecodeAttributes(asFile[3]);
+            asFile[3] = UtilDirList.DecodeAttributes(asFile[3]);
 
             if ((asFile.Length > FileParse.knColLengthLV) &&
                 (false == string.IsNullOrWhiteSpace(asFile[FileParse.knColLengthLV])))
             {
                 asFile[FileParse.knColLengthLV] =
-                    UtilAnalysis_DirList.FormatSize(asFile[FileParse.knColLengthLV], bBytes: true);
+                    UtilDirList.FormatSize(asFile[FileParse.knColLengthLV], bBytes: true);
             }
 
             UtilProject.UIthread(() =>

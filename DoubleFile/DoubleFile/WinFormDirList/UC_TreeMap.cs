@@ -144,7 +144,7 @@ namespace DoubleFile
             var bImmediateFiles = false;
             var bVolumeView = false;
 
-            UtilAnalysis_DirList.Closure(() =>
+            UtilDirList.Closure(() =>
             {
                 {
                     var nodeDatum = _treeNode.Tag as NodeDatum;
@@ -239,7 +239,7 @@ namespace DoubleFile
                 var nodeDatum = nodeRet.Tag as NodeDatum;
 
                 _selRect = nodeDatum.TreeMapRect;
-                _toolTip.Show(UtilAnalysis_DirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
+                _toolTip.Show(UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
                     TooltipAnchor,
                     new Point(0, 0));
                 ToolTipActive = true; UtilProject.WriteLine(DateTime.Now + " a ToolTipActive = true; ------");
@@ -659,7 +659,7 @@ namespace DoubleFile
                     TreeNode parent = null;
                     var bVolumeNode = false;
 
-                    UtilAnalysis_DirList.Closure(() =>
+                    UtilDirList.Closure(() =>
                     {
                         var rootNodeDatum = item.Tag as RootNodeDatum;
 

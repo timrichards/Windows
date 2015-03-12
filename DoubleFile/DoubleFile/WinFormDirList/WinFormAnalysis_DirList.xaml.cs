@@ -1,11 +1,11 @@
 ﻿namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinFormAnalysis_DirList.xaml
+    /// Interaction logic for WinFormDirList.xaml
     /// </summary>
-    public partial class WinFormAnalysis_DirList
+    public partial class WinFormDirList
     {
-        internal WinFormAnalysis_DirList(MainWindow mainWindow, LV_ProjectVM LVprojectVM)
+        internal WinFormDirList(MainWindow mainWindow, LV_ProjectVM LVprojectVM)
         {
             InitializeComponent();
             _form.Init(mainWindow, LVprojectVM);
@@ -13,12 +13,12 @@
             Deactivated += _form.ClearToolTip;
             Closing += _form.HostClosing;
             Closed += (o,e) => _host.Dispose();
-            Loaded += _form.FormAnalysis_DirList_Load;
+            Loaded += _form.FormDirList_Load;
         }
 
-        internal static void RestartTreeTimer(WinFormAnalysis_DirList form1, LV_ProjectVM lvProjectVM)
+        internal static void RestartTreeTimer(WinFormDirList form1, LV_ProjectVM lvProjectVM)
         {
-            FormAnalysis_DirList.RestartTreeTimer(form1._form, lvProjectVM);
+            FormDirList.RestartTreeTimer(form1._form, lvProjectVM);
         }
     }
 }

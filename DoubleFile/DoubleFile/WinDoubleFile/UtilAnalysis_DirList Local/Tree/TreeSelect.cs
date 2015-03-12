@@ -6,7 +6,7 @@ using DoubleFile;
 
 namespace Local
 {
-    partial class TreeSelect : UtilAnalysis_DirList
+    partial class TreeSelect : UtilDirList
     {
         internal TreeSelect(LocalTreeNode node,
             Dictionary<string, string> dictDriveInfo,

@@ -89,7 +89,7 @@ namespace DoubleFile
             m_clrVolGroupOrig = form_lblVolGroup.BackColor;
         }
 
-        void FormAnalysis_DirList_Load(object sender, EventArgs e)
+        internal void FormAnalysis_DirList_Load(object sender, EventArgs e)
         {
             gd.RestartTreeTimer();
             form_tmapUserCtl.TooltipAnchor = (Control)form_cbFindbox;

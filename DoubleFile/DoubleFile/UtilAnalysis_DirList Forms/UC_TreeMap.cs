@@ -38,6 +38,8 @@ namespace DoubleFile
             BackgroundImageLayout = ImageLayout.Stretch;
             Dock = DockStyle.Fill;
             BackColor = Color.Transparent;
+            //MouseDown += form_tmapUserCtl_MouseDown;		NO.
+            //MouseUp += form_tmapUserCtl_MouseUp;
 
             if (null == TooltipAnchor)
                 TooltipAnchor = this;
@@ -53,6 +55,15 @@ namespace DoubleFile
                 Invalidate();
         }
 
+        void form_tmapUserCtl_MouseDown(object sender, MouseEventArgs e)
+        {
+            MBoxStatic.Assert(0, false);
+        }
+
+        void form_tmapUserCtl_MouseUp(object sender, MouseEventArgs e)
+        {
+            MBoxStatic.Assert(0, false);
+        }
         internal void Clear()
         {
             _treeNode = null;
@@ -303,19 +314,18 @@ namespace DoubleFile
 
             var nodeFileList = new TreeNode(parent.Text);
             ulong nTotalLength = 0;
-            var iterUlong = listLengths.GetEnumerator();
+            var enumerator = listLengths.GetEnumerator();
 
             foreach (var arrLine in listFiles)
             {
-                MBoxStatic.Assert(1302.3316, iterUlong.MoveNext());
                 var nodeDatum_A = new NodeDatum();
+                var bMoveNext = enumerator.MoveNext();
 
-                nTotalLength += nodeDatum_A.TotalLength = iterUlong.Current;
+                MBoxStatic.Assert(1302.3316, bMoveNext);
+                nTotalLength += nodeDatum_A.TotalLength = enumerator.Current;
 
-                if (iterUlong.Current == 0)
-                {
+                if (enumerator.Current == 0)
                     continue;
-                }
 
                 nodeFileList.Nodes.Add(new TreeNode(arrLine[0])
                 {
@@ -421,9 +431,9 @@ namespace DoubleFile
                 _deepNode = treeNode;
             }
 
-            var nPxPerSide = (treeNode.SelectedImageIndex < 0) ?
-                1024 :
-                treeNode.SelectedImageIndex;
+            var nPxPerSide = (treeNode.SelectedImageIndex < 0)
+                ? 1024
+                : treeNode.SelectedImageIndex;
 
             if (nPxPerSide != _rectBitmap.Size.Width)
             {
@@ -437,9 +447,7 @@ namespace DoubleFile
                 bgcontext.MaximumBuffer = _rectBitmap.Size;
 
                 if (_bg != null)
-                {
                     _bg.Dispose();
-                }
 
                 _bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), _rectBitmap);
                 TranslateSize();
@@ -503,7 +511,7 @@ namespace DoubleFile
 
             if (treeNode_A.TreeView != null)    // null if fake file treenode (NodeDatum.TreeMapFiles)
             {
-                var rootNodeDatum = treeNode_A.Tag as NodeDatum as RootNodeDatum;
+                var rootNodeDatum = treeNode_A.Tag as RootNodeDatum;
 
                 if (rootNodeDatum != null)
                 {
@@ -653,7 +661,7 @@ namespace DoubleFile
 
                     UtilAnalysis_DirList.Closure(() =>
                     {
-                        var rootNodeDatum = item.Tag as NodeDatum as RootNodeDatum;
+                        var rootNodeDatum = item.Tag as RootNodeDatum;
 
                         if ((false == bStart) ||
                             (null == rootNodeDatum))

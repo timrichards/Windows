@@ -20,17 +20,24 @@ namespace DoubleFile
         internal SDL_Timer(double milliseconds, Action callback)
             : base(milliseconds)
         {
-            Elapsed += m_Elapsed = (o, e) => callback();
+            Elapsed += _ElapsedHandler = (o, e) => callback();
         }
 
         public new void Dispose()
         {
-            Elapsed -= m_Elapsed;
+            Elapsed -= _ElapsedHandler;
             base.Dispose();
+            _bDisposed = true;
         }
 
         internal new SDL_Timer Start()
         {
+            if (_bDisposed)
+            {
+                MBoxStatic.Assert(0, false, bTraceOnly: true);
+                return null;
+            }
+
             if (MBoxStatic.Assert(99937, Interval >= 33))
             {
                 base.Start();
@@ -40,7 +47,8 @@ namespace DoubleFile
             return null;
         }
 
-        ElapsedEventHandler m_Elapsed = null;
+        ElapsedEventHandler _ElapsedHandler = null;
+        bool _bDisposed = false;
     }
 
 }

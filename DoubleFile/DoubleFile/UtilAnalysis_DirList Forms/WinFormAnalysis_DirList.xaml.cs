@@ -13,6 +13,7 @@
             Deactivated += _form.ClearToolTip;
             Closing += _form.HostClosing;
             Closed += (o,e) => _host.Dispose();
+            Loaded += _form.FormAnalysis_DirList_Load;
         }
 
         internal static void RestartTreeTimer(WinFormAnalysis_DirList form1, LV_ProjectVM lvProjectVM)

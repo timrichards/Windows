@@ -1309,7 +1309,7 @@ namespace DoubleFile
             //this.Deactivate += new System.EventHandler(this.ClearToolTip);
             //this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormAnalysis_DirList_FormClosing);
             //this.Disposed += new EventHandler(this.FormDisposed);
-            this.Load += new System.EventHandler(this.FormAnalysis_DirList_Load);
+            //this.Load += new System.EventHandler(this.FormAnalysis_DirList_Load);
             this.Enter += new System.EventHandler(this.ClearToolTip);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormAnalysis_DirList_KeyDown);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.FormAnalysis_DirList_KeyPress);

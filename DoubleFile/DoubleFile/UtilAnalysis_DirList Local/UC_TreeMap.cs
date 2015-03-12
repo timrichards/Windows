@@ -78,8 +78,6 @@ namespace Local
                 return;
             }
 
-            //gd.m_bPutPathInFindEditBox = true;
-            //gd.m_bTreeViewIndirectSelChange = true;
             treeNode.TreeView.SelectedNode = treeNode;
         }
 
@@ -178,7 +176,7 @@ namespace Local
                     {
                         var rootNodeDatum = nodeDatum as RootNodeDatum;
 
-                        bVolumeView = ((rootNodeDatum != null) && rootNodeDatum.VolumeView);
+                        bVolumeView = ((null != rootNodeDatum) && rootNodeDatum.VolumeView);
                     }
 
                     if ((false == bVolumeView) &&
@@ -345,9 +343,7 @@ namespace Local
                 nTotalLength += nodeDatum_A.TotalLength = enumerator.Current;
 
                 if (enumerator.Current == 0)
-                {
                     continue;
-                }
 
                 nodeFileList.Nodes.Add(new LocalTreeMapNode(arrLine[0])
                 {
@@ -458,9 +454,9 @@ namespace Local
                 _deepNode = treeNode;
             }
 
-            var nPxPerSide = (treeNode.SelectedImageIndex < 0) ?
-                1024 :
-                treeNode.SelectedImageIndex;
+            var nPxPerSide = (treeNode.SelectedImageIndex < 0)
+                ? 1024
+                : treeNode.SelectedImageIndex;
 
             if (nPxPerSide != _rectBitmap.Size.Width)
             {
@@ -474,9 +470,7 @@ namespace Local
                 bgcontext.MaximumBuffer = _rectBitmap.Size;
 
                 if (_bg != null)
-                {
                     _bg.Dispose();
-                }
 
                 _bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), _rectBitmap);
                 TranslateSize();

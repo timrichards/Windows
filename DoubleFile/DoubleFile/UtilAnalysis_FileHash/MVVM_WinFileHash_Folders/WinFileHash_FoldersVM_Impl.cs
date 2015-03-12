@@ -131,7 +131,6 @@ namespace DoubleFile
 
             TreeCleanup();
             UString.GenerationEnded();
-            _tvVM.SetData(_listRootNodes);
             _winProgress.CloseIfNatural();
 
             // saving memory here.
@@ -141,6 +140,7 @@ namespace DoubleFile
                 System.Threading.Thread.Sleep(200);
 
             UtilProject.UIthread<bool>(ShowWindows);
+            _tvVM.SetData(_listRootNodes);
         }
 
         void DoTree(bool bKill = false)

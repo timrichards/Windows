@@ -38,6 +38,9 @@ namespace DoubleFile
             }
 
             UtilProject.UIthread(() => _TVFE.DataContext = _Items);
+
+            if (0 < _Items.Count)
+                _Items[0].SelectProgrammatic(true);
         }
 
         private void GoToFile(LVitem_ProjectVM lvItem_ProjectVM, string strPath, string strFile)

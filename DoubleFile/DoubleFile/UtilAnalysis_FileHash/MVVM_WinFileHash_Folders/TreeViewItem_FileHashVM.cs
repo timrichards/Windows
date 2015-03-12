@@ -108,11 +108,9 @@ namespace DoubleFile
                 return;
             }
 
-            _bSelected = bSelect;
-
             if (bSelect == false)
             {
-                RaisePropertyChanged("IsSelected");
+                IsSelected = false;
                 EphemeralExpandedPos = -1;
                 return;
             }
@@ -157,7 +155,7 @@ namespace DoubleFile
             EphemeralExpandedPos += (Index + 1);
             EphemeralExpandedPos *= _HeaderHeight;       // when implementing variable-height headers this calc will be wrong
             _TVVM._listExpanded = listParents;
-            RaisePropertyChanged("IsSelected");
+            IsSelected = true;
         }
 
         internal TreeViewItem_FileHashVM(TreeView_FileHashVM tvvm, LocalTreeNode datum_in, int nIndex)

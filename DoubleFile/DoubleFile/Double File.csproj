@@ -300,7 +300,7 @@
     <Compile Include="UtilProject\DriveSerialStatic.cs" />
     <Compile Include="UtilProject\MBoxStatic.cs" />
     <Compile Include="UtilProject\ProjectFile.cs" />
-    <Compile Include="UtilProject\SDL_Timer.cs" />
+    <Compile Include="UtilProject\LocalTimer.cs" />
     <Compile Include="UtilProject\KeyList.cs" />
     <Compile Include="UtilAnalysis_FileHash\TabledString.cs" />
     <Compile Include="UtilProject\UtilProject.cs" />

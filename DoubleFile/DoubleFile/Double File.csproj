@@ -501,10 +501,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\ic_error_black_18dp.png" />
-    <Content Include="Utilities\7z920x86\7z.dll">
+    <Content Include="WinProject\UtilProject\7z920x86\7z.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Utilities\7z920x86\7z.exe">
+    <Content Include="WinProject\UtilProject\7z920x86\7z.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="_Todo.txt" />

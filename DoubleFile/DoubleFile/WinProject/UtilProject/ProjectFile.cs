@@ -24,7 +24,7 @@ namespace DoubleFile
             process.StartInfo.FileName = Path.GetDirectoryName(
                 new Uri(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)
                 .LocalPath) +
-                @"\UtilProject\7z920x86\7z.exe";
+                @"\WinProject\UtilProject\7z920x86\7z.exe";
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardOutput = true;

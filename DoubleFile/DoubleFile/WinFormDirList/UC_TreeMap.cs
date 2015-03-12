@@ -57,12 +57,12 @@ namespace DoubleFile
 
         void form_tmapUserCtl_MouseDown(object sender, MouseEventArgs e)
         {
-            MBoxStatic.Assert(0, false);
+            MBoxStatic.Assert(99895, false);
         }
 
         void form_tmapUserCtl_MouseUp(object sender, MouseEventArgs e)
         {
-            MBoxStatic.Assert(0, false);
+            MBoxStatic.Assert(99894, false);
         }
         internal void Clear()
         {
@@ -206,7 +206,7 @@ namespace DoubleFile
 
                 if (null == nodeDatum)      // added 2/13/15 as safety
                 {
-                    MBoxStatic.Assert(99923, false);
+                    MBoxStatic.Assert(99890, false);
                     return null;
                 }
 
@@ -268,7 +268,7 @@ namespace DoubleFile
 
                 if (null == nodeDatum)      // added 2/13/15 as safety
                 {
-                    MBoxStatic.Assert(99966, false);
+                    MBoxStatic.Assert(99889, false);
                     return null;
                 }
 
@@ -321,7 +321,7 @@ namespace DoubleFile
                 var nodeDatum_A = new NodeDatum();
                 var bMoveNext = enumerator.MoveNext();
 
-                MBoxStatic.Assert(1302.3316, bMoveNext);
+                MBoxStatic.Assert(99888, bMoveNext);
                 nTotalLength += nodeDatum_A.TotalLength = enumerator.Current;
 
                 if (enumerator.Current == 0)
@@ -342,11 +342,11 @@ namespace DoubleFile
             var nodeDatum = parent.Tag as NodeDatum;
             var nodeDatum_B = new NodeDatum();
 
-            MBoxStatic.Assert(1302.3301, nTotalLength == nodeDatum.Length);
+            MBoxStatic.Assert(99887, nTotalLength == nodeDatum.Length);
             nodeDatum_B.TotalLength = nTotalLength;
             nodeDatum_B.TreeMapRect = nodeDatum.TreeMapRect;
             nodeFileList.Tag = nodeDatum_B;
-            MBoxStatic.Assert(1302.3302, nodeFileList.SelectedImageIndex == -1);              // sets the bitmap size
+            MBoxStatic.Assert(99886, nodeFileList.SelectedImageIndex == -1);              // sets the bitmap size
             nodeFileList.SelectedImageIndex = -1;
             return nodeFileList;
         }
@@ -378,7 +378,7 @@ namespace DoubleFile
 
             if (null == nodeDatum)      // added 2/13/15 as safety
             {
-                MBoxStatic.Assert(99965, false);
+                MBoxStatic.Assert(99885, false);
                 return;
             }
 
@@ -505,7 +505,7 @@ namespace DoubleFile
 
             if (null == treeNode_A)      // added 2/13/15 as safety
             {
-                MBoxStatic.Assert(99964, false);
+                MBoxStatic.Assert(99884, false);
                 return null;
             }
 
@@ -577,7 +577,7 @@ namespace DoubleFile
 
             if (null == nodeDatum)      // added 2/13/15 as safety
             {
-                MBoxStatic.Assert(99963, false);
+                MBoxStatic.Assert(99883, false);
                 return;
             }
 
@@ -612,8 +612,8 @@ namespace DoubleFile
                 bool bStart = false)
             {
 #if (DEBUG)
-                MBoxStatic.Assert(1302.3303, rc.Width >= 0);
-                MBoxStatic.Assert(1302.3304, rc.Height >= 0);
+                MBoxStatic.Assert(1302.33035, rc.Width >= 0);
+                MBoxStatic.Assert(1302.33045, rc.Height >= 0);
 #endif
                 if (rc.Width < 1 ||
                     rc.Height < 1)
@@ -639,7 +639,7 @@ namespace DoubleFile
 
                 if (null == nodeDatum)      // added 2/13/15 as safety
                 {
-                    MBoxStatic.Assert(99962, false);
+                    MBoxStatic.Assert(99962.5, false);
                     return;
                 }
 
@@ -855,7 +855,7 @@ namespace DoubleFile
                     for (var i = 0; i < row.ChildrenPerRow; i++, c++)
                     {
                         var child = listChildren[c];
-                        MBoxStatic.Assert(1302.3305, anChildWidth[c] >= 0);
+                        MBoxStatic.Assert(1302.33055, anChildWidth[c] >= 0);
                         var fRight = left + anChildWidth[c] * width;
                         var right = (int)fRight;
 
@@ -912,16 +912,16 @@ namespace DoubleFile
             {
                 childrenUsed = 0;
                 const double kdMinProportion = 0.4;
-                MBoxStatic.Assert(1302.3308, kdMinProportion < 1);
+                MBoxStatic.Assert(1302.33085, kdMinProportion < 1);
 
-                MBoxStatic.Assert(1302.3309, nextChild < listChildren.Count);
-                MBoxStatic.Assert(1302.33101, width >= 1.0);
+                MBoxStatic.Assert(1302.33095, nextChild < listChildren.Count);
+                MBoxStatic.Assert(1302.331015, width >= 1.0);
 
                 var nodeDatum = parent.Tag as NodeDatum;
 
                 if (null == nodeDatum)      // added 2/13/15 as safety
                 {
-                    MBoxStatic.Assert(99961, false);
+                    MBoxStatic.Assert(99961.5, false);
                     return 0;
                 }
 
@@ -935,8 +935,8 @@ namespace DoubleFile
                     var childSize = (listChildren[i].Tag as NodeDatum).TotalLength;
                     sizeUsed += childSize;
                     var virtualRowHeight = sizeUsed / mySize;
-                    MBoxStatic.Assert(1302.3311, virtualRowHeight > 0);
-                    MBoxStatic.Assert(1302.3312, virtualRowHeight <= 1);
+                    MBoxStatic.Assert(1302.33115, virtualRowHeight > 0);
+                    MBoxStatic.Assert(1302.33125, virtualRowHeight <= 1);
 
                     // Rectangle(mySize)    = width * 1.0
                     // Rectangle(childSize) = childWidth * virtualRowHeight
@@ -946,7 +946,7 @@ namespace DoubleFile
 
                     if (childWidth / virtualRowHeight < kdMinProportion)
                     {
-                        MBoxStatic.Assert(1302.3313, i > nextChild); // because width >= 1 and _minProportion < 1.
+                        MBoxStatic.Assert(1302.33135, i > nextChild); // because width >= 1 and _minProportion < 1.
                         // For the first child we have:
                         // childWidth / rowHeight
                         // = childSize / mySize * width / rowHeight / rowHeight
@@ -959,7 +959,7 @@ namespace DoubleFile
                     rowHeight = virtualRowHeight;
                 }
 
-                MBoxStatic.Assert(1302.3314, i > nextChild);
+                MBoxStatic.Assert(1302.33145, i > nextChild);
 
                 // Now i-1 is the last child used
                 // and rowHeight is the height of the row.
@@ -975,13 +975,13 @@ namespace DoubleFile
 
                     if (null == nodeDatum_A)      // added 2/13/15 as safety
                     {
-                        MBoxStatic.Assert(99960, false);
+                        MBoxStatic.Assert(99960.5, false);
                         return 0;
                     }
 
                     var childSize = (double)nodeDatum_A.TotalLength;
                     var cw = childSize / rowSize;
-                    MBoxStatic.Assert(1302.3315, cw >= 0);
+                    MBoxStatic.Assert(1302.33155, cw >= 0);
                     anChildWidth[nextChild + i] = cw;
                 }
 

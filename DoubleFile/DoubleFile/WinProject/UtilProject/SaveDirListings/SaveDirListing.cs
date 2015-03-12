@@ -211,9 +211,9 @@ namespace DoubleFile
                         fs.WriteLine(ksErrorsLoc01);
 
                         // Unit test metrix on non-system volume
-                        //MBox.Assert(0, nProgressDenominator >= nProgressNumerator);       file creation/deletion between times
-                        //MBox.Assert(0, nProgressDenominator == m_nFilesDiff);             ditto
-                        //MBox.Assert(0, nProgressDenominator == dictHash.Count);           ditto
+                        //MBox.Assert(99893, nProgressDenominator >= nProgressNumerator);       file creation/deletion between times
+                        //MBox.Assert(99892, nProgressDenominator == m_nFilesDiff);             ditto
+                        //MBox.Assert(99891, nProgressDenominator == dictHash.Count);           ditto
 
                         foreach (var strError in ErrorList)
                         {

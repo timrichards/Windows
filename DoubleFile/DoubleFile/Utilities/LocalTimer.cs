@@ -34,7 +34,7 @@ namespace DoubleFile
         {
             if (_bDisposed)
             {
-                MBoxStatic.Assert(0, false, bTraceOnly: true);
+                MBoxStatic.Assert(99896, false, bTraceOnly: true);
                 return null;
             }
 

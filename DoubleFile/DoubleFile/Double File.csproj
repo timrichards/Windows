@@ -186,7 +186,7 @@
     <Compile Include="UtilAnalysis_FileHash\WinFileHash_Files.xaml.cs">
       <DependentUpon>WinFileHash_Files.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UtilProject\LocalMbox.xaml.cs">
+    <Compile Include="Utilities\LocalMbox.xaml.cs">
       <DependentUpon>LocalMbox.xaml</DependentUpon>
     </Compile>
     <Compile Include="UtilAnalysis_DirList Local\Collate.cs" />
@@ -225,7 +225,7 @@
     <Compile Include="UtilAnalysis_DirList Forms\CountNodes.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\UtilAnalysis_DirList\ListViewEx.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\FormAnalysis_DirList\Form_Search.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\Tree\FolderKeyTuple.cs" />
+    <Compile Include="Utilities\FolderKeyTuple.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Tree\DetailsDatum\NodeDatum.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
     <Compile Include="UtilAnalysis_DirList Local\Tree\LVitemFileTag.cs" />
@@ -242,7 +242,7 @@
     <Compile Include="UtilAnalysis_DirList Local\UtilAnalysis_DirList.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\UtilAnalysis_DirList\BlinkyStruct.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\UtilAnalysis_DirList\ExtensionMethodsStatic.cs" />
-    <Compile Include="UtilAnalysis_DirList Local\UtilAnalysis_DirList\FlashWindowStatic.cs" />
+    <Compile Include="Utilities\FlashWindowStatic.cs" />
     <Compile Include="UtilAnalysis_DirList Local\UtilAnalysis_DirList\SDL_FileBase.cs" />
     <Compile Include="UtilAnalysis_DirList Forms\UtilAnalysis_DirList\SDL_TreeView.cs" />
     <Compile Include="UtilAnalysis_DirList Local\UtilAnalysis_DirList\SDL_FileBase\SDL_CopyFile.cs" />
@@ -250,8 +250,8 @@
     <Compile Include="UtilAnalysis_DirList Local\UtilColor.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary.cs" />
     <Compile Include="UtilAnalysis_FileHash\FileDictionary\DuplicateStruct.cs" />
-    <Compile Include="UtilAnalysis_FileHash\FileKeyTuple.cs" />
-    <Compile Include="UtilAnalysis_FileHash\HashTuple.cs" />
+    <Compile Include="Utilities\FileKeyTuple.cs" />
+    <Compile Include="Utilities\HashTuple.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Files\LVitem_FileHash_FilesVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Files\LV_FileHash_FilesVM.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Files\LV_FileHash_FilesVM_Impl.cs" />
@@ -270,7 +270,7 @@
     <Compile Include="UtilProject\GlobalData.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UtilProject\LocalWindow.cs" />
+    <Compile Include="Utilities\LocalWindow.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -298,11 +298,11 @@
     <Compile Include="MVVM_WinProject\WinProjectVM_Impl.cs" />
     <Compile Include="MVVM_WinProject\LVitem_ProjectVM.cs" />
     <Compile Include="UtilProject\DriveSerialStatic.cs" />
-    <Compile Include="UtilProject\MBoxStatic.cs" />
+    <Compile Include="Utilities\MBoxStatic.cs" />
     <Compile Include="UtilProject\ProjectFile.cs" />
-    <Compile Include="UtilProject\LocalTimer.cs" />
-    <Compile Include="UtilProject\KeyList.cs" />
-    <Compile Include="UtilAnalysis_FileHash\TabledString.cs" />
+    <Compile Include="Utilities\LocalTimer.cs" />
+    <Compile Include="Utilities\KeyList.cs" />
+    <Compile Include="Utilities\TabledString.cs" />
     <Compile Include="UtilProject\UtilProject.cs" />
     <Compile Include="UtilProject\Win32FindFileStatic.cs" />
     <Compile Include="UtilProject\ExtensionMethodsStatic.cs" />
@@ -454,7 +454,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UtilProject\LocalMbox.xaml">
+    <Page Include="Utilities\LocalMbox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -501,10 +501,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\ic_error_black_18dp.png" />
-    <Content Include="UtilProject\7z920x86\7z.dll">
+    <Content Include="Utilities\7z920x86\7z.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="UtilProject\7z920x86\7z.exe">
+    <Content Include="Utilities\7z920x86\7z.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="_Todo.txt" />

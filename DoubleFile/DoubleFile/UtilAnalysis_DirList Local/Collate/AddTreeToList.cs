@@ -11,7 +11,7 @@ namespace Local
         {
             internal int Count { get; private set; }
 
-            internal AddTreeToList(UList<LocalTreeNode> listTreeNodes, List<LocalTreeNode> listSameVol)
+            internal AddTreeToList(KeyList<LocalTreeNode> listTreeNodes, List<LocalTreeNode> listSameVol)
             {
                 m_listTreeNodes = listTreeNodes;
                 m_listSameVol = listSameVol;
@@ -76,7 +76,7 @@ namespace Local
                 while (bNextNode && ((treeNode = treeNode.NextNode) != null));
             }
 
-            readonly UList<LocalTreeNode> m_listTreeNodes = null;
+            readonly KeyList<LocalTreeNode> m_listTreeNodes = null;
             readonly List<LocalTreeNode> m_listSameVol = null;
         }
     }

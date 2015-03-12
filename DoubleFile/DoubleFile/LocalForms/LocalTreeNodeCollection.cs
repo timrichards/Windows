@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    class LocalTreeNodeCollection : UList<LocalTreeNode>
+    class LocalTreeNodeCollection : KeyList<LocalTreeNode>
     {
         internal LocalTreeNodeCollection(LocalTV treeView)
         {

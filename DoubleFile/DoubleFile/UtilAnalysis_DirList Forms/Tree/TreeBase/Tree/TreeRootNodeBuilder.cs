@@ -62,7 +62,7 @@ namespace DoubleFile
 
                 lock (m_dictNodes)
                 {
-                    UList<TreeNode> lsNodes = null;
+                    KeyList<TreeNode> lsNodes = null;
 
                     if (m_dictNodes.TryGetValue(nKey, out lsNodes))
                     {
@@ -70,7 +70,7 @@ namespace DoubleFile
                     }
                     else if (nodeDatum.TotalLength > 100 * 1024)
                     {
-                        m_dictNodes.Add(nKey, new UList<TreeNode> { treeNode });
+                        m_dictNodes.Add(nKey, new KeyList<TreeNode> { treeNode });
                     }
                 }
 

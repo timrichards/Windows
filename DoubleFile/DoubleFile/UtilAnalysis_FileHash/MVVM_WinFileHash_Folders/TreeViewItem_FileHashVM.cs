@@ -118,7 +118,7 @@ namespace DoubleFile
             _TVVM.SelectedItem = this;
 
             var stackParents = new Stack<TreeViewItem_FileHashVM>(8);
-            var listParents = new UList<TreeViewItem_FileHashVM>();
+            var listParents = new KeyList<TreeViewItem_FileHashVM>();
             var parentItem = _Parent;
 
             while (parentItem != null)

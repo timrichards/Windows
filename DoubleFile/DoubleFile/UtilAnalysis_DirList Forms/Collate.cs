@@ -10,13 +10,13 @@ namespace DoubleFile
     partial class Collate
     {
         internal Collate(GlobalData_Base gd_in,
-            SortedDictionary<FolderKeyTuple, UList<TreeNode>> dictNodes,
+            SortedDictionary<FolderKeyTuple, KeyList<TreeNode>> dictNodes,
             TreeView treeViewBrowse,
             SDL_ListView lvClones,
             SDL_ListView lvSameVol,
             SDL_ListView lvUnique,
             List<TreeNode> listRootNodes,
-            UList<TreeNode> listTreeNodes,
+            KeyList<TreeNode> listTreeNodes,
             bool bCheckboxes,
             List<ListViewItem> list_lvIgnore,
             bool bLoose)
@@ -113,7 +113,7 @@ namespace DoubleFile
             Dictionary<TreeNode, ListViewItem> dictIgnoreMark = new Dictionary<TreeNode, ListViewItem>();
             SortedDictionary<FolderKeyTuple, List<TreeNode>> dictNodes = new SortedDictionary<FolderKeyTuple, List<TreeNode>>();
 
-            foreach (KeyValuePair<FolderKeyTuple, UList<TreeNode>> pair in m_dictNodes)  // clone to remove ignored
+            foreach (KeyValuePair<FolderKeyTuple, KeyList<TreeNode>> pair in m_dictNodes)  // clone to remove ignored
             {                                                                       // m_ vs local check is via List vs UList
                 dictNodes.Add(pair.Key, pair.Value.ToList());                       // clone pair.Value to remove ignored, using ToList() 
             }
@@ -171,7 +171,7 @@ namespace DoubleFile
                 {
                     // Parent folder may contain only its clone subfolder, in which case unmark the subfolder
 
-                    UList<TreeNode> listKeep = new UList<TreeNode>();
+                    KeyList<TreeNode> listKeep = new KeyList<TreeNode>();
 
                     foreach (TreeNode treeNode_A in listNodes)
                     {
@@ -214,7 +214,7 @@ namespace DoubleFile
                 }
             }
 
-            SortedDictionary<FolderKeyTuple, UList<TreeNode>> dictClones = new SortedDictionary<FolderKeyTuple, UList<TreeNode>>();
+            SortedDictionary<FolderKeyTuple, KeyList<TreeNode>> dictClones = new SortedDictionary<FolderKeyTuple, KeyList<TreeNode>>();
 
             foreach (TreeNode treeNode in m_listRootNodes)
             {
@@ -228,7 +228,7 @@ namespace DoubleFile
 
             m_listRootNodes.Sort((x, y) => string.Compare(x.Text, y.Text));
 
-            foreach (KeyValuePair<FolderKeyTuple, UList<TreeNode>> listNodes in dictClones)
+            foreach (KeyValuePair<FolderKeyTuple, KeyList<TreeNode>> listNodes in dictClones)
             {
                 // load up listLVdiffVol
 
@@ -484,13 +484,13 @@ namespace DoubleFile
 
         // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
         // Breadth-first.
-        void DifferentVolsQuery(SortedDictionary<FolderKeyTuple, UList<TreeNode>> dictClones, TreeNode treeNode, TreeNode rootClone = null)
+        void DifferentVolsQuery(SortedDictionary<FolderKeyTuple, KeyList<TreeNode>> dictClones, TreeNode treeNode, TreeNode rootClone = null)
         {
             // neither rootClone nor nMaxLength are used at all (rootClone is used as a bool).
             // provisional.
 
             NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
-            UList<TreeNode> listClones = nodeDatum.Clones;
+            KeyList<TreeNode> listClones = nodeDatum.Clones;
             ulong nLength = nodeDatum.TotalLength;
 
             if (nLength <= 100 * 1024)
@@ -503,7 +503,7 @@ namespace DoubleFile
             {
                 rootClone = treeNode;
 
-                UList<TreeNode> lsTreeNodes = null;
+                KeyList<TreeNode> lsTreeNodes = null;
 
                 if (dictClones.TryGetValue(nodeDatum.Key, out lsTreeNodes))
                 {
@@ -663,13 +663,13 @@ namespace DoubleFile
         }
 
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
-        readonly SortedDictionary<FolderKeyTuple, UList<TreeNode>> m_dictNodes = null;
+        readonly SortedDictionary<FolderKeyTuple, KeyList<TreeNode>> m_dictNodes = null;
         readonly TreeView m_treeViewBrowse = null;
         readonly SDL_ListView form_lvClones = null;
         readonly SDL_ListView form_lvSameVol = null;
         readonly SDL_ListView form_lvUnique = null;
         readonly List<TreeNode> m_listRootNodes = null;
-        readonly UList<TreeNode> m_listTreeNodes = null;
+        readonly KeyList<TreeNode> m_listTreeNodes = null;
         readonly bool m_bCheckboxes = false;
         readonly List<ListViewItem> m_list_lvIgnore = null;
 

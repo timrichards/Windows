@@ -14,7 +14,7 @@ namespace DoubleFile
 
                 ListViewItem lvItem = (ListViewItem)lvMarker.Clone();
 
-                lvItem.Text = ((UtilAnalysis_DirList.FormatSize(((NodeDatum)((TreeNode)(bUnique ? listLVitems[nIx].Tag : ((UList<TreeNode>)listLVitems[nIx].Tag)[0])).Tag).TotalLength, bNoDecimal: true)));
+                lvItem.Text = ((UtilAnalysis_DirList.FormatSize(((NodeDatum)((TreeNode)(bUnique ? listLVitems[nIx].Tag : ((KeyList<TreeNode>)listLVitems[nIx].Tag)[0])).Tag).TotalLength, bNoDecimal: true)));
 
                 if (bAdd)
                 {

@@ -204,7 +204,7 @@ namespace DoubleFile
 
             // Directory detail
 
-            UList<ListViewItem> listItems = new UList<ListViewItem>();
+            KeyList<ListViewItem> listItems = new KeyList<ListViewItem>();
 
             nIx = 4; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new ListViewItem(new string[] { "Created\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
             nIx = 5; if ((strArray.Length > nIx) && (false == string.IsNullOrWhiteSpace(strArray[nIx]))) listItems.Add(new ListViewItem(new string[] { "Modified\t", (dt = DateTime.Parse(strArray[nIx])).ToLongDateString() + ", " + dt.ToLongTimeString() }));
@@ -250,7 +250,7 @@ namespace DoubleFile
 
             if (listFiles_A != null)
             {
-                UList<ListViewItem> listFiles = new UList<ListViewItem>();
+                KeyList<ListViewItem> listFiles = new KeyList<ListViewItem>();
 
                 foreach (string[] arrLine in listFiles_A)
                 {

@@ -15,7 +15,7 @@ namespace DoubleFile
             Name { get; set; }
         //internal LocalLVitem
         //    IgnoreLVItem { get; set; }
-        internal UList<LocalTreeNode>
+        internal KeyList<LocalTreeNode>
             TreeNodes { get; set; }
         internal LocalTreeNode
             LocalTreeNode { get; set; }

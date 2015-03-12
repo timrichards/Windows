@@ -12,7 +12,7 @@ namespace Local
         {
         }
 
-        internal UList<LocalTreeNode>
+        internal KeyList<LocalTreeNode>
             Clones { get; set; }
         internal LocalLVitem 
             LVitem { get; set; }

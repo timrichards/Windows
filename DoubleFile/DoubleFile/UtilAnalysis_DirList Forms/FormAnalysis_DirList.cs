@@ -283,7 +283,7 @@ namespace DoubleFile
                 return;
             }
 
-            UList<TreeNode> listTreeNodes = (UList<TreeNode>)((ListViewItem)lv.SelectedItems[0]).Tag;
+            KeyList<TreeNode> listTreeNodes = (KeyList<TreeNode>)((ListViewItem)lv.SelectedItems[0]).Tag;
 
             if (MBoxStatic.Assert(1308.9308, listTreeNodes != null, bTraceOnly: true) == false)
             {
@@ -1103,9 +1103,9 @@ namespace DoubleFile
 
                     sortOrder = SortOrder.None;
 
-                    if (listItems[0].Tag is UList<TreeNode>)
+                    if (listItems[0].Tag is KeyList<TreeNode>)
                     {
-                        listItems.Sort((y, x) => ((NodeDatum)((UList<TreeNode>)x.Tag)[0].Tag).TotalLength.CompareTo(((NodeDatum)((UList<TreeNode>)y.Tag)[0].Tag).TotalLength));
+                        listItems.Sort((y, x) => ((NodeDatum)((KeyList<TreeNode>)x.Tag)[0].Tag).TotalLength.CompareTo(((NodeDatum)((KeyList<TreeNode>)y.Tag)[0].Tag).TotalLength));
                     }
                     else
                     {

@@ -12,7 +12,7 @@ namespace DoubleFile
     {
         internal Tree(GlobalData_Base gd_in,
             LV_ProjectVM lvProjectVM,
-            SortedDictionary<FolderKeyTuple, UList<TreeNode>> dictNodes,
+            SortedDictionary<FolderKeyTuple, KeyList<TreeNode>> dictNodes,
             Dictionary<string, string> dictDriveInfo,
             TreeStatusDelegate statusCallback,
             Action doneCallback)

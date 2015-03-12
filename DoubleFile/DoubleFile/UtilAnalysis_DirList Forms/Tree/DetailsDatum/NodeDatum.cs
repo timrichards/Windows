@@ -12,8 +12,8 @@ namespace DoubleFile
         {
         }
 
-        internal UList<TreeNode>
-            Clones = new UList<TreeNode>();
+        internal KeyList<TreeNode>
+            Clones = new KeyList<TreeNode>();
         internal ListViewItem 
             LVitem { get; set; }
         internal TreeNode

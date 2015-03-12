@@ -12,7 +12,7 @@ namespace DoubleFile
         {
             internal int Count { get; private set; }
 
-            internal AddTreeToList(UList<TreeNode> listTreeNodes, List<TreeNode> listSameVol)
+            internal AddTreeToList(KeyList<TreeNode> listTreeNodes, List<TreeNode> listSameVol)
             {
                 m_listTreeNodes = listTreeNodes;
                 m_listSameVol = listSameVol;
@@ -74,7 +74,7 @@ namespace DoubleFile
                 while (bNextNode && ((treeNode = (TreeNode)treeNode.NextNode) != null));
             }
 
-            UList<TreeNode> m_listTreeNodes = null;
+            KeyList<TreeNode> m_listTreeNodes = null;
             List<TreeNode> m_listSameVol = null;
         }
     }

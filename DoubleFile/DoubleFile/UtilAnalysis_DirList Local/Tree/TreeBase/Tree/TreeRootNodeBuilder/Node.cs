@@ -123,7 +123,7 @@ namespace Local
                     }
                     else if (1 < _subNodes.Count)
                     {
-                        var treeList = new UList<LocalTreeNode>();
+                        var treeList = new KeyList<LocalTreeNode>();
 
                         foreach (var node in _subNodes.Values)
                         {

@@ -47,7 +47,7 @@ namespace DoubleFile
             return (source.Count == 0);
         }
 
-        internal static bool IsEmpty<T>(this UList<T> source)
+        internal static bool IsEmpty<T>(this KeyList<T> source)
         {
             return (source.Count == 0);
         }

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    class UList<T> : 
+    class KeyList<T> : 
 #if (true)
         Dictionary<T, object>, IReadOnlyList<T>     // Dictionary<T> guarantees uniqueness; faster random seek; removes items fast
     {

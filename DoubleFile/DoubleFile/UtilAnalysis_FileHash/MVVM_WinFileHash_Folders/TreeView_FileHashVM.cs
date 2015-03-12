@@ -10,8 +10,8 @@ namespace DoubleFile
     {
         internal TreeViewItem_FileHashVM
             SelectedItem { get; set; }
-        internal UList<TreeViewItem_FileHashVM>
-            _listExpanded = new UList<TreeViewItem_FileHashVM>();
+        internal KeyList<TreeViewItem_FileHashVM>
+            _listExpanded = new KeyList<TreeViewItem_FileHashVM>();
         internal readonly TreeView
             _TVFE = null;
         internal Dictionary<string, string>

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    class LocalLVitemCollection : UList<LocalLVitem>
+    class LocalLVitemCollection : KeyList<LocalLVitem>
     {
         internal LocalLVitemCollection(LocalLV listView)
         {

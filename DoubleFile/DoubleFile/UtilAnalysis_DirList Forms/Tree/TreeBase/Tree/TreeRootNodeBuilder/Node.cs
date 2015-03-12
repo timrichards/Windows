@@ -123,7 +123,7 @@ namespace DoubleFile
                     }
                     else if (1 < _subNodes.Count)
                     {
-                        var treeList = new UList<TreeNode>();
+                        var treeList = new KeyList<TreeNode>();
 
                         foreach (var node in _subNodes.Values)
                         {

@@ -57,7 +57,7 @@ namespace Local
 
                 nodeDatum.DirsWithFiles = datum.DirsWithFiles;
 
-                UList<LocalTreeNode> lsTreeNodes = null;
+                KeyList<LocalTreeNode> lsTreeNodes = null;
 
                 if (m_dictNodes.TryGetValue(nodeDatum.Key, out lsTreeNodes))
                 {
@@ -65,7 +65,7 @@ namespace Local
                 }
                 else if (nodeDatum.TotalLength > 100 * 1024)
                 {
-                    m_dictNodes[nodeDatum.Key] = new UList<LocalTreeNode> { treeNode };
+                    m_dictNodes[nodeDatum.Key] = new KeyList<LocalTreeNode> { treeNode };
                 }
 
                 return datum;

@@ -11,8 +11,8 @@ namespace DoubleFile
         internal SDL_TreeView m_treeCopyToClipboard = null;
         internal TreeNode m_nodeCompare1 = null;
         internal readonly Dictionary<TreeNode, TreeNode> m_dictCompareDiffs = new Dictionary<TreeNode, TreeNode>();
-        internal readonly UList<TreeNode> m_listTreeNodes_Compare1 = new UList<TreeNode>();
-        internal readonly UList<TreeNode> m_listTreeNodes_Compare2 = new UList<TreeNode>();
+        internal readonly KeyList<TreeNode> m_listTreeNodes_Compare1 = new KeyList<TreeNode>();
+        internal readonly KeyList<TreeNode> m_listTreeNodes_Compare2 = new KeyList<TreeNode>();
         internal readonly List<TreeNode> m_listHistory = new List<TreeNode>();
         internal int m_nIxHistory = -1;
 
@@ -349,7 +349,7 @@ namespace DoubleFile
             return (((ListViewItem)lv.SelectedItems[0]).Tag != null);
         }
 
-        internal void NameNodes(TreeNode treeNode, UList<TreeNode> listTreeNodes)
+        internal void NameNodes(TreeNode treeNode, KeyList<TreeNode> listTreeNodes)
         {
             treeNode.Name = treeNode.Text;
             treeNode.ForeColor = Color.Empty;
@@ -415,7 +415,7 @@ namespace DoubleFile
                 treeNode.BackColor = Color.Empty;
 
                 NodeDatum nodeDatum = (NodeDatum)treeNode.Tag;
-                UList<TreeNode> listClones = null;
+                KeyList<TreeNode> listClones = null;
 
                 if (false == gd_Tree.m_dictNodes.TryGetValue(nodeDatum.Key, out listClones))
                 {

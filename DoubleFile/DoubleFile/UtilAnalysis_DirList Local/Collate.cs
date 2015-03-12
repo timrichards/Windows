@@ -10,13 +10,13 @@ namespace Local
     partial class Collate
     {
         internal Collate(GlobalData_Base gd,
-            ConcurrentDictionary<FolderKeyTuple, UList<LocalTreeNode>> dictNodes,
+            ConcurrentDictionary<FolderKeyTuple, KeyList<LocalTreeNode>> dictNodes,
             LocalTV tvBrowse,
             LocalLV lvClones,
             LocalLV lvSameVol,
             LocalLV lvUnique,
             List<LocalTreeNode> lsRootNodes,
-            UList<LocalTreeNode> lsTreeNodes,
+            KeyList<LocalTreeNode> lsTreeNodes,
             List<LocalLVitem> lsLVignore,
             bool bLoose)
         {
@@ -189,7 +189,7 @@ namespace Local
                 {
                     // Parent folder may contain only its clone subfolder, in which case unmark the subfolder
 
-                    var listKeep = new UList<LocalTreeNode>();
+                    var listKeep = new KeyList<LocalTreeNode>();
 
                     foreach (var treeNode_A in listNodes)
                     {
@@ -260,7 +260,7 @@ namespace Local
                 }
             }
 
-            var dictClones = new SortedDictionary<FolderKeyTuple, UList<LocalTreeNode>>();
+            var dictClones = new SortedDictionary<FolderKeyTuple, KeyList<LocalTreeNode>>();
 
             nProgressDenominator += _lsRootNodes.Count;
             ++nProgressItem;
@@ -564,7 +564,7 @@ namespace Local
         // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
         // Breadth-first.
         void DifferentVolsQuery(
-            IDictionary<FolderKeyTuple, UList<LocalTreeNode>> dictClones,
+            IDictionary<FolderKeyTuple, KeyList<LocalTreeNode>> dictClones,
             LocalTreeNode treeNode,
             LocalTreeNode rootClone = null)
         {
@@ -594,7 +594,7 @@ namespace Local
             {
                 rootClone = treeNode;
 
-                UList<LocalTreeNode> lsTreeNodes = null;
+                KeyList<LocalTreeNode> lsTreeNodes = null;
 
                 if (dictClones.TryGetValue(nodeDatum.Key, out lsTreeNodes))
                 {
@@ -774,14 +774,14 @@ namespace Local
         }
 
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
-        readonly ConcurrentDictionary<FolderKeyTuple, UList<LocalTreeNode>>
+        readonly ConcurrentDictionary<FolderKeyTuple, KeyList<LocalTreeNode>>
             _dictNodes = null;
         readonly LocalTV _tvBrowse = null;
         readonly LocalLV _lvClones = null;
         readonly LocalLV _lvSameVol = null;
         readonly LocalLV _lvUnique = null;
         readonly List<LocalTreeNode> _lsRootNodes = null;
-        readonly UList<LocalTreeNode> _lsTreeNodes = null;
+        readonly KeyList<LocalTreeNode> _lsTreeNodes = null;
         readonly List<LocalLVitem> _lsLVignore = null;
 
         // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.

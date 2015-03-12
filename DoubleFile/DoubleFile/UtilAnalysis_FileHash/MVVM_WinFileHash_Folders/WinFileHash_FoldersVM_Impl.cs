@@ -9,13 +9,13 @@ namespace DoubleFile
     
     partial class WinFileHash_FoldersVM
     {
-        internal ConcurrentDictionary<FolderKeyTuple, UList<LocalTreeNode>>
+        internal ConcurrentDictionary<FolderKeyTuple, KeyList<LocalTreeNode>>
             DictNodes { get; private set; }
         internal Local.Tree
             Tree { get; private set; }
 
-        internal readonly UList<LocalTreeNode>
-            _listTreeNodes = new UList<LocalTreeNode>();
+        internal readonly KeyList<LocalTreeNode>
+            _listTreeNodes = new KeyList<LocalTreeNode>();
         internal readonly List<LocalTreeNode>
             _listRootNodes = new List<LocalTreeNode>();
 
@@ -208,7 +208,7 @@ namespace DoubleFile
             TabledString.GenerationStarting();
 
             if (null == DictNodes)
-                DictNodes = new ConcurrentDictionary<FolderKeyTuple, UList<LocalTreeNode>>();
+                DictNodes = new ConcurrentDictionary<FolderKeyTuple, KeyList<LocalTreeNode>>();
 
             Tree =
                 new Local.Tree(_gd, _lvProjectVM, DictNodes, _tvVM._dictVolumeInfo,

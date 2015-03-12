@@ -4,11 +4,11 @@ using System.Windows;
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinFileHash_Duplicates.xaml
+    /// Interaction logic for WinDoubleFile_Duplicates.xaml
     /// </summary>
-    partial class WinFileHash_Duplicates
+    partial class WinDoubleFile_Duplicates
     {
-        internal WinFileHash_Duplicates(GlobalData_Base gd)
+        internal WinDoubleFile_Duplicates(GlobalData_Base gd)
         {
             _gd = gd;
 
@@ -20,7 +20,7 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            DataContext = _winFileHash_DuplicatesVM = new WinFileHash_DuplicatesVM(_gd);
+            DataContext = _winDoubleFile_DuplicatesVM = new WinDoubleFile_DuplicatesVM(_gd);
         }
 
         internal new void Show()
@@ -44,23 +44,23 @@ namespace DoubleFile
 
         internal bool ShowWindows()
         {
-            return _winFileHash_DuplicatesVM.ShowWindows();
+            return _winDoubleFile_DuplicatesVM.ShowWindows();
         }
 
         internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, string strFileLine)
         {
-            _winFileHash_DuplicatesVM.TreeFileSelChanged(lsDuplicates, strFileLine);
+            _winDoubleFile_DuplicatesVM.TreeFileSelChanged(lsDuplicates, strFileLine);
         }
 
         private void Window_Closed(object sender, System.EventArgs e)
         {
-            _winFileHash_DuplicatesVM.Dispose();
+            _winDoubleFile_DuplicatesVM.Dispose();
             _nWantsLeft = Left;
             _nWantsTop = Top;
         }
 
-        WinFileHash_DuplicatesVM
-            _winFileHash_DuplicatesVM = null;
+        WinDoubleFile_DuplicatesVM
+            _winDoubleFile_DuplicatesVM = null;
         GlobalData_Base
             _gd = null;
 

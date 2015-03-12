@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    partial class TreeViewItem_FileHashVM
+    partial class TreeViewItem_DoubleFileVM
     {
         void DoTreeSelect()
         {

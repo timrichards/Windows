@@ -1,6 +1,6 @@
 ﻿namespace DoubleFile
 {
-    public class LocalWindow_FileHash : LocalWindow
+    public class LocalWindow_DoubleFile : LocalWindow
     {
         protected override void PositionWindow()
         {

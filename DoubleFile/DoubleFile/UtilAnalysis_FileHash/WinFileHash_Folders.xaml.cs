@@ -4,11 +4,11 @@ using System.Windows;
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinFileHash_Folders.xaml
+    /// Interaction logic for WinDoubleFile_Folders.xaml
     /// </summary>
-    partial class WinFileHash_Folders
+    partial class WinDoubleFile_Folders
     {
-        internal WinFileHash_Folders(GlobalData_Base gd, LV_ProjectVM lvProjectVM)
+        internal WinDoubleFile_Folders(GlobalData_Base gd, LV_ProjectVM lvProjectVM)
         {
             _gd = gd;
             _lvProjectVM = lvProjectVM;
@@ -23,9 +23,9 @@ namespace DoubleFile
         {
             MinWidth = Width;
             MinHeight = Height;
-            _treeView_FileHashVM = new TreeView_FileHashVM(form_tv);
-            _winFileHash_FoldersVM = new WinFileHash_FoldersVM(_gd, _treeView_FileHashVM, _lvProjectVM);
-            DataContext = _winFileHash_FoldersVM;
+            _treeView_DoubleFileVM = new TreeView_DoubleFileVM(form_tv);
+            _winDoubleFile_FoldersVM = new WinDoubleFile_FoldersVM(_gd, _treeView_DoubleFileVM, _lvProjectVM);
+            DataContext = _winDoubleFile_FoldersVM;
         }
 
         internal new void Show()
@@ -47,13 +47,13 @@ namespace DoubleFile
 
         internal bool ShowWindows()
         {
-            return _winFileHash_FoldersVM.ShowWindows();
+            return _winDoubleFile_FoldersVM.ShowWindows();
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            _winFileHash_FoldersVM.Dispose();     // closes the file list (domino/chain) when this tree view closes
-            _treeView_FileHashVM.Dispose();
+            _winDoubleFile_FoldersVM.Dispose();     // closes the file list (domino/chain) when this tree view closes
+            _treeView_DoubleFileVM.Dispose();
             DataContext = null;
             _lvProjectVM = null;
             _gd = null;
@@ -63,10 +63,10 @@ namespace DoubleFile
 
         LV_ProjectVM
             _lvProjectVM = null;
-        TreeView_FileHashVM
-            _treeView_FileHashVM = null;
-        WinFileHash_FoldersVM
-            _winFileHash_FoldersVM = null;
+        TreeView_DoubleFileVM
+            _treeView_DoubleFileVM = null;
+        WinDoubleFile_FoldersVM
+            _winDoubleFile_FoldersVM = null;
         GlobalData_Base
             _gd = null;
 

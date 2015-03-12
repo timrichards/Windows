@@ -6,26 +6,26 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    class TreeView_FileHashVM : IDisposable
+    class TreeView_DoubleFileVM : IDisposable
     {
-        internal TreeViewItem_FileHashVM
+        internal TreeViewItem_DoubleFileVM
             SelectedItem { get; set; }
-        internal KeyList<TreeViewItem_FileHashVM>
-            _listExpanded = new KeyList<TreeViewItem_FileHashVM>();
+        internal KeyList<TreeViewItem_DoubleFileVM>
+            _listExpanded = new KeyList<TreeViewItem_DoubleFileVM>();
         internal readonly TreeView
             _TVFE = null;
         internal Dictionary<string, string>
             _dictVolumeInfo = new Dictionary<string, string>();
 
-        internal TreeView_FileHashVM(TreeView tvfe)
+        internal TreeView_DoubleFileVM(TreeView tvfe)
         {
             _TVFE = tvfe;
-            WinFileHash_DuplicatesVM.GoToFile += GoToFile;
+            WinDoubleFile_DuplicatesVM.GoToFile += GoToFile;
         }
 
         public void Dispose()
         {
-            WinFileHash_DuplicatesVM.GoToFile -= GoToFile;
+            WinDoubleFile_DuplicatesVM.GoToFile -= GoToFile;
         }
 
         internal void SetData(IReadOnlyList<LocalTreeNode> rootNodes)
@@ -34,7 +34,7 @@ namespace DoubleFile
 
             foreach (var treeNode in rootNodes)
             {
-                _Items.Add(new TreeViewItem_FileHashVM(this, treeNode, ++nIndex));
+                _Items.Add(new TreeViewItem_DoubleFileVM(this, treeNode, ++nIndex));
             }
 
             UtilProject.UIthread(() => _TVFE.DataContext = _Items);
@@ -58,7 +58,7 @@ namespace DoubleFile
                 );
         }
 
-        readonly ObservableCollection<TreeViewItem_FileHashVM>
-            _Items = new ObservableCollection<TreeViewItem_FileHashVM>();
+        readonly ObservableCollection<TreeViewItem_DoubleFileVM>
+            _Items = new ObservableCollection<TreeViewItem_DoubleFileVM>();
     }
 }

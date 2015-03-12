@@ -1,4 +1,4 @@
-﻿<local:LocalWindow_FileHash x:Class="DoubleFile.WinTreeMap"
+﻿<local:LocalWindow_DoubleFile x:Class="DoubleFile.WinTreeMap"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
@@ -10,4 +10,4 @@
             <localLocal:UC_TreeMap x:Name="form_ucTreeMap" />
         </WindowsFormsHost>
     </Grid>
-</local:LocalWindow_FileHash>
+</local:LocalWindow_DoubleFile>

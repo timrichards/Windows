@@ -1,6 +1,6 @@
 ﻿namespace DoubleFile
 {
-    class LVitem_FileHash_FilesVM : ListViewItemVM_Base
+    class LVitem_DoubleFile_FilesVM : ListViewItemVM_Base
     {
         internal System.Collections.Generic.IEnumerable<FileDictionary.DuplicateStruct>
             LSduplicates = null;
@@ -37,12 +37,12 @@
         internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 2;
 
-        internal LVitem_FileHash_FilesVM(string[] arrStr = null)
+        internal LVitem_DoubleFile_FilesVM(string[] arrStr = null)
             : base(null, arrStr)
         {
         }
 
-        internal LVitem_FileHash_FilesVM(LVitem_FileHash_FilesVM lvItemTemp)
+        internal LVitem_DoubleFile_FilesVM(LVitem_DoubleFile_FilesVM lvItemTemp)
             : this(lvItemTemp.StringValues)
         {
         }

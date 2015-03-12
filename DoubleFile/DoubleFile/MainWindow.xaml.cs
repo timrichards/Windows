@@ -86,11 +86,11 @@ namespace DoubleFile
             _gd.FileDictionary.Clear();
             FormAnalysis_DirListAction(WinFormAnalysis_DirList.RestartTreeTimer);
 
-            if ((null != _winFileHash_Folders) && (false == _winFileHash_Folders.LocalIsClosed))
+            if ((null != _winDoubleFile_Folders) && (false == _winDoubleFile_Folders.LocalIsClosed))
             {
-                _winFileHash_Folders.Close();
-                (_winFileHash_Folders = new WinFileHash_Folders(_gd, LVprojectVM)).Show();
-                _winFileHash_Folders.Closed += (o, a) => _winFileHash_Folders = null;
+                _winDoubleFile_Folders.Close();
+                (_winDoubleFile_Folders = new WinDoubleFile_Folders(_gd, LVprojectVM)).Show();
+                _winDoubleFile_Folders.Closed += (o, a) => _winDoubleFile_Folders = null;
             }
         }
 
@@ -238,18 +238,18 @@ namespace DoubleFile
 
         private void Button_DuplicateFileExplorer_Click(object sender, RoutedEventArgs e)
         {
-            if ((null == _winFileHash_Folders) || (_winFileHash_Folders.LocalIsClosed))
+            if ((null == _winDoubleFile_Folders) || (_winDoubleFile_Folders.LocalIsClosed))
             {
-                (_winFileHash_Folders = new WinFileHash_Folders(_gd, LVprojectVM)).Show();
-                _winFileHash_Folders.Closed += (o, a) => _winFileHash_Folders = null;
+                (_winDoubleFile_Folders = new WinDoubleFile_Folders(_gd, LVprojectVM)).Show();
+                _winDoubleFile_Folders.Closed += (o, a) => _winDoubleFile_Folders = null;
             }
-            else if (false == _winFileHash_Folders.ShowWindows())       // returns true if it created a window
-                _winFileHash_Folders.Activate();                        // UX feedback
+            else if (false == _winDoubleFile_Folders.ShowWindows())       // returns true if it created a window
+                _winDoubleFile_Folders.Activate();                        // UX feedback
         }
         #endregion form_handlers
 
-        WinFileHash_Folders
-            _winFileHash_Folders = null;
+        WinDoubleFile_Folders
+            _winDoubleFile_Folders = null;
         readonly GlobalData
             _gd_old = null;
     }

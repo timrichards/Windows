@@ -2,7 +2,7 @@
 
 namespace DoubleFile
 {
-    partial class WinFileHash_DuplicatesVM : ListViewVM_GenericBase<LVitem_FileDuplicatesVM>
+    partial class WinDoubleFile_DuplicatesVM : ListViewVM_GenericBase<LVitem_FileDuplicatesVM>
     {
         public ICommand Icmd_Goto { get; private set; }
 
@@ -18,7 +18,7 @@ namespace DoubleFile
                     return;
                 }
 
-                _winFileHash_Detail.UpdateFileDetail(value.FileLine);
+                _winDoubleFile_Detail.UpdateFileDetail(value.FileLine);
             }
         }
         LVitem_FileDuplicatesVM _selectedItem = null;

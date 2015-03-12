@@ -1,4 +1,4 @@
-﻿<local:LocalWindow_FileHash x:Class="DoubleFile.WinFileHash_Detail"
+﻿<local:LocalWindow_DoubleFile x:Class="DoubleFile.WinDoubleFile_Detail"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
@@ -48,4 +48,4 @@
             </Border>
         </StackPanel>
     </Grid>
-</local:LocalWindow_FileHash>
+</local:LocalWindow_DoubleFile>

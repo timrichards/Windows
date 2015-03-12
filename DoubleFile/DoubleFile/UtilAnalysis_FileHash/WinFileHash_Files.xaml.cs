@@ -3,11 +3,11 @@
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinFileHash_Files.xaml
+    /// Interaction logic for WinDoubleFile_Files.xaml
     /// </summary>
-    partial class WinFileHash_Files
+    partial class WinDoubleFile_Files
     {
-        internal WinFileHash_Files(GlobalData_Base gd)
+        internal WinDoubleFile_Files(GlobalData_Base gd)
         {
             _gd = gd;
 
@@ -19,12 +19,12 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            DataContext = _lvFileHash_FilesVM = new LV_FileHash_FilesVM(_gd);
+            DataContext = _lvDoubleFile_FilesVM = new LV_DoubleFile_FilesVM(_gd);
         }
 
         internal bool ShowWindows()
         {
-            return _lvFileHash_FilesVM.ShowWindows();
+            return _lvDoubleFile_FilesVM.ShowWindows();
         }
 
         internal new void Show()
@@ -46,13 +46,13 @@ namespace DoubleFile
 
         private void Window_Closed(object sender, System.EventArgs e)
         {
-            _lvFileHash_FilesVM.Dispose();
+            _lvDoubleFile_FilesVM.Dispose();
             _nWantsLeft = Left;
             _nWantsTop = Top;
         }
 
-        LV_FileHash_FilesVM
-            _lvFileHash_FilesVM = null;
+        LV_DoubleFile_FilesVM
+            _lvDoubleFile_FilesVM = null;
         GlobalData_Base
             _gd = null;
 

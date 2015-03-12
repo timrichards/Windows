@@ -3,11 +3,11 @@
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinFileHash_Detail.xaml
+    /// Interaction logic for WinDoubleFile_Detail.xaml
     /// </summary>
-    partial class WinFileHash_Detail
+    partial class WinDoubleFile_Detail
     {
-        internal WinFileHash_Detail(GlobalData_Base gd)
+        internal WinDoubleFile_Detail(GlobalData_Base gd)
         {
             _gd = gd;
 

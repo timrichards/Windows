@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace DoubleFile
 {
-    partial class TreeViewItem_FileHashVM : ObservableObjectBase
+    partial class TreeViewItem_DoubleFileVM : ObservableObjectBase
     {
         public string Text { get { return ((string)_datum.Text).PadRight(200); } }
         public Brush Foreground { get { return _bSelected ? _SelectedForeground : FrontBrush; } }
@@ -16,9 +16,9 @@ namespace DoubleFile
         public Brush Background { get { return UtilColor.ARGBtoBrush(_datum.BackColor); } }
         public FontWeight FontWeight { get { return _bSelected ? FontWeights.ExtraBold : FontWeights.Normal; } }
 
-        internal readonly TreeViewItem_FileHashVM
+        internal readonly TreeViewItem_DoubleFileVM
             _Parent = null;
-        internal readonly TreeView_FileHashVM
+        internal readonly TreeView_DoubleFileVM
             _TVVM = null;
         internal readonly LocalTreeNode
             _datum = null;
@@ -29,7 +29,7 @@ namespace DoubleFile
         internal int
             Index { get { return -1; } set { } }
 
-        public ObservableCollection<TreeViewItem_FileHashVM> Items
+        public ObservableCollection<TreeViewItem_DoubleFileVM> Items
         {
             get
             {
@@ -37,19 +37,19 @@ namespace DoubleFile
                 {
                     var nIndex = -1;
 
-                    _Items = new ObservableCollection<TreeViewItem_FileHashVM>
+                    _Items = new ObservableCollection<TreeViewItem_DoubleFileVM>
                     (
                         from
                             item
                             in _datum.Nodes.Keys
-                            select new TreeViewItem_FileHashVM(_TVVM, item, this, ++nIndex)
+                            select new TreeViewItem_DoubleFileVM(_TVVM, item, this, ++nIndex)
                     );
                 }
 
                 return _Items;
             }
         }
-        ObservableCollection<TreeViewItem_FileHashVM> _Items = null;
+        ObservableCollection<TreeViewItem_DoubleFileVM> _Items = null;
 
         public bool IsExpanded
         {
@@ -117,8 +117,8 @@ namespace DoubleFile
 
             _TVVM.SelectedItem = this;
 
-            var stackParents = new Stack<TreeViewItem_FileHashVM>(8);
-            var listParents = new KeyList<TreeViewItem_FileHashVM>();
+            var stackParents = new Stack<TreeViewItem_DoubleFileVM>(8);
+            var listParents = new KeyList<TreeViewItem_DoubleFileVM>();
             var parentItem = _Parent;
 
             while (parentItem != null)
@@ -158,12 +158,12 @@ namespace DoubleFile
             IsSelected = true;
         }
 
-        internal TreeViewItem_FileHashVM(TreeView_FileHashVM tvvm, LocalTreeNode datum_in, int nIndex)
+        internal TreeViewItem_DoubleFileVM(TreeView_DoubleFileVM tvvm, LocalTreeNode datum_in, int nIndex)
             : this(tvvm, datum_in, null, nIndex)
         { }
 
-        TreeViewItem_FileHashVM(TreeView_FileHashVM tvvm, LocalTreeNode datum_in,
-            TreeViewItem_FileHashVM parent, int nIndex)
+        TreeViewItem_DoubleFileVM(TreeView_DoubleFileVM tvvm, LocalTreeNode datum_in,
+            TreeViewItem_DoubleFileVM parent, int nIndex)
         {
             _TVVM = tvvm;
             _datum = datum_in;

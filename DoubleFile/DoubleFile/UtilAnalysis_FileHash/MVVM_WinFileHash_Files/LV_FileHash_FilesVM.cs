@@ -1,8 +1,8 @@
 ﻿namespace DoubleFile
 {
-    partial class LV_FileHash_FilesVM : ListViewVM_GenericBase<LVitem_FileHash_FilesVM>
+    partial class LV_DoubleFile_FilesVM : ListViewVM_GenericBase<LVitem_DoubleFile_FilesVM>
     {
-        public LVitem_FileHash_FilesVM SelectedItem
+        public LVitem_DoubleFile_FilesVM SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -14,14 +14,14 @@
                     return;
                 }
 
-                _winFileHash_Duplicates.TreeFileSelChanged(value.LSduplicates, value.FileLine);
+                _winDoubleFile_Duplicates.TreeFileSelChanged(value.LSduplicates, value.FileLine);
             }
         }
-        LVitem_FileHash_FilesVM _selectedItem = null;
+        LVitem_DoubleFile_FilesVM _selectedItem = null;
 
         public string WidthFilename { get { return SCW; } }                   // franken all NaN
         public string WidthDuplicates { get { return SCW; } }
 
-        internal override int NumCols { get { return LVitem_FileHash_FilesVM.NumCols_; } }
+        internal override int NumCols { get { return LVitem_DoubleFile_FilesVM.NumCols_; } }
     }
 }

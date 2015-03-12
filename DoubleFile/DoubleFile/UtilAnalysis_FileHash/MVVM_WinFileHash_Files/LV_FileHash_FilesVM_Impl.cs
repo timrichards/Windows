@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    partial class LV_FileHash_FilesVM : IDisposable
+    partial class LV_DoubleFile_FilesVM : IDisposable
     {
-        internal LV_FileHash_FilesVM(GlobalData_Base gd)
+        internal LV_DoubleFile_FilesVM(GlobalData_Base gd)
         {
             _gd = gd;
             Local.TreeSelect.FileListUpdated += TreeSelect_FileList;
@@ -15,18 +15,18 @@ namespace DoubleFile
         public void Dispose()
         {
             Local.TreeSelect.FileListUpdated -= TreeSelect_FileList;
-            _winFileHash_Duplicates.Close();
+            _winDoubleFile_Duplicates.Close();
         }
 
         internal bool ShowWindows()    // returns true if it created a window
         {
-            if ((null != _winFileHash_Duplicates) &&
-                (false == _winFileHash_Duplicates.LocalIsClosed))
+            if ((null != _winDoubleFile_Duplicates) &&
+                (false == _winDoubleFile_Duplicates.LocalIsClosed))
             {
-                return _winFileHash_Duplicates.ShowWindows();
+                return _winDoubleFile_Duplicates.ShowWindows();
             }
 
-            (_winFileHash_Duplicates = new WinFileHash_Duplicates(_gd)).Show();
+            (_winDoubleFile_Duplicates = new WinDoubleFile_Duplicates(_gd)).Show();
             return true;
         }
 
@@ -37,7 +37,7 @@ namespace DoubleFile
             if (null == lsFileLines)
                 return;
 
-            var lsItems = new List<LVitem_FileHash_FilesVM>();
+            var lsItems = new List<LVitem_DoubleFile_FilesVM>();
 
             foreach (var strFileLine in lsFileLines)
             {
@@ -46,7 +46,7 @@ namespace DoubleFile
                 var lsDuplicates = _gd.FileDictionary.GetDuplicates(strFileLine, out strFilename, out nLine);
                 var nCount = (null != lsDuplicates) ? lsDuplicates.Count() - 1 : 0;
                 var strCount = (nCount > 0) ? "" + nCount : null;
-                var lvItem = new LVitem_FileHash_FilesVM(new[] { strFilename, strCount });
+                var lvItem = new LVitem_DoubleFile_FilesVM(new[] { strFilename, strCount });
 
                 lvItem.FileLine = strFileLine;
 
@@ -83,7 +83,7 @@ namespace DoubleFile
 
         GlobalData_Base
             _gd = null;
-        WinFileHash_Duplicates
-            _winFileHash_Duplicates = null;
+        WinDoubleFile_Duplicates
+            _winDoubleFile_Duplicates = null;
     }
 }

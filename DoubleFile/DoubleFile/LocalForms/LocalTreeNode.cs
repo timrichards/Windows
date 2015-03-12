@@ -28,8 +28,8 @@ namespace DoubleFile
         internal int
             SelectedImageIndex { get { return Datum16bits; } set { Datum16bits = value; } }
 
-//       internal TreeViewItem_FileHashVM TVIVM = null;
-//       internal LVitem_FileHashVM LVIVM = null;
+//       internal TreeViewItem_DoubleFileVM TVIVM = null;
+//       internal LVitem_DoubleFileVM LVIVM = null;
 //       internal string ToolTipText = null;
 //       internal bool Checked = false;
 

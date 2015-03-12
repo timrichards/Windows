@@ -163,28 +163,28 @@
     <Compile Include="UtilAnalysis_DirList Local\WinTreeMap.xaml.cs">
       <DependentUpon>WinTreeMap.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UtilAnalysis_FileHash\LocalWindow_FileHash.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Detail\LVitem_FolderDetailVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Detail\LVitem_VolumeDetail.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Detail\LVitem_FileDetailVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Detail\LV_FolderDetailVM_Impl.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Detail\LV_FolderDetailVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Detail\LV_VolumeDetailVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Detail\LV_FileDetailVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Detail\LV_VolumeDetailVM_Impl.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Detail\LV_FileDetailVM_Impl.cs" />
+    <Compile Include="UtilAnalysis_FileHash\LocalWindow_DoubleFile.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Detail\LVitem_FolderDetailVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Detail\LVitem_VolumeDetail.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Detail\LVitem_FileDetailVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Detail\LV_FolderDetailVM_Impl.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Detail\LV_FolderDetailVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Detail\LV_VolumeDetailVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Detail\LV_FileDetailVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Detail\LV_VolumeDetailVM_Impl.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM_WinDoubleFile_Detail\LV_FileDetailVM_Impl.cs" />
     <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Duplicates\LVitem_FileDuplicatesVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Duplicates\WinFileHash_DuplicatesVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Duplicates\WinFileHash_DuplicatesVM_Impl.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Folders\TreeViewItem_FileHashVM_Impl.cs" />
-    <Compile Include="UtilAnalysis_FileHash\WinFileHash_Detail.xaml.cs">
-      <DependentUpon>WinFileHash_Detail.xaml</DependentUpon>
+    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Duplicates\WinDoubleFile_DuplicatesVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Duplicates\WinDoubleFile_DuplicatesVM_Impl.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Folders\TreeViewItem_DoubleFileVM_Impl.cs" />
+    <Compile Include="UtilAnalysis_FileHash\WinDoubleFile_Detail.xaml.cs">
+      <DependentUpon>WinDoubleFile_Detail.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UtilAnalysis_FileHash\WinFileHash_Duplicates.xaml.cs">
-      <DependentUpon>WinFileHash_Duplicates.xaml</DependentUpon>
+    <Compile Include="UtilAnalysis_FileHash\WinDoubleFile_Duplicates.xaml.cs">
+      <DependentUpon>WinDoubleFile_Duplicates.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UtilAnalysis_FileHash\WinFileHash_Files.xaml.cs">
-      <DependentUpon>WinFileHash_Files.xaml</DependentUpon>
+    <Compile Include="UtilAnalysis_FileHash\WinDoubleFile_Files.xaml.cs">
+      <DependentUpon>WinDoubleFile_Files.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utilities\LocalMbox.xaml.cs">
       <DependentUpon>LocalMbox.xaml</DependentUpon>
@@ -252,20 +252,20 @@
     <Compile Include="UtilAnalysis_FileHash\FileDictionary\DuplicateStruct.cs" />
     <Compile Include="Utilities\FileKeyTuple.cs" />
     <Compile Include="Utilities\HashTuple.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Files\LVitem_FileHash_FilesVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Files\LV_FileHash_FilesVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Files\LV_FileHash_FilesVM_Impl.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Files\LVitem_DoubleFile_FilesVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Files\LV_DoubleFile_FilesVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Files\LV_DoubleFile_FilesVM_Impl.cs" />
     <Compile Include="LocalForms\LocalTreeNode.cs" />
     <Compile Include="LocalForms\LocalTreeNodeCollection.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Folders\TreeViewItem_FileHashVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Folders\TreeViewItem_DoubleFileVM.cs" />
     <Compile Include="LocalForms\LocalTV.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Folders\TreeView_FileHashVM.cs">
+    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Folders\TreeView_DoubleFileVM.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Folders\WinFileHash_FoldersVM.cs" />
-    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Folders\WinFileHash_FoldersVM_Impl.cs" />
-    <Compile Include="UtilAnalysis_FileHash\WinFileHash_Folders.xaml.cs">
-      <DependentUpon>WinFileHash_Folders.xaml</DependentUpon>
+    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Folders\WinDoubleFile_FoldersVM.cs" />
+    <Compile Include="UtilAnalysis_FileHash\MVVM_WinFileHash_Folders\WinDoubleFile_FoldersVM_Impl.cs" />
+    <Compile Include="UtilAnalysis_FileHash\WinDoubleFile_Folders.xaml.cs">
+      <DependentUpon>WinDoubleFile_Folders.xaml</DependentUpon>
     </Compile>
     <Compile Include="UtilProject\GlobalData.cs">
       <SubType>Code</SubType>
@@ -442,15 +442,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UtilAnalysis_FileHash\WinFileHash_Detail.xaml">
+    <Page Include="UtilAnalysis_FileHash\WinDoubleFile_Detail.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UtilAnalysis_FileHash\WinFileHash_Duplicates.xaml">
+    <Page Include="UtilAnalysis_FileHash\WinDoubleFile_Duplicates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UtilAnalysis_FileHash\WinFileHash_Files.xaml">
+    <Page Include="UtilAnalysis_FileHash\WinDoubleFile_Files.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -462,7 +462,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UtilAnalysis_FileHash\WinFileHash_Folders.xaml">
+    <Page Include="UtilAnalysis_FileHash\WinDoubleFile_Folders.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

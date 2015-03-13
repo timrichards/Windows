@@ -8,8 +8,8 @@ namespace DoubleFile
     {
         internal LocalTreeNodeCollection
             Nodes { get; private set; }
-        internal TabledString
-            Text { get; set; }
+        internal virtual string
+            Text { get { return _Text; } set { _Text = value; } } TabledString _Text = null;
         internal LocalTV
             TreeView { get; private set; }
         internal LocalTreeNode

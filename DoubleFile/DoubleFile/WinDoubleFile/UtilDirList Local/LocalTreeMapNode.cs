@@ -2,7 +2,7 @@
 {
     class LocalTreeMapNode : LocalTreeNode
     {
-        internal new string Text { get; set; }
+        internal override string Text { get; set; }
 
         internal LocalTreeMapNode(string strContent)
             : base()

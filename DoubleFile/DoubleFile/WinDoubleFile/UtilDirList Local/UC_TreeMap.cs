@@ -14,7 +14,7 @@ namespace Local
     class UC_TreeMap : UserControl
     {
         internal bool ToolTipActive { get { return (null != _toolTip) && (false == _toolTip.LocalIsClosed); } }
-        internal System.Windows.Window TooltipAnchor = null;
+        internal System.Windows.Window LocalOwner = null;
 
         public UC_TreeMap()
         {
@@ -40,7 +40,7 @@ namespace Local
             Local.TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
             MouseDown += form_tmapUserCtl_MouseDown;
             MouseUp += form_tmapUserCtl_MouseUp;
-            //WinTooltip.MouseClicked += Tooltip_Click;
+            WinTooltip.MouseClicked += Tooltip_ClickA;
         }
 
         void InvalidatePushRef(Action action)
@@ -83,7 +83,9 @@ namespace Local
             _prevNode = null;
             _deepNode = null;
             _deepNodeDrawn = null;
-            _toolTip.Tag = null;
+
+            WinTooltip.CloseTooltip();      // Tag
+
             UtilProject.WriteLine(DateTime.Now + " Clear();");
             ClearSelection();
         }
@@ -112,7 +114,7 @@ namespace Local
             WinTooltip.CloseTooltip();
             _timerAnim.Dispose();
             Local.TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
-            //WinTooltip.MouseClicked -= Tooltip_Click;
+            WinTooltip.MouseClicked -= Tooltip_ClickA;
             base.Dispose(disposing);
         }
 
@@ -243,7 +245,7 @@ namespace Local
                 _toolTip = WinTooltip.ShowTooltip(
                     strFolder,
                     UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
-                    TooltipAnchor);
+                    LocalOwner);
                 _toolTip.Tag = nodeRet;
             }
 
@@ -427,11 +429,19 @@ namespace Local
 
         void TreeSelect_FolderDetailUpdated(IEnumerable<string[]> lasDetail, LocalTreeNode treeNode)
         {
+            RenderA(treeNode);
+        }
+
+        void RenderA(LocalTreeNode treeNode)
+        {
             InvalidatePushRef(() => Render(treeNode));
         }
 
         void Render(LocalTreeNode treeNode)
         {
+            if (null != LocalOwner)
+                UtilProject.UIthread(() => LocalOwner.Title = treeNode.Text);
+
             if ((null == _deepNode) ||
                 (false == _deepNode.IsChildOf(treeNode)))
             {
@@ -499,6 +509,12 @@ namespace Local
                     (((treeNode.SelectedImageIndex < 0) ? _rectBitmap.Size.Width : treeNode.SelectedImageIndex)
                     * .75), 256);
             }
+        }
+
+        internal void Tooltip_ClickA()
+        {
+            RenderA(_toolTip.Tag as LocalTreeNode);
+            WinTooltip.CloseTooltip();
         }
 
         internal string Tooltip_Click()

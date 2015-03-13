@@ -13,7 +13,7 @@
           //  Deactivated += (o, e) => form_ucTreeMap.ClearSelection();
             SizeChanged += (o, e) => form_ucTreeMap.ClearSelection();
             LocationChanged += (o, e) => form_ucTreeMap.ClearSelection();
-            form_ucTreeMap.TooltipAnchor = this;
+            form_ucTreeMap.LocalOwner = this;
         }
 
         internal new void Show()

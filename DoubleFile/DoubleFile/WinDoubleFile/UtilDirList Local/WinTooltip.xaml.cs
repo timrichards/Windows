@@ -59,9 +59,9 @@ namespace DoubleFile
                 (false == winOwner.LocalIsClosed))
             {
                 winOwner.Closed -= CloseTooltip;
-
-                winOwner.Activate();
             }
+
+            _winTooltip = null;
         }
 
         WinTooltip()

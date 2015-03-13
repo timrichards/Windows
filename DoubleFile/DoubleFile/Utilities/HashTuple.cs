@@ -32,8 +32,7 @@ namespace DoubleFile
 
         public override string ToString()
         {
-            var strRet = Item1.ToString("X8").PadLeft(16, '0') + Item2.ToString("X8").PadLeft(16, '0');
-            return strRet;
+            return Item1.ToString("X8").PadLeft(16, '0') + Item2.ToString("X8").PadLeft(16, '0');
         }
     }
 }

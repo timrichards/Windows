@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Media;
 
 namespace DoubleFile
 {
@@ -67,6 +68,10 @@ namespace DoubleFile
         WinTooltip()
         {
             InitializeComponent();
+            WindowStyle = WindowStyle.None;
+            SizeToContent = SizeToContent.WidthAndHeight;
+            ResizeMode = ResizeMode.NoResize;
+            Background = Brushes.LightYellow;
             Loaded += (o, e) => ++form_folder.FontSize;
             MouseDown += (o, e) => _bMouseDown = true;
             MouseUp += (o, e) => { if ((null != MouseClicked) && _bMouseDown) MouseClicked(); };

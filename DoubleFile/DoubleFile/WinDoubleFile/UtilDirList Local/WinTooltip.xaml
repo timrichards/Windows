@@ -4,9 +4,7 @@
         xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         xmlns:local="clr-namespace:DoubleFile"
         xmlns:localLocal="clr-namespace:Local"
-        Title="Double File"
-                   Width="300" Height="100"
-                   WindowStyle="None" SizeToContent="WidthAndHeight" Background="LightYellow">
+        Title="Double File" Width="300" Height="100">
     <Grid>
         <StackPanel Margin="10,10">
             <TextBlock Name="form_folder" FontWeight="Bold"/>

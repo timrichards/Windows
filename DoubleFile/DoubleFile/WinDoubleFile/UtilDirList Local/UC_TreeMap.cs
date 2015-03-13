@@ -13,7 +13,7 @@ namespace Local
     [System.ComponentModel.DesignerCategory("Code")]
     class UC_TreeMap : UserControl
     {
-        internal bool ToolTipActive { get; private set; }
+        internal bool ToolTipActive { get { return (null != _toolTip) && (false == _toolTip.LocalIsClosed); } }
         internal System.Windows.Window TooltipAnchor = null;
 
         public UC_TreeMap()
@@ -93,12 +93,9 @@ namespace Local
             if (App.LocalExit)
                 return;
 
-            UtilProject.UIthread(() => WinTooltip.CloseTooltip());
-
             if (false == bKeepTooltipActive)
             {
-                ToolTipActive = false;
-                UtilProject.WriteLine(DateTime.Now + " b ToolTipActive = false;");
+                UtilProject.UIthread(() => WinTooltip.CloseTooltip());
             }
 
             InvalidatePushRef(() => _selRect = Rectangle.Empty);
@@ -114,7 +111,6 @@ namespace Local
 
             WinTooltip.CloseTooltip();
             _timerAnim.Dispose();
-            ToolTipActive = false; UtilProject.WriteLine(DateTime.Now + " c ToolTipActive = false;");
             Local.TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
             //WinTooltip.MouseClicked -= Tooltip_Click;
             base.Dispose(disposing);
@@ -123,7 +119,7 @@ namespace Local
         internal LocalTreeNode DoToolTip(Point pt_in)
         {
             UtilProject.WriteLine(DateTime.Now + " DoToolTip();");
-            ClearSelection();
+            ClearSelection(bKeepTooltipActive: true);
 
             if (_treeNode == null)
             {
@@ -249,7 +245,6 @@ namespace Local
                     UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
                     TooltipAnchor);
                 _toolTip.Tag = nodeRet;
-                ToolTipActive = true; UtilProject.WriteLine(DateTime.Now + " a ToolTipActive = true; ------");
             }
 
             _prevNode = nodeRet;

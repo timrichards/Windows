@@ -14,24 +14,29 @@ namespace DoubleFile
 
         internal static WinTooltip ShowTooltip(string strFolder, string strSize, Window winAnchor)
         {
-            CloseTooltip();
-            _winTooltip = new WinTooltip();
+            if ((null == _winTooltip) ||
+                _winTooltip.LocalIsClosing ||
+                _winTooltip.LocalIsClosed)
+            {
+                _winTooltip = new WinTooltip();
+
+                _winTooltip.WindowStartupLocation = WindowStartupLocation.Manual;
+                _winTooltip.Show();
+
+                var winOwner = winAnchor as LocalWindow;
+
+                if (null != winOwner)
+                {
+                    _winTooltip.Owner = winOwner;
+                    _winTooltip.Left = winOwner.Left;
+                    _winTooltip.Top = winOwner.Top + winOwner.Height;
+
+                    winOwner.Closed += CloseTooltip;
+                }
+            }
+
             _winTooltip.Folder = strFolder;
             _winTooltip.Size = strSize;
-            _winTooltip.Show();
-
-            var winOwner = winAnchor as LocalWindow;
-
-            if (null != winOwner)
-            {
-                _winTooltip.Owner = winOwner;
-                _winTooltip.Left = winOwner.Left;
-                _winTooltip.Top = winOwner.Top + winOwner.Height;
-
-                winOwner.MouseDown += CloseTooltip;
-                winOwner.Closed += CloseTooltip;
-            }
-            
             return _winTooltip;
         }
 
@@ -53,7 +58,6 @@ namespace DoubleFile
                 (false == winOwner.LocalIsClosing) &&
                 (false == winOwner.LocalIsClosed))
             {
-                winOwner.MouseDown -= CloseTooltip;
                 winOwner.Closed -= CloseTooltip;
 
                 winOwner.Activate();
@@ -63,36 +67,50 @@ namespace DoubleFile
         WinTooltip()
         {
             InitializeComponent();
-  //          Visibility = System.Windows.Visibility.Hidden;
             Loaded += (o, e) => ++form_folder.FontSize;
-            ContentRendered += WinTooltip_ContentRendered;
             MouseDown += (o, e) => _bMouseDown = true;
             MouseUp += (o, e) => { if ((null != MouseClicked) && _bMouseDown) MouseClicked(); };
+            SizeChanged += WinTooltip_SizeChanged;
         }
 
-        void WinTooltip_ContentRendered(object sender, EventArgs e)
+        void WinTooltip_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (Top + Height > System.Windows.SystemParameters.PrimaryScreenHeight)
+            var winOwner = Owner as LocalWindow;
+
+            if (null != winOwner)
             {
-                var winOwner = Owner as LocalWindow;
+                var nWidth = e.NewSize.Width;
+                var nHeight = e.NewSize.Height;
 
-                if (null != winOwner)
+                var bMaxd = (winOwner.WindowState == WindowState.Maximized);
+
+                var nLeft = bMaxd
+                    ? (SystemParameters.PrimaryScreenWidth - nWidth) / 2.0
+                    : winOwner.Left;
+
+                var nTop = bMaxd ? 0 : winOwner.Top + winOwner.Height;
+
+                if (nTop + nHeight > SystemParameters.PrimaryScreenHeight)
                 {
-                    Top = winOwner.Top;
-                    Left = winOwner.Left + winOwner.Width;
-
-                    if (Left + Width > System.Windows.SystemParameters.PrimaryScreenWidth)
-                    {
-                        Top = winOwner.Top - Height;
-                        Left = winOwner.Left;
-                    }
-
-                    if (Top < 0)
-                        Top = winOwner.Top;
+                    nTop = winOwner.Top;
+                    nLeft = winOwner.Left + winOwner.Width;
                 }
-            }
 
-            Visibility = System.Windows.Visibility.Visible;
+                if (nLeft + nWidth > SystemParameters.PrimaryScreenWidth)
+                {
+                    nTop = winOwner.Top - nHeight;
+                    nLeft = winOwner.Left + winOwner.Width - nWidth;
+                }
+
+                if (nLeft < 0)
+                    nLeft = bMaxd ? 0 : winOwner.Left;
+
+                if (nTop < 0)
+                    nTop = bMaxd ? 0 : winOwner.Top;
+
+                Left = nLeft;
+                Top = nTop;
+            }
         }
 
         bool _bMouseDown = false;

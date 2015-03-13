@@ -29,5 +29,11 @@ namespace DoubleFile
                 .Where(x => x % 2 == 0)
                 .Select(x => Convert.ToByte(strHash.Substring(x, 2), 16)));
         }
+
+        public override string ToString()
+        {
+            var strRet = Item1.ToString("X8").PadLeft(16, '0') + Item2.ToString("X8").PadLeft(16, '0');
+            return strRet;
+        }
     }
 }

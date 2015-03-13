@@ -439,9 +439,6 @@ namespace Local
 
         void Render(LocalTreeNode treeNode)
         {
-            if (null != LocalOwner)
-                UtilProject.UIthread(() => LocalOwner.Title = treeNode.Text);
-
             if ((null == _deepNode) ||
                 (false == _deepNode.IsChildOf(treeNode)))
             {
@@ -479,9 +476,15 @@ namespace Local
 
             UtilProject.UIthread(() =>
             {
+                if (null != LocalOwner)
+                    LocalOwner.Title = "Double File";
+
                 _bg.Graphics.Clear(Color.DarkGray);
 
                 var lsFrames = new List<RenderAction>();
+
+                if (null == _lsRenderActions)
+                    return;     // from lambda
 
                 foreach (var stroke in _lsRenderActions)
                 {
@@ -497,6 +500,9 @@ namespace Local
                 _lsRenderActions = null;
                 _bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), _rectBitmap);
                 _bg.Render();
+
+                if (null != LocalOwner)
+                    LocalOwner.Title = treeNode.Text;
             });
 
             _selRect = Rectangle.Empty;

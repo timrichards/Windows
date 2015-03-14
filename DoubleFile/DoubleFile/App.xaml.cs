@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -7,6 +8,7 @@ namespace DoubleFile
     /// </summary>
     public partial class App : Application
     {
+        internal static event Action DeactivateDidOccur;
         internal static bool LocalActivated { get; private set; }
         internal static bool LocalExit { get; private set; }
 
@@ -29,7 +31,7 @@ namespace DoubleFile
             LocalExit = false;
 
             Activated += Application_Activated;
-            Deactivated += (o, e) => LocalActivated = false;
+            Deactivated += (o, e) => { LocalActivated = false; if (null != DeactivateDidOccur) DeactivateDidOccur(); };
             Exit += (o, e) => LocalExit = true;
 
             DispatcherUnhandledException += (o, e) =>

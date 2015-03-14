@@ -62,12 +62,6 @@ namespace DoubleFile
             Loaded += (o, e) => LocalIsClosed = false;
             Closed += (o, e) => LocalIsClosed = true;
             Closing += (o, e) => LocalIsClosing = true;
-#if (DEBUG)
-            Activated += (o, e) => UtilProject.WriteLine(this + " Activated");
-            Deactivated += (o, e) => UtilProject.WriteLine(this + " Deactivated");
-            GotFocus += (o, e) => UtilProject.WriteLine(this + " GotFocus");
-            LostFocus += (o, e) => UtilProject.WriteLine(this + " LostFocus");
-#endif
             LocalIsClosed = true;
         }
 

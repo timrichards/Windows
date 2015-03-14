@@ -13,7 +13,6 @@ namespace Local
     [System.ComponentModel.DesignerCategory("Code")]
     class UC_TreeMap : UserControl
     {
-        internal bool ToolTipActive { get { return (null != _toolTip) && (false == _toolTip.LocalIsClosed); } }
         internal System.Windows.Window LocalOwner = null;
 
         public UC_TreeMap()
@@ -83,10 +82,7 @@ namespace Local
             _prevNode = null;
             _deepNode = null;
             _deepNodeDrawn = null;
-
             WinTooltip.CloseTooltip();      // Tag
-
-            UtilProject.WriteLine(DateTime.Now + " Clear();");
             ClearSelection();
         }
 
@@ -120,7 +116,6 @@ namespace Local
 
         internal LocalTreeNode DoToolTip(Point pt_in)
         {
-            UtilProject.WriteLine(DateTime.Now + " DoToolTip();");
             ClearSelection(bKeepTooltipActive: true);
 
             if (_treeNode == null)
@@ -242,11 +237,11 @@ namespace Local
                 var nodeDatum = nodeRet.NodeDatum;
 
                 _selRect = nodeDatum.TreeMapRect;
-                _toolTip = WinTooltip.ShowTooltip(
+                WinTooltip.ShowTooltip(
                     strFolder,
                     UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
-                    LocalOwner);
-                _toolTip.Tag = nodeRet;
+                    LocalOwner,
+                    nodeRet);
             }
 
             _prevNode = nodeRet;
@@ -423,7 +418,6 @@ namespace Local
             base.OnSizeChanged(e);
             TranslateSize();
             _prevNode = null;
-            UtilProject.WriteLine(DateTime.Now + " OnSizeChanged();");
             ClearSelection();
         }
 
@@ -519,22 +513,16 @@ namespace Local
 
         internal void Tooltip_ClickA()
         {
-            RenderA(_toolTip.Tag as LocalTreeNode);
+            RenderA(WinTooltip.LocalTreeNode);
             WinTooltip.CloseTooltip();
         }
 
         internal string Tooltip_Click()
         {
-            if (null == _toolTip.Tag)
-            {
-                return null;
-            }
+            var treeNode_A = WinTooltip.LocalTreeNode;
 
-            var treeNode_A = (_toolTip.Tag as LocalTreeNode);
-
-            if (null == treeNode_A)      // added 2/13/15 as safety
+            if (null == treeNode_A)
             {
-                MBoxStatic.Assert(99964, false);
                 return null;
             }
 
@@ -1065,8 +1053,6 @@ namespace Local
             _nAnimFrame = 0;
         DateTime
             _dtHideGoofball = DateTime.MinValue;
-        WinTooltip
-            _toolTip = null;
         bool
             _bMouseDown = false;
         int

@@ -5,22 +5,23 @@ using System.Windows.Media;
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinFormDirList.xaml
+    /// Interaction logic for WinTooltip.xaml
     /// </summary>
     public partial class WinTooltip
     {
         static internal event Action MouseClicked;
         internal string Folder { set { form_folder.Text = value; } }
         internal string Size { set { form_size.Text = value; } }
+        static internal LocalTreeNode LocalTreeNode { get { return (null == _winTooltip) ? null : _winTooltip.Tag as LocalTreeNode; } }
 
-        internal static WinTooltip ShowTooltip(string strFolder, string strSize, Window winAnchor)
+        internal static WinTooltip ShowTooltip(string strFolder, string strSize,
+            Window winAnchor, LocalTreeNode treeNode)
         {
             if ((null == _winTooltip) ||
                 _winTooltip.LocalIsClosing ||
                 _winTooltip.LocalIsClosed)
             {
                 _winTooltip = new WinTooltip();
-
                 _winTooltip.WindowStartupLocation = WindowStartupLocation.Manual;
                 _winTooltip.Show();
 
@@ -31,13 +32,13 @@ namespace DoubleFile
                     _winTooltip.Owner = winOwner;
                     _winTooltip.Left = winOwner.Left;
                     _winTooltip.Top = winOwner.Top + winOwner.Height;
-
                     winOwner.Closed += CloseTooltip;
                 }
             }
 
             _winTooltip.Folder = strFolder;
             _winTooltip.Size = strSize;
+            _winTooltip.Tag = treeNode;
             return _winTooltip;
         }
 
@@ -63,6 +64,11 @@ namespace DoubleFile
             }
 
             _winTooltip = null;
+        }
+
+        static WinTooltip()
+        {
+        //    App.DeactivateDidOccur += () => CloseTooltip();
         }
 
         WinTooltip()

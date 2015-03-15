@@ -87,12 +87,13 @@ namespace DoubleFile
 
             m_FontVolGroupOrig = form_lblVolGroup.Font;
             m_clrVolGroupOrig = form_lblVolGroup.BackColor;
+            WinTooltip.MouseClicked += Tooltip_Click;
         }
 
         internal void FormDirList_Load(object sender, EventArgs e)
         {
             gd.RestartTreeTimer();
-            form_tmapUserCtl.TooltipAnchor = (Control)form_cbFindbox;
+            form_tmapUserCtl.TooltipAnchor = form_cbFindbox;
         }
 
         static internal void RestartTreeTimer(FormDirList form1, LV_ProjectVM lvProjectVM)
@@ -109,6 +110,7 @@ namespace DoubleFile
             Collate.ClearMem();
             GlobalData.Reset();
             m_ownerWindow.Activate();
+            WinTooltip.MouseClicked -= Tooltip_Click;
         }
 
         // Memory allocations occur just below all partial class FormDirList : Form declarations, then ClearMem_...() for each.
@@ -764,32 +766,7 @@ namespace DoubleFile
 
         void form_cbFindbox_MouseUp(object sender, MouseEventArgs e)
         {
-            var bToolTip = form_tmapUserCtl.ToolTipActive;
-
-            UtilProject.WriteLine(DateTime.Now + " form_cbFindbox_MouseUp");
-            form_tmapUserCtl.ClearSelection();      // resets ToolTipActive
-
-            if (gd.m_bNavDropDown)
-            {
-                gd.m_bNavDropDown = false;
-                return;
-            }
-
-            if (false == bToolTip)
-            {
-                return;
-            }
-
-            gd.m_bPutPathInFindEditBox = true;
-            gd.m_bTreeViewIndirectSelChange = true;
-            gd_Search_1_2.m_strSelectFile = form_tmapUserCtl.Tooltip_Click();
-
-            if (gd_Search_1_2.m_strSelectFile != null)
-            {
-                gd.m_bTreeViewIndirectSelChange = false;   // didn't hit a sel change
-                form_tabControlFileList.SelectedTab = form_tabPageFileList;
-                SelectFoundFile();
-            }
+            gd.m_bNavDropDown = false;
         }
 
         void form_cbFindbox_SelectedIndexChanged(object sender, EventArgs e)
@@ -1158,21 +1135,31 @@ namespace DoubleFile
             gd.m_btmapUserCtl_MouseDown = true;
         }
 
+        void Tooltip_Click()
+        {
+            gd.m_bPutPathInFindEditBox = true;
+            gd.m_bTreeViewIndirectSelChange = true;
+            gd_Search_1_2.m_strSelectFile = form_tmapUserCtl.Tooltip_Click();
+
+            if (null != gd_Search_1_2.m_strSelectFile)
+            {
+                gd.m_bTreeViewIndirectSelChange = false;   // didn't hit a sel change
+                form_tabControlFileList.SelectedTab = form_tabPageFileList;
+                SelectFoundFile();
+            }
+        }
+
         void form_tmapUserCtl_MouseUp(object sender, MouseEventArgs e)
         {
-            if (gd.m_btmapUserCtl_MouseDown == false)
-            {
+            if (false == gd.m_btmapUserCtl_MouseDown)
                 return;
-            }
 
             gd.m_btmapUserCtl_MouseDown = false;
 
-            TreeNode treeNode = form_tmapUserCtl.DoToolTip(e.Location);
+            var treeNode = form_tmapUserCtl.ZoomOrToolTip(e.Location);
 
-            if (treeNode == null)
-            {
+            if (null == treeNode)
                 return;
-            }
 
             gd.m_bPutPathInFindEditBox = true;
             gd.m_bTreeViewIndirectSelChange = true;
@@ -1182,9 +1169,7 @@ namespace DoubleFile
         void form_treeCompare_Enter(object sender, EventArgs e)
         {
             if (false == App.LocalActivated)
-            {
                 return;
-            }
 
             form_SetCopyToClipboardTree(sender);
             form_cbFindbox.Text = GlobalData.FullPath((TreeNode)((TreeView)sender).SelectedNode);

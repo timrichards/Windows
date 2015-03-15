@@ -12,24 +12,11 @@ namespace DoubleFile
     [System.ComponentModel.DesignerCategory("Code")]
     class UC_TreeMap : UserControl
     {
-        internal bool ToolTipActive { get; private set; }
         internal Control TooltipAnchor = null;
+        internal System.Windows.Window LocalOwner = null;
 
         public UC_TreeMap()
         {
-            _toolTip.UseFading = true;
-            _toolTip.UseAnimation = true;
-            _timerAnim = new LocalTimer(33.0, () =>   // 30 FPS
-            {
-                if (_rectCenter != Rectangle.Empty)
-                {
-                    ++_nAnimFrame;
-
-                    if (0 == _nInvalidateRef)
-                        Invalidate(_rectCenter);
-                }
-            }).Start();
-
             DoubleBuffered = true;
             SetStyle(ControlStyles.DoubleBuffer |
                 ControlStyles.UserPaint |
@@ -40,9 +27,22 @@ namespace DoubleFile
             BackColor = Color.Transparent;
             //MouseDown += form_tmapUserCtl_MouseDown;		NO.
             //MouseUp += form_tmapUserCtl_MouseUp;
+        }
 
-            if (null == TooltipAnchor)
-                TooltipAnchor = this;
+        protected override void InitLayout()
+        {
+            base.InitLayout();
+
+            _timerAnim = new LocalTimer(33.0, () =>   // 30 FPS
+            {
+                if (_rectCenter != Rectangle.Empty)
+                {
+                    ++_nAnimFrame;
+
+                    if (0 == _nInvalidateRef)
+                        Invalidate(_rectCenter);
+                }
+            }).Start();
         }
 
         void InvalidatePushRef(Action action)
@@ -70,8 +70,7 @@ namespace DoubleFile
             _prevNode = null;
             _deepNode = null;
             _deepNodeDrawn = null;
-            _toolTip.Tag = null;
-            UtilProject.WriteLine(DateTime.Now + " Clear();");
+            WinTooltip.CloseTooltip();      // Tag
             ClearSelection();
         }
 
@@ -80,23 +79,20 @@ namespace DoubleFile
             if (App.LocalExit)
                 return;
 
-            var ctl = TooltipAnchor;
-
-            if ((null == ctl) || ctl.IsDisposed)
-                ctl = this;
-
-            if (ctl.IsDisposed)
+            if (_bClearingSelection)
                 return;
 
-            UtilProject.UIthread(() => _toolTip.Hide(ctl));
+            _bClearingSelection = true;
 
             if (false == bKeepTooltipActive)
-            {
-                ToolTipActive = false;
-                UtilProject.WriteLine(DateTime.Now + " b ToolTipActive = false;");
-            }
+                UtilProject.UIthread(() => WinTooltip.CloseTooltip());  // CloseTooltip callback recurses here hence _bClearingSelection
 
-            InvalidatePushRef(() => _selRect = Rectangle.Empty);
+            _selRect = Rectangle.Empty;
+
+            if (0 == _nInvalidateRef)
+                Invalidate();
+
+            _bClearingSelection = false;
         }
 
         protected override void Dispose(bool disposing)
@@ -107,16 +103,14 @@ namespace DoubleFile
                 _bg = null;
             }
 
-            _toolTip.Dispose();
+            WinTooltip.CloseTooltip();
             _timerAnim.Dispose();
-            ToolTipActive = false; UtilProject.WriteLine(DateTime.Now + " c ToolTipActive = false;");
             base.Dispose(disposing);
         }
 
-        internal TreeNode DoToolTip(Point pt_in)
+        internal TreeNode ZoomOrToolTip(Point pt_in)
         {
-            UtilProject.WriteLine(DateTime.Now + " DoToolTip();");
-            ClearSelection();
+            ClearSelection(bKeepTooltipActive: true);
 
             if (_treeNode == null)
             {
@@ -152,7 +146,7 @@ namespace DoubleFile
                     if (null == nodeDatum)      // added 2/13/15 as safety
                     {
                         MBoxStatic.Assert(99979, false);
-                        return;
+                        return;     // from lambda
                     }
 
                     {
@@ -165,36 +159,30 @@ namespace DoubleFile
                         (null != (nodeRet = FindMapNode(nodeDatum.TreeMapFiles, pt))))
                     {
                         bImmediateFiles = true;
-                        return;
+                        return;     // from lambda
                     }
                 }
 
-                var m_prevNode_A = _prevNode ?? _treeNode;
+                var prevNode_A = _prevNode ?? _treeNode;
 
-                if (null != (nodeRet = FindMapNode(m_prevNode_A, pt)))
-                {
-                    return;
-                }
+                if (null != (nodeRet = FindMapNode(prevNode_A, pt)))
+                    return;         // from lambda
 
                 var nodeUplevel = 
                     (_prevNode != null)
                     ? _prevNode.Parent
                     : null;
 
-                while (nodeUplevel != null)
+                while (null != nodeUplevel)
                 {
                     if ((nodeRet = FindMapNode(nodeUplevel, pt)) != null)
-                    {
-                        return;
-                    }
+                        return;     // from lambda
 
                     nodeUplevel = nodeUplevel.Parent;
                 }
 
                 if ((nodeRet = FindMapNode(_treeNode, pt)) != null)
-                {
-                    return;
-                }
+                    return;         // from lambda
 
                 nodeRet = _treeNode;
             });
@@ -226,23 +214,23 @@ namespace DoubleFile
                 bImmediateFiles = false;
             }
 
-            _toolTip.ToolTipTitle = nodeRet.Text;
+            var strFolder = nodeRet.Text;
 
             if (bImmediateFiles)
-            {
-                _toolTip.ToolTipTitle += " (immediate files)";
-            }
-
-            _toolTip.Tag = nodeRet;
+                strFolder += " (immediate files)";
 
             {
                 var nodeDatum = nodeRet.Tag as NodeDatum;
 
                 _selRect = nodeDatum.TreeMapRect;
-                _toolTip.Show(UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
-                    TooltipAnchor,
-                    new Point(0, 0));
-                ToolTipActive = true; UtilProject.WriteLine(DateTime.Now + " a ToolTipActive = true; ------");
+
+                WinTooltip.ShowTooltip(
+                    strFolder,
+                    UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
+                    LocalOwner,
+                    LocalOwner.PointToScreen(new System.Windows.Point(TooltipAnchor.Left, TooltipAnchor.Top)),
+                    nodeRet,
+                    () => ClearSelection());
             }
 
             _prevNode = nodeRet;
@@ -257,10 +245,8 @@ namespace DoubleFile
         {
             var treeNode = treeNode_in;
 
-            if (treeNode == null)
-            {
+            if (null == treeNode)
                 return null;
-            }
 
             do
             {
@@ -273,9 +259,7 @@ namespace DoubleFile
                 }
 
                 if (false == nodeDatum.TreeMapRect.Contains(pt))
-                {
                     continue;
-                }
 
                 if (bNextNode ||
                     (treeNode != treeNode_in))
@@ -283,7 +267,7 @@ namespace DoubleFile
                     return treeNode;
                 }
 
-                if ((treeNode.Nodes == null) ||
+                if ((null == treeNode.Nodes) ||
                     (treeNode.Nodes.IsEmpty()))
                 {
                     continue;
@@ -291,13 +275,12 @@ namespace DoubleFile
 
                 var foundNode = FindMapNode(treeNode.Nodes[0], pt, bNextNode: true);
 
-                if (foundNode != null)
-                {
+                if (null != foundNode)
                     return foundNode;
-                }
             }
             while (bNextNode &&
-                (null != (treeNode = treeNode.NextNode)));
+                (null !=
+                (treeNode = treeNode.NextNode)));
 
             return null;
         }
@@ -307,10 +290,8 @@ namespace DoubleFile
             var listLengths = new List<ulong>();
             var listFiles = TreeSelect.GetFileList(parent, listLengths);
 
-            if (listFiles == null)
-            {
+            if (null == listFiles)
                 return null;
-            }
 
             var nodeFileList = new TreeNode(parent.Text);
             ulong nTotalLength = 0;
@@ -324,7 +305,7 @@ namespace DoubleFile
                 MBoxStatic.Assert(99888, bMoveNext);
                 nTotalLength += nodeDatum_A.TotalLength = enumerator.Current;
 
-                if (enumerator.Current == 0)
+                if (0 == enumerator.Current)
                     continue;
 
                 nodeFileList.Nodes.Add(new TreeNode(arrLine[0])
@@ -334,10 +315,8 @@ namespace DoubleFile
                 });
             }
 
-            if (nTotalLength == 0)
-            {
+            if (0 == nTotalLength)
                 return null;
-            }
 
             var nodeDatum = parent.Tag as NodeDatum;
             var nodeDatum_B = new NodeDatum();
@@ -419,7 +398,6 @@ namespace DoubleFile
             base.OnSizeChanged(e);
             TranslateSize();
             _prevNode = null;
-            UtilProject.WriteLine(DateTime.Now + " OnSizeChanged();");
             ClearSelection();
         }
 
@@ -458,11 +436,14 @@ namespace DoubleFile
 
             ClearSelection();
             _treeNode = treeNode;
-            DrawTreemap();              // populates _lsRenderActions
+            _lsRenderActions = DrawTreemap();
 
             UtilProject.UIthread(() =>
             {
                 _bg.Graphics.Clear(Color.DarkGray);
+
+                if (null == _lsRenderActions)
+                    return;     // from lambda
 
                 var lsFrames = new List<RenderAction>();
 
@@ -496,18 +477,11 @@ namespace DoubleFile
 
         internal string Tooltip_Click()
         {
-            if (null == _toolTip.Tag)
-            {
-                return null;
-            }
+            var treeNode_A = WinTooltip.TreeNode;
 
-            var treeNode_A = (_toolTip.Tag as TreeNode);
+            if (null == treeNode_A)
 
-            if (null == treeNode_A)      // added 2/13/15 as safety
-            {
-                MBoxStatic.Assert(99884, false);
                 return null;
-            }
 
             if (treeNode_A.TreeView != null)    // null if fake file treenode (NodeDatum.TreeMapFiles)
             {
@@ -560,31 +534,29 @@ namespace DoubleFile
         //
         // Last modified: $Date: 2004/11/05 16:53:08 $
         
-        internal void DrawTreemap()
+        ConcurrentBag<RenderAction> DrawTreemap()
         {
             _deepNodeDrawn = null;
             var rc = _rectBitmap;
 
-	        rc.Width--;
-	        rc.Height--;
+            rc.Width--;
+            rc.Height--;
 
-	        if (rc.Width <= 0 || rc.Height <= 0)
-            {
-		        return;
-            }
+            if (rc.Width <= 0 || rc.Height <= 0)
+                return null;
 
             var nodeDatum = _treeNode.Tag as NodeDatum;
 
             if (null == nodeDatum)      // added 2/13/15 as safety
             {
                 MBoxStatic.Assert(99883, false);
-                return;
+                return null;
             }
 
-            if (nodeDatum.TotalLength > 0)
-                _lsRenderActions = new Recurse().Render(_treeNode, rc, _deepNode, out _deepNodeDrawn);
-            else
-                _lsRenderActions = new ConcurrentBag<RenderAction> { new FillRectangle() { Brush = Brushes.Wheat, rc = rc } };
+            return
+                (nodeDatum.TotalLength > 0)
+                ? new Recurse().Render(_treeNode, rc, _deepNode, out _deepNodeDrawn)
+                : new ConcurrentBag<RenderAction> { new FillRectangle() { Brush = Brushes.Wheat, rc = rc } };
         }
 
         class Recurse
@@ -674,15 +646,18 @@ namespace DoubleFile
                             return;     // from lambda
                         }
 
-                        var nodeDatumFree = new NodeDatum();
-                        var nodeFree = new TreeNode(item.Text + " (free space)");
+                        var nodeDatumFree = new NodeDatum()
+                        {
+                            TotalLength = rootNodeDatum.VolumeFree
+                        };
 
-                        nodeDatumFree.TotalLength = rootNodeDatum.VolumeFree;
-                        nodeFree.Tag = nodeDatumFree;
-                        nodeFree.ForeColor = Color.MediumSpringGreen;
+                        var nodeFree = new TreeNode(item.Text + " (free space)")
+                        {
+                            Tag = nodeDatumFree,
+                            ForeColor = Color.MediumSpringGreen
+                        };
 
                         var nodeDatumUnread = new NodeDatum();
-                        var nodeUnread = new TreeNode(item.Text + " (unread data)");
                         var nVolumeLength = rootNodeDatum.VolumeLength;
                         var nUnreadLength = (long)nVolumeLength -
                             (long)rootNodeDatum.VolumeFree -
@@ -700,8 +675,11 @@ namespace DoubleFile
                             nodeDatumUnread.TotalLength = 0;
                         }
 
-                        nodeUnread.Tag = nodeDatumUnread;
-                        nodeUnread.ForeColor = Color.MediumVioletRed;
+                        var nodeUnread = new TreeNode(item.Text + " (unread data)")
+                        {
+                            Tag = nodeDatumUnread,
+                            ForeColor = Color.MediumVioletRed
+                        };
 
                         // parent added as child, with two other nodes:
                         // free space (color: spring green); and...
@@ -872,13 +850,13 @@ namespace DoubleFile
                             : new Rectangle((int)top, (int)left, bottom - (int)top, right - (int)left);
 
                         ThreadPool.QueueUserWorkItem(
-                            new WaitCallback(state =>
+                            state =>
                             {
                                 var param = (Tuple<TreeNode, Rectangle>)state;
 
                                 RecurseDrawGraph(param.Item1, param.Item2);
                                 Interlocked.Decrement(ref _nWorkerCount);
-                            }),
+                            },
                             new Tuple<TreeNode, Rectangle>(child, rcChild)
                         );
 
@@ -1008,6 +986,20 @@ namespace DoubleFile
         class
             DrawRectangle : RenderAction { static Pen Pen = new Pen(Color.Black, 2); internal override void Stroke(Graphics g) { g.DrawRectangle(Pen, rc); } }
 
+        TreeNode
+            _treeNode = null;
+        BufferedGraphics
+            _bg = null;
+        Rectangle
+            _rectBitmap = Rectangle.Empty;
+        SizeF
+            _sizeTranslate = SizeF.Empty;
+        int
+            _nInvalidateRef = 0;
+        bool
+            _bClearingSelection = false;
+
+        // Recurse class
         ConcurrentBag<RenderAction>
             _lsRenderActions = null;
         TreeNode
@@ -1015,29 +1007,20 @@ namespace DoubleFile
         TreeNode
             _deepNodeDrawn = null;
 
-        Rectangle
-            _rectBitmap = Rectangle.Empty;
-        Rectangle
-            _selRect = Rectangle.Empty;
+        // goofball
         Rectangle
             _rectCenter = Rectangle.Empty;
-        SizeF
-            _sizeTranslate = SizeF.Empty;
-        BufferedGraphics
-            _bg = null;
-        TreeNode
-            _treeNode = null;
-        TreeNode
-            _prevNode = null;
-        readonly LocalTimer
+        DateTime
+            _dtHideGoofball = DateTime.MinValue;
+        LocalTimer
             _timerAnim = null;
         int
             _nAnimFrame = 0;
-        DateTime
-            _dtHideGoofball = DateTime.MinValue;
-        readonly ToolTip
-            _toolTip = new ToolTip();
-        int
-            _nInvalidateRef = 0;
+
+        // selection
+        Rectangle
+            _selRect = Rectangle.Empty;
+        TreeNode
+            _prevNode = null;
     }
 }

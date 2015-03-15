@@ -28,7 +28,7 @@ namespace Local
             Local.TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
             MouseDown += form_tmapUserCtl_MouseDown;
             MouseUp += form_tmapUserCtl_MouseUp;
-            WinTooltip.MouseClicked += Tooltip_ClickA;
+            WinTooltip.MouseClicked += Tooltip_Click;
         }
 
         protected override void InitLayout()
@@ -69,7 +69,7 @@ namespace Local
 
             _bMouseDown = false;
 
-            var treeNode = DoToolTip(e.Location);
+            var treeNode = ZoomOrTooltip(e.Location);
 
             if (null == treeNode)
                 return;
@@ -92,6 +92,11 @@ namespace Local
             if (App.LocalExit)
                 return;
 
+            if (_bClearingSelection)
+                return;
+
+            _bClearingSelection = true;
+
             if (false == bKeepTooltipActive)
                 UtilProject.UIthread(() => WinTooltip.CloseTooltip());
 
@@ -99,6 +104,8 @@ namespace Local
 
             if (0 == _nInvalidateRef)
                 Invalidate();
+
+            _bClearingSelection = false;
         }
 
         protected override void Dispose(bool disposing)
@@ -112,11 +119,11 @@ namespace Local
             WinTooltip.CloseTooltip();
             _timerAnim.Dispose();
             Local.TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
-            WinTooltip.MouseClicked -= Tooltip_ClickA;
+            WinTooltip.MouseClicked -= Tooltip_Click;
             base.Dispose(disposing);
         }
 
-        internal LocalTreeNode DoToolTip(Point pt_in)
+        internal LocalTreeNode ZoomOrTooltip(Point pt_in)
         {
             ClearSelection(bKeepTooltipActive: true);
 
@@ -235,7 +242,8 @@ namespace Local
                     strFolder,
                     UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
                     LocalOwner,
-                    nodeRet);
+                    nodeRet,
+                    () => ClearSelection());
             }
 
             _prevNode = nodeRet;
@@ -243,7 +251,7 @@ namespace Local
             if (0 == _nInvalidateRef)   // jic
                 Invalidate();
 
-            return nodeRet;
+            return null;
         }
 
         static LocalTreeNode FindMapNode(LocalTreeNode treeNode_in, Point pt, bool bNextNode = false)
@@ -257,7 +265,7 @@ namespace Local
             {
                 var nodeDatum = treeNode.NodeDatum;
 
-                if (null == nodeDatum)      // added 2/13/15 as safety
+                if (null ==  nodeDatum)      // added 2/13/15 as safety
                 {
                     MBoxStatic.Assert(99966, false);
                     return null;
@@ -418,8 +426,6 @@ namespace Local
 
         void Render(LocalTreeNode treeNode)
         {
-            _prevNode = null;
-
             if ((null == _deepNode) ||
                 (false == _deepNode.IsChildOf(treeNode)))
             {
@@ -498,39 +504,10 @@ namespace Local
             }
         }
 
-        internal void Tooltip_ClickA()
+        internal void Tooltip_Click()
         {
             RenderA(WinTooltip.LocalTreeNode);
             WinTooltip.CloseTooltip();
-        }
-
-        internal string Tooltip_Click()
-        {
-            var treeNode_A = WinTooltip.LocalTreeNode;
-
-            if (null == treeNode_A)
-            {
-                return null;
-            }
-
-            if (treeNode_A.TreeView != null)    // null if fake file treenode (NodeDatum.TreeMapFiles)
-            {
-                var rootNodeDatum = treeNode_A.NodeDatum as RootNodeDatum;
-
-                if (rootNodeDatum != null)
-                {
-                    rootNodeDatum.VolumeView = (rootNodeDatum.VolumeView == false);
-                    treeNode_A.TreeView.SelectedNode = null;    // to kick in a change selection event
-                }
-
-                treeNode_A.TreeView.SelectedNode = treeNode_A;
-            }
-            else
-            {
-                return treeNode_A.Text;
-            }
-
-            return null;
         }
 
         void TranslateSize()
@@ -569,11 +546,11 @@ namespace Local
             _deepNodeDrawn = null;
             var rc = _rectBitmap;
 
-	        rc.Width--;
-	        rc.Height--;
+            rc.Width--;
+            rc.Height--;
 
-	        if (rc.Width <= 0 || rc.Height <= 0)
-		        return null;
+            if (rc.Width <= 0 || rc.Height <= 0)
+                return null;
 
             var nodeDatum = _treeNode.NodeDatum;
 
@@ -676,15 +653,18 @@ namespace Local
                             return;     // from lambda
                         }
 
-                        var nodeDatumFree = new NodeDatum();
-                        var nodeFree = new LocalTreeMapNode(item.Text + " (free space)");
+                        var nodeDatumFree = new NodeDatum()
+                        {
+                            TotalLength = rootNodeDatum.VolumeFree
+                        };
 
-                        nodeDatumFree.TotalLength = rootNodeDatum.VolumeFree;
-                        nodeFree.NodeDatum = nodeDatumFree;
-                        nodeFree.ForeColor = UtilColor.MediumSpringGreen;
+                        var nodeFree = new LocalTreeMapNode(item.Text + " (free space)")
+                        {
+                            NodeDatum = nodeDatumFree,
+                            ForeColor = UtilColor.MediumSpringGreen
+                        };
 
                         var nodeDatumUnread = new NodeDatum();
-                        var nodeUnread = new LocalTreeMapNode(item.Text + " (unread data)");
                         var nVolumeLength = rootNodeDatum.VolumeLength;
                         var nUnreadLength = (long)nVolumeLength -
                             (long)rootNodeDatum.VolumeFree -
@@ -702,8 +682,11 @@ namespace Local
                             nodeDatumUnread.TotalLength = 0;
                         }
 
-                        nodeUnread.NodeDatum = nodeDatumUnread;
-                        nodeUnread.ForeColor = UtilColor.MediumVioletRed;
+                        var nodeUnread = new LocalTreeMapNode(item.Text + " (unread data)")
+                        {
+                            NodeDatum = nodeDatumUnread,
+                            ForeColor = UtilColor.MediumVioletRed
+                        };
 
                         // parent added as child, with two other nodes:
                         // free space (color: spring green); and...
@@ -1021,6 +1004,8 @@ namespace Local
             _sizeTranslate = SizeF.Empty;
         int
             _nInvalidateRef = 0;
+        bool
+            _bClearingSelection = false;
 
         // Recurse class
         ConcurrentBag<RenderAction>

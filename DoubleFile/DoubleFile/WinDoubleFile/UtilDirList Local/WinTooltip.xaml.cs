@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Media;
 
 namespace DoubleFile
@@ -13,18 +14,43 @@ namespace DoubleFile
         internal string Folder { set { form_folder.Text = value; } }
         internal string Size { set { form_size.Text = value; } }
         static internal LocalTreeNode LocalTreeNode { get { return (null == _winTooltip) ? null : _winTooltip.Tag as LocalTreeNode; } }
+        static internal TreeNode TreeNode { get { return (null == _winTooltip) ? null : _winTooltip.Tag as TreeNode; } }
 
-        internal static WinTooltip ShowTooltip(string strFolder, string strSize,
-            Window winAnchor, LocalTreeNode treeNode)
+        internal static void ShowTooltip(string strFolder, string strSize,
+            Window winOwner, Point ptAnchor, TreeNode treeNode, Action closingCallback = null)
         {
-            if ((null == _winTooltip) ||
-                _winTooltip.LocalIsClosing ||
-                _winTooltip.LocalIsClosed)
+            if ((null != _winTooltip) &&
+                (_winTooltip.Tag is LocalTreeNode))  // the other type
             {
-                _winTooltip = new WinTooltip();
-                _winTooltip.WindowStartupLocation = WindowStartupLocation.Manual;
-                _winTooltip.Show();
+                CloseTooltip();
+            }
 
+            FactoryCreate(strFolder, strSize, treeNode, closingCallback, () =>
+            {
+                _winTooltip.Left = ptAnchor.X;
+                _winTooltip.Top = ptAnchor.Y;
+
+                if (null != winOwner)
+                {
+                    _winTooltip.Owner = winOwner;
+                    winOwner.Closed += CloseTooltip;
+                }
+
+                _winTooltip._closingCallback = closingCallback;
+            });
+        }
+
+        internal static void ShowTooltip(string strFolder, string strSize,
+            Window winAnchor, LocalTreeNode treeNode, Action closingCallback = null)
+        {
+            if ((null != _winTooltip) &&
+                (_winTooltip.Tag is TreeNode))  // the other type
+            {
+                CloseTooltip();
+            }
+
+            FactoryCreate(strFolder, strSize, treeNode, closingCallback, () =>
+            {
                 var winOwner = winAnchor as LocalWindow;
 
                 if (null != winOwner)
@@ -33,21 +59,45 @@ namespace DoubleFile
                     _winTooltip.Left = winOwner.Left;
                     _winTooltip.Top = winOwner.Top + winOwner.Height;
                     winOwner.Closed += CloseTooltip;
+                    _winTooltip.SizeChanged += _winTooltip.WinTooltip_SizeChanged;
                 }
+            });
+        }
+
+        static WinTooltip FactoryCreate(string strFolder, string strSize, object tag, Action closingCallback,
+            Action clientSpecific)
+        {
+            if ((null == _winTooltip) ||
+                _winTooltip.LocalIsClosing ||
+                _winTooltip.LocalIsClosed)
+            {
+                _winTooltip = new WinTooltip();
+                _winTooltip.WindowStartupLocation = WindowStartupLocation.Manual;
+                _winTooltip.Show();
+                clientSpecific();
             }
 
             _winTooltip.Folder = strFolder;
             _winTooltip.Size = strSize;
-            _winTooltip.Tag = treeNode;
+            _winTooltip.Tag = tag;
+            _winTooltip._closingCallback = closingCallback;
             return _winTooltip;
         }
 
         internal static void CloseTooltip(object sender = null, EventArgs e = null)
         {
+            if (_bClosingTooltip)
+                return;
+
+            _bClosingTooltip = true;
+
             if ((null != _winTooltip) &&
                 (false == _winTooltip.LocalIsClosing) &&
                 (false == _winTooltip.LocalIsClosed))
             {
+                if (null != _winTooltip._closingCallback)
+                    _winTooltip._closingCallback();
+
                 _winTooltip.Close();
             }
 
@@ -64,6 +114,7 @@ namespace DoubleFile
             }
 
             _winTooltip = null;
+            _bClosingTooltip = false;
         }
 
         static WinTooltip()
@@ -81,7 +132,6 @@ namespace DoubleFile
             Loaded += (o, e) => ++form_folder.FontSize;
             MouseDown += (o, e) => _bMouseDown = true;
             MouseUp += (o, e) => { if ((null != MouseClicked) && _bMouseDown) MouseClicked(); };
-            SizeChanged += WinTooltip_SizeChanged;
         }
 
         void WinTooltip_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -92,39 +142,45 @@ namespace DoubleFile
             {
                 var nWidth = e.NewSize.Width;
                 var nHeight = e.NewSize.Height;
+                var nLeft = winOwner.Left;
+                var nTop = winOwner.Top + winOwner.Height;
 
-                var bMaxd = (winOwner.WindowState == WindowState.Maximized);
+                if (WindowState.Maximized == winOwner.WindowState)
+                {
+                    nLeft = (SystemParameters.PrimaryScreenWidth - nWidth) / 2.0;
+                    nTop = 0;
+                }
 
-                var nLeft = bMaxd
-                    ? (SystemParameters.PrimaryScreenWidth - nWidth) / 2.0
-                    : winOwner.Left;
-
-                var nTop = bMaxd ? 0 : winOwner.Top + winOwner.Height;
-
-                if (nTop + nHeight > SystemParameters.PrimaryScreenHeight)
+                if (SystemParameters.PrimaryScreenHeight < nTop + nHeight)
                 {
                     nTop = winOwner.Top;
                     nLeft = winOwner.Left + winOwner.Width;
                 }
 
-                if (nLeft + nWidth > SystemParameters.PrimaryScreenWidth)
+                if (SystemParameters.PrimaryScreenWidth < nLeft + nWidth)
                 {
                     nTop = winOwner.Top - nHeight;
                     nLeft = winOwner.Left + winOwner.Width - nWidth;
                 }
 
-                if (nLeft < 0)
-                    nLeft = bMaxd ? 0 : winOwner.Left;
+                if (0 > nLeft)
+                    nLeft = winOwner.Left;
 
-                if (nTop < 0)
-                    nTop = bMaxd ? 0 : winOwner.Top;
+                if (0 > nTop)
+                    nTop = winOwner.Top;
 
                 Left = nLeft;
                 Top = nTop;
             }
         }
 
-        bool _bMouseDown = false;
-        static WinTooltip _winTooltip = null;
+        bool
+            _bMouseDown = false;
+        static WinTooltip
+            _winTooltip = null;
+        Action
+            _closingCallback = null;
+        static bool
+            _bClosingTooltip = false;
     }
 }

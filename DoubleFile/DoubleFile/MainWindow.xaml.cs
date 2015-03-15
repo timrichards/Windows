@@ -30,6 +30,10 @@ namespace DoubleFile
             form_btnSaveProject.Click += Button_SaveProject_Click;
             form_btnSearchDirLists.Click += Button_SearchDirLists_Click;
             form_btnDuplicateFileExplorer.Click += Button_DuplicateFileExplorer_Click;
+            MouseDown += (o, e) => DragMove();
+            StateChanged += (o, e) => WinTooltip.CloseTooltip();     // app minimize
+            SizeToContent = SizeToContent.WidthAndHeight;
+            ResizeMode = ResizeMode.CanMinimize;
         }
 
         void FormDirListAction(Action<WinFormDirList, LV_ProjectVM> action)

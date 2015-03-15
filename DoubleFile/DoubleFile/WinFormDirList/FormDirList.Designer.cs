@@ -1310,11 +1310,11 @@ namespace DoubleFile
             //this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormDirList_FormClosing);
             //this.Disposed += new EventHandler(this.FormDisposed);
             //this.Load += new System.EventHandler(this.FormDirList_Load);
-            this.Enter += new System.EventHandler(this.ClearToolTip);
+            //this.Enter += new System.EventHandler(this.ClearToolTip);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormDirList_KeyDown);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.FormDirList_KeyPress);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.FormDirList_KeyUp);
-            this.Leave += new System.EventHandler(this.ClearToolTip);
+            //this.Leave += new System.EventHandler(this.ClearToolTip);
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
             this.form_splitFiles.Panel1.ResumeLayout(false);
@@ -1453,7 +1453,7 @@ namespace DoubleFile
         private System.Windows.Forms.TabControl form_tabControlFileList;
         private System.Windows.Forms.TabPage form_tabPageFileList;
         private System.Windows.Forms.TabPage form_tabPageDiskUsage;
-        private UC_TreeMap form_tmapUserCtl;
+        internal UC_TreeMap form_tmapUserCtl;
         private System.Windows.Forms.Button form_btnUp;
         private System.Windows.Forms.Button form_btnForward;
         private System.Windows.Forms.Button form_btnBack;

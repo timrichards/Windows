@@ -17,17 +17,6 @@ namespace Local
 
         public UC_TreeMap()
         {
-            _timerAnim = new LocalTimer(33.0, () =>   // 30 FPS
-            {
-                if (_rectCenter != Rectangle.Empty)
-                {
-                    ++_nAnimFrame;
-
-                    if (0 == _nInvalidateRef)
-                        Invalidate(_rectCenter);
-                }
-            }).Start();
-
             DoubleBuffered = true;
             SetStyle(ControlStyles.DoubleBuffer |
                 ControlStyles.UserPaint |
@@ -40,6 +29,22 @@ namespace Local
             MouseDown += form_tmapUserCtl_MouseDown;
             MouseUp += form_tmapUserCtl_MouseUp;
             WinTooltip.MouseClicked += Tooltip_ClickA;
+        }
+
+        protected override void InitLayout()
+        {
+            base.InitLayout();
+
+            _timerAnim = new LocalTimer(33.0, () =>   // 30 FPS
+            {
+                if (_rectCenter != Rectangle.Empty)
+                {
+                    ++_nAnimFrame;
+
+                    if (0 == _nInvalidateRef)
+                        Invalidate(_rectCenter);
+                }
+            }).Start();
         }
 
         void InvalidatePushRef(Action action)
@@ -59,19 +64,15 @@ namespace Local
 
         void form_tmapUserCtl_MouseUp(object sender, MouseEventArgs e)
         {
-            if (_bMouseDown == false)
-            {
+            if (false == _bMouseDown)
                 return;
-            }
 
             _bMouseDown = false;
 
             var treeNode = DoToolTip(e.Location);
 
-            if (treeNode == null)
-            {
+            if (null == treeNode)
                 return;
-            }
 
             treeNode.TreeView.SelectedNode = treeNode;
         }
@@ -92,11 +93,12 @@ namespace Local
                 return;
 
             if (false == bKeepTooltipActive)
-            {
                 UtilProject.UIthread(() => WinTooltip.CloseTooltip());
-            }
 
-            InvalidatePushRef(() => _selRect = Rectangle.Empty);
+            _selRect = Rectangle.Empty;
+
+            if (0 == _nInvalidateRef)
+                Invalidate();
         }
 
         protected override void Dispose(bool disposing)
@@ -152,7 +154,7 @@ namespace Local
                     if (null == nodeDatum)      // added 2/13/15 as safety
                     {
                         MBoxStatic.Assert(99967, false);
-                        return;
+                        return;     // from lambda
                     }
 
                     {
@@ -165,36 +167,30 @@ namespace Local
                         (null != (nodeRet = FindMapNode(nodeDatum.TreeMapFiles, pt))))
                     {
                         bImmediateFiles = true;
-                        return;
+                        return;     // from lambda
                     }
                 }
 
-                var m_prevNode_A = _prevNode ?? _treeNode;
+                var prevNode_A = _prevNode ?? _treeNode;
 
-                if (null != (nodeRet = FindMapNode(m_prevNode_A, pt)))
-                {
-                    return;
-                }
+                if (null != (nodeRet = FindMapNode(prevNode_A, pt)))
+                    return;         // from lambda
 
                 var nodeUplevel = 
                     (_prevNode != null)
                     ? _prevNode.Parent
                     : null;
 
-                while (nodeUplevel != null)
+                while (null != nodeUplevel)
                 {
                     if ((nodeRet = FindMapNode(nodeUplevel, pt)) != null)
-                    {
-                        return;
-                    }
+                        return;     // from lambda
 
                     nodeUplevel = nodeUplevel.Parent;
                 }
 
                 if ((nodeRet = FindMapNode(_treeNode, pt)) != null)
-                {
-                    return;
-                }
+                    return;         // from lambda
 
                 nodeRet = _treeNode;
             });
@@ -229,9 +225,7 @@ namespace Local
             var strFolder = nodeRet.Text;
 
             if (bImmediateFiles)
-            {
                 strFolder += " (immediate files)";
-            }
 
             {
                 var nodeDatum = nodeRet.NodeDatum;
@@ -249,17 +243,15 @@ namespace Local
             if (0 == _nInvalidateRef)   // jic
                 Invalidate();
 
-            return null;
+            return nodeRet;
         }
 
         static LocalTreeNode FindMapNode(LocalTreeNode treeNode_in, Point pt, bool bNextNode = false)
         {
             var treeNode = treeNode_in;
 
-            if (treeNode == null)
-            {
+            if (null == treeNode)
                 return null;
-            }
 
             do
             {
@@ -272,9 +264,7 @@ namespace Local
                 }
 
                 if (false == nodeDatum.TreeMapRect.Contains(pt))
-                {
                     continue;
-                }
 
                 if (bNextNode ||
                     (treeNode != treeNode_in))
@@ -282,7 +272,7 @@ namespace Local
                     return treeNode;
                 }
 
-                if ((treeNode.Nodes == null) ||
+                if ((null == treeNode.Nodes) ||
                     (treeNode.Nodes.IsEmpty()))
                 {
                     continue;
@@ -290,13 +280,12 @@ namespace Local
 
                 var foundNode = FindMapNode(treeNode.Nodes[0], pt, bNextNode: true);
 
-                if (foundNode != null)
-                {
+                if (null != foundNode)
                     return foundNode;
-                }
             }
             while (bNextNode &&
-                (null != (treeNode = treeNode.NextNode)));
+                (null !=
+                (treeNode = treeNode.NextNode)));
 
             return null;
         }
@@ -306,10 +295,8 @@ namespace Local
             var listLengths = new List<ulong>();
             var listFiles = TreeSelect.GetFileList(parent, listLengths);
 
-            if (listFiles == null)
-            {
+            if (null == listFiles)
                 return null;
-            }
 
             var nodeFileList = new LocalTreeMapNode(parent.Text);
             ulong nTotalLength = 0;
@@ -323,7 +310,7 @@ namespace Local
                 MBoxStatic.Assert(1302.3316, bMoveNext);
                 nTotalLength += nodeDatum_A.TotalLength = enumerator.Current;
 
-                if (enumerator.Current == 0)
+                if (0 == enumerator.Current)
                     continue;
 
                 nodeFileList.Nodes.Add(new LocalTreeMapNode(arrLine[0])
@@ -333,10 +320,8 @@ namespace Local
                 });
             }
 
-            if (nTotalLength == 0)
-            {
+            if (0 == nTotalLength)
                 return null;
-            }
 
             var nodeDatum = parent.NodeDatum;
             var nodeDatum_B = new NodeDatum();
@@ -433,6 +418,8 @@ namespace Local
 
         void Render(LocalTreeNode treeNode)
         {
+            _prevNode = null;
+
             if ((null == _deepNode) ||
                 (false == _deepNode.IsChildOf(treeNode)))
             {
@@ -466,7 +453,7 @@ namespace Local
 
             ClearSelection();
             _treeNode = treeNode;
-            DrawTreemap();              // populates _lsRenderActions
+            _lsRenderActions = DrawTreemap();
 
             UtilProject.UIthread(() =>
             {
@@ -475,10 +462,10 @@ namespace Local
 
                 _bg.Graphics.Clear(Color.DarkGray);
 
-                var lsFrames = new List<RenderAction>();
-
                 if (null == _lsRenderActions)
                     return;     // from lambda
+
+                var lsFrames = new List<RenderAction>();
 
                 foreach (var stroke in _lsRenderActions)
                 {
@@ -577,7 +564,7 @@ namespace Local
         //
         // Last modified: $Date: 2004/11/05 16:53:08 $
         
-        internal void DrawTreemap()
+        ConcurrentBag<RenderAction> DrawTreemap()
         {
             _deepNodeDrawn = null;
             var rc = _rectBitmap;
@@ -586,22 +573,20 @@ namespace Local
 	        rc.Height--;
 
 	        if (rc.Width <= 0 || rc.Height <= 0)
-            {
-		        return;
-            }
+		        return null;
 
             var nodeDatum = _treeNode.NodeDatum;
 
             if (null == nodeDatum)      // added 2/13/15 as safety
             {
                 MBoxStatic.Assert(99963, false);
-                return;
+                return null;
             }
 
-            if (nodeDatum.TotalLength > 0)
-                _lsRenderActions = new Recurse().Render(_treeNode, rc, _deepNode, out _deepNodeDrawn);
-            else
-                _lsRenderActions = new ConcurrentBag<RenderAction> { new FillRectangle() { Brush = Brushes.Wheat, rc = rc } };
+            return
+                (nodeDatum.TotalLength > 0)
+                ? new Recurse().Render(_treeNode, rc, _deepNode, out _deepNodeDrawn)
+                : new ConcurrentBag<RenderAction> { new FillRectangle() { Brush = Brushes.Wheat, rc = rc } };
         }
 
         class Recurse
@@ -632,6 +617,16 @@ namespace Local
                 MBoxStatic.Assert(1302.3303, rc.Width >= 0);
                 MBoxStatic.Assert(1302.3304, rc.Height >= 0);
 #endif
+                var nodeDatum = item.NodeDatum;
+
+                if (null == nodeDatum)      // added 2/13/15 as safety
+                {
+                    MBoxStatic.Assert(99962, false);
+                    return;
+                }
+
+                nodeDatum.TreeMapRect = rc;
+
                 if (rc.Width < 1 ||
                     rc.Height < 1)
                 {
@@ -651,16 +646,6 @@ namespace Local
                 {
                     _deepNodeDrawn = item;
                 }
-
-                var nodeDatum = item.NodeDatum;
-
-                if (null == nodeDatum)      // added 2/13/15 as safety
-                {
-                    MBoxStatic.Assert(99962, false);
-                    return;
-                }
-
-                nodeDatum.TreeMapRect = rc;
 
                 if (bStart &&
                     (null == nodeDatum.TreeMapFiles) &&
@@ -1026,6 +1011,18 @@ namespace Local
         class
             DrawRectangle : RenderAction { static Pen Pen = new Pen(Color.Black, 2); internal override void Stroke(Graphics g) { g.DrawRectangle(Pen, rc); } }
 
+        LocalTreeNode
+            _treeNode = null;
+        BufferedGraphics
+            _bg = null;
+        Rectangle
+            _rectBitmap = Rectangle.Empty;
+        SizeF
+            _sizeTranslate = SizeF.Empty;
+        int
+            _nInvalidateRef = 0;
+
+        // Recurse class
         ConcurrentBag<RenderAction>
             _lsRenderActions = null;
         LocalTreeNode
@@ -1033,29 +1030,22 @@ namespace Local
         LocalTreeNode
             _deepNodeDrawn = null;
 
-        Rectangle
-            _rectBitmap = Rectangle.Empty;
-        Rectangle
-            _selRect = Rectangle.Empty;
+        // goofball
         Rectangle
             _rectCenter = Rectangle.Empty;
-        SizeF
-            _sizeTranslate = SizeF.Empty;
-        BufferedGraphics
-            _bg = null;
-        LocalTreeNode
-            _treeNode = null;
-        LocalTreeNode
-            _prevNode = null;
-        readonly LocalTimer
+        DateTime
+            _dtHideGoofball = DateTime.MinValue;
+        LocalTimer
             _timerAnim = null;
         int
             _nAnimFrame = 0;
-        DateTime
-            _dtHideGoofball = DateTime.MinValue;
+
+        // selection
         bool
             _bMouseDown = false;
-        int
-            _nInvalidateRef = 0;
+        Rectangle
+            _selRect = Rectangle.Empty;
+        LocalTreeNode
+            _prevNode = null;
     }
 }

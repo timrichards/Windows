@@ -10,9 +10,10 @@ namespace DoubleFile
     /// </summary>
     public partial class WinTooltip
     {
-        static internal event Action MouseClicked;
         internal string Folder { set { form_folder.Text = value; } }
         internal string Size { set { form_size.Text = value; } }
+
+        static internal event Action MouseClicked;
         static internal LocalTreeNode LocalTreeNode { get { return (null == _winTooltip) ? null : _winTooltip.Tag as LocalTreeNode; } }
         static internal TreeNode TreeNode { get { return (null == _winTooltip) ? null : _winTooltip.Tag as TreeNode; } }
 
@@ -25,7 +26,7 @@ namespace DoubleFile
                 CloseTooltip();
             }
 
-            FactoryCreate(strFolder, strSize, treeNode, closingCallback, () =>
+            FactoryCreateOrUpdate(strFolder, strSize, treeNode, closingCallback, () =>
             {
                 _winTooltip.Left = ptAnchor.X;
                 _winTooltip.Top = ptAnchor.Y;
@@ -49,7 +50,7 @@ namespace DoubleFile
                 CloseTooltip();
             }
 
-            FactoryCreate(strFolder, strSize, treeNode, closingCallback, () =>
+            FactoryCreateOrUpdate(strFolder, strSize, treeNode, closingCallback, () =>
             {
                 var winOwner = winAnchor as LocalWindow;
 
@@ -64,7 +65,7 @@ namespace DoubleFile
             });
         }
 
-        static WinTooltip FactoryCreate(string strFolder, string strSize, object tag, Action closingCallback,
+        static WinTooltip FactoryCreateOrUpdate(string strFolder, string strSize, object tag, Action closingCallback,
             Action clientSpecific)
         {
             if ((null == _winTooltip) ||
@@ -86,6 +87,9 @@ namespace DoubleFile
 
         internal static void CloseTooltip(object sender = null, EventArgs e = null)
         {
+            if (null != _winTooltip)
+                _winTooltip.Tag = null;
+
             if (_bClosingTooltip)
                 return;
 
@@ -153,14 +157,14 @@ namespace DoubleFile
 
                 if (SystemParameters.PrimaryScreenHeight < nTop + nHeight)
                 {
-                    nTop = winOwner.Top;
                     nLeft = winOwner.Left + winOwner.Width;
+                    nTop = winOwner.Top;
                 }
 
                 if (SystemParameters.PrimaryScreenWidth < nLeft + nWidth)
                 {
-                    nTop = winOwner.Top - nHeight;
                     nLeft = winOwner.Left + winOwner.Width - nWidth;
+                    nTop = winOwner.Top - nHeight;
                 }
 
                 if (0 > nLeft)

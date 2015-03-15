@@ -77,37 +77,6 @@ namespace Local
             treeNode.TreeView.SelectedNode = treeNode;
         }
 
-        internal void Clear()
-        {
-            _treeNode = null;
-            _prevNode = null;
-            _deepNode = null;
-            _deepNodeDrawn = null;
-            WinTooltip.CloseTooltip();      // Tag
-            ClearSelection();
-        }
-
-        internal void ClearSelection(bool bKeepTooltipActive = false)
-        {
-            if (App.LocalExit)
-                return;
-
-            if (_bClearingSelection)
-                return;
-
-            _bClearingSelection = true;
-
-            if (false == bKeepTooltipActive)
-                UtilProject.UIthread(() => WinTooltip.CloseTooltip());
-
-            _selRect = Rectangle.Empty;
-
-            if (0 == _nInvalidateRef)
-                Invalidate();
-
-            _bClearingSelection = false;
-        }
-
         protected override void Dispose(bool disposing)
         {
             if (_bg != null)
@@ -414,6 +383,43 @@ namespace Local
             ClearSelection();
         }
 
+        internal void Clear()
+        {
+            _treeNode = null;
+            _prevNode = null;
+            _deepNode = null;
+            _deepNodeDrawn = null;
+            WinTooltip.CloseTooltip();      // Tag
+            ClearSelection();
+        }
+
+        internal void ClearSelection(bool bKeepTooltipActive = false)
+        {
+            if (App.LocalExit)
+                return;
+
+            if (_bClearingSelection)
+                return;
+
+            _bClearingSelection = true;
+
+            if (false == bKeepTooltipActive)
+                UtilProject.UIthread(() => WinTooltip.CloseTooltip());
+
+            _selRect = Rectangle.Empty;
+
+            if (0 == _nInvalidateRef)
+                Invalidate();
+
+            _bClearingSelection = false;
+        }
+
+        internal void Tooltip_Click()
+        {
+            RenderA(WinTooltip.LocalTreeNode);
+            WinTooltip.CloseTooltip();
+        }
+
         void TreeSelect_FolderDetailUpdated(IEnumerable<string[]> lasDetail, LocalTreeNode treeNode)
         {
             RenderA(treeNode);
@@ -502,12 +508,6 @@ namespace Local
                     (((treeNode.SelectedImageIndex < 0) ? _rectBitmap.Size.Width : treeNode.SelectedImageIndex)
                     * .75), 256);
             }
-        }
-
-        internal void Tooltip_Click()
-        {
-            RenderA(WinTooltip.LocalTreeNode);
-            WinTooltip.CloseTooltip();
         }
 
         void TranslateSize()

@@ -151,6 +151,7 @@
     <Compile Include="MVVM\ListView Base\ListViewVM_GenericBase.cs" />
     <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
     <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
+    <Compile Include="Utilities\TreeNodeProxy.cs" />
     <Compile Include="WinFormDirList\WinFormDirList.xaml.cs">
       <DependentUpon>WinFormDirList.xaml</DependentUpon>
     </Compile>

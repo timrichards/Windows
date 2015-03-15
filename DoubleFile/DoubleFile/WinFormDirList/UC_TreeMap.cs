@@ -615,6 +615,16 @@ namespace DoubleFile
                 MBoxStatic.Assert(1302.33035, rc.Width >= 0);
                 MBoxStatic.Assert(1302.33045, rc.Height >= 0);
 #endif
+                var nodeDatum = item.Tag as NodeDatum;
+
+                if (null == nodeDatum)      // added 2/13/15 as safety
+                {
+                    MBoxStatic.Assert(99962.5, false);
+                    return;
+                }
+
+                nodeDatum.TreeMapRect = rc;
+
                 if (rc.Width < 1 ||
                     rc.Height < 1)
                 {
@@ -634,16 +644,6 @@ namespace DoubleFile
                 {
                     _deepNodeDrawn = item;
                 }
-
-                var nodeDatum = item.Tag as NodeDatum;
-
-                if (null == nodeDatum)      // added 2/13/15 as safety
-                {
-                    MBoxStatic.Assert(99962.5, false);
-                    return;
-                }
-
-                nodeDatum.TreeMapRect = rc;
 
                 if (bStart &&
                     (null == nodeDatum.TreeMapFiles) &&

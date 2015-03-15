@@ -37,10 +37,10 @@ namespace DoubleFile
             DispatcherUnhandledException += (o, e) =>
             {
                 e.Handled = true;
-                MBoxStatic.Assert(-1, false, e.Exception.GetBaseException().Message);
+                MBoxStatic.Assert(-1, false, e.Exception.Message);
             };
 
-            ShutdownMode = System.Windows.ShutdownMode.OnMainWindowClose;
+            ShutdownMode = ShutdownMode.OnMainWindowClose;
         }
 
         private void Application_Activated(object sender, System.EventArgs e)

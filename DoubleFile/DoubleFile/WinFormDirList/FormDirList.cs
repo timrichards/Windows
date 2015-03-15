@@ -767,6 +767,7 @@ namespace DoubleFile
         void form_cbFindbox_MouseUp(object sender, MouseEventArgs e)
         {
             gd.m_bNavDropDown = false;
+            WinTooltip.CloseTooltip();
         }
 
         void form_cbFindbox_SelectedIndexChanged(object sender, EventArgs e)

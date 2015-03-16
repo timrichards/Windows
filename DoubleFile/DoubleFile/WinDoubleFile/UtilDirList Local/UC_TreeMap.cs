@@ -13,7 +13,7 @@ namespace Local
     [System.ComponentModel.DesignerCategory("Code")]
     class UC_TreeMap : UserControl
     {
-        internal System.Windows.Window LocalOwner = null;
+        internal LocalWindow LocalOwner = null;
 
         public UC_TreeMap()
         {
@@ -28,7 +28,6 @@ namespace Local
             Local.TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
             MouseDown += form_tmapUserCtl_MouseDown;
             MouseUp += form_tmapUserCtl_MouseUp;
-            WinTooltip.MouseClicked += Tooltip_Click;
         }
 
         protected override void InitLayout()
@@ -119,7 +118,6 @@ namespace Local
             WinTooltip.CloseTooltip();
             _timerAnim.Dispose();
             Local.TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
-            WinTooltip.MouseClicked -= Tooltip_Click;
             base.Dispose(disposing);
         }
 
@@ -238,12 +236,16 @@ namespace Local
                 var nodeDatum = nodeRet.NodeDatum;
 
                 _selRect = nodeDatum.TreeMapRect;
-                WinTooltip.ShowTooltip(
-                    strFolder,
-                    UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
-                    LocalOwner,
-                    nodeRet,
-                    () => ClearSelection());
+
+                WinTooltip.ShowTooltip(new WinTooltip.ArgsStruct
+                    {
+                        strFolder = strFolder,
+                        strSize = UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
+                        winOwner = LocalOwner,
+                        closingCallback = () => ClearSelection(),
+                        clickCallback = () => Tooltip_Click()
+                    },
+                    nodeRet);
             }
 
             _prevNode = nodeRet;

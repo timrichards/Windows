@@ -13,7 +13,8 @@ namespace DoubleFile
     class UC_TreeMap : UserControl
     {
         internal Control TooltipAnchor = null;
-        internal System.Windows.Window LocalOwner = null;
+        internal LocalWindow LocalOwner = null;
+        internal static Action TooltipClickCallback = null;
 
         public UC_TreeMap()
         {
@@ -194,13 +195,16 @@ namespace DoubleFile
 
                 _selRect = nodeDatum.TreeMapRect;
 
-                WinTooltip.ShowTooltip(
-                    strFolder,
-                    UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
-                    LocalOwner,
+                WinTooltip.ShowTooltip(new WinTooltip.ArgsStruct
+                    {
+                        strFolder = strFolder,
+                        strSize = UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
+                        winOwner = LocalOwner,
+                        closingCallback = () => ClearSelection(),
+                        clickCallback = TooltipClickCallback
+                    },
                     LocalOwner.PointToScreen(new System.Windows.Point(TooltipAnchor.Left, TooltipAnchor.Top)),
-                    nodeRet,
-                    () => ClearSelection());
+                    nodeRet);
             }
 
             _prevNode = nodeRet;

@@ -87,7 +87,7 @@ namespace DoubleFile
 
             m_FontVolGroupOrig = form_lblVolGroup.Font;
             m_clrVolGroupOrig = form_lblVolGroup.BackColor;
-            WinTooltip.MouseClicked += Tooltip_Click;
+            UC_TreeMap.TooltipClickCallback = Tooltip_Click;
         }
 
         internal void FormDirList_Load(object sender, EventArgs e)
@@ -110,7 +110,6 @@ namespace DoubleFile
             Collate.ClearMem();
             GlobalData.Reset();
             m_ownerWindow.Activate();
-            WinTooltip.MouseClicked -= Tooltip_Click;
         }
 
         // Memory allocations occur just below all partial class FormDirList : Form declarations, then ClearMem_...() for each.

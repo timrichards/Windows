@@ -16,6 +16,7 @@ namespace DoubleFile
         static internal event Action MouseClicked;
         static internal LocalTreeNode LocalTreeNode { get { return (null == _winTooltip) ? null : _winTooltip.Tag as LocalTreeNode; } }
         static internal TreeNode TreeNode { get { return (null == _winTooltip) ? null : _winTooltip.Tag as TreeNode; } }
+        static internal TreeNodeProxy TreeNodeProxy { get { return (null == _winTooltip) ? null : _winTooltip.Tag as TreeNodeProxy; } }
 
         internal static void ShowTooltip(string strFolder, string strSize,
             Window winOwner, Point ptAnchor, TreeNode treeNode, Action closingCallback = null)

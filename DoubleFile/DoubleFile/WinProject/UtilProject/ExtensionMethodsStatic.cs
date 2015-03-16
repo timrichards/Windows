@@ -7,6 +7,11 @@ namespace DoubleFile
 {
     internal static partial class ExtensionMethodsStatic
     {
+        internal static bool IsEmpty<T>(this IEnumerable<T> source)
+        {
+            return (false == source.Any());
+        }
+
         internal static bool IsEmpty<T>(this ICollection<T> source)
         {
             return (source.Count == 0);

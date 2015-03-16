@@ -5,6 +5,13 @@ using System.Drawing;
 
 namespace DoubleFile
 {
+    class MyTreeNode : TreeNode
+    {
+        public MyTreeNode() { }
+        public MyTreeNode(string text) : base(text) { }
+        public MyTreeNode(string text, MyTreeNode[] children) { }
+    }
+
     interface INodeDatum
     {
         TreeNodeProxy

@@ -1164,7 +1164,7 @@ namespace DoubleFile
 
             gd.m_bPutPathInFindEditBox = true;
             gd.m_bTreeViewIndirectSelChange = true;
-            treeNode.SetTreeViewSelectedNode();
+            treeNode.TreeView.SelectedNode = treeNode;
         }
 
         void form_treeCompare_Enter(object sender, EventArgs e)
@@ -1243,7 +1243,7 @@ namespace DoubleFile
             }
 
             gd.m_bTreeViewIndirectSelChange = false;
-            form_tmapUserCtl.Render(e.Node);
+            form_tmapUserCtl.Render((TreeNode)e.Node);
 
             if (sender == form_treeCompare2)
             {

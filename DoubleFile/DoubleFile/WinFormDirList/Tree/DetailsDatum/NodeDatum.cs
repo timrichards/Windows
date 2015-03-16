@@ -2,7 +2,7 @@
 
 namespace DoubleFile
 {
-    class NodeDatum : DetailsDatum, INodeDatum
+    class NodeDatum : DetailsDatum
     {
         internal NodeDatum() { }
         internal NodeDatum(DetailsDatum datum)
@@ -16,7 +16,7 @@ namespace DoubleFile
             Clones = new KeyList<TreeNode>();
         internal ListViewItem 
             LVitem { get; set; }
-        public TreeNodeProxy
+        internal TreeNode
             TreeMapFiles { get; set; }
     }
 }

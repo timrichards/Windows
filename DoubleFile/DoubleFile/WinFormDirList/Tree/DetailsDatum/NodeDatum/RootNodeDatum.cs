@@ -1,6 +1,6 @@
 ﻿namespace DoubleFile
 {
-    class RootNodeDatum : NodeDatum, IRootNodeDatum
+    class RootNodeDatum : NodeDatum
     {
         internal string
             ListingFile { get; private set; }
@@ -12,12 +12,12 @@
         internal string
             RootPath { get; private set; }
 
-        public bool
+        internal bool
             VolumeView { get; set; }
 
-        public ulong
+        internal ulong
             VolumeFree { get; private set; }
-        public ulong
+        internal ulong
             VolumeLength { get; private set; }
 
         internal RootNodeDatum(DetailsDatum node, string listingFile, string strVolGroup,

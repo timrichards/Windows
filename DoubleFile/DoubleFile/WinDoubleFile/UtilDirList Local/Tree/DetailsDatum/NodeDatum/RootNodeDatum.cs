@@ -2,7 +2,7 @@
 
 namespace Local
 {
-    class RootNodeDatum : NodeDatum, IRootNodeDatum
+    class RootNodeDatum : NodeDatum
     {
         internal TabledString
             ListingFile { get; private set; }
@@ -14,12 +14,12 @@ namespace Local
         internal TabledString
             RootPath { get; private set; }
 
-        public bool
+        internal bool
             VolumeView { get; set; }
 
-        public ulong
+        internal ulong
             VolumeFree { get; private set; }
-        public ulong
+        internal ulong
             VolumeLength { get; private set; }
 
         internal RootNodeDatum(NodeDatum node, string listingFile, string strVolGroup,

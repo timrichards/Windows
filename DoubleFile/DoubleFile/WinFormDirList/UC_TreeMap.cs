@@ -78,7 +78,7 @@ namespace DoubleFile
             base.Dispose(disposing);
         }
 
-        internal TreeNodeProxy ZoomOrToolTip(Point pt_in)
+        internal TreeNode ZoomOrToolTip(Point pt_in)
         {
             ClearSelection(bKeepTooltipActive: true);
 
@@ -104,14 +104,14 @@ namespace DoubleFile
             _dtHideGoofball = DateTime.MinValue;   // click anywhere else on the treemap and the goofball returns.
 
             var pt = Point.Ceiling(new PointF(pt_in.X / _sizeTranslate.Width, pt_in.Y / _sizeTranslate.Height));
-            TreeNodeProxy nodeRet = null;
+            TreeNode nodeRet = null;
             var bImmediateFiles = false;
             var bVolumeView = false;
 
             UtilDirList.Closure(() =>
             {
                 {
-                    var nodeDatum = _treeNode.NodeDatum;
+                    var nodeDatum = _treeNode.Tag as NodeDatum;
 
                     if (null == nodeDatum)      // added 2/13/15 as safety
                     {
@@ -160,7 +160,7 @@ namespace DoubleFile
             if ((false == bVolumeView) &&
                 (false == bImmediateFiles))
             {
-                var nodeDatum = nodeRet.NodeDatum;
+                var nodeDatum = nodeRet.Tag as NodeDatum;
 
                 if (null == nodeDatum)      // added 2/13/15 as safety
                 {
@@ -190,7 +190,7 @@ namespace DoubleFile
                 strFolder += " (immediate files)";
 
             {
-                var nodeDatum = nodeRet.NodeDatum;
+                var nodeDatum = nodeRet.Tag as NodeDatum;
 
                 _selRect = nodeDatum.TreeMapRect;
 
@@ -211,7 +211,7 @@ namespace DoubleFile
             return null;
         }
 
-        static TreeNodeProxy FindMapNode(TreeNodeProxy treeNode_in, Point pt, bool bNextNode = false)
+        static TreeNode FindMapNode(TreeNode treeNode_in, Point pt, bool bNextNode = false)
         {
             var treeNode = treeNode_in;
 
@@ -220,7 +220,7 @@ namespace DoubleFile
 
             do
             {
-                var nodeDatum = treeNode.NodeDatum;
+                var nodeDatum = treeNode.Tag as NodeDatum;
 
                 if (null == nodeDatum)      // added 2/13/15 as safety
                 {
@@ -243,10 +243,7 @@ namespace DoubleFile
                     continue;
                 }
 
-                TreeNodeProxy foundNode = null;
-                
-                treeNode.Nodes.First(treeNodeA =>
-                    foundNode = FindMapNode(treeNodeA, pt, bNextNode: true));
+                var foundNode = FindMapNode(treeNode.Nodes[0], pt, bNextNode: true);
 
                 if (null != foundNode)
                     return foundNode;
@@ -258,7 +255,7 @@ namespace DoubleFile
             return null;
         }
 
-        static TreeNodeProxy GetFileList(TreeNodeProxy parent)
+        static TreeNode GetFileList(TreeNode parent)
         {
             var listLengths = new List<ulong>();
             var listFiles = TreeSelect.GetFileList(parent, listLengths);
@@ -266,13 +263,13 @@ namespace DoubleFile
             if (null == listFiles)
                 return null;
 
-            var nodeFileList = parent.MakeTreeNode(parent.Text);
+            var nodeFileList = new TreeNode(parent.Text);
             ulong nTotalLength = 0;
             var enumerator = listLengths.GetEnumerator();
 
             foreach (var arrLine in listFiles)
             {
-                var nodeDatum_A = parent.MakeNodeDatum();
+                var nodeDatum_A = new NodeDatum();
                 var bMoveNext = enumerator.MoveNext();
 
                 MBoxStatic.Assert(99888, bMoveNext);
@@ -281,22 +278,25 @@ namespace DoubleFile
                 if (0 == enumerator.Current)
                     continue;
 
-                var treeNode = parent.MakeTreeNode(arrLine[0]);
-                treeNode.NodeDatum = nodeDatum_A;
-                treeNode.ForeColor = UtilColor.OliveDrab;
-                nodeFileList.Nodes = nodeFileList.Nodes.Concat(new[] { treeNode });
+                nodeFileList.Nodes.Add(new TreeNode(arrLine[0])
+                {
+                    Tag = nodeDatum_A,
+                    ForeColor = Color.OliveDrab
+                });
             }
 
             if (0 == nTotalLength)
                 return null;
 
-            var nodeDatum = parent.NodeDatum;
+            var nodeDatum = parent.Tag as NodeDatum;
             var nodeDatum_B = new NodeDatum();
 
             MBoxStatic.Assert(99887, nTotalLength == nodeDatum.Length);
             nodeDatum_B.TotalLength = nTotalLength;
             nodeDatum_B.TreeMapRect = nodeDatum.TreeMapRect;
-            nodeFileList.NodeDatum = nodeDatum_B;
+            nodeFileList.Tag = nodeDatum_B;
+            MBoxStatic.Assert(99886, nodeFileList.SelectedImageIndex == -1);              // sets the bitmap size
+            nodeFileList.SelectedImageIndex = -1;
             return nodeFileList;
         }
 
@@ -321,7 +321,7 @@ namespace DoubleFile
             if (_dtHideGoofball != DateTime.MinValue)
                 return;
 
-            var nodeDatum = _deepNodeDrawn.NodeDatum;
+            var nodeDatum = _deepNodeDrawn.Tag as NodeDatum;
 
             if (null == nodeDatum)      // added 2/13/15 as safety
             {
@@ -403,22 +403,22 @@ namespace DoubleFile
 
         internal string Tooltip_Click()
         {
-            var treeNode_A = WinTooltip.TreeNodeProxy;
+            var treeNode_A = WinTooltip.TreeNode;
 
             if (null == treeNode_A)
                 return null;
 
-            if (false == treeNode_A.IsTreeViewNull())    // null if fake file treenode (NodeDatum.TreeMapFiles)
+            if (treeNode_A.TreeView != null)    // null if fake file treenode (NodeDatum.TreeMapFiles)
             {
-                var rootNodeDatum = treeNode_A.RootNodeDatum;
+                var rootNodeDatum = treeNode_A.Tag as RootNodeDatum;
 
                 if (rootNodeDatum != null)
                 {
                     rootNodeDatum.VolumeView = (rootNodeDatum.VolumeView == false);
-                    treeNode_A.ClearTreeViewSelectedNode();    // to kick in a change selection event
+                    treeNode_A.TreeView.SelectedNode = null;    // to kick in a change selection event
                 }
 
-                treeNode_A.SetTreeViewSelectedNode();
+                treeNode_A.TreeView.SelectedNode = treeNode_A;
             }
             else
             {
@@ -428,7 +428,7 @@ namespace DoubleFile
             return null;
         }
 
-        internal void Render(TreeNodeProxy treeNode)
+        internal void Render(TreeNode treeNode)
         {
             if ((null == _deepNode) ||
                 (false == _deepNode.IsChildOf(treeNode)))
@@ -436,7 +436,9 @@ namespace DoubleFile
                 _deepNode = treeNode;
             }
 
-            var nPxPerSide = 1024;
+            var nPxPerSide = (treeNode.SelectedImageIndex < 0)
+                ? 1024
+                : treeNode.SelectedImageIndex;
 
             if (nPxPerSide != _rectBitmap.Size.Width)
             {
@@ -491,6 +493,13 @@ namespace DoubleFile
             _selRect = Rectangle.Empty;
             _prevNode = null;
             _dtHideGoofball = DateTime.MinValue;
+
+            if ((DateTime.Now - dtStart) > TimeSpan.FromSeconds(1))
+            {
+                treeNode.SelectedImageIndex = Math.Max((int)
+                    (((treeNode.SelectedImageIndex < 0) ? _rectBitmap.Size.Width : treeNode.SelectedImageIndex)
+                    * .75), 256);
+            }
         }
 
         void TranslateSize()
@@ -535,7 +544,7 @@ namespace DoubleFile
             if (rc.Width <= 0 || rc.Height <= 0)
                 return null;
 
-            var nodeDatum = _treeNode.NodeDatum;
+            var nodeDatum = _treeNode.Tag as NodeDatum;
 
             if (null == nodeDatum)      // added 2/13/15 as safety
             {
@@ -552,10 +561,10 @@ namespace DoubleFile
         class Recurse
         {
             internal ConcurrentBag<RenderAction> Render(
-                TreeNodeProxy item,
+                TreeNode item,
                 Rectangle rc,
-                TreeNodeProxy deepNode,
-                out TreeNodeProxy deepNodeDrawn_out)
+                TreeNode deepNode,
+                out TreeNode deepNodeDrawn_out)
             {
                 _lsRenderActions = new ConcurrentBag<RenderAction>();
                 _deepNode = deepNode;
@@ -569,7 +578,7 @@ namespace DoubleFile
             }
             
             void RecurseDrawGraph(
-                TreeNodeProxy item,
+                TreeNode item,
                 Rectangle rc,
                 bool bStart = false)
             {
@@ -577,7 +586,7 @@ namespace DoubleFile
                 MBoxStatic.Assert(1302.33035, rc.Width >= 0);
                 MBoxStatic.Assert(1302.33045, rc.Height >= 0);
 #endif
-                var nodeDatum = item.NodeDatum;
+                var nodeDatum = item.Tag as NodeDatum;
 
                 if (null == nodeDatum)      // added 2/13/15 as safety
                 {
@@ -609,7 +618,7 @@ namespace DoubleFile
 
                 if (bStart &&
                     (null == nodeDatum.TreeMapFiles) &&
-                    (false != item.IsTreeViewNull()))
+                    (null != item.TreeView))
                 {
                     nodeDatum.TreeMapFiles = GetFileList(item);
                 }
@@ -617,13 +626,13 @@ namespace DoubleFile
                 if ((false == item.Nodes.IsEmpty()) ||
                     (bStart && (null != nodeDatum.TreeMapFiles)))
                 {
-                    IEnumerable<TreeNodeProxy> ieChildren = null;
-                    TreeNodeProxy parent = null;
+                    IEnumerable<TreeNode> ieChildren = null;
+                    TreeNode parent = null;
                     var bVolumeNode = false;
 
                     UtilDirList.Closure(() =>
                     {
-                        var rootNodeDatum = item.RootNodeDatum;
+                        var rootNodeDatum = item.Tag as RootNodeDatum;
 
                         if ((false == bStart) ||
                             (null == rootNodeDatum))
@@ -636,12 +645,16 @@ namespace DoubleFile
                             return;     // from lambda
                         }
 
-                        var nodeDatumFree = item.MakeNodeDatum();
-                        nodeDatumFree.TotalLength = rootNodeDatum.VolumeFree;
+                        var nodeDatumFree = new NodeDatum()
+                        {
+                            TotalLength = rootNodeDatum.VolumeFree
+                        };
 
-                        var nodeFree = item.MakeTreeNode(item.Text + " (free space)");
-                        nodeFree.NodeDatum = nodeDatumFree;
-                        nodeFree.ForeColor = UtilColor.MediumSpringGreen;
+                        var nodeFree = new TreeNode(item.Text + " (free space)")
+                        {
+                            Tag = nodeDatumFree,
+                            ForeColor = Color.MediumSpringGreen
+                        };
 
                         var nodeDatumUnread = new NodeDatum();
                         var nVolumeLength = rootNodeDatum.VolumeLength;
@@ -661,13 +674,15 @@ namespace DoubleFile
                             nodeDatumUnread.TotalLength = 0;
                         }
 
-                        var nodeUnread = item.MakeTreeNode(item.Text + " (unread data)");
-                        nodeUnread.NodeDatum = nodeDatumUnread;
-                        nodeUnread.ForeColor = UtilColor.MediumVioletRed;
+                        var nodeUnread = new TreeNode(item.Text + " (unread data)")
+                        {
+                            Tag = nodeDatumUnread,
+                            ForeColor = Color.MediumVioletRed
+                        };
 
                         // parent added as child, with two other nodes:
                         // free space (color: spring green); and...
-                        var lsChildren = new List<TreeNodeProxy> { item, nodeFree };
+                        var lsChildren = new List<TreeNode> { item, nodeFree };
 
                         if (nUnreadLength > 0)
                         {
@@ -677,13 +692,15 @@ namespace DoubleFile
 
                         ieChildren = lsChildren;
 
-                        parent = item.MakeTreeNode(item.Text + " (volume)");
+                        parent = new TreeNode(item.Text + " (volume)");
 
-                        var nodeDatumVolume = item.MakeNodeDatum();
-                        nodeDatumVolume.TotalLength = nVolumeLength;
-                        nodeDatumVolume.TreeMapRect = rootNodeDatum.TreeMapRect;
+                        var nodeDatumVolume = new NodeDatum
+                        {
+                            TotalLength = nVolumeLength,
+                            TreeMapRect = rootNodeDatum.TreeMapRect
+                        };
 
-                        parent.NodeDatum = nodeDatumVolume;
+                        parent.Tag = nodeDatumVolume;
                         bVolumeNode = true;
                     });
 
@@ -693,8 +710,8 @@ namespace DoubleFile
 
                         ieChildren =
                             item.Nodes
-                            .Cast<TreeNodeProxy>()
-                            .Where(t => 0 < (t.NodeDatum).TotalLength);
+                            .Cast<TreeNode>()
+                            .Where(t => 0 < (t.Tag as NodeDatum).TotalLength);
                     }
 
                     // returns true if there are children
@@ -709,7 +726,7 @@ namespace DoubleFile
                 DrawNode(item, rc);
             }
 
-            void DrawNode(TreeNodeProxy item, Rectangle rc)
+            void DrawNode(TreeNode item, Rectangle rc)
             {
                 var path = new GraphicsPath();
                 var r = rc;
@@ -721,9 +738,9 @@ namespace DoubleFile
                 {
                     CenterColor = Color.Wheat,
                     SurroundColors = new[] { ControlPaint.Dark(
-                        (item.ForeColor == UtilColor.Empty)
+                        (item.ForeColor == Color.Empty)
                         ? Color.SandyBrown
-                        : Color.FromArgb(item.ForeColor)
+                        : item.ForeColor
                     )}
                 };
 
@@ -738,9 +755,9 @@ namespace DoubleFile
             //I learned this squarification style from the KDirStat executable.
             //It's the most complex one here but also the clearest, imho.
 
-            bool KDirStat_DrawChildren(TreeNodeProxy parent, IEnumerable<TreeNodeProxy> ieChildren, bool bStart)
+            bool KDirStat_DrawChildren(TreeNode parent, IEnumerable<TreeNode> ieChildren, bool bStart)
             {
-                var nodeDatum = parent.NodeDatum;
+                var nodeDatum = parent.Tag as NodeDatum;
                 var rc = nodeDatum.TreeMapRect;
                 var rows = new List<RowStruct>();
 
@@ -751,16 +768,16 @@ namespace DoubleFile
                 }
                 else if (nodeDatum.Length > 0)
                 {
-                    var treeNode = parent.MakeTreeNode(parent.Text);
-                    treeNode.NodeDatum = parent.MakeNodeDatum();
-                    treeNode.NodeDatum.TotalLength = nodeDatum.Length;
-                    treeNode.ForeColor = UtilColor.OliveDrab;
-                    ieChildren = ieChildren.Concat(new[] { treeNode });
+                    ieChildren = ieChildren.Concat(new[] { new TreeNode(parent.Text)
+                    {
+                        Tag = new NodeDatum { TotalLength = nodeDatum.Length },
+                        ForeColor = Color.OliveDrab
+                    }});
                 }
 
                 var lsChildren =
                     ieChildren
-                    .OrderByDescending(x => (x.NodeDatum).TotalLength)
+                    .OrderByDescending(x => (x.Tag as NodeDatum).TotalLength)
                     .ToList();
 
                 if (0 == lsChildren.Count)
@@ -838,12 +855,12 @@ namespace DoubleFile
                         ThreadPool.QueueUserWorkItem(
                             state =>
                             {
-                                var param = (Tuple<TreeNodeProxy, Rectangle>)state;
+                                var param = (Tuple<TreeNode, Rectangle>)state;
 
                                 RecurseDrawGraph(param.Item1, param.Item2);
                                 Interlocked.Decrement(ref _nWorkerCount);
                             },
-                            new Tuple<TreeNodeProxy, Rectangle>(child, rcChild)
+                            new Tuple<TreeNode, Rectangle>(child, rcChild)
                         );
 
                         if (bStart)
@@ -855,7 +872,7 @@ namespace DoubleFile
                             c++;
 
                             if (i < row.ChildrenPerRow)
-                                (lsChildren[c].NodeDatum).TreeMapRect = new Rectangle(-1, -1, -1, -1);
+                                (lsChildren[c].Tag as NodeDatum).TreeMapRect = new Rectangle(-1, -1, -1, -1);
 
                             c += row.ChildrenPerRow - i;
                             break;
@@ -870,9 +887,9 @@ namespace DoubleFile
                 return true;
             }
 
-            static double KDirStat_CalculateNextRow(TreeNodeProxy parent, int nextChild, double width,
+            static double KDirStat_CalculateNextRow(TreeNode parent, int nextChild, double width,
                 out int childrenUsed, double[] anChildWidth,
-                IReadOnlyList<TreeNodeProxy> listChildren)
+                IReadOnlyList<TreeNode> listChildren)
             {
                 childrenUsed = 0;
                 const double kdMinProportion = 0.4;
@@ -881,7 +898,7 @@ namespace DoubleFile
                 MBoxStatic.Assert(1302.33095, nextChild < listChildren.Count);
                 MBoxStatic.Assert(1302.331015, width >= 1.0);
 
-                var nodeDatum = parent.NodeDatum;
+                var nodeDatum = parent.Tag as NodeDatum;
 
                 if (null == nodeDatum)      // added 2/13/15 as safety
                 {
@@ -896,7 +913,7 @@ namespace DoubleFile
 
                 for (i = nextChild; i < listChildren.Count; i++)
                 {
-                    var childSize = (listChildren[i].NodeDatum).TotalLength;
+                    var childSize = (listChildren[i].Tag as NodeDatum).TotalLength;
                     sizeUsed += childSize;
                     var virtualRowHeight = sizeUsed / mySize;
                     MBoxStatic.Assert(1302.33115, virtualRowHeight > 0);
@@ -935,7 +952,7 @@ namespace DoubleFile
                 {
                     // Rectangle(1.0 * 1.0) = mySize
                     var rowSize = mySize * rowHeight;
-                    var nodeDatum_A = listChildren[nextChild + i].NodeDatum;
+                    var nodeDatum_A = listChildren[nextChild + i].Tag as NodeDatum;
 
                     if (null == nodeDatum_A)      // added 2/13/15 as safety
                     {
@@ -954,9 +971,9 @@ namespace DoubleFile
 
             ConcurrentBag<RenderAction>
                 _lsRenderActions = null;
-            TreeNodeProxy
+            TreeNode
                 _deepNode = null;
-            TreeNodeProxy
+            TreeNode
                 _deepNodeDrawn = null;
 
             struct
@@ -972,7 +989,7 @@ namespace DoubleFile
         class
             DrawRectangle : RenderAction { static Pen Pen = new Pen(Color.Black, 2); internal override void Stroke(Graphics g) { g.DrawRectangle(Pen, rc); } }
 
-        TreeNodeProxy
+        TreeNode
             _treeNode = null;
         BufferedGraphics
             _bg = null;
@@ -988,9 +1005,9 @@ namespace DoubleFile
         // Recurse class
         ConcurrentBag<RenderAction>
             _lsRenderActions = null;
-        TreeNodeProxy
+        TreeNode
             _deepNode = null;
-        TreeNodeProxy
+        TreeNode
             _deepNodeDrawn = null;
 
         // goofball
@@ -1006,7 +1023,7 @@ namespace DoubleFile
         // selection
         Rectangle
             _selRect = Rectangle.Empty;
-        TreeNodeProxy
+        TreeNode
             _prevNode = null;
     }
 }

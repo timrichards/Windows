@@ -76,12 +76,12 @@ namespace DoubleFile
                 : _TreeNode.IsChildOf(parentNode);
         }
 
-        internal INodeDatum NodeDatum { get { return (null != _LocalTreeNode)
-            ? _LocalTreeNode.NodeDatum
-            : _TreeNode.Tag as INodeDatum; }  set { if (null != _LocalTreeNode)
-            _LocalTreeNode.NodeDatum = (Local.NodeDatum)value; else
-            _TreeNode.Tag = value; } }
-        internal IRootNodeDatum RootNodeDatum { get { return NodeDatum as IRootNodeDatum; } }
+        //internal INodeDatum NodeDatum { get { return (null != _LocalTreeNode)
+        //    ? _LocalTreeNode.NodeDatum
+        //    : _TreeNode.Tag as INodeDatum; }  set { if (null != _LocalTreeNode)
+        //    _LocalTreeNode.NodeDatum = (Local.NodeDatum)value; else
+        //    _TreeNode.Tag = value; } }
+        //internal IRootNodeDatum RootNodeDatum { get { return NodeDatum as IRootNodeDatum; } }
 
         internal IEnumerable<TreeNodeProxy> Nodes { get { return _modifiedNodes ?? ((null != _LocalTreeNode)
             ? _LocalTreeNode.Nodes.Cast<TreeNodeProxy>()
@@ -98,9 +98,9 @@ namespace DoubleFile
         internal TreeNodeProxy NextNode { get { return ((TreeNodeProxy) _treeNode).NextNode; } }
         internal string Text { get { return ((TreeNodeProxy) _treeNode).Text; } }
 
-        internal INodeDatum MakeNodeDatum() { return (null != _LocalTreeNode)
-            ? new Local.NodeDatum()
-            : (INodeDatum) new NodeDatum(); }
+        //internal INodeDatum MakeNodeDatum() { return (null != _LocalTreeNode)
+        //    ? new Local.NodeDatum()
+        //    : (INodeDatum) new NodeDatum(); }
 
         internal TreeNodeProxy MakeTreeNode(string strText) { return (null != _LocalTreeNode)
             ? (TreeNodeProxy)new LocalTreeNode(strText)

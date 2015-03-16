@@ -9,12 +9,12 @@ namespace DoubleFile
             PrevLineNo { get; private set; }
         internal uint
             LineNo { get; private set; }
-        internal ulong
+        public ulong
             Length { get; private set; }
         internal int
             HashParity { get; set; }
 
-        internal ulong
+        public ulong
             TotalLength { get; set; }
         internal uint
             FilesInSubdirs { get; set; }
@@ -28,7 +28,7 @@ namespace DoubleFile
         internal bool 
             SeparateVols { get; set; }
 
-        internal Rectangle
+        public Rectangle
             TreeMapRect { get; set; }
 
         internal DetailsDatum() { }

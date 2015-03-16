@@ -2,7 +2,7 @@
 
 namespace Local
 {
-    class NodeDatum : DetailsDatum
+    class NodeDatum : DetailsDatum, INodeDatum
     {
         internal NodeDatum() { }
         internal NodeDatum(DetailsDatum datum)
@@ -16,7 +16,7 @@ namespace Local
             Clones { get; set; }
         internal LocalLVitem 
             LVitem { get; set; }
-        internal LocalTreeNode
+        public TreeNodeProxy
             TreeMapFiles { get; set; }
     }
 }

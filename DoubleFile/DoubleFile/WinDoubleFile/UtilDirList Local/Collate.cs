@@ -411,11 +411,8 @@ namespace Local
                 MBoxStatic.Assert(1305.6322, nodeDatum.ImmediateFiles > 0);
                 SnowUniqueParents(treeNode);
 
-                if (treeNode.ForeColor != UtilColor.DarkOrange)
-                {
-                    MBoxStatic.Assert(1305.6323, treeNode.ForeColor == UtilColor.Empty);
-                    treeNode.ForeColor = UtilColor.Red;
-                }
+                MBoxStatic.Assert(1305.6323, treeNode.ForeColor == UtilColor.Empty);
+                treeNode.ForeColor = UtilColor.Red;
 
                 lvItem.ForeColor = treeNode.ForeColor;
                 _lsLVunique.Add(lvItem);
@@ -762,12 +759,9 @@ namespace Local
                     nodeDatum.LVitem.BackColor = parentNode.BackColor;
                 }
 
-                if (parentNode.ForeColor != UtilColor.DarkOrange)
-                {
-                    MBoxStatic.Assert(1305.6313,
-                        (parentNode.ForeColor == UtilColor.Empty) ==
-                        (nodeDatum.LVitem == null));
-                }
+                MBoxStatic.Assert(1305.6313,
+                    (parentNode.ForeColor == UtilColor.Empty) ==
+                    (nodeDatum.LVitem == null));
 
                 parentNode = parentNode.Parent;
             }

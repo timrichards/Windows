@@ -13,7 +13,7 @@ namespace DoubleFile
         internal static int White { get { return Color.White.ToArgb(); } }
         internal static int Blue { get { return Color.Blue.ToArgb(); } }
         internal static int DarkGray { get { return Color.DarkGray.ToArgb(); } }
-        internal static int DarkOrange { get { return Color.DarkOrange.ToArgb(); } }
+        internal static int DarkKhaki { get { return Color.DarkKhaki.ToArgb(); } }
         internal static int DarkRed { get { return Color.DarkRed.ToArgb(); } }
         internal static int DarkSlateGray { get { return Color.DarkSlateGray.ToArgb(); } }
         internal static int Firebrick { get { return Color.Firebrick.ToArgb(); } }
@@ -56,7 +56,7 @@ namespace DoubleFile
 
         readonly static int[] CLUT = new int[_knNumColors]
         {
-            Empty, White, Blue, DarkGray, DarkOrange, DarkRed, DarkSlateGray,
+            Empty, White, Blue, DarkGray, DarkKhaki, DarkRed, DarkSlateGray,
             Firebrick, LightGoldenrodYellow, LightGray, MediumSpringGreen, MediumVioletRed,
             OliveDrab, Red, Snow, SteelBlue
         };
@@ -69,7 +69,7 @@ namespace DoubleFile
             _RevCLUT[White] = nIx++;
             _RevCLUT[Blue] = nIx++;
             _RevCLUT[DarkGray] = nIx++;
-            _RevCLUT[DarkOrange] = nIx++;
+            _RevCLUT[DarkKhaki] = nIx++;
             _RevCLUT[DarkRed] = nIx++;
             _RevCLUT[DarkSlateGray] = nIx++;
             _RevCLUT[Firebrick] = nIx++;
@@ -89,15 +89,15 @@ namespace DoubleFile
             Description[White] = "";
             Description[Blue] = "This folder has multiple copies on at least two separate volumes.";
             Description[DarkGray] = "";             // ignore list
-            Description[DarkOrange] = "";           // not used
+            Description[DarkKhaki] = "";           // Treemap: Folder containing files
             Description[DarkRed] = "";              // not used
             Description[DarkSlateGray] = "";        // LV marker item back color
             Description[Firebrick] = "All copies of this folder reside on one volume.";
             Description[LightGoldenrodYellow] = "This folder and its parent have a copy on a separate volume.";
             Description[LightGray] = "This folder has less than 100K of data.";
-            Description[MediumSpringGreen] = "";    // Treemap
+            Description[MediumSpringGreen] = "";    // Treemap: Free space
             Description[MediumVioletRed] = "";      // Treemap
-            Description[OliveDrab] = "";            // Treemap
+            Description[OliveDrab] = "";            // Treemap: File
             Description[Red] = "This folder has no exact copy.";
             Description[Snow] = "Contains folders that have no copy; or copies are on one volume.";
             Description[SteelBlue] = "This folder has a copy on a separate volume.";

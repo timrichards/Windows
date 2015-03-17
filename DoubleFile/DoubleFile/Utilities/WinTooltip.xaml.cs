@@ -19,11 +19,25 @@ namespace DoubleFile
 
         internal struct ArgsStruct
         {
-            internal string strFolder;
-            internal string strSize;
-            internal LocalWindow winOwner;
-            internal Action clickCallback;
-            internal Action closingCallback;
+            internal ArgsStruct(
+                string strFolder_in,
+                string strSize_in,
+                LocalWindow winOwner_in,
+                Action clickCallback_in,
+                Action closingCallback_in)
+            {
+                strFolder = strFolder_in;
+                strSize = strSize_in;
+                winOwner = winOwner_in;
+                clickCallback = clickCallback_in;
+                closingCallback = closingCallback_in;
+            }
+
+            readonly internal string strFolder;
+            readonly internal string strSize;
+            readonly internal LocalWindow winOwner;
+            readonly internal Action clickCallback;
+            readonly internal Action closingCallback;
         }
 
         internal static void ShowTooltip(ArgsStruct args, Point ptAnchor, TreeNode treeNode)

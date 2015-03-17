@@ -25,9 +25,9 @@ namespace Local
             BackgroundImageLayout = ImageLayout.Stretch;
             Dock = DockStyle.Fill;
             BackColor = Color.Transparent;
-            Local.TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
             MouseDown += form_tmapUserCtl_MouseDown;
             MouseUp += form_tmapUserCtl_MouseUp;
+            Local.TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
         }
 
         protected override void InitLayout()
@@ -181,18 +181,21 @@ namespace Local
                 if (null != (nodeRet = FindMapNode(prevNode_A, pt)))
                     return;         // from lambda
 
-                var nodeUplevel = 
-                    (_prevNode != null)
-                    ? _prevNode.Parent
-                    : null;
-
-                while (null != nodeUplevel)
+                if ((null != _prevNode) &&
+                    _prevNode.IsChildOf(_treeNode))
                 {
-                    if ((nodeRet = FindMapNode(nodeUplevel, pt)) != null)
-                        return;     // from lambda
+                    var nodeUplevel = _prevNode.Parent;
 
-                    nodeUplevel = nodeUplevel.Parent;
+                    while (null != nodeUplevel)
+                    {
+                        if ((nodeRet = FindMapNode(nodeUplevel, pt)) != null)
+                            return;     // from lambda
+
+                        nodeUplevel = nodeUplevel.Parent;
+                    }
                 }
+
+                MBoxStatic.Assert(99882, (null == _prevNode) || (false == _treeNode.IsChildOf(_prevNode)));
 
                 if ((nodeRet = FindMapNode(_treeNode, pt)) != null)
                     return;         // from lambda
@@ -237,14 +240,13 @@ namespace Local
 
                 _selRect = nodeDatum.TreeMapRect;
 
-                WinTooltip.ShowTooltip(new WinTooltip.ArgsStruct
-                    {
-                        strFolder = strFolder,
-                        strSize = UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
-                        winOwner = LocalOwner,
-                        closingCallback = () => ClearSelection(),
-                        clickCallback = () => Tooltip_Click()
-                    },
+                WinTooltip.ShowTooltip(
+                    new WinTooltip.ArgsStruct(
+                        strFolder,
+                        UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
+                        LocalOwner,
+                        Tooltip_Click,
+                        () => ClearSelection()),
                     nodeRet);
             }
 
@@ -267,7 +269,7 @@ namespace Local
             {
                 var nodeDatum = treeNode.NodeDatum;
 
-                if (null ==  nodeDatum)      // added 2/13/15 as safety
+                if (null == nodeDatum)      // added 2/13/15 as safety
                 {
                     MBoxStatic.Assert(99966, false);
                     return null;
@@ -364,9 +366,7 @@ namespace Local
             }
 
             if (_dtHideGoofball != DateTime.MinValue)
-            {
                 return;
-            }
 
             var nodeDatum = _deepNodeDrawn.NodeDatum;
 
@@ -376,7 +376,8 @@ namespace Local
                 return;
             }
 
-            RectangleF r = (nodeDatum.TreeMapRect)
+            RectangleF r = 
+                nodeDatum.TreeMapRect
                 .Scale(_sizeTranslate);
 
             r.Inflate(-r.Width / 2 + 15, -r.Height / 2 + 15);
@@ -389,7 +390,7 @@ namespace Local
             var brush = new PathGradientBrush(path)
             {
                 CenterColor = Color.White,
-                SurroundColors = new Color[] {Color.FromArgb(0, 0, 0, 0)}
+                SurroundColors = new Color[] { Color.FromArgb(0, 0, 0, 0) }
             };
 
             e.Graphics.FillEllipse(brush, _rectCenter);
@@ -418,8 +419,14 @@ namespace Local
 
         internal void Tooltip_Click()
         {
-            RenderA(WinTooltip.LocalTreeNode);
+            var treeNode = WinTooltip.LocalTreeNode;
+
             WinTooltip.CloseTooltip();
+
+            if (null == treeNode.TreeView)
+                return;     // file fake node
+
+            RenderA(treeNode);
         }
 
         void TreeSelect_FolderDetailUpdated(IEnumerable<string[]> lasDetail, LocalTreeNode treeNode)
@@ -636,7 +643,7 @@ namespace Local
                 if ((false == item.Nodes.IsEmpty()) ||
                     (bStart && (null != nodeDatum.TreeMapFiles)))
                 {
-                    List<LocalTreeNode> listChildren = null;
+                    IEnumerable<LocalTreeNode> ieChildren = null;
                     LocalTreeNode parent = null;
                     var bVolumeNode = false;
 
@@ -692,13 +699,15 @@ namespace Local
 
                         // parent added as child, with two other nodes:
                         // free space (color: spring green); and...
-                        listChildren = new List<LocalTreeNode> { item, nodeFree };
+                        var lsChildren = new List<LocalTreeNode> { item, nodeFree };
 
                         if (nUnreadLength > 0)
                         {
                             // ...unread guess, affected by compression and hard links (violet)
-                            listChildren.Add(nodeUnread);
+                            lsChildren.Add(nodeUnread);
                         }
+
+                        ieChildren = lsChildren;
 
                         parent = new LocalTreeMapNode(item.Text + " (volume)");
 
@@ -716,15 +725,14 @@ namespace Local
                     {
                         parent = item;
 
-                        listChildren =
+                        ieChildren =
                             item.Nodes
                             .Cast<LocalTreeNode>()
-                            .Where(t => 0 < t.NodeDatum.TotalLength)
-                            .ToList();
+                            .Where(t => 0 < t.NodeDatum.TotalLength);
                     }
 
                     // returns true if there are children
-                    if (KDirStat_DrawChildren(parent, listChildren, bStart))
+                    if (KDirStat_DrawChildren(parent, ieChildren, bStart))
                     {
                         // example scenario: empty folder when there are immediate files and bStart is not true
                         return;
@@ -764,7 +772,7 @@ namespace Local
             //I learned this squarification style from the KDirStat executable.
             //It's the most complex one here but also the clearest, imho.
 
-            bool KDirStat_DrawChildren(LocalTreeNode parent, List<LocalTreeNode> listChildren, bool bStart)
+            bool KDirStat_DrawChildren(LocalTreeNode parent, IEnumerable<LocalTreeNode> ieChildren, bool bStart)
             {
                 var nodeDatum = parent.NodeDatum;
                 var rc = nodeDatum.TreeMapRect;
@@ -773,29 +781,32 @@ namespace Local
                 if (bStart &&
                     (null != nodeDatum.TreeMapFiles))
                 {
-                    listChildren.Add(nodeDatum.TreeMapFiles);
+                    ieChildren = ieChildren.Concat(new[] { nodeDatum.TreeMapFiles });
                 }
                 else if (nodeDatum.Length > 0)
                 {
-                    listChildren.Add(new LocalTreeMapNode(parent.Text)
+                    ieChildren = ieChildren.Concat(new[] { new LocalTreeMapNode(parent.Text)
                     {
                         NodeDatum = new NodeDatum { TotalLength = nodeDatum.Length },
-                        ForeColor = UtilColor.OliveDrab
-                    });
+                        ForeColor = UtilColor.DarkKhaki
+                    }});
                 }
 
-                listChildren.Sort((y, x) => x.NodeDatum.TotalLength.CompareTo(y.NodeDatum.TotalLength));
+                var lsChildren =
+                    ieChildren
+                    .OrderByDescending(x => (x.NodeDatum).TotalLength)
+                    .ToList();
 
-                if (listChildren.IsEmpty())
+                if (lsChildren.IsEmpty())
                 {
                     // any files are zero in length
                     return false;
                 }
 
-                Interlocked.Add(ref _nWorkerCount, listChildren.Count);
+                Interlocked.Add(ref _nWorkerCount, lsChildren.Count);
 
                 var anChildWidth = // Widths of the children (fraction of row width).
-                    new Double[listChildren.Count];
+                    new Double[lsChildren.Count];
 
                 var horizontalRows = (rc.Width >= rc.Height);
                 var width_A = 1.0;
@@ -814,11 +825,11 @@ namespace Local
                 {
                     var childrenUsed = 0;
 
-                    for (var nextChild = 0; nextChild < listChildren.Count; nextChild += childrenUsed)
+                    for (var nextChild = 0; nextChild < lsChildren.Count; nextChild += childrenUsed)
                     {
                         rows.Add(new RowStruct
                         {
-                            RowHeight = KDirStat_CalculateNextRow(parent, nextChild, width_A, out childrenUsed, anChildWidth, listChildren),
+                            RowHeight = KDirStat_CalculateNextRow(parent, nextChild, width_A, out childrenUsed, anChildWidth, lsChildren),
                             ChildrenPerRow = childrenUsed
                         });
                     }
@@ -842,7 +853,7 @@ namespace Local
 
                     for (var i = 0; i < row.ChildrenPerRow; i++, c++)
                     {
-                        var child = listChildren[c];
+                        var child = lsChildren[c];
                         MBoxStatic.Assert(1302.3305, anChildWidth[c] >= 0);
                         var fRight = left + anChildWidth[c] * width;
                         var right = (int)fRight;
@@ -879,7 +890,7 @@ namespace Local
                             c++;
 
                             if (i < row.ChildrenPerRow)
-                                listChildren[c].NodeDatum.TreeMapRect = new Rectangle(-1, -1, -1, -1);
+                                lsChildren[c].NodeDatum.TreeMapRect = new Rectangle(-1, -1, -1, -1);
 
                             c += row.ChildrenPerRow - i;
                             break;

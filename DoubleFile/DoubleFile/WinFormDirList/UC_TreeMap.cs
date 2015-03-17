@@ -12,8 +12,8 @@ namespace DoubleFile
     [System.ComponentModel.DesignerCategory("Code")]
     class UC_TreeMap : UserControl
     {
-        internal Control TooltipAnchor = null;
         internal LocalWindow LocalOwner = null;
+        internal Control TooltipAnchor = null;
         internal static Action TooltipClickCallback = null;
 
         public UC_TreeMap()
@@ -64,6 +64,37 @@ namespace DoubleFile
         void form_tmapUserCtl_MouseUp(object sender, MouseEventArgs e)
         {
             MBoxStatic.Assert(99894, false);
+        }
+
+        internal void Clear()
+        {
+            _treeNode = null;
+            _prevNode = null;
+            _deepNode = null;
+            _deepNodeDrawn = null;
+            WinTooltip.CloseTooltip();      // Tag
+            ClearSelection();
+        }
+
+        internal void ClearSelection(bool bKeepTooltipActive = false)
+        {
+            if (App.LocalExit)
+                return;
+
+            if (_bClearingSelection)
+                return;
+
+            _bClearingSelection = true;
+
+            if (false == bKeepTooltipActive)
+                UtilProject.UIthread(() => WinTooltip.CloseTooltip());  // CloseTooltip callback recurses here hence _bClearingSelection
+
+            _selRect = Rectangle.Empty;
+
+            if (0 == _nInvalidateRef)
+                Invalidate();
+
+            _bClearingSelection = false;
         }
 
         protected override void Dispose(bool disposing)
@@ -139,18 +170,21 @@ namespace DoubleFile
                 if (null != (nodeRet = FindMapNode(prevNode_A, pt)))
                     return;         // from lambda
 
-                var nodeUplevel = 
-                    (_prevNode != null)
-                    ? _prevNode.Parent
-                    : null;
-
-                while (null != nodeUplevel)
+                if ((null != _prevNode) &&
+                    _prevNode.IsChildOf(_treeNode))
                 {
-                    if ((nodeRet = FindMapNode(nodeUplevel, pt)) != null)
-                        return;     // from lambda
+                    var nodeUplevel = _prevNode.Parent;
 
-                    nodeUplevel = nodeUplevel.Parent;
+                    while (null != nodeUplevel)
+                    {
+                        if ((nodeRet = FindMapNode(nodeUplevel, pt)) != null)
+                            return;     // from lambda
+
+                        nodeUplevel = nodeUplevel.Parent;
+                    }
                 }
+
+                MBoxStatic.Assert(99882, (null == _prevNode) || (false == _treeNode.IsChildOf(_prevNode)));
 
                 if ((nodeRet = FindMapNode(_treeNode, pt)) != null)
                     return;         // from lambda
@@ -195,14 +229,13 @@ namespace DoubleFile
 
                 _selRect = nodeDatum.TreeMapRect;
 
-                WinTooltip.ShowTooltip(new WinTooltip.ArgsStruct
-                    {
-                        strFolder = strFolder,
-                        strSize = UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
-                        winOwner = LocalOwner,
-                        closingCallback = () => ClearSelection(),
-                        clickCallback = TooltipClickCallback
-                    },
+                WinTooltip.ShowTooltip(
+                    new WinTooltip.ArgsStruct(
+                        strFolder,
+                        UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
+                        LocalOwner,
+                        TooltipClickCallback,
+                        () => ClearSelection()),
                     LocalOwner.PointToScreen(new System.Windows.Point(TooltipAnchor.Left, TooltipAnchor.Top)),
                     nodeRet);
             }
@@ -372,37 +405,6 @@ namespace DoubleFile
             TranslateSize();
             _prevNode = null;
             ClearSelection();
-        }
-
-        internal void Clear()
-        {
-            _treeNode = null;
-            _prevNode = null;
-            _deepNode = null;
-            _deepNodeDrawn = null;
-            WinTooltip.CloseTooltip();      // Tag
-            ClearSelection();
-        }
-
-        internal void ClearSelection(bool bKeepTooltipActive = false)
-        {
-            if (App.LocalExit)
-                return;
-
-            if (_bClearingSelection)
-                return;
-
-            _bClearingSelection = true;
-
-            if (false == bKeepTooltipActive)
-                UtilProject.UIthread(() => WinTooltip.CloseTooltip());  // CloseTooltip callback recurses here hence _bClearingSelection
-
-            _selRect = Rectangle.Empty;
-
-            if (0 == _nInvalidateRef)
-                Invalidate();
-
-            _bClearingSelection = false;
         }
 
         internal string Tooltip_Click()
@@ -775,7 +777,7 @@ namespace DoubleFile
                     ieChildren = ieChildren.Concat(new[] { new TreeNode(parent.Text)
                     {
                         Tag = new NodeDatum { TotalLength = nodeDatum.Length },
-                        ForeColor = Color.OliveDrab
+                        ForeColor = Color.DarkKhaki
                     }});
                 }
 
@@ -784,7 +786,7 @@ namespace DoubleFile
                     .OrderByDescending(x => (x.Tag as NodeDatum).TotalLength)
                     .ToList();
 
-                if (0 == lsChildren.Count)
+                if (lsChildren.IsEmpty())
                 {
                     // any files are zero in length
                     return false;

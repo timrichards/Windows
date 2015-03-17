@@ -87,7 +87,7 @@ namespace DoubleFile
 
             m_FontVolGroupOrig = form_lblVolGroup.Font;
             m_clrVolGroupOrig = form_lblVolGroup.BackColor;
-            UC_TreeMap.TooltipClickCallback = Tooltip_Click;
+            UC_TreeMap.Tooltip_Click = Tooltip_Click;
         }
 
         internal void FormDirList_Load(object sender, EventArgs e)
@@ -1139,10 +1139,27 @@ namespace DoubleFile
         {
             gd.m_bPutPathInFindEditBox = true;
             gd.m_bTreeViewIndirectSelChange = true;
-            gd_Search_1_2.m_strSelectFile = form_tmapUserCtl.Tooltip_Click();
 
-            if (null != gd_Search_1_2.m_strSelectFile)
+            var treeNode_A = WinTooltip.TreeNode;
+
+            if (null == treeNode_A)
+                return;
+
+            if (treeNode_A.TreeView != null)    // null if fake file treenode (NodeDatum.TreeMapFiles)
             {
+                var rootNodeDatum = treeNode_A.Tag as RootNodeDatum;
+
+                if (rootNodeDatum != null)
+                {
+                    rootNodeDatum.VolumeView = (rootNodeDatum.VolumeView == false);
+                    treeNode_A.TreeView.SelectedNode = null;    // to kick in a change selection event
+                }
+
+                treeNode_A.TreeView.SelectedNode = treeNode_A;
+            }
+            else
+            {
+                gd_Search_1_2.m_strSelectFile = treeNode_A.Text;
                 gd.m_bTreeViewIndirectSelChange = false;   // didn't hit a sel change
                 form_tabControlFileList.SelectedTab = form_tabPageFileList;
                 SelectFoundFile();

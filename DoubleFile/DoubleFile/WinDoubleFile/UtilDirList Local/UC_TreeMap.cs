@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Drawing.Drawing2D;
-using DoubleFile;
 using System.Threading;
 using System.Collections.Concurrent;
+using DoubleFile;
 
 namespace Local
 {
@@ -97,7 +97,7 @@ namespace Local
             _bClearingSelection = true;
 
             if (false == bKeepTooltipActive)
-                UtilProject.UIthread(() => WinTooltip.CloseTooltip());
+                UtilProject.UIthread(() => WinTooltip.CloseTooltip());  // CloseTooltip callback recurses here hence _bClearingSelection
 
             _selRect = Rectangle.Empty;
 
@@ -186,7 +186,8 @@ namespace Local
                 {
                     var nodeUplevel = _prevNode.Parent;
 
-                    while (null != nodeUplevel)
+                    while ((null != nodeUplevel) &&
+                        nodeUplevel.IsChildOf(_treeNode))
                     {
                         if ((nodeRet = FindMapNode(nodeUplevel, pt)) != null)
                             return;     // from lambda
@@ -708,7 +709,6 @@ namespace Local
                         }
 
                         ieChildren = lsChildren;
-
                         parent = new LocalTreeMapNode(item.Text + " (volume)");
 
                         var nodeDatumVolume = new NodeDatum

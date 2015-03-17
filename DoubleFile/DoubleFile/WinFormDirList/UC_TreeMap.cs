@@ -14,7 +14,7 @@ namespace DoubleFile
     {
         internal LocalWindow LocalOwner = null;
         internal Control TooltipAnchor = null;
-        internal static Action TooltipClickCallback = null;
+        internal static Action Tooltip_Click = null;
 
         public UC_TreeMap()
         {
@@ -175,7 +175,8 @@ namespace DoubleFile
                 {
                     var nodeUplevel = _prevNode.Parent;
 
-                    while (null != nodeUplevel)
+                    while ((null != nodeUplevel) &&
+                        nodeUplevel.IsChildOf(_treeNode))
                     {
                         if ((nodeRet = FindMapNode(nodeUplevel, pt)) != null)
                             return;     // from lambda
@@ -184,7 +185,7 @@ namespace DoubleFile
                     }
                 }
 
-                MBoxStatic.Assert(99882, (null == _prevNode) || (false == _treeNode.IsChildOf(_prevNode)));
+                MBoxStatic.Assert(99881, (null == _prevNode) || (false == _treeNode.IsChildOf(_prevNode)));
 
                 if ((nodeRet = FindMapNode(_treeNode, pt)) != null)
                     return;         // from lambda
@@ -234,7 +235,7 @@ namespace DoubleFile
                         strFolder,
                         UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
                         LocalOwner,
-                        TooltipClickCallback,
+                        Tooltip_Click,
                         () => ClearSelection()),
                     LocalOwner.PointToScreen(new System.Windows.Point(TooltipAnchor.Left, TooltipAnchor.Top)),
                     nodeRet);
@@ -405,33 +406,6 @@ namespace DoubleFile
             TranslateSize();
             _prevNode = null;
             ClearSelection();
-        }
-
-        internal string Tooltip_Click()
-        {
-            var treeNode_A = WinTooltip.TreeNode;
-
-            if (null == treeNode_A)
-                return null;
-
-            if (treeNode_A.TreeView != null)    // null if fake file treenode (NodeDatum.TreeMapFiles)
-            {
-                var rootNodeDatum = treeNode_A.Tag as RootNodeDatum;
-
-                if (rootNodeDatum != null)
-                {
-                    rootNodeDatum.VolumeView = (rootNodeDatum.VolumeView == false);
-                    treeNode_A.TreeView.SelectedNode = null;    // to kick in a change selection event
-                }
-
-                treeNode_A.TreeView.SelectedNode = treeNode_A;
-            }
-            else
-            {
-                return treeNode_A.Text;
-            }
-
-            return null;
         }
 
         internal void Render(TreeNode treeNode)
@@ -799,6 +773,7 @@ namespace DoubleFile
 
                 var horizontalRows = (rc.Width >= rc.Height);
                 var width_A = 1.0;
+
                 if (horizontalRows)
                 {
                     if (rc.Height > 0)

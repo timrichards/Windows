@@ -1,4 +1,6 @@
-﻿namespace DoubleFile
+﻿using System.Windows;
+
+namespace DoubleFile
 {
     /// <summary>
     /// Interaction logic for WinFormDirList.xaml
@@ -9,11 +11,11 @@
         {
             InitializeComponent();
             Closed += Window_Closed;
-          //  Activated += (o, e) => form_ucTreeMap.ClearSelection();
-          //  Deactivated += (o, e) => form_ucTreeMap.ClearSelection();
             SizeChanged += (o, e) => form_ucTreeMap.ClearSelection();
             LocationChanged += (o, e) => form_ucTreeMap.ClearSelection();
+            ResizeMode = ResizeMode.CanResize;
             form_ucTreeMap.LocalOwner = this;
+            base.DataContext = form_ucTreeMap.TreeMapVM = new WinTreeMapVM();
         }
 
         internal new void Show()

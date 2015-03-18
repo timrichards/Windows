@@ -671,7 +671,6 @@ namespace DoubleFile
                         }
 
                         ieChildren = lsChildren;
-
                         parent = new TreeNode(item.Text + " (volume)");
 
                         var nodeDatumVolume = new NodeDatum

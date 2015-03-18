@@ -14,6 +14,7 @@ namespace Local
     class UC_TreeMap : UserControl
     {
         internal LocalWindow LocalOwner = null;
+        internal WinTreeMapVM TreeMapVM = null;
 
         public UC_TreeMap()
         {
@@ -30,9 +31,9 @@ namespace Local
             Local.TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
         }
 
-        protected override void InitLayout()
+        protected override void OnLoad(EventArgs e)
         {
-            base.InitLayout();
+            base.OnLoad(e);
 
             _timerAnim = new LocalTimer(33.0, () =>   // 30 FPS
             {
@@ -44,6 +45,8 @@ namespace Local
                         Invalidate(_rectCenter);
                 }
             }).Start();
+
+            TreeMapVM.TreeNodeCallback = RenderA;
         }
 
         void InvalidatePushRef(Action action)
@@ -446,6 +449,7 @@ namespace Local
                 (false == _deepNode.IsChildOf(treeNode)))
             {
                 _deepNode = treeNode;
+                UtilProject.UIthread(() => TreeMapVM.DeepNode = _deepNode);
             }
 
             var nPxPerSide = (treeNode.SelectedImageIndex < 0)
@@ -479,7 +483,9 @@ namespace Local
 
             UtilProject.UIthread(() =>
             {
-                if (null != LocalOwner)
+                TreeMapVM.TreeNode = treeNode;
+
+               if (null != LocalOwner)
                     LocalOwner.Title = "Double File";
 
                 _bg.Graphics.Clear(Color.DarkGray);

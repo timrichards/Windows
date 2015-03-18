@@ -7,9 +7,6 @@ namespace DoubleFile
     {
         internal Action<LocalTreeNode> TreeNodeCallback = null;
 
-        public DoubleCollection Ticks { get { return _ticks; } internal set { _ticks = value; RaisePropertyChanged("Ticks"); } }
-        DoubleCollection _ticks;
-
         public double Maximum { get { return _maximum; } internal set { _maximum = value; RaisePropertyChanged("Maximum"); } }
         double _maximum;
 
@@ -44,17 +41,14 @@ namespace DoubleFile
 
                 var nMaximum = 0;
                 var treeNode = value.Parent;
-                var anTicks = new DoubleCollection(new[] { 0.0 });
 
                 while (null != treeNode)
                 {
                     ++nMaximum;
-                    anTicks.Add(nMaximum);
                     treeNode = treeNode.Parent;
                 }
 
                 Maximum = nMaximum;
-                Ticks = anTicks;
                 _deepNode = value;
             }
         }
@@ -67,6 +61,8 @@ namespace DoubleFile
                 if (_bSettingValue)
                     return;
 
+                _bSettingValue = true;
+
                 var nCount = 0;
                 var treeNode = _deepNode;
 
@@ -76,7 +72,6 @@ namespace DoubleFile
                     ++nCount;
                 }
 
-                _bSettingValue = true;
                 _value = nCount; RaisePropertyChanged("Value");
                 _bSettingValue = false;
             }

@@ -24,10 +24,11 @@ namespace DoubleFile
 
                 var treeNode = _deepNode;
 
-                for (var nCount = 0; nCount++ < value; ++nCount)
+                for (var nCount = 0; nCount < value; ++nCount)
                     treeNode = treeNode.Parent;
 
                 TreeNodeCallback(treeNode);
+                _value = value;
             }
         }
         double _value;
@@ -40,12 +41,12 @@ namespace DoubleFile
                     return;
 
                 var nMaximum = 0;
-                var treeNode = value.Parent;
 
-                while (null != treeNode)
+                for (var treeNode = value.Parent;
+                    null != treeNode;
+                    treeNode = treeNode.Parent)
                 {
                     ++nMaximum;
-                    treeNode = treeNode.Parent;
                 }
 
                 Maximum = nMaximum;
@@ -64,15 +65,16 @@ namespace DoubleFile
                 _bSettingValue = true;
 
                 var nCount = 0;
-                var treeNode = _deepNode;
 
-                while (false == ReferenceEquals(value, treeNode))
+                for (var treeNode = _deepNode;
+                    false == ReferenceEquals(value, treeNode);
+                    treeNode = treeNode.Parent)
                 {
-                    treeNode = treeNode.Parent;
                     ++nCount;
                 }
 
-                _value = nCount; RaisePropertyChanged("Value");
+                _value = nCount;
+                RaisePropertyChanged("Value");
                 _bSettingValue = false;
             }
         }

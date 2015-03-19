@@ -15,8 +15,8 @@ namespace DoubleFile
 
             var lvChildrenVM = new LV_TreeListChildrenVM();
 
-            LV_Children.DataContext = lvChildrenVM;
-            LV_Siblings.DataContext = _lvTreeListSiblingsVM = new LV_TreeListSiblingsVM(lvChildrenVM);
+            form_lvChildren.DataContext = lvChildrenVM;
+            form_lvSiblings.DataContext = _lvTreeListSiblingsVM = new LV_TreeListSiblingsVM(lvChildrenVM);
         }
 
         internal new void Show()
@@ -44,10 +44,10 @@ namespace DoubleFile
             _lvTreeListSiblingsVM.Dispose();
         }
 
-        static double _nWantsLeft = -1;
-        static double _nWantsTop = -1;
-
         LV_TreeListSiblingsVM
             _lvTreeListSiblingsVM = null;
+
+        static double _nWantsLeft = -1;
+        static double _nWantsTop = -1;
     }
 }

@@ -37,7 +37,8 @@ namespace DoubleFile
             foreach (var item in lsItems)
                 Add(item, bQuiet: true);
 
-            if (bQuiet == false)
+            if ((false == Items.IsEmpty()) &&
+                (false == bQuiet))
             {
                 RaiseItems();
             }

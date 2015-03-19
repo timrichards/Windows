@@ -5,17 +5,6 @@ namespace DoubleFile
 {
     class LV_TreeListSiblingsVM : ListViewVM_GenericBase<LVitem_TreeListVM>, IDisposable
     {
-        public string Title
-        {
-            get { return (_Title ?? "").Replace("_", "__"); }
-            internal set
-            {
-                _Title = value;
-                RaisePropertyChanged("Title");
-            }
-        }
-        string _Title = null;
-
         public string WidthFolder { get { return SCW; } }                   // franken all NaN
 
         internal override int NumCols { get { return LVitem_TreeListVM.NumCols_; } }
@@ -38,15 +27,21 @@ namespace DoubleFile
 
         void TreeSelect_FolderDetailUpdated(IEnumerable<string[]> lasDetail, LocalTreeNode treeNodeSel)
         {
-            Items.Clear();
-
             var treeNodes =
                 (null != treeNodeSel.Parent)
                 ? treeNodeSel.Parent.Nodes
                 : treeNodeSel.TreeView.Nodes;
 
+            var lsLVitems = new List<LVitem_TreeListVM>();
+
             foreach (var treeNode in treeNodes)
-                Add(new LVitem_TreeListVM(new[] { treeNode.Name }));
+                lsLVitems.Add(new LVitem_TreeListVM(new[] { treeNode.Name }));
+
+            UtilProject.UIthread(() =>
+            {
+                Items.Clear();
+                Add(lsLVitems);
+            });
 
             Select(treeNodeSel);
         }

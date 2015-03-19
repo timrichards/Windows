@@ -33,6 +33,19 @@ namespace DoubleFile
                 Left = _nWantsLeft;
                 Top = _nWantsTop;
             }
+
+            ShowWindows();
+        }
+
+        internal void ShowWindows()
+        {
+            if ((null != _winDoubleFile_TreeList) &&
+                (false == _winDoubleFile_TreeList.LocalIsClosed))
+            {
+                return;
+            }
+
+            (_winDoubleFile_TreeList = new WinDoubleFile_TreeList()).Show();
         }
 
         private void Window_Closed(object sender, System.EventArgs e)
@@ -42,6 +55,9 @@ namespace DoubleFile
             _nWantsLeft = Left;
             _nWantsTop = Top;
         }
+
+        WinDoubleFile_TreeList
+            _winDoubleFile_TreeList = null;
 
         static double _nWantsLeft = -1;
         static double _nWantsTop = -1;

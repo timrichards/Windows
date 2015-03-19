@@ -8,11 +8,19 @@
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
-        <ListView Grid.Column="0" Name="LV_Siblings" ItemsSource="{Binding Siblings}" SelectedItem="{Binding SelectedItem}">
-            <GridViewColumn Header="Folder name" DisplayMemberBinding="{Binding Folder}" Width="{Binding WidthFolder}"/>
+        <ListView Grid.Column="0" Name="form_lvSiblings" SelectedItem="{Binding SelectedItem}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Sibling folders" DisplayMemberBinding="{Binding Folder}" Width="{Binding WidthFolder}"/>
+                </GridView>
+            </ListView.View>
         </ListView>
-        <ListView Grid.Column="1" Name="LV_Children" ItemsSource="{Binding Children}" SelectedItem="{Binding SelectedItem}">
-            <GridViewColumn Header="Folder name" DisplayMemberBinding="{Binding Folder}" Width="{Binding WidthFolder}"/>
+        <ListView Grid.Column="1" Name="form_lvChildren" SelectedItem="{Binding SelectedItem}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Subfolders" DisplayMemberBinding="{Binding Folder}" Width="{Binding WidthFolder}"/>
+                </GridView>
+            </ListView.View>
         </ListView>
     </Grid>
 </local:LocalWindow_DoubleFile>

@@ -14,7 +14,8 @@
         <Style TargetType="Button" BasedOn="{StaticResource FrameworkElement}">
             <Setter Property="Grid.Column" Value="2" />
             <Setter Property="Width" Value="24" />
-            <Setter Property="Height" Value="24" /> <!--both only for client design view-->
+            <!--both only for client design view-->
+            <Setter Property="Height" Value="24" />
             <Setter Property="HorizontalAlignment" Value="Center" />
         </Style>
         <Style TargetType="Label" BasedOn="{StaticResource FrameworkElement}">
@@ -43,7 +44,8 @@
         <Style TargetType="ListView">
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="ItemsSource" Value="{Binding Items}"/>
-            <Setter Property="IsSynchronizedWithCurrentItem" Value="True"/><!-- troublemaker -->
+            <!-- troublemaker -->
+            <Setter Property="IsSynchronizedWithCurrentItem" Value="True"/>
         </Style>
         <Style TargetType="GridViewColumnHeader">
             <Setter Property="HorizontalContentAlignment" Value="Left" />

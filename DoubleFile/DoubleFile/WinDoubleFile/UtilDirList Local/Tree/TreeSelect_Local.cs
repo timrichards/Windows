@@ -59,8 +59,7 @@ namespace Local
                     File
                     .ReadLines(strListingFile)
                     .Skip(nPrevDir)
-                    .Take((nLineNo - nPrevDir - 1))
-                    .ToList();
+                    .Take((nLineNo - nPrevDir - 1));
             } while (false);
 
             FileListUpdated(lsFiles, strListingFile);

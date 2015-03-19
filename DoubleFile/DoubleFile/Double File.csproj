@@ -152,6 +152,11 @@
     <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
     <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
     <Compile Include="Utilities\TreeNodeProxy.cs" />
+    <Compile Include="WinDoubleFile\WinTreeList\LVitem_TreeListVM.cs" />
+    <Compile Include="WinDoubleFile\WinTreeList\WinTreeList.xaml.cs">
+      <DependentUpon>WinTreeList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WinDoubleFile\WinTreeList\LV_TreeListVM.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\WinTreeMapVM.cs" />
     <Compile Include="WinFormDirList\WinFormDirList.xaml.cs">
       <DependentUpon>WinFormDirList.xaml</DependentUpon>
@@ -433,6 +438,10 @@
     <Resource Include="ic_people_black_18dp.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="WinDoubleFile\WinTreeList\WinTreeList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="WinFormDirList\WinFormDirList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

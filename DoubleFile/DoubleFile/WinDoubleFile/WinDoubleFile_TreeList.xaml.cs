@@ -5,15 +5,18 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinFormDirList.xaml
     /// </summary>
-    public partial class WinTreeList
+    public partial class WinDoubleFile_TreeList
     {
-        internal WinTreeList()
+        internal WinDoubleFile_TreeList()
         {
             InitializeComponent();
             Closed += Window_Closed;
             ResizeMode = ResizeMode.CanResize;
-            LV_Siblings.DataContext = new LV_TreeListVM();
-            LV_Children.DataContext = new LV_TreeListVM();
+
+            var lvChildrenVM = new LV_TreeListChildrenVM();
+
+            LV_Children.DataContext = lvChildrenVM;
+            LV_Siblings.DataContext = _lvTreeListSiblingsVM = new LV_TreeListSiblingsVM(lvChildrenVM);
         }
 
         internal new void Show()
@@ -37,9 +40,14 @@ namespace DoubleFile
         {
             _nWantsLeft = Left;
             _nWantsTop = Top;
+
+            _lvTreeListSiblingsVM.Dispose();
         }
 
         static double _nWantsLeft = -1;
         static double _nWantsTop = -1;
+
+        LV_TreeListSiblingsVM
+            _lvTreeListSiblingsVM = null;
     }
 }

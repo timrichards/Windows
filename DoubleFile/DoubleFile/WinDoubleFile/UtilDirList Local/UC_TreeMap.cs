@@ -13,6 +13,7 @@ namespace Local
     [System.ComponentModel.DesignerCategory("Code")]
     class UC_TreeMap : UserControl
     {
+        internal static event Action<LocalTreeNode> TreeMapRendered = null;
         internal LocalWindow LocalOwner = null;
         internal WinTreeMapVM TreeMapVM = null;
 
@@ -235,32 +236,32 @@ namespace Local
                 bImmediateFiles = false;
             }
 
-            var strFolder = nodeRet.Text;
+            SelRectAndTooltip(nodeRet, bImmediateFiles);
+            return null;
+        }
+
+        void SelRectAndTooltip(LocalTreeNode treeNode, bool bImmediateFiles = false)
+        {
+            var nodeDatum = treeNode.NodeDatum;
+            var strFolder = treeNode.Text;
 
             if (bImmediateFiles)
                 strFolder += " (immediate files)";
 
-            {
-                var nodeDatum = nodeRet.NodeDatum;
+            WinTooltip.ShowTooltip(
+                new WinTooltip.ArgsStruct(
+                    strFolder,
+                    UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
+                    LocalOwner,
+                    Tooltip_Click,
+                    () => ClearSelection()),
+                treeNode);
 
-                _selRect = nodeDatum.TreeMapRect;
-
-                WinTooltip.ShowTooltip(
-                    new WinTooltip.ArgsStruct(
-                        strFolder,
-                        UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
-                        LocalOwner,
-                        Tooltip_Click,
-                        () => ClearSelection()),
-                    nodeRet);
-            }
-
-            _prevNode = nodeRet;
+            _selRect = nodeDatum.TreeMapRect;
+            _prevNode = treeNode;
 
             if (0 == _nInvalidateRef)   // jic
                 Invalidate();
-
-            return null;
         }
 
         static LocalTreeNode FindMapNode(LocalTreeNode treeNode_in, Point pt, bool bNextNode = false)
@@ -442,6 +443,9 @@ namespace Local
         void RenderA(LocalTreeNode treeNode)
         {
             InvalidatePushRef(() => Render(treeNode));
+
+            if (null != TreeMapRendered)
+                TreeMapRendered(treeNode);
         }
 
         void Render(LocalTreeNode treeNode)

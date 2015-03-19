@@ -30,7 +30,7 @@ namespace DoubleFile
             //MouseUp += form_tmapUserCtl_MouseUp;
         }
 
-        protected override void InitLayout()
+        protected override void OnLoad(EventArgs e)
         {
             base.InitLayout();
 

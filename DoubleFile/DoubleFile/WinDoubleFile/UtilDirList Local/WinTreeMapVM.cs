@@ -7,11 +7,11 @@ namespace DoubleFile
     {
         internal Action<LocalTreeNode> TreeNodeCallback = null;
 
-        public double Maximum { get { return _maximum; } internal set { _maximum = value; RaisePropertyChanged("Maximum"); } }
+        public double Maximum { get { return _maximum; } private set { _maximum = value; RaisePropertyChanged("Maximum"); } }
         double _maximum;
 
         public double Value
-        {           
+        {
             get { return _value; }
 
             set
@@ -35,6 +35,8 @@ namespace DoubleFile
 
         internal LocalTreeNode DeepNode
         {
+            get { return _deepNode; }
+
             set
             {
                 if (value == _deepNode)
@@ -57,6 +59,8 @@ namespace DoubleFile
 
         internal LocalTreeNode TreeNode
         {
+            get { return _treeNode; }
+
             set
             {
                 if (_bSettingValue)
@@ -76,8 +80,10 @@ namespace DoubleFile
                 _value = nCount;
                 RaisePropertyChanged("Value");
                 _bSettingValue = false;
+                _treeNode = value;
             }
         }
+        LocalTreeNode _treeNode = null;
 
         bool _bSettingValue = false;
     }

@@ -30,12 +30,6 @@ namespace DoubleFile
         internal bool IsEmpty { get { return null == _DictFiles; } }
         internal void ResetAbortFlag() { IsAborted = false; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="strLine"></param>
-        /// <param name="strListingFile">Only used to prevent adding queried item to the returned list.</param>
-        /// <returns>null if bad strLine. Otherwise always non-null, even if empty.</returns>
         internal IEnumerable<DuplicateStruct> GetDuplicates(
             string strLine,
             out string strFilename,
@@ -208,7 +202,7 @@ namespace DoubleFile
             {
                 foreach (var kvp in _DictFiles)
                 {
-                    writer.Write(kvp.Key);
+                    writer.Write(kvp.Key.Item1 + " " + kvp.Key.Item2);
 
                     foreach (var ls in kvp.Value)
                     {
@@ -238,8 +232,9 @@ namespace DoubleFile
                 while ((strLine = reader.ReadLine()) != null)
                 {
                     var asLine = strLine.Split('\t');
+                    var asKey = asLine[0].Split(' ');
 
-                    _DictFiles[new FileKeyTuple(asLine[0])] =
+                    _DictFiles[new FileKeyTuple(asKey[0], asKey[1])] =
                         asLine
                         .Skip(1)
                         .Select(s => Convert.ToInt32(s));

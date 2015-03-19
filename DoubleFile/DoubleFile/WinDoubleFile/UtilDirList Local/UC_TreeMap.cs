@@ -76,14 +76,15 @@ namespace Local
             if (null == treeNode)
                 return;
 
+            //RenderA(treeNode);
             treeNode.TreeView.SelectedNode = treeNode;
         }
 
         internal void Clear()
         {
-            _treeNode = null;
+            TreeMapVM.TreeNode = null;
             _prevNode = null;
-            _deepNode = null;
+            TreeMapVM.DeepNode = null;
             _deepNodeDrawn = null;
             WinTooltip.CloseTooltip();      // Tag
             ClearSelection();
@@ -128,7 +129,7 @@ namespace Local
         {
             ClearSelection(bKeepTooltipActive: true);
 
-            if (_treeNode == null)
+            if (TreeMapVM.TreeNode == null)
             {
                 return null;
             }
@@ -143,7 +144,7 @@ namespace Local
                 else if (DateTime.Now - _dtHideGoofball < TimeSpan.FromSeconds(5))
                 {
                     _dtHideGoofball = DateTime.MinValue;
-                    return _deepNode;
+                    return TreeMapVM.DeepNode;
                 }
             }
 
@@ -157,7 +158,7 @@ namespace Local
             UtilDirList.Closure(() =>
             {
                 {
-                    var nodeDatum = _treeNode.NodeDatum;
+                    var nodeDatum = TreeMapVM.TreeNode.NodeDatum;
 
                     if (null == nodeDatum)      // added 2/13/15 as safety
                     {
@@ -179,18 +180,18 @@ namespace Local
                     }
                 }
 
-                var prevNode_A = _prevNode ?? _treeNode;
+                var prevNode_A = _prevNode ?? TreeMapVM.TreeNode;
 
                 if (null != (nodeRet = FindMapNode(prevNode_A, pt)))
                     return;         // from lambda
 
                 if ((null != _prevNode) &&
-                    _prevNode.IsChildOf(_treeNode))
+                    _prevNode.IsChildOf(TreeMapVM.TreeNode))
                 {
                     var nodeUplevel = _prevNode.Parent;
 
                     while ((null != nodeUplevel) &&
-                        nodeUplevel.IsChildOf(_treeNode))
+                        nodeUplevel.IsChildOf(TreeMapVM.TreeNode))
                     {
                         if ((nodeRet = FindMapNode(nodeUplevel, pt)) != null)
                             return;     // from lambda
@@ -199,12 +200,12 @@ namespace Local
                     }
                 }
 
-                MBoxStatic.Assert(99882, (null == _prevNode) || (false == _treeNode.IsChildOf(_prevNode)));
+                MBoxStatic.Assert(99882, (null == _prevNode) || (false == TreeMapVM.TreeNode.IsChildOf(_prevNode)));
 
-                if ((nodeRet = FindMapNode(_treeNode, pt)) != null)
+                if ((nodeRet = FindMapNode(TreeMapVM.TreeNode, pt)) != null)
                     return;         // from lambda
 
-                nodeRet = _treeNode;
+                nodeRet = TreeMapVM.TreeNode;
             });
 
             if ((false == bVolumeView) &&
@@ -221,7 +222,7 @@ namespace Local
                 var nodeRet_A = FindMapNode(nodeDatum.TreeMapFiles, pt);
 
                 if ((null != nodeRet_A) &&
-                    (nodeRet == _treeNode))
+                    (nodeRet == TreeMapVM.TreeNode))
                 {
                     nodeRet = nodeRet_A;
                     bImmediateFiles = true;
@@ -230,7 +231,7 @@ namespace Local
 
             if (nodeRet == _prevNode)
             {
-                nodeRet = _treeNode;
+                nodeRet = TreeMapVM.TreeNode;
                 bImmediateFiles = false;
             }
 
@@ -363,7 +364,7 @@ namespace Local
             }
 
             if ((null == _deepNodeDrawn) ||
-                (_deepNodeDrawn == _treeNode))
+                (_deepNodeDrawn == TreeMapVM.TreeNode))
             {
                 _rectCenter = Rectangle.Empty;
                 return;
@@ -445,11 +446,10 @@ namespace Local
 
         void Render(LocalTreeNode treeNode)
         {
-            if ((null == _deepNode) ||
-                (false == _deepNode.IsChildOf(treeNode)))
+            if ((null == TreeMapVM.DeepNode) ||
+                (false == TreeMapVM.DeepNode.IsChildOf(treeNode)))
             {
-                _deepNode = treeNode;
-                UtilProject.UIthread(() => TreeMapVM.DeepNode = _deepNode);
+                UtilProject.UIthread(() => TreeMapVM.DeepNode = treeNode);
             }
 
             var nPxPerSide = (treeNode.SelectedImageIndex < 0)
@@ -478,13 +478,11 @@ namespace Local
             var dtStart = DateTime.Now;
 
             ClearSelection();
-            _treeNode = treeNode;
+            UtilProject.UIthread(() => TreeMapVM.TreeNode = treeNode);
             _lsRenderActions = DrawTreemap();
 
             UtilProject.UIthread(() =>
             {
-                TreeMapVM.TreeNode = treeNode;
-
                if (null != LocalOwner)
                     LocalOwner.Title = "Double File";
 
@@ -568,7 +566,7 @@ namespace Local
             if (rc.Width <= 0 || rc.Height <= 0)
                 return null;
 
-            var nodeDatum = _treeNode.NodeDatum;
+            var nodeDatum = TreeMapVM.TreeNode.NodeDatum;
 
             if (null == nodeDatum)      // added 2/13/15 as safety
             {
@@ -578,7 +576,7 @@ namespace Local
 
             return
                 (nodeDatum.TotalLength > 0)
-                ? new Recurse().Render(_treeNode, rc, _deepNode, out _deepNodeDrawn)
+                ? new Recurse().Render(TreeMapVM.TreeNode, rc, TreeMapVM.DeepNode, out _deepNodeDrawn)
                 : new ConcurrentBag<RenderAction> { new FillRectangle() { Brush = Brushes.Wheat, rc = rc } };
         }
 
@@ -1013,8 +1011,6 @@ namespace Local
         class
             DrawRectangle : RenderAction { static Pen Pen = new Pen(Color.Black, 2); internal override void Stroke(Graphics g) { g.DrawRectangle(Pen, rc); } }
 
-        LocalTreeNode
-            _treeNode = null;
         BufferedGraphics
             _bg = null;
         Rectangle
@@ -1029,8 +1025,6 @@ namespace Local
         // Recurse class
         ConcurrentBag<RenderAction>
             _lsRenderActions = null;
-        LocalTreeNode
-            _deepNode = null;
         LocalTreeNode
             _deepNodeDrawn = null;
 

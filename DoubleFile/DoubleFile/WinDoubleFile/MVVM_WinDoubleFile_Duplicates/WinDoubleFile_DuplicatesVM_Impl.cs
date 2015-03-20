@@ -15,7 +15,7 @@ namespace DoubleFile
         internal WinDoubleFile_DuplicatesVM(GlobalData_Base gd)
         {
             _gd = gd;
-            Icmd_Goto = new RelayCommand(param => Goto(), param => null != SelectedItem);
+            Icmd_Goto = new RelayCommand(param => Goto(), param => null != _selectedItem);
             Local.TreeSelect.FileListUpdated += TreeSelect_FileList;
         }
 
@@ -102,12 +102,12 @@ namespace DoubleFile
             if (null == GoToFile)
                 return;
 
-            if (null == SelectedItem)
+            if (null == _selectedItem)
             {
                 MBoxStatic.Assert(99901, false);    // binding should dim the button
             }
 
-            GoToFile(SelectedItem.LVitem_ProjectVM, SelectedItem.Path, SelectedItem.Filename);
+            GoToFile(_selectedItem.LVitem_ProjectVM, _selectedItem.Path, _selectedItem.Filename);
         }
 
         GlobalData_Base

@@ -16,14 +16,27 @@ namespace DoubleFile
                     return;
 
                 _selectedItem = value;
-                RaisePropertyChanged("SelectedItem");
 
                 if (null == value)
                     return;
 
                 if (null != TreeListChildSelected)
                     TreeListChildSelected(value.LocalTreeNode);
+
+                SelectedItem_AllTriggers();
             }
+        }
+        internal void SelectedItem_Set(LVitem_TreeListVM value)
+        {
+            if (value == _selectedItem)
+                return;
+
+            _selectedItem = value;
+            RaisePropertyChanged("SelectedItem");
+            SelectedItem_AllTriggers();
+        }
+        void SelectedItem_AllTriggers()
+        {
         }
         LVitem_TreeListVM _selectedItem = null;
 

@@ -31,6 +31,7 @@ namespace Local
             MouseDown += form_tmapUserCtl_MouseDown;
             MouseUp += form_tmapUserCtl_MouseUp;
             Local.TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
+            LV_TreeListSiblingsVM.TreeListSiblingSelected += RenderA;
             LV_TreeListChildrenVM.TreeListChildSelected += TreeListChildSelected;
         }
 
@@ -125,6 +126,7 @@ namespace Local
             WinTooltip.CloseTooltip();
             _timerAnim.Dispose();
             Local.TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
+            LV_TreeListSiblingsVM.TreeListSiblingSelected -= RenderA;
             LV_TreeListChildrenVM.TreeListChildSelected -= TreeListChildSelected;
             base.Dispose(disposing);
         }
@@ -474,7 +476,8 @@ namespace Local
                 ? 1024
                 : treeNode.SelectedImageIndex;
 
-            if (nPxPerSide != _rectBitmap.Size.Width)
+            if ((null == _bg) ||
+                (nPxPerSide != _rectBitmap.Size.Width))
             {
                 var dtStart_A = DateTime.Now;
 
@@ -485,7 +488,7 @@ namespace Local
 
                 bgcontext.MaximumBuffer = _rectBitmap.Size;
 
-                if (_bg != null)
+                if (null != _bg)
                     _bg.Dispose();
 
                 _bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), _rectBitmap);

@@ -16,14 +16,27 @@ namespace DoubleFile
                     return;
 
                 _selectedItem = value;
-                RaisePropertyChanged("SelectedItem");
 
                 if (null == value)
                     return;
 
                 if (null != TreeFileSelChanged)
                     TreeFileSelChanged(value.LSduplicates, value.FileLine);
+
+                SelectedItem_AllTriggers();
             }
+        }
+        internal void SelectedItem_Set(LVitem_DoubleFile_FilesVM value)
+        {
+            if (value == _selectedItem)
+                return;
+
+            _selectedItem = value;
+            RaisePropertyChanged("SelectedItem");
+            SelectedItem_AllTriggers();
+        }
+        void SelectedItem_AllTriggers()
+        {
         }
         LVitem_DoubleFile_FilesVM _selectedItem = null;
 

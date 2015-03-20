@@ -12,7 +12,7 @@
         <WindowsFormsHost Name="_host" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <localLocal:UC_TreeMap x:Name="form_ucTreeMap" />
         </WindowsFormsHost>
-        <Slider Grid.Column="1" Value="{Binding Value}" Ticks="{Binding Ticks}" Maximum="{Binding Maximum}"
+        <Slider Grid.Column="1" Value="{Binding Value}" Maximum="{Binding Maximum}"
                 IsSnapToTickEnabled="True"
                 LargeChange="1" SmallChange="1" TickFrequency="1"
                 TickPlacement="TopLeft" Orientation="Vertical"

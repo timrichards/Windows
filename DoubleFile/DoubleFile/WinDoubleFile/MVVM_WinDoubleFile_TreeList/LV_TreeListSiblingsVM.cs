@@ -6,6 +6,8 @@ namespace DoubleFile
 {
     class LV_TreeListSiblingsVM : ListViewVM_GenericBase<LVitem_TreeListVM>, IDisposable
     {
+        static internal event Action<LocalTreeNode> TreeListSiblingSelected = null;
+
         public LVitem_TreeListVM SelectedItem
         {
             get { return _selectedItem; }
@@ -15,13 +17,28 @@ namespace DoubleFile
                     return;
 
                 _selectedItem = value;
-                RaisePropertyChanged("SelectedItem");
 
                 if (null == value)
                     return;
 
-                _lvChildrenVM.Populate(value.LocalTreeNode);
+                if (null != TreeListSiblingSelected)
+                    TreeListSiblingSelected(value.LocalTreeNode);
+
+                SelectedItem_AllTriggers();
             }
+        }
+        internal void SelectedItem_Set(LVitem_TreeListVM value)
+        {
+            if (value == _selectedItem)
+                return;
+
+            _selectedItem = value;
+            RaisePropertyChanged("SelectedItem");
+            SelectedItem_AllTriggers();
+        }
+        void SelectedItem_AllTriggers()
+        {
+            _lvChildrenVM.Populate(_selectedItem.LocalTreeNode);
         }
         LVitem_TreeListVM _selectedItem = null;
 
@@ -43,11 +60,11 @@ namespace DoubleFile
 
             ItemsCast
                 .Where(lvItem => lvItem.LocalTreeNode == _treeNode)
-                .FirstOnlyAssert(lvItem => SelectedItem = lvItem);
+                .FirstOnlyAssert(lvItem => SelectedItem_Set(lvItem));
 
             _lvChildrenVM.ItemsCast
                 .Where(lvItem => lvItem.LocalTreeNode == treeNodeChild)
-                .FirstOnlyAssert(lvItem => _lvChildrenVM.SelectedItem = lvItem);
+                .FirstOnlyAssert(lvItem => _lvChildrenVM.SelectedItem_Set(lvItem));
         }
 
         public void Dispose()
@@ -87,10 +104,12 @@ namespace DoubleFile
                 Add(lsLVitems);
             });
 
-            SelectedItem = selectedItem;
+            SelectedItem_Set(selectedItem);
         }
 
-        LocalTreeNode _treeNode = null;
-        LV_TreeListChildrenVM _lvChildrenVM = null;
+        LocalTreeNode
+            _treeNode = null;
+        LV_TreeListChildrenVM
+            _lvChildrenVM = null;
     }
 }

@@ -14,6 +14,7 @@ namespace DoubleFile
             InitializeComponent();
             form_grid.Loaded += Grid_Loaded;
             Closed += Window_Closed;
+            WinDoubleFile_DuplicatesVM.UpdateFileDetail += UpdateFileDetail;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -23,57 +24,23 @@ namespace DoubleFile
             form_lvVolume.DataContext = _lvVolumeDetailVM = new LV_VolumeDetailVM(_gd);
         }
 
-        internal void UpdateFileDetail(string strFileLine = null)
+        internal void UpdateFileDetail(string strFileLine)
         {
             _lvFileDetailVM.Update(strFileLine);
         }
 
-        internal new void Show()
+        protected override LocalWindow_DoubleFile CreateChainedWindow()
         {
-            if (false == LocalIsClosed)
-            {
-                MBoxStatic.Assert(99906, false, bTraceOnly: true);
-                return;
-            }
-
-            base.Show();
-            
-            if (_nWantsLeft > -1)
-            {
-                Left = _nWantsLeft;
-                Top = _nWantsTop;
-            }
-
-            ShowWindows();
-        }
-
-        internal void ShowWindows()
-        {
-            if ((null != _winTreeMap) &&
-                (false == _winTreeMap.LocalIsClosed))
-            {
-                return;
-            }
-
-            (_winTreeMap = new WinTreeMap()).Show();
+            return new WinTreeMap();
         }
 
         private void Window_Closed(object sender, System.EventArgs e)
         {
-            if ((null != _winTreeMap) &&
-                (false == _winTreeMap.LocalIsClosed))
-            {
-                _winTreeMap.Close();
-            }
-
             _lvFolderDetailVM.Dispose();
             _lvVolumeDetailVM.Dispose();
-            _nWantsLeft = Left;
-            _nWantsTop = Top;
+            WinDoubleFile_DuplicatesVM.UpdateFileDetail -= UpdateFileDetail;
         }
 
-        WinTreeMap
-            _winTreeMap = null;
         LV_FileDetailVM
             _lvFileDetailVM = null;
         LV_FolderDetailVM
@@ -82,6 +49,9 @@ namespace DoubleFile
             _lvVolumeDetailVM = null;
         GlobalData_Base
             _gd = null;
+
+        override protected double WantsLeft { get { return _nWantsLeft; } set { _nWantsLeft = value; } }
+        override protected double WantsTop { get { return _nWantsTop; } set { _nWantsTop = value; } }
 
         static double _nWantsLeft = -1;
         static double _nWantsTop = -1;

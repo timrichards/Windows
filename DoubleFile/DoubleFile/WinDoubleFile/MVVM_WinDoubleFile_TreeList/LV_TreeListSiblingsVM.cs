@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -10,14 +11,15 @@ namespace DoubleFile
             get { return _selectedItem; }
             set
             {
+                if (value == _selectedItem)
+                    return;
+
                 _selectedItem = value;
 
                 if (null == value)
-                {
                     return;
-                }
 
-                _lvChildrenVM.Populate(_selectedItem.LocalTreeNode);
+                _lvChildrenVM.Populate(value.LocalTreeNode);
                 RaisePropertyChanged("SelectedItem");
             }
         }
@@ -31,6 +33,21 @@ namespace DoubleFile
         {
             _lvChildrenVM = lvChildrenVM;
             Local.UC_TreeMap.TreeMapRendered += Populate;
+            Local.UC_TreeMap.TreeMapChildSelected += UC_TreeMap_TreeMapChildSelected;
+        }
+
+        void UC_TreeMap_TreeMapChildSelected(LocalTreeNode treeNodeChild)
+        {
+            if (_treeNode != treeNodeChild.Parent)
+                return;
+
+            ItemsCast
+                .Where(lvItem => lvItem.LocalTreeNode == _treeNode)
+                .FirstOnlyAssert(lvItem => SelectedItem = lvItem);
+
+            _lvChildrenVM.ItemsCast
+                .Where(lvItem => lvItem.LocalTreeNode == treeNodeChild)
+                .FirstOnlyAssert(lvItem => _lvChildrenVM.SelectedItem = lvItem);
         }
 
         public void Dispose()
@@ -60,6 +77,8 @@ namespace DoubleFile
                 {
                     selectedItem = lvItem;
                 }
+
+                _treeNode = treeNodeSel;
             }
 
             UtilProject.UIthread(() =>
@@ -71,6 +90,7 @@ namespace DoubleFile
             SelectedItem = selectedItem;
         }
 
+        LocalTreeNode _treeNode = null;
         LV_TreeListChildrenVM _lvChildrenVM = null;
     }
 }

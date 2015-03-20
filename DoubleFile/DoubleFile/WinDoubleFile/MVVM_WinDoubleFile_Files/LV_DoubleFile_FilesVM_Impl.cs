@@ -15,19 +15,6 @@ namespace DoubleFile
         public void Dispose()
         {
             Local.TreeSelect.FileListUpdated -= TreeSelect_FileList;
-            _winDoubleFile_Duplicates.Close();
-        }
-
-        internal bool ShowWindows()    // returns true if it created a window
-        {
-            if ((null != _winDoubleFile_Duplicates) &&
-                (false == _winDoubleFile_Duplicates.LocalIsClosed))
-            {
-                return _winDoubleFile_Duplicates.ShowWindows();
-            }
-
-            (_winDoubleFile_Duplicates = new WinDoubleFile_Duplicates(_gd)).Show();
-            return true;
         }
 
         void TreeSelect_FileList(IEnumerable<string> lsFileLines, string strListingFile)
@@ -83,7 +70,5 @@ namespace DoubleFile
 
         GlobalData_Base
             _gd = null;
-        WinDoubleFile_Duplicates
-            _winDoubleFile_Duplicates = null;
     }
 }

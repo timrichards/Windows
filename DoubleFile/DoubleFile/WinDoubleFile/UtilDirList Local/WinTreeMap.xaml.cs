@@ -18,46 +18,19 @@ namespace DoubleFile
             base.DataContext = form_ucTreeMap.TreeMapVM = new WinTreeMapVM();
         }
 
-        internal new void Show()
+        protected override LocalWindow_DoubleFile CreateChainedWindow()
         {
-            if (false == LocalIsClosed)
-            {
-                MBoxStatic.Assert(99897, false, bTraceOnly: true);
-                return;
-            }
-
-            base.Show();
-            
-            if (_nWantsLeft > -1)
-            {
-                Left = _nWantsLeft;
-                Top = _nWantsTop;
-            }
-
-            ShowWindows();
-        }
-
-        internal void ShowWindows()
-        {
-            if ((null != _winDoubleFile_TreeList) &&
-                (false == _winDoubleFile_TreeList.LocalIsClosed))
-            {
-                return;
-            }
-
-            (_winDoubleFile_TreeList = new WinDoubleFile_TreeList()).Show();
+            return new WinDoubleFile_TreeList();
         }
 
         private void Window_Closed(object sender, System.EventArgs e)
         {
             _host.Dispose();
             form_ucTreeMap.Dispose();
-            _nWantsLeft = Left;
-            _nWantsTop = Top;
         }
 
-        WinDoubleFile_TreeList
-            _winDoubleFile_TreeList = null;
+        override protected double WantsLeft { get { return _nWantsLeft; } set { _nWantsLeft = value; } }
+        override protected double WantsTop { get { return _nWantsTop; } set { _nWantsTop = value; } }
 
         static double _nWantsLeft = -1;
         static double _nWantsTop = -1;

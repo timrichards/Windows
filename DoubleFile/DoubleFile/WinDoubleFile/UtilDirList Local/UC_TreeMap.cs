@@ -14,6 +14,7 @@ namespace Local
     class UC_TreeMap : UserControl
     {
         internal static event Action<LocalTreeNode> TreeMapRendered = null;
+        internal static event Action<LocalTreeNode> TreeMapChildSelected = null;
         internal LocalWindow LocalOwner = null;
         internal WinTreeMapVM TreeMapVM = null;
 
@@ -30,6 +31,7 @@ namespace Local
             MouseDown += form_tmapUserCtl_MouseDown;
             MouseUp += form_tmapUserCtl_MouseUp;
             Local.TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
+            LV_TreeListChildrenVM.TreeListChildSelected += TreeListChildSelected;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -123,6 +125,7 @@ namespace Local
             WinTooltip.CloseTooltip();
             _timerAnim.Dispose();
             Local.TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
+            LV_TreeListChildrenVM.TreeListChildSelected -= TreeListChildSelected;
             base.Dispose(disposing);
         }
 
@@ -240,10 +243,18 @@ namespace Local
             return null;
         }
 
-        void SelRectAndTooltip(LocalTreeNode treeNode, bool bImmediateFiles = false)
+        void TreeListChildSelected(LocalTreeNode treeNodeChild)
         {
-            var nodeDatum = treeNode.NodeDatum;
-            var strFolder = treeNode.Text;
+            if (TreeMapVM.TreeNode != treeNodeChild.Parent)
+                return;
+
+            SelRectAndTooltip(treeNodeChild);
+        }
+
+        void SelRectAndTooltip(LocalTreeNode treeNodeChild, bool bImmediateFiles = false)
+        {
+            var nodeDatum = treeNodeChild.NodeDatum;
+            var strFolder = treeNodeChild.Text;
 
             if (bImmediateFiles)
                 strFolder += " (immediate files)";
@@ -255,13 +266,16 @@ namespace Local
                     LocalOwner,
                     Tooltip_Click,
                     () => ClearSelection()),
-                treeNode);
+                treeNodeChild);
 
             _selRect = nodeDatum.TreeMapRect;
-            _prevNode = treeNode;
+            _prevNode = treeNodeChild;
 
             if (0 == _nInvalidateRef)   // jic
                 Invalidate();
+
+            if (null != TreeMapChildSelected)
+                TreeMapChildSelected(treeNodeChild);
         }
 
         static LocalTreeNode FindMapNode(LocalTreeNode treeNode_in, Point pt, bool bNextNode = false)

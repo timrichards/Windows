@@ -11,14 +11,16 @@ namespace DoubleFile
             get { return _selectedItem; }
             set
             {
+                if (value == _selectedItem)
+                    return;
+
                 _selectedItem = value;
 
                 if (null == value)
-                {
                     return;
-                }
 
-                _winDoubleFile_Detail.UpdateFileDetail(value.FileLine);
+                if (null != UpdateFileDetail)
+                    UpdateFileDetail(value.FileLine);
             }
         }
         LVitem_FileDuplicatesVM _selectedItem = null;

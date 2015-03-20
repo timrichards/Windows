@@ -9,6 +9,8 @@ namespace DoubleFile
     
     partial class WinDoubleFile_FoldersVM
     {
+        internal static event Func<bool> ShowWindows = null;
+
         internal ConcurrentDictionary<FolderKeyTuple, KeyList<LocalTreeNode>>
             DictNodes { get; private set; }
         internal Local.Tree
@@ -139,7 +141,9 @@ namespace DoubleFile
             while (false == _winProgress.LocalIsClosed)
                 System.Threading.Thread.Sleep(200);
 
-            UtilProject.UIthread<bool>(ShowWindows);
+            if (null != ShowWindows)
+                UtilProject.UIthread(ShowWindows);
+
             _tvVM.SetData(_listRootNodes);
         }
 

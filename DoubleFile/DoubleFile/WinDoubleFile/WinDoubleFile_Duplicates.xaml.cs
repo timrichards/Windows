@@ -16,6 +16,7 @@ namespace DoubleFile
             form_grid.Loaded += Grid_Loaded;
             Closed += Window_Closed;
             ResizeMode = ResizeMode.CanResize;
+            LV_DoubleFile_FilesVM.TreeFileSelChanged += TreeFileSelChanged;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -23,28 +24,9 @@ namespace DoubleFile
             DataContext = _winDoubleFile_DuplicatesVM = new WinDoubleFile_DuplicatesVM(_gd);
         }
 
-        internal new void Show()
+        protected override LocalWindow_DoubleFile CreateChainedWindow()
         {
-            if (false == LocalIsClosed)
-            {
-                MBoxStatic.Assert(99905, false, bTraceOnly: true);
-                return;
-            }
-
-            base.Show();
-            
-            if (_nWantsLeft > -1)
-            {
-                Left = _nWantsLeft;
-                Top = _nWantsTop;
-            }
-
-            ShowWindows();
-        }
-
-        internal bool ShowWindows()
-        {
-            return _winDoubleFile_DuplicatesVM.ShowWindows();
+            return new WinDoubleFile_Detail(_gd);
         }
 
         internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, string strFileLine)
@@ -55,14 +37,16 @@ namespace DoubleFile
         private void Window_Closed(object sender, System.EventArgs e)
         {
             _winDoubleFile_DuplicatesVM.Dispose();
-            _nWantsLeft = Left;
-            _nWantsTop = Top;
+            LV_DoubleFile_FilesVM.TreeFileSelChanged -= TreeFileSelChanged;
         }
 
         WinDoubleFile_DuplicatesVM
             _winDoubleFile_DuplicatesVM = null;
         GlobalData_Base
             _gd = null;
+
+        override protected double WantsLeft { get { return _nWantsLeft; } set { _nWantsLeft = value; } }
+        override protected double WantsTop { get { return _nWantsTop; } set { _nWantsTop = value; } }
 
         static double _nWantsLeft = -1;
         static double _nWantsTop = -1;

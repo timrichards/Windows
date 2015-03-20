@@ -19,33 +19,16 @@ namespace DoubleFile
             form_lvSiblings.DataContext = _lvTreeListSiblingsVM = new LV_TreeListSiblingsVM(lvChildrenVM);
         }
 
-        internal new void Show()
-        {
-            if (false == LocalIsClosed)
-            {
-                MBoxStatic.Assert(99897, false, bTraceOnly: true);
-                return;
-            }
-
-            base.Show();
-            
-            if (_nWantsLeft > -1)
-            {
-                Left = _nWantsLeft;
-                Top = _nWantsTop;
-            }
-        }
-
         private void Window_Closed(object sender, System.EventArgs e)
         {
-            _nWantsLeft = Left;
-            _nWantsTop = Top;
-
             _lvTreeListSiblingsVM.Dispose();
         }
 
         LV_TreeListSiblingsVM
             _lvTreeListSiblingsVM = null;
+
+        override protected double WantsLeft { get { return _nWantsLeft; } set { _nWantsLeft = value; } }
+        override protected double WantsTop { get { return _nWantsTop; } set { _nWantsTop = value; } }
 
         static double _nWantsLeft = -1;
         static double _nWantsTop = -1;

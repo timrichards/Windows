@@ -22,39 +22,23 @@ namespace DoubleFile
             DataContext = _lvDoubleFile_FilesVM = new LV_DoubleFile_FilesVM(_gd);
         }
 
-        internal bool ShowWindows()
+        protected override LocalWindow_DoubleFile CreateChainedWindow()
         {
-            return _lvDoubleFile_FilesVM.ShowWindows();
-        }
-
-        internal new void Show()
-        {
-            if (false == LocalIsClosed)
-            {
-                MBoxStatic.Assert(99904, false, bTraceOnly: true);
-                return;
-            }
-
-            base.Show();
-            
-            if (_nWantsLeft > -1)
-            {
-                Left = _nWantsLeft;
-                Top = _nWantsTop;
-            }
+            return new WinDoubleFile_Duplicates(_gd);
         }
 
         private void Window_Closed(object sender, System.EventArgs e)
         {
             _lvDoubleFile_FilesVM.Dispose();
-            _nWantsLeft = Left;
-            _nWantsTop = Top;
         }
 
         LV_DoubleFile_FilesVM
             _lvDoubleFile_FilesVM = null;
         GlobalData_Base
             _gd = null;
+
+        override protected double WantsLeft { get { return _nWantsLeft; } set { _nWantsLeft = value; } }
+        override protected double WantsTop { get { return _nWantsTop; } set { _nWantsTop = value; } }
 
         static double _nWantsLeft = -1;
         static double _nWantsTop = -1;

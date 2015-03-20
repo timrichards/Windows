@@ -17,6 +17,7 @@ namespace DoubleFile
             form_grid.Loaded += Grid_Loaded;
             Closed += Window_Closed;
             ResizeMode = ResizeMode.CanResize;
+            WinDoubleFile_FoldersVM.ShowWindows += ShowWindows;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -28,37 +29,19 @@ namespace DoubleFile
             DataContext = _winDoubleFile_FoldersVM;
         }
 
-        internal new void Show()
+        protected override LocalWindow_DoubleFile CreateChainedWindow()
         {
-            if (false == LocalIsClosed)
-            {
-                MBoxStatic.Assert(99903, false, bTraceOnly: true);
-                return;
-            }
-
-            base.Show();
-            
-            if (_nWantsLeft > -1)
-            {
-                Left = _nWantsLeft;
-                Top = _nWantsTop;
-            }
-        }
-
-        internal bool ShowWindows()
-        {
-            return _winDoubleFile_FoldersVM.ShowWindows();
+            return new WinDoubleFile_Files(_gd);
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            _winDoubleFile_FoldersVM.Dispose();     // closes the file list (domino/chain) when this tree view closes
+            _winDoubleFile_FoldersVM.Dispose();
             _treeView_DoubleFileVM.Dispose();
+            WinDoubleFile_FoldersVM.ShowWindows -= ShowWindows;
             DataContext = null;
             _lvProjectVM = null;
             _gd = null;
-            _nWantsLeft = Left;
-            _nWantsTop = Top;
         }
 
         LV_ProjectVM
@@ -69,6 +52,9 @@ namespace DoubleFile
             _winDoubleFile_FoldersVM = null;
         GlobalData_Base
             _gd = null;
+
+        override protected double WantsLeft { get { return _nWantsLeft; } set { _nWantsLeft = value; } }
+        override protected double WantsTop { get { return _nWantsTop; } set { _nWantsTop = value; } }
 
         static double _nWantsLeft = -1;
         static double _nWantsTop = -1;

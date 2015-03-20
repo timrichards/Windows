@@ -10,6 +10,7 @@ namespace DoubleFile
     partial class WinDoubleFile_DuplicatesVM : IDisposable
     {
         static internal event Action<LVitem_ProjectVM, string, string> GoToFile;
+        static internal event Action<string> UpdateFileDetail;
 
         internal WinDoubleFile_DuplicatesVM(GlobalData_Base gd)
         {
@@ -20,37 +21,21 @@ namespace DoubleFile
 
         public void Dispose()
         {
-            if ((null != _winDoubleFile_Detail) &&
-                (false == _winDoubleFile_Detail.LocalIsClosed))
-            {
-                _winDoubleFile_Detail.Close();
-            }
-
             Local.TreeSelect.FileListUpdated -= TreeSelect_FileList;
-        }
-
-        internal bool ShowWindows()
-        {
-            if ((null != _winDoubleFile_Detail) &&
-                (false == _winDoubleFile_Detail.LocalIsClosed))
-            {
-                _winDoubleFile_Detail.ShowWindows();
-                return false;
-            }
-
-            (_winDoubleFile_Detail = new WinDoubleFile_Detail(_gd)).Show();
-            return true;
         }
 
         void TreeSelect_FileList(IEnumerable<string> lsFileLines, string strListingFile)
         {
             UtilProject.UIthread(Items.Clear);
-            _winDoubleFile_Detail.UpdateFileDetail(/*clear items*/);
+
+            if (null != UpdateFileDetail)
+                UpdateFileDetail(null /*clear items*/);
         }
 
         internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, string strFileLine)
         {
-            _winDoubleFile_Detail.UpdateFileDetail(strFileLine);
+            if (null != UpdateFileDetail)
+                UpdateFileDetail(strFileLine);
 
             Items.Clear();
 
@@ -125,8 +110,6 @@ namespace DoubleFile
             GoToFile(SelectedItem.LVitem_ProjectVM, SelectedItem.Path, SelectedItem.Filename);
         }
 
-        WinDoubleFile_Detail
-            _winDoubleFile_Detail = null;
         GlobalData_Base
             _gd = null;
     }

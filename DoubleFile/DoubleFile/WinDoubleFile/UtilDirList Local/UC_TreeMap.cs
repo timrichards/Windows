@@ -278,6 +278,8 @@ namespace Local
 
             if (null != TreeMapChildSelected)
                 TreeMapChildSelected(treeNodeChild);
+
+            _threadTreeSelect = new Local.TreeSelect(treeNodeChild, treeNodeChild.TreeView._dictVolumeInfo, false, false).DoThreadFactory();
         }
 
         static LocalTreeNode FindMapNode(LocalTreeNode treeNode_in, Point pt, bool bNextNode = false)
@@ -458,10 +460,18 @@ namespace Local
 
         void RenderA(LocalTreeNode treeNode)
         {
+            if ((null != _threadTreeSelect) &&
+                _threadTreeSelect.IsAlive)
+            {
+                return;     // one infinite loop
+            }
+
             InvalidatePushRef(() => Render(treeNode));
 
             if (null != TreeMapRendered)
                 TreeMapRendered(treeNode);
+
+            _threadTreeSelect = new Local.TreeSelect(treeNode, treeNode.TreeView._dictVolumeInfo, false, false).DoThreadFactory();
         }
 
         void Render(LocalTreeNode treeNode)
@@ -1042,6 +1052,8 @@ namespace Local
             _nInvalidateRef = 0;
         bool
             _bClearingSelection = false;
+        Thread
+            _threadTreeSelect = null;
 
         // Recurse class
         ConcurrentBag<RenderAction>

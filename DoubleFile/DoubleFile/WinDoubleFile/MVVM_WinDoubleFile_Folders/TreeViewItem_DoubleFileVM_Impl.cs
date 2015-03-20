@@ -12,7 +12,7 @@ namespace DoubleFile
                 return;
             }
 
-            new Local.TreeSelect(_datum, _TVVM._dictVolumeInfo, false, false).DoThreadFactory();
+            new Local.TreeSelect(_datum, _datum.TreeView._dictVolumeInfo, false, false).DoThreadFactory();
         }
 
         internal void GoToFile(IEnumerable<string> asPath, string strFile)

@@ -5,6 +5,8 @@ namespace DoubleFile
 {
     class LocalTV
     {
+        internal Dictionary<string, string>
+            _dictVolumeInfo = null;
         internal LocalTreeNodeCollection
             Nodes { get; private set; }
         internal LocalTreeNode

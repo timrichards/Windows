@@ -128,6 +128,9 @@ namespace DoubleFile
 
         static string Get(int nIndex)
         {
+            if (0 == _refCount)
+                return null;
+
             return _bGenerating ? _dictStringsRev[nIndex] : _acStrings[nIndex];
         }
 

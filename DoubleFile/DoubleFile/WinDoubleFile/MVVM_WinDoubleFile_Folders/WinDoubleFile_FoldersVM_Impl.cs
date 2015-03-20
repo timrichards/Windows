@@ -31,7 +31,11 @@ namespace DoubleFile
         {
             TreeCleanup();
 
-            _tvVM._dictVolumeInfo.Clear();
+            if ((false == _listTreeNodes.IsEmpty()) &&
+                (null != _listTreeNodes[0].TreeView))
+            {
+                _listTreeNodes[0].TreeView._dictVolumeInfo.Clear();
+            }
 
             // m_dictNodes is tested to recreate tree.
             DictNodes = null;
@@ -101,6 +105,9 @@ namespace DoubleFile
             TreeCleanup();
 
             var localTV = new LocalTV();
+
+            localTV._dictVolumeInfo = _dictVolumeInfo;
+
             var localLVclones = new LocalLV();
             var localLVsameVol = new LocalLV();
             var localLVsolitary = new LocalLV();
@@ -215,7 +222,7 @@ namespace DoubleFile
                 DictNodes = new ConcurrentDictionary<FolderKeyTuple, KeyList<LocalTreeNode>>();
 
             Tree =
-                new Local.Tree(_gd, _lvProjectVM, DictNodes, _tvVM._dictVolumeInfo,
+                new Local.Tree(_gd, _lvProjectVM, DictNodes, _dictVolumeInfo,
                     TreeStatusCallback, TreeDoneCallback)
                 .DoThreadFactory();
 
@@ -228,5 +235,8 @@ namespace DoubleFile
         const string _ksFolderTreeKey = "Creating folder tree browser";
 
         bool _bFileDictDone = false;
+
+        Dictionary<string, string>
+            _dictVolumeInfo = new Dictionary<string, string>();
     }
 }

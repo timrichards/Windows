@@ -14,8 +14,6 @@ namespace DoubleFile
             _listExpanded = new KeyList<TreeViewItem_DoubleFileVM>();
         internal readonly TreeView
             _TVFE = null;
-        internal Dictionary<string, string>
-            _dictVolumeInfo = new Dictionary<string, string>();
 
         internal TreeView_DoubleFileVM(TreeView tvfe)
         {

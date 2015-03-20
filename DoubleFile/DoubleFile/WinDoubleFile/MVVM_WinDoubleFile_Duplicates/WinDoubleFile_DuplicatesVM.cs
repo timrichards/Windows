@@ -15,6 +15,7 @@ namespace DoubleFile
                     return;
 
                 _selectedItem = value;
+                RaisePropertyChanged("SelectedItem");
 
                 if (null == value)
                     return;

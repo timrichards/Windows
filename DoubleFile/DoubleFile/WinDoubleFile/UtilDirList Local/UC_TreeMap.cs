@@ -279,6 +279,9 @@ namespace Local
             if (null != TreeMapChildSelected)
                 TreeMapChildSelected(treeNodeChild);
 
+            if (null == treeNodeChild.TreeView)
+                return;
+
             _threadTreeSelect = new Local.TreeSelect(treeNodeChild, treeNodeChild.TreeView._dictVolumeInfo, false, false).DoThreadFactory();
         }
 

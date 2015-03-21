@@ -30,7 +30,7 @@ namespace DoubleFile
 
         protected override LocalWindow_DoubleFile CreateChainedWindow()
         {
-            return new WinDoubleFile_Files();
+            return new WinTreeMap();
         }
 
         private void Window_Closed(object sender, EventArgs e)

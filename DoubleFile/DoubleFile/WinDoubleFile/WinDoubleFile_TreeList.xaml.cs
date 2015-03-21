@@ -19,6 +19,11 @@ namespace DoubleFile
             form_lvSiblings.DataContext = _lvTreeListSiblingsVM = new LV_TreeListSiblingsVM(lvChildrenVM);
         }
 
+        protected override LocalWindow_DoubleFile CreateChainedWindow()
+        {
+            return new WinDoubleFile_Files();
+        }
+
         private void Window_Closed(object sender, System.EventArgs e)
         {
             _lvTreeListSiblingsVM.Dispose();

@@ -27,11 +27,6 @@ namespace DoubleFile
             _lvFileDetailVM.Update(strFileLine);
         }
 
-        protected override LocalWindow_DoubleFile CreateChainedWindow()
-        {
-            return new WinTreeMap();
-        }
-
         private void Window_Closed(object sender, System.EventArgs e)
         {
             _lvFolderDetailVM.Dispose();

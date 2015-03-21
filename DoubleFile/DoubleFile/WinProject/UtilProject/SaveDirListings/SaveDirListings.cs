@@ -15,13 +15,12 @@ namespace DoubleFile
             return ((strDrive.Length > 2) && char.IsLetter(strDrive[0]) && (strDrive.Substring(1, 2) == @":\"));
         }
 
-        internal SaveDirListings(GlobalData_Base gd_in,
+        internal SaveDirListings(
             LV_ProjectVM lvProjectVM,
             SaveDirListingsStatusDelegate statusCallback,
             Action doneCallback)
         {
             IsAborted = false;
-            gd = gd_in;
             m_lvProjectVM = lvProjectVM;
             m_statusCallback = statusCallback;
             m_doneCallback = doneCallback;
@@ -58,7 +57,7 @@ namespace DoubleFile
                 in m_lvProjectVM.ItemsCast
                 .Where(lvItemProjectVM => lvItemProjectVM.WouldSave))
             {
-                m_cbagWorkers.Add(new SaveDirListing(gd, lvItemProjectVM, m_statusCallback).DoThreadFactory());
+                m_cbagWorkers.Add(new SaveDirListing(lvItemProjectVM, m_statusCallback).DoThreadFactory());
             }
 
             foreach (var worker in m_cbagWorkers)
@@ -69,7 +68,7 @@ namespace DoubleFile
             UtilProject.WriteLine(string.Format("Finished saving directory listings in {0} seconds.",
                 ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
-            if (IsAborted || gd.WindowClosed)
+            if (App.LocalExit || IsAborted)
             {
                 return;
             }
@@ -77,7 +76,6 @@ namespace DoubleFile
             m_doneCallback();
         }
 
-        readonly GlobalData_Base gd = null;
         readonly SaveDirListingsStatusDelegate m_statusCallback = null;
         readonly Action m_doneCallback = null;
         Thread m_thread = null;

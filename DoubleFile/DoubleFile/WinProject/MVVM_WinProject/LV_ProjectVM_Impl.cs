@@ -8,18 +8,11 @@ namespace DoubleFile
     {
         internal bool Unsaved { get; set; }
 
-        internal LV_ProjectVM(GlobalData_Base gd = null, LV_ProjectVM lvProjectVM = null)
+        internal LV_ProjectVM(LV_ProjectVM lvProjectVM = null)
         {
-            _gd = gd;
-
             if (null == lvProjectVM)
             {
                 return;
-            }
-
-            if (null == _gd)
-            {
-                _gd = lvProjectVM._gd;
             }
 
             foreach (var lvItemVM in lvProjectVM.ItemsCast)
@@ -352,7 +345,5 @@ namespace DoubleFile
             MBoxStatic.Assert(99987, (false == (bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo || bDriveLetter_Todo)));
             return true;
         }
-
-        GlobalData_Base _gd = null;
     }
 }

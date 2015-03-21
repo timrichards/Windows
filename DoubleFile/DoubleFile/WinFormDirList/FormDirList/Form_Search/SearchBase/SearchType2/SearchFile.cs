@@ -58,10 +58,8 @@ namespace DoubleFile
 
                     while ((strLine = file.ReadLine()) != null)
                     {
-                        if (m_bThreadAbort || gd.WindowClosed)
-                        {
+                        if (App.LocalExit || m_bThreadAbort)
                             return;
-                        }
 
                         bool bDir = strLine.StartsWith(FileParse.ksLineType_Directory);
                         bool bFile = strLine.StartsWith(FileParse.ksLineType_File);

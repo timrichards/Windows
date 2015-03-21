@@ -9,7 +9,7 @@ namespace Local
 {
     partial class Collate
     {
-        internal Collate(GlobalData_Base gd,
+        internal Collate(
             ConcurrentDictionary<FolderKeyTuple, KeyList<LocalTreeNode>> dictNodes,
             LocalTV tvBrowse,
             LocalLV lvClones,
@@ -20,7 +20,6 @@ namespace Local
             List<LocalLVitem> lsLVignore,
             bool bLoose)
         {
-            _gd = gd;
             _static_this = this;
             _dictNodes = dictNodes;
             _tvBrowse = tvBrowse;
@@ -172,7 +171,7 @@ namespace Local
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
 
-                if (_bThreadAbort || _gd.WindowClosed)
+                if (App.LocalExit || _bThreadAbort)
                 {
                     return;
                 }
@@ -193,7 +192,7 @@ namespace Local
 
                     foreach (var treeNode_A in listNodes)
                     {
-                        if (_bThreadAbort || _gd.WindowClosed)
+                        if (App.LocalExit || _bThreadAbort)
                         {
                             return;
                         }
@@ -269,7 +268,7 @@ namespace Local
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
                 
-                if (_bThreadAbort || _gd.WindowClosed)
+                if (App.LocalExit || _bThreadAbort)
                 {
                     return;
                 }
@@ -287,10 +286,8 @@ namespace Local
 
                 // load up listLVdiffVol
 
-                if (_bThreadAbort || _gd.WindowClosed)
-                {
+                if (App.LocalExit || _bThreadAbort)
                     return;
-                }
 
                 var nClones = listNodes.Value.Count;
 
@@ -328,10 +325,8 @@ namespace Local
 
                 foreach (var treeNode in listNodes.Value)
                 {
-                    if (_bThreadAbort || _gd.WindowClosed)
-                    {
+                    if (App.LocalExit || _bThreadAbort)
                         return;
-                    }
 
                     if (treeNode.Level < nLevel)
                     {
@@ -390,10 +385,8 @@ namespace Local
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator);
 
-                if (_bThreadAbort || _gd.WindowClosed)
-                {
+                if (App.LocalExit || _bThreadAbort)
                     return;
-                }
 
                 var treeNode = kvp.Value;
 
@@ -442,10 +435,8 @@ namespace Local
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
 
-                if (_bThreadAbort || _gd.WindowClosed)
-                {
+                if (App.LocalExit || _bThreadAbort)
                     return;
-                }
 
                 SnowUniqueParents(treeNode);
 
@@ -510,10 +501,8 @@ namespace Local
                 UtilProject.WriteLine("Step2_OnForm_A " + nCount);
             }
 
-            if (_bThreadAbort || _gd.WindowClosed)
-            {
+            if (App.LocalExit || _bThreadAbort)
                 return;
-            }
 
             MBoxStatic.Assert(1305.6333, _lvClones.Items.IsEmpty());
             UtilDirList.Write("B");
@@ -521,10 +510,8 @@ namespace Local
             _lvClones.Invalidate();
             UtilProject.WriteLine("B");
 
-            if (_bThreadAbort || _gd.WindowClosed)
-            {
+            if (App.LocalExit || _bThreadAbort)
                 return;
-            }
 
             MBoxStatic.Assert(1305.6334, _lvUnique.Items.IsEmpty());
             UtilDirList.Write("C");
@@ -532,10 +519,8 @@ namespace Local
             _lvUnique.Invalidate();
             UtilProject.WriteLine("C");
 
-            if (_bThreadAbort || _gd.WindowClosed)
-            {
+            if (App.LocalExit || _bThreadAbort)
                 return;
-            }
 
             MBoxStatic.Assert(1305.6335, _lvSameVol.Items.IsEmpty());
             UtilDirList.Write("D");
@@ -622,10 +607,9 @@ namespace Local
 
                     foreach (var subnode in listClones)
                     {
-                        if (_bThreadAbort || _gd.WindowClosed)
-                        {
+                        if (App.LocalExit || _bThreadAbort)
                             return;
-                        }
+
 
                         MBoxStatic.Assert(1305.6309, subnode.NodeDatum.Key.Equals(nodeDatum.Key));
 
@@ -675,10 +659,8 @@ namespace Local
 
             foreach (var subNode in treeNode.Nodes)
             {
-                if (_bThreadAbort || _gd.WindowClosed)
-                {
+                if (App.LocalExit || _bThreadAbort)
                     return;
-                }
 
                 DifferentVolsQuery(dictClones, subNode, rootClone);
             }
@@ -717,10 +699,8 @@ namespace Local
 
             do
             {
-                if (_bThreadAbort || _gd.WindowClosed)
-                {
+                if (App.LocalExit || _bThreadAbort)
                     return;
-                }
 
                 if (sbMatch.Contains(treeNode.Text.ToLower()))
                 {
@@ -787,6 +767,5 @@ namespace Local
 
         bool _bThreadAbort = false;
         static Collate _static_this = null;
-        readonly GlobalData_Base _gd = null;
     }
 }

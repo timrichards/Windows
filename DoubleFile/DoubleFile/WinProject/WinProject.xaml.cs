@@ -10,9 +10,8 @@ namespace DoubleFile
     {
         internal LV_ProjectVM LVprojectVM { get; private set; }
 
-        internal WinProject(GlobalData_Base gd_in, LV_ProjectVM lvProjectVM = null, bool bOpenProject = false)
+        internal WinProject(LV_ProjectVM lvProjectVM = null, bool bOpenProject = false)
         {
-            _gd = gd_in;
             _bOpenProject = bOpenProject;
             LVprojectVM = lvProjectVM;
 
@@ -24,8 +23,8 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            var lvProjectVM = new LV_ProjectVM(_gd, LVprojectVM);
-            var win = new WinProjectVM(_gd, lvProjectVM);
+            var lvProjectVM = new LV_ProjectVM(LVprojectVM);
+            var win = new WinProjectVM(lvProjectVM);
 
             form_lv.DataContext = lvProjectVM;
             DataContext = win;
@@ -69,7 +68,6 @@ namespace DoubleFile
             }
         }
 
-        readonly GlobalData_Base _gd = null;
         readonly bool _bOpenProject = false;
     }
 }

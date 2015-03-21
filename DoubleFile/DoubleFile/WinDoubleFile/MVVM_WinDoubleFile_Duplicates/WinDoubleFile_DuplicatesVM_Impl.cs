@@ -12,9 +12,8 @@ namespace DoubleFile
         static internal event Action<LVitem_ProjectVM, string, string> GoToFile;
         static internal event Action<string> UpdateFileDetail;
 
-        internal WinDoubleFile_DuplicatesVM(GlobalData_Base gd)
+        internal WinDoubleFile_DuplicatesVM()
         {
-            _gd = gd;
             Icmd_Goto = new RelayCommand(param => Goto(), param => null != _selectedItem);
             Local.TreeSelect.FileListUpdated += TreeSelect_FileList;
         }
@@ -109,8 +108,5 @@ namespace DoubleFile
 
             GoToFile(_selectedItem.LVitem_ProjectVM, _selectedItem.Path, _selectedItem.Filename);
         }
-
-        GlobalData_Base
-            _gd = null;
     }
 }

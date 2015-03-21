@@ -10,10 +10,8 @@ namespace DoubleFile
             // can't be struct because of null
             class DirData
             {
-                internal DirData(GlobalData_Base gd,
-                    RootNode rootNode)
+                internal DirData(RootNode rootNode)
                 {
-                    _gd = gd;
                     _rootNode = rootNode;
                 }
 
@@ -21,7 +19,7 @@ namespace DoubleFile
                 {
                     string str = str_in.TrimEnd('\\');
 
-                    _rootNode.Nodes.Add(str, new Node(_gd, str, nLineNo, nLength, nHashParity, _rootNode));
+                    _rootNode.Nodes.Add(str, new Node(str, nLineNo, nLength, nHashParity, _rootNode));
                 }
 
                 internal TreeNode AddToTree(string strVolumeName, out string strRootPath)
@@ -42,8 +40,6 @@ namespace DoubleFile
 
                 RootNode
                     _rootNode = null;
-                readonly GlobalData_Base
-                    _gd = null;
             }
         }
     }

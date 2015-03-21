@@ -8,6 +8,8 @@ namespace DoubleFile
     /// </summary>
     public partial class App : Application
     {
+        internal static FileDictionary FileDictionary = new FileDictionary();
+
         internal static event Action DeactivateDidOccur;
         internal static bool LocalActivated { get; private set; }
         internal static bool LocalExit { get; private set; }
@@ -32,7 +34,7 @@ namespace DoubleFile
 
             Activated += Application_Activated;
             Deactivated += (o, e) => { LocalActivated = false; if (null != DeactivateDidOccur) DeactivateDidOccur(); };
-            Exit += (o, e) => LocalExit = true;
+            Exit += App_Exit;
 
             DispatcherUnhandledException += (o, e) =>
             {
@@ -41,6 +43,13 @@ namespace DoubleFile
             };
 
             ShutdownMode = ShutdownMode.OnMainWindowClose;
+        }
+
+        void App_Exit(object sender, ExitEventArgs e)
+        {
+            FileDictionary.Dispose();
+            FileDictionary = null;
+            LocalExit = true;
         }
 
         private void Application_Activated(object sender, System.EventArgs e)

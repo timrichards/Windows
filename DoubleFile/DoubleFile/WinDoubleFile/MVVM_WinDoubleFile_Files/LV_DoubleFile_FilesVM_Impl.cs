@@ -6,9 +6,8 @@ namespace DoubleFile
 {
     partial class LV_DoubleFile_FilesVM : IDisposable
     {
-        internal LV_DoubleFile_FilesVM(GlobalData_Base gd)
+        internal LV_DoubleFile_FilesVM()
         {
-            _gd = gd;
             Local.TreeSelect.FileListUpdated += TreeSelect_FileList;
         }
 
@@ -30,7 +29,7 @@ namespace DoubleFile
             {
                 string strFilename = null;
                 var nLine = -1;
-                var lsDuplicates = _gd.FileDictionary.GetDuplicates(strFileLine, out strFilename, out nLine);
+                var lsDuplicates = App.FileDictionary.GetDuplicates(strFileLine, out strFilename, out nLine);
                 var nCount = (null != lsDuplicates) ? lsDuplicates.Count() - 1 : 0;
                 var strCount = (nCount > 0) ? "" + nCount : null;
                 var lvItem = new LVitem_DoubleFile_FilesVM(new[] { strFilename, strCount });
@@ -67,8 +66,5 @@ namespace DoubleFile
 
             UtilProject.UIthread(() => Add(lsItems));
         }
-
-        GlobalData_Base
-            _gd = null;
     }
 }

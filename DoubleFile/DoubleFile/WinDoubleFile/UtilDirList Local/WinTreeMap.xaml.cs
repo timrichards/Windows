@@ -29,10 +29,9 @@ namespace DoubleFile
             form_ucTreeMap.Dispose();
         }
 
-        override protected double WantsLeft { get { return _nWantsLeft; } set { _nWantsLeft = value; } }
-        override protected double WantsTop { get { return _nWantsTop; } set { _nWantsTop = value; } }
-
-        static double _nWantsLeft = -1;
-        static double _nWantsTop = -1;
+        override protected Rect
+            PosAtClose { get { return _rcPosAtClose; } set { _rcPosAtClose = value; } }
+        static Rect
+            _rcPosAtClose = Rect.Empty;
     }
 }

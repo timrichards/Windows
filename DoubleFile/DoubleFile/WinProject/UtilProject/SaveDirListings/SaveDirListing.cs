@@ -13,10 +13,10 @@ namespace DoubleFile
     {
         class SaveDirListing : TraverseTreeBase
         {
-            internal SaveDirListing(GlobalData_Base gd_in,
+            internal SaveDirListing(
                 LVitem_ProjectVM volStrings, 
                 SaveDirListingsStatusDelegate statusCallback)
-                : base(gd_in, volStrings)
+                : base(volStrings)
             {
                 m_statusCallback = statusCallback;
             }
@@ -224,7 +224,7 @@ namespace DoubleFile
                         fs.WriteLine(FormatString(strDir: ksTotalLengthLoc01, nLength: LengthRead));
                     }
 
-                    if (m_bThreadAbort || gd.WindowClosed)
+                    if (App.LocalExit || m_bThreadAbort)
                     {
                         File.Delete(LVitemProjectVM.ListingFile);
                         return;

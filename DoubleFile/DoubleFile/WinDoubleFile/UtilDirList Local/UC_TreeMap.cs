@@ -279,10 +279,7 @@ namespace Local
             if (null != TreeMapChildSelected)
                 TreeMapChildSelected(treeNodeChild);
 
-            if (null == treeNodeChild.TreeView)
-                return;
-
-            _threadTreeSelect = new Local.TreeSelect(treeNodeChild, treeNodeChild.TreeView._dictVolumeInfo, false, false).DoThreadFactory();
+            _threadTreeSelect = new Local.TreeSelect(treeNodeChild).DoThreadFactory();
         }
 
         static LocalTreeNode FindMapNode(LocalTreeNode treeNode_in, Point pt, bool bNextNode = false)
@@ -474,7 +471,7 @@ namespace Local
             if (null != TreeMapRendered)
                 TreeMapRendered(treeNode);
 
-            _threadTreeSelect = new Local.TreeSelect(treeNode, treeNode.TreeView._dictVolumeInfo, false, false).DoThreadFactory();
+            _threadTreeSelect = new Local.TreeSelect(treeNode).DoThreadFactory();
         }
 
         void Render(LocalTreeNode treeNode)

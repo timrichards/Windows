@@ -8,10 +8,8 @@ namespace DoubleFile
     /// </summary>
     partial class WinDoubleFile_Duplicates
     {
-        internal WinDoubleFile_Duplicates(GlobalData_Base gd)
+        internal WinDoubleFile_Duplicates()
         {
-            _gd = gd;
-
             InitializeComponent();
             form_grid.Loaded += Grid_Loaded;
             Closed += Window_Closed;
@@ -21,12 +19,12 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            DataContext = _winDoubleFile_DuplicatesVM = new WinDoubleFile_DuplicatesVM(_gd);
+            DataContext = _winDoubleFile_DuplicatesVM = new WinDoubleFile_DuplicatesVM();
         }
 
         protected override LocalWindow_DoubleFile CreateChainedWindow()
         {
-            return new WinDoubleFile_Detail(_gd);
+            return new WinDoubleFile_Detail();
         }
 
         internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, string strFileLine)
@@ -42,13 +40,10 @@ namespace DoubleFile
 
         WinDoubleFile_DuplicatesVM
             _winDoubleFile_DuplicatesVM = null;
-        GlobalData_Base
-            _gd = null;
 
-        override protected double WantsLeft { get { return _nWantsLeft; } set { _nWantsLeft = value; } }
-        override protected double WantsTop { get { return _nWantsTop; } set { _nWantsTop = value; } }
-
-        static double _nWantsLeft = -1;
-        static double _nWantsTop = -1;
+        override protected Rect
+            PosAtClose { get { return _rcPosAtClose; } set { _rcPosAtClose = value; } }
+        static Rect
+            _rcPosAtClose = Rect.Empty;
     }
 }

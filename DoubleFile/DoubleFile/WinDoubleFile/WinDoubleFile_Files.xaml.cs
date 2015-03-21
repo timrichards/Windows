@@ -7,10 +7,8 @@ namespace DoubleFile
     /// </summary>
     partial class WinDoubleFile_Files
     {
-        internal WinDoubleFile_Files(GlobalData_Base gd)
+        internal WinDoubleFile_Files()
         {
-            _gd = gd;
-
             InitializeComponent();
             form_grid.Loaded += Grid_Loaded;
             Closed += Window_Closed;
@@ -19,12 +17,12 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            DataContext = _lvDoubleFile_FilesVM = new LV_DoubleFile_FilesVM(_gd);
+            DataContext = _lvDoubleFile_FilesVM = new LV_DoubleFile_FilesVM();
         }
 
         protected override LocalWindow_DoubleFile CreateChainedWindow()
         {
-            return new WinDoubleFile_Duplicates(_gd);
+            return new WinDoubleFile_Duplicates();
         }
 
         private void Window_Closed(object sender, System.EventArgs e)
@@ -34,13 +32,10 @@ namespace DoubleFile
 
         LV_DoubleFile_FilesVM
             _lvDoubleFile_FilesVM = null;
-        GlobalData_Base
-            _gd = null;
 
-        override protected double WantsLeft { get { return _nWantsLeft; } set { _nWantsLeft = value; } }
-        override protected double WantsTop { get { return _nWantsTop; } set { _nWantsTop = value; } }
-
-        static double _nWantsLeft = -1;
-        static double _nWantsTop = -1;
+        override protected Rect
+            PosAtClose { get { return _rcPosAtClose; } set { _rcPosAtClose = value; } }
+        static Rect
+            _rcPosAtClose = Rect.Empty;
     }
 }

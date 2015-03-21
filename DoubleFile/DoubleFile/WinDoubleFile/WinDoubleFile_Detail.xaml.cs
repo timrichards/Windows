@@ -7,10 +7,8 @@ namespace DoubleFile
     /// </summary>
     partial class WinDoubleFile_Detail
     {
-        internal WinDoubleFile_Detail(GlobalData_Base gd)
+        internal WinDoubleFile_Detail()
         {
-            _gd = gd;
-
             InitializeComponent();
             form_grid.Loaded += Grid_Loaded;
             Closed += Window_Closed;
@@ -19,9 +17,9 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            form_lvFile.DataContext = _lvFileDetailVM = new LV_FileDetailVM(_gd);          
-            form_lvFolder.DataContext = _lvFolderDetailVM = new LV_FolderDetailVM(_gd);
-            form_lvVolume.DataContext = _lvVolumeDetailVM = new LV_VolumeDetailVM(_gd);
+            form_lvFile.DataContext = _lvFileDetailVM = new LV_FileDetailVM();          
+            form_lvFolder.DataContext = _lvFolderDetailVM = new LV_FolderDetailVM();
+            form_lvVolume.DataContext = _lvVolumeDetailVM = new LV_VolumeDetailVM();
         }
 
         internal void UpdateFileDetail(string strFileLine)
@@ -47,13 +45,10 @@ namespace DoubleFile
             _lvFolderDetailVM = null;
         LV_VolumeDetailVM
             _lvVolumeDetailVM = null;
-        GlobalData_Base
-            _gd = null;
 
-        override protected double WantsLeft { get { return _nWantsLeft; } set { _nWantsLeft = value; } }
-        override protected double WantsTop { get { return _nWantsTop; } set { _nWantsTop = value; } }
-
-        static double _nWantsLeft = -1;
-        static double _nWantsTop = -1;
+        override protected Rect
+            PosAtClose { get { return _rcPosAtClose; } set { _rcPosAtClose = value; } }
+        static Rect
+            _rcPosAtClose = Rect.Empty;
     }
 }

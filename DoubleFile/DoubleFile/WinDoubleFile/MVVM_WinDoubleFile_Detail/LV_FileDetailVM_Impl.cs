@@ -5,11 +5,6 @@ namespace DoubleFile
 {
     partial class LV_FileDetailVM
     {
-        internal LV_FileDetailVM(GlobalData_Base gd)
-        {
-            _gd = gd;
-        }
-
         internal void Update(string strFileLine = null)
         {
             UtilProject.UIthread(() =>
@@ -49,7 +44,5 @@ namespace DoubleFile
                 RaiseItems();
             });
         }
-
-        GlobalData_Base _gd = null;
     }
 }

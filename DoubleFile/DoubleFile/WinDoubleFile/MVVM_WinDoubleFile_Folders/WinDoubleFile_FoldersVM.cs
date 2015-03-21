@@ -5,7 +5,7 @@ namespace DoubleFile
 {
     partial class WinDoubleFile_FoldersVM : ObservableObject_OwnerWindow, IDisposable
     {
-        internal WinDoubleFile_FoldersVM(GlobalData_Base gd, TreeView_DoubleFileVM tvVM, LV_ProjectVM lvProjectVM)
+        internal WinDoubleFile_FoldersVM(TreeView_DoubleFileVM tvVM, LV_ProjectVM lvProjectVM)
         {
             _lvProjectVM = lvProjectVM;
 
@@ -16,7 +16,6 @@ namespace DoubleFile
             }
 
             _nCorrelateProgressDenominator = _lvProjectVM.Count;
-            _gd = gd;
             _tvVM = tvVM;
             _winProgress = new WinProgress(); 
             TabledString.AddRef();
@@ -34,8 +33,6 @@ namespace DoubleFile
             TabledString.DropRef();
         }
 
-        readonly GlobalData_Base
-            _gd = null;
         readonly TreeView_DoubleFileVM
             _tvVM = null;
         readonly LV_ProjectVM

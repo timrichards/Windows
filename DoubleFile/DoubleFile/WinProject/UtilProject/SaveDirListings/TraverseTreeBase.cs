@@ -8,7 +8,6 @@ namespace DoubleFile
     {
         abstract class TraverseTreeBase
         {
-            protected readonly GlobalData_Base gd = null;
             protected long LengthRead { get; private set; }
 
             protected List<string> ErrorList { get { return _errorList; } }
@@ -17,10 +16,8 @@ namespace DoubleFile
             protected bool m_bThreadAbort = false;
             protected readonly LVitem_ProjectVM LVitemProjectVM = null;
 
-            protected TraverseTreeBase(GlobalData_Base gd_in,
-                LVitem_ProjectVM lvProjectVM)
+            protected TraverseTreeBase(LVitem_ProjectVM lvProjectVM)
             {
-                gd = gd_in;
                 LVitemProjectVM = lvProjectVM;
             }
 
@@ -63,7 +60,7 @@ namespace DoubleFile
 
                 while (false == stackDirs.IsEmpty())
                 {
-                    if (m_bThreadAbort || gd.WindowClosed)
+                    if (App.LocalExit || m_bThreadAbort)
                     {
                         return null;
                     }
@@ -92,7 +89,7 @@ namespace DoubleFile
 
                     foreach (var winFile in listFiles)
                     {
-                        if (m_bThreadAbort || gd.WindowClosed)
+                        if (App.LocalExit || m_bThreadAbort)
                         {
                             return null;
                         }

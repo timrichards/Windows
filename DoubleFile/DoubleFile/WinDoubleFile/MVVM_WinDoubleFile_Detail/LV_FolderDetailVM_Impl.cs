@@ -5,9 +5,8 @@ namespace DoubleFile
 {
     partial class LV_FolderDetailVM : IDisposable
     {
-        internal LV_FolderDetailVM(GlobalData_Base gd)
+        internal LV_FolderDetailVM()
         {
-            _gd = gd;
             Local.TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
         }
 
@@ -51,7 +50,5 @@ namespace DoubleFile
                 RaiseItems();
             });
         }
-
-        GlobalData_Base _gd = null;
     }
 }

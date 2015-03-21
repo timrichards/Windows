@@ -14,13 +14,13 @@ namespace Local
 
     partial class Tree : TreeBase
     {
-        internal Tree(GlobalData_Base gd_in,
+        internal Tree(
             LV_ProjectVM lvProjectVM,
             ConcurrentDictionary<FolderKeyTuple, KeyList<LocalTreeNode>> dictNodes,
             Dictionary<string, string> dictDriveInfo,
             TreeStatusDelegate statusCallback,
             Action doneCallback)
-            : base(gd_in, dictNodes, dictDriveInfo, statusCallback)
+            : base(dictNodes, dictDriveInfo, statusCallback)
         {
             IsAborted = false;
             LVprojectVM = lvProjectVM;
@@ -81,7 +81,7 @@ namespace Local
             UtilProject.WriteLine(string.Format("Completed tree in {0} seconds.",
                 ((int)(DateTime.Now - dtStart).TotalMilliseconds / 10) / 100.0));
 
-            if (IsAborted || gd.WindowClosed)
+            if (App.LocalExit || IsAborted)
             {
                 return;
             }

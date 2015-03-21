@@ -14,12 +14,10 @@ namespace DoubleFile
     {
         internal LV_ProjectVM LVprojectVM { get; private set; }
         internal WinFormDirList DirListForm { get; private set; }
-        internal GlobalData_Base _gd { get; private set; }
 
         public MainWindow()
             : base(bIsMainWindow: true)
         {
-            _gd = new GlobalData_Window(this);
             _gd_old = new GlobalData(this);
 
             InitializeComponent();
@@ -44,7 +42,7 @@ namespace DoubleFile
                 return;
             }
 
-            action(DirListForm, new LV_ProjectVM(_gd, LVprojectVM));
+            action(DirListForm, new LV_ProjectVM(LVprojectVM));
         }
 
         void ShowProjectWindow(bool bOpenProject = false)
@@ -61,11 +59,11 @@ namespace DoubleFile
                     return;
                 }
 
-                volumes = new WinProject(_gd, bOpenProject: true);
+                volumes = new WinProject(bOpenProject: true);
             }
             else
             {
-                volumes = new WinProject(_gd, LVprojectVM);
+                volumes = new WinProject(LVprojectVM);
             }
 
             if (false == (volumes.ShowDialog() ?? false))
@@ -85,15 +83,15 @@ namespace DoubleFile
 
             LVprojectVM = volumes.LVprojectVM;
 
-            new SaveListingsProcess(_gd, LVprojectVM);
+            new SaveListingsProcess(LVprojectVM);
 
-            _gd.FileDictionary.Clear();
+            App.FileDictionary.Clear();
             FormDirListAction(WinFormDirList.RestartTreeTimer);
 
             if ((null != _winDoubleFile_Folders) && (false == _winDoubleFile_Folders.LocalIsClosed))
             {
                 _winDoubleFile_Folders.Close();
-                (_winDoubleFile_Folders = new WinDoubleFile_Folders(_gd, LVprojectVM)).Show();
+                (_winDoubleFile_Folders = new WinDoubleFile_Folders(LVprojectVM)).Show();
                 _winDoubleFile_Folders.Closed += (o, a) => _winDoubleFile_Folders = null;
             }
         }
@@ -244,7 +242,7 @@ namespace DoubleFile
         {
             if ((null == _winDoubleFile_Folders) || (_winDoubleFile_Folders.LocalIsClosed))
             {
-                (_winDoubleFile_Folders = new WinDoubleFile_Folders(_gd, LVprojectVM)).Show();
+                (_winDoubleFile_Folders = new WinDoubleFile_Folders(LVprojectVM)).Show();
                 _winDoubleFile_Folders.Closed += (o, a) => _winDoubleFile_Folders = null;
             }
             else if (false == _winDoubleFile_Folders.ShowWindows())       // returns true if it created a window

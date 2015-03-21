@@ -11,19 +11,15 @@ namespace Local
             class Node
             {
                 // can't be struct because of object ==
-                internal Node(GlobalData_Base gd,
+                internal Node(
                     string in_str,
                     uint nLineNo,
                     ulong nLength,
                     int nHashParity,
                     RootNode rootNode)
                 {
-                    _gd = gd;
-
-                    if (_gd.WindowClosed)
-                    {
+                    if (App.LocalExit)
                         return;
-                    }
 
                     MBoxStatic.Assert(1301.2303, nLineNo != 0);
                     _rootNode = rootNode;
@@ -55,7 +51,7 @@ namespace Local
 
                     if (false == _rootNode.Nodes.TryGetValue(strParent, out nodeParent))
                     {
-                        nodeParent = new Node(_gd, strParent, _rootNode.FirstLineNo, 0, _nHashParity, _rootNode);
+                        nodeParent = new Node(strParent, _rootNode.FirstLineNo, 0, _nHashParity, _rootNode);
                         _rootNode.Nodes.Add(strParent, nodeParent);
                     }
 
@@ -90,10 +86,8 @@ namespace Local
 
                 LocalTreeNode AddToTree()
                 {
-                    if (_gd.WindowClosed)
-                    {
+                    if (App.LocalExit)
                         return new LocalTreeNode();
-                    }
 
                     var nIndex = _strPath.LastIndexOf('\\');
                     var strShortPath = _bUseShortPath ? _strPath.Substring(nIndex + 1) : _strPath;
@@ -160,8 +154,6 @@ namespace Local
                     _bUseShortPath = true;
                 int
                     _nHashParity = 0;
-                readonly GlobalData_Base
-                    _gd = null;
             }
         }
     }

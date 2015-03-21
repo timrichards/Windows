@@ -8,11 +8,9 @@ namespace DoubleFile
         void DoTreeSelect()
         {
             if (false == _bSelected)
-            {
                 return;
-            }
 
-            new Local.TreeSelect(_datum, _datum.TreeView._dictVolumeInfo, false, false).DoThreadFactory();
+            new Local.TreeSelect(_datum).DoThreadFactory();
         }
 
         internal void GoToFile(IEnumerable<string> asPath, string strFile)

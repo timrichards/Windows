@@ -18,10 +18,8 @@ namespace DoubleFile
 
     class SaveListingsProcess
     {
-        internal SaveListingsProcess(GlobalData_Base gd_in,
-            LV_ProjectVM lvProjectVM)
+        internal SaveListingsProcess(LV_ProjectVM lvProjectVM)
         {
-            gd = gd_in;
             gd_old = GlobalData.Instance;
 
             var listNicknames = new List<string>();
@@ -74,7 +72,7 @@ namespace DoubleFile
                 gd_old.m_saveDirListings.EndThread();
             }
 
-            (gd_old.m_saveDirListings = new SaveDirListings(gd,
+            (gd_old.m_saveDirListings = new SaveDirListings(
                 lvProjectVM,
                 SaveDirListingsStatusCallback,
                 SaveDirListingsDoneCallback)).DoThreadFactory();
@@ -86,7 +84,7 @@ namespace DoubleFile
         {
             UtilProject.UIthread(() =>
             {
-                if (gd.WindowClosed || (gd_old.m_saveDirListings == null) || gd_old.m_saveDirListings.IsAborted)
+                if (App.LocalExit || (gd_old.m_saveDirListings == null) || gd_old.m_saveDirListings.IsAborted)
                 {
                     m_winProgress.Aborted = true;
 
@@ -123,7 +121,7 @@ namespace DoubleFile
 
         internal void SaveDirListingsDoneCallback()
         {
-            if (gd.WindowClosed || (gd_old.m_saveDirListings == null) || gd_old.m_saveDirListings.IsAborted)
+            if (App.LocalExit || (gd_old.m_saveDirListings == null) || gd_old.m_saveDirListings.IsAborted)
             {
                 return;
             }
@@ -143,7 +141,6 @@ namespace DoubleFile
             });
         }
 
-        readonly GlobalData_Base gd = null;
         GlobalData gd_old = null;
         WinProgress m_winProgress = null;
         bool m_bKeepShowingError = false;

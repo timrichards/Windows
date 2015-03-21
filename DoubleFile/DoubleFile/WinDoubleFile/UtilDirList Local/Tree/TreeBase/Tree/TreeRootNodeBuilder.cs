@@ -24,10 +24,8 @@ namespace Local
 
                 foreach (var node in treeNode.Nodes)
                 {
-                    if (m_bThreadAbort || gd.WindowClosed)
-                    {
+                    if (App.LocalExit || m_bThreadAbort)
                         return datum;
-                    }
 
                     datum += TreeSubnodeDetails(node);
                 }
@@ -198,7 +196,7 @@ namespace Local
                         .ReadLines(m_volStrings.ListingFile)
                         .Where(s => s.StartsWith(ksLineType_Start))
                         .FirstOnlyAssert(s => rootNode.FirstLineNo = uint.Parse(s.Split('\t')[1]));
-                    dirData = new DirData(gd, rootNode);
+                    dirData = new DirData(rootNode);
                 }
 
                 var ieLines = File
@@ -208,10 +206,8 @@ namespace Local
 
                 foreach (var strLine in ieLines)
                 {
-                    if (gd.WindowClosed)
-                    {
+                    if (App.LocalExit || m_bThreadAbort)
                         return;
-                    }
 
                     var asLine = strLine.Split('\t');
 

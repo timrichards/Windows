@@ -5,9 +5,8 @@ namespace DoubleFile
 {
     partial class LV_VolumeDetailVM : IDisposable
     {
-        internal LV_VolumeDetailVM(GlobalData_Base gd)
+        internal LV_VolumeDetailVM()
         {
-            _gd = gd;
             Local.TreeSelect.VolumeDetailUpdated += TreeSelect_VolumeDetail;
         }
 
@@ -20,17 +19,17 @@ namespace DoubleFile
         {
             UtilProject.UIthread(() =>
             {
-                Title = null;
+                Title = strTitle;
                 Items.Clear();
+
+                if (null == lasDetail)
+                    return;     // from lambda
 
                 foreach (var asLine in lasDetail)
                     Add(new LVitem_VolumeDetailVM(asLine), bQuiet: true);
 
-                Title = strTitle;
                 RaiseItems();
             });
         }
-
-        GlobalData_Base _gd = null;
     }
 }

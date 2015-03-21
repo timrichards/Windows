@@ -9,7 +9,7 @@ namespace DoubleFile
 {
     partial class SearchType2 : SearchBase
     {
-        internal SearchType2(GlobalData_Base gd_in,
+        internal SearchType2(
             LV_ProjectVM lvProjectVM,
             string strSearch, 
             bool bCaseSensitive,
@@ -18,7 +18,7 @@ namespace DoubleFile
             string strCurrentNode,
             SearchStatusDelegate statusCallback,
             Action doneCallback)
-            : base(gd_in, statusCallback)
+            : base(statusCallback)
         {
             m_lvProjectVM = lvProjectVM;
             m_strSearch = strSearch;
@@ -49,10 +49,8 @@ namespace DoubleFile
 
             UtilProject.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", m_strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
-            if (m_bThreadAbort || gd.WindowClosed)
-            {
+            if (App.LocalExit || m_bThreadAbort)
                 return;
-            }
 
             m_doneCallback();
         }

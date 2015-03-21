@@ -9,11 +9,13 @@ namespace Local
     partial class TreeSelect : UtilDirList
     {
         internal TreeSelect(LocalTreeNode node,
-            Dictionary<string, string> dictDriveInfo,
-            bool bCompareMode, bool bSecondComparePane)
+            bool bCompareMode = false, bool bSecondComparePane = false)
         {
             _treeNode = node;
-            _dictVolumeInfo = dictDriveInfo;
+
+            if (null != _treeNode.TreeView)
+                _dictVolumeInfo = _treeNode.TreeView._dictVolumeInfo;
+
             _bCompareMode = bCompareMode;
             _bSecondComparePane = bSecondComparePane;
         }

@@ -10,13 +10,13 @@ namespace DoubleFile
 
     partial class Tree : TreeBase
     {
-        internal Tree(GlobalData_Base gd_in,
+        internal Tree(
             LV_ProjectVM lvProjectVM,
             SortedDictionary<FolderKeyTuple, KeyList<TreeNode>> dictNodes,
             Dictionary<string, string> dictDriveInfo,
             TreeStatusDelegate statusCallback,
             Action doneCallback)
-            : base(gd_in, dictNodes, dictDriveInfo, statusCallback)
+            : base(dictNodes, dictDriveInfo, statusCallback)
         {
             LVprojectVM = lvProjectVM;
             m_doneCallback = doneCallback;
@@ -78,10 +78,8 @@ namespace DoubleFile
 
             UtilProject.WriteLine(string.Format("Completed tree in {0} seconds.", ((int)(DateTime.Now - dtStart).TotalMilliseconds / 10) / 100.0));
 
-            if (m_bThreadAbort || gd.WindowClosed)
-            {
+            if (App.LocalExit || m_bThreadAbort)
                 return;
-            }
 
             m_doneCallback();
         }

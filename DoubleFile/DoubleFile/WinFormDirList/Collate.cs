@@ -9,7 +9,7 @@ namespace DoubleFile
 {
     partial class Collate
     {
-        internal Collate(GlobalData_Base gd_in,
+        internal Collate(
             SortedDictionary<FolderKeyTuple, KeyList<TreeNode>> dictNodes,
             TreeView treeViewBrowse,
             SDL_ListView lvClones,
@@ -21,7 +21,6 @@ namespace DoubleFile
             List<ListViewItem> list_lvIgnore,
             bool bLoose)
         {
-            gd = gd_in;
             static_this = this;
             m_dictNodes = dictNodes;
             m_treeViewBrowse = treeViewBrowse;
@@ -154,10 +153,8 @@ namespace DoubleFile
 
             foreach (KeyValuePair<FolderKeyTuple, List<TreeNode>> pair in dictNodes)
             {
-                if (m_bThreadAbort || gd.WindowClosed)
-                {
+                if (App.LocalExit || m_bThreadAbort)
                     return;
-                }
 
                 var listNodes = pair.Value;
 
@@ -175,10 +172,8 @@ namespace DoubleFile
 
                     foreach (TreeNode treeNode_A in listNodes)
                     {
-                        if (m_bThreadAbort || gd.WindowClosed)
-                        {
+                        if (App.LocalExit || m_bThreadAbort)
                             return;
-                        }
 
                         NodeDatum nodeDatum = ((NodeDatum)treeNode_A.Tag);
 
@@ -218,10 +213,8 @@ namespace DoubleFile
 
             foreach (TreeNode treeNode in m_listRootNodes)
             {
-                if (m_bThreadAbort || gd.WindowClosed)
-                {
+                if (App.LocalExit || m_bThreadAbort)
                     return;
-                }
 
                 DifferentVolsQuery(dictClones, treeNode);
             }
@@ -232,10 +225,8 @@ namespace DoubleFile
             {
                 // load up listLVdiffVol
 
-                if (m_bThreadAbort || gd.WindowClosed)
-                {
+                if (App.LocalExit || m_bThreadAbort)
                     return;
-                }
 
                 int nClones = listNodes.Value.Count;
 
@@ -272,10 +263,8 @@ namespace DoubleFile
 
                 foreach (TreeNode treeNode in listNodes.Value)
                 {
-                    if (m_bThreadAbort || gd.WindowClosed)
-                    {
+                    if (App.LocalExit || m_bThreadAbort)
                         return;
-                    }
 
                     if (treeNode.Level < nLevel)
                     {
@@ -311,10 +300,8 @@ namespace DoubleFile
 
             foreach (KeyValuePair<FolderKeyTuple, TreeNode> listNodes in dictUnique)
             {
-                if (m_bThreadAbort || gd.WindowClosed)
-                {
+                if (App.LocalExit || m_bThreadAbort)
                     return;
-                }
 
                 TreeNode treeNode = listNodes.Value;
 
@@ -361,10 +348,8 @@ namespace DoubleFile
 
             foreach (TreeNode treeNode in listSameVol)
             {
-                if (m_bThreadAbort || gd.WindowClosed)
-                {
+                if (App.LocalExit || m_bThreadAbort)
                     return;
-                }
 
                 SnowUniqueParents(treeNode);
 
@@ -406,12 +391,10 @@ namespace DoubleFile
         {
             UtilDirList.Closure(() =>
             {
-                if (m_bThreadAbort || gd.WindowClosed)
-                {
+                if (App.LocalExit || m_bThreadAbort)
                     return;
-                }
 
-                    m_treeViewBrowse.Nodes.Clear();
+                m_treeViewBrowse.Nodes.Clear();
 
                 if (m_listRootNodes.IsEmpty())
                 {
@@ -433,10 +416,8 @@ namespace DoubleFile
                 MBoxStatic.Assert(1305.6332, m_treeViewBrowse.GetNodeCount(includeSubTrees: true) == nCount);
                 UtilProject.WriteLine("Step2_OnForm_A " + nCount);
 
-                if (m_bThreadAbort || gd.WindowClosed)
-                {
+                if (App.LocalExit || m_bThreadAbort)
                     return;
-                }
 
                 MBoxStatic.Assert(1305.6333, form_lvClones.Items.IsEmpty());
                 UtilDirList.Write("B");
@@ -444,10 +425,8 @@ namespace DoubleFile
                 form_lvClones.Invalidate();
                 UtilProject.WriteLine("B");
 
-                if (m_bThreadAbort || gd.WindowClosed)
-                {
+                if (App.LocalExit || m_bThreadAbort)
                     return;
-                }
 
                 MBoxStatic.Assert(1305.6334, form_lvUnique.Items.IsEmpty());
                 UtilDirList.Write("C");
@@ -455,10 +434,8 @@ namespace DoubleFile
                 form_lvUnique.Invalidate();
                 UtilProject.WriteLine("C");
 
-                if (m_bThreadAbort || gd.WindowClosed)
-                {
+                if (App.LocalExit || m_bThreadAbort)
                     return;
-                }
 
                 MBoxStatic.Assert(1305.6335, form_lvSameVol.Items.IsEmpty());
                 UtilDirList.Write("D");
@@ -527,10 +504,8 @@ namespace DoubleFile
 
                     foreach (TreeNode subnode in listClones)
                     {
-                        if (m_bThreadAbort || gd.WindowClosed)
-                        {
+                        if (App.LocalExit || m_bThreadAbort)
                             return;
-                        }
 
                         MBoxStatic.Assert(1305.6309, ((NodeDatum)subnode.Tag).Key.Equals(nodeDatum.Key));
 
@@ -566,10 +541,8 @@ namespace DoubleFile
 
             foreach (TreeNode subNode in treeNode.Nodes)
             {
-                if (m_bThreadAbort || gd.WindowClosed)
-                {
+                if (App.LocalExit || m_bThreadAbort)
                     return;
-                }
 
                 DifferentVolsQuery(dictClones, subNode, rootClone);
             }
@@ -608,10 +581,8 @@ namespace DoubleFile
 
             do
             {
-                if (m_bThreadAbort || gd.WindowClosed)
-                {
+                if (App.LocalExit || m_bThreadAbort)
                     return;
-                }
 
                 if (sbMatch.Contains(treeNode.Text.ToLower()))
                 {
@@ -682,6 +653,5 @@ namespace DoubleFile
 
         bool m_bThreadAbort = false;
         static Collate static_this = null;
-        readonly GlobalData_Base gd = null;
     }
 }

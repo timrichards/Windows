@@ -119,63 +119,66 @@ namespace Local
             while (null != rootNode.Parent)
                 rootNode = rootNode.Parent;
 
-            if (_dictVolumeInfo.TryGetValue(((RootNodeDatum)rootNode.NodeDatum).ListingFile, out strDriveInfo))
+            if ((null == _dictVolumeInfo) ||
+                (false == _dictVolumeInfo.TryGetValue(((RootNodeDatum)rootNode.NodeDatum).ListingFile, out strDriveInfo)))
             {
-                var arrDriveInfo =
-                    strDriveInfo
-                    .Split(new[] { "\r\n", "\n" },
-                    StringSplitOptions.None);
-
-                MBoxStatic.Assert(1301.2314,
-                    new[] { 7, 8, 10, kanDIviewOrder.Length }
-                    .Contains(arrDriveInfo.Length));
-
-                var asItems = new string[arrDriveInfo.Length][];
-
-                for (var i = 0; i < arrDriveInfo.Length; ++i)
-                {
-                    var a = arrDriveInfo[i].Split('\t');
-
-                    if (0 == a[1].Trim().Length)
-                    {
-                        continue;
-                    }
-
-                    asItems[i] = new[]
-                    {
-                        a[0],
-                        kabDIsizeType[i]
-                            ? FormatSize(a[1], bBytes: true) 
-                            : a[1]
-                    };
-                }
-
-                var lasItems = new List<string[]>();
-
-                for (var ix = 0; ix < arrDriveInfo.Length; ++ix)
-                {
-                    if ((null == asItems[ix]) ||
-                        (0 == asItems[ix].Length) ||
-                        (0 == asItems[ix][1].Trim().Length))
-                    {
-                        continue;
-                    }
-
-                    if ((kanDIoptIfEqTo[ix] != -1) &&
-                        (asItems[ix][1] == asItems[kanDIoptIfEqTo[ix]][1]))
-                    {
-                        continue;
-                    }
-
-                    var ixA = (arrDriveInfo.Length == kanDIviewOrder.Length)
-                        ? kanDIviewOrder[ix]
-                        : ix;
-
-                    lasItems.Add(asItems[ix]);
-                }
-
-                VolumeDetailUpdated(lasItems.Where(i => i != null), rootNode.Text);
+                VolumeDetailUpdated(null, rootNode.Text);
             }
+
+            var arrDriveInfo =
+                strDriveInfo
+                .Split(new[] { "\r\n", "\n" },
+                StringSplitOptions.None);
+
+            MBoxStatic.Assert(1301.2314,
+                new[] { 7, 8, 10, kanDIviewOrder.Length }
+                .Contains(arrDriveInfo.Length));
+
+            var asItems = new string[arrDriveInfo.Length][];
+
+            for (var i = 0; i < arrDriveInfo.Length; ++i)
+            {
+                var a = arrDriveInfo[i].Split('\t');
+
+                if (0 == a[1].Trim().Length)
+                {
+                    continue;
+                }
+
+                asItems[i] = new[]
+                {
+                    a[0],
+                    kabDIsizeType[i]
+                        ? FormatSize(a[1], bBytes: true) 
+                        : a[1]
+                };
+            }
+
+            var lasItems = new List<string[]>();
+
+            for (var ix = 0; ix < arrDriveInfo.Length; ++ix)
+            {
+                if ((null == asItems[ix]) ||
+                    (0 == asItems[ix].Length) ||
+                    (0 == asItems[ix][1].Trim().Length))
+                {
+                    continue;
+                }
+
+                if ((kanDIoptIfEqTo[ix] != -1) &&
+                    (asItems[ix][1] == asItems[kanDIoptIfEqTo[ix]][1]))
+                {
+                    continue;
+                }
+
+                var ixA = (arrDriveInfo.Length == kanDIviewOrder.Length)
+                    ? kanDIviewOrder[ix]
+                    : ix;
+
+                lasItems.Add(asItems[ix]);
+            }
+
+            VolumeDetailUpdated(lasItems.Where(i => i != null), rootNode.Text);
         }
     }
 }

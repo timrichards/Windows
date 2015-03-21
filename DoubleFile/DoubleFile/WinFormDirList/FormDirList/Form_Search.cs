@@ -221,7 +221,7 @@ namespace DoubleFile
 
             MBoxStatic.Assert(1307.8312, gd_Search_1_2.m_searchType2 == null);
 
-            gd_Search_1_2.m_searchType2 = new SearchType2(m_ownerWindow._gd,
+            gd_Search_1_2.m_searchType2 = new SearchType2(
                 LVprojectVM,
                 strSearch,
                 strSearch.ToLower() != strSearch,

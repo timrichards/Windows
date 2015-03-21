@@ -51,10 +51,12 @@ namespace DoubleFile
 
             base.Show();
             
-            if (WantsLeft > -1)
+            if (Rect.Empty != PosAtClose)
             {
-                Left = WantsLeft;
-                Top = WantsTop;
+                Left = PosAtClose.Left;
+                Top = PosAtClose.Top;
+                Width = PosAtClose.Width;
+                Height = PosAtClose.Height;
             }
 
             ShowWindows();
@@ -90,16 +92,13 @@ namespace DoubleFile
                 _chainedWindow.Close();
             }
 
-            WantsLeft = Left;
-            WantsTop = Top;
-
+            PosAtClose = new Rect(Left, Top, Width, Height);
             GlobalData.static_lastPlacementWindow = null;
         }
 
         LocalWindow_DoubleFile _chainedWindow = null;
 
-        virtual protected double WantsLeft { get; set; }
-        virtual protected double WantsTop { get; set; }
+        virtual protected Rect PosAtClose { get; set; }
 
         static double _nWantsLeft = -1;
         static double _nWantsTop = -1;

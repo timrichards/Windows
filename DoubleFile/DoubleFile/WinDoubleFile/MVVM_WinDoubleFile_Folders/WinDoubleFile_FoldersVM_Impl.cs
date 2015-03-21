@@ -46,9 +46,9 @@ namespace DoubleFile
 
         internal void CreateFileDictStatusCallback(bool bDone = false, double nProgress = double.NaN)
         {
-            if (_gd.WindowClosed ||
-                (null == _gd.FileDictionary) ||
-                _gd.FileDictionary.IsAborted)
+            if (App.LocalExit ||
+                (null == App.FileDictionary) ||
+                App.FileDictionary.IsAborted)
             {
                 _winProgress.Aborted = true;
                 return;
@@ -68,9 +68,9 @@ namespace DoubleFile
         
         void TreeStatusCallback(LVitem_ProjectVM volStrings, LocalTreeNode rootNode = null, bool bError = false)
         {
-            if (_gd.WindowClosed ||
-                (null == _gd.FileDictionary) ||
-                _gd.FileDictionary.IsAborted ||
+            if (App.LocalExit ||
+                (null == App.FileDictionary) ||
+                App.FileDictionary.IsAborted ||
                 ((null != Tree) && (Tree.IsAborted)))
             {
                 ClearMem_TreeForm();
@@ -116,7 +116,7 @@ namespace DoubleFile
 
             using (new LocalTimer(() => { _winProgress.SetProgress(_ksFolderTreeKey, (3 + nProgress)/4.0); }).Start())
             {
-                var collate = new Local.Collate(_gd, DictNodes,
+                var collate = new Local.Collate(DictNodes,
                     localTV,
                     localLVclones, localLVsameVol, localLVsolitary,
                     _listRootNodes, _listTreeNodes,
@@ -127,7 +127,7 @@ namespace DoubleFile
                 UtilProject.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds/1000.0 + " seconds.");
                 dtStart = DateTime.Now;
 
-                if (_gd.WindowClosed)
+                if (App.LocalExit)
                 {
                     TreeCleanup();
                     return;
@@ -176,7 +176,7 @@ namespace DoubleFile
             {
                 if (false == UtilDirList.Closure(() =>
                 {
-                    if (_gd.FileDictionary
+                    if (App.FileDictionary
                         .IsAborted)
                     {
                         return true;
@@ -196,7 +196,7 @@ namespace DoubleFile
                     return false;
                 }
 
-                _gd.FileDictionary
+                App.FileDictionary
                     .Abort();
                     
                 if (null != Tree)
@@ -208,12 +208,12 @@ namespace DoubleFile
 
             var lsProgressItems = new List<string>();
 
-            _gd.FileDictionary.ResetAbortFlag();
+            App.FileDictionary.ResetAbortFlag();
 
-            if (_gd.FileDictionary.IsEmpty)
+            if (App.FileDictionary.IsEmpty)
             {
                 lsProgressItems.Add(_ksFileDictKey);
-                _gd.FileDictionary.DoThreadFactory(_lvProjectVM, CreateFileDictStatusCallback);
+                App.FileDictionary.DoThreadFactory(_lvProjectVM, CreateFileDictStatusCallback);
             }
 
             TabledString.GenerationStarting();
@@ -222,7 +222,7 @@ namespace DoubleFile
                 DictNodes = new ConcurrentDictionary<FolderKeyTuple, KeyList<LocalTreeNode>>();
 
             Tree =
-                new Local.Tree(_gd, _lvProjectVM, DictNodes, _dictVolumeInfo,
+                new Local.Tree(_lvProjectVM, DictNodes, _dictVolumeInfo,
                     TreeStatusCallback, TreeDoneCallback)
                 .DoThreadFactory();
 

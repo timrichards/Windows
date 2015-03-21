@@ -29,10 +29,8 @@ namespace DoubleFile
 
                 foreach (TreeNode node in treeNode.Nodes)
                 {
-                    if (m_bThreadAbort || gd.WindowClosed)
-                    {
+                    if (App.LocalExit || m_bThreadAbort)
                         return datum;
-                    }
 
                     datum += TreeSubnodeDetails(node);
                 }
@@ -201,7 +199,7 @@ namespace DoubleFile
                         .ReadLines(m_volStrings.ListingFile)
                         .Where(s => s.StartsWith(ksLineType_Start))
                         .FirstOnlyAssert(s => rootNode.FirstLineNo = uint.Parse(s.Split('\t')[1]));
-                    dirData = new DirData(gd, rootNode);
+                    dirData = new DirData(rootNode);
                 }
 
                 var ieLines = File
@@ -210,10 +208,8 @@ namespace DoubleFile
 
                 foreach (var strLine in ieLines)
                 {
-                    if (gd.WindowClosed)
-                    {
+                    if (App.LocalExit || m_bThreadAbort)
                         return;
-                    }
 
                     var asLine = strLine.Split('\t');
                     var nHashParity = 0;

@@ -10,9 +10,8 @@ namespace Local
             // can't be struct because of null
             class DirData
             {
-                internal DirData(GlobalData_Base gd, RootNode rootNode)
+                internal DirData(RootNode rootNode)
                 {
-                    _gd = gd;
                     _rootNode = rootNode;
                 }
 
@@ -20,7 +19,7 @@ namespace Local
                 {
                     var str = str_in.TrimEnd('\\');
 
-                    _rootNode.Nodes.Add(str, new Node(_gd, str, nLineNo, nLength, nHashParity, _rootNode));
+                    _rootNode.Nodes.Add(str, new Node(str, nLineNo, nLength, nHashParity, _rootNode));
                 }
 
                 internal LocalTreeNode AddToTree(string strVolumeName, out string strRootPath)
@@ -41,8 +40,6 @@ namespace Local
 
                 readonly RootNode
                     _rootNode = null;
-                readonly GlobalData_Base
-                    _gd = null;
             }
         }
     }

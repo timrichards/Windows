@@ -89,6 +89,9 @@ namespace Local
 
         internal Thread DoThreadFactory()
         {
+            if (null == _treeNode.TreeView)     // does not support immediate file fake nodes
+                return null;
+
             _thread = new Thread(Go) { IsBackground = true };
             _thread.Start();
             return _thread;

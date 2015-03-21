@@ -1,13 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DoubleFile
 {
     partial class TreeViewItem_DoubleFileVM
     {
+        static internal event Action<string> SelectedFile = null;
+
         void DoTreeSelect()
         {
-            if (false == _bSelected)
+            if (false == _isSelected)
                 return;
 
             new Local.TreeSelect(_datum).DoThreadFactory();
@@ -18,7 +21,11 @@ namespace DoubleFile
             if ((0 == asPath.Count()) ||
                 (1 == asPath.Count()) && string.IsNullOrWhiteSpace(asPath.ElementAt(0)))
             {
-                SelectProgrammatic(true);
+                SelectedItem_Set();
+
+                if (null != SelectedFile)
+                    SelectedFile(strFile);
+
                 return;
             }
 

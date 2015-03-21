@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.Text;
-using System.Windows.Media;
+using System.Linq;
+using System;
 
 namespace DoubleFile
 {
     class LocalTreeNode : LocalColorItemBase
     {
+        static internal event Action<LocalTreeNode> Selected = null;
+        static internal event Action<string> SelectedFile = null;
+
         internal LocalTreeNodeCollection
             Nodes { get; private set; }
         internal virtual string
@@ -165,6 +168,23 @@ namespace DoubleFile
                 treeNode.Level = nLevel;
                 SetLevel(treeView, treeNode.Nodes, treeNode, nLevel + 1);
             }
+        }
+
+        internal void GoToFile(IEnumerable<string> asPath, string strFile)
+        {
+            if ((0 == asPath.Count()) ||
+                (1 == asPath.Count()) && string.IsNullOrWhiteSpace(asPath.ElementAt(0)))
+            {
+                if (null != Selected)
+                    Selected(this);
+
+                if (null != SelectedFile)
+                    SelectedFile(strFile);
+
+                return;
+            }
+
+            Nodes.GoToFile(asPath.Skip(1), strFile);
         }
 
         //string _strFullPath = null;

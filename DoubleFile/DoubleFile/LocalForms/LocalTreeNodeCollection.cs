@@ -64,6 +64,14 @@ namespace DoubleFile
             base.Clear();
         }
 
+        internal void GoToFile(IEnumerable<string> asPath, string strFile)
+        {
+            asPath.First(strFolder =>
+                Keys
+                    .Where(item => strFolder == item.Text)
+                    .FirstOnlyAssert(item => item.GoToFile(asPath.Skip(1), strFile)));
+        }
+
         readonly LocalTV
             _treeView = null;
         string

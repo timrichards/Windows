@@ -71,7 +71,7 @@ namespace DoubleFile
                 var nCount = 0;
 
                 for (var treeNode = _deepNode;
-                    false == ReferenceEquals(value, treeNode);
+                    ((null != treeNode) && (false == ReferenceEquals(value, treeNode)));
                     treeNode = treeNode.Parent)
                 {
                     ++nCount;

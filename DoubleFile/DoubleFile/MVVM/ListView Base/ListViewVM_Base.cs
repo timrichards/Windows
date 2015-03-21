@@ -60,24 +60,6 @@ namespace DoubleFile
 
         internal int Count { get { return _items.Count; } }
 
-        internal ListViewItemVM_Base this[string s_in]
-        {
-            get
-            {
-                var s = s_in.ToLower();
-
-                foreach (var o in _items)
-                {
-                    if (o.SearchValue == s)
-                    {
-                        return o;
-                    }
-                }
-
-                return null;
-            }
-        }
-
         protected void RaiseItems()
         {
             RaisePropertyChanged("Items");

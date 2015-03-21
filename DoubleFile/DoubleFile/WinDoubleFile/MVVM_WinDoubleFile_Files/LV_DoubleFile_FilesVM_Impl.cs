@@ -9,15 +9,20 @@ namespace DoubleFile
         internal LV_DoubleFile_FilesVM()
         {
             Local.TreeSelect.FileListUpdated += TreeSelect_FileList;
+            LocalTreeNode.SelectedFile += SelectedFile;
+            TreeViewItem_DoubleFileVM.SelectedFile += SelectedFile;
         }
 
         public void Dispose()
         {
             Local.TreeSelect.FileListUpdated -= TreeSelect_FileList;
+            LocalTreeNode.SelectedFile -= SelectedFile;
+            TreeViewItem_DoubleFileVM.SelectedFile -= SelectedFile;
         }
 
         void TreeSelect_FileList(IEnumerable<string> lsFileLines, string strListingFile)
         {
+            _selectedItem = null;
             UtilProject.UIthread(Items.Clear);
 
             if (null == lsFileLines)
@@ -65,6 +70,11 @@ namespace DoubleFile
             }
 
             UtilProject.UIthread(() => Add(lsItems));
+        }
+
+        void SelectedFile(string strFile)
+        {
+            SelectedItem_Set(this[strFile]);
         }
     }
 }

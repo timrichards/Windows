@@ -33,6 +33,7 @@ namespace Local
             Local.TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
             LV_TreeListSiblingsVM.TreeListSiblingSelected += RenderA;
             LV_TreeListChildrenVM.TreeListChildSelected += TreeListChildSelected;
+            LocalTreeNode.Selected += RenderA;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -128,6 +129,7 @@ namespace Local
             Local.TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
             LV_TreeListSiblingsVM.TreeListSiblingSelected -= RenderA;
             LV_TreeListChildrenVM.TreeListChildSelected -= TreeListChildSelected;
+            LocalTreeNode.Selected -= RenderA;
             base.Dispose(disposing);
         }
 

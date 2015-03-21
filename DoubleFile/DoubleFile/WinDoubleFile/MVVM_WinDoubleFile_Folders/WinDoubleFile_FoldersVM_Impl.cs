@@ -103,10 +103,7 @@ namespace DoubleFile
             }
 
             TreeCleanup();
-
-            var localTV = new LocalTV();
-
-            localTV._dictVolumeInfo = _dictVolumeInfo;
+            _localTV._dictVolumeInfo = _dictVolumeInfo;
 
             var localLVclones = new LocalLV();
             var localLVsameVol = new LocalLV();
@@ -117,7 +114,7 @@ namespace DoubleFile
             using (new LocalTimer(() => { _winProgress.SetProgress(_ksFolderTreeKey, (3 + nProgress)/4.0); }).Start())
             {
                 var collate = new Local.Collate(DictNodes,
-                    localTV,
+                    _localTV,
                     localLVclones, localLVsameVol, localLVsolitary,
                     _listRootNodes, _listTreeNodes,
                     lsLVignore: lsLocalLVignore, bLoose: true);
@@ -238,5 +235,7 @@ namespace DoubleFile
 
         Dictionary<string, string>
             _dictVolumeInfo = new Dictionary<string, string>();
+        LocalTV
+            _localTV = new LocalTV();
     }
 }

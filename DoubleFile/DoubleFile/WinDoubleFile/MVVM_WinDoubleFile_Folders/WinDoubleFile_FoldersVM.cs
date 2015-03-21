@@ -30,6 +30,7 @@ namespace DoubleFile
                 return;
             }
 
+            _localTV.Dispose();
             TabledString.DropRef();
         }
 

@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:DoubleFile"
         Title="Files in Folder" Height="500" Width="400">
     <Grid Name="form_grid">
-        <ListView Name="form_lv" Margin="0" SelectedItem="{Binding SelectedItem}">
+        <ListView Name="form_lv" SelectedItem="{Binding SelectedItem}">
             <ListView.Resources>
                 <Style TargetType="ListViewItem">
                     <Setter Property="Foreground" Value="Black"/>

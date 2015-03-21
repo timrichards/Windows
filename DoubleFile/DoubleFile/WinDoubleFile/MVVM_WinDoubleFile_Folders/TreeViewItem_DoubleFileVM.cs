@@ -9,12 +9,11 @@ namespace DoubleFile
     partial class TreeViewItem_DoubleFileVM : ObservableObjectBase
     {
         public string Text { get { return ((string)_datum.Text).PadRight(200); } }
-        public Brush Foreground { get { return _bSelected ? _SelectedForeground : FrontBrush; } }
-        public Brush SelectedForeground { get { return _bSelected ? _SelectedForeground : FrontBrush; } }
-        Brush _SelectedForeground { get { return Brushes.White; } set { } }
+        public Brush Foreground { get { return _isSelected ? Brushes.White : FrontBrush; } }
+        public Brush SelectedForeground { get { return _isSelected ? Brushes.White : FrontBrush; } }
 
         public Brush Background { get { return UtilColor.ARGBtoBrush(_datum.BackColor); } }
-        public FontWeight FontWeight { get { return _bSelected ? FontWeights.ExtraBold : FontWeights.Normal; } }
+        public FontWeight FontWeight { get { return _isSelected ? FontWeights.ExtraBold : FontWeights.Normal; } }
 
         internal readonly TreeViewItem_DoubleFileVM
             _Parent = null;
@@ -22,12 +21,6 @@ namespace DoubleFile
             _TVVM = null;
         internal readonly LocalTreeNode
             _datum = null;
-
-        // turned these dependency property hacks into properties that are always -1
-        internal double
-            EphemeralExpandedPos { get { return -1; } set { } }
-        internal int
-            Index { get { return -1; } set { } }
 
         public ObservableCollection<TreeViewItem_DoubleFileVM> Items
         {
@@ -53,65 +46,45 @@ namespace DoubleFile
 
         public bool IsExpanded
         {
-            get { return _bExpanded; }
+            get { return _isExpanded; }
             set
             {
-                if (value == _bExpanded)
-                {
+                if (value == _isExpanded)
                     return;
-                }
 
-                _bExpanded = value;
+                _isExpanded = value;
 
-                if (_bExpanded)
-                {
+                if (_isExpanded)
                     _TVVM._listExpanded.Add(this);
-                }
                 else
-                {
                     _TVVM._listExpanded.Remove(this);
-                }
             }
         }
+        bool _isExpanded = false;
 
         public bool IsSelected
         {
-            get { return _bSelected; }
+            get { return _isSelected; }
             set
             {
-                if (value == _bSelected)
-                {
+                if (value == _isSelected)
                     return;
-                }
 
-                _bSelected = value;
-                EphemeralExpandedPos = -1;
-                _SelectedForeground = Brushes.White;
-
-                if (_bSelected)
-                {
-                    _TVVM.SelectedItem = this;
-                }
-                else if (_TVVM.SelectedItem == this)
-                {
-                    _TVVM.SelectedItem = null;
-                }
-
+                _isSelected = value;
                 DoTreeSelect();
+                SelectedItem_AllTriggers();
             }
         }
-
-        internal void SelectProgrammatic(bool bSelect)
+        internal void SelectedItem_Set(bool value = true)
         {
-            if (_bSelected == bSelect)
-            {
+            if (value == _isSelected)
                 return;
-            }
 
-            if (bSelect == false)
+            _isSelected = value;
+
+            if (false == _isSelected)
             {
-                IsSelected = false;
-                EphemeralExpandedPos = -1;
+                RaisePropertyChanged("IsSelected");
                 return;
             }
 
@@ -130,10 +103,9 @@ namespace DoubleFile
 
             foreach (var tvivm in _TVVM._listExpanded.ToArray()
                 .Where(tvivm => (stackParents.Contains(tvivm) == false) &&
-                    tvivm._bExpanded))
+                    tvivm._isExpanded))
             {
-                tvivm.EphemeralExpandedPos = -1;
-                tvivm._bExpanded = false;
+                tvivm._isExpanded = false;
                 tvivm.RaisePropertyChanged("IsExpanded");
                 _TVVM._listExpanded.Remove(tvivm);
             }
@@ -141,22 +113,27 @@ namespace DoubleFile
             while (false == stackParents.IsEmpty())
             {
                 parentItem = stackParents.Pop();
-                EphemeralExpandedPos += (parentItem.Index + 1);
-                parentItem.EphemeralExpandedPos = EphemeralExpandedPos * _HeaderHeight;
 
-                if (parentItem._bExpanded == false)
+                if (parentItem._isExpanded == false)
                 {
-                    parentItem._bExpanded = true;
+                    parentItem._isExpanded = true;
                     parentItem.RaisePropertyChanged("IsExpanded");
                     _TVVM._listExpanded.Add(parentItem);
                 }
             }
 
-            EphemeralExpandedPos += (Index + 1);
-            EphemeralExpandedPos *= _HeaderHeight;       // when implementing variable-height headers this calc will be wrong
             _TVVM._listExpanded = listParents;
-            IsSelected = true;
+            RaisePropertyChanged("IsSelected");
+            SelectedItem_AllTriggers();
         }
+        void SelectedItem_AllTriggers()
+        {
+            if (_isSelected)
+                _TVVM.SelectedItem = this;
+            else if (_TVVM.SelectedItem == this)
+                _TVVM.SelectedItem = null;
+        }
+        bool _isSelected = false;
 
         internal TreeViewItem_DoubleFileVM(TreeView_DoubleFileVM tvvm, LocalTreeNode datum_in, int nIndex)
             : this(tvvm, datum_in, null, nIndex)
@@ -168,9 +145,6 @@ namespace DoubleFile
             _TVVM = tvvm;
             _datum = datum_in;
             _Parent = parent;
-            Index = nIndex;
-         //   datum.TVIVM = this;
-         //   m_Foreground = SDLWPF._ForeClrToBrush(datum.ForeColor);
         }
 
         Brush FrontBrush
@@ -186,8 +160,5 @@ namespace DoubleFile
 
         static double
             _HeaderHeight { get { return -1; } }
-
-        bool _bExpanded = false;
-        bool _bSelected = false;
     }
 }

@@ -12,6 +12,22 @@ namespace DoubleFile
 
         internal IEnumerable<T> ItemsCast { get { return _items.Cast<T>(); } }
 
+        internal T this[string s_in]
+        {
+            get
+            {
+                var s = s_in.ToLower();
+
+                foreach (var o in ItemsCast)
+                {
+                    if (o.SearchValue == s)
+                        return o;
+                }
+
+                return null;
+            }
+        }
+
         public virtual bool Equals(ListViewVM_GenericBase<T> other)
         {
             if (null == other)

@@ -13,7 +13,6 @@ namespace DoubleFile
             InitializeComponent();
             form_grid.Loaded += Grid_Loaded;
             Closed += Window_Closed;
-            ResizeMode = ResizeMode.CanResize;
             ContentRendered += WinDoubleFile_Duplicates_ContentRendered;
             LV_DoubleFile_FilesVM.TreeFileSelChanged += TreeFileSelChanged;
         }

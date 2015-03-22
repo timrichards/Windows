@@ -14,7 +14,10 @@ namespace DoubleFile
             WindowStyle = WindowStyle.ToolWindow;
 
             var lastWin = GlobalData.static_lastPlacementWindow ?? GlobalData.static_MainWindow;
-            var bUseLastWindow = (null != lastWin);
+            var bUseLastWindow = true;
+
+            if (null == _leftWindow)
+                _leftWindow = GlobalData.static_MainWindow;
 
             if (_nWantsLeft > -1)
             {
@@ -22,10 +25,11 @@ namespace DoubleFile
                 Top = _nWantsTop;
                 _nWantsLeft = _nWantsTop = -1;
 
-                bUseLastWindow &= (Left + Width > SystemParameters.PrimaryScreenWidth);
+                bUseLastWindow = (Left + Width > SystemParameters.PrimaryScreenWidth);
             }
 
-            if (bUseLastWindow)
+            if ((null != lastWin) &&
+                bUseLastWindow)
             {
                 Left = lastWin.Left + lastWin.Width + 5;
                 Top = lastWin.Top;
@@ -34,8 +38,9 @@ namespace DoubleFile
                 {
                     _nWantsLeft = Left;
                     _nWantsTop = Top;
-                    Left = GlobalData.static_MainWindow.Left;
-                    Top = lastWin.Top + lastWin.Height + 5;
+                    Left = _leftWindow.Left;
+                    Top = _leftWindow.Top + _leftWindow.Height + 5;
+                    _leftWindow = this;
                 }
             }
 
@@ -102,6 +107,7 @@ namespace DoubleFile
 
         virtual protected Rect PosAtClose { get; set; }
 
+        static LocalWindow _leftWindow = null;
         static double _nWantsLeft = -1;
         static double _nWantsTop = -1;
     }

@@ -15,6 +15,11 @@ namespace DoubleFile
             WinDoubleFile_DuplicatesVM.UpdateFileDetail += UpdateFileDetail;
         }
 
+        protected override LocalWindow_DoubleFile CreateChainedWindow()
+        {
+            return new WinDoubleFile_Search();
+        }
+
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             form_lvFile.DataContext = _lvFileDetailVM = new LV_FileDetailVM();          

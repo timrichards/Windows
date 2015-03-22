@@ -153,6 +153,9 @@
     <Compile Include="Utilities\TreeNodeProxy.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_TreeList\LVitem_TreeListVM.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_TreeList\LV_TreeListChildrenVM.cs" />
+    <Compile Include="WinDoubleFile\WinDoubleFile_Search.xaml.cs">
+      <DependentUpon>WinDoubleFile_Search.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WinDoubleFile\WinDoubleFile_TreeList.xaml.cs">
       <DependentUpon>WinDoubleFile_TreeList.xaml</DependentUpon>
     </Compile>
@@ -437,6 +440,10 @@
     <Resource Include="ic_people_black_18dp.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="WinDoubleFile\WinDoubleFile_Search.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="WinDoubleFile\WinDoubleFile_TreeList.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

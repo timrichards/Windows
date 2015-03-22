@@ -156,6 +156,7 @@
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Search\WinDoubleFile_SearchVM.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_TreeList\LVitem_TreeListVM.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_TreeList\LV_TreeListChildrenVM.cs" />
+    <Compile Include="WinDoubleFile\UtilDirList Local\Search\GetOneNodeByRootPath.cs" />
     <Compile Include="WinDoubleFile\WinDoubleFile_Search.xaml.cs">
       <DependentUpon>WinDoubleFile_Search.xaml</DependentUpon>
     </Compile>
@@ -222,7 +223,7 @@
     <Compile Include="WinDoubleFile\UtilDirList Local\Search\SearchFiles\SearchResults.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Search\SearchFiles\SearchResultsDir.cs" />
     <Compile Include="WinFormDirList\FormDirList\Form_Search_1_2_GlobalData.cs" />
-    <Compile Include="WinFormDirList\FormDirList\Form_Search_Path_GlobalData.cs" />
+    <Compile Include="WinFormDirList\FormDirList\GetOneNodeByRootPath.cs" />
     <Compile Include="WinFormDirList\FormDirList\Form_Tree_GlobalData.cs" />
     <Compile Include="WinFormDirList\GlobalData.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Tree\DetailsDatum\NodeDatum.cs" />

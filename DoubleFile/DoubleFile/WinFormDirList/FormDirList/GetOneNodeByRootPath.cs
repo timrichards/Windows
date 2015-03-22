@@ -5,16 +5,16 @@ using System.Windows.Forms;
 
 namespace DoubleFile
 {
-    class GetNodeByPath    // Get one node by path
+    static class GetNodeByPath    // Get one node by path
     {
         static internal TreeNode Go(string path, IEnumerable treeNodeCollection)
         {
             return
-                GetNodeByPath_A(path, treeNodeCollection) 
-                ?? GetNodeByPath_A(path, treeNodeCollection, bIgnoreCase: true);
+                Go_A(path, treeNodeCollection) 
+                ?? Go_A(path, treeNodeCollection, bIgnoreCase: true);
         }
 
-        static TreeNode GetNodeByPath_A(string strPath, IEnumerable treeNodeCollection, bool bIgnoreCase = false)
+        static TreeNode Go_A(string strPath, IEnumerable treeNodeCollection, bool bIgnoreCase = false)
         {
             if (string.IsNullOrWhiteSpace(strPath))
             {

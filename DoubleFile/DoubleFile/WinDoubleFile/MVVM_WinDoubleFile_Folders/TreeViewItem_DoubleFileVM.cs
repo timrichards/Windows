@@ -71,7 +71,6 @@ namespace DoubleFile
                     return;
 
                 _isSelected = value;
-                DoTreeSelect();
                 SelectedItem_AllTriggers();
             }
         }
@@ -80,10 +79,9 @@ namespace DoubleFile
             if (value == _isSelected)
                 return;
 
-            _isSelected = value;
-
-            if (false == _isSelected)
+            if (false == value)
             {
+                _isSelected = false;
                 RaisePropertyChanged("IsSelected");
                 return;
             }
@@ -123,6 +121,12 @@ namespace DoubleFile
             }
 
             _TVVM._listExpanded = listParents;
+
+            if (_isSelected)     // through the above IsExpanded logic
+                return;
+
+            _isSelected = true;
+
             RaisePropertyChanged("IsSelected");
             SelectedItem_AllTriggers();
         }
@@ -132,6 +136,8 @@ namespace DoubleFile
                 _TVVM.SelectedItem = this;
             else if (_TVVM.SelectedItem == this)
                 _TVVM.SelectedItem = null;
+
+            DoTreeSelect();
         }
         bool _isSelected = false;
 

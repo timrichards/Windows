@@ -14,12 +14,19 @@ namespace DoubleFile
             form_grid.Loaded += Grid_Loaded;
             Closed += Window_Closed;
             ResizeMode = ResizeMode.CanResize;
+            ContentRendered += WinDoubleFile_Duplicates_ContentRendered;
             LV_DoubleFile_FilesVM.TreeFileSelChanged += TreeFileSelChanged;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = _winDoubleFile_DuplicatesVM = new WinDoubleFile_DuplicatesVM();
+        }
+
+        void WinDoubleFile_Duplicates_ContentRendered(object sender, System.EventArgs e)
+        {
+            if (Rect.Empty == _rcPosAtClose)
+                Top += 50;
         }
 
         protected override LocalWindow_DoubleFile CreateChainedWindow()

@@ -6,6 +6,8 @@ namespace DoubleFile
     {
         protected override void PositionWindow()
         {
+            base.PositionWindow();
+
             //var chrome = new System.Windows.Shell.WindowChrome();
             //chrome.CornerRadius = new System.Windows.CornerRadius(0);
             //chrome.GlassFrameThickness = new System.Windows.Thickness(1);

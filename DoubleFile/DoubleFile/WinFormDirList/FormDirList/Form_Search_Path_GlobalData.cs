@@ -1,32 +1,20 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using System.Windows.Forms;
 
 namespace DoubleFile
 {
-    partial class GlobalData_Search_Path    // Get one node by path
+    class GlobalData_Search_Path    // Get one node by path
     {
-        GlobalData gd
+        internal TreeNode GetNodeByPath(string path, IEnumerable treeNodeCollection)
         {
-            set
-            {
-                MBoxStatic.Assert(99982, _gd == null);
-                _gd = value;
-            }
-        }
-        GlobalData _gd = null;
-
-        internal GlobalData_Search_Path(GlobalData gd_in)
-        {
-            gd = gd_in;
+            return
+                GetNodeByPath_A(path, treeNodeCollection) 
+                ?? GetNodeByPath_A(path, treeNodeCollection, bIgnoreCase: true);
         }
 
-        internal TreeNode GetNodeByPath(string path, SDL_TreeView treeView)
-        {
-            return GetNodeByPath_A(path, treeView) ?? GetNodeByPath_A(path, treeView, bIgnoreCase: true);
-        }
-
-        internal TreeNode GetNodeByPath_A(string strPath, SDL_TreeView treeView, bool bIgnoreCase = false)
+        internal TreeNode GetNodeByPath_A(string strPath, IEnumerable treeNodeCollection, bool bIgnoreCase = false)
         {
             if (string.IsNullOrWhiteSpace(strPath))
             {
@@ -40,9 +28,8 @@ namespace DoubleFile
 
             TreeNode nodeRet = null;
 
-            foreach (Object obj in treeView.Nodes)
+            foreach (TreeNode topNode in treeNodeCollection)
             {
-                TreeNode topNode = (TreeNode)obj;
                 string[] arrPath = null;
                 int nPathLevelLength = 0;
                 int nLevel = 0;
@@ -86,7 +73,7 @@ namespace DoubleFile
 
                 if (strNode == arrPath[nLevel])
                 {
-                    nodeRet = (TreeNode)topNode;
+                    nodeRet = topNode;
                     nLevel++;
 
                     if ((nLevel < nPathLevelLength) && nodeRet != null)

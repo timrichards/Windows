@@ -132,7 +132,7 @@ namespace DoubleFile
                 treeView = ((SDL_TreeView)GlobalData.static_MainWindow.DirListForm._form.form_treeViewBrowse);
             }
 
-            TreeNode treeNode = gd_Search_Path.GetNodeByPath(strSearch, treeView);
+            TreeNode treeNode = gd_Search_Path.GetNodeByPath(strSearch, treeView.Nodes);
 
             if (treeNode == null)
             {

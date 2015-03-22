@@ -38,7 +38,7 @@ namespace DoubleFile
             gd = GlobalData.Reset();
             gd_Tree = new GlobalData_Tree(gd);
             gd.gd_Tree = gd_Tree;
-            gd_Search_Path = new GlobalData_Search_Path(gd);
+            gd_Search_Path = new GlobalData_Search_Path();
             gd_Search_1_2 = new GlobalData_Search_1_2(gd, gd_Search_Path, gd_Tree);
 
             gd.m_tmrDoTree.Elapsed += (o, e) =>
@@ -244,7 +244,7 @@ namespace DoubleFile
 
             foreach (ListViewItem lvItem in lvFake.Items)
             {
-                TreeNode treeNode = gd_Search_Path.GetNodeByPath(lvItem.SubItems[1].Text, form_treeViewBrowse);
+                TreeNode treeNode = gd_Search_Path.GetNodeByPath(lvItem.SubItems[1].Text, form_treeViewBrowse.Nodes);
 
                 if (treeNode != null)
                 {

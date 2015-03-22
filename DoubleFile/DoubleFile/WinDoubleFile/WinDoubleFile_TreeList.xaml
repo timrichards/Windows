@@ -24,7 +24,7 @@
         <ListView Grid.Column="1" Name="form_lvChildren" SelectedItem="{Binding SelectedItem}">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Subfolders" DisplayMemberBinding="{Binding Folder}" Width="{Binding WidthFolder}"/>
+                    <GridViewColumn Header="Immediate Subfolders (folders here)" DisplayMemberBinding="{Binding Folder}" Width="{Binding WidthFolder}"/>
                 </GridView>
             </ListView.View>
         </ListView>

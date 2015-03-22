@@ -151,6 +151,9 @@
     <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
     <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
     <Compile Include="Utilities\TreeNodeProxy.cs" />
+    <Compile Include="WinDoubleFile\LV_DoubleFile_SearchVM\LVitem_DoubleFile_SearchVM.cs" />
+    <Compile Include="WinDoubleFile\LV_DoubleFile_SearchVM\WinDoubleFile_SearchVM_Impl.cs" />
+    <Compile Include="WinDoubleFile\LV_DoubleFile_SearchVM\WinDoubleFile_SearchVM.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_TreeList\LVitem_TreeListVM.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_TreeList\LV_TreeListChildrenVM.cs" />
     <Compile Include="WinDoubleFile\WinDoubleFile_Search.xaml.cs">

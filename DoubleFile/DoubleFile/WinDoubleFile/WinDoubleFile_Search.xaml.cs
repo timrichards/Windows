@@ -11,6 +11,7 @@ namespace DoubleFile
         internal WinDoubleFile_Search()
         {
             InitializeComponent();
+            DataContext = new WinDoubleFile_SearchVM();
         }
 
         override protected Rect

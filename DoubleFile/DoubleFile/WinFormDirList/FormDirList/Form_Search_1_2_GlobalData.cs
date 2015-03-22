@@ -17,17 +17,6 @@ namespace DoubleFile
         }
         GlobalData _gd = null;
 
-        GlobalData_Search_Path gd_Search_Path
-        {
-            get { return _gd_Search_Path; }
-            set
-            {
-                MBoxStatic.Assert(99984, _gd_Search_Path == null);
-                _gd_Search_Path = value;
-            }
-        }
-        GlobalData_Search_Path _gd_Search_Path = null;
-
         GlobalData_Tree gd_Tree
         {
             get { return _gd_Tree; }
@@ -51,11 +40,9 @@ namespace DoubleFile
         internal const string ksSearchTitle = "Search";
 
         internal GlobalData_Search_1_2(GlobalData gd_in, 
-            GlobalData_Search_Path gd_Search_Path_in,
             GlobalData_Tree gd_Tree_in)
         {
             gd = gd_in;
-            gd_Search_Path = gd_Search_Path_in;
             gd_Tree = gd_Tree_in;
         }
 
@@ -132,7 +119,7 @@ namespace DoubleFile
                 treeView = ((SDL_TreeView)GlobalData.static_MainWindow.DirListForm._form.form_treeViewBrowse);
             }
 
-            TreeNode treeNode = gd_Search_Path.GetNodeByPath(strSearch, treeView.Nodes);
+            TreeNode treeNode = GetNodeByPath.Go(strSearch, treeView.Nodes);
 
             if (treeNode == null)
             {

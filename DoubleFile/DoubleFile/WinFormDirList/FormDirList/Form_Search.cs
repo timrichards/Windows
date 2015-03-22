@@ -36,7 +36,7 @@ namespace DoubleFile
                                 continue;
                             }
 
-                            TreeNode treeNode = gd_Search_Path.GetNodeByPath(resultDir.StrDir, treeView.Nodes);
+                            TreeNode treeNode = GetNodeByPath.Go(resultDir.StrDir, treeView.Nodes);
 
                             if (treeNode == null)
                             {
@@ -64,7 +64,7 @@ namespace DoubleFile
 
                                 gd_Search_1_2.m_strSelectFile = strFile;
 
-                                TreeNode treeNode = gd_Search_Path.GetNodeByPath(resultDir.StrDir, treeView.Nodes);
+                                TreeNode treeNode = GetNodeByPath.Go(resultDir.StrDir, treeView.Nodes);
 
                                 if (treeNode == null)
                                 {
@@ -286,7 +286,7 @@ namespace DoubleFile
 
                     int nPos = form_cbFindbox.Text.LastIndexOf('\\');
                     string strMaybePath = form_cbFindbox.Text.Substring(0, nPos);
-                    TreeNode treeNode = gd_Search_Path.GetNodeByPath(strMaybePath, form_treeViewBrowse.Nodes);
+                    TreeNode treeNode = GetNodeByPath.Go(strMaybePath, form_treeViewBrowse.Nodes);
 
                     gd_Search_1_2.m_strSelectFile = form_cbFindbox.Text.Substring(nPos + 1);
 

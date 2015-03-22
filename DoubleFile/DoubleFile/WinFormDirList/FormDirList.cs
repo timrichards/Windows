@@ -242,7 +242,7 @@ namespace DoubleFile
 
             foreach (ListViewItem lvItem in lvFake.Items)
             {
-                TreeNode treeNode = GetNodeByPath.Go(lvItem.SubItems[1].Text, form_treeViewBrowse.Nodes);
+                TreeNode treeNode = GetOneNodeByRootPath.Go(lvItem.SubItems[1].Text, form_treeViewBrowse.Nodes);
 
                 if (treeNode != null)
                 {

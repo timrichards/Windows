@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Linq;
+using System.Collections;
 using System.Windows.Forms;
 
 namespace DoubleFile
 {
-    static class GetNodeByPath    // Get one node by path
+    static class GetOneNodeByRootPath
     {
         static internal TreeNode Go(string path, IEnumerable treeNodeCollection)
         {
@@ -17,97 +17,81 @@ namespace DoubleFile
         static TreeNode Go_A(string strPath, IEnumerable treeNodeCollection, bool bIgnoreCase = false)
         {
             if (string.IsNullOrWhiteSpace(strPath))
-            {
                 return null;
-            }
 
             if (bIgnoreCase)
-            {
                 strPath = strPath.ToLower();
-            }
 
             TreeNode nodeRet = null;
 
             foreach (TreeNode topNode in treeNodeCollection)
             {
-                string[] arrPath = null;
-                int nPathLevelLength = 0;
-                int nLevel = 0;
-                string strNode = topNode.Name.TrimEnd('\\').Replace(@"\\", @"\");
+                var strNode = topNode.Name.TrimEnd('\\').Replace(@"\\", @"\");
 
                 if (bIgnoreCase)
-                {
                     strNode = strNode.ToLower();
-                }
 
-                arrPath = strPath.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
-                nPathLevelLength = arrPath.Length;
+                var arrPath = strPath.Split(new[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
+                var nPathLevelLength = arrPath.Length;
 
                 if (strNode.Contains('\\'))
                 {
-                    int nCount = strNode.Count(c => c == '\\');
+                    var nCount = strNode.Count(c => '\\' == c);
 
-                    for (int n = 0; n < nPathLevelLength - 1; ++n)
+                    for (var n = 0; n < nPathLevelLength - 1; ++n)
                     {
                         if (n < nCount)
-                        {
                             arrPath[0] += '\\' + arrPath[n + 1];
-                        }
                     }
 
-                    for (int n = 1; n < nPathLevelLength - 1; ++n)
+                    for (var n = 1; n < nPathLevelLength - 1; ++n)
                     {
                         if ((nCount + n) < arrPath.Length)
-                        {
                             arrPath[n] = arrPath[nCount + n];
-                        }
                     }
 
-                    if (nPathLevelLength > 1)
+                    if (1 < nPathLevelLength)
                     {
-                        MBoxStatic.Assert(1308.9329, (nPathLevelLength - nCount) > 0);
+                        MBoxStatic.Assert(1308.9329, 0 < (nPathLevelLength - nCount));
                         nPathLevelLength -= nCount;
                         nPathLevelLength = Math.Max(0, nPathLevelLength);
                     }
                 }
 
-                if (strNode == arrPath[nLevel])
+                if (strNode != arrPath[0])
+                    continue;
+
+                nodeRet = topNode;
+
+                if ((1 < nPathLevelLength) &&
+                    (null != nodeRet))
                 {
-                    nodeRet = topNode;
-                    nLevel++;
+                    nodeRet = GetSubNode(nodeRet, arrPath, 1, nPathLevelLength, bIgnoreCase);
 
-                    if ((nLevel < nPathLevelLength) && nodeRet != null)
-                    {
-                        nodeRet = GetSubNode(nodeRet, arrPath, nLevel, nPathLevelLength, bIgnoreCase);
-
-                        if (nodeRet != null)
-                        {
-                            return nodeRet;
-                        }
-                    }
+                    if (null != nodeRet)
+                        return nodeRet;
                 }
             }
 
             return nodeRet;
         }
 
-        static TreeNode GetSubNode(TreeNode node, string[] pathLevel, int i, int nPathLevelLength, bool bIgnoreCase)
+        static TreeNode GetSubNode(TreeNode node, string[] pathLevel, int nLevel, int nPathLevelLength, bool bIgnoreCase)
         {
             foreach (TreeNode subNode in node.Nodes)
             {
-                string strText = bIgnoreCase ? subNode.Text.ToLower() : subNode.Text;
+                var strText =
+                    bIgnoreCase
+                    ? subNode.Text.ToLower()
+                    : subNode.Text;
 
-                if (strText != pathLevel[i])
-                {
+                if (strText != pathLevel[nLevel])
                     continue;
-                }
 
-                if (++i == nPathLevelLength)
-                {
+                if (++nLevel == nPathLevelLength)
                     return subNode;
-                }
 
-                return GetSubNode(subNode, pathLevel, i, nPathLevelLength, bIgnoreCase);
+                return GetSubNode(subNode, pathLevel, nLevel, nPathLevelLength, bIgnoreCase);
             }
 
             return null;

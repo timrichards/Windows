@@ -18,12 +18,10 @@ namespace DoubleFile
         internal TreeView_DoubleFileVM(TreeView tvfe)
         {
             _TVFE = tvfe;
-//            WinDoubleFile_DuplicatesVM.GoToFile += GoToFile;
         }
 
         public void Dispose()
         {
-//            WinDoubleFile_DuplicatesVM.GoToFile -= GoToFile;
         }
 
         internal void SetData(IReadOnlyList<LocalTreeNode> rootNodes)
@@ -41,21 +39,6 @@ namespace DoubleFile
 
             if (0 < _Items.Count)
                 _Items[0].SelectedItem_Set();
-        }
-
-        private void GoToFile(LVitem_ProjectVM lvItem_ProjectVM, string strPath, string strFile)
-        {
-            _Items
-                .Where(item => lvItem_ProjectVM.ListingFile == 
-                    ((Local.RootNodeDatum)item._datum.NodeDatum).ListingFile)
-                .FirstOnlyAssert(item =>
-                    item.GoToFile(
-                        strPath
-                            .Replace(((Local.RootNodeDatum)item._datum.NodeDatum).RootPath, "")
-                            .TrimStart('\\')
-                            .Split('\\'),
-                        strFile)
-                );
         }
 
         readonly ObservableCollection<TreeViewItem_DoubleFileVM>

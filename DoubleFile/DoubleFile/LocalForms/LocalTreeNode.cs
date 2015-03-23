@@ -179,18 +179,6 @@ namespace DoubleFile
                 SelectedFile(strFile);
         }
 
-        internal void GoToFile(IEnumerable<string> asPath, string strFile)
-        {
-            if ((0 == asPath.Count()) ||
-                (1 == asPath.Count()) && string.IsNullOrWhiteSpace(asPath.ElementAt(0)))
-            {
-                GoToFile(strFile);
-                return;
-            }
-
-            Nodes.GoToFile(asPath.Skip(1), strFile);
-        }
-
         //string _strFullPath = null;
     }
 }

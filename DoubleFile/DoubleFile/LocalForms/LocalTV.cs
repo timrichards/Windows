@@ -56,18 +56,6 @@ namespace DoubleFile
                 return;
 
             treeNode.GoToFile(strFile);
-
-            //Nodes.Keys
-            //    .Where(item => lvItem_ProjectVM.ListingFile == 
-            //        ((Local.RootNodeDatum)item.NodeDatum).ListingFile)
-            //    .FirstOnlyAssert(item =>
-            //        item.GoToFile(
-            //            strPath
-            //                .Replace(((Local.RootNodeDatum)item.NodeDatum).RootPath, "")
-            //                .TrimStart('\\')
-            //                .Split('\\'),
-            //            strFile)
-            //    );
         }
 
         public void Dispose()

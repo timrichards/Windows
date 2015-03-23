@@ -10,19 +10,17 @@ namespace DoubleFile
         {
             Local.TreeSelect.FileListUpdated += TreeSelect_FileList;
             LocalTreeNode.SelectedFile += SelectedFile;
-            TreeViewItem_DoubleFileVM.SelectedFile += SelectedFile;
         }
 
         public void Dispose()
         {
             Local.TreeSelect.FileListUpdated -= TreeSelect_FileList;
             LocalTreeNode.SelectedFile -= SelectedFile;
-            TreeViewItem_DoubleFileVM.SelectedFile -= SelectedFile;
         }
 
         void TreeSelect_FileList(IEnumerable<string> lsFileLines, string strListingFile)
         {
-            _selectedItem = null;
+            SelectedItem_Set(null);
             UtilProject.UIthread(Items.Clear);
 
             if (null == lsFileLines)

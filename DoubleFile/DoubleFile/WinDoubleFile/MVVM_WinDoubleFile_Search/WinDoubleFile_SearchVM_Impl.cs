@@ -6,14 +6,23 @@ namespace DoubleFile
     {
         internal WinDoubleFile_SearchVM()
         {
-            Icmd_Folders = new RelayCommand(param => SearchFolders());
+            Icmd_Folders = new RelayCommand(param => SearchFolders(), param => false == string.IsNullOrWhiteSpace(SearchText));
+            Icmd_FoldersAndFiles = new RelayCommand(param => SearchFoldersAndFiles(), param => false == string.IsNullOrWhiteSpace(SearchText));
+            Icmd_Files = new RelayCommand(param => SearchFiles(), param => false == string.IsNullOrWhiteSpace(SearchText));
             Icmd_Goto = new RelayCommand(param => Goto(), param => null != _selectedItem);
             Items.Add(new LVitem_DoubleFile_SearchVM(new[] { "Not implemented yet." }));
         }
 
         void SearchFolders()
         {
-            MBoxStatic.ShowDialog(SearchText);
+        }
+
+        void SearchFoldersAndFiles()
+        {
+        }
+
+        void SearchFiles()
+        {
         }
 
         private void Goto()

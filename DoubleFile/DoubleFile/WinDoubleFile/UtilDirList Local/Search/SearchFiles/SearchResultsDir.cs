@@ -4,14 +4,16 @@ namespace DoubleFile
 {
     class SearchResultsDir
     {
-        readonly List<string> m_listFiles = new List<string>();
+        internal string
+            StrDir { get; set; }
 
-        internal string StrDir { get; set; }
-        internal List<string> ListFiles { get { return m_listFiles; } }
+        internal List<string>
+            ListFiles { get { return _listFiles; } }
+        readonly List<string> _listFiles = new List<string>();
 
         void AddFile(string strFile)
         {
-            m_listFiles.Add(strFile);
+            _listFiles.Add(strFile);
         }
     }
 }

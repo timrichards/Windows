@@ -20,66 +20,71 @@ namespace DoubleFile
             Action doneCallback)
             : base(statusCallback)
         {
-            m_lvProjectVM = lvProjectVM;
-            m_strSearch = strSearch;
-            m_bCaseSensitive = bCaseSensitive;
+            _lvProjectVM = lvProjectVM;
+            _strSearch = strSearch;
+            _bCaseSensitive = bCaseSensitive;
             m_folderHandling = folderHandling;          // not used
-            m_bSearchFilesOnly = bSearchFilesOnly;
-            m_strCurrentNode = strCurrentNode;
-            m_doneCallback = doneCallback;
+            _bSearchFilesOnly = bSearchFilesOnly;
+            _strCurrentNode = strCurrentNode;
+            _doneCallback = doneCallback;
         }
 
         void Go()
         {
-            UtilProject.WriteLine("Searching for '" + m_strSearch + "'");
+            UtilProject.WriteLine("Searching for '" + _strSearch + "'");
 
             DateTime dtStart = DateTime.Now;
 
-            foreach (var volStrings in m_lvProjectVM.ItemsCast)
+            foreach (var volStrings in _lvProjectVM.ItemsCast)
             {
                 SearchFile searchFile = new SearchFile((SearchBase)this, volStrings);
 
-                m_cbagWorkers.Add(searchFile.DoThreadFactory());
+                _cbagWorkers.Add(searchFile.DoThreadFactory());
             }
 
-            foreach (SearchFile worker in m_cbagWorkers)
-            {
+            foreach (SearchFile worker in _cbagWorkers)
                 worker.Join();
-            }
 
-            UtilProject.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", m_strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
+            UtilProject.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", _strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
-            if (App.LocalExit || m_bThreadAbort)
+            if (App.LocalExit || _bThreadAbort)
                 return;
 
-            m_doneCallback();
+            _doneCallback();
         }
 
         internal void EndThread()
         {
-            foreach (SearchFile worker in m_cbagWorkers)
+            foreach (SearchFile worker in _cbagWorkers)
             {
                 worker.Abort();
             }
 
-            m_bThreadAbort = true;
-            m_thread = null;
+            _bThreadAbort = true;
+            _thread = null;
         }
 
-        internal void DoThreadFactory()
+        internal Thread DoThreadFactory()
         {
-            m_thread = new Thread(Go);
-            m_thread.IsBackground = true;
-            m_thread.Start();
+            _thread = new Thread(Go);
+            _thread.IsBackground = true;
+            _thread.Start();
+            return _thread;
         }
 
-        internal bool IsAborted { get { return m_bThreadAbort; } }
+        internal bool
+            IsAborted { get { return _bThreadAbort; } }
 
-        readonly Action m_doneCallback = null;
-        readonly LV_ProjectVM m_lvProjectVM = null;
+        readonly Action
+            _doneCallback = null;
+        readonly LV_ProjectVM
+            _lvProjectVM = null;
 
-        Thread m_thread = null;
-        bool m_bThreadAbort = false;
-        ConcurrentBag<SearchFile> m_cbagWorkers = new ConcurrentBag<SearchFile>();
+        ConcurrentBag<SearchFile>
+            _cbagWorkers = new ConcurrentBag<SearchFile>();
+        Thread
+            _thread = null;
+        bool
+            _bThreadAbort = false;
     }
 }

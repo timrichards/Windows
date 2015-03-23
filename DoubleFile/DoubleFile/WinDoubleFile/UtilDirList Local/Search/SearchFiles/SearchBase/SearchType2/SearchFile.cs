@@ -12,83 +12,80 @@ namespace DoubleFile
             internal SearchFile(SearchBase searchBase, LVitem_ProjectVM volStrings)
                 : base(searchBase)
             {
-                m_volStrings = volStrings;
+                _volStrings = volStrings;
             }
 
             internal SearchFile DoThreadFactory()
             {
-                m_thread = new Thread(Go);
-                m_thread.IsBackground = true;
-                m_thread.Start();
+                _thread = new Thread(Go);
+                _thread.IsBackground = true;
+                _thread.Start();
                 return this;
             }
 
             internal void Join()
             {
-                m_thread.Join();
+                _thread.Join();
             }
 
             internal void Abort()
             {
-                m_bThreadAbort = true;
-                m_thread.Abort();
+                _bThreadAbort = true;
+                _thread.Abort();
             }
 
             void Go()
             {
-                if (m_volStrings.CanLoad == false)
-                {
+                if (false == _volStrings.CanLoad)
                     return;
-                }
 
-                using (StreamReader file = new StreamReader(m_volStrings.ListingFile))
+                using (var sr = new StreamReader(_volStrings.ListingFile))
                 {
-                    string strLine = null;
-                    SearchResultsDir searchResultDir = null;
-                    string strSearch = m_strSearch;
-                    List<SearchResultsDir> listResults = new List<SearchResultsDir>();
-                    bool bFirst = false;
-                    string strCurrentNode = m_strCurrentNode ?? string.Empty;
+                    var strSearch = _strSearch;
+                    var strCurrentNode = _strCurrentNode ?? string.Empty;
 
-                    if (m_bCaseSensitive == false)
+                    if (false == _bCaseSensitive)
                     {
                         strSearch = strSearch.ToLower();
                         strCurrentNode = strCurrentNode.ToLower();
                     }
 
-                    while ((strLine = file.ReadLine()) != null)
+                    SearchResultsDir searchResultDir = null;
+                    var listResults = new List<SearchResultsDir>();
+                    var bFirst = false;
+                    string strLine = null;
+
+                    while (null != (strLine = sr.ReadLine()))
                     {
-                        if (App.LocalExit || m_bThreadAbort)
+                        if (App.LocalExit || _bThreadAbort)
                             return;
 
-                        bool bDir = strLine.StartsWith(FileParse.ksLineType_Directory);
-                        bool bFile = strLine.StartsWith(FileParse.ksLineType_File);
+                        var bDir = strLine.StartsWith(FileParse.ksLineType_Directory);
+                        var bFile = strLine.StartsWith(FileParse.ksLineType_File);
 
-                        if ((bDir == false) && (bFile == false))
-                        {
+                        if ((false == bDir) && (false == bFile))
                             continue;
-                        }
 
-                        string[] arrLine = strLine.Split('\t');
+                        var arrLine = strLine.Split('\t');
                         string strMatchDir = null;
                         string strMatchFile = null;
 
                         if (bDir) { strMatchDir = arrLine[2].TrimEnd('\\'); }
                         if (bFile) { strMatchFile = arrLine[3]; }
 
-                        if (m_bCaseSensitive == false)
+                        if (false == _bCaseSensitive)
                         {
                             if (bDir) { strMatchDir = strMatchDir.ToLower(); }
                             if (bFile) { strMatchFile = strMatchFile.ToLower(); }
                         }
 
                         // strMatchDir gets set to just the folder name after this, but first check the full path
-                        if (bDir && (strMatchDir == strCurrentNode))
+                        if (bDir &&
+                            (strMatchDir == strCurrentNode))
                         {
                             if (false == listResults.IsEmpty())
                             {
-                                listResults.Sort((x, y) => x.StrDir.CompareTo(y.StrDir));
-                                m_statusCallback(new SearchResults(m_strSearch, m_volStrings, listResults), bLast: true);
+                                _statusCallback(new SearchResults(_strSearch, _volStrings, listResults), bLast: true);
                                 listResults = new List<SearchResultsDir>();
                             }
 
@@ -101,67 +98,68 @@ namespace DoubleFile
 
                         if (bDir) { strDir = arrLine[2].TrimEnd('\\'); }
 
-                        if (bDir && (searchResultDir != null))
+                        if (bDir &&
+                            (null != searchResultDir))
                         {
                             searchResultDir.StrDir = strDir;
-                            searchResultDir.ListFiles.Sort();
-                            listResults.Add(searchResultDir);
+
+                            listResults.Insert(listResults.TakeWhile(y => 0 <= searchResultDir.StrDir.CompareTo(y.StrDir)).Count(),
+                                searchResultDir);
+
                             searchResultDir = null;
                         }
 
                         // ...now just the last folder name for strMatchDir...      // "outermost"
-                        if (bDir && strMatchDir.Contains('\\'))
+                        if (bDir &&
+                            strMatchDir.Contains('\\'))
                         {
-                            if (strSearch.Contains('\\') == false)
-                            {
+                            if (false == strSearch.Contains('\\'))
                                 strMatchDir = strMatchDir.Substring(strMatchDir.LastIndexOf('\\') + 1);
-                            }
                         }
 
-                        if ((m_bSearchFilesOnly == false) && bDir && strMatchDir.Contains(strSearch))
+                        if ((false == _bSearchFilesOnly) &&
+                            bDir &&
+                            strMatchDir.Contains(strSearch))
                         {
-                            if (searchResultDir == null)
-                            {
+                            if (null == searchResultDir)
                                 searchResultDir = new SearchResultsDir();
-                            }
 
                             searchResultDir.StrDir = strDir;
-                            listResults.Add(searchResultDir);
+
+                            listResults.Insert(listResults.TakeWhile(y => 0 <= searchResultDir.StrDir.CompareTo(y.StrDir)).Count(),
+                                searchResultDir);
+
                             searchResultDir = null;
                         }
-                        else if (bFile && strMatchFile.Contains(strSearch))
+                        else if (bFile &&
+                            strMatchFile.Contains(strSearch))
                         {
                             string strFile = arrLine[3];
 
-                            if (searchResultDir == null)
-                            {
+                            if (null == searchResultDir)
                                 searchResultDir = new SearchResultsDir();
-                            }
 
-                            searchResultDir.ListFiles.Add(strFile);
+                            searchResultDir.ListFiles.Insert(searchResultDir.ListFiles.TakeWhile(y => 0 <= strFile.CompareTo(y)).Count(),
+                                strFile);
                         }
                     }
 
-                    if (searchResultDir != null)
-                    {
-                        MBoxStatic.Assert(1307.8301, searchResultDir.StrDir == null);
-                    }
+                    if (null != searchResultDir)
+                        MBoxStatic.Assert(1307.8301, null == searchResultDir.StrDir);
                     else
-                    {
-                        MBoxStatic.Assert(1307.8302, searchResultDir == null);
-                    }
+                        MBoxStatic.Assert(1307.8302, null == searchResultDir);
 
                     if (false == listResults.IsEmpty())
-                    {
-                        listResults.Sort((x, y) => x.StrDir.CompareTo(y.StrDir));
-                        m_statusCallback(new SearchResults(m_strSearch, m_volStrings, listResults), bFirst: bFirst);
-                    }
+                        _statusCallback(new SearchResults(_strSearch, _volStrings, listResults), bFirst: bFirst);
                 }
             }
 
-            Thread m_thread = null;
-            bool m_bThreadAbort = false;
-            LVitem_ProjectVM m_volStrings = null;
+            LVitem_ProjectVM
+                _volStrings = null;
+            Thread
+                _thread = null;
+            bool
+                _bThreadAbort = false;
         }
     }
 }

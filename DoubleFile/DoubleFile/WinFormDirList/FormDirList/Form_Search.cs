@@ -136,7 +136,7 @@ namespace DoubleFile
                 {
                     return;
                 }
-                    
+
                 gd_Search_1_2.m_searchType2 = null;
                 gd_Search_1_2.m_SearchResultsType2_List.Sort((x, y) => (x.VolStrings.Nickname.CompareTo(y.VolStrings.Nickname)));
 

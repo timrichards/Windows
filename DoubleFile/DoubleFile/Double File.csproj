@@ -150,6 +150,7 @@
     <Compile Include="MVVM\ListView Base\ListViewVM_GenericBase.cs" />
     <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
     <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
+    <Compile Include="Utilities\KeyListSorted.cs" />
     <Compile Include="Utilities\TreeNodeProxy.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Search\LVitem_DoubleFile_SearchVM.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Search\WinDoubleFile_SearchVM_Impl.cs" />

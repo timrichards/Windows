@@ -11,7 +11,11 @@ namespace DoubleFile
         internal WinDoubleFile_Search()
         {
             InitializeComponent();
-            DataContext = new WinDoubleFile_SearchVM();
+            
+            var vm = new WinDoubleFile_SearchVM();
+
+            vm.IsSearchEnabled = () => false == string.IsNullOrWhiteSpace(form_searchText.Text);
+            DataContext = vm;
         }
 
         override protected Rect

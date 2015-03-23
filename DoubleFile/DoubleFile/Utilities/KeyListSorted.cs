@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    class KeyList<T> : 
+    class KeyListSorted<T> : 
 #if (true)
-        Dictionary<T, object>, IReadOnlyList<T>     // Dictionary<T> guarantees uniqueness; faster random seek; removes items fast
+        SortedDictionary<T, object>, IReadOnlyList<T>     // Dictionary<T> guarantees uniqueness; faster random seek; removes items fast
     {
         public void Add(T key)
         {

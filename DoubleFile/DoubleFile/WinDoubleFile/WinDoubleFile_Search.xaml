@@ -13,7 +13,7 @@
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBox Text="{Binding SearchText, Mode=OneWayToSource}" Grid.Column="0" HorizontalContentAlignment="Stretch"/>
+            <TextBox Text="{Binding SearchText, Mode=OneWayToSource}" Name="form_searchText" Grid.Column="0" HorizontalContentAlignment="Stretch"/>
             <StackPanel Grid.Column="1" Orientation="Horizontal">
                 <Button Command="{Binding Icmd_Folders}" Grid.Column="1" Content="Folders" Width="55"/>
                 <Button Command="{Binding Icmd_FoldersAndFiles}" Grid.Column="1" Content="Folders &amp; files" Width="90"/>

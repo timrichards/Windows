@@ -23,7 +23,7 @@ namespace DoubleFile
             _lvProjectVM = lvProjectVM;
             _strSearch = strSearch;
             _bCaseSensitive = bCaseSensitive;
-            m_folderHandling = folderHandling;          // not used
+            _folderHandling = folderHandling;          // not used
             _bSearchFilesOnly = bSearchFilesOnly;
             _strCurrentNode = strCurrentNode;
             _doneCallback = doneCallback;
@@ -31,13 +31,16 @@ namespace DoubleFile
 
         void Go()
         {
+            if (null == _lvProjectVM)
+                return;
+
             UtilProject.WriteLine("Searching for '" + _strSearch + "'");
 
             DateTime dtStart = DateTime.Now;
 
             foreach (var volStrings in _lvProjectVM.ItemsCast)
             {
-                SearchFile searchFile = new SearchFile((SearchBase)this, volStrings);
+                SearchFile searchFile = new SearchFile(this, volStrings);
 
                 _cbagWorkers.Add(searchFile.DoThreadFactory());
             }
@@ -64,12 +67,12 @@ namespace DoubleFile
             _thread = null;
         }
 
-        internal Thread DoThreadFactory()
+        internal SearchType2 DoThreadFactory()
         {
             _thread = new Thread(Go);
             _thread.IsBackground = true;
             _thread.Start();
-            return _thread;
+            return this;
         }
 
         internal bool

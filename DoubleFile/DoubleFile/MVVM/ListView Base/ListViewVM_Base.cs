@@ -26,7 +26,7 @@ namespace DoubleFile
             item.LVVM = this;
             _items.Add(item);
 
-            if (bQuiet == false)
+            if (false == bQuiet)
             {
                 RaiseItems();
             }

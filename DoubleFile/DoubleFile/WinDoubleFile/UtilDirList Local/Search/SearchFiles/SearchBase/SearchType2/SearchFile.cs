@@ -51,7 +51,7 @@ namespace DoubleFile
                     }
 
                     SearchResultsDir searchResultDir = null;
-                    var listResults = new List<SearchResultsDir>();
+                    var listResults = new KeyListSorted<SearchResultsDir>();
                     var bFirst = false;
                     string strLine = null;
 
@@ -86,7 +86,7 @@ namespace DoubleFile
                             if (false == listResults.IsEmpty())
                             {
                                 _statusCallback(new SearchResults(_strSearch, _volStrings, listResults), bLast: true);
-                                listResults = new List<SearchResultsDir>();
+                                listResults = new KeyListSorted<SearchResultsDir>();
                             }
 
                             bFirst = true;
@@ -103,8 +103,7 @@ namespace DoubleFile
                         {
                             searchResultDir.StrDir = strDir;
 
-                            listResults.Insert(listResults.TakeWhile(y => 0 <= searchResultDir.StrDir.CompareTo(y.StrDir)).Count(),
-                                searchResultDir);
+                            listResults.Add(searchResultDir);
 
                             searchResultDir = null;
                         }
@@ -126,8 +125,7 @@ namespace DoubleFile
 
                             searchResultDir.StrDir = strDir;
 
-                            listResults.Insert(listResults.TakeWhile(y => 0 <= searchResultDir.StrDir.CompareTo(y.StrDir)).Count(),
-                                searchResultDir);
+                            listResults.Add(searchResultDir);
 
                             searchResultDir = null;
                         }
@@ -139,8 +137,7 @@ namespace DoubleFile
                             if (null == searchResultDir)
                                 searchResultDir = new SearchResultsDir();
 
-                            searchResultDir.ListFiles.Insert(searchResultDir.ListFiles.TakeWhile(y => 0 <= strFile.CompareTo(y)).Count(),
-                                strFile);
+                            searchResultDir.ListFiles.Add(strFile);
                         }
                     }
 

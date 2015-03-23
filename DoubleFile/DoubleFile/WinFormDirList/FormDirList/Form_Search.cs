@@ -136,7 +136,7 @@ namespace DoubleFile
                 {
                     return;
                 }
-
+                    
                 gd_Search_1_2.m_searchType2 = null;
                 gd_Search_1_2.m_SearchResultsType2_List.Sort((x, y) => (x.VolStrings.Nickname.CompareTo(y.VolStrings.Nickname)));
 
@@ -216,16 +216,18 @@ namespace DoubleFile
 
             MBoxStatic.Assert(1307.8312, gd_Search_1_2.m_searchType2 == null);
 
-            gd_Search_1_2.m_searchType2 = new SearchType2(
-                LVprojectVM,
-                strSearch,
-                strSearch.ToLower() != strSearch,
-                folderHandling,
-                bSearchFilesOnly,
-                strCurrentNode,
-                new SearchStatusDelegate(gd_Search_1_2.SearchStatusCallback),
-                SearchDoneCallback);
-            gd_Search_1_2.m_searchType2.DoThreadFactory();
+            gd_Search_1_2.m_searchType2 = new SearchType2
+                (
+                    LVprojectVM,
+                    strSearch,
+                    strSearch.ToLower() != strSearch,
+                    folderHandling,
+                    bSearchFilesOnly,
+                    strCurrentNode,
+                    gd_Search_1_2.SearchStatusCallback,
+                    SearchDoneCallback
+                )
+                .DoThreadFactory();
         }
 
         void DoSearch(object sender)

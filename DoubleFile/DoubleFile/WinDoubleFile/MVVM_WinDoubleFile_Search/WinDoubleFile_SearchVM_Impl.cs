@@ -8,6 +8,7 @@ namespace DoubleFile
         {
             Icmd_Folders = new RelayCommand(param => SearchFolders());
             Icmd_Goto = new RelayCommand(param => Goto(), param => null != _selectedItem);
+            Items.Add(new LVitem_DoubleFile_SearchVM(new[] { "Not implemented yet." }));
         }
 
         void SearchFolders()
@@ -15,9 +16,8 @@ namespace DoubleFile
             MBoxStatic.ShowDialog(SearchText);
         }
 
-        private object Goto()
+        private void Goto()
         {
-            throw new NotImplementedException();
         }
     }
 }

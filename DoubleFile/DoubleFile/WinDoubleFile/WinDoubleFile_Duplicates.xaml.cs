@@ -14,7 +14,6 @@ namespace DoubleFile
             form_grid.Loaded += Grid_Loaded;
             Closed += Window_Closed;
             ContentRendered += WinDoubleFile_Duplicates_ContentRendered;
-            LV_DoubleFile_FilesVM.TreeFileSelChanged += TreeFileSelChanged;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -33,15 +32,9 @@ namespace DoubleFile
             return new WinDoubleFile_Detail();
         }
 
-        internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, string strFileLine)
-        {
-            _winDoubleFile_DuplicatesVM.TreeFileSelChanged(lsDuplicates, strFileLine);
-        }
-
         private void Window_Closed(object sender, System.EventArgs e)
         {
             _winDoubleFile_DuplicatesVM.Dispose();
-            LV_DoubleFile_FilesVM.TreeFileSelChanged -= TreeFileSelChanged;
         }
 
         WinDoubleFile_DuplicatesVM

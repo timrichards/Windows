@@ -18,16 +18,18 @@ namespace DoubleFile
         internal TreeView_DoubleFileVM(TreeView tvfe)
         {
             _TVFE = tvfe;
-            WinDoubleFile_DuplicatesVM.GoToFile += GoToFile;
+//            WinDoubleFile_DuplicatesVM.GoToFile += GoToFile;
         }
 
         public void Dispose()
         {
-            WinDoubleFile_DuplicatesVM.GoToFile -= GoToFile;
+//            WinDoubleFile_DuplicatesVM.GoToFile -= GoToFile;
         }
 
         internal void SetData(IReadOnlyList<LocalTreeNode> rootNodes)
         {
+            SelectedItem = null;
+
             var nIndex = -1;
 
             foreach (var treeNode in rootNodes)

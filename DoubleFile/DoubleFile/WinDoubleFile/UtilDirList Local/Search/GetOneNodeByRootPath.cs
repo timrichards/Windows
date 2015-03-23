@@ -26,7 +26,7 @@ namespace Local
 
             foreach (var topNode in treeNodeCollection)
             {
-                var strNode = topNode.Name.TrimEnd('\\').Replace(@"\\", @"\");
+                var strNode = ((string)((RootNodeDatum)topNode.NodeDatum).RootPath).TrimEnd('\\').Replace(@"\\", @"\");
 
                 if (bIgnoreCase)
                     strNode = strNode.ToLower();

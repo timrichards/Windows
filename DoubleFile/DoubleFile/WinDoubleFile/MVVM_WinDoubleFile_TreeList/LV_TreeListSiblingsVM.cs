@@ -98,6 +98,8 @@ namespace DoubleFile
                 _treeNode = treeNodeSel;
             }
 
+            _selectedItem = null;
+
             UtilProject.UIthread(() =>
             {
                 Items.Clear();

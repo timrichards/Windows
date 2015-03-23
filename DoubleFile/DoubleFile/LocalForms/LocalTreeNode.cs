@@ -170,17 +170,21 @@ namespace DoubleFile
             }
         }
 
+        internal void GoToFile(string strFile)
+        {
+            if (null != Selected)
+                Selected(this);
+
+            if (null != SelectedFile)
+                SelectedFile(strFile);
+        }
+
         internal void GoToFile(IEnumerable<string> asPath, string strFile)
         {
             if ((0 == asPath.Count()) ||
                 (1 == asPath.Count()) && string.IsNullOrWhiteSpace(asPath.ElementAt(0)))
             {
-                if (null != Selected)
-                    Selected(this);
-
-                if (null != SelectedFile)
-                    SelectedFile(strFile);
-
+                GoToFile(strFile);
                 return;
             }
 

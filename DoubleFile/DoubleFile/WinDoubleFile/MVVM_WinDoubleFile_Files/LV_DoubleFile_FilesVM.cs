@@ -5,7 +5,7 @@ namespace DoubleFile
 {
     partial class LV_DoubleFile_FilesVM : ListViewVM_GenericBase<LVitem_DoubleFile_FilesVM>
     {
-        internal static event Action<IEnumerable<FileDictionary.DuplicateStruct>, string> TreeFileSelChanged = null;
+        internal static event Action<IEnumerable<FileDictionary.DuplicateStruct>, string> SelectedFileChanged = null;
 
         public LVitem_DoubleFile_FilesVM SelectedItem
         {
@@ -19,9 +19,6 @@ namespace DoubleFile
 
                 if (null == value)
                     return;
-
-                if (null != TreeFileSelChanged)
-                    TreeFileSelChanged(value.LSduplicates, value.FileLine);
 
                 SelectedItem_AllTriggers();
             }
@@ -37,6 +34,13 @@ namespace DoubleFile
         }
         void SelectedItem_AllTriggers()
         {
+            if (null != SelectedFileChanged)
+            {
+                if (null != _selectedItem)
+                    SelectedFileChanged(_selectedItem.LSduplicates, _selectedItem.FileLine);
+                else
+                    SelectedFileChanged(null, null);
+            }
         }
         LVitem_DoubleFile_FilesVM _selectedItem = null;
 

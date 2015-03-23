@@ -56,6 +56,8 @@ namespace DoubleFile
                 lsLVitems.Add(lvItem);
             }
 
+            _selectedItem = null;
+
             UtilProject.UIthread(() =>
             {
                 Items.Clear();

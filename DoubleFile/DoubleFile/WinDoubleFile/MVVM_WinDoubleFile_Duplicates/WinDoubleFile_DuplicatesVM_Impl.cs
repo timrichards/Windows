@@ -15,20 +15,12 @@ namespace DoubleFile
         internal WinDoubleFile_DuplicatesVM()
         {
             Icmd_Goto = new RelayCommand(param => Goto(), param => null != _selectedItem);
-            Local.TreeSelect.FileListUpdated += TreeSelect_FileList;
+            LV_DoubleFile_FilesVM.SelectedFileChanged += TreeFileSelChanged;
         }
 
         public void Dispose()
         {
-            Local.TreeSelect.FileListUpdated -= TreeSelect_FileList;
-        }
-
-        void TreeSelect_FileList(IEnumerable<string> lsFileLines, string strListingFile)
-        {
-            UtilProject.UIthread(Items.Clear);
-
-            if (null != UpdateFileDetail)
-                UpdateFileDetail(null /*clear items*/);
+            LV_DoubleFile_FilesVM.SelectedFileChanged -= TreeFileSelChanged;
         }
 
         internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, string strFileLine)
@@ -36,12 +28,13 @@ namespace DoubleFile
             if (null != UpdateFileDetail)
                 UpdateFileDetail(strFileLine);
 
-            Items.Clear();
+            _selectedItem = null;
+            UtilProject.UIthread(Items.Clear);
 
             if (null == lsDuplicates)
                 return;
 
-            var laoLines = new ConcurrentBag<Tuple<string, string, LVitem_ProjectVM>>();
+            var lsLVitems = new ConcurrentBag<LVitem_FileDuplicatesVM>();
 
             Parallel.ForEach(
                 lsDuplicates
@@ -74,7 +67,13 @@ namespace DoubleFile
                         strLine.StartsWith(FileParse.ksLineType_Directory))
                     {
                         foreach (var strFileLineA in lsFilesInDir)
-                            laoLines.Add(Tuple.Create(strFileLineA, strLine.Split('\t')[2], g.Key));
+                        {
+                            var lvItem = new LVitem_FileDuplicatesVM(new[] { strFileLineA.Split('\t')[3], strLine.Split('\t')[2] });
+
+                            lvItem.FileLine = strFileLineA;
+                            lvItem.LVitem_ProjectVM = g.Key;
+                            lsLVitems.Add(lvItem);
+                        }
 
                         lsFilesInDir.Clear();
  
@@ -84,16 +83,7 @@ namespace DoubleFile
                 }
             });
 
-            foreach (var aoLine in laoLines)
-            {
-                var lvItem = new LVitem_FileDuplicatesVM(new[] { aoLine.Item1.Split('\t')[3], aoLine.Item2 });
-
-                lvItem.FileLine = aoLine.Item1;
-                lvItem.LVitem_ProjectVM = aoLine.Item3;
-                Add(lvItem, bQuiet: true);
-            }
-
-            RaiseItems();
+            UtilProject.UIthread(() => Add(lsLVitems));
         }
 
         internal void Goto()
@@ -104,6 +94,7 @@ namespace DoubleFile
             if (null == _selectedItem)
             {
                 MBoxStatic.Assert(99901, false);    // binding should dim the button
+                return;
             }
 
             GoToFile(_selectedItem.LVitem_ProjectVM, _selectedItem.Path, _selectedItem.Filename);

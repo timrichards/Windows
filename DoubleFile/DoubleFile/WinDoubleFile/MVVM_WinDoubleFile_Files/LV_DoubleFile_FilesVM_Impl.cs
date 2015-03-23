@@ -70,11 +70,17 @@ namespace DoubleFile
             }
 
             UtilProject.UIthread(() => Add(lsItems));
+
+            SelectedItem_Set(this[_strSelectedFile]);
+            _strSelectedFile = null;
         }
 
         void SelectedFile(string strFile)
         {
-            SelectedItem_Set(this[strFile]);
+            _strSelectedFile = strFile;
+            SelectedItem_Set(this[_strSelectedFile]);
         }
+
+        string _strSelectedFile = null;
     }
 }

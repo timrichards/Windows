@@ -16,6 +16,9 @@ namespace DoubleFile
         {
             get
             {
+                if (null == s_in)
+                    return null;
+            
                 var s = s_in.ToLower();
 
                 foreach (var o in ItemsCast)

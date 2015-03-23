@@ -36,14 +36,10 @@ namespace DoubleFile
 
             UtilProject.WriteLine("Searching for '" + _strSearch + "'");
 
-            DateTime dtStart = DateTime.Now;
+            var dtStart = DateTime.Now;
 
             foreach (var volStrings in _lvProjectVM.ItemsCast)
-            {
-                SearchFile searchFile = new SearchFile(this, volStrings);
-
-                _cbagWorkers.Add(searchFile.DoThreadFactory());
-            }
+                _cbagWorkers.Add(new SearchFile(this, volStrings).DoThreadFactory());
 
             foreach (SearchFile worker in _cbagWorkers)
                 worker.Join();
@@ -59,9 +55,7 @@ namespace DoubleFile
         internal void EndThread()
         {
             foreach (SearchFile worker in _cbagWorkers)
-            {
                 worker.Abort();
-            }
 
             _bThreadAbort = true;
             _thread = null;

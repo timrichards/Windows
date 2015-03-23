@@ -102,9 +102,7 @@ namespace DoubleFile
                             (null != searchResultDir))
                         {
                             searchResultDir.StrDir = strDir;
-
                             listResults.Add(searchResultDir);
-
                             searchResultDir = null;
                         }
 
@@ -123,16 +121,14 @@ namespace DoubleFile
                             if (null == searchResultDir)
                                 searchResultDir = new SearchResultsDir();
 
-                            searchResultDir.StrDir = strDir;
-
+                            searchResultDir.StrDir = strDir + '\\';
                             listResults.Add(searchResultDir);
-
                             searchResultDir = null;
                         }
                         else if (bFile &&
                             strMatchFile.Contains(strSearch))
                         {
-                            string strFile = arrLine[3];
+                            var strFile = arrLine[3];
 
                             if (null == searchResultDir)
                                 searchResultDir = new SearchResultsDir();

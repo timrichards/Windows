@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows.Threading;
 
 namespace DoubleFile
 {
@@ -16,8 +17,6 @@ namespace DoubleFile
         readonly protected ObservableCollection<ListViewItemVM_Base>
             _items = new ObservableCollection<ListViewItemVM_Base>();
 
-        internal virtual bool
-            NewItem(string[] arrStr, bool bQuiet = false) { MBoxStatic.Assert(99994, false); return false; }
         internal abstract int
             NumCols { get; }
 
@@ -32,10 +31,43 @@ namespace DoubleFile
             }
         }
 
+        internal virtual bool
+            Add(string[] arrStr, bool bQuiet = false) { MBoxStatic.Assert(99994, false); return false; }
+        internal virtual bool
+            Add(IReadOnlyList<string[]> laStr, bool bQuiet = false) { MBoxStatic.Assert(99994, false); return false; }
+
         internal void Add(IEnumerable<ListViewItemVM_Base> lsItems, bool bQuiet = false)
         {
+            var dt = DateTime.Now;
+            var nCounter = 0;
+
             foreach (var item in lsItems)
+            {
                 Add(item, bQuiet: true);
+
+                if (++nCounter >= 100)
+                {
+                    // When there are too many items you get UI thread lockup.
+
+                    if ((DateTime.Now - dt).Milliseconds > 20)
+                    {
+                        DispatcherFrame blockingFrame = null;
+
+                        LocalTimer timer = null;
+                        var timer_ = new LocalTimer(33.0, () =>
+                        {
+                            timer.Stop();
+                            blockingFrame.Continue = false;
+                        }).Start();
+                        timer = timer_;
+
+                        Dispatcher.PushFrame(blockingFrame = new DispatcherFrame(true));
+                        dt = DateTime.Now;
+                    }
+
+                    nCounter = 0;
+                }
+            }
 
             if ((false == Items.IsEmpty()) &&
                 (false == bQuiet))

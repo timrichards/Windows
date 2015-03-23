@@ -9,7 +9,7 @@ namespace Template      // prevents smart tag rename command from renaming the t
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public string WidthColumnNameHere { get { return SCW; } }
 
-        internal override bool NewItem(string[] arrStr, bool bQuiet = false) { Add(new Template_LVitemVM(this, arrStr), bQuiet); return true; }
+        internal override bool Add(string[] arrStr, bool bQuiet = false) { Add(new Template_LVitemVM(this, arrStr), bQuiet); return true; }
         internal override int NumCols { get { return Template_LVitemVM.NumCols_; } }
     }
 }

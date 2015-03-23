@@ -115,10 +115,10 @@ namespace DoubleFile
 
         internal bool NewItem(LVitem_ProjectVM lvItem, bool bQuiet = false)
         {
-            return NewItem(lvItem.StringValues, bQuiet);
+            return Add(lvItem.StringValues, bQuiet);
         }
 
-        internal override bool NewItem(string[] arrStr, bool bQuiet = false)
+        internal override bool Add(string[] arrStr, bool bQuiet = false)
         {
             var lvItem = new LVitem_ProjectVM(arrStr);
             var bNotInProject = (false == AlreadyInProject(lvItem));

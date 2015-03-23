@@ -14,16 +14,7 @@ namespace DoubleFile
 
         public int CompareTo(object other)
         {
-            var otherResults = other as SearchResultsDir;
-            var nCmp = StrDir.CompareTo(otherResults.StrDir);
-
-            if (0 != nCmp)
-                return nCmp;
-
-            if (object.ReferenceEquals(this, other))
-                return 0;
-
-            return 1;       // objects are unequal but have the same directory. Stick it at the end.
+            return StrDir.CompareTo(((SearchResultsDir)other).StrDir);
         }
     }
 }

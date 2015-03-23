@@ -5,6 +5,8 @@ namespace DoubleFile
 {
     partial class WinDoubleFile_FoldersVM : ObservableObject_OwnerWindow, IDisposable
     {
+        internal static Func<KeyList<LocalTreeNode>> GetTreeNodes = null;
+
         internal WinDoubleFile_FoldersVM(TreeView_DoubleFileVM tvVM, LV_ProjectVM lvProjectVM)
         {
             _lvProjectVM = lvProjectVM;
@@ -20,6 +22,7 @@ namespace DoubleFile
             _winProgress = new WinProgress(); 
             TabledString.AddRef();
             DoTree();
+            GetTreeNodes = () => _listTreeNodes;
         }
 
         public void Dispose()
@@ -31,6 +34,7 @@ namespace DoubleFile
             }
 
             _localTV.Dispose();
+            GetTreeNodes = null;
             TabledString.DropRef();
         }
 

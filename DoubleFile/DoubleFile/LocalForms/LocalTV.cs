@@ -26,6 +26,7 @@ namespace DoubleFile
         {
             Nodes = new LocalTreeNodeCollection(this);
             WinDoubleFile_DuplicatesVM.GoToFile += GoToFile;
+            WinDoubleFile_SearchVM.GoToFile += GoToFile;
         }
 
         internal int GetNodeCount(bool includeSubTrees = false)
@@ -61,6 +62,7 @@ namespace DoubleFile
         public void Dispose()
         {
             WinDoubleFile_DuplicatesVM.GoToFile -= GoToFile;
+            WinDoubleFile_SearchVM.GoToFile -= GoToFile;
         }
     }
 }

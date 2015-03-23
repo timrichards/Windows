@@ -34,7 +34,7 @@ namespace DoubleFile
 
             for (var i = 0; i < astrPaths.Count(); ++i)
             {
-                _lv.NewItem(new[] { astrNicknames.ElementAt(i), astrPaths.ElementAt(i) }, bQuiet: true);
+                _lv.Add(new[] { astrNicknames.ElementAt(i), astrPaths.ElementAt(i) }, bQuiet: true);
             }
         }
 

@@ -7,14 +7,22 @@ namespace Local
 {
     static class GetOneNodeByRootPath
     {
-        static internal LocalTreeNode Go(string path, IReadOnlyList<LocalTreeNode> treeNodeCollection)
+        static internal LocalTreeNode Go(
+            string path,
+            IReadOnlyList<LocalTreeNode> treeNodeCollection,
+            LVitem_ProjectVM lvItemProjectVM = null
+            )
         {
             return
-                Go_A(path, treeNodeCollection) 
-                ?? Go_A(path, treeNodeCollection, bIgnoreCase: true);
+                Go_A(path, treeNodeCollection, lvItemProjectVM) 
+                ?? Go_A(path, treeNodeCollection, lvItemProjectVM, bIgnoreCase: true);
         }
 
-        static LocalTreeNode Go_A(string strPath, IReadOnlyList<LocalTreeNode> treeNodeCollection, bool bIgnoreCase = false)
+        static LocalTreeNode Go_A(
+            string strPath,
+            IReadOnlyList<LocalTreeNode> treeNodeCollection,
+            LVitem_ProjectVM lvItemProjectVM,
+            bool bIgnoreCase = false)
         {
             if (string.IsNullOrWhiteSpace(strPath))
                 return null;
@@ -26,7 +34,8 @@ namespace Local
 
             foreach (var topNode in treeNodeCollection)
             {
-                var strNode = ((string)((RootNodeDatum)topNode.NodeDatum).RootPath).TrimEnd('\\').Replace(@"\\", @"\");
+                var rootNodeDatum = (RootNodeDatum)topNode.NodeDatum;
+                var strNode = ((string)(rootNodeDatum.RootPath)).TrimEnd('\\').Replace(@"\\", @"\");
 
                 if (bIgnoreCase)
                     strNode = strNode.ToLower();
@@ -60,6 +69,12 @@ namespace Local
 
                 if (strNode != arrPath[0])
                     continue;
+
+                if ((null != lvItemProjectVM) &&
+                    (lvItemProjectVM.ListingFile != rootNodeDatum.ListingFile))
+                {
+                    continue;
+                }
 
                 nodeRet = topNode;
 

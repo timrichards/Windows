@@ -48,9 +48,9 @@ namespace DoubleFile
             return nRet;
         }
 
-        private void GoToFile(LVitem_ProjectVM lvItem_ProjectVM, string strPath, string strFile)
+        private void GoToFile(LVitem_ProjectVM lvItemProjectVM, string strPath, string strFile)
         {
-            var treeNode = Local.GetOneNodeByRootPath.Go(strPath, Nodes);
+            var treeNode = Local.GetOneNodeByRootPath.Go(strPath, Nodes, lvItemProjectVM);
 
             if (null == treeNode)
                 return;

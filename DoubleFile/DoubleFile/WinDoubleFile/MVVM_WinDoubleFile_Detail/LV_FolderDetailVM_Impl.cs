@@ -7,12 +7,12 @@ namespace DoubleFile
     {
         internal LV_FolderDetailVM()
         {
-            Local.TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
+            TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
         }
 
         public void Dispose()
         {
-            Local.TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
+            TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
         }
 
         void TreeSelect_FolderDetailUpdated(IEnumerable<string[]> lasDetail, LocalTreeNode treeNode)

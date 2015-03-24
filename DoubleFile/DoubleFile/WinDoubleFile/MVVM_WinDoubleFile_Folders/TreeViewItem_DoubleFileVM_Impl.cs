@@ -11,7 +11,7 @@ namespace DoubleFile
             if (false == _isSelected)
                 return;
 
-            new Local.TreeSelect(_datum).DoThreadFactory();
+            new TreeSelect(_datum).DoThreadFactory();
         }
     }
 }

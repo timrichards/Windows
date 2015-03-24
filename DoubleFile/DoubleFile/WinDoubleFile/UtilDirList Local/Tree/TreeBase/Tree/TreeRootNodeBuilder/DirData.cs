@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using DoubleFile;
 
-namespace Local
+namespace DoubleFile
 {
     partial class Tree
     {

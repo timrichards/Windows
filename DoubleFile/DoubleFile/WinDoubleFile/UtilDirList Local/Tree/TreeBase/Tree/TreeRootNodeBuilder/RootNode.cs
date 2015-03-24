@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Local
+namespace DoubleFile
 {
     partial class Tree
     {

@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using DoubleFile;
 using System.Collections.Concurrent;
 
-namespace Local
+namespace DoubleFile
 {
     abstract class TreeBase : FileParse
     {

@@ -13,7 +13,7 @@ namespace DoubleFile
 
         internal ConcurrentDictionary<FolderKeyTuple, KeyList<LocalTreeNode>>
             DictNodes { get; private set; }
-        internal Local.Tree
+        internal Tree
             Tree { get; private set; }
 
         internal readonly KeyList<LocalTreeNode>
@@ -24,7 +24,7 @@ namespace DoubleFile
         internal void TreeCleanup()
         {
             Tree = null;
-            Local.Collate.ClearMem();
+            Collate.ClearMem();
         }
 
         internal void ClearMem_TreeForm()
@@ -113,7 +113,7 @@ namespace DoubleFile
 
             using (new LocalTimer(() => { _winProgress.SetProgress(_ksFolderTreeKey, (3 + nProgress)/4.0); }).Start())
             {
-                var collate = new Local.Collate(DictNodes,
+                var collate = new Collate(DictNodes,
                     _localTV,
                     localLVclones, localLVsameVol, localLVsolitary,
                     _listRootNodes, _listTreeNodes,
@@ -219,7 +219,7 @@ namespace DoubleFile
                 DictNodes = new ConcurrentDictionary<FolderKeyTuple, KeyList<LocalTreeNode>>();
 
             Tree =
-                new Local.Tree(_lvProjectVM, DictNodes, _dictVolumeInfo,
+                new Tree(_lvProjectVM, DictNodes, _dictVolumeInfo,
                     TreeStatusCallback, TreeDoneCallback)
                 .DoThreadFactory();
 

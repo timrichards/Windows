@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using DoubleFile;
 
-namespace Local
+namespace DoubleFile
 {
     partial class TreeSelect
     {

@@ -8,13 +8,13 @@ namespace DoubleFile
     {
         internal LV_DoubleFile_FilesVM()
         {
-            Local.TreeSelect.FileListUpdated += TreeSelect_FileList;
+            TreeSelect.FileListUpdated += TreeSelect_FileList;
             LocalTreeNode.SelectedFile += SelectedFile;
         }
 
         public void Dispose()
         {
-            Local.TreeSelect.FileListUpdated -= TreeSelect_FileList;
+            TreeSelect.FileListUpdated -= TreeSelect_FileList;
             LocalTreeNode.SelectedFile -= SelectedFile;
         }
 

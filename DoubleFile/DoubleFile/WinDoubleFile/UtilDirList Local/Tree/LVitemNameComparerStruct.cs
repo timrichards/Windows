@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using DoubleFile;
 
-namespace Local
+namespace DoubleFile
 {
     struct LVitemNameComparerStruct : IEqualityComparer<LocalLVitem>
     {

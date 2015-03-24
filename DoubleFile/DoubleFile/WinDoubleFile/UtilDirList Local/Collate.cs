@@ -5,7 +5,7 @@ using System.Text;
 using DoubleFile;
 using System.Collections.Concurrent;
 
-namespace Local
+namespace DoubleFile
 {
     partial class Collate
     {

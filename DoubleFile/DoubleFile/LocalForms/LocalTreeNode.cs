@@ -21,7 +21,7 @@ namespace DoubleFile
             NextNode { get; private set; }
         internal LocalTreeNode
             Parent { get; private set; }
-        internal Local.NodeDatum
+        internal NodeDatum
             NodeDatum { get; set; }
 
         internal string

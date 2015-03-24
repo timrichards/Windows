@@ -49,8 +49,8 @@ namespace DoubleFile
         internal LV_TreeListSiblingsVM(LV_TreeListChildrenVM lvChildrenVM)
         {
             _lvChildrenVM = lvChildrenVM;
-            Local.UC_TreeMap.TreeMapRendered += Populate;
-            Local.UC_TreeMap.TreeMapChildSelected += UC_TreeMap_TreeMapChildSelected;
+            UC_TreeMap.TreeMapRendered += Populate;
+            UC_TreeMap.TreeMapChildSelected += UC_TreeMap_TreeMapChildSelected;
         }
 
         void UC_TreeMap_TreeMapChildSelected(LocalTreeNode treeNodeChild)
@@ -69,7 +69,7 @@ namespace DoubleFile
 
         public void Dispose()
         {
-            Local.UC_TreeMap.TreeMapRendered -= Populate;
+            UC_TreeMap.TreeMapRendered -= Populate;
         }
 
         void Populate(LocalTreeNode treeNodeSel)

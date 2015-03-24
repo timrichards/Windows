@@ -1,6 +1,6 @@
 ﻿using DoubleFile;
 
-namespace Local
+namespace DoubleFile
 {
     class RootNodeDatum : NodeDatum
     {

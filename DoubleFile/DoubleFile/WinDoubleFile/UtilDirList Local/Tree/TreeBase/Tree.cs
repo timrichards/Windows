@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using DoubleFile;
 
-namespace Local
+namespace DoubleFile
 {
     delegate void TreeStatusDelegate(
         LVitem_ProjectVM volStrings,

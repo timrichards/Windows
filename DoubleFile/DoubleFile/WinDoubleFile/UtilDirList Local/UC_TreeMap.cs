@@ -8,7 +8,7 @@ using System.Threading;
 using System.Collections.Concurrent;
 using DoubleFile;
 
-namespace Local
+namespace DoubleFile
 {
     [System.ComponentModel.DesignerCategory("Code")]
     class UC_TreeMap : UserControl
@@ -30,7 +30,7 @@ namespace Local
             BackColor = Color.Transparent;
             MouseDown += form_tmapUserCtl_MouseDown;
             MouseUp += form_tmapUserCtl_MouseUp;
-            Local.TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
+            TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
             LV_TreeListSiblingsVM.TreeListSiblingSelected += RenderA;
             LV_TreeListChildrenVM.TreeListChildSelected += TreeListChildSelected;
             LocalTreeNode.Selected += RenderA;
@@ -126,7 +126,7 @@ namespace Local
 
             WinTooltip.CloseTooltip();
             _timerAnim.Dispose();
-            Local.TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
+            TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
             LV_TreeListSiblingsVM.TreeListSiblingSelected -= RenderA;
             LV_TreeListChildrenVM.TreeListChildSelected -= TreeListChildSelected;
             LocalTreeNode.Selected -= RenderA;
@@ -281,7 +281,7 @@ namespace Local
             if (null != TreeMapChildSelected)
                 TreeMapChildSelected(treeNodeChild);
 
-            _threadTreeSelect = new Local.TreeSelect(treeNodeChild).DoThreadFactory();
+            _threadTreeSelect = new TreeSelect(treeNodeChild).DoThreadFactory();
         }
 
         static LocalTreeNode FindMapNode(LocalTreeNode treeNode_in, Point pt, bool bNextNode = false)
@@ -473,7 +473,7 @@ namespace Local
             if (null != TreeMapRendered)
                 TreeMapRendered(treeNode);
 
-            _threadTreeSelect = new Local.TreeSelect(treeNode).DoThreadFactory();
+            _threadTreeSelect = new TreeSelect(treeNode).DoThreadFactory();
         }
 
         void Render(LocalTreeNode treeNode)

@@ -2,7 +2,7 @@
 using System.Linq;
 using DoubleFile;
 
-namespace Local
+namespace DoubleFile
 {
     static class CountNodes
     {

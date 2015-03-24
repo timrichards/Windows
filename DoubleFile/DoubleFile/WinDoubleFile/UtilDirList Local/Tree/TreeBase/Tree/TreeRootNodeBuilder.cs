@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using DoubleFile;
 
-namespace Local
+namespace DoubleFile
 {
     partial class Tree
     {

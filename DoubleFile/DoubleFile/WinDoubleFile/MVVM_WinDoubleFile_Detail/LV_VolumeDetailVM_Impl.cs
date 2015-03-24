@@ -7,12 +7,12 @@ namespace DoubleFile
     {
         internal LV_VolumeDetailVM()
         {
-            Local.TreeSelect.VolumeDetailUpdated += TreeSelect_VolumeDetail;
+            TreeSelect.VolumeDetailUpdated += TreeSelect_VolumeDetail;
         }
 
         public void Dispose()
         {
-            Local.TreeSelect.VolumeDetailUpdated -= TreeSelect_VolumeDetail;
+            TreeSelect.VolumeDetailUpdated -= TreeSelect_VolumeDetail;
         }
 
         void TreeSelect_VolumeDetail(IEnumerable<string[]> lasDetail, string strTitle)

@@ -3,7 +3,7 @@ using System.Linq;
 using DoubleFile;
 using System.Collections.Generic;
 
-namespace Local
+namespace DoubleFile
 {
     static class GetOneNodeByRootPath
     {

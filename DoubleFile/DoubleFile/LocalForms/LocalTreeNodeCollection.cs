@@ -13,11 +13,10 @@ namespace DoubleFile
         internal void AddRange(IReadOnlyList<LocalTreeNode> lsNodes)
         {
             foreach (var treeNode in lsNodes)
-            {
                 Add(treeNode);
-            }
 
-            if ((false == this.IsEmpty()) && (_treeView != null))
+            if ((false == this.IsEmpty()) &&
+                (null != _treeView))
             {
                 _treeView.TopNode = this[0];
                 LocalTreeNode.SetLevel(_treeView, this);
@@ -32,7 +31,7 @@ namespace DoubleFile
                 _nodePrevQuery = this[s];
             }
 
-            return (_nodePrevQuery != null);
+            return (null != _nodePrevQuery);
         }
 
         internal LocalTreeNode this[string s]
@@ -40,26 +39,22 @@ namespace DoubleFile
             get
             {
                 if (s == _strPrevQuery)
-                {
                     return _nodePrevQuery;
-                }
-                else
-                {
-                    _strPrevQuery = s;
-                    Keys
-                        .Where(t => t.Text == s)
-                        .FirstOnlyAssert(t => _nodePrevQuery = t);
-                    return _nodePrevQuery;                   // TODO: Trim? ignore case? Probably neither.
-                }
+
+                _strPrevQuery = s;
+
+                Keys
+                    .Where(t => t.Text == s)
+                    .FirstOnlyAssert(t => _nodePrevQuery = t);
+
+                return _nodePrevQuery;                   // TODO: Trim? ignore case? Probably neither.
             }
         }
 
         internal new void Clear()
         {
             foreach (var treeNode in this)
-            {
                 treeNode.DetachFromTree();
-            }
 
             base.Clear();
         }

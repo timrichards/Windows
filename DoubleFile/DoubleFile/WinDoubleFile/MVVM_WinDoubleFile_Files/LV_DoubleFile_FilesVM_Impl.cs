@@ -35,9 +35,7 @@ namespace DoubleFile
                 var lsDuplicates = MainWindow.FileDictionary.GetDuplicates(strFileLine, out strFilename, out nLine);
                 var nCount = (null != lsDuplicates) ? lsDuplicates.Count() - 1 : 0;
                 var strCount = (nCount > 0) ? "" + nCount : null;
-                var lvItem = new LVitem_DoubleFile_FilesVM(new[] { strFilename, strCount });
-
-                lvItem.FileLine = strFileLine;
+                var lvItem = new LVitem_DoubleFile_FilesVM(new[] { strFilename, strCount }) { FileLine = strFileLine };
 
                 if (0 < nCount)
                 {

@@ -30,18 +30,18 @@ namespace DoubleFile
 
                 if (false == string.IsNullOrEmpty(strFG_Description))
                 {
-                    var lvItem = new LVitem_FolderDetailVM(new[] { "", strFG_Description });
-
-                    lvItem.Foreground = UtilColor.ARGBtoBrush(treeNode.ForeColor);
-                    Add(lvItem, bQuiet: true);
+                    Add(new LVitem_FolderDetailVM(new[] { "", strFG_Description })
+                    {
+                        Foreground = UtilColor.ARGBtoBrush(treeNode.ForeColor)
+                    }, bQuiet: true);
                 }
 
                 if (false == string.IsNullOrEmpty(strBG_Description))
                 {
-                    var lvItem = new LVitem_FolderDetailVM(new[] { "", strBG_Description });
-
-                    lvItem.Background = UtilColor.ARGBtoBrush(treeNode.BackColor);
-                    Add(lvItem, bQuiet: true);
+                    Add(new LVitem_FolderDetailVM(new[] { "", strBG_Description })
+                    {
+                        Background = UtilColor.ARGBtoBrush(treeNode.BackColor)
+                    }, bQuiet: true);
                 }
 #if DEBUG
                 Add(new LVitem_FolderDetailVM(new[] { "Hash Parity", "" + treeNode.NodeDatum.HashParity }), bQuiet: true);

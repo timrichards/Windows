@@ -45,28 +45,28 @@ namespace DoubleFile
             {
                 Add(item, bQuiet: true);
 
-                if (++nCounter >= 100)
+                if (++nCounter < 100)
+                    continue;
+
+                // When there are too many items you get UI thread lockup.
+
+                if ((DateTime.Now - dt).Milliseconds > 20)
                 {
-                    // When there are too many items you get UI thread lockup.
+                    DispatcherFrame blockingFrame = null;
 
-                    if ((DateTime.Now - dt).Milliseconds > 20)
+                    LocalTimer timer = null;
+                    var timer_ = new LocalTimer(33.0, () =>
                     {
-                        DispatcherFrame blockingFrame = null;
+                        timer.Stop();
+                        blockingFrame.Continue = false;
+                    }).Start();
+                    timer = timer_;
 
-                        LocalTimer timer = null;
-                        var timer_ = new LocalTimer(33.0, () =>
-                        {
-                            timer.Stop();
-                            blockingFrame.Continue = false;
-                        }).Start();
-                        timer = timer_;
-
-                        Dispatcher.PushFrame(blockingFrame = new DispatcherFrame(true));
-                        dt = DateTime.Now;
-                    }
-
-                    nCounter = 0;
+                    Dispatcher.PushFrame(blockingFrame = new DispatcherFrame(true));
+                    dt = DateTime.Now;
                 }
+
+                nCounter = 0;
             }
 
             if ((false == Items.IsEmpty()) &&

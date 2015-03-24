@@ -33,51 +33,37 @@ namespace DoubleFile
             }
 
             for (var i = 0; i < astrPaths.Count(); ++i)
-            {
                 _lv.Add(new[] { astrNicknames.ElementAt(i), astrPaths.ElementAt(i) }, bQuiet: true);
-            }
         }
 
         internal void SetProgress(string strPath, double nProgress)
         {
-            var lvItem = (_lv[strPath] as LVitem_ProgressVM);
+            var lvItem = _lv[strPath];
 
             if (lvItem != null)
-            {
                 lvItem.Progress = nProgress;
-            }
             else
-            {
                 MBoxStatic.Assert(99931, false);
-            }
         }
 
         internal void SetCompleted(string strPath)
         {
-            var lvItem = (_lv[strPath] as LVitem_ProgressVM);
+            var lvItem = _lv[strPath];
 
             if (lvItem != null)
-            {
                 lvItem.SetCompleted();
-            }
             else
-            {
                 MBoxStatic.Assert(99930, false);
-            }
         }
 
         internal void SetError(string strPath, string strError)
         {
-            var lvItem = (_lv[strPath] as LVitem_ProgressVM);
+            var lvItem = _lv[strPath];
 
             if (lvItem != null)
-            {
                 lvItem.SetError(strError);
-            }
             else
-            {
                 MBoxStatic.Assert(99929, false);
-            }
         }
 
         internal bool Aborted { set; private get; }
@@ -85,14 +71,10 @@ namespace DoubleFile
         internal void CloseIfNatural()
         {
             if (_bClosing)
-            {
                 return;     // get an error otherwise
-            }
 
             if (Aborted)
-            {
                 return;     // don't close: there may be an error message
-            }
 
             if (_lv
                 .ItemsCast
@@ -130,9 +112,7 @@ namespace DoubleFile
             }
 
             if (null == WindowClosingCallback)
-            {
                 return;
-            }
 
             e.Cancel = true;
 

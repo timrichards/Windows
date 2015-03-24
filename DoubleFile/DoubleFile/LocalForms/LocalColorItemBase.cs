@@ -30,7 +30,7 @@ namespace DoubleFile
         }
 
         static readonly uint _knDatum8bitMask =  0x0000FFFF - UtilColor.CLUT_Mask;
-        static readonly uint _knDatum16bitMask = 0xFFFF0000;
+        const uint _knDatum16bitMask = 0xFFFF0000;
 
         int _datum = 0;
     }

@@ -101,9 +101,7 @@ namespace DoubleFile
  //           _strFullPath = null;
 
             foreach (var treeNode in Nodes)
-            {
                 treeNode.DetachFromTree();
-            }
         }
 
   //      internal void EnsureVisible() { }
@@ -111,18 +109,14 @@ namespace DoubleFile
         internal bool IsChildOf(LocalTreeNode treeNode)
         {
             if (Level <= treeNode.Level)
-            {
                 return false;
-            }
 
             var parentNode = Parent;
 
             while (parentNode != null)
             {
                 if (parentNode == treeNode)
-                {
                     return true;
-                }
 
                 parentNode = parentNode.Parent;
             }
@@ -135,9 +129,7 @@ namespace DoubleFile
             var nodeParent = this;
 
             while (nodeParent.Parent != null)
-            {
                 nodeParent = nodeParent.Parent;
-            }
 
             return nodeParent;
         }
@@ -147,17 +139,16 @@ namespace DoubleFile
         {
             LocalTreeNode nodePrev = null;
 
-            if ((nodeParent != null) && (false == nodes.IsEmptyA()))
+            if ((null != nodeParent) &&
+                (false == nodes.IsEmptyA()))
             {
                 nodeParent.FirstNode = nodes[0];
             }
 
             foreach (var treeNode in nodes)
             {
-                if (nodePrev != null)
-                {
+                if (null != nodePrev)
                     nodePrev.NextNode = treeNode;
-                }
 
                 // same assert that Forms generates: must remove it from the other tree first.
                 MBoxStatic.Assert(99999, (treeNode.TreeView == null) || (treeNode.TreeView == treeView));

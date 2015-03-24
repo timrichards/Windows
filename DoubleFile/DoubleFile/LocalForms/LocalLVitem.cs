@@ -51,13 +51,12 @@ namespace DoubleFile
             var i = 1;
 
             foreach (var s in asString.Skip(1))
-            {
                 SubItems.Add(new LocalLVitem(asString[i++], listView));
-            }
         }
 
         // Only used for colors and bold font weight, not subitems, in Collate.cs InsertSizeMarker(). Size 18 to show obvious fault in interpretation.
         internal object Clone() { var lvItem = (LocalLVitem)MemberwiseClone(); lvItem.FontWeight = FontWeight; return lvItem; }
+
         internal System.Windows.FontWeight FontWeight
         {
             get { return (Datum8bits != 0) ? System.Windows.FontWeights.Bold : System.Windows.FontWeights.Normal; }

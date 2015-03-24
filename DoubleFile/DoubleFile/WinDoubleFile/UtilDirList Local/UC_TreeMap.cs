@@ -883,7 +883,7 @@ namespace DoubleFile
                     var fBottom = top + row.RowHeight * height;
                     var bottom = (int)fBottom;
 
-                    if (object.ReferenceEquals(row, rows[rows.Count - 1]))
+                    if (ReferenceEquals(row, rows[rows.Count - 1]))
                         bottom = horizontalRows ? rc.Bottom : rc.Right;
 
                     double left = horizontalRows ? rc.Left : rc.Top;
@@ -1042,7 +1042,7 @@ namespace DoubleFile
         class
             FillRectangle : RenderAction { internal Brush Brush; internal override void Stroke(Graphics g) { g.FillRectangle(Brush, rc); } }
         class
-            DrawRectangle : RenderAction { static Pen Pen = new Pen(Color.Black, 2); internal override void Stroke(Graphics g) { g.DrawRectangle(Pen, rc); } }
+            DrawRectangle : RenderAction { static readonly Pen Pen = new Pen(Color.Black, 2); internal override void Stroke(Graphics g) { g.DrawRectangle(Pen, rc); } }
 
         BufferedGraphics
             _bg = null;

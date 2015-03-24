@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    class TreeView_DoubleFileVM : IDisposable
+    class TreeView_DoubleFileVM
     {
         internal TreeViewItem_DoubleFileVM
             SelectedItem { get; set; }
@@ -18,10 +18,6 @@ namespace DoubleFile
         internal TreeView_DoubleFileVM(TreeView tvfe)
         {
             _TVFE = tvfe;
-        }
-
-        public void Dispose()
-        {
         }
 
         internal void SetData(IReadOnlyList<LocalTreeNode> rootNodes)

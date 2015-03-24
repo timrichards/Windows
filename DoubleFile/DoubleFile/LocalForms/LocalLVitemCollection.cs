@@ -13,9 +13,7 @@ namespace DoubleFile
         internal void AddRange(IReadOnlyList<string> lsItems)
         {
             foreach (var s in lsItems)
-            {
                 Add(new LocalLVitem(s, _listView));
-            }
         }
 
         internal void AddRange(IReadOnlyList<LocalLVitem> lsItems)
@@ -35,7 +33,7 @@ namespace DoubleFile
                 _lvItemPrevQuery = this[s];
             }
 
-            return (_lvItemPrevQuery != null);
+            return (null != _lvItemPrevQuery);
         }
 
         internal new LocalLVitem this[int i] { get { return (i < Count) ? base[i] : null; } }
@@ -52,9 +50,11 @@ namespace DoubleFile
                 {
                     _strPrevQuery = s;
                     _lvItemPrevQuery = null;
+
                     Keys
                         .Where(t => t.Text == s)
                         .FirstOnlyAssert(lvItem => _lvItemPrevQuery = lvItem);
+
                     return _lvItemPrevQuery;                   // TODO: Trim? ignore case? Probably neither.
                 }
             }

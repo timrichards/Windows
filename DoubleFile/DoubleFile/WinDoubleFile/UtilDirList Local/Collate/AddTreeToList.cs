@@ -17,7 +17,7 @@ namespace DoubleFile
                 m_listSameVol = listSameVol;
             }
 
-            internal AddTreeToList Go(IReadOnlyList<LocalTreeNode> listNodes)
+            internal AddTreeToList Go(IEnumerable<LocalTreeNode> listNodes)
             {
                 foreach (var treeNode in listNodes)
                 {

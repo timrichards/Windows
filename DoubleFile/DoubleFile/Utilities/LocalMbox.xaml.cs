@@ -74,22 +74,22 @@ namespace DoubleFile
             {
                 case MessageBoxButton.OKCancel:
                 case MessageBoxButton.YesNoCancel:
-                    {
-                        _Result = MessageBoxResult.Cancel;
-                        break;
-                    }
+                {
+                    _Result = MessageBoxResult.Cancel;
+                    break;
+                }
 
                 case MessageBoxButton.OK:
-                    {
-                        _Result = MessageBoxResult.OK;
-                        break;
-                    }
+                {
+                    _Result = MessageBoxResult.OK;
+                    break;
+                }
 
                 case MessageBoxButton.YesNo:
-                    {
-                        _Result = MessageBoxResult.No;
-                        break;
-                    }
+                {
+                    _Result = MessageBoxResult.No;
+                    break;
+                }
             }
 
             base.ShowDialog();
@@ -102,17 +102,17 @@ namespace DoubleFile
             {
                 case MessageBoxButton.OKCancel:
                 case MessageBoxButton.OK:
-                    {
-                        _Result = MessageBoxResult.OK;
-                        break;
-                    }
+                {
+                    _Result = MessageBoxResult.OK;
+                    break;
+                }
 
                 case MessageBoxButton.YesNo:
                 case MessageBoxButton.YesNoCancel:
-                    {
-                        _Result = MessageBoxResult.Yes;
-                        break;
-                    }
+                {
+                    _Result = MessageBoxResult.Yes;
+                    break;
+                }
             }
 
             LocalDialogResult = true;

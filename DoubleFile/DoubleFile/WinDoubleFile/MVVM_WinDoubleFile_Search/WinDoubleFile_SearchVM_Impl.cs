@@ -7,7 +7,7 @@ namespace DoubleFile
 {
     partial class WinDoubleFile_SearchVM
     {
-        internal Func<bool> IsSearchEnabled = null;
+        internal Func<bool> IsEditBoxNonEmpty = null;
         static internal event Action<LVitem_ProjectVM, string, string> GoToFile;
 
         internal WinDoubleFile_SearchVM()
@@ -18,11 +18,13 @@ namespace DoubleFile
             Icmd_Goto = new RelayCommand(param => Goto(), param => null != _selectedItem);
         }
 
+        bool IsSearchEnabled() { return IsEditBoxNonEmpty() && (null == _searchType2); }
+
         void SearchFolders()
         {
             UtilProject.UIthread(Items.Clear);
 
-            bool bCase = SearchText.ToLower() != SearchText;
+            var bCase = SearchText.ToLower() != SearchText;
             IEnumerable<LocalTreeNode> lsTreeNodes = null;
 
             if (bCase)
@@ -36,15 +38,7 @@ namespace DoubleFile
                     .Where(treeNode => treeNode.Text.ToLower().Contains(SearchText));
             }
 
-            var lsLVitems = new List<LVitem_DoubleFile_SearchVM>();
-
-            foreach (var treeNode in lsTreeNodes)
-            {
-                var lvItem = new LVitem_DoubleFile_SearchVM();
-
-                lvItem.LocalTreeNode = treeNode;
-                lsLVitems.Add(lvItem);
-            }
+            var lsLVitems = lsTreeNodes.Select(treeNode => new LVitem_DoubleFile_SearchVM { LocalTreeNode = treeNode });
 
             UtilProject.UIthread(() => Add(lsLVitems));
         }
@@ -59,7 +53,7 @@ namespace DoubleFile
                     MainWindow.static_MainWindow.LVprojectVM,
                     SearchText,
                     SearchText.ToLower() != SearchText,
-                    SearchType2.FolderSpecialHandling.None,
+                    SearchBase.FolderSpecialHandling.None,
                     bSearchFilesOnly,
                     null,
                     SearchStatusCallback,
@@ -94,21 +88,11 @@ namespace DoubleFile
                     (false == searchResult.ListFiles.IsEmpty()))
                 {
                     for (var nIx = 0; nIx < searchResult.ListFiles.Count; ++nIx)
-                    {
-                        var lvItem = new LVitem_DoubleFile_SearchVM();
-
-                        lvItem.SearchResultsDir = searchResult;
-                        lvItem.FileIndex = nIx;
-                        _lsLVitems.Add(lvItem);
-                    }
+                        _lsLVitems.Add(new LVitem_DoubleFile_SearchVM { SearchResultsDir = searchResult, FileIndex = nIx });
                 }
                 else
                 {
-                    var lvItem = new LVitem_DoubleFile_SearchVM();
-
-                    lvItem.SearchResultsDir = searchResult;
-                    lvItem.FileIndex = -1;
-                    _lsLVitems.Add(lvItem);
+                    _lsLVitems.Add(new LVitem_DoubleFile_SearchVM { SearchResultsDir = searchResult, FileIndex = -1 });
                 }
             }
         }

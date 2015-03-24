@@ -40,12 +40,11 @@ namespace DoubleFile
                 lsDuplicates
                 .GroupBy(duplicate => duplicate.LVitemProjectVM), g =>
             {
-                var lsLineNumbers = new List<int>();
-
-                foreach (var duplicate in g)
-                    lsLineNumbers.Add(duplicate.LineNumber);
-
-                lsLineNumbers.Sort();               // jic already sorted upstream at A
+                var lsLineNumbers =
+                    g
+                    .Select(duplicate => duplicate.LineNumber)
+                    .OrderBy(x => x)        // jic already sorted upstream at A
+                    .ToList();
 
                 var nLine = 0;
                 var lsFilesInDir = new List<string>();
@@ -68,11 +67,11 @@ namespace DoubleFile
                     {
                         foreach (var strFileLineA in lsFilesInDir)
                         {
-                            var lvItem = new LVitem_FileDuplicatesVM(new[] { strFileLineA.Split('\t')[3], strLine.Split('\t')[2] });
-
-                            lvItem.FileLine = strFileLineA;
-                            lvItem.LVitem_ProjectVM = g.Key;
-                            lsLVitems.Add(lvItem);
+                            lsLVitems.Add(new LVitem_FileDuplicatesVM(new[] { strFileLineA.Split('\t')[3], strLine.Split('\t')[2] })
+                                {
+                                    FileLine = strFileLineA,
+                                    LVitem_ProjectVM = g.Key
+                                });
                         }
 
                         lsFilesInDir.Clear();

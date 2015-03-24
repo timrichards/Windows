@@ -16,7 +16,7 @@ namespace DoubleFile
                 lvItem.Text = ((UtilDirList.FormatSize(
                     (bUnique
                         ? listLVitems[nIx].LocalTreeNode
-                        : ((LocalTreeNode)(listLVitems[nIx].TreeNodes)[0]))
+                        : (listLVitems[nIx].TreeNodes)[0])
                     .NodeDatum
                     .TotalLength,
                     bNoDecimal: true)));

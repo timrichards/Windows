@@ -163,8 +163,5 @@ namespace DoubleFile
                     : UtilColor.ARGBtoBrush(_datum.ForeColor);
             }
         }
-
-        static double
-            _HeaderHeight { get { return -1; } }
     }
 }

@@ -22,6 +22,7 @@ namespace DoubleFile
             Action doneCallback)
             : base(statusCallback)
         {
+            IsAborted = false;
             _lvProjectVM = lvProjectVM;
             _strSearch = strSearch;
             _bCaseSensitive = bCaseSensitive;
@@ -48,7 +49,7 @@ namespace DoubleFile
 
             UtilProject.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", _strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
-            if (App.LocalExit || _bThreadAbort)
+            if (App.LocalExit || IsAborted)
                 return;
 
             _doneCallback();
@@ -59,7 +60,7 @@ namespace DoubleFile
             foreach (SearchFile worker in _cbagWorkers)
                 worker.Abort();
 
-            _bThreadAbort = true;
+            IsAborted = true;
             _thread = null;
         }
 
@@ -72,18 +73,16 @@ namespace DoubleFile
         }
 
         internal bool
-            IsAborted { get { return _bThreadAbort; } }
+            IsAborted { get; private set; }
 
         readonly Action
             _doneCallback = null;
         readonly LV_ProjectVM
             _lvProjectVM = null;
 
-        ConcurrentBag<SearchFile>
+        readonly ConcurrentBag<SearchFile>
             _cbagWorkers = new ConcurrentBag<SearchFile>();
         Thread
             _thread = null;
-        bool
-            _bThreadAbort = false;
     }
 }

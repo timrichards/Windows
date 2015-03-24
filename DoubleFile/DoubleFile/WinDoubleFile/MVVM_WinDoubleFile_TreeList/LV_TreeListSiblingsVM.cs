@@ -60,7 +60,7 @@ namespace DoubleFile
 
             ItemsCast
                 .Where(lvItem => lvItem.LocalTreeNode == _treeNode)
-                .FirstOnlyAssert(lvItem => SelectedItem_Set(lvItem));
+                .FirstOnlyAssert(SelectedItem_Set);
 
             _lvChildrenVM.ItemsCast
                 .Where(lvItem => lvItem.LocalTreeNode == treeNodeChild)
@@ -84,13 +84,12 @@ namespace DoubleFile
 
             foreach (var treeNode in treeNodes)
             {
-                var lvItem = new LVitem_TreeListVM(new[] { treeNode.Name });
+                var lvItem = new LVitem_TreeListVM(new[] { treeNode.Name }) { LocalTreeNode = treeNode };
 
-                lvItem.LocalTreeNode = treeNode;
                 lsLVitems.Add(lvItem);
 
                 if ((null == selectedItem) &&
-                    object.ReferenceEquals(treeNode, treeNodeSel))
+                    ReferenceEquals(treeNode, treeNodeSel))
                 {
                     selectedItem = lvItem;
                 }
@@ -111,7 +110,7 @@ namespace DoubleFile
 
         LocalTreeNode
             _treeNode = null;
-        LV_TreeListChildrenVM
+        readonly LV_TreeListChildrenVM
             _lvChildrenVM = null;
     }
 }

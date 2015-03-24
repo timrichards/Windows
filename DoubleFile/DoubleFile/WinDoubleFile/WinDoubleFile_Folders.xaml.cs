@@ -36,7 +36,6 @@ namespace DoubleFile
         private void Window_Closed(object sender, EventArgs e)
         {
             _winDoubleFile_FoldersVM.Dispose();
-            _treeView_DoubleFileVM.Dispose();
             WinDoubleFile_FoldersVM.ShowWindows -= ShowWindows;
             DataContext = null;
             _lvProjectVM = null;

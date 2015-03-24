@@ -109,7 +109,7 @@ namespace DoubleFile
             _knCLUT_FGmask = 0x0000000F;
         static readonly uint
             _knCLUT_BGmask = CLUT_Mask - _knCLUT_FGmask;
-        static Dictionary<int, int>
+        static readonly Dictionary<int, int>
             _RevCLUT = new Dictionary<int, int>();
     }
 }

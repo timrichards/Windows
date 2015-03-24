@@ -704,15 +704,12 @@ namespace DoubleFile
 
                 if (sbMatch.Contains(treeNode.Text.ToLower()))
                 {
-                    foreach (var lvItem
-                        in _lsLVignore
+                    if (_lsLVignore
                         .Where(lvItem => treeNode.Level == (int.Parse(lvItem.SubItems[1].Text) - 1))
-                        .Where(lvItem => ((string)lvItem.Text).Equals(treeNode.Text,
+                        .Any(lvItem => ((string)lvItem.Text).Equals(treeNode.Text,
                             StringComparison.InvariantCultureIgnoreCase)))
                     {
                         MBoxStatic.Assert(99898, false);    // replace the Tag field with an LVitem
-                  //      IgnoreNodeAndSubnodes((LocalLVitem)lvItem.Tag, treeNode);
-                        break;
                     }
                 }
 

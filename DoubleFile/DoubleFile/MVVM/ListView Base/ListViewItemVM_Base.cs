@@ -80,9 +80,9 @@ namespace DoubleFile
         {
             // Column widths are only set for visible rows in the listviewer.
             // So far column widths are not set for datum: only marr, but they're not switched off for datum: Clones LVs do not use it.
-            for (int nCol = 0; nCol < NumCols; ++nCol)
+            for (var nCol = 0; nCol < NumCols; ++nCol)
             {
-                string strPropName = PropertyNames[nCol];
+                var strPropName = PropertyNames[nCol];
 
                 ListViewVM_Base.SCW = 50.ToString();
                 LVVM.RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there

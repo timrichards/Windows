@@ -12,10 +12,10 @@ namespace DoubleFile
         {
             InitializeComponent();
             
-            var vm = new WinDoubleFile_SearchVM();
-
-            vm.IsSearchEnabled = () => false == string.IsNullOrWhiteSpace(form_searchText.Text);
-            DataContext = vm;
+            DataContext = new WinDoubleFile_SearchVM
+            {
+                IsEditBoxNonEmpty = () => false == string.IsNullOrWhiteSpace(form_searchText.Text)
+            };
         }
 
         override protected Rect

@@ -233,9 +233,9 @@ namespace DoubleFile
 
         bool _bFileDictDone = false;
 
-        Dictionary<string, string>
+        readonly Dictionary<string, string>
             _dictVolumeInfo = new Dictionary<string, string>();
-        LocalTV
+        readonly LocalTV
             _localTV = new LocalTV();
     }
 }

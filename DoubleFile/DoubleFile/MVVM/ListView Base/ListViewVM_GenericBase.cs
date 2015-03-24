@@ -21,13 +21,7 @@ namespace DoubleFile
             
                 var s = s_in.ToLower();
 
-                foreach (var o in ItemsCast)
-                {
-                    if (o.SearchValue == s)
-                        return o;
-                }
-
-                return null;
+                return ItemsCast.FirstOrDefault(o => o.SearchValue == s);
             }
         }
 
@@ -38,7 +32,7 @@ namespace DoubleFile
                 return false;
             }
 
-            MBoxStatic.Assert(99992, (false == object.ReferenceEquals(this, other)));
+            MBoxStatic.Assert(99992, (false == ReferenceEquals(this, other)));
 
             if (Items.Count != other.Items.Count)
             {
@@ -49,7 +43,7 @@ namespace DoubleFile
             {
                 var otherItem = other[item.SearchValue];
 
-                MBoxStatic.Assert(99991, (false == object.ReferenceEquals(item, otherItem)));
+                MBoxStatic.Assert(99991, (false == ReferenceEquals(item, otherItem)));
 
                 if (false == item.Equals(otherItem))
                     return false;

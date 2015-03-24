@@ -50,10 +50,7 @@ namespace DoubleFile
 
             foreach (var treeNode in treeNodeParent.Nodes)
             {
-                var lvItem = new LVitem_TreeListVM(new[] { treeNode.Name });
-
-                lvItem.LocalTreeNode = treeNode;
-                lsLVitems.Add(lvItem);
+                lsLVitems.Add(new LVitem_TreeListVM(new[] { treeNode.Name }) { LocalTreeNode = treeNode });
             }
 
             _selectedItem = null;

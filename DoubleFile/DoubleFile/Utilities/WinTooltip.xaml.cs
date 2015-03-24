@@ -72,7 +72,7 @@ namespace DoubleFile
 
             FactoryCreateOrUpdate(args, treeNode, () =>
             {
-                var winOwner = args.winOwner as LocalWindow;
+                var winOwner = args.winOwner;
 
                 if (null == winOwner)
                     return; // from lambda
@@ -85,14 +85,13 @@ namespace DoubleFile
             });
         }
 
-        static WinTooltip FactoryCreateOrUpdate(ArgsStruct args, object tag, Action clientSpecific)
+        static void FactoryCreateOrUpdate(ArgsStruct args, object tag, Action clientSpecific)
         {
             if ((null == _winTooltip) ||
                 _winTooltip.LocalIsClosing ||
                 _winTooltip.LocalIsClosed)
             {
-                _winTooltip = new WinTooltip();
-                _winTooltip.WindowStartupLocation = WindowStartupLocation.Manual;
+                _winTooltip = new WinTooltip { WindowStartupLocation = WindowStartupLocation.Manual };
                 _winTooltip.Show();
                 clientSpecific();
             }
@@ -104,7 +103,6 @@ namespace DoubleFile
             _winTooltip._clickCallback = args.clickCallback;
 
             MBoxStatic.Assert(99964, null != tag);
-            return _winTooltip;
         }
 
         internal static void CloseTooltip(object sender = null, EventArgs e = null)

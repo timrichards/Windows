@@ -74,24 +74,16 @@ namespace DoubleFile
         internal void TimerTick()
         {
             if (_nLastProgress.Equals(Progress))
-            {
                 return;
-            }
 
             if (double.IsNaN(Progress))
-            {
                 return;
-            }
 
             if (_bIndeterminate)
-            {
                 Indeterminate = false;
-            }
 
             if (_dtRollingProgress == DateTime.MinValue)
-            {
                 _dtRollingProgress = DateTime.Now;
-            }
 
             var tmRolling = DateTime.Now - _dtRollingProgress;
 
@@ -102,9 +94,7 @@ namespace DoubleFile
                 _nRollingProgress = Progress;
 
                 if (_nRollingProgress.Equals(0))
-                {
                     _nRollingProgress = double.Epsilon;
-                }
 
                 _dtRollingProgress = DateTime.Now;
             }
@@ -114,7 +104,7 @@ namespace DoubleFile
                 var numerator = Math.Max(0, (1 - v) * tmRolling.Ticks);
                 var denominator = (v - _nRollingProgress) / _knRollingMinutes;
 
-                if (denominator > 0)
+                if (0 < denominator)
                 {
                     var nRemaining = (int) TimeSpan.FromTicks((long)(numerator / denominator))
                         .Add(TimeSpan.FromMinutes(1))

@@ -24,7 +24,7 @@ namespace DoubleFile
 
         static internal void AddRef()
         {
-            if (_refCount == 0)
+            if (0 ==_refCount)
             {
                 MBoxStatic.Assert(99936, null == _dictStrings);
                 MBoxStatic.Assert(99935, null == _dictStringsRev);
@@ -77,7 +77,7 @@ namespace DoubleFile
                     _dictStrings = new ConcurrentDictionary<string, int>(MainWindow.static_MainWindow.LVprojectVM.Count, _acStrings.Length);
                     _dictStringsRev = new ConcurrentDictionary<int, string>(MainWindow.static_MainWindow.LVprojectVM.Count, _acStrings.Length);
 
-                    for (int nIx = 0; nIx < _acStrings.Length; ++nIx)
+                    for (var nIx = 0; nIx < _acStrings.Length; ++nIx)
                     {
                         var strA = _acStrings[nIx];
 
@@ -98,9 +98,7 @@ namespace DoubleFile
             _acStrings = new string[_dictStrings.Count];
 
             foreach (var kvp in _dictStrings)
-            {
                 _acStrings[kvp.Value] = kvp.Key;
-            }
 
             _dictStrings = null;
             _dictStringsRev = null;

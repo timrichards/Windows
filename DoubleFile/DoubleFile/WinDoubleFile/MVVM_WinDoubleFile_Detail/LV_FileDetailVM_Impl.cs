@@ -16,7 +16,7 @@ namespace DoubleFile
             if (string.IsNullOrWhiteSpace(strFileLine))
                 return;
 
-            string[] kasHeader = new[] { "Filename", "Created", "Modified", "Attributes", "Length", "Error 1", "Error 2" };
+            var kasHeader = new[] { "Filename", "Created", "Modified", "Attributes", "Length", "Error 1", "Error 2" };
             var asFile = strFileLine.Split('\t')
                 .Skip(3)                            // makes this an LV line: knColLengthLV
                 .ToArray();
@@ -32,7 +32,7 @@ namespace DoubleFile
 
             UtilProject.UIthread(() =>
             {
-                for (int i = 1; i < Math.Min(asFile.Length, kasHeader.Length); ++i)
+                for (var i = 1; i < Math.Min(asFile.Length, kasHeader.Length); ++i)
                 {
                     if (string.IsNullOrWhiteSpace(asFile[i]))
                         continue;

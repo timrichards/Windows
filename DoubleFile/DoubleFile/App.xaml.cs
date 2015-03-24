@@ -43,12 +43,12 @@ namespace DoubleFile
             ShutdownMode = ShutdownMode.OnMainWindowClose;
         }
 
-        void App_Exit(object sender, ExitEventArgs e)
+        static void App_Exit(object sender, ExitEventArgs e)
         {
             LocalExit = true;
         }
 
-        private void Application_Activated(object sender, System.EventArgs e)
+        static void Application_Activated(object sender, System.EventArgs e)
         {
             if (false == LocalActivated)
             {

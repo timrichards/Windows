@@ -16,7 +16,7 @@ namespace DoubleFile
     {
         internal Tree(
             LV_ProjectVM lvProjectVM,
-            ConcurrentDictionary<FolderKeyTuple, KeyList<LocalTreeNode>> dictNodes,
+            ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>> dictNodes,
             Dictionary<string, string> dictDriveInfo,
             TreeStatusDelegate statusCallback,
             Action doneCallback)
@@ -45,7 +45,7 @@ namespace DoubleFile
 
             m_cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
             Collate.Abort();
-            m_dictNodes.Clear();
+            _dictNodes.Clear();
         }
 
         internal Tree DoThreadFactory()

@@ -11,10 +11,10 @@ namespace DoubleFile
         {
             internal int Count { get; private set; }
 
-            internal AddTreeToList(KeyList<LocalTreeNode> listTreeNodes, List<LocalTreeNode> listSameVol)
+            internal AddTreeToList(List<LocalTreeNode> listTreeNodes, List<LocalTreeNode> listSameVol)
             {
-                m_listTreeNodes = listTreeNodes;
-                m_listSameVol = listSameVol;
+                _listTreeNodes = listTreeNodes;
+                _listSameVol = listSameVol;
             }
 
             internal AddTreeToList Go(IEnumerable<LocalTreeNode> listNodes)
@@ -39,7 +39,7 @@ namespace DoubleFile
 
                 do
                 {
-                    m_listTreeNodes.Add(treeNode);
+                    _listTreeNodes.Add(treeNode);
                     ++Count;
 
                     var nodeDatum = treeNode.NodeDatum;
@@ -54,7 +54,7 @@ namespace DoubleFile
                         (treeNode == nodeDatum.Clones[0]))
                     {
                         MBoxStatic.Assert(1305.6304, false == nodeDatum.SeparateVols);
-                        m_listSameVol.Add(treeNode);
+                        _listSameVol.Add(treeNode);
                     }
 
                     if (bCloneOK)
@@ -76,8 +76,10 @@ namespace DoubleFile
                 while (bNextNode && ((treeNode = treeNode.NextNode) != null));
             }
 
-            readonly KeyList<LocalTreeNode> m_listTreeNodes = null;
-            readonly List<LocalTreeNode> m_listSameVol = null;
+            readonly List<LocalTreeNode>
+                _listTreeNodes = null;
+            readonly List<LocalTreeNode>
+                _listSameVol = null;
         }
     }
 }

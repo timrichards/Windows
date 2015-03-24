@@ -10,13 +10,13 @@ namespace DoubleFile
     partial class Collate
     {
         internal Collate(
-            ConcurrentDictionary<FolderKeyTuple, KeyList<LocalTreeNode>> dictNodes,
+            ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>> dictNodes,
             LocalTV tvBrowse,
             LocalLV lvClones,
             LocalLV lvSameVol,
             LocalLV lvUnique,
             List<LocalTreeNode> lsRootNodes,
-            KeyList<LocalTreeNode> lsTreeNodes,
+            List<LocalTreeNode> lsTreeNodes,
             List<LocalLVitem> lsLVignore,
             bool bLoose)
         {
@@ -188,7 +188,7 @@ namespace DoubleFile
                 {
                     // Parent folder may contain only its clone subfolder, in which case unmark the subfolder
 
-                    var listKeep = new KeyList<LocalTreeNode>();
+                    var listKeep = new List<LocalTreeNode>();
 
                     foreach (var treeNode_A in listNodes)
                     {
@@ -236,7 +236,7 @@ namespace DoubleFile
                     }
                     else
                     {
-                        listNodes = listKeep.ToList();  // kick off "else" logic below after deleting child clones
+                        listNodes = listKeep;  // kick off "else" logic below after deleting child clones
                     }
                 }
 
@@ -259,7 +259,7 @@ namespace DoubleFile
                 }
             }
 
-            var dictClones = new SortedDictionary<FolderKeyTuple, KeyList<LocalTreeNode>>();
+            var dictClones = new SortedDictionary<FolderKeyTuple, List<LocalTreeNode>>();
 
             nProgressDenominator += _lsRootNodes.Count;
             ++nProgressItem;
@@ -546,7 +546,7 @@ namespace DoubleFile
         // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
         // Breadth-first.
         void DifferentVolsQuery(
-            IDictionary<FolderKeyTuple, KeyList<LocalTreeNode>> dictClones,
+            IDictionary<FolderKeyTuple, List<LocalTreeNode>> dictClones,
             LocalTreeNode treeNode,
             LocalTreeNode rootClone = null)
         {
@@ -576,7 +576,7 @@ namespace DoubleFile
             {
                 rootClone = treeNode;
 
-                KeyList<LocalTreeNode> lsTreeNodes = null;
+                List<LocalTreeNode> lsTreeNodes = null;
 
                 if (dictClones.TryGetValue(nodeDatum.Key, out lsTreeNodes))
                 {
@@ -677,7 +677,7 @@ namespace DoubleFile
                     continue;
                 }
 
-                MBoxStatic.Assert(1305.6312, lvItem != null);
+                MBoxStatic.Assert(1305.6312, null != lvItem);
                 _dictIgnoreNodes.Add(treeNode, lvItem);
 
                 if (false == treeNode.Nodes.IsEmpty())
@@ -685,7 +685,8 @@ namespace DoubleFile
                     IgnoreNodeAndSubnodes(lvItem, treeNode.Nodes[0], bContinue: true);
                 }
             }
-            while (bContinue && ((treeNode = treeNode.NextNode) != null));
+            while (bContinue &&
+                (null != (treeNode = treeNode.NextNode)));
         }
 
         void IgnoreNodeQuery(string sbMatch, int nMaxLevel, LocalTreeNode treeNode_in)
@@ -719,41 +720,41 @@ namespace DoubleFile
                     IgnoreNodeQuery(sbMatch, nMaxLevel, treeNode.Nodes[0]);
                 }
             }
-            while ((treeNode = treeNode.NextNode) != null);
+            while (null != (treeNode = treeNode.NextNode));
         }
 
         static void SnowUniqueParents(LocalTreeNode treeNode)
         {
             LocalTreeNode parentNode = treeNode.Parent;
 
-            while (parentNode != null)
+            while (null != parentNode)
             {
                 parentNode.BackColor = UtilColor.Snow;
 
                 var nodeDatum = parentNode.NodeDatum;
 
-                if (nodeDatum.LVitem != null)
+                if (null != nodeDatum.LVitem)
                 {
                     nodeDatum.LVitem.BackColor = parentNode.BackColor;
                 }
 
                 MBoxStatic.Assert(1305.6313,
                     (parentNode.ForeColor == UtilColor.Empty) ==
-                    (nodeDatum.LVitem == null));
+                    (null == nodeDatum.LVitem));
 
                 parentNode = parentNode.Parent;
             }
         }
 
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
-        readonly ConcurrentDictionary<FolderKeyTuple, KeyList<LocalTreeNode>>
+        readonly ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
             _dictNodes = null;
         readonly LocalTV _tvBrowse = null;
         readonly LocalLV _lvClones = null;
         readonly LocalLV _lvSameVol = null;
         readonly LocalLV _lvUnique = null;
         readonly List<LocalTreeNode> _lsRootNodes = null;
-        readonly KeyList<LocalTreeNode> _lsTreeNodes = null;
+        readonly List<LocalTreeNode> _lsTreeNodes = null;
         readonly List<LocalLVitem> _lsLVignore = null;
 
         // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.

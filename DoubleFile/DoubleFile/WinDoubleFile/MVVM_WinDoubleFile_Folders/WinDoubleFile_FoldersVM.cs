@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 
 namespace DoubleFile
 {
     partial class WinDoubleFile_FoldersVM : ObservableObject_OwnerWindow, IDisposable
     {
-        internal static Func<KeyList<LocalTreeNode>> GetTreeNodes = null;
+        internal static Func<IEnumerable<LocalTreeNode>> GetTreeNodes = null;
 
         internal WinDoubleFile_FoldersVM(TreeView_DoubleFileVM tvVM, LV_ProjectVM lvProjectVM)
         {

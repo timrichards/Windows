@@ -14,7 +14,7 @@ namespace DoubleFile
 
         public ObservableCollection<ListViewItemVM_Base>
             Items { get { return _items; } }
-        readonly protected ObservableCollection<ListViewItemVM_Base>
+        ObservableCollection<ListViewItemVM_Base>
             _items = new ObservableCollection<ListViewItemVM_Base>();
 
         internal abstract int
@@ -41,27 +41,28 @@ namespace DoubleFile
             var dt = DateTime.Now;
             var nCounter = 0;
 
+            // When there are too many items you get UI thread lockup.
+
+            DispatcherFrame blockingFrame = null;
+
+            LocalTimer timer = null;
+            var timer_ = new LocalTimer(33.0, () =>
+            {
+                timer.Stop();
+                blockingFrame.Continue = false;
+            });
+            timer = timer_;
+
             foreach (var item in lsItems)
             {
                 Add(item, bQuiet: true);
 
-                if (++nCounter < 100)
+                if (1000 > ++nCounter)
                     continue;
 
-                // When there are too many items you get UI thread lockup.
-
-                if ((DateTime.Now - dt).Milliseconds > 20)
+                if (100 < (DateTime.Now - dt).Milliseconds)
                 {
-                    DispatcherFrame blockingFrame = null;
-
-                    LocalTimer timer = null;
-                    var timer_ = new LocalTimer(33.0, () =>
-                    {
-                        timer.Stop();
-                        blockingFrame.Continue = false;
-                    }).Start();
-                    timer = timer_;
-
+                    timer.Start();
                     Dispatcher.PushFrame(blockingFrame = new DispatcherFrame(true));
                     dt = DateTime.Now;
                 }
@@ -69,7 +70,9 @@ namespace DoubleFile
                 nCounter = 0;
             }
 
-            if ((false == Items.IsEmpty()) &&
+            timer.Dispose();
+
+            if ((false == _items.IsEmpty()) &&
                 (false == bQuiet))
             {
                 RaiseItems();

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    class LocalTreeNodeCollection : KeyList<LocalTreeNode>
+    class LocalTreeNodeCollection : List<LocalTreeNode>
     {
         internal LocalTreeNodeCollection(LocalTV treeView)
         {
@@ -43,7 +43,7 @@ namespace DoubleFile
 
                 _strPrevQuery = s;
 
-                Keys
+                this
                     .Where(t => t.Text == s)
                     .FirstOnlyAssert(t => _nodePrevQuery = t);
 

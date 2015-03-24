@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    class LocalLVitemCollection : KeyList<LocalLVitem>
+    class LocalLVitemCollection : List<LocalLVitem>
     {
         internal LocalLVitemCollection(LocalLV listView)
         {
@@ -51,7 +51,7 @@ namespace DoubleFile
                     _strPrevQuery = s;
                     _lvItemPrevQuery = null;
 
-                    Keys
+                    this
                         .Where(t => t.Text == s)
                         .FirstOnlyAssert(lvItem => _lvItemPrevQuery = lvItem);
 

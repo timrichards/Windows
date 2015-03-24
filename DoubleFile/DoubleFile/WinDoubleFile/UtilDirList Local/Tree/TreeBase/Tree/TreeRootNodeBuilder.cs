@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using DoubleFile;
+using System.Collections.Generic;
 
 namespace DoubleFile
 {
@@ -14,8 +15,8 @@ namespace DoubleFile
             internal TreeRootNodeBuilder(LVitem_ProjectVM volStrings, TreeBase base_in)
                 : base(base_in)
             {
-                m_volStrings = volStrings;
-                MBoxStatic.Assert(1301.2301, m_statusCallback != null);
+                _volStrings = volStrings;
+                MBoxStatic.Assert(1301.2301, _statusCallback != null);
             }
 
             DetailsDatum TreeSubnodeDetails(LocalTreeNode treeNode)
@@ -24,7 +25,7 @@ namespace DoubleFile
 
                 foreach (var node in treeNode.Nodes)
                 {
-                    if (App.LocalExit || m_bThreadAbort)
+                    if (App.LocalExit || _bThreadAbort)
                         return datum;
 
                     datum += TreeSubnodeDetails(node);
@@ -55,15 +56,15 @@ namespace DoubleFile
 
                 nodeDatum.DirsWithFiles = datum.DirsWithFiles;
 
-                KeyList<LocalTreeNode> lsTreeNodes = null;
+                List<LocalTreeNode> lsTreeNodes = null;
 
-                if (m_dictNodes.TryGetValue(nodeDatum.Key, out lsTreeNodes))
+                if (_dictNodes.TryGetValue(nodeDatum.Key, out lsTreeNodes))
                 {
                     lsTreeNodes.Add(treeNode);
                 }
                 else if (nodeDatum.TotalLength > 100 * 1024)
                 {
-                    m_dictNodes[nodeDatum.Key] = new KeyList<LocalTreeNode> { treeNode };
+                    _dictNodes[nodeDatum.Key] = new List<LocalTreeNode> { treeNode };
                 }
 
                 return datum;
@@ -71,27 +72,27 @@ namespace DoubleFile
 
             internal TreeRootNodeBuilder DoThreadFactory()
             {
-                m_thread = new Thread(Go) { IsBackground = true };
-                m_thread.Start();
+                _thread = new Thread(Go) { IsBackground = true };
+                _thread.Start();
                 return this;
             }
 
             internal void Join()
             {
-                m_thread.Join();
+                _thread.Join();
             }
 
             internal void Abort()
             {
-                m_bThreadAbort = true;
-                m_thread.Abort();
+                _bThreadAbort = true;
+                _thread.Abort();
             }
 
             void Go()
             {
                 var dtStart = DateTime.Now;
 
-                if (m_volStrings.CanLoad == false)
+                if (_volStrings.CanLoad == false)
                 {
                     MBoxStatic.Assert(1301.2307, false);    // guaranteed by caller
                     return;
@@ -103,21 +104,21 @@ namespace DoubleFile
 
                     while (true)
                     {
-                        bValid = ValidateFile(m_volStrings.ListingFile);
+                        bValid = ValidateFile(_volStrings.ListingFile);
 
                         if (bValid || bAttemptConvert)
                         {
                             break;
                         }
 
-                        if (false == File.Exists(StrFile_01(m_volStrings.ListingFile)))
+                        if (false == File.Exists(StrFile_01(_volStrings.ListingFile)))
                         {
                             break;
                         }
 
                         try
                         {
-                            File.Delete(StrFile_01(m_volStrings.ListingFile));
+                            File.Delete(StrFile_01(_volStrings.ListingFile));
                         }
                         catch (IOException) { }
 
@@ -126,8 +127,8 @@ namespace DoubleFile
 
                     if (bValid == false)
                     {
-                        MBoxStatic.ShowDialog("Bad file: " + m_volStrings.ListingFile, "Tree");
-                        m_statusCallback(m_volStrings, bError: true);
+                        MBoxStatic.ShowDialog("Bad file: " + _volStrings.ListingFile, "Tree");
+                        _statusCallback(_volStrings, bError: true);
                         return;
                     }
                 }
@@ -137,7 +138,7 @@ namespace DoubleFile
 
                 {
                     var ieDriveInfo = File
-                        .ReadLines(m_volStrings.ListingFile)
+                        .ReadLines(_volStrings.ListingFile)
                         .Where(s => s.StartsWith(ksLineType_VolumeInfo));
                     var strBuilder = new StringBuilder();
                     var nIx = -1;
@@ -175,15 +176,15 @@ namespace DoubleFile
                         }
                     }
 
-                    lock (m_dictDriveInfo)
+                    lock (_dictDriveInfo)
                     {
-                        if (m_dictDriveInfo.ContainsKeyA(m_volStrings.ListingFile))
+                        if (_dictDriveInfo.ContainsKeyA(_volStrings.ListingFile))
                         {
                             MBoxStatic.Assert(1301.2308, false);
-                            m_dictDriveInfo.Remove(m_volStrings.ListingFile);
+                            _dictDriveInfo.Remove(_volStrings.ListingFile);
                         }
 
-                        m_dictDriveInfo.Add(m_volStrings.ListingFile, strBuilder.ToString().Trim('\r', '\n'));
+                        _dictDriveInfo.Add(_volStrings.ListingFile, strBuilder.ToString().Trim('\r', '\n'));
                     }
                 }
 
@@ -193,20 +194,21 @@ namespace DoubleFile
                     var rootNode = new RootNode();
                     
                     File
-                        .ReadLines(m_volStrings.ListingFile)
+                        .ReadLines(_volStrings.ListingFile)
                         .Where(s => s.StartsWith(ksLineType_Start))
                         .FirstOnlyAssert(s => rootNode.FirstLineNo = uint.Parse(s.Split('\t')[1]));
+
                     dirData = new DirData(rootNode);
                 }
 
                 var ieLines = File
-                    .ReadLines(m_volStrings.ListingFile);
+                    .ReadLines(_volStrings.ListingFile);
 
                 var nHashParity = 0;
 
                 foreach (var strLine in ieLines)
                 {
-                    if (App.LocalExit || m_bThreadAbort)
+                    if (App.LocalExit || _bThreadAbort)
                         return;
 
                     var asLine = strLine.Split('\t');
@@ -225,13 +227,13 @@ namespace DoubleFile
                 }
 
                 string strRootPath = null;
-                var rootTreeNode = dirData.AddToTree(m_volStrings.Nickname, out strRootPath);
+                var rootTreeNode = dirData.AddToTree(_volStrings.Nickname, out strRootPath);
 
-                if (rootTreeNode != null)
+                if (null != rootTreeNode)
                 {
                     rootTreeNode.NodeDatum = new RootNodeDatum(
                         rootTreeNode.NodeDatum,
-                        m_volStrings.ListingFile, m_volStrings.VolumeGroup,
+                        _volStrings.ListingFile, _volStrings.VolumeGroup,
                         nVolFree, nVolLength,
                         strRootPath
                     );
@@ -239,7 +241,7 @@ namespace DoubleFile
                     TreeSubnodeDetails(rootTreeNode);
                 }
 
-                m_statusCallback(m_volStrings, rootTreeNode);
+                _statusCallback(_volStrings, rootTreeNode);
 
 #if (DEBUG && FOOBAR)
                 UtilProject.WriteLine(File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_File)).Sum(s => double.Parse(s.Split('\t')[knColLength])).ToString());
@@ -276,9 +278,12 @@ namespace DoubleFile
 #endif
             }
 
-            Thread m_thread = null;
-            bool m_bThreadAbort = false;
-            readonly LVitem_ProjectVM m_volStrings = null;
+            Thread
+                _thread = null;
+            bool
+                _bThreadAbort = false;
+            readonly LVitem_ProjectVM
+                _volStrings = null;
         }
     }
 }

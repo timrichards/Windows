@@ -34,7 +34,7 @@ namespace DoubleFile
                     (
                         from
                             item
-                            in _datum.Nodes.Keys
+                            in _datum.Nodes
                             select new TreeViewItem_DoubleFileVM(_TVVM, item, this, ++nIndex)
                     );
                 }

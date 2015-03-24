@@ -123,7 +123,7 @@ namespace DoubleFile
                 }
             }).Start())
             {
-                var dictFiles = new ConcurrentDictionary<FileKeyTuple, KeyListSorted<int>>();
+                var dictFiles = new ConcurrentDictionary<FileKeyTuple, List<int>>();
 
                 Parallel.ForEach(
                     _LVprojectVM.ItemsCast
@@ -161,18 +161,19 @@ namespace DoubleFile
                         MBoxStatic.Assert(99907, _DictItemNumberToLV[GetLVitemProjectVM(lookup)] == lvItem);
                         MBoxStatic.Assert(99908, GetLineNumber(lookup) == nLineNumber);
 #endif
-                        KeyListSorted<int> ls = null;
+                        List<int> ls = null;
 
                         if (dictFiles.TryGetValue(key, out ls))
                         {
                             lock (ls)                      // jic sorting downstream too at A
                             {
-                                ls.Add(lookup);
+                                ls.Insert(ls.TakeWhile(nLookup => lookup >= nLookup).Count(),
+                                    lookup);
                             }
                         }
                         else
                         {
-                            dictFiles[key] = new KeyListSorted<int> { lookup };
+                            dictFiles[key] = new List<int> { lookup };
                         }
                     }
                 });
@@ -185,7 +186,7 @@ namespace DoubleFile
                 _DictFiles =
                     dictFiles
                     .Where(kvp => kvp.Value.Count > 1)
-                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Keys.AsEnumerable());
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.AsEnumerable());
             }
 
             _statusCallback(bDone: true);

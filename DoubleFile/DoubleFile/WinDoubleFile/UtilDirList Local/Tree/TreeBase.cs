@@ -7,25 +7,28 @@ namespace DoubleFile
 {
     abstract class TreeBase : FileParse
     {
-        protected readonly ConcurrentDictionary<FolderKeyTuple, KeyList<LocalTreeNode>> m_dictNodes = null;
-        protected readonly Dictionary<string, string> m_dictDriveInfo = null;
-        protected readonly TreeStatusDelegate m_statusCallback = null;
+        protected readonly ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
+            _dictNodes = null;
+        protected readonly Dictionary<string, string>
+            _dictDriveInfo = null;
+        protected readonly TreeStatusDelegate
+            _statusCallback = null;
 
         protected TreeBase(
-            ConcurrentDictionary<FolderKeyTuple, KeyList<LocalTreeNode>> dictNodes,
+            ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>> dictNodes,
             Dictionary<string, string> dictDriveInfo,
             TreeStatusDelegate statusCallback)
         {
-            m_dictNodes = dictNodes;
-            m_dictDriveInfo = dictDriveInfo;
-            m_statusCallback = statusCallback;
+            _dictNodes = dictNodes;
+            _dictDriveInfo = dictDriveInfo;
+            _statusCallback = statusCallback;
         }
 
         protected TreeBase(TreeBase base_in)
         {
-            m_dictNodes = base_in.m_dictNodes;
-            m_dictDriveInfo = base_in.m_dictDriveInfo;
-            m_statusCallback = base_in.m_statusCallback;
+            _dictNodes = base_in._dictNodes;
+            _dictDriveInfo = base_in._dictDriveInfo;
+            _statusCallback = base_in._statusCallback;
         }
     }
 }

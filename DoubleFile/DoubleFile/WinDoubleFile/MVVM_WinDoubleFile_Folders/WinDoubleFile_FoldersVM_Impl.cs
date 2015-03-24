@@ -11,13 +11,13 @@ namespace DoubleFile
     {
         internal static event Func<bool> ShowWindows = null;
 
-        internal ConcurrentDictionary<FolderKeyTuple, KeyList<LocalTreeNode>>
+        internal ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
             DictNodes { get; private set; }
         internal Tree
             Tree { get; private set; }
 
-        internal readonly KeyList<LocalTreeNode>
-            _listTreeNodes = new KeyList<LocalTreeNode>();
+        internal readonly List<LocalTreeNode>
+            _listTreeNodes = new List<LocalTreeNode>();
         internal readonly List<LocalTreeNode>
             _listRootNodes = new List<LocalTreeNode>();
 
@@ -216,7 +216,7 @@ namespace DoubleFile
             TabledString.GenerationStarting();
 
             if (null == DictNodes)
-                DictNodes = new ConcurrentDictionary<FolderKeyTuple, KeyList<LocalTreeNode>>();
+                DictNodes = new ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>();
 
             Tree =
                 new Tree(_lvProjectVM, DictNodes, _dictVolumeInfo,

@@ -1,4 +1,5 @@
 ﻿using DoubleFile;
+using System.Collections.Generic;
 
 namespace DoubleFile
 {
@@ -12,7 +13,7 @@ namespace DoubleFile
         {
         }
 
-        internal KeyList<LocalTreeNode>
+        internal List<LocalTreeNode>
             Clones { get; set; }
         internal LocalLVitem 
             LVitem { get; set; }

@@ -117,14 +117,12 @@ namespace DoubleFile
                     }
                     else if (1 < _subNodes.Count)
                     {
-                        var treeList = new KeyList<LocalTreeNode>();
+                        var treeList = new List<LocalTreeNode>();
 
                         foreach (var node in _subNodes.Values)
-                        {
                             treeList.Add(node.AddToTree());
-                        }
 
-                        treeNode = new LocalTreeNode(strShortPath, treeList.ToArray());
+                        treeNode = new LocalTreeNode(strShortPath, treeList);
                     }
                     else
                     {

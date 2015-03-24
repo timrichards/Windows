@@ -29,12 +29,12 @@ namespace DoubleFile
 
             if (bCase)
             {
-                lsTreeNodes = WinDoubleFile_FoldersVM.GetTreeNodes().Keys
+                lsTreeNodes = WinDoubleFile_FoldersVM.GetTreeNodes()
                     .Where(treeNode => treeNode.Text.Contains(SearchText));
             }
             else
             {
-                lsTreeNodes = WinDoubleFile_FoldersVM.GetTreeNodes().Keys
+                lsTreeNodes = WinDoubleFile_FoldersVM.GetTreeNodes()
                     .Where(treeNode => treeNode.Text.ToLower().Contains(SearchText));
             }
 
@@ -67,7 +67,7 @@ namespace DoubleFile
             if (null != _selectedItem.SearchResultsDir)
             {
                 var strFile =
-                    (_selectedItem.FileIndex >= 0)
+                    (0 <= _selectedItem.FileIndex)
                     ? _selectedItem.SearchResultsDir.ListFiles[_selectedItem.FileIndex]
                     : null;
 

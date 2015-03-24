@@ -84,7 +84,7 @@ namespace DoubleFile
                         {
                             if (false == listResults.IsEmpty())
                             {
-                                _statusCallback(new SearchResults(_strSearch, _volStrings, listResults), bLast: true);
+                                _statusCallback(new SearchResults(_strSearch, _volStrings, listResults.ToList()), bLast: true);
                                 listResults = new KeyListSorted<SearchResultsDir>();
                             }
 
@@ -142,7 +142,7 @@ namespace DoubleFile
                         MBoxStatic.Assert(1307.8302, null == searchResultDir);
 
                     if (false == listResults.IsEmpty())
-                        _statusCallback(new SearchResults(_strSearch, _volStrings, listResults), bFirst: bFirst);
+                        _statusCallback(new SearchResults(_strSearch, _volStrings, listResults.ToList()), bFirst: bFirst);
                 }
             }
 

@@ -68,10 +68,10 @@ namespace DoubleFile
                         foreach (var strFileLineA in lsFilesInDir)
                         {
                             lsLVitems.Add(new LVitem_FileDuplicatesVM(new[] { strFileLineA.Split('\t')[3], strLine.Split('\t')[2] })
-                                {
-                                    FileLine = strFileLineA,
-                                    LVitem_ProjectVM = g.Key
-                                });
+                            {
+                                FileLine = strFileLineA,
+                                LVitem_ProjectVM = g.Key
+                            });
                         }
 
                         lsFilesInDir.Clear();

@@ -710,6 +710,7 @@ namespace DoubleFile
                             StringComparison.InvariantCultureIgnoreCase)))
                     {
                         MBoxStatic.Assert(99898, false);    // replace the Tag field with an LVitem
+                  //      IgnoreNodeAndSubnodes((LocalLVitem)lvItem.Tag, treeNode);
                     }
                 }
 

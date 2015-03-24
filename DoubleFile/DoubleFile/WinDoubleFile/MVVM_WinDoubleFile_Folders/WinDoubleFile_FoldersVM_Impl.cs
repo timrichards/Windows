@@ -47,8 +47,8 @@ namespace DoubleFile
         internal void CreateFileDictStatusCallback(bool bDone = false, double nProgress = double.NaN)
         {
             if (App.LocalExit ||
-                (null == App.FileDictionary) ||
-                App.FileDictionary.IsAborted)
+                (null == MainWindow.FileDictionary) ||
+                MainWindow.FileDictionary.IsAborted)
             {
                 _winProgress.Aborted = true;
                 return;
@@ -69,8 +69,8 @@ namespace DoubleFile
         void TreeStatusCallback(LVitem_ProjectVM volStrings, LocalTreeNode rootNode = null, bool bError = false)
         {
             if (App.LocalExit ||
-                (null == App.FileDictionary) ||
-                App.FileDictionary.IsAborted ||
+                (null == MainWindow.FileDictionary) ||
+                MainWindow.FileDictionary.IsAborted ||
                 ((null != Tree) && (Tree.IsAborted)))
             {
                 ClearMem_TreeForm();
@@ -173,7 +173,7 @@ namespace DoubleFile
             {
                 if (false == UtilDirList.Closure(() =>
                 {
-                    if (App.FileDictionary
+                    if (MainWindow.FileDictionary
                         .IsAborted)
                     {
                         return true;
@@ -193,7 +193,7 @@ namespace DoubleFile
                     return false;
                 }
 
-                App.FileDictionary
+                MainWindow.FileDictionary
                     .Abort();
                     
                 if (null != Tree)
@@ -205,12 +205,12 @@ namespace DoubleFile
 
             var lsProgressItems = new List<string>();
 
-            App.FileDictionary.ResetAbortFlag();
+            MainWindow.FileDictionary.ResetAbortFlag();
 
-            if (App.FileDictionary.IsEmpty)
+            if (MainWindow.FileDictionary.IsEmpty)
             {
                 lsProgressItems.Add(_ksFileDictKey);
-                App.FileDictionary.DoThreadFactory(_lvProjectVM, CreateFileDictStatusCallback);
+                MainWindow.FileDictionary.DoThreadFactory(_lvProjectVM, CreateFileDictStatusCallback);
             }
 
             TabledString.GenerationStarting();

@@ -13,12 +13,17 @@ namespace DoubleFile
     partial class MainWindow
     {
         internal LV_ProjectVM LVprojectVM { get; private set; }
-        internal WinFormDirList DirListForm { get; private set; }
+
+        static internal FileDictionary FileDictionary = new FileDictionary();
+        static internal SaveDirListings _saveDirListings = null;
+        static internal MainWindow static_MainWindow { get; private set; }
+        static internal LocalWindow static_Dialog { get; set; }
+        static internal LocalWindow static_lastPlacementWindow { get; set; }
 
         public MainWindow()
             : base(bIsMainWindow: true)
         {
-            _gd_old = new GlobalData(this);
+            static_MainWindow = this;
 
             InitializeComponent();
             form_grid.Loaded += Grid_Loaded;
@@ -26,23 +31,11 @@ namespace DoubleFile
             form_btnViewProject.Click += Button_ViewProject_Click;
             form_btnOpenProject.Click += Button_OpenProject_Click;
             form_btnSaveProject.Click += Button_SaveProject_Click;
-            form_btnSearchDirLists.Click += Button_SearchDirLists_Click;
             form_btnDuplicateFileExplorer.Click += Button_DuplicateFileExplorer_Click;
             MouseDown += (o, e) => DragMove();
             StateChanged += (o, e) => WinTooltip.CloseTooltip();     // app minimize
             SizeToContent = SizeToContent.WidthAndHeight;
             ResizeMode = ResizeMode.CanMinimize;
-        }
-
-        void FormDirListAction(Action<WinFormDirList, LV_ProjectVM> action)
-        {
-            if ((null == DirListForm) ||
-                DirListForm.LocalIsClosed)
-            {
-                return;
-            }
-
-            action(DirListForm, new LV_ProjectVM(LVprojectVM));
         }
 
         void ShowProjectWindow(bool bOpenProject = false)
@@ -85,8 +78,7 @@ namespace DoubleFile
 
             new SaveListingsProcess(LVprojectVM);
 
-            App.FileDictionary.Clear();
-            FormDirListAction(WinFormDirList.RestartTreeTimer);
+            MainWindow.FileDictionary.Clear();
 
             if ((null != _winDoubleFile_Folders) && (false == _winDoubleFile_Folders.LocalIsClosed))
             {
@@ -188,6 +180,9 @@ namespace DoubleFile
                 return;
             }
 
+            FileDictionary.Dispose();
+            FileDictionary = null;
+
             if (Directory.Exists(ProjectFile.TempPath))
             {
                 try { Directory.Delete(ProjectFile.TempPath, true); }
@@ -198,8 +193,6 @@ namespace DoubleFile
             {
                 Directory.Delete(ProjectFile.TempPath01, true);
             }
-
-            _gd_old.Dispose();
         }
 
         private void Button_ViewProject_Click(object sender, RoutedEventArgs e)
@@ -224,20 +217,6 @@ namespace DoubleFile
             }
         }
 
-        private void Button_SearchDirLists_Click(object sender, RoutedEventArgs e)
-        {
-            if ((null == DirListForm) ||
-                DirListForm.LocalIsClosed)
-            {
-                (DirListForm = new WinFormDirList(this, LVprojectVM)).Show();
-                DirListForm.Closed += (o, a) => DirListForm = null;
-            }
-            else
-            {
-                DirListForm.Activate();
-            }
-        }
-
         private void Button_DuplicateFileExplorer_Click(object sender, RoutedEventArgs e)
         {
             if ((null == _winDoubleFile_Folders) || (_winDoubleFile_Folders.LocalIsClosed))
@@ -252,7 +231,5 @@ namespace DoubleFile
 
         WinDoubleFile_Folders
             _winDoubleFile_Folders = null;
-        readonly GlobalData
-            _gd_old = null;
     }
 }

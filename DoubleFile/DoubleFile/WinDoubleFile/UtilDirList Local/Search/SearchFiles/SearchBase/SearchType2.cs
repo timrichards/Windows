@@ -7,6 +7,8 @@ using System.Threading;
 
 namespace DoubleFile
 {
+    delegate void SearchStatusDelegate(SearchResults searchResults, bool bFirst = false, bool bLast = false);
+
     partial class SearchType2 : SearchBase
     {
         internal SearchType2(

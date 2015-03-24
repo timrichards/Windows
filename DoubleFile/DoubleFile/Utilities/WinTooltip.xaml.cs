@@ -15,7 +15,6 @@ namespace DoubleFile
 
         static internal LocalTreeNode LocalTreeNode { get { return (null == _winTooltip) ? null : _winTooltip.Tag as LocalTreeNode; } }
         static internal TreeNode TreeNode { get { return (null == _winTooltip) ? null : _winTooltip.Tag as TreeNode; } }
-        static internal TreeNodeProxy TreeNodeProxy { get { return (null == _winTooltip) ? null : _winTooltip.Tag as TreeNodeProxy; } }
 
         internal struct ArgsStruct
         {

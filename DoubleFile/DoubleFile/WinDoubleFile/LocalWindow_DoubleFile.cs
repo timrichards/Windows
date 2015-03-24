@@ -13,11 +13,11 @@ namespace DoubleFile
             //chrome.GlassFrameThickness = new System.Windows.Thickness(1);
             WindowStyle = WindowStyle.ToolWindow;
 
-            var lastWin = GlobalData.static_lastPlacementWindow ?? GlobalData.static_MainWindow;
+            var lastWin = MainWindow.static_lastPlacementWindow ?? MainWindow.static_MainWindow;
             var bUseLastWindow = true;
 
             if (null == _leftWindow)
-                _leftWindow = GlobalData.static_MainWindow;
+                _leftWindow = MainWindow.static_MainWindow;
 
             if (_nWantsLeft > -1)
             {
@@ -44,7 +44,7 @@ namespace DoubleFile
                 }
             }
 
-            GlobalData.static_lastPlacementWindow = this;
+            MainWindow.static_lastPlacementWindow = this;
             Closed += Window_Closed;
         }
 
@@ -100,7 +100,7 @@ namespace DoubleFile
             }
 
             PosAtClose = new Rect(Left, Top, Width, Height);
-            GlobalData.static_lastPlacementWindow = null;
+            MainWindow.static_lastPlacementWindow = null;
         }
 
         LocalWindow_DoubleFile _chainedWindow = null;

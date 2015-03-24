@@ -26,7 +26,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>123</ApplicationRevision>
+    <ApplicationRevision>124</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -151,7 +151,6 @@
     <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
     <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
     <Compile Include="Utilities\KeyListSorted.cs" />
-    <Compile Include="Utilities\TreeNodeProxy.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Search\LVitem_DoubleFile_SearchVM.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Search\WinDoubleFile_SearchVM_Impl.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Search\WinDoubleFile_SearchVM.cs" />
@@ -166,9 +165,6 @@
     </Compile>
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_TreeList\LV_TreeListSiblingsVM.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\WinTreeMapVM.cs" />
-    <Compile Include="WinFormDirList\WinFormDirList.xaml.cs">
-      <DependentUpon>WinFormDirList.xaml</DependentUpon>
-    </Compile>
     <Compile Include="WinDoubleFile\UtilDirList Local\LocalTreeMapNode.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Tree\DetailsDatum.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Tree\TreeSelect_Local.cs" />
@@ -212,21 +208,11 @@
     <Compile Include="LocalForms\LocalLVitem.cs" />
     <Compile Include="LocalForms\LocalLVitemCollection.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\UtilDirList\ExtensionMethodsStatic.cs" />
-    <Compile Include="WinFormDirList\UC_TreeMap.cs" />
-    <Compile Include="WinFormDirList\Collate.cs" />
-    <Compile Include="WinFormDirList\Collate\AddTreeToList.cs" />
-    <Compile Include="WinFormDirList\Collate\InsertSizeMarkerStatic.cs" />
-    <Compile Include="WinFormDirList\FormDirList.cs" />
-    <Compile Include="WinFormDirList\FormDirList.Designer.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Search\SearchFiles\SearchBase.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Search\SearchFiles\SearchBase\SearchType2.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Search\SearchFiles\SearchBase\SearchType2\SearchFile.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Search\SearchFiles\SearchResults.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Search\SearchFiles\SearchResultsDir.cs" />
-    <Compile Include="WinFormDirList\FormDirList\Form_Search_1_2_GlobalData.cs" />
-    <Compile Include="WinFormDirList\FormDirList\GetOneNodeByRootPath.cs" />
-    <Compile Include="WinFormDirList\FormDirList\Form_Tree_GlobalData.cs" />
-    <Compile Include="WinFormDirList\GlobalData.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Tree\DetailsDatum\NodeDatum.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Tree\LVitemNameComparerStruct.cs" />
@@ -237,29 +223,12 @@
     <Compile Include="WinDoubleFile\UtilDirList Local\Tree\TreeBase\Tree\TreeRootNodeBuilder\Node.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Tree\TreeBase\Tree\TreeRootNodeBuilder\RootNode.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Tree\TreeSelect.cs" />
-    <Compile Include="WinFormDirList\CountNodes.cs" />
-    <Compile Include="WinFormDirList\UtilDirList\ListViewEx.cs" />
-    <Compile Include="WinFormDirList\FormDirList\Form_Search.cs" />
     <Compile Include="Utilities\FolderKeyTuple.cs" />
-    <Compile Include="WinFormDirList\Tree\DetailsDatum\NodeDatum.cs" />
-    <Compile Include="WinFormDirList\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Tree\LVitemFileTag.cs" />
-    <Compile Include="WinFormDirList\Tree\LVitemNameComparerStruct.cs" />
-    <Compile Include="WinFormDirList\Tree\TreeBase\Tree.cs" />
-    <Compile Include="WinFormDirList\FormDirList\Form_Tree.cs" />
-    <Compile Include="WinFormDirList\Tree\TreeBase.cs" />
-    <Compile Include="WinFormDirList\Tree\TreeBase\Tree\TreeRootNodeBuilder.cs" />
-    <Compile Include="WinFormDirList\Tree\TreeBase\Tree\TreeRootNodeBuilder\DirData.cs" />
-    <Compile Include="WinFormDirList\Tree\TreeBase\Tree\TreeRootNodeBuilder\Node.cs" />
-    <Compile Include="WinFormDirList\Tree\TreeBase\Tree\TreeRootNodeBuilder\RootNode.cs" />
-    <Compile Include="WinFormDirList\Tree\TreeSelect.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\UC_TreeMap.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\UtilDirList.cs" />
-    <Compile Include="WinFormDirList\UtilDirList\BlinkyStruct.cs" />
-    <Compile Include="WinFormDirList\UtilDirList\ExtensionMethodsStatic.cs" />
     <Compile Include="Utilities\FlashWindowStatic.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\UtilDirList\SDL_FileBase.cs" />
-    <Compile Include="WinFormDirList\UtilDirList\SDL_TreeView.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\UtilDirList\SDL_FileBase\SDL_CopyFile.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\UtilDirList\SDL_FileBase\SDL_IgnoreFile.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\UtilColor.cs" />
@@ -281,9 +250,6 @@
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Folders\WinDoubleFile_FoldersVM_Impl.cs" />
     <Compile Include="WinDoubleFile\WinDoubleFile_Folders.xaml.cs">
       <DependentUpon>WinDoubleFile_Folders.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="WinProject\UtilProject\GlobalData.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utilities\LocalWindow.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -388,9 +354,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="WinFormDirList\FormDirList.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <None Include="DoubleFile_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -452,10 +415,6 @@
     <Page Include="WinDoubleFile\WinDoubleFile_TreeList.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="WinFormDirList\WinFormDirList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Utilities\WinTooltip.xaml">
       <Generator>MSBuild:Compile</Generator>

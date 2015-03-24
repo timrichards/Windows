@@ -33,17 +33,20 @@ namespace DoubleFile
             // You can comment this stuff out all you want: the flashing close box on the
             // system file dialogs isn't going away...
 
+            if (null == MainWindow.static_Dialog)
+                MainWindow.static_Dialog = this;
+
             Activated += (o, e) =>
             {
                 var bCanFlashWindow = App.CanFlashWindow_ResetsIt;     // querying it resets it
 
-                if (GlobalData.static_Dialog._simulatingModal &&
-                    (this != GlobalData.static_Dialog))
+                if (MainWindow.static_Dialog._simulatingModal &&
+                    (this != MainWindow.static_Dialog))
                 {
-                    GlobalData.static_Dialog.Activate();
+                    MainWindow.static_Dialog.Activate();
 
                     if (bCanFlashWindow)
-                        FlashWindowStatic.Go(GlobalData.static_Dialog);
+                        FlashWindowStatic.Go(MainWindow.static_Dialog);
                 }
             };
 
@@ -52,7 +55,7 @@ namespace DoubleFile
 
             if (false == bIsMainWindow)
             {
-                Icon = GlobalData.static_MainWindow.Icon;
+                Icon = MainWindow.static_MainWindow.Icon;
                 WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 ShowInTaskbar = false;
             }
@@ -73,13 +76,13 @@ namespace DoubleFile
 
         internal new LocalWindow Show()
         {
-            Owner = GlobalData.static_Dialog;
+            Owner = MainWindow.static_Dialog;
             base.Show();
             PositionWindow();
             return this;
         }
 
-        internal new bool? ShowDialog() { return ShowDialog(GlobalData.static_Dialog); }
+        internal new bool? ShowDialog() { return ShowDialog(MainWindow.static_Dialog); }
 
         protected virtual void PositionWindow()
         {
@@ -90,7 +93,7 @@ namespace DoubleFile
             // 3/9/15 This is false because e.g. bringing up a New Listing File dialog does not
             // properly focus: a second click is needed to move the window or do anything in it.
             _simulatingModal = false;           // Change it here to switch to simulated dialog
-            GlobalData.static_Dialog = this;
+            MainWindow.static_Dialog = this;
             Owner = me;
 
             bool? bResult = null;
@@ -98,7 +101,7 @@ namespace DoubleFile
 
             Closed += (o, e) =>
             {
-                GlobalData.static_Dialog = me;
+                MainWindow.static_Dialog = me;
                 me.Activate();
 
                 if (_simulatingModal)

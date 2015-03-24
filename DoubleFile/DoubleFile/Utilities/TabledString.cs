@@ -31,8 +31,8 @@ namespace DoubleFile
                 MBoxStatic.Assert(99912, null == _acStrings);
                 MBoxStatic.Assert(99911, _bGenerating);
                 MBoxStatic.Assert(99914, 0 == _indexGenerator);
-                _dictStrings = new ConcurrentDictionary<string, int>(GlobalData.static_MainWindow.LVprojectVM.Count, 16384);
-                _dictStringsRev = new ConcurrentDictionary<int, string>(GlobalData.static_MainWindow.LVprojectVM.Count, 16384);
+                _dictStrings = new ConcurrentDictionary<string, int>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384);
+                _dictStringsRev = new ConcurrentDictionary<int, string>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384);
                 _acStrings = null;
                 _bGenerating = true;
                 _indexGenerator = 0;
@@ -74,8 +74,8 @@ namespace DoubleFile
                     MBoxStatic.Assert(99918, _indexGenerator == _acStrings.Length);
                     MBoxStatic.Assert(99916, 1 < _refCount);
 
-                    _dictStrings = new ConcurrentDictionary<string, int>(GlobalData.static_MainWindow.LVprojectVM.Count, _acStrings.Length);
-                    _dictStringsRev = new ConcurrentDictionary<int, string>(GlobalData.static_MainWindow.LVprojectVM.Count, _acStrings.Length);
+                    _dictStrings = new ConcurrentDictionary<string, int>(MainWindow.static_MainWindow.LVprojectVM.Count, _acStrings.Length);
+                    _dictStringsRev = new ConcurrentDictionary<int, string>(MainWindow.static_MainWindow.LVprojectVM.Count, _acStrings.Length);
 
                     for (int nIx = 0; nIx < _acStrings.Length; ++nIx)
                     {

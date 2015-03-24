@@ -8,11 +8,9 @@ namespace DoubleFile
     /// </summary>
     public partial class App : Application
     {
-        internal static FileDictionary FileDictionary = new FileDictionary();
-
-        internal static event Action DeactivateDidOccur;
-        internal static bool LocalActivated { get; private set; }
-        internal static bool LocalExit { get; private set; }
+        static internal event Action DeactivateDidOccur;
+        static internal bool LocalActivated { get; private set; }
+        static internal bool LocalExit { get; private set; }
 
         internal static bool CanFlashWindow_ResetsIt
         {
@@ -47,8 +45,6 @@ namespace DoubleFile
 
         void App_Exit(object sender, ExitEventArgs e)
         {
-            FileDictionary.Dispose();
-            FileDictionary = null;
             LocalExit = true;
         }
 

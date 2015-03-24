@@ -56,7 +56,7 @@ namespace DoubleFile
 
             _searchType2 = new SearchType2
                 (
-                    GlobalData.static_MainWindow.LVprojectVM,
+                    MainWindow.static_MainWindow.LVprojectVM,
                     SearchText,
                     SearchText.ToLower() != SearchText,
                     SearchType2.FolderSpecialHandling.None,

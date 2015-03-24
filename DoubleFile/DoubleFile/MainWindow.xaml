@@ -12,8 +12,7 @@
             <Button Content="View project" Name ="form_btnViewProject" Width="110" Margin="10,0,10,5"/>
             <Button Content="Open project" Name ="form_btnOpenProject" Width="110" Margin="10,0,10,5"/>
             <Button Content="Save project" Name ="form_btnSaveProject" Width="110" Margin="10,0,10,5"/>
-            <Button Content="Search Directories" Name ="form_btnSearchDirLists" Width="110" Margin="10,5,10,5"/>
-            <Button Content="Explore Duplicates" Name ="form_btnDuplicateFileExplorer" Width="110" Margin="10,5,10,10"/>
+            <Button Content="Explore" Name ="form_btnDuplicateFileExplorer" Width="110" Margin="10,5,10,10"/>
         </StackPanel>
     </Grid>
 </local:LocalWindow>

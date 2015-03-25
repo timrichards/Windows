@@ -6,9 +6,9 @@ namespace DoubleFile
     class DetailsDatum
     {
         internal uint
-            PrevLineNo { get; private set; }
+            PrevLineNo { get; private set; }        // Found 21 bits
         internal uint
-            LineNo { get; private set; }
+            LineNo { get; private set; }            // Found 21 bits
         internal ulong
             Length { get; private set; }
         internal int
@@ -17,16 +17,13 @@ namespace DoubleFile
         internal ulong
             TotalLength { get; set; }
         internal uint
-            FilesInSubdirs { get; set; }
+            FilesInSubdirs { get; set; }            // Found 21 bits
         internal uint
-            SubDirs { get; set; }
+            SubDirs { get; set; }                   // Found 17 bits
         internal uint
-            ImmediateFiles { get; set; }
+            ImmediateFiles { get; set; }            // Found 15 bits
         internal uint
-            DirsWithFiles { get; set; }
-
-        internal bool 
-            SeparateVols { get; set; }
+            DirsWithFiles { get; set; }             // Found 15 bits
 
         internal Rectangle
             TreeMapRect { get; set; }
@@ -60,8 +57,8 @@ namespace DoubleFile
                 TotalLength = datum1.TotalLength + datum2.TotalLength,
                 FilesInSubdirs = datum1.FilesInSubdirs + datum2.FilesInSubdirs,
                 SubDirs = datum1.SubDirs + datum2.SubDirs,
-                ImmediateFiles = datum1.ImmediateFiles + datum2.ImmediateFiles,
-                DirsWithFiles = datum1.DirsWithFiles + datum2.DirsWithFiles,
+                ImmediateFiles = (ushort)(datum1.ImmediateFiles + datum2.ImmediateFiles),
+                DirsWithFiles = (ushort)(datum1.DirsWithFiles + datum2.DirsWithFiles),
                 HashParity = datum1.HashParity + datum2.HashParity
             };
         }

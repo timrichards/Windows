@@ -9,8 +9,8 @@ namespace DoubleFile
     {
         internal Dictionary<string, string>
             _dictVolumeInfo = null;
-        internal LocalTreeNodeCollection
-            Nodes { get; private set; }
+        internal LocalTreeNode[]
+            Nodes { get; set; }
         internal LocalTreeNode
             SelectedNode { get; set; }
         internal LocalTreeNode
@@ -22,22 +22,27 @@ namespace DoubleFile
         internal bool
             Enabled { get; set; }
         
-        internal LocalTV()
+        internal LocalTV(IEnumerable<LocalTreeNode> lsRootNodes = null)
         {
-            Nodes = new LocalTreeNodeCollection(this);
+            if (null != lsRootNodes)
+                Nodes = lsRootNodes.ToArray();
+            
             WinDoubleFile_DuplicatesVM.GoToFile += GoToFile;
             WinDoubleFile_SearchVM.GoToFile += GoToFile;
         }
 
         internal int GetNodeCount(bool includeSubTrees = false)
         {
-            return includeSubTrees ? CountSubnodes(Nodes) : Nodes.Count;
+            return includeSubTrees ? CountSubnodes(Nodes) : (null != Nodes) ? Nodes.Length : 0;
         }
 
         internal void Select() { }
 
         static int CountSubnodes(IEnumerable<LocalTreeNode> nodes)
         {
+            if (null == nodes)
+                return 0;
+
             var nRet = 0;
 
             foreach (var treeNode in nodes)

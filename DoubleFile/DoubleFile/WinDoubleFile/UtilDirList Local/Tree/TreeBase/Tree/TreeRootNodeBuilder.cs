@@ -23,12 +23,15 @@ namespace DoubleFile
             {
                 var datum = new DetailsDatum();
 
-                foreach (var node in treeNode.Nodes)
+                if (null != treeNode.Nodes)
                 {
-                    if (App.LocalExit || _bThreadAbort)
-                        return datum;
+                    foreach (var node in treeNode.Nodes)
+                    {
+                        if (App.LocalExit || _bThreadAbort)
+                            return datum;
 
-                    datum += TreeSubnodeDetails(node);
+                        datum += TreeSubnodeDetails(node);
+                    }
                 }
 
                 var nodeDatum = treeNode.NodeDatum;
@@ -44,9 +47,9 @@ namespace DoubleFile
                 }
 
                 nodeDatum.TotalLength = (datum.TotalLength += nodeDatum.Length);
-                nodeDatum.ImmediateFiles = (nodeDatum.LineNo - nodeDatum.PrevLineNo - 1);
+                nodeDatum.ImmediateFiles = (ushort)(nodeDatum.LineNo - nodeDatum.PrevLineNo - 1);
                 nodeDatum.FilesInSubdirs = (datum.FilesInSubdirs += nodeDatum.ImmediateFiles);
-                nodeDatum.SubDirs = (datum.SubDirs += (uint)treeNode.Nodes.Count);
+                nodeDatum.SubDirs = (datum.SubDirs += (null != treeNode.Nodes) ? (uint)treeNode.Nodes.Length : 0);
                 nodeDatum.HashParity = (datum.HashParity += nodeDatum.HashParity);
 
                 if (nodeDatum.ImmediateFiles > 0)

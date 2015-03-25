@@ -82,7 +82,7 @@ namespace DoubleFile
                 return;
 
             //RenderA(treeNode);
-            treeNode.TreeView.SelectedNode = treeNode;
+            LocalTreeNode.TreeView.SelectedNode = treeNode;
         }
 
         internal void Clear()
@@ -336,9 +336,9 @@ namespace DoubleFile
             if (null == listFiles)
                 return null;
 
-            var nodeFileList = new LocalTreeMapNode(parent.Text);
             ulong nTotalLength = 0;
             var enumerator = listLengths.GetEnumerator();
+            var lsNodes = new List<LocalTreeNode>();
 
             foreach (var arrLine in listFiles)
             {
@@ -351,7 +351,7 @@ namespace DoubleFile
                 if (0 == enumerator.Current)
                     continue;
 
-                nodeFileList.Nodes.Add(new LocalTreeMapNode(arrLine[0])
+                lsNodes.Add(new LocalTreeMapNode(arrLine[0])
                 {
                     NodeDatum = nodeDatum_A,
                     ForeColor = UtilColor.OliveDrab
@@ -367,10 +367,12 @@ namespace DoubleFile
             MBoxStatic.Assert(1302.3301, nTotalLength == nodeDatum.Length);
             nodeDatum_B.TotalLength = nTotalLength;
             nodeDatum_B.TreeMapRect = nodeDatum.TreeMapRect;
-            nodeFileList.NodeDatum = nodeDatum_B;
-            MBoxStatic.Assert(1302.3302, nodeFileList.SelectedImageIndex == -1);              // sets the bitmap size
-            nodeFileList.SelectedImageIndex = -1;
-            return nodeFileList;
+
+            return new LocalTreeMapNode(parent.Text, lsNodes)
+            {
+                NodeDatum = nodeDatum_B,
+                SelectedImageIndex = -1
+            };
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -449,7 +451,7 @@ namespace DoubleFile
 
             WinTooltip.CloseTooltip();
 
-            if (null == treeNode.TreeView)
+            if (treeNode is LocalTreeMapNode)
                 return;     // file fake node
 
             RenderA(treeNode);
@@ -673,12 +675,12 @@ namespace DoubleFile
 
                 if (bStart &&
                     (null == nodeDatum.TreeMapFiles) &&
-                    (null != item.TreeView))
+                    (false == (item is LocalTreeMapNode)))
                 {
                     nodeDatum.TreeMapFiles = GetFileList(item);
                 }
 
-                if ((false == item.Nodes.IsEmpty()) ||
+                if ((null != item.Nodes) && (false == item.Nodes.IsEmpty()) ||
                     (bStart && (null != nodeDatum.TreeMapFiles)))
                 {
                     IEnumerable<LocalTreeNode> ieChildren = null;
@@ -762,14 +764,18 @@ namespace DoubleFile
                     {
                         parent = item;
 
-                        ieChildren =
-                            item.Nodes
-                            .Cast<LocalTreeNode>()
-                            .Where(t => 0 < t.NodeDatum.TotalLength);
+                        if (null != item.Nodes)
+                        {
+                            ieChildren =
+                                item.Nodes
+                                .Cast<LocalTreeNode>()
+                                .Where(t => 0 < t.NodeDatum.TotalLength);
+                        }
                     }
 
                     // returns true if there are children
-                    if (KDirStat_DrawChildren(parent, ieChildren, bStart))
+                    if ((null != ieChildren) &&
+                        KDirStat_DrawChildren(parent, ieChildren, bStart))
                     {
                         // example scenario: empty folder when there are immediate files and bStart is not true
                         return;

@@ -38,6 +38,9 @@ namespace DoubleFile
         }
         void SelectedItem_AllTriggers()
         {
+            if (null == _selectedItem)
+                return;
+
             _lvChildrenVM.Populate(_selectedItem.LocalTreeNode);
         }
         LVitem_TreeListVM _selectedItem = null;
@@ -77,7 +80,7 @@ namespace DoubleFile
             var treeNodes =
                 (null != treeNodeSel.Parent)
                 ? treeNodeSel.Parent.Nodes
-                : treeNodeSel.TreeView.Nodes;
+                : LocalTreeNode.TreeView.Nodes.AsEnumerable();
 
             var lsLVitems = new List<LVitem_TreeListVM>();
             LVitem_TreeListVM selectedItem = null;
@@ -97,7 +100,7 @@ namespace DoubleFile
                 _treeNode = treeNodeSel;
             }
 
-            _selectedItem = null;
+            SelectedItem_Set(null);
 
             UtilProject.UIthread(() =>
             {

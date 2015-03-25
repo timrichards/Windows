@@ -82,7 +82,7 @@ namespace DoubleFile
             lasItems.Add(new[] { "# Files Here", nodeDatum.ImmediateFiles.ToString(NUMFMT) });
             lasItems.Add(new[] { "with Size of", FormatSize(nodeDatum.Length, bBytes: true) });
             lasItems.Add(new[] { "Total # Files", nodeDatum.FilesInSubdirs.ToString(NUMFMT) });
-            lasItems.Add(new[] { "# Folders Here", _treeNode.Nodes.Count.ToString(NUMFMT) });
+            lasItems.Add(new[] { "# Folders Here", ((null != _treeNode.Nodes) ? _treeNode.Nodes.Length : 0).ToString(NUMFMT) });
 
             if (nodeDatum.SubDirs > 0)
             {

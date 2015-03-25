@@ -4,10 +4,9 @@
     {
         internal LocalLVitem
             TopItem { get; set; }
-        internal LocalLVitemCollection
+        internal LocalLVitem[]
             Items { get; set; }
         
-        internal LocalLV() { Items = new LocalLVitemCollection(this); }
         internal void Invalidate() { }
     }
 }

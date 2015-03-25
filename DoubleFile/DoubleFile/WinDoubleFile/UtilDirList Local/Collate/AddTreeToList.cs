@@ -53,7 +53,6 @@ namespace DoubleFile
                     if ((treeNode.ForeColor == UtilColor.Firebrick) &&
                         (treeNode == nodeDatum.Clones[0]))
                     {
-                        MBoxStatic.Assert(1305.6304, false == nodeDatum.SeparateVols);
                         _listSameVol.Add(treeNode);
                     }
 

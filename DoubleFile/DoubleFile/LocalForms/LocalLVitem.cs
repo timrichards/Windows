@@ -20,7 +20,7 @@ namespace DoubleFile
         internal LocalTreeNode
             LocalTreeNode { get; set; }
 
-        internal LocalLVitemCollection
+        internal LocalLVitem[]
             SubItems { get; set; }
         internal LocalLV
             ListView { get; set; }
@@ -37,7 +37,6 @@ namespace DoubleFile
         internal LocalLVitem(LocalLV listView = null)
         {
             ListView = listView;
-            SubItems = new LocalLVitemCollection(ListView);
         }
 
         internal LocalLVitem(string strContent, LocalLV listView = null) : this(listView) { Text = strContent; Index = -1; }
@@ -45,13 +44,17 @@ namespace DoubleFile
         internal LocalLVitem(IReadOnlyList<string> asString, LocalLV listView = null)
             : this(listView)
         {
+            var lsLVItems = new List<LocalLVitem>();
+
             Text = asString[0];
-            SubItems.Add(this);
+            lsLVItems.Add(this);
 
             var i = 1;
 
             foreach (var s in asString.Skip(1))
-                SubItems.Add(new LocalLVitem(asString[i++], listView));
+                lsLVItems.Add(new LocalLVitem(asString[i++], listView));
+
+            SubItems = lsLVItems.ToArray();
         }
 
         // Only used for colors and bold font weight, not subitems, in Collate.cs InsertSizeMarker(). Size 18 to show obvious fault in interpretation.

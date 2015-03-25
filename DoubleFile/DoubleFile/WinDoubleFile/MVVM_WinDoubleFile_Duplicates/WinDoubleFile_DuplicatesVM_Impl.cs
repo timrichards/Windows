@@ -28,7 +28,7 @@ namespace DoubleFile
             if (null != UpdateFileDetail)
                 UpdateFileDetail(strFileLine);
 
-            _selectedItem = null;
+            SelectedItem_Set(null);
             UtilProject.UIthread(Items.Clear);
 
             if (null == lsDuplicates)

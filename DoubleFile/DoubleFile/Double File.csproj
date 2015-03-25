@@ -26,7 +26,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>127</ApplicationRevision>
+    <ApplicationRevision>131</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -206,7 +206,6 @@
     <Compile Include="WinDoubleFile\UtilDirList Local\CountNodes.cs" />
     <Compile Include="LocalForms\LocalLV.cs" />
     <Compile Include="LocalForms\LocalLVitem.cs" />
-    <Compile Include="LocalForms\LocalLVitemCollection.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\UtilDirList\ExtensionMethodsStatic.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Search\SearchFiles\SearchBase.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Search\SearchFiles\SearchBase\SearchType2.cs" />
@@ -240,7 +239,6 @@
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Files\LV_DoubleFile_FilesVM.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Files\LV_DoubleFile_FilesVM_Impl.cs" />
     <Compile Include="LocalForms\LocalTreeNode.cs" />
-    <Compile Include="LocalForms\LocalTreeNodeCollection.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Folders\TreeViewItem_DoubleFileVM.cs" />
     <Compile Include="LocalForms\LocalTV.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Folders\TreeView_DoubleFileVM.cs">

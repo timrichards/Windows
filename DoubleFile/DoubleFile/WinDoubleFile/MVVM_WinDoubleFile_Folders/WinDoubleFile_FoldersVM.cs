@@ -23,7 +23,7 @@ namespace DoubleFile
             _winProgress = new WinProgress(); 
             TabledString.AddRef();
             DoTree();
-            GetTreeNodes = () => _listTreeNodes;
+            GetTreeNodes = () => _arrTreeNodes;
         }
 
         public void Dispose()

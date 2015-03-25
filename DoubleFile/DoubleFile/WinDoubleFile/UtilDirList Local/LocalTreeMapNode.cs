@@ -1,4 +1,7 @@
-﻿namespace DoubleFile
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace DoubleFile
 {
     class LocalTreeMapNode : LocalTreeNode
     {
@@ -8,6 +11,12 @@
             : base()
         {
             Text = strContent;
+        }
+
+        internal LocalTreeMapNode(string strContent, IReadOnlyList<LocalTreeNode> lsNodes)
+            : this(strContent)
+        {
+            Nodes = lsNodes.ToArray();
         }
     }
 }

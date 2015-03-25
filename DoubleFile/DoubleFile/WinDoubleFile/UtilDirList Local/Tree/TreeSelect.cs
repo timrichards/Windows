@@ -13,8 +13,8 @@ namespace DoubleFile
         {
             _treeNode = node;
 
-            if (null != _treeNode.TreeView)
-                _dictVolumeInfo = _treeNode.TreeView._dictVolumeInfo;
+            if (null != LocalTreeNode.TreeView)
+                _dictVolumeInfo = LocalTreeNode.TreeView._dictVolumeInfo;
 
             _bCompareMode = bCompareMode;
             _bSecondComparePane = bSecondComparePane;
@@ -89,7 +89,7 @@ namespace DoubleFile
 
         internal Thread DoThreadFactory()
         {
-            if (null == _treeNode.TreeView)     // does not support immediate file fake nodes
+            if (_treeNode is LocalTreeMapNode)     // does not support immediate file fake nodes
                 return null;
 
             _thread = new Thread(Go) { IsBackground = true };

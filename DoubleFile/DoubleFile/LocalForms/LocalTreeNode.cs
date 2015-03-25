@@ -9,14 +9,14 @@ namespace DoubleFile
         static internal event Action<LocalTreeNode> Selected = null;
         static internal event Action<string> SelectedFile = null;
 
-        internal LocalTreeNodeCollection
-            Nodes { get; private set; }
+        public LocalTreeNode[]
+            Nodes { get; protected set; }
         internal virtual string
             Text { get { return _Text; } set { _Text = value; } } TabledString _Text = null;
-        internal LocalTV
+        static internal LocalTV
             TreeView { get; private set; }
         internal LocalTreeNode
-            FirstNode { get; private set; }
+            FirstNode { get { return ((null != Nodes) && (0 < Nodes.Length)) ? Nodes[0] : null; } }
         internal LocalTreeNode
             NextNode { get; private set; }
         internal LocalTreeNode
@@ -40,7 +40,6 @@ namespace DoubleFile
         {
             Level = -1;
             SelectedImageIndex = -1;
-            Nodes = new LocalTreeNodeCollection(TreeView);
         }
 
         internal LocalTreeNode(string strContent)
@@ -58,7 +57,7 @@ namespace DoubleFile
         internal LocalTreeNode(string strContent, IReadOnlyList<LocalTreeNode> lsNodes)
             : this(strContent)
         {
-            Nodes.AddRange(lsNodes);
+            Nodes = lsNodes.ToArray();
         }
 
         //internal string FullPath
@@ -100,6 +99,9 @@ namespace DoubleFile
             Level = -1;
  //           _strFullPath = null;
 
+            if (null == Nodes)
+                return;
+
             foreach (var treeNode in Nodes)
                 treeNode.DetachFromTree();
         }
@@ -137,24 +139,19 @@ namespace DoubleFile
         internal static void SetLevel(LocalTV treeView,
             IReadOnlyList<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
         {
-            LocalTreeNode nodePrev = null;
+            LocalTreeNode.TreeView = treeView;
 
-            if ((null != nodeParent) &&
-                (false == nodes.IsEmptyA()))
-            {
-                nodeParent.FirstNode = nodes[0];
-            }
+            if (null == nodes)
+                return;
+
+            LocalTreeNode nodePrev = null;
 
             foreach (var treeNode in nodes)
             {
                 if (null != nodePrev)
                     nodePrev.NextNode = treeNode;
 
-                // same assert that Forms generates: must remove it from the other tree first.
-                MBoxStatic.Assert(99999, (treeNode.TreeView == null) || (treeNode.TreeView == treeView));
-
                 nodePrev = treeNode;
-                treeNode.TreeView = treeView;
                 treeNode.Parent = nodeParent;
                 treeNode.Level = nLevel;
                 SetLevel(treeView, treeNode.Nodes, treeNode, nLevel + 1);

@@ -227,7 +227,7 @@ namespace DoubleFile
             using (var reader = new StreamReader(_ksSerializeFile, false))
             {
                 string strLine = null;
-                _DictFiles = new Dictionary<FileKeyTuple,IEnumerable<int>>();
+                _DictFiles = new Dictionary<FileKeyTuple, IEnumerable<int>>();
 
                 while ((strLine = reader.ReadLine()) != null)
                 {

@@ -84,18 +84,15 @@ namespace DoubleFile
             double nProgressItem = 0;
             const double nTotalProgressItems = 6;
 
-            var treeView = new LocalTV();     // sets Level and NextNode
-
             if (_lsRootNodes.IsEmpty())
             {
                 MBoxStatic.Assert(1305.6314, false);
                 return;
             }
 
-            if (_lsRootNodes[0].TreeView == null)
-            {
-                treeView.Nodes.AddRange(_lsRootNodes.ToArray());
-            }
+            _tvBrowse.Nodes = _lsRootNodes.ToArray();
+            _tvBrowse.TopNode = _lsRootNodes[0];
+            LocalTreeNode.SetLevel(_tvBrowse, _tvBrowse.Nodes);
 
             if (false == _lsLVignore.IsEmpty())
             {
@@ -479,54 +476,33 @@ namespace DoubleFile
             }
 
             InsertSizeMarkers(_lsLVsameVol);
-            treeView.Nodes.Clear();                             // prevents destroy nodes
         }
 
         internal void Step2()
         {
             if (_tvBrowse.Enabled == false)
-            {
                 _tvBrowse.Enabled = true;
 
-                var nCount = CountNodes.Go(_lsRootNodes);
-
-                UtilDirList.Write("A");
-                _tvBrowse.Nodes.AddRange(_lsRootNodes.ToArray());
-                UtilProject.WriteLine("A");
-
-                var nCount_A = CountNodes.Go(_lsRootNodes);
-
-                MBoxStatic.Assert(1305.6331, nCount_A == nCount);
-                MBoxStatic.Assert(1305.6332, _tvBrowse.GetNodeCount(includeSubTrees: true) == nCount);
-                UtilProject.WriteLine("Step2_OnForm_A " + nCount);
-            }
-
             if (App.LocalExit || _bThreadAbort)
                 return;
 
-            MBoxStatic.Assert(1305.6333, _lvClones.Items.IsEmpty());
-            UtilDirList.Write("B");
-            _lvClones.Items.AddRange(_lsLVdiffVol.ToArray());
+            MBoxStatic.Assert(1305.6333, null == _lvClones.Items);
+            _lvClones.Items = _lsLVdiffVol.ToArray();
             _lvClones.Invalidate();
-            UtilProject.WriteLine("B");
 
             if (App.LocalExit || _bThreadAbort)
                 return;
 
-            MBoxStatic.Assert(1305.6334, _lvUnique.Items.IsEmpty());
-            UtilDirList.Write("C");
-            _lvUnique.Items.AddRange(_lsLVunique.ToArray());
+            MBoxStatic.Assert(1305.6334, null == _lvUnique.Items);
+            _lvUnique.Items =_lsLVunique.ToArray();
             _lvUnique.Invalidate();
-            UtilProject.WriteLine("C");
 
             if (App.LocalExit || _bThreadAbort)
                 return;
 
-            MBoxStatic.Assert(1305.6335, _lvSameVol.Items.IsEmpty());
-            UtilDirList.Write("D");
-            _lvSameVol.Items.AddRange(_lsLVsameVol.ToArray());
+            MBoxStatic.Assert(1305.6335, null == _lvSameVol.Items);
+            _lvSameVol.Items = _lsLVsameVol.ToArray();
             _lvSameVol.Invalidate();
-            UtilProject.WriteLine("D");
 
             if (_tvBrowse.SelectedNode != null)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
             {
@@ -581,7 +557,6 @@ namespace DoubleFile
                 if (dictClones.TryGetValue(nodeDatum.Key, out lsTreeNodes))
                 {
                     MBoxStatic.Assert(1305.6305, lsTreeNodes == listClones);
-                    MBoxStatic.Assert(1305.6306, lsTreeNodes[0].NodeDatum.SeparateVols == nodeDatum.SeparateVols);
                     MBoxStatic.Assert(1305.6307, lsTreeNodes[0].ForeColor == treeNode.ForeColor);
                 }
                 else
@@ -602,8 +577,6 @@ namespace DoubleFile
 
                     MBoxStatic.Assert(1305.6308, UtilColor.Empty == treeNode.ForeColor);
                     treeNode.ForeColor = UtilColor.Firebrick;
-
-                    var bDifferentVols = false;
 
                     foreach (var subnode in listClones)
                     {
@@ -636,8 +609,6 @@ namespace DoubleFile
 
                         MBoxStatic.Assert(1305.6311, treeNode.ForeColor == UtilColor.Firebrick);
                         treeNode.ForeColor = UtilColor.SteelBlue;
-
-                        bDifferentVols = true;
                         break;
                     }
 
@@ -651,11 +622,13 @@ namespace DoubleFile
                             return;
                         }
 
-                        nodeDatum_A.SeparateVols = bDifferentVols;
                         subNode.ForeColor = treeNode.ForeColor;
                     }
                 }
             }
+
+            if (null == treeNode.Nodes)
+                return;
 
             foreach (var subNode in treeNode.Nodes)
             {

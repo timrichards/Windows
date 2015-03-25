@@ -34,12 +34,13 @@ namespace DoubleFile
             Deactivated += (o, e) => { LocalActivated = false; if (null != DeactivateDidOccur) DeactivateDidOccur(); };
             Exit += App_Exit;
 
+#if (false == DEBUG)
             DispatcherUnhandledException += (o, e) =>
             {
                 e.Handled = true;
                 MBoxStatic.Assert(-1, false, e.Exception.Message);
             };
-
+#endif
             ShutdownMode = ShutdownMode.OnMainWindowClose;
         }
 

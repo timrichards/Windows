@@ -16,8 +16,8 @@ namespace DoubleFile
         internal Tree
             Tree { get; private set; }
 
-        internal readonly List<LocalTreeNode>
-            _listTreeNodes = new List<LocalTreeNode>();
+        internal LocalTreeNode[]
+            _arrTreeNodes { get; private set; }
         internal readonly List<LocalTreeNode>
             _listRootNodes = new List<LocalTreeNode>();
 
@@ -31,16 +31,16 @@ namespace DoubleFile
         {
             TreeCleanup();
 
-            if ((false == _listTreeNodes.IsEmpty()) &&
-                (null != _listTreeNodes[0].TreeView))
+            if ((false == _arrTreeNodes.IsEmpty()) &&
+                (null != LocalTreeNode.TreeView))
             {
-                _listTreeNodes[0].TreeView._dictVolumeInfo.Clear();
+                LocalTreeNode.TreeView._dictVolumeInfo.Clear();
             }
 
             // m_dictNodes is tested to recreate tree.
             DictNodes = null;
 
-            _listTreeNodes.Clear();
+            _arrTreeNodes = null;
             _listRootNodes.Clear();
         }
 
@@ -113,10 +113,12 @@ namespace DoubleFile
 
             using (new LocalTimer(() => { _winProgress.SetProgress(_ksFolderTreeKey, (3 + nProgress)/4.0); }).Start())
             {
+                var lsTreeNodes = new List<LocalTreeNode>();
+
                 var collate = new Collate(DictNodes,
                     _localTV,
                     localLVclones, localLVsameVol, localLVsolitary,
-                    _listRootNodes, _listTreeNodes,
+                    _listRootNodes, lsTreeNodes,
                     lsLVignore: lsLocalLVignore, bLoose: true);
                 var dtStart = DateTime.Now;
 
@@ -132,6 +134,7 @@ namespace DoubleFile
 
                 _winProgress.SetCompleted(_ksFolderTreeKey);
                 collate.Step2();
+                _arrTreeNodes = lsTreeNodes.ToArray();
                 UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds/1000.0 + " seconds.");
             }
 

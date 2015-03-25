@@ -40,18 +40,14 @@ namespace DoubleFile
 
         internal static void Abort()
         {
-            if (_static_this != null)
-            {
+            if (null != _static_this)
                 _static_this._bThreadAbort = true;
-            }
         }
 
         internal static void InsertSizeMarkers(List<LocalLVitem> listLVitems)
         {
             if (listLVitems.IsEmpty())
-            {
                 return;
-            }
 
             var bUnique = (null != listLVitems[0].LocalTreeNode);
             var nCount = listLVitems.Count;
@@ -61,17 +57,13 @@ namespace DoubleFile
 
             var nInitial = nCount % nInterval;
 
-            if (nInitial == 0)
-            {
+            if (0 == nInitial)
                 nInitial = nInterval;
-            }
 
             if (nCount - nInitial > nInterval / 2)
             {
                 for (var i = nCount - nInitial; i > nInterval / 2; i -= nInterval)
-                {
                     InsertSizeMarkerStatic.Go(listLVitems, i, bUnique);
-                }
             }
 
             InsertSizeMarkerStatic.Go(listLVitems, 0, bUnique);            // Enter the Zeroth
@@ -92,7 +84,8 @@ namespace DoubleFile
 
             _tvBrowse.Nodes = _lsRootNodes.ToArray();
             _tvBrowse.TopNode = _lsRootNodes[0];
-            LocalTreeNode.SetLevel(_tvBrowse, _tvBrowse.Nodes);
+            LocalTreeNode.TreeView = _tvBrowse;
+            LocalTreeNode.SetLevel(_tvBrowse.Nodes);
 
             if (false == _lsLVignore.IsEmpty())
             {
@@ -101,9 +94,7 @@ namespace DoubleFile
                 var sbMatch = new StringBuilder();
 
                 foreach (var lvItem in _lsLVignore)
-                {
                     sbMatch.AppendLine(lvItem.Text);
-                }
 
                 IgnoreNodeQuery(sbMatch.ToString().ToLower(), nMaxLevel, _lsRootNodes[0]);
                 UtilProject.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
@@ -128,23 +119,17 @@ namespace DoubleFile
                 var nodeDatum = treeNode.NodeDatum;
 
                 if (null == nodeDatum)
-                {
                     MBoxStatic.Assert(99900, false);    // This check is new 3/7/15 as safety
-                }
 
                 List<LocalTreeNode> lsTreeNodes = null;
 
                 if (false == dictNodes.TryGetValue(nodeDatum.Key, out lsTreeNodes))
-                {
                     continue;
-                }
 
                 if (_bLoose)
                 {
                     foreach (var treeNode_A in lsTreeNodes)
-                    {
                         dictIgnoreMark.Add(treeNode_A, kvp.Value);
-                    }
 
                     dictNodes.Remove(nodeDatum.Key);
                 }
@@ -154,9 +139,7 @@ namespace DoubleFile
                     lsTreeNodes.Remove(treeNode);
 
                     if (lsTreeNodes.IsEmpty())
-                    {
                         dictNodes.Remove(nodeDatum.Key);
-                    }
                 }
             }
 
@@ -169,9 +152,7 @@ namespace DoubleFile
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
 
                 if (App.LocalExit || _bThreadAbort)
-                {
                     return;
-                }
 
                 var listNodes = kvp.Value;
 
@@ -190,9 +171,7 @@ namespace DoubleFile
                     foreach (var treeNode_A in listNodes)
                     {
                         if (App.LocalExit || _bThreadAbort)
-                        {
                             return;
-                        }
 
                         if (null == treeNode_A)
                         {
@@ -208,12 +187,10 @@ namespace DoubleFile
                             return;
                         }
 
-                        MBoxStatic.Assert(1305.6316, nodeDatum.TotalLength > 100 * 1024);
+                        MBoxStatic.Assert(1305.6316, 0 < nodeDatum.TotalLength);
 
                         if (listNodes.Contains(treeNode_A.Parent) == false)
-                        {
                             listKeep.Add(treeNode_A);
-                        }
                     }
 
                     if (listKeep.Count > 1)
@@ -240,7 +217,6 @@ namespace DoubleFile
                 if (listNodes.Count == 1)               // "else"
                 {
                     var treeNode = listNodes[0];
-
                     var nodeDatum = treeNode.NodeDatum;
 
                     if (null == nodeDatum)      // added 2/13/15 as safety
@@ -249,10 +225,8 @@ namespace DoubleFile
                         return;
                     }
 
-                    if (nodeDatum.ImmediateFiles > 0)
-                    {
+                    if (0 < nodeDatum.ImmediateFiles)
                         dictUnique.Add(kvp.Key, treeNode);
-                    }
                 }
             }
 
@@ -266,9 +240,7 @@ namespace DoubleFile
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
                 
                 if (App.LocalExit || _bThreadAbort)
-                {
                     return;
-                }
 
                 DifferentVolsQuery(dictClones, treeNode);
             }
@@ -288,30 +260,26 @@ namespace DoubleFile
 
                 var nClones = listNodes.Value.Count;
 
-                if (nClones == 0)
+                if (0 == nClones)
                 {
                     MBoxStatic.Assert(1305.6317, false);
                     continue;
                 }
 
-                if (nClones == 1)
-                {
-                    continue;       // keep the same-vol
-                }
+                if (1 == nClones)
+                    continue;           // keep the same-vol
 
                 string str_nClones = null;
 
-                if (nClones > 2)        // includes the subject node: only note three clones or more
+                if (2 < nClones)        // includes the subject node: only note three clones or more
                 {
                     str_nClones = nClones.ToString("###,###");
 
                     foreach (var node in listNodes.Value)
-                    {
                         node.ForeColor = UtilColor.Blue;
-                    }
                 }
 
-                var lvItem = new LocalLVitem(new[] {string.Empty, str_nClones})
+                var lvItem = new LocalLVitem(new[] { string.Empty, str_nClones })
                 {
                     TreeNodes = listNodes.Value,
                     ForeColor = listNodes.Value[0].ForeColor
@@ -450,17 +418,13 @@ namespace DoubleFile
                 if (null != nodeDatum.Clones)
                     nClones = nodeDatum.Clones.Count;
 
-                if (nClones == 0)
-                {
+                if (0 == nClones)
                     MBoxStatic.Assert(1305.6328, false);
-                }
 
                 string str_nClones = null;
 
-                if (nClones > 2)
-                {
+                if (2 < nClones)
                     str_nClones = nClones.ToString("###,###");
-                }
 
                 MBoxStatic.Assert(1305.6329, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
@@ -504,7 +468,7 @@ namespace DoubleFile
             _lvSameVol.Items = _lsLVsameVol.ToArray();
             _lvSameVol.Invalidate();
 
-            if (_tvBrowse.SelectedNode != null)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
+            if (null != _tvBrowse.SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
             {
                 var treeNode = _tvBrowse.SelectedNode;
 
@@ -540,7 +504,7 @@ namespace DoubleFile
             var listClones = nodeDatum.Clones;
             var nLength = nodeDatum.TotalLength;
 
-            if (nLength <= 100 * 1024)
+            if (0 == nLength)
             {
                 treeNode.ForeColor = UtilColor.LightGray;
                 nodeDatum.Clones = null;
@@ -583,15 +547,12 @@ namespace DoubleFile
                         if (App.LocalExit || _bThreadAbort)
                             return;
 
-
                         MBoxStatic.Assert(1305.6309, subnode.NodeDatum.Key.Equals(nodeDatum.Key));
 
                         var rootNode_A = subnode.Root();
 
                         if (rootNode == rootNode_A)
-                        {
                             continue;
-                        }
 
                         var rootNodeDatum_A = (rootNode_A.NodeDatum as RootNodeDatum);
 
@@ -646,17 +607,13 @@ namespace DoubleFile
             do
             {
                 if (_dictIgnoreNodes.ContainsKeyA(treeNode))
-                {
                     continue;
-                }
 
                 MBoxStatic.Assert(1305.6312, null != lvItem);
                 _dictIgnoreNodes.Add(treeNode, lvItem);
 
                 if (false == treeNode.Nodes.IsEmpty())
-                {
                     IgnoreNodeAndSubnodes(lvItem, treeNode.Nodes[0], bContinue: true);
-                }
             }
             while (bContinue &&
                 (null != (treeNode = treeNode.NextNode)));
@@ -665,9 +622,7 @@ namespace DoubleFile
         void IgnoreNodeQuery(string sbMatch, int nMaxLevel, LocalTreeNode treeNode_in)
         {
             if (treeNode_in.Level > nMaxLevel)
-            {
                 return;
-            }
 
             var treeNode = treeNode_in;
 
@@ -689,9 +644,7 @@ namespace DoubleFile
                 }
 
                 if (false == treeNode.Nodes.IsEmpty())
-                {
                     IgnoreNodeQuery(sbMatch, nMaxLevel, treeNode.Nodes[0]);
-                }
             }
             while (null != (treeNode = treeNode.NextNode));
         }
@@ -707,9 +660,7 @@ namespace DoubleFile
                 var nodeDatum = parentNode.NodeDatum;
 
                 if (null != nodeDatum.LVitem)
-                {
                     nodeDatum.LVitem.BackColor = parentNode.BackColor;
-                }
 
                 MBoxStatic.Assert(1305.6313,
                     (parentNode.ForeColor == UtilColor.Empty) ==

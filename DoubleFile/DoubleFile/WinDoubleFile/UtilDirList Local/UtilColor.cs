@@ -89,12 +89,12 @@ namespace DoubleFile
             Description[White] = "";
             Description[Blue] = "This folder has multiple copies on at least two separate volumes.";
             Description[DarkGray] = "";             // ignore list
-            Description[DarkKhaki] = "";           // Treemap: Folder containing files
+            Description[DarkKhaki] = "";            // Treemap: Folder containing files
             Description[DarkRed] = "";              // not used
             Description[DarkSlateGray] = "";        // LV marker item back color
             Description[Firebrick] = "All copies of this folder reside on one volume.";
             Description[LightGoldenrodYellow] = "This folder and its parent have a copy on a separate volume.";
-            Description[LightGray] = "This folder has less than 100K of data.";
+            Description[LightGray] = "This folder has no data.";
             Description[MediumSpringGreen] = "";    // Treemap: Free space
             Description[MediumVioletRed] = "";      // Treemap
             Description[OliveDrab] = "";            // Treemap: File

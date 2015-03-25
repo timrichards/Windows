@@ -36,12 +36,8 @@ namespace DoubleFile
 
                 var nodeDatum = treeNode.NodeDatum;
 
-                if (null == nodeDatum)
-                {
-                    return datum;
-                }
-
-                if (nodeDatum.LineNo == 0)
+                if ((null == nodeDatum) ||
+                    (0 == nodeDatum.LineNo))
                 {
                     return datum;
                 }
@@ -52,23 +48,17 @@ namespace DoubleFile
                 nodeDatum.SubDirs = (datum.SubDirs += (null != treeNode.Nodes) ? (uint)treeNode.Nodes.Length : 0);
                 nodeDatum.HashParity = (datum.HashParity += nodeDatum.HashParity);
 
-                if (nodeDatum.ImmediateFiles > 0)
-                {
+                if (0 < nodeDatum.ImmediateFiles)
                     ++datum.DirsWithFiles;
-                }
 
                 nodeDatum.DirsWithFiles = datum.DirsWithFiles;
 
                 List<LocalTreeNode> lsTreeNodes = null;
 
                 if (_dictNodes.TryGetValue(nodeDatum.Key, out lsTreeNodes))
-                {
                     lsTreeNodes.Add(treeNode);
-                }
-                else if (nodeDatum.TotalLength > 100 * 1024)
-                {
+                else if (0 < nodeDatum.TotalLength)
                     _dictNodes[nodeDatum.Key] = new List<LocalTreeNode> { treeNode };
-                }
 
                 return datum;
             }
@@ -110,14 +100,10 @@ namespace DoubleFile
                         bValid = ValidateFile(_volStrings.ListingFile);
 
                         if (bValid || bAttemptConvert)
-                        {
                             break;
-                        }
 
                         if (false == File.Exists(StrFile_01(_volStrings.ListingFile)))
-                        {
                             break;
-                        }
 
                         try
                         {
@@ -128,7 +114,7 @@ namespace DoubleFile
                         bAttemptConvert = true;
                     }
 
-                    if (bValid == false)
+                    if (false == bValid)
                     {
                         MBoxStatic.ShowDialog("Bad file: " + _volStrings.ListingFile, "Tree");
                         _statusCallback(_volStrings, bError: true);
@@ -140,9 +126,11 @@ namespace DoubleFile
                 ulong nVolLength = 0;
 
                 {
-                    var ieDriveInfo = File
+                    var ieDriveInfo =
+                        File
                         .ReadLines(_volStrings.ListingFile)
                         .Where(s => s.StartsWith(ksLineType_VolumeInfo));
+
                     var strBuilder = new StringBuilder();
                     var nIx = -1;
 
@@ -152,28 +140,24 @@ namespace DoubleFile
                     {
                         ++nIx;
 
-                        if (strArray.Length > 3)
-                        {
+                        if (3 < strArray.Length)
                             strBuilder.Append(strArray[2]);
-                        }
-                        else if (strArray.Length > 2)
-                        {
+                        else if (2 < strArray.Length)
                             strBuilder.Append(FileParse.kasDIlabels[nIx]);
-                        }
                         else
-                        {
                             continue;
-                        }
 
                         var s = strArray[strArray.Length - 1];
 
                         strBuilder.AppendLine('\t' + s);
 
-                        if ((nIx == 5) && (false == string.IsNullOrWhiteSpace(s)))
+                        if ((5 == nIx) &&
+                            (false == string.IsNullOrWhiteSpace(s)))
                         {
                             nVolFree = ulong.Parse(s);
                         }
-                        else if ((nIx == 6) && (false == string.IsNullOrWhiteSpace(s)))
+                        else if ((6 == nIx) &&
+                            (false == string.IsNullOrWhiteSpace(s)))
                         {
                             nVolLength = ulong.Parse(s);
                         }
@@ -204,7 +188,8 @@ namespace DoubleFile
                     dirData = new DirData(rootNode);
                 }
 
-                var ieLines = File
+                var ieLines =
+                    File
                     .ReadLines(_volStrings.ListingFile);
 
                 var nHashParity = 0;

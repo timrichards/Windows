@@ -14,7 +14,7 @@ namespace DoubleFile
         internal virtual string
             Text { get { return _Text; } set { _Text = value; } } TabledString _Text = null;
         static internal LocalTV
-            TreeView { get; private set; }
+            TreeView { get; set; }
         internal LocalTreeNode
             FirstNode { get { return ((null != Nodes) && (0 < Nodes.Length)) ? Nodes[0] : null; } }
         internal LocalTreeNode
@@ -136,11 +136,8 @@ namespace DoubleFile
             return nodeParent;
         }
 
-        internal static void SetLevel(LocalTV treeView,
-            IReadOnlyList<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
+        internal static void SetLevel(IReadOnlyList<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
         {
-            LocalTreeNode.TreeView = treeView;
-
             if (null == nodes)
                 return;
 
@@ -154,7 +151,7 @@ namespace DoubleFile
                 nodePrev = treeNode;
                 treeNode.Parent = nodeParent;
                 treeNode.Level = nLevel;
-                SetLevel(treeView, treeNode.Nodes, treeNode, nLevel + 1);
+                SetLevel(treeNode.Nodes, treeNode, nLevel + 1);
             }
         }
 

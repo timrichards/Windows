@@ -74,12 +74,17 @@ namespace DoubleFile
                 Close();
         }
 
-        internal new LocalWindow Show()
+        internal new void Show()
         {
+            if ((null != MBoxStatic.MessageBox) &&
+                (this != MBoxStatic.MessageBox))
+            {
+                return;
+            }
+
             Owner = MainWindow.static_Dialog;
             base.Show();
             PositionWindow();
-            return this;
         }
 
         internal new bool? ShowDialog() { return ShowDialog(MainWindow.static_Dialog); }

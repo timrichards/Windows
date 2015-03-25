@@ -57,8 +57,8 @@ namespace DoubleFile
                 TotalLength = datum1.TotalLength + datum2.TotalLength,
                 FilesInSubdirs = datum1.FilesInSubdirs + datum2.FilesInSubdirs,
                 SubDirs = datum1.SubDirs + datum2.SubDirs,
-                ImmediateFiles = (ushort)(datum1.ImmediateFiles + datum2.ImmediateFiles),
-                DirsWithFiles = (ushort)(datum1.DirsWithFiles + datum2.DirsWithFiles),
+                ImmediateFiles = datum1.ImmediateFiles + datum2.ImmediateFiles,
+                DirsWithFiles = datum1.DirsWithFiles + datum2.DirsWithFiles,
                 HashParity = datum1.HashParity + datum2.HashParity
             };
         }

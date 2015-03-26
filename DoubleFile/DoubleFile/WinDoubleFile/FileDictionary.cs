@@ -86,18 +86,21 @@ namespace DoubleFile
 
         internal void Abort()
         {
+            if (IsAborted)
+                return;
+
             IsAborted = true;
-            _thread.Abort();
+
+            if (null != _thread)
+                _thread.Abort();
         }
 
         internal bool IsAborted { get; private set; }
 
         void Go()
         {
-            if (_LVprojectVM == null)
-            {
+            if (null == _LVprojectVM)
                 return;
-            }
 
             var nLVitems = 0;
 
@@ -205,9 +208,7 @@ namespace DoubleFile
                     writer.Write(kvp.Key.Item1 + " " + kvp.Key.Item2);
 
                     foreach (var ls in kvp.Value)
-                    {
                         writer.Write("\t" + ls);
-                    }
 
                     writer.WriteLine();
                 }
@@ -220,13 +221,12 @@ namespace DoubleFile
         void Deserialize()
         {
             if (false == File.Exists(_ksSerializeFile))
-            {
                 return;
-            }
 
             using (var reader = new StreamReader(_ksSerializeFile, false))
             {
                 string strLine = null;
+
                 _DictFiles = new Dictionary<FileKeyTuple, IEnumerable<int>>();
 
                 while ((strLine = reader.ReadLine()) != null)

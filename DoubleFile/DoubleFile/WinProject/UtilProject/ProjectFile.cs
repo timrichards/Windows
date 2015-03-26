@@ -25,6 +25,7 @@ namespace DoubleFile
                 new Uri(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)
                 .LocalPath) +
                 @"\WinProject\UtilProject\7z920x86\7z.exe";
+
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardOutput = true;
@@ -49,9 +50,7 @@ namespace DoubleFile
             if (Directory.Exists(TempPath))                     // close box/cancel/undo
             {
                 if (Directory.Exists(TempPath01))
-                {
                     Directory.Delete(TempPath01, true);
-                }
 
                 Directory.Move(TempPath, TempPath01);
             }
@@ -77,33 +76,27 @@ namespace DoubleFile
 
                 openListingFiles(
                     Directory
-                        .GetFiles(TempPath)
-                        .Where(s =>
-                        {
-                            var strExt = Path.GetExtension(Path.GetFileName(s) ?? "");
+                    .GetFiles(TempPath)
+                    .Where(s =>
+                    {
+                        var strExt = Path.GetExtension(Path.GetFileName(s) ?? "");
 
-                            if (strExt.Length == 0)
-                            {
-                                return false;
-                            }
+                        if (strExt.Length == 0)
+                            return false;
 
-                            return 
-                                strExt
-                                .Remove(0, 1)
-                                .Equals(FileParse.ksFileExt_Listing,
-                                StringComparison.InvariantCultureIgnoreCase);
-                        }),
+                        return 
+                            strExt
+                            .Remove(0, 1)
+                            .Equals(FileParse.ksFileExt_Listing,
+                            StringComparison.InvariantCultureIgnoreCase);
+                    }),
                     true, () => _bUserCancelled);
 
                 if (null != OnOpenedProject)
-                {
                     OnOpenedProject();
-                }
 
                 if (Directory.Exists(TempPath01))
-                {
                     Directory.Delete(TempPath01, true);
-                }
 
                 if (false == _winProgress.LocalIsClosed)
                 {
@@ -133,6 +126,7 @@ namespace DoubleFile
             SaveProject_(lvProjectVM, strProjectFilename, out bRet,
                 Init(new Process()))
                 .Dispose();
+
             return bRet;
         }
 
@@ -147,9 +141,7 @@ namespace DoubleFile
             foreach (var volStrings in lvProjectVM.ItemsCast)
             {
                 if (volStrings.WouldSave)
-                {
                     continue;
-                }
 
                 var strNewName = Path.GetFileName(volStrings.ListingFile);
 
@@ -187,6 +179,7 @@ namespace DoubleFile
                 MBoxStatic.ShowDialog("Any listing files in project have not yet been saved." +
                     " Click OK on the Project window to start saving directory listings of your drives.",
                     "Save Project");
+
                 bRet_out = false;
                 return process;
             }
@@ -199,9 +192,7 @@ namespace DoubleFile
                 var strFilename = listingFile;
 
                 if (strFilename.StartsWith(strPath))
-                {
                     strFilename = strFilename.Replace(strPath, "");
-                }
 
                 sbSource.Append("\"").Append(strFilename).Append("\" ");
             }
@@ -209,7 +200,8 @@ namespace DoubleFile
             if (null != OnSavingProject)
             {
                 foreach (var strFilename
-                    in OnSavingProject.GetInvocationList()
+                    in OnSavingProject
+                    .GetInvocationList()
                     .Select(onSavingProject => (string)onSavingProject.DynamicInvoke()))
                 {
                     sbSource.Append("\"").Append(strFilename.Replace(strPath, "")).Append("\" ");
@@ -231,9 +223,7 @@ namespace DoubleFile
                 }
 
                 if (File.Exists(strProjectFilename))
-                {
                     File.Delete(strProjectFilename);
-                }
 
                 File.Move(strProjectFilename + ".7z", strProjectFilename);
                 _winProgress.SetCompleted(strProjectFileNoPath);
@@ -246,9 +236,7 @@ namespace DoubleFile
             var str7z = strProjectFilename + ".7z";
 
             if (File.Exists(str7z))
-            {
                 File.Delete(str7z);
-            }
 
             process.StartInfo.Arguments = "a \"" + str7z + "\" " + sbSource + " -mx=3 -md=128m";
 
@@ -261,10 +249,8 @@ namespace DoubleFile
 
                 for (var n = 0; n < knMaxAttempts; ++n)
                 {
-                    if (n == knMaxAttempts - 1)
-                    {
+                    if (knMaxAttempts - 1 == n)
                         strDir = TempPath.TrimEnd('\\') + "_" + strProjectFileNoPath;
-                    }
 
                     try
                     {
@@ -280,9 +266,7 @@ namespace DoubleFile
                 if (bSuccess)
                 {
                     foreach (var listingFile in listListingFiles)
-                    {
                         File.Copy(listingFile, strDir + '\\' + Path.GetFileName(listingFile));
-                    }
 
                     strMessage = " Copied the listing files to\n" + strDir;
                 }
@@ -312,9 +296,7 @@ namespace DoubleFile
                 _winProgress.WindowClosingCallback = () =>
                 {
                     if (false == _bProcessing)
-                    {
                         return true;
-                    }
 
                     var bRet = false;
 
@@ -326,9 +308,7 @@ namespace DoubleFile
                             _bUserCancelled = true;
 
                             if (false == process.HasExited)
-                            {
                                 process.Kill();
-                            }
 
                             bRet = true;
                         }
@@ -350,17 +330,13 @@ namespace DoubleFile
 
             try { bExitCode = process.ExitCode; } catch (InvalidOperationException) {}
 
-            if (bExitCode == 0)
-            {
+            if (0 == bExitCode)
                 return false;
-            }
 
             _bProcessing = false;
 
             if (_bUserCancelled)
-            {
                 return false;
-            }
 
             var strError =
                 string
@@ -371,14 +347,10 @@ namespace DoubleFile
                 .Trim();
 
             if (string.IsNullOrWhiteSpace(strError))
-            {
                 strError = strWin32Error;
-            }
 
             if (string.IsNullOrWhiteSpace(strError))
-            {
                 strError = "Error " + strMode.ToLower() + " project.";
-            }
 
             File.AppendAllText(_strErrorLogFile, _sbError.ToString());
 

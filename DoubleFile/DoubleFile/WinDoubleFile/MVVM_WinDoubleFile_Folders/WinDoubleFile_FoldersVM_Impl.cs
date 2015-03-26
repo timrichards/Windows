@@ -9,8 +9,6 @@ namespace DoubleFile
     
     partial class WinDoubleFile_FoldersVM
     {
-        internal static event Func<bool> ShowWindows = null;
-
         internal ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
             DictNodes { get; private set; }
         internal Tree
@@ -115,11 +113,13 @@ namespace DoubleFile
             {
                 var lsTreeNodes = new List<LocalTreeNode>();
 
-                var collate = new Collate(DictNodes,
+                var collate = new Collate(
+                    DictNodes,
                     _localTV,
                     localLVclones, localLVsameVol, localLVsolitary,
                     _listRootNodes, lsTreeNodes,
                     lsLVignore: lsLocalLVignore, bLoose: true);
+
                 var dtStart = DateTime.Now;
 
                 collate.Step1(d => nProgress = d);
@@ -141,16 +141,7 @@ namespace DoubleFile
             TreeCleanup();
             TabledString.GenerationEnded();
             _winProgress.CloseIfNatural();
-
-            // saving memory here.
-            DictNodes = null;
-
-            while (false == _winProgress.LocalIsClosed)
-                System.Threading.Thread.Sleep(200);
-
-            if (null != ShowWindows)
-                UtilProject.UIthread(ShowWindows);
-
+            DictNodes = null;       // saving memory here.
             _tvVM.SetData(_listRootNodes);
         }
 

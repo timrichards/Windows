@@ -97,7 +97,12 @@ namespace DoubleFile
         {
             // 3/9/15 This is false because e.g. bringing up a New Listing File dialog does not
             // properly focus: a second click is needed to move the window or do anything in it.
-            _simulatingModal = false;           // Change it here to switch to simulated dialog
+
+            // 3/26/15 This is true because e.g. 1) left open or canel during Explorer initialize:
+            // the Folders VM disappears and crashes on close. 2) Do you want to cancel, left open,
+            // mysteriously leaves WinProject unpopulated after clicking OK: does not run any code
+            // in MainWindow.xaml.cs after volumes.ShowDialog. Acts like a suppressed null pointer.
+            _simulatingModal = true;           // Change it here to switch to simulated dialog
             MainWindow.static_Dialog = this;
             Owner = me;
 

@@ -100,21 +100,16 @@ namespace DoubleFile
             var buttons = buttons_in ?? MessageBoxButton.OK;
             
             UtilProject.UIthread(() =>
-                MessageBox = new LocalMbox(owner ?? MainWindow.static_Dialog, strMessage, strTitle, buttons));
+                MessageBox = new LocalMbox(owner ?? MainWindow.static_MainWindow, strMessage, strTitle, buttons));
 
-            MessageBox.Closed += (o,e) => MessageBox = null;
             UtilProject.UIthread(() => msgBoxRet = MessageBox.ShowDialog());
 
             if (null == MessageBox)
-            {
-                // cancelled externally
-                msgBoxRet = MessageBoxResult.None;
-            }
+                msgBoxRet = MessageBoxResult.None;          // cancelled externally
             else
-            {
                 UtilProject.UIthread(() => MessageBoxKill());
-            }
 
+            MessageBox = null;
             return msgBoxRet;
         }
     }

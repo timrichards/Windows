@@ -60,19 +60,13 @@ namespace DoubleFile
             }
 
             if (false == (volumes.ShowDialog() ?? false))
-            {
                 return;
-            }
 
             if (null == volumes.LVprojectVM)
-            {
                 return;
-            }
 
             if (volumes.LVprojectVM.Equals(LVprojectVM))
-            {
                 return;
-            }
 
             LVprojectVM = volumes.LVprojectVM;
 

@@ -156,13 +156,13 @@ namespace DoubleFile
 
                 var listNodes = kvp.Value;
 
-                if (listNodes.Count < 1)
+                if (1 > listNodes.Count)
                 {
                     MBoxStatic.Assert(1305.6315, false);
                     continue;
                 }
                 
-                if (listNodes.Count > 1)
+                if (1 < listNodes.Count)
                 {
                     // Parent folder may contain only its clone subfolder, in which case unmark the subfolder
 
@@ -214,7 +214,7 @@ namespace DoubleFile
                     }
                 }
 
-                if (listNodes.Count == 1)               // "else"
+                if (1 == listNodes.Count)               // "else"
                 {
                     var treeNode = listNodes[0];
                     var nodeDatum = treeNode.NodeDatum;

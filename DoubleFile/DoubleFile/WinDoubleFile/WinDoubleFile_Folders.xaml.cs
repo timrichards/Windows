@@ -16,7 +16,6 @@ namespace DoubleFile
             form_grid.Loaded += Grid_Loaded;
             Closed += Window_Closed;
             ResizeMode = ResizeMode.CanResize;
-            WinDoubleFile_FoldersVM.ShowWindows += ShowWindows;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -36,7 +35,6 @@ namespace DoubleFile
         private void Window_Closed(object sender, EventArgs e)
         {
             _winDoubleFile_FoldersVM.Dispose();
-            WinDoubleFile_FoldersVM.ShowWindows -= ShowWindows;
             DataContext = null;
             _lvProjectVM = null;
         }

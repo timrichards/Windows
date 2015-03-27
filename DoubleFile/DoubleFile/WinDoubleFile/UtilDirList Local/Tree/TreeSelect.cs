@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using DoubleFile;
+using System;
 
 namespace DoubleFile
 {
@@ -24,13 +25,11 @@ namespace DoubleFile
         // Static and is used by the treemap.
         // However it deprecatedly splits each line and formats it:
         // unused and too far upstream
-        internal static List<string[]> GetFileList(
-            LocalTreeNode parent,
-            List<ulong> listLength = null)
+        internal static List<Tuple<string[], ulong>> GetFileList(LocalTreeNode parent)
         {
             var nodeDatum = parent.NodeDatum;
             var rootNodeDatum = parent.Root().NodeDatum as RootNodeDatum;
-            var listFiles = new List<string[]>();
+            var listFiles = new List<Tuple<string[], ulong>>();
 
             if ((null == nodeDatum) ||
                 (nodeDatum.LineNo == 0) ||
@@ -75,12 +74,7 @@ namespace DoubleFile
                     strArrayFiles[knColLengthLV] = FormatSize(strArrayFiles[knColLengthLV]);
                 }
 
-                listFiles.Add(strArrayFiles);
-
-                if (listLength != null)
-                {
-                    listLength.Add(nLength);
-                }
+                listFiles.Add(Tuple.Create(strArrayFiles, nLength));
             }
 
             MBoxStatic.Assert(1301.2313, nLengthDebug == nodeDatum.Length);

@@ -13,10 +13,19 @@ namespace DoubleFile
             Text = strContent;
         }
 
-        internal LocalTreeMapNode(string strContent, IReadOnlyList<LocalTreeNode> lsNodes)
+        internal LocalTreeMapNode(string strContent, IReadOnlyList<LocalTreeMapNode> lsNodes)
             : this(strContent)
         {
             Nodes = lsNodes.ToArray();
+
+            LocalTreeMapNode nextNode = null;
+
+            foreach (var treeNode in lsNodes.Reverse())
+            {
+                treeNode.Parent = this;
+                treeNode.NextNode = nextNode;
+                nextNode = treeNode;
+            }
         }
     }
 }

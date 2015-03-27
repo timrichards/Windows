@@ -17,10 +17,10 @@ namespace DoubleFile
             TreeView { get; set; }
         internal LocalTreeNode
             FirstNode { get { return ((null != Nodes) && (0 < Nodes.Length)) ? Nodes[0] : null; } }
-        internal LocalTreeNode
-            NextNode { get; private set; }
-        internal LocalTreeNode
-            Parent { get; private set; }
+        public virtual LocalTreeNode
+            NextNode { get; protected set; }
+        public virtual LocalTreeNode
+            Parent { get; protected set; }
         internal NodeDatum
             NodeDatum { get; set; }
 

@@ -81,7 +81,6 @@ namespace DoubleFile
             if (null == treeNode)
                 return;
 
-            //RenderA(treeNode);
             LocalTreeNode.TreeView.SelectedNode = treeNode;
         }
 
@@ -137,10 +136,8 @@ namespace DoubleFile
         {
             ClearSelection(bKeepTooltipActive: true);
 
-            if (TreeMapVM.TreeNode == null)
-            {
+            if (null == TreeMapVM.TreeNode)
                 return null;
-            }
 
             if (_rectCenter.Contains(pt_in))   // click once to hide goofball. Click again within 5 seconds to return to the deep node.
             {
@@ -174,11 +171,9 @@ namespace DoubleFile
                         return;     // from lambda
                     }
 
-                    {
-                        var rootNodeDatum = nodeDatum as RootNodeDatum;
+                    var rootNodeDatum = nodeDatum as RootNodeDatum;
 
-                        bVolumeView = ((null != rootNodeDatum) && rootNodeDatum.VolumeView);
-                    }
+                    bVolumeView = ((null != rootNodeDatum) && rootNodeDatum.VolumeView);
 
                     if ((false == bVolumeView) &&
                         (null != (nodeRet = FindMapNode(nodeDatum.TreeMapFiles, pt))))
@@ -214,30 +209,28 @@ namespace DoubleFile
                     return;         // from lambda
 
                 nodeRet = TreeMapVM.TreeNode;
-            });
 
-            if ((false == bVolumeView) &&
-                (false == bImmediateFiles))
-            {
-                var nodeDatum = nodeRet.NodeDatum;
+                if (bVolumeView)
+                    return;         // from lambda
 
-                if (null == nodeDatum)      // added 2/13/15 as safety
+                var nodeDatum_A = nodeRet.NodeDatum;
+
+                if (null == nodeDatum_A)      // added 2/13/15 as safety
                 {
                     MBoxStatic.Assert(99923, false);
-                    return null;
+                    return;
                 }
 
-                var nodeRet_A = FindMapNode(nodeDatum.TreeMapFiles, pt);
+                var nodeRet_A = FindMapNode(nodeDatum_A.TreeMapFiles, pt);
 
-                if ((null != nodeRet_A) &&
-                    (nodeRet == TreeMapVM.TreeNode))
+                if (null != nodeRet_A)
                 {
                     nodeRet = nodeRet_A;
                     bImmediateFiles = true;
                 }
-            }
+            });
 
-            if (nodeRet == _prevNode)
+            if (ReferenceEquals(nodeRet, _prevNode))
             {
                 nodeRet = TreeMapVM.TreeNode;
                 bImmediateFiles = false;
@@ -249,7 +242,7 @@ namespace DoubleFile
 
         void TreeListChildSelected(LocalTreeNode treeNodeChild)
         {
-            if (TreeMapVM.TreeNode != treeNodeChild.Parent)
+            if (false == ReferenceEquals(TreeMapVM.TreeNode, treeNodeChild.Parent))
                 return;
 
             SelRectAndTooltip(treeNodeChild);
@@ -330,30 +323,24 @@ namespace DoubleFile
 
         static LocalTreeNode GetFileList(LocalTreeNode parent)
         {
-            var listLengths = new List<ulong>();
-            var listFiles = TreeSelect.GetFileList(parent, listLengths);
+            var lsFiles = TreeSelect.GetFileList(parent);
 
-            if (null == listFiles)
+            if (null == lsFiles)
                 return null;
 
             ulong nTotalLength = 0;
-            var enumerator = listLengths.GetEnumerator();
-            var lsNodes = new List<LocalTreeNode>();
+            var lsNodes = new List<LocalTreeMapNode>();
 
-            foreach (var arrLine in listFiles)
+            foreach (var tuple in lsFiles)
             {
-                var nodeDatum_A = new NodeDatum();
-                var bMoveNext = enumerator.MoveNext();
-
-                MBoxStatic.Assert(1302.3316, bMoveNext);
-                nTotalLength += nodeDatum_A.TotalLength = enumerator.Current;
-
-                if (0 == enumerator.Current)
+                if (0 == tuple.Item2)
                     continue;
 
-                lsNodes.Add(new LocalTreeMapNode(arrLine[0])
+                nTotalLength += tuple.Item2;
+
+                lsNodes.Add(new LocalTreeMapNode(tuple.Item1[0])
                 {
-                    NodeDatum = nodeDatum_A,
+                    NodeDatum = new NodeDatum() { TotalLength = tuple.Item2 },
                     ForeColor = UtilColor.OliveDrab
                 });
             }
@@ -361,16 +348,11 @@ namespace DoubleFile
             if (0 == nTotalLength)
                 return null;
 
-            var nodeDatum = parent.NodeDatum;
-            var nodeDatum_B = new NodeDatum();
-
-            MBoxStatic.Assert(1302.3301, nTotalLength == nodeDatum.Length);
-            nodeDatum_B.TotalLength = nTotalLength;
-            nodeDatum_B.TreeMapRect = nodeDatum.TreeMapRect;
+            MBoxStatic.Assert(1302.3301, nTotalLength == parent.NodeDatum.Length);
 
             return new LocalTreeMapNode(parent.Text, lsNodes)
             {
-                NodeDatum = nodeDatum_B,
+                NodeDatum = new NodeDatum() { TotalLength = nTotalLength, TreeMapRect = parent.NodeDatum.TreeMapRect },
                 SelectedImageIndex = -1
             };
         }
@@ -387,7 +369,7 @@ namespace DoubleFile
             }
 
             if ((null == _deepNodeDrawn) ||
-                (_deepNodeDrawn == TreeMapVM.TreeNode))
+                ReferenceEquals(_deepNodeDrawn, TreeMapVM.TreeNode))
             {
                 _rectCenter = Rectangle.Empty;
                 return;
@@ -698,9 +680,7 @@ namespace DoubleFile
                         }
 
                         if (false == rootNodeDatum.VolumeView)
-                        {
                             return;     // from lambda
-                        }
 
                         var nodeDatumFree = new NodeDatum()
                         {
@@ -728,6 +708,7 @@ namespace DoubleFile
                             // Faked length to make up for compression and hard links
                             nVolumeLength = rootNodeDatum.VolumeFree +
                                 rootNodeDatum.TotalLength;
+
                             nodeDatumUnread.TotalLength = 0;
                         }
 
@@ -760,17 +741,15 @@ namespace DoubleFile
                         bVolumeNode = true;
                     });
 
-                    if (bVolumeNode == false)
+                    if ((bVolumeNode == false) &&
+                        (null != item.Nodes))
                     {
                         parent = item;
 
-                        if (null != item.Nodes)
-                        {
-                            ieChildren =
-                                item.Nodes
-                                .Cast<LocalTreeNode>()
-                                .Where(t => 0 < t.NodeDatum.TotalLength);
-                        }
+                        ieChildren =
+                            item.Nodes
+                            .Cast<LocalTreeNode>()
+                            .Where(t => 0 < t.NodeDatum.TotalLength);
                     }
 
                     // returns true if there are children

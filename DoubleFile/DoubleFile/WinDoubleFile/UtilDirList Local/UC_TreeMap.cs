@@ -487,7 +487,7 @@ namespace DoubleFile
             }
 
             var nPxPerSide = (treeNode.SelectedImageIndex < 0)
-                ? 1024
+                ? 2048
                 : treeNode.SelectedImageIndex;
 
             if ((null == _bg) ||
@@ -659,8 +659,8 @@ namespace DoubleFile
                     return;
                 }
 
-                if (rc.Width < 4 ||
-                    rc.Height < 4)
+                if (rc.Width < 32 ||
+                    rc.Height < 32)
                 {
                     // Speedup. Draw an "empty" folder in place of too much detail
                     DrawNode(item, rc);

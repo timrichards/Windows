@@ -83,7 +83,7 @@ namespace DoubleFile
 
         internal Thread DoThreadFactory()
         {
-            if (_treeNode is LocalTreeMapNode)     // does not support immediate file fake nodes
+            if (_treeNode is LocalTreeMapFileNode)     // does not support immediate file fake nodes
                 return null;
 
             _thread = new Thread(Go) { IsBackground = true };

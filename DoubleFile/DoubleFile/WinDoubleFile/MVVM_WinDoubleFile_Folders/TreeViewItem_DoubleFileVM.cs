@@ -26,7 +26,8 @@ namespace DoubleFile
         {
             get
             {
-                if (null == _Items)
+                if ((null == _Items) &&
+                    (null != _datum.Nodes))
                 {
                     var nIndex = -1;
 

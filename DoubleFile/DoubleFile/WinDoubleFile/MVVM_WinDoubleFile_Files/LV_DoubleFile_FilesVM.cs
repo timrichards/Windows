@@ -5,7 +5,7 @@ namespace DoubleFile
 {
     partial class LV_DoubleFile_FilesVM : ListViewVM_GenericBase<LVitem_DoubleFile_FilesVM>
     {
-        internal static event Action<IEnumerable<FileDictionary.DuplicateStruct>, string> SelectedFileChanged = null;
+        internal static event Action<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>> SelectedFileChanged = null;
 
         public LVitem_DoubleFile_FilesVM SelectedItem
         {
@@ -46,6 +46,12 @@ namespace DoubleFile
 
         public string WidthFilename { get { return SCW; } }                   // franken all NaN
         public string WidthDuplicates { get { return SCW; } }
+        public string WidthCreated { get { return SCW; } }
+        public string WidthModified { get { return SCW; } }
+        public string WidthAttributes { get { return SCW; } }
+        public string WidthLength { get { return SCW; } }
+        public string WidthError1 { get { return SCW; } }
+        public string WidthError2{ get { return SCW; } }
 
         internal override int NumCols { get { return LVitem_DoubleFile_FilesVM.NumCols_; } }
     }

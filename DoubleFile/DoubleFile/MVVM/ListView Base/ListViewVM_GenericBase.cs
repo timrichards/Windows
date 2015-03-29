@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    abstract class ListViewVM_GenericBase<T> : ListViewVM_Base, IEquatable<ListViewVM_GenericBase<T>>
+    abstract class ListViewVM_GenericBase<T> : ListViewVM_Base //, IEquatable<ListViewVM_GenericBase<T>>
         where T : ListViewItemVM_Base
     {
         internal delegate IEnumerable<T> EnumerableQuery();
@@ -12,7 +12,7 @@ namespace DoubleFile
 
         internal IEnumerable<T> ItemsCast { get { return Items.Cast<T>(); } }
 
-        internal T this[string s_in]
+        internal virtual T this[string s_in]
         {
             get
             {
@@ -25,7 +25,7 @@ namespace DoubleFile
             }
         }
 
-        public virtual bool Equals(ListViewVM_GenericBase<T> other)
+        public virtual bool LocalEquals(ListViewVM_GenericBase<T> other)
         {
             if (null == other)
             {
@@ -45,7 +45,7 @@ namespace DoubleFile
 
                 MBoxStatic.Assert(99991, (false == ReferenceEquals(item, otherItem)));
 
-                if (false == item.Equals(otherItem))
+                if (false == item.LocalEquals(otherItem))
                     return false;
             }
 

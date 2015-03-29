@@ -1,13 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Threading;
-using DoubleFile;
-using System;
 
 namespace DoubleFile
 {
-    partial class TreeSelect : UtilDirList
+    partial class TreeSelect
     {
         internal TreeSelect(LocalTreeNode node,
             bool bCompareMode = false, bool bSecondComparePane = false)
@@ -19,66 +15,6 @@ namespace DoubleFile
 
             _bCompareMode = bCompareMode;
             _bSecondComparePane = bSecondComparePane;
-        }
-
-        // This is the original GetFileList() that returns multiple info columns
-        // Static and is used by the treemap.
-        // However it deprecatedly splits each line and formats it:
-        // unused and too far upstream
-        internal static List<Tuple<string[], ulong>> GetFileList(LocalTreeNode parent)
-        {
-            var nodeDatum = parent.NodeDatum;
-            var rootNodeDatum = parent.Root().NodeDatum as RootNodeDatum;
-            var listFiles = new List<Tuple<string[], ulong>>();
-
-            if ((null == nodeDatum) ||
-                (nodeDatum.LineNo == 0) ||
-                (null == rootNodeDatum))
-            {
-                return listFiles;
-            }
-
-            var strListingFile = rootNodeDatum.ListingFile;
-
-            var nPrevDir = (int) nodeDatum.PrevLineNo;
-            var nLineNo = (int) nodeDatum.LineNo;
-
-            if (nPrevDir == 0)
-            {
-                return listFiles;
-            }
-
-            if ((nLineNo - nPrevDir) <= 1)  // dir has no files
-            {
-                return listFiles;
-            }
-
-            ulong nLengthDebug = 0;
-
-            foreach (var strFileLine
-                in File.ReadLines(strListingFile)
-                .Skip(nPrevDir)
-                .Take((nLineNo - nPrevDir - 1)))
-            {
-                var strArrayFiles = strFileLine.Split('\t')
-                    .Skip(3)
-                    .ToArray();
-                ulong nLength = 0;
-
-                strArrayFiles[3] = DecodeAttributes(strArrayFiles[3]);
-
-                if ((strArrayFiles.Length > knColLengthLV) &&
-                    (false == string.IsNullOrWhiteSpace(strArrayFiles[knColLengthLV])))
-                {
-                    nLengthDebug += nLength = ulong.Parse(strArrayFiles[knColLengthLV]);
-                    strArrayFiles[knColLengthLV] = FormatSize(strArrayFiles[knColLengthLV]);
-                }
-
-                listFiles.Add(Tuple.Create(strArrayFiles, nLength));
-            }
-
-            MBoxStatic.Assert(1301.2313, nLengthDebug == nodeDatum.Length);
-            return listFiles;
         }
 
         internal Thread DoThreadFactory()

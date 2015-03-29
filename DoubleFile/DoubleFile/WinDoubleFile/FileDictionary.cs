@@ -30,38 +30,19 @@ namespace DoubleFile
         internal bool IsEmpty { get { return null == _DictFiles; } }
         internal void ResetAbortFlag() { IsAborted = false; }
 
-        internal IEnumerable<DuplicateStruct> GetDuplicates(
-            string strLine,
-            out string strFilename,
-            out int nLine)
+        internal IEnumerable<DuplicateStruct> GetDuplicates(string[] asFileLine)
         {
-            strFilename = null;
-            nLine = -1;
-
-            if (false == strLine.StartsWith(FileParse.ksLineType_File))
-            {
-                MBoxStatic.Assert(99956, false);
-                return null;
-            }
-
-            var asLine = strLine.Split('\t');
-
-            strFilename = asLine[3];
-
-            if (10 >= asLine.Length)
-                return null;
-
-            var key = new FileKeyTuple(asLine[10], asLine[7]);
-
             if (null == _DictFiles)
                 return null;
 
+            if (10 >= asFileLine.Length)
+                return null;
+
+            var key = new FileKeyTuple(asFileLine[10], asFileLine[7]);
             IEnumerable<int> lsDupes = null;
 
             if (false == _DictFiles.TryGetValue(key, out lsDupes))
                 return null;
-
-            nLine = int.Parse(asLine[1]);
 
             return
                 lsDupes

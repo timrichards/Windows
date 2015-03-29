@@ -6,7 +6,7 @@ using System.Linq;
 using System.Drawing.Drawing2D;
 using System.Threading;
 using System.Collections.Concurrent;
-using DoubleFile;
+using System.IO;
 
 namespace DoubleFile
 {
@@ -327,10 +327,53 @@ namespace DoubleFile
 
         static LocalTreeNode GetFileList(LocalTreeNode parent)
         {
-            var lsFiles = TreeSelect.GetFileList(parent);
+            var nodeDatum = parent.NodeDatum;
+            var rootNodeDatum = parent.Root().NodeDatum as RootNodeDatum;
 
-            if (null == lsFiles)
+            if ((null == nodeDatum) ||
+                (nodeDatum.LineNo == 0) ||
+                (null == rootNodeDatum))
+            {
                 return null;
+            }
+
+            var nPrevDir = (int) nodeDatum.PrevLineNo;
+
+            if (0 == nPrevDir)
+                return null;
+
+            var nLineNo = (int) nodeDatum.LineNo;
+
+            if (1 >= (nLineNo - nPrevDir))  // dir has no files
+                return null;
+
+            ulong nLengthDebug = 0;
+            var strListingFile = rootNodeDatum.ListingFile;
+            var lsFiles = new List<Tuple<string, ulong>>();
+
+            foreach (var asFileLine
+                in File.ReadLines(strListingFile)
+                .Skip(nPrevDir)
+                .Take((nLineNo - nPrevDir - 1))
+                .Select(s =>
+                    s
+                    .Split('\t')
+                    .Skip(3)                    // makes this an LV line: knColLengthLV
+                    .ToArray()))
+            {
+                ulong nLength = 0;
+
+                if ((asFileLine.Length > UtilDirList.knColLengthLV) &&
+                    (false == string.IsNullOrWhiteSpace(asFileLine[UtilDirList.knColLengthLV])))
+                {
+                    nLengthDebug += nLength = ulong.Parse(asFileLine[UtilDirList.knColLengthLV]);
+                    asFileLine[UtilDirList.knColLengthLV] = UtilDirList.FormatSize(asFileLine[UtilDirList.knColLengthLV]);
+                }
+
+                lsFiles.Add(Tuple.Create(asFileLine[0], nLength));
+            }
+
+            MBoxStatic.Assert(1301.2313, nLengthDebug == nodeDatum.Length);
 
             ulong nTotalLength = 0;
             var lsNodes = new List<LocalTreeMapFileNode>();
@@ -342,7 +385,7 @@ namespace DoubleFile
 
                 nTotalLength += tuple.Item2;
 
-                lsNodes.Add(new LocalTreeMapFileNode(tuple.Item1[0])
+                lsNodes.Add(new LocalTreeMapFileNode(tuple.Item1)
                 {
                     NodeDatum = new NodeDatum() { TotalLength = tuple.Item2 },
                     ForeColor = UtilColor.OliveDrab
@@ -443,7 +486,7 @@ namespace DoubleFile
             RenderA(treeNode);
         }
 
-        void TreeSelect_FolderDetailUpdated(IEnumerable<string[]> lasDetail, LocalTreeNode treeNode)
+        void TreeSelect_FolderDetailUpdated(IEnumerable<IEnumerable<string>> lasDetail, LocalTreeNode treeNode)
         {
             RenderA(treeNode);
         }

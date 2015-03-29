@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
+
 namespace DoubleFile
 {
     class LVitem_DoubleFile_SearchVM : ListViewItemVM_Base
@@ -48,8 +50,8 @@ namespace DoubleFile
         internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 1;
 
-        internal LVitem_DoubleFile_SearchVM(string[] arrStr = null)
-            : base(null, arrStr)
+        internal LVitem_DoubleFile_SearchVM(IEnumerable<string> ieString = null)
+            : base(null, ieString)
         {
         }
 

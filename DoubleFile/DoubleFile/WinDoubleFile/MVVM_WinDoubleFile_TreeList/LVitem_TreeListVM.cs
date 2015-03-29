@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.Collections.Generic;
+using System.Windows.Media;
 
 namespace DoubleFile
 {
@@ -15,8 +16,8 @@ namespace DoubleFile
         internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 1;
 
-        internal LVitem_TreeListVM(string[] arrStr = null)
-            : base(null, arrStr)
+        internal LVitem_TreeListVM(IEnumerable<string> ieString = null)
+            : base(null, ieString)
         {
         }
 

@@ -15,15 +15,15 @@ namespace DoubleFile
             TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
         }
 
-        void TreeSelect_FolderDetailUpdated(IEnumerable<string[]> lasDetail, LocalTreeNode treeNode)
+        void TreeSelect_FolderDetailUpdated(IEnumerable<IEnumerable<string>> ieDetail, LocalTreeNode treeNode)
         {
             UtilProject.UIthread(() =>
             {
                 Title = null;
                 Items.Clear();
 
-                foreach (var asLine in lasDetail)
-                    Add(new LVitem_FolderDetailVM(asLine), bQuiet: true);
+                foreach (var ieLine in ieDetail)
+                    Add(new LVitem_FolderDetailVM(ieLine), bQuiet: true);
 
                 var strFG_Description = UtilColor.Description[treeNode.ForeColor];
                 var strBG_Description = UtilColor.Description[treeNode.BackColor];

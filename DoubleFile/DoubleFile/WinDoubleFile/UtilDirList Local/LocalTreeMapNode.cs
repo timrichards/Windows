@@ -17,6 +17,9 @@ namespace DoubleFile
             : this(parent.Text)
         {
             Parent = parent;
+            Text = parent.Text;
+            Level = parent.Level + 1;       // just for fun: not used
+
             Nodes = lsNodes.ToArray();
 
             LocalTreeMapFileNode nextNode = null;
@@ -25,8 +28,8 @@ namespace DoubleFile
             {
                 treeNode.Parent = this;
                 treeNode.NextNode = nextNode;
+                treeNode.Level = Level + 1;
                 nextNode = treeNode;
-                Level = parent.Level + 1;       // just for fun: not used
             }
         }
     }

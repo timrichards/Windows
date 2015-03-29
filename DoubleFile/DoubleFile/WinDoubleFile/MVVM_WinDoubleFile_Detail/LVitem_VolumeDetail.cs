@@ -1,4 +1,6 @@
-﻿namespace DoubleFile
+﻿using System.Collections.Generic;
+
+namespace DoubleFile
 {
     class LVitem_VolumeDetailVM : ListViewItemVM_Base
     {
@@ -10,8 +12,8 @@
         internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 2;
 
-        internal LVitem_VolumeDetailVM(string[] arrStr = null)
-            : base(null, arrStr)
+        internal LVitem_VolumeDetailVM(IEnumerable<string> ieString = null)
+            : base(null, ieString)
         {
         }
 

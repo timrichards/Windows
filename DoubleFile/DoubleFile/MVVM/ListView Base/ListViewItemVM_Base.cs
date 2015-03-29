@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DoubleFile
 {
-    abstract class ListViewItemVM_Base : ObservableObjectBase, IEquatable<ListViewItemVM_Base>
+    abstract class ListViewItemVM_Base : ObservableObjectBase //, IEquatable<ListViewItemVM_Base>
     {
         internal string this[int i] { get { return marr[i]; } }
 
@@ -30,24 +32,30 @@ namespace DoubleFile
 
         // NumCols, and columns, are covariant: while all subclasses have columns; the subclasses vary in the number of columns.
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        internal ListViewItemVM_Base(ListViewVM_Base lvvm, string[] arrStr)     // e.g. Volumes LV: marr
+        internal ListViewItemVM_Base(ListViewVM_Base lvvm, IEnumerable<string> ieStr)     // e.g. Volumes LV: marr
             : this(lvvm)
         {
-            marr = new string[NumCols];
-
-            if (arrStr != null)
+            if (null != ieStr)
             {
-                MBoxStatic.Assert(99995, arrStr.Length <= NumCols);
-                arrStr.CopyTo(marr, 0);
+                var nCount = ieStr.Count();
+
+                if (nCount < NumCols)
+                    ieStr = ieStr.Concat(new string[NumCols - nCount]);
+
+                marr = ieStr.ToArray();
+            }
+            else
+            {
+                marr = new string[NumCols];
             }
 
-            if (lvvm != null)
-            {
+            MBoxStatic.Assert(99995, marr.Length == NumCols);
+
+            if (null != LVVM)
                 RaiseColumnWidths();
-            }
         }
 
-        public virtual bool Equals(ListViewItemVM_Base other)
+        public virtual bool LocalEquals(ListViewItemVM_Base other)
         {
             if (null == other)
                 return false;
@@ -58,11 +66,20 @@ namespace DoubleFile
             if (SearchCol != other.SearchCol)
                 return false;
 
-            if (0 !=
-                string.Join("", marr).CompareTo(
-                string.Join("", other.marr)))
+            if ((null == marr) !=
+                (null == other.marr))
             {
                 return false;
+            }
+
+            if (null != marr)
+            {
+                if (0 !=
+                    string.Join("", marr).CompareTo(
+                    string.Join("", other.marr)))
+                {
+                    return false;
+                }
             }
 
             if (0 !=
@@ -107,10 +124,8 @@ namespace DoubleFile
                 RaisePropertyChanged(PropertyNames[nCol]);
             }
 
-            if (LVVM != null)
-            {
+            if (null != LVVM)
                 RaiseColumnWidths();
-            }
         }
 
         internal ListViewVM_Base LVVM = null;

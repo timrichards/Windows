@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using DoubleFile;
 using System.Collections.Generic;
 
 namespace DoubleFile

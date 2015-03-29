@@ -77,7 +77,7 @@ namespace DoubleFile
                         {
                             FileParse.ReadHeader(lvItemVolumeTemp.ListingFile, out lvItemVolumeTemp);
                         }
-                        else if (lvItem.Equals(lvItemVolumeTemp))
+                        else if (lvItem.LocalEquals(lvItemVolumeTemp))
                         {
                             // volume group; include y/n: columns that aren't in the listing file
                             // no change

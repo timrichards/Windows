@@ -65,7 +65,7 @@ namespace DoubleFile
             if (null == volumes.LVprojectVM)
                 return;
 
-            if (volumes.LVprojectVM.Equals(LVprojectVM))
+            if (volumes.LVprojectVM.LocalEquals(LVprojectVM))
                 return;
 
             LVprojectVM = volumes.LVprojectVM;

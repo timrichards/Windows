@@ -10,7 +10,7 @@ namespace DoubleFile
     partial class WinDoubleFile_DuplicatesVM : IDisposable
     {
         static internal event Action<LVitem_ProjectVM, string, string> GoToFile;
-        static internal event Action<string> UpdateFileDetail;
+        static internal event Action<IEnumerable<string>> UpdateFileDetail;
 
         internal WinDoubleFile_DuplicatesVM()
         {
@@ -23,10 +23,10 @@ namespace DoubleFile
             LV_DoubleFile_FilesVM.SelectedFileChanged -= TreeFileSelChanged;
         }
 
-        internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, string strFileLine)
+        internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, IEnumerable<string> ieFileLine)
         {
             if (null != UpdateFileDetail)
-                UpdateFileDetail(strFileLine);
+                UpdateFileDetail(ieFileLine);
 
             SelectedItem_Set(null);
             UtilProject.UIthread(Items.Clear);
@@ -65,11 +65,14 @@ namespace DoubleFile
                     else if ((0 < lsFilesInDir.Count) &&
                         strLine.StartsWith(FileParse.ksLineType_Directory))
                     {
-                        foreach (var strFileLineA in lsFilesInDir)
+                        foreach (var strFileLine in lsFilesInDir)
                         {
-                            lsLVitems.Add(new LVitem_FileDuplicatesVM(new[] { strFileLineA.Split('\t')[3], strLine.Split('\t')[2] })
+                            lsLVitems.Add(new LVitem_FileDuplicatesVM(new[] { strLine.Split('\t')[2] })
                             {
-                                FileLine = strFileLineA,
+                                FileLine = strFileLine.Split('\t')
+                                    .Skip(3)                    // makes this an LV line: knColLengthLV
+                                    .ToArray(),
+
                                 LVitem_ProjectVM = g.Key
                             });
                         }

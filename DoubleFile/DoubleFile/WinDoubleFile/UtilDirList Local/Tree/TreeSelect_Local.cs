@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DoubleFile;
 
 namespace DoubleFile
 {
-    partial class TreeSelect
+    partial class TreeSelect : UtilDirList
     {
         static internal event Action<IEnumerable<string>, string> FileListUpdated;
-        static internal event Action<IEnumerable<string[]>, LocalTreeNode> FolderDetailUpdated;
-        static internal event Action<IEnumerable<string[]>, string> VolumeDetailUpdated;
+        static internal event Action<IEnumerable<IEnumerable<string>>, LocalTreeNode> FolderDetailUpdated;
+        static internal event Action<IEnumerable<IEnumerable<string>>, string> VolumeDetailUpdated;
 
         void Go()
         {
@@ -24,10 +23,6 @@ namespace DoubleFile
                 GetVolumeDetail();
         }
 
-        // The main file has the original GetFileList() that returns multiple info columns
-        // That one is static and is used by the treemap.
-        // However it deprecatedly splits each line and formats it:
-        // unused and too far upstream
         void GetFileList()
         {
             string strListingFile = null;

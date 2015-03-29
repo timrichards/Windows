@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Windows.Forms;
-using DoubleFile;
 using System.Collections.Concurrent;
 
 namespace DoubleFile

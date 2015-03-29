@@ -12,7 +12,6 @@ namespace DoubleFile
             InitializeComponent();
             form_grid.Loaded += Grid_Loaded;
             Closed += Window_Closed;
-            WinDoubleFile_DuplicatesVM.UpdateFileDetail += UpdateFileDetail;
         }
 
         protected override LocalWindow_DoubleFile CreateChainedWindow()
@@ -27,16 +26,11 @@ namespace DoubleFile
             form_lvVolume.DataContext = _lvVolumeDetailVM = new LV_VolumeDetailVM();
         }
 
-        internal void UpdateFileDetail(string strFileLine)
-        {
-            _lvFileDetailVM.Update(strFileLine);
-        }
-
         private void Window_Closed(object sender, System.EventArgs e)
         {
+            _lvFileDetailVM.Dispose();
             _lvFolderDetailVM.Dispose();
             _lvVolumeDetailVM.Dispose();
-            WinDoubleFile_DuplicatesVM.UpdateFileDetail -= UpdateFileDetail;
         }
 
         LV_FileDetailVM

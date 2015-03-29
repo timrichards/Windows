@@ -22,6 +22,12 @@
                 <GridView>
                     <GridViewColumn Header="File name" DisplayMemberBinding="{Binding Filename}" Width="{Binding WidthFilename}"/>
                     <GridViewColumn Header="Duplicates" DisplayMemberBinding="{Binding Duplicates}" Width="{Binding WidthDuplicates}"/>
+                    <GridViewColumn Header="Length" DisplayMemberBinding="{Binding Length}" Width="{Binding WidthLength}"/>
+                    <GridViewColumn Header="Created" DisplayMemberBinding="{Binding Created}" Width="{Binding WidthCreated}"/>
+                    <GridViewColumn Header="Modified" DisplayMemberBinding="{Binding Modified}" Width="{Binding WidthModified}"/>
+                    <GridViewColumn Header="Attributes" DisplayMemberBinding="{Binding Attributes}" Width="{Binding WidthAttributes}"/>
+                    <GridViewColumn Header="Error 1" DisplayMemberBinding="{Binding Error1}" Width="{Binding WidthError1}"/>
+                    <GridViewColumn Header="Error 2" DisplayMemberBinding="{Binding Error2}" Width="{Binding WidthError2}"/>
                 </GridView>
             </ListView.View>
         </ListView>

@@ -1,5 +1,4 @@
-﻿using DoubleFile;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace DoubleFile
 {

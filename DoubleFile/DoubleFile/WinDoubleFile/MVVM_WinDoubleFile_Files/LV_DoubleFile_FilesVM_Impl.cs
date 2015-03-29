@@ -30,36 +30,35 @@ namespace DoubleFile
 
             foreach (var strFileLine in lsFileLines)
             {
-                string strFilename = null;
-                var nLine = -1;
-                var lsDuplicates = MainWindow.FileDictionary.GetDuplicates(strFileLine, out strFilename, out nLine);
-                var nCount = (null != lsDuplicates) ? lsDuplicates.Count() - 1 : 0;
-                var strCount = (nCount > 0) ? "" + nCount : null;
-                var lvItem = new LVitem_DoubleFile_FilesVM(new[] { strFilename, strCount }) { FileLine = strFileLine };
+                var asFileLine =
+                    strFileLine
+                    .Split('\t')
+                    .ToArray();
 
-                if (0 < nCount)
+                var nLine = int.Parse(asFileLine[1]);
+                var lsDuplicates = MainWindow.FileDictionary.GetDuplicates(asFileLine);
+
+                asFileLine =
+                    asFileLine
+                    .Skip(3)                            // makes this an LV line: knColLengthLV
+                    .ToArray();
+
+                var nDuplicates = (null != lsDuplicates) ? lsDuplicates.Count() - 1 : 0;
+                var lvItem = new LVitem_DoubleFile_FilesVM() { nDuplicates = nDuplicates, FileLine = asFileLine };
+
+                if (0 < nDuplicates)
                 {
                     lvItem.LSduplicates =
                         lsDuplicates
                         .Where(dupe =>
                             (dupe.LVitemProjectVM.ListingFile != strListingFile) ||    // exactly once every query
-                            (dupe.LineNumber != nLine)
-                        );
+                            (dupe.LineNumber != nLine));
 
                     lvItem.SameVolume =
                         (1 ==
                         lsDuplicates
                             .GroupBy(duplicate => duplicate.LVitemProjectVM.Volume)
                             .Count());
-                }
-                else    // solitary file
-                {
-                    var asFile = strFileLine.Split('\t');
-
-                    lvItem.SolitaryAndNonEmpty =
-                        (asFile.Length <= FileParse.knColLength) ||                       // doesn't happen
-                        string.IsNullOrWhiteSpace(asFile[FileParse.knColLength]) ||       // doesn't happen
-                        ulong.Parse(asFile[FileParse.knColLength]) > 0;
                 }
 
                 lsItems.Add(lvItem);
@@ -75,6 +74,19 @@ namespace DoubleFile
         {
             _strSelectedFile = strFile;
             SelectedItem_Set(this[_strSelectedFile]);
+        }
+
+        internal override LVitem_DoubleFile_FilesVM this[string s_in]
+        {
+            get
+            {
+                if (null == s_in)
+                    return null;
+            
+                var s = s_in.ToLower();
+
+                return ItemsCast.FirstOrDefault(o => o.FileLine[0].ToLower() == s);
+            }
         }
 
         string _strSelectedFile = null;

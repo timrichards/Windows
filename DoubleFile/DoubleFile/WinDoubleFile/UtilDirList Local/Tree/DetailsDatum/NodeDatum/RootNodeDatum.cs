@@ -1,6 +1,4 @@
-﻿using DoubleFile;
-
-namespace DoubleFile
+﻿namespace DoubleFile
 {
     class RootNodeDatum : NodeDatum
     {

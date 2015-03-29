@@ -1,11 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DoubleFile
 {
-    partial class LV_FileDetailVM
+    partial class LV_FileDetailVM : IDisposable
     {
-        internal void Update(string strFileLine = null)
+        internal LV_FileDetailVM()
+        {
+            WinDoubleFile_DuplicatesVM.UpdateFileDetail += Update;
+        }
+
+        public void Dispose()
+        {
+            WinDoubleFile_DuplicatesVM.UpdateFileDetail -= Update;
+        }
+
+        internal void Update(IEnumerable<string> ieFileLine = null)
         {
             UtilProject.UIthread(() =>
             {
@@ -13,34 +24,35 @@ namespace DoubleFile
                 Items.Clear();
             });
 
-            if (string.IsNullOrWhiteSpace(strFileLine))
+            if (null == ieFileLine)
                 return;
 
             var kasHeader = new[] { "Filename", "Created", "Modified", "Attributes", "Length", "Error 1", "Error 2" };
-            var asFile = strFileLine.Split('\t')
-                .Skip(3)                            // makes this an LV line: knColLengthLV
+
+            var asFileLine =
+                ieFileLine
                 .ToArray();
 
-            asFile[3] = UtilDirList.DecodeAttributes(asFile[3]);
+            asFileLine[3] = UtilDirList.DecodeAttributes(asFileLine[3]);
 
-            if ((asFile.Length > FileParse.knColLengthLV) &&
-                (false == string.IsNullOrWhiteSpace(asFile[FileParse.knColLengthLV])))
+            if ((asFileLine.Length > FileParse.knColLengthLV) &&
+                (false == string.IsNullOrWhiteSpace(asFileLine[FileParse.knColLengthLV])))
             {
-                asFile[FileParse.knColLengthLV] =
-                    UtilDirList.FormatSize(asFile[FileParse.knColLengthLV], bBytes: true);
+                asFileLine[FileParse.knColLengthLV] =
+                    UtilDirList.FormatSize(asFileLine[FileParse.knColLengthLV], bBytes: true);
             }
 
             UtilProject.UIthread(() =>
             {
-                for (var i = 1; i < Math.Min(asFile.Length, kasHeader.Length); ++i)
+                for (var i = 1; i < Math.Min(asFileLine.Length, kasHeader.Length); ++i)
                 {
-                    if (string.IsNullOrWhiteSpace(asFile[i]))
+                    if (string.IsNullOrWhiteSpace(asFileLine[i]))
                         continue;
 
-                    Add(new LVitem_FileDetailVM(new[] { kasHeader[i], asFile[i] }), bQuiet: true);
+                    Add(new LVitem_FileDetailVM(new[] { kasHeader[i], asFileLine[i] }), bQuiet: true);
                 }
 
-                Title = asFile[0];
+                Title = asFileLine[0];
                 RaiseItems();
             });
         }

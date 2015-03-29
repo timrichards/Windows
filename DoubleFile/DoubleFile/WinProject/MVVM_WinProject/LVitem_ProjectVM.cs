@@ -1,4 +1,5 @@
-﻿
+﻿using System.Collections.Generic;
+
 namespace DoubleFile
 {
     class LVitem_ProjectVM : ListViewItemVM_Base
@@ -21,8 +22,8 @@ namespace DoubleFile
         internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 9;
 
-        internal LVitem_ProjectVM(string[] arrStr = null)
-            : base(null, arrStr)
+        internal LVitem_ProjectVM(IEnumerable<string> ieString = null)
+            : base(null, ieString)
         {
         }
 

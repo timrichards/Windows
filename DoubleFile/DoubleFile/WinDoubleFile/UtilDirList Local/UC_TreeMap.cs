@@ -13,8 +13,9 @@ namespace DoubleFile
     [System.ComponentModel.DesignerCategory("Code")]
     class UC_TreeMap : UserControl
     {
-        internal static event Action<LocalTreeNode> TreeMapRendered = null;
-        internal static event Action<LocalTreeNode> TreeMapChildSelected = null;
+        static internal event Action<LocalTreeNode> TreeMapRendered = null;
+        static internal event Action<LocalTreeNode> TreeMapChildSelected = null;
+        static internal event Action<string> SelectedFile = null;
         internal LocalWindow LocalOwner = null;
         internal WinTreeMapVM TreeMapVM = null;
 
@@ -42,13 +43,13 @@ namespace DoubleFile
 
             _timerAnim = new LocalTimer(33.0, () =>   // 30 FPS
             {
-                if (_rectCenter != Rectangle.Empty)
-                {
-                    ++_nAnimFrame;
+                if (Rectangle.Empty == _rectCenter)
+                    return;         // from lambda
 
-                    if (0 == _nInvalidateRef)
-                        Invalidate(_rectCenter);
-                }
+                ++_nAnimFrame;
+
+                if (0 == _nInvalidateRef)
+                    Invalidate(_rectCenter);
             }).Start();
 
             TreeMapVM.TreeNodeCallback = RenderA;
@@ -258,7 +259,12 @@ namespace DoubleFile
             var strFolder = treeNodeChild.Text;
 
             if (bImmediateFiles)
-                strFolder += " (immediate files)";
+            {
+                strFolder += " (file)";
+
+                if (null != SelectedFile)
+                    SelectedFile(treeNodeChild.Text);
+            }
 
             WinTooltip.ShowTooltip(
                 new WinTooltip.ArgsStruct(
@@ -555,17 +561,7 @@ namespace DoubleFile
                 if (null == _lsRenderActions)
                     return;     // from lambda
 
-                var lsFrames = new List<RenderAction>();
-
                 foreach (var stroke in _lsRenderActions)
-                {
-                    if (stroke is DrawRectangle)
-                        lsFrames.Add(stroke);
-                    else
-                        stroke.Stroke(_bg.Graphics);
-                }
-
-                foreach (var stroke in lsFrames)
                     stroke.Stroke(_bg.Graphics);
 
                 _lsRenderActions = null;
@@ -619,7 +615,7 @@ namespace DoubleFile
         //
         // Last modified: $Date: 2004/11/05 16:53:08 $
         
-        ConcurrentBag<RenderAction> DrawTreemap()
+        IEnumerable<RenderAction> DrawTreemap()
         {
             _deepNodeDrawn = null;
             var rc = _rectBitmap;
@@ -641,18 +637,19 @@ namespace DoubleFile
             return
                 (nodeDatum.TotalLength > 0)
                 ? new Recurse().Render(TreeMapVM.TreeNode, rc, TreeMapVM.DeepNode, out _deepNodeDrawn)
-                : new ConcurrentBag<RenderAction> { new FillRectangle() { Brush = Brushes.Wheat, rc = rc } };
+                : new[] { new FillRectangle() { Brush = Brushes.Wheat, rc = rc } };
         }
 
         class Recurse
         {
-            internal ConcurrentBag<RenderAction> Render(
+            internal IEnumerable<RenderAction> Render(
                 LocalTreeNode item,
                 Rectangle rc,
                 LocalTreeNode deepNode,
                 out LocalTreeNode deepNodeDrawn_out)
             {
                 _lsRenderActions = new ConcurrentBag<RenderAction>();
+                _lsFrames = new ConcurrentBag<RenderAction>();
                 _deepNode = deepNode;
                 RecurseDrawGraph(item, rc, true);
 
@@ -660,7 +657,7 @@ namespace DoubleFile
                     Thread.Sleep(20);
 
                 deepNodeDrawn_out = _deepNodeDrawn;
-                return _lsRenderActions;
+                return _lsRenderActions.Concat(_lsFrames);
             }
             
             void RecurseDrawGraph(
@@ -958,7 +955,7 @@ namespace DoubleFile
                         );
 
                         if (bStart)
-                            _lsRenderActions.Add(new DrawRectangle { rc = rcChild });
+                            _lsFrames.Add(new DrawRectangle { rc = rcChild });
 
                         if (lastChild)
                         {
@@ -1065,6 +1062,8 @@ namespace DoubleFile
 
             ConcurrentBag<RenderAction>
                 _lsRenderActions = null;
+            ConcurrentBag<RenderAction>
+                _lsFrames = null;
             LocalTreeNode
                 _deepNode = null;
             LocalTreeNode
@@ -1097,7 +1096,7 @@ namespace DoubleFile
             _threadTreeSelect = null;
 
         // Recurse class
-        ConcurrentBag<RenderAction>
+        IEnumerable<RenderAction>
             _lsRenderActions = null;
         LocalTreeNode
             _deepNodeDrawn = null;

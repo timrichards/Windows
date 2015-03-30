@@ -56,6 +56,9 @@ namespace DoubleFile
 
         private void GoToFile(LVitem_ProjectVM lvItemProjectVM, string strPath, string strFile)
         {
+            if (null == Nodes)
+                return;
+
             var treeNode = GetOneNodeByRootPath.Go(strPath, Nodes, lvItemProjectVM);
 
             if (null == treeNode)

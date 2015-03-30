@@ -611,8 +611,11 @@ namespace DoubleFile
                 MBoxStatic.Assert(1305.6312, null != lvItem);
                 _dictIgnoreNodes.Add(treeNode, lvItem);
 
-                if (false == treeNode.Nodes.IsEmpty())
+                if ((null != treeNode.Nodes) &&
+                    (false == treeNode.Nodes.IsEmpty()))
+                {
                     IgnoreNodeAndSubnodes(lvItem, treeNode.Nodes[0], bContinue: true);
+                }
             }
             while (bContinue &&
                 (null != (treeNode = treeNode.NextNode)));
@@ -642,8 +645,11 @@ namespace DoubleFile
                     }
                 }
 
-                if (false == treeNode.Nodes.IsEmpty())
+                if ((null != treeNode.Nodes) &&
+                    (false == treeNode.Nodes.IsEmpty()))
+                {
                     IgnoreNodeQuery(sbMatch, nMaxLevel, treeNode.Nodes[0]);
+                }
             }
             while (null != (treeNode = treeNode.NextNode));
         }

@@ -167,7 +167,7 @@ namespace DoubleFile
 
             var nWidth = e.NewSize.Width;
             var nHeight = e.NewSize.Height;
-            var nLeft = winOwner.Left;
+            var nLeft = winOwner.Left + winOwner.Width - nWidth;
             var nTop = winOwner.Top + winOwner.Height;
 
             if (WindowState.Maximized == winOwner.WindowState)
@@ -176,13 +176,9 @@ namespace DoubleFile
                 nTop = 0;
             }
 
-            if (SystemParameters.PrimaryScreenHeight < nTop + nHeight)
-            {
-                nLeft = winOwner.Left + winOwner.Width;
-                nTop = winOwner.Top;
-            }
+            if ((SystemParameters.PrimaryScreenHeight < nTop + nHeight) ||
+                (SystemParameters.PrimaryScreenWidth < nLeft + nWidth))
 
-            if (SystemParameters.PrimaryScreenWidth < nLeft + nWidth)
             {
                 nLeft = winOwner.Left + winOwner.Width - nWidth;
                 nTop = winOwner.Top - nHeight;

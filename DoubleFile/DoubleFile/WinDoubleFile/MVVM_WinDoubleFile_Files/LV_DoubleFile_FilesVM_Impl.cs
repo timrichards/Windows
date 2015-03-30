@@ -10,12 +10,14 @@ namespace DoubleFile
         {
             TreeSelect.FileListUpdated += TreeSelect_FileList;
             LocalTreeNode.SelectedFile += SelectedFile;
+            UC_TreeMap.SelectedFile += SelectedFile;
         }
 
         public void Dispose()
         {
             TreeSelect.FileListUpdated -= TreeSelect_FileList;
             LocalTreeNode.SelectedFile -= SelectedFile;
+            UC_TreeMap.SelectedFile -= SelectedFile;
         }
 
         void TreeSelect_FileList(IEnumerable<string> lsFileLines, string strListingFile)

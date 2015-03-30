@@ -17,7 +17,7 @@ namespace DoubleFile
 
             do
             {
-                if (null != treeNode.Nodes &&
+                if ((null != treeNode.Nodes) &&
                     (false == treeNode.Nodes.IsEmpty()))
                 {
                     nCount += Go(treeNode.Nodes[0]);
@@ -25,7 +25,8 @@ namespace DoubleFile
 
                 ++nCount;
             }
-            while (bNextNode && ((treeNode = treeNode.NextNode) != null));
+            while (bNextNode &&
+                (null != (treeNode = treeNode.NextNode)));
 
             return nCount;
         }

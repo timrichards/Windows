@@ -26,7 +26,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>136</ApplicationRevision>
+    <ApplicationRevision>137</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -151,6 +151,10 @@
     <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
     <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
     <Compile Include="Utilities\KeyListSorted.cs" />
+    <Compile Include="Utilities\Win32Screen\MONITORINFO.cs" />
+    <Compile Include="Utilities\Win32Screen\RECT.cs" />
+    <Compile Include="Utilities\Win32Screen\SWP.cs" />
+    <Compile Include="Utilities\Win32Screen\Win32Screen.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Search\LVitem_DoubleFile_SearchVM.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Search\WinDoubleFile_SearchVM_Impl.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Search\WinDoubleFile_SearchVM.cs" />

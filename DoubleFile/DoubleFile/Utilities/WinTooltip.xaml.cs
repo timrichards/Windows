@@ -1,6 +1,9 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Interop;
 using System.Windows.Media;
 
 namespace DoubleFile
@@ -126,7 +129,7 @@ namespace DoubleFile
             }
 
             LocalWindow winOwner = null;
-            
+
             if (null != _winTooltip)
                 winOwner = _winTooltip.Owner as LocalWindow;
 
@@ -143,7 +146,7 @@ namespace DoubleFile
 
         static WinTooltip()
         {
-        //    App.DeactivateDidOccur += () => CloseTooltip();
+            //    App.DeactivateDidOccur += () => CloseTooltip();
         }
 
         WinTooltip()
@@ -165,33 +168,40 @@ namespace DoubleFile
             if (null == winOwner)
                 return;
 
-            var nWidth = e.NewSize.Width;
-            var nHeight = e.NewSize.Height;
-            var nLeft = winOwner.Left + winOwner.Width - nWidth;
-            var nTop = winOwner.Top + winOwner.Height;
+            var nOwnerRight = winOwner.Left + winOwner.Width;
+            var nOwnerBot = winOwner.Top + winOwner.Height;
 
+            var rcTooltip = new Rect()
+            {
+                X = nOwnerRight - e.NewSize.Width,
+                Y = nOwnerBot,
+                Width = e.NewSize.Width,
+                Height = e.NewSize.Height
+            };
+
+            //          var screen = Screen.
             if (WindowState.Maximized == winOwner.WindowState)
             {
-                nLeft = (SystemParameters.PrimaryScreenWidth - nWidth) / 2.0;
-                nTop = 0;
+                rcTooltip.X = (SystemParameters.PrimaryScreenWidth - rcTooltip.Width) / 2.0;
+                rcTooltip.Y = 0;
             }
 
-            if ((SystemParameters.PrimaryScreenHeight < nTop + nHeight) ||
-                (SystemParameters.PrimaryScreenWidth < nLeft + nWidth))
+            var rcMonitor = Win32Screen.GetOwnerMonitorRect(Owner);
 
+            if (false == (rcMonitor.Contains(rcTooltip)))
             {
-                nLeft = winOwner.Left + winOwner.Width - nWidth;
-                nTop = winOwner.Top - nHeight;
+                rcTooltip.X = winOwner.Left + winOwner.Width - rcTooltip.Width;
+                rcTooltip.Y = winOwner.Top - rcTooltip.Height;
             }
 
-            if (0 > nLeft)
-                nLeft = winOwner.Left;
+            if (0 > rcTooltip.X)
+                rcTooltip.X = winOwner.Left;
 
-            if (0 > nTop)
-                nTop = winOwner.Top;
+            if (0 > rcTooltip.Y)
+                rcTooltip.Y = winOwner.Top;
 
-            Left = nLeft;
-            Top = nTop;
+            Left = rcTooltip.X;
+            Top = rcTooltip.Y;
         }
 
         bool

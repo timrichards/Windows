@@ -19,13 +19,15 @@ namespace DoubleFile
             if (null == _leftWindow)
                 _leftWindow = MainWindow.static_MainWindow;
 
-            if (_nWantsLeft > -1)
+            var rcMonitor = Win32Screen.GetOwnerMonitorRect(_leftWindow);
+
+            if (-1 < _nWantsLeft)
             {
                 Left = _nWantsLeft;
                 Top = _nWantsTop;
                 _nWantsLeft = _nWantsTop = -1;
 
-                bUseLastWindow = (Left + Width > SystemParameters.PrimaryScreenWidth);
+                bUseLastWindow = (Left + Width > rcMonitor.Width);
             }
 
             if ((null != lastWin) &&
@@ -34,7 +36,7 @@ namespace DoubleFile
                 Left = lastWin.Left + lastWin.Width + 5;
                 Top = lastWin.Top;
 
-                if (Left + Width > SystemParameters.PrimaryScreenWidth)
+                if (Left + Width > rcMonitor.Width)
                 {
                     _nWantsLeft = Left;
                     _nWantsTop = Top;

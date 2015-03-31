@@ -55,7 +55,10 @@ namespace DoubleFile
                 List<LocalTreeNode> lsTreeNodes = null;
 
                 if (_dictNodes.TryGetValue(nodeDatum.Key, out lsTreeNodes))
-                    lsTreeNodes.Add(treeNode);
+                {
+                    lock (lsTreeNodes)
+                        lsTreeNodes.Add(treeNode);
+                }
                 else if (0 < nodeDatum.TotalLength)
                     _dictNodes[nodeDatum.Key] = new List<LocalTreeNode> { treeNode };
 

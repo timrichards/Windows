@@ -67,11 +67,11 @@ namespace DoubleFile
             var strFormat = bNoDecimal ? "###,###" : kStrFmt_big;
             string strSz = null;
 
-            if (((int)nT) > 0) strSz = nT.ToString(kStrFmt_big) + " TB";
-            else if (((int)nG) > 0) strSz = nG.ToString(kStrFmt_big) + " GB";
-            else if (((int)nM) > 0) strSz = nM.ToString(strFormat) + " MB";
-            else if (((int)nK) > 0) strSz = nK.ToString(strFormat) + " KB";
-            else strSz = "1 KB";                    // Windows Explorer mins at 1K
+            if (((int)nT) > 0) strSz = nT.ToString(kStrFmt_big) + " TiB";
+            else if (((int)nG) > 0) strSz = nG.ToString(kStrFmt_big) + " GiB";
+            else if (((int)nM) > 0) strSz = nM.ToString(strFormat) + " MiB";
+            else if (((int)nK) > 0) strSz = nK.ToString(strFormat) + " KiB";
+            else strSz = "1 KiB";                    // Windows Explorer mins at 1K
 
             if (nLength > 0)
             {

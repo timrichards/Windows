@@ -25,6 +25,9 @@ namespace DoubleFile
                 foreach (var ieLine in ieDetail)
                     Add(new LVitem_FolderDetailVM(ieLine), bQuiet: true);
 
+                if (null == treeNode)
+                    return;
+
                 var strFG_Description = UtilColor.Description[treeNode.ForeColor];
                 var strBG_Description = UtilColor.Description[treeNode.BackColor];
 

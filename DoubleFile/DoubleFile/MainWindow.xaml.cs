@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;               // release mode
+using System.IO;
 using System.Windows;
 
 namespace DoubleFile

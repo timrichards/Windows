@@ -22,8 +22,18 @@ namespace DoubleFile
 
         void TreeSelect_FileList(IEnumerable<string> lsFileLines, string strListingFile)
         {
+            if ((strListingFile.Equals(_strListingFile)) &&
+                (null != _lsFileLines) &&
+                (null != lsFileLines) &&
+                (lsFileLines.Except(_lsFileLines).IsEmpty()))
+            {
+                return;
+            }
+
             SelectedItem_Set(null);
             UtilProject.UIthread(Items.Clear);
+            _lsFileLines = lsFileLines;
+            _strListingFile = strListingFile;
 
             if (null == lsFileLines)
                 return;
@@ -67,7 +77,6 @@ namespace DoubleFile
             }
 
             UtilProject.UIthread(() => Add(lsItems));
-
             SelectedItem_Set(this[_strSelectedFile]);
             _strSelectedFile = null;
         }
@@ -91,6 +100,11 @@ namespace DoubleFile
             }
         }
 
-        string _strSelectedFile = null;
+        string
+            _strSelectedFile = null;
+        IEnumerable<string>
+            _lsFileLines = null;
+        string
+            _strListingFile = null;
     }
 }

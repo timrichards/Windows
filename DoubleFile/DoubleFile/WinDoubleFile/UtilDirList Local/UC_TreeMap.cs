@@ -257,13 +257,17 @@ namespace DoubleFile
         {
             var nodeDatum = treeNodeChild.NodeDatum;
             var strFolder = treeNodeChild.Text;
+            var nodeTreeSelect = treeNodeChild;
 
             if (bImmediateFiles)
             {
                 strFolder += " (file)";
 
                 if (null != SelectedFile)
+                {
+                    nodeTreeSelect = treeNodeChild.Parent.Parent;   // Parent is TreeMapFileListNode
                     SelectedFile(treeNodeChild.Text);
+                }
             }
 
             WinTooltip.ShowTooltip(
@@ -284,7 +288,7 @@ namespace DoubleFile
             if (null != TreeMapChildSelected)
                 TreeMapChildSelected(treeNodeChild);
 
-            _threadTreeSelect = new TreeSelect(treeNodeChild).DoThreadFactory();
+            _threadTreeSelect = new TreeSelect(nodeTreeSelect).DoThreadFactory();
         }
 
         static LocalTreeNode FindMapNode(LocalTreeNode treeNode_in, Point pt, bool bNextNode = false)
@@ -484,11 +488,10 @@ namespace DoubleFile
         {
             var treeNode = WinTooltip.LocalTreeNode;
 
-            WinTooltip.CloseTooltip();
-
             if (treeNode is LocalTreeMapFileNode)
                 return;     // file fake node
 
+            WinTooltip.CloseTooltip();
             RenderA(treeNode);
         }
 

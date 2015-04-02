@@ -22,23 +22,20 @@ namespace DoubleFile
         public void Dispose()
         {
             LV_DoubleFile_FilesVM.SelectedFileChanged -= TreeFileSelChanged;
-
-            if (null != _timer)
-                _timer.Dispose();
         }
 
         internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, IEnumerable<string> ieFileLine)
         {
-            if (null != _timer)
-                _timer.Dispose();
-
             if (null != _cts)
                 _cts.Cancel();
 
-            _timer = new LocalTimer(33.0, () =>
+            new Thread(() => 
             {
-                _timer.Dispose();
-                TreeFileSelChangedA(lsDuplicates, ieFileLine);
+                try
+                {
+                    TreeFileSelChangedA(lsDuplicates, ieFileLine);
+                }
+                catch (OperationCanceledException) { }
             }).Start();
         }
 
@@ -60,7 +57,7 @@ namespace DoubleFile
                     (false == _cts.IsCancellationRequested) &&
                     (10 > nCheck))
                 {
-                    UtilProject.WriteLine(nCheck + "false == _cts.IsCancellationRequested");
+                    UtilProject.WriteLine(nCheck + " false == _cts.IsCancellationRequested");
                     Thread.Sleep(20);
                     ++nCheck;
                 }
@@ -131,10 +128,10 @@ namespace DoubleFile
                 }
             });
 
-            if (_cts.IsCancellationRequested)
-                return;
+            if (false == _cts.IsCancellationRequested)
+                UtilProject.UIthread(() => Add(lsLVitems));
 
-            UtilProject.UIthread(() => Add(lsLVitems));
+            _cts = null;
         }
 
         internal void Goto()
@@ -151,7 +148,6 @@ namespace DoubleFile
             GoToFile(_selectedItem.LVitem_ProjectVM, _selectedItem.Path, _selectedItem.Filename);
         }
 
-        LocalTimer _timer = null;
         CancellationTokenSource _cts = null;
     }
 }

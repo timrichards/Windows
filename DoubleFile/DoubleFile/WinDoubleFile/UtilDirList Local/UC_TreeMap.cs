@@ -35,6 +35,7 @@ namespace DoubleFile
             LV_TreeListSiblingsVM.TreeListSiblingSelected += RenderA;
             LV_TreeListChildrenVM.TreeListChildSelected += TreeListChildSelected;
             LocalTreeNode.Selected += RenderA;
+            LV_DoubleFile_FilesVM.SelectedFileChanged += LV_DoubleFile_FilesVM_SelectedFileChanged;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -118,11 +119,8 @@ namespace DoubleFile
 
         protected override void Dispose(bool disposing)
         {
-            if (_bg != null)
-            {
+            if (null != _bg)
                 _bg.Dispose();
-                _bg = null;
-            }
 
             WinTooltip.CloseTooltip();
             _timerAnim.Dispose();
@@ -130,6 +128,7 @@ namespace DoubleFile
             LV_TreeListSiblingsVM.TreeListSiblingSelected -= RenderA;
             LV_TreeListChildrenVM.TreeListChildSelected -= TreeListChildSelected;
             LocalTreeNode.Selected -= RenderA;
+            LV_DoubleFile_FilesVM.SelectedFileChanged -= LV_DoubleFile_FilesVM_SelectedFileChanged;
             base.Dispose(disposing);
         }
 
@@ -142,7 +141,7 @@ namespace DoubleFile
 
             if (_rectCenter.Contains(pt_in))   // click once to hide goofball. Click again within 5 seconds to return to the deep node.
             {
-                if (_dtHideGoofball == DateTime.MinValue)
+                if (DateTime.MinValue == _dtHideGoofball)
                 {
                     _dtHideGoofball = DateTime.Now;
                     return null;
@@ -253,8 +252,40 @@ namespace DoubleFile
             SelRectAndTooltip(treeNodeChild);
         }
 
+        void LV_DoubleFile_FilesVM_SelectedFileChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, IEnumerable<string> ieFileLine, LocalTreeNode treeNode)
+        {
+            if (_bSelRecAndTooltip)
+                return;
+
+            if ((null == ieFileLine) ||
+                (null == treeNode))
+            {
+                return;
+            }
+
+            LocalTreeMapFileNode fileNode = null;
+
+            if (null != treeNode.NodeDatum.TreeMapFiles)            // TODO: Why would this be null? (reparse point)
+            {
+                ieFileLine
+                    .First(strFile => treeNode.NodeDatum.TreeMapFiles.Nodes
+                        .Where(treeNodeA => treeNodeA.Text == strFile)
+                        .FirstOnlyAssert(treeNodeA => fileNode = treeNodeA as LocalTreeMapFileNode));
+
+                if (null != fileNode)                               // TODO: Why would this be null?
+                {
+                    SelRectAndTooltip(fileNode, bImmediateFiles: true);
+                    return;
+                }
+            }
+
+            WinTooltip.CloseTooltip();
+        }
+
         void SelRectAndTooltip(LocalTreeNode treeNodeChild, bool bImmediateFiles = false)
         {
+            _bSelRecAndTooltip = true;
+
             var nodeDatum = treeNodeChild.NodeDatum;
             var strFolder = treeNodeChild.Text;
             var nodeTreeSelect = treeNodeChild;
@@ -270,14 +301,14 @@ namespace DoubleFile
                 }
             }
 
-            WinTooltip.ShowTooltip(
+            UtilProject.UIthread(() => WinTooltip.ShowTooltip(
                 new WinTooltip.ArgsStruct(
                     strFolder,
                     UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
                     LocalOwner,
                     Tooltip_Click,
                     () => ClearSelection()),
-                treeNodeChild);
+                treeNodeChild));
 
             _selRect = nodeDatum.TreeMapRect;
             _prevNode = treeNodeChild;
@@ -289,6 +320,7 @@ namespace DoubleFile
                 TreeMapChildSelected(treeNodeChild);
 
             _threadTreeSelect = new TreeSelect(nodeTreeSelect).DoThreadFactory();
+            _bSelRecAndTooltip = false;
         }
 
         static LocalTreeNode FindMapNode(LocalTreeNode treeNode_in, Point pt, bool bNextNode = false)
@@ -502,6 +534,9 @@ namespace DoubleFile
 
         void RenderA(LocalTreeNode treeNode)
         {
+            if (treeNode == TreeMapVM.TreeNode)
+                return;
+
             if ((null != _threadTreeSelect) &&
                 _threadTreeSelect.IsAlive)
             {
@@ -1097,6 +1132,8 @@ namespace DoubleFile
             _bClearingSelection = false;
         Thread
             _threadTreeSelect = null;
+        bool
+            _bSelRecAndTooltip = false;
 
         // Recurse class
         IEnumerable<RenderAction>

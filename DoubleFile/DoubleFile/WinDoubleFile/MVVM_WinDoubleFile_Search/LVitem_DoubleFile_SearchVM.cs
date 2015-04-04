@@ -16,7 +16,7 @@ namespace DoubleFile
                 if (null != SearchResultsDir)
                 {
                     var strRet =
-                        (FileIndex >= 0)
+                        (0 <= FileIndex)
                         ? SearchResultsDir.ListFiles[FileIndex] + " in "
                         : "";
 
@@ -24,25 +24,12 @@ namespace DoubleFile
                 }
                 else
                 {
-                    return LocalTreeNode.Text + " in " + GetParentPath();
+                    return LocalTreeNode.Text +
+                        ((null != LocalTreeNode)
+                        ? " in " + LocalTreeNode.Parent.FullPath
+                        : "");
                 }
             }
-        }
-
-        string GetParentPath()
-        {
-            if (null == LocalTreeNode.Parent)
-                return null;
-
-            var sbPath = new StringBuilder();
-            var treeNodeParent = LocalTreeNode.Parent;
-
-            do
-            {
-                sbPath.Insert(0, treeNodeParent.Text + '\\');
-            } while (null != (treeNodeParent = treeNodeParent.Parent));
-
-            return sbPath.ToString().TrimEnd('\\');
         }
 
         protected override string[] PropertyNames { get { return new[] { "Results" }; } }

@@ -6,9 +6,8 @@ namespace DoubleFile
     {
         internal System.Collections.Generic.IEnumerable<FileDictionary.DuplicateStruct>
             LSduplicates = null;
-
-        internal int nDuplicates { get; set; }
-        internal string[] FileLine { get; set; }
+        internal string[]
+            FileLine { get; set; }
 
         public bool SameVolume
         {
@@ -26,10 +25,10 @@ namespace DoubleFile
             get
             {
                 return
-                    (0 == nDuplicates) &&
+                    (0 == Duplicates_) &&
                         ((FileLine.Length <= FileParse.knColLengthLV) ||                    // doesn't happen
                         string.IsNullOrWhiteSpace(FileLine[FileParse.knColLengthLV]) ||     // doesn't happen
-                        ulong.Parse(FileLine[FileParse.knColLengthLV]) > 0);
+                        (0 < ulong.Parse(FileLine[FileParse.knColLengthLV])));
             }
         }
 
@@ -40,10 +39,11 @@ namespace DoubleFile
             get
             {
                 return
-                    ((0 != nDuplicates) ? "" + nDuplicates : "") +
+                    ((0 != Duplicates_) ? "" + Duplicates_ : "") +
                     (_SameVolume ? " all on the same volume." : "");
             }
         }
+        internal int Duplicates_ { get; set; }
 
         public string Created { get { return FileLine[1]; } }
         public string Modified { get { return FileLine[2]; } }

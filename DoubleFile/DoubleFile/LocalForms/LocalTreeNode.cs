@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Text;
 
 namespace DoubleFile
 {
@@ -31,11 +32,6 @@ namespace DoubleFile
         internal int
             SelectedImageIndex { get { return Datum16bits; } set { Datum16bits = value; } }
 
-//       internal TreeViewItem_DoubleFileVM TVIVM = null;
-//       internal LVitem_DoubleFileVM LVIVM = null;
-//       internal string ToolTipText = null;
-//       internal bool Checked = false;
-
         internal LocalTreeNode()
         {
             Level = -1;
@@ -60,44 +56,10 @@ namespace DoubleFile
             Nodes = lsNodes.ToArray();
         }
 
-        //internal string FullPath
-        //{
-        //    get
-        //    {
-        //        if (_strFullPath != null)
-        //        {
-        //            return _strFullPath;
-        //        }
-
-        //        var stack = new Stack<LocalTreeNode>(8);
-        //        var nodeParent = Parent;
-
-        //        while (nodeParent != null)
-        //        {
-        //            stack.Push(nodeParent);
-        //            nodeParent = nodeParent.Parent;
-        //        }
-
-        //        var sb = new StringBuilder();
-
-        //        while (false == stack.IsEmpty())
-        //        {
-        //            nodeParent = stack.Pop();
-        //            sb.Append(nodeParent.Text + '\\');
-        //        }
-
-        //        sb.Append(Text);
-        //        _strFullPath = sb.ToString();
-        //        return _strFullPath;
-        //    }
-        //}
-
         internal void DetachFromTree()
         {
- //           TVIVM = null;
             TreeView = null;
             Level = -1;
- //           _strFullPath = null;
 
             if (null == Nodes)
                 return;
@@ -106,7 +68,23 @@ namespace DoubleFile
                 treeNode.DetachFromTree();
         }
 
-  //      internal void EnsureVisible() { }
+        internal string FullPath
+        {
+            get
+            {
+                var sbPath = new StringBuilder();
+                var treeNode = this;
+
+                do
+                {
+                    sbPath
+                        .Insert(0, '\\')
+                        .Insert(0, treeNode.Text);
+                } while (null != (treeNode = treeNode.Parent));
+
+                return sbPath.ToString().TrimEnd('\\');
+            }
+        }
 
         internal bool IsChildOf(LocalTreeNode treeNode)
         {
@@ -163,7 +141,5 @@ namespace DoubleFile
             if (null != SelectedFile)
                 SelectedFile(strFile);
         }
-
-        //string _strFullPath = null;
     }
 }

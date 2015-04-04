@@ -21,7 +21,7 @@ namespace DoubleFile
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            form_lvFile.DataContext = _lvFileDetailVM = new LV_FileDetailVM();          
+            form_localPath.DataContext = form_lvFile.DataContext = _lvFileDetailVM = new LV_FileDetailVM();          
             form_lvFolder.DataContext = _lvFolderDetailVM = new LV_FolderDetailVM();
             form_lvVolume.DataContext = _lvVolumeDetailVM = new LV_VolumeDetailVM();
         }

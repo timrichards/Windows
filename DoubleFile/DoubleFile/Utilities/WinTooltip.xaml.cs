@@ -17,7 +17,6 @@ namespace DoubleFile
         internal string Size { set { form_size.Text = value; } }
 
         static internal LocalTreeNode LocalTreeNode { get { return (null == _winTooltip) ? null : _winTooltip.Tag as LocalTreeNode; } }
-        static internal TreeNode TreeNode { get { return (null == _winTooltip) ? null : _winTooltip.Tag as TreeNode; } }
 
         internal struct ArgsStruct
         {
@@ -42,37 +41,8 @@ namespace DoubleFile
             readonly internal Action closingCallback;
         }
 
-        internal static void ShowTooltip(ArgsStruct args, Point ptAnchor, TreeNode treeNode)
-        {
-            if ((null != _winTooltip) &&
-                (_winTooltip.Tag is LocalTreeNode))  // the other type
-            {
-                CloseTooltip();
-            }
-
-            FactoryCreateOrUpdate(args, treeNode, () =>
-            {
-                _winTooltip.Left = ptAnchor.X;
-                _winTooltip.Top = ptAnchor.Y;
-
-                if (null != args.winOwner)
-                {
-                    _winTooltip.Owner = args.winOwner;
-                    args.winOwner.Closed += CloseTooltip;
-                }
-
-                _winTooltip._closingCallback = args.closingCallback;
-            });
-        }
-
         internal static void ShowTooltip(ArgsStruct args, LocalTreeNode treeNode)
         {
-            if ((null != _winTooltip) &&
-                (_winTooltip.Tag is TreeNode))  // the other type
-            {
-                CloseTooltip();
-            }
-
             FactoryCreateOrUpdate(args, treeNode, () =>
             {
                 var winOwner = args.winOwner;

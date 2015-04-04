@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -8,21 +9,35 @@ namespace DoubleFile
     {
         internal LV_FileDetailVM()
         {
-            WinDoubleFile_DuplicatesVM.UpdateFileDetail += Update;
+            Icmd_Copy = new RelayCommand(param => Copy(), param => false == string.IsNullOrEmpty(LocalPath));
+            WinDoubleFile_DuplicatesVM.UpdateFileDetail += WinDoubleFile_DuplicatesVM_UpdateFileDetail;
+            TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
         }
 
         public void Dispose()
         {
-            WinDoubleFile_DuplicatesVM.UpdateFileDetail -= Update;
+            WinDoubleFile_DuplicatesVM.UpdateFileDetail -= WinDoubleFile_DuplicatesVM_UpdateFileDetail;
+            TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
         }
 
-        internal void Update(IEnumerable<string> ieFileLine = null)
+        void Copy()
         {
-            UtilProject.UIthread(() =>
-            {
-                Title = null;
-                Items.Clear();
-            });
+            Clipboard.SetText(LocalPath);
+        }
+
+        void TreeSelect_FolderDetailUpdated(IEnumerable<IEnumerable<string>> ieDetail, LocalTreeNode treeNode)
+        {
+            if (_treeNode != treeNode)
+                LocalPath_Set(treeNode);
+        }
+
+        void WinDoubleFile_DuplicatesVM_UpdateFileDetail(IEnumerable<string> ieFileLine = null, LocalTreeNode treeNode = null)
+        {
+            _treeNode = treeNode;
+            LocalPath_Set();
+            Title = null;
+
+            UtilProject.UIthread(Items.Clear);
 
             if (null == ieFileLine)
                 return;
@@ -33,6 +48,7 @@ namespace DoubleFile
                 ieFileLine
                 .ToArray();
 
+            LocalPath_Set(treeNode, asFileLine[0]);
             asFileLine[3] = UtilDirList.DecodeAttributes(asFileLine[3]);
 
             if ((asFileLine.Length > FileParse.knColLengthLV) &&
@@ -56,5 +72,7 @@ namespace DoubleFile
                 RaiseItems();
             });
         }
+
+        LocalTreeNode _treeNode = null;
     }
 }

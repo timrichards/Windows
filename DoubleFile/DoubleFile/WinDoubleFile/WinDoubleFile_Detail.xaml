@@ -11,6 +11,18 @@
         </Grid.RowDefinitions>
         <StackPanel>
             <Border Style="{StaticResource styleBorder}">
+                <Grid Name="form_localPath">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Path:"/>
+                    <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Grid.Column="1" Text="{Binding LocalPath}" />
+                    <Button Grid.Column="2" Content="Copy" Width ="50" Command="{Binding Icmd_Copy}"/>
+                </Grid>
+            </Border>
+            <Border Style="{StaticResource styleBorder}">
                 <ListView Name="form_lvFile">
                     <ListView.View>
                         <GridView>

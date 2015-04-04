@@ -11,23 +11,34 @@ namespace DoubleFile
     partial class WinDoubleFile_DuplicatesVM : IDisposable
     {
         static internal event Action<LVitem_ProjectVM, string, string> GoToFile;
-        static internal event Action<IEnumerable<string>> UpdateFileDetail;
+        static internal event Action<IEnumerable<string>, LocalTreeNode> UpdateFileDetail;
 
         internal WinDoubleFile_DuplicatesVM()
         {
             Icmd_Goto = new RelayCommand(param => Goto(), param => null != _selectedItem);
-            LV_DoubleFile_FilesVM.SelectedFileChanged += TreeFileSelChanged;
+            LV_DoubleFile_FilesVM.SelectedFileChanged += LV_DoubleFile_FilesVM_SelectedFileChanged;
         }
 
         public void Dispose()
         {
-            LV_DoubleFile_FilesVM.SelectedFileChanged -= TreeFileSelChanged;
+            LV_DoubleFile_FilesVM.SelectedFileChanged -= LV_DoubleFile_FilesVM_SelectedFileChanged;
         }
 
-        internal void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, IEnumerable<string> ieFileLine)
+        void LV_DoubleFile_FilesVM_SelectedFileChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, IEnumerable<string> ieFileLine, LocalTreeNode treeNode)
         {
             if (null != _cts)
                 _cts.Cancel();
+
+            _treeNode = treeNode;
+
+            if (null != UpdateFileDetail)
+                UpdateFileDetail(ieFileLine, _treeNode);
+
+            SelectedItem_Set(null);
+            UtilProject.UIthread(Items.Clear);
+
+            if (null == lsDuplicates)
+                return;
 
             new Thread(() => 
             {
@@ -41,15 +52,6 @@ namespace DoubleFile
 
         void TreeFileSelChangedA(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, IEnumerable<string> ieFileLine)
         {
-            if (null != UpdateFileDetail)
-                UpdateFileDetail(ieFileLine);
-
-            SelectedItem_Set(null);
-            UtilProject.UIthread(Items.Clear);
-
-            if (null == lsDuplicates)
-                return;
-
             {
                 var nCheck = 0;
 
@@ -149,5 +151,6 @@ namespace DoubleFile
         }
 
         CancellationTokenSource _cts = null;
+        LocalTreeNode _treeNode = null;
     }
 }

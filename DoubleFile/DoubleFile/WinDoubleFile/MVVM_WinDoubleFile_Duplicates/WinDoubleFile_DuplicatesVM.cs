@@ -20,7 +20,7 @@ namespace DoubleFile
                     return;
 
                 if (null != UpdateFileDetail)
-                    UpdateFileDetail(value.FileLine);
+                    UpdateFileDetail(value.FileLine, _treeNode);
 
                 SelectedItem_AllTriggers();
             }

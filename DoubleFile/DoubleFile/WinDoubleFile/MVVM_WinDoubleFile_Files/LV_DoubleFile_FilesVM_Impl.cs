@@ -20,20 +20,16 @@ namespace DoubleFile
             UC_TreeMap.SelectedFile -= SelectedFile;
         }
 
-        void TreeSelect_FileList(IEnumerable<string> lsFileLines, string strListingFile)
+        void TreeSelect_FileList(IEnumerable<string> lsFileLines, string strListingFile, LocalTreeNode treeNode)
         {
-            if ((strListingFile.Equals(_strListingFile)) &&
-                (null != _lsFileLines) &&
-                (null != lsFileLines) &&
-                (lsFileLines.Except(_lsFileLines).IsEmpty()))
+            if (treeNode == _treeNode)
             {
                 return;
             }
 
             SelectedItem_Set(null);
             UtilProject.UIthread(Items.Clear);
-            _lsFileLines = lsFileLines;
-            _strListingFile = strListingFile;
+            _treeNode = treeNode;
 
             if (null == lsFileLines)
                 return;
@@ -56,7 +52,7 @@ namespace DoubleFile
                     .ToArray();
 
                 var nDuplicates = (null != lsDuplicates) ? lsDuplicates.Count() - 1 : 0;
-                var lvItem = new LVitem_DoubleFile_FilesVM() { nDuplicates = nDuplicates, FileLine = asFileLine };
+                var lvItem = new LVitem_DoubleFile_FilesVM() { Duplicates_ = nDuplicates, FileLine = asFileLine };
 
                 if (0 < nDuplicates)
                 {
@@ -102,9 +98,7 @@ namespace DoubleFile
 
         string
             _strSelectedFile = null;
-        IEnumerable<string>
-            _lsFileLines = null;
-        string
-            _strListingFile = null;
+        LocalTreeNode
+            _treeNode = null;
     }
 }

@@ -1,7 +1,24 @@
-﻿namespace DoubleFile
+﻿using System.Windows.Input;
+namespace DoubleFile
 {
     partial class LV_FileDetailVM : ListViewVM_GenericBase<LVitem_FileDetailVM>
     {
+        public ICommand Icmd_Copy { get; internal set; }
+
+        public string LocalPath { get; internal set; }
+        void LocalPath_Set(LocalTreeNode treeNode = null, string strFile = null)
+        {
+            LocalPath = null;
+
+            if (null != treeNode)
+                LocalPath = treeNode.FullPath +
+                ((false == string.IsNullOrEmpty(strFile))
+                ? '\\' + strFile
+                : "");
+
+            RaisePropertyChanged("LocalPath");
+        }
+
         public string Title
         {
             get { return (_Title ?? "").Replace("_", "__"); }

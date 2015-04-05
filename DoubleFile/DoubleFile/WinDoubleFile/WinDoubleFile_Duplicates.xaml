@@ -5,10 +5,10 @@
         Title="Duplicate Files" Width="415" Height="450">
     <Grid Name="form_grid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
+            <RowDefinition />
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <ListView Grid.Row="0" SelectedItem="{Binding SelectedItem}">
+        <ListView Grid.Row="0" SelectedItem="{Binding SelectedItem}" ScrollViewer.HorizontalScrollBarVisibility="Auto">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="File name" DisplayMemberBinding="{Binding Filename}" Width="{Binding WidthFilename}"/>

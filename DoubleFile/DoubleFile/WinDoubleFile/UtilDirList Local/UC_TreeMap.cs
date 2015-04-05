@@ -254,10 +254,9 @@ namespace DoubleFile
 
         void LV_DoubleFile_FilesVM_SelectedFileChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, IEnumerable<string> ieFileLine, LocalTreeNode treeNode)
         {
-            if (_bSelRecAndTooltip)
-                return;
-
-            if ((null == ieFileLine) ||
+            if (_bTreeSelect ||
+                _bSelRecAndTooltip ||
+                (null == ieFileLine) ||
                 (null == treeNode))
             {
                 return;
@@ -319,7 +318,7 @@ namespace DoubleFile
             if (null != TreeMapChildSelected)
                 TreeMapChildSelected(treeNodeChild);
 
-            _threadTreeSelect = new TreeSelect(nodeTreeSelect).DoThreadFactory();
+            _bTreeSelect = TreeSelect.DoThreadFactory(nodeTreeSelect);
             _bSelRecAndTooltip = false;
         }
 
@@ -530,17 +529,15 @@ namespace DoubleFile
         void TreeSelect_FolderDetailUpdated(IEnumerable<IEnumerable<string>> lasDetail, LocalTreeNode treeNode)
         {
             RenderA(treeNode);
+            _bTreeSelect = false;
         }
 
         void RenderA(LocalTreeNode treeNode)
         {
-            if (treeNode == TreeMapVM.TreeNode)
-                return;
-
-            if ((null != _threadTreeSelect) &&
-                _threadTreeSelect.IsAlive)
+            if (_bSelRecAndTooltip ||
+                _bTreeSelect)
             {
-                return;     // one infinite loop
+                return;
             }
 
             InvalidatePushRef(() => Render(treeNode));
@@ -548,7 +545,7 @@ namespace DoubleFile
             if (null != TreeMapRendered)
                 TreeMapRendered(treeNode);
 
-            _threadTreeSelect = new TreeSelect(treeNode).DoThreadFactory();
+            _bTreeSelect = TreeSelect.DoThreadFactory(treeNode);
         }
 
         void Render(LocalTreeNode treeNode)
@@ -1130,8 +1127,8 @@ namespace DoubleFile
             _nInvalidateRef = 0;
         bool
             _bClearingSelection = false;
-        Thread
-            _threadTreeSelect = null;
+        bool
+            _bTreeSelect = false;
         bool
             _bSelRecAndTooltip = false;
 

@@ -8,7 +8,7 @@ namespace DoubleFile
         internal LVitem_ProjectVM LVitem_ProjectVM { get; set; }
 
         public string Filename { get { return FileLine[0]; } }
-        public string Path { get { return marr[0]; } internal set { SetProperty(0, value); } }
+        public string Path { get { return marr[0]; } private set { SetProperty(0, value); } }
 
         protected override string[] PropertyNames { get { return new[] { "Filename", "Path" }; } }
 

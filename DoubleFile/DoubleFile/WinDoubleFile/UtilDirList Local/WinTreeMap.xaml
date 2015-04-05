@@ -5,7 +5,7 @@
         Title="Double File" Width="415" Height="400">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <WindowsFormsHost Name="_host" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

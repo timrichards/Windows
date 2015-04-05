@@ -5,7 +5,7 @@
         public string Title
         {
             get { return (_Title ?? "").Replace("_", "__"); }
-            internal set
+            private set
             {
                 _Title = value;
                 RaisePropertyChanged("Title");
@@ -14,7 +14,7 @@
         string _Title = null;
 
         public string WidthHeader { get { return SCW; } }                   // franken all NaN
-        public string WidthDetail { get { return SCW; } }
+        public string WidthDetail { get { return SCW; } }   // not used
 
         internal override int NumCols { get { return LVitem_FolderDetailVM.NumCols_; } }
     }

@@ -6,11 +6,11 @@
     <Grid Name="form_grid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBox Text="{Binding SearchText, Mode=OneWayToSource}" Name="form_searchText" Grid.Column="0" HorizontalContentAlignment="Stretch"/>
@@ -22,7 +22,7 @@
         </Grid>
         <Grid Grid.Row="1" Margin="0,5,0,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <ListView Name="form_lv" Grid.Column="0" SelectedItem="{Binding SelectedItem}">

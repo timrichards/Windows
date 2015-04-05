@@ -21,6 +21,8 @@ namespace DoubleFile
             CheckBoxes { get; set; }
         internal bool
             Enabled { get; set; }
+        static internal Func<string, LVitem_ProjectVM, LocalTreeNode>
+            GetOneNodeByRootPathA = null;
         
         internal LocalTV(IEnumerable<LocalTreeNode> lsRootNodes = null)
         {
@@ -29,6 +31,7 @@ namespace DoubleFile
             
             WinDoubleFile_DuplicatesVM.GoToFile += GoToFile;
             WinDoubleFile_SearchVM.GoToFile += GoToFile;
+            GetOneNodeByRootPathA = (strPath, lvItemProjectVM) => GetOneNodeByRootPath.Go(strPath, Nodes, lvItemProjectVM);
         }
 
         internal int GetNodeCount(bool includeSubTrees = false)
@@ -59,7 +62,7 @@ namespace DoubleFile
             if (null == Nodes)
                 return;
 
-            var treeNode = GetOneNodeByRootPath.Go(strPath, Nodes, lvItemProjectVM);
+            var treeNode = GetOneNodeByRootPathA(strPath, lvItemProjectVM);
 
             if (null == treeNode)
                 return;

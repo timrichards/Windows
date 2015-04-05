@@ -11,7 +11,7 @@ namespace DoubleFile
         public string ListingFileNoPath { get { return System.IO.Path.GetFileName(marr[2]); } }
 
         public string Status { get { return marr[3]; } internal set { SetProperty(3, value); } }
-        public string IncludeYN { get { return marr[4]; } internal set { SetProperty(4, value); } }
+        public string IncludeYN { get { return marr[4]; } private set { SetProperty(4, value); } }
         public string VolumeGroup { get { return marr[5]; } internal set { SetProperty(5, value); } }
         public string DriveModel { get { return marr[6]; } internal set { SetProperty(6, value); } }
         public string DriveSerial { get { return marr[7]; } internal set { SetProperty(7, value); } }

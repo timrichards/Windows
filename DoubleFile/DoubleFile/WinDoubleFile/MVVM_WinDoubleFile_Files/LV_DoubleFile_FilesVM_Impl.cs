@@ -92,7 +92,7 @@ namespace DoubleFile
             
                 var s = s_in.ToLower();
 
-                return ItemsCast.FirstOrDefault(o => o.FileLine[0].ToLower() == s);
+                return ItemsCast.FirstOrDefault(o => o.Filename.ToLower().Equals(s));
             }
         }
 

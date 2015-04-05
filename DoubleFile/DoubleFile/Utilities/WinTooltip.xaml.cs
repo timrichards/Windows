@@ -149,7 +149,6 @@ namespace DoubleFile
                 Height = e.NewSize.Height
             };
 
-            //          var screen = Screen.
             if (WindowState.Maximized == winOwner.WindowState)
             {
                 rcTooltip.X = (SystemParameters.PrimaryScreenWidth - rcTooltip.Width) / 2.0;
@@ -164,10 +163,10 @@ namespace DoubleFile
                 rcTooltip.Y = winOwner.Top - rcTooltip.Height;
             }
 
-            if (0 > rcTooltip.X)
+            if (rcMonitor.Left > rcTooltip.X)
                 rcTooltip.X = winOwner.Left;
 
-            if (0 > rcTooltip.Y)
+            if (rcMonitor.Top > rcTooltip.Y)
                 rcTooltip.Y = winOwner.Top;
 
             Left = rcTooltip.X;

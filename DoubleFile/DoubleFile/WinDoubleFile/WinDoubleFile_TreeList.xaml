@@ -5,8 +5,8 @@
         Title="Double File" Width="600" Height="400">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid.Resources>
             <Style TargetType="ListViewItem">

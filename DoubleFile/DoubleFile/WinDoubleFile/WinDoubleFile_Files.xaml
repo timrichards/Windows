@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:DoubleFile"
         Title="Files in Folder" Width="565" Height="250">
     <Grid Name="form_grid">
-        <ListView SelectedItem="{Binding SelectedItem}">
+        <ListView SelectedItem="{Binding SelectedItem}" ScrollViewer.HorizontalScrollBarVisibility="Auto">
             <ListView.Resources>
                 <Style TargetType="ListViewItem">
                     <Setter Property="Foreground" Value="Black"/>

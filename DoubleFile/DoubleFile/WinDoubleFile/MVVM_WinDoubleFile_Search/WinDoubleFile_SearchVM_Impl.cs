@@ -24,17 +24,28 @@ namespace DoubleFile
         {
             UtilProject.UIthread(Items.Clear);
 
+            if (FullPathFound(SearchText))
+                return;
+
+            if (null == WinDoubleFile_FoldersVM.GetTreeNodes)
+                return;
+
             var bCase = SearchText.ToLower() != SearchText;
-            IEnumerable<LocalTreeNode> lsTreeNodes = null;
+            var lsTreeNodes = WinDoubleFile_FoldersVM.GetTreeNodes();
+
+            if (null == lsTreeNodes)
+                return;
 
             if (bCase)
             {
-                lsTreeNodes = WinDoubleFile_FoldersVM.GetTreeNodes()
+                lsTreeNodes =
+                    lsTreeNodes
                     .Where(treeNode => treeNode.Text.Contains(SearchText));
             }
             else
             {
-                lsTreeNodes = WinDoubleFile_FoldersVM.GetTreeNodes()
+                lsTreeNodes =
+                    lsTreeNodes
                     .Where(treeNode => treeNode.Text.ToLower().Contains(SearchText));
             }
 
@@ -43,9 +54,42 @@ namespace DoubleFile
             UtilProject.UIthread(() => Add(lsLVitems));
         }
 
+        bool FullPathFound(string strPath)
+        {
+            var result = new SearchResultsDir();
+
+            if (null != LocalTV.GetOneNodeByRootPathA(strPath, null))
+            {
+                result.StrDir = strPath;
+            }
+            else
+            {
+                var nLastBackSlashIx = strPath.LastIndexOf('\\');
+
+                if (2 > nLastBackSlashIx)
+                    return false;
+
+                result.StrDir = strPath.Substring(0, nLastBackSlashIx);
+
+                if (null == LocalTV.GetOneNodeByRootPathA(result.StrDir, null))
+                    return false;
+
+                result.ListFiles.Add(strPath.Substring(nLastBackSlashIx + 1));
+            }
+
+            _lsLVitems = new ConcurrentBag<LVitem_DoubleFile_SearchVM>();
+            SearchStatusCallback(new SearchResults(strPath, null, new[] { result }));
+            SearchDoneCallback();
+            return true;
+        }
+
         void SearchFoldersAndFiles(bool bSearchFilesOnly = false)
         {
             UtilProject.UIthread(Items.Clear);
+
+            if (FullPathFound(SearchText))
+                return;
+
             _lsLVitems = new ConcurrentBag<LVitem_DoubleFile_SearchVM>();
 
             _searchType2 = new SearchType2

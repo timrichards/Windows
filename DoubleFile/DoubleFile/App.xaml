@@ -46,6 +46,7 @@
             <Setter Property="ItemsSource" Value="{Binding Items}"/>
             <!-- troublemaker -->
             <Setter Property="IsSynchronizedWithCurrentItem" Value="True"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
         </Style>
         <Style TargetType="GridViewColumnHeader">
             <Setter Property="HorizontalContentAlignment" Value="Left" />

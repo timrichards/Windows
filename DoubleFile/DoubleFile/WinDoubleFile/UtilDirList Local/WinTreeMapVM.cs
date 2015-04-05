@@ -3,7 +3,7 @@ using System.Windows.Media;
 
 namespace DoubleFile
 {
-    class WinTreeMapVM : ObservableObject_OwnerWindow
+    class WinTreeMapVM : ObservableObject_OwnerWindow, IDisposable
     {
         internal Action<LocalTreeNode> TreeNodeCallback = null;
 
@@ -22,12 +22,14 @@ namespace DoubleFile
                 if (_value == value)
                     return;
 
-                var treeNode = _deepNode;
+                _timer.Stop();
+
+                _treeNodeA = _deepNode;
 
                 for (var nCount = 0; nCount < value; ++nCount)
-                    treeNode = treeNode.Parent;
+                    _treeNodeA = _treeNodeA.Parent;
 
-                TreeNodeCallback(treeNode);
+                _timer.Start();
                 _value = value;
             }
         }
@@ -85,6 +87,25 @@ namespace DoubleFile
         }
         LocalTreeNode _treeNode = null;
 
-        bool _bSettingValue = false;
+        internal WinTreeMapVM()
+        {
+            _timer = new LocalTimer(200.0, () =>
+            {
+                _timer.Stop();
+                TreeNodeCallback(_treeNodeA);
+            });
+        }
+
+        public void Dispose()
+        {
+            _timer.Dispose();
+        }
+
+        bool
+            _bSettingValue = false;
+        LocalTreeNode
+            _treeNodeA = null;
+        LocalTimer
+            _timer = null;
     }
 }

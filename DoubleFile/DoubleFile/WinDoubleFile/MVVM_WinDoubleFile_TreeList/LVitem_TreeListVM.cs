@@ -9,7 +9,7 @@ namespace DoubleFile
         public Brush Background { get { return UtilColor.ARGBtoBrush(LocalTreeNode.BackColor); } }
         internal LocalTreeNode LocalTreeNode { get; set; }
 
-        public string Folder { get { return marr[0]; } internal set { SetProperty(0, value); } }
+        public string Folder { get { return marr[0]; } private set { SetProperty(0, value); } }
 
         protected override string[] PropertyNames { get { return new[] { "Folder" }; } }
 

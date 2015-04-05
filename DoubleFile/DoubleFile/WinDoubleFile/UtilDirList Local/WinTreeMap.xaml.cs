@@ -26,6 +26,7 @@ namespace DoubleFile
         private void Window_Closed(object sender, System.EventArgs e)
         {
             _host.Dispose();
+            form_ucTreeMap.TreeMapVM.Dispose();
             form_ucTreeMap.Dispose();
         }
 

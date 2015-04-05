@@ -14,7 +14,7 @@
                 <Grid Name="form_localPath">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Content="Path:"/>
@@ -27,7 +27,7 @@
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="File Detail" DisplayMemberBinding="{Binding Header}" Width="{Binding WidthHeader}"/>
-                            <GridViewColumn Header="{Binding Title}" DisplayMemberBinding="{Binding Detail}" Width="{Binding WidthDetail}"/>
+                            <GridViewColumn Header="{Binding Title}" DisplayMemberBinding="{Binding Detail}" Width="999"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -43,7 +43,7 @@
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Folder Detail" DisplayMemberBinding="{Binding Header}" Width="{Binding WidthHeader}"/>
-                            <GridViewColumn Header="{Binding Title}" DisplayMemberBinding="{Binding Detail}" Width="{Binding WidthDetail}"/>
+                            <GridViewColumn Header="{Binding Title}" DisplayMemberBinding="{Binding Detail}" Width="999"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -53,7 +53,7 @@
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Volume Detail" DisplayMemberBinding="{Binding Header}" Width="{Binding WidthHeader}"/>
-                            <GridViewColumn Header="{Binding Title}" DisplayMemberBinding="{Binding Detail}" Width="{Binding WidthDetail}"/>
+                            <GridViewColumn Header="{Binding Title}" DisplayMemberBinding="{Binding Detail}" Width="999"/>
                         </GridView>
                     </ListView.View>
                 </ListView>

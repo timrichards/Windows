@@ -26,6 +26,9 @@ namespace DoubleFile
             if (string.IsNullOrWhiteSpace(strPath))
                 return null;
 
+            if (null == treeNodeCollection)
+                return null;
+
             if (bIgnoreCase)
                 strPath = strPath.ToLower();
 

@@ -57,8 +57,8 @@ namespace DoubleFile
             // 
             if (0 != (flags & MONITOR_CENTER))
             {
-                prc.left = rc.left + (rc.right - rc.left - w) / 2;
-                prc.top = rc.top + (rc.bottom - rc.top - h) / 2;
+                prc.left = rc.left + ((rc.right - rc.left - w) >> 1);
+                prc.top = rc.top + ((rc.bottom - rc.top - h) >> 1);
                 prc.right = prc.left + w;
                 prc.bottom = prc.top + h;
             }

@@ -5,7 +5,7 @@ namespace DoubleFile
 {
     static class CountNodes
     {
-        internal static int Go(IReadOnlyList<LocalTreeNode> listNodes)
+        internal static int Go(IEnumerable<LocalTreeNode> listNodes)
         {
             return listNodes.Sum(treeNode => Go(treeNode, bNextNode: false));
         }

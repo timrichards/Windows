@@ -20,7 +20,7 @@ namespace DoubleFile
             _TVFE = tvfe;
         }
 
-        internal void SetData(IReadOnlyList<LocalTreeNode> rootNodes)
+        internal void SetData(IEnumerable<LocalTreeNode> rootNodes)
         {
             SelectedItem = null;
 

@@ -41,18 +41,16 @@ namespace DoubleFile
 
         internal LocalLVitem(string strContent, LocalLV listView = null) : this(listView) { Text = strContent; Index = -1; }
 
-        internal LocalLVitem(IReadOnlyList<string> asString, LocalLV listView = null)
+        internal LocalLVitem(IEnumerable<string> asString, LocalLV listView = null)
             : this(listView)
         {
             var lsLVItems = new List<LocalLVitem>();
 
-            Text = asString[0];
+            asString.First(s => Text = s);
             lsLVItems.Add(this);
 
-            var i = 1;
-
             foreach (var s in asString.Skip(1))
-                lsLVItems.Add(new LocalLVitem(asString[i++], listView));
+                lsLVItems.Add(new LocalLVitem(s, listView));
 
             SubItems = lsLVItems.ToArray();
         }

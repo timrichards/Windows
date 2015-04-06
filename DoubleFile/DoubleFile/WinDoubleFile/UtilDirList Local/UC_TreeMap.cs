@@ -134,6 +134,12 @@ namespace DoubleFile
 
         internal LocalTreeNode ZoomOrTooltip(Point pt_in)
         {
+            if (_bTreeSelect ||
+                _bSelRecAndTooltip)
+            {
+                return null;
+            }
+
             ClearSelection(bKeepTooltipActive: true);
 
             if (null == TreeMapVM.TreeNode)
@@ -246,6 +252,12 @@ namespace DoubleFile
 
         void TreeListChildSelected(LocalTreeNode treeNodeChild)
         {
+            if (_bTreeSelect ||
+                _bSelRecAndTooltip)
+            {
+                return;
+            }
+
             if (false == ReferenceEquals(TreeMapVM.TreeNode, treeNodeChild.Parent))
                 return;
 
@@ -283,6 +295,12 @@ namespace DoubleFile
 
         void SelRectAndTooltip(LocalTreeNode treeNodeChild, bool bImmediateFiles = false)
         {
+            if (_bTreeSelect ||
+                _bSelRecAndTooltip)
+            {
+                return;
+            }
+
             _bSelRecAndTooltip = true;
 
             var nodeDatum = treeNodeChild.NodeDatum;
@@ -449,7 +467,7 @@ namespace DoubleFile
         {
             base.OnPaint(e);
 
-            if (_selRect != Rectangle.Empty)
+            if (Rectangle.Empty != _selRect)
             {
                 e.Graphics.FillRectangle(
                     new SolidBrush(Color.FromArgb(64, 0, 0, 0)),
@@ -463,7 +481,7 @@ namespace DoubleFile
                 return;
             }
 
-            if (_dtHideGoofball != DateTime.MinValue)
+            if (DateTime.MinValue != _dtHideGoofball)
                 return;
 
             var nodeDatum = _deepNodeDrawn.NodeDatum;
@@ -856,7 +874,7 @@ namespace DoubleFile
                 var path = new GraphicsPath();
                 var r = rc;
 
-                r.Inflate(r.Width / 2, r.Height / 2);
+                r.Inflate(r.Width >> 1, r.Height >> 1);
                 path.AddEllipse(r);
 
                 var brush = new PathGradientBrush(path)

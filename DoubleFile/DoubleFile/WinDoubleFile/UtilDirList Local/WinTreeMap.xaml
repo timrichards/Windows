@@ -15,6 +15,6 @@
                 IsSnapToTickEnabled="True"
                 LargeChange="1" SmallChange="1" TickFrequency="1"
                 TickPlacement="TopLeft" Orientation="Vertical"
-                Delay="200"/>
+                Delay="200" LostMouseCapture="Slider_LostMouseCapture"/>
     </Grid>
 </local:LocalWindow_DoubleFile>

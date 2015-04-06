@@ -59,9 +59,11 @@ namespace DoubleFile
             if (0 == nInitial)
                 nInitial = nInterval;
 
-            if (nCount - nInitial > nInterval / 2)
+            var nHalf = (nInterval >> 1);
+
+            if (nCount - nInitial > nHalf)
             {
-                for (var i = nCount - nInitial; i > nInterval / 2; i -= nInterval)
+                for (var i = nCount - nInitial; i > nHalf; i -= nInterval)
                     InsertSizeMarkerStatic.Go(listLVitems, i, bUnique);
             }
 

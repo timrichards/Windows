@@ -32,11 +32,6 @@ namespace DoubleFile
             return (source.Count == 0);
         }
 
-        internal static bool IsEmptyA<T>(this IReadOnlyList<T> source)
-        {
-            return (source.Count == 0);
-        }
-
         internal static bool IsEmpty(this ListView.ListViewItemCollection source)
         {
             return (source.Count == 0);

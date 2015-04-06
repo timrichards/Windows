@@ -13,7 +13,7 @@ namespace DoubleFile
             Text = strContent;
         }
 
-        internal LocalTreeMapFileListNode(LocalTreeNode parent, IReadOnlyList<LocalTreeMapFileNode> lsNodes)
+        internal LocalTreeMapFileListNode(LocalTreeNode parent, IEnumerable<LocalTreeMapFileNode> lsNodes)
             : this(parent.Text)
         {
             Parent = parent;

@@ -104,7 +104,7 @@ namespace DoubleFile
                 fs.WriteLine(sb.ToString().Trim());
             }
 
-            void Hash(IReadOnlyList<string> listFilePaths,
+            void Hash(IEnumerable<string> listFilePaths,
                 out ConcurrentDictionary<string, HashTuple> dictHash_out,
                 out Dictionary<string, string> dictException_FileRead_out)
             {

@@ -18,6 +18,11 @@ namespace DoubleFile
             base.DataContext = form_ucTreeMap.TreeMapVM = new WinTreeMapVM();
         }
 
+        private void Slider_LostMouseCapture(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            form_ucTreeMap.TreeMapVM.LostMouseCapture();
+        }
+
         protected override LocalWindow_DoubleFile CreateChainedWindow()
         {
             return new WinDoubleFile_TreeList();
@@ -26,7 +31,6 @@ namespace DoubleFile
         private void Window_Closed(object sender, System.EventArgs e)
         {
             _host.Dispose();
-            form_ucTreeMap.TreeMapVM.Dispose();
             form_ucTreeMap.Dispose();
         }
 

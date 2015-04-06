@@ -24,7 +24,7 @@ namespace DoubleFile
             Closed += Window_Closed;
         }
 
-        internal void InitProgress(IReadOnlyList<string> astrNicknames, IReadOnlyList<string> astrPaths)
+        internal void InitProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths)
         {
             if (astrNicknames.Count() != astrPaths.Count())
             {

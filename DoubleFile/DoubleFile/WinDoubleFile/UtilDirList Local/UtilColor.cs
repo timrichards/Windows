@@ -41,9 +41,9 @@ namespace DoubleFile
         }
 
         internal static int GetFG_ARGB(int n) { return CLUT[(n & _knCLUT_FGmask)]; }
-        internal static int GetBG_ARGB(int n) { return CLUT[(n & _knCLUT_BGmask) >> (CLUT_Shift / 2)]; }
+        internal static int GetBG_ARGB(int n) { return CLUT[(n & _knCLUT_BGmask) >> (CLUT_Shift >> 1)]; }
         internal static int SetFG_ARGB(ref int n, int argb) { return n = (int)(n & _knCLUT_BGmask) + _RevCLUT[argb]; }
-        internal static int SetBG_ARGB(ref int n, int argb) { return n = (int)(n & _knCLUT_FGmask) + (_RevCLUT[argb] << (CLUT_Shift / 2)); }
+        internal static int SetBG_ARGB(ref int n, int argb) { return n = (int)(n & _knCLUT_FGmask) + (_RevCLUT[argb] << (CLUT_Shift >> 1)); }
 
         internal static System.Windows.Media.Brush ARGBtoBrush(int nFormsARGB)
         {

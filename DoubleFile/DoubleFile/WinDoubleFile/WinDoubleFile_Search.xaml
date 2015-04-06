@@ -25,7 +25,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <ListView Name="form_lv" Grid.Column="0" SelectedItem="{Binding SelectedItem}">
+            <ListView Name="form_lv" Grid.Column="0" SelectedItem="{Binding SelectedItem}" ScrollViewer.HorizontalScrollBarVisibility="Auto">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Results" DisplayMemberBinding="{Binding Results}" Width="{Binding WidthResults}"/>

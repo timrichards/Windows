@@ -4,7 +4,7 @@ namespace DoubleFile
 {
     static partial class ExtensionMethodsStatic
     {
-        internal static Rectangle Scale(this Rectangle rc_in, SizeF scale)
+        internal static RectangleF Scale(this Rectangle rc_in, SizeF scale)
         {
             RectangleF rc = rc_in;
 
@@ -12,7 +12,7 @@ namespace DoubleFile
             rc.Y *= scale.Height;
             rc.Width *= scale.Width;
             rc.Height *= scale.Height;
-            return Rectangle.Ceiling(rc);
+            return rc;
         }
     }
 }

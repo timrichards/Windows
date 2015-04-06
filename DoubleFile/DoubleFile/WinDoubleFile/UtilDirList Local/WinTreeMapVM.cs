@@ -1,40 +1,12 @@
 ﻿using System;
-using System.Windows.Media;
 
 namespace DoubleFile
 {
-    class WinTreeMapVM : ObservableObject_OwnerWindow, IDisposable
+    class WinTreeMapVM : ObservableObject_OwnerWindow
     {
         internal Action<LocalTreeNode> TreeNodeCallback = null;
 
-        public double Maximum { get { return _maximum; } private set { _maximum = value; RaisePropertyChanged("Maximum"); } }
-        double _maximum;
-
-        public double Value
-        {
-            get { return _value; }
-
-            set
-            {
-                if (_bSettingValue)
-                    return;
-
-                if (_value == value)
-                    return;
-
-                _timer.Stop();
-
-                _treeNodeA = _deepNode;
-
-                for (var nCount = 0; nCount < value; ++nCount)
-                    _treeNodeA = _treeNodeA.Parent;
-
-                _timer.Start();
-                _value = value;
-            }
-        }
-        double _value;
-
+        public double Maximum { get; set; }
         internal LocalTreeNode DeepNode
         {
             get { return _deepNode; }
@@ -54,22 +26,19 @@ namespace DoubleFile
                 }
 
                 Maximum = nMaximum;
+                RaisePropertyChanged("Maximum");
                 _deepNode = value;
             }
         }
         LocalTreeNode _deepNode = null;
 
+        public double Value { get; set; }
         internal LocalTreeNode TreeNode
         {
             get { return _treeNode; }
 
             set
             {
-                if (_bSettingValue)
-                    return;
-
-                _bSettingValue = true;
-
                 var nCount = 0;
 
                 for (var treeNode = _deepNode;
@@ -79,33 +48,24 @@ namespace DoubleFile
                     ++nCount;
                 }
 
-                _value = nCount;
+                Value = nCount;
                 RaisePropertyChanged("Value");
-                _bSettingValue = false;
                 _treeNode = value;
             }
         }
         LocalTreeNode _treeNode = null;
 
-        internal WinTreeMapVM()
+        internal void LostMouseCapture()
         {
-            _timer = new LocalTimer(200.0, () =>
-            {
-                _timer.Stop();
-                TreeNodeCallback(_treeNodeA);
-            });
-        }
+            if (null == _deepNode)
+                return;
 
-        public void Dispose()
-        {
-            _timer.Dispose();
-        }
+            var treeNode = _deepNode;
 
-        bool
-            _bSettingValue = false;
-        LocalTreeNode
-            _treeNodeA = null;
-        LocalTimer
-            _timer = null;
+            for (var nCount = 0; nCount < Value; ++nCount)
+                treeNode = treeNode.Parent;
+
+            TreeNodeCallback(treeNode);
+        }
     }
 }

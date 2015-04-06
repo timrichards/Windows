@@ -26,7 +26,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>138</ApplicationRevision>
+    <ApplicationRevision>139</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -171,7 +171,6 @@
     <Compile Include="WinDoubleFile\UtilDirList Local\WinTreeMapVM.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\LocalTreeMapNode.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Tree\DetailsDatum.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Tree\TreeSelect_Local.cs" />
     <Compile Include="Utilities\WinTooltip.xaml.cs">
       <DependentUpon>WinTooltip.xaml</DependentUpon>
     </Compile>

@@ -8,7 +8,7 @@ namespace DoubleFile
     {
         static internal LocalTreeNode Go(
             string path,
-            IReadOnlyList<LocalTreeNode> treeNodeCollection,
+            IEnumerable<LocalTreeNode> treeNodeCollection,
             LVitem_ProjectVM lvItemProjectVM = null
             )
         {
@@ -19,15 +19,15 @@ namespace DoubleFile
 
         static LocalTreeNode Go_A(
             string strPath,
-            IReadOnlyList<LocalTreeNode> treeNodeCollection,
+            IEnumerable<LocalTreeNode> treeNodeCollection,
             LVitem_ProjectVM lvItemProjectVM,
             bool bIgnoreCase = false)
         {
-            if (string.IsNullOrWhiteSpace(strPath))
+            if ((string.IsNullOrWhiteSpace(strPath)) ||
+                (null == treeNodeCollection))
+            {
                 return null;
-
-            if (null == treeNodeCollection)
-                return null;
+            }
 
             if (bIgnoreCase)
                 strPath = strPath.ToLower();
@@ -36,13 +36,17 @@ namespace DoubleFile
 
             foreach (var topNode in treeNodeCollection)
             {
+                var arrPath = strPath.Split(new[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
                 var rootNodeDatum = (RootNodeDatum)topNode.NodeDatum;
-                var strNode = ((string)(rootNodeDatum.RootPath)).TrimEnd('\\').Replace(@"\\", @"\");
+
+                var strNode =
+                    (2 < arrPath[0].Length)
+                    ? topNode.Text
+                    : (string)(rootNodeDatum.RootPath);
 
                 if (bIgnoreCase)
                     strNode = strNode.ToLower();
 
-                var arrPath = strPath.Split(new[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
                 var nPathLevelLength = arrPath.Length;
 
                 if (strNode.Contains('\\'))

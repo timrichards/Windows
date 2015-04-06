@@ -34,7 +34,7 @@ namespace DoubleFile
         internal virtual bool
             Add(string[] arrStr, bool bQuiet = false) { MBoxStatic.Assert(99994, false); return false; }
         internal virtual bool
-            Add(IReadOnlyList<string[]> laStr, bool bQuiet = false) { MBoxStatic.Assert(99994, false); return false; }
+            Add(IEnumerable<string[]> laStr, bool bQuiet = false) { MBoxStatic.Assert(99994, false); return false; }
 
         internal void Add(IEnumerable<ListViewItemVM_Base> lsItems, bool bQuiet = false)
         {

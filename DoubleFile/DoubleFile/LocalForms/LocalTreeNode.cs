@@ -50,7 +50,7 @@ namespace DoubleFile
             Text = strContent;
         }
 
-        internal LocalTreeNode(string strContent, IReadOnlyList<LocalTreeNode> lsNodes)
+        internal LocalTreeNode(string strContent, IEnumerable<LocalTreeNode> lsNodes)
             : this(strContent)
         {
             Nodes = lsNodes.ToArray();
@@ -114,7 +114,7 @@ namespace DoubleFile
             return nodeParent;
         }
 
-        internal static void SetLevel(IReadOnlyList<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
+        internal static void SetLevel(IEnumerable<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
         {
             if (null == nodes)
                 return;

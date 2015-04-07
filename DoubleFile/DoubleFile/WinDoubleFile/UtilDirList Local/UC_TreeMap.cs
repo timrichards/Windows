@@ -290,7 +290,7 @@ namespace DoubleFile
                 }
             }
 
-            WinTooltip.CloseTooltip();
+            UtilProject.UIthread(() => WinTooltip.CloseTooltip());
         }
 
         void SelRectAndTooltip(LocalTreeNode treeNodeChild, bool bImmediateFiles = false)

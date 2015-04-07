@@ -9,7 +9,7 @@ namespace DoubleFile
     static class Win32FindFileStatic
     {
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        internal struct DATUM
+        internal struct DATUM : IComparable
         {
             internal FileAttributes fileAttributes;
             internal uint ftCreationTimeLow;
@@ -26,6 +26,11 @@ namespace DoubleFile
             internal string strFileName;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
             internal string strAltFileName;
+
+            public int CompareTo(object obj)
+            {
+                return strFileName.CompareTo(((DATUM)obj).strFileName);
+            }
         }
 
         internal enum IndexInfoLevels
@@ -123,7 +128,7 @@ namespace DoubleFile
             }
         }
 
-        internal static bool GetDirectory(string strDir, ref List<DATUM> listDirs, ref List<DATUM> listFiles,
+        internal static bool GetDirectory(string strDir, out IEnumerable<DATUM> ieDirs, out IEnumerable<DATUM> ieFiles,
             out string strWin32Error)
         {
             strWin32Error = null;
@@ -138,18 +143,18 @@ namespace DoubleFile
                 strWin32Error = new System.ComponentModel.Win32Exception(
                         System.Runtime.InteropServices.Marshal.GetLastWin32Error()).Message;
 
+                ieDirs = null;
+                ieFiles = null;
                 return false;
             }
 
-            listDirs.Clear();
-            listFiles.Clear();
+            var dictDirs = new KeyListSorted<DATUM>();
+            var dictFiles = new KeyListSorted<DATUM>();
 
             do
             {
                 if ("..".Contains(winFindData.strFileName))
-                {
                     continue;
-                }
 
                 winFindData.strAltFileName = (strDir + '\\' +
                     winFindData.strFileName).Replace(@"\\", @"\");    // 8.3 not used
@@ -165,23 +170,23 @@ namespace DoubleFile
                         if (((winFindData.dwReserved0 & IO_REPARSE_TAG_MOUNT_POINT) != 0) ||
                             ((winFindData.dwReserved0 & IO_REPARSE_TAG_SYMLINK) != 0))
                         {
-                            listFiles.Add(winFindData);
+                            dictFiles.Add(winFindData);
                             continue;
                         }
                     }
 
-                    listDirs.Add(winFindData);
+                    dictDirs.Add(winFindData);
                 }
                 else
                 {
-                    listFiles.Add(winFindData);
+                    dictFiles.Add(winFindData);
                 }
             }
             while (FindNextFileW(handle, out winFindData));
 
             FindClose(handle);
-            listDirs.Sort((x, y) => x.strFileName.CompareTo(y.strFileName));
-            listFiles.Sort((x, y) => x.strFileName.CompareTo(y.strFileName));
+            ieDirs = dictDirs;
+            ieFiles = dictFiles;
             return true;
         }
     }

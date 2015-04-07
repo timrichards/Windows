@@ -68,11 +68,11 @@ namespace DoubleFile
                     var winDir = stackDirs.Pop();
                     var strFullPath = winDir.strAltFileName;
                     var strError2_Dir = CheckNTFS_chars(ref strFullPath);
-                    var listSubDirs = new List<Win32FindFileStatic.DATUM>();
-                    var listFiles = new List<Win32FindFileStatic.DATUM>();
+                    IEnumerable<Win32FindFileStatic.DATUM> ieSubDirs = null;
+                    IEnumerable<Win32FindFileStatic.DATUM> ieFiles = null;
                     string strWin32Error = null;
 
-                    if (false == Win32FindFileStatic.GetDirectory(strFullPath, ref listSubDirs, ref listFiles, out strWin32Error))
+                    if (false == Win32FindFileStatic.GetDirectory(strFullPath, out ieSubDirs, out ieFiles, out strWin32Error))
                     {
                         if (fs != null)
                         {
@@ -87,7 +87,7 @@ namespace DoubleFile
                     long nDirLength = 0;
                     var bHasLength = false;
 
-                    foreach (var winFile in listFiles)
+                    foreach (var winFile in ieFiles)
                     {
                         if (App.LocalExit || m_bThreadAbort)
                         {
@@ -192,7 +192,7 @@ namespace DoubleFile
                         }
                     }
 
-                    foreach (var winData in listSubDirs)
+                    foreach (var winData in ieSubDirs)
                     {
                         stackDirs.Push(winData);
                     }

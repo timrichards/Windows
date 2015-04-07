@@ -6,7 +6,7 @@ namespace DoubleFile
     {
         internal Action<LocalTreeNode> TreeNodeCallback = null;
 
-        public double Maximum { get; set; }
+        public double Maximum { get; private set; }
         internal LocalTreeNode DeepNode
         {
             get { return _deepNode; }

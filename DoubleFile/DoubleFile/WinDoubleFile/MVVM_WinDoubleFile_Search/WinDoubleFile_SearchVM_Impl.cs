@@ -49,7 +49,7 @@ namespace DoubleFile
                     .Where(treeNode => treeNode.Text.ToLower().Contains(SearchText));
             }
 
-            var lsLVitems = lsTreeNodes.Select(treeNode => new LVitem_DoubleFile_SearchVM { LocalTreeNode = treeNode });
+            var lsLVitems = lsTreeNodes.AsParallel().Select(treeNode => new LVitem_DoubleFile_SearchVM { LocalTreeNode = treeNode });
 
             UtilProject.UIthread(() => Add(lsLVitems));
         }

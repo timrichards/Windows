@@ -1,5 +1,6 @@
 ﻿using System;               // release mode
 using System.IO;
+using System.Reactive.Linq;
 using System.Windows;
 
 namespace DoubleFile
@@ -24,16 +25,32 @@ namespace DoubleFile
             : base(bIsMainWindow: true)
         {
             static_MainWindow = this;
-
             InitializeComponent();
-            form_grid.Loaded += Grid_Loaded;
-            Closing += MainWindow_Closing;
-            form_btnViewProject.Click += Button_ViewProject_Click;
-            form_btnOpenProject.Click += Button_OpenProject_Click;
-            form_btnSaveProject.Click += Button_SaveProject_Click;
-            form_btnDuplicateFileExplorer.Click += Button_DuplicateFileExplorer_Click;
-            MouseDown += (o, e) => DragMove();
-            StateChanged += (o, e) => WinTooltip.CloseTooltip();     // app minimize
+
+            Observable.FromEventPattern(form_grid, "Loaded")
+                .Subscribe(args => Grid_Loaded());
+
+            Observable.FromEventPattern<System.ComponentModel.CancelEventArgs>(this, "Closing")
+                .Subscribe(args => MainWindow_Closing(args.EventArgs));
+
+            Observable.FromEventPattern(form_btnViewProject, "Click")
+                .Subscribe(args => ShowProjectWindow());
+
+            Observable.FromEventPattern(form_btnOpenProject, "Click")
+                .Subscribe(args => ShowProjectWindow(bOpenProject: true));
+
+            Observable.FromEventPattern(form_btnSaveProject, "Click")
+                .Subscribe(args => Button_SaveProject_Click());
+
+            Observable.FromEventPattern(form_btnDuplicateFileExplorer, "Click")
+                .Subscribe(args => Button_DuplicateFileExplorer_Click());
+
+            Observable.FromEventPattern(this, "MouseDown")
+                .Subscribe(args => DragMove());
+
+            Observable.FromEventPattern(this, "StateChanged")     // app minimize
+                .Subscribe(args => WinTooltip.CloseTooltip());
+
             SizeToContent = SizeToContent.WidthAndHeight;
             ResizeMode = ResizeMode.CanMinimize;
         }
@@ -83,7 +100,7 @@ namespace DoubleFile
         }
 
         #region form_handlers
-        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        private void Grid_Loaded()
         {
             MinWidth = Width;
             MinHeight = Height;
@@ -163,7 +180,7 @@ namespace DoubleFile
 #endif
         }
 
-        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void MainWindow_Closing(System.ComponentModel.CancelEventArgs e)
         {
             if ((null != LVprojectVM) &&
                 LVprojectVM.Unsaved &&
@@ -189,17 +206,7 @@ namespace DoubleFile
             }
         }
 
-        private void Button_ViewProject_Click(object sender, RoutedEventArgs e)
-        {
-            ShowProjectWindow();
-        }
-
-        private void Button_OpenProject_Click(object sender, RoutedEventArgs e)
-        {
-            ShowProjectWindow(bOpenProject: true);
-        }
-
-        private void Button_SaveProject_Click(object sender, RoutedEventArgs e)
+        private void Button_SaveProject_Click()
         {
             if (LVprojectVM != null)
             {
@@ -211,7 +218,7 @@ namespace DoubleFile
             }
         }
 
-        private void Button_DuplicateFileExplorer_Click(object sender, RoutedEventArgs e)
+        private void Button_DuplicateFileExplorer_Click()
         {
             if ((null == _winDoubleFile_Folders) || (_winDoubleFile_Folders.LocalIsClosed))
             {

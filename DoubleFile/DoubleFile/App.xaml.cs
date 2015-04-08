@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Windows;
 
 namespace DoubleFile
@@ -30,9 +32,17 @@ namespace DoubleFile
             LocalActivated = true;      // seemed to work but jic
             LocalExit = false;
 
-            Activated += Application_Activated;
-            Deactivated += (o, e) => { LocalActivated = false; if (null != DeactivateDidOccur) DeactivateDidOccur(); };
-            Exit += App_Exit;
+            Observable
+                .FromEventPattern<EventArgs>(this, "Activated")
+                .Subscribe(args => Application_Activated());
+
+            Observable
+                .FromEventPattern<EventArgs>(this, "Deactivated")
+                .Subscribe(args => { LocalActivated = false; if (null != DeactivateDidOccur) DeactivateDidOccur(); });
+
+            Observable
+                .FromEventPattern<EventArgs>(this, "Exit")
+                .Subscribe(args => LocalExit = true);
 
 #if (false == DEBUG)
             DispatcherUnhandledException += (o, e) =>
@@ -44,12 +54,7 @@ namespace DoubleFile
             ShutdownMode = ShutdownMode.OnMainWindowClose;
         }
 
-        static void App_Exit(object sender, ExitEventArgs e)
-        {
-            LocalExit = true;
-        }
-
-        static void Application_Activated(object sender, System.EventArgs e)
+        static void Application_Activated()
         {
             if (false == LocalActivated)
             {

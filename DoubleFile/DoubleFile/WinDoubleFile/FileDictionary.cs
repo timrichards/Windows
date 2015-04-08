@@ -45,12 +45,12 @@ namespace DoubleFile
                 return null;
 
             return
-                lsDupes
+                lsDupes.AsParallel()
                 .Select(lookup => new DuplicateStruct
-                {
-                    LVitemProjectVM = _DictItemNumberToLV[GetLVitemProjectVM(lookup)],
-                    LineNumber = GetLineNumber(lookup)
-                });
+            {
+                LVitemProjectVM = _DictItemNumberToLV[GetLVitemProjectVM(lookup)],
+                LineNumber = GetLineNumber(lookup)
+            });
         }
 
         internal FileDictionary DoThreadFactory(LV_ProjectVM lvProjectVM,

@@ -1,10 +1,9 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Windows;
-using System.Windows.Forms;
-using System.Windows.Interop;
 using System.Windows.Media;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -53,8 +52,12 @@ namespace DoubleFile
                 _winTooltip.Owner = winOwner;
                 _winTooltip.Left = winOwner.Left;
                 _winTooltip.Top = winOwner.Top + winOwner.Height;
-                winOwner.Closed += CloseTooltip;
-                _winTooltip.SizeChanged += _winTooltip.WinTooltip_SizeChanged;
+
+                _winOwnerClosedObserver = Observable.FromEventPattern(winOwner, "Closed")
+                    .Subscribe(argsA => CloseTooltip());
+
+                Observable.FromEventPattern<SizeChangedEventArgs>(_winTooltip, "SizeChanged")
+                    .Subscribe(argsA => _winTooltip.WinTooltip_SizeChanged(argsA.EventArgs.NewSize));
             });
         }
 
@@ -78,7 +81,7 @@ namespace DoubleFile
             MBoxStatic.Assert(99964, null != tag);
         }
 
-        internal static void CloseTooltip(object sender = null, EventArgs e = null)
+        internal static void CloseTooltip()
         {
             if (_bClosingTooltip)
                 return;
@@ -103,20 +106,14 @@ namespace DoubleFile
             if (null != _winTooltip)
                 winOwner = _winTooltip.Owner as LocalWindow;
 
-            if ((null != winOwner) &&
-                (false == winOwner.LocalIsClosing) &&
-                (false == winOwner.LocalIsClosed))
+            if (null != _winOwnerClosedObserver)
             {
-                winOwner.Closed -= CloseTooltip;
+                _winOwnerClosedObserver.Dispose();
+                _winOwnerClosedObserver = null;
             }
 
             _winTooltip = null;
             _bClosingTooltip = false;
-        }
-
-        static WinTooltip()
-        {
-            //    App.DeactivateDidOccur += () => CloseTooltip();
         }
 
         WinTooltip()
@@ -126,12 +123,20 @@ namespace DoubleFile
             SizeToContent = SizeToContent.WidthAndHeight;
             ResizeMode = ResizeMode.NoResize;
             Background = Brushes.LightYellow;
-            Loaded += (o, e) => ++form_folder.FontSize;
-            MouseDown += (o, e) => _bMouseDown = true;
-            MouseUp += (o, e) => { if (_bMouseDown) _clickCallback(); _bMouseDown = false; };
+
+            Observable.FromEventPattern(this, "Loaded")
+                .Subscribe(args => ++form_folder.FontSize);
+
+            var bMouseDown = false;
+
+            Observable.FromEventPattern(this, "MouseDown")
+                .Subscribe(args => bMouseDown = true);
+
+            Observable.FromEventPattern(this, "MouseUp")
+                .Subscribe(args => { if (bMouseDown) _clickCallback(); bMouseDown = false; });
         }
 
-        void WinTooltip_SizeChanged(object sender, SizeChangedEventArgs e)
+        void WinTooltip_SizeChanged(Size newSize)
         {
             var winOwner = Owner as LocalWindow;
 
@@ -143,10 +148,10 @@ namespace DoubleFile
 
             var rcTooltip = new Rect()
             {
-                X = nOwnerRight - e.NewSize.Width,
+                X = nOwnerRight - newSize.Width,
                 Y = nOwnerBot,
-                Width = e.NewSize.Width,
-                Height = e.NewSize.Height
+                Width = newSize.Width,
+                Height = newSize.Height
             };
 
             if (WindowState.Maximized == winOwner.WindowState)
@@ -173,8 +178,6 @@ namespace DoubleFile
             Top = rcTooltip.Y;
         }
 
-        bool
-            _bMouseDown = false;
         static WinTooltip
             _winTooltip = null;
         Action
@@ -183,5 +186,7 @@ namespace DoubleFile
             _clickCallback = null;
         static bool
             _bClosingTooltip = false;
+        static IDisposable
+            _winOwnerClosedObserver = null;
     }
 }

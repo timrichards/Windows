@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
+using System.Reactive.Linq;
+using System;
 
 namespace DoubleFile
 {
@@ -18,10 +20,18 @@ namespace DoubleFile
         internal WinProgress()
         {
             InitializeComponent();
-            form_grid.Loaded += Grid_Loaded;
-            ContentRendered += WinProgress_ContentRendered;
-            Closing += Window_Closing;
-            Closed += Window_Closed;
+
+            Observable.FromEventPattern(form_grid, "Loaded")
+                .Subscribe(args => Grid_Loaded());
+
+            Observable.FromEventPattern(this, "ContentRendered")
+                .Subscribe(args => WinProgress_ContentRendered());
+
+            Observable.FromEventPattern<System.ComponentModel.CancelEventArgs>(this, "Closing")
+                .Subscribe(args => Window_Closing(args.EventArgs));
+
+            Observable.FromEventPattern(this, "Closed")
+                .Subscribe(args => _lv.Dispose());
         }
 
         internal void InitProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths)
@@ -88,7 +98,7 @@ namespace DoubleFile
         }
 
         #region form_handlers
-        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        private void Grid_Loaded()
         {
             form_lvProgress.DataContext = _lv;
 
@@ -97,13 +107,13 @@ namespace DoubleFile
             _lv.Selected = () => form_lvProgress.SelectedItems.Cast<LVitem_ProgressVM>();
         }
 
-        private void WinProgress_ContentRendered(object sender, System.EventArgs e)
+        private void WinProgress_ContentRendered()
         {
             MinHeight = ActualHeight;
             MaxHeight = ActualHeight;
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(System.ComponentModel.CancelEventArgs e)
         {
             if (Aborted)
             {
@@ -141,10 +151,6 @@ namespace DoubleFile
             }).Start();
         }
 
-        private void Window_Closed(object sender, System.EventArgs e)
-        {
-            _lv.Dispose();
-        }
         #endregion form_handlers
 
         readonly LV_ProgressVM _lv = new LV_ProgressVM();

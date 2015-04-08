@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Threading;
 using System.Windows;
+using System.Reactive.Linq;
 
 namespace DoubleFile
 {
@@ -36,7 +37,8 @@ namespace DoubleFile
             if (null == MainWindow.static_Dialog)
                 MainWindow.static_Dialog = this;
 
-            Activated += (o, e) =>
+            Observable.FromEventPattern(this, "Activated")
+                .Subscribe(args =>
             {
                 var bCanFlashWindow = App.CanFlashWindow_ResetsIt;     // querying it resets it
 
@@ -48,7 +50,7 @@ namespace DoubleFile
                     if (bCanFlashWindow)
                         FlashWindowStatic.Go(MainWindow.static_Dialog);
                 }
-            };
+            });
 
             // Keep this around so you see how it's done
             // Icon = BitmapFrame.Create(new Uri(@"pack://application:,,/Resources/ic_people_black_18dp.png"));
@@ -62,9 +64,16 @@ namespace DoubleFile
 
             ResizeMode = ResizeMode.CanResizeWithGrip;
             ShowActivated = true;
-            Loaded += (o, e) => LocalIsClosed = false;
-            Closed += (o, e) => LocalIsClosed = true;
-            Closing += (o, e) => LocalIsClosing = true;
+
+            Observable.FromEventPattern(this, "Loaded")
+                .Subscribe(args => LocalIsClosed = false);
+
+            Observable.FromEventPattern(this, "Closed")
+                .Subscribe(args => LocalIsClosed = true);
+
+            Observable.FromEventPattern(this, "Closing")
+                .Subscribe(args => LocalIsClosing = true);
+
             LocalIsClosed = true;
         }
 
@@ -109,7 +118,8 @@ namespace DoubleFile
             bool? bResult = null;
             DispatcherFrame blockingFrame = null;
 
-            Closed += (o, e) =>
+            Observable.FromEventPattern(this, "Closed")
+                .Subscribe(args =>
             {
                 MainWindow.static_Dialog = me;
                 me.Activate();
@@ -119,7 +129,7 @@ namespace DoubleFile
                     bResult = LocalDialogResult;
                     blockingFrame.Continue = false;
                 }
-            };
+            });
 
             if ( _simulatingModal)
             {

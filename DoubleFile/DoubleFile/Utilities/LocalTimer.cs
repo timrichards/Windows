@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Linq;
 using System.Timers;
 
 namespace DoubleFile
@@ -20,24 +21,12 @@ namespace DoubleFile
         internal LocalTimer(double milliseconds, Action callback)
             : base(milliseconds)
         {
-            Elapsed += _ElapsedHandler = (o, e) => callback();
-        }
-
-        public new void Dispose()
-        {
-            Elapsed -= _ElapsedHandler;
-            base.Dispose();
-            _bDisposed = true;
+            Observable.FromEventPattern(this, "Elapsed")
+                .Subscribe(args => callback());
         }
 
         internal new LocalTimer Start()
         {
-            if (_bDisposed)
-            {
-                MBoxStatic.Assert(99896, false, bTraceOnly: true);
-                return null;
-            }
-
             if (MBoxStatic.Assert(99937, Interval >= 33))
             {
                 base.Start();
@@ -46,9 +35,6 @@ namespace DoubleFile
 
             return null;
         }
-
-        ElapsedEventHandler _ElapsedHandler = null;
-        bool _bDisposed = false;
     }
 
 }

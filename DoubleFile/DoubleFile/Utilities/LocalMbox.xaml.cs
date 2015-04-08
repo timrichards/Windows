@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.ComponentModel;
+using System.Reactive.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace DoubleFile
@@ -46,12 +49,27 @@ namespace DoubleFile
         }
         MessageBoxButton _buttons = MessageBoxButton.OKCancel;
 
+        public LocalMbox()
+        {
+            if (false ==
+                DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
+            {
+                MBoxStatic.Assert(99990, false);
+            }
+        }
+
         internal LocalMbox(string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
         {
             InitializeComponent();
-            form_grid.Loaded += (o, e) => FlashWindowStatic.Go(this, Once: true);
-            form_btnOK.Click += BtnOK_Click;
-            form_btnCancel.Click += (o, e) => CloseIfSimulatingModal();
+
+            Observable.FromEventPattern(form_grid, "Loaded")
+                .Subscribe(args => FlashWindowStatic.Go(this, Once: true));
+
+            Observable.FromEventPattern(form_btnOK, "Click")
+                .Subscribe(args => BtnOK_Click());
+
+            Observable.FromEventPattern(form_btnOK, "Click")
+                .Subscribe(args => CloseIfSimulatingModal());
 
             Message = strMessage;
 
@@ -96,7 +114,7 @@ namespace DoubleFile
             return _Result;
         }
 
-        private void BtnOK_Click(object sender, RoutedEventArgs e)
+        private void BtnOK_Click()
         {
             switch (_buttons)
             {

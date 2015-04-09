@@ -7,6 +7,7 @@ using System.Drawing.Drawing2D;
 using System.Threading;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Reactive.Linq;
 
 namespace DoubleFile
 {
@@ -29,8 +30,15 @@ namespace DoubleFile
             BackgroundImageLayout = ImageLayout.Stretch;
             Dock = DockStyle.Fill;
             BackColor = Color.Transparent;
-            MouseDown += form_tmapUserCtl_MouseDown;
-            MouseUp += form_tmapUserCtl_MouseUp;
+
+            var bMouseDown = false;
+
+            Observable.FromEventPattern(this, "MouseDown")
+                .Subscribe(args => bMouseDown = true);
+
+            Observable.FromEventPattern<MouseEventArgs>(this, "MouseUp")
+                .Subscribe(args => { if (bMouseDown) { bMouseDown = false; form_tmapUserCtl_MouseUp(args.EventArgs.Location); } });
+
             TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
             LV_TreeListSiblingsVM.TreeListSiblingSelected += RenderA;
             LV_TreeListChildrenVM.TreeListChildSelected += TreeListChildSelected;
@@ -42,7 +50,8 @@ namespace DoubleFile
         {
             base.OnLoad(e);
 
-            _timerAnim = new LocalTimer(33.0, () =>   // 30 FPS
+            Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(33)).Timestamp()         // 30 FPS
+                .Subscribe(x =>
             {
                 if (Rectangle.Empty == _rectCenter)
                     return;         // from lambda
@@ -51,7 +60,7 @@ namespace DoubleFile
 
                 if (0 == _nInvalidateRef)
                     Invalidate(_rectCenter);
-            }).Start();
+            });
 
             TreeMapVM.TreeNodeCallback = RenderA;
         }
@@ -66,19 +75,9 @@ namespace DoubleFile
                 Invalidate();
         }
 
-        void form_tmapUserCtl_MouseDown(object sender, MouseEventArgs e)
+        void form_tmapUserCtl_MouseUp(Point ptLocation)
         {
-            _bMouseDown = true;
-        }
-
-        void form_tmapUserCtl_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (false == _bMouseDown)
-                return;
-
-            _bMouseDown = false;
-
-            var treeNode = ZoomOrTooltip(e.Location);
+            var treeNode = ZoomOrTooltip(ptLocation);
 
             if (null == treeNode)
                 return;
@@ -123,7 +122,6 @@ namespace DoubleFile
                 _bg.Dispose();
 
             WinTooltip.CloseTooltip();
-            _timerAnim.Dispose();
             TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
             LV_TreeListSiblingsVM.TreeListSiblingSelected -= RenderA;
             LV_TreeListChildrenVM.TreeListChildSelected -= TreeListChildSelected;
@@ -1161,14 +1159,10 @@ namespace DoubleFile
             _rectCenter = Rectangle.Empty;
         DateTime
             _dtHideGoofball = DateTime.MinValue;
-        LocalTimer
-            _timerAnim = null;
         int
             _nAnimFrame = 0;
 
         // selection
-        bool
-            _bMouseDown = false;
         Rectangle
             _selRect = Rectangle.Empty;
         LocalTreeNode

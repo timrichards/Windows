@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Linq;
 using System.IO;
+using System.Reactive.Linq;
 
 namespace DoubleFile
 {
@@ -38,12 +39,25 @@ namespace DoubleFile
         public UC_VolumeEdit()
         {
             InitializeComponent();
-            form_grid.Loaded += Grid_Loaded;
-            form_EditSourcePath.LostFocus += form_EditSourcePath_LostFocus;
-            form_EditDriveLetter.PreviewKeyDown += form_EditDriveLetter_PreviewKeyDown;
-            form_EditListingFile.LostFocus += form_EditListingFile_LostFocus;
-            form_btnOK.Click += BtnOK_Click;
-            form_btnCancel.Click += BtnCancel_Click;
+
+
+            Observable.FromEventPattern(form_grid, "Loaded")
+                .Subscribe(args => Grid_Loaded());
+
+            Observable.FromEventPattern(form_EditSourcePath, "LostFocus")
+                .Subscribe(args => { if (IsValidSourcePathEdit) form_EditSourcePath.Text = CapDrive(form_EditSourcePath.Text); });
+
+            Observable.FromEventPattern<KeyEventArgs>(form_EditDriveLetter, "PreviewKeyDown")
+                .Subscribe(args => form_EditDriveLetter_PreviewKeyDown(args.EventArgs));
+
+            Observable.FromEventPattern(form_EditListingFile, "LostFocus")
+                .Subscribe(args => form_EditListingFile_LostFocus());
+
+            Observable.FromEventPattern(form_btnOK, "Click")
+                .Subscribe(args => BtnOK_Click());
+
+            Observable.FromEventPattern(form_btnCancel, "Click")
+                .Subscribe(args => BtnCancel_Click());
         }
 
         internal LVitem_ProjectVM LVitemVolumeTemp
@@ -123,7 +137,7 @@ namespace DoubleFile
         }
 
         #region form_handlers
-        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        private void Grid_Loaded()
         {
             var vm = new UC_VolumeEditVM();
 
@@ -141,17 +155,9 @@ namespace DoubleFile
 
             textBox.Focus();
             textBox.CaretIndex = int.MaxValue;
-        }
+        }        
 
-        private void form_EditSourcePath_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (IsValidSourcePathEdit)
-            {
-                form_EditSourcePath.Text = CapDrive(form_EditSourcePath.Text);
-            }
-        }
-
-        private void form_EditDriveLetter_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void form_EditDriveLetter_PreviewKeyDown(KeyEventArgs e)
         {
             if (new Key[] {Key.Tab, Key.Back, Key.Delete, Key.Left, Key.Right}.Contains(e.Key))
             {
@@ -178,7 +184,7 @@ namespace DoubleFile
             }
         }
 
-        private void form_EditListingFile_LostFocus(object sender, RoutedEventArgs e)
+        private void form_EditListingFile_LostFocus()
         {
             if (string.IsNullOrWhiteSpace(form_EditListingFile.Text) ||
                 (false == IsValidListingEdit))
@@ -200,7 +206,7 @@ namespace DoubleFile
             form_EditListingFile.Text = strListingFile;
         }
 
-        private void BtnOK_Click(object sender, RoutedEventArgs e)
+        private void BtnOK_Click()
         {
             if (IsOKenabled)
             {
@@ -218,7 +224,7 @@ namespace DoubleFile
             }
         }
 
-        private void BtnCancel_Click(object sender, RoutedEventArgs e)
+        private void BtnCancel_Click()
         {
             var window = Window.GetWindow(uc_VolumeEdit) as LocalWindow;
 

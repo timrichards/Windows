@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using System.Linq;
+using System.Reactive.Linq;
+using System;
 
 namespace DoubleFile
 {
@@ -16,12 +18,18 @@ namespace DoubleFile
             LVprojectVM = lvProjectVM;
 
             InitializeComponent();
-            form_grid.Loaded += Grid_Loaded;
-            form_btnOK.Click += BtnOK_Click;
-            Closing += WinProject_Closing;
+
+            Observable.FromEventPattern(form_grid, "Loaded")
+                .Subscribe(args => Grid_Loaded());
+
+            Observable.FromEventPattern(form_btnOK, "Click")
+                .Subscribe(args => BtnOK_Click());
+
+            Observable.FromEventPattern<System.ComponentModel.CancelEventArgs>(this, "Closing")
+                .Subscribe(args => WinProject_Closing(args.EventArgs));
         }
 
-        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        private void Grid_Loaded()
         {
             var lvProjectVM = new LV_ProjectVM(LVprojectVM);
             var win = new WinProjectVM(lvProjectVM);
@@ -39,7 +47,7 @@ namespace DoubleFile
             }
         }
 
-        private void BtnOK_Click(object sender, RoutedEventArgs e)
+        private void BtnOK_Click()
         {
             LVprojectVM = form_lv.DataContext as LV_ProjectVM;
             LocalDialogResult = true;
@@ -49,7 +57,7 @@ namespace DoubleFile
             CloseIfSimulatingModal();
         }
 
-        private void WinProject_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void WinProject_Closing(System.ComponentModel.CancelEventArgs e)
         {
             if (LocalDialogResult ?? false)
             {

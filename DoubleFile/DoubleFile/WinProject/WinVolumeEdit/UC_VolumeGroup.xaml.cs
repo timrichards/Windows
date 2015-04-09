@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using System.Reactive.Linq;
+using System.Windows.Controls;
+using System;
 
 namespace DoubleFile
 {
@@ -13,10 +15,12 @@ namespace DoubleFile
         public UC_VolumeGroup()
         {
             InitializeComponent();
-            form_grid.Loaded += Grid_Loaded;
+
+            Observable.FromEventPattern(form_grid, "Loaded")
+                .Subscribe(args => Grid_Loaded());
         }
 
-        private void Grid_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        private void Grid_Loaded()
         {
             if (IsWinVolumeGroup)
             {

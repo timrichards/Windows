@@ -11,10 +11,10 @@
         <WindowsFormsHost Name="_host" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <local:UC_TreeMap x:Name="form_ucTreeMap" />
         </WindowsFormsHost>
-        <Slider Grid.Column="1" Value="{Binding Value}" Maximum="{Binding Maximum}"
+        <Slider Name="form_slider" Grid.Column="1" Value="{Binding Value}" Maximum="{Binding Maximum}"
                 IsSnapToTickEnabled="True"
                 LargeChange="1" SmallChange="1" TickFrequency="1"
                 TickPlacement="TopLeft" Orientation="Vertical"
-                Delay="200" LostMouseCapture="Slider_LostMouseCapture"/>
+                Delay="200"/>
     </Grid>
 </local:LocalWindow_DoubleFile>

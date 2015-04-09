@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 
@@ -30,8 +31,13 @@ namespace DoubleFile
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
-            process.OutputDataReceived += (sender, args) => { UtilProject.WriteLine(args.Data); _sbError.AppendLine(args.Data); };
-            process.ErrorDataReceived += (sender, args) => { UtilProject.WriteLine(args.Data); _sbError.AppendLine(args.Data); };
+
+            Observable.FromEventPattern<DataReceivedEventArgs>(process, "OutputDataReceived")
+                .Subscribe(args => { UtilProject.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); });
+
+            Observable.FromEventPattern<DataReceivedEventArgs>(process, "ErrorDataReceived")
+                .Subscribe(args => { UtilProject.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); });
+
             process.EnableRaisingEvents = true;
             return process;
         }
@@ -57,7 +63,8 @@ namespace DoubleFile
 
             Directory.CreateDirectory(TempPath);
 
-            process.Exited += (sender, args) =>
+            Observable.FromEventPattern(process, "Exited")
+                .Subscribe(args => 
             {
                 var bErr = ReportAnyErrors(process, "Opening",
                     new Win32Exception(Marshal.GetLastWin32Error()).Message);
@@ -105,7 +112,7 @@ namespace DoubleFile
                 }
                 
                 _bProcessing = false;
-            };
+            });
 
             process.StartInfo.WorkingDirectory = TempPath;
             process.StartInfo.Arguments = "e \"" + strProjectFilename + "\" -y";
@@ -211,7 +218,8 @@ namespace DoubleFile
             var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
             var bRet = true;
 
-            process.Exited += (sender, args) =>
+            Observable.FromEventPattern(process, "Exited")
+                .Subscribe(args => 
             {
                 var bErr = ReportAnyErrors(process, "Saving",
                     new Win32Exception(Marshal.GetLastWin32Error()).Message);
@@ -229,7 +237,7 @@ namespace DoubleFile
                 _winProgress.SetCompleted(strProjectFileNoPath);
                 MBoxStatic.ShowDialog("Todo: save volume group.\nTodo: save include y/n");
                 _bProcessing = false;
-            };
+            });
 
             process.StartInfo.WorkingDirectory = strPath;
 
@@ -362,13 +370,12 @@ namespace DoubleFile
                 UtilProject.UIthread(_winProgress.Close);
             }
 
-            LocalTimer tmr = null;
-            var tmr_ = new LocalTimer(33.0, () =>
+            Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()
+                .Subscribe(x =>
             {
-                tmr.Dispose();
                 MBoxStatic.ShowDialog(strError, "Error " + strMode + " Project");
-            }).Start();
-            tmr = tmr_;
+            });
+
             return true;
         }
 

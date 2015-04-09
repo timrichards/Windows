@@ -289,7 +289,6 @@
     <Compile Include="WinProject\UtilProject\DriveSerialStatic.cs" />
     <Compile Include="Utilities\MBoxStatic.cs" />
     <Compile Include="WinProject\UtilProject\ProjectFile.cs" />
-    <Compile Include="Utilities\LocalTimer.cs" />
     <Compile Include="Utilities\KeyList.cs" />
     <Compile Include="Utilities\TabledString.cs" />
     <Compile Include="WinProject\UtilProject\UtilProject.cs" />

@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Reactive.Linq;
+using System.Windows;
+using System;
 
 namespace DoubleFile
 {
@@ -12,9 +14,15 @@ namespace DoubleFile
         public WinVolumeGroup()
         {
             InitializeComponent();
-            form_grid.Loaded += (o, e) => form_ucVolumeGroup.IsWinVolumeGroup = true;
-            form_btnOK.Click += (o, e) => { LocalDialogResult = true; CloseIfSimulatingModal(); };
-            form_btnCancel.Click += (o, e) => CloseIfSimulatingModal();
+
+            Observable.FromEventPattern(form_grid, "Loaded")
+                .Subscribe(args => form_ucVolumeGroup.IsWinVolumeGroup = true);
+
+            Observable.FromEventPattern(form_btnOK, "Click")
+                .Subscribe(args => { LocalDialogResult = true; CloseIfSimulatingModal(); });
+
+            Observable.FromEventPattern(form_btnCancel, "Click")
+                .Subscribe(args => { CloseIfSimulatingModal(); });
         }
     }
 }

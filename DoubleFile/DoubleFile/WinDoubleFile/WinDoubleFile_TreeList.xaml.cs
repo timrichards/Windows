@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Reactive.Linq;
+using System.Windows;
+using System;
 
 namespace DoubleFile
 {
@@ -10,7 +12,10 @@ namespace DoubleFile
         internal WinDoubleFile_TreeList()
         {
             InitializeComponent();
-            Closed += Window_Closed;
+
+            Observable.FromEventPattern(this, "Closed")
+                .Subscribe(args => _lvTreeListSiblingsVM.Dispose());
+
             ResizeMode = ResizeMode.CanResize;
 
             var lvChildrenVM = new LV_TreeListChildrenVM();
@@ -22,11 +27,6 @@ namespace DoubleFile
         protected override LocalWindow_DoubleFile CreateChainedWindow()
         {
             return new WinDoubleFile_Files();
-        }
-
-        private void Window_Closed(object sender, System.EventArgs e)
-        {
-            _lvTreeListSiblingsVM.Dispose();
         }
 
         LV_TreeListSiblingsVM

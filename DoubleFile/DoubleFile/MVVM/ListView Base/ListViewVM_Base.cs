@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Windows.Threading;
 
 namespace DoubleFile
@@ -40,18 +42,7 @@ namespace DoubleFile
         {
             var dt = DateTime.Now;
             var nCounter = 0;
-
-            // When there are too many items you get UI thread lockup.
-
-            DispatcherFrame blockingFrame = null;
-
-            LocalTimer timer = null;
-            var timer_ = new LocalTimer(33.0, () =>
-            {
-                timer.Stop();
-                blockingFrame.Continue = false;
-            });
-            timer = timer_;
+            var blockingFrame = new DispatcherFrame(true);
 
             foreach (var item in lsItems)
             {
@@ -62,15 +53,17 @@ namespace DoubleFile
 
                 if (100 < (DateTime.Now - dt).Milliseconds)
                 {
-                    timer.Start();
-                    Dispatcher.PushFrame(blockingFrame = new DispatcherFrame(true));
+                    // When there are too many items you get UI thread lockup.
+                    Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()
+                        .Subscribe(x => blockingFrame.Continue = false);
+
+                    blockingFrame.Continue = true;
+                    Dispatcher.PushFrame(blockingFrame);
                     dt = DateTime.Now;
                 }
 
                 nCounter = 0;
             }
-
-            timer.Dispose();
 
             if ((false == _items.IsEmpty()) &&
                 (false == bQuiet))

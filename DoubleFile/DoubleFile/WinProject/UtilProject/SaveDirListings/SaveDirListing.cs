@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Reactive.Linq;
 
 namespace DoubleFile
 {
@@ -118,10 +119,8 @@ namespace DoubleFile
                 var nProgressNumerator = 0;
                 double nProgressDenominator = listFilePaths.Count();        // double preserves mantissa
 
-                using (new LocalTimer(() =>
-                {
-                    m_statusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator);
-                }).Start())
+                using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
+                    .Subscribe(x => m_statusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator)))
                 {
                     var dictHash = new ConcurrentDictionary<string, HashTuple>();
                     var dictException_FileRead = new Dictionary<string, string>();

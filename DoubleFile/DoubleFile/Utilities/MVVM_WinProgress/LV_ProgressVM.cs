@@ -1,8 +1,9 @@
-﻿
-using System;
+﻿using System;
+using System.Reactive.Linq;
+
 namespace DoubleFile
 {
-    class LV_ProgressVM : ListViewVM_GenericBase<LVitem_ProgressVM>, IDisposable    // Timer so IDisposable
+    class LV_ProgressVM : ListViewVM_GenericBase<LVitem_ProgressVM>
     {
         // queried by ObservableObject but not used for progress bar
         public string WidthNickname { get { return SCW; } }                         // franken all NaN
@@ -22,20 +23,12 @@ namespace DoubleFile
 
         internal LV_ProgressVM()
         {
-            _tmrUpdate = new LocalTimer(() =>
+            Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
+                .Subscribe(x =>
             {
                 foreach (var lvItem in ItemsCast)
-                {
                     lvItem.TimerTick();
-                }
-            }).Start();
+            });
         }
-
-        public void Dispose()
-        {
-            _tmrUpdate.Dispose();
-        }
-
-        readonly LocalTimer _tmrUpdate = null;
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Reactive.Linq;
+using System.Windows;
+using System;
 
 namespace DoubleFile
 {
@@ -10,24 +12,19 @@ namespace DoubleFile
         internal WinDoubleFile_Files()
         {
             InitializeComponent();
-            form_grid.Loaded += Grid_Loaded;
-            Closed += Window_Closed;
-            ResizeMode = ResizeMode.CanResize;
-        }
 
-        private void Grid_Loaded(object sender, RoutedEventArgs e)
-        {
-            DataContext = _lvDoubleFile_FilesVM = new LV_DoubleFile_FilesVM();
+            Observable.FromEventPattern(form_grid, "Loaded")
+                .Subscribe(args => DataContext = _lvDoubleFile_FilesVM = new LV_DoubleFile_FilesVM());
+
+            Observable.FromEventPattern(this, "Closed")
+                .Subscribe(args => _lvDoubleFile_FilesVM.Dispose());
+
+            ResizeMode = ResizeMode.CanResize;
         }
 
         protected override LocalWindow_DoubleFile CreateChainedWindow()
         {
             return new WinDoubleFile_Duplicates();
-        }
-
-        private void Window_Closed(object sender, System.EventArgs e)
-        {
-            _lvDoubleFile_FilesVM.Dispose();
         }
 
         LV_DoubleFile_FilesVM

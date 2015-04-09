@@ -32,24 +32,22 @@ namespace DoubleFile
             LocalActivated = true;      // seemed to work but jic
             LocalExit = false;
 
-            Observable
-                .FromEventPattern<EventArgs>(this, "Activated")
+            Observable.FromEventPattern(this, "Activated")
                 .Subscribe(args => Application_Activated());
 
-            Observable
-                .FromEventPattern<EventArgs>(this, "Deactivated")
+            Observable.FromEventPattern(this, "Deactivated")
                 .Subscribe(args => { LocalActivated = false; if (null != DeactivateDidOccur) DeactivateDidOccur(); });
 
-            Observable
-                .FromEventPattern<EventArgs>(this, "Exit")
+            Observable.FromEventPattern(this, "Exit")
                 .Subscribe(args => LocalExit = true);
 
 #if (false == DEBUG)
-            DispatcherUnhandledException += (o, e) =>
+            Observable.FromEventPattern<System.Windows.Threading.DispatcherUnhandledExceptionEventArgs>(this, "DispatcherUnhandledException")
+                .Subscribe(args =>
             {
-                e.Handled = true;
-                MBoxStatic.Assert(-1, false, e.Exception.Message);
-            };
+                args.EventArgs.Handled = true;
+                MBoxStatic.Assert(-1, false, args.EventArgs.Exception.Message);
+            });
 #endif
             ShutdownMode = ShutdownMode.OnMainWindowClose;
         }

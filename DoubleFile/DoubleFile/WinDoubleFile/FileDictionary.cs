@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Concurrent;
 using System;
+using System.Reactive.Linq;
 
 namespace DoubleFile
 {
@@ -99,13 +100,13 @@ namespace DoubleFile
 
             var nLVitems_A = 0;
 
-            using (new LocalTimer(() =>
+
+            using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
+                .Subscribe(x =>
             {
                 if (nLVitems == nLVitems_A)
-                {
                     _statusCallback(nProgress: _nFilesProgress/(double) _nFilesTotal);
-                }
-            }).Start())
+            }))
             {
                 var dictFiles = new ConcurrentDictionary<FileKeyTuple, List<int>>();
 

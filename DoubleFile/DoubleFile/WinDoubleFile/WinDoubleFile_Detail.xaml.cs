@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Reactive.Linq;
+using System.Windows;
+using System;
 
 namespace DoubleFile
 {
@@ -10,8 +12,19 @@ namespace DoubleFile
         internal WinDoubleFile_Detail()
         {
             InitializeComponent();
-            form_grid.Loaded += Grid_Loaded;
-            Closed += Window_Closed;
+
+            Observable.FromEventPattern(form_grid, "Loaded")
+                .Subscribe(args => Grid_Loaded());
+
+            Observable.FromEventPattern(this, "Closed")
+                .Subscribe(args => Window_Closed());
+        }
+
+        private void Grid_Loaded()
+        {
+            form_localPath.DataContext = form_lvFile.DataContext = _lvFileDetailVM = new LV_FileDetailVM();          
+            form_lvFolder.DataContext = _lvFolderDetailVM = new LV_FolderDetailVM();
+            form_lvVolume.DataContext = _lvVolumeDetailVM = new LV_VolumeDetailVM();
         }
 
         protected override LocalWindow_DoubleFile CreateChainedWindow()
@@ -19,14 +32,7 @@ namespace DoubleFile
             return new WinDoubleFile_Search();
         }
 
-        private void Grid_Loaded(object sender, RoutedEventArgs e)
-        {
-            form_localPath.DataContext = form_lvFile.DataContext = _lvFileDetailVM = new LV_FileDetailVM();          
-            form_lvFolder.DataContext = _lvFolderDetailVM = new LV_FolderDetailVM();
-            form_lvVolume.DataContext = _lvVolumeDetailVM = new LV_VolumeDetailVM();
-        }
-
-        private void Window_Closed(object sender, System.EventArgs e)
+        private void Window_Closed()
         {
             _lvFileDetailVM.Dispose();
             _lvFolderDetailVM.Dispose();

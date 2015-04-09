@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Linq;
 using System.Windows;
 
 namespace DoubleFile
@@ -11,14 +12,18 @@ namespace DoubleFile
         internal WinDoubleFile_Folders(LV_ProjectVM lvProjectVM)
         {
             _lvProjectVM = lvProjectVM;
-
             InitializeComponent();
-            form_grid.Loaded += Grid_Loaded;
-            Closed += Window_Closed;
+
+            Observable.FromEventPattern(form_grid, "Loaded")
+                .Subscribe(args => Grid_Loaded());
+
+            Observable.FromEventPattern(this, "Closed")
+                .Subscribe(args => Window_Closed());
+
             ResizeMode = ResizeMode.CanResize;
         }
 
-        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        private void Grid_Loaded()
         {
             MinWidth = Width;
             MinHeight = Height;
@@ -32,7 +37,7 @@ namespace DoubleFile
             return new WinTreeMap();
         }
 
-        private void Window_Closed(object sender, EventArgs e)
+        private void Window_Closed()
         {
             _winDoubleFile_FoldersVM.Dispose();
             DataContext = null;

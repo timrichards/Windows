@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Reactive.Linq;
+using System.Windows;
+using System;
 
 namespace DoubleFile
 {
@@ -47,7 +49,9 @@ namespace DoubleFile
             }
 
             MainWindow.static_lastPlacementWindow = this;
-            Closed += Window_Closed;
+
+            Observable.FromEventPattern(this, "Closed")
+                .Subscribe(args => Window_Closed());
         }
 
         internal new void Show()
@@ -93,7 +97,7 @@ namespace DoubleFile
             return null;
         }
 
-        private void Window_Closed(object sender, System.EventArgs e)
+        private void Window_Closed()
         {
             if ((null != _chainedWindow) &&
                 (false == _chainedWindow.LocalIsClosed))

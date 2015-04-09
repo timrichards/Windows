@@ -29,9 +29,6 @@ namespace DoubleFile
 
             Observable.FromEventPattern<System.ComponentModel.CancelEventArgs>(this, "Closing")
                 .Subscribe(args => Window_Closing(args.EventArgs));
-
-            Observable.FromEventPattern(this, "Closed")
-                .Subscribe(args => _lv.Dispose());
         }
 
         internal void InitProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths)

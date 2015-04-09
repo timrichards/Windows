@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Collections.Concurrent;
+using System.Reactive.Linq;
 
 namespace DoubleFile
 {
@@ -109,7 +110,8 @@ namespace DoubleFile
             var lsLocalLVignore = new List<LocalLVitem>();  // when implementing, replace the Forms ListViewItem.Tag in LocalLVItem
             var nProgress = 0.0;
 
-            using (new LocalTimer(() => { _winProgress.SetProgress(_ksFolderTreeKey, (3 + nProgress)/4.0); }).Start())
+            using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
+                .Subscribe(x => _winProgress.SetProgress(_ksFolderTreeKey, (3 + nProgress)/4.0)))
             {
                 var lsTreeNodes = new List<LocalTreeNode>();
 

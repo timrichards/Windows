@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Reactive.Linq;
 using System.Windows;
+using System;
 
 namespace DoubleFile
 {
@@ -11,30 +13,20 @@ namespace DoubleFile
         internal WinDoubleFile_Duplicates()
         {
             InitializeComponent();
-            form_grid.Loaded += Grid_Loaded;
-            Closed += Window_Closed;
-            ContentRendered += WinDoubleFile_Duplicates_ContentRendered;
-        }
 
-        private void Grid_Loaded(object sender, RoutedEventArgs e)
-        {
-            DataContext = _winDoubleFile_DuplicatesVM = new WinDoubleFile_DuplicatesVM();
-        }
+            Observable.FromEventPattern(form_grid, "Loaded")
+                .Subscribe(args => DataContext = _winDoubleFile_DuplicatesVM = new WinDoubleFile_DuplicatesVM());
 
-        void WinDoubleFile_Duplicates_ContentRendered(object sender, System.EventArgs e)
-        {
-            if (Rect.Empty == _rcPosAtClose)
-                Top += 50;
+            Observable.FromEventPattern(this, "ContentRendered")
+                .Subscribe(args => { if (Rect.Empty == _rcPosAtClose) Top += 50; });
+
+            Observable.FromEventPattern(this, "Closed")
+                .Subscribe(args => _winDoubleFile_DuplicatesVM.Dispose());
         }
 
         protected override LocalWindow_DoubleFile CreateChainedWindow()
         {
             return new WinDoubleFile_Detail();
-        }
-
-        private void Window_Closed(object sender, System.EventArgs e)
-        {
-            _winDoubleFile_DuplicatesVM.Dispose();
         }
 
         WinDoubleFile_DuplicatesVM

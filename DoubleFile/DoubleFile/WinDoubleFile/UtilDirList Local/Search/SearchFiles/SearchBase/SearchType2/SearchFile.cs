@@ -50,7 +50,7 @@ namespace DoubleFile
                     }
 
                     SearchResultsDir searchResultDir = null;
-                    var listResults = new KeyListSorted<SearchResultsDir>();
+                    var listResults = new SortedDictionary<SearchResultsDir, bool>();
                     var bFirst = false;
                     string strLine = null;
 
@@ -84,8 +84,8 @@ namespace DoubleFile
                         {
                             if (false == listResults.IsEmpty())
                             {
-                                _statusCallback(new SearchResults(_strSearch, _volStrings, listResults.ToList()), bLast: true);
-                                listResults = new KeyListSorted<SearchResultsDir>();
+                                _statusCallback(new SearchResults(_strSearch, _volStrings, listResults.Keys), bLast: true);
+                                listResults = new SortedDictionary<SearchResultsDir, bool>();
                             }
 
                             bFirst = true;
@@ -101,7 +101,7 @@ namespace DoubleFile
                             (null != searchResultDir))
                         {
                             searchResultDir.StrDir = strDir;
-                            listResults.Add(searchResultDir);
+                            listResults.Add(searchResultDir, false);
                             searchResultDir = null;
                         }
 
@@ -121,7 +121,7 @@ namespace DoubleFile
                                 searchResultDir = new SearchResultsDir();
 
                             searchResultDir.StrDir = strDir + '\\';
-                            listResults.Add(searchResultDir);
+                            listResults.Add(searchResultDir, false);
                             searchResultDir = null;
                         }
                         else if (bFile &&
@@ -132,7 +132,7 @@ namespace DoubleFile
                             if (null == searchResultDir)
                                 searchResultDir = new SearchResultsDir();
 
-                            searchResultDir.ListFiles.Add(strFile);
+                            searchResultDir.ListFiles.Add(strFile, false);
                         }
                     }
 
@@ -142,7 +142,7 @@ namespace DoubleFile
                         MBoxStatic.Assert(1307.8302, null == searchResultDir);
 
                     if (false == listResults.IsEmpty())
-                        _statusCallback(new SearchResults(_strSearch, _volStrings, listResults.ToList()), bFirst: bFirst);
+                        _statusCallback(new SearchResults(_strSearch, _volStrings, listResults.Keys), bFirst: bFirst);
                 }
             }
 

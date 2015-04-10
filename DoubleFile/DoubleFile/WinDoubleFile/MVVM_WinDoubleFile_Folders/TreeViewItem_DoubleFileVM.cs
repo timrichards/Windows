@@ -56,7 +56,7 @@ namespace DoubleFile
                 _isExpanded = value;
 
                 if (_isExpanded)
-                    _TVVM._listExpanded.Add(this);
+                    _TVVM._listExpanded.Add(this, false);
                 else
                     _TVVM._listExpanded.Remove(this);
             }
@@ -90,18 +90,18 @@ namespace DoubleFile
             _TVVM.SelectedItem = this;
 
             var stackParents = new Stack<TreeViewItem_DoubleFileVM>(8);
-            var listParents = new KeyList<TreeViewItem_DoubleFileVM>();
+            var listParents = new Dictionary<TreeViewItem_DoubleFileVM, bool>();
             var parentItem = _Parent;
 
             while (parentItem != null)
             {
                 stackParents.Push(parentItem);
-                listParents.Add(parentItem);
+                listParents.Add(parentItem, false);
                 parentItem = parentItem._Parent;
             }
 
-            foreach (var tvivm in _TVVM._listExpanded.ToArray()
-                .Where(tvivm => (stackParents.Contains(tvivm) == false) &&
+            foreach (var tvivm in _TVVM._listExpanded.Keys.ToArray()
+                .Where(tvivm => (false == stackParents.Contains(tvivm)) &&
                     tvivm._isExpanded))
             {
                 tvivm._isExpanded = false;
@@ -117,7 +117,7 @@ namespace DoubleFile
                 {
                     parentItem._isExpanded = true;
                     parentItem.RaisePropertyChanged("IsExpanded");
-                    _TVVM._listExpanded.Add(parentItem);
+                    _TVVM._listExpanded.Add(parentItem, false);
                 }
             }
 

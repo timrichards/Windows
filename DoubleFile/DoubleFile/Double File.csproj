@@ -157,7 +157,6 @@
     <Compile Include="MVVM\ListView Base\ListViewVM_GenericBase.cs" />
     <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
     <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
-    <Compile Include="Utilities\KeyListSorted.cs" />
     <Compile Include="Utilities\Win32Screen\MONITORINFO.cs" />
     <Compile Include="Utilities\Win32Screen\RECT.cs" />
     <Compile Include="Utilities\Win32Screen\SWP.cs" />
@@ -289,7 +288,6 @@
     <Compile Include="WinProject\UtilProject\DriveSerialStatic.cs" />
     <Compile Include="Utilities\MBoxStatic.cs" />
     <Compile Include="WinProject\UtilProject\ProjectFile.cs" />
-    <Compile Include="Utilities\KeyList.cs" />
     <Compile Include="Utilities\TabledString.cs" />
     <Compile Include="WinProject\UtilProject\UtilProject.cs" />
     <Compile Include="WinProject\UtilProject\Win32FindFileStatic.cs" />

@@ -148,8 +148,8 @@ namespace DoubleFile
                 return false;
             }
 
-            var dictDirs = new KeyListSorted<DATUM>();
-            var dictFiles = new KeyListSorted<DATUM>();
+            var dictDirs = new SortedDictionary<DATUM, bool>();
+            var dictFiles = new SortedDictionary<DATUM, bool>();
 
             do
             {
@@ -170,23 +170,23 @@ namespace DoubleFile
                         if (((winFindData.dwReserved0 & IO_REPARSE_TAG_MOUNT_POINT) != 0) ||
                             ((winFindData.dwReserved0 & IO_REPARSE_TAG_SYMLINK) != 0))
                         {
-                            dictFiles.Add(winFindData);
+                            dictFiles.Add(winFindData, false);
                             continue;
                         }
                     }
 
-                    dictDirs.Add(winFindData);
+                    dictDirs.Add(winFindData, false);
                 }
                 else
                 {
-                    dictFiles.Add(winFindData);
+                    dictFiles.Add(winFindData, false);
                 }
             }
             while (FindNextFileW(handle, out winFindData));
 
             FindClose(handle);
-            ieDirs = dictDirs;
-            ieFiles = dictFiles;
+            ieDirs = dictDirs.Keys;
+            ieFiles = dictFiles.Keys;
             return true;
         }
     }

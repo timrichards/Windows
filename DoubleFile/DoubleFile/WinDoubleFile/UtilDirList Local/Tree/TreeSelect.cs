@@ -145,6 +145,7 @@ namespace DoubleFile
                 (false == _dictVolumeInfo.TryGetValue(((RootNodeDatum)rootNode.NodeDatum).ListingFile, out strDriveInfo)))
             {
                 VolumeDetailUpdated(null, rootNode.Text);
+                return;
             }
 
             var arrDriveInfo =

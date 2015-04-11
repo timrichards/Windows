@@ -1,31 +1,34 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace DoubleFile
 {
     class LVitem_DoubleFile_SearchVM : ListViewItemVM_Base
     {
-        internal SearchResultsDir SearchResultsDir { get; set; }
-        internal int FileIndex { get; set; }
-        internal LocalTreeNode LocalTreeNode = null;
+        internal PathBuilder Directory { get { return _datum as PathBuilder; } set { _datum = value; } }
+        internal LocalTreeNode LocalTreeNode { get { return _datum as LocalTreeNode; } set { _datum = value; } }
+        object _datum = null;
+
+        internal TabledString Filename { get; set; }
 
         public string Results
         {
             get
             {
-                if (null != SearchResultsDir)
+                if (null != Directory)
                 {
-                    var strRet =
-                        (0 <= FileIndex)
-                        ? SearchResultsDir.ListFiles[FileIndex] + " in "
+                    var strFile = 
+                        (false == string.IsNullOrEmpty(Filename))
+                        ? Filename + " in "
                         : "";
 
-                    return strRet + SearchResultsDir.StrDir;
+                    return strFile + Directory;
                 }
                 else
                 {
                     return LocalTreeNode.Text +
-                        ((null != LocalTreeNode)
+                        ((null != LocalTreeNode.Parent)
                         ? " in " + LocalTreeNode.Parent.FullPath
                         : "");
                 }
@@ -40,6 +43,7 @@ namespace DoubleFile
         internal LVitem_DoubleFile_SearchVM(IEnumerable<string> ieString = null)
             : base(null, ieString)
         {
+            marr = null;
         }
 
         internal LVitem_DoubleFile_SearchVM(LVitem_DoubleFile_SearchVM lvItemTemp)

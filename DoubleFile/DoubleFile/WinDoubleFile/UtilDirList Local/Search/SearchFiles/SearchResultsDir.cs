@@ -7,10 +7,8 @@ namespace DoubleFile
     {
         internal string
             StrDir { get; set; }
-
-        internal KeyListSorted<string>
-            ListFiles { get { return _listFiles; } }
-        readonly KeyListSorted<string> _listFiles = new KeyListSorted<string>();
+        internal readonly SortedDictionary<string, bool>
+            ListFiles = new SortedDictionary<string, bool>();
 
         public int CompareTo(object other)
         {

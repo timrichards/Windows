@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Reactive.Linq;
 using System.Windows;
+using System;
 
 namespace DoubleFile
 {
@@ -12,10 +14,15 @@ namespace DoubleFile
         {
             InitializeComponent();
             
-            DataContext = new WinDoubleFile_SearchVM
+            var vm = new WinDoubleFile_SearchVM
             {
                 IsEditBoxNonEmpty = () => false == string.IsNullOrWhiteSpace(form_searchText.Text)
             };
+
+            DataContext = vm;
+
+            Observable.FromEventPattern(this, "Closed")
+                .Subscribe(args => vm.Dispose());
         }
 
         override protected Rect

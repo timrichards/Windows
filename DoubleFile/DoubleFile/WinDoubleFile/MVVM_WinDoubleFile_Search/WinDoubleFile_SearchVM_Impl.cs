@@ -2,10 +2,11 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace DoubleFile
 {
-    partial class WinDoubleFile_SearchVM
+    partial class WinDoubleFile_SearchVM : IDisposable
     {
         internal Func<bool> IsEditBoxNonEmpty = null;
         static internal event Action<LVitem_ProjectVM, string, string> GoToFile;
@@ -16,6 +17,12 @@ namespace DoubleFile
             Icmd_FoldersAndFiles = new RelayCommand(param => SearchFoldersAndFiles(), param => IsSearchEnabled());
             Icmd_Files = new RelayCommand(param => SearchFoldersAndFiles(bSearchFilesOnly: true), param => IsSearchEnabled());
             Icmd_Goto = new RelayCommand(param => Goto(), param => null != _selectedItem);
+            TabledString.AddRef();
+        }
+
+        public void Dispose()
+        {
+            TabledString.DropRef();
         }
 
         bool IsSearchEnabled() { return IsEditBoxNonEmpty() && (null == _searchType2); }
@@ -74,7 +81,7 @@ namespace DoubleFile
                 if (null == LocalTV.GetOneNodeByRootPathA(result.StrDir, null))
                     return false;
 
-                result.ListFiles.Add(strPath.Substring(nLastBackSlashIx + 1));
+                result.ListFiles.Add(strPath.Substring(nLastBackSlashIx + 1), false);
             }
 
             _lsLVitems = new ConcurrentBag<LVitem_DoubleFile_SearchVM>();
@@ -91,32 +98,29 @@ namespace DoubleFile
                 return;
 
             _lsLVitems = new ConcurrentBag<LVitem_DoubleFile_SearchVM>();
+            TabledString.GenerationStarting();
 
-            _searchType2 = new SearchType2
-                (
-                    MainWindow.static_MainWindow.LVprojectVM,
-                    SearchText,
-                    SearchText.ToLower() != SearchText,
-                    SearchBase.FolderSpecialHandling.None,
-                    bSearchFilesOnly,
-                    null,
-                    SearchStatusCallback,
-                    SearchDoneCallback
-                )
+            _searchType2 =
+                new SearchType2
+            (
+                MainWindow.static_MainWindow.LVprojectVM,
+                SearchText,
+                SearchText.ToLower() != SearchText,
+                SearchBase.FolderSpecialHandling.None,
+                bSearchFilesOnly,
+                null,
+                SearchStatusCallback,
+                SearchDoneCallback
+            )
                 .DoThreadFactory();
         }
 
         void Goto()
         {
-            if (null != _selectedItem.SearchResultsDir)
+            if (null != _selectedItem.Directory)
             {
-                var strFile =
-                    (0 <= _selectedItem.FileIndex)
-                    ? _selectedItem.SearchResultsDir.ListFiles[_selectedItem.FileIndex]
-                    : null;
-
                 if (null != GoToFile)
-                    GoToFile(null, _selectedItem.SearchResultsDir.StrDir, strFile);
+                    GoToFile(null, _selectedItem.Directory.ToString(), _selectedItem.Filename);
             }
             else
             {
@@ -128,15 +132,17 @@ namespace DoubleFile
         {
             foreach (var searchResult in searchResults.Results)
             {
+                var Directory = PathBuilder.FactoryCreate(searchResult.StrDir);
+
                 if ((null != searchResult.ListFiles) &&
                     (false == searchResult.ListFiles.IsEmpty()))
                 {
-                    for (var nIx = 0; nIx < searchResult.ListFiles.Count; ++nIx)
-                        _lsLVitems.Add(new LVitem_DoubleFile_SearchVM { SearchResultsDir = searchResult, FileIndex = nIx });
+                    foreach (var strFile in searchResult.ListFiles.Keys)
+                        _lsLVitems.Add(new LVitem_DoubleFile_SearchVM { Directory = Directory, Filename = strFile });
                 }
                 else
                 {
-                    _lsLVitems.Add(new LVitem_DoubleFile_SearchVM { SearchResultsDir = searchResult, FileIndex = -1 });
+                    _lsLVitems.Add(new LVitem_DoubleFile_SearchVM { Directory = Directory });
                 }
             }
         }
@@ -146,6 +152,7 @@ namespace DoubleFile
             _searchType2 = null;
             UtilProject.UIthread(() => Add(_lsLVitems));
             _lsLVitems = null;
+            TabledString.GenerationEnded();
         }
 
         SearchType2

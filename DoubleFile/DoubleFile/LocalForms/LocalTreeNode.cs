@@ -13,7 +13,7 @@ namespace DoubleFile
         public LocalTreeNode[]
             Nodes { get; protected set; }
         internal virtual string
-            Text { get { return _Text; } set { _Text = value; } } TabledString _Text = null;
+            Text { get { return _Text; } set { _Text = value; } } TabledString<TypedArray0> _Text = null;
         static internal LocalTV
             TreeView { get; set; }
         internal LocalTreeNode
@@ -44,7 +44,7 @@ namespace DoubleFile
             Text = strContent;
         }
 
-        internal LocalTreeNode(TabledString strContent)
+        internal LocalTreeNode(TabledString<TypedArray0> strContent)
             : this()
         {
             Text = strContent;

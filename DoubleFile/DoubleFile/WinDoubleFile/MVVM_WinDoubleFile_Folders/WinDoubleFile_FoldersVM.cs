@@ -21,7 +21,7 @@ namespace DoubleFile
             _nCorrelateProgressDenominator = _lvProjectVM.Count;
             _tvVM = tvVM;
             _winProgress = new WinProgress(); 
-            TabledString.AddRef();
+            TabledString<TypedArray0>.AddRef();
             DoTree();
             GetTreeNodes = () => _arrTreeNodes;
         }
@@ -36,7 +36,7 @@ namespace DoubleFile
 
             _localTV.Dispose();
             GetTreeNodes = null;
-            TabledString.DropRef();
+            TabledString<TypedArray0>.DropRef();
         }
 
         readonly TreeView_DoubleFileVM

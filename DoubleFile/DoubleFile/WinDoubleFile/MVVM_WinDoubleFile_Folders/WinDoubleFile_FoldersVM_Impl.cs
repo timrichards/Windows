@@ -141,7 +141,7 @@ namespace DoubleFile
             }
 
             TreeCleanup();
-            TabledString.GenerationEnded();
+            TabledString<TypedArray0>.GenerationEnded();
             _winProgress.CloseIfNatural();
             DictNodes = null;       // saving memory here.
             _tvVM.SetData(_listRootNodes);
@@ -209,7 +209,7 @@ namespace DoubleFile
                 MainWindow.FileDictionary.DoThreadFactory(_lvProjectVM, CreateFileDictStatusCallback);
             }
 
-            TabledString.GenerationStarting();
+            TabledString<TypedArray0>.GenerationStarting();
 
             if (null == DictNodes)
                 DictNodes = new ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>();

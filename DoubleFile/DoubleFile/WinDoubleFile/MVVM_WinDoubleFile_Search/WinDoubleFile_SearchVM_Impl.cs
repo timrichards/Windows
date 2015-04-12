@@ -17,12 +17,12 @@ namespace DoubleFile
             Icmd_FoldersAndFiles = new RelayCommand(param => SearchFoldersAndFiles(), param => IsSearchEnabled());
             Icmd_Files = new RelayCommand(param => SearchFoldersAndFiles(bSearchFilesOnly: true), param => IsSearchEnabled());
             Icmd_Goto = new RelayCommand(param => Goto(), param => null != _selectedItem);
-            TabledString.AddRef();
+            TabledString<TypedArray1>.AddRef();
         }
 
         public void Dispose()
         {
-            TabledString.DropRef();
+            TabledString<TypedArray1>.DropRef();
         }
 
         bool IsSearchEnabled() { return IsEditBoxNonEmpty() && (null == _searchType2); }
@@ -98,7 +98,7 @@ namespace DoubleFile
                 return;
 
             _lsLVitems = new ConcurrentBag<LVitem_DoubleFile_SearchVM>();
-            TabledString.GenerationStarting();
+            TabledString<TypedArray1>.GenerationStarting();
 
             _searchType2 =
                 new SearchType2
@@ -132,7 +132,7 @@ namespace DoubleFile
         {
             foreach (var searchResult in searchResults.Results)
             {
-                var Directory = PathBuilder.FactoryCreate(searchResult.StrDir);
+                var Directory = PathBuilder<TypedArray1>.FactoryCreate(searchResult.StrDir);
 
                 if ((null != searchResult.ListFiles) &&
                     (false == searchResult.ListFiles.IsEmpty()))
@@ -152,7 +152,7 @@ namespace DoubleFile
             _searchType2 = null;
             UtilProject.UIthread(() => Add(_lsLVitems));
             _lsLVitems = null;
-            TabledString.GenerationEnded();
+            TabledString<TypedArray1>.GenerationEnded();
         }
 
         SearchType2

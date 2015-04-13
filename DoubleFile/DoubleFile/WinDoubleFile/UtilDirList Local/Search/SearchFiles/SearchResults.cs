@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DoubleFile
 {
     class SearchResults
     {
-        internal readonly string
+        internal readonly TabledString<TypedArray1>
             StrSearch = null;
         internal readonly LVitem_ProjectVM
             VolStrings = null;

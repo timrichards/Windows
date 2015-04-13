@@ -20,28 +20,32 @@ namespace DoubleFile
         internal Func<int, string> Get;
         internal Func<string, int> Set;
 
+        internal int
+            RefCount { get; set; }
+        internal bool
+            Generating { get; set; }
+
+        internal int
+            IndexGenerator;
         internal ConcurrentDictionary<string, int>
             DictStrings { get; set; }
         internal ConcurrentDictionary<int, string>
             DictStringsRev { get; set; }
-        internal int
-            RefCount { get; set; }
-        internal int
-            IndexGenerator;
-        internal bool
-            Generating { get; set; }
+
         internal string[]
             Strings { get; set; }
         internal int[]
             Sort { get; set; }
+
+        internal int
+            PathIxGenerator;
         internal ConcurrentDictionary<string, PathBuilderBase>
             DictPathParts { get; set; }
         internal ConcurrentDictionary<PathBuilderBase, int>
             DictPathInts { get; set; }
         internal ConcurrentDictionary<int, PathBuilderBase>
             DictPathRev { get; set; }
-        internal int
-            PathIxGenerator;
+
         internal PathBuilderBase[]
             Paths { get; set; }
         internal int[]
@@ -49,14 +53,12 @@ namespace DoubleFile
     }
 
     // can't be struct because of null
-    class TabledString<T> : IComparable<string>
+    class TabledString<T> : IComparable
         where T : TypedArrayBase, new()
     {
-        static TabledStringStatics t = null;
-
         public static implicit operator TabledString<T>(string value) { return (null == value) ? null : new TabledString<T> { nIndex = Set(value) }; }
         public static implicit operator string(TabledString<T> value) { return (null == value) ? null : Get(value.nIndex); }
-        int IComparable<string>.CompareTo(string other) { return Get(nIndex).CompareTo(other); }
+        public int CompareTo(object obj) { return Get(nIndex).CompareTo(Get(((TabledString<T>)obj).nIndex)); }
 
         internal bool Contains(TabledString<T> ustr) { return Get(nIndex).Contains(Get(ustr.nIndex)); }
         internal bool Contains(char ch) { return Get(nIndex).Contains(ch); }
@@ -65,60 +67,57 @@ namespace DoubleFile
         internal string[] Split(string[] arrStr, StringSplitOptions opts) { return Get(nIndex).Split(arrStr, opts); }
         internal bool StartsWith(string str) { return Get(nIndex).StartsWith(str); }
         internal TabledString<T> ToLower() { return Get(nIndex).ToLower(); }
-
         static internal TabledString<T> Empty { get { return string.Empty; } }
 
-        static TabledString()
+        static internal void Reinitialize()
         {
-            t = TypedArrayBase.tA[new T().Type] = new TabledStringStatics()
+            var t = TypedArrayBase.tA[new T().Type];
+            var nRefCount = 0;
+
+            if (null != t)
+                nRefCount = t.RefCount;
+
+            TypedArrayBase.tA[new T().Type] = 
+                new TabledStringStatics()
             {
+                RefCount = nRefCount,
                 Get = Get,
-                Set = Set,
+                Set = SetA,
                 Generating = true,
-                PathIxGenerator = -1
+                PathIxGenerator = -1,
+                DictStrings = new ConcurrentDictionary<string, int>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384),
+                DictStringsRev = new ConcurrentDictionary<int, string>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384),
+                DictPathParts = new ConcurrentDictionary<string, PathBuilderBase>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384),
+                DictPathInts = new ConcurrentDictionary<PathBuilderBase, int>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384),
+                DictPathRev = new ConcurrentDictionary<int, PathBuilderBase>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384)
             };
-            UtilProject.WriteLine("Type " + new T().Type);
         }
 
         static internal void AddRef()
         {
-            if (0 == t.RefCount)
-            {
-                MBoxStatic.Assert(99936, null == t.DictStrings);
-                MBoxStatic.Assert(99935, null == t.DictStringsRev);
-                MBoxStatic.Assert(99912, null == t.Strings);
-                MBoxStatic.Assert(99911, t.Generating);
-                MBoxStatic.Assert(99914, 0 == t.IndexGenerator);
-                t.DictStrings = new ConcurrentDictionary<string, int>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384);
-                t.DictStringsRev = new ConcurrentDictionary<int, string>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384);
-                t.DictPathParts = new ConcurrentDictionary<string, PathBuilderBase>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384);
-                t.DictPathInts = new ConcurrentDictionary<PathBuilderBase, int>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384);
-                t.DictPathRev = new ConcurrentDictionary<int, PathBuilderBase>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384);
-                t.Strings = null;
-                t.Generating = true;
-                t.IndexGenerator = 0;
-            }
+            if (null == TypedArrayBase.tA[new T().Type])
+                Reinitialize();
+
+            var t = TypedArrayBase.tA[new T().Type];
 
             ++t.RefCount;
         }
 
         static internal void DropRef()
         {
+            var t = TypedArrayBase.tA[new T().Type];
+
             MBoxStatic.Assert(99934, 0 < t.RefCount);
             --t.RefCount;
 
-            if (0 == t.RefCount)
-            {
-                t.DictStrings = null;
-                t.DictStringsRev = null;
-                t.Strings = null;
-                t.Generating = true;
-                t.IndexGenerator = 0;
-            }
+            if (0 <= t.RefCount)
+                TypedArrayBase.tA[new T().Type] = null;
         }
 
         static internal void GenerationStarting()
         {
+            var t = TypedArrayBase.tA[new T().Type];
+
             if (null == t.Strings)
             {
                 MBoxStatic.Assert(99915, t.Generating);
@@ -169,6 +168,8 @@ namespace DoubleFile
 
         static internal void GenerationEnded()
         {
+            var t = TypedArrayBase.tA[new T().Type];
+
             MBoxStatic.Assert(99922, t.IndexGenerator == t.DictStrings.Count);
 
             {
@@ -187,6 +188,8 @@ namespace DoubleFile
                 }
             }
 
+            t.Generating = false;
+
             {
                 var sortedPathBuilders = new SortedDictionary<PathBuilderBase, int>(t.DictPathInts);
                 var nIx = 0;
@@ -203,50 +206,33 @@ namespace DoubleFile
                     t.PathSort[-kvp.Value - 1] = nIx++;
                 }
             }
-
-            t.Generating = false;
         }
 
         static int Set(string str)
         {
-            if (str.Contains('\\'))
-            {
-                if (false == t.Generating)
-                {
-                    MBoxStatic.Assert(99917, false);
-                    return -1;
-                }
-
-                lock (t.DictPathParts)
-                {
-                    return t.DictPathParts.GetOrAdd(str, x =>
-                    {
-                        var path = PathBuilder<T>.FactoryCreate(str);
-
-                        path.nIndex = Interlocked.Decrement(ref t.PathIxGenerator) + 1;
-                        t.DictPathInts[path] = path.nIndex;
-                        t.DictPathRev[path.nIndex] = path;
-                        return path;
-                    }).nIndex;
-                }
-            }
-            else
-            {
-                return SetA(str);
-            }
+            return
+                (str.Contains('\\'))
+                ? PathBuilder<T>.FactoryCreateOrFind(str).nIndex
+                : SetA(str);
         }
 
-        static protected int SetA(string str)
+        static int SetA(string str)
         {
+            var t = TypedArrayBase.tA[new T().Type];
+
+            if (null == t)
+                return 0;
+
             if (false == t.Generating)
             {
                 var nRet = FindString(str);
 
-                if (-1 == nRet)
-                    MBoxStatic.Assert(99917, false);
-
+                MBoxStatic.Assert(99917, -1 != nRet);
                 return nRet;
             }
+
+            if (null == t)
+                return 0;
 
             lock (t.DictStrings)
             lock (t.DictStringsRev)
@@ -261,7 +247,9 @@ namespace DoubleFile
 
         static string Get(int nIndex)
         {
-            if (0 == t.RefCount)
+            var t = TypedArrayBase.tA[new T().Type];
+
+            if (null == t)
                 return null;
 
             string strRet = null;
@@ -286,6 +274,7 @@ namespace DoubleFile
 
         static protected int FindString(string str)
         {
+            var t = TypedArrayBase.tA[new T().Type];
             var nMin = 0;
             var nMax = t.Strings.Length;
 
@@ -352,25 +341,49 @@ namespace DoubleFile
     class PathBuilder<T> : PathBuilderBase
         where T : TypedArrayBase, new()
     {
-        static TabledStringStatics t = TypedArrayBase.tA[new T().Type];
-
-        internal static PathBuilder<T> FactoryCreate(string str)
+        static internal PathBuilder<T> FactoryCreateOrFind(string str)
         {
-            var aStr = str.Split('\\').ToArray();
+            var t = TypedArrayBase.tA[new T().Type];
 
-            if (1 == aStr.Length)
-                return null;
+            MBoxStatic.Assert(99917, t.Generating);
 
+            lock (t.DictPathParts)
+            {
+                return
+                    (PathBuilder<T>)
+                    t.DictPathParts.GetOrAdd(str, x =>
+                {
+                    var path = new PathBuilder<T>(str)
+                    {
+                        nIndex = Interlocked.Decrement(ref t.PathIxGenerator) + 1
+                    };
+
+                    t.DictPathInts[path] = path.nIndex;
+                    t.DictPathRev[path.nIndex] = path;
+                    return path;
+                });
+            }
+        }
+
+        PathBuilder(string str)
+        {
+            var t = TypedArrayBase.tA[new T().Type];
             var lsInts = new List<int>();
 
-            foreach (var s in aStr)
-                lsInts.Add(t.Set(s));
+            foreach (var s in str.Split('\\'))
+            {
+                // MBoxStatic.Assert(99880, false == string.IsNullOrWhiteSpace(s));
+                // Acceptable: search results dir
+                // if (false == string.IsNullOrWhiteSpace(s))
+                    lsInts.Add(t.Set(s));
+            }
 
-            return new PathBuilder<T> { PathParts = lsInts.ToArray() };
+            PathParts = lsInts.ToArray();
         }
 
         public override string ToString()
         {
+            var t = TypedArrayBase.tA[new T().Type];
             var sbRet = new StringBuilder();
 
             foreach (var nIx in PathParts)

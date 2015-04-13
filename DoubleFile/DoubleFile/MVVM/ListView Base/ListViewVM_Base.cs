@@ -38,7 +38,7 @@ namespace DoubleFile
         internal virtual bool
             Add(IEnumerable<string[]> laStr, bool bQuiet = false) { MBoxStatic.Assert(99994, false); return false; }
 
-        internal void Add(IEnumerable<ListViewItemVM_Base> lsItems, bool bQuiet = false)
+        internal void Add(IEnumerable<ListViewItemVM_Base> lsItems, bool bQuiet = false, Func<bool> Cancel = null)
         {
             var dt = DateTime.Now;
             var nCounter = 0;
@@ -46,6 +46,12 @@ namespace DoubleFile
 
             foreach (var item in lsItems)
             {
+                if ((null != Cancel) &&
+                    Cancel())
+                {
+                    return;
+                }
+
                 Add(item, bQuiet: true);
 
                 if (1000 > ++nCounter)

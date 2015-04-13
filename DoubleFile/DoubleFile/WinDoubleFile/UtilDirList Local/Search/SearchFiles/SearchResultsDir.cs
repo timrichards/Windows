@@ -5,10 +5,10 @@ namespace DoubleFile
 {
     class SearchResultsDir : IComparable
     {
-        internal string
+        internal PathBuilder<TypedArray1>
             StrDir { get; set; }
-        internal readonly SortedDictionary<string, bool>
-            ListFiles = new SortedDictionary<string, bool>();
+        internal readonly SortedDictionary<TabledString<TypedArray1>, bool>
+            ListFiles = new SortedDictionary<TabledString<TypedArray1>, bool>();
 
         public int CompareTo(object other)
         {

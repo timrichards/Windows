@@ -92,7 +92,7 @@ namespace DoubleFile
 
             if (null != LocalTV.GetOneNodeByRootPathA(strPath, null))
             {
-                result.StrDir = PathBuilder<Tabled_Files>.FactoryCreateOrFind(strPath);
+                result.StrDir = PathBuilder.FactoryCreateOrFind(strPath);
             }
             else
             {
@@ -101,7 +101,7 @@ namespace DoubleFile
                 if (2 > nLastBackSlashIx)
                     return false;
 
-                result.StrDir = PathBuilder<Tabled_Files>.FactoryCreateOrFind(strPath.Substring(0, nLastBackSlashIx));
+                result.StrDir = PathBuilder.FactoryCreateOrFind(strPath.Substring(0, nLastBackSlashIx));
 
                 if (null == LocalTV.GetOneNodeByRootPathA(result.StrDir.ToString(), null))
                     return false;
@@ -167,7 +167,7 @@ namespace DoubleFile
                 try
                 {
                     // SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
-                    var Directory = PathBuilder<Tabled_Files>.FactoryCreateOrFind(searchResult.StrDir.ToString().TrimEnd('\\'));
+                    var Directory = PathBuilder.FactoryCreateOrFind(searchResult.StrDir.ToString().TrimEnd('\\'));
 
                     if ((null != searchResult.ListFiles) &&
                         (false == searchResult.ListFiles.IsEmpty()))

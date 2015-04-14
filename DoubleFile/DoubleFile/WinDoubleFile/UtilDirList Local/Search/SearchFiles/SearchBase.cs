@@ -11,7 +11,7 @@ namespace DoubleFile
             _bSearchFilesOnly = false;
         protected string
             _strCurrentNode = null;
-        protected static SearchStatusDelegate
+        protected SearchStatusDelegate
             _statusCallback = null;
 
         internal enum FolderSpecialHandling { None, Outermost, Innermost };                     // not used
@@ -29,7 +29,7 @@ namespace DoubleFile
             _bSearchFilesOnly = searchBase._bSearchFilesOnly;
             _strCurrentNode = searchBase._strCurrentNode;
             _folderHandling = searchBase._folderHandling;
-            MBoxStatic.Assert(1307.8315, _statusCallback != null);
+            _statusCallback = searchBase._statusCallback;
         }
     }
 }

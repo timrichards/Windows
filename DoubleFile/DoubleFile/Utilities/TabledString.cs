@@ -17,9 +17,6 @@ namespace DoubleFile
 
     class TabledStringStatics
     {
-        internal Func<int, string> Get;
-        internal Func<string, int> Set;
-
         internal int
             RefCount { get; set; }
         internal bool
@@ -39,14 +36,14 @@ namespace DoubleFile
 
         internal int
             PathIxGenerator;
-        internal ConcurrentDictionary<string, PathBuilderBase>
+        internal ConcurrentDictionary<string, PathBuilder>
             DictPathParts { get; set; }
-        internal ConcurrentDictionary<PathBuilderBase, int>
+        internal ConcurrentDictionary<PathBuilder, int>
             DictPathInts { get; set; }
-        internal ConcurrentDictionary<int, PathBuilderBase>
+        internal ConcurrentDictionary<int, PathBuilder>
             DictPathRev { get; set; }
 
-        internal PathBuilderBase[]
+        internal PathBuilder[]
             Paths { get; set; }
         internal int[]
             PathSort { get; set; }
@@ -81,15 +78,13 @@ namespace DoubleFile
                 new TabledStringStatics()
             {
                 RefCount = nRefCount,
-                Get = Get,
-                Set = SetA,
                 Generating = true,
                 PathIxGenerator = -1,
                 DictStrings = new ConcurrentDictionary<string, int>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384),
                 DictStringsRev = new ConcurrentDictionary<int, string>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384),
-                DictPathParts = new ConcurrentDictionary<string, PathBuilderBase>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384),
-                DictPathInts = new ConcurrentDictionary<PathBuilderBase, int>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384),
-                DictPathRev = new ConcurrentDictionary<int, PathBuilderBase>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384)
+                DictPathParts = new ConcurrentDictionary<string, PathBuilder>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384),
+                DictPathInts = new ConcurrentDictionary<PathBuilder, int>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384),
+                DictPathRev = new ConcurrentDictionary<int, PathBuilder>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384)
             };
         }
 
@@ -145,9 +140,9 @@ namespace DoubleFile
                         t.DictStringsRev[nIx] = strA;
                     }
 
-                    t.DictPathParts = new ConcurrentDictionary<string, PathBuilderBase>(MainWindow.static_MainWindow.LVprojectVM.Count, t.Paths.Length);
-                    t.DictPathInts = new ConcurrentDictionary<PathBuilderBase, int>(MainWindow.static_MainWindow.LVprojectVM.Count, t.Paths.Length);
-                    t.DictPathRev = new ConcurrentDictionary<int, PathBuilderBase>(MainWindow.static_MainWindow.LVprojectVM.Count, t.Paths.Length);
+                    t.DictPathParts = new ConcurrentDictionary<string, PathBuilder>(MainWindow.static_MainWindow.LVprojectVM.Count, t.Paths.Length);
+                    t.DictPathInts = new ConcurrentDictionary<PathBuilder, int>(MainWindow.static_MainWindow.LVprojectVM.Count, t.Paths.Length);
+                    t.DictPathRev = new ConcurrentDictionary<int, PathBuilder>(MainWindow.static_MainWindow.LVprojectVM.Count, t.Paths.Length);
 
                     for (var nIx = 0; nIx < t.Paths.Length; ++nIx)
                     {
@@ -191,13 +186,13 @@ namespace DoubleFile
             t.Generating = false;
 
             {
-                var sortedPathBuilders = new SortedDictionary<PathBuilderBase, int>(t.DictPathInts);
+                var sortedPathBuilders = new SortedDictionary<PathBuilder, int>(t.DictPathInts);
                 var nIx = 0;
 
                 t.DictPathParts = null;
                 t.DictPathInts = null;
                 t.DictPathRev = null;
-                t.Paths = new PathBuilderBase[sortedPathBuilders.Count];
+                t.Paths = new PathBuilder[sortedPathBuilders.Count];
                 t.PathSort = new int[sortedPathBuilders.Count];
 
                 foreach (var kvp in sortedPathBuilders)
@@ -208,12 +203,20 @@ namespace DoubleFile
             }
         }
 
-        static int Set(string str)
+        static int Set(string str_in)
         {
-            return
-                (str.Contains('\\'))
-                ? PathBuilder<T>.FactoryCreateOrFind(str).nIndex
-                : SetA(str);
+            var split = str_in.Split('\\');
+
+            if (1 < split.Length)
+            {
+                foreach (var str in str_in.Split('\\'))
+                {
+                    if (0 < str.Length)
+                        SetA(str);
+                }
+            }
+
+            return SetA(str_in);
         }
 
         static int SetA(string str)
@@ -224,15 +227,7 @@ namespace DoubleFile
                 return 0;
 
             if (false == t.Generating)
-            {
-                var nRet = FindString(str);
-
-                MBoxStatic.Assert(99917, -1 != nRet);
-                return nRet;
-            }
-
-            if (null == t)
-                return 0;
+                MBoxStatic.Assert(99917, false);
 
             lock (t.DictStrings)
             lock (t.DictStringsRev)
@@ -272,52 +267,14 @@ namespace DoubleFile
             return strRet;
         }
 
-        static protected int FindString(string str)
-        {
-            var t = TypedArrayBase.tA[new T().Type];
-            var nMin = 0;
-            var nMax = t.Strings.Length;
-
-            for (; ; )
-            {
-                var nIx = nMin + ((nMax - nMin) >> 1);
-
-                switch (str.CompareTo(t.Strings[nIx]))
-                {
-                    case -1:
-                    {
-                        if (nMax == nIx)
-                            return -1;
-
-                        nMax = nIx;
-                        continue;
-                    }
-
-                    case 1:
-                    {
-                        if (nMin == nIx)
-                            return -1;
-
-                        nMin = nIx;
-                        continue;
-                    }
-
-                    case 0:
-                    {
-                        return nIx;
-                    }
-                }
-            }
-        }
-
         int nIndex = -1;
     }
 
-    abstract class PathBuilderBase : IComparable
+    class PathBuilder : IComparable
     {
         public int CompareTo(object obj)
         {
-            var that = obj as PathBuilderBase;
+            var that = obj as PathBuilder;
             
             for (var nIx = 0; ; ++nIx)
             {
@@ -334,16 +291,9 @@ namespace DoubleFile
             }
         }
 
-        internal int nIndex = -1;
-        internal int[] PathParts { get; set; }
-    }
-
-    class PathBuilder<T> : PathBuilderBase
-        where T : TypedArrayBase, new()
-    {
-        static internal PathBuilder<T> FactoryCreateOrFind(string str, Action Cancel = null)
+        static internal PathBuilder FactoryCreateOrFind(string str, Action Cancel = null)
         {
-            var t = TypedArrayBase.tA[new T().Type];
+            var t = TypedArrayBase.tA[new Tabled_Files().Type];
 
             try
             {
@@ -355,10 +305,9 @@ namespace DoubleFile
                 lock (t.DictPathParts)
                 {
                     return
-                        (PathBuilder<T>)
                         t.DictPathParts.GetOrAdd(str, x =>
                     {
-                        var path = new PathBuilder<T>(str)
+                        var path = new PathBuilder(str)
                         {
                             nIndex = Interlocked.Decrement(ref t.PathIxGenerator) + 1
                         };
@@ -380,7 +329,7 @@ namespace DoubleFile
 
         PathBuilder(string str)
         {
-            var t = TypedArrayBase.tA[new T().Type];
+            var t = TypedArrayBase.tA[new Tabled_Folders().Type];
             var lsInts = new List<int>();
 
             foreach (var s in str.Split('\\'))
@@ -388,7 +337,10 @@ namespace DoubleFile
                 // MBoxStatic.Assert(99880, false == string.IsNullOrWhiteSpace(s));
                 // Acceptable: search results dir
                 // if (false == string.IsNullOrWhiteSpace(s))
-                    lsInts.Add(t.Set(s));
+                if (string.IsNullOrWhiteSpace(s))
+                    lsInts.Add(-1);
+                else
+                    lsInts.Add(FindString(s));
             }
 
             PathParts = lsInts.ToArray();
@@ -396,13 +348,58 @@ namespace DoubleFile
 
         public override string ToString()
         {
-            var t = TypedArrayBase.tA[new T().Type];
+            var t = TypedArrayBase.tA[new Tabled_Folders().Type];
             var sbRet = new StringBuilder();
 
             foreach (var nIx in PathParts)
-                sbRet.Append(t.Get(nIx)).Append('\\');
+            {
+                if (-1 != nIx)
+                    sbRet.Append(t.Strings[nIx]);
+
+                sbRet.Append('\\');
+            }
 
             return sbRet.ToString().TrimEnd('\\');
         }
+
+        static protected int FindString(string str)
+        {
+            var t = TypedArrayBase.tA[new Tabled_Folders().Type];
+            var nMin = 0;
+            var nMax = t.Strings.Length;
+
+            for (; ; )
+            {
+                var nShift = (nMax - nMin) >> 1;
+
+                if (0 == nShift)
+                    return -1;
+
+                var nIx = nMin + nShift;
+
+                switch (str.CompareTo(t.Strings[nIx]))
+                {
+                    case -1:
+                    {
+                        nMax = nIx;
+                        continue;
+                    }
+
+                    case 1:
+                    {
+                        nMin = nIx;
+                        continue;
+                    }
+
+                    case 0:
+                    {
+                        return nIx;
+                    }
+                }
+            }
+        }
+
+        internal int nIndex = -1;
+        internal int[] PathParts { get; set; }
     }
 }

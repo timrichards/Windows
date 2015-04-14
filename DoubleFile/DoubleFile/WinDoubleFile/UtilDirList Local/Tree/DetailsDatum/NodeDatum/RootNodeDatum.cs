@@ -2,14 +2,14 @@
 {
     class RootNodeDatum : NodeDatum
     {
-        internal TabledString<Tabled_Folders>
+        internal string
             ListingFile { get; private set; }
-        internal TabledString<Tabled_Folders>
+        internal string
             VolumeGroup { get; set; }
-        internal TabledString<Tabled_Folders>
+        internal string
             Root { get; private set; }
 
-        internal TabledString<Tabled_Folders>
+        internal string
             RootPath { get; private set; }
 
         internal bool

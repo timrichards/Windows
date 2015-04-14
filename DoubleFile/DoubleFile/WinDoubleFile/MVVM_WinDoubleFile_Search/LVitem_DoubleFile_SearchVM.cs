@@ -6,7 +6,7 @@ namespace DoubleFile
 {
     class LVitem_DoubleFile_SearchVM : ListViewItemVM_Base
     {
-        internal PathBuilder<Tabled_Files> Directory { get { return _datum as PathBuilder<Tabled_Files>; } set { _datum = value; } }
+        internal PathBuilder Directory { get { return _datum as PathBuilder; } set { _datum = value; } }
         internal LocalTreeNode LocalTreeNode { get { return _datum as LocalTreeNode; } set { _datum = value; } }
         object _datum = null;
 

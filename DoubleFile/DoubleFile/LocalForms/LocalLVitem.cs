@@ -9,9 +9,9 @@ namespace DoubleFile
 {
     class LocalLVitem : LocalColorItemBase
     {
-        internal TabledString<TypedArray0>
+        internal TabledString<Tabled_Folders>
             Text { get; set; }
-        internal TabledString<TypedArray0>
+        internal TabledString<Tabled_Folders>
             Name { get; set; }
         //internal LocalLVitem
         //    IgnoreLVItem { get; set; }

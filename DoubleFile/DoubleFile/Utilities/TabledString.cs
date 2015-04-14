@@ -12,8 +12,8 @@ namespace DoubleFile
         internal abstract int Type { get; }
         internal static TabledStringStatics[] tA = new TabledStringStatics[2];
     }
-    class TypedArray0 : TypedArrayBase { internal override int Type { get { return 0; } } }
-    class TypedArray1 : TypedArrayBase { internal override int Type { get { return 1; } } }
+    class Tabled_Folders : TypedArrayBase { internal override int Type { get { return 0; } } }
+    class Tabled_Files : TypedArrayBase { internal override int Type { get { return 1; } } }
 
     class TabledStringStatics
     {
@@ -58,7 +58,7 @@ namespace DoubleFile
     {
         public static implicit operator TabledString<T>(string value) { return (null == value) ? null : new TabledString<T> { nIndex = Set(value) }; }
         public static implicit operator string(TabledString<T> value) { return (null == value) ? null : Get(value.nIndex); }
-        public int CompareTo(object obj) { return Get(nIndex).CompareTo(Get(((TabledString<T>)obj).nIndex)); }
+        public int CompareTo(object obj) { return (Get(nIndex) + "").CompareTo(Get(((TabledString<T>)obj).nIndex)); }
 
         internal bool Contains(TabledString<T> ustr) { return Get(nIndex).Contains(Get(ustr.nIndex)); }
         internal bool Contains(char ch) { return Get(nIndex).Contains(ch); }
@@ -341,27 +341,40 @@ namespace DoubleFile
     class PathBuilder<T> : PathBuilderBase
         where T : TypedArrayBase, new()
     {
-        static internal PathBuilder<T> FactoryCreateOrFind(string str)
+        static internal PathBuilder<T> FactoryCreateOrFind(string str, Action Cancel = null)
         {
             var t = TypedArrayBase.tA[new T().Type];
 
-            MBoxStatic.Assert(99917, t.Generating);
-
-            lock (t.DictPathParts)
+            try
             {
-                return
-                    (PathBuilder<T>)
-                    t.DictPathParts.GetOrAdd(str, x =>
-                {
-                    var path = new PathBuilder<T>(str)
-                    {
-                        nIndex = Interlocked.Decrement(ref t.PathIxGenerator) + 1
-                    };
+                if (null == t)
+                    throw new NullReferenceException();
 
-                    t.DictPathInts[path] = path.nIndex;
-                    t.DictPathRev[path.nIndex] = path;
-                    return path;
-                });
+                MBoxStatic.Assert(99917, t.Generating);
+
+                lock (t.DictPathParts)
+                {
+                    return
+                        (PathBuilder<T>)
+                        t.DictPathParts.GetOrAdd(str, x =>
+                    {
+                        var path = new PathBuilder<T>(str)
+                        {
+                            nIndex = Interlocked.Decrement(ref t.PathIxGenerator) + 1
+                        };
+
+                        t.DictPathInts[path] = path.nIndex;
+                        t.DictPathRev[path.nIndex] = path;
+                        return path;
+                    });
+                }
+            }
+            catch (NullReferenceException)
+            {
+                if (null != Cancel)
+                    Cancel();
+
+                return null;
             }
         }
 

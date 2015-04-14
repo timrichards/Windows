@@ -102,7 +102,7 @@ namespace DoubleFile
                         {
                             // SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
                             // Not here. The other case below.
-                            searchResultDir.StrDir = PathBuilder<TypedArray1>.FactoryCreateOrFind(strDir);
+                            searchResultDir.StrDir = PathBuilder<Tabled_Files>.FactoryCreateOrFind(strDir, Cancel: Abort);
                             listResults.Add(searchResultDir, false);
                             searchResultDir = null;
                         }
@@ -123,7 +123,7 @@ namespace DoubleFile
                                 searchResultDir = new SearchResultsDir();
 
                             // SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
-                            searchResultDir.StrDir = PathBuilder<TypedArray1>.FactoryCreateOrFind(strDir + '\\');
+                            searchResultDir.StrDir = PathBuilder<Tabled_Files>.FactoryCreateOrFind(strDir + '\\', Cancel: Abort);
                             listResults.Add(searchResultDir, false);
                             searchResultDir = null;
                         }

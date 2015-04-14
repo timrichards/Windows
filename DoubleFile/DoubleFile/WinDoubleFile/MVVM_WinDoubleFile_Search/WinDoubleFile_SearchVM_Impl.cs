@@ -17,13 +17,13 @@ namespace DoubleFile
             Icmd_FoldersAndFiles = new RelayCommand(param => SearchFoldersAndFiles(), param => IsSearchEnabled());
             Icmd_Files = new RelayCommand(param => SearchFoldersAndFiles(bSearchFilesOnly: true), param => IsSearchEnabled());
             Icmd_Goto = new RelayCommand(param => Goto(), param => null != _selectedItem);
-            TabledString<TypedArray1>.AddRef();
+            TabledString<Tabled_Files>.AddRef();
         }
 
         public void Dispose()
         {
             _bDisposed = true;
-            TabledString<TypedArray1>.DropRef();
+            TabledString<Tabled_Files>.DropRef();
         }
 
         bool IsSearchEnabled() { return IsEditBoxNonEmpty() && (null == _searchType2); }
@@ -66,7 +66,7 @@ namespace DoubleFile
                 return;
 
             _dictResults = new SortedDictionary<SearchResultsDir, bool>();
-            TabledString<TypedArray1>.GenerationStarting();
+            TabledString<Tabled_Files>.GenerationStarting();
 
             _searchType2 =
                 new SearchType2
@@ -86,13 +86,13 @@ namespace DoubleFile
         bool Reinitialize_And_FullPathFound(string strPath)
         {
             UtilProject.UIthread(Items.Clear);
-            TabledString<TypedArray1>.Reinitialize();
+            TabledString<Tabled_Files>.Reinitialize();
 
             var result = new SearchResultsDir();
 
             if (null != LocalTV.GetOneNodeByRootPathA(strPath, null))
             {
-                result.StrDir = PathBuilder<TypedArray1>.FactoryCreateOrFind(strPath);
+                result.StrDir = PathBuilder<Tabled_Files>.FactoryCreateOrFind(strPath);
             }
             else
             {
@@ -101,7 +101,7 @@ namespace DoubleFile
                 if (2 > nLastBackSlashIx)
                     return false;
 
-                result.StrDir = PathBuilder<TypedArray1>.FactoryCreateOrFind(strPath.Substring(0, nLastBackSlashIx));
+                result.StrDir = PathBuilder<Tabled_Files>.FactoryCreateOrFind(strPath.Substring(0, nLastBackSlashIx));
 
                 if (null == LocalTV.GetOneNodeByRootPathA(result.StrDir.ToString(), null))
                     return false;
@@ -130,8 +130,27 @@ namespace DoubleFile
 
         void SearchStatusCallback(SearchResults searchResults, bool bFirst = false, bool bLast = false)
         {
-            foreach (var result in searchResults.Results)
-                _dictResults.Add(result, false);
+            try
+            {
+                foreach (var result in searchResults.Results)
+                    _dictResults.Add(result, false);
+            }
+            catch (Exception ex)
+            {
+                if ((ex is ArgumentNullException) ||
+                    (ex is NullReferenceException))
+                {
+                    if (null != _searchType2)
+                        _searchType2.EndThread();
+
+                    _searchType2 = null;
+                    _dictResults = null;
+                    Dispose();
+                    return;
+                }
+
+                throw;
+            }
         }
 
         void SearchDoneCallback()
@@ -148,7 +167,7 @@ namespace DoubleFile
                 try
                 {
                     // SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
-                    var Directory = PathBuilder<TypedArray1>.FactoryCreateOrFind(searchResult.StrDir.ToString().TrimEnd('\\'));
+                    var Directory = PathBuilder<Tabled_Files>.FactoryCreateOrFind(searchResult.StrDir.ToString().TrimEnd('\\'));
 
                     if ((null != searchResult.ListFiles) &&
                         (false == searchResult.ListFiles.IsEmpty()))
@@ -172,6 +191,7 @@ namespace DoubleFile
                         (ex is NullReferenceException))
                     {
                         MBoxStatic.Assert(99878, _bDisposed);
+                        _dictResults = null;
                         return;
                     }
 
@@ -191,7 +211,7 @@ namespace DoubleFile
 
             try
             {
-                TabledString<TypedArray1>.GenerationEnded();
+                TabledString<Tabled_Files>.GenerationEnded();
             }
             catch (NullReferenceException)
             {

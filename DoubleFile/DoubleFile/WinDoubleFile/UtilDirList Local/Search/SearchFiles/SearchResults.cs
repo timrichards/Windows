@@ -5,7 +5,7 @@ namespace DoubleFile
 {
     class SearchResults
     {
-        internal readonly TabledString<TypedArray1>
+        internal readonly TabledString<Tabled_Files>
             StrSearch = null;
         internal readonly LVitem_ProjectVM
             VolStrings = null;

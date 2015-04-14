@@ -6,11 +6,11 @@ namespace DoubleFile
 {
     class LVitem_DoubleFile_SearchVM : ListViewItemVM_Base
     {
-        internal PathBuilder<TypedArray1> Directory { get { return _datum as PathBuilder<TypedArray1>; } set { _datum = value; } }
+        internal PathBuilder<Tabled_Files> Directory { get { return _datum as PathBuilder<Tabled_Files>; } set { _datum = value; } }
         internal LocalTreeNode LocalTreeNode { get { return _datum as LocalTreeNode; } set { _datum = value; } }
         object _datum = null;
 
-        internal TabledString<TypedArray1> Filename { get; set; }
+        internal TabledString<Tabled_Files> Filename { get; set; }
 
         public string Results
         {

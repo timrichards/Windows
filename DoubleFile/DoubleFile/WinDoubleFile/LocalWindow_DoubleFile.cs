@@ -77,9 +77,9 @@ namespace DoubleFile
 
         internal bool ShowWindows()
         {
-            if ((null != _chainedWindow) &&
-                (false == _chainedWindow.LocalIsClosed))
+            if (null != _chainedWindow)
             {
+                MBoxStatic.Assert(99877, false == _chainedWindow.LocalIsClosed);
                 return _chainedWindow.ShowWindows();
             }
 
@@ -87,6 +87,9 @@ namespace DoubleFile
 
             if (null == _chainedWindow)
                 return false;
+
+            Observable.FromEventPattern(_chainedWindow, "Closed")
+                .Subscribe(args => _chainedWindow = null);
 
             _chainedWindow.Show();
             return true;
@@ -107,6 +110,7 @@ namespace DoubleFile
 
             PosAtClose = new Rect(Left, Top, Width, Height);
             MainWindow.static_lastPlacementWindow = null;
+            _leftWindow = null;
         }
 
         LocalWindow_DoubleFile _chainedWindow = null;

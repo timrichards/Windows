@@ -34,19 +34,8 @@ namespace DoubleFile
         internal int[]
             Sort { get; set; }
 
-        internal int
-            PathIxGenerator;
         internal ConcurrentDictionary<string, PathBuilder>
             DictPathParts { get; set; }
-        internal ConcurrentDictionary<PathBuilder, int>
-            DictPathInts { get; set; }
-        internal ConcurrentDictionary<int, PathBuilder>
-            DictPathRev { get; set; }
-
-        internal PathBuilder[]
-            Paths { get; set; }
-        internal int[]
-            PathSort { get; set; }
     }
 
     // can't be struct because of null
@@ -79,12 +68,6 @@ namespace DoubleFile
             {
                 RefCount = nRefCount,
                 Generating = true,
-                PathIxGenerator = -1,
-                DictStrings = new ConcurrentDictionary<string, int>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384),
-                DictStringsRev = new ConcurrentDictionary<int, string>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384),
-                DictPathParts = new ConcurrentDictionary<string, PathBuilder>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384),
-                DictPathInts = new ConcurrentDictionary<PathBuilder, int>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384),
-                DictPathRev = new ConcurrentDictionary<int, PathBuilder>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384)
             };
         }
 
@@ -113,9 +96,13 @@ namespace DoubleFile
         {
             var t = TypedArrayBase.tA[new T().Type];
 
+            t.DictPathParts = new ConcurrentDictionary<string, PathBuilder>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384);
+
             if (null == t.Strings)
             {
                 MBoxStatic.Assert(99915, t.Generating);
+                t.DictStrings = new ConcurrentDictionary<string, int>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384);
+                t.DictStringsRev = new ConcurrentDictionary<int, string>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384);
                 return;
             }
 
@@ -140,20 +127,6 @@ namespace DoubleFile
                         t.DictStringsRev[nIx] = strA;
                     }
 
-                    t.DictPathParts = new ConcurrentDictionary<string, PathBuilder>(MainWindow.static_MainWindow.LVprojectVM.Count, t.Paths.Length);
-                    t.DictPathInts = new ConcurrentDictionary<PathBuilder, int>(MainWindow.static_MainWindow.LVprojectVM.Count, t.Paths.Length);
-                    t.DictPathRev = new ConcurrentDictionary<int, PathBuilder>(MainWindow.static_MainWindow.LVprojectVM.Count, t.Paths.Length);
-
-                    for (var nIx = 0; nIx < t.Paths.Length; ++nIx)
-                    {
-                        var path = t.Paths[nIx];
-                        var nIxPath = -nIx - 1;
-
-                        t.DictPathParts[path.ToString()] = path;
-                        t.DictPathInts[path] = nIxPath;
-                        t.DictPathRev[nIxPath] = path;
-                    }
-
                     t.Generating = true;
                 }
             }
@@ -165,42 +138,25 @@ namespace DoubleFile
         {
             var t = TypedArrayBase.tA[new T().Type];
 
+            t.DictPathParts = null;
             MBoxStatic.Assert(99922, t.IndexGenerator == t.DictStrings.Count);
 
+            var sortedStrings = new SortedDictionary<string, int>(t.DictStrings);
+
+            t.DictStrings = null;
+            t.DictStringsRev = null;
+            t.Strings = new string[sortedStrings.Count];
+            t.Sort = new int[sortedStrings.Count];
+
+            var nIx = 0;
+
+            foreach (var kvp in sortedStrings)
             {
-                var sortedStrings = new SortedDictionary<string, int>(t.DictStrings);
-                var nIx = 0;
-
-                t.DictStrings = null;
-                t.DictStringsRev = null;
-                t.Strings = new string[sortedStrings.Count];
-                t.Sort = new int[sortedStrings.Count];
-
-                foreach (var kvp in sortedStrings)
-                {
-                    t.Strings[nIx] = kvp.Key;
-                    t.Sort[kvp.Value] = nIx++;
-                }
+                t.Strings[nIx] = kvp.Key;
+                t.Sort[kvp.Value] = nIx++;
             }
 
             t.Generating = false;
-
-            {
-                var sortedPathBuilders = new SortedDictionary<PathBuilder, int>(t.DictPathInts);
-                var nIx = 0;
-
-                t.DictPathParts = null;
-                t.DictPathInts = null;
-                t.DictPathRev = null;
-                t.Paths = new PathBuilder[sortedPathBuilders.Count];
-                t.PathSort = new int[sortedPathBuilders.Count];
-
-                foreach (var kvp in sortedPathBuilders)
-                {
-                    t.Paths[nIx] = kvp.Key;
-                    t.PathSort[-kvp.Value - 1] = nIx++;
-                }
-            }
         }
 
         static int Set(string str_in)
@@ -247,24 +203,10 @@ namespace DoubleFile
             if (null == t)
                 return null;
 
-            string strRet = null;
-
-            if (t.Generating)
-            {
-                if (-1 < nIndex)
-                    strRet = t.DictStringsRev[nIndex];
-                else
-                    strRet = t.DictPathRev[nIndex].ToString();
-            }
-            else
-            {
-                if (-1 < nIndex)
-                    strRet = t.Strings[t.Sort[nIndex]];
-                else
-                    strRet = t.Paths[t.PathSort[-nIndex - 1]].ToString();
-            }
-
-            return strRet;
+            return
+                (t.Generating)
+                ? t.DictStringsRev[nIndex]
+                : t.Strings[t.Sort[nIndex]];
         }
 
         int nIndex = -1;
@@ -305,17 +247,8 @@ namespace DoubleFile
                 lock (t.DictPathParts)
                 {
                     return
-                        t.DictPathParts.GetOrAdd(str, x =>
-                    {
-                        var path = new PathBuilder(str)
-                        {
-                            nIndex = Interlocked.Decrement(ref t.PathIxGenerator) + 1
-                        };
-
-                        t.DictPathInts[path] = path.nIndex;
-                        t.DictPathRev[path.nIndex] = path;
-                        return path;
-                    });
+                        t.DictPathParts
+                        .GetOrAdd(str, x => new PathBuilder(str));
                 }
             }
             catch (NullReferenceException)
@@ -399,7 +332,6 @@ namespace DoubleFile
             }
         }
 
-        internal int nIndex = -1;
         internal int[] PathParts { get; set; }
     }
 }

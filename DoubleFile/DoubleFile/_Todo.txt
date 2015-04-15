@@ -1,3 +1,2 @@
 ﻿99874 next assert(s)
-                MBoxStatic.Assert(99877, t.DictStringsRev.Count > nIx);
                 MBoxStatic.Assert(99876, t.DictStrings.Count >= nIx);

@@ -2,11 +2,24 @@
 using System.Windows.Threading;
 using System.Windows;
 using System.Reactive.Linq;
+using FirstFloor.ModernUI.Windows.Controls;
+using System.Windows.Controls;
 
 namespace DoubleFile
 {
-    public class LocalWindow : Window
+    public class LocalUserControl : UserControl
     {
+        internal bool LocalIsClosed { get; private set; }
+        internal bool LocalIsClosing { get; private set; }
+
+        internal bool? LocalDialogResult { get; set; }
+        internal void CloseIfSimulatingModal() { }
+    }
+
+    public class LocalWindow : ModernWindow
+    {
+    //    public string LogoData { get; set; }
+
         internal bool LocalIsClosed { get; private set; }
         internal bool LocalIsClosing { get; private set; }
 
@@ -90,6 +103,17 @@ namespace DoubleFile
             {
                 return;
             }
+
+            ////WindowStyle = System.Windows.WindowStyle.None;
+
+            //var chrome = new WindowChrome();
+            //chrome.CornerRadius = new System.Windows.CornerRadius(50);
+            //chrome.GlassFrameThickness = new System.Windows.Thickness(20);
+            //chrome.ResizeBorderThickness = new System.Windows.Thickness(20);
+            //chrome.UseAeroCaptionButtons = true;
+            //chrome.CaptionHeight = 40;
+            //chrome.NonClientFrameEdges = NonClientFrameEdges.None;
+            //WindowChrome.SetWindowChrome(this, chrome);
 
             Owner = MainWindow.static_Dialog;
             base.Show();

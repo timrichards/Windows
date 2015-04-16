@@ -9,7 +9,7 @@ namespace DoubleFile
     /// </summary>
     public partial class WinDoubleFile_TreeList
     {
-        internal WinDoubleFile_TreeList()
+        public WinDoubleFile_TreeList()
         {
             InitializeComponent();
 

@@ -76,8 +76,8 @@ namespace DoubleFile
                 volumes = new WinProject(LVprojectVM);
             }
 
-            if (false == (volumes.ShowDialog() ?? false))
-                return;
+            //if (false == (volumes.ShowDialog() ?? false))
+            //    return;
 
             if (null == volumes.LVprojectVM)
                 return;

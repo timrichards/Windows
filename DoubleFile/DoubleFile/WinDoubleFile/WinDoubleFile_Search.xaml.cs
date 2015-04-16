@@ -10,7 +10,7 @@ namespace DoubleFile
     /// </summary>
     partial class WinDoubleFile_Search
     {
-        internal WinDoubleFile_Search()
+        public WinDoubleFile_Search()
         {
             InitializeComponent();
             

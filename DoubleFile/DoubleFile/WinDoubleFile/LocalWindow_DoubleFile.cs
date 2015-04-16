@@ -1,6 +1,7 @@
 ﻿using System.Reactive.Linq;
 using System.Windows;
 using System;
+using System.Windows.Shell;
 
 namespace DoubleFile
 {
@@ -9,11 +10,6 @@ namespace DoubleFile
         protected override void PositionWindow()
         {
             base.PositionWindow();
-
-            //var chrome = new System.Windows.Shell.WindowChrome();
-            //chrome.CornerRadius = new System.Windows.CornerRadius(0);
-            //chrome.GlassFrameThickness = new System.Windows.Thickness(1);
-            WindowStyle = WindowStyle.ToolWindow;
 
             var lastWin = MainWindow.static_lastPlacementWindow ?? MainWindow.static_MainWindow;
             var bUseLastWindow = true;
@@ -62,6 +58,7 @@ namespace DoubleFile
                 return;
             }
 
+            WindowStyle = WindowStyle.ToolWindow;
             base.Show();
             
             if (Rect.Empty != PosAtClose)

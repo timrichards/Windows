@@ -56,10 +56,7 @@ namespace DoubleFile
             {
                 MBoxStatic.Assert(99990, false);
             }
-        }
 
-        internal LocalMbox(string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
-        {
             InitializeComponent();
 
             Observable.FromEventPattern(form_grid, "Loaded")
@@ -70,7 +67,11 @@ namespace DoubleFile
 
             Observable.FromEventPattern(form_btnOK, "Click")
                 .Subscribe(args => CloseIfSimulatingModal());
+        }
 
+        internal LocalMbox(string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
+            : this()
+        {
             Message = strMessage;
 
             if (null != strTitle)

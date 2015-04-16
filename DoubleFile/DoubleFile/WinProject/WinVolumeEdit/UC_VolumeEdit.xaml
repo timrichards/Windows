@@ -4,7 +4,7 @@
             xmlns:local="clr-namespace:DoubleFile"
             Background="White"
             Name="uc_VolumeEdit">
-    <Grid Name="form_grid">
+    <Grid Name="form_grid" Style="{StaticResource ContentRoot}">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="32"/>

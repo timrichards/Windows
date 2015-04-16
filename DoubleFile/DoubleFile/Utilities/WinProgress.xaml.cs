@@ -17,7 +17,7 @@ namespace DoubleFile
     {
         internal System.Func<bool> WindowClosingCallback { get; set; }
 
-        internal WinProgress()
+        public WinProgress()
         {
             InitializeComponent();
 

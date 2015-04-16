@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:DoubleFile"
         Title="Double File" Width="300" MinWidth="300" Height="300" MinHeight="50"
         SizeToContent="Height" WindowStyle="ToolWindow">
-    <Grid Name="form_grid">
+    <Grid Name="form_grid" Style="{StaticResource ContentRoot}">
         <ListView Name="form_lvProgress" IsSynchronizedWithCurrentItem="False"  ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
             <ListView.Resources>
                 <Style TargetType="ListViewItem">

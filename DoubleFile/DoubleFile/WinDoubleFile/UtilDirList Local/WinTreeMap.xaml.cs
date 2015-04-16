@@ -9,7 +9,7 @@ namespace DoubleFile
     /// </summary>
     public partial class WinTreeMap
     {
-        internal WinTreeMap()
+        public WinTreeMap()
         {
             InitializeComponent();
 

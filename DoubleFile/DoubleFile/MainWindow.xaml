@@ -33,8 +33,8 @@
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="Explore">
             <mui:LinkGroup.Links>
-                <mui:Link DisplayName="Wireframe" Source="/Pages/LayoutWireframe.xaml" />
-                <mui:Link DisplayName="Basic" Source="/Pages/LayoutBasic.xaml" />
+                <mui:Link DisplayName="Folders" Source="/WinDoubleFile/WinDoubleFile_Folders.xaml" />
+                <mui:Link DisplayName="Treemap" Source="/WinDoubleFile/UtilDirList Local/WinTreeMap.xaml" />
                 <mui:Link DisplayName="Split" Source="/Pages/LayoutSplit.xaml" />
                 <mui:Link DisplayName="List" Source="/Pages/LayoutList.xaml"  />
                 <mui:Link DisplayName="Tab" Source="/Pages/LayoutTab.xaml" />

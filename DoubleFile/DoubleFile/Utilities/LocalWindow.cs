@@ -9,11 +9,17 @@ namespace DoubleFile
 {
     public class LocalUserControl : UserControl
     {
+        public string Title { get; set; }
+
         internal bool LocalIsClosed { get; private set; }
         internal bool LocalIsClosing { get; private set; }
 
         internal bool? LocalDialogResult { get; set; }
         internal void CloseIfSimulatingModal() { }
+
+        protected virtual LocalWindow_DoubleFile CreateChainedWindow() { return null; }
+        internal ResizeMode ResizeMode;
+        virtual protected Rect PosAtClose { get; set; }
     }
 
     public class LocalWindow : ModernWindow
@@ -70,6 +76,7 @@ namespace DoubleFile
 
             if (false == bIsMainWindow)
             {
+                Style = (Style)App.Current.Resources["BlankWindow"];
                 Icon = MainWindow.static_MainWindow.Icon;
                 WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 ShowInTaskbar = false;
@@ -103,17 +110,6 @@ namespace DoubleFile
             {
                 return;
             }
-
-            ////WindowStyle = System.Windows.WindowStyle.None;
-
-            //var chrome = new WindowChrome();
-            //chrome.CornerRadius = new System.Windows.CornerRadius(50);
-            //chrome.GlassFrameThickness = new System.Windows.Thickness(20);
-            //chrome.ResizeBorderThickness = new System.Windows.Thickness(20);
-            //chrome.UseAeroCaptionButtons = true;
-            //chrome.CaptionHeight = 40;
-            //chrome.NonClientFrameEdges = NonClientFrameEdges.None;
-            //WindowChrome.SetWindowChrome(this, chrome);
 
             Owner = MainWindow.static_Dialog;
             base.Show();

@@ -1,5 +1,4 @@
 ﻿using System.Reactive.Linq;
-using System.Windows;
 using System;
 
 namespace DoubleFile

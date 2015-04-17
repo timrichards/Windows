@@ -33,7 +33,7 @@ namespace DoubleFile
             get { return _brushProgressState; }
             private set { _brushProgressState = value; RaisePropertyChanged(_ksProgressState); }
         }
-        Brush _brushProgressState = Brushes.Yellow;
+        Brush _brushProgressState = Brushes.SteelBlue;
         
         public string
             Remaining { get { return marr[5]; } private set { SetProperty(5, value); } }

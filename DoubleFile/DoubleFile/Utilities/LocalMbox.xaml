@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:DoubleFile"
         Title="Double File" Width="500" MinWidth="500" Height="170" MinHeight="170"
         SizeToContent="Height" WindowStyle="ToolWindow">
-    <Grid Name="form_grid" Style="{StaticResource ContentRoot}">
+    <Grid Name="form_grid">
         <Grid.RowDefinitions>
             <RowDefinition Height="28"/>
             <RowDefinition />

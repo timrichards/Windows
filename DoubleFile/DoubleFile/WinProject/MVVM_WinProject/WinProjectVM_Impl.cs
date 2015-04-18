@@ -81,7 +81,7 @@ namespace DoubleFile
 
             while (true)
             {
-                var newVolume = new WinVolumeNew { LVitemVolumeTemp = new LVitem_ProjectVM(lvItemVolumeTemp) };
+                var newVolume = new WinVolumeNew {LVitemVolumeTemp = new LVitem_ProjectVM(lvItemVolumeTemp)};
 
                 if (false == (newVolume.ShowDialog() ?? false))
                 {

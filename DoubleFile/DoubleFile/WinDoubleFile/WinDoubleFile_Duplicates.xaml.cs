@@ -10,7 +10,7 @@ namespace DoubleFile
     /// </summary>
     partial class WinDoubleFile_Duplicates
     {
-        public WinDoubleFile_Duplicates()
+        internal WinDoubleFile_Duplicates()
         {
             InitializeComponent();
 

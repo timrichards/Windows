@@ -4,7 +4,7 @@
         xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         xmlns:local="clr-namespace:DoubleFile"
         Title="Double File">
-    <Grid Style="{StaticResource ContentRoot}">
+    <Grid>
         <StackPanel Margin="10,10">
             <TextBlock Name="form_folder" FontWeight="Bold"/>
             <TextBlock Name="form_size"/>

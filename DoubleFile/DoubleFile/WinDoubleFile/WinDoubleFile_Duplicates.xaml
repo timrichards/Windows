@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
         Title="Duplicate Files" Width="415" Height="450">
-    <Grid Name="form_grid" Style="{StaticResource ContentRoot}">
+    <Grid Name="form_grid">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto"/>

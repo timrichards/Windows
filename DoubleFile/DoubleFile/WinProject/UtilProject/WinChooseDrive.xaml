@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
         Title="Find Yor Drive" Width="450" Height="300">
-    <Grid Style="{StaticResource ContentRoot}">
+    <Grid>
         <Label VerticalAlignment="Top" HorizontalAlignment="Stretch">Is your drive in this list?</Label>
         <ListView Name="form_lvDrives" Margin="10,30,10,60">
         </ListView>

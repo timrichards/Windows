@@ -5,7 +5,7 @@
         Title="Double File" Width="300" MinWidth="300" Height="300" MinHeight="50"
         SizeToContent="Height" WindowStyle="ToolWindow">
     <Grid Name="form_grid">
-        <ListView Name="form_lvProgress" IsSynchronizedWithCurrentItem="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
+        <ListView Name="form_lvProgress" IsSynchronizedWithCurrentItem="False"  ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
             <ListView.Resources>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -18,9 +18,7 @@
                         <StackPanel Margin="10,0,0,0">
                             <TextBlock FontWeight="Bold" Text="{Binding Nickname}" />
                             <TextBlock Text="{Binding SourcePath}" />
-                            <ProgressBar Minimum="0" Maximum="1" Height="20" IsIndeterminate="{Binding Indeterminate}"
-                                LargeChange="0.1" SmallChange="0.01"
-                                Foreground="{Binding ProgressState}" Value="{Binding Progress, Mode=OneWay}"/>
+                            <ProgressBar Foreground="{Binding ProgressState}" Value="{Binding Progress, Mode=OneWay}" Maximum="1" LargeChange="0.1" SmallChange="0.01" IsIndeterminate="{Binding Indeterminate}" Height="20" />
                             <TextBlock Text="{Binding Remaining}" />
                         </StackPanel>
                     </Border>

@@ -2,30 +2,11 @@
 using System.Windows.Threading;
 using System.Windows;
 using System.Reactive.Linq;
-using FirstFloor.ModernUI.Windows.Controls;
-using System.Windows.Controls;
 
 namespace DoubleFile
 {
-    public class LocalUserControl : UserControl
+    public class LocalWindow : Window
     {
-        public string Title { get; set; }
-
-        internal bool LocalIsClosed { get; private set; }
-        internal bool LocalIsClosing { get; private set; }
-
-        internal bool? LocalDialogResult { get; set; }
-        internal void CloseIfSimulatingModal() { }
-
-        protected virtual LocalWindow_DoubleFile CreateChainedWindow() { return null; }
-        internal ResizeMode ResizeMode;
-        virtual protected Rect PosAtClose { get; set; }
-    }
-
-    public class LocalWindow : ModernWindow
-    {
-    //    public string LogoData { get; set; }
-
         internal bool LocalIsClosed { get; private set; }
         internal bool LocalIsClosing { get; private set; }
 
@@ -76,7 +57,6 @@ namespace DoubleFile
 
             if (false == bIsMainWindow)
             {
-                Style = (Style)App.Current.Resources["BlankWindow"];
                 Icon = MainWindow.static_MainWindow.Icon;
                 WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 ShowInTaskbar = false;

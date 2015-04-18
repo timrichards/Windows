@@ -9,8 +9,9 @@ namespace DoubleFile
     /// </summary>
     partial class WinDoubleFile_Folders
     {
-        public WinDoubleFile_Folders()
+        internal WinDoubleFile_Folders(LV_ProjectVM lvProjectVM)
         {
+            _lvProjectVM = lvProjectVM;
             InitializeComponent();
 
             Observable.FromEventPattern(form_grid, "Loaded")
@@ -20,12 +21,6 @@ namespace DoubleFile
                 .Subscribe(args => Window_Closed());
 
             ResizeMode = ResizeMode.CanResize;
-        }
-
-        internal WinDoubleFile_Folders(LV_ProjectVM lvProjectVM)
-            : this()
-        {
-            _lvProjectVM = lvProjectVM;
         }
 
         private void Grid_Loaded()

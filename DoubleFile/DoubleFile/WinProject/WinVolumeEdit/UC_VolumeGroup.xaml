@@ -1,7 +1,7 @@
 ﻿<UserControl x:Class="DoubleFile.UC_VolumeGroup"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Grid Name="form_grid" Style="{StaticResource ContentRoot}">
+    <Grid Name="form_grid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="75"/>
             <ColumnDefinition Width="120"/>

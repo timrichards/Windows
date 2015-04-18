@@ -12,8 +12,11 @@ namespace DoubleFile
     {
         internal LV_ProjectVM LVprojectVM { get; private set; }
 
-        public WinProject()
+        internal WinProject(LV_ProjectVM lvProjectVM = null, bool bOpenProject = false)
         {
+            _bOpenProject = bOpenProject;
+            LVprojectVM = lvProjectVM;
+
             InitializeComponent();
 
             Observable.FromEventPattern(form_grid, "Loaded")
@@ -21,13 +24,6 @@ namespace DoubleFile
 
             Observable.FromEventPattern(form_btnOK, "Click")
                 .Subscribe(args => BtnOK_Click());
-        }
-
-        internal WinProject(LV_ProjectVM lvProjectVM = null, bool bOpenProject = false)
-            : this()
-        {
-            _bOpenProject = bOpenProject;
-            LVprojectVM = lvProjectVM;
 
             Observable.FromEventPattern<System.ComponentModel.CancelEventArgs>(this, "Closing")
                 .Subscribe(args => WinProject_Closing(args.EventArgs));

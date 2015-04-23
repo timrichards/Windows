@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive.Subjects;
+using System.Reactive.Linq;
 
 namespace DoubleFile
 {
     class LV_TreeListChildrenVM : ListViewVM_GenericBase<LVitem_TreeListVM>
     {
-        static internal event Action<LocalTreeNode> TreeListChildSelected = null;
+        static internal IObservable<LocalTreeNode>
+            TreeListChildSelected { get { return _treeListChildSelected.AsObservable(); } }
+        static readonly Subject<LocalTreeNode> _treeListChildSelected = new Subject<LocalTreeNode>();
 
         public LVitem_TreeListVM SelectedItem
         {
@@ -20,8 +24,7 @@ namespace DoubleFile
                 if (null == value)
                     return;
 
-                if (null != TreeListChildSelected)
-                    TreeListChildSelected(value.LocalTreeNode);
+                _treeListChildSelected.OnNext(value.LocalTreeNode);
 
                 SelectedItem_AllTriggers();
             }

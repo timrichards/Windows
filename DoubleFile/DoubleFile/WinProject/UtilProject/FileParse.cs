@@ -99,7 +99,7 @@ namespace DoubleFile
 
             if ((nIx = strFile.IndexOfAny(arrChar)) > -1)
             {
-                var strRet = "NTFS ASCII " + ((int)strFile[nIx]).ToString();
+                var strRet = "NTFS ASCII " + ((int)strFile[nIx]);
 
                 strFile = strFile.Replace("\n", "").Replace("\r", "").Replace("\t", "");    // program-incompatible
                 return strRet;
@@ -274,17 +274,17 @@ namespace DoubleFile
 
             if (nLength > -1)
             {
-                strLength = nLength.ToString();
+                strLength = "" + nLength;
             }
 
             if (dtCreated != null)
             {
-                strCreated = dtCreated.ToString();
+                strCreated = "" + dtCreated;
             }
 
             if (dtModified != null)
             {
-                strModified = dtModified.ToString();
+                strModified = "" + dtModified;
             }
 
             if (string.IsNullOrWhiteSpace(strDir + strFile + strCreated + strModified +
@@ -422,7 +422,7 @@ namespace DoubleFile
                     File.ReadLines(strFile)
                         .Where(s => s.StartsWith(ksLineType_Length))
                         .FirstOnlyAssert(strLine =>     // redundant parse confirms it's a number
-                            lvItem.ScannedLength = ulong.Parse(strLine.Split('\t')[knColLength]).ToString());
+                            lvItem.ScannedLength = "" + ulong.Parse(strLine.Split('\t')[knColLength]));
                 }
                 catch
                 {

@@ -3,37 +3,54 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Reactive.Linq;
 
 namespace DoubleFile
 {
     partial class WinDoubleFile_DuplicatesVM : IDisposable
     {
-        static internal event Action<LVitem_ProjectVM, string, string> GoToFile;
-        static internal event Action<IEnumerable<string>, LocalTreeNode> UpdateFileDetail;
+        static internal IObservable<Tuple<LVitem_ProjectVM, string, string>>
+            GoToFile { get { return _goToFile.AsObservable(); } }
+        static readonly Subject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new Subject<Tuple<LVitem_ProjectVM, string, string>>();
+
+        static internal IObservable<Tuple<IEnumerable<string>, LocalTreeNode>>
+            UpdateFileDetail { get { return _updateFileDetail.AsObservable(); } }
+        static readonly Subject<Tuple<IEnumerable<string>, LocalTreeNode>> _updateFileDetail = new Subject<Tuple<IEnumerable<string>, LocalTreeNode>>();
 
         internal WinDoubleFile_DuplicatesVM()
         {
             Icmd_Goto = new RelayCommand(param => Goto(), param => null != _selectedItem);
-            LV_DoubleFile_FilesVM.SelectedFileChanged += LV_DoubleFile_FilesVM_SelectedFileChanged;
+            _lsDisposable.Add(LV_DoubleFile_FilesVM.SelectedFileChanged.Subscribe(LV_DoubleFile_FilesVM_SelectedFileChanged));
         }
 
         public void Dispose()
         {
-            LV_DoubleFile_FilesVM.SelectedFileChanged -= LV_DoubleFile_FilesVM_SelectedFileChanged;
+            foreach (var d in _lsDisposable)
+                d.Dispose();
         }
 
-        void LV_DoubleFile_FilesVM_SelectedFileChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, IEnumerable<string> ieFileLine, LocalTreeNode treeNode)
+        void LV_DoubleFile_FilesVM_SelectedFileChanged(Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode> tuple)
         {
+            UtilDirList.Write("I");
             if (null != _cts)
                 _cts.Cancel();
 
+            LocalTreeNode treeNode = null;
+            IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates = null;
+            IEnumerable<string> ieFileLine = null;
+
+            if (null != tuple)
+            {
+                treeNode = tuple.Item3;
+                lsDuplicates = tuple.Item1;
+                ieFileLine = tuple.Item2;
+            }
+
             _treeNode = treeNode;
-
-            if (null != UpdateFileDetail)
-                UpdateFileDetail(ieFileLine, _treeNode);
-
+            _updateFileDetail.OnNext(Tuple.Create(ieFileLine, _treeNode));
             SelectedItem_Set(null);
             UtilProject.UIthread(Items.Clear);
 
@@ -44,13 +61,13 @@ namespace DoubleFile
             {
                 try
                 {
-                    TreeFileSelChangedA(lsDuplicates, ieFileLine);
+                    TreeFileSelChanged(lsDuplicates, ieFileLine);
                 }
                 catch (OperationCanceledException) { }
             }).Start();
         }
 
-        void TreeFileSelChangedA(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, IEnumerable<string> ieFileLine)
+        void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, IEnumerable<string> ieFileLine)
         {
             {
                 var nCheck = 0;
@@ -138,19 +155,20 @@ namespace DoubleFile
 
         internal void Goto()
         {
-            if (null == GoToFile)
-                return;
-
             if (null == _selectedItem)
             {
                 MBoxStatic.Assert(99901, false);    // binding should dim the button
                 return;
             }
 
-            GoToFile(_selectedItem.LVitem_ProjectVM, _selectedItem.Path, _selectedItem.Filename);
+            _goToFile.OnNext(Tuple.Create(_selectedItem.LVitem_ProjectVM, _selectedItem.Path, _selectedItem.Filename));
         }
 
-        CancellationTokenSource _cts = null;
-        LocalTreeNode _treeNode = null;
+        CancellationTokenSource
+            _cts = null;
+        LocalTreeNode
+            _treeNode = null;
+        List<IDisposable>
+            _lsDisposable = new List<IDisposable>();
     }
 }

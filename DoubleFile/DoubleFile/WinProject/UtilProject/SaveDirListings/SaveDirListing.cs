@@ -83,7 +83,7 @@ namespace DoubleFile
 
                 Action<Object> WriteLine = o =>
                 {
-                    var s = (o != null) ? o.ToString() : null;
+                    var s = (o != null) ? "" + o : null;
 
                     // Hack. Prevent blank line continue in FileParse.ConvertFile()
                     sb.AppendLine(string.IsNullOrWhiteSpace(s) ? " " : s.Trim());
@@ -102,7 +102,7 @@ namespace DoubleFile
                 WriteLine(strSerial);
                 WriteLine(nSize);
                 MBoxStatic.Assert(99941, nCount == knDriveInfoItems);
-                fs.WriteLine(sb.ToString().Trim());
+                fs.WriteLine(("" + sb).Trim());
             }
 
             void Hash(IEnumerable<string> listFilePaths,

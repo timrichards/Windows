@@ -8,17 +8,29 @@ using System.Threading;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace DoubleFile
 {
     [System.ComponentModel.DesignerCategory("Code")]
     class UC_TreeMap : UserControl
     {
-        static internal event Action<LocalTreeNode> TreeMapRendered = null;
-        static internal event Action<LocalTreeNode> TreeMapChildSelected = null;
-        static internal event Action<string> SelectedFile = null;
-        internal LocalWindow LocalOwner = null;
-        internal WinTreeMapVM TreeMapVM = null;
+        static internal IObservable<LocalTreeNode>
+            TreeMapRendered { get { return _treeMapRendered.AsObservable(); } }
+        static readonly Subject<LocalTreeNode> _treeMapRendered = new Subject<LocalTreeNode>();
+
+        static internal IObservable<LocalTreeNode>
+            TreeMapChildSelected { get { return _treeMapChildSelected.AsObservable(); } }
+        static readonly Subject<LocalTreeNode> _treeMapChildSelected = new Subject<LocalTreeNode>();
+
+        static internal IObservable<string>
+            SelectedFile { get { return _selectedFile.AsObservable(); } }
+        static readonly Subject<string> _selectedFile = new Subject<string>();
+
+        internal LocalWindow
+            LocalOwner = null;
+        internal WinTreeMapVM
+            TreeMapVM = null;
 
         public UC_TreeMap()
         {
@@ -33,24 +45,24 @@ namespace DoubleFile
 
             var bMouseDown = false;
 
-            Observable.FromEventPattern(this, "MouseDown")
-                .Subscribe(args => bMouseDown = true);
+            _lsDisposable.Add(Observable.FromEventPattern(this, "MouseDown")
+                .Subscribe(args => bMouseDown = true));
 
-            Observable.FromEventPattern<MouseEventArgs>(this, "MouseUp")
-                .Subscribe(args => { if (bMouseDown) { bMouseDown = false; form_tmapUserCtl_MouseUp(args.EventArgs.Location); } });
+            _lsDisposable.Add(Observable.FromEventPattern<MouseEventArgs>(this, "MouseUp")
+                .Subscribe(args => { if (bMouseDown) { bMouseDown = false; form_tmapUserCtl_MouseUp(args.EventArgs.Location); } }));
 
-            TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
-            LV_TreeListSiblingsVM.TreeListSiblingSelected += RenderA;
-            LV_TreeListChildrenVM.TreeListChildSelected += TreeListChildSelected;
-            LocalTreeNode.Selected += RenderA;
-            LV_DoubleFile_FilesVM.SelectedFileChanged += LV_DoubleFile_FilesVM_SelectedFileChanged;
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(tuple => { UtilDirList.Write("M"); RenderA(tuple.Item2); _bTreeSelect = false; }));
+            _lsDisposable.Add(LV_TreeListSiblingsVM.TreeListSiblingSelected.Subscribe(RenderB));
+            _lsDisposable.Add(LV_TreeListChildrenVM.TreeListChildSelected.Subscribe(TreeListChildSelected));
+            _lsDisposable.Add(LocalTreeNode.Selected.Subscribe(RenderC));
+            _lsDisposable.Add(LV_DoubleFile_FilesVM.SelectedFileChanged.Subscribe(LV_DoubleFile_FilesVM_SelectedFileChanged));
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(33)).Timestamp()         // 30 FPS
+            _lsDisposable.Add(Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(33)).Timestamp()         // 30 FPS
                 .Subscribe(x =>
             {
                 if (Rectangle.Empty == _rectCenter)
@@ -60,7 +72,7 @@ namespace DoubleFile
 
                 if (0 == _nInvalidateRef)
                     Invalidate(_rectCenter);
-            });
+            }));
 
             TreeMapVM.TreeNodeCallback = RenderA;
         }
@@ -82,7 +94,7 @@ namespace DoubleFile
             if (null == treeNode)
                 return;
 
-            LocalTreeNode.TreeView.SelectedNode = treeNode;
+            LocalTV.StaticTreeView.SelectedNode = treeNode;
         }
 
         internal void Clear()
@@ -118,15 +130,14 @@ namespace DoubleFile
 
         protected override void Dispose(bool disposing)
         {
+            foreach (var d in _lsDisposable)
+                d.Dispose();
+
             if (null != _bg)
                 _bg.Dispose();
 
+            _bg = null;
             WinTooltip.CloseTooltip();
-            TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
-            LV_TreeListSiblingsVM.TreeListSiblingSelected -= RenderA;
-            LV_TreeListChildrenVM.TreeListChildSelected -= TreeListChildSelected;
-            LocalTreeNode.Selected -= RenderA;
-            LV_DoubleFile_FilesVM.SelectedFileChanged -= LV_DoubleFile_FilesVM_SelectedFileChanged;
             base.Dispose(disposing);
         }
 
@@ -250,6 +261,7 @@ namespace DoubleFile
 
         void TreeListChildSelected(LocalTreeNode treeNodeChild)
         {
+            UtilDirList.Write("N");
             if (_bTreeSelect ||
                 _bSelRecAndTooltip)
             {
@@ -262,22 +274,22 @@ namespace DoubleFile
             SelRectAndTooltip(treeNodeChild);
         }
 
-        void LV_DoubleFile_FilesVM_SelectedFileChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, IEnumerable<string> ieFileLine, LocalTreeNode treeNode)
+        void LV_DoubleFile_FilesVM_SelectedFileChanged(Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode> tuple)
         {
+            UtilDirList.Write("O");
             if (_bTreeSelect ||
                 _bSelRecAndTooltip ||
-                (null == ieFileLine) ||
-                (null == treeNode))
+                (null == tuple))
             {
                 return;
             }
 
             LocalTreeMapFileNode fileNode = null;
 
-            if (null != treeNode.NodeDatum.TreeMapFiles)            // TODO: Why would this be null? (reparse point)
+            if (null != tuple.Item3.NodeDatum.TreeMapFiles)            // TODO: Why would this be null? (reparse point)
             {
-                ieFileLine
-                    .First(strFile => treeNode.NodeDatum.TreeMapFiles.Nodes
+                tuple.Item2
+                    .First(strFile => tuple.Item3.NodeDatum.TreeMapFiles.Nodes
                         .Where(treeNodeA => treeNodeA.Text == strFile)
                         .FirstOnlyAssert(treeNodeA => fileNode = treeNodeA as LocalTreeMapFileNode));
 
@@ -308,12 +320,8 @@ namespace DoubleFile
             if (bImmediateFiles)
             {
                 strFolder += " (file)";
-
-                if (null != SelectedFile)
-                {
-                    nodeTreeSelect = treeNodeChild.Parent.Parent;   // Parent is TreeMapFileListNode
-                    SelectedFile(treeNodeChild.Text);
-                }
+                nodeTreeSelect = treeNodeChild.Parent.Parent;   // Parent is TreeMapFileListNode
+                _selectedFile.OnNext(treeNodeChild.Text);
             }
 
             UtilProject.UIthread(() => WinTooltip.ShowTooltip(
@@ -331,9 +339,7 @@ namespace DoubleFile
             if (0 == _nInvalidateRef)   // jic
                 Invalidate();
 
-            if (null != TreeMapChildSelected)
-                TreeMapChildSelected(treeNodeChild);
-
+            _treeMapChildSelected.OnNext(treeNodeChild);
             _bTreeSelect = TreeSelect.DoThreadFactory(nodeTreeSelect);
             _bSelRecAndTooltip = false;
         }
@@ -542,12 +548,8 @@ namespace DoubleFile
             RenderA(treeNode);
         }
 
-        void TreeSelect_FolderDetailUpdated(IEnumerable<IEnumerable<string>> lasDetail, LocalTreeNode treeNode)
-        {
-            RenderA(treeNode);
-            _bTreeSelect = false;
-        }
-
+        void RenderB(LocalTreeNode treeNode) { UtilDirList.Write("P"); RenderA(treeNode); }
+        void RenderC(LocalTreeNode treeNode) { UtilDirList.Write("Q"); RenderA(treeNode); }
         void RenderA(LocalTreeNode treeNode)
         {
             if (_bSelRecAndTooltip ||
@@ -556,11 +558,8 @@ namespace DoubleFile
                 return;
             }
 
-            InvalidatePushRef(() => Render(treeNode));
-
-            if (null != TreeMapRendered)
-                TreeMapRendered(treeNode);
-
+            InvalidatePushRef(() => UtilProject.UIthread(() => Render(treeNode)));
+            _treeMapRendered.OnNext(treeNode);
             _bTreeSelect = TreeSelect.DoThreadFactory(treeNode);
         }
 
@@ -577,6 +576,7 @@ namespace DoubleFile
                 : treeNode.SelectedImageIndex;
 
             if ((null == _bg) ||
+                (null == _bg.Graphics) ||
                 (nPxPerSide != _rectBitmap.Size.Width))
             {
                 var dtStart_A = DateTime.Now;
@@ -1002,7 +1002,7 @@ namespace DoubleFile
                                 RecurseDrawGraph(param.Item1, param.Item2);
                                 Interlocked.Decrement(ref _nWorkerCount);
                             },
-                            new Tuple<LocalTreeNode, Rectangle>(child, rcChild)
+                            Tuple.Create(child, rcChild)
                         );
 
                         if (bStart)
@@ -1167,5 +1167,8 @@ namespace DoubleFile
             _selRect = Rectangle.Empty;
         LocalTreeNode
             _prevNode = null;
+
+        List<IDisposable>
+            _lsDisposable = new List<IDisposable>();
     }
 }

@@ -109,9 +109,9 @@ namespace DoubleFile
         {
             if (source == null) return null;
 
-            var s = string
-                .Join("", source.ToString()
-                .Where(c => Char.IsControl(c) == false))
+            var s =
+                string.Join("",
+                    ("" + source).Where(c => Char.IsControl(c) == false))
                 .Trim();
 
             return (s.Length > 0) ? s : null;

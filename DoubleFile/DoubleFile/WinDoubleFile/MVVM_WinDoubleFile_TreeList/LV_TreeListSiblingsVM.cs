@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Subjects;
+using System.Reactive.Linq;
 
 namespace DoubleFile
 {
     class LV_TreeListSiblingsVM : ListViewVM_GenericBase<LVitem_TreeListVM>, IDisposable
     {
-        static internal event Action<LocalTreeNode> TreeListSiblingSelected = null;
+        static internal IObservable<LocalTreeNode>
+            TreeListSiblingSelected { get { return _treeListSiblingSelected.AsObservable(); } }
+        static readonly Subject<LocalTreeNode> _treeListSiblingSelected = new Subject<LocalTreeNode>();
 
         public LVitem_TreeListVM SelectedItem
         {
@@ -21,9 +25,7 @@ namespace DoubleFile
                 if (null == value)
                     return;
 
-                if (null != TreeListSiblingSelected)
-                    TreeListSiblingSelected(value.LocalTreeNode);
-
+                _treeListSiblingSelected.OnNext(value.LocalTreeNode);
                 SelectedItem_AllTriggers();
             }
         }
@@ -52,12 +54,19 @@ namespace DoubleFile
         internal LV_TreeListSiblingsVM(LV_TreeListChildrenVM lvChildrenVM)
         {
             _lvChildrenVM = lvChildrenVM;
-            UC_TreeMap.TreeMapRendered += Populate;
-            UC_TreeMap.TreeMapChildSelected += UC_TreeMap_TreeMapChildSelected;
+            _lsDisposable.Add(UC_TreeMap.TreeMapRendered.Subscribe(Populate));
+            _lsDisposable.Add(UC_TreeMap.TreeMapChildSelected.Subscribe(UC_TreeMap_TreeMapChildSelected));
+        }
+
+        public void Dispose()
+        {
+            foreach (var d in _lsDisposable)
+                d.Dispose();
         }
 
         void UC_TreeMap_TreeMapChildSelected(LocalTreeNode treeNodeChild)
         {
+            UtilDirList.Write("L");
             if (_treeNode != treeNodeChild.Parent)
                 return;
 
@@ -70,17 +79,13 @@ namespace DoubleFile
                 .FirstOnlyAssert(lvItem => _lvChildrenVM.SelectedItem_Set(lvItem));
         }
 
-        public void Dispose()
-        {
-            UC_TreeMap.TreeMapRendered -= Populate;
-        }
-
         void Populate(LocalTreeNode treeNodeSel)
         {
+            UtilDirList.Write("K");
             var treeNodes =
                 (null != treeNodeSel.Parent)
                 ? treeNodeSel.Parent.Nodes
-                : LocalTreeNode.TreeView.Nodes.AsEnumerable();
+                : LocalTV.StaticTreeView.Nodes.AsEnumerable();
 
             var lsLVitems = new List<LVitem_TreeListVM>();
             LVitem_TreeListVM selectedItem = null;
@@ -115,5 +120,7 @@ namespace DoubleFile
             _treeNode = null;
         readonly LV_TreeListChildrenVM
             _lvChildrenVM = null;
+        List<IDisposable>
+            _lsDisposable = new List<IDisposable>();
     }
 }

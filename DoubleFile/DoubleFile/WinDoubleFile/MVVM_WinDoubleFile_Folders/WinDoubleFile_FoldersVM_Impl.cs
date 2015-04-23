@@ -31,9 +31,9 @@ namespace DoubleFile
             TreeCleanup();
 
             if ((false == _arrTreeNodes.IsEmpty()) &&
-                (null != LocalTreeNode.TreeView))
+                (null != LocalTV.StaticTreeView))
             {
-                LocalTreeNode.TreeView._dictVolumeInfo.Clear();
+                LocalTV.StaticTreeView._dictVolumeInfo.Clear();
             }
 
             // m_dictNodes is tested to recreate tree.
@@ -102,7 +102,10 @@ namespace DoubleFile
             }
 
             TreeCleanup();
-            _localTV._dictVolumeInfo = _dictVolumeInfo;
+            LocalTV.StaticTreeView = new LocalTV
+            {
+                _dictVolumeInfo = _dictVolumeInfo
+            };
 
             var localLVclones = new LocalLV();
             var localLVsameVol = new LocalLV();
@@ -117,7 +120,6 @@ namespace DoubleFile
 
                 var collate = new Collate(
                     DictNodes,
-                    _localTV,
                     localLVclones, localLVsameVol, localLVsolitary,
                     _listRootNodes, lsTreeNodes,
                     lsLVignore: lsLocalLVignore, bLoose: true);
@@ -231,7 +233,5 @@ namespace DoubleFile
 
         readonly Dictionary<string, string>
             _dictVolumeInfo = new Dictionary<string, string>();
-        readonly LocalTV
-            _localTV = new LocalTV();
     }
 }

@@ -114,6 +114,7 @@ namespace DoubleFile
         {
             if (Aborted)
             {
+                WindowClosingCallback = null;
                 _bClosing = true;
                 return;     // close
             }

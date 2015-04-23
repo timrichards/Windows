@@ -45,6 +45,9 @@ namespace DoubleFile
             Observable.FromEventPattern(form_btnDuplicateFileExplorer, "Click")
                 .Subscribe(args => Button_DuplicateFileExplorer_Click());
 
+            Observable.FromEventPattern(form_btnNewline, "Click")
+                .Subscribe(args => UtilProject.WriteLine());
+
             Observable.FromEventPattern(this, "MouseDown")
                 .Subscribe(args => DragMove());
 

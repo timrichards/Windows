@@ -1,4 +1,6 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows.Input;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -19,9 +21,7 @@ namespace DoubleFile
                 if (null == value)
                     return;
 
-                if (null != UpdateFileDetail)
-                    UpdateFileDetail(value.FileLine, _treeNode);
-
+                _updateFileDetail.OnNext(Tuple.Create(value.FileLine.AsEnumerable(), _treeNode));
                 SelectedItem_AllTriggers();
             }
         }

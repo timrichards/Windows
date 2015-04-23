@@ -8,35 +8,33 @@ namespace DoubleFile
     {
         internal LV_DoubleFile_FilesVM()
         {
-            TreeSelect.FileListUpdated += TreeSelect_FileList;
-            LocalTreeNode.SelectedFile += SelectedFile;
-            UC_TreeMap.SelectedFile += SelectedFile;
+            _lsDisposable.Add(TreeSelect.FileListUpdated.Subscribe(TreeSelect_FileList));
+            _lsDisposable.Add(LocalTreeNode.SelectedFile.Subscribe(SelectedFileA));
+            _lsDisposable.Add(UC_TreeMap.SelectedFile.Subscribe(SelectedFileB));
         }
 
         public void Dispose()
         {
-            TreeSelect.FileListUpdated -= TreeSelect_FileList;
-            LocalTreeNode.SelectedFile -= SelectedFile;
-            UC_TreeMap.SelectedFile -= SelectedFile;
+            foreach (var d in _lsDisposable)
+                d.Dispose();
         }
 
-        void TreeSelect_FileList(IEnumerable<string> lsFileLines, string strListingFile, LocalTreeNode treeNode)
+        void TreeSelect_FileList(Tuple<IEnumerable<string>, string, LocalTreeNode> tuple)
         {
-            if (treeNode == _treeNode)
-            {
+            UtilDirList.Write("J");
+            if (tuple.Item3 == _treeNode)
                 return;
-            }
 
             SelectedItem_Set(null);
             UtilProject.UIthread(Items.Clear);
-            _treeNode = treeNode;
+            _treeNode = tuple.Item3;
 
-            if (null == lsFileLines)
+            if (null == tuple.Item1)
                 return;
 
             var lsItems = new List<LVitem_DoubleFile_FilesVM>();
 
-            foreach (var strFileLine in lsFileLines)
+            foreach (var strFileLine in tuple.Item1)
             {
                 var asFileLine =
                     strFileLine
@@ -59,7 +57,7 @@ namespace DoubleFile
                     lvItem.LSduplicates =
                         lsDuplicates
                         .Where(dupe =>
-                            (dupe.LVitemProjectVM.ListingFile != strListingFile) ||    // exactly once every query
+                            (dupe.LVitemProjectVM.ListingFile != tuple.Item2) ||    // exactly once every query
                             (dupe.LineNumber != nLine));
 
                     lvItem.SameVolume =
@@ -77,6 +75,8 @@ namespace DoubleFile
             _strSelectedFile = null;
         }
 
+        void SelectedFileA(string strFile) { UtilDirList.Write("A"); SelectedFile(strFile); }
+        void SelectedFileB(string strFile) { UtilDirList.Write("B"); SelectedFile(strFile); }
         void SelectedFile(string strFile)
         {
             _strSelectedFile = strFile;
@@ -100,5 +100,7 @@ namespace DoubleFile
             _strSelectedFile = null;
         LocalTreeNode
             _treeNode = null;
+        List<IDisposable>
+            _lsDisposable = new List<IDisposable>();
     }
 }

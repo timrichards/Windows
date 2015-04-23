@@ -101,9 +101,9 @@ namespace DoubleFile
             {
                 var strPropName = PropertyNames[nCol];
 
-                ListViewVM_Base.SCW = 50.ToString();
+                ListViewVM_Base.SCW = "" + 50;
                 LVVM.RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there
-                ListViewVM_Base.SCW = double.NaN.ToString();
+                ListViewVM_Base.SCW = "" + double.NaN;
                 LVVM.RaisePropertyChanged("Width" + strPropName);
             }
         }

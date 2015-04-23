@@ -129,7 +129,7 @@ namespace DoubleFile
 
             if (a.Length > 0)
             {
-                a[0] = a[0].ToString().ToUpper()[0];
+                a[0] = ("" + a[0]).ToUpper()[0];
                 return string.Join("", a);
             }
 

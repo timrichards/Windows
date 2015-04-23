@@ -264,7 +264,7 @@ namespace DoubleFile
 
                     System.Action<string> Replace = s =>
                     {
-                        var astr = sbLine.ToString().Split('\t').ToList();
+                        var astr = ("" + sbLine).Split('\t').ToList();
 
                         MBoxStatic.Assert(1308.9312, astr.Count == 3);
 
@@ -296,12 +296,12 @@ namespace DoubleFile
                         bNickname_Todo = false;
                     }
 
-                    sbOut.AppendLine(sbLine.ToString());
+                    sbOut.AppendLine("" + sbLine);
                 }
 
                 if (sbOut.Length > 0)
                 {
-                    File.WriteAllText(lvItem_Orig.ListingFile, sbOut.ToString());
+                    File.WriteAllText(lvItem_Orig.ListingFile, "" + sbOut);
                 }
                 else
                 {
@@ -335,7 +335,7 @@ namespace DoubleFile
                             sbOut.Replace("\t" + driveLetterOrig + @":\", "\t" + driveLetter + @":\");
                         }
 
-                        fileWriter.Write(sbOut.ToString());
+                        fileWriter.Write("" + sbOut);
                     }
                 }
 

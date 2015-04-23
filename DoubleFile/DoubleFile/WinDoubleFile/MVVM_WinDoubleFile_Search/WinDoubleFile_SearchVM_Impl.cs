@@ -2,14 +2,19 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Subjects;
 using System.Text;
+using System.Reactive.Linq;
 
 namespace DoubleFile
 {
     partial class WinDoubleFile_SearchVM : IDisposable
     {
         internal Func<bool> IsEditBoxNonEmpty = null;
-        static internal event Action<LVitem_ProjectVM, string, string> GoToFile;
+
+        static internal IObservable<Tuple<LVitem_ProjectVM, string, string>>
+            GoToFile { get { return _goToFile.AsObservable(); } }
+        static readonly Subject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new Subject<Tuple<LVitem_ProjectVM, string, string>>();
 
         internal WinDoubleFile_SearchVM()
         {
@@ -103,7 +108,7 @@ namespace DoubleFile
 
                 result.StrDir = PathBuilder.FactoryCreateOrFind(strPath.Substring(0, nLastBackSlashIx));
 
-                if (null == LocalTV.GetOneNodeByRootPathA(result.StrDir.ToString(), null))
+                if (null == LocalTV.GetOneNodeByRootPathA("" + result.StrDir, null))
                     return false;
 
                 result.ListFiles.Add(strPath.Substring(nLastBackSlashIx + 1), false);
@@ -118,14 +123,9 @@ namespace DoubleFile
         void Goto()
         {
             if (null != _selectedItem.Directory)
-            {
-                if (null != GoToFile)
-                    GoToFile(null, _selectedItem.Directory.ToString(), _selectedItem.Filename);
-            }
+                _goToFile.OnNext(Tuple.Create((LVitem_ProjectVM)null, "" + _selectedItem.Directory, "" + _selectedItem.Filename));
             else
-            {
                 _selectedItem.LocalTreeNode.GoToFile(null);
-            }
         }
 
         void SearchStatusCallback(SearchResults searchResults, bool bFirst = false, bool bLast = false)
@@ -167,7 +167,7 @@ namespace DoubleFile
                 try
                 {
                     // SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
-                    var Directory = PathBuilder.FactoryCreateOrFind(searchResult.StrDir.ToString().TrimEnd('\\'));
+                    var Directory = PathBuilder.FactoryCreateOrFind(("" + searchResult.StrDir).TrimEnd('\\'));
 
                     if ((null != searchResult.ListFiles) &&
                         (false == searchResult.ListFiles.IsEmpty()))

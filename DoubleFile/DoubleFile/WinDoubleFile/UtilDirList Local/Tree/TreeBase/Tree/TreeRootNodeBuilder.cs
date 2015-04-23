@@ -174,7 +174,7 @@ namespace DoubleFile
                             _dictDriveInfo.Remove(_volStrings.ListingFile);
                         }
 
-                        _dictDriveInfo.Add(_volStrings.ListingFile, strBuilder.ToString().Trim('\r', '\n'));
+                        _dictDriveInfo.Add(_volStrings.ListingFile, ("" + strBuilder).Trim('\r', '\n'));
                     }
                 }
 
@@ -235,37 +235,35 @@ namespace DoubleFile
                 _statusCallback(_volStrings, rootTreeNode);
 
 #if (DEBUG && FOOBAR)
-                UtilProject.WriteLine(File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_File)).Sum(s => double.Parse(s.Split('\t')[knColLength])).ToString());
-                UtilProject.WriteLine(File.ReadLines(m_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => double.Parse(s.Split('\t')[knColLength])).ToString());
+                UtilProject.WriteLine("" + File.ReadLines(_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_File)).Sum(s => double.Parse(s.Split('\t')[knColLength])));
+                UtilProject.WriteLine("" + File.ReadLines(_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => double.Parse(s.Split('\t')[knColLength])));
 
                 ulong nScannedLength = 0;
 
                 File
-                    .ReadLines(m_volStrings.ListingFile)
+                    .ReadLines(_volStrings.ListingFile)
                     .Where(s => s.StartsWith(ksLineType_Length))
                     .FirstOnlyAssert(s => nScannedLength = ulong.Parse(s.Split('\t')[knColLength]));
 
-                UtilProject.WriteLine(nScannedLength.ToString());
+                UtilProject.WriteLine("" + nScannedLength);
 
                 ulong nTotalLength = 0;
 
                 if (rootTreeNode != null)
                 {
-                    nTotalLength = ((RootNodeDatum)rootTreeNode.Tag).nTotalLength;
+                    nTotalLength = ((RootNodeDatum)rootTreeNode.NodeDatum).TotalLength;
                 }
 
-                if (gd.WindowClosed)
-                {
+                if (App.LocalExit)
                     return;     // to avoid the below assert box
-                }
 
                 if (nScannedLength != nTotalLength)
                 {
-                    UtilProject.WriteLine(nTotalLength.ToString());
-                    MBoxStatic.Assert(1301.23101, false, "nScannedLength != nTotalLength\n" + m_volStrings.ListingFile, bTraceOnly: true);
+                    UtilProject.WriteLine("" + nTotalLength);
+                    MBoxStatic.Assert(1301.23101, false, "nScannedLength != nTotalLength\n" + _volStrings.ListingFile, bTraceOnly: true);
                 }
 
-                UtilProject.WriteLine(m_volStrings.ListingFile + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
+                UtilProject.WriteLine(_volStrings.ListingFile + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
 #endif
             }
 

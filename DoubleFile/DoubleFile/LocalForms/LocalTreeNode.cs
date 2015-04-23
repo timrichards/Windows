@@ -2,20 +2,25 @@
 using System.Linq;
 using System;
 using System.Text;
+using System.Reactive.Subjects;
+using System.Reactive.Linq;
 
 namespace DoubleFile
 {
     class LocalTreeNode : LocalColorItemBase
     {
-        static internal event Action<LocalTreeNode> Selected = null;
-        static internal event Action<string> SelectedFile = null;
+        static internal IObservable<LocalTreeNode>
+            Selected { get { return _selected.AsObservable(); } }
+        static readonly Subject<LocalTreeNode> _selected = new Subject<LocalTreeNode>();
+
+        static internal IObservable<string>
+            SelectedFile { get { return _selectedFile.AsObservable(); } }
+        static readonly Subject<string> _selectedFile = new Subject<string>();
 
         public LocalTreeNode[]
             Nodes { get; protected set; }
         internal virtual string
             Text { get { return _Text; } set { _Text = value; } } TabledString<Tabled_Folders> _Text = null;
-        static internal LocalTV
-            TreeView { get; set; }
         internal LocalTreeNode
             FirstNode { get { return ((null != Nodes) && (0 < Nodes.Length)) ? Nodes[0] : null; } }
         public virtual LocalTreeNode
@@ -58,7 +63,6 @@ namespace DoubleFile
 
         internal void DetachFromTree()
         {
-            TreeView = null;
             Level = -1;
 
             if (null == Nodes)
@@ -82,7 +86,7 @@ namespace DoubleFile
                         .Insert(0, treeNode.Text);
                 } while (null != (treeNode = treeNode.Parent));
 
-                return sbPath.ToString().TrimEnd('\\');
+                return ("" + sbPath).TrimEnd('\\');
             }
         }
 
@@ -135,11 +139,8 @@ namespace DoubleFile
 
         internal void GoToFile(string strFile)
         {
-            if (null != Selected)
-                Selected(this);
-
-            if (null != SelectedFile)
-                SelectedFile(strFile);
+            _selected.OnNext(this);
+            _selectedFile.OnNext(strFile);
         }
     }
 }

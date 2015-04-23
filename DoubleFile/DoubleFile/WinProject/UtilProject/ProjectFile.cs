@@ -20,39 +20,40 @@ namespace DoubleFile
         internal static string TempPath { get { return System.IO.Path.GetTempPath() + @"DoubleFile\"; } }
         internal static string TempPath01 { get { return TempPath.TrimEnd(new char[] { '\\' }) + "01"; } }
 
-        Process Init(Process process)
+        Process Init()
         {
-            process.StartInfo.FileName = Path.GetDirectoryName(
-                new Uri(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)
-                .LocalPath) +
-                @"\WinProject\UtilProject\7z920x86\7z.exe";
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = Path.GetDirectoryName(
+                        new Uri(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)
+                        .LocalPath) +
+                        @"\WinProject\UtilProject\7z920x86\7z.exe",
 
-            process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                }
+            };
 
-            Observable.FromEventPattern<DataReceivedEventArgs>(process, "OutputDataReceived")
-                .Subscribe(args => { UtilProject.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); });
+            _lsDisposable.Add(Observable.FromEventPattern<DataReceivedEventArgs>(process, "OutputDataReceived")
+                .Subscribe(args => { UtilProject.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
 
-            Observable.FromEventPattern<DataReceivedEventArgs>(process, "ErrorDataReceived")
-                .Subscribe(args => { UtilProject.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); });
+            _lsDisposable.Add(Observable.FromEventPattern<DataReceivedEventArgs>(process, "ErrorDataReceived")
+                .Subscribe(args => { UtilProject.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
 
             process.EnableRaisingEvents = true;
+            _lsDisposable.Add(process);
             return process;
         }
 
-        internal void OpenProject(string strProjectFilename, Action<IEnumerable<string>, bool, Func<bool>> openListingFiles)
+        internal void OpenProject(string strProjectFilename,
+            Action<IEnumerable<string>, bool, Func<bool>> openListingFiles)
         {
-            OpenProject_(strProjectFilename, openListingFiles,
-                Init(new Process()))
-                .Dispose();
-        }
+            var process = Init();
 
-        Process OpenProject_(string strProjectFilename,
-            Action<IEnumerable<string>, bool, Func<bool>> openListingFiles,
-            Process process)
-        {
             if (Directory.Exists(TempPath))                     // close box/cancel/undo
             {
                 if (Directory.Exists(TempPath01))
@@ -123,25 +124,28 @@ namespace DoubleFile
                     "and get to your listing files using a download from 7-zip.org.", "Open Project");
             }
 
-            return process;
+            foreach (var d in _lsDisposable)
+                d.Dispose();
         }
 
         internal bool SaveProject(LV_ProjectVM lvProjectVM, string strProjectFilename)
         {
             var bRet = false;
 
-            SaveProject_(lvProjectVM, strProjectFilename, out bRet,
-                Init(new Process()))
-                .Dispose();
+            SaveProject_(lvProjectVM, strProjectFilename, out bRet);
+
+            foreach (var d in _lsDisposable)
+                d.Dispose();
 
             return bRet;
         }
 
-        Process SaveProject_(LV_ProjectVM lvProjectVM,
+        void SaveProject_(LV_ProjectVM lvProjectVM,
             string strProjectFilename,
-            out bool bRet_out,
-            Process process)
+            out bool bRet_out)
         {
+            var process = Init();
+
             var listListingFiles = new List<string>();
             var listListingFiles_Check = new List<string>();
 
@@ -188,7 +192,7 @@ namespace DoubleFile
                     "Save Project");
 
                 bRet_out = false;
-                return process;
+                return;
             }
 
             var sbSource = new System.Text.StringBuilder();
@@ -284,7 +288,6 @@ namespace DoubleFile
             }
 
             bRet_out = bRet;
-            return process;
         }
 
         bool StartProcess(string status,
@@ -348,8 +351,8 @@ namespace DoubleFile
 
             var strError =
                 string
-                .Join("", _sbError
-                    .ToString()
+                .Join("",
+                    ("" + _sbError)
                     .Split('\n')
                     .SkipWhile(s => false == s.StartsWith("Error:")))
                 .Trim();
@@ -360,7 +363,7 @@ namespace DoubleFile
             if (string.IsNullOrWhiteSpace(strError))
                 strError = "Error " + strMode.ToLower() + " project.";
 
-            File.AppendAllText(_strErrorLogFile, _sbError.ToString());
+            File.AppendAllText(_strErrorLogFile, "" + _sbError);
 
             // bootstrap the window close with a delay then messagebox
             // otherwise it freezes
@@ -390,5 +393,7 @@ namespace DoubleFile
             _bProcessing = false;
         bool
             _bUserCancelled = false;
+        List<IDisposable>
+            _lsDisposable = new List<IDisposable>();
     }
 }

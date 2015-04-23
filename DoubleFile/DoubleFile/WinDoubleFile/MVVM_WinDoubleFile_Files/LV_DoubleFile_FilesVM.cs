@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive.Subjects;
+using System.Reactive.Linq;
+using System.Linq;
 
 namespace DoubleFile
 {
     partial class LV_DoubleFile_FilesVM : ListViewVM_GenericBase<LVitem_DoubleFile_FilesVM>
     {
-        internal static event Action<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode> SelectedFileChanged = null;
+        static internal IObservable<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>>
+            SelectedFileChanged { get { return _selectedFileChanged.AsObservable(); } }
+        static readonly Subject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>> _selectedFileChanged = new Subject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>>();
 
         public LVitem_DoubleFile_FilesVM SelectedItem
         {
@@ -34,13 +39,10 @@ namespace DoubleFile
         }
         void SelectedItem_AllTriggers()
         {
-            if (null != SelectedFileChanged)
-            {
-                if (null != _selectedItem)
-                    SelectedFileChanged(_selectedItem.LSduplicates, _selectedItem.FileLine, _treeNode);
-                else
-                    SelectedFileChanged(null, null, null);
-            }
+            if (null != _selectedItem)
+                _selectedFileChanged.OnNext(Tuple.Create(_selectedItem.LSduplicates, _selectedItem.FileLine.AsEnumerable(), _treeNode));
+            else
+                _selectedFileChanged.OnNext(null);
         }
         LVitem_DoubleFile_FilesVM _selectedItem = null;
 

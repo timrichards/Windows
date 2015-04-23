@@ -292,7 +292,7 @@ namespace DoubleFile
                 sbRet.Append('\\');
             }
 
-            return sbRet.ToString().TrimEnd('\\');
+            return ("" + sbRet).TrimEnd('\\');
         }
 
         static protected int FindString(string str)

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Windows;
 
 namespace DoubleFile
@@ -10,7 +12,10 @@ namespace DoubleFile
     /// </summary>
     public partial class App : Application
     {
-        static internal event Action DeactivateDidOccur;
+        static internal IObservable<bool>   // bool is a no-op: generic placeholder
+            DeactivateDidOccur { get { return _deactivateDidOccur.AsObservable(); } }
+        static readonly Subject<bool> _deactivateDidOccur = new Subject<bool>();
+
         static internal bool LocalActivated { get; private set; }
         static internal bool LocalExit { get; private set; }
 
@@ -36,7 +41,7 @@ namespace DoubleFile
                 .Subscribe(args => Application_Activated());
 
             Observable.FromEventPattern(this, "Deactivated")
-                .Subscribe(args => { LocalActivated = false; if (null != DeactivateDidOccur) DeactivateDidOccur(); });
+                .Subscribe(args => { LocalActivated = false; _deactivateDidOccur.OnNext(false); });
 
             Observable.FromEventPattern(this, "Exit")
                 .Subscribe(args => LocalExit = true);

@@ -7,29 +7,32 @@ namespace DoubleFile
     {
         internal LV_VolumeDetailVM()
         {
-            TreeSelect.VolumeDetailUpdated += TreeSelect_VolumeDetail;
+            _lsDisposable.Add(TreeSelect.VolumeDetailUpdated.Subscribe(tuple =>
+            {
+                UtilDirList.Write("H");
+                UtilProject.UIthread(() =>
+                {
+                    Title = tuple.Item2;
+                    Items.Clear();
+
+                    if (null == tuple.Item1)
+                        return;     // from lambda
+
+                    foreach (var ieLine in tuple.Item1)
+                        Add(new LVitem_VolumeDetailVM(ieLine), bQuiet: true);
+
+                    RaiseItems();
+                });
+            }));
         }
 
         public void Dispose()
         {
-            TreeSelect.VolumeDetailUpdated -= TreeSelect_VolumeDetail;
+            foreach (var d in _lsDisposable)
+                d.Dispose();
         }
 
-        void TreeSelect_VolumeDetail(IEnumerable<IEnumerable<string>> ieDetail, string strTitle)
-        {
-            UtilProject.UIthread(() =>
-            {
-                Title = strTitle;
-                Items.Clear();
-
-                if (null == ieDetail)
-                    return;     // from lambda
-
-                foreach (var ieLine in ieDetail)
-                    Add(new LVitem_VolumeDetailVM(ieLine), bQuiet: true);
-
-                RaiseItems();
-            });
-        }
+        List<IDisposable>
+            _lsDisposable = new List<IDisposable>();
     }
 }

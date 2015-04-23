@@ -7,51 +7,54 @@ namespace DoubleFile
     {
         internal LV_FolderDetailVM()
         {
-            TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(tuple =>
+            {
+                UtilDirList.Write("G");
+                UtilProject.UIthread(() =>
+                {
+                    Title = null;
+                    Items.Clear();
+
+                    foreach (var ieLine in tuple.Item1)
+                        Add(new LVitem_FolderDetailVM(ieLine), bQuiet: true);
+
+                    if (null == tuple.Item2)
+                        return;
+
+                    var strFG_Description = UtilColor.Description[tuple.Item2.ForeColor];
+                    var strBG_Description = UtilColor.Description[tuple.Item2.BackColor];
+
+                    if (false == string.IsNullOrEmpty(strFG_Description))
+                    {
+                        Add(new LVitem_FolderDetailVM(new[] { "", strFG_Description })
+                        {
+                            Foreground = UtilColor.ARGBtoBrush(tuple.Item2.ForeColor)
+                        }, bQuiet: true);
+                    }
+
+                    if (false == string.IsNullOrEmpty(strBG_Description))
+                    {
+                        Add(new LVitem_FolderDetailVM(new[] { "", strBG_Description })
+                        {
+                            Background = UtilColor.ARGBtoBrush(tuple.Item2.BackColor)
+                        }, bQuiet: true);
+                    }
+#if DEBUG
+                    Add(new LVitem_FolderDetailVM(new[] { "Hash Parity", "" + tuple.Item2.NodeDatum.HashParity }), bQuiet: true);
+#endif
+                    Title = tuple.Item2.Text;
+                    RaiseItems();
+                });
+            }));
         }
 
         public void Dispose()
         {
-            TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
+            foreach (var d in _lsDisposable)
+                d.Dispose();
         }
 
-        void TreeSelect_FolderDetailUpdated(IEnumerable<IEnumerable<string>> ieDetail, LocalTreeNode treeNode)
-        {
-            UtilProject.UIthread(() =>
-            {
-                Title = null;
-                Items.Clear();
-
-                foreach (var ieLine in ieDetail)
-                    Add(new LVitem_FolderDetailVM(ieLine), bQuiet: true);
-
-                if (null == treeNode)
-                    return;
-
-                var strFG_Description = UtilColor.Description[treeNode.ForeColor];
-                var strBG_Description = UtilColor.Description[treeNode.BackColor];
-
-                if (false == string.IsNullOrEmpty(strFG_Description))
-                {
-                    Add(new LVitem_FolderDetailVM(new[] { "", strFG_Description })
-                    {
-                        Foreground = UtilColor.ARGBtoBrush(treeNode.ForeColor)
-                    }, bQuiet: true);
-                }
-
-                if (false == string.IsNullOrEmpty(strBG_Description))
-                {
-                    Add(new LVitem_FolderDetailVM(new[] { "", strBG_Description })
-                    {
-                        Background = UtilColor.ARGBtoBrush(treeNode.BackColor)
-                    }, bQuiet: true);
-                }
-#if DEBUG
-                Add(new LVitem_FolderDetailVM(new[] { "Hash Parity", "" + treeNode.NodeDatum.HashParity }), bQuiet: true);
-#endif
-                Title = treeNode.Text;
-                RaiseItems();
-            });
-        }
+        List<IDisposable>
+            _lsDisposable = new List<IDisposable>();
     }
 }

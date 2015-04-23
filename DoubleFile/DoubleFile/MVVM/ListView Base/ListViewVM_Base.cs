@@ -90,7 +90,7 @@ namespace DoubleFile
         //    }
         //}
 
-        internal static string SCW = double.NaN.ToString();     // frankenhoek
+        internal static string SCW = "" + double.NaN;     // frankenhoek
 
         internal int Count { get { return _items.Count; } }
 

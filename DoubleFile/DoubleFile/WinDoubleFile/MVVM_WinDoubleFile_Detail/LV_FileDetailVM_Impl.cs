@@ -10,14 +10,14 @@ namespace DoubleFile
         internal LV_FileDetailVM()
         {
             Icmd_Copy = new RelayCommand(param => Copy(), param => false == string.IsNullOrEmpty(LocalPath));
-            WinDoubleFile_DuplicatesVM.UpdateFileDetail += WinDoubleFile_DuplicatesVM_UpdateFileDetail;
-            TreeSelect.FolderDetailUpdated += TreeSelect_FolderDetailUpdated;
+            _lsDisposable.Add(WinDoubleFile_DuplicatesVM.UpdateFileDetail.Subscribe(WinDoubleFile_DuplicatesVM_UpdateFileDetail));
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(tuple => { UtilDirList.Write("E"); if (null != tuple.Item2) LocalPath_Set(tuple.Item2); }));
         }
 
         public void Dispose()
         {
-            WinDoubleFile_DuplicatesVM.UpdateFileDetail -= WinDoubleFile_DuplicatesVM_UpdateFileDetail;
-            TreeSelect.FolderDetailUpdated -= TreeSelect_FolderDetailUpdated;
+            foreach (var d in _lsDisposable)
+                d.Dispose();
         }
 
         void Copy()
@@ -25,27 +25,24 @@ namespace DoubleFile
             Clipboard.SetText(LocalPath);
         }
 
-        void TreeSelect_FolderDetailUpdated(IEnumerable<IEnumerable<string>> ieDetail, LocalTreeNode treeNode)
+        void WinDoubleFile_DuplicatesVM_UpdateFileDetail(Tuple<IEnumerable<string>, LocalTreeNode> tuple = null)
         {
-            if (_treeNode != treeNode)
-                LocalPath_Set(treeNode);
-        }
+            UtilDirList.Write("F");
+            var treeNode = tuple.Item2;
 
-        void WinDoubleFile_DuplicatesVM_UpdateFileDetail(IEnumerable<string> ieFileLine = null, LocalTreeNode treeNode = null)
-        {
             _treeNode = treeNode;
             LocalPath_Set();
             Title = null;
 
             UtilProject.UIthread(Items.Clear);
 
-            if (null == ieFileLine)
+            if (null == tuple.Item1)
                 return;
 
             var kasHeader = new[] { "Filename", "Created", "Modified", "Attributes", "Length", "Error 1", "Error 2" };
 
             var asFileLine =
-                ieFileLine
+                tuple.Item1
                 .ToArray();
 
             LocalPath_Set(treeNode, asFileLine[0]);
@@ -73,6 +70,9 @@ namespace DoubleFile
             });
         }
 
-        LocalTreeNode _treeNode = null;
+        LocalTreeNode
+            _treeNode = null;
+        List<IDisposable>
+            _lsDisposable = new List<IDisposable>();
     }
 }

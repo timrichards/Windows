@@ -10,7 +10,6 @@ namespace DoubleFile
     {
         internal Collate(
             ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>> dictNodes,
-            LocalTV tvBrowse,
             LocalLV lvClones,
             LocalLV lvSameVol,
             LocalLV lvUnique,
@@ -21,7 +20,6 @@ namespace DoubleFile
         {
             _static_this = this;
             _dictNodes = dictNodes;
-            _tvBrowse = tvBrowse;
             _lvClones = lvClones;
             _lvSameVol = lvSameVol;
             _lvUnique = lvUnique;
@@ -83,10 +81,9 @@ namespace DoubleFile
                 return;
             }
 
-            _tvBrowse.Nodes = _lsRootNodes.ToArray();
-            _tvBrowse.TopNode = _lsRootNodes[0];
-            LocalTreeNode.TreeView = _tvBrowse;
-            LocalTreeNode.SetLevel(_tvBrowse.Nodes);
+            LocalTV.StaticTreeView.Nodes = _lsRootNodes.ToArray();
+            LocalTV.StaticTreeView.TopNode = _lsRootNodes[0];
+            LocalTreeNode.SetLevel(LocalTV.StaticTreeView.Nodes);
 
             if (false == _lsLVignore.IsEmpty())
             {
@@ -97,7 +94,7 @@ namespace DoubleFile
                 foreach (var lvItem in _lsLVignore)
                     sbMatch.AppendLine(lvItem.Text);
 
-                IgnoreNodeQuery(sbMatch.ToString().ToLower(), nMaxLevel, _lsRootNodes[0]);
+                IgnoreNodeQuery(("" + sbMatch).ToLower(), nMaxLevel, _lsRootNodes[0]);
                 UtilProject.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             }
 
@@ -445,9 +442,6 @@ namespace DoubleFile
 
         internal void Step2()
         {
-            if (_tvBrowse.Enabled == false)
-                _tvBrowse.Enabled = true;
-
             if (App.LocalExit || _bThreadAbort)
                 return;
 
@@ -469,16 +463,16 @@ namespace DoubleFile
             _lvSameVol.Items = _lsLVsameVol.ToArray();
             _lvSameVol.Invalidate();
 
-            if (null != _tvBrowse.SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
+            if (null != LocalTV.StaticTreeView.SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
             {
-                var treeNode = _tvBrowse.SelectedNode;
+                var treeNode = LocalTV.StaticTreeView.SelectedNode;
 
-                _tvBrowse.SelectedNode = null;
-                _tvBrowse.SelectedNode = treeNode;   // reselect in repopulated collation listviewers
+                LocalTV.StaticTreeView.SelectedNode = null;
+                LocalTV.StaticTreeView.SelectedNode = treeNode;   // reselect in repopulated collation listviewers
             }
             else
             {
-                _tvBrowse.SelectedNode = _lsRootNodes[0];
+                LocalTV.StaticTreeView.SelectedNode = _lsRootNodes[0];
             }
 
             _static_this = null;
@@ -680,7 +674,6 @@ namespace DoubleFile
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
         readonly ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
             _dictNodes = null;
-        readonly LocalTV _tvBrowse = null;
         readonly LocalLV _lvClones = null;
         readonly LocalLV _lvSameVol = null;
         readonly LocalLV _lvUnique = null;

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reactive.Linq;
 using System;
+using System.Collections.Generic;
 
 namespace DoubleFile
 {
@@ -16,17 +17,19 @@ namespace DoubleFile
         {
             _bOpenProject = bOpenProject;
             LVprojectVM = lvProjectVM;
-
             InitializeComponent();
 
-            Observable.FromEventPattern(form_grid, "Loaded")
-                .Subscribe(args => Grid_Loaded());
+            _lsDisposable.Add(Observable.FromEventPattern(form_grid, "Loaded")
+                .Subscribe(args => Grid_Loaded()));
 
-            Observable.FromEventPattern(form_btnOK, "Click")
-                .Subscribe(args => BtnOK_Click());
+            _lsDisposable.Add(Observable.FromEventPattern(form_btnOK, "Click")
+                .Subscribe(args => BtnOK_Click()));
 
-            Observable.FromEventPattern<System.ComponentModel.CancelEventArgs>(this, "Closing")
-                .Subscribe(args => WinProject_Closing(args.EventArgs));
+            _lsDisposable.Add(Observable.FromEventPattern<System.ComponentModel.CancelEventArgs>(this, "Closing")
+                .Subscribe(args => WinProject_Closing(args.EventArgs)));
+
+            _lsDisposable.Add(Observable.FromEventPattern(this, "Closed")
+                .Subscribe(args => { foreach (var d in _lsDisposable) d.Dispose(); }));
         }
 
         private void Grid_Loaded()
@@ -36,15 +39,12 @@ namespace DoubleFile
 
             form_lv.DataContext = lvProjectVM;
             DataContext = win;
-
             lvProjectVM.SelectedOne = () => form_lv.SelectedItems.HasOnlyOne();
             lvProjectVM.SelectedAny = () => (false == form_lv.SelectedItems.IsEmptyA());
             lvProjectVM.Selected = () => form_lv.SelectedItems.Cast<LVitem_ProjectVM>();
 
             if (_bOpenProject)
-            {
                 win.OpenProject();
-            }
         }
 
         private void BtnOK_Click()
@@ -60,9 +60,7 @@ namespace DoubleFile
         private void WinProject_Closing(System.ComponentModel.CancelEventArgs e)
         {
             if (LocalDialogResult ?? false)
-            {
                 return;
-            }
 
             var lvProjectVM = form_lv.DataContext as LV_ProjectVM;
             
@@ -76,6 +74,9 @@ namespace DoubleFile
             }
         }
 
-        readonly bool _bOpenProject = false;
+        readonly bool
+            _bOpenProject = false;
+        List<IDisposable>
+            _lsDisposable = new List<IDisposable>();
     }
 }

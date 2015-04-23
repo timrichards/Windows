@@ -68,7 +68,7 @@ namespace DoubleFile
             Observable.FromEventPattern(form_btnOK, "Click")
                 .Subscribe(args => BtnOK_Click());
 
-            Observable.FromEventPattern(form_btnOK, "Click")
+            Observable.FromEventPattern(form_btnCancel, "Click")
                 .Subscribe(args => CloseIfSimulatingModal());
 
             Message = strMessage;

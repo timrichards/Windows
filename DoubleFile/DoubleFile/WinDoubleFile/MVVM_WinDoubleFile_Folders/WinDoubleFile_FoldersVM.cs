@@ -28,14 +28,16 @@ namespace DoubleFile
 
         public void Dispose()
         {
+            GetTreeNodes = null;
+            LocalTV.StaticTreeView.Dispose();
+            LocalTV.StaticTreeView = null;
+
             if ((null == _lvProjectVM) ||
                 (0 == _lvProjectVM.Count))
             {
                 return;
             }
 
-            _localTV.Dispose();
-            GetTreeNodes = null;
             TabledString<Tabled_Folders>.DropRef();
         }
 

@@ -138,14 +138,14 @@ namespace DoubleFile
                             if ((null != dictHash) &&
                                 dictHash.TryGetValue(winFile.strAltFileName, out hash))
                             {
-                                strHash = hash.ToString();
+                                strHash = "" + hash;
                             }
 
                             string strError1 = null;
 
                             if (winFile.strAltFileName.Length > 260)
                             {
-                                strError1 = "Path Length: " + winFile.strAltFileName.Length.ToString();
+                                strError1 = "Path Length: " + winFile.strAltFileName.Length;
                             }
 
                             if ((null != dictException_FileRead) &&

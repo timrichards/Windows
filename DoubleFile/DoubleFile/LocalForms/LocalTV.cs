@@ -15,23 +15,28 @@ namespace DoubleFile
             SelectedNode { get; set; }
         internal LocalTreeNode
             TopNode { get; set; }
-        internal Font
-            Font { get; set; }
-        internal bool
-            CheckBoxes { get; set; }
-        internal bool
-            Enabled { get; set; }
         static internal Func<string, LVitem_ProjectVM, LocalTreeNode>
             GetOneNodeByRootPathA = null;
-        
+        static internal LocalTV
+            StaticTreeView { get; set; }
+
         internal LocalTV(IEnumerable<LocalTreeNode> lsRootNodes = null)
         {
             if (null != lsRootNodes)
                 Nodes = lsRootNodes.ToArray();
             
-            WinDoubleFile_DuplicatesVM.GoToFile += GoToFile;
-            WinDoubleFile_SearchVM.GoToFile += GoToFile;
+            _lsDisposable.Add(WinDoubleFile_DuplicatesVM.GoToFile.Subscribe(GoToFileA));
+            _lsDisposable.Add(WinDoubleFile_SearchVM.GoToFile.Subscribe(GoToFileB));
             GetOneNodeByRootPathA = (strPath, lvItemProjectVM) => GetOneNodeByRootPath.Go(strPath, Nodes, lvItemProjectVM);
+        }
+
+        public void Dispose()
+        {
+            foreach (var d in _lsDisposable)
+                d.Dispose();
+
+            GetOneNodeByRootPathA = null;
+            StaticTreeView = null;
         }
 
         internal int GetNodeCount(bool includeSubTrees = false)
@@ -57,23 +62,22 @@ namespace DoubleFile
             return nRet;
         }
 
-        private void GoToFile(LVitem_ProjectVM lvItemProjectVM, string strPath, string strFile)
+        void GoToFileA(Tuple<LVitem_ProjectVM, string, string> tuple) { UtilDirList.Write("C"); GoToFile(tuple); }
+        void GoToFileB(Tuple<LVitem_ProjectVM, string, string> tuple) { UtilDirList.Write("D"); GoToFile(tuple); }
+        private void GoToFile(Tuple<LVitem_ProjectVM, string, string> tuple)
         {
             if (null == Nodes)
                 return;
 
-            var treeNode = GetOneNodeByRootPathA(strPath, lvItemProjectVM);
+            var treeNode = GetOneNodeByRootPathA(tuple.Item2, tuple.Item1);
 
             if (null == treeNode)
                 return;
 
-            treeNode.GoToFile(strFile);
+            treeNode.GoToFile(tuple.Item3);
         }
 
-        public void Dispose()
-        {
-            WinDoubleFile_DuplicatesVM.GoToFile -= GoToFile;
-            WinDoubleFile_SearchVM.GoToFile -= GoToFile;
-        }
+        List<IDisposable>
+            _lsDisposable = new List<IDisposable>();
     }
 }

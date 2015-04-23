@@ -71,7 +71,6 @@ namespace DoubleFile
                 return;
 
             _dictResults = new SortedDictionary<SearchResultsDir, bool>();
-            TabledString<Tabled_Files>.GenerationStarting();
 
             _searchType2 =
                 new SearchType2
@@ -92,6 +91,7 @@ namespace DoubleFile
         {
             UtilProject.UIthread(Items.Clear);
             TabledString<Tabled_Files>.Reinitialize();
+            TabledString<Tabled_Files>.GenerationStarting();
 
             var result = new SearchResultsDir();
 

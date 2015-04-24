@@ -96,13 +96,13 @@ namespace DoubleFile
         {
             var t = TypedArrayBase.tA[new T().Type];
 
-            t.DictPathParts = new ConcurrentDictionary<string, PathBuilder>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384);
+            t.DictPathParts = new ConcurrentDictionary<string, PathBuilder>(MainWindow.GetMainWindow().LVprojectVM.Count, 16384);
 
             if (null == t.Strings)
             {
                 MBoxStatic.Assert(99915, t.Generating);
-                t.DictStrings = new ConcurrentDictionary<string, int>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384);
-                t.DictStringsRev = new ConcurrentDictionary<int, string>(MainWindow.static_MainWindow.LVprojectVM.Count, 16384);
+                t.DictStrings = new ConcurrentDictionary<string, int>(MainWindow.GetMainWindow().LVprojectVM.Count, 16384);
+                t.DictStringsRev = new ConcurrentDictionary<int, string>(MainWindow.GetMainWindow().LVprojectVM.Count, 16384);
                 return;
             }
 
@@ -116,8 +116,8 @@ namespace DoubleFile
                     MBoxStatic.Assert(99918, t.IndexGenerator == t.Strings.Length);
                     MBoxStatic.Assert(99916, 1 < t.RefCount);
 
-                    t.DictStrings = new ConcurrentDictionary<string, int>(MainWindow.static_MainWindow.LVprojectVM.Count, t.Strings.Length);
-                    t.DictStringsRev = new ConcurrentDictionary<int, string>(MainWindow.static_MainWindow.LVprojectVM.Count, t.Strings.Length);
+                    t.DictStrings = new ConcurrentDictionary<string, int>(MainWindow.GetMainWindow().LVprojectVM.Count, t.Strings.Length);
+                    t.DictStringsRev = new ConcurrentDictionary<int, string>(MainWindow.GetMainWindow().LVprojectVM.Count, t.Strings.Length);
 
                     for (var nIx = 0; nIx < t.Strings.Length; ++nIx)
                     {

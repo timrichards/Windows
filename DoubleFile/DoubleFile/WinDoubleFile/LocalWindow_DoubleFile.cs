@@ -15,20 +15,20 @@ namespace DoubleFile
             //chrome.GlassFrameThickness = new System.Windows.Thickness(1);
             WindowStyle = WindowStyle.ToolWindow;
 
-            var lastWin = MainWindow.static_lastPlacementWindow ?? MainWindow.static_MainWindow;
+            var lastWin = MainWindow.GetLastPlacementWindow() ?? MainWindow.GetMainWindow();
             var bUseLastWindow = true;
 
-            if (null == _leftWindow)
-                _leftWindow = MainWindow.static_MainWindow;
+            if (null == MainWindow.GetLeftWindow())
+                MainWindow.SetLeftWindow(MainWindow.GetMainWindow());
 
-            var rcMonitor = Win32Screen.GetOwnerMonitorRect(_leftWindow);
+            var leftWindow = MainWindow.GetLeftWindow();
+            var rcMonitor = Win32Screen.GetOwnerMonitorRect(leftWindow);
 
             if (-1 < _nWantsLeft)
             {
                 Left = _nWantsLeft;
                 Top = _nWantsTop;
                 _nWantsLeft = _nWantsTop = -1;
-
                 bUseLastWindow = (Left + Width > rcMonitor.Width);
             }
 
@@ -42,13 +42,13 @@ namespace DoubleFile
                 {
                     _nWantsLeft = Left;
                     _nWantsTop = Top;
-                    Left = _leftWindow.Left;
-                    Top = _leftWindow.Top + _leftWindow.Height + 5;
-                    _leftWindow = this;
+                    Left = leftWindow.Left;
+                    Top = leftWindow.Top + leftWindow.Height + 5;
+                    MainWindow.SetLeftWindow(this);
                 }
             }
 
-            MainWindow.static_lastPlacementWindow = this;
+            MainWindow.SetLastPlacementWindow(this);
 
             Observable.FromEventPattern(this, "Closed")
                 .Subscribe(args => Window_Closed());
@@ -109,15 +109,14 @@ namespace DoubleFile
             }
 
             PosAtClose = new Rect(Left, Top, Width, Height);
-            MainWindow.static_lastPlacementWindow = null;
-            _leftWindow = null;
+            MainWindow.SetLastPlacementWindow(null);
+            MainWindow.SetLeftWindow(null);
         }
 
         LocalWindow_DoubleFile _chainedWindow = null;
 
         virtual protected Rect PosAtClose { get; set; }
 
-        static LocalWindow _leftWindow = null;
         static double _nWantsLeft = -1;
         static double _nWantsTop = -1;
     }

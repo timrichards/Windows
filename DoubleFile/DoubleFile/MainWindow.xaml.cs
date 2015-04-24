@@ -13,18 +13,60 @@ namespace DoubleFile
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     partial class MainWindow
     {
-        internal LV_ProjectVM LVprojectVM { get; private set; }
+        internal LV_ProjectVM
+            LVprojectVM { get; private set; }
 
-        static internal FileDictionary FileDictionary = new FileDictionary();
-        static internal SaveDirListings _saveDirListings = null;
-        static internal MainWindow static_MainWindow { get; private set; }
-        static internal LocalWindow static_Dialog { get; set; }
-        static internal LocalWindow static_lastPlacementWindow { get; set; }
+        static internal Func<FileDictionary>
+            GetFileDictionary = null;
+        FileDictionary _fileDictionary = new FileDictionary();
 
-        public MainWindow()
-            : base(bIsMainWindow: true)
+        static internal Func<SaveDirListings>
+            GetSaveDirListings = null;
+        static internal Func<SaveDirListings, SaveDirListings>
+            SetSaveDirListings = null;
+        SaveDirListings _saveDirListings = null;
+
+        static internal Func<MainWindow>
+            GetMainWindow = null;
+
+        static internal Func<LocalWindow>
+            GetTopWindow = null;
+        static internal Func<LocalWindow, LocalWindow>
+            SetTopWindow = null;
+        LocalWindow _topWindow = null;
+
+        static internal Func<LocalWindow>
+            GetLastPlacementWindow = null;
+        static internal Func<LocalWindow, LocalWindow>
+            SetLastPlacementWindow = null;
+        LocalWindow _lastPlacementWindow = null;
+
+        static internal Func<LocalWindow>
+            GetLeftWindow = null;
+        static internal Func<LocalWindow, LocalWindow>
+            SetLeftWindow = null;
+        LocalWindow _leftWindow = null;
+
+        static Action Init = null;
+        static void GetInit(Action init) { Init = init; }
+        public
+            MainWindow()
+            : base(GetInit)
         {
-            static_MainWindow = this;
+            var weakReference = new WeakReference(this);
+
+            GetFileDictionary = () => weakReference.IsAlive ? ((MainWindow)weakReference.Target)._fileDictionary : null;
+            GetSaveDirListings = () => weakReference.IsAlive ? ((MainWindow)weakReference.Target)._saveDirListings : null;
+            SetSaveDirListings = o => weakReference.IsAlive ? ((MainWindow)weakReference.Target)._saveDirListings = o : null;
+            GetMainWindow = () => weakReference.IsAlive ? ((MainWindow)weakReference.Target) : null;
+            GetTopWindow = () => weakReference.IsAlive ? ((MainWindow)weakReference.Target)._topWindow : null;
+            SetTopWindow = o => weakReference.IsAlive ? ((MainWindow)weakReference.Target)._topWindow = o : null;
+            GetLastPlacementWindow = () => weakReference.IsAlive ? ((MainWindow)weakReference.Target)._lastPlacementWindow : null;
+            SetLastPlacementWindow = o => weakReference.IsAlive ? ((MainWindow)weakReference.Target)._lastPlacementWindow = o : null;
+            GetLeftWindow = () => weakReference.IsAlive ? ((MainWindow)weakReference.Target)._leftWindow : null;
+            SetLeftWindow = o => weakReference.IsAlive ? ((MainWindow)weakReference.Target)._leftWindow = o : null;
+            Init();
+            Init = null;
             InitializeComponent();
 
             Observable.FromEventPattern(form_grid, "Loaded")
@@ -92,7 +134,7 @@ namespace DoubleFile
 
             new SaveListingsProcess(LVprojectVM);
 
-            MainWindow.FileDictionary.Clear();
+            _fileDictionary.Clear();
 
             if ((null != _winDoubleFile_Folders) && (false == _winDoubleFile_Folders.LocalIsClosed))
             {
@@ -194,8 +236,8 @@ namespace DoubleFile
                 return;
             }
 
-            FileDictionary.Dispose();
-            FileDictionary = null;
+            _fileDictionary.Dispose();
+            GetFileDictionary = null;
 
             if (Directory.Exists(ProjectFile.TempPath))
             {

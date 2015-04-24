@@ -27,7 +27,7 @@ namespace DoubleFile
         {
             UtilProject.UIthread(() =>
             {
-                var window = window_in ?? MainWindow.static_MainWindow;
+                var window = window_in ?? MainWindow.GetMainWindow();
                 var fInfo = new FLASHWINFO
                 {
                     hwnd = new WindowInteropHelper(window).Handle,

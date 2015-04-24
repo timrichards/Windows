@@ -302,33 +302,34 @@ namespace DoubleFile
                 _bProcessing = true;
                 process.Start();
                 process.BeginOutputReadLine();
-                _winProgress = new WinProgress();
-                _winProgress.InitProgress(new[] { status }, new[] { strProjectFileNoPath });
-                _winProgress.WindowClosingCallback = () =>
+
+                (_winProgress = new WinProgress(new[] { status }, new[] { strProjectFileNoPath })
                 {
-                    if (false == _bProcessing)
-                        return true;
-
-                    var bRet = false;
-
-                    UtilProject.UIthread(() =>
+                    WindowClosingCallback = () =>
                     {
-                        if (MessageBoxResult.Yes ==
-                            MBoxStatic.ShowDialog("Do you want to cancel?", status, MessageBoxButton.YesNo, _winProgress))
+                        if (false == _bProcessing)
+                            return true;
+
+                        var bRet = false;
+
+                        UtilProject.UIthread(() =>
                         {
-                            _bUserCancelled = true;
+                            if (MessageBoxResult.Yes ==
+                                MBoxStatic.ShowDialog("Do you want to cancel?", status, MessageBoxButton.YesNo, _winProgress))
+                            {
+                                _bUserCancelled = true;
 
-                            if (false == process.HasExited)
-                                process.Kill();
+                                if (false == process.HasExited)
+                                    process.Kill();
 
-                            bRet = true;
-                        }
-                    });
+                                bRet = true;
+                            }
+                        });
 
-                    return bRet;
-                };
+                        return bRet;
+                    }
+                }).ShowDialog();
 
-                _winProgress.ShowDialog();
                 return true;
             }
 

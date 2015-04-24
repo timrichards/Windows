@@ -88,8 +88,8 @@ namespace DoubleFile
             MessageBoxButton? buttons_in = null, LocalWindow owner = null)
         {
             if (App.LocalExit ||
-                (null == MainWindow.static_MainWindow) || 
-                MainWindow.static_MainWindow.LocalIsClosed)
+                (null == MainWindow.GetMainWindow()) || 
+                MainWindow.GetMainWindow().LocalIsClosed)
             {
                 return MessageBoxResult.None;
             }
@@ -100,7 +100,7 @@ namespace DoubleFile
             var buttons = buttons_in ?? MessageBoxButton.OK;
             
             UtilProject.UIthread(() =>
-                MessageBox = new LocalMbox(owner ?? MainWindow.static_MainWindow, strMessage, strTitle, buttons));
+                MessageBox = new LocalMbox(owner ?? MainWindow.GetMainWindow(), strMessage, strTitle, buttons));
 
             UtilProject.UIthread(() => msgBoxRet = MessageBox.ShowDialog());
 

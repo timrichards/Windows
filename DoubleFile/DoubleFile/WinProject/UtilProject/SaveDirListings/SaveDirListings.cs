@@ -8,7 +8,7 @@ namespace DoubleFile
 {
     partial class SaveDirListings : FileParse
     {
-        internal int FilesWritten { get; set; }
+        internal int FilesWritten = 0;
 
         static internal bool IsGoodDriveSyntax(string strDrive)
         {

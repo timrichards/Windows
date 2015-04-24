@@ -31,16 +31,24 @@ namespace DoubleFile
                 .Subscribe(args => Window_Closing(args.EventArgs));
         }
 
-        internal void InitProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths)
+        internal WinProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths)
+            : this()
+        {
+            InitProgress(astrNicknames, astrPaths);
+        }
+
+        internal WinProgress InitProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths)
         {
             if (astrNicknames.Count() != astrPaths.Count())
             {
                 MBoxStatic.Assert(99932, false);
-                return;
+                return this;
             }
 
             for (var i = 0; i < astrPaths.Count(); ++i)
                 _lv.Add(new[] { astrNicknames.ElementAt(i), astrPaths.ElementAt(i) }, bQuiet: true);
+
+            return this;
         }
 
         internal void SetProgress(string strPath, double nProgress)

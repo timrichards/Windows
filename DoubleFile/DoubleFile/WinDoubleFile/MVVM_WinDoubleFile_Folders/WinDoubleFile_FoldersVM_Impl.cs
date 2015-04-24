@@ -44,8 +44,8 @@ namespace DoubleFile
         internal void CreateFileDictStatusCallback(bool bDone = false, double nProgress = double.NaN)
         {
             if (App.LocalExit ||
-                (null == MainWindow.FileDictionary) ||
-                MainWindow.FileDictionary.IsAborted)
+                (null == MainWindow.GetFileDictionary()) ||
+                MainWindow.GetFileDictionary().IsAborted)
             {
                 _winProgress.Aborted = true;
                 return;
@@ -66,8 +66,8 @@ namespace DoubleFile
         void TreeStatusCallback(LVitem_ProjectVM volStrings, LocalTreeNode rootNode = null, bool bError = false)
         {
             if (App.LocalExit ||
-                (null == MainWindow.FileDictionary) ||
-                MainWindow.FileDictionary.IsAborted ||
+                (null == MainWindow.GetFileDictionary()) ||
+                MainWindow.GetFileDictionary().IsAborted ||
                 ((null != Tree) && (Tree.IsAborted)))
             {
                 ClearMem_TreeForm();
@@ -166,7 +166,7 @@ namespace DoubleFile
             {
                 if (false == UtilDirList.Closure(() =>
                 {
-                    if (MainWindow.FileDictionary
+                    if (MainWindow.GetFileDictionary()
                         .IsAborted)
                     {
                         return true;
@@ -186,7 +186,7 @@ namespace DoubleFile
                     return false;
                 }
 
-                MainWindow.FileDictionary
+                MainWindow.GetFileDictionary()
                     .Abort();
                     
                 if (null != Tree)
@@ -198,12 +198,12 @@ namespace DoubleFile
 
             var lsProgressItems = new List<string>();
 
-            MainWindow.FileDictionary.ResetAbortFlag();
+            MainWindow.GetFileDictionary().ResetAbortFlag();
 
-            if (MainWindow.FileDictionary.IsEmpty)
+            if (MainWindow.GetFileDictionary().IsEmpty)
             {
                 lsProgressItems.Add(_ksFileDictKey);
-                MainWindow.FileDictionary.DoThreadFactory(_lvProjectVM, CreateFileDictStatusCallback);
+                MainWindow.GetFileDictionary().DoThreadFactory(_lvProjectVM, CreateFileDictStatusCallback);
             }
 
             TabledString<Tabled_Folders>.GenerationStarting();
@@ -217,8 +217,10 @@ namespace DoubleFile
                 .DoThreadFactory();
 
             lsProgressItems.Add(_ksFolderTreeKey);
-            _winProgress.InitProgress(new string[lsProgressItems.Count], lsProgressItems);
-            _winProgress.ShowDialog();
+
+            _winProgress
+                .InitProgress(new string[lsProgressItems.Count], lsProgressItems)
+                .ShowDialog();
         }
 
         const string _ksFileDictKey = "Creating file dictionary";

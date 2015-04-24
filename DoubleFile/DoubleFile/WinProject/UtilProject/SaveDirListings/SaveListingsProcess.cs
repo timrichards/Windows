@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 
 namespace DoubleFile
@@ -27,49 +28,46 @@ namespace DoubleFile
             }
 
             if (listSourcePaths.IsEmpty())
-            {
                 return;
-            }
 
-            m_winProgress = new WinProgress();
-            m_winProgress.InitProgress(listNicknames, listSourcePaths);
-            m_winProgress.Title = "Saving Directory Listings";
-            m_winProgress.WindowClosingCallback = () =>
+            _winProgress = new WinProgress(listNicknames, listSourcePaths)
             {
-                if (MainWindow._saveDirListings == null)
+                Title = "Saving Directory Listings",
+                WindowClosingCallback = () =>
                 {
-                    return true;
-                }
+                    if (null == MainWindow.GetSaveDirListings())
+                        return true;
 
-                if (MainWindow._saveDirListings.IsAborted)
-                {
-                    return true;
-                }
+                    if (MainWindow.GetSaveDirListings().IsAborted)
+                        return true;
 
-                if (MBoxStatic.ShowDialog("Do you want to cancel?", "Saving Directory Listings",
-                    MessageBoxButton.YesNo,
-                    m_winProgress) ==
-                    MessageBoxResult.Yes)
-                {
-                    MainWindow._saveDirListings.EndThread();
-                    return true;
-                }
+                    if (MBoxStatic.ShowDialog("Do you want to cancel?", "Saving Directory Listings",
+                        MessageBoxButton.YesNo,
+                        _winProgress) ==
+                        MessageBoxResult.Yes)
+                    {
+                        MainWindow.GetSaveDirListings().EndThread();
+                        return true;
+                    }
 
-                return false;
+                    return false;
+                }
             };
 
-            if ((null != MainWindow._saveDirListings) &&
-                (false == MainWindow._saveDirListings.IsAborted))
+            if ((null != MainWindow.GetSaveDirListings()) &&
+                (false == MainWindow.GetSaveDirListings().IsAborted))
             {
                 MBoxStatic.Assert(99940, false);
-                MainWindow._saveDirListings.EndThread();
+                MainWindow.GetSaveDirListings().EndThread();
             }
 
-            (MainWindow._saveDirListings = new SaveDirListings(
+            (MainWindow.SetSaveDirListings(new SaveDirListings(
                 lvProjectVM,
                 SaveDirListingsStatusCallback,
-                SaveDirListingsDoneCallback)).DoThreadFactory();
-            m_winProgress.ShowDialog();
+                SaveDirListingsDoneCallback))
+            ).DoThreadFactory();
+
+            _winProgress.ShowDialog();
         }
 
         internal void SaveDirListingsStatusCallback(LVitem_ProjectVM lvItemProjectVM,
@@ -77,47 +75,47 @@ namespace DoubleFile
         {
             UtilProject.UIthread(() =>
             {
-                if (App.LocalExit || (MainWindow._saveDirListings == null) || MainWindow._saveDirListings.IsAborted)
-                {
-                    m_winProgress.Aborted = true;
+                var sdl = MainWindow.GetSaveDirListings();
 
-                    if (m_bKeepShowingError == false)
-                    {
-                        m_winProgress.Close();
-                    }
+                if (App.LocalExit ||
+                    (null == sdl) ||
+                    sdl.IsAborted)
+                {
+                    _winProgress.Aborted = true;
+
+                    if (false == _bKeepShowingError)
+                        _winProgress.Close();
                     
                     return;
                 }
 
-                if (strError != null)
+                if (null != strError)
                 {
-                    m_winProgress.SetError(lvItemProjectVM.SourcePath, strError);
+                    _winProgress.SetError(lvItemProjectVM.SourcePath, strError);
                     lvItemProjectVM.Status = FileParse.ksError;
-                    m_bKeepShowingError = true;
+                    _bKeepShowingError = true;
                 }
                 else if (bDone)
                 {
-                    m_winProgress.SetCompleted(lvItemProjectVM.SourcePath);
+                    _winProgress.SetCompleted(lvItemProjectVM.SourcePath);
                     lvItemProjectVM.SetSaved();
-
-                    lock (MainWindow._saveDirListings)
-                    {
-                        ++MainWindow._saveDirListings.FilesWritten;
-                    }
+                    Interlocked.Increment(ref sdl.FilesWritten);
                 }
                 else if (nProgress >= 0)
                 {
-                    m_winProgress.SetProgress(lvItemProjectVM.SourcePath, nProgress);
+                    _winProgress.SetProgress(lvItemProjectVM.SourcePath, nProgress);
                 }
             });
         }
 
         internal void SaveDirListingsDoneCallback()
         {
-            MainWindow._saveDirListings = null;
+            MainWindow.SetSaveDirListings(null);
         }
 
-        WinProgress m_winProgress = null;
-        bool m_bKeepShowingError = false;
+        WinProgress
+            _winProgress = null;
+        bool
+            _bKeepShowingError = false;
     }
 }

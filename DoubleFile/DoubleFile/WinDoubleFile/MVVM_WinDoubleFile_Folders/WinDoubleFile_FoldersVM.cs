@@ -24,9 +24,12 @@ namespace DoubleFile
             _nCorrelateProgressDenominator = _lvProjectVM.Count;
             _tvVM = tvVM;
             TabledString<Tabled_Folders>.AddRef();
-            GetLocalTV = () => _localTV;
+
+            var weakReference = new WeakReference(this);
+
+            GetLocalTV = () => weakReference.IsAlive ? ((WinDoubleFile_FoldersVM)weakReference.Target)._localTV : null;
             DoTree();
-            GetTreeNodes = () => _arrTreeNodes;
+            GetTreeNodes = () => weakReference.IsAlive ? ((WinDoubleFile_FoldersVM)weakReference.Target)._arrTreeNodes : null;
         }
 
         public void Dispose()

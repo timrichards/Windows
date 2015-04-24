@@ -40,7 +40,7 @@ namespace DoubleFile
             readonly internal Action closingCallback;
         }
 
-        internal static void ShowTooltip(ArgsStruct args, LocalTreeNode treeNode)
+        static internal void ShowTooltip(ArgsStruct args, LocalTreeNode treeNode)
         {
             FactoryCreateOrUpdate(args, treeNode, () =>
             {
@@ -81,7 +81,7 @@ namespace DoubleFile
             MBoxStatic.Assert(99964, null != tag);
         }
 
-        internal static void CloseTooltip()
+        static internal void CloseTooltip()
         {
             if (_bClosingTooltip)
                 return;

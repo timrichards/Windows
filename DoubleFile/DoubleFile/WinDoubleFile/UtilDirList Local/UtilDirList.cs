@@ -6,10 +6,10 @@ namespace DoubleFile
 {
     class UtilDirList : FileParse
     {
-        internal static void Closure(Action action) { action(); }
-        internal static T Closure<T>(Func<T> action) { return action(); }
+        static internal void Closure(Action action) { action(); }
+        static internal T Closure<T>(Func<T> action) { return action(); }
 
-        internal static void UIthread(Control dispatcher, Action action, object[] args = null)
+        static internal void UIthread(Control dispatcher, Action action, object[] args = null)
         {
             if ((null == dispatcher) ||
                 (dispatcher.IsDisposed))
@@ -29,7 +29,7 @@ namespace DoubleFile
                 action();
         }
 
-        internal static string DecodeAttributes(string strAttr)
+        static internal string DecodeAttributes(string strAttr)
         {
             var nAttr = (FileAttributes)Convert.ToInt32(strAttr, 16);
             var str = "";
@@ -52,12 +52,12 @@ namespace DoubleFile
             return str;
         }
 
-        internal static string FormatSize(string in_str, bool bBytes = false)
+        static internal string FormatSize(string in_str, bool bBytes = false)
         {
             return FormatSize(ulong.Parse(in_str ?? "0"), bBytes);
         }
 
-        internal static string FormatSize(ulong nLength, bool bBytes = false, bool bNoDecimal = false)
+        static internal string FormatSize(ulong nLength, bool bBytes = false, bool bNoDecimal = false)
         {
             var nT = nLength / 1024.0 / 1024.0 / 1024 / 1024 - .05;
             var nG = nLength / 1024.0 / 1024 / 1024 - .05;

@@ -11,7 +11,7 @@ namespace DoubleFile
         {
         }
 
-        internal static HashTuple FactoryCreate(byte[] abHash_in)
+        static internal HashTuple FactoryCreate(byte[] abHash_in)
         {
             var nIx = 16;
             var abHash = new byte[nIx];
@@ -22,7 +22,7 @@ namespace DoubleFile
             return Create(abHash);
         }
 
-        internal static HashTuple FactoryCreate(string strHash)
+        static internal HashTuple FactoryCreate(string strHash)
         {
             var abHash = new byte[16];
 

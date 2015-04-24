@@ -94,7 +94,7 @@ namespace DoubleFile
             if (null == treeNode)
                 return;
 
-            LocalTV.StaticTreeView.SelectedNode = treeNode;
+            WinDoubleFile_FoldersVM.GetLocalTV().SelectedNode = treeNode;
         }
 
         internal void Clear()

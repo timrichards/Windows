@@ -20,7 +20,7 @@ namespace DoubleFile
             return obj.Name == null ? 0 : obj.Name.GetHashCode();
         }
 
-        internal static void NameItems(ListView.ListViewItemCollection list)
+        static internal void NameItems(ListView.ListViewItemCollection list)
         {
             foreach (LocalLVitem item in list)
             {
@@ -33,7 +33,7 @@ namespace DoubleFile
             }
         }
 
-        internal static void MarkItemsFrom1notIn2(LocalLV lv1, LocalLV lv2)
+        static internal void MarkItemsFrom1notIn2(LocalLV lv1, LocalLV lv2)
         {
             if ((lv1.Items.IsEmpty()) || (lv2.Items.IsEmpty())) { return; }
 
@@ -47,7 +47,7 @@ namespace DoubleFile
             }
         }
 
-        internal static void SetTopItem(LocalLV lv1, LocalLV lv2)
+        static internal void SetTopItem(LocalLV lv1, LocalLV lv2)
         {
             if (lv1.TopItem == null) { return; }
             if (lv1.TopItem.Index > 0) { return; }

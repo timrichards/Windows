@@ -10,7 +10,7 @@ namespace DoubleFile
     {
         internal int FilesWritten { get; set; }
 
-        internal static bool IsGoodDriveSyntax(string strDrive)
+        static internal bool IsGoodDriveSyntax(string strDrive)
         {
             return ((strDrive.Length > 2) && char.IsLetter(strDrive[0]) && (strDrive.Substring(1, 2) == @":\"));
         }

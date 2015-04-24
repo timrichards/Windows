@@ -21,14 +21,14 @@ namespace DoubleFile
         readonly string m_strExt = null;
         internal string Filter { get { return "SearchDirLists " + Description + "|*." + m_strExt; } }
 
-        internal static SaveFileDialog SFD = null;        // TODO: remove frankenSFD
+        static internal SaveFileDialog SFD = null;        // TODO: remove frankenSFD
 
         protected string m_strPrevFile = null;
         protected string m_strFileNotDialog = null;
 
         static bool bInited = false;
 
-        internal static void Init()
+        static internal void Init()
         {
             if (bInited)
             {

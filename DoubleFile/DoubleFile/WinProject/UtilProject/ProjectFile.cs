@@ -14,11 +14,11 @@ namespace DoubleFile
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     class ProjectFile
     {
-        internal static event Func<string> OnSavingProject = null;
-        internal static event Action OnOpenedProject = null;
+        static internal event Func<string> OnSavingProject = null;
+        static internal event Action OnOpenedProject = null;
 
-        internal static string TempPath { get { return System.IO.Path.GetTempPath() + @"DoubleFile\"; } }
-        internal static string TempPath01 { get { return TempPath.TrimEnd(new char[] { '\\' }) + "01"; } }
+        static internal string TempPath { get { return System.IO.Path.GetTempPath() + @"DoubleFile\"; } }
+        static internal string TempPath01 { get { return TempPath.TrimEnd(new char[] { '\\' }) + "01"; } }
 
         Process Init()
         {

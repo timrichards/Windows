@@ -19,7 +19,7 @@ namespace DoubleFile
         static internal bool LocalActivated { get; private set; }
         static internal bool LocalExit { get; private set; }
 
-        internal static bool CanFlashWindow_ResetsIt
+        static internal bool CanFlashWindow_ResetsIt
         {
             get
             {

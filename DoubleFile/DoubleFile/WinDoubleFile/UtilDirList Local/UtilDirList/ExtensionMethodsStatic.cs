@@ -4,7 +4,7 @@ namespace DoubleFile
 {
     static partial class ExtensionMethodsStatic
     {
-        internal static RectangleF Scale(this Rectangle rc_in, SizeF scale)
+        static internal RectangleF Scale(this Rectangle rc_in, SizeF scale)
         {
             RectangleF rc = rc_in;
 

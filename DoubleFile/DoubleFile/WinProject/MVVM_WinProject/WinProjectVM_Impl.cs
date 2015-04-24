@@ -10,12 +10,12 @@ namespace DoubleFile
     {
         // Menu items
         
-        internal static string
+        static internal string
             ListingFilter { get { return "Double File Listing|*." + FileParse.ksFileExt_Listing + _ksAllFilesFilter; } }
         const string _ksProjectFilter = "Double File project|*." + FileParse.ksFileExt_Project + _ksAllFilesFilter;
         const string _ksAllFilesFilter = "|All files|*.*";
 
-        internal static string
+        static internal string
             UnsavedWarning { get { return "You are about to lose changes to an unsaved project."; } }
 
         internal void OpenProject()

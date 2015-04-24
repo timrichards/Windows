@@ -11,7 +11,7 @@ namespace DoubleFile
 
     static class MBoxStatic
     {
-        internal static LocalMbox MessageBox { get; private set; }
+        static internal LocalMbox MessageBox { get; private set; }
 
         static double static_nLastAssertLoc = -1;
         static DateTime static_dtLastAssert = DateTime.MinValue;
@@ -20,7 +20,7 @@ namespace DoubleFile
         static bool static_bAssertUp = false;
 #endif
 
-        internal static bool Assert(double nLocation, bool bCondition, string strError_in = null,
+        static internal bool Assert(double nLocation, bool bCondition, string strError_in = null,
             bool bTraceOnly = false)
         {
             if (bCondition)
@@ -73,7 +73,7 @@ namespace DoubleFile
             return false;
         }
 
-        internal static void MessageBoxKill(string strMatch = null)
+        static internal void MessageBoxKill(string strMatch = null)
         {
             if ((MessageBox != null) &&
                 new[] { null, MessageBox.Title }.Contains(strMatch))
@@ -84,7 +84,7 @@ namespace DoubleFile
         }
 
         // make MessageBox modal from a worker thread
-        internal static MessageBoxResult ShowDialog(string strMessage, string strTitle = null,
+        static internal MessageBoxResult ShowDialog(string strMessage, string strTitle = null,
             MessageBoxButton? buttons_in = null, LocalWindow owner = null)
         {
             if (App.LocalExit ||

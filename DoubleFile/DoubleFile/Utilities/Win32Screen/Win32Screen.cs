@@ -80,7 +80,7 @@ namespace DoubleFile
             SWP.SetWindowPos(hwnd, IntPtr.Zero, rc.left, rc.top, 0, 0, SWP.NOSIZE | SWP.NOZORDER | SWP.NOACTIVATE);
         }
 
-        internal static Rect GetOwnerMonitorRect(Window Owner)
+        static internal Rect GetOwnerMonitorRect(Window Owner)
         {
             RECT rcOwner;
 

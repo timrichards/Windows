@@ -6,7 +6,7 @@ namespace DoubleFile
     /// <summary>
     /// SetWindowPos Flags
     /// </summary>
-    internal static class SWP
+    static internal class SWP
     {
         [Flags()]
         enum SetWindowPosFlags : uint
@@ -70,26 +70,26 @@ namespace DoubleFile
         }
 
         [DllImport("user32.dll", SetLastError = true)]
-        internal static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags);
+        static internal extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags);
 
-        internal static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
-        internal static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
-        internal static readonly IntPtr HWND_TOP = new IntPtr(0);
-        internal static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
+        static internal readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
+        static internal readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
+        static internal readonly IntPtr HWND_TOP = new IntPtr(0);
+        static internal readonly IntPtr HWND_BOTTOM = new IntPtr(1);
 
         /// <summary>
         /// Window handles (HWND) used for hWndInsertAfter
         /// </summary>
-        internal static class HWND
+        static internal class HWND
         {
-            internal static IntPtr
+            static internal IntPtr
             NoTopMost = new IntPtr(-2),
             TopMost = new IntPtr(-1),
             Top = new IntPtr(0),
             Bottom = new IntPtr(1);
         }
 
-        internal static readonly int
+        static internal readonly int
             NOSIZE = 0x0001,
             NOMOVE = 0x0002,
             NOZORDER = 0x0004,

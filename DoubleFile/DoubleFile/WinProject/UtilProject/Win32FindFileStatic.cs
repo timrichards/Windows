@@ -80,7 +80,7 @@ namespace DoubleFile
             internal long Size { get { return m_Size; } }
             internal bool IsValid { get { return m_bValid; } }
 
-            internal static bool WinFile(string strFile, out DATUM winFindData)
+            static internal bool WinFile(string strFile, out DATUM winFindData)
             {
                 var handle = FindFirstFileExW(@"\\?\" + strFile, IndexInfoLevels.FindExInfoBasic,
                     out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero,
@@ -128,7 +128,7 @@ namespace DoubleFile
             }
         }
 
-        internal static bool GetDirectory(string strDir, out IEnumerable<DATUM> ieDirs, out IEnumerable<DATUM> ieFiles,
+        static internal bool GetDirectory(string strDir, out IEnumerable<DATUM> ieDirs, out IEnumerable<DATUM> ieFiles,
             out string strWin32Error)
         {
             strWin32Error = null;

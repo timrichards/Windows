@@ -65,7 +65,7 @@ namespace DoubleFile
 
         internal const int knDriveInfoItems = 11;
 
-        internal static readonly string[] kasDIlabels = new string[knDriveInfoItems]
+        static internal readonly string[] kasDIlabels = new string[knDriveInfoItems]
         {
             "Volume Free",
             "Volume Format",
@@ -79,20 +79,20 @@ namespace DoubleFile
             "Drive Serial",
             "Drive Size"
         };
-        internal static readonly bool[] kabDIsizeType = new bool[knDriveInfoItems]
+        static internal readonly bool[] kabDIsizeType = new bool[knDriveInfoItems]
         {
             true, false, false, false, false, true, true, false, false, false, true
         };
-        internal static readonly int[] kanDIviewOrder = new int[knDriveInfoItems]
+        static internal readonly int[] kanDIviewOrder = new int[knDriveInfoItems]
         {
             9, 5, 6, 2, 0, 10, 8, 1, 3, 4, 7
         };
-        internal static readonly int[] kanDIoptIfEqTo = new int[knDriveInfoItems]
+        static internal readonly int[] kanDIoptIfEqTo = new int[knDriveInfoItems]
         {
             -1, -1, -1, 4, -1, 0, -1, -1, -1, -1, -1
         };
 
-        internal static string CheckNTFS_chars(ref string strFile, bool bFile = false)
+        static internal string CheckNTFS_chars(ref string strFile, bool bFile = false)
         {
             var arrChar = bFile ? Path.GetInvalidFileNameChars() : Path.GetInvalidPathChars();
             var nIx = -1;
@@ -108,7 +108,7 @@ namespace DoubleFile
             return null;
         }
 
-        internal static void ConvertFile(string strFile)
+        static internal void ConvertFile(string strFile)
         {
             var strFile_01 = StrFile_01(strFile);
 
@@ -263,7 +263,7 @@ namespace DoubleFile
             return strLineType + "\t" + nLineNo + '\t' + (strLine_in ?? "").TrimEnd();
         }
 
-        internal static string FormatString(string strDir = null, string strFile = null,
+        static internal string FormatString(string strDir = null, string strFile = null,
             DateTime? dtCreated = null, DateTime? dtModified = null,
             string strAttributes = null, long nLength = -1,
             string strError1 = null, string strError2 = null, int? nHeader = null, string strHash = null)
@@ -333,7 +333,7 @@ namespace DoubleFile
             return strRet;
         }
 
-        internal static bool ReadHeader(string strFile, out LVitem_ProjectVM lvItem_out)
+        static internal bool ReadHeader(string strFile, out LVitem_ProjectVM lvItem_out)
         {
             lvItem_out = null;
 
@@ -434,13 +434,13 @@ namespace DoubleFile
             return true;
         }
 
-        internal static string StrFile_01(string strFile)
+        static internal string StrFile_01(string strFile)
         {
             return Path.Combine(Path.GetDirectoryName(strFile),
                 Path.GetFileNameWithoutExtension(strFile) + "_01" + Path.GetExtension(strFile));
         }
 
-        internal static bool ValidateFile(string strFile)
+        static internal bool ValidateFile(string strFile)
         {
             if (false == File.Exists(strFile))
                 return false;

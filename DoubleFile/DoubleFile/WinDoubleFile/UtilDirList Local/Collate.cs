@@ -29,19 +29,19 @@ namespace DoubleFile
             _bLoose = bLoose;
         }
 
-        internal static void ClearMem()
+        static internal void ClearMem()
         {
             Abort();
             _static_this = null;
         }
 
-        internal static void Abort()
+        static internal void Abort()
         {
             if (null != _static_this)
                 _static_this._bThreadAbort = true;
         }
 
-        internal static void InsertSizeMarkers(List<LocalLVitem> listLVitems)
+        static internal void InsertSizeMarkers(List<LocalLVitem> listLVitems)
         {
             if (listLVitems.IsEmpty())
                 return;
@@ -81,9 +81,9 @@ namespace DoubleFile
                 return;
             }
 
-            LocalTV.StaticTreeView.Nodes = _lsRootNodes.ToArray();
-            LocalTV.StaticTreeView.TopNode = _lsRootNodes[0];
-            LocalTreeNode.SetLevel(LocalTV.StaticTreeView.Nodes);
+            WinDoubleFile_FoldersVM.GetLocalTV().Nodes = _lsRootNodes.ToArray();
+            WinDoubleFile_FoldersVM.GetLocalTV().TopNode = _lsRootNodes[0];
+            LocalTreeNode.SetLevel(WinDoubleFile_FoldersVM.GetLocalTV().Nodes);
 
             if (false == _lsLVignore.IsEmpty())
             {
@@ -463,17 +463,8 @@ namespace DoubleFile
             _lvSameVol.Items = _lsLVsameVol.ToArray();
             _lvSameVol.Invalidate();
 
-            if (null != LocalTV.StaticTreeView.SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
-            {
-                var treeNode = LocalTV.StaticTreeView.SelectedNode;
-
-                LocalTV.StaticTreeView.SelectedNode = null;
-                LocalTV.StaticTreeView.SelectedNode = treeNode;   // reselect in repopulated collation listviewers
-            }
-            else
-            {
-                LocalTV.StaticTreeView.SelectedNode = _lsRootNodes[0];
-            }
+            if (null == WinDoubleFile_FoldersVM.GetLocalTV().SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
+                WinDoubleFile_FoldersVM.GetLocalTV().SelectedNode = _lsRootNodes[0];
 
             _static_this = null;
         }

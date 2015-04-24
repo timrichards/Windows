@@ -13,7 +13,7 @@ namespace DoubleFile
     struct MONITORINFO
     {
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        internal static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
+        static internal extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
 
         /// <summary>
         /// The size, in bytes, of the structure. Set this member to sizeof(MONITORINFOEX) (72) before calling the GetMonitorInfo function.

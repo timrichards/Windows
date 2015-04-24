@@ -12,7 +12,7 @@ namespace DoubleFile
 #endif
         }
 
-        internal static void UIthread(Action action)
+        static internal void UIthread(Action action)
         {
             if (App.LocalExit ||
                 (null == MainWindow.static_MainWindow) ||
@@ -35,7 +35,7 @@ namespace DoubleFile
                 owner.Dispatcher.Invoke(action);
         }
 
-        internal static T UIthread<T>(Func<T> action, Control owner = null)
+        static internal T UIthread<T>(Func<T> action, Control owner = null)
         {
             if (null == owner)
             {

@@ -6,7 +6,10 @@ namespace DoubleFile
 {
     partial class WinDoubleFile_FoldersVM : ObservableObject_OwnerWindow, IDisposable
     {
-        internal static Func<IEnumerable<LocalTreeNode>> GetTreeNodes = null;
+        static internal Func<IEnumerable<LocalTreeNode>>
+            GetTreeNodes = null;
+        static internal Func<LocalTV>
+            GetLocalTV = null;
 
         internal WinDoubleFile_FoldersVM(TreeView_DoubleFileVM tvVM, LV_ProjectVM lvProjectVM)
         {
@@ -20,8 +23,8 @@ namespace DoubleFile
 
             _nCorrelateProgressDenominator = _lvProjectVM.Count;
             _tvVM = tvVM;
-            _winProgress = new WinProgress(); 
             TabledString<Tabled_Folders>.AddRef();
+            GetLocalTV = () => _localTV;
             DoTree();
             GetTreeNodes = () => _arrTreeNodes;
         }
@@ -29,8 +32,10 @@ namespace DoubleFile
         public void Dispose()
         {
             GetTreeNodes = null;
-            LocalTV.StaticTreeView.Dispose();
-            LocalTV.StaticTreeView = null;
+            GetLocalTV = null;
+
+            if (null != _localTV)
+                _localTV.Dispose();
 
             if ((null == _lvProjectVM) ||
                 (0 == _lvProjectVM.Count))
@@ -46,8 +51,10 @@ namespace DoubleFile
         readonly LV_ProjectVM
             _lvProjectVM = null;
         readonly WinProgress
-            _winProgress = null;
+            _winProgress = new WinProgress();
         readonly double
             _nCorrelateProgressDenominator = 0;
+        readonly LocalTV
+            _localTV = new LocalTV();
     }
 }

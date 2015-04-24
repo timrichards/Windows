@@ -36,7 +36,7 @@ namespace DoubleFile.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        static internal global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DoubleFile.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace DoubleFile.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        static internal global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }

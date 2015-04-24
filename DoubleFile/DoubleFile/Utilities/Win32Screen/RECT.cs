@@ -21,11 +21,11 @@ namespace DoubleFile
         internal const uint MONITOR_DEFAULTTONEAREST = 0x00000002;
 
         [DllImport("user32.dll")]
-        internal static extern IntPtr
+        static internal extern IntPtr
             MonitorFromRect([In] ref RECT lprc, uint dwFlags);
 
         [DllImport("user32.dll", SetLastError = true)]
-        internal static extern bool
+        static internal extern bool
             GetWindowRect(IntPtr hwnd, out RECT lpRect);
 
         /// <summary>

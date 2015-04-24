@@ -31,14 +31,12 @@ namespace DoubleFile
             TreeCleanup();
 
             if ((false == _arrTreeNodes.IsEmpty()) &&
-                (null != LocalTV.StaticTreeView))
+                (null != _localTV))
             {
-                LocalTV.StaticTreeView._dictVolumeInfo.Clear();
+                _localTV._dictVolumeInfo.Clear();
             }
 
-            // m_dictNodes is tested to recreate tree.
-            DictNodes = null;
-
+            DictNodes = null;           // m_dictNodes is tested to recreate tree.
             _arrTreeNodes = null;
             _listRootNodes.Clear();
         }
@@ -102,10 +100,7 @@ namespace DoubleFile
             }
 
             TreeCleanup();
-            LocalTV.StaticTreeView = new LocalTV
-            {
-                _dictVolumeInfo = _dictVolumeInfo
-            };
+            _localTV._dictVolumeInfo = _dictVolumeInfo;
 
             var localLVclones = new LocalLV();
             var localLVsameVol = new LocalLV();

@@ -6,32 +6,32 @@ namespace DoubleFile
 {
     static class UtilColor
     {
-        internal static Dictionary<int, string>
+        static internal Dictionary<int, string>
             Description = new Dictionary<int, string>();
 
-        internal static int Empty { get { return Color.Empty.ToArgb(); } }
-        internal static int White { get { return Color.White.ToArgb(); } }
-        internal static int Blue { get { return Color.Blue.ToArgb(); } }
-        internal static int DarkGray { get { return Color.DarkGray.ToArgb(); } }
-        internal static int DarkKhaki { get { return Color.DarkKhaki.ToArgb(); } }
-        internal static int DarkRed { get { return Color.DarkRed.ToArgb(); } }
-        internal static int DarkSlateGray { get { return Color.DarkSlateGray.ToArgb(); } }
-        internal static int Firebrick { get { return Color.Firebrick.ToArgb(); } }
-        internal static int LightGoldenrodYellow { get { return Color.LightGoldenrodYellow.ToArgb(); } }
-        internal static int LightGray { get { return Color.LightGray.ToArgb(); } }
-        internal static int MediumSpringGreen { get { return Color.MediumSpringGreen.ToArgb(); } }
-        internal static int MediumVioletRed { get { return Color.MediumVioletRed.ToArgb(); } }
-        internal static int OliveDrab { get { return Color.OliveDrab.ToArgb(); } }
-        internal static int Red { get { return Color.Red.ToArgb(); } }
-        internal static int Snow { get { return Color.Snow.ToArgb(); } }
-        internal static int SteelBlue { get { return Color.SteelBlue.ToArgb(); } }
+        static internal int Empty { get { return Color.Empty.ToArgb(); } }
+        static internal int White { get { return Color.White.ToArgb(); } }
+        static internal int Blue { get { return Color.Blue.ToArgb(); } }
+        static internal int DarkGray { get { return Color.DarkGray.ToArgb(); } }
+        static internal int DarkKhaki { get { return Color.DarkKhaki.ToArgb(); } }
+        static internal int DarkRed { get { return Color.DarkRed.ToArgb(); } }
+        static internal int DarkSlateGray { get { return Color.DarkSlateGray.ToArgb(); } }
+        static internal int Firebrick { get { return Color.Firebrick.ToArgb(); } }
+        static internal int LightGoldenrodYellow { get { return Color.LightGoldenrodYellow.ToArgb(); } }
+        static internal int LightGray { get { return Color.LightGray.ToArgb(); } }
+        static internal int MediumSpringGreen { get { return Color.MediumSpringGreen.ToArgb(); } }
+        static internal int MediumVioletRed { get { return Color.MediumVioletRed.ToArgb(); } }
+        static internal int OliveDrab { get { return Color.OliveDrab.ToArgb(); } }
+        static internal int Red { get { return Color.Red.ToArgb(); } }
+        static internal int Snow { get { return Color.Snow.ToArgb(); } }
+        static internal int SteelBlue { get { return Color.SteelBlue.ToArgb(); } }
 
-        internal static uint
+        static internal uint
             CLUT_Mask { get { return 0x000000FF; } }
-        internal static int
+        static internal int
             CLUT_Shift { get { return (int)Math.Log(CLUT_Mask + 1, 2); } }
 
-        internal static int Set_ARGB(int fg, int bg)
+        static internal int Set_ARGB(int fg, int bg)
         {
             int ret = 0;
 
@@ -40,12 +40,12 @@ namespace DoubleFile
             return ret;
         }
 
-        internal static int GetFG_ARGB(int n) { return CLUT[(n & _knCLUT_FGmask)]; }
-        internal static int GetBG_ARGB(int n) { return CLUT[(n & _knCLUT_BGmask) >> (CLUT_Shift >> 1)]; }
-        internal static int SetFG_ARGB(ref int n, int argb) { return n = (int)(n & _knCLUT_BGmask) + _RevCLUT[argb]; }
-        internal static int SetBG_ARGB(ref int n, int argb) { return n = (int)(n & _knCLUT_FGmask) + (_RevCLUT[argb] << (CLUT_Shift >> 1)); }
+        static internal int GetFG_ARGB(int n) { return CLUT[(n & _knCLUT_FGmask)]; }
+        static internal int GetBG_ARGB(int n) { return CLUT[(n & _knCLUT_BGmask) >> (CLUT_Shift >> 1)]; }
+        static internal int SetFG_ARGB(ref int n, int argb) { return n = (int)(n & _knCLUT_BGmask) + _RevCLUT[argb]; }
+        static internal int SetBG_ARGB(ref int n, int argb) { return n = (int)(n & _knCLUT_FGmask) + (_RevCLUT[argb] << (CLUT_Shift >> 1)); }
 
-        internal static System.Windows.Media.Brush ARGBtoBrush(int nFormsARGB)
+        static internal System.Windows.Media.Brush ARGBtoBrush(int nFormsARGB)
         {
             var abARGB = BitConverter.GetBytes(nFormsARGB);
 

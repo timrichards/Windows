@@ -23,7 +23,7 @@ namespace DoubleFile
 
         public const UInt32 FLASHW_ALL = 3;
 
-        internal static void Go(System.Windows.Window window_in, bool Once = false)
+        static internal void Go(System.Windows.Window window_in, bool Once = false)
         {
             UtilProject.UIthread(() =>
             {

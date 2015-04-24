@@ -6,7 +6,7 @@ namespace DoubleFile
     {
         static class InsertSizeMarkerStatic
         {
-            internal static void Go(IList<LocalLVitem> listLVitems, int nIx, bool bUnique, bool bAdd = false)
+            static internal void Go(IList<LocalLVitem> listLVitems, int nIx, bool bUnique, bool bAdd = false)
             {
                 Init();
 

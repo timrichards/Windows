@@ -10,7 +10,7 @@ namespace DoubleFile
     abstract class TypedArrayBase
     {
         internal abstract int Type { get; }
-        internal static TabledStringStatics[] tA = new TabledStringStatics[2];
+        static internal TabledStringStatics[] tA = new TabledStringStatics[2];
     }
     class Tabled_Folders : TypedArrayBase { internal override int Type { get { return 0; } } }
     class Tabled_Files : TypedArrayBase { internal override int Type { get { return 1; } } }

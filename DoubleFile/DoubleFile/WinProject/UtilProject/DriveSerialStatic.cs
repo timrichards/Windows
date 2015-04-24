@@ -7,11 +7,11 @@ using System.Runtime.InteropServices;
 
 namespace DoubleFile
 {
-    internal static class DriveSerialStatic
+    static internal class DriveSerialStatic
     {
         //[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, BestFitMapping = false), SuppressUnmanagedCodeSecurity]
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        internal static extern Microsoft.Win32.SafeHandles.SafeFileHandle CreateFile(
+        static internal extern Microsoft.Win32.SafeHandles.SafeFileHandle CreateFile(
             string lpFileName,
             FileAccess dwDesiredAccess,
             FileShare dwShareMode,
@@ -20,7 +20,7 @@ namespace DoubleFile
             FileAttributes dwFlagsAndAttributes,
             IntPtr hTemplateFile);
 
-        internal static void Get(string strPath, out string strDriveModel_out,
+        static internal void Get(string strPath, out string strDriveModel_out,
             out string strDriveSerial_out, out ulong? nSize_out)
         {
             var letter = strPath.Substring(0, 2);

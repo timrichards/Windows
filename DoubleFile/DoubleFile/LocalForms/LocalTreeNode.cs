@@ -118,7 +118,7 @@ namespace DoubleFile
             return nodeParent;
         }
 
-        internal static void SetLevel(IEnumerable<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
+        static internal void SetLevel(IEnumerable<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
         {
             if (null == nodes)
                 return;

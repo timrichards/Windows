@@ -59,14 +59,15 @@ namespace DoubleFile
                 .Subscribe(args =>
             {
                 var bCanFlashWindow = App.CanFlashWindow_ResetsIt;     // querying it resets it
+                var topWindow = MainWindow.GetTopWindow();
 
-                if (MainWindow.GetTopWindow()._simulatingModal &&
-                    (this != MainWindow.GetTopWindow()))
+                if (topWindow._simulatingModal &&
+                    (this != topWindow))
                 {
-                    MainWindow.GetTopWindow().Activate();
+                    topWindow.Activate();
 
                     if (bCanFlashWindow)
-                        FlashWindowStatic.Go(MainWindow.GetTopWindow());
+                        FlashWindowStatic.Go(topWindow);
                 }
             });
 

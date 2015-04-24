@@ -17,34 +17,34 @@ namespace DoubleFile
             LVprojectVM { get; private set; }
 
         static internal Func<FileDictionary>
-            GetFileDictionary = null;
+            GetFileDictionary = () => _weakReference.IsAlive ? ((MainWindow)_weakReference.Target)._fileDictionary : null;
         FileDictionary _fileDictionary = new FileDictionary();
 
         static internal Func<SaveDirListings>
-            GetSaveDirListings = null;
+            GetSaveDirListings = () => _weakReference.IsAlive ? ((MainWindow)_weakReference.Target)._saveDirListings : null;
         static internal Func<SaveDirListings, SaveDirListings>
-            SetSaveDirListings = null;
+            SetSaveDirListings = o => _weakReference.IsAlive ? ((MainWindow)_weakReference.Target)._saveDirListings = o : null;
         SaveDirListings _saveDirListings = null;
 
         static internal Func<MainWindow>
-            GetMainWindow = null;
+            GetMainWindow = () => _weakReference.IsAlive ? ((MainWindow)_weakReference.Target) : null;
 
         static internal Func<LocalWindow>
-            GetTopWindow = null;
+            GetTopWindow = () => _weakReference.IsAlive ? ((MainWindow)_weakReference.Target)._topWindow : null;
         static internal Func<LocalWindow, LocalWindow>
-            SetTopWindow = null;
+            SetTopWindow = o => _weakReference.IsAlive ? ((MainWindow)_weakReference.Target)._topWindow = o : null;
         LocalWindow _topWindow = null;
 
         static internal Func<LocalWindow>
-            GetLastPlacementWindow = null;
+            GetLastPlacementWindow = () => _weakReference.IsAlive ? ((MainWindow)_weakReference.Target)._lastPlacementWindow : null;
         static internal Func<LocalWindow, LocalWindow>
-            SetLastPlacementWindow = null;
+            SetLastPlacementWindow = o => _weakReference.IsAlive ? ((MainWindow)_weakReference.Target)._lastPlacementWindow = o : null;
         LocalWindow _lastPlacementWindow = null;
 
         static internal Func<LocalWindow>
-            GetLeftWindow = null;
+            GetLeftWindow = () => _weakReference.IsAlive ? ((MainWindow)_weakReference.Target)._leftWindow : null;
         static internal Func<LocalWindow, LocalWindow>
-            SetLeftWindow = null;
+            SetLeftWindow = o => _weakReference.IsAlive ? ((MainWindow)_weakReference.Target)._leftWindow = o : null;
         LocalWindow _leftWindow = null;
 
         static Action Init = null;
@@ -53,20 +53,11 @@ namespace DoubleFile
             MainWindow()
             : base(GetInit)
         {
-            var weakReference = new WeakReference(this);
-
-            GetFileDictionary = () => weakReference.IsAlive ? ((MainWindow)weakReference.Target)._fileDictionary : null;
-            GetSaveDirListings = () => weakReference.IsAlive ? ((MainWindow)weakReference.Target)._saveDirListings : null;
-            SetSaveDirListings = o => weakReference.IsAlive ? ((MainWindow)weakReference.Target)._saveDirListings = o : null;
-            GetMainWindow = () => weakReference.IsAlive ? ((MainWindow)weakReference.Target) : null;
-            GetTopWindow = () => weakReference.IsAlive ? ((MainWindow)weakReference.Target)._topWindow : null;
-            SetTopWindow = o => weakReference.IsAlive ? ((MainWindow)weakReference.Target)._topWindow = o : null;
-            GetLastPlacementWindow = () => weakReference.IsAlive ? ((MainWindow)weakReference.Target)._lastPlacementWindow : null;
-            SetLastPlacementWindow = o => weakReference.IsAlive ? ((MainWindow)weakReference.Target)._lastPlacementWindow = o : null;
-            GetLeftWindow = () => weakReference.IsAlive ? ((MainWindow)weakReference.Target)._leftWindow : null;
-            SetLeftWindow = o => weakReference.IsAlive ? ((MainWindow)weakReference.Target)._leftWindow = o : null;
+            _weakReference = new WeakReference(this);
             Init();
             Init = null;
+            SizeToContent = SizeToContent.WidthAndHeight;
+            ResizeMode = ResizeMode.CanMinimize;
             InitializeComponent();
 
             Observable.FromEventPattern(form_grid, "Loaded")
@@ -95,9 +86,6 @@ namespace DoubleFile
 
             Observable.FromEventPattern(this, "StateChanged")     // app minimize
                 .Subscribe(args => WinTooltip.CloseTooltip());
-
-            SizeToContent = SizeToContent.WidthAndHeight;
-            ResizeMode = ResizeMode.CanMinimize;
         }
 
         void ShowProjectWindow(bool bOpenProject = false)
@@ -131,9 +119,7 @@ namespace DoubleFile
                 return;
 
             LVprojectVM = volumes.LVprojectVM;
-
             new SaveListingsProcess(LVprojectVM);
-
             _fileDictionary.Clear();
 
             if ((null != _winDoubleFile_Folders) && (false == _winDoubleFile_Folders.LocalIsClosed))
@@ -237,7 +223,6 @@ namespace DoubleFile
             }
 
             _fileDictionary.Dispose();
-            GetFileDictionary = null;
 
             if (Directory.Exists(ProjectFile.TempPath))
             {
@@ -246,21 +231,15 @@ namespace DoubleFile
             }
 
             if (Directory.Exists(ProjectFile.TempPath01))
-            {
                 Directory.Delete(ProjectFile.TempPath01, true);
-            }
         }
 
         private void Button_SaveProject_Click()
         {
-            if (LVprojectVM != null)
-            {
+            if (null != LVprojectVM)
                 WinProjectVM.SaveProject(LVprojectVM);
-            }
             else
-            {
                 MBoxStatic.ShowDialog("No project to save.", "Save Project");
-            }
         }
 
         private void Button_DuplicateFileExplorer_Click()
@@ -277,5 +256,7 @@ namespace DoubleFile
 
         WinDoubleFile_Folders
             _winDoubleFile_Folders = null;
+        static WeakReference
+            _weakReference = null;
     }
 }

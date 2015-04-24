@@ -197,13 +197,14 @@ namespace DoubleFile
             });
 
             var lsProgressItems = new List<string>();
+            var fileDictionary = MainWindow.GetFileDictionary();
 
-            MainWindow.GetFileDictionary().ResetAbortFlag();
+            fileDictionary.ResetAbortFlag();
 
-            if (MainWindow.GetFileDictionary().IsEmpty)
+            if (fileDictionary.IsEmpty)
             {
                 lsProgressItems.Add(_ksFileDictKey);
-                MainWindow.GetFileDictionary().DoThreadFactory(_lvProjectVM, CreateFileDictStatusCallback);
+                fileDictionary.DoThreadFactory(_lvProjectVM, CreateFileDictStatusCallback);
             }
 
             TabledString<Tabled_Folders>.GenerationStarting();

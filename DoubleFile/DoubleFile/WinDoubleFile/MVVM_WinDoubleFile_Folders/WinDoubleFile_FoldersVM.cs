@@ -7,9 +7,9 @@ namespace DoubleFile
     partial class WinDoubleFile_FoldersVM : ObservableObject_OwnerWindow, IDisposable
     {
         static internal Func<IEnumerable<LocalTreeNode>>
-            GetTreeNodes = null;
+            GetTreeNodes = () => _weakReference.IsAlive ? ((WinDoubleFile_FoldersVM)_weakReference.Target)._arrTreeNodes : null;
         static internal Func<LocalTV>
-            GetLocalTV = null;
+            GetLocalTV = () => _weakReference.IsAlive ? ((WinDoubleFile_FoldersVM)_weakReference.Target)._localTV : null;
 
         internal WinDoubleFile_FoldersVM(TreeView_DoubleFileVM tvVM, LV_ProjectVM lvProjectVM)
         {
@@ -24,19 +24,12 @@ namespace DoubleFile
             _nCorrelateProgressDenominator = _lvProjectVM.Count;
             _tvVM = tvVM;
             TabledString<Tabled_Folders>.AddRef();
-
-            var weakReference = new WeakReference(this);
-
-            GetLocalTV = () => weakReference.IsAlive ? ((WinDoubleFile_FoldersVM)weakReference.Target)._localTV : null;
+            _weakReference = new WeakReference(this);            
             DoTree();
-            GetTreeNodes = () => weakReference.IsAlive ? ((WinDoubleFile_FoldersVM)weakReference.Target)._arrTreeNodes : null;
         }
 
         public void Dispose()
         {
-            GetTreeNodes = null;
-            GetLocalTV = null;
-
             if (null != _localTV)
                 _localTV.Dispose();
 
@@ -59,5 +52,7 @@ namespace DoubleFile
             _nCorrelateProgressDenominator = 0;
         readonly LocalTV
             _localTV = new LocalTV();
+        static WeakReference
+            _weakReference = null;
     }
 }

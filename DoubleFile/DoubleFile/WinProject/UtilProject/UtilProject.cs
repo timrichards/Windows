@@ -14,39 +14,41 @@ namespace DoubleFile
 
         static internal void UIthread(Action action)
         {
+            var mainWindow = MainWindow.GetMainWindow();
+
             if (App.LocalExit ||
-                (null == MainWindow.GetMainWindow()) ||
-                MainWindow.GetMainWindow().LocalIsClosed)
+                (null == mainWindow) ||
+                mainWindow.LocalIsClosed)
                 return;
 
-            var owner = MainWindow.GetMainWindow();
-
-            if ((null == owner) ||
-                (null == owner.Dispatcher) ||
-                owner.Dispatcher.HasShutdownStarted ||
-                owner.Dispatcher.HasShutdownFinished)
+            if ((null == mainWindow) ||
+                (null == mainWindow.Dispatcher) ||
+                mainWindow.Dispatcher.HasShutdownStarted ||
+                mainWindow.Dispatcher.HasShutdownFinished)
             {
                 return;
             }
 
-            if (owner.Dispatcher.CheckAccess())
+            if (mainWindow.Dispatcher.CheckAccess())
                 action();
             else
-                owner.Dispatcher.Invoke(action);
+                mainWindow.Dispatcher.Invoke(action);
         }
 
         static internal T UIthread<T>(Func<T> action, Control owner = null)
         {
             if (null == owner)
             {
+                var mainWindow = MainWindow.GetMainWindow();
+
                 if (App.LocalExit ||
-                    (null == MainWindow.GetMainWindow()) ||
-                    MainWindow.GetMainWindow().LocalIsClosed)
+                    (null == mainWindow) ||
+                    mainWindow.LocalIsClosed)
                 {
                     return default(T);
                 }
 
-                owner = MainWindow.GetMainWindow();
+                owner = mainWindow;
             }
 
             if ((null == owner) ||

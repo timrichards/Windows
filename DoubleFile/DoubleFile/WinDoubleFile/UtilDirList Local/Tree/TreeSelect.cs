@@ -34,8 +34,8 @@ namespace DoubleFile
             if (treeNode is LocalTreeMapFileNode)     // does not support immediate file fake nodes
                 return false;
 
-            if (null != WinDoubleFile_FoldersVM.GetLocalTV())
-                _dictVolumeInfo = WinDoubleFile_FoldersVM.GetLocalTV()._dictVolumeInfo;
+            if (null != WinDoubleFile_FoldersVM.LocalTV)
+                _dictVolumeInfo = WinDoubleFile_FoldersVM.LocalTV._dictVolumeInfo;
 
             _bCompareMode = bCompareMode;
             _bSecondComparePane = bSecondComparePane;

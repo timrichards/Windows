@@ -6,10 +6,10 @@ namespace DoubleFile
 {
     partial class WinDoubleFile_FoldersVM : ObservableObject_OwnerWindow, IDisposable
     {
-        static internal Func<IEnumerable<LocalTreeNode>>
-            GetTreeNodes = () => _weakReference.IsAlive ? ((WinDoubleFile_FoldersVM)_weakReference.Target)._arrTreeNodes : null;
-        static internal Func<LocalTV>
-            GetLocalTV = () => _weakReference.IsAlive ? ((WinDoubleFile_FoldersVM)_weakReference.Target)._localTV : null;
+        static internal IEnumerable<LocalTreeNode>
+            TreeNodes { get { return _weakReference.IsAlive ? ((WinDoubleFile_FoldersVM)_weakReference.Target)._arrTreeNodes : null; } }
+        static internal LocalTV
+            LocalTV { get { return _weakReference.IsAlive ? ((WinDoubleFile_FoldersVM)_weakReference.Target)._localTV : null; } }
 
         internal WinDoubleFile_FoldersVM(TreeView_DoubleFileVM tvVM, LV_ProjectVM lvProjectVM)
         {

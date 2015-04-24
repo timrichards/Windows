@@ -38,16 +38,12 @@ namespace DoubleFile
             if (Reinitialize_And_FullPathFound(SearchText))
                 return;
 
-            if (null == WinDoubleFile_FoldersVM.GetTreeNodes)
-                return;
-
-            var bCase = SearchText.ToLower() != SearchText;
-            var lsTreeNodes = WinDoubleFile_FoldersVM.GetTreeNodes();
+            var lsTreeNodes = WinDoubleFile_FoldersVM.TreeNodes;
 
             if (null == lsTreeNodes)
                 return;
 
-            if (bCase)
+            if (SearchText.ToLower() != SearchText)
             {
                 lsTreeNodes =
                     lsTreeNodes

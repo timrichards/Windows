@@ -95,7 +95,7 @@ namespace DoubleFile
         static internal void GenerationStarting()
         {
             var t = TypedArrayBase.tA[new T().Type];
-            var nThreads = MainWindow.GetMainWindow().LVprojectVM.Count;
+            var nThreads = MainWindow.Instance.LVprojectVM.Count;
 
             t.DictPathParts = new ConcurrentDictionary<string, PathBuilder>(nThreads, 16384);
 

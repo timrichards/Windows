@@ -29,18 +29,18 @@ namespace DoubleFile
         }
         bool? _LocalDialogResult = null;
 
-        protected LocalWindow(params Action<Action>[] GetInit)
+        protected LocalWindow(params Action<Action>[] SetInit)
         {
-            if (0 < GetInit.Length)
+            if (0 < SetInit.Length)
             {
-                GetInit[0](Init);
+                SetInit[0](Init);
                 return;
             }
 
             // Keep this around so you see how it's done
             // Icon = BitmapFrame.Create(new Uri(@"pack://application:,,/Resources/ic_people_black_18dp.png"));
 
-            Icon = MainWindow.GetMainWindow().Icon;
+            Icon = MainWindow.Instance.Icon;
             WindowStartupLocation = WindowStartupLocation.CenterOwner;
             ResizeMode = ResizeMode.CanResizeWithGrip;
             ShowInTaskbar = false;
@@ -52,14 +52,14 @@ namespace DoubleFile
             // You can comment this stuff out all you want: the flashing close box on the
             // system file dialogs isn't going away...
 
-            if (null == MainWindow.GetTopWindow())
-                MainWindow.SetTopWindow(this);
+            if (null == MainWindow.TopWindow)
+                MainWindow.TopWindow = this;
 
             Observable.FromEventPattern(this, "Activated")
                 .Subscribe(args =>
             {
                 var bCanFlashWindow = App.CanFlashWindow_ResetsIt;     // querying it resets it
-                var topWindow = MainWindow.GetTopWindow();
+                var topWindow = MainWindow.TopWindow;
 
                 if (topWindow._simulatingModal &&
                     (this != topWindow))
@@ -99,12 +99,12 @@ namespace DoubleFile
                 return;
             }
 
-            Owner = MainWindow.GetTopWindow();
+            Owner = MainWindow.TopWindow;
             base.Show();
             PositionWindow();
         }
 
-        internal new bool? ShowDialog() { return ShowDialog(MainWindow.GetTopWindow()); }
+        internal new bool? ShowDialog() { return ShowDialog(MainWindow.TopWindow); }
 
         protected virtual void PositionWindow()
         {
@@ -120,7 +120,7 @@ namespace DoubleFile
             // mysteriously leaves WinProject unpopulated after clicking OK: does not run any code
             // in MainWindow.xaml.cs after volumes.ShowDialog. Acts like a suppressed null pointer.
             _simulatingModal = true;           // Change it here to switch to simulated dialog
-            MainWindow.SetTopWindow(this);
+            MainWindow.TopWindow = this;
             Owner = me;
 
             bool? bResult = null;
@@ -129,7 +129,7 @@ namespace DoubleFile
             Observable.FromEventPattern(this, "Closed")
                 .Subscribe(args =>
             {
-                MainWindow.SetTopWindow(me);
+                MainWindow.TopWindow = me;
                 me.Activate();
 
                 if (_simulatingModal)

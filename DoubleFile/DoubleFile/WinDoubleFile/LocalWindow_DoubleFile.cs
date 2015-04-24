@@ -15,13 +15,13 @@ namespace DoubleFile
             //chrome.GlassFrameThickness = new System.Windows.Thickness(1);
             WindowStyle = WindowStyle.ToolWindow;
 
-            var lastWin = MainWindow.GetLastPlacementWindow() ?? MainWindow.GetMainWindow();
+            var lastWin = MainWindow.LastPlacementWindow ?? MainWindow.Instance;
             var bUseLastWindow = true;
 
-            if (null == MainWindow.GetLeftWindow())
-                MainWindow.SetLeftWindow(MainWindow.GetMainWindow());
+            if (null == MainWindow.LeftWindow)
+                MainWindow.LeftWindow = MainWindow.Instance;
 
-            var leftWindow = MainWindow.GetLeftWindow();
+            var leftWindow = MainWindow.LeftWindow;
             var rcMonitor = Win32Screen.GetOwnerMonitorRect(leftWindow);
 
             if (-1 < _nWantsLeft)
@@ -44,11 +44,11 @@ namespace DoubleFile
                     _nWantsTop = Top;
                     Left = leftWindow.Left;
                     Top = leftWindow.Top + leftWindow.Height + 5;
-                    MainWindow.SetLeftWindow(this);
+                    MainWindow.LeftWindow = this;
                 }
             }
 
-            MainWindow.SetLastPlacementWindow(this);
+            MainWindow.LastPlacementWindow = this;
 
             Observable.FromEventPattern(this, "Closed")
                 .Subscribe(args => Window_Closed());
@@ -109,8 +109,8 @@ namespace DoubleFile
             }
 
             PosAtClose = new Rect(Left, Top, Width, Height);
-            MainWindow.SetLastPlacementWindow(null);
-            MainWindow.SetLeftWindow(null);
+            MainWindow.LastPlacementWindow = null;
+            MainWindow.LeftWindow = null;
         }
 
         LocalWindow_DoubleFile _chainedWindow = null;

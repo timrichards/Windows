@@ -44,8 +44,8 @@ namespace DoubleFile
         internal void CreateFileDictStatusCallback(bool bDone = false, double nProgress = double.NaN)
         {
             if (App.LocalExit ||
-                (null == MainWindow.GetFileDictionary()) ||
-                MainWindow.GetFileDictionary().IsAborted)
+                (null == MainWindow.FileDictionary) ||
+                MainWindow.FileDictionary.IsAborted)
             {
                 _winProgress.Aborted = true;
                 return;
@@ -66,8 +66,8 @@ namespace DoubleFile
         void TreeStatusCallback(LVitem_ProjectVM volStrings, LocalTreeNode rootNode = null, bool bError = false)
         {
             if (App.LocalExit ||
-                (null == MainWindow.GetFileDictionary()) ||
-                MainWindow.GetFileDictionary().IsAborted ||
+                (null == MainWindow.FileDictionary) ||
+                MainWindow.FileDictionary.IsAborted ||
                 ((null != Tree) && (Tree.IsAborted)))
             {
                 ClearMem_TreeForm();
@@ -166,7 +166,7 @@ namespace DoubleFile
             {
                 if (false == UtilDirList.Closure(() =>
                 {
-                    if (MainWindow.GetFileDictionary()
+                    if (MainWindow.FileDictionary
                         .IsAborted)
                     {
                         return true;
@@ -186,7 +186,7 @@ namespace DoubleFile
                     return false;
                 }
 
-                MainWindow.GetFileDictionary()
+                MainWindow.FileDictionary
                     .Abort();
                     
                 if (null != Tree)
@@ -197,7 +197,7 @@ namespace DoubleFile
             });
 
             var lsProgressItems = new List<string>();
-            var fileDictionary = MainWindow.GetFileDictionary();
+            var fileDictionary = MainWindow.FileDictionary;
 
             fileDictionary.ResetAbortFlag();
 

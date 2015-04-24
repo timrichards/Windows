@@ -35,10 +35,10 @@ namespace DoubleFile
                 Title = "Saving Directory Listings",
                 WindowClosingCallback = () =>
                 {
-                    if (null == MainWindow.GetSaveDirListings())
+                    if (null == MainWindow.SaveDirListings)
                         return true;
 
-                    if (MainWindow.GetSaveDirListings().IsAborted)
+                    if (MainWindow.SaveDirListings.IsAborted)
                         return true;
 
                     if (MBoxStatic.ShowDialog("Do you want to cancel?", "Saving Directory Listings",
@@ -46,7 +46,7 @@ namespace DoubleFile
                         _winProgress) ==
                         MessageBoxResult.Yes)
                     {
-                        MainWindow.GetSaveDirListings().EndThread();
+                        MainWindow.SaveDirListings.EndThread();
                         return true;
                     }
 
@@ -54,14 +54,14 @@ namespace DoubleFile
                 }
             };
 
-            if ((null != MainWindow.GetSaveDirListings()) &&
-                (false == MainWindow.GetSaveDirListings().IsAborted))
+            if ((null != MainWindow.SaveDirListings) &&
+                (false == MainWindow.SaveDirListings.IsAborted))
             {
                 MBoxStatic.Assert(99940, false);
-                MainWindow.GetSaveDirListings().EndThread();
+                MainWindow.SaveDirListings.EndThread();
             }
 
-            (MainWindow.SetSaveDirListings(new SaveDirListings(
+            (MainWindow.SaveDirListings = (new SaveDirListings(
                 lvProjectVM,
                 SaveDirListingsStatusCallback,
                 SaveDirListingsDoneCallback))
@@ -75,7 +75,7 @@ namespace DoubleFile
         {
             UtilProject.UIthread(() =>
             {
-                var sdl = MainWindow.GetSaveDirListings();
+                var sdl = MainWindow.SaveDirListings;
 
                 if (App.LocalExit ||
                     (null == sdl) ||
@@ -110,7 +110,7 @@ namespace DoubleFile
 
         internal void SaveDirListingsDoneCallback()
         {
-            MainWindow.SetSaveDirListings(null);
+            MainWindow.SaveDirListings = null;
         }
 
         WinProgress

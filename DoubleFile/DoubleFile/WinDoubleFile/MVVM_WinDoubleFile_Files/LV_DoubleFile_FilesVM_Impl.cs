@@ -42,7 +42,7 @@ namespace DoubleFile
                     .ToArray();
 
                 var nLine = int.Parse(asFileLine[1]);
-                var lsDuplicates = MainWindow.GetFileDictionary().GetDuplicates(asFileLine);
+                var lsDuplicates = MainWindow.FileDictionary.GetDuplicates(asFileLine);
 
                 asFileLine =
                     asFileLine

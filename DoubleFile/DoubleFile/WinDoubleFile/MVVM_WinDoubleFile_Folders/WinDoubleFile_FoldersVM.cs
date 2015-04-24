@@ -13,6 +13,7 @@ namespace DoubleFile
 
         internal WinDoubleFile_FoldersVM(TreeView_DoubleFileVM tvVM, LV_ProjectVM lvProjectVM)
         {
+            _weakReference = new WeakReference(this);            
             _lvProjectVM = lvProjectVM;
 
             if ((null == _lvProjectVM) ||
@@ -24,7 +25,6 @@ namespace DoubleFile
             _nCorrelateProgressDenominator = _lvProjectVM.Count;
             _tvVM = tvVM;
             TabledString<Tabled_Folders>.AddRef();
-            _weakReference = new WeakReference(this);            
             DoTree();
         }
 

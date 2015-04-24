@@ -14,7 +14,7 @@ namespace DoubleFile
 
         static internal void UIthread(Action action)
         {
-            var mainWindow = MainWindow.GetMainWindow();
+            var mainWindow = MainWindow.Instance;
 
             if (App.LocalExit ||
                 (null == mainWindow) ||
@@ -39,7 +39,7 @@ namespace DoubleFile
         {
             if (null == owner)
             {
-                var mainWindow = MainWindow.GetMainWindow();
+                var mainWindow = MainWindow.Instance;
 
                 if (App.LocalExit ||
                     (null == mainWindow) ||

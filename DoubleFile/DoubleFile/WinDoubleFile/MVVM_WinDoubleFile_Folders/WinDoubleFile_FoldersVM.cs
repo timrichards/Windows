@@ -7,9 +7,9 @@ namespace DoubleFile
     partial class WinDoubleFile_FoldersVM : ObservableObject_OwnerWindow, IDisposable
     {
         static internal IEnumerable<LocalTreeNode>
-            TreeNodes { get { return _weakReference.IsAlive ? ((WinDoubleFile_FoldersVM)_weakReference.Target)._arrTreeNodes : null; } }
+            TreeNodes { get { var o = _weakReference.Target as WinDoubleFile_FoldersVM; return (null != o) ? o._arrTreeNodes : null; } }
         static internal LocalTV
-            LocalTV { get { return _weakReference.IsAlive ? ((WinDoubleFile_FoldersVM)_weakReference.Target)._localTV : null; } }
+            LocalTV { get { var o = _weakReference.Target as WinDoubleFile_FoldersVM; return (null != o) ? o._localTV : null; } }
 
         internal WinDoubleFile_FoldersVM(TreeView_DoubleFileVM tvVM, LV_ProjectVM lvProjectVM)
         {
@@ -30,6 +30,8 @@ namespace DoubleFile
 
         public void Dispose()
         {
+            _weakReference.Target = null;
+
             if (null != _localTV)
                 _localTV.Dispose();
 

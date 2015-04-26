@@ -17,49 +17,49 @@ namespace DoubleFile
             LVprojectVM { get; private set; }
 
         static internal FileDictionary
-            FileDictionary { get { return _weakReference.IsAlive ? ((MainWindow)_weakReference.Target)._fileDictionary : null; } }
+            FileDictionary { get { var o = _weakReference.Target as MainWindow; return (null != o) ? o._fileDictionary : null; } }
         FileDictionary _fileDictionary = new FileDictionary();
 
         static internal SaveDirListings
             SaveDirListings
         {
-            get { return _weakReference.IsAlive ? ((MainWindow)_weakReference.Target)._saveDirListings : null; }
-            set { if (_weakReference.IsAlive) ((MainWindow)_weakReference.Target)._saveDirListings = value; }
+            get { var o = _weakReference.Target as MainWindow; return (null != o) ? o._saveDirListings : null; }
+            set { var o = _weakReference.Target as MainWindow; if (null != o) o._saveDirListings = value; }
         }
         SaveDirListings _saveDirListings = null;
 
         static internal MainWindow
-            Instance { get { return _weakReference.IsAlive ? ((MainWindow)_weakReference.Target) : null; } }
+            Instance { get { var o = _weakReference.Target as MainWindow; return (null != o) ? o : null; } }
 
         static internal LocalWindow
             TopWindow
         {
-            get { return _weakReference.IsAlive ? ((MainWindow)_weakReference.Target)._topWindow : null; }
-            set { if (_weakReference.IsAlive) ((MainWindow)_weakReference.Target)._topWindow = value; }
+            get { var o = _weakReference.Target as MainWindow; return (null != o) ? o._topWindow : null; }
+            set { var o = _weakReference.Target as MainWindow; if (null != o) o._topWindow = value; }
         }
         LocalWindow _topWindow = null;
 
         static internal LocalWindow
             LastPlacementWindow
         {
-            get { return _weakReference.IsAlive ? ((MainWindow)_weakReference.Target)._lastPlacementWindow : null; }
-            set { if (_weakReference.IsAlive) ((MainWindow)_weakReference.Target)._lastPlacementWindow = value; }
+            get { var o = _weakReference.Target as MainWindow; return (null != o) ? o._lastPlacementWindow : null; }
+            set { var o = _weakReference.Target as MainWindow; if (null != o) o._lastPlacementWindow = value; }
         }
         LocalWindow _lastPlacementWindow = null;
 
         static internal LocalWindow
             LeftWindow
         {
-            get { return _weakReference.IsAlive ? ((MainWindow)_weakReference.Target)._leftWindow : null; }
-            set { if (_weakReference.IsAlive) ((MainWindow)_weakReference.Target)._leftWindow = value; }
+            get { var o = _weakReference.Target as MainWindow; return (null != o) ? o._leftWindow : null; }
+            set { var o = _weakReference.Target as MainWindow; if (null != o) o._leftWindow = value; }
         }
         LocalWindow _leftWindow = null;
 
         static Action Init = null;
-        static void SetInit(Action init) { Init = init; }
+        static void InitForMainWindowOnly(Action init) { Init = init; }
         public
             MainWindow()
-            : base(SetInit)
+            : base(InitForMainWindowOnly)
         {
             _weakReference = new WeakReference(this);
             Init();
@@ -231,6 +231,7 @@ namespace DoubleFile
                 return;
             }
 
+            _weakReference.Target = null;
             _fileDictionary.Dispose();
 
             if (Directory.Exists(ProjectFile.TempPath))

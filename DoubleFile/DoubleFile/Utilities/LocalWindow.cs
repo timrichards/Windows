@@ -29,11 +29,11 @@ namespace DoubleFile
         }
         bool? _LocalDialogResult = null;
 
-        protected LocalWindow(params Action<Action>[] SetInit)
+        protected LocalWindow(Action<Action> InitForMainWindowOnly = null)
         {
-            if (0 < SetInit.Length)
+            if (null != InitForMainWindowOnly)
             {
-                SetInit[0](Init);
+                InitForMainWindowOnly(Init);
                 return;
             }
 

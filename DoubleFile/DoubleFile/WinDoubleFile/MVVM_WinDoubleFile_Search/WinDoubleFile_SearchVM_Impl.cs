@@ -18,10 +18,10 @@ namespace DoubleFile
 
         internal WinDoubleFile_SearchVM()
         {
-            Icmd_Folders = new RelayCommand(param => SearchFolders(), param => IsSearchEnabled());
-            Icmd_FoldersAndFiles = new RelayCommand(param => SearchFoldersAndFiles(), param => IsSearchEnabled());
-            Icmd_Files = new RelayCommand(param => SearchFoldersAndFiles(bSearchFilesOnly: true), param => IsSearchEnabled());
-            Icmd_Goto = new RelayCommand(param => Goto(), param => null != _selectedItem);
+            Icmd_Folders = new RelayCommand(SearchFolders, IsSearchEnabled);
+            Icmd_FoldersAndFiles = new RelayCommand(() => SearchFoldersAndFiles(), IsSearchEnabled);
+            Icmd_Files = new RelayCommand(() => SearchFoldersAndFiles(bSearchFilesOnly: true), IsSearchEnabled);
+            Icmd_Goto = new RelayCommand(Goto, () => null != _selectedItem);
             TabledString<Tabled_Files>.AddRef();
         }
 

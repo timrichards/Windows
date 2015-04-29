@@ -117,6 +117,12 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FirstFloor.ModernUI">
+      <HintPath>..\packages\ModernUI.WPF.1.0.6\lib\net45\FirstFloor.ModernUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -132,6 +138,9 @@
     <Reference Include="System.Reactive.Windows.Forms, Version=2.0.20823.0, Culture=neutral, PublicKeyToken=f300afd708cefcd3, processorArchitecture=MSIL" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.1.1.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -152,11 +161,15 @@
     </ApplicationDefinition>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="LocalForms\LocalColorItemBase.cs" />
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MVVM\ListView Base\ListViewItemVM_Base.cs" />
     <Compile Include="MVVM\ListView Base\ListViewVM_Base.cs" />
     <Compile Include="MVVM\ListView Base\ListViewVM_GenericBase.cs" />
     <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
     <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
+    <Compile Include="MVVM\RelayCommand.cs" />
     <Compile Include="Utilities\Win32Screen\MONITORINFO.cs" />
     <Compile Include="Utilities\Win32Screen\RECT.cs" />
     <Compile Include="Utilities\Win32Screen\SWP.cs" />
@@ -259,8 +272,8 @@
       <DependentUpon>WinDoubleFile_Folders.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utilities\LocalWindow.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="MainWindow_.xaml.cs">
+      <DependentUpon>MainWindow_.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="WinProject\MVVM_WinProject\LV_ProjectVM_Impl.cs" />
@@ -279,7 +292,6 @@
     <Compile Include="WinProject\UtilProject\FileParse.cs" />
     <Compile Include="MVVM\ObservableObjectBase.cs" />
     <Compile Include="MVVM\ObservableObject_OwnerWindow.cs" />
-    <Compile Include="MVVM\RelayCommand.cs" />
     <Compile Include="Utilities\MVVM_WinProgress\LVitem_ProgressVM.cs" />
     <Compile Include="Utilities\MVVM_WinProgress\LV_ProgressVM.cs" />
     <Compile Include="WinProject\MVVM_WinProject\LV_ProjectVM.cs" />
@@ -305,6 +317,9 @@
     <Compile Include="Utilities\WinProgress.xaml.cs">
       <DependentUpon>WinProgress.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WinProject\WinProject_MUI.xaml.cs">
+      <DependentUpon>WinProject_MUI.xaml</DependentUpon>
     </Compile>
     <Compile Include="WinProject\WinVolumeEdit\MVVM_UC_VolumeEdit\UC_VolumeEditVM.cs">
       <SubType>Code</SubType>
@@ -360,6 +375,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="DoubleFile_TemporaryKey.pfx" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -413,6 +429,10 @@
     <Resource Include="ic_people_black_18dp.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="WinDoubleFile\WinDoubleFile_Search.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -445,7 +465,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="MainWindow_.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -460,6 +480,10 @@
     <Page Include="Utilities\WinProgress.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WinProject\WinProject_MUI.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="WinProject\WinVolumeEdit\UC_VolumeEdit.xaml">
       <SubType>Designer</SubType>

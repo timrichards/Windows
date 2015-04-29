@@ -11,14 +11,10 @@ namespace DoubleFile
         internal LV_ProjectVM(LV_ProjectVM lvProjectVM = null)
         {
             if (null == lvProjectVM)
-            {
                 return;
-            }
 
             foreach (var lvItemVM in lvProjectVM.ItemsCast)
-            {
                 Add(new LVitem_ProjectVM(lvItemVM), bQuiet: true);
-            }
 
             Unsaved = lvProjectVM.Unsaved;
         }
@@ -29,67 +25,53 @@ namespace DoubleFile
                 (null != ContainsListingFile(lvCurrentItem, strFilename));
 
             if (bAlreadyInProject)
-            {
                 MBoxStatic.ShowDialog("Listing file already in the project.", "Add Listing File");
-            }
 
             return bAlreadyInProject;
         }
 
         internal void EditListingFile()
         {
-            Selected().FirstOnlyAssert(lvItem =>
+            Selected()
+                .FirstOnlyAssert(lvItem =>
             {
                 var lvItemVolumeTemp = new LVitem_ProjectVM(lvItem);
 
-                if (lvItemVolumeTemp.Status == FileParse.ksError)
-                {
+                if (FileParse.ksError == lvItemVolumeTemp.Status)
                     lvItemVolumeTemp.Status = FileParse.ksNotSaved;
-                }
 
-                while (true)
+                for (; ; )
                 {
                     var dlg =
                         lvItemVolumeTemp.WouldSave
                         ? new WinVolumeNew()
-                        : (WinVolumeEditBase)new WinVolumeEdit();
-
-                    dlg.LVitemVolumeTemp = new LVitem_ProjectVM(lvItemVolumeTemp);
+                        : (WinVolumeEditBase)new WinVolumeEdit()
+                    {
+                        LVitemVolumeTemp = new LVitem_ProjectVM(lvItemVolumeTemp)
+                    };
 
                     if (false == (dlg.ShowDialog() ?? false))
-                    {
-                        // user cancelled
-                        break;
-                    }
+                        break;  // user cancelled
 
                     lvItemVolumeTemp = new LVitem_ProjectVM(dlg.LVitemVolumeTemp);
 
                     if (AlreadyInProject(lvItem, lvItemVolumeTemp.ListingFile))
-                    {
                         continue;
-                    }
 
                     var dlgEdit = dlg as WinVolumeEdit;
 
                     if (null != dlgEdit)
                     {
                         if (ModifyListingFile(lvItem, lvItemVolumeTemp, dlgEdit.form_ucVolumeEdit.DriveLetter))
-                        {
                             FileParse.ReadHeader(lvItemVolumeTemp.ListingFile, out lvItemVolumeTemp);
-                        }
                         else if (lvItem.LocalEquals(lvItemVolumeTemp))
-                        {
-                            // volume group; include y/n: columns that aren't in the listing file
-                            // no change
-                            break;
-                        }
+                            break;  // no change to volume group; include y/n: columns that aren't in the listing file
 
                         Unsaved = true;
                     }
-                    else    // WinVolumeNew
+                    else if (FileExists(lvItemVolumeTemp.ListingFile))   // WinVolumeNew
                     {
-                        if (FileExists(lvItemVolumeTemp.ListingFile))
-                            continue;
+                        continue;
                     }
 
                     lvItem.StringValues = lvItemVolumeTemp.StringValues;
@@ -100,17 +82,16 @@ namespace DoubleFile
 
         internal bool FileExists(string strListingFile)
         {
-            var bFileExists = File.Exists(strListingFile) &&
-                (false == strListingFile.StartsWith(ProjectFile.TempPath) ||
-                FileParse.ValidateFile(strListingFile));
-
-            if (bFileExists)
+            if (File.Exists(strListingFile) &&
+                ((false == strListingFile.StartsWith(ProjectFile.TempPath)) || FileParse.ValidateFile(strListingFile)))
             {
                 MBoxStatic.ShowDialog("Listing file exists. Please manually delete it using the Save Listing\n" +
                     "File dialog by clicking the icon button after this alert closes.", "New Listing File");
+
+                return true;
             }
 
-            return bFileExists;
+            return false;
         }
 
         internal bool NewItem(LVitem_ProjectVM lvItem, bool bQuiet = false)
@@ -121,35 +102,20 @@ namespace DoubleFile
         internal override bool Add(string[] arrStr, bool bQuiet = false)
         {
             var lvItem = new LVitem_ProjectVM(arrStr);
-            var bNotInProject = (false == AlreadyInProject(lvItem));
 
-            if (bNotInProject)
+            if (false == AlreadyInProject(lvItem))
             {
                 Add(lvItem, bQuiet);
+                return true;
             }
 
-            return (bNotInProject);
+            return false;
         }
 
         internal void RemoveListingFile()
         {
-            var bUnsaved = false;
-
-            Selected()
-                .ForEach(lvItem =>
-            {
-                if (bUnsaved)
-                {
-                    return;     // from lambda
-                }
-
-                if (lvItem.WouldSave)
-                {
-                    bUnsaved = true;
-                }
-            });
-
-            if (bUnsaved && (MBoxStatic.ShowDialog("Selected listings have not been saved. Continue?", "Remove Listing File",
+            if (Selected().Any(lvItem => lvItem.WouldSave) &&
+                (MBoxStatic.ShowDialog("Selected listings have not been saved. Continue?", "Remove Listing File",
                 System.Windows.MessageBoxButton.YesNo) !=
                 System.Windows.MessageBoxResult.Yes))
             {
@@ -159,6 +125,7 @@ namespace DoubleFile
             Selected()
                 .ToList()
                 .ForEach(lvItem => Items.Remove(lvItem));
+
             Unsaved = (false == Items.IsEmpty());
         }
 
@@ -166,11 +133,7 @@ namespace DoubleFile
         {
             var dlg = new WinVolumeGroup();
 
-            Selected()
-                .First(lvItem =>
-            {
-                dlg.Text = lvItem.VolumeGroup;
-            });
+            Selected().First(lvItem => dlg.Text = lvItem.VolumeGroup);
 
             if (dlg.ShowDialog() ?? false)
             {
@@ -192,16 +155,15 @@ namespace DoubleFile
         internal void ToggleInclude()
         {
             Selected()
-                .ForEach(lvItem => { lvItem.Include = (false == lvItem.Include); });
+                .ForEach(lvItem => lvItem.Include = (false == lvItem.Include));
+
             Unsaved = true;
         }
 
         LVitem_ProjectVM ContainsListingFile(LVitem_ProjectVM lvItem_Current, string t)
         {
             if (string.IsNullOrEmpty(t))
-            {
                 return null;
-            }
 
             var s = t.ToLower();
 
@@ -229,16 +191,12 @@ namespace DoubleFile
             var bDriveLetter_Todo = (char.IsLetter(driveLetter) && (driveLetter != driveLetterOrig));
 
             if (false == (bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo || bDriveLetter_Todo))
-            {
                 return false;
-            }
 
             var strFile_01 = FileParse.StrFile_01(lvItem_Orig.ListingFile);
 
             if (File.Exists(strFile_01))
-            {
                 File.Delete(strFile_01);
-            }
 
             File.Move(lvItem_Orig.ListingFile, strFile_01);
 
@@ -269,9 +227,7 @@ namespace DoubleFile
                         MBoxStatic.Assert(1308.9312, astr.Count == 3);
 
                         while (astr.Count < 3)
-                        {
                             astr.Add("");
-                        }
 
                         astr[2] = s;
                         sbLine = new System.Text.StringBuilder(string.Join("\t", astr));
@@ -331,9 +287,7 @@ namespace DoubleFile
                         sbOut.Append(buffer, 0, nRead);
 
                         if (bDriveLetter_Todo)
-                        {
                             sbOut.Replace("\t" + driveLetterOrig + @":\", "\t" + driveLetter + @":\");
-                        }
 
                         fileWriter.Write("" + sbOut);
                     }

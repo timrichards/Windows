@@ -22,7 +22,7 @@ namespace DoubleFile
 
         internal WinDoubleFile_DuplicatesVM()
         {
-            Icmd_Goto = new RelayCommand(param => Goto(), param => null != _selectedItem);
+            Icmd_Goto = new RelayCommand(Goto, () => null != _selectedItem);
             _lsDisposable.Add(LV_DoubleFile_FilesVM.SelectedFileChanged.Subscribe(LV_DoubleFile_FilesVM_SelectedFileChanged));
         }
 

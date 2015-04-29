@@ -2,9 +2,25 @@
 using System.Windows.Threading;
 using System.Windows;
 using System.Reactive.Linq;
+using System.Windows.Controls;
 
 namespace DoubleFile
 {
+    public class LocalUserControl : UserControl
+    {
+        public string Title { get; set; }
+
+        internal bool LocalIsClosed { get; private set; }
+        internal bool LocalIsClosing { get; private set; }
+
+        internal bool? LocalDialogResult { get; set; }
+        internal void CloseIfSimulatingModal() { }
+
+        protected virtual LocalWindow_DoubleFile CreateChainedWindow() { return null; }
+        internal ResizeMode ResizeMode { get; set; }
+        virtual protected Rect PosAtClose { get; set; }
+    }
+
     public class LocalWindow : Window
     {
         internal bool LocalIsClosed { get; private set; }
@@ -150,6 +166,6 @@ namespace DoubleFile
             return base.ShowDialog();
         }
 
-        bool _simulatingModal = false;      // NO. Must be false. Look up. (this class also controls plain windows.)
+        bool _simulatingModal = false;      // NO. Must be false. Look up. (this class also controls modeless windows.)
     }
 }

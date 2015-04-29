@@ -73,10 +73,8 @@ namespace DoubleFile
             }
             set
             {
-                if (value == null)
-                {
+                if (null == value)
                     return;
-                }
 
                 var astr = value.StringValues;
                 var i = 0;
@@ -139,15 +137,15 @@ namespace DoubleFile
         #region form_handlers
         private void Grid_Loaded()
         {
-            var vm = new UC_VolumeEditVM();
-
-            uc_VolumeEdit.DataContext = vm;
-            vm.IsOKenabled = () => IsOKenabled;
-            vm.SourcePath_CurrentText = () => form_EditSourcePath.Text;
-            vm.ListingFile_CurrentText = () => form_EditListingFile.Text;
-            vm.FromSourcePathDlg = s => form_EditSourcePath.Text = s;
-            vm.FromProbe = (strDriveModel, strDriveSerial) => { form_EditDriveModel.Text = strDriveModel; form_EditDriveSerial.Text = strDriveSerial; };
-            vm.FromListingFileDlg = s => form_EditListingFile.Text = s;
+            uc_VolumeEdit.DataContext = new UC_VolumeEditVM()
+            {
+                IsOKenabled = () => IsOKenabled,
+                SourcePath_CurrentText = () => form_EditSourcePath.Text,
+                ListingFile_CurrentText = () => form_EditListingFile.Text,
+                FromSourcePathDlg = s => form_EditSourcePath.Text = s,
+                FromProbe = (strDriveModel, strDriveSerial) => { form_EditDriveModel.Text = strDriveModel; form_EditDriveSerial.Text = strDriveSerial; },
+                FromListingFileDlg = s => form_EditListingFile.Text = s
+            };
 
             form_EditDriveLetter.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (o, e1) => { e1.Handled = true; }));
 
@@ -155,14 +153,12 @@ namespace DoubleFile
 
             textBox.Focus();
             textBox.CaretIndex = int.MaxValue;
-        }        
+        }
 
         private void form_EditDriveLetter_PreviewKeyDown(KeyEventArgs e)
         {
-            if (new Key[] {Key.Tab, Key.Back, Key.Delete, Key.Left, Key.Right}.Contains(e.Key))
-            {
+            if (new Key[] { Key.Tab, Key.Back, Key.Delete, Key.Left, Key.Right }.Contains(e.Key))
                 return;
-            }
 
             if (form_EditDriveLetter.Text.Length > 0)
             {
@@ -229,9 +225,7 @@ namespace DoubleFile
             var window = Window.GetWindow(uc_VolumeEdit) as LocalWindow;
 
             if (window != null)
-            {
                 window.CloseIfSimulatingModal();
-            }
         }
         #endregion form_handlers
 

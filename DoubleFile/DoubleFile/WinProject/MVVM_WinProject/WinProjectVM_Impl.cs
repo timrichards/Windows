@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Linq;
+using System.IO;
+using System.Text;
 
 namespace DoubleFile
 {
@@ -27,12 +29,13 @@ namespace DoubleFile
                 return;
             }
 
-            var dlg = new Microsoft.Win32.OpenFileDialog {Title = "Open Project", Filter = _ksProjectFilter};
+            var dlg = new Microsoft.Win32.OpenFileDialog { Title = "Open Project", Filter = _ksProjectFilter };
 
             if (dlg.ShowDialog() ?? false)
             {
                 new ProjectFile().OpenProject(dlg.FileName,
                     (listFiles, bClearItems, userCancelled) => OpenListingFiles(listFiles, bClearItems, userCancelled));
+
                 _lvVM.Unsaved = false;
             }
         }
@@ -46,7 +49,7 @@ namespace DoubleFile
         {
             string strFilename = null;
 
-            while (true)
+            for (; ; )
             {
                 var dlg = new Microsoft.Win32.SaveFileDialog
                 {
@@ -60,7 +63,7 @@ namespace DoubleFile
                 {
                     strFilename = dlg.FileName;
 
-                    if (System.IO.File.Exists(strFilename))
+                    if (File.Exists(strFilename))
                     {
                         MBoxStatic.ShowDialog("Project file exists. Please manually delete it using the Save Project dialog after this alert closes.", "Save Project");
                         continue;
@@ -79,9 +82,9 @@ namespace DoubleFile
         {
             var lvItemVolumeTemp = new LVitem_ProjectVM();
 
-            while (true)
+            for (; ; )
             {
-                var newVolume = new WinVolumeNew {LVitemVolumeTemp = new LVitem_ProjectVM(lvItemVolumeTemp)};
+                var newVolume = new WinVolumeNew { LVitemVolumeTemp = new LVitem_ProjectVM(lvItemVolumeTemp) };
 
                 if (false == (newVolume.ShowDialog() ?? false))
                 {
@@ -122,16 +125,14 @@ namespace DoubleFile
             bool bClearItems = false,
             System.Func<bool> userCancelled = null)
         {
-            var sbBadFiles = new System.Text.StringBuilder();
+            var sbBadFiles = new StringBuilder();
             var bMultiBad = true;
             var listItems = new ConcurrentBag<LVitem_ProjectVM>();
 
             if (false == bClearItems)
             {
                 foreach (var lvItem in _lvVM.ItemsCast)
-                {
                     listItems.Add(lvItem);
-                }
             }
 
             Parallel.ForEach(listFiles, strFilename =>
@@ -153,9 +154,7 @@ namespace DoubleFile
                     bMultiBad = (sbBadFiles.Length > 0);
 
                     lock (sbBadFiles)
-                    {
                         sbBadFiles.Append("• ").Append(System.IO.Path.GetFileName(strFilename)).Append("\n");
-                    }
                 }
             });
 
@@ -181,9 +180,7 @@ namespace DoubleFile
             });
 
             if (sbBadFiles.Length > 0)
-            {
                 MBoxStatic.ShowDialog("Bad listing file" + (bMultiBad ? "s" : "") + ".\n" + sbBadFiles, "Open Listing File");
-            }
 
             return bOpenedFiles;
         }

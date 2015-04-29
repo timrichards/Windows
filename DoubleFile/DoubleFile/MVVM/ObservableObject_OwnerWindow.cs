@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+
 namespace DoubleFile
 {
     class ObservableObject_OwnerWindow : ObservableObjectBase

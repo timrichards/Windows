@@ -24,9 +24,7 @@ namespace DoubleFile
             bool bTraceOnly = false)
         {
             if (bCondition)
-            {
                 return true;
-            }
 
             if ((static_nLastAssertLoc == nLocation) &&
                 (1 > (DateTime.Now - static_dtLastAssert).Seconds))
@@ -37,9 +35,7 @@ namespace DoubleFile
             var strError = "Assertion failed at location " + nLocation + ".";
 
             if (false == string.IsNullOrWhiteSpace(strError_in))
-            {
                 strError += "\n\nAdditional information: " + strError_in;
-            }
 
             UtilProject.WriteLine(strError);
 #if (DEBUG)

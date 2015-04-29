@@ -15,8 +15,8 @@ namespace DoubleFile
     {
         #region Fields
 
-        readonly Action<object> _execute;
-        readonly Predicate<object> _canExecute;
+        readonly Action _execute;
+        readonly Func<bool> _canExecute;
 
         #endregion // Fields
 
@@ -26,7 +26,7 @@ namespace DoubleFile
         /// Creates a new command that can always execute.
         /// </summary>
         /// <param name="execute">The execution logic.</param>
-        public RelayCommand(Action<object> execute)
+        public RelayCommand(Action execute)
             : this(execute, null)
         {
         }
@@ -36,7 +36,7 @@ namespace DoubleFile
         /// </summary>
         /// <param name="execute">The execution logic.</param>
         /// <param name="canExecute">The execution status logic.</param>
-        public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
+        public RelayCommand(Action execute, Func<bool> canExecute = null)
         {
             if (execute == null)
                 throw new ArgumentNullException("execute");
@@ -50,9 +50,9 @@ namespace DoubleFile
         #region ICommand Members
 
         [DebuggerStepThrough]
-        public bool CanExecute(object parameters)
+        public bool CanExecute(object o)
         {
-            return _canExecute == null || _canExecute(parameters);
+            return _canExecute == null || _canExecute();
         }
 
         public event EventHandler CanExecuteChanged
@@ -61,9 +61,9 @@ namespace DoubleFile
             remove { CommandManager.RequerySuggested -= value; }
         }
 
-        public void Execute(object parameters)
+        public void Execute(object o)
         {
-            _execute(parameters);
+            _execute();
         }
 
         #endregion // ICommand Members

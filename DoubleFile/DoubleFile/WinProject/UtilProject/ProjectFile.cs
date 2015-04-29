@@ -89,7 +89,7 @@ namespace DoubleFile
                     {
                         var strExt = Path.GetExtension(Path.GetFileName(s) ?? "");
 
-                        if (strExt.Length == 0)
+                        if (0 == strExt.Length)
                             return false;
 
                         return 
@@ -375,10 +375,7 @@ namespace DoubleFile
             }
 
             Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()
-                .Subscribe(x =>
-            {
-                MBoxStatic.ShowDialog(strError, "Error " + strMode + " Project");
-            });
+                .Subscribe(x => MBoxStatic.ShowDialog(strError, "Error " + strMode + " Project"));
 
             return true;
         }

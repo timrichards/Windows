@@ -113,11 +113,13 @@ namespace DoubleFile
             MainWindow.LeftWindow = null;
         }
 
-        LocalWindow_DoubleFile _chainedWindow = null;
-
-        virtual protected Rect PosAtClose { get; set; }
-
-        static double _nWantsLeft = -1;
-        static double _nWantsTop = -1;
+        LocalWindow_DoubleFile
+            _chainedWindow = null;
+        virtual protected Rect
+            PosAtClose { get; set; }
+        static double
+            _nWantsLeft = -1;
+        static double
+            _nWantsTop = -1;
     }
 }

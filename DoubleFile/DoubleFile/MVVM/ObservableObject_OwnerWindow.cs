@@ -2,7 +2,7 @@
 
 namespace DoubleFile
 {
-    class ObservableObject_OwnerWindow : ObservableObjectBase
+    abstract class Observable_OwnerWindowBase : ObservableObjectBase
     {
         static internal void DesignModeOK()
         {

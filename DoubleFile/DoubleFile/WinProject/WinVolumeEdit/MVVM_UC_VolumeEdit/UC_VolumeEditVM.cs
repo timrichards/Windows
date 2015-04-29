@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace DoubleFile
 {
-    partial class UC_VolumeEditVM : ObservableObject_OwnerWindow
+    partial class UC_VolumeEditVM : Observable_OwnerWindowBase
     {
         public Func<bool>
             IsOKenabled = () => { DesignModeOK(); return false; };
@@ -24,12 +24,13 @@ namespace DoubleFile
         public ICommand Icmd_EditListingFile { get; private set; }
         public ICommand Icmd_IsOKenabled { get; private set; }
 
-        internal UC_VolumeEditVM()
+        internal UC_VolumeEditVM Init()
         {
             Icmd_EditSourcePath = new RelayCommand(EditSourcePath);
             Icmd_Probe = new RelayCommand(Probe, IsOKenabled);
             Icmd_EditListingFile = new RelayCommand(EditListingFile);
             Icmd_IsOKenabled = new RelayCommand(() => { }, IsOKenabled);
+            return this;
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Windows.Threading;
 
 namespace DoubleFile
 {
-    abstract class ListViewVM_Base : ObservableObject_OwnerWindow
+    abstract class ListViewVM_Base : Observable_OwnerWindowBase
     {
         internal Func<bool>
             SelectedOne = () => { DesignModeOK(); return false; };

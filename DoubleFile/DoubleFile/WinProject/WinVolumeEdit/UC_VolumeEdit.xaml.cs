@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Linq;
 using System.IO;
@@ -12,7 +11,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for UC_VolumeEdit.xaml
     /// </summary>
-    partial class UC_VolumeEdit : UserControl
+    partial class UC_VolumeEdit
     {
         internal char DriveLetter { get { return (form_EditDriveLetter.Text + "\0")[0]; } }
 
@@ -39,7 +38,6 @@ namespace DoubleFile
         public UC_VolumeEdit()
         {
             InitializeComponent();
-
 
             Observable.FromEventPattern(form_grid, "Loaded")
                 .Subscribe(args => Grid_Loaded());
@@ -94,12 +92,8 @@ namespace DoubleFile
         {
             get
             {
-                var strListingFile = form_EditListingFile.Text;
-
-                try { strListingFile = Path.GetFullPath(strListingFile); }
+                try { return (Path.GetFileName(Path.GetFullPath(form_EditListingFile.Text)).Length > 0); }
                 catch (ArgumentException) { return false; }
-
-                return (Path.GetFileName(strListingFile).Length > 0);
             }
         }
 
@@ -108,7 +102,7 @@ namespace DoubleFile
             get
             {
                 return (SaveDirListings.IsGoodDriveSyntax(form_EditSourcePath.Text) &&
-                    ((IsVolumeNew == false) || Directory.Exists(form_EditSourcePath.Text)));
+                    ((false == IsVolumeNew) || Directory.Exists(form_EditSourcePath.Text)));
             }
         }
 
@@ -137,7 +131,7 @@ namespace DoubleFile
         #region form_handlers
         private void Grid_Loaded()
         {
-            uc_VolumeEdit.DataContext = new UC_VolumeEditVM()
+            uc_VolumeEdit.DataContext = new UC_VolumeEditVM
             {
                 IsOKenabled = () => IsOKenabled,
                 SourcePath_CurrentText = () => form_EditSourcePath.Text,
@@ -145,7 +139,7 @@ namespace DoubleFile
                 FromSourcePathDlg = s => form_EditSourcePath.Text = s,
                 FromProbe = (strDriveModel, strDriveSerial) => { form_EditDriveModel.Text = strDriveModel; form_EditDriveSerial.Text = strDriveSerial; },
                 FromListingFileDlg = s => form_EditListingFile.Text = s
-            };
+            }.Init();
 
             form_EditDriveLetter.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (o, e1) => { e1.Handled = true; }));
 

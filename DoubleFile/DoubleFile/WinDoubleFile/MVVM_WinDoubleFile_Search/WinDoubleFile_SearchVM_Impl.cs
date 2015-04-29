@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Subjects;
-using System.Text;
 using System.Reactive.Linq;
 
 namespace DoubleFile
@@ -16,13 +14,14 @@ namespace DoubleFile
             GoToFile { get { return _goToFile.AsObservable(); } }
         static readonly Subject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new Subject<Tuple<LVitem_ProjectVM, string, string>>();
 
-        internal WinDoubleFile_SearchVM()
+        internal WinDoubleFile_SearchVM Init()
         {
             Icmd_Folders = new RelayCommand(SearchFolders, IsSearchEnabled);
             Icmd_FoldersAndFiles = new RelayCommand(() => SearchFoldersAndFiles(), IsSearchEnabled);
             Icmd_Files = new RelayCommand(() => SearchFoldersAndFiles(bSearchFilesOnly: true), IsSearchEnabled);
             Icmd_Goto = new RelayCommand(Goto, () => null != _selectedItem);
             TabledString<Tabled_Files>.AddRef();
+            return this;
         }
 
         public void Dispose()

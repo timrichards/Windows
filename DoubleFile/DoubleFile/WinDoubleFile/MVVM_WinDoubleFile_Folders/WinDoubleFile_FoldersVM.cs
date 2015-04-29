@@ -4,7 +4,7 @@ using System.Windows.Input;
 
 namespace DoubleFile
 {
-    partial class WinDoubleFile_FoldersVM : ObservableObject_OwnerWindow, IDisposable
+    partial class WinDoubleFile_FoldersVM : Observable_OwnerWindowBase, IDisposable
     {
         static internal IEnumerable<LocalTreeNode>
             TreeNodes { get { var o = _weakReference.Target as WinDoubleFile_FoldersVM; return (null != o) ? o._arrTreeNodes : null; } }

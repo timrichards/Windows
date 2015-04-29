@@ -2,7 +2,7 @@
 
 namespace DoubleFile
 {
-    partial class WinProjectVM : ObservableObject_OwnerWindow
+    partial class WinProjectVM : Observable_OwnerWindowBase
     {
         // In order of appearance on the form
         public ICommand Icmd_OpenProject { get; private set; }

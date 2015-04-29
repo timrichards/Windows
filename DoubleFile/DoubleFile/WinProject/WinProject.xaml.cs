@@ -34,14 +34,17 @@ namespace DoubleFile
 
         private void Grid_Loaded()
         {
-            var lvProjectVM = new LV_ProjectVM(LVprojectVM);
+            var lvProjectVM = new LV_ProjectVM(LVprojectVM)
+            {
+                SelectedOne = () => form_lv.SelectedItems.HasOnlyOne(),
+                SelectedAny = () => (false == form_lv.SelectedItems.IsEmptyA()),
+                Selected = () => form_lv.SelectedItems.Cast<LVitem_ProjectVM>()
+            };
+
             var win = new WinProjectVM(lvProjectVM);
 
             form_lv.DataContext = lvProjectVM;
             DataContext = win;
-            lvProjectVM.SelectedOne = () => form_lv.SelectedItems.HasOnlyOne();
-            lvProjectVM.SelectedAny = () => (false == form_lv.SelectedItems.IsEmptyA());
-            lvProjectVM.Selected = () => form_lv.SelectedItems.Cast<LVitem_ProjectVM>();
 
             if (_bOpenProject)
                 win.OpenProject();

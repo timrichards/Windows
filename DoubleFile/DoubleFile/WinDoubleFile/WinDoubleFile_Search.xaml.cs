@@ -17,7 +17,7 @@ namespace DoubleFile
             var vm = new WinDoubleFile_SearchVM
             {
                 IsEditBoxNonEmpty = () => false == string.IsNullOrWhiteSpace(form_searchText.Text)
-            };
+            }.Init();
 
             DataContext = vm;
 

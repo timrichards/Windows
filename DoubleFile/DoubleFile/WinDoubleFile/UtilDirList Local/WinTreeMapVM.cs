@@ -2,7 +2,7 @@
 
 namespace DoubleFile
 {
-    class WinTreeMapVM : ObservableObject_OwnerWindow
+    class WinTreeMapVM : Observable_OwnerWindowBase
     {
         internal Action<LocalTreeNode> TreeNodeCallback = null;
 

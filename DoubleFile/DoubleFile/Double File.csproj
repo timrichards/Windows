@@ -180,6 +180,9 @@
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_TreeList\LVitem_TreeListVM.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_TreeList\LV_TreeListChildrenVM.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Search\GetOneNodeByRootPath.cs" />
+    <Compile Include="WinDoubleFile\UtilDirList Local\WinTreeMap_MUI.xaml.cs">
+      <DependentUpon>WinTreeMap_MUI.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WinDoubleFile\WinDoubleFile_Search.xaml.cs">
       <DependentUpon>WinDoubleFile_Search.xaml</DependentUpon>
     </Compile>
@@ -432,6 +435,10 @@
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WinDoubleFile\UtilDirList Local\WinTreeMap_MUI.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="WinDoubleFile\WinDoubleFile_Search.xaml">
       <Generator>MSBuild:Compile</Generator>

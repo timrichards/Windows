@@ -133,7 +133,7 @@ namespace DoubleFile
                 .Subscribe(args => bMouseDown = true);
 
             Observable.FromEventPattern(this, "MouseUp")
-                .Subscribe(args => { if (bMouseDown) _clickCallback(); bMouseDown = false; });
+                .Subscribe(args => { if (bMouseDown && (null != _clickCallback)) _clickCallback(); bMouseDown = false; });
         }
 
         void WinTooltip_SizeChanged(Size newSize)

@@ -6,8 +6,6 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    delegate void CreateFileDictStatusDelegate(bool bDone = false, double nProgress = double.NaN);
-    
     partial class WinDoubleFile_FoldersVM
     {
         internal ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
@@ -57,7 +55,7 @@ namespace DoubleFile
                 _winProgress.CloseIfNatural();
                 _bFileDictDone = true;
             }
-            else if (nProgress >= 0)
+            else if (0 <= nProgress)
             {
                 _winProgress.SetProgress(_ksFileDictKey, nProgress);
             }
@@ -82,7 +80,7 @@ namespace DoubleFile
             else if (rootNode != null)
             {
                 _listRootNodes.Add(rootNode);
-                _winProgress.SetProgress(_ksFolderTreeKey, _listRootNodes.Count / _nCorrelateProgressDenominator*3/4.0);
+                _winProgress.SetProgress(_ksFolderTreeKey, _listRootNodes.Count / _nCorrelateProgressDenominator * 3 / 4.0);
             }
             else
             {
@@ -109,7 +107,7 @@ namespace DoubleFile
             var nProgress = 0.0;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
-                .Subscribe(x => _winProgress.SetProgress(_ksFolderTreeKey, (3 + nProgress)/4.0)))
+                .Subscribe(x => _winProgress.SetProgress(_ksFolderTreeKey, (3 + nProgress) / 4.0)))
             {
                 var lsTreeNodes = new List<LocalTreeNode>();
 
@@ -122,7 +120,7 @@ namespace DoubleFile
                 var dtStart = DateTime.Now;
 
                 collate.Step1(d => nProgress = d);
-                UtilProject.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds/1000.0 + " seconds.");
+                UtilProject.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
                 dtStart = DateTime.Now;
 
                 if (App.LocalExit)
@@ -134,7 +132,7 @@ namespace DoubleFile
                 _winProgress.SetCompleted(_ksFolderTreeKey);
                 collate.Step2();
                 _arrTreeNodes = lsTreeNodes.ToArray();
-                UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds/1000.0 + " seconds.");
+                UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
             }
 
             TreeCleanup();
@@ -162,7 +160,7 @@ namespace DoubleFile
             }
 
             _winProgress.Title = "Initializing Duplicate File Explorer";
-            _winProgress.WindowClosingCallback = (() =>
+            _winProgress.WindowClosingCallback = () =>
             {
                 if (false == UtilDirList.Closure(() =>
                 {
@@ -194,7 +192,7 @@ namespace DoubleFile
 
                 TreeCleanup();
                 return true;
-            });
+            };
 
             var lsProgressItems = new List<string>();
             var fileDictionary = MainWindow.FileDictionary;

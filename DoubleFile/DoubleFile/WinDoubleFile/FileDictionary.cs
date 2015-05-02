@@ -9,6 +9,8 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
+    delegate void CreateFileDictStatusDelegate(bool bDone = false, double nProgress = double.NaN);
+    
     partial class FileDictionary : IDisposable
     {
         internal FileDictionary()
@@ -100,7 +102,6 @@ namespace DoubleFile
 
             var nLVitems_A = 0;
 
-
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                 .Subscribe(x =>
             {
@@ -164,9 +165,7 @@ namespace DoubleFile
                 });
 
                 if (IsAborted)
-                {
                     return;
-                }
 
                 _DictFiles =
                     dictFiles

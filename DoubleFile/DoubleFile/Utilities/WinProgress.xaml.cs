@@ -15,7 +15,7 @@ namespace DoubleFile
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     partial class WinProgress
     {
-        internal System.Func<bool> WindowClosingCallback { get; set; }
+        internal Func<bool> WindowClosingCallback { get; set; }
 
         internal WinProgress()
         {

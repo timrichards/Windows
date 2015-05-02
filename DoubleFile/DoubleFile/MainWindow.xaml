@@ -17,7 +17,7 @@
         <mui:LinkGroup DisplayName="Welcome">
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="View project" Source="/WinProject/WinProject_MUI.xaml" />
-                <mui:Link DisplayName="Explore" Source="/Pages/ListPage1.xaml" />
+                <mui:Link DisplayName="Explore" Source="WinDoubleFIle/UtilDirList Local/WinTreeMap_MUI.xaml" />
                 <mui:Link DisplayName="Search" Source="/Pages/Search.xaml" />
                 <mui:Link DisplayName="Introduction" Source="/Pages/Introduction.xaml" />
             </mui:LinkGroup.Links>

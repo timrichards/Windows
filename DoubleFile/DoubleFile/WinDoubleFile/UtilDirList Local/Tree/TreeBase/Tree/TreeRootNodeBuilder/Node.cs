@@ -75,7 +75,7 @@ namespace DoubleFile
 
                     rootNode.Text =
                         strVolumeName +
-                        (strVolumeName.EndsWith(rootNode.Text)
+                        (strVolumeName.EndsWith("" + rootNode.Text)
                             ? ""
                             : " (" + rootNode.Text + ")"
                         );

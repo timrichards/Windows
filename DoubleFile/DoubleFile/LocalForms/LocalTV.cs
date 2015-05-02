@@ -15,10 +15,10 @@ namespace DoubleFile
             SelectedNode { get; set; }
         internal LocalTreeNode
             TopNode { get; set; }
+
         static internal Func<string, LVitem_ProjectVM, LocalTreeNode>
-            GetOneNodeByRootPathA = null;
-        static internal LocalTV
-            StaticTreeView { get; set; }
+            GetOneNodeByRootPathA { get { return _getOneNodeByRootPathA.Target as Func<string, LVitem_ProjectVM, LocalTreeNode>; } }
+        static WeakReference _getOneNodeByRootPathA = new WeakReference(null);
 
         internal LocalTV(IEnumerable<LocalTreeNode> lsRootNodes = null)
         {
@@ -27,7 +27,7 @@ namespace DoubleFile
             
             _lsDisposable.Add(WinDoubleFile_DuplicatesVM.GoToFile.Subscribe(GoToFileA));
             _lsDisposable.Add(WinDoubleFile_SearchVM.GoToFile.Subscribe(GoToFileB));
-            GetOneNodeByRootPathA = (strPath, lvItemProjectVM) => GetOneNodeByRootPath.Go(strPath, Nodes, lvItemProjectVM);
+            _getOneNodeByRootPathA.Target = (Func<string, LVitem_ProjectVM, LocalTreeNode>)((strPath, lvItemProjectVM) => GetOneNodeByRootPath.Go(strPath, Nodes, lvItemProjectVM));
         }
 
         public void Dispose()
@@ -35,8 +35,7 @@ namespace DoubleFile
             foreach (var d in _lsDisposable)
                 d.Dispose();
 
-            GetOneNodeByRootPathA = null;
-            StaticTreeView = null;
+            _getOneNodeByRootPathA.Target = null;
         }
 
         internal int GetNodeCount(bool includeSubTrees = false)

@@ -15,30 +15,17 @@ namespace DoubleFile
     {
         internal LV_ProjectVM LVprojectVM { get; private set; }
 
+        public void OnFragmentNavigation(FragmentNavigationEventArgs e) { }
+        public void OnNavigatedFrom(NavigationEventArgs e) { }
+        public void OnNavigatedTo(NavigationEventArgs e) { Init(); }
+        public void OnNavigatingFrom(NavigatingCancelEventArgs e) { e.Cancel = WinProject_CancelOrDispose(); }
+
         public WinProject_MUI()
         {
             InitializeComponent();
 
             _lsDisposable.Add(Observable.FromEventPattern(form_btnOK, "Click")
                 .Subscribe(args => BtnOK_Click()));
-        }
-
-        public void OnFragmentNavigation(FragmentNavigationEventArgs e)
-        {
-        }
-
-        public void OnNavigatedFrom(NavigationEventArgs e)
-        {
-        }
-
-        public void OnNavigatedTo(NavigationEventArgs e)
-        {
-            Init();
-        }
-
-        public void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
-            e.Cancel = WinProject_CancelOrDispose();
         }
 
         internal WinProject_MUI(LV_ProjectVM lvProjectVM = null, bool bOpenProject = false)

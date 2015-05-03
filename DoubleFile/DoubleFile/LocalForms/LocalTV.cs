@@ -16,26 +16,34 @@ namespace DoubleFile
         internal LocalTreeNode
             TopNode { get; set; }
 
-        static internal Func<string, LVitem_ProjectVM, LocalTreeNode>
-            GetOneNodeByRootPathA { get { return _getOneNodeByRootPathA.Target as Func<string, LVitem_ProjectVM, LocalTreeNode>; } }
-        static WeakReference _getOneNodeByRootPathA = new WeakReference(null);
+        static internal LocalTreeNode
+            GetOneNodeByRootPathA(string strPath, LVitem_ProjectVM lvItemProjectVM)
+        {
+            var o = _weakReference.Target as LocalTV;
+
+            if (null == o)
+                return null;
+
+            return GetOneNodeByRootPath.Go(strPath, o.Nodes, lvItemProjectVM);
+        }
 
         internal LocalTV(IEnumerable<LocalTreeNode> lsRootNodes = null)
         {
+            _weakReference.Target = this;            
+
             if (null != lsRootNodes)
                 Nodes = lsRootNodes.ToArray();
             
             _lsDisposable.Add(WinDoubleFile_DuplicatesVM.GoToFile.Subscribe(GoToFileA));
             _lsDisposable.Add(WinDoubleFile_SearchVM.GoToFile.Subscribe(GoToFileB));
-            _getOneNodeByRootPathA.Target = (Func<string, LVitem_ProjectVM, LocalTreeNode>)((strPath, lvItemProjectVM) => GetOneNodeByRootPath.Go(strPath, Nodes, lvItemProjectVM));
         }
 
         public void Dispose()
         {
+            _weakReference.Target = null;
+
             foreach (var d in _lsDisposable)
                 d.Dispose();
-
-            _getOneNodeByRootPathA.Target = null;
         }
 
         internal int GetNodeCount(bool includeSubTrees = false)
@@ -78,5 +86,7 @@ namespace DoubleFile
 
         List<IDisposable>
             _lsDisposable = new List<IDisposable>();
+        static readonly WeakReference
+            _weakReference = new WeakReference(null);
     }
 }

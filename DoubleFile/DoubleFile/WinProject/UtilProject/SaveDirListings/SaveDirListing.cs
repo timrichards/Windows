@@ -7,6 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Reactive.Linq;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace DoubleFile
 {
@@ -16,28 +18,28 @@ namespace DoubleFile
         {
             internal SaveDirListing(
                 LVitem_ProjectVM volStrings, 
-                SaveDirListingsStatusDelegate statusCallback)
+                WeakReference<ISaveDirListingsStatus> callbackWR)
                 : base(volStrings)
             {
-                m_statusCallback = statusCallback;
+                _callbackWR = callbackWR;
             }
 
             internal SaveDirListing DoThreadFactory()
             {
-                m_thread = new Thread(Go) {IsBackground = true};
-                m_thread.Start();
+                _thread = new Thread(Go) {IsBackground = true};
+                _thread.Start();
                 return this;
             }
 
             internal void Join()
             {
-                m_thread.Join();
+                _thread.Join();
             }
 
             internal void Abort()
             {
                 m_bThreadAbort = true;
-                m_thread.Abort();
+                _thread.Abort();
             }
 
             void WriteHeader(TextWriter fs)
@@ -109,7 +111,7 @@ namespace DoubleFile
                 out ConcurrentDictionary<string, HashTuple> dictHash_out,
                 out Dictionary<string, string> dictException_FileRead_out)
             {
-                if (listFilePaths == null)
+                if (null == listFilePaths)
                 {
                     dictHash_out = null;
                     dictException_FileRead_out = null;
@@ -120,7 +122,7 @@ namespace DoubleFile
                 double nProgressDenominator = listFilePaths.Count();        // double preserves mantissa
 
                 using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
-                    .Subscribe(x => m_statusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator)))
+                    .Subscribe(x => StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator)))
                 {
                     var dictHash = new ConcurrentDictionary<string, HashTuple>();
                     var dictException_FileRead = new Dictionary<string, string>();
@@ -128,21 +130,18 @@ namespace DoubleFile
                     Parallel.ForEach(listFilePaths, strFile =>
                     {
                         if (m_bThreadAbort)
-                        {
-                            return; // return from lambda
-                        }
+                            return;     // from lambda
 
                         Interlocked.Increment(ref nProgressNumerator);
 
-                        var fileHandle = DriveSerialStatic.CreateFile(@"\\?\" + strFile, FileAccess.Read,
-                            FileShare.ReadWrite,
-                            IntPtr.Zero, 3, 0, IntPtr.Zero);
+                        var fileHandle =
+                            DriveSerialStatic
+                            .CreateFile(@"\\?\" + strFile, FileAccess.Read, FileShare.ReadWrite, IntPtr.Zero, 3, 0, IntPtr.Zero);
 
                         if (fileHandle.IsInvalid)
                         {
-                            dictException_FileRead[strFile] = new System.ComponentModel.Win32Exception(
-                                System.Runtime.InteropServices.Marshal.GetLastWin32Error()).Message;
-                            return; // return from lambda
+                            dictException_FileRead[strFile] = new Win32Exception(Marshal.GetLastWin32Error()).Message;
+                            return;     // from lambda
                         }
 
                         using (var fsA = new FileStream(fileHandle, FileAccess.Read))
@@ -153,9 +152,7 @@ namespace DoubleFile
                             fsA.Read(buffer, 0, kBufferSize);
 
                             using (var md5 = System.Security.Cryptography.MD5.Create())
-                            {
                                 dictHash[strFile] = HashTuple.FactoryCreate(md5.ComputeHash(buffer));
-                            }
                         }
                     });
 
@@ -163,20 +160,20 @@ namespace DoubleFile
                     dictException_FileRead_out = dictException_FileRead;
                 }
 
-                m_statusCallback(LVitemProjectVM, nProgress: 1);
+                StatusCallback(LVitemProjectVM, nProgress: 1);
             }
 
             void Go()
             {
-                if (IsGoodDriveSyntax(LVitemProjectVM.SourcePath) == false)
+                if (false == IsGoodDriveSyntax(LVitemProjectVM.SourcePath))
                 {
-                    m_statusCallback(LVitemProjectVM, strError: "Bad drive syntax.");
+                    StatusCallback(LVitemProjectVM, strError: "Bad drive syntax.");
                     return;
                 }
 
-                if (Directory.Exists(LVitemProjectVM.SourcePath) == false)
+                if (false == Directory.Exists(LVitemProjectVM.SourcePath))
                 {
-                    m_statusCallback(LVitemProjectVM, strError: "Source Path does not exist.");
+                    StatusCallback(LVitemProjectVM, strError: "Source Path does not exist.");
                     return;
                 }
 
@@ -215,22 +212,21 @@ namespace DoubleFile
                         //MBox.Assert(99891, nProgressDenominator == dictHash.Count);           ditto
 
                         foreach (var strError in ErrorList)
-                        {
                             fs.WriteLine(strError);
-                        }
 
                         fs.WriteLine();
                         fs.WriteLine(FormatString(strDir: ksTotalLengthLoc01, nLength: LengthRead));
                     }
 
-                    if (App.LocalExit || m_bThreadAbort)
+                    if (App.LocalExit ||
+                        m_bThreadAbort)
                     {
                         File.Delete(LVitemProjectVM.ListingFile);
                         return;
                     }
 
                     Directory.SetCurrentDirectory(strPathOrig);
-                    m_statusCallback(LVitemProjectVM, bDone: true);
+                    StatusCallback(LVitemProjectVM, bDone: true);
                 }
 #if DEBUG == false
                 catch (Exception e)
@@ -241,8 +237,35 @@ namespace DoubleFile
                 finally { }
             }
 
-            readonly SaveDirListingsStatusDelegate m_statusCallback = null;
-            Thread m_thread = null;
+            void StatusCallback(
+                LVitem_ProjectVM lvItemProjectVM,
+                string strError = null,
+                bool bDone = false,
+                double nProgress = double.NaN)
+            {
+                if (null == _callbackWR)
+                {
+                    MBoxStatic.Assert(99871, false);
+                    return;
+                }
+
+                ISaveDirListingsStatus saveDirListingsStatus = null;
+
+                _callbackWR.TryGetTarget(out saveDirListingsStatus);
+
+                if (null == saveDirListingsStatus)
+                {
+                    MBoxStatic.Assert(99870, false);
+                    return;
+                }
+
+                saveDirListingsStatus.SaveDirListingsStatus(lvItemProjectVM, strError, bDone, nProgress);
+            }
+
+            WeakReference<ISaveDirListingsStatus>
+                _callbackWR = null;
+            Thread
+                _thread = null;
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    partial class WinDoubleFile_FoldersVM
+    partial class WinDoubleFile_FoldersVM : IWinProgressClosingCallback
     {
         internal ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
             DictNodes { get; private set; }
@@ -160,39 +160,7 @@ namespace DoubleFile
             }
 
             _winProgress.Title = "Initializing Duplicate File Explorer";
-            _winProgress.WindowClosingCallback = () =>
-            {
-                if (false == UtilDirList.Closure(() =>
-                {
-                    if (MainWindow.FileDictionary
-                        .IsAborted)
-                    {
-                        return true;
-                    }
-
-                    if (_bFileDictDone &&
-                        (null == Tree))
-                    {
-                        return true;
-                    }
-
-                    return
-                        (MessageBoxResult.Yes ==
-                        MBoxStatic.ShowDialog("Do you want to cancel?", _winProgress.Title, MessageBoxButton.YesNo, _winProgress));
-                }))
-                {
-                    return false;
-                }
-
-                MainWindow.FileDictionary
-                    .Abort();
-                    
-                if (null != Tree)
-                    Tree.EndThread();
-
-                TreeCleanup();
-                return true;
-            };
+            _winProgress.WindowClosingCallback = new WeakReference<IWinProgressClosingCallback>(this);
 
             var lsProgressItems = new List<string>();
             var fileDictionary = MainWindow.FileDictionary;
@@ -222,6 +190,40 @@ namespace DoubleFile
                 .ShowDialog();
         }
 
+        bool IWinProgressClosingCallback.WinProgressClosingCallback()
+        {
+            if (false == UtilDirList.Closure(() =>
+            {
+                if (MainWindow.FileDictionary
+                    .IsAborted)
+                {
+                    return true;
+                }
+
+                if (_bFileDictDone &&
+                    (null == Tree))
+                {
+                    return true;
+                }
+
+                return
+                    (MessageBoxResult.Yes ==
+                    MBoxStatic.ShowDialog("Do you want to cancel?", _winProgress.Title, MessageBoxButton.YesNo, _winProgress));
+            }))
+            {
+                return false;
+            }
+
+            MainWindow.FileDictionary
+                .Abort();
+                    
+            if (null != Tree)
+                Tree.EndThread();
+
+            TreeCleanup();
+            return true;
+        }
+        
         const string _ksFileDictKey = "Creating file dictionary";
         const string _ksFolderTreeKey = "Creating folder tree browser";
 

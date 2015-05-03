@@ -5,13 +5,13 @@ using System.Windows;
 using System.Linq;
 using System.IO;
 using System.Text;
+using System;
 
 namespace DoubleFile
 {
-    partial class WinProjectVM
+    partial class WinProjectVM : IOpenListingFiles
     {
-        // Menu items
-        
+        // Menu items       
         static internal string
             ListingFilter { get { return "Double File Listing|*." + FileParse.ksFileExt_Listing + _ksAllFilesFilter; } }
         const string _ksProjectFilter = "Double File project|*." + FileParse.ksFileExt_Project + _ksAllFilesFilter;
@@ -33,8 +33,7 @@ namespace DoubleFile
 
             if (dlg.ShowDialog() ?? false)
             {
-                new ProjectFile().OpenProject(dlg.FileName,
-                    (listFiles, bClearItems, userCancelled) => OpenListingFiles(listFiles, bClearItems, userCancelled));
+                ProjectFile.OpenProject(dlg.FileName, new WeakReference<IOpenListingFiles>(this));
 
                 _lvVM.Unsaved = false;
             }
@@ -70,7 +69,7 @@ namespace DoubleFile
                     }
 
                     // if it's saved, don't set it to unsaved if SaveProject() bails.
-                    if (new ProjectFile().SaveProject(lvProjectVM, strFilename))
+                    if (ProjectFile.SaveProject(lvProjectVM, strFilename))
                         lvProjectVM.Unsaved = false;
                 }
 
@@ -88,7 +87,7 @@ namespace DoubleFile
 
                 if (false == (newVolume.ShowDialog() ?? false))
                 {
-                    // user cancelled
+                    // user canceled
                     break;
                 }
 
@@ -123,7 +122,7 @@ namespace DoubleFile
         internal bool OpenListingFiles(
             IEnumerable<string> listFiles,
             bool bClearItems = false,
-            System.Func<bool> userCancelled = null)
+            System.Func<bool> userCanceled = null)
         {
             var sbBadFiles = new StringBuilder();
             var bMultiBad = true;
@@ -137,8 +136,8 @@ namespace DoubleFile
 
             Parallel.ForEach(listFiles, strFilename =>
             {
-                if ((null != userCancelled) &&
-                    userCancelled())
+                if ((null != userCanceled) &&
+                    userCanceled())
                 {
                     return;
                 }
@@ -158,8 +157,8 @@ namespace DoubleFile
                 }
             });
 
-            if ((null != userCancelled) &&
-                userCancelled())
+            if ((null != userCanceled) &&
+                userCanceled())
             {
                 return false;
             }
@@ -170,8 +169,8 @@ namespace DoubleFile
                 .OrderBy(lvItem => lvItem.SourcePath)
                 .Aggregate(false, (current, lvItem) =>
             {
-                if ((null != userCancelled) &&
-                    userCancelled())
+                if ((null != userCanceled) &&
+                    userCanceled())
                 {
                     return false;
                 }
@@ -183,6 +182,11 @@ namespace DoubleFile
                 MBoxStatic.ShowDialog("Bad listing file" + (bMultiBad ? "s" : "") + ".\n" + sbBadFiles, "Open Listing File");
 
             return bOpenedFiles;
+        }
+
+        void IOpenListingFiles.OpenListingFiles(IEnumerable<string> lsFiles, bool bClearItems, Func<bool> userCanceled)
+        {
+            OpenListingFiles(lsFiles, bClearItems, userCanceled);
         }
     }
 }

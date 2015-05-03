@@ -13,7 +13,7 @@ namespace DoubleFile
 
         internal WinDoubleFile_FoldersVM(TreeView_DoubleFileVM tvVM, LV_ProjectVM lvProjectVM)
         {
-            _weakReference = new WeakReference(this);            
+            _weakReference.Target = this;            
             _lvProjectVM = lvProjectVM;
 
             if ((null == _lvProjectVM) ||
@@ -54,7 +54,7 @@ namespace DoubleFile
             _nCorrelateProgressDenominator = 0;
         readonly LocalTV
             _localTV = new LocalTV();
-        static WeakReference
-            _weakReference = null;
+        static readonly WeakReference
+            _weakReference = new WeakReference(null);
     }
 }

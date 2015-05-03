@@ -6,42 +6,56 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    partial class SaveDirListings : FileParse
+    delegate void SaveDirListingsStatusDelegate(
+        LVitem_ProjectVM lvItemProjectVM,
+        string strError = null,
+        bool bDone = false,
+        double nProgress = double.NaN);
+
+    interface ISaveDirListingsStatus
+    {
+        void SaveDirListingsStatus(
+            LVitem_ProjectVM lvItemProjectVM,
+            string strError = null,
+            bool bDone = false,
+            double nProgress = double.NaN);
+
+        void SaveDirListingsDoneCallback();
+    }
+
+    partial class SaveDirListings
     {
         internal int FilesWritten = 0;
 
         static internal bool IsGoodDriveSyntax(string strDrive)
         {
-            return ((strDrive.Length > 2) && char.IsLetter(strDrive[0]) && (strDrive.Substring(1, 2) == @":\"));
+            return ((strDrive.Length > 2) &&
+                char.IsLetter(strDrive[0]) &&
+                (strDrive.Substring(1, 2) == @":\"));
         }
 
-        internal SaveDirListings(
-            LV_ProjectVM lvProjectVM,
-            SaveDirListingsStatusDelegate statusCallback,
-            Action doneCallback)
+        internal SaveDirListings(LV_ProjectVM lvProjectVM, WeakReference<ISaveDirListingsStatus> callbackWR)
         {
             IsAborted = false;
-            m_lvProjectVM = lvProjectVM;
-            m_statusCallback = statusCallback;
-            m_doneCallback = doneCallback;
+            _lvProjectVM = lvProjectVM;
+            _callbackWR = callbackWR;
         }
 
         internal void EndThread()
         {
-            foreach (var worker in m_cbagWorkers)
-            {
+            foreach (var worker in _cbagWorkers)
                 worker.Abort();
-            }
 
-            m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
+            _cbagWorkers = new ConcurrentBag<SaveDirListing>();
             IsAborted = true;
-            m_thread = null;
+            _thread = null;
         }
 
-        internal void DoThreadFactory()
+        internal SaveDirListings DoThreadFactory()
         {
-            m_thread = new Thread(Go) {IsBackground = true};
-            m_thread.Start();
+            _thread = new Thread(Go) {IsBackground = true};
+            _thread.Start();
+            return this;
         }
 
         internal bool IsAborted { get; private set; }
@@ -54,32 +68,50 @@ namespace DoubleFile
             var dtStart = DateTime.Now;
 
             foreach (var lvItemProjectVM
-                in m_lvProjectVM.ItemsCast
+                in _lvProjectVM.ItemsCast
                 .Where(lvItemProjectVM => lvItemProjectVM.WouldSave))
             {
-                m_cbagWorkers.Add(new SaveDirListing(lvItemProjectVM, m_statusCallback).DoThreadFactory());
+                _cbagWorkers.Add(new SaveDirListing(lvItemProjectVM, _callbackWR).DoThreadFactory());
             }
 
-            foreach (var worker in m_cbagWorkers)
-            {
+            foreach (var worker in _cbagWorkers)
                 worker.Join();
-            }
 
             UtilProject.WriteLine(string.Format("Finished saving directory listings in {0} seconds.",
                 ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
-            if (App.LocalExit || IsAborted)
+            if (App.LocalExit ||
+                IsAborted)
             {
                 return;
             }
 
-            m_doneCallback();
+            if (null == _callbackWR)
+            {
+                MBoxStatic.Assert(99873, false);
+                return;
+            }
+
+            ISaveDirListingsStatus saveDirListingsStatus = null;
+
+            _callbackWR.TryGetTarget(out saveDirListingsStatus);
+
+            if (null == saveDirListingsStatus)
+            {
+                MBoxStatic.Assert(99872, false);
+                return;
+            }
+
+            saveDirListingsStatus.SaveDirListingsDoneCallback();
         }
 
-        readonly SaveDirListingsStatusDelegate m_statusCallback = null;
-        readonly Action m_doneCallback = null;
-        Thread m_thread = null;
-        ConcurrentBag<SaveDirListing> m_cbagWorkers = new ConcurrentBag<SaveDirListing>();
-        LV_ProjectVM m_lvProjectVM = null;
+        WeakReference<ISaveDirListingsStatus>
+            _callbackWR = null;
+        Thread
+            _thread = null;
+        ConcurrentBag<SaveDirListing>
+            _cbagWorkers = new ConcurrentBag<SaveDirListing>();
+        LV_ProjectVM
+            _lvProjectVM = null;
     }
 }

@@ -6,23 +6,55 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows;
 
 namespace DoubleFile
 {
+    interface IOpenListingFiles
+    {
+        void OpenListingFiles(IEnumerable<string> lsFiles, bool bClearItems, Func<bool> userCanceled);
+    }
+
     // The Process disposable field is managed by wrapper functions that dispose it once control returns.
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
-    class ProjectFile
+    class ProjectFile : IWinProgressClosingCallback
     {
         static internal event Func<string> OnSavingProject = null;
         static internal event Action OnOpenedProject = null;
 
-        static internal string TempPath { get { return System.IO.Path.GetTempPath() + @"DoubleFile\"; } }
-        static internal string TempPath01 { get { return TempPath.TrimEnd(new char[] { '\\' }) + "01"; } }
+        static internal string TempPath { get { return Path.GetTempPath() + @"DoubleFile\"; } }
+        static internal string TempPath01 { get { return TempPath.TrimEnd('\\') + "01"; } }
 
-        Process Init()
+        static internal void OpenProject(string strProjectFilename,
+            WeakReference<IOpenListingFiles> openListingFilesWR)
         {
-            var process = new Process
+            var projectFile = new ProjectFile();
+
+            _weakReference.Target = projectFile;
+            projectFile.OpenProject_(strProjectFilename, openListingFilesWR);
+
+            foreach (var d in projectFile._lsDisposable)
+                d.Dispose();
+        }
+
+        static internal bool SaveProject(LV_ProjectVM lvProjectVM, string strProjectFilename)
+        {
+            var projectFile = new ProjectFile();
+
+            _weakReference.Target = projectFile;
+
+            var bRet = projectFile.SaveProject_(lvProjectVM, strProjectFilename);
+
+            foreach (var d in projectFile._lsDisposable)
+                d.Dispose();
+
+            return bRet;
+        }
+
+        ProjectFile()
+        {
+            _process = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -38,22 +70,18 @@ namespace DoubleFile
                 }
             };
 
-            _lsDisposable.Add(Observable.FromEventPattern<DataReceivedEventArgs>(process, "OutputDataReceived")
+            _lsDisposable.Add(Observable.FromEventPattern<DataReceivedEventArgs>(_process, "OutputDataReceived")
                 .Subscribe(args => { UtilProject.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
 
-            _lsDisposable.Add(Observable.FromEventPattern<DataReceivedEventArgs>(process, "ErrorDataReceived")
+            _lsDisposable.Add(Observable.FromEventPattern<DataReceivedEventArgs>(_process, "ErrorDataReceived")
                 .Subscribe(args => { UtilProject.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
 
-            process.EnableRaisingEvents = true;
-            _lsDisposable.Add(process);
-            return process;
+            _process.EnableRaisingEvents = true;
+            _lsDisposable.Add(_process);
         }
 
-        internal void OpenProject(string strProjectFilename,
-            Action<IEnumerable<string>, bool, Func<bool>> openListingFiles)
+        void OpenProject_(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR)
         {
-            var process = Init();
-
             if (Directory.Exists(TempPath))                     // close box/cancel/undo
             {
                 if (Directory.Exists(TempPath01))
@@ -64,90 +92,80 @@ namespace DoubleFile
 
             Directory.CreateDirectory(TempPath);
 
-            Observable.FromEventPattern(process, "Exited")
-                .Subscribe(args => 
-            {
-                var bErr = ReportAnyErrors(process, "Opening",
-                    new Win32Exception(Marshal.GetLastWin32Error()).Message);
-
-                if (bErr || _bUserCancelled)
-                {
-                    if (Directory.Exists(TempPath01))
-                    {
-                        Directory.Delete(TempPath, true);
-                        Directory.Move(TempPath01, TempPath);
-                    }
-
-                    _bProcessing = false;
-                    return;
-                }
-
-                openListingFiles(
-                    Directory
-                    .GetFiles(TempPath)
-                    .Where(s =>
-                    {
-                        var strExt = Path.GetExtension(Path.GetFileName(s) ?? "");
-
-                        if (0 == strExt.Length)
-                            return false;
-
-                        return 
-                            strExt
-                            .Remove(0, 1)
-                            .Equals(FileParse.ksFileExt_Listing,
-                            StringComparison.InvariantCultureIgnoreCase);
-                    }),
-                    true, () => _bUserCancelled);
-
-                if (null != OnOpenedProject)
-                    OnOpenedProject();
-
-                if (Directory.Exists(TempPath01))
-                    Directory.Delete(TempPath01, true);
-
-                if (false == _winProgress.LocalIsClosed)
-                {
-                    _winProgress.Aborted = true;
-                    UtilProject.UIthread(_winProgress.Close);
-                }
-                
-                _bProcessing = false;
-            });
-
-            process.StartInfo.WorkingDirectory = TempPath;
-            process.StartInfo.Arguments = "e \"" + strProjectFilename + "\" -y";
-
-            if (false == StartProcess("Opening project", Path.GetFileName(strProjectFilename), process))
+            if (false == StartProcess("Opening project", Path.GetFileName(strProjectFilename),
+                TempPath,
+                "e \"" + strProjectFilename + "\" -y",
+                () => OpenProjectExited(openListingFilesWR)))
             {
                 MBoxStatic.ShowDialog("Couldn't open the project. Reinstall Double File or open your project file " +
                     "and get to your listing files using a download from 7-zip.org.", "Open Project");
             }
-
-            foreach (var d in _lsDisposable)
-                d.Dispose();
         }
 
-        internal bool SaveProject(LV_ProjectVM lvProjectVM, string strProjectFilename)
+        void OpenProjectExited(WeakReference<IOpenListingFiles> openListingFilesWR)
         {
-            var bRet = false;
+            var bErr = ReportAnyErrors(_process, "Opening",
+                new Win32Exception(Marshal.GetLastWin32Error()).Message);
 
-            SaveProject_(lvProjectVM, strProjectFilename, out bRet);
+            if (bErr || _bUserCanceled)
+            {
+                if (Directory.Exists(TempPath01))
+                {
+                    Directory.Delete(TempPath, true);
+                    Directory.Move(TempPath01, TempPath);
+                }
 
-            foreach (var d in _lsDisposable)
-                d.Dispose();
+                _bProcessing = false;
+                return;
+            }
 
-            return bRet;
+            IOpenListingFiles openListingFiles = null;
+
+            openListingFilesWR.TryGetTarget(out openListingFiles);
+
+            if (null == openListingFiles)
+            {
+                MBoxStatic.Assert(99874, false);
+                return;
+            }
+
+            openListingFiles.OpenListingFiles(
+                Directory
+                .GetFiles(TempPath)
+                .Where(s =>
+                {
+                    var strExt = Path.GetExtension(Path.GetFileName(s) ?? "");
+
+                    if (0 == strExt.Length)
+                        return false;
+
+                    return 
+                        strExt
+                        .Remove(0, 1)
+                        .Equals(FileParse.ksFileExt_Listing,
+                        StringComparison.InvariantCultureIgnoreCase);
+                }),
+                true, () => _bUserCanceled);
+
+            if (null != OnOpenedProject)
+                OnOpenedProject();
+
+            if (Directory.Exists(TempPath01))
+                Directory.Delete(TempPath01, true);
+
+            if (false == _winProgress.LocalIsClosed)
+            {
+                _winProgress.Aborted = true;
+                UtilProject.UIthread(_winProgress.Close);
+            }
+                
+            _bProcessing = false;
         }
 
-        void SaveProject_(LV_ProjectVM lvProjectVM,
-            string strProjectFilename,
-            out bool bRet_out)
+        bool SaveProject_(LV_ProjectVM lvProjectVM, string strProjectFilename)
         {
-            var process = Init();
-
-            var listListingFiles = new List<string>();
-            var listListingFiles_Check = new List<string>();
+            var lsListingFiles = new List<string>();
+            var lsListingFiles_Check = new List<string>();
 
             foreach (var volStrings in lvProjectVM.ItemsCast)
             {
@@ -156,7 +174,7 @@ namespace DoubleFile
 
                 var strNewName = Path.GetFileName(volStrings.ListingFile);
 
-                if (listListingFiles_Check.Contains(strNewName))
+                if (lsListingFiles_Check.Contains(strNewName))
                 {
                     var bSuccess = false;
                     const int knMaxAttempts = 16;
@@ -166,7 +184,7 @@ namespace DoubleFile
                         strNewName = Path.GetFileNameWithoutExtension(volStrings.ListingFile) +
                             "_" + n.ToString("00") + Path.GetExtension(volStrings.ListingFile);
 
-                        if (false == listListingFiles_Check.Contains(strNewName))
+                        if (false == lsListingFiles_Check.Contains(strNewName))
                         {
                             bSuccess = true;
                             break;
@@ -181,24 +199,23 @@ namespace DoubleFile
                     }
                 }
 
-                listListingFiles.Add(volStrings.ListingFile);
-                listListingFiles_Check.Add(Path.GetFileName(volStrings.ListingFile));
+                lsListingFiles.Add(volStrings.ListingFile);
+                lsListingFiles_Check.Add(Path.GetFileName(volStrings.ListingFile));
             }
 
-            if (listListingFiles.IsEmpty())
+            if (lsListingFiles.IsEmpty())
             {
                 MBoxStatic.ShowDialog("Any listing files in project have not yet been saved." +
                     " Click OK on the Project window to start saving directory listings of your drives.",
                     "Save Project");
 
-                bRet_out = false;
-                return;
+                return false;
             }
 
-            var sbSource = new System.Text.StringBuilder();
-            var strPath = Path.GetDirectoryName(listListingFiles[0]) + '\\';
+            var sbSource = new StringBuilder();
+            var strPath = Path.GetDirectoryName(lsListingFiles[0]) + '\\';
 
-            foreach (var listingFile in listListingFiles)
+            foreach (var listingFile in lsListingFiles)
             {
                 var strFilename = listingFile;
 
@@ -222,118 +239,135 @@ namespace DoubleFile
             var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
             var bRet = true;
 
-            Observable.FromEventPattern(process, "Exited")
-                .Subscribe(args => 
-            {
-                var bErr = ReportAnyErrors(process, "Saving",
-                    new Win32Exception(Marshal.GetLastWin32Error()).Message);
-
-                if (bErr || _bUserCancelled)
-                {
-                    bRet = false;
-                    return;
-                }
-
-                if (File.Exists(strProjectFilename))
-                    File.Delete(strProjectFilename);
-
-                File.Move(strProjectFilename + ".7z", strProjectFilename);
-                _winProgress.SetCompleted(strProjectFileNoPath);
-                MBoxStatic.ShowDialog("Todo: save volume group.\nTodo: save include y/n");
-                _bProcessing = false;
-            });
-
-            process.StartInfo.WorkingDirectory = strPath;
-
             var str7z = strProjectFilename + ".7z";
 
             if (File.Exists(str7z))
                 File.Delete(str7z);
 
-            process.StartInfo.Arguments = "a \"" + str7z + "\" " + sbSource + " -mx=3 -md=128m";
-
-            if (false == StartProcess("Saving project", strProjectFileNoPath, process))
+            if (false == StartProcess("Saving project", strProjectFileNoPath,
+                strPath,
+                "a \"" + str7z + "\" " + sbSource + " -mx=3 -md=128m",
+                () => SaveProcessExited(out bRet, strProjectFilename)))
             {
-                var strDir = strProjectFilename;
-                var strMessage = "";
-                var bSuccess = false;
-                const int knMaxAttempts = 16;
-
-                for (var n = 0; n < knMaxAttempts; ++n)
-                {
-                    if (knMaxAttempts - 1 == n)
-                        strDir = TempPath.TrimEnd('\\') + "_" + strProjectFileNoPath;
-
-                    try
-                    {
-                        Directory.CreateDirectory(strDir);
-                        bSuccess = true;
-                        break;
-                    }
-                    catch { }
-
-                    strDir = strProjectFilename + "_" + n.ToString("00");
-                }
-
-                if (bSuccess)
-                {
-                    foreach (var listingFile in listListingFiles)
-                        File.Copy(listingFile, strDir + '\\' + Path.GetFileName(listingFile));
-
-                    strMessage = " Copied the listing files to\n" + strDir;
-                }
-
-                MBoxStatic.ShowDialog("Couldn't save the project." + strMessage, "Save Project");
+                SaveProjectFailedToStartProcess(strProjectFilename, lsListingFiles);
                 bRet = false;
             }
 
-            bRet_out = bRet;
+            return bRet;
         }
 
-        bool StartProcess(string status,
-            string strProjectFileNoPath,
-            Process process)
+        void SaveProcessExited(out bool bRet, string strProjectFilename)
+        {
+            var bErr = ReportAnyErrors(_process, "Saving",
+                new Win32Exception(Marshal.GetLastWin32Error()).Message);
+
+            if (bErr || _bUserCanceled)
+            {
+                bRet = false;
+                return;
+            }
+
+            var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
+
+            if (File.Exists(strProjectFilename))
+                File.Delete(strProjectFilename);
+
+            File.Move(strProjectFilename + ".7z", strProjectFilename);
+            _winProgress.SetCompleted(strProjectFileNoPath);
+            MBoxStatic.ShowDialog("Todo: save volume group.\nTodo: save include y/n");
+            _bProcessing = false;
+            bRet = true;
+        }
+
+        void SaveProjectFailedToStartProcess(string strProjectFilename, List<string> lsListingFiles)
+        {
+            var strDir = strProjectFilename;
+            var strMessage = "";
+            var bSuccess = false;
+            const int knMaxAttempts = 16;
+
+            var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
+
+            for (var n = 0; n < knMaxAttempts; ++n)
+            {
+                if (knMaxAttempts - 1 == n)
+                    strDir = TempPath.TrimEnd('\\') + "_" + strProjectFileNoPath;
+
+                try
+                {
+                    Directory.CreateDirectory(strDir);
+                    bSuccess = true;
+                    break;
+                }
+                catch { }
+
+                strDir = strProjectFilename + "_" + n.ToString("00");
+            }
+
+            if (bSuccess)
+            {
+                foreach (var listingFile in lsListingFiles)
+                    File.Copy(listingFile, strDir + '\\' + Path.GetFileName(listingFile));
+
+                strMessage = " Copied the listing files to\n" + strDir;
+            }
+
+            MBoxStatic.ShowDialog("Couldn't save the project." + strMessage, "Save Project");
+        }
+
+        bool StartProcess(string status, string strProjectFileNoPath,
+            string strWorkingDirectory,
+            string strArguments,
+            Action onExit)
         {
             MBoxStatic.Assert(99942, null == _winProgress);
+            _status = status;
+            _process.StartInfo.WorkingDirectory = strWorkingDirectory;
+            _process.StartInfo.Arguments = strArguments;
+            
+            Observable.FromEventPattern(_process, "Exited")
+                .Subscribe(args => onExit());
 
-            if (File.Exists(process.StartInfo.FileName))
+            if (File.Exists(_process.StartInfo.FileName))
             {
                 _sbError.AppendLine(DateTime.Now.ToLongTimeString().PadRight(80, '-'));
                 _bProcessing = true;
-                process.Start();
-                process.BeginOutputReadLine();
+                _process.Start();
+                _process.BeginOutputReadLine();
 
-                (_winProgress = new WinProgress(new[] { status }, new[] { strProjectFileNoPath })
+                (_winProgress = new WinProgress(new[] { _status }, new[] { strProjectFileNoPath })
                 {
-                    WindowClosingCallback = () =>
-                    {
-                        if (false == _bProcessing)
-                            return true;
-
-                        var bRet = false;
-
-                        UtilProject.UIthread(() =>
-                        {
-                            if (MessageBoxResult.Yes ==
-                                MBoxStatic.ShowDialog("Do you want to cancel?", status, MessageBoxButton.YesNo, _winProgress))
-                            {
-                                _bUserCancelled = true;
-
-                                if (false == process.HasExited)
-                                    process.Kill();
-
-                                bRet = true;
-                            }
-                        });
-
-                        return bRet;
-                    }
+                    WindowClosingCallback = new WeakReference<IWinProgressClosingCallback>(this)
                 }).ShowDialog();
 
                 return true;
             }
 
             return false;
+        }
+
+        bool IWinProgressClosingCallback.WinProgressClosingCallback()
+        {
+            if (false == _bProcessing)
+                return true;
+
+            var bRet = false;
+
+            UtilProject.UIthread(() =>
+            {
+                if (MessageBoxResult.Yes ==
+                    MBoxStatic.ShowDialog("Do you want to cancel?", _status, MessageBoxButton.YesNo, _winProgress))
+                {
+                    _bUserCanceled = true;
+
+                    if (false == _process.HasExited)
+                        _process.Kill();
+
+                    bRet = true;
+                }
+            });
+
+            return bRet;
         }
 
         bool ReportAnyErrors(Process process, string strMode, string strWin32Error)
@@ -347,7 +381,7 @@ namespace DoubleFile
 
             _bProcessing = false;
 
-            if (_bUserCancelled)
+            if (_bUserCanceled)
                 return false;
 
             var strError =
@@ -382,16 +416,24 @@ namespace DoubleFile
 
         readonly string
             _strErrorLogFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "ErrorLog";
-        readonly System.Text.StringBuilder 
-            _sbError = new System.Text.StringBuilder();
+        readonly StringBuilder 
+            _sbError = new StringBuilder();
 
         WinProgress
             _winProgress = null;
         bool
             _bProcessing = false;
         bool
-            _bUserCancelled = false;
+            _bUserCanceled = false;
         List<IDisposable>
             _lsDisposable = new List<IDisposable>();
+
+        string
+            _status = null;
+        readonly Process
+            _process = null;
+        static readonly WeakReference
+            _weakReference = new WeakReference(null);
+
     }
 }

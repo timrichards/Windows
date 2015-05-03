@@ -6,13 +6,7 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    delegate void SaveDirListingsStatusDelegate(
-        LVitem_ProjectVM lvItemProjectVM,
-        string strError = null,
-        bool bDone = false,
-        double nProgress = double.NaN);
-
-    class SaveListingsProcess
+    class SaveListingsProcess : IWinProgressClosingCallback, ISaveDirListingsStatus
     {
         internal SaveListingsProcess(LV_ProjectVM lvProjectVM)
         {
@@ -33,25 +27,7 @@ namespace DoubleFile
             _winProgress = new WinProgress(listNicknames, listSourcePaths)
             {
                 Title = "Saving Directory Listings",
-                WindowClosingCallback = () =>
-                {
-                    if (null == MainWindow.SaveDirListings)
-                        return true;
-
-                    if (MainWindow.SaveDirListings.IsAborted)
-                        return true;
-
-                    if (MBoxStatic.ShowDialog("Do you want to cancel?", "Saving Directory Listings",
-                        MessageBoxButton.YesNo,
-                        _winProgress) ==
-                        MessageBoxResult.Yes)
-                    {
-                        MainWindow.SaveDirListings.EndThread();
-                        return true;
-                    }
-
-                    return false;
-                }
+                WindowClosingCallback = new WeakReference<IWinProgressClosingCallback>(this)
             };
 
             if ((null != MainWindow.SaveDirListings) &&
@@ -61,17 +37,15 @@ namespace DoubleFile
                 MainWindow.SaveDirListings.EndThread();
             }
 
-            (MainWindow.SaveDirListings = (new SaveDirListings(
-                lvProjectVM,
-                SaveDirListingsStatusCallback,
-                SaveDirListingsDoneCallback))
-            ).DoThreadFactory();
+            MainWindow.SaveDirListings =
+                new SaveDirListings(lvProjectVM, new WeakReference<ISaveDirListingsStatus>(this))
+                .DoThreadFactory();
 
             _winProgress.ShowDialog();
         }
 
-        internal void SaveDirListingsStatusCallback(LVitem_ProjectVM lvItemProjectVM,
-            string strError = null, bool bDone = false, double nProgress = double.NaN)
+        void ISaveDirListingsStatus.SaveDirListingsStatus(LVitem_ProjectVM lvItemProjectVM,
+            string strError, bool bDone, double nProgress)
         {
             UtilProject.UIthread(() =>
             {
@@ -101,16 +75,38 @@ namespace DoubleFile
                     lvItemProjectVM.SetSaved();
                     Interlocked.Increment(ref sdl.FilesWritten);
                 }
-                else if (nProgress >= 0)
+                else if (0 <= nProgress)
                 {
                     _winProgress.SetProgress(lvItemProjectVM.SourcePath, nProgress);
                 }
             });
         }
 
-        internal void SaveDirListingsDoneCallback()
+        void ISaveDirListingsStatus.SaveDirListingsDoneCallback()
         {
             MainWindow.SaveDirListings = null;
+        }
+
+        bool IWinProgressClosingCallback.WinProgressClosingCallback()
+        {
+            if (null == MainWindow.SaveDirListings)
+                return true;
+
+            if (MainWindow.SaveDirListings.IsAborted)
+                return true;
+
+            if (MBoxStatic.ShowDialog("Do you want to cancel?", "Saving Directory Listings",
+                MessageBoxButton.YesNo,
+                _winProgress) ==
+                MessageBoxResult.Yes)
+            {
+                if (null != MainWindow.SaveDirListings)
+                    MainWindow.SaveDirListings.EndThread();
+
+                return true;
+            }
+
+            return false;
         }
 
         WinProgress

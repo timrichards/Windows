@@ -7,15 +7,16 @@ using System;
 
 namespace DoubleFile
 {
-    /// <summary>
-    /// Interaction logic for WinSaveInProgress.xaml
-    /// </summary>
+    interface IWinProgressClosingCallback
+    {
+        bool WinProgressClosingCallback();
+    }
 
     // Window_Closed() calls Dispose() on the LV_ProgressVM member.
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     partial class WinProgress
     {
-        internal Func<bool> WindowClosingCallback { get; set; }
+        internal WeakReference<IWinProgressClosingCallback> WindowClosingCallback{ get; set; }
 
         internal WinProgress()
         {
@@ -130,6 +131,13 @@ namespace DoubleFile
             if (null == WindowClosingCallback)
                 return;
 
+            IWinProgressClosingCallback windowClosingCallback = null;
+            
+            WindowClosingCallback.TryGetTarget(out windowClosingCallback);
+
+            if (null == windowClosingCallback)
+                return;
+
             e.Cancel = true;
 
             // Squib load: return without closing.
@@ -139,20 +147,18 @@ namespace DoubleFile
             // WindowClosingCallback hasn't returned yet (from a messagebox), then it will
             // blockade and freeze up.
 
-            var windowClosingCallback = WindowClosingCallback;
-
             WindowClosingCallback = null;
 
             new Thread(() =>
             {
-                if (UtilProject.UIthread(windowClosingCallback))
+                if (UtilProject.UIthread(() => windowClosingCallback.WinProgressClosingCallback()))
                 {
                     Aborted = true;
                     UtilProject.UIthread(Close);
                 }
                 else
                 {
-                    WindowClosingCallback = windowClosingCallback;
+                    WindowClosingCallback = new WeakReference<IWinProgressClosingCallback>(windowClosingCallback);
                 }
             }).Start();
         }

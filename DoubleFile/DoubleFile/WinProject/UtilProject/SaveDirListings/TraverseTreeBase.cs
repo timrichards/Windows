@@ -6,7 +6,7 @@ namespace DoubleFile
 {
     partial class SaveDirListings
     {
-        abstract class TraverseTreeBase
+        abstract class TraverseTreeBase : FileParse
         {
             protected long LengthRead { get; private set; }
 

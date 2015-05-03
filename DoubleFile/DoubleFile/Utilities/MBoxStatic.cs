@@ -103,7 +103,7 @@ namespace DoubleFile
             UtilProject.UIthread(() => msgBoxRet = MessageBox.ShowDialog());
 
             if (null == MessageBox)
-                msgBoxRet = MessageBoxResult.None;          // cancelled externally
+                msgBoxRet = MessageBoxResult.None;          // canceled externally
             else
                 UtilProject.UIthread(() => MessageBoxKill());
 

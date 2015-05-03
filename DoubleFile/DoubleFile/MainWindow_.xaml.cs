@@ -61,7 +61,7 @@ namespace DoubleFile
             MainWindow()
             : base(InitForMainWindowOnly)
         {
-            _weakReference = new WeakReference(this);
+            _weakReference.Target = this;
             Init();
             Init = null;
             SizeToContent = SizeToContent.WidthAndHeight;
@@ -275,7 +275,7 @@ namespace DoubleFile
 
         WinDoubleFile_Folders
             _winDoubleFile_Folders = null;
-        static WeakReference
-            _weakReference = null;
+        static readonly WeakReference
+            _weakReference = new WeakReference(null);
     }
 }

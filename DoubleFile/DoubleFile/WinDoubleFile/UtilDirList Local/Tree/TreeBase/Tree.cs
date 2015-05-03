@@ -6,25 +6,18 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    delegate void TreeStatusDelegate(
-        LVitem_ProjectVM volStrings,
-        LocalTreeNode rootNode = null,
-        bool bError = false);
-
     partial class Tree : TreeBase
     {
         internal Tree(
             LV_ProjectVM lvProjectVM,
             ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>> dictNodes,
             Dictionary<string, string> dictDriveInfo,
-            TreeStatusDelegate statusCallback,
-            Action doneCallback)
-            : base(dictNodes, dictDriveInfo, statusCallback)
+            WeakReference<ITreeStatus> callbackWR)
+            : base(dictNodes, dictDriveInfo, callbackWR)
         {
             IsAborted = false;
             LVprojectVM = lvProjectVM;
-            m_doneCallback = doneCallback;
-            MBoxStatic.Assert(1301.2301, m_doneCallback != null);
+            MBoxStatic.Assert(1301.2301, callbackWR != null);
         }
 
         internal void EndThread()     // bJoin is not used because it induces lag.
@@ -85,11 +78,26 @@ namespace DoubleFile
                 return;
             }
 
-            m_doneCallback();
+            if (null == _callbackWR)
+            {
+                MBoxStatic.Assert(99865, false);
+                return;
+            }
+
+            ITreeStatus treeStatus = null;
+
+            _callbackWR.TryGetTarget(out treeStatus);
+
+            if (null == treeStatus)
+            {
+                MBoxStatic.Assert(99864, false);
+                return;
+            }
+
+            treeStatus.Done();
         }
 
         LV_ProjectVM LVprojectVM { get; set; }
-        readonly Action m_doneCallback = null;
         ConcurrentBag<TreeRootNodeBuilder> m_cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
         Thread m_thread = null;
     }

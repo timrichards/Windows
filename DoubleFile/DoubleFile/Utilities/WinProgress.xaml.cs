@@ -7,16 +7,16 @@ using System;
 
 namespace DoubleFile
 {
-    interface IWinProgressClosingCallback
+    interface IWinProgressClosing
     {
-        bool WinProgressClosingCallback();
+        bool ConfirmClose();
     }
 
     // Window_Closed() calls Dispose() on the LV_ProgressVM member.
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     partial class WinProgress
     {
-        internal WeakReference<IWinProgressClosingCallback> WindowClosingCallback{ get; set; }
+        internal WeakReference<IWinProgressClosing> WindowClosingCallback{ get; set; }
 
         internal WinProgress()
         {
@@ -131,11 +131,11 @@ namespace DoubleFile
             if (null == WindowClosingCallback)
                 return;
 
-            IWinProgressClosingCallback windowClosingCallback = null;
+            IWinProgressClosing windowClosing = null;
             
-            WindowClosingCallback.TryGetTarget(out windowClosingCallback);
+            WindowClosingCallback.TryGetTarget(out windowClosing);
 
-            if (null == windowClosingCallback)
+            if (null == windowClosing)
                 return;
 
             e.Cancel = true;
@@ -151,14 +151,14 @@ namespace DoubleFile
 
             new Thread(() =>
             {
-                if (UtilProject.UIthread(() => windowClosingCallback.WinProgressClosingCallback()))
+                if (UtilProject.UIthread(() => windowClosing.ConfirmClose()))
                 {
                     Aborted = true;
                     UtilProject.UIthread(Close);
                 }
                 else
                 {
-                    WindowClosingCallback = new WeakReference<IWinProgressClosingCallback>(windowClosingCallback);
+                    WindowClosingCallback = new WeakReference<IWinProgressClosing>(windowClosing);
                 }
             }).Start();
         }

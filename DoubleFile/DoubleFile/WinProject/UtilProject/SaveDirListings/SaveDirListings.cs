@@ -6,26 +6,18 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    delegate void SaveDirListingsStatusDelegate(
-        LVitem_ProjectVM lvItemProjectVM,
-        string strError = null,
-        bool bDone = false,
-        double nProgress = double.NaN);
-
     interface ISaveDirListingsStatus
     {
-        void SaveDirListingsStatus(
-            LVitem_ProjectVM lvItemProjectVM,
-            string strError = null,
-            bool bDone = false,
-            double nProgress = double.NaN);
-
-        void SaveDirListingsDoneCallback();
+        void Status(LVitem_ProjectVM lvItemProjectVM, string strError = null, bool bDone = false, double nProgress = double.NaN);
+        void Done();
     }
 
     partial class SaveDirListings
     {
-        internal int FilesWritten = 0;
+        internal bool
+            IsAborted { get; private set; }
+        internal int
+            FilesWritten = 0;
 
         static internal bool IsGoodDriveSyntax(string strDrive)
         {
@@ -57,8 +49,6 @@ namespace DoubleFile
             _thread.Start();
             return this;
         }
-
-        internal bool IsAborted { get; private set; }
 
         void Go()
         {
@@ -102,10 +92,10 @@ namespace DoubleFile
                 return;
             }
 
-            saveDirListingsStatus.SaveDirListingsDoneCallback();
+            saveDirListingsStatus.Done();
         }
 
-        WeakReference<ISaveDirListingsStatus>
+        readonly WeakReference<ISaveDirListingsStatus>
             _callbackWR = null;
         Thread
             _thread = null;

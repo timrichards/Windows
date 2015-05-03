@@ -106,6 +106,7 @@ namespace DoubleFile
                                     winFile.strAltFileName.LastIndexOf('\\'));
 
                                 CheckNTFS_chars(ref strErrorDir);
+
                                 ErrorList.Add(FormatString(strFile: strFile, strDir: strErrorDir,
                                     strError2: strError2_File));
                             }

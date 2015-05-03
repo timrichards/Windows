@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    partial class WinDoubleFile_FoldersVM : IWinProgressClosingCallback
+    partial class WinDoubleFile_FoldersVM : IWinProgressClosing, ICreateFileDictStatus, ITreeStatus
     {
         internal ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
             DictNodes { get; private set; }
@@ -39,7 +39,54 @@ namespace DoubleFile
             _listRootNodes.Clear();
         }
 
-        internal void CreateFileDictStatusCallback(bool bDone = false, double nProgress = double.NaN)
+        void DoTree(bool bKill = false)
+        {
+            if (null != Tree)
+            {
+                if (bKill)
+                {
+                    Tree.EndThread();
+                    Tree = null;
+                    ClearMem_TreeForm();
+                }
+                else
+                {
+                    MBoxStatic.Assert(99954, false);
+                    return;
+                }
+            }
+
+            _winProgress.Title = "Initializing Duplicate File Explorer";
+            _winProgress.WindowClosingCallback = new WeakReference<IWinProgressClosing>(this);
+
+            var lsProgressItems = new List<string>();
+            var fileDictionary = MainWindow.FileDictionary;
+
+            fileDictionary.ResetAbortFlag();
+
+            if (fileDictionary.IsEmpty)
+            {
+                lsProgressItems.Add(_ksFileDictKey);
+                fileDictionary.DoThreadFactory(_lvProjectVM, new WeakReference<ICreateFileDictStatus>(this));
+            }
+
+            TabledString<Tabled_Folders>.GenerationStarting();
+
+            if (null == DictNodes)
+                DictNodes = new ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>();
+
+            Tree =
+                new Tree(_lvProjectVM, DictNodes, _dictVolumeInfo, new WeakReference<ITreeStatus>(this))
+                .DoThreadFactory();
+
+            lsProgressItems.Add(_ksFolderTreeKey);
+
+            _winProgress
+                .InitProgress(new string[lsProgressItems.Count], lsProgressItems)
+                .ShowDialog();
+        }
+
+        void ICreateFileDictStatus.Callback(bool bDone, double nProgress)
         {
             if (App.LocalExit ||
                 (null == MainWindow.FileDictionary) ||
@@ -61,7 +108,7 @@ namespace DoubleFile
             }
         }
         
-        void TreeStatusCallback(LVitem_ProjectVM volStrings, LocalTreeNode rootNode = null, bool bError = false)
+        void ITreeStatus.Status(LVitem_ProjectVM volStrings, LocalTreeNode rootNode, bool bError)
         {
             if (App.LocalExit ||
                 (null == MainWindow.FileDictionary) ||
@@ -88,7 +135,7 @@ namespace DoubleFile
             }
         }
 
-        void TreeDoneCallback()
+        void ITreeStatus.Done()
         {
             if (_listRootNodes.IsEmpty())
             {
@@ -142,55 +189,7 @@ namespace DoubleFile
             _tvVM.SetData(_listRootNodes);
         }
 
-        void DoTree(bool bKill = false)
-        {
-            if (null != Tree)
-            {
-                if (bKill)
-                {
-                    Tree.EndThread();
-                    Tree = null;
-                    ClearMem_TreeForm();
-                }
-                else
-                {
-                    MBoxStatic.Assert(99954, false);
-                    return;
-                }
-            }
-
-            _winProgress.Title = "Initializing Duplicate File Explorer";
-            _winProgress.WindowClosingCallback = new WeakReference<IWinProgressClosingCallback>(this);
-
-            var lsProgressItems = new List<string>();
-            var fileDictionary = MainWindow.FileDictionary;
-
-            fileDictionary.ResetAbortFlag();
-
-            if (fileDictionary.IsEmpty)
-            {
-                lsProgressItems.Add(_ksFileDictKey);
-                fileDictionary.DoThreadFactory(_lvProjectVM, CreateFileDictStatusCallback);
-            }
-
-            TabledString<Tabled_Folders>.GenerationStarting();
-
-            if (null == DictNodes)
-                DictNodes = new ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>();
-
-            Tree =
-                new Tree(_lvProjectVM, DictNodes, _dictVolumeInfo,
-                    TreeStatusCallback, TreeDoneCallback)
-                .DoThreadFactory();
-
-            lsProgressItems.Add(_ksFolderTreeKey);
-
-            _winProgress
-                .InitProgress(new string[lsProgressItems.Count], lsProgressItems)
-                .ShowDialog();
-        }
-
-        bool IWinProgressClosingCallback.WinProgressClosingCallback()
+        bool IWinProgressClosing.ConfirmClose()
         {
             if (false == UtilDirList.Closure(() =>
             {

@@ -16,9 +16,7 @@ namespace DoubleFile
     {
         class SaveDirListing : TraverseTreeBase
         {
-            internal SaveDirListing(
-                LVitem_ProjectVM volStrings, 
-                WeakReference<ISaveDirListingsStatus> callbackWR)
+            internal SaveDirListing(LVitem_ProjectVM volStrings, WeakReference<ISaveDirListingsStatus> callbackWR)
                 : base(volStrings)
             {
                 _callbackWR = callbackWR;
@@ -237,11 +235,7 @@ namespace DoubleFile
                 finally { }
             }
 
-            void StatusCallback(
-                LVitem_ProjectVM lvItemProjectVM,
-                string strError = null,
-                bool bDone = false,
-                double nProgress = double.NaN)
+            void StatusCallback(LVitem_ProjectVM lvItemProjectVM, string strError = null, bool bDone = false, double nProgress = double.NaN)
             {
                 if (null == _callbackWR)
                 {
@@ -259,10 +253,10 @@ namespace DoubleFile
                     return;
                 }
 
-                saveDirListingsStatus.SaveDirListingsStatus(lvItemProjectVM, strError, bDone, nProgress);
+                saveDirListingsStatus.Status(lvItemProjectVM, strError, bDone, nProgress);
             }
 
-            WeakReference<ISaveDirListingsStatus>
+            readonly WeakReference<ISaveDirListingsStatus>
                 _callbackWR = null;
             Thread
                 _thread = null;

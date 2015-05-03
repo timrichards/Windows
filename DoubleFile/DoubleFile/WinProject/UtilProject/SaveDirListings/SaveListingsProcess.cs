@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    class SaveListingsProcess : IWinProgressClosingCallback, ISaveDirListingsStatus
+    class SaveListingsProcess : IWinProgressClosing, ISaveDirListingsStatus
     {
         internal SaveListingsProcess(LV_ProjectVM lvProjectVM)
         {
@@ -27,7 +27,7 @@ namespace DoubleFile
             _winProgress = new WinProgress(listNicknames, listSourcePaths)
             {
                 Title = "Saving Directory Listings",
-                WindowClosingCallback = new WeakReference<IWinProgressClosingCallback>(this)
+                WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
             };
 
             if ((null != MainWindow.SaveDirListings) &&
@@ -44,7 +44,7 @@ namespace DoubleFile
             _winProgress.ShowDialog();
         }
 
-        void ISaveDirListingsStatus.SaveDirListingsStatus(LVitem_ProjectVM lvItemProjectVM,
+        void ISaveDirListingsStatus.Status(LVitem_ProjectVM lvItemProjectVM,
             string strError, bool bDone, double nProgress)
         {
             UtilProject.UIthread(() =>
@@ -82,12 +82,12 @@ namespace DoubleFile
             });
         }
 
-        void ISaveDirListingsStatus.SaveDirListingsDoneCallback()
+        void ISaveDirListingsStatus.Done()
         {
             MainWindow.SaveDirListings = null;
         }
 
-        bool IWinProgressClosingCallback.WinProgressClosingCallback()
+        bool IWinProgressClosing.ConfirmClose()
         {
             if (null == MainWindow.SaveDirListings)
                 return true;

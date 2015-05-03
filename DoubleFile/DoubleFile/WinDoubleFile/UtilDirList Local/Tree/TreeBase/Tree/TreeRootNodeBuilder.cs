@@ -8,6 +8,12 @@ using System.Reactive.Subjects;
 
 namespace DoubleFile
 {
+    interface ITreeStatus
+    {
+        void Status(LVitem_ProjectVM volStrings, LocalTreeNode rootNode = null, bool bError = false);
+        void Done();
+    }
+
     partial class Tree
     {
         partial class TreeRootNodeBuilder : TreeBase
@@ -16,7 +22,7 @@ namespace DoubleFile
                 : base(base_in)
             {
                 _volStrings = volStrings;
-                MBoxStatic.Assert(1301.2301, _statusCallback != null);
+                MBoxStatic.Assert(1301.2301, _callbackWR != null);
             }
 
             DetailsDatum TreeSubnodeDetails(LocalTreeNode treeNode)
@@ -120,7 +126,7 @@ namespace DoubleFile
                     if (false == bValid)
                     {
                         MBoxStatic.ShowDialog("Bad file: " + _volStrings.ListingFile, "Tree");
-                        _statusCallback(_volStrings, bError: true);
+                        StatusCallback(_volStrings, bError: true);
                         return;
                     }
                 }
@@ -232,7 +238,7 @@ namespace DoubleFile
                     TreeSubnodeDetails(rootTreeNode);
                 }
 
-                _statusCallback(_volStrings, rootTreeNode);
+                StatusCallback(_volStrings, rootTreeNode);
 
 #if (DEBUG && FOOBAR)
                 UtilProject.WriteLine("" + File.ReadLines(_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_File)).Sum(s => double.Parse(s.Split('\t')[knColLength])));
@@ -265,6 +271,27 @@ namespace DoubleFile
 
                 UtilProject.WriteLine(_volStrings.ListingFile + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
 #endif
+            }
+
+            void StatusCallback(LVitem_ProjectVM volStrings, LocalTreeNode rootNode = null, bool bError = false)
+            {
+                if (null == _callbackWR)
+                {
+                    MBoxStatic.Assert(99867, false);
+                    return;
+                }
+
+                ITreeStatus treeStatus = null;
+
+                _callbackWR.TryGetTarget(out treeStatus);
+
+                if (null == treeStatus)
+                {
+                    MBoxStatic.Assert(99866, false);
+                    return;
+                }
+
+                treeStatus.Status(volStrings, rootNode, bError);
             }
 
             Thread

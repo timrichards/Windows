@@ -13,12 +13,12 @@ namespace DoubleFile
 {
     interface IOpenListingFiles
     {
-        void OpenListingFiles(IEnumerable<string> lsFiles, bool bClearItems, Func<bool> userCanceled);
+        void Callback(IEnumerable<string> lsFiles, bool bClearItems, Func<bool> userCanceled);
     }
 
     // The Process disposable field is managed by wrapper functions that dispose it once control returns.
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
-    class ProjectFile : IWinProgressClosingCallback
+    class ProjectFile : IWinProgressClosing
     {
         static internal event Func<string> OnSavingProject = null;
         static internal event Action OnOpenedProject = null;
@@ -26,8 +26,7 @@ namespace DoubleFile
         static internal string TempPath { get { return Path.GetTempPath() + @"DoubleFile\"; } }
         static internal string TempPath01 { get { return TempPath.TrimEnd('\\') + "01"; } }
 
-        static internal void OpenProject(string strProjectFilename,
-            WeakReference<IOpenListingFiles> openListingFilesWR)
+        static internal void OpenProject(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR)
         {
             var projectFile = new ProjectFile();
 
@@ -129,7 +128,7 @@ namespace DoubleFile
                 return;
             }
 
-            openListingFiles.OpenListingFiles(
+            openListingFiles.Callback(
                 Directory
                 .GetFiles(TempPath)
                 .Where(s =>
@@ -267,13 +266,11 @@ namespace DoubleFile
                 return;
             }
 
-            var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
-
             if (File.Exists(strProjectFilename))
                 File.Delete(strProjectFilename);
 
             File.Move(strProjectFilename + ".7z", strProjectFilename);
-            _winProgress.SetCompleted(strProjectFileNoPath);
+            _winProgress.SetCompleted(Path.GetFileName(strProjectFilename));
             MBoxStatic.ShowDialog("Todo: save volume group.\nTodo: save include y/n");
             _bProcessing = false;
             bRet = true;
@@ -285,7 +282,6 @@ namespace DoubleFile
             var strMessage = "";
             var bSuccess = false;
             const int knMaxAttempts = 16;
-
             var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
 
             for (var n = 0; n < knMaxAttempts; ++n)
@@ -337,7 +333,7 @@ namespace DoubleFile
 
                 (_winProgress = new WinProgress(new[] { _status }, new[] { strProjectFileNoPath })
                 {
-                    WindowClosingCallback = new WeakReference<IWinProgressClosingCallback>(this)
+                    WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
                 }).ShowDialog();
 
                 return true;
@@ -346,7 +342,7 @@ namespace DoubleFile
             return false;
         }
 
-        bool IWinProgressClosingCallback.WinProgressClosingCallback()
+        bool IWinProgressClosing.ConfirmClose()
         {
             if (false == _bProcessing)
                 return true;

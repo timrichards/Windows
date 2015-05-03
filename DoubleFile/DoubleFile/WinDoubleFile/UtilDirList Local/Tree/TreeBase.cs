@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System;
 
 namespace DoubleFile
 {
@@ -9,24 +10,24 @@ namespace DoubleFile
             _dictNodes = null;
         protected readonly Dictionary<string, string>
             _dictDriveInfo = null;
-        protected readonly TreeStatusDelegate
-            _statusCallback = null;
+        protected readonly WeakReference<ITreeStatus>
+            _callbackWR = null;
 
         protected TreeBase(
             ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>> dictNodes,
             Dictionary<string, string> dictDriveInfo,
-            TreeStatusDelegate statusCallback)
+            WeakReference<ITreeStatus> callbackWR)
         {
             _dictNodes = dictNodes;
             _dictDriveInfo = dictDriveInfo;
-            _statusCallback = statusCallback;
+            _callbackWR = callbackWR;
         }
 
         protected TreeBase(TreeBase base_in)
         {
             _dictNodes = base_in._dictNodes;
             _dictDriveInfo = base_in._dictDriveInfo;
-            _statusCallback = base_in._statusCallback;
+            _callbackWR = base_in._callbackWR;
         }
     }
 }

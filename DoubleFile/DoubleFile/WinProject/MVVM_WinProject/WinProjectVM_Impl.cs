@@ -184,7 +184,7 @@ namespace DoubleFile
             return bOpenedFiles;
         }
 
-        void IOpenListingFiles.OpenListingFiles(IEnumerable<string> lsFiles, bool bClearItems, Func<bool> userCanceled)
+        void IOpenListingFiles.Callback(IEnumerable<string> lsFiles, bool bClearItems, Func<bool> userCanceled)
         {
             OpenListingFiles(lsFiles, bClearItems, userCanceled);
         }

@@ -9,7 +9,10 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    delegate void CreateFileDictStatusDelegate(bool bDone = false, double nProgress = double.NaN);
+    interface ICreateFileDictStatus
+    {
+        void Callback(bool bDone = false, double nProgress = double.NaN);
+    }
     
     partial class FileDictionary : IDisposable
     {
@@ -56,11 +59,10 @@ namespace DoubleFile
             });
         }
 
-        internal FileDictionary DoThreadFactory(LV_ProjectVM lvProjectVM,
-            CreateFileDictStatusDelegate statusCallback)
+        internal FileDictionary DoThreadFactory(LV_ProjectVM lvProjectVM, WeakReference<ICreateFileDictStatus> callbackWR)
         {
             _LVprojectVM = lvProjectVM;
-            _statusCallback = statusCallback;
+            _callbackWR = callbackWR;
             _DictFiles = null;
             IsAborted = false;
             _thread = new Thread(Go) { IsBackground = true };
@@ -106,7 +108,7 @@ namespace DoubleFile
                 .Subscribe(x =>
             {
                 if (nLVitems == nLVitems_A)
-                    _statusCallback(nProgress: _nFilesProgress/(double) _nFilesTotal);
+                    StatusCallback(nProgress: _nFilesProgress/(double) _nFilesTotal);
             }))
             {
                 var dictFiles = new ConcurrentDictionary<FileKeyTuple, List<int>>();
@@ -173,10 +175,31 @@ namespace DoubleFile
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.AsEnumerable());
             }
 
-            _statusCallback(bDone: true);
-            _statusCallback = null;
+             StatusCallback(bDone: true);
+             _callbackWR = null;
             _LVprojectVM = null;
             _thread = null;
+        }
+
+        void StatusCallback(bool bDone = false, double nProgress = double.NaN)
+        {
+            if (null == _callbackWR)
+            {
+                MBoxStatic.Assert(99869, false);
+                return;
+            }
+
+            ICreateFileDictStatus createFileDictStatus = null;
+
+            _callbackWR.TryGetTarget(out createFileDictStatus);
+
+            if (null == createFileDictStatus)
+            {
+                MBoxStatic.Assert(99868, false);
+                return;
+            }
+
+            createFileDictStatus.Callback(bDone, nProgress);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
@@ -241,8 +264,8 @@ namespace DoubleFile
         Dictionary<FileKeyTuple, IEnumerable<int>>
             _DictFiles = null;
 
-        CreateFileDictStatusDelegate
-            _statusCallback = null;
+        WeakReference<ICreateFileDictStatus>
+            _callbackWR = null;
         Thread
             _thread = null;
         LV_ProjectVM

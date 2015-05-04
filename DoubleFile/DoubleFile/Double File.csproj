@@ -269,8 +269,7 @@
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Folders\TreeView_DoubleFileVM.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Folders\WinDoubleFile_FoldersVM.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Folders\WinDoubleFile_FoldersVM_Impl.cs" />
+    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Folders\LocalTV_Impl.cs" />
     <Compile Include="WinDoubleFile\WinDoubleFile_Folders.xaml.cs">
       <DependentUpon>WinDoubleFile_Folders.xaml</DependentUpon>
     </Compile>

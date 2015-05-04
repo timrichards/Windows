@@ -81,9 +81,7 @@ namespace DoubleFile
                 return;
             }
 
-            LocalTV.Instance.Nodes = _lsRootNodes.ToArray();
-            LocalTV.Instance.TopNode = _lsRootNodes[0];
-            LocalTreeNode.SetLevel(LocalTV.Instance.Nodes);
+            LocalTV.Nodes = _lsRootNodes.ToArray();
 
             if (false == _lsLVignore.IsEmpty())
             {
@@ -463,8 +461,8 @@ namespace DoubleFile
             _lvSameVol.Items = _lsLVsameVol.ToArray();
             _lvSameVol.Invalidate();
 
-            if (null == LocalTV.Instance.SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
-                LocalTV.Instance.SelectedNode = _lsRootNodes[0];
+            if (null == LocalTV.SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
+                LocalTV.SelectedNode = _lsRootNodes[0];
 
             _static_this = null;
         }

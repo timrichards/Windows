@@ -13,6 +13,9 @@ namespace DoubleFile
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     partial class MainWindow
     {
+        static internal MainWindow
+            Instance { get { var o = _weakReference.Target as MainWindow; return (null != o) ? o : null; } }
+
         internal LV_ProjectVM
             LVprojectVM { get; private set; }
 
@@ -27,9 +30,6 @@ namespace DoubleFile
             set { var o = _weakReference.Target as MainWindow; if (null != o) o._saveDirListings = value; }
         }
         SaveDirListings _saveDirListings = null;
-
-        static internal MainWindow
-            Instance { get { var o = _weakReference.Target as MainWindow; return (null != o) ? o : null; } }
 
         static internal LocalWindow
             TopWindow

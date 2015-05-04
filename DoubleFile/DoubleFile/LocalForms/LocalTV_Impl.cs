@@ -182,7 +182,6 @@ namespace DoubleFile
             TabledString<Tabled_Folders>.GenerationEnded();
             _winProgress.CloseIfNatural();
             DictNodes = null;       // saving memory here.
-            _tvVM.SetData(_listRootNodes);
         }
 
         bool IWinProgressClosing.ConfirmClose()

@@ -94,7 +94,7 @@ namespace DoubleFile
             if (null == treeNode)
                 return;
 
-            LocalTV.Instance.SelectedNode = treeNode;
+            LocalTV.SelectedNode = treeNode;
         }
 
         internal void Clear()

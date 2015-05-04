@@ -5,17 +5,50 @@ namespace DoubleFile
 {
     partial class LocalTV
     {
+        static internal LocalTV
+            Instance { get; private set; }
+
         static internal IEnumerable<LocalTreeNode>
             TreeNodes { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._arrTreeNodes : null; } }
 
-        static internal LocalTV Instance { get; private set; }
+        static internal IEnumerable<LocalTreeNode>
+            NodesAsEnumerable { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._nodes : null; } }
 
-        internal LocalTreeNode[]
-            Nodes { get; set; }
         internal LocalTreeNode
-            SelectedNode { get; set; }
-        internal LocalTreeNode
-            TopNode { get; set; }
+            TopNode { get; private set; }
+
+        static internal LocalTreeNode[]
+            Nodes
+        {
+            get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._nodes : null; } 
+            set
+            {
+                var o = _weakReference.Target as LocalTV;
+
+                if (null == o)
+                    return;
+
+                o._nodes = value;
+
+                if ((null == value) ||
+                    (0 == value.Length))
+                {
+                    return;
+                }
+
+                o.TopNode = value[0];
+                LocalTreeNode.SetLevel(value);
+            }
+        }
+        LocalTreeNode[] _nodes = null;
+
+        static internal LocalTreeNode
+            SelectedNode
+        {
+            get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._selectedNode : null; }
+            set { var o = _weakReference.Target as LocalTV; if (null != o) o._selectedNode = value; }
+        }
+        LocalTreeNode _selectedNode = null;
 
         static internal Dictionary<string, string>
             DictVolumeInfo
@@ -31,7 +64,7 @@ namespace DoubleFile
             }
         }
 
-        static internal void FactoryCreate(TreeView_DoubleFileVM tvVM, LV_ProjectVM lvProjectVM)
+        static internal void FactoryCreate(LV_ProjectVM lvProjectVM)
         {
             if (null != Instance)
             {
@@ -41,12 +74,12 @@ namespace DoubleFile
 
             _weakReference.Target =
                 Instance =
-                new LocalTV(tvVM, lvProjectVM);
+                new LocalTV(lvProjectVM);
 
             Instance.DoTree();
         }
 
-        LocalTV(TreeView_DoubleFileVM tvVM, LV_ProjectVM lvProjectVM)
+        LocalTV(LV_ProjectVM lvProjectVM)
         {
             _lvProjectVM = lvProjectVM;
 
@@ -54,7 +87,6 @@ namespace DoubleFile
                 (0 < _lvProjectVM.Count))
             {
                 _nCorrelateProgressDenominator = _lvProjectVM.Count;
-                _tvVM = tvVM;
                 TabledString<Tabled_Folders>.AddRef();
             }
 
@@ -92,12 +124,12 @@ namespace DoubleFile
         static internal LocalTreeNode
             GetOneNodeByRootPathA(string strPath, LVitem_ProjectVM lvItemProjectVM)
         {
-            var o = _weakReference.Target as LocalTV;
+            var nodes = LocalTV.Nodes;
 
-            if (null == o)
+            if (null == nodes)
                 return null;
 
-            return GetOneNodeByRootPath.Go(strPath, o.Nodes, lvItemProjectVM);
+            return GetOneNodeByRootPath.Go(strPath, nodes, lvItemProjectVM);
         }
 
         internal int GetNodeCount(bool includeSubTrees = false)
@@ -136,8 +168,6 @@ namespace DoubleFile
             treeNode.GoToFile(tuple.Item3);
         }
 
-        readonly TreeView_DoubleFileVM
-            _tvVM = null;
         readonly LV_ProjectVM
             _lvProjectVM = null;
         readonly WinProgress

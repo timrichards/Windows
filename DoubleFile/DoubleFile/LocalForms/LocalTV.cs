@@ -9,26 +9,17 @@ namespace DoubleFile
         static internal LocalTV
             Instance { get; private set; }
 
-        internal Tree
-            Tree { get; private set; }
-
-        internal ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
-            DictNodes { get; private set; }
+        static internal IEnumerable<LocalTreeNode>
+            AllNodes { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._aAllNodes : null; } }
+        LocalTreeNode[] _aAllNodes = null;
 
         static internal IEnumerable<LocalTreeNode>
-            TreeNodes { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._arrTreeNodes : null; } }
-        LocalTreeNode[] _arrTreeNodes = null;
+            RootNodes { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._rootNodes : null; } }
+        LocalTreeNode[] _rootNodes = null;
+        static readonly object _rootNodesSemaphore = new object();
 
         internal LocalTreeNode
             TopNode { get; private set; }
-
-        static internal IEnumerable<LocalTreeNode>
-            NodesAsEnumerable { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._nodes : null; } }
-
-        static internal LocalTreeNode[]
-            Nodes { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._nodes : null; } }
-        LocalTreeNode[] _nodes = null;
-        static readonly object _nodesSemaphore = new object();
 
         static internal LocalTreeNode
             SelectedNode
@@ -39,18 +30,7 @@ namespace DoubleFile
         LocalTreeNode _selectedNode = null;
 
         static internal Dictionary<string, string>
-            DictVolumeInfo
-        {
-            get
-            {
-                var o = _weakReference.Target as LocalTV;
-
-                if (null == o)
-                    return null;
-
-                return o._dictVolumeInfo;
-            }
-        }
+            DictVolumeInfo { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._dictVolumeInfo : null; } }
 
         static internal void FactoryCreate(LV_ProjectVM lvProjectVM)
         {
@@ -108,7 +88,7 @@ namespace DoubleFile
         static internal LocalTreeNode
             GetOneNodeByRootPathA(string strPath, LVitem_ProjectVM lvItemProjectVM)
         {
-            var nodes = LocalTV.Nodes;
+            var nodes = LocalTV.RootNodes;
 
             if (null == nodes)
                 return null;
@@ -118,7 +98,7 @@ namespace DoubleFile
 
         internal int GetNodeCount(bool includeSubTrees = false)
         {
-            return includeSubTrees ? CountSubnodes(Nodes) : (null != Nodes) ? Nodes.Length : 0;
+            return includeSubTrees ? CountSubnodes(_rootNodes) : (null != _rootNodes) ? _rootNodes.Length : 0;
         }
 
         static int CountSubnodes(IEnumerable<LocalTreeNode> nodes)
@@ -141,7 +121,7 @@ namespace DoubleFile
         void GoToFileB(Tuple<LVitem_ProjectVM, string, string> tuple) { UtilDirList.Write("D"); GoToFile(tuple); }
         private void GoToFile(Tuple<LVitem_ProjectVM, string, string> tuple)
         {
-            if (null == Nodes)
+            if (null == RootNodes)
                 return;
 
             var treeNode = GetOneNodeByRootPathA(tuple.Item2, tuple.Item1);

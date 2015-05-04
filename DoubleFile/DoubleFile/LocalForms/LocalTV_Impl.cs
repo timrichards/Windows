@@ -11,7 +11,7 @@ namespace DoubleFile
     {
         internal void TreeCleanup()
         {
-            Tree = null;
+            _tree = null;
             Collate.ClearMem();
         }
 
@@ -19,22 +19,22 @@ namespace DoubleFile
         {
             TreeCleanup();
 
-            if (false == _arrTreeNodes.IsEmpty())
+            if (false == _aAllNodes.IsEmpty())
                 _dictVolumeInfo.Clear();
 
-            DictNodes = null;           // m_dictNodes is tested to recreate tree.
-            _arrTreeNodes = null;
-            _nodes = null;
+            _dictNodes = null;           // m_dictNodes is tested to recreate tree.
+            _aAllNodes = null;
+            _rootNodes = null;
         }
 
         void DoTree(bool bKill = false)
         {
-            if (null != Tree)
+            if (null != _tree)
             {
                 if (bKill)
                 {
-                    Tree.EndThread();
-                    Tree = null;
+                    _tree.EndThread();
+                    _tree = null;
                     ClearMem_TreeForm();
                 }
                 else
@@ -60,11 +60,11 @@ namespace DoubleFile
 
             TabledString<Tabled_Folders>.GenerationStarting();
 
-            if (null == DictNodes)
-                DictNodes = new ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>();
+            if (null == _dictNodes)
+                _dictNodes = new ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>();
 
-            Tree =
-                new Tree(_lvProjectVM, DictNodes, _dictVolumeInfo, new WeakReference<ITreeStatus>(this))
+            _tree =
+                new Tree(_lvProjectVM, _dictNodes, _dictVolumeInfo, new WeakReference<ITreeStatus>(this))
                 .DoThreadFactory();
 
             lsProgressItems.Add(_ksFolderTreeKey);
@@ -101,7 +101,7 @@ namespace DoubleFile
             if (App.LocalExit ||
                 (null == MainWindow.FileDictionary) ||
                 MainWindow.FileDictionary.IsAborted ||
-                ((null != Tree) && (Tree.IsAborted)))
+                ((null != _tree) && (_tree.IsAborted)))
             {
                 ClearMem_TreeForm();
                 _winProgress.Aborted = true;
@@ -113,22 +113,22 @@ namespace DoubleFile
                 //           volStrings.SetStatus_BadFile(LV);
             }
             else if (rootNode != null)
-                lock (_nodesSemaphore)
+                lock (_rootNodesSemaphore)
             {
-                if (null == _nodes)
+                if (null == _rootNodes)
                 {
-                    _nodes = new[] { rootNode };
+                    _rootNodes = new[] { rootNode };
                 }
                 else
                 {
                     // The root volume list is very small so this copy-sort is viable
-                    var ls = new List<LocalTreeNode>(_nodes);
+                    var ls = new List<LocalTreeNode>(_rootNodes);
 
                     ls.Insert(ls.TakeWhile(node => rootNode.Text.CompareTo(node.Text) > 0).Count(), rootNode);
-                    _nodes = ls.ToArray();
+                    _rootNodes = ls.ToArray();
                 }
 
-                _winProgress.SetProgress(_ksFolderTreeKey, _nodes.Length / _nCorrelateProgressDenominator * 3 / 4.0);
+                _winProgress.SetProgress(_ksFolderTreeKey, _rootNodes.Length / _nCorrelateProgressDenominator * 3 / 4.0);
             }
             else
             {
@@ -138,15 +138,15 @@ namespace DoubleFile
 
         void ITreeStatus.Done()
         {
-            if (_nodes.IsEmpty())
+            if (_rootNodes.IsEmpty())
             {
                 _winProgress.Aborted = true;
                 UtilProject.UIthread(_winProgress.Close);
                 return;
             }
 
-            TopNode = _nodes[0];
-            LocalTreeNode.SetLevel(_nodes);
+            TopNode = _rootNodes[0];
+            LocalTreeNode.SetLevel(_rootNodes);
             TreeCleanup();
 
             var localLVclones = new LocalLV();
@@ -161,9 +161,9 @@ namespace DoubleFile
                 var lsTreeNodes = new List<LocalTreeNode>();
 
                 var collate = new Collate(
-                    DictNodes,
+                    _dictNodes,
                     localLVclones, localLVsameVol, localLVsolitary,
-                    _nodes, lsTreeNodes,
+                    _rootNodes, lsTreeNodes,
                     lsLVignore: lsLocalLVignore, bLoose: true);
 
                 var dtStart = DateTime.Now;
@@ -183,14 +183,14 @@ namespace DoubleFile
 
                 if (null == LocalTV.SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
                     LocalTV.SelectedNode = TopNode;
-                _arrTreeNodes = lsTreeNodes.ToArray();
+                _aAllNodes = lsTreeNodes.ToArray();
                 UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
             }
 
             TreeCleanup();
             TabledString<Tabled_Folders>.GenerationEnded();
             _winProgress.CloseIfNatural();
-            DictNodes = null;       // saving memory here.
+            _dictNodes = null;       // saving memory here.
         }
 
         bool IWinProgressClosing.ConfirmClose()
@@ -204,7 +204,7 @@ namespace DoubleFile
                 }
 
                 if (_bFileDictDone &&
-                    (null == Tree))
+                    (null == _tree))
                 {
                     return true;
                 }
@@ -220,8 +220,8 @@ namespace DoubleFile
             MainWindow.FileDictionary
                 .Abort();
                     
-            if (null != Tree)
-                Tree.EndThread();
+            if (null != _tree)
+                _tree.EndThread();
 
             TreeCleanup();
             return true;
@@ -230,7 +230,13 @@ namespace DoubleFile
         const string _ksFileDictKey = "Creating file dictionary";
         const string _ksFolderTreeKey = "Creating folder tree browser";
 
-        bool _bFileDictDone = false;
+        Tree
+            _tree = null;
+        ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
+            _dictNodes = null;
+
+        bool
+            _bFileDictDone = false;
 
         readonly Dictionary<string, string>
             _dictVolumeInfo = new Dictionary<string, string>();

@@ -37,7 +37,7 @@ namespace DoubleFile
             if (Reinitialize_And_FullPathFound(SearchText))
                 return;
 
-            var lsTreeNodes = LocalTV.TreeNodes;
+            var lsTreeNodes = LocalTV.AllNodes;
 
             if (null == lsTreeNodes)
                 return;

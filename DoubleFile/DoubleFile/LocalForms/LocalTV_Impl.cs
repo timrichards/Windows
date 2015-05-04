@@ -19,11 +19,11 @@ namespace DoubleFile
         {
             TreeCleanup();
 
-            if (false == _aAllNodes.IsEmpty())
+            if (false == _allNodes.IsEmpty())
                 _dictVolumeInfo.Clear();
 
             _dictNodes = null;           // m_dictNodes is tested to recreate tree.
-            _aAllNodes = null;
+            _allNodes = null;
             _rootNodes = null;
         }
 
@@ -183,7 +183,7 @@ namespace DoubleFile
 
                 if (null == LocalTV.SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
                     LocalTV.SelectedNode = TopNode;
-                _aAllNodes = lsTreeNodes.ToArray();
+                _allNodes = lsTreeNodes.ToArray();
                 UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
             }
 
@@ -237,8 +237,5 @@ namespace DoubleFile
 
         bool
             _bFileDictDone = false;
-
-        readonly Dictionary<string, string>
-            _dictVolumeInfo = new Dictionary<string, string>();
     }
 }

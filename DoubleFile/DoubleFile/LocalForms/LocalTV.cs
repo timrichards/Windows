@@ -10,8 +10,8 @@ namespace DoubleFile
             Instance { get; private set; }
 
         static internal IEnumerable<LocalTreeNode>
-            AllNodes { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._aAllNodes : null; } }
-        LocalTreeNode[] _aAllNodes = null;
+            AllNodes { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._allNodes : null; } }
+        LocalTreeNode[] _allNodes = null;
 
         static internal IEnumerable<LocalTreeNode>
             RootNodes { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._rootNodes : null; } }
@@ -31,6 +31,7 @@ namespace DoubleFile
 
         static internal Dictionary<string, string>
             DictVolumeInfo { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._dictVolumeInfo : null; } }
+        readonly Dictionary<string, string> _dictVolumeInfo = new Dictionary<string, string>();
 
         static internal void FactoryCreate(LV_ProjectVM lvProjectVM)
         {
@@ -65,13 +66,13 @@ namespace DoubleFile
 
         static internal void LocalDispose()
         {
+            _weakReference.Target = null;
+
             if (null == Instance)
             {
                 MBoxStatic.Assert(99857, false);
                 return;
             }
-
-            _weakReference.Target = null;
 
             if ((null != Instance._lvProjectVM) &&
                 (0 < Instance._lvProjectVM.Count))
@@ -98,7 +99,11 @@ namespace DoubleFile
 
         internal int GetNodeCount(bool includeSubTrees = false)
         {
-            return includeSubTrees ? CountSubnodes(_rootNodes) : (null != _rootNodes) ? _rootNodes.Length : 0;
+            return includeSubTrees
+                ? CountSubnodes(_rootNodes)
+                : (null != _rootNodes)
+                ? _rootNodes.Length
+                : 0;
         }
 
         static int CountSubnodes(IEnumerable<LocalTreeNode> nodes)
@@ -109,17 +114,14 @@ namespace DoubleFile
             var nRet = 0;
 
             foreach (var treeNode in nodes)
-            {
-                nRet += CountSubnodes(treeNode.Nodes);
-                ++nRet;
-            }
+                nRet += 1 + CountSubnodes(treeNode.Nodes);
 
             return nRet;
         }
 
         void GoToFileA(Tuple<LVitem_ProjectVM, string, string> tuple) { UtilDirList.Write("C"); GoToFile(tuple); }
         void GoToFileB(Tuple<LVitem_ProjectVM, string, string> tuple) { UtilDirList.Write("D"); GoToFile(tuple); }
-        private void GoToFile(Tuple<LVitem_ProjectVM, string, string> tuple)
+        void GoToFile(Tuple<LVitem_ProjectVM, string, string> tuple)
         {
             if (null == RootNodes)
                 return;

@@ -103,12 +103,6 @@ namespace DoubleFile
                 return;
             }
 
-            Instance.Dispose();
-            Instance = null;
-        }
-
-        public void Dispose()
-        {
             _weakReference.Target = null;
 
             if ((null != Instance._lvProjectVM) &&
@@ -117,8 +111,10 @@ namespace DoubleFile
                 TabledString<Tabled_Folders>.DropRef();
             }
 
-            foreach (var d in _lsDisposable)
+            foreach (var d in Instance._lsDisposable)
                 d.Dispose();
+
+            Instance = null;
         }
 
         static internal LocalTreeNode

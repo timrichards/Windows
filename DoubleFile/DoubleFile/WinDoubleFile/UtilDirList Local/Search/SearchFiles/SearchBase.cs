@@ -1,4 +1,5 @@
-﻿
+﻿using System;
+
 namespace DoubleFile
 {
     class SearchBase
@@ -11,15 +12,15 @@ namespace DoubleFile
             _bSearchFilesOnly = false;
         protected string
             _strCurrentNode = null;
-        protected SearchStatusDelegate
-            _statusCallback = null;
+        protected WeakReference<ISearchStatus>
+            _callbackWR = null;
 
         internal enum FolderSpecialHandling { None, Outermost, Innermost };                     // not used
         protected FolderSpecialHandling _folderHandling = FolderSpecialHandling.Outermost;      // not used
 
-        protected SearchBase(SearchStatusDelegate statusCallback)
+        protected SearchBase(WeakReference<ISearchStatus> callbackWR)
         {
-            _statusCallback = statusCallback;
+            _callbackWR = callbackWR;
         }
 
         protected SearchBase(SearchBase searchBase)
@@ -29,7 +30,7 @@ namespace DoubleFile
             _bSearchFilesOnly = searchBase._bSearchFilesOnly;
             _strCurrentNode = searchBase._strCurrentNode;
             _folderHandling = searchBase._folderHandling;
-            _statusCallback = searchBase._statusCallback;
+            _callbackWR = searchBase._callbackWR;
         }
     }
 }

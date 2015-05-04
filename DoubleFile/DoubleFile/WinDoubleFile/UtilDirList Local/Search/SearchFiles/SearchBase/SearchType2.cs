@@ -7,7 +7,11 @@ using System.Threading;
 
 namespace DoubleFile
 {
-    delegate void SearchStatusDelegate(SearchResults searchResults, bool bFirst = false, bool bLast = false);
+    interface ISearchStatus
+    {
+        void Status(SearchResults searchResults, bool bFirst = false, bool bLast = false);
+        void Done();
+    }
 
     partial class SearchType2 : SearchBase
     {
@@ -18,9 +22,8 @@ namespace DoubleFile
             SearchBase.FolderSpecialHandling folderHandling,
             bool bSearchFilesOnly,
             string strCurrentNode,
-            SearchStatusDelegate statusCallback,
-            Action doneCallback)
-            : base(statusCallback)
+            WeakReference<ISearchStatus> callbackWR)
+            : base(callbackWR)
         {
             IsAborted = false;
             _lvProjectVM = lvProjectVM;
@@ -29,7 +32,6 @@ namespace DoubleFile
             _folderHandling = folderHandling;          // not used
             _bSearchFilesOnly = bSearchFilesOnly;
             _strCurrentNode = strCurrentNode;
-            _doneCallback = doneCallback;
         }
 
         void Go()
@@ -52,7 +54,23 @@ namespace DoubleFile
             if (App.LocalExit || IsAborted)
                 return;
 
-            _doneCallback();
+            if (null == _callbackWR)
+            {
+                MBoxStatic.Assert(99860, false);
+                return;
+            }
+
+            ISearchStatus searchStatus = null;
+
+            _callbackWR.TryGetTarget(out searchStatus);
+
+            if (null == searchStatus)
+            {
+                MBoxStatic.Assert(99859, false);
+                return;
+            }
+
+            searchStatus.Done();
         }
 
         internal void EndThread()
@@ -75,8 +93,6 @@ namespace DoubleFile
         internal bool
             IsAborted { get; private set; }
 
-        readonly Action
-            _doneCallback = null;
         readonly LV_ProjectVM
             _lvProjectVM = null;
 

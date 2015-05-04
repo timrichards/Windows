@@ -7,14 +7,13 @@ namespace DoubleFile
     static class GetOneNodeByRootPath
     {
         static internal LocalTreeNode Go(
-            string path,
+            string strPath,
             IEnumerable<LocalTreeNode> treeNodeCollection,
-            LVitem_ProjectVM lvItemProjectVM = null
-            )
+            LVitem_ProjectVM lvItemProjectVM = null)
         {
             return
-                Go_A(path, treeNodeCollection, lvItemProjectVM) 
-                ?? Go_A(path, treeNodeCollection, lvItemProjectVM, bIgnoreCase: true);
+                Go_A(strPath, treeNodeCollection, lvItemProjectVM) 
+                ?? Go_A(strPath, treeNodeCollection, lvItemProjectVM, bIgnoreCase: true);
         }
 
         static LocalTreeNode Go_A(

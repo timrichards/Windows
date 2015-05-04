@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    partial class WinDoubleFile_SearchVM : IDisposable
+    partial class WinDoubleFile_SearchVM : IDisposable, ISearchStatus
     {
         internal Func<bool> IsEditBoxNonEmpty = null;
 
@@ -76,8 +76,7 @@ namespace DoubleFile
                 SearchBase.FolderSpecialHandling.None,
                 bSearchFilesOnly,
                 null,
-                SearchStatusCallback,
-                SearchDoneCallback
+                new WeakReference<ISearchStatus>(this)
             )
                 .DoThreadFactory();
         }
@@ -110,8 +109,8 @@ namespace DoubleFile
             }
 
             _dictResults = new SortedDictionary<SearchResultsDir, bool>();
-            SearchStatusCallback(new SearchResults(strPath, null, new[] { result }));
-            SearchDoneCallback();
+            ((ISearchStatus)this).Status(new SearchResults(strPath, null, new[] { result }));
+            ((ISearchStatus)this).Done();
             return true;
         }
 
@@ -123,7 +122,7 @@ namespace DoubleFile
                 _selectedItem.LocalTreeNode.GoToFile(null);
         }
 
-        void SearchStatusCallback(SearchResults searchResults, bool bFirst = false, bool bLast = false)
+        void ISearchStatus.Status(SearchResults searchResults, bool bFirst, bool bLast)
         {
             try
             {
@@ -148,7 +147,7 @@ namespace DoubleFile
             }
         }
 
-        void SearchDoneCallback()
+        void ISearchStatus.Done()
         {
             _searchType2 = null;
 

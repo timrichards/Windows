@@ -118,6 +118,12 @@ namespace DoubleFile
                 return;
             }
 
+            if (null == openListingFilesWR)
+            {
+                MBoxStatic.Assert(99863, false);
+                return;
+            }
+
             IOpenListingFiles openListingFiles = null;
 
             openListingFilesWR.TryGetTarget(out openListingFiles);

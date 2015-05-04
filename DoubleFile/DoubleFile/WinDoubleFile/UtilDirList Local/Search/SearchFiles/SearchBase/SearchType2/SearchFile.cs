@@ -84,7 +84,7 @@ namespace DoubleFile
                         {
                             if (false == listResults.IsEmpty())
                             {
-                                _statusCallback(new SearchResults(_strSearch, _volStrings, listResults.Keys), bLast: true);
+                                StatusCallback(new SearchResults(_strSearch, _volStrings, listResults.Keys), bLast: true);
                                 listResults = new SortedDictionary<SearchResultsDir, bool>();
                             }
 
@@ -145,8 +145,29 @@ namespace DoubleFile
                         MBoxStatic.Assert(1307.8302, null == searchResultDir);
 
                     if (false == listResults.IsEmpty())
-                        _statusCallback(new SearchResults(_strSearch, _volStrings, listResults.Keys), bFirst: bFirst);
+                        StatusCallback(new SearchResults(_strSearch, _volStrings, listResults.Keys), bFirst: bFirst);
                 }
+            }
+
+            void StatusCallback(SearchResults searchResults, bool bFirst = false, bool bLast = false)
+            {
+                if (null == _callbackWR)
+                {
+                    MBoxStatic.Assert(99862, false);
+                    return;
+                }
+
+                ISearchStatus searchStatus = null;
+
+                _callbackWR.TryGetTarget(out searchStatus);
+
+                if (null == searchStatus)
+                {
+                    MBoxStatic.Assert(99861, false);
+                    return;
+                }
+
+                searchStatus.Status(searchResults, bFirst, bLast);
             }
 
             LVitem_ProjectVM

@@ -118,7 +118,7 @@ namespace DoubleFile
                 {
                     _nodes = new[] { rootNode };
                 }
-                else lock (_nodes)
+                else lock (_nodesLock)
                 {
                     // The root volume list is very small so this copy-sort is viable
                     var ls = new List<LocalTreeNode>(_nodes);

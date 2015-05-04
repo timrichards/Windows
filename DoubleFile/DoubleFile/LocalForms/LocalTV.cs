@@ -28,6 +28,7 @@ namespace DoubleFile
         static internal LocalTreeNode[]
             Nodes { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._nodes : null; } }
         LocalTreeNode[] _nodes = null;
+        object _nodesLock = new object();
 
         static internal LocalTreeNode
             SelectedNode

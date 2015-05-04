@@ -107,31 +107,24 @@ namespace DoubleFile
                 return;
             }
 
-            lock (t.Strings)               // this thread stuff shouldn't be necessary
+            MBoxStatic.Assert(99921, false == t.Generating);
+            MBoxStatic.Assert(99920, null == t.DictStrings);
+            MBoxStatic.Assert(99919, null == t.DictStringsRev);
+            MBoxStatic.Assert(99918, t.IndexGenerator == t.Strings.Length);
+            MBoxStatic.Assert(99916, 1 < t.RefCount);
+
+            t.DictStrings = new ConcurrentDictionary<string, int>(nThreads, t.Strings.Length);
+            t.DictStringsRev = new ConcurrentDictionary<int, string>(nThreads, t.Strings.Length);
+
+            for (var nIx = 0; nIx < t.Strings.Length; ++nIx)
             {
-                if (null != t.Strings)     // another thread set it up
-                {
-                    MBoxStatic.Assert(99921, false == t.Generating);
-                    MBoxStatic.Assert(99920, null == t.DictStrings);
-                    MBoxStatic.Assert(99919, null == t.DictStringsRev);
-                    MBoxStatic.Assert(99918, t.IndexGenerator == t.Strings.Length);
-                    MBoxStatic.Assert(99916, 1 < t.RefCount);
-
-                    t.DictStrings = new ConcurrentDictionary<string, int>(nThreads, t.Strings.Length);
-                    t.DictStringsRev = new ConcurrentDictionary<int, string>(nThreads, t.Strings.Length);
-
-                    for (var nIx = 0; nIx < t.Strings.Length; ++nIx)
-                    {
-                        var strA = t.Strings[nIx];
+                var strA = t.Strings[nIx];
                          
-                        t.DictStrings[strA] = nIx;
-                        t.DictStringsRev[nIx] = strA;
-                    }
-
-                    t.Generating = true;
-                }
+                t.DictStrings[strA] = nIx;
+                t.DictStringsRev[nIx] = strA;
             }
 
+            t.Generating = true;
             t.Strings = null;
         }
 

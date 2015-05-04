@@ -532,7 +532,7 @@ namespace DoubleFile
 
                         var rootNodeDatum_A = (rootNode_A.NodeDatum as RootNodeDatum);
 
-                        if (null == rootNodeDatum_A)      // added 2/13/15 as safety
+                        if (null == rootNodeDatum_A)      // added 2/13/15 as safety, got hit on 5/4/15
                         {
                             MBoxStatic.Assert(99969, false);
                             return;

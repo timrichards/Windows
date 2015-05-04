@@ -113,12 +113,13 @@ namespace DoubleFile
                 //           volStrings.SetStatus_BadFile(LV);
             }
             else if (rootNode != null)
+                lock (_nodesSemaphore)
             {
                 if (null == _nodes)
                 {
                     _nodes = new[] { rootNode };
                 }
-                else lock (_nodesLock)
+                else
                 {
                     // The root volume list is very small so this copy-sort is viable
                     var ls = new List<LocalTreeNode>(_nodes);

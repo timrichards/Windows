@@ -81,9 +81,9 @@ namespace DoubleFile
                 return;
             }
 
-            WinDoubleFile_FoldersVM.LocalTV.Nodes = _lsRootNodes.ToArray();
-            WinDoubleFile_FoldersVM.LocalTV.TopNode = _lsRootNodes[0];
-            LocalTreeNode.SetLevel(WinDoubleFile_FoldersVM.LocalTV.Nodes);
+            LocalTV.Instance.Nodes = _lsRootNodes.ToArray();
+            LocalTV.Instance.TopNode = _lsRootNodes[0];
+            LocalTreeNode.SetLevel(LocalTV.Instance.Nodes);
 
             if (false == _lsLVignore.IsEmpty())
             {
@@ -463,8 +463,8 @@ namespace DoubleFile
             _lvSameVol.Items = _lsLVsameVol.ToArray();
             _lvSameVol.Invalidate();
 
-            if (null == WinDoubleFile_FoldersVM.LocalTV.SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
-                WinDoubleFile_FoldersVM.LocalTV.SelectedNode = _lsRootNodes[0];
+            if (null == LocalTV.Instance.SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
+                LocalTV.Instance.SelectedNode = _lsRootNodes[0];
 
             _static_this = null;
         }

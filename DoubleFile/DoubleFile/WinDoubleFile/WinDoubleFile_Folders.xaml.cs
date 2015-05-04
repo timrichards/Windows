@@ -28,8 +28,7 @@ namespace DoubleFile
             MinWidth = Width;
             MinHeight = Height;
             _treeView_DoubleFileVM = new TreeView_DoubleFileVM(form_tv);
-            _winDoubleFile_FoldersVM = new WinDoubleFile_FoldersVM(_treeView_DoubleFileVM, _lvProjectVM);
-            DataContext = _winDoubleFile_FoldersVM;
+            LocalTV.FactoryCreate(_treeView_DoubleFileVM, _lvProjectVM);
         }
 
         protected override LocalWindow_DoubleFile CreateChainedWindow()
@@ -39,7 +38,7 @@ namespace DoubleFile
 
         private void Window_Closed()
         {
-            _winDoubleFile_FoldersVM.Dispose();
+            LocalTV.LocalDispose();
             DataContext = null;
             _lvProjectVM = null;
         }
@@ -48,8 +47,6 @@ namespace DoubleFile
             _lvProjectVM = null;
         TreeView_DoubleFileVM
             _treeView_DoubleFileVM = null;
-        WinDoubleFile_FoldersVM
-            _winDoubleFile_FoldersVM = null;
 
         override protected Rect
             PosAtClose { get { return _rcPosAtClose; } set { _rcPosAtClose = value; } }

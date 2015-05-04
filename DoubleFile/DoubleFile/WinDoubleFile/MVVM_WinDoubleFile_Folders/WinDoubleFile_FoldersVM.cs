@@ -4,44 +4,69 @@ using System.Windows.Input;
 
 namespace DoubleFile
 {
-    partial class WinDoubleFile_FoldersVM : Observable_OwnerWindowBase, IDisposable
+    partial class LocalTV : IDisposable
     {
         static internal IEnumerable<LocalTreeNode>
-            TreeNodes { get { var o = _weakReference.Target as WinDoubleFile_FoldersVM; return (null != o) ? o._arrTreeNodes : null; } }
-        static internal LocalTV
-            LocalTV { get { var o = _weakReference.Target as WinDoubleFile_FoldersVM; return (null != o) ? o._localTV : null; } }
+            TreeNodes { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._arrTreeNodes : null; } }
 
-        internal WinDoubleFile_FoldersVM(TreeView_DoubleFileVM tvVM, LV_ProjectVM lvProjectVM)
+        static internal LocalTV Instance { get; private set; }
+
+        static internal void FactoryCreate(TreeView_DoubleFileVM tvVM, LV_ProjectVM lvProjectVM)
         {
-            _weakReference.Target = this;            
-            _lvProjectVM = lvProjectVM;
-
-            if ((null == _lvProjectVM) ||
-                (0 == _lvProjectVM.Count))
+            if (null != Instance)
             {
+                MBoxStatic.Assert(99858, false);
                 return;
             }
 
-            _nCorrelateProgressDenominator = _lvProjectVM.Count;
-            _tvVM = tvVM;
-            TabledString<Tabled_Folders>.AddRef();
-            DoTree();
+            _weakReference.Target =
+                Instance =
+                new LocalTV(tvVM, lvProjectVM);
+
+            Instance.DoTree();
+        }
+
+        LocalTV(TreeView_DoubleFileVM tvVM, LV_ProjectVM lvProjectVM)
+        {
+            _lvProjectVM = lvProjectVM;
+
+            if ((null != _lvProjectVM) &&
+                (0 < _lvProjectVM.Count))
+            {
+                _nCorrelateProgressDenominator = _lvProjectVM.Count;
+                _tvVM = tvVM;
+                TabledString<Tabled_Folders>.AddRef();
+            }
+
+            _weakReference.Target = this;            
+            _lsDisposable.Add(WinDoubleFile_DuplicatesVM.GoToFile.Subscribe(GoToFileA));
+            _lsDisposable.Add(WinDoubleFile_SearchVM.GoToFile.Subscribe(GoToFileB));
+        }
+
+        static internal void LocalDispose()
+        {
+            if (null == Instance)
+            {
+                MBoxStatic.Assert(99857, false);
+                return;
+            }
+
+            Instance.Dispose();
+            Instance = null;
         }
 
         public void Dispose()
         {
             _weakReference.Target = null;
 
-            if (null != _localTV)
-                _localTV.Dispose();
-
-            if ((null == _lvProjectVM) ||
-                (0 == _lvProjectVM.Count))
+            if ((null != Instance._lvProjectVM) &&
+                (0 < Instance._lvProjectVM.Count))
             {
-                return;
+                TabledString<Tabled_Folders>.DropRef();
             }
 
-            TabledString<Tabled_Folders>.DropRef();
+            foreach (var d in _lsDisposable)
+                d.Dispose();
         }
 
         readonly TreeView_DoubleFileVM
@@ -52,9 +77,5 @@ namespace DoubleFile
             _winProgress = new WinProgress();
         readonly double
             _nCorrelateProgressDenominator = 0;
-        readonly LocalTV
-            _localTV = new LocalTV();
-        static readonly WeakReference
-            _weakReference = new WeakReference(null);
     }
 }

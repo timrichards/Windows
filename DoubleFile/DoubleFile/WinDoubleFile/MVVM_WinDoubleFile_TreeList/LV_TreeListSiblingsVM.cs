@@ -85,7 +85,7 @@ namespace DoubleFile
             var treeNodes =
                 (null != treeNodeSel.Parent)
                 ? treeNodeSel.Parent.Nodes
-                : WinDoubleFile_FoldersVM.LocalTV.Nodes.AsEnumerable();
+                : LocalTV.Instance.Nodes.AsEnumerable();
 
             var lsLVitems = new List<LVitem_TreeListVM>();
             LVitem_TreeListVM selectedItem = null;

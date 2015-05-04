@@ -5,16 +5,28 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    class LocalTV : IDisposable
+    partial class LocalTV
     {
-        internal Dictionary<string, string>
-            _dictVolumeInfo = null;
         internal LocalTreeNode[]
             Nodes { get; set; }
         internal LocalTreeNode
             SelectedNode { get; set; }
         internal LocalTreeNode
             TopNode { get; set; }
+
+        static internal Dictionary<string, string>
+            DictVolumeInfo
+        {
+            get
+            {
+                var o = _weakReference.Target as LocalTV;
+
+                if (null == o)
+                    return null;
+
+                return o._dictVolumeInfo;
+            }
+        }
 
         static internal LocalTreeNode
             GetOneNodeByRootPathA(string strPath, LVitem_ProjectVM lvItemProjectVM)
@@ -27,31 +39,10 @@ namespace DoubleFile
             return GetOneNodeByRootPath.Go(strPath, o.Nodes, lvItemProjectVM);
         }
 
-        internal LocalTV(IEnumerable<LocalTreeNode> lsRootNodes = null)
-        {
-            _weakReference.Target = this;            
-
-            if (null != lsRootNodes)
-                Nodes = lsRootNodes.ToArray();
-            
-            _lsDisposable.Add(WinDoubleFile_DuplicatesVM.GoToFile.Subscribe(GoToFileA));
-            _lsDisposable.Add(WinDoubleFile_SearchVM.GoToFile.Subscribe(GoToFileB));
-        }
-
-        public void Dispose()
-        {
-            _weakReference.Target = null;
-
-            foreach (var d in _lsDisposable)
-                d.Dispose();
-        }
-
         internal int GetNodeCount(bool includeSubTrees = false)
         {
             return includeSubTrees ? CountSubnodes(Nodes) : (null != Nodes) ? Nodes.Length : 0;
         }
-
-        internal void Select() { }
 
         static int CountSubnodes(IEnumerable<LocalTreeNode> nodes)
         {

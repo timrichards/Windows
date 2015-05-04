@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    partial class WinDoubleFile_FoldersVM : IWinProgressClosing, ICreateFileDictStatus, ITreeStatus
+    partial class LocalTV : IWinProgressClosing, ICreateFileDictStatus, ITreeStatus
     {
         internal ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
             DictNodes { get; private set; }
@@ -28,11 +28,8 @@ namespace DoubleFile
         {
             TreeCleanup();
 
-            if ((false == _arrTreeNodes.IsEmpty()) &&
-                (null != _localTV))
-            {
-                _localTV._dictVolumeInfo.Clear();
-            }
+            if (false == _arrTreeNodes.IsEmpty())
+                _dictVolumeInfo.Clear();
 
             DictNodes = null;           // m_dictNodes is tested to recreate tree.
             _arrTreeNodes = null;
@@ -145,7 +142,6 @@ namespace DoubleFile
             }
 
             TreeCleanup();
-            _localTV._dictVolumeInfo = _dictVolumeInfo;
 
             var localLVclones = new LocalLV();
             var localLVsameVol = new LocalLV();

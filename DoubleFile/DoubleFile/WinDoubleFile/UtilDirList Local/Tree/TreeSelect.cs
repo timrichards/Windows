@@ -34,9 +34,7 @@ namespace DoubleFile
             if (treeNode is LocalTreeMapFileNode)     // does not support immediate file fake nodes
                 return false;
 
-            if (null != WinDoubleFile_FoldersVM.LocalTV)
-                _dictVolumeInfo = WinDoubleFile_FoldersVM.LocalTV._dictVolumeInfo;
-
+            _dictVolumeInfo = LocalTV.DictVolumeInfo;
             _bCompareMode = bCompareMode;
             _bSecondComparePane = bSecondComparePane;
             _thread = new Thread(() => Go(treeNode)) { IsBackground = true };

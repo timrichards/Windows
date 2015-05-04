@@ -37,7 +37,7 @@ namespace DoubleFile
             if (Reinitialize_And_FullPathFound(SearchText))
                 return;
 
-            var lsTreeNodes = WinDoubleFile_FoldersVM.TreeNodes;
+            var lsTreeNodes = LocalTV.TreeNodes;
 
             if (null == lsTreeNodes)
                 return;

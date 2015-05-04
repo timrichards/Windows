@@ -28,7 +28,7 @@ namespace DoubleFile
             MinWidth = Width;
             MinHeight = Height;
             LocalTV.FactoryCreate(_lvProjectVM);
-            _treeView_DoubleFileVM = new TreeView_DoubleFileVM(form_tv, LocalTV.Instance._listRootNodes);
+            _treeView_DoubleFileVM = new TreeView_DoubleFileVM(form_tv, LocalTV.Nodes);
         }
 
         protected override LocalWindow_DoubleFile CreateChainedWindow()

@@ -3,21 +3,12 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
+using System.Linq;
 
 namespace DoubleFile
 {
     partial class LocalTV : IWinProgressClosing, ICreateFileDictStatus, ITreeStatus
     {
-        internal ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
-            DictNodes { get; private set; }
-        internal Tree
-            Tree { get; private set; }
-
-        internal LocalTreeNode[]
-            _arrTreeNodes { get; private set; }
-        internal readonly List<LocalTreeNode>
-            _listRootNodes = new List<LocalTreeNode>();
-
         internal void TreeCleanup()
         {
             Tree = null;
@@ -33,7 +24,7 @@ namespace DoubleFile
 
             DictNodes = null;           // m_dictNodes is tested to recreate tree.
             _arrTreeNodes = null;
-            _listRootNodes.Clear();
+            _nodes = null;
         }
 
         void DoTree(bool bKill = false)
@@ -123,8 +114,20 @@ namespace DoubleFile
             }
             else if (rootNode != null)
             {
-                _listRootNodes.Add(rootNode);
-                _winProgress.SetProgress(_ksFolderTreeKey, _listRootNodes.Count / _nCorrelateProgressDenominator * 3 / 4.0);
+                if (null == _nodes)
+                {
+                    _nodes = new[] { rootNode };
+                }
+                else lock (_nodes)
+                {
+                    // The root volume list is very small so this copy-sort is viable
+                    var ls = new List<LocalTreeNode>(_nodes);
+
+                    ls.Insert(ls.TakeWhile(node => rootNode.Text.CompareTo(node.Text) > 0).Count(), rootNode);
+                    _nodes = ls.ToArray();
+                }
+
+                _winProgress.SetProgress(_ksFolderTreeKey, _nodes.Length / _nCorrelateProgressDenominator * 3 / 4.0);
             }
             else
             {
@@ -134,13 +137,15 @@ namespace DoubleFile
 
         void ITreeStatus.Done()
         {
-            if (_listRootNodes.IsEmpty())
+            if (_nodes.IsEmpty())
             {
                 _winProgress.Aborted = true;
                 UtilProject.UIthread(_winProgress.Close);
                 return;
             }
 
+            TopNode = _nodes[0];
+            LocalTreeNode.SetLevel(_nodes);
             TreeCleanup();
 
             var localLVclones = new LocalLV();
@@ -157,7 +162,7 @@ namespace DoubleFile
                 var collate = new Collate(
                     DictNodes,
                     localLVclones, localLVsameVol, localLVsolitary,
-                    _listRootNodes, lsTreeNodes,
+                    _nodes, lsTreeNodes,
                     lsLVignore: lsLocalLVignore, bLoose: true);
 
                 var dtStart = DateTime.Now;
@@ -174,6 +179,9 @@ namespace DoubleFile
 
                 _winProgress.SetCompleted(_ksFolderTreeKey);
                 collate.Step2();
+
+                if (null == LocalTV.SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
+                    LocalTV.SelectedNode = TopNode;
                 _arrTreeNodes = lsTreeNodes.ToArray();
                 UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
             }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace DoubleFile
@@ -8,38 +9,24 @@ namespace DoubleFile
         static internal LocalTV
             Instance { get; private set; }
 
-        static internal IEnumerable<LocalTreeNode>
-            TreeNodes { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._arrTreeNodes : null; } }
+        internal Tree
+            Tree { get; private set; }
+
+        internal ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
+            DictNodes { get; private set; }
 
         static internal IEnumerable<LocalTreeNode>
-            NodesAsEnumerable { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._nodes : null; } }
+            TreeNodes { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._arrTreeNodes : null; } }
+        LocalTreeNode[] _arrTreeNodes = null;
 
         internal LocalTreeNode
             TopNode { get; private set; }
 
+        static internal IEnumerable<LocalTreeNode>
+            NodesAsEnumerable { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._nodes : null; } }
+
         static internal LocalTreeNode[]
-            Nodes
-        {
-            get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._nodes : null; } 
-            set
-            {
-                var o = _weakReference.Target as LocalTV;
-
-                if (null == o)
-                    return;
-
-                o._nodes = value;
-
-                if ((null == value) ||
-                    (0 == value.Length))
-                {
-                    return;
-                }
-
-                o.TopNode = value[0];
-                LocalTreeNode.SetLevel(value);
-            }
-        }
+            Nodes { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._nodes : null; } }
         LocalTreeNode[] _nodes = null;
 
         static internal LocalTreeNode

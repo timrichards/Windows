@@ -13,7 +13,7 @@ namespace DoubleFile
             LocalLV lvClones,
             LocalLV lvSameVol,
             LocalLV lvUnique,
-            List<LocalTreeNode> lsRootNodes,
+            IEnumerable<LocalTreeNode> ieRootNodes,
             List<LocalTreeNode> lsTreeNodes,
             List<LocalLVitem> lsLVignore,
             bool bLoose)
@@ -23,7 +23,7 @@ namespace DoubleFile
             _lvClones = lvClones;
             _lvSameVol = lvSameVol;
             _lvUnique = lvUnique;
-            _lsRootNodes = lsRootNodes;
+            _ieRootNodes = ieRootNodes;
             _lsTreeNodes = lsTreeNodes;
             _lsLVignore = lsLVignore;
             _bLoose = bLoose;
@@ -75,13 +75,11 @@ namespace DoubleFile
             double nProgressItem = 0;
             const double nTotalProgressItems = 6;
 
-            if (_lsRootNodes.IsEmpty())
+            if (_ieRootNodes.IsEmpty())
             {
                 MBoxStatic.Assert(1305.6314, false);
                 return;
             }
-
-            LocalTV.Nodes = _lsRootNodes.ToArray();
 
             if (false == _lsLVignore.IsEmpty())
             {
@@ -92,7 +90,7 @@ namespace DoubleFile
                 foreach (var lvItem in _lsLVignore)
                     sbMatch.AppendLine(lvItem.Text);
 
-                IgnoreNodeQuery(("" + sbMatch).ToLower(), nMaxLevel, _lsRootNodes[0]);
+                IgnoreNodeQuery(("" + sbMatch).ToLower(), nMaxLevel, _ieRootNodes.ElementAt(0));
                 UtilProject.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             }
 
@@ -228,10 +226,10 @@ namespace DoubleFile
 
             var dictClones = new SortedDictionary<FolderKeyTuple, List<LocalTreeNode>>();
 
-            nProgressDenominator += _lsRootNodes.Count;
+            nProgressDenominator += _ieRootNodes.Count();
             ++nProgressItem;
 
-            foreach (var treeNode in _lsRootNodes)
+            foreach (var treeNode in _ieRootNodes)
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
                 
@@ -241,7 +239,6 @@ namespace DoubleFile
                 DifferentVolsQuery(dictClones, treeNode);
             }
 
-            _lsRootNodes.Sort((x, y) => string.Compare(x.Text, y.Text));
             nProgressDenominator += dictClones.Count;
             ++nProgressItem;
 
@@ -378,10 +375,10 @@ namespace DoubleFile
 
             var listSameVol = new List<LocalTreeNode>();
 
-            if (false == _lsRootNodes.IsEmpty())
+            if (false == _ieRootNodes.IsEmpty())
             {
-                var nCount = CountNodes.Go(_lsRootNodes);
-                var nCount_A = new AddTreeToList(_lsTreeNodes, listSameVol).Go(_lsRootNodes).Count;
+                var nCount = CountNodes.Go(_ieRootNodes);
+                var nCount_A = new AddTreeToList(_lsTreeNodes, listSameVol).Go(_ieRootNodes).Count;
 
                 MBoxStatic.Assert(1305.6325, nCount_A == nCount);
                 MBoxStatic.Assert(1305.6326, _lsTreeNodes.Count == nCount);
@@ -460,10 +457,6 @@ namespace DoubleFile
             MBoxStatic.Assert(1305.6335, null == _lvSameVol.Items);
             _lvSameVol.Items = _lsLVsameVol.ToArray();
             _lvSameVol.Invalidate();
-
-            if (null == LocalTV.SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
-                LocalTV.SelectedNode = _lsRootNodes[0];
-
             _static_this = null;
         }
 
@@ -516,12 +509,11 @@ namespace DoubleFile
                     var rootNode = treeNode.Root();
                     var rootNodeDatum = rootNode.NodeDatum as RootNodeDatum;
 
-                    if (null == rootNodeDatum)      // added 2/13/15 as safety
+                    if (null == rootNodeDatum)      // added 2/13/15 as safety, got hit on 5/4/15
                     {
                         MBoxStatic.Assert(99970, false);
                         return;
                     }
-
 
                     MBoxStatic.Assert(1305.6308, UtilColor.Empty == treeNode.ForeColor);
                     treeNode.ForeColor = UtilColor.Firebrick;
@@ -666,7 +658,7 @@ namespace DoubleFile
         readonly LocalLV _lvClones = null;
         readonly LocalLV _lvSameVol = null;
         readonly LocalLV _lvUnique = null;
-        readonly List<LocalTreeNode> _lsRootNodes = null;
+        readonly IEnumerable<LocalTreeNode> _ieRootNodes = null;
         readonly List<LocalTreeNode> _lsTreeNodes = null;
         readonly List<LocalLVitem> _lsLVignore = null;
 

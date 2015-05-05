@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace DoubleFile
@@ -18,8 +17,10 @@ namespace DoubleFile
         LocalTreeNode[] _rootNodes = null;
         static readonly object _rootNodesSemaphore = new object();
 
-        internal LocalTreeNode
-            TopNode { get; private set; }
+        static internal LocalTreeNode
+            TopNode { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._topNode : null; } }
+        LocalTreeNode
+            _topNode = null;
 
         static internal LocalTreeNode
             SelectedNode

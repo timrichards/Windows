@@ -3,6 +3,7 @@ using System.Windows;
 using System;
 using FirstFloor.ModernUI.Windows;
 using FirstFloor.ModernUI.Windows.Navigation;
+using System.Windows.Controls;
 
 namespace DoubleFile
 {
@@ -11,6 +12,8 @@ namespace DoubleFile
     /// </summary>
     public partial class WinTreeMap_MUI : IContent
     {
+        internal LV_ProjectVM LVprojectVM { get; set; }
+
         public void OnFragmentNavigation(FragmentNavigationEventArgs e) { }
         public void OnNavigatedFrom(NavigationEventArgs e) { }
         public void OnNavigatedTo(NavigationEventArgs e)
@@ -26,7 +29,11 @@ namespace DoubleFile
 
             ResizeMode = ResizeMode.CanResize;
     //        form_ucTreeMap.LocalOwner = this;
-            base.DataContext = form_ucTreeMap.TreeMapVM = new WinTreeMapVM();
+
+            DataContext = form_ucTreeMap.TreeMapVM = new WinTreeMapVM();
+
+            LocalTV.FactoryCreate(App.LVprojectVM);
+            form_ucTreeMap.TreeMapVM.TreeNode = LocalTV.TopNode;
         }
 
         public void OnNavigatingFrom(NavigatingCancelEventArgs e) { }

@@ -3,6 +3,7 @@ using System.Windows.Threading;
 using System.Windows;
 using System.Reactive.Linq;
 using System.Windows.Controls;
+using FirstFloor.ModernUI.Windows.Controls;
 
 namespace DoubleFile
 {
@@ -21,23 +22,36 @@ namespace DoubleFile
         virtual protected Rect PosAtClose { get; set; }
     }
 
-    public class LocalWindow : Window
+    interface ILocalWindow
     {
-        internal bool LocalIsClosed { get; private set; }
+        bool LocalIsClosed { get; }
+        bool SimulatingModal { get; set; }
+        bool Activate();
+    }
+
+    public class LocalModernWindow : ModernWindow, ILocalWindow
+    {
+        public bool LocalIsClosed { get; private set; }
+        bool ILocalWindow.SimulatingModal { get; set; }
+    }
+
+    public class LocalWindow : Window, ILocalWindow
+    {
+        public bool LocalIsClosed { get; private set; }
         internal bool LocalIsClosing { get; private set; }
 
         internal bool? LocalDialogResult
         {
             get
             {
-                return _simulatingModal
+                return i.SimulatingModal
                     ? _LocalDialogResult
                     : DialogResult;
             }
 
             set
             {
-                if (_simulatingModal)
+                if (i.SimulatingModal)
                     _LocalDialogResult = value;
                 else
                     DialogResult = value;
@@ -56,7 +70,7 @@ namespace DoubleFile
             // Keep this around so you see how it's done
             // Icon = BitmapFrame.Create(new Uri(@"pack://application:,,/Resources/ic_people_black_18dp.png"));
 
-            Icon = MainWindow.Instance.Icon;
+            Icon = App.Icon;
             WindowStartupLocation = WindowStartupLocation.CenterOwner;
             ResizeMode = ResizeMode.CanResizeWithGrip;
             ShowInTaskbar = false;
@@ -68,22 +82,22 @@ namespace DoubleFile
             // You can comment this stuff out all you want: the flashing close box on the
             // system file dialogs isn't going away...
 
-            if (null == MainWindow.TopWindow)
-                MainWindow.TopWindow = this;
+            if (null == App.TopWindow)
+                App.TopWindow = this;
 
             Observable.FromEventPattern(this, "Activated")
                 .Subscribe(args =>
             {
                 var bCanFlashWindow = App.CanFlashWindow_ResetsIt;     // querying it resets it
-                var topWindow = MainWindow.TopWindow;
+                var topWindow = App.TopWindow;
 
-                if (topWindow._simulatingModal &&
+                if (topWindow.SimulatingModal &&
                     (this != topWindow))
                 {
-                    topWindow.Activate();
+                    topWindow.Activate(); 
 
                     if (bCanFlashWindow)
-                        FlashWindowStatic.Go(topWindow);
+                        FlashWindowStatic.Go((Window)topWindow);
                 }
             });
 
@@ -103,7 +117,7 @@ namespace DoubleFile
 
         internal void CloseIfSimulatingModal()
         {
-            if (_simulatingModal)
+            if (i.SimulatingModal)
                 Close();
         }
 
@@ -115,18 +129,18 @@ namespace DoubleFile
                 return;
             }
 
-            Owner = MainWindow.TopWindow;
+            Owner = (Window)App.TopWindow;
             base.Show();
             PositionWindow();
         }
 
-        internal new bool? ShowDialog() { return ShowDialog(MainWindow.TopWindow); }
+        internal new bool? ShowDialog() { return ShowDialog(App.TopWindow); }
 
         protected virtual void PositionWindow()
         {
         }
 
-        bool? ShowDialog(LocalWindow me)
+        bool? ShowDialog(ILocalWindow me)
         {
             // 3/9/15 This is false because e.g. bringing up a New Listing File dialog does not
             // properly focus: a second click is needed to move the window or do anything in it.
@@ -135,9 +149,9 @@ namespace DoubleFile
             // the Folders VM disappears and crashes on close. 2) Do you want to cancel, left open,
             // mysteriously leaves WinProject unpopulated after clicking OK: does not run any code
             // in MainWindow.xaml.cs after volumes.ShowDialog. Acts like a suppressed null pointer.
-            _simulatingModal = true;           // Change it here to switch to simulated dialog
-            MainWindow.TopWindow = this;
-            Owner = me;
+            i.SimulatingModal = true;           // Change it here to switch to simulated dialog
+            App.TopWindow = this;
+            Owner = (Window)me;
 
             bool? bResult = null;
             DispatcherFrame blockingFrame = null;
@@ -145,27 +159,28 @@ namespace DoubleFile
             Observable.FromEventPattern(this, "Closed")
                 .Subscribe(args =>
             {
-                MainWindow.TopWindow = me;
+                App.TopWindow = me;
                 me.Activate();
 
-                if (_simulatingModal)
+                if (i.SimulatingModal)
                 {
                     bResult = LocalDialogResult;
                     blockingFrame.Continue = false;
                 }
             });
 
-            if ( _simulatingModal)
+            if (i.SimulatingModal)
             {
                 base.Show();
                 Dispatcher.PushFrame(blockingFrame = new DispatcherFrame(true));
-                _simulatingModal = false;
+                i.SimulatingModal = false;
                 return bResult;
             }
 
             return base.ShowDialog();
         }
 
-        bool _simulatingModal = false;      // NO. Must be false. Look up. (this class also controls modeless windows.)
+        ILocalWindow i { get { return this; } }
+        bool ILocalWindow.SimulatingModal { get; set; }
     }
 }

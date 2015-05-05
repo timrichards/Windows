@@ -63,13 +63,13 @@ namespace DoubleFile
             var rootNodeDatum = treeNode.Root().NodeDatum as RootNodeDatum;
             IEnumerable<string> lsFiles = null;
 
-            do
+            UtilDirList.Closure(() =>
             {
                 if ((null == nodeDatum) ||
                     (0 == nodeDatum.LineNo) ||
                     (null == rootNodeDatum))
                 {
-                    break;
+                    return;     // from lambda
                 }
 
                 strListingFile = rootNodeDatum.ListingFile;
@@ -78,17 +78,17 @@ namespace DoubleFile
                 var nLineNo = (int)nodeDatum.LineNo;
 
                 if (0 == nPrevDir)
-                    break;
+                    return;     // from lambda
 
                 if (1 >= (nLineNo - nPrevDir))  // dir has no files
-                    break;
+                    return;     // from lambda
 
                 lsFiles =
                     File
                     .ReadLines(strListingFile)
                     .Skip(nPrevDir)
                     .Take((nLineNo - nPrevDir - 1));
-            } while (false);
+            });
 
             _fileListUpdated.OnNext(Tuple.Create(lsFiles, strListingFile, treeNode));
         }
@@ -112,26 +112,22 @@ namespace DoubleFile
             lasItems.Add(new[] { "Total # Files", nodeDatum.FilesInSubdirs.ToString(kStrFmt_thous) });
             lasItems.Add(new[] { "# Folders Here", ((null != treeNode.Nodes) ? treeNode.Nodes.Length : 0).ToString(kStrFmt_thous) });
 
-            if (nodeDatum.SubDirs > 0)
+            if (0 < nodeDatum.SubDirs)
             {
                 var strItem = nodeDatum.SubDirs.ToString(kStrFmt_thous);
 
-                if (nodeDatum.DirsWithFiles > 0)
+                if (0 < nodeDatum.DirsWithFiles)
                 {
                     var nDirsWithFiles = nodeDatum.DirsWithFiles;
 
-                    if (nodeDatum.ImmediateFiles > 0)
-                    {
+                    if (0 < nodeDatum.ImmediateFiles)
                         --nDirsWithFiles;
-                    }
 
-                    if (nDirsWithFiles > 0)
-                    {
+                    if (0 < nDirsWithFiles)
                         strItem += " (" + nDirsWithFiles.ToString(kStrFmt_thous) + " with files)";
-                    }
                 }
 
-                lasItems.Add(new string[] { "# Subfolders", strItem });
+                lasItems.Add(new[] { "# Subfolders", strItem });
             }
 
             lasItems.Add(new[] { "Total Size", FormatSize(nodeDatum.TotalLength, bBytes: true) });
@@ -141,7 +137,6 @@ namespace DoubleFile
         static void GetVolumeDetail(LocalTreeNode treeNode)
         {
             string strDriveInfo = null;
-
             var rootNode = treeNode;
 
             while (null != rootNode.Parent)
@@ -170,9 +165,7 @@ namespace DoubleFile
                 var a = arrDriveInfo[i].Split('\t');
 
                 if (0 == a[1].Trim().Length)
-                {
                     continue;
-                }
 
                 asItems[i] = new[]
                 {
@@ -200,14 +193,15 @@ namespace DoubleFile
                     continue;
                 }
 
-                var ixA = (arrDriveInfo.Length == kanDIviewOrder.Length)
+                var ixA =
+                    (arrDriveInfo.Length == kanDIviewOrder.Length)
                     ? kanDIviewOrder[ix]
                     : ix;
 
                 lasItems.Add(asItems[ix]);
             }
 
-            _volumeDetailUpdated.OnNext(Tuple.Create(lasItems.Where(i => i != null), rootNode.Text));
+            _volumeDetailUpdated.OnNext(Tuple.Create(lasItems.Where(i => null != i), rootNode.Text));
         }
 
         static Dictionary<string, string>

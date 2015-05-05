@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
 
@@ -23,11 +24,11 @@ namespace DoubleFile
 
         public const UInt32 FLASHW_ALL = 3;
 
-        static internal void Go(System.Windows.Window window_in, bool Once = false)
+        static internal void Go(Window window_in, bool Once = false)
         {
             UtilProject.UIthread(() =>
             {
-                var window = window_in ?? MainWindow.Instance;
+                var window = window_in ?? App.LocalMainWindow as Window;
                 var fInfo = new FLASHWINFO
                 {
                     hwnd = new WindowInteropHelper(window).Handle,

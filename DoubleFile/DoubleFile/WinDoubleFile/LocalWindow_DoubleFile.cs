@@ -15,11 +15,11 @@ namespace DoubleFile
             //chrome.GlassFrameThickness = new System.Windows.Thickness(1);
             WindowStyle = WindowStyle.ToolWindow;
 
-            var lastWin = MainWindow.LastPlacementWindow ?? MainWindow.Instance;
+            var lastWin = MainWindow.LastPlacementWindow ?? App.LocalMainWindow as Window;
             var bUseLastWindow = true;
 
             if (null == MainWindow.LeftWindow)
-                MainWindow.LeftWindow = MainWindow.Instance;
+                MainWindow.LeftWindow = App.LocalMainWindow as Window;
 
             var leftWindow = MainWindow.LeftWindow;
             var rcMonitor = Win32Screen.GetOwnerMonitorRect(leftWindow);

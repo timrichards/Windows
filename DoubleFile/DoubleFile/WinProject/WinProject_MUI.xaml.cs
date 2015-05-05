@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using FirstFloor.ModernUI.Windows;
 using FirstFloor.ModernUI.Windows.Navigation;
+using System.Windows.Controls;
 
 namespace DoubleFile
 {
@@ -13,10 +14,10 @@ namespace DoubleFile
     /// </summary>
     partial class WinProject_MUI : IContent
     {
-        internal LV_ProjectVM LVprojectVM { get; private set; }
-
         public void OnFragmentNavigation(FragmentNavigationEventArgs e) { }
+        
         public void OnNavigatedFrom(NavigationEventArgs e) { }
+
         public void OnNavigatedTo(NavigationEventArgs e) { Init(); }
         public void OnNavigatingFrom(NavigatingCancelEventArgs e) { e.Cancel = WinProject_CancelOrDispose(); }
 
@@ -32,7 +33,7 @@ namespace DoubleFile
             : this()
         {
             _bOpenProject = bOpenProject;
-            LVprojectVM = lvProjectVM;
+            App.LVprojectVM = lvProjectVM;
 
             _lsDisposable.Add(Observable.FromEventPattern(form_grid, "Loaded")
                 .Subscribe(args => Init()));
@@ -43,26 +44,26 @@ namespace DoubleFile
 
         private void Init()
         {
-            var lvProjectVM = new LV_ProjectVM(LVprojectVM)
+            var lvProjectVM = new LV_ProjectVM(App.LVprojectVM)
             {
                 SelectedOne = () => form_lv.SelectedItems.HasOnlyOne(),
                 SelectedAny = () => false == form_lv.SelectedItems.IsEmptyA(),
                 Selected = () => form_lv.SelectedItems.Cast<LVitem_ProjectVM>()
             };
 
-            var win = new WinProjectVM(lvProjectVM);
+            var vm = new WinProjectVM(lvProjectVM);
 
             form_lv.DataContext = lvProjectVM;
-            DataContext = win;
+            DataContext = vm;
             LocalDialogResult = false;
 
             if (_bOpenProject)
-                win.OpenProject();
+                vm.OpenProject();
         }
 
         private void BtnOK_Click()
         {
-            LVprojectVM = form_lv.DataContext as LV_ProjectVM;
+            App.LVprojectVM = form_lv.DataContext as LV_ProjectVM;
             LocalDialogResult = true;
 
             // IsDefault = "True" in xaml so that seems to take care of closing the window After this handler returns.
@@ -84,7 +85,7 @@ namespace DoubleFile
             if (false ==
                 (((null != lvProjectVM) &&
                 lvProjectVM.Unsaved &&
-                ((null == LVprojectVM) || (false == LVprojectVM.LocalEquals(lvProjectVM))) &&
+                ((null == App.LVprojectVM) || (false == App.LVprojectVM.LocalEquals(lvProjectVM))) &&
                 (MessageBoxResult.Cancel ==
                 MBoxStatic.ShowDialog(WinProjectVM.UnsavedWarning, "Close Project", MessageBoxButton.OKCancel)))))
             {

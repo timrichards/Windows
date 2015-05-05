@@ -84,7 +84,8 @@ namespace DoubleFile
                     sbPath
                         .Insert(0, '\\')
                         .Insert(0, treeNode.Text);
-                } while (null != (treeNode = treeNode.Parent));
+                }
+                while (null != (treeNode = treeNode.Parent));
 
                 return ("" + sbPath).TrimEnd('\\');
             }

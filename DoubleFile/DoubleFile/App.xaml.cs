@@ -4,6 +4,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows;
+using System.Windows.Media;
 
 namespace DoubleFile
 {
@@ -12,9 +13,26 @@ namespace DoubleFile
     /// </summary>
     public partial class App : Application
     {
+        static internal ILocalWindow
+            LocalMainWindow { get; set; }
+
+        static internal ILocalWindow
+            TopWindow { get; set; }
+
+        static internal LV_ProjectVM
+            LVprojectVM { get; set; }
+
+        static internal FileDictionary 
+            FileDictionary = new FileDictionary();
+
+        static internal SaveDirListings
+            SaveDirListings { get; set; }
+
         static internal IObservable<bool>   // bool is a no-op: generic placeholder
             DeactivateDidOccur { get { return _deactivateDidOccur.AsObservable(); } }
         static readonly Subject<bool> _deactivateDidOccur = new Subject<bool>();
+
+        static internal ImageSource Icon { get; set; }
 
         static internal bool LocalActivated { get; private set; }
         static internal bool LocalExit { get; private set; }
@@ -44,7 +62,7 @@ namespace DoubleFile
                 .Subscribe(args => { LocalActivated = false; _deactivateDidOccur.OnNext(false); });
 
             Observable.FromEventPattern(this, "Exit")
-                .Subscribe(args => LocalExit = true);
+                .Subscribe(args => LocalExit = true);   // App.FileDictionary.Dispose();
 
 #if (false == DEBUG)
             Observable.FromEventPattern<System.Windows.Threading.DispatcherUnhandledExceptionEventArgs>(this, "DispatcherUnhandledException")

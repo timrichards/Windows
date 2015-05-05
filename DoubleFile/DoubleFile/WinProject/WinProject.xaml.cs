@@ -41,13 +41,13 @@ namespace DoubleFile
                 Selected = () => form_lv.SelectedItems.Cast<LVitem_ProjectVM>()
             };
 
-            var win = new WinProjectVM(lvProjectVM);
+            var vm = new WinProjectVM(lvProjectVM);
 
             form_lv.DataContext = lvProjectVM;
-            DataContext = win;
+            DataContext = vm;
 
             if (_bOpenProject)
-                win.OpenProject();
+                vm.OpenProject();
         }
 
         private void BtnOK_Click()

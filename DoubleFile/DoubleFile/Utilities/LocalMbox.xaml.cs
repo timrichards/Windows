@@ -80,10 +80,10 @@ namespace DoubleFile
                 Buttons = buttons.Value;
         }
 
-        internal LocalMbox(LocalWindow owner, string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
+        internal LocalMbox(ILocalWindow owner, string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
             : this(strMessage, strTitle, buttons)
         {
-            Owner = owner;
+            Owner = owner as Window;
         }
 
         internal new MessageBoxResult ShowDialog()

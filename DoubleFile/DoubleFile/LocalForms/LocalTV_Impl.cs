@@ -48,7 +48,7 @@ namespace DoubleFile
             _winProgress.WindowClosingCallback = new WeakReference<IWinProgressClosing>(this);
 
             var lsProgressItems = new List<string>();
-            var fileDictionary = MainWindow.FileDictionary;
+            var fileDictionary = App.FileDictionary;
 
             fileDictionary.ResetAbortFlag();
 
@@ -77,8 +77,8 @@ namespace DoubleFile
         void ICreateFileDictStatus.Callback(bool bDone, double nProgress)
         {
             if (App.LocalExit ||
-                (null == MainWindow.FileDictionary) ||
-                MainWindow.FileDictionary.IsAborted)
+                (null == App.FileDictionary) ||
+                App.FileDictionary.IsAborted)
             {
                 _winProgress.Aborted = true;
                 return;
@@ -99,8 +99,8 @@ namespace DoubleFile
         void ITreeStatus.Status(LVitem_ProjectVM volStrings, LocalTreeNode rootNode, bool bError)
         {
             if (App.LocalExit ||
-                (null == MainWindow.FileDictionary) ||
-                MainWindow.FileDictionary.IsAborted ||
+                (null == App.FileDictionary) ||
+                App.FileDictionary.IsAborted ||
                 ((null != _tree) && (_tree.IsAborted)))
             {
                 ClearMem_TreeForm();
@@ -145,7 +145,7 @@ namespace DoubleFile
                 return;
             }
 
-            TopNode = _rootNodes[0];
+            _topNode = _rootNodes[0];
             LocalTreeNode.SetLevel(_rootNodes);
             TreeCleanup();
 
@@ -182,7 +182,7 @@ namespace DoubleFile
                 collate.Step2();
 
                 if (null == LocalTV.SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
-                    LocalTV.SelectedNode = TopNode;
+                    LocalTV.SelectedNode = _topNode;
                 _allNodes = lsTreeNodes.ToArray();
                 UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
             }
@@ -197,7 +197,7 @@ namespace DoubleFile
         {
             if (false == UtilDirList.Closure(() =>
             {
-                if (MainWindow.FileDictionary
+                if (App.FileDictionary
                     .IsAborted)
                 {
                     return true;
@@ -217,7 +217,7 @@ namespace DoubleFile
                 return false;
             }
 
-            MainWindow.FileDictionary
+            App.FileDictionary
                 .Abort();
                     
             if (null != _tree)

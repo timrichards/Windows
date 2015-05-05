@@ -6,14 +6,13 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for ModernWindow1.xaml
     /// </summary>
-    public partial class ModernWindow1 : ModernWindow
+    public partial class ModernWindow1
     {
         public ModernWindow1()
         {
             InitializeComponent();
-            ((Window)_mainWindow).Show();
+            App.LocalMainWindow = this;
+            App.TopWindow = this;
         }
-
-        MainWindow _mainWindow = new MainWindow();
     }
 }

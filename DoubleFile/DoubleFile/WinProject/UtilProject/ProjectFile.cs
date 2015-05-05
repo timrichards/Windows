@@ -163,7 +163,7 @@ namespace DoubleFile
                 _winProgress.Aborted = true;
                 UtilProject.UIthread(_winProgress.Close);
             }
-                
+
             _bProcessing = false;
         }
 

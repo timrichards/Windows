@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace DoubleFile
@@ -14,11 +15,11 @@ namespace DoubleFile
 
         static internal void UIthread(Action action)
         {
-            var mainWindow = MainWindow.Instance;
+            var mainWindow = App.LocalMainWindow as Window;
 
             if (App.LocalExit ||
                 (null == mainWindow) ||
-                mainWindow.LocalIsClosed)
+                App.LocalMainWindow.LocalIsClosed)
                 return;
 
             if ((null == mainWindow) ||
@@ -39,11 +40,11 @@ namespace DoubleFile
         {
             if (null == owner)
             {
-                var mainWindow = MainWindow.Instance;
+                var mainWindow = App.LocalMainWindow as Window;
 
                 if (App.LocalExit ||
                     (null == mainWindow) ||
-                    mainWindow.LocalIsClosed)
+                    App.LocalMainWindow.LocalIsClosed)
                 {
                     return default(T);
                 }

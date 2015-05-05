@@ -13,32 +13,6 @@ namespace DoubleFile
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     partial class MainWindow
     {
-        static internal MainWindow
-            Instance { get { var o = _weakReference.Target as MainWindow; return (null != o) ? o : null; } }
-
-        internal LV_ProjectVM
-            LVprojectVM { get; private set; }
-
-        static internal FileDictionary
-            FileDictionary { get { var o = _weakReference.Target as MainWindow; return (null != o) ? o._fileDictionary : null; } }
-        FileDictionary _fileDictionary = new FileDictionary();
-
-        static internal SaveDirListings
-            SaveDirListings
-        {
-            get { var o = _weakReference.Target as MainWindow; return (null != o) ? o._saveDirListings : null; }
-            set { var o = _weakReference.Target as MainWindow; if (null != o) o._saveDirListings = value; }
-        }
-        SaveDirListings _saveDirListings = null;
-
-        static internal LocalWindow
-            TopWindow
-        {
-            get { var o = _weakReference.Target as MainWindow; return (null != o) ? o._topWindow : null; }
-            set { var o = _weakReference.Target as MainWindow; if (null != o) o._topWindow = value; }
-        }
-        LocalWindow _topWindow = null;
-
         static internal LocalWindow
             LastPlacementWindow
         {
@@ -47,13 +21,13 @@ namespace DoubleFile
         }
         LocalWindow _lastPlacementWindow = null;
 
-        static internal LocalWindow
+        static internal Window
             LeftWindow
         {
             get { var o = _weakReference.Target as MainWindow; return (null != o) ? o._leftWindow : null; }
             set { var o = _weakReference.Target as MainWindow; if (null != o) o._leftWindow = value; }
         }
-        LocalWindow _leftWindow = null;
+        Window _leftWindow = null;
 
         static Action Init = null;
         static void InitForMainWindowOnly(Action init) { Init = init; }
@@ -62,6 +36,8 @@ namespace DoubleFile
             : base(InitForMainWindowOnly)
         {
             _weakReference.Target = this;
+            App.Icon = Icon;
+            App.LocalMainWindow = this;
             Init();
             Init = null;
             SizeToContent = SizeToContent.WidthAndHeight;
@@ -102,8 +78,8 @@ namespace DoubleFile
 
             if (bOpenProject)
             {
-                if ((null != LVprojectVM) &&
-                    LVprojectVM.Unsaved &&
+                if ((null != App.LVprojectVM) &&
+                    App.LVprojectVM.Unsaved &&
                     (MessageBoxResult.Cancel ==
                     MBoxStatic.ShowDialog(WinProjectVM.UnsavedWarning, "Open Project", MessageBoxButton.OKCancel)))
                 {
@@ -114,7 +90,7 @@ namespace DoubleFile
             }
             else
             {
-                volumes = new WinProject(LVprojectVM);
+                volumes = new WinProject(App.LVprojectVM);
             }
 
             if (false == (volumes.ShowDialog() ?? false))
@@ -123,19 +99,19 @@ namespace DoubleFile
             if (null == volumes.LVprojectVM)
                 return;
 
-            if (volumes.LVprojectVM.LocalEquals(LVprojectVM))
+            if (volumes.LVprojectVM.LocalEquals(App.LVprojectVM))
                 return;
 
-            LVprojectVM = volumes.LVprojectVM;
-            new SaveListingsProcess(LVprojectVM);
-            _fileDictionary.Clear();
+            App.LVprojectVM = volumes.LVprojectVM;
+            new SaveListingsProcess(App.LVprojectVM);
+            App.FileDictionary.Clear();
 
             if ((null != _winDoubleFile_Folders) &&
                 (false == _winDoubleFile_Folders.LocalIsClosed))
             {
                 _winDoubleFile_Folders.Close();
 
-                (_winDoubleFile_Folders = new WinDoubleFile_Folders(LVprojectVM))
+                (_winDoubleFile_Folders = new WinDoubleFile_Folders(App.LVprojectVM))
                     .Show();
 
                 Observable.FromEventPattern(_winDoubleFile_Folders, "Closed")
@@ -226,8 +202,8 @@ namespace DoubleFile
 
         private void MainWindow_Closing(System.ComponentModel.CancelEventArgs e)
         {
-            if ((null != LVprojectVM) &&
-                LVprojectVM.Unsaved &&
+            if ((null != App.LVprojectVM) &&
+                App.LVprojectVM.Unsaved &&
                 (MessageBoxResult.Cancel == 
                 MBoxStatic.ShowDialog(WinProjectVM.UnsavedWarning, "Quit Double File", MessageBoxButton.OKCancel)))
             {
@@ -236,7 +212,6 @@ namespace DoubleFile
             }
 
             _weakReference.Target = null;
-            _fileDictionary.Dispose();
 
             if (Directory.Exists(ProjectFile.TempPath))
             {
@@ -250,8 +225,8 @@ namespace DoubleFile
 
         private void Button_SaveProject_Click()
         {
-            if (null != LVprojectVM)
-                WinProjectVM.SaveProject(LVprojectVM);
+            if (null != App.LVprojectVM)
+                WinProjectVM.SaveProject(App.LVprojectVM);
             else
                 MBoxStatic.ShowDialog("No project to save.", "Save Project");
         }
@@ -260,7 +235,7 @@ namespace DoubleFile
         {
             if ((null == _winDoubleFile_Folders) || (_winDoubleFile_Folders.LocalIsClosed))
             {
-                (_winDoubleFile_Folders = new WinDoubleFile_Folders(LVprojectVM))
+                (_winDoubleFile_Folders = new WinDoubleFile_Folders(App.LVprojectVM))
                     .Show();
 
                 Observable.FromEventPattern(_winDoubleFile_Folders, "Closed")

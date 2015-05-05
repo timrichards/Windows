@@ -30,14 +30,14 @@ namespace DoubleFile
                 WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
             };
 
-            if ((null != MainWindow.SaveDirListings) &&
-                (false == MainWindow.SaveDirListings.IsAborted))
+            if ((null != App.SaveDirListings) &&
+                (false == App.SaveDirListings.IsAborted))
             {
                 MBoxStatic.Assert(99940, false);
-                MainWindow.SaveDirListings.EndThread();
+                App.SaveDirListings.EndThread();
             }
 
-            MainWindow.SaveDirListings =
+            App.SaveDirListings =
                 new SaveDirListings(lvProjectVM, new WeakReference<ISaveDirListingsStatus>(this))
                 .DoThreadFactory();
 
@@ -49,7 +49,7 @@ namespace DoubleFile
         {
             UtilProject.UIthread(() =>
             {
-                var sdl = MainWindow.SaveDirListings;
+                var sdl = App.SaveDirListings;
 
                 if (App.LocalExit ||
                     (null == sdl) ||
@@ -84,15 +84,15 @@ namespace DoubleFile
 
         void ISaveDirListingsStatus.Done()
         {
-            MainWindow.SaveDirListings = null;
+            App.SaveDirListings = null;
         }
 
         bool IWinProgressClosing.ConfirmClose()
         {
-            if (null == MainWindow.SaveDirListings)
+            if (null == App.SaveDirListings)
                 return true;
 
-            if (MainWindow.SaveDirListings.IsAborted)
+            if (App.SaveDirListings.IsAborted)
                 return true;
 
             if (MBoxStatic.ShowDialog("Do you want to cancel?", "Saving Directory Listings",
@@ -100,8 +100,8 @@ namespace DoubleFile
                 _winProgress) ==
                 MessageBoxResult.Yes)
             {
-                if (null != MainWindow.SaveDirListings)
-                    MainWindow.SaveDirListings.EndThread();
+                if (null != App.SaveDirListings)
+                    App.SaveDirListings.EndThread();
 
                 return true;
             }

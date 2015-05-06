@@ -12,30 +12,29 @@ namespace DoubleFile
     /// </summary>
     public partial class WinTreeMap_MUI : IContent
     {
-        internal LV_ProjectVM LVprojectVM { get; set; }
-
         public void OnFragmentNavigation(FragmentNavigationEventArgs e) { }
-        public void OnNavigatedFrom(NavigationEventArgs e) { }
+        public void OnNavigatedFrom(NavigationEventArgs e)
+        {
+       //     _host.Dispose();
+       //     form_ucTreeMap.Dispose();
+        }
+
         public void OnNavigatedTo(NavigationEventArgs e)
         {
-            Observable.FromEventPattern(this, "SizeChanged")
-                .Subscribe(args => form_ucTreeMap.ClearSelection());
+            if ((null == App.LVprojectVM) ||
+                (App.LVprojectVM == _lvProjectVM) ||
+                (App.LVprojectVM.LocalEquals(_lvProjectVM)))
+            {
+                return;
+            }
 
-            Observable.FromEventPattern(form_slider, "LostMouseCapture")
-                .Subscribe(args => form_ucTreeMap.TreeMapVM.LostMouseCapture());
+            _lvProjectVM = new LV_ProjectVM(App.LVprojectVM);
 
-            //Observable.FromEventPattern(this, "Unloaded")
-            //    .Subscribe(args => LocalDispose());
+            if (null != LocalTV.Instance)
+                LocalTV.LocalDispose();
 
-            ResizeMode = ResizeMode.CanResize;
-    //        form_ucTreeMap.LocalOwner = this;
-
-            DataContext =
-                form_ucTreeMap.TreeMapVM =
-                new WinTreeMapVM();
-
-            LocalTV.FactoryCreate(App.LVprojectVM);
-            form_ucTreeMap.TreeMapVM.TreeNode = LocalTV.TopNode;
+            LocalTV.FactoryCreate(_lvProjectVM);
+            form_ucTreeMap.TreeMapVM.TreeNodeCallback(LocalTV.TopNode);
         }
 
         public void OnNavigatingFrom(NavigatingCancelEventArgs e) { }
@@ -43,12 +42,21 @@ namespace DoubleFile
         internal WinTreeMap_MUI()
         {
             InitializeComponent();
+
+            Observable.FromEventPattern(this, "SizeChanged")
+                .Subscribe(args => form_ucTreeMap.ClearSelection());
+
+            Observable.FromEventPattern(form_slider, "LostMouseCapture")
+                .Subscribe(args => form_ucTreeMap.TreeMapVM.LostMouseCapture());
+
+            DataContext =
+                form_ucTreeMap.TreeMapVM =
+                new WinTreeMapVM();
+
+    //        form_ucTreeMap.LocalOwner = this;
         }
 
-        private void LocalDispose()
-        {
-            _host.Dispose();
-            form_ucTreeMap.Dispose();
-        }
+        LV_ProjectVM
+            _lvProjectVM = null;
     }
 }

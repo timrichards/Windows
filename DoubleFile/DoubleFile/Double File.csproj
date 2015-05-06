@@ -273,7 +273,7 @@
     <Compile Include="WinDoubleFile\WinDoubleFile_Folders.xaml.cs">
       <DependentUpon>WinDoubleFile_Folders.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utilities\LocalWindow.cs" />
+    <Compile Include="Utilities\LocalWindowBase.cs" />
     <Compile Include="MainWindow_.xaml.cs">
       <DependentUpon>MainWindow_.xaml</DependentUpon>
       <SubType>Code</SubType>

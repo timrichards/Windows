@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    partial class WinDoubleFile_DuplicatesVM : ListViewVM_GenericBase<LVitem_FileDuplicatesVM>
+    partial class WinDoubleFile_DuplicatesVM : ListViewVM_Base<LVitem_FileDuplicatesVM>
     {
         public ICommand Icmd_Goto { get; private set; }
 

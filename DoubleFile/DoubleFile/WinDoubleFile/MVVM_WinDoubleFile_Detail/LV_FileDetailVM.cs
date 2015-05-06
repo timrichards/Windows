@@ -1,7 +1,7 @@
 ﻿using System.Windows.Input;
 namespace DoubleFile
 {
-    partial class LV_FileDetailVM : ListViewVM_GenericBase<LVitem_FileDetailVM>
+    partial class LV_FileDetailVM : ListViewVM_Base<LVitem_FileDetailVM>
     {
         public ICommand Icmd_Copy { get; private set; }
 

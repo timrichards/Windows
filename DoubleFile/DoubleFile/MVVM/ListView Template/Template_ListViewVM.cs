@@ -4,7 +4,7 @@ namespace Template      // prevents smart tag rename command from renaming the t
     using DoubleFile;
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
-    class Template_ListViewVM : ListViewVM_GenericBase<Template_LVitemVM>
+    class Template_ListViewVM : ListViewVM_Base<Template_LVitemVM>
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public string WidthColumnNameHere { get { return SCW; } }

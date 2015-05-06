@@ -14,10 +14,8 @@ namespace DoubleFile
     /// </summary>
     partial class WinProject_MUI : IContent
     {
-        public void OnFragmentNavigation(FragmentNavigationEventArgs e) { }
-        
+        public void OnFragmentNavigation(FragmentNavigationEventArgs e) { }  
         public void OnNavigatedFrom(NavigationEventArgs e) { }
-
         public void OnNavigatedTo(NavigationEventArgs e) { Init(); }
         public void OnNavigatingFrom(NavigatingCancelEventArgs e) { e.Cancel = WinProject_CancelOrDispose(); }
 

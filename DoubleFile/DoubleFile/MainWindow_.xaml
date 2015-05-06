@@ -1,4 +1,4 @@
-﻿<local:LocalWindow x:Class="DoubleFile.MainWindow"
+﻿<local:LocalWindowBase x:Class="DoubleFile.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
@@ -17,4 +17,4 @@
             <Button Content="Newline" Name ="form_btnNewline" Width="110" Margin="10,10,10,10"/>
         </StackPanel>
     </Grid>
-</local:LocalWindow>
+</local:LocalWindowBase>

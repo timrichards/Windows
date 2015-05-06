@@ -1,4 +1,4 @@
-﻿<local:LocalModernWindow x:Class="DoubleFile.ModernWindow1"
+﻿<local:LocalModernWindowBase x:Class="DoubleFile.ModernWindow1"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -61,4 +61,4 @@
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
     </mui:ModernWindow.MenuLinkGroups>
-</local:LocalModernWindow>
+</local:LocalModernWindowBase>

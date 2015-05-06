@@ -2,7 +2,7 @@
 
 namespace DoubleFile
 {
-    partial class WinDoubleFile_SearchVM : ListViewVM_GenericBase<LVitem_DoubleFile_SearchVM>
+    partial class WinDoubleFile_SearchVM : ListViewVM_Base<LVitem_DoubleFile_SearchVM>
     {
         public ICommand Icmd_Folders { get; private set; }
         public ICommand Icmd_FoldersAndFiles { get; private set; }

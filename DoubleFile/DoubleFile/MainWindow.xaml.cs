@@ -1,4 +1,5 @@
 ﻿using FirstFloor.ModernUI.Windows.Controls;
+using System;
 using System.Windows;
 
 namespace DoubleFile
@@ -8,11 +9,17 @@ namespace DoubleFile
     /// </summary>
     public partial class ModernWindow1
     {
-        public ModernWindow1()
+        static Action Init = null;
+        static void InitForMainWindowOnly(Action init) { Init = init; }
+        public
+            ModernWindow1()
+            : base(InitForMainWindowOnly)
         {
-            InitializeComponent();
+            App.Icon = Icon;
             App.LocalMainWindow = this;
-            App.TopWindow = this;
+            Init();
+            Init = null;
+            InitializeComponent();
         }
     }
 }

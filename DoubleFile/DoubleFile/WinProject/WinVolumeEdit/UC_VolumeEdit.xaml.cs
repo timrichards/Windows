@@ -200,7 +200,7 @@ namespace DoubleFile
         {
             if (IsOKenabled)
             {
-                var window = Window.GetWindow(uc_VolumeEdit) as LocalWindow;
+                var window = Window.GetWindow(uc_VolumeEdit) as LocalWindowBase;
 
                 if (window != null)
                 {
@@ -216,7 +216,7 @@ namespace DoubleFile
 
         private void BtnCancel_Click()
         {
-            var window = Window.GetWindow(uc_VolumeEdit) as LocalWindow;
+            var window = Window.GetWindow(uc_VolumeEdit) as LocalWindowBase;
 
             if (window != null)
                 window.CloseIfSimulatingModal();

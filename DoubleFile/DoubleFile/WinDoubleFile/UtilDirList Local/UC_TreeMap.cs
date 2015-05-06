@@ -27,7 +27,7 @@ namespace DoubleFile
             SelectedFile { get { return _selectedFile.AsObservable(); } }
         static readonly Subject<string> _selectedFile = new Subject<string>();
 
-        internal LocalWindow
+        internal LocalWindowBase
             LocalOwner = null;
         internal WinTreeMapVM
             TreeMapVM = null;

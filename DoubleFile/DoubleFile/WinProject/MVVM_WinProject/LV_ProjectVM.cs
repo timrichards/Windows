@@ -2,7 +2,7 @@
 
 namespace DoubleFile
 {
-    partial class LV_ProjectVM : ListViewVM_GenericBase<LVitem_ProjectVM>
+    partial class LV_ProjectVM : ListViewVM_Base<LVitem_ProjectVM>
     {
         public string WidthNickname { get { return SCW; } }                   // franken all NaN
         public string WidthSourcePath { get { return SCW; } }

@@ -22,7 +22,7 @@ namespace DoubleFile
             internal ArgsStruct(
                 string strFolder_in,
                 string strSize_in,
-                LocalWindow winOwner_in,
+                LocalWindowBase winOwner_in,
                 Action clickCallback_in,
                 Action closingCallback_in)
             {
@@ -35,7 +35,7 @@ namespace DoubleFile
 
             readonly internal string strFolder;
             readonly internal string strSize;
-            readonly internal LocalWindow winOwner;
+            readonly internal LocalWindowBase winOwner;
             readonly internal Action clickCallback;
             readonly internal Action closingCallback;
         }
@@ -101,10 +101,10 @@ namespace DoubleFile
                 _winTooltip.Close();
             }
 
-            LocalWindow winOwner = null;
+            LocalWindowBase winOwner = null;
 
             if (null != _winTooltip)
-                winOwner = _winTooltip.Owner as LocalWindow;
+                winOwner = _winTooltip.Owner as LocalWindowBase;
 
             if (null != _winOwnerClosedObserver)
             {
@@ -138,7 +138,7 @@ namespace DoubleFile
 
         void WinTooltip_SizeChanged(Size newSize)
         {
-            var winOwner = Owner as LocalWindow;
+            var winOwner = Owner as LocalWindowBase;
 
             if (null == winOwner)
                 return;

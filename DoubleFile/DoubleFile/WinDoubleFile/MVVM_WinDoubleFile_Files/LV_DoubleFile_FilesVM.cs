@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    partial class LV_DoubleFile_FilesVM : ListViewVM_GenericBase<LVitem_DoubleFile_FilesVM>
+    partial class LV_DoubleFile_FilesVM : ListViewVM_Base<LVitem_DoubleFile_FilesVM>
     {
         static internal IObservable<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>>
             SelectedFileChanged { get { return _selectedFileChanged.AsObservable(); } }

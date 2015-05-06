@@ -30,7 +30,9 @@ namespace DoubleFile
             ResizeMode = ResizeMode.CanResize;
     //        form_ucTreeMap.LocalOwner = this;
 
-            DataContext = form_ucTreeMap.TreeMapVM = new WinTreeMapVM();
+            DataContext =
+                form_ucTreeMap.TreeMapVM =
+                new WinTreeMapVM();
 
             LocalTV.FactoryCreate(App.LVprojectVM);
             form_ucTreeMap.TreeMapVM.TreeNode = LocalTV.TopNode;

@@ -1,6 +1,6 @@
 ﻿namespace DoubleFile
 {
-    partial class LV_VolumeDetailVM : ListViewVM_GenericBase<LVitem_VolumeDetailVM>
+    partial class LV_VolumeDetailVM : ListViewVM_Base<LVitem_VolumeDetailVM>
     {
         public string Title
         {

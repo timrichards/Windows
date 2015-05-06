@@ -13,13 +13,13 @@ namespace DoubleFile
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     partial class MainWindow
     {
-        static internal LocalWindow
+        static internal LocalWindowBase
             LastPlacementWindow
         {
             get { var o = _weakReference.Target as MainWindow; return (null != o) ? o._lastPlacementWindow : null; }
             set { var o = _weakReference.Target as MainWindow; if (null != o) o._lastPlacementWindow = value; }
         }
-        LocalWindow _lastPlacementWindow = null;
+        LocalWindowBase _lastPlacementWindow = null;
 
         static internal Window
             LeftWindow

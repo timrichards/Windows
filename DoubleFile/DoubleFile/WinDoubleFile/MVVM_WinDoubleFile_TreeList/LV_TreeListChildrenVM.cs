@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    class LV_TreeListChildrenVM : ListViewVM_GenericBase<LVitem_TreeListVM>
+    class LV_TreeListChildrenVM : ListViewVM_Base<LVitem_TreeListVM>
     {
         static internal IObservable<LocalTreeNode>
             TreeListChildSelected { get { return _treeListChildSelected.AsObservable(); } }

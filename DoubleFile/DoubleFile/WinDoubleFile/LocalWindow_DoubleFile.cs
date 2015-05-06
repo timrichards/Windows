@@ -4,7 +4,7 @@ using System;
 
 namespace DoubleFile
 {
-    public class LocalWindow_DoubleFile : LocalWindow
+    public class LocalWindow_DoubleFile : LocalWindowBase
     {
         protected override void PositionWindow()
         {

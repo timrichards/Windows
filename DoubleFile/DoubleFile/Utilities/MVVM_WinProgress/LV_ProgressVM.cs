@@ -3,7 +3,7 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    class LV_ProgressVM : ListViewVM_GenericBase<LVitem_ProgressVM>
+    class LV_ProgressVM : ListViewVM_Base<LVitem_ProgressVM>
     {
         // queried by ObservableObject but not used for progress bar
         public string WidthNickname { get { return SCW; } }                         // franken all NaN

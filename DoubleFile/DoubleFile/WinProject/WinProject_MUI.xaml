@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:DoubleFile"
         Title="Double File Project">
     <Grid Name="form_grid" Style="{StaticResource ContentRoot}">
-        <Menu IsMainMenu="True" Background="Transparent">
+        <Menu IsMainMenu="True">
             <MenuItem Header="File" VerticalAlignment="Center">
                 <MenuItem Header="Open project" Command="{Binding Icmd_OpenProject}" />
                 <MenuItem Header="Save project" Command="{Binding Icmd_SaveProject}"/>
@@ -19,13 +19,13 @@
                 <MenuItem Header="Edit volume group label" Command="{Binding Icmd_VolumeGroup}"/>
             </MenuItem>
             <Button Command="{Binding Icmd_NewListingFile}" Style="{StaticResource styleFlatButton}" ToolTip="New listing file">
-                <Image Source="/Double File;component/Resources/ic_add_circle_black_18dp.png" Width="18" />
+                <Image Source="/Double File;component/Assets/ic_add_circle_white_18dp.png" Width="18" />
             </Button>
             <Button Command="{Binding Icmd_RemoveListingFile}" Style="{StaticResource styleFlatButton}" ToolTip="Remove listing file">
-                <Image Source="/Double File;component/Resources/ic_remove_circle_black_18dp.png" Width="18" />
+                <Image Source="/Double File;component/Assets/ic_remove_circle_white_18dp.png" Width="18" />
             </Button>
             <Button Command="{Binding Icmd_EditListingFile}" Style="{StaticResource styleFlatButton}" ToolTip="Edit listing file">
-                <Image Source="/Double File;component/Resources/ic_create_black_18dp.png" Width="18" />
+                <Image Source="/Double File;component/Assets/ic_create_white_18dp.png" Width="18" />
             </Button>
         </Menu>
         <ListView Name="form_lv" Margin="10,30,10,60">

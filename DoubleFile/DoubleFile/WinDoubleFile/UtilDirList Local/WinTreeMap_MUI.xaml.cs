@@ -28,13 +28,31 @@ namespace DoubleFile
                 return;
             }
 
-            _lvProjectVM = new LV_ProjectVM(App.LVprojectVM);
-
             if (null != LocalTV.Instance)
                 LocalTV.LocalDispose();
 
+            App.FileDictionary.Dispose();
+            App.FileDictionary = new FileDictionary();
+
+            if (null != _ucTreeMap)
+                _ucTreeMap.Dispose();
+
+            _ucTreeMap = new UC_TreeMap();
+
+    //        form_ucTreeMap.LocalOwner = this;
+
+            DataContext =
+                _ucTreeMap.TreeMapVM =
+                new WinTreeMapVM();
+
+            _host.Child = _ucTreeMap;
+            _lvProjectVM = new LV_ProjectVM(App.LVprojectVM);
+
+            if (_lvProjectVM.Items.IsEmpty())
+                return;
+
             LocalTV.FactoryCreate(_lvProjectVM);
-            form_ucTreeMap.TreeMapVM.TreeNodeCallback(LocalTV.TopNode);
+            _ucTreeMap.TreeMapVM.TreeNodeCallback(LocalTV.TopNode);
         }
 
         public void OnNavigatingFrom(NavigatingCancelEventArgs e) { }
@@ -44,19 +62,15 @@ namespace DoubleFile
             InitializeComponent();
 
             Observable.FromEventPattern(this, "SizeChanged")
-                .Subscribe(args => form_ucTreeMap.ClearSelection());
+                .Subscribe(args => _ucTreeMap.ClearSelection());
 
             Observable.FromEventPattern(form_slider, "LostMouseCapture")
-                .Subscribe(args => form_ucTreeMap.TreeMapVM.LostMouseCapture());
-
-            DataContext =
-                form_ucTreeMap.TreeMapVM =
-                new WinTreeMapVM();
-
-    //        form_ucTreeMap.LocalOwner = this;
+                .Subscribe(args => _ucTreeMap.TreeMapVM.LostMouseCapture());
         }
 
         LV_ProjectVM
             _lvProjectVM = null;
+        UC_TreeMap
+            _ucTreeMap = null;
     }
 }

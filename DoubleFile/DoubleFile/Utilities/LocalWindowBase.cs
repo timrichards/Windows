@@ -63,7 +63,7 @@ namespace DoubleFile
             }
 
             // Keep this around so you see how it's done
-            // Icon = BitmapFrame.Create(new Uri(@"pack://application:,,/Resources/ic_people_black_18dp.png"));
+            // Icon = BitmapFrame.Create(new Uri(@"pack://application:,,/Assets/ic_people_white_18dp.png"));
 
             Icon = App.Icon;
             WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -213,7 +213,7 @@ namespace DoubleFile
             }
 
             // Keep this around so you see how it's done
-            // Icon = BitmapFrame.Create(new Uri(@"pack://application:,,/Resources/ic_people_black_18dp.png"));
+            // Icon = BitmapFrame.Create(new Uri(@"pack://application:,,/Assets/ic_people_white_18dp.png"));
 
             Icon = App.Icon;
             WindowStartupLocation = WindowStartupLocation.CenterOwner;

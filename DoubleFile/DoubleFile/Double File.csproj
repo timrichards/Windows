@@ -170,6 +170,11 @@
     <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
     <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
     <Compile Include="MVVM\RelayCommand.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\Win32Screen\MONITORINFO.cs" />
     <Compile Include="Utilities\Win32Screen\RECT.cs" />
     <Compile Include="Utilities\Win32Screen\SWP.cs" />
@@ -361,11 +366,6 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -373,8 +373,8 @@
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="DoubleFile_TemporaryKey.pfx" />
     <None Include="packages.config" />
@@ -388,24 +388,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\ic_add_circle_black_18dp.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\ic_remove_circle_black_18dp.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\ic_storage_black_18dp.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\ic_save_black_18dp.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\ic_folder_open_black_18dp.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\ic_create_black_18dp.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -425,12 +407,21 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\ic_people_black_18dp.png" />
-  </ItemGroup>
-  <ItemGroup>
+    <Resource Include="Assets\ic_add_circle_white_18dp.png" />
+    <Resource Include="Assets\ic_create_white_18dp.png" />
+    <Resource Include="Assets\ic_folder_open_black_18dp.png" />
+    <Resource Include="Assets\ic_people_black_18dp.png" />
+    <Resource Include="Assets\ic_remove_circle_white_18dp.png" />
+    <Resource Include="Assets\ic_remove_white_18dp.png" />
+    <Resource Include="Assets\ic_save_black_18dp.png" />
+    <Resource Include="Assets\ic_storage_black_18dp.png" />
     <Resource Include="ic_people_black_18dp.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Assets\LocalMUIdark.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -517,7 +508,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\ic_error_black_18dp.png" />
     <Content Include="WinProject\UtilProject\7z920x86\7z.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

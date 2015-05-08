@@ -1,10 +1,14 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Windows.Input;
+using System.Windows;
 
 namespace DoubleFile
 {
     partial class LV_ProjectVM
     {
+        public Visibility Visible { get { return Items.IsEmpty() ? Visibility.Hidden : Visibility.Visible; } }
+
         internal bool Unsaved { get; set; }
 
         internal LV_ProjectVM(LV_ProjectVM lvProjectVM = null)
@@ -16,6 +20,7 @@ namespace DoubleFile
                 Add(new LVitem_ProjectVM(lvItemVM), bQuiet: true);
 
             Unsaved = lvProjectVM.Unsaved;
+            RaisePropertyChanged("Visible");
         }
 
         internal bool AlreadyInProject(LVitem_ProjectVM lvCurrentItem, string strFilename = null)
@@ -104,7 +109,8 @@ namespace DoubleFile
 
             if (false == AlreadyInProject(lvItem))
             {
-                Add(lvItem, bQuiet);
+                base.Add(lvItem, bQuiet);
+                RaisePropertyChanged("Visible");
                 return true;
             }
 
@@ -126,6 +132,7 @@ namespace DoubleFile
                 .ForEach(lvItem => Items.Remove(lvItem));
 
             Unsaved = (false == Items.IsEmpty());
+            RaisePropertyChanged("Visible");
         }
 
         internal void EditVolumeGroupLabel()

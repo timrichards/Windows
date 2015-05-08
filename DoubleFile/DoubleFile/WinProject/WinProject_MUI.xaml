@@ -51,7 +51,7 @@
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
-            <DataGrid Name="form_lv" Margin="0,20,0,0" ItemsSource="{Binding Items}">
+            <DataGrid Name="form_lv" Margin="0,20,0,0" ItemsSource="{Binding Items}" Visibility="{Binding Visible}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Nickname" Binding="{Binding Nickname}" Width="{Binding WidthNickname}"/>
                 <DataGridTextColumn Header="Source path" Binding="{Binding SourcePath}" Width="{Binding WidthSourcePath}"/>

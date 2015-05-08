@@ -637,7 +637,7 @@ namespace DoubleFile
 
             while (null != parentNode)
             {
-                parentNode.BackColor = UtilColor.DarkRed;
+                parentNode.BackColor = UtilColor.DarkRedBG;
 
                 var nodeDatum = parentNode.NodeDatum;
 

@@ -14,15 +14,15 @@ namespace DoubleFile
         static internal int LightBlue { get { return Color.LightBlue.ToArgb(); } }
         static internal int DarkGray { get { return Color.DarkGray.ToArgb(); } }
         static internal int DarkKhaki { get { return Color.DarkKhaki.ToArgb(); } }
-        static internal int DarkRed { get { return Color.FromArgb(64,64,0,0).ToArgb(); } }
+        static internal int DarkRedBG { get { return Color.FromArgb(64, 64, 0, 0).ToArgb(); } }
         static internal int DarkSlateGray { get { return Color.DarkSlateGray.ToArgb(); } }
         static internal int Firebrick { get { return Color.Firebrick.ToArgb(); } }
-        static internal int LightGoldenrodYellow { get { return Color.LightGoldenrodYellow.ToArgb(); } }
+        static internal int DarkYellowBG { get { return Color.FromArgb(64, 0, 64, 64).ToArgb(); } }
         static internal int LightGray { get { return Color.LightGray.ToArgb(); } }
         static internal int MediumSpringGreen { get { return Color.MediumSpringGreen.ToArgb(); } }
         static internal int MediumVioletRed { get { return Color.MediumVioletRed.ToArgb(); } }
         static internal int OliveDrab { get { return Color.OliveDrab.ToArgb(); } }
-        static internal int Red { get { return Color.FromArgb(255,192,0,0).ToArgb(); } }
+        static internal int Red { get { return Color.FromArgb(255, 192, 0, 0).ToArgb(); } }
         static internal int SteelBlue { get { return Color.SteelBlue.ToArgb(); } }
 
         static internal uint
@@ -55,8 +55,8 @@ namespace DoubleFile
 
         readonly static int[] CLUT = new int[_knNumColors]
         {
-            Empty, White, LightBlue, DarkGray, DarkKhaki, DarkRed, DarkSlateGray,
-            Firebrick, LightGoldenrodYellow, LightGray, MediumSpringGreen, MediumVioletRed,
+            Empty, White, LightBlue, DarkGray, DarkKhaki, DarkRedBG, DarkSlateGray,
+            Firebrick, DarkYellowBG, LightGray, MediumSpringGreen, MediumVioletRed,
             OliveDrab, Red, SteelBlue
         };
 
@@ -69,10 +69,10 @@ namespace DoubleFile
             _RevCLUT[LightBlue] = nIx++;
             _RevCLUT[DarkGray] = nIx++;
             _RevCLUT[DarkKhaki] = nIx++;
-            _RevCLUT[DarkRed] = nIx++;
+            _RevCLUT[DarkRedBG] = nIx++;
             _RevCLUT[DarkSlateGray] = nIx++;
             _RevCLUT[Firebrick] = nIx++;
-            _RevCLUT[LightGoldenrodYellow] = nIx++;
+            _RevCLUT[DarkYellowBG] = nIx++;
             _RevCLUT[LightGray] = nIx++;
             _RevCLUT[MediumSpringGreen] = nIx++;
             _RevCLUT[MediumVioletRed] = nIx++;
@@ -88,10 +88,10 @@ namespace DoubleFile
             Description[LightBlue] = "This folder has multiple copies on at least two separate volumes.";
             Description[DarkGray] = "";             // ignore list
             Description[DarkKhaki] = "";            // Treemap: Folder containing files
-            Description[DarkRed] = "Contains folders that have no copy; or copies are on one volume.";
+            Description[DarkRedBG] = "Contains folders that have no copy; or copies are on one volume.";
             Description[DarkSlateGray] = "";        // LV marker item back color
             Description[Firebrick] = "All copies of this folder reside on one volume.";
-            Description[LightGoldenrodYellow] = "This folder and its parent have a copy on a separate volume.";
+            Description[DarkYellowBG] = "This folder and its parent have a copy on a separate volume.";
             Description[LightGray] = "This folder has no data.";
             Description[MediumSpringGreen] = "";    // Treemap: Free space
             Description[MediumVioletRed] = "";      // Treemap

@@ -57,7 +57,7 @@ namespace DoubleFile
 
                     if (bCloneOK)
                     {
-                        treeNode.BackColor = UtilColor.LightGoldenrodYellow;
+                        treeNode.BackColor = UtilColor.DarkYellowBG;
 
                         if ((nodeDatum.LVitem != null) && (nodeDatum.LVitem.ListView == null))  // ignore LV
                         {

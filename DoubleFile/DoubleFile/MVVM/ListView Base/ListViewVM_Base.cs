@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows.Threading;
 
@@ -27,9 +26,7 @@ namespace DoubleFile
             _items.Add(item);
 
             if (false == bQuiet)
-            {
                 RaiseItems();
-            }
         }
 
         internal virtual bool
@@ -98,13 +95,9 @@ namespace DoubleFile
             RaisePropertyChanged("Items");
 
             if (false == _items.IsEmpty())
-            {
                 _items[0].RaiseColumnWidths();
-            }
             else
-            {
                 MBoxStatic.Assert(99993, false);
-            }
         }
     }
 }

@@ -166,7 +166,7 @@
     </Compile>
     <Compile Include="MVVM\ListView Base\ListViewItemVM_Base.cs" />
     <Compile Include="MVVM\ListView Base\ListViewVM_Base.cs" />
-    <Compile Include="MVVM\ListView Base\ListViewVM_GenericBase.cs" />
+    <Compile Include="MVVM\ListView Base\ListViewVM_Base Generic.cs" />
     <Compile Include="MVVM\ListView Template\Template_ListViewVM.cs" />
     <Compile Include="MVVM\ListView Template\Template_LVitemVM.cs" />
     <Compile Include="MVVM\RelayCommand.cs" />
@@ -418,6 +418,10 @@
     <Resource Include="ic_people_black_18dp.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Assets\Strings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Assets\LocalMUIdark.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -508,6 +512,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Assets\ic_assistant_photo_white_18dp.png" />
+    <Resource Include="Assets\ic_content_copy_white_18dp.png" />
+    <Resource Include="Assets\ic_folder_open_white_18dp.png" />
+    <Resource Include="Assets\ic_save_white_18dp.png" />
     <Content Include="WinProject\UtilProject\7z920x86\7z.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -13,12 +13,7 @@ namespace DoubleFile
     public partial class WinTreeMap_MUI : IContent
     {
         public void OnFragmentNavigation(FragmentNavigationEventArgs e) { }
-        public void OnNavigatedFrom(NavigationEventArgs e)
-        {
-       //     _host.Dispose();
-       //     form_ucTreeMap.Dispose();
-        }
-
+        public void OnNavigatedFrom(NavigationEventArgs e) { }
         public void OnNavigatedTo(NavigationEventArgs e)
         {
             if ((null == App.LVprojectVM) ||
@@ -38,8 +33,7 @@ namespace DoubleFile
                 _ucTreeMap.Dispose();
 
             _ucTreeMap = new UC_TreeMap();
-
-    //        form_ucTreeMap.LocalOwner = this;
+            _ucTreeMap.LocalOwner = App.LocalMainWindow as Window;
 
             DataContext =
                 _ucTreeMap.TreeMapVM =
@@ -62,10 +56,10 @@ namespace DoubleFile
             InitializeComponent();
 
             Observable.FromEventPattern(this, "SizeChanged")
-                .Subscribe(args => _ucTreeMap.ClearSelection());
+                .Subscribe(args => { if (null != _ucTreeMap) _ucTreeMap.ClearSelection(); });
 
             Observable.FromEventPattern(form_slider, "LostMouseCapture")
-                .Subscribe(args => _ucTreeMap.TreeMapVM.LostMouseCapture());
+                .Subscribe(args => { if (null != _ucTreeMap) _ucTreeMap.TreeMapVM.LostMouseCapture(); });
         }
 
         LV_ProjectVM

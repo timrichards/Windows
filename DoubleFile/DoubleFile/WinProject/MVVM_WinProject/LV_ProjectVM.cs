@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace DoubleFile
+﻿namespace DoubleFile
 {
     partial class LV_ProjectVM : ListViewVM_Base<LVitem_ProjectVM>
     {

@@ -28,16 +28,12 @@ namespace DoubleFile
         public virtual bool LocalEquals(ListViewVM_Base<T> other)
         {
             if (null == other)
-            {
                 return false;
-            }
 
             MBoxStatic.Assert(99992, (false == ReferenceEquals(this, other)));
 
             if (Items.Count != other.Items.Count)
-            {
                 return false;
-            }
 
             foreach (var item in ItemsCast)
             {

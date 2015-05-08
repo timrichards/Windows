@@ -2,46 +2,69 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
+        xmlns:mui="http://firstfloorsoftware.com/ModernUI"
         Title="Double File Project">
     <Grid Name="form_grid" Style="{StaticResource ContentRoot}">
-        <Menu IsMainMenu="True">
-            <MenuItem Header="File" VerticalAlignment="Center">
-                <MenuItem Header="Open project" Command="{Binding Icmd_OpenProject}" />
-                <MenuItem Header="Save project" Command="{Binding Icmd_SaveProject}"/>
-                <Separator />
-                <MenuItem Header="New listing file" Command="{Binding Icmd_NewListingFile}"/>
-                <MenuItem Header="Open listing file" Command="{Binding Icmd_OpenListingFile}"/>
-                <Separator />
-                <MenuItem Header="Edit listing file" Command="{Binding Icmd_EditListingFile}"/>
-                <MenuItem Header="Remove" Command="{Binding Icmd_RemoveListingFile}"/>
-                <Separator />
-                <MenuItem Header="Toggle include" Command="{Binding Icmd_ToggleInclude}"/>
-                <MenuItem Header="Edit volume group label" Command="{Binding Icmd_VolumeGroup}"/>
-            </MenuItem>
-            <Button Command="{Binding Icmd_NewListingFile}" Style="{StaticResource styleFlatButton}" ToolTip="New listing file">
-                <Image Source="/Double File;component/Assets/ic_add_circle_white_18dp.png" Width="18" />
-            </Button>
-            <Button Command="{Binding Icmd_RemoveListingFile}" Style="{StaticResource styleFlatButton}" ToolTip="Remove listing file">
-                <Image Source="/Double File;component/Assets/ic_remove_circle_white_18dp.png" Width="18" />
-            </Button>
-            <Button Command="{Binding Icmd_EditListingFile}" Style="{StaticResource styleFlatButton}" ToolTip="Edit listing file">
-                <Image Source="/Double File;component/Assets/ic_create_white_18dp.png" Width="18" />
-            </Button>
-        </Menu>
-        <ListView Name="form_lv" Margin="10,30,10,60">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Nickname" DisplayMemberBinding="{Binding Nickname}" Width="{Binding WidthNickname}"/>
-                    <GridViewColumn Header="Source path" DisplayMemberBinding="{Binding SourcePath}" Width="{Binding WidthSourcePath}"/>
-                    <GridViewColumn Header="Length" DisplayMemberBinding="{Binding ScannedLength}" Width="{Binding WidthScannedLength}"/>
-                    <GridViewColumn Header="Drive model" DisplayMemberBinding="{Binding DriveModel}" Width="{Binding WidthDriveModel}"/>
-                    <GridViewColumn Header="Drive serial #" DisplayMemberBinding="{Binding DriveSerial}" Width="{Binding WidthDriveSerial}"/>
-                    <GridViewColumn Header="Volume group" DisplayMemberBinding="{Binding VolumeGroup}" Width="{Binding WidthVolumeGroup}"/>
-                    <GridViewColumn Header="Include in search" DisplayMemberBinding="{Binding IncludeYN}" Width="{Binding WidthIncludeYN}"/>
-                    <GridViewColumn Header="Listing file" DisplayMemberBinding="{Binding ListingFileNoPath}" Width="{Binding WidthListingFileNoPath}"/>
-                    <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="{Binding WidthStatus}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <StackPanel HorizontalAlignment="Left">
+            <StackPanel Orientation="Horizontal">
+                <StackPanel.Resources>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                        <Setter Property="FontFamily" Value="Segoe UI Light" />
+                        <Setter Property="FontSize" Value="23"/>
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="TextOptions.TextFormattingMode" Value="Ideal" />
+                        <Setter Property="Margin" Value="0,0,12,4" />
+                        <Setter Property="Foreground" Value="{DynamicResource MenuTextSelected}" />
+                    </Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource styleFlatButton}">
+                        <Setter Property="ContentTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Width="18" Margin="0,0,5,0"  Source="{Binding Tag, RelativeSource={RelativeSource FindAncestor, AncestorType='Button'}}"/>
+                                        <TextBlock FontFamily="Segoe UI" FontSize="11" Margin="0,0,12,0" VerticalAlignment="Center"
+                                            Foreground="{DynamicResource SubMenuText}"
+                                            Text="{Binding Content, RelativeSource={RelativeSource FindAncestor, AncestorType='Button'}}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </StackPanel.Resources>
+                <StackPanel>
+                    <TextBlock Foreground="{DynamicResource MenuTextSelected}">project</TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="OPEN" Command="{Binding Icmd_OpenProject}" ToolTip="Open project" Tag="/Double File;component/Assets/ic_folder_open_white_18dp.png" />
+                        <Button Content="SAVE" Command="{Binding Icmd_SaveProject}" ToolTip="Save project" Tag="/Double File;component/Assets/ic_save_white_18dp.png" />
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Foreground="{DynamicResource MenuTextSelected}">volume</TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="NEW" Command="{Binding Icmd_NewListingFile}" ToolTip="New listing file" Tag="/Double File;component/Assets/ic_add_circle_white_18dp.png" />
+                        <Button Content="OPEN" Command="{Binding Icmd_OpenListingFile}" ToolTip="Open listing file" Tag="/Double File;component/Assets/ic_folder_open_white_18dp.png" />
+                        <Button Content="EDIT" Command="{Binding Icmd_EditListingFile}" ToolTip="Edit listing file" Tag="/Double File;component/Assets/ic_create_white_18dp.png" />
+                        <Button Content="GROUP" Command="{Binding Icmd_VolumeGroup}" ToolTip="Edit volume group" Tag="/Double File;component/Assets/ic_content_copy_white_18dp.png" />
+                        <Button Content="TOGGLE INCLUDE" Command="{Binding Icmd_ToggleInclude}" ToolTip="Include in explorer" Tag="/Double File;component/Assets/ic_assistant_photo_white_18dp.png" />
+                        <Button Content="REMOVE" Command="{Binding Icmd_RemoveListingFile}" ToolTip="Remove listing file" Tag="/Double File;component/Assets/ic_remove_circle_white_18dp.png" />
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+            <DataGrid Name="form_lv" Margin="10,30,10,60" ItemsSource="{Binding Items}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Nickname" Binding="{Binding Nickname}" Width="{Binding WidthNickname}"/>
+                <DataGridTextColumn Header="Source path" Binding="{Binding SourcePath}" Width="{Binding WidthSourcePath}"/>
+                <DataGridTextColumn Header="Length" Binding="{Binding ScannedLength}" Width="{Binding WidthScannedLength}"/>
+                <DataGridTextColumn Header="Drive model" Binding="{Binding DriveModel}" Width="{Binding WidthDriveModel}"/>
+                <DataGridTextColumn Header="Drive serial #" Binding="{Binding DriveSerial}" Width="{Binding WidthDriveSerial}"/>
+                <DataGridTextColumn Header="Volume group" Binding="{Binding VolumeGroup}" Width="{Binding WidthVolumeGroup}"/>
+                <DataGridTextColumn Header="Include in search" Binding="{Binding IncludeYN}" Width="{Binding WidthIncludeYN}"/>
+                <DataGridTextColumn Header="Listing file" Binding="{Binding ListingFileNoPath}" Width="{Binding WidthListingFileNoPath}"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="{Binding WidthStatus}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        </StackPanel>
+
     </Grid>
 </local:LocalUserControl>

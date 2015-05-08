@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Linq;
+using System.Windows.Controls;
 
 namespace DoubleFile
 {
@@ -22,7 +23,7 @@ namespace DoubleFile
             internal ArgsStruct(
                 string strFolder_in,
                 string strSize_in,
-                LocalWindowBase winOwner_in,
+                Window winOwner_in,
                 Action clickCallback_in,
                 Action closingCallback_in)
             {
@@ -35,7 +36,7 @@ namespace DoubleFile
 
             readonly internal string strFolder;
             readonly internal string strSize;
-            readonly internal LocalWindowBase winOwner;
+            readonly internal Window winOwner;
             readonly internal Action clickCallback;
             readonly internal Action closingCallback;
         }

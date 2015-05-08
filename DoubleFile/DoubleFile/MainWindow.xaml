@@ -27,13 +27,17 @@
                 <mui:Link DisplayName="Tree map" Source="WinDoubleFIle/UtilDirList Local/WinTreeMap_MUI.xaml" />
                 <mui:Link DisplayName="Folders" Source="/WinDoubleFile/WinDoubleFile_Folders.xaml" />
                 <mui:Link DisplayName="Tree list" Source="/WinDoubleFile/UtilDirList Local/WinTreeMap.xaml" />
-                <mui:Link DisplayName="Search" Source="/Pages/Search.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="Files">
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="Files in folder" Source="/WinDoubleFile/WinDoubleFile_Folders.xaml" />
                 <mui:Link DisplayName="Duplicate files" Source="/WinDoubleFile/WinDoubleFile_Folders.xaml" />
+            </mui:LinkGroup.Links>
+        </mui:LinkGroup>
+        <mui:LinkGroup DisplayName="Search">
+            <mui:LinkGroup.Links>
+                <mui:Link DisplayName="Search" Source="/Pages/Search.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="Detailed info">

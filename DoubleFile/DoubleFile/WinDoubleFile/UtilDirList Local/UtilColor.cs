@@ -11,10 +11,10 @@ namespace DoubleFile
 
         static internal int Empty { get { return Color.Empty.ToArgb(); } }
         static internal int White { get { return Color.White.ToArgb(); } }
-        static internal int Blue { get { return Color.Blue.ToArgb(); } }
+        static internal int LightBlue { get { return Color.LightBlue.ToArgb(); } }
         static internal int DarkGray { get { return Color.DarkGray.ToArgb(); } }
         static internal int DarkKhaki { get { return Color.DarkKhaki.ToArgb(); } }
-        static internal int DarkRed { get { return Color.DarkRed.ToArgb(); } }
+        static internal int DarkRed { get { return Color.FromArgb(64,64,0,0).ToArgb(); } }
         static internal int DarkSlateGray { get { return Color.DarkSlateGray.ToArgb(); } }
         static internal int Firebrick { get { return Color.Firebrick.ToArgb(); } }
         static internal int LightGoldenrodYellow { get { return Color.LightGoldenrodYellow.ToArgb(); } }
@@ -22,8 +22,7 @@ namespace DoubleFile
         static internal int MediumSpringGreen { get { return Color.MediumSpringGreen.ToArgb(); } }
         static internal int MediumVioletRed { get { return Color.MediumVioletRed.ToArgb(); } }
         static internal int OliveDrab { get { return Color.OliveDrab.ToArgb(); } }
-        static internal int Red { get { return Color.Red.ToArgb(); } }
-        static internal int Snow { get { return Color.Snow.ToArgb(); } }
+        static internal int Red { get { return Color.FromArgb(255,192,0,0).ToArgb(); } }
         static internal int SteelBlue { get { return Color.SteelBlue.ToArgb(); } }
 
         static internal uint
@@ -56,9 +55,9 @@ namespace DoubleFile
 
         readonly static int[] CLUT = new int[_knNumColors]
         {
-            Empty, White, Blue, DarkGray, DarkKhaki, DarkRed, DarkSlateGray,
+            Empty, White, LightBlue, DarkGray, DarkKhaki, DarkRed, DarkSlateGray,
             Firebrick, LightGoldenrodYellow, LightGray, MediumSpringGreen, MediumVioletRed,
-            OliveDrab, Red, Snow, SteelBlue
+            OliveDrab, Red, SteelBlue
         };
 
         static UtilColor()
@@ -67,7 +66,7 @@ namespace DoubleFile
 
             _RevCLUT[Empty] = nIx++;
             _RevCLUT[White] = nIx++;
-            _RevCLUT[Blue] = nIx++;
+            _RevCLUT[LightBlue] = nIx++;
             _RevCLUT[DarkGray] = nIx++;
             _RevCLUT[DarkKhaki] = nIx++;
             _RevCLUT[DarkRed] = nIx++;
@@ -79,7 +78,6 @@ namespace DoubleFile
             _RevCLUT[MediumVioletRed] = nIx++;
             _RevCLUT[OliveDrab] = nIx++;
             _RevCLUT[Red] = nIx++;
-            _RevCLUT[Snow] = nIx++;
             _RevCLUT[SteelBlue] = nIx++;
 
             MBoxStatic.Assert(99957, nIx == _knNumColors);
@@ -87,10 +85,10 @@ namespace DoubleFile
 
             Description[Empty] = "";
             Description[White] = "";
-            Description[Blue] = "This folder has multiple copies on at least two separate volumes.";
+            Description[LightBlue] = "This folder has multiple copies on at least two separate volumes.";
             Description[DarkGray] = "";             // ignore list
             Description[DarkKhaki] = "";            // Treemap: Folder containing files
-            Description[DarkRed] = "";              // not used
+            Description[DarkRed] = "Contains folders that have no copy; or copies are on one volume.";
             Description[DarkSlateGray] = "";        // LV marker item back color
             Description[Firebrick] = "All copies of this folder reside on one volume.";
             Description[LightGoldenrodYellow] = "This folder and its parent have a copy on a separate volume.";
@@ -99,12 +97,11 @@ namespace DoubleFile
             Description[MediumVioletRed] = "";      // Treemap
             Description[OliveDrab] = "";            // Treemap: File
             Description[Red] = "This folder has no exact copy.";
-            Description[Snow] = "Contains folders that have no copy; or copies are on one volume.";
             Description[SteelBlue] = "This folder has a copy on a separate volume.";
         }
 
         const int
-            _knNumColors = 16;
+            _knNumColors = 15;
         const uint
             _knCLUT_FGmask = 0x0000000F;
         static readonly uint

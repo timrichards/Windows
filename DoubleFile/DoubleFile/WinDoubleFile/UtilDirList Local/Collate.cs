@@ -269,7 +269,7 @@ namespace DoubleFile
                     str_nClones = nClones.ToString("###,###");
 
                     foreach (var node in listNodes.Value)
-                        node.ForeColor = UtilColor.Blue;
+                        node.ForeColor = UtilColor.LightBlue;
                 }
 
                 var lvItem = new LocalLVitem(new[] { string.Empty, str_nClones })
@@ -637,7 +637,7 @@ namespace DoubleFile
 
             while (null != parentNode)
             {
-                parentNode.BackColor = UtilColor.Snow;
+                parentNode.BackColor = UtilColor.DarkRed;
 
                 var nodeDatum = parentNode.NodeDatum;
 

@@ -8,9 +8,9 @@ namespace DoubleFile
 {
     partial class TreeViewItem_DoubleFileVM : ObservableObjectBase
     {
-        public string Text { get { return ((string)_datum.Text).PadRight(200); } }
-        public Brush Foreground { get { return _isSelected ? Brushes.White : FrontBrush; } }
-        public Brush SelectedForeground { get { return _isSelected ? Brushes.White : FrontBrush; } }
+        public string Text { get { return ("" + _datum.Text); } }
+        public Brush Foreground { get { return _isSelected ? Brushes.Transparent : FrontBrush; } }
+        public Brush SelectedForeground { get { return _isSelected ? Brushes.Transparent : FrontBrush; } }
 
         public Brush Background { get { return UtilColor.ARGBtoBrush(_datum.BackColor); } }
         public FontWeight FontWeight { get { return _isSelected ? FontWeights.ExtraBold : FontWeights.Normal; } }
@@ -160,7 +160,7 @@ namespace DoubleFile
             {
                 return
                     (UtilColor.Empty == _datum.ForeColor)
-                    ? Brushes.Black
+                    ? Brushes.White
                     : UtilColor.ARGBtoBrush(_datum.ForeColor);
             }
         }

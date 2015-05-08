@@ -150,7 +150,7 @@ namespace DoubleFile
                     .Aggregate(Unsaved, (current, lvItem) => 
                 {
                     var bRet =
-                        (false == (lvItem.VolumeGroup ?? "").Equals(strLabel));
+                        (false == ("" + lvItem.VolumeGroup).Equals(strLabel));
 
                     lvItem.VolumeGroup = strLabel;
                     return bRet || current;
@@ -187,9 +187,9 @@ namespace DoubleFile
                 return false;
             }
 
-            var bDriveModel_Todo = ((lvItem_Orig.DriveModel ?? "") != (lvItemVolumeTemp.DriveModel ?? ""));
-            var bDriveSerial_Todo = ((lvItem_Orig.DriveSerial ?? "") != (lvItemVolumeTemp.DriveSerial ?? ""));
-            var bNickname_Todo = ((lvItem_Orig.Nickname ?? "") != (lvItemVolumeTemp.Nickname ?? ""));
+            var bDriveModel_Todo = ("" + lvItem_Orig.DriveModel != "" + lvItemVolumeTemp.DriveModel);
+            var bDriveSerial_Todo = ("" + lvItem_Orig.DriveSerial != "" + lvItemVolumeTemp.DriveSerial);
+            var bNickname_Todo = ("" + lvItem_Orig.Nickname != "" + lvItemVolumeTemp.Nickname);
 
             driveLetter = char.ToUpper(driveLetter);
 

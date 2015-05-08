@@ -139,7 +139,7 @@ namespace DoubleFile
                 .GetFiles(TempPath)
                 .Where(s =>
                 {
-                    var strExt = Path.GetExtension(Path.GetFileName(s) ?? "");
+                    var strExt = "" + Path.GetExtension(Path.GetFileName(s));
 
                     if (0 == strExt.Length)
                         return false;
@@ -235,7 +235,7 @@ namespace DoubleFile
                 foreach (var strFilename
                     in OnSavingProject
                     .GetInvocationList()
-                    .Select(onSavingProject => (string)onSavingProject.DynamicInvoke()))
+                    .Select(onSavingProject => "" + onSavingProject.DynamicInvoke()))
                 {
                     sbSource.Append("\"").Append(strFilename.Replace(strPath, "")).Append("\" ");
                 }

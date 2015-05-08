@@ -41,7 +41,7 @@ namespace DoubleFile
                 var strNode =
                     (2 < arrPath[0].Length)
                     ? topNode.Text
-                    : (string)(rootNodeDatum.RootPath);
+                    : "" + rootNodeDatum.RootPath;
 
                 if (bIgnoreCase)
                     strNode = strNode.ToLower();

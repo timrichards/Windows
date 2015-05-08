@@ -16,18 +16,17 @@ namespace DoubleFile
         public void OnNavigatedFrom(NavigationEventArgs e) { }
         public void OnNavigatedTo(NavigationEventArgs e)
         {
-            if ((null == App.LVprojectVM) ||
-                (App.LVprojectVM == _lvProjectVM) ||
-                (App.LVprojectVM.LocalEquals(_lvProjectVM)))
+            if (false == WinProject_MUI.InitExplorer())
             {
-                return;
+                if ((null == App.LVprojectVM) ||
+                    (App.LVprojectVM == _lvProjectVM) ||
+                    (App.LVprojectVM.LocalEquals(_lvProjectVM)))
+                {
+                    return;
+                }
             }
 
-            if (null != LocalTV.Instance)
-                LocalTV.LocalDispose();
-
-            App.FileDictionary.Dispose();
-            App.FileDictionary = new FileDictionary();
+            _lvProjectVM = new LV_ProjectVM(App.LVprojectVM);
 
             if (null != _ucTreeMap)
                 _ucTreeMap.Dispose();
@@ -40,12 +39,10 @@ namespace DoubleFile
                 new WinTreeMapVM();
 
             _host.Child = _ucTreeMap;
-            _lvProjectVM = new LV_ProjectVM(App.LVprojectVM);
 
             if (_lvProjectVM.Items.IsEmpty())
                 return;
 
-            LocalTV.FactoryCreate(_lvProjectVM);
             _ucTreeMap.TreeMapVM.TreeNodeCallback(LocalTV.TopNode);
         }
 

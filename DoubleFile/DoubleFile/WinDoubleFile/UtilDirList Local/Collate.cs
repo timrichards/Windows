@@ -421,7 +421,7 @@ namespace DoubleFile
 
                 MBoxStatic.Assert(1305.6329, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
-                var lvItem = new LocalLVitem(new[] {(string)treeNode.Text, str_nClones})
+                var lvItem = new LocalLVitem(new[] {"" + treeNode.Text, str_nClones})
                 {
                     TreeNodes = nodeDatum.Clones,
                     ForeColor = UtilColor.Firebrick,

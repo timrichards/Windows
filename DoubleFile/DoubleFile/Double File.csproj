@@ -164,6 +164,9 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MainWindow_.xaml.cs">
+      <DependentUpon>MainWindow_.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MVVM\ListView Base\ListViewItemVM_Base.cs" />
     <Compile Include="MVVM\ListView Base\ListViewVM_Base.cs" />
     <Compile Include="MVVM\ListView Base\ListViewVM_Base Generic.cs" />
@@ -187,6 +190,9 @@
     <Compile Include="WinDoubleFile\UtilDirList Local\Search\GetOneNodeByRootPath.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\WinTreeMap_MUI.xaml.cs">
       <DependentUpon>WinTreeMap_MUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WinDoubleFile\WinDoubleFile_Folders.xaml.cs">
+      <DependentUpon>WinDoubleFile_Folders.xaml</DependentUpon>
     </Compile>
     <Compile Include="WinDoubleFile\WinDoubleFile_Search.xaml.cs">
       <DependentUpon>WinDoubleFile_Search.xaml</DependentUpon>
@@ -275,14 +281,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="LocalForms\LocalTV_Impl.cs" />
-    <Compile Include="WinDoubleFile\WinDoubleFile_Folders.xaml.cs">
-      <DependentUpon>WinDoubleFile_Folders.xaml</DependentUpon>
+    <Compile Include="WinDoubleFile\WinDoubleFile_Folders_MUI.xaml.cs">
+      <DependentUpon>WinDoubleFile_Folders_MUI.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utilities\LocalWindowBase.cs" />
-    <Compile Include="MainWindow_.xaml.cs">
-      <DependentUpon>MainWindow_.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="WinProject\MVVM_WinProject\LV_ProjectVM_Impl.cs" />
     <Compile Include="WinProject\UtilProject\SaveDirListings\SaveDirListing.cs">
       <SubType>Code</SubType>
@@ -325,6 +327,9 @@
       <DependentUpon>WinProgress.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="WinProject\WinProject.xaml.cs">
+      <DependentUpon>WinProject.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WinProject\WinProject_MUI.xaml.cs">
       <DependentUpon>WinProject_MUI.xaml</DependentUpon>
     </Compile>
@@ -355,10 +360,6 @@
     </Compile>
     <Compile Include="WinProject\WinVolumeEdit\WinVolumeNew.xaml.cs">
       <DependentUpon>WinVolumeNew.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="WinProject\WinProject.xaml.cs">
-      <DependentUpon>WinProject.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -430,7 +431,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="MainWindow_.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="WinDoubleFile\UtilDirList Local\WinTreeMap_MUI.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WinDoubleFile\WinDoubleFile_Folders.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -466,11 +475,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow_.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="WinDoubleFile\WinDoubleFile_Folders.xaml">
+    <Page Include="WinDoubleFile\WinDoubleFile_Folders_MUI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -481,6 +486,10 @@
     <Page Include="Utilities\WinProgress.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WinProject\WinProject.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="WinProject\WinProject_MUI.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -503,10 +512,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="WinProject\WinVolumeEdit\WinVolumeNew.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="WinProject\WinProject.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

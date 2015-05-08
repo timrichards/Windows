@@ -96,7 +96,7 @@ namespace DoubleFile
 
                         var fi = new Win32FindFileStatic.FileData(winFile);
                         var strFile = winFile.strFileName;
-                        var strError2_File = CheckNTFS_chars(ref strFile, bFile: true) ?? "";
+                        var strError2_File = "" + CheckNTFS_chars(ref strFile, bFile: true);
 
                         if (fi.IsValid == false)
                         {

@@ -21,7 +21,7 @@ namespace DoubleFile
 
         public string Title
         {
-            get { return (_Title ?? "").Replace("_", "__"); }
+            get { return ("" + _Title).Replace("_", "__"); }
             private set
             {
                 _Title = value;

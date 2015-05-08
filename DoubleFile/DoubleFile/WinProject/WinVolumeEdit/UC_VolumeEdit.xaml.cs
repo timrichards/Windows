@@ -183,7 +183,7 @@ namespace DoubleFile
             }
 
             var strListingFile = CapDrive(Path.GetFullPath(form_EditListingFile.Text));
-            var strExt = Path.GetExtension(strListingFile) ?? "";
+            var strExt = "" + Path.GetExtension(strListingFile);
 
             if ((strExt.Length == 0) || (false ==
                 strExt.Remove(0, 1)

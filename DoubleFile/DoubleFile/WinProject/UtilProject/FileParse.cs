@@ -260,7 +260,7 @@ namespace DoubleFile
 
         static string FormatLine(string strLineType, long nLineNo, string strLine_in = null)
         {
-            return strLineType + "\t" + nLineNo + '\t' + (strLine_in ?? "").TrimEnd();
+            return strLineType + "\t" + nLineNo + '\t' + ("" + strLine_in).TrimEnd();
         }
 
         static internal string FormatString(string strDir = null, string strFile = null,
@@ -304,8 +304,8 @@ namespace DoubleFile
 
             var bDbgCheck = false;
 
-            if (((strDir ?? "").TrimEnd() != (strDir ?? "")) ||
-                ((strFile ?? "").TrimEnd() != (strFile ?? "")))
+            if ((("" + strDir).TrimEnd() != "" + strDir) ||
+                (("" + strFile).TrimEnd() != "" + strFile))
             {
                 strError1 += " Trailing whitespace";
                 MBoxStatic.Assert(99948, (false == string.IsNullOrWhiteSpace(strDir)) ||

@@ -12,12 +12,9 @@ namespace DoubleFile
             SelectedItem { get; set; }
         internal Dictionary<TreeViewItem_DoubleFileVM, bool>
             _listExpanded = new Dictionary<TreeViewItem_DoubleFileVM, bool>();
-        internal readonly TreeView
-            _TVFE = null;
 
         internal TreeView_DoubleFileVM(TreeView tvfe, IEnumerable<LocalTreeNode> rootNodes)
         {
-            _TVFE = tvfe;
             SelectedItem = null;
 
             var nIndex = -1;
@@ -25,7 +22,7 @@ namespace DoubleFile
             foreach (var treeNode in rootNodes)
                 _Items.Add(new TreeViewItem_DoubleFileVM(this, treeNode, ++nIndex));
 
-            UtilProject.UIthread(() => _TVFE.DataContext = _Items);
+            UtilProject.UIthread(() => tvfe.DataContext = _Items);
 
             Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()
                 .Subscribe(x => { if (0 < _Items.Count) _Items[0].SelectedItem_Set(); });

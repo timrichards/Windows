@@ -15,15 +15,15 @@
                         <Setter Property="VerticalAlignment" Value="Center" />
                         <Setter Property="TextOptions.TextFormattingMode" Value="Ideal" />
                         <Setter Property="Margin" Value="0,0,12,4" />
-                        <Setter Property="Foreground" Value="{DynamicResource MenuTextSelected}" />
+                        <Setter Property="Foreground" Value="{DynamicResource MenuText}" />
                     </Style>
                     <Style TargetType="Button" BasedOn="{StaticResource styleFlatButton}">
                         <Setter Property="ContentTemplate">
                             <Setter.Value>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Width="18" Margin="0,0,5,0"  Source="{Binding Tag, RelativeSource={RelativeSource FindAncestor, AncestorType='Button'}}"/>
-                                        <TextBlock FontFamily="Segoe UI" FontSize="11" Margin="0,0,12,0" VerticalAlignment="Center"
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,12,0">
+                                        <Image Width="18" Source="{Binding Tag, RelativeSource={RelativeSource FindAncestor, AncestorType='Button'}}"/>
+                                        <TextBlock FontFamily="Segoe UI" FontSize="11" VerticalAlignment="Bottom"
                                             Foreground="{DynamicResource SubMenuText}"
                                             Text="{Binding Content, RelativeSource={RelativeSource FindAncestor, AncestorType='Button'}}"/>
                                     </StackPanel>
@@ -32,23 +32,17 @@
                         </Setter>
                     </Style>
                 </StackPanel.Resources>
-                <StackPanel>
+                <StackPanel Orientation="Horizontal">
                     <TextBlock>project</TextBlock>
-                    <StackPanel Orientation="Horizontal">
-                        <Button Content="OPEN" Command="{Binding Icmd_OpenProject}" ToolTip="Open project" Tag="/Double File;component/Assets/ic_folder_open_white_18dp.png" />
-                        <Button Content="SAVE" Command="{Binding Icmd_SaveProject}" ToolTip="Save project" Tag="/Double File;component/Assets/ic_save_white_18dp.png" />
-                    </StackPanel>
-                </StackPanel>
-                <StackPanel>
+                    <Button Content="  OPEN" Command="{Binding Icmd_OpenProject}" ToolTip="Open project" Tag="/Double File;component/Assets/ic_folder_open_white_18dp.png" />
+                    <Button Content="  SAVE" Command="{Binding Icmd_SaveProject}" ToolTip="Save project" Tag="/Double File;component/Assets/ic_save_white_18dp.png" />
                     <TextBlock>volume</TextBlock>
-                    <StackPanel Orientation="Horizontal">
-                        <Button Content="NEW" Command="{Binding Icmd_NewListingFile}" ToolTip="New listing file" Tag="/Double File;component/Assets/ic_add_circle_white_18dp.png" />
-                        <Button Content="OPEN" Command="{Binding Icmd_OpenListingFile}" ToolTip="Open listing file" Tag="/Double File;component/Assets/ic_folder_open_white_18dp.png" />
-                        <Button Content="EDIT" Command="{Binding Icmd_EditListingFile}" ToolTip="Edit listing file" Tag="/Double File;component/Assets/ic_create_white_18dp.png" />
-                        <Button Content="GROUP" Command="{Binding Icmd_VolumeGroup}" ToolTip="Edit volume group" Tag="/Double File;component/Assets/ic_content_copy_white_18dp.png" />
-                        <Button Content="TOGGLE INCLUDE" Command="{Binding Icmd_ToggleInclude}" ToolTip="Include in explorer" Tag="/Double File;component/Assets/ic_assistant_photo_white_18dp.png" />
-                        <Button Content="REMOVE" Command="{Binding Icmd_RemoveListingFile}" ToolTip="Remove listing file" Tag="/Double File;component/Assets/ic_remove_circle_white_18dp.png" />
-                    </StackPanel>
+                    <Button Content="  NEW" Command="{Binding Icmd_NewListingFile}" ToolTip="New listing file" Tag="/Double File;component/Assets/ic_add_circle_white_18dp.png" />
+                    <Button Content="  OPEN" Command="{Binding Icmd_OpenListingFile}" ToolTip="Open listing file" Tag="/Double File;component/Assets/ic_folder_open_white_18dp.png" />
+                    <Button Content="  EDIT" Command="{Binding Icmd_EditListingFile}" ToolTip="Edit listing file" Tag="/Double File;component/Assets/ic_create_white_18dp.png" />
+                    <Button Content="  GROUP" Command="{Binding Icmd_VolumeGroup}" ToolTip="Edit volume group" Tag="/Double File;component/Assets/ic_content_copy_white_18dp.png" />
+                    <Button Content="  TOGGLE INCLUDE" Command="{Binding Icmd_ToggleInclude}" ToolTip="Include in explorer" Tag="/Double File;component/Assets/ic_assistant_photo_white_18dp.png" />
+                    <Button Content="  REMOVE" Command="{Binding Icmd_RemoveListingFile}" ToolTip="Remove listing file" Tag="/Double File;component/Assets/ic_remove_circle_white_18dp.png" />
                 </StackPanel>
             </StackPanel>
             <DataGrid Name="form_lv" Margin="0,20,0,0" ItemsSource="{Binding Items}" Visibility="{Binding Visible}">

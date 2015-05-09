@@ -44,7 +44,7 @@ namespace DoubleFile
                 }
             }
 
-            _winProgress.Title = "Initializing Duplicate File Explorer";
+            _winProgress.Title = "Initializing Explorer";
             _winProgress.WindowClosingCallback = new WeakReference<IWinProgressClosing>(this);
 
             var lsProgressItems = new List<string>();

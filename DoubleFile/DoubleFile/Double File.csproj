@@ -194,8 +194,14 @@
     <Compile Include="WinDoubleFile\WinDoubleFile_Folders.xaml.cs">
       <DependentUpon>WinDoubleFile_Folders.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WinDoubleFile\WinDoubleFile_Search_MUI.xaml.cs">
+      <DependentUpon>WinDoubleFile_Search_MUI.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WinDoubleFile\WinDoubleFile_Search.xaml.cs">
       <DependentUpon>WinDoubleFile_Search.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WinDoubleFile\WinDoubleFile_TreeList_MUI.xaml.cs">
+      <DependentUpon>WinDoubleFile_TreeList_MUI.xaml</DependentUpon>
     </Compile>
     <Compile Include="WinDoubleFile\WinDoubleFile_TreeList.xaml.cs">
       <DependentUpon>WinDoubleFile_TreeList.xaml</DependentUpon>
@@ -419,6 +425,10 @@
     <Resource Include="ic_people_black_18dp.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Assets\LocalStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Assets\Strings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -443,7 +453,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="WinDoubleFile\WinDoubleFile_Search_MUI.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="WinDoubleFile\WinDoubleFile_Search.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WinDoubleFile\WinDoubleFile_TreeList_MUI.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

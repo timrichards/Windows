@@ -1,0 +1,21 @@
+﻿<local:LocalUserControl x:Class="DoubleFile.WinDoubleFile_TreeList_MUI"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:DoubleFile">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <DataGrid Grid.Column="0" Name="form_lvSiblings" SelectedItem="{Binding SelectedItem}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Sibling folders" Binding="{Binding Folder}" Width="{Binding WidthFolder}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid Grid.Column="1" Name="form_lvChildren" SelectedItem="{Binding SelectedItem}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Folders here" Binding="{Binding Folder}" Width="{Binding WidthFolder}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</local:LocalUserControl>

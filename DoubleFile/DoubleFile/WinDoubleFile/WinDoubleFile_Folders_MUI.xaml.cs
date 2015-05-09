@@ -31,7 +31,7 @@ namespace DoubleFile
             if (_lvProjectVM.Items.IsEmpty())
                 return;
 
-            _treeView_DoubleFileVM = new TreeView_DoubleFileVM(form_tv, LocalTV.RootNodes);
+            new TreeView_DoubleFileVM(form_tv, LocalTV.RootNodes);
         }
 
         public void OnNavigatingFrom(NavigatingCancelEventArgs e) { }
@@ -43,7 +43,5 @@ namespace DoubleFile
 
         LV_ProjectVM
             _lvProjectVM = null;
-        TreeView_DoubleFileVM
-            _treeView_DoubleFileVM = null;
     }
 }

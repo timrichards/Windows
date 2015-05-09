@@ -23,7 +23,7 @@
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="Tree map" Source="WinDoubleFIle/UtilDirList Local/WinTreeMap_MUI.xaml" />
                 <mui:Link DisplayName="Folders" Source="/WinDoubleFile/WinDoubleFile_Folders_MUI.xaml" />
-                <mui:Link DisplayName="Tree list" Source="/Pages/Search.xaml" />
+                <mui:Link DisplayName="Tree list" Source="/WinDoubleFile/WinDoubleFile_TreeList_MUI.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="Files">
@@ -34,7 +34,7 @@
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="Search">
             <mui:LinkGroup.Links>
-                <mui:Link DisplayName="Search" Source="/Pages/Search.xaml" />
+                <mui:Link DisplayName="Search" Source="/WinDoubleFile/WinDoubleFile_Search_MUI.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="Detailed info">

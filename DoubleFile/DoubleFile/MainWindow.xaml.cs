@@ -66,7 +66,7 @@ namespace DoubleFile
         Uri
             _currentPage = null;
         static readonly Link
-            _titleLink = new Link() { DisplayName = "Extra Window", Source = new Uri("/ExtraWindowUC.xaml", UriKind.Relative) };
+            _titleLink = new Link() { DisplayName = "Extra Window", Source = new Uri("/ExtraWindow.xaml", UriKind.Relative) };
         static readonly WeakReference<ModernWindow1>
             _mainWindowWR = new WeakReference<ModernWindow1>(null);
     }

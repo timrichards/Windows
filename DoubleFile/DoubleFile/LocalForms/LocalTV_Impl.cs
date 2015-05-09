@@ -19,8 +19,11 @@ namespace DoubleFile
         {
             TreeCleanup();
 
-            if (false == _allNodes.IsEmpty())
+            if ((null != _allNodes) &&
+                (false == _allNodes.IsEmpty()))
+            {
                 _dictVolumeInfo.Clear();
+            }
 
             _dictNodes = null;           // m_dictNodes is tested to recreate tree.
             _allNodes = null;

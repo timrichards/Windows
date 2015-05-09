@@ -17,7 +17,7 @@ namespace DoubleFile
         protected virtual void LocalNavigatedTo() { }
         public void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            if ("/ExtraWindowUC.xaml" == "" + e.Source)
+            if ("/ExtraWindow.xaml" == "" + e.Source)
             {
                 new ExtraWindow { ContentSource = ModernWindow1.CurrentPage }
                     .Show();

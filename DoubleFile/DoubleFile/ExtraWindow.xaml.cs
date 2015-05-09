@@ -5,7 +5,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for ExtraWindow.xaml
     /// </summary>
-    public partial class ExtraWindow : ModernWindow
+    public partial class ExtraWindow
     {
         public ExtraWindow()
         {

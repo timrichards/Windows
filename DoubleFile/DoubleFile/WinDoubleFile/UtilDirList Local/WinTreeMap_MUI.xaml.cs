@@ -10,11 +10,9 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinFormDirList.xaml
     /// </summary>
-    public partial class WinTreeMap_MUI : IContent
+    public partial class WinTreeMap_MUI
     {
-        public void OnFragmentNavigation(FragmentNavigationEventArgs e) { }
-        public void OnNavigatedFrom(NavigationEventArgs e) { }
-        public void OnNavigatedTo(NavigationEventArgs e)
+        protected override void LocalNavigatedTo()
         {
             if (false == WinProject_MUI.InitExplorer())
             {
@@ -43,10 +41,8 @@ namespace DoubleFile
             if (_lvProjectVM.Items.IsEmpty())
                 return;
 
-            _ucTreeMap.TreeMapVM.TreeNodeCallback(LocalTV.TopNode);
+            _ucTreeMap.TreeMapVM.GoTo(LocalTV.TopNode);
         }
-
-        public void OnNavigatingFrom(NavigatingCancelEventArgs e) { }
 
         internal WinTreeMap_MUI()
         {

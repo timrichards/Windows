@@ -1,6 +1,5 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
+﻿using FirstFloor.ModernUI.Presentation;
 using System;
-using System.Windows;
 
 namespace DoubleFile
 {
@@ -20,6 +19,60 @@ namespace DoubleFile
             Init();
             Init = null;
             InitializeComponent();
+            _mainWindowWR.SetTarget(this);
         }
+
+        static internal LocalUserControlBase CurrentPage
+        {
+            get { return WithMainWindow(mainWindow => mainWindow._currentPage); }
+
+            set
+            {
+                WithMainWindow(mainWindow =>
+                {
+                    if (value == mainWindow._currentPage)
+                        return false;
+
+                    mainWindow._currentPage = value;
+
+                    var bTitleLink = true;
+
+                    if (mainWindow._currentPage is WinProject_MUI)
+                        bTitleLink = false;
+
+                    //if (mainWindow._currentPage is info page)
+                    //    bTitleLink = false;
+
+                    if (bTitleLink)
+                        mainWindow.TitleLinks.Add(_titleLink);
+                    else
+                        mainWindow.TitleLinks.Remove(_titleLink);
+
+                    return true;
+                });
+            }
+        }
+
+        static T WithMainWindow<T>(Func<ModernWindow1, T> doSomething)
+        {
+            ModernWindow1 mainWindow = null;
+
+            _mainWindowWR.TryGetTarget(out mainWindow);
+
+            if (null == mainWindow)
+            {
+                MBoxStatic.Assert(99855, false);
+                return default(T);
+            }
+
+            return (T)doSomething(mainWindow);
+        }
+
+        LocalUserControlBase
+            _currentPage = null;
+        static readonly Link
+            _titleLink = new Link() { DisplayName = "Extra Window", Source = new Uri("/ExtraWindowUC.xaml", UriKind.Relative) };
+        static readonly WeakReference<ModernWindow1>
+            _mainWindowWR = new WeakReference<ModernWindow1>(null);
     }
 }

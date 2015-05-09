@@ -34,19 +34,19 @@ namespace DoubleFile
             DictVolumeInfo { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._dictVolumeInfo : null; } }
         readonly Dictionary<string, string> _dictVolumeInfo = new Dictionary<string, string>();
 
-        static internal void FactoryCreate(LV_ProjectVM lvProjectVM)
+        static internal bool FactoryCreate(LV_ProjectVM lvProjectVM)
         {
             if (null != Instance)
             {
                 MBoxStatic.Assert(99858, false);
-                return;
+                return false;
             }
 
             _weakReference.Target =
                 Instance =
                 new LocalTV(lvProjectVM);
 
-            Instance.DoTree();
+            return Instance.DoTree();
         }
 
         LocalTV(LV_ProjectVM lvProjectVM)

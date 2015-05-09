@@ -1,19 +1,11 @@
-﻿using FirstFloor.ModernUI.Windows;
-using FirstFloor.ModernUI.Windows.Navigation;
-using System;
-using System.Reactive.Linq;
-using System.Windows;
-
-namespace DoubleFile
+﻿namespace DoubleFile
 {
     /// <summary>
     /// Interaction logic for WinDoubleFile_Folders.xaml
     /// </summary>
-    partial class WinDoubleFile_Folders_MUI : IContent
+    partial class WinDoubleFile_Folders_MUI
     {
-        public void OnFragmentNavigation(FragmentNavigationEventArgs e) { }
-        public void OnNavigatedFrom(NavigationEventArgs e) { }
-        public void OnNavigatedTo(NavigationEventArgs e)
+        protected override void LocalNavigatedTo()
         {
             if (false == WinProject_MUI.InitExplorer())
             {
@@ -34,9 +26,7 @@ namespace DoubleFile
             new TreeView_DoubleFileVM(form_tv, LocalTV.RootNodes);
         }
 
-        public void OnNavigatingFrom(NavigatingCancelEventArgs e) { }
-
-        internal WinDoubleFile_Folders_MUI()
+        public WinDoubleFile_Folders_MUI()
         {
             InitializeComponent();
         }

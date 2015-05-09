@@ -1,10 +1,16 @@
 ﻿using System;
+using System.Reactive.Subjects;
+using System.Reactive.Linq;
 
 namespace DoubleFile
 {
     class WinTreeMapVM : Observable_OwnerWindowBase
     {
-        internal Action<LocalTreeNode> TreeNodeCallback = null;
+        internal IObservable<LocalTreeNode>
+            TreeNodeCallback { get { return _treeNodeCallback.AsObservable(); } }
+        readonly Subject<LocalTreeNode> _treeNodeCallback = new Subject<LocalTreeNode>();
+
+        internal void GoTo(LocalTreeNode treeNode) { _treeNodeCallback.OnNext(treeNode); }
 
         public double Maximum { get; private set; }
         internal LocalTreeNode DeepNode
@@ -65,7 +71,7 @@ namespace DoubleFile
             for (var nCount = 0; nCount < Value; ++nCount)
                 treeNode = treeNode.Parent;
 
-            TreeNodeCallback(treeNode);
+            GoTo(treeNode);
         }
     }
 }

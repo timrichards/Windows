@@ -4,11 +4,31 @@ using System.Windows;
 using System.Reactive.Linq;
 using System.Windows.Controls;
 using FirstFloor.ModernUI.Windows.Controls;
+using FirstFloor.ModernUI.Windows.Navigation;
+using FirstFloor.ModernUI.Windows;
 
 namespace DoubleFile
 {
-    public class LocalUserControl : UserControl
+    public abstract class LocalUserControlBase : UserControl, IContent
     {
+        public void OnFragmentNavigation(FragmentNavigationEventArgs e) { }
+        public void OnNavigatedFrom(NavigationEventArgs e) { }
+        public void OnNavigatedTo(NavigationEventArgs e) { ModernWindow1.CurrentPage = this; LocalNavigatedTo(); }
+        protected virtual void LocalNavigatedTo() { }
+        public void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            if ("/ExtraWindowUC.xaml" == "" + e.Source)
+            {
+                new ExtraWindow
+                {
+                    Content = Activator.CreateInstance(ModernWindow1.CurrentPage.GetType())
+                }
+                    .Show();
+
+                e.Cancel = true;
+            }
+        }
+
         public string Title { get; set; }
 
         internal bool LocalIsClosed { get; private set; }

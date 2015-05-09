@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
         Title="Double File" MinWidth="145" MinHeight="400"
-        Icon="/Double File;component/Assets/ic_people_white_18dp.png"
+        Icon="/Double File;component/Assets/ic_people_black_18dp.png"
         Left="120" Top="20">
     <Grid Name="form_grid">
         <!--IsMainMenu sets content background-->

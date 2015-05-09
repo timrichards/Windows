@@ -27,7 +27,7 @@ namespace DoubleFile
             _rootNodes = null;
         }
 
-        void DoTree(bool bKill = false)
+        bool DoTree(bool bKill = false)
         {
             if (null != _tree)
             {
@@ -40,10 +40,11 @@ namespace DoubleFile
                 else
                 {
                     MBoxStatic.Assert(99954, false);
-                    return;
+                    return false;
                 }
             }
 
+            _bFinished = false;
             _winProgress.Title = "Initializing Explorer";
             _winProgress.WindowClosingCallback = new WeakReference<IWinProgressClosing>(this);
 
@@ -72,6 +73,8 @@ namespace DoubleFile
             _winProgress
                 .InitProgress(new string[lsProgressItems.Count], lsProgressItems)
                 .ShowDialog();
+
+            return _bFinished;
         }
 
         void ICreateFileDictStatus.Callback(bool bDone, double nProgress)
@@ -237,5 +240,7 @@ namespace DoubleFile
 
         bool
             _bFileDictDone = false;
+        bool
+            _bFinished = false;
     }
 }

@@ -49,9 +49,9 @@ namespace DoubleFile
             if (App.LVprojectVM.Items.IsEmpty())
                 return false;
 
-            LocalTV.FactoryCreate(App.LVprojectVM);
-            _bCreated = true;
-            return true;
+            return
+                _bCreated =
+                LocalTV.FactoryCreate(App.LVprojectVM);
         }
 
         static WeakReference<LV_ProjectVM>

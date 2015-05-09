@@ -74,7 +74,7 @@ namespace DoubleFile
                     Invalidate(_rectCenter);
             }));
 
-            TreeMapVM.TreeNodeCallback = RenderA;
+            TreeMapVM.TreeNodeCallback.Subscribe(RenderA);
         }
 
         void InvalidatePushRef(Action action)

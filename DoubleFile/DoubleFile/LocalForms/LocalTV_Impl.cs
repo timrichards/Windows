@@ -195,8 +195,9 @@ namespace DoubleFile
 
             TreeCleanup();
             TabledString<Tabled_Folders>.GenerationEnded();
+            _bFinished = true;      // should preceed closing status dialog: returns true to the caller
             _winProgress.CloseIfNatural();
-            _dictNodes = null;       // saving memory here.
+            _dictNodes = null;      // saving memory here.
         }
 
         bool IWinProgressClosing.ConfirmClose()

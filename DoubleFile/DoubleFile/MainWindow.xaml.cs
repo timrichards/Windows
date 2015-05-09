@@ -63,10 +63,10 @@ namespace DoubleFile
             return doSomethingWith(mainWindow);
         }
 
-        static internal string
-            ExtraWindowFakeKey { get { return "/ExtraWindow.xaml"; } }
         LocalUserControlBase
             _currentPage = null;
+        static internal string
+            ExtraWindowFakeKey { get { return "/ExtraWindow.xaml"; } }
         static readonly Link
             _titleLink = new Link() { DisplayName = "Extra Window", Source = new Uri(ExtraWindowFakeKey, UriKind.Relative) };
         static readonly WeakReference<ModernWindow1>

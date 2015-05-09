@@ -17,19 +17,19 @@ namespace DoubleFile
         protected virtual void LocalNavigatedTo() { }
         public void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            if (ModernWindow1.ExtraWindowFakeKey == "" + e.Source)
+            if (ModernWindow1.ExtraWindowFakeKey != "" + e.Source)
+                return;
+
+            var page = ModernWindow1.CurrentPage;
+
+            new ExtraWindow
             {
-                var page = ModernWindow1.CurrentPage;
-
-                new ExtraWindow
-                {
-                    Content = Activator.CreateInstance(page.GetType()),
-                    Title = page.Title
-                }
-                    .Show();
-
-                e.Cancel = true;
+                Content = Activator.CreateInstance(page.GetType()),
+                Title = page.Title
             }
+                .Show();
+
+            e.Cancel = true;
         }
 
         public string Title { get; set; }

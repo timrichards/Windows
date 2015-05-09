@@ -22,7 +22,7 @@ namespace DoubleFile
             _mainWindowWR.SetTarget(this);
         }
 
-        static internal Uri CurrentPage
+        static internal LocalUserControlBase CurrentPage
         {
             get { return WithMainWindow(mainWindow => mainWindow._currentPage); }
 
@@ -36,7 +36,7 @@ namespace DoubleFile
                     mainWindow._currentPage = value;
                     mainWindow.TitleLinks.Remove(_titleLink);
 
-                    if ("/WinProject/WinProject_MUI.xaml" == "" + mainWindow._currentPage)
+                    if (mainWindow._currentPage is WinProject_MUI)
                         return false;
 
                     //if (mainWindow._currentPage is info page)
@@ -63,10 +63,12 @@ namespace DoubleFile
             return doSomethingWith(mainWindow);
         }
 
-        Uri
+        static internal string
+            ExtraWindowFakeKey { get { return "/ExtraWindow.xaml"; } }
+        LocalUserControlBase
             _currentPage = null;
         static readonly Link
-            _titleLink = new Link() { DisplayName = "Extra Window", Source = new Uri("/ExtraWindow.xaml", UriKind.Relative) };
+            _titleLink = new Link() { DisplayName = "Extra Window", Source = new Uri(ExtraWindowFakeKey, UriKind.Relative) };
         static readonly WeakReference<ModernWindow1>
             _mainWindowWR = new WeakReference<ModernWindow1>(null);
     }

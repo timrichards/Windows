@@ -13,13 +13,19 @@ namespace DoubleFile
     {
         public void OnFragmentNavigation(FragmentNavigationEventArgs e) { }
         public void OnNavigatedFrom(NavigationEventArgs e) { }
-        public void OnNavigatedTo(NavigationEventArgs e) { ModernWindow1.CurrentPage = e.Source; LocalNavigatedTo(); }
+        public void OnNavigatedTo(NavigationEventArgs e) { ModernWindow1.CurrentPage = this; LocalNavigatedTo(); }
         protected virtual void LocalNavigatedTo() { }
         public void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            if ("/ExtraWindow.xaml" == "" + e.Source)
+            if (ModernWindow1.ExtraWindowFakeKey == "" + e.Source)
             {
-                new ExtraWindow { ContentSource = ModernWindow1.CurrentPage }
+                var page = ModernWindow1.CurrentPage;
+
+                new ExtraWindow
+                {
+                    Content = Activator.CreateInstance(page.GetType()),
+                    Title = page.Title
+                }
                     .Show();
 
                 e.Cancel = true;

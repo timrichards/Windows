@@ -44,7 +44,7 @@ namespace DoubleFile
             _ucTreeMap.TreeMapVM.GoTo(LocalTV.TopNode);
         }
 
-        internal WinTreeMap_MUI()
+        public WinTreeMap_MUI()
         {
             InitializeComponent();
 

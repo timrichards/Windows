@@ -53,7 +53,7 @@ namespace DoubleFile
             }
         }
 
-        static T WithMainWindow<T>(Func<ModernWindow1, T> doSomething)
+        static T WithMainWindow<T>(Func<ModernWindow1, T> doSomethingWith)
         {
             ModernWindow1 mainWindow = null;
 
@@ -61,11 +61,11 @@ namespace DoubleFile
 
             if (null == mainWindow)
             {
-                MBoxStatic.Assert(99855, false);
+                MBoxStatic.Assert(99856, false);
                 return default(T);
             }
 
-            return (T)doSomething(mainWindow);
+            return doSomethingWith(mainWindow);
         }
 
         LocalUserControlBase

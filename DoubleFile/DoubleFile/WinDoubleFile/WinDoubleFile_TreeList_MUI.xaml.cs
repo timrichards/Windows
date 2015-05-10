@@ -21,7 +21,7 @@ namespace DoubleFile
             form_lvChildren.DataContext = lvChildrenVM;
 
             Tag =
-            form_lvSiblings.DataContext =
+                form_lvSiblings.DataContext =
                 _lvTreeListSiblingsVM =
                 new LV_TreeListSiblingsVM(lvChildrenVM);
         }

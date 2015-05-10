@@ -49,6 +49,8 @@ namespace DoubleFile
             if (App.LVprojectVM.Items.IsEmpty())
                 return false;
 
+            new SaveListingsProcess(App.LVprojectVM);
+
             return
                 _bCreated =
                 LocalTV.FactoryCreate(App.LVprojectVM);

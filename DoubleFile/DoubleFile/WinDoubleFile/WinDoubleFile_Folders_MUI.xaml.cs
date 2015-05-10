@@ -1,4 +1,6 @@
-﻿namespace DoubleFile
+﻿using System;
+
+namespace DoubleFile
 {
     /// <summary>
     /// Interaction logic for WinDoubleFile_Folders.xaml
@@ -29,6 +31,11 @@
         public WinDoubleFile_Folders_MUI()
         {
             InitializeComponent();
+        }
+
+        protected override void CopyTag(WeakReference wr)
+        {
+            LocalNavigatedTo();
         }
 
         LV_ProjectVM

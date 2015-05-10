@@ -14,22 +14,29 @@ namespace DoubleFile
         public void OnFragmentNavigation(FragmentNavigationEventArgs e) { }
         public void OnNavigatedFrom(NavigationEventArgs e) { }
         public void OnNavigatedTo(NavigationEventArgs e) { ModernWindow1.CurrentPage = this; LocalNavigatedTo(); }
-        protected virtual void LocalNavigatedTo() { }
+        virtual protected void LocalNavigatedTo() { }
         public void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             if (ModernWindow1.ExtraWindowFakeKey != "" + e.Source)
                 return;
 
             var page = ModernWindow1.CurrentPage;
+            var content = Activator.CreateInstance(page.GetType()) as LocalUserControlBase;
+
+            content.CopyTag(new WeakReference(page.Tag));
 
             new ExtraWindow
             {
-                Content = Activator.CreateInstance(page.GetType()),
-                Title = page.Title
+                Content = content,
+                Title = page.Title,
             }
                 .Show();
 
             e.Cancel = true;
+        }
+
+        virtual protected void CopyTag(WeakReference weakReference)
+        {
         }
 
         public string Title { get; set; }
@@ -304,7 +311,7 @@ namespace DoubleFile
 
         internal new bool? ShowDialog() { return ShowDialog(App.TopWindow); }
 
-        protected virtual void PositionWindow()
+        virtual protected void PositionWindow()
         {
         }
 

@@ -58,6 +58,11 @@ namespace DoubleFile
             _lsDisposable.Add(UC_TreeMap.TreeMapChildSelected.Subscribe(UC_TreeMap_TreeMapChildSelected));
         }
 
+        internal void CopyFrom(LV_TreeListSiblingsVM vm)
+        {
+            Populate(vm._treeNode);
+        }
+
         public void Dispose()
         {
             foreach (var d in _lsDisposable)
@@ -81,6 +86,9 @@ namespace DoubleFile
 
         void Populate(LocalTreeNode treeNodeSel)
         {
+            if (null == treeNodeSel)
+                return;
+
             UtilDirList.Write("K");
             var treeNodes =
                 (null != treeNodeSel.Parent)

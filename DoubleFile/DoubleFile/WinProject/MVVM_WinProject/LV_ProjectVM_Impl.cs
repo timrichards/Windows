@@ -98,7 +98,7 @@ namespace DoubleFile
 
                     if (null != dlgEdit)
                     {
-                        if (ModifyListingFile(lvItem, lvItemVolumeTemp, dlgEdit.form_ucVolumeEdit.DriveLetter))
+                        if (ModifyListingFile(lvItem, lvItemVolumeTemp, dlgEdit.formUC_VolumeEdit.DriveLetter))
                             FileParse.ReadHeader(lvItemVolumeTemp.ListingFile, out lvItemVolumeTemp);
                         else if (lvItem.LocalEquals(lvItemVolumeTemp))
                             break;  // no change to volume group; include y/n: columns that aren't in the listing file

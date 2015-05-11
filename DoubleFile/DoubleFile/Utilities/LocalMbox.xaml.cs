@@ -13,8 +13,8 @@ namespace DoubleFile
     {
         internal string Message
         {
-            get { return form_textBlock_Message.Text; }
-            private set { form_textBlock_Message.Text = value; }
+            get { return formTextBlock_Message.Text; }
+            private set { formTextBlock_Message.Text = value; }
         }
 
         MessageBoxButton Buttons

@@ -14,20 +14,20 @@ namespace DoubleFile
             InitializeComponent();
 
             Observable.FromEventPattern(this, "SizeChanged")
-                .Subscribe(args => form_ucTreeMap.ClearSelection());
+                .Subscribe(args => formUC_TreeMap.ClearSelection());
 
             Observable.FromEventPattern(this, "LocationChanged")
-                .Subscribe(args => form_ucTreeMap.ClearSelection());
+                .Subscribe(args => formUC_TreeMap.ClearSelection());
 
             Observable.FromEventPattern(form_slider, "LostMouseCapture")
-                .Subscribe(args => form_ucTreeMap.TreeMapVM.LostMouseCapture());
+                .Subscribe(args => formUC_TreeMap.TreeMapVM.LostMouseCapture());
 
             Observable.FromEventPattern(this, "Closed")
                 .Subscribe(args => Window_Closed());
 
             ResizeMode = ResizeMode.CanResize;
-            form_ucTreeMap.LocalOwner = this;
-            base.DataContext = form_ucTreeMap.TreeMapVM = new WinTreeMapVM();
+            formUC_TreeMap.LocalOwner = this;
+            base.DataContext = formUC_TreeMap.TreeMapVM = new WinTreeMapVM();
         }
 
         protected override LocalWindow_DoubleFile CreateChainedWindow()
@@ -38,7 +38,7 @@ namespace DoubleFile
         private void Window_Closed()
         {
             _host.Dispose();
-            form_ucTreeMap.Dispose();
+            formUC_TreeMap.Dispose();
         }
 
         override protected Rect

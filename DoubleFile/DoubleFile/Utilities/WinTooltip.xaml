@@ -6,8 +6,8 @@
         Title="Double File">
     <Grid>
         <StackPanel Margin="10,10">
-            <TextBlock Name="form_folder" FontWeight="Bold"/>
-            <TextBlock Name="form_size"/>
+            <TextBlock Name="formTextBlock_folder" FontWeight="Bold"/>
+            <TextBlock Name="formTextBlock_size"/>
         </StackPanel>
     </Grid>
 </local:LocalWindowBase>

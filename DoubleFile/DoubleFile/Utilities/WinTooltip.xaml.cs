@@ -13,8 +13,8 @@ namespace DoubleFile
     /// </summary>
     public partial class WinTooltip
     {
-        internal string Folder { set { form_folder.Text = value; } }
-        internal string Size { set { form_size.Text = value; } }
+        internal string Folder { set { formTextBlock_folder.Text = value; } }
+        internal string Size { set { formTextBlock_size.Text = value; } }
 
         static internal LocalTreeNode LocalTreeNode { get { return (null == _winTooltip) ? null : _winTooltip.Tag as LocalTreeNode; } }
 
@@ -126,7 +126,7 @@ namespace DoubleFile
             Background = Brushes.LightYellow;
 
             Observable.FromEventPattern(this, "Loaded")
-                .Subscribe(args => ++form_folder.FontSize);
+                .Subscribe(args => ++formTextBlock_folder.FontSize);
 
             var bMouseDown = false;
 

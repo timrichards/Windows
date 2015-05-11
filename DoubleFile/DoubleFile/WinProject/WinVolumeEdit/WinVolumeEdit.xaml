@@ -3,5 +3,5 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
         Title="Edit Listing File" Width="720" MinWidth="470" Height="474"  MinHeight="474" MaxHeight="474">
-    <local:UC_VolumeEdit IsVolumeNew="False" x:Name="form_ucVolumeEdit"/>
+    <local:UC_VolumeEdit IsVolumeNew="False" x:Name="formUC_VolumeEdit"/>
 </local:WinVolumeEditBase>

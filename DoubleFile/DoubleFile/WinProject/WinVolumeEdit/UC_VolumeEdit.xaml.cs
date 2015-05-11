@@ -66,7 +66,7 @@ namespace DoubleFile
                     formEdit_Nickname.Text, formEdit_SourcePath.Text,
                     (IsVolumeNew ? formEdit_SaveListingFile.Text : _strListingFile),
                     _strStatus, _strIncludeYN,
-                    form_ucVolumeGroup.Text, formEdit_DriveModel.Text, formEdit_DriveSerial.Text
+                    formUC_VolumeGroup.Text, formEdit_DriveModel.Text, formEdit_DriveSerial.Text
                 });
             }
             set
@@ -82,7 +82,7 @@ namespace DoubleFile
                 if (i < astr.Length) { _strListingFile = value[i++]; formEdit_SaveListingFile.Text = (IsVolumeNew ? _strListingFile : Path.GetFileName(_strListingFile)); }
                 if (i < astr.Length) { var s = value[i++]; if (null != s) _strStatus = s; }
                 if (i < astr.Length) { var s = value[i++]; if (null != s) _strIncludeYN = s; }
-                if (i < astr.Length) form_ucVolumeGroup.Text = value[i++];
+                if (i < astr.Length) formUC_VolumeGroup.Text = value[i++];
                 if (i < astr.Length) formEdit_DriveModel.Text = value[i++];
                 if (i < astr.Length) formEdit_DriveSerial.Text = value[i++];
             }

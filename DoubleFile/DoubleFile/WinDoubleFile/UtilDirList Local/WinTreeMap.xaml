@@ -9,7 +9,7 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <WindowsFormsHost Name="_host" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <local:UC_TreeMap x:Name="form_ucTreeMap" />
+            <local:UC_TreeMap x:Name="formUC_TreeMap" />
         </WindowsFormsHost>
         <Slider Name="form_slider" Grid.Column="1" Value="{Binding Value}" Maximum="{Binding Maximum}"
                 IsSnapToTickEnabled="True"

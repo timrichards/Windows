@@ -9,14 +9,14 @@ namespace DoubleFile
     /// </summary>
     partial class WinVolumeGroup
     {
-        public string Text { get { return form_ucVolumeGroup.Text; } set { form_ucVolumeGroup.Text = value; } }
+        public string Text { get { return formUC_VolumeGroup.Text; } set { formUC_VolumeGroup.Text = value; } }
 
         public WinVolumeGroup()
         {
             InitializeComponent();
 
             Observable.FromEventPattern(form_grid, "Loaded")
-                .Subscribe(args => form_ucVolumeGroup.IsWinVolumeGroup = true);
+                .Subscribe(args => formUC_VolumeGroup.IsWinVolumeGroup = true);
 
             Observable.FromEventPattern(formBtn_OK, "Click")
                 .Subscribe(args => { LocalDialogResult = true; CloseIfSimulatingModal(); });

@@ -76,7 +76,7 @@ model/serial# do not.
             </TextBox.ToolTip>
         </TextBox>
 
-        <local:UC_VolumeGroup Grid.Row="8" x:Name="form_ucVolumeGroup" Grid.ColumnSpan="999"/>
+        <local:UC_VolumeGroup Grid.Row="8" x:Name="formUC_VolumeGroup" Grid.ColumnSpan="999"/>
 
         <Label Grid.Row="10" Content="Directory listing file" />
         <Button Name="formBtn_SaveListingFile" Grid.Row="10" Command="{Binding Icmd_SaveListingFile}" ToolTip="Click to open a file save dialog">

@@ -21,7 +21,6 @@ namespace DoubleFile
 
             DataContext = new WinProjectVM(App.LVprojectVM);
             _weakReference.SetTarget(this);
-
             LV_ProjectVM.Modified.Subscribe(x => Reset());
         }
 

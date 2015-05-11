@@ -10,7 +10,19 @@ namespace DoubleFile
 {
     partial class LV_ProjectVM
     {
-        public Visibility Visible { get { return Items.IsEmpty() ? Visibility.Hidden : Visibility.Visible; } }
+        public Visibility Visible
+        {
+            get
+            {
+                ModernWindow1.WithMainWindow(mainWindow =>
+                {
+                    mainWindow.ShowLinks(Items.IsEmpty());
+                    return false;   // from lambda
+                });
+
+                return Items.IsEmpty() ? Visibility.Hidden : Visibility.Visible;
+            }
+        }
 
         static internal IObservable<bool>   // bool is a no-op: generic placeholder
             Modified { get { return _modified.AsObservable(); } }

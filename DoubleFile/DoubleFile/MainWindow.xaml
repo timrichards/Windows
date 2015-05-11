@@ -1,12 +1,8 @@
 ﻿<local:LocalModernWindowBase x:Class="DoubleFile.ModernWindow1"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:mui="http://firstfloorsoftware.com/ModernUI"
         xmlns:local="clr-namespace:DoubleFile"
-        mc:Ignorable="d" 
-        d:DesignHeight="300" d:DesignWidth="300"
         Icon="/Double File;component/Assets/ic_people_black_18dp.png"
         ContentSource="/WinProject/WinProject_MUI.xaml"
         Title="Double File"
@@ -17,29 +13,6 @@
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="View project" Source="/WinProject/WinProject_MUI.xaml" />
                 <mui:Link DisplayName="Introduction" Source="/Pages/Search.xaml" />
-            </mui:LinkGroup.Links>
-        </mui:LinkGroup>
-        <mui:LinkGroup DisplayName="Explore">
-            <mui:LinkGroup.Links>
-                <mui:Link DisplayName="Tree map" Source="/WinDoubleFIle/UtilDirList Local/WinTreeMap_MUI.xaml" />
-                <mui:Link DisplayName="Folders" Source="/WinDoubleFile/WinDoubleFile_Folders_MUI.xaml" />
-                <mui:Link DisplayName="Tree list" Source="/WinDoubleFile/WinDoubleFile_TreeList_MUI.xaml" />
-            </mui:LinkGroup.Links>
-        </mui:LinkGroup>
-        <mui:LinkGroup DisplayName="Files">
-            <mui:LinkGroup.Links>
-                <mui:Link DisplayName="Files in folder" Source="/Pages/Search.xaml" />
-                <mui:Link DisplayName="Duplicate files" Source="/Pages/Search.xaml" />
-            </mui:LinkGroup.Links>
-        </mui:LinkGroup>
-        <mui:LinkGroup DisplayName="Search">
-            <mui:LinkGroup.Links>
-                <mui:Link DisplayName="Search" Source="/WinDoubleFile/WinDoubleFile_Search_MUI.xaml" />
-            </mui:LinkGroup.Links>
-        </mui:LinkGroup>
-        <mui:LinkGroup DisplayName="Detailed info">
-            <mui:LinkGroup.Links>
-                <mui:Link DisplayName="Detailed info" Source="/Pages/Search.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
     </mui:ModernWindow.MenuLinkGroups>

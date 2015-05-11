@@ -7,11 +7,6 @@ namespace DoubleFile
     /// </summary>
     public partial class WinDoubleFile_TreeList_MUI
     {
-        protected override void LocalNavigatedTo()
-        {
-            WinProject_MUI.InitExplorer();
-        }
-
         public WinDoubleFile_TreeList_MUI()
         {
             InitializeComponent();

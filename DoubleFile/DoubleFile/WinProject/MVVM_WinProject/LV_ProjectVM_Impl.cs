@@ -2,6 +2,9 @@
 using System.Linq;
 using System.Windows.Input;
 using System.Windows;
+using System;
+using System.Reactive.Subjects;
+using System.Reactive.Linq;
 
 namespace DoubleFile
 {
@@ -9,7 +12,25 @@ namespace DoubleFile
     {
         public Visibility Visible { get { return Items.IsEmpty() ? Visibility.Hidden : Visibility.Visible; } }
 
-        internal bool Unsaved { get; set; }
+        static internal IObservable<bool>   // bool is a no-op: generic placeholder
+            Modified { get { return _modified.AsObservable(); } }
+        static readonly Subject<bool> _modified = new Subject<bool>();
+        internal void SetModified() { _modified.OnNext(false); }
+
+        internal bool
+            Unsaved
+        {
+            get { return _unsaved; }
+
+            set
+            {
+                if (value)
+                    SetModified();
+
+                _unsaved = value; 
+            }
+        }
+        bool _unsaved = false;
 
         internal LV_ProjectVM(LV_ProjectVM lvProjectVM = null)
         {
@@ -19,7 +40,7 @@ namespace DoubleFile
             foreach (var lvItemVM in lvProjectVM.ItemsCast)
                 Add(new LVitem_ProjectVM(lvItemVM), bQuiet: true);
 
-            Unsaved = lvProjectVM.Unsaved;
+            _unsaved = lvProjectVM.Unsaved;
             RaisePropertyChanged("Visible");
         }
 
@@ -131,7 +152,8 @@ namespace DoubleFile
                 .ToList()
                 .ForEach(lvItem => Items.Remove(lvItem));
 
-            Unsaved = (false == Items.IsEmpty());
+            _unsaved = (false == Items.IsEmpty());
+            SetModified();
             RaisePropertyChanged("Visible");
         }
 
@@ -144,17 +166,19 @@ namespace DoubleFile
             if (dlg.ShowDialog() ?? false)
             {
                 var strLabel = dlg.Text.Trim();
+                bool bUnsaved = false;
 
-                Unsaved =
-                    Selected()
-                    .Aggregate(Unsaved, (current, lvItem) => 
+                foreach (var lvItem in Selected())
                 {
-                    var bRet =
-                        (false == ("" + lvItem.VolumeGroup).Equals(strLabel));
+                    if (("" + lvItem.VolumeGroup).Equals(strLabel))
+                        continue;
 
                     lvItem.VolumeGroup = strLabel;
-                    return bRet || current;
-                });
+                    bUnsaved = true;
+                }
+
+                if (bUnsaved)
+                    Unsaved = true;
             }
         }
 

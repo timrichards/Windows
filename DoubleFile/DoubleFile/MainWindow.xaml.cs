@@ -48,7 +48,7 @@ namespace DoubleFile
             }
         }
 
-        static T WithMainWindow<T>(Func<ModernWindow1, T> doSomethingWith)
+        static internal T WithMainWindow<T>(Func<ModernWindow1, T> doSomethingWith)
         {
             ModernWindow1 mainWindow = null;
 

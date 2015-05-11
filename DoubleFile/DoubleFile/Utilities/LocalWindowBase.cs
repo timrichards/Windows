@@ -17,6 +17,12 @@ namespace DoubleFile
         virtual protected void LocalNavigatedTo() { }
         public void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
+            if (false == WinProject_MUI.OKtoNavigate())
+            {
+                e.Cancel = true;
+                return;
+            }
+
             if (ModernWindow1.ExtraWindowFakeKey != "" + e.Source)
                 return;
 

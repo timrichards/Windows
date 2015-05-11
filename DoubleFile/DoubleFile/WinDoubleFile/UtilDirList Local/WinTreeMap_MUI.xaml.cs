@@ -14,18 +14,6 @@ namespace DoubleFile
     {
         protected override void LocalNavigatedTo()
         {
-            if (false == WinProject_MUI.InitExplorer())
-            {
-                if ((null == App.LVprojectVM) ||
-                    (App.LVprojectVM == _lvProjectVM) ||
-                    (App.LVprojectVM.LocalEquals(_lvProjectVM)))
-                {
-                    return;
-                }
-            }
-
-            _lvProjectVM = new LV_ProjectVM(App.LVprojectVM);
-
             if (null != _ucTreeMap)
                 _ucTreeMap.Dispose();
 
@@ -37,10 +25,6 @@ namespace DoubleFile
                 new WinTreeMapVM();
 
             _host.Child = _ucTreeMap;
-
-            if (_lvProjectVM.Items.IsEmpty())
-                return;
-
             _ucTreeMap.TreeMapVM.GoTo(LocalTV.TopNode);
         }
 
@@ -55,8 +39,6 @@ namespace DoubleFile
                 .Subscribe(args => { if (null != _ucTreeMap) _ucTreeMap.TreeMapVM.LostMouseCapture(); });
         }
 
-        LV_ProjectVM
-            _lvProjectVM = null;
         UC_TreeMap
             _ucTreeMap = null;
     }

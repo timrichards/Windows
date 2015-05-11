@@ -36,6 +36,7 @@ namespace DoubleFile
                 ProjectFile.OpenProject(dlg.FileName, new WeakReference<IOpenListingFiles>(this));
 
                 _lvVM.Unsaved = false;
+                _lvVM.SetModified();
             }
         }
 

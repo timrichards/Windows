@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -19,46 +20,73 @@ namespace DoubleFile
             };
 
             DataContext = new WinProjectVM(App.LVprojectVM);
+            _weakReference.SetTarget(this);
+
+            LV_ProjectVM.Modified.Subscribe(x => Reset());
         }
 
-        internal static bool InitExplorer()
+        internal static bool OKtoNavigate()
         {
+            if (OKtoNavigate_())
+                return true;
+
+            Reset();
+            return false;
+        }
+
+        static bool OKtoNavigate_()
+        {
+            if (null == App.LVprojectVM)
+                return false;
+
+            WinProject_MUI winProjectMUI = null;
+
+            _weakReference.TryGetTarget(out winProjectMUI);
+
+            if ((null != winProjectMUI._lvProjectVM)
+                && (App.LVprojectVM.LocalEquals(winProjectMUI._lvProjectVM)))
             {
-                LV_ProjectVM lvProjectVM = null;
-
-                _lvProjectVM_WR.TryGetTarget(out lvProjectVM);
-
-                if ((null == App.LVprojectVM) ||
-                    (App.LVprojectVM == lvProjectVM) ||
-                    (App.LVprojectVM.LocalEquals(lvProjectVM)))
-                {
-                    if (_bCreated)
-                        return false;
-                }
+                return true;
             }
 
-            _bCreated = false;
-            _lvProjectVM_WR.SetTarget(App.LVprojectVM);
+            Reset();
+
+            if (false == App.LVprojectVM.Items.IsEmpty())
+            {
+                new SaveListingsProcess(App.LVprojectVM);
+
+                if (LocalTV.FactoryCreate(App.LVprojectVM))
+                    winProjectMUI._lvProjectVM = new LV_ProjectVM(App.LVprojectVM);
+            }
+
+            return (null != winProjectMUI._lvProjectVM);
+        }
+
+        static void Reset()
+        {
+            ModernWindow1.WithMainWindow(mainWindow =>
+            {
+                foreach (Window window in mainWindow.OwnedWindows)
+                    window.Close();
+
+                return false;   // from lambda
+            });
+
+            WinProject_MUI winProjectMUI = null;
+
+            _weakReference.TryGetTarget(out winProjectMUI);
+            winProjectMUI._lvProjectVM = null;
 
             if (null != LocalTV.Instance)
                 LocalTV.LocalDispose();
 
             App.FileDictionary.Dispose();
             App.FileDictionary = new FileDictionary();
-
-            if (App.LVprojectVM.Items.IsEmpty())
-                return false;
-
-            new SaveListingsProcess(App.LVprojectVM);
-
-            return
-                _bCreated =
-                LocalTV.FactoryCreate(App.LVprojectVM);
         }
 
-        static WeakReference<LV_ProjectVM>
-            _lvProjectVM_WR = new WeakReference<LV_ProjectVM>(null);
-        static bool
-            _bCreated = false;
+        LV_ProjectVM
+            _lvProjectVM = null;
+        static WeakReference<WinProject_MUI>
+            _weakReference = new WeakReference<WinProject_MUI>(null);
     }
 }

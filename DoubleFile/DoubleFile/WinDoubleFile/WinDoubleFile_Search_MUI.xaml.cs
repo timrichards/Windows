@@ -5,11 +5,6 @@
     /// </summary>
     partial class WinDoubleFile_Search_MUI
     {
-        protected override void LocalNavigatedTo()
-        {
-            WinProject_MUI.InitExplorer();
-        }
-
         public WinDoubleFile_Search_MUI()
         {
             InitializeComponent();

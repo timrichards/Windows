@@ -62,31 +62,36 @@ namespace DoubleFile
         {
             get
             {
-                return new LVitem_ProjectVM(new[] {
-                    formEdit_Nickname.Text, formEdit_SourcePath.Text,
-                    (IsVolumeNew ? formEdit_SaveListingFile.Text : _strListingFile),
-                    _strStatus, _strIncludeYN,
-                    formUC_VolumeGroup.Text, formEdit_DriveModel.Text, formEdit_DriveSerial.Text
-                });
+                _lvItemTemp.Nickname = formEdit_Nickname.Text;
+                _lvItemTemp.SourcePath = formEdit_SourcePath.Text;
+                _lvItemTemp.ListingFile = (IsVolumeNew ? formEdit_SaveListingFile.Text : _strListingFile);
+                _lvItemTemp.VolumeGroup = formUC_VolumeGroup.Text;
+                _lvItemTemp.DriveModel = formEdit_DriveModel.Text;
+                _lvItemTemp.DriveSerial = formEdit_DriveSerial.Text;
+                // Status; IncludeYN; ScannedLength; (etc.) are preserved
+                return _lvItemTemp;
             }
             set
             {
+                _lvItemTemp = new LVitem_ProjectVM(value);
+
                 if (null == value)
                     return;
-
-                var astr = value.StringValues;
+                
                 var i = 0;
 
-                if (i < astr.Length) formEdit_Nickname.Text = value[i++]; else MBoxStatic.Assert(99926, false);
-                if (i < astr.Length) formEdit_SourcePath.Text = value[i++]; else MBoxStatic.Assert(99925, false);
-                if (i < astr.Length) { _strListingFile = value[i++]; formEdit_SaveListingFile.Text = (IsVolumeNew ? _strListingFile : Path.GetFileName(_strListingFile)); }
-                if (i < astr.Length) { var s = value[i++]; if (null != s) _strStatus = s; }
-                if (i < astr.Length) { var s = value[i++]; if (null != s) _strIncludeYN = s; }
-                if (i < astr.Length) formUC_VolumeGroup.Text = value[i++];
-                if (i < astr.Length) formEdit_DriveModel.Text = value[i++];
-                if (i < astr.Length) formEdit_DriveSerial.Text = value[i++];
+                formEdit_Nickname.Text = value[i++];
+                formEdit_SourcePath.Text = value[i++];
+                _strListingFile = value[i++]; formEdit_SaveListingFile.Text = (IsVolumeNew ? _strListingFile : Path.GetFileName(_strListingFile));
+                ++i;    // Status
+                ++i;    // IncludeYN
+                formUC_VolumeGroup.Text = value[i++];
+                formEdit_DriveModel.Text = value[i++];
+                formEdit_DriveSerial.Text = value[i++];
+                        // ScannedLength
             }
         }
+        LVitem_ProjectVM _lvItemTemp = null;
 
         bool IsValidListingEdit
         {
@@ -223,8 +228,7 @@ namespace DoubleFile
         }
         #endregion form_handlers
 
-        string _strListingFile = null;
-        string _strStatus = FileParse.ksNotSaved;
-        string _strIncludeYN = FileParse.ksInclude;
+        string
+            _strListingFile = null;
     }
 }

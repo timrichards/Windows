@@ -18,10 +18,10 @@ namespace DoubleFile
             Observable.FromEventPattern(form_grid, "Loaded")
                 .Subscribe(args => form_ucVolumeGroup.IsWinVolumeGroup = true);
 
-            Observable.FromEventPattern(form_btnOK, "Click")
+            Observable.FromEventPattern(formBtn_OK, "Click")
                 .Subscribe(args => { LocalDialogResult = true; CloseIfSimulatingModal(); });
 
-            Observable.FromEventPattern(form_btnCancel, "Click")
+            Observable.FromEventPattern(formBtn_Cancel, "Click")
                 .Subscribe(args => { CloseIfSimulatingModal(); });
         }
     }

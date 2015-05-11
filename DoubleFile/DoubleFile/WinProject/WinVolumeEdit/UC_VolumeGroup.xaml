@@ -13,7 +13,7 @@
         </Grid.ColumnDefinitions>
 
         <Label Content="Volume group label" />
-        <TextBox Name="form_EditVolumeGroup">
+        <TextBox Name="formEdit_VolumeGroup">
             <TextBox.ToolTip>
                 <TextBlock>
 Lets you group volumes arbitrarily in the project. Since it's simple to save

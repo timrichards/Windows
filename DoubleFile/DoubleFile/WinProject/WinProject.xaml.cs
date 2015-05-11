@@ -22,7 +22,7 @@ namespace DoubleFile
             _lsDisposable.Add(Observable.FromEventPattern(form_grid, "Loaded")
                 .Subscribe(args => Grid_Loaded()));
 
-            _lsDisposable.Add(Observable.FromEventPattern(form_btnOK, "Click")
+            _lsDisposable.Add(Observable.FromEventPattern(formBtn_OK, "Click")
                 .Subscribe(args => BtnOK_Click()));
 
             _lsDisposable.Add(Observable.FromEventPattern<System.ComponentModel.CancelEventArgs>(this, "Closing")

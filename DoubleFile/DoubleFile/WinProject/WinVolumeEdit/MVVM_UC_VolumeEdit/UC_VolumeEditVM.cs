@@ -21,14 +21,14 @@ namespace DoubleFile
         // In order of appearance on the form
         public ICommand Icmd_EditSourcePath { get; private set; }
         public ICommand Icmd_Probe { get; private set; }
-        public ICommand Icmd_EditListingFile { get; private set; }
+        public ICommand Icmd_SaveListingFile { get; private set; }
         public ICommand Icmd_IsOKenabled { get; private set; }
 
         internal UC_VolumeEditVM Init()
         {
             Icmd_EditSourcePath = new RelayCommand(EditSourcePath);
             Icmd_Probe = new RelayCommand(Probe, IsOKenabled);
-            Icmd_EditListingFile = new RelayCommand(EditListingFile);
+            Icmd_SaveListingFile = new RelayCommand(SaveListingFile);
             Icmd_IsOKenabled = new RelayCommand(() => { }, IsOKenabled);
             return this;
         }

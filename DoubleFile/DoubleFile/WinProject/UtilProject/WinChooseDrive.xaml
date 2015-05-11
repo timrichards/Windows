@@ -5,7 +5,7 @@
         Title="Find Yor Drive" Width="450" Height="300">
     <Grid>
         <Label VerticalAlignment="Top" HorizontalAlignment="Stretch">Is your drive in this list?</Label>
-        <ListView Name="form_lvDrives" Margin="10,30,10,60">
+        <ListView Name="formLV_Drives" Margin="10,30,10,60">
         </ListView>
         <Button Content="Yes" Margin="0,0,10,10" IsCancel="True" IsDefault="True" Height="22" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Click="BtnYes_Click"/>
     </Grid>

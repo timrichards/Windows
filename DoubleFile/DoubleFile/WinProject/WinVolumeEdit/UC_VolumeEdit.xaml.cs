@@ -13,25 +13,25 @@ namespace DoubleFile
     /// </summary>
     partial class UC_VolumeEdit
     {
-        internal char DriveLetter { get { return (form_EditDriveLetter.Text + "\0")[0]; } }
+        internal char DriveLetter { get { return (formEdit_DriveLetter.Text + "\0")[0]; } }
 
         [Description("User control supports choice"), Category("New or Edit Volume window")]
         internal bool IsVolumeNew
         {
             set
             {
-                form_EditSourcePath.IsEnabled = value;
-                form_BtnSourcePath.IsEnabled = value;
+                formEdit_SourcePath.IsEnabled = value;
+                formBtn_SourcePath.IsEnabled = value;
                 form_Border.VerticalAlignment = value ? VerticalAlignment.Top : VerticalAlignment.Center;
-                form_lblDriveLetter.Visibility = value ? Visibility.Hidden : Visibility.Visible;
-                form_EditDriveLetter.Visibility = value ? Visibility.Hidden : Visibility.Visible;
-                form_BtnDriveModel.IsEnabled = value;
-                form_BtnListingFile.IsEnabled = value;
-                form_EditListingFile.IsEnabled = value;
+                formLabel_DriveLetter.Visibility = value ? Visibility.Hidden : Visibility.Visible;
+                formEdit_DriveLetter.Visibility = value ? Visibility.Hidden : Visibility.Visible;
+                formBtn_DriveModel.IsEnabled = value;
+                formBtn_SaveListingFile.IsEnabled = value;
+                formEdit_SaveListingFile.IsEnabled = value;
             }
             get
             {
-                return form_EditSourcePath.IsEnabled;
+                return formEdit_SourcePath.IsEnabled;
             }
         }
 
@@ -42,19 +42,19 @@ namespace DoubleFile
             Observable.FromEventPattern(form_grid, "Loaded")
                 .Subscribe(args => Grid_Loaded());
 
-            Observable.FromEventPattern(form_EditSourcePath, "LostFocus")
-                .Subscribe(args => { if (IsValidSourcePathEdit) form_EditSourcePath.Text = CapDrive(form_EditSourcePath.Text); });
+            Observable.FromEventPattern(formEdit_SourcePath, "LostFocus")
+                .Subscribe(args => { if (IsValidSourcePathEdit) formEdit_SourcePath.Text = CapDrive(formEdit_SourcePath.Text); });
 
-            Observable.FromEventPattern<KeyEventArgs>(form_EditDriveLetter, "PreviewKeyDown")
-                .Subscribe(args => form_EditDriveLetter_PreviewKeyDown(args.EventArgs));
+            Observable.FromEventPattern<KeyEventArgs>(formEdit_DriveLetter, "PreviewKeyDown")
+                .Subscribe(args => formEdit_DriveLetter_PreviewKeyDown(args.EventArgs));
 
-            Observable.FromEventPattern(form_EditListingFile, "LostFocus")
-                .Subscribe(args => form_EditListingFile_LostFocus());
+            Observable.FromEventPattern(formEdit_SaveListingFile, "LostFocus")
+                .Subscribe(args => formEdit_ListingFile_LostFocus());
 
-            Observable.FromEventPattern(form_btnOK, "Click")
+            Observable.FromEventPattern(formBtn_OK, "Click")
                 .Subscribe(args => BtnOK_Click());
 
-            Observable.FromEventPattern(form_btnCancel, "Click")
+            Observable.FromEventPattern(formBtn_Cancel, "Click")
                 .Subscribe(args => BtnCancel_Click());
         }
 
@@ -62,11 +62,11 @@ namespace DoubleFile
         {
             get
             {
-                return new LVitem_ProjectVM(new string[] {
-                    form_EditNickname.Text, form_EditSourcePath.Text,
-                    (IsVolumeNew ? form_EditListingFile.Text : _strListingFile),
+                return new LVitem_ProjectVM(new[] {
+                    formEdit_Nickname.Text, formEdit_SourcePath.Text,
+                    (IsVolumeNew ? formEdit_SaveListingFile.Text : _strListingFile),
                     _strStatus, _strIncludeYN,
-                    form_ucVolumeGroup.Text, form_EditDriveModel.Text, form_EditDriveSerial.Text
+                    form_ucVolumeGroup.Text, formEdit_DriveModel.Text, formEdit_DriveSerial.Text
                 });
             }
             set
@@ -77,14 +77,14 @@ namespace DoubleFile
                 var astr = value.StringValues;
                 var i = 0;
 
-                if (astr.Length > i) { form_EditNickname.Text = value[i++]; } else { MBoxStatic.Assert(99926, false); }
-                if (astr.Length > i) { form_EditSourcePath.Text = value[i++]; } else { MBoxStatic.Assert(99925, false); }
-                if (astr.Length > i) { _strListingFile = value[i++]; form_EditListingFile.Text = (IsVolumeNew ? _strListingFile : Path.GetFileName(_strListingFile)); }
-                if (astr.Length > i) { var s = value[i++]; if (s != null) { _strStatus = s; } }
-                if (astr.Length > i) { var s = value[i++]; if (s != null) { _strIncludeYN = s; } }
-                if (astr.Length > i) { form_ucVolumeGroup.Text = value[i++]; }
-                if (astr.Length > i) { form_EditDriveModel.Text = value[i++]; }
-                if (astr.Length > i) { form_EditDriveSerial.Text = value[i++]; }
+                if (i < astr.Length) formEdit_Nickname.Text = value[i++]; else MBoxStatic.Assert(99926, false);
+                if (i < astr.Length) formEdit_SourcePath.Text = value[i++]; else MBoxStatic.Assert(99925, false);
+                if (i < astr.Length) { _strListingFile = value[i++]; formEdit_SaveListingFile.Text = (IsVolumeNew ? _strListingFile : Path.GetFileName(_strListingFile)); }
+                if (i < astr.Length) { var s = value[i++]; if (null != s) _strStatus = s; }
+                if (i < astr.Length) { var s = value[i++]; if (null != s) _strIncludeYN = s; }
+                if (i < astr.Length) form_ucVolumeGroup.Text = value[i++];
+                if (i < astr.Length) formEdit_DriveModel.Text = value[i++];
+                if (i < astr.Length) formEdit_DriveSerial.Text = value[i++];
             }
         }
 
@@ -92,7 +92,7 @@ namespace DoubleFile
         {
             get
             {
-                try { return (Path.GetFileName(Path.GetFullPath(form_EditListingFile.Text)).Length > 0); }
+                try { return 0 < Path.GetFileName(Path.GetFullPath(formEdit_SaveListingFile.Text)).Length; }
                 catch (ArgumentException) { return false; }
             }
         }
@@ -101,8 +101,8 @@ namespace DoubleFile
         {
             get
             {
-                return (SaveDirListings.IsGoodDriveSyntax(form_EditSourcePath.Text) &&
-                    ((false == IsVolumeNew) || Directory.Exists(form_EditSourcePath.Text)));
+                return (SaveDirListings.IsGoodDriveSyntax(formEdit_SourcePath.Text) &&
+                    ((false == IsVolumeNew) || Directory.Exists(formEdit_SourcePath.Text)));
             }
         }
 
@@ -110,7 +110,7 @@ namespace DoubleFile
         {
             get
             {
-                return ((string.IsNullOrWhiteSpace(form_EditListingFile.Text) || IsValidListingEdit) &&
+                return ((string.IsNullOrWhiteSpace(formEdit_SaveListingFile.Text) || IsValidListingEdit) &&
                     IsValidSourcePathEdit);
             }
         }
@@ -119,7 +119,7 @@ namespace DoubleFile
         {
             var a = strPath.ToCharArray();
 
-            if (a.Length > 0)
+            if (0 < a.Length)
             {
                 a[0] = ("" + a[0]).ToUpper()[0];
                 return string.Join("", a);
@@ -134,27 +134,27 @@ namespace DoubleFile
             uc_VolumeEdit.DataContext = new UC_VolumeEditVM
             {
                 IsOKenabled = () => IsOKenabled,
-                SourcePath_CurrentText = () => form_EditSourcePath.Text,
-                ListingFile_CurrentText = () => form_EditListingFile.Text,
-                FromSourcePathDlg = s => form_EditSourcePath.Text = s,
-                FromProbe = (strDriveModel, strDriveSerial) => { form_EditDriveModel.Text = strDriveModel; form_EditDriveSerial.Text = strDriveSerial; },
-                FromListingFileDlg = s => form_EditListingFile.Text = s
+                SourcePath_CurrentText = () => formEdit_SourcePath.Text,
+                ListingFile_CurrentText = () => formEdit_SaveListingFile.Text,
+                FromSourcePathDlg = s => formEdit_SourcePath.Text = s,
+                FromProbe = (strDriveModel, strDriveSerial) => { formEdit_DriveModel.Text = strDriveModel; formEdit_DriveSerial.Text = strDriveSerial; },
+                FromListingFileDlg = s => formEdit_SaveListingFile.Text = s
             }.Init();
 
-            form_EditDriveLetter.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (o, e1) => { e1.Handled = true; }));
+            formEdit_DriveLetter.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (o, e) => e.Handled = true));
 
-            var textBox = (IsVolumeNew ? form_EditSourcePath : form_EditDriveLetter);
+            var textBox = (IsVolumeNew ? formEdit_SourcePath : formEdit_DriveLetter);
 
             textBox.Focus();
             textBox.CaretIndex = int.MaxValue;
         }
 
-        private void form_EditDriveLetter_PreviewKeyDown(KeyEventArgs e)
+        private void formEdit_DriveLetter_PreviewKeyDown(KeyEventArgs e)
         {
-            if (new Key[] { Key.Tab, Key.Back, Key.Delete, Key.Left, Key.Right }.Contains(e.Key))
+            if (new[] { Key.Tab, Key.Back, Key.Delete, Key.Left, Key.Right }.Contains(e.Key))
                 return;
 
-            if (form_EditDriveLetter.Text.Length > 0)
+            if (0 < formEdit_DriveLetter.Text.Length)
             {
                 e.Handled = true;
                 return;
@@ -167,22 +167,22 @@ namespace DoubleFile
             }
 
             if ((new KeyConverter().ConvertToString(e.Key) + "\0")[0] ==
-                form_EditSourcePath.Text[0])
+                formEdit_SourcePath.Text[0])
             {
                 e.Handled = true;
                 return;
             }
         }
 
-        private void form_EditListingFile_LostFocus()
+        private void formEdit_ListingFile_LostFocus()
         {
-            if (string.IsNullOrWhiteSpace(form_EditListingFile.Text) ||
+            if (string.IsNullOrWhiteSpace(formEdit_SaveListingFile.Text) ||
                 (false == IsValidListingEdit))
             {
                 return;
             }
 
-            var strListingFile = CapDrive(Path.GetFullPath(form_EditListingFile.Text));
+            var strListingFile = CapDrive(Path.GetFullPath(formEdit_SaveListingFile.Text));
             var strExt = "" + Path.GetExtension(strListingFile);
 
             if ((strExt.Length == 0) || (false ==
@@ -193,7 +193,7 @@ namespace DoubleFile
                 strListingFile += "." + FileParse.ksFileExt_Listing;
             }
 
-            form_EditListingFile.Text = strListingFile;
+            formEdit_SaveListingFile.Text = strListingFile;
         }
 
         private void BtnOK_Click()
@@ -202,7 +202,7 @@ namespace DoubleFile
             {
                 var window = Window.GetWindow(uc_VolumeEdit) as LocalWindowBase;
 
-                if (window != null)
+                if (null != window)
                 {
                     window.LocalDialogResult = true;
                     window.CloseIfSimulatingModal();
@@ -218,7 +218,7 @@ namespace DoubleFile
         {
             var window = Window.GetWindow(uc_VolumeEdit) as LocalWindowBase;
 
-            if (window != null)
+            if (null != window)
                 window.CloseIfSimulatingModal();
         }
         #endregion form_handlers

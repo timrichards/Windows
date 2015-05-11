@@ -65,17 +65,12 @@ namespace DoubleFile
 
         internal void ShowLinks(bool bHidden = false)
         {
-            bool bAlreadyHidden = (MenuLinkGroups.Count == 1);
-
-            if (bAlreadyHidden == bHidden)
-                return;
-
             if (bHidden)
             {
                 while (MenuLinkGroups.Count > 1)
                     MenuLinkGroups.RemoveAt(1);
             }
-            else
+            else if (1 == MenuLinkGroups.Count)
             {
                 foreach (var group in _links)
                     MenuLinkGroups.Add(group);
@@ -88,29 +83,31 @@ namespace DoubleFile
             ExtraWindowFakeKey { get { return "/ExtraWindow.xaml"; } }
         static readonly Link
             _titleLink = new Link { DisplayName = "Extra Window", Source = new Uri(ExtraWindowFakeKey, UriKind.Relative) };
+
         static readonly LinkGroup[]
             _links =
+        {
+            new LinkGroup { DisplayName="Explore", Links =
             {
-                new LinkGroup { DisplayName="Explore", Links =
-                {
-                    new Link { DisplayName = "Tree map", Source = new Uri("/WinDoubleFIle/UtilDirList Local/WinTreeMap_MUI.xaml", UriKind.Relative)},
-                    new Link { DisplayName = "Folders", Source = new Uri("/WinDoubleFIle/WinDoubleFile_Folders_MUI.xaml", UriKind.Relative)},
-                    new Link { DisplayName = "Tree list", Source = new Uri("/WinDoubleFIle/WinDoubleFile_TreeList_MUI.xaml", UriKind.Relative)}
-                }},
-                new LinkGroup { DisplayName="Files", Links =
-                {
-                    new Link { DisplayName = "Files in folder", Source = new Uri("/WinDoubleFIle/UtilDirList Local/WinTreeMap_MUI.xaml", UriKind.Relative)},
-                    new Link { DisplayName = "Folders", Source = new Uri("/WinDoubleFIle/WinDoubleFile_Folders_MUI.xaml", UriKind.Relative)}
-                }},
-                new LinkGroup { DisplayName="Search", Links =
-                {
-                    new Link { DisplayName = "Search", Source = new Uri("/WinDoubleFile/WinDoubleFile_Search_MUI.xaml", UriKind.Relative)}
-                }},
-                new LinkGroup { DisplayName="Detailed info", Links =
-                {
-                    new Link { DisplayName = "Detailed info", Source = new Uri("/WinDoubleFile/WinDoubleFile_Search_MUI.xaml", UriKind.Relative)}
-                }}
-            };
+                new Link { DisplayName = "Tree map", Source = new Uri("/WinDoubleFIle/UtilDirList Local/WinTreeMap_MUI.xaml", UriKind.Relative)},
+                new Link { DisplayName = "Folders", Source = new Uri("/WinDoubleFIle/WinDoubleFile_Folders_MUI.xaml", UriKind.Relative)},
+                new Link { DisplayName = "Tree list", Source = new Uri("/WinDoubleFIle/WinDoubleFile_TreeList_MUI.xaml", UriKind.Relative)}
+            }},
+            new LinkGroup { DisplayName="Files", Links =
+            {
+                new Link { DisplayName = "Files in folder", Source = new Uri("/WinDoubleFIle/UtilDirList Local/WinTreeMap_MUI.xaml", UriKind.Relative)},
+                new Link { DisplayName = "Folders", Source = new Uri("/WinDoubleFIle/WinDoubleFile_Folders_MUI.xaml", UriKind.Relative)}
+            }},
+            new LinkGroup { DisplayName="Search", Links =
+            {
+                new Link { DisplayName = "Search", Source = new Uri("/WinDoubleFile/WinDoubleFile_Search_MUI.xaml", UriKind.Relative)}
+            }},
+            new LinkGroup { DisplayName="Detailed info", Links =
+            {
+                new Link { DisplayName = "Detailed info", Source = new Uri("/WinDoubleFile/WinDoubleFile_Search_MUI.xaml", UriKind.Relative)}
+            }}
+        };
+
         static readonly WeakReference<ModernWindow1>
             _mainWindowWR = new WeakReference<ModernWindow1>(null);
     }

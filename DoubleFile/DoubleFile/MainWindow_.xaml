@@ -10,11 +10,11 @@
         <Menu IsMainMenu="True" Grid.ColumnSpan="999" Grid.RowSpan="999"/>
         <StackPanel>
             <Label Content="Double File" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="10"/>
-            <Button Content="View project" Name ="form_btnViewProject" Width="110" Margin="10,0,10,5"/>
-            <Button Content="Open project" Name ="form_btnOpenProject" Width="110" Margin="10,0,10,5"/>
-            <Button Content="Save project" Name ="form_btnSaveProject" Width="110" Margin="10,0,10,5"/>
-            <Button Content="Explore" Name ="form_btnDuplicateFileExplorer" Width="110" Margin="10,5,10,10"/>
-            <Button Content="Newline" Name ="form_btnNewline" Width="110" Margin="10,10,10,10"/>
+            <Button Content="View project" Name ="formBtn_ViewProject" Width="110" Margin="10,0,10,5"/>
+            <Button Content="Open project" Name ="formBtn_OpenProject" Width="110" Margin="10,0,10,5"/>
+            <Button Content="Save project" Name ="formBtn_SaveProject" Width="110" Margin="10,0,10,5"/>
+            <Button Content="Explore" Name ="formBtn_DuplicateFileExplorer" Width="110" Margin="10,5,10,10"/>
+            <Button Content="Newline" Name ="formBtn_Newline" Width="110" Margin="10,10,10,10"/>
         </StackPanel>
     </Grid>
 </local:LocalWindowBase>

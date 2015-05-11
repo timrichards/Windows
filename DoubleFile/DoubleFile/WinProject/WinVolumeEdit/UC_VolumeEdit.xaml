@@ -31,10 +31,10 @@
         </Grid.ColumnDefinitions>
 
         <Label Grid.Row="1" Content="Path" />
-        <Button Grid.Row="1" Name="form_BtnSourcePath" Command="{Binding Icmd_EditSourcePath}" ToolTip="Click to open a folder browse dialog to enter the source path">
+        <Button Grid.Row="1" Name="formBtn_SourcePath" Command="{Binding Icmd_EditSourcePath}" ToolTip="Click to open a folder browse dialog to enter the source path">
             <Image Source="/Double File;component/Assets/ic_folder_open_black_18dp.png" />
         </Button>
-        <TextBox Grid.Row="1" Name="form_EditSourcePath">
+        <TextBox Grid.Row="1" Name="formEdit_SourcePath">
             <TextBox.ToolTip>
                 <TextBlock>
 Source path of the directory for which a listing file is to be created.
@@ -46,22 +46,22 @@ folder browse dialog.
             </TextBox.ToolTip>
         </TextBox>
 
-        <Label Grid.Row="2" Name="form_lblDriveLetter" Content="Modify drive letter" />
-        <TextBox Grid.Row="2" Name="form_EditDriveLetter" Width="30" HorizontalAlignment="Left" ToolTip="You can enter a new drive letter here." CharacterCasing="Upper"/>
+        <Label Grid.Row="2" Name="formLabel_DriveLetter" Content="Modify drive letter" />
+        <TextBox Grid.Row="2" Name="formEdit_DriveLetter" Width="30" HorizontalAlignment="Left" ToolTip="You can enter a new drive letter here." CharacterCasing="Upper"/>
 
         <Border Name="form_Border" BorderBrush="DarkGray" BorderThickness="1" Grid.ColumnSpan="7" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Stretch" Height="1" VerticalAlignment="Center" />
 
         <Label Grid.Row="4" Content="Drive model" />
-        <Button Grid.Row="4" Name="form_BtnDriveModel" Command="{Binding Icmd_Probe}" ToolTip="Click to try and probe your drive for the model and serial #">
+        <Button Grid.Row="4" Name="formBtn_DriveModel" Command="{Binding Icmd_Probe}" ToolTip="Click to try and probe your drive for the model and serial #">
             <Image Source="/Double File;component/Assets/ic_storage_black_18dp.png" />
         </Button>
-        <TextBox Grid.Row="4" Name="form_EditDriveModel" ToolTip="Optional. Drive model helps to identify the drive this listing is for later on when reviewing." />
+        <TextBox Grid.Row="4" Name="formEdit_DriveModel" ToolTip="Optional. Drive model helps to identify the drive this listing is for later on when reviewing." />
 
         <Label Grid.Row="5" Content="Drive serial #" />
-        <TextBox Grid.Row="5" Name="form_EditDriveSerial" ToolTip="Optional. Serial number helps to identify the drive this listing is for later on when reviewing." />
+        <TextBox Grid.Row="5" Name="formEdit_DriveSerial" ToolTip="Optional. Serial number helps to identify the drive this listing is for later on when reviewing." />
 
         <Label Grid.Row="7" Content="Volume nickname" />
-        <TextBox Grid.Row="7" Name="form_EditNickname">
+        <TextBox Grid.Row="7" Name="formEdit_Nickname">
             <TextBox.ToolTip>
                 <TextBlock>
 Optional. Volume nickname helps to identify the drive
@@ -79,12 +79,12 @@ model/serial# do not.
         <local:UC_VolumeGroup Grid.Row="8" x:Name="form_ucVolumeGroup" Grid.ColumnSpan="999"/>
 
         <Label Grid.Row="10" Content="Directory listing file" />
-        <Button Name="form_BtnListingFile" Grid.Row="10" Command="{Binding Icmd_EditListingFile}" ToolTip="Click to open a file save dialog">
+        <Button Name="formBtn_SaveListingFile" Grid.Row="10" Command="{Binding Icmd_SaveListingFile}" ToolTip="Click to open a file save dialog">
             <Image Source="/Double File;component/Assets/ic_save_black_18dp.png" />
         </Button>
-        <TextBox Grid.Row="10" Name="form_EditListingFile" ToolTip="Where to save the directory listing."/>
+        <TextBox Grid.Row="10" Name="formEdit_SaveListingFile" ToolTip="Where to save the directory listing."/>
 
-        <Button Grid.Column="3" Content="OK" Name="form_btnOK" Command="{Binding Icmd_IsOKenabled}" Grid.Row="11" Width="75" Height="Auto" IsDefault="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
-        <Button Grid.Column="4" Content="Cancel" Name="form_btnCancel" Grid.Row="11" Width="75" Grid.ColumnSpan="2" Height="Auto" IsCancel="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+        <Button Grid.Column="3" Content="OK" Name="formBtn_OK" Command="{Binding Icmd_IsOKenabled}" Grid.Row="11" Width="75" Height="Auto" IsDefault="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+        <Button Grid.Column="4" Content="Cancel" Name="formBtn_Cancel" Grid.Row="11" Width="75" Grid.ColumnSpan="2" Height="Auto" IsCancel="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
     </Grid>
 </UserControl>

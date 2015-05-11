@@ -13,10 +13,10 @@ namespace DoubleFile
 
             var lvChildrenVM = new LV_TreeListChildrenVM();
 
-            form_lvChildren.DataContext = lvChildrenVM;
+            formLV_Children.DataContext = lvChildrenVM;
 
             Tag =
-                form_lvSiblings.DataContext =
+                formLV_Siblings.DataContext =
                 _lvTreeListSiblingsVM =
                 new LV_TreeListSiblingsVM(lvChildrenVM);
         }

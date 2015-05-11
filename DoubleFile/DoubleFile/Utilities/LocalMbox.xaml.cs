@@ -27,15 +27,15 @@ namespace DoubleFile
                 {
                     case MessageBoxButton.OK:
                     {
-                        form_btnCancel.Visibility = Visibility.Hidden;
-                        form_btnOK.SetValue(Grid.ColumnProperty, form_btnCancel.GetValue(Grid.ColumnProperty));
+                        formBtn_Cancel.Visibility = Visibility.Hidden;
+                        formBtn_OK.SetValue(Grid.ColumnProperty, formBtn_Cancel.GetValue(Grid.ColumnProperty));
                         break;
                     }
 
                     case MessageBoxButton.YesNo:
                     {
-                        form_btnOK.Content = "Yes";
-                        form_btnCancel.Content = "No";
+                        formBtn_OK.Content = "Yes";
+                        formBtn_Cancel.Content = "No";
                         break;
                     }
 
@@ -65,10 +65,10 @@ namespace DoubleFile
             Observable.FromEventPattern(form_grid, "Loaded")
                 .Subscribe(args => FlashWindowStatic.Go(this, Once: true));
 
-            Observable.FromEventPattern(form_btnOK, "Click")
+            Observable.FromEventPattern(formBtn_OK, "Click")
                 .Subscribe(args => BtnOK_Click());
 
-            Observable.FromEventPattern(form_btnCancel, "Click")
+            Observable.FromEventPattern(formBtn_Cancel, "Click")
                 .Subscribe(args => CloseIfSimulatingModal());
 
             Message = strMessage;

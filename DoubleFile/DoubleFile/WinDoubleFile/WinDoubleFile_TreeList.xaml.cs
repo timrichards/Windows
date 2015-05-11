@@ -20,8 +20,8 @@ namespace DoubleFile
 
             var lvChildrenVM = new LV_TreeListChildrenVM();
 
-            form_lvChildren.DataContext = lvChildrenVM;
-            form_lvSiblings.DataContext = _lvTreeListSiblingsVM = new LV_TreeListSiblingsVM(lvChildrenVM);
+            formLV_Children.DataContext = lvChildrenVM;
+            formLV_Siblings.DataContext = _lvTreeListSiblingsVM = new LV_TreeListSiblingsVM(lvChildrenVM);
         }
 
         protected override LocalWindow_DoubleFile CreateChainedWindow()

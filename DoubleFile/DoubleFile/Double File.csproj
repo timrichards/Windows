@@ -553,6 +553,7 @@
     <Resource Include="Assets\ic_content_copy_white_18dp.png" />
     <Resource Include="Assets\ic_folder_open_white_18dp.png" />
     <Resource Include="Assets\ic_save_white_18dp.png" />
+    <Resource Include="Assets\ic_error_black_18dp.png" />
     <Content Include="WinProject\UtilProject\7z920x86\7z.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

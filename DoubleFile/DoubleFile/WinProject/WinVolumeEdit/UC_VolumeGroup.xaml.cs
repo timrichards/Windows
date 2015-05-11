@@ -9,7 +9,7 @@ namespace DoubleFile
     /// </summary>
     public partial class UC_VolumeGroup : UserControl
     {
-        public string Text { get { return form_EditVolumeGroup.Text; } set { form_EditVolumeGroup.Text = value; } }
+        public string Text { get { return formEdit_VolumeGroup.Text; } set { formEdit_VolumeGroup.Text = value; } }
         internal bool IsWinVolumeGroup { set; private get; }
 
         public UC_VolumeGroup()
@@ -24,8 +24,8 @@ namespace DoubleFile
         {
             if (IsWinVolumeGroup)
             {
-                form_EditVolumeGroup.Focus();
-                form_EditVolumeGroup.CaretIndex = int.MaxValue;
+                formEdit_VolumeGroup.Focus();
+                formEdit_VolumeGroup.CaretIndex = int.MaxValue;
             }
         }
     }

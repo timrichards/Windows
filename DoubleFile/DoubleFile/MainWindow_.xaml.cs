@@ -50,19 +50,19 @@ namespace DoubleFile
             Observable.FromEventPattern<System.ComponentModel.CancelEventArgs>(this, "Closing")
                 .Subscribe(args => MainWindow_Closing(args.EventArgs));
 
-            Observable.FromEventPattern(form_btnViewProject, "Click")
+            Observable.FromEventPattern(formBtn_ViewProject, "Click")
                 .Subscribe(args => ShowProjectWindow());
 
-            Observable.FromEventPattern(form_btnOpenProject, "Click")
+            Observable.FromEventPattern(formBtn_OpenProject, "Click")
                 .Subscribe(args => ShowProjectWindow(bOpenProject: true));
 
-            Observable.FromEventPattern(form_btnSaveProject, "Click")
+            Observable.FromEventPattern(formBtn_SaveProject, "Click")
                 .Subscribe(args => Button_SaveProject_Click());
 
-            Observable.FromEventPattern(form_btnDuplicateFileExplorer, "Click")
+            Observable.FromEventPattern(formBtn_DuplicateFileExplorer, "Click")
                 .Subscribe(args => Button_DuplicateFileExplorer_Click());
 
-            Observable.FromEventPattern(form_btnNewline, "Click")
+            Observable.FromEventPattern(formBtn_Newline, "Click")
                 .Subscribe(args => UtilProject.WriteLine());
 
             Observable.FromEventPattern(this, "MouseDown")
@@ -183,7 +183,7 @@ namespace DoubleFile
                 {
                     //form_tabControlMain.SelectedTab = form_tabPageBrowse;
                     //form_tabControlCopyIgnore.SelectedTab = form_tabPageCopy;
-                    //m_blinky.Go(form_lvCopyScratchpad, clr: Color.Yellow, Once: true);
+                    //m_blinky.Go(formLV_CopyScratchpad, clr: Color.Yellow, Once: true);
                     //FormDirListMessageBox("The Copy scratchpad cannot be loaded with no directory listings.", "Load Copy scratchpad externally");
                     //Application.Exit();
                     break;

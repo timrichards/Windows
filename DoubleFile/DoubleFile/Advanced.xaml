@@ -10,7 +10,7 @@
         <ScrollViewer>
             <StackPanel MinWidth="200">
                 <TextBlock Text="ADVANCED" Style="{StaticResource Heading2}" />
-                <Button Name="form_btnNewWindow" Content="New Window" Width="75"/>
+                <Button Name="formBtn_NewWindow" Content="New Window" Width="75"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>

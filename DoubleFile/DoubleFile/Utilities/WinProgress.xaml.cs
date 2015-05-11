@@ -106,11 +106,11 @@ namespace DoubleFile
         #region form_handlers
         private void Grid_Loaded()
         {
-            form_lvProgress.DataContext = _lv;
+            formLV_Progress.DataContext = _lv;
 
-            _lv.SelectedOne = () => form_lvProgress.SelectedItems.HasOnlyOne();
-            _lv.SelectedAny = () => (false == form_lvProgress.SelectedItems.IsEmptyA());
-            _lv.Selected = () => form_lvProgress.SelectedItems.Cast<LVitem_ProgressVM>();
+            _lv.SelectedOne = () => formLV_Progress.SelectedItems.HasOnlyOne();
+            _lv.SelectedAny = () => (false == formLV_Progress.SelectedItems.IsEmptyA());
+            _lv.Selected = () => formLV_Progress.SelectedItems.Cast<LVitem_ProgressVM>();
         }
 
         private void WinProgress_ContentRendered()

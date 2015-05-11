@@ -22,9 +22,9 @@ namespace DoubleFile
 
         private void Grid_Loaded()
         {
-            form_localPath.DataContext = form_lvFile.DataContext = _lvFileDetailVM = new LV_FileDetailVM();          
-            form_lvFolder.DataContext = _lvFolderDetailVM = new LV_FolderDetailVM();
-            form_lvVolume.DataContext = _lvVolumeDetailVM = new LV_VolumeDetailVM();
+            form_localPath.DataContext = formLV_File.DataContext = _lvFileDetailVM = new LV_FileDetailVM();          
+            formLV_Folder.DataContext = _lvFolderDetailVM = new LV_FolderDetailVM();
+            formLV_Volume.DataContext = _lvVolumeDetailVM = new LV_VolumeDetailVM();
         }
 
         protected override LocalWindow_DoubleFile CreateChainedWindow()

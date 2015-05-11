@@ -14,14 +14,14 @@
                 <Setter Property="Background" Value="{Binding Background}"/>
             </Style>
         </Grid.Resources>
-        <ListView Grid.Column="0" Name="form_lvSiblings" SelectedItem="{Binding SelectedItem}">
+        <ListView Grid.Column="0" Name="formLV_Siblings" SelectedItem="{Binding SelectedItem}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Sibling folders" DisplayMemberBinding="{Binding Folder}" Width="{Binding WidthFolder}"/>
                 </GridView>
             </ListView.View>
         </ListView>
-        <ListView Grid.Column="1" Name="form_lvChildren" SelectedItem="{Binding SelectedItem}">
+        <ListView Grid.Column="1" Name="formLV_Children" SelectedItem="{Binding SelectedItem}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Folders here" DisplayMemberBinding="{Binding Folder}" Width="{Binding WidthFolder}"/>

@@ -64,7 +64,10 @@ namespace DoubleFile
             {
                 _lvItemTemp.Nickname = formEdit_Nickname.Text;
                 _lvItemTemp.SourcePath = formEdit_SourcePath.Text;
-                _lvItemTemp.ListingFile = (IsVolumeNew ? formEdit_SaveListingFile.Text : _strListingFile);
+
+                if (IsVolumeNew)
+                    _lvItemTemp.ListingFile = formEdit_SaveListingFile.Text;
+
                 _lvItemTemp.VolumeGroup = formUC_VolumeGroup.Text;
                 _lvItemTemp.DriveModel = formEdit_DriveModel.Text;
                 _lvItemTemp.DriveSerial = formEdit_DriveSerial.Text;
@@ -78,17 +81,12 @@ namespace DoubleFile
                 if (null == value)
                     return;
                 
-                var i = 0;
-
-                formEdit_Nickname.Text = value[i++];
-                formEdit_SourcePath.Text = value[i++];
-                _strListingFile = value[i++]; formEdit_SaveListingFile.Text = (IsVolumeNew ? _strListingFile : Path.GetFileName(_strListingFile));
-                ++i;    // Status
-                ++i;    // IncludeYN
-                formUC_VolumeGroup.Text = value[i++];
-                formEdit_DriveModel.Text = value[i++];
-                formEdit_DriveSerial.Text = value[i++];
-                        // ScannedLength
+                formEdit_Nickname.Text = value.Nickname;
+                formEdit_SourcePath.Text = value.SourcePath;
+                formEdit_SaveListingFile.Text = IsVolumeNew ? value.ListingFile : Path.GetFileName(value.ListingFile);
+                formUC_VolumeGroup.Text = value.VolumeGroup;
+                formEdit_DriveModel.Text = value.DriveModel;
+                formEdit_DriveSerial.Text = value.DriveSerial;
             }
         }
         LVitem_ProjectVM _lvItemTemp = null;
@@ -133,7 +131,6 @@ namespace DoubleFile
             return strPath;
         }
 
-        #region form_handlers
         private void Grid_Loaded()
         {
             uc_VolumeEdit.DataContext = new UC_VolumeEditVM
@@ -226,9 +223,5 @@ namespace DoubleFile
             if (null != window)
                 window.CloseIfSimulatingModal();
         }
-        #endregion form_handlers
-
-        string
-            _strListingFile = null;
     }
 }

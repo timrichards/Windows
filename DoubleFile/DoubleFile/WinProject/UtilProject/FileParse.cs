@@ -95,17 +95,13 @@ namespace DoubleFile
         static internal string CheckNTFS_chars(ref string strFile, bool bFile = false)
         {
             var arrChar = bFile ? Path.GetInvalidFileNameChars() : Path.GetInvalidPathChars();
-            var nIx = -1;
+            var nIx = strFile.IndexOfAny(arrChar);
 
-            if ((nIx = strFile.IndexOfAny(arrChar)) > -1)
-            {
-                var strRet = "NTFS ASCII " + ((int)strFile[nIx]);
+            if (0 > nIx)
+                return null;
 
-                strFile = strFile.Replace("\n", "").Replace("\r", "").Replace("\t", "");    // program-incompatible
-                return strRet;
-            }
-
-            return null;
+            strFile = strFile.Replace("\n", "").Replace("\r", "").Replace("\t", "");    // program-incompatible
+            return "NTFS ASCII " + ((int)strFile[nIx]);
         }
 
         static internal void ConvertFile(string strFile)
@@ -113,9 +109,7 @@ namespace DoubleFile
             var strFile_01 = StrFile_01(strFile);
 
             if (File.Exists(strFile_01))
-            {
                 File.Delete(strFile_01);
-            }
 
             File.Move(strFile, strFile_01);
 

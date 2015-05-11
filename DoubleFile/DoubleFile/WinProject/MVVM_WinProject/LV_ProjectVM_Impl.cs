@@ -81,10 +81,9 @@ namespace DoubleFile
                     var dlg =
                         lvItemVolumeTemp.WouldSave
                         ? new WinVolumeNew()
-                        : (WinVolumeEditBase)new WinVolumeEdit()
-                    {
-                        LVitemVolumeTemp = new LVitem_ProjectVM(lvItemVolumeTemp)
-                    };
+                        : (WinVolumeEditBase)new WinVolumeEdit();
+
+                    dlg.LVitemVolumeTemp = new LVitem_ProjectVM(lvItemVolumeTemp);
 
                     if (false == (dlg.ShowDialog() ?? false))
                         break;  // user canceled
@@ -216,12 +215,6 @@ namespace DoubleFile
 
         bool ModifyListingFile(LVitem_ProjectVM lvItem_Orig, LVitem_ProjectVM lvItemVolumeTemp, char driveLetter)
         {
-            if (false == FileParse.ValidateFile(lvItem_Orig.ListingFile))
-            {
-                MBoxStatic.ShowDialog("Bad listing file.", "Edit Listing File");
-                return false;
-            }
-
             var bDriveModel_Todo = ("" + lvItem_Orig.DriveModel != "" + lvItemVolumeTemp.DriveModel);
             var bDriveSerial_Todo = ("" + lvItem_Orig.DriveSerial != "" + lvItemVolumeTemp.DriveSerial);
             var bNickname_Todo = ("" + lvItem_Orig.Nickname != "" + lvItemVolumeTemp.Nickname);
@@ -233,6 +226,12 @@ namespace DoubleFile
 
             if (false == (bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo || bDriveLetter_Todo))
                 return false;
+
+            if (false == FileParse.ValidateFile(lvItem_Orig.ListingFile))
+            {
+                MBoxStatic.ShowDialog("Bad listing file.", "Edit Listing File");
+                return false;
+            }
 
             var strFile_01 = FileParse.StrFile_01(lvItem_Orig.ListingFile);
 

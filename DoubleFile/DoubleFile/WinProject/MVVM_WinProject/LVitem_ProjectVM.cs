@@ -25,6 +25,8 @@ namespace DoubleFile
         internal LVitem_ProjectVM(IEnumerable<string> ieString = null)
             : base(null, ieString)
         {
+            if (null == Status)
+                Status = FileParse.ksNotSaved;
         }
 
         internal LVitem_ProjectVM(LVitem_ProjectVM lvItemTemp)

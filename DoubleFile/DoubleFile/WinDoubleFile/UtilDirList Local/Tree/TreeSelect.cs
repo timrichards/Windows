@@ -13,17 +13,17 @@ namespace DoubleFile
         static internal IObservable<Tuple<IEnumerable<string>, string, LocalTreeNode>>
             FileListUpdated { get { return _fileListUpdated.AsObservable(); } }
         static readonly Subject<Tuple<IEnumerable<string>, string, LocalTreeNode>> _fileListUpdated = new Subject<Tuple<IEnumerable<string>, string, LocalTreeNode>>();
-        static readonly int _nFileListUpdatedOnNextID = ExtensionMethodsStatic.OnNextID;
+        static readonly int _nFileListUpdatedOnNextAssertLoc = 99846;
 
         static internal IObservable<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>>
             FolderDetailUpdated { get { return _folderDetailUpdated.AsObservable(); } }
         static readonly Subject<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>> _folderDetailUpdated = new Subject<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>>();
-        static readonly int _nFolderDetailUpdatedOnNextID = ExtensionMethodsStatic.OnNextID;
+        static readonly int _nFolderDetailUpdatedOnNextAssertLoc = 99845;
 
         static internal IObservable<Tuple<IEnumerable<IEnumerable<string>>, string>>
             VolumeDetailUpdated { get { return _volumeDetailUpdated.AsObservable(); } }
         static readonly Subject<Tuple<IEnumerable<IEnumerable<string>>, string>> _volumeDetailUpdated = new Subject<Tuple<IEnumerable<IEnumerable<string>>, string>>();
-        static readonly int _nVolumeDetailUpdatedOnNextID = ExtensionMethodsStatic.OnNextID;
+        static readonly int _nVolumeDetailUpdatedOnNextAssertLoc = 99844;
 
         static internal bool DoThreadFactory(LocalTreeNode treeNode,
             bool bCompareMode = false, bool bSecondComparePane = false)
@@ -93,7 +93,7 @@ namespace DoubleFile
                     .Take((nLineNo - nPrevDir - 1));
             });
 
-            _fileListUpdated.LocalOnNext(Tuple.Create(lsFiles, strListingFile, treeNode), _nFileListUpdatedOnNextID);
+            _fileListUpdated.LocalOnNext(Tuple.Create(lsFiles, strListingFile, treeNode), _nFileListUpdatedOnNextAssertLoc);
         }
 
         static void GetFolderDetail(LocalTreeNode treeNode)
@@ -104,7 +104,7 @@ namespace DoubleFile
             if ((null == nodeDatum) ||
                 (0 == nodeDatum.LineNo))
             {
-                _folderDetailUpdated.LocalOnNext(Tuple.Create(lasItems.AsEnumerable(), (LocalTreeNode)null), _nFolderDetailUpdatedOnNextID);
+                _folderDetailUpdated.LocalOnNext(Tuple.Create(lasItems.AsEnumerable(), (LocalTreeNode)null), _nFolderDetailUpdatedOnNextAssertLoc);
                 return;
             }
 
@@ -134,7 +134,7 @@ namespace DoubleFile
             }
 
             lasItems.Add(new[] { "Total Size", FormatSize(nodeDatum.TotalLength, bBytes: true) });
-            _folderDetailUpdated.LocalOnNext(Tuple.Create(lasItems.AsEnumerable(), treeNode), _nFolderDetailUpdatedOnNextID);
+            _folderDetailUpdated.LocalOnNext(Tuple.Create(lasItems.AsEnumerable(), treeNode), _nFolderDetailUpdatedOnNextAssertLoc);
         }
 
         static void GetVolumeDetail(LocalTreeNode treeNode)
@@ -148,7 +148,7 @@ namespace DoubleFile
             if ((null == _dictVolumeInfo) ||
                 (false == _dictVolumeInfo.TryGetValue(((RootNodeDatum)rootNode.NodeDatum).ListingFile, out strDriveInfo)))
             {
-                _volumeDetailUpdated.LocalOnNext(Tuple.Create((IEnumerable<IEnumerable<string>>)null, rootNode.Text), _nVolumeDetailUpdatedOnNextID);
+                _volumeDetailUpdated.LocalOnNext(Tuple.Create((IEnumerable<IEnumerable<string>>)null, rootNode.Text), _nVolumeDetailUpdatedOnNextAssertLoc);
                 return;
             }
 
@@ -204,7 +204,7 @@ namespace DoubleFile
                 lasItems.Add(asItems[ix]);
             }
 
-            _volumeDetailUpdated.LocalOnNext(Tuple.Create(lasItems.Where(i => null != i), rootNode.Text), _nVolumeDetailUpdatedOnNextID);
+            _volumeDetailUpdated.LocalOnNext(Tuple.Create(lasItems.Where(i => null != i), rootNode.Text), _nVolumeDetailUpdatedOnNextAssertLoc);
         }
 
         static Dictionary<string, string>

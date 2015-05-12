@@ -12,12 +12,12 @@ namespace DoubleFile
         static internal IObservable<LocalTreeNode>
             Selected { get { return _selected.AsObservable(); } }
         static readonly Subject<LocalTreeNode> _selected = new Subject<LocalTreeNode>();
-        static readonly int _nSelectedOnNextID = ExtensionMethodsStatic.OnNextID;
+        static readonly int _nSelectedOnNextAssertLoc = 99851;
 
         static internal IObservable<string>
             SelectedFile { get { return _selectedFile.AsObservable(); } }
         static readonly Subject<string> _selectedFile = new Subject<string>();
-        static readonly int _nSelectedFileOnNextID = ExtensionMethodsStatic.OnNextID;
+        static readonly int _nSelectedFileOnNextAssertLoc = 99850;
 
         public LocalTreeNode[]
             Nodes { get; protected set; }
@@ -142,8 +142,8 @@ namespace DoubleFile
 
         internal void GoToFile(string strFile)
         {
-            _selected.LocalOnNext(this, _nSelectedOnNextID);
-            _selectedFile.LocalOnNext(strFile, _nSelectedFileOnNextID);
+            _selected.LocalOnNext(this, _nSelectedOnNextAssertLoc);
+            _selectedFile.LocalOnNext(strFile, _nSelectedFileOnNextAssertLoc);
         }
     }
 }

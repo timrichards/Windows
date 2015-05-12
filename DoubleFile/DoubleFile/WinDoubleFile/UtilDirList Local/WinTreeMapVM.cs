@@ -9,9 +9,9 @@ namespace DoubleFile
         internal IObservable<LocalTreeNode>
             TreeNodeCallback { get { return _treeNodeCallback.AsObservable(); } }
         readonly Subject<LocalTreeNode> _treeNodeCallback = new Subject<LocalTreeNode>();
-        static readonly int _nTreeNodeCallbackOnNextID = ExtensionMethodsStatic.OnNextID;
+        static readonly int _nTreeNodeCallbackOnNextAssertLoc = 99853;
 
-        internal void GoTo(LocalTreeNode treeNode) { _treeNodeCallback.LocalOnNext(treeNode, _nTreeNodeCallbackOnNextID); }
+        internal void GoTo(LocalTreeNode treeNode) { _treeNodeCallback.LocalOnNext(treeNode, _nTreeNodeCallbackOnNextAssertLoc); }
 
         public double Maximum { get; private set; }
         internal LocalTreeNode DeepNode

@@ -8,24 +8,23 @@ namespace DoubleFile
 {
     static internal partial class ExtensionMethodsStatic
     {
-        static internal int OnNextID { get { return _nOnNextID++; } }
-        static int _nOnNextID = 0;
         static Dictionary<int, DateTime> _lsSubjects = new Dictionary<int, DateTime>();
-        static internal void LocalOnNext<T>(this Subject<T> subject, T value, int nOnNextID)
+        static internal bool LocalOnNext<T>(this Subject<T> subject, T value, int nOnNextAssertLoc)
         {
             var dt = DateTime.MinValue;
 
-            _lsSubjects.TryGetValue(nOnNextID, out dt);
+            _lsSubjects.TryGetValue(nOnNextAssertLoc, out dt);
 
             if ((null != dt) &&
                 (DateTime.Now - dt) < TimeSpan.FromMilliseconds(100))
             {
-                MBoxStatic.Assert(99854, false);
-                return;
+                MBoxStatic.Assert(nOnNextAssertLoc, false);
+                return false;
             }
 
-            _lsSubjects[nOnNextID] = DateTime.Now;
+            _lsSubjects[nOnNextAssertLoc] = DateTime.Now;
             subject.OnNext(value);
+            return true;
         }
 
         static internal bool IsEmpty<T>(this IEnumerable<T> source)

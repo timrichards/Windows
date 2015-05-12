@@ -15,12 +15,12 @@ namespace DoubleFile
         static internal IObservable<Tuple<LVitem_ProjectVM, string, string>>
             GoToFile { get { return _goToFile.AsObservable(); } }
         static readonly Subject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new Subject<Tuple<LVitem_ProjectVM, string, string>>();
-        static readonly int _nGoToFileOnNextID = ExtensionMethodsStatic.OnNextID;
+        static readonly int _nGoToFileOnNextAssertLoc = 99848;
 
         static internal IObservable<Tuple<IEnumerable<string>, LocalTreeNode>>
             UpdateFileDetail { get { return _updateFileDetail.AsObservable(); } }
         static readonly Subject<Tuple<IEnumerable<string>, LocalTreeNode>> _updateFileDetail = new Subject<Tuple<IEnumerable<string>, LocalTreeNode>>();
-        static readonly int _nUpdateFileDetailOnNextID = ExtensionMethodsStatic.OnNextID;
+        static readonly int _nUpdateFileDetailOnNextAssertLoc = 99847;
 
         internal WinDoubleFile_DuplicatesVM()
         {
@@ -52,7 +52,7 @@ namespace DoubleFile
             }
 
             _treeNode = treeNode;
-            _updateFileDetail.LocalOnNext(Tuple.Create(ieFileLine, _treeNode), _nUpdateFileDetailOnNextID);
+            _updateFileDetail.LocalOnNext(Tuple.Create(ieFileLine, _treeNode), _nUpdateFileDetailOnNextAssertLoc);
             SelectedItem_Set(null);
             UtilProject.UIthread(Items.Clear);
 
@@ -163,7 +163,7 @@ namespace DoubleFile
                 return;
             }
 
-            _goToFile.LocalOnNext(Tuple.Create(_selectedItem.LVitem_ProjectVM, _selectedItem.Path, _selectedItem.Filename), _nGoToFileOnNextID);
+            _goToFile.LocalOnNext(Tuple.Create(_selectedItem.LVitem_ProjectVM, _selectedItem.Path, _selectedItem.Filename), _nGoToFileOnNextAssertLoc);
         }
 
         CancellationTokenSource

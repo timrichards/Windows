@@ -31,6 +31,7 @@ namespace DoubleFile
         static internal IObservable<bool>   // bool is a no-op: generic placeholder
             DeactivateDidOccur { get { return _deactivateDidOccur.AsObservable(); } }
         static readonly Subject<bool> _deactivateDidOccur = new Subject<bool>();
+        static readonly int _nDeactivateDidOccurOnNextID = ExtensionMethodsStatic.OnNextID;
 
         static internal ImageSource Icon { get; set; }
 
@@ -59,7 +60,7 @@ namespace DoubleFile
                 .Subscribe(args => Application_Activated());
 
             Observable.FromEventPattern(this, "Deactivated")
-                .Subscribe(args => { LocalActivated = false; _deactivateDidOccur.LocalOnNext(false); });
+                .Subscribe(args => { LocalActivated = false; _deactivateDidOccur.LocalOnNext(false, _nDeactivateDidOccurOnNextID); });
 
             Observable.FromEventPattern(this, "Exit")
                 .Subscribe(args => LocalExit = true);   // App.FileDictionary.Dispose();

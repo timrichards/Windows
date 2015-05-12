@@ -18,14 +18,17 @@ namespace DoubleFile
         static internal IObservable<LocalTreeNode>
             TreeMapRendered { get { return _treeMapRendered.AsObservable(); } }
         static readonly Subject<LocalTreeNode> _treeMapRendered = new Subject<LocalTreeNode>();
+        static readonly int _nTreeMapRenderedNextID = ExtensionMethodsStatic.OnNextID;
 
         static internal IObservable<LocalTreeNode>
             TreeMapChildSelected { get { return _treeMapChildSelected.AsObservable(); } }
         static readonly Subject<LocalTreeNode> _treeMapChildSelected = new Subject<LocalTreeNode>();
+        static readonly int _nTreeMapChildSelectedOnNextID = ExtensionMethodsStatic.OnNextID;
 
         static internal IObservable<string>
             SelectedFile { get { return _selectedFile.AsObservable(); } }
         static readonly Subject<string> _selectedFile = new Subject<string>();
+        static readonly int _nSelectedFileOnNextID = ExtensionMethodsStatic.OnNextID;
 
         internal System.Windows.Window
             LocalOwner = null;
@@ -321,7 +324,7 @@ namespace DoubleFile
             {
                 strFolder += " (file)";
                 nodeTreeSelect = treeNodeChild.Parent.Parent;   // Parent is TreeMapFileListNode
-                _selectedFile.LocalOnNext(treeNodeChild.Text);
+                _selectedFile.LocalOnNext(treeNodeChild.Text, _nSelectedFileOnNextID);
             }
 
             UtilProject.UIthread(() => WinTooltip.ShowTooltip(
@@ -339,7 +342,7 @@ namespace DoubleFile
             if (0 == _nInvalidateRef)   // jic
                 Invalidate();
 
-            _treeMapChildSelected.LocalOnNext(treeNodeChild);
+            _treeMapChildSelected.LocalOnNext(treeNodeChild, _nTreeMapChildSelectedOnNextID);
             _bTreeSelect = TreeSelect.DoThreadFactory(nodeTreeSelect);
             _bSelRecAndTooltip = false;
         }
@@ -559,7 +562,7 @@ namespace DoubleFile
             }
 
             InvalidatePushRef(() => UtilProject.UIthread(() => Render(treeNode)));
-            _treeMapRendered.LocalOnNext(treeNode);
+            _treeMapRendered.LocalOnNext(treeNode, _nTreeMapRenderedNextID);
             _bTreeSelect = TreeSelect.DoThreadFactory(treeNode);
         }
 

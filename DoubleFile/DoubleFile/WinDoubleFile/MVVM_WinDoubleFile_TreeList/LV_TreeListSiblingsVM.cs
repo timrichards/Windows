@@ -11,6 +11,7 @@ namespace DoubleFile
         static internal IObservable<LocalTreeNode>
             TreeListSiblingSelected { get { return _treeListSiblingSelected.AsObservable(); } }
         static readonly Subject<LocalTreeNode> _treeListSiblingSelected = new Subject<LocalTreeNode>();
+        static readonly int _nTreeListSiblingSelectedOnNextID = ExtensionMethodsStatic.OnNextID;
 
         public LVitem_TreeListVM SelectedItem
         {
@@ -25,7 +26,7 @@ namespace DoubleFile
                 if (null == value)
                     return;
 
-                _treeListSiblingSelected.LocalOnNext(value.LocalTreeNode);
+                _treeListSiblingSelected.LocalOnNext(value.LocalTreeNode, _nTreeListSiblingSelectedOnNextID);
                 SelectedItem_AllTriggers();
             }
         }

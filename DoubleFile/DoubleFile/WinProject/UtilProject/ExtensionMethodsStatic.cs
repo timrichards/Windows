@@ -8,13 +8,14 @@ namespace DoubleFile
 {
     static internal partial class ExtensionMethodsStatic
     {
-        static Dictionary<Type, DateTime> _lsSubjects = new Dictionary<Type, DateTime>();
-        static internal void LocalOnNext<T>(this Subject<T> subject, T value)
+        static internal int OnNextID { get { return _nOnNextID++; } }
+        static int _nOnNextID = 0;
+        static Dictionary<int, DateTime> _lsSubjects = new Dictionary<int, DateTime>();
+        static internal void LocalOnNext<T>(this Subject<T> subject, T value, int nOnNextID)
         {
             var dt = DateTime.MinValue;
-            var type = subject.GetType();
 
-            _lsSubjects.TryGetValue(type, out dt);
+            _lsSubjects.TryGetValue(nOnNextID, out dt);
 
             if ((null != dt) &&
                 (DateTime.Now - dt) < TimeSpan.FromMilliseconds(100))
@@ -23,7 +24,7 @@ namespace DoubleFile
                 return;
             }
 
-            _lsSubjects[type] = DateTime.Now;
+            _lsSubjects[nOnNextID] = DateTime.Now;
             subject.OnNext(value);
         }
 

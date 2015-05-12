@@ -54,7 +54,7 @@ namespace DoubleFile
 
         internal void SetProgress(string strPath, double nProgress)
         {
-            var lvItem = _lv[strPath];
+            var lvItem = _lv[strPath].FirstOrDefault();
 
             if (lvItem != null)
                 lvItem.Progress = nProgress;
@@ -67,7 +67,7 @@ namespace DoubleFile
             var lvItem = _lv[strPath];
 
             if (lvItem != null)
-                lvItem.SetCompleted();
+                lvItem.FirstOrDefault().SetCompleted();
             else
                 MBoxStatic.Assert(99930, false);
         }
@@ -77,7 +77,7 @@ namespace DoubleFile
             var lvItem = _lv[strPath];
 
             if (lvItem != null)
-                lvItem.SetError(strError);
+                lvItem.FirstOrDefault().SetError(strError);
             else
                 MBoxStatic.Assert(99929, false);
         }

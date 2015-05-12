@@ -71,7 +71,7 @@ namespace DoubleFile
             }
 
             UtilProject.UIthread(() => Add(lsItems));
-            SelectedItem_Set(this[_strSelectedFile]);
+            SelectedItem_Set(this[_strSelectedFile].FirstOrDefault());
             _strSelectedFile = null;
         }
 
@@ -80,10 +80,10 @@ namespace DoubleFile
         void SelectedFile(string strFile)
         {
             _strSelectedFile = strFile;
-            SelectedItem_Set(this[_strSelectedFile]);
+            SelectedItem_Set(this[_strSelectedFile].FirstOrDefault());
         }
 
-        internal override LVitem_DoubleFile_FilesVM this[string s_in]
+        internal override IEnumerable<LVitem_DoubleFile_FilesVM> this[string s_in]
         {
             get
             {
@@ -92,7 +92,7 @@ namespace DoubleFile
             
                 var s = s_in.ToLower();
 
-                return ItemsCast.FirstOrDefault(o => o.Filename.ToLower().Equals(s));
+                return ItemsCast.Where(o => o.Filename.ToLower().Equals(s));
             }
         }
 

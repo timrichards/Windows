@@ -10,7 +10,7 @@ namespace DoubleFile
         internal Func<IEnumerable<T>> Selected = () => { DesignModeOK(); return null; };
         internal IEnumerable<T> ItemsCast { get { return Items.Cast<T>(); } }
 
-        internal virtual T this[string s_in]
+        internal virtual IEnumerable<T> this[string s_in]
         {
             get
             {
@@ -19,7 +19,7 @@ namespace DoubleFile
             
                 var s = s_in.ToLower();
 
-                return ItemsCast.FirstOrDefault(o => o.SearchValue == s);
+                return ItemsCast.Where(o => o.SearchValue == s);
             }
         }
 
@@ -33,14 +33,27 @@ namespace DoubleFile
             if (Items.Count != other.Items.Count)
                 return false;
 
+            var lsMatched = new List<ListViewItemVM_Base>();
+
             foreach (var item in ItemsCast)
             {
-                var otherItem = other[item.SearchValue];
+                var bMatch = false;
 
-                MBoxStatic.Assert(99991, (false == ReferenceEquals(item, otherItem)));
+                foreach (var otherItem in other[item.SearchValue])
+                {
+                    MBoxStatic.Assert(99991, (false == ReferenceEquals(item, otherItem)));
 
-                if (false == item.LocalEquals(otherItem))
-                    return false;
+                    if ((false == lsMatched.Contains(otherItem)) &&
+                        item.LocalEquals(otherItem))
+                    {
+                        lsMatched.Add(otherItem);
+                        bMatch = true;
+                        break;
+                    }
+                }
+
+                if (false == bMatch)
+                    return false;       // assumes other logic checks for duplicates
             }
 
             return true;

@@ -71,7 +71,10 @@ namespace DoubleFile
             }
 
             UtilProject.UIthread(() => Add(lsItems));
-            SelectedItem_Set(this[_strSelectedFile].FirstOrDefault());
+
+            if (null != _strSelectedFile)
+                SelectedItem_Set(this[_strSelectedFile].FirstOrDefault());
+
             _strSelectedFile = null;
         }
 

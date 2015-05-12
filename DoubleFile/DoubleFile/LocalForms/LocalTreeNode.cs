@@ -140,8 +140,8 @@ namespace DoubleFile
 
         internal void GoToFile(string strFile)
         {
-            _selected.OnNext(this);
-            _selectedFile.OnNext(strFile);
+            _selected.LocalOnNext(this);
+            _selectedFile.LocalOnNext(strFile);
         }
     }
 }

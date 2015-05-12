@@ -10,7 +10,7 @@ namespace DoubleFile
             TreeNodeCallback { get { return _treeNodeCallback.AsObservable(); } }
         readonly Subject<LocalTreeNode> _treeNodeCallback = new Subject<LocalTreeNode>();
 
-        internal void GoTo(LocalTreeNode treeNode) { _treeNodeCallback.OnNext(treeNode); }
+        internal void GoTo(LocalTreeNode treeNode) { _treeNodeCallback.LocalOnNext(treeNode); }
 
         public double Maximum { get; private set; }
         internal LocalTreeNode DeepNode

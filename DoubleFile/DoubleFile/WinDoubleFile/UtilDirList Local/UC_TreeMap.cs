@@ -321,7 +321,7 @@ namespace DoubleFile
             {
                 strFolder += " (file)";
                 nodeTreeSelect = treeNodeChild.Parent.Parent;   // Parent is TreeMapFileListNode
-                _selectedFile.OnNext(treeNodeChild.Text);
+                _selectedFile.LocalOnNext(treeNodeChild.Text);
             }
 
             UtilProject.UIthread(() => WinTooltip.ShowTooltip(
@@ -339,7 +339,7 @@ namespace DoubleFile
             if (0 == _nInvalidateRef)   // jic
                 Invalidate();
 
-            _treeMapChildSelected.OnNext(treeNodeChild);
+            _treeMapChildSelected.LocalOnNext(treeNodeChild);
             _bTreeSelect = TreeSelect.DoThreadFactory(nodeTreeSelect);
             _bSelRecAndTooltip = false;
         }
@@ -559,7 +559,7 @@ namespace DoubleFile
             }
 
             InvalidatePushRef(() => UtilProject.UIthread(() => Render(treeNode)));
-            _treeMapRendered.OnNext(treeNode);
+            _treeMapRendered.LocalOnNext(treeNode);
             _bTreeSelect = TreeSelect.DoThreadFactory(treeNode);
         }
 

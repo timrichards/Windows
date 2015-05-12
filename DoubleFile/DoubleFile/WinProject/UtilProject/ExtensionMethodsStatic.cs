@@ -1,12 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Subjects;
 using System.Windows.Forms;
 
 namespace DoubleFile
 {
     static internal partial class ExtensionMethodsStatic
     {
+        static Dictionary<Type, DateTime> _lsSubjects = new Dictionary<Type, DateTime>();
+        static internal void LocalOnNext<T>(this Subject<T> subject, T value)
+        {
+            var dt = DateTime.MinValue;
+            var type = subject.GetType();
+
+            _lsSubjects.TryGetValue(type, out dt);
+
+            if ((null != dt) &&
+                (DateTime.Now - dt) < TimeSpan.FromMilliseconds(100))
+            {
+                MBoxStatic.Assert(99854, false);
+                return;
+            }
+
+            _lsSubjects[type] = DateTime.Now;
+            subject.OnNext(value);
+        }
+
         static internal bool IsEmpty<T>(this IEnumerable<T> source)
         {
             return (false == source.Any());

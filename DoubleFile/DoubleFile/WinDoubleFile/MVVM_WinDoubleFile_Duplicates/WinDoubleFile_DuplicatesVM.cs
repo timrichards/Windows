@@ -6,11 +6,12 @@ namespace DoubleFile
 {
     partial class WinDoubleFile_DuplicatesVM : ListViewVM_Base<LVitem_FileDuplicatesVM>
     {
-        public ICommand Icmd_Goto { get; private set; }
+        public ICommand Icmd_GoTo { get; private set; }
 
         public LVitem_FileDuplicatesVM SelectedItem
         {
             get { return _selectedItem; }
+
             set
             {
                 if (value == _selectedItem)
@@ -21,7 +22,7 @@ namespace DoubleFile
                 if (null == value)
                     return;
 
-                _updateFileDetail.OnNext(Tuple.Create(value.FileLine.AsEnumerable(), _treeNode));
+                _updateFileDetail.LocalOnNext(Tuple.Create(value.FileLine.AsEnumerable(), _treeNode));
                 SelectedItem_AllTriggers();
             }
         }

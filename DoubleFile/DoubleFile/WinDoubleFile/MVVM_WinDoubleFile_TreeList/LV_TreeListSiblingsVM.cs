@@ -25,7 +25,7 @@ namespace DoubleFile
                 if (null == value)
                     return;
 
-                _treeListSiblingSelected.OnNext(value.LocalTreeNode);
+                _treeListSiblingSelected.LocalOnNext(value.LocalTreeNode);
                 SelectedItem_AllTriggers();
             }
         }

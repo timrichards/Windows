@@ -90,7 +90,7 @@ namespace DoubleFile
                     .Take((nLineNo - nPrevDir - 1));
             });
 
-            _fileListUpdated.OnNext(Tuple.Create(lsFiles, strListingFile, treeNode));
+            _fileListUpdated.LocalOnNext(Tuple.Create(lsFiles, strListingFile, treeNode));
         }
 
         static void GetFolderDetail(LocalTreeNode treeNode)
@@ -101,7 +101,7 @@ namespace DoubleFile
             if ((null == nodeDatum) ||
                 (0 == nodeDatum.LineNo))
             {
-                _folderDetailUpdated.OnNext(Tuple.Create(lasItems.AsEnumerable(), (LocalTreeNode)null));
+                _folderDetailUpdated.LocalOnNext(Tuple.Create(lasItems.AsEnumerable(), (LocalTreeNode)null));
                 return;
             }
 
@@ -131,7 +131,7 @@ namespace DoubleFile
             }
 
             lasItems.Add(new[] { "Total Size", FormatSize(nodeDatum.TotalLength, bBytes: true) });
-            _folderDetailUpdated.OnNext(Tuple.Create(lasItems.AsEnumerable(), treeNode));
+            _folderDetailUpdated.LocalOnNext(Tuple.Create(lasItems.AsEnumerable(), treeNode));
         }
 
         static void GetVolumeDetail(LocalTreeNode treeNode)
@@ -145,7 +145,7 @@ namespace DoubleFile
             if ((null == _dictVolumeInfo) ||
                 (false == _dictVolumeInfo.TryGetValue(((RootNodeDatum)rootNode.NodeDatum).ListingFile, out strDriveInfo)))
             {
-                _volumeDetailUpdated.OnNext(Tuple.Create((IEnumerable<IEnumerable<string>>)null, rootNode.Text));
+                _volumeDetailUpdated.LocalOnNext(Tuple.Create((IEnumerable<IEnumerable<string>>)null, rootNode.Text));
                 return;
             }
 
@@ -201,7 +201,7 @@ namespace DoubleFile
                 lasItems.Add(asItems[ix]);
             }
 
-            _volumeDetailUpdated.OnNext(Tuple.Create(lasItems.Where(i => null != i), rootNode.Text));
+            _volumeDetailUpdated.LocalOnNext(Tuple.Create(lasItems.Where(i => null != i), rootNode.Text));
         }
 
         static Dictionary<string, string>

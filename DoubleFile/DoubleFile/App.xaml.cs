@@ -59,7 +59,7 @@ namespace DoubleFile
                 .Subscribe(args => Application_Activated());
 
             Observable.FromEventPattern(this, "Deactivated")
-                .Subscribe(args => { LocalActivated = false; _deactivateDidOccur.OnNext(false); });
+                .Subscribe(args => { LocalActivated = false; _deactivateDidOccur.LocalOnNext(false); });
 
             Observable.FromEventPattern(this, "Exit")
                 .Subscribe(args => LocalExit = true);   // App.FileDictionary.Dispose();

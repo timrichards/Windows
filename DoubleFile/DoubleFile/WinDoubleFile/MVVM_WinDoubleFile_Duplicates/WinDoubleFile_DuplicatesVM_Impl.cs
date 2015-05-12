@@ -22,7 +22,7 @@ namespace DoubleFile
 
         internal WinDoubleFile_DuplicatesVM()
         {
-            Icmd_Goto = new RelayCommand(Goto, () => null != _selectedItem);
+            Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
             _lsDisposable.Add(LV_DoubleFile_FilesVM.SelectedFileChanged.Subscribe(LV_DoubleFile_FilesVM_SelectedFileChanged));
         }
 
@@ -50,7 +50,7 @@ namespace DoubleFile
             }
 
             _treeNode = treeNode;
-            _updateFileDetail.OnNext(Tuple.Create(ieFileLine, _treeNode));
+            _updateFileDetail.LocalOnNext(Tuple.Create(ieFileLine, _treeNode));
             SelectedItem_Set(null);
             UtilProject.UIthread(Items.Clear);
 
@@ -153,7 +153,7 @@ namespace DoubleFile
             _cts = null;
         }
 
-        internal void Goto()
+        internal void GoTo()
         {
             if (null == _selectedItem)
             {
@@ -161,7 +161,7 @@ namespace DoubleFile
                 return;
             }
 
-            _goToFile.OnNext(Tuple.Create(_selectedItem.LVitem_ProjectVM, _selectedItem.Path, _selectedItem.Filename));
+            _goToFile.LocalOnNext(Tuple.Create(_selectedItem.LVitem_ProjectVM, _selectedItem.Path, _selectedItem.Filename));
         }
 
         CancellationTokenSource

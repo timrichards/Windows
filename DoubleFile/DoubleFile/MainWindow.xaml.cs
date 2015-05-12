@@ -89,14 +89,14 @@ namespace DoubleFile
         {
             new LinkGroup { DisplayName="Explore", Links =
             {
-                new Link { DisplayName = "Tree map", Source = new Uri("/WinDoubleFIle/UtilDirList Local/WinTreeMap_MUI.xaml", UriKind.Relative)},
-                new Link { DisplayName = "Folders", Source = new Uri("/WinDoubleFIle/WinDoubleFile_Folders_MUI.xaml", UriKind.Relative)},
-                new Link { DisplayName = "Tree list", Source = new Uri("/WinDoubleFIle/WinDoubleFile_TreeList_MUI.xaml", UriKind.Relative)}
+                new Link { DisplayName = "Tree map", Source = new Uri("/WinDoubleFile/UtilDirList Local/WinTreeMap_MUI.xaml", UriKind.Relative)},
+                new Link { DisplayName = "Folders", Source = new Uri("/WinDoubleFile/WinDoubleFile_Folders_MUI.xaml", UriKind.Relative)},
+                new Link { DisplayName = "Tree list", Source = new Uri("/WinDoubleFile/WinDoubleFile_TreeList_MUI.xaml", UriKind.Relative)}
             }},
             new LinkGroup { DisplayName="Files", Links =
             {
-                new Link { DisplayName = "Files in folder", Source = new Uri("/WinDoubleFIle/UtilDirList Local/WinTreeMap_MUI.xaml", UriKind.Relative)},
-                new Link { DisplayName = "Folders", Source = new Uri("/WinDoubleFIle/WinDoubleFile_Folders_MUI.xaml", UriKind.Relative)}
+                new Link { DisplayName = "Files in folder", Source = new Uri("/WinDoubleFile/UtilDirList Local/WinTreeMap_MUI.xaml", UriKind.Relative)},
+                new Link { DisplayName = "Duplicates", Source = new Uri("/WinDoubleFile/WinDoubleFile_Folders_MUI.xaml", UriKind.Relative)}
             }},
             new LinkGroup { DisplayName="Search", Links =
             {

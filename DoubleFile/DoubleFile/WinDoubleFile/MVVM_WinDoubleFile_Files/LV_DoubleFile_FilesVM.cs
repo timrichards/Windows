@@ -40,9 +40,9 @@ namespace DoubleFile
         void SelectedItem_AllTriggers()
         {
             if (null != _selectedItem)
-                _selectedFileChanged.OnNext(Tuple.Create(_selectedItem.LSduplicates, _selectedItem.FileLine.AsEnumerable(), _treeNode));
+                _selectedFileChanged.LocalOnNext(Tuple.Create(_selectedItem.LSduplicates, _selectedItem.FileLine.AsEnumerable(), _treeNode));
             else
-                _selectedFileChanged.OnNext(null);
+                _selectedFileChanged.LocalOnNext(null);
         }
         LVitem_DoubleFile_FilesVM _selectedItem = null;
 

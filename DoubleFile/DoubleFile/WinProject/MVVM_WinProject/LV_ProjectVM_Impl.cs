@@ -26,7 +26,7 @@ namespace DoubleFile
         static internal IObservable<bool>   // bool is a no-op: generic placeholder
             Modified { get { return _modified.AsObservable(); } }
         static readonly Subject<bool> _modified = new Subject<bool>();
-        internal void SetModified() { _modified.OnNext(false); }
+        internal void SetModified() { _modified.LocalOnNext(false); }
 
         internal bool
             Unsaved

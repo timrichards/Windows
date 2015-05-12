@@ -123,7 +123,7 @@ namespace DoubleFile
         void Goto()
         {
             if (null != _selectedItem.Directory)
-                _goToFile.OnNext(Tuple.Create((LVitem_ProjectVM)null, "" + _selectedItem.Directory, "" + _selectedItem.Filename));
+                _goToFile.LocalOnNext(Tuple.Create((LVitem_ProjectVM)null, "" + _selectedItem.Directory, "" + _selectedItem.Filename));
             else
                 _selectedItem.LocalTreeNode.GoToFile(null);
         }

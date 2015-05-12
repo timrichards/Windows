@@ -55,13 +55,16 @@ namespace DoubleFile
             RaisePropertyChanged("Visible");
         }
 
-        internal bool AlreadyInProject(LVitem_ProjectVM lvCurrentItem, string strFilename = null)
+        internal bool AlreadyInProject(string strFilename, LVitem_ProjectVM lvCurrentItem = null, bool bQuiet = false)
         {
             bool bAlreadyInProject =
-                (null != ContainsListingFile(lvCurrentItem, strFilename));
+                (null != ContainsListingFile(strFilename, lvCurrentItem));
 
-            if (bAlreadyInProject)
+            if (bAlreadyInProject &&
+                (false == bQuiet))
+            {
                 MBoxStatic.ShowDialog("Listing file already in the project.", "Add Listing File");
+            }
 
             return bAlreadyInProject;
         }
@@ -90,7 +93,7 @@ namespace DoubleFile
 
                     lvItemVolumeTemp = new LVitem_ProjectVM(dlg.LVitemVolumeTemp);
 
-                    if (AlreadyInProject(lvItem, lvItemVolumeTemp.ListingFile))
+                    if (AlreadyInProject(lvItemVolumeTemp.ListingFile, lvItem))
                         continue;
 
                     var dlgEdit = dlg as WinVolumeEdit;
@@ -131,21 +134,19 @@ namespace DoubleFile
 
         internal bool NewItem(LVitem_ProjectVM lvItem, bool bQuiet = false)
         {
-            return Add(lvItem.StringValues, bQuiet);
+            return this.Add(lvItem.StringValues, bQuiet);
         }
 
         internal override bool Add(string[] arrStr, bool bQuiet = false)
         {
             var lvItem = new LVitem_ProjectVM(arrStr);
 
-            if (false == AlreadyInProject(lvItem))
-            {
-                base.Add(lvItem, bQuiet);
-                RaisePropertyChanged("Visible");
-                return true;
-            }
+            if (AlreadyInProject(lvItem.ListingFile))
+                return false;
 
-            return false;
+            base.Add(lvItem, bQuiet);
+            RaisePropertyChanged("Visible");
+            return true;
         }
 
         internal void RemoveListingFile()
@@ -200,17 +201,18 @@ namespace DoubleFile
             Unsaved = true;
         }
 
-        LVitem_ProjectVM ContainsListingFile(LVitem_ProjectVM lvItem_Current, string t)
+        LVitem_ProjectVM ContainsListingFile(string strListingFile, LVitem_ProjectVM lvItem_Current = null)
         {
-            if (string.IsNullOrEmpty(t))
+            if (string.IsNullOrEmpty(strListingFile))
                 return null;
 
-            var s = t.ToLower();
+            var s = strListingFile.ToLower();
 
             return ItemsCast
                 .FirstOrDefault(item =>
                     (item.ListingFile.ToLower() == s) &&
-                    (lvItem_Current != item));
+                    (lvItem_Current != item) &&
+                    (MBoxStatic.Assert(99855, null != item)));
         }
 
         bool ModifyListingFile(LVitem_ProjectVM lvItem_Orig, LVitem_ProjectVM lvItemVolumeTemp, char driveLetter)

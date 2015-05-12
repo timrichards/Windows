@@ -92,7 +92,7 @@ namespace DoubleFile
                     break;
                 }
 
-                if ((false == _lvVM.AlreadyInProject(null, newVolume.LVitemVolumeTemp.ListingFile)) &&
+                if ((false == _lvVM.AlreadyInProject(newVolume.LVitemVolumeTemp.ListingFile)) &&
                     (false == _lvVM.FileExists(newVolume.LVitemVolumeTemp.ListingFile)))
                 {
                     _lvVM.NewItem(newVolume.LVitemVolumeTemp);
@@ -127,6 +127,7 @@ namespace DoubleFile
         {
             var sbBadFiles = new StringBuilder();
             var bMultiBad = true;
+            var sbAlreadyInProject = new StringBuilder();
             var listItems = new ConcurrentBag<LVitem_ProjectVM>();
 
             if (false == bClearItems)
@@ -140,7 +141,15 @@ namespace DoubleFile
                 if ((null != userCanceled) &&
                     userCanceled())
                 {
-                    return;
+                    return;   // from lambda
+                }
+
+                if (_lvVM.AlreadyInProject(strFilename, bQuiet: true))
+                {
+                    lock (sbAlreadyInProject)
+                        sbAlreadyInProject.Append("• ").Append(System.IO.Path.GetFileName(strFilename)).Append("\n");
+
+                    return;   // from lambda
                 }
 
                 LVitem_ProjectVM lvItem = null;
@@ -151,7 +160,7 @@ namespace DoubleFile
                 }
                 else
                 {
-                    bMultiBad = (sbBadFiles.Length > 0);
+                    bMultiBad = (0 < sbBadFiles.Length);
 
                     lock (sbBadFiles)
                         sbBadFiles.Append("• ").Append(System.IO.Path.GetFileName(strFilename)).Append("\n");
@@ -173,14 +182,22 @@ namespace DoubleFile
                 if ((null != userCanceled) &&
                     userCanceled())
                 {
-                    return false;
+                    return false;   // from lambda
                 }
 
-                return UtilProject.UIthread(() => _lvVM.NewItem(lvItem)) || current;
+                return UtilProject.UIthread(() => _lvVM.NewItem(lvItem)) || current;  // from lambda
             });
 
-            if (sbBadFiles.Length > 0)
-                MBoxStatic.ShowDialog("Bad listing file" + (bMultiBad ? "s" : "") + ".\n" + sbBadFiles, "Open Listing File");
+            var sbError = new StringBuilder();
+
+            if (0 < sbBadFiles.Length)
+                sbError.Append("Bad listing file" + (bMultiBad ? "s" : "") + ".\n\n" + sbBadFiles);
+
+            if (0 < sbAlreadyInProject.Length)
+                sbError.Append("Already in project.\n\n" + sbAlreadyInProject);
+
+            if (0 < sbError.Length)
+                MBoxStatic.ShowDialog("" + sbError, "Open Listing File");
 
             return bOpenedFiles;
         }

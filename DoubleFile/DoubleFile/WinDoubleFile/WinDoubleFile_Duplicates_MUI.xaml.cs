@@ -1,4 +1,6 @@
-﻿namespace DoubleFile
+﻿using System;
+
+namespace DoubleFile
 {
     /// <summary>
     /// Interaction logic for WinDoubleFile_Duplicates.xaml
@@ -7,8 +9,7 @@
     {
         protected override void LocalNavigatedTo()
         {
-            if (null != _winDoubleFile_DuplicatesVM)
-                _winDoubleFile_DuplicatesVM.Dispose();
+            LocalDispose_WindowClosed();
 
             DataContext =
                 _winDoubleFile_DuplicatesVM =
@@ -18,6 +19,17 @@
         public WinDoubleFile_Duplicates_MUI()
         {
             InitializeComponent();
+        }
+
+        protected override void CopyTag_NewWindow(WeakReference wr)
+        {
+            LocalNavigatedTo();
+        }
+
+        protected override void LocalDispose_WindowClosed()
+        {
+            if (null != _winDoubleFile_DuplicatesVM)
+                _winDoubleFile_DuplicatesVM.Dispose();
         }
 
         WinDoubleFile_DuplicatesVM

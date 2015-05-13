@@ -29,19 +29,26 @@ namespace DoubleFile
             var page = ModernWindow1.CurrentPage;
             var content = Activator.CreateInstance(page.GetType()) as LocalUserControlBase;
 
-            content.CopyTag(new WeakReference(page.Tag));
+            content.CopyTag_NewWindow(new WeakReference(page.Tag));
 
-            new ExtraWindow
+            var window = new ExtraWindow
             {
                 Content = content,
                 Title = page.Title,
             }
                 .Show();
 
+            Observable.FromEventPattern(window, "Closed")
+                .Subscribe(args => content.LocalDispose_WindowClosed());
+
             e.Cancel = true;
         }
 
-        virtual protected void CopyTag(WeakReference weakReference)
+        virtual protected void CopyTag_NewWindow(WeakReference weakReference)
+        {
+        }
+
+        virtual protected void LocalDispose_WindowClosed()
         {
         }
 
@@ -302,17 +309,18 @@ namespace DoubleFile
                 Close();
         }
 
-        internal new void Show()
+        internal new Window Show()
         {
             if ((null != MBoxStatic.MessageBox)) // &&
     //            (this != MBoxStatic.MessageBox))
             {
-                return;
+                return this;
             }
 
             Owner = (Window)App.TopWindow;
             base.Show();
             PositionWindow();
+            return this;
         }
 
         internal new bool? ShowDialog() { return ShowDialog(App.TopWindow); }

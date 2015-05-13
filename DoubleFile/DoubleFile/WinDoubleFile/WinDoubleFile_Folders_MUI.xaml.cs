@@ -18,7 +18,7 @@ namespace DoubleFile
             InitializeComponent();
         }
 
-        protected override void CopyTag(WeakReference wr)
+        protected override void CopyTag_NewWindow(WeakReference wr)
         {
             LocalNavigatedTo();
         }

@@ -57,7 +57,9 @@ namespace DoubleFile
 
             UtilProject.UIthread(() =>
             {
-                for (var i = 1; i < Math.Min(asFileLine.Length, kasHeader.Length); ++i)
+                var nMax = Math.Min(asFileLine.Length, kasHeader.Length);
+
+                for (var i = 1; i < nMax; ++i)
                 {
                     if (string.IsNullOrWhiteSpace(asFileLine[i]))
                         continue;

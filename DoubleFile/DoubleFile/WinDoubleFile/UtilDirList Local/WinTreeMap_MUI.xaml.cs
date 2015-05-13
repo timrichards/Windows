@@ -39,6 +39,11 @@ namespace DoubleFile
                 .Subscribe(args => { if (null != _ucTreeMap) _ucTreeMap.TreeMapVM.LostMouseCapture(); });
         }
 
+        protected override void CopyTag_NewWindow(WeakReference wr)
+        {
+            LocalNavigatedTo();
+        }
+
         UC_TreeMap
             _ucTreeMap = null;
     }

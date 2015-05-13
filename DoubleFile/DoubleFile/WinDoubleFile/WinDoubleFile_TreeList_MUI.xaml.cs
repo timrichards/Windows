@@ -21,7 +21,7 @@ namespace DoubleFile
                 new LV_TreeListSiblingsVM(lvChildrenVM);
         }
 
-        protected override void CopyTag(WeakReference wr)
+        protected override void CopyTag_NewWindow(WeakReference wr)
         {
             _lvTreeListSiblingsVM.CopyFrom(wr.Target as LV_TreeListSiblingsVM);
         }

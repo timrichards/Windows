@@ -4,11 +4,6 @@
         xmlns:local="clr-namespace:DoubleFile"
         Title="Detail" Width="485" Height="500">
     <Grid Name="form_grid">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
         <StackPanel>
             <Border Style="{StaticResource styleBorder}">
                 <Grid Name="form_localPath">

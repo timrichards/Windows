@@ -9,22 +9,22 @@ namespace DoubleFile
     static internal partial class ExtensionMethodsStatic
     {
         static Dictionary<int, DateTime> _lsSubjects = new Dictionary<int, DateTime>();
-        static internal bool LocalOnNext<T>(this Subject<T> subject, T value, int nOnNextAssertLoc)
+        static internal void LocalOnNext<T>(this Subject<T> subject, T value, int nOnNextAssertLoc)
         {
             var dt = DateTime.MinValue;
 
             _lsSubjects.TryGetValue(nOnNextAssertLoc, out dt);
 
-            if ((null != dt) &&
-                (DateTime.Now - dt) < TimeSpan.FromMilliseconds(100))
+            if ((null == dt) ||
+                (DateTime.Now - dt) > TimeSpan.FromMilliseconds(100))
+            {
+                _lsSubjects[nOnNextAssertLoc] = DateTime.Now;
+                subject.OnNext(value);
+            }
+            else
             {
                 MBoxStatic.Assert(nOnNextAssertLoc, false);
-                return false;
             }
-
-            _lsSubjects[nOnNextAssertLoc] = DateTime.Now;
-            subject.OnNext(value);
-            return true;
         }
 
         static internal bool IsEmpty<T>(this IEnumerable<T> source)

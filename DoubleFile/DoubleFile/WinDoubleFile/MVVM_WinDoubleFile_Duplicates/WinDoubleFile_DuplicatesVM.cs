@@ -22,7 +22,7 @@ namespace DoubleFile
                 if (null == value)
                     return;
 
-                _updateFileDetail.LocalOnNext(Tuple.Create(value.FileLine.AsEnumerable(), _treeNode), _nUpdateFileDetailOnNextAssertLoc);
+                UpdateFileDetailOnNext(Tuple.Create(value.FileLine.AsEnumerable(), _treeNode));
                 SelectedItem_AllTriggers();
             }
         }

@@ -11,7 +11,7 @@ namespace DoubleFile
         static internal IObservable<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>>
             SelectedFileChanged { get { return _selectedFileChanged.AsObservable(); } }
         static readonly Subject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>> _selectedFileChanged = new Subject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>>();
-        static readonly int _nSelectedFileChangedOnNextAssertLoc = 99852;
+        static void SelectedFileChangedOnNext(Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode> value = null) { _selectedFileChanged.LocalOnNext(value, 99852); }
 
         public LVitem_DoubleFile_FilesVM SelectedItem
         {
@@ -41,9 +41,9 @@ namespace DoubleFile
         void SelectedItem_AllTriggers()
         {
             if (null != _selectedItem)
-                _selectedFileChanged.LocalOnNext(Tuple.Create(_selectedItem.LSduplicates, _selectedItem.FileLine.AsEnumerable(), _treeNode), _nSelectedFileChangedOnNextAssertLoc);
+                SelectedFileChangedOnNext(Tuple.Create(_selectedItem.LSduplicates, _selectedItem.FileLine.AsEnumerable(), _treeNode));
             else
-                _selectedFileChanged.LocalOnNext(null, _nSelectedFileChangedOnNextAssertLoc);
+                SelectedFileChangedOnNext();
         }
         LVitem_DoubleFile_FilesVM _selectedItem = null;
 

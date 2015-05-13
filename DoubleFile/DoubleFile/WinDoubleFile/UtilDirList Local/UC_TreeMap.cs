@@ -18,17 +18,17 @@ namespace DoubleFile
         static internal IObservable<LocalTreeNode>
             TreeMapRendered { get { return _treeMapRendered.AsObservable(); } }
         static readonly Subject<LocalTreeNode> _treeMapRendered = new Subject<LocalTreeNode>();
-        static readonly int _nTreeMapRenderedNextID = 99843;
+        static void TreeMapRenderedOnNext(LocalTreeNode value) { _treeMapRendered.LocalOnNext(value, 99843); }
 
         static internal IObservable<LocalTreeNode>
             TreeMapChildSelected { get { return _treeMapChildSelected.AsObservable(); } }
         static readonly Subject<LocalTreeNode> _treeMapChildSelected = new Subject<LocalTreeNode>();
-        static readonly int _nTreeMapChildSelectedOnNextAssertLoc = 99842;
+        static void TreeMapChildSelectedOnNext(LocalTreeNode value) { _treeMapChildSelected.LocalOnNext(value, 99842); }
 
         static internal IObservable<string>
             SelectedFile { get { return _selectedFile.AsObservable(); } }
         static readonly Subject<string> _selectedFile = new Subject<string>();
-        static readonly int _nSelectedFileOnNextAssertLoc = 99841;
+        static void SelectedFileOnNext(string value) { _selectedFile.LocalOnNext(value, 99841); }
 
         internal System.Windows.Window
             LocalOwner = null;
@@ -324,7 +324,7 @@ namespace DoubleFile
             {
                 strFolder += " (file)";
                 nodeTreeSelect = treeNodeChild.Parent.Parent;   // Parent is TreeMapFileListNode
-                _selectedFile.LocalOnNext(treeNodeChild.Text, _nSelectedFileOnNextAssertLoc);
+                SelectedFileOnNext(treeNodeChild.Text);
             }
 
             UtilProject.UIthread(() => WinTooltip.ShowTooltip(
@@ -342,7 +342,7 @@ namespace DoubleFile
             if (0 == _nInvalidateRef)   // jic
                 Invalidate();
 
-            _treeMapChildSelected.LocalOnNext(treeNodeChild, _nTreeMapChildSelectedOnNextAssertLoc);
+            TreeMapChildSelectedOnNext(treeNodeChild);
             _bTreeSelect = TreeSelect.DoThreadFactory(nodeTreeSelect);
             _bSelRecAndTooltip = false;
         }
@@ -562,7 +562,7 @@ namespace DoubleFile
             }
 
             InvalidatePushRef(() => UtilProject.UIthread(() => Render(treeNode)));
-            _treeMapRendered.LocalOnNext(treeNode, _nTreeMapRenderedNextID);
+            TreeMapRenderedOnNext(treeNode);
             _bTreeSelect = TreeSelect.DoThreadFactory(treeNode);
         }
 

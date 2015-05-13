@@ -13,7 +13,7 @@ namespace DoubleFile
         static internal IObservable<Tuple<LVitem_ProjectVM, string, string>>
             GoToFile { get { return _goToFile.AsObservable(); } }
         static readonly Subject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new Subject<Tuple<LVitem_ProjectVM, string, string>>();
-        static readonly int _nGoToFileOnNextAssertLoc = 99838;
+        static void GoToFileOnNext(Tuple<LVitem_ProjectVM, string, string> value) { _goToFile.LocalOnNext(value, 99838); }
 
         internal WinDoubleFile_SearchVM Init()
         {
@@ -124,7 +124,7 @@ namespace DoubleFile
         void Goto()
         {
             if (null != _selectedItem.Directory)
-                _goToFile.LocalOnNext(Tuple.Create((LVitem_ProjectVM)null, "" + _selectedItem.Directory, "" + _selectedItem.Filename), _nGoToFileOnNextAssertLoc);
+                GoToFileOnNext(Tuple.Create((LVitem_ProjectVM)null, "" + _selectedItem.Directory, "" + _selectedItem.Filename));
             else
                 _selectedItem.LocalTreeNode.GoToFile(null);
         }

@@ -197,6 +197,15 @@
     <Compile Include="WinDoubleFile\UtilDirList Local\WinTreeMap_MUI.xaml.cs">
       <DependentUpon>WinTreeMap_MUI.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WinDoubleFile\WinDoubleFile_Detail_MUI.xaml.cs">
+      <DependentUpon>WinDoubleFile_Detail_MUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WinDoubleFile\WinDoubleFile_Duplicates_MUI.xaml.cs">
+      <DependentUpon>WinDoubleFile_Duplicates_MUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WinDoubleFile\WinDoubleFile_Files_MUI.xaml.cs">
+      <DependentUpon>WinDoubleFile_Files_MUI.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WinDoubleFile\WinDoubleFile_Folders.xaml.cs">
       <DependentUpon>WinDoubleFile_Folders.xaml</DependentUpon>
     </Compile>
@@ -235,7 +244,6 @@
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Duplicates\LVitem_FileDuplicatesVM.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Duplicates\WinDoubleFile_DuplicatesVM.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Duplicates\WinDoubleFile_DuplicatesVM_Impl.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Folders\TreeViewItem_DoubleFileVM_Impl.cs" />
     <Compile Include="WinDoubleFile\WinDoubleFile_Detail.xaml.cs">
       <DependentUpon>WinDoubleFile_Detail.xaml</DependentUpon>
     </Compile>
@@ -460,6 +468,18 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="WinDoubleFile\UtilDirList Local\WinTreeMap_MUI.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WinDoubleFile\WinDoubleFile_Detail_MUI.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WinDoubleFile\WinDoubleFile_Duplicates_MUI.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WinDoubleFile\WinDoubleFile_Files_MUI.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

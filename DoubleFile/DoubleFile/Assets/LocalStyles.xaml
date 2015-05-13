@@ -16,11 +16,6 @@
         <Setter Property="HorizontalAlignment" Value="Center" />
     </Style>
     
-    <Style TargetType="Label" BasedOn="{StaticResource MyFrameworkElementStyle}">
-        <Setter Property="Grid.Column" Value="1" />
-        <Setter Property="Height" Value="26" />
-    </Style>
-    
     <Style TargetType="TextBox" BasedOn="{StaticResource MyFrameworkElementStyle}">
         <Setter Property="Grid.Column" Value="3" />
         <Setter Property="Grid.ColumnSpan" Value="2" />

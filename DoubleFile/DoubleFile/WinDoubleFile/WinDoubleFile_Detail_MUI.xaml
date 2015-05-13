@@ -1,0 +1,57 @@
+﻿<local:LocalUserControlBase x:Class="DoubleFile.WinDoubleFile_Detail_MUI"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:DoubleFile"
+        Title="Detail">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <Border Style="{StaticResource styleBorder}">
+                <Grid Name="form_localPath">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Path:" Margin="10, 0"/>
+                    <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Grid.Column="1" Text="{Binding LocalPath}" />
+                    <Button Grid.Column="2" Content="Copy" Width ="50" Command="{Binding Icmd_Copy}"/>
+                </Grid>
+            </Border>
+            <Border Style="{StaticResource styleBorder}">
+                <DataGrid Name="formLV_File">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="File Detail" Binding="{Binding Header}" Width="{Binding WidthHeader}"/>
+                        <DataGridTextColumn Header="{Binding Title}" Binding="{Binding Detail}" Width="999"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+            <Border Style="{StaticResource styleBorder}">
+                <DataGrid Name="formLV_Folder">
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridCellsPresenter">
+                            <Setter Property="Foreground" Value="{Binding Foreground}"/>
+                            <Setter Property="Background" Value="{Binding Background}"/>
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Folder Detail" Binding="{Binding Header}" Width="{Binding WidthHeader}"/>
+                        <DataGridTextColumn Header="{Binding Title}" Binding="{Binding Detail}" Width="999"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+            <Border Style="{StaticResource styleBorder}">
+                <DataGrid Name="formLV_Volume">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Volume Detail" Binding="{Binding Header}" Width="{Binding WidthHeader}"/>
+                        <DataGridTextColumn Header="{Binding Title}" Binding="{Binding Detail}" Width="999"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </StackPanel>
+    </Grid>
+</local:LocalUserControlBase>

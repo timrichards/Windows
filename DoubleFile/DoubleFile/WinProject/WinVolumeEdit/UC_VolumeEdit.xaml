@@ -5,6 +5,12 @@
             Background="White"
             Name="uc_VolumeEdit">
     <Grid Name="form_grid">
+        <Grid.Resources>
+            <Style TargetType="Label" BasedOn="{StaticResource MyFrameworkElementStyle}">
+                <Setter Property="Grid.Column" Value="1" />
+                <Setter Property="Height" Value="26" />
+            </Style>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="32"/>

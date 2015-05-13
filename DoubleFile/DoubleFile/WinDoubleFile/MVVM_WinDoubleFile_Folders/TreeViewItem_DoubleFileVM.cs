@@ -138,7 +138,10 @@ namespace DoubleFile
             else if (_TVVM.SelectedItem == this)
                 _TVVM.SelectedItem = null;
 
-            DoTreeSelect();
+            if (false == _isSelected)
+                return;
+
+            TreeSelect.DoThreadFactory(_datum);
         }
         bool _isSelected = false;
 

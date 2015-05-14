@@ -90,7 +90,8 @@ namespace DoubleFile
                     File
                     .ReadLines(strListingFile)
                     .Skip(nPrevDir)
-                    .Take((nLineNo - nPrevDir - 1));
+                    .Take((nLineNo - nPrevDir - 1))
+                    .ToArray();
             });
 
             FileListUpdatedOnNext(Tuple.Create(lsFiles, strListingFile, treeNode));

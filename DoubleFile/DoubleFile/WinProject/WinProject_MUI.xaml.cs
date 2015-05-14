@@ -65,8 +65,11 @@ namespace DoubleFile
         {
             ModernWindow1.WithMainWindow(mainWindow =>
             {
-                foreach (Window window in mainWindow.OwnedWindows)
-                    window.Close();
+                UtilProject.UIthread(() =>
+                {
+                    foreach (Window window in mainWindow.OwnedWindows)
+                        window.Close();
+                });
 
                 return false;   // from lambda
             });

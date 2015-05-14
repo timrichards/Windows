@@ -173,7 +173,7 @@ namespace DoubleFile
                 return false;
             }
 
-            UtilProject.UIthread(_lvVM.Items.Clear);
+            UtilProject.UIthread(_lvVM.ClearItems);
 
             var bOpenedFiles = listItems
                 .OrderBy(lvItem => lvItem.SourcePath)

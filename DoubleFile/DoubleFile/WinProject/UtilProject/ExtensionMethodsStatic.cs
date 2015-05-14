@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Subjects;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace DoubleFile
@@ -19,11 +20,11 @@ namespace DoubleFile
                 (DateTime.Now - dt) > TimeSpan.FromMilliseconds(100))
             {
                 _lsSubjects[nOnNextAssertLoc] = DateTime.Now;
-                subject.OnNext(value);
+                new Thread(() => subject.OnNext(value)).Start();
             }
             else
             {
-                MBoxStatic.Assert(nOnNextAssertLoc, false);
+             //   MBoxStatic.Assert(nOnNextAssertLoc, false);
             }
         }
 

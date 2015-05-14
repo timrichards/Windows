@@ -54,7 +54,7 @@ namespace DoubleFile
             _lsDisposable.Add(Observable.FromEventPattern<MouseEventArgs>(this, "MouseUp")
                 .Subscribe(args => { if (bMouseDown) { bMouseDown = false; form_tmapUserCtl_MouseUp(args.EventArgs.Location); } }));
 
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(tuple => { UtilDirList.Write("M"); RenderA(tuple.Item2); _bTreeSelect = false; }));
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(tuple => { UtilDirList.Write("M"); RenderD(tuple.Item2); _bTreeSelect = false; }));
             _lsDisposable.Add(LV_TreeListSiblingsVM.TreeListSiblingSelected.Subscribe(RenderB));
             _lsDisposable.Add(LV_TreeListChildrenVM.TreeListChildSelected.Subscribe(TreeListChildSelected));
             _lsDisposable.Add(LocalTreeNode.Selected.Subscribe(RenderC));
@@ -555,6 +555,11 @@ namespace DoubleFile
         void RenderC(LocalTreeNode treeNode) { UtilDirList.Write("Q"); RenderA(treeNode); }
         void RenderA(LocalTreeNode treeNode)
         {
+            RenderD(treeNode);
+            _bTreeSelect = TreeSelect.DoThreadFactory(treeNode);
+        }
+        void RenderD(LocalTreeNode treeNode)
+        {
             if (_bSelRecAndTooltip ||
                 _bTreeSelect)
             {
@@ -563,7 +568,6 @@ namespace DoubleFile
 
             InvalidatePushRef(() => UtilProject.UIthread(() => Render(treeNode)));
             TreeMapRenderedOnNext(treeNode);
-            _bTreeSelect = TreeSelect.DoThreadFactory(treeNode);
         }
 
         void Render(LocalTreeNode treeNode)

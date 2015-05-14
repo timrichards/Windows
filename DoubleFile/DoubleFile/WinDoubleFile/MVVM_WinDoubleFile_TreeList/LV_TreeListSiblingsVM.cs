@@ -118,7 +118,7 @@ namespace DoubleFile
 
             UtilProject.UIthread(() =>
             {
-                Items.Clear();
+                ClearItems();
                 Add(lsLVitems);
             });
 

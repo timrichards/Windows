@@ -49,7 +49,7 @@ namespace DoubleFile
 
         internal void Populate(LocalTreeNode treeNodeParent)
         {
-            UtilProject.UIthread(Items.Clear);
+            UtilProject.UIthread(ClearItems);
 
             if (null == treeNodeParent.Nodes)
                 return;

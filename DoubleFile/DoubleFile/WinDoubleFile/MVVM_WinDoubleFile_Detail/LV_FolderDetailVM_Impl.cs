@@ -13,7 +13,7 @@ namespace DoubleFile
                 UtilProject.UIthread(() =>
                 {
                     Title = null;
-                    Items.Clear();
+                    ClearItems();
 
                     foreach (var ieLine in tuple.Item1)
                         Add(new LVitem_FolderDetailVM(ieLine), bQuiet: true);

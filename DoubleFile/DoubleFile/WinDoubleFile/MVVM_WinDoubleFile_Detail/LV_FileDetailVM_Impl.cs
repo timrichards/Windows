@@ -34,7 +34,7 @@ namespace DoubleFile
             LocalPath_Set();
             Title = null;
 
-            UtilProject.UIthread(Items.Clear);
+            UtilProject.UIthread(ClearItems);
 
             if (null == tuple.Item1)
                 return;

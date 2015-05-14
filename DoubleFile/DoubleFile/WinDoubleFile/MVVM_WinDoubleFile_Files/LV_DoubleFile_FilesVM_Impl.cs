@@ -26,7 +26,7 @@ namespace DoubleFile
                 return;
 
             SelectedItem_Set(null);
-            UtilProject.UIthread(Items.Clear);
+            UtilProject.UIthread(ClearItems);
             _treeNode = tuple.Item3;
 
             if (null == tuple.Item1)

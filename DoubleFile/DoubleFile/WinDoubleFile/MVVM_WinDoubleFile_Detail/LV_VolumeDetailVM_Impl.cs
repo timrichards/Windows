@@ -13,7 +13,7 @@ namespace DoubleFile
                 UtilProject.UIthread(() =>
                 {
                     Title = tuple.Item2;
-                    Items.Clear();
+                    ClearItems();
 
                     if (null == tuple.Item1)
                         return;     // from lambda

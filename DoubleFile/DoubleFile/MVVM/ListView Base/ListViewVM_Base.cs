@@ -16,6 +16,7 @@ namespace DoubleFile
         public ObservableCollection<ListViewItemVM_Base>
             Items { get { return _items; } }
         ObservableCollection<ListViewItemVM_Base> _items = new ObservableCollection<ListViewItemVM_Base>();
+        internal void ClearItems() { _items = new ObservableCollection<ListViewItemVM_Base>(); }
 
         internal abstract int
             NumCols { get; }

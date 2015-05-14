@@ -54,7 +54,7 @@ namespace DoubleFile
             _treeNode = treeNode;
             UpdateFileDetailOnNext(Tuple.Create(ieFileLine, _treeNode));
             SelectedItem_Set(null);
-            UtilProject.UIthread(Items.Clear);
+            UtilProject.UIthread(ClearItems);
 
             if (null == lsDuplicates)
                 return;
@@ -79,7 +79,7 @@ namespace DoubleFile
                     (10 > nCheck))
                 {
                     UtilProject.WriteLine(nCheck + " false == _cts.IsCancellationRequested");
-                    Thread.Sleep(20);
+                    Thread.Sleep(100);
                     ++nCheck;
                 }
 

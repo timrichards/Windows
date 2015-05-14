@@ -90,7 +90,7 @@ namespace DoubleFile
                 return true;        // found there are no volumes loaded
             }
 
-            UtilProject.UIthread(Items.Clear);
+            UtilProject.UIthread(ClearItems);
             TabledString<Tabled_Files>.Reinitialize();
             TabledString<Tabled_Files>.GenerationStarting();
 

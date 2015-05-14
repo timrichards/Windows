@@ -9,17 +9,22 @@ namespace DoubleFile
 {
     static internal partial class ExtensionMethodsStatic
     {
-        static Dictionary<int, DateTime> _lsSubjects = new Dictionary<int, DateTime>();
+        static Dictionary<int, Tuple<DateTime, WeakReference>> _lsSubjects = new Dictionary<int, Tuple<DateTime, WeakReference>>();
         static internal void LocalOnNext<T>(this Subject<T> subject, T value, int nOnNextAssertLoc)
         {
-            var dt = DateTime.MinValue;
+            Tuple<DateTime, WeakReference> o = null;
 
-            _lsSubjects.TryGetValue(nOnNextAssertLoc, out dt);
+            _lsSubjects.TryGetValue(nOnNextAssertLoc, out o);
+            T oldValue = default(T);
 
-            if ((null == dt) ||
-                (DateTime.Now - dt) > TimeSpan.FromMilliseconds(100))
+            if (null != o)
+                oldValue = (T)o.Item2.Target;
+
+            if ((EqualityComparer<T>.Default.Equals(oldValue)) ||
+                oldValue.Equals(value) ||
+                (DateTime.Now - o.Item1) > TimeSpan.FromMilliseconds(100))
             {
-                _lsSubjects[nOnNextAssertLoc] = DateTime.Now;
+                _lsSubjects[nOnNextAssertLoc] = Tuple.Create(DateTime.Now, new WeakReference(value));
                 new Thread(() => subject.OnNext(value)).Start();
             }
             else

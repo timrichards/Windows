@@ -5,6 +5,11 @@
         Title="Detail">
     <Grid>
         <StackPanel>
+            <StackPanel.Resources>
+                <DataTemplate x:Key="Title">
+                    <TextBlock Text="{Binding DataContext.Title, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                </DataTemplate>
+            </StackPanel.Resources>
             <Border Style="{StaticResource styleBorder}">
                 <Grid Name="form_localPath">
                     <Grid.ColumnDefinitions>
@@ -21,7 +26,7 @@
                 <DataGrid Name="formLV_File">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="File Detail" Binding="{Binding Header}" Width="{Binding WidthHeader}"/>
-                        <DataGridTextColumn Header="{Binding Title}" Binding="{Binding Detail}" Width="999"/>
+                        <DataGridTextColumn Binding="{Binding Detail}" HeaderTemplate="{StaticResource Title}"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>
@@ -35,7 +40,7 @@
                     </DataGrid.Resources>
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Folder Detail" Binding="{Binding Header}" Width="{Binding WidthHeader}"/>
-                        <DataGridTextColumn Header="{Binding Title}" Binding="{Binding Detail}" Width="999"/>
+                        <DataGridTextColumn Binding="{Binding Detail}" HeaderTemplate="{StaticResource Title}"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>
@@ -43,7 +48,7 @@
                 <DataGrid Name="formLV_Volume">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Volume Detail" Binding="{Binding Header}" Width="{Binding WidthHeader}"/>
-                        <DataGridTextColumn Header="{Binding Title}" Binding="{Binding Detail}" Width="999"/>
+                        <DataGridTextColumn Binding="{Binding Detail}" HeaderTemplate="{StaticResource Title}"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>

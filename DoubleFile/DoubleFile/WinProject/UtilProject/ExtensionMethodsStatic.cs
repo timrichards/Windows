@@ -17,10 +17,15 @@ namespace DoubleFile
             _lsSubjects.TryGetValue(nOnNextAssertLoc, out o);
             T oldValue = default(T);
 
-            if (null != o)
+            if ((null != o) &&
+                (null != o.Item2) &&
+                (null != o.Item2.Target))
+            {
                 oldValue = (T)o.Item2.Target;
+            }
 
-            if ((EqualityComparer<T>.Default.Equals(oldValue)) ||
+            if ((null == oldValue) ||
+                (EqualityComparer<T>.Default.Equals(oldValue)) ||
                 oldValue.Equals(value) ||
                 (DateTime.Now - o.Item1) > TimeSpan.FromMilliseconds(100))
             {

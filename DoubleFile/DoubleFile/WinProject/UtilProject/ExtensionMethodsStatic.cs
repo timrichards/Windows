@@ -26,7 +26,8 @@ namespace DoubleFile
 
             if ((null == oldValue) ||
                 (EqualityComparer<T>.Default.Equals(oldValue)) ||
-                oldValue.Equals(value) ||
+                (false == oldValue.Equals(value)) ||
+                (null == o) ||
                 (DateTime.Now - o.Item1) > TimeSpan.FromMilliseconds(100))
             {
                 _lsSubjects[nOnNextAssertLoc] = Tuple.Create(DateTime.Now, new WeakReference(value));

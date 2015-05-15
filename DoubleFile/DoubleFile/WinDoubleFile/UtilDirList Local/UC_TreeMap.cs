@@ -289,18 +289,18 @@ namespace DoubleFile
 
             LocalTreeMapFileNode fileNode = null;
 
-            if (null != tuple.Item3.NodeDatum.TreeMapFiles)            // TODO: Why would this be null? (reparse point)
-            {
-                tuple.Item2
-                    .First(strFile => tuple.Item3.NodeDatum.TreeMapFiles.Nodes
-                        .Where(treeNodeA => treeNodeA.Text == strFile)
-                        .FirstOnlyAssert(treeNodeA => fileNode = treeNodeA as LocalTreeMapFileNode));
+            if (null == tuple.Item3.NodeDatum.TreeMapFiles)     // TODO: Why would this be null?
+                return;
 
-                if (null != fileNode)                               // TODO: Why would this be null?
-                {
-                    SelRectAndTooltip(fileNode, bImmediateFiles: true);
-                    return;
-                }
+            tuple.Item2
+                .First(strFile => tuple.Item3.NodeDatum.TreeMapFiles.Nodes
+                    .Where(treeNodeA => treeNodeA.Text == strFile)
+                    .FirstOnlyAssert(treeNodeA => fileNode = treeNodeA as LocalTreeMapFileNode));
+
+            if (null != fileNode)                               // TODO: Why would this be null?
+            {
+                SelRectAndTooltip(fileNode, bImmediateFiles: true);
+                return;
             }
 
             UtilProject.UIthread(() => WinTooltip.CloseTooltip());

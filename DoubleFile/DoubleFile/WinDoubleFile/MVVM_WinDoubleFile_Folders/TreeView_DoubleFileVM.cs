@@ -15,8 +15,6 @@ namespace DoubleFile
 
         internal TreeView_DoubleFileVM(TreeView tvfe, IEnumerable<LocalTreeNode> rootNodes)
         {
-            SelectedItem = null;
-
             var nIndex = -1;
 
             foreach (var treeNode in rootNodes)

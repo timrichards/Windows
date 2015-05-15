@@ -28,7 +28,7 @@ namespace DoubleFile
                     {
                         Add(new LVitem_FolderDetailVM(new[] { "", strFG_Description })
                         {
-                            Foreground = UtilColor.ARGBtoBrush(tuple.Item2.ForeColor)
+                            Foreground = tuple.Item2.Foreground
                         }, bQuiet: true);
                     }
 
@@ -36,7 +36,7 @@ namespace DoubleFile
                     {
                         Add(new LVitem_FolderDetailVM(new[] { "", strBG_Description })
                         {
-                            Background = UtilColor.ARGBtoBrush(tuple.Item2.BackColor)
+                            Background = tuple.Item2.Background
                         }, bQuiet: true);
                     }
 #if DEBUG

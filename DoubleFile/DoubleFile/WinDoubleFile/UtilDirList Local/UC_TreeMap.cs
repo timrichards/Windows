@@ -886,7 +886,7 @@ namespace DoubleFile
                 {
                     CenterColor = Color.Wheat,
                     SurroundColors = new[] { ControlPaint.Dark(
-                        (item.ForeColor == UtilColor.Empty)
+                        (UtilColor.Empty == item.ForeColor)
                         ? Color.SandyBrown
                         : Color.FromArgb(item.ForeColor)
                     )}

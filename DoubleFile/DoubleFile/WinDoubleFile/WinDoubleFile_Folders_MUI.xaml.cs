@@ -9,7 +9,6 @@ namespace DoubleFile
     {
         protected override void LocalNavigatedTo()
         {
-            form_tv.DataContext = null;
             new TreeView_DoubleFileVM(form_tv, LocalTV.RootNodes);
         }
 

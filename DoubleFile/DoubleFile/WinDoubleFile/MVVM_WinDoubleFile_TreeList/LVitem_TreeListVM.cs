@@ -5,8 +5,8 @@ namespace DoubleFile
 {
     class LVitem_TreeListVM : ListViewItemVM_Base
     {
-        public Brush Foreground { get { return (UtilColor.Empty == LocalTreeNode.ForeColor) ? Brushes.Black : UtilColor.ARGBtoBrush(LocalTreeNode.ForeColor); } }
-        public Brush Background { get { return UtilColor.ARGBtoBrush(LocalTreeNode.BackColor); } }
+        public Brush Foreground { get { return LocalTreeNode.Foreground; } }
+        public Brush Background { get { return LocalTreeNode.Background; } }
         internal LocalTreeNode LocalTreeNode { get; set; }
 
         public string Folder { get { return marr[0]; } private set { SetProperty(0, value); } }

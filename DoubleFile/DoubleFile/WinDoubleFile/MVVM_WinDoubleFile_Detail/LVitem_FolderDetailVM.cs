@@ -19,7 +19,7 @@ namespace DoubleFile
         internal LVitem_FolderDetailVM(IEnumerable<string> ieString = null)
             : base(null, ieString)
         {
-            Foreground = Brushes.Black;
+            Foreground = Brushes.White;
             Background = Brushes.Transparent;
         }
 

@@ -8,6 +8,12 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
+        <Grid.Resources>
+            <Style TargetType="DataGridCell">
+                <Setter Property="Foreground" Value="{Binding Foreground}"/>
+                <Setter Property="Background" Value="{Binding Background}"/>
+            </Style>
+        </Grid.Resources>
         <DataGrid Grid.Column="0" Name="formLV_Siblings" SelectedItem="{Binding SelectedItem}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Sibling folders" Binding="{Binding Folder}" Width="{Binding WidthFolder}"/>

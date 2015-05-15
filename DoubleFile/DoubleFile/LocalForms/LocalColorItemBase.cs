@@ -1,10 +1,27 @@
-﻿
+﻿using System.Windows.Media;
+
 namespace DoubleFile
 {
     abstract class LocalColorItemBase
     {
-        internal int BackColor { get { return UtilColor.GetBG_ARGB(Color); } set { int c = Color; Color = UtilColor.SetBG_ARGB(ref c, value); } }
         internal int ForeColor { get { return UtilColor.GetFG_ARGB(Color); } set { int c = Color; Color = UtilColor.SetFG_ARGB(ref c, value); } }
+        internal int BackColor { get { return UtilColor.GetBG_ARGB(Color); } set { int c = Color; Color = UtilColor.SetBG_ARGB(ref c, value); } }
+
+        internal Brush Foreground
+        {
+            get
+            {
+                return
+                    (UtilColor.Empty == ForeColor)
+                    ? Brushes.White
+                    : UtilColor.ARGBtoBrush(ForeColor);
+            }
+        }
+
+        internal Brush Background
+        {
+            get { return UtilColor.ARGBtoBrush(BackColor); } 
+        }
 
         internal LocalColorItemBase()
         {

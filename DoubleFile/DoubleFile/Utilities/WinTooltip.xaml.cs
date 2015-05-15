@@ -139,13 +139,11 @@ namespace DoubleFile
 
         void WinTooltip_SizeChanged(Size newSize)
         {
-            var winOwner = Owner as LocalWindowBase;
-
-            if (null == winOwner)
+            if (null == Owner)
                 return;
 
-            var nOwnerRight = winOwner.Left + winOwner.Width;
-            var nOwnerBot = winOwner.Top + winOwner.Height;
+            var nOwnerRight = Owner.Left + Owner.Width;
+            var nOwnerBot = Owner.Top + Owner.Height;
 
             var rcTooltip = new Rect()
             {
@@ -155,7 +153,7 @@ namespace DoubleFile
                 Height = newSize.Height
             };
 
-            if (WindowState.Maximized == winOwner.WindowState)
+            if (WindowState.Maximized == Owner.WindowState)
             {
                 rcTooltip.X = (SystemParameters.PrimaryScreenWidth - rcTooltip.Width) / 2.0;
                 rcTooltip.Y = 0;
@@ -165,15 +163,15 @@ namespace DoubleFile
 
             if (false == (rcMonitor.Contains(rcTooltip)))
             {
-                rcTooltip.X = winOwner.Left + winOwner.Width - rcTooltip.Width;
-                rcTooltip.Y = winOwner.Top - rcTooltip.Height;
+                rcTooltip.X = Owner.Left + Owner.Width - rcTooltip.Width;
+                rcTooltip.Y = Owner.Top - rcTooltip.Height;
             }
 
             if (rcMonitor.Left > rcTooltip.X)
-                rcTooltip.X = winOwner.Left;
+                rcTooltip.X = Owner.Left;
 
             if (rcMonitor.Top > rcTooltip.Y)
-                rcTooltip.Y = winOwner.Top;
+                rcTooltip.Y = Owner.Top;
 
             Left = rcTooltip.X;
             Top = rcTooltip.Y;

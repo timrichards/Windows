@@ -4,10 +4,9 @@
         xmlns:local="clr-namespace:DoubleFile"
         Title="Files in Folder">
     <Grid>
-        <ListView SelectedItem="{Binding SelectedItem}" ScrollViewer.HorizontalScrollBarVisibility="Auto">
-            <ListView.Resources>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Foreground" Value="Black"/>
+        <DataGrid SelectedItem="{Binding SelectedItem}" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+            <DataGrid.Resources>
+                <Style TargetType="DataGridCell">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding SolitaryAndNonEmpty}" Value="True">
                             <Setter Property="Foreground" Value="Red" />
@@ -17,19 +16,17 @@
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </ListView.Resources>
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="File name" DisplayMemberBinding="{Binding Filename}" Width="{Binding WidthFilename}"/>
-                    <GridViewColumn Header="Duplicates" DisplayMemberBinding="{Binding Duplicates}" Width="{Binding WidthDuplicates}"/>
-                    <GridViewColumn Header="Length" DisplayMemberBinding="{Binding Length}" Width="{Binding WidthLength}"/>
-                    <GridViewColumn Header="Created" DisplayMemberBinding="{Binding Created}" Width="{Binding WidthCreated}"/>
-                    <GridViewColumn Header="Modified" DisplayMemberBinding="{Binding Modified}" Width="{Binding WidthModified}"/>
-                    <GridViewColumn Header="Attributes" DisplayMemberBinding="{Binding Attributes}" Width="{Binding WidthAttributes}"/>
-                    <GridViewColumn Header="Error 1" DisplayMemberBinding="{Binding Error1}" Width="{Binding WidthError1}"/>
-                    <GridViewColumn Header="Error 2" DisplayMemberBinding="{Binding Error2}" Width="{Binding WidthError2}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
+            </DataGrid.Resources>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="File name" Binding="{Binding Filename}" Width="{Binding WidthFilename}"/>
+                <DataGridTextColumn Header="Duplicates" Binding="{Binding Duplicates}" Width="{Binding WidthDuplicates}"/>
+                <DataGridTextColumn Header="Length" Binding="{Binding Length}" Width="{Binding WidthLength}"/>
+                <DataGridTextColumn Header="Created" Binding="{Binding Created}" Width="{Binding WidthCreated}"/>
+                <DataGridTextColumn Header="Modified" Binding="{Binding Modified}" Width="{Binding WidthModified}"/>
+                <DataGridTextColumn Header="Attributes" Binding="{Binding Attributes}" Width="{Binding WidthAttributes}"/>
+                <DataGridTextColumn Header="Error 1" Binding="{Binding Error1}" Width="{Binding WidthError1}"/>
+                <DataGridTextColumn Header="Error 2" Binding="{Binding Error2}" Width="{Binding WidthError2}"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </local:LocalUserControlBase>

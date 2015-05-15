@@ -16,7 +16,7 @@ namespace DoubleFile
         public ObservableCollection<ListViewItemVM_Base>
             Items { get { return _items; } }
         ObservableCollection<ListViewItemVM_Base> _items = new ObservableCollection<ListViewItemVM_Base>();
-        internal void ClearItems() { _items = new ObservableCollection<ListViewItemVM_Base>(); RaiseItems(); }
+        internal void ClearItems() { _items = new ObservableCollection<ListViewItemVM_Base>(); RaisePropertyChanged("Items"); }
 
         internal abstract int
             NumCols { get; }
@@ -94,6 +94,8 @@ namespace DoubleFile
 
             if (false == _items.IsEmpty())
                 _items[0].RaiseColumnWidths();
+            else
+                MBoxStatic.Assert(99993, false);
         }
     }
 }

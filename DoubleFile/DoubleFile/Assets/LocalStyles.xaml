@@ -40,6 +40,10 @@
         <Setter Property="ItemsSource" Value="{Binding Items}" />
         <Setter Property="IsReadOnly" Value="True" />
     </Style>
+
+    <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+    </Style>
     
     <Style TargetType="{x:Type ListView}" BasedOn="{StaticResource {x:Type ListView}}">
         <Setter Property="BorderThickness" Value="0" />

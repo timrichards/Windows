@@ -12,7 +12,7 @@ namespace DoubleFile
     public abstract class LocalUserControlBase : UserControl, IContent
     {
         public void OnFragmentNavigation(FragmentNavigationEventArgs e) { }
-        public void OnNavigatedFrom(NavigationEventArgs e) { }
+        public void OnNavigatedFrom(NavigationEventArgs e) { LocalDispose_WindowClosed(); }
         public void OnNavigatedTo(NavigationEventArgs e) { ModernWindow1.CurrentPage = this; LocalNavigatedTo(); }
         virtual protected void LocalNavigatedTo() { }
         public void OnNavigatingFrom(NavigatingCancelEventArgs e)

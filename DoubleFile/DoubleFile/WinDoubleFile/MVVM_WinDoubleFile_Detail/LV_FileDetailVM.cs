@@ -8,14 +8,18 @@ namespace DoubleFile
         public string LocalPath { get; private set; }
         void LocalPath_Set(LocalTreeNode treeNode = null, string strFile = null)
         {
-            LocalPath = null;
+            var strLocalPath =
+                (null != treeNode)
+                ? treeNode.FullPath +
+                    ((false == string.IsNullOrEmpty(strFile))
+                    ? '\\' + strFile
+                    : "")
+                : null;
 
-            if (null != treeNode)
-                LocalPath = treeNode.FullPath +
-                ((false == string.IsNullOrEmpty(strFile))
-                ? '\\' + strFile
-                : "");
+            if (strLocalPath == LocalPath)
+                return;
 
+            LocalPath = strLocalPath;
             RaisePropertyChanged("LocalPath");
         }
 

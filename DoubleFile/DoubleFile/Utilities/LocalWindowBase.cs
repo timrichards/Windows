@@ -34,7 +34,7 @@ namespace DoubleFile
             var window = new ExtraWindow
             {
                 Content = content,
-                Title = page.Title,
+                Title = page.LocalTitle,
             }
                 .Show();
 
@@ -52,17 +52,13 @@ namespace DoubleFile
         {
         }
 
-        public string Title { get; set; }
+        public string LocalTitle { get; set; }
 
         internal bool LocalIsClosed { get; private set; }
         internal bool LocalIsClosing { get; private set; }
 
         internal bool? LocalDialogResult { get; set; }
         internal void CloseIfSimulatingModal() { }
-
-        protected virtual LocalWindow_DoubleFile CreateChainedWindow() { return null; }
-        internal ResizeMode ResizeMode { get; set; }
-        virtual protected Rect PosAtClose { get; set; }
     }
 
     interface ILocalWindow
@@ -169,14 +165,9 @@ namespace DoubleFile
 
             Owner = (Window)App.TopWindow;
             base.Show();
-            PositionWindow();
         }
 
         internal new bool? ShowDialog() { return ShowDialog(App.TopWindow); }
-
-        protected virtual void PositionWindow()
-        {
-        }
 
         bool? ShowDialog(ILocalWindow me)
         {

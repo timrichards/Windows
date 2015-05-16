@@ -170,9 +170,6 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainWindow_.xaml.cs">
-      <DependentUpon>MainWindow_.xaml</DependentUpon>
-    </Compile>
     <Compile Include="MVVM\ListView Base\ListViewItemVM_Base.cs" />
     <Compile Include="MVVM\ListView Base\ListViewVM_Base.cs" />
     <Compile Include="MVVM\ListView Base\ListViewVM_Base Generic.cs" />
@@ -206,20 +203,11 @@
     <Compile Include="WinDoubleFile\WinDoubleFile_Files_MUI.xaml.cs">
       <DependentUpon>WinDoubleFile_Files_MUI.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinDoubleFile\WinDoubleFile_Folders.xaml.cs">
-      <DependentUpon>WinDoubleFile_Folders.xaml</DependentUpon>
-    </Compile>
     <Compile Include="WinDoubleFile\WinDoubleFile_Search_MUI.xaml.cs">
       <DependentUpon>WinDoubleFile_Search_MUI.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinDoubleFile\WinDoubleFile_Search.xaml.cs">
-      <DependentUpon>WinDoubleFile_Search.xaml</DependentUpon>
-    </Compile>
     <Compile Include="WinDoubleFile\WinDoubleFile_TreeList_MUI.xaml.cs">
       <DependentUpon>WinDoubleFile_TreeList_MUI.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="WinDoubleFile\WinDoubleFile_TreeList.xaml.cs">
-      <DependentUpon>WinDoubleFile_TreeList.xaml</DependentUpon>
     </Compile>
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_TreeList\LV_TreeListSiblingsVM.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\WinTreeMapVM.cs" />
@@ -228,10 +216,6 @@
     <Compile Include="Utilities\WinTooltip.xaml.cs">
       <DependentUpon>WinTooltip.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinDoubleFile\UtilDirList Local\WinTreeMap.xaml.cs">
-      <DependentUpon>WinTreeMap.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="WinDoubleFile\LocalWindow_DoubleFile.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LVitem_FolderDetailVM.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LVitem_VolumeDetail.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LVitem_FileDetailVM.cs" />
@@ -244,15 +228,6 @@
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Duplicates\LVitem_FileDuplicatesVM.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Duplicates\WinDoubleFile_DuplicatesVM.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Duplicates\WinDoubleFile_DuplicatesVM_Impl.cs" />
-    <Compile Include="WinDoubleFile\WinDoubleFile_Detail.xaml.cs">
-      <DependentUpon>WinDoubleFile_Detail.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="WinDoubleFile\WinDoubleFile_Duplicates.xaml.cs">
-      <DependentUpon>WinDoubleFile_Duplicates.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="WinDoubleFile\WinDoubleFile_Files.xaml.cs">
-      <DependentUpon>WinDoubleFile_Files.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Utilities\LocalMbox.xaml.cs">
       <DependentUpon>LocalMbox.xaml</DependentUpon>
     </Compile>
@@ -463,10 +438,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow_.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="WinDoubleFile\UtilDirList Local\WinTreeMap_MUI.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -483,15 +454,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WinDoubleFile\WinDoubleFile_Folders.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="WinDoubleFile\WinDoubleFile_Search_MUI.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="WinDoubleFile\WinDoubleFile_Search.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -499,29 +462,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WinDoubleFile\WinDoubleFile_TreeList.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Utilities\WinTooltip.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="WinDoubleFile\UtilDirList Local\WinTreeMap.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="WinDoubleFile\WinDoubleFile_Detail.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="WinDoubleFile\WinDoubleFile_Duplicates.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="WinDoubleFile\WinDoubleFile_Files.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Utilities\LocalMbox.xaml">
       <SubType>Designer</SubType>

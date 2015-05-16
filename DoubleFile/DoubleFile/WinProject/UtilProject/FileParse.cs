@@ -75,8 +75,8 @@ namespace DoubleFile
             "Volume Free 2",
             "Volume Size",
             "Volume Label",
-            "Drive Model",          // These last three are CIM items
-            "Drive Serial",
+            "Drive Model #",        // These last three are CIM items
+            "Drive Serial #",
             "Drive Size"
         };
         static internal readonly bool[] kabDIsizeType = new bool[knDriveInfoItems]

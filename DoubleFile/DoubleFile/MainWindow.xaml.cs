@@ -1,5 +1,8 @@
 ﻿using FirstFloor.ModernUI.Presentation;
 using System;
+using System.IO;
+using System.Reactive.Linq;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -20,6 +23,12 @@ namespace DoubleFile
             Init = null;
             InitializeComponent();
             _mainWindowWR.SetTarget(this);
+
+            Observable.FromEventPattern(this, "Loaded")
+                .Subscribe(Window_Loaded);
+
+            Observable.FromEventPattern<System.ComponentModel.CancelEventArgs>(this, "Closing")
+                .Subscribe(args => MainWindow_Closing(args.EventArgs));
         }
 
         static internal LocalUserControlBase CurrentPage
@@ -77,12 +86,96 @@ namespace DoubleFile
             }
         }
 
-        LocalUserControlBase
-            _currentPage = null;
-        static internal string
-            ExtraWindowFakeKey { get { return "/ExtraWindow.xaml"; } }
-        static readonly Link
-            _titleLink = new Link { DisplayName = "Extra Window", Source = new Uri(ExtraWindowFakeKey, UriKind.Relative) };
+        private void Window_Loaded(System.Reactive.EventPattern<object> obj)
+        {
+#if (DEBUG)
+            //#warning DEBUG is defined.
+            MBoxStatic.Assert(99998, System.Diagnostics.Debugger.IsAttached, "Debugger is not attached!");
+#else
+            if (MBoxStatic.Assert(99997, (System.Diagnostics.Debugger.IsAttached == false), "Debugger is attached but DEBUG is not defined.") == false)
+                return;
+
+            var args = AppDomain.CurrentDomain.SetupInformation.ActivationArguments;
+
+            if (null == args)
+                return;
+
+            var arrArgs = args.ActivationData;
+
+            // scenario: launched from Start menu
+            if (null == arrArgs)                
+                return;
+
+            if (false == MBoxStatic.Assert(1308.93165, 0 < arrArgs.Length))
+                return;
+
+            var strFile = arrArgs[0];
+
+            if (2 > strFile.Length)
+                return;
+
+            switch (Path.GetExtension(strFile).Substring(1))
+            {
+                case FileParse.ksFileExt_Listing:
+                {
+                    //form_cbSaveAs.Text = strFile;
+                    //AddVolume();
+                    //form_tabControlMain.SelectedTab = form_tabPageBrowse;
+                    //RestartTreeTimer();
+                    break;
+                }
+
+                case FileParse.ksFileExt_Project:
+                {
+                    //if (LoadVolumeList(strFile))
+                    //{
+                    //    RestartTreeTimer();
+                    //}
+
+                    break;
+                }
+
+                case FileParse.ksFileExt_Copy:
+                {
+                    //form_tabControlMain.SelectedTab = form_tabPageBrowse;
+                    //form_tabControlCopyIgnore.SelectedTab = form_tabPageCopy;
+                    //m_blinky.Go(formLV_CopyScratchpad, clr: Color.Yellow, Once: true);
+                    //FormDirListMessageBox("The Copy scratchpad cannot be loaded with no directory listings.", "Load Copy scratchpad externally");
+                    //Application.Exit();
+                    break;
+                }
+
+                case FileParse.ksFileExt_Ignore:
+                {
+                    //LoadIgnoreList(strFile);
+                    //form_tabControlMain.SelectedTab = form_tabPageBrowse;
+                    //form_tabControlCopyIgnore.SelectedTab = form_tabPageIgnore;
+                    break;
+                }
+            }
+#endif
+        }
+
+        void MainWindow_Closing(System.ComponentModel.CancelEventArgs e)
+        {
+            if ((null != App.LVprojectVM) &&
+                App.LVprojectVM.Unsaved &&
+                (MessageBoxResult.Cancel == 
+                MBoxStatic.ShowDialog(WinProjectVM.UnsavedWarning, "Quit Double File", MessageBoxButton.OKCancel)))
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            if (Directory.Exists(ProjectFile.TempPath))
+            {
+                try { Directory.Delete(ProjectFile.TempPath, true); }
+                catch { }
+            }
+
+            if (Directory.Exists(ProjectFile.TempPath01))
+                Directory.Delete(ProjectFile.TempPath01, true);
+        }
 
         static readonly LinkGroup[]
             _links =
@@ -108,6 +201,12 @@ namespace DoubleFile
             }}
         };
 
+        LocalUserControlBase
+            _currentPage = null;
+        static internal string
+            ExtraWindowFakeKey { get { return "/ExtraWindow.xaml"; } }
+        static readonly Link
+            _titleLink = new Link { DisplayName = "Extra Window", Source = new Uri(ExtraWindowFakeKey, UriKind.Relative) };
         static readonly WeakReference<ModernWindow1>
             _mainWindowWR = new WeakReference<ModernWindow1>(null);
     }

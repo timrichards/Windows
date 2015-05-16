@@ -3,9 +3,9 @@
     /// <summary>
     /// Interaction logic for WinDoubleFile_Duplicates.xaml
     /// </summary>
-    partial class WinDoubleFile_Search_MUI
+    partial class WinDoubleFile_Search
     {
-        public WinDoubleFile_Search_MUI()
+        public WinDoubleFile_Search()
         {
             InitializeComponent();
             

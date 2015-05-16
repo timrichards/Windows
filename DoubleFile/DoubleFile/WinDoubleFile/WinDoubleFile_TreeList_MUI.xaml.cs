@@ -5,9 +5,9 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinFormDirList.xaml
     /// </summary>
-    public partial class WinDoubleFile_TreeList_MUI
+    public partial class WinDoubleFile_TreeList
     {
-        public WinDoubleFile_TreeList_MUI()
+        public WinDoubleFile_TreeList()
         {
             InitializeComponent();
 

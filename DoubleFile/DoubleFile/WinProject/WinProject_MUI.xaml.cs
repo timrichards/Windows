@@ -4,9 +4,9 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    partial class WinProject_MUI
+    partial class WinProject
     {
-        public WinProject_MUI()
+        public WinProject()
         {
             InitializeComponent();
 
@@ -38,7 +38,7 @@ namespace DoubleFile
             if (null == App.LVprojectVM)
                 return false;
 
-            WinProject_MUI winProjectMUI = null;
+            WinProject winProjectMUI = null;
 
             _weakReference.TryGetTarget(out winProjectMUI);
 
@@ -74,7 +74,7 @@ namespace DoubleFile
                 return false;   // from lambda
             });
 
-            WinProject_MUI winProjectMUI = null;
+            WinProject winProjectMUI = null;
 
             _weakReference.TryGetTarget(out winProjectMUI);
             winProjectMUI._lvProjectVM = null;
@@ -88,7 +88,7 @@ namespace DoubleFile
 
         LV_ProjectVM
             _lvProjectVM = null;
-        static WeakReference<WinProject_MUI>
-            _weakReference = new WeakReference<WinProject_MUI>(null);
+        static WeakReference<WinProject>
+            _weakReference = new WeakReference<WinProject>(null);
     }
 }

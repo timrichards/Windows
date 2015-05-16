@@ -322,9 +322,6 @@
       <DependentUpon>WinProgress.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinProject\WinProject.xaml.cs">
-      <DependentUpon>WinProject.xaml</DependentUpon>
-    </Compile>
     <Compile Include="WinProject\WinProject_MUI.xaml.cs">
       <DependentUpon>WinProject_MUI.xaml</DependentUpon>
     </Compile>
@@ -481,10 +478,6 @@
     <Page Include="Utilities\WinProgress.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="WinProject\WinProject.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="WinProject\WinProject_MUI.xaml">
       <Generator>MSBuild:Compile</Generator>

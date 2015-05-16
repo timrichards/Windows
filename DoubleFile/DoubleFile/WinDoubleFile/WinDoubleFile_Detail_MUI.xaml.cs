@@ -5,7 +5,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinDoubleFile_Detail.xaml
     /// </summary>
-    partial class WinDoubleFile_Detail_MUI
+    partial class WinDoubleFile_Detail
     {
         protected override void LocalNavigatedTo()
         {
@@ -25,7 +25,7 @@ namespace DoubleFile
                 new LV_VolumeDetailVM();
         }
 
-        public WinDoubleFile_Detail_MUI()
+        public WinDoubleFile_Detail()
         {
             InitializeComponent();
         }

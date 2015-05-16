@@ -10,7 +10,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinFormDirList.xaml
     /// </summary>
-    public partial class WinTreeMap_MUI
+    public partial class WinTreeMap
     {
         protected override void LocalNavigatedTo()
         {
@@ -28,7 +28,7 @@ namespace DoubleFile
             _ucTreeMap.TreeMapVM.GoTo(LocalTV.TopNode);
         }
 
-        public WinTreeMap_MUI()
+        public WinTreeMap()
         {
             InitializeComponent();
 

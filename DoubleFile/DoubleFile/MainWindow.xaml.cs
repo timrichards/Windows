@@ -45,7 +45,7 @@ namespace DoubleFile
                     mainWindow._currentPage = value;
                     mainWindow.TitleLinks.Remove(_titleLink);
 
-                    if (mainWindow._currentPage is WinProject_MUI)
+                    if (mainWindow._currentPage is WinProject)
                         return false;
 
                     //if (mainWindow._currentPage is info page)
@@ -182,22 +182,22 @@ namespace DoubleFile
         {
             new LinkGroup { DisplayName="Explore", Links =
             {
-                new Link { DisplayName = "Tree map", Source = new Uri("/WinDoubleFile/UtilDirList Local/WinTreeMap_MUI.xaml", UriKind.Relative)},
-                new Link { DisplayName = "Folders", Source = new Uri("/WinDoubleFile/WinDoubleFile_Folders_MUI.xaml", UriKind.Relative)},
-                new Link { DisplayName = "Tree list", Source = new Uri("/WinDoubleFile/WinDoubleFile_TreeList_MUI.xaml", UriKind.Relative)}
+                new Link { DisplayName = "Tree map", Source = new Uri("/WinDoubleFile/UtilDirList Local/WinTreeMap.xaml", UriKind.Relative)},
+                new Link { DisplayName = "Folders", Source = new Uri("/WinDoubleFile/WinDoubleFile_Folders.xaml", UriKind.Relative)},
+                new Link { DisplayName = "Tree list", Source = new Uri("/WinDoubleFile/WinDoubleFile_TreeList.xaml", UriKind.Relative)}
             }},
             new LinkGroup { DisplayName="Files", Links =
             {
-                new Link { DisplayName = "Files in folder", Source = new Uri("/WinDoubleFile/WinDoubleFile_Files_MUI.xaml", UriKind.Relative)},
-                new Link { DisplayName = "Duplicates", Source = new Uri("/WinDoubleFile/WinDoubleFile_Duplicates_MUI.xaml", UriKind.Relative)}
+                new Link { DisplayName = "Files in folder", Source = new Uri("/WinDoubleFile/WinDoubleFile_Files.xaml", UriKind.Relative)},
+                new Link { DisplayName = "Duplicates", Source = new Uri("/WinDoubleFile/WinDoubleFile_Duplicates.xaml", UriKind.Relative)}
             }},
             new LinkGroup { DisplayName="Search", Links =
             {
-                new Link { DisplayName = "Search", Source = new Uri("/WinDoubleFile/WinDoubleFile_Search_MUI.xaml", UriKind.Relative)}
+                new Link { DisplayName = "Search", Source = new Uri("/WinDoubleFile/WinDoubleFile_Search.xaml", UriKind.Relative)}
             }},
             new LinkGroup { DisplayName="Detailed info", Links =
             {
-                new Link { DisplayName = "Detailed info", Source = new Uri("/WinDoubleFile/WinDoubleFile_Detail_MUI.xaml", UriKind.Relative)}
+                new Link { DisplayName = "Detailed info", Source = new Uri("/WinDoubleFile/WinDoubleFile_Detail.xaml", UriKind.Relative)}
             }}
         };
 

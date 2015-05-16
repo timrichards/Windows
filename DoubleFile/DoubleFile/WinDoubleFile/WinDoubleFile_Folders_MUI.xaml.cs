@@ -5,14 +5,14 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinDoubleFile_Folders.xaml
     /// </summary>
-    partial class WinDoubleFile_Folders_MUI
+    partial class WinDoubleFile_Folders
     {
         protected override void LocalNavigatedTo()
         {
             new TreeView_DoubleFileVM(form_tv, LocalTV.RootNodes);
         }
 
-        public WinDoubleFile_Folders_MUI()
+        public WinDoubleFile_Folders()
         {
             InitializeComponent();
         }

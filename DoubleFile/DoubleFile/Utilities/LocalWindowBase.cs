@@ -13,7 +13,7 @@ namespace DoubleFile
     {
         public void OnFragmentNavigation(FragmentNavigationEventArgs e) { }
         public void OnNavigatedFrom(NavigationEventArgs e) { LocalDispose_WindowClosed(); }
-        public void OnNavigatedTo(NavigationEventArgs e) { ModernWindow1.CurrentPage = this; LocalNavigatedTo(); }
+        public void OnNavigatedTo(NavigationEventArgs e) { MainWindow.CurrentPage = this; LocalNavigatedTo(); }
         virtual protected void LocalNavigatedTo() { }
         public void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
@@ -23,10 +23,10 @@ namespace DoubleFile
                 return;
             }
 
-            if (ModernWindow1.ExtraWindowFakeKey != "" + e.Source)
+            if (MainWindow.ExtraWindowFakeKey != "" + e.Source)
                 return;
 
-            var page = ModernWindow1.CurrentPage;
+            var page = MainWindow.CurrentPage;
             var content = Activator.CreateInstance(page.GetType()) as LocalUserControlBase;
 
             content.CopyTag_NewWindow(new WeakReference(page.Tag));

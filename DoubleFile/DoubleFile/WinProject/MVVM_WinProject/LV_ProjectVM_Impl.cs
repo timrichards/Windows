@@ -13,7 +13,7 @@ namespace DoubleFile
         {
             get
             {
-                ModernWindow1.WithMainWindow(mainWindow =>
+                MainWindow.WithMainWindow(mainWindow =>
                 {
                     mainWindow.ShowLinks(Items.IsEmpty());
                     return false;   // from lambda

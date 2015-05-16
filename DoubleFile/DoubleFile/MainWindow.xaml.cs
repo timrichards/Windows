@@ -9,12 +9,12 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for ModernWindow1.xaml
     /// </summary>
-    public partial class ModernWindow1
+    public partial class MainWindow
     {
         static Action Init = null;
         static void InitForMainWindowOnly(Action init) { Init = init; }
         public
-            ModernWindow1()
+            MainWindow()
             : base(InitForMainWindowOnly)
         {
             App.Icon = Icon;
@@ -57,9 +57,9 @@ namespace DoubleFile
             }
         }
 
-        static internal T WithMainWindow<T>(Func<ModernWindow1, T> doSomethingWith)
+        static internal T WithMainWindow<T>(Func<MainWindow, T> doSomethingWith)
         {
-            ModernWindow1 mainWindow = null;
+            MainWindow mainWindow = null;
 
             _mainWindowWR.TryGetTarget(out mainWindow);
 
@@ -207,7 +207,7 @@ namespace DoubleFile
             ExtraWindowFakeKey { get { return "/ExtraWindow.xaml"; } }
         static readonly Link
             _titleLink = new Link { DisplayName = "Extra Window", Source = new Uri(ExtraWindowFakeKey, UriKind.Relative) };
-        static readonly WeakReference<ModernWindow1>
-            _mainWindowWR = new WeakReference<ModernWindow1>(null);
+        static readonly WeakReference<MainWindow>
+            _mainWindowWR = new WeakReference<MainWindow>(null);
     }
 }

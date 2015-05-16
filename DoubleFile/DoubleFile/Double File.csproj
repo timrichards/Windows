@@ -191,23 +191,23 @@
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_TreeList\LVitem_TreeListVM.cs" />
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_TreeList\LV_TreeListChildrenVM.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\Search\GetOneNodeByRootPath.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\WinTreeMap_MUI.xaml.cs">
-      <DependentUpon>WinTreeMap_MUI.xaml</DependentUpon>
+    <Compile Include="WinDoubleFile\UtilDirList Local\WinTreeMap.xaml.cs">
+      <DependentUpon>WinTreeMap.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinDoubleFile\WinDoubleFile_Detail_MUI.xaml.cs">
-      <DependentUpon>WinDoubleFile_Detail_MUI.xaml</DependentUpon>
+    <Compile Include="WinDoubleFile\WinDoubleFile_Detail.xaml.cs">
+      <DependentUpon>WinDoubleFile_Detail.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinDoubleFile\WinDoubleFile_Duplicates_MUI.xaml.cs">
-      <DependentUpon>WinDoubleFile_Duplicates_MUI.xaml</DependentUpon>
+    <Compile Include="WinDoubleFile\WinDoubleFile_Duplicates.xaml.cs">
+      <DependentUpon>WinDoubleFile_Duplicates.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinDoubleFile\WinDoubleFile_Files_MUI.xaml.cs">
-      <DependentUpon>WinDoubleFile_Files_MUI.xaml</DependentUpon>
+    <Compile Include="WinDoubleFile\WinDoubleFile_Files.xaml.cs">
+      <DependentUpon>WinDoubleFile_Files.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinDoubleFile\WinDoubleFile_Search_MUI.xaml.cs">
-      <DependentUpon>WinDoubleFile_Search_MUI.xaml</DependentUpon>
+    <Compile Include="WinDoubleFile\WinDoubleFile_Search.xaml.cs">
+      <DependentUpon>WinDoubleFile_Search.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinDoubleFile\WinDoubleFile_TreeList_MUI.xaml.cs">
-      <DependentUpon>WinDoubleFile_TreeList_MUI.xaml</DependentUpon>
+    <Compile Include="WinDoubleFile\WinDoubleFile_TreeList.xaml.cs">
+      <DependentUpon>WinDoubleFile_TreeList.xaml</DependentUpon>
     </Compile>
     <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_TreeList\LV_TreeListSiblingsVM.cs" />
     <Compile Include="WinDoubleFile\UtilDirList Local\WinTreeMapVM.cs" />
@@ -276,8 +276,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="LocalForms\LocalTV_Impl.cs" />
-    <Compile Include="WinDoubleFile\WinDoubleFile_Folders_MUI.xaml.cs">
-      <DependentUpon>WinDoubleFile_Folders_MUI.xaml</DependentUpon>
+    <Compile Include="WinDoubleFile\WinDoubleFile_Folders.xaml.cs">
+      <DependentUpon>WinDoubleFile_Folders.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utilities\LocalWindowBase.cs" />
     <Compile Include="WinProject\MVVM_WinProject\LV_ProjectVM_Impl.cs" />
@@ -322,8 +322,8 @@
       <DependentUpon>WinProgress.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinProject\WinProject_MUI.xaml.cs">
-      <DependentUpon>WinProject_MUI.xaml</DependentUpon>
+    <Compile Include="WinProject\WinProject.xaml.cs">
+      <DependentUpon>WinProject.xaml</DependentUpon>
     </Compile>
     <Compile Include="WinProject\WinVolumeEdit\MVVM_UC_VolumeEdit\UC_VolumeEditVM.cs">
       <SubType>Code</SubType>
@@ -435,27 +435,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WinDoubleFile\UtilDirList Local\WinTreeMap_MUI.xaml">
+    <Page Include="WinDoubleFile\UtilDirList Local\WinTreeMap.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WinDoubleFile\WinDoubleFile_Detail_MUI.xaml">
+    <Page Include="WinDoubleFile\WinDoubleFile_Detail.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WinDoubleFile\WinDoubleFile_Duplicates_MUI.xaml">
+    <Page Include="WinDoubleFile\WinDoubleFile_Duplicates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WinDoubleFile\WinDoubleFile_Files_MUI.xaml">
+    <Page Include="WinDoubleFile\WinDoubleFile_Files.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WinDoubleFile\WinDoubleFile_Search_MUI.xaml">
+    <Page Include="WinDoubleFile\WinDoubleFile_Search.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WinDoubleFile\WinDoubleFile_TreeList_MUI.xaml">
+    <Page Include="WinDoubleFile\WinDoubleFile_TreeList.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -467,7 +467,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WinDoubleFile\WinDoubleFile_Folders_MUI.xaml">
+    <Page Include="WinDoubleFile\WinDoubleFile_Folders.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -479,7 +479,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WinProject\WinProject_MUI.xaml">
+    <Page Include="WinProject\WinProject.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

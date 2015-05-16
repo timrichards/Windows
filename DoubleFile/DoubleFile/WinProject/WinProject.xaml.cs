@@ -63,7 +63,7 @@ namespace DoubleFile
 
         static void Reset()
         {
-            ModernWindow1.WithMainWindow(mainWindow =>
+            MainWindow.WithMainWindow(mainWindow =>
             {
                 UtilProject.UIthread(() =>
                 {

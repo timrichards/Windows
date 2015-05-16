@@ -14,7 +14,7 @@ namespace DoubleFile
             InitializeComponent();
 
             Observable.FromEventPattern(formBtn_NewWindow, "Click")
-                .Subscribe(args => { new ModernWindow1().Show(); });
+                .Subscribe(args => { new MainWindow().Show(); });
         }
     }
 }

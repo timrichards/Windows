@@ -20,7 +20,7 @@ namespace DoubleFile
             Icmd_Folders = new RelayCommand(SearchFolders, IsSearchEnabled);
             Icmd_FoldersAndFiles = new RelayCommand(() => SearchFoldersAndFiles(), IsSearchEnabled);
             Icmd_Files = new RelayCommand(() => SearchFoldersAndFiles(bSearchFilesOnly: true), IsSearchEnabled);
-            Icmd_Goto = new RelayCommand(Goto, () => null != _selectedItem);
+            Icmd_GoTo = new RelayCommand(Goto, () => null != _selectedItem);
             TabledString<Tabled_Files>.AddRef();
             return this;
         }

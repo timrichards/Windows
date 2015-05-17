@@ -7,7 +7,7 @@ namespace DoubleFile
         public ICommand Icmd_Folders { get; private set; }
         public ICommand Icmd_FoldersAndFiles { get; private set; }
         public ICommand Icmd_Files { get; private set; }
-        public ICommand Icmd_Goto { get; private set; }
+        public ICommand Icmd_GoTo { get; private set; }
 
         public string SearchText { set; private get; }
 

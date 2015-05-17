@@ -34,24 +34,20 @@ namespace DoubleFile
         void WinDoubleFile_DuplicatesVM_UpdateFileDetail(Tuple<IEnumerable<string>, LocalTreeNode> tuple = null)
         {
             UtilDirList.Write("F");
-
-            if (tuple.Item2 == _treeNode)
-                return;
-
             _treeNode = tuple.Item2;
             LocalPath_Set();
             Title = null;
-
             UtilProject.UIthread(ClearItems);
 
             if (null == tuple.Item1)
                 return;
 
-            var kasHeader = new[] { "Filename", "Created", "Modified", "Attributes", "Length", "Error 1", "Error 2" };
-
             var asFileLine =
                 tuple.Item1
                 .ToArray();
+
+            if (asFileLine[0] == Title)
+                return;
 
             LocalPath_Set(_treeNode, asFileLine[0]);
             asFileLine[3] = UtilDirList.DecodeAttributes(asFileLine[3]);
@@ -65,6 +61,7 @@ namespace DoubleFile
 
             UtilProject.UIthread(() =>
             {
+                var kasHeader = new[] { "Filename", "Created", "Modified", "Attributes", "Length", "Error 1", "Error 2" };
                 var nMax = Math.Min(asFileLine.Length, kasHeader.Length);
 
                 for (var i = 1; i < nMax; ++i)

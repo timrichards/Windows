@@ -8,10 +8,13 @@ namespace DoubleFile
     /// </summary>
     partial class WinDoubleFile_Detail
     {
+        public WinDoubleFile_Detail()
+        {
+            InitializeComponent();
+        }
+
         protected override void LocalNavigatedTo()
         {
-            LocalDispose_WindowClosed();
-
             form_localPath.DataContext =
                 formLV_File.DataContext =
                 _lvFileDetailVM =
@@ -30,11 +33,6 @@ namespace DoubleFile
                 Observable.FromEventPattern(ctl, "SelectionChanged")
                     .Subscribe(args => ctl.UnselectAllCells());
             }
-        }
-
-        public WinDoubleFile_Detail()
-        {
-            InitializeComponent();
         }
 
         protected override void CopyTag_NewWindow(WeakReference wr)

@@ -7,18 +7,16 @@ namespace DoubleFile
     /// </summary>
     partial class WinDoubleFile_Duplicates
     {
-        protected override void LocalNavigatedTo()
-        {
-            LocalDispose_WindowClosed();
-
-            DataContext =
-                _winDoubleFile_DuplicatesVM =
-                new WinDoubleFile_DuplicatesVM();
-        }
-
         public WinDoubleFile_Duplicates()
         {
             InitializeComponent();
+        }
+
+        protected override void LocalNavigatedTo()
+        {
+            DataContext =
+                _winDoubleFile_DuplicatesVM =
+                new WinDoubleFile_DuplicatesVM();
         }
 
         protected override void CopyTag_NewWindow(WeakReference wr)

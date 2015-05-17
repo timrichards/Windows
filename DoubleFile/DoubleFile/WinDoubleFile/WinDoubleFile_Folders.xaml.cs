@@ -7,14 +7,14 @@ namespace DoubleFile
     /// </summary>
     partial class WinDoubleFile_Folders
     {
-        protected override void LocalNavigatedTo()
-        {
-            new TreeView_DoubleFileVM(form_tv, LocalTV.RootNodes);
-        }
-
         public WinDoubleFile_Folders()
         {
             InitializeComponent();
+        }
+
+        protected override void LocalNavigatedTo()
+        {
+            new TreeView_DoubleFileVM(form_tv, LocalTV.RootNodes);
         }
 
         protected override void CopyTag_NewWindow(WeakReference wr)

@@ -11,6 +11,7 @@ namespace DoubleFile
         {
             Icmd_Copy = new RelayCommand(Copy, () => false == string.IsNullOrEmpty(LocalPath));
             _lsDisposable.Add(WinDoubleFile_DuplicatesVM.UpdateFileDetail.Subscribe(WinDoubleFile_DuplicatesVM_UpdateFileDetail));
+            _lsDisposable.Add(LV_DoubleFile_FilesVM.SelectedFileChanged.Subscribe(LV_DoubleFile_FilesVM_SelectedFileChanged));
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(tuple => { UtilDirList.Write("E"); if (null != tuple.Item2) LocalPath_Set(tuple.Item2); }));
         }
 
@@ -25,12 +26,19 @@ namespace DoubleFile
             Clipboard.SetText(LocalPath);
         }
 
+        void LV_DoubleFile_FilesVM_SelectedFileChanged(Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode> tuple = null)
+        {
+            WinDoubleFile_DuplicatesVM_UpdateFileDetail(Tuple.Create(tuple.Item2, tuple.Item3));
+        }
+
         void WinDoubleFile_DuplicatesVM_UpdateFileDetail(Tuple<IEnumerable<string>, LocalTreeNode> tuple = null)
         {
             UtilDirList.Write("F");
-            var treeNode = tuple.Item2;
 
-            _treeNode = treeNode;
+            if (tuple.Item2 == _treeNode)
+                return;
+
+            _treeNode = tuple.Item2;
             LocalPath_Set();
             Title = null;
 
@@ -45,7 +53,7 @@ namespace DoubleFile
                 tuple.Item1
                 .ToArray();
 
-            LocalPath_Set(treeNode, asFileLine[0]);
+            LocalPath_Set(_treeNode, asFileLine[0]);
             asFileLine[3] = UtilDirList.DecodeAttributes(asFileLine[3]);
 
             if ((asFileLine.Length > FileParse.knColLengthLV) &&

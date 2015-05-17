@@ -12,22 +12,6 @@ namespace DoubleFile
     /// </summary>
     public partial class WinTreeMap
     {
-        protected override void LocalNavigatedTo()
-        {
-            if (null != _ucTreeMap)
-                _ucTreeMap.Dispose();
-
-            _ucTreeMap = new UC_TreeMap();
-            _ucTreeMap.LocalOwner = App.LocalMainWindow as Window;
-
-            DataContext =
-                _ucTreeMap.TreeMapVM =
-                new WinTreeMapVM();
-
-            _host.Child = _ucTreeMap;
-            _ucTreeMap.TreeMapVM.GoTo(LocalTV.TopNode);
-        }
-
         public WinTreeMap()
         {
             InitializeComponent();
@@ -39,9 +23,29 @@ namespace DoubleFile
                 .Subscribe(args => { if (null != _ucTreeMap) _ucTreeMap.TreeMapVM.LostMouseCapture(); });
         }
 
+        protected override void LocalNavigatedTo()
+        {
+            _host.Child =
+                _ucTreeMap =
+                new UC_TreeMap()
+            {
+                LocalOwner = App.LocalMainWindow as Window,
+                TreeMapVM = new WinTreeMapVM()
+            };
+
+            DataContext = _ucTreeMap.TreeMapVM;
+            _ucTreeMap.TreeMapVM.GoTo(LocalTV.TopNode);
+        }
+
         protected override void CopyTag_NewWindow(WeakReference wr)
         {
             LocalNavigatedTo();
+        }
+
+        protected override void LocalDispose_WindowClosed()
+        {
+            if (null != _ucTreeMap)
+                _ucTreeMap.Dispose();
         }
 
         UC_TreeMap

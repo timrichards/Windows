@@ -9,8 +9,6 @@ namespace DoubleFile
     {
         protected override void LocalNavigatedTo()
         {
-            LocalDispose_WindowClosed();
-
             DataContext =
                 _lvDoubleFile_FilesVM =
                 new LV_DoubleFile_FilesVM();

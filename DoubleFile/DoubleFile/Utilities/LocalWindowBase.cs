@@ -79,19 +79,19 @@ namespace DoubleFile
             {
                 return
                     I.SimulatingModal
-                    ? _LocalDialogResult
+                    ? _localDialogResult
                     : DialogResult;
             }
 
             set
             {
                 if (I.SimulatingModal)
-                    _LocalDialogResult = value;
+                    _localDialogResult = value;
                 else
                     DialogResult = value;
             }
         }
-        bool? _LocalDialogResult = null;
+        bool? _localDialogResult = null;
 
         protected LocalWindowBase(Action<Action> InitForMainWindowOnly = null)
         {
@@ -224,19 +224,19 @@ namespace DoubleFile
             {
                 return
                     I.SimulatingModal
-                    ? _LocalDialogResult
+                    ? _localDialogResult
                     : DialogResult;
             }
 
             set
             {
                 if (I.SimulatingModal)
-                    _LocalDialogResult = value;
+                    _localDialogResult = value;
                 else
                     DialogResult = value;
             }
         }
-        bool? _LocalDialogResult = null;
+        bool? _localDialogResult = null;
 
         protected LocalModernWindowBase(Action<Action> InitForMainWindowOnly = null)
         {
@@ -310,15 +310,10 @@ namespace DoubleFile
 
             Owner = (Window)App.TopWindow;
             base.Show();
-            PositionWindow();
             return this;
         }
 
         internal new bool? ShowDialog() { return ShowDialog(App.TopWindow); }
-
-        virtual protected void PositionWindow()
-        {
-        }
 
         bool? ShowDialog(ILocalWindow me)
         {

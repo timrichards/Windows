@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Linq;
 
 namespace DoubleFile
 {
@@ -23,6 +24,12 @@ namespace DoubleFile
             formLV_Volume.DataContext =
                 _lvVolumeDetailVM =
                 new LV_VolumeDetailVM();
+
+            foreach (var ctl in new[] { formLV_File, formLV_Folder, formLV_Volume })
+            {
+                Observable.FromEventPattern(ctl, "SelectionChanged")
+                    .Subscribe(args => ctl.UnselectAllCells());
+            }
         }
 
         public WinDoubleFile_Detail()

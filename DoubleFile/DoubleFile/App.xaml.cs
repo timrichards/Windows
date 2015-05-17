@@ -79,9 +79,7 @@ namespace DoubleFile
         static void Application_Activated()
         {
             if (false == LocalActivated)
-            {
                 _canFlashWindow_ResetsIt = false;
-            }
             
             LocalActivated = true;
         }

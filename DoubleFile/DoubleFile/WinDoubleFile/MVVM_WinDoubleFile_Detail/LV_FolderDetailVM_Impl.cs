@@ -15,11 +15,11 @@ namespace DoubleFile
                     Title = null;
                     ClearItems();
 
+                    if (null == tuple.Item2)
+                        return;     // from lambda
+
                     foreach (var ieLine in tuple.Item1)
                         Add(new LVitem_FolderDetailVM(ieLine), bQuiet: true);
-
-                    if (null == tuple.Item2)
-                        return;
 
                     var strFG_Description = UtilColor.Description[tuple.Item2.ForeColor];
                     var strBG_Description = UtilColor.Description[tuple.Item2.BackColor];

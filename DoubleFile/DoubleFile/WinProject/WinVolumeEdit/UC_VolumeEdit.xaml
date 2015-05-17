@@ -57,7 +57,7 @@ folder browse dialog.
 
         <Border Name="form_Border" BorderBrush="DarkGray" BorderThickness="1" Grid.ColumnSpan="7" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Stretch" Height="1" VerticalAlignment="Center" />
 
-        <Label Grid.Row="4" Content="Drive model" />
+        <Label Grid.Row="4" Content="Drive model #" />
         <Button Grid.Row="4" Name="formBtn_DriveModel" Command="{Binding Icmd_Probe}" ToolTip="Click to try and probe your drive for the model and serial #">
             <Image Source="/Double File;component/Assets/ic_storage_black_18dp.png" />
         </Button>

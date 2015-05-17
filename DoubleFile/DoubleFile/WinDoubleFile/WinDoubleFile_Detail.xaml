@@ -9,6 +9,9 @@
                 <DataTemplate x:Key="Title">
                     <TextBlock Text="{Binding DataContext.Title, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
                 </DataTemplate>
+                <Style TargetType="{x:Type DataGrid}" BasedOn="{StaticResource {x:Type DataGrid}}">
+                    <Setter Property="CanUserSortColumns" Value="False"/>
+                </Style>
             </StackPanel.Resources>
             <Border Style="{StaticResource styleBorder}">
                 <Grid Name="form_localPath">

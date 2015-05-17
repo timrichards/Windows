@@ -43,12 +43,12 @@
                     <Button Content="  REMOVE" Command="{Binding Icmd_RemoveListingFile}" ToolTip="Remove listing file" Tag="/Double File;component/Assets/ic_remove_circle_white_18dp.png" />
                 </StackPanel>
             </StackPanel>
-            <DataGrid Name="form_lv" Margin="0,20,0,0" Visibility="{Binding Visible}">
+            <DataGrid Name="form_lv" Margin="0,20,0,0" Visibility="{Binding Visible}" SelectionMode="Extended">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Nickname" Binding="{Binding Nickname}" Width="{Binding WidthNickname}"/>
                     <DataGridTextColumn Header="Source path" Binding="{Binding SourcePath}" Width="{Binding WidthSourcePath}"/>
                     <DataGridTextColumn Header="Length" Binding="{Binding ScannedLength}" Width="{Binding WidthScannedLength}"/>
-                    <DataGridTextColumn Header="Drive model" Binding="{Binding DriveModel}" Width="{Binding WidthDriveModel}"/>
+                    <DataGridTextColumn Header="Drive model #" Binding="{Binding DriveModel}" Width="{Binding WidthDriveModel}"/>
                     <DataGridTextColumn Header="Drive serial #" Binding="{Binding DriveSerial}" Width="{Binding WidthDriveSerial}"/>
                     <DataGridTextColumn Header="Volume group" Binding="{Binding VolumeGroup}" Width="{Binding WidthVolumeGroup}"/>
                     <DataGridTextColumn Header="Include in search" Binding="{Binding IncludeYN}" Width="{Binding WidthIncludeYN}"/>
@@ -57,6 +57,5 @@
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>
-
     </Grid>
 </local:LocalUserControlBase>

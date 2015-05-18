@@ -55,6 +55,7 @@ namespace DoubleFile
         internal LV_TreeListSiblingsVM(LV_TreeListChildrenVM lvChildrenVM)
         {
             _lvChildrenVM = lvChildrenVM;
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(TreeSelect_FolderDetailUpdated));
             _lsDisposable.Add(UC_TreeMap.TreeMapRendered.Subscribe(Populate));
             _lsDisposable.Add(UC_TreeMap.TreeMapChildSelected.Subscribe(UC_TreeMap_TreeMapChildSelected));
         }
@@ -85,12 +86,27 @@ namespace DoubleFile
                 .FirstOnlyAssert(lvItem => _lvChildrenVM.SelectedItem_Set(lvItem));
         }
 
+        void TreeSelect_FolderDetailUpdated(Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode> tuple)
+        {
+            Populate(tuple.Item2);
+        }
+
         void Populate(LocalTreeNode treeNodeSel)
         {
+            if (_lvChildrenVM.SettingSelected_ResetsIt)
+                return;
+
+            if (treeNodeSel == _treeNode)
+                return;
+
+            ClearItems();
+
             if (null == treeNodeSel)
                 return;
 
+            _treeNode = treeNodeSel;
             UtilDirList.Write("K");
+
             var treeNodes =
                 (null != treeNodeSel.Parent)
                 ? treeNodeSel.Parent.Nodes
@@ -110,18 +126,9 @@ namespace DoubleFile
                 {
                     selectedItem = lvItem;
                 }
-
-                _treeNode = treeNodeSel;
             }
 
-            SelectedItem_Set(null);
-
-            UtilProject.UIthread(() =>
-            {
-                ClearItems();
-                Add(lsLVitems);
-            });
-
+            UtilProject.UIthread(() => Add(lsLVitems));
             SelectedItem_Set(selectedItem);
         }
 

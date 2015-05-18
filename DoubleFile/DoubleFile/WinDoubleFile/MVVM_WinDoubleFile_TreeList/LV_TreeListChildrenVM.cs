@@ -11,6 +11,9 @@ namespace DoubleFile
             TreeListChildSelected { get { return _treeListChildSelected.AsObservable(); } }
         static readonly Subject<LocalTreeNode> _treeListChildSelected = new Subject<LocalTreeNode>();
         static void TreeListChildSelectedOnNext(LocalTreeNode value) { _treeListChildSelected.LocalOnNext(value, 99854); }
+        internal bool
+            SettingSelected_ResetsIt { get { var b = _settingSelected; _settingSelected = false; return b; } set { _settingSelected = value; } }
+        bool _settingSelected = false;
 
         public LVitem_TreeListVM SelectedItem
         {
@@ -25,6 +28,7 @@ namespace DoubleFile
                 if (null == value)
                     return;
 
+                SettingSelected_ResetsIt = true;
                 TreeListChildSelectedOnNext(value.LocalTreeNode);
                 SelectedItem_AllTriggers();
             }
@@ -57,9 +61,7 @@ namespace DoubleFile
             var lsLVitems = new List<LVitem_TreeListVM>();
 
             foreach (var treeNode in treeNodeParent.Nodes)
-            {
                 lsLVitems.Add(new LVitem_TreeListVM(new[] { treeNode.Name }) { LocalTreeNode = treeNode });
-            }
 
             SelectedItem_Set(null);
             UtilProject.UIthread(() => Add(lsLVitems));

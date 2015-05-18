@@ -67,7 +67,7 @@ namespace DoubleFile
 
 #if (false == DEBUG)
             Observable.FromEventPattern<System.Windows.Threading.DispatcherUnhandledExceptionEventArgs>(this, "DispatcherUnhandledException")
-                .Subscribe(x =>
+                .Subscribe(args =>
             {
                 args.EventArgs.Handled = true;
                 MBoxStatic.Assert(-1, false, args.EventArgs.Exception.Message);

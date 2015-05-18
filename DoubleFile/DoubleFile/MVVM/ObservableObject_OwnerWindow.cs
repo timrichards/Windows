@@ -9,7 +9,7 @@ namespace DoubleFile
             if (false ==
                 DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
             {
-                MBoxStatic.Assert(99990, false);
+                MBoxStatic.Assert(99876, false);
             }
         }
     }

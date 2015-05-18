@@ -236,7 +236,7 @@ namespace DoubleFile
                 if (null == t)
                     throw new NullReferenceException();
 
-                MBoxStatic.Assert(99917, t.Generating);
+                MBoxStatic.Assert(99985, t.Generating);
 
                 lock (t.DictPathParts)
                 {

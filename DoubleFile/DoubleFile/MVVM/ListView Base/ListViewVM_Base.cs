@@ -31,7 +31,7 @@ namespace DoubleFile
         }
 
         internal virtual bool
-            Add(string[] arrStr, bool bQuiet = false) { MBoxStatic.Assert(99994, false); return false; }
+            Add(string[] arrStr, bool bQuiet = false) { MBoxStatic.Assert(99999, false); return false; }
         internal virtual bool
             Add(IEnumerable<string[]> laStr, bool bQuiet = false) { MBoxStatic.Assert(99994, false); return false; }
 

@@ -15,8 +15,6 @@ namespace DoubleFile
 
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(tupleA =>
             {
-                MBoxStatic.Assert(tupleA.Item2 + .5, false);
-
                 var tuple = tupleA.Item1;
 
                 UtilDirList.Write("E"); if (null != tuple.Item2) LocalPath_Set(tuple.Item2);
@@ -36,8 +34,6 @@ namespace DoubleFile
 
         void LV_DoubleFile_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int> tupleA)
         {
-            MBoxStatic.Assert(tupleA.Item2 + .5, false);
-
             var tuple = tupleA.Item1;
             var item2 = (null != tuple) ? tuple.Item2 : null;
             var item3 = (null != tuple) ? tuple.Item3 : null;
@@ -47,8 +43,6 @@ namespace DoubleFile
 
         void WinDoubleFile_DuplicatesVM_UpdateFileDetail(Tuple<Tuple<IEnumerable<string>, LocalTreeNode>, int> tupleA)
         {
-            MBoxStatic.Assert(tupleA.Item2 + .5, false);
-
             var tuple = tupleA.Item1;
 
             UtilDirList.Write("F");

@@ -31,7 +31,7 @@ namespace DoubleFile
         static internal IObservable<Tuple<bool, int>>   // bool is a no-op: generic placeholder
             DeactivateDidOccur { get { return _deactivateDidOccur.AsObservable(); } }
         static readonly LocalSubject<bool> _deactivateDidOccur = new LocalSubject<bool>();
-        static void DeactivateDidOccurOnNext() { _deactivateDidOccur.LocalOnNext(false, 99839, -1); }
+        static void DeactivateDidOccurOnNext() { _deactivateDidOccur.LocalOnNext(false, 99839); }
 
         static internal ImageSource Icon { get; set; }
 

@@ -10,10 +10,8 @@ namespace DoubleFile
         static internal IObservable<Tuple<LocalTreeNode, int>>
             TreeListChildSelected { get { return _treeListChildSelected.AsObservable(); } }
         static readonly LocalSubject<LocalTreeNode> _treeListChildSelected = new LocalSubject<LocalTreeNode>();
-        static void TreeListChildSelectedOnNext(LocalTreeNode value) { _treeListChildSelected.LocalOnNext(value, 99854, -1); }
-        internal bool
-            SkipOne_TreeMapChildSelected_ResetsIt { get { var b = _skipOne_TreeMapChildSelected_ResetsIt; _skipOne_TreeMapChildSelected_ResetsIt = false; return b; } set { _skipOne_TreeMapChildSelected_ResetsIt = value; } }
-        bool _skipOne_TreeMapChildSelected_ResetsIt = false;
+        static void TreeListChildSelectedOnNext(LocalTreeNode value) { _treeListChildSelected.LocalOnNext(value, kChildSelectedOnNext); }
+        internal const int kChildSelectedOnNext = 99854;
 
         public LVitem_TreeListVM SelectedItem
         {
@@ -28,8 +26,6 @@ namespace DoubleFile
                 if (null == value)
                     return;
 
-                MBoxStatic.Assert(99837, false == _skipOne_TreeMapChildSelected_ResetsIt);
-                SkipOne_TreeMapChildSelected_ResetsIt = true;
                 TreeListChildSelectedOnNext(value.LocalTreeNode);
                 SelectedItem_AllTriggers();
             }

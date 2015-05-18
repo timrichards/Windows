@@ -23,7 +23,7 @@ namespace DoubleFile
             UtilProject.UIthread(() => tvfe.DataContext = _Items);
 
             Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()
-                .Subscribe(x => { if (0 < _Items.Count) _Items[0].SelectedItem_Set(); });
+                .Subscribe(x => { if (0 < _Items.Count) _Items[0].SelectedItem_Set(true, nInitiator: 0); });
         }
 
         readonly ObservableCollection<TreeViewItem_DoubleFileVM>

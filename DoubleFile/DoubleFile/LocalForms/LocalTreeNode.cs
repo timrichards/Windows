@@ -12,12 +12,12 @@ namespace DoubleFile
         static internal IObservable<Tuple<LocalTreeNode, int>>
             Selected { get { return _selected.AsObservable(); } }
         static readonly LocalSubject<LocalTreeNode> _selected = new LocalSubject<LocalTreeNode>();
-        void SelectedOnNext() { _selected.LocalOnNext(this, 99851, -1); }
+        void SelectedOnNext() { _selected.LocalOnNext(this, 99851); }
 
         static internal IObservable<Tuple<string, int>>
             SelectedFile { get { return _selectedFile.AsObservable(); } }
         static readonly LocalSubject<string> _selectedFile = new LocalSubject<string>();
-        static void SelectedFileOnNext(string value) { _selectedFile.LocalOnNext(value, 99850, -1); }
+        static void SelectedFileOnNext(string value) { _selectedFile.LocalOnNext(value, 99850); }
 
         public LocalTreeNode[]
             Nodes { get; protected set; }

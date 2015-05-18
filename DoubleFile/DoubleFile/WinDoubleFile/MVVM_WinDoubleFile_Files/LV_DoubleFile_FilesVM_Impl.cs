@@ -21,15 +21,13 @@ namespace DoubleFile
 
         void TreeSelect_FileListUpdated(Tuple<Tuple<IEnumerable<string>, string, LocalTreeNode>, int> tupleA)
         {
-            MBoxStatic.Assert(tupleA.Item2 + .5, false);
-
             var tuple = tupleA.Item1;
 
             UtilDirList.Write("J");
             if (tuple.Item3 == _treeNode)
                 return;
 
-            SelectedItem_Set(null);
+            SelectedItem_Set(null, tupleA.Item2);
             UtilProject.UIthread(ClearItems);
             _treeNode = tuple.Item3;
 
@@ -77,29 +75,26 @@ namespace DoubleFile
             UtilProject.UIthread(() => Add(lsItems));
 
             if (null != _strSelectedFile)
-                SelectedItem_Set(this[_strSelectedFile].FirstOrDefault());
+                SelectedItem_Set(this[_strSelectedFile].FirstOrDefault(), tupleA.Item2);
 
             _strSelectedFile = null;
         }
 
-        void LocalTreeNode_SelectedFile(Tuple<string, int> tuple)
+        void LocalTreeNode_SelectedFile(Tuple<string, int> tupleA)
         {
-            MBoxStatic.Assert(tuple.Item2 + .5, false);
             UtilDirList.Write("A");
-            SelectedFile(tuple.Item1);
+            SelectedFile(tupleA);
         }
 
-        void UC_TreeMap_SelectedFile(Tuple<string, int> tuple)
+        void UC_TreeMap_SelectedFile(Tuple<string, int> tupleA)
         {
-            MBoxStatic.Assert(tuple.Item2 + .5, false);
             UtilDirList.Write("B");
-            SelectedFile(tuple.Item1);
+            SelectedFile(tupleA);
         }
 
-        void SelectedFile(string strFile)
+        void SelectedFile(Tuple<string, int> tupleA)
         {
-            _strSelectedFile = strFile;
-            SelectedItem_Set(this[_strSelectedFile].FirstOrDefault());
+            SelectedItem_Set(this[tupleA.Item1].FirstOrDefault(), tupleA.Item2);
         }
 
         internal override IEnumerable<LVitem_DoubleFile_FilesVM> this[string s_in]

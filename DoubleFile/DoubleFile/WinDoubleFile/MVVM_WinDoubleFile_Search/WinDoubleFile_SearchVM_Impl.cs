@@ -13,14 +13,14 @@ namespace DoubleFile
         static internal IObservable<Tuple<Tuple<LVitem_ProjectVM, string, string>, int>>
             GoToFile { get { return _goToFile.AsObservable(); } }
         static readonly LocalSubject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new LocalSubject<Tuple<LVitem_ProjectVM, string, string>>();
-        static void GoToFileOnNext(Tuple<LVitem_ProjectVM, string, string> value) { _goToFile.LocalOnNext(value, 99838, -1); }
+        static void GoToFileOnNext(Tuple<LVitem_ProjectVM, string, string> value) { _goToFile.LocalOnNext(value, 99838); }
 
         internal WinDoubleFile_SearchVM Init()
         {
             Icmd_Folders = new RelayCommand(SearchFolders, IsSearchEnabled);
             Icmd_FoldersAndFiles = new RelayCommand(() => SearchFoldersAndFiles(), IsSearchEnabled);
             Icmd_Files = new RelayCommand(() => SearchFoldersAndFiles(bSearchFilesOnly: true), IsSearchEnabled);
-            Icmd_GoTo = new RelayCommand(Goto, () => null != _selectedItem);
+            Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
             TabledString<Tabled_Files>.AddRef();
             return this;
         }
@@ -121,7 +121,7 @@ namespace DoubleFile
             return true;
         }
 
-        void Goto()
+        void GoTo()
         {
             if (null != _selectedItem.Directory)
                 GoToFileOnNext(Tuple.Create((LVitem_ProjectVM)null, "" + _selectedItem.Directory, "" + _selectedItem.Filename));

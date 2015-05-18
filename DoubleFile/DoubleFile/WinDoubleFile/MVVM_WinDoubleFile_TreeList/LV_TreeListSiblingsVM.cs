@@ -11,7 +11,7 @@ namespace DoubleFile
         static internal IObservable<Tuple<LocalTreeNode, int>>
             TreeListSiblingSelected { get { return _treeListSiblingSelected.AsObservable(); } }
         static readonly LocalSubject<LocalTreeNode> _treeListSiblingSelected = new LocalSubject<LocalTreeNode>();
-        static void TreeListSiblingSelectedOnNext(LocalTreeNode value) { _treeListSiblingSelected.LocalOnNext(value, 99849, -1); }
+        static void TreeListSiblingSelectedOnNext(LocalTreeNode value) { _treeListSiblingSelected.LocalOnNext(value, 99849); }
 
         public LVitem_TreeListVM SelectedItem
         {
@@ -72,12 +72,10 @@ namespace DoubleFile
 
         void TreeSelect_FolderDetailUpdated(Tuple<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>, int> tupleA)
         {
-            MBoxStatic.Assert(tupleA.Item2 + .5, false);
+            if (LV_TreeListChildrenVM.kChildSelectedOnNext == tupleA.Item2)
+                return;
 
             var tuple = tupleA.Item1;
-
-            if (_lvChildrenVM.SkipOne_TreeMapChildSelected_ResetsIt)
-                return;
 
             UtilDirList.Write("L");
             if (_treeNode != tuple.Item2.Parent)

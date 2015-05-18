@@ -72,10 +72,10 @@ namespace DoubleFile
                     return;
 
                 _isSelected = value;
-                SelectedItem_AllTriggers();
+                SelectedItem_AllTriggers(0);
             }
         }
-        internal void SelectedItem_Set(bool value = true)
+        internal void SelectedItem_Set(bool value, int nInitiator)
         {
             if (value == _isSelected)
                 return;
@@ -129,9 +129,9 @@ namespace DoubleFile
             _isSelected = true;
 
             RaisePropertyChanged("IsSelected");
-            SelectedItem_AllTriggers();
+            SelectedItem_AllTriggers(nInitiator);
         }
-        void SelectedItem_AllTriggers()
+        void SelectedItem_AllTriggers(int nInitiator)
         {
             if (_isSelected)
                 _TVVM.SelectedItem = this;
@@ -141,7 +141,7 @@ namespace DoubleFile
             if (false == _isSelected)
                 return;
 
-            TreeSelect.DoThreadFactory(_datum);
+            TreeSelect.DoThreadFactory(_datum, nInitiator);
         }
         bool _isSelected = false;
 

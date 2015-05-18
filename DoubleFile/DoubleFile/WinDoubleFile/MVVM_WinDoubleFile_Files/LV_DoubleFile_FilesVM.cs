@@ -11,7 +11,7 @@ namespace DoubleFile
         static internal IObservable<Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int>>
             SelectedFileChanged { get { return _selectedFileChanged.AsObservable(); } }
         static readonly LocalSubject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>> _selectedFileChanged = new LocalSubject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>>();
-        static void SelectedFileChangedOnNext(Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode> value = null) { _selectedFileChanged.LocalOnNext(value, 99852, -1); }
+        static void SelectedFileChangedOnNext(Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode> value, int nInitiator) { _selectedFileChanged.LocalOnNext(value, 99852, nInitiator); }
 
         public LVitem_DoubleFile_FilesVM SelectedItem
         {
@@ -26,24 +26,24 @@ namespace DoubleFile
                 if (null == value)
                     return;
 
-                SelectedItem_AllTriggers();
+                SelectedItem_AllTriggers(0);
             }
         }
-        internal void SelectedItem_Set(LVitem_DoubleFile_FilesVM value)
+        internal void SelectedItem_Set(LVitem_DoubleFile_FilesVM value, int nInitiator)
         {
             if (value == _selectedItem)
                 return;
 
             _selectedItem = value;
             RaisePropertyChanged("SelectedItem");
-            SelectedItem_AllTriggers();
+            SelectedItem_AllTriggers(nInitiator);
         }
-        void SelectedItem_AllTriggers()
+        void SelectedItem_AllTriggers(int nInitiator)
         {
             if (null != _selectedItem)
-                SelectedFileChangedOnNext(Tuple.Create(_selectedItem.LSduplicates, _selectedItem.FileLine.AsEnumerable(), _treeNode));
+                SelectedFileChangedOnNext(Tuple.Create(_selectedItem.LSduplicates, _selectedItem.FileLine.AsEnumerable(), _treeNode), nInitiator);
             else
-                SelectedFileChangedOnNext();
+                SelectedFileChangedOnNext(null, nInitiator);
         }
         LVitem_DoubleFile_FilesVM _selectedItem = null;
 

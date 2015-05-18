@@ -9,8 +9,6 @@ namespace DoubleFile
         {
             _lsDisposable.Add(TreeSelect.VolumeDetailUpdated.Subscribe(tupleA =>
             {
-                MBoxStatic.Assert(tupleA.Item2 + .5, false);
-
                 var tuple = tupleA.Item1;
 
                 UtilDirList.Write("H");

@@ -122,13 +122,11 @@ namespace DoubleFile
 
         void WinDoubleFile_DuplicatesVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, int> tupleA)
         {
-            MBoxStatic.Assert(tupleA.Item2 + .5, false);
             UtilDirList.Write("C"); GoToFile(tupleA.Item1);
         }
 
         void WinDoubleFile_SearchVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, int> tupleA)
         {
-            MBoxStatic.Assert(tupleA.Item2 + .5, false);
             UtilDirList.Write("D"); GoToFile(tupleA.Item1);
         }
 

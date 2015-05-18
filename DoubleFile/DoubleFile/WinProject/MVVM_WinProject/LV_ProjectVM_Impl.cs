@@ -27,7 +27,7 @@ namespace DoubleFile
             Modified { get { return _modified.AsObservable(); } }
         static readonly LocalSubject<bool> _modified = new LocalSubject<bool>();
         static readonly int _nModifiedOnNextAssertLoc = 99840;
-        internal void SetModified() { _modified.LocalOnNext(false, _nModifiedOnNextAssertLoc, -1); }
+        internal void SetModified() { _modified.LocalOnNext(false, _nModifiedOnNextAssertLoc); }
 
         internal bool
             Unsaved

@@ -18,12 +18,12 @@ namespace DoubleFile
         static internal IObservable<Tuple<LocalTreeNode, int>>
             TreeMapRendered { get { return _treeMapRendered.AsObservable(); } }
         static readonly LocalSubject<LocalTreeNode> _treeMapRendered = new LocalSubject<LocalTreeNode>();
-        static void TreeMapRenderedOnNext(LocalTreeNode value) { _treeMapRendered.LocalOnNext(value, 99843, -1); }
+        static void TreeMapRenderedOnNext(LocalTreeNode value, int nInitiator) { _treeMapRendered.LocalOnNext(value, 99843, nInitiator); }
 
         static internal IObservable<Tuple<string, int>>
             SelectedFile { get { return _selectedFile.AsObservable(); } }
         static readonly LocalSubject<string> _selectedFile = new LocalSubject<string>();
-        static void SelectedFileOnNext(string value) { _selectedFile.LocalOnNext(value, 99841, -1); }
+        static void SelectedFileOnNext(string value, int nInitiator) { _selectedFile.LocalOnNext(value, 99841, nInitiator); }
 
         internal System.Windows.Window
             LocalOwner = null;
@@ -51,11 +51,9 @@ namespace DoubleFile
 
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(tupleA =>
             {
-                MBoxStatic.Assert(tupleA.Item2 + .5, false);
-
                 var tuple = tupleA.Item1;
 
-                UtilDirList.Write("M"); RenderD(tuple.Item2); _bTreeSelect = false;
+                UtilDirList.Write("M"); RenderD(tuple.Item2, tupleA.Item2); _bTreeSelect = false;
             }));
 
             _lsDisposable.Add(LV_TreeListSiblingsVM.TreeListSiblingSelected.Subscribe(LV_TreeListSiblingsVM_TreeListSiblingSelected));
@@ -261,14 +259,12 @@ namespace DoubleFile
                 bImmediateFiles = false;
             }
 
-            SelRectAndTooltip(nodeRet, bImmediateFiles);
+            SelRectAndTooltip(nodeRet, 0 /* UI Initiator */, bImmediateFiles);
             return null;
         }
 
         void LV_TreeListChildrenVM_TreeListChildSelected(Tuple<LocalTreeNode, int> tupleA)
         {
-            MBoxStatic.Assert(tupleA.Item2 + .5, false);
-
             var treeNodeChild = tupleA.Item1;
 
             UtilDirList.Write("N");
@@ -281,13 +277,11 @@ namespace DoubleFile
             if (false == ReferenceEquals(TreeMapVM.TreeNode, treeNodeChild.Parent))
                 return;
 
-            SelRectAndTooltip(treeNodeChild);
+            SelRectAndTooltip(treeNodeChild, tupleA.Item2, bImmediateFiles: false);
         }
 
         void LV_DoubleFile_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int> tupleA)
         {
-            MBoxStatic.Assert(tupleA.Item2 + .5, false);
-
             var tuple = tupleA.Item1;
 
             UtilDirList.Write("O");
@@ -310,14 +304,14 @@ namespace DoubleFile
 
             if (null != fileNode)                               // TODO: Why would this be null?
             {
-                SelRectAndTooltip(fileNode, bImmediateFiles: true);
+                SelRectAndTooltip(fileNode, tupleA.Item2, bImmediateFiles: true);
                 return;
             }
 
             UtilProject.UIthread(() => WinTooltip.CloseTooltip());
         }
 
-        void SelRectAndTooltip(LocalTreeNode treeNodeChild, bool bImmediateFiles = false)
+        void SelRectAndTooltip(LocalTreeNode treeNodeChild, int nInitiator, bool bImmediateFiles)
         {
             if (_bTreeSelect ||
                 _bSelRecAndTooltip)
@@ -335,7 +329,7 @@ namespace DoubleFile
             {
                 strFolder += " (file)";
                 nodeTreeSelect = treeNodeChild.Parent.Parent;   // Parent is TreeMapFileListNode
-                SelectedFileOnNext(treeNodeChild.Text);
+                SelectedFileOnNext(treeNodeChild.Text, nInitiator);
             }
 
             UtilProject.UIthread(() => WinTooltip.ShowTooltip(
@@ -353,7 +347,7 @@ namespace DoubleFile
             if (0 == _nInvalidateRef)   // jic
                 Invalidate();
 
-            _bTreeSelect = TreeSelect.DoThreadFactory(nodeTreeSelect);
+            _bTreeSelect = TreeSelect.DoThreadFactory(nodeTreeSelect, nInitiator);
             _bSelRecAndTooltip = false;
         }
 
@@ -558,45 +552,39 @@ namespace DoubleFile
                 return;     // file fake node
 
             WinTooltip.CloseTooltip();
-            RenderA(treeNode);
+            RenderA(treeNode, nInitiator: 0);
         }
 
         void LV_TreeListSiblingsVM_TreeListSiblingSelected(Tuple<LocalTreeNode, int> tupleA)
         {
-            MBoxStatic.Assert(tupleA.Item2 + .5, false);
-
             var treeNode = tupleA.Item1;
 
             UtilDirList.Write("P");
-            RenderA(treeNode);
+            RenderA(treeNode, tupleA.Item2);
         }
 
         void LocalTreeNode_Selected(Tuple<LocalTreeNode, int> tupleA)
         {
-            MBoxStatic.Assert(tupleA.Item2 + .5, false);
-
             var treeNode = tupleA.Item1;
 
             UtilDirList.Write("Q");
-            RenderA(treeNode);
+            RenderA(treeNode, tupleA.Item2);
         }
 
         void TreeMapVM_TreeNodeCallback(Tuple<LocalTreeNode, int> tupleA)
         {
-            MBoxStatic.Assert(tupleA.Item2 + .5, false);
-
             var treeNode = tupleA.Item1;
 
-            RenderA(treeNode);
+            RenderA(treeNode, tupleA.Item2);
         }
 
-        void RenderA(LocalTreeNode treeNode)
+        void RenderA(LocalTreeNode treeNode, int nInitiator)
         {
-            RenderD(treeNode);
-            _bTreeSelect = TreeSelect.DoThreadFactory(treeNode);
+            RenderD(treeNode, nInitiator);
+            _bTreeSelect = TreeSelect.DoThreadFactory(treeNode, nInitiator);
         }
 
-        void RenderD(LocalTreeNode treeNode)
+        void RenderD(LocalTreeNode treeNode, int nInitiator)
         {
             if (_bSelRecAndTooltip ||
                 _bTreeSelect)
@@ -605,7 +593,7 @@ namespace DoubleFile
             }
 
             InvalidatePushRef(() => UtilProject.UIthread(() => Render(treeNode)));
-            TreeMapRenderedOnNext(treeNode);
+            TreeMapRenderedOnNext(treeNode, nInitiator);
         }
 
         void Render(LocalTreeNode treeNode)

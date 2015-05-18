@@ -12,7 +12,15 @@ namespace DoubleFile
             Icmd_Copy = new RelayCommand(Copy, () => false == string.IsNullOrEmpty(LocalPath));
             _lsDisposable.Add(WinDoubleFile_DuplicatesVM.UpdateFileDetail.Subscribe(WinDoubleFile_DuplicatesVM_UpdateFileDetail));
             _lsDisposable.Add(LV_DoubleFile_FilesVM.SelectedFileChanged.Subscribe(LV_DoubleFile_FilesVM_SelectedFileChanged));
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(tuple => { UtilDirList.Write("E"); if (null != tuple.Item2) LocalPath_Set(tuple.Item2); }));
+
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(tupleA =>
+            {
+                MBoxStatic.Assert(tupleA.Item2 + .5, false);
+
+                var tuple = tupleA.Item1;
+
+                UtilDirList.Write("E"); if (null != tuple.Item2) LocalPath_Set(tuple.Item2);
+            }));
         }
 
         public void Dispose()
@@ -26,16 +34,23 @@ namespace DoubleFile
             Clipboard.SetText(LocalPath);
         }
 
-        void LV_DoubleFile_FilesVM_SelectedFileChanged(Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode> tuple = null)
+        void LV_DoubleFile_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int> tupleA)
         {
+            MBoxStatic.Assert(tupleA.Item2 + .5, false);
+
+            var tuple = tupleA.Item1;
             var item2 = (null != tuple) ? tuple.Item2 : null;
             var item3 = (null != tuple) ? tuple.Item3 : null;
 
-            WinDoubleFile_DuplicatesVM_UpdateFileDetail(Tuple.Create(item2, item3));
+            WinDoubleFile_DuplicatesVM_UpdateFileDetail(Tuple.Create(Tuple.Create(item2, item3), tupleA.Item2));
         }
 
-        void WinDoubleFile_DuplicatesVM_UpdateFileDetail(Tuple<IEnumerable<string>, LocalTreeNode> tuple)
+        void WinDoubleFile_DuplicatesVM_UpdateFileDetail(Tuple<Tuple<IEnumerable<string>, LocalTreeNode>, int> tupleA)
         {
+            MBoxStatic.Assert(tupleA.Item2 + .5, false);
+
+            var tuple = tupleA.Item1;
+
             UtilDirList.Write("F");
             LocalPath_Set();
             Title = null;

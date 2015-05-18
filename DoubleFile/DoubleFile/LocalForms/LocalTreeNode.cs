@@ -9,15 +9,15 @@ namespace DoubleFile
 {
     class LocalTreeNode : LocalColorItemBase
     {
-        static internal IObservable<LocalTreeNode>
+        static internal IObservable<Tuple<LocalTreeNode, int>>
             Selected { get { return _selected.AsObservable(); } }
-        static readonly Subject<LocalTreeNode> _selected = new Subject<LocalTreeNode>();
-        void SelectedOnNext() { _selected.LocalOnNext(this, 99851); }
+        static readonly LocalSubject<LocalTreeNode> _selected = new LocalSubject<LocalTreeNode>();
+        void SelectedOnNext() { _selected.LocalOnNext(this, 99851, -1); }
 
-        static internal IObservable<string>
+        static internal IObservable<Tuple<string, int>>
             SelectedFile { get { return _selectedFile.AsObservable(); } }
-        static readonly Subject<string> _selectedFile = new Subject<string>();
-        static void SelectedFileOnNext(string value) { _selectedFile.LocalOnNext(value, 99850); }
+        static readonly LocalSubject<string> _selectedFile = new LocalSubject<string>();
+        static void SelectedFileOnNext(string value) { _selectedFile.LocalOnNext(value, 99850, -1); }
 
         public LocalTreeNode[]
             Nodes { get; protected set; }

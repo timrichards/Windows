@@ -12,15 +12,15 @@ namespace DoubleFile
 {
     partial class WinDoubleFile_DuplicatesVM : IDisposable
     {
-        static internal IObservable<Tuple<LVitem_ProjectVM, string, string>>
+        static internal IObservable<Tuple<Tuple<LVitem_ProjectVM, string, string>, int>>
             GoToFile { get { return _goToFile.AsObservable(); } }
-        static readonly Subject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new Subject<Tuple<LVitem_ProjectVM, string, string>>();
-        static void GoToFileOnNext(Tuple<LVitem_ProjectVM, string, string> value) { _goToFile.LocalOnNext(value, 99848); }
+        static readonly LocalSubject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new LocalSubject<Tuple<LVitem_ProjectVM, string, string>>();
+        static void GoToFileOnNext(Tuple<LVitem_ProjectVM, string, string> value) { _goToFile.LocalOnNext(value, 99848, -1); }
 
-        static internal IObservable<Tuple<IEnumerable<string>, LocalTreeNode>>
+        static internal IObservable<Tuple<Tuple<IEnumerable<string>, LocalTreeNode>, int>>
             UpdateFileDetail { get { return _updateFileDetail.AsObservable(); } }
-        static readonly Subject<Tuple<IEnumerable<string>, LocalTreeNode>> _updateFileDetail = new Subject<Tuple<IEnumerable<string>, LocalTreeNode>>();
-        static void UpdateFileDetailOnNext(Tuple<IEnumerable<string>, LocalTreeNode> value) { _updateFileDetail.LocalOnNext(value, 99847); }
+        static readonly LocalSubject<Tuple<IEnumerable<string>, LocalTreeNode>> _updateFileDetail = new LocalSubject<Tuple<IEnumerable<string>, LocalTreeNode>>();
+        static void UpdateFileDetailOnNext(Tuple<IEnumerable<string>, LocalTreeNode> value) { _updateFileDetail.LocalOnNext(value, 99847, -1); }
 
         internal WinDoubleFile_DuplicatesVM()
         {
@@ -34,8 +34,12 @@ namespace DoubleFile
                 d.Dispose();
         }
 
-        void LV_DoubleFile_FilesVM_SelectedFileChanged(Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode> tuple)
+        void LV_DoubleFile_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int> tupleA)
         {
+            MBoxStatic.Assert(tupleA.Item2 + .5, false);
+
+            var tuple = tupleA.Item1;
+
             UtilDirList.Write("I");
             if (null != _cts)
                 _cts.Cancel();

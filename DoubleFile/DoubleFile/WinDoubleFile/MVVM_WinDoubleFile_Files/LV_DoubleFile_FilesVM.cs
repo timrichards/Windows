@@ -8,10 +8,10 @@ namespace DoubleFile
 {
     partial class LV_DoubleFile_FilesVM : ListViewVM_Base<LVitem_DoubleFile_FilesVM>
     {
-        static internal IObservable<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>>
+        static internal IObservable<Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int>>
             SelectedFileChanged { get { return _selectedFileChanged.AsObservable(); } }
-        static readonly Subject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>> _selectedFileChanged = new Subject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>>();
-        static void SelectedFileChangedOnNext(Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode> value = null) { _selectedFileChanged.LocalOnNext(value, 99852); }
+        static readonly LocalSubject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>> _selectedFileChanged = new LocalSubject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>>();
+        static void SelectedFileChangedOnNext(Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode> value = null) { _selectedFileChanged.LocalOnNext(value, 99852, -1); }
 
         public LVitem_DoubleFile_FilesVM SelectedItem
         {

@@ -28,10 +28,10 @@ namespace DoubleFile
         static internal SaveDirListings
             SaveDirListings { get; set; }
 
-        static internal IObservable<bool>   // bool is a no-op: generic placeholder
+        static internal IObservable<Tuple<bool, int>>   // bool is a no-op: generic placeholder
             DeactivateDidOccur { get { return _deactivateDidOccur.AsObservable(); } }
-        static readonly Subject<bool> _deactivateDidOccur = new Subject<bool>();
-        static void DeactivateDidOccurOnNext() { _deactivateDidOccur.LocalOnNext(false, 99839); }
+        static readonly LocalSubject<bool> _deactivateDidOccur = new LocalSubject<bool>();
+        static void DeactivateDidOccurOnNext() { _deactivateDidOccur.LocalOnNext(false, 99839, -1); }
 
         static internal ImageSource Icon { get; set; }
 

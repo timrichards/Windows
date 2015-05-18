@@ -8,10 +8,10 @@ namespace DoubleFile
 {
     class LV_TreeListSiblingsVM : ListViewVM_Base<LVitem_TreeListVM>, IDisposable
     {
-        static internal IObservable<LocalTreeNode>
+        static internal IObservable<Tuple<LocalTreeNode, int>>
             TreeListSiblingSelected { get { return _treeListSiblingSelected.AsObservable(); } }
-        static readonly Subject<LocalTreeNode> _treeListSiblingSelected = new Subject<LocalTreeNode>();
-        static void TreeListSiblingSelectedOnNext(LocalTreeNode value) { _treeListSiblingSelected.LocalOnNext(value, 99849); }
+        static readonly LocalSubject<LocalTreeNode> _treeListSiblingSelected = new LocalSubject<LocalTreeNode>();
+        static void TreeListSiblingSelectedOnNext(LocalTreeNode value) { _treeListSiblingSelected.LocalOnNext(value, 99849, -1); }
 
         public LVitem_TreeListVM SelectedItem
         {
@@ -56,8 +56,7 @@ namespace DoubleFile
         {
             _lvChildrenVM = lvChildrenVM;
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(TreeSelect_FolderDetailUpdated));
-            _lsDisposable.Add(UC_TreeMap.TreeMapRendered.Subscribe(Populate));
-            _lsDisposable.Add(UC_TreeMap.TreeMapChildSelected.Subscribe(UC_TreeMap_TreeMapChildSelected));
+            _lsDisposable.Add(UC_TreeMap.TreeMapRendered.Subscribe(UC_TreeMap_TreeMapRendered));
         }
 
         internal void CopyFrom(LV_TreeListSiblingsVM vm)
@@ -71,10 +70,17 @@ namespace DoubleFile
                 d.Dispose();
         }
 
-        void UC_TreeMap_TreeMapChildSelected(LocalTreeNode treeNodeChild)
+        void TreeSelect_FolderDetailUpdated(Tuple<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>, int> tupleA)
         {
+            MBoxStatic.Assert(tupleA.Item2 + .5, false);
+
+            var tuple = tupleA.Item1;
+
+            if (_lvChildrenVM.SkipOne_TreeMapChildSelected_ResetsIt)
+                return;
+
             UtilDirList.Write("L");
-            if (_treeNode != treeNodeChild.Parent)
+            if (_treeNode != tuple.Item2.Parent)
                 return;
 
             ItemsCast
@@ -82,20 +88,18 @@ namespace DoubleFile
                 .FirstOnlyAssert(SelectedItem_Set);
 
             _lvChildrenVM.ItemsCast
-                .Where(lvItem => lvItem.LocalTreeNode == treeNodeChild)
+                .Where(lvItem => lvItem.LocalTreeNode == tuple.Item2)
                 .FirstOnlyAssert(lvItem => _lvChildrenVM.SelectedItem_Set(lvItem));
         }
 
-        void TreeSelect_FolderDetailUpdated(Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode> tuple)
+        void UC_TreeMap_TreeMapRendered(Tuple<LocalTreeNode, int> tuple)
         {
-            Populate(tuple.Item2);
+            MBoxStatic.Assert(tuple.Item2 + .5, false);
+            Populate(tuple.Item1);
         }
 
         void Populate(LocalTreeNode treeNodeSel)
         {
-            if (_lvChildrenVM.SettingSelected_ResetsIt)
-                return;
-
             if (treeNodeSel == _treeNode)
                 return;
 

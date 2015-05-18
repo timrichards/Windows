@@ -10,10 +10,10 @@ namespace DoubleFile
     {
         internal Func<bool> IsEditBoxNonEmpty = null;
 
-        static internal IObservable<Tuple<LVitem_ProjectVM, string, string>>
+        static internal IObservable<Tuple<Tuple<LVitem_ProjectVM, string, string>, int>>
             GoToFile { get { return _goToFile.AsObservable(); } }
-        static readonly Subject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new Subject<Tuple<LVitem_ProjectVM, string, string>>();
-        static void GoToFileOnNext(Tuple<LVitem_ProjectVM, string, string> value) { _goToFile.LocalOnNext(value, 99838); }
+        static readonly LocalSubject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new LocalSubject<Tuple<LVitem_ProjectVM, string, string>>();
+        static void GoToFileOnNext(Tuple<LVitem_ProjectVM, string, string> value) { _goToFile.LocalOnNext(value, 99838, -1); }
 
         internal WinDoubleFile_SearchVM Init()
         {

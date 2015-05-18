@@ -8,9 +8,9 @@ namespace DoubleFile
     {
         internal LV_DoubleFile_FilesVM()
         {
-            _lsDisposable.Add(TreeSelect.FileListUpdated.Subscribe(TreeSelect_FileList));
-            _lsDisposable.Add(LocalTreeNode.SelectedFile.Subscribe(SelectedFileA));
-            _lsDisposable.Add(UC_TreeMap.SelectedFile.Subscribe(SelectedFileB));
+            _lsDisposable.Add(TreeSelect.FileListUpdated.Subscribe(TreeSelect_FileListUpdated));
+            _lsDisposable.Add(LocalTreeNode.SelectedFile.Subscribe(LocalTreeNode_SelectedFile));
+            _lsDisposable.Add(UC_TreeMap.SelectedFile.Subscribe(UC_TreeMap_SelectedFile));
         }
 
         public void Dispose()
@@ -19,8 +19,12 @@ namespace DoubleFile
                 d.Dispose();
         }
 
-        void TreeSelect_FileList(Tuple<IEnumerable<string>, string, LocalTreeNode> tuple)
+        void TreeSelect_FileListUpdated(Tuple<Tuple<IEnumerable<string>, string, LocalTreeNode>, int> tupleA)
         {
+            MBoxStatic.Assert(tupleA.Item2 + .5, false);
+
+            var tuple = tupleA.Item1;
+
             UtilDirList.Write("J");
             if (tuple.Item3 == _treeNode)
                 return;
@@ -78,8 +82,20 @@ namespace DoubleFile
             _strSelectedFile = null;
         }
 
-        void SelectedFileA(string strFile) { UtilDirList.Write("A"); SelectedFile(strFile); }
-        void SelectedFileB(string strFile) { UtilDirList.Write("B"); SelectedFile(strFile); }
+        void LocalTreeNode_SelectedFile(Tuple<string, int> tuple)
+        {
+            MBoxStatic.Assert(tuple.Item2 + .5, false);
+            UtilDirList.Write("A");
+            SelectedFile(tuple.Item1);
+        }
+
+        void UC_TreeMap_SelectedFile(Tuple<string, int> tuple)
+        {
+            MBoxStatic.Assert(tuple.Item2 + .5, false);
+            UtilDirList.Write("B");
+            SelectedFile(tuple.Item1);
+        }
+
         void SelectedFile(string strFile)
         {
             _strSelectedFile = strFile;

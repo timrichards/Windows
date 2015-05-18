@@ -7,11 +7,24 @@ using System.Windows.Forms;
 
 namespace DoubleFile
 {
+    class LocalSubject<T> : ISubject<Tuple<T, int>>
+    {
+        public void OnCompleted() { _subject.OnCompleted(); }
+        public void OnError(Exception error) { _subject.OnError(error); }
+        public void OnNext(Tuple<T, int> value) { _subject.OnNext(value); }
+        public IDisposable Subscribe(IObserver<Tuple<T, int>> observer) { return _subject.Subscribe(observer); }
+
+        Subject<Tuple<T, int>>
+            _subject = new Subject<Tuple<T, int>>();
+    }
+
     static internal partial class ExtensionMethodsStatic
     {
         static Dictionary<int, Tuple<DateTime, WeakReference>> _lsSubjects = new Dictionary<int, Tuple<DateTime, WeakReference>>();
-        static internal void LocalOnNext<T>(this Subject<T> subject, T value, int nOnNextAssertLoc)
+        static internal void LocalOnNext<T>(this LocalSubject<T> subject, T value, int nOnNextAssertLoc, int nInitiator)
         {
+            MBoxStatic.Assert(nOnNextAssertLoc, 0 < nInitiator);
+
             Tuple<DateTime, WeakReference> o = null;
 
             _lsSubjects.TryGetValue(nOnNextAssertLoc, out o);
@@ -31,7 +44,7 @@ namespace DoubleFile
                 (DateTime.Now - o.Item1) > TimeSpan.FromMilliseconds(100))
             {
                 _lsSubjects[nOnNextAssertLoc] = Tuple.Create(DateTime.Now, new WeakReference(value));
-                new Thread(() => subject.OnNext(value)).Start();
+                new Thread(() => subject.OnNext(Tuple.Create(value, nInitiator))).Start();
             }
             else
             {

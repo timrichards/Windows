@@ -7,13 +7,13 @@ namespace DoubleFile
 {
     class LV_TreeListChildrenVM : ListViewVM_Base<LVitem_TreeListVM>
     {
-        static internal IObservable<LocalTreeNode>
+        static internal IObservable<Tuple<LocalTreeNode, int>>
             TreeListChildSelected { get { return _treeListChildSelected.AsObservable(); } }
-        static readonly Subject<LocalTreeNode> _treeListChildSelected = new Subject<LocalTreeNode>();
-        static void TreeListChildSelectedOnNext(LocalTreeNode value) { _treeListChildSelected.LocalOnNext(value, 99854); }
+        static readonly LocalSubject<LocalTreeNode> _treeListChildSelected = new LocalSubject<LocalTreeNode>();
+        static void TreeListChildSelectedOnNext(LocalTreeNode value) { _treeListChildSelected.LocalOnNext(value, 99854, -1); }
         internal bool
-            SettingSelected_ResetsIt { get { var b = _settingSelected; _settingSelected = false; return b; } set { _settingSelected = value; } }
-        bool _settingSelected = false;
+            SkipOne_TreeMapChildSelected_ResetsIt { get { var b = _skipOne_TreeMapChildSelected_ResetsIt; _skipOne_TreeMapChildSelected_ResetsIt = false; return b; } set { _skipOne_TreeMapChildSelected_ResetsIt = value; } }
+        bool _skipOne_TreeMapChildSelected_ResetsIt = false;
 
         public LVitem_TreeListVM SelectedItem
         {
@@ -28,7 +28,8 @@ namespace DoubleFile
                 if (null == value)
                     return;
 
-                SettingSelected_ResetsIt = true;
+                MBoxStatic.Assert(99837, false == _skipOne_TreeMapChildSelected_ResetsIt);
+                SkipOne_TreeMapChildSelected_ResetsIt = true;
                 TreeListChildSelectedOnNext(value.LocalTreeNode);
                 SelectedItem_AllTriggers();
             }

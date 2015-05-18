@@ -6,10 +6,10 @@ namespace DoubleFile
 {
     class WinTreeMapVM : Observable_OwnerWindowBase
     {
-        internal IObservable<LocalTreeNode>
+        internal IObservable<Tuple<LocalTreeNode, int>>
             TreeNodeCallback { get { return _treeNodeCallback.AsObservable(); } }
-        readonly Subject<LocalTreeNode> _treeNodeCallback = new Subject<LocalTreeNode>();
-        internal void GoTo(LocalTreeNode treeNode) { _treeNodeCallback.LocalOnNext(treeNode, 99853); }
+        readonly LocalSubject<LocalTreeNode> _treeNodeCallback = new LocalSubject<LocalTreeNode>();
+        internal void GoTo(LocalTreeNode treeNode) { _treeNodeCallback.LocalOnNext(treeNode, 99853, -1); }
 
         public double Maximum { get; private set; }
         internal LocalTreeNode DeepNode

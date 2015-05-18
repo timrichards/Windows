@@ -23,11 +23,11 @@ namespace DoubleFile
             }
         }
 
-        static internal IObservable<bool>   // bool is a no-op: generic placeholder
+        static internal IObservable<Tuple<bool, int>>   // bool is a no-op: generic placeholder
             Modified { get { return _modified.AsObservable(); } }
-        static readonly Subject<bool> _modified = new Subject<bool>();
+        static readonly LocalSubject<bool> _modified = new LocalSubject<bool>();
         static readonly int _nModifiedOnNextAssertLoc = 99840;
-        internal void SetModified() { _modified.LocalOnNext(false, _nModifiedOnNextAssertLoc); }
+        internal void SetModified() { _modified.LocalOnNext(false, _nModifiedOnNextAssertLoc, -1); }
 
         internal bool
             Unsaved

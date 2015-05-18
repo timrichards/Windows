@@ -10,20 +10,20 @@ namespace DoubleFile
 {
     partial class TreeSelect : UtilDirList
     {
-        static internal IObservable<Tuple<IEnumerable<string>, string, LocalTreeNode>>
+        static internal IObservable<Tuple<Tuple<IEnumerable<string>, string, LocalTreeNode>, int>>
             FileListUpdated { get { return _fileListUpdated.AsObservable(); } }
-        static readonly Subject<Tuple<IEnumerable<string>, string, LocalTreeNode>> _fileListUpdated = new Subject<Tuple<IEnumerable<string>, string, LocalTreeNode>>();
-        static void FileListUpdatedOnNext(Tuple<IEnumerable<string>, string, LocalTreeNode> value) { _fileListUpdated.LocalOnNext(value, 99846); }
+        static readonly LocalSubject<Tuple<IEnumerable<string>, string, LocalTreeNode>> _fileListUpdated = new LocalSubject<Tuple<IEnumerable<string>, string, LocalTreeNode>>();
+        static void FileListUpdatedOnNext(Tuple<IEnumerable<string>, string, LocalTreeNode> value) { _fileListUpdated.LocalOnNext(value, 99846, -1); }
 
-        static internal IObservable<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>>
+        static internal IObservable<Tuple<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>, int>>
             FolderDetailUpdated { get { return _folderDetailUpdated.AsObservable(); } }
-        static readonly Subject<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>> _folderDetailUpdated = new Subject<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>>();
-        static void FolderDetailUpdatedOnNext(Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode> value) { _folderDetailUpdated.LocalOnNext(value, 99845); }
+        static readonly LocalSubject<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>> _folderDetailUpdated = new LocalSubject<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>>();
+        static void FolderDetailUpdatedOnNext(Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode> value) { _folderDetailUpdated.LocalOnNext(value, 99845, -1); }
 
-        static internal IObservable<Tuple<IEnumerable<IEnumerable<string>>, string>>
+        static internal IObservable<Tuple<Tuple<IEnumerable<IEnumerable<string>>, string>, int>>
             VolumeDetailUpdated { get { return _volumeDetailUpdated.AsObservable(); } }
-        static readonly Subject<Tuple<IEnumerable<IEnumerable<string>>, string>> _volumeDetailUpdated = new Subject<Tuple<IEnumerable<IEnumerable<string>>, string>>();
-        static void VolumeDetailUpdatedOnNext(Tuple<IEnumerable<IEnumerable<string>>, string> value) { _volumeDetailUpdated.LocalOnNext(value, 99844); }
+        static readonly LocalSubject<Tuple<IEnumerable<IEnumerable<string>>, string>> _volumeDetailUpdated = new LocalSubject<Tuple<IEnumerable<IEnumerable<string>>, string>>();
+        static void VolumeDetailUpdatedOnNext(Tuple<IEnumerable<IEnumerable<string>>, string> value) { _volumeDetailUpdated.LocalOnNext(value, 99844, -1); }
 
         static internal bool DoThreadFactory(LocalTreeNode treeNode,
             bool bCompareMode = false, bool bSecondComparePane = false)

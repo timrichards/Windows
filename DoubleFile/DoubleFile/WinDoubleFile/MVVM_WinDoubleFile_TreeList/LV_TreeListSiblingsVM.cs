@@ -92,7 +92,6 @@ namespace DoubleFile
 
         void UC_TreeMap_TreeMapRendered(Tuple<LocalTreeNode, int> tuple)
         {
-            MBoxStatic.Assert(tuple.Item2 + .5, false);
             Populate(tuple.Item1);
         }
 

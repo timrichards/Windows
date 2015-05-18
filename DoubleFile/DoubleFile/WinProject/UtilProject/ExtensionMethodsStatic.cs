@@ -23,7 +23,7 @@ namespace DoubleFile
         static Dictionary<int, Tuple<DateTime, WeakReference>> _lsSubjects = new Dictionary<int, Tuple<DateTime, WeakReference>>();
         static internal void LocalOnNext<T>(this LocalSubject<T> subject, T value, int nOnNextAssertLoc, int nInitiator = 0)
         {
-            MBoxStatic.Assert(nOnNextAssertLoc, 0 < nInitiator);
+            MBoxStatic.Assert(nOnNextAssertLoc, 0 <= nInitiator);
 
             if (0 == nInitiator)
                 nInitiator = nOnNextAssertLoc;

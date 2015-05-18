@@ -51,6 +51,15 @@
         <Setter Property="CanUserResizeRows" Value="False"/>
     </Style>
 
+    <Style TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource {x:Type DataGridRow}}">
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource DataGridCellForegroundSelected}"/>
+                <Setter Property="Background" Value="{DynamicResource DataGridCellBackgroundSelected}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
         <Setter Property="HorizontalAlignment" Value="Left"/>
     </Style>

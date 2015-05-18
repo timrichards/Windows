@@ -23,10 +23,10 @@ namespace DoubleFile
             InitializeComponent();
 
             Observable.FromEventPattern(form_grid, "Loaded")
-                .Subscribe(args => Grid_Loaded());
+                .Subscribe(x => Grid_Loaded());
 
             Observable.FromEventPattern(this, "ContentRendered")
-                .Subscribe(args => WinProgress_ContentRendered());
+                .Subscribe(x => WinProgress_ContentRendered());
 
             Observable.FromEventPattern<System.ComponentModel.CancelEventArgs>(this, "Closing")
                 .Subscribe(args => Window_Closing(args.EventArgs));

@@ -39,7 +39,7 @@ namespace DoubleFile
                 .Show();
 
             Observable.FromEventPattern(window, "Closed")
-                .Subscribe(args => content.LocalDispose_WindowClosed());
+                .Subscribe(x => content.LocalDispose_WindowClosed());
 
             e.Cancel = true;
         }
@@ -120,7 +120,7 @@ namespace DoubleFile
                 App.TopWindow = this;
 
             Observable.FromEventPattern(this, "Activated")
-                .Subscribe(args =>
+                .Subscribe(x =>
             {
                 var bCanFlashWindow = App.CanFlashWindow_ResetsIt;     // querying it resets it
                 var topWindow = App.TopWindow;
@@ -138,13 +138,13 @@ namespace DoubleFile
             ShowActivated = true;
 
             Observable.FromEventPattern(this, "Loaded")
-                .Subscribe(args => LocalIsClosed = false);
+                .Subscribe(x => LocalIsClosed = false);
 
             Observable.FromEventPattern(this, "Closed")
-                .Subscribe(args => LocalIsClosed = true);
+                .Subscribe(x => LocalIsClosed = true);
 
             Observable.FromEventPattern(this, "Closing")
-                .Subscribe(args => LocalIsClosing = true);
+                .Subscribe(x => LocalIsClosing = true);
 
             LocalIsClosed = true;
         }
@@ -186,7 +186,7 @@ namespace DoubleFile
             DispatcherFrame blockingFrame = null;
 
             Observable.FromEventPattern(this, "Closed")
-                .Subscribe(args =>
+                .Subscribe(x =>
             {
                 App.TopWindow = me;
                 me.Activate();
@@ -265,7 +265,7 @@ namespace DoubleFile
                 App.TopWindow = this;
 
             Observable.FromEventPattern(this, "Activated")
-                .Subscribe(args =>
+                .Subscribe(x =>
             {
                 var bCanFlashWindow = App.CanFlashWindow_ResetsIt;     // querying it resets it
                 var topWindow = App.TopWindow;
@@ -283,13 +283,13 @@ namespace DoubleFile
             ShowActivated = true;
 
             Observable.FromEventPattern(this, "Loaded")
-                .Subscribe(args => LocalIsClosed = false);
+                .Subscribe(x => LocalIsClosed = false);
 
             Observable.FromEventPattern(this, "Closed")
-                .Subscribe(args => LocalIsClosed = true);
+                .Subscribe(x => LocalIsClosed = true);
 
             Observable.FromEventPattern(this, "Closing")
-                .Subscribe(args => LocalIsClosing = true);
+                .Subscribe(x => LocalIsClosing = true);
 
             LocalIsClosed = true;
         }
@@ -332,7 +332,7 @@ namespace DoubleFile
             DispatcherFrame blockingFrame = null;
 
             Observable.FromEventPattern(this, "Closed")
-                .Subscribe(args =>
+                .Subscribe(x =>
             {
                 App.TopWindow = me;
                 me.Activate();

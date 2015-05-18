@@ -63,13 +63,13 @@ namespace DoubleFile
             InitializeComponent();
 
             Observable.FromEventPattern(form_grid, "Loaded")
-                .Subscribe(args => FlashWindowStatic.Go(this, Once: true));
+                .Subscribe(x => FlashWindowStatic.Go(this, Once: true));
 
             Observable.FromEventPattern(formBtn_OK, "Click")
-                .Subscribe(args => BtnOK_Click());
+                .Subscribe(x => BtnOK_Click());
 
             Observable.FromEventPattern(formBtn_Cancel, "Click")
-                .Subscribe(args => CloseIfSimulatingModal());
+                .Subscribe(x => CloseIfSimulatingModal());
 
             Message = strMessage;
 

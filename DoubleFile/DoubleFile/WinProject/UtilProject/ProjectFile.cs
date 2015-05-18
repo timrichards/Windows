@@ -328,7 +328,7 @@ namespace DoubleFile
             _process.StartInfo.Arguments = strArguments;
             
             Observable.FromEventPattern(_process, "Exited")
-                .Subscribe(args => onExit());
+                .Subscribe(x => onExit());
 
             if (File.Exists(_process.StartInfo.FileName))
             {

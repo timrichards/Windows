@@ -40,22 +40,22 @@ namespace DoubleFile
             InitializeComponent();
 
             Observable.FromEventPattern(form_grid, "Loaded")
-                .Subscribe(args => Grid_Loaded());
+                .Subscribe(x => Grid_Loaded());
 
             Observable.FromEventPattern(formEdit_SourcePath, "LostFocus")
-                .Subscribe(args => { if (IsValidSourcePathEdit) formEdit_SourcePath.Text = CapDrive(formEdit_SourcePath.Text); });
+                .Subscribe(x => { if (IsValidSourcePathEdit) formEdit_SourcePath.Text = CapDrive(formEdit_SourcePath.Text); });
 
             Observable.FromEventPattern<KeyEventArgs>(formEdit_DriveLetter, "PreviewKeyDown")
                 .Subscribe(args => formEdit_DriveLetter_PreviewKeyDown(args.EventArgs));
 
             Observable.FromEventPattern(formEdit_SaveListingFile, "LostFocus")
-                .Subscribe(args => formEdit_ListingFile_LostFocus());
+                .Subscribe(x => formEdit_ListingFile_LostFocus());
 
             Observable.FromEventPattern(formBtn_OK, "Click")
-                .Subscribe(args => BtnOK_Click());
+                .Subscribe(x => BtnOK_Click());
 
             Observable.FromEventPattern(formBtn_Cancel, "Click")
-                .Subscribe(args => BtnCancel_Click());
+                .Subscribe(x => BtnCancel_Click());
         }
 
         internal LVitem_ProjectVM LVitemVolumeTemp

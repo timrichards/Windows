@@ -31,7 +31,7 @@ namespace DoubleFile
             foreach (var ctl in new[] { formLV_File, formLV_Folder, formLV_Volume })
             {
                 Observable.FromEventPattern(ctl, "SelectionChanged")
-                    .Subscribe(args => ctl.UnselectAllCells());
+                    .Subscribe(x => ctl.UnselectAllCells());
             }
         }
 

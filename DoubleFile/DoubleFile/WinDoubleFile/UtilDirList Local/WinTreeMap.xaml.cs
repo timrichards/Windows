@@ -17,10 +17,10 @@ namespace DoubleFile
             InitializeComponent();
 
             Observable.FromEventPattern(this, "SizeChanged")
-                .Subscribe(args => { if (null != _ucTreeMap) _ucTreeMap.ClearSelection(); });
+                .Subscribe(x => { if (null != _ucTreeMap) _ucTreeMap.ClearSelection(); });
 
             Observable.FromEventPattern(form_slider, "LostMouseCapture")
-                .Subscribe(args => { if (null != _ucTreeMap) _ucTreeMap.TreeMapVM.LostMouseCapture(); });
+                .Subscribe(x => { if (null != _ucTreeMap) _ucTreeMap.TreeMapVM.LostMouseCapture(); });
         }
 
         protected override void LocalNavigatedTo()

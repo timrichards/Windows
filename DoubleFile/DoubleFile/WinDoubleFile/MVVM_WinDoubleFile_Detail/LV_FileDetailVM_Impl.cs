@@ -44,39 +44,32 @@ namespace DoubleFile
             if (null == tuple.Item1)
                 return;
 
+            var asFileLine =
+                tuple.Item1
+                .ToArray();
+
+            Title = asFileLine[0];
+            LocalPath_Set(tuple.Item2, asFileLine[0]);
+            asFileLine[3] = UtilDirList.DecodeAttributes(asFileLine[3]);
+
+            if ((asFileLine.Length > FileParse.knColLengthLV) &&
+                (false == string.IsNullOrWhiteSpace(asFileLine[FileParse.knColLengthLV])))
             {
-                var asFileLine =
-                    tuple.Item1
-                    .ToArray();
-
-                if (asFileLine == _asFileLine)
-                    return;
-
-                _asFileLine = asFileLine;
-            }
-
-            Title = _asFileLine[0];
-            LocalPath_Set(tuple.Item2, _asFileLine[0]);
-            _asFileLine[3] = UtilDirList.DecodeAttributes(_asFileLine[3]);
-
-            if ((_asFileLine.Length > FileParse.knColLengthLV) &&
-                (false == string.IsNullOrWhiteSpace(_asFileLine[FileParse.knColLengthLV])))
-            {
-                _asFileLine[FileParse.knColLengthLV] =
-                    UtilDirList.FormatSize(_asFileLine[FileParse.knColLengthLV], bBytes: true);
+                asFileLine[FileParse.knColLengthLV] =
+                    UtilDirList.FormatSize(asFileLine[FileParse.knColLengthLV], bBytes: true);
             }
 
             UtilProject.UIthread(() =>
             {
                 var kasHeader = new[] { "Filename", "Created", "Modified", "Attributes", "Length", "Error 1", "Error 2" };
-                var nMax = Math.Min(_asFileLine.Length, kasHeader.Length);
+                var nMax = Math.Min(asFileLine.Length, kasHeader.Length);
 
                 for (var i = 1; i < nMax; ++i)
                 {
-                    if (string.IsNullOrWhiteSpace(_asFileLine[i]))
+                    if (string.IsNullOrWhiteSpace(asFileLine[i]))
                         continue;
 
-                    Add(new LVitem_FileDetailVM(new[] { kasHeader[i], _asFileLine[i] }), bQuiet: true);
+                    Add(new LVitem_FileDetailVM(new[] { kasHeader[i], asFileLine[i] }), bQuiet: true);
                 }
 
                 RaiseItems();
@@ -85,7 +78,5 @@ namespace DoubleFile
 
         List<IDisposable>
             _lsDisposable = new List<IDisposable>();
-        string[]
-            _asFileLine = null;
     }
 }

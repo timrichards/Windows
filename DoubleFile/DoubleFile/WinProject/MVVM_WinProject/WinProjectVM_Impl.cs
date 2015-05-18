@@ -136,6 +136,8 @@ namespace DoubleFile
                     listItems.Add(lvItem);
             }
 
+            UtilProject.UIthread(_lvVM.ClearItems);
+
             Parallel.ForEach(listFiles, strFilename =>
             {
                 if ((null != userCanceled) &&
@@ -172,8 +174,6 @@ namespace DoubleFile
             {
                 return false;
             }
-
-            UtilProject.UIthread(_lvVM.ClearItems);
 
             var bOpenedFiles = listItems
                 .OrderBy(lvItem => lvItem.SourcePath)

@@ -126,15 +126,15 @@ namespace DoubleFile
             Background = Brushes.LightYellow;
 
             Observable.FromEventPattern(this, "Loaded")
-                .Subscribe(args => ++formTextBlock_folder.FontSize);
+                .Subscribe(x => ++formTextBlock_folder.FontSize);
 
             var bMouseDown = false;
 
             Observable.FromEventPattern(this, "MouseDown")
-                .Subscribe(args => bMouseDown = true);
+                .Subscribe(x => bMouseDown = true);
 
             Observable.FromEventPattern(this, "MouseUp")
-                .Subscribe(args => { if (bMouseDown && (null != _clickCallback)) _clickCallback(); bMouseDown = false; });
+                .Subscribe(x => { if (bMouseDown && (null != _clickCallback)) _clickCallback(); bMouseDown = false; });
         }
 
         void WinTooltip_SizeChanged(Size newSize)

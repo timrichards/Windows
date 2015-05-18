@@ -17,7 +17,7 @@ namespace DoubleFile
             InitializeComponent();
 
             Observable.FromEventPattern(form_grid, "Loaded")
-                .Subscribe(args => Grid_Loaded());
+                .Subscribe(x => Grid_Loaded());
         }
 
         private void Grid_Loaded()

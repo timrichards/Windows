@@ -6,7 +6,7 @@
     <Grid>
         <DataGrid SelectedItem="{Binding SelectedItem}" ScrollViewer.HorizontalScrollBarVisibility="Auto">
             <DataGrid.Resources>
-                <Style TargetType="DataGridCell">
+                <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding SolitaryAndNonEmpty}" Value="True">
                             <Setter Property="Foreground" Value="Red" />

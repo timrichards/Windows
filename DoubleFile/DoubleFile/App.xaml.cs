@@ -57,17 +57,17 @@ namespace DoubleFile
             LocalExit = false;
 
             Observable.FromEventPattern(this, "Activated")
-                .Subscribe(args => Application_Activated());
+                .Subscribe(x => Application_Activated());
 
             Observable.FromEventPattern(this, "Deactivated")
-                .Subscribe(args => { LocalActivated = false; DeactivateDidOccurOnNext(); });
+                .Subscribe(x => { LocalActivated = false; DeactivateDidOccurOnNext(); });
 
             Observable.FromEventPattern(this, "Exit")
-                .Subscribe(args => LocalExit = true);   // App.FileDictionary.Dispose();
+                .Subscribe(x => LocalExit = true);   // App.FileDictionary.Dispose();
 
 #if (false == DEBUG)
             Observable.FromEventPattern<System.Windows.Threading.DispatcherUnhandledExceptionEventArgs>(this, "DispatcherUnhandledException")
-                .Subscribe(args =>
+                .Subscribe(x =>
             {
                 args.EventArgs.Handled = true;
                 MBoxStatic.Assert(-1, false, args.EventArgs.Exception.Message);

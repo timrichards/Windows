@@ -159,9 +159,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Advanced.xaml.cs">
-      <DependentUpon>Advanced.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ExtraWindow.xaml.cs">
       <DependentUpon>ExtraWindow.xaml</DependentUpon>
     </Compile>
@@ -411,10 +408,6 @@
     <Resource Include="ic_people_black_18dp.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Advanced.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Assets\LocalStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

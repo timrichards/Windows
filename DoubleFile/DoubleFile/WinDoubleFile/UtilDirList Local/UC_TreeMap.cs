@@ -49,7 +49,7 @@ namespace DoubleFile
             var bMouseDown = false;
 
             _lsDisposable.Add(Observable.FromEventPattern(this, "MouseDown")
-                .Subscribe(args => bMouseDown = true));
+                .Subscribe(x => bMouseDown = true));
 
             _lsDisposable.Add(Observable.FromEventPattern<MouseEventArgs>(this, "MouseUp")
                 .Subscribe(args => { if (bMouseDown) { bMouseDown = false; form_tmapUserCtl_MouseUp(args.EventArgs.Location); } }));

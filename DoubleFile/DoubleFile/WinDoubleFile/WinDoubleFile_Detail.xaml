@@ -20,7 +20,7 @@
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="Path:" Margin="10, 0"/>
+                    <Label VerticalAlignment="Center" Grid.Column="0" Content="Path:" Margin="10, 0"/>
                     <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Grid.Column="1" Text="{Binding LocalPath}" />
                     <Button Grid.Column="2" Content="Copy" Width ="50" Command="{Binding Icmd_Copy}"/>
                 </Grid>
@@ -36,7 +36,7 @@
             <Border Style="{StaticResource styleBorder}">
                 <DataGrid Name="formLV_Folder">
                     <DataGrid.Resources>
-                        <Style TargetType="DataGridCell">
+                        <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
                             <Setter Property="Foreground" Value="{Binding Foreground}"/>
                             <Setter Property="Background" Value="{Binding Background}"/>
                         </Style>

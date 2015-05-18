@@ -16,13 +16,13 @@ namespace DoubleFile
             InitializeComponent();
 
             Observable.FromEventPattern(form_grid, "Loaded")
-                .Subscribe(args => formUC_VolumeGroup.IsWinVolumeGroup = true);
+                .Subscribe(x => formUC_VolumeGroup.IsWinVolumeGroup = true);
 
             Observable.FromEventPattern(formBtn_OK, "Click")
-                .Subscribe(args => { LocalDialogResult = true; CloseIfSimulatingModal(); });
+                .Subscribe(x => { LocalDialogResult = true; CloseIfSimulatingModal(); });
 
             Observable.FromEventPattern(formBtn_Cancel, "Click")
-                .Subscribe(args => { CloseIfSimulatingModal(); });
+                .Subscribe(x => { CloseIfSimulatingModal(); });
         }
     }
 }

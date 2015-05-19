@@ -61,8 +61,6 @@ namespace DoubleFile
             }
 
             _weakReference.Target = this;            
-            _lsDisposable.Add(WinDoubleFile_DuplicatesVM.GoToFile.Subscribe(WinDoubleFile_DuplicatesVM_GoToFile));
-            _lsDisposable.Add(WinDoubleFile_SearchVM.GoToFile.Subscribe(WinDoubleFile_SearchVM_GoToFile));
         }
 
         static internal void LocalDispose()
@@ -118,29 +116,6 @@ namespace DoubleFile
                 nRet += 1 + CountSubnodes(treeNode.Nodes);
 
             return nRet;
-        }
-
-        void WinDoubleFile_DuplicatesVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, int> tupleA)
-        {
-            UtilDirList.Write("C"); GoToFile(tupleA.Item1);
-        }
-
-        void WinDoubleFile_SearchVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, int> tupleA)
-        {
-            UtilDirList.Write("D"); GoToFile(tupleA.Item1);
-        }
-
-        void GoToFile(Tuple<LVitem_ProjectVM, string, string> tuple)
-        {
-            if (null == RootNodes)
-                return;
-
-            var treeNode = GetOneNodeByRootPathA(tuple.Item2, tuple.Item1);
-
-            if (null == treeNode)
-                return;
-
-            treeNode.GoToFile(tuple.Item3);
         }
 
         readonly LV_ProjectVM

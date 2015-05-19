@@ -6,14 +6,39 @@ using System.Windows.Controls;
 using FirstFloor.ModernUI.Windows.Controls;
 using FirstFloor.ModernUI.Windows.Navigation;
 using FirstFloor.ModernUI.Windows;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DoubleFile
 {
     public abstract class LocalUserControlBase : UserControl, IContent
     {
+        static protected IEnumerable<WeakReference<LocalUserControlBase>>
+            InstantiatedList { get { return _lsInstantiated; } }
+        static List<WeakReference<LocalUserControlBase>> _lsInstantiated = new List<WeakReference<LocalUserControlBase>>();
+        void LocalNavigatedToA() { _lsInstantiated.Add(new WeakReference<LocalUserControlBase>(this)); LocalNavigatedTo(); }
+        void LocalDispose_WindowClosedA()
+        {
+            _lsInstantiated.First(w =>
+            {
+                LocalUserControlBase u = null;
+                
+                w.TryGetTarget(out u);
+
+                var e = ReferenceEquals(this, u);
+
+                if (e)
+                    _lsInstantiated.Remove(w);
+
+                return e;
+            });
+            
+            LocalNavigatedTo();
+        }
+
         public void OnFragmentNavigation(FragmentNavigationEventArgs e) { }
         public void OnNavigatedFrom(NavigationEventArgs e) { LocalDispose_WindowClosed(); }
-        public void OnNavigatedTo(NavigationEventArgs e) { MainWindow.CurrentPage = this; LocalNavigatedTo(); }
+        public void OnNavigatedTo(NavigationEventArgs e) { MainWindow.CurrentPage = this; LocalNavigatedToA(); }
         virtual protected void LocalNavigatedTo() { }
         public void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {

@@ -9,7 +9,6 @@ namespace DoubleFile
         internal LV_DoubleFile_FilesVM()
         {
             _lsDisposable.Add(TreeSelect.FileListUpdated.Subscribe(TreeSelect_FileListUpdated));
-            _lsDisposable.Add(LocalTreeNode.SelectedFile.Subscribe(LocalTreeNode_SelectedFile));
             _lsDisposable.Add(UC_TreeMap.SelectedFile.Subscribe(UC_TreeMap_SelectedFile));
         }
 
@@ -19,7 +18,7 @@ namespace DoubleFile
                 d.Dispose();
         }
 
-        void TreeSelect_FileListUpdated(Tuple<Tuple<IEnumerable<string>, string, LocalTreeNode>, int> tupleA)
+        void TreeSelect_FileListUpdated(Tuple<Tuple<IEnumerable<string>, string, LocalTreeNode, string>, int> tupleA)
         {
             var tuple = tupleA.Item1;
 
@@ -74,26 +73,13 @@ namespace DoubleFile
 
             UtilProject.UIthread(() => Add(lsItems));
 
-            if (null != _strSelectedFile)
-                SelectedItem_Set(this[_strSelectedFile].FirstOrDefault(), tupleA.Item2);
-
-            _strSelectedFile = null;
-        }
-
-        void LocalTreeNode_SelectedFile(Tuple<string, int> tupleA)
-        {
-            UtilDirList.Write("A");
-            SelectedFile(tupleA);
+            if (null != tuple.Item4)
+                SelectedItem_Set(this[tuple.Item4].FirstOrDefault(), tupleA.Item2);
         }
 
         void UC_TreeMap_SelectedFile(Tuple<string, int> tupleA)
         {
             UtilDirList.Write("B");
-            SelectedFile(tupleA);
-        }
-
-        void SelectedFile(Tuple<string, int> tupleA)
-        {
             SelectedItem_Set(this[tupleA.Item1].FirstOrDefault(), tupleA.Item2);
         }
 
@@ -110,8 +96,6 @@ namespace DoubleFile
             }
         }
 
-        string
-            _strSelectedFile = null;
         LocalTreeNode
             _treeNode = null;
         List<IDisposable>

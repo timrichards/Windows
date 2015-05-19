@@ -8,11 +8,6 @@ namespace DoubleFile
 {
     class LV_TreeListSiblingsVM : ListViewVM_Base<LVitem_TreeListVM>, IDisposable
     {
-        static internal IObservable<Tuple<LocalTreeNode, int>>
-            TreeListSiblingSelected { get { return _treeListSiblingSelected.AsObservable(); } }
-        static readonly LocalSubject<LocalTreeNode> _treeListSiblingSelected = new LocalSubject<LocalTreeNode>();
-        static void TreeListSiblingSelectedOnNext(LocalTreeNode value) { _treeListSiblingSelected.LocalOnNext(value, 99849); }
-
         public LVitem_TreeListVM SelectedItem
         {
             get { return _selectedItem; }
@@ -26,7 +21,7 @@ namespace DoubleFile
                 if (null == value)
                     return;
 
-                TreeListSiblingSelectedOnNext(value.LocalTreeNode);
+                TreeSelect.DoThreadFactory(value.LocalTreeNode, nInitiator: 0);
                 SelectedItem_AllTriggers();
             }
         }
@@ -56,7 +51,6 @@ namespace DoubleFile
         {
             _lvChildrenVM = lvChildrenVM;
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(TreeSelect_FolderDetailUpdated));
-            _lsDisposable.Add(UC_TreeMap.TreeMapRendered.Subscribe(UC_TreeMap_TreeMapRendered));
         }
 
         internal void CopyFrom(LV_TreeListSiblingsVM vm)
@@ -79,7 +73,7 @@ namespace DoubleFile
 
             UtilDirList.Write("L");
             if (_treeNode != tuple.Item2.Parent)
-                return;
+                Populate(tuple.Item2);
 
             ItemsCast
                 .Where(lvItem => lvItem.LocalTreeNode == _treeNode)
@@ -88,11 +82,6 @@ namespace DoubleFile
             _lvChildrenVM.ItemsCast
                 .Where(lvItem => lvItem.LocalTreeNode == tuple.Item2)
                 .FirstOnlyAssert(lvItem => _lvChildrenVM.SelectedItem_Set(lvItem));
-        }
-
-        void UC_TreeMap_TreeMapRendered(Tuple<LocalTreeNode, int> tuple)
-        {
-            Populate(tuple.Item1);
         }
 
         void Populate(LocalTreeNode treeNodeSel)

@@ -9,16 +9,6 @@ namespace DoubleFile
 {
     class LocalTreeNode : LocalColorItemBase
     {
-        static internal IObservable<Tuple<LocalTreeNode, int>>
-            Selected { get { return _selected.AsObservable(); } }
-        static readonly LocalSubject<LocalTreeNode> _selected = new LocalSubject<LocalTreeNode>();
-        void SelectedOnNext() { _selected.LocalOnNext(this, 99851); }
-
-        static internal IObservable<Tuple<string, int>>
-            SelectedFile { get { return _selectedFile.AsObservable(); } }
-        static readonly LocalSubject<string> _selectedFile = new LocalSubject<string>();
-        static void SelectedFileOnNext(string value) { _selectedFile.LocalOnNext(value, 99850); }
-
         public LocalTreeNode[]
             Nodes { get; protected set; }
         internal virtual string
@@ -142,8 +132,7 @@ namespace DoubleFile
 
         internal void GoToFile(string strFile)
         {
-            SelectedOnNext();
-            SelectedFileOnNext(strFile);
+            TreeSelect.DoThreadFactory(this, 0 /* UI Initiator */, strFile);
         }
     }
 }

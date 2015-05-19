@@ -15,11 +15,6 @@ namespace DoubleFile
     [System.ComponentModel.DesignerCategory("Code")]
     class UC_TreeMap : UserControl
     {
-        static internal IObservable<Tuple<LocalTreeNode, int>>
-            TreeMapRendered { get { return _treeMapRendered.AsObservable(); } }
-        static readonly LocalSubject<LocalTreeNode> _treeMapRendered = new LocalSubject<LocalTreeNode>();
-        static void TreeMapRenderedOnNext(LocalTreeNode value, int nInitiator) { _treeMapRendered.LocalOnNext(value, 99843, nInitiator); }
-
         static internal IObservable<Tuple<string, int>>
             SelectedFile { get { return _selectedFile.AsObservable(); } }
         static readonly LocalSubject<string> _selectedFile = new LocalSubject<string>();
@@ -56,9 +51,7 @@ namespace DoubleFile
                 UtilDirList.Write("M"); RenderD(tuple.Item2, tupleA.Item2); _bTreeSelect = false;
             }));
 
-            _lsDisposable.Add(LV_TreeListSiblingsVM.TreeListSiblingSelected.Subscribe(LV_TreeListSiblingsVM_TreeListSiblingSelected));
             _lsDisposable.Add(LV_TreeListChildrenVM.TreeListChildSelected.Subscribe(LV_TreeListChildrenVM_TreeListChildSelected));
-            _lsDisposable.Add(LocalTreeNode.Selected.Subscribe(LocalTreeNode_Selected));
             _lsDisposable.Add(LV_DoubleFile_FilesVM.SelectedFileChanged.Subscribe(LV_DoubleFile_FilesVM_SelectedFileChanged));
         }
 
@@ -124,7 +117,7 @@ namespace DoubleFile
             if (false == bKeepTooltipActive)
                 UtilProject.UIthread(() => WinTooltip.CloseTooltip());  // CloseTooltip callback recurses here hence _bClearingSelection
 
-            _selRect = Rectangle.Empty;
+            _selChildNode = null;
 
             if (0 == _nInvalidateRef)
                 Invalidate();
@@ -142,6 +135,9 @@ namespace DoubleFile
 
             _bg = null;
             WinTooltip.CloseTooltip();
+            _deepNodeDrawn = null;
+            _selChildNode = null;
+            _prevNode = null;
             base.Dispose(disposing);
         }
 
@@ -319,6 +315,9 @@ namespace DoubleFile
                 return;
             }
 
+            if (_selChildNode == treeNodeChild)
+                return;
+
             _bSelRecAndTooltip = true;
 
             var nodeDatum = treeNodeChild.NodeDatum;
@@ -341,13 +340,15 @@ namespace DoubleFile
                     () => ClearSelection()),
                 treeNodeChild));
 
-            _selRect = nodeDatum.TreeMapRect;
+            _selChildNode = treeNodeChild;
             _prevNode = treeNodeChild;
 
             if (0 == _nInvalidateRef)   // jic
                 Invalidate();
 
-            _bTreeSelect = TreeSelect.DoThreadFactory(nodeTreeSelect, nInitiator);
+            if (LV_TreeListChildrenVM.kChildSelectedOnNext != nInitiator)
+                _bTreeSelect = TreeSelect.DoThreadFactory(nodeTreeSelect, nInitiator);
+
             _bSelRecAndTooltip = false;
         }
 
@@ -478,11 +479,11 @@ namespace DoubleFile
         {
             base.OnPaint(e);
 
-            if (Rectangle.Empty != _selRect)
+            if (null != _selChildNode)
             {
                 e.Graphics.FillRectangle(
                     new SolidBrush(Color.FromArgb(64, 0, 0, 0)),
-                    _selRect.Scale(_sizeTranslate));
+                    _selChildNode.NodeDatum.TreeMapRect.Scale(_sizeTranslate));
             }
 
             if ((null == _deepNodeDrawn) ||
@@ -555,22 +556,6 @@ namespace DoubleFile
             RenderA(treeNode, nInitiator: 0);
         }
 
-        void LV_TreeListSiblingsVM_TreeListSiblingSelected(Tuple<LocalTreeNode, int> tupleA)
-        {
-            var treeNode = tupleA.Item1;
-
-            UtilDirList.Write("P");
-            RenderA(treeNode, tupleA.Item2);
-        }
-
-        void LocalTreeNode_Selected(Tuple<LocalTreeNode, int> tupleA)
-        {
-            var treeNode = tupleA.Item1;
-
-            UtilDirList.Write("Q");
-            RenderA(treeNode, tupleA.Item2);
-        }
-
         void TreeMapVM_TreeNodeCallback(Tuple<LocalTreeNode, int> tupleA)
         {
             var treeNode = tupleA.Item1;
@@ -593,7 +578,6 @@ namespace DoubleFile
             }
 
             InvalidatePushRef(() => UtilProject.UIthread(() => Render(treeNode)));
-            TreeMapRenderedOnNext(treeNode, nInitiator);
         }
 
         void Render(LocalTreeNode treeNode)
@@ -656,7 +640,7 @@ namespace DoubleFile
                     LocalOwner.Title = treeNode.Text;
             });
 
-            _selRect = Rectangle.Empty;
+            _selChildNode = null;
             _prevNode = null;
             _dtHideGoofball = DateTime.MinValue;
 
@@ -1196,8 +1180,8 @@ namespace DoubleFile
             _nAnimFrame = 0;
 
         // selection
-        Rectangle
-            _selRect = Rectangle.Empty;
+        LocalTreeNode
+            _selChildNode = null;
         LocalTreeNode
             _prevNode = null;
 

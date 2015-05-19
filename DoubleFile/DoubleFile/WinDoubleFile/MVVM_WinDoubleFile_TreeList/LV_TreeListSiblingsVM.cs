@@ -69,8 +69,9 @@ namespace DoubleFile
             var tuple = tupleA.Item1;
 
             UtilDirList.Write("L");
-            if (_treeNode != tuple.Item2.Parent)
-                return;
+            if ((null != _treeNode) &&
+                (_treeNode != tuple.Item2.Parent))
+                Populate(tuple.Item2);
 
             ItemsCast
                 .Where(lvItem => lvItem.LocalTreeNode == _treeNode)

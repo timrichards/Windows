@@ -346,9 +346,7 @@ namespace DoubleFile
             if (0 == _nInvalidateRef)   // jic
                 Invalidate();
 
-            if (LV_TreeListChildrenVM.kChildSelectedOnNext != nInitiator)
-                _bTreeSelect = TreeSelect.DoThreadFactory(nodeTreeSelect, nInitiator);
-
+            _bTreeSelect = TreeSelect.DoThreadFactory(nodeTreeSelect, nInitiator);
             _bSelRecAndTooltip = false;
         }
 

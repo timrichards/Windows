@@ -66,14 +66,11 @@ namespace DoubleFile
 
         void TreeSelect_FolderDetailUpdated(Tuple<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>, int> tupleA)
         {
-            if (LV_TreeListChildrenVM.kChildSelectedOnNext == tupleA.Item2)
-                return;
-
             var tuple = tupleA.Item1;
 
             UtilDirList.Write("L");
             if (_treeNode != tuple.Item2.Parent)
-                Populate(tuple.Item2);
+                return;
 
             ItemsCast
                 .Where(lvItem => lvItem.LocalTreeNode == _treeNode)

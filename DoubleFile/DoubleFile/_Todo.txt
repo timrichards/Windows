@@ -1,4 +1,34 @@
-﻿99836 next assert(s)
+﻿1 2 3 4 5 6         1 Tree Map
+                    2 Folders / LocalTV
+                    3 Tree List
+                    4 Files
+                    5 Duplicates
+                    6 Detail
+Consumers										Producers
+
+       4            TreeSelect					FileListUpdated			Tuple<IEnumerable<string>, string, LocalTreeNode>
+1   3      6        TreeSelect					FolderDetailUpdated		Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>
+           6        TreeSelect					VolumeDetailUpdated		Tuple<IEnumerable<IEnumerable<string>>, string>
+
+1                   LocalTreeNode				Selected				LocalTreeNode
+       4            LocalTreeNode				SelectedFile			string
+
+  2                 WinDoubleFile_DuplicatesVM	GoToFile				Tuple<LVitem_ProjectVM, string, string>
+           6    x   WinDoubleFile_DuplicatesVM	UpdateFileDetail		Tuple<IEnumerable<string>, LocalTreeNode>
+
+1        5 6        LV_DoubleFile_FilesVM		SelectedFileChanged		Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>
+
+  2                 WinDoubleFile_SearchVM		GoToFile				Tuple<LVitem_ProjectVM, string, string>
+
+1                   LV_TreeListSiblingsVM		TreeListSiblingSelected	LocalTreeNode
+1                   LV_TreeListChildrenVM		TreeListChildSelected	LocalTreeNode
+                    
+not used            UC_TreeMap					TreeMapRendered			LocalTreeNode
+       4            UC_TreeMap					SelectedFile			string
+1                   WinTreeMapVM				TreeNodeCallback		LocalTreeNode
+
+
+99836 next low assert
 
 99984 99983 99982 99981 99980 99979
 99969 99968

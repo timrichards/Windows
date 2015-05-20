@@ -21,7 +21,7 @@ namespace DoubleFile
                 if (null == value)
                     return;
 
-                TreeSelect.DoThreadFactory(value.LocalTreeNode, nInitiator: 0);
+                TreeSelect.DoThreadFactory(value.LocalTreeNode, nInitiator: _kTreeSelect);
                 SelectedItem_AllTriggers();
             }
         }
@@ -66,25 +66,41 @@ namespace DoubleFile
 
         void TreeSelect_FolderDetailUpdated(Tuple<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>, int> tupleA)
         {
+            if (new[] { _kTreeSelect, LV_TreeListChildrenVM.kChildSelectedOnNext, UC_TreeMap.kSelRectAndTooltip }
+                .Contains(tupleA.Item2))
+            {
+                return;
+            }
+
             var tuple = tupleA.Item1;
 
             UtilDirList.Write("L");
 
-            if ((null != _treeNode) &&
-                (_treeNode == tuple.Item2.Parent))
-            {
-                ItemsCast
-                    .Where(lvItem => lvItem.LocalTreeNode == _treeNode)
-                    .FirstOnlyAssert(SelectedItem_Set);
+            if (tuple.Item2 == _treeNode)
+                return;
 
-                _lvChildrenVM.ItemsCast
-                    .Where(lvItem => lvItem.LocalTreeNode == tuple.Item2)
-                    .FirstOnlyAssert(lvItem => _lvChildrenVM.SelectedItem_Set(lvItem));
-            }
-            else
+            if (null != _treeNode)
             {
-                Populate(tuple.Item2);
+                if (_treeNode == tuple.Item2.Parent)
+                {
+                    ItemsCast
+                        .Where(lvItem => lvItem.LocalTreeNode == _treeNode)
+                        .FirstOnlyAssert(SelectedItem_Set);
+
+                    _lvChildrenVM.ItemsCast
+                        .Where(lvItem => lvItem.LocalTreeNode == tuple.Item2)
+                        .FirstOnlyAssert(lvItem => _lvChildrenVM.SelectedItem_Set(lvItem));
+
+                    return;
+                }
+                else if (tuple.Item2.IsChildOf(_treeNode))
+                {
+                    // no-op on descending treemap subfolders.
+                    return;
+                }
             }
+
+            Populate(tuple.Item2);
         }
 
         void Populate(LocalTreeNode treeNodeSel)
@@ -92,17 +108,17 @@ namespace DoubleFile
             if (treeNodeSel == _treeNode)
                 return;
 
+            _treeNode = treeNodeSel;
             ClearItems();
 
-            if (null == treeNodeSel)
+            if (null == _treeNode)
                 return;
 
-            _treeNode = treeNodeSel;
             UtilDirList.Write("K");
 
             var treeNodes =
-                (null != treeNodeSel.Parent)
-                ? treeNodeSel.Parent.Nodes
+                (null != _treeNode.Parent)
+                ? _treeNode.Parent.Nodes
                 : LocalTV.RootNodes;
 
             var lsLVitems = new List<LVitem_TreeListVM>();
@@ -115,7 +131,7 @@ namespace DoubleFile
                 lsLVitems.Add(lvItem);
 
                 if ((null == selectedItem) &&
-                    ReferenceEquals(treeNode, treeNodeSel))
+                    ReferenceEquals(treeNode, _treeNode))
                 {
                     selectedItem = lvItem;
                 }
@@ -125,6 +141,8 @@ namespace DoubleFile
             SelectedItem_Set(selectedItem);
         }
 
+        const int
+            _kTreeSelect = 99984;
         LocalTreeNode
             _treeNode = null;
         readonly LV_TreeListChildrenVM

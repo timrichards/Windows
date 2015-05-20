@@ -20,6 +20,9 @@ namespace DoubleFile
         static readonly LocalSubject<string> _selectedFile = new LocalSubject<string>();
         static void SelectedFileOnNext(string value, int nInitiator) { _selectedFile.LocalOnNext(value, 99841, nInitiator); }
 
+        internal const int
+            kSelRectAndTooltip = 99983;
+
         internal System.Windows.Window
             LocalOwner = null;
         internal WinTreeMapVM
@@ -258,7 +261,7 @@ namespace DoubleFile
                 bImmediateFiles = false;
             }
 
-            SelRectAndTooltip(nodeRet, 0 /* UI Initiator */, bImmediateFiles);
+            SelRectAndTooltip(nodeRet, kSelRectAndTooltip /* UI Initiator */, bImmediateFiles);
             return null;
         }
 

@@ -46,6 +46,9 @@ namespace DoubleFile
 
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(tupleA =>
             {
+                if (LV_TreeListChildrenVM.kChildSelectedOnNext == tupleA.Item2)
+                    return;
+
                 var tuple = tupleA.Item1;
 
                 UtilDirList.Write("M"); RenderD(tuple.Item2, tupleA.Item2); _bTreeSelect = false;
@@ -346,7 +349,9 @@ namespace DoubleFile
             if (0 == _nInvalidateRef)   // jic
                 Invalidate();
 
-            _bTreeSelect = TreeSelect.DoThreadFactory(nodeTreeSelect, nInitiator);
+            if (LV_TreeListChildrenVM.kChildSelectedOnNext != nInitiator)
+                _bTreeSelect = TreeSelect.DoThreadFactory(nodeTreeSelect, nInitiator);
+
             _bSelRecAndTooltip = false;
         }
 

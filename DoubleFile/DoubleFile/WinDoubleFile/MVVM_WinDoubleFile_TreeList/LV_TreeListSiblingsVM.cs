@@ -69,17 +69,22 @@ namespace DoubleFile
             var tuple = tupleA.Item1;
 
             UtilDirList.Write("L");
+
             if ((null != _treeNode) &&
-                (_treeNode != tuple.Item2.Parent))
+                (_treeNode == tuple.Item2.Parent))
+            {
+                ItemsCast
+                    .Where(lvItem => lvItem.LocalTreeNode == _treeNode)
+                    .FirstOnlyAssert(SelectedItem_Set);
+
+                _lvChildrenVM.ItemsCast
+                    .Where(lvItem => lvItem.LocalTreeNode == tuple.Item2)
+                    .FirstOnlyAssert(lvItem => _lvChildrenVM.SelectedItem_Set(lvItem));
+            }
+            else
+            {
                 Populate(tuple.Item2);
-
-            ItemsCast
-                .Where(lvItem => lvItem.LocalTreeNode == _treeNode)
-                .FirstOnlyAssert(SelectedItem_Set);
-
-            _lvChildrenVM.ItemsCast
-                .Where(lvItem => lvItem.LocalTreeNode == tuple.Item2)
-                .FirstOnlyAssert(lvItem => _lvChildrenVM.SelectedItem_Set(lvItem));
+            }
         }
 
         void Populate(LocalTreeNode treeNodeSel)

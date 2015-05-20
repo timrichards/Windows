@@ -13,9 +13,9 @@ namespace DoubleFile
             _lsDisposable.Add(WinDoubleFile_DuplicatesVM.UpdateFileDetail.Subscribe(WinDoubleFile_DuplicatesVM_UpdateFileDetail));
             _lsDisposable.Add(LV_DoubleFile_FilesVM.SelectedFileChanged.Subscribe(LV_DoubleFile_FilesVM_SelectedFileChanged));
 
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(tupleA =>
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(initiatorTuple =>
             {
-                var tuple = tupleA.Item1;
+                var tuple = initiatorTuple.Item1;
 
                 UtilDirList.Write("E"); if (null != tuple.Item2) LocalPath_Set(tuple.Item2);
             }));
@@ -32,18 +32,18 @@ namespace DoubleFile
             Clipboard.SetText(LocalPath);
         }
 
-        void LV_DoubleFile_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int> tupleA)
+        void LV_DoubleFile_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int> initiatorTuple)
         {
-            var tuple = tupleA.Item1;
+            var tuple = initiatorTuple.Item1;
             var item2 = (null != tuple) ? tuple.Item2 : null;
             var item3 = (null != tuple) ? tuple.Item3 : null;
 
-            WinDoubleFile_DuplicatesVM_UpdateFileDetail(Tuple.Create(Tuple.Create(item2, item3), tupleA.Item2));
+            WinDoubleFile_DuplicatesVM_UpdateFileDetail(Tuple.Create(Tuple.Create(item2, item3), initiatorTuple.Item2));
         }
 
-        void WinDoubleFile_DuplicatesVM_UpdateFileDetail(Tuple<Tuple<IEnumerable<string>, LocalTreeNode>, int> tupleA)
+        void WinDoubleFile_DuplicatesVM_UpdateFileDetail(Tuple<Tuple<IEnumerable<string>, LocalTreeNode>, int> initiatorTuple)
         {
-            var tuple = tupleA.Item1;
+            var tuple = initiatorTuple.Item1;
 
             UtilDirList.Write("F");
             LocalPath_Set();

@@ -18,15 +18,15 @@ namespace DoubleFile
                 d.Dispose();
         }
 
-        void TreeSelect_FileListUpdated(Tuple<Tuple<IEnumerable<string>, string, LocalTreeNode, string>, int> tupleA)
+        void TreeSelect_FileListUpdated(Tuple<Tuple<IEnumerable<string>, string, LocalTreeNode, string>, int> initiatorTuple)
         {
-            var tuple = tupleA.Item1;
+            var tuple = initiatorTuple.Item1;
 
             UtilDirList.Write("J");
             if (tuple.Item3 == _treeNode)
                 return;
 
-            SelectedItem_Set(null, tupleA.Item2);
+            SelectedItem_Set(null, initiatorTuple.Item2);
             UtilProject.UIthread(ClearItems);
             _treeNode = tuple.Item3;
 
@@ -74,13 +74,13 @@ namespace DoubleFile
             UtilProject.UIthread(() => Add(lsItems));
 
             if (null != tuple.Item4)
-                SelectedItem_Set(this[tuple.Item4].FirstOrDefault(), tupleA.Item2);
+                SelectedItem_Set(this[tuple.Item4].FirstOrDefault(), initiatorTuple.Item2);
         }
 
-        void UC_TreeMap_SelectedFile(Tuple<string, int> tupleA)
+        void UC_TreeMap_SelectedFile(Tuple<string, int> initiatorTuple)
         {
             UtilDirList.Write("B");
-            SelectedItem_Set(this[tupleA.Item1].FirstOrDefault(), tupleA.Item2);
+            SelectedItem_Set(this[initiatorTuple.Item1].FirstOrDefault(), initiatorTuple.Item2);
         }
 
         internal override IEnumerable<LVitem_DoubleFile_FilesVM> this[string s_in]

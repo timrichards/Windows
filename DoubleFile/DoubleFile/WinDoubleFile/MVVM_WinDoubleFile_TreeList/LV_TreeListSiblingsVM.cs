@@ -64,20 +64,26 @@ namespace DoubleFile
                 d.Dispose();
         }
 
-        void TreeSelect_FolderDetailUpdated(Tuple<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>, int> tupleA)
+        void TreeSelect_FolderDetailUpdated(Tuple<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>, int> initiatorTuple)
         {
-            if (new[] { _kTreeSelect, LV_TreeListChildrenVM.kChildSelectedOnNext, UC_TreeMap.kSelRectAndTooltip }
-                .Contains(tupleA.Item2))
+            if (new[] { _kTreeSelect, LV_TreeListChildrenVM.kChildSelectedOnNext }
+                .Contains(initiatorTuple.Item2))
             {
                 return;
             }
 
-            var tuple = tupleA.Item1;
+            var tuple = initiatorTuple.Item1;
 
             UtilDirList.Write("L");
 
             if (tuple.Item2 == _treeNode)
                 return;
+
+            if (UC_TreeMap.kSelRectAndTooltip != initiatorTuple.Item2)
+            {
+                Populate(tuple.Item2);
+                return;
+            }
 
             if (null != _treeNode)
             {
@@ -99,8 +105,6 @@ namespace DoubleFile
                     return;
                 }
             }
-
-            Populate(tuple.Item2);
         }
 
         void Populate(LocalTreeNode treeNodeSel)

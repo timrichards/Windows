@@ -47,14 +47,14 @@ namespace DoubleFile
             _lsDisposable.Add(Observable.FromEventPattern<MouseEventArgs>(this, "MouseUp")
                 .Subscribe(args => { if (bMouseDown) { bMouseDown = false; form_tmapUserCtl_MouseUp(args.EventArgs.Location); } }));
 
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(tupleA =>
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(initiatorTuple =>
             {
-                if (LV_TreeListChildrenVM.kChildSelectedOnNext == tupleA.Item2)
+                if (LV_TreeListChildrenVM.kChildSelectedOnNext == initiatorTuple.Item2)
                     return;
 
-                var tuple = tupleA.Item1;
+                var tuple = initiatorTuple.Item1;
 
-                UtilDirList.Write("M"); RenderD(tuple.Item2, tupleA.Item2); _bTreeSelect = false;
+                UtilDirList.Write("M"); RenderD(tuple.Item2, initiatorTuple.Item2); _bTreeSelect = false;
             }));
 
             _lsDisposable.Add(LV_TreeListChildrenVM.TreeListChildSelected.Subscribe(LV_TreeListChildrenVM_TreeListChildSelected));
@@ -265,9 +265,9 @@ namespace DoubleFile
             return null;
         }
 
-        void LV_TreeListChildrenVM_TreeListChildSelected(Tuple<LocalTreeNode, int> tupleA)
+        void LV_TreeListChildrenVM_TreeListChildSelected(Tuple<LocalTreeNode, int> initiatorTuple)
         {
-            var treeNodeChild = tupleA.Item1;
+            var treeNodeChild = initiatorTuple.Item1;
 
             UtilDirList.Write("N");
             if (_bTreeSelect ||
@@ -279,12 +279,12 @@ namespace DoubleFile
             if (false == ReferenceEquals(TreeMapVM.TreeNode, treeNodeChild.Parent))
                 return;
 
-            SelRectAndTooltip(treeNodeChild, tupleA.Item2, bImmediateFiles: false);
+            SelRectAndTooltip(treeNodeChild, initiatorTuple.Item2, bImmediateFiles: false);
         }
 
-        void LV_DoubleFile_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int> tupleA)
+        void LV_DoubleFile_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int> initiatorTuple)
         {
-            var tuple = tupleA.Item1;
+            var tuple = initiatorTuple.Item1;
 
             UtilDirList.Write("O");
             if (_bTreeSelect ||
@@ -306,7 +306,7 @@ namespace DoubleFile
 
             if (null != fileNode)                               // TODO: Why would this be null?
             {
-                SelRectAndTooltip(fileNode, tupleA.Item2, bImmediateFiles: true);
+                SelRectAndTooltip(fileNode, initiatorTuple.Item2, bImmediateFiles: true);
                 return;
             }
 
@@ -562,11 +562,11 @@ namespace DoubleFile
             RenderA(treeNode, nInitiator: 0);
         }
 
-        void TreeMapVM_TreeNodeCallback(Tuple<LocalTreeNode, int> tupleA)
+        void TreeMapVM_TreeNodeCallback(Tuple<LocalTreeNode, int> initiatorTuple)
         {
-            var treeNode = tupleA.Item1;
+            var treeNode = initiatorTuple.Item1;
 
-            RenderA(treeNode, tupleA.Item2);
+            RenderA(treeNode, initiatorTuple.Item2);
         }
 
         void RenderA(LocalTreeNode treeNode, int nInitiator)

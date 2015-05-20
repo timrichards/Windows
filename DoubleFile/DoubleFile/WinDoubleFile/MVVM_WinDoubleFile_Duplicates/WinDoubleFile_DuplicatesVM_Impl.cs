@@ -34,9 +34,9 @@ namespace DoubleFile
                 d.Dispose();
         }
 
-        void LV_DoubleFile_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int> tupleA)
+        void LV_DoubleFile_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int> initiatorTuple)
         {
-            var tuple = tupleA.Item1;
+            var tuple = initiatorTuple.Item1;
 
             UtilDirList.Write("I");
             if (null != _cts)
@@ -54,7 +54,7 @@ namespace DoubleFile
             }
 
             _treeNode = treeNode;
-            UpdateFileDetailOnNext(Tuple.Create(ieFileLine, _treeNode), tupleA.Item2);
+            UpdateFileDetailOnNext(Tuple.Create(ieFileLine, _treeNode), initiatorTuple.Item2);
             SelectedItem_Set(null);
             UtilProject.UIthread(ClearItems);
 

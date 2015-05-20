@@ -7,9 +7,9 @@ namespace DoubleFile
     {
         internal LV_VolumeDetailVM()
         {
-            _lsDisposable.Add(TreeSelect.VolumeDetailUpdated.Subscribe(tupleA =>
+            _lsDisposable.Add(TreeSelect.VolumeDetailUpdated.Subscribe(initiatorTuple =>
             {
-                var tuple = tupleA.Item1;
+                var tuple = initiatorTuple.Item1;
 
                 UtilDirList.Write("H");
                 UtilProject.UIthread(() =>

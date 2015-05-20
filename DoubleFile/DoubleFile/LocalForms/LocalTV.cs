@@ -120,14 +120,14 @@ namespace DoubleFile
             return nRet;
         }
 
-        void WinDoubleFile_DuplicatesVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, int> tupleA)
+        void WinDoubleFile_DuplicatesVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, int> initiatorTuple)
         {
-            UtilDirList.Write("C"); GoToFile(tupleA.Item1);
+            UtilDirList.Write("C"); GoToFile(initiatorTuple.Item1);
         }
 
-        void WinDoubleFile_SearchVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, int> tupleA)
+        void WinDoubleFile_SearchVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, int> initiatorTuple)
         {
-            UtilDirList.Write("D"); GoToFile(tupleA.Item1);
+            UtilDirList.Write("D"); GoToFile(initiatorTuple.Item1);
         }
 
         void GoToFile(Tuple<LVitem_ProjectVM, string, string> tuple)

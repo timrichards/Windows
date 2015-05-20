@@ -85,26 +85,19 @@ namespace DoubleFile
                 return;
             }
 
-            if (null != _treeNode)
-            {
-                if (_treeNode == tuple.Item2.Parent)
-                {
-                    ItemsCast
-                        .Where(lvItem => lvItem.LocalTreeNode == _treeNode)
-                        .FirstOnlyAssert(SelectedItem_Set);
+            if (null == _treeNode)
+                return;
 
-                    _lvChildrenVM.ItemsCast
-                        .Where(lvItem => lvItem.LocalTreeNode == tuple.Item2)
-                        .FirstOnlyAssert(lvItem => _lvChildrenVM.SelectedItem_Set(lvItem));
+            if (tuple.Item2.Parent != _treeNode)    // no-op on descending treemap subfolders.
+                return;
 
-                    return;
-                }
-                else if (tuple.Item2.IsChildOf(_treeNode))
-                {
-                    // no-op on descending treemap subfolders.
-                    return;
-                }
-            }
+            ItemsCast
+                .Where(lvItem => lvItem.LocalTreeNode == _treeNode)
+                .FirstOnlyAssert(SelectedItem_Set);
+
+            _lvChildrenVM.ItemsCast
+                .Where(lvItem => lvItem.LocalTreeNode == tuple.Item2)
+                .FirstOnlyAssert(lvItem => _lvChildrenVM.SelectedItem_Set(lvItem));
         }
 
         void Populate(LocalTreeNode treeNodeSel)

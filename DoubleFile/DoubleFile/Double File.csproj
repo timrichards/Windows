@@ -178,6 +178,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\ILocalWindow.cs" />
+    <Compile Include="Utilities\LocalModernWindowBase.cs" />
+    <Compile Include="Utilities\LocalSubject.cs" />
+    <Compile Include="Utilities\LocalUserControlBase.cs" />
     <Compile Include="Utilities\Win32Screen\MONITORINFO.cs" />
     <Compile Include="Utilities\Win32Screen\RECT.cs" />
     <Compile Include="Utilities\Win32Screen\SWP.cs" />
@@ -210,7 +214,7 @@
     <Compile Include="Win\Treemap\WinTreeMapVM.cs" />
     <Compile Include="Win\Treemap\LocalTreeMapNode.cs" />
     <Compile Include="Win\UtilWin\Tree\DetailsDatum.cs" />
-    <Compile Include="Utilities\WinTooltip.xaml.cs">
+    <Compile Include="Win\Treemap\WinTooltip.xaml.cs">
       <DependentUpon>WinTooltip.xaml</DependentUpon>
     </Compile>
     <Compile Include="Win\MVVM_Detail\LVitem_FolderDetailVM.cs" />
@@ -234,7 +238,6 @@
     <Compile Include="Win\UtilWin\CountNodes.cs" />
     <Compile Include="LocalForms\LocalLV.cs" />
     <Compile Include="LocalForms\LocalLVitem.cs" />
-    <Compile Include="Win\UtilWin\UtilDirList\ExtensionMethodsStatic.cs" />
     <Compile Include="Win\UtilWin\Search\SearchFiles\SearchBase.cs" />
     <Compile Include="Win\UtilWin\Search\SearchFiles\SearchBase\SearchType2.cs" />
     <Compile Include="Win\UtilWin\Search\SearchFiles\SearchBase\SearchType2\SearchFile.cs" />
@@ -259,8 +262,8 @@
     <Compile Include="Win\UtilWin\UtilDirList\SDL_FileBase\SDL_CopyFile.cs" />
     <Compile Include="Win\UtilWin\UtilDirList\SDL_FileBase\SDL_IgnoreFile.cs" />
     <Compile Include="Win\UtilWin\UtilColor.cs" />
-    <Compile Include="Win\FileDictionary.cs" />
-    <Compile Include="Win\FileDictionary\DuplicateStruct.cs" />
+    <Compile Include="Win\UtilWin\FileDictionary.cs" />
+    <Compile Include="Win\UtilWin\FileDictionary\DuplicateStruct.cs" />
     <Compile Include="Utilities\FileKeyTuple.cs" />
     <Compile Include="Utilities\HashTuple.cs" />
     <Compile Include="Win\MVVM_Files\LVitem_FilesVM.cs" />
@@ -301,10 +304,10 @@
     <Compile Include="WinProject\UtilProject\DriveSerialStatic.cs" />
     <Compile Include="Utilities\MBoxStatic.cs" />
     <Compile Include="WinProject\UtilProject\ProjectFile.cs" />
-    <Compile Include="Utilities\TabledString.cs" />
+    <Compile Include="Win\UtilWin\TabledString.cs" />
     <Compile Include="WinProject\UtilProject\UtilProject.cs" />
     <Compile Include="WinProject\UtilProject\Win32FindFileStatic.cs" />
-    <Compile Include="WinProject\UtilProject\ExtensionMethodsStatic.cs" />
+    <Compile Include="Utilities\ExtensionMethodsStatic.cs" />
     <Compile Include="WinProject\MVVM_WinProject\WinProjectVM.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -452,7 +455,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Utilities\WinTooltip.xaml">
+    <Page Include="Win\Treemap\WinTooltip.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

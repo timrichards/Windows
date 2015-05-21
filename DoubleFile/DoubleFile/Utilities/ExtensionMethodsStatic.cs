@@ -1,23 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-using System.Reactive.Subjects;
 using System.Threading;
 using System.Windows.Forms;
 
 namespace DoubleFile
 {
-    class LocalSubject<T> : ISubject<Tuple<T, int>>
-    {
-        public void OnCompleted() { _subject.OnCompleted(); }
-        public void OnError(Exception error) { _subject.OnError(error); }
-        public void OnNext(Tuple<T, int> value) { _subject.OnNext(value); }
-        public IDisposable Subscribe(IObserver<Tuple<T, int>> observer) { return _subject.Subscribe(observer); }
-
-        Subject<Tuple<T, int>>
-            _subject = new Subject<Tuple<T, int>>();
-    }
-
     static internal partial class ExtensionMethodsStatic
     {
         static Dictionary<int, Tuple<DateTime, WeakReference>> _lsSubjects = new Dictionary<int, Tuple<DateTime, WeakReference>>();
@@ -132,10 +121,7 @@ namespace DoubleFile
         {
             return (source.Count == 1);
         }
-    }
 
-    static internal partial class ExtensionMethodsStatic
-    {
         static internal bool ContainsKeyA<T1, T2>(this IDictionary<T1, T2> dict, T1 key)
         {
             T2 outValue;
@@ -149,10 +135,7 @@ namespace DoubleFile
 
             return dict.TryGetValue(key, out outValue);
         }
-    }
 
-    static internal partial class ExtensionMethodsStatic
-    {
         static internal string ToPrintString(this object source)
         {
             if (source == null) return null;
@@ -163,6 +146,17 @@ namespace DoubleFile
                 .Trim();
 
             return (s.Length > 0) ? s : null;
+        }
+
+        static internal RectangleF Scale(this Rectangle rc_in, SizeF scale)
+        {
+            RectangleF rc = rc_in;
+
+            rc.X *= scale.Width;
+            rc.Y *= scale.Height;
+            rc.Width *= scale.Width;
+            rc.Height *= scale.Height;
+            return rc;
         }
     }
 }

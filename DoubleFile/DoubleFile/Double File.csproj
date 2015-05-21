@@ -191,7 +191,7 @@
     <Compile Include="Win\MVVM_Search\WinSearchVM.cs" />
     <Compile Include="Win\MVVM_TreeList\LVitem_TreeListVM.cs" />
     <Compile Include="Win\MVVM_TreeList\LV_TreeListChildrenVM.cs" />
-    <Compile Include="Win\UtilWin\Search\GetOneNodeByRootPath.cs" />
+    <Compile Include="Utilities\GetOneNodeByRootPath.cs" />
     <Compile Include="Win\WinTreeMap.xaml.cs">
       <DependentUpon>WinTreeMap.xaml</DependentUpon>
     </Compile>
@@ -213,7 +213,7 @@
     <Compile Include="Win\MVVM_TreeList\LV_TreeListSiblingsVM.cs" />
     <Compile Include="Win\Treemap\WinTreeMapVM.cs" />
     <Compile Include="Win\Treemap\LocalTreeMapNode.cs" />
-    <Compile Include="Win\UtilWin\Tree\DetailsDatum.cs" />
+    <Compile Include="Utilities\Tree\DetailsDatum.cs" />
     <Compile Include="Win\Treemap\WinTooltip.xaml.cs">
       <DependentUpon>WinTooltip.xaml</DependentUpon>
     </Compile>
@@ -232,34 +232,34 @@
     <Compile Include="Utilities\LocalMbox.xaml.cs">
       <DependentUpon>LocalMbox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Win\UtilWin\Collate.cs" />
-    <Compile Include="Win\UtilWin\Collate\AddTreeToList.cs" />
-    <Compile Include="Win\UtilWin\Collate\InsertSizeMarkerStatic.cs" />
-    <Compile Include="Win\UtilWin\CountNodes.cs" />
+    <Compile Include="Utilities\Collate.cs" />
+    <Compile Include="Utilities\Collate\AddTreeToList.cs" />
+    <Compile Include="Utilities\Collate\InsertSizeMarkerStatic.cs" />
+    <Compile Include="Utilities\CountNodes.cs" />
     <Compile Include="LocalForms\LocalLV.cs" />
     <Compile Include="LocalForms\LocalLVitem.cs" />
-    <Compile Include="Win\UtilWin\Search\SearchFiles\SearchBase.cs" />
-    <Compile Include="Win\UtilWin\Search\SearchFiles\SearchBase\SearchType2.cs" />
-    <Compile Include="Win\UtilWin\Search\SearchFiles\SearchBase\SearchType2\SearchFile.cs" />
-    <Compile Include="Win\UtilWin\Search\SearchFiles\SearchResults.cs" />
-    <Compile Include="Win\UtilWin\Search\SearchFiles\SearchResultsDir.cs" />
-    <Compile Include="Win\UtilWin\Tree\DetailsDatum\NodeDatum.cs" />
-    <Compile Include="Win\UtilWin\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
-    <Compile Include="Win\UtilWin\Tree\LVitemNameComparerStruct.cs" />
-    <Compile Include="Win\UtilWin\Tree\TreeBase.cs" />
-    <Compile Include="Win\UtilWin\Tree\TreeBase\Tree.cs" />
-    <Compile Include="Win\UtilWin\Tree\TreeBase\Tree\TreeRootNodeBuilder.cs" />
-    <Compile Include="Win\UtilWin\Tree\TreeBase\Tree\TreeRootNodeBuilder\DirData.cs" />
-    <Compile Include="Win\UtilWin\Tree\TreeBase\Tree\TreeRootNodeBuilder\Node.cs" />
-    <Compile Include="Win\UtilWin\Tree\TreeBase\Tree\TreeRootNodeBuilder\RootNode.cs" />
-    <Compile Include="Win\UtilWin\Tree\TreeSelect.cs" />
+    <Compile Include="Win\SearchListings\SearchBase.cs" />
+    <Compile Include="Win\SearchListings\SearchBase\SearchListings.cs" />
+    <Compile Include="Win\SearchListings\SearchBase\SearchListings\SearchFile.cs" />
+    <Compile Include="Win\SearchListings\SearchResults.cs" />
+    <Compile Include="Win\SearchListings\SearchResultsDir.cs" />
+    <Compile Include="Utilities\Tree\DetailsDatum\NodeDatum.cs" />
+    <Compile Include="Utilities\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
+    <Compile Include="Utilities\Tree\LVitemNameComparerStruct.cs" />
+    <Compile Include="Utilities\Tree\TreeBase.cs" />
+    <Compile Include="Utilities\Tree\TreeBase\Tree.cs" />
+    <Compile Include="Utilities\Tree\TreeBase\Tree\TreeRootNodeBuilder.cs" />
+    <Compile Include="Utilities\Tree\TreeBase\Tree\TreeRootNodeBuilder\DirData.cs" />
+    <Compile Include="Utilities\Tree\TreeBase\Tree\TreeRootNodeBuilder\Node.cs" />
+    <Compile Include="Utilities\Tree\TreeBase\Tree\TreeRootNodeBuilder\RootNode.cs" />
+    <Compile Include="Utilities\Tree\TreeSelect.cs" />
     <Compile Include="Utilities\FolderKeyTuple.cs" />
-    <Compile Include="Win\UtilWin\Tree\LVitemFileTag.cs" />
+    <Compile Include="Utilities\Tree\LVitemFileTag.cs" />
     <Compile Include="Win\Treemap\UC_TreeMap.cs" />
     <Compile Include="Utilities\FlashWindowStatic.cs" />
     <Compile Include="Utilities\UtilColor.cs" />
     <Compile Include="Utilities\FileDictionary.cs" />
-    <Compile Include="Win\UtilWin\FileDictionary\DuplicateStruct.cs" />
+    <Compile Include="Utilities\FileDictionary\DuplicateStruct.cs" />
     <Compile Include="Utilities\FileKeyTuple.cs" />
     <Compile Include="Utilities\HashTuple.cs" />
     <Compile Include="Win\MVVM_Files\LVitem_FilesVM.cs" />

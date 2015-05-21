@@ -13,9 +13,9 @@ namespace DoubleFile
         void Done();
     }
 
-    partial class SearchType2 : SearchBase
+    partial class SearchListings : SearchBase
     {
-        internal SearchType2(
+        internal SearchListings(
             LV_ProjectVM lvProjectVM,
             string strSearch, 
             bool bCaseSensitive,
@@ -44,9 +44,9 @@ namespace DoubleFile
             var dtStart = DateTime.Now;
 
             foreach (var volStrings in _lvProjectVM.ItemsCast)
-                _cbagWorkers.Add(new SearchFile(this, volStrings).DoThreadFactory());
+                _cbagWorkers.Add(new SearchListing(this, volStrings).DoThreadFactory());
 
-            foreach (SearchFile worker in _cbagWorkers)
+            foreach (SearchListing worker in _cbagWorkers)
                 worker.Join();
 
             Util.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", _strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
@@ -75,14 +75,14 @@ namespace DoubleFile
 
         internal void EndThread()
         {
-            foreach (SearchFile worker in _cbagWorkers)
+            foreach (SearchListing worker in _cbagWorkers)
                 worker.Abort();
 
             IsAborted = true;
             _thread = null;
         }
 
-        internal SearchType2 DoThreadFactory()
+        internal SearchListings DoThreadFactory()
         {
             _thread = new Thread(Go);
             _thread.IsBackground = true;
@@ -96,8 +96,8 @@ namespace DoubleFile
         readonly LV_ProjectVM
             _lvProjectVM = null;
 
-        readonly ConcurrentBag<SearchFile>
-            _cbagWorkers = new ConcurrentBag<SearchFile>();
+        readonly ConcurrentBag<SearchListing>
+            _cbagWorkers = new ConcurrentBag<SearchListing>();
         Thread
             _thread = null;
     }

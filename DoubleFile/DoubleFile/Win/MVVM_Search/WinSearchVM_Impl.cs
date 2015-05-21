@@ -68,7 +68,7 @@ namespace DoubleFile
             _dictResults = new SortedDictionary<SearchResultsDir, bool>();
 
             _searchType2 =
-                new SearchType2
+                new SearchListings
             (
                 App.LVprojectVM,
                 SearchText,
@@ -219,7 +219,7 @@ namespace DoubleFile
             }
         }
 
-        SearchType2
+        SearchListings
             _searchType2 = null;
         SortedDictionary<SearchResultsDir, bool>
             _dictResults = null;

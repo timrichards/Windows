@@ -34,7 +34,6 @@ namespace DoubleFile
         static internal LocalUserControlBase CurrentPage
         {
             get { return WithMainWindow(mainWindow => mainWindow._currentPage); }
-
             set
             {
                 WithMainWindow(mainWindow =>

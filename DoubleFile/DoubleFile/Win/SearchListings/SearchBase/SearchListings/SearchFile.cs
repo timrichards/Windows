@@ -5,17 +5,17 @@ using System.Threading;
 
 namespace DoubleFile
 {
-    partial class SearchType2 : SearchBase
+    partial class SearchListings : SearchBase
     {
-        class SearchFile : SearchBase
+        class SearchListing : SearchBase
         {
-            internal SearchFile(SearchBase searchBase, LVitem_ProjectVM volStrings)
+            internal SearchListing(SearchBase searchBase, LVitem_ProjectVM volStrings)
                 : base(searchBase)
             {
                 _volStrings = volStrings;
             }
 
-            internal SearchFile DoThreadFactory()
+            internal SearchListing DoThreadFactory()
             {
                 _thread = new Thread(Go) { IsBackground = true };
                 _thread.Start();

@@ -257,11 +257,8 @@
     <Compile Include="Win\UtilWin\Tree\LVitemFileTag.cs" />
     <Compile Include="Win\Treemap\UC_TreeMap.cs" />
     <Compile Include="Utilities\FlashWindowStatic.cs" />
-    <Compile Include="Win\UtilWin\UtilDirList\SDL_FileBase.cs" />
-    <Compile Include="Win\UtilWin\UtilDirList\SDL_FileBase\SDL_CopyFile.cs" />
-    <Compile Include="Win\UtilWin\UtilDirList\SDL_FileBase\SDL_IgnoreFile.cs" />
-    <Compile Include="Win\UtilWin\UtilColor.cs" />
-    <Compile Include="Win\UtilWin\FileDictionary.cs" />
+    <Compile Include="Utilities\UtilColor.cs" />
+    <Compile Include="Utilities\FileDictionary.cs" />
     <Compile Include="Win\UtilWin\FileDictionary\DuplicateStruct.cs" />
     <Compile Include="Utilities\FileKeyTuple.cs" />
     <Compile Include="Utilities\HashTuple.cs" />
@@ -292,7 +289,7 @@
     <Compile Include="WinProject\UtilProject\SaveDirListings\TraverseTreeBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinProject\UtilProject\FileParse.cs" />
+    <Compile Include="Utilities\FileParse.cs" />
     <Compile Include="MVVM\ObservableObjectBase.cs" />
     <Compile Include="MVVM\ObservableObject_OwnerWindow.cs" />
     <Compile Include="Utilities\MVVM_WinProgress\LVitem_ProgressVM.cs" />
@@ -303,8 +300,8 @@
     <Compile Include="WinProject\UtilProject\DriveSerialStatic.cs" />
     <Compile Include="Utilities\MBoxStatic.cs" />
     <Compile Include="WinProject\UtilProject\ProjectFile.cs" />
-    <Compile Include="Win\UtilWin\TabledString.cs" />
-    <Compile Include="WinProject\UtilProject\UtilProject.cs" />
+    <Compile Include="Utilities\TabledString.cs" />
+    <Compile Include="Utilities\Util.cs" />
     <Compile Include="WinProject\UtilProject\Win32FindFileStatic.cs" />
     <Compile Include="Utilities\ExtensionMethodsStatic.cs" />
     <Compile Include="WinProject\MVVM_Project\WinProjectVM.cs">
@@ -313,9 +310,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="WinProject\UtilProject\WinChooseDrive.xaml.cs">
-      <DependentUpon>WinChooseDrive.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utilities\WinProgress.xaml.cs">
       <DependentUpon>WinProgress.xaml</DependentUpon>
@@ -463,10 +457,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Win\WinTreeView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="WinProject\UtilProject\WinChooseDrive.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -64,20 +64,6 @@ namespace DoubleFile
             return "0 bytes";
         }
 
-        static internal void Write(string str)
-        {
-#if (DEBUG)
-            Console.Write(str);
-#endif
-        }
-
-        static internal void WriteLine(string str = null)
-        {
-#if (DEBUG)
-            System.Console.WriteLine(str);
-#endif
-        }
-
         static internal void UIthread(Action action)
         {
             var mainWindow = App.LocalMainWindow as Window;
@@ -129,6 +115,20 @@ namespace DoubleFile
                 owner.Dispatcher.CheckAccess()
                 ? action()
                 : owner.Dispatcher.Invoke(action);      // cancellationToken? timeout?
+        }
+
+        static internal void Write(string str)
+        {
+#if (DEBUG)
+            Console.Write(str);
+#endif
+        }
+
+        static internal void WriteLine(string str = null)
+        {
+#if (DEBUG)
+            System.Console.WriteLine(str);
+#endif
         }
     }
 }

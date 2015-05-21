@@ -240,7 +240,7 @@
     <Compile Include="LocalForms\LocalLVitem.cs" />
     <Compile Include="Win\SearchListings\SearchBase.cs" />
     <Compile Include="Win\SearchListings\SearchBase\SearchListings.cs" />
-    <Compile Include="Win\SearchListings\SearchBase\SearchListings\SearchFile.cs" />
+    <Compile Include="Win\SearchListings\SearchBase\SearchListings\SearchListing.cs" />
     <Compile Include="Win\SearchListings\SearchResults.cs" />
     <Compile Include="Win\SearchListings\SearchResultsDir.cs" />
     <Compile Include="Utilities\Tree\DetailsDatum\NodeDatum.cs" />

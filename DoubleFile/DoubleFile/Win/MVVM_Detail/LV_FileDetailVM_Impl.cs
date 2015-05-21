@@ -19,6 +19,11 @@ namespace DoubleFile
 
                 Util.Write("E"); if (null != tuple.Item2) LocalPath_Set(tuple.Item2);
             }));
+
+            var folderDetail = LocalTV.TreeSelect_FolderDetail;
+
+            if (null != folderDetail)
+                LocalPath_Set(folderDetail.Item2);
         }
 
         public void Dispose()

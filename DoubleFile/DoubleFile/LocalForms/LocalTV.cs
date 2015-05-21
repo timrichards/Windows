@@ -34,6 +34,18 @@ namespace DoubleFile
             DictVolumeInfo { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._dictVolumeInfo : null; } }
         readonly Dictionary<string, string> _dictVolumeInfo = new Dictionary<string, string>();
 
+        static internal Tuple<IEnumerable<string>, string, LocalTreeNode, string>
+            TreeSelect_FileList { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._treeSelect_FileList : null; } }
+        Tuple<IEnumerable<string>, string, LocalTreeNode, string> _treeSelect_FileList = null;
+
+        static internal Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>
+            TreeSelect_FolderDetail { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._treeSelect_FolderDetail : null; } }
+        Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode> _treeSelect_FolderDetail = null;
+
+        static internal Tuple<IEnumerable<IEnumerable<string>>, string>
+            TreeSelect_VolumeDetail { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._treeSelect_VolumeDetail : null; } }
+        Tuple<IEnumerable<IEnumerable<string>>, string> _treeSelect_VolumeDetail = null;
+
         static internal bool FactoryCreate(LV_ProjectVM lvProjectVM)
         {
             if (null != Instance)
@@ -63,6 +75,9 @@ namespace DoubleFile
             _weakReference.Target = this;            
             _lsDisposable.Add(WinDuplicatesVM.GoToFile.Subscribe(WinDuplicatesVM_GoToFile));
             _lsDisposable.Add(WinSearchVM.GoToFile.Subscribe(WinSearchVM_GoToFile));
+            _lsDisposable.Add(TreeSelect.FileListUpdated.Subscribe(v => _treeSelect_FileList = v.Item1));
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(v => _treeSelect_FolderDetail = v.Item1));
+            _lsDisposable.Add(TreeSelect.VolumeDetailUpdated.Subscribe(v => _treeSelect_VolumeDetail = v.Item1));
         }
 
         static internal void LocalDispose()
@@ -84,6 +99,9 @@ namespace DoubleFile
             foreach (var d in Instance._lsDisposable)
                 d.Dispose();
 
+            Instance._treeSelect_FileList = null;
+            Instance._treeSelect_FolderDetail = null;
+            Instance._treeSelect_VolumeDetail = null;
             Instance = null;
         }
 

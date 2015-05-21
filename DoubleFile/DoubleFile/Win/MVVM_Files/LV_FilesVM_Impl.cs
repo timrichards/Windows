@@ -10,6 +10,11 @@ namespace DoubleFile
         {
             _lsDisposable.Add(TreeSelect.FileListUpdated.Subscribe(TreeSelect_FileListUpdated));
             _lsDisposable.Add(UC_TreeMap.SelectedFile.Subscribe(UC_TreeMap_SelectedFile));
+
+            var fileList = LocalTV.TreeSelect_FileList;
+
+            if (null != fileList)
+                TreeSelect_FileListUpdated(Tuple.Create(fileList, 0));
         }
 
         public void Dispose()

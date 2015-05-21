@@ -49,6 +49,11 @@ namespace DoubleFile
         {
             _lvChildrenVM = lvChildrenVM;
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(TreeSelect_FolderDetailUpdated));
+
+            var folderDetail = LocalTV.TreeSelect_FolderDetail;
+
+            if (null != folderDetail)
+                TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
         }
 
         internal void CopyFrom(LV_TreeListSiblingsVM vm)

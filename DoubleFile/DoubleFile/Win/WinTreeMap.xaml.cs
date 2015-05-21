@@ -34,7 +34,14 @@ namespace DoubleFile
             };
 
             DataContext = _ucTreeMap.TreeMapVM;
-            _ucTreeMap.TreeMapVM.GoTo(LocalTV.TopNode);
+
+            var treeNode = LocalTV.TopNode;
+            var folderDetail = LocalTV.TreeSelect_FolderDetail;
+
+            if (null != folderDetail)
+                treeNode = folderDetail.Item2;
+
+            _ucTreeMap.TreeMapVM.GoTo(treeNode);
         }
 
         protected override void CopyTag_NewWindow(WeakReference wr)

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Windows;
 using System;
-using System.Reactive.Subjects;
 using System.Reactive.Linq;
 
 namespace DoubleFile

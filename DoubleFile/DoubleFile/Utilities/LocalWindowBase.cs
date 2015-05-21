@@ -209,7 +209,7 @@ namespace DoubleFile
             return base.ShowDialog();
         }
 
-        ILocalWindow I { get { return this as ILocalWindow; } }
+        ILocalWindow I { get { return this; } }
         bool ILocalWindow.SimulatingModal { get; set; }
     }
 

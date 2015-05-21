@@ -51,7 +51,7 @@ namespace DoubleFile
             }
             else
             {
-             //   MBoxStatic.Assert(nOnNextAssertLoc, false);
+                MBoxStatic.Assert(nOnNextAssertLoc, false);
             }
         }
 

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Subjects;
-using System.Reactive.Linq;
 
 namespace DoubleFile
 {
@@ -97,7 +95,7 @@ namespace DoubleFile
 
             _lvChildrenVM.ItemsCast
                 .Where(lvItem => lvItem.LocalTreeNode == tuple.Item2)
-                .FirstOnlyAssert(lvItem => _lvChildrenVM.SelectedItem_Set(lvItem));
+                .FirstOnlyAssert(_lvChildrenVM.SelectedItem_Set);
         }
 
         void Populate(LocalTreeNode treeNodeSel)

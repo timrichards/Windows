@@ -8,7 +8,6 @@ using System.Threading;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
 
 namespace DoubleFile
 {
@@ -54,7 +53,9 @@ namespace DoubleFile
 
                 var tuple = initiatorTuple.Item1;
 
-                UtilDirList.Write("M"); RenderD(tuple.Item2, initiatorTuple.Item2); _bTreeSelect = false;
+                UtilDirList.Write("M");
+                RenderD(tuple.Item2, initiatorTuple.Item2);
+                _bTreeSelect = false;
             }));
 
             _lsDisposable.Add(LV_TreeListChildrenVM.TreeListChildSelected.Subscribe(LV_TreeListChildrenVM_TreeListChildSelected));
@@ -121,7 +122,7 @@ namespace DoubleFile
             _bClearingSelection = true;
 
             if (false == bKeepTooltipActive)
-                UtilProject.UIthread(() => WinTooltip.CloseTooltip());  // CloseTooltip callback recurses here hence _bClearingSelection
+                UtilProject.UIthread(WinTooltip.CloseTooltip);  // CloseTooltip callback recurses here hence _bClearingSelection
 
             _selChildNode = null;
 
@@ -310,7 +311,7 @@ namespace DoubleFile
                 return;
             }
 
-            UtilProject.UIthread(() => WinTooltip.CloseTooltip());
+            UtilProject.UIthread(WinTooltip.CloseTooltip);
         }
 
         void SelRectAndTooltip(LocalTreeNode treeNodeChild, int nInitiator, bool bImmediateFiles)
@@ -414,12 +415,12 @@ namespace DoubleFile
                 return null;
             }
 
-            var nPrevDir = (int) nodeDatum.PrevLineNo;
+            var nPrevDir = (int)nodeDatum.PrevLineNo;
 
             if (0 == nPrevDir)
                 return null;
 
-            var nLineNo = (int) nodeDatum.LineNo;
+            var nLineNo = (int)nodeDatum.LineNo;
 
             if (1 >= (nLineNo - nPrevDir))  // dir has no files
                 return null;
@@ -464,7 +465,7 @@ namespace DoubleFile
 
                 lsNodes.Add(new LocalTreeMapFileNode(tuple.Item1)
                 {
-                    NodeDatum = new NodeDatum() { TotalLength = tuple.Item2 },
+                    NodeDatum = new NodeDatum { TotalLength = tuple.Item2 },
                     ForeColor = UtilColor.OliveDrab
                 });
             }
@@ -476,7 +477,7 @@ namespace DoubleFile
 
             return new LocalTreeMapFileListNode(parent, lsNodes)
             {
-                NodeDatum = new NodeDatum() { TotalLength = nTotalLength, TreeMapRect = parent.NodeDatum.TreeMapRect },
+                NodeDatum = new NodeDatum { TotalLength = nTotalLength, TreeMapRect = parent.NodeDatum.TreeMapRect },
                 SelectedImageIndex = -1
             };
         }
@@ -524,7 +525,7 @@ namespace DoubleFile
             var brush = new PathGradientBrush(path)
             {
                 CenterColor = Color.White,
-                SurroundColors = new Color[] { Color.FromArgb(0, 0, 0, 0) }
+                SurroundColors = new[] { Color.FromArgb(0, 0, 0, 0) }
             };
 
             e.Graphics.FillEllipse(brush, _rectCenter);
@@ -564,9 +565,7 @@ namespace DoubleFile
 
         void TreeMapVM_TreeNodeCallback(Tuple<LocalTreeNode, int> initiatorTuple)
         {
-            var treeNode = initiatorTuple.Item1;
-
-            RenderA(treeNode, initiatorTuple.Item2);
+            RenderA(initiatorTuple.Item1, initiatorTuple.Item2);
         }
 
         void RenderA(LocalTreeNode treeNode, int nInitiator)
@@ -692,6 +691,7 @@ namespace DoubleFile
         IEnumerable<RenderAction> DrawTreemap()
         {
             _deepNodeDrawn = null;
+
             var rc = _rectBitmap;
 
             rc.Width--;
@@ -711,16 +711,13 @@ namespace DoubleFile
             return
                 (nodeDatum.TotalLength > 0)
                 ? new Recurse().Render(TreeMapVM.TreeNode, rc, TreeMapVM.DeepNode, out _deepNodeDrawn)
-                : new[] { new FillRectangle() { Brush = Brushes.Wheat, rc = rc } };
+                : new[] { new FillRectangle { Brush = Brushes.Wheat, rc = rc } };
         }
 
         class Recurse
         {
-            internal IEnumerable<RenderAction> Render(
-                LocalTreeNode item,
-                Rectangle rc,
-                LocalTreeNode deepNode,
-                out LocalTreeNode deepNodeDrawn_out)
+            internal IEnumerable<RenderAction>
+                Render(LocalTreeNode item, Rectangle rc, LocalTreeNode deepNode, out LocalTreeNode deepNodeDrawn_out)
             {
                 _lsRenderActions = new ConcurrentBag<RenderAction>();
                 _lsFrames = new ConcurrentBag<RenderAction>();
@@ -800,10 +797,7 @@ namespace DoubleFile
                         if (false == rootNodeDatum.VolumeView)
                             return;     // from lambda
 
-                        var nodeDatumFree = new NodeDatum()
-                        {
-                            TotalLength = rootNodeDatum.VolumeFree
-                        };
+                        var nodeDatumFree = new NodeDatum { TotalLength = rootNodeDatum.VolumeFree };
 
                         var nodeFree = new LocalTreeMapFileNode(item.Text + " (free space)")
                         {
@@ -941,7 +935,7 @@ namespace DoubleFile
 
                 var lsChildren =
                     ieChildren
-                    .OrderByDescending(x => (x.NodeDatum).TotalLength)
+                    .OrderByDescending(x => x.NodeDatum.TotalLength)
                     .ToList();
 
                 if (lsChildren.IsEmpty())

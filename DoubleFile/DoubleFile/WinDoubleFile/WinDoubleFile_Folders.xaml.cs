@@ -3,11 +3,11 @@
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinDoubleFile_Folders.xaml
+    /// Interaction logic for WinFolders.xaml
     /// </summary>
-    partial class WinDoubleFile_Folders
+    partial class WinFolders
     {
-        public WinDoubleFile_Folders()
+        public WinFolders()
         {
             InitializeComponent();
         }

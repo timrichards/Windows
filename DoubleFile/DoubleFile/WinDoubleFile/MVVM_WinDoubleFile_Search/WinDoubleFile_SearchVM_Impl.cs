@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    partial class WinDoubleFile_SearchVM : IDisposable, ISearchStatus
+    partial class WinSearchVM : IDisposable, ISearchStatus
     {
         internal Func<bool> IsEditBoxNonEmpty = null;
 
@@ -14,7 +14,7 @@ namespace DoubleFile
         static readonly LocalSubject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new LocalSubject<Tuple<LVitem_ProjectVM, string, string>>();
         static void GoToFileOnNext(Tuple<LVitem_ProjectVM, string, string> value) { _goToFile.LocalOnNext(value, 99838); }
 
-        internal WinDoubleFile_SearchVM Init()
+        internal WinSearchVM Init()
         {
             Icmd_Folders = new RelayCommand(SearchFolders, IsSearchEnabled);
             Icmd_FoldersAndFiles = new RelayCommand(() => SearchFoldersAndFiles(), IsSearchEnabled);
@@ -55,7 +55,7 @@ namespace DoubleFile
                     .Where(treeNode => treeNode.Text.ToLower().Contains(SearchText));
             }
 
-            var lsLVitems = lsTreeNodes.AsParallel().Select(treeNode => new LVitem_DoubleFile_SearchVM { LocalTreeNode = treeNode });
+            var lsLVitems = lsTreeNodes.AsParallel().Select(treeNode => new LVitem_SearchVM { LocalTreeNode = treeNode });
 
             UtilProject.UIthread(() => Add(lsLVitems));
         }
@@ -157,7 +157,7 @@ namespace DoubleFile
         {
             _searchType2 = null;
 
-            var lsLVitems = new List<LVitem_DoubleFile_SearchVM>();
+            var lsLVitems = new List<LVitem_SearchVM>();
 
             foreach (var searchResult in _dictResults.Select(result => result.Key))
             {
@@ -177,12 +177,12 @@ namespace DoubleFile
                             if (_bDisposed)
                                 return;
 
-                            lsLVitems.Add(new LVitem_DoubleFile_SearchVM { Directory = Directory, Filename = strFile });
+                            lsLVitems.Add(new LVitem_SearchVM { Directory = Directory, Filename = strFile });
                         }
                     }
                     else
                     {
-                        lsLVitems.Add(new LVitem_DoubleFile_SearchVM { Directory = Directory });
+                        lsLVitems.Add(new LVitem_SearchVM { Directory = Directory });
                     }
                 }
                 catch (Exception ex)

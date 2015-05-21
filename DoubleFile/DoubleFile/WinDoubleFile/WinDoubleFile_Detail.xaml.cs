@@ -4,11 +4,11 @@ using System.Reactive.Linq;
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinDoubleFile_Detail.xaml
+    /// Interaction logic for WinDetail.xaml
     /// </summary>
-    partial class WinDoubleFile_Detail
+    partial class WinDetail
     {
-        public WinDoubleFile_Detail()
+        public WinDetail()
         {
             InitializeComponent();
         }

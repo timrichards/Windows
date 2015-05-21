@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    class LVitem_DoubleFile_SearchVM : ListViewItemVM_Base
+    class LVitem_SearchVM : ListViewItemVM_Base
     {
         internal PathBuilder Directory { get { return _datum as PathBuilder; } set { _datum = value; } }
         internal LocalTreeNode LocalTreeNode { get { return _datum as LocalTreeNode; } set { _datum = value; } }
@@ -40,13 +40,13 @@ namespace DoubleFile
         internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 1;
 
-        internal LVitem_DoubleFile_SearchVM(IEnumerable<string> ieString = null)
+        internal LVitem_SearchVM(IEnumerable<string> ieString = null)
             : base(null, ieString)
         {
             marr = null;
         }
 
-        internal LVitem_DoubleFile_SearchVM(LVitem_DoubleFile_SearchVM lvItemTemp)
+        internal LVitem_SearchVM(LVitem_SearchVM lvItemTemp)
             : this(lvItemTemp.StringValues)
         {
         }

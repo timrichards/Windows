@@ -3,18 +3,18 @@
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinDoubleFile_Files.xaml
+    /// Interaction logic for WinFiles.xaml
     /// </summary>
-    partial class WinDoubleFile_Files
+    partial class WinFiles
     {
         protected override void LocalNavigatedTo()
         {
             DataContext =
-                _lvDoubleFile_FilesVM =
-                new LV_DoubleFile_FilesVM();
+                _lvFilesVM =
+                new LV_FilesVM();
         }
 
-        public WinDoubleFile_Files()
+        public WinFiles()
         {
             InitializeComponent();
         }
@@ -26,11 +26,11 @@ namespace DoubleFile
 
         protected override void LocalDispose_WindowClosed()
         {
-            if (null != _lvDoubleFile_FilesVM)
-                _lvDoubleFile_FilesVM.Dispose();
+            if (null != _lvFilesVM)
+                _lvFilesVM.Dispose();
         }
 
-        LV_DoubleFile_FilesVM
-            _lvDoubleFile_FilesVM = null;
+        LV_FilesVM
+            _lvFilesVM = null;
     }
 }

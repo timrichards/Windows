@@ -1,11 +1,11 @@
 ﻿namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinDoubleFile_Duplicates.xaml
+    /// Interaction logic for WinDuplicates.xaml
     /// </summary>
-    partial class WinDoubleFile_Search
+    partial class WinSearch
     {
-        public WinDoubleFile_Search()
+        public WinSearch()
         {
             InitializeComponent();            
         }
@@ -13,8 +13,8 @@
         protected override void LocalNavigatedTo()
         {
             DataContext = 
-                _winDoubleFile_SearchVM =
-                new WinDoubleFile_SearchVM
+                _winSearchVM =
+                new WinSearchVM
             {
                 IsEditBoxNonEmpty = () => false == string.IsNullOrWhiteSpace(formEdit_search.Text)
             }
@@ -28,11 +28,11 @@
 
         protected override void LocalDispose_WindowClosed()
         {
-            if (null != _winDoubleFile_SearchVM)
-                _winDoubleFile_SearchVM.Dispose();
+            if (null != _winSearchVM)
+                _winSearchVM.Dispose();
         }
 
-        WinDoubleFile_SearchVM
-            _winDoubleFile_SearchVM = null;
+        WinSearchVM
+            _winSearchVM = null;
     }
 }

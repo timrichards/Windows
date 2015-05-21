@@ -61,8 +61,8 @@ namespace DoubleFile
             }
 
             _weakReference.Target = this;            
-            _lsDisposable.Add(WinDoubleFile_DuplicatesVM.GoToFile.Subscribe(WinDoubleFile_DuplicatesVM_GoToFile));
-            _lsDisposable.Add(WinDoubleFile_SearchVM.GoToFile.Subscribe(WinDoubleFile_SearchVM_GoToFile));
+            _lsDisposable.Add(WinDuplicatesVM.GoToFile.Subscribe(WinDuplicatesVM_GoToFile));
+            _lsDisposable.Add(WinSearchVM.GoToFile.Subscribe(WinSearchVM_GoToFile));
         }
 
         static internal void LocalDispose()
@@ -120,12 +120,12 @@ namespace DoubleFile
             return nRet;
         }
 
-        void WinDoubleFile_DuplicatesVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, int> initiatorTuple)
+        void WinDuplicatesVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, int> initiatorTuple)
         {
             UtilDirList.Write("C"); GoToFile(initiatorTuple.Item1);
         }
 
-        void WinDoubleFile_SearchVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, int> initiatorTuple)
+        void WinSearchVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, int> initiatorTuple)
         {
             UtilDirList.Write("D"); GoToFile(initiatorTuple.Item1);
         }

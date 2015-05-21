@@ -59,7 +59,7 @@ namespace DoubleFile
             }));
 
             _lsDisposable.Add(LV_TreeListChildrenVM.TreeListChildSelected.Subscribe(LV_TreeListChildrenVM_TreeListChildSelected));
-            _lsDisposable.Add(LV_DoubleFile_FilesVM.SelectedFileChanged.Subscribe(LV_DoubleFile_FilesVM_SelectedFileChanged));
+            _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.Subscribe(LV_FilesVM_SelectedFileChanged));
         }
 
         protected override void OnLoad(EventArgs e)
@@ -283,7 +283,7 @@ namespace DoubleFile
             SelRectAndTooltip(treeNodeChild, initiatorTuple.Item2, bImmediateFiles: false);
         }
 
-        void LV_DoubleFile_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int> initiatorTuple)
+        void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
 

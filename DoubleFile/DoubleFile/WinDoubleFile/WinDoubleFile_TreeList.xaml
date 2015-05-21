@@ -1,4 +1,4 @@
-﻿<local:LocalUserControlBase x:Class="DoubleFile.WinDoubleFile_TreeList"
+﻿<local:LocalUserControlBase x:Class="DoubleFile.WinTreeList"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"

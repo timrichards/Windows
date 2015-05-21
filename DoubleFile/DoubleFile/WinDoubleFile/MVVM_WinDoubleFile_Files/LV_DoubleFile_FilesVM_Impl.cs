@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    partial class LV_DoubleFile_FilesVM : IDisposable
+    partial class LV_FilesVM : IDisposable
     {
-        internal LV_DoubleFile_FilesVM()
+        internal LV_FilesVM()
         {
             _lsDisposable.Add(TreeSelect.FileListUpdated.Subscribe(TreeSelect_FileListUpdated));
             _lsDisposable.Add(UC_TreeMap.SelectedFile.Subscribe(UC_TreeMap_SelectedFile));
@@ -33,7 +33,7 @@ namespace DoubleFile
             if (null == tuple.Item1)
                 return;
 
-            var lsItems = new List<LVitem_DoubleFile_FilesVM>();
+            var lsItems = new List<LVitem_FilesVM>();
 
             foreach (var strFileLine in tuple.Item1)
             {
@@ -51,7 +51,7 @@ namespace DoubleFile
                     .ToArray();
 
                 var nDuplicates = (null != lsDuplicates) ? lsDuplicates.Count() - 1 : 0;
-                var lvItem = new LVitem_DoubleFile_FilesVM() { Duplicates_ = nDuplicates, FileLine = asFileLine };
+                var lvItem = new LVitem_FilesVM() { Duplicates_ = nDuplicates, FileLine = asFileLine };
 
                 if (0 < nDuplicates)
                 {
@@ -83,7 +83,7 @@ namespace DoubleFile
             SelectedItem_Set(this[initiatorTuple.Item1].FirstOrDefault(), initiatorTuple.Item2);
         }
 
-        internal override IEnumerable<LVitem_DoubleFile_FilesVM> this[string s_in]
+        internal override IEnumerable<LVitem_FilesVM> this[string s_in]
         {
             get
             {

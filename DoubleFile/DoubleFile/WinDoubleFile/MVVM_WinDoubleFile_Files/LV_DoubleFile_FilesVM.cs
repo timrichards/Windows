@@ -5,14 +5,14 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    partial class LV_DoubleFile_FilesVM : ListViewVM_Base<LVitem_DoubleFile_FilesVM>
+    partial class LV_FilesVM : ListViewVM_Base<LVitem_FilesVM>
     {
         static internal IObservable<Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int>>
             SelectedFileChanged { get { return _selectedFileChanged.AsObservable(); } }
         static readonly LocalSubject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>> _selectedFileChanged = new LocalSubject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>>();
         static void SelectedFileChangedOnNext(Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode> value, int nInitiator) { _selectedFileChanged.LocalOnNext(value, 99852, nInitiator); }
 
-        public LVitem_DoubleFile_FilesVM SelectedItem
+        public LVitem_FilesVM SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -28,7 +28,7 @@ namespace DoubleFile
                 SelectedItem_AllTriggers(0);
             }
         }
-        internal void SelectedItem_Set(LVitem_DoubleFile_FilesVM value, int nInitiator)
+        internal void SelectedItem_Set(LVitem_FilesVM value, int nInitiator)
         {
             if (value == _selectedItem)
                 return;
@@ -44,7 +44,7 @@ namespace DoubleFile
             else
                 SelectedFileChangedOnNext(null, nInitiator);
         }
-        LVitem_DoubleFile_FilesVM _selectedItem = null;
+        LVitem_FilesVM _selectedItem = null;
 
         public string WidthFilename { get { return SCW; } }                   // franken all NaN
         public string WidthDuplicates { get { return SCW; } }
@@ -55,6 +55,6 @@ namespace DoubleFile
         public string WidthError1 { get { return SCW; } }
         public string WidthError2{ get { return SCW; } }
 
-        internal override int NumCols { get { return LVitem_DoubleFile_FilesVM.NumCols_; } }
+        internal override int NumCols { get { return LVitem_FilesVM.NumCols_; } }
     }
 }

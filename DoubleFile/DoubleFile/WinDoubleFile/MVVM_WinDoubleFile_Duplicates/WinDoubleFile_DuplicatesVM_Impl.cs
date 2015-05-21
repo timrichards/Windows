@@ -9,7 +9,7 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    partial class WinDoubleFile_DuplicatesVM : IDisposable
+    partial class WinDuplicatesVM : IDisposable
     {
         static internal IObservable<Tuple<Tuple<LVitem_ProjectVM, string, string>, int>>
             GoToFile { get { return _goToFile.AsObservable(); } }
@@ -21,10 +21,10 @@ namespace DoubleFile
         static readonly LocalSubject<Tuple<IEnumerable<string>, LocalTreeNode>> _updateFileDetail = new LocalSubject<Tuple<IEnumerable<string>, LocalTreeNode>>();
         static void UpdateFileDetailOnNext(Tuple<IEnumerable<string>, LocalTreeNode> value, int nInitiator) { _updateFileDetail.LocalOnNext(value, 99847, nInitiator); }
 
-        internal WinDoubleFile_DuplicatesVM()
+        internal WinDuplicatesVM()
         {
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
-            _lsDisposable.Add(LV_DoubleFile_FilesVM.SelectedFileChanged.Subscribe(LV_DoubleFile_FilesVM_SelectedFileChanged));
+            _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.Subscribe(LV_FilesVM_SelectedFileChanged));
         }
 
         public void Dispose()
@@ -33,7 +33,7 @@ namespace DoubleFile
                 d.Dispose();
         }
 
-        void LV_DoubleFile_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int> initiatorTuple)
+        void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
 

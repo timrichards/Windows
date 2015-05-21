@@ -3,11 +3,11 @@
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinDoubleFile_Duplicates.xaml
+    /// Interaction logic for WinDuplicates.xaml
     /// </summary>
-    partial class WinDoubleFile_Duplicates
+    partial class WinDuplicates
     {
-        public WinDoubleFile_Duplicates()
+        public WinDuplicates()
         {
             InitializeComponent();
         }
@@ -15,8 +15,8 @@ namespace DoubleFile
         protected override void LocalNavigatedTo()
         {
             DataContext =
-                _winDoubleFile_DuplicatesVM =
-                new WinDoubleFile_DuplicatesVM();
+                _winDuplicatesVM =
+                new WinDuplicatesVM();
         }
 
         protected override void CopyTag_NewWindow(WeakReference wr)
@@ -26,11 +26,11 @@ namespace DoubleFile
 
         protected override void LocalDispose_WindowClosed()
         {
-            if (null != _winDoubleFile_DuplicatesVM)
-                _winDoubleFile_DuplicatesVM.Dispose();
+            if (null != _winDuplicatesVM)
+                _winDuplicatesVM.Dispose();
         }
 
-        WinDoubleFile_DuplicatesVM
-            _winDoubleFile_DuplicatesVM = null;
+        WinDuplicatesVM
+            _winDuplicatesVM = null;
     }
 }

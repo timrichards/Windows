@@ -2,7 +2,7 @@
 
 namespace DoubleFile
 {
-    partial class WinDoubleFile_SearchVM : ListViewVM_Base<LVitem_DoubleFile_SearchVM>
+    partial class WinSearchVM : ListViewVM_Base<LVitem_SearchVM>
     {
         public ICommand Icmd_Folders { get; private set; }
         public ICommand Icmd_FoldersAndFiles { get; private set; }
@@ -11,7 +11,7 @@ namespace DoubleFile
 
         public string SearchText { set; private get; }
 
-        public LVitem_DoubleFile_SearchVM SelectedItem
+        public LVitem_SearchVM SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -27,7 +27,7 @@ namespace DoubleFile
                 SelectedItem_AllTriggers();
             }
         }
-        internal void SelectedItem_Set(LVitem_DoubleFile_SearchVM value)
+        internal void SelectedItem_Set(LVitem_SearchVM value)
         {
             if (value == _selectedItem)
                 return;
@@ -39,10 +39,10 @@ namespace DoubleFile
         void SelectedItem_AllTriggers()
         {
         }
-        LVitem_DoubleFile_SearchVM _selectedItem = null;
+        LVitem_SearchVM _selectedItem = null;
 
         public string WidthResults { get { return SCW; } }                   // franken all NaN
 
-        internal override int NumCols { get { return LVitem_DoubleFile_SearchVM.NumCols_; } }
+        internal override int NumCols { get { return LVitem_SearchVM.NumCols_; } }
     }
 }

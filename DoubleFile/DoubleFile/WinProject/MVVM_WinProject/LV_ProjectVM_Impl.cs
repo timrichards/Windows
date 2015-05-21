@@ -32,7 +32,6 @@ namespace DoubleFile
             Unsaved
         {
             get { return _unsaved; }
-
             set
             {
                 if (value)

@@ -270,14 +270,14 @@
     <Compile Include="Win\MVVM_Files\LV_FilesVM.cs" />
     <Compile Include="Win\MVVM_Files\LV_FilesVM_Impl.cs" />
     <Compile Include="LocalForms\LocalTreeNode.cs" />
-    <Compile Include="Win\MVVM_Folders\TreeViewItem_DoubleFileVM.cs" />
+    <Compile Include="Win\MVVM_TreeView\TreeViewItemVM.cs" />
     <Compile Include="LocalForms\LocalTV.cs" />
-    <Compile Include="Win\MVVM_Folders\TreeView_DoubleFileVM.cs">
+    <Compile Include="Win\MVVM_TreeView\TreeViewVM.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="LocalForms\LocalTV_Impl.cs" />
-    <Compile Include="Win\WinFolders.xaml.cs">
-      <DependentUpon>WinFolders.xaml</DependentUpon>
+    <Compile Include="Win\WinTreeView.xaml.cs">
+      <DependentUpon>WinTreeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utilities\LocalWindowBase.cs" />
     <Compile Include="WinProject\MVVM_WinProject\LV_ProjectVM_Impl.cs" />
@@ -463,7 +463,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Win\WinFolders.xaml">
+    <Page Include="Win\WinTreeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

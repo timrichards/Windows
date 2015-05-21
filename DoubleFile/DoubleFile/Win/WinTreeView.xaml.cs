@@ -5,9 +5,9 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinFolders.xaml
     /// </summary>
-    partial class WinFolders
+    partial class WinTreeView
     {
-        public WinFolders()
+        public WinTreeView()
         {
             InitializeComponent();
         }

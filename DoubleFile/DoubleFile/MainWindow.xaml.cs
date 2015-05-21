@@ -183,7 +183,7 @@ namespace DoubleFile
             new LinkGroup { DisplayName="Explore", Links =
             {
                 new Link { DisplayName = "Tree map", Source = new Uri("/Win/WinTreeMap.xaml", UriKind.Relative)},
-                new Link { DisplayName = "Folders", Source = new Uri("/Win/WinFolders.xaml", UriKind.Relative)},
+                new Link { DisplayName = "Folders", Source = new Uri("/Win/WinTreeView.xaml", UriKind.Relative)},
                 new Link { DisplayName = "Tree list", Source = new Uri("/Win/WinTreeList.xaml", UriKind.Relative)}
             }},
             new LinkGroup { DisplayName="Files", Links =

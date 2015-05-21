@@ -12,7 +12,7 @@ namespace DoubleFile
 
                 var lvItem = (LocalLVitem)lvMarker.Clone();
 
-                lvItem.Text = ((UtilDirList.FormatSize(
+                lvItem.Text = ((Util.FormatSize(
                     (bUnique
                         ? listLVitems[nIx].LocalTreeNode
                         : (listLVitems[nIx].TreeNodes)[0])

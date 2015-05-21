@@ -100,7 +100,7 @@ namespace DoubleFile
             }
 
             Aborted = true;
-            UtilProject.UIthread(Close);
+            Util.UIthread(Close);
         }
 
         #region form_handlers
@@ -151,10 +151,10 @@ namespace DoubleFile
 
             new Thread(() =>
             {
-                if (UtilProject.UIthread(() => windowClosing.ConfirmClose()))
+                if (Util.UIthread(() => windowClosing.ConfirmClose()))
                 {
                     Aborted = true;
-                    UtilProject.UIthread(Close);
+                    Util.UIthread(Close);
                 }
                 else
                 {

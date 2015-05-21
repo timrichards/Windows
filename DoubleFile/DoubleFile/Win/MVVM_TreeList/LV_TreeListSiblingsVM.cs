@@ -73,7 +73,7 @@ namespace DoubleFile
             var tuple = initiatorTuple.Item1;
             var bSiblingFolder = (UC_TreeMap.kSelRectAndTooltip != initiatorTuple.Item2);
 
-            UtilDirList.Write("L");
+            Util.Write("L");
 
             if (bSiblingFolder &&
                 Populate(tuple.Item2))
@@ -126,7 +126,7 @@ namespace DoubleFile
 
             _treeNode = parentNode;
             ClearItems();
-            UtilDirList.Write("K");
+            Util.Write("K");
 
             var treeNodes =
                 (null != _treeNode)
@@ -149,7 +149,7 @@ namespace DoubleFile
                 }
             }
 
-            UtilProject.UIthread(() =>
+            Util.UIthread(() =>
             {
                 Add(lsLVitems);
                 SelectedItem_Set(selectedItem);     // doesn't need to be on the UI thread: just needs to follow Add

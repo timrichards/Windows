@@ -50,7 +50,7 @@ namespace DoubleFile
 
         internal void Populate(LocalTreeNode treeNodeParent)
         {
-            UtilProject.UIthread(ClearItems);
+            Util.UIthread(ClearItems);
 
             if (null == treeNodeParent.Nodes)
                 return;
@@ -61,7 +61,7 @@ namespace DoubleFile
                 lsLVitems.Add(new LVitem_TreeListVM(new[] { treeNode.Name }) { LocalTreeNode = treeNode });
 
             SelectedItem_Set(null);
-            UtilProject.UIthread(() => Add(lsLVitems));
+            Util.UIthread(() => Add(lsLVitems));
         }
     }
 }

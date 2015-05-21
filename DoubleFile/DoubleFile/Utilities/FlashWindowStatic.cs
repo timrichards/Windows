@@ -26,7 +26,7 @@ namespace DoubleFile
 
         static internal void Go(Window window_in, bool Once = false)
         {
-            UtilProject.UIthread(() =>
+            Util.UIthread(() =>
             {
                 var window = window_in ?? App.LocalMainWindow as Window;
                 var fInfo = new FLASHWINFO

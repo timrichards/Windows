@@ -57,7 +57,7 @@ namespace DoubleFile
 
             var lsLVitems = lsTreeNodes.AsParallel().Select(treeNode => new LVitem_SearchVM { LocalTreeNode = treeNode });
 
-            UtilProject.UIthread(() => Add(lsLVitems));
+            Util.UIthread(() => Add(lsLVitems));
         }
 
         void SearchFoldersAndFiles(bool bSearchFilesOnly = false)
@@ -89,7 +89,7 @@ namespace DoubleFile
                 return true;        // found there are no volumes loaded
             }
 
-            UtilProject.UIthread(ClearItems);
+            Util.UIthread(ClearItems);
             TabledString<Tabled_Files>.Reinitialize();
             TabledString<Tabled_Files>.GenerationStarting();
 
@@ -204,7 +204,7 @@ namespace DoubleFile
             if (_bDisposed)
                 return;
 
-            UtilProject.UIthread(() => Add(lsLVitems, bQuiet: false, Cancel: () => _bDisposed));
+            Util.UIthread(() => Add(lsLVitems, bQuiet: false, Cancel: () => _bDisposed));
 
             if (_bDisposed)
                 return;

@@ -52,8 +52,8 @@ namespace DoubleFile
 
         void Go()
         {
-            UtilProject.WriteLine();
-            UtilProject.WriteLine("Saving directory listings.");
+            Util.WriteLine();
+            Util.WriteLine("Saving directory listings.");
 
             var dtStart = DateTime.Now;
 
@@ -67,7 +67,7 @@ namespace DoubleFile
             foreach (var worker in _cbagWorkers)
                 worker.Join();
 
-            UtilProject.WriteLine(string.Format("Finished saving directory listings in {0} seconds.",
+            Util.WriteLine(string.Format("Finished saving directory listings in {0} seconds.",
                 ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
             if (App.LocalExit ||

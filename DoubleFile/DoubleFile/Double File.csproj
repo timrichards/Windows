@@ -256,7 +256,6 @@
     <Compile Include="Utilities\FolderKeyTuple.cs" />
     <Compile Include="Win\UtilWin\Tree\LVitemFileTag.cs" />
     <Compile Include="Win\Treemap\UC_TreeMap.cs" />
-    <Compile Include="Win\UtilWin\UtilDirList.cs" />
     <Compile Include="Utilities\FlashWindowStatic.cs" />
     <Compile Include="Win\UtilWin\UtilDirList\SDL_FileBase.cs" />
     <Compile Include="Win\UtilWin\UtilDirList\SDL_FileBase\SDL_CopyFile.cs" />

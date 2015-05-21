@@ -53,7 +53,7 @@ namespace DoubleFile
 
                 var tuple = initiatorTuple.Item1;
 
-                UtilDirList.Write("M");
+                Util.Write("M");
                 RenderD(tuple.Item2, initiatorTuple.Item2);
                 _bTreeSelect = false;
             }));
@@ -122,7 +122,7 @@ namespace DoubleFile
             _bClearingSelection = true;
 
             if (false == bKeepTooltipActive)
-                UtilProject.UIthread(WinTooltip.CloseTooltip);  // CloseTooltip callback recurses here hence _bClearingSelection
+                Util.UIthread(WinTooltip.CloseTooltip);  // CloseTooltip callback recurses here hence _bClearingSelection
 
             _selChildNode = null;
 
@@ -182,7 +182,7 @@ namespace DoubleFile
             var bImmediateFiles = false;
             var bVolumeView = false;
 
-            UtilDirList.Closure(() =>
+            Util.Closure(() =>
             {
                 {
                     var nodeDatum = TreeMapVM.TreeNode.NodeDatum;
@@ -270,7 +270,7 @@ namespace DoubleFile
         {
             var treeNodeChild = initiatorTuple.Item1;
 
-            UtilDirList.Write("N");
+            Util.Write("N");
             if (_bTreeSelect ||
                 _bSelRecAndTooltip)
             {
@@ -287,7 +287,7 @@ namespace DoubleFile
         {
             var tuple = initiatorTuple.Item1;
 
-            UtilDirList.Write("O");
+            Util.Write("O");
             if (_bTreeSelect ||
                 _bSelRecAndTooltip ||
                 (null == tuple))
@@ -311,7 +311,7 @@ namespace DoubleFile
                 return;
             }
 
-            UtilProject.UIthread(WinTooltip.CloseTooltip);
+            Util.UIthread(WinTooltip.CloseTooltip);
         }
 
         void SelRectAndTooltip(LocalTreeNode treeNodeChild, int nInitiator, bool bImmediateFiles)
@@ -338,10 +338,10 @@ namespace DoubleFile
                 SelectedFileOnNext(treeNodeChild.Text, nInitiator);
             }
 
-            UtilProject.UIthread(() => WinTooltip.ShowTooltip(
+            Util.UIthread(() => WinTooltip.ShowTooltip(
                 new WinTooltip.ArgsStruct(
                     strFolder,
-                    UtilDirList.FormatSize(nodeDatum.TotalLength, bBytes: true),
+                    Util.FormatSize(nodeDatum.TotalLength, bBytes: true),
                     LocalOwner,
                     Tooltip_Click,
                     () => ClearSelection()),
@@ -441,11 +441,11 @@ namespace DoubleFile
             {
                 ulong nLength = 0;
 
-                if ((asFileLine.Length > UtilDirList.knColLengthLV) &&
-                    (false == string.IsNullOrWhiteSpace(asFileLine[UtilDirList.knColLengthLV])))
+                if ((asFileLine.Length > Util.knColLengthLV) &&
+                    (false == string.IsNullOrWhiteSpace(asFileLine[Util.knColLengthLV])))
                 {
-                    nLengthDebug += nLength = ulong.Parse(asFileLine[UtilDirList.knColLengthLV]);
-                    asFileLine[UtilDirList.knColLengthLV] = UtilDirList.FormatSize(asFileLine[UtilDirList.knColLengthLV]);
+                    nLengthDebug += nLength = ulong.Parse(asFileLine[Util.knColLengthLV]);
+                    asFileLine[Util.knColLengthLV] = Util.FormatSize(asFileLine[Util.knColLengthLV]);
                 }
 
                 lsFiles.Add(Tuple.Create(asFileLine[0], nLength));
@@ -582,7 +582,7 @@ namespace DoubleFile
                 return;
             }
 
-            InvalidatePushRef(() => UtilProject.UIthread(() => Render(treeNode)));
+            InvalidatePushRef(() => Util.UIthread(() => Render(treeNode)));
         }
 
         void Render(LocalTreeNode treeNode)
@@ -590,7 +590,7 @@ namespace DoubleFile
             if ((null == TreeMapVM.DeepNode) ||
                 (false == TreeMapVM.DeepNode.IsChildOf(treeNode)))
             {
-                UtilProject.UIthread(() => TreeMapVM.DeepNode = treeNode);
+                Util.UIthread(() => TreeMapVM.DeepNode = treeNode);
             }
 
             var nPxPerSide = (treeNode.SelectedImageIndex < 0)
@@ -615,16 +615,16 @@ namespace DoubleFile
 
                 _bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), _rectBitmap);
                 TranslateSize();
-                UtilProject.WriteLine("Size bitmap " + nPxPerSide + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000.0 + " seconds.");
+                Util.WriteLine("Size bitmap " + nPxPerSide + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000.0 + " seconds.");
             }
 
             var dtStart = DateTime.Now;
 
             ClearSelection();
-            UtilProject.UIthread(() => TreeMapVM.TreeNode = treeNode);
+            Util.UIthread(() => TreeMapVM.TreeNode = treeNode);
             _lsRenderActions = DrawTreemap();
 
-            UtilProject.UIthread(() =>
+            Util.UIthread(() =>
             {
                if (null != LocalOwner)
                     LocalOwner.Title = "Double File";
@@ -784,7 +784,7 @@ namespace DoubleFile
                     LocalTreeNode parent = null;
                     var bVolumeNode = false;
 
-                    UtilDirList.Closure(() =>
+                    Util.Closure(() =>
                     {
                         var rootNodeDatum = item.NodeDatum as RootNodeDatum;
 

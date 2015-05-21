@@ -17,7 +17,7 @@ namespace DoubleFile
             {
                 var tuple = initiatorTuple.Item1;
 
-                UtilDirList.Write("E"); if (null != tuple.Item2) LocalPath_Set(tuple.Item2);
+                Util.Write("E"); if (null != tuple.Item2) LocalPath_Set(tuple.Item2);
             }));
         }
 
@@ -45,10 +45,10 @@ namespace DoubleFile
         {
             var tuple = initiatorTuple.Item1;
 
-            UtilDirList.Write("F");
+            Util.Write("F");
             LocalPath_Set();
             Title = null;
-            UtilProject.UIthread(ClearItems);
+            Util.UIthread(ClearItems);
 
             if (null == tuple.Item1)
                 return;
@@ -59,16 +59,16 @@ namespace DoubleFile
 
             Title = asFileLine[0];
             LocalPath_Set(tuple.Item2, asFileLine[0]);
-            asFileLine[3] = UtilDirList.DecodeAttributes(asFileLine[3]);
+            asFileLine[3] = Util.DecodeAttributes(asFileLine[3]);
 
             if ((asFileLine.Length > FileParse.knColLengthLV) &&
                 (false == string.IsNullOrWhiteSpace(asFileLine[FileParse.knColLengthLV])))
             {
                 asFileLine[FileParse.knColLengthLV] =
-                    UtilDirList.FormatSize(asFileLine[FileParse.knColLengthLV], bBytes: true);
+                    Util.FormatSize(asFileLine[FileParse.knColLengthLV], bBytes: true);
             }
 
-            UtilProject.UIthread(() =>
+            Util.UIthread(() =>
             {
                 var kasHeader = new[] { "Filename", "Created", "Modified", "Attributes", "Length", "Error 1", "Error 2" };
                 var nMax = Math.Min(asFileLine.Length, kasHeader.Length);

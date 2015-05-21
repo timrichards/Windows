@@ -37,7 +37,7 @@ namespace DoubleFile
         {
             var tuple = initiatorTuple.Item1;
 
-            UtilDirList.Write("I");
+            Util.Write("I");
             if (null != _cts)
                 _cts.Cancel();
 
@@ -55,7 +55,7 @@ namespace DoubleFile
             _treeNode = treeNode;
             UpdateFileDetailOnNext(Tuple.Create(ieFileLine, _treeNode), initiatorTuple.Item2);
             SelectedItem_Set(null);
-            UtilProject.UIthread(ClearItems);
+            Util.UIthread(ClearItems);
 
             if (null == lsDuplicates)
                 return;
@@ -79,7 +79,7 @@ namespace DoubleFile
                     (false == _cts.IsCancellationRequested) &&
                     (10 > nCheck))
                 {
-                    UtilProject.WriteLine(nCheck + " false == _cts.IsCancellationRequested");
+                    Util.WriteLine(nCheck + " false == _cts.IsCancellationRequested");
                     Thread.Sleep(100);
                     ++nCheck;
                 }
@@ -151,7 +151,7 @@ namespace DoubleFile
             });
 
             if (false == _cts.IsCancellationRequested)
-                UtilProject.UIthread(() => Add(lsLVitems));
+                Util.UIthread(() => Add(lsLVitems));
 
             _cts = null;
         }

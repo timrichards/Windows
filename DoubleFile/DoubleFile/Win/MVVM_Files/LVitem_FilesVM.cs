@@ -47,8 +47,8 @@ namespace DoubleFile
 
         public string Created { get { return FileLine[1]; } }
         public string Modified { get { return FileLine[2]; } }
-        public string Attributes { get { return UtilDirList.DecodeAttributes(FileLine[3]); } }
-        public string Length { get { return 4 < FileLine.Length ? UtilDirList.FormatSize(FileLine[4]) : ""; } }
+        public string Attributes { get { return Util.DecodeAttributes(FileLine[3]); } }
+        public string Length { get { return 4 < FileLine.Length ? Util.FormatSize(FileLine[4]) : ""; } }
         public string Error1 { get { return 5 < FileLine.Length ? FileLine[5] : ""; } }
         public string Error2 { get { return 6 < FileLine.Length ? FileLine[6] : ""; } }
 

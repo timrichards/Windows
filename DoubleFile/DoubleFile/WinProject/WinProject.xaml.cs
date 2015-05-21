@@ -65,7 +65,7 @@ namespace DoubleFile
         {
             MainWindow.WithMainWindow(mainWindow =>
             {
-                UtilProject.UIthread(() =>
+                Util.UIthread(() =>
                 {
                     foreach (Window window in mainWindow.OwnedWindows)
                         window.Close();

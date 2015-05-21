@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    partial class TreeSelect : UtilDirList
+    partial class TreeSelect : Util
     {
         static internal IObservable<Tuple<Tuple<IEnumerable<string>, string, LocalTreeNode, string>, int>>
             FileListUpdated { get { return _fileListUpdated.AsObservable(); } }
@@ -33,7 +33,7 @@ namespace DoubleFile
                 return false;
             }
 
-            if (treeNode is LocalTreeMapFileNode)     // does not support immediate file fake nodes
+            if (treeNode is LocalTreeMapFileNode)     // does not support file fake nodes
                 return false;
 
             _dictVolumeInfo = LocalTV.DictVolumeInfo;
@@ -59,7 +59,7 @@ namespace DoubleFile
             var rootNodeDatum = treeNode.Root().NodeDatum as RootNodeDatum;
             IEnumerable<string> lsFiles = null;
 
-            UtilDirList.Closure(() =>
+            Util.Closure(() =>
             {
                 if ((null == nodeDatum) ||
                     (0 == nodeDatum.LineNo) ||

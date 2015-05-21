@@ -39,7 +39,7 @@ namespace DoubleFile
             if (null == _lvProjectVM)
                 return;
 
-            UtilProject.WriteLine("Searching for '" + _strSearch + "'");
+            Util.WriteLine("Searching for '" + _strSearch + "'");
 
             var dtStart = DateTime.Now;
 
@@ -49,7 +49,7 @@ namespace DoubleFile
             foreach (SearchFile worker in _cbagWorkers)
                 worker.Join();
 
-            UtilProject.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", _strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
+            Util.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", _strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
 
             if (App.LocalExit || IsAborted)
                 return;

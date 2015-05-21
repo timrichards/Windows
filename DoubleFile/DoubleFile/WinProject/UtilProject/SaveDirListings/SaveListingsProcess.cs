@@ -47,7 +47,7 @@ namespace DoubleFile
         void ISaveDirListingsStatus.Status(LVitem_ProjectVM lvItemProjectVM,
             string strError, bool bDone, double nProgress)
         {
-            UtilProject.UIthread(() =>
+            Util.UIthread(() =>
             {
                 var sdl = App.SaveDirListings;
 

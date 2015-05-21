@@ -147,7 +147,7 @@ namespace DoubleFile
             if (_rootNodes.IsEmpty())
             {
                 _winProgress.Aborted = true;
-                UtilProject.UIthread(_winProgress.Close);
+                Util.UIthread(_winProgress.Close);
                 return;
             }
 
@@ -175,7 +175,7 @@ namespace DoubleFile
                 var dtStart = DateTime.Now;
 
                 collate.Step1(d => nProgress = d);
-                UtilProject.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
+                Util.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
                 dtStart = DateTime.Now;
 
                 if (App.LocalExit)
@@ -190,7 +190,7 @@ namespace DoubleFile
                 if (null == LocalTV.SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
                     LocalTV.SelectedNode = _topNode;
                 _allNodes = lsTreeNodes.ToArray();
-                UtilProject.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
+                Util.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
             }
 
             TreeCleanup();
@@ -202,7 +202,7 @@ namespace DoubleFile
 
         bool IWinProgressClosing.ConfirmClose()
         {
-            if (false == UtilDirList.Closure(() =>
+            if (false == Util.Closure(() =>
             {
                 if (App.FileDictionary
                     .IsAborted)

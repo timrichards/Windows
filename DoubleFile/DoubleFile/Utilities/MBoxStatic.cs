@@ -37,7 +37,7 @@ namespace DoubleFile
             if (false == string.IsNullOrWhiteSpace(strError_in))
                 strError += "\n\nAdditional information: " + strError_in;
 
-            UtilProject.WriteLine(strError);
+            Util.WriteLine(strError);
 #if (DEBUG)
             System.Diagnostics.Debug.Assert(false, strError);
 #else
@@ -92,20 +92,20 @@ namespace DoubleFile
                 return MessageBoxResult.None;
             }
 
-            UtilProject.UIthread(() => MessageBoxKill());
+            Util.UIthread(() => MessageBoxKill());
 
             var msgBoxRet = MessageBoxResult.None;
             var buttons = buttons_in ?? MessageBoxButton.OK;
             
-            UtilProject.UIthread(() =>
+            Util.UIthread(() =>
                 MessageBox = new LocalMbox(owner ?? mainWindow, strMessage, strTitle, buttons));
 
-            UtilProject.UIthread(() => msgBoxRet = MessageBox.ShowDialog());
+            Util.UIthread(() => msgBoxRet = MessageBox.ShowDialog());
 
             if (null == MessageBox)
                 msgBoxRet = MessageBoxResult.None;          // canceled externally
             else
-                UtilProject.UIthread(() => MessageBoxKill());
+                Util.UIthread(() => MessageBoxKill());
 
             MessageBox = null;
             return msgBoxRet;

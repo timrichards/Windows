@@ -91,7 +91,7 @@ namespace DoubleFile
                     sbMatch.AppendLine(lvItem.Text);
 
                 IgnoreNodeQuery(("" + sbMatch).ToLower(), nMaxLevel, _ieRootNodes.ElementAt(0));
-                UtilProject.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+                Util.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
             }
 
             var dictIgnoreMark = new Dictionary<LocalTreeNode, LocalLVitem>();
@@ -382,7 +382,7 @@ namespace DoubleFile
 
                 MBoxStatic.Assert(1305.6325, nCount_A == nCount);
                 MBoxStatic.Assert(1305.6326, _lsTreeNodes.Count == nCount);
-                UtilProject.WriteLine("Step1_OnThread " + nCount);
+                Util.WriteLine("Step1_OnThread " + nCount);
             }
 
             listSameVol.Sort((y, x) => x.NodeDatum.TotalLength.CompareTo(y.NodeDatum.TotalLength));

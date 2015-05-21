@@ -449,9 +449,9 @@ namespace DoubleFile
 
             if (arrLine[0] == ksHeader01)
             {
-                UtilProject.WriteLine("Converting " + strFile);
+                Util.WriteLine("Converting " + strFile);
                 ConvertFile(strFile);
-                UtilProject.WriteLine("File converted to " + ksHeader);
+                Util.WriteLine("File converted to " + ksHeader);
                 bConvertFile = true;
             }
 

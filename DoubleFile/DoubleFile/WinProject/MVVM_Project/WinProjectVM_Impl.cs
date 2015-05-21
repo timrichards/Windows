@@ -136,7 +136,7 @@ namespace DoubleFile
                     listItems.Add(lvItem);
             }
 
-            UtilProject.UIthread(_lvVM.ClearItems);
+            Util.UIthread(_lvVM.ClearItems);
 
             Parallel.ForEach(listFiles, strFilename =>
             {
@@ -185,7 +185,7 @@ namespace DoubleFile
                     return false;   // from lambda
                 }
 
-                return UtilProject.UIthread(() => _lvVM.NewItem(lvItem)) || current;  // from lambda
+                return Util.UIthread(() => _lvVM.NewItem(lvItem)) || current;  // from lambda
             });
 
             var sbError = new StringBuilder();

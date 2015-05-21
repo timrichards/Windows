@@ -20,7 +20,7 @@ namespace DoubleFile
             foreach (var treeNode in rootNodes)
                 _Items.Add(new TreeViewItemVM(this, treeNode, ++nIndex));
 
-            UtilProject.UIthread(() => tvfe.DataContext = _Items);
+            Util.UIthread(() => tvfe.DataContext = _Items);
 
             Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()
                 .Subscribe(x => { if (0 < _Items.Count) _Items[0].SelectedItem_Set(true, nInitiator: 0); });

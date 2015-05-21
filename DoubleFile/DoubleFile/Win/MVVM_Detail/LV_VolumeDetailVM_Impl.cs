@@ -11,8 +11,8 @@ namespace DoubleFile
             {
                 var tuple = initiatorTuple.Item1;
 
-                UtilDirList.Write("H");
-                UtilProject.UIthread(() =>
+                Util.Write("H");
+                Util.UIthread(() =>
                 {
                     Title = tuple.Item2;
                     ClearItems();

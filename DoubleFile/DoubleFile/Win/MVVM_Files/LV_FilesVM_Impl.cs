@@ -22,12 +22,12 @@ namespace DoubleFile
         {
             var tuple = initiatorTuple.Item1;
 
-            UtilDirList.Write("J");
+            Util.Write("J");
             if (tuple.Item3 == _treeNode)
                 return;
 
             SelectedItem_Set(null, initiatorTuple.Item2);
-            UtilProject.UIthread(ClearItems);
+            Util.UIthread(ClearItems);
             _treeNode = tuple.Item3;
 
             if (null == tuple.Item1)
@@ -71,7 +71,7 @@ namespace DoubleFile
                 lsItems.Add(lvItem);
             }
 
-            UtilProject.UIthread(() => Add(lsItems));
+            Util.UIthread(() => Add(lsItems));
 
             if (null != tuple.Item4)
                 SelectedItem_Set(this[tuple.Item4].FirstOrDefault(), initiatorTuple.Item2);
@@ -79,7 +79,7 @@ namespace DoubleFile
 
         void UC_TreeMap_SelectedFile(Tuple<string, int> initiatorTuple)
         {
-            UtilDirList.Write("B");
+            Util.Write("B");
             SelectedItem_Set(this[initiatorTuple.Item1].FirstOrDefault(), initiatorTuple.Item2);
         }
 

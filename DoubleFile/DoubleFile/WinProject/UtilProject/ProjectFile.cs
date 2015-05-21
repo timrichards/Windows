@@ -70,10 +70,10 @@ namespace DoubleFile
             };
 
             _lsDisposable.Add(Observable.FromEventPattern<DataReceivedEventArgs>(_process, "OutputDataReceived")
-                .Subscribe(args => { UtilProject.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
+                .Subscribe(args => { Util.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
 
             _lsDisposable.Add(Observable.FromEventPattern<DataReceivedEventArgs>(_process, "ErrorDataReceived")
-                .Subscribe(args => { UtilProject.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
+                .Subscribe(args => { Util.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
 
             _process.EnableRaisingEvents = true;
             _lsDisposable.Add(_process);
@@ -161,7 +161,7 @@ namespace DoubleFile
             if (false == _winProgress.LocalIsClosed)
             {
                 _winProgress.Aborted = true;
-                UtilProject.UIthread(_winProgress.Close);
+                Util.UIthread(_winProgress.Close);
             }
 
             _bProcessing = false;
@@ -355,7 +355,7 @@ namespace DoubleFile
 
             var bRet = false;
 
-            UtilProject.UIthread(() =>
+            Util.UIthread(() =>
             {
                 if (MessageBoxResult.Yes ==
                     MBoxStatic.ShowDialog("Do you want to cancel?", _status, MessageBoxButton.YesNo, _winProgress))
@@ -407,7 +407,7 @@ namespace DoubleFile
             if (false == _winProgress.LocalIsClosed)
             {
                 _winProgress.Aborted = true;
-                UtilProject.UIthread(_winProgress.Close);
+                Util.UIthread(_winProgress.Close);
             }
 
             Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()

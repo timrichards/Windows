@@ -280,7 +280,7 @@
       <DependentUpon>WinTreeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utilities\LocalWindowBase.cs" />
-    <Compile Include="WinProject\MVVM_WinProject\LV_ProjectVM_Impl.cs" />
+    <Compile Include="WinProject\MVVM_Project\LV_ProjectVM_Impl.cs" />
     <Compile Include="WinProject\UtilProject\SaveDirListings\SaveDirListing.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -298,9 +298,9 @@
     <Compile Include="MVVM\ObservableObject_OwnerWindow.cs" />
     <Compile Include="Utilities\MVVM_WinProgress\LVitem_ProgressVM.cs" />
     <Compile Include="Utilities\MVVM_WinProgress\LV_ProgressVM.cs" />
-    <Compile Include="WinProject\MVVM_WinProject\LV_ProjectVM.cs" />
-    <Compile Include="WinProject\MVVM_WinProject\WinProjectVM_Impl.cs" />
-    <Compile Include="WinProject\MVVM_WinProject\LVitem_ProjectVM.cs" />
+    <Compile Include="WinProject\MVVM_Project\LV_ProjectVM.cs" />
+    <Compile Include="WinProject\MVVM_Project\WinProjectVM_Impl.cs" />
+    <Compile Include="WinProject\MVVM_Project\LVitem_ProjectVM.cs" />
     <Compile Include="WinProject\UtilProject\DriveSerialStatic.cs" />
     <Compile Include="Utilities\MBoxStatic.cs" />
     <Compile Include="WinProject\UtilProject\ProjectFile.cs" />
@@ -308,7 +308,7 @@
     <Compile Include="WinProject\UtilProject\UtilProject.cs" />
     <Compile Include="WinProject\UtilProject\Win32FindFileStatic.cs" />
     <Compile Include="Utilities\ExtensionMethodsStatic.cs" />
-    <Compile Include="WinProject\MVVM_WinProject\WinProjectVM.cs">
+    <Compile Include="WinProject\MVVM_Project\WinProjectVM.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="App.xaml.cs">

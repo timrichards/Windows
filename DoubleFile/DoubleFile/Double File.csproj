@@ -182,99 +182,99 @@
     <Compile Include="Utilities\Win32Screen\RECT.cs" />
     <Compile Include="Utilities\Win32Screen\SWP.cs" />
     <Compile Include="Utilities\Win32Screen\Win32Screen.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Search\LVitem_DoubleFile_SearchVM.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Search\WinDoubleFile_SearchVM_Impl.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Search\WinDoubleFile_SearchVM.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_TreeList\LVitem_TreeListVM.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_TreeList\LV_TreeListChildrenVM.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Search\GetOneNodeByRootPath.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\WinTreeMap.xaml.cs">
+    <Compile Include="Win\MVVM_Search\LVitem_SearchVM.cs" />
+    <Compile Include="Win\MVVM_Search\WinSearchVM_Impl.cs" />
+    <Compile Include="Win\MVVM_Search\WinSearchVM.cs" />
+    <Compile Include="Win\MVVM_TreeList\LVitem_TreeListVM.cs" />
+    <Compile Include="Win\MVVM_TreeList\LV_TreeListChildrenVM.cs" />
+    <Compile Include="Win\UtilWin\Search\GetOneNodeByRootPath.cs" />
+    <Compile Include="Win\WinTreeMap.xaml.cs">
       <DependentUpon>WinTreeMap.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinDoubleFile\WinDoubleFile_Detail.xaml.cs">
-      <DependentUpon>WinDoubleFile_Detail.xaml</DependentUpon>
+    <Compile Include="Win\WinDetail.xaml.cs">
+      <DependentUpon>WinDetail.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinDoubleFile\WinDoubleFile_Duplicates.xaml.cs">
-      <DependentUpon>WinDoubleFile_Duplicates.xaml</DependentUpon>
+    <Compile Include="Win\WinDuplicates.xaml.cs">
+      <DependentUpon>WinDuplicates.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinDoubleFile\WinDoubleFile_Files.xaml.cs">
-      <DependentUpon>WinDoubleFile_Files.xaml</DependentUpon>
+    <Compile Include="Win\WinFiles.xaml.cs">
+      <DependentUpon>WinFiles.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinDoubleFile\WinDoubleFile_Search.xaml.cs">
-      <DependentUpon>WinDoubleFile_Search.xaml</DependentUpon>
+    <Compile Include="Win\WinSearch.xaml.cs">
+      <DependentUpon>WinSearch.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinDoubleFile\WinDoubleFile_TreeList.xaml.cs">
-      <DependentUpon>WinDoubleFile_TreeList.xaml</DependentUpon>
+    <Compile Include="Win\WinTreeList.xaml.cs">
+      <DependentUpon>WinTreeList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_TreeList\LV_TreeListSiblingsVM.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\WinTreeMapVM.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\LocalTreeMapNode.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Tree\DetailsDatum.cs" />
+    <Compile Include="Win\MVVM_TreeList\LV_TreeListSiblingsVM.cs" />
+    <Compile Include="Win\Treemap\WinTreeMapVM.cs" />
+    <Compile Include="Win\Treemap\LocalTreeMapNode.cs" />
+    <Compile Include="Win\UtilWin\Tree\DetailsDatum.cs" />
     <Compile Include="Utilities\WinTooltip.xaml.cs">
       <DependentUpon>WinTooltip.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LVitem_FolderDetailVM.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LVitem_VolumeDetail.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LVitem_FileDetailVM.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LV_FolderDetailVM_Impl.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LV_FolderDetailVM.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LV_VolumeDetailVM.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LV_FileDetailVM.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LV_VolumeDetailVM_Impl.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Detail\LV_FileDetailVM_Impl.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Duplicates\LVitem_FileDuplicatesVM.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Duplicates\WinDoubleFile_DuplicatesVM.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Duplicates\WinDoubleFile_DuplicatesVM_Impl.cs" />
+    <Compile Include="Win\MVVM_Detail\LVitem_FolderDetailVM.cs" />
+    <Compile Include="Win\MVVM_Detail\LVitem_VolumeDetail.cs" />
+    <Compile Include="Win\MVVM_Detail\LVitem_FileDetailVM.cs" />
+    <Compile Include="Win\MVVM_Detail\LV_FolderDetailVM_Impl.cs" />
+    <Compile Include="Win\MVVM_Detail\LV_FolderDetailVM.cs" />
+    <Compile Include="Win\MVVM_Detail\LV_VolumeDetailVM.cs" />
+    <Compile Include="Win\MVVM_Detail\LV_FileDetailVM.cs" />
+    <Compile Include="Win\MVVM_Detail\LV_VolumeDetailVM_Impl.cs" />
+    <Compile Include="Win\MVVM_Detail\LV_FileDetailVM_Impl.cs" />
+    <Compile Include="Win\MVVM_Duplicates\LVitem_FileDuplicatesVM.cs" />
+    <Compile Include="Win\MVVM_Duplicates\WinDuplicatesVM.cs" />
+    <Compile Include="Win\MVVM_Duplicates\WinDuplicatesVM_Impl.cs" />
     <Compile Include="Utilities\LocalMbox.xaml.cs">
       <DependentUpon>LocalMbox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinDoubleFile\UtilDirList Local\Collate.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Collate\AddTreeToList.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Collate\InsertSizeMarkerStatic.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\CountNodes.cs" />
+    <Compile Include="Win\UtilWin\Collate.cs" />
+    <Compile Include="Win\UtilWin\Collate\AddTreeToList.cs" />
+    <Compile Include="Win\UtilWin\Collate\InsertSizeMarkerStatic.cs" />
+    <Compile Include="Win\UtilWin\CountNodes.cs" />
     <Compile Include="LocalForms\LocalLV.cs" />
     <Compile Include="LocalForms\LocalLVitem.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\UtilDirList\ExtensionMethodsStatic.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Search\SearchFiles\SearchBase.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Search\SearchFiles\SearchBase\SearchType2.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Search\SearchFiles\SearchBase\SearchType2\SearchFile.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Search\SearchFiles\SearchResults.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Search\SearchFiles\SearchResultsDir.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Tree\DetailsDatum\NodeDatum.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Tree\LVitemNameComparerStruct.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Tree\TreeBase.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Tree\TreeBase\Tree.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Tree\TreeBase\Tree\TreeRootNodeBuilder.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Tree\TreeBase\Tree\TreeRootNodeBuilder\DirData.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Tree\TreeBase\Tree\TreeRootNodeBuilder\Node.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Tree\TreeBase\Tree\TreeRootNodeBuilder\RootNode.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Tree\TreeSelect.cs" />
+    <Compile Include="Win\UtilWin\UtilDirList\ExtensionMethodsStatic.cs" />
+    <Compile Include="Win\UtilWin\Search\SearchFiles\SearchBase.cs" />
+    <Compile Include="Win\UtilWin\Search\SearchFiles\SearchBase\SearchType2.cs" />
+    <Compile Include="Win\UtilWin\Search\SearchFiles\SearchBase\SearchType2\SearchFile.cs" />
+    <Compile Include="Win\UtilWin\Search\SearchFiles\SearchResults.cs" />
+    <Compile Include="Win\UtilWin\Search\SearchFiles\SearchResultsDir.cs" />
+    <Compile Include="Win\UtilWin\Tree\DetailsDatum\NodeDatum.cs" />
+    <Compile Include="Win\UtilWin\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
+    <Compile Include="Win\UtilWin\Tree\LVitemNameComparerStruct.cs" />
+    <Compile Include="Win\UtilWin\Tree\TreeBase.cs" />
+    <Compile Include="Win\UtilWin\Tree\TreeBase\Tree.cs" />
+    <Compile Include="Win\UtilWin\Tree\TreeBase\Tree\TreeRootNodeBuilder.cs" />
+    <Compile Include="Win\UtilWin\Tree\TreeBase\Tree\TreeRootNodeBuilder\DirData.cs" />
+    <Compile Include="Win\UtilWin\Tree\TreeBase\Tree\TreeRootNodeBuilder\Node.cs" />
+    <Compile Include="Win\UtilWin\Tree\TreeBase\Tree\TreeRootNodeBuilder\RootNode.cs" />
+    <Compile Include="Win\UtilWin\Tree\TreeSelect.cs" />
     <Compile Include="Utilities\FolderKeyTuple.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\Tree\LVitemFileTag.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\UC_TreeMap.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\UtilDirList.cs" />
+    <Compile Include="Win\UtilWin\Tree\LVitemFileTag.cs" />
+    <Compile Include="Win\Treemap\UC_TreeMap.cs" />
+    <Compile Include="Win\UtilWin\UtilDirList.cs" />
     <Compile Include="Utilities\FlashWindowStatic.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\UtilDirList\SDL_FileBase.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\UtilDirList\SDL_FileBase\SDL_CopyFile.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\UtilDirList\SDL_FileBase\SDL_IgnoreFile.cs" />
-    <Compile Include="WinDoubleFile\UtilDirList Local\UtilColor.cs" />
-    <Compile Include="WinDoubleFile\FileDictionary.cs" />
-    <Compile Include="WinDoubleFile\FileDictionary\DuplicateStruct.cs" />
+    <Compile Include="Win\UtilWin\UtilDirList\SDL_FileBase.cs" />
+    <Compile Include="Win\UtilWin\UtilDirList\SDL_FileBase\SDL_CopyFile.cs" />
+    <Compile Include="Win\UtilWin\UtilDirList\SDL_FileBase\SDL_IgnoreFile.cs" />
+    <Compile Include="Win\UtilWin\UtilColor.cs" />
+    <Compile Include="Win\FileDictionary.cs" />
+    <Compile Include="Win\FileDictionary\DuplicateStruct.cs" />
     <Compile Include="Utilities\FileKeyTuple.cs" />
     <Compile Include="Utilities\HashTuple.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Files\LVitem_DoubleFile_FilesVM.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Files\LV_DoubleFile_FilesVM.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Files\LV_DoubleFile_FilesVM_Impl.cs" />
+    <Compile Include="Win\MVVM_Files\LVitem_FilesVM.cs" />
+    <Compile Include="Win\MVVM_Files\LV_FilesVM.cs" />
+    <Compile Include="Win\MVVM_Files\LV_FilesVM_Impl.cs" />
     <Compile Include="LocalForms\LocalTreeNode.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Folders\TreeViewItem_DoubleFileVM.cs" />
+    <Compile Include="Win\MVVM_Folders\TreeViewItem_DoubleFileVM.cs" />
     <Compile Include="LocalForms\LocalTV.cs" />
-    <Compile Include="WinDoubleFile\MVVM_WinDoubleFile_Folders\TreeView_DoubleFileVM.cs">
+    <Compile Include="Win\MVVM_Folders\TreeView_DoubleFileVM.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="LocalForms\LocalTV_Impl.cs" />
-    <Compile Include="WinDoubleFile\WinDoubleFile_Folders.xaml.cs">
-      <DependentUpon>WinDoubleFile_Folders.xaml</DependentUpon>
+    <Compile Include="Win\WinFolders.xaml.cs">
+      <DependentUpon>WinFolders.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utilities\LocalWindowBase.cs" />
     <Compile Include="WinProject\MVVM_WinProject\LV_ProjectVM_Impl.cs" />
@@ -428,27 +428,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WinDoubleFile\UtilDirList Local\WinTreeMap.xaml">
+    <Page Include="Win\WinTreeMap.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WinDoubleFile\WinDoubleFile_Detail.xaml">
+    <Page Include="Win\WinDetail.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WinDoubleFile\WinDoubleFile_Duplicates.xaml">
+    <Page Include="Win\WinDuplicates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WinDoubleFile\WinDoubleFile_Files.xaml">
+    <Page Include="Win\WinFiles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WinDoubleFile\WinDoubleFile_Search.xaml">
+    <Page Include="Win\WinSearch.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WinDoubleFile\WinDoubleFile_TreeList.xaml">
+    <Page Include="Win\WinTreeList.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -460,7 +460,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WinDoubleFile\WinDoubleFile_Folders.xaml">
+    <Page Include="Win\WinFolders.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

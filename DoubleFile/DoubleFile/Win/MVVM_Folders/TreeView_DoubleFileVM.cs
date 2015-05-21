@@ -6,19 +6,19 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    class TreeView_DoubleFileVM
+    class TreeViewVM
     {
-        internal TreeViewItem_DoubleFileVM
+        internal TreeViewItemVM
             SelectedItem { get; set; }
-        internal Dictionary<TreeViewItem_DoubleFileVM, bool>
-            _listExpanded = new Dictionary<TreeViewItem_DoubleFileVM, bool>();
+        internal Dictionary<TreeViewItemVM, bool>
+            _listExpanded = new Dictionary<TreeViewItemVM, bool>();
 
-        internal TreeView_DoubleFileVM(TreeView tvfe, IEnumerable<LocalTreeNode> rootNodes)
+        internal TreeViewVM(TreeView tvfe, IEnumerable<LocalTreeNode> rootNodes)
         {
             var nIndex = -1;
 
             foreach (var treeNode in rootNodes)
-                _Items.Add(new TreeViewItem_DoubleFileVM(this, treeNode, ++nIndex));
+                _Items.Add(new TreeViewItemVM(this, treeNode, ++nIndex));
 
             UtilProject.UIthread(() => tvfe.DataContext = _Items);
 
@@ -26,7 +26,7 @@ namespace DoubleFile
                 .Subscribe(x => { if (0 < _Items.Count) _Items[0].SelectedItem_Set(true, nInitiator: 0); });
         }
 
-        readonly ObservableCollection<TreeViewItem_DoubleFileVM>
-            _Items = new ObservableCollection<TreeViewItem_DoubleFileVM>();
+        readonly ObservableCollection<TreeViewItemVM>
+            _Items = new ObservableCollection<TreeViewItemVM>();
     }
 }

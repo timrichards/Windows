@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace DoubleFile
 {
-    partial class TreeViewItem_DoubleFileVM : ObservableObjectBase
+    partial class TreeViewItemVM : ObservableObjectBase
     {
         public string Text { get { return ("" + _datum.Text); } }
         public Brush Foreground { get { return _isSelected ? Brushes.Transparent : _datum.Foreground; } }
@@ -15,14 +15,14 @@ namespace DoubleFile
         public Brush Background { get { return UtilColor.ARGBtoBrush(_datum.BackColor); } }
         public FontWeight FontWeight { get { return _isSelected ? FontWeights.ExtraBold : FontWeights.Normal; } }
 
-        internal readonly TreeViewItem_DoubleFileVM
+        internal readonly TreeViewItemVM
             _Parent = null;
-        internal readonly TreeView_DoubleFileVM
+        internal readonly TreeViewVM
             _TVVM = null;
         internal readonly LocalTreeNode
             _datum = null;
 
-        public ObservableCollection<TreeViewItem_DoubleFileVM> Items
+        public ObservableCollection<TreeViewItemVM> Items
         {
             get
             {
@@ -31,19 +31,19 @@ namespace DoubleFile
                 {
                     var nIndex = -1;
 
-                    _Items = new ObservableCollection<TreeViewItem_DoubleFileVM>
+                    _Items = new ObservableCollection<TreeViewItemVM>
                     (
                         from
                             item
                             in _datum.Nodes
-                            select new TreeViewItem_DoubleFileVM(_TVVM, item, this, ++nIndex)
+                            select new TreeViewItemVM(_TVVM, item, this, ++nIndex)
                     );
                 }
 
                 return _Items;
             }
         }
-        ObservableCollection<TreeViewItem_DoubleFileVM> _Items = null;
+        ObservableCollection<TreeViewItemVM> _Items = null;
 
         public bool IsExpanded
         {
@@ -89,8 +89,8 @@ namespace DoubleFile
 
             _TVVM.SelectedItem = this;
 
-            var stackParents = new Stack<TreeViewItem_DoubleFileVM>(8);
-            var listParents = new Dictionary<TreeViewItem_DoubleFileVM, bool>();
+            var stackParents = new Stack<TreeViewItemVM>(8);
+            var listParents = new Dictionary<TreeViewItemVM, bool>();
             var parentItem = _Parent;
 
             while (parentItem != null)
@@ -145,12 +145,12 @@ namespace DoubleFile
         }
         bool _isSelected = false;
 
-        internal TreeViewItem_DoubleFileVM(TreeView_DoubleFileVM tvvm, LocalTreeNode datum_in, int nIndex)
+        internal TreeViewItemVM(TreeViewVM tvvm, LocalTreeNode datum_in, int nIndex)
             : this(tvvm, datum_in, null, nIndex)
         { }
 
-        TreeViewItem_DoubleFileVM(TreeView_DoubleFileVM tvvm, LocalTreeNode datum_in,
-            TreeViewItem_DoubleFileVM parent, int nIndex)
+        TreeViewItemVM(TreeViewVM tvvm, LocalTreeNode datum_in,
+            TreeViewItemVM parent, int nIndex)
         {
             _TVVM = tvvm;
             _datum = datum_in;

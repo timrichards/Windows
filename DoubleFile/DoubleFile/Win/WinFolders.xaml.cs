@@ -14,7 +14,7 @@ namespace DoubleFile
 
         protected override void LocalNavigatedTo()
         {
-            new TreeView_DoubleFileVM(form_tv, LocalTV.RootNodes);
+            new TreeViewVM(form_tv, LocalTV.RootNodes);
         }
 
         protected override void CopyTag_NewWindow(WeakReference wr)

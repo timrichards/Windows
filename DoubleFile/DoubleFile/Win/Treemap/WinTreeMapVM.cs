@@ -10,6 +10,6 @@ namespace DoubleFile
         internal IObservable<Tuple<LocalTreeNode, int>>
             TreeNodeCallback { get { return _treeNodeCallback.AsObservable(); } }
         readonly LocalSubject<LocalTreeNode> _treeNodeCallback = new LocalSubject<LocalTreeNode>();
-        internal override void GoTo(LocalTreeNode treeNode) { _treeNodeCallback.LocalOnNext(treeNode, 99982); }
+        internal override void GoTo(LocalTreeNode treeNode) { _treeNodeCallback.LocalOnNext(treeNode, 99853); }
     }
 }

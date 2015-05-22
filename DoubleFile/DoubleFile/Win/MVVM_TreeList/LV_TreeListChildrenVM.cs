@@ -50,6 +50,7 @@ namespace DoubleFile
         }
         void SelectedItem_AllTriggers()
         {
+            DeepNode = _selectedItem.LocalTreeNode;
         }
         LVitem_TreeListVM _selectedItem = null;
 

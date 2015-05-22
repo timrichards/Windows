@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Linq;
 
 namespace DoubleFile
 {
@@ -10,20 +11,22 @@ namespace DoubleFile
         public WinTreeList()
         {
             InitializeComponent();
+
+            Observable.FromEventPattern(form_slider, "LostMouseCapture")
+                .Subscribe(x => { if (null != _lvTreeListChildrenVM) _lvTreeListChildrenVM.LostMouseCapture(); });
         }
 
         protected override void LocalNavigatedTo()
         {
-            var lvChildrenVM = new LV_TreeListChildrenVM();
-
             formLV_Children.DataContext = 
                 form_gridChildrenCtls.DataContext =
-                lvChildrenVM;
+                _lvTreeListChildrenVM =
+                new LV_TreeListChildrenVM();
 
             Tag =
                 formLV_Siblings.DataContext =
                 _lvTreeListSiblingsVM =
-                new LV_TreeListSiblingsVM(lvChildrenVM);
+                new LV_TreeListSiblingsVM(_lvTreeListChildrenVM);
         }
 
         protected override void CopyTag_NewWindow(WeakReference wr)
@@ -40,5 +43,7 @@ namespace DoubleFile
 
         LV_TreeListSiblingsVM
             _lvTreeListSiblingsVM = null;
+        LV_TreeListChildrenVM
+            _lvTreeListChildrenVM = null;
     }
 }

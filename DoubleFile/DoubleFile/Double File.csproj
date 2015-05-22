@@ -192,7 +192,7 @@
     <Compile Include="Win\MVVM_TreeList\LVitem_TreeListVM.cs" />
     <Compile Include="Win\MVVM_TreeList\LV_TreeListChildrenVM.cs" />
     <Compile Include="Utilities\GetOneNodeByRootPath.cs" />
-    <Compile Include="Win\Slider.cs" />
+    <Compile Include="Win\SliderVM_Base.cs" />
     <Compile Include="Win\WinTreeMap.xaml.cs">
       <DependentUpon>WinTreeMap.xaml</DependentUpon>
     </Compile>
@@ -253,7 +253,7 @@
     <Compile Include="Utilities\Tree\TreeBase\Tree\TreeRootNodeBuilder\DirData.cs" />
     <Compile Include="Utilities\Tree\TreeBase\Tree\TreeRootNodeBuilder\Node.cs" />
     <Compile Include="Utilities\Tree\TreeBase\Tree\TreeRootNodeBuilder\RootNode.cs" />
-    <Compile Include="Utilities\Tree\TreeSelect.cs" />
+    <Compile Include="Utilities\TreeSelect.cs" />
     <Compile Include="Utilities\FolderKeyTuple.cs" />
     <Compile Include="Utilities\Tree\LVitemFileTag.cs" />
     <Compile Include="Win\Treemap\UC_TreeMap.cs" />

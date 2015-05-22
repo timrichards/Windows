@@ -5,7 +5,7 @@ using System.Windows.Input;
 
 namespace DoubleFile
 {
-    class LV_TreeListChildrenVM : Slider<LVitem_TreeListVM>
+    class LV_TreeListChildrenVM : SliderVM_Base<LVitem_TreeListVM>
     {
         public ICommand Icmd_GoTo { get; private set; }
         internal override void GoTo(LocalTreeNode treeNode) { treeNode.GoToFile(null); }

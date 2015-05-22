@@ -3,7 +3,7 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    class WinTreeMapVM : Slider<ListViewItemVM_Base>
+    class WinTreeMapVM : SliderVM_Base<ListViewItemVM_Base>
     {
         internal override int NumCols { get { return 0; } }
 

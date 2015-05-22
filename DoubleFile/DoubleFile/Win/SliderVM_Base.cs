@@ -3,7 +3,7 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    abstract class Slider<T> : ListViewVM_Base<T>
+    abstract class SliderVM_Base<T> : ListViewVM_Base<T>
         where T : ListViewItemVM_Base
     {
         internal abstract void GoTo(LocalTreeNode treeNode);

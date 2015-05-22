@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Reactive.Linq;
+using System;
 
 namespace DoubleFile
 {
@@ -10,16 +11,12 @@ namespace DoubleFile
         public WinTreeView()
         {
             InitializeComponent();
-        }
-
-        protected override void LocalNavigatedTo()
-        {
             new TreeViewVM(form_tv, LocalTV.RootNodes);
         }
 
-        protected override void CopyTag_NewWindow(WeakReference wr)
+        protected override void LocalWindowClosed()
         {
-            LocalNavigatedTo();
+            form_tv.DataContext = null;
         }
     }
 }

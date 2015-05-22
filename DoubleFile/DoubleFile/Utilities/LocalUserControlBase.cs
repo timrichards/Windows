@@ -8,8 +8,11 @@ namespace DoubleFile
 {
     public abstract class LocalUserControlBase : UserControl, IContent
     {
+        public string LocalTitle { get; set; }
+
         public void OnFragmentNavigation(FragmentNavigationEventArgs e) { }
-        public void OnNavigatedFrom(NavigationEventArgs e) { LocalDispose_WindowClosed(); }
+        public void OnNavigatedFrom(NavigationEventArgs e) { LocalNavigatedFrom(); }
+        virtual protected void LocalNavigatedFrom() { }
         public void OnNavigatedTo(NavigationEventArgs e) { MainWindow.CurrentPage = this; LocalNavigatedTo(); }
         virtual protected void LocalNavigatedTo() { }
         public void OnNavigatingFrom(NavigatingCancelEventArgs e)
@@ -26,35 +29,36 @@ namespace DoubleFile
             var page = MainWindow.CurrentPage;
             var content = Activator.CreateInstance(page.GetType()) as LocalUserControlBase;
 
-            content.CopyTag_NewWindow(new WeakReference(page.Tag));
-
             var window = new ExtraWindow
             {
                 Content = content,
                 Title = page.LocalTitle,
-            }
-                .Show();
+            };
+
+            Observable.FromEventPattern(window, "Loaded")
+                .Subscribe(x =>
+            {
+                content.LocalNavigatedTo();
+                //content.CopyTag_NewWindow(new WeakReference(page.Tag));
+            });
 
             Observable.FromEventPattern(window, "Closed")
-                .Subscribe(x => content.LocalDispose_WindowClosed());
+                .Subscribe(x =>
+            {
+                content.LocalNavigatedFrom();
+                content.LocalWindowClosed();
+            });
 
+            window.Show();
             e.Cancel = true;
         }
 
-        virtual protected void CopyTag_NewWindow(WeakReference weakReference)
+        //virtual protected void CopyTag_NewWindow(WeakReference weakReference)
+        //{
+        //}
+
+        virtual protected void LocalWindowClosed()
         {
         }
-
-        virtual protected void LocalDispose_WindowClosed()
-        {
-        }
-
-        public string LocalTitle { get; set; }
-
-        internal bool LocalIsClosed { get; private set; }
-        internal bool LocalIsClosing { get; private set; }
-
-        internal bool? LocalDialogResult { get; set; }
-        internal void CloseIfSimulatingModal() { }
     }
 }

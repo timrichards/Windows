@@ -29,13 +29,7 @@ namespace DoubleFile
                 new LV_TreeListSiblingsVM(_lvTreeListChildrenVM);
         }
 
-        protected override void CopyTag_NewWindow(WeakReference wr)
-        {
-            LocalNavigatedTo();
-            _lvTreeListSiblingsVM.CopyFrom(wr.Target as LV_TreeListSiblingsVM);
-        }
-
-        protected override void LocalDispose_WindowClosed()
+        protected override void LocalNavigatedFrom()
         {
             if (null != _lvTreeListSiblingsVM)
                 _lvTreeListSiblingsVM.Dispose();

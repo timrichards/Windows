@@ -16,15 +16,6 @@ namespace DoubleFile
         {
             InitializeComponent();
 
-            Observable.FromEventPattern(this, "SizeChanged")
-                .Subscribe(x => { if (null != _ucTreeMap) _ucTreeMap.ClearSelection(); });
-
-            Observable.FromEventPattern(form_slider, "LostMouseCapture")
-                .Subscribe(x => { if (null != _ucTreeMap) _ucTreeMap.TreeMapVM.LostMouseCapture(); });
-        }
-
-        protected override void LocalNavigatedTo()
-        {
             _host.Child =
                 _ucTreeMap =
                 new UC_TreeMap()
@@ -35,21 +26,27 @@ namespace DoubleFile
 
             DataContext = _ucTreeMap.TreeMapVM;
 
+            Observable.FromEventPattern(this, "SizeChanged")
+                .Subscribe(x => { if (null != _ucTreeMap) _ucTreeMap.ClearSelection(); });
+
+            Observable.FromEventPattern(form_slider, "LostMouseCapture")
+                .Subscribe(x => { if (null != _ucTreeMap) _ucTreeMap.TreeMapVM.LostMouseCapture(); });
+        }
+
+        protected override void LocalNavigatedTo()
+        {
             var treeNode = LocalTV.TopNode;
             var folderDetail = LocalTV.TreeSelect_FolderDetail;
 
-            if (null != folderDetail)
+            if (null == folderDetail)
+                TreeSelect.DoThreadFactory(LocalTV.TopNode, 0);
+            else
                 treeNode = folderDetail.Item2;
 
             _ucTreeMap.TreeMapVM.GoTo(treeNode);
         }
 
-        protected override void CopyTag_NewWindow(WeakReference wr)
-        {
-            LocalNavigatedTo();
-        }
-
-        protected override void LocalDispose_WindowClosed()
+        protected override void LocalWindowClosed()
         {
             if (null != _ucTreeMap)
                 _ucTreeMap.Dispose();

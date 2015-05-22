@@ -21,12 +21,7 @@
                 .Init();
         }
 
-        protected override void CopyTag_NewWindow(System.WeakReference weakReference)
-        {
-            LocalNavigatedTo();
-        }
-
-        protected override void LocalDispose_WindowClosed()
+        protected override void LocalNavigatedFrom()
         {
             if (null != _winSearchVM)
                 _winSearchVM.Dispose();

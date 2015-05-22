@@ -19,12 +19,7 @@ namespace DoubleFile
             InitializeComponent();
         }
 
-        protected override void CopyTag_NewWindow(WeakReference wr)
-        {
-            LocalNavigatedTo();
-        }
-
-        protected override void LocalDispose_WindowClosed()
+        protected override void LocalNavigatedFrom()
         {
             if (null != _lvFilesVM)
                 _lvFilesVM.Dispose();

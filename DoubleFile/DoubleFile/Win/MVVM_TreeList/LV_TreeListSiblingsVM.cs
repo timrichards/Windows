@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace DoubleFile
 {
@@ -154,12 +155,18 @@ namespace DoubleFile
                 }
             }
 
+            bool bCompleted = false;
+
             Util.UIthread(() =>
             {
                 Add(lsLVitems);
-                SelectedItem_Set(selectedItem);     // doesn't need to be on the UI thread: just needs to follow Add
+                bCompleted = true;
             });
 
+            while (false == bCompleted)
+                Thread.Sleep(20);
+
+            SelectedItem_Set(selectedItem);
             return true;
         }
 

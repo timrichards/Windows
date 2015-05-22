@@ -26,7 +26,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>169</ApplicationRevision>
+    <ApplicationRevision>170</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -192,6 +192,7 @@
     <Compile Include="Win\MVVM_TreeList\LVitem_TreeListVM.cs" />
     <Compile Include="Win\MVVM_TreeList\LV_TreeListChildrenVM.cs" />
     <Compile Include="Utilities\GetOneNodeByRootPath.cs" />
+    <Compile Include="Win\Slider.cs" />
     <Compile Include="Win\WinTreeMap.xaml.cs">
       <DependentUpon>WinTreeMap.xaml</DependentUpon>
     </Compile>

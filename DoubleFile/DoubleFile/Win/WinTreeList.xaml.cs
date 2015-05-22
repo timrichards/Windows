@@ -16,7 +16,9 @@ namespace DoubleFile
         {
             var lvChildrenVM = new LV_TreeListChildrenVM();
 
-            formLV_Children.DataContext = lvChildrenVM;
+            formLV_Children.DataContext = 
+                form_gridChildrenCtls.DataContext =
+                lvChildrenVM;
 
             Tag =
                 formLV_Siblings.DataContext =

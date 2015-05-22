@@ -1,16 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
+using System.Windows.Input;
 
 namespace DoubleFile
 {
-    class LV_TreeListChildrenVM : ListViewVM_Base<LVitem_TreeListVM>
+    class LV_TreeListChildrenVM : Slider<LVitem_TreeListVM>
     {
+        public ICommand Icmd_GoTo { get; private set; }
+        internal override void GoTo(LocalTreeNode treeNode) { treeNode.GoToFile(null); }
+
         static internal IObservable<Tuple<LocalTreeNode, int>>
             TreeListChildSelected { get { return _treeListChildSelected.AsObservable(); } }
         static readonly LocalSubject<LocalTreeNode> _treeListChildSelected = new LocalSubject<LocalTreeNode>();
         static void TreeListChildSelectedOnNext(LocalTreeNode value) { _treeListChildSelected.LocalOnNext(value, kChildSelectedOnNext); }
         internal const int kChildSelectedOnNext = 99854;
+
+        internal LV_TreeListChildrenVM()
+        {
+            Icmd_GoTo = new RelayCommand(() => _selectedItem.LocalTreeNode.GoToFile(null), () => null != _selectedItem);
+        }
 
         public LVitem_TreeListVM SelectedItem
         {

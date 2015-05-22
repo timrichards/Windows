@@ -11,7 +11,6 @@ namespace DoubleFile
         public LVitem_FileDuplicatesVM SelectedItem
         {
             get { return _selectedItem; }
-
             set
             {
                 if (value == _selectedItem)

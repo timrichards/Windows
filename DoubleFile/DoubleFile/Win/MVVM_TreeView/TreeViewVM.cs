@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Reactive.Linq;
+using System.Threading;
 
 namespace DoubleFile
 {
@@ -20,10 +21,24 @@ namespace DoubleFile
             foreach (var treeNode in rootNodes)
                 _Items.Add(new TreeViewItemVM(this, treeNode, ++nIndex));
 
-            Util.UIthread(() => tvfe.DataContext = _Items);
+            bool bCompleted = false;
 
-            Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()
-                .Subscribe(x => { if (0 < _Items.Count) _Items[0].SelectedItem_Set(true, nInitiator: 0); });
+            Util.UIthread(() =>
+            {
+                tvfe.DataContext = _Items;
+                bCompleted = true;
+            });
+
+            while (false == bCompleted)
+                Thread.Sleep(20);
+
+            if (0 > _Items.Count)
+                return;     // from lambda
+
+            var folderDetail = LocalTV.TreeSelect_FolderDetail;
+
+            if (null == folderDetail)
+                _Items[0].SelectedItem_Set(true, nInitiator: 0);
         }
 
         readonly ObservableCollection<TreeViewItemVM>

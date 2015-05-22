@@ -17,7 +17,7 @@ namespace DoubleFile
             private set { formTextBlock_Message.Text = value; }
         }
 
-        MessageBoxButton Buttons
+        new MessageBoxButton Buttons
         {
             set
             {

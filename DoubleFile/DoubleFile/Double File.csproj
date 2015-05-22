@@ -178,20 +178,21 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Utilities\ILocalWindow.cs" />
-    <Compile Include="Utilities\LocalModernWindowBase.cs" />
-    <Compile Include="Utilities\LocalSubject.cs" />
-    <Compile Include="Utilities\LocalUserControlBase.cs" />
-    <Compile Include="Utilities\Win32Screen\MONITORINFO.cs" />
-    <Compile Include="Utilities\Win32Screen\RECT.cs" />
-    <Compile Include="Utilities\Win32Screen\SWP.cs" />
-    <Compile Include="Utilities\Win32Screen\Win32Screen.cs" />
+    <Compile Include="Util\ILocalWindow.cs" />
+    <Compile Include="Util\LocalModernDialogBase.cs" />
+    <Compile Include="Util\LocalModernWindowBase.cs" />
+    <Compile Include="Util\LocalSubject.cs" />
+    <Compile Include="Util\LocalUserControlBase.cs" />
+    <Compile Include="Util\Win32Screen\MONITORINFO.cs" />
+    <Compile Include="Util\Win32Screen\RECT.cs" />
+    <Compile Include="Util\Win32Screen\SWP.cs" />
+    <Compile Include="Util\Win32Screen\Win32Screen.cs" />
     <Compile Include="Win\MVVM_Search\LVitem_SearchVM.cs" />
     <Compile Include="Win\MVVM_Search\WinSearchVM_Impl.cs" />
     <Compile Include="Win\MVVM_Search\WinSearchVM.cs" />
     <Compile Include="Win\MVVM_TreeList\LVitem_TreeListVM.cs" />
     <Compile Include="Win\MVVM_TreeList\LV_TreeListChildrenVM.cs" />
-    <Compile Include="Utilities\GetOneNodeByRootPath.cs" />
+    <Compile Include="Util\GetOneNodeByRootPath.cs" />
     <Compile Include="Win\SliderVM_Base.cs" />
     <Compile Include="Win\WinTreeMap.xaml.cs">
       <DependentUpon>WinTreeMap.xaml</DependentUpon>
@@ -214,7 +215,7 @@
     <Compile Include="Win\MVVM_TreeList\LV_TreeListSiblingsVM.cs" />
     <Compile Include="Win\Treemap\WinTreeMapVM.cs" />
     <Compile Include="Win\Treemap\LocalTreeMapNode.cs" />
-    <Compile Include="Utilities\Tree\DetailsDatum.cs" />
+    <Compile Include="Util\Tree\DetailsDatum.cs" />
     <Compile Include="Win\Treemap\WinTooltip.xaml.cs">
       <DependentUpon>WinTooltip.xaml</DependentUpon>
     </Compile>
@@ -230,13 +231,13 @@
     <Compile Include="Win\MVVM_Duplicates\LVitem_FileDuplicatesVM.cs" />
     <Compile Include="Win\MVVM_Duplicates\WinDuplicatesVM.cs" />
     <Compile Include="Win\MVVM_Duplicates\WinDuplicatesVM_Impl.cs" />
-    <Compile Include="Utilities\LocalMbox.xaml.cs">
+    <Compile Include="Util\LocalMbox.xaml.cs">
       <DependentUpon>LocalMbox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utilities\Collate.cs" />
-    <Compile Include="Utilities\Collate\AddTreeToList.cs" />
-    <Compile Include="Utilities\Collate\InsertSizeMarkerStatic.cs" />
-    <Compile Include="Utilities\CountNodes.cs" />
+    <Compile Include="Util\Collate.cs" />
+    <Compile Include="Util\Collate\AddTreeToList.cs" />
+    <Compile Include="Util\Collate\InsertSizeMarkerStatic.cs" />
+    <Compile Include="Util\CountNodes.cs" />
     <Compile Include="LocalForms\LocalLV.cs" />
     <Compile Include="LocalForms\LocalLVitem.cs" />
     <Compile Include="Win\SearchListings\SearchBase.cs" />
@@ -244,25 +245,25 @@
     <Compile Include="Win\SearchListings\SearchBase\SearchListings\SearchListing.cs" />
     <Compile Include="Win\SearchListings\SearchResults.cs" />
     <Compile Include="Win\SearchListings\SearchResultsDir.cs" />
-    <Compile Include="Utilities\Tree\DetailsDatum\NodeDatum.cs" />
-    <Compile Include="Utilities\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
-    <Compile Include="Utilities\Tree\LVitemNameComparerStruct.cs" />
-    <Compile Include="Utilities\Tree\TreeBase.cs" />
-    <Compile Include="Utilities\Tree\TreeBase\Tree.cs" />
-    <Compile Include="Utilities\Tree\TreeBase\Tree\TreeRootNodeBuilder.cs" />
-    <Compile Include="Utilities\Tree\TreeBase\Tree\TreeRootNodeBuilder\DirData.cs" />
-    <Compile Include="Utilities\Tree\TreeBase\Tree\TreeRootNodeBuilder\Node.cs" />
-    <Compile Include="Utilities\Tree\TreeBase\Tree\TreeRootNodeBuilder\RootNode.cs" />
-    <Compile Include="Utilities\TreeSelect.cs" />
-    <Compile Include="Utilities\FolderKeyTuple.cs" />
-    <Compile Include="Utilities\Tree\LVitemFileTag.cs" />
+    <Compile Include="Util\Tree\DetailsDatum\NodeDatum.cs" />
+    <Compile Include="Util\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
+    <Compile Include="Util\Tree\LVitemNameComparerStruct.cs" />
+    <Compile Include="Util\Tree\TreeBase.cs" />
+    <Compile Include="Util\Tree\TreeBase\Tree.cs" />
+    <Compile Include="Util\Tree\TreeBase\Tree\TreeRootNodeBuilder.cs" />
+    <Compile Include="Util\Tree\TreeBase\Tree\TreeRootNodeBuilder\DirData.cs" />
+    <Compile Include="Util\Tree\TreeBase\Tree\TreeRootNodeBuilder\Node.cs" />
+    <Compile Include="Util\Tree\TreeBase\Tree\TreeRootNodeBuilder\RootNode.cs" />
+    <Compile Include="Util\TreeSelect.cs" />
+    <Compile Include="Util\FolderKeyTuple.cs" />
+    <Compile Include="Util\Tree\LVitemFileTag.cs" />
     <Compile Include="Win\Treemap\UC_TreeMap.cs" />
-    <Compile Include="Utilities\FlashWindowStatic.cs" />
-    <Compile Include="Utilities\UtilColor.cs" />
-    <Compile Include="Utilities\FileDictionary.cs" />
-    <Compile Include="Utilities\FileDictionary\DuplicateStruct.cs" />
-    <Compile Include="Utilities\FileKeyTuple.cs" />
-    <Compile Include="Utilities\HashTuple.cs" />
+    <Compile Include="Util\FlashWindowStatic.cs" />
+    <Compile Include="Util\UtilColor.cs" />
+    <Compile Include="Util\FileDictionary.cs" />
+    <Compile Include="Util\FileDictionary\DuplicateStruct.cs" />
+    <Compile Include="Util\FileKeyTuple.cs" />
+    <Compile Include="Util\HashTuple.cs" />
     <Compile Include="Win\MVVM_Files\LVitem_FilesVM.cs" />
     <Compile Include="Win\MVVM_Files\LV_FilesVM.cs" />
     <Compile Include="Win\MVVM_Files\LV_FilesVM_Impl.cs" />
@@ -276,35 +277,35 @@
     <Compile Include="Win\WinTreeView.xaml.cs">
       <DependentUpon>WinTreeView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utilities\LocalWindowBase.cs" />
+    <Compile Include="Util\LocalWindowBase.cs" />
     <Compile Include="WinProject\MVVM_Project\LV_ProjectVM_Impl.cs" />
-    <Compile Include="WinProject\UtilProject\SaveDirListings\SaveDirListing.cs">
+    <Compile Include="WinProject\SaveDirListings\SaveDirListing.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinProject\UtilProject\SaveDirListings\SaveDirListings.cs">
+    <Compile Include="WinProject\SaveDirListings\SaveDirListings.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinProject\UtilProject\SaveDirListings\SaveListingsProcess.cs">
+    <Compile Include="WinProject\SaveDirListings\SaveListingsProcess.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinProject\UtilProject\SaveDirListings\TraverseTreeBase.cs">
+    <Compile Include="WinProject\SaveDirListings\TraverseTreeBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Utilities\FileParse.cs" />
+    <Compile Include="Util\FileParse.cs" />
     <Compile Include="MVVM\ObservableObjectBase.cs" />
     <Compile Include="MVVM\ObservableObject_OwnerWindow.cs" />
-    <Compile Include="Utilities\MVVM_WinProgress\LVitem_ProgressVM.cs" />
-    <Compile Include="Utilities\MVVM_WinProgress\LV_ProgressVM.cs" />
+    <Compile Include="Util\MVVM_WinProgress\LVitem_ProgressVM.cs" />
+    <Compile Include="Util\MVVM_WinProgress\LV_ProgressVM.cs" />
     <Compile Include="WinProject\MVVM_Project\LV_ProjectVM.cs" />
     <Compile Include="WinProject\MVVM_Project\WinProjectVM_Impl.cs" />
     <Compile Include="WinProject\MVVM_Project\LVitem_ProjectVM.cs" />
-    <Compile Include="WinProject\UtilProject\DriveSerialStatic.cs" />
-    <Compile Include="Utilities\MBoxStatic.cs" />
-    <Compile Include="WinProject\UtilProject\ProjectFile.cs" />
-    <Compile Include="Utilities\TabledString.cs" />
-    <Compile Include="Utilities\Util.cs" />
-    <Compile Include="WinProject\UtilProject\Win32FindFileStatic.cs" />
-    <Compile Include="Utilities\ExtensionMethodsStatic.cs" />
+    <Compile Include="WinProject\DriveSerialStatic.cs" />
+    <Compile Include="Util\MBoxStatic.cs" />
+    <Compile Include="WinProject\ProjectFile.cs" />
+    <Compile Include="Util\TabledString.cs" />
+    <Compile Include="Util\Util.cs" />
+    <Compile Include="WinProject\Win32FindFileStatic.cs" />
+    <Compile Include="Util\ExtensionMethodsStatic.cs" />
     <Compile Include="WinProject\MVVM_Project\WinProjectVM.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -312,7 +313,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Utilities\WinProgress.xaml.cs">
+    <Compile Include="Util\WinProgress.xaml.cs">
       <DependentUpon>WinProgress.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -453,7 +454,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Utilities\LocalMbox.xaml">
+    <Page Include="Util\LocalMbox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -461,7 +462,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Utilities\WinProgress.xaml">
+    <Page Include="Util\WinProgress.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -496,10 +497,10 @@
     <Resource Include="Assets\ic_folder_open_white_18dp.png" />
     <Resource Include="Assets\ic_save_white_18dp.png" />
     <Resource Include="Assets\ic_error_black_18dp.png" />
-    <Content Include="WinProject\UtilProject\7z920x86\7z.dll">
+    <Content Include="WinProject\7z920x86\7z.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="WinProject\UtilProject\7z920x86\7z.exe">
+    <Content Include="WinProject\7z920x86\7z.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="_Todo.txt" />

@@ -1,11 +1,12 @@
-﻿using System;
-using System.Windows.Threading;
-using System.Windows;
+﻿using FirstFloor.ModernUI.Windows.Controls;
+using System;
 using System.Reactive.Linq;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace DoubleFile
 {
-    abstract public class LocalWindowBase : Window, ILocalWindow
+    abstract public class LocalModernDialogBase : ModernDialog, ILocalWindow
     {
         public bool LocalIsClosed { get; private set; }
         internal bool LocalIsClosing { get; private set; }
@@ -30,7 +31,7 @@ namespace DoubleFile
         }
         bool? _localDialogResult = null;
 
-        protected LocalWindowBase(Action<Action> InitForMainWindowOnly = null)
+        protected LocalModernDialogBase(Action<Action> InitForMainWindowOnly = null)
         {
             if (null != InitForMainWindowOnly)
             {
@@ -92,16 +93,17 @@ namespace DoubleFile
                 Close();
         }
 
-        internal new void Show()
+        internal new Window Show()
         {
             if ((null != MBoxStatic.MessageBox)) // &&
-            //    (this != MBoxStatic.MessageBox))
+    //            (this != MBoxStatic.MessageBox))
             {
-                return;
+                return this;
             }
 
             Owner = (Window)App.TopWindow;
             base.Show();
+            return this;
         }
 
         internal new bool? ShowDialog() { return ShowDialog(App.TopWindow); }

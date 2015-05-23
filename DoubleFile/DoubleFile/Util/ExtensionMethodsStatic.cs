@@ -38,7 +38,8 @@ namespace DoubleFile
                 _lsSubjects[nOnNextAssertLoc] = Tuple.Create(DateTime.Now, new WeakReference(value));
                 new Thread(() => subject.OnNext(Tuple.Create(value, nInitiator))).Start();
             }
-            else
+            else if ((nOnNextAssertLoc < 99830) ||      // 99830 block is reserved: do not alert LocalOnNext
+                (nOnNextAssertLoc >= 99840))
             {
                 MBoxStatic.Assert(nOnNextAssertLoc, false);
             }

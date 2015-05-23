@@ -353,23 +353,18 @@ namespace DoubleFile
             if (false == _bProcessing)
                 return true;
 
-            var bRet = false;
-
-            Util.UIthread(() =>
+            if (MessageBoxResult.Yes ==
+                MBoxStatic.ShowDialog("Do you want to cancel?", _status, MessageBoxButton.YesNo, _winProgress))
             {
-                if (MessageBoxResult.Yes ==
-                    MBoxStatic.ShowDialog("Do you want to cancel?", _status, MessageBoxButton.YesNo, _winProgress))
-                {
-                    _bUserCanceled = true;
+                _bUserCanceled = true;
 
-                    if (false == _process.HasExited)
-                        _process.Kill();
+                if (false == _process.HasExited)
+                    _process.Kill();
 
-                    bRet = true;
-                }
-            });
+                return true;
+            }
 
-            return bRet;
+            return false;
         }
 
         bool ReportAnyErrors(Process process, string strMode, string strWin32Error)

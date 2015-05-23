@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 
 namespace DoubleFile
@@ -100,7 +101,16 @@ namespace DoubleFile
             Util.UIthread(() =>
                 MessageBox = new LocalMbox(owner ?? mainWindow, strMessage, strTitle, buttons));
 
-            Util.UIthread(() => msgBoxRet = MessageBox.ShowDialog());
+            bool bCompleted = false;
+
+            Util.UIthread(() =>
+            {
+                msgBoxRet = MessageBox.ShowDialog();
+                bCompleted = true;
+            });
+
+            while (false == bCompleted)
+                Thread.Sleep(100);
 
             if (null == MessageBox)
                 msgBoxRet = MessageBoxResult.None;          // canceled externally

@@ -308,7 +308,7 @@ namespace DoubleFile
                     {
                         File.Delete(lvItem_Orig.ListingFile);
                     }
-                    catch (System.Exception e)
+                    catch (Exception e)
                     {
                         MBoxStatic.ShowDialog("Couldn't overwrite file.\n" + e.GetBaseException().Message, "Edit Listing File");
                         return false;

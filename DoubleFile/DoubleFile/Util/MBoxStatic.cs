@@ -5,11 +5,6 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    delegate MessageBoxResult MBoxDelegate(
-        string strMessage,
-        string strTitle = null,
-        MessageBoxButton? buttons = null);
-
     static class MBoxStatic
     {
         static internal LocalMbox MessageBox { get; private set; }

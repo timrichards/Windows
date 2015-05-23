@@ -21,7 +21,7 @@ namespace DoubleFile
             {
                 _bIndeterminate = value;
 
-                ProgressState = _bIndeterminate ? Brushes.Yellow : Brushes.Blue;
+                ProgressState = _bIndeterminate ? Brushes.LightBlue : Brushes.LightBlue;
                 RaisePropertyChanged(_ksIndeterminate);
             }
         }
@@ -33,7 +33,7 @@ namespace DoubleFile
             get { return _brushProgressState; }
             private set { _brushProgressState = value; RaisePropertyChanged(_ksProgressState); }
         }
-        Brush _brushProgressState = Brushes.Navy;
+        Brush _brushProgressState = Brushes.LightBlue;
         
         public string
             Remaining { get { return marr[5]; } private set { SetProperty(5, value); } }

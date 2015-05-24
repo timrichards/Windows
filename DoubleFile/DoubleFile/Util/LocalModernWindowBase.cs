@@ -72,6 +72,10 @@ namespace DoubleFile
                     if (bCanFlashWindow)
                         FlashWindowStatic.Go((Window)topWindow);
                 }
+                else
+                {
+                    App.TopWindow = this;
+                }
             });
 
             ShowActivated = true;
@@ -125,7 +129,7 @@ namespace DoubleFile
                 return this;
             }
 
-            Owner = (Window)App.TopWindow;
+            Owner = (Window)App.LocalMainWindow;
             base.Show();
             return this;
         }
@@ -142,7 +146,6 @@ namespace DoubleFile
             // mysteriously leaves WinProject unpopulated after clicking OK: does not run any code
             // in MainWindow.xaml.cs after volumes.ShowDialog. Acts like a suppressed null pointer.
             I.SimulatingModal = true;           // Change it here to switch to simulated dialog
-            App.TopWindow = this;
             Owner = (Window)me;
 
             bool? bResult = null;

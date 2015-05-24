@@ -35,7 +35,7 @@
                 LargeChange="1" SmallChange="1" TickFrequency="1"
                 TickPlacement="TopLeft" Orientation="Vertical"
                 Delay="200"/>
-            <Button Command="{Binding Icmd_GoTo}" Grid.Row="1" Content="Go To" Margin="5,10,0,0" Width="60" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+            <Button Command="{Binding Icmd_GoTo}" Grid.Row="1" Content="Go To" Margin="5,10,0,0" Width="70" VerticalAlignment="Bottom" HorizontalAlignment="Right">
                 <Button.LayoutTransform>
                     <RotateTransform Angle="90" />
                 </Button.LayoutTransform>

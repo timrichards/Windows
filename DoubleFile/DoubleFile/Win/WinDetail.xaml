@@ -22,7 +22,7 @@
                     </Grid.ColumnDefinitions>
                     <Label VerticalAlignment="Center" Grid.Column="0" Content="Path:" Margin="10, 0"/>
                     <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Grid.Column="1" Text="{Binding LocalPath}" />
-                    <Button Grid.Column="2" Content="Copy" Width ="50" Command="{Binding Icmd_Copy}"/>
+                    <Button Grid.Column="2" Content="Copy" Width ="70" Command="{Binding Icmd_Copy}"/>
                 </Grid>
             </Border>
             <Border Style="{StaticResource styleBorder}">

@@ -2,6 +2,7 @@
 using System;
 using System.Reactive.Linq;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Threading;
 
 namespace DoubleFile
@@ -75,6 +76,14 @@ namespace DoubleFile
 
             ShowActivated = true;
 
+            Observable.FromEventPattern(this, "SourceInitialized")
+                .Subscribe(x =>
+            {
+                HwndSource
+                    .FromHwnd(new WindowInteropHelper(this).Handle)
+                    .AddHook(WndProc);
+            });
+
             Observable.FromEventPattern(this, "Loaded")
                 .Subscribe(x => LocalIsClosed = false);
 
@@ -87,6 +96,21 @@ namespace DoubleFile
             LocalIsClosed = true;
         }
 
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (this == App.TopWindow)
+                return IntPtr.Zero;
+
+            if (msg != NativeMethods.WM_SYSCOMMAND)
+                return IntPtr.Zero;
+
+            if (NativeMethods.Command(wParam) != NativeMethods.SC_MOVE)
+                return IntPtr.Zero;
+
+            handled = true;
+            return IntPtr.Zero;
+        }
+        
         internal void CloseIfSimulatingModal()
         {
             if (I.SimulatingModal)

@@ -45,7 +45,7 @@ namespace DoubleFile
             // get the work area or entire monitor rect. 
             // 
             mi.cbSize = Marshal.SizeOf(mi);
-            MONITORINFO.GetMonitorInfo(hMonitor, ref mi);
+            NativeMethods.GetMonitorInfo(hMonitor, ref mi);
 
             if (0 != (flags & MONITOR_WORKAREA))
                 rc = mi.rcWork;
@@ -95,7 +95,7 @@ namespace DoubleFile
 
             mi.cbSize = Marshal.SizeOf(mi);
 
-            var bSuccess = MONITORINFO.GetMonitorInfo(hMonitor, ref mi);
+            var bSuccess = NativeMethods.GetMonitorInfo(hMonitor, ref mi);
 
             MBoxStatic.Assert(99904, bSuccess, new Win32Exception(Marshal.GetLastWin32Error()).Message);
 

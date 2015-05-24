@@ -92,7 +92,7 @@ namespace DoubleFile
 
             var msgBoxRet = MessageBoxResult.None;
             var buttons = buttons_in ?? MessageBoxButton.OK;
-            
+
             Util.UIthread(() =>
                 MessageBox = new LocalMbox(owner ?? mainWindow, strMessage, strTitle, buttons));
 
@@ -112,7 +112,6 @@ namespace DoubleFile
             else
                 Util.UIthread(() => MessageBoxKill());
 
-            MessageBox = null;
             return msgBoxRet;
         }
     }

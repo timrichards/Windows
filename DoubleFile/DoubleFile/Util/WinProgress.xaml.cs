@@ -22,6 +22,19 @@ namespace DoubleFile
         {
             InitializeComponent();
 
+            MainWindow.WithMainWindow(mainWindow =>
+            {
+                Left = mainWindow.Left;
+                Width = mainWindow.Width;
+                return false;
+            });
+
+            Observable.FromEventPattern(this, "SourceInitialized")
+                .Subscribe(x =>
+            {
+                ResizeMode = ResizeMode.NoResize;
+            });
+
             Observable.FromEventPattern(form_grid, "Loaded")
                 .Subscribe(x => Grid_Loaded());
 

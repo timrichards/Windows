@@ -15,9 +15,9 @@
             </Grid.ColumnDefinitions>
             <TextBox Text="{Binding SearchText, Mode=OneWayToSource}" Name="formEdit_search" Grid.Column="0" HorizontalContentAlignment="Stretch"/>
             <StackPanel Grid.Column="1" Orientation="Horizontal">
-                <Button Command="{Binding Icmd_Folders}" Grid.Column="1" Content="Folders" Width="55"/>
-                <Button Command="{Binding Icmd_FoldersAndFiles}" Grid.Column="1" Content="Folders &amp; files" Width="90"/>
-                <Button Command="{Binding Icmd_Files}" Grid.Column="1" Content="Files" Width="40"/>
+                <Button Command="{Binding Icmd_Folders}" Grid.Column="1" Content="Folders" Width="80"/>
+                <Button Command="{Binding Icmd_FoldersAndFiles}" Grid.Column="1" Content="Folders &amp; files" Width="120"/>
+                <Button Command="{Binding Icmd_Files}" Grid.Column="1" Content="Files" Width="60"/>
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1" Margin="0,5,0,0">

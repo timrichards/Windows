@@ -155,6 +155,20 @@ namespace DoubleFile
 
         void ISearchStatus.Done()
         {
+            Done();
+
+            try
+            {
+                TabledString<Tabled_Files>.GenerationEnded();
+            }
+            catch (NullReferenceException)
+            {
+                MBoxStatic.Assert(99875, _bDisposed);
+            }
+        }
+
+        void Done()
+        {
             _searchType2 = null;
 
             var lsLVitems = new List<LVitem_SearchVM>();
@@ -201,6 +215,9 @@ namespace DoubleFile
 
             _dictResults = null;
 
+            if (lsLVitems.IsEmpty())
+                return;
+
             if (_bDisposed)
                 return;
 
@@ -208,15 +225,6 @@ namespace DoubleFile
 
             if (_bDisposed)
                 return;
-
-            try
-            {
-                TabledString<Tabled_Files>.GenerationEnded();
-            }
-            catch (NullReferenceException)
-            {
-                MBoxStatic.Assert(99875, _bDisposed);
-            }
         }
 
         SearchListings

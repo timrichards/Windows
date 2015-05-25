@@ -65,18 +65,21 @@ namespace DoubleFile
                 var bCanFlashWindow = App.CanFlashWindow_ResetsIt;     // querying it resets it
                 var topWindow = App.TopWindow;
 
-                if (topWindow.SimulatingModal &&
-                    (this != topWindow))
+                if (topWindow.SimulatingModal)
                 {
-                    topWindow.Activate();
+                    if ((this != topWindow) &&
+                        (false == I.SimulatingModal))
+                    {
+                        topWindow.Activate();
 
-                    if (bCanFlashWindow)
-                        FlashWindowStatic.Go((Window)topWindow);
+                        if (bCanFlashWindow)
+                            FlashWindowStatic.Go((Window)topWindow);
+                    }
+
+                    return;
                 }
-                else
-                {
-                    App.TopWindow = this;
-                }
+
+                App.TopWindow = this;
             });
 
             ShowActivated = true;

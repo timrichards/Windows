@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace DoubleFile
@@ -45,8 +44,8 @@ namespace DoubleFile
                 IDictionary<string, HashTuple> dictHash = null,
                 IReadOnlyDictionary<string, string> dictException_FileRead = null)
             {
-                var stackDirs = new Stack<Win32FindFileStatic.DATUM>(64);
-                Win32FindFileStatic.DATUM winRoot;
+                var stackDirs = new Stack<NativeMethods.DATUM>(64);
+                NativeMethods.DATUM winRoot;
 
                 Win32FindFileStatic.FileData.WinFile(LVitemProjectVM.SourcePath, out winRoot);
                 stackDirs.Push(winRoot);
@@ -68,8 +67,8 @@ namespace DoubleFile
                     var winDir = stackDirs.Pop();
                     var strFullPath = winDir.strAltFileName;
                     var strError2_Dir = CheckNTFS_chars(ref strFullPath);
-                    IEnumerable<Win32FindFileStatic.DATUM> ieSubDirs = null;
-                    IEnumerable<Win32FindFileStatic.DATUM> ieFiles = null;
+                    IEnumerable<NativeMethods.DATUM> ieSubDirs = null;
+                    IEnumerable<NativeMethods.DATUM> ieFiles = null;
                     string strWin32Error = null;
 
                     if (false == Win32FindFileStatic.GetDirectory(strFullPath, out ieSubDirs, out ieFiles, out strWin32Error))

@@ -1,25 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Management;
-using System.Runtime.InteropServices;
 
 namespace DoubleFile
 {
     static internal class DriveSerialStatic
     {
-        //[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, BestFitMapping = false), SuppressUnmanagedCodeSecurity]
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        static internal extern Microsoft.Win32.SafeHandles.SafeFileHandle CreateFile(
-            string lpFileName,
-            FileAccess dwDesiredAccess,
-            FileShare dwShareMode,
-            IntPtr lpSecurityAttributes,
-            int dwCreationDisposition,
-            FileAttributes dwFlagsAndAttributes,
-            IntPtr hTemplateFile);
-
         static internal void Get(string strPath, out string strDriveModel_out,
             out string strDriveSerial_out, out ulong? nSize_out)
         {

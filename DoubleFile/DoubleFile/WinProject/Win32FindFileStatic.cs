@@ -1,67 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Security;
 
 namespace DoubleFile
 {
     static class Win32FindFileStatic
     {
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        internal struct DATUM : IComparable
-        {
-            internal FileAttributes fileAttributes;
-            internal uint ftCreationTimeLow;
-            internal uint ftCreationTimeHigh;
-            internal uint ftLastAccessTimeLow;
-            internal uint ftLastAccessTimeHigh;
-            internal uint ftLastWriteTimeLow;
-            internal uint ftLastWriteTimeHigh;
-            internal uint nFileSizeHigh;
-            internal uint nFileSizeLow;
-            internal int dwReserved0;
-            internal int dwReserved1;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-            internal string strFileName;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
-            internal string strAltFileName;
-
-            public int CompareTo(object obj)
-            {
-                return strFileName.CompareTo(((DATUM)obj).strFileName);
-            }
-        }
-
-        internal enum IndexInfoLevels
-        {
-            FindExInfoStandard = 0,
-            FindExInfoBasic,
-            FindExInfoMaxInfoLevel
-        };
-
-        private enum IndexSearchOps
-        {
-            FindExSearchNameMatch = 0,
-            FindExSearchLimitToDirectories,
-            FindExSearchLimitToDevices
-        };
-
-        private const int FIND_FIRST_EX_LARGE_FETCH = 0x02;
-
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, BestFitMapping = false), SuppressUnmanagedCodeSecurity]
-        private static extern IntPtr FindFirstFileExW(string lpFileName, IndexInfoLevels infoLevel, out DATUM lpFindFileData, IndexSearchOps fSearchOp, IntPtr lpSearchFilter, int dwAdditionalFlag);
-
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, BestFitMapping = false), SuppressUnmanagedCodeSecurity]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool FindNextFileW(IntPtr handle, out DATUM lpFindFileData);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool FindClose(IntPtr hFindFile);
-
-        private static readonly IntPtr InvalidHandleValue = new IntPtr(-1);
-
         [Serializable]
         internal class FileData
         {
@@ -80,17 +24,17 @@ namespace DoubleFile
             internal long Size { get { return m_Size; } }
             internal bool IsValid { get { return m_bValid; } }
 
-            static internal bool WinFile(string strFile, out DATUM winFindData)
+            static internal bool WinFile(string strFile, out NativeMethods.DATUM winFindData)
             {
-                var handle = FindFirstFileExW(@"\\?\" + strFile, IndexInfoLevels.FindExInfoBasic,
-                    out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero,
-                    FIND_FIRST_EX_LARGE_FETCH);
+                var handle = NativeMethods.FindFirstFileExW(@"\\?\" + strFile, NativeMethods.IndexInfoLevels.FindExInfoBasic,
+                    out winFindData, NativeMethods.IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero,
+                    NativeMethods.FIND_FIRST_EX_LARGE_FETCH);
 
                 winFindData.strAltFileName = strFile.Replace(@"\\", @"\");          // 8.3 not used
-                return (handle != InvalidHandleValue);
+                return (handle != NativeMethods.InvalidHandleValue);
             }
 
-            internal FileData(DATUM findData)
+            internal FileData(NativeMethods.DATUM findData)
             {
                 m_Attributes = findData.fileAttributes;
                 m_CreationTimeUtc = ConvertDateTime(findData.ftCreationTimeHigh, findData.ftCreationTimeLow);
@@ -128,17 +72,18 @@ namespace DoubleFile
             }
         }
 
-        static internal bool GetDirectory(string strDir, out IEnumerable<DATUM> ieDirs, out IEnumerable<DATUM> ieFiles,
+        static internal bool GetDirectory(string strDir, out IEnumerable<NativeMethods.DATUM> ieDirs, out IEnumerable<NativeMethods.DATUM> ieFiles,
             out string strWin32Error)
         {
             strWin32Error = null;
 
-            DATUM winFindData;
-            var handle = FindFirstFileExW(@"\\?\" + strDir + @"\*", IndexInfoLevels.FindExInfoBasic,
-                out winFindData, IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero,
-                FIND_FIRST_EX_LARGE_FETCH);
+            var winFindData = default(NativeMethods.DATUM);
 
-            if (handle == InvalidHandleValue)
+            var handle = NativeMethods.FindFirstFileExW(@"\\?\" + strDir + @"\*", NativeMethods.IndexInfoLevels.FindExInfoBasic,
+                out winFindData, NativeMethods.IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero,
+                NativeMethods.FIND_FIRST_EX_LARGE_FETCH);
+
+            if (handle == NativeMethods.InvalidHandleValue)
             {
                 strWin32Error = new System.ComponentModel.Win32Exception(
                         System.Runtime.InteropServices.Marshal.GetLastWin32Error()).Message;
@@ -148,8 +93,8 @@ namespace DoubleFile
                 return false;
             }
 
-            var dictDirs = new SortedDictionary<DATUM, bool>();
-            var dictFiles = new SortedDictionary<DATUM, bool>();
+            var dictDirs = new SortedDictionary<NativeMethods.DATUM, bool>();
+            var dictFiles = new SortedDictionary<NativeMethods.DATUM, bool>();
 
             do
             {
@@ -182,9 +127,9 @@ namespace DoubleFile
                     dictFiles.Add(winFindData, false);
                 }
             }
-            while (FindNextFileW(handle, out winFindData));
+            while (NativeMethods.FindNextFileW(handle, out winFindData));
 
-            FindClose(handle);
+            NativeMethods.FindClose(handle);
             ieDirs = dictDirs.Keys;
             ieFiles = dictFiles.Keys;
             return true;

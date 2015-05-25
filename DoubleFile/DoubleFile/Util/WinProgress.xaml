@@ -30,5 +30,6 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <Button Name="formBtn_Cancel" Content="Close" Width="70" Height="Auto" IsCancel="True" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10"/>
     </Grid>
 </local:LocalWindowBase>

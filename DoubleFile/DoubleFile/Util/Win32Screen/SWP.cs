@@ -69,9 +69,6 @@ namespace DoubleFile
             ShowWindow = 0x0040,
         }
 
-        [DllImport("user32.dll", SetLastError = true)]
-        static internal extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags);
-
         static internal readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
         static internal readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
         static internal readonly IntPtr HWND_TOP = new IntPtr(0);

@@ -46,6 +46,9 @@ namespace DoubleFile
             Observable.FromEventPattern(this, "ContentRendered")
                 .Subscribe(x => WinProgress_ContentRendered());
 
+            Observable.FromEventPattern(formBtn_Cancel, "Click")
+                .Subscribe(x => Close());
+
             Observable.FromEventPattern<System.ComponentModel.CancelEventArgs>(this, "Closing")
                 .Subscribe(args => Window_Closing(args.EventArgs));
         }

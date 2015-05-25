@@ -1,6 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 
@@ -84,7 +82,9 @@ namespace DoubleFile
                 .GetWindowRect(hwnd, out rc));
 
             ClipOrCenterRectToMonitor(ref rc, flags);
-            SWP.SetWindowPos(hwnd, IntPtr.Zero, rc.Left, rc.Top, 0, 0, SWP.NOSIZE | SWP.NOZORDER | SWP.NOACTIVATE);
+
+            NativeMethods.Call(() => NativeMethods
+                .SetWindowPos(hwnd, IntPtr.Zero, rc.Left, rc.Top, 0, 0, SWP.NOSIZE | SWP.NOZORDER | SWP.NOACTIVATE));
         }
 
         static internal Rect GetOwnerMonitorRect(Window Owner)

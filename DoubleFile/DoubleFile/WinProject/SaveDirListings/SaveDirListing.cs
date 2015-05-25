@@ -132,8 +132,7 @@ namespace DoubleFile
 
                         Interlocked.Increment(ref nProgressNumerator);
 
-                        var fileHandle =
-                            DriveSerialStatic
+                        var fileHandle = NativeMethods
                             .CreateFile(@"\\?\" + strFile, FileAccess.Read, FileShare.ReadWrite, IntPtr.Zero, 3, 0, IntPtr.Zero);
 
                         if (fileHandle.IsInvalid)

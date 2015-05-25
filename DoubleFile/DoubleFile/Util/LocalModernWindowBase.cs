@@ -101,7 +101,7 @@ namespace DoubleFile
             LocalIsClosed = true;
         }
 
-        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             if (this == App.TopWindow)
                 return IntPtr.Zero;
@@ -109,7 +109,8 @@ namespace DoubleFile
             if (msg != NativeMethods.WM_SYSCOMMAND)
                 return IntPtr.Zero;
 
-            if (false == new[] { NativeMethods.SC_MAXIMIZE, NativeMethods.SC_RESTORE, NativeMethods.SC_MOVE }
+            if (false ==
+                new[] { NativeMethods.SC_MAXIMIZE, NativeMethods.SC_RESTORE, NativeMethods.SC_MOVE }
                 .Contains(NativeMethods.Command(wParam)))
             {
                 return IntPtr.Zero;

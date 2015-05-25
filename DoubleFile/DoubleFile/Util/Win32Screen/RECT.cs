@@ -17,6 +17,7 @@ namespace DoubleFile
     struct RECT
     {
         internal int Width { get { return Right - Left; } }
+        internal int Height { get { return Bottom - Top; } }
 
         /// <summary>
         /// The x-coordinate of the upper-left corner of the rectangle.

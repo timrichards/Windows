@@ -66,11 +66,10 @@ namespace DoubleFile
 
             MainWindow.WithMainWindow(mainWindow =>
             {
-                RECT rc;
+                var rc = default(RECT);
 
-                NativeMethods.GetWindowRect(new WindowInteropHelper(mainWindow).Handle, out rc);
-
-                var strError = new Win32Exception(Marshal.GetLastWin32Error()).Message;
+                NativeMethods.Call(() => NativeMethods
+                    .GetWindowRect(new WindowInteropHelper(mainWindow).Handle, out rc));
 
                 Left = rc.Left;
                 Width = rc.Width;
@@ -78,10 +77,7 @@ namespace DoubleFile
             });
 
             Observable.FromEventPattern(this, "SourceInitialized")
-                .Subscribe(x =>
-            {
-                ResizeMode = ResizeMode.NoResize;
-            });
+                .Subscribe(x => ResizeMode = ResizeMode.NoResize);
 
             Observable.FromEventPattern(form_grid, "Loaded")
                 .Subscribe(x => FlashWindowStatic.Go(this, Once: true));

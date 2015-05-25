@@ -30,83 +30,86 @@ namespace DoubleFile
         // 
         static void ClipOrCenterRectToMonitor(ref RECT prc, uint flags)
         {
-            IntPtr hMonitor;
-            MONITORINFO mi = new MONITORINFO();
-            RECT rc;
-            int w = prc.Right - prc.Left;
-            int h = prc.Bottom - prc.Top;
-
             // 
             // get the nearest monitor to the passed rect. 
-            // 
-            hMonitor = NativeMethods.MonitorFromRect(ref prc, NativeMethods.MONITOR_DEFAULTTONEAREST);
+            //
+
+            var prcA = prc;
+
+            var hMonitor = NativeMethods.Call(() => NativeMethods
+                .MonitorFromRect(ref prcA, NativeMethods.MONITOR_DEFAULTTONEAREST));
+
+            prc = prcA;
 
             // 
             // get the work area or entire monitor rect. 
             // 
-            mi.cbSize = Marshal.SizeOf(mi);
-            NativeMethods.GetMonitorInfo(hMonitor, ref mi);
+            var mi = new MONITORINFO();
 
-            if (0 != (flags & MONITOR_WORKAREA))
-                rc = mi.rcWork;
-            else
-                rc = mi.rcMonitor;
+            NativeMethods.Call(() => NativeMethods
+                .GetMonitorInfo(hMonitor, ref mi));
+
+            var rc = 
+                (0 != (flags & MONITOR_WORKAREA))
+                ? mi.rcWork
+                : mi.rcMonitor;
 
             // 
             // center or clip the passed rect to the monitor rect 
             // 
+            var origWidth = prc.Width;
+            var origHeight = prc.Height;
+
             if (0 != (flags & MONITOR_CENTER))
             {
-                prc.Left = rc.Left + ((rc.Right - rc.Left - w) >> 1);
-                prc.Top = rc.Top + ((rc.Bottom - rc.Top - h) >> 1);
-                prc.Right = prc.Left + w;
-                prc.Bottom = prc.Top + h;
+                prc.Left = rc.Left + ((rc.Width - origWidth) >> 1);
+                prc.Top = rc.Top + ((rc.Height - origHeight) >> 1);
+                prc.Right = prc.Left + origWidth;
+                prc.Bottom = prc.Top + origHeight;
             }
             else
             {
-                prc.Left = Math.Max(rc.Left, Math.Min(rc.Right - w, prc.Left));
-                prc.Top = Math.Max(rc.Top, Math.Min(rc.Bottom - h, prc.Top));
-                prc.Right = prc.Left + w;
-                prc.Bottom = prc.Top + h;
+                prc.Left = Math.Max(rc.Left, Math.Min(rc.Right - origWidth, prc.Left));
+                prc.Top = Math.Max(rc.Top, Math.Min(rc.Bottom - origHeight, prc.Top));
+                prc.Right = prc.Left + origWidth;
+                prc.Bottom = prc.Top + origHeight;
             }
         }
 
         static void ClipOrCenterWindowToMonitor(IntPtr hwnd, uint flags)
         {
-            RECT rc;
+            var rc = default(RECT);
 
-            NativeMethods.GetWindowRect(hwnd, out rc);
+            NativeMethods.Call(() => NativeMethods
+                .GetWindowRect(hwnd, out rc));
+
             ClipOrCenterRectToMonitor(ref rc, flags);
             SWP.SetWindowPos(hwnd, IntPtr.Zero, rc.Left, rc.Top, 0, 0, SWP.NOSIZE | SWP.NOZORDER | SWP.NOACTIVATE);
         }
 
         static internal Rect GetOwnerMonitorRect(Window Owner)
         {
-            RECT rcOwner;
+            var rcOwner = default(RECT);
 
-            NativeMethods.GetWindowRect(new WindowInteropHelper(Owner).Handle, out rcOwner);
+            NativeMethods.Call(() => NativeMethods
+                .GetWindowRect(new WindowInteropHelper(Owner).Handle, out rcOwner));
 
-            var strError = new Win32Exception(Marshal.GetLastWin32Error()).Message;
-            var hMonitor = NativeMethods.MonitorFromRect(ref rcOwner, NativeMethods.MONITOR_MONITOR_DEFAULTTOPRIMARY);
+            var hMonitor = NativeMethods.Call(() => NativeMethods
+                .MonitorFromRect(ref rcOwner, NativeMethods.MONITOR_MONITOR_DEFAULTTOPRIMARY));
 
-            strError = new Win32Exception(Marshal.GetLastWin32Error()).Message;
+            var mi = new MONITORINFO();
 
-            MONITORINFO mi = new MONITORINFO();
-
-            mi.cbSize = Marshal.SizeOf(mi);
-
-            var bSuccess = NativeMethods.GetMonitorInfo(hMonitor, ref mi);
-
-            MBoxStatic.Assert(99904, bSuccess, new Win32Exception(Marshal.GetLastWin32Error()).Message);
+            NativeMethods.Call(() => NativeMethods
+                .GetMonitorInfo(hMonitor, ref mi), false, 99904);
 
             var rc = mi.rcMonitor;
 
-            return new Rect()
+            return new Rect
             {
                 X = rc.Left,
                 Y = rc.Top,
-                Width = rc.Right - rc.Left,
-                Height = rc.Bottom - rc.Top
+                Width = rc.Width,
+                Height = rc.Height
             };
         }
     }

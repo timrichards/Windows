@@ -100,7 +100,7 @@ namespace DoubleFile
             var mi = new MONITORINFO();
 
             NativeMethods.Call(() => NativeMethods
-                .GetMonitorInfo(hMonitor, ref mi), false, 99904);
+                .GetMonitorInfo(hMonitor, ref mi), true, false, 99904);
 
             var rc = mi.rcMonitor;
 

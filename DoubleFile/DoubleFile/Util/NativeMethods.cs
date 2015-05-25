@@ -12,13 +12,13 @@ namespace DoubleFile
             return wParam.ToInt32() & 0xFFF0;
         }
 
-        internal static T Call<T>(Func<T> action, T errorValue = default(T), double nAssertLoc = -1)
+        internal static T Call<T>(Func<T> action, bool bAssert = false, T errorValue = default(T), double nAssertLoc = -1)
         {
             T retVal = action();
             var strGetLastError = new Win32Exception(Marshal.GetLastWin32Error()).Message;
 
             MBoxStatic.Assert(nAssertLoc,
-                (default(T).Equals(errorValue)) ||
+                (false == bAssert) ||
                 (false == errorValue.Equals(retVal)));
 
             Util.WriteLine(strGetLastError);

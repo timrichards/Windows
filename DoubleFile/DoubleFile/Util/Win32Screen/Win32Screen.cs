@@ -33,13 +33,13 @@ namespace DoubleFile
             IntPtr hMonitor;
             MONITORINFO mi = new MONITORINFO();
             RECT rc;
-            int w = prc.right - prc.left;
-            int h = prc.bottom - prc.top;
+            int w = prc.Right - prc.Left;
+            int h = prc.Bottom - prc.Top;
 
             // 
             // get the nearest monitor to the passed rect. 
             // 
-            hMonitor = RECT.MonitorFromRect(ref prc, RECT.MONITOR_DEFAULTTONEAREST);
+            hMonitor = NativeMethods.MonitorFromRect(ref prc, NativeMethods.MONITOR_DEFAULTTONEAREST);
 
             // 
             // get the work area or entire monitor rect. 
@@ -57,17 +57,17 @@ namespace DoubleFile
             // 
             if (0 != (flags & MONITOR_CENTER))
             {
-                prc.left = rc.left + ((rc.right - rc.left - w) >> 1);
-                prc.top = rc.top + ((rc.bottom - rc.top - h) >> 1);
-                prc.right = prc.left + w;
-                prc.bottom = prc.top + h;
+                prc.Left = rc.Left + ((rc.Right - rc.Left - w) >> 1);
+                prc.Top = rc.Top + ((rc.Bottom - rc.Top - h) >> 1);
+                prc.Right = prc.Left + w;
+                prc.Bottom = prc.Top + h;
             }
             else
             {
-                prc.left = Math.Max(rc.left, Math.Min(rc.right - w, prc.left));
-                prc.top = Math.Max(rc.top, Math.Min(rc.bottom - h, prc.top));
-                prc.right = prc.left + w;
-                prc.bottom = prc.top + h;
+                prc.Left = Math.Max(rc.Left, Math.Min(rc.Right - w, prc.Left));
+                prc.Top = Math.Max(rc.Top, Math.Min(rc.Bottom - h, prc.Top));
+                prc.Right = prc.Left + w;
+                prc.Bottom = prc.Top + h;
             }
         }
 
@@ -75,19 +75,19 @@ namespace DoubleFile
         {
             RECT rc;
 
-            RECT.GetWindowRect(hwnd, out rc);
+            NativeMethods.GetWindowRect(hwnd, out rc);
             ClipOrCenterRectToMonitor(ref rc, flags);
-            SWP.SetWindowPos(hwnd, IntPtr.Zero, rc.left, rc.top, 0, 0, SWP.NOSIZE | SWP.NOZORDER | SWP.NOACTIVATE);
+            SWP.SetWindowPos(hwnd, IntPtr.Zero, rc.Left, rc.Top, 0, 0, SWP.NOSIZE | SWP.NOZORDER | SWP.NOACTIVATE);
         }
 
         static internal Rect GetOwnerMonitorRect(Window Owner)
         {
             RECT rcOwner;
 
-            RECT.GetWindowRect(new WindowInteropHelper(Owner).Handle, out rcOwner);
+            NativeMethods.GetWindowRect(new WindowInteropHelper(Owner).Handle, out rcOwner);
 
             var strError = new Win32Exception(Marshal.GetLastWin32Error()).Message;
-            var hMonitor = RECT.MonitorFromRect(ref rcOwner, RECT.MONITOR_MONITOR_DEFAULTTOPRIMARY);
+            var hMonitor = NativeMethods.MonitorFromRect(ref rcOwner, NativeMethods.MONITOR_MONITOR_DEFAULTTOPRIMARY);
 
             strError = new Win32Exception(Marshal.GetLastWin32Error()).Message;
 
@@ -103,10 +103,10 @@ namespace DoubleFile
 
             return new Rect()
             {
-                X = rc.left,
-                Y = rc.top,
-                Width = rc.right - rc.left,
-                Height = rc.bottom - rc.top
+                X = rc.Left,
+                Y = rc.Top,
+                Width = rc.Right - rc.Left,
+                Height = rc.Bottom - rc.Top
             };
         }
     }

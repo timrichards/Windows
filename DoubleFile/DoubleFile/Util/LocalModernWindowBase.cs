@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -108,8 +109,11 @@ namespace DoubleFile
             if (msg != NativeMethods.WM_SYSCOMMAND)
                 return IntPtr.Zero;
 
-            if (NativeMethods.Command(wParam) != NativeMethods.SC_MOVE)
+            if (false == new[] { NativeMethods.SC_MAXIMIZE, NativeMethods.SC_RESTORE, NativeMethods.SC_MOVE }
+                .Contains(NativeMethods.Command(wParam)))
+            {
                 return IntPtr.Zero;
+            }
 
             handled = true;
             return IntPtr.Zero;

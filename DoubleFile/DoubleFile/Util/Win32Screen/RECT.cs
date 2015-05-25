@@ -16,36 +16,26 @@ namespace DoubleFile
     [StructLayout(LayoutKind.Sequential)]
     struct RECT
     {
-        internal const uint MONITOR_MONITOR_DEFAULTTONULL = 0x00000000;
-        internal const uint MONITOR_MONITOR_DEFAULTTOPRIMARY = 0x00000001;
-        internal const uint MONITOR_DEFAULTTONEAREST = 0x00000002;
-
-        [DllImport("user32.dll")]
-        static internal extern IntPtr
-            MonitorFromRect([In] ref RECT lprc, uint dwFlags);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        static internal extern bool
-            GetWindowRect(IntPtr hwnd, out RECT lpRect);
+        internal int Width { get { return Right - Left; } }
 
         /// <summary>
         /// The x-coordinate of the upper-left corner of the rectangle.
         /// </summary>
-        internal int left;
+        internal int Left;
 
         /// <summary>
         /// The y-coordinate of the upper-left corner of the rectangle.
         /// </summary>
-        internal int top;
+        internal int Top;
 
         /// <summary>
         /// The x-coordinate of the lower-right corner of the rectangle.
         /// </summary>
-        internal int right;
+        internal int Right;
 
         /// <summary>
         /// The y-coordinate of the lower-right corner of the rectangle.
         /// </summary>
-        internal int bottom;
+        internal int Bottom;
     }
 }

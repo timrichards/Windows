@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Reactive.Linq;
 using System;
+using System.Windows.Interop;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace DoubleFile
 {
@@ -24,8 +27,14 @@ namespace DoubleFile
 
             MainWindow.WithMainWindow(mainWindow =>
             {
-                Left = mainWindow.Left;
-                Width = mainWindow.Width;
+                RECT rc;
+
+                NativeMethods.GetWindowRect(new WindowInteropHelper(mainWindow).Handle, out rc);
+
+                var strError = new Win32Exception(Marshal.GetLastWin32Error()).Message;
+
+                Left = rc.Left;
+                Width = rc.Width;
                 return false;
             });
 

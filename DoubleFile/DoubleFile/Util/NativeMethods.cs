@@ -38,8 +38,8 @@ namespace DoubleFile
         static internal extern bool
             GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
 
-        internal const uint MONITOR_MONITOR_DEFAULTTONULL = 0;
-        internal const uint MONITOR_MONITOR_DEFAULTTOPRIMARY = 1;
+        internal const uint MONITOR_DEFAULTTONULL = 0;
+        internal const uint MONITOR_DEFAULTTOPRIMARY = 1;
         internal const uint MONITOR_DEFAULTTONEAREST = 2;
 
         [DllImport("user32.dll")]

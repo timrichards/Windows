@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -81,10 +82,14 @@ namespace DoubleFile
                 return;
             }
 
-            if (mainWindow.Dispatcher.CheckAccess())
-                action();
-            else
-                mainWindow.Dispatcher.Invoke(action);
+            try
+            {
+                if (mainWindow.Dispatcher.CheckAccess())
+                    action();
+                else
+                    mainWindow.Dispatcher.Invoke(action);
+            }
+            catch (TaskCanceledException) { }
         }
 
         static internal T UIthread<T>(Func<T> action, Control owner = null)
@@ -111,10 +116,18 @@ namespace DoubleFile
                 return default(T);
             }
 
-            return
-                owner.Dispatcher.CheckAccess()
-                ? action()
-                : owner.Dispatcher.Invoke(action);      // cancellationToken? timeout?
+            var retVal = default(T);
+
+            try
+            {
+                retVal =
+                    owner.Dispatcher.CheckAccess()
+                    ? action()
+                    : owner.Dispatcher.Invoke(action);      // cancellationToken? timeout?
+            }
+            catch (TaskCanceledException) { }
+
+            return retVal;
         }
 
         static internal void Write(string str)

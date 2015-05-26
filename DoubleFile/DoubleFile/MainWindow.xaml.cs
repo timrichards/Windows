@@ -85,10 +85,7 @@ namespace DoubleFile
 
             _darkWindow = WithMainWindow(mainWindow =>
             {
-                var rc = default(RECT);
-
-                NativeMethods.Call(() => NativeMethods
-                    .GetWindowRect(new WindowInteropHelper(mainWindow).Handle, out rc));
+                var rc = Win32Screen.GetWindowRect(mainWindow);
 
                 return new DarkWindow
                 {

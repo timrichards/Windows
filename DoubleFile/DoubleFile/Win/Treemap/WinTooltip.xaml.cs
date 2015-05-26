@@ -88,7 +88,7 @@ namespace DoubleFile
                 return;
 
             if (null != _winTooltip)
-                _winTooltip.Tag = null;
+                Util.UIthread(() => _winTooltip.Tag = null);
 
             _bClosingTooltip = true;
 
@@ -99,13 +99,8 @@ namespace DoubleFile
                 if (null != _winTooltip._closingCallback)
                     _winTooltip._closingCallback();
 
-                _winTooltip.Close();
+                Util.UIthread(_winTooltip.Close);
             }
-
-            LocalWindowBase winOwner = null;
-
-            if (null != _winTooltip)
-                winOwner = _winTooltip.Owner as LocalWindowBase;
 
             if (null != _winOwnerClosedObserver)
             {
@@ -159,7 +154,7 @@ namespace DoubleFile
                 rcTooltip.Y = 0;
             }
 
-            var rcMonitor = Win32Screen.GetOwnerMonitorRect(Owner);
+            var rcMonitor = Win32Screen.GetWindowMonitorRect(Owner);
 
             if (false == (rcMonitor.Contains(rcTooltip)))
             {

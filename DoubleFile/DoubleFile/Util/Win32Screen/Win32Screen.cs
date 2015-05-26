@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 
@@ -42,7 +43,7 @@ namespace DoubleFile
             // 
             // get the work area or entire monitor rect. 
             // 
-            var mi = new MONITORINFO();
+            var mi = new MONITORINFO { cbSize = Marshal.SizeOf(typeof(MONITORINFO)) };
 
             NativeMethods.Call(() => NativeMethods
                 .GetMonitorInfo(hMonitor, ref mi));
@@ -87,17 +88,53 @@ namespace DoubleFile
                 .SetWindowPos(hwnd, IntPtr.Zero, rc.Left, rc.Top, 0, 0, SWP.NOSIZE | SWP.NOZORDER | SWP.NOACTIVATE));
         }
 
-        static internal Rect GetOwnerMonitorRect(Window Owner)
+        static internal Rect GetWindowRect(Window window)
         {
-            var rcOwner = default(RECT);
+            switch (window.WindowState)
+            {
+                case WindowState.Normal:
+                {
+                    return new Rect(window.Left, window.Top, window.Width, window.Height);
+                }
+
+                case WindowState.Minimized:
+                {
+                    return default(Rect);
+                }
+            }
+
+            // maximized
+
+            var rcWindow = default(RECT);
 
             NativeMethods.Call(() => NativeMethods
-                .GetWindowRect(new WindowInteropHelper(Owner).Handle, out rcOwner));
+                .GetWindowRect(new WindowInteropHelper(window).Handle, out rcWindow));
+
+            var rcMonitor = GetWindowMonitorRect(window);
+
+            return new Rect
+            {
+                X = rcWindow.Left,
+                Y = rcWindow.Top,
+                Width = rcMonitor.Right - rcWindow.Left,
+                Height = rcMonitor.Bottom - rcWindow.Top
+            };
+        }
+
+        static internal Rect GetWindowMonitorRect(Window window)
+        {
+            var rcOwner = new RECT
+            {
+                Left = (int)window.Left,
+                Top = (int)window.Top,
+                Right = (int)(window.Left + window.Width),
+                Bottom = (int)(window.Top + window.Height)
+            };
 
             var hMonitor = NativeMethods.Call(() => NativeMethods
-                .MonitorFromRect(ref rcOwner, NativeMethods.MONITOR_MONITOR_DEFAULTTOPRIMARY));
+                .MonitorFromRect(ref rcOwner, NativeMethods.MONITOR_DEFAULTTOPRIMARY));
 
-            var mi = new MONITORINFO();
+            var mi = new MONITORINFO { cbSize = Marshal.SizeOf(typeof(MONITORINFO)) };
 
             NativeMethods.Call(() => NativeMethods
                 .GetMonitorInfo(hMonitor, ref mi), true, false, 99904);

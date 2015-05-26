@@ -9,24 +9,19 @@ namespace DoubleFile
     /// for the display monitor.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-    class MONITORINFO
+    struct MONITORINFO
     {
-        internal MONITORINFO()
-        {
-            cbSize = Marshal.SizeOf(this);
-        }
-
         /// <summary>
         /// The size, in bytes, of the structure. Set this member to sizeof(MONITORINFOEX) (72) before calling the GetMonitorInfo function.
         /// Doing so lets the function determine the type of structure you are passing to it.
         /// </summary>
-        readonly internal int cbSize;
+        internal int cbSize;
 
         /// <summary>
         /// A RECT structure that specifies the display monitor rectangle, expressed in virtual-screen coordinates.
         /// Note that if the monitor is not the primary display monitor, some of the rectangle's coordinates may be negative values.
         /// </summary>
-        internal RECT rcMonitor = default(RECT);
+        internal RECT rcMonitor;
 
         /// <summary>
         /// A RECT structure that specifies the work area rectangle of the display monitor that can be used by applications,
@@ -34,7 +29,7 @@ namespace DoubleFile
         /// The rest of the area in rcMonitor contains system windows such as the task bar and side bars.
         /// Note that if the monitor is not the primary display monitor, some of the rectangle's coordinates may be negative values.
         /// </summary>
-        internal RECT rcWork = default(RECT);
+        internal RECT rcWork;
 
         /// <summary>
         /// The attributes of the display monitor.
@@ -42,6 +37,6 @@ namespace DoubleFile
         /// This member can be the following value:
         ///   1 : MONITORINFOF_PRIMARY
         /// </summary>
-        internal uint Flags = 0;
+        internal uint Flags;
     }
 }

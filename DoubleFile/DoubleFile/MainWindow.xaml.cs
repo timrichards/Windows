@@ -3,6 +3,8 @@ using System;
 using System.IO;
 using System.Reactive.Linq;
 using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
 
 namespace DoubleFile
 {
@@ -69,6 +71,46 @@ namespace DoubleFile
             }
 
             return doSomethingWith(mainWindow);
+        }
+
+        class DarkWindow : LocalWindowBase { }
+        static DarkWindow _darkWindow = null;
+        static internal T Darken<T>(Func<T> showDialog)
+        {
+            if (null != _darkWindow)
+                return showDialog();
+
+            WithMainWindow(mainWindow =>
+            {
+                var rc = default(RECT);
+
+                NativeMethods.Call(() => NativeMethods
+                    .GetWindowRect(new WindowInteropHelper(mainWindow).Handle, out rc));
+
+                return new DarkWindow
+                {
+                    Background = Brushes.Black,
+                    Opacity = 0.4,
+                    AllowsTransparency = true,
+                    WindowStyle = WindowStyle.None,
+                    Left = rc.Left,
+                    Top = rc.Top,
+                    Width = rc.Width,
+                    Height = rc.Height,
+                    Owner = mainWindow,
+                    ResizeMode = ResizeMode.NoResize
+                };
+            })
+                .Show();
+
+            var retVal = showDialog();
+
+            if (null != _darkWindow)
+                _darkWindow.Close();
+
+            _darkWindow = null;
+            MainWindow.WithMainWindow(mainWindow => mainWindow.Activate());
+            return retVal;
         }
 
         internal void ShowLinks(bool bHidden = false)

@@ -46,6 +46,10 @@ namespace DoubleFile
         static internal extern IntPtr
             MonitorFromRect([In] ref RECT lprc, uint dwFlags);
 
+        [DllImport("user32.dll")]
+        static internal extern IntPtr
+            MonitorFromWindow(IntPtr hwnd, uint dwFlags);
+
         [DllImport("user32.dll", SetLastError = true)]
         static internal extern bool
             GetWindowRect(IntPtr hwnd, out RECT lpRect);

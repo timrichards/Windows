@@ -123,16 +123,8 @@ namespace DoubleFile
 
         static internal Rect GetWindowMonitorRect(Window window)
         {
-            var rcOwner = new RECT
-            {
-                Left = (int)window.Left,
-                Top = (int)window.Top,
-                Right = (int)(window.Left + window.Width),
-                Bottom = (int)(window.Top + window.Height)
-            };
-
             var hMonitor = NativeMethods.Call(() => NativeMethods
-                .MonitorFromRect(ref rcOwner, NativeMethods.MONITOR_DEFAULTTOPRIMARY));
+                .MonitorFromWindow(new WindowInteropHelper(window).Handle, NativeMethods.MONITOR_DEFAULTTOPRIMARY));
 
             var mi = new MONITORINFO { cbSize = Marshal.SizeOf(typeof(MONITORINFO)) };
 

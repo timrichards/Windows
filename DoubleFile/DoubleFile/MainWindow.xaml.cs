@@ -33,7 +33,8 @@ namespace DoubleFile
                 .Subscribe(args => MainWindow_Closing(args.EventArgs));
         }
 
-        static internal LocalUserControlBase CurrentPage
+        static internal LocalUserControlBase
+            CurrentPage
         {
             get { return WithMainWindow(mainWindow => mainWindow._currentPage); }
             set
@@ -58,7 +59,8 @@ namespace DoubleFile
             }
         }
 
-        static internal T WithMainWindow<T>(Func<MainWindow, T> doSomethingWith)
+        static internal T
+            WithMainWindow<T>(Func<MainWindow, T> doSomethingWith)
         {
             MainWindow mainWindow = null;
 
@@ -75,12 +77,13 @@ namespace DoubleFile
 
         class DarkWindow : LocalWindowBase { }
         static DarkWindow _darkWindow = null;
-        static internal T Darken<T>(Func<T> showDialog)
+        static internal T
+            Darken<T>(Func<T> showDialog)
         {
             if (null != _darkWindow)
                 return showDialog();
 
-            WithMainWindow(mainWindow =>
+            _darkWindow = WithMainWindow(mainWindow =>
             {
                 var rc = default(RECT);
 
@@ -100,8 +103,10 @@ namespace DoubleFile
                     Owner = mainWindow,
                     ResizeMode = ResizeMode.NoResize
                 };
-            })
-                .Show();
+            });
+
+            if (null != _darkWindow)
+                _darkWindow.Show();
 
             var retVal = showDialog();
 
@@ -113,7 +118,8 @@ namespace DoubleFile
             return retVal;
         }
 
-        internal void ShowLinks(bool bHidden = false)
+        internal void
+            ShowLinks(bool bHidden = false)
         {
             if (bHidden)
             {
@@ -127,7 +133,7 @@ namespace DoubleFile
             }
         }
 
-        private void Window_Loaded(System.Reactive.EventPattern<object> obj)
+        void Window_Loaded(System.Reactive.EventPattern<object> obj)
         {
 #if (DEBUG)
             //#warning DEBUG is defined.

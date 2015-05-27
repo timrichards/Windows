@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -17,6 +18,17 @@ namespace DoubleFile
     {
         internal int Width { get { return Right - Left; } }
         internal int Height { get { return Bottom - Top; } }
+
+        public static implicit operator Rect(RECT value)
+        {
+            return new Rect
+            {
+                X = value.Left,
+                Y = value.Top,
+                Width = value.Width,
+                Height = value.Height
+            };
+        }
 
         /// <summary>
         /// The x-coordinate of the upper-left corner of the rectangle.

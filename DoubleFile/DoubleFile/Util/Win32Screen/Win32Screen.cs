@@ -105,23 +105,17 @@ namespace DoubleFile
 
             // maximized
 
-            var rcWindow = default(RECT);
-
-            NativeMethods.Call(() => NativeMethods
-                .GetWindowRect(new WindowInteropHelper(window).Handle, out rcWindow));
-
-            var rcMonitor = GetWindowMonitorRect(window);
-
-            return new Rect
-            {
-                X = rcWindow.Left,
-                Y = rcWindow.Top,
-                Width = rcMonitor.Right - rcWindow.Left,
-                Height = rcMonitor.Bottom - rcWindow.Top
-            };
+            return GetWindowMonitorInfo(window)
+                .rcWork;
         }
 
         static internal Rect GetWindowMonitorRect(Window window)
+        {
+            return GetWindowMonitorInfo(window)
+                .rcMonitor;
+        }
+
+        static MONITORINFO GetWindowMonitorInfo(Window window)
         {
             var hMonitor = NativeMethods.Call(() => NativeMethods
                 .MonitorFromWindow(new WindowInteropHelper(window).Handle, NativeMethods.MONITOR_DEFAULTTOPRIMARY));
@@ -131,15 +125,7 @@ namespace DoubleFile
             NativeMethods.Call(() => NativeMethods
                 .GetMonitorInfo(hMonitor, ref mi), true, false, 99904);
 
-            var rc = mi.rcMonitor;
-
-            return new Rect
-            {
-                X = rc.Left,
-                Y = rc.Top,
-                Width = rc.Width,
-                Height = rc.Height
-            };
+            return mi;
         }
     }
 }

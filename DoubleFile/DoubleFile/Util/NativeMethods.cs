@@ -18,7 +18,7 @@ namespace DoubleFile
         internal static T
             Call<T>(Func<T> action, bool bAssert = false, T errorValue = default(T), double nAssertLoc = -1)
         {
-            T retVal = action();
+            var retVal = action();
             var strGetLastError = new Win32Exception(Marshal.GetLastWin32Error()).Message;
 
             MBoxStatic.Assert(nAssertLoc,

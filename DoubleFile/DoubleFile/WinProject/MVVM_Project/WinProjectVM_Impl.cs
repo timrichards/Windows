@@ -31,7 +31,7 @@ namespace DoubleFile
 
             var dlg = new Microsoft.Win32.OpenFileDialog { Title = "Open Project", Filter = _ksProjectFilter };
 
-            if (MainWindow.Darken(() => dlg.ShowDialog()) ?? false)
+            if (MainWindow.Darken(darkWindow => dlg.ShowDialog((Window)darkWindow)) ?? false)
             {
                 ProjectFile.OpenProject(dlg.FileName, new WeakReference<IOpenListingFiles>(this));
 
@@ -59,7 +59,7 @@ namespace DoubleFile
                     OverwritePrompt = false
                 };
 
-                if (MainWindow.Darken(() => dlg.ShowDialog()) ?? false)
+                if (MainWindow.Darken(darkWindow => dlg.ShowDialog((Window)darkWindow)) ?? false)
                 {
                     strFilename = dlg.FileName;
 
@@ -113,7 +113,7 @@ namespace DoubleFile
                 Multiselect = true
             };
 
-            if ((MainWindow.Darken(() => dlg.ShowDialog()) ?? false) &&
+            if ((MainWindow.Darken(darkWindow => dlg.ShowDialog((Window)darkWindow)) ?? false) &&
                 OpenListingFiles(dlg.FileNames))
             {
                 _lvVM.Unsaved = true;

@@ -141,9 +141,9 @@ namespace DoubleFile
             return this;
         }
 
-        internal new bool? ShowDialog() { return MainWindow.Darken(() => ShowDialog(App.TopWindow)); }
+        internal new bool? ShowDialog() { return MainWindow.Darken(ShowDialog); }
 
-        bool? ShowDialog(ILocalWindow me)
+        protected bool? ShowDialog(ILocalWindow me)
         {
             // 3/9/15 This is false because e.g. bringing up a New Listing File dialog does not
             // properly focus: a second click is needed to move the window or do anything in it.

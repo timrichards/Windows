@@ -101,12 +101,13 @@ namespace DoubleFile
                 {
                     return default(Rect);
                 }
+
+                default:    // maximized
+                {
+                    return GetWindowMonitorInfo(window)
+                        .rcWork;
+                }
             }
-
-            // maximized
-
-            return GetWindowMonitorInfo(window)
-                .rcWork;
         }
 
         static internal Rect GetWindowMonitorRect(Window window)

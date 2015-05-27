@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Reactive.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
 
@@ -75,13 +76,37 @@ namespace DoubleFile
             return doSomethingWith(mainWindow);
         }
 
-        class DarkWindow : LocalWindowBase { }
+        class DarkWindow : LocalWindowBase
+        {
+            internal T ShowDialog<T>(Func<ILocalWindow, T> showDialog)
+            {
+                Background = Brushes.Black;
+                Opacity = 0.4;
+                AllowsTransparency = true;
+                WindowStyle = WindowStyle.None;
+                ResizeMode = ResizeMode.NoResize;
+                Content = new Grid();
+
+                var retVal = default(T);
+
+                Observable.FromEventPattern(this, "ContentRendered")
+                    .Subscribe(x =>
+                {
+                    retVal = showDialog(this);
+                    Close();
+                });
+
+                base.ShowDialog(App.TopWindow);
+                return retVal;
+            }
+        }
+
         static DarkWindow _darkWindow = null;
         static internal T
-            Darken<T>(Func<T> showDialog)
+            Darken<T>(Func<ILocalWindow, T> showDialog)
         {
             if (null != _darkWindow)
-                return showDialog();
+                return showDialog(App.LocalMainWindow);
 
             _darkWindow = WithMainWindow(mainWindow =>
             {
@@ -89,26 +114,17 @@ namespace DoubleFile
 
                 return new DarkWindow
                 {
-                    Background = Brushes.Black,
-                    Opacity = 0.4,
-                    AllowsTransparency = true,
-                    WindowStyle = WindowStyle.None,
                     Left = rc.Left,
                     Top = rc.Top,
                     Width = rc.Width,
                     Height = rc.Height,
-                    Owner = mainWindow,
-                    ResizeMode = ResizeMode.NoResize
                 };
             });
 
-            if (null != _darkWindow)
-                _darkWindow.Show();
-
-            var retVal = showDialog();
+            var retVal = default(T);
 
             if (null != _darkWindow)
-                _darkWindow.Close();
+                retVal = _darkWindow.ShowDialog(showDialog);
 
             _darkWindow = null;
             MainWindow.WithMainWindow(mainWindow => mainWindow.Activate());

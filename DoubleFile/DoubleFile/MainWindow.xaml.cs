@@ -106,7 +106,7 @@ namespace DoubleFile
             Darken<T>(Func<ILocalWindow, T> showDialog)
         {
             if (null != _darkWindow)
-                return showDialog(App.LocalMainWindow);
+                return showDialog(App.TopWindow);
 
             _darkWindow = WithMainWindow(mainWindow =>
             {
@@ -125,9 +125,10 @@ namespace DoubleFile
 
             if (null != _darkWindow)
                 retVal = _darkWindow.ShowDialog(showDialog);
+            else
+                return showDialog(App.TopWindow);
 
             _darkWindow = null;
-            MainWindow.WithMainWindow(mainWindow => mainWindow.Activate());
             return retVal;
         }
 

@@ -145,14 +145,7 @@ namespace DoubleFile
 
         protected bool? ShowDialog(ILocalWindow me)
         {
-            // 3/9/15 This is false because e.g. bringing up a New Listing File dialog does not
-            // properly focus: a second click is needed to move the window or do anything in it.
-
-            // 3/26/15 This is true because e.g. 1) left open or cancel during Explorer initialize:
-            // the Folders VM disappears and crashes on close. 2) Do you want to cancel, left open,
-            // mysteriously leaves WinProject unpopulated after clicking OK: does not run any code
-            // in MainWindow.xaml.cs after volumes.ShowDialog. Acts like a suppressed null pointer.
-            I.SimulatingModal = true;           // Change it here to switch to simulated dialog
+            I.SimulatingModal = App.SimulatingModal;
             Owner = (Window)me;
 
             bool? bResult = null;

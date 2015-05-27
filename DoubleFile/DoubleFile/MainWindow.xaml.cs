@@ -118,6 +118,7 @@ namespace DoubleFile
                     Top = rc.Top,
                     Width = rc.Width,
                     Height = rc.Height,
+                    WindowState = mainWindow.WindowState
                 };
             });
 

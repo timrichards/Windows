@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
         Title="Edit Volume Group Label" Width="520" MinWidth="470" Height="180"  MinHeight="180" MaxHeight="180">
-    <Grid Name="form_grid">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
             <RowDefinition Height="32"/>

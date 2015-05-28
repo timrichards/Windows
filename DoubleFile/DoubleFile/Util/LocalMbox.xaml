@@ -9,7 +9,7 @@
     <i:Interaction.Behaviors>
         <Behaviours:BorderlessWindowBehavior/>
     </i:Interaction.Behaviors>
-    <Grid Name="form_grid">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="28"/>
             <RowDefinition />

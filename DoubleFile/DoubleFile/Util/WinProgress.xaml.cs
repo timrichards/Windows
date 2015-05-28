@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Reactive.Linq;
 using System;
-using System.Windows.Interop;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
 
 namespace DoubleFile
 {
@@ -19,29 +16,33 @@ namespace DoubleFile
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     partial class WinProgress
     {
+        internal bool Aborted { set; private get; }
+
         internal WeakReference<IWinProgressClosing> WindowClosingCallback{ get; set; }
 
         internal WinProgress()
         {
             InitializeComponent();
 
-            MainWindow.WithMainWindow(mainWindow =>
-            {
-                var rc = Win32Screen.GetWindowRect(mainWindow);
+            var rc = MainWindow.WithMainWindow(Win32Screen.GetWindowRect);
 
-                Left = rc.Left;
-                Width = rc.Width;
-                return false;
-            });
+            Left = rc.Left;
+            Width = rc.Width;
 
             Observable.FromEventPattern(this, "SourceInitialized")
                 .Subscribe(x => ResizeMode = ResizeMode.NoResize);
 
             Observable.FromEventPattern(form_grid, "Loaded")
-                .Subscribe(x => Grid_Loaded());
+                .Subscribe(x =>
+            {
+                formLV_Progress.DataContext = _lv;
+                _lv.SelectedOne = () => formLV_Progress.SelectedItems.HasOnlyOne();
+                _lv.SelectedAny = () => (false == formLV_Progress.SelectedItems.IsEmptyA());
+                _lv.Selected = () => formLV_Progress.SelectedItems.Cast<LVitem_ProgressVM>();
+            });
 
             Observable.FromEventPattern(this, "ContentRendered")
-                .Subscribe(x => WinProgress_ContentRendered());
+                .Subscribe(x => MinHeight = MaxHeight = ActualHeight);
 
             Observable.FromEventPattern(formBtn_Cancel, "Click")
                 .Subscribe(x => Close());
@@ -58,14 +59,8 @@ namespace DoubleFile
 
         internal WinProgress InitProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths)
         {
-            if (astrNicknames.Count() != astrPaths.Count())
-            {
-                MBoxStatic.Assert(99932, false);
-                return this;
-            }
-
-            for (var i = 0; i < astrPaths.Count(); ++i)
-                _lv.Add(new[] { astrNicknames.ElementAt(i), astrPaths.ElementAt(i) }, bQuiet: true);
+            foreach (var ieStrs in astrNicknames.Zip(astrPaths, Tuple.Create))
+                _lv.Add(new[] { ieStrs.Item1, ieStrs.Item2 }, bQuiet: true);
 
             return this;
         }
@@ -74,7 +69,7 @@ namespace DoubleFile
         {
             var lvItem = _lv[strPath].FirstOrDefault();
 
-            if (lvItem != null)
+            if (null != lvItem)
                 lvItem.Progress = nProgress;
             else
                 MBoxStatic.Assert(99931, false);
@@ -84,7 +79,7 @@ namespace DoubleFile
         {
             var lvItem = _lv[strPath];
 
-            if (lvItem != null)
+            if (null != lvItem)
                 lvItem.FirstOrDefault().SetCompleted();
             else
                 MBoxStatic.Assert(99930, false);
@@ -94,13 +89,11 @@ namespace DoubleFile
         {
             var lvItem = _lv[strPath];
 
-            if (lvItem != null)
+            if (null != lvItem)
                 lvItem.FirstOrDefault().SetError(strError);
             else
                 MBoxStatic.Assert(99929, false);
         }
-
-        internal bool Aborted { set; private get; }
 
         internal void CloseIfNatural()
         {
@@ -112,29 +105,13 @@ namespace DoubleFile
 
             if (_lv
                 .ItemsCast
-                .Any(lvItem => lvItem.Progress < 1))
+                .Any(lvItem => 1 > lvItem.Progress))
             {
                 return;
             }
 
             Aborted = true;
             Util.UIthread(Close);
-        }
-
-        #region form_handlers
-        private void Grid_Loaded()
-        {
-            formLV_Progress.DataContext = _lv;
-
-            _lv.SelectedOne = () => formLV_Progress.SelectedItems.HasOnlyOne();
-            _lv.SelectedAny = () => (false == formLV_Progress.SelectedItems.IsEmptyA());
-            _lv.Selected = () => formLV_Progress.SelectedItems.Cast<LVitem_ProgressVM>();
-        }
-
-        private void WinProgress_ContentRendered()
-        {
-            MinHeight = ActualHeight;
-            MaxHeight = ActualHeight;
         }
 
         private void Window_Closing(System.ComponentModel.CancelEventArgs e)
@@ -180,8 +157,6 @@ namespace DoubleFile
                 }
             }).Start();
         }
-
-        #endregion form_handlers
 
         readonly LV_ProgressVM _lv = new LV_ProgressVM();
         bool _bClosing = false;

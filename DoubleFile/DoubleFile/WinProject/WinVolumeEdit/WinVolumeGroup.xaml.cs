@@ -15,7 +15,7 @@ namespace DoubleFile
         {
             InitializeComponent();
 
-            Observable.FromEventPattern(form_grid, "Loaded")
+            Observable.FromEventPattern(this, "Loaded")
                 .Subscribe(x => formUC_VolumeGroup.IsWinVolumeGroup = true);
 
             Observable.FromEventPattern(formBtn_OK, "Click")

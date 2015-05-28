@@ -39,8 +39,8 @@ namespace DoubleFile
         {
             InitializeComponent();
 
-            Observable.FromEventPattern(form_grid, "Loaded")
-                .Subscribe(x => Grid_Loaded());
+            Observable.FromEventPattern(this, "Loaded")
+                .Subscribe(x => LoadHandler());
 
             Observable.FromEventPattern(formEdit_SourcePath, "LostFocus")
                 .Subscribe(x => { if (IsValidSourcePathEdit) formEdit_SourcePath.Text = CapDrive(formEdit_SourcePath.Text); });
@@ -131,7 +131,7 @@ namespace DoubleFile
             return strPath;
         }
 
-        private void Grid_Loaded()
+        void LoadHandler()
         {
             uc_VolumeEdit.DataContext = new UC_VolumeEditVM
             {

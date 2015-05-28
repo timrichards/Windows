@@ -4,7 +4,7 @@
             xmlns:local="clr-namespace:DoubleFile"
             Background="White"
             Name="uc_VolumeEdit">
-    <Grid Name="form_grid">
+    <Grid>
         <Grid.Resources>
             <ResourceDictionary Source="/Double File;component/Assets/WinVolumeEdit.xaml"/>
         </Grid.Resources>

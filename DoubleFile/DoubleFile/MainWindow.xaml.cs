@@ -108,26 +108,17 @@ namespace DoubleFile
             if (null != _darkWindow)
                 return showDialog(App.TopWindow);
 
-            _darkWindow = WithMainWindow(mainWindow =>
+            var rc = MainWindow.WithMainWindow(Win32Screen.GetWindowRect);
+
+            _darkWindow = new DarkWindow
             {
-                var rc = Win32Screen.GetWindowRect(mainWindow);
+                Left = rc.Left,
+                Top = rc.Top,
+                Width = rc.Width,
+                Height = rc.Height,
+            };
 
-                return new DarkWindow
-                {
-                    Left = rc.Left,
-                    Top = rc.Top,
-                    Width = rc.Width,
-                    Height = rc.Height,
-                    WindowState = mainWindow.WindowState
-                };
-            });
-
-            var retVal = default(T);
-
-            if (null != _darkWindow)
-                retVal = _darkWindow.ShowDialog(showDialog);
-            else
-                return showDialog(App.TopWindow);
+            var retVal = _darkWindow.ShowDialog(showDialog);
 
             _darkWindow = null;
             return retVal;

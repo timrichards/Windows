@@ -63,19 +63,15 @@ namespace DoubleFile
         {
             InitializeComponent();
 
-            MainWindow.WithMainWindow(mainWindow =>
-            {
-                var rc = Win32Screen.GetWindowRect(mainWindow);
+            var rc = MainWindow.WithMainWindow(Win32Screen.GetWindowRect);
 
-                Left = rc.Left;
-                Width = rc.Width;
-                return false;
-            });
+            Left = rc.Left;
+            Width = rc.Width;
 
             Observable.FromEventPattern(this, "SourceInitialized")
                 .Subscribe(x => ResizeMode = ResizeMode.NoResize);
 
-            Observable.FromEventPattern(form_grid, "Loaded")
+            Observable.FromEventPattern(this, "ContentRendered")
                 .Subscribe(x => FlashWindowStatic.Go(this, Once: true));
 
             Observable.FromEventPattern(formBtn_OK, "Click")

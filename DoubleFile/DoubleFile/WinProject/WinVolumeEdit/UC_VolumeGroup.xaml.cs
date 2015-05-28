@@ -16,17 +16,15 @@ namespace DoubleFile
         {
             InitializeComponent();
 
-            Observable.FromEventPattern(form_grid, "Loaded")
-                .Subscribe(x => Grid_Loaded());
-        }
-
-        private void Grid_Loaded()
-        {
-            if (IsWinVolumeGroup)
+            Observable.FromEventPattern(this, "Loaded")
+                .Subscribe(x =>
             {
-                formEdit_VolumeGroup.Focus();
-                formEdit_VolumeGroup.CaretIndex = int.MaxValue;
-            }
+                if (IsWinVolumeGroup)
+                {
+                    formEdit_VolumeGroup.Focus();
+                    formEdit_VolumeGroup.CaretIndex = int.MaxValue;
+                }
+            });
         }
     }
 }

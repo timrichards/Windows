@@ -162,7 +162,8 @@ namespace DoubleFile
                 return;
             }
             
-            if ((e.Key < Key.A) || (e.Key > Key.Z))
+            if ((Key.A > e.Key) ||
+                (Key.Z < e.Key))
             {
                 e.Handled = true;
                 return;
@@ -187,10 +188,11 @@ namespace DoubleFile
             var strListingFile = CapDrive(Path.GetFullPath(formEdit_SaveListingFile.Text));
             var strExt = "" + Path.GetExtension(strListingFile);
 
-            if ((strExt.Length == 0) || (false ==
-                strExt.Remove(0, 1)
-                .Equals(FileParse.ksFileExt_Listing,
-                StringComparison.InvariantCultureIgnoreCase)))
+            if ((0 == strExt.Length) ||
+                (false ==
+                strExt
+                    .Remove(0, 1)
+                    .Equals(FileParse.ksFileExt_Listing, StringComparison.InvariantCultureIgnoreCase)))
             {
                 strListingFile += "." + FileParse.ksFileExt_Listing;
             }
@@ -202,7 +204,7 @@ namespace DoubleFile
         {
             if (IsOKenabled)
             {
-                var window = Window.GetWindow(uc_VolumeEdit) as LocalWindowBase;
+                var window = Window.GetWindow(uc_VolumeEdit) as LocalModernWindowBase;
 
                 if (null != window)
                 {
@@ -218,7 +220,7 @@ namespace DoubleFile
 
         private void BtnCancel_Click()
         {
-            var window = Window.GetWindow(uc_VolumeEdit) as LocalWindowBase;
+            var window = Window.GetWindow(uc_VolumeEdit) as LocalModernWindowBase;
 
             if (null != window)
                 window.CloseIfSimulatingModal();

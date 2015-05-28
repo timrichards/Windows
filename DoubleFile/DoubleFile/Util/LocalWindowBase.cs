@@ -74,25 +74,27 @@ namespace DoubleFile
                         if (bCanFlashWindow)
                             FlashWindowStatic.Go((Window)topWindow);
                     }
-
-                    return;
                 }
 
-                App.TopWindow = this;
+                if (0 == OwnedWindows.Count)
+                    App.TopWindow = this;
             });
 
             ShowActivated = true;
 
-            Observable.FromEventPattern(this, "SourceInitialized")
+            Observable.FromEventPattern(this, "Loaded")
                 .Subscribe(x =>
             {
+                LocalIsClosed = false;
+
+                var hwnd = new WindowInteropHelper(this).Handle;
+
+          //      NativeMethods.SetWindowLong(hwnd, NativeMethods.GWL_STYLE, NativeMethods.GetWindowLong(hwnd, NativeMethods.GWL_STYLE) & ~NativeMethods.WS_MINIMIZEBOX);
+
                 HwndSource
-                    .FromHwnd(new WindowInteropHelper(this).Handle)
+                    .FromHwnd(hwnd)
                     .AddHook(WndProc);
             });
-
-            Observable.FromEventPattern(this, "Loaded")
-                .Subscribe(x => LocalIsClosed = false);
 
             Observable.FromEventPattern(this, "Closed")
                 .Subscribe(x => LocalIsClosed = true);
@@ -105,6 +107,16 @@ namespace DoubleFile
 
         IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
+            var command = NativeMethods.Command(wParam);
+
+            if (NativeMethods.SC_MINIMIZE == command)
+            {
+         //     if (false == this is MainWindow)
+                    handled = true;
+
+                return IntPtr.Zero;
+            }
+
             if (this == App.TopWindow)
                 return IntPtr.Zero;
 
@@ -113,7 +125,7 @@ namespace DoubleFile
 
             if (false ==
                 new[] { NativeMethods.SC_MAXIMIZE, NativeMethods.SC_RESTORE, NativeMethods.SC_MOVE }
-                .Contains(NativeMethods.Command(wParam)))
+                .Contains(command))
             {
                 return IntPtr.Zero;
             }
@@ -145,6 +157,12 @@ namespace DoubleFile
 
         protected bool? ShowDialog(ILocalWindow me)
         {
+            if (me.LocalIsClosed)
+            {
+                MBoxStatic.Assert(99981, false);
+                return null;
+            }
+
             I.SimulatingModal = App.SimulatingModal;
             Owner = (Window)me;
 

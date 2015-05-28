@@ -31,6 +31,7 @@ namespace DoubleFile
 
         internal const int WM_SYSCOMMAND = 0x112;
         internal const int SC_MOVE = 0xF010;
+        internal const int SC_MINIMIZE = 0xF020;
         internal const int SC_MAXIMIZE = 0xF030;
         internal const int SC_RESTORE = 0xF120;
 
@@ -124,5 +125,16 @@ namespace DoubleFile
 
         internal static readonly IntPtr
             InvalidHandleValue = new IntPtr(-1);
+
+        internal const int GWL_STYLE = -16;
+        internal const int WS_MAXIMIZEBOX = 0x10000;
+        internal const int WS_MINIMIZEBOX = 0x20000;
+
+        [DllImport("user32.dll")]
+        internal static extern int
+            GetWindowLong(IntPtr hWnd, int nIndex);
+        [DllImport("user32.dll")]
+        internal static extern int
+            SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
     }
 }

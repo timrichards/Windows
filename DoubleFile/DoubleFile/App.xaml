@@ -8,6 +8,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/ModernUI.xaml" />
+                <ResourceDictionary Source="/Double File;component/Assets/LocalBlankWindow.xaml" />
                 <ResourceDictionary Source="/Double File;component/Assets/LocalMUIdark.xaml" />
                 <ResourceDictionary Source="/Double File;component/Assets/Strings.xaml" />
                 <ResourceDictionary Source="/Double File;component/Assets/LocalStyles.xaml" />

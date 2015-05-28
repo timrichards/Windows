@@ -13,7 +13,7 @@
         <Setter Property="Height" Value="26" />
     </Style>
     
-    <Style TargetType="Button" BasedOn="{StaticResource MyFrameworkElementStyle}">
+    <Style x:Key="ImageButton" TargetType="Button" BasedOn="{StaticResource MyFrameworkElementStyle}">
         <Setter Property="Grid.Column" Value="2" />
         <Setter Property="Width" Value="24" />
         <!--both only for client design view-->

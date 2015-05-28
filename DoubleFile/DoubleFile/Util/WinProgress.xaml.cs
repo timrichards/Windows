@@ -59,9 +59,7 @@ namespace DoubleFile
 
         internal WinProgress InitProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths)
         {
-            foreach (var ieStrs in astrNicknames.Zip(astrPaths, Tuple.Create))
-                _lv.Add(new[] { ieStrs.Item1, ieStrs.Item2 }, bQuiet: true);
-
+            _lv.Add(astrNicknames.Zip(astrPaths, (a, b) => new[] { a, b }), bQuiet: true);
             return this;
         }
 

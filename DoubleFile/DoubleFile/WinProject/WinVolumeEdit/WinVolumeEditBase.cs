@@ -1,6 +1,6 @@
 ﻿namespace DoubleFile
 {
-    public abstract class WinVolumeEditBase : LocalWindowBase
+    public abstract class WinVolumeEditBase : LocalModernWindowBase
     {
         internal abstract LVitem_ProjectVM LVitemVolumeTemp { get; set; }
     }

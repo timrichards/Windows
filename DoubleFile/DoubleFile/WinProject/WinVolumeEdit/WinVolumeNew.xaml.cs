@@ -3,7 +3,7 @@
     /// <summary>
     /// Interaction logic for WinVolumeNew.xaml
     /// </summary>
-    partial class WinVolumeNew : WinVolumeEditBase
+    partial class WinVolumeNew
     {
         public WinVolumeNew()
         {

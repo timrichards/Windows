@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 
 namespace DoubleFile
@@ -13,9 +14,11 @@ namespace DoubleFile
         public string WidthProgressState { get { return SCW; } }
         public string WidthRemaining { get { return SCW; } }
 
-        internal override bool Add(string[] arrStr, bool bQuiet = false)
+        internal override bool Add(IEnumerable<string[]> ieStr, bool bQuiet = true /* ignored */)
         {
-            Add(new LVitem_ProgressVM(this, arrStr), bQuiet);
+            foreach (var arrStr in ieStr)
+                Add(new LVitem_ProgressVM(this, arrStr), bQuiet: true);
+
             return true;
         }
 

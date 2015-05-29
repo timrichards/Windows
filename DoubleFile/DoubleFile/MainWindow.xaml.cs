@@ -1,11 +1,12 @@
 ﻿using FirstFloor.ModernUI.Presentation;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interop;
 using System.Windows.Media;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -78,15 +79,25 @@ namespace DoubleFile
 
         class DarkWindow : LocalWindowBase
         {
-            internal T ShowDialog<T>(Func<ILocalWindow, T> showDialog)
+            internal DarkWindow(Window owner)
             {
+                var rc = Win32Screen.GetWindowRect(owner);
+
+                Left = rc.Left;
+                Top = rc.Top;
+                Width = rc.Width;
+                Height = rc.Height;
                 Background = Brushes.Black;
                 Opacity = 0.4;
                 AllowsTransparency = true;
                 WindowStyle = WindowStyle.None;
                 ResizeMode = ResizeMode.NoResize;
                 Content = new Grid();
+                Owner = owner;
+            }
 
+            internal T ShowDialog<T>(Func<ILocalWindow, T> showDialog)
+            {
                 var retVal = default(T);
 
                 Observable.FromEventPattern(this, "ContentRendered")
@@ -96,31 +107,49 @@ namespace DoubleFile
                     Close();
                 });
 
-                base.ShowDialog(App.TopWindow);
+                base.ShowDialog(App.LocalMainWindow);
                 return retVal;
             }
         }
 
-        static DarkWindow _darkWindow = null;
+        static List<DarkWindow> _lsDarkWindows = new List<DarkWindow>();
+
         static internal T
             Darken<T>(Func<ILocalWindow, T> showDialog)
         {
-            if (null != _darkWindow)
-                return showDialog(App.TopWindow);
+            if (0 < _lsDarkWindows.Count)
+                return showDialog(App.LocalMainWindow);
 
-            var rc = MainWindow.WithMainWindow(Win32Screen.GetWindowRect);
-
-            _darkWindow = new DarkWindow
+            var darkDialog = MainWindow.WithMainWindow(mainWindow =>
             {
-                Left = rc.Left,
-                Top = rc.Top,
-                Width = rc.Width,
-                Height = rc.Height,
-            };
+                var ownedWindows = mainWindow.OwnedWindows.Cast<Window>().ToArray();
 
-            var retVal = _darkWindow.ShowDialog(showDialog);
+                foreach (var window in ownedWindows)
+                {
+                    if (window is DarkWindow)
+                    {
+                        MBoxStatic.Assert(99979, false);
+                        continue;
+                    }
 
-            _darkWindow = null;
+                    _lsDarkWindows.Add(new DarkWindow((Window)window));
+                }
+
+                var darkDialogA = new DarkWindow(mainWindow);
+
+                _lsDarkWindows.Insert(0, darkDialogA);
+                return darkDialogA;
+            });
+
+            foreach (var darkWindow in _lsDarkWindows.Skip(1))
+                darkWindow.Show();
+
+            var retVal = darkDialog.ShowDialog(showDialog);
+
+            foreach (var darkWindow in _lsDarkWindows.Skip(1))
+                darkWindow.Close();
+
+            _lsDarkWindows = new List<DarkWindow>();
             return retVal;
         }
 
@@ -129,7 +158,7 @@ namespace DoubleFile
         {
             if (bHidden)
             {
-                while (MenuLinkGroups.Count > 1)
+                while (1 < MenuLinkGroups.Count)
                     MenuLinkGroups.RemoveAt(1);
             }
             else if (1 == MenuLinkGroups.Count)

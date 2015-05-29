@@ -116,7 +116,6 @@ namespace DoubleFile
             if (NativeMethods.SC_MINIMIZE == command)
             {
                 handled = true;
-
                 return IntPtr.Zero;
             }
 

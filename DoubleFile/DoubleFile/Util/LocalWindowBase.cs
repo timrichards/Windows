@@ -114,6 +114,7 @@ namespace DoubleFile
 
             if (NativeMethods.SC_MINIMIZE == command)
             {
+                handled = true;
                 return IntPtr.Zero;
             }
 
@@ -148,7 +149,9 @@ namespace DoubleFile
                 return this;
             }
 
-            Owner = (Window)App.LocalMainWindow;
+            if (null == Owner)
+                Owner = (Window)App.LocalMainWindow;
+
             base.Show();
             return this;
         }

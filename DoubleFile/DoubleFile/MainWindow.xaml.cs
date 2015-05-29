@@ -127,7 +127,7 @@ namespace DoubleFile
                 return retVal;
             }
 
-            Window[] _ownedWindows = null;
+            Window[] _ownedWindows = new Window[] { };
         }
 
         static List<DarkWindow> _lsDarkWindows = new List<DarkWindow>();

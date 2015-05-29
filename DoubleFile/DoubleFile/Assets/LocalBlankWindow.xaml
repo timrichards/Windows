@@ -67,7 +67,7 @@
 
                                         <!-- window system buttons-->
                                         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True">
-                                            <!--<Button Command="{Binding Source={x:Static SystemCommands.MinimizeWindowCommand}}" ToolTip="Minimize" Style="{StaticResource SystemButton}">
+                                            <!--<Button Command="{Binding Source={x:Static SystemCommands.MinimizeWindowCommand}}" ToolTip="minimize" Style="{StaticResource SystemButton}">
                                                 <Button.Content>
                                                     <Grid Width="13" Height="12" RenderTransform="1,0,0,1,0,1">
                                                         <Path Data="M0,6 L8,6 Z" Width="8" Height="7" VerticalAlignment="Center" HorizontalAlignment="Center"
@@ -76,7 +76,7 @@
                                                 </Button.Content>
                                             </Button>-->
                                             <Grid Margin="1,0,1,0">
-                                                <Button x:Name="Restore" Command="{Binding Source={x:Static SystemCommands.RestoreWindowCommand}}" ToolTip="Restore" Style="{StaticResource SystemButton}" Visibility="Hidden" >
+                                                <Button x:Name="Restore" Command="{Binding Source={x:Static SystemCommands.RestoreWindowCommand}}" ToolTip="restore" Style="{StaticResource SystemButton}" Visibility="Hidden" >
                                                     <Button.Content>
                                                         <Grid Width="13" Height="12" UseLayoutRounding="True" RenderTransform="1,0,0,1,.5,.5">
                                                             <Path Data="M2,0 L8,0 L8,6 M0,3 L6,3 M0,2 L6,2 L6,8 L0,8 Z" Width="8" Height="8" VerticalAlignment="Center" HorizontalAlignment="Center"
@@ -84,7 +84,7 @@
                                                         </Grid>
                                                     </Button.Content>
                                                 </Button>
-                                                <Button x:Name="Maximize" Command="{Binding Source={x:Static SystemCommands.MaximizeWindowCommand}}" ToolTip="Maximize" Style="{StaticResource SystemButton}" >
+                                                <Button x:Name="Maximize" Command="{Binding Source={x:Static SystemCommands.MaximizeWindowCommand}}" ToolTip="maximize" Style="{StaticResource SystemButton}" >
                                                     <Button.Content>
                                                         <Grid Width="13" Height="12">
                                                             <Path Data="M0,1 L9,1 L9,8 L0,8 Z" Width="9" Height="8" VerticalAlignment="Center" HorizontalAlignment="Center"
@@ -93,7 +93,7 @@
                                                     </Button.Content>
                                                 </Button>
                                             </Grid>
-                                            <Button Command="{Binding Source={x:Static SystemCommands.CloseWindowCommand}}" ToolTip="Close" Style="{StaticResource SystemCloseButton}" >
+                                            <Button Command="{Binding Source={x:Static SystemCommands.CloseWindowCommand}}" ToolTip="close" Style="{StaticResource SystemCloseButton}" >
                                                 <Button.Content>
                                                     <Grid Width="13" Height="12" RenderTransform="1,0,0,1,0,1">
                                                         <Path Data="M0,0 L8,7 M8,0 L0,7 Z" Width="8" Height="7" VerticalAlignment="Center" HorizontalAlignment="Center"

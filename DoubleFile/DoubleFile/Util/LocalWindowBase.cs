@@ -107,13 +107,13 @@ namespace DoubleFile
 
         IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
+            //if (this is MainWindow)
+            //    return IntPtr.Zero;
+
             var command = NativeMethods.Command(wParam);
 
             if (NativeMethods.SC_MINIMIZE == command)
             {
-         //     if (false == this is MainWindow)
-                    handled = true;
-
                 return IntPtr.Zero;
             }
 

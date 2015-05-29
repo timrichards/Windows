@@ -76,8 +76,11 @@ namespace DoubleFile
                     }
                 }
 
-                if (0 == OwnedWindows.Count)
+                if ((0 == OwnedWindows.Count)
+                    && Focusable)
+                {
                     App.TopWindow = this;
+                }
             });
 
             ShowActivated = true;

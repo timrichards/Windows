@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Linq;
+using System.Windows.Interop;
 
 namespace DoubleFile
 {
@@ -93,6 +94,17 @@ namespace DoubleFile
                 WindowStyle = WindowStyle.None;
                 ResizeMode = ResizeMode.NoResize;
                 Content = new Grid();
+                ShowActivated = false;
+                Focusable = false;
+                IsEnabled = false;
+                _ownedWindows = owner.OwnedWindows.Cast<Window>().ToArray();
+
+                foreach (var window in _ownedWindows)
+                {
+                    window.Owner = null;
+                    NativeMethods.SetWindowPos(new WindowInteropHelper(window).Handle, SWP.HWND_BOTTOM, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
+                }
+
                 Owner = owner;
             }
 
@@ -104,12 +116,18 @@ namespace DoubleFile
                     .Subscribe(x =>
                 {
                     retVal = showDialog(this);
+
+                    foreach (var window in _ownedWindows)
+                        window.Owner = Owner;
+
                     Close();
                 });
 
                 base.ShowDialog(App.LocalMainWindow);
                 return retVal;
             }
+
+            Window[] _ownedWindows = null;
         }
 
         static List<DarkWindow> _lsDarkWindows = new List<DarkWindow>();
@@ -123,6 +141,9 @@ namespace DoubleFile
             var darkDialog = MainWindow.WithMainWindow(mainWindow =>
             {
                 var ownedWindows = mainWindow.OwnedWindows.Cast<Window>().ToArray();
+                var darkDialogA = new DarkWindow(mainWindow);
+
+                _lsDarkWindows.Add(darkDialogA);
 
                 foreach (var window in ownedWindows)
                 {
@@ -135,9 +156,6 @@ namespace DoubleFile
                     _lsDarkWindows.Add(new DarkWindow((Window)window));
                 }
 
-                var darkDialogA = new DarkWindow(mainWindow);
-
-                _lsDarkWindows.Insert(0, darkDialogA);
                 return darkDialogA;
             });
 

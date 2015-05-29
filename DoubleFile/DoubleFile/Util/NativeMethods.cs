@@ -130,9 +130,13 @@ namespace DoubleFile
         internal const int WS_MAXIMIZEBOX = 0x10000;
         internal const int WS_MINIMIZEBOX = 0x20000;
 
+        internal const int GWL_EXSTYLE = -20;
+        internal const int WS_EX_NOACTIVATE = 0x08000000;
+
         [DllImport("user32.dll")]
         internal static extern int
             GetWindowLong(IntPtr hWnd, int nIndex);
+
         [DllImport("user32.dll")]
         internal static extern int
             SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);

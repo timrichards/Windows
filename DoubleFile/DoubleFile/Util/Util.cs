@@ -72,7 +72,9 @@ namespace DoubleFile
             if (App.LocalExit ||
                 (null == mainWindow) ||
                 App.LocalMainWindow.LocalIsClosed)
+            {
                 return;
+            }
 
             if ((null == mainWindow) ||
                 (null == mainWindow.Dispatcher) ||

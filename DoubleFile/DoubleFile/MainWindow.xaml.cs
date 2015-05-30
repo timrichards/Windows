@@ -94,16 +94,12 @@ namespace DoubleFile
                 WindowStyle = WindowStyle.None;
                 ResizeMode = ResizeMode.NoResize;
                 Content = new Grid();
-                ShowActivated = false;
                 Focusable = false;
                 IsEnabled = false;
                 _ownedWindows = owner.OwnedWindows.Cast<Window>().ToArray();
 
                 foreach (var window in _ownedWindows)
-                {
                     window.Owner = null;
-                    NativeMethods.SetWindowPos(new WindowInteropHelper(window).Handle, SWP.HWND_BOTTOM, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
-                }
 
                 Owner = owner;
             }
@@ -112,6 +108,9 @@ namespace DoubleFile
             {
                 var retVal = default(T);
 
+                Observable.FromEventPattern(this, "SourceInitialized")
+                    .Subscribe(x => ShowActivated = false);
+                
                 Observable.FromEventPattern(this, "ContentRendered")
                     .Subscribe(x =>
                 {
@@ -136,14 +135,13 @@ namespace DoubleFile
             Darken<T>(Func<ILocalWindow, T> showDialog)
         {
             if (0 < _lsDarkWindows.Count)
-                return showDialog(App.LocalMainWindow);
+                return showDialog(App.TopWindow);
 
             var darkDialog = MainWindow.WithMainWindow(mainWindow =>
             {
                 var ownedWindows = mainWindow.OwnedWindows.Cast<Window>().ToArray();
-                var darkDialogA = new DarkWindow(mainWindow);
 
-                _lsDarkWindows.Add(darkDialogA);
+                _lsDarkWindows.Add(new DarkWindow(mainWindow));
 
                 foreach (var window in ownedWindows)
                 {
@@ -153,10 +151,14 @@ namespace DoubleFile
                         continue;
                     }
 
+                    if (false == window is ExtraWindow)
+                        continue;
+
                     _lsDarkWindows.Add(new DarkWindow((Window)window));
                 }
 
-                return darkDialogA;
+                NativeMethods.SetWindowPos(new WindowInteropHelper(mainWindow).Handle, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE);
+                return _lsDarkWindows[0];
             });
 
             foreach (var darkWindow in _lsDarkWindows.Skip(1))

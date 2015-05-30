@@ -67,13 +67,15 @@ namespace DoubleFile
 
                 if (topWindow.SimulatingModal)
                 {
-                    if ((this != topWindow) &&
-                        (false == I.SimulatingModal))
+                    if (((this != topWindow) && (false == I.SimulatingModal))
+                        || (false == Focusable))
                     {
                         topWindow.Activate();
 
                         if (bCanFlashWindow)
                             FlashWindowStatic.Go((Window)topWindow);
+
+                        return;
                     }
                 }
 
@@ -91,12 +93,8 @@ namespace DoubleFile
             {
                 LocalIsClosed = false;
 
-                var hwnd = new WindowInteropHelper(this).Handle;
-
-         //       NativeMethods.SetWindowLong(hwnd, NativeMethods.GWL_STYLE, NativeMethods.GetWindowLong(hwnd, NativeMethods.GWL_STYLE) & ~NativeMethods.WS_MINIMIZEBOX);
-
                 HwndSource
-                    .FromHwnd(hwnd)
+                    .FromHwnd(new WindowInteropHelper(this).Handle)
                     .AddHook(WndProc);
             });
 

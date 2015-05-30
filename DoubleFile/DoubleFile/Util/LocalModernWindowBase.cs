@@ -73,7 +73,7 @@ namespace DoubleFile
                         topWindow.Activate();
 
                         if (bCanFlashWindow)
-                            FlashWindowStatic.Go((Window)topWindow);
+                            Win32Screen.FlashWindow((Window)topWindow);
 
                         return;
                     }

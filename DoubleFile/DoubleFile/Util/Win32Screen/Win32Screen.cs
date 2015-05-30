@@ -128,5 +128,24 @@ namespace DoubleFile
 
             return mi;
         }
+
+        static internal void FlashWindow(Window window_in, bool Once = false)
+        {
+            Util.UIthread(() =>
+            {
+                var window = window_in ?? App.LocalMainWindow as Window;
+
+                var fInfo = new NativeMethods.FLASHWINFO
+                {
+                    hwnd = new WindowInteropHelper(window).Handle,
+                    dwFlags = NativeMethods.FLASHW_ALL,
+                    uCount = (uint)(Once ? 1 : 7),
+                    dwTimeout = 75,
+                    cbSize = Convert.ToUInt32(Marshal.SizeOf(typeof(NativeMethods.FLASHWINFO)))
+                };
+
+                NativeMethods.FlashWindowEx(ref fInfo);
+            });
+        }
     }
 }

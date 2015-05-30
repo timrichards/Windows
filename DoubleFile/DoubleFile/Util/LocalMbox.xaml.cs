@@ -72,7 +72,7 @@ namespace DoubleFile
                 .Subscribe(x => ResizeMode = ResizeMode.NoResize);
 
             Observable.FromEventPattern(this, "ContentRendered")
-                .Subscribe(x => FlashWindowStatic.Go(this, Once: true));
+                .Subscribe(x => Win32Screen.FlashWindow(this, Once: true));
 
             Observable.FromEventPattern(formBtn_OK, "Click")
                 .Subscribe(x => BtnOK_Click());

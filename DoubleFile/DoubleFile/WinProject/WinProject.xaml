@@ -57,7 +57,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Nickname" Binding="{Binding Nickname}" Width="{Binding WidthNickname}"/>
                     <DataGridTextColumn Header="Source path" Binding="{Binding SourcePath}" Width="{Binding WidthSourcePath}"/>
-                    <DataGridTextColumn Header="Length" Binding="{Binding ScannedLength}" Width="{Binding WidthScannedLength}"/>
+                    <DataGridTextColumn Header="Length" Binding="{Binding ScannedLength}" SortMemberPath="ScannedLengthRaw"  Width="{Binding WidthScannedLength}"/>
                     <DataGridTextColumn Header="Drive model #" Binding="{Binding DriveModel}" Width="{Binding WidthDriveModel}"/>
                     <DataGridTextColumn Header="Drive serial #" Binding="{Binding DriveSerial}" Width="{Binding WidthDriveSerial}"/>
                     <DataGridTextColumn Header="Volume group" Binding="{Binding VolumeGroup}" Width="{Binding WidthVolumeGroup}"/>

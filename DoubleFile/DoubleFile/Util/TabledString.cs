@@ -88,7 +88,7 @@ namespace DoubleFile
             MBoxStatic.Assert(99934, 0 < t.RefCount);
             --t.RefCount;
 
-            if (0 <= t.RefCount)
+            if (0 >= t.RefCount)
                 TypedArrayBase.tA[new T().Type] = null;
         }
 

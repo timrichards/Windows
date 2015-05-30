@@ -16,7 +16,7 @@ namespace DoubleFile
         public string DriveModel { get { return marr[6]; } internal set { SetProperty(6, value); } }
         public string DriveSerial { get { return marr[7]; } internal set { SetProperty(7, value); } }
         public string ScannedLength { get { return Util.FormatSize(marr[8]); } internal set { SetProperty(8, value); } }
-        public long ScannedLengthRaw { get { return long.Parse(marr[8]); } }
+        public ulong ScannedLengthRaw { get { return ulong.Parse(marr[8]); } }
 
         protected override string[] PropertyNames { get { return new[] { "Nickname", "SourcePath", "ListingFileNoPath", "Status", "IncludeYN", "VolumeGroup", "DriveModel", "DriveSerial", "ScannedLength" }; } }
 

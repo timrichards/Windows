@@ -19,10 +19,10 @@
             </DataGrid.Resources>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="File name" Binding="{Binding Filename}" Width="{Binding WidthFilename}"/>
-                <DataGridTextColumn Header="Duplicates" Binding="{Binding Duplicates}" Width="{Binding WidthDuplicates}"/>
-                <DataGridTextColumn Header="Length" Binding="{Binding Length}" Width="{Binding WidthLength}"/>
-                <DataGridTextColumn Header="Created" Binding="{Binding Created}" Width="{Binding WidthCreated}"/>
-                <DataGridTextColumn Header="Modified" Binding="{Binding Modified}" Width="{Binding WidthModified}"/>
+                <DataGridTextColumn Header="Duplicates" Binding="{Binding Duplicates}" SortMemberPath="DuplicatesRaw" Width="{Binding WidthDuplicates}"/>
+                <DataGridTextColumn Header="Length" Binding="{Binding Length}" SortMemberPath="LengthRaw" Width="{Binding WidthLength}"/>
+                <DataGridTextColumn Header="Created" Binding="{Binding Created}" SortMemberPath="CreatedRaw" Width="{Binding WidthCreated}"/>
+                <DataGridTextColumn Header="Modified" Binding="{Binding Modified}" SortMemberPath="ModifiedRaw" Width="{Binding WidthModified}"/>
                 <DataGridTextColumn Header="Attributes" Binding="{Binding Attributes}" Width="{Binding WidthAttributes}"/>
                 <DataGridTextColumn Header="Error 1" Binding="{Binding Error1}" Width="{Binding WidthError1}"/>
                 <DataGridTextColumn Header="Error 2" Binding="{Binding Error2}" Width="{Binding WidthError2}"/>

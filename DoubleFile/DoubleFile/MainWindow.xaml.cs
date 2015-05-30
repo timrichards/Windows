@@ -80,14 +80,12 @@ namespace DoubleFile
 
         class DarkWindow : LocalWindowBase
         {
+            internal Rect Rect;
+
             internal DarkWindow(Window owner)
             {
-                var rc = Win32Screen.GetWindowRect(owner);
-
-                Left = rc.Left;
-                Top = rc.Top;
-                Width = rc.Width;
-                Height = rc.Height;
+                Rect = Win32Screen.GetWindowRect(owner);
+                this.SetRect(new Rect(-1, -1, 0, 0));
                 Background = Brushes.Black;
                 Opacity = 0.4;
                 AllowsTransparency = true;
@@ -114,6 +112,7 @@ namespace DoubleFile
                 Observable.FromEventPattern(this, "ContentRendered")
                     .Subscribe(x =>
                 {
+                    this.SetRect(Rect);
                     retVal = showDialog(this);
 
                     foreach (var window in _ownedWindows)
@@ -162,7 +161,10 @@ namespace DoubleFile
             });
 
             foreach (var darkWindow in _lsDarkWindows.Skip(1))
+            {
                 darkWindow.Show();
+                darkWindow.SetRect(darkWindow.Rect);
+            }
 
             var retVal = darkDialog.ShowDialog(showDialog);
 

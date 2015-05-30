@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
+using System.Windows;
 using System.Windows.Forms;
 
 namespace DoubleFile
@@ -158,6 +159,19 @@ namespace DoubleFile
             rc.Width *= scale.Width;
             rc.Height *= scale.Height;
             return rc;
+        }
+
+        static internal Rect GetRect(this Window window)
+        {
+            return new Rect(window.Left, window.Top, window.Width, window.Height);
+        }
+
+        static internal void SetRect(this Window window, Rect r)
+        {
+            window.Left = r.X;
+            window.Top = r.Y;
+            window.Width = r.Width;
+            window.Height = r.Height;
         }
     }
 }

@@ -85,7 +85,7 @@ namespace DoubleFile
             internal DarkWindow(Window owner)
             {
                 Rect = Win32Screen.GetWindowRect(owner);
-                this.SetRect(new Rect(-1, -1, 0, 0));
+                this.SetRect(new Rect());
                 Background = Brushes.Black;
                 Opacity = 0.4;
                 AllowsTransparency = true;
@@ -161,10 +161,10 @@ namespace DoubleFile
             });
 
             foreach (var darkWindow in _lsDarkWindows.Skip(1))
-            {
                 darkWindow.Show();
+
+            foreach (var darkWindow in _lsDarkWindows.Skip(1))
                 darkWindow.SetRect(darkWindow.Rect);
-            }
 
             var retVal = darkDialog.ShowDialog(showDialog);
 

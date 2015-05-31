@@ -8,6 +8,9 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Linq;
 using System.Windows.Interop;
+using Drawing = System.Drawing;
+using System.Drawing.Imaging;
+using System.Windows.Media.Imaging;
 
 namespace DoubleFile
 {
@@ -136,6 +139,35 @@ namespace DoubleFile
             if (0 < _lsDarkWindows.Count)
                 return showDialog(App.TopWindow);
 
+            var bounds = MainWindow.WithMainWindow(mainWindow => Win32Screen.GetWindowMonitorInfo(mainWindow).rcMonitor);
+
+            var doubleBufferWindow = new Window
+            {
+                Topmost = true,
+                WindowStyle = WindowStyle.None,
+                Opacity = 0,
+                ShowInTaskbar = false,
+                AllowsTransparency = true,
+                BorderThickness = new Thickness()
+            };
+
+            doubleBufferWindow.SetRect(bounds);
+
+            using (var bitmap = new Drawing.Bitmap(bounds.Width, bounds.Height))
+            {
+                using (Drawing.Graphics g = Drawing.Graphics.FromImage(bitmap))
+                    g.CopyFromScreen(Drawing.Point.Empty, Drawing.Point.Empty, new Drawing.Size(bounds.Width, bounds.Height));
+
+                doubleBufferWindow.Background = new ImageBrush(Imaging.CreateBitmapSourceFromHBitmap(
+                    bitmap.GetHbitmap(),
+                    IntPtr.Zero,
+                    Int32Rect.Empty,
+                    BitmapSizeOptions.FromEmptyOptions()));
+            }
+
+            doubleBufferWindow.Show();
+            doubleBufferWindow.Opacity = 1;
+
             var darkDialog = MainWindow.WithMainWindow(mainWindow =>
             {
                 var ownedWindows = mainWindow.OwnedWindows.Cast<Window>().ToArray();
@@ -165,6 +197,8 @@ namespace DoubleFile
 
             foreach (var darkWindow in _lsDarkWindows.Skip(1))
                 darkWindow.SetRect(darkWindow.Rect);
+
+            doubleBufferWindow.Close();
 
             var retVal = darkDialog.ShowDialog(showDialog);
 

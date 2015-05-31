@@ -116,7 +116,7 @@ namespace DoubleFile
                 .rcMonitor;
         }
 
-        static MONITORINFO GetWindowMonitorInfo(Window window)
+        internal static MONITORINFO GetWindowMonitorInfo(Window window)
         {
             var hMonitor = NativeMethods.Call(() => NativeMethods
                 .MonitorFromWindow(new WindowInteropHelper(window).Handle, NativeMethods.MONITOR_DEFAULTTOPRIMARY));

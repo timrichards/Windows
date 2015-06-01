@@ -99,7 +99,7 @@ namespace DoubleFile
                 _ownedWindows = owner.OwnedWindows.Cast<Window>().ToArray();
 
                 foreach (var window in _ownedWindows)
-                    window.Owner = null;
+                    window.Owner = _fakeBaseWindow;
 
                 Owner = owner;
             }
@@ -114,6 +114,7 @@ namespace DoubleFile
                 Observable.FromEventPattern(this, "ContentRendered")
                     .Subscribe(x =>
                 {
+                    NativeMethods.SetWindowPos(_fakeBaseWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
                     this.SetRect(Rect);
                     retVal = showDialog(this);
 
@@ -124,6 +125,8 @@ namespace DoubleFile
                         NativeMethods.BringWindowToTop(_topWindow);
 
                     _topWindow = null;
+                    _fakeBaseWindow.Close();
+                    _fakeBaseWindow = null;
                     Close();
                 });
 
@@ -136,6 +139,7 @@ namespace DoubleFile
 
         static List<DarkWindow> _lsDarkWindows = new List<DarkWindow>();
         static NativeWindow _topWindow = null;
+        static Window _fakeBaseWindow = null;
 
         static internal T
             Darken<T>(Func<ILocalWindow, T> showDialog)
@@ -170,6 +174,19 @@ namespace DoubleFile
 
             doubleBufferWindow.Show();
             doubleBufferWindow.Opacity = 1;
+
+            (_fakeBaseWindow = new Window
+            {
+                ShowInTaskbar = false,
+                WindowStyle = WindowStyle.None,
+                AllowsTransparency = true,
+                Opacity = 0
+            })
+                .Show();
+
+            NativeMethods.SetWindowLong(
+                _fakeBaseWindow, NativeMethods.GWL_EXSTYLE, NativeMethods.GetWindowLong(_fakeBaseWindow, NativeMethods.GWL_EXSTYLE)
+                | NativeMethods.WS_EX_TOOLWINDOW);
 
             var darkDialog = MainWindow.WithMainWindow(mainWindow =>
             {

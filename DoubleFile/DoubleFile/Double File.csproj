@@ -167,6 +167,7 @@
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="LocalForms\LocalColorItemBase.cs" />
+    <Compile Include="MainWindow DarkWindow.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>

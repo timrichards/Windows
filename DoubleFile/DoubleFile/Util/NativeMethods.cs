@@ -24,8 +24,8 @@ namespace DoubleFile
             MBoxStatic.Assert(nAssertLoc,
                 (false == bAssert) ||
                 (false == errorValue.Equals(retVal)));
-
-            Util.WriteLine(strGetLastError);
+            
+            Util.WriteLine(action.Method.Name + ": " + retVal + " (" + strGetLastError +")");
             return retVal;
         }
 

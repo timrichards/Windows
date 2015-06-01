@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -53,6 +54,9 @@ namespace DoubleFile
                 MBoxStatic.Assert(99858, false);
                 return false;
             }
+
+            if (false == lvProjectVM.ItemsCast.Any(lvItem => lvItem.CanLoad))
+                return false;
 
             _weakReference.Target =
                 Instance =

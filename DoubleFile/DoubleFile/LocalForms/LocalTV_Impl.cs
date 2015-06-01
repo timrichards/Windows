@@ -4,6 +4,7 @@ using System.Windows;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
 using System.Linq;
+using System.Threading;
 
 namespace DoubleFile
 {
@@ -46,6 +47,9 @@ namespace DoubleFile
                     return false;
                 }
             }
+
+            if (false == _lvProjectVM.ItemsCast.Any(lvItem => lvItem.CanLoad))
+                return false;
 
             _bFinished = false;
             _winProgress.Title = "Initializing Explorer";
@@ -144,9 +148,14 @@ namespace DoubleFile
 
         void ITreeStatus.Done()
         {
-            if (_rootNodes.IsEmpty())
+            if ((null == _rootNodes) ||
+                _rootNodes.IsEmpty())
             {
                 _winProgress.Aborted = true;
+
+                while (_winProgress.LocalIsClosed)
+                    Thread.Sleep(100);
+
                 Util.UIthread(_winProgress.Close);
                 return;
             }
@@ -196,6 +205,10 @@ namespace DoubleFile
             TreeCleanup();
             TabledString<Tabled_Folders>.GenerationEnded();
             _bFinished = true;      // should preceed closing status dialog: returns true to the caller
+
+            while (_winProgress.LocalIsClosed)
+                Thread.Sleep(100);
+
             _winProgress.CloseIfNatural();
             _dictNodes = null;      // saving memory here.
         }

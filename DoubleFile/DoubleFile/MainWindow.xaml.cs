@@ -120,6 +120,10 @@ namespace DoubleFile
                     foreach (var window in _ownedWindows)
                         window.Owner = Owner;
 
+                    if (null != (IntPtr)_topWindow)
+                        NativeMethods.BringWindowToTop(_topWindow);
+
+                    _topWindow = null;
                     Close();
                 });
 
@@ -131,6 +135,7 @@ namespace DoubleFile
         }
 
         static List<DarkWindow> _lsDarkWindows = new List<DarkWindow>();
+        static NativeWindow _topWindow = null;
 
         static internal T
             Darken<T>(Func<ILocalWindow, T> showDialog)
@@ -169,6 +174,14 @@ namespace DoubleFile
             var darkDialog = MainWindow.WithMainWindow(mainWindow =>
             {
                 var ownedWindows = mainWindow.OwnedWindows.Cast<Window>().ToArray();
+
+                for (_topWindow = NativeMethods.GetTopWindow(IntPtr.Zero);
+                    _topWindow != IntPtr.Zero;
+                    _topWindow = NativeMethods.GetWindow(_topWindow, NativeMethods.GW_HWNDNEXT))
+                {
+                    if (ownedWindows.Select(w => (NativeWindow)w).Contains(_topWindow))
+                        break;
+                }
 
                 _lsDarkWindows.Add(new DarkWindow(mainWindow));
 

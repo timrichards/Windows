@@ -9,11 +9,16 @@ using System.Windows.Interop;
 
 namespace DoubleFile
 {
-    internal class NativeWindow
+    internal class NativeWindow : IEquatable<NativeWindow>
     {
         static public implicit operator IntPtr(NativeWindow h) { return h.hwnd; }
         static public implicit operator NativeWindow(Window w) { return new NativeWindow { hwnd = new WindowInteropHelper(w).Handle }; }
         static public implicit operator NativeWindow(IntPtr hwnd) { return new NativeWindow { hwnd = hwnd }; }
+
+        public bool Equals(NativeWindow other)
+        {
+            return hwnd == other.hwnd;
+        }
 
         IntPtr hwnd = IntPtr.Zero;
     }
@@ -174,7 +179,19 @@ namespace DoubleFile
 
         [DllImport("user32.dll")]
         static extern IntPtr GetTopWindow(IntPtr hWnd);
-        static internal IntPtr
+        static internal NativeWindow
             GetTopWindow(NativeWindow w) { return GetTopWindow((IntPtr)w); }
+
+        [DllImport("user32.dll")]
+        static extern bool BringWindowToTop(IntPtr hWnd);
+        static internal bool
+            BringWindowToTop(NativeWindow w) { return BringWindowToTop((IntPtr)w); }
+
+        internal const uint GW_HWNDNEXT = 2;
+
+        [DllImport("User32")]
+        static extern IntPtr GetWindow(IntPtr hWnd, uint wCmd);
+        static internal NativeWindow
+            GetWindow(NativeWindow w, uint wCmd) { return GetWindow((IntPtr)w, wCmd); }
     }
 }

@@ -18,5 +18,5 @@
 99877 99876
 99842
 
-99830 block is reserved: do not alert LocalOnNext
+99830 block is reserved: do not alert LocalOnNext. Next: 99838 on down
 99829 next low assert

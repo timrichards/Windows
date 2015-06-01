@@ -150,15 +150,18 @@ namespace DoubleFile
         internal const int WS_MINIMIZEBOX = 0x20000;
 
         internal const int GWL_EXSTYLE = -20;
-        internal const int WS_EX_NOACTIVATE = 0x08000000;
+        internal const int WS_EX_NOACTIVATE = 0x8000000;    // 7th place (six zeros)
+        internal const int WS_EX_TOOLWINDOW = 0x80;
 
         [DllImport("user32.dll")]
-        static internal extern int
-            GetWindowLong(IntPtr hWnd, int nIndex);
+        static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+        static internal int
+            GetWindowLong(NativeWindow w, int nIndex) { return GetWindowLong((IntPtr)w, nIndex); }
 
         [DllImport("user32.dll")]
-        static internal extern int
-            SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+        static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+        static internal int
+            SetWindowLong(NativeWindow w, int nIndex, int dwNewLong) { return SetWindowLong((IntPtr)w, nIndex, dwNewLong); }
 
         internal const UInt32 FLASHW_ALL = 3;
 

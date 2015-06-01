@@ -31,6 +31,7 @@ namespace DoubleFile
             var projectFile = new ProjectFile();
 
             _weakReference.Target = projectFile;
+
             var bRet = projectFile.OpenProject_(strProjectFilename, openListingFilesWR);
 
             foreach (var d in projectFile._lsDisposable)

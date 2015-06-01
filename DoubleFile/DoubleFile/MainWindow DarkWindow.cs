@@ -137,6 +137,7 @@ namespace DoubleFile
                 .Subscribe(x =>
             {
                 NativeMethods.SetWindowPos(fakeBaseWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
+                NativeMethods.SetWindowPos(darkDialog, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE);
                 doubleBufferWindow.Opacity = 0;
                 doubleBufferWindow.Close();
             });
@@ -147,13 +148,12 @@ namespace DoubleFile
             foreach (var window in darkenedWindows)
                 window.Owner = this;
 
-            NativeMethods.BringWindowToTop(topWindow);
             fakeBaseWindow.Close();
+            NativeMethods.BringWindowToTop(topWindow);
 
             foreach (var darkWindow in darkWindows)
                 darkWindow.Close();
 
-            darkWindows = new List<DarkWindow>();
             bDarkening = false;
             return retVal;
         }

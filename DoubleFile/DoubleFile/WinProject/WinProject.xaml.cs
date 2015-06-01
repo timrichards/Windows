@@ -24,7 +24,7 @@ namespace DoubleFile
             LV_ProjectVM.Modified.Subscribe(x => Reset());
         }
 
-        internal static bool OKtoNavigate()
+        static internal bool OKtoNavigate()
         {
             if (OKtoNavigate_())
                 return true;

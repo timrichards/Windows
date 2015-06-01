@@ -151,7 +151,7 @@ namespace DoubleFile
             textBox.CaretIndex = int.MaxValue;
         }
 
-        private void formEdit_DriveLetter_PreviewKeyDown(KeyEventArgs e)
+        void formEdit_DriveLetter_PreviewKeyDown(KeyEventArgs e)
         {
             if (new[] { Key.Tab, Key.Back, Key.Delete, Key.Left, Key.Right }.Contains(e.Key))
                 return;
@@ -177,7 +177,7 @@ namespace DoubleFile
             }
         }
 
-        private void formEdit_ListingFile_LostFocus()
+        void formEdit_ListingFile_LostFocus()
         {
             if (string.IsNullOrWhiteSpace(formEdit_SaveListingFile.Text) ||
                 (false == IsValidListingEdit))
@@ -200,7 +200,7 @@ namespace DoubleFile
             formEdit_SaveListingFile.Text = strListingFile;
         }
 
-        private void BtnOK_Click()
+        void BtnOK_Click()
         {
             if (IsOKenabled)
             {
@@ -218,7 +218,7 @@ namespace DoubleFile
             }
         }
 
-        private void BtnCancel_Click()
+        void BtnCancel_Click()
         {
             var window = Window.GetWindow(uc_VolumeEdit) as LocalModernWindowBase;
 

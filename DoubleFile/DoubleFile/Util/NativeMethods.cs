@@ -11,22 +11,22 @@ namespace DoubleFile
 {
     internal class NativeWindow
     {
-        public static implicit operator IntPtr(NativeWindow h) { return h.hwnd; }
-        public static implicit operator NativeWindow(Window w) { return new NativeWindow { hwnd = new WindowInteropHelper(w).Handle }; }
-        public static implicit operator NativeWindow(IntPtr hwnd) { return new NativeWindow { hwnd = hwnd }; }
+        static public implicit operator IntPtr(NativeWindow h) { return h.hwnd; }
+        static public implicit operator NativeWindow(Window w) { return new NativeWindow { hwnd = new WindowInteropHelper(w).Handle }; }
+        static public implicit operator NativeWindow(IntPtr hwnd) { return new NativeWindow { hwnd = hwnd }; }
 
         IntPtr hwnd = IntPtr.Zero;
     }
 
     static class NativeMethods
     {
-        internal static int
+        static internal int
             Command(IntPtr wParam)
         {
             return wParam.ToInt32() & 0xFFF0;
         }
 
-        internal static T
+        static internal T
             Call<T>(Func<T> action, bool bAssert = false, T errorValue = default(T), double nAssertLoc = -1)
         {
             var retVal = action();
@@ -124,20 +124,20 @@ namespace DoubleFile
             FIND_FIRST_EX_LARGE_FETCH = 2;
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, BestFitMapping = false), SuppressUnmanagedCodeSecurity]
-        internal static extern IntPtr
+        static internal extern IntPtr
             FindFirstFileExW(string lpFileName, IndexInfoLevels infoLevel, out DATUM lpFindFileData, IndexSearchOps fSearchOp, IntPtr lpSearchFilter, int dwAdditionalFlag);
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, BestFitMapping = false), SuppressUnmanagedCodeSecurity]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool
+        static internal extern bool
             FindNextFileW(IntPtr handle, out DATUM lpFindFileData);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool
+        static internal extern bool
             FindClose(IntPtr hFindFile);
 
-        internal static readonly IntPtr
+        static internal readonly IntPtr
             InvalidHandleValue = new IntPtr(-1);
 
         internal const int GWL_STYLE = -16;
@@ -148,11 +148,11 @@ namespace DoubleFile
         internal const int WS_EX_NOACTIVATE = 0x08000000;
 
         [DllImport("user32.dll")]
-        internal static extern int
+        static internal extern int
             GetWindowLong(IntPtr hWnd, int nIndex);
 
         [DllImport("user32.dll")]
-        internal static extern int
+        static internal extern int
             SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
         internal const UInt32 FLASHW_ALL = 3;
@@ -169,12 +169,12 @@ namespace DoubleFile
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool
+        static internal extern bool
             FlashWindowEx(ref FLASHWINFO pwfi);
 
         [DllImport("user32.dll")]
         static extern IntPtr GetTopWindow(IntPtr hWnd);
-        internal static IntPtr
+        static internal IntPtr
             GetTopWindow(NativeWindow w) { return GetTopWindow((IntPtr)w); }
     }
 }

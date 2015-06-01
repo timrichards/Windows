@@ -19,7 +19,7 @@ namespace DoubleFile
         internal int Width { get { return Right - Left; } }
         internal int Height { get { return Bottom - Top; } }
 
-        public static implicit operator Rect(RECT value)
+        static public implicit operator Rect(RECT value)
         {
             return new Rect
             {

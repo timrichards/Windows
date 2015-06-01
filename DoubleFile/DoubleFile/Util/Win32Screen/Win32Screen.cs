@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Interop;
 
 namespace DoubleFile
 {
@@ -110,7 +109,7 @@ namespace DoubleFile
             }
         }
 
-        internal static MONITORINFO GetWindowMonitorInfo(Window window)
+        static internal MONITORINFO GetWindowMonitorInfo(Window window)
         {
             var hMonitor = NativeMethods.Call(() => NativeMethods
                 .MonitorFromWindow(window, NativeMethods.MONITOR_DEFAULTTOPRIMARY));

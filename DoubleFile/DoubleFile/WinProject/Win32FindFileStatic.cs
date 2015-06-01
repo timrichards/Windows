@@ -60,12 +60,12 @@ namespace DoubleFile
                 get { return LastWriteTimeUtc.ToLocalTime(); }
             }
 
-            private static long CombineHighLowInts(uint high, uint low)
+            static long CombineHighLowInts(uint high, uint low)
             {
                 return (((long)high) << 0x20) | low;
             }
 
-            private static DateTime ConvertDateTime(uint high, uint low)
+            static DateTime ConvertDateTime(uint high, uint low)
             {
                 long fileTime = CombineHighLowInts(high, low);
                 return DateTime.FromFileTimeUtc(fileTime);

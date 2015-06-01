@@ -42,8 +42,8 @@ namespace DoubleFile
     class TabledString<T> : IComparable
         where T : TypedArrayBase, new()
     {
-        public static implicit operator TabledString<T>(string value) { return (null == value) ? null : new TabledString<T> { nIndex = Set(value) }; }
-        public static implicit operator string(TabledString<T> value) { return (null == value) ? null : Get(value.nIndex); }
+        static public implicit operator TabledString<T>(string value) { return (null == value) ? null : new TabledString<T> { nIndex = Set(value) }; }
+        static public implicit operator string(TabledString<T> value) { return (null == value) ? null : Get(value.nIndex); }
         public int CompareTo(object obj) { return (Get(nIndex) + "").CompareTo(Get(((TabledString<T>)obj).nIndex)); }
 
         internal bool Contains(TabledString<T> ustr) { return Get(nIndex).Contains(Get(ustr.nIndex)); }

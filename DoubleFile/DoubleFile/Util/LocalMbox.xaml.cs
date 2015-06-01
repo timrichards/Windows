@@ -123,7 +123,7 @@ namespace DoubleFile
             return _Result;
         }
 
-        private void BtnOK_Click()
+        void BtnOK_Click()
         {
             switch (_buttons)
             {

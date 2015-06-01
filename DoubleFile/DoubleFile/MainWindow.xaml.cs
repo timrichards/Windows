@@ -9,7 +9,6 @@ using System.Windows.Media;
 using System.Linq;
 using System.Windows.Interop;
 using Drawing = System.Drawing;
-using System.Drawing.Imaging;
 using System.Windows.Media.Imaging;
 
 namespace DoubleFile

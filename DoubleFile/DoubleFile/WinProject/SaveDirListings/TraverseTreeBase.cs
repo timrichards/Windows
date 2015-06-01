@@ -39,7 +39,7 @@ namespace DoubleFile
             /// <param name="dictHash"></param>
             /// <param name="dictException_FileRead"></param>
             /// <returns>File list if first pass</returns>
-            private IEnumerable<string> ImplementationDetails(
+            IEnumerable<string> ImplementationDetails(
                 TextWriter fs = null,
                 IDictionary<string, HashTuple> dictHash = null,
                 IReadOnlyDictionary<string, string> dictException_FileRead = null)

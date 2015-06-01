@@ -183,7 +183,7 @@ namespace DoubleFile
             });
 
             foreach (var darkWindow in _lsDarkWindows.Skip(1))
-                darkWindow.Show();
+                ((Window)darkWindow).Show();
 
             foreach (var darkWindow in _lsDarkWindows.Skip(1))
                 darkWindow.SetRect(darkWindow.Rect);

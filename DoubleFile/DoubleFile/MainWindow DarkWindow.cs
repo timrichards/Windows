@@ -27,13 +27,12 @@ namespace DoubleFile
                 Opacity = 0.4;
                 WindowStyle = WindowStyle.None;
                 ResizeMode = ResizeMode.NoResize;
-                Content = new Grid();
                 Focusable = false;
                 IsEnabled = false;
             }
 
-            internal new void Show() { ((Window)this).Show(); }                         // darkens ExtraWindow and WinTooltip
-            internal new void ShowDialog() { base.ShowDialog(App.LocalMainWindow); }    // darkens MainWindow
+            internal new void ShowDialog() { base.ShowDialog(App.LocalMainWindow); }    // kicks off by darkening MainWindow
+            internal new void Show() { ((Window)this).Show(); }                         // <- then ExtraWindow and WinTooltip
         }
 
         static internal T
@@ -102,7 +101,6 @@ namespace DoubleFile
                     break;
             }
 
-            var darkDialog = new DarkWindow(this);
             var darkWindows = new List<DarkWindow>();
 
             darkenedWindows
@@ -117,24 +115,32 @@ namespace DoubleFile
             foreach (var darkWindow in darkWindows)
                 darkWindow.SetRect(darkWindow.Rect);
 
-            Observable.FromEventPattern(darkDialog, "SourceInitialized")
-                .Subscribe(x => darkDialog.ShowActivated = false);
-
             T retVal = default(T);
-
-            Observable.FromEventPattern(darkDialog, "ContentRendered")
-                .Subscribe(x =>
+            
             {
-                NativeMethods.SetWindowPos(fakeBaseWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
-                NativeMethods.SetWindowPos(darkDialog, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE);
-                doubleBufferWindow.Opacity = 0;
-                doubleBufferWindow.Close();
-                darkDialog.SetRect(darkDialog.Rect);
-                retVal = showDialog(darkDialog);
-                darkDialog.Close();
-            });
+                var darkDialog = new DarkWindow(this) { Content = new Grid() };
 
-            darkDialog.ShowDialog();
+                Observable.FromEventPattern(darkDialog, "SourceInitialized")
+                    .Subscribe(x => darkDialog.ShowActivated = false);
+
+                Observable.FromEventPattern(darkDialog, "ContentRendered")
+                    .Subscribe(x =>
+                {
+                    NativeMethods.SetWindowPos(fakeBaseWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
+                    
+                    foreach (var winTooltip in darkenedWindows.Where(w => w is WinTooltip))
+                        NativeMethods.SetWindowPos(winTooltip, SWP.HWND_BOTTOM, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
+
+                    NativeMethods.BringWindowToTop(topWindow);
+                    darkDialog.SetRect(darkDialog.Rect);
+                    doubleBufferWindow.Opacity = 0;
+                    doubleBufferWindow.Close();
+                    retVal = showDialog(darkDialog);
+                    darkDialog.Close();
+                });
+
+                darkDialog.ShowDialog();
+            }
 
             foreach (var window in darkenedWindows)
                 window.Owner = this;

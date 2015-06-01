@@ -70,6 +70,7 @@ namespace DoubleFile
             {
                 _winTooltip = new WinTooltip { WindowStartupLocation = WindowStartupLocation.Manual };
                 _winTooltip.Show();
+                NativeMethods.SetWindowPos(_winTooltip, _winTooltip.Owner, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
                 clientSpecific();
             }
 

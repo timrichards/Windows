@@ -76,7 +76,7 @@ namespace DoubleFile
         [DllImport("user32.dll", SetLastError = true)]
         static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags);
         static internal bool
-            SetWindowPos(NativeWindow w, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags) { return SetWindowPos((IntPtr)w, hWndInsertAfter, X, Y, cx, cy, uFlags); }
+            SetWindowPos(NativeWindow w, NativeWindow insertAfter, int X, int Y, int cx, int cy, int uFlags) { return SetWindowPos((IntPtr)w, (IntPtr)insertAfter, X, Y, cx, cy, uFlags); }
 
         //[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, BestFitMapping = false), SuppressUnmanagedCodeSecurity]
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]

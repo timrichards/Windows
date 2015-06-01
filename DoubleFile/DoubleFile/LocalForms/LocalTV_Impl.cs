@@ -153,7 +153,7 @@ namespace DoubleFile
             {
                 _winProgress.Aborted = true;
 
-                while (_winProgress.LocalIsClosed)
+                for (var i = 0; (i < 10) && _winProgress.LocalIsClosed; ++i)
                     Thread.Sleep(100);
 
                 Util.UIthread(_winProgress.Close);
@@ -206,7 +206,7 @@ namespace DoubleFile
             TabledString<Tabled_Folders>.GenerationEnded();
             _bFinished = true;      // should preceed closing status dialog: returns true to the caller
 
-            while (_winProgress.LocalIsClosed)
+            for (var i = 0; (i < 10) && _winProgress.LocalIsClosed; ++i)
                 Thread.Sleep(100);
 
             _winProgress.CloseIfNatural();

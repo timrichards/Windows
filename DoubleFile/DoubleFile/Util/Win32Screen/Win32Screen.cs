@@ -110,12 +110,6 @@ namespace DoubleFile
             }
         }
 
-        static internal Rect GetWindowMonitorRect(Window window)
-        {
-            return GetWindowMonitorInfo(window)
-                .rcMonitor;
-        }
-
         internal static MONITORINFO GetWindowMonitorInfo(Window window)
         {
             var hMonitor = NativeMethods.Call(() => NativeMethods

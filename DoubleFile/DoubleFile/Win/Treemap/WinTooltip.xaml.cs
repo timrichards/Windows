@@ -154,7 +154,7 @@ namespace DoubleFile
                 rcTooltip.Y = 0;
             }
 
-            var rcMonitor = Win32Screen.GetWindowMonitorRect(Owner);
+            Rect rcMonitor = Win32Screen.GetWindowMonitorInfo(Owner).rcMonitor;
 
             if (false == (rcMonitor.Contains(rcTooltip)))
             {

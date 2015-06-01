@@ -31,10 +31,9 @@ namespace DoubleFile
 
             var dlg = new Microsoft.Win32.OpenFileDialog { Title = "Open Project", Filter = _ksProjectFilter };
 
-            if (MainWindow.Darken(darkWindow => dlg.ShowDialog((Window)darkWindow)) ?? false)
+            if ((MainWindow.Darken(darkWindow => dlg.ShowDialog((Window)darkWindow)) ?? false) &&
+                ProjectFile.OpenProject(dlg.FileName, new WeakReference<IOpenListingFiles>(this)))
             {
-                ProjectFile.OpenProject(dlg.FileName, new WeakReference<IOpenListingFiles>(this));
-
                 _lvVM.Unsaved = false;
                 _lvVM.SetModified();
             }
@@ -207,9 +206,9 @@ namespace DoubleFile
             return bOpenedFiles;
         }
 
-        void IOpenListingFiles.Callback(IEnumerable<string> lsFiles, bool bClearItems, Func<bool> userCanceled)
+        bool IOpenListingFiles.Callback(IEnumerable<string> lsFiles, bool bClearItems, Func<bool> userCanceled)
         {
-            OpenListingFiles(lsFiles, bClearItems, userCanceled);
+            return OpenListingFiles(lsFiles, bClearItems, userCanceled);
         }
     }
 }

@@ -4,9 +4,20 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Windows;
+using System.Windows.Interop;
 
 namespace DoubleFile
 {
+    internal class NativeWindow
+    {
+        public static implicit operator IntPtr(NativeWindow h) { return h.hwnd; }
+        public static implicit operator NativeWindow(Window w) { return new NativeWindow { hwnd = new WindowInteropHelper(w).Handle }; }
+        public static implicit operator NativeWindow(IntPtr hwnd) { return new NativeWindow { hwnd = hwnd }; }
+
+        IntPtr hwnd = IntPtr.Zero;
+    }
+
     static class NativeMethods
     {
         internal static int
@@ -48,16 +59,19 @@ namespace DoubleFile
             MonitorFromRect([In] ref RECT lprc, uint dwFlags);
 
         [DllImport("user32.dll")]
-        static internal extern IntPtr
-            MonitorFromWindow(IntPtr hwnd, uint dwFlags);
+        static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
+        static internal IntPtr
+            MonitorFromWindow(NativeWindow w, uint dwFlags) { return MonitorFromWindow((IntPtr)w, dwFlags); }
 
         [DllImport("user32.dll", SetLastError = true)]
-        static internal extern bool
-            GetWindowRect(IntPtr hwnd, out RECT lpRect);
+        static internal extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
+        //static internal bool
+        //    GetWindowRect(NativeWindow w, out RECT lpRect) { return GetWindowRect((IntPtr)w, out lpRect); }
 
         [DllImport("user32.dll", SetLastError = true)]
-        static internal extern bool
-            SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags);
+        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags);
+        static internal bool
+            SetWindowPos(NativeWindow w, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags) { return SetWindowPos((IntPtr)w, hWndInsertAfter, X, Y, cx, cy, uFlags); }
 
         //[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, BestFitMapping = false), SuppressUnmanagedCodeSecurity]
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
@@ -157,5 +171,10 @@ namespace DoubleFile
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool
             FlashWindowEx(ref FLASHWINFO pwfi);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr GetTopWindow(IntPtr hWnd);
+        internal static IntPtr
+            GetTopWindow(NativeWindow w) { return GetTopWindow((IntPtr)w); }
     }
 }

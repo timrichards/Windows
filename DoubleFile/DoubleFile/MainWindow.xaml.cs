@@ -154,7 +154,7 @@ namespace DoubleFile
 
             using (var bitmap = new Drawing.Bitmap(bounds.Width, bounds.Height))
             {
-                using (Drawing.Graphics g = Drawing.Graphics.FromImage(bitmap))
+                using (var g = Drawing.Graphics.FromImage(bitmap))
                     g.CopyFromScreen(Drawing.Point.Empty, Drawing.Point.Empty, new Drawing.Size(bounds.Width, bounds.Height));
 
                 doubleBufferWindow.Background = new ImageBrush(Imaging.CreateBitmapSourceFromHBitmap(
@@ -178,7 +178,7 @@ namespace DoubleFile
                     .Select(w => new DarkWindow(w))
                     .ForEach(_lsDarkWindows.Add);
 
-                NativeMethods.SetWindowPos(new WindowInteropHelper(mainWindow).Handle, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE);
+                NativeMethods.SetWindowPos(mainWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE);
                 return _lsDarkWindows[0];
             });
 

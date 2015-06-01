@@ -94,7 +94,7 @@ namespace DoubleFile
                 LocalIsClosed = false;
 
                 HwndSource
-                    .FromHwnd(new WindowInteropHelper(this).Handle)
+                    .FromHwnd((NativeWindow)this)
                     .AddHook(WndProc);
             });
 

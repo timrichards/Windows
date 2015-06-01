@@ -113,7 +113,7 @@ namespace DoubleFile
         internal static MONITORINFO GetWindowMonitorInfo(Window window)
         {
             var hMonitor = NativeMethods.Call(() => NativeMethods
-                .MonitorFromWindow(new WindowInteropHelper(window).Handle, NativeMethods.MONITOR_DEFAULTTOPRIMARY));
+                .MonitorFromWindow(window, NativeMethods.MONITOR_DEFAULTTOPRIMARY));
 
             var mi = new MONITORINFO { cbSize = Marshal.SizeOf(typeof(MONITORINFO)) };
 
@@ -131,7 +131,7 @@ namespace DoubleFile
 
                 var fInfo = new NativeMethods.FLASHWINFO
                 {
-                    hwnd = new WindowInteropHelper(window).Handle,
+                    hwnd = (NativeWindow)window,
                     dwFlags = NativeMethods.FLASHW_ALL,
                     uCount = (uint)(Once ? 1 : 7),
                     dwTimeout = 75,

@@ -56,8 +56,10 @@ namespace DoubleFile
             Darken<T>(Func<ILocalWindow, T> showDialog) { return MainWindow.WithMainWindow(mainWindow => mainWindow.DarkenA(showDialog)); }
         T DarkenA<T>(Func<ILocalWindow, T> showDialog)
         {
-            if (null != _d)
+            if (bDarkening)
                 return showDialog(App.TopWindow);
+
+            bDarkening = true;
 
             var bounds = MainWindow.WithMainWindow(Win32Screen.GetWindowMonitorInfo).rcMonitor;
 
@@ -87,84 +89,75 @@ namespace DoubleFile
             doubleBufferWindow.Show();
             doubleBufferWindow.Opacity = 1;
 
-            _d = new DarkData();
-
-            (_d.FakeBaseWindow = new Window
+            var fakeBaseWindow = new Window
             {
                 ShowInTaskbar = false,
                 WindowStyle = WindowStyle.None,
                 AllowsTransparency = true,
                 Opacity = 0
-            })
-                .Show();
+            };
+
+            fakeBaseWindow.Show();
 
             NativeMethods.SetWindowLong(
-                _d.FakeBaseWindow, NativeMethods.GWL_EXSTYLE, NativeMethods.GetWindowLong(_d.FakeBaseWindow, NativeMethods.GWL_EXSTYLE)
+                fakeBaseWindow, NativeMethods.GWL_EXSTYLE, NativeMethods.GetWindowLong(fakeBaseWindow, NativeMethods.GWL_EXSTYLE)
                 | NativeMethods.WS_EX_TOOLWINDOW);
 
-            _d.ExtraWindows = OwnedWindows.Cast<Window>()
-                .Where(w => w is ExtraWindow).ToArray();
+            var darkenedWindows = OwnedWindows.Cast<Window>()
+                .Where(w => (w is ExtraWindow) || (w is WinTooltip)).ToArray();
 
-            foreach (var window in _d.ExtraWindows)
-                window.Owner = _d.FakeBaseWindow;
+            foreach (var window in darkenedWindows)
+                window.Owner = fakeBaseWindow;
 
-            for (_d.TopWindow = NativeMethods.GetTopWindow(IntPtr.Zero);
-                _d.TopWindow != IntPtr.Zero;
-                _d.TopWindow = NativeMethods.GetWindow(_d.TopWindow, NativeMethods.GW_HWNDNEXT))
+            var topWindow = NativeMethods.GetTopWindow(IntPtr.Zero);
+
+            for (; topWindow != IntPtr.Zero;
+                topWindow = NativeMethods.GetWindow(topWindow, NativeMethods.GW_HWNDNEXT))
             {
-                if (_d.ExtraWindows.Select(w => (NativeWindow)w).Contains(_d.TopWindow))
+                if (darkenedWindows.Where(w => w is ExtraWindow).Select(w => (NativeWindow)w).Contains(topWindow))
                     break;
             }
 
             var darkDialog = new DarkWindow(this);
+            var darkWindows = new List<DarkWindow>();
 
-            _d.ExtraWindows
+            darkenedWindows
                 .Select(w => new DarkWindow(w))
-                .ForEach(_d.DarkWindows.Add);
+                .ForEach(darkWindows.Add);
 
             NativeMethods.SetWindowPos(this, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE);
 
-            foreach (var darkWindow in _d.DarkWindows)
+            foreach (var darkWindow in darkWindows)
                 ((Window)darkWindow).Show();
 
-            foreach (var darkWindow in _d.DarkWindows)
+            foreach (var darkWindow in darkWindows)
                 darkWindow.SetRect(darkWindow.Rect);
 
-            doubleBufferWindow.Opacity = 0;
-            doubleBufferWindow.Close();
-
             Observable.FromEventPattern(darkDialog, "ContentRendered")
-                .Subscribe(x => NativeMethods.SetWindowPos(_d.FakeBaseWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE));
+                .Subscribe(x =>
+            {
+                NativeMethods.SetWindowPos(fakeBaseWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
+                doubleBufferWindow.Opacity = 0;
+                doubleBufferWindow.Close();
+            });
 
             var retVal =
                 darkDialog.ShowDialog(showDialog);
 
-            foreach (var window in _d.ExtraWindows)
+            foreach (var window in darkenedWindows)
                 window.Owner = this;
 
-            NativeMethods.BringWindowToTop(_d.TopWindow);
-            _d.FakeBaseWindow.Close();
+            NativeMethods.BringWindowToTop(topWindow);
+            fakeBaseWindow.Close();
 
-            foreach (var darkWindow in _d.DarkWindows)
+            foreach (var darkWindow in darkWindows)
                 darkWindow.Close();
 
-            _d.DarkWindows = new List<DarkWindow>();
-            _d = null;
+            darkWindows = new List<DarkWindow>();
+            bDarkening = false;
             return retVal;
         }
 
-        class DarkData
-        {
-            internal Window
-                FakeBaseWindow = null;
-            internal NativeWindow
-                TopWindow = null;
-            internal List<DarkWindow>
-                DarkWindows = new List<DarkWindow>();
-            internal Window[]
-                ExtraWindows = new Window[] { };
-        }
-
-        DarkData _d = null;
+        bool bDarkening = false;
     }
 }

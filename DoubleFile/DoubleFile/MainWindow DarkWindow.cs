@@ -32,24 +32,8 @@ namespace DoubleFile
                 IsEnabled = false;
             }
 
-            internal T ShowDialog<T>(Func<ILocalWindow, T> showDialog)
-            {
-                var retVal = default(T);
-
-                Observable.FromEventPattern(this, "SourceInitialized")
-                    .Subscribe(x => ShowActivated = false);
-                
-                Observable.FromEventPattern(this, "ContentRendered")
-                    .Subscribe(x =>
-                {
-                    this.SetRect(Rect);
-                    retVal = showDialog(this);
-                    Close();
-                });
-
-                base.ShowDialog(App.LocalMainWindow);
-                return retVal;
-            }
+            internal new void Show() { ((Window)this).Show(); }                         // darkens ExtraWindow and WinTooltip
+            internal new void ShowDialog() { base.ShowDialog(App.LocalMainWindow); }    // darkens MainWindow
         }
 
         static internal T
@@ -128,10 +112,15 @@ namespace DoubleFile
             NativeMethods.SetWindowPos(this, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE);
 
             foreach (var darkWindow in darkWindows)
-                ((Window)darkWindow).Show();
+                darkWindow.Show();
 
             foreach (var darkWindow in darkWindows)
                 darkWindow.SetRect(darkWindow.Rect);
+
+            Observable.FromEventPattern(darkDialog, "SourceInitialized")
+                .Subscribe(x => darkDialog.ShowActivated = false);
+
+            T retVal = default(T);
 
             Observable.FromEventPattern(darkDialog, "ContentRendered")
                 .Subscribe(x =>
@@ -140,10 +129,12 @@ namespace DoubleFile
                 NativeMethods.SetWindowPos(darkDialog, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE);
                 doubleBufferWindow.Opacity = 0;
                 doubleBufferWindow.Close();
+                darkDialog.SetRect(darkDialog.Rect);
+                retVal = showDialog(darkDialog);
+                darkDialog.Close();
             });
 
-            var retVal =
-                darkDialog.ShowDialog(showDialog);
+            darkDialog.ShowDialog();
 
             foreach (var window in darkenedWindows)
                 window.Owner = this;

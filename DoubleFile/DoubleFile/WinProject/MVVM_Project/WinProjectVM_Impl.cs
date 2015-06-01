@@ -136,8 +136,6 @@ namespace DoubleFile
                     listItems.Add(lvItem);
             }
 
-            Util.UIthread(_lvVM.ClearItems);
-
             Parallel.ForEach(listFiles, strFilename =>
             {
                 if ((null != userCanceled) &&
@@ -175,18 +173,25 @@ namespace DoubleFile
                 return false;
             }
 
-            var bOpenedFiles = listItems
-                .OrderBy(lvItem => lvItem.SourcePath)
-                .Aggregate(false, (current, lvItem) =>
-            {
-                if ((null != userCanceled) &&
-                    userCanceled())
-                {
-                    return false;   // from lambda
-                }
+            var bOpenedFiles = false;
 
-                return Util.UIthread(() => _lvVM.NewItem(lvItem)) || current;  // from lambda
-            });
+            if (listItems.Count > _lvVM.Count)
+            {
+                Util.UIthread(_lvVM.ClearItems);
+
+                bOpenedFiles = listItems
+                    .OrderBy(lvItem => lvItem.SourcePath)
+                    .Aggregate(false, (current, lvItem) =>
+                {
+                    if ((null != userCanceled) &&
+                        userCanceled())
+                    {
+                        return false;   // from lambda
+                    }
+
+                    return Util.UIthread(() => _lvVM.NewItem(lvItem)) || current;  // from lambda
+                });
+            }
 
             var sbError = new StringBuilder();
 

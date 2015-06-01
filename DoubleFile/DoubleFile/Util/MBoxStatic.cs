@@ -91,7 +91,7 @@ namespace DoubleFile
             Util.UIthread(() => MessageBoxKill());
 
             if ((null != owner) &&
-                (owner.LocalIsClosed))
+                owner.LocalIsClosed)
             {
                 return MessageBoxResult.None;
             }

@@ -90,8 +90,8 @@ namespace DoubleFile
                 Rect = Win32Screen.GetWindowRect(owner);
                 this.SetRect(new Rect());
                 Background = Brushes.Black;
-                Opacity = 0.4;
                 AllowsTransparency = true;
+                Opacity = 0.4;
                 WindowStyle = WindowStyle.None;
                 ResizeMode = ResizeMode.NoResize;
                 Content = new Grid();
@@ -139,16 +139,15 @@ namespace DoubleFile
             if (0 < _lsDarkWindows.Count)
                 return showDialog(App.TopWindow);
 
-            var bounds = MainWindow.WithMainWindow(mainWindow => Win32Screen.GetWindowMonitorInfo(mainWindow).rcMonitor);
+            var bounds = MainWindow.WithMainWindow(Win32Screen.GetWindowMonitorInfo).rcMonitor;
 
             var doubleBufferWindow = new Window
             {
                 Topmost = true,
                 WindowStyle = WindowStyle.None,
-                Opacity = 0,
                 ShowInTaskbar = false,
                 AllowsTransparency = true,
-                BorderThickness = new Thickness()
+                Opacity = 0
             };
 
             doubleBufferWindow.SetRect(bounds);
@@ -174,19 +173,10 @@ namespace DoubleFile
 
                 _lsDarkWindows.Add(new DarkWindow(mainWindow));
 
-                foreach (var window in ownedWindows)
-                {
-                    if (window is DarkWindow)
-                    {
-                        MBoxStatic.Assert(99979, false);
-                        continue;
-                    }
-
-                    if (false == window is ExtraWindow)
-                        continue;
-
-                    _lsDarkWindows.Add(new DarkWindow((Window)window));
-                }
+                ownedWindows
+                    .Where(w => w is ExtraWindow)
+                    .Select(w => new DarkWindow(w))
+                    .ForEach(_lsDarkWindows.Add);
 
                 NativeMethods.SetWindowPos(new WindowInteropHelper(mainWindow).Handle, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE);
                 return _lsDarkWindows[0];
@@ -198,9 +188,11 @@ namespace DoubleFile
             foreach (var darkWindow in _lsDarkWindows.Skip(1))
                 darkWindow.SetRect(darkWindow.Rect);
 
+            doubleBufferWindow.Opacity = 0;
             doubleBufferWindow.Close();
 
-            var retVal = darkDialog.ShowDialog(showDialog);
+            var retVal =
+                darkDialog.ShowDialog(showDialog);
 
             foreach (var darkWindow in _lsDarkWindows.Skip(1))
                 darkWindow.Close();

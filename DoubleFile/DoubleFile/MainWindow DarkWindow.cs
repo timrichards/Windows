@@ -46,10 +46,10 @@ namespace DoubleFile
 
             var dictOwners = new Dictionary<Window, Window>();
 
-            foreach (Window window in Application.Current.Windows.Cast<Window>()
+            foreach (var window in Application.Current.Windows.Cast<Window>()
                 .Where(w => (w is ILocalWindow) && (false == ((ILocalWindow)w).LocalIsClosed)))
             {
-                dictOwners.Add(window, (Window)window.Owner);
+                dictOwners.Add(window, window.Owner);
             }
 
             var bounds = MainWindow.WithMainWindow(Win32Screen.GetWindowMonitorInfo).rcMonitor;
@@ -99,13 +99,13 @@ namespace DoubleFile
             foreach (var window in darkenedWindows)
                 window.Owner = fakeBaseWindow;
 
-            var topWindow = NativeMethods.GetTopWindow(IntPtr.Zero);
+            var lsWindowOrder = new List<NativeWindow>();
 
-            for (; topWindow != IntPtr.Zero;
-                topWindow = NativeMethods.GetWindow(topWindow, NativeMethods.GW_HWNDNEXT))
+            for (var nativeWindow = NativeMethods.GetTopWindow(IntPtr.Zero); nativeWindow != IntPtr.Zero;
+                nativeWindow = NativeMethods.GetWindow(nativeWindow, NativeMethods.GW_HWNDNEXT))
             {
-                if (darkenedWindows.Where(w => w is ExtraWindow).Select(w => (NativeWindow)w).Contains(topWindow))
-                    break;
+                if (darkenedWindows.Select(w => (NativeWindow)w).Contains(nativeWindow))
+                    lsWindowOrder.Insert(0, nativeWindow);
             }
 
             var darkWindows = new List<DarkWindow>();
@@ -135,10 +135,9 @@ namespace DoubleFile
                 {
                     NativeMethods.SetWindowPos(fakeBaseWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
                     
-                    foreach (var winTooltip in darkenedWindows.Where(w => w is WinTooltip))
-                        NativeMethods.SetWindowPos(winTooltip, SWP.HWND_BOTTOM, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
+                    foreach (var nativeWindow in lsWindowOrder)
+                        NativeMethods.BringWindowToTop(nativeWindow);
 
-                    NativeMethods.BringWindowToTop(topWindow);
                     darkDialog.SetRect(darkDialog.Rect);
                     doubleBufferWindow.Opacity = 0;
                     doubleBufferWindow.Close();
@@ -153,7 +152,9 @@ namespace DoubleFile
                 kvp.Key.Owner = kvp.Value;
 
             fakeBaseWindow.Close();
-            NativeMethods.BringWindowToTop(topWindow);
+
+            foreach (var nativeWindow in lsWindowOrder)
+                NativeMethods.BringWindowToTop(nativeWindow);
 
             foreach (var darkWindow in darkWindows)
                 darkWindow.Close();

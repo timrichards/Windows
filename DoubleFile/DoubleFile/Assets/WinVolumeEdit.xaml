@@ -23,7 +23,6 @@
     <Style TargetType="TextBox" BasedOn="{StaticResource MyFrameworkElementStyle}">
         <Setter Property="Grid.Column" Value="3" />
         <Setter Property="Grid.ColumnSpan" Value="2" />
-        <Setter Property="Height" Value="22" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="Effect">
             <Setter.Value>

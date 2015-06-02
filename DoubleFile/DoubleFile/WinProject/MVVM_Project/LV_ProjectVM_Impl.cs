@@ -76,7 +76,7 @@ namespace DoubleFile
                 var lvItemVolumeTemp = new LVitem_ProjectVM(lvItem);
 
                 if (FileParse.ksError == lvItemVolumeTemp.Status)
-                    lvItemVolumeTemp.Status = FileParse.ksNotSaved;
+                    lvItemVolumeTemp.Status = "" + App.Current.Resources["Status_NotSaved"];
 
                 for (; ; )
                 {

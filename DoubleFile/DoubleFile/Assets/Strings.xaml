@@ -1,4 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:clr="clr-namespace:System;assembly=System">
+        xmlns:clr="clr-namespace:System;assembly=mscorlib">
+    <clr:String x:Key="Include_No">No</clr:String>
+    <clr:String x:Key="Status_NotSaved">Not saved.</clr:String>
 </ResourceDictionary>

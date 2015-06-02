@@ -57,10 +57,10 @@
                 <DataGrid.Resources>
                     <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding IncludeYN}" Value="No">
+                            <DataTrigger Binding="{Binding IncludeYN}" Value="{StaticResource Include_No}">
                                 <Setter Property="Foreground" Value="Gray" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding Status}" Value="Not saved.">
+                            <DataTrigger Binding="{Binding Status}" Value="{StaticResource Status_NotSaved}">
                                 <Setter Property="Foreground" Value="LightBlue" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding VolumeGroup}" Value="{x:Null}">

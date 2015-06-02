@@ -25,7 +25,6 @@ namespace DoubleFile
         internal const string ksIgnoreListHeader = ksHeader + " IGNORE LIST";
         internal const string ksUsingFile = "Using file.";
         internal const string ksSaved = "Saved.";
-        internal const string ksNotSaved = "Not saved.";
         internal const string ksError = "Error during save.";
         internal const string ksInclude = "Yes";
 

@@ -36,7 +36,7 @@ namespace DoubleFile
                     case MessageBoxButton.YesNo:
                     {
                         formBtn_OK.Content = "Yes";
-                        formBtn_Cancel.Content = "No";
+                        formBtn_Cancel.Content = App.Current.Resources["Include_No"];
                         break;
                     }
 

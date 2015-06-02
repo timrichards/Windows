@@ -10,7 +10,6 @@
     
     <Style TargetType="Label" BasedOn="{StaticResource MyFrameworkElementStyle}">
         <Setter Property="Grid.Column" Value="1" />
-        <Setter Property="Height" Value="26" />
     </Style>
     
     <Style x:Key="ImageButton" TargetType="Button" BasedOn="{StaticResource MyFrameworkElementStyle}">

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Interop;
 using Drawing = System.Drawing;
 using System.Windows.Media.Imaging;
+using System.Threading;
 
 namespace DoubleFile
 {
@@ -43,6 +44,11 @@ namespace DoubleFile
                 return showDialog(App.TopWindow);
 
             _bDarkening = true;
+
+            var napTime = MBoxStatic.LastMBoxClose - DateTime.Now + TimeSpan.FromMilliseconds(300);
+
+            if (0 < napTime.Milliseconds)
+                Thread.Sleep(napTime);
 
             var dictOwners = new Dictionary<Window, Window>();
 

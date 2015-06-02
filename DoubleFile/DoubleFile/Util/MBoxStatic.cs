@@ -8,9 +8,7 @@ namespace DoubleFile
     static class MBoxStatic
     {
         static internal LocalMbox MessageBox { get; private set; }
-
-        static double static_nLastAssertLoc = -1;
-        static DateTime static_dtLastAssert = DateTime.MinValue;
+        static internal DateTime LastMBoxClose = DateTime.MinValue;
 
 #if (DEBUG == false)
         static bool static_bAssertUp = false;
@@ -22,8 +20,8 @@ namespace DoubleFile
             if (bCondition)
                 return true;
 
-            if ((static_nLastAssertLoc == nLocation) &&
-                (1 > (DateTime.Now - static_dtLastAssert).Seconds))
+            if ((_nLastAssertLoc == nLocation) &&
+                (1 > (DateTime.Now - _dtLastAssert).Seconds))
             {
                 return false;
             }
@@ -118,7 +116,13 @@ namespace DoubleFile
             else
                 Util.UIthread(() => MessageBoxKill());
 
+            LastMBoxClose = DateTime.Now;
             return msgBoxRet;
         }
+
+        static double
+            _nLastAssertLoc = -1;
+        static DateTime
+            _dtLastAssert = DateTime.MinValue;
     }
 }

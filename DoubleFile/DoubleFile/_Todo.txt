@@ -1,4 +1,10 @@
-﻿99969 99968
+﻿- resource all stringets; en-us etc.
+- clones lvs; and all dupe files lv?
+- intro page
+- auto layout? save layout?
+- dupe vm event alerts: static vm internal counter or static transmit
+
+99969 99968
 99956 99955
 99945 99944
 99937 99936 99935

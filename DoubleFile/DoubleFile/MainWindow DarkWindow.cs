@@ -97,11 +97,15 @@ namespace DoubleFile
             var darkenedWindows = dictOwners.Keys.Where(w => w != this);
             var lsWindowOrder = new List<NativeWindow>();
 
-            for (var nativeWindow = NativeMethods.GetTopWindow(IntPtr.Zero); nativeWindow != IntPtr.Zero;
-                nativeWindow = NativeMethods.GetWindow(nativeWindow, NativeMethods.GW_HWNDNEXT))
             {
-                if (darkenedWindows.Select(w => (NativeWindow)w).Contains(nativeWindow))
-                    lsWindowOrder.Insert(0, nativeWindow);
+                var lsNativeWindows = darkenedWindows.Select(w => (NativeWindow)w).ToArray();
+
+                for (var nativeWindow = NativeMethods.GetTopWindow(IntPtr.Zero); nativeWindow != IntPtr.Zero;
+                    nativeWindow = NativeMethods.GetWindow(nativeWindow, NativeMethods.GW_HWNDNEXT))
+                {
+                    if (lsNativeWindows.Contains(nativeWindow))
+                        lsWindowOrder.Insert(0, nativeWindow);
+                }
             }
 
             foreach (var window in darkenedWindows)
@@ -122,7 +126,7 @@ namespace DoubleFile
                 darkWindow.SetRect(darkWindow.Rect);
 
             var retVal = default(T);
-            
+
             {
                 var darkDialog = new DarkWindow(this) { Content = new Grid() };
 
@@ -133,7 +137,7 @@ namespace DoubleFile
                     .Subscribe(x =>
                 {
                     NativeMethods.SetWindowPos(fakeBaseWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
-                    
+
                     foreach (var nativeWindow in lsWindowOrder)
                         NativeMethods.BringWindowToTop(nativeWindow);
 

@@ -9,6 +9,7 @@ using System.Windows.Interop;
 using Drawing = System.Drawing;
 using System.Windows.Media.Imaging;
 using System.Threading;
+using System.Windows.Threading;
 
 namespace DoubleFile
 {
@@ -40,6 +41,9 @@ namespace DoubleFile
             Darken<T>(Func<ILocalWindow, T> showDialog) { return MainWindow.WithMainWindow(mainWindow => mainWindow.DarkenA(showDialog)); }
         T DarkenA<T>(Func<ILocalWindow, T> showDialog)
         {
+            if (_bBlocking)     // debounce
+                return default(T);
+
             if (_bDarkening)
                 return showDialog(App.TopWindow);
 
@@ -47,9 +51,22 @@ namespace DoubleFile
 
             {
                 var napTime = _dtLastDarken - DateTime.Now + TimeSpan.FromMilliseconds(250);
+                DispatcherFrame blockingFrame = null;
 
                 if (0 < napTime.Milliseconds)
-                    Thread.Sleep(napTime);
+                {
+                    _bBlocking = true;
+
+                    new Thread(() =>
+                    {
+                        Thread.Sleep(napTime);
+                        blockingFrame.Continue = false;
+                    })
+                        .Start();
+
+                    Dispatcher.PushFrame(blockingFrame = new DispatcherFrame(true));
+                    _bBlocking = false;
+                }
             }
 
             var dictOwners = new Dictionary<Window, Window>();
@@ -176,7 +193,11 @@ namespace DoubleFile
             return retVal;
         }
 
-        bool _bDarkening = false;
-        DateTime _dtLastDarken = DateTime.MinValue;
+        bool
+            _bDarkening = false;
+        bool
+            _bBlocking = false;
+        DateTime
+            _dtLastDarken = DateTime.MinValue;
     }
 }

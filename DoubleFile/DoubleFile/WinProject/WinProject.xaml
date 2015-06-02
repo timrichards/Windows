@@ -54,6 +54,26 @@
                 </StackPanel>
             </StackPanel>
             <DataGrid Name="form_lv" Margin="0,20,0,0" Visibility="{Binding Visible}" SelectionMode="Extended">
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IncludeYN}" Value="No">
+                                <Setter Property="Foreground" Value="Gray" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Status}" Value="Not saved.">
+                                <Setter Property="Foreground" Value="LightBlue" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding VolumeGroup}" Value="{x:Null}">
+                                <Setter Property="Background" Value="{StaticResource DataGridBackground}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding VolumeGroup}" Value="">
+                                <Setter Property="Background" Value="{StaticResource DataGridBackground}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                        <!--inverted rare case: VolumeGroup will usually be empty so cells will be {StaticResource DataGridBackground}-->
+                        <Setter Property="Background" Value="DarkOliveGreen" />
+                    </Style>
+                </DataGrid.Resources>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Nickname" Binding="{Binding Nickname}" Width="{Binding WidthNickname}"/>
                     <DataGridTextColumn Header="Source path" Binding="{Binding SourcePath}" Width="{Binding WidthSourcePath}"/>

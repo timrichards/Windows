@@ -8,7 +8,6 @@ namespace DoubleFile
     static class MBoxStatic
     {
         static internal LocalMbox MessageBox { get; private set; }
-        static internal DateTime LastMBoxClose = DateTime.MinValue;
 
 #if (DEBUG == false)
         static bool static_bAssertUp = false;
@@ -116,7 +115,6 @@ namespace DoubleFile
             else
                 Util.UIthread(() => MessageBoxKill());
 
-            LastMBoxClose = DateTime.Now;
             return msgBoxRet;
         }
 

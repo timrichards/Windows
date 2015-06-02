@@ -45,10 +45,12 @@ namespace DoubleFile
 
             _bDarkening = true;
 
-            var napTime = MBoxStatic.LastMBoxClose - DateTime.Now + TimeSpan.FromMilliseconds(300);
+            {
+                var napTime = _dtLastDarken - DateTime.Now + TimeSpan.FromMilliseconds(250);
 
-            if (0 < napTime.Milliseconds)
-                Thread.Sleep(napTime);
+                if (0 < napTime.Milliseconds)
+                    Thread.Sleep(napTime);
+            }
 
             var dictOwners = new Dictionary<Window, Window>();
 
@@ -169,10 +171,12 @@ namespace DoubleFile
             foreach (var darkWindow in lsDarkWindows)
                 darkWindow.Close();
 
+            _dtLastDarken = DateTime.Now;
             _bDarkening = false;
             return retVal;
         }
 
         bool _bDarkening = false;
+        DateTime _dtLastDarken = DateTime.MinValue;
     }
 }

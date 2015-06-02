@@ -95,10 +95,6 @@ namespace DoubleFile
                 | NativeMethods.WS_EX_TOOLWINDOW);
 
             var darkenedWindows = dictOwners.Keys.Where(w => w != this);
-
-            foreach (var window in darkenedWindows)
-                window.Owner = fakeBaseWindow;
-
             var lsWindowOrder = new List<NativeWindow>();
 
             for (var nativeWindow = NativeMethods.GetTopWindow(IntPtr.Zero); nativeWindow != IntPtr.Zero;
@@ -108,18 +104,21 @@ namespace DoubleFile
                     lsWindowOrder.Insert(0, nativeWindow);
             }
 
-            var darkWindows = new List<DarkWindow>();
+            foreach (var window in darkenedWindows)
+                window.Owner = fakeBaseWindow;
+
+            var lsDarkWindows = new List<DarkWindow>();
 
             darkenedWindows
                 .Select(w => new DarkWindow(w))
-                .ForEach(darkWindows.Add);
+                .ForEach(lsDarkWindows.Add);
 
             NativeMethods.SetWindowPos(this, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE);
 
-            foreach (var darkWindow in darkWindows)
+            foreach (var darkWindow in lsDarkWindows)
                 darkWindow.Show();
 
-            foreach (var darkWindow in darkWindows)
+            foreach (var darkWindow in lsDarkWindows)
                 darkWindow.SetRect(darkWindow.Rect);
 
             var retVal = default(T);
@@ -156,7 +155,7 @@ namespace DoubleFile
             foreach (var nativeWindow in lsWindowOrder)
                 NativeMethods.BringWindowToTop(nativeWindow);
 
-            foreach (var darkWindow in darkWindows)
+            foreach (var darkWindow in lsDarkWindows)
                 darkWindow.Close();
 
             _bDarkening = false;

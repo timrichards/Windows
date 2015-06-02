@@ -98,12 +98,13 @@ namespace DoubleFile
             var lsWindowOrder = new List<NativeWindow>();
 
             {
-                var lsNativeWindows = darkenedWindows.Select(w => (NativeWindow)w).ToArray();
+                var nativeWindows = darkenedWindows.Select(w => (NativeWindow)w).ToArray();
 
                 for (var nativeWindow = NativeMethods.GetTopWindow(IntPtr.Zero); nativeWindow != IntPtr.Zero;
                     nativeWindow = NativeMethods.GetWindow(nativeWindow, NativeMethods.GW_HWNDNEXT))
                 {
-                    if (lsNativeWindows.Contains(nativeWindow))
+                    // array enumerable Contains came up empty -?
+                    if (Array.Exists(nativeWindows, w => w.Equals(nativeWindow)))
                         lsWindowOrder.Insert(0, nativeWindow);
                 }
             }

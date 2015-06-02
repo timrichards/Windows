@@ -31,18 +31,26 @@ namespace DoubleFile
                 IsEnabled = false;
             }
 
-            internal new void ShowDialog() { base.ShowDialog(App.LocalMainWindow); }    // kicks off by darkening MainWindow
-            internal new void Show() { ((Window)this).Show(); }                         // <- then ExtraWindow and WinTooltip
+            internal new void Show() { ((Window)this).Show(); }                         // Darkens ExtraWindows and WinTooltip
+            internal new void ShowDialog() { base.ShowDialog(App.LocalMainWindow); }    // then modally darkens MainWindow
         }
 
         static internal T
             Darken<T>(Func<ILocalWindow, T> showDialog) { return MainWindow.WithMainWindow(mainWindow => mainWindow.DarkenA(showDialog)); }
         T DarkenA<T>(Func<ILocalWindow, T> showDialog)
         {
-            if (bDarkening)
+            if (_bDarkening)
                 return showDialog(App.TopWindow);
 
-            bDarkening = true;
+            _bDarkening = true;
+
+            var dictOwners = new Dictionary<Window, Window>();
+
+            foreach (Window window in Application.Current.Windows.Cast<Window>()
+                .Where(w => (w is ILocalWindow) && (false == ((ILocalWindow)w).LocalIsClosed)))
+            {
+                dictOwners.Add(window, (Window)window.Owner);
+            }
 
             var bounds = MainWindow.WithMainWindow(Win32Screen.GetWindowMonitorInfo).rcMonitor;
 
@@ -86,8 +94,7 @@ namespace DoubleFile
                 fakeBaseWindow, NativeMethods.GWL_EXSTYLE, NativeMethods.GetWindowLong(fakeBaseWindow, NativeMethods.GWL_EXSTYLE)
                 | NativeMethods.WS_EX_TOOLWINDOW);
 
-            var darkenedWindows = OwnedWindows.Cast<Window>()
-                .Where(w => (w is ExtraWindow) || (w is WinTooltip)).ToArray();
+            var darkenedWindows = dictOwners.Keys.Where(w => w != this);
 
             foreach (var window in darkenedWindows)
                 window.Owner = fakeBaseWindow;
@@ -115,7 +122,7 @@ namespace DoubleFile
             foreach (var darkWindow in darkWindows)
                 darkWindow.SetRect(darkWindow.Rect);
 
-            T retVal = default(T);
+            var retVal = default(T);
             
             {
                 var darkDialog = new DarkWindow(this) { Content = new Grid() };
@@ -142,8 +149,8 @@ namespace DoubleFile
                 darkDialog.ShowDialog();
             }
 
-            foreach (var window in darkenedWindows)
-                window.Owner = this;
+            foreach (var kvp in dictOwners)
+                kvp.Key.Owner = kvp.Value;
 
             fakeBaseWindow.Close();
             NativeMethods.BringWindowToTop(topWindow);
@@ -151,10 +158,10 @@ namespace DoubleFile
             foreach (var darkWindow in darkWindows)
                 darkWindow.Close();
 
-            bDarkening = false;
+            _bDarkening = false;
             return retVal;
         }
 
-        bool bDarkening = false;
+        bool _bDarkening = false;
     }
 }

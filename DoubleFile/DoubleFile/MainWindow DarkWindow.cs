@@ -8,8 +8,6 @@ using System.Linq;
 using System.Windows.Interop;
 using Drawing = System.Drawing;
 using System.Windows.Media.Imaging;
-using System.Threading;
-using System.Windows.Threading;
 
 namespace DoubleFile
 {
@@ -50,19 +48,22 @@ namespace DoubleFile
             _bDarkening = true;
 
             {
-                var napTime = _dtLastDarken - DateTime.Now +  TimeSpan.FromMilliseconds(250);
+                var napTime = _dtLastDarken - DateTime.Now + TimeSpan.FromMilliseconds(250);
 
                 if (0 < napTime.Milliseconds)
                 {
                     _bBlocking = true;
                     Util.Block(napTime);
                     _bBlocking = false;
-
-                    if (null == Application.Current)
-                        return default(T);
                 }
             }
 
+            if (null == Application.Current)
+            {
+                _bDarkening = false;
+                return default(T);
+            }
+            
             var dictOwners = new Dictionary<Window, Window>();
 
             foreach (var window in Application.Current.Windows.Cast<Window>()

@@ -4,7 +4,6 @@ using System.Windows;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
 using System.Linq;
-using System.Threading;
 
 namespace DoubleFile
 {

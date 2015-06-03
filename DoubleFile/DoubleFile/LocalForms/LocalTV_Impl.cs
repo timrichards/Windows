@@ -154,7 +154,7 @@ namespace DoubleFile
                 _winProgress.Aborted = true;
 
                 for (var i = 0; (i < 10) && _winProgress.LocalIsClosed; ++i)
-                    Thread.Sleep(100);
+                    Util.Block(100);
 
                 Util.UIthread(_winProgress.Close);
                 return;
@@ -207,7 +207,7 @@ namespace DoubleFile
             _bFinished = true;      // should preceed closing status dialog: returns true to the caller
 
             for (var i = 0; (i < 10) && _winProgress.LocalIsClosed; ++i)
-                Thread.Sleep(100);
+                Util.Block(100);
 
             _winProgress.CloseIfNatural();
             _dictNodes = null;      // saving memory here.

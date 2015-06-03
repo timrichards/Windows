@@ -164,7 +164,7 @@ namespace DoubleFile
             });
 
             while (false == bCompleted)
-                Thread.Sleep(20);
+                Util.Block(20);
 
             SelectedItem_Set(selectedItem);
             return true;

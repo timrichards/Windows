@@ -50,22 +50,16 @@ namespace DoubleFile
             _bDarkening = true;
 
             {
-                var napTime = _dtLastDarken - DateTime.Now + TimeSpan.FromMilliseconds(250);
-                DispatcherFrame blockingFrame = null;
+                var napTime = _dtLastDarken - DateTime.Now +  TimeSpan.FromMilliseconds(250);
 
                 if (0 < napTime.Milliseconds)
                 {
                     _bBlocking = true;
-
-                    new Thread(() =>
-                    {
-                        Thread.Sleep(napTime);
-                        blockingFrame.Continue = false;
-                    })
-                        .Start();
-
-                    Dispatcher.PushFrame(blockingFrame = new DispatcherFrame(true));
+                    Util.Block(napTime);
                     _bBlocking = false;
+
+                    if (null == Application.Current)
+                        return default(T);
                 }
             }
 

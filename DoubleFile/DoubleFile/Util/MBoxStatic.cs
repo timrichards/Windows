@@ -108,7 +108,7 @@ namespace DoubleFile
             });
 
             while (false == bCompleted)
-                Thread.Sleep(100);
+                Util.Block(100);
 
             if (null == MessageBox)
                 msgBoxRet = MessageBoxResult.None;          // canceled externally

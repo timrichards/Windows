@@ -1,13 +1,30 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace DoubleFile
 {
     partial class Util : FileParse
     {
+        static internal void Block(int nMilliseconds) { Block(new TimeSpan(0, 0, 0, 0, nMilliseconds)); }
+        static internal void Block(TimeSpan napTime)
+        {
+            DispatcherFrame blockingFrame = new DispatcherFrame(true);
+
+            new Thread(() =>
+            {
+                Thread.Sleep(napTime);
+                blockingFrame.Continue = false;
+            })
+                .Start();
+
+            Dispatcher.PushFrame(blockingFrame);
+        }
+
         static internal void Closure(Action action) { action(); }
         static internal T Closure<T>(Func<T> action) { return action(); }
 

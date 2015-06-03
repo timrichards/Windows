@@ -725,7 +725,7 @@ namespace DoubleFile
                 RecurseDrawGraph(item, rc, true);
 
                 while (_nWorkerCount > 0)
-                    Thread.Sleep(20);
+                    Util.Block(20);
 
                 deepNodeDrawn_out = _deepNodeDrawn;
                 return _lsRenderActions.Concat(_lsFrames);

@@ -80,7 +80,7 @@ namespace DoubleFile
                     (10 > nCheck))
                 {
                     Util.WriteLine(nCheck + " false == _cts.IsCancellationRequested");
-                    Thread.Sleep(100);
+                    Util.Block(100);
                     ++nCheck;
                 }
 

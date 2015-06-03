@@ -120,28 +120,30 @@ namespace DoubleFile
                     if (IsAborted)
                         return;
 
-                    var iesLines =
+                    var arrTuples =
                         File
                         .ReadLines(lvItem.ListingFile)
                         .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
                         .Select(strLine => strLine.Split('\t'))
-                        .Where(asLine => asLine.Length > 10);
+                        .Where(asLine => 10 < asLine.Length)
+                        .Select(asLine => Tuple.Create(int.Parse(asLine[1]), asLine[7], asLine[10]))
+                        .ToArray();
 
                     var nLVitem = _DictLVtoItemNumber[lvItem];
 
-                    Interlocked.Add(ref _nFilesTotal, iesLines.Count());
+                    Interlocked.Add(ref _nFilesTotal, arrTuples.Length);
                     Interlocked.Increment(ref nLVitems_A);
 
-                    foreach (var asLine in iesLines)
+                    foreach (var tuple in arrTuples)
                     {
                         if (IsAborted)
                             return;
 
                         Interlocked.Increment(ref _nFilesProgress);
 
-                        var key = new FileKeyTuple(asLine[10], asLine[7]);
+                        var key = new FileKeyTuple(tuple.Item3, tuple.Item2);
                         var lookup = 0;
-                        var nLineNumber = int.Parse(asLine[1]);
+                        var nLineNumber = tuple.Item1;
 
                         SetLVitemProjectVM(ref lookup, nLVitem);
                         SetLineNumber(ref lookup, nLineNumber);

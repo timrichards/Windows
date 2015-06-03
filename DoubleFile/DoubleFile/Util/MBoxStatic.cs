@@ -9,7 +9,7 @@ namespace DoubleFile
         static internal LocalMbox MessageBox { get; private set; }
 
 #if (DEBUG == false)
-        static bool static_bAssertUp = false;
+        static bool _bAssertUp = false;
 #endif
 
         static internal bool Assert(double nLocation, bool bCondition, string strError_in = null,
@@ -33,7 +33,7 @@ namespace DoubleFile
 #if (DEBUG)
             System.Diagnostics.Debug.Assert(false, strError);
 #else
-            if (static_bAssertUp == false)
+            if (_bAssertUp == false)
             {
                 var bTrace = false; // Trace.Listeners.Cast<TraceListener>().Any(i => i is DefaultTraceListener);
 
@@ -42,7 +42,7 @@ namespace DoubleFile
                     MBoxStatic.ShowDialog(strError +
                         "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.".PadRight(100),
                         "SearchDirLists Assertion Failure");
-                    static_bAssertUp = false;
+                    _bAssertUp = false;
                 };
 
                 if (bTrace)
@@ -51,9 +51,9 @@ namespace DoubleFile
                 }
                 else if (bTraceOnly == false)
                 {
-                    static_nLastAssertLoc = nLocation;
-                    static_dtLastAssert = DateTime.Now;
-                    static_bAssertUp = true;
+                    _nLastAssertLoc = nLocation;
+                    _dtLastAssert = DateTime.Now;
+                    _bAssertUp = true;
                     new System.Threading.Thread(new System.Threading.ThreadStart(messageBox)).Start();
                 }
             }

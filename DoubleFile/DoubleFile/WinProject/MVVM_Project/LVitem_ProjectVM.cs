@@ -27,7 +27,7 @@ namespace DoubleFile
             : base(null, ieString)
         {
             if (null == Status)
-                Status = "" + App.Current.Resources["Status_NotSaved"];
+                Status = FileParse.ksNotSaved;
         }
 
         internal LVitem_ProjectVM(LVitem_ProjectVM lvItemTemp)
@@ -37,8 +37,8 @@ namespace DoubleFile
 
         internal bool Include
         {
-            get { return (IncludeYN == FileParse.ksInclude); }
-            set { IncludeYN = (value ? FileParse.ksInclude : "" + App.Current.Resources["Include_No"]); } 
+            get { return (IncludeYN == FileParse.ksIncludeYes); }
+            set { IncludeYN = (value ? FileParse.ksIncludeYes : FileParse.ksIncludeNo); } 
         }
 
         internal bool WouldSave
@@ -71,6 +71,6 @@ namespace DoubleFile
             }
         }
 
-        const string _ksFileExistsCheck = FileParse.ksUsingFile + FileParse.ksSaved;
+        readonly string _ksFileExistsCheck = FileParse.ksUsingFile + FileParse.ksSaved;
     }
 }

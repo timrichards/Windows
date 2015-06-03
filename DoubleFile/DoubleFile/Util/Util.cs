@@ -82,6 +82,14 @@ namespace DoubleFile
             return "0 bytes";
         }
 
+        static internal string Localized(string key)
+        {
+            if (null == App.Current)
+                return null;
+
+            return "" + App.Current.Resources[key];
+        }
+
         static internal void UIthread(Action action)
         {
             var mainWindow = App.LocalMainWindow as Window;

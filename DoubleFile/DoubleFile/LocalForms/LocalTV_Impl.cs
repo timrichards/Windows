@@ -153,7 +153,7 @@ namespace DoubleFile
                 _winProgress.Aborted = true;
 
                 for (var i = 0; (i < 10) && _winProgress.LocalIsClosed; ++i)
-                    Util.Block(100);
+                    Util.Block(100);    // completed tree too quick to bring up progress box.
 
                 Util.UIthread(_winProgress.Close);
                 return;
@@ -206,7 +206,7 @@ namespace DoubleFile
             _bFinished = true;      // should preceed closing status dialog: returns true to the caller
 
             for (var i = 0; (i < 10) && _winProgress.LocalIsClosed; ++i)
-                Util.Block(100);
+                Util.Block(100);    // completed tree too quick to bring up progress box.
 
             _winProgress.CloseIfNatural();
             _dictNodes = null;      // saving memory here.

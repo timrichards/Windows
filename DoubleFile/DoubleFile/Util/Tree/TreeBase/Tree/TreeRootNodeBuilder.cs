@@ -212,7 +212,7 @@ namespace DoubleFile
                     if ((10 < asLine.Length) &&
                         (strLine.StartsWith(ksLineType_File)))
                     {
-                        nHashParity += new FileKeyTuple(asLine[10], asLine[knColLength]).GetHashCode();
+                        nHashParity += new FileKeyTuple(asLine[10], ulong.Parse(asLine[knColLength])).GetHashCode();
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {

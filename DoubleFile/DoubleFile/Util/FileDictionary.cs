@@ -44,7 +44,7 @@ namespace DoubleFile
             if (10 >= asFileLine.Length)
                 return null;
 
-            var key = new FileKeyTuple(asFileLine[10], asFileLine[7]);
+            var key = new FileKeyTuple(asFileLine[10], ulong.Parse(asFileLine[7]));
             IEnumerable<int> lsDupes = null;
 
             if (false == _DictFiles.TryGetValue(key, out lsDupes))
@@ -126,7 +126,7 @@ namespace DoubleFile
                         .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
                         .Select(strLine => strLine.Split('\t'))
                         .Where(asLine => 10 < asLine.Length)
-                        .Select(asLine => Tuple.Create(int.Parse(asLine[1]), asLine[7], asLine[10]))
+                        .Select(asLine => Tuple.Create(int.Parse(asLine[1]), ulong.Parse(asLine[7]), asLine[10]))
                         .ToArray();
 
                     var nLVitem = _DictLVtoItemNumber[lvItem];
@@ -143,13 +143,12 @@ namespace DoubleFile
 
                         var key = new FileKeyTuple(tuple.Item3, tuple.Item2);
                         var lookup = 0;
-                        var nLineNumber = tuple.Item1;
 
                         SetLVitemProjectVM(ref lookup, nLVitem);
-                        SetLineNumber(ref lookup, nLineNumber);
+                        SetLineNumber(ref lookup, tuple.Item1);
 #if (DEBUG)
                         MBoxStatic.Assert(99907, _DictItemNumberToLV[GetLVitemProjectVM(lookup)] == lvItem);
-                        MBoxStatic.Assert(99908, GetLineNumber(lookup) == nLineNumber);
+                        MBoxStatic.Assert(99908, GetLineNumber(lookup) == tuple.Item1);
 #endif
                         List<int> ls = null;
 
@@ -240,7 +239,7 @@ namespace DoubleFile
                     var asLine = strLine.Split('\t');
                     var asKey = asLine[0].Split(' ');
 
-                    _DictFiles[new FileKeyTuple(asKey[0], asKey[1])] =
+                    _DictFiles[new FileKeyTuple(asKey[0], ulong.Parse(asKey[1]))] =
                         asLine
                         .Skip(1)
                         .Select(s => Convert.ToInt32(s));

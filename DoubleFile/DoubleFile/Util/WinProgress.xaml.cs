@@ -17,6 +17,7 @@ namespace DoubleFile
     partial class WinProgress
     {
         internal bool Aborted { set; private get; }
+        internal bool AllowNewProcess { set; private get; }
 
         internal WeakReference<IWinProgressClosing> WindowClosingCallback{ get; set; }
 
@@ -39,6 +40,13 @@ namespace DoubleFile
                 _lv.SelectedOne = () => formLV_Progress.SelectedItems.HasOnlyOne();
                 _lv.SelectedAny = () => (false == formLV_Progress.SelectedItems.IsEmptyA());
                 _lv.Selected = () => formLV_Progress.SelectedItems.Cast<LVitem_ProgressVM>();
+
+                var lastWindow = _lsNativeWindow.LastOrDefault();
+
+                if (null != lastWindow)
+                    NativeMethods.BringWindowToTop(lastWindow);
+
+                _lsNativeWindow.Add(this);
             });
 
             Observable.FromEventPattern(this, "ContentRendered")
@@ -81,6 +89,12 @@ namespace DoubleFile
                 lvItem.FirstOrDefault().SetCompleted();
             else
                 MBoxStatic.Assert(99930, false);
+
+            if (_lv.ItemsCast.All(lvItemA => 1 == lvItemA.Progress) &&
+                AllowNewProcess)
+            {
+                StopSimulatingModal();
+            }
         }
 
         internal void SetError(string strPath, string strError)
@@ -118,6 +132,12 @@ namespace DoubleFile
             {
                 WindowClosingCallback = null;
                 _bClosing = true;
+
+                _lsNativeWindow
+                    .Where(w => w.Equals(this))
+                    .ToArray()
+                    .ForEach(w => _lsNativeWindow.Remove(w));
+
                 return;     // close
             }
 
@@ -156,7 +176,11 @@ namespace DoubleFile
             }).Start();
         }
 
-        readonly LV_ProgressVM _lv = new LV_ProgressVM();
-        bool _bClosing = false;
+        readonly LV_ProgressVM
+            _lv = new LV_ProgressVM();
+        bool
+            _bClosing = false;
+        static List<NativeWindow>
+            _lsNativeWindow = new List<NativeWindow>();
     }
 }

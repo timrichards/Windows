@@ -171,25 +171,20 @@ namespace DoubleFile
             Owner = (Window)me;
 
             bool? bResult = null;
-            DispatcherFrame blockingFrame = null;
 
             Observable.FromEventPattern(this, "Closed")
                 .Subscribe(x =>
             {
                 App.TopWindow = me;
                 me.Activate();
-
-                if (I.SimulatingModal)
-                {
-                    bResult = LocalDialogResult;
-                    blockingFrame.Continue = false;
-                }
+                bResult = StopSimulatingModal();
             });
 
             if (I.SimulatingModal)
             {
                 base.Show();
-                Dispatcher.PushFrame(blockingFrame = new DispatcherFrame(true));
+                Dispatcher.PushFrame(_blockingFrame = new DispatcherFrame(true));
+                _blockingFrame = null;
                 I.SimulatingModal = false;
                 return bResult;
             }
@@ -197,7 +192,21 @@ namespace DoubleFile
             return base.ShowDialog();
         }
 
-        ILocalWindow I { get { return this; } }
-        bool ILocalWindow.SimulatingModal { get; set; }
+        protected bool? StopSimulatingModal()
+        {
+            var bResult = LocalDialogResult;
+
+            if (null != _blockingFrame)
+                _blockingFrame.Continue = false;
+
+            return bResult;
+        }
+
+        ILocalWindow
+            I { get { return this; } }
+        bool
+            ILocalWindow.SimulatingModal { get; set; }
+        DispatcherFrame
+            _blockingFrame = null;
     }
 }

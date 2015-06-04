@@ -268,7 +268,7 @@ namespace DoubleFile
                     MBoxStatic.Assert(1301.23101, false, "nScannedLength != nTotalLength\n" + _volStrings.ListingFile, bTraceOnly: true);
                 }
 
-                UtilProject.WriteLine(_volStrings.ListingFile + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
+                UtilProject.WriteLine(_volStrings.ListingFile + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
 #endif
             }
 

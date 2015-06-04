@@ -27,7 +27,8 @@ namespace DoubleFile
             _winProgress = new WinProgress(listNicknames, listSourcePaths)
             {
                 Title = "Saving Directory Listings",
-                WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
+                WindowClosingCallback = new WeakReference<IWinProgressClosing>(this),
+                AllowNewProcess = true
             };
 
             if ((null != App.SaveDirListings) &&

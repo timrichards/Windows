@@ -137,7 +137,7 @@ namespace DoubleFile
                     _rootNodes = ls.ToArray();
                 }
 
-                _winProgress.SetProgress(_ksFolderTreeKey, _rootNodes.Length / _nCorrelateProgressDenominator * 3 / 4.0);
+                _winProgress.SetProgress(_ksFolderTreeKey, _rootNodes.Length / _nCorrelateProgressDenominator * 3 / 4d);
             }
             else
             {
@@ -167,10 +167,10 @@ namespace DoubleFile
             var localLVsameVol = new LocalLV();
             var localLVsolitary = new LocalLV();
             var lsLocalLVignore = new List<LocalLVitem>();  // when implementing, replace the Forms ListViewItem.Tag in LocalLVItem
-            var nProgress = 0.0;
+            var nProgress = 0d;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
-                .Subscribe(x => _winProgress.SetProgress(_ksFolderTreeKey, (3 + nProgress) / 4.0)))
+                .Subscribe(x => _winProgress.SetProgress(_ksFolderTreeKey, (3 + nProgress) / 4d)))
             {
                 var lsTreeNodes = new List<LocalTreeNode>();
 
@@ -183,7 +183,7 @@ namespace DoubleFile
                 var dtStart = DateTime.Now;
 
                 collate.Step1(d => nProgress = d);
-                Util.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
+                Util.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
                 dtStart = DateTime.Now;
 
                 if (App.LocalExit)
@@ -198,7 +198,7 @@ namespace DoubleFile
                 if (null == LocalTV.SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
                     LocalTV.SelectedNode = _topNode;
                 _allNodes = lsTreeNodes.ToArray();
-                Util.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds.");
+                Util.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
             }
 
             TreeCleanup();

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Interop;
 using Drawing = System.Drawing;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace DoubleFile
 {
@@ -33,6 +34,7 @@ namespace DoubleFile
 
             internal new void Show() { ((Window)this).Show(); }                         // Darkens ExtraWindows and WinTooltip
             internal new void ShowDialog() { base.ShowDialog(App.LocalMainWindow); }    // then modally darkens MainWindow
+            internal new void StopSimulatingModal() { base.StopSimulatingModal(); }
         }
 
         static internal T
@@ -166,7 +168,27 @@ namespace DoubleFile
                     doubleBufferWindow.Opacity = 0;
                     doubleBufferWindow.Close();
                     retVal = showDialog(darkDialog);
-                    darkDialog.Close();
+
+                    ILocalWindow dialog = null;
+
+                    darkDialog.OwnedWindows.Cast<ILocalWindow>()
+                        .FirstOnlyAssert(w => dialog = w);
+
+                    if ((null != dialog) &&
+                        (false == dialog.LocalIsClosed))
+                    {
+                        // went modeless: remain modal to the app
+                        // current use-case: another progress window is being shown after the first
+                        // using AllowNewProcess
+                        darkDialog.StopSimulatingModal();
+
+                        Observable.FromEventPattern(dialog, "Closed")
+                            .Subscribe(y => darkDialog.Close());
+                    }
+                    else
+                    {
+                        darkDialog.Close();
+                    }
                 });
 
                 darkDialog.ShowDialog();

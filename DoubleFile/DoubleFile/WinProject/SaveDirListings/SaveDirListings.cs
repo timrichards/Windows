@@ -68,7 +68,7 @@ namespace DoubleFile
                 worker.Join();
 
             Util.WriteLine(string.Format("Finished saving directory listings in {0} seconds.",
-                ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
+                ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10d));
 
             if (App.LocalExit ||
                 IsAborted)

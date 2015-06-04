@@ -91,7 +91,7 @@ namespace DoubleFile
                     sbMatch.AppendLine(lvItem.Text);
 
                 IgnoreNodeQuery(("" + sbMatch).ToLower(), nMaxLevel, _ieRootNodes.ElementAt(0));
-                Util.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000.0 + " seconds."); dtStart = DateTime.Now;
+                Util.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds."); dtStart = DateTime.Now;
             }
 
             var dictIgnoreMark = new Dictionary<LocalTreeNode, LocalLVitem>();

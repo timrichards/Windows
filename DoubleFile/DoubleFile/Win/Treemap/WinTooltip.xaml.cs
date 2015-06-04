@@ -151,7 +151,7 @@ namespace DoubleFile
 
             if (WindowState.Maximized == Owner.WindowState)
             {
-                rcTooltip.X = (SystemParameters.PrimaryScreenWidth - rcTooltip.Width) / 2.0;
+                rcTooltip.X = (SystemParameters.PrimaryScreenWidth - rcTooltip.Width) / 2d;
                 rcTooltip.Y = 0;
             }
 

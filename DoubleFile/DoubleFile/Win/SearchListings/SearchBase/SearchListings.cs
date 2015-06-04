@@ -49,7 +49,7 @@ namespace DoubleFile
             foreach (SearchListing worker in _cbagWorkers)
                 worker.Join();
 
-            Util.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", _strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10.0));
+            Util.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", _strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10d));
 
             if (App.LocalExit || IsAborted)
                 return;

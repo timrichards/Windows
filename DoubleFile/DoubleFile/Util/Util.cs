@@ -58,10 +58,10 @@ namespace DoubleFile
 
         static internal string FormatSize(ulong nLength, bool bBytes = false, bool bNoDecimal = false)
         {
-            var nT = nLength / 1024.0 / 1024.0 / 1024 / 1024 - .05;
-            var nG = nLength / 1024.0 / 1024 / 1024 - .05;
-            var nM = nLength / 1024.0 / 1024 - .05;
-            var nK = nLength / 1024.0 - .05;     // Windows Explorer seems to not round
+            var nT = nLength / 1024d / 1024 / 1024 / 1024 - .05;
+            var nG = nLength / 1024d / 1024 / 1024 - .05;
+            var nM = nLength / 1024d / 1024 - .05;
+            var nK = nLength / 1024d - .05;     // Windows Explorer seems to not round
             const string kStrFmt_big = "###,##0.0";
             var strFormat = bNoDecimal ? "###,###" : kStrFmt_big;
             string strSz = null;

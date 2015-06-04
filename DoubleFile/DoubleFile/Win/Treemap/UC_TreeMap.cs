@@ -615,7 +615,7 @@ namespace DoubleFile
 
                 _bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), _rectBitmap);
                 TranslateSize();
-                Util.WriteLine("Size bitmap " + nPxPerSide + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000.0 + " seconds.");
+                Util.WriteLine("Size bitmap " + nPxPerSide + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000d + " seconds.");
             }
 
             var dtStart = DateTime.Now;
@@ -950,7 +950,7 @@ namespace DoubleFile
                     new Double[lsChildren.Count];
 
                 var horizontalRows = (rc.Width >= rc.Height);
-                var width_A = 1.0;
+                var width_A = 1d;
 
                 if (horizontalRows)
                 {
@@ -1055,7 +1055,7 @@ namespace DoubleFile
                 MBoxStatic.Assert(1302.3308, kdMinProportion < 1);
 
                 MBoxStatic.Assert(1302.3309, nextChild < listChildren.Count);
-                MBoxStatic.Assert(1302.33101, width >= 1.0);
+                MBoxStatic.Assert(1302.33101, width >= 1d);
 
                 var nodeDatum = parent.NodeDatum;
 
@@ -1078,7 +1078,7 @@ namespace DoubleFile
                     MBoxStatic.Assert(1302.3311, virtualRowHeight > 0);
                     MBoxStatic.Assert(1302.3312, virtualRowHeight <= 1);
 
-                    // Rectangle(mySize)    = width * 1.0
+                    // Rectangle(mySize)    = width * 1d
                     // Rectangle(childSize) = childWidth * virtualRowHeight
                     // Rectangle(childSize) = childSize / mySize * width
 
@@ -1109,7 +1109,7 @@ namespace DoubleFile
                 // Now as we know the rowHeight, we compute the widths of our children.
                 for (i = 0; i < childrenUsed; i++)
                 {
-                    // Rectangle(1.0 * 1.0) = mySize
+                    // Rectangle(1d * 1d) = mySize
                     var rowSize = mySize * rowHeight;
                     var nodeDatum_A = listChildren[nextChild + i].NodeDatum;
 

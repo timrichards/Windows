@@ -1,9 +1,8 @@
 ﻿- scroll to highlighted item in LVs
 - stop the auto horizontal scrolling
 - clones lvs; and all dupe files lv?
-- Sync to button in tree view
+- Sync To button in tree view
 - fix slider in tree list
-- silent second progress: autostart tree while waiting user response on save listings
 - regex search
 - wpf treemap
 - UX tree map free space

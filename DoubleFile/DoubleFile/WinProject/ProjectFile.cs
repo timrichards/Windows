@@ -285,7 +285,6 @@ namespace DoubleFile
 
             File.Move(strProjectFilename + ".7z", strProjectFilename);
             _winProgress.SetCompleted(Path.GetFileName(strProjectFilename));
-            MBoxStatic.ShowDialog("Todo: save volume group.\nTodo: save include y/n");
             _bProcessing = false;
             bRet = true;
         }
@@ -439,6 +438,5 @@ namespace DoubleFile
             _process = null;
         static readonly WeakReference
             _weakReference = new WeakReference(null);
-
     }
 }

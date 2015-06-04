@@ -3,6 +3,11 @@
 - intro page
 - auto layout? save layout?
 - dupe vm event alerts: static vm internal counter or static transmit
+- regex search
+- silent second progress: autostart tree while waiting user response on save listings
+- db
+- wpf treemap
+- Todo: save volume group.\nTodo: save include y/n
 
 99969 99968
 99956 99955

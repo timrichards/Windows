@@ -26,7 +26,7 @@ namespace DoubleFile
         static internal int SteelBlue { get { return Color.SteelBlue.ToArgb(); } }
 
         static internal uint
-            CLUT_Mask { get { return 0x000000FF; } }
+            CLUT_Mask { get { return 0xFF; } }
         static internal int
             CLUT_Shift { get { return (int)Math.Log(CLUT_Mask + 1, 2); } }
 
@@ -103,7 +103,7 @@ namespace DoubleFile
         const int
             _knNumColors = 15;
         const uint
-            _knCLUT_FGmask = 0x0000000F;
+            _knCLUT_FGmask = 0xF;
         static readonly uint
             _knCLUT_BGmask = CLUT_Mask - _knCLUT_FGmask;
         static readonly Dictionary<int, int>

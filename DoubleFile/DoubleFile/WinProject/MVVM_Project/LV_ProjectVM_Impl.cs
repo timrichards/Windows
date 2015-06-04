@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using System;
 using System.Reactive.Linq;
+using System.Text;
 
 namespace DoubleFile
 {
@@ -241,7 +242,7 @@ namespace DoubleFile
 
             File.Move(lvItem_Orig.ListingFile, strFile_01);
 
-            var sbOut = new System.Text.StringBuilder();
+            var sbOut = new StringBuilder();
 
             using (var reader = File.OpenText(strFile_01))
             {
@@ -259,7 +260,7 @@ namespace DoubleFile
                         break;
                     }
 
-                    var sbLine = new System.Text.StringBuilder(strLine);
+                    var sbLine = new StringBuilder(strLine);
 
                     System.Action<string> Replace = s =>
                     {
@@ -271,7 +272,7 @@ namespace DoubleFile
                             astr.Add("");
 
                         astr[2] = s;
-                        sbLine = new System.Text.StringBuilder(string.Join("\t", astr));
+                        sbLine = new StringBuilder(string.Join("\t", astr));
                     };
 
                     if (bDriveModel_Todo &&

@@ -1,6 +1,7 @@
 ﻿- scroll to highlighted item in LVs
 - stop the auto horizontal scrolling
 - clones lvs; and all dupe files lv?
+- Sync to button in tree view
 - fix slider in tree list
 - silent second progress: autostart tree while waiting user response on save listings
 - regex search
@@ -15,7 +16,7 @@
 - lose the file convert process
 - db
 - Todo: save volume group.\nTodo: save include y/n
-- services: rewrite in JavaScript; C++; etc.
+- services: rewrite in JavaScript; C++; Linux etc.
 
 99969 99968
 99956 99955

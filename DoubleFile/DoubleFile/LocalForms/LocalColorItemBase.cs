@@ -46,7 +46,7 @@ namespace DoubleFile
             set { _datum = (int)(_datum & (-1 - UtilColor.CLUT_Mask)) + value; }
         }
 
-        static readonly uint _knDatum8bitMask =  0x0000FFFF - UtilColor.CLUT_Mask;
+        static readonly uint _knDatum8bitMask =  0xFFFF - UtilColor.CLUT_Mask;
         const uint _knDatum16bitMask = 0xFFFF0000;
 
         int _datum = 0;

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -60,8 +57,8 @@ namespace DoubleFile
 
         internal System.Windows.FontWeight FontWeight
         {
-            get { return (Datum8bits != 0) ? System.Windows.FontWeights.Bold : System.Windows.FontWeights.Normal; }
-            set { Datum8bits = (value == System.Windows.FontWeights.Normal) ? 0 : -1; }
+            get { return (Datum8bits != 0) ? FontWeights.Bold : FontWeights.Normal; }
+            set { Datum8bits = (value == FontWeights.Normal) ? 0 : -1; }
         }
     }
 }

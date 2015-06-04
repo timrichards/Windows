@@ -1,13 +1,21 @@
-﻿- resource all stringets; en-us etc.
+﻿- scroll to highlighted item in LVs
+- stop the auto horizontal scrolling
 - clones lvs; and all dupe files lv?
+- fix slider in tree list
+- silent second progress: autostart tree while waiting user response on save listings
+- regex search
+- wpf treemap
+- UX tree map free space
+- go to button in tree map
+- tool tip to tree map title bar area
+- resource all stringets; en-us etc.
 - intro page
 - auto layout? save layout?
 - dupe vm event alerts: static vm internal counter or static transmit
-- regex search
-- silent second progress: autostart tree while waiting user response on save listings
+- lose the file convert process
 - db
-- wpf treemap
 - Todo: save volume group.\nTodo: save include y/n
+- services: rewrite in JavaScript; C++; etc.
 
 99969 99968
 99956 99955

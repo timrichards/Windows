@@ -44,6 +44,9 @@ namespace DoubleFile
         // the Folders VM disappears and crashes on close. 2) Do you want to cancel, left open,
         // mysteriously leaves WinProject unpopulated after clicking OK: does not run any code
         // in MainWindow.xaml.cs after volumes.ShowDialog. Acts like a suppressed null pointer.
+
+        // 6/4/15 This is also true because of GoModeless(), which I've never seen demostrated
+        // natively, and believe is not possible.
         static internal readonly bool SimulatingModal = true;   // Change it here to switch to simulated dialog
 
         static internal bool CanFlashWindow_ResetsIt

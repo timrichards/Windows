@@ -146,12 +146,14 @@ namespace DoubleFile
         internal new Window Show()
         {
             if ((null != MBoxStatic.MessageBox)) // &&
-    //            (this != MBoxStatic.MessageBox))
+            //    (this != MBoxStatic.MessageBox))
             {
                 return this;
             }
 
-            Owner = (Window)App.LocalMainWindow;
+            if (null == Owner)
+                Owner = (Window)App.LocalMainWindow;
+
             base.Show();
             return this;
         }
@@ -169,34 +171,35 @@ namespace DoubleFile
             I.SimulatingModal = App.SimulatingModal;
             Owner = (Window)me;
 
-            bool? bResult = null;
-            DispatcherFrame blockingFrame = null;
-
             Observable.FromEventPattern(this, "Closed")
                 .Subscribe(x =>
             {
                 App.TopWindow = me;
                 me.Activate();
-
-                if (I.SimulatingModal)
-                {
-                    bResult = LocalDialogResult;
-                    blockingFrame.Continue = false;
-                }
+                GoModeless();
             });
 
             if (I.SimulatingModal)
             {
                 base.Show();
-                Dispatcher.PushFrame(blockingFrame = new DispatcherFrame(true));
-                I.SimulatingModal = false;
-                return bResult;
+                _blockingFrame.Continue = true;
+                Dispatcher.PushFrame(_blockingFrame);
+                return LocalDialogResult;
             }
 
             return base.ShowDialog();
         }
 
-        ILocalWindow I { get { return this; } }
-        bool ILocalWindow.SimulatingModal { get; set; }
+        protected void GoModeless()
+        {
+            _blockingFrame.Continue = false;
+        }
+
+        ILocalWindow
+            I { get { return this; } }
+        bool
+            ILocalWindow.SimulatingModal { get; set; }
+        DispatcherFrame
+            _blockingFrame = new DispatcherFrame(false);
     }
 }

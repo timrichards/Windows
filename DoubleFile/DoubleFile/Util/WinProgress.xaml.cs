@@ -40,13 +40,6 @@ namespace DoubleFile
                 _lv.SelectedOne = () => formLV_Progress.SelectedItems.HasOnlyOne();
                 _lv.SelectedAny = () => (false == formLV_Progress.SelectedItems.IsEmptyA());
                 _lv.Selected = () => formLV_Progress.SelectedItems.Cast<LVitem_ProgressVM>();
-
-                var lastWindow = _lsNativeWindow.LastOrDefault();
-
-                if (null != lastWindow)
-                    NativeMethods.BringWindowToTop(lastWindow);
-
-                _lsNativeWindow.Add(this);
             });
 
             Observable.FromEventPattern(this, "ContentRendered")
@@ -93,7 +86,7 @@ namespace DoubleFile
             if (_lv.ItemsCast.All(lvItemA => 1 == lvItemA.Progress) &&
                 AllowNewProcess)
             {
-                StopSimulatingModal();
+                GoModeless();
             }
         }
 
@@ -132,12 +125,6 @@ namespace DoubleFile
             {
                 WindowClosingCallback = null;
                 _bClosing = true;
-
-                _lsNativeWindow
-                    .Where(w => w.Equals(this))
-                    .ToArray()
-                    .ForEach(w => _lsNativeWindow.Remove(w));
-
                 return;     // close
             }
 
@@ -180,7 +167,5 @@ namespace DoubleFile
             _lv = new LV_ProgressVM();
         bool
             _bClosing = false;
-        static List<NativeWindow>
-            _lsNativeWindow = new List<NativeWindow>();
     }
 }

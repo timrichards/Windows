@@ -34,7 +34,7 @@ namespace DoubleFile
 
             internal new void Show() { ((Window)this).Show(); }                         // Darkens ExtraWindows and WinTooltip
             internal new void ShowDialog() { base.ShowDialog(App.LocalMainWindow); }    // then modally darkens MainWindow
-            internal new void StopSimulatingModal() { base.StopSimulatingModal(); }
+            internal new void GoModeless() { base.GoModeless(); }
         }
 
         static internal T
@@ -180,7 +180,7 @@ namespace DoubleFile
                         // went modeless: remain modal to the app
                         // current use-case: another progress window is being shown after the first
                         // using AllowNewProcess
-                        darkDialog.StopSimulatingModal();
+                        darkDialog.GoModeless();
 
                         Observable.FromEventPattern(dialog, "Closed")
                             .Subscribe(y => darkDialog.Close());

@@ -183,7 +183,14 @@ namespace DoubleFile
                         darkDialog.GoModeless();
 
                         Observable.FromEventPattern(dialog, "Closed")
-                            .Subscribe(y => darkDialog.Close());
+                            .Subscribe(y =>
+                        {
+                            if ((darkDialog != null) &&
+                                (false == (darkDialog.LocalIsClosing || darkDialog.LocalIsClosed)))
+                            {
+                                darkDialog.Close();
+                            }
+                        });
                     }
                     else
                     {

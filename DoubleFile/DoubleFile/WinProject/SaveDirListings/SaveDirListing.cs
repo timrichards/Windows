@@ -16,10 +16,10 @@ namespace DoubleFile
     {
         class SaveDirListing : TraverseTreeBase
         {
-            internal SaveDirListing(LVitem_ProjectVM volStrings, WeakReference<ISaveDirListingsStatus> callbackWR)
+            internal SaveDirListing(LVitem_ProjectVM volStrings, ISaveDirListingsStatus saveDirListingsStatus)
                 : base(volStrings)
             {
-                _callbackWR = callbackWR;
+                _saveDirListingsStatus = saveDirListingsStatus;
             }
 
             internal SaveDirListing DoThreadFactory()
@@ -236,27 +236,17 @@ namespace DoubleFile
 
             void StatusCallback(LVitem_ProjectVM lvItemProjectVM, string strError = null, bool bDone = false, double nProgress = double.NaN)
             {
-                if (null == _callbackWR)
-                {
-                    MBoxStatic.Assert(99871, false);
-                    return;
-                }
-
-                ISaveDirListingsStatus saveDirListingsStatus = null;
-
-                _callbackWR.TryGetTarget(out saveDirListingsStatus);
-
-                if (null == saveDirListingsStatus)
+                if (null == _saveDirListingsStatus)
                 {
                     MBoxStatic.Assert(99870, false);
                     return;
                 }
 
-                saveDirListingsStatus.Status(lvItemProjectVM, strError, bDone, nProgress);
+                _saveDirListingsStatus.Status(lvItemProjectVM, strError, bDone, nProgress);
             }
 
-            readonly WeakReference<ISaveDirListingsStatus>
-                _callbackWR = null;
+            readonly ISaveDirListingsStatus
+                _saveDirListingsStatus = null;
             Thread
                 _thread = null;
         }

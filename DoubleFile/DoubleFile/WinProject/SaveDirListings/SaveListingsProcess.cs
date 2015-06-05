@@ -39,7 +39,7 @@ namespace DoubleFile
             }
 
             App.SaveDirListings =
-                new SaveDirListings(lvProjectVM, new WeakReference<ISaveDirListingsStatus>(this))
+                new SaveDirListings(lvProjectVM, this)
                 .DoThreadFactory();
 
             _winProgress.ShowDialog();

@@ -26,11 +26,11 @@ namespace DoubleFile
                 (strDrive.Substring(1, 2) == @":\"));
         }
 
-        internal SaveDirListings(LV_ProjectVM lvProjectVM, WeakReference<ISaveDirListingsStatus> callbackWR)
+        internal SaveDirListings(LV_ProjectVM lvProjectVM, ISaveDirListingsStatus saveDirListingsStatus)
         {
             IsAborted = false;
             _lvProjectVM = lvProjectVM;
-            _callbackWR = callbackWR;
+            _saveDirListingsStatus = saveDirListingsStatus;
         }
 
         internal void EndThread()
@@ -61,7 +61,7 @@ namespace DoubleFile
                 in _lvProjectVM.ItemsCast
                 .Where(lvItemProjectVM => lvItemProjectVM.WouldSave))
             {
-                _cbagWorkers.Add(new SaveDirListing(lvItemProjectVM, _callbackWR).DoThreadFactory());
+                _cbagWorkers.Add(new SaveDirListing(lvItemProjectVM, _saveDirListingsStatus).DoThreadFactory());
             }
 
             foreach (var worker in _cbagWorkers)
@@ -76,27 +76,17 @@ namespace DoubleFile
                 return;
             }
 
-            if (null == _callbackWR)
+            if (null == _saveDirListingsStatus)
             {
                 MBoxStatic.Assert(99873, false);
                 return;
             }
 
-            ISaveDirListingsStatus saveDirListingsStatus = null;
-
-            _callbackWR.TryGetTarget(out saveDirListingsStatus);
-
-            if (null == saveDirListingsStatus)
-            {
-                MBoxStatic.Assert(99872, false);
-                return;
-            }
-
-            saveDirListingsStatus.Done();
+            _saveDirListingsStatus.Done();
         }
 
-        readonly WeakReference<ISaveDirListingsStatus>
-            _callbackWR = null;
+        readonly ISaveDirListingsStatus
+            _saveDirListingsStatus = null;
         Thread
             _thread = null;
         ConcurrentBag<SaveDirListing>

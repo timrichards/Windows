@@ -79,7 +79,7 @@ namespace DoubleFile
             var lvItem = _lv[strPath];
 
             if (null != lvItem)
-                lvItem.FirstOrDefault().SetCompleted();
+                lvItem.FirstOnlyAssert(lvItemA => lvItemA.SetCompleted());
             else
                 MBoxStatic.Assert(99930, false);
 
@@ -95,7 +95,7 @@ namespace DoubleFile
             var lvItem = _lv[strPath];
 
             if (null != lvItem)
-                lvItem.FirstOrDefault().SetError(strError);
+                lvItem.FirstOnlyAssert(lvItemA => lvItemA.SetError(strError));
             else
                 MBoxStatic.Assert(99929, false);
         }

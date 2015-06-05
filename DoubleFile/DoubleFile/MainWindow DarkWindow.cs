@@ -169,28 +169,29 @@ namespace DoubleFile
                     doubleBufferWindow.Close();
                     retVal = showDialog(darkDialog);
 
-                    ILocalWindow dialog = null;
-
-                    darkDialog.OwnedWindows.Cast<ILocalWindow>()
-                        .FirstOnlyAssert(w => dialog = w);
-
-                    if ((null != dialog) &&
-                        (false == dialog.LocalIsClosed))
+                    if (darkDialog.OwnedWindows.Cast<ILocalWindow>()
+                        .Any(dialog =>
                     {
-                        // went modeless: remain modal to the app
-                        // current use-case: another progress window is being shown after the first
-                        // using AllowNewProcess
-                        darkDialog.GoModeless();
+                        if (dialog.LocalIsClosed)
+                            return false;   // from lambda: close dark window: modal loop ended
 
                         Observable.FromEventPattern(dialog, "Closed")
                             .Subscribe(y =>
                         {
-                            if ((darkDialog != null) &&
-                                (false == (darkDialog.LocalIsClosing || darkDialog.LocalIsClosed)))
-                            {
-                                darkDialog.Close();
-                            }
+                            if ((null == darkDialog) || darkDialog.LocalIsClosing || darkDialog.LocalIsClosed)
+                                return;     // from lambda
+
+                            darkDialog.Close();
                         });
+
+                        return true;        // from lambda: do not close dark window: went modeless
+                    }))
+                    {
+                        // Went modeless. Use-case 6/4/15: another progress window is being shown after
+                        // the first using AllowNewProcess. Now program flow will proceed just like Show()
+                        // except that the app effectively remains modal to the user (prevent UI via dark
+                        // dialog). 
+                        darkDialog.GoModeless();
                     }
                     else
                     {

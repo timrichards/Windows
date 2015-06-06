@@ -82,7 +82,10 @@ namespace DoubleFile
                 WindowStyle = WindowStyle.None,
                 ShowInTaskbar = false,
                 AllowsTransparency = true,
-                Opacity = 0
+                Opacity = 0,
+                ShowActivated = false,
+                Focusable = false,
+                IsEnabled = false
             };
 
             doubleBufferWindow.SetRect(bounds);

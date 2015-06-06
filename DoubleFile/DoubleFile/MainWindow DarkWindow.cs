@@ -172,7 +172,7 @@ namespace DoubleFile
                     doubleBufferWindow.Close();
                     retVal = showDialog(darkDialog);
 
-                    if (darkDialog.OwnedWindows.Cast<ILocalWindow>()
+                    if (false == darkDialog.OwnedWindows.Cast<ILocalWindow>()
                         .Where(dialog => false == dialog.LocalIsClosed)
                         .FirstOnlyAssert(dialog =>
                     {
@@ -184,16 +184,15 @@ namespace DoubleFile
 
                             darkDialog.Close();
                         });
-                    }))
-                    {
+
                         // Went modeless. Use-case 6/4/15: another progress window is being shown after
                         // the first using AllowNewProcess. Now program flow will proceed just like Show()
                         // except that the app effectively remains modal to the user (prevent UI via dark
                         // dialog). 
                         darkDialog.GoModeless();
-                    }
-                    else
+                    }))
                     {
+                        // The above code block did not execute. Still modal: child dialog closed.
                         darkDialog.Close();
                     }
                 });

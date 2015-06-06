@@ -173,11 +173,9 @@ namespace DoubleFile
                     retVal = showDialog(darkDialog);
 
                     if (darkDialog.OwnedWindows.Cast<ILocalWindow>()
-                        .Any(dialog =>
+                        .Where(dialog => false == dialog.LocalIsClosed)
+                        .FirstOnlyAssert(dialog =>
                     {
-                        if (dialog.LocalIsClosed)
-                            return false;   // from lambda: close dark window: modal loop ended
-
                         Observable.FromEventPattern(dialog, "Closed")
                             .Subscribe(y =>
                         {
@@ -186,8 +184,6 @@ namespace DoubleFile
 
                             darkDialog.Close();
                         });
-
-                        return true;        // from lambda: do not close dark window: went modeless
                     }))
                     {
                         // Went modeless. Use-case 6/4/15: another progress window is being shown after

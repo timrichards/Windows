@@ -91,19 +91,25 @@ namespace DoubleFile
             return (source.Count == 0);
         }
 
-        static internal void First<T>(this IEnumerable<T> source, Action<T> action)
+        static internal bool First<T>(this IEnumerable<T> source, Action<T> action)
         {
-            source
+            var retVal = source
                 .FirstOrDefault(item =>
             {
                 action(item);
                 return true;
             });
+
+            if (null == retVal)
+                return false;
+
+            return 
+                false == retVal.Equals(default(T));
         }
 
-        static internal void FirstOnlyAssert<T>(this IEnumerable<T> source, Action<T> action)
+        static internal bool FirstOnlyAssert<T>(this IEnumerable<T> source, Action<T> action)
         {
-            First(source, action);
+            var retVal = First(source, action);
 
 #if (DEBUG)
             var enumerator = source.GetEnumerator();
@@ -111,6 +117,7 @@ namespace DoubleFile
             if (enumerator.MoveNext())
                 MBoxStatic.Assert(99953, false == enumerator.MoveNext());
 #endif
+            return retVal;
         }
 
         static internal void ForEach<T>(this IEnumerable<T> source, Action<T> action)

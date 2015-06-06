@@ -179,7 +179,7 @@ namespace DoubleFile
 
             var pt = Point.Ceiling(new PointF(pt_in.X / _sizeTranslate.Width, pt_in.Y / _sizeTranslate.Height));
             LocalTreeNode nodeRet = null;
-            var bImmediateFiles = false;
+            var bFilesHere = false;
             var bVolumeView = false;
 
             Util.Closure(() =>
@@ -202,7 +202,7 @@ namespace DoubleFile
                     if ((false == bVolumeView) &&
                         (null != (nodeRet = FindMapNode(nodeDatum.TreeMapFiles, pt))))
                     {
-                        bImmediateFiles = true;
+                        bFilesHere = true;
                         return;     // from lambda
                     }
                 }
@@ -252,17 +252,17 @@ namespace DoubleFile
                 if (null != nodeRet_A)
                 {
                     nodeRet = nodeRet_A;
-                    bImmediateFiles = true;
+                    bFilesHere = true;
                 }
             });
 
             if (ReferenceEquals(nodeRet, _prevNode))
             {
                 nodeRet = TreeMapVM.TreeNode;
-                bImmediateFiles = false;
+                bFilesHere = false;
             }
 
-            SelRectAndTooltip(nodeRet, kSelRectAndTooltip /* UI Initiator */, bImmediateFiles);
+            SelRectAndTooltip(nodeRet, kSelRectAndTooltip /* UI Initiator */, bFilesHere);
             return null;
         }
 
@@ -280,7 +280,7 @@ namespace DoubleFile
             if (false == ReferenceEquals(TreeMapVM.TreeNode, treeNodeChild.Parent))
                 return;
 
-            SelRectAndTooltip(treeNodeChild, initiatorTuple.Item2, bImmediateFiles: false);
+            SelRectAndTooltip(treeNodeChild, initiatorTuple.Item2, bFile: false);
         }
 
         void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int> initiatorTuple)
@@ -295,26 +295,20 @@ namespace DoubleFile
                 return;
             }
 
-            LocalTreeMapFileNode fileNode = null;
-
             if (null == tuple.Item3.NodeDatum.TreeMapFiles)     // TODO: Why would this be null?
                 return;
 
-            tuple.Item2
-                .First(strFile => tuple.Item3.NodeDatum.TreeMapFiles.Nodes
-                    .Where(treeNodeA => treeNodeA.Text == strFile)
-                    .FirstOnlyAssert(treeNodeA => fileNode = treeNodeA as LocalTreeMapFileNode));
-
-            if (null != fileNode)                               // TODO: Why would this be null?
+            if (false == tuple.Item2.First(strFile => tuple.Item3.NodeDatum.TreeMapFiles.Nodes
+                .Where(treeNodeA => treeNodeA.Text == strFile)
+                .Where(treeNodeA => treeNodeA is LocalTreeMapFileNode)
+                .FirstOnlyAssert(fileNode =>
+                    SelRectAndTooltip(fileNode, initiatorTuple.Item2, bFile: true))))
             {
-                SelRectAndTooltip(fileNode, initiatorTuple.Item2, bImmediateFiles: true);
-                return;
+                WinTooltip.CloseTooltip();
             }
-
-            WinTooltip.CloseTooltip();
         }
 
-        void SelRectAndTooltip(LocalTreeNode treeNodeChild, int nInitiator, bool bImmediateFiles)
+        void SelRectAndTooltip(LocalTreeNode treeNodeChild, int nInitiator, bool bFile)
         {
             if (_bTreeSelect ||
                 _bSelRecAndTooltip)
@@ -331,7 +325,7 @@ namespace DoubleFile
             var strFolder = treeNodeChild.Text;
             var nodeTreeSelect = treeNodeChild;
 
-            if (bImmediateFiles)
+            if (bFile)
             {
                 strFolder += " (file)";
                 nodeTreeSelect = treeNodeChild.Parent.Parent;   // Parent is TreeMapFileListNode
@@ -875,7 +869,7 @@ namespace DoubleFile
                     if ((null != ieChildren) &&
                         KDirStat_DrawChildren(parent, ieChildren, bStart))
                     {
-                        // example scenario: empty folder when there are immediate files and bStart is not true
+                        // example scenario: empty folder when there are files here and bStart is not true
                         return;
                     }
                 }

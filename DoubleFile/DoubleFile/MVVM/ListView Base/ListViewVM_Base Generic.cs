@@ -7,7 +7,7 @@ namespace DoubleFile
     abstract class ListViewVM_Base<T> : ListViewVM_Base //, IEquatable<ListViewVM_GenericBase<T>>
         where T : ListViewItemVM_Base
     {
-        internal Func<IEnumerable<T>> Selected = () => { DesignModeOK(); return null; };
+        internal Func<IEnumerable<T>> Selected = () => { DesignModeOK(); return new T[] { }; };
         internal IEnumerable<T> ItemsCast { get { return Items.Cast<T>(); } }
 
         internal virtual IEnumerable<T> this[string s_in]

@@ -26,12 +26,8 @@ namespace DoubleFile
                     LocalTreeNode rootTreeNode = null;
                     string strRootPath_out = null;
 
-                    _rootNode.Nodes.Values
-                        .First(rootNode =>
-                            rootTreeNode =
-                                rootNode
-                                .AddToTree(strVolumeName, out strRootPath_out)
-                        );
+                    _rootNode.Nodes.Values.First(rootNode => rootTreeNode =
+                        rootNode.AddToTree(strVolumeName, out strRootPath_out));
 
                     strRootPath = strRootPath_out;
                     return rootTreeNode;

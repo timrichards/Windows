@@ -48,12 +48,12 @@ namespace DoubleFile
                 }
 
                 nodeDatum.TotalLength = (datum.TotalLength += nodeDatum.Length);
-                nodeDatum.ImmediateFiles = nodeDatum.LineNo - nodeDatum.PrevLineNo - 1;
-                nodeDatum.FilesInSubdirs = (datum.FilesInSubdirs += nodeDatum.ImmediateFiles);
+                nodeDatum.FilesHere = nodeDatum.LineNo - nodeDatum.PrevLineNo - 1;
+                nodeDatum.FilesInSubdirs = (datum.FilesInSubdirs += nodeDatum.FilesHere);
                 nodeDatum.SubDirs = (datum.SubDirs += (null != treeNode.Nodes) ? (uint)treeNode.Nodes.Length : 0);
                 nodeDatum.HashParity = (datum.HashParity += nodeDatum.HashParity);
 
-                if (0 < nodeDatum.ImmediateFiles)
+                if (0 < nodeDatum.FilesHere)
                     ++datum.DirsWithFiles;
 
                 nodeDatum.DirsWithFiles = datum.DirsWithFiles;

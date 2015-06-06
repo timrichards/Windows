@@ -219,7 +219,7 @@ namespace DoubleFile
                         return;
                     }
 
-                    if (0 < nodeDatum.ImmediateFiles)
+                    if (0 < nodeDatum.FilesHere)
                         dictUnique.Add(kvp.Key, treeNode);
                 }
             }
@@ -359,7 +359,7 @@ namespace DoubleFile
                     return;
                 }
 
-                MBoxStatic.Assert(1305.6322, nodeDatum.ImmediateFiles > 0);
+                MBoxStatic.Assert(1305.6322, nodeDatum.FilesHere > 0);
                 SnowUniqueParents(treeNode);
 
                 MBoxStatic.Assert(1305.6323, treeNode.ForeColor == UtilColor.Empty);

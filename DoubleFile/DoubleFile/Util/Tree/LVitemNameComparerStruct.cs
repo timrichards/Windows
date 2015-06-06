@@ -39,7 +39,7 @@ namespace DoubleFile
 
             var list = lv1.Items.Except(lv2.Items, new LVitemNameComparerStruct());
 
-            list.Take(1).First(item => lv1.TopItem = item);
+            list.First(item => lv1.TopItem = item);
 
             foreach (var item in list)
             {

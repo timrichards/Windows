@@ -104,7 +104,7 @@ namespace DoubleFile
 
             const string kStrFmt_thous = "###,###,###,##0";
 
-            lasItems.Add(new[] { "# Files Here", nodeDatum.ImmediateFiles.ToString(kStrFmt_thous) });
+            lasItems.Add(new[] { "# Files Here", nodeDatum.FilesHere.ToString(kStrFmt_thous) });
             lasItems.Add(new[] { "with Size of", FormatSize(nodeDatum.Length, bBytes: true) });
             lasItems.Add(new[] { "Total # Files", nodeDatum.FilesInSubdirs.ToString(kStrFmt_thous) });
             lasItems.Add(new[] { "# Folders Here", ((null != treeNode.Nodes) ? treeNode.Nodes.Length : 0).ToString(kStrFmt_thous) });
@@ -117,7 +117,7 @@ namespace DoubleFile
                 {
                     var nDirsWithFiles = nodeDatum.DirsWithFiles;
 
-                    if (0 < nodeDatum.ImmediateFiles)
+                    if (0 < nodeDatum.FilesHere)
                         --nDirsWithFiles;
 
                     if (0 < nDirsWithFiles)

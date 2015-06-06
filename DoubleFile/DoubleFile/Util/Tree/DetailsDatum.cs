@@ -21,7 +21,7 @@ namespace DoubleFile
         internal uint
             SubDirs { get; set; }                   // Found 17 bits
         internal uint
-            ImmediateFiles { get; set; }            // Found 15 bits
+            FilesHere { get; set; }                 // Found 15 bits
         internal uint
             DirsWithFiles { get; set; }             // Found 15 bits
 
@@ -42,7 +42,7 @@ namespace DoubleFile
             TotalLength = datum.TotalLength;
             FilesInSubdirs = datum.FilesInSubdirs;
             SubDirs = datum.SubDirs;
-            ImmediateFiles = datum.ImmediateFiles;
+            FilesHere = datum.FilesHere;
             DirsWithFiles = datum.DirsWithFiles;
             PrevLineNo = datum.PrevLineNo;
             LineNo = datum.LineNo;
@@ -57,7 +57,7 @@ namespace DoubleFile
                 TotalLength = datum1.TotalLength + datum2.TotalLength,
                 FilesInSubdirs = datum1.FilesInSubdirs + datum2.FilesInSubdirs,
                 SubDirs = datum1.SubDirs + datum2.SubDirs,
-                ImmediateFiles = datum1.ImmediateFiles + datum2.ImmediateFiles,
+                FilesHere = datum1.FilesHere + datum2.FilesHere,
                 DirsWithFiles = datum1.DirsWithFiles + datum2.DirsWithFiles,
                 HashParity = datum1.HashParity + datum2.HashParity
             };

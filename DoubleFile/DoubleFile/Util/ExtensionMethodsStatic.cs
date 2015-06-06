@@ -93,18 +93,17 @@ namespace DoubleFile
 
         static internal bool First<T>(this IEnumerable<T> source, Action<T> action)
         {
+            bool bRetVal = false;
+
             var retVal = source
                 .FirstOrDefault(item =>
             {
                 action(item);
-                return true;
+                bRetVal = true;
+                return true;    // from lambda
             });
 
-            if (null == retVal)
-                return false;
-
-            return 
-                false == retVal.Equals(default(T));
+            return bRetVal;
         }
 
         static internal bool FirstOnlyAssert<T>(this IEnumerable<T> source, Action<T> action)

@@ -1,5 +1,4 @@
 ﻿- disallow saving the same directory simultaneously (saving already completed is alright)
-- a dialog or messagebox on another should darken the one behind it
 - scroll to highlighted item in LVs
 - stop the auto horizontal scrolling
 - clones lvs; and all dupe files lv?

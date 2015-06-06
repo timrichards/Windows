@@ -32,7 +32,7 @@ namespace DoubleFile
                 IsEnabled = false;
             }
 
-            internal new void Show() { ((Window)this).Show(); }                         // Darkens ExtraWindows and WinTooltip
+            internal new DarkWindow Show() { ((Window)this).Show(); return this; }      // Darkens ExtraWindows and WinTooltip
             internal new void ShowDialog() { base.ShowDialog(App.LocalMainWindow); }    // then modally darkens MainWindow
             internal new void GoModeless() { base.GoModeless(); }
         }
@@ -45,7 +45,20 @@ namespace DoubleFile
                 return default(T);
 
             if (_bDarkening)
-                return showDialog(App.TopWindow);
+            {
+                var prevTopWindow = App.TopWindow;
+                var darkWindow = new DarkWindow((Window)App.TopWindow);
+
+                darkWindow
+                    .SetRect(darkWindow.Rect)
+                    .Show();
+
+                var retValA = showDialog(darkWindow);
+
+                darkWindow.Close();
+                App.TopWindow = prevTopWindow;
+                return retValA;
+            }
 
             _bDarkening = true;
 

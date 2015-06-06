@@ -172,12 +172,13 @@ namespace DoubleFile
             return new Rect(window.Left, window.Top, window.Width, window.Height);
         }
 
-        static internal void SetRect(this Window window, Rect r)
+        static internal T SetRect<T>(this T window, Rect r) where T : Window
         {
             window.Left = r.X;
             window.Top = r.Y;
             window.Width = r.Width;
             window.Height = r.Height;
+            return window;
         }
     }
 }

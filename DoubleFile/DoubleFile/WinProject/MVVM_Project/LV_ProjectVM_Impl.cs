@@ -107,7 +107,7 @@ namespace DoubleFile
 
                         Unsaved = true;
                     }
-                    else if (FileExists(lvItemVolumeTemp.ListingFile) ||   // WinVolumeNew
+                    else if (FileExists(lvItemVolumeTemp.ListingFile) ||    // WinVolumeNew
                         ContainsUnsavedPath(lvItemVolumeTemp.SourcePath))
                     {
                         continue;

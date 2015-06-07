@@ -6,10 +6,12 @@ using System.Linq;
 using System.IO;
 using System.Text;
 using System;
+using System.Reactive.Linq;
+using System.Threading;
 
 namespace DoubleFile
 {
-    partial class WinProjectVM : IOpenListingFiles
+    partial class WinProjectVM : IOpenListingFiles, IWinProgressClosing
     {
         // Menu items       
         static internal string
@@ -108,6 +110,8 @@ namespace DoubleFile
 
         internal void OpenListingFile()
         {
+            _bUserCanceled = false;
+
             var dlg = new Microsoft.Win32.OpenFileDialog
             {
                 Title = "Open Listing File",
@@ -115,17 +119,37 @@ namespace DoubleFile
                 Multiselect = true
             };
 
-            if ((MainWindow.Darken(darkWindow => dlg.ShowDialog((Window)darkWindow)) ?? false) &&
-                OpenListingFiles(dlg.FileNames))
+            if (false == (MainWindow.Darken(darkWindow => dlg.ShowDialog((Window)darkWindow)) ?? false))
+                return;
+
+            var strPlural = (1 < dlg.FileNames.Length) ? "s" : "";
+
+            var winProgress = new WinProgress(new[] { "Opening listing file" + strPlural }, new[] { "" })
             {
-                _lvVM.Unsaved = true;
-            }
+                WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
+            };
+
+            Observable.FromEventPattern(winProgress, "SourceInitialized")
+                .Subscribe(x =>
+            {
+                new Thread(() =>
+                {
+                    if (OpenListingFiles(dlg.FileNames, userCanceled: () => _bUserCanceled))
+                        _lvVM.Unsaved = true;
+
+                    winProgress.Aborted = true;
+                    Util.UIthread(winProgress.Close);
+                })
+                    .Start();
+            });
+
+            winProgress.ShowDialog();
         }
 
         internal bool OpenListingFiles(
             IEnumerable<string> listFiles,
             bool bClearItems = false,
-            System.Func<bool> userCanceled = null)
+            Func<bool> userCanceled = null)
         {
             var sbBadFiles = new StringBuilder();
             var bMultiBad = true;
@@ -213,5 +237,16 @@ namespace DoubleFile
         {
             return OpenListingFiles(lsFiles, bClearItems, userCanceled);
         }
+
+        bool IWinProgressClosing.ConfirmClose()
+        {
+            _bUserCanceled |= (MessageBoxResult.Yes ==
+                MBoxStatic.ShowDialog("Do you want to cancel?", "Opening Listing Files", MessageBoxButton.YesNo));
+
+            return false;   // it will close when the loop queries _bUserCanceled
+        }
+
+        bool
+            _bUserCanceled = false;
     }
 }

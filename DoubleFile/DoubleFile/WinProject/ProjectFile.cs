@@ -347,7 +347,8 @@ namespace DoubleFile
                 (_winProgress = new WinProgress(new[] { _status }, new[] { strProjectFileNoPath })
                 {
                     WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
-                }).ShowDialog();
+                })
+                    .ShowDialog();
 
                 return true;
             }

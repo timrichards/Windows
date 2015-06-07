@@ -8,6 +8,7 @@ using System.Text;
 using System;
 using System.Reactive.Linq;
 using System.Threading;
+using System.Windows.Input;
 
 namespace DoubleFile
 {
@@ -24,7 +25,11 @@ namespace DoubleFile
 
         internal void OpenProject()
         {
-            if (_lvVM.Unsaved &&
+            var bClearItems =
+                (_lvVM.Count == 0) ||
+                false == (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift));
+
+            if (bClearItems && _lvVM.Unsaved &&
                 (MessageBoxResult.Cancel ==
                 MBoxStatic.ShowDialog(UnsavedWarning, "Open Project", MessageBoxButton.OKCancel)))
             {
@@ -34,10 +39,13 @@ namespace DoubleFile
             var dlg = new Microsoft.Win32.OpenFileDialog { Title = "Open Project", Filter = _ksProjectFilter };
 
             if ((MainWindow.Darken(darkWindow => dlg.ShowDialog((Window)darkWindow)) ?? false) &&
-                ProjectFile.OpenProject(dlg.FileName, new WeakReference<IOpenListingFiles>(this)))
+                ProjectFile.OpenProject(dlg.FileName, new WeakReference<IOpenListingFiles>(this), bClearItems))
             {
-                _lvVM.Unsaved = false;
-                _lvVM.SetModified();
+                _lvVM.Unsaved =
+                    false == bClearItems;
+
+                if (bClearItems)
+                    _lvVM.SetModified();    // Unsaved has trickery to do a UX reset only when set to true: want always
             }
         }
 

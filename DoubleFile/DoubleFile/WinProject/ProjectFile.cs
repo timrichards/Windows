@@ -26,13 +26,14 @@ namespace DoubleFile
         static internal string TempPath { get { return Path.GetTempPath() + @"DoubleFile\"; } }
         static internal string TempPath01 { get { return TempPath.TrimEnd('\\') + "01"; } }
 
-        static internal bool OpenProject(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR)
+        static internal bool
+            OpenProject(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR, bool bClearItems)
         {
             var projectFile = new ProjectFile();
 
             _weakReference.Target = projectFile;
 
-            var bRet = projectFile.OpenProject_(strProjectFilename, openListingFilesWR);
+            var bRet = projectFile.OpenProject_(strProjectFilename, openListingFilesWR, bClearItems);
 
             foreach (var d in projectFile._lsDisposable)
                 d.Dispose();
@@ -40,7 +41,8 @@ namespace DoubleFile
             return bRet;
         }
 
-        static internal bool SaveProject(LV_ProjectVM lvProjectVM, string strProjectFilename)
+        static internal bool
+            SaveProject(LV_ProjectVM lvProjectVM, string strProjectFilename)
         {
             var projectFile = new ProjectFile();
 
@@ -82,7 +84,7 @@ namespace DoubleFile
             _lsDisposable.Add(_process);
         }
 
-        bool OpenProject_(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR)
+        bool OpenProject_(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR, bool bClearItems)
         {
             if (Directory.Exists(TempPath))                     // close box/cancel/undo
             {
@@ -96,10 +98,11 @@ namespace DoubleFile
 
             var bRet = false;
 
-            if (false == StartProcess("Opening project", Path.GetFileName(strProjectFilename),
+            if (false == StartProcess((bClearItems ? "Opening" : "Appending") + " project",
+                Path.GetFileName(strProjectFilename),
                 TempPath,
                 "e \"" + strProjectFilename + "\" -y",
-                () => bRet = OpenProjectExited(openListingFilesWR)))
+                () => bRet = OpenProjectExited(openListingFilesWR, bClearItems)))
             {
                 MBoxStatic.ShowDialog("Couldn't open the project. Reinstall Double File or open your project file " +
                     "and get to your listing files using a download from 7-zip.org.", "Open Project");
@@ -108,7 +111,7 @@ namespace DoubleFile
             return bRet;
         }
 
-        bool OpenProjectExited(WeakReference<IOpenListingFiles> openListingFilesWR)
+        bool OpenProjectExited(WeakReference<IOpenListingFiles> openListingFilesWR, bool bClearItems)
         {
             var bErr = ReportAnyErrors(_process, "Opening",
                 new Win32Exception(Marshal.GetLastWin32Error()).Message);
@@ -157,7 +160,8 @@ namespace DoubleFile
                         .Equals(FileParse.ksFileExt_Listing,
                         StringComparison.InvariantCultureIgnoreCase);
                 }),
-                true, () => _bUserCanceled);
+                bClearItems,
+                () => _bUserCanceled);
 
             if (null != OnOpenedProject)
                 OnOpenedProject();

@@ -1,6 +1,5 @@
 ﻿- rollover highlight project image button text
 - set hover bg same as bg in project lv for group etc
-- allow user to shift-open a project so it appends current project
 - scroll to highlighted item in LVs
 - stop the auto horizontal scrolling
 - clones lvs; and all dupe files lv?

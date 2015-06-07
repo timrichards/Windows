@@ -42,7 +42,7 @@
                 </StackPanel.Resources>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock>project</TextBlock>
-                    <Button Content="  OPEN" Command="{Binding Icmd_OpenProject}" ToolTip="Open project" Tag="/Double File;component/Assets/ic_folder_open_white_18dp.png" />
+                    <Button Content="  OPEN" Command="{Binding Icmd_OpenProject}" ToolTip="Open project. Use shift key to append project." Tag="/Double File;component/Assets/ic_folder_open_white_18dp.png" />
                     <Button Content="  SAVE" Command="{Binding Icmd_SaveProject}" ToolTip="Save project" Tag="/Double File;component/Assets/ic_save_white_18dp.png" />
                     <TextBlock>volume</TextBlock>
                     <Button Content="  NEW" Command="{Binding Icmd_NewListingFile}" ToolTip="New listing file" Tag="/Double File;component/Assets/ic_add_circle_white_18dp.png" />

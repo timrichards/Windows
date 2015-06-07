@@ -14,10 +14,24 @@ namespace DoubleFile
         public string WidthProgressState { get { return SCW; } }
         public string WidthRemaining { get { return SCW; } }
 
-        internal override bool Add(IEnumerable<string[]> ieStr, bool bQuiet = true /* ignored */)
+        internal override bool Add(IEnumerable<string[]> ieStr, bool bQuiet)
         {
-            foreach (var arrStr in ieStr)
-                Add(new LVitem_ProgressVM(this, arrStr), bQuiet: true);
+            MBoxStatic.Assert(99945, false);
+            return false;
+        }
+
+        internal bool Add(IEnumerable<Tuple<string, string>> ieStr)
+        {
+            foreach (var tuple in ieStr)
+            {
+                if (false == this[tuple.Item2].IsEmpty())
+                {
+                    MBoxStatic.Assert(99955, false);
+                    return false;
+                }
+
+                base.Add(new LVitem_ProgressVM(this, new[] { tuple.Item1, tuple.Item2 }), bQuiet: true);
+            }
 
             return true;
         }

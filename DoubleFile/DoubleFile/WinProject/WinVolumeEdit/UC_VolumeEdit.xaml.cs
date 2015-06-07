@@ -133,7 +133,8 @@ namespace DoubleFile
 
         void LoadHandler()
         {
-            uc_VolumeEdit.DataContext = new UC_VolumeEditVM
+            uc_VolumeEdit.DataContext =
+                new UC_VolumeEditVM
             {
                 IsOKenabled = () => IsOKenabled,
                 SourcePath_CurrentText = () => formEdit_SourcePath.Text,
@@ -141,7 +142,8 @@ namespace DoubleFile
                 FromSourcePathDlg = s => formEdit_SourcePath.Text = s,
                 FromProbe = (strDriveModel, strDriveSerial) => { formEdit_DriveModel.Text = strDriveModel; formEdit_DriveSerial.Text = strDriveSerial; },
                 FromListingFileDlg = s => formEdit_SaveListingFile.Text = s
-            }.Init();
+            }
+                .Init();
 
             formEdit_DriveLetter.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (o, e) => e.Handled = true));
 

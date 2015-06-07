@@ -15,7 +15,7 @@ namespace DoubleFile
             get
             {
                 if (null == s_in)
-                    return null;
+                    return new T[] { };
             
                 var s = s_in.ToLower();
 

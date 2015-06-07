@@ -87,7 +87,8 @@ namespace DoubleFile
 
             var tmRolling = DateTime.Now - _dtRollingProgress;
 
-            if ((_nRollingProgress.Equals(0)) && (tmRolling > TimeSpan.FromSeconds(15)))
+            if (_nRollingProgress.Equals(0) &&
+                (tmRolling > TimeSpan.FromSeconds(15)))
             {
                 // The operating system caches reads so restarting the drive read sweeps
                 // through the already-read data unreasonably fast.
@@ -125,13 +126,20 @@ namespace DoubleFile
             _nLastProgress = Progress;
         }
 
-        const string _ksProgress = "Progress";
-        const string _ksIndeterminate = "Indeterminate";
-        const string _ksProgressState = "ProgressState";
-        const int _knRollingMinutes = 2;
+        const string
+            _ksProgress = "Progress";
+        const string
+            _ksIndeterminate = "Indeterminate";
+        const string
+            _ksProgressState = "ProgressState";
+        const int
+            _knRollingMinutes = 2;
 
-        DateTime _dtRollingProgress = DateTime.MinValue;
-        double _nRollingProgress = 0;
-        double _nLastProgress = 0;
+        DateTime
+            _dtRollingProgress = DateTime.MinValue;
+        double
+            _nRollingProgress = 0;
+        double
+            _nLastProgress = 0;
     }
 }

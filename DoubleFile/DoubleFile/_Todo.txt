@@ -1,4 +1,5 @@
-﻿- disallow saving the same directory simultaneously (saving already completed is alright)
+﻿- progress window for opening files
+- rollover highlight project image button text
 - scroll to highlighted item in LVs
 - stop the auto horizontal scrolling
 - clones lvs; and all dupe files lv?
@@ -18,12 +19,9 @@
 - Todo: save volume group.\nTodo: save include y/n
 - services: rewrite in JavaScript; C++; Linux etc.
 
-99969 99968
-99956 99955
-99945 99944
+99944
 99937 99936 99935
-99933 99932
-99928
+99933 99932 99931 99930 99929 99928
 99926 99925
 99919
 99914

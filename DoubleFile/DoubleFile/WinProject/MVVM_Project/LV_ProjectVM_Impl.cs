@@ -107,7 +107,8 @@ namespace DoubleFile
 
                         Unsaved = true;
                     }
-                    else if (FileExists(lvItemVolumeTemp.ListingFile))   // WinVolumeNew
+                    else if (FileExists(lvItemVolumeTemp.ListingFile) ||   // WinVolumeNew
+                        ContainsUnsavedPath(lvItemVolumeTemp.SourcePath))
                     {
                         continue;
                     }
@@ -201,6 +202,18 @@ namespace DoubleFile
             Unsaved = true;
         }
 
+        internal bool ContainsUnsavedPath(string strPath)
+        {
+            if (string.IsNullOrEmpty(strPath))
+                return false;
+
+            var s = strPath.ToLower();
+
+            return ItemsCast
+                .Where(item => (item.SourcePath.ToLower() == s) && item.WouldSave)
+                .FirstOnlyAssert(x => MBoxStatic.ShowDialog("Source path is already set to be scanned.", "Add Listing File"));
+        }
+
         LVitem_ProjectVM ContainsListingFile(string strListingFile, LVitem_ProjectVM lvItem_Current = null)
         {
             if (string.IsNullOrEmpty(strListingFile))
@@ -208,11 +221,10 @@ namespace DoubleFile
 
             var s = strListingFile.ToLower();
 
-            return ItemsCast
-                .FirstOrDefault(item =>
-                    (item.ListingFile.ToLower() == s) &&
-                    (lvItem_Current != item) &&
-                    (MBoxStatic.Assert(99855, null != item)));
+            return ItemsCast.FirstOrDefault(item =>
+                (item.ListingFile.ToLower() == s) &&
+                (lvItem_Current != item) &&
+                (MBoxStatic.Assert(99855, null != item)));
         }
 
         bool ModifyListingFile(LVitem_ProjectVM lvItem_Orig, LVitem_ProjectVM lvItemVolumeTemp, char driveLetter)

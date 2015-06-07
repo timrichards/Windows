@@ -60,44 +60,37 @@ namespace DoubleFile
 
         internal WinProgress InitProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths)
         {
-            _lv.Add(astrNicknames.Zip(astrPaths, (a, b) => new[] { a, b }), bQuiet: true);
+            _lv.Add(astrNicknames.Zip(astrPaths, (a, b) => Tuple.Create(a, b)));
             return this;
         }
 
         internal void SetProgress(string strPath, double nProgress)
         {
-            var lvItem = _lv[strPath].FirstOrDefault();
-
-            if (null != lvItem)
-                lvItem.Progress = nProgress;
-            else
-                MBoxStatic.Assert(99931, false);
+            if (false == _lv[strPath].FirstOnlyAssert(lvItem => lvItem.Progress = nProgress))
+                MBoxStatic.Assert(99969, false);
         }
 
         internal void SetCompleted(string strPath)
         {
-            var lvItem = _lv[strPath];
-
-            if (null != lvItem)
-                lvItem.FirstOnlyAssert(lvItemA => lvItemA.SetCompleted());
-            else
-                MBoxStatic.Assert(99930, false);
-
-            if (_lv.ItemsCast.All(lvItemA => 1 == lvItemA.Progress) &&
-                AllowNewProcess)
+            if (false == _lv[strPath].FirstOnlyAssert(lvItem =>
             {
-                GoModeless();
+                lvItem.SetCompleted();
+
+                if (_lv.ItemsCast.All(lvItemA => 1 == lvItemA.Progress) &&
+                    AllowNewProcess)
+                {
+                    GoModeless();
+                }
+            }))
+            {
+                MBoxStatic.Assert(99968, false);
             }
         }
 
         internal void SetError(string strPath, string strError)
         {
-            var lvItem = _lv[strPath];
-
-            if (null != lvItem)
-                lvItem.FirstOnlyAssert(lvItemA => lvItemA.SetError(strError));
-            else
-                MBoxStatic.Assert(99929, false);
+            if (false == _lv[strPath].FirstOnlyAssert(lvItem => lvItem.SetError(strError)))
+                MBoxStatic.Assert(99956, false);
         }
 
         internal void CloseIfNatural()

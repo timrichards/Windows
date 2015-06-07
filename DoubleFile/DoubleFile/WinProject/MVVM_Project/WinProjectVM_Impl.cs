@@ -91,15 +91,18 @@ namespace DoubleFile
                     break;
                 }
 
-                if ((false == _lvVM.AlreadyInProject(newVolume.LVitemVolumeTemp.ListingFile)) &&
-                    (false == _lvVM.FileExists(newVolume.LVitemVolumeTemp.ListingFile)))
+                lvItemVolumeTemp = new LVitem_ProjectVM(newVolume.LVitemVolumeTemp);
+
+                if (_lvVM.AlreadyInProject(lvItemVolumeTemp.ListingFile) ||
+                    _lvVM.FileExists(lvItemVolumeTemp.ListingFile) ||
+                    _lvVM.ContainsUnsavedPath(lvItemVolumeTemp.SourcePath))
                 {
-                    _lvVM.NewItem(newVolume.LVitemVolumeTemp);
-                    _lvVM.Unsaved = true;
-                    break;
+                    continue;
                 }
 
-                lvItemVolumeTemp = new LVitem_ProjectVM(newVolume.LVitemVolumeTemp);
+                _lvVM.NewItem(lvItemVolumeTemp);
+                _lvVM.Unsaved = true;
+                break;
             }
         }
 

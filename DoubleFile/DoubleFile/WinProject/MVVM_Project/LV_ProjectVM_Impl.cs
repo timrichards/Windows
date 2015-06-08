@@ -13,11 +13,8 @@ namespace DoubleFile
         {
             get
             {
-                MainWindow.WithMainWindow(mainWindow =>
-                {
-                    mainWindow.ShowLinks(Items.IsEmpty());
-                    return false;   // from lambda; no-op
-                });
+                MainWindow.WithMainWindowA(mainWindow =>
+                    mainWindow.ShowLinks(Items.IsEmpty()));
 
                 return Items.IsEmpty() ? Visibility.Hidden : Visibility.Visible;
             }

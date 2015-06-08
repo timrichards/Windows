@@ -68,26 +68,21 @@ namespace DoubleFile
             if (bListingsToSave && bSaveListings)
                 bListingsToSave = false;
 
-            MainWindow.WithMainWindow(mainWindow =>
-            {
-                mainWindow.UpdateTitleLinks(bListingsToSave);
-                return false;   // from lambda; no-op
-            });
+            MainWindow.WithMainWindowA(mainWindow =>
+                mainWindow.UpdateTitleLinks(bListingsToSave));
 
             return (false == bSaveListings);
         }
 
         static void Reset()
         {
-            MainWindow.WithMainWindow(mainWindow =>
+            MainWindow.WithMainWindowA(mainWindow =>
             {
                 Util.UIthread(() =>
                 {
                     foreach (Window window in mainWindow.OwnedWindows)
                         window.Close();
                 });
-
-                return false;   // from lambda; no-op
             });
 
             WinProject winProject = null;

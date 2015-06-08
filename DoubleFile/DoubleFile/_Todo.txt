@@ -1,6 +1,5 @@
 ﻿- saving a project with an unsaved listing does not warn
 - opening test.dfp with 17 vols.dfp open does nothing; etc.: more bugs?
-- overload WithMainWindow
 - rollover highlight project image button text
 - set hover bg same as bg in project lv for group etc
 - scroll to highlighted item in LVs

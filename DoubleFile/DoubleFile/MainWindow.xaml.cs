@@ -44,14 +44,13 @@ namespace DoubleFile
             get { return WithMainWindow(mainWindow => mainWindow._currentPage); }
             set
             {
-                WithMainWindow(mainWindow =>
+                WithMainWindowA(mainWindow =>
                 {
-                    if (value == mainWindow._currentPage)
-                        return false;
-
-                    mainWindow._currentPage = value;
-                    mainWindow.UpdateTitleLinks();
-                    return false;       // from lambda; no-op
+                    if (value != mainWindow._currentPage)
+                    {
+                        mainWindow._currentPage = value;
+                        mainWindow.UpdateTitleLinks();
+                    }
                 });
             }
         }
@@ -73,6 +72,16 @@ namespace DoubleFile
             //    return;
 
             TitleLinks.Add(_extraWindowLink);
+        }
+
+        static internal void
+            WithMainWindowA(Action<MainWindow> doSomethingWith)
+        {
+            WithMainWindow(mainWindow =>
+            {
+                doSomethingWith(mainWindow);
+                return false;   // from lambda; no-op
+            });
         }
 
         static internal T

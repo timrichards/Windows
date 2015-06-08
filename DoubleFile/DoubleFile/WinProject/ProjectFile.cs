@@ -183,11 +183,15 @@ namespace DoubleFile
         {
             var lsListingFiles = new List<string>();
             var lsListingFiles_Check = new List<string>();
+            var bUnsavedListings = false;
 
             foreach (var volStrings in lvProjectVM.ItemsCast)
             {
                 if (volStrings.WouldSave)
+                {
+                    bUnsavedListings = true;
                     continue;
+                }
 
                 var strNewName = Path.GetFileName(volStrings.ListingFile);
 
@@ -220,13 +224,14 @@ namespace DoubleFile
                 lsListingFiles_Check.Add(Path.GetFileName(volStrings.ListingFile));
             }
 
-            if (lsListingFiles.IsEmpty())
+            if (bUnsavedListings || lsListingFiles.IsEmpty())
             {
-                MBoxStatic.ShowDialog("Any listing files in project have not yet been saved." +
-                    " Click OK on the Project window to start saving directory listings of your drives.",
+                MBoxStatic.ShowDialog("One or more volumes in the project have not yet had directory listings saved for it." +
+                    " Click an explorer link at the top of the window to start saving directory listings of your drives.",
                     "Save Project");
 
-                return false;
+                if (lsListingFiles.IsEmpty())
+                    return false;
             }
 
             var sbSource = new StringBuilder();

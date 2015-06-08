@@ -99,7 +99,7 @@ namespace DoubleFile
             {
                 action(item);
                 bRetVal = true;
-                return true;    // from lambda, no-op
+                return false;    // from lambda; no-op
             });
 
             return bRetVal;

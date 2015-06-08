@@ -11,6 +11,13 @@ namespace DoubleFile
     /// </summary>
     public partial class MainWindow
     {
+        static internal string
+            ExtraWindowFakeKey { get { return "/ExtraWindow.xaml"; } }
+        static readonly Link _extraWindowLink = new Link { DisplayName = "Extra Window", Source = new Uri(ExtraWindowFakeKey, UriKind.Relative) };
+        static internal string
+            SaveListingsFakeKey { get { return "/SaveListings.xaml"; } }
+        static readonly Link _saveListingsLink = new Link { DisplayName = "Save Listings", Source = new Uri(SaveListingsFakeKey, UriKind.Relative) };
+
         static Action Init = null;
         static void InitForMainWindowOnly(Action init) { Init = init; }
         public
@@ -51,8 +58,7 @@ namespace DoubleFile
 
         internal void UpdateTitleLinks(bool? bListingsToSave = null)
         {
-            while (0 < TitleLinks.Count)
-                TitleLinks.RemoveAt(0);
+            TitleLinks = new LinkCollection();
 
             if (null != bListingsToSave)
                 _bListingsToSave = bListingsToSave.Value;
@@ -219,14 +225,6 @@ namespace DoubleFile
             _currentPage = null;
         bool
             _bListingsToSave = false;
-        static internal string
-            ExtraWindowFakeKey { get { return "/ExtraWindow.xaml"; } }
-        static readonly Link
-            _extraWindowLink = new Link { DisplayName = "Extra Window", Source = new Uri(ExtraWindowFakeKey, UriKind.Relative) };
-        static internal string
-            SaveListingsFakeKey { get { return "/SaveListings.xaml"; } }
-        static readonly Link
-            _saveListingsLink = new Link { DisplayName = "Save Listings", Source = new Uri(SaveListingsFakeKey, UriKind.Relative) };
         static readonly WeakReference<MainWindow>
             _mainWindowWR = new WeakReference<MainWindow>(null);
     }

@@ -16,7 +16,7 @@ namespace DoubleFile
                 MainWindow.WithMainWindow(mainWindow =>
                 {
                     mainWindow.ShowLinks(Items.IsEmpty());
-                    return false;   // from lambda
+                    return false;   // from lambda; no-op
                 });
 
                 return Items.IsEmpty() ? Visibility.Hidden : Visibility.Visible;

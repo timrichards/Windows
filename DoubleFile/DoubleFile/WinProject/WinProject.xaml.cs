@@ -25,59 +25,56 @@ namespace DoubleFile
             LV_ProjectVM.Modified.Subscribe(x => Reset());
         }
 
-        static internal bool OKtoNavigate()
-        {
-            if (OKtoNavigate_())
-                return true;
-
-            Reset();
-            return false;
-        }
-
-        static bool OKtoNavigate_()
+        static internal bool OKtoNavigate_BuildExplorer(bool bSaveListings)
         {
             if (null == App.LVprojectVM)
-                return false;
-
-            WinProject winProjectMUI = null;
-
-            _weakReference.TryGetTarget(out winProjectMUI);
-
-            if ((null != winProjectMUI._lvProjectVM)
-                && (App.LVprojectVM.LocalEquals(winProjectMUI._lvProjectVM)))
             {
-                if (false == App.LVprojectVM.ItemsCast.Any(lvItem => lvItem.WouldSave))
-                    return true;
+                Reset();
+                return false;
+            }
 
-                if (winProjectMUI._bAskedToSave)
-                {
-                    if (false == (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
-                        return true;
-                }
-                else if (MessageBoxResult.No ==
-                    MBoxStatic.ShowDialog("Would you like to scan now? Hit Ctrl while navigating next time to do the scan then.",
-                    "One or more listings have not been scanned.",
-                    MessageBoxButton.YesNo))
-                {
-                    winProjectMUI._bAskedToSave = true;
-                    return true;
-                }
+            WinProject winProject = null;
+
+            _weakReference.TryGetTarget(out winProject);
+
+            if ((null != winProject._lvProjectVM)
+                && App.LVprojectVM.LocalEquals(winProject._lvProjectVM)
+                && OKtoNavigate_UpdateSaveListingsLink(winProject, bSaveListings))
+            {
+                return true;
             }
 
             Reset();
 
             if (false == App.LVprojectVM.Items.IsEmpty())
             {
-                new SaveListingsProcess(App.LVprojectVM);
+                SaveListingsProcess.Go(App.LVprojectVM);
 
                 if (App.LVprojectVM.ItemsCast.Any(lvItem => lvItem.CanLoad) &&
                     LocalTV.FactoryCreate(App.LVprojectVM))
                 {
-                    winProjectMUI._lvProjectVM = new LV_ProjectVM(App.LVprojectVM);
+                    winProject._lvProjectVM = new LV_ProjectVM(App.LVprojectVM);
                 }
             }
 
-            return (null != winProjectMUI._lvProjectVM);
+            OKtoNavigate_UpdateSaveListingsLink(winProject);
+            return (null != winProject._lvProjectVM);
+        }
+
+        static bool OKtoNavigate_UpdateSaveListingsLink(WinProject winProject, bool bSaveListings = false)
+        {
+            var bListingsToSave = App.LVprojectVM.ItemsCast.Any(lvItem => lvItem.WouldSave);
+
+            if (bListingsToSave && bSaveListings)
+                bListingsToSave = false;
+
+            MainWindow.WithMainWindow(mainWindow =>
+            {
+                mainWindow.UpdateTitleLinks(bListingsToSave);
+                return false;   // from lambda; no-op
+            });
+
+            return (false == bSaveListings);
         }
 
         static void Reset()
@@ -90,14 +87,13 @@ namespace DoubleFile
                         window.Close();
                 });
 
-                return false;   // from lambda
+                return false;   // from lambda; no-op
             });
 
-            WinProject winProjectMUI = null;
+            WinProject winProject = null;
 
-            _weakReference.TryGetTarget(out winProjectMUI);
-            winProjectMUI._lvProjectVM = null;
-            winProjectMUI._bAskedToSave = false;
+            _weakReference.TryGetTarget(out winProject);
+            winProject._lvProjectVM = null;
 
             if (null != LocalTV.Instance)
                 LocalTV.LocalDispose();
@@ -106,8 +102,6 @@ namespace DoubleFile
             App.FileDictionary = new FileDictionary();
         }
 
-        bool
-            _bAskedToSave = false;
         LV_ProjectVM
             _lvProjectVM = null;
         static WeakReference<WinProject>

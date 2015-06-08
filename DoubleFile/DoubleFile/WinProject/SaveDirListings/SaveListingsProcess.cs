@@ -8,7 +8,12 @@ namespace DoubleFile
 {
     class SaveListingsProcess : IWinProgressClosing, ISaveDirListingsStatus
     {
-        internal SaveListingsProcess(LV_ProjectVM lvProjectVM)
+        static internal void Go(LV_ProjectVM lvProjectVM)
+        {
+            new SaveListingsProcess(lvProjectVM);
+        }
+
+        SaveListingsProcess(LV_ProjectVM lvProjectVM)
         {
             var listNicknames = new List<string>();
             var listSourcePaths = new List<string>();

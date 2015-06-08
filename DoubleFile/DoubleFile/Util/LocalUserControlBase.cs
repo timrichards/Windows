@@ -17,14 +17,26 @@ namespace DoubleFile
         virtual protected void LocalNavigatedTo() { }
         public void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            if (false == WinProject.OKtoNavigate())
+            var bSaveListings = false;
+
+            if (MainWindow.SaveListingsFakeKey ==
+                "" + e.Source)
+            {
+                bSaveListings = true;
+            }
+
+            if ((false == WinProject.OKtoNavigate_BuildExplorer(bSaveListings)) ||
+                bSaveListings)
             {
                 e.Cancel = true;
                 return;
             }
 
-            if (MainWindow.ExtraWindowFakeKey != "" + e.Source)
+            if (MainWindow.ExtraWindowFakeKey !=
+                "" + e.Source)
+            {
                 return;
+            }
 
             var page = MainWindow.CurrentPage;
             var content = Activator.CreateInstance(page.GetType()) as LocalUserControlBase;

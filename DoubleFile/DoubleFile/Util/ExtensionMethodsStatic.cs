@@ -95,12 +95,11 @@ namespace DoubleFile
         {
             bool bRetVal = false;
 
-            var retVal = source
-                .FirstOrDefault(item =>
+            source.FirstOrDefault(item =>
             {
                 action(item);
                 bRetVal = true;
-                return true;    // from lambda
+                return true;    // from lambda, no-op
             });
 
             return bRetVal;

@@ -43,18 +43,30 @@ namespace DoubleFile
                         return false;
 
                     mainWindow._currentPage = value;
-                    mainWindow.TitleLinks.Remove(_extraWindowLink);
-
-                    if (mainWindow._currentPage is WinProject)
-                        return false;
-
-                    //if (mainWindow._currentPage is info page)
-                    //    return false;
-
-                    mainWindow.TitleLinks.Add(_extraWindowLink);
-                    return true;
+                    mainWindow.UpdateTitleLinks();
+                    return false;       // from lambda; no-op
                 });
             }
+        }
+
+        internal void UpdateTitleLinks(bool? bListingsToSave = null)
+        {
+            while (0 < TitleLinks.Count)
+                TitleLinks.RemoveAt(0);
+
+            if (null != bListingsToSave)
+                _bListingsToSave = bListingsToSave.Value;
+
+            if (_bListingsToSave)
+                TitleLinks.Add(_saveListingsLink);
+
+            if (_currentPage is WinProject)
+                return;
+
+            //if (_currentPage is info page)
+            //    return;
+
+            TitleLinks.Add(_extraWindowLink);
         }
 
         static internal T
@@ -205,10 +217,16 @@ namespace DoubleFile
 
         LocalUserControlBase
             _currentPage = null;
+        bool
+            _bListingsToSave = false;
         static internal string
             ExtraWindowFakeKey { get { return "/ExtraWindow.xaml"; } }
         static readonly Link
             _extraWindowLink = new Link { DisplayName = "Extra Window", Source = new Uri(ExtraWindowFakeKey, UriKind.Relative) };
+        static internal string
+            SaveListingsFakeKey { get { return "/SaveListings.xaml"; } }
+        static readonly Link
+            _saveListingsLink = new Link { DisplayName = "Save Listings", Source = new Uri(SaveListingsFakeKey, UriKind.Relative) };
         static readonly WeakReference<MainWindow>
             _mainWindowWR = new WeakReference<MainWindow>(null);
     }

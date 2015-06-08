@@ -23,12 +23,12 @@ namespace DoubleFile
         internal const string ksProjectHeader = ksHeader + " PROJECT";
         internal const string ksCopyScratchpadHeader = ksHeader + " COPYDIRS LIST";
         internal const string ksIgnoreListHeader = ksHeader + " IGNORE LIST";
-        internal static readonly string ksUsingFile = Util.Localized("Status_UsingFile");
+        static internal readonly string ksUsingFile = Util.Localized("Status_UsingFile");
         internal const string ksSaved = "Saved.";
-        internal static readonly string ksNotSaved = Util.Localized("Status_NotSaved");
+        static internal readonly string ksNotSaved = Util.Localized("Status_NotSaved");
         internal const string ksError = "Error during save.";
-        internal static readonly string ksIncludeYes = Util.Localized("Include_Yes");
-        internal static readonly string ksIncludeNo = Util.Localized("Include_No");
+        static internal readonly string ksIncludeYes = Util.Localized("Include_Yes");
+        static internal readonly string ksIncludeNo = Util.Localized("Include_No");
 
         internal const int knColLength = 7;
         internal const int knColLength01 = 5;

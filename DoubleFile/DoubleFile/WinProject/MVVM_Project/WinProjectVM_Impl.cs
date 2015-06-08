@@ -209,7 +209,8 @@ namespace DoubleFile
 
             var bOpenedFiles = false;
 
-            if (listItems.Count > _lvVM.Count)
+            if (bClearItems ||
+                (listItems.Count > _lvVM.Count))
             {
                 Util.UIthread(_lvVM.ClearItems);
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 
 namespace DoubleFile
 {
@@ -45,7 +46,22 @@ namespace DoubleFile
             if ((null != winProjectMUI._lvProjectVM)
                 && (App.LVprojectVM.LocalEquals(winProjectMUI._lvProjectVM)))
             {
-                return true;
+                if (false == App.LVprojectVM.ItemsCast.Any(lvItem => lvItem.WouldSave))
+                    return true;
+
+                if (winProjectMUI._bAskedToSave)
+                {
+                    if (false == (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
+                        return true;
+                }
+                else if (MessageBoxResult.No ==
+                    MBoxStatic.ShowDialog("Would you like to scan now? Hit Ctrl while navigating next time to do the scan then.",
+                    "One or more listings have not been scanned.",
+                    MessageBoxButton.YesNo))
+                {
+                    winProjectMUI._bAskedToSave = true;
+                    return true;
+                }
             }
 
             Reset();
@@ -81,6 +97,7 @@ namespace DoubleFile
 
             _weakReference.TryGetTarget(out winProjectMUI);
             winProjectMUI._lvProjectVM = null;
+            winProjectMUI._bAskedToSave = false;
 
             if (null != LocalTV.Instance)
                 LocalTV.LocalDispose();
@@ -89,6 +106,8 @@ namespace DoubleFile
             App.FileDictionary = new FileDictionary();
         }
 
+        bool
+            _bAskedToSave = false;
         LV_ProjectVM
             _lvProjectVM = null;
         static WeakReference<WinProject>

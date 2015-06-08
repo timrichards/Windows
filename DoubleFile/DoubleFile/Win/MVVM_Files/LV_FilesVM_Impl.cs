@@ -78,8 +78,11 @@ namespace DoubleFile
 
             Util.UIthread(() => Add(lsItems));
 
-            this[tuple.Item4].FirstOnlyAssert(fileVM =>
-                SelectedItem_Set(fileVM, initiatorTuple.Item2));
+            if (null != tuple.Item4)
+            {
+                this[tuple.Item4].FirstOnlyAssert(fileVM =>
+                    SelectedItem_Set(fileVM, initiatorTuple.Item2));
+            }
         }
 
         void UC_TreeMap_SelectedFile(Tuple<string, int> initiatorTuple)

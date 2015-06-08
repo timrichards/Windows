@@ -43,7 +43,7 @@ namespace DoubleFile
                         return false;
 
                     mainWindow._currentPage = value;
-                    mainWindow.TitleLinks.Remove(_titleLink);
+                    mainWindow.TitleLinks.Remove(_extraWindowLink);
 
                     if (mainWindow._currentPage is WinProject)
                         return false;
@@ -51,7 +51,7 @@ namespace DoubleFile
                     //if (mainWindow._currentPage is info page)
                     //    return false;
 
-                    mainWindow.TitleLinks.Add(_titleLink);
+                    mainWindow.TitleLinks.Add(_extraWindowLink);
                     return true;
                 });
             }
@@ -208,7 +208,7 @@ namespace DoubleFile
         static internal string
             ExtraWindowFakeKey { get { return "/ExtraWindow.xaml"; } }
         static readonly Link
-            _titleLink = new Link { DisplayName = "Extra Window", Source = new Uri(ExtraWindowFakeKey, UriKind.Relative) };
+            _extraWindowLink = new Link { DisplayName = "Extra Window", Source = new Uri(ExtraWindowFakeKey, UriKind.Relative) };
         static readonly WeakReference<MainWindow>
             _mainWindowWR = new WeakReference<MainWindow>(null);
     }

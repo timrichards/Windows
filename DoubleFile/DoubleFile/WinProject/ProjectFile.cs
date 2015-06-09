@@ -144,6 +144,9 @@ namespace DoubleFile
                 return false;
             }
 
+            if (_winProgress.LocalIsClosed)     // happened too fast to bring up progress dialog
+                Util.Block(250);
+
             var bRet = openListingFiles.Callback(
                 Directory
                 .GetFiles(TempPath)

@@ -8,7 +8,6 @@ using System.Linq;
 using System.Windows.Interop;
 using Drawing = System.Drawing;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 
 namespace DoubleFile
 {

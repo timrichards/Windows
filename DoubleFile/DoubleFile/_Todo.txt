@@ -1,4 +1,6 @@
-﻿- test opening and saving projects
+﻿- check fix: opening a project again acts as though it's appending and whines about existing listing files.
+- message box should always be topmost. progress window behind. Small project: test append
+- test opening and saving projects
 - rollover highlight project image button text
 - set hover bg same as bg in project lv for group etc
 - scroll to highlighted item in LVs

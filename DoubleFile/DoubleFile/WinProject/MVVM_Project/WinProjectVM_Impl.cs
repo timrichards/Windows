@@ -178,7 +178,8 @@ namespace DoubleFile
                     return;   // from lambda
                 }
 
-                if (_lvVM.AlreadyInProject(strFilename, bQuiet: true))
+                if ((false == bClearItems) &&
+                    _lvVM.AlreadyInProject(strFilename, bQuiet: true))
                 {
                     lock (sbAlreadyInProject)
                         sbAlreadyInProject.Append("• ").Append(System.IO.Path.GetFileName(strFilename)).Append("\n");

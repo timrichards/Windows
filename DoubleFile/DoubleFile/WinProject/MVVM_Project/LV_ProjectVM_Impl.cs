@@ -54,8 +54,15 @@ namespace DoubleFile
 
         internal bool AlreadyInProject(string strFilename, LVitem_ProjectVM lvCurrentItem = null, bool bQuiet = false)
         {
-            bool bAlreadyInProject =
-                (null != ContainsListingFile(strFilename, lvCurrentItem));
+            if (string.IsNullOrEmpty(strFilename))
+                return false;
+
+            var s = strFilename.ToLower();
+
+            var bAlreadyInProject = ItemsCast.Any(item =>
+                (item.ListingFile.ToLower() == s) &&
+                (lvCurrentItem != item) &&
+                (MBoxStatic.Assert(99855, null != item)));
 
             if (bAlreadyInProject &&
                 (false == bQuiet))
@@ -209,19 +216,6 @@ namespace DoubleFile
             return ItemsCast
                 .Where(item => (item.SourcePath.ToLower() == s) && item.WouldSave)
                 .FirstOnlyAssert(x => MBoxStatic.ShowDialog("Source path is already set to be scanned.", "Add Listing File"));
-        }
-
-        LVitem_ProjectVM ContainsListingFile(string strListingFile, LVitem_ProjectVM lvItem_Current = null)
-        {
-            if (string.IsNullOrEmpty(strListingFile))
-                return null;
-
-            var s = strListingFile.ToLower();
-
-            return ItemsCast.FirstOrDefault(item =>
-                (item.ListingFile.ToLower() == s) &&
-                (lvItem_Current != item) &&
-                (MBoxStatic.Assert(99855, null != item)));
         }
 
         bool ModifyListingFile(LVitem_ProjectVM lvItem_Orig, LVitem_ProjectVM lvItemVolumeTemp, char driveLetter)

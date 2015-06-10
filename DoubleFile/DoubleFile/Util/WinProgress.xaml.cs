@@ -34,16 +34,15 @@ namespace DoubleFile
                 .Subscribe(x => ResizeMode = ResizeMode.NoResize);
 
             Observable.FromEventPattern(form_grid, "Loaded")
-                .Subscribe(x =>
-            {
-                formLV_Progress.DataContext = _lv;
-                _lv.SelectedOne = () => formLV_Progress.SelectedItems.HasOnlyOne();
-                _lv.SelectedAny = () => (false == formLV_Progress.SelectedItems.IsEmptyA());
-                _lv.Selected = () => formLV_Progress.SelectedItems.Cast<LVitem_ProgressVM>();
-            });
+                .Subscribe(x => formLV_Progress.DataContext = _lv);
 
             Observable.FromEventPattern(this, "ContentRendered")
-                .Subscribe(x => MinHeight = MaxHeight = ActualHeight);
+                .Subscribe(x =>
+            {
+                MinHeight = MaxHeight = ActualHeight;
+                MBoxStatic.Restart = true;
+                MBoxStatic.Kill();
+            });
 
             Observable.FromEventPattern(formBtn_Cancel, "Click")
                 .Subscribe(x => Close());

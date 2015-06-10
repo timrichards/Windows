@@ -89,7 +89,7 @@ namespace DoubleFile
                 return true;        // found there are no volumes loaded
             }
 
-            Util.UIthread(ClearItems);
+            ClearItems();
             TabledString<Tabled_Files>.Reinitialize();
             TabledString<Tabled_Files>.GenerationStarting();
 
@@ -221,7 +221,7 @@ namespace DoubleFile
             if (_bDisposed)
                 return;
 
-            Util.UIthread(() => Add(lsLVitems, bQuiet: false, Cancel: () => _bDisposed));
+            Util.UIthread(() => Add(lsLVitems, Cancel: () => _bDisposed));
 
             if (_bDisposed)
                 return;

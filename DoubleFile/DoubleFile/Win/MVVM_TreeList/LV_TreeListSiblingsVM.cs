@@ -154,17 +154,7 @@ namespace DoubleFile
                 }
             }
 
-            bool bCompleted = false;
-
-            Util.UIthread(() =>
-            {
-                Add(lsLVitems);
-                bCompleted = true;
-            });
-
-            while (false == bCompleted)
-                Util.Block(20);
-
+            Util.UIthread(() => Add(lsLVitems));
             SelectedItem_Set(selectedItem);
             return true;
         }

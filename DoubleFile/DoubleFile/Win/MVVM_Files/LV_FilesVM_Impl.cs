@@ -32,7 +32,7 @@ namespace DoubleFile
                 return;
 
             SelectedItem_Set(null, initiatorTuple.Item2);
-            Util.UIthread(ClearItems);
+            ClearItems();
             _treeNode = tuple.Item3;
 
             if (null == tuple.Item1)

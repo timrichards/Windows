@@ -18,16 +18,8 @@ namespace DoubleFile
             foreach (var treeNode in rootNodes)
                 _Items.Add(new TreeViewItemVM(this, treeNode, ++nIndex));
 
-            bool bCompleted = false;
 
-            Util.UIthread(() =>
-            {
-                tvfe.DataContext = _Items;
-                bCompleted = true;
-            });
-
-            while (false == bCompleted)
-                Util.Block(20);
+            Util.UIthread(() => tvfe.DataContext = _Items);
 
             if (0 > _Items.Count)
                 return;     // from lambda

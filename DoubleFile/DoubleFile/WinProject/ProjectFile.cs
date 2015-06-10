@@ -144,18 +144,22 @@ namespace DoubleFile
                 return false;
             }
 
-            if (_winProgress.LocalIsClosed)     // happened too fast to bring up progress dialog
+            if ((null == _winProgress) ||
+                _winProgress.LocalIsClosed)
+            {
+                // happened too fast to bring up progress dialog
                 Util.Block(250);
+            }
 
-            var bRet = openListingFiles.Callback(
-                Directory
-                .GetFiles(TempPath)
+            var bRet = openListingFiles.Callback
+            (
+                Directory.GetFiles(TempPath)
                 .Where(s =>
                 {
                     var strExt = "" + Path.GetExtension(Path.GetFileName(s));
 
                     if (0 == strExt.Length)
-                        return false;
+                        return false;   // both returns are from lambda
 
                     return 
                         strExt
@@ -164,7 +168,8 @@ namespace DoubleFile
                         StringComparison.InvariantCultureIgnoreCase);
                 }),
                 bClearItems,
-                () => _bUserCanceled);
+                () => _bUserCanceled
+            );
 
             if (null != OnOpenedProject)
                 OnOpenedProject();

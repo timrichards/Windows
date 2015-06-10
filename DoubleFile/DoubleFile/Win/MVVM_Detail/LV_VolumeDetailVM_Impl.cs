@@ -20,19 +20,19 @@ namespace DoubleFile
             var tuple = initiatorTuple.Item1;
 
             Util.Write("H");
+            Title = tuple.Item2;
+            ClearItems();
+
+            if (null == tuple.Item1)
+                return;
+
             Util.UIthread(() =>
             {
-                Title = tuple.Item2;
-                ClearItems();
-
-                if (null == tuple.Item1)
-                    return;     // from lambda
-
                 foreach (var ieLine in tuple.Item1)
                     Add(new LVitem_VolumeDetailVM(ieLine), bQuiet: true);
-
-                RaiseItems();
             });
+
+            RaiseItems();
         }
 
         public void Dispose()

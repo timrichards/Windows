@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace DoubleFile
 {
     static class MBoxStatic
     {
-        static internal LocalMbox MessageBox { get; private set; }
+        static internal bool
+            Restart { set; private get; }
 
 #if (DEBUG == false)
         static bool _bAssertUp = false;
@@ -61,14 +63,13 @@ namespace DoubleFile
             return false;
         }
 
-        static internal void MessageBoxKill(string strMatch = null)
+        static internal void Kill()
         {
-            if ((MessageBox != null) &&
-                new[] { null, MessageBox.Title }.Contains(strMatch))
-            {
-                MessageBox.Close();
-                MessageBox = null;
-            }
+            if (null == _messageBox)
+                return;
+
+            Util.UIthread(_messageBox.Close);
+            _messageBox = null;
         }
 
         // make MessageBox modal from a worker thread
@@ -84,8 +85,6 @@ namespace DoubleFile
                 return MessageBoxResult.None;
             }
 
-            Util.UIthread(() => MessageBoxKill());
-
             if ((null != owner) &&
                 owner.LocalIsClosed)
             {
@@ -93,27 +92,24 @@ namespace DoubleFile
             }
 
             var msgBoxRet = MessageBoxResult.None;
-            var buttons = buttons_in ?? MessageBoxButton.OK;
-
-            Util.UIthread(() =>
-                MessageBox = new LocalMbox(owner ?? mainWindow, strMessage, strTitle, buttons));
-
-            bool bCompleted = false;
-
-            Util.UIthread(() =>
+            
+            do
             {
-                msgBoxRet = MessageBox.ShowDialog();
-                bCompleted = true;
-            });
+                Restart = false;
 
-            while (false == bCompleted)
-                Util.Block(100);
+                var buttons = buttons_in ?? MessageBoxButton.OK;
 
-            if (null == MessageBox)
-                msgBoxRet = MessageBoxResult.None;          // canceled externally
-            else
-                Util.UIthread(() => MessageBoxKill());
+                Util.UIthread(() =>
+                    msgBoxRet =
+                    (_messageBox = new LocalMbox(owner ?? mainWindow, strMessage, strTitle, buttons))
+                    .ShowDialog());
 
+                if (Restart)
+                    Util.Block(250);
+            }
+            while (Restart);
+
+            _messageBox = null;
             return msgBoxRet;
         }
 
@@ -121,5 +117,7 @@ namespace DoubleFile
             _nLastAssertLoc = -1;
         static DateTime
             _dtLastAssert = DateTime.MinValue;
+        static LocalMbox
+            _messageBox = null;
     }
 }

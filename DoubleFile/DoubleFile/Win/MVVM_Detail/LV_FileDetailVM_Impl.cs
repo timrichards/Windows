@@ -53,7 +53,7 @@ namespace DoubleFile
             Util.Write("F");
             LocalPath_Set();
             Title = null;
-            Util.UIthread(ClearItems);
+            ClearItems();
 
             if (null == tuple.Item1)
                 return;
@@ -85,9 +85,9 @@ namespace DoubleFile
 
                     Add(new LVitem_FileDetailVM(new[] { kasHeader[i], asFileLine[i] }), bQuiet: true);
                 }
-
-                RaiseItems();
             });
+
+            RaiseItems();
         }
 
         List<IDisposable>

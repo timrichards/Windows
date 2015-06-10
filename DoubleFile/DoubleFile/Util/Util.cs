@@ -90,7 +90,7 @@ namespace DoubleFile
             return "" + App.Current.Resources[key];
         }
 
-        static internal void UIthread(Action action)
+        static internal void UIthread(Action action, bool bBlock = true)
         {
             var mainWindow = App.LocalMainWindow as Window;
 
@@ -112,14 +112,26 @@ namespace DoubleFile
             try
             {
                 if (mainWindow.Dispatcher.CheckAccess())
+                {
                     action();
+                }
                 else
-                    mainWindow.Dispatcher.Invoke(action);
+                {
+                    var blockingFrame = new DispatcherFrame(bBlock);
+
+                    mainWindow.Dispatcher.Invoke(() =>
+                    {
+                        action();
+                        blockingFrame.Continue = false;
+                    });
+
+                    Dispatcher.PushFrame(blockingFrame);
+                }
             }
             catch (TaskCanceledException) { }
         }
 
-        static internal T UIthread<T>(Func<T> action, Control owner = null)
+        static internal T UIthread<T>(Func<T> action, Control owner = null, bool bBlock = true)
         {
             if (null == owner)
             {
@@ -147,10 +159,22 @@ namespace DoubleFile
 
             try
             {
-                retVal =
-                    owner.Dispatcher.CheckAccess()
-                    ? action()
-                    : owner.Dispatcher.Invoke(action);      // cancellationToken? timeout?
+                if (owner.Dispatcher.CheckAccess())
+                {
+                    retVal = action();
+                }
+                else
+                {
+                    var blockingFrame = new DispatcherFrame(bBlock);
+
+                    owner.Dispatcher.Invoke(() =>      // cancellationToken? timeout?
+                    {
+                        retVal = action();
+                        blockingFrame.Continue = false;
+                    });
+
+                    Dispatcher.PushFrame(blockingFrame);
+                }
             }
             catch (TaskCanceledException) { }
 

@@ -122,7 +122,7 @@ namespace DoubleFile
             _bClearingSelection = true;
 
             if (false == bKeepTooltipActive)
-                Util.UIthread(WinTooltip.CloseTooltip);  // CloseTooltip callback recurses here hence _bClearingSelection
+                WinTooltip.CloseTooltip();  // CloseTooltip callback recurses here hence _bClearingSelection
 
             _selChildNode = null;
 
@@ -338,14 +338,14 @@ namespace DoubleFile
                 SelectedFileOnNext(treeNodeChild.Text, nInitiator);
             }
 
-            Util.UIthread(() => WinTooltip.ShowTooltip(
+            WinTooltip.ShowTooltip(
                 new WinTooltip.ArgsStruct(
                     strFolder,
                     Util.FormatSize(nodeDatum.TotalLength, bBytes: true),
                     LocalOwner,
                     Tooltip_Click,
                     () => ClearSelection()),
-                treeNodeChild));
+                treeNodeChild);
 
             _selChildNode = treeNodeChild;
             _prevNode = treeNodeChild;
@@ -582,7 +582,7 @@ namespace DoubleFile
                 return;
             }
 
-            InvalidatePushRef(() => Util.UIthread(() => Render(treeNode)));
+            InvalidatePushRef(() => Render(treeNode));
         }
 
         void Render(LocalTreeNode treeNode)
@@ -590,7 +590,7 @@ namespace DoubleFile
             if ((null == TreeMapVM.DeepNode) ||
                 (false == TreeMapVM.DeepNode.IsChildOf(treeNode)))
             {
-                Util.UIthread(() => TreeMapVM.DeepNode = treeNode);
+                TreeMapVM.DeepNode = treeNode;
             }
 
             var nPxPerSide = (treeNode.SelectedImageIndex < 0)
@@ -621,7 +621,7 @@ namespace DoubleFile
             var dtStart = DateTime.Now;
 
             ClearSelection();
-            Util.UIthread(() => TreeMapVM.TreeNode = treeNode);
+            TreeMapVM.TreeNode = treeNode;
             _lsRenderActions = DrawTreemap();
 
             Util.UIthread(() =>

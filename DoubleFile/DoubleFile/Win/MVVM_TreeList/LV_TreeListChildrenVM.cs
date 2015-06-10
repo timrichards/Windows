@@ -60,7 +60,7 @@ namespace DoubleFile
 
         internal void Populate(LocalTreeNode treeNodeParent)
         {
-            Util.UIthread(ClearItems);
+            ClearItems();
 
             if (null == treeNodeParent.Nodes)
                 return;

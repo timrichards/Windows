@@ -55,7 +55,7 @@ namespace DoubleFile
             _treeNode = treeNode;
             UpdateFileDetailOnNext(Tuple.Create(ieFileLine, _treeNode), initiatorTuple.Item2);
             SelectedItem_Set(null);
-            Util.UIthread(ClearItems);
+            ClearItems();
 
             if (null == lsDuplicates)
                 return;

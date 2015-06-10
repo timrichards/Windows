@@ -13,8 +13,8 @@ namespace DoubleFile
     /// </summary>
     public partial class WinTooltip
     {
-        internal string Folder { set { formTextBlock_folder.Text = value; } }
-        internal string Size { set { formTextBlock_size.Text = value; } }
+        internal string Folder { set { Util.UIthread(() => formTextBlock_folder.Text = value); } }
+        internal string Size { set { Util.UIthread(() => formTextBlock_size.Text = value); } }
 
         static internal LocalTreeNode LocalTreeNode { get { return (null == _winTooltip) ? null : _winTooltip.Tag as LocalTreeNode; } }
 
@@ -50,9 +50,12 @@ namespace DoubleFile
                 if (null == winOwner)
                     return; // from lambda
 
-                _winTooltip.Owner = winOwner;
-                _winTooltip.Left = winOwner.Left;
-                _winTooltip.Top = winOwner.Top + winOwner.Height;
+                Util.UIthread(() =>
+                {
+                    _winTooltip.Owner = winOwner;
+                    _winTooltip.Left = winOwner.Left;
+                    _winTooltip.Top = winOwner.Top + winOwner.Height;
+                });
 
                 _winOwnerClosedObserver = Observable.FromEventPattern(winOwner, "Closed")
                     .Subscribe(argsA => CloseTooltip());
@@ -68,15 +71,20 @@ namespace DoubleFile
                 _winTooltip.LocalIsClosing ||
                 _winTooltip.LocalIsClosed)
             {
-                _winTooltip = new WinTooltip { WindowStartupLocation = WindowStartupLocation.Manual };
-                _winTooltip.Show();
-                NativeMethods.SetWindowPos(_winTooltip, _winTooltip.Owner, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
+                Util.UIthread(() =>
+                {
+                    (_winTooltip = new WinTooltip { WindowStartupLocation = WindowStartupLocation.Manual })
+                        .Show();
+
+                    NativeMethods.SetWindowPos(_winTooltip, _winTooltip.Owner, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
+                });
+
                 clientSpecific();
             }
 
             _winTooltip.Folder = args.strFolder;
             _winTooltip.Size = args.strSize;
-            _winTooltip.Tag = tag;
+            Util.UIthread(() => _winTooltip.Tag = tag);
             _winTooltip._closingCallback = args.closingCallback;
             _winTooltip._clickCallback = args.clickCallback;
 

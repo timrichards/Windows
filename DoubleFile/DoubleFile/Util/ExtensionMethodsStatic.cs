@@ -95,11 +95,11 @@ namespace DoubleFile
         {
             bool bRetVal = false;
 
-            source.FirstOrDefault(item =>
+            source.FirstOrDefault(item =>   // 6/9/15 This is the only use of FirstOrDefault.
             {
                 action(item);
                 bRetVal = true;
-                return false;    // from lambda; no-op
+                return true;    // from lambda; NOT a no-op: has to be a non-default value.
             });
 
             return bRetVal;

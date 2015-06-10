@@ -20,14 +20,14 @@ namespace DoubleFile
             var tuple = initiatorTuple.Item1;
 
             Util.Write("G");
+            Title = null;
+            ClearItems();
+
+            if (null == tuple.Item2)
+                return;
+
             Util.UIthread(() =>
             {
-                Title = null;
-                ClearItems();
-
-                if (null == tuple.Item2)
-                    return;     // from lambda
-
                 foreach (var ieLine in tuple.Item1)
                     Add(new LVitem_FolderDetailVM(ieLine), bQuiet: true);
 
@@ -52,9 +52,10 @@ namespace DoubleFile
 #if DEBUG
                 Add(new LVitem_FolderDetailVM(new[] { "Hash Parity", "" + tuple.Item2.NodeDatum.HashParity }), bQuiet: true);
 #endif
-                Title = tuple.Item2.Text;
-                RaiseItems();
             });
+
+            Title = tuple.Item2.Text;
+            RaiseItems();
         }
 
         public void Dispose()

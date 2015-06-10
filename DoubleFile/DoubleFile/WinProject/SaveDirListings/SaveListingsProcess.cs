@@ -53,39 +53,36 @@ namespace DoubleFile
         void ISaveDirListingsStatus.Status(LVitem_ProjectVM lvItemProjectVM,
             string strError, bool bDone, double nProgress)
         {
-            Util.UIthread(() =>
+            var sdl = App.SaveDirListings;
+
+            if (App.LocalExit ||
+                (null == sdl) ||
+                sdl.IsAborted)
             {
-                var sdl = App.SaveDirListings;
+                _winProgress.Aborted = true;
 
-                if (App.LocalExit ||
-                    (null == sdl) ||
-                    sdl.IsAborted)
-                {
-                    _winProgress.Aborted = true;
-
-                    if (false == _bKeepShowingError)
-                        _winProgress.Close();
+                if (false == _bKeepShowingError)
+                    Util.UIthread(_winProgress.Close);
                     
-                    return;
-                }
+                return;
+            }
 
-                if (null != strError)
-                {
-                    _winProgress.SetError(lvItemProjectVM.SourcePath, strError);
-                    lvItemProjectVM.Status = FileParse.ksError;
-                    _bKeepShowingError = true;
-                }
-                else if (bDone)
-                {
-                    _winProgress.SetCompleted(lvItemProjectVM.SourcePath);
-                    lvItemProjectVM.SetSaved();
-                    Interlocked.Increment(ref sdl.FilesWritten);
-                }
-                else if (0 <= nProgress)
-                {
-                    _winProgress.SetProgress(lvItemProjectVM.SourcePath, nProgress);
-                }
-            });
+            if (null != strError)
+            {
+                _winProgress.SetError(lvItemProjectVM.SourcePath, strError);
+                lvItemProjectVM.Status = FileParse.ksError;
+                _bKeepShowingError = true;
+            }
+            else if (bDone)
+            {
+                _winProgress.SetCompleted(lvItemProjectVM.SourcePath);
+                lvItemProjectVM.SetSaved();
+                Interlocked.Increment(ref sdl.FilesWritten);
+            }
+            else if (0 <= nProgress)
+            {
+                _winProgress.SetProgress(lvItemProjectVM.SourcePath, nProgress);
+            }
         }
 
         void ISaveDirListingsStatus.Done()

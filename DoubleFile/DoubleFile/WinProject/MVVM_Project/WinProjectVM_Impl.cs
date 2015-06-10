@@ -213,7 +213,7 @@ namespace DoubleFile
             if (bClearItems ||
                 (listItems.Count > _lvVM.Count))
             {
-                Util.UIthread(_lvVM.ClearItems);
+                _lvVM.ClearItems();
 
                 bOpenedFiles = listItems
                     .OrderBy(lvItem => lvItem.SourcePath)

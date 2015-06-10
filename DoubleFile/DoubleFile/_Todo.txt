@@ -1,8 +1,18 @@
-﻿- UIthread on Close(); RaisePropertyChanged(); and other atomics: remove enveloping calls
+﻿- LV items not responding quick enough: pause after Raise() (e.g. save listings allow subsequent)
+- UIthread on Close(); RaisePropertyChanged(); and other atomics: remove enveloping calls
+
 - tree view does not reset when opening new project.
 - check fix: opening a project again acts as though it's appending and whines about existing listing files.
 - message box should always be topmost. progress window behind. Small project: test append
 - test opening and saving projects
+
+- check properties that are only supposed to be set once to true: make them Set methods
+- Allow method chaining: return this instead of void
+- Don't base progress on path and nickname
+- Try to remove MahApps dependency
+
+- Why are some folders white? Why do some folders not say they're duplicated?
+
 - rollover highlight project image button text
 - set hover bg same as bg in project lv for group etc
 - scroll to highlighted item in LVs

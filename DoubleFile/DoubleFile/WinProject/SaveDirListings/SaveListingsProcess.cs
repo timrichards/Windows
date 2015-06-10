@@ -29,12 +29,12 @@ namespace DoubleFile
             if (listSourcePaths.IsEmpty())
                 return;
 
-            _winProgress = new WinProgress(listNicknames, listSourcePaths)
+            (_winProgress = new WinProgress(listNicknames, listSourcePaths)
             {
                 Title = "Saving Directory Listings",
                 WindowClosingCallback = new WeakReference<IWinProgressClosing>(this),
-                AllowNewProcess = true
-            };
+            })
+                .AllowSubsequentProcess();
 
             if ((null != App.SaveDirListings) &&
                 (false == App.SaveDirListings.IsAborted))
@@ -59,7 +59,7 @@ namespace DoubleFile
                 (null == sdl) ||
                 sdl.IsAborted)
             {
-                _winProgress.Aborted = true;
+                _winProgress.SetAborted();
 
                 if (false == _bKeepShowingError)
                     Util.UIthread(_winProgress.Close);

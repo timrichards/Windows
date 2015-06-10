@@ -179,7 +179,7 @@ namespace DoubleFile
 
             if (false == _winProgress.LocalIsClosed)
             {
-                _winProgress.Aborted = true;
+                _winProgress.SetAborted();
                 Util.UIthread(_winProgress.Close);
             }
 
@@ -426,7 +426,7 @@ namespace DoubleFile
             // otherwise it freezes
             if (false == _winProgress.LocalIsClosed)
             {
-                _winProgress.Aborted = true;
+                _winProgress.SetAborted();
                 Util.UIthread(_winProgress.Close);
             }
 

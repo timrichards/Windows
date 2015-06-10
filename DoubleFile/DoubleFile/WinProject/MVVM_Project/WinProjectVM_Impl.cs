@@ -145,7 +145,7 @@ namespace DoubleFile
                     if (OpenListingFiles(dlg.FileNames, userCanceled: () => _bUserCanceled))
                         _lvVM.Unsaved = true;
 
-                    winProgress.Aborted = true;
+                    winProgress.SetAborted();
                     Util.UIthread(winProgress.Close);
                 })
                     .Start();

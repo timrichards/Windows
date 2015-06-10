@@ -16,12 +16,19 @@ namespace DoubleFile
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     partial class WinProgress
     {
-        internal bool Aborted { set; private get; }
-        internal bool AllowNewProcess { set; private get; }
+        internal WeakReference<IWinProgressClosing>
+            WindowClosingCallback { set; private get; }
 
-        internal WeakReference<IWinProgressClosing> WindowClosingCallback{ get; set; }
+        internal WinProgress
+            AllowSubsequentProcess() { _bAllowSubsequentProcess = true; return this; }
+        bool _bAllowSubsequentProcess = false;
 
-        internal WinProgress()
+        internal WinProgress
+            SetAborted() { _bAborted = true; return this; }
+        bool _bAborted = false;
+
+        internal
+            WinProgress()
         {
             InitializeComponent();
 
@@ -51,69 +58,83 @@ namespace DoubleFile
                 .Subscribe(args => Window_Closing(args.EventArgs));
         }
 
-        internal WinProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths)
+        internal
+            WinProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths)
             : this()
         {
             InitProgress(astrNicknames, astrPaths);
         }
 
-        internal WinProgress InitProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths)
+        internal WinProgress
+            InitProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths)
         {
             _lv.Add(astrNicknames.Zip(astrPaths, (a, b) => Tuple.Create(a, b)));
             return this;
         }
 
-        internal void SetProgress(string strPath, double nProgress)
+        internal WinProgress
+            SetProgress(string strPath, double nProgress)
         {
             if (false == _lv[strPath].FirstOnlyAssert(lvItem => lvItem.Progress = nProgress))
                 MBoxStatic.Assert(99969, false);
+
+            return this;
         }
 
-        internal void SetCompleted(string strPath)
+        internal WinProgress
+            SetCompleted(string strPath)
         {
             if (false == _lv[strPath].FirstOnlyAssert(lvItem =>
             {
                 lvItem.SetCompleted();
 
                 if (_lv.ItemsCast.All(lvItemA => 1 == lvItemA.Progress) &&
-                    AllowNewProcess)
+                    _bAllowSubsequentProcess)
                 {
+                    Util.UIthread(() => formBtn_Cancel.ToolTip = "Process completed. You can close the window now");
                     GoModeless();
                 }
             }))
             {
                 MBoxStatic.Assert(99968, false);
             }
+
+            return this;
         }
 
-        internal void SetError(string strPath, string strError)
+        internal WinProgress
+            SetError(string strPath, string strError)
         {
             if (false == _lv[strPath].FirstOnlyAssert(lvItem => lvItem.SetError(strError)))
                 MBoxStatic.Assert(99956, false);
+
+            return this;
         }
 
-        internal void CloseIfNatural()
+        internal WinProgress
+            CloseIfNatural()
         {
             if (_bClosing)
-                return;     // get an error otherwise
+                return this;     // get an error otherwise
 
-            if (Aborted)
-                return;     // don't close: there may be an error message
+            if (_bAborted)
+                return this;     // don't close: there may be an error message
 
-            if (_lv
-                .ItemsCast
+            if (_lv.ItemsCast
                 .Any(lvItem => 1 > lvItem.Progress))
             {
-                return;
+                return this;
             }
 
-            Aborted = true;
+            _bAborted = true;
             Util.UIthread(Close);
+            return this;
         }
 
-        private void Window_Closing(System.ComponentModel.CancelEventArgs e)
+        void
+            Window_Closing(System.ComponentModel.CancelEventArgs e)
         {
-            if (Aborted)
+            if (_bAborted)
             {
                 WindowClosingCallback = null;
                 _bClosing = true;
@@ -145,7 +166,7 @@ namespace DoubleFile
             {
                 if (Util.UIthread(() => windowClosing.ConfirmClose()))
                 {
-                    Aborted = true;
+                    _bAborted = true;
                     Util.UIthread(Close);
                 }
                 else

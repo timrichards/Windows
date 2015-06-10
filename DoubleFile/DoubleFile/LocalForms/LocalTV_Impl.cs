@@ -89,7 +89,7 @@ namespace DoubleFile
                 (null == App.FileDictionary) ||
                 App.FileDictionary.IsAborted)
             {
-                _winProgress.Aborted = true;
+                _winProgress.SetAborted();
                 return;
             }
 
@@ -113,7 +113,7 @@ namespace DoubleFile
                 ((null != _tree) && (_tree.IsAborted)))
             {
                 ClearMem_TreeForm();
-                _winProgress.Aborted = true;
+                _winProgress.SetAborted();
                 return;
             }
 
@@ -150,7 +150,7 @@ namespace DoubleFile
             if ((null == _rootNodes) ||
                 _rootNodes.IsEmpty())
             {
-                _winProgress.Aborted = true;
+                _winProgress.SetAborted();
 
                 for (var i = 0; (i < 10) && _winProgress.LocalIsClosed; ++i)
                     Util.Block(100);    // completed tree too quick to bring up progress box.

@@ -4,6 +4,7 @@ using System.Windows;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
 using System.Linq;
+using System.Windows.Threading;
 
 namespace DoubleFile
 {
@@ -147,15 +148,23 @@ namespace DoubleFile
 
         void ITreeStatus.Done()
         {
+            Action WaitForProgressDialogToOpen = () =>
+            {
+                // completed tree too quick to bring up progress box.
+                var blockingFrame = new DispatcherFrame(true) { Continue = false == _winProgress.LocalDidOpen };
+
+                Observable.FromEventPattern(_winProgress, "SourceInitialized")
+                    .Subscribe(x => blockingFrame.Continue = false);
+
+                Dispatcher.PushFrame(blockingFrame);
+            };
+
             if ((null == _rootNodes) ||
                 _rootNodes.IsEmpty())
             {
                 _winProgress.SetAborted();
-
-                for (var i = 0; (i < 10) && _winProgress.LocalIsClosed; ++i)
-                    Util.Block(100);    // completed tree too quick to bring up progress box.
-
-                Util.UIthread(_winProgress.Close);
+                WaitForProgressDialogToOpen();
+                _winProgress.Close();
                 return;
             }
 
@@ -204,10 +213,7 @@ namespace DoubleFile
             TreeCleanup();
             TabledString<Tabled_Folders>.GenerationEnded();
             _bFinished = true;      // should preceed closing status dialog: returns true to the caller
-
-            for (var i = 0; (i < 10) && _winProgress.LocalIsClosed; ++i)
-                Util.Block(100);    // completed tree too quick to bring up progress box.
-
+            WaitForProgressDialogToOpen();
             _winProgress.CloseIfNatural();
             _dictNodes = null;      // saving memory here.
         }

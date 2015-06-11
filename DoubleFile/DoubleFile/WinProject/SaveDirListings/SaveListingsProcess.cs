@@ -62,7 +62,7 @@ namespace DoubleFile
                 _winProgress.SetAborted();
 
                 if (false == _bKeepShowingError)
-                    Util.UIthread(_winProgress.Close);
+                    _winProgress.Close();
                     
                 return;
             }

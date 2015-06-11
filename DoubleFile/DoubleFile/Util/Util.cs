@@ -13,7 +13,7 @@ namespace DoubleFile
         static internal void Block(int nMilliseconds) { Block(new TimeSpan(0, 0, 0, 0, nMilliseconds)); }
         static internal void Block(TimeSpan napTime)
         {
-            DispatcherFrame blockingFrame = new DispatcherFrame(true);
+            var blockingFrame = new DispatcherFrame(true) { Continue = true };
 
             new Thread(() =>
             {
@@ -117,7 +117,7 @@ namespace DoubleFile
                 }
                 else
                 {
-                    var blockingFrame = new DispatcherFrame(bBlock);
+                    var blockingFrame = new DispatcherFrame(true) { Continue = bBlock };
 
                     mainWindow.Dispatcher.Invoke(() =>
                     {
@@ -165,7 +165,7 @@ namespace DoubleFile
                 }
                 else
                 {
-                    var blockingFrame = new DispatcherFrame(bBlock);
+                    var blockingFrame = new DispatcherFrame(true) { Continue = bBlock };
 
                     owner.Dispatcher.Invoke(() =>      // cancellationToken? timeout?
                     {

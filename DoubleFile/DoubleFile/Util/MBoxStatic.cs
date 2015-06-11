@@ -71,7 +71,7 @@ namespace DoubleFile
             if (null == _messageBox)
                 return;
 
-            Util.UIthread(_messageBox.Close);
+            _messageBox.Close();
             _messageBox = null;
         }
 

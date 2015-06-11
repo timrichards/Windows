@@ -108,7 +108,7 @@ namespace DoubleFile
                 if (null != _winTooltip._closingCallback)
                     _winTooltip._closingCallback();
 
-                Util.UIthread(_winTooltip.Close);
+                _winTooltip.Close();
             }
 
             if (null != _winOwnerClosedObserver)

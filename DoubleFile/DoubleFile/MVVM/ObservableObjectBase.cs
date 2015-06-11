@@ -70,13 +70,10 @@ namespace DoubleFile
 
             if (handler != null)
             {
-                var e = new PropertyChangedEventArgs(propertyName);
-                Util.UIthread(() => handler(this, e));
-//                UtilProject.WriteLine(propertyName + " raised.");
+                Util.UIthread(() => handler(this, new PropertyChangedEventArgs(propertyName)));
                 return true;
             }
 
-//            UtilProject.WriteLine(propertyName + " did not raise.");
             return false;
         }
 

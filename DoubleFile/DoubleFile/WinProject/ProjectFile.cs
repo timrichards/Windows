@@ -180,7 +180,7 @@ namespace DoubleFile
             if (false == _winProgress.LocalIsClosed)
             {
                 _winProgress.SetAborted();
-                Util.UIthread(_winProgress.Close);
+                _winProgress.Close();
             }
 
             _bProcessing = false;
@@ -427,7 +427,7 @@ namespace DoubleFile
             if (false == _winProgress.LocalIsClosed)
             {
                 _winProgress.SetAborted();
-                Util.UIthread(_winProgress.Close);
+                _winProgress.Close();
             }
 
             Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()

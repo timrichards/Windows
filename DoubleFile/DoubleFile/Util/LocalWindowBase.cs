@@ -9,6 +9,7 @@ namespace DoubleFile
 {
     abstract public class LocalWindowBase : Window, ILocalWindow
     {
+        internal bool LocalDidOpen { get; private set; }
         public bool LocalIsClosed { get; private set; }
         internal bool LocalIsClosing { get; private set; }
 
@@ -87,9 +88,10 @@ namespace DoubleFile
 
             ShowActivated = true;
 
-            Observable.FromEventPattern(this, "Loaded")
+            Observable.FromEventPattern(this, "SourceInitialized")
                 .Subscribe(x =>
             {
+                LocalDidOpen = true;
                 LocalIsClosed = false;
 
                 HwndSource
@@ -190,11 +192,16 @@ namespace DoubleFile
             _blockingFrame.Continue = false;
         }
 
+        internal new void Close()
+        {
+            Util.UIthread(base.Close);
+        }
+
         ILocalWindow
             I { get { return this; } }
         bool
             ILocalWindow.SimulatingModal { get; set; }
         DispatcherFrame
-            _blockingFrame = new DispatcherFrame(false);
+            _blockingFrame = new DispatcherFrame(true) { Continue = false };
     }
 }

@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Reactive.Linq;
 using System;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DoubleFile
 {
@@ -13,7 +15,7 @@ namespace DoubleFile
     }
 
     // Window_Closed() calls Dispose() on the LV_ProgressVM member.
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
+    [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     partial class WinProgress
     {
         internal WeakReference<IWinProgressClosing>
@@ -51,9 +53,9 @@ namespace DoubleFile
             });
 
             Observable.FromEventPattern(formBtn_Cancel, "Click")
-                .Subscribe(x => Close());
+                .Subscribe(x => base.Close());
 
-            Observable.FromEventPattern<System.ComponentModel.CancelEventArgs>(this, "Closing")
+            Observable.FromEventPattern<CancelEventArgs>(this, "Closing")
                 .Subscribe(args => Window_Closing(args.EventArgs));
         }
 
@@ -74,8 +76,12 @@ namespace DoubleFile
         internal WinProgress
             SetProgress(string strPath, double nProgress)
         {
-            if (false == _lv[strPath].FirstOnlyAssert(lvItem => lvItem.Progress = nProgress))
+            if (false ==
+                _lv[strPath]
+                .FirstOnlyAssert(lvItem => lvItem.Progress = nProgress))
+            {
                 MBoxStatic.Assert(99969, false);
+            }
 
             return this;
         }
@@ -83,7 +89,9 @@ namespace DoubleFile
         internal WinProgress
             SetCompleted(string strPath)
         {
-            if (false == _lv[strPath].FirstOnlyAssert(lvItem =>
+            if (false ==
+                _lv[strPath]
+                .FirstOnlyAssert(lvItem =>
             {
                 lvItem.SetCompleted();
 
@@ -126,28 +134,35 @@ namespace DoubleFile
             }
 
             _bAborted = true;
-            Util.UIthread(Close);
+            base.Close();
             return this;
         }
 
         void
-            Window_Closing(System.ComponentModel.CancelEventArgs e)
+            Window_Closing(CancelEventArgs e)
         {
-            if (_bAborted)
-            {
-                WindowClosingCallback = null;
-                _bClosing = true;
-                return;     // close
-            }
-
-            if (null == WindowClosingCallback)
-                return;
-
             IWinProgressClosing windowClosing = null;
-            
-            WindowClosingCallback.TryGetTarget(out windowClosing);
 
-            if (null == windowClosing)
+            _bClosing = Util.Closure(() =>
+            {
+                if (_bAborted)
+                {
+                    WindowClosingCallback = null;
+                    return true;    // from lambda
+                }
+
+                if (null == WindowClosingCallback)
+                    return true;    // from lambda
+
+                WindowClosingCallback.TryGetTarget(out windowClosing);
+
+                if (null == windowClosing)
+                    return true;    // from lambda
+
+                return false;       // from lambda
+            });
+
+            if (_bClosing)
                 return;
 
             e.Cancel = true;
@@ -166,7 +181,7 @@ namespace DoubleFile
                 if (Util.UIthread(() => windowClosing.ConfirmClose()))
                 {
                     _bAborted = true;
-                    Util.UIthread(Close);
+                    base.Close();
                 }
                 else
                 {

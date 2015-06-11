@@ -146,7 +146,7 @@ namespace DoubleFile
                         _lvVM.Unsaved = true;
 
                     winProgress.SetAborted();
-                    Util.UIthread(winProgress.Close);
+                    winProgress.Close();
                 })
                     .Start();
             });

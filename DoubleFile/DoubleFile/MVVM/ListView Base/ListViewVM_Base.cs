@@ -39,7 +39,7 @@ namespace DoubleFile
         {
             var dt = DateTime.Now;
             var nCounter = 0;
-            var blockingFrame = new DispatcherFrame(true);
+            var blockingFrame = new DispatcherFrame(true) { Continue = true };
 
             foreach (var item in lsItems)
             {

@@ -31,8 +31,17 @@ namespace DoubleFile
 
         protected override void LocalNavigatedFrom()
         {
-            if (null != _lvTreeListSiblingsVM)
-                _lvTreeListSiblingsVM.Dispose();
+            _lvTreeListSiblingsVM.Dispose();
+
+            formLV_Children.DataContext =
+                form_gridChildrenCtls.DataContext =
+                _lvTreeListChildrenVM =
+                null;
+
+            Tag =
+                formLV_Siblings.DataContext =
+                _lvTreeListSiblingsVM =
+                null;
         }
 
         LV_TreeListSiblingsVM

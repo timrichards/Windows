@@ -23,8 +23,11 @@
 
         protected override void LocalNavigatedFrom()
         {
-            if (null != _winSearchVM)
-                _winSearchVM.Dispose();
+            _winSearchVM.Dispose();
+
+            DataContext =
+                _winSearchVM =
+                null;
         }
 
         WinSearchVM

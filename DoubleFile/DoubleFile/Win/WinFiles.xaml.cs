@@ -7,6 +7,11 @@ namespace DoubleFile
     /// </summary>
     partial class WinFiles
     {
+        public WinFiles()
+        {
+            InitializeComponent();
+        }
+
         protected override void LocalNavigatedTo()
         {
             DataContext =
@@ -14,15 +19,13 @@ namespace DoubleFile
                 new LV_FilesVM();
         }
 
-        public WinFiles()
-        {
-            InitializeComponent();
-        }
-
         protected override void LocalNavigatedFrom()
         {
-            if (null != _lvFilesVM)
-                _lvFilesVM.Dispose();
+            _lvFilesVM.Dispose();
+
+            DataContext =
+                _lvFilesVM =
+                null;
         }
 
         LV_FilesVM

@@ -31,20 +31,28 @@ namespace DoubleFile
             foreach (var ctl in new[] { formLV_File, formLV_Folder, formLV_Volume })
             {
                 Observable.FromEventPattern(ctl, "SelectionChanged")
-                    .Subscribe(x => ctl.UnselectAllCells());
+                    .Subscribe(x => ctl.UnselectAllCells());    // in C# 2.0 closure on ctl == formLV_Volume 3x
             }
         }
 
         protected override void LocalNavigatedFrom()
         {
-            if (null != _lvFileDetailVM)
-                _lvFileDetailVM.Dispose();
+            _lvFileDetailVM.Dispose();
+            _lvFolderDetailVM.Dispose();
+            _lvVolumeDetailVM.Dispose();
 
-            if (null != _lvFolderDetailVM)
-                _lvFolderDetailVM.Dispose();
+            form_localPath.DataContext =
+                formLV_File.DataContext =
+                _lvFileDetailVM =
+                null;
 
-            if (null != _lvVolumeDetailVM)
-                _lvVolumeDetailVM.Dispose();
+            formLV_Folder.DataContext =
+                _lvFolderDetailVM =
+                null;
+
+            formLV_Volume.DataContext =
+                _lvVolumeDetailVM =
+                null;
         }
 
         LV_FileDetailVM

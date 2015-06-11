@@ -11,28 +11,19 @@ namespace DoubleFile
         internal Dictionary<TreeViewItemVM, bool>
             _listExpanded = new Dictionary<TreeViewItemVM, bool>();
 
-        static internal void FactoryCreate(TreeView tvfe)
+        static internal ObservableCollection<TreeViewItemVM> FactoryCreate(TreeView tvfe)
         {
-            new TreeViewVM(tvfe, LocalTV.RootNodes);
+            return
+                new TreeViewVM(LocalTV.RootNodes)
+                ._Items;
         }
 
-        TreeViewVM(TreeView tvfe, IEnumerable<LocalTreeNode> rootNodes)
+        TreeViewVM(IEnumerable<LocalTreeNode> rootNodes)
         {
             var nIndex = -1;
 
             foreach (var treeNode in rootNodes)
                 _Items.Add(new TreeViewItemVM(this, treeNode, ++nIndex));
-
-
-            Util.UIthread(() => tvfe.DataContext = _Items);
-
-            if (0 > _Items.Count)
-                return;     // from lambda
-
-            var folderDetail = LocalTV.TreeSelect_FolderDetail;
-
-            if (null == folderDetail)
-                _Items[0].SelectedItem_Set(true, nInitiator: 0);
         }
 
         readonly ObservableCollection<TreeViewItemVM>

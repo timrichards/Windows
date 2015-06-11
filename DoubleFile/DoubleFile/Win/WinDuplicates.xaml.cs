@@ -21,8 +21,11 @@ namespace DoubleFile
 
         protected override void LocalNavigatedFrom()
         {
-            if (null != _winDuplicatesVM)
-                _winDuplicatesVM.Dispose();
+            _winDuplicatesVM.Dispose();
+
+            DataContext =
+                _winDuplicatesVM =
+                null;
         }
 
         WinDuplicatesVM

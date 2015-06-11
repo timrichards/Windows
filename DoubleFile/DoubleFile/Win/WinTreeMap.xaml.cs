@@ -48,8 +48,13 @@ namespace DoubleFile
 
         protected override void LocalNavigatedFrom()
         {
-            if (null != _ucTreeMap)
-                _ucTreeMap.Dispose();
+            _ucTreeMap.Dispose();
+
+            _host.Child =
+                _ucTreeMap =
+                null;
+
+            DataContext = null;
         }
 
         UC_TreeMap

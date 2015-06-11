@@ -145,8 +145,7 @@ namespace DoubleFile
 
         internal new Window Show()
         {
-            MBoxStatic.Restart = true;
-            MBoxStatic.Kill();
+            MBoxStatic.Restart();
 
             if (null == Owner)
                 Owner = (Window)App.LocalMainWindow;

@@ -1,7 +1,6 @@
-﻿- LV items not responding quick enough: pause after Raise() (e.g. save listings allow subsequent)
+﻿- LV items not responding quick enough: Raise() race condition?! (e.g. save listings allow subsequent)
 - UIthread on Close(); RaisePropertyChanged(); and other atomics: remove enveloping calls
 
-- tree view does not reset when opening new project.
 - check fix: opening a project again acts as though it's appending and whines about existing listing files.
 - message box should always be topmost. progress window behind. Small project: test append
 - test opening and saving projects
@@ -33,7 +32,11 @@
 - lose the file convert process
 - db
 - Todo: save volume group.\nTodo: save include y/n
-- services: rewrite in JavaScript; C++; Linux etc.
+- Apply async/await
+- Who collaborates/reviews? Who wants to learn from this code base?
+- Research runtime asserts vs unit testing online. 
+	NUnit: replace MboxStatic assert with [TestMethod} and Assert.AreEqual, etc.
+- services: rewrite in Node/Angular; C++; Linux etc. Start these with unit testing.
 
 99944
 99937 99936 99935

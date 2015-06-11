@@ -7,9 +7,6 @@ namespace DoubleFile
 {
     static class MBoxStatic
     {
-        static internal bool
-            Restart { set; private get; }
-
 #if (DEBUG == false)
         static bool _bAssertUp = false;
 #endif
@@ -63,6 +60,12 @@ namespace DoubleFile
             return false;
         }
 
+        static internal void Restart()
+        {
+            _restart = true;
+            Kill();
+        }
+
         static internal void Kill()
         {
             if (null == _messageBox)
@@ -95,7 +98,7 @@ namespace DoubleFile
             
             do
             {
-                Restart = false;
+                _restart = false;
 
                 var buttons = buttons_in ?? MessageBoxButton.OK;
 
@@ -104,10 +107,10 @@ namespace DoubleFile
                     (_messageBox = new LocalMbox(owner ?? mainWindow, strMessage, strTitle, buttons))
                     .ShowDialog());
 
-                if (Restart)
+                if (_restart)
                     Util.Block(250);
             }
-            while (Restart);
+            while (_restart);
 
             _messageBox = null;
             return msgBoxRet;
@@ -119,5 +122,7 @@ namespace DoubleFile
             _dtLastAssert = DateTime.MinValue;
         static LocalMbox
             _messageBox = null;
+        static bool
+            _restart = false;
     }
 }

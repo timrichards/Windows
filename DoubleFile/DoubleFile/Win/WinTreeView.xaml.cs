@@ -11,10 +11,14 @@ namespace DoubleFile
         public WinTreeView()
         {
             InitializeComponent();
-            new TreeViewVM(form_tv, LocalTV.RootNodes);
         }
 
-        protected override void LocalWindowClosed()
+        protected override void LocalNavigatedTo()
+        {
+            TreeViewVM.FactoryCreate(form_tv);
+        }
+
+        protected override void LocalNavigatedFrom()
         {
             form_tv.DataContext = null;
         }

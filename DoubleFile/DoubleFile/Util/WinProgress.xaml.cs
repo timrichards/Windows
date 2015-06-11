@@ -47,8 +47,7 @@ namespace DoubleFile
                 .Subscribe(x =>
             {
                 MinHeight = MaxHeight = ActualHeight;
-                MBoxStatic.Restart = true;
-                MBoxStatic.Kill();
+                MBoxStatic.Restart();
             });
 
             Observable.FromEventPattern(formBtn_Cancel, "Click")

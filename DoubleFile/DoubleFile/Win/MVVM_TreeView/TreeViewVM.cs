@@ -11,7 +11,12 @@ namespace DoubleFile
         internal Dictionary<TreeViewItemVM, bool>
             _listExpanded = new Dictionary<TreeViewItemVM, bool>();
 
-        internal TreeViewVM(TreeView tvfe, IEnumerable<LocalTreeNode> rootNodes)
+        static internal void FactoryCreate(TreeView tvfe)
+        {
+            new TreeViewVM(tvfe, LocalTV.RootNodes);
+        }
+
+        TreeViewVM(TreeView tvfe, IEnumerable<LocalTreeNode> rootNodes)
         {
             var nIndex = -1;
 

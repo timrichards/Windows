@@ -1,7 +1,12 @@
-﻿- LV items not responding quick enough: Raise() race condition?! (e.g. save listings allow subsequent)
+﻿- save listings does not refresh the vm somehow
+- large file tree map blacks out switching between items 1 and 2
+- New Listing File dialog flashes when system choose folder dialog is shown
+- When done saving listings the treemap was old: clicking the explorer link refreshed it
+- First tree view item is bold and the wrong forecolors, incl highlighted
+- Going to the tree map again in the release crashed the program.
+
 - UIthread on Close(); RaisePropertyChanged(); and other atomics: remove enveloping calls
 
-- check fix: opening a project again acts as though it's appending and whines about existing listing files.
 - message box should always be topmost. progress window behind. Small project: test append
 - test opening and saving projects
 

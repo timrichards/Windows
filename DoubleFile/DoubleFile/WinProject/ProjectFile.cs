@@ -145,7 +145,7 @@ namespace DoubleFile
             }
 
             if ((null == _winProgress) ||
-                _winProgress.LocalIsClosed)
+                (false == _winProgress.LocalDidOpen))
             {
                 // happened too fast to bring up progress dialog
                 Util.Block(250);

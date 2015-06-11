@@ -11,8 +11,8 @@ namespace DoubleFile
     abstract public class LocalModernWindowBase : ModernWindow, ILocalWindow
     {
         internal bool LocalDidOpen { get; private set; }
-        public bool LocalIsClosed { get; private set; }
         internal bool LocalIsClosing { get; private set; }
+        public bool LocalIsClosed { get; private set; }
 
         internal bool? LocalDialogResult
         {
@@ -89,7 +89,7 @@ namespace DoubleFile
 
             ShowActivated = true;
 
-            Observable.FromEventPattern(this, "SourceInitialized")
+            Observable.FromEventPattern(this, "Loaded")
                 .Subscribe(x =>
             {
                 LocalDidOpen = true;

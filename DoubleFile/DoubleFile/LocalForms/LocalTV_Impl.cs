@@ -151,9 +151,9 @@ namespace DoubleFile
             Action WaitForProgressDialogToOpen = () =>
             {
                 // completed tree too quick to bring up progress box.
-                var blockingFrame = new DispatcherFrame(true) { Continue = false == _winProgress.LocalDidOpen };
+                var blockingFrame = new DispatcherFrame(true) { Continue = (false == _winProgress.LocalDidOpen) };
 
-                Observable.FromEventPattern(_winProgress, "SourceInitialized")
+                Observable.FromEventPattern(_winProgress, "ContentRendered")
                     .Subscribe(x => blockingFrame.Continue = false);
 
                 Dispatcher.PushFrame(blockingFrame);

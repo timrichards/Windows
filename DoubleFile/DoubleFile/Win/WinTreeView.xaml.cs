@@ -15,7 +15,7 @@ namespace DoubleFile
 
         protected override void LocalNavigatedTo()
         {
-            var items = TreeViewVM.FactoryCreate(form_tv);
+            var items = TreeViewVM.FactoryCreate();
 
             form_tv.DataContext = items;
 

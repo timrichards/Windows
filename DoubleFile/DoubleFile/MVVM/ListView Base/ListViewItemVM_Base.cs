@@ -84,9 +84,14 @@ namespace DoubleFile
             // Could use
             //if (false == PropNames.SequenceEqual(other.PropNames))
             //    return false;
-            // but PropNames is a static reference so
+            // but PropNames is a reference to a static so
             if (false == ReferenceEquals(PropNames, other.PropNames))
                 return false;
+
+            // in fact in the same vein, but this always uses
+            // reflection, whereas static PropNames just does it once:
+            //if (GetType() != other.GetType())
+            //    return false;
 
             // ignore the LVVM
             return true;

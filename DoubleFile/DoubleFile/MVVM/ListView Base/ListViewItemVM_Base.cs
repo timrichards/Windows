@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace DoubleFile
 {
-    abstract class ListViewItemVM_Base : ObservableObjectBase //, IEquatable<ListViewItemVM_Base>
+    abstract class ListViewItemVM_Base : ObservableObjectBase
     {
         internal string this[int i] { get { return marr[i]; } }
 
@@ -16,12 +17,11 @@ namespace DoubleFile
                 MBoxStatic.Assert(99996, value.Length <= NumCols);
                 marr = value;
 
-                for (var nCol = 0; nCol < marr.Length; ++nCol)
+                foreach (var propName in PropNames)
                 {
-                    RaisePropertyChanged(PropertyNames[nCol]);
+                    RaisePropertyChanged(propName);
+                    RaiseColumnWidth(propName);
                 }
-
-                RaiseColumnWidths();
             }
         }
 
@@ -32,17 +32,18 @@ namespace DoubleFile
 
         // NumCols, and columns, are covariant: while all subclasses have columns; the subclasses vary in the number of columns.
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        internal ListViewItemVM_Base(ListViewVM_Base lvvm, IEnumerable<string> ieStr)     // e.g. Volumes LV: marr
+        internal ListViewItemVM_Base(ListViewVM_Base lvvm, IList<string> lsStr)     // e.g. Volumes LV: marr
             : this(lvvm)
         {
-            if (null != ieStr)
+            if (null != lsStr)
             {
-                var nCount = ieStr.Count();
+                var nCount = lsStr.Count;
 
-                if (nCount < NumCols)
-                    ieStr = ieStr.Concat(new string[NumCols - nCount]);
-
-                marr = ieStr.ToArray();
+                marr =
+                    ((nCount < NumCols)
+                        ? lsStr.Concat(new string[NumCols - nCount])
+                        : lsStr)
+                    .ToArray();
             }
             else
             {
@@ -82,30 +83,27 @@ namespace DoubleFile
                 }
             }
 
-            if (0 !=
-                string.Join("", PropertyNames).CompareTo(
-                string.Join("", other.PropertyNames)))
-            {
-                return false;
-            }
-
             // ignore the LVVM
             return true;
         }
 
         internal void RaiseColumnWidths()
         {
+            foreach (var propName in PropNames)
+                RaiseColumnWidth(propName);
+        }
+
+        void RaiseColumnWidth(string strPropName)
+        {
+            if (null == LVVM)
+                return;
+
             // Column widths are only set for visible rows in the listviewer.
             // So far column widths are not set for datum: only marr, but they're not switched off for datum: Clones LVs do not use it.
-            for (var nCol = 0; nCol < NumCols; ++nCol)
-            {
-                var strPropName = PropertyNames[nCol];
-
-                ListViewVM_Base.SCW = "" + 50;
-                LVVM.RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there
-                ListViewVM_Base.SCW = "" + double.NaN;
-                LVVM.RaisePropertyChanged("Width" + strPropName);
-            }
+            ListViewVM_Base.SCW = "" + 50;
+            LVVM.RaisePropertyChanged("Width" + strPropName);     // some reasonable arbitrary value in case it gets stuck there
+            ListViewVM_Base.SCW = "" + double.NaN;
+            LVVM.RaisePropertyChanged("Width" + strPropName);
         }
 
         internal string SearchValue
@@ -116,24 +114,37 @@ namespace DoubleFile
             }
         }
 
-        protected void SetProperty(int nCol, string s)
+        protected void SetProperty(int nCol, string s, [CallerMemberName]string propertyName = null)
         {
             if (this[nCol] != s)
             {
                 marr[nCol] = s;
-                RaisePropertyChanged(PropertyNames[nCol]);
-            }
 
-            if (null != LVVM)
-                RaiseColumnWidths();
+                MBoxStatic.Assert(99937, null != propertyName);
+                RaisePropertyChanged(propertyName);
+                RaiseColumnWidth(propertyName);
+            }
         }
 
         internal ListViewVM_Base LVVM = null;
 
         internal abstract int NumCols { get; }
-        protected abstract string[] PropertyNames { get; }
         protected virtual int SearchCol { get { return 0; } }
 
         protected string[] marr = null;
+
+        IEnumerable<string> PropNames
+        {
+            get
+            {
+                return
+                    _propNames
+                    ?? (_propNames =
+                        GetType().GetProperties().Where(pi => pi.PropertyType == typeof(string))
+                        .Select(pi => pi.Name));
+            }
+        }
+
+        IEnumerable<string> _propNames = null;
     }
 }

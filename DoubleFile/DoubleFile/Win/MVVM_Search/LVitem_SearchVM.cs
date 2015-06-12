@@ -35,13 +35,11 @@ namespace DoubleFile
             }
         }
 
-        protected override string[] PropertyNames { get { return new[] { "Results" }; } }
-
         internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 1;
 
-        internal LVitem_SearchVM(IEnumerable<string> ieString = null)
-            : base(null, ieString)
+        internal LVitem_SearchVM(IList<string> lsStr = null)
+            : base(null, lsStr)
         {
             marr = null;
         }

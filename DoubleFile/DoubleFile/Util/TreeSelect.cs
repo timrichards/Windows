@@ -201,7 +201,7 @@ namespace DoubleFile
             VolumeDetailUpdatedOnNext(Tuple.Create(lasItems.Where(i => null != i), rootNode.Text), nInitiator);
         }
 
-        static Dictionary<string, string>
+        static IDictionary<string, string>
             _dictVolumeInfo = null;
         static bool
             _bCompareMode = false;

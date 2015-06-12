@@ -231,8 +231,7 @@ namespace DoubleFile
                         rootTreeNode.NodeDatum,
                         _volStrings.ListingFile, _volStrings.VolumeGroup,
                         nVolFree, nVolLength,
-                        strRootPath
-                    );
+                        strRootPath);
 
                     TreeSubnodeDetails(rootTreeNode);
                 }

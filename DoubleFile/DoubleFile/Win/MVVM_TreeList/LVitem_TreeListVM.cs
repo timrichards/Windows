@@ -11,13 +11,11 @@ namespace DoubleFile
 
         public string Folder { get { return marr[0]; } private set { SetProperty(0, value); } }
 
-        protected override string[] PropertyNames { get { return new[] { "Folder" }; } }
-
         internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 1;
 
-        internal LVitem_TreeListVM(IEnumerable<string> ieString = null)
-            : base(null, ieString)
+        internal LVitem_TreeListVM(IList<string> lsStr = null)
+            : base(null, lsStr)
         {
         }
 

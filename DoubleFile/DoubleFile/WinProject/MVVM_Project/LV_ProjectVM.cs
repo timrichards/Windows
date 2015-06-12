@@ -12,6 +12,8 @@
         public string WidthDriveSerial { get { return SCW; } }
         public string WidthScannedLength { get { return SCW; } }
 
+        public string WidthListingFile { get { return SCW; } }                  // HACK
+
         internal override int NumCols { get { return LVitem_ProjectVM.NumCols_; } }
     }
 }

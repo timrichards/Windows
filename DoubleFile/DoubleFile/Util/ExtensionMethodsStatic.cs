@@ -10,7 +10,7 @@ namespace DoubleFile
 {
     static internal partial class ExtensionMethodsStatic
     {
-        static Dictionary<int, Tuple<DateTime, WeakReference>> _lsSubjects = new Dictionary<int, Tuple<DateTime, WeakReference>>();
+        static IDictionary<int, Tuple<DateTime, WeakReference>> _lsSubjects = new Dictionary<int, Tuple<DateTime, WeakReference>>();
         static internal void LocalOnNext<T>(this LocalSubject<T> subject, T value, int nOnNextAssertLoc, int nInitiator = 0)
         {
             MBoxStatic.Assert(nOnNextAssertLoc, 0 <= nInitiator);

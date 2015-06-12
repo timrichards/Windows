@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace DoubleFile
 {
@@ -48,8 +49,9 @@ namespace DoubleFile
         /// Raises the PropertyChange event for the property specified
         /// </summary>
         /// <param name="propertyName">Property name to update. Is case-sensitive.</param>
-        public virtual bool RaisePropertyChanged(string propertyName)
+        public virtual bool RaisePropertyChanged([CallerMemberName]string propertyName = null)
         {
+            MBoxStatic.Assert(99944, null != propertyName);
             return OnPropertyChanged(propertyName);
         }
 

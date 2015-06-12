@@ -7,7 +7,7 @@ namespace DoubleFile
         public string Nickname { get { return marr[0]; } internal set { SetProperty(0, value); } }
         public string SourcePath { get { return marr[1]; } internal set { SetProperty(1, value); } }
 
-        internal string ListingFile { get { return marr[2]; } set { SetProperty(2, value); } }
+        public string ListingFile { get { return marr[2]; } set { SetProperty(2, value); } }
         public string ListingFileNoPath { get { return System.IO.Path.GetFileName(marr[2]); } }
 
         public string Status { get { return marr[3]; } internal set { SetProperty(3, value); } }
@@ -18,13 +18,11 @@ namespace DoubleFile
         public string ScannedLength { get { return Util.FormatSize(marr[8]); } internal set { SetProperty(8, value); } }
         public ulong ScannedLengthRaw { get { return ulong.Parse(marr[8]); } }
 
-        protected override string[] PropertyNames { get { return new[] { "Nickname", "SourcePath", "ListingFileNoPath", "Status", "IncludeYN", "VolumeGroup", "DriveModel", "DriveSerial", "ScannedLength" }; } }
-
         internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 9;
 
-        internal LVitem_ProjectVM(IEnumerable<string> ieString = null)
-            : base(null, ieString)
+        internal LVitem_ProjectVM(IList<string> lsStr = null)
+            : base(null, lsStr)
         {
             if (null == Status)
                 Status = FileParse.ksNotSaved;

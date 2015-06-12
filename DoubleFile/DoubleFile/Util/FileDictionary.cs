@@ -258,11 +258,11 @@ namespace DoubleFile
         readonly string
             _ksSerializeFile = ProjectFile.TempPath + "_DuplicateFiles._";
 
-        readonly Dictionary<LVitem_ProjectVM, int>
+        readonly IDictionary<LVitem_ProjectVM, int>
             _DictLVtoItemNumber = new Dictionary<LVitem_ProjectVM, int>();
-        readonly Dictionary<int, LVitem_ProjectVM>
+        readonly IDictionary<int, LVitem_ProjectVM>
             _DictItemNumberToLV = new Dictionary<int, LVitem_ProjectVM>();
-        Dictionary<FileKeyTuple, IEnumerable<int>>
+        IDictionary<FileKeyTuple, IEnumerable<int>>
             _DictFiles = null;
 
         WeakReference<ICreateFileDictStatus>

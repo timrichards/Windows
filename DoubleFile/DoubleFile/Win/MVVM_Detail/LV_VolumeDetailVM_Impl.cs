@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -29,7 +30,7 @@ namespace DoubleFile
             Util.UIthread(() =>
             {
                 foreach (var ieLine in tuple.Item1)
-                    Add(new LVitem_VolumeDetailVM(ieLine), bQuiet: true);
+                    Add(new LVitem_VolumeDetailVM(ieLine.ToList()), bQuiet: true);
             });
 
             RaiseItems();

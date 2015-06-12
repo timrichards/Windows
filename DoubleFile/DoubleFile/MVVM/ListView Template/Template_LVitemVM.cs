@@ -8,8 +8,6 @@ namespace Template      // prevents smart tag rename command from renaming the t
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         public string ColumnNameHere { get { return marr[0]; } internal set { SetProperty(0, value); } }
 
-        protected override string[] PropertyNames { get { return new[] { "" }; } }
-
         internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 0;
 

@@ -22,7 +22,7 @@ namespace DoubleFile
                 _bIndeterminate = value;
 
                 ProgressState = _bIndeterminate ? Brushes.Navy : Brushes.Navy;
-                RaisePropertyChanged(_ksIndeterminate);
+                RaisePropertyChanged();
             }
         }
         bool _bIndeterminate = true;
@@ -31,15 +31,12 @@ namespace DoubleFile
             ProgressState
         {
             get { return _brushProgressState; }
-            private set { _brushProgressState = value; RaisePropertyChanged(_ksProgressState); }
+            private set { _brushProgressState = value; RaisePropertyChanged(); }
         }
         Brush _brushProgressState = Brushes.Navy;
         
         public string
             Remaining { get { return marr[5]; } private set { SetProperty(5, value); } }
-
-        protected override string[]
-            PropertyNames { get { return new[] { "Nickname", "SourcePath", _ksProgress, _ksIndeterminate, _ksProgressState, "Remaining" }; } }
 
         internal override int
             NumCols { get { return NumCols_; } }
@@ -128,10 +125,6 @@ namespace DoubleFile
 
         const string
             _ksProgress = "Progress";
-        const string
-            _ksIndeterminate = "Indeterminate";
-        const string
-            _ksProgressState = "ProgressState";
         const int
             _knRollingMinutes = 2;
 

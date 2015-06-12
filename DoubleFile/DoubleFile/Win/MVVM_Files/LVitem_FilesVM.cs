@@ -56,13 +56,11 @@ namespace DoubleFile
         public string Error1 { get { return 5 < FileLine.Length ? FileLine[5] : ""; } }
         public string Error2 { get { return 6 < FileLine.Length ? FileLine[6] : ""; } }
 
-        protected override string[] PropertyNames { get { return new[] { "Filename", "Duplicates", "Created", "Modified", "Attributes", "Length", "Error1", "Error2" }; } }
-
         internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 8;
 
-        internal LVitem_FilesVM(IEnumerable<string> ieString = null)
-            : base(null, ieString)
+        internal LVitem_FilesVM(IList<string> lsStr = null)
+            : base(null, lsStr)
         {
             marr = null;
         }

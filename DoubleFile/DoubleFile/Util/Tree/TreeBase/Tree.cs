@@ -11,7 +11,7 @@ namespace DoubleFile
         internal Tree(
             LV_ProjectVM lvProjectVM,
             ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>> dictNodes,
-            Dictionary<string, string> dictDriveInfo,
+            IDictionary<string, string> dictDriveInfo,
             WeakReference<ITreeStatus> callbackWR)
             : base(dictNodes, dictDriveInfo, callbackWR)
         {

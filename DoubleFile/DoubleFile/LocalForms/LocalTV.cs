@@ -31,7 +31,7 @@ namespace DoubleFile
         }
         LocalTreeNode _selectedNode = null;
 
-        static internal Dictionary<string, string>
+        static internal IDictionary<string, string>
             DictVolumeInfo { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._dictVolumeInfo : null; } }
         readonly Dictionary<string, string> _dictVolumeInfo = new Dictionary<string, string>();
 

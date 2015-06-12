@@ -107,7 +107,7 @@ namespace DoubleFile
 
             void Hash(IEnumerable<string> listFilePaths,
                 out ConcurrentDictionary<string, HashTuple> dictHash_out,
-                out Dictionary<string, string> dictException_FileRead_out)
+                out IReadOnlyDictionary<string, string> dictException_FileRead_out)
             {
                 if (null == listFilePaths)
                 {
@@ -190,7 +190,7 @@ namespace DoubleFile
                     using (TextWriter fs = File.CreateText(LVitemProjectVM.ListingFile))
                     {
                         ConcurrentDictionary<string, HashTuple> dictHash = null;
-                        Dictionary<string, string> dictException_FileRead = null;
+                        IReadOnlyDictionary<string, string> dictException_FileRead = null;
 
                         WriteHeader(fs);
                         fs.WriteLine();

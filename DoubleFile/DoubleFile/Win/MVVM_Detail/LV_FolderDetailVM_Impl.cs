@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -29,7 +30,7 @@ namespace DoubleFile
             Util.UIthread(() =>
             {
                 foreach (var ieLine in tuple.Item1)
-                    Add(new LVitem_FolderDetailVM(ieLine), bQuiet: true);
+                    Add(new LVitem_FolderDetailVM(ieLine.ToList()), bQuiet: true);
 
                 var strFG_Description = UtilColor.Description[tuple.Item2.ForeColor];
                 var strBG_Description = UtilColor.Description[tuple.Item2.BackColor];

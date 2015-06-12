@@ -8,14 +8,14 @@ namespace DoubleFile
     {
         protected readonly ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
             _dictNodes = null;
-        protected readonly Dictionary<string, string>
+        protected readonly IDictionary<string, string>
             _dictDriveInfo = null;
         protected readonly WeakReference<ITreeStatus>
             _callbackWR = null;
 
         protected TreeBase(
             ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>> dictNodes,
-            Dictionary<string, string> dictDriveInfo,
+            IDictionary<string, string> dictDriveInfo,
             WeakReference<ITreeStatus> callbackWR)
         {
             _dictNodes = dictNodes;

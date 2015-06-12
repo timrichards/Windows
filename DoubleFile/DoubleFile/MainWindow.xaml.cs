@@ -46,11 +46,11 @@ namespace DoubleFile
             {
                 WithMainWindowA(mainWindow =>
                 {
-                    if (value != mainWindow._currentPage)
-                    {
-                        mainWindow._currentPage = value;
-                        mainWindow.UpdateTitleLinks();
-                    }
+                    if (value == mainWindow._currentPage)
+                        return;     // from lambda
+
+                    mainWindow._currentPage = value;
+                    mainWindow.UpdateTitleLinks();
                 });
             }
         }

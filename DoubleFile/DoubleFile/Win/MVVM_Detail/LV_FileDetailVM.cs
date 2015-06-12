@@ -29,7 +29,7 @@ namespace DoubleFile
             private set
             {
                 _Title = value;
-                RaisePropertyChanged("Title");
+                RaisePropertyChanged();
             }
         }
         string _Title = null;

@@ -666,7 +666,7 @@ namespace DoubleFile
         readonly List<LocalLVitem> _lsLVunique = new List<LocalLVitem>();
         readonly List<LocalLVitem> _lsLVsameVol = new List<LocalLVitem>();
         readonly List<LocalLVitem> _lsLVdiffVol = new List<LocalLVitem>();
-        readonly Dictionary<LocalTreeNode, LocalLVitem> _dictIgnoreNodes = new Dictionary<LocalTreeNode, LocalLVitem>();
+        readonly IDictionary<LocalTreeNode, LocalLVitem> _dictIgnoreNodes = new Dictionary<LocalTreeNode, LocalLVitem>();
         readonly bool _bLoose = false;
 
         bool _bThreadAbort = false;

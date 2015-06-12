@@ -8,7 +8,7 @@ namespace DoubleFile
     {
         internal TreeViewItemVM
             SelectedItem { get; set; }
-        internal Dictionary<TreeViewItemVM, bool>
+        internal IDictionary<TreeViewItemVM, bool>
             _listExpanded = new Dictionary<TreeViewItemVM, bool>();
 
         static internal ObservableCollection<TreeViewItemVM> FactoryCreate()

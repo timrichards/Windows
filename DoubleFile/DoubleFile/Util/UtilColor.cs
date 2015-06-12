@@ -6,7 +6,7 @@ namespace DoubleFile
 {
     static class UtilColor
     {
-        static internal Dictionary<int, string>
+        static internal IDictionary<int, string>
             Description = new Dictionary<int, string>();
 
         static internal int Empty { get { return Color.Empty.ToArgb(); } }
@@ -106,7 +106,7 @@ namespace DoubleFile
             _knCLUT_FGmask = 0xF;
         static readonly uint
             _knCLUT_BGmask = CLUT_Mask - _knCLUT_FGmask;
-        static readonly Dictionary<int, int>
+        static readonly IDictionary<int, int>
             _RevCLUT = new Dictionary<int, int>();
     }
 }

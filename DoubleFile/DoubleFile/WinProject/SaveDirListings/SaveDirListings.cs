@@ -45,7 +45,7 @@ namespace DoubleFile
 
         internal SaveDirListings DoThreadFactory()
         {
-            _thread = new Thread(Go) {IsBackground = true};
+            _thread = new Thread(Go) { IsBackground = true };
             _thread.Start();
             return this;
         }
@@ -55,13 +55,14 @@ namespace DoubleFile
             Util.WriteLine();
             Util.WriteLine("Saving directory listings.");
 
+            var dictHash = new ConcurrentDictionary<string, HashTuple>();
             var dtStart = DateTime.Now;
 
             foreach (var lvItemProjectVM
                 in _lvProjectVM.ItemsCast
                 .Where(lvItemProjectVM => lvItemProjectVM.WouldSave))
             {
-                _cbagWorkers.Add(new SaveDirListing(lvItemProjectVM, _saveDirListingsStatus).DoThreadFactory());
+                _cbagWorkers.Add(new SaveDirListing(lvItemProjectVM, _saveDirListingsStatus).DoThreadFactory(dictHash));
             }
 
             foreach (var worker in _cbagWorkers)

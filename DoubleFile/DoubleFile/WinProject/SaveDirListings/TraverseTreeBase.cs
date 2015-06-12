@@ -7,13 +7,18 @@ namespace DoubleFile
     {
         abstract class TraverseTreeBase : FileParse
         {
-            protected long LengthRead { get; private set; }
+            protected long
+                LengthRead { get; private set; }
 
-            protected List<string> ErrorList { get { return _errorList; } }
+            protected List<string>
+                ErrorList { get { return _errorList; } }
             readonly List<string> _errorList = new List<string>();
 
-            protected bool m_bThreadAbort = false;
-            protected readonly LVitem_ProjectVM LVitemProjectVM = null;
+            protected bool
+                _bThreadAbort = false;
+
+            protected readonly LVitem_ProjectVM
+                LVitemProjectVM = null;
 
             protected TraverseTreeBase(LVitem_ProjectVM lvProjectVM)
             {
@@ -45,7 +50,7 @@ namespace DoubleFile
                 IReadOnlyDictionary<string, string> dictException_FileRead = null)
             {
                 var stackDirs = new Stack<NativeMethods.DATUM>(64);
-                NativeMethods.DATUM winRoot;
+                var winRoot = default(NativeMethods.DATUM);
 
                 Win32FindFileStatic.FileData.WinFile(LVitemProjectVM.SourcePath, out winRoot);
                 stackDirs.Push(winRoot);
@@ -59,7 +64,7 @@ namespace DoubleFile
 
                 while (false == stackDirs.IsEmpty())
                 {
-                    if (App.LocalExit || m_bThreadAbort)
+                    if (App.LocalExit || _bThreadAbort)
                     {
                         return null;
                     }
@@ -88,7 +93,7 @@ namespace DoubleFile
 
                     foreach (var winFile in ieFiles)
                     {
-                        if (App.LocalExit || m_bThreadAbort)
+                        if (App.LocalExit || _bThreadAbort)
                         {
                             return null;
                         }

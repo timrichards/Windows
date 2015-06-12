@@ -63,20 +63,16 @@ namespace DoubleFile
         /// <summary>
         /// Raises this object's PropertyChanged event.
         /// </summary>
-        /// <param name="propertyName">The property that has a new value.</param>
-        protected virtual bool OnPropertyChanged(string propertyName)
+        /// <param name="strPropName">The property that has a new value.</param>
+        protected virtual bool OnPropertyChanged(string strPropName)
         {
-            this.VerifyPropertyName(propertyName);
+            VerifyPropertyName(strPropName);
 
-            PropertyChangedEventHandler handler = this.PropertyChanged;
+            if (null == PropertyChanged)
+                return false;
 
-            if (handler != null)
-            {
-                Util.UIthread(() => handler(this, new PropertyChangedEventArgs(propertyName)));
-                return true;
-            }
-
-            return false;
+            Util.UIthread(() => PropertyChanged(this, new PropertyChangedEventArgs(strPropName)));
+            return true;
         }
 
         #endregion // INotifyPropertyChanged Members    

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 
 namespace DoubleFile
 {
@@ -22,9 +23,9 @@ namespace DoubleFile
                 _saveDirListingsStatus = saveDirListingsStatus;
             }
 
-            internal SaveDirListing DoThreadFactory()
+            internal SaveDirListing DoThreadFactory(ConcurrentDictionary<string, HashTuple> dictHash)
             {
-                _thread = new Thread(Go) {IsBackground = true};
+                _thread = new Thread(() => Go(dictHash)) { IsBackground = true };
                 _thread.Start();
                 return this;
             }
@@ -36,7 +37,7 @@ namespace DoubleFile
 
             internal void Abort()
             {
-                m_bThreadAbort = true;
+                _bThreadAbort = true;
                 _thread.Abort();
             }
 
@@ -106,12 +107,11 @@ namespace DoubleFile
             }
 
             void Hash(IEnumerable<string> listFilePaths,
-                out ConcurrentDictionary<string, HashTuple> dictHash_out,
+                ConcurrentDictionary<string, HashTuple> dictHash,
                 out IReadOnlyDictionary<string, string> dictException_FileRead_out)
             {
                 if (null == listFilePaths)
                 {
-                    dictHash_out = null;
                     dictException_FileRead_out = null;
                     return;
                 }
@@ -122,45 +122,46 @@ namespace DoubleFile
                 using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                     .Subscribe(x => StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator)))
                 {
-                    var dictHash = new ConcurrentDictionary<string, HashTuple>();
                     var dictException_FileRead = new Dictionary<string, string>();
 
                     Parallel.ForEach(listFilePaths, strFile =>
                     {
-                        if (m_bThreadAbort)
-                            return;     // from lambda
+                        if (_bThreadAbort)
+                            return;     // from lambda Parallel.ForEach
 
                         Interlocked.Increment(ref nProgressNumerator);
 
-                        var fileHandle = NativeMethods
-                            .CreateFile(@"\\?\" + strFile, FileAccess.Read, FileShare.ReadWrite, IntPtr.Zero, 3, 0, IntPtr.Zero);
-
-                        if (fileHandle.IsInvalid)
+                        dictHash.GetOrAdd(strFile, x =>
                         {
-                            dictException_FileRead[strFile] = new Win32Exception(Marshal.GetLastWin32Error()).Message;
-                            return;     // from lambda
-                        }
+                            var fileHandle = NativeMethods
+                                .CreateFile(@"\\?\" + strFile, FileAccess.Read, FileShare.ReadWrite, IntPtr.Zero, 3, 0, IntPtr.Zero);
 
-                        using (var fsA = new FileStream(fileHandle, FileAccess.Read))
-                        {
-                            const int kBufferSize = 4096; // Hash the first 4K of the file for speed
-                            var buffer = new byte[kBufferSize];
+                            if (fileHandle.IsInvalid)
+                            {
+                                dictException_FileRead[strFile] = new Win32Exception(Marshal.GetLastWin32Error()).Message;
+                                return default(HashTuple);     // from lambda dictHash.GetOrAdd
+                            }
 
-                            fsA.Read(buffer, 0, kBufferSize);
+                            using (var fsA = new FileStream(fileHandle, FileAccess.Read))
+                            {
+                                const int kBufferSize = 4096; // Hash the first 4K of the file for speed
+                                var buffer = new byte[kBufferSize];
 
-                            using (var md5 = System.Security.Cryptography.MD5.Create())
-                                dictHash[strFile] = HashTuple.FactoryCreate(md5.ComputeHash(buffer));
-                        }
+                                fsA.Read(buffer, 0, kBufferSize);
+
+                                using (var md5 = MD5.Create())
+                                    return HashTuple.FactoryCreate(md5.ComputeHash(buffer));
+                            }
+                        });
                     });
 
-                    dictHash_out = dictHash;
                     dictException_FileRead_out = dictException_FileRead;
                 }
 
                 StatusCallback(LVitemProjectVM, nProgress: 1);
             }
 
-            void Go()
+            void Go(ConcurrentDictionary<string, HashTuple> dictHash)
             {
                 if (false == IsGoodDriveSyntax(LVitemProjectVM.SourcePath))
                 {
@@ -189,7 +190,6 @@ namespace DoubleFile
                 {
                     using (TextWriter fs = File.CreateText(LVitemProjectVM.ListingFile))
                     {
-                        ConcurrentDictionary<string, HashTuple> dictHash = null;
                         IReadOnlyDictionary<string, string> dictException_FileRead = null;
 
                         WriteHeader(fs);
@@ -197,7 +197,7 @@ namespace DoubleFile
                         fs.WriteLine(FormatString(nHeader: 0));
                         fs.WriteLine(FormatString(nHeader: 1));
                         fs.WriteLine(ksStart01 + " " + DateTime.Now);
-                        Hash(GetFileList(), out dictHash, out dictException_FileRead);
+                        Hash(GetFileList(), dictHash, out dictException_FileRead);
                         WriteDirectoryListing(fs, dictHash, dictException_FileRead);
                         fs.WriteLine(ksEnd01 + " " + DateTime.Now);
                         fs.WriteLine();
@@ -216,7 +216,7 @@ namespace DoubleFile
                     }
 
                     if (App.LocalExit ||
-                        m_bThreadAbort)
+                        _bThreadAbort)
                     {
                         File.Delete(LVitemProjectVM.ListingFile);
                         return;

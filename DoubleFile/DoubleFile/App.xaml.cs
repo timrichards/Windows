@@ -64,7 +64,7 @@ namespace DoubleFile
 
         public App()
         {
-            LocalActivated = true;      // seemed to work but jic
+            LocalActivated = true;      // Application_Activated() seemed to work but jic
             LocalExit = false;
 
             Observable.FromEventPattern(this, "Activated")

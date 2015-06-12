@@ -44,8 +44,8 @@ namespace DoubleFile
         internal const int
             NumCols_ = 6;
 
-        protected override IEnumerable<string> _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
-        static IEnumerable<string> _propNamesA = null;
+        protected override IEnumerable<string> PropNames { get { return _propNames; } }
+        static IEnumerable<string> _propNames = GetProps(typeof(LVitem_ProgressVM));
 
         protected override int SearchCol { get { return 1; } }
 

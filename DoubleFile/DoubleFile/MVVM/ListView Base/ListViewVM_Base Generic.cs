@@ -53,7 +53,7 @@ namespace DoubleFile
                 }
 
                 if (false == bMatch)
-                    return false;       // assumes other logic checks for duplicates
+                    return false;
             }
 
             return true;

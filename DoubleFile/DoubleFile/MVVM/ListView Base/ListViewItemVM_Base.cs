@@ -51,9 +51,7 @@ namespace DoubleFile
             }
 
             MBoxStatic.Assert(99995, marr.Length == NumCols);
-
-            if (null != LVVM)
-                RaiseColumnWidths();
+            RaiseColumnWidths();
         }
 
         public virtual bool LocalEquals(ListViewItemVM_Base other)
@@ -83,12 +81,22 @@ namespace DoubleFile
                 }
             }
 
+            // Could use
+            //if (false == PropNames.SequenceEqual(other.PropNames))
+            //    return false;
+            // but PropNames is a static reference so
+            if (false == ReferenceEquals(PropNames, other.PropNames))
+                return false;
+
             // ignore the LVVM
             return true;
         }
 
         internal void RaiseColumnWidths()
         {
+            if (null == LVVM)
+                return;
+
             foreach (var propName in PropNames)
                 RaiseColumnWidth(propName);
         }
@@ -134,7 +142,7 @@ namespace DoubleFile
                     _propNames
                     ?? (_propNames =
                         GetType().GetProperties().Where(pi => typeof(string) == pi.PropertyType)
-                        .Select(pi => pi.Name));
+                        .Select(pi => pi.Name)).OrderBy(s => s);
             }
         }
         abstract protected IEnumerable<string> _propNames { get; set; }

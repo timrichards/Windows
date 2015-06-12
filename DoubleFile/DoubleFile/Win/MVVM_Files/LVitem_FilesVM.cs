@@ -5,7 +5,7 @@ namespace DoubleFile
 {
     class LVitem_FilesVM : ListViewItemVM_Base
     {
-        internal System.Collections.Generic.IEnumerable<FileDictionary.DuplicateStruct>
+        internal IEnumerable<FileDictionary.DuplicateStruct>
             LSduplicates = null;
         internal string[]
             FileLine { get; set; }

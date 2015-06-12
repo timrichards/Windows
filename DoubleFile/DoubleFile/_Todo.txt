@@ -4,7 +4,7 @@
 - When done saving listings the treemap was old: clicking the explorer link refreshed it
 - First tree view item is bold and the wrong forecolors, incl highlighted
 - Going to the tree map again in the release crashed the program.
-- Remove WidthListingFile and redo the ListingFile setter
+- Remove WidthListingFile and redo the ListingFile setter to internal
 
 - UIthread on Close(); RaisePropertyChanged(); and other atomics: remove enveloping calls
 

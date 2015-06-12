@@ -106,30 +106,23 @@ namespace DoubleFile
             LVVM.RaisePropertyChanged("Width" + strPropName);
         }
 
-        internal string SearchValue
-        {
-            get
-            {
-                return marr[SearchCol].ToLower();
-            }
-        }
+        internal string SearchValue { get { return marr[SearchCol].ToLower(); } }
 
         protected void SetProperty(int nCol, string s, [CallerMemberName]string propertyName = null)
         {
-            if (this[nCol] != s)
-            {
-                marr[nCol] = s;
+            if (this[nCol] == s)
+                return;
 
-                MBoxStatic.Assert(99937, null != propertyName);
-                RaisePropertyChanged(propertyName);
-                RaiseColumnWidth(propertyName);
-            }
+            marr[nCol] = s;
+            MBoxStatic.Assert(99937, null != propertyName);
+            RaisePropertyChanged(propertyName);
+            RaiseColumnWidth(propertyName);
         }
 
         internal ListViewVM_Base LVVM = null;
 
-        internal abstract int NumCols { get; }
-        protected virtual int SearchCol { get { return 0; } }
+        abstract internal int NumCols { get; }
+        virtual protected int SearchCol { get { return 0; } }
 
         protected string[] marr = null;
 
@@ -140,11 +133,10 @@ namespace DoubleFile
                 return
                     _propNames
                     ?? (_propNames =
-                        GetType().GetProperties().Where(pi => pi.PropertyType == typeof(string))
+                        GetType().GetProperties().Where(pi => typeof(string) == pi.PropertyType)
                         .Select(pi => pi.Name));
             }
         }
-
-        IEnumerable<string> _propNames = null;
+        abstract protected IEnumerable<string> _propNames { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Media;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace DoubleFile
 {
@@ -42,6 +43,9 @@ namespace DoubleFile
             NumCols { get { return NumCols_; } }
         internal const int
             NumCols_ = 6;
+
+        protected override IEnumerable<string> _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
+        static IEnumerable<string> _propNamesA = null;
 
         protected override int SearchCol { get { return 1; } }
 

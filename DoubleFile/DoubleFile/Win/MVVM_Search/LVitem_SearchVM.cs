@@ -38,8 +38,8 @@ namespace DoubleFile
         internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 1;
 
-        protected override IEnumerable<string> PropNames { get { return _propNames; } }
-        static IEnumerable<string> _propNames = GetProps(typeof(LVitem_SearchVM));
+        protected override IEnumerable<string> _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
+        static IEnumerable<string> _propNamesA = null;
 
         internal LVitem_SearchVM(IList<string> lsStr = null)
             : base(null, lsStr)

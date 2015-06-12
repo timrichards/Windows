@@ -126,12 +126,17 @@ namespace DoubleFile
 
         protected string[] marr = null;
 
-        abstract protected IEnumerable<string>
-            PropNames { get; }
-        static protected IEnumerable<string> GetProps(Type type)
+        IEnumerable<string> PropNames
         {
-            return type.GetProperties().Where(pi => typeof(string) == pi.PropertyType)
-                .Select(pi => pi.Name);
+            get
+            {
+                return
+                    _propNames
+                    ?? (_propNames =
+                        GetType().GetProperties().Where(pi => typeof(string) == pi.PropertyType)
+                        .Select(pi => pi.Name));
+            }
         }
+        abstract protected IEnumerable<string> _propNames { get; set; }
     }
 }

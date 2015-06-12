@@ -140,7 +140,7 @@ namespace DoubleFile
 
         protected string[] marr = null;
 
-        IEnumerable<string> PropNames
+        string[] PropNames
         {
             get
             {
@@ -148,10 +148,10 @@ namespace DoubleFile
                     _propNames
                     ?? (_propNames =
                         GetType().GetProperties().Where(pi => typeof(string) == pi.PropertyType)
-                        .Select(pi => pi.Name)).OrderBy(s => s)
-                        .ToArray();
+                        .Select(pi => pi.Name).OrderBy(s => s)
+                        .ToArray());
             }
         }
-        abstract protected IEnumerable<string> _propNames { get; set; }
+        abstract protected string[] _propNames { get; set; }
     }
 }

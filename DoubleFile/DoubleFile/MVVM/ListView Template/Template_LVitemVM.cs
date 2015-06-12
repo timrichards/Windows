@@ -11,8 +11,8 @@
         internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 0;
 
-        protected override IEnumerable<string> _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
-        static IEnumerable<string> _propNamesA = null;
+        protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
+        static string[] _propNamesA = null;
 
         internal Template_LVitemVM(Template_ListViewVM LV, string[] arrStr)
             : base(LV, arrStr) { }

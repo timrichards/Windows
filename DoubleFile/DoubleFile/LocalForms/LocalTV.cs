@@ -76,7 +76,6 @@ namespace DoubleFile
                 TabledString<Tabled_Folders>.AddRef();
             }
 
-            _weakReference.Target = this;            
             _lsDisposable.Add(WinDuplicatesVM.GoToFile.Subscribe(WinDuplicatesVM_GoToFile));
             _lsDisposable.Add(WinSearchVM.GoToFile.Subscribe(WinSearchVM_GoToFile));
             _lsDisposable.Add(TreeSelect.FileListUpdated.Subscribe(v => _treeSelect_FileList = v.Item1));
@@ -103,9 +102,6 @@ namespace DoubleFile
             foreach (var d in Instance._lsDisposable)
                 d.Dispose();
 
-            Instance._treeSelect_FileList = null;
-            Instance._treeSelect_FolderDetail = null;
-            Instance._treeSelect_VolumeDetail = null;
             Instance = null;
         }
 
@@ -154,7 +150,7 @@ namespace DoubleFile
 
         void GoToFile(Tuple<LVitem_ProjectVM, string, string> tuple)
         {
-            if (null == RootNodes)
+            if (null == _rootNodes)
                 return;
 
             var treeNode = GetOneNodeByRootPathA(tuple.Item2, tuple.Item1);

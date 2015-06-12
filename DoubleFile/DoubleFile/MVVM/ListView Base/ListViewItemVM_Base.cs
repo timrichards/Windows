@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -31,7 +32,7 @@ namespace DoubleFile
         }
 
         // NumCols, and columns, are covariant: while all subclasses have columns; the subclasses vary in the number of columns.
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         internal ListViewItemVM_Base(ListViewVM_Base lvvm, IList<string> lsStr)     // e.g. Volumes LV: marr
             : this(lvvm)
         {
@@ -147,7 +148,8 @@ namespace DoubleFile
                     _propNames
                     ?? (_propNames =
                         GetType().GetProperties().Where(pi => typeof(string) == pi.PropertyType)
-                        .Select(pi => pi.Name)).OrderBy(s => s);
+                        .Select(pi => pi.Name)).OrderBy(s => s)
+                        .ToArray();
             }
         }
         abstract protected IEnumerable<string> _propNames { get; set; }

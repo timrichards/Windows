@@ -58,14 +58,7 @@ namespace DoubleFile
             if (App.FileDictionary.IsEmpty)
                 lsProgressItems.Insert(0, _ksFileDictKey);
 
-            _winProgress = new WinProgress(new string[lsProgressItems.Count], lsProgressItems)
-            {
-                Title = "Initializing Explorer",
-                WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
-            };
-
-            Observable.FromEventPattern(_winProgress, "Loaded")
-                .Subscribe(x =>
+            (_winProgress = new WinProgress(new string[lsProgressItems.Count], lsProgressItems, x =>
             {
                 if (App.FileDictionary.IsEmpty)
                     App.FileDictionary.DoThreadFactory(_lvProjectVM, new WeakReference<ICreateFileDictStatus>(this));
@@ -78,9 +71,13 @@ namespace DoubleFile
                 _tree =
                     new Tree(_lvProjectVM, _dictNodes, _dictVolumeInfo, new WeakReference<ITreeStatus>(this))
                     .DoThreadFactory();
-            });
+            })
+            {
+                Title = "Initializing Explorer",
+                WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
+            })
+                .ShowDialog();
 
-            _winProgress.ShowDialog();
             TabledString<Tabled_Folders>.GenerationEnded();
             _winProgress = null;
             return _bFinished;

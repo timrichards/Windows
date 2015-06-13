@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Threading;
 using System.Windows;
 
@@ -37,20 +36,16 @@ namespace DoubleFile
                 App.SaveDirListings.EndThread();
             }
 
-            (_winProgress = new WinProgress(listNicknames, listSourcePaths)
+            (_winProgress = new WinProgress(listNicknames, listSourcePaths, x =>
+                App.SaveDirListings =
+                    new SaveDirListings(lvProjectVM, this)
+                    .DoThreadFactory())
             {
                 Title = "Saving Directory Listings",
                 WindowClosingCallback = new WeakReference<IWinProgressClosing>(this),
             })
-                .AllowSubsequentProcess();
-
-            Observable.FromEventPattern(_winProgress, "Loaded")
-                .Subscribe(x =>
-                App.SaveDirListings =
-                    new SaveDirListings(lvProjectVM, this)
-                    .DoThreadFactory());
-
-            _winProgress.ShowDialog();
+                .AllowSubsequentProcess()
+                .ShowDialog();
         }
 
         void ISaveDirListingsStatus.Status(LVitem_ProjectVM lvItemProjectVM,

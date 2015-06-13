@@ -88,7 +88,8 @@ namespace DoubleFile
 
             var bounds = MainWindow.WithMainWindow(Win32Screen.GetWindowMonitorInfo).rcMonitor;
 
-            var doubleBufferWindow = new Window
+            var doubleBufferWindow =
+                new Window
             {
                 Topmost = true,
                 WindowStyle = WindowStyle.None,
@@ -98,9 +99,8 @@ namespace DoubleFile
                 ShowActivated = false,
                 Focusable = false,
                 IsEnabled = false
-            };
-
-            doubleBufferWindow.SetRect(bounds);
+            }
+                .SetRect(bounds);
 
             using (var bitmap = new Drawing.Bitmap(bounds.Width, bounds.Height))
             {

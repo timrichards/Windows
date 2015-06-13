@@ -6,7 +6,6 @@ using System.Reactive.Linq;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Windows.Threading;
 
 namespace DoubleFile
 {
@@ -31,7 +30,7 @@ namespace DoubleFile
         bool _bAborted = false;
 
         internal
-            WinProgress()
+            WinProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths, Action<WinProgress> initClient)
         {
             InitializeComponent();
 
@@ -51,6 +50,7 @@ namespace DoubleFile
             {
                 MinHeight = MaxHeight = ActualHeight;
                 MBoxStatic.Restart();
+                initClient(this);
             });
 
             Observable.FromEventPattern(formBtn_Cancel, "Click")
@@ -58,20 +58,8 @@ namespace DoubleFile
 
             Observable.FromEventPattern<CancelEventArgs>(this, "Closing")
                 .Subscribe(args => Window_Closing(args.EventArgs));
-        }
 
-        internal
-            WinProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths)
-            : this()
-        {
-            InitProgress(astrNicknames, astrPaths);
-        }
-
-        internal WinProgress
-            InitProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths)
-        {
             _lv.Add(astrNicknames.Zip(astrPaths, (a, b) => Tuple.Create(a, b)));
-            return this;
         }
 
         internal WinProgress

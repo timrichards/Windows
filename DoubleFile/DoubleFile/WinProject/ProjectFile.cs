@@ -363,21 +363,16 @@ namespace DoubleFile
             Observable.FromEventPattern(_process, "Exited")
                 .Subscribe(x => onExit());
 
-            _winProgress = new WinProgress(new[] { _status }, new[] { strProjectFileNoPath })
-            {
-                WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
-            };
-
-            Observable.FromEventPattern(_winProgress, "Loaded")
-                .Subscribe(x =>
+            (_winProgress = new WinProgress(new[] { _status }, new[] { strProjectFileNoPath }, x =>
             {
                 _sbError.AppendLine(DateTime.Now.ToLongTimeString().PadRight(80, '-'));
                 _bProcessing = true;
                 _process.Start();
                 _process.BeginOutputReadLine();
-            });
+            })
+            { WindowClosingCallback = new WeakReference<IWinProgressClosing>(this) })
+                .ShowDialog();
 
-            _winProgress.ShowDialog();
             return true;
         }
 

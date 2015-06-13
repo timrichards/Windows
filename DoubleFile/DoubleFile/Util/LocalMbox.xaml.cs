@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interop;
 
 namespace DoubleFile
 {

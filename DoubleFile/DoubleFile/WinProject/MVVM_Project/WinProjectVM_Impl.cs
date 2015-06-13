@@ -6,7 +6,6 @@ using System.Linq;
 using System.IO;
 using System.Text;
 using System;
-using System.Reactive.Linq;
 using System.Threading;
 using System.Windows.Input;
 
@@ -134,13 +133,8 @@ namespace DoubleFile
 
             var strPlural = (1 < dlg.FileNames.Length) ? "s" : "";
 
-            var winProgress = new WinProgress(new[] { "Opening listing file" + strPlural }, new[] { "" })
-            {
-                WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
-            };
-
-            Observable.FromEventPattern(winProgress, "Loaded")
-                .Subscribe(x => new Thread(() =>
+            new WinProgress(new[] { "Opening listing file" + strPlural }, new[] { "" }, winProgress =>
+                new Thread(() =>
                 {
                     if (OpenListingFiles(dlg.FileNames, userCanceled: () => _bUserCanceled))
                         _lvVM.Unsaved = true;
@@ -149,9 +143,11 @@ namespace DoubleFile
                     winProgress.Close();
                 })
                      { IsBackground = true }
-                     .Start());
-
-            winProgress.ShowDialog();
+                     .Start())
+            {
+                WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
+            }
+                .ShowDialog();
         }
 
         internal bool OpenListingFiles(

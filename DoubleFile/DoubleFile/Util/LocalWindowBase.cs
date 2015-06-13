@@ -164,6 +164,12 @@ namespace DoubleFile
                 return null;
             }
 
+            if ((false == this is LocalMbox) &&
+                Focusable)
+            {
+                MBoxStatic.Restart();
+            }
+
             I.SimulatingModal = App.SimulatingModal;
             Owner = (Window)me;
 

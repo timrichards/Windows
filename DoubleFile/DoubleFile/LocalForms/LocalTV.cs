@@ -163,8 +163,6 @@ namespace DoubleFile
 
         readonly LV_ProjectVM
             _lvProjectVM = null;
-        readonly WinProgress
-            _winProgress = new WinProgress();
         readonly double
             _nCorrelateProgressDenominator = 0;
         List<IDisposable>

@@ -119,18 +119,6 @@ namespace DoubleFile
             return this;
         }
 
-        internal WinProgress WaitForOpen()
-        {
-            // completed tree too quick to bring up progress box.
-            var blockingFrame = new DispatcherFrame(true) { Continue = (false == LocalDidOpen) };
-
-            Observable.FromEventPattern(this, "ContentRendered")
-                .Subscribe(x => blockingFrame.Continue = false);
-
-            Dispatcher.PushFrame(blockingFrame);
-            return this;
-        }
-
         internal WinProgress
             CloseIfNatural()
         {

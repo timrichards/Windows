@@ -37,7 +37,10 @@ namespace DoubleFile
                 (DateTime.Now - o.Item1) > TimeSpan.FromMilliseconds(100))
             {
                 _lsSubjects[nOnNextAssertLoc] = Tuple.Create(DateTime.Now, new WeakReference(value));
-                new Thread(() => subject.OnNext(Tuple.Create(value, nInitiator))).Start();
+
+                new Thread(() => subject.OnNext(Tuple.Create(value, nInitiator)))
+                    { IsBackground = true }
+                    .Start();
             }
             else if ((nOnNextAssertLoc < 99830) ||      // 99830 block is reserved: do not alert LocalOnNext
                 (nOnNextAssertLoc >= 99840))

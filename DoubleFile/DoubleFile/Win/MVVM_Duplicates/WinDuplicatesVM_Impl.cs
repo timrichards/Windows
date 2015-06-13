@@ -67,7 +67,9 @@ namespace DoubleFile
                     TreeFileSelChanged(lsDuplicates, ieFileLine);
                 }
                 catch (OperationCanceledException) { }
-            }).Start();
+            })
+                 { IsBackground = true }
+                 .Start();
         }
 
         void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, IEnumerable<string> ieFileLine)

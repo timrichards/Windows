@@ -148,7 +148,8 @@ namespace DoubleFile
                     winProgress.SetAborted();
                     winProgress.Close();
                 })
-                    .Start());
+                     { IsBackground = true }
+                     .Start());
 
             winProgress.ShowDialog();
         }

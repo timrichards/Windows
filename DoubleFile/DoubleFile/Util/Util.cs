@@ -20,6 +20,7 @@ namespace DoubleFile
                 Thread.Sleep(napTime);
                 blockingFrame.Continue = false;
             })
+                { IsBackground = true }
                 .Start();
 
             Dispatcher.PushFrame(blockingFrame);

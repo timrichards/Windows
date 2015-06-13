@@ -25,8 +25,9 @@ namespace DoubleFile
 
             internal SaveDirListing DoThreadFactory(ConcurrentDictionary<string, HashTuple> dictHash)
             {
-                _thread = new Thread(() => Go(dictHash)) { IsBackground = true };
-                _thread.Start();
+                (_thread = new Thread(() => Go(dictHash)) { IsBackground = true })
+                    .Start();
+
                 return this;
             }
 

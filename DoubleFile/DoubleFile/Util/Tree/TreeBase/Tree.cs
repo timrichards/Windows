@@ -24,26 +24,25 @@ namespace DoubleFile
         {
             IsAborted = true;
 
-            if (m_thread != null)
+            if (_thread != null)
             {
-                m_thread.Abort();
-                m_thread = null;
+                _thread.Abort();
+                _thread = null;
             }
 
-            foreach (var worker in m_cbagWorkers)
-            {
+            foreach (var worker in _cbagWorkers)
                 worker.Abort();
-            }
 
-            m_cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
+            _cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
             Collate.Abort();
             _dictNodes.Clear();
         }
 
         internal Tree DoThreadFactory()
         {
-            m_thread = new Thread(Go) {IsBackground = true};
-            m_thread.Start();
+            (_thread = new Thread(Go) { IsBackground = true })
+                .Start();
+
             return this;
         }
 
@@ -62,10 +61,10 @@ namespace DoubleFile
                 where volStrings.CanLoad
                 select new TreeRootNodeBuilder(volStrings, this))
             {
-                m_cbagWorkers.Add(treeRoot.DoThreadFactory());
+                _cbagWorkers.Add(treeRoot.DoThreadFactory());
             }
 
-            foreach (var worker in m_cbagWorkers)
+            foreach (var worker in _cbagWorkers)
             {
                 worker.Join();
             }
@@ -97,8 +96,11 @@ namespace DoubleFile
             treeStatus.Done();
         }
 
-        LV_ProjectVM LVprojectVM { get; set; }
-        ConcurrentBag<TreeRootNodeBuilder> m_cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
-        Thread m_thread = null;
+        LV_ProjectVM
+            LVprojectVM { get; set; }
+        ConcurrentBag<TreeRootNodeBuilder>
+            _cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
+        Thread
+            _thread = null;
     }
 }

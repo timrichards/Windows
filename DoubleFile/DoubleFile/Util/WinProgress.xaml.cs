@@ -187,7 +187,9 @@ namespace DoubleFile
                 {
                     WindowClosingCallback = new WeakReference<IWinProgressClosing>(windowClosing);
                 }
-            }).Start();
+            })
+                { IsBackground = true }
+                .Start();
         }
 
         readonly LV_ProgressVM

@@ -1,13 +1,13 @@
-﻿- after saving the first listing it sometimes doesn't navigate
+﻿- test a.dfp doesn't open when it's already open. Has the old dim lockup issue with append too.
 - check fix: Going to the tree map again in the release crashed the program.
-- not fixed: save listings does not refresh the vm somehow
 - not fixed: When done saving listings the treemap was old: clicking the explorer link refreshed it
-- check fix: First tree view item is bold and the wrong forecolors, incl highlighted - treeview shouldn't have a selected item.
+- not fixed: First tree view item is bold and the wrong forecolors, incl highlighted - treeview shouldn't have a selected item.
 - New Listing File dialog flashes when system choose folder dialog is shown
 - message box should always be topmost. progress window behind. Small project: test append
 - test opening and saving projects
 - large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
 - Why are some folders white? Why do some folders not say they're duplicated?
+- check fix: save listings did not refresh the vm because the progress dialog was closed too soon
 
 - reading more of the file or get a spread of data to increase match likelihood
 - Check the use of reflection in loops: is operator. as operator not reflection?

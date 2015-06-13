@@ -337,7 +337,12 @@ namespace DoubleFile
                 return false;
             }
 
-            var lvItem = new LVitem_ProjectVM {ListingFile = strFile, Status = ksUsingFile, Include = true};
+            var lvItem = new LVitem_ProjectVM
+            {
+                ListingFile = strFile,
+                Status = ksUsingFile,
+                Include = true
+            };
 
             using (var sr = new System.IO.StreamReader(strFile))
             {

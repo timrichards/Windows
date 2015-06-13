@@ -63,7 +63,9 @@ namespace DoubleFile
                 in _lvProjectVM.ItemsCast
                 .Where(lvItemProjectVM => lvItemProjectVM.WouldSave))
             {
-                _cbagWorkers.Add(new SaveDirListing(lvItemProjectVM, _saveDirListingsStatus).DoThreadFactory(dictHash));
+                _cbagWorkers
+                    .Add(new SaveDirListing(lvItemProjectVM, _saveDirListingsStatus)
+                    .DoThreadFactory(dictHash));
             }
 
             foreach (var worker in _cbagWorkers)

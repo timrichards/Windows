@@ -178,7 +178,8 @@ namespace DoubleFile
 
                 if (string.IsNullOrWhiteSpace(LVitemProjectVM.ListingFile))
                 {
-                    LVitemProjectVM.ListingFile = ProjectFile.TempPath +
+                    LVitemProjectVM.ListingFile =
+                        ProjectFile.TempPath +
                         LVitemProjectVM.SourcePath[0] + "_Listing_" +
                         Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + "." + ksFileExt_Listing;
                 }

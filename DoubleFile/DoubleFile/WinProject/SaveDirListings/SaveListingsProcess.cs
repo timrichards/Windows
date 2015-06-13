@@ -29,13 +29,6 @@ namespace DoubleFile
             if (listSourcePaths.IsEmpty())
                 return;
 
-            (_winProgress = new WinProgress(listNicknames, listSourcePaths)
-            {
-                Title = "Saving Directory Listings",
-                WindowClosingCallback = new WeakReference<IWinProgressClosing>(this),
-            })
-                .AllowSubsequentProcess();
-
             if ((null != App.SaveDirListings) &&
                 (false == App.SaveDirListings.IsAborted))
             {
@@ -47,7 +40,13 @@ namespace DoubleFile
                 new SaveDirListings(lvProjectVM, this)
                 .DoThreadFactory();
 
-            _winProgress.ShowDialog();
+            (_winProgress = new WinProgress(listNicknames, listSourcePaths)
+            {
+                Title = "Saving Directory Listings",
+                WindowClosingCallback = new WeakReference<IWinProgressClosing>(this),
+            })
+                .AllowSubsequentProcess()
+                .ShowDialog();
         }
 
         void ISaveDirListingsStatus.Status(LVitem_ProjectVM lvItemProjectVM,
@@ -69,15 +68,15 @@ namespace DoubleFile
 
             if (null != strError)
             {
-                _winProgress.SetError(lvItemProjectVM.SourcePath, strError);
                 lvItemProjectVM.Status = FileParse.ksError;
                 _bKeepShowingError = true;
+                _winProgress.SetError(lvItemProjectVM.SourcePath, strError);
             }
             else if (bDone)
             {
-                _winProgress.SetCompleted(lvItemProjectVM.SourcePath);
                 lvItemProjectVM.SetSaved();
                 Interlocked.Increment(ref sdl.FilesWritten);
+                _winProgress.SetCompleted(lvItemProjectVM.SourcePath);
             }
             else if (0 <= nProgress)
             {

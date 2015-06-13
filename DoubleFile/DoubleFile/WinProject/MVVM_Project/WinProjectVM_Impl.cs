@@ -29,14 +29,16 @@ namespace DoubleFile
                 (_lvVM.Count == 0) ||
                 false == (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift));
 
+            var strTitle = (bClearItems ? "Open" : "Append") + " Project";
+
             if (bClearItems && _lvVM.Unsaved &&
                 (MessageBoxResult.Cancel ==
-                MBoxStatic.ShowDialog(UnsavedWarning, "Open Project", MessageBoxButton.OKCancel)))
+                MBoxStatic.ShowDialog(UnsavedWarning, strTitle, MessageBoxButton.OKCancel)))
             {
                 return;
             }
 
-            var dlg = new Microsoft.Win32.OpenFileDialog { Title = "Open Project", Filter = _ksProjectFilter };
+            var dlg = new Microsoft.Win32.OpenFileDialog { Title = strTitle, Filter = _ksProjectFilter };
 
             if ((MainWindow.Darken(darkWindow => dlg.ShowDialog((Window)darkWindow)) ?? false) &&
                 ProjectFile.OpenProject(dlg.FileName, new WeakReference<IOpenListingFiles>(this), bClearItems))
@@ -138,9 +140,7 @@ namespace DoubleFile
             };
 
             Observable.FromEventPattern(winProgress, "SourceInitialized")
-                .Subscribe(x =>
-            {
-                new Thread(() =>
+                .Subscribe(x => new Thread(() =>
                 {
                     if (OpenListingFiles(dlg.FileNames, userCanceled: () => _bUserCanceled))
                         _lvVM.Unsaved = true;
@@ -148,8 +148,7 @@ namespace DoubleFile
                     winProgress.SetAborted();
                     winProgress.Close();
                 })
-                    .Start();
-            });
+                    .Start());
 
             winProgress.ShowDialog();
         }

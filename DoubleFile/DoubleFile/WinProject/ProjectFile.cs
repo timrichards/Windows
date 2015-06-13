@@ -154,7 +154,7 @@ namespace DoubleFile
             var bRet = openListingFiles.Callback
             (
                 Directory.GetFiles(TempPath)
-                .Where(s =>
+                    .Where(s =>
                 {
                     var strExt = "" + Path.GetExtension(Path.GetFileName(s));
 
@@ -175,7 +175,21 @@ namespace DoubleFile
                 OnOpenedProject();
 
             if (Directory.Exists(TempPath01))
+            {
+                if (false == bClearItems)
+                {
+                    string strNew = null;
+
+                    foreach (var strFile in
+                        Directory.GetFiles(TempPath01, "*.*")
+                        .Where(strFile => false == File.Exists(strNew = strFile.Replace(TempPath01, TempPath))))
+                    {
+                        File.Move(strFile, strNew);
+                    }
+                }
+
                 Directory.Delete(TempPath01, true);
+            }
 
             if (false == _winProgress.LocalIsClosed)
             {

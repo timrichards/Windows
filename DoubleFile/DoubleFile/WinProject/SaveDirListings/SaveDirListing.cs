@@ -150,7 +150,7 @@ namespace DoubleFile
                                 fsA.Read(buffer, 0, kBufferSize);
 
                                 using (var md5 = MD5.Create())
-                                    return HashTuple.FactoryCreate(md5.ComputeHash(buffer));
+                                    return HashTuple.FactoryCreate(md5.ComputeHash(buffer));     // from lambda dictHash.GetOrAdd
                             }
                         });
                     });

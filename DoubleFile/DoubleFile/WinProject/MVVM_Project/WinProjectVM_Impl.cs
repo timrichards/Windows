@@ -139,7 +139,7 @@ namespace DoubleFile
                 WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
             };
 
-            Observable.FromEventPattern(winProgress, "SourceInitialized")
+            Observable.FromEventPattern(winProgress, "Loaded")
                 .Subscribe(x => new Thread(() =>
                 {
                     if (OpenListingFiles(dlg.FileNames, userCanceled: () => _bUserCanceled))

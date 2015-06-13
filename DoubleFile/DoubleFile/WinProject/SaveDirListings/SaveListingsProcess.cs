@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Windows;
 
@@ -36,17 +37,20 @@ namespace DoubleFile
                 App.SaveDirListings.EndThread();
             }
 
-            App.SaveDirListings =
-                new SaveDirListings(lvProjectVM, this)
-                .DoThreadFactory();
-
             (_winProgress = new WinProgress(listNicknames, listSourcePaths)
             {
                 Title = "Saving Directory Listings",
                 WindowClosingCallback = new WeakReference<IWinProgressClosing>(this),
             })
-                .AllowSubsequentProcess()
-                .ShowDialog();
+                .AllowSubsequentProcess();
+
+            Observable.FromEventPattern(_winProgress, "Loaded")
+                .Subscribe(x =>
+                App.SaveDirListings =
+                    new SaveDirListings(lvProjectVM, this)
+                    .DoThreadFactory());
+
+            _winProgress.ShowDialog();
         }
 
         void ISaveDirListingsStatus.Status(LVitem_ProjectVM lvItemProjectVM,
@@ -91,24 +95,19 @@ namespace DoubleFile
 
         bool IWinProgressClosing.ConfirmClose()
         {
-            if (null == App.SaveDirListings)
-                return true;
-
-            if (App.SaveDirListings.IsAborted)
-                return true;
-
-            if (MBoxStatic.ShowDialog("Do you want to cancel?", "Saving Directory Listings",
-                MessageBoxButton.YesNo,
-                _winProgress) ==
-                MessageBoxResult.Yes)
+            if ((null == App.SaveDirListings) ||
+                App.SaveDirListings.IsAborted)
             {
-                if (null != App.SaveDirListings)
-                    App.SaveDirListings.EndThread();
-
                 return true;
             }
 
-            return false;
+            if (MessageBoxResult.Yes != MBoxStatic.ShowDialog("Do you want to cancel?", "Saving Directory Listings", MessageBoxButton.YesNo, _winProgress))
+                return false;
+
+            if (null != App.SaveDirListings)
+                App.SaveDirListings.EndThread();
+
+            return true;
         }
 
         WinProgress

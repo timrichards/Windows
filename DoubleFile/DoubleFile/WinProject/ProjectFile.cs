@@ -144,13 +144,6 @@ namespace DoubleFile
                 return false;
             }
 
-            if ((null == _winProgress) ||
-                (false == _winProgress.LocalDidOpen))
-            {
-                // happened too fast to bring up progress dialog
-                Util.Block(250);
-            }
-
             var bRet = openListingFiles.Callback
             (
                 Directory.GetFiles(TempPath)
@@ -184,6 +177,7 @@ namespace DoubleFile
                         Directory.GetFiles(TempPath01, "*.*")
                         .Where(strFile => false == File.Exists(strNew = strFile.Replace(TempPath01, TempPath))))
                     {
+                        // strNew is assigned each iteration in C# 4.
                         File.Move(strFile, strNew);
                     }
                 }
@@ -191,11 +185,9 @@ namespace DoubleFile
                 Directory.Delete(TempPath01, true);
             }
 
-            if (false == _winProgress.LocalIsClosed)
-            {
-                _winProgress.SetAborted();
-                _winProgress.Close();
-            }
+            _winProgress
+                .SetAborted()
+                .Close();
 
             _bProcessing = false;
             return bRet && (false == _bUserCanceled);
@@ -315,9 +307,9 @@ namespace DoubleFile
                 File.Delete(strProjectFilename);
 
             File.Move(strProjectFilename + ".7z", strProjectFilename);
-            _winProgress.SetCompleted(Path.GetFileName(strProjectFilename));
             _bProcessing = false;
             bRet = true;
+            _winProgress.SetCompleted(Path.GetFileName(strProjectFilename));
         }
 
         void SaveProjectFailedToStartProcess(string strProjectFilename, List<string> lsListingFiles)
@@ -360,6 +352,9 @@ namespace DoubleFile
             string strArguments,
             Action onExit)
         {
+            if (false == File.Exists(_process.StartInfo.FileName))
+                return false;
+
             MBoxStatic.Assert(99942, null == _winProgress);
             _status = status;
             _process.StartInfo.WorkingDirectory = strWorkingDirectory;
@@ -368,23 +363,22 @@ namespace DoubleFile
             Observable.FromEventPattern(_process, "Exited")
                 .Subscribe(x => onExit());
 
-            if (File.Exists(_process.StartInfo.FileName))
+            _winProgress = new WinProgress(new[] { _status }, new[] { strProjectFileNoPath })
+            {
+                WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
+            };
+
+            Observable.FromEventPattern(_winProgress, "Loaded")
+                .Subscribe(x =>
             {
                 _sbError.AppendLine(DateTime.Now.ToLongTimeString().PadRight(80, '-'));
                 _bProcessing = true;
                 _process.Start();
                 _process.BeginOutputReadLine();
+            });
 
-                (_winProgress = new WinProgress(new[] { _status }, new[] { strProjectFileNoPath })
-                {
-                    WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
-                })
-                    .ShowDialog();
-
-                return true;
-            }
-
-            return false;
+            _winProgress.ShowDialog();
+            return true;
         }
 
         bool IWinProgressClosing.ConfirmClose()

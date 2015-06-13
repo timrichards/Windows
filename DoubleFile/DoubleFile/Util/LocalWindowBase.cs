@@ -86,8 +86,6 @@ namespace DoubleFile
                 }
             });
 
-            ShowActivated = true;
-
             Observable.FromEventPattern(this, "Loaded")
                 .Subscribe(x =>
             {
@@ -99,12 +97,13 @@ namespace DoubleFile
                     .AddHook(WndProc);
             });
 
-            Observable.FromEventPattern(this, "Closed")
-                .Subscribe(x => LocalIsClosed = true);
-
             Observable.FromEventPattern(this, "Closing")
                 .Subscribe(x => LocalIsClosing = true);
 
+            Observable.FromEventPattern(this, "Closed")
+                .Subscribe(x => LocalIsClosed = true);
+
+            ShowActivated = true;
             LocalIsClosed = true;
         }
 
@@ -124,7 +123,7 @@ namespace DoubleFile
             if (this == App.TopWindow)
                 return IntPtr.Zero;
 
-            if (msg != NativeMethods.WM_SYSCOMMAND)
+            if (NativeMethods.WM_SYSCOMMAND != msg)
                 return IntPtr.Zero;
 
             if (false ==

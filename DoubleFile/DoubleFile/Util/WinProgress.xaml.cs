@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Windows.Threading;
 
 namespace DoubleFile
 {
@@ -115,6 +116,18 @@ namespace DoubleFile
             if (false == _lv[strPath].FirstOnlyAssert(lvItem => lvItem.SetError(strError)))
                 MBoxStatic.Assert(99956, false);
 
+            return this;
+        }
+
+        internal WinProgress WaitForOpen()
+        {
+            // completed tree too quick to bring up progress box.
+            var blockingFrame = new DispatcherFrame(true) { Continue = (false == LocalDidOpen) };
+
+            Observable.FromEventPattern(this, "ContentRendered")
+                .Subscribe(x => blockingFrame.Continue = false);
+
+            Dispatcher.PushFrame(blockingFrame);
             return this;
         }
 

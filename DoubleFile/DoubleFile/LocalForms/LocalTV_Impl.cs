@@ -81,6 +81,7 @@ namespace DoubleFile
             });
 
             _winProgress.ShowDialog();
+            TabledString<Tabled_Folders>.GenerationEnded();
             _winProgress = null;
             return _bFinished;
         }
@@ -204,7 +205,6 @@ namespace DoubleFile
             }
 
             TreeCleanup();
-            TabledString<Tabled_Folders>.GenerationEnded();
             _bFinished = true;      // should preceed closing status dialog: returns true to the caller
 
             _winProgress

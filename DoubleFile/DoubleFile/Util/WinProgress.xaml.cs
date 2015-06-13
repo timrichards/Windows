@@ -42,7 +42,7 @@ namespace DoubleFile
             Observable.FromEventPattern(this, "SourceInitialized")
                 .Subscribe(x => ResizeMode = ResizeMode.NoResize);
 
-            Observable.FromEventPattern(form_grid, "Loaded")
+            Observable.FromEventPattern(this, "Loaded")
                 .Subscribe(x => formLV_Progress.DataContext = _lv);
 
             Observable.FromEventPattern(this, "ContentRendered")

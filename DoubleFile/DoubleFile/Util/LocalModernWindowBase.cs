@@ -165,8 +165,11 @@ namespace DoubleFile
                 return null;
             }
 
-            //if (false == this is LocalMbox)
-            //    MBoxStatic.Restart();
+            if (//(false == this is LocalMbox) &&
+                "" + Tag != MainWindow.DarkWindowClass)     // future proof
+            {
+                MBoxStatic.Restart();
+            }
 
             I.SimulatingModal = App.SimulatingModal;
             Owner = (Window)me;

@@ -9,7 +9,7 @@
     <i:Interaction.Behaviors>
         <Behaviours:BorderlessWindowBehavior/>
     </i:Interaction.Behaviors>
-    <Grid Name="form_grid">
+    <Grid>
         <ListView Name="formLV_Progress" IsSynchronizedWithCurrentItem="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
             <ListView.Resources>
                 <Style TargetType="ListViewItem">

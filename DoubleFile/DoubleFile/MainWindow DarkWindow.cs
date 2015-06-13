@@ -13,6 +13,8 @@ namespace DoubleFile
 {
     public partial class MainWindow
     {
+        internal const string DarkWindowClass = "DarkWindow";
+
         class DarkWindow : LocalWindowBase
         {
             internal Rect Rect;
@@ -29,6 +31,7 @@ namespace DoubleFile
                 ResizeMode = ResizeMode.NoResize;
                 Focusable = false;
                 IsEnabled = false;
+                Tag = DarkWindowClass;
             }
 
             internal new DarkWindow Show() { ((Window)this).Show(); return this; }      // Darkens ExtraWindows and WinTooltip

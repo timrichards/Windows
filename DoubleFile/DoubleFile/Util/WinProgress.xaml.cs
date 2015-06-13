@@ -98,7 +98,7 @@ namespace DoubleFile
 
                 if (_lv.ItemsCast.All(lvItemA => 1 == lvItemA.Progress))
                 {
-                    Util.UIthread(() => formBtn_Cancel.ToolTip = "Process completed. You can close the window now");
+                    Util.UIthread(() => formBtn_Cancel.ToolTip = "Process completed. You may now close the window");
 
                     if (_bAllowSubsequentProcess)
                         GoModeless();

@@ -96,11 +96,12 @@ namespace DoubleFile
             {
                 lvItem.SetCompleted();
 
-                if (_lv.ItemsCast.All(lvItemA => 1 == lvItemA.Progress) &&
-                    _bAllowSubsequentProcess)
+                if (_lv.ItemsCast.All(lvItemA => 1 == lvItemA.Progress))
                 {
                     Util.UIthread(() => formBtn_Cancel.ToolTip = "Process completed. You can close the window now");
-                    GoModeless();
+
+                    if (_bAllowSubsequentProcess)
+                        GoModeless();
                 }
             }))
             {

@@ -15,29 +15,27 @@ namespace DoubleFile
         public string WidthProgressState { get { return SCW; } }
         public string WidthRemaining { get { return SCW; } }
 
+        internal override int NumCols { get { return LVitem_ProgressVM.NumCols_; } }
+
         internal void Add(IEnumerable<Tuple<string, string>> ieStr)
         {
             base.Add(ieStr
                 .Select(tuple => 
                 {
                     if (false == this[tuple.Item2].IsEmpty())
-                    {
                         MBoxStatic.Assert(99955, false);
-                    }
 
                     return new LVitem_ProgressVM(this, new[] { tuple.Item1, tuple.Item2 });
                 }),
-                bQuiet: true);      // not an real listviewer
+                bQuiet: true);      // not a real listviewer
         }
-
-        internal override int NumCols { get { return LVitem_ProgressVM.NumCols_; } }
 
         internal LV_ProgressVM()
         {
             Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                 .Subscribe(x =>
             {
-                foreach (var lvItem in ItemsCast)
+                foreach (var lvItem in ItemsCast.ToArray())
                     lvItem.TimerTick();
             });
         }

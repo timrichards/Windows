@@ -32,7 +32,7 @@ namespace DoubleFile
 
         internal LV_ProgressVM()
         {
-            Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
+            Observable.Timer(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500)).Timestamp()
                 .Subscribe(x =>
             {
                 foreach (var lvItem in ItemsCast.ToArray())

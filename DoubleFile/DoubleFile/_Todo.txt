@@ -5,7 +5,6 @@
 - stop the auto horizontal scrolling - solve it by selecting first column
 - not fixed: First tree view item is bold and the wrong forecolors, incl highlighted - treeview shouldn't have a selected item.
 - New Listing File dialog flashes when system choose folder dialog is shown
-- message box should always be topmost. progress window behind. Small project: test append
 - large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
 - Why are some folders white? Why do some folders not say they're duplicated?
 

@@ -75,7 +75,7 @@ namespace DoubleFile
 
         // make MessageBox modal from a worker thread
         static internal MessageBoxResult
-            ShowDialog(string strMessage, string strTitle = null, MessageBoxButton? buttons_in = null, ILocalWindow owner = null)
+            ShowDialog(string strMessage, string strTitle = null, MessageBoxButton? buttons = null, ILocalWindow owner = null)
         {
             var mainWindow = App.LocalMainWindow;
 
@@ -98,12 +98,9 @@ namespace DoubleFile
             {
                 _restart = false;
 
-                var buttons = buttons_in ?? MessageBoxButton.OK;
-
-                Util.UIthread(() =>
-                    msgBoxRet =
-                    (_messageBox = new LocalMbox(owner ?? mainWindow, strMessage, strTitle, buttons))
-                    .ShowDialog());
+                msgBoxRet =
+                    (_messageBox = new LocalMbox(owner ?? mainWindow, strMessage, strTitle, buttons ?? MessageBoxButton.OK))
+                    .ShowDialog();
 
                 if (_restart)
                     Util.Block(250);

@@ -25,7 +25,7 @@ namespace DoubleFile
         internal void OpenProject()
         {
             var bClearItems =
-                (_lvVM.Count == 0) ||
+                (0 == _lvVM.Count) ||
                 false == (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift));
 
             var strTitle = (bClearItems ? "Open" : "Append") + " Project";
@@ -139,8 +139,9 @@ namespace DoubleFile
                     if (OpenListingFiles(dlg.FileNames, userCanceled: () => _bUserCanceled))
                         _lvVM.Unsaved = true;
 
-                    winProgress.SetAborted();
-                    winProgress.Close();
+                    winProgress
+                        .SetAborted()
+                        .Close();
                 })
                      { IsBackground = true }
                      .Start())

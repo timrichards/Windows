@@ -127,7 +127,7 @@ namespace DoubleFile
             var fInfo =
                 new NativeMethods.FLASHWINFO
             {
-                hwnd = (NativeWindow)window ?? App.LocalMainWindow as Window,
+                hwnd = (NativeWindow)window ?? (Window)App.LocalMainWindow,
                 dwFlags = NativeMethods.FLASHW_ALL,
                 uCount = (uint)(Once ? 1 : 7),
                 dwTimeout = 75,

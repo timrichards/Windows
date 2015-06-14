@@ -8,11 +8,9 @@
 - large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
 - Why are some folders white? Why do some folders not say they're duplicated?
 
-- Don't base progress on path and nickname
-- UIthread on Show(); ShowDialog(); and other atomics: remove enveloping calls
 - check properties that are only supposed to be set once to true: make them Set methods
 - Allow method chaining: return this instead of void
-- reading more of the file or get a spread of data to increase match likelihood
+- read more of the file or get a spread of data to increase match likelihood
 - Check the use of reflection in loops: is operator. as operator not reflection?
 - Remove WidthListingFile and redo the ListingFile setter to internal - same goes for progress dialog though
 - Try to remove MahApps dependency

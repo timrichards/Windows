@@ -30,22 +30,10 @@
         <Setter Property="HorizontalAlignment" Value="Left"/>
     </Style>
     
-    <Style TargetType="{x:Type ListView}" BasedOn="{StaticResource {x:Type ListView}}">
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="ItemsSource" Value="{Binding Items}" />
-        <!-- troublemaker -->
-        <Setter Property="IsSynchronizedWithCurrentItem" Value="True" />
-        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
-    </Style>
-    
     <Style TargetType="GridViewColumnHeader" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
         <Setter Property="HorizontalContentAlignment" Value="Left" />
     </Style>
-    
-    <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
-        <Setter Property="Foreground" Value="Black" />
-    </Style>
-    
+
     <Style x:Key="styleBorder" TargetType="{x:Type Border}">
         <Setter Property="Margin" Value="0,0,0,2" />
         <Setter Property="VerticalAlignment" Value="Stretch" />

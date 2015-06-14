@@ -8,8 +8,8 @@ namespace DoubleFile
     class LV_ProgressVM : ListViewVM_Base<LVitem_ProgressVM>
     {
         // queried by ObservableObject but not used for progress bar
-        public string WidthNickname { get { return SCW; } }                         // franken all NaN
-        public string WidthSourcePath { get { return SCW; } }
+        public string WidthBigLabel { get { return SCW; } }                         // franken all NaN
+        public string WidthSmallKeyLabel { get { return SCW; } }
         public string WidthProgress { get { return SCW; } }
         public string WidthIndeterminate { get { return SCW; } }
         public string WidthProgressState { get { return SCW; } }

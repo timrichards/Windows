@@ -30,7 +30,7 @@ namespace DoubleFile
         bool _bAborted = false;
 
         internal
-            WinProgress(IEnumerable<string> astrNicknames, IEnumerable<string> astrPaths, Action<WinProgress> initClient)
+            WinProgress(IEnumerable<string> astrBigLabels, IEnumerable<string> astrSmallKeyLabels, Action<WinProgress> initClient)
         {
             InitializeComponent();
 
@@ -49,7 +49,6 @@ namespace DoubleFile
                 .Subscribe(x =>
             {
                 MinHeight = MaxHeight = ActualHeight;
-                MBoxStatic.Restart();
                 initClient(this);
             });
 
@@ -59,7 +58,7 @@ namespace DoubleFile
             Observable.FromEventPattern<CancelEventArgs>(this, "Closing")
                 .Subscribe(args => Window_Closing(args.EventArgs));
 
-            _lv.Add(astrNicknames.Zip(astrPaths, (a, b) => Tuple.Create(a, b)));
+            _lv.Add(astrBigLabels.Zip(astrSmallKeyLabels, (a, b) => Tuple.Create(a, b)));
         }
 
         internal WinProgress
@@ -100,9 +99,9 @@ namespace DoubleFile
         }
 
         internal WinProgress
-            SetError(string strPath, string strError)
+            SetError(string strSmallKeyLabel, string strError)
         {
-            if (false == _lv[strPath].FirstOnlyAssert(lvItem => lvItem.SetError(strError)))
+            if (false == _lv[strSmallKeyLabel].FirstOnlyAssert(lvItem => lvItem.SetError(strError)))
                 MBoxStatic.Assert(99956, false);
 
             return this;

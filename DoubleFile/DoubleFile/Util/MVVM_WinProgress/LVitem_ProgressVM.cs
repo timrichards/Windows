@@ -8,9 +8,9 @@ namespace DoubleFile
     class LVitem_ProgressVM : ListViewItemVM_Base
     {
         public string
-            Nickname { get { return marr[0]; } private set { SetProperty(0, value); } }
+            BigLabel { get { return marr[0]; } private set { SetProperty(0, value); } }
         public string
-            SourcePath { get { return marr[1]; } private set { SetProperty(1, value); } }
+            SmallKeyLabel { get { return marr[1]; } private set { SetProperty(1, value); } }
         public double
             Progress { get; internal set; }
 

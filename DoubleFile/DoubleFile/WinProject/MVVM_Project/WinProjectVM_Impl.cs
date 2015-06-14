@@ -111,7 +111,7 @@ namespace DoubleFile
                     continue;
                 }
 
-                _lvVM.NewItem(lvItemVolumeTemp);
+                _lvVM.Add(lvItemVolumeTemp);
                 _lvVM.Unsaved = true;
                 break;
             }
@@ -178,7 +178,7 @@ namespace DoubleFile
                     _lvVM.AlreadyInProject(strFilename, bQuiet: true))
                 {
                     lock (sbAlreadyInProject)
-                        sbAlreadyInProject.Append("• ").Append(System.IO.Path.GetFileName(strFilename)).Append("\n");
+                        sbAlreadyInProject.Append("• ").Append(Path.GetFileName(strFilename)).Append("\n");
 
                     return;   // from lambda
                 }
@@ -194,7 +194,7 @@ namespace DoubleFile
                     bMultiBad = (0 < sbBadFiles.Length);
 
                     lock (sbBadFiles)
-                        sbBadFiles.Append("• ").Append(System.IO.Path.GetFileName(strFilename)).Append("\n");
+                        sbBadFiles.Append("• ").Append(Path.GetFileName(strFilename)).Append("\n");
                 }
             });
 
@@ -221,7 +221,7 @@ namespace DoubleFile
                         return false;   // from lambda
                     }
 
-                    return Util.UIthread(() => _lvVM.NewItem(lvItem)) || current;  // from lambda
+                    return Util.UIthread(() => _lvVM.Add(lvItem)) || current;  // from lambda
                 });
             }
 

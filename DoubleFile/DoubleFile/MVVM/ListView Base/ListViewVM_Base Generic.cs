@@ -4,11 +4,13 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    abstract class ListViewVM_Base<T> : ListViewVM_Base //, IEquatable<ListViewVM_GenericBase<T>>
+    abstract class ListViewVM_Base<T> : ListViewVM_Base
         where T : ListViewItemVM_Base
     {
-        internal Func<IEnumerable<T>> Selected = () => { DesignModeOK(); return new T[] { }; };
-        internal IEnumerable<T> ItemsCast { get { return Items.Cast<T>(); } }
+        internal Func<IEnumerable<T>>
+            Selected = () => { DesignModeOK(); return new T[] { }; };
+        internal IEnumerable<T>
+            ItemsCast { get { return Items.Cast<T>(); } }
 
         internal virtual IEnumerable<T> this[string s_in]
         {

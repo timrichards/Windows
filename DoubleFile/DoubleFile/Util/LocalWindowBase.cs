@@ -165,7 +165,7 @@ namespace DoubleFile
             }
 
             if ((false == this is LocalMbox) &&
-                "" + Tag != MainWindow.DarkWindowClass)
+                (Tag != MainWindow.DarkWindowClass))
             {
                 MBoxStatic.Restart();
             }

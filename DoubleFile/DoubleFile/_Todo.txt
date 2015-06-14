@@ -1,7 +1,7 @@
 ﻿- show messagbox title
 - store last selected file in App
 - remove save listings link when listings to save are removed
-- message box shows up blank on rare occasion
+- message box shows up blank > 1 out of 10 times
 - stop the auto horizontal scrolling - solve it by selecting first column
 - not fixed: First tree view item is bold and the wrong forecolors, incl highlighted - treeview shouldn't have a selected item.
 - New Listing File dialog flashes when system choose folder dialog is shown
@@ -15,7 +15,7 @@
 - Allow method chaining: return this instead of void
 - reading more of the file or get a spread of data to increase match likelihood
 - Check the use of reflection in loops: is operator. as operator not reflection?
-- Remove WidthListingFile and redo the ListingFile setter to internal
+- Remove WidthListingFile and redo the ListingFile setter to internal - same goes for progress dialog though
 - Try to remove MahApps dependency
 
 - rollover highlight project image button text
@@ -45,7 +45,7 @@
 - what C# features don't translate well to other languages like C++? is operator?
 - all threads are background as of 6/12/15
 
-99936 99935
+99935
 99933 99932 99931 99930 99929 99928
 99926 99925
 99919

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 using System.Windows.Threading;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -16,12 +17,14 @@ namespace DoubleFile
         public ObservableCollection<ListViewItemVM_Base>
             Items { get { return _items; } }
         ObservableCollection<ListViewItemVM_Base> _items = new ObservableCollection<ListViewItemVM_Base>();
-        internal void ClearItems() { _items = new ObservableCollection<ListViewItemVM_Base>(); RaisePropertyChanged("Items"); }
+        internal void
+            ClearItems() { _items = new ObservableCollection<ListViewItemVM_Base>(); RaisePropertyChanged("Items"); }
 
         internal abstract int
             NumCols { get; }
 
-        internal void Add(ListViewItemVM_Base item, bool bQuiet = false)
+        internal void
+            Add(ListViewItemVM_Base item, bool bQuiet = false)
         {
             item.LVVM = this;
             _items.Add(item);
@@ -30,18 +33,14 @@ namespace DoubleFile
                 RaiseItems();
         }
 
-        internal virtual bool
-            Add(string[] arrStr, bool bQuiet = false) { MBoxStatic.Assert(99999, false); return false; }
-        internal virtual bool
-            Add(IEnumerable<string[]> laStr, bool bQuiet = false) { MBoxStatic.Assert(99994, false); return false; }
-
-        internal void Add(IEnumerable<ListViewItemVM_Base> lsItems, bool bQuiet = false, Func<bool> Cancel = null)
+        internal void Add<T>(IEnumerable<T> ieItems, bool bQuiet = false, Func<bool> Cancel = null)
+            where T : ListViewItemVM_Base
         {
             var dt = DateTime.Now;
             var nCounter = 0;
             var blockingFrame = new DispatcherFrame(true) { Continue = true };
 
-            foreach (var item in lsItems)
+            foreach (var item in ieItems)
             {
                 if ((null != Cancel) &&
                     Cancel())
@@ -71,18 +70,6 @@ namespace DoubleFile
             if (false == bQuiet)
                 RaiseItems();
         }
-
-        //internal void Add<T>(IEnumerable<T> lsItems, bool bQuiet = false)
-        //    where T : ListViewItemVM_Base, new()
-        //{
-        //    foreach (var item in lsItems)
-        //        Add(new T(item), bQuiet: true);
-
-        //    if (bQuiet == false)
-        //    {
-        //        RaiseItems();
-        //    }
-        //}
 
         static internal string SCW = "" + double.NaN;     // frankenhoek
 

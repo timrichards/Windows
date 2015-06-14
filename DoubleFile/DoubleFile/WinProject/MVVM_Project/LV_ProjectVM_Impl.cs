@@ -45,9 +45,7 @@ namespace DoubleFile
             if (null == lvProjectVM)
                 return;
 
-            foreach (var lvItemVM in lvProjectVM.ItemsCast)
-                Add(new LVitem_ProjectVM(lvItemVM), bQuiet: true);
-
+            Add(lvProjectVM.ItemsCast.Select(lvItemVM => new LVitem_ProjectVM(lvItemVM)), bQuiet: true);
             _unsaved = lvProjectVM.Unsaved;
             RaisePropertyChanged("Visible");
         }
@@ -137,15 +135,14 @@ namespace DoubleFile
             return false;
         }
 
-        internal bool NewItem(LVitem_ProjectVM lvItem, bool bQuiet = false)
+        internal new void Add(ListViewItemVM_Base item, bool bQuiet = false)
         {
-            return this.Add(lvItem.StringValues, bQuiet);
+            // making sure that LVitem_ProjectVM doesn't get interpreted as ListViewItemVM_Base
+            MBoxStatic.Assert(99936, false);
         }
 
-        internal override bool Add(string[] arrStr, bool bQuiet = false)
+        internal bool Add(LVitem_ProjectVM lvItem, bool bQuiet = false)
         {
-            var lvItem = new LVitem_ProjectVM(arrStr);
-
             if (AlreadyInProject(lvItem.ListingFile))
                 return false;
 

@@ -13,7 +13,7 @@ namespace DoubleFile
 {
     public partial class MainWindow
     {
-        internal const string DarkWindowClass = "DarkWindow";
+        internal static object DarkWindowClass = "DarkWindow";
 
         class DarkWindow : LocalWindowBase
         {

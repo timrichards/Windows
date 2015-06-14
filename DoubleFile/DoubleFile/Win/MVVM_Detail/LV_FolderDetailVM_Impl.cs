@@ -29,34 +29,31 @@ namespace DoubleFile
 
             Util.UIthread(() =>
             {
-                foreach (var ieLine in tuple.Item1)
-                    Add(new LVitem_FolderDetailVM(ieLine.ToList()), bQuiet: true);
+                var ieDetail =
+                    tuple.Item1
+                    .Select(ieLine => new LVitem_FolderDetailVM(ieLine.ToList()));
 
                 var strFG_Description = UtilColor.Description[tuple.Item2.ForeColor];
                 var strBG_Description = UtilColor.Description[tuple.Item2.BackColor];
 
                 if (false == string.IsNullOrEmpty(strFG_Description))
                 {
-                    Add(new LVitem_FolderDetailVM(new[] { "", strFG_Description })
-                    {
-                        Foreground = tuple.Item2.Foreground
-                    }, bQuiet: true);
+                    ieDetail = ieDetail.Concat(new[]
+                    { new LVitem_FolderDetailVM(new[] { "", strFG_Description }) { Foreground = tuple.Item2.Foreground } });
                 }
 
                 if (false == string.IsNullOrEmpty(strBG_Description))
                 {
-                    Add(new LVitem_FolderDetailVM(new[] { "", strBG_Description })
-                    {
-                        Background = tuple.Item2.Background
-                    }, bQuiet: true);
+                    ieDetail = ieDetail.Concat(new[]
+                    { new LVitem_FolderDetailVM(new[] { "", strBG_Description }) { Background = tuple.Item2.Background } });
                 }
 #if DEBUG
-                Add(new LVitem_FolderDetailVM(new[] { "Hash Parity", "" + tuple.Item2.NodeDatum.HashParity }), bQuiet: true);
+                ieDetail = ieDetail.Concat(new[]
+                { new LVitem_FolderDetailVM(new[] { "Hash Parity", "" + tuple.Item2.NodeDatum.HashParity }) });
 #endif
+                Title = tuple.Item2.Text;
+                Add(ieDetail);
             });
-
-            Title = tuple.Item2.Text;
-            RaiseItems();
         }
 
         public void Dispose()

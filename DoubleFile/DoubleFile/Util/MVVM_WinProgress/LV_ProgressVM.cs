@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -14,26 +15,19 @@ namespace DoubleFile
         public string WidthProgressState { get { return SCW; } }
         public string WidthRemaining { get { return SCW; } }
 
-        internal override bool Add(IEnumerable<string[]> ieStr, bool bQuiet)
+        internal void Add(IEnumerable<Tuple<string, string>> ieStr)
         {
-            MBoxStatic.Assert(99945, false);
-            return false;
-        }
-
-        internal bool Add(IEnumerable<Tuple<string, string>> ieStr)
-        {
-            foreach (var tuple in ieStr)
-            {
-                if (false == this[tuple.Item2].IsEmpty())
+            base.Add(ieStr
+                .Select(tuple => 
                 {
-                    MBoxStatic.Assert(99955, false);
-                    return false;
-                }
+                    if (false == this[tuple.Item2].IsEmpty())
+                    {
+                        MBoxStatic.Assert(99955, false);
+                    }
 
-                base.Add(new LVitem_ProgressVM(this, new[] { tuple.Item1, tuple.Item2 }), bQuiet: true);
-            }
-
-            return true;
+                    return new LVitem_ProgressVM(this, new[] { tuple.Item1, tuple.Item2 });
+                }),
+                bQuiet: true);      // not an real listviewer
         }
 
         internal override int NumCols { get { return LVitem_ProgressVM.NumCols_; } }

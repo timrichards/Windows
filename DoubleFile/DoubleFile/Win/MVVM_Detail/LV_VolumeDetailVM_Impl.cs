@@ -28,12 +28,7 @@ namespace DoubleFile
                 return;
 
             Util.UIthread(() =>
-            {
-                foreach (var ieLine in tuple.Item1)
-                    Add(new LVitem_VolumeDetailVM(ieLine.ToList()), bQuiet: true);
-            });
-
-            RaiseItems();
+                Add(tuple.Item1.Select(ieLine => new LVitem_VolumeDetailVM(ieLine.ToList()))));
         }
 
         public void Dispose()

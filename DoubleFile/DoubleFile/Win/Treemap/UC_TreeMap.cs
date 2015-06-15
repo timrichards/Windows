@@ -136,14 +136,18 @@ namespace DoubleFile
         {
             Util.LocalDispose(_lsDisposable);
 
-            if (null != _bg)
-                _bg.Dispose();
+            Util.ThreadMake(() =>
+            {
+                if (null != _bg)
+                    _bg.Dispose();
 
-            _bg = null;
-            WinTooltip.CloseTooltip();
-            _deepNodeDrawn = null;
-            _selChildNode = null;
-            _prevNode = null;
+                _bg = null;
+                WinTooltip.CloseTooltip();
+                _deepNodeDrawn = null;
+                _selChildNode = null;
+                _prevNode = null;
+            });
+
             base.Dispose(disposing);
         }
 

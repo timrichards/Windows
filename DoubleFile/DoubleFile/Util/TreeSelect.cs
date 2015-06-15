@@ -39,10 +39,7 @@ namespace DoubleFile
             _dictVolumeInfo = LocalTV.DictVolumeInfo;
             _bCompareMode = bCompareMode;
             _bSecondComparePane = bSecondComparePane;
-
-            (_thread = new Thread(() => Go(treeNode, strFile, nInitiator)) { IsBackground = true })
-                .Start();
-
+            _thread = Util.ThreadMake(() => Go(treeNode, strFile, nInitiator));
             return true;
         }
 

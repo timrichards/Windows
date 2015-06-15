@@ -59,16 +59,14 @@ namespace DoubleFile
             if (null == lsDuplicates)
                 return;
 
-            new Thread(() => 
+            Util.ThreadMake(() => 
             {
                 try
                 {
                     TreeFileSelChanged(lsDuplicates, ieFileLine);
                 }
                 catch (OperationCanceledException) { }
-            })
-                 { IsBackground = true }
-                 .Start();
+            });
         }
 
         void TreeFileSelChanged(IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates, IEnumerable<string> ieFileLine)

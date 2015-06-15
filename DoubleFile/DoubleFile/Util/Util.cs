@@ -18,13 +18,11 @@ namespace DoubleFile
         {
             var blockingFrame = new DispatcherFrame(true) { Continue = true };
 
-            new Thread(() =>
+            ThreadMake(() =>
             {
                 Thread.Sleep(napTime);
                 blockingFrame.Continue = false;
-            })
-                { IsBackground = true }
-                .Start();
+            });
 
             Dispatcher.PushFrame(blockingFrame);
         }
@@ -99,20 +97,25 @@ namespace DoubleFile
             var lsDisposable = ieDisposable.ToList();
             var cts = new CancellationTokenSource();
 
-            Observable.Timer(TimeSpan.FromMilliseconds(250)).Timestamp()
-                .Subscribe(x => cts.Cancel());
-
-            var thread = new Thread(() =>
+            var thread = ThreadMake(() =>
             {
                 Parallel.ForEach(lsDisposable, new ParallelOptions { CancellationToken = cts.Token },
                     d => d.Dispose());
-            }) 
-                { IsBackground = true };
+            });
 
-            Observable.Timer(TimeSpan.FromMilliseconds(500))
+            Observable.Timer(TimeSpan.FromMilliseconds(250)).Timestamp()
+                .Subscribe(x => cts.Cancel());
+
+            Observable.Timer(TimeSpan.FromMilliseconds(500)).Timestamp()
                 .Subscribe(x => thread.Abort());
+        }
+
+        static internal Thread ThreadMake(ThreadStart doSomething)
+        {
+            var thread = new Thread(doSomething) { IsBackground = true };
 
             thread.Start();
+            return thread;
         }
 
         static internal void UIthread(Action action, bool bBlock = true)

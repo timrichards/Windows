@@ -45,9 +45,7 @@ namespace DoubleFile
 
         internal SaveDirListings DoThreadFactory()
         {
-            (_thread = new Thread(Go) { IsBackground = true })
-                .Start();
-
+            _thread = Util.ThreadMake(Go);
             return this;
         }
 

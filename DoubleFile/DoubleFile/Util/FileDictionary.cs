@@ -65,10 +65,7 @@ namespace DoubleFile
             _callbackWR = callbackWR;
             _DictFiles = null;
             IsAborted = false;
-
-            (_thread = new Thread(Go) { IsBackground = true })
-                .Start();
-
+            _thread = Util.ThreadMake(Go);
             return this;
         }
 

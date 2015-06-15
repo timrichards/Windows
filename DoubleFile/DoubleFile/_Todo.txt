@@ -1,13 +1,14 @@
-﻿- show messagbox title
-- store last selected file in App
-- remove save listings link when listings to save are removed
-- message box shows up blank > 1 out of 10 times
+﻿- message box shows up blank > 1 out of 10 times
 - stop the auto horizontal scrolling - solve it by selecting first column
 - not fixed: First tree view item is bold and the wrong forecolors, incl highlighted - treeview shouldn't have a selected item.
 - New Listing File dialog flashes when system choose folder dialog is shown
 - large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
 - Why are some folders white? Why do some folders not say they're duplicated?
 
+- store last selected file in App
+- remove save listings link when listings to save are removed
+- open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.
+- show messagbox title
 - is the x in Subscribe(x => being used anywhere?
 - check properties that are only supposed to be set once to true: make them Set methods
 - Allow method chaining: return this instead of void

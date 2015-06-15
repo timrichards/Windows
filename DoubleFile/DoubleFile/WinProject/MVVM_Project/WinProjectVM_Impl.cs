@@ -134,7 +134,7 @@ namespace DoubleFile
             var strPlural = (1 < dlg.FileNames.Length) ? "s" : "";
 
             new WinProgress(new[] { "Opening listing file" + strPlural }, new[] { "" }, winProgress =>
-                new Thread(() =>
+                Util.ThreadMake(() =>
                 {
                     if (OpenListingFiles(dlg.FileNames, userCanceled: () => _bUserCanceled))
                         _lvVM.Unsaved = true;
@@ -142,9 +142,7 @@ namespace DoubleFile
                     winProgress
                         .SetAborted()
                         .Close();
-                })
-                     { IsBackground = true }
-                     .Start())
+                }))
             {
                 WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
             }

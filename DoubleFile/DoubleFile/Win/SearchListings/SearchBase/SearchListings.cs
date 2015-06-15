@@ -84,9 +84,7 @@ namespace DoubleFile
 
         internal SearchListings DoThreadFactory()
         {
-            (_thread = new Thread(Go) { IsBackground = true })
-                .Start();
-
+            _thread = Util.ThreadMake(Go);
             return this;
         }
 

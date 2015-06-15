@@ -167,7 +167,7 @@ namespace DoubleFile
 
             WindowClosingCallback = null;
 
-            new Thread(() =>
+            Util.ThreadMake(() =>
             {
                 if (Util.UIthread(() => windowClosing.ConfirmClose()))
                 {
@@ -178,9 +178,7 @@ namespace DoubleFile
                 {
                     WindowClosingCallback = new WeakReference<IWinProgressClosing>(windowClosing);
                 }
-            })
-                { IsBackground = true }
-                .Start();
+            });
         }
 
         readonly LV_ProgressVM

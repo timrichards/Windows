@@ -103,7 +103,8 @@ namespace DoubleFile
                 Focusable = false,
                 IsEnabled = false
             }
-                .SetRect(bounds);
+                .SetRect(new Rect());
+              //.SetRect(bounds);        // mahApps seems to have slowed window creation to a crawl
 
             using (var bitmap = new Drawing.Bitmap(bounds.Width, bounds.Height))
             {

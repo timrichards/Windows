@@ -63,8 +63,7 @@ namespace DoubleFile
 
         public void Dispose()
         {
-            foreach (var d in _lsDisposable)
-                d.Dispose();
+            Util.LocalDispose(_lsDisposable);
         }
 
         void TreeSelect_FolderDetailUpdated(Tuple<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>, int> initiatorTuple)

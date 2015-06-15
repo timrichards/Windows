@@ -99,9 +99,7 @@ namespace DoubleFile
                 TabledString<Tabled_Folders>.DropRef();
             }
 
-            foreach (var d in Instance._lsDisposable)
-                d.Dispose();
-
+            Util.LocalDispose(Instance._lsDisposable);
             Instance = null;
         }
 

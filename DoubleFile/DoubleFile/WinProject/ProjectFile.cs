@@ -35,9 +35,7 @@ namespace DoubleFile
 
             var bRet = projectFile.OpenProject_(strProjectFilename, openListingFilesWR, bClearItems);
 
-            foreach (var d in projectFile._lsDisposable)
-                d.Dispose();
-
+            Util.LocalDispose(projectFile._lsDisposable);
             return bRet;
         }
 
@@ -50,9 +48,7 @@ namespace DoubleFile
 
             var bRet = projectFile.SaveProject_(lvProjectVM, strProjectFilename);
 
-            foreach (var d in projectFile._lsDisposable)
-                d.Dispose();
-
+            Util.LocalDispose(projectFile._lsDisposable);
             return bRet;
         }
 

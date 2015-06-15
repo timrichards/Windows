@@ -59,6 +59,12 @@ namespace DoubleFile
             if (null == App.TopWindow)
                 App.TopWindow = this;
 
+            Observable.FromEventPattern(this, "SourceInitialized")
+                .Subscribe(x =>
+                HwndSource
+                    .FromHwnd((NativeWindow)this)
+                    .AddHook(WndProc));
+
             Observable.FromEventPattern(this, "Activated")
                 .Subscribe(x =>
             {
@@ -91,10 +97,6 @@ namespace DoubleFile
             {
                 LocalDidOpen = true;
                 LocalIsClosed = false;
-
-                HwndSource
-                    .FromHwnd((NativeWindow)this)
-                    .AddHook(WndProc);
             });
 
             Observable.FromEventPattern(this, "Closing")
@@ -109,7 +111,7 @@ namespace DoubleFile
 
         IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            //if (this is MainWindow)
+            //if (this is MainWindow)       // future proof
             //    return IntPtr.Zero;
 
             var command = NativeMethods.Command(wParam);

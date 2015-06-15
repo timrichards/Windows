@@ -1,14 +1,29 @@
 ﻿<local:LocalWindowBase x:Class="DoubleFile.LocalMbox"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
         xmlns:local="clr-namespace:DoubleFile"
         Title="Double File" Height="170" MinHeight="170"
         SizeToContent="Height">
-    <i:Interaction.Behaviors>
-        <Behaviours:BorderlessWindowBehavior/>
-    </i:Interaction.Behaviors>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <EventTrigger.Actions>
+                <BeginStoryboard>
+                    <Storyboard BeginTime="0" Duration="0:0:0.2">
+                        <DoubleAnimation Storyboard.TargetProperty="(Window.Opacity)" From="0" To="1" BeginTime="0:0:0" Duration="0:0:0.2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger.Actions>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="Window.Unloaded">
+            <EventTrigger.Actions>
+                <BeginStoryboard>
+                    <Storyboard BeginTime="0" Duration="0:0:0.2">
+                        <DoubleAnimation Storyboard.TargetProperty="(Window.Opacity)" From="1" To="0" BeginTime="0:0:0" Duration="0:0:0.2"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger.Actions>
+        </EventTrigger>
+    </Window.Triggers>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="28"/>

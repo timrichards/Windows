@@ -60,6 +60,12 @@ namespace DoubleFile
             if (null == App.TopWindow)
                 App.TopWindow = this;
 
+            Observable.FromEventPattern(this, "SourceInitialized")
+                .Subscribe(x =>
+                HwndSource
+                    .FromHwnd((NativeWindow)this)
+                    .AddHook(WndProc));
+
             Observable.FromEventPattern(this, "Activated")
                 .Subscribe(x =>
             {
@@ -92,10 +98,6 @@ namespace DoubleFile
             {
                 LocalDidOpen = true;
                 LocalIsClosed = false;
-
-                HwndSource
-                    .FromHwnd((NativeWindow)this)
-                    .AddHook(WndProc);
             });
 
             Observable.FromEventPattern(this, "Closing")

@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -89,6 +92,27 @@ namespace DoubleFile
                 return null;
 
             return "" + App.Current.Resources[key];
+        }
+
+        static internal void LocalDispose(IEnumerable<IDisposable> ieDisposable)
+        {
+            var lsDisposable = ieDisposable.ToList();
+            var cts = new CancellationTokenSource();
+
+            Observable.Timer(TimeSpan.FromMilliseconds(250)).Timestamp()
+                .Subscribe(x => cts.Cancel());
+
+            var thread = new Thread(() =>
+            {
+                Parallel.ForEach(lsDisposable, new ParallelOptions { CancellationToken = cts.Token },
+                    d => d.Dispose());
+            }) 
+                { IsBackground = true };
+
+            Observable.Timer(TimeSpan.FromMilliseconds(500))
+                .Subscribe(x => thread.Abort());
+
+            thread.Start();
         }
 
         static internal void UIthread(Action action, bool bBlock = true)

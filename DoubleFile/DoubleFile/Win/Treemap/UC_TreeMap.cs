@@ -134,8 +134,7 @@ namespace DoubleFile
 
         protected override void Dispose(bool disposing)
         {
-            foreach (var d in _lsDisposable)
-                d.Dispose();
+            Util.LocalDispose(_lsDisposable);
 
             if (null != _bg)
                 _bg.Dispose();

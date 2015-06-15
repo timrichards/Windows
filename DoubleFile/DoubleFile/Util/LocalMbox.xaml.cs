@@ -61,6 +61,8 @@ namespace DoubleFile
         internal LocalMbox(string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
         {
             InitializeComponent();
+            WindowStyle = WindowStyle.None;
+            AllowsTransparency = true;
 
             var rc = MainWindow.WithMainWindow(Win32Screen.GetWindowRect);
 

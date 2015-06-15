@@ -29,8 +29,7 @@ namespace DoubleFile
 
         public void Dispose()
         {
-            foreach (var d in _lsDisposable)
-                d.Dispose();
+            Util.LocalDispose(_lsDisposable);
         }
 
         void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int> initiatorTuple)

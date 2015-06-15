@@ -19,15 +19,15 @@ namespace DoubleFile
 
         internal void Add(IEnumerable<Tuple<string, string>> ieStr)
         {
-            base.Add(ieStr
+            base.Add(
+                ieStr
                 .Select(tuple => 
-                {
-                    if (false == this[tuple.Item2].IsEmpty())
-                        MBoxStatic.Assert(99955, false);
+            {
+                if (false == this[tuple.Item2].IsEmpty())
+                    MBoxStatic.Assert(99955, false);
 
-                    return new LVitem_ProgressVM(this, new[] { tuple.Item1, tuple.Item2 });
-                }),
-                bQuiet: true);      // not a real listviewer
+                return new LVitem_ProgressVM(this, new[] { tuple.Item1, tuple.Item2 });
+            }));
         }
 
         internal LV_ProgressVM()

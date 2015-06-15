@@ -33,6 +33,8 @@ namespace DoubleFile
             WinProgress(IEnumerable<string> astrBigLabels, IEnumerable<string> astrSmallKeyLabels, Action<WinProgress> initClient)
         {
             InitializeComponent();
+            WindowStyle = WindowStyle.None;
+            AllowsTransparency = true;
 
             var rc = MainWindow.WithMainWindow(Win32Screen.GetWindowRect);
 

@@ -45,9 +45,9 @@ namespace DoubleFile
                 return null;
 
             var key = new FileKeyTuple(asFileLine[10], ulong.Parse(asFileLine[7]));
-            IEnumerable<int> lsDupes = null;
+            var lsDupes = _DictFiles.TryGetValue(key);
 
-            if (false == _DictFiles.TryGetValue(key, out lsDupes))
+            if (null == lsDupes)
                 return null;
 
             return
@@ -149,9 +149,9 @@ namespace DoubleFile
                         MBoxStatic.Assert(99907, _DictItemNumberToLV[GetLVitemProjectVM(lookup)] == lvItem);
                         MBoxStatic.Assert(99908, GetLineNumber(lookup) == tuple.Item1);
 #endif
-                        List<int> ls = null;
+                        var ls = dictFiles.TryGetValue(key);
 
-                        if (dictFiles.TryGetValue(key, out ls))
+                        if (null != ls)
                         {
                             lock (ls)                      // jic sorting downstream too at A
                             {

@@ -113,11 +113,11 @@ namespace DoubleFile
                 var nodeDatum = treeNode.NodeDatum;
 
                 if (null == nodeDatum)
-                    MBoxStatic.Assert(99900, false);    // This check is new 3/7/15 as safety
+                    MBoxStatic.Assert(99900, false);    // This check is new 3/7/15
 
-                List<LocalTreeNode> lsTreeNodes = null;
+                var lsTreeNodes = dictNodes.TryGetValue(nodeDatum.Key);
 
-                if (false == dictNodes.TryGetValue(nodeDatum.Key, out lsTreeNodes))
+                if (null == lsTreeNodes)
                     continue;
 
                 if (_bLoose)
@@ -175,7 +175,7 @@ namespace DoubleFile
 
                         var nodeDatum = treeNode_A.NodeDatum;
 
-                        if (null == nodeDatum)      // added 2/13/15 as safety
+                        if (null == nodeDatum)      // added 2/13/15
                         {
                             MBoxStatic.Assert(99977, false);
                             return;
@@ -193,7 +193,7 @@ namespace DoubleFile
                         {
                             var nodeDatum = treeNode_A.NodeDatum;
 
-                            if (null == nodeDatum)      // added 2/13/15 as safety
+                            if (null == nodeDatum)      // added 2/13/15
                             {
                                 MBoxStatic.Assert(99976, false);
                                 return;
@@ -213,7 +213,7 @@ namespace DoubleFile
                     var treeNode = listNodes[0];
                     var nodeDatum = treeNode.NodeDatum;
 
-                    if (null == nodeDatum)      // added 2/13/15 as safety
+                    if (null == nodeDatum)      // added 2/13/15
                     {
                         MBoxStatic.Assert(99975, false);
                         return;
@@ -294,7 +294,7 @@ namespace DoubleFile
 
                     var nodeDatum = treeNode.NodeDatum;
 
-                    if (null == nodeDatum)      // added 2/13/15 as safety
+                    if (null == nodeDatum)      // added 2/13/15
                     {
                         MBoxStatic.Assert(99974, false);
                         return;
@@ -323,7 +323,7 @@ namespace DoubleFile
 
                 var nodeDatum = treeNode.NodeDatum;
 
-                if (null == nodeDatum)      // added 2/13/15 as safety
+                if (null == nodeDatum)      // added 2/13/15
                 {
                     MBoxStatic.Assert(99973, false);
                     return;
@@ -353,7 +353,7 @@ namespace DoubleFile
                 var lvItem = new LocalLVitem(treeNode.Text) { LocalTreeNode = treeNode };
                 var nodeDatum = treeNode.NodeDatum;
 
-                if (null == nodeDatum)      // added 2/13/15 as safety
+                if (null == nodeDatum)      // added 2/13/15
                 {
                     MBoxStatic.Assert(99972, false);
                     return;
@@ -400,7 +400,7 @@ namespace DoubleFile
 
                 var nodeDatum = treeNode.NodeDatum;
 
-                if (null == nodeDatum)      // added 2/13/15 as safety
+                if (null == nodeDatum)      // added 2/13/15
                 {
                     MBoxStatic.Assert(99971, false);
                     return;
@@ -467,14 +467,14 @@ namespace DoubleFile
             LocalTreeNode treeNode,
             LocalTreeNode rootClone = null)
         {
-            // neither rootClone nor nMaxLength are used at all (rootClone is used as a bool).
+            // neither rootClone nor nMaxLength are used at all (rootClone is used like a bool).
             // provisional.
 
             var nodeDatum = treeNode.NodeDatum;
 
             if (null == nodeDatum)
             {
-                MBoxStatic.Assert(99913, false);    // This check is new 2/23/15 as safety
+                MBoxStatic.Assert(99913, false);    // This check is new 2/23/15
                 return;
             }
 
@@ -493,9 +493,9 @@ namespace DoubleFile
             {
                 rootClone = treeNode;
 
-                List<LocalTreeNode> lsTreeNodes = null;
+                var lsTreeNodes = dictClones.TryGetValue(nodeDatum.Key);
 
-                if (dictClones.TryGetValue(nodeDatum.Key, out lsTreeNodes))
+                if (null != lsTreeNodes)
                 {
                     MBoxStatic.Assert(1305.6305, lsTreeNodes == listClones);
                     MBoxStatic.Assert(1305.6307, lsTreeNodes[0].ForeColor == treeNode.ForeColor);
@@ -507,13 +507,14 @@ namespace DoubleFile
                     // Test to see if clones are on separate volumes.
 
                     var rootNode = treeNode.Root();
-                    var rootNodeDatum = rootNode.NodeDatum as RootNodeDatum;
 
-                    if (null == rootNodeDatum)      // added 2/13/15 as safety, got hit on 5/4/15
+                    if (false == rootNode.NodeDatum is RootNodeDatum)      // added 2/13/15, got hit on 5/4/15
                     {
                         MBoxStatic.Assert(99970, false);
                         return;
                     }
+
+                    var rootNodeDatum = (RootNodeDatum)rootNode.NodeDatum;
 
                     MBoxStatic.Assert(1305.6308, UtilColor.Empty == treeNode.ForeColor);
                     treeNode.ForeColor = UtilColor.Firebrick;
@@ -530,13 +531,13 @@ namespace DoubleFile
                         if (rootNode == rootNode_A)
                             continue;
 
-                        var rootNodeDatum_A = (rootNode_A.NodeDatum as RootNodeDatum);
-
-                        if (null == rootNodeDatum_A)      // added 2/13/15 as safety, got hit on 5/4/15
+                        if (false == rootNode_A.NodeDatum is RootNodeDatum)      // added 2/13/15, got hit on 5/4/15
                         {
                             MBoxStatic.Assert(99969, false);
                             return;
                         }
+
+                        var rootNodeDatum_A = (RootNodeDatum)rootNode_A.NodeDatum;
 
                         if (false == string.IsNullOrWhiteSpace(rootNodeDatum.VolumeGroup) &&
                             (rootNodeDatum.VolumeGroup == rootNodeDatum_A.VolumeGroup))
@@ -553,7 +554,7 @@ namespace DoubleFile
                     {
                         var nodeDatum_A = subNode.NodeDatum;
 
-                        if (null == nodeDatum_A)      // added 2/13/15 as safety
+                        if (null == nodeDatum_A)      // added 2/13/15
                         {
                             MBoxStatic.Assert(99968, false);
                             return;
@@ -582,7 +583,7 @@ namespace DoubleFile
 
             do
             {
-                if (_dictIgnoreNodes.ContainsKeyA(treeNode))
+                if (null != _dictIgnoreNodes.TryGetValue(treeNode))
                     continue;
 
                 MBoxStatic.Assert(1305.6312, null != lvItem);

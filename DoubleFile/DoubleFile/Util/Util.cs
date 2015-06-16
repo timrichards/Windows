@@ -32,7 +32,17 @@ namespace DoubleFile
 
         static internal string DecodeAttributes(string strAttr)
         {
-            var nAttr = (FileAttributes)Convert.ToInt32(strAttr, 16);
+            var nAttr = default(FileAttributes);
+
+            try
+            {
+                nAttr = (FileAttributes)Convert.ToInt32(strAttr, 16);
+            }
+            catch (ArgumentException)
+            {
+                MBoxStatic.Assert(99933, false);
+            }
+
             var str = "";
 
             if ((nAttr & FileAttributes.ReparsePoint) != 0) str += " ReparsePoint";
@@ -47,15 +57,22 @@ namespace DoubleFile
 
             str = str.TrimStart();
 
-            if (str.Length == 0) str = strAttr;
-            else str += " (" + strAttr + ")";
+            if (str.Length == 0)
+                str = strAttr;
+            else
+                str += " (" + strAttr + ")";
 
             return str;
         }
 
         static internal string FormatSize(string in_str, bool bBytes = false)
         {
-            return FormatSize(ulong.Parse(in_str ?? "0"), bBytes);
+            ulong retVal = 0;
+
+            bool bSuccess = ulong.TryParse(in_str ?? "0", out retVal);
+
+            MBoxStatic.Assert(99935, bSuccess);
+            return FormatSize(retVal, bBytes);
         }
 
         static internal string FormatSize(ulong nLength, bool bBytes = false, bool bNoDecimal = false)
@@ -82,6 +99,20 @@ namespace DoubleFile
             }
 
             return "0 bytes";
+        }
+
+        static internal TMember WR<THolder, TMember>(WeakReference<THolder> wr, Func<THolder, TMember> getValue)
+            where THolder : class
+            where TMember : class
+        {
+            THolder holder = null;
+
+            wr.TryGetTarget(out holder);
+
+            return
+                (null != holder)
+                ? getValue(holder)
+                : null;
         }
 
         static internal string Localized(string key)
@@ -120,14 +151,14 @@ namespace DoubleFile
 
         static internal void UIthread(Action action, bool bBlock = true)
         {
-            var mainWindow = App.LocalMainWindow as Window;
-
             if (App.LocalExit ||
-                (null == mainWindow) ||
+                (false == App.LocalMainWindow is Window) ||
                 App.LocalMainWindow.LocalIsClosed)
             {
                 return;
             }
+
+            var mainWindow = (Window)App.LocalMainWindow;
 
             if ((null == mainWindow) ||
                 (null == mainWindow.Dispatcher) ||
@@ -157,56 +188,6 @@ namespace DoubleFile
                 }
             }
             catch (TaskCanceledException) { }
-        }
-
-        static internal T UIthread<T>(Func<T> action, Control owner = null, bool bBlock = true)
-        {
-            if (null == owner)
-            {
-                var mainWindow = App.LocalMainWindow as Window;
-
-                if (App.LocalExit ||
-                    (null == mainWindow) ||
-                    App.LocalMainWindow.LocalIsClosed)
-                {
-                    return default(T);
-                }
-
-                owner = mainWindow;
-            }
-
-            if ((null == owner) ||
-                (null == owner.Dispatcher) ||
-                owner.Dispatcher.HasShutdownStarted ||
-                owner.Dispatcher.HasShutdownFinished)
-            {
-                return default(T);
-            }
-
-            var retVal = default(T);
-
-            try
-            {
-                if (owner.Dispatcher.CheckAccess())
-                {
-                    retVal = action();
-                }
-                else
-                {
-                    var blockingFrame = new DispatcherFrame(true) { Continue = bBlock };
-
-                    owner.Dispatcher.Invoke(() =>      // cancellationToken? timeout?
-                    {
-                        retVal = action();
-                        blockingFrame.Continue = false;
-                    });
-
-                    Dispatcher.PushFrame(blockingFrame);
-                }
-            }
-            catch (TaskCanceledException) { }
-
-            return retVal;
         }
 
         static internal void Write(string str)

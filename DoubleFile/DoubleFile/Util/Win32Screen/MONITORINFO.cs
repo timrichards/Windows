@@ -26,7 +26,7 @@ namespace DoubleFile
         /// <summary>
         /// A RECT structure that specifies the work area rectangle of the display monitor that can be used by applications,
         /// expressed in virtual-screen coordinates. Windows uses this rectangle to maximize an application on the monitor.
-        /// The rest of the area in rcMonitor contains system windows such as the task bar and side bars.
+        /// The rest of the area in rcMonitor contains system windows like the task bar and side bars.
         /// Note that if the monitor is not the primary display monitor, some of the rectangle's coordinates may be negative values.
         /// </summary>
         internal RECT rcWork;

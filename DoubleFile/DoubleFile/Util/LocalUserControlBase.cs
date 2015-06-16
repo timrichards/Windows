@@ -39,7 +39,7 @@ namespace DoubleFile
             }
 
             var page = MainWindow.CurrentPage;
-            var content = Activator.CreateInstance(page.GetType()) as LocalUserControlBase;
+            var content = (LocalUserControlBase)Activator.CreateInstance(page.GetType());
 
             var window = new ExtraWindow
             {

@@ -220,7 +220,10 @@ namespace DoubleFile
                         return false;   // from lambda
                     }
 
-                    return Util.UIthread(() => _lvVM.Add(lvItem)) || current;  // from lambda
+                    bool bAdded = false;
+
+                    Util.UIthread(() => bAdded = _lvVM.Add(lvItem));
+                    return bAdded || current;  // from lambda
                 });
             }
 

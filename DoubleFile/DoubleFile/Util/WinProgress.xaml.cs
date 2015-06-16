@@ -169,7 +169,11 @@ namespace DoubleFile
 
             Util.ThreadMake(() =>
             {
-                if (Util.UIthread(() => windowClosing.ConfirmClose()))
+                bool bConfirmClose = false;
+
+                Util.UIthread(() => bConfirmClose = windowClosing.ConfirmClose());
+
+                if (bConfirmClose)
                 {
                     _bAborted = true;
                     base.Close();

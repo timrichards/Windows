@@ -18,10 +18,8 @@ namespace DoubleFile
             if (0 == nInitiator)
                 nInitiator = nOnNextAssertLoc;
 
-            Tuple<DateTime, WeakReference> o = null;
-
-            _lsSubjects.TryGetValue(nOnNextAssertLoc, out o);
-            T oldValue = default(T);
+            var o = _lsSubjects.TryGetValue(nOnNextAssertLoc);
+            var oldValue = default(T);
 
             if ((null != o) &&
                 (null != o.Item2) &&
@@ -129,18 +127,20 @@ namespace DoubleFile
             return (source.Count == 1);
         }
 
-        static internal bool ContainsKeyA<T1, T2>(this IDictionary<T1, T2> dict, T1 key)
+        static internal T2 TryGetValue<T1, T2>(this IReadOnlyDictionary<T1, T2> dict, T1 key) where T2 : class
         {
-            T2 outValue;
+            T2 outValue = null;
 
-            return dict.TryGetValue(key, out outValue);
+            dict.TryGetValue(key, out outValue);
+            return outValue;
         }
 
-        static internal bool ContainsKeyB<T1, T2>(this IReadOnlyDictionary<T1, T2> dict, T1 key)
+        static internal T2 TryGetValue<T1, T2>(this IDictionary<T1, T2> dict, T1 key) where T2 : class
         {
-            T2 outValue;
+            T2 outValue = null;
 
-            return dict.TryGetValue(key, out outValue);
+            dict.TryGetValue(key, out outValue);
+            return outValue;
         }
 
         static internal string ToPrintString(this object source)

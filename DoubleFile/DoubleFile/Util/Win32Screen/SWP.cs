@@ -48,7 +48,7 @@ namespace DoubleFile
             DoNotChangeOwnerZOrder = 0x0200,
             /// <summary>Does not redraw changes. If this flag is set, no repainting of any kind occurs. This applies to
             /// the client area, the nonclient area (including the title bar and scroll bars), and any part of the parent
-            /// window uncovered as a result of the window being moved. When this flag is set, the application must
+            /// window uncovered due to the window being moved. When this flag is set, the application must
             /// explicitly invalidate or redraw any parts of the window and parent window that need redrawing.</summary>
             /// <remarks>SWP_NOREDRAW</remarks>
             DoNotRedraw = 0x0008,

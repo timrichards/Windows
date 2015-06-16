@@ -210,7 +210,7 @@ namespace DoubleFile
     {
         public int CompareTo(object obj)
         {
-            var that = obj as PathBuilder;
+            var that = (PathBuilder)obj;
             
             for (var nIx = 0; ; ++nIx)
             {

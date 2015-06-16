@@ -58,9 +58,9 @@ namespace DoubleFile
 
                 nodeDatum.DirsWithFiles = datum.DirsWithFiles;
 
-                List<LocalTreeNode> lsTreeNodes = null;
+                var lsTreeNodes = _dictNodes.TryGetValue(nodeDatum.Key);
 
-                if (_dictNodes.TryGetValue(nodeDatum.Key, out lsTreeNodes))
+                if (null != lsTreeNodes)
                 {
                     lock (lsTreeNodes)
                         lsTreeNodes.Add(treeNode);
@@ -172,7 +172,7 @@ namespace DoubleFile
 
                     lock (_dictDriveInfo)
                     {
-                        if (_dictDriveInfo.ContainsKeyA(_volStrings.ListingFile))
+                        if (null != _dictDriveInfo.TryGetValue(_volStrings.ListingFile))
                         {
                             MBoxStatic.Assert(1301.2308, false);
                             _dictDriveInfo.Remove(_volStrings.ListingFile);

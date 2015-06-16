@@ -10,41 +10,40 @@ namespace DoubleFile
             Instance { get; private set; }
 
         static internal IEnumerable<LocalTreeNode>
-            AllNodes { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._allNodes : null; } }
+            AllNodes { get { return Util.WR(_wr, o => o._allNodes); } }
         LocalTreeNode[] _allNodes = null;
 
         static internal IEnumerable<LocalTreeNode>
-            RootNodes { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._rootNodes : null; } }
+            RootNodes { get { return Util.WR(_wr, o => o._rootNodes); } }
         LocalTreeNode[] _rootNodes = null;
         static readonly object _rootNodesSemaphore = new object();
 
         static internal LocalTreeNode
-            TopNode { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._topNode : null; } }
-        LocalTreeNode
-            _topNode = null;
+            TopNode { get { return Util.WR(_wr, o => o._topNode); } }
+        LocalTreeNode _topNode = null;
 
         static internal LocalTreeNode
             SelectedNode
         {
-            get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._selectedNode : null; }
-            set { var o = _weakReference.Target as LocalTV; if (null != o) o._selectedNode = value; }
+            get { return Util.WR(_wr, o => o._selectedNode); }
+            set { Util.WR(_wr, o => o._selectedNode = value); }
         }
         LocalTreeNode _selectedNode = null;
 
         static internal IDictionary<string, string>
-            DictVolumeInfo { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._dictVolumeInfo : null; } }
+            DictVolumeInfo { get { return Util.WR(_wr, o => o._dictVolumeInfo); } }
         readonly Dictionary<string, string> _dictVolumeInfo = new Dictionary<string, string>();
 
         static internal Tuple<IEnumerable<string>, string, LocalTreeNode, string>
-            TreeSelect_FileList { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._treeSelect_FileList : null; } }
+            TreeSelect_FileList { get { return Util.WR(_wr, o => o._treeSelect_FileList); } }
         Tuple<IEnumerable<string>, string, LocalTreeNode, string> _treeSelect_FileList = null;
 
         static internal Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>
-            TreeSelect_FolderDetail { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._treeSelect_FolderDetail : null; } }
+            TreeSelect_FolderDetail { get { return Util.WR(_wr, o => o._treeSelect_FolderDetail); } }
         Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode> _treeSelect_FolderDetail = null;
 
         static internal Tuple<IEnumerable<IEnumerable<string>>, string>
-            TreeSelect_VolumeDetail { get { var o = _weakReference.Target as LocalTV; return (null != o) ? o._treeSelect_VolumeDetail : null; } }
+            TreeSelect_VolumeDetail { get { return Util.WR(_wr, o => o._treeSelect_VolumeDetail); } }
         Tuple<IEnumerable<IEnumerable<string>>, string> _treeSelect_VolumeDetail = null;
 
         static internal bool FactoryCreate(LV_ProjectVM lvProjectVM)
@@ -58,9 +57,9 @@ namespace DoubleFile
             if (false == lvProjectVM.ItemsCast.Any(lvItem => lvItem.CanLoad))
                 return false;
 
-            _weakReference.Target =
+            _wr.SetTarget(
                 Instance =
-                new LocalTV(lvProjectVM);
+                new LocalTV(lvProjectVM));
 
             return Instance.DoTree();
         }
@@ -85,7 +84,7 @@ namespace DoubleFile
 
         static internal void LocalDispose()
         {
-            _weakReference.Target = null;
+            _wr.SetTarget(null);
 
             if (null == Instance)
             {
@@ -165,7 +164,7 @@ namespace DoubleFile
             _nCorrelateProgressDenominator = 0;
         List<IDisposable>
             _lsDisposable = new List<IDisposable>();
-        static readonly WeakReference
-            _weakReference = new WeakReference(null);
+        static readonly WeakReference<LocalTV>
+            _wr = new WeakReference<LocalTV>(null);
     }
 }

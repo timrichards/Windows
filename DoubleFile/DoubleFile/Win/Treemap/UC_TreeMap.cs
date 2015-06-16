@@ -190,7 +190,7 @@ namespace DoubleFile
                 {
                     var nodeDatum = TreeMapVM.TreeNode.NodeDatum;
 
-                    if (null == nodeDatum)      // added 2/13/15 as safety
+                    if (null == nodeDatum)      // added 2/13/15
                     {
                         MBoxStatic.Assert(99967, false);
                         return;     // from lambda
@@ -244,7 +244,7 @@ namespace DoubleFile
 
                 var nodeDatum_A = nodeRet.NodeDatum;
 
-                if (null == nodeDatum_A)      // added 2/13/15 as safety
+                if (null == nodeDatum_A)      // added 2/13/15
                 {
                     MBoxStatic.Assert(99923, false);
                     return;
@@ -373,7 +373,7 @@ namespace DoubleFile
             {
                 var nodeDatum = treeNode.NodeDatum;
 
-                if (null == nodeDatum)      // added 2/13/15 as safety
+                if (null == nodeDatum)      // added 2/13/15
                 {
                     MBoxStatic.Assert(99966, false);
                     return null;
@@ -508,7 +508,7 @@ namespace DoubleFile
 
             var nodeDatum = _deepNodeDrawn.NodeDatum;
 
-            if (null == nodeDatum)      // added 2/13/15 as safety
+            if (null == nodeDatum)      // added 2/13/15
             {
                 MBoxStatic.Assert(99965, false);
                 return;
@@ -705,7 +705,7 @@ namespace DoubleFile
 
             var nodeDatum = TreeMapVM.TreeNode.NodeDatum;
 
-            if (null == nodeDatum)      // added 2/13/15 as safety
+            if (null == nodeDatum)      // added 2/13/15
             {
                 MBoxStatic.Assert(99963, false);
                 return null;
@@ -745,7 +745,7 @@ namespace DoubleFile
 #endif
                 var nodeDatum = item.NodeDatum;
 
-                if (null == nodeDatum)      // added 2/13/15 as safety
+                if (null == nodeDatum)      // added 2/13/15
                 {
                     MBoxStatic.Assert(99962, false);
                     return;
@@ -775,7 +775,7 @@ namespace DoubleFile
 
                 if (bStart &&
                     (null == nodeDatum.TreeMapFiles) &&
-                    (false == (item is LocalTreeMapFileNode)))
+                    (false == item is LocalTreeMapFileNode))
                 {
                     nodeDatum.TreeMapFiles = GetFileList(item);
                 }
@@ -789,13 +789,13 @@ namespace DoubleFile
 
                     Util.Closure(() =>
                     {
-                        var rootNodeDatum = item.NodeDatum as RootNodeDatum;
-
                         if ((false == bStart) ||
-                            (null == rootNodeDatum))
+                            (false == item.NodeDatum is RootNodeDatum))
                         {
                             return;     // from lambda
                         }
+
+                        var rootNodeDatum = (RootNodeDatum)item.NodeDatum;
 
                         if (false == rootNodeDatum.VolumeView)
                             return;     // from lambda
@@ -1062,7 +1062,7 @@ namespace DoubleFile
 
                 var nodeDatum = parent.NodeDatum;
 
-                if (null == nodeDatum)      // added 2/13/15 as safety
+                if (null == nodeDatum)      // added 2/13/15
                 {
                     MBoxStatic.Assert(99961, false);
                     return 0;
@@ -1116,7 +1116,7 @@ namespace DoubleFile
                     var rowSize = mySize * rowHeight;
                     var nodeDatum_A = listChildren[nextChild + i].NodeDatum;
 
-                    if (null == nodeDatum_A)      // added 2/13/15 as safety
+                    if (null == nodeDatum_A)      // added 2/13/15
                     {
                         MBoxStatic.Assert(99960, false);
                         return 0;

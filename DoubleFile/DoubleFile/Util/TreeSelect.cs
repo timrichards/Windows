@@ -54,18 +54,21 @@ namespace DoubleFile
         static void GetFileList(LocalTreeNode treeNode, string strFile, int nInitiator)
         {
             string strListingFile = null;
-            var nodeDatum = treeNode.NodeDatum;
-            var rootNodeDatum = treeNode.Root().NodeDatum as RootNodeDatum;
             IEnumerable<string> lsFiles = null;
 
             Util.Closure(() =>
             {
+                var nodeDatum = treeNode.NodeDatum;
+                var rootNode = treeNode.Root();
+
                 if ((null == nodeDatum) ||
                     (0 == nodeDatum.LineNo) ||
-                    (null == rootNodeDatum))
+                    (false == rootNode.NodeDatum is RootNodeDatum))
                 {
                     return;     // from lambda
                 }
+
+                var rootNodeDatum = (RootNodeDatum)rootNode.NodeDatum;
 
                 strListingFile = rootNodeDatum.ListingFile;
 
@@ -132,14 +135,11 @@ namespace DoubleFile
 
         static void GetVolumeDetail(LocalTreeNode treeNode, int nInitiator)
         {
-            string strDriveInfo = null;
-            var rootNode = treeNode;
-
-            while (null != rootNode.Parent)
-                rootNode = rootNode.Parent;
+            var rootNode = treeNode.Root();
+            var strDriveInfo = _dictVolumeInfo.TryGetValue(((RootNodeDatum)rootNode.NodeDatum).ListingFile);
 
             if ((null == _dictVolumeInfo) ||
-                (false == _dictVolumeInfo.TryGetValue(((RootNodeDatum)rootNode.NodeDatum).ListingFile, out strDriveInfo)))
+                (null == strDriveInfo))
             {
                 VolumeDetailUpdatedOnNext(Tuple.Create((IEnumerable<IEnumerable<string>>)null, rootNode.Text), nInitiator);
                 return;

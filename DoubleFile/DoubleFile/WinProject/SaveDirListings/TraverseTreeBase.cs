@@ -138,10 +138,10 @@ namespace DoubleFile
                             }
 
                             string strHash = null;
-                            HashTuple hash;
+                            var hash = dictHash.TryGetValue(winFile.strAltFileName);
 
                             if ((null != dictHash) &&
-                                dictHash.TryGetValue(winFile.strAltFileName, out hash))
+                                (null != hash))
                             {
                                 strHash = "" + hash;
                             }
@@ -154,7 +154,7 @@ namespace DoubleFile
                             }
 
                             if ((null != dictException_FileRead) &&
-                                (dictException_FileRead.ContainsKeyB(strFile)))
+                                (null != dictException_FileRead.TryGetValue(strFile)))
                             {
                                 strError2_File += " " + dictException_FileRead[strFile];
                                 strError2_File = strError2_File.TrimStart();

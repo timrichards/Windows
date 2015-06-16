@@ -106,10 +106,10 @@ namespace DoubleFile
                 .SetRect(new Rect());
               //.SetRect(bounds);        // mahApps seems to have slowed window creation to a crawl
 
-            using (var bitmap = new Drawing.Bitmap(bounds.Width, bounds.Height))
+            using (var bitmap = new Drawing::Bitmap(bounds.Width, bounds.Height))
             {
-                using (var g = Drawing.Graphics.FromImage(bitmap))
-                    g.CopyFromScreen(Drawing.Point.Empty, Drawing.Point.Empty, new Drawing.Size(bounds.Width, bounds.Height));
+                using (var g = Drawing::Graphics.FromImage(bitmap))
+                    g.CopyFromScreen(Drawing::Point.Empty, Drawing::Point.Empty, new Drawing::Size(bounds.Width, bounds.Height));
 
                 doubleBufferWindow.Background = new ImageBrush(Imaging.CreateBitmapSourceFromHBitmap(
                     bitmap.GetHbitmap(),

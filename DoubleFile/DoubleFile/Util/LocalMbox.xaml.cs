@@ -93,7 +93,7 @@ namespace DoubleFile
         internal LocalMbox(ILocalWindow owner, string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
             : this(strMessage, strTitle, buttons)
         {
-            Owner = owner as Window;
+            Owner = (Window)owner;
         }
 
         internal new MessageBoxResult ShowDialog()

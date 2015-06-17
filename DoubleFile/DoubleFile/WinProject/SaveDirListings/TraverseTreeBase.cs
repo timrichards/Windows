@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace DoubleFile
@@ -31,7 +32,7 @@ namespace DoubleFile
             }
 
             protected void WriteDirectoryListing(TextWriter fs,
-                IDictionary<string, HashTuple> dictHash,
+                IDictionary<string, Tuple<HashTuple, HashTuple>> dictHash,
                 IReadOnlyDictionary<string, string> dictException_FileRead)
             {
                 ImplementationDetails(fs, dictHash, dictException_FileRead);
@@ -46,7 +47,7 @@ namespace DoubleFile
             /// <returns>File list if first pass</returns>
             IEnumerable<string> ImplementationDetails(
                 TextWriter fs = null,
-                IDictionary<string, HashTuple> dictHash = null,
+                IDictionary<string, Tuple<HashTuple, HashTuple>> dictHash = null,
                 IReadOnlyDictionary<string, string> dictException_FileRead = null)
             {
                 var stackDirs = new Stack<NativeMethods.DATUM>(64);
@@ -138,12 +139,14 @@ namespace DoubleFile
                             }
 
                             string strHash = null;
-                            var hash = dictHash.TryGetValue(winFile.strAltFileName);
+                            string strHash1 = null;
+                            var tuple = dictHash.TryGetValue(winFile.strAltFileName);
 
                             if ((null != dictHash) &&
-                                (null != hash))
+                                (null != tuple))
                             {
-                                strHash = "" + hash;
+                                strHash = "" + tuple.Item1;
+                                strHash1 = "" + tuple.Item2;
                             }
 
                             string strError1 = null;
@@ -162,7 +165,8 @@ namespace DoubleFile
 
                             fs.WriteLine(FormatString(strFile: strFile, dtCreated: fi.CreationTime,
                                 strAttributes: ((int)fi.Attributes).ToString("X"), dtModified: fi.LastWriteTime,
-                                nLength: fi.Size, strError1: strError1, strError2: strError2_File, strHash: strHash));
+                                nLength: fi.Size, strError1: strError1, strError2: strError2_File,
+                                strHash: strHash, strHash1: strHash1));
                         }
                     }
 

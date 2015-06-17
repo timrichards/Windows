@@ -2,7 +2,11 @@
 using FirstFloor.ModernUI.Windows.Navigation;
 using System;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Linq;
+using System.IO;
+using System.Collections.Concurrent;
 
 namespace DoubleFile
 {
@@ -29,6 +33,13 @@ namespace DoubleFile
                 bSaveListings)
             {
                 e.Cancel = true;
+                return;
+            }
+
+            if (MainWindow.AdvancedFakeKey ==
+                "" + e.Source)
+            {
+                CalculateAverageFileLength();
                 return;
             }
 
@@ -71,6 +82,32 @@ namespace DoubleFile
 
         virtual protected void LocalWindowClosed()
         {
+        }
+
+        private void CalculateAverageFileLength()
+        {
+            var lsFileLengths = new ConcurrentBag<decimal>();
+
+            Util.ThreadMake(() =>
+            {
+                Parallel.ForEach(
+                    App.LVprojectVM.ItemsCast
+                    .Where(lvItem => lvItem.CanLoad), lvItem =>
+                {
+                    foreach (var nLength in
+                        File
+                        .ReadLines(lvItem.ListingFile)
+                        .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
+                        .Select(strLine => strLine.Split('\t'))
+                        .Where(asLine => FileParse.knColLength < asLine.Length)
+                        .Select(asLine => decimal.Parse(asLine[FileParse.knColLength])))
+                    {
+                        lsFileLengths.Add(nLength);
+                    }
+                });
+
+                Util.WriteLine("Average file length = " + lsFileLengths.Average());
+            });
         }
     }
 }

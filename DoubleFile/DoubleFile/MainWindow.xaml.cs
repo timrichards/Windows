@@ -17,6 +17,9 @@ namespace DoubleFile
         static internal string
             SaveListingsFakeKey { get { return "/SaveListings.xaml"; } }
         static readonly Link _saveListingsLink = new Link { DisplayName = "Save Listings", Source = new Uri(SaveListingsFakeKey, UriKind.Relative) };
+        static internal string
+            AdvancedFakeKey { get { return "/Advanced.xaml"; } }
+        static readonly Link _advancedLink = new Link { DisplayName = "Advanced", Source = new Uri(AdvancedFakeKey, UriKind.Relative) };
 
         static Action Init = null;
         static void InitForMainWindowOnly(Action init) { Init = init; }
@@ -72,6 +75,7 @@ namespace DoubleFile
             //    return;
 
             TitleLinks.Add(_extraWindowLink);
+            TitleLinks.Add(_advancedLink);
         }
 
         static internal void

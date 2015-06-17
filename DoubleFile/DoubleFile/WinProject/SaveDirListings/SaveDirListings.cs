@@ -54,7 +54,7 @@ namespace DoubleFile
             Util.WriteLine();
             Util.WriteLine("Saving directory listings.");
 
-            var dictHash = new ConcurrentDictionary<string, HashTuple>();
+            var dictHash = new ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>>();
             var dtStart = DateTime.Now;
 
             foreach (var lvItemProjectVM

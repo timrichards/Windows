@@ -161,8 +161,13 @@ namespace DoubleFile
                                     return retval;     // from lambda dictHash.GetOrAdd
                                 }
 
-                                lsHash.Add(md5.ComputeHash(readBuffer));    // for backwards compatibility the entire buffer is hashed incl unread.
-                                retval = Tuple.Create(HashTuple.FactoryCreate(lsHash[0]), default(HashTuple));
+                                // for backwards compatibility the entire buffer is hashed incl 4K - size.
+                                // all subsequent computes will necessarily be exactly 4K
+                                lsHash.Add(md5.ComputeHash(readBuffer));
+
+                                var hash1pt0 = HashTuple.FactoryCreate(lsHash[0]);
+
+                                retval = Tuple.Create(hash1pt0, hash1pt0);
 
                                 if (fsA.Length <= knBufferSize)
                                     return retval;     // from lambda dictHash.GetOrAdd
@@ -170,19 +175,16 @@ namespace DoubleFile
                                 fsB.Seek(-knBufferSize, SeekOrigin.End);
 
                                 // lsHash[1] is last part of file
-                                if (0 == (nRead = fsB.Read(readBuffer, 0, knBufferSize)))
+                                if (knBufferSize != (nRead = fsB.Read(readBuffer, 0, knBufferSize)))
                                 {
                                     MBoxStatic.Assert(99931, false);
                                     return retval;     // from lambda dictHash.GetOrAdd
                                 }
 
-                                lsHash.Add(md5.ComputeHash(readBuffer, 0, nRead));      // from now on hash just the read part
+                                lsHash.Add(md5.ComputeHash(readBuffer));
 
                                 if (fsA.Length <= knSkipLength)
-                                {
-                                    retval = Tuple.Create(HashTuple.FactoryCreate(lsHash[0]), HashTuple.FactoryCreate(lsHash[1]));
-                                    return retval;     // from lambda dictHash.GetOrAdd
-                                }
+                                    return Tuple.Create(hash1pt0, HashTuple.FactoryCreate(lsHash[1]));     // from lambda dictHash.GetOrAdd
 
                                 // lsHash[2..n] are the middle sections
                                 long endPos = fsA.Length - knBufferSize;
@@ -191,13 +193,13 @@ namespace DoubleFile
                                 {
                                     fsB.Position = nPos;
 
-                                    if (0 == (nRead = fsB.Read(readBuffer, 0, knBufferSize)))
+                                    if (knBufferSize != (nRead = fsB.Read(readBuffer, 0, knBufferSize)))
                                     {
                                         MBoxStatic.Assert(99932, false);
                                         return retval;     // from lambda dictHash.GetOrAdd
                                     }
 
-                                    lsHash.Add(md5.ComputeHash(readBuffer, 0, nRead));
+                                    lsHash.Add(md5.ComputeHash(readBuffer));
                                 }
 
                                 var buffer = new byte[lsHash.Count * 16];
@@ -207,7 +209,7 @@ namespace DoubleFile
                                     Array.Copy(hash, 0, buffer, nIx++ * 16, 16);
 
                                 return Tuple.Create(
-                                    HashTuple.FactoryCreate(lsHash[0]),
+                                    hash1pt0,
                                     HashTuple.FactoryCreate(md5.ComputeHash(buffer)));  // from lambda dictHash.GetOrAdd
                             }
                         });

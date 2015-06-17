@@ -15,6 +15,7 @@
 - replace properties with converters
 - replace DarkWindow with flyouts
 
+- vertical scrollbar: window height clips volumes lv
 - rollover highlight project image button text
 - set hover bg same as bg in project lv for group etc
 - scroll to highlighted item in LVs
@@ -43,7 +44,6 @@
 - all threads are background as of 6/12/15
 - neither is nor as are reflection. as is 20x slower though. p. 123
 
-99929 99928
 99926 99925
 99919
 99914

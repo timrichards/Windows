@@ -105,7 +105,7 @@ namespace DoubleFile
                 fs.WriteLine(("" + sb).Trim());
             }
 
-            void Hash(IEnumerable<string> listFilePaths,
+            void Hash(IEnumerable<Tuple<string, long>> listFilePaths,
                 ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>> dictHash,
                 out IReadOnlyDictionary<string, string> dictException_FileRead_out)
             {
@@ -115,19 +115,63 @@ namespace DoubleFile
                     return;
                 }
 
-                var nProgressNumerator = 0;
-                double nProgressDenominator = listFilePaths.Count();        // double preserves mantissa
+                bool bLimitHashes = true;
+                var nMaxHashes = 128; // long.MaxValue;
+                const long nComputeMultX = 32768;           // speed factor of computing many hashes per file
+                const int knBufferSize = 4096;
+                const long knSkipLength = 1048576;
+                long nProgressNumerator = 0;
+
+                double nProgressDenominator =               // double preserves mantissa
+                    listFilePaths
+                    .Select(tuple =>
+                {
+                    long nNumHashes = 1;
+
+                    if (knBufferSize >= tuple.Item2)
+                        return nNumHashes;
+
+                    if (nMaxHashes <= nNumHashes)
+                        return nMaxHashes;
+
+                    ++nNumHashes;
+
+                    if (knSkipLength >= tuple.Item2)
+                        return nNumHashes;
+
+                    if (nMaxHashes <= nNumHashes)
+                        return nMaxHashes;
+
+                    nNumHashes += (long)Math.Ceiling((tuple.Item2 - 2 * knBufferSize) / ((double)knSkipLength));
+
+                    if (nMaxHashes <= nNumHashes)
+                        return nMaxHashes * nComputeMultX;
+#if DEBUG
+                    long nNumHashesCheck = 2;
+                    long endPos = tuple.Item2 - knBufferSize;
+
+                    for (long nPos = knBufferSize; nPos < endPos; nPos += knSkipLength)
+                        ++nNumHashesCheck;
+
+                    MBoxStatic.Assert(99929, nNumHashesCheck == nNumHashes);
+#endif
+                    var retVal = nNumHashes * nComputeMultX;
+
+                    return retVal;
+                })
+                    .Sum();
 
                 using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                     .Subscribe(x => StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator)))
                 {
                     var dictException_FileRead = new Dictionary<string, string>();
 
-                    Parallel.ForEach(listFilePaths, strFile =>
+                    Parallel.ForEach(listFilePaths, tuple =>
                     {
                         if (_bThreadAbort)
                             return;     // from lambda Parallel.ForEach
 
+                        var strFile = tuple.Item1;
                         Interlocked.Increment(ref nProgressNumerator);
 
                         dictHash.GetOrAdd(strFile, x =>
@@ -143,13 +187,10 @@ namespace DoubleFile
                                 return retval;     // from lambda dictHash.GetOrAdd
                             }
 
-                            const long knSkipLength = 1048576;
-
                             using (var md5 = MD5.Create())
                             using (var fsA = new FileStream(fileHandle, FileAccess.Read))
                             {
                                 var fsB = fsA;
-                                const int knBufferSize = 4096; // Hash the first 4K of the file for speed
                                 var readBuffer = new byte[knBufferSize];
                                 var nRead = 0;
                                 var lsHash = new List<byte[]>();
@@ -162,6 +203,7 @@ namespace DoubleFile
                                 }
 
                                 // for backwards compatibility the entire buffer is hashed incl 4K - size.
+                                // the remaining buffer is all zeros at this point.
                                 // all subsequent computes will necessarily be exactly 4K
                                 lsHash.Add(md5.ComputeHash(readBuffer));
 
@@ -170,6 +212,11 @@ namespace DoubleFile
                                 retval = Tuple.Create(hash1pt0, hash1pt0);
 
                                 if (fsA.Length <= knBufferSize)
+                                    return retval;     // from lambda dictHash.GetOrAdd
+
+                                var nHashes = 0;
+
+                                if (nMaxHashes <= ++nHashes)
                                     return retval;     // from lambda dictHash.GetOrAdd
 
                                 fsB.Seek(-knBufferSize, SeekOrigin.End);
@@ -182,15 +229,24 @@ namespace DoubleFile
                                 }
 
                                 lsHash.Add(md5.ComputeHash(readBuffer));
+                                Interlocked.Increment(ref nProgressNumerator);
+
+                                retval = Tuple.Create(hash1pt0, HashTuple.FactoryCreate(lsHash[1]));
 
                                 if (fsA.Length <= knSkipLength)
-                                    return Tuple.Create(hash1pt0, HashTuple.FactoryCreate(lsHash[1]));     // from lambda dictHash.GetOrAdd
+                                    return retval;     // from lambda dictHash.GetOrAdd
+
+                                if (nMaxHashes <= ++nHashes)
+                                    return retval;     // from lambda dictHash.GetOrAdd
 
                                 // lsHash[2..n] are the middle sections
                                 long endPos = fsA.Length - knBufferSize;
 
                                 for (long nPos = knBufferSize; nPos < endPos; nPos += knSkipLength)
                                 {
+                                    if (_bThreadAbort)
+                                        return retval;     // from lambda dictHash.GetOrAdd
+
                                     fsB.Position = nPos;
 
                                     if (knBufferSize != (nRead = fsB.Read(readBuffer, 0, knBufferSize)))
@@ -199,7 +255,16 @@ namespace DoubleFile
                                         return retval;     // from lambda dictHash.GetOrAdd
                                     }
 
+                                    Interlocked.Add(ref nProgressNumerator, nComputeMultX);
                                     lsHash.Add(md5.ComputeHash(readBuffer));
+
+                                    if (nMaxHashes <= ++nHashes)
+                                    {
+                                        if (bLimitHashes)
+                                            break;
+                                        else
+                                            MBoxStatic.Assert(99928, false);
+                                    }
                                 }
 
                                 var buffer = new byte[lsHash.Count * 16];

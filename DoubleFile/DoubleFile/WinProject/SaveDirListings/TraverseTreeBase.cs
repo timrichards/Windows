@@ -26,7 +26,7 @@ namespace DoubleFile
                 LVitemProjectVM = lvProjectVM;
             }
 
-            protected IEnumerable<string> GetFileList()
+            protected IEnumerable<Tuple<string, long>> GetFileList()
             {
                 return ImplementationDetails();
             }
@@ -45,7 +45,7 @@ namespace DoubleFile
             /// <param name="dictHash"></param>
             /// <param name="dictException_FileRead"></param>
             /// <returns>File list if first pass</returns>
-            IEnumerable<string> ImplementationDetails(
+            IEnumerable<Tuple<string, long>> ImplementationDetails(
                 TextWriter fs = null,
                 IDictionary<string, Tuple<HashTuple, HashTuple>> dictHash = null,
                 IReadOnlyDictionary<string, string> dictException_FileRead = null)
@@ -56,7 +56,7 @@ namespace DoubleFile
                 Win32FindFileStatic.FileData.WinFile(LVitemProjectVM.SourcePath, out winRoot);
                 stackDirs.Push(winRoot);
 
-                var listFilePaths = new List<string>();
+                var listFilePaths = new List<Tuple<string, long>>();
 
                 MBoxStatic.Assert(99939, LengthRead == 0);
                 MBoxStatic.Assert(99938, m_nFilesRead == 0);
@@ -125,7 +125,7 @@ namespace DoubleFile
                         {
                             if (fi.Size > 0)
                             {
-                                listFilePaths.Add(winFile.strAltFileName);
+                                listFilePaths.Add(Tuple.Create(winFile.strAltFileName, fi.Size));
                             }
                         }
                         else

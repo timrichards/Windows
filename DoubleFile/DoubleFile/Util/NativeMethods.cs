@@ -78,11 +78,17 @@ namespace DoubleFile
         static internal bool
             SetWindowPos(NativeWindow w, NativeWindow insertAfter, int X, int Y, int cx, int cy, int uFlags) { return SetWindowPos((IntPtr)w, (IntPtr)insertAfter, X, Y, cx, cy, uFlags); }
 
-        //[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, BestFitMapping = false), SuppressUnmanagedCodeSecurity]
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        internal const int OPEN_EXISTING = 3;
+        internal const int FILE_FLAG_RANDOM_ACCESS = 0x10000000;
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode), SuppressUnmanagedCodeSecurity]
         static internal extern SafeFileHandle
             CreateFile(string lpFileName, FileAccess dwDesiredAccess, FileShare dwShareMode, IntPtr lpSecurityAttributes, int dwCreationDisposition, FileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile);
 
+        [DllImport("kernel32.dll", SetLastError=true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static internal extern bool CloseHandle(IntPtr hObject);
+        
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct
             DATUM : IComparable

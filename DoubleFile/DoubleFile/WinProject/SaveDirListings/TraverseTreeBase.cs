@@ -32,7 +32,7 @@ namespace DoubleFile
             }
 
             protected void WriteDirectoryListing(TextWriter fs,
-                IDictionary<string, Tuple<HashTuple, HashTuple>> dictHash,
+                IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>> dictHash,
                 IReadOnlyDictionary<string, string> dictException_FileRead)
             {
                 ImplementationDetails(fs, dictHash, dictException_FileRead);
@@ -47,7 +47,7 @@ namespace DoubleFile
             /// <returns>File list if first pass</returns>
             IEnumerable<Tuple<string, long>> ImplementationDetails(
                 TextWriter fs = null,
-                IDictionary<string, Tuple<HashTuple, HashTuple>> dictHash = null,
+                IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>> dictHash = null,
                 IReadOnlyDictionary<string, string> dictException_FileRead = null)
             {
                 var stackDirs = new Stack<NativeMethods.DATUM>(64);

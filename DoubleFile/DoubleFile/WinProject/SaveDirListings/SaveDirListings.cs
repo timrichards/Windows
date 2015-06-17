@@ -54,7 +54,6 @@ namespace DoubleFile
             Util.WriteLine();
             Util.WriteLine("Saving directory listings.");
 
-            var dictHash = new ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>>();
             var dtStart = DateTime.Now;
 
             foreach (var lvItemProjectVM
@@ -63,7 +62,7 @@ namespace DoubleFile
             {
                 _cbagWorkers
                     .Add(new SaveDirListing(lvItemProjectVM, _saveDirListingsStatus)
-                    .DoThreadFactory(dictHash));
+                    .DoThreadFactory());
             }
 
             foreach (var worker in _cbagWorkers)

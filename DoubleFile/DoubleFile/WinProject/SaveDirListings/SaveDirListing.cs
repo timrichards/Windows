@@ -107,7 +107,8 @@ namespace DoubleFile
 
             void Hash(IEnumerable<Tuple<string, long>> listFilePaths,
                 out IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>> dictHash_out,
-                out IReadOnlyDictionary<string, string> dictException_FileRead_out)
+                out IReadOnlyDictionary<string, string> dictException_FileRead_out,
+                bool bSSD)
             {
                 if (null == listFilePaths)
                 {
@@ -165,17 +166,18 @@ namespace DoubleFile
                 using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                     .Subscribe(x => StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator)))
                 {
-                    var dictHash = new Dictionary<string, Tuple<HashTuple, HashTuple>>();
+                    var dictHash = new ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>>();
                     var dictException_FileRead = new Dictionary<string, string>();
 
-                    // do not make this parallel since it is all on one volume.
-                    foreach (var tuple in listFilePaths)
+                    // Parallel works great for SSDs; not so great for HDDs.
+                    Parallel.ForEach(listFilePaths,
+                        new ParallelOptions { MaxDegreeOfParallelism = bSSD ? 4 : 1 }, tuple =>
                     {
                         if (_bThreadAbort)
-                            break;
+                            return;     // from lambda Parallel.ForEach
 
                         var strFile = tuple.Item1;
-                        ++nProgressNumerator;
+                        Interlocked.Increment(ref nProgressNumerator);
 
                         using (var fileHandle = NativeMethods
                             .CreateFile(@"\\?\" + strFile, FileAccess.Read, FileShare.ReadWrite, IntPtr.Zero,
@@ -234,7 +236,7 @@ namespace DoubleFile
                                     }
 
                                     lsHash.Add(md5.ComputeHash(readBuffer));
-                                    ++nProgressNumerator;
+                                    Interlocked.Increment(ref nProgressNumerator);
 
                                     retval = Tuple.Create(hash1pt0, HashTuple.FactoryCreate(lsHash[1]));
 
@@ -260,7 +262,7 @@ namespace DoubleFile
                                             return retval;     // from lambda Util.Closure
                                         }
 
-                                        nProgressNumerator += nComputeMultX;
+                                        Interlocked.Add(ref nProgressNumerator, nComputeMultX);
                                         lsHash.Add(md5.ComputeHash(readBuffer));
 
                                         if (nMaxHashes <= ++nHashes)
@@ -284,9 +286,9 @@ namespace DoubleFile
                                 }
                             });
                         }
-                    }
+                    });
 
-                    dictHash_out = dictHash;
+                    dictHash_out = dictHash.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
                     dictException_FileRead_out = dictException_FileRead;
                 }
 
@@ -331,7 +333,10 @@ namespace DoubleFile
                         fs.WriteLine(FormatString(nHeader: 0));
                         fs.WriteLine(FormatString(nHeader: 1));
                         fs.WriteLine(ksStart01 + " " + DateTime.Now);
-                        Hash(GetFileList(), out dictHash, out dictException_FileRead);
+
+                        bool bSSD = ("" + LVitemProjectVM.DriveModel).Contains("SSD");
+
+                        Hash(GetFileList(), out dictHash, out dictException_FileRead, bSSD);
                         WriteDirectoryListing(fs, dictHash, dictException_FileRead);
                         fs.WriteLine(ksEnd01 + " " + DateTime.Now);
                         fs.WriteLine();

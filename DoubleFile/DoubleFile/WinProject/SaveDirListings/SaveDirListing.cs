@@ -119,8 +119,8 @@ namespace DoubleFile
 
                 // Default cluster size on any NTFS volume up to 16TB is 4K
                 // Limiting hashes is not really the limiting factor: CreateFile is the bottleneck by far.
-                bool bLimitHashes = false;
-                var nMaxHashes = long.MaxValue;
+                bool bLimitHashes = true;
+                var nMaxHashes = 16;
                 const long nComputeMultX = 32768;           // progress bar speed factor of computing many hashes per file
                 const int knBufferSize = 4096;
                 const long knSkipLength = 1048576;          // == 4096 * 256
@@ -246,7 +246,7 @@ namespace DoubleFile
                                     if (nMaxHashes <= ++nHashes)
                                         return retval;     // from lambda Util.Closure
 
-                                    // lsHash[2..n] are the middle sections
+                                    // lsHash[2..N) are the middle sections
                                     long endPos = fsA.Length - knBufferSize;
 
                                     for (long nPos = knBufferSize; nPos < endPos; nPos += knSkipLength)

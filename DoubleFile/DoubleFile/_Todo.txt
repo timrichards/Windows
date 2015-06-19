@@ -1,4 +1,5 @@
-﻿- stop the auto horizontal scrolling - solve it by selecting first column
+﻿- determine USB speed of drive
+- stop the auto horizontal scrolling - solve it by selecting first column
 - not fixed: First tree view item is bold and the wrong forecolors, incl highlighted - treeview shouldn't have a selected item.
 - New Listing File dialog flashes when system choose folder dialog is shown
 - large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
@@ -14,6 +15,8 @@
 - Remove WidthListingFile and redo the ListingFile setter to internal - same goes for progress dialog though
 - replace properties with converters
 - replace DarkWindow with flyouts
+- allow moving the window when darkened
+- minimize progress/messagebox to task bar?
 
 - vertical scrollbar: window height clips volumes lv
 - rollover highlight project image button text

@@ -10,6 +10,7 @@ using System.Reactive.Linq;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using Microsoft.Win32.SafeHandles;
 
 namespace DoubleFile
 {
@@ -105,6 +106,19 @@ namespace DoubleFile
                 fs.WriteLine(("" + sb).Trim());
             }
 
+            IEnumerable<Tuple<string, SafeFileHandle>> OpenFiles(IEnumerable<Tuple<string, long>> listFilePaths)
+            {
+                foreach (var tuple in listFilePaths)
+                {
+                    var strFile = tuple.Item1;
+
+                    yield return Tuple.Create(strFile, NativeMethods
+                        .CreateFile(@"\\?\" + strFile, FileAccess.Read, FileShare.ReadWrite, IntPtr.Zero,
+                        NativeMethods.OPEN_EXISTING,
+                        (FileAttributes)NativeMethods.FILE_FLAG_RANDOM_ACCESS, IntPtr.Zero));
+                }
+            }
+
             void Hash(IEnumerable<Tuple<string, long>> listFilePaths,
                 out IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>> dictHash_out,
                 out IReadOnlyDictionary<string, string> dictException_FileRead_out,
@@ -170,7 +184,7 @@ namespace DoubleFile
                     var dictException_FileRead = new Dictionary<string, string>();
 
                     // Parallel works great for SSDs; not so great for HDDs.
-                    Parallel.ForEach(listFilePaths,
+                    Parallel.ForEach(OpenFiles(listFilePaths),
                         new ParallelOptions { MaxDegreeOfParallelism = bSSD ? 4 : 1 }, tuple =>
                     {
                         if (_bThreadAbort)
@@ -179,11 +193,10 @@ namespace DoubleFile
                         var strFile = tuple.Item1;
                         Interlocked.Increment(ref nProgressNumerator);
 
-                        using (var fileHandle = NativeMethods
-                            .CreateFile(@"\\?\" + strFile, FileAccess.Read, FileShare.ReadWrite, IntPtr.Zero,
-                            NativeMethods.OPEN_EXISTING,
-                            (FileAttributes)NativeMethods.FILE_FLAG_RANDOM_ACCESS, IntPtr.Zero))
+                        using (tuple.Item2)
                         {
+                            var fileHandle = tuple.Item2;
+
                             dictHash[strFile] = Util.Closure(() =>
                             {
                                 var retval = Tuple.Create(default(HashTuple), default(HashTuple));

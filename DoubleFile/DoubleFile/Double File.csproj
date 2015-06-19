@@ -184,6 +184,7 @@
     <Compile Include="Util\LocalSubject.cs" />
     <Compile Include="Util\LocalUserControlBase.cs" />
     <Compile Include="Util\NativeMethods.cs" />
+    <Compile Include="Util\USB.cs" />
     <Compile Include="Util\Win32Screen\MONITORINFO.cs" />
     <Compile Include="Util\Win32Screen\RECT.cs" />
     <Compile Include="Util\Win32Screen\SWP.cs" />

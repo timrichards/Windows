@@ -164,23 +164,24 @@ namespace DoubleFile
                     using (var fs = new FileStream(fileHandle, FileAccess.Read))
                     Util.Closure(() =>
                     {
-                        if (false == FillBuffer(fs, 4096, lsRet))
+                        const int knLilBuffLength = 4096;
+                        const int knBigBuffLength = 65536;
+
+                        if (false == FillBuffer(fs, knLilBuffLength, lsRet))
                             return;     // from lambda
 
-                        if (false == FillBuffer(fs, 65536, lsRet))
+                        if (false == FillBuffer(fs, knBigBuffLength, lsRet))
                             return;     // from lambda
 
-                        var desiredPos = fs.Length - 65536;
-
-                        if (desiredPos < 0)
-                            return;     // from lambda
-
-                        MBoxStatic.Assert(99931, 65536 + 4096 == fs.Position);
+                        var desiredPos = fs.Length - knBigBuffLength;
 
                         if (desiredPos > fs.Position)
+                        {
+                            MBoxStatic.Assert(99931, knBigBuffLength + knLilBuffLength == fs.Position);
                             fs.Position = desiredPos;
+                        }
 
-                        if (false == FillBuffer(fs, 65536, lsRet))
+                        if (false == FillBuffer(fs, knBigBuffLength, lsRet))
                             return;     // from lambda
                     });
 
@@ -253,10 +254,17 @@ namespace DoubleFile
 
                                 var lsHash = new List<byte[]>();
 
-                                foreach (var buffer in lsBuffer)
+                                foreach (var buffer in lsBuffer.Skip(1))
                                 {
-                                    for (int nOffset = 0; nOffset < lsBuffer.Count; nOffset += 4096)
-                                        lsHash.Add(md5.ComputeHash(buffer, nOffset, Math.Min(nOffset + 4096, lsBuffer.Count - nOffset)));
+                                    const int knBuffLength = 4096;
+                                    var nLastPos = buffer.Length - knBuffLength;
+                                    var nOffset = 0;
+
+                                    for (; nOffset <= nLastPos; nOffset += knBuffLength)
+                                        lsHash.Add(md5.ComputeHash(buffer, nOffset, knBuffLength));
+
+                                    if (buffer.Length > nOffset)
+                                        lsHash.Add(md5.ComputeHash(buffer, nOffset, buffer.Length - nOffset));
                                 }
 
                                 var hashArray = new byte[lsHash.Count * 16];

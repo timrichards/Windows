@@ -26,7 +26,7 @@ namespace DoubleFile
                 LVitemProjectVM = lvProjectVM;
             }
 
-            protected IEnumerable<Tuple<string, long>> GetFileList()
+            protected IReadOnlyList<Tuple<string, long>> GetFileList()
             {
                 return ImplementationDetails();
             }
@@ -45,7 +45,7 @@ namespace DoubleFile
             /// <param name="dictHash"></param>
             /// <param name="dictException_FileRead"></param>
             /// <returns>File list if first pass</returns>
-            IEnumerable<Tuple<string, long>> ImplementationDetails(
+            IReadOnlyList<Tuple<string, long>> ImplementationDetails(
                 TextWriter fs = null,
                 IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>> dictHash = null,
                 IReadOnlyDictionary<string, string> dictException_FileRead = null)

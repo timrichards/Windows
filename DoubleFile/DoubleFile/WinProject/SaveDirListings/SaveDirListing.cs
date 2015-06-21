@@ -106,20 +106,89 @@ namespace DoubleFile
                 fs.WriteLine(("" + sb).Trim());
             }
 
-            IEnumerable<Tuple<string, SafeFileHandle>> OpenFiles(IEnumerable<Tuple<string, long>> listFilePaths)
+            IEnumerable<Tuple<string, long, SafeFileHandle, string>>
+                OpenFiles(IEnumerable<Tuple<string, long>> listFilePaths)
             {
                 foreach (var tuple in listFilePaths)
                 {
                     var strFile = tuple.Item1;
-
-                    yield return Tuple.Create(strFile, NativeMethods
+                    var fileHandle = NativeMethods
                         .CreateFile(@"\\?\" + strFile, FileAccess.Read, FileShare.ReadWrite, IntPtr.Zero,
                         NativeMethods.OPEN_EXISTING,
-                        (FileAttributes)NativeMethods.FILE_FLAG_RANDOM_ACCESS, IntPtr.Zero));
+                        (FileAttributes)NativeMethods.FILE_FLAG_RANDOM_ACCESS, IntPtr.Zero);
+
+                    string strError = fileHandle.IsInvalid ? new Win32Exception(Marshal.GetLastWin32Error()).Message : null;
+
+                    yield return Tuple.Create(strFile, tuple.Item2, fileHandle, strError);
                 }
             }
 
-            void Hash(IEnumerable<Tuple<string, long>> listFilePaths,
+            bool FillBuffer(FileStream fs, int nBufferSize, IList<byte[]> lsBuffer)
+            {
+                var readBuffer = new byte[nBufferSize];
+                var nRead = fs.Read(readBuffer, 0, nBufferSize);
+
+                lsBuffer.Add(readBuffer);
+
+                if (0 == nRead)
+                {
+                    MBoxStatic.Assert(99930, false);
+                    return false;
+                }
+
+                bool bMoreToRead = fs.Position < fs.Length;
+                
+                if (bMoreToRead)
+                    MBoxStatic.Assert(99926, nRead == nBufferSize);
+
+                return bMoreToRead;
+            }
+
+            IEnumerable<Tuple<string, long, string, IReadOnlyList<byte[]>>>
+                ReadBuffers(IEnumerable<Tuple<string, long, SafeFileHandle, string>> listFileHandles)
+            {
+                foreach (var tuple in listFileHandles)
+                {
+                    var lsRet = new List<byte[]>();
+                    var retval = Tuple.Create(tuple.Item1, tuple.Item2, tuple.Item4, (IReadOnlyList<byte[]>)lsRet);
+                    var fileHandle = tuple.Item3;
+
+                    if (fileHandle.IsInvalid)
+                    {
+                        fileHandle.Dispose();
+                        yield return retval;
+                        continue;
+                    }
+
+                    using (fileHandle)
+                    using (var fs = new FileStream(fileHandle, FileAccess.Read))
+                    Util.Closure(() =>
+                    {
+                        if (false == FillBuffer(fs, 4096, lsRet))
+                            return;     // from lambda
+
+                        if (false == FillBuffer(fs, 65536, lsRet))
+                            return;     // from lambda
+
+                        var desiredPos = fs.Length - 65536;
+
+                        if (desiredPos < 0)
+                            return;     // from lambda
+
+                        MBoxStatic.Assert(99931, 65536 + 4096 == fs.Position);
+
+                        if (desiredPos > fs.Position)
+                            fs.Position = desiredPos;
+
+                        if (false == FillBuffer(fs, 65536, lsRet))
+                            return;     // from lambda
+                    });
+
+                    yield return retval;
+                }
+            }
+
+            void Hash(IReadOnlyList<Tuple<string, long>> listFilePaths,
                 out IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>> dictHash_out,
                 out IReadOnlyDictionary<string, string> dictException_FileRead_out,
                 bool bSSD)
@@ -133,176 +202,76 @@ namespace DoubleFile
 
                 // Default cluster size on any NTFS volume up to 16TB is 4K
                 // Limiting hashes is not really the limiting factor: CreateFile is the bottleneck by far.
-                bool bLimitHashes = true;
-                var nMaxHashes = 16;
-                const long nComputeMultX = 32768;           // progress bar speed factor of computing many hashes per file
-                const int knBufferSize = 4096;
-                const long knSkipLength = 1048576;          // == 4096 * 256
                 long nProgressNumerator = 0;
 
                 double nProgressDenominator =               // double preserves mantissa
-                    listFilePaths
-                    .Select(tuple =>
-                {
-                    long nNumHashes = 1;
-
-                    if (knBufferSize >= tuple.Item2)
-                        return nNumHashes;
-
-                    if (nMaxHashes <= nNumHashes)
-                        return nMaxHashes;
-
-                    ++nNumHashes;
-
-                    if (knSkipLength >= tuple.Item2)
-                        return nNumHashes;
-
-                    if (nMaxHashes <= nNumHashes)
-                        return nMaxHashes;
-
-                    nNumHashes += (long)Math.Ceiling((tuple.Item2 - 2 * knBufferSize) / ((double)knSkipLength));
-
-                    if (nMaxHashes <= nNumHashes)
-                        return nMaxHashes * nComputeMultX;
-#if DEBUG
-                    long nNumHashesCheck = 2;
-                    long endPos = tuple.Item2 - knBufferSize;
-
-                    for (long nPos = knBufferSize; nPos < endPos; nPos += knSkipLength)
-                        ++nNumHashesCheck;
-
-                    MBoxStatic.Assert(99929, nNumHashesCheck == nNumHashes);
-#endif
-                    return nNumHashes * nComputeMultX;
-                })
-                    .Sum();
+                    listFilePaths.Count;
 
                 using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                     .Subscribe(x => StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator)))
                 {
                     var dictHash = new ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>>();
-                    var dictException_FileRead = new Dictionary<string, string>();
+                    var dictException_FileRead = new ConcurrentDictionary<string, string>();
 
                     // Parallel works great for SSDs; not so great for HDDs.
-                    Parallel.ForEach(OpenFiles(listFilePaths),
+                    Parallel.ForEach(ReadBuffers(OpenFiles(listFilePaths)),
                         new ParallelOptions { MaxDegreeOfParallelism = bSSD ? 4 : 1 }, tuple =>
                     {
                         if (_bThreadAbort)
-                            return;     // from lambda Parallel.ForEach
+                            return;                     // from lambda Parallel.ForEach
 
                         var strFile = tuple.Item1;
                         Interlocked.Increment(ref nProgressNumerator);
 
-                        using (tuple.Item2)
+                        dictHash[strFile] =
+                            Util.Closure(() =>
                         {
-                            var fileHandle = tuple.Item2;
+                            var retval = Tuple.Create(default(HashTuple), default(HashTuple));
 
-                            dictHash[strFile] = Util.Closure(() =>
+                            if (null != tuple.Item3)
                             {
-                                var retval = Tuple.Create(default(HashTuple), default(HashTuple));
+                                dictException_FileRead[strFile] = tuple.Item3;
+                                return retval;          // from lambda Util.Closure
+                            }
 
-                                if (fileHandle.IsInvalid)
+                            var lsBuffer = tuple.Item4;
+
+                            if (0 == lsBuffer.Count)
+                            {
+                                MBoxStatic.Assert(99932, false);
+                                return retval;          // from lambda Util.Closure
+                            }
+
+                            using (var md5 = MD5.Create())
+                            {
+                                var hash1pt0 = HashTuple.FactoryCreate(md5.ComputeHash(lsBuffer[0]));
+
+                                retval = Tuple.Create(hash1pt0, hash1pt0);
+
+                                if (1 == lsBuffer.Count)
+                                    return retval;      // from lambda Util.Closure
+
+                                var lsHash = new List<byte[]>();
+
+                                foreach (var buffer in lsBuffer)
                                 {
-                                    dictException_FileRead[strFile] = new Win32Exception(Marshal.GetLastWin32Error()).Message;
-                                    return retval;     // from lambda Util.Closure
+                                    for (int nOffset = 0; nOffset < lsBuffer.Count; nOffset += 4096)
+                                        lsHash.Add(md5.ComputeHash(buffer, nOffset, Math.Min(nOffset + 4096, lsBuffer.Count - nOffset)));
                                 }
 
-                                using (var md5 = MD5.Create())
-                                using (var fsA = new FileStream(fileHandle, FileAccess.Read))
-                                {
-                                    var fsB = fsA;
-                                    var readBuffer = new byte[knBufferSize];
-                                    var nRead = 0;
-                                    var lsHash = new List<byte[]>();
+                                var hashArray = new byte[lsHash.Count * 16];
+                                var nIx = 0;
 
-                                    // lsHash[0] is first part of file
-                                    if (0 == (nRead = fsB.Read(readBuffer, 0, knBufferSize)))
-                                    {
-                                        MBoxStatic.Assert(99930, false);
-                                        return retval;     // from lambda Util.Closure
-                                    }
+                                foreach (var hash in lsHash)
+                                    hash.CopyTo(hashArray, nIx++ * 16);
 
-                                    // for backwards compatibility the entire buffer is hashed incl 4K - size.
-                                    // the remaining buffer is all zeros at this point.
-                                    // all subsequent computes will necessarily be exactly 4K
-                                    lsHash.Add(md5.ComputeHash(readBuffer));
-
-                                    var hash1pt0 = HashTuple.FactoryCreate(lsHash[0]);
-
-                                    retval = Tuple.Create(hash1pt0, hash1pt0);
-
-                                    if (fsA.Length <= knBufferSize)
-                                        return retval;     // from lambda Util.Closure
-
-                                    var nHashes = 0;
-
-                                    if (nMaxHashes <= ++nHashes)
-                                        return retval;     // from lambda Util.Closure
-
-                                    fsB.Seek(-knBufferSize, SeekOrigin.End);
-
-                                    // lsHash[1] is last part of file
-                                    if (knBufferSize != (nRead = fsB.Read(readBuffer, 0, knBufferSize)))
-                                    {
-                                        MBoxStatic.Assert(99931, false);
-                                        return retval;     // from lambda Util.Closure
-                                    }
-
-                                    lsHash.Add(md5.ComputeHash(readBuffer));
-                                    Interlocked.Increment(ref nProgressNumerator);
-
-                                    retval = Tuple.Create(hash1pt0, HashTuple.FactoryCreate(lsHash[1]));
-
-                                    if (fsA.Length <= knSkipLength)
-                                        return retval;     // from lambda Util.Closure
-
-                                    if (nMaxHashes <= ++nHashes)
-                                        return retval;     // from lambda Util.Closure
-
-                                    // lsHash[2..N) are the middle sections
-                                    long endPos = fsA.Length - knBufferSize;
-
-                                    for (long nPos = knBufferSize; nPos < endPos; nPos += knSkipLength)
-                                    {
-                                        if (_bThreadAbort)
-                                            return retval;     // from lambda Util.Closure
-
-                                        fsB.Position = nPos;
-
-                                        if (knBufferSize != (nRead = fsB.Read(readBuffer, 0, knBufferSize)))
-                                        {
-                                            MBoxStatic.Assert(99932, false);
-                                            return retval;     // from lambda Util.Closure
-                                        }
-
-                                        Interlocked.Add(ref nProgressNumerator, nComputeMultX);
-                                        lsHash.Add(md5.ComputeHash(readBuffer));
-
-                                        if (nMaxHashes <= ++nHashes)
-                                        {
-                                            if (bLimitHashes)
-                                                break;
-                                            else
-                                                MBoxStatic.Assert(99928, false);
-                                        }
-                                    }
-
-                                    var buffer = new byte[lsHash.Count * 16];
-                                    var nIx = 0;
-
-                                    foreach (var hash in lsHash)
-                                        Array.Copy(hash, 0, buffer, nIx++ * 16, 16);
-
-                                    return Tuple.Create(
-                                        hash1pt0,
-                                        HashTuple.FactoryCreate(md5.ComputeHash(buffer)));  // from lambda Util.Closure
-                                }
-                            });
-                        }
+                                return Tuple.Create(hash1pt0, HashTuple.FactoryCreate(md5.ComputeHash(hashArray)));          // from lambda Util.Closure
+                            }
+                        });
                     });
 
                     dictHash_out = dictHash.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-                    dictException_FileRead_out = dictException_FileRead;
+                    dictException_FileRead_out = dictException_FileRead.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
                 }
 
                 StatusCallback(LVitemProjectVM, nProgress: 1);

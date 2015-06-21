@@ -266,11 +266,10 @@ namespace DoubleFile
 
                         Dispatcher.PushFrame(blockingFrameA);
                         var lsA = lsB;
+                        blockingFrameA.Continue = true;
 
                         Util.ThreadMake(() =>
                         {
-                            blockingFrameA.Continue = true;
-
                             Parallel.ForEach(lsA, new ParallelOptions { CancellationToken = cts.Token }, tuple =>
                             {
                                 if (_bThreadAbort)

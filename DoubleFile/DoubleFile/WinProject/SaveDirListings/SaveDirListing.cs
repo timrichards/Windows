@@ -230,9 +230,12 @@ namespace DoubleFile
                     var dictException_FileRead = new ConcurrentDictionary<string, string> { };
                     var blockWhileHashingPreviousBatch = new DispatcherFrame(true) { Continue = false };
 
+                    // The above ThreadMake will be busy pumping out new file handles while the below processes will
+                    // read those files' buffers and hash them in batches until all files have been opened.
                     while ((false == bAllFilesOpened) ||
                         (lsFileHandles.Count > 0))
                     {
+                        // Avoid spinning too quickly while waiting for new file handles.
                         Util.Block(100);
 
                         Tuple<string, long, SafeFileHandle, string> tupleA = null;
@@ -244,9 +247,12 @@ namespace DoubleFile
                             lsOpenedFiles.Add(tupleA);
                         }
 
+                        // ToList() enumerates ReadBuffers() sequentially, reading disk I/O buffers one at a time.
+                        // Up to nine accesses to one disk are occurring simultaneously: CreateFile() x8 and fs.Read() x1.
                         var lsFileBuffers_Enqueue = ReadBuffers(lsOpenedFiles)
                             .ToList();
 
+                        // Expect block to be false: reading buffers from disk is The limiting factor. Allow block just in case.
                         Dispatcher.PushFrame(blockWhileHashingPreviousBatch);
                         
                         // in C# this assignment occurs every iteration. A closure is created each time in ThreadMake.
@@ -271,9 +277,9 @@ namespace DoubleFile
                                     dictException_FileRead[strFile] = tuple.Item3;
                                 
                                 dictHash[strFile] = HashFile(tuple);
-                                Interlocked.Increment(ref nProgressNumerator);
                             });
 
+                            nProgressNumerator += lsFileBuffers_Dequeue.Count;
                             blockWhileHashingPreviousBatch.Continue = false;
                         });
                     }

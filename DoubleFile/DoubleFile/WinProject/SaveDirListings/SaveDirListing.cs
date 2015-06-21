@@ -123,15 +123,14 @@ namespace DoubleFile
                 }
             }
 
-            bool FillBuffer(FileStream fs, int nBufferSize, IList<byte[]> lsBuffer, bool bTruncate = true)
+            bool FillBuffer(FileStream fs, int nBufferSize, IList<byte[]> lsBuffer)
             {
                 var readBuffer = new byte[nBufferSize];
                 var nRead = fs.Read(readBuffer, 0, nBufferSize);
 
-                if (bTruncate &&
-                    (0 < nRead) &&
-                    (nRead < nBufferSize))
+                if (nRead < nBufferSize)
                 {
+                    // works fine with nRead == 0
                     var truncBuffer = new byte[nRead];
 
                     Array.Copy(readBuffer, truncBuffer, nRead);
@@ -159,7 +158,7 @@ namespace DoubleFile
             {
                 foreach (var tuple in listFileHandles)
                 {
-                    var lsRet = new List<byte[]>();
+                    var lsRet = new List<byte[]> { };
                     var retval = Tuple.Create(tuple.Item1, tuple.Item2, tuple.Item4, (IReadOnlyList<byte[]>)lsRet);
                     var fileHandle = tuple.Item3;
 
@@ -174,20 +173,33 @@ namespace DoubleFile
                     using (var fs = new FileStream(fileHandle, FileAccess.Read))
                     Util.Closure(() =>
                     {
-                        const int knLilBuffLength = 4096;
+                        lsRet.Add(new byte[4096]);
+
                         const int knBigBuffLength = 65536;
+                        var bFilled = FillBuffer(fs, knBigBuffLength, lsRet);
 
-                        if (false == FillBuffer(fs, knLilBuffLength, lsRet, bTruncate: false))
-                            return;     // from lambda
+                        Array.Copy(lsRet[1], lsRet[0], Math.Min(lsRet[1].Length, lsRet[0].Length));
 
-                        if (false == FillBuffer(fs, knBigBuffLength, lsRet))
+                        if (lsRet[1].Length > lsRet[0].Length)
+                        {
+                            var truncBuff = new byte[lsRet[1].Length - lsRet[0].Length];
+
+                            Array.Copy(lsRet[1], lsRet[0].Length, truncBuff, 0, truncBuff.Length);
+                            lsRet[1] = truncBuff;
+                        }
+                        else
+                        {
+                            lsRet.RemoveAt(1);
+                        }
+
+                        if (false == bFilled)
                             return;     // from lambda
 
                         var desiredPos = fs.Length - knBigBuffLength;
 
                         if (desiredPos > fs.Position)
                         {
-                            MBoxStatic.Assert(99931, knBigBuffLength + knLilBuffLength == fs.Position);
+                            MBoxStatic.Assert(99931, knBigBuffLength == fs.Position);
                             fs.Position = desiredPos;
                         }
 

@@ -366,8 +366,104 @@ namespace DoubleFile
 
                 if (nRead < nBufferSize)
                 {
+<<<<<<< HEAD
                     // works fine with nRead == 0
                     var truncBuffer = new byte[nRead];
+=======
+                    var dictHash = new ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>> { };
+                    var dictException_FileRead = new ConcurrentDictionary<string, string> { };
+                    var lsFileHandles = new ConcurrentBag<Tuple<string, long, SafeFileHandle, string>> { };
+                    var blockingFrame = new DispatcherFrame(true) { Continue = true };
+                    var bEndOfList = false;
+                    var cts = new CancellationTokenSource();
+
+                    Util.ThreadMake(() =>
+                    {
+                        Parallel.ForEach(lsFilePaths, new ParallelOptions { CancellationToken = cts.Token, MaxDegreeOfParallelism = 8 },
+                            tuple => OpenFile(tuple, lsFileHandles));
+                        bEndOfList = true;
+                        blockingFrame.Continue = false;
+                    });
+
+                    var blockingFrameA = new DispatcherFrame(true) { Continue = false };
+
+                    while ((false == bEndOfList) ||
+                        (lsFileHandles.Count > 0))
+                    {
+                        Util.Block(100);
+
+                        Tuple<string, long, SafeFileHandle, string> tupleA = null;
+                        var ls = new List<Tuple<string, long, SafeFileHandle, string>> { };
+
+                        while (lsFileHandles.TryTake(out tupleA) &&
+                            (ls.Count < 4096))
+                        {
+                            ls.Add(tupleA);
+                        }
+
+                        var lsB = ReadBuffers(ls)
+                            .ToList();
+
+                        Dispatcher.PushFrame(blockingFrameA);
+                        var lsA = lsB;
+                        blockingFrameA.Continue = true;
+
+                        Util.ThreadMake(() =>
+                        {
+                            Parallel.ForEach(lsA, new ParallelOptions { CancellationToken = cts.Token }, tuple =>
+                            {
+                                if (_bThreadAbort)
+                                {
+                                    cts.Cancel();
+                                    bEndOfList = true;
+                                    return;     // from lambda Parallel.ForEach
+                                }
+
+                                var strFile = tuple.Item1;
+                                Interlocked.Increment(ref nProgressNumerator);
+
+                                dictHash[strFile] =
+                                    Util.Closure(() =>
+                                {
+                                    var retval = Tuple.Create(default(HashTuple), default(HashTuple));
+
+                                    if (null != tuple.Item3)
+                                    {
+                                        dictException_FileRead[strFile] = tuple.Item3;
+                                        return retval;          // from lambda Util.Closure
+                                    }
+
+                                    var lsBuffer = tuple.Item4;
+
+                                    if (0 == lsBuffer.Count)
+                                    {
+                                        MBoxStatic.Assert(99932, false);
+                                        return retval;          // from lambda Util.Closure
+                                    }
+
+                                    using (var md5 = MD5.Create())
+                                    {
+                                        var hash1pt0 = HashTuple.FactoryCreate(md5.ComputeHash(lsBuffer[0]));
+
+                                        retval = Tuple.Create(hash1pt0, hash1pt0);
+
+                                        if (1 == lsBuffer.Count)
+                                            return retval;      // from lambda Util.Closure
+
+                                        var nSize = 0;
+
+                                        foreach (var buffer in lsBuffer.Skip(1))
+                                            nSize += buffer.Length;
+
+                                        var hashArray = new byte[nSize];
+                                        var nIx = 0;
+
+                                        foreach (var buffer in lsBuffer.Skip(1))
+                                        {
+                                            buffer.CopyTo(hashArray, nIx);
+                                            nIx += buffer.Length;
+                                        }
+>>>>>>> origin/master
 
                     Array.Copy(readBuffer, truncBuffer, nRead);
                     readBuffer = truncBuffer;

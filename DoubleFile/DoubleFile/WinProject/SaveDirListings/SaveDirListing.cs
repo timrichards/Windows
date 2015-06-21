@@ -123,10 +123,20 @@ namespace DoubleFile
                 }
             }
 
-            bool FillBuffer(FileStream fs, int nBufferSize, IList<byte[]> lsBuffer)
+            bool FillBuffer(FileStream fs, int nBufferSize, IList<byte[]> lsBuffer, bool bTruncate = true)
             {
                 var readBuffer = new byte[nBufferSize];
                 var nRead = fs.Read(readBuffer, 0, nBufferSize);
+
+                if (bTruncate &&
+                    (0 < nRead) &&
+                    (nRead < nBufferSize))
+                {
+                    var truncBuffer = new byte[nRead];
+
+                    Array.Copy(readBuffer, truncBuffer, nRead);
+                    readBuffer = truncBuffer;
+                }
 
                 lsBuffer.Add(readBuffer);
 
@@ -167,7 +177,7 @@ namespace DoubleFile
                         const int knLilBuffLength = 4096;
                         const int knBigBuffLength = 65536;
 
-                        if (false == FillBuffer(fs, knLilBuffLength, lsRet))
+                        if (false == FillBuffer(fs, knLilBuffLength, lsRet, bTruncate: false))
                             return;     // from lambda
 
                         if (false == FillBuffer(fs, knBigBuffLength, lsRet))

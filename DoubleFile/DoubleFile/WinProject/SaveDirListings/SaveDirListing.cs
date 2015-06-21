@@ -245,82 +245,94 @@ namespace DoubleFile
                         blockingFrame.Continue = false;
                     });
 
-                    using (var md5 = MD5.Create())
-                        while ((false == bEndOfList) || (lsFileHandles.Count > 0))
+                    var blockingFrameA = new DispatcherFrame(true) { Continue = false };
+
+                    while ((false == bEndOfList) ||
+                        (lsFileHandles.Count > 0))
                     {
-                        Util.Block(500);
+                        Util.Block(100);
 
                         Tuple<string, long, SafeFileHandle, string> tupleA = null;
                         var ls = new List<Tuple<string, long, SafeFileHandle, string>> { };
 
-                        while (lsFileHandles.TryTake(out tupleA))
-                            ls.Add(tupleA);
-
-                        foreach (var tuple in ReadBuffers(ls))
+                        while (lsFileHandles.TryTake(out tupleA) &&
+                            (ls.Count < 4096))
                         {
-                            if (_bThreadAbort)
+                            ls.Add(tupleA);
+                        }
+
+                        var lsB = ReadBuffers(ls)
+                            .ToList();
+
+                        Dispatcher.PushFrame(blockingFrameA);
+                        var lsA = lsB;
+
+                        Util.ThreadMake(() =>
+                        {
+                            blockingFrameA.Continue = true;
+
+                            Parallel.ForEach(lsA, new ParallelOptions { CancellationToken = cts.Token }, tuple =>
                             {
-                                cts.Cancel();
-                                bEndOfList = true;
-                                break;
-                            }
-
-                            var strFile = tuple.Item1;
-                            Interlocked.Increment(ref nProgressNumerator);
-
-                            dictHash[strFile] =
-                                Util.Closure(() =>
-                            {
-                                var retval = Tuple.Create(default(HashTuple), default(HashTuple));
-
-                                if (null != tuple.Item3)
+                                if (_bThreadAbort)
                                 {
-                                    dictException_FileRead[strFile] = tuple.Item3;
-                                    return retval;          // from lambda Util.Closure
+                                    cts.Cancel();
+                                    bEndOfList = true;
+                                    return;     // from lambda Parallel.ForEach
                                 }
 
-                                var lsBuffer = tuple.Item4;
+                                var strFile = tuple.Item1;
+                                Interlocked.Increment(ref nProgressNumerator);
 
-                                if (0 == lsBuffer.Count)
+                                dictHash[strFile] =
+                                    Util.Closure(() =>
                                 {
-                                    MBoxStatic.Assert(99932, false);
-                                    return retval;          // from lambda Util.Closure
-                                }
+                                    var retval = Tuple.Create(default(HashTuple), default(HashTuple));
 
-                                {
-                                    var hash1pt0 = HashTuple.FactoryCreate(md5.ComputeHash(lsBuffer[0]));
-
-                                    retval = Tuple.Create(hash1pt0, hash1pt0);
-
-                                    if (1 == lsBuffer.Count)
-                                        return retval;      // from lambda Util.Closure
-
-                                    var lsHash = new List<byte[]> { };
-
-                                    foreach (var buffer in lsBuffer.Skip(1))
+                                    if (null != tuple.Item3)
                                     {
-                                        const int knBuffLength = 4096;
-                                        var nLastPos = buffer.Length - knBuffLength;
-                                        var nOffset = 0;
-
-                                        for (; nOffset <= nLastPos; nOffset += knBuffLength)
-                                            lsHash.Add(md5.ComputeHash(buffer, nOffset, knBuffLength));
-
-                                        if (buffer.Length > nOffset)
-                                            lsHash.Add(md5.ComputeHash(buffer, nOffset, buffer.Length - nOffset));
+                                        dictException_FileRead[strFile] = tuple.Item3;
+                                        return retval;          // from lambda Util.Closure
                                     }
 
-                                    var hashArray = new byte[lsHash.Count * 16];
-                                    var nIx = 0;
+                                    var lsBuffer = tuple.Item4;
 
-                                    foreach (var hash in lsHash)
-                                        hash.CopyTo(hashArray, nIx++ * 16);
+                                    if (0 == lsBuffer.Count)
+                                    {
+                                        MBoxStatic.Assert(99932, false);
+                                        return retval;          // from lambda Util.Closure
+                                    }
 
-                                    return Tuple.Create(hash1pt0,          // from lambda Util.Closure
-                                        HashTuple.FactoryCreate(md5.ComputeHash(hashArray)));
-                                }
+                                    using (var md5 = MD5.Create())
+                                    {
+                                        var hash1pt0 = HashTuple.FactoryCreate(md5.ComputeHash(lsBuffer[0]));
+
+                                        retval = Tuple.Create(hash1pt0, hash1pt0);
+
+                                        if (1 == lsBuffer.Count)
+                                            return retval;      // from lambda Util.Closure
+
+                                        var nSize = 0;
+
+                                        foreach (var buffer in lsBuffer.Skip(1))
+                                            nSize += buffer.Length;
+
+                                        var hashArray = new byte[nSize];
+                                        var nIx = 0;
+
+                                        foreach (var buffer in lsBuffer.Skip(1))
+                                        {
+                                            buffer.CopyTo(hashArray, nIx);
+                                            nIx += buffer.Length;
+                                        }
+
+                                        return Tuple.Create(hash1pt0,          // from lambda Util.Closure
+                                            HashTuple.FactoryCreate(md5.ComputeHash(hashArray)));
+                                    }
+                                });
                             });
-                        }
+
+                            blockingFrameA.Continue = false;
+                        });
                     }
 
                     Dispatcher.PushFrame(blockingFrame);

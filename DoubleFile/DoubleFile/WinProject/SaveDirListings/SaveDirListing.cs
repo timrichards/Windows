@@ -246,7 +246,7 @@ namespace DoubleFile
                     });
 
                     using (var md5 = MD5.Create())
-                        while (false == bEndOfList)
+                        while ((false == bEndOfList) || (lsFileHandles.Count > 0))
                     {
                         Util.Block(500);
 

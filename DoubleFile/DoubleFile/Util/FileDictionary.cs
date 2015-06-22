@@ -142,6 +142,7 @@ namespace DoubleFile
                         Interlocked.Increment(ref _nFilesProgress);
 
                         var key = new FileKeyTuple(tuple.Item3, tuple.Item2);
+                        FileKeyTuple key2 = (null != tuple.Item4) ? new FileKeyTuple(tuple.Item4, tuple.Item2) : null;
                         var lookup = 0;
 
                         SetLVitemProjectVM(ref lookup, nLVitem);

@@ -255,8 +255,10 @@ namespace DoubleFile
                         // Expect block to be false: reading buffers from disk is The limiting factor. Allow block just in case.
                         Dispatcher.PushFrame(blockWhileHashingPreviousBatch);
                         
-                        // in C# this assignment occurs every iteration. A closure is created each time in ThreadMake.
-                        var lsFileBuffers_Dequeue = lsFileBuffers_Enqueue;
+                        // in C# this copy occurs every iteration. A closure is created each time in ThreadMake.
+                        // The closure along with the block being false should make the copy unnecessary but just in case.
+                        var lsFileBuffers_Dequeue = lsFileBuffers_Enqueue
+                            .ToArray();
                         
                         blockWhileHashingPreviousBatch.Continue = true;
 
@@ -283,7 +285,7 @@ namespace DoubleFile
                                 dictHash[strFile] = HashFile(tuple);
                             });
 
-                            nProgressNumerator += lsFileBuffers_Dequeue.Count;
+                            nProgressNumerator += lsFileBuffers_Dequeue.Length;
                             blockWhileHashingPreviousBatch.Continue = false;
                         });
                     }

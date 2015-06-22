@@ -231,7 +231,7 @@ namespace DoubleFile
                     var blockWhileHashingPreviousBatch = new DispatcherFrame(true) { Continue = false };
 
                     // The above ThreadMake will be busy pumping out new file handles while the below processes will
-                    // read those files' buffers and hash them in batches until all files have been opened.
+                    // read those files' buffers and simultaneously hash them in batches until all files have been opened.
                     while ((false == bAllFilesOpened) ||
                         (lsFileHandles.Count > 0))
                     {
@@ -260,6 +260,10 @@ namespace DoubleFile
                         
                         blockWhileHashingPreviousBatch.Continue = true;
 
+                        // While reading in the next batch of buffers, hash this batch. Three processes are occurring
+                        // simultaneously: opening all files on disk; reading in all buffers from files; hashing all buffers.
+                        // So the time it takes to complete saving listings should just be the sum of reading buffers from disk.
+                        // There is a miniscule start-up time, and a larger wind-down time, which is saving the listings to file.
                         Util.ThreadMake(() =>
                         {
                             Parallel.ForEach(lsFileBuffers_Dequeue, new ParallelOptions { CancellationToken = cts.Token }, tuple =>

@@ -125,7 +125,8 @@ namespace DoubleFile
                         .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
                         .Select(strLine => strLine.Split('\t'))
                         .Where(asLine => 10 < asLine.Length)
-                        .Select(asLine => Tuple.Create(int.Parse(asLine[1]), ulong.Parse(asLine[FileParse.knColLength]), asLine[10]))
+                        .Select(asLine => Tuple.Create(int.Parse(asLine[1]), ulong.Parse(asLine[FileParse.knColLength]), asLine[10],
+                            (11 < asLine.Length) ? asLine[11] : null))
                         .ToArray();
 
                     var nLVitem = _DictLVtoItemNumber[lvItem];

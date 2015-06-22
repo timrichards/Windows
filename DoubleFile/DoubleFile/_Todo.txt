@@ -47,8 +47,7 @@
 - all threads are background as of 6/12/15
 - neither is nor as are reflection. as is 20x slower though. p. 123
 
-99912 99911
-99909
+99912 99909
 99906
 99903 99902
 99897 99896 99895 99894

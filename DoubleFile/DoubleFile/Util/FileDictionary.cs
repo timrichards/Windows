@@ -31,6 +31,8 @@ namespace DoubleFile
         internal void Clear()
         {
             _DictFiles = null;
+            _DictV2V1 = new ConcurrentDictionary<FileKeyTuple, FileKeyTuple> { };
+            _DictV1V2 = new ConcurrentDictionary<FileKeyTuple, FileKeyTuple> { };
         }
 
         internal bool IsEmpty { get { return null == _DictFiles; } }

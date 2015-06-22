@@ -213,17 +213,23 @@ namespace DoubleFile
                     .Subscribe(x => StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator)))
                 {
                     var lsFileHandles = new ConcurrentBag<Tuple<string, long, SafeFileHandle, string>> { };
-                    var blockUntilAllFilesOpened = new DispatcherFrame(true) { Continue = true };
                     var bAllFilesOpened = false;
                     var cts = new CancellationTokenSource();
 
                     Util.ThreadMake(() =>
                     {
-                        Parallel.ForEach(lsFilePaths, new ParallelOptions { CancellationToken = cts.Token, MaxDegreeOfParallelism = 8 },
-                            tuple => lsFileHandles.Add(OpenFile(tuple)));
+                        Parallel.ForEach(lsFilePaths,
+                            new ParallelOptions
+                            {
+                                MaxDegreeOfParallelism = Environment.ProcessorCount,
+                                CancellationToken = cts.Token
+                            },
+                            tuple =>
+                        {
+                            lsFileHandles.Add(OpenFile(tuple));
+                        });
 
                         bAllFilesOpened = true;
-                        blockUntilAllFilesOpened.Continue = false;
                     });
 
                     var dictHash = new ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>> { };
@@ -248,11 +254,13 @@ namespace DoubleFile
                         }
 
                         // ToList() enumerates ReadBuffers() sequentially, reading disk I/O buffers one at a time.
-                        // Up to nine accesses to one disk are occurring simultaneously: CreateFile() x8 and fs.Read() x1.
+                        // Up to proc count + 1 accesses to one disk are occurring simultaneously:
+                        // CreateFile() x proc count and fs.Read() x1.
                         var lsFileBuffers_Enqueue = ReadBuffers(lsOpenedFiles)
                             .ToList();
 
-                        // Expect block to be false: reading buffers from disk is The limiting factor. Allow block just in case.
+                        // Expect block to be false: reading buffers from disk is The limiting factor. Opening files is
+                        // slow too, which makes it even less likely to block. Allow block just in case.
                         Dispatcher.PushFrame(blockWhileHashingPreviousBatch);
                         
                         // in C# this copy occurs every iteration. A closure is created each time in ThreadMake.
@@ -290,7 +298,6 @@ namespace DoubleFile
                         });
                     }
 
-                    Dispatcher.PushFrame(blockUntilAllFilesOpened);
                     dictHash_out = dictHash.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
                     dictException_FileRead_out = dictException_FileRead.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
                 }
@@ -302,13 +309,22 @@ namespace DoubleFile
                 OpenFile(Tuple<string, long> tuple)
             {
                 var strFile = tuple.Item1;
+                var fileHandle = new SafeFileHandle(IntPtr.Zero, false);
+                string strError = null;
 
-                var fileHandle = NativeMethods
-                    .CreateFile(@"\\?\" + strFile, FileAccess.Read, FileShare.ReadWrite, IntPtr.Zero,
-                    NativeMethods.OPEN_EXISTING,
-                    (FileAttributes)NativeMethods.FILE_FLAG_RANDOM_ACCESS, IntPtr.Zero);
+                fileHandle.SetHandleAsInvalid();
 
-                string strError = fileHandle.IsInvalid ? new Win32Exception(Marshal.GetLastWin32Error()).Message : null;
+                if (0 < tuple.Item2)       // non-empty file
+                {
+                    fileHandle =
+                        NativeMethods
+                        .CreateFile(@"\\?\" + strFile, FileAccess.Read, FileShare.ReadWrite, IntPtr.Zero,
+                        NativeMethods.OPEN_EXISTING,
+                        (FileAttributes)NativeMethods.FILE_FLAG_RANDOM_ACCESS, IntPtr.Zero);
+
+                    if (fileHandle.IsInvalid)
+                        strError = new Win32Exception(Marshal.GetLastWin32Error()).Message;
+                }
 
                 return Tuple.Create(strFile, tuple.Item2, fileHandle, strError);
             }
@@ -405,11 +421,14 @@ namespace DoubleFile
                 HashFile(Tuple<string, long, string, IReadOnlyList<byte[]>> tuple)
             {
                 var retval = Tuple.Create(default(HashTuple), default(HashTuple));
-
-                if (null != tuple.Item3)
-                    return retval;
-
                 var lsBuffer = tuple.Item4;
+
+                if ((0 == tuple.Item2) ||       // empty file
+                    (null != tuple.Item3))      // bad file handle, with error string
+                {
+                    MBoxStatic.Assert(99911, 0 == lsBuffer.Count);
+                    return retval;
+                }
 
                 if (0 == lsBuffer.Count)
                 {

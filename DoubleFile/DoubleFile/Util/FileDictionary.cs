@@ -44,7 +44,9 @@ namespace DoubleFile
             if (10 >= asFileLine.Length)
                 return null;
 
-            var key = new FileKeyTuple(asFileLine[10], ulong.Parse(asFileLine[7]));
+            var nLineNo = ulong.Parse(asFileLine[7]);
+            var key = new FileKeyTuple(asFileLine[10], nLineNo);
+            var key2 = (11 > asFileLine.Length) ? new FileKeyTuple(asFileLine[11], nLineNo) : null;
             var lsDupes = _DictFiles.TryGetValue(key);
 
             if (null == lsDupes)
@@ -110,7 +112,7 @@ namespace DoubleFile
                     StatusCallback(nProgress: _nFilesProgress/(double) _nFilesTotal);
             }))
             {
-                var dictFiles = new ConcurrentDictionary<FileKeyTuple, List<int>>();
+                var dictFiles = new ConcurrentDictionary<FileKeyTuple, List<int>> { };
 
                 Parallel.ForEach(
                     _LVprojectVM.ItemsCast
@@ -142,7 +144,6 @@ namespace DoubleFile
                         Interlocked.Increment(ref _nFilesProgress);
 
                         var key = new FileKeyTuple(tuple.Item3, tuple.Item2);
-                        FileKeyTuple key2 = (null != tuple.Item4) ? new FileKeyTuple(tuple.Item4, tuple.Item2) : null;
                         var lookup = 0;
 
                         SetLVitemProjectVM(ref lookup, nLVitem);
@@ -164,6 +165,15 @@ namespace DoubleFile
                         else
                         {
                             dictFiles[key] = new List<int> { lookup };
+                        }
+
+                        FileKeyTuple key2 = (null != tuple.Item4) ? new FileKeyTuple(tuple.Item4, tuple.Item2) : null;
+
+                        if ((null != key2) &&
+                            (null == _DictV2V1.TryGetValue(key2)))
+                        {
+                            _DictV2V1[key2] = key;
+                            _DictV1V2[key] = key2;
                         }
                     }
                 });
@@ -260,11 +270,15 @@ namespace DoubleFile
             _ksSerializeFile = ProjectFile.TempPath + "_DuplicateFiles._";
 
         readonly IDictionary<LVitem_ProjectVM, int>
-            _DictLVtoItemNumber = new Dictionary<LVitem_ProjectVM, int>();
+            _DictLVtoItemNumber = new Dictionary<LVitem_ProjectVM, int> { };
         readonly IDictionary<int, LVitem_ProjectVM>
-            _DictItemNumberToLV = new Dictionary<int, LVitem_ProjectVM>();
+            _DictItemNumberToLV = new Dictionary<int, LVitem_ProjectVM> { };
         IDictionary<FileKeyTuple, IEnumerable<int>>
             _DictFiles = null;
+        IDictionary<FileKeyTuple, FileKeyTuple>
+            _DictV2V1 = new ConcurrentDictionary<FileKeyTuple, FileKeyTuple> { };
+        IDictionary<FileKeyTuple, FileKeyTuple>
+            _DictV1V2 = new ConcurrentDictionary<FileKeyTuple, FileKeyTuple> { };
 
         WeakReference<ICreateFileDictStatus>
             _callbackWR = null;

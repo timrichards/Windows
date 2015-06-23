@@ -98,7 +98,7 @@ namespace DoubleFile
 
             foreach (var lvItem
                 in _LVprojectVM.ItemsCast
-                    .OrderBy(lvItem => lvItem.SourcePath))
+                .OrderBy(lvItem => lvItem.SourcePath))
             {
                 _DictLVtoItemNumber.Add(lvItem, nLVitems);
                 _DictItemNumberToLV.Add(nLVitems, lvItem);
@@ -106,6 +106,7 @@ namespace DoubleFile
             }
 
             var nLVitems_A = 0;
+            var bListingFileWithOnlyHashV1pt0 = false;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                 .Subscribe(x =>
@@ -115,15 +116,20 @@ namespace DoubleFile
             }))
             {
                 var dictFiles = new ConcurrentDictionary<FileKeyTuple, List<int>> { };
+                var dictTuples = new ConcurrentDictionary<LVitem_ProjectVM, IReadOnlyList<Tuple<int, ulong, string, string>>> { };
+                var cts = new CancellationTokenSource();
 
                 Parallel.ForEach(
                     _LVprojectVM.ItemsCast
-                    .Where(lvItem => lvItem.CanLoad), lvItem =>
+                    .Where(lvItem => lvItem.CanLoad), new ParallelOptions{ CancellationToken = cts.Token }, lvItem =>
                 {
                     if (IsAborted)
+                    {
+                        cts.Cancel();
                         return;
+                    }
 
-                    var arrTuples =
+                    dictTuples[lvItem] =
                         File
                         .ReadLines(lvItem.ListingFile)
                         .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
@@ -132,16 +138,30 @@ namespace DoubleFile
                         .Select(asLine => Tuple.Create(int.Parse(asLine[1]), ulong.Parse(asLine[FileParse.knColLength]), asLine[10],
                             (11 < asLine.Length) ? asLine[11] : null))
                         .ToArray();
+                });
 
+                foreach (var kvp in dictTuples)
+                {
+                    if (IsAborted)
+                    {
+                        cts.Cancel();
+                        return;
+                    }
+
+                    var lvItem = kvp.Key;
+                    var arrTuples = kvp.Value;
                     var nLVitem = _DictLVtoItemNumber[lvItem];
-
-                    Interlocked.Add(ref _nFilesTotal, arrTuples.Length);
+                    var bOnlyHashV1pt0 = true;
+                    Interlocked.Add(ref _nFilesTotal, arrTuples.Count);
                     Interlocked.Increment(ref nLVitems_A);
 
-                    foreach (var tuple in arrTuples)
+                    Parallel.ForEach(arrTuples, new ParallelOptions{ CancellationToken = cts.Token },tuple =>
                     {
                         if (IsAborted)
+                        {
+                            cts.Cancel();
                             return;
+                        }
 
                         Interlocked.Increment(ref _nFilesProgress);
 
@@ -171,14 +191,25 @@ namespace DoubleFile
 
                         FileKeyTuple key2 = (null != tuple.Item4) ? new FileKeyTuple(tuple.Item4, tuple.Item2) : null;
 
-                        if ((null != key2) &&
-                            (null == _DictV2V1.TryGetValue(key2)))
+                        if (null != key2)
                         {
-                            _DictV2V1[key2] = key;
-                            _DictV1V2[key] = key2;
+                            bOnlyHashV1pt0 = false;
+
+                            if (null == _DictV2V1.TryGetValue(key2))
+                            {
+                                _DictV2V1[key2] = key;
+                                _DictV1V2[key] = key2;
+                            }
                         }
-                    }
-                });
+                    });
+
+                    if (bOnlyHashV1pt0)
+                        bListingFileWithOnlyHashV1pt0 = true;
+                }
+
+                if (bListingFileWithOnlyHashV1pt0)
+                {
+                }
 
                 if (IsAborted)
                     return;

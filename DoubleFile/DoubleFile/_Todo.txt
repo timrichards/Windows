@@ -42,7 +42,7 @@
 - Who collaborates/reviews? Who wants to learn from this code base?
 - Research runtime asserts vs unit testing online. Throw exceptions instead, perhaps.
 	NUnit: replace MboxStatic assert with [TestMethod} and Assert.AreEqual, etc.
-- services: rewrite in Node/Angular; C++; Linux etc. Start these with unit testing.
+- services, decouple: Unity frameork: rewrite in Node/Angular; C++; Linux etc. Start these with unit testing.
 - what C# features don't translate well to other languages like C++? is operator?
 - all threads are background as of 6/12/15
 - neither is nor as are reflection. as is 20x slower though. p. 123

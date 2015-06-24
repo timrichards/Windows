@@ -632,20 +632,24 @@ namespace DoubleFile
                if (null != LocalOwner)
                     LocalOwner.Title = "Double File";
 
-                _bg.Graphics.Clear(Color.DarkGray);
+               try
+               {
+                   _bg.Graphics.Clear(Color.DarkGray);
 
-                if (null == _lsRenderActions)
-                    return;     // from lambda
+                   if (null == _lsRenderActions)
+                       return;     // from lambda
 
-                foreach (var stroke in _lsRenderActions)
-                    stroke.Stroke(_bg.Graphics);
+                   foreach (var stroke in _lsRenderActions)
+                       stroke.Stroke(_bg.Graphics);
 
-                _lsRenderActions = null;
-                _bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), _rectBitmap);
-                _bg.Render();
+                   _lsRenderActions = null;
+                   _bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), _rectBitmap);
+                   _bg.Render();
 
-                if (null != LocalOwner)
-                    LocalOwner.Title = treeNode.Text;
+                   if (null != LocalOwner)
+                       LocalOwner.Title = treeNode.Text;
+               }
+               catch (ArgumentException) { MBoxStatic.Assert(99979, false); }
             });
 
             _selChildNode = null;

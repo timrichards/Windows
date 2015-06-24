@@ -9,15 +9,10 @@ namespace DoubleFile
 {
     partial class LocalTV : IWinProgressClosing, ICreateFileDictStatus, ITreeStatus
     {
-        internal void TreeCleanup()
+        internal void ClearMem_TreeForm()
         {
             _tree = null;
             Collate.ClearMem();
-        }
-
-        internal void ClearMem_TreeForm()
-        {
-            TreeCleanup();
 
             if ((null != _allNodes) &&
                 (false == _allNodes.IsEmpty()))
@@ -36,8 +31,6 @@ namespace DoubleFile
             {
                 if (bKill)
                 {
-                    _tree.EndThread();
-                    _tree = null;
                     ClearMem_TreeForm();
                 }
                 else
@@ -50,7 +43,7 @@ namespace DoubleFile
             if (false == _lvProjectVM.ItemsCast.Any(lvItem => lvItem.CanLoad))
                 return false;
 
-            _bFinished = false;
+            _bTreeDone = false;
             App.FileDictionary.ResetAbortFlag();
 
             var lsProgressItems = new List<string> { _ksFolderTreeKey };
@@ -80,7 +73,7 @@ namespace DoubleFile
 
             TabledString<Tabled_Folders>.GenerationEnded();
             _winProgress = null;
-            return _bFinished;
+            return _bTreeDone;
         }
 
         void ICreateFileDictStatus.Callback(bool bDone, double nProgress)
@@ -168,7 +161,8 @@ namespace DoubleFile
 
             _topNode = _rootNodes[0];
             LocalTreeNode.SetLevel(_rootNodes);
-            TreeCleanup();
+            _tree = null;
+            Collate.ClearMem();
 
             var localLVclones = new LocalLV();
             var localLVsameVol = new LocalLV();
@@ -195,7 +189,7 @@ namespace DoubleFile
 
                 if (App.LocalExit)
                 {
-                    TreeCleanup();
+                    Collate.ClearMem();
                     return;
                 }
 
@@ -210,8 +204,8 @@ namespace DoubleFile
                 Util.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
             }
 
-            TreeCleanup();
-            _bFinished = true;      // should preceed closing status dialog: returns true to the caller
+            Collate.ClearMem();
+            _bTreeDone = true;      // should preceed closing status dialog: returns true to the caller
 
             WithWinProgress(w => w
                 .CloseIfNatural());
@@ -230,7 +224,7 @@ namespace DoubleFile
                 }
 
                 if (_bFileDictDone &&
-                    (null == _tree))
+                    _bTreeDone)
                 {
                     return true;
                 }
@@ -249,14 +243,15 @@ namespace DoubleFile
             if (null != _tree)
                 _tree.EndThread();
 
-            TreeCleanup();
+            _tree = null;
+            Collate.ClearMem();
             return true;
         }
 
-        T WithWinProgress<T>(Func<WinProgress, T> doSomething) where T: class
+        T WithWinProgress<T>(Func<WinProgress, T> doSomethingWith) where T: class
         {
             return (null != _winProgress)
-                ? doSomething(_winProgress)
+                ? doSomethingWith(_winProgress)
                 : null;
         }
         WinProgress _winProgress = null;
@@ -272,6 +267,6 @@ namespace DoubleFile
         bool
             _bFileDictDone = false;
         bool
-            _bFinished = false;
+            _bTreeDone = false;
     }
 }

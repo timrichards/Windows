@@ -5,6 +5,7 @@
 - large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
 - Why are some folders white? Why do some folders not say they're duplicated?
 
+- tree map still doesn't always show up at all (on top of slow calc etc as before) on 6/24/15
 - WithWinProgress(() => {});
 - put length and number of lines at the head of the converted file
 - save listings complete; status bar at 1: corner case possible where you can close it before file is written

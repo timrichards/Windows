@@ -170,29 +170,10 @@ namespace DoubleFile
                         MBoxStatic.Assert(99907, _DictItemNumberToLV[GetLVitemProjectVM(lookup)] == lvItem);
                         MBoxStatic.Assert(99908, GetLineNumber(lookup) == tuple.Item1);
 #endif
-                        Action<IDictionary<FileKeyTuple, List<int>>, FileKeyTuple>
-                            Insert = (dict_, key_) =>
-                        {
-                            var ls = dict_.TryGetValue(key);
-
-                            if (null != ls)
-                            {
-                                lock (ls)                      // jic sorting downstream too at A
-                                {
-                                    ls.Insert(ls.TakeWhile(nLookup => lookup >= nLookup).Count(),
-                                        lookup);
-                                }
-                            }
-                            else
-                            {
-                                dict_[key] = new List<int> { lookup };
-                            }
-                        };
-
-                        Insert(dictV1pt0, key);
+                        Insert(dictV1pt0, key, lookup);
 
                         if (null != key2)
-                            Insert(dictV2, key2);
+                            Insert(dictV2, key2, lookup);
                     }
 
                     if (bOnlyHashV1pt0)
@@ -215,6 +196,24 @@ namespace DoubleFile
              _callbackWR = null;
             _LVprojectVM = null;
             _thread = null;
+        }
+
+        void Insert(IDictionary<FileKeyTuple, List<int>> dictionary, FileKeyTuple key, int lookup)
+        {
+            var ls = dictionary.TryGetValue(key);
+
+            if (null != ls)
+            {
+                lock (ls)                      // jic sorting downstream too at A
+                {
+                    ls.Insert(ls.TakeWhile(nLookup => lookup >= nLookup).Count(),
+                        lookup);
+                }
+            }
+            else
+            {
+                dictionary[key] = new List<int> { lookup };
+            }
         }
 
         void StatusCallback(bool bDone = false, double nProgress = double.NaN)

@@ -140,13 +140,15 @@ namespace DoubleFile
             return IntPtr.Zero;
         }
         
-        internal void CloseIfSimulatingModal()
+        internal LocalModernWindowBase CloseIfSimulatingModal()
         {
             if (I.SimulatingModal)
                 Close();
+
+            return this;
         }
 
-        internal new Window Show()
+        internal new LocalModernWindowBase Show()
         {
             MBoxStatic.Restart();
 
@@ -195,14 +197,16 @@ namespace DoubleFile
             return base.ShowDialog();
         }
 
-        protected void GoModeless()
+        protected LocalModernWindowBase GoModeless()
         {
             _blockingFrame.Continue = false;
+            return this;
         }
 
-        internal new void Close()
+        internal new LocalModernWindowBase Close()
         {
             Util.UIthread(base.Close);
+            return this;
         }
 
         ILocalWindow

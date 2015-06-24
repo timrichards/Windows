@@ -5,6 +5,9 @@
 - large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
 - Why are some folders white? Why do some folders not say they're duplicated?
 
+- WithWinProgress(() => {});
+- put length and number of lines at the head of the converted file
+- save listings complete; status bar at 1: corner case possible where you can close it before file is written
 - store last selected file in App
 - remove save listings link when listings to save are removed
 - open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.

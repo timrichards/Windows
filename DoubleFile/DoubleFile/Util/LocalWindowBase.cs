@@ -81,7 +81,7 @@ namespace DoubleFile
                         if (bCanFlashWindow)
                             Win32Screen.FlashWindow((Window)topWindow);
 
-                        return;
+                        return;     // from lambda
                     }
                 }
 
@@ -139,13 +139,15 @@ namespace DoubleFile
             return IntPtr.Zero;
         }
         
-        internal void CloseIfSimulatingModal()
+        internal LocalWindowBase CloseIfSimulatingModal()
         {
             if (I.SimulatingModal)
                 Close();
+
+            return this;
         }
 
-        internal new Window Show()
+        internal new LocalWindowBase Show()
         {
             MBoxStatic.Restart();
 
@@ -194,14 +196,16 @@ namespace DoubleFile
             return base.ShowDialog();
         }
 
-        protected void GoModeless()
+        protected LocalWindowBase GoModeless()
         {
             _blockingFrame.Continue = false;
+            return this;
         }
 
-        internal new void Close()
+        internal new LocalWindowBase Close()
         {
             Util.UIthread(base.Close);
+            return this;
         }
 
         ILocalWindow

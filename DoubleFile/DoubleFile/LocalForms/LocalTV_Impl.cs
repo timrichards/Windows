@@ -89,21 +89,24 @@ namespace DoubleFile
                 (null == App.FileDictionary) ||
                 App.FileDictionary.IsAborted)
             {
-                _winProgress.SetAborted();
+                WithWinProgress(w => w
+                    .SetAborted());
+
                 return;
             }
 
             if (bDone)
             {
-                _winProgress
+                WithWinProgress(w => w
                     .SetCompleted(_ksFileDictKey)
-                    .CloseIfNatural();
+                    .CloseIfNatural());
 
                 _bFileDictDone = true;
             }
             else if (0 <= nProgress)
             {
-                _winProgress.SetProgress(_ksFileDictKey, nProgress);
+                WithWinProgress(w => w
+                    .SetProgress(_ksFileDictKey, nProgress));
             }
         }
         
@@ -115,7 +118,10 @@ namespace DoubleFile
                 ((null != _tree) && (_tree.IsAborted)))
             {
                 ClearMem_TreeForm();
-                _winProgress.SetAborted();
+
+                WithWinProgress(w => w
+                    .SetAborted());
+
                 return;
             }
 
@@ -139,7 +145,8 @@ namespace DoubleFile
                     _rootNodes = ls.ToArray();
                 }
 
-                _winProgress.SetProgress(_ksFolderTreeKey, _rootNodes.Length / _nCorrelateProgressDenominator * 3 / 4d);
+                WithWinProgress(w => w
+                    .SetProgress(_ksFolderTreeKey, _rootNodes.Length / _nCorrelateProgressDenominator * 3 / 4d));
             }
             else
             {
@@ -152,9 +159,9 @@ namespace DoubleFile
             if ((null == _rootNodes) ||
                 _rootNodes.IsEmpty())
             {
-                _winProgress
+                WithWinProgress(w => w
                     .SetAborted()
-                    .Close();
+                    .Close());
 
                 return;
             }
@@ -170,7 +177,7 @@ namespace DoubleFile
             var nProgress = 0d;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
-                .Subscribe(x => _winProgress.SetProgress(_ksFolderTreeKey, (3 + nProgress) / 4d)))
+                .Subscribe(x => WithWinProgress(w => w.SetProgress(_ksFolderTreeKey, (3 + nProgress) / 4d))))
             {
                 var lsTreeNodes = new List<LocalTreeNode>();
 
@@ -192,7 +199,9 @@ namespace DoubleFile
                     return;
                 }
 
-                _winProgress.SetCompleted(_ksFolderTreeKey);
+                WithWinProgress(w => w
+                    .SetCompleted(_ksFolderTreeKey));
+
                 collate.Step2();
 
                 if (null == LocalTV.SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
@@ -204,8 +213,8 @@ namespace DoubleFile
             TreeCleanup();
             _bFinished = true;      // should preceed closing status dialog: returns true to the caller
 
-            _winProgress
-                .CloseIfNatural();
+            WithWinProgress(w => w
+                .CloseIfNatural());
 
             _dictNodes = null;      // saving memory here.
         }
@@ -228,7 +237,7 @@ namespace DoubleFile
 
                 return
                     (MessageBoxResult.Yes ==
-                    MBoxStatic.ShowDialog("Do you want to cancel?", _winProgress.Title, MessageBoxButton.YesNo, _winProgress));
+                    MBoxStatic.ShowDialog("Do you want to cancel?", WithWinProgress(w => w.Title), MessageBoxButton.YesNo, _winProgress));
             }))
             {
                 return false;
@@ -243,6 +252,14 @@ namespace DoubleFile
             TreeCleanup();
             return true;
         }
+
+        T WithWinProgress<T>(Func<WinProgress, T> doSomething) where T: class
+        {
+            return (null != _winProgress)
+                ? doSomething(_winProgress)
+                : null;
+        }
+        WinProgress _winProgress = null;
         
         const string _ksFileDictKey = "Creating file dictionary";
         const string _ksFolderTreeKey = "Creating folder tree browser";
@@ -251,8 +268,6 @@ namespace DoubleFile
             _tree = null;
         ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
             _dictNodes = null;
-        WinProgress
-            _winProgress = null;
 
         bool
             _bFileDictDone = false;

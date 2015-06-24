@@ -533,7 +533,7 @@ namespace DoubleFile
 
                         if (false == rootNode_A.NodeDatum is RootNodeDatum)      // added 2/13/15, got hit on 5/4/15
                         {
-                            MBoxStatic.Assert(99969, false);
+                            MBoxStatic.Assert(99999, false);
                             return;
                         }
 
@@ -556,7 +556,7 @@ namespace DoubleFile
 
                         if (null == nodeDatum_A)      // added 2/13/15
                         {
-                            MBoxStatic.Assert(99968, false);
+                            MBoxStatic.Assert(99994, false);
                             return;
                         }
 

@@ -213,6 +213,7 @@ namespace DoubleFile
                     .Subscribe(x => StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator)))
                 {
                     var lsFileHandles = new ConcurrentBag<Tuple<string, long, SafeFileHandle, string>> { };
+                    var blockUntilAllFilesOpened = new DispatcherFrame(true) { Continue = true };
                     var bAllFilesOpened = false;
                     var cts = new CancellationTokenSource();
 
@@ -295,9 +296,13 @@ namespace DoubleFile
 
                             nProgressNumerator += lsFileBuffers_Dequeue.Length;
                             blockWhileHashingPreviousBatch.Continue = false;
+
+                            if (bAllFilesOpened)
+                                blockUntilAllFilesOpened.Continue = false;
                         });
                     }
 
+                    Dispatcher.PushFrame(blockUntilAllFilesOpened);
                     dictHash_out = dictHash.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
                     dictException_FileRead_out = dictException_FileRead.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
                 }

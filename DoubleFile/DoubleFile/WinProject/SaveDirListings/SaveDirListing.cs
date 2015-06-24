@@ -236,40 +236,48 @@ namespace DoubleFile
                     var dictHash = new ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>> { };
                     var dictException_FileRead = new ConcurrentDictionary<string, string> { };
                     var blockWhileHashingPreviousBatch = new DispatcherFrame(true) { Continue = false };
+                    var bEnqueued = true;
 
                     // The above ThreadMake will be busy pumping out new file handles while the below processes will
                     // read those files' buffers and simultaneously hash them in batches until all files have been opened.
                     while ((false == bAllFilesOpened) ||
-                        (lsFileHandles.Count > 0))
+                        (0 < lsFileHandles.Count) ||
+                        bEnqueued)
                     {
                         // Avoid spinning too quickly while waiting for new file handles.
                         Util.Block(100);
 
-                        Tuple<string, long, SafeFileHandle, string> tupleA = null;
                         var lsOpenedFiles = new List<Tuple<string, long, SafeFileHandle, string>> { };
 
-                        while (lsFileHandles.TryTake(out tupleA) &&
-                            (lsOpenedFiles.Count < 4096))
+                        while (4096 > lsOpenedFiles.Count)
                         {
+                            Tuple<string, long, SafeFileHandle, string> tupleA = null;
+
+                            lsFileHandles.TryTake(out tupleA);
+
+                            if (null == tupleA)
+                                break;
+
                             lsOpenedFiles.Add(tupleA);
                         }
 
                         // ToList() enumerates ReadBuffers() sequentially, reading disk I/O buffers one at a time.
                         // Up to proc count + 1 accesses to one disk are occurring simultaneously:
                         // CreateFile() x proc count and fs.Read() x1.
-                        var lsFileBuffers_Enqueue = ReadBuffers(lsOpenedFiles)
+                        var lsFileBuffers_Enqueue =
+                            ReadBuffers(lsOpenedFiles)
                             .ToList();
 
                         // Expect block to be false: reading buffers from disk is The limiting factor. Opening files is
-                        // slow too, which makes it even less likely to block. Allow block just in case.
+                        // slow too, which makes it even less likely to block. Allow block. It does get hit a handful of times.
                         Dispatcher.PushFrame(blockWhileHashingPreviousBatch);
-                        
+                        blockWhileHashingPreviousBatch.Continue = true;
+
                         // in C# this copy occurs every iteration. A closure is created each time in ThreadMake.
                         // The closure along with the block being false should make the copy unnecessary but just in case.
-                        var lsFileBuffers_Dequeue = lsFileBuffers_Enqueue
+                        var lsFileBuffers_Dequeue =
+                            lsFileBuffers_Enqueue
                             .ToArray();
-                        
-                        blockWhileHashingPreviousBatch.Continue = true;
 
                         // While reading in the next batch of buffers, hash this batch. Three processes are occurring
                         // simultaneously: opening all files on disk; reading in all buffers from files; hashing all buffers.
@@ -300,6 +308,8 @@ namespace DoubleFile
                             if (bAllFilesOpened)
                                 blockUntilAllFilesOpened.Continue = false;
                         });
+
+                        bEnqueued = (false == lsFileBuffers_Enqueue.IsEmpty());
                     }
 
                     Dispatcher.PushFrame(blockUntilAllFilesOpened);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -41,7 +42,7 @@ namespace DoubleFile
             /// <summary>
             /// Two-pass private implementation. First to get file list; second to write to file.
             /// </summary>
-            /// <param name="fs">If omitted then there can be no params and it returns the file list.</param>
+            /// <param name="fs">If omitted then params are ignored and it returns the file list.</param>
             /// <param name="dictHash"></param>
             /// <param name="dictException_FileRead"></param>
             /// <returns>File list if first pass</returns>
@@ -57,11 +58,10 @@ namespace DoubleFile
                 stackDirs.Push(winRoot);
 
                 var listFilePaths = new List<Tuple<string, long>>();
+                var nFiles = 0;
 
                 MBoxStatic.Assert(99939, LengthRead == 0);
-                MBoxStatic.Assert(99938, m_nFilesRead == 0);
                 LengthRead = 0;
-                m_nFilesRead = 0;
 
                 while (false == stackDirs.IsEmpty())
                 {
@@ -92,12 +92,14 @@ namespace DoubleFile
                     long nDirLength = 0;
                     var bHasLength = false;
 
-                    foreach (var winFile in ieFiles)
+                    foreach (var winFile in ieFiles.OrderBy(winData => winData.strAltFileName))
                     {
                         if (App.LocalExit || _bThreadAbort)
                         {
                             return null;
                         }
+
+                        ++nFiles;
 
                         var fi = new Win32FindFileStatic.FileData(winFile);
                         var strFile = winFile.strFileName;
@@ -135,18 +137,20 @@ namespace DoubleFile
                                 bHasLength = true;
                                 LengthRead += fi.Size;
                                 nDirLength += fi.Size;
-                                ++m_nFilesRead;
                             }
 
-                            string strHash = null;
-                            string strHash1 = null;
-                            var tuple = dictHash.TryGetValue(winFile.strAltFileName);
+                            string strHashV1pt0 = null;
+                            string strHashV2 = null;
 
-                            if ((null != dictHash) &&
-                                (null != tuple))
+                            if (null != dictHash)
                             {
-                                strHash = "" + tuple.Item1;
-                                strHash1 = "" + tuple.Item2;
+                                var tuple = dictHash.TryGetValue(winFile.strAltFileName);
+
+                                if (null != tuple)
+                                {
+                                    strHashV1pt0 = "" + tuple.Item1;
+                                    strHashV2 = "" + tuple.Item2;
+                                }
                             }
 
                             string strError1 = null;
@@ -166,7 +170,7 @@ namespace DoubleFile
                             fs.WriteLine(FormatString(strFile: strFile, dtCreated: fi.CreationTime,
                                 strAttributes: ((int)fi.Attributes).ToString("X"), dtModified: fi.LastWriteTime,
                                 nLength: fi.Size, strError1: strError1, strError2: strError2_File,
-                                strHash: strHash, strHash1: strHash1));
+                                strHashV1pt0: strHashV1pt0, strHashV2: strHashV2));
                         }
                     }
 
@@ -201,16 +205,15 @@ namespace DoubleFile
                         }
                     }
 
-                    foreach (var winData in ieSubDirs)
+                    foreach (var winData in ieSubDirs.OrderBy(winData => winData.strAltFileName))
                     {
                         stackDirs.Push(winData);
                     }
                 }
 
+                Util.WriteLine("All files: " + nFiles);
                 return listFilePaths;
             }
-
-            long m_nFilesRead = 0;
         }
     }
 }

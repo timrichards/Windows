@@ -262,7 +262,7 @@ namespace DoubleFile
             DateTime? dtCreated = null, DateTime? dtModified = null,
             string strAttributes = null, long nLength = -1,
             string strError1 = null, string strError2 = null, int? nHeader = null,
-            string strHash = null, string strHash1 = null)
+            string strHashV1pt0 = null, string strHashV2 = null)
         {
             string strLength = null;
             string strCreated = null;
@@ -284,7 +284,7 @@ namespace DoubleFile
             }
 
             if (string.IsNullOrWhiteSpace(strDir + strFile + strCreated + strModified +
-                strAttributes + strLength + strError1 + strError2 + strHash + strHash1))
+                strAttributes + strLength + strError1 + strError2 + strHashV1pt0 + strHashV2))
             {
                 if (nHeader == 0)
                 {
@@ -296,7 +296,7 @@ namespace DoubleFile
                 return "Dir" + '\t' + "File" + '\t' + "Created" + '\t' + "Modded" +'\t' +
                     "Attrib" + '\t' + "Length" + '\t' +
                     "Error1" + '\t' + "Error2" + '\t' +
-                    "Hash" + '\t' + "Hash1";
+                    "4K Hash" + '\t' + "128K Hash";
             }
 
             var bDbgCheck = false;
@@ -313,7 +313,7 @@ namespace DoubleFile
             var strRet = (strDir + '\t' + strFile + '\t' + strCreated + '\t' + strModified + '\t' +
                 strAttributes + '\t' + strLength + '\t' +
                 strError1 + '\t' + strError2 + '\t' +
-                strHash + '\t' + strHash1).TrimEnd();
+                strHashV1pt0 + '\t' + strHashV2).TrimEnd();
 
             if (bDbgCheck)
             {

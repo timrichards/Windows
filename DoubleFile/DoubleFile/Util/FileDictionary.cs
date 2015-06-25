@@ -56,6 +56,7 @@ namespace DoubleFile
                         .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
                         .Select(strLine => strLine.Split('\t'))
                         .Where(asLine => 10 < asLine.Length)
+                        .Take(1)
                         .Any(asLine => 11 > asLine.Length))
                     {
                         bHashV2 = false;

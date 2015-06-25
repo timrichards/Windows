@@ -16,11 +16,7 @@ namespace DoubleFile
             if (null != fileList)
                 TreeSelect_FileListUpdated(Tuple.Create(fileList, 0));
 
-            if (null != TreeSelect.LastSelectedFile)
-            {
-                this[TreeSelect.LastSelectedFile].FirstOnlyAssert(fileVM =>
-                    SelectedItem_Set(fileVM, 0));
-            }
+            _wr.SetTarget(this);
         }
 
         public void Dispose()
@@ -115,5 +111,7 @@ namespace DoubleFile
             _treeNode = null;
         List<IDisposable>
             _lsDisposable = new List<IDisposable>();
+        static WeakReference<LV_FilesVM>
+            _wr = new WeakReference<LV_FilesVM>(null);
     }
 }

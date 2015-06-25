@@ -9,8 +9,6 @@ namespace DoubleFile
 {
     partial class TreeSelect : Util
     {
-        static internal string LastSelectedFile { get; private set; }
-
         static internal IObservable<Tuple<Tuple<IEnumerable<string>, string, LocalTreeNode, string>, int>>
             FileListUpdated { get { return _fileListUpdated.AsObservable(); } }
         static readonly LocalSubject<Tuple<IEnumerable<string>, string, LocalTreeNode, string>> _fileListUpdated = new LocalSubject<Tuple<IEnumerable<string>, string, LocalTreeNode, string>>();
@@ -38,7 +36,6 @@ namespace DoubleFile
             if (treeNode is LocalTreeMapFileNode)     // does not support file fake nodes
                 return false;
 
-            LastSelectedFile = null;
             _dictVolumeInfo = LocalTV.DictVolumeInfo;
             _bCompareMode = bCompareMode;
             _bSecondComparePane = bSecondComparePane;
@@ -93,7 +90,6 @@ namespace DoubleFile
             });
 
             FileListUpdatedOnNext(Tuple.Create(lsFiles, strListingFile, treeNode, strFile), nInitiator);
-            LastSelectedFile = strFile;
         }
 
         static void GetFolderDetail(LocalTreeNode treeNode, int nInitiator)

@@ -25,6 +25,11 @@ namespace DoubleFile
         {
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
             _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.Subscribe(LV_FilesVM_SelectedFileChanged));
+
+            var lastSelectedFile = LV_FilesVM.LastSelectedFile;
+
+            if (null != lastSelectedFile)
+                LV_FilesVM_SelectedFileChanged(Tuple.Create(lastSelectedFile, 0));
         }
 
         public void Dispose()

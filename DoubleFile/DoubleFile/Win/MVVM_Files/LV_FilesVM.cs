@@ -10,7 +10,30 @@ namespace DoubleFile
         static internal IObservable<Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int>>
             SelectedFileChanged { get { return _selectedFileChanged.AsObservable(); } }
         static readonly LocalSubject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>> _selectedFileChanged = new LocalSubject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>>();
-        static void SelectedFileChangedOnNext(Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode> value, int nInitiator) { _selectedFileChanged.LocalOnNext(value, 99852, nInitiator); }
+        static void SelectedFileChangedOnNext(Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode> value, int nInitiator)
+        {
+            _selectedFileChanged.LocalOnNext(value, 99852, nInitiator);
+            LastSelectedFile = value;
+        }
+        static internal Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>
+            LastSelectedFile
+        {
+            get { return WithLV_FilesVM(lv => lv._lastSelectedFile); }
+            private set { WithLV_FilesVM(lv => lv._lastSelectedFile = value); }
+        }
+        static T WithLV_FilesVM<T>(Func<LV_FilesVM, T> doSomethingWith) where T: class
+        {
+            LV_FilesVM lv = null;
+
+            _wr.TryGetTarget(out lv);
+
+            if (null == lv)
+                return null;
+
+            return doSomethingWith(lv);
+        }
+        Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>
+            _lastSelectedFile = null;
 
         public LVitem_FilesVM SelectedItem
         {

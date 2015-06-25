@@ -56,24 +56,10 @@ namespace DoubleFile
                     }
                 }
 
-                bool bHashV2 = true;
+                _allListingsHashV2 =
+                    _LVprojectVM.ItemsCast
+                    .Aggregate(true, (current, lvItem) => lvItem.HashV2 && current);
 
-                foreach (var lvItem in _LVprojectVM.ItemsCast)
-                {
-                    if (File
-                        .ReadLines(lvItem.ListingFile)
-                        .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
-                        .Select(strLine => strLine.Split('\t'))
-                        .Where(asLine => 10 < asLine.Length)
-                        .Take(1)
-                        .Any(asLine => 11 == asLine.Length))
-                    {
-                        bHashV2 = false;
-                        break;
-                    }
-                }
-
-                _allListingsHashV2 = bHashV2;
                 return _allListingsHashV2.Value;
             }
         }
@@ -241,6 +227,8 @@ namespace DoubleFile
                 // Otherwise note that _LVprojectVM gets nulled six lines down so the value has to be set by now.
                 if (null == _allListingsHashV2)
                     _allListingsHashV2 = (false == _bListingFileWithOnlyHashV1pt0);
+                else
+                    MBoxStatic.Assert(99958, _bListingFileWithOnlyHashV1pt0 != AllListingsHashV2);
             }
 
              StatusCallback(bDone: true);

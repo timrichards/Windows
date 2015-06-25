@@ -15,8 +15,12 @@ namespace DoubleFile
         public string VolumeGroup { get { return marr[5]; } internal set { SetProperty(5, value); } }
         public string DriveModel { get { return marr[6]; } internal set { SetProperty(6, value); } }
         public string DriveSerial { get { return marr[7]; } internal set { SetProperty(7, value); } }
+
         public string ScannedLength { get { return Util.FormatSize(marr[8]); } internal set { SetProperty(8, value); } }
         public ulong ScannedLengthRaw { get { return ulong.Parse(marr[8]); } }
+
+        internal int LinesTotal { get; set; }
+        internal bool HashV2 { get; set; }
 
         internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 9;

@@ -105,7 +105,7 @@ namespace DoubleFile
             return "NTFS ASCII " + ((int)strFile[nIx]);
         }
 
-        static internal void ConvertFile(string strFile)
+        static void ConvertFile(string strFile)
         {
             var strFile_01 = StrFile_01(strFile);
 
@@ -290,7 +290,7 @@ namespace DoubleFile
                 {
                     return "2" + '\t' + "3" + '\t' + "4" + '\t' + "5" + '\t' +
                         "6" + '\t' + "7" + '\t' +
-                        "8" + '\t' + "9" + '\t' + "10";
+                        "8" + '\t' + "9" + '\t' + "10" + '\t' + "11";
                 }
 
                 return "Dir" + '\t' + "File" + '\t' + "Created" + '\t' + "Modded" +'\t' +
@@ -335,10 +335,10 @@ namespace DoubleFile
         {
             lvItem_out = null;
 
-            if (ValidateFile(strFile) == false)
-            {
+            var tupleValidate = ValidateFile(strFile);
+
+            if (false == tupleValidate.Item1)
                 return false;
-            }
 
             var lvItem = new LVitem_ProjectVM
             {
@@ -347,93 +347,66 @@ namespace DoubleFile
                 Include = true
             };
 
-            using (var sr = new System.IO.StreamReader(strFile))
-            {
-                string line = null;
+            const int knLinesDesired = 4 + knDriveInfoItems;
+            const int knLinesGrabFile = 10;
 
-                if (sr.ReadLine() == null)
-                    return false;
+            var lsLines = File.ReadLines(strFile).Take(knLinesDesired + knLinesGrabFile)
+                .ToList();
 
-                if ((line = sr.ReadLine()) == null)
-                    return false;
+            if (lsLines.Count < knLinesDesired)
+                return false;
 
-                if (line.StartsWith(ksLineType_Nickname) == false)
-                    return false;
+            if (lsLines[1].StartsWith(ksLineType_Nickname) == false)
+                return false;
 
-                var arrLine = line.Split('\t');
+            var arrLine = lsLines[1].Split('\t');
 
-                if (arrLine.Length > 2)
-                    lvItem.Nickname = arrLine[2];
+            if (arrLine.Length > 2)
+                lvItem.Nickname = arrLine[2];
 
-                if ((line = sr.ReadLine()) == null)
-                    return false;
+            // unkosher lambda "byref parameters"
 
-                if (line.StartsWith(ksLineType_Path) == false)
-                    return false;
+            if (lsLines[2].StartsWith(ksLineType_Path) == false)
+                return false;
 
-                // unkosher lambda "byref parameters"
-                var bReadAttributeReturnValue = false;
-                string strReadAttributeReturnValue = null;
-                Action<string> ReadAttribute = s =>
-                {
-                    bReadAttributeReturnValue = false;
-                    strReadAttributeReturnValue = null;
+            if (null == (lvItem.SourcePath = ReadAttribute(lsLines[2])))
+                return false;
 
-                    var astr = s.Split('\t');
+            lsLines
+                .Skip(4)
+                .Where(s => s.StartsWith(ksLineType_VolumeInfo_DriveModel))
+                .FirstOnlyAssert(s => lvItem.DriveModel = ReadAttribute(s));
 
-                    MBoxStatic.Assert(99946, astr.Length == 3);
+            lsLines
+                .Skip(4)
+                .Where(s => s.StartsWith(ksLineType_VolumeInfo_DriveSerial))
+                .FirstOnlyAssert(s => lvItem.DriveSerial = ReadAttribute(s));
 
-                    if (astr.Length < 3)
-                    {
-                        return; // from lambda
-                    }
+            lvItem.HashV2 =
+                lsLines
+                .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
+                .Select(strLine => strLine.Split('\t'))
+                .Where(asLine => 10 < asLine.Length)
+                .Take(1)
+                .Any(asLine => 11 < asLine.Length);
 
-                    strReadAttributeReturnValue = astr[2];
-                    bReadAttributeReturnValue = true;
-                };
-
-                ReadAttribute(line);
-
-                if (bReadAttributeReturnValue == false)
-                    return false;
-
-                lvItem.SourcePath = strReadAttributeReturnValue;
-
-                File.ReadLines(strFile).Skip(4).Take(knDriveInfoItems)
-                    .Where(s => s.StartsWith(ksLineType_VolumeInfo_DriveModel))
-                    .FirstOnlyAssert(s =>
-                {
-                    ReadAttribute(s);
-
-                    if (bReadAttributeReturnValue)
-                        lvItem.DriveModel = strReadAttributeReturnValue;
-                });
-
-                File.ReadLines(strFile).Skip(4).Take(knDriveInfoItems)
-                    .Where(s => s.StartsWith(ksLineType_VolumeInfo_DriveSerial))
-                    .FirstOnlyAssert(s =>
-                {
-                    ReadAttribute(s);
-
-                    if (bReadAttributeReturnValue)
-                        lvItem.DriveSerial = strReadAttributeReturnValue;
-                });
-
-                try
-                {
-                    File.ReadLines(strFile)
-                        .Where(s => s.StartsWith(ksLineType_Length))
-                        .FirstOnlyAssert(strLine =>     // redundant parse confirms it's a number
-                            lvItem.ScannedLength = "" + ulong.Parse(strLine.Split('\t')[knColLength]));
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-
+            lvItem.ScannedLength = "" + tupleValidate.Item2;
+            lvItem.LinesTotal = tupleValidate.Item3;
             lvItem_out = lvItem;
             return true;
+        }
+
+        static string ReadAttribute(string s)
+        {
+            var astr = s.Split('\t');
+
+            if (3 > astr.Length)
+            {
+                MBoxStatic.Assert(99946, false);
+                return null;
+            }
+
+            return astr[2];
         }
 
         static internal string StrFile_01(string strFile)
@@ -442,17 +415,21 @@ namespace DoubleFile
                 Path.GetFileNameWithoutExtension(strFile) + "_01" + Path.GetExtension(strFile));
         }
 
-        static internal bool ValidateFile(string strFile)
+        static internal Tuple<bool, ulong, int>
+            ValidateFile(string strFile)
         {
-            if (false == File.Exists(strFile))
-                return false;
+            var retVal = Tuple.Create(false, 0UL, 0);
 
-            var arrLine = File.ReadLines(strFile)
+            if (false == File.Exists(strFile))
+                return retVal;
+
+            var arrLine =
+                File.ReadLines(strFile)
                 .Take(1)
                 .ToArray();
 
             if (arrLine.Length == 0)
-                return false;
+                return retVal;
 
             var bConvertFile = false;
 
@@ -469,36 +446,42 @@ namespace DoubleFile
             File.ReadLines(strFile)
                 .Take(1)
                 .FirstOnlyAssert(strLine =>
-                {
-                    var arrToken = strLine.Split('\t');
-
-                    if (arrToken.Length < 3) return;
-                    if (arrToken[2] != ksHeader) return;
-                    bRet = true;
-                });
-
-            if (bRet == false)
             {
-                return false;
-            }
+                var arrToken = strLine.Split('\t');
+
+                if (arrToken.Length < 3) return;
+                if (arrToken[2] != ksHeader) return;
+                bRet = true;
+            });
+
+            if (false == bRet)
+                return retVal;
 
             bRet = false;
 
+            ulong nScannedLength = 0;
+            var nLinesTotal = 0;
+
             File.ReadLines(strFile)
-                .Where(s => s.StartsWith(ksLineType_Length))
-                .FirstOnlyAssert(strLine =>
-                {
-                    var arrToken = strLine.Split('\t');
-
-                    if (arrToken.Length < 3) return;
-                    if (arrToken[2] != ksTotalLengthLoc) return;
-                    bRet = true;
-                });
-
-            if (bRet == false)
+                .Where(strLine => strLine.StartsWith(ksLineType_Length))
+                .Select(strLine => strLine.Split('\t'))
+                .FirstOnlyAssert(asLine =>
             {
-                return false;
-            }
+                if (asLine.Length < 3) return;
+                if (asLine[2] != ksTotalLengthLoc) return;
+
+                // redundant parse confirms it's a number
+                try
+                {
+                    nScannedLength = ulong.Parse(asLine[knColLength]);
+                    nLinesTotal = int.Parse(asLine[1]);
+                    bRet = true;
+                }
+                catch { }
+            });
+
+            if (false == bRet)
+                return retVal;
 
             var strFile_01 = StrFile_01(strFile);
 
@@ -508,7 +491,7 @@ namespace DoubleFile
                 File.Delete(strFile_01);
             }
 
-            return true;
+            return Tuple.Create(true, nScannedLength, nLinesTotal);
         }
     }
 }

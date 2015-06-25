@@ -5,14 +5,18 @@
 - large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
 - Why are some folders white? Why do some folders not say they're duplicated?
 
+- allow two different file windows to point to two different folders: each new folder window should have its own children
+- last modified time as part of comparison; or notification: hash equal but mod times are different
+- wolfram-alpha front-end; curate; data -> query language: what state are my backups in?
+- compare the 4K vs 128K correlations to see what they caught.
+- nickname does not seem to work to separate drives for duplicate files in file explorer the way renaming a drive letter does
 - hash version is not shown to the user.
 - FileDictionary is not based on CanLoad.
 - compare mode
 - should the 2-pass listing save go out to the fs twice or just cache all the filenames?
 - tree map still doesn't always show up at all (on top of slow calc etc as before) on 6/24/15
 - WithWinProgress(() => {});
-- put length and number of lines at the head of the converted file
-- save listings complete; status bar at 1: corner case possible where you can close it before file is written
+- save listings complete; status bar at 1: corner case possible where you can close it before file is written: subtract epsilon
 - store last selected file in App
 - remove save listings link when listings to save are removed
 - open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.
@@ -55,7 +59,6 @@
 - all threads are background as of 6/12/15
 - neither is nor as are reflection. as is 20x slower though. p. 123
 
-99958
 99930 99929 99928
 99925
 99914

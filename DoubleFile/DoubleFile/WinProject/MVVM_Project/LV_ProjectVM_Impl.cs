@@ -124,7 +124,7 @@ namespace DoubleFile
         internal bool FileExists(string strListingFile)
         {
             if (File.Exists(strListingFile) &&
-                ((false == strListingFile.StartsWith(ProjectFile.TempPath)) || FileParse.ValidateFile(strListingFile)))
+                ((false == strListingFile.StartsWith(ProjectFile.TempPath)) || FileParse.ValidateFile(strListingFile).Item1))
             {
                 MBoxStatic.ShowDialog("Listing file exists. Please manually delete it using the Save Listing\n" +
                     "File dialog by clicking the icon button after this alert closes.", "New Listing File");
@@ -231,7 +231,7 @@ namespace DoubleFile
             if (false == (bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo || bDriveLetter_Todo))
                 return false;
 
-            if (false == FileParse.ValidateFile(lvItem_Orig.ListingFile))
+            if (false == FileParse.ValidateFile(lvItem_Orig.ListingFile).Item1)
             {
                 MBoxStatic.ShowDialog("Bad listing file.", "Edit Listing File");
                 return false;

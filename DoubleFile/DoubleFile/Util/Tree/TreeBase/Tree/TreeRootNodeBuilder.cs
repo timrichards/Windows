@@ -104,7 +104,9 @@ namespace DoubleFile
 
                     while (true)
                     {
-                        bValid = ValidateFile(_volStrings.ListingFile);
+                        bValid =
+                            ValidateFile(_volStrings.ListingFile)
+                            .Item1;
 
                         if (bValid || bAttemptConvert)
                             break;

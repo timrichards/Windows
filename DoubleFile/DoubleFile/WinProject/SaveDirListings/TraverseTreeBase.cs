@@ -58,7 +58,6 @@ namespace DoubleFile
                 stackDirs.Push(winRoot);
 
                 var listFilePaths = new List<Tuple<string, long>>();
-                var nFiles = 0;
 
                 MBoxStatic.Assert(99939, LengthRead == 0);
                 LengthRead = 0;
@@ -98,8 +97,6 @@ namespace DoubleFile
                         {
                             return null;
                         }
-
-                        ++nFiles;
 
                         var fi = new Win32FindFileStatic.FileData(winFile);
                         var strFile = winFile.strFileName;
@@ -211,7 +208,6 @@ namespace DoubleFile
                     }
                 }
 
-                Util.WriteLine("All files: " + nFiles);
                 return listFilePaths;
             }
         }

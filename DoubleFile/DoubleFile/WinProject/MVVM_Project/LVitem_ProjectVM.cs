@@ -68,6 +68,8 @@ namespace DoubleFile
             if (FileParse.ReadHeader(ListingFile, out lvItem))
             {
                 StringValues = lvItem.StringValues;
+                LinesTotal = lvItem.LinesTotal;
+                HashV2 = lvItem.HashV2;
                 Status = FileParse.ksSaved;
             }
             else

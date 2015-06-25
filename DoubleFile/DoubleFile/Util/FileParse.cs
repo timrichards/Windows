@@ -356,17 +356,15 @@ namespace DoubleFile
             if (lsLines.Count < knLinesDesired)
                 return false;
 
-            if (lsLines[1].StartsWith(ksLineType_Nickname) == false)
+            if (false == lsLines[1].StartsWith(ksLineType_Nickname))
                 return false;
 
             var arrLine = lsLines[1].Split('\t');
 
-            if (arrLine.Length > 2)
+            if (2 < arrLine.Length)
                 lvItem.Nickname = arrLine[2];
 
-            // unkosher lambda "byref parameters"
-
-            if (lsLines[2].StartsWith(ksLineType_Path) == false)
+            if (false == lsLines[2].StartsWith(ksLineType_Path))
                 return false;
 
             if (null == (lvItem.SourcePath = ReadAttribute(lsLines[2])))

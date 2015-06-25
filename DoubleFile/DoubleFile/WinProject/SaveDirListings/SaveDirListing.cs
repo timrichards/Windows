@@ -371,17 +371,8 @@ namespace DoubleFile
 
                         Array.Copy(lsRet[1], lsRet[0], Math.Min(lsRet[1].Length, lsRet[0].Length));
 
-                        if (lsRet[1].Length > lsRet[0].Length)
-                        {
-                            var truncBuff = new byte[lsRet[1].Length - lsRet[0].Length];
-
-                            Array.Copy(lsRet[1], lsRet[0].Length, truncBuff, 0, truncBuff.Length);
-                            lsRet[1] = truncBuff;
-                        }
-                        else
-                        {
+                        if (lsRet[1].Length <= lsRet[0].Length)
                             lsRet.RemoveAt(1);
-                        }
 
                         if (false == bFilled)
                             return;     // from lambda

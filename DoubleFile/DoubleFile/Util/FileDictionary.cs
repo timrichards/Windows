@@ -31,6 +31,7 @@ namespace DoubleFile
         internal void Clear()
         {
             _DictFiles = null;
+            _bListingFileWithOnlyHashV1pt0 = false;
         }
 
         internal bool IsEmpty { get { return null == _DictFiles; } }
@@ -38,15 +39,19 @@ namespace DoubleFile
 
         internal IEnumerable<DuplicateStruct> GetDuplicates(string[] asFileLine)
         {
+            var nHashColumn =
+                _bListingFileWithOnlyHashV1pt0
+                ? 10
+                : 11;
+
             if (null == _DictFiles)
                 return null;
 
-            if (10 >= asFileLine.Length)
+            if (nHashColumn >= asFileLine.Length)
                 return null;
 
             var nLineNo = ulong.Parse(asFileLine[7]);
-            var key = new FileKeyTuple(asFileLine[10], nLineNo);
-            var key2 = (11 > asFileLine.Length) ? new FileKeyTuple(asFileLine[11], nLineNo) : null;
+            var key = new FileKeyTuple(asFileLine[nHashColumn], nLineNo);
             var lsDupes = _DictFiles.TryGetValue(key);
 
             if (null == lsDupes)
@@ -104,7 +109,6 @@ namespace DoubleFile
             }
 
             var nLVitems_A = 0;
-            var bListingFileWithOnlyHashV1pt0 = false;
             var cts = new CancellationTokenSource();
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
@@ -153,14 +157,14 @@ namespace DoubleFile
 
                         Interlocked.Increment(ref _nFilesProgress);
 
-                        var key = new FileKeyTuple(tuple.Item3, tuple.Item2);
+                        var keyv1pt0 = new FileKeyTuple(tuple.Item3, tuple.Item2);
                         var lookup = 0;
-                        FileKeyTuple key2 = null;
+                        FileKeyTuple keyV2 = null;
 
-                        if ((false == bListingFileWithOnlyHashV1pt0) &&
+                        if ((false == _bListingFileWithOnlyHashV1pt0) &&
                             (null != tuple.Item4))
                         {
-                            key2 = new FileKeyTuple(tuple.Item4, tuple.Item2);
+                            keyV2 = new FileKeyTuple(tuple.Item4, tuple.Item2);
                             bOnlyHashV1pt0 = false;
                         }
 
@@ -170,14 +174,14 @@ namespace DoubleFile
                         MBoxStatic.Assert(99907, _DictItemNumberToLV[GetLVitemProjectVM(lookup)] == lvItem);
                         MBoxStatic.Assert(99908, GetLineNumber(lookup) == tuple.Item1);
 #endif
-                        Insert(dictV1pt0, key, lookup);
+                        Insert(dictV1pt0, keyv1pt0, lookup);
 
-                        if (null != key2)
-                            Insert(dictV2, key2, lookup);
+                        if (null != keyV2)
+                            Insert(dictV2, keyV2, lookup);
                     }
 
                     if (bOnlyHashV1pt0)
-                        bListingFileWithOnlyHashV1pt0 = true;
+                        _bListingFileWithOnlyHashV1pt0 = true;
                 });
 
                 if (IsAborted)
@@ -187,7 +191,7 @@ namespace DoubleFile
                 }
 
                 _DictFiles =
-                    (bListingFileWithOnlyHashV1pt0 ? dictV1pt0 : dictV2)
+                    (_bListingFileWithOnlyHashV1pt0 ? dictV1pt0 : dictV2)
                     .Where(kvp => kvp.Value.Count > 1)
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.AsEnumerable());
             }
@@ -298,6 +302,8 @@ namespace DoubleFile
             _DictItemNumberToLV = new Dictionary<int, LVitem_ProjectVM> { };
         IDictionary<FileKeyTuple, IEnumerable<int>>
             _DictFiles = null;
+        bool
+            _bListingFileWithOnlyHashV1pt0 = false;
 
         WeakReference<ICreateFileDictStatus>
             _callbackWR = null;

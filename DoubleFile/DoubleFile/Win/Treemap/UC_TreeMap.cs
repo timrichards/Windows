@@ -409,7 +409,7 @@ namespace DoubleFile
         static LocalTreeNode GetFileList(LocalTreeNode parent)
         {
             var nodeDatum = parent.NodeDatum;
-            var rootNodeDatum = parent.Root().NodeDatum as RootNodeDatum;
+            var rootNodeDatum = parent.Root.NodeDatum as RootNodeDatum;
 
             if ((null == nodeDatum) ||
                 (nodeDatum.LineNo == 0) ||

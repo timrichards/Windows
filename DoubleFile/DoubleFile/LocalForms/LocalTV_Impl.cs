@@ -139,7 +139,7 @@ namespace DoubleFile
                 }
 
                 WithWinProgress(w => w
-                    .SetProgress(_ksFolderTreeKey, _rootNodes.Length / _nCorrelateProgressDenominator * 3 / 4d));
+                    .SetProgress(_ksFolderTreeKey, _rootNodes.Length * _knProgMult));
             }
             else
             {
@@ -171,7 +171,7 @@ namespace DoubleFile
             var nProgress = 0d;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
-                .Subscribe(x => WithWinProgress(w => w.SetProgress(_ksFolderTreeKey, (3 + nProgress) / 4d))))
+                .Subscribe(x => WithWinProgress(w => w.SetProgress(_ksFolderTreeKey, (3 + nProgress) / (4 + double.Epsilon)))))
             {
                 var lsTreeNodes = new List<LocalTreeNode>();
 

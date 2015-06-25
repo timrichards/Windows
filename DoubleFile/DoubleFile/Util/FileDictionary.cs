@@ -58,7 +58,7 @@ namespace DoubleFile
 
                 _allListingsHashV2 =
                     _LVprojectVM.ItemsCast
-                    .Aggregate(true, (current, lvItem) => lvItem.HashV2 && current);
+                    .Aggregate(true, (current, lvItem) => current && lvItem.HashV2);
 
                 return _allListingsHashV2.Value;
             }

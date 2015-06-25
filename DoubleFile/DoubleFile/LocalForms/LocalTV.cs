@@ -71,7 +71,7 @@ namespace DoubleFile
             if ((null != _lvProjectVM) &&
                 (0 < _lvProjectVM.Count))
             {
-                _nCorrelateProgressDenominator = _lvProjectVM.Count;
+                _knProgMult = 3 / ((4 + double.Epsilon) * _lvProjectVM.Count);
                 TabledString<Tabled_Folders>.AddRef();
             }
 
@@ -161,7 +161,7 @@ namespace DoubleFile
         readonly LV_ProjectVM
             _lvProjectVM = null;
         readonly double
-            _nCorrelateProgressDenominator = 0;
+            _knProgMult = 0;
         List<IDisposable>
             _lsDisposable = new List<IDisposable>();
         static readonly WeakReference<LocalTV>

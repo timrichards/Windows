@@ -21,13 +21,13 @@ namespace DoubleFile
                     _rootNode.Nodes.Add(str, new Node(str, nLineNo, nLength, nHashParity, _rootNode));
                 }
 
-                internal LocalTreeNode AddToTree(string strVolumeName, out string strRootPath)
+                internal LocalTreeNode AddToTree(string strNickname, out string strRootPath)
                 {
                     LocalTreeNode rootTreeNode = null;
                     string strRootPath_out = null;
 
                     _rootNode.Nodes.Values.First(rootNode => rootTreeNode =
-                        rootNode.AddToTree(strVolumeName, out strRootPath_out));
+                        rootNode.AddToTree(strNickname, out strRootPath_out));
 
                     strRootPath = strRootPath_out;
                     return rootTreeNode;

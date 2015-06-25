@@ -207,7 +207,7 @@ namespace DoubleFile
                 // Default cluster size on any NTFS volume up to 16TB is 4K
                 // Maximize hash buffers while reducing CreateFile() and fs.Read() calls.
                 long nProgressNumerator = 0;
-                double nProgressDenominator = lsFilePaths.Count;  // double preserves mantissa
+                var nProgressDenominator = lsFilePaths.Count + double.Epsilon;  // double preserves mantissa
 
                 using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                     .Subscribe(x => StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator)))
@@ -317,7 +317,7 @@ namespace DoubleFile
                     dictException_FileRead_out = dictException_FileRead.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
                 }
 
-                StatusCallback(LVitemProjectVM, nProgress: 1);
+                StatusCallback(LVitemProjectVM, nProgress: 1 - double.Epsilon);
             }
 
             Tuple<string, long, SafeFileHandle, string>

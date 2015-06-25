@@ -7,17 +7,14 @@
 
 - allow two different file windows to point to two different folders: each new folder window should have its own children
 - last modified time as part of comparison; or notification: hash equal but mod times are different
-- wolfram-alpha front-end; curate; data -> query language: what state are my backups in?
+- wolfram-alpha front-end; curate; data -> query language: what state are my backups in? What are the best queries to bring forward?
 - compare the 4K vs 128K correlations to see what they caught.
-- nickname does not seem to work to separate drives for duplicate files in file explorer the way renaming a drive letter does
 - hash version is not shown to the user.
 - FileDictionary is not based on CanLoad.
-- compare mode
+- compare mode - how is this folder different from that one besides looking at the details: show missing/different file.
 - should the 2-pass listing save go out to the fs twice or just cache all the filenames?
 - tree map still doesn't always show up at all (on top of slow calc etc as before) on 6/24/15
 - WithWinProgress(() => {});
-- save listings complete; status bar at 1: corner case possible where you can close it before file is written: subtract epsilon
-- store last selected file in App
 - remove save listings link when listings to save are removed
 - open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.
 - show messagbox title

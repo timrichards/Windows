@@ -15,6 +15,12 @@ namespace DoubleFile
 
             if (null != fileList)
                 TreeSelect_FileListUpdated(Tuple.Create(fileList, 0));
+
+            if (null != TreeSelect.LastSelectedFile)
+            {
+                this[TreeSelect.LastSelectedFile].FirstOnlyAssert(fileVM =>
+                    SelectedItem_Set(fileVM, 0));
+            }
         }
 
         public void Dispose()

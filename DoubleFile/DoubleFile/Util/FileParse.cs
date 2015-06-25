@@ -426,7 +426,7 @@ namespace DoubleFile
                 .Take(1)
                 .ToArray();
 
-            if (arrLine.Length == 0)
+            if (0 == arrLine.Length)
                 return retVal;
 
             var bConvertFile = false;
@@ -468,7 +468,6 @@ namespace DoubleFile
                 if (asLine.Length < 3) return;
                 if (asLine[2] != ksTotalLengthLoc) return;
 
-                // redundant parse confirms it's a number
                 try
                 {
                     nScannedLength = ulong.Parse(asLine[knColLength]);

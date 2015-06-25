@@ -60,26 +60,17 @@ namespace DoubleFile
                     }
                 }
 
-                internal LocalTreeNode AddToTree(string strVolumeName, out string strRootPath)
+                internal LocalTreeNode AddToTree(string strNickname, out string strRootPath)
                 {
                     var rootNode = AddToTree();
 
+                    // out parameter
                     strRootPath = rootNode.Text;
 
-                    //treeNode.Name = treeNode.Text;    Name is now a get accessor for Text in LocalTreeNode 2/22/15
-
-                    if (string.IsNullOrWhiteSpace(strVolumeName))
-                    {
+                    if (string.IsNullOrWhiteSpace(strNickname))
                         return rootNode;
-                    }
 
-                    rootNode.Text =
-                        strVolumeName +
-                        (strVolumeName.EndsWith("" + rootNode.Text)
-                            ? ""
-                            : " (" + rootNode.Text + ")"
-                        );
-
+                    rootNode.Text = LVitem_ProjectVM.RootText(strNickname, strRootPath);
                     return rootNode;
                 }
 

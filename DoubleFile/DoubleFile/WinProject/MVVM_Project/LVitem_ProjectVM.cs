@@ -58,7 +58,27 @@ namespace DoubleFile
 
         internal string Volume
         {
-            get { return string.IsNullOrWhiteSpace(VolumeGroup) ? SourcePath : VolumeGroup; }
+            get
+            {
+                if (false == string.IsNullOrWhiteSpace(VolumeGroup))
+                    return VolumeGroup;
+
+                if (false == string.IsNullOrWhiteSpace(Nickname))
+                    return RootText(Nickname, SourcePath);
+
+                return SourcePath;
+            }
+        }
+
+        static internal string RootText(string strNickname, string strSourcePath)
+        {
+            if (string.IsNullOrEmpty(strSourcePath))
+                return strNickname;
+
+            if (("" + strNickname).EndsWith(strSourcePath))
+                return strNickname;
+
+            return strNickname + " (" + strSourcePath + ")";
         }
 
         internal void SetSaved()

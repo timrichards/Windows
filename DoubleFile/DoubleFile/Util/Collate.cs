@@ -506,7 +506,7 @@ namespace DoubleFile
 
                     // Test to see if clones are on separate volumes.
 
-                    var rootNode = treeNode.Root();
+                    var rootNode = treeNode.Root;
 
                     if (false == rootNode.NodeDatum is RootNodeDatum)      // added 2/13/15, got hit on 5/4/15
                     {
@@ -526,7 +526,7 @@ namespace DoubleFile
 
                         MBoxStatic.Assert(1305.6309, subnode.NodeDatum.Key.Equals(nodeDatum.Key));
 
-                        var rootNode_A = subnode.Root();
+                        var rootNode_A = subnode.Root;
 
                         if (rootNode == rootNode_A)
                             continue;

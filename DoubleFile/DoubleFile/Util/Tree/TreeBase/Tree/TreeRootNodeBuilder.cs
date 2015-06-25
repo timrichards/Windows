@@ -102,7 +102,7 @@ namespace DoubleFile
                     var bValid = false;
                     var bAttemptConvert = false;
 
-                    while (true)
+                    for (; ; )
                     {
                         bValid =
                             ValidateFile(_volStrings.ListingFile)

@@ -9,6 +9,8 @@ namespace DoubleFile
 {
     partial class TreeSelect : Util
     {
+        static internal string LastSelectedFile { get; private set; }
+
         static internal IObservable<Tuple<Tuple<IEnumerable<string>, string, LocalTreeNode, string>, int>>
             FileListUpdated { get { return _fileListUpdated.AsObservable(); } }
         static readonly LocalSubject<Tuple<IEnumerable<string>, string, LocalTreeNode, string>> _fileListUpdated = new LocalSubject<Tuple<IEnumerable<string>, string, LocalTreeNode, string>>();
@@ -36,6 +38,7 @@ namespace DoubleFile
             if (treeNode is LocalTreeMapFileNode)     // does not support file fake nodes
                 return false;
 
+            LastSelectedFile = null;
             _dictVolumeInfo = LocalTV.DictVolumeInfo;
             _bCompareMode = bCompareMode;
             _bSecondComparePane = bSecondComparePane;
@@ -59,7 +62,7 @@ namespace DoubleFile
             Util.Closure(() =>
             {
                 var nodeDatum = treeNode.NodeDatum;
-                var rootNode = treeNode.Root();
+                var rootNode = treeNode.Root;
 
                 if ((null == nodeDatum) ||
                     (0 == nodeDatum.LineNo) ||
@@ -90,6 +93,7 @@ namespace DoubleFile
             });
 
             FileListUpdatedOnNext(Tuple.Create(lsFiles, strListingFile, treeNode, strFile), nInitiator);
+            LastSelectedFile = strFile;
         }
 
         static void GetFolderDetail(LocalTreeNode treeNode, int nInitiator)
@@ -135,7 +139,7 @@ namespace DoubleFile
 
         static void GetVolumeDetail(LocalTreeNode treeNode, int nInitiator)
         {
-            var rootNode = treeNode.Root();
+            var rootNode = treeNode.Root;
             var strDriveInfo = _dictVolumeInfo.TryGetValue(((RootNodeDatum)rootNode.NodeDatum).ListingFile);
 
             if ((null == _dictVolumeInfo) ||

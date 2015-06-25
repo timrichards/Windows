@@ -26,6 +26,19 @@ namespace DoubleFile
         internal int
             SelectedImageIndex { get { return Datum16bits; } set { Datum16bits = value; } }
 
+        internal LocalTreeNode Root
+        {
+            get
+            {
+                var nodeParent = this;
+
+                while (nodeParent.Parent != null)
+                    nodeParent = nodeParent.Parent;
+
+                return nodeParent;
+            }
+        }
+
         internal LocalTreeNode()
         {
             Level = -1;
@@ -50,15 +63,17 @@ namespace DoubleFile
             Nodes = lsNodes.ToArray();
         }
 
-        internal void DetachFromTree()
+        internal LocalTreeNode DetachFromTree()
         {
             Level = -1;
 
             if (null == Nodes)
-                return;
+                return this;
 
             foreach (var treeNode in Nodes)
                 treeNode.DetachFromTree();
+
+            return this;
         }
 
         internal string FullPath
@@ -98,16 +113,6 @@ namespace DoubleFile
             return false;
         }
 
-        internal LocalTreeNode Root()
-        {
-            var nodeParent = this;
-
-            while (nodeParent.Parent != null)
-                nodeParent = nodeParent.Parent;
-
-            return nodeParent;
-        }
-
         static internal void SetLevel(IEnumerable<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
         {
             if (null == nodes)
@@ -127,9 +132,10 @@ namespace DoubleFile
             }
         }
 
-        internal void GoToFile(string strFile)
+        internal LocalTreeNode GoToFile(string strFile)
         {
             TreeSelect.DoThreadFactory(this, 0 /* UI Initiator */, strFile);
+            return this;
         }
     }
 }

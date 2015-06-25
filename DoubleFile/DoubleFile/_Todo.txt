@@ -5,6 +5,7 @@
 - large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
 - Why are some folders white? Why do some folders not say they're duplicated?
 
+- compare mode
 - should the 2-pass listing save go out to the fs twice or just cache all the filenames?
 - tree map still doesn't always show up at all (on top of slow calc etc as before) on 6/24/15
 - WithWinProgress(() => {});
@@ -52,7 +53,6 @@
 - all threads are background as of 6/12/15
 - neither is nor as are reflection. as is 20x slower though. p. 123
 
-99958
 99945
 99938
 99929 99928

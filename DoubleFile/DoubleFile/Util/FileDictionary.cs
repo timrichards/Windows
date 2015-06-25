@@ -51,11 +51,12 @@ namespace DoubleFile
 
                 foreach (var lvItem in _LVprojectVM.ItemsCast)
                 {
-                    if (false == (File
+                    if (File
                         .ReadLines(lvItem.ListingFile)
-                        .Where(strLine => strLine.StartsWith(FileParse.ksLineType_Start))
-                        .First/*onlyassert*/())
-                        .Contains(FileParse.ksHashV2))
+                        .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
+                        .Select(strLine => strLine.Split('\t'))
+                        .Where(asLine => 10 < asLine.Length)
+                        .Any(asLine => 11 > asLine.Length))
                     {
                         bHashV2 = false;
                         break;
@@ -213,6 +214,9 @@ namespace DoubleFile
 
                     if (bOnlyHashV1pt0)
                         _bListingFileWithOnlyHashV1pt0 = true;
+
+                    if (null != _allListingsHashV2)
+                        MBoxStatic.Assert(99958, _bListingFileWithOnlyHashV1pt0 != _allListingsHashV2.Value);
                 });
 
                 if (IsAborted)

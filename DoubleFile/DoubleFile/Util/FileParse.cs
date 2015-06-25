@@ -14,6 +14,8 @@ namespace DoubleFile
         internal const string ksDrive01 = ksHeader01 + " DRIVE";
         internal const string ksVolListHeader01 = ksHeader01 + " VOLUME LIST";
 
+        internal const string ksHashV2 = "HashV2";
+
         internal const string ksHeader = "SearchDirLists 0.2";
         internal const string ksStart = ksHeader + " START";
         internal const string ksEnd = ksHeader + " END";

@@ -90,7 +90,7 @@ namespace DoubleFile
                         fs.WriteLine();
                         fs.WriteLine(FormatString(nHeader: 0));
                         fs.WriteLine(FormatString(nHeader: 1));
-                        fs.WriteLine(ksStart01 + " " + DateTime.Now);
+                        fs.WriteLine(ksStart01 + " " + DateTime.Now + " " + ksHashV2);
                         HashAllFiles(GetFileList(), out dictHash, out dictException_FileRead);
                         WriteDirectoryListing(fs, dictHash, dictException_FileRead);
                         fs.WriteLine(ksEnd01 + " " + DateTime.Now);

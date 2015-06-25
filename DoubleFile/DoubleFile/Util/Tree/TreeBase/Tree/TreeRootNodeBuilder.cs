@@ -201,6 +201,11 @@ namespace DoubleFile
 
                 var nHashParity = 0;
 
+                var nHashColumn =
+                    App.FileDictionary.AllListingsHashV2
+                    ? 11
+                    : 10;
+
                 foreach (var strLine in ieLines)
                 {
                     if (App.LocalExit || _bThreadAbort)
@@ -208,10 +213,10 @@ namespace DoubleFile
 
                     var asLine = strLine.Split('\t');
 
-                    if ((10 < asLine.Length) &&
+                    if ((nHashColumn < asLine.Length) &&
                         (strLine.StartsWith(ksLineType_File)))
                     {
-                        nHashParity += new FileKeyTuple(asLine[10], ulong.Parse(asLine[knColLength])).GetHashCode();
+                        nHashParity += new FileKeyTuple(asLine[nHashColumn], ulong.Parse(asLine[knColLength])).GetHashCode();
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {

@@ -37,6 +37,37 @@ namespace DoubleFile
         internal bool IsEmpty { get { return null == _DictFiles; } }
         internal void ResetAbortFlag() { IsAborted = false; }
 
+        internal bool AllListingsHashV2
+        {
+            get
+            {
+                if (null != _allListingsHashV2)
+                    return _allListingsHashV2.Value;
+
+                if (null == _LVprojectVM)
+                    MBoxStatic.Assert(99959, false);
+
+                bool bHashV2 = true;
+
+                foreach (var lvItem in _LVprojectVM.ItemsCast)
+                {
+                    if (false == (File
+                        .ReadLines(lvItem.ListingFile)
+                        .Where(strLine => strLine.StartsWith(FileParse.ksLineType_Start))
+                        .First/*onlyassert*/())
+                        .Contains(FileParse.ksHashV2))
+                    {
+                        bHashV2 = false;
+                        break;
+                    }
+                }
+
+                _allListingsHashV2 = bHashV2;
+                return _allListingsHashV2.Value;
+            }
+        }
+        bool? _allListingsHashV2 = null;
+
         internal IEnumerable<DuplicateStruct> GetDuplicates(string[] asFileLine)
         {
             var nHashColumn =

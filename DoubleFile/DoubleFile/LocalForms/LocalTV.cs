@@ -71,7 +71,7 @@ namespace DoubleFile
             if ((null != _lvProjectVM) &&
                 (0 < _lvProjectVM.Count))
             {
-                _knProgMult = 3 / ((4 + double.Epsilon) * _lvProjectVM.Count);
+                _knProgMult = 3 / (4 * _lvProjectVM.Count);
                 TabledString<Tabled_Folders>.AddRef();
             }
 

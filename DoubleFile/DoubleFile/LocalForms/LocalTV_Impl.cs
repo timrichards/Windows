@@ -171,7 +171,7 @@ namespace DoubleFile
             var nProgress = 0d;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
-                .Subscribe(x => WithWinProgress(w => w.SetProgress(_ksFolderTreeKey, (3 + nProgress) / (4 + double.Epsilon)))))
+                .Subscribe(x => WithWinProgress(w => w.SetProgress(_ksFolderTreeKey, (3 + nProgress) / 4))))
             {
                 var lsTreeNodes = new List<LocalTreeNode>();
 

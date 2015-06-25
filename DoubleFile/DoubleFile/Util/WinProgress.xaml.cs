@@ -68,7 +68,7 @@ namespace DoubleFile
         {
             if (false ==
                 _lv[strPath]
-                .FirstOnlyAssert(lvItem => lvItem.Progress = nProgress))
+                .FirstOnlyAssert(lvItem => lvItem.Progress = nProgress - double.Epsilon))
             {
                 MBoxStatic.Assert(99969, false);
             }

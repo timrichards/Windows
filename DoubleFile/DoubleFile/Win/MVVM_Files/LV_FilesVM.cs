@@ -21,16 +21,16 @@ namespace DoubleFile
             get { return WithLV_FilesVM(lv => lv._lastSelectedFile); }
             private set { WithLV_FilesVM(lv => lv._lastSelectedFile = value); }
         }
-        static T WithLV_FilesVM<T>(Func<LV_FilesVM, T> doSomethingWith) where T: class
+        static T WithLV_FilesVM<T>(Func<LV_FilesVM, T> doSomethingWith) where T : class
         {
-            LV_FilesVM lv = null;
+            LV_FilesVM vm = null;
 
-            _wr.TryGetTarget(out lv);
+            _wr.TryGetTarget(out vm);
 
-            if (null == lv)
+            if (null == vm)
                 return null;
 
-            return doSomethingWith(lv);
+            return doSomethingWith(vm);
         }
         Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>
             _lastSelectedFile = null;

@@ -57,7 +57,7 @@ namespace DoubleFile
                         .Select(strLine => strLine.Split('\t'))
                         .Where(asLine => 10 < asLine.Length)
                         .Take(1)
-                        .Any(asLine => 11 > asLine.Length))
+                        .Any(asLine => 11 == asLine.Length))
                     {
                         bHashV2 = false;
                         break;
@@ -215,9 +215,6 @@ namespace DoubleFile
 
                     if (bOnlyHashV1pt0)
                         _bListingFileWithOnlyHashV1pt0 = true;
-
-                    if (null != _allListingsHashV2)
-                        MBoxStatic.Assert(99958, _bListingFileWithOnlyHashV1pt0 != _allListingsHashV2.Value);
                 });
 
                 if (IsAborted)
@@ -230,6 +227,9 @@ namespace DoubleFile
                     (_bListingFileWithOnlyHashV1pt0 ? dictV1pt0 : dictV2)
                     .Where(kvp => kvp.Value.Count > 1)
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.AsEnumerable());
+
+                if (null != _allListingsHashV2)
+                    MBoxStatic.Assert(99958, _bListingFileWithOnlyHashV1pt0 != _allListingsHashV2.Value);
             }
 
              StatusCallback(bDone: true);

@@ -369,10 +369,20 @@ namespace DoubleFile
                         const int knBigBuffLength = 65536;
                         var bFilled = FillBuffer(fs, knBigBuffLength, lsRet);
 
-                        Array.Copy(lsRet[1], lsRet[0], Math.Min(lsRet[1].Length, lsRet[0].Length));
+                        if (0 < lsRet[1].Length)
+                        {
+                            // virtually always: all non-empty files
+                            Array.Copy(lsRet[1], lsRet[0], Math.Min(lsRet[1].Length, lsRet[0].Length));
 
-                        if (lsRet[1].Length <= lsRet[0].Length)
-                            lsRet.RemoveAt(1);
+                            if (lsRet[1].Length <= lsRet[0].Length)
+                                lsRet.RemoveAt(1);
+                        }
+                        else
+                        {
+                            // virtually never: file emptied after being catalogued
+                            lsRet.Clear();
+                            MBoxStatic.Assert(99945, false == bFilled);
+                        }
 
                         if (false == bFilled)
                             return;     // from lambda
@@ -410,10 +420,7 @@ namespace DoubleFile
                 lsBuffer.Add(readBuffer);
 
                 if (0 == nRead)
-                {
-                    MBoxStatic.Assert(99930, false);
-                    return false;
-                }
+                    return false;   // file was emptied since being catalogued
 
                 bool bMoreToRead = fs.Position < fs.Length;
                 

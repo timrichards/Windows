@@ -45,7 +45,16 @@ namespace DoubleFile
                     return _allListingsHashV2.Value;
 
                 if (null == _LVprojectVM)
+                {
                     MBoxStatic.Assert(99959, false);
+                    Util.Block(1000);
+
+                    if (null == _LVprojectVM)
+                    {
+                        MBoxStatic.Assert(99938, false);
+                        return false;
+                    }
+                }
 
                 bool bHashV2 = true;
 
@@ -228,8 +237,10 @@ namespace DoubleFile
                     .Where(kvp => kvp.Value.Count > 1)
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.AsEnumerable());
 
-                if (null != _allListingsHashV2)
-                    MBoxStatic.Assert(99958, _bListingFileWithOnlyHashV1pt0 != _allListingsHashV2.Value);
+                // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step
+                // Otherwise note that _LVprojectVM gets nulled six lines down so the value has to be set by now.
+                if (null == _allListingsHashV2)
+                    _allListingsHashV2 = (false == _bListingFileWithOnlyHashV1pt0);
             }
 
              StatusCallback(bDone: true);

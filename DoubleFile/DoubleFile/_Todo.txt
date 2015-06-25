@@ -5,6 +5,7 @@
 - large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
 - Why are some folders white? Why do some folders not say they're duplicated?
 
+- TryParse or wrap Parse in try blocks
 - allow two different file windows to point to two different folders: each new folder window should have its own children
 - last modified time as part of comparison; or notification: hash equal but mod times are different
 - wolfram-alpha front-end; curate; data -> query language: what state are my backups in? What are the best queries to bring forward?

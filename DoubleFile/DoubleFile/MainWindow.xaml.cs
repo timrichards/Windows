@@ -75,7 +75,9 @@ namespace DoubleFile
             //    return;
 
             TitleLinks.Add(_extraWindowLink);
+#if DEBUG
             TitleLinks.Add(_advancedLink);
+#endif
         }
 
         static internal void

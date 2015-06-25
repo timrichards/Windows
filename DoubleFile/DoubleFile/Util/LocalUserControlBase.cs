@@ -40,6 +40,7 @@ namespace DoubleFile
                 "" + e.Source)
             {
                 CalculateAverageFileLength();
+                e.Cancel = true;
                 return;
             }
 
@@ -106,7 +107,7 @@ namespace DoubleFile
                     }
                 });
 
-                Util.WriteLine("Average file length = " + lsFileLengths.Average());
+                Util.WriteLine("Average file length = " + Util.FormatSize((ulong)lsFileLengths.Average(), true));
             });
         }
     }

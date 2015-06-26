@@ -294,7 +294,7 @@ namespace DoubleFile
                 return "Dir" + '\t' + "File" + '\t' + "Created" + '\t' + "Modded" +'\t' +
                     "Attrib" + '\t' + "Length" + '\t' +
                     "Error1" + '\t' + "Error2" + '\t' +
-                    "4K Hash" + '\t' + "128K Hash";
+                    "4K Hash" + '\t' + "512K Hash";
             }
 
             var bDbgCheck = false;

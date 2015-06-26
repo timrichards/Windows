@@ -141,7 +141,7 @@ namespace DoubleFile
             if (null == arrArgs)                
                 return;
 
-            if (false == MBoxStatic.Assert(1308.93165, 0 < arrArgs.Length))
+            if (false == MBoxStatic.Assert(1308.93165m, 0 < arrArgs.Length))
                 return;
 
             var strFile = arrArgs[0];

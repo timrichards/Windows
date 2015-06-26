@@ -364,11 +364,10 @@ namespace DoubleFile
                     using (var fs = new FileStream(fileHandle, FileAccess.Read))
                     Util.Closure(() =>
                     {
-                        const int knLilBuffLength = 4096;
                         const int knBigBuffLength = 65536;
 
-                        MBoxStatic.Assert(99935, knBigBuffLength > 2 * knLilBuffLength);
-                        lsRet.Add(new byte[knLilBuffLength]);
+                        MBoxStatic.Assert(99935, knBigBuffLength > 2 * 4096);
+                        lsRet.Add(new byte[4096]);          // happens to be block size
                         var bFilled = FillBuffer(fs, knBigBuffLength, lsRet);
 
                         if (0 < lsRet[1].Length)
@@ -394,9 +393,17 @@ namespace DoubleFile
                         if (desiredPos > fs.Position)
                         {
                             MBoxStatic.Assert(99931, knBigBuffLength == fs.Position);
-                            desiredPos += (4096 - desiredPos % 4096);       // align to block boundary if possible
-                            MBoxStatic.Assert(99914, 0 == desiredPos % 4096);
                             fs.Position = desiredPos;
+
+                            // read the remainder to align to block boundary
+                            var alignTrunc = desiredPos % 4096;
+
+                            if ((0 < alignTrunc) &&
+                                (false == FillBuffer(fs, (int)alignTrunc, lsRet)))
+                            {
+                                MBoxStatic.Assert(99912, false);
+                                return;     // from lambda
+                            }
                         }
 
                         if (false == FillBuffer(fs, knBigBuffLength, lsRet))
@@ -466,6 +473,8 @@ namespace DoubleFile
 
                     foreach (var buffer in lsBuffer.Skip(1))
                         nSize += buffer.Length;
+
+                    MBoxStatic.Assert(99909, 131072 >= nSize);
 
                     var hashArray = new byte[nSize];
                     var nIx = 0;

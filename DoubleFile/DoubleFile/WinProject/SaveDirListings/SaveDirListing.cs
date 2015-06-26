@@ -392,8 +392,8 @@ namespace DoubleFile
                         if (desiredPos > fs.Position)
                         {
                             MBoxStatic.Assert(99931, knBigBuffLength == fs.Position);
-                            desiredPos += (4096 - desiredPos % 4096);       // align to block boundary if possible
-                            MBoxStatic.Assert(99914, 0 == desiredPos % 4096);
+                            desiredPos += (4096 - (desiredPos & 4095));       // align to block boundary if possible
+                            MBoxStatic.Assert(99914, 0 == (desiredPos & 4095));
                             fs.Position = desiredPos;
                         }
 
@@ -465,7 +465,7 @@ namespace DoubleFile
                     foreach (var buffer in lsBuffer.Skip(1))
                         nSize += buffer.Length;
 
-     //               MBoxStatic.Assert(99909, 131072 >= nSize);
+                    MBoxStatic.Assert(99909, 1048576 >= nSize);
 
                     var hashArray = new byte[nSize];
                     var nIx = 0;

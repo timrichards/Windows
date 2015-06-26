@@ -20,12 +20,12 @@ namespace DoubleFile
                     if (App.LocalExit)
                         return;
 
-                    MBoxStatic.Assert(1301.2303, nLineNo != 0);
+                    MBoxStatic.Assert(1301.2303m, nLineNo != 0);
                     _rootNode = rootNode;
 
                     if (in_str.EndsWith(@":\") == false)
                     {
-                        MBoxStatic.Assert(1301.2304, in_str.Trim().EndsWith(@"\") == false);
+                        MBoxStatic.Assert(1301.2304m, in_str.Trim().EndsWith(@"\") == false);
                     }
 
                     _strPath = in_str;
@@ -120,7 +120,7 @@ namespace DoubleFile
                     }
 
                     //Utilities.Assert(1301.2305, treeNode.Text == strShortPath, "\"" + treeNode.Text + "\" != \"" + strShortPath + "\""); not true for non-root
-                    MBoxStatic.Assert(1301.2306, treeNode.SelectedImageIndex == -1);     // sets the bitmap size
+                    MBoxStatic.Assert(1301.2306m, treeNode.SelectedImageIndex == -1);     // sets the bitmap size
                     treeNode.SelectedImageIndex = -1;
                     treeNode.NodeDatum = new NodeDatum(_nPrevLineNo, _nLineNo, _nLength, _nHashParity);  // this is almost but not quite always newly assigned here.
                     return treeNode;

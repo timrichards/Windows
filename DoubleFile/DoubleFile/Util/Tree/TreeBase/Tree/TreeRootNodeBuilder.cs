@@ -21,7 +21,7 @@ namespace DoubleFile
                 : base(base_in)
             {
                 _volStrings = volStrings;
-                MBoxStatic.Assert(1301.2301, _callbackWR != null);
+                MBoxStatic.Assert(1301.2301m, _callbackWR != null);
             }
 
             DetailsDatum TreeSubnodeDetails(LocalTreeNode treeNode)
@@ -94,7 +94,7 @@ namespace DoubleFile
 
                 if (_volStrings.CanLoad == false)
                 {
-                    MBoxStatic.Assert(1301.2307, false);    // guaranteed by caller
+                    MBoxStatic.Assert(1301.2307m, false);    // guaranteed by caller
                     return;
                 }
 
@@ -163,12 +163,12 @@ namespace DoubleFile
                         if ((5 == nIx) &&
                             (false == string.IsNullOrWhiteSpace(s)))
                         {
-                            nVolFree = ulong.Parse(s);
+                            nVolFree = ("" + s).ToUlong();
                         }
                         else if ((6 == nIx) &&
                             (false == string.IsNullOrWhiteSpace(s)))
                         {
-                            nVolLength = ulong.Parse(s);
+                            nVolLength = ("" + s).ToUlong();
                         }
                     }
 
@@ -176,7 +176,7 @@ namespace DoubleFile
                     {
                         if (null != _dictDriveInfo.TryGetValue(_volStrings.ListingFile))
                         {
-                            MBoxStatic.Assert(1301.2308, false);
+                            MBoxStatic.Assert(1301.2308m, false);
                             _dictDriveInfo.Remove(_volStrings.ListingFile);
                         }
 
@@ -192,7 +192,7 @@ namespace DoubleFile
                     File
                         .ReadLines(_volStrings.ListingFile)
                         .Where(s => s.StartsWith(ksLineType_Start))
-                        .FirstOnlyAssert(s => rootNode.FirstLineNo = uint.Parse(s.Split('\t')[1]));
+                        .FirstOnlyAssert(s => rootNode.FirstLineNo = (uint)(s.Split('\t')[1]).ToInt());
 
                     dirData = new DirData(rootNode);
                 }
@@ -218,11 +218,11 @@ namespace DoubleFile
                     if ((nHashColumn < asLine.Length) &&
                         (strLine.StartsWith(ksLineType_File)))
                     {
-                        nHashParity += new FileKeyTuple(asLine[nHashColumn], ulong.Parse(asLine[knColLength])).GetHashCode();
+                        nHashParity += new FileKeyTuple(asLine[nHashColumn], ("" + asLine[knColLength]).ToUlong()).GetHashCode();
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {
-                        dirData.AddToTree(asLine[2], uint.Parse(asLine[1]), ulong.Parse(asLine[knColLength]),
+                        dirData.AddToTree(asLine[2], (uint)("" + asLine[1]).ToInt(), ("" + asLine[knColLength]).ToUlong(),
                             nHashParity);
                         nHashParity = 0;
                     }
@@ -245,15 +245,15 @@ namespace DoubleFile
                 StatusCallback(_volStrings, rootTreeNode);
 
 #if (DEBUG && FOOBAR)
-                Util.WriteLine("" + File.ReadLines(_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_File)).Sum(s => double.Parse(s.Split('\t')[knColLength])));
-                Util.WriteLine("" + File.ReadLines(_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => double.Parse(s.Split('\t')[knColLength])));
+                Util.WriteLine("" + File.ReadLines(_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_File)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
+                Util.WriteLine("" + File.ReadLines(_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
 
                 ulong nScannedLength = 0;
 
                 File
                     .ReadLines(_volStrings.ListingFile)
                     .Where(s => s.StartsWith(ksLineType_Length))
-                    .FirstOnlyAssert(s => nScannedLength = ulong.Parse(s.Split('\t')[knColLength]));
+                    .FirstOnlyAssert(s => nScannedLength = (s.Split('\t')[knColLength]).ToUlong());
 
                 Util.WriteLine("" + nScannedLength);
 

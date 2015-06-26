@@ -17,7 +17,7 @@ namespace DoubleFile
         {
             IsAborted = false;
             LVprojectVM = lvProjectVM;
-            MBoxStatic.Assert(1301.2301, callbackWR != null);
+            MBoxStatic.Assert(1301.2301m, callbackWR != null);
         }
 
         internal void EndThread()     // bJoin is not used because it induces lag.

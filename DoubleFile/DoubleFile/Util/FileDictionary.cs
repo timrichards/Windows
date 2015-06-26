@@ -78,7 +78,7 @@ namespace DoubleFile
             if (nHashColumn >= asFileLine.Length)
                 return null;
 
-            var nLineNo = ulong.Parse(asFileLine[7]);
+            var nLineNo = ("" + asFileLine[7]).ToUlong();
             var key = new FileKeyTuple(asFileLine[nHashColumn], nLineNo);
             var lsDupes = _DictFiles.TryGetValue(key);
 
@@ -165,7 +165,7 @@ namespace DoubleFile
                         .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
                         .Select(strLine => strLine.Split('\t'))
                         .Where(asLine => 10 < asLine.Length)
-                        .Select(asLine => Tuple.Create(int.Parse(asLine[1]), ulong.Parse(asLine[FileParse.knColLength]), asLine[10],
+                        .Select(asLine => Tuple.Create(("" + asLine[1]).ToInt(), ("" + asLine[FileParse.knColLength]).ToUlong(), asLine[10],
                             (11 < asLine.Length) ? asLine[11] : null))
                         .ToArray();
 
@@ -312,7 +312,7 @@ namespace DoubleFile
                     var asLine = strLine.Split('\t');
                     var asKey = asLine[0].Split(' ');
 
-                    _DictFiles[new FileKeyTuple(asKey[0], ulong.Parse(asKey[1]))] =
+                    _DictFiles[new FileKeyTuple(asKey[0], ("" + asKey[1]).ToUlong())] =
                         asLine
                         .Skip(1)
                         .Select(s => Convert.ToInt32(s));

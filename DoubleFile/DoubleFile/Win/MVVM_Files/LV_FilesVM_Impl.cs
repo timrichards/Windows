@@ -48,7 +48,7 @@ namespace DoubleFile
                     .Split('\t')
                     .ToArray();
 
-                var nLine = int.Parse(asFileLine[1]);
+                var nLine = ("" + asFileLine[1]).ToInt();
                 var lsDuplicates = App.FileDictionary.GetDuplicates(asFileLine);
 
                 asFileLine =

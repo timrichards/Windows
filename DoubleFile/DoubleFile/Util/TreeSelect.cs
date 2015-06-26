@@ -150,7 +150,7 @@ namespace DoubleFile
                 .Split(new[] { "\r\n", "\n" },
                 StringSplitOptions.None);
 
-            MBoxStatic.Assert(1301.2314,
+            MBoxStatic.Assert(1301.2314m,
                 new[] { 7, 8, 10, kanDIviewOrder.Length }
                 .Contains(arrDriveInfo.Length));
 

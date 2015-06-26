@@ -268,7 +268,7 @@ namespace DoubleFile
                     {
                         var astr = ("" + sbLine).Split('\t').ToList();
 
-                        MBoxStatic.Assert(1308.9312, astr.Count == 3);
+                        MBoxStatic.Assert(1308.9312m, astr.Count == 3);
 
                         while (astr.Count < 3)
                             astr.Add("");

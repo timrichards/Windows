@@ -9,20 +9,30 @@ namespace DoubleFile
         [Serializable]
         internal class FileData
         {
-            readonly FileAttributes m_Attributes;
-            readonly DateTime m_CreationTimeUtc;
-            readonly DateTime m_LastAccessTimeUtc;
-            readonly DateTime m_LastWriteTimeUtc;
-            readonly long m_Size;
-            readonly bool m_bValid = false;
+            internal FileAttributes
+                Attributes { get { return _Attributes; } }
+            readonly FileAttributes _Attributes;
 
-            internal FileAttributes Attributes { get { return m_Attributes; } }
-            internal DateTime CreationTimeUtc { get { return m_CreationTimeUtc; } }
+            internal DateTime
+                CreationTimeUtc { get { return _CreationTimeUtc; } }
+            readonly DateTime _CreationTimeUtc;
+
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            internal DateTime LastAccessTimeUtc { get { return m_LastAccessTimeUtc; } }
-            internal DateTime LastWriteTimeUtc { get { return m_LastWriteTimeUtc; } }
-            internal long Size { get { return m_Size; } }
-            internal bool IsValid { get { return m_bValid; } }
+            internal DateTime
+                LastAccessTimeUtc { get { return _LastAccessTimeUtc; } }
+            readonly DateTime _LastAccessTimeUtc;
+
+            internal DateTime
+                LastWriteTimeUtc { get { return _LastWriteTimeUtc; } }
+            readonly DateTime _LastWriteTimeUtc;
+
+            internal ulong
+                Size { get { MBoxStatic.Assert(99928, 0 <= _Size); return (ulong)_Size; } }
+            readonly long _Size;
+
+            internal bool
+                IsValid { get { return _bValid; } }
+            readonly bool _bValid = false;
 
             static internal bool WinFile(string strFile, out NativeMethods.DATUM winFindData)
             {
@@ -36,12 +46,12 @@ namespace DoubleFile
 
             internal FileData(NativeMethods.DATUM findData)
             {
-                m_Attributes = findData.fileAttributes;
-                m_CreationTimeUtc = ConvertDateTime(findData.ftCreationTimeHigh, findData.ftCreationTimeLow);
-                m_LastAccessTimeUtc = ConvertDateTime(findData.ftLastAccessTimeHigh, findData.ftLastAccessTimeLow);
-                m_LastWriteTimeUtc = ConvertDateTime(findData.ftLastWriteTimeHigh, findData.ftLastWriteTimeLow);
-                m_Size = CombineHighLowInts(findData.nFileSizeHigh, findData.nFileSizeLow);
-                m_bValid = (findData.ftCreationTimeHigh | findData.ftCreationTimeLow) != 0;
+                _Attributes = findData.fileAttributes;
+                _CreationTimeUtc = ConvertDateTime(findData.ftCreationTimeHigh, findData.ftCreationTimeLow);
+                _LastAccessTimeUtc = ConvertDateTime(findData.ftLastAccessTimeHigh, findData.ftLastAccessTimeLow);
+                _LastWriteTimeUtc = ConvertDateTime(findData.ftLastWriteTimeHigh, findData.ftLastWriteTimeLow);
+                _Size = CombineHighLowInts(findData.nFileSizeHigh, findData.nFileSizeLow);
+                _bValid = (findData.ftCreationTimeHigh | findData.ftCreationTimeLow) != 0;
             }
 
             internal DateTime CreationTime

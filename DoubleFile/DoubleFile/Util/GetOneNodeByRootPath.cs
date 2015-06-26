@@ -66,7 +66,7 @@ namespace DoubleFile
 
                     if (1 < nPathLevelLength)
                     {
-                        MBoxStatic.Assert(1308.9329, 0 < (nPathLevelLength - nCount));
+                        MBoxStatic.Assert(1308.9329m, 0 < (nPathLevelLength - nCount));
                         nPathLevelLength -= nCount;
                         nPathLevelLength = Math.Max(0, nPathLevelLength);
                     }

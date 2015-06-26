@@ -143,7 +143,7 @@ namespace DoubleFile
             }
             else
             {
-                MBoxStatic.Assert(1304.5309, false);
+                MBoxStatic.Assert(1304.5309m, false);
             }
         }
 

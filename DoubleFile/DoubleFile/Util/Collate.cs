@@ -77,14 +77,14 @@ namespace DoubleFile
 
             if (_ieRootNodes.IsEmpty())
             {
-                MBoxStatic.Assert(1305.6314, false);
+                MBoxStatic.Assert(1305.6314m, false);
                 return;
             }
 
             if (false == _lsLVignore.IsEmpty())
             {
                 var dtStart = DateTime.Now;
-                var nMaxLevel = _lsLVignore.Max(i => int.Parse(i.SubItems[1].Text) - 1);
+                var nMaxLevel = _lsLVignore.Max(i => ("" + i.SubItems[1].Text).ToInt() - 1);
                 var sbMatch = new StringBuilder();
 
                 foreach (var lvItem in _lsLVignore)
@@ -152,7 +152,7 @@ namespace DoubleFile
 
                 if (1 > listNodes.Count)
                 {
-                    MBoxStatic.Assert(1305.6315, false);
+                    MBoxStatic.Assert(1305.6315m, false);
                     continue;
                 }
                 
@@ -181,7 +181,7 @@ namespace DoubleFile
                             return;
                         }
 
-                        MBoxStatic.Assert(1305.6316, 0 < nodeDatum.TotalLength);
+                        MBoxStatic.Assert(1305.6316m, 0 < nodeDatum.TotalLength);
 
                         if (listNodes.Contains(treeNode_A.Parent) == false)
                             listKeep.Add(treeNode_A);
@@ -255,7 +255,7 @@ namespace DoubleFile
 
                 if (0 == nClones)
                 {
-                    MBoxStatic.Assert(1305.6317, false);
+                    MBoxStatic.Assert(1305.6317m, false);
                     continue;
                 }
 
@@ -304,7 +304,7 @@ namespace DoubleFile
                 }
 
                 lvItem.Text = nameNode.Text;
-                MBoxStatic.Assert(1305.6318, false == string.IsNullOrWhiteSpace(lvItem.Text));
+                MBoxStatic.Assert(1305.6318m, false == string.IsNullOrWhiteSpace(lvItem.Text));
                 _lsLVdiffVol.Add(lvItem);
             }
 
@@ -330,7 +330,7 @@ namespace DoubleFile
                 }
 
                 nodeDatum.LVitem = lvIgnoreItem;
-                MBoxStatic.Assert(1305.6319, nodeDatum.LVitem != null);
+                MBoxStatic.Assert(1305.6319m, nodeDatum.LVitem != null);
 
                 if (null != nodeDatum.Clones)
                     nodeDatum.Clones.Remove(treeNode);
@@ -348,7 +348,7 @@ namespace DoubleFile
 
                 var treeNode = kvp.Value;
 
-                MBoxStatic.Assert(1305.6321, false == string.IsNullOrWhiteSpace(treeNode.Text));
+                MBoxStatic.Assert(1305.6321m, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
                 var lvItem = new LocalLVitem(treeNode.Text) { LocalTreeNode = treeNode };
                 var nodeDatum = treeNode.NodeDatum;
@@ -359,15 +359,15 @@ namespace DoubleFile
                     return;
                 }
 
-                MBoxStatic.Assert(1305.6322, nodeDatum.FilesHere > 0);
+                MBoxStatic.Assert(1305.6322m, nodeDatum.FilesHere > 0);
                 SnowUniqueParents(treeNode);
 
-                MBoxStatic.Assert(1305.6323, treeNode.ForeColor == UtilColor.Empty);
+                MBoxStatic.Assert(1305.6323m, treeNode.ForeColor == UtilColor.Empty);
                 treeNode.ForeColor = UtilColor.Red;
 
                 lvItem.ForeColor = treeNode.ForeColor;
                 _lsLVunique.Add(lvItem);
-                MBoxStatic.Assert(1305.6324, nodeDatum.LVitem == null);
+                MBoxStatic.Assert(1305.6324m, nodeDatum.LVitem == null);
                 nodeDatum.LVitem = lvItem;
             }
 
@@ -380,8 +380,8 @@ namespace DoubleFile
                 var nCount = CountNodes.Go(_ieRootNodes);
                 var nCount_A = new AddTreeToList(_lsTreeNodes, listSameVol).Go(_ieRootNodes).Count;
 
-                MBoxStatic.Assert(1305.6325, nCount_A == nCount);
-                MBoxStatic.Assert(1305.6326, _lsTreeNodes.Count == nCount);
+                MBoxStatic.Assert(1305.6325m, nCount_A == nCount);
+                MBoxStatic.Assert(1305.6326m, _lsTreeNodes.Count == nCount);
                 Util.WriteLine("Step1_OnThread " + nCount);
             }
 
@@ -412,14 +412,14 @@ namespace DoubleFile
                     nClones = nodeDatum.Clones.Count;
 
                 if (0 == nClones)
-                    MBoxStatic.Assert(1305.6328, false);
+                    MBoxStatic.Assert(1305.6328m, false);
 
                 string str_nClones = null;
 
                 if (2 < nClones)
                     str_nClones = nClones.ToString("###,###");
 
-                MBoxStatic.Assert(1305.6329, false == string.IsNullOrWhiteSpace(treeNode.Text));
+                MBoxStatic.Assert(1305.6329m, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
                 var lvItem = new LocalLVitem(new[] {"" + treeNode.Text, str_nClones})
                 {
@@ -440,21 +440,21 @@ namespace DoubleFile
             if (App.LocalExit || _bThreadAbort)
                 return;
 
-            MBoxStatic.Assert(1305.6333, null == _lvClones.Items);
+            MBoxStatic.Assert(1305.6333m, null == _lvClones.Items);
             _lvClones.Items = _lsLVdiffVol.ToArray();
             _lvClones.Invalidate();
 
             if (App.LocalExit || _bThreadAbort)
                 return;
 
-            MBoxStatic.Assert(1305.6334, null == _lvUnique.Items);
+            MBoxStatic.Assert(1305.6334m, null == _lvUnique.Items);
             _lvUnique.Items =_lsLVunique.ToArray();
             _lvUnique.Invalidate();
 
             if (App.LocalExit || _bThreadAbort)
                 return;
 
-            MBoxStatic.Assert(1305.6335, null == _lvSameVol.Items);
+            MBoxStatic.Assert(1305.6335m, null == _lvSameVol.Items);
             _lvSameVol.Items = _lsLVsameVol.ToArray();
             _lvSameVol.Invalidate();
             _static_this = null;
@@ -497,8 +497,8 @@ namespace DoubleFile
 
                 if (null != lsTreeNodes)
                 {
-                    MBoxStatic.Assert(1305.6305, lsTreeNodes == listClones);
-                    MBoxStatic.Assert(1305.6307, lsTreeNodes[0].ForeColor == treeNode.ForeColor);
+                    MBoxStatic.Assert(1305.6305m, lsTreeNodes == listClones);
+                    MBoxStatic.Assert(1305.6307m, lsTreeNodes[0].ForeColor == treeNode.ForeColor);
                 }
                 else
                 {
@@ -516,7 +516,7 @@ namespace DoubleFile
 
                     var rootNodeDatum = (RootNodeDatum)rootNode.NodeDatum;
 
-                    MBoxStatic.Assert(1305.6308, UtilColor.Empty == treeNode.ForeColor);
+                    MBoxStatic.Assert(1305.6308m, UtilColor.Empty == treeNode.ForeColor);
                     treeNode.ForeColor = UtilColor.Firebrick;
 
                     foreach (var subnode in listClones)
@@ -524,7 +524,7 @@ namespace DoubleFile
                         if (App.LocalExit || _bThreadAbort)
                             return;
 
-                        MBoxStatic.Assert(1305.6309, subnode.NodeDatum.Key.Equals(nodeDatum.Key));
+                        MBoxStatic.Assert(1305.6309m, subnode.NodeDatum.Key.Equals(nodeDatum.Key));
 
                         var rootNode_A = subnode.Root;
 
@@ -545,7 +545,7 @@ namespace DoubleFile
                             continue;
                         }
 
-                        MBoxStatic.Assert(1305.6311, treeNode.ForeColor == UtilColor.Firebrick);
+                        MBoxStatic.Assert(1305.6311m, treeNode.ForeColor == UtilColor.Firebrick);
                         treeNode.ForeColor = UtilColor.SteelBlue;
                         break;
                     }
@@ -586,7 +586,7 @@ namespace DoubleFile
                 if (null != _dictIgnoreNodes.TryGetValue(treeNode))
                     continue;
 
-                MBoxStatic.Assert(1305.6312, null != lvItem);
+                MBoxStatic.Assert(1305.6312m, null != lvItem);
                 _dictIgnoreNodes.Add(treeNode, lvItem);
 
                 if ((null != treeNode.Nodes) &&
@@ -614,7 +614,7 @@ namespace DoubleFile
                 if (sbMatch.Contains(treeNode.Text.ToLower()))
                 {
                     if (_lsLVignore
-                        .Where(lvItem => treeNode.Level == (int.Parse(lvItem.SubItems[1].Text) - 1))
+                        .Where(lvItem => treeNode.Level == (("" + lvItem.SubItems[1].Text).ToInt() - 1))
                         .Any(lvItem => ((string)lvItem.Text).Equals(treeNode.Text,
                             StringComparison.InvariantCultureIgnoreCase)))
                     {
@@ -645,7 +645,7 @@ namespace DoubleFile
                 if (null != nodeDatum.LVitem)
                     nodeDatum.LVitem.BackColor = parentNode.BackColor;
 
-                MBoxStatic.Assert(1305.6313,
+                MBoxStatic.Assert(1305.6313m,
                     (parentNode.ForeColor == UtilColor.Empty) ==
                     (null == nodeDatum.LVitem));
 

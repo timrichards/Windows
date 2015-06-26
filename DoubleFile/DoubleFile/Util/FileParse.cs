@@ -219,7 +219,7 @@ namespace DoubleFile
                         {
                             var arrLine = strLine.Split('\t');
 
-                            file_out.WriteLine(FormatLine(ksLineType_Length, nLineNo, FormatString(strDir: ksTotalLengthLoc, nLength: long.Parse(arrLine[knColLength01]))));
+                            file_out.WriteLine(FormatLine(ksLineType_Length, nLineNo, FormatString(strDir: ksTotalLengthLoc, nLength: ("" + arrLine[knColLength01]).ToUlong())));
                             continue;
                         }
 
@@ -260,7 +260,7 @@ namespace DoubleFile
 
         static internal string FormatString(string strDir = null, string strFile = null,
             DateTime? dtCreated = null, DateTime? dtModified = null,
-            string strAttributes = null, long nLength = -1,
+            string strAttributes = null, ulong nLength = ulong.MaxValue,
             string strError1 = null, string strError2 = null, int? nHeader = null,
             string strHashV1pt0 = null, string strHashV2 = null)
         {
@@ -268,17 +268,15 @@ namespace DoubleFile
             string strCreated = null;
             string strModified = null;
 
-            if (nLength > -1)
-            {
+            if (ulong.MaxValue != nLength)
                 strLength = "" + nLength;
-            }
 
-            if (dtCreated != null)
+            if (null != dtCreated)
             {
                 strCreated = "" + dtCreated;
             }
 
-            if (dtModified != null)
+            if (null != dtModified)
             {
                 strModified = "" + dtModified;
             }
@@ -470,8 +468,8 @@ namespace DoubleFile
 
                 try
                 {
-                    nScannedLength = ulong.Parse(asLine[knColLength]);
-                    nLinesTotal = int.Parse(asLine[1]);
+                    nScannedLength = ("" + asLine[knColLength]).ToUlong();
+                    nLinesTotal = (asLine[1]).ToInt();
                     bRet = true;
                 }
                 catch { }

@@ -127,6 +127,18 @@ namespace DoubleFile
             return (source.Count == 1);
         }
 
+        static internal string ToPrintString(this object source)
+        {
+            if (source == null) return null;
+
+            var s =
+                string.Join("",
+                    ("" + source).Where(c => Char.IsControl(c) == false))
+                .Trim();
+
+            return (s.Length > 0) ? s : null;
+        }
+
         static internal T2 TryGetValue<T1, T2>(this IReadOnlyDictionary<T1, T2> dict, T1 key) where T2 : class
         {
             T2 outValue = null;
@@ -143,16 +155,34 @@ namespace DoubleFile
             return outValue;
         }
 
-        static internal string ToPrintString(this object source)
+        static internal DateTime ToDateTime(this string str)
         {
-            if (source == null) return null;
+            DateTime nRet = DateTime.MinValue;
 
-            var s =
-                string.Join("",
-                    ("" + source).Where(c => Char.IsControl(c) == false))
-                .Trim();
+            if (false == DateTime.TryParse(str, out nRet))
+                MBoxStatic.Assert(99925, false);
 
-            return (s.Length > 0) ? s : null;
+            return nRet;
+        }
+
+        static internal int ToInt(this string str)
+        {
+            int nRet = 0;
+
+            if (false == int.TryParse(str, out nRet))
+                MBoxStatic.Assert(99930, false);
+
+            return nRet;
+        }
+
+        static internal ulong ToUlong(this string str)
+        {
+            ulong nRet = 0;
+
+            if (false == ulong.TryParse(str, out nRet))
+                MBoxStatic.Assert(99929, false);
+
+            return nRet;
         }
 
         static internal RectangleF Scale(this Rectangle rc_in, SizeF scale)

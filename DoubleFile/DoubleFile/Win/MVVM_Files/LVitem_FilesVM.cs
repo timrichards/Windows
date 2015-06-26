@@ -29,7 +29,7 @@ namespace DoubleFile
                     (0 == DuplicatesRaw) &&
                         ((FileLine.Length <= FileParse.knColLengthLV) ||                    // doesn't happen
                         string.IsNullOrWhiteSpace(FileLine[FileParse.knColLengthLV]) ||     // doesn't happen
-                        (0 < ulong.Parse(FileLine[FileParse.knColLengthLV])));
+                        (0 < ("" + FileLine[FileParse.knColLengthLV]).ToUlong()));
             }
         }
 
@@ -47,12 +47,12 @@ namespace DoubleFile
         public int DuplicatesRaw { get; internal set; }
 
         public string Created { get { return FileLine[1]; } }
-        public DateTime CreatedRaw { get { return DateTime.Parse(FileLine[1]); } }
+        public DateTime CreatedRaw { get { return ("" + Created).ToDateTime(); } }
         public string Modified { get { return FileLine[2]; } }
-        public DateTime ModifiedRaw { get { return DateTime.Parse(FileLine[1]); } }
+        public DateTime ModifiedRaw { get { return ("" + Modified).ToDateTime(); } }
         public string Attributes { get { return Util.DecodeAttributes(FileLine[3]); } }
         public string Length { get { return 4 < FileLine.Length ? Util.FormatSize(FileLine[4]) : ""; } }
-        public ulong LengthRaw { get { return 4 < FileLine.Length ? ulong.Parse(FileLine[4]) : 0; } }
+        public ulong LengthRaw { get { return 4 < FileLine.Length ? ("" + FileLine[4]).ToUlong() : 0; } }
         public string Error1 { get { return 5 < FileLine.Length ? FileLine[5] : ""; } }
         public string Error2 { get { return 6 < FileLine.Length ? FileLine[6] : ""; } }
 

@@ -193,7 +193,7 @@ namespace DoubleFile
                 fs.WriteLine(("" + sb).Trim());
             }
 
-            void HashAllFiles(IReadOnlyList<Tuple<string, long>> lsFilePaths,
+            void HashAllFiles(IReadOnlyList<Tuple<string, ulong>> lsFilePaths,
                 out IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>> dictHash_out,
                 out IReadOnlyDictionary<string, string> dictException_FileRead_out)
             {
@@ -212,7 +212,7 @@ namespace DoubleFile
                 using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                     .Subscribe(x => StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator)))
                 {
-                    var lsFileHandles = new ConcurrentBag<Tuple<string, long, SafeFileHandle, string>> { };
+                    var lsFileHandles = new ConcurrentBag<Tuple<string, ulong, SafeFileHandle, string>> { };
                     var blockUntilAllFilesOpened = new DispatcherFrame(true) { Continue = true };
                     var bAllFilesOpened = false;
                     var cts = new CancellationTokenSource();
@@ -247,11 +247,11 @@ namespace DoubleFile
                         // Avoid spinning too quickly while waiting for new file handles.
                         Util.Block(100);
 
-                        var lsOpenedFiles = new List<Tuple<string, long, SafeFileHandle, string>> { };
+                        var lsOpenedFiles = new List<Tuple<string, ulong, SafeFileHandle, string>> { };
 
                         while (4096 > lsOpenedFiles.Count)
                         {
-                            Tuple<string, long, SafeFileHandle, string> tupleA = null;
+                            Tuple<string, ulong, SafeFileHandle, string> tupleA = null;
 
                             lsFileHandles.TryTake(out tupleA);
 
@@ -320,8 +320,8 @@ namespace DoubleFile
                 StatusCallback(LVitemProjectVM, nProgress: 1);
             }
 
-            Tuple<string, long, SafeFileHandle, string>
-                OpenFile(Tuple<string, long> tuple)
+            Tuple<string, ulong, SafeFileHandle, string>
+                OpenFile(Tuple<string, ulong> tuple)
             {
                 var strFile = tuple.Item1;
                 var fileHandle = new SafeFileHandle(IntPtr.Zero, false);
@@ -344,8 +344,8 @@ namespace DoubleFile
                 return Tuple.Create(strFile, tuple.Item2, fileHandle, strError);
             }
 
-            IEnumerable<Tuple<string, long, string, IReadOnlyList<byte[]>>>
-                ReadBuffers(IEnumerable<Tuple<string, long, SafeFileHandle, string>> listFileHandles)
+            IEnumerable<Tuple<string, ulong, string, IReadOnlyList<byte[]>>>
+                ReadBuffers(IEnumerable<Tuple<string, ulong, SafeFileHandle, string>> listFileHandles)
             {
                 foreach (var tuple in listFileHandles)
                 {
@@ -431,7 +431,7 @@ namespace DoubleFile
             }
 
             Tuple<HashTuple, HashTuple>
-                HashFile(Tuple<string, long, string, IReadOnlyList<byte[]>> tuple)
+                HashFile(Tuple<string, ulong, string, IReadOnlyList<byte[]>> tuple)
             {
                 var retval = Tuple.Create(default(HashTuple), default(HashTuple));
                 var lsBuffer = tuple.Item4;

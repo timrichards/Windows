@@ -66,12 +66,7 @@ namespace DoubleFile
 
         static internal string FormatSize(string in_str, bool bBytes = false)
         {
-            ulong retVal = 0;
-
-            bool bSuccess = ulong.TryParse(in_str ?? "0", out retVal);
-
-            MBoxStatic.Assert(99935, bSuccess);
-            return FormatSize(retVal, bBytes);
+            return FormatSize((in_str ?? "0").ToUlong(), bBytes);
         }
 
         static internal string FormatSize(ulong nLength, bool bBytes = false, bool bNoDecimal = false)

@@ -9,7 +9,7 @@ namespace DoubleFile
         static bool _bAssertUp = false;
 #endif
 
-        static internal bool Assert(double nLocation, bool bCondition, string strError_in = null,
+        static internal bool Assert(decimal nLocation, bool bCondition, string strError_in = null,
             bool bTraceOnly = false)
         {
             if (bCondition)
@@ -111,7 +111,7 @@ namespace DoubleFile
             return msgBoxRet;
         }
 
-        static double
+        static decimal
             _nLastAssertLoc = -1;
         static DateTime
             _dtLastAssert = DateTime.MinValue;

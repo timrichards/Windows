@@ -139,9 +139,9 @@ namespace DoubleFile
                     }
 
                     if (null != searchResultDir)
-                        MBoxStatic.Assert(1307.8301, null == searchResultDir.StrDir);
+                        MBoxStatic.Assert(1307.8301m, null == searchResultDir.StrDir);
                     else
-                        MBoxStatic.Assert(1307.8302, null == searchResultDir);
+                        MBoxStatic.Assert(1307.8302m, null == searchResultDir);
 
                     if (false == listResults.IsEmpty())
                         StatusCallback(new SearchResults(_strSearch, _volStrings, listResults.Keys), bFirst: bFirst);

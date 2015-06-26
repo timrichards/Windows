@@ -9,7 +9,7 @@ namespace DoubleFile
     {
         abstract class TraverseTreeBase : FileParse
         {
-            protected long
+            protected ulong
                 LengthRead { get; private set; }
 
             protected List<string>
@@ -27,7 +27,7 @@ namespace DoubleFile
                 LVitemProjectVM = lvProjectVM;
             }
 
-            protected IReadOnlyList<Tuple<string, long>> GetFileList()
+            protected IReadOnlyList<Tuple<string, ulong>> GetFileList()
             {
                 return ImplementationDetails();
             }
@@ -46,7 +46,7 @@ namespace DoubleFile
             /// <param name="dictHash"></param>
             /// <param name="dictException_FileRead"></param>
             /// <returns>File list if first pass</returns>
-            IReadOnlyList<Tuple<string, long>> ImplementationDetails(
+            IReadOnlyList<Tuple<string, ulong>> ImplementationDetails(
                 TextWriter fs = null,
                 IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>> dictHash = null,
                 IReadOnlyDictionary<string, string> dictException_FileRead = null)
@@ -57,7 +57,7 @@ namespace DoubleFile
                 Win32FindFileStatic.FileData.WinFile(LVitemProjectVM.SourcePath, out winRoot);
                 stackDirs.Push(winRoot);
 
-                var listFilePaths = new List<Tuple<string, long>>();
+                var listFilePaths = new List<Tuple<string, ulong>>();
 
                 MBoxStatic.Assert(99939, LengthRead == 0);
                 LengthRead = 0;
@@ -88,7 +88,7 @@ namespace DoubleFile
                         continue;
                     }
 
-                    long nDirLength = 0;
+                    var nDirLength = 0UL;
                     var bHasLength = false;
 
                     foreach (var winFile in ieFiles.OrderBy(winData => winData.strAltFileName))
@@ -118,7 +118,7 @@ namespace DoubleFile
                             continue;
                         }
 
-                        MBoxStatic.Assert(1306.7307, fi.Size >= 0);
+                        MBoxStatic.Assert(1306.7307m, fi.Size >= 0);
 
                         if (fs == null)
                         {
@@ -180,21 +180,21 @@ namespace DoubleFile
                             strError1 = "Path Length: " + strFullPath.Length;
                         }
 
-                        MBoxStatic.Assert(1306.7308, bHasLength == (nDirLength > 0));
-                        MBoxStatic.Assert(1306.7301, nDirLength >= 0);
+                        MBoxStatic.Assert(1306.7308m, bHasLength == (nDirLength > 0));
+                        MBoxStatic.Assert(1306.7301m, nDirLength >= 0);
 
                         var di = new Win32FindFileStatic.FileData(winDir);
 
                         if (strFullPath.EndsWith(@":\"))                            // root directory
                         {
-                            MBoxStatic.Assert(1306.7302, di.IsValid == false);      // yes, yes...
-                            MBoxStatic.Assert(1306.7303, strFullPath.Length == 3);
+                            MBoxStatic.Assert(1306.7302m, di.IsValid == false);      // yes, yes...
+                            MBoxStatic.Assert(1306.7303m, strFullPath.Length == 3);
                             fs.WriteLine(FormatString(strDir: strFullPath, nLength: nDirLength,
                                 strError1: strError1, strError2: strError2_Dir));
                         }
                         else
                         {
-                            MBoxStatic.Assert(1306.7304, di.IsValid);
+                            MBoxStatic.Assert(1306.7304m, di.IsValid);
                             fs.WriteLine(FormatString(strDir: strFullPath, dtCreated: di.CreationTime,
                                 strAttributes: ((int)di.Attributes).ToString("X"),
                                 dtModified: di.LastWriteTime, nLength: nDirLength,

@@ -101,7 +101,7 @@ namespace DoubleFile
                         .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
                         .Select(strLine => strLine.Split('\t'))
                         .Where(asLine => FileParse.knColLength < asLine.Length)
-                        .Select(asLine => (decimal)("" + asLine[FileParse.knColLength]).ToInt()))
+                        .Select(asLine => (decimal)("" + asLine[FileParse.knColLength]).ToUlong()))
                     {
                         lsFileLengths.Add(nLength);
                     }

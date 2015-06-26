@@ -364,9 +364,11 @@ namespace DoubleFile
                     using (var fs = new FileStream(fileHandle, FileAccess.Read))
                     Util.Closure(() =>
                     {
-                        lsRet.Add(new byte[4096]);
-
+                        const int knLilBuffLength = 4096;
                         const int knBigBuffLength = 65536;
+
+                        MBoxStatic.Assert(99935, knBigBuffLength > 2 * knLilBuffLength);
+                        lsRet.Add(new byte[knLilBuffLength]);
                         var bFilled = FillBuffer(fs, knBigBuffLength, lsRet);
 
                         if (0 < lsRet[1].Length)
@@ -392,6 +394,8 @@ namespace DoubleFile
                         if (desiredPos > fs.Position)
                         {
                             MBoxStatic.Assert(99931, knBigBuffLength == fs.Position);
+                            desiredPos += (4096 - desiredPos % 4096);       // align to block boundary if possible
+                            MBoxStatic.Assert(99914, 0 == desiredPos % 4096);
                             fs.Position = desiredPos;
                         }
 

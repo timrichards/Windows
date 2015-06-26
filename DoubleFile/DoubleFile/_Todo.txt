@@ -1,31 +1,35 @@
-﻿- determine USB speed of drive
+﻿- Assert after cancelling listings because FileDictionary is not based on CanLoad.
+- WithWinProgress(() => {});
 - stop the auto horizontal scrolling - solve it by selecting first column
 - not fixed: First tree view item is bold and the wrong forecolors, incl highlighted - treeview shouldn't have a selected item.
-- New Listing File dialog flashes when system choose folder dialog is shown
+- tree map still doesn't always show up at all (on top of slow calc etc as before) on 6/24/15
 - large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
+- wpf treemap
 - Why are some folders white? Why do some folders not say they're duplicated?
+- intro page
+- Todo: save volume group.\nTodo: save include y/n
+- dupe vm event alerts: static vm internal counter or static transmit
+- fix slider in tree list
 
+- check properties that are only supposed to be set once to true: make them Set methods
+- Allow method chaining: return this instead of void
 - allow two different file windows to point to two different folders: each new folder window should have its own children
 - last modified time as part of comparison; or notification: hash equal but mod times are different
 - wolfram-alpha front-end; curate; data -> query language: what state are my backups in? What are the best queries to bring forward?
 - compare the 4K vs 128K correlations to see what they caught.
 - hash version is not shown to the user.
-- FileDictionary is not based on CanLoad.
 - compare mode - how is this folder different from that one besides looking at the details: show missing/different file.
 - should the 2-pass listing save go out to the fs twice or just cache all the filenames?
-- tree map still doesn't always show up at all (on top of slow calc etc as before) on 6/24/15
-- WithWinProgress(() => {});
 - remove save listings link when listings to save are removed
 - open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.
 - show messagbox title
-- check properties that are only supposed to be set once to true: make them Set methods
-- Allow method chaining: return this instead of void
-- read more of the file or get a spread of data to increase match likelihood
 - Remove WidthListingFile and redo the ListingFile setter to internal - same goes for progress dialog though
 - replace properties with converters
 - replace DarkWindow with flyouts
 - allow moving the window when darkened
 - minimize progress/messagebox to task bar?
+- New Listing File dialog flashes when system choose folder dialog is shown
+- determine USB speed of drive
 
 - vertical scrollbar: window height clips volumes lv
 - rollover highlight project image button text
@@ -33,31 +37,24 @@
 - scroll to highlighted item in LVs
 - clones lvs; and all dupe files lv?
 - Sync To button in tree view
-- fix slider in tree list
 - regex search
-- wpf treemap
 - allow user toggle showing free space
 - UX tree map free space
 - go to button in tree map
 - tool tip to tree map title bar area
 - resource all stringets; en-us etc.
-- intro page
 - auto layout? save layout?
-- dupe vm event alerts: static vm internal counter or static transmit
 - lose the file convert process
 - db
-- Todo: save volume group.\nTodo: save include y/n
 - Apply async/await
 - Who collaborates/reviews? Who wants to learn from this code base?
 - Research runtime asserts vs unit testing online. Throw exceptions instead, perhaps.
-	NUnit: replace MboxStatic assert with [TestMethod} and Assert.AreEqual, etc.
+	NUnit: replace MboxStatic assert with [TestMethod] and Assert.AreEqual, etc.
 - services, decouple: Unity frameork: rewrite in Node/Angular; C++; Linux etc. Start these with unit testing.
 - what C# features don't translate well to other languages like C++? is operator?
 - all threads are background as of 6/12/15
 - neither is nor as are reflection. as is 20x slower though. p. 123
 
-99935
-99914
 99912
 99909
 99906

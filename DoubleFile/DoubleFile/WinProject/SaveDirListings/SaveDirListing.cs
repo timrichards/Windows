@@ -396,7 +396,7 @@ namespace DoubleFile
                             fs.Position = desiredPos;
 
                             // read the remainder to align to block boundary
-                            var alignTrunc = desiredPos % 4096;
+                            var alignTrunc = 4096 - desiredPos % 4096;
 
                             if ((0 < alignTrunc) &&
                                 (false == FillBuffer(fs, (int)alignTrunc, lsRet)))
@@ -404,6 +404,8 @@ namespace DoubleFile
                                 MBoxStatic.Assert(99912, false);
                                 return;     // from lambda
                             }
+
+                            MBoxStatic.Assert(99914, 0 == fs.Position % 4096);                        
                         }
 
                         if (false == FillBuffer(fs, knBigBuffLength, lsRet))

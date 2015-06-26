@@ -364,7 +364,7 @@ namespace DoubleFile
                     using (var fs = new FileStream(fileHandle, FileAccess.Read))
                     Util.Closure(() =>
                     {
-                        const int knBigBuffLength = 262144;
+                        const int knBigBuffLength = 524288;
 
                         lsRet.Add(new byte[4096]);          // happens to be block size
                         var bFilled = FillBuffer(fs, knBigBuffLength, lsRet);

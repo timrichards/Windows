@@ -1,4 +1,11 @@
-﻿- Assert after cancelling listings because FileDictionary is not based on CanLoad.
+﻿The main purpose of Double File is to allow you to pack up your drive and go: transition from one computer to another;
+or put a new drive or operating system in. Copy the files you use then let the rest just sit in storage. Drive capacities
+and speeds are increasing. This drive has nothing better to do than serve as backup; to maintain enviroment state. Plug it
+back in and be right where you were when you left it. But wait - what's actually on those drives, and are they backed up?
+Out of sight, out of mind: that's where Double File comes in. Catalog them, then have them curated for you on your current
+setup as they sit in storage: safe from transitional hazards. Plan well, then act: reuse the drives after making a plan.
+
+- Assert after cancelling listings because FileDictionary is not based on CanLoad.
 - WithWinProgress(() => {});
 - stop the auto horizontal scrolling - solve it by selecting first column
 - not fixed: First tree view item is bold and the wrong forecolors, incl highlighted - treeview shouldn't have a selected item.
@@ -11,6 +18,16 @@
 - dupe vm event alerts: static vm internal counter or static transmit
 - fix slider in tree list
 
+- This folder has no exact copy: so please itemize in a report what the exact differences are to the nearest copy.
+	- Allow a list of important files and directories to watch, with alerts; links; etc.:
+		- Invert the exclusive principle. Start inclusive, not with an ignore list.
+	- Folders and files that are missing; or that are different.
+	- Invert the size matters principle: some of the most important files may go unnoticed: just a drop in the bucket.
+	- Restore the ignore list: nobody cares about the Windows or Program Files directories. Don't make moron reports.
+- tagged array of hashes representing increasing bandwidth: USB 2 gets 64K; ... SATA gets 1M
+- Hashes are 8 bytes. Compress to make the last long 64K; the previous long 512M; an extra hash string 1M; non-inclusive.
+	compatible because string length is locked to bandwidth. A long has 1/4.3 billion chance of collision
+- Do collision tests: e.g. run SHA1 against MD5. Put statistics like these under the Advanced link.
 - check properties that are only supposed to be set once to true: make them Set methods
 - Allow method chaining: return this instead of void
 - allow two different file windows to point to two different folders: each new folder window should have its own children

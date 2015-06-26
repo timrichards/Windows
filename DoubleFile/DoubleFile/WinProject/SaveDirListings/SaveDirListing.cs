@@ -364,7 +364,7 @@ namespace DoubleFile
                     using (var fs = new FileStream(fileHandle, FileAccess.Read))
                     Util.Closure(() =>
                     {
-                        const int knBigBuffLength = 65536;
+                        const int knBigBuffLength = 262144;
 
                         lsRet.Add(new byte[4096]);          // happens to be block size
                         var bFilled = FillBuffer(fs, knBigBuffLength, lsRet);
@@ -392,6 +392,8 @@ namespace DoubleFile
                         if (desiredPos > fs.Position)
                         {
                             MBoxStatic.Assert(99931, knBigBuffLength == fs.Position);
+                            desiredPos += (4096 - desiredPos % 4096);       // align to block boundary if possible
+                            MBoxStatic.Assert(99914, 0 == desiredPos % 4096);
                             fs.Position = desiredPos;
                         }
 
@@ -463,7 +465,7 @@ namespace DoubleFile
                     foreach (var buffer in lsBuffer.Skip(1))
                         nSize += buffer.Length;
 
-                    MBoxStatic.Assert(99909, 131072 >= nSize);
+     //               MBoxStatic.Assert(99909, 131072 >= nSize);
 
                     var hashArray = new byte[nSize];
                     var nIx = 0;

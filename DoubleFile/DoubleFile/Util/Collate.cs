@@ -615,7 +615,7 @@ namespace DoubleFile
                 {
                     if (_lsLVignore
                         .Where(lvItem => treeNode.Level == (("" + lvItem.SubItems[1].Text).ToInt() - 1))
-                        .Any(lvItem => ((string)lvItem.Text).Equals(treeNode.Text,
+                        .Any(lvItem => ("" + lvItem.Text).Equals(treeNode.Text,
                             StringComparison.InvariantCultureIgnoreCase)))
                     {
                         MBoxStatic.Assert(99898, false);    // replace the Tag field with an LVitem

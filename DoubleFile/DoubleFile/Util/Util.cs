@@ -12,8 +12,10 @@ namespace DoubleFile
 {
     partial class Util : FileParse
     {
-        static internal void Block(int nMilliseconds) { Block(new TimeSpan(0, 0, 0, 0, nMilliseconds)); }
-        static internal void Block(TimeSpan napTime)
+        static internal void
+            Block(int nMilliseconds) { Block(new TimeSpan(0, 0, 0, 0, nMilliseconds)); }
+        static internal void
+            Block(TimeSpan napTime)
         {
             var blockingFrame = new DispatcherFrame(true) { Continue = true };
 
@@ -26,10 +28,13 @@ namespace DoubleFile
             Dispatcher.PushFrame(blockingFrame);
         }
 
-        static internal void Closure(Action action) { action(); }
-        static internal T Closure<T>(Func<T> action) { return action(); }
+        static internal void
+            Closure(Action action) { action(); }
+        static internal T
+            Closure<T>(Func<T> action) { return action(); }
 
-        static internal string DecodeAttributes(string strAttr)
+        static internal string
+            DecodeAttributes(string strAttr)
         {
             var nAttr = default(FileAttributes);
 
@@ -64,12 +69,14 @@ namespace DoubleFile
             return str;
         }
 
-        static internal string FormatSize(string in_str, bool bBytes = false)
+        static internal string
+            FormatSize(string in_str, bool bBytes = false)
         {
             return FormatSize((in_str ?? "0").ToUlong(), bBytes);
         }
 
-        static internal string FormatSize(ulong nLength, bool bBytes = false, bool bNoDecimal = false)
+        static internal string
+            FormatSize(ulong nLength, bool bBytes = false, bool bNoDecimal = false)
         {
             var nT = nLength / 1024d / 1024 / 1024 / 1024 - .05;
             var nG = nLength / 1024d / 1024 / 1024 - .05;
@@ -95,21 +102,8 @@ namespace DoubleFile
             return "0 bytes";
         }
 
-        static internal TMember WR<THolder, TMember>(WeakReference<THolder> wr, Func<THolder, TMember> getValue)
-            where THolder : class
-            where TMember : class
-        {
-            THolder holder = null;
-
-            wr.TryGetTarget(out holder);
-
-            return
-                (null != holder)
-                ? getValue(holder)
-                : null;
-        }
-
-        static internal string Localized(string key)
+        static internal string
+            Localized(string key)
         {
             if (null == App.Current)
                 return null;
@@ -117,14 +111,15 @@ namespace DoubleFile
             return "" + App.Current.Resources[key];
         }
 
-        static internal void LocalDispose(IEnumerable<IDisposable> ieDisposable)
+        static internal void
+            LocalDispose(IEnumerable<IDisposable> ieDisposable)
         {
             var lsDisposable = ieDisposable.ToList();
             var cts = new CancellationTokenSource();
 
             var thread = ThreadMake(() =>
             {
-                Parallel.ForEach(lsDisposable, new ParallelOptions { CancellationToken = cts.Token },
+                ParallelForEach(lsDisposable, new ParallelOptions { CancellationToken = cts.Token },
                     d => d.Dispose());
             });
 
@@ -135,7 +130,20 @@ namespace DoubleFile
                 .Subscribe(x => thread.Abort());
         }
 
-        static internal Thread ThreadMake(ThreadStart doSomething)
+        static internal void
+            ParallelForEach<TSource>(IEnumerable<TSource> source, ParallelOptions options, Action<TSource> doSomething)
+        {
+            try
+            {
+                Parallel.ForEach(source, options, doSomething);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        static internal Thread
+            ThreadMake(ThreadStart doSomething)
         {
             var thread = new Thread(doSomething) { IsBackground = true };
 
@@ -143,7 +151,8 @@ namespace DoubleFile
             return thread;
         }
 
-        static internal void UIthread(Action action, bool bBlock = true)
+        static internal void
+            UIthread(Action action, bool bBlock = true)
         {
             if (App.LocalExit ||
                 (false == App.LocalMainWindow is Window) ||
@@ -196,6 +205,21 @@ namespace DoubleFile
 #if (DEBUG)
             System.Console.WriteLine(str);
 #endif
+        }
+
+        static internal TMember
+            WR<THolder, TMember>(WeakReference<THolder> wr, Func<THolder, TMember> getValue)
+            where THolder : class
+            where TMember : class
+        {
+            THolder holder = null;
+
+            wr.TryGetTarget(out holder);
+
+            return
+                (null != holder)
+                ? getValue(holder)
+                : null;
         }
     }
 }

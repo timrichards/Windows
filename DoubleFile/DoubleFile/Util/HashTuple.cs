@@ -26,8 +26,16 @@ namespace DoubleFile
         {
             var abHash = new byte[16];
 
-            for (var i = 0; i < 32; i += 2)
-                abHash[15 - (i >> 1)] = Convert.ToByte(strHash.Substring(i, 2), 16);
+            try
+            {
+                for (var i = 0; i < 32; i += 2)
+                    abHash[15 - (i >> 1)] = Convert.ToByte(strHash.Substring(i, 2), 16);
+            }
+            catch (FormatException)
+            {
+                MBoxStatic.Assert(99935, false);
+                return default(HashTuple);
+            }
 
             return Create(abHash);
         }

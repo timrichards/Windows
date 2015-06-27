@@ -218,7 +218,18 @@ namespace DoubleFile
                     if ((nHashColumn < asLine.Length) &&
                         (strLine.StartsWith(ksLineType_File)))
                     {
-                        nHashParity += new FileKeyTuple(asLine[nHashColumn], ("" + asLine[knColLength]).ToUlong()).GetHashCode();
+                        var fileKeyTuple =
+                            FileKeyTuple
+                            .FactoryCreate(asLine[nHashColumn], ("" + asLine[knColLength]).ToUlong());
+
+                        if (null == fileKeyTuple)
+                        {
+                            MBoxStatic.Assert(99912, false);
+                            Abort();
+                            return;
+                        }
+
+                        nHashParity += fileKeyTuple.GetHashCode();
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {

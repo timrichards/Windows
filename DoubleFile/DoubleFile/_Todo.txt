@@ -10,6 +10,13 @@
 - dupe vm event alerts: static vm internal counter or static transmit
 - fix slider in tree list
 
+- Bug: Source path is already set to be scanned: when you edit a new listing file and change the save to filename
+
+- Add folder name to suffix title Tree List: My Documents; Files in Folder: My Documents; Folders Here: My Documents; etc.
+- Tree list is not updating from treemap selection - or maybe it's a drill down - didn't respond to tree map drill up. Did.
+- Option to show drive label and model/serial in Volume text (Nickname)
+- Good that tree does not autoupdate: extra window. Allow filter by volume type; for example.
+- Filtering user control header for tree list; tree view; files; search; duplicates
 - open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.
 - show messagbox title
 - This folder has no exact copy: so please itemize in a report what the exact differences are to the nearest copy.
@@ -63,8 +70,6 @@
 - all threads are background as of 6/12/15
 - neither is nor as are reflection. as is 20x slower though. p. 123
 
-99935
-99912
 99906
 99903 99902
 99899

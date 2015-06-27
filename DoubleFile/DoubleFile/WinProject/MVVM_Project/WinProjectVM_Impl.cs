@@ -160,6 +160,7 @@ namespace DoubleFile
             var bMultiBad = true;
             var sbAlreadyInProject = new StringBuilder();
             var listItems = new ConcurrentBag<LVitem_ProjectVM>();
+            var cts = new CancellationTokenSource();
 
             if (false == bClearItems)
             {
@@ -167,11 +168,12 @@ namespace DoubleFile
                     listItems.Add(lvItem);
             }
 
-            Parallel.ForEach(listFiles, strFilename =>
+            Util.ParallelForEach(listFiles, new ParallelOptions { CancellationToken = cts.Token }, strFilename =>
             {
                 if ((null != userCanceled) &&
                     userCanceled())
                 {
+                    cts.Cancel();
                     return;   // from lambda
                 }
 

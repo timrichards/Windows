@@ -103,7 +103,7 @@ namespace DoubleFile
             
                 var s = s_in.ToLower();
 
-                return ItemsCast.Where(o => o.Filename.ToLower().Equals(s));
+                return ItemsCast.Where(o => ("" + o.Filename).ToLower().Equals(s));
             }
         }
 

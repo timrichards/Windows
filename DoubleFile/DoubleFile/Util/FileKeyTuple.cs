@@ -4,9 +4,19 @@ namespace DoubleFile
 {
     internal class FileKeyTuple : Tuple<HashTuple, ulong>
     {
-        internal FileKeyTuple(string strHash, ulong nLength = 0)
-            : base(HashTuple.FactoryCreate(strHash), nLength)
+        FileKeyTuple(HashTuple hashTuple, ulong nLength = 0)
+            : base(hashTuple, nLength)
         {
+        }
+
+        static internal FileKeyTuple FactoryCreate(string strHash, ulong nLength = 0)
+        {
+            var hashTuple = HashTuple.FactoryCreate(strHash);
+
+            if (null == hashTuple)
+                return null;
+
+            return new FileKeyTuple(hashTuple, nLength);
         }
     }
  }

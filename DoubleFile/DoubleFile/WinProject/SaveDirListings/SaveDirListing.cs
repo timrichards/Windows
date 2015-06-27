@@ -83,16 +83,17 @@ namespace DoubleFile
                 {
                     using (TextWriter fs = File.CreateText(LVitemProjectVM.ListingFile))
                     {
-                        IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>> dictHash = null;
-                        IReadOnlyDictionary<string, string> dictException_FileRead = null;
-
                         WriteHeader(fs);
                         fs.WriteLine();
                         fs.WriteLine(FormatString(nHeader: 0));
                         fs.WriteLine(FormatString(nHeader: 1));
                         fs.WriteLine(ksStart01 + " " + DateTime.Now);
-                        HashAllFiles(GetFileList(), out dictHash, out dictException_FileRead);
-                        WriteDirectoryListing(fs, dictHash, dictException_FileRead);
+
+                        var tuple = HashAllFiles(GetFileList());
+
+                        if (null != tuple)
+                            WriteDirectoryListing(fs, tuple);
+
                         fs.WriteLine(ksEnd01 + " " + DateTime.Now);
                         fs.WriteLine();
                         fs.WriteLine(ksErrorsLoc01);
@@ -193,16 +194,11 @@ namespace DoubleFile
                 fs.WriteLine(("" + sb).Trim());
             }
 
-            void HashAllFiles(IReadOnlyList<Tuple<string, ulong>> lsFilePaths,
-                out IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>> dictHash_out,
-                out IReadOnlyDictionary<string, string> dictException_FileRead_out)
+            Tuple<IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>>, IReadOnlyDictionary<string, string>>
+                HashAllFiles(IReadOnlyList<Tuple<string, ulong>> lsFilePaths)
             {
                 if (null == lsFilePaths)
-                {
-                    dictHash_out = null;
-                    dictException_FileRead_out = null;
-                    return;
-                }
+                    return null;
 
                 // Default cluster size on any NTFS volume up to 16TB is 4K
                 // Maximize hash buffers while reducing CreateFile() and fs.Read() calls.
@@ -219,7 +215,7 @@ namespace DoubleFile
 
                     Util.ThreadMake(() =>
                     {
-                        Parallel.ForEach(lsFilePaths,
+                        Util.ParallelForEach(lsFilePaths,
                             new ParallelOptions
                             {
                                 MaxDegreeOfParallelism = Environment.ProcessorCount,
@@ -261,12 +257,23 @@ namespace DoubleFile
                             lsOpenedFiles.Add(tupleA);
                         }
 
-                        // ToList() enumerates ReadBuffers() sequentially, reading disk I/O buffers one at a time.
-                        // Up to proc count + 1 accesses to one disk are occurring simultaneously:
-                        // CreateFile() x proc count and fs.Read() x1.
                         var lsFileBuffers_Enqueue =
-                            ReadBuffers(lsOpenedFiles)
-                            .ToList();
+                            default(IEnumerable<Tuple<string, ulong, string, IReadOnlyList<byte[]>>>);
+
+                        try
+                        {
+                            // ToList() enumerates ReadBuffers() sequentially, reading disk I/O buffers one at a time.
+                            // Up to proc count + 1 accesses to one disk are occurring simultaneously:
+                            // CreateFile() x proc count and fs.Read() x1.
+                            lsFileBuffers_Enqueue =
+                                ReadBuffers(lsOpenedFiles)
+                                .ToList();
+                        }
+                        catch (Exception e)
+                        {
+                            StatusCallback(LVitemProjectVM, strError: e.Message);
+                            return null;
+                        }
 
                         // Expect block to be false: reading buffers from disk is The limiting factor. Opening files is
                         // slow too, which makes it even less likely to block. Allow block. It does get hit a handful of times.
@@ -285,7 +292,7 @@ namespace DoubleFile
                         // There is a miniscule start-up time, and a larger wind-down time, which is saving the listings to file.
                         Util.ThreadMake(() =>
                         {
-                            Parallel.ForEach(lsFileBuffers_Dequeue, new ParallelOptions { CancellationToken = cts.Token }, tuple =>
+                            Util.ParallelForEach(lsFileBuffers_Dequeue, new ParallelOptions { CancellationToken = cts.Token }, tuple =>
                             {
                                 if (_bThreadAbort)
                                 {
@@ -313,11 +320,14 @@ namespace DoubleFile
                     }
 
                     Dispatcher.PushFrame(blockUntilAllFilesOpened);
-                    dictHash_out = dictHash.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-                    dictException_FileRead_out = dictException_FileRead.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+                    StatusCallback(LVitemProjectVM, nProgress: 1);
+                    
+                    return Tuple.Create(
+                        (IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>>)
+                            dictHash.ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
+                        (IReadOnlyDictionary<string, string>)
+                            dictException_FileRead.ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
                 }
-
-                StatusCallback(LVitemProjectVM, nProgress: 1);
             }
 
             Tuple<string, ulong, SafeFileHandle, string>

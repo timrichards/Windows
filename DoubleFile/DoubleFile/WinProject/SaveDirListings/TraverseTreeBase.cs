@@ -33,10 +33,9 @@ namespace DoubleFile
             }
 
             protected void WriteDirectoryListing(TextWriter fs,
-                IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>> dictHash,
-                IReadOnlyDictionary<string, string> dictException_FileRead)
+                Tuple<IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>>, IReadOnlyDictionary<string, string>> tuple)
             {
-                ImplementationDetails(fs, dictHash, dictException_FileRead);
+                ImplementationDetails(fs, tuple);
             }
 
             /// <summary>
@@ -48,8 +47,7 @@ namespace DoubleFile
             /// <returns>File list if first pass</returns>
             IReadOnlyList<Tuple<string, ulong>> ImplementationDetails(
                 TextWriter fs = null,
-                IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>> dictHash = null,
-                IReadOnlyDictionary<string, string> dictException_FileRead = null)
+                Tuple<IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>>, IReadOnlyDictionary<string, string>> tuple = null)
             {
                 var stackDirs = new Stack<NativeMethods.DATUM>(64);
                 var winRoot = default(NativeMethods.DATUM);
@@ -139,14 +137,14 @@ namespace DoubleFile
                             string strHashV1pt0 = null;
                             string strHashV2 = null;
 
-                            if (null != dictHash)
+                            if (null != tuple)
                             {
-                                var tuple = dictHash.TryGetValue(winFile.strAltFileName);
+                                var tupleA = tuple.Item1.TryGetValue(winFile.strAltFileName);
 
-                                if (null != tuple)
+                                if (null != tupleA)
                                 {
-                                    strHashV1pt0 = "" + tuple.Item1;
-                                    strHashV2 = "" + tuple.Item2;
+                                    strHashV1pt0 = "" + tupleA.Item1;
+                                    strHashV2 = "" + tupleA.Item2;
                                 }
                             }
 
@@ -157,11 +155,15 @@ namespace DoubleFile
                                 strError1 = "Path Length: " + winFile.strAltFileName.Length;
                             }
 
-                            if ((null != dictException_FileRead) &&
-                                (null != dictException_FileRead.TryGetValue(strFile)))
+                            if (null != tuple)
                             {
-                                strError2_File += " " + dictException_FileRead[strFile];
-                                strError2_File = strError2_File.TrimStart();
+                                var str = tuple.Item2.TryGetValue(strFile);
+
+                                if (false == string.IsNullOrEmpty(str))
+                                {
+                                    strError2_File += " " + str;
+                                    strError2_File = strError2_File.TrimStart();
+                                }
                             }
 
                             fs.WriteLine(FormatString(strFile: strFile, dtCreated: fi.CreationTime,

@@ -79,9 +79,9 @@ namespace DoubleFile
             if (nHashColumn >= asFileLine.Length)
                 return null;
 
-            var nLineNo = ("" + asFileLine[7]).ToUlong();
-            var key = new FileKeyTuple(asFileLine[nHashColumn], nLineNo);
-            var lsDupes = _DictFiles.TryGetValue(key);
+            var lsDupes = _DictFiles.TryGetValue(FileKeyTuple.FactoryCreate(
+                asFileLine[nHashColumn],
+                ("" + asFileLine[7]).ToUlong()));
 
             if (null == lsDupes)
                 return null;
@@ -151,7 +151,7 @@ namespace DoubleFile
                 var dictV1pt0 = new ConcurrentDictionary<FileKeyTuple, List<int>> { };
                 var dictV2 = new ConcurrentDictionary<FileKeyTuple, List<int>> { };
 
-                Parallel.ForEach(
+                Util.ParallelForEach(
                     _LVprojectVM.ItemsCast
                     .Where(lvItem => lvItem.CanLoad), new ParallelOptions{ CancellationToken = cts.Token }, lvItem =>
                 {
@@ -187,14 +187,30 @@ namespace DoubleFile
 
                         Interlocked.Increment(ref _nFilesProgress);
 
-                        var keyv1pt0 = new FileKeyTuple(tuple.Item3, tuple.Item2);
+                        var keyv1pt0 = FileKeyTuple.FactoryCreate(tuple.Item3, tuple.Item2);
+
+                        if (null == keyv1pt0)
+                        {
+                            IsAborted = true;
+                            cts.Cancel();
+                            return;     // from inner lambda
+                        }
+
                         var lookup = 0;
                         FileKeyTuple keyV2 = null;
 
                         if ((false == _bListingFileWithOnlyHashV1pt0) &&
                             (null != tuple.Item4))
                         {
-                            keyV2 = new FileKeyTuple(tuple.Item4, tuple.Item2);
+                            keyV2 = FileKeyTuple.FactoryCreate(tuple.Item4, tuple.Item2);
+
+                            if (null == keyV2)
+                            {
+                                IsAborted = true;
+                                cts.Cancel();
+                                return;     // from inner lambda
+                            }
+
                             bOnlyHashV1pt0 = false;
                         }
 
@@ -309,12 +325,12 @@ namespace DoubleFile
 
                 _DictFiles = new Dictionary<FileKeyTuple, IEnumerable<int>>();
 
-                while ((strLine = reader.ReadLine()) != null)
+                while (null != (strLine = reader.ReadLine()))
                 {
                     var asLine = strLine.Split('\t');
                     var asKey = asLine[0].Split(' ');
 
-                    _DictFiles[new FileKeyTuple(asKey[0], ("" + asKey[1]).ToUlong())] =
+                    _DictFiles[FileKeyTuple.FactoryCreate(asKey[0], ("" + asKey[1]).ToUlong())] =
                         asLine
                         .Skip(1)
                         .Select(s => Convert.ToInt32(s));

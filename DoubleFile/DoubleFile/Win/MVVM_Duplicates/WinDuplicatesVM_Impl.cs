@@ -97,7 +97,7 @@ namespace DoubleFile
 
             var lsLVitems = new ConcurrentBag<LVitem_FileDuplicatesVM>();
 
-            Parallel.ForEach(
+            Util.ParallelForEach(
                 lsDuplicates
                     .GroupBy(duplicate => duplicate.LVitemProjectVM),
                 new ParallelOptions() { CancellationToken = (_cts = new CancellationTokenSource()).Token },

@@ -71,8 +71,8 @@ namespace DoubleFile
             if (_currentPage is WinProject)
                 return;
 
-            //if (_currentPage is info page)
-            //    return;
+            if (_currentPage is Introduction)
+                return;
 
             TitleLinks.Add(_extraWindowLink);
 #if DEBUG

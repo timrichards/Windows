@@ -1,0 +1,21 @@
+﻿<local:LocalUserControlBase x:Class="DoubleFile.Introduction"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             xmlns:local="clr-namespace:DoubleFile">
+    <Grid Style="{StaticResource ContentRoot}">
+        <ScrollViewer>
+            <StackPanel MinWidth="200">
+                <TextBlock Text="INTRODUCTION" Style="{StaticResource Heading2}" />
+                <TextBlock TextWrapping="WrapWithOverflow" Text=
+"The main purpose of Double File is to allow you to pack up your drive and go: transition from one computer to another;
+or put a new drive or operating system in. Copy the files you use then let the rest just sit in storage. Drive capacities
+and speeds are increasing. This drive has nothing better to do than serve as backup; to maintain enviroment state. Plug it
+back in and be right where you were when you left it. But wait - what's actually on those drives, and are they backed up?
+Out of sight, out of mind: that's where Double File comes in. Catalog them, then have them curated for you on your current
+setup as they sit in storage: safe from transitional hazards. Plan well, then act: reuse the drives after making a plan.
+" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</local:LocalUserControlBase>

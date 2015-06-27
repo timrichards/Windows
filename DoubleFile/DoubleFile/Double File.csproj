@@ -162,6 +162,9 @@
       <DependentUpon>ExtraWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Introduction.xaml.cs">
+      <DependentUpon>Introduction.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LocalForms\LocalColorItemBase.cs" />
     <Compile Include="MainWindow DarkWindow.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -425,6 +428,10 @@
     <Page Include="ExtraWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Introduction.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>

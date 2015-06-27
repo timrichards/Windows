@@ -21,6 +21,18 @@ namespace DoubleFile
         virtual protected void LocalNavigatedTo() { }
         public void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
+            if ("/Introduction.xaml" ==
+                "" + e.Source)
+            {
+                return;
+            }
+
+            if ("/WinProject/WinProject.xaml" ==
+                "" + e.Source)
+            {
+                return;
+            }
+
             var bSaveListings = false;
 
             if (MainWindow.SaveListingsFakeKey ==

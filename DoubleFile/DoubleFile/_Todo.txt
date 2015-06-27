@@ -1,11 +1,4 @@
-﻿The main purpose of Double File is to allow you to pack up your drive and go: transition from one computer to another;
-or put a new drive or operating system in. Copy the files you use then let the rest just sit in storage. Drive capacities
-and speeds are increasing. This drive has nothing better to do than serve as backup; to maintain enviroment state. Plug it
-back in and be right where you were when you left it. But wait - what's actually on those drives, and are they backed up?
-Out of sight, out of mind: that's where Double File comes in. Catalog them, then have them curated for you on your current
-setup as they sit in storage: safe from transitional hazards. Plan well, then act: reuse the drives after making a plan.
-
-- WithWinProgress(() => {});
+﻿- WithWinProgress(() => {});
 - stop the auto horizontal scrolling - solve it by selecting first column
 - not fixed: First tree view item is bold and the wrong forecolors, incl highlighted - treeview shouldn't have a selected item.
 - tree map still doesn't always show up at all (on top of slow calc etc as before) on 6/24/15

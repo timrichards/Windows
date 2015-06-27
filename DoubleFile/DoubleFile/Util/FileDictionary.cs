@@ -58,6 +58,7 @@ namespace DoubleFile
 
                 _allListingsHashV2 =
                     _LVprojectVM.ItemsCast
+                    .Where(lvItem => lvItem.CanLoad)
                     .Aggregate(true, (current, lvItem) => current && lvItem.HashV2);
 
                 return _allListingsHashV2.Value;
@@ -129,6 +130,7 @@ namespace DoubleFile
 
             foreach (var lvItem
                 in _LVprojectVM.ItemsCast
+                .Where(lvItem => lvItem.CanLoad)
                 .OrderBy(lvItem => lvItem.SourcePath))
             {
                 _DictLVtoItemNumber.Add(lvItem, nLVitems);

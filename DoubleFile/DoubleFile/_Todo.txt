@@ -5,7 +5,6 @@ back in and be right where you were when you left it. But wait - what's actually
 Out of sight, out of mind: that's where Double File comes in. Catalog them, then have them curated for you on your current
 setup as they sit in storage: safe from transitional hazards. Plan well, then act: reuse the drives after making a plan.
 
-- Assert after cancelling listings because FileDictionary is not based on CanLoad.
 - WithWinProgress(() => {});
 - stop the auto horizontal scrolling - solve it by selecting first column
 - not fixed: First tree view item is bold and the wrong forecolors, incl highlighted - treeview shouldn't have a selected item.

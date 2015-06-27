@@ -47,6 +47,8 @@ namespace DoubleFile
 
                 if (bClearItems)
                     _lvVM.SetModified();    // Unsaved has trickery to do a UX reset only when set to true: want always
+
+                WinProject.OKtoNavigate_UpdateSaveListingsLink();
             }
         }
 

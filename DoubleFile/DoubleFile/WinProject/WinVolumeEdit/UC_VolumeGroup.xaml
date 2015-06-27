@@ -20,11 +20,11 @@
         <TextBox Name="formEdit_VolumeGroup">
             <TextBox.ToolTip>
                 <TextBlock>
-Lets you group volumes arbitrarily in the project. Since it's simple to save
+Optional. Lets you group volumes arbitrarily in the project. Since it's simple
                     <LineBreak />
-multiple copies of the same project, you can have different views of the same
+to save multiple copies of the same project, you can have different views of
                     <LineBreak />
-listings.
+the same listings.
                     <LineBreak />
                     <LineBreak />
 Listings in the same volume group will be treated as if they are on the same

@@ -55,7 +55,7 @@ folder browse dialog.
         <Border Name="form_Border" BorderBrush="DarkGray" BorderThickness="1" Grid.ColumnSpan="7" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Stretch" Height="1" VerticalAlignment="Center" />
 
         <Label Grid.Row="4" Content="Drive model #" />
-        <Button Grid.Row="4" Name="formBtn_DriveModel" Command="{Binding Icmd_Probe}" ToolTip="Click to try and probe your drive for the model and serial #" Style="{StaticResource ImageButton}">
+        <Button Grid.Row="4" Name="formBtn_DriveModel" Command="{Binding Icmd_Probe}" ToolTip="Optional. Click to try and probe your drive for the model and serial #" Style="{StaticResource ImageButton}">
             <Image Source="/Double File;component/Assets/ic_storage_black_18dp.png" />
         </Button>
         <TextBox Grid.Row="4" Name="formEdit_DriveModel" ToolTip="Optional. Drive model helps to identify the drive this listing is for later on when reviewing." />
@@ -82,10 +82,10 @@ model/serial# do not.
         <local:UC_VolumeGroup Grid.Row="8" x:Name="formUC_VolumeGroup" Grid.ColumnSpan="999"/>
 
         <Label Grid.Row="10" Content="Directory listing file" />
-        <Button Name="formBtn_SaveListingFile" Grid.Row="10" Command="{Binding Icmd_SaveListingFile}" ToolTip="Click to open a file save dialog" Style="{StaticResource ImageButton}">
+        <Button Name="formBtn_SaveListingFile" Grid.Row="10" Command="{Binding Icmd_SaveListingFile}" ToolTip="Optional. Click to open a file save dialog" Style="{StaticResource ImageButton}">
             <Image Source="/Double File;component/Assets/ic_save_black_18dp.png" />
         </Button>
-        <TextBox Grid.Row="10" Name="formEdit_SaveListingFile" ToolTip="Where to save the directory listing."/>
+        <TextBox Grid.Row="10" Name="formEdit_SaveListingFile" ToolTip="Optional. Where to save the directory listing."/>
 
         <Button Grid.Column="3" Content="OK" Name="formBtn_OK" Command="{Binding Icmd_IsOKenabled}" Grid.Row="11" Width="75" Height="Auto" IsDefault="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
         <Button Grid.Column="4" Content="Cancel" Name="formBtn_Cancel" Grid.Row="11" Width="75" Grid.ColumnSpan="2" Height="Auto" IsCancel="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>

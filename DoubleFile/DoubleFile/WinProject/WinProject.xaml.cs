@@ -38,7 +38,7 @@ namespace DoubleFile
 
             if ((null != winProject._lvProjectVM)
                 && App.LVprojectVM.LocalEquals(winProject._lvProjectVM)
-                && OKtoNavigate_UpdateSaveListingsLink(winProject, bSaveListings))
+                && OKtoNavigate_UpdateSaveListingsLink(bSaveListings))
             {
                 return true;
             }
@@ -56,11 +56,11 @@ namespace DoubleFile
                 }
             }
 
-            OKtoNavigate_UpdateSaveListingsLink(winProject);
+            OKtoNavigate_UpdateSaveListingsLink();
             return (null != winProject._lvProjectVM);
         }
 
-        static bool OKtoNavigate_UpdateSaveListingsLink(WinProject winProject, bool bSaveListings = false)
+        static internal bool OKtoNavigate_UpdateSaveListingsLink(bool bSaveListings = false)
         {
             var bListingsToSave = App.LVprojectVM.ItemsCast.Any(lvItem => lvItem.WouldSave);
 

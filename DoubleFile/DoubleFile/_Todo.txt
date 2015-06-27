@@ -10,6 +10,8 @@
 - dupe vm event alerts: static vm internal counter or static transmit
 - fix slider in tree list
 
+- open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.
+- show messagbox title
 - This folder has no exact copy: so please itemize in a report what the exact differences are to the nearest copy.
 	- Allow a list of important files and directories to watch, with alerts; links; etc.:
 		- Invert the exclusive principle. Start inclusive, not with an ignore list.
@@ -29,9 +31,6 @@
 - hash version is not shown to the user.
 - compare mode - how is this folder different from that one besides looking at the details: show missing/different file.
 - should the 2-pass listing save go out to the fs twice or just cache all the filenames?
-- remove save listings link when listings to save are removed
-- open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.
-- show messagbox title
 - Remove WidthListingFile and redo the ListingFile setter to internal - same goes for progress dialog though
 - replace properties with converters
 - replace DarkWindow with flyouts

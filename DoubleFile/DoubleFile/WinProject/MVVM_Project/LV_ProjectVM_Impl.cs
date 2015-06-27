@@ -156,9 +156,9 @@ namespace DoubleFile
         internal void RemoveListingFile()
         {
             if (Selected().Any(lvItem => lvItem.WouldSave) &&
-                (MBoxStatic.ShowDialog("Selected listings have not been saved. Continue?", "Remove Listing File",
-                System.Windows.MessageBoxButton.YesNo) !=
-                System.Windows.MessageBoxResult.Yes))
+                (System.Windows.MessageBoxResult.Yes !=
+                MBoxStatic.ShowDialog("Selected listings have not been saved. Continue?", "Remove Listing File",
+                System.Windows.MessageBoxButton.YesNo)))
             {
                 return;
             }
@@ -170,6 +170,7 @@ namespace DoubleFile
             _unsaved = (false == Items.IsEmpty());
             SetModified();
             RaisePropertyChanged("Visible");
+            WinProject.OKtoNavigate_UpdateSaveListingsLink();
         }
 
         internal void EditVolumeGroupLabel()

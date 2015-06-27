@@ -16,7 +16,7 @@ namespace DoubleFile
         // Menu items       
         static internal string
             ListingFilter { get { return "Double File Listing|*." + FileParse.ksFileExt_Listing + _ksAllFilesFilter; } }
-        const string _ksProjectFilter = "Double File project|*." + FileParse.ksFileExt_Project + _ksAllFilesFilter;
+        const string _ksProjectFilter = "Double File Project|*." + FileParse.ksFileExt_Project + _ksAllFilesFilter;
         const string _ksAllFilesFilter = "|All files|*.*";
 
         static internal string

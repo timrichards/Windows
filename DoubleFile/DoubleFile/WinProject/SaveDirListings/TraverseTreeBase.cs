@@ -53,19 +53,18 @@ namespace DoubleFile
                 Tuple<IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>>, IReadOnlyDictionary<string, string>> tuple = null)
             {
                 var stackDirs = new Stack<NativeMethods.DATUM>(64);
-                var winRoot = default(NativeMethods.DATUM);
 
-                Win32FindFileStatic.FileData.WinFile(LVitemProjectVM.SourcePath, out winRoot);
-                stackDirs.Push(winRoot);
+                stackDirs.Push(Win32FindFileStatic.FileData.WinFile(LVitemProjectVM.SourcePath));
 
                 var listFilePaths = new List<Tuple<string, ulong>>();
 
-                MBoxStatic.Assert(99939, LengthRead == 0);
+                MBoxStatic.Assert(99939, 0 == LengthRead);
                 LengthRead = 0;
 
                 while (false == stackDirs.IsEmpty())
                 {
-                    if (App.LocalExit || _bThreadAbort)
+                    if (App.LocalExit ||
+                        _bThreadAbort)
                     {
                         return null;
                     }
@@ -79,7 +78,7 @@ namespace DoubleFile
 
                     if (false == Win32FindFileStatic.GetDirectory(strFullPath, out ieSubDirs, out ieFiles, out strWin32Error))
                     {
-                        if (fs != null)
+                        if (null != fs)             // second pass
                         {
                             ErrorList.Add(FormatString(strDir: strFullPath,
                                 strError1: strWin32Error,
@@ -94,7 +93,8 @@ namespace DoubleFile
 
                     foreach (var winFile in ieFiles.OrderBy(winData => winData.strAltFileName))
                     {
-                        if (App.LocalExit || _bThreadAbort)
+                        if (App.LocalExit ||
+                            _bThreadAbort)
                         {
                             return null;
                         }
@@ -103,39 +103,41 @@ namespace DoubleFile
                         var strFile = winFile.strFileName;
                         var strError2_File = "" + CheckNTFS_chars(ref strFile, bFile: true);
 
-                        if (fi.IsValid == false)
+                        if (false == fi.IsValid)
                         {
-                            if (fs != null)
+                            if (null != fs)             // second pass
                             {
                                 var strErrorDir = winFile.strAltFileName.Substring(0,
                                     winFile.strAltFileName.LastIndexOf('\\'));
 
                                 CheckNTFS_chars(ref strErrorDir);
 
-                                ErrorList.Add(FormatString(strFile: strFile, strDir: strErrorDir,
+                                ErrorList.Add(FormatString(strFile: strFile,
+                                    strDir: strErrorDir,
                                     strError2: strError2_File));
                             }
 
                             continue;
                         }
 
-                        MBoxStatic.Assert(1306.7307m, fi.Size >= 0);
-
-                        if (fs == null)
+                        if (null == fs)
                         {
-                            if (fi.Size > 0)
-                            {
+                            if (0 < fi.Size)
                                 listFilePaths.Add(Tuple.Create(winFile.strAltFileName, fi.Size));
-                            }
                         }
-                        else
+                        else                            // second pass
                         {
-                            if (fi.Size > 0)
+                            if (0 < fi.Size)
                             {
                                 bHasLength = true;
                                 LengthRead += fi.Size;
                                 nDirLength += fi.Size;
                             }
+
+                            string strError1 =
+                                (260 < winFile.strAltFileName.Length)
+                                ? "Path Length: " + winFile.strAltFileName.Length
+                                : null;
 
                             string strHashV1pt0 = null;
                             string strHashV2 = null;
@@ -149,22 +151,12 @@ namespace DoubleFile
                                     strHashV1pt0 = "" + tupleA.Item1;
                                     strHashV2 = "" + tupleA.Item2;
                                 }
-                            }
 
-                            string strError1 = null;
+                                var strError = tuple.Item2.TryGetValue(strFile);
 
-                            if (winFile.strAltFileName.Length > 260)
-                            {
-                                strError1 = "Path Length: " + winFile.strAltFileName.Length;
-                            }
-
-                            if (null != tuple)
-                            {
-                                var str = tuple.Item2.TryGetValue(strFile);
-
-                                if (false == string.IsNullOrEmpty(str))
+                                if (false == string.IsNullOrEmpty(strError))
                                 {
-                                    strError2_File += " " + str;
+                                    strError2_File += " " + strError;
                                     strError2_File = strError2_File.TrimStart();
                                 }
                             }
@@ -176,30 +168,29 @@ namespace DoubleFile
                         }
                     }
 
-                    if (fs != null)
+                    if (null != fs)                     // second pass
                     {
-                        string strError1 = null;
+                        string strError1 =
+                            (240 < strFullPath.Length)
+                            ? "Path Length: " + strFullPath.Length
+                            : null;
 
-                        if (strFullPath.Length > 240)
-                        {
-                            strError1 = "Path Length: " + strFullPath.Length;
-                        }
-
-                        MBoxStatic.Assert(1306.7308m, bHasLength == (nDirLength > 0));
-                        MBoxStatic.Assert(1306.7301m, nDirLength >= 0);
+                        MBoxStatic.Assert(1306.7308m, bHasLength == (0 < nDirLength));
 
                         var di = new Win32FindFileStatic.FileData(winDir);
 
                         if (strFullPath.EndsWith(@":\"))                            // root directory
                         {
                             MBoxStatic.Assert(1306.7302m, di.IsValid == false);      // yes, yes...
-                            MBoxStatic.Assert(1306.7303m, strFullPath.Length == 3);
+                            MBoxStatic.Assert(1306.7303m, 3 == strFullPath.Length);
+
                             fs.WriteLine(FormatString(strDir: strFullPath, nLength: nDirLength,
                                 strError1: strError1, strError2: strError2_Dir));
                         }
                         else
                         {
                             MBoxStatic.Assert(1306.7304m, di.IsValid);
+
                             fs.WriteLine(FormatString(strDir: strFullPath, dtCreated: di.CreationTime,
                                 strAttributes: ((int)di.Attributes).ToString("X"),
                                 dtModified: di.LastWriteTime, nLength: nDirLength,
@@ -208,9 +199,7 @@ namespace DoubleFile
                     }
 
                     foreach (var winData in ieSubDirs.OrderBy(winData => winData.strAltFileName))
-                    {
                         stackDirs.Push(winData);
-                    }
                 }
 
                 return listFilePaths;

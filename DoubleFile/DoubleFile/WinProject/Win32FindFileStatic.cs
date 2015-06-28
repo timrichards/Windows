@@ -34,14 +34,16 @@ namespace DoubleFile
                 IsValid { get { return _bValid; } }
             readonly bool _bValid = false;
 
-            static internal bool WinFile(string strFile, out NativeMethods.DATUM winFindData)
+            static internal NativeMethods.DATUM WinFile(string strFile)
             {
-                var handle = NativeMethods.FindFirstFileExW(@"\\?\" + strFile, NativeMethods.IndexInfoLevels.FindExInfoBasic,
+                var winFindData = default(NativeMethods.DATUM);
+
+                NativeMethods.FindFirstFileExW(@"\\?\" + strFile, NativeMethods.IndexInfoLevels.FindExInfoBasic,
                     out winFindData, NativeMethods.IndexSearchOps.FindExSearchNameMatch, IntPtr.Zero,
                     NativeMethods.FIND_FIRST_EX_LARGE_FETCH);
 
                 winFindData.strAltFileName = strFile.Replace(@"\\", @"\");          // 8.3 not used
-                return (handle != NativeMethods.InvalidHandleValue);
+                return winFindData;
             }
 
             internal FileData(NativeMethods.DATUM findData)

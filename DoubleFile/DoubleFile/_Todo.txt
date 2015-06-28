@@ -12,6 +12,11 @@
 
 - Bug: Source path is already set to be scanned: when you edit a new listing file and change the save to filename
 
+- Scanning serial/model in edit wipes out model if already entered - maybe also in ProcessFile.
+- Allow a notes field
+- Mark user-entered model/serial number
+- Allow rescan of drive, with history difference, or allow copying values of already saved to the new one
+- Allow opening values of listing file that failed scanning
 - Add folder name to suffix title Tree List: My Documents; Files in Folder: My Documents; Folders Here: My Documents; etc.
 - Tree list is not updating from treemap selection - or maybe it's a drill down - didn't respond to tree map drill up. Did.
 - Option to show drive label and model/serial in Volume text (Nickname)
@@ -20,15 +25,14 @@
 - open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.
 - show messagbox title
 - This folder has no exact copy: so please itemize in a report what the exact differences are to the nearest copy.
+	- K nearest neighbor; PCA; etc.: score the folders with a function resulting in a double.
 	- Allow a list of important files and directories to watch, with alerts; links; etc.:
 		- Invert the exclusive principle. Start inclusive, not with an ignore list.
 	- Folders and files that are missing; or that are different.
 	- Invert the size matters principle: some of the most important files may go unnoticed: just a drop in the bucket.
 	- Restore the ignore list: nobody cares about the Windows or Program Files directories. Don't make moron reports.
 - tagged array of hashes representing increasing bandwidth: USB 2 gets 64K; ... SATA gets 1M
-- Hashes are 8 bytes. Compress to make the last long 64K; the previous long 512M; an extra hash string 1M; non-inclusive.
-	compatible because string length is locked to bandwidth. A long has 1/4.3 billion chance of collision
-- Do collision tests: e.g. run SHA1 against MD5. Put statistics like these under the Advanced link.
+- A 64 bit hash has 1 chance in 18 quintillion. Do collision tests: e.g. run SHA1 against MD5. Put statistics under Advanced.
 - check properties that are only supposed to be set once to true: make them Set methods
 - Allow method chaining: return this instead of void
 - allow two different file windows to point to two different folders: each new folder window should have its own children

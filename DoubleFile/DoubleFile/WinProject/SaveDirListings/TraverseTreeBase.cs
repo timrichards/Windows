@@ -14,7 +14,7 @@ namespace DoubleFile
 
             protected List<string>
                 ErrorList { get { return _errorList; } }
-            readonly List<string> _errorList = new List<string>();
+            readonly List<string> _errorList = new List<string> { };
 
             protected bool
                 _bThreadAbort = false;
@@ -44,9 +44,8 @@ namespace DoubleFile
             /// <summary>
             /// Two-pass private implementation. First to get file list; second to write to file.
             /// </summary>
-            /// <param name="fs">If omitted then params are ignored and it returns the file list.</param>
-            /// <param name="dictHash"></param>
-            /// <param name="dictException_FileRead"></param>
+            /// <param name="fs">If omitted then tuple is ignored (no params) and it returns the file list.</param>
+            /// <param name="tuple">Item 1: hash dictionary; Item2: read errors dictionary</param>
             /// <returns>File list if first pass</returns>
             IReadOnlyList<Tuple<string, ulong>> ImplementationDetails(
                 TextWriter fs = null,
@@ -56,7 +55,7 @@ namespace DoubleFile
 
                 stackDirs.Push(Win32FindFileStatic.FileData.WinFile(LVitemProjectVM.SourcePath));
 
-                var listFilePaths = new List<Tuple<string, ulong>>();
+                var listFilePaths = new List<Tuple<string, ulong>> { };
 
                 MBoxStatic.Assert(99939, 0 == LengthRead);
                 LengthRead = 0;
@@ -181,7 +180,7 @@ namespace DoubleFile
 
                         if (strFullPath.EndsWith(@":\"))                            // root directory
                         {
-                            MBoxStatic.Assert(1306.7302m, di.IsValid == false);      // yes, yes...
+                            MBoxStatic.Assert(1306.7302m, false == di.IsValid);     // yes, yes...
                             MBoxStatic.Assert(1306.7303m, 3 == strFullPath.Length);
 
                             fs.WriteLine(FormatString(strDir: strFullPath, nLength: nDirLength,

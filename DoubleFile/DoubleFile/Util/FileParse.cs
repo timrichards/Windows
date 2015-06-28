@@ -101,8 +101,10 @@ namespace DoubleFile
             if (0 > nIx)
                 return null;
 
+            int badChar = strFile[nIx];
+
             strFile = strFile.Replace("\n", "").Replace("\r", "").Replace("\t", "");    // program-incompatible
-            return "NTFS ASCII " + ((int)strFile[nIx]);
+            return "NTFS ASCII " + badChar;
         }
 
         static void ConvertFile(string strFile)

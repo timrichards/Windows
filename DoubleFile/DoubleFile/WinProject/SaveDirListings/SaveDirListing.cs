@@ -88,12 +88,7 @@ namespace DoubleFile
                         fs.WriteLine(FormatString(nHeader: 0));
                         fs.WriteLine(FormatString(nHeader: 1));
                         fs.WriteLine(ksStart01 + " " + DateTime.Now);
-
-                        var tuple = HashAllFiles(GetFileList());
-
-                        if (null != tuple)
-                            WriteDirectoryListing(fs, tuple);
-
+                        WriteDirectoryListing(fs, HashAllFiles(GetFileList()));
                         fs.WriteLine(ksEnd01 + " " + DateTime.Now);
                         fs.WriteLine();
                         fs.WriteLine(ksErrorsLoc01);
@@ -271,7 +266,7 @@ namespace DoubleFile
                         }
                         catch (Exception e)
                         {
-                            StatusCallback(LVitemProjectVM, strError: e.Message);
+                            StatusCallback(LVitemProjectVM, strError: e.GetBaseException().Message);
                             return null;
                         }
 

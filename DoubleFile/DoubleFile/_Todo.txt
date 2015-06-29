@@ -10,8 +10,6 @@
 - dupe vm event alerts: static vm internal counter or static transmit
 - fix slider in tree list
 
-- Bug: Source path is already set to be scanned: when you edit a new listing file and change the save to filename
-
 - Scanning serial/model in edit wipes out model if already entered - maybe also in ProcessFile.
 - Allow a notes field
 - Mark user-entered model/serial number

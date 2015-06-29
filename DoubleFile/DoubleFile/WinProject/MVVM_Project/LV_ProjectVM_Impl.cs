@@ -76,46 +76,47 @@ namespace DoubleFile
             Selected()
                 .FirstOnlyAssert(lvItem =>
             {
-                var lvItemVolumeTemp = new LVitem_ProjectVM(lvItem);
+                var lvItemTemp = new LVitem_ProjectVM(lvItem);
 
-                if (FileParse.ksError == lvItemVolumeTemp.Status)
-                    lvItemVolumeTemp.Status = FileParse.ksNotSaved;
+                if (FileParse.ksError == lvItemTemp.Status)
+                    lvItemTemp.Status = FileParse.ksNotSaved;
 
                 for (; ; )
                 {
                     var dlg =
-                        lvItemVolumeTemp.WouldSave
+                        lvItemTemp.WouldSave
                         ? new WinVolumeNew()
                         : (WinVolumeEditBase)new WinVolumeEdit();
 
-                    dlg.LVitemVolumeTemp = new LVitem_ProjectVM(lvItemVolumeTemp);
+                    dlg.LVitemVolumeTemp = new LVitem_ProjectVM(lvItemTemp);
 
                     if (false == (dlg.ShowDialog() ?? false))
                         break;  // user canceled
 
-                    lvItemVolumeTemp = new LVitem_ProjectVM(dlg.LVitemVolumeTemp);
+                    lvItemTemp = new LVitem_ProjectVM(dlg.LVitemVolumeTemp);
 
-                    if (AlreadyInProject(lvItemVolumeTemp.ListingFile, lvItem))
+                    if (AlreadyInProject(lvItemTemp.ListingFile, lvItem))
                         continue;
 
                     var dlgEdit = dlg as WinVolumeEdit;
 
                     if (null != dlgEdit)
                     {
-                        if (ModifyListingFile(lvItem, lvItemVolumeTemp, dlgEdit.formUC_VolumeEdit.DriveLetter))
-                            FileParse.ReadHeader(lvItemVolumeTemp.ListingFile, out lvItemVolumeTemp);
-                        else if (lvItem.LocalEquals(lvItemVolumeTemp))
+                        if (ModifyListingFile(lvItem, lvItemTemp, dlgEdit.formUC_VolumeEdit.DriveLetter))
+                            FileParse.ReadHeader(lvItemTemp.ListingFile, out lvItemTemp);
+                        else if (lvItem.LocalEquals(lvItemTemp))
                             break;  // no change to volume group; include y/n: columns that aren't in the listing file
 
                         Unsaved = true;
                     }
-                    else if (FileExists(lvItemVolumeTemp.ListingFile) ||    // WinVolumeNew
-                        ContainsUnsavedPath(lvItemVolumeTemp.SourcePath))
+                    else if (FileExists(lvItemTemp.ListingFile) ||
+                        ((lvItemTemp.SourcePath != lvItem.SourcePath) && ContainsUnsavedPath(lvItemTemp.SourcePath)))
                     {
+                        // WinVolumeNew
                         continue;
                     }
 
-                    lvItem.StringValues = lvItemVolumeTemp.StringValues;
+                    lvItem.StringValues = lvItemTemp.StringValues;
                     break;
                 }
             });

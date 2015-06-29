@@ -139,6 +139,8 @@ namespace DoubleFile
                 IsOKenabled = () => IsOKenabled,
                 SourcePath_CurrentText = () => formEdit_SourcePath.Text,
                 ListingFile_CurrentText = () => formEdit_SaveListingFile.Text,
+                DriveModel_CurrentText = () => formEdit_DriveModel.Text,
+                DriveSerial_CurrentText = () => formEdit_DriveSerial.Text,
                 FromSourcePathDlg = s => formEdit_SourcePath.Text = s,
                 FromProbe = (strDriveModel, strDriveSerial) => { formEdit_DriveModel.Text = strDriveModel; formEdit_DriveSerial.Text = strDriveSerial; },
                 FromListingFileDlg = s => formEdit_SaveListingFile.Text = s

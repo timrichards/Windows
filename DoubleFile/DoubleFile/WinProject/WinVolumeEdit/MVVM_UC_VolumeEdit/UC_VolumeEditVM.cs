@@ -11,6 +11,10 @@ namespace DoubleFile
             SourcePath_CurrentText = () => { DesignModeOK(); return null; };
         public Func<string>
             ListingFile_CurrentText = () => { DesignModeOK(); return null; };
+        public Func<string>
+            DriveModel_CurrentText = () => { DesignModeOK(); return null; };
+        public Func<string>
+            DriveSerial_CurrentText = () => { DesignModeOK(); return null; };
         public Action<string>
             FromSourcePathDlg = s => DesignModeOK();
         public Action<string, string>

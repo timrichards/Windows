@@ -130,34 +130,12 @@ namespace DoubleFile
                 fs.WriteLine(LVitemProjectVM.Nickname);
                 fs.WriteLine(LVitemProjectVM.SourcePath);
 
-                string strModel = null;
-                string strSerial = null;
-                ulong? nSize = null;
+                // strModel and strSerial are not as throwaway as they look: this file will be read in when done
+                string strModel = LVitemProjectVM.DriveModel;
+                string strSerial = LVitemProjectVM.DriveSerial;
 
                 // at minimum get the drive size
-                DriveSerialStatic.Get(LVitemProjectVM.SourcePath, out strModel, out strSerial, out nSize);
-
-                var bAsk_DriveModel = ((false == string.IsNullOrWhiteSpace(strModel)) &&
-                    ((false == string.IsNullOrWhiteSpace(LVitemProjectVM.DriveModel)) &&
-                    (strModel != LVitemProjectVM.DriveModel)));
-
-                var bAsk_DriveSerial = ((false == string.IsNullOrWhiteSpace(strSerial)) &&
-                    ((false == string.IsNullOrWhiteSpace(LVitemProjectVM.DriveSerial)) &&
-                    (strSerial != LVitemProjectVM.DriveSerial)));
-
-                if ((bAsk_DriveModel || bAsk_DriveSerial) &&
-                    ((MBoxStatic.ShowDialog("Overwrite user-entered drive model and/or serial # for " +
-                        LVitemProjectVM.SourcePath[0] + @":\ ?", "Save Directory Listings",
-                        System.Windows.MessageBoxButton.YesNo) ==
-                        System.Windows.MessageBoxResult.No)))
-                {
-                    // separating these allows one user value to substitute blank robo-get, while keeping the other one
-                    if (bAsk_DriveModel)
-                        strModel = LVitemProjectVM.DriveModel;
-
-                    if (bAsk_DriveSerial)
-                        strSerial = LVitemProjectVM.DriveSerial;
-                }
+                ulong? nSize = DriveSerialStatic.Get(LVitemProjectVM.SourcePath, ref strModel, ref strSerial);
 
                 fs.WriteLine(ksDrive01);
 

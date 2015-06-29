@@ -2,34 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management;
+using System.ServiceProcess;
 
 namespace DoubleFile
 {
     static internal class DriveSerialStatic
     {
-        static internal void Get(string strPath, out string strDriveModel_out,
-            out string strDriveSerial_out, out ulong? nSize_out)
+        static internal ulong? Get(string strSourcePath,
+            ref string strDriveModel_ref, ref string strDriveSerial_ref)
         {
-            var letter = strPath.Substring(0, 2);
-
+            var strDriveLetter = strSourcePath.Substring(0, 2);
             string strDriveModel = null;
             string strDriveSerial = null;
             ulong? nSize = null;
-
             var bWMI = false;
 
             try
             {
-                bWMI = (new System.ServiceProcess.ServiceController("Winmgmt").Status ==
-                    System.ServiceProcess.ServiceControllerStatus.Running);
+                bWMI = (ServiceControllerStatus.Running == new ServiceController("Winmgmt").Status);
             }
             catch (InvalidOperationException) { }
 
             if (bWMI)
-                new ManagementObjectSearcher(
-                    new ManagementScope(@"\\.\ROOT\cimv2"),
-                    new ObjectQuery("SELECT * FROM Win32_LogicalDisk WHERE DeviceID='" + letter + "'")
-            ).Get().Cast<ManagementObject>().FirstOnlyAssert(logicalDisk =>
+                new ManagementObjectSearcher
+            (
+                new ManagementScope(@"\\.\ROOT\cimv2"),
+                new ObjectQuery("SELECT * FROM Win32_LogicalDisk WHERE DeviceID='" + strDriveLetter + "'")
+            )
+                .Get().Cast<ManagementObject>().FirstOnlyAssert(logicalDisk =>
             {
                 logicalDisk
                     .GetRelated("Win32_DiskPartition")
@@ -41,15 +41,19 @@ namespace DoubleFile
                         .Cast<ManagementObject>()
                         .FirstOnlyAssert(diskDrive =>
                     {
-                        try { nSize = (ulong?)diskDrive["Size"]; } catch (ManagementException) {}
-                        try { strDriveModel = diskDrive["DriveModel"].ToPrintString(); } catch (ManagementException) {}
+                        try { nSize = (ulong?)diskDrive["Size"]; }
+                        catch (ManagementException) { }
+                        try { strDriveModel = diskDrive["DriveModel"].ToPrintString(); }
+                        catch (ManagementException) { }
 
                         if (string.IsNullOrWhiteSpace(strDriveModel))
                         {
-                            try { strDriveModel = diskDrive["Caption"].ToPrintString(); } catch (ManagementException) {}
+                            try { strDriveModel = diskDrive["Caption"].ToPrintString(); }
+                            catch (ManagementException) { }
                         }
 
-                        try { strDriveSerial = diskDrive["SerialNumber"].ToPrintString(); } catch (ManagementException) {}
+                        try { strDriveSerial = diskDrive["SerialNumber"].ToPrintString(); }
+                        catch (ManagementException) { }
 
                         if (string.IsNullOrWhiteSpace(strDriveSerial))
                         {
@@ -58,23 +62,53 @@ namespace DoubleFile
                                 .Cast<ManagementObject>()
                                 .FirstOnlyAssert(diskMedia =>
                             {
-                                try { strDriveSerial = diskMedia["SerialNumber"].ToPrintString(); } catch (ManagementException) {}
+                                try { strDriveSerial = diskMedia["SerialNumber"].ToPrintString(); }
+                                catch (ManagementException) { }
                             });
                         }
                     });
                 });
             });
 
-            if (string.IsNullOrEmpty(strDriveModel))
+            //if (string.IsNullOrEmpty(strDriveModel))
+            //{
+            //    var listDrives = GetAll();
+
+
+            //}
+
+            var bAsk_DriveModel = ((false == string.IsNullOrWhiteSpace(strDriveModel)) &&
+                ((false == string.IsNullOrWhiteSpace(strDriveModel_ref)) &&
+                (strDriveModel != strDriveModel_ref)));
+
+            var bAsk_DriveSerial = ((false == string.IsNullOrWhiteSpace(strDriveSerial)) &&
+                ((false == string.IsNullOrWhiteSpace(strDriveSerial_ref)) &&
+                (strDriveSerial != strDriveSerial_ref)));
+
+            if ((bAsk_DriveModel || bAsk_DriveSerial) &&
+                ((System.Windows.MessageBoxResult.No == 
+                MBoxStatic.ShowDialog("Overwrite user-entered drive model and/or serial # for " +
+                strDriveLetter + @"\ ?", "Save Directory Listings",
+                System.Windows.MessageBoxButton.YesNo))))
             {
-                var listDrives = GetAll();
+                // separating these allows one user value to substitute blank robo-get, while keeping the other one
+                // here overwriting robo-get values with the ones the user entered
+                // because the user said No.
 
+                if (bAsk_DriveModel)
+                    strDriveModel = strDriveModel_ref;
 
+                if (bAsk_DriveSerial)
+                    strDriveSerial = strDriveSerial_ref;
             }
 
-            strDriveModel_out = strDriveModel;
-            strDriveSerial_out = strDriveSerial;
-            nSize_out = nSize;
+            if (false == string.IsNullOrWhiteSpace(strDriveModel))
+                strDriveModel_ref = strDriveModel;
+
+            if (false == string.IsNullOrWhiteSpace(strDriveSerial))
+                strDriveSerial_ref = strDriveSerial;
+
+            return nSize;
         }
 
         static IEnumerable<string> GetAll()

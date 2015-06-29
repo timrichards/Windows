@@ -5,12 +5,13 @@
 - large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
 - wpf treemap
 - Why are some folders white? Why do some folders not say they're duplicated?
-- intro page
 - Todo: save volume group.\nTodo: save include y/n
 - dupe vm event alerts: static vm internal counter or static transmit
 - fix slider in tree list
 
-- Scanning serial/model in edit wipes out model if already entered - maybe also in ProcessFile.
+- string.IsNullOrWhiteSpace
+- Unimplemented code in DriveSerialStatic.cs which tries to scan all drives to find model # - not an issue: serial # usb is
+- Serial #? Lose USB class: drive speed matters less than the politically incorrect suggestion to turn of antivirus
 - Allow a notes field
 - Mark user-entered model/serial number
 - Allow rescan of drive, with history difference, or allow copying values of already saved to the new one
@@ -19,26 +20,28 @@
 - Tree list is not updating from treemap selection - or maybe it's a drill down - didn't respond to tree map drill up. Did.
 - Option to show drive label and model/serial in Volume text (Nickname)
 - Good that tree does not autoupdate: extra window. Allow filter by volume type; for example.
+- allow two different file windows to point to two different folders: each new folder window should have its own children
+- compare mode - how is this folder different from that one besides looking at the details: show missing/different file.
 - Filtering user control header for tree list; tree view; files; search; duplicates
 - open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.
 - show messagbox title
 - This folder has no exact copy: so please itemize in a report what the exact differences are to the nearest copy.
 	- K nearest neighbor; PCA; etc.: score the folders with a function resulting in a double.
+	- linear regression: split hash into X an Y - multiply by # of files for magnitude
 	- Allow a list of important files and directories to watch, with alerts; links; etc.:
 		- Invert the exclusive principle. Start inclusive, not with an ignore list.
 	- Folders and files that are missing; or that are different.
 	- Invert the size matters principle: some of the most important files may go unnoticed: just a drop in the bucket.
 	- Restore the ignore list: nobody cares about the Windows or Program Files directories. Don't make moron reports.
-- tagged array of hashes representing increasing bandwidth: USB 2 gets 64K; ... SATA gets 1M
 - A 64 bit hash has 1 chance in 18 quintillion. Do collision tests: e.g. run SHA1 against MD5. Put statistics under Advanced.
-- check properties that are only supposed to be set once to true: make them Set methods
-- Allow method chaining: return this instead of void
-- allow two different file windows to point to two different folders: each new folder window should have its own children
 - last modified time as part of comparison; or notification: hash equal but mod times are different
 - wolfram-alpha front-end; curate; data -> query language: what state are my backups in? What are the best queries to bring forward?
 - compare the 4K vs 128K correlations to see what they caught.
+- USBDevice.SerialNumber - may just be a downstream hub
+
+- check properties that are only supposed to be set once to true: make them Set methods
+- Allow method chaining: return this instead of void
 - hash version is not shown to the user.
-- compare mode - how is this folder different from that one besides looking at the details: show missing/different file.
 - should the 2-pass listing save go out to the fs twice or just cache all the filenames?
 - Remove WidthListingFile and redo the ListingFile setter to internal - same goes for progress dialog though
 - replace properties with converters
@@ -46,23 +49,20 @@
 - allow moving the window when darkened
 - minimize progress/messagebox to task bar?
 - New Listing File dialog flashes when system choose folder dialog is shown
-- determine USB speed of drive
 
+- regex search
 - vertical scrollbar: window height clips volumes lv
 - rollover highlight project image button text
 - set hover bg same as bg in project lv for group etc
 - scroll to highlighted item in LVs
 - clones lvs; and all dupe files lv?
 - Sync To button in tree view
-- regex search
 - allow user toggle showing free space
 - UX tree map free space
 - go to button in tree map
 - tool tip to tree map title bar area
 - resource all stringets; en-us etc.
 - auto layout? save layout?
-- lose the file convert process
-- db
 - Apply async/await
 - Who collaborates/reviews? Who wants to learn from this code base?
 - Research runtime asserts vs unit testing online. Throw exceptions instead, perhaps.

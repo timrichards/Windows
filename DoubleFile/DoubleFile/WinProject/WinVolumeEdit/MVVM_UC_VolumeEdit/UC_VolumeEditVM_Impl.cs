@@ -21,11 +21,10 @@ namespace DoubleFile
         { 
             if (IsOKenabled())
             {
-                ulong? nSize;
-                string strDriveModel = null;
-                string strDriveSerial = null;
+                string strDriveModel = DriveModel_CurrentText();
+                string strDriveSerial = DriveSerial_CurrentText();
 
-                DriveSerialStatic.Get(SourcePath_CurrentText(), out strDriveModel, out strDriveSerial, out nSize);
+                DriveSerialStatic.Get(SourcePath_CurrentText(), ref strDriveModel, ref strDriveSerial);
                 FromProbe(strDriveModel, strDriveSerial);
             }
             else

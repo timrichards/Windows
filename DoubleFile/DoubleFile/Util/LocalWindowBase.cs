@@ -177,10 +177,12 @@ namespace DoubleFile
             I.SimulatingModal = App.SimulatingModal;
             Owner = (Window)me;
 
+            var topWindow = App.TopWindow;
+
             Observable.FromEventPattern(this, "Closed")
                 .Subscribe(x =>
             {
-                App.TopWindow = me;
+                App.TopWindow = topWindow;
                 me.Activate();
                 GoModeless();
             });

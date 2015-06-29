@@ -58,13 +58,17 @@ namespace DoubleFile
             }
         }
 
-        internal LocalMbox(string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
+        internal LocalMbox(ILocalWindow owner, string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
         {
             InitializeComponent();
             WindowStyle = WindowStyle.None;
             AllowsTransparency = true;
+            Owner = (Window)owner;
 
-            var rc = MainWindow.WithMainWindow(Win32Screen.GetWindowRect);
+            if (null == Owner)
+                Owner = MainWindow.WithMainWindow(w => w);
+
+            var rc = Win32Screen.GetWindowRect(Owner);
 
             Left = rc.Left;
             Width = rc.Width;
@@ -88,12 +92,6 @@ namespace DoubleFile
 
             if (null != buttons)
                 Buttons = buttons.Value;
-        }
-
-        internal LocalMbox(ILocalWindow owner, string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
-            : this(strMessage, strTitle, buttons)
-        {
-            Owner = (Window)owner;
         }
 
         internal new MessageBoxResult ShowDialog()

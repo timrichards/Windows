@@ -9,6 +9,8 @@
 - dupe vm event alerts: static vm internal counter or static transmit
 - fix slider in tree list
 
+- Overwrite? probe prompt is main window width yet it centers over New/Edit dialog. Make it width of window it's centered on.
+- Click OK on that and in another instance and Double File disappears behind another app.
 - string.IsNullOrWhiteSpace
 - Unimplemented code in DriveSerialStatic.cs which tries to scan all drives to find model # - not an issue: serial # usb is
 - Serial #? Lose USB class: drive speed matters less than the politically incorrect suggestion to turn of antivirus

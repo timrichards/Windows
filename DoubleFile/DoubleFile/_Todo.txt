@@ -9,6 +9,12 @@
 - dupe vm event alerts: static vm internal counter or static transmit
 - fix slider in tree list
 
+- allow moving the window when darkened
+- New Listing File dialog flashes when system choose folder dialog is shown
+- tool tip to tree map title bar area
+- regex search
+- save to both V1 and latest V as 2 files (in debug); convert V1 and compare to latest: for practice in consistency
+- rollover highlight project image button text
 - Recently (since 6/25 or so) creating file explorer stopped showing the progress bar until almost done.
 - Click OK on a dialog and Double File disappears behind another app. -fix example: end of save listings it comes to front.
 - string.IsNullOrWhiteSpace
@@ -30,14 +36,15 @@
 - Add folder name to suffix title Tree List: My Documents; Files in Folder: My Documents; Folders Here: My Documents; etc.
 - Tree list is not updating from treemap selection - or maybe it's a drill down - didn't respond to tree map drill up. Did.
 - Option to show drive label and model/serial in Volume text (Nickname)
-- Good that tree does not autoupdate: extra window. Allow filter by volume type; for example.
+- Good that tree does not autoupdate: extra window. Allow filter by volume type, for example.
+- Sync To button in tree view
 - allow two different file windows to point to two different folders: each new folder window should have its own children
 - compare mode - how is this folder different from that one besides looking at the details: show missing/different file.
 - Filtering user control header for tree list; tree view; files; search; duplicates
 - open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.
 - show messagbox title
 - Unimplemented code in DriveSerialStatic.cs which tries to scan all drives to find model # - not an issue: serial # usb is
-- Serial #? Lose USB class: drive speed matters less than the politically incorrect suggestion to turn of antivirus
+- Serial #? Lose USB class: drive speed matters less than the politically incorrect suggestion to turn off antivirus
 - USBDevice.SerialNumber - may just be a downstream hub
 
 - check properties that are only supposed to be set once to true: make them Set methods
@@ -47,21 +54,15 @@
 - Remove WidthListingFile and redo the ListingFile setter to internal - same goes for progress dialog though
 - replace properties with converters
 - replace DarkWindow with flyouts
-- allow moving the window when darkened
 - minimize progress/messagebox to task bar?
-- New Listing File dialog flashes when system choose folder dialog is shown
 
-- regex search
 - vertical scrollbar: window height clips volumes lv
-- rollover highlight project image button text
 - set hover bg same as bg in project lv for group etc
 - scroll to highlighted item in LVs
 - clones lvs; and all dupe files lv?
-- Sync To button in tree view
 - allow user toggle showing free space
 - UX tree map free space
 - go to button in tree map
-- tool tip to tree map title bar area
 - resource all stringets; en-us etc.
 - auto layout? save layout?
 - Apply async/await
@@ -70,7 +71,6 @@
 	NUnit: replace MboxStatic assert with [TestMethod] and Assert.AreEqual, etc.
 - services, decouple: Unity frameork: rewrite in Node/Angular; C++; Linux etc. Start these with unit testing.
 - what C# features don't translate well to other languages like C++? is operator?
-- all threads are background as of 6/12/15
 - neither is nor as are reflection. as is 20x slower though. p. 123
 
 99906

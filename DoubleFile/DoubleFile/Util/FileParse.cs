@@ -446,14 +446,9 @@ namespace DoubleFile
 
             if (false ==
                 File.ReadLines(strFile)
-                .Select(strLine =>
-            {
-                var arrToken = strLine.Split('\t');
-
-                return
-                    ((3 < arrToken.Length) &&
-                    (ksHeader == arrToken[2]));     // from lambda
-            })
+                .Take(1)
+                .Select(strLine => strLine.Split('\t'))
+                .Select(asLine => ((3 < asLine.Length) && (ksHeader == asLine[2])))
                 .Any())
             {
                 return retVal;
@@ -469,10 +464,8 @@ namespace DoubleFile
                 .Select(strLine => strLine.Split('\t'))
                 .FirstOnlyAssert(asLine =>
             {
-                if (asLine.Length < 3) return;
-                if (asLine[2] != ksTotalLengthLoc) return;
-
-                try
+                if ((3 < asLine.Length) && (ksTotalLengthLoc == asLine[2]))
+                    try
                 {
                     nScannedLength = ("" + asLine[knColLength]).ToUlong();
                     nLinesTotal = (asLine[1]).ToInt();

@@ -122,7 +122,7 @@ namespace DoubleFile
             {
                 //           volStrings.SetStatus_BadFile(LV);
             }
-            else if (rootNode != null)
+            else if (null != rootNode)
                 lock (_rootNodesSemaphore)
             {
                 if (null == _rootNodes)
@@ -134,7 +134,7 @@ namespace DoubleFile
                     // The root volume list is very small so this copy-sort is viable
                     var ls = new List<LocalTreeNode>(_rootNodes);
 
-                    ls.Insert(ls.TakeWhile(node => rootNode.Text.CompareTo(node.Text) > 0).Count(), rootNode);
+                    ls.Insert(ls.TakeWhile(node => 0 < rootNode.Text.CompareTo(node.Text)).Count(), rootNode);
                     _rootNodes = ls.ToArray();
                 }
 
@@ -173,7 +173,7 @@ namespace DoubleFile
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                 .Subscribe(x => WithWinProgress(w => w.SetProgress(_ksFolderTreeKey, (3 + nProgress) / 4))))
             {
-                var lsTreeNodes = new List<LocalTreeNode>();
+                var lsTreeNodes = new List<LocalTreeNode> { };
 
                 var collate = new Collate(
                     _dictNodes,
@@ -200,6 +200,7 @@ namespace DoubleFile
 
                 if (null == LocalTV.SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
                     LocalTV.SelectedNode = _topNode;
+
                 _allNodes = lsTreeNodes.ToArray();
                 Util.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
             }
@@ -248,7 +249,7 @@ namespace DoubleFile
             return true;
         }
 
-        T WithWinProgress<T>(Func<WinProgress, T> doSomethingWith) where T: class
+        T WithWinProgress<T>(Func<WinProgress, T> doSomethingWith) where T : class
         {
             return (null != _winProgress)
                 ? doSomethingWith(_winProgress)

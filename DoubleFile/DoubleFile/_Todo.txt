@@ -9,24 +9,11 @@
 - dupe vm event alerts: static vm internal counter or static transmit
 - fix slider in tree list
 
-- Mark user-entered model/serial number - especially since when they change drives new/edit it will ask overwrite as if user
-- Click OK on that and in another instance and Double File disappears behind another app.
+- Click OK on a dialog and Double File disappears behind another app.
 - string.IsNullOrWhiteSpace
-- str = str.Insert(0, x) vs str = x + str
-- Unimplemented code in DriveSerialStatic.cs which tries to scan all drives to find model # - not an issue: serial # usb is
-- Serial #? Lose USB class: drive speed matters less than the politically incorrect suggestion to turn of antivirus
 - Allow a notes field
 - Allow rescan of drive, with history difference, or allow copying values of already saved to the new one
 - Allow opening values of listing file that failed scanning
-- Add folder name to suffix title Tree List: My Documents; Files in Folder: My Documents; Folders Here: My Documents; etc.
-- Tree list is not updating from treemap selection - or maybe it's a drill down - didn't respond to tree map drill up. Did.
-- Option to show drive label and model/serial in Volume text (Nickname)
-- Good that tree does not autoupdate: extra window. Allow filter by volume type; for example.
-- allow two different file windows to point to two different folders: each new folder window should have its own children
-- compare mode - how is this folder different from that one besides looking at the details: show missing/different file.
-- Filtering user control header for tree list; tree view; files; search; duplicates
-- open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.
-- show messagbox title
 - This folder has no exact copy: so please itemize in a report what the exact differences are to the nearest copy.
 	- K nearest neighbor; PCA; etc.: score the folders with a function resulting in a double.
 	- linear regression: split hash into X an Y - multiply by # of files for magnitude
@@ -39,6 +26,17 @@
 - last modified time as part of comparison; or notification: hash equal but mod times are different
 - wolfram-alpha front-end; curate; data -> query language: what state are my backups in? What are the best queries to bring forward?
 - compare the 4K vs 128K correlations to see what they caught.
+- Add folder name to suffix title Tree List: My Documents; Files in Folder: My Documents; Folders Here: My Documents; etc.
+- Tree list is not updating from treemap selection - or maybe it's a drill down - didn't respond to tree map drill up. Did.
+- Option to show drive label and model/serial in Volume text (Nickname)
+- Good that tree does not autoupdate: extra window. Allow filter by volume type; for example.
+- allow two different file windows to point to two different folders: each new folder window should have its own children
+- compare mode - how is this folder different from that one besides looking at the details: show missing/different file.
+- Filtering user control header for tree list; tree view; files; search; duplicates
+- open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.
+- show messagbox title
+- Unimplemented code in DriveSerialStatic.cs which tries to scan all drives to find model # - not an issue: serial # usb is
+- Serial #? Lose USB class: drive speed matters less than the politically incorrect suggestion to turn of antivirus
 - USBDevice.SerialNumber - may just be a downstream hub
 
 - check properties that are only supposed to be set once to true: make them Set methods

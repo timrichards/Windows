@@ -48,10 +48,10 @@ namespace DoubleFile
                     { new LVitem_FolderDetailVM(new[] { "", strBG_Description }) { Background = tuple.Item2.Background } });
                 }
 #if DEBUG
-                var nHashVersion = (App.FileDictionary.AllListingsHashV2) ? 512 : 4;
+                var nHashVersion = (App.FileDictionary.AllListingsHashV2) ? "1 MB" : "4K";
 
                 ieDetail = ieDetail.Concat(new[]
-                { new LVitem_FolderDetailVM(new[] { nHashVersion + "K Hash Parity", "" + tuple.Item2.NodeDatum.HashParity }) });
+                { new LVitem_FolderDetailVM(new[] { nHashVersion + " Hash Parity", "" + tuple.Item2.NodeDatum.HashParity }) });
 #endif
                 Title = tuple.Item2.Text;
                 Add(ieDetail);

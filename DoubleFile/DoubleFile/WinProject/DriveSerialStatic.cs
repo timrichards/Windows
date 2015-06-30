@@ -110,9 +110,8 @@ namespace DoubleFile
                 (false == strValue_ref.StartsWith(WMI)) &&
                 (strValue != strValue_ref));
 
-            // separating these allows one user value to substitute blank robo-get, while keeping the other one
-            // here overwriting robo-get values with the ones the user entered
-            // because the user said No.
+            // Separating these allows one user value to substitute blank robo-get, while keeping the other one.
+            // Here the user said No, so overwrite robo-get values with the ones the user entered.
 
             if (bAsk && (false == AskOverwrite()))
                 strValue = strValue_ref;

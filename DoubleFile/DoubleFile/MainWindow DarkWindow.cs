@@ -135,8 +135,8 @@ namespace DoubleFile
                 fakeBaseWindow, NativeMethods.GWL_EXSTYLE, NativeMethods.GetWindowLong(fakeBaseWindow, NativeMethods.GWL_EXSTYLE)
                 | NativeMethods.WS_EX_TOOLWINDOW);
 
-            var darkenedWindows = dictOwners.Keys.Where(w => w != this);
-            var lsWindowOrder = new List<NativeWindow>();
+            var darkenedWindows = dictOwners.Keys.Where(w => this != w);
+            var lsWindowOrder = new List<NativeWindow> { };
 
             {
                 var nativeWindows = darkenedWindows.Select(w => (NativeWindow)w).ToArray();
@@ -153,7 +153,7 @@ namespace DoubleFile
             foreach (var window in darkenedWindows)
                 window.Owner = fakeBaseWindow;
 
-            var lsDarkWindows = new List<DarkWindow>();
+            var lsDarkWindows = new List<DarkWindow> { };
 
             darkenedWindows
                 .Select(w => new DarkWindow(w))

@@ -163,7 +163,7 @@ namespace DoubleFile
 
                         var bHitBlankLine = false;
 
-                        for (var ixDriveInfo = 0; ixDriveInfo < knDriveInfoItems; ++ixDriveInfo)
+                        for (var ixDriveInfo = 0; knDriveInfoItems > ixDriveInfo; ++ixDriveInfo)
                         {
                             strLine = bHitBlankLine ? "" : file_in.ReadLine();
 
@@ -310,8 +310,10 @@ namespace DoubleFile
                 (("" + strFile).TrimEnd() != "" + strFile))
             {
                 strError1 += " Trailing whitespace";
+
                 MBoxStatic.Assert(99948, (false == string.IsNullOrWhiteSpace(strDir)) ||
                     (false == string.IsNullOrWhiteSpace(strFile)));
+
                 bDbgCheck = true;
             }
 
@@ -327,9 +329,7 @@ namespace DoubleFile
                 DateTime dtParse = DateTime.MinValue;
 
                 if (strArray[knColLength01].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
-                {
                     MBoxStatic.Assert(99947, false);
-                }
 #endif
             }
 
@@ -358,7 +358,7 @@ namespace DoubleFile
             var lsLines = File.ReadLines(strFile).Take(knLinesDesired + knLinesGrabFile)
                 .ToList();
 
-            if (lsLines.Count < knLinesDesired)
+            if (knLinesDesired > lsLines.Count)
                 return false;
 
             if (false == lsLines[1].StartsWith(ksLineType_Nickname))
@@ -444,23 +444,22 @@ namespace DoubleFile
                 bConvertFile = true;
             }
 
-            var bRet = false;
-
-            File.ReadLines(strFile)
-                .Take(1)
-                .FirstOnlyAssert(strLine =>
+            if (false ==
+                File.ReadLines(strFile)
+                .Select(strLine =>
             {
                 var arrToken = strLine.Split('\t');
 
-                if (arrToken.Length < 3) return;
-                if (arrToken[2] != ksHeader) return;
-                bRet = true;
-            });
-
-            if (false == bRet)
+                return
+                    ((3 < arrToken.Length) &&
+                    (ksHeader == arrToken[2]));     // from lambda
+            })
+                .Any())
+            {
                 return retVal;
+            }
 
-            bRet = false;
+            var bRet = false;
 
             ulong nScannedLength = 0;
             var nLinesTotal = 0;

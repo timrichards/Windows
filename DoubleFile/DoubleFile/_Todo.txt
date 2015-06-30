@@ -9,7 +9,8 @@
 - dupe vm event alerts: static vm internal counter or static transmit
 - fix slider in tree list
 
-- Click OK on a dialog and Double File disappears behind another app.
+- Recently (since 6/25 or so) creating file explorer stopped showing the progress bar until almost done.
+- Click OK on a dialog and Double File disappears behind another app. -fix example: end of save listings it comes to front.
 - string.IsNullOrWhiteSpace
 - Allow a notes field
 - Allow rescan of drive, with history difference, or allow copying values of already saved to the new one

@@ -8,6 +8,8 @@ namespace DoubleFile
 {
     static internal class DriveSerialStatic
     {
+        internal const string WMI = "WMI: ";
+
         static internal ulong? Get(string strSourcePath,
             ref string strDriveModel_ref, ref string strDriveSerial_ref)
         {
@@ -77,38 +79,46 @@ namespace DoubleFile
 
             //}
 
-            var bAsk_DriveModel = ((false == string.IsNullOrWhiteSpace(strDriveModel)) &&
-                ((false == string.IsNullOrWhiteSpace(strDriveModel_ref)) &&
-                (strDriveModel != strDriveModel_ref)));
+            bool? bAskedYesOverwrite = null;
 
-            var bAsk_DriveSerial = ((false == string.IsNullOrWhiteSpace(strDriveSerial)) &&
-                ((false == string.IsNullOrWhiteSpace(strDriveSerial_ref)) &&
-                (strDriveSerial != strDriveSerial_ref)));
-
-            if ((bAsk_DriveModel || bAsk_DriveSerial) &&
-                ((System.Windows.MessageBoxResult.No == 
-                MBoxStatic.ShowDialog("Overwrite user-entered drive model and/or serial # for " +
-                strDriveLetter + @"\ ?", "Save Directory Listings",
-                System.Windows.MessageBoxButton.YesNo))))
+            Func<bool> AskOverwrite = () =>
             {
-                // separating these allows one user value to substitute blank robo-get, while keeping the other one
-                // here overwriting robo-get values with the ones the user entered
-                // because the user said No.
+                if (null != bAskedYesOverwrite)
+                    return bAskedYesOverwrite.Value;
 
-                if (bAsk_DriveModel)
-                    strDriveModel = strDriveModel_ref;
+                bAskedYesOverwrite =
+                    ((System.Windows.MessageBoxResult.Yes ==
+                    MBoxStatic.ShowDialog("Overwrite user-entered drive model and/or serial # for " +
+                    strDriveLetter + @"\ ?", "Save Directory Listings",
+                    System.Windows.MessageBoxButton.YesNo)));
 
-                if (bAsk_DriveSerial)
-                    strDriveSerial = strDriveSerial_ref;
-            }
+                return bAskedYesOverwrite.Value;
+            };
 
-            if (false == string.IsNullOrWhiteSpace(strDriveModel))
-                strDriveModel_ref = strDriveModel;
-
-            if (false == string.IsNullOrWhiteSpace(strDriveSerial))
-                strDriveSerial_ref = strDriveSerial;
-
+            CheckValues(strDriveModel, ref strDriveModel_ref, AskOverwrite);
+            CheckValues(strDriveSerial, ref strDriveSerial_ref, AskOverwrite);
             return nSize;
+        }
+
+        static void CheckValues(string strValue, ref string strValue_ref, Func<bool> AskOverwrite)
+        {
+            if (null != strValue)
+                strValue = WMI + strValue;
+
+            var bAsk = ((false == string.IsNullOrWhiteSpace(strValue)) &&
+                (false == string.IsNullOrWhiteSpace(strValue_ref)) &&
+                (false == strValue_ref.StartsWith(WMI)) &&
+                (strValue != strValue_ref));
+
+            // separating these allows one user value to substitute blank robo-get, while keeping the other one
+            // here overwriting robo-get values with the ones the user entered
+            // because the user said No.
+
+            if (bAsk && (false == AskOverwrite()))
+                strValue = strValue_ref;
+
+            if (false == string.IsNullOrWhiteSpace(strValue))
+                strValue_ref = strValue;
         }
 
         static IEnumerable<string> GetAll()

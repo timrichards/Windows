@@ -9,13 +9,13 @@
 - dupe vm event alerts: static vm internal counter or static transmit
 - fix slider in tree list
 
-- Overwrite? probe prompt is main window width yet it centers over New/Edit dialog. Make it width of window it's centered on.
+- Mark user-entered model/serial number - especially since when they change drives new/edit it will ask overwrite as if user
 - Click OK on that and in another instance and Double File disappears behind another app.
 - string.IsNullOrWhiteSpace
+- str = str.Insert(0, x) vs str = x + str
 - Unimplemented code in DriveSerialStatic.cs which tries to scan all drives to find model # - not an issue: serial # usb is
 - Serial #? Lose USB class: drive speed matters less than the politically incorrect suggestion to turn of antivirus
 - Allow a notes field
-- Mark user-entered model/serial number
 - Allow rescan of drive, with history difference, or allow copying values of already saved to the new one
 - Allow opening values of listing file that failed scanning
 - Add folder name to suffix title Tree List: My Documents; Files in Folder: My Documents; Folders Here: My Documents; etc.

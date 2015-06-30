@@ -126,96 +126,111 @@ namespace DoubleFile
             {
                 ++nLineNo;
 
-                if (strLine == ksHeader01)
+                switch (nLineNo)
                 {
-                    MBoxStatic.Assert(99952, nLineNo == 1);
-                    file_out.WriteLine(FormatLine(ksLineType_Version, nLineNo, ksHeader));
-                    continue;
-                }
-                else if (nLineNo == 2)
-                {
-                    file_out.WriteLine(FormatLine(ksLineType_Nickname, nLineNo, strLine));
-                    continue;
-                }
-                else if (nLineNo == 3)
-                {
-                    file_out.WriteLine(FormatLine(ksLineType_Path, nLineNo, strLine));
-                    continue;
-                }
-                else if (strLine == ksDrive01)
-                {
-                    MBoxStatic.Assert(99951, nLineNo == 4);
-                    file_out.WriteLine(FormatLine(ksLineType_Comment, nLineNo, ksVolume));
-
-                    var astrInfoLineTypes = new string[knDriveInfoItems]
+                    case 1:
                     {
-                        ksLineType_VolumeInfo_Free, ksLineType_VolumeInfo_Format, ksLineType_VolumeInfo_DriveType,
-                        ksLineType_VolumeInfo_Name, ksLineType_VolumeInfo_Root, ksLineType_VolumeInfo_Free2,
-                        ksLineType_VolumeInfo_Size, ksLineType_VolumeInfo_Label,
-                        ksLineType_VolumeInfo_DriveModel, ksLineType_VolumeInfo_DriveSerial,
-                        ksLineType_VolumeInfo_DriveSize
-                    };
+                        MBoxStatic.Assert(99952, ksHeader01 == strLine);
+                        file_out.WriteLine(FormatLine(ksLineType_Version, nLineNo, ksHeader));
+                        continue;
+                    }
 
-                    var bHitBlankLine = false;
-                            
-                    for (var ixDriveInfo = 0; ixDriveInfo < knDriveInfoItems; ++ixDriveInfo)
+                    case 2:
                     {
-                        strLine = bHitBlankLine ? "" : file_in.ReadLine();
+                        file_out.WriteLine(FormatLine(ksLineType_Nickname, nLineNo, strLine));
+                        continue;
+                    }
 
-                        if (strLine == null)
+                    case 3:
+                    {
+                        file_out.WriteLine(FormatLine(ksLineType_Path, nLineNo, strLine));
+                        continue;
+                    }
+
+                    case 4:
+                    {
+                        MBoxStatic.Assert(99951, ksDrive01 == strLine);
+                        file_out.WriteLine(FormatLine(ksLineType_Comment, nLineNo, ksVolume));
+
+                        var astrInfoLineTypes = new string[knDriveInfoItems]
                         {
-                            MBoxStatic.Assert(99950, false);
-                            return;
+                            ksLineType_VolumeInfo_Free, ksLineType_VolumeInfo_Format, ksLineType_VolumeInfo_DriveType,
+                            ksLineType_VolumeInfo_Name, ksLineType_VolumeInfo_Root, ksLineType_VolumeInfo_Free2,
+                            ksLineType_VolumeInfo_Size, ksLineType_VolumeInfo_Label,
+                            ksLineType_VolumeInfo_DriveModel, ksLineType_VolumeInfo_DriveSerial,
+                            ksLineType_VolumeInfo_DriveSize
+                        };
+
+                        var bHitBlankLine = false;
+
+                        for (var ixDriveInfo = 0; ixDriveInfo < knDriveInfoItems; ++ixDriveInfo)
+                        {
+                            strLine = bHitBlankLine ? "" : file_in.ReadLine();
+
+                            if (null == strLine)
+                            {
+                                MBoxStatic.Assert(99950, false);
+                                return;
+                            }
+
+                            if ((false == bHitBlankLine) &&
+                                (0 == strLine.Length))
+                            {
+                                bHitBlankLine = true;
+                            }
+
+                            ++nLineNo;
+                            file_out.WriteLine(FormatLine(astrInfoLineTypes[ixDriveInfo], nLineNo, strLine));
                         }
 
-                        if ((false == bHitBlankLine) && (strLine.Length == 0))
-                        {
-                            bHitBlankLine = true;
-                        }
+                        if (false == bHitBlankLine)
+                            file_in.ReadLine();
 
                         ++nLineNo;
-                        file_out.WriteLine(FormatLine(astrInfoLineTypes[ixDriveInfo], nLineNo, strLine));
-                    }
+                        file_out.WriteLine(FormatLine(ksLineType_Blank, nLineNo));
 
-                    if (false == bHitBlankLine)
-                    {
                         file_in.ReadLine();
+                        ++nLineNo;
+                        file_out.WriteLine(FormatLine(ksLineType_Comment, nLineNo, FormatString(nHeader: 0)));
+
+                        file_in.ReadLine();
+                        ++nLineNo;
+                        file_out.WriteLine(FormatLine(ksLineType_Comment, nLineNo, FormatString(nHeader: 1)));
+                        continue;
                     }
-                            
-                    ++nLineNo;
-                    file_out.WriteLine(FormatLine(ksLineType_Blank, nLineNo));
 
-                    file_in.ReadLine();
-                    ++nLineNo;
-                    file_out.WriteLine(FormatLine(ksLineType_Comment, nLineNo, FormatString(nHeader: 0)));
-
-                    file_in.ReadLine();
-                    ++nLineNo;
-                    file_out.WriteLine(FormatLine(ksLineType_Comment, nLineNo, FormatString(nHeader: 1)));
-                    continue;
+                    default:
+                    {
+                        break;
+                    }
                 }
-                else if (strLine.Length == 0)
+
+                if (0 == strLine.Length)
                 {
                     file_out.WriteLine(FormatLine(ksLineType_Blank, nLineNo));
                     continue;
                 }
-                else if (strLine.StartsWith(ksStart01))
+                
+                if (strLine.StartsWith(ksStart01))
                 {
                     file_out.WriteLine(FormatLine(ksLineType_Start, nLineNo, ksStart + strLine.Replace(ksStart01, "")));
                     continue;
                 }
-                else if (strLine.StartsWith(ksEnd01))
+                
+                if (strLine.StartsWith(ksEnd01))
                 {
                     file_out.WriteLine(FormatLine(ksLineType_End, nLineNo, ksEnd + strLine.Replace(ksEnd01, "")));
                     continue;
                 }
-                else if (strLine == ksErrorsLoc01)
+                
+                if (ksErrorsLoc01 == strLine)
                 {
                     file_out.WriteLine(FormatLine(ksLineType_Comment, nLineNo, ksErrorsLoc));
                     bAtErrors = true;
                     continue;
                 }
-                else if (strLine.StartsWith(ksTotalLengthLoc01))
+                
+                if (strLine.StartsWith(ksTotalLengthLoc01))
                 {
                     var arrLine = strLine.Split('\t');
 
@@ -231,7 +246,9 @@ namespace DoubleFile
                     DateTime dtParse;
                     string strTab = null;
 
-                    if ((arrLine_A.Length > 5) && arrLine_A[5].Contains("Trailing whitespace") && DateTime.TryParse(arrLine_A[1], out dtParse))
+                    if ((5 < arrLine_A.Length) &&
+                        arrLine_A[5].Contains("Trailing whitespace") &&
+                        DateTime.TryParse(arrLine_A[1], out dtParse))
                     {
                         strTab = "\t";
                     }
@@ -239,7 +256,8 @@ namespace DoubleFile
                     file_out.WriteLine(FormatLine(bAtErrors ? ksLineType_ErrorFile : ksLineType_File, nLineNo, strTab + strLine));
                     continue;
                 }
-                else if (strDir.Contains(@":\") == false)
+                
+                if (false == strDir.Contains(@":\"))
                 {
                     MBoxStatic.Assert(99949, false);        // all that's left is directories
                     continue;

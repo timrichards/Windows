@@ -79,15 +79,15 @@ namespace DoubleFile
             if (nHashColumn >= asFileLine.Length)
                 return null;
 
-            var lsDupes = _DictFiles.TryGetValue(FileKeyTuple.FactoryCreate(
+            var tuple = _DictFiles.TryGetValue(FileKeyTuple.FactoryCreate(
                 asFileLine[nHashColumn],
                 ("" + asFileLine[7]).ToUlong()));
 
-            if (null == lsDupes)
+            if (null == tuple)
                 return null;
 
             return
-                lsDupes.AsParallel()
+                tuple.Item2.AsParallel()
                 .Select(lookup => new DuplicateStruct
             {
                 LVitemProjectVM = _DictItemNumberToLV[GetLVitemProjectVM(lookup)],
@@ -236,10 +236,12 @@ namespace DoubleFile
                     return;     // from inner lambda
                 }
 
+                int nIndexer = -1;
+
                 _DictFiles =
                     (_bListingFileWithOnlyHashV1pt0 ? dictV1pt0 : dictV2)
                     .Where(kvp => kvp.Value.Count > 1)
-                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.AsEnumerable());
+                    .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(++nIndexer, kvp.Value.AsEnumerable()));
 
                 // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step
                 // Otherwise note that _LVprojectVM gets nulled six lines down so the value has to be set by now.
@@ -303,7 +305,7 @@ namespace DoubleFile
                 {
                     writer.Write(kvp.Key.Item1 + " " + kvp.Key.Item2);
 
-                    foreach (var ls in kvp.Value)
+                    foreach (var ls in kvp.Value.Item2)
                         writer.Write("\t" + ls);
 
                     writer.WriteLine();
@@ -322,18 +324,19 @@ namespace DoubleFile
             using (var reader = new StreamReader(_ksSerializeFile, false))
             {
                 string strLine = null;
+                var nIndexer = -1;
 
-                _DictFiles = new Dictionary<FileKeyTuple, IEnumerable<int>>();
+                _DictFiles = new Dictionary<FileKeyTuple, Tuple<int, IEnumerable<int>>>();
 
                 while (null != (strLine = reader.ReadLine()))
                 {
                     var asLine = strLine.Split('\t');
                     var asKey = asLine[0].Split(' ');
 
-                    _DictFiles[FileKeyTuple.FactoryCreate(asKey[0], ("" + asKey[1]).ToUlong())] =
+                    _DictFiles[FileKeyTuple.FactoryCreate(asKey[0], ("" + asKey[1]).ToUlong())] = Tuple.Create(++nIndexer,
                         asLine
                         .Skip(1)
-                        .Select(s => Convert.ToInt32(s));
+                        .Select(s => Convert.ToInt32(s)));
                 }
             }
         }
@@ -353,7 +356,7 @@ namespace DoubleFile
             _DictLVtoItemNumber = new Dictionary<LVitem_ProjectVM, int> { };
         readonly IDictionary<int, LVitem_ProjectVM>
             _DictItemNumberToLV = new Dictionary<int, LVitem_ProjectVM> { };
-        IDictionary<FileKeyTuple, IEnumerable<int>>
+        IDictionary<FileKeyTuple, Tuple<int, IEnumerable<int>>>
             _DictFiles = null;
         bool
             _bListingFileWithOnlyHashV1pt0 = false;

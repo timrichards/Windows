@@ -236,12 +236,12 @@ namespace DoubleFile
                     return;     // from inner lambda
                 }
 
-                int nIndexer = -1;
+                int nFolderScorer = -1;
 
                 _DictFiles =
                     (_bListingFileWithOnlyHashV1pt0 ? dictV1pt0 : dictV2)
                     .Where(kvp => kvp.Value.Count > 1)
-                    .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(++nIndexer, kvp.Value.AsEnumerable()));
+                    .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(++nFolderScorer, kvp.Value.AsEnumerable()));
 
                 // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step
                 // Otherwise note that _LVprojectVM gets nulled six lines down so the value has to be set by now.
@@ -324,7 +324,7 @@ namespace DoubleFile
             using (var reader = new StreamReader(_ksSerializeFile, false))
             {
                 string strLine = null;
-                var nIndexer = -1;
+                var nFolderScorer = -1;
 
                 _DictFiles = new Dictionary<FileKeyTuple, Tuple<int, IEnumerable<int>>>();
 
@@ -333,7 +333,8 @@ namespace DoubleFile
                     var asLine = strLine.Split('\t');
                     var asKey = asLine[0].Split(' ');
 
-                    _DictFiles[FileKeyTuple.FactoryCreate(asKey[0], ("" + asKey[1]).ToUlong())] = Tuple.Create(++nIndexer,
+                    _DictFiles[FileKeyTuple.FactoryCreate(asKey[0], ("" + asKey[1]).ToUlong())] =
+                        Tuple.Create(++nFolderScorer,
                         asLine
                         .Skip(1)
                         .Select(s => Convert.ToInt32(s)));

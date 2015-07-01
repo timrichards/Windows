@@ -89,9 +89,9 @@ namespace DoubleFile
             return (source.Count == 0);
         }
 
-        static internal bool First<T>(this IEnumerable<T> source, Action<T> action)
+        static internal bool FirstOnlyAssert<T>(this IEnumerable<T> source, Action<T> action)
         {
-            bool bRetVal = false;
+            var bRetVal = false;
 
             source.FirstOrDefault(item =>   // 6/9/15 This is the only use of FirstOrDefault.
             {
@@ -100,20 +100,13 @@ namespace DoubleFile
                 return true;    // from lambda; NOT a no-op: has to be a non-default value.
             });
 
-            return bRetVal;
-        }
-
-        static internal bool FirstOnlyAssert<T>(this IEnumerable<T> source, Action<T> action)
-        {
-            var retVal = First(source, action);
-
 #if (DEBUG)
             var enumerator = source.GetEnumerator();
 
             if (enumerator.MoveNext())
                 MBoxStatic.Assert(99953, false == enumerator.MoveNext());
 #endif
-            return retVal;
+            return bRetVal;
         }
 
         static internal void ForEach<T>(this IEnumerable<T> source, Action<T> action)

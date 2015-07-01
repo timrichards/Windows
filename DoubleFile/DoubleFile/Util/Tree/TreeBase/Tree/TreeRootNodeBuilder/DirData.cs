@@ -9,9 +9,9 @@ namespace DoubleFile
             // can't be struct because of null
             class DirData
             {
-                internal DirData(RootNode rootNode)
+                internal DirData(int nFirstLineNo)
                 {
-                    _rootNode = rootNode;
+                    _rootNode.FirstLineNo = (uint)nFirstLineNo;
                 }
 
                 internal void AddToTree(string str_in, uint nLineNo, ulong nLength, int nHashParity)
@@ -23,18 +23,19 @@ namespace DoubleFile
 
                 internal LocalTreeNode AddToTree(string strNickname, out string strRootPath)
                 {
-                    LocalTreeNode rootTreeNode = null;
                     string strRootPath_out = null;
 
-                    _rootNode.Nodes.Values.First(rootNode => rootTreeNode =
-                        rootNode.AddToTree(strNickname, out strRootPath_out));
+                    var rootTreeNode = 
+                        _rootNode.Nodes.Values
+                        .Select(rootNode => rootNode.AddToTree(strNickname, out strRootPath_out))
+                        .FirstOrDefault();
 
                     strRootPath = strRootPath_out;
                     return rootTreeNode;
                 }
 
                 readonly RootNode
-                    _rootNode = null;
+                    _rootNode = new RootNode { };
             }
         }
     }

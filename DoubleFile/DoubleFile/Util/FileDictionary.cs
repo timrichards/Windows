@@ -241,6 +241,7 @@ namespace DoubleFile
                 _DictFiles =
                     (_bListingFileWithOnlyHashV1pt0 ? dictV1pt0 : dictV2)
                     .Where(kvp => kvp.Value.Count > 1)
+                    .OrderBy(kvp => kvp.Key.Item2)        // folder scorer values increase with file length
                     .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(++nFolderScorer, kvp.Value.AsEnumerable()));
 
                 // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step

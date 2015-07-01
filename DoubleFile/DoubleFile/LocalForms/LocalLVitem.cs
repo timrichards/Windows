@@ -43,7 +43,7 @@ namespace DoubleFile
         {
             var lsLVItems = new List<LocalLVitem>();
 
-            asString.First(s => Text = s);
+            Text = asString.FirstOrDefault();
             lsLVItems.Add(this);
 
             foreach (var s in asString.Skip(1))

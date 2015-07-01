@@ -184,22 +184,12 @@ namespace DoubleFile
                     }
                 }
 
-                DirData dirData = null;
-
-                {
-                    var rootNode = new RootNode();
-                    
+                var dirData =
                     File
-                        .ReadLines(_volStrings.ListingFile)
-                        .Where(s => s.StartsWith(ksLineType_Start))
-                        .FirstOnlyAssert(s => rootNode.FirstLineNo = (uint)(s.Split('\t')[1]).ToInt());
-
-                    dirData = new DirData(rootNode);
-                }
-
-                var ieLines =
-                    File
-                    .ReadLines(_volStrings.ListingFile);
+                    .ReadLines(_volStrings.ListingFile)
+                    .Where(s => s.StartsWith(ksLineType_Start))
+                    .Select(s => new DirData((s.Split('\t')[1]).ToInt()))
+                    .First();
 
                 var nHashParity = 0;
 
@@ -208,7 +198,7 @@ namespace DoubleFile
                     ? 11
                     : 10;
 
-                foreach (var strLine in ieLines)
+                foreach (var strLine in File.ReadLines(_volStrings.ListingFile))
                 {
                     if (App.LocalExit || _bThreadAbort)
                         return;
@@ -233,8 +223,12 @@ namespace DoubleFile
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {
-                        dirData.AddToTree(asLine[2], (uint)("" + asLine[1]).ToInt(), ("" + asLine[knColLength]).ToUlong(),
+                        dirData.AddToTree(
+                            asLine[2],
+                            (uint)("" + asLine[1]).ToInt(),
+                            ("" + asLine[knColLength]).ToUlong(),
                             nHashParity);
+
                         nHashParity = 0;
                     }
                 }

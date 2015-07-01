@@ -39,12 +39,10 @@ namespace DoubleFile
 
             var list = lv1.Items.Except(lv2.Items, new LVitemNameComparerStruct());
 
-            list.First(item => lv1.TopItem = item);
+            lv1.TopItem = list.FirstOrDefault();
 
             foreach (var item in list)
-            {
                 item.ForeColor = UtilColor.Red;
-            }
         }
 
         static internal void SetTopItem(LocalLV lv1, LocalLV lv2)

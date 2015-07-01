@@ -176,9 +176,13 @@ namespace DoubleFile
 
         internal void EditVolumeGroupLabel()
         {
-            var dlg = new WinVolumeGroup();
-
-            Selected().First(lvItem => dlg.Text = lvItem.VolumeGroup);
+            var dlg = new WinVolumeGroup
+            {
+                Text =
+                    Selected()
+                    .Select(lvItem => lvItem.VolumeGroup)
+                    .FirstOrDefault()
+            };
 
             if (dlg.ShowDialog() ?? false)
             {

@@ -9,6 +9,7 @@
 - dupe vm event alerts: static vm internal counter or static transmit
 - fix slider in tree list
 
+- T FirstOnlyAssert()
 - allow moving the window when darkened
 - New Listing File dialog flashes when system choose folder dialog is shown
 - tool tip to tree map title bar area

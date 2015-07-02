@@ -237,6 +237,11 @@ namespace DoubleFile
                     (uint)meanSquare);
             }
 
+            _allNodes =
+                _allNodes
+                .OrderByDescending(folder => folder.NodeDatum.FolderScoreTuple.Item2)
+                .ToArray();
+
             _bTreeDone = true;      // should preceed closing status dialog: returns true to the caller
 
             WithWinProgress(w => w

@@ -7,8 +7,8 @@ namespace DoubleFile
         internal NodeDatum() { }
         internal NodeDatum(DetailsDatum datum)
             : base(datum) { }
-        internal NodeDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, int nHashParity)
-            : base(nPrevLineNo, nLineNo, nLength, nHashParity)
+        internal NodeDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, int nFolderScore)
+            : base(nPrevLineNo, nLineNo, nLength, nFolderScore)
         {
         }
 

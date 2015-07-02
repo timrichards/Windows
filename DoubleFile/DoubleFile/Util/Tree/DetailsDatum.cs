@@ -12,7 +12,7 @@ namespace DoubleFile
         internal ulong
             Length { get; private set; }
         internal int
-            HashParity { get; set; }
+            FolderScore { get; set; }
 
         internal ulong
             TotalLength { get; set; }
@@ -29,12 +29,12 @@ namespace DoubleFile
             TreeMapRect { get; set; }
 
         internal DetailsDatum() { }
-        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, int nHashParity)
+        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, int nFolderScore)
         {
             PrevLineNo = nPrevLineNo;
             LineNo = nLineNo;
             Length = nLength;
-            HashParity = nHashParity;
+            FolderScore = nFolderScore;
         }
 
         protected DetailsDatum(DetailsDatum datum)
@@ -47,7 +47,7 @@ namespace DoubleFile
             PrevLineNo = datum.PrevLineNo;
             LineNo = datum.LineNo;
             Length = datum.Length;
-            HashParity = datum.HashParity;
+            FolderScore = datum.FolderScore;
         }
 
         static public DetailsDatum operator +(DetailsDatum datum1, DetailsDatum datum2)
@@ -59,7 +59,7 @@ namespace DoubleFile
                 SubDirs = datum1.SubDirs + datum2.SubDirs,
                 FilesHere = datum1.FilesHere + datum2.FilesHere,
                 DirsWithFiles = datum1.DirsWithFiles + datum2.DirsWithFiles,
-                HashParity = datum1.HashParity + datum2.HashParity
+                FolderScore = datum1.FolderScore + datum2.FolderScore
             };
         }
 
@@ -67,7 +67,7 @@ namespace DoubleFile
         {
             get
             {
-                return new FolderKeyTuple(TotalLength, FilesInSubdirs, DirsWithFiles, HashParity);
+                return new FolderKeyTuple(TotalLength, FilesInSubdirs, DirsWithFiles, FolderScore);
             }
         }
     }

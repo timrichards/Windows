@@ -51,7 +51,7 @@ namespace DoubleFile
                 var nHashVersion = (App.FileDictionary.AllListingsHashV2) ? "1 MB" : "4K";
 
                 ieDetail = ieDetail.Concat(new[]
-                { new LVitem_FolderDetailVM(new[] { nHashVersion + " Hash Parity", "" + tuple.Item2.NodeDatum.HashParity }) });
+                { new LVitem_FolderDetailVM(new[] { nHashVersion + " Folder Score", "" + tuple.Item2.NodeDatum.FolderScore }) });
 #endif
                 Title = tuple.Item2.Text;
                 Add(ieDetail);

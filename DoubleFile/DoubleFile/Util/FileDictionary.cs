@@ -6,6 +6,7 @@ using System.Linq;
 using System.Collections.Concurrent;
 using System;
 using System.Reactive.Linq;
+using System.Windows.Threading;
 
 namespace DoubleFile
 {
@@ -44,6 +45,9 @@ namespace DoubleFile
                 if (null != _allListingsHashV2)
                     return _allListingsHashV2.Value;
 
+                // 7/1/15 DoThreadFactory() is now synchronous so NodeDatum can use folder scorer
+                MBoxStatic.Assert(99906, false);
+
                 if (null == _LVprojectVM)
                 {
                     MBoxStatic.Assert(99959, false);
@@ -65,6 +69,16 @@ namespace DoubleFile
             }
         }
         bool? _allListingsHashV2 = null;
+
+        internal int GetFolderScorer(FileKeyTuple fileKeyTuple)
+        {
+            var tuple = _DictFiles.TryGetValue(fileKeyTuple);
+
+            return
+                (null != tuple)
+                ? tuple.Item1
+                : 1;                // no duplicates for this file so just account for its existence
+        }
 
         internal IEnumerable<DuplicateStruct> GetDuplicates(string[] asFileLine)
         {
@@ -101,7 +115,12 @@ namespace DoubleFile
             _callbackWR = callbackWR;
             _DictFiles = null;
             IsAborted = false;
-            _thread = Util.ThreadMake(Go);
+
+            // 7/1/15 Make this synchronous so NodeDatum can use folder scorer
+            DispatcherFrame blockingFrame = new DispatcherFrame(true) { Continue = true };
+
+            _thread = Util.ThreadMake(() => { Go(); blockingFrame.Continue = false; });
+            Dispatcher.PushFrame(blockingFrame);
             return this;
         }
 
@@ -236,11 +255,11 @@ namespace DoubleFile
                     return;     // from inner lambda
                 }
 
-                int nFolderScorer = -1;
+                var nFolderScorer = -1;
 
                 _DictFiles =
                     (_bListingFileWithOnlyHashV1pt0 ? dictV1pt0 : dictV2)
-                    .Where(kvp => kvp.Value.Count > 1)
+                    .Where(kvp => 1 < kvp.Value.Count)
                     .OrderBy(kvp => kvp.Key.Item2)        // folder scorer values increase with file length
                     .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(++nFolderScorer, kvp.Value.AsEnumerable()));
 

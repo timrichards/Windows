@@ -89,11 +89,24 @@ namespace DoubleFile
             return (source.Count == 0);
         }
 
+        static internal T FirstOnlyAssert<T>(this IEnumerable<T> source)
+        {
+            var retVal = source.FirstOrDefault();
+
+#if (DEBUG)
+            var enumerator = source.GetEnumerator();
+
+            if (enumerator.MoveNext())
+                MBoxStatic.Assert(99903, false == enumerator.MoveNext());
+#endif
+            return retVal;
+        }
+
         static internal bool FirstOnlyAssert<T>(this IEnumerable<T> source, Action<T> action)
         {
             var bRetVal = false;
 
-            source.FirstOrDefault(item =>   // 6/9/15 This is the only use of FirstOrDefault.
+            source.FirstOrDefault(item =>
             {
                 action(item);
                 bRetVal = true;

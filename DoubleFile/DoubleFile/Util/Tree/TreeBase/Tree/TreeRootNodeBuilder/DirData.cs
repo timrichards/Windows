@@ -14,11 +14,11 @@ namespace DoubleFile
                     _rootNode.FirstLineNo = (uint)nFirstLineNo;
                 }
 
-                internal void AddToTree(string str_in, uint nLineNo, ulong nLength, int nHashParity)
+                internal void AddToTree(string str_in, uint nLineNo, ulong nLength, int nFolderScore)
                 {
                     var str = str_in.TrimEnd('\\');
 
-                    _rootNode.Nodes.Add(str, new Node(str, nLineNo, nLength, nHashParity, _rootNode));
+                    _rootNode.Nodes.Add(str, new Node(str, nLineNo, nLength, nFolderScore, _rootNode));
                 }
 
                 internal LocalTreeNode AddToTree(string strNickname, out string strRootPath)

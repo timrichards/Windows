@@ -51,7 +51,7 @@ namespace DoubleFile
                 nodeDatum.FilesHere = nodeDatum.LineNo - nodeDatum.PrevLineNo - 1;
                 nodeDatum.FilesInSubdirs = (datum.FilesInSubdirs += nodeDatum.FilesHere);
                 nodeDatum.SubDirs = (datum.SubDirs += (null != treeNode.Nodes) ? (uint)treeNode.Nodes.Length : 0);
-                nodeDatum.HashParity = (datum.HashParity += nodeDatum.HashParity);
+                nodeDatum.FolderScore = (datum.FolderScore += nodeDatum.FolderScore);
 
                 if (0 < nodeDatum.FilesHere)
                     ++datum.DirsWithFiles;
@@ -189,9 +189,9 @@ namespace DoubleFile
                     .ReadLines(_volStrings.ListingFile)
                     .Where(s => s.StartsWith(ksLineType_Start))
                     .Select(s => new DirData((s.Split('\t')[1]).ToInt()))
-                    .First();
+                    .FirstOnlyAssert();
 
-                var nHashParity = 0;
+                var nFolderScore = 0;
 
                 var nHashColumn =
                     App.FileDictionary.AllListingsHashV2
@@ -219,7 +219,7 @@ namespace DoubleFile
                             return;
                         }
 
-                        nHashParity += fileKeyTuple.GetHashCode();
+                        nFolderScore += App.FileDictionary.GetFolderScorer(fileKeyTuple);
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {
@@ -227,9 +227,9 @@ namespace DoubleFile
                             asLine[2],
                             (uint)("" + asLine[1]).ToInt(),
                             ("" + asLine[knColLength]).ToUlong(),
-                            nHashParity);
+                            nFolderScore);
 
-                        nHashParity = 0;
+                        nFolderScore = 0;
                     }
                 }
 

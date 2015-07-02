@@ -48,8 +48,8 @@ namespace DoubleFile
                 }
 
                 nodeDatum.TotalLength = (datum.TotalLength += nodeDatum.Length);
-                nodeDatum.FilesHere = nodeDatum.LineNo - nodeDatum.PrevLineNo - 1;
-                nodeDatum.FilesInSubdirs = (datum.FilesInSubdirs += nodeDatum.FilesHere);
+                nodeDatum.FileCountHere = nodeDatum.LineNo - nodeDatum.PrevLineNo - 1;
+                nodeDatum.FileCountTotal = (datum.FileCountTotal += nodeDatum.FileCountHere);
                 nodeDatum.SubDirs = (datum.SubDirs += (null != treeNode.Nodes) ? (uint)treeNode.Nodes.Length : 0);
 
                 datum.FolderScoreTuple =
@@ -62,7 +62,7 @@ namespace DoubleFile
                     datum.FolderScoreTuple.Item1 + nodeDatum.FolderScoreTuple.Item1,
                     datum.FolderScoreTuple.Item2 + nodeDatum.FolderScoreTuple.Item2);
 
-                if (0 < nodeDatum.FilesHere)
+                if (0 < nodeDatum.FileCountHere)
                     ++datum.DirsWithFiles;
 
                 nodeDatum.DirsWithFiles = datum.DirsWithFiles;
@@ -200,7 +200,7 @@ namespace DoubleFile
                     .Select(s => new DirData((s.Split('\t')[1]).ToInt()))
                     .FirstOnlyAssert();
 
-                var folderScoreTuple = Tuple.Create(0, 0);
+                var folderScoreTuple = Tuple.Create(0, 0U);
 
                 var nHashColumn =
                     App.FileDictionary.AllListingsHashV2
@@ -241,7 +241,7 @@ namespace DoubleFile
                             ("" + asLine[knColLength]).ToUlong(),
                             folderScoreTuple);
 
-                        folderScoreTuple = Tuple.Create(0, 0);
+                        folderScoreTuple = Tuple.Create(0, 0U);
                     }
                 }
 

@@ -12,17 +12,17 @@ namespace DoubleFile
             LineNo { get; private set; }            // Found 21 bits
         internal ulong
             Length { get; private set; }
-        internal Tuple<int, int>
-            FolderScoreTuple = Tuple.Create(0, 0);
+        internal Tuple<int, uint>
+            FolderScoreTuple = Tuple.Create(0, 0U);
 
         internal ulong
             TotalLength { get; set; }
         internal uint
-            FilesInSubdirs { get; set; }            // Found 21 bits
+            FileCountHere { get; set; }             // Found 15 bits
+        internal uint
+            FileCountTotal { get; set; }            // Found 21 bits
         internal uint
             SubDirs { get; set; }                   // Found 17 bits
-        internal uint
-            FilesHere { get; set; }                 // Found 15 bits
         internal uint
             DirsWithFiles { get; set; }             // Found 15 bits
 
@@ -30,7 +30,7 @@ namespace DoubleFile
             TreeMapRect { get; set; }
 
         internal DetailsDatum() { }
-        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, Tuple<int, int> folderScoreTuple)
+        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, Tuple<int, uint> folderScoreTuple)
         {
             PrevLineNo = nPrevLineNo;
             LineNo = nLineNo;
@@ -41,9 +41,9 @@ namespace DoubleFile
         protected DetailsDatum(DetailsDatum datum)
         {
             TotalLength = datum.TotalLength;
-            FilesInSubdirs = datum.FilesInSubdirs;
+            FileCountTotal = datum.FileCountTotal;
             SubDirs = datum.SubDirs;
-            FilesHere = datum.FilesHere;
+            FileCountHere = datum.FileCountHere;
             DirsWithFiles = datum.DirsWithFiles;
             PrevLineNo = datum.PrevLineNo;
             LineNo = datum.LineNo;
@@ -56,9 +56,9 @@ namespace DoubleFile
             return new DetailsDatum
             {
                 TotalLength = datum1.TotalLength + datum2.TotalLength,
-                FilesInSubdirs = datum1.FilesInSubdirs + datum2.FilesInSubdirs,
+                FileCountTotal = datum1.FileCountTotal + datum2.FileCountTotal,
                 SubDirs = datum1.SubDirs + datum2.SubDirs,
-                FilesHere = datum1.FilesHere + datum2.FilesHere,
+                FileCountHere = datum1.FileCountHere + datum2.FileCountHere,
                 DirsWithFiles = datum1.DirsWithFiles + datum2.DirsWithFiles,
 
                 FolderScoreTuple =
@@ -72,7 +72,7 @@ namespace DoubleFile
         {
             get
             {
-                return new FolderKeyTuple(TotalLength, FilesInSubdirs, DirsWithFiles, FolderScoreTuple);
+                return new FolderKeyTuple(TotalLength, FileCountTotal, DirsWithFiles, FolderScoreTuple);
             }
         }
     }

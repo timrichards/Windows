@@ -45,7 +45,7 @@ namespace DoubleFile
                 if (null != _allListingsHashV2)
                     return _allListingsHashV2.Value;
 
-                // 7/1/15 DoThreadFactory() is now synchronous so NodeDatum can use folder scorer
+                // 7/1/15 DoThreadFactory() is now synchronous so TreeRootNodeBuilder can use folder scorer
                 MBoxStatic.Assert(99906, false);
 
                 if (null == _LVprojectVM)
@@ -70,14 +70,16 @@ namespace DoubleFile
         }
         bool? _allListingsHashV2 = null;
 
-        internal int GetFolderScorer(FileKeyTuple fileKeyTuple)
+        internal uint GetFolderScorer(FileKeyTuple fileKeyTuple)
         {
             var tuple = _DictFiles.TryGetValue(fileKeyTuple);
 
             return
                 (null != tuple)
                 ? tuple.Item1
-                : 1;                // no duplicates for this file so just account for its existence
+                : 0 < fileKeyTuple.Item2
+                ? 1U                // no duplicates for this file so just account for its existence
+                : 0;                // empty file
         }
 
         internal IEnumerable<DuplicateStruct> GetDuplicates(string[] asFileLine)
@@ -255,13 +257,13 @@ namespace DoubleFile
                     return;     // from inner lambda
                 }
 
-                var nFolderScorer = -1;
+                var nFolderScorer = 0U;
 
                 _DictFiles =
                     (_bListingFileWithOnlyHashV1pt0 ? dictV1pt0 : dictV2)
                     .Where(kvp => 1 < kvp.Value.Count)
                     .OrderBy(kvp => kvp.Key.Item2)        // folder scorer values increase with file length
-                    .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(++nFolderScorer, kvp.Value.AsEnumerable()));
+                    .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(nFolderScorer++, kvp.Value.AsEnumerable()));
 
                 // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step
                 // Otherwise note that _LVprojectVM gets nulled six lines down so the value has to be set by now.
@@ -344,9 +346,9 @@ namespace DoubleFile
             using (var reader = new StreamReader(_ksSerializeFile, false))
             {
                 string strLine = null;
-                var nFolderScorer = -1;
+                var nFolderScorer = 0U;
 
-                _DictFiles = new Dictionary<FileKeyTuple, Tuple<int, IEnumerable<int>>>();
+                _DictFiles = new Dictionary<FileKeyTuple, Tuple<uint, IEnumerable<int>>>();
 
                 while (null != (strLine = reader.ReadLine()))
                 {
@@ -354,10 +356,10 @@ namespace DoubleFile
                     var asKey = asLine[0].Split(' ');
 
                     _DictFiles[FileKeyTuple.FactoryCreate(asKey[0], ("" + asKey[1]).ToUlong())] =
-                        Tuple.Create(++nFolderScorer,
+                        Tuple.Create(nFolderScorer++,
                         asLine
                         .Skip(1)
-                        .Select(s => Convert.ToInt32(s)));
+                        .Select(s => ("" + s).ToInt()));
                 }
             }
         }
@@ -377,7 +379,7 @@ namespace DoubleFile
             _DictLVtoItemNumber = new Dictionary<LVitem_ProjectVM, int> { };
         readonly IDictionary<int, LVitem_ProjectVM>
             _DictItemNumberToLV = new Dictionary<int, LVitem_ProjectVM> { };
-        IDictionary<FileKeyTuple, Tuple<int, IEnumerable<int>>>
+        IDictionary<FileKeyTuple, Tuple<uint, IEnumerable<int>>>
             _DictFiles = null;
         bool
             _bListingFileWithOnlyHashV1pt0 = false;

@@ -2,12 +2,12 @@
 
 namespace DoubleFile
 {
-    class FolderKeyTuple : Tuple<ulong, uint, uint, int, int>
+    class FolderKeyTuple : Tuple<ulong, uint, uint, int, uint>
     {
         internal FolderKeyTuple(ulong nTotalLength,
             uint nFilesInSubdirs,
             uint nDirsWithFiles,
-            Tuple<int, int> folderScoreTuple)
+            Tuple<int, uint> folderScoreTuple)
         : base(nTotalLength, nFilesInSubdirs, nDirsWithFiles, folderScoreTuple.Item1, folderScoreTuple.Item2)
         {
         }

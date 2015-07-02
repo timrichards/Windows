@@ -206,6 +206,37 @@ namespace DoubleFile
             }
 
             Collate.ClearMem();
+
+            // Mean square from ANOVA: ((folder mean minus total mean) squared * folder total) == ss / (number of folders minus one == df)
+
+            var grandTotalMean =
+                Util.Closure(() =>
+            {
+                var grandTotalFolderScore = 0U;
+                var grandTotalFileCount = 0U;
+
+                foreach (var folder in _rootNodes)
+                {
+                    grandTotalFolderScore += folder.NodeDatum.FolderScoreTuple.Item2;
+                    grandTotalFileCount += folder.NodeDatum.FileCountTotal;
+                }
+
+                return grandTotalFolderScore / (double)grandTotalFileCount;     // from lambda
+            });
+
+            foreach (var folder in _allNodes)
+            {
+                var mean = folder.NodeDatum.FolderScoreTuple.Item2 / (double)folder.NodeDatum.FileCountTotal;
+                var meanDiff = (mean - grandTotalMean);
+                var sumOfSquares = meanDiff * meanDiff * folder.NodeDatum.FileCountTotal;
+                var meanSquare = sumOfSquares / (_allNodes.Length - 1);
+
+                folder.NodeDatum.FolderScoreTuple =
+                    Tuple.Create(
+                    folder.NodeDatum.FolderScoreTuple.Item1,
+                    (uint)meanSquare);
+            }
+
             _bTreeDone = true;      // should preceed closing status dialog: returns true to the caller
 
             WithWinProgress(w => w

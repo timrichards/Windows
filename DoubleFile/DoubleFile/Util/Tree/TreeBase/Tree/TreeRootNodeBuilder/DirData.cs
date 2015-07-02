@@ -15,7 +15,7 @@ namespace DoubleFile
                     _rootNode.FirstLineNo = (uint)nFirstLineNo;
                 }
 
-                internal void AddToTree(string str_in, uint nLineNo, ulong nLength, Tuple<int, int> folderScoreTuple)
+                internal void AddToTree(string str_in, uint nLineNo, ulong nLength, Tuple<int, uint> folderScoreTuple)
                 {
                     var str = str_in.TrimEnd('\\');
 

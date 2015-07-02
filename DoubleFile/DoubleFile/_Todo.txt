@@ -9,6 +9,8 @@
 - dupe vm event alerts: static vm internal counter or static transmit
 - fix slider in tree list
 
+- string compare
+- Convert.ToInt32 etc: use Util
 - Replace First() with FirstOnlyAssert()
 - Join() vs Block() - Join() completely locks up the Dispatcher? Does Block() wait At PushFrame() like a traffic cop?
 - allow moving the window when darkened
@@ -24,9 +26,6 @@
 - Allow rescan of drive, with history difference, or allow copying values of already saved to the new one
 - Allow opening values of listing file that failed scanning
 - This folder has no exact copy: so please itemize in a report what the exact differences are to the nearest copy.
-	- temp render dictionary from key to incrementing int which is stored in datum: folder score is X=mean, Y=std dev normalized
-		Beats mean against hash because values aren't distributed through Z, which leaves room to sum.
-		Linear regression X, Y; sort: neighbors are similar
 	- Allow a list of important files and directories to watch, with alerts; links; etc.:
 		- Invert the exclusive principle. Start inclusive, not with an ignore list.
 	- Folders and files that are missing; or that are different.

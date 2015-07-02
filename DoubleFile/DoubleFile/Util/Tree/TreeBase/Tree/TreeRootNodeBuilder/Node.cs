@@ -15,7 +15,7 @@ namespace DoubleFile
                     string in_str,
                     uint nLineNo,
                     ulong nLength,
-                    Tuple<int, int> folderScoreTuple,
+                    Tuple<int, uint> folderScoreTuple,
                     RootNode rootNode)
                 {
                     if (App.LocalExit)
@@ -141,8 +141,8 @@ namespace DoubleFile
                     _nLength = 0;
                 bool
                     _bUseShortPath = true;
-                Tuple<int, int>
-                    _folderScoreTuple = Tuple.Create(0, 0);
+                Tuple<int, uint>
+                    _folderScoreTuple = Tuple.Create(0, 0U);
             }
         }
     }

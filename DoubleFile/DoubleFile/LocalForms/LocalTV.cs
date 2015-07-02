@@ -16,7 +16,7 @@ namespace DoubleFile
         static internal IEnumerable<LocalTreeNode>
             RootNodes { get { return Util.WR(_wr, o => o._rootNodes); } }
         LocalTreeNode[] _rootNodes = null;
-        static readonly object _rootNodesSemaphore = new object();
+        static readonly object _rootNodesLock = new object();
 
         static internal LocalTreeNode
             TopNode { get { return Util.WR(_wr, o => o._topNode); } }

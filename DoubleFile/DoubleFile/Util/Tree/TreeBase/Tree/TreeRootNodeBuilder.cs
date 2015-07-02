@@ -51,7 +51,16 @@ namespace DoubleFile
                 nodeDatum.FilesHere = nodeDatum.LineNo - nodeDatum.PrevLineNo - 1;
                 nodeDatum.FilesInSubdirs = (datum.FilesInSubdirs += nodeDatum.FilesHere);
                 nodeDatum.SubDirs = (datum.SubDirs += (null != treeNode.Nodes) ? (uint)treeNode.Nodes.Length : 0);
-                nodeDatum.FolderScore = (datum.FolderScore += nodeDatum.FolderScore);
+
+                datum.FolderScoreTuple =
+                    Tuple.Create(
+                    datum.FolderScoreTuple.Item1 + nodeDatum.FolderScoreTuple.Item1,
+                    datum.FolderScoreTuple.Item2 + nodeDatum.FolderScoreTuple.Item2);
+
+                nodeDatum.FolderScoreTuple =
+                    Tuple.Create(
+                    datum.FolderScoreTuple.Item1 + nodeDatum.FolderScoreTuple.Item1,
+                    datum.FolderScoreTuple.Item2 + nodeDatum.FolderScoreTuple.Item2);
 
                 if (0 < nodeDatum.FilesHere)
                     ++datum.DirsWithFiles;
@@ -191,7 +200,7 @@ namespace DoubleFile
                     .Select(s => new DirData((s.Split('\t')[1]).ToInt()))
                     .FirstOnlyAssert();
 
-                var nFolderScore = 0;
+                var folderScoreTuple = Tuple.Create(0, 0);
 
                 var nHashColumn =
                     App.FileDictionary.AllListingsHashV2
@@ -219,7 +228,10 @@ namespace DoubleFile
                             return;
                         }
 
-                        nFolderScore += App.FileDictionary.GetFolderScorer(fileKeyTuple);
+                        folderScoreTuple =
+                            Tuple.Create(
+                            folderScoreTuple.Item1 + fileKeyTuple.GetHashCode(),
+                            folderScoreTuple.Item2 + App.FileDictionary.GetFolderScorer(fileKeyTuple));
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {
@@ -227,9 +239,9 @@ namespace DoubleFile
                             asLine[2],
                             (uint)("" + asLine[1]).ToInt(),
                             ("" + asLine[knColLength]).ToUlong(),
-                            nFolderScore);
+                            folderScoreTuple);
 
-                        nFolderScore = 0;
+                        folderScoreTuple = Tuple.Create(0, 0);
                     }
                 }
 

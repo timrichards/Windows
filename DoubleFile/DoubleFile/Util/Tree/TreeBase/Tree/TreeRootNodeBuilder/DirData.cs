@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -14,11 +15,11 @@ namespace DoubleFile
                     _rootNode.FirstLineNo = (uint)nFirstLineNo;
                 }
 
-                internal void AddToTree(string str_in, uint nLineNo, ulong nLength, int nFolderScore)
+                internal void AddToTree(string str_in, uint nLineNo, ulong nLength, Tuple<int, int> folderScoreTuple)
                 {
                     var str = str_in.TrimEnd('\\');
 
-                    _rootNode.Nodes.Add(str, new Node(str, nLineNo, nLength, nFolderScore, _rootNode));
+                    _rootNode.Nodes.Add(str, new Node(str, nLineNo, nLength, folderScoreTuple, _rootNode));
                 }
 
                 internal LocalTreeNode AddToTree(string strNickname, out string strRootPath)

@@ -123,7 +123,7 @@ namespace DoubleFile
                 //           volStrings.SetStatus_BadFile(LV);
             }
             else if (null != rootNode)
-                lock (_rootNodesSemaphore)
+                lock (_rootNodesLock)
             {
                 if (null == _rootNodes)
                 {

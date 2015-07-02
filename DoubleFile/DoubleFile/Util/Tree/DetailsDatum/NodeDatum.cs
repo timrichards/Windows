@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DoubleFile
 {
@@ -7,8 +8,8 @@ namespace DoubleFile
         internal NodeDatum() { }
         internal NodeDatum(DetailsDatum datum)
             : base(datum) { }
-        internal NodeDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, int nFolderScore)
-            : base(nPrevLineNo, nLineNo, nLength, nFolderScore)
+        internal NodeDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, Tuple<int, int> folderScoreTuple)
+            : base(nPrevLineNo, nLineNo, nLength, folderScoreTuple)
         {
         }
 

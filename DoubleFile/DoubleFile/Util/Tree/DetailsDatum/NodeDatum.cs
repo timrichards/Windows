@@ -8,8 +8,8 @@ namespace DoubleFile
         internal NodeDatum() { }
         internal NodeDatum(DetailsDatum datum)
             : base(datum) { }
-        internal NodeDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, Tuple<int, uint> folderScoreTuple)
-            : base(nPrevLineNo, nLineNo, nLength, folderScoreTuple)
+        internal NodeDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, uint[] folderScore)
+            : base(nPrevLineNo, nLineNo, nLength, folderScore)
         {
         }
 

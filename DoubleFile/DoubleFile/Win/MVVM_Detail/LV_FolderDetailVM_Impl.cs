@@ -52,8 +52,7 @@ namespace DoubleFile
 
                 ieDetail = ieDetail.Concat(new[]
                 { new LVitem_FolderDetailVM(new[] { nHashVersion + " Folder Score", "" +
-                    tuple.Item2.NodeDatum.FolderScoreTuple.Item1 + " " +
-                    tuple.Item2.NodeDatum.FolderScoreTuple.Item2}) });
+                    string.Join(" ", tuple.Item2.NodeDatum.FolderScore)}) });
 #endif
                 Title = tuple.Item2.Text;
                 Add(ieDetail);

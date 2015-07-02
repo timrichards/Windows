@@ -4,6 +4,7 @@ using System.Windows;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DoubleFile
 {
@@ -212,34 +213,57 @@ namespace DoubleFile
             var grandTotalMean =
                 Util.Closure(() =>
             {
-                var grandTotalFolderScore = 0U;
+                var grandTotalFolderScore = new[]{ 0U, 0U, 0U, 0U };  // MD5; Weighted folder scores: largest; smallest; random
                 var grandTotalFileCount = 0U;
 
                 foreach (var folder in _rootNodes)
                 {
-                    grandTotalFolderScore += folder.NodeDatum.FolderScoreTuple.Item2;
+                    grandTotalFolderScore =
+                        grandTotalFolderScore
+                        .Zip(folder.NodeDatum.FolderScore, (n1, n2) => n1 + n2)
+                        .ToArray();
+
                     grandTotalFileCount += folder.NodeDatum.FileCountTotal;
                 }
 
-                return grandTotalFolderScore / (double)grandTotalFileCount;     // from lambda
+                return grandTotalFolderScore.Select(n => n / (double)grandTotalFileCount)
+                    .ToArray();     // from lambda
             });
 
-            foreach (var folder in _allNodes)
+            Parallel.ForEach(_allNodes, folder =>
             {
-                var mean = folder.NodeDatum.FolderScoreTuple.Item2 / (double)folder.NodeDatum.FileCountTotal;
-                var meanDiff = (mean - grandTotalMean);
-                var sumOfSquares = meanDiff * meanDiff * folder.NodeDatum.FileCountTotal;
-                var meanSquare = sumOfSquares / (_allNodes.Length - 1);
+                var meanSquare =
+                    grandTotalMean
+                    .Zip(folder.NodeDatum.FolderScore, (totalMean, folderScore) =>
+                {
+                    var mean = folderScore / (double)folder.NodeDatum.FileCountTotal;
+                    var meanDiff = (mean - totalMean);
+                    var sumOfSquares = meanDiff * meanDiff * folder.NodeDatum.FileCountTotal;
+                    return (uint) (sumOfSquares / (_allNodes.Length - 1));
+                })
+                    .ToArray();
 
-                folder.NodeDatum.FolderScoreTuple =
-                    Tuple.Create(
-                    folder.NodeDatum.FolderScoreTuple.Item1,
-                    (uint)meanSquare);
-            }
+                folder.NodeDatum.FolderScore = meanSquare;
+            });
 
             _allNodes =
                 _allNodes
-                .OrderByDescending(folder => folder.NodeDatum.FolderScoreTuple.Item2)
+                .OrderByDescending(folder => folder.NodeDatum.FolderScore[1])
+                .ToArray();
+
+            var allNodesWeightedSmall =
+                _allNodes
+                .OrderBy(folder => folder.NodeDatum.FolderScore[2])
+                .ToArray();
+
+            var allNodesMD5 =
+                _allNodes
+                .OrderByDescending(folder => folder.NodeDatum.FolderScore[0])
+                .ToArray();
+
+            var allNodesRandom =
+                _allNodes
+                .OrderByDescending(folder => folder.NodeDatum.FolderScore[3])
                 .ToArray();
 
             _bTreeDone = true;      // should preceed closing status dialog: returns true to the caller

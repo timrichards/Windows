@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -12,8 +14,8 @@ namespace DoubleFile
             LineNo { get; private set; }            // Found 21 bits
         internal ulong
             Length { get; private set; }
-        internal Tuple<int, uint>
-            FolderScoreTuple = Tuple.Create(0, 0U);
+        internal uint[]
+            FolderScore = new[]{ 0U, 0U, 0U, 0U };  // MD5; Weighted folder scores: largest; smallest; random
 
         internal ulong
             TotalLength { get; set; }
@@ -30,12 +32,12 @@ namespace DoubleFile
             TreeMapRect { get; set; }
 
         internal DetailsDatum() { }
-        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, Tuple<int, uint> folderScoreTuple)
+        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, uint[] folderScore)
         {
             PrevLineNo = nPrevLineNo;
             LineNo = nLineNo;
             Length = nLength;
-            FolderScoreTuple = folderScoreTuple;
+            FolderScore = folderScore;
         }
 
         protected DetailsDatum(DetailsDatum datum)
@@ -48,7 +50,7 @@ namespace DoubleFile
             PrevLineNo = datum.PrevLineNo;
             LineNo = datum.LineNo;
             Length = datum.Length;
-            FolderScoreTuple = datum.FolderScoreTuple;
+            FolderScore = datum.FolderScore;
         }
 
         static public DetailsDatum operator +(DetailsDatum datum1, DetailsDatum datum2)
@@ -61,10 +63,9 @@ namespace DoubleFile
                 FileCountHere = datum1.FileCountHere + datum2.FileCountHere,
                 DirsWithFiles = datum1.DirsWithFiles + datum2.DirsWithFiles,
 
-                FolderScoreTuple =
-                    Tuple.Create(
-                    datum1.FolderScoreTuple.Item1 + datum2.FolderScoreTuple.Item1,
-                    datum1.FolderScoreTuple.Item2 + datum2.FolderScoreTuple.Item2)
+                FolderScore =
+                    datum1.FolderScore.Zip(datum2.FolderScore, (n1, n2) => n1 + n2)
+                    .ToArray()
             };
         }
 
@@ -72,7 +73,7 @@ namespace DoubleFile
         {
             get
             {
-                return new FolderKeyTuple(TotalLength, FileCountTotal, DirsWithFiles, FolderScoreTuple);
+                return new FolderKeyTuple(TotalLength, FileCountTotal, DirsWithFiles, FolderScore);
             }
         }
     }

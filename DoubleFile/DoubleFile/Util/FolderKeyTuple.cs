@@ -2,14 +2,16 @@
 
 namespace DoubleFile
 {
-    class FolderKeyTuple : Tuple<ulong, uint, uint, int, uint>
+    class FolderKeyTuple : Tuple<ulong, uint, uint, uint, uint, uint, uint>
     {
         internal FolderKeyTuple(ulong nTotalLength,
             uint nFilesInSubdirs,
             uint nDirsWithFiles,
-            Tuple<int, uint> folderScoreTuple)
-        : base(nTotalLength, nFilesInSubdirs, nDirsWithFiles, folderScoreTuple.Item1, folderScoreTuple.Item2)
+            uint[] folderScore)
+        : base(nTotalLength, nFilesInSubdirs, nDirsWithFiles,
+              folderScore[0], folderScore[1], folderScore[2], folderScore[3])
         {
+            MBoxStatic.Assert(99902, 4 == folderScore.Length);
         }
     }
 }

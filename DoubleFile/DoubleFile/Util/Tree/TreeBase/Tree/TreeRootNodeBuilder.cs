@@ -52,15 +52,13 @@ namespace DoubleFile
                 nodeDatum.FileCountTotal = (datum.FileCountTotal += nodeDatum.FileCountHere);
                 nodeDatum.SubDirs = (datum.SubDirs += (null != treeNode.Nodes) ? (uint)treeNode.Nodes.Length : 0);
 
-                datum.FolderScoreTuple =
-                    Tuple.Create(
-                    datum.FolderScoreTuple.Item1 + nodeDatum.FolderScoreTuple.Item1,
-                    datum.FolderScoreTuple.Item2 + nodeDatum.FolderScoreTuple.Item2);
+                datum.FolderScore =
+                    datum.FolderScore.Zip(nodeDatum.FolderScore, (n1, n2) => n1 + n2)
+                    .ToArray();
 
-                nodeDatum.FolderScoreTuple =
-                    Tuple.Create(
-                    datum.FolderScoreTuple.Item1 + nodeDatum.FolderScoreTuple.Item1,
-                    datum.FolderScoreTuple.Item2 + nodeDatum.FolderScoreTuple.Item2);
+                nodeDatum.FolderScore =
+                    datum.FolderScore.Zip(nodeDatum.FolderScore, (n1, n2) => n1 + n2)
+                    .ToArray();
 
                 if (0 < nodeDatum.FileCountHere)
                     ++datum.DirsWithFiles;
@@ -200,7 +198,7 @@ namespace DoubleFile
                     .Select(s => new DirData((s.Split('\t')[1]).ToInt()))
                     .FirstOnlyAssert();
 
-                var folderScoreTuple = Tuple.Create(0, 0U);
+                var folderScore = new[]{ 0U, 0U, 0U, 0U };  // MD5; Weighted folder scores: largest; smallest; random
 
                 var nHashColumn =
                     App.FileDictionary.AllListingsHashV2
@@ -228,10 +226,15 @@ namespace DoubleFile
                             return;
                         }
 
-                        folderScoreTuple =
-                            Tuple.Create(
-                            folderScoreTuple.Item1 + fileKeyTuple.GetHashCode(),
-                            folderScoreTuple.Item2 + App.FileDictionary.GetFolderScorer(fileKeyTuple));
+                        var folderScorer = App.FileDictionary.GetFolderScorer(fileKeyTuple);
+
+                        folderScore =
+                            new[] { folderScore[0] + (uint)fileKeyTuple.GetHashCode() }
+                            .Concat(
+                                folderScore
+                                .Skip(1)
+                                .Zip(folderScorer, (n1, n2) => n1 + n2))
+                            .ToArray();
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {
@@ -239,9 +242,9 @@ namespace DoubleFile
                             asLine[2],
                             (uint)("" + asLine[1]).ToInt(),
                             ("" + asLine[knColLength]).ToUlong(),
-                            folderScoreTuple);
+                            folderScore);
 
-                        folderScoreTuple = Tuple.Create(0, 0U);
+                        folderScore = new[]{ 0U, 0U, 0U, 0U };  // MD5; Weighted folder scores: largest; smallest; random
                     }
                 }
 

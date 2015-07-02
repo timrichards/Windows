@@ -15,7 +15,7 @@ namespace DoubleFile
                     string in_str,
                     uint nLineNo,
                     ulong nLength,
-                    Tuple<int, uint> folderScoreTuple,
+                    uint[] folderScore,
                     RootNode rootNode)
                 {
                     if (App.LocalExit)
@@ -33,7 +33,7 @@ namespace DoubleFile
                     _nPrevLineNo = _rootNode.FirstLineNo;
                     _rootNode.FirstLineNo = _nLineNo = nLineNo;
                     _nLength = nLength;
-                    _folderScoreTuple = folderScoreTuple;
+                    _folderScore = folderScore;
 
                     // Path.GetDirectoryName() does not preserve filesystem root
 
@@ -51,7 +51,7 @@ namespace DoubleFile
 
                     if (null == nodeParent)
                     {
-                        nodeParent = new Node(strParent, _rootNode.FirstLineNo, 0, _folderScoreTuple, _rootNode);
+                        nodeParent = new Node(strParent, _rootNode.FirstLineNo, 0, _folderScore, _rootNode);
                         _rootNode.Nodes.Add(strParent, nodeParent);
                     }
 
@@ -99,7 +99,7 @@ namespace DoubleFile
                             _nPrevLineNo = subNode._nPrevLineNo;
                             _nLength = subNode._nLength;
                             _nLineNo = subNode._nLineNo;
-                            _folderScoreTuple = subNode._folderScoreTuple;
+                            _folderScore = subNode._folderScore;
                         }
                         else
                         {
@@ -123,7 +123,7 @@ namespace DoubleFile
                     //Utilities.Assert(1301.2305, treeNode.Text == strShortPath, "\"" + treeNode.Text + "\" != \"" + strShortPath + "\""); not true for non-root
                     MBoxStatic.Assert(1301.2306m, treeNode.SelectedImageIndex == -1);     // sets the bitmap size
                     treeNode.SelectedImageIndex = -1;
-                    treeNode.NodeDatum = new NodeDatum(_nPrevLineNo, _nLineNo, _nLength, _folderScoreTuple);  // this is almost but not quite always newly assigned here.
+                    treeNode.NodeDatum = new NodeDatum(_nPrevLineNo, _nLineNo, _nLength, _folderScore);  // this is almost but not quite always newly assigned here.
                     return treeNode;
                 }
 
@@ -141,8 +141,8 @@ namespace DoubleFile
                     _nLength = 0;
                 bool
                     _bUseShortPath = true;
-                Tuple<int, uint>
-                    _folderScoreTuple = Tuple.Create(0, 0U);
+                uint[]
+                    _folderScore = new[]{ 0U, 0U, 0U, 0U };  // MD5; Weighted folder scores: largest; smallest; random
             }
         }
     }

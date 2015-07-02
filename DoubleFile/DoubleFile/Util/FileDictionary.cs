@@ -70,16 +70,16 @@ namespace DoubleFile
         }
         bool? _allListingsHashV2 = null;
 
-        internal uint GetFolderScorer(FileKeyTuple fileKeyTuple)
+        internal uint[] GetFolderScorer(FileKeyTuple fileKeyTuple)
         {
             var tuple = _DictFiles.TryGetValue(fileKeyTuple);
 
             return
                 (null != tuple)
                 ? tuple.Item1
-                : 0 < fileKeyTuple.Item2
-                ? 1U                // no duplicates for this file so just account for its existence
-                : 0;                // empty file
+                : (0 < fileKeyTuple.Item2)
+                ? new[] { 1U, 1U, 1U, 1U }      // no duplicates for this file so just account for its existence
+                : new[] { 0U, 0U, 0U, 0U };     // empty file
         }
 
         internal IEnumerable<DuplicateStruct> GetDuplicates(string[] asFileLine)
@@ -92,7 +92,7 @@ namespace DoubleFile
             if (null == _DictFiles)
                 return null;
 
-            if (nHashColumn >= asFileLine.Length)
+            if (asFileLine.Length <= nHashColumn)
                 return null;
 
             var tuple = _DictFiles.TryGetValue(FileKeyTuple.FactoryCreate(
@@ -258,12 +258,31 @@ namespace DoubleFile
                 }
 
                 var nFolderScorer = 0U;
+                var lsRandom = new List<uint> { };
+
+                for (var i = 0U; i < dictV1pt0.Count; ++i)
+                    lsRandom.Add(i);
+
+                {
+                    Random gen = new Random();
+
+                    for (var i = lsRandom.Count - 1; i > 0; --i)
+                    {
+                        var k = gen.Next(i + 1);
+                        var v = lsRandom[k];
+
+                        lsRandom[k] = lsRandom[i];
+                        lsRandom[i] = v;
+                    }
+                }
 
                 _DictFiles =
                     (_bListingFileWithOnlyHashV1pt0 ? dictV1pt0 : dictV2)
                     .Where(kvp => 1 < kvp.Value.Count)
                     .OrderBy(kvp => kvp.Key.Item2)        // folder scorer values increase with file length
-                    .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(nFolderScorer++, kvp.Value.AsEnumerable()));
+                    .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(
+                    new[] { nFolderScorer, (uint)dictV1pt0.Count - nFolderScorer++, lsRandom[(int)nFolderScorer -1] },
+                    kvp.Value.AsEnumerable()));
 
                 // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step
                 // Otherwise note that _LVprojectVM gets nulled six lines down so the value has to be set by now.
@@ -348,7 +367,7 @@ namespace DoubleFile
                 string strLine = null;
                 var nFolderScorer = 0U;
 
-                _DictFiles = new Dictionary<FileKeyTuple, Tuple<uint, IEnumerable<int>>>();
+                _DictFiles = new Dictionary<FileKeyTuple, Tuple<uint[], IEnumerable<int>>>();
 
                 while (null != (strLine = reader.ReadLine()))
                 {
@@ -356,7 +375,7 @@ namespace DoubleFile
                     var asKey = asLine[0].Split(' ');
 
                     _DictFiles[FileKeyTuple.FactoryCreate(asKey[0], ("" + asKey[1]).ToUlong())] =
-                        Tuple.Create(nFolderScorer++,
+                        Tuple.Create(new uint[] { nFolderScorer++, 0, 0 },
                         asLine
                         .Skip(1)
                         .Select(s => ("" + s).ToInt()));
@@ -379,7 +398,7 @@ namespace DoubleFile
             _DictLVtoItemNumber = new Dictionary<LVitem_ProjectVM, int> { };
         readonly IDictionary<int, LVitem_ProjectVM>
             _DictItemNumberToLV = new Dictionary<int, LVitem_ProjectVM> { };
-        IDictionary<FileKeyTuple, Tuple<uint, IEnumerable<int>>>
+        IDictionary<FileKeyTuple, Tuple<uint[], IEnumerable<int>>>
             _DictFiles = null;
         bool
             _bListingFileWithOnlyHashV1pt0 = false;

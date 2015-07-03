@@ -226,14 +226,11 @@ namespace DoubleFile
                             return;
                         }
 
-                        var folderScorer = App.FileDictionary.GetFolderScorer(fileKeyTuple);
-
-                        folderScore =
-                            new[] { folderScore[0] + (uint)fileKeyTuple.GetHashCode() }
-                            .Concat(
-                                folderScore
-                                .Skip(1)
-                                .Zip(folderScorer, (n1, n2) => n1 + n2))
+                       folderScore =
+                            folderScore.Zip(
+                            new[] { (uint)fileKeyTuple.GetHashCode() }
+                            .Concat(App.FileDictionary.GetFolderScorer(fileKeyTuple)),
+                            (n1, n2) => n1 + n2)
                             .ToArray();
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))

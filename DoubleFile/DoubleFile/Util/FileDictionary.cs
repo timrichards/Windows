@@ -281,7 +281,7 @@ namespace DoubleFile
                     .Where(kvp => 1 < kvp.Value.Count)
                     .OrderBy(kvp => kvp.Key.Item2)        // folder scorer values increase with file length
                     .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(
-                    new[] { nFolderScorer, (uint)dictV1pt0.Count - nFolderScorer++, lsRandom[(int)nFolderScorer -1] },
+                    new[] { nFolderScorer, (uint)dictV1pt0.Count - nFolderScorer, lsRandom[(int)nFolderScorer++] },
                     kvp.Value.AsEnumerable()));
 
                 // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step

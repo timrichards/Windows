@@ -230,21 +230,23 @@ namespace DoubleFile
                     .ToArray();     // from lambda
             });
 
-            Parallel.ForEach(_allNodes, folder =>
+            Parallel.ForEach(_allNodes, folder => folder.NodeDatum.FolderScore = // mean square
+                grandTotalMean
+                .Zip(folder.NodeDatum.FolderScore, (totalMean, folderScore) =>
             {
-                var meanSquare =
-                    grandTotalMean
-                    .Zip(folder.NodeDatum.FolderScore, (totalMean, folderScore) =>
-                {
-                    var mean = folderScore / (double)folder.NodeDatum.FileCountTotal;
-                    var meanDiff = (mean - totalMean);
-                    var sumOfSquares = meanDiff * meanDiff * folder.NodeDatum.FileCountTotal;
-                    return (uint) (sumOfSquares / (_allNodes.Length - 1));
-                })
-                    .ToArray();
+                var mean = folderScore / (double)folder.NodeDatum.FileCountTotal;
+                var meanDiff = (mean - totalMean);
+                var sumOfSquares = meanDiff * meanDiff * folder.NodeDatum.FileCountTotal;
+                return (uint) (sumOfSquares / (_allNodes.Length - 1));
+            })
+                .ToArray());
 
-                folder.NodeDatum.FolderScore = meanSquare;
-            });
+            // Since it's just a parity, the hash parity serves as a random weight
+            // So this is also a mean square 
+            var allNodesHashParity =
+                _allNodes
+                .OrderByDescending(folder => folder.NodeDatum.FolderScore[0])
+                .ToArray();
 
             _allNodes =
                 _allNodes
@@ -253,18 +255,21 @@ namespace DoubleFile
 
             var allNodesWeightedSmall =
                 _allNodes
-                .OrderBy(folder => folder.NodeDatum.FolderScore[2])
-                .ToArray();
-
-            var allNodesMD5 =
-                _allNodes
-                .OrderByDescending(folder => folder.NodeDatum.FolderScore[0])
+                .OrderByDescending(folder => folder.NodeDatum.FolderScore[2])
                 .ToArray();
 
             var allNodesRandom =
                 _allNodes
                 .OrderByDescending(folder => folder.NodeDatum.FolderScore[3])
                 .ToArray();
+
+
+            //for (var i = 0; i < _allNodes.Length; ++i)
+            //    Util.WriteLine(
+            //        _allNodes[i].Text + "[  ]" +
+            //        allNodesMD5[i].Text + "[  ]" +
+            //        allNodesWeightedSmall[i].Text + "[  ]" +
+            //        allNodesRandom[i].Text);
 
             _bTreeDone = true;      // should preceed closing status dialog: returns true to the caller
 

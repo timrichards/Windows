@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinFormDirList.xaml
+    /// Interaction logic for WinTreeList.xaml
     /// </summary>
     public partial class WinTreeList
     {

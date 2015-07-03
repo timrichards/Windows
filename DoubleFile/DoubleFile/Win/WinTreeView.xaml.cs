@@ -4,7 +4,7 @@ using System;
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinFolders.xaml
+    /// Interaction logic for WinTreeView.xaml
     /// </summary>
     partial class WinTreeView
     {

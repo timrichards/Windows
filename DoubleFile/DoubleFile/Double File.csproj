@@ -193,6 +193,12 @@
     <Compile Include="Util\Win32Screen\RECT.cs" />
     <Compile Include="Util\Win32Screen\SWP.cs" />
     <Compile Include="Util\Win32Screen\Win32Screen.cs" />
+    <Compile Include="Win\MVVM_FolderList\LVitem_FolderListVM.cs" />
+    <Compile Include="Win\MVVM_FolderList\WinFolderListVM.cs" />
+    <Compile Include="Win\MVVM_FolderList\WinFolderListM_Impl.cs" />
+    <Compile Include="Win\WinFolderList.xaml.cs">
+      <DependentUpon>WinFolderList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Win\MVVM_Search\LVitem_SearchVM.cs" />
     <Compile Include="Win\MVVM_Search\WinSearchVM_Impl.cs" />
     <Compile Include="Win\MVVM_Search\WinSearchVM.cs" />
@@ -443,6 +449,10 @@
     <Page Include="Assets\WinVolumeEdit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Win\WinFolderList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Win\WinTreeMap.xaml">
       <Generator>MSBuild:Compile</Generator>

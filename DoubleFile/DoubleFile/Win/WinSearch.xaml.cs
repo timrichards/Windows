@@ -1,7 +1,7 @@
 ﻿namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinDuplicates.xaml
+    /// Interaction logic for WinSearch.xaml
     /// </summary>
     partial class WinSearch
     {

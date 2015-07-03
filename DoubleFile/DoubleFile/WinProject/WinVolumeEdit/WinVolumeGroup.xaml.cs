@@ -5,7 +5,7 @@ using System;
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinVolumeEdit.xaml
+    /// Interaction logic for WinVolumeGroup.xaml
     /// </summary>
     partial class WinVolumeGroup
     {

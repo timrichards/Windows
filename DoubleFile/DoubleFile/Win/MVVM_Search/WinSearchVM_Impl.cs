@@ -122,6 +122,12 @@ namespace DoubleFile
 
         void GoTo()
         {
+            if (null == _selectedItem)
+            {
+                MBoxStatic.Assert(99899, false);    // binding should dim the button
+                return;
+            }
+
             if (null != _selectedItem.Directory)
                 GoToFileOnNext(Tuple.Create((LVitem_ProjectVM)null, "" + _selectedItem.Directory, "" + _selectedItem.Filename));
             else

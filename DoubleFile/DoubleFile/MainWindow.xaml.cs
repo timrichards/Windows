@@ -7,7 +7,7 @@ using System.Windows;
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for ModernWindow1.xaml
+    /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow
     {

@@ -8,7 +8,7 @@ using System.Windows.Controls;
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinFormDirList.xaml
+    /// Interaction logic for WinTreeMap.xaml
     /// </summary>
     public partial class WinTreeMap
     {

@@ -198,6 +198,7 @@ namespace DoubleFile
                     .Select(s => new DirData((s.Split('\t')[1]).ToInt()))
                     .FirstOnlyAssert();
 
+                var dt = DateTime.Now;
                 var folderScore = new[]{ 0U, 0U, 0U, 0U };  // MD5; Weighted folder scores: largest; smallest; random
 
                 var nHashColumn =
@@ -244,6 +245,9 @@ namespace DoubleFile
                         folderScore = new[]{ 0U, 0U, 0U, 0U };  // MD5; Weighted folder scores: largest; smallest; random
                     }
                 }
+
+                // < 1s
+                Util.WriteLine("FolderScore " + (DateTime.Now - dt).Milliseconds + " ms - " + _volStrings.Volume);
 
                 string strRootPath = null;
                 var rootTreeNode = dirData.AddToTree(_volStrings.Nickname, out strRootPath);

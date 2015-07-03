@@ -9,6 +9,7 @@
 - dupe vm event alerts: static vm internal counter or static transmit
 - fix slider in tree list
 
+- Replace _nFilesTotal with CanLoad; make the whole thing parallel; see what the holdup is
 - PresentationCore.dll: FormatException; InvalidCastException; ArgumentException (see output window)
 - string compare
 - Convert.ToInt32 etc: use Util

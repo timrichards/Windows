@@ -188,8 +188,12 @@ namespace DoubleFile
                         .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
                         .Select(strLine => strLine.Split('\t'))
                         .Where(asLine => 10 < asLine.Length)
-                        .Select(asLine => Tuple.Create(("" + asLine[1]).ToInt(), ("" + asLine[FileParse.knColLength]).ToUlong(), asLine[10],
+
+                        .Select(asLine => Tuple.Create(("" + asLine[1]).ToInt(),
+                            ("" + asLine[FileParse.knColLength]).ToUlong(),
+                            asLine[10],
                             (11 < asLine.Length) ? asLine[11] : null))
+
                         .ToArray();
 
                     var nLVitem = _DictLVtoItemNumber[lvItem];
@@ -205,8 +209,6 @@ namespace DoubleFile
                             cts.Cancel();
                             return;     // from inner lambda
                         }
-
-                        Interlocked.Increment(ref _nFilesProgress);
 
                         var keyv1pt0 = FileKeyTuple.FactoryCreate(tuple.Item3, tuple.Item2);
 
@@ -247,6 +249,8 @@ namespace DoubleFile
                             Insert(dictV2, keyV2, lookup);
                     }
 
+                    Interlocked.Add(ref _nFilesProgress, arrTuples.Length);
+
                     if (bOnlyHashV1pt0)
                         _bListingFileWithOnlyHashV1pt0 = true;
                 });
@@ -276,6 +280,8 @@ namespace DoubleFile
                     }
                 }
 
+                var dt = DateTime.Now;
+
                 _DictFiles =
                     (_bListingFileWithOnlyHashV1pt0 ? dictV1pt0 : dictV2)
                     .Where(kvp => 1 < kvp.Value.Count)
@@ -283,6 +289,8 @@ namespace DoubleFile
                     .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(
                     new[] { nFolderScorer, (uint)dictV1pt0.Count - nFolderScorer, lsRandom[(int)nFolderScorer++] },
                     kvp.Value.AsEnumerable()));
+
+                Util.WriteLine("_DictFiles " + (DateTime.Now - dt).Milliseconds + " ms");   // 75 ms
 
                 // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step
                 // Otherwise note that _LVprojectVM gets nulled six lines down so the value has to be set by now.
@@ -292,8 +300,8 @@ namespace DoubleFile
                     MBoxStatic.Assert(99958, _bListingFileWithOnlyHashV1pt0 != AllListingsHashV2);
             }
 
-             StatusCallback(bDone: true);
-             _callbackWR = null;
+            StatusCallback(bDone: true);
+            _callbackWR = null;
             _LVprojectVM = null;
             _thread = null;
         }

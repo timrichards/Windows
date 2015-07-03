@@ -213,15 +213,16 @@ namespace DoubleFile
             var grandTotalMean =
                 Util.Closure(() =>
             {
-                var grandTotalFolderScore = new[]{ 0U, 0U, 0U, 0U };  // MD5; Weighted folder scores: largest; smallest; random
+                var grandTotalFolderScore = new[] { 0U, 0U, 0U, 0U }  // MD5; Weighted folder scores: largest; smallest; random
+                    .AsEnumerable();
+
                 var grandTotalFileCount = 0U;
 
                 foreach (var folder in _rootNodes)
                 {
                     grandTotalFolderScore =
                         grandTotalFolderScore
-                        .Zip(folder.NodeDatum.FolderScore, (n1, n2) => n1 + n2)
-                        .ToArray();
+                        .Zip(folder.NodeDatum.FolderScore, (n1, n2) => n1 + n2);
 
                     grandTotalFileCount += folder.NodeDatum.FileCountTotal;
                 }
@@ -230,6 +231,8 @@ namespace DoubleFile
                     .ToArray();     // from lambda
             });
 
+            var dt = DateTime.Now;
+
             Parallel.ForEach(_allNodes, folder => folder.NodeDatum.FolderScore = // mean square
                 grandTotalMean
                 .Zip(folder.NodeDatum.FolderScore, (totalMean, folderScore) =>
@@ -237,9 +240,11 @@ namespace DoubleFile
                 var mean = folderScore / (double)folder.NodeDatum.FileCountTotal;
                 var meanDiff = (mean - totalMean);
                 var sumOfSquares = meanDiff * meanDiff * folder.NodeDatum.FileCountTotal;
-                return (uint) (sumOfSquares / (_allNodes.Length - 1));
+                return (uint) (sumOfSquares / (_allNodes.Length - 1));      // from lamnda
             })
                 .ToArray());
+            Util.WriteLine("Completed ANOVA in " + (DateTime.Now - dt).Milliseconds + " ms");   // 350 ms
+            dt = DateTime.Now;
 
             // Since it's just a parity, the hash parity serves as a random weight
             // So this is also a mean square 
@@ -263,6 +268,7 @@ namespace DoubleFile
                 .OrderByDescending(folder => folder.NodeDatum.FolderScore[3])
                 .ToArray();
 
+            Util.WriteLine("Completed ANOVA arrays in " + (DateTime.Now - dt).Milliseconds + " ms");    // 500 ms
 
             //for (var i = 0; i < _allNodes.Length; ++i)
             //    Util.WriteLine(

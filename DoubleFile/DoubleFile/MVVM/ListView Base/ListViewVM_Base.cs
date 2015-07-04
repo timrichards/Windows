@@ -59,7 +59,7 @@ namespace DoubleFile
                 if (1000 > ++nCounter)
                     continue;
 
-                if (100 < (DateTime.Now - dt).Milliseconds)
+                if (100 < (DateTime.Now - dt).TotalMilliseconds)
                 {
                     // When there are too many items you get UI thread lockup.
                     Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()

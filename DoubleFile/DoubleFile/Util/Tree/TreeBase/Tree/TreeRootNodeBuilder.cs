@@ -199,7 +199,7 @@ namespace DoubleFile
                     .FirstOnlyAssert();
 
                 var dt = DateTime.Now;
-                var folderScore = new[]{ 0U, 0U, 0U, 0U };  // MD5; Weighted folder scores: largest; smallest; random
+                var folderScore = new[] { 0U, 0U, 0U };  // Weighted folder scores: HashParity (random); largest; smallest
 
                 var nHashColumn =
                     App.FileDictionary.AllListingsHashV2
@@ -242,12 +242,12 @@ namespace DoubleFile
                             ("" + asLine[knColLength]).ToUlong(),
                             folderScore);
 
-                        folderScore = new[]{ 0U, 0U, 0U, 0U };  // MD5; Weighted folder scores: largest; smallest; random
+                        folderScore = new[] { 0U, 0U, 0U };  // Weighted folder scores: HashParity (random); largest; smallest
                     }
                 }
 
-                // < 1s
-                Util.WriteLine("FolderScore " + (DateTime.Now - dt).Milliseconds + " ms - " + _volStrings.Volume);
+                // 8s
+                Util.WriteLine("FolderScore " + (DateTime.Now - dt).TotalMilliseconds + " ms - " + _volStrings.Volume);
 
                 string strRootPath = null;
                 var rootTreeNode = dirData.AddToTree(_volStrings.Nickname, out strRootPath);

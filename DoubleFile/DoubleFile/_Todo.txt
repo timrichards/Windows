@@ -9,6 +9,9 @@
 - dupe vm event alerts: static vm internal counter or static transmit
 - fix slider in tree list
 
+- ToEnumerable() in FileDictionary cut 60MB off and did not take any time to make.
+- Count property is very slow on Dictionary: check usage in loops
+- TotalMilliseconds gotcha
 - Replace _nFilesTotal with CanLoad; make the whole thing parallel; see what the holdup is
 - PresentationCore.dll: FormatException; InvalidCastException; ArgumentException (see output window)
 - string compare

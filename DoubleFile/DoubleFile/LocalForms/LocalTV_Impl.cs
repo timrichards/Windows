@@ -213,7 +213,7 @@ namespace DoubleFile
             var grandTotalMean =
                 Util.Closure(() =>
             {
-                var grandTotalFolderScore = new[] { 0U, 0U, 0U, 0U }  // MD5; Weighted folder scores: largest; smallest; random
+                var grandTotalFolderScore = new[] { 0U, 0U, 0U }  // Weighted folder scores: HashParity (random); largest; smallest
                     .AsEnumerable();
 
                 var grandTotalFileCount = 0U;
@@ -243,7 +243,8 @@ namespace DoubleFile
                 return (uint) (sumOfSquares / (_allNodes.Length - 1));      // from lamnda
             })
                 .ToArray());
-            Util.WriteLine("Completed ANOVA in " + (DateTime.Now - dt).Milliseconds + " ms");   // 350 ms
+
+            Util.WriteLine("Completed ANOVA in " + (DateTime.Now - dt).TotalMilliseconds + " ms");   // 350 ms
             dt = DateTime.Now;
 
             // Since it's just a parity, the hash parity serves as a random weight
@@ -263,19 +264,13 @@ namespace DoubleFile
                 .OrderByDescending(folder => folder.NodeDatum.FolderScore[2])
                 .ToArray();
 
-            var allNodesRandom =
-                _allNodes
-                .OrderByDescending(folder => folder.NodeDatum.FolderScore[3])
-                .ToArray();
+            Util.WriteLine("Completed ANOVA arrays in " + (DateTime.Now - dt).TotalMilliseconds + " ms");    // 500 ms
 
-            Util.WriteLine("Completed ANOVA arrays in " + (DateTime.Now - dt).Milliseconds + " ms");    // 500 ms
-
-            //for (var i = 0; i < _allNodes.Length; ++i)
-            //    Util.WriteLine(
-            //        _allNodes[i].Text + "[  ]" +
-            //        allNodesMD5[i].Text + "[  ]" +
-            //        allNodesWeightedSmall[i].Text + "[  ]" +
-            //        allNodesRandom[i].Text);
+            for (var i = 0; i < 50; ++i)
+                Util.WriteLine(
+                    allNodesHashParity[i].Text.PadRight(50) +
+                    _allNodes[i].Text.PadRight(50) +
+                    allNodesWeightedSmall[i].Text);
 
             _bTreeDone = true;      // should preceed closing status dialog: returns true to the caller
 
@@ -301,6 +296,8 @@ namespace DoubleFile
                     return true;
                 }
 
+                Util.WriteLine("IWinProgressClosing.ConfirmClose A");
+
                 return
                     (MessageBoxResult.Yes ==
                     MBoxStatic.ShowDialog("Do you want to cancel?", WithWinProgress(w => w.Title), MessageBoxButton.YesNo, _winProgress));
@@ -308,6 +305,8 @@ namespace DoubleFile
             {
                 return false;
             }
+
+            Util.WriteLine("IWinProgressClosing.ConfirmClose B");
 
             App.FileDictionary
                 .Abort();

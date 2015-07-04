@@ -142,7 +142,7 @@ namespace DoubleFile
                 bool
                     _bUseShortPath = true;
                 uint[]
-                    _folderScore = new[]{ 0U, 0U, 0U, 0U };  // MD5; Weighted folder scores: largest; smallest; random
+                    _folderScore = new[] { 0U, 0U, 0U };  // Weighted folder scores: HashParity (random); largest; smallest
             }
         }
     }

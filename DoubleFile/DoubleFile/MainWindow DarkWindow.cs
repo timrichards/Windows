@@ -67,7 +67,7 @@ namespace DoubleFile
             {
                 var napTime = _dtLastDarken - DateTime.Now + TimeSpan.FromMilliseconds(250);
 
-                if (0 < napTime.Milliseconds)
+                if (0 < napTime.TotalMilliseconds)
                 {
                     _bBlocking = true;
                     Util.Block(napTime);

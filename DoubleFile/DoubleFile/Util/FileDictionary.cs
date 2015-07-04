@@ -78,8 +78,8 @@ namespace DoubleFile
                 (null != tuple)
                 ? tuple.Item1
                 : (0 < fileKeyTuple.Item2)
-                ? new[] { 1U, 1U, 1U, 1U }      // no duplicates for this file so just account for its existence
-                : new[] { 0U, 0U, 0U, 0U };     // empty file
+                ? new[] { 1U, 1U, 1U }      // no duplicates for this file so just account for its existence
+                : new[] { 0U, 0U, 0U };     // empty file
         }
 
         internal IEnumerable<DuplicateStruct> GetDuplicates(string[] asFileLine)
@@ -159,22 +159,41 @@ namespace DoubleFile
                 ++nLVitems;
             }
 
-            var nLVitems_A = 0;
             var cts = new CancellationTokenSource();
+            var nProgress = 0;
+            var dictV1pt0 = new ConcurrentDictionary<FileKeyTuple, Tuple<uint, List<int>>> { };
+            var dictV2 = new ConcurrentDictionary<FileKeyTuple, Tuple<uint, List<int>>> { };
+            var nFolderScorer = 0U;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
-                .Subscribe(x =>
+                .Subscribe(x => StatusCallback(nProgress: nProgress/(double) nLVitems)))
+            Util.ParallelForEach(
+                _LVprojectVM.ItemsCast
+                .Where(lvItem => lvItem.CanLoad), new ParallelOptions{ CancellationToken = cts.Token }, lvItem =>
             {
-                if (nLVitems == nLVitems_A)
-                    StatusCallback(nProgress: _nFilesProgress/(double) _nFilesTotal);
-            }))
-            {
-                var dictV1pt0 = new ConcurrentDictionary<FileKeyTuple, List<int>> { };
-                var dictV2 = new ConcurrentDictionary<FileKeyTuple, List<int>> { };
+                if (IsAborted)
+                {
+                    cts.Cancel();
+                    return;     // from inner lambda
+                }
 
-                Util.ParallelForEach(
-                    _LVprojectVM.ItemsCast
-                    .Where(lvItem => lvItem.CanLoad), new ParallelOptions{ CancellationToken = cts.Token }, lvItem =>
+                var nLVitem = _DictLVtoItemNumber[lvItem];
+                var bOnlyHashV1pt0 = true;
+
+                foreach (var tuple in
+                    File
+                    .ReadLines(lvItem.ListingFile)
+                    .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
+                    .Select(strLine => strLine.Split('\t'))
+                    .Where(asLine => 10 < asLine.Length)
+
+                    .Select(asLine => Tuple.Create(
+                        ("" + asLine[1]).ToInt(),                           // Item1 - line number
+                        ("" + asLine[FileParse.knColLength]).ToUlong(),     // Item2 - file length
+                        asLine[10],                                         // Item3 - 4K hash
+                        (11 < asLine.Length) ? asLine[11] : null))          // Item4 - 1M hash
+
+                    .OrderBy(tuple => tuple.Item2))
                 {
                     if (IsAborted)
                     {
@@ -182,123 +201,83 @@ namespace DoubleFile
                         return;     // from inner lambda
                     }
 
-                    var arrTuples =
-                        File
-                        .ReadLines(lvItem.ListingFile)
-                        .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
-                        .Select(strLine => strLine.Split('\t'))
-                        .Where(asLine => 10 < asLine.Length)
+                    var keyv1pt0 = FileKeyTuple.FactoryCreate(tuple.Item3, tuple.Item2);
 
-                        .Select(asLine => Tuple.Create(("" + asLine[1]).ToInt(),
-                            ("" + asLine[FileParse.knColLength]).ToUlong(),
-                            asLine[10],
-                            (11 < asLine.Length) ? asLine[11] : null))
-
-                        .ToArray();
-
-                    var nLVitem = _DictLVtoItemNumber[lvItem];
-                    var bOnlyHashV1pt0 = true;
-
-                    Interlocked.Add(ref _nFilesTotal, arrTuples.Length);
-                    Interlocked.Increment(ref nLVitems_A);
-
-                    foreach (var tuple in arrTuples)
+                    if (null == keyv1pt0)
                     {
-                        if (IsAborted)
-                        {
-                            cts.Cancel();
-                            return;     // from inner lambda
-                        }
+                        IsAborted = true;
+                        cts.Cancel();
+                        return;     // from inner lambda
+                    }
 
-                        var keyv1pt0 = FileKeyTuple.FactoryCreate(tuple.Item3, tuple.Item2);
+                    var lookup = 0;
+                    FileKeyTuple keyV2 = null;
 
-                        if (null == keyv1pt0)
+                    if ((false == _bListingFileWithOnlyHashV1pt0) &&
+                        (null != tuple.Item4))
+                    {
+                        keyV2 = FileKeyTuple.FactoryCreate(tuple.Item4, tuple.Item2);
+
+                        if (null == keyV2)
                         {
                             IsAborted = true;
                             cts.Cancel();
                             return;     // from inner lambda
                         }
 
-                        var lookup = 0;
-                        FileKeyTuple keyV2 = null;
+                        bOnlyHashV1pt0 = false;
+                    }
 
-                        if ((false == _bListingFileWithOnlyHashV1pt0) &&
-                            (null != tuple.Item4))
-                        {
-                            keyV2 = FileKeyTuple.FactoryCreate(tuple.Item4, tuple.Item2);
-
-                            if (null == keyV2)
-                            {
-                                IsAborted = true;
-                                cts.Cancel();
-                                return;     // from inner lambda
-                            }
-
-                            bOnlyHashV1pt0 = false;
-                        }
-
-                        SetLVitemProjectVM(ref lookup, nLVitem);
-                        SetLineNumber(ref lookup, tuple.Item1);
+                    SetLVitemProjectVM(ref lookup, nLVitem);
+                    SetLineNumber(ref lookup, tuple.Item1);
 #if (DEBUG)
-                        MBoxStatic.Assert(99907, _DictItemNumberToLV[GetLVitemProjectVM(lookup)] == lvItem);
-                        MBoxStatic.Assert(99908, GetLineNumber(lookup) == tuple.Item1);
+                    MBoxStatic.Assert(99907, _DictItemNumberToLV[GetLVitemProjectVM(lookup)] == lvItem);
+                    MBoxStatic.Assert(99908, GetLineNumber(lookup) == tuple.Item1);
 #endif
-                        Insert(dictV1pt0, keyv1pt0, lookup);
+                    Insert(dictV1pt0, keyv1pt0, lookup, ref nFolderScorer);
 
-                        if (null != keyV2)
-                            Insert(dictV2, keyV2, lookup);
-                    }
-
-                    Interlocked.Add(ref _nFilesProgress, arrTuples.Length);
-
-                    if (bOnlyHashV1pt0)
-                        _bListingFileWithOnlyHashV1pt0 = true;
-                });
-
-                if (IsAborted)
-                {
-                    cts.Cancel();
-                    return;     // from inner lambda
-                }
-
-                var nFolderScorer = 0U;
-                var lsRandom = new List<uint> { };
-
-                for (var i = 0U; i < dictV1pt0.Count; ++i)
-                    lsRandom.Add(i);
-
-                {
-                    Random gen = new Random();
-
-                    for (var i = lsRandom.Count - 1; i > 0; --i)
+                    if (null != keyV2)
                     {
-                        var k = gen.Next(i + 1);
-                        var v = lsRandom[k];
+                        var nDontIncrement = nFolderScorer;
 
-                        lsRandom[k] = lsRandom[i];
-                        lsRandom[i] = v;
+                        Insert(dictV2, keyV2, lookup, ref nDontIncrement);
                     }
                 }
 
-                var dt = DateTime.Now;
+                if (bOnlyHashV1pt0)
+                    _bListingFileWithOnlyHashV1pt0 = true;
 
-                _DictFiles =
-                    (_bListingFileWithOnlyHashV1pt0 ? dictV1pt0 : dictV2)
-                    .Where(kvp => 1 < kvp.Value.Count)
-                    .OrderBy(kvp => kvp.Key.Item2)        // folder scorer values increase with file length
-                    .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(
-                    new[] { nFolderScorer, (uint)dictV1pt0.Count - nFolderScorer, lsRandom[(int)nFolderScorer++] },
-                    kvp.Value.AsEnumerable()));
+                Interlocked.Increment(ref nProgress);
+            });
 
-                Util.WriteLine("_DictFiles " + (DateTime.Now - dt).Milliseconds + " ms");   // 75 ms
+            Util.WriteLine(DateTime.Now.Ticks + "FileDictionary loop done.");
 
-                // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step
-                // Otherwise note that _LVprojectVM gets nulled six lines down so the value has to be set by now.
-                if (null == _allListingsHashV2)
-                    _allListingsHashV2 = (false == _bListingFileWithOnlyHashV1pt0);
-                else
-                    MBoxStatic.Assert(99958, _bListingFileWithOnlyHashV1pt0 != AllListingsHashV2);
+            if (IsAborted)
+            {
+                cts.Cancel();
+                return;     // from inner lambda
             }
+
+            Util.WriteLine("" + DateTime.Now.Ticks);
+
+            var dt = DateTime.Now;
+
+            _DictFiles =
+                (_bListingFileWithOnlyHashV1pt0 ? dictV1pt0 : dictV2)
+                .Where(kvp => 1 < kvp.Value.Item2.Count)
+                .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(
+                new[] { kvp.Value.Item1, nFolderScorer - kvp.Value.Item1 },
+                kvp.Value.Item2.AsEnumerable()));
+
+            Util.WriteLine("" + DateTime.Now.Ticks);
+            Util.WriteLine("_DictFiles " + (DateTime.Now - dt).TotalMilliseconds + " ms");   // 650 ms 
+
+            // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step
+            // Otherwise note that _LVprojectVM gets nulled six lines down so the value has to be set by now.
+            if (null == _allListingsHashV2)
+                _allListingsHashV2 = (false == _bListingFileWithOnlyHashV1pt0);
+            else
+                MBoxStatic.Assert(99958, _bListingFileWithOnlyHashV1pt0 != AllListingsHashV2);
 
             StatusCallback(bDone: true);
             _callbackWR = null;
@@ -306,12 +285,18 @@ namespace DoubleFile
             _thread = null;
         }
 
-        void Insert(IDictionary<FileKeyTuple, List<int>> dictionary, FileKeyTuple key, int lookup)
+        void Insert(IDictionary<FileKeyTuple, Tuple<uint, List<int>>> dictionary, FileKeyTuple key, int lookup,
+            ref uint nFolderScorer)
         {
-            var ls = dictionary.TryGetValue(key);
+            var tuple = dictionary.TryGetValue(key);
 
-            if (null != ls)
+            if (null != tuple)
             {
+                var ls = tuple.Item2;
+
+                if (1 == ls.Count)
+                    ++nFolderScorer;
+
                 lock (ls)                      // jic sorting downstream too at A
                 {
                     ls.Insert(ls.TakeWhile(nLookup => lookup >= nLookup).Count(),
@@ -320,7 +305,7 @@ namespace DoubleFile
             }
             else
             {
-                dictionary[key] = new List<int> { lookup };
+                dictionary[key] = Tuple.Create(nFolderScorer, new List<int> { lookup });
             }
         }
 
@@ -417,9 +402,5 @@ namespace DoubleFile
             _thread = null;
         LV_ProjectVM
             _LVprojectVM = null;
-        long
-            _nFilesTotal = 0;
-        long
-            _nFilesProgress = 0;
     }
 }

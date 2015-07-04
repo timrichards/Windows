@@ -15,7 +15,7 @@ namespace DoubleFile
         internal ulong
             Length { get; private set; }
         internal uint[]
-            FolderScore = new[]{ 0U, 0U, 0U, 0U };  // MD5; Weighted folder scores: largest; smallest; random
+            FolderScore = new[] { 0U, 0U, 0U };     // Weighted folder scores: HashParity (random); largest; smallest
 
         internal ulong
             TotalLength { get; set; }

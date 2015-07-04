@@ -161,10 +161,10 @@ namespace DoubleFile
 
             var cts = new CancellationTokenSource();
             var nProgress = 0;
-            var dictV1pt0 = new ConcurrentDictionary<FileKeyTuple, Tuple<uint, List<int>>> { };
-            var dictV2 = new ConcurrentDictionary<FileKeyTuple, Tuple<uint, List<int>>> { };
-            var nFolderScorer1pt0 = 1;
-            var nFolderScorer2 = 1;
+            var dictV1pt0 = new ConcurrentDictionary<FileKeyTuple, List<int>> { };
+            var dictV2 = new ConcurrentDictionary<FileKeyTuple, List<int>> { };
+            var nFolderCount1pt0 = 1;
+            var nFolderCount2 = 1;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                 .Subscribe(x => StatusCallback(nProgress: nProgress/(double) nLVitems)))
@@ -235,10 +235,10 @@ namespace DoubleFile
                     MBoxStatic.Assert(99907, _DictItemNumberToLV[GetLVitemProjectVM(lookup)] == lvItem);
                     MBoxStatic.Assert(99908, GetLineNumber(lookup) == tuple.Item1);
 #endif
-                    Insert(dictV1pt0, keyv1pt0, lookup, ref nFolderScorer1pt0);
+                    Insert(dictV1pt0, keyv1pt0, lookup, ref nFolderCount1pt0);
 
                     if (null != keyV2)
-                        Insert(dictV2, keyV2, lookup, ref nFolderScorer2);
+                        Insert(dictV2, keyV2, lookup, ref nFolderCount2);
                 }
 
                 if (bOnlyHashV1pt0)
@@ -256,22 +256,20 @@ namespace DoubleFile
             Util.WriteLine("" + DateTime.Now.Ticks);
 
             var dt = DateTime.Now;
-            var nFolderScorer = _bListingFileWithOnlyHashV1pt0 ? nFolderScorer1pt0 : nFolderScorer2;
+            var nFolderScorer = 0U;
+
+            var nFolderCount = (uint)(_bListingFileWithOnlyHashV1pt0 ? nFolderCount1pt0 : nFolderCount2);
 
             _DictFiles =
                 (_bListingFileWithOnlyHashV1pt0 ? dictV1pt0 : dictV2)
-                .Where(kvp => 1 < kvp.Value.Item2.Count)
-                .ToDictionary(kvp => kvp.Key, kvp =>
-                {
-                    MBoxStatic.Assert(99895, 0 != kvp.Value.Item1);
-                    MBoxStatic.Assert(99894, kvp.Value.Item1 < nFolderScorer);
+                .Where(kvp => 1 < kvp.Value.Count)
+                .OrderBy(kvp => kvp.Key.Item2)
+                .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(
+                    new[] { ++nFolderScorer, nFolderCount - nFolderScorer },
+                    kvp.Value.AsEnumerable()));
 
-                    return Tuple.Create(
-                        new[] { kvp.Value.Item1, (uint)nFolderScorer - kvp.Value.Item1 },
-                        kvp.Value.Item2.AsEnumerable());
-                });
-
-            MBoxStatic.Assert(99896, new[] { /*nFolderScorer - 2,*/ nFolderScorer - 1 }.Contains(_DictFiles.Count));
+            MBoxStatic.Assert(99895, 1 == nFolderCount - nFolderScorer);
+            MBoxStatic.Assert(99896, _DictFiles.Count == nFolderCount - 1);
             Util.WriteLine("_DictFiles " + (DateTime.Now - dt).TotalMilliseconds + " ms");   // 650 ms 
 
             // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step
@@ -287,29 +285,26 @@ namespace DoubleFile
             _thread = null;
         }
 
-        void Insert(IDictionary<FileKeyTuple, Tuple<uint, List<int>>> dictionary, FileKeyTuple key, int lookup,
-            ref int nFolderScorer)
+        void Insert(IDictionary<FileKeyTuple, List<int>> dictionary, FileKeyTuple key, int lookup,
+            ref int nFolderCount)
         {
-            var tuple = dictionary.TryGetValue(key);
+            var ls = dictionary.TryGetValue(key);
 
-            if (null != tuple)
+            if (null == ls)
             {
-                lock (tuple.Item2)
-                {
-                    var ls = tuple.Item2;
-
-                    if (1 == ls.Count)
-                        Interlocked.Increment(ref nFolderScorer);
-
-                    // jic sorting downstream too at A
-                    ls.Insert(
-                        ls.TakeWhile(nLookup => lookup >= nLookup).Count(),
-                        lookup);
-                }
+                dictionary[key] = new List<int> { lookup };
+                return;
             }
-            else
+
+            lock (ls)
             {
-                dictionary[key] = Tuple.Create((uint)nFolderScorer, new List<int> { lookup });
+                if (1 == ls.Count)
+                    Interlocked.Increment(ref nFolderCount);
+
+                // jic sorting downstream too at A
+                ls.Insert(
+                    ls.TakeWhile(nLookup => lookup >= nLookup).Count(),
+                    lookup);
             }
         }
 

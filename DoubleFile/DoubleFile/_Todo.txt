@@ -9,6 +9,7 @@
 - dupe vm event alerts: static vm internal counter or static transmit
 - fix slider in tree list
 
+- Why does a folder with the same # items as subfolder have a different folder score? (i.e. no files here)
 - ToEnumerable() in FileDictionary cut 60MB off and did not take any time to make.
 - Count property is very slow on Dictionary: check usage in loops
 - TotalMilliseconds gotcha
@@ -79,6 +80,7 @@
 - what C# features don't translate well to other languages like C++? is operator?
 - neither is nor as are reflection. as is 20x slower though. p. 123
 
+99894
 99890 99889 99888 99887 99886 99885 99884 99883
 99881
 99879

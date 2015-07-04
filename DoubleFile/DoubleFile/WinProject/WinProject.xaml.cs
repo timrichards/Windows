@@ -49,7 +49,7 @@ namespace DoubleFile
             {
                 SaveListingsProcess.Go(App.LVprojectVM);
 
-                if (App.LVprojectVM.ItemsCast.Any(lvItem => lvItem.CanLoad) &&
+                if ((0 < App.LVprojectVM.CanLoadCount) &&
                     LocalTV.FactoryCreate(App.LVprojectVM))
                 {
                     winProject._lvProjectVM = new LV_ProjectVM(App.LVprojectVM);

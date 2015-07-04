@@ -54,7 +54,7 @@ namespace DoubleFile
                 return false;
             }
 
-            if (false == lvProjectVM.ItemsCast.Any(lvItem => lvItem.CanLoad))
+            if (0 == lvProjectVM.CanLoadCount)
                 return false;
 
             _wr.SetTarget(
@@ -69,9 +69,9 @@ namespace DoubleFile
             _lvProjectVM = lvProjectVM;
 
             if ((null != _lvProjectVM) &&
-                (0 < _lvProjectVM.Count))
+                (0 < _lvProjectVM.CanLoadCount))
             {
-                _knProgMult = 3 / (4 * _lvProjectVM.Count);
+                _knProgMult = 3 / (4d * _lvProjectVM.CanLoadCount);
                 TabledString<Tabled_Folders>.AddRef();
             }
 
@@ -93,7 +93,7 @@ namespace DoubleFile
             }
 
             if ((null != Instance._lvProjectVM) &&
-                (0 < Instance._lvProjectVM.Count))
+                (0 < Instance._lvProjectVM.CanLoadCount))
             {
                 TabledString<Tabled_Folders>.DropRef();
             }

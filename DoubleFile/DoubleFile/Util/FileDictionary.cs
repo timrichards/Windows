@@ -261,11 +261,17 @@ namespace DoubleFile
             _DictFiles =
                 (_bListingFileWithOnlyHashV1pt0 ? dictV1pt0 : dictV2)
                 .Where(kvp => 1 < kvp.Value.Item2.Count)
-                .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(
-                new[] { kvp.Value.Item1, (uint)nFolderScorer - kvp.Value.Item1 },
-                kvp.Value.Item2.AsEnumerable()));
+                .ToDictionary(kvp => kvp.Key, kvp =>
+                {
+                    MBoxStatic.Assert(99895, 0 != kvp.Value.Item1);
+                    MBoxStatic.Assert(99894, kvp.Value.Item1 < nFolderScorer);
 
-            MBoxStatic.Assert(99896, _DictFiles.Count == nFolderScorer - 1);
+                    return Tuple.Create(
+                        new[] { kvp.Value.Item1, (uint)nFolderScorer - kvp.Value.Item1 },
+                        kvp.Value.Item2.AsEnumerable());
+                });
+
+            MBoxStatic.Assert(99896, new[] { /*nFolderScorer - 2,*/ nFolderScorer - 1 }.Contains(_DictFiles.Count));
             Util.WriteLine("_DictFiles " + (DateTime.Now - dt).TotalMilliseconds + " ms");   // 650 ms 
 
             // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step
@@ -288,16 +294,16 @@ namespace DoubleFile
 
             if (null != tuple)
             {
-                var ls = tuple.Item2;
-
-                if (1 == ls.Count)
+                lock (tuple.Item2)
                 {
-                    Interlocked.Increment(ref nFolderScorer);
-                }
+                    var ls = tuple.Item2;
 
-                lock (ls)                      // jic sorting downstream too at A
-                {
-                    ls.Insert(ls.TakeWhile(nLookup => lookup >= nLookup).Count(),
+                    if (1 == ls.Count)
+                        Interlocked.Increment(ref nFolderScorer);
+
+                    // jic sorting downstream too at A
+                    ls.Insert(
+                        ls.TakeWhile(nLookup => lookup >= nLookup).Count(),
                         lookup);
                 }
             }

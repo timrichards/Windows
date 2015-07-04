@@ -84,7 +84,7 @@ namespace DoubleFile
         bool Reinitialize_And_FullPathFound(string strPath)
         {
             if ((null == App.LVprojectVM) ||
-                (0 == App.LVprojectVM.Count))
+                (0 == App.LVprojectVM.CanLoadCount))
             {
                 return true;        // found there are no volumes loaded
             }

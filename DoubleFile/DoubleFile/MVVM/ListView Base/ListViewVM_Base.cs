@@ -20,9 +20,6 @@ namespace DoubleFile
         internal void
             ClearItems() { _items = new ObservableCollection<ListViewItemVM_Base>(); RaisePropertyChanged("Items"); }
 
-        internal int
-            Count { get { return _items.Count; } }
-
         internal abstract int
             NumCols { get; }
 

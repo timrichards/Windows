@@ -41,7 +41,7 @@ namespace DoubleFile
                 }
             }
 
-            if (false == _lvProjectVM.ItemsCast.Any(lvItem => lvItem.CanLoad))
+            if (0 == _lvProjectVM.CanLoadCount)
                 return false;
 
             _bTreeDone = false;

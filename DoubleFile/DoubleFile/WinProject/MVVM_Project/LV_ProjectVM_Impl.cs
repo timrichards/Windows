@@ -26,6 +26,8 @@ namespace DoubleFile
         static readonly int _nModifiedOnNextAssertLoc = 99840;
         internal void SetModified() { _modified.LocalOnNext(false, _nModifiedOnNextAssertLoc); }
 
+        internal int CanLoadCount { get { return ItemsCast.Where(item => item.CanLoad).Count(); } }
+
         internal bool
             Unsaved
         {

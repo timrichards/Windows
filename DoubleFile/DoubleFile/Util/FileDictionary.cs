@@ -163,7 +163,8 @@ namespace DoubleFile
             var nProgress = 0;
             var dictV1pt0 = new ConcurrentDictionary<FileKeyTuple, Tuple<uint, List<int>>> { };
             var dictV2 = new ConcurrentDictionary<FileKeyTuple, Tuple<uint, List<int>>> { };
-            var nFolderScorer = 0U;
+            var nFolderScorer1pt0 = 1;
+            var nFolderScorer2 = 1;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                 .Subscribe(x => StatusCallback(nProgress: nProgress/(double) nLVitems)))
@@ -234,14 +235,10 @@ namespace DoubleFile
                     MBoxStatic.Assert(99907, _DictItemNumberToLV[GetLVitemProjectVM(lookup)] == lvItem);
                     MBoxStatic.Assert(99908, GetLineNumber(lookup) == tuple.Item1);
 #endif
-                    Insert(dictV1pt0, keyv1pt0, lookup, ref nFolderScorer);
+                    Insert(dictV1pt0, keyv1pt0, lookup, ref nFolderScorer1pt0);
 
                     if (null != keyV2)
-                    {
-                        var nDontIncrement = nFolderScorer;
-
-                        Insert(dictV2, keyV2, lookup, ref nDontIncrement);
-                    }
+                        Insert(dictV2, keyV2, lookup, ref nFolderScorer2);
                 }
 
                 if (bOnlyHashV1pt0)
@@ -249,8 +246,6 @@ namespace DoubleFile
 
                 Interlocked.Increment(ref nProgress);
             });
-
-            Util.WriteLine(DateTime.Now.Ticks + "FileDictionary loop done.");
 
             if (IsAborted)
             {
@@ -261,15 +256,16 @@ namespace DoubleFile
             Util.WriteLine("" + DateTime.Now.Ticks);
 
             var dt = DateTime.Now;
+            var nFolderScorer = _bListingFileWithOnlyHashV1pt0 ? nFolderScorer1pt0 : nFolderScorer2;
 
             _DictFiles =
                 (_bListingFileWithOnlyHashV1pt0 ? dictV1pt0 : dictV2)
                 .Where(kvp => 1 < kvp.Value.Item2.Count)
                 .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(
-                new[] { kvp.Value.Item1, nFolderScorer - kvp.Value.Item1 },
+                new[] { kvp.Value.Item1, (uint)nFolderScorer - kvp.Value.Item1 },
                 kvp.Value.Item2.AsEnumerable()));
 
-            Util.WriteLine("" + DateTime.Now.Ticks);
+            MBoxStatic.Assert(99896, _DictFiles.Count == nFolderScorer - 1);
             Util.WriteLine("_DictFiles " + (DateTime.Now - dt).TotalMilliseconds + " ms");   // 650 ms 
 
             // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step
@@ -286,7 +282,7 @@ namespace DoubleFile
         }
 
         void Insert(IDictionary<FileKeyTuple, Tuple<uint, List<int>>> dictionary, FileKeyTuple key, int lookup,
-            ref uint nFolderScorer)
+            ref int nFolderScorer)
         {
             var tuple = dictionary.TryGetValue(key);
 
@@ -295,7 +291,9 @@ namespace DoubleFile
                 var ls = tuple.Item2;
 
                 if (1 == ls.Count)
-                    ++nFolderScorer;
+                {
+                    Interlocked.Increment(ref nFolderScorer);
+                }
 
                 lock (ls)                      // jic sorting downstream too at A
                 {
@@ -305,7 +303,7 @@ namespace DoubleFile
             }
             else
             {
-                dictionary[key] = Tuple.Create(nFolderScorer, new List<int> { lookup });
+                dictionary[key] = Tuple.Create((uint)nFolderScorer, new List<int> { lookup });
             }
         }
 

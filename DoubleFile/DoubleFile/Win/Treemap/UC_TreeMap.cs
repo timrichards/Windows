@@ -731,7 +731,10 @@ namespace DoubleFile
                 _lsFrames = new ConcurrentBag<RenderAction>();
                 _deepNode = deepNode;
                 RecurseDrawGraph(item, rc, true);
-                Dispatcher.PushFrame(_blockingFrame);
+
+                if (0 < _nWorkerCount)
+                    Dispatcher.PushFrame(_blockingFrame);
+
                 deepNodeDrawn_out = _deepNodeDrawn;
                 return _lsRenderActions.Concat(_lsFrames);
             }

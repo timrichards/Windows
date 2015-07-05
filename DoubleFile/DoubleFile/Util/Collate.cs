@@ -149,14 +149,15 @@ namespace DoubleFile
                     return;
 
                 var listNodes = kvp.Value;
+                var moreThanOne = listNodes.MoreThanOne();
 
-                if (1 > listNodes.Count)
+                if (MoreThanOneEnum.Zero == moreThanOne)
                 {
                     MBoxStatic.Assert(1305.6315m, false);
                     continue;
                 }
                 
-                if (1 < listNodes.Count)
+                if (MoreThanOneEnum.MoreThanOne == moreThanOne)
                 {
                     // Parent folder may contain only its clone subfolder, in which case unmark the subfolder
 
@@ -187,7 +188,7 @@ namespace DoubleFile
                             listKeep.Add(treeNode_A);
                     }
 
-                    if (1 < listKeep.Count)
+                    if (MoreThanOneEnum.MoreThanOne == listKeep.MoreThanOne())
                     {
                         foreach (var treeNode_A in listKeep)
                         {
@@ -208,7 +209,7 @@ namespace DoubleFile
                     }
                 }
 
-                if (1 == listNodes.Count)               // "else"
+                if (MoreThanOneEnum.One == moreThanOne)      // "else"
                 {
                     var treeNode = listNodes[0];
                     var nodeDatum = treeNode.NodeDatum;

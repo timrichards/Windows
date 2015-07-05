@@ -210,7 +210,7 @@ namespace DoubleFile
                     // The above ThreadMake will be busy pumping out new file handles while the below processes will
                     // read those files' buffers and simultaneously hash them in batches until all files have been opened.
                     while ((false == bAllFilesOpened) ||
-                        (0 < lsFileHandles.Count) ||
+                        lsFileHandles.Any() ||
                         bEnqueued)
                     {
                         // Avoid spinning too quickly while waiting for new file handles.
@@ -395,7 +395,7 @@ namespace DoubleFile
 
                 if (nRead < nBufferSize)
                 {
-                    // works fine with nRead == 0
+                    // works fine with 0 == nRead
                     var truncBuffer = new byte[nRead];
 
                     Array.Copy(readBuffer, truncBuffer, nRead);
@@ -424,13 +424,13 @@ namespace DoubleFile
                 if ((0 == tuple.Item2) ||       // empty file
                     (null != tuple.Item3))      // bad file handle, with error string
                 {
-                    MBoxStatic.Assert(99911, 0 == lsBuffer.Count);
+                    MBoxStatic.Assert(99911, false == lsBuffer.Any());
                     return retval;
                 }
 
-                var nCount = lsBuffer.Count;
+                var ieBuffer = lsBuffer.GetEnumerator();
 
-                if (0 == nCount)
+                if (false == ieBuffer.MoveNext())       // 0
                 {
                     MBoxStatic.Assert(99932, false);
                     return retval;
@@ -442,13 +442,14 @@ namespace DoubleFile
 
                     retval = Tuple.Create(hash1pt0, hash1pt0);
 
-                    if (1 == nCount)
-                        return retval;
+                    if (false == ieBuffer.MoveNext())
+                        return retval;                  // 1
 
-                    var nSize = 0;
+                    var nSize = 0;                      // > 1
 
-                    foreach (var buffer in lsBuffer.Skip(1))
-                        nSize += buffer.Length;
+                    do
+                        nSize += ieBuffer.Current.Length;
+                    while (ieBuffer.MoveNext());
 
                     MBoxStatic.Assert(99909, 1048576 >= nSize);
 

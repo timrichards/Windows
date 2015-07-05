@@ -413,7 +413,7 @@ namespace DoubleFile
             var rootNodeDatum = parent.Root.NodeDatum as RootNodeDatum;
 
             if ((null == nodeDatum) ||
-                (nodeDatum.LineNo == 0) ||
+                (0 == nodeDatum.LineNo) ||
                 (null == rootNodeDatum))
             {
                 return null;
@@ -941,18 +941,19 @@ namespace DoubleFile
                     }});
                 }
 
+                // could do array here but it's slightly less efficient because element sizes have to be shrunk
                 var lsChildren =
                     ieChildren
                     .OrderByDescending(x => x.NodeDatum.TotalLength)
                     .ToList();
 
-                if (false == lsChildren.Any())
+                var nCount = lsChildren.Count;
+
+                if (0 == nCount)
                 {
                     // any files are zero in length
                     return false;
                 }
-
-                var nCount = lsChildren.Count;
 
                 Interlocked.Add(ref _nWorkerCount, nCount);
 
@@ -991,13 +992,14 @@ namespace DoubleFile
 
                 var c = 0;
                 double top = horizontalRows ? rc.Top : rc.Left;
+                var lastRow = rows[rows.Count - 1];
 
                 rows.ForEach(row =>
                 {
                     var fBottom = top + row.RowHeight * height;
                     var bottom = (int)fBottom;
 
-                    if (ReferenceEquals(row, rows[rows.Count - 1]))
+                    if (ReferenceEquals(row, lastRow))
                         bottom = horizontalRows ? rc.Bottom : rc.Right;
 
                     double left = horizontalRows ? rc.Left : rc.Top;

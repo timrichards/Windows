@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Reactive.Linq;
 using System.Windows;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -111,10 +112,17 @@ namespace DoubleFile
         {
             if (bHidden)
             {
-                while (1 < MenuLinkGroups.Count)
-                    MenuLinkGroups.RemoveAt(1);
+                if (MenuLinkGroups.Any())
+                {
+                    while (false == MenuLinkGroups.HasExactly(1))
+                        MenuLinkGroups.RemoveAt(1);
+                }
+                else
+                {
+                    MBoxStatic.Assert(99894, false);
+                }
             }
-            else if (1 == MenuLinkGroups.Count)
+            else if (MenuLinkGroups.HasExactly(1))
             {
                 foreach (var group in _links)
                     MenuLinkGroups.Add(group);

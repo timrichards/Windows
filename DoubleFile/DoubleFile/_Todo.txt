@@ -7,9 +7,9 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- Look for ToArray()
 - string compare CompareTo()
 - string.IsNullOrWhiteSpace
-- TotalMilliseconds gotcha
 
 - why does e.g. monkey_house have a nFolderScorer of 0?
 - What is the distribution of sums of "random" hash folder score?
@@ -82,8 +82,9 @@
 - Join() vs Block() - Join() completely locks up the Dispatcher? Does Block() wait At PushFrame() like a traffic cop?
 - ToEnumerable() in FileDictionary cut 60MB off and did not take any time to make.
 - nullables should be type nullable = null; not var nullable = default(type);
+- TotalMilliseconds gotcha
+- look for 0 ==    > 0 <   == 0   < 0 >  Count property;   etc.
 
-99894
 99890 99889 99888 99887 99886 99885 99884 99883
 99881
 99879

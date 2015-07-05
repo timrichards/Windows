@@ -68,10 +68,9 @@ namespace DoubleFile
                             (dupe.LineNumber != nLine));
 
                     lvItem.SameVolume =
-                        (1 ==
                         lsDuplicates
-                            .GroupBy(duplicate => duplicate.LVitemProjectVM.Volume)
-                            .Count());
+                        .GroupBy(duplicate => duplicate.LVitemProjectVM.Volume)
+                        .HasExactly(1);
                 }
 
                 lsItems.Add(lvItem);

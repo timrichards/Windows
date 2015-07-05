@@ -6,6 +6,13 @@ using System.Windows;
 
 namespace DoubleFile
 {
+    internal enum MoreThanOneEnum
+    {
+        Zero,
+        One,
+        MoreThanOne
+    }
+
     static internal partial class ExtensionMethodsStatic
     {
         static IDictionary<int, Tuple<DateTime, WeakReference>> _lsSubjects = new Dictionary<int, Tuple<DateTime, WeakReference>>();
@@ -79,6 +86,32 @@ namespace DoubleFile
         {
             source
                 .All(item => { action(item); return true; });
+        }
+
+        static internal bool HasExactly<T>(this IEnumerable<T> source, int nDesiredElements)
+        {
+            var ie = source.GetEnumerator();
+
+            for (var i = 0; i < nDesiredElements; ++i)
+            {
+                if (false == ie.MoveNext())
+                    return false;
+            }
+
+            return false == ie.MoveNext();
+        }
+
+        static internal MoreThanOneEnum MoreThanOne<T>(this IEnumerable<T> source)
+        {
+            var ie = source.GetEnumerator();
+
+            if (false == ie.MoveNext())
+                return MoreThanOneEnum.Zero;
+
+            if (false == ie.MoveNext())
+                return MoreThanOneEnum.One;
+
+            return MoreThanOneEnum.MoreThanOne;
         }
 
         static internal string ToPrintString(this object source)

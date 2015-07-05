@@ -25,8 +25,8 @@ namespace DoubleFile
         internal void OpenProject()
         {
             var bClearItems =
-                (0 == _lvVM.Items.Count) ||
-                false == (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift));
+                (false == _lvVM.Items.Any()) ||
+                (false == (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)));
 
             var strTitle = (bClearItems ? "Open" : "Append") + " Project";
 
@@ -194,7 +194,7 @@ namespace DoubleFile
                 }
                 else
                 {
-                    bMultiBad = (0 < sbBadFiles.Length);
+                    bMultiBad = 0 < sbBadFiles.Length;
 
                     lock (sbBadFiles)
                         sbBadFiles.Append("• ").Append(Path.GetFileName(strFilename)).Append("\n");

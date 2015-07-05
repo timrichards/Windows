@@ -355,38 +355,38 @@ namespace DoubleFile
             const int knLinesDesired = 4 + knDriveInfoItems;
             const int knLinesGrabFile = 10;
 
-            var lsLines = File.ReadLines(strFile).Take(knLinesDesired + knLinesGrabFile)
-                .ToList();
+            var asLines = File.ReadLines(strFile).Take(knLinesDesired + knLinesGrabFile)
+                .ToArray();
 
-            if (knLinesDesired > lsLines.Count)
+            if (knLinesDesired > asLines.Length)
                 return false;
 
-            if (false == lsLines[1].StartsWith(ksLineType_Nickname))
+            if (false == asLines[1].StartsWith(ksLineType_Nickname))
                 return false;
 
-            var arrLine = lsLines[1].Split('\t');
+            var arrLine = asLines[1].Split('\t');
 
             if (2 < arrLine.Length)
                 lvItem.Nickname = arrLine[2];
 
-            if (false == lsLines[2].StartsWith(ksLineType_Path))
+            if (false == asLines[2].StartsWith(ksLineType_Path))
                 return false;
 
-            if (null == (lvItem.SourcePath = ReadAttribute(lsLines[2])))
+            if (null == (lvItem.SourcePath = ReadAttribute(asLines[2])))
                 return false;
 
-            lsLines
+            asLines
                 .Skip(4)
                 .Where(s => s.StartsWith(ksLineType_VolumeInfo_DriveModel))
                 .FirstOnlyAssert(s => lvItem.DriveModel = ReadAttribute(s));
 
-            lsLines
+            asLines
                 .Skip(4)
                 .Where(s => s.StartsWith(ksLineType_VolumeInfo_DriveSerial))
                 .FirstOnlyAssert(s => lvItem.DriveSerial = ReadAttribute(s));
 
             lvItem.HashV2 =
-                lsLines
+                asLines
                 .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
                 .Select(strLine => strLine.Split('\t'))
                 .Where(asLine => 10 < asLine.Length)

@@ -259,7 +259,7 @@ namespace DoubleFile
 
             _DictFiles =
                 (_bListingFileWithOnlyHashV1pt0 ? dictV1pt0 : dictV2)
-                .Where(kvp => 1 < kvp.Value.Count)
+                .Where(kvp => MoreThanOneEnum.MoreThanOne == kvp.Value.MoreThanOne())
                 .OrderBy(kvp => kvp.Key.Item2)
                 .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(
                     new[] { ++nFolderScorer, nFolderCount - nFolderScorer },
@@ -295,7 +295,7 @@ namespace DoubleFile
 
             lock (ls)
             {
-                if (1 == ls.Count)
+                if (ls.HasExactly(1))
                     Interlocked.Increment(ref nFolderCount);
 
                 // jic sorting downstream too at A

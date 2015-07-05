@@ -1,4 +1,5 @@
 ﻿using System.Windows.Input;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -22,7 +23,7 @@ namespace DoubleFile
             _lvVM = lvVM;
 
             Icmd_OpenProject = new RelayCommand(OpenProject);
-            Icmd_SaveProject = new RelayCommand(SaveProject, () => 0 < _lvVM.Items.Count);
+            Icmd_SaveProject = new RelayCommand(SaveProject, () => _lvVM.Items.Any());
 
             Icmd_NewListingFile = new RelayCommand(NewListingFile);
             Icmd_OpenListingFile = new RelayCommand(OpenListingFile);

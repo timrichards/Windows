@@ -131,12 +131,12 @@ namespace DoubleFile
         static internal void GenerationEnded()
         {
             var t = TypedArrayBase.tA[new T().Type];
+            var nCount = t.DictStrings.Count;
 
             t.DictPathParts = null;
-            MBoxStatic.Assert(99922, t.IndexGenerator == t.DictStrings.Count);
+            MBoxStatic.Assert(99922, t.IndexGenerator == nCount);
 
             var sortedStrings = new SortedDictionary<string, int>(t.DictStrings);
-            var nCount = sortedStrings.Count;
 
             t.DictStrings = null;
             t.DictStringsRev = null;

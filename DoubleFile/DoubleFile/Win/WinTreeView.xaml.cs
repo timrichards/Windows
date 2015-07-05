@@ -1,5 +1,5 @@
 ﻿using System.Reactive.Linq;
-using System;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -19,12 +19,12 @@ namespace DoubleFile
 
             form_tv.DataContext = items;
 
-            if (0 >= items.Count)
+            if (false == items.Any())
                 return;
 
             var folderDetail = LocalTV.TreeSelect_FolderDetail;
 
-            if (null == folderDetail)   // do not reset selected item when navigating to
+            if (null == folderDetail)   // do not kick off a new TreeSelect when navigating to
                 items[0].SelectedItem_Set(true, nInitiator: 0);
         }
 

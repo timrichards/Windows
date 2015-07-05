@@ -61,7 +61,7 @@ namespace DoubleFile
 
             str = str.TrimStart();
 
-            if (str.Length == 0)
+            if (0 == str.Length)
                 str = strAttr;
             else
                 str += " (" + strAttr + ")";

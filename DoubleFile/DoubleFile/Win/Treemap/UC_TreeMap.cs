@@ -8,6 +8,7 @@ using System.Threading;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Reactive.Linq;
+using System.Windows.Threading;
 
 namespace DoubleFile
 {
@@ -305,9 +306,9 @@ namespace DoubleFile
 
             tuple.Item2.First(strFile =>
                 tuple.Item3.NodeDatum.TreeMapFiles.Nodes
-                    .Where(treeNodeA => treeNodeA.Text == strFile)
-                    .Where(treeNodeA => treeNodeA is LocalTreeMapFileNode)
-                    .FirstOnlyAssert(fileNode =>
+                .Where(treeNodeA => treeNodeA.Text == strFile)
+                .Where(treeNodeA => treeNodeA is LocalTreeMapFileNode)
+                .FirstOnlyAssert(fileNode =>
             {
                 SelRectAndTooltip(fileNode, initiatorTuple.Item2, bFile: true);
                 bCloseTooltip = false;
@@ -730,10 +731,7 @@ namespace DoubleFile
                 _lsFrames = new ConcurrentBag<RenderAction>();
                 _deepNode = deepNode;
                 RecurseDrawGraph(item, rc, true);
-
-                while (_nWorkerCount > 0)
-                    Util.Block(20);
-
+                Dispatcher.PushFrame(_blockingFrame);
                 deepNodeDrawn_out = _deepNodeDrawn;
                 return _lsRenderActions.Concat(_lsFrames);
             }
@@ -1027,6 +1025,9 @@ namespace DoubleFile
 
                                 RecurseDrawGraph(param.Item1, param.Item2);
                                 Interlocked.Decrement(ref _nWorkerCount);
+
+                                if (0 == _nWorkerCount)
+                                    _blockingFrame.Continue = false;
                             },
                             Tuple.Create(child, rcChild)
                         );
@@ -1153,6 +1154,8 @@ namespace DoubleFile
                 RowStruct { internal double RowHeight; internal int ChildrenPerRow; }
             int
                 _nWorkerCount = 0;
+            DispatcherFrame
+                _blockingFrame = new DispatcherFrame(true) { Continue = true };
         }
 
         abstract class

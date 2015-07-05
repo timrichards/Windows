@@ -136,11 +136,12 @@ namespace DoubleFile
             MBoxStatic.Assert(99922, t.IndexGenerator == t.DictStrings.Count);
 
             var sortedStrings = new SortedDictionary<string, int>(t.DictStrings);
+            var nCount = sortedStrings.Count;
 
             t.DictStrings = null;
             t.DictStringsRev = null;
-            t.Strings = new string[sortedStrings.Count];
-            t.Sort = new int[sortedStrings.Count];
+            t.Strings = new string[nCount];
+            t.Sort = new int[nCount];
 
             var nIx = 0;
 

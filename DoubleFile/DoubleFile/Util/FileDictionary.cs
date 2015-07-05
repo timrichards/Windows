@@ -253,11 +253,8 @@ namespace DoubleFile
                 return;     // from inner lambda
             }
 
-            Util.WriteLine("" + DateTime.Now.Ticks);
-
             var dt = DateTime.Now;
             var nFolderScorer = 0U;
-
             var nFolderCount = (uint)(_bListingFileWithOnlyHashV1pt0 ? nFolderCount1pt0 : nFolderCount2);
 
             _DictFiles =

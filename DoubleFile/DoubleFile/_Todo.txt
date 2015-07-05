@@ -1,23 +1,20 @@
 ﻿- WithWinProgress(() => {});
 - stop the auto horizontal scrolling - solve it by selecting first column
-- not fixed: First tree view item is bold and the wrong forecolors, incl highlighted - treeview shouldn't have a selected item.
-- tree map still doesn't always show up at all (on top of slow calc etc as before) on 6/24/15
+- first tree view item is bold and the wrong forecolors, incl highlighted - treeview shouldn't have a selected item.
+- tree map doesn't always show up at all; slow calc etc
 - large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
 - wpf treemap
-- Why are some folders white? Why do some folders not say they're duplicated?
 - Todo: save volume group.\nTodo: save include y/n
-- dupe vm event alerts: static vm internal counter or static transmit
 - fix slider in tree list
 
-- Why does a folder with the same # items as subfolder have a different folder score? (i.e. no files here)
-- ToEnumerable() in FileDictionary cut 60MB off and did not take any time to make.
-- Count property is very slow on Dictionary: check usage in loops
+- string compare CompareTo()
+- string.IsNullOrWhiteSpace
 - TotalMilliseconds gotcha
+
+- What is the distribution of sums of "random" hash folder score?
+- Why does a folder with the same # items as subfolder have a different folder score? (i.e. no files here)
+- Why are some folders white? Why do some folders not say they're duplicated?
 - PresentationCore.dll: FormatException; InvalidCastException; ArgumentException (see output window)
-- string compare
-- Convert.ToInt32 etc: use Util
-- Replace First() with FirstOnlyAssert()
-- Join() vs Block() - Join() completely locks up the Dispatcher? Does Block() wait At PushFrame() like a traffic cop?
 - allow moving the window when darkened
 - New Listing File dialog flashes when system choose folder dialog is shown
 - tool tip to tree map title bar area
@@ -25,7 +22,6 @@
 - save to both V1 and latest V as 2 files (in debug); convert V1 and compare to latest: for practice in consistency
 - rollover highlight project image button text
 - Click OK on a dialog and Double File disappears behind another app. -fix example: end of save listings it comes to front.
-- string.IsNullOrWhiteSpace
 - Allow a notes field
 - Allow rescan of drive, with history difference, or allow copying values of already saved to the new one
 - Allow opening values of listing file that failed scanning
@@ -39,11 +35,12 @@
 - A 64 bit hash has 1 chance in 18 quintillion. Do collision tests: e.g. run SHA1 against MD5. Put statistics under Advanced.
 - last modified time as part of comparison; or notification: hash equal but mod times are different
 - wolfram-alpha front-end; curate; data -> query language: what state are my backups in? What are the best queries to bring forward?
-- compare the 4K vs 128K correlations to see what they caught.
+- compare the 4K vs 128K correlations to see what they caught. - quick see: nFolderCount1pt0 vs nFolderCount2
 - Add folder name to suffix title Tree List: My Documents; Files in Folder: My Documents; Folders Here: My Documents; etc.
 - Tree list is not updating from treemap selection - or maybe it's a drill down - didn't respond to tree map drill up. Did.
 - Option to show drive label and model/serial in Volume text (Nickname)
 - Good that tree does not autoupdate: extra window. Allow filter by volume type, for example.
+- dupe vm event alerts: static vm internal counter or static transmit
 - Sync To button in tree view
 - allow two different file windows to point to two different folders: each new folder window should have its own children
 - compare mode - how is this folder different from that one besides looking at the details: show missing/different file.
@@ -51,8 +48,6 @@
 - open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.
 - show messagbox title
 - Unimplemented code in DriveSerialStatic.cs which tries to scan all drives to find model # - not an issue: serial # usb is
-- Serial #? Lose USB class: drive speed matters less than the politically incorrect suggestion to turn off antivirus
-- USBDevice.SerialNumber - may just be a downstream hub
 
 - check properties that are only supposed to be set once to true: make them Set methods
 - Allow method chaining: return this instead of void
@@ -79,6 +74,13 @@
 - services, decouple: Unity frameork: rewrite in Node/Angular; C++; Linux etc. Start these with unit testing.
 - what C# features don't translate well to other languages like C++? is operator?
 - neither is nor as are reflection. as is 20x slower though. p. 123
+
+- Count property is very slow on Dictionary: check usage in loops
+- Convert.ToInt32 etc: use Util
+- Replace First() with FirstOnlyAssert()
+- Join() vs Block() - Join() completely locks up the Dispatcher? Does Block() wait At PushFrame() like a traffic cop?
+- ToEnumerable() in FileDictionary cut 60MB off and did not take any time to make.
+- nullables should be type nullable = null; not var nullable = default(type);
 
 99894
 99890 99889 99888 99887 99886 99885 99884 99883

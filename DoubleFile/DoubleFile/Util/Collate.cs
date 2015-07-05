@@ -187,7 +187,7 @@ namespace DoubleFile
                             listKeep.Add(treeNode_A);
                     }
 
-                    if (listKeep.Count > 1)
+                    if (1 < listKeep.Count)
                     {
                         foreach (var treeNode_A in listKeep)
                         {

@@ -74,8 +74,8 @@ namespace DoubleFile
 
             if (null != marr)
             {
-                if (0 !=
-                    string.Join("", marr).CompareTo(
+                if (false ==
+                    string.Join("", marr).Equals(
                     string.Join("", other.marr)))
                 {
                     return false;

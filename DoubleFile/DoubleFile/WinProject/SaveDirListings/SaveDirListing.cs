@@ -218,7 +218,7 @@ namespace DoubleFile
 
                         var lsOpenedFiles = new List<Tuple<string, ulong, SafeFileHandle, string>> { };
 
-                        while (4096 > lsOpenedFiles.Count)
+                        for (int i = 0; i < 4096; ++i)
                         {
                             Tuple<string, ulong, SafeFileHandle, string> tupleA = null;
 
@@ -428,7 +428,9 @@ namespace DoubleFile
                     return retval;
                 }
 
-                if (0 == lsBuffer.Count)
+                var nCount = lsBuffer.Count;
+
+                if (0 == nCount)
                 {
                     MBoxStatic.Assert(99932, false);
                     return retval;
@@ -440,7 +442,7 @@ namespace DoubleFile
 
                     retval = Tuple.Create(hash1pt0, hash1pt0);
 
-                    if (1 == lsBuffer.Count)
+                    if (1 == nCount)
                         return retval;
 
                     var nSize = 0;

@@ -34,7 +34,7 @@ namespace DoubleFile
             catch (FormatException)
             {
                 MBoxStatic.Assert(99935, false);
-                return default(HashTuple);
+                return null;
             }
 
             return Create(abHash);

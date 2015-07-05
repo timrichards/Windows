@@ -951,10 +951,12 @@ namespace DoubleFile
                     return false;
                 }
 
-                Interlocked.Add(ref _nWorkerCount, lsChildren.Count);
+                var nCount = lsChildren.Count;
+
+                Interlocked.Add(ref _nWorkerCount, nCount);
 
                 var anChildWidth = // Widths of the children (fraction of row width).
-                    new Double[lsChildren.Count];
+                    new Double[nCount];
 
                 var horizontalRows = (rc.Width >= rc.Height);
                 var width_A = 1d;
@@ -973,7 +975,7 @@ namespace DoubleFile
                 {
                     var childrenUsed = 0;
 
-                    for (var nextChild = 0; nextChild < lsChildren.Count; nextChild += childrenUsed)
+                    for (var nextChild = 0; nextChild < nCount; nextChild += childrenUsed)
                     {
                         rows.Add(new RowStruct
                         {
@@ -1058,10 +1060,13 @@ namespace DoubleFile
                 IReadOnlyList<LocalTreeNode> listChildren)
             {
                 childrenUsed = 0;
+
                 const double kdMinProportion = 0.4;
+                var nCount = listChildren.Count;
+
                 MBoxStatic.Assert(1302.3308m, kdMinProportion < 1);
 
-                MBoxStatic.Assert(1302.3309m, nextChild < listChildren.Count);
+                MBoxStatic.Assert(1302.3309m, nextChild < nCount);
                 MBoxStatic.Assert(1302.33101m, width >= 1d);
 
                 var nodeDatum = parent.NodeDatum;
@@ -1077,7 +1082,7 @@ namespace DoubleFile
                 double rowHeight = 0;
                 var i = 0;
 
-                for (i = nextChild; i < listChildren.Count; i++)
+                for (i = nextChild; i < nCount; i++)
                 {
                     var childSize = listChildren[i].NodeDatum.TotalLength;
                     sizeUsed += childSize;

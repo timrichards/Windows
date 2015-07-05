@@ -159,9 +159,9 @@ namespace DoubleFile
         internal void RemoveListingFile()
         {
             if (Selected().Any(lvItem => lvItem.WouldSave) &&
-                (System.Windows.MessageBoxResult.Yes !=
+                (MessageBoxResult.Yes !=
                 MBoxStatic.ShowDialog("Selected listings have not been saved. Continue?", "Remove Listing File",
-                System.Windows.MessageBoxButton.YesNo)))
+                MessageBoxButton.YesNo)))
             {
                 return;
             }
@@ -272,13 +272,13 @@ namespace DoubleFile
 
                     var sbLine = new StringBuilder(strLine);
 
-                    System.Action<string> Replace = s =>
+                    Action<string> Replace = s =>
                     {
                         var astr = ("" + sbLine).Split('\t').ToList();
 
-                        MBoxStatic.Assert(1308.9312m, astr.Count == 3);
+                        MBoxStatic.Assert(1308.9312m, 3 == astr.Count);
 
-                        while (astr.Count < 3)
+                        while (3 > astr.Count)
                             astr.Add("");
 
                         astr[2] = s;

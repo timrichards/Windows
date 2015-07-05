@@ -63,14 +63,13 @@ namespace DoubleFile
             }
 
             foreach (var worker in _cbagWorkers)
-            {
                 worker.Join();
-            }
 
             Util.WriteLine(string.Format("Completed tree in {0} seconds.",
                 ((int)(DateTime.Now - dtStart).TotalMilliseconds / 10) / 100d));
 
-            if (App.LocalExit || IsAborted)
+            if (App.LocalExit ||
+                IsAborted)
             {
                 return;
             }

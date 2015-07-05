@@ -81,7 +81,7 @@ namespace DoubleFile
                         if (bDir &&
                             (strMatchDir == strCurrentNode))
                         {
-                            if (false == listResults.IsEmpty())
+                            if (listResults.Any())
                             {
                                 StatusCallback(new SearchResults(_strSearch, _volStrings, listResults.Keys), bLast: true);
                                 listResults = new SortedDictionary<SearchResultsDir, bool>();
@@ -143,7 +143,7 @@ namespace DoubleFile
                     else
                         MBoxStatic.Assert(1307.8302m, null == searchResultDir);
 
-                    if (false == listResults.IsEmpty())
+                    if (listResults.Any())
                         StatusCallback(new SearchResults(_strSearch, _volStrings, listResults.Keys), bFirst: bFirst);
                 }
             }

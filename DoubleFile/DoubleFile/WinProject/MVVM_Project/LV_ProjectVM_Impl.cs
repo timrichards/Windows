@@ -13,10 +13,12 @@ namespace DoubleFile
         {
             get
             {
-                MainWindow.WithMainWindowA(mainWindow =>
-                    mainWindow.ShowLinks(Items.IsEmpty()));
+                bool bIsEmpty = false == Items.Any();
 
-                return Items.IsEmpty() ? Visibility.Hidden : Visibility.Visible;
+                MainWindow.WithMainWindowA(mainWindow =>
+                    mainWindow.ShowLinks(bIsEmpty));
+
+                return bIsEmpty ? Visibility.Hidden : Visibility.Visible;
             }
         }
 
@@ -170,7 +172,7 @@ namespace DoubleFile
                 .ToList()
                 .ForEach(lvItem => Items.Remove(lvItem));
 
-            _unsaved = (false == Items.IsEmpty());
+            _unsaved = Items.Any();
             SetModified();
             RaisePropertyChanged("Visible");
             WinProject.OKtoNavigate_UpdateSaveListingsLink();

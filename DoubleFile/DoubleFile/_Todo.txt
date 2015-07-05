@@ -11,6 +11,7 @@
 - string.IsNullOrWhiteSpace
 - TotalMilliseconds gotcha
 
+- why does e.g. monkey_house have a nFolderScorer of 0?
 - What is the distribution of sums of "random" hash folder score?
 - Why does a folder with the same # items as subfolder have a different folder score? (i.e. no files here)
 - Why are some folders white? Why do some folders not say they're duplicated?

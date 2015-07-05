@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Threading;
 using System.Windows;
-using System.Windows.Forms;
 
 namespace DoubleFile
 {
@@ -44,51 +42,6 @@ namespace DoubleFile
             }
         }
 
-        static internal bool IsEmpty<T>(this IEnumerable<T> source)
-        {
-            return (false == source.Any());
-        }
-
-        static internal bool IsEmpty<T>(this ICollection<T> source)
-        {
-            return (source.Count == 0);
-        }
-
-        static internal bool IsEmpty<T1, T2>(this IDictionary<T1, T2> source)
-        {
-            return (source.Count == 0);
-        }
-
-        static internal bool IsEmptyA(this System.Collections.IList source)
-        {
-            return (source.Count == 0);
-        }
-
-        static internal bool IsEmpty<T>(this IList<T> source)
-        {
-            return (source.Count == 0);
-        }
-
-        static internal bool IsEmpty(this ListView.ListViewItemCollection source)
-        {
-            return (source.Count == 0);
-        }
-
-        static internal bool IsEmpty(this ListView.SelectedListViewItemCollection source)
-        {
-            return (source.Count == 0);
-        }
-
-        static internal bool IsEmpty<T>(this Stack<T> source)
-        {
-            return (source.Count == 0);
-        }
-
-        static internal bool IsEmpty(this TreeNodeCollection source)
-        {
-            return (source.Count == 0);
-        }
-
         static internal T FirstOnlyAssert<T>(this IEnumerable<T> source)
         {
             var retVal = source.FirstOrDefault();
@@ -126,11 +79,6 @@ namespace DoubleFile
         {
             source
                 .All(item => { action(item); return true; });
-        }
-
-        static internal bool HasOnlyOne(this System.Collections.IList source)
-        {
-            return (source.Count == 1);
         }
 
         static internal string ToPrintString(this object source)

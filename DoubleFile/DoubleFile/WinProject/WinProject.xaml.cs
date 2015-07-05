@@ -14,8 +14,8 @@ namespace DoubleFile
                 App.LVprojectVM =
                 new LV_ProjectVM(App.LVprojectVM)
             {
-                SelectedOne = () => form_lv.SelectedItems.HasOnlyOne(),
-                SelectedAny = () => false == form_lv.SelectedItems.IsEmptyA(),
+                SelectedOne = () => 1 == form_lv.SelectedItems.Count,
+                SelectedAny = () => 0 < form_lv.SelectedItems.Count,
                 Selected = () => form_lv.SelectedItems.Cast<LVitem_ProjectVM>()
             };
 
@@ -45,7 +45,7 @@ namespace DoubleFile
 
             Reset();
 
-            if (false == App.LVprojectVM.Items.IsEmpty())
+            if (App.LVprojectVM.Items.Any())
             {
                 SaveListingsProcess.Go(App.LVprojectVM);
 

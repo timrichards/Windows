@@ -234,13 +234,15 @@ namespace DoubleFile
                 lsListingFiles_Check.Add(Path.GetFileName(volStrings.ListingFile));
             }
 
-            if (bUnsavedListings || lsListingFiles.IsEmpty())
+            bool bIsEmpty = false == lsListingFiles.Any();
+
+            if (bUnsavedListings || bIsEmpty)
             {
                 MBoxStatic.ShowDialog("One or more volumes in the project have not yet had directory listings saved for it." +
                     " Click an explorer link at the top of the window to start saving directory listings of your drives.",
                     "Save Project");
 
-                if (lsListingFiles.IsEmpty())
+                if (bIsEmpty)
                     return false;
             }
 

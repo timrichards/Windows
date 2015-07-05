@@ -23,7 +23,7 @@ namespace DoubleFile
                 ieStr
                 .Select(tuple => 
             {
-                if (false == this[tuple.Item2].IsEmpty())
+                if (this[tuple.Item2].Any())
                     MBoxStatic.Assert(99955, false);
 
                 return new LVitem_ProgressVM(this, new[] { tuple.Item1, tuple.Item2 });

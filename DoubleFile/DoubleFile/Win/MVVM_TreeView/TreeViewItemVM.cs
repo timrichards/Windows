@@ -109,7 +109,7 @@ namespace DoubleFile
                 _TVVM._listExpanded.Remove(tvivm);
             }
 
-            while (false == stackParents.IsEmpty())
+            while (stackParents.Any())
             {
                 parentItem = stackParents.Pop();
 

@@ -289,7 +289,7 @@ namespace DoubleFile
                                 blockUntilAllFilesOpened.Continue = false;
                         });
 
-                        bEnqueued = (false == lsFileBuffers_Enqueue.IsEmpty());
+                        bEnqueued = lsFileBuffers_Enqueue.Any();
                     }
 
                     Dispatcher.PushFrame(blockUntilAllFilesOpened);

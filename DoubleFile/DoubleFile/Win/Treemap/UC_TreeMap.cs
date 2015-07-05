@@ -390,7 +390,7 @@ namespace DoubleFile
                 }
 
                 if ((null == treeNode.Nodes) ||
-                    (treeNode.Nodes.IsEmpty()))
+                    (false == treeNode.Nodes.Any()))
                 {
                     continue;
                 }
@@ -785,7 +785,7 @@ namespace DoubleFile
                     nodeDatum.TreeMapFiles = GetFileList(item);
                 }
 
-                if ((null != item.Nodes) && (false == item.Nodes.IsEmpty()) ||
+                if ((null != item.Nodes) && item.Nodes.Any() ||
                     (bStart && (null != nodeDatum.TreeMapFiles)))
                 {
                     IEnumerable<LocalTreeNode> ieChildren = null;
@@ -946,7 +946,7 @@ namespace DoubleFile
                     .OrderByDescending(x => x.NodeDatum.TotalLength)
                     .ToList();
 
-                if (lsChildren.IsEmpty())
+                if (false == lsChildren.Any())
                 {
                     // any files are zero in length
                     return false;

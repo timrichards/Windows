@@ -35,7 +35,11 @@ namespace DoubleFile
 
         static internal void MarkItemsFrom1notIn2(LocalLV lv1, LocalLV lv2)
         {
-            if ((lv1.Items.IsEmpty()) || (lv2.Items.IsEmpty())) { return; }
+            if (false ==
+                (lv1.Items.Any()) && (lv2.Items.Any()))
+            {
+                return;
+            }
 
             var list = lv1.Items.Except(lv2.Items, new LVitemNameComparerStruct());
 

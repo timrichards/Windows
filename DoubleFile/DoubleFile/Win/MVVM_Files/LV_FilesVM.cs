@@ -27,10 +27,9 @@ namespace DoubleFile
 
             _wr.TryGetTarget(out vm);
 
-            if (null == vm)
-                return null;
-
-            return doSomethingWith(vm);
+            return (null != vm)
+                ? doSomethingWith(vm)
+                : null;
         }
         Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>
             _lastSelectedFile = null;

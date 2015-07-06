@@ -82,10 +82,10 @@ namespace DoubleFile
             return bRetVal;
         }
 
-        static internal void ForEach<T>(this IEnumerable<T> source, Action<T> action)
+        static internal void ForEach<T>(this IEnumerable<T> source, Action<T> action)           // 3 references on 7/6/15
         {
-            source
-                .All(item => { action(item); return true; });
+            foreach (var item in source)
+                action(item);
         }
 
         static internal bool HasExactly<T>(this ICollection<T> source, int nDesiredElements)    // 5 references on 7/6/15
@@ -95,6 +95,12 @@ namespace DoubleFile
 
         static internal bool HasExactly<T>(this IEnumerable<T> source, int nDesiredElements)    // 1 reference on 7/6/15
         {
+            if (source is ICollection<T>)
+            {
+                MBoxStatic.Assert(99890, false, bTraceOnly: true);
+                return ((ICollection<T>)source).HasExactly(nDesiredElements);
+            }
+
             var ie = source.GetEnumerator();
 
             for (var i = 0; i < nDesiredElements; ++i)
@@ -106,17 +112,23 @@ namespace DoubleFile
             return false == ie.MoveNext();
         }
 
-        static internal bool LocalAny<T>(this ICollection<T> source)                    // 33 references on 7/6/15
+        static internal bool LocalAny<T>(this ICollection<T> source)                    // 32 references on 7/6/15
         {
             return 0 < source.Count;
         }
 
-        static internal bool LocalAny<T>(this IEnumerable<T> source)                    // 10 references on 7/6/15
+        static internal bool LocalAny<T>(this IEnumerable<T> source)                    // 9 references on 7/6/15
         {
+            if (source is ICollection<T>)
+            {
+              //  MBoxStatic.Assert(99889, false, bTraceOnly: true);                    // Collate._ieRootNodes 7/6/15
+                return 0 < ((ICollection<T>)source).Count;
+            }
+
             return source.Any();
         }
 
-        static internal MoreThanOneEnum MoreThanOne<T>(this ICollection<T> source)      // 5 references on7/6/15
+        static internal MoreThanOneEnum MoreThanOne<T>(this ICollection<T> source)      // 5 references on 7/6/15
         {
             return
                 (0 == source.Count)
@@ -126,8 +138,14 @@ namespace DoubleFile
                 : MoreThanOneEnum.MoreThanOne;
         }
 
-        static internal MoreThanOneEnum MoreThanOne<T>(this IEnumerable<T> source)      // not used as of on 7/6/15
+        static internal MoreThanOneEnum MoreThanOne<T>(this IEnumerable<T> source)      // not used as of 7/6/15
         {
+            if (source is ICollection<T>)
+            {
+                MBoxStatic.Assert(99888, false, bTraceOnly: true);
+                return ((ICollection<T>)source).MoreThanOne();
+            }
+
             var ie = source.GetEnumerator();
 
             if (false == ie.MoveNext())

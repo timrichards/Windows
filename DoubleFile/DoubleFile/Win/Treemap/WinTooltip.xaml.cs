@@ -96,9 +96,7 @@ namespace DoubleFile
             if (_bClosingTooltip)
                 return;
 
-            if (null != _winTooltip)
-                Util.UIthread(() => _winTooltip.Tag = null);
-
+            WithWinTooltip(w => w.Tag = null);
             _bClosingTooltip = true;
 
             if ((null != _winTooltip) &&
@@ -179,6 +177,15 @@ namespace DoubleFile
 
             Left = rcTooltip.X;
             Top = rcTooltip.Y;
+        }
+
+        static void WithWinTooltip(Action<WinTooltip> doSomethingWith)
+        {
+            Util.UIthread(() =>
+            {
+                if (null != _winTooltip)
+                    doSomethingWith(_winTooltip);
+            });
         }
 
         static WinTooltip

@@ -7,7 +7,7 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
-- Look for ToArray()
+- Look for ToArray(): LocalTreeNode etc OK as array for Length.
 - string compare CompareTo()
 - string.IsNullOrWhiteSpace
 
@@ -41,6 +41,7 @@
 - Tree list is not updating from treemap selection - or maybe it's a drill down - didn't respond to tree map drill up. Did.
 - Option to show drive label and model/serial in Volume text (Nickname)
 - Good that tree does not autoupdate: extra window. Allow filter by volume type, for example.
+- Allow sorting the tree view by drive letter, etc.
 - dupe vm event alerts: static vm internal counter or static transmit
 - Sync To button in tree view
 - allow two different file windows to point to two different folders: each new folder window should have its own children
@@ -84,6 +85,8 @@
 - nullables should be type nullable = null; not var nullable = default(type);
 - TotalMilliseconds gotcha
 - look for 0 ==    > 0 <   == 0   < 0 >  Count property;   etc.
+	TheLength property is guaranteed to be a O(1) operation.
+	several types which support O(1) length lookup like ICollection<T> via a Count property.
 
 99890 99889 99888 99887 99886 99885 99884 99883
 99881

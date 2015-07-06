@@ -210,7 +210,7 @@ namespace DoubleFile
                     // The above ThreadMake will be busy pumping out new file handles while the below processes will
                     // read those files' buffers and simultaneously hash them in batches until all files have been opened.
                     while ((false == bAllFilesOpened) ||
-                        lsFileHandles.Any() ||
+                        lsFileHandles.LocalAny() ||
                         bEnqueued)
                     {
                         // Avoid spinning too quickly while waiting for new file handles.
@@ -289,7 +289,7 @@ namespace DoubleFile
                                 blockUntilAllFilesOpened.Continue = false;
                         });
 
-                        bEnqueued = lsFileBuffers_Enqueue.Any();
+                        bEnqueued = lsFileBuffers_Enqueue.LocalAny();
                     }
 
                     Dispatcher.PushFrame(blockUntilAllFilesOpened);
@@ -424,7 +424,7 @@ namespace DoubleFile
                 if ((0 == tuple.Item2) ||       // empty file
                     (null != tuple.Item3))      // bad file handle, with error string
                 {
-                    MBoxStatic.Assert(99911, false == lsBuffer.Any());
+                    MBoxStatic.Assert(99911, false == lsBuffer.LocalAny());
                     return retval;
                 }
 

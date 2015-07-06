@@ -19,7 +19,7 @@ namespace DoubleFile
 
             form_tv.DataContext = items;
 
-            if (false == items.Any())
+            if (false == items.LocalAny())
                 return;
 
             var folderDetail = LocalTV.TreeSelect_FolderDetail;

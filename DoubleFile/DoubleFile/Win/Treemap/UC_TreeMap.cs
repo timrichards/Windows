@@ -390,7 +390,7 @@ namespace DoubleFile
                 }
 
                 if ((null == treeNode.Nodes) ||
-                    (false == treeNode.Nodes.Any()))
+                    (false == treeNode.Nodes.LocalAny()))
                 {
                     continue;
                 }
@@ -785,7 +785,7 @@ namespace DoubleFile
                     nodeDatum.TreeMapFiles = GetFileList(item);
                 }
 
-                if ((null != item.Nodes) && item.Nodes.Any() ||
+                if ((null != item.Nodes) && item.Nodes.LocalAny() ||
                     (bStart && (null != nodeDatum.TreeMapFiles)))
                 {
                     IEnumerable<LocalTreeNode> ieChildren = null;

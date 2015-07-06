@@ -36,7 +36,7 @@ namespace DoubleFile
         static internal void MarkItemsFrom1notIn2(LocalLV lv1, LocalLV lv2)
         {
             if (false ==
-                (lv1.Items.Any()) && (lv2.Items.Any()))
+                (lv1.Items.LocalAny()) && (lv2.Items.LocalAny()))
             {
                 return;
             }

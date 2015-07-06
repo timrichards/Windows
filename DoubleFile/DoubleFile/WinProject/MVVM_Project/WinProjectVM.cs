@@ -23,7 +23,7 @@ namespace DoubleFile
             _lvVM = lvVM;
 
             Icmd_OpenProject = new RelayCommand(OpenProject);
-            Icmd_SaveProject = new RelayCommand(SaveProject, () => _lvVM.Items.Any());
+            Icmd_SaveProject = new RelayCommand(SaveProject, () => _lvVM.Items.LocalAny());
 
             Icmd_NewListingFile = new RelayCommand(NewListingFile);
             Icmd_OpenListingFile = new RelayCommand(OpenListingFile);

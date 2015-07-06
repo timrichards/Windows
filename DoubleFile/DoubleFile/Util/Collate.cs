@@ -43,7 +43,7 @@ namespace DoubleFile
 
         static internal void InsertSizeMarkers(List<LocalLVitem> listLVitems)
         {
-            if (false == listLVitems.Any())
+            if (false == listLVitems.LocalAny())
                 return;
 
             var bUnique = (null != listLVitems[0].LocalTreeNode);
@@ -75,13 +75,13 @@ namespace DoubleFile
             double nProgressItem = 0;
             const double nTotalProgressItems = 6;
 
-            if (false == _ieRootNodes.Any())
+            if (false == _ieRootNodes.LocalAny())
             {
                 MBoxStatic.Assert(1305.6314m, false);
                 return;
             }
 
-            if (_lsLVignore.Any())
+            if (_lsLVignore.LocalAny())
             {
                 var dtStart = DateTime.Now;
                 var nMaxLevel = _lsLVignore.Max(i => ("" + i.SubItems[1].Text).ToInt() - 1);
@@ -132,7 +132,7 @@ namespace DoubleFile
                     dictIgnoreMark.Add(treeNode, kvp.Value);
                     lsTreeNodes.Remove(treeNode);
 
-                    if (false == lsTreeNodes.Any())
+                    if (false == lsTreeNodes.LocalAny())
                         dictNodes.Remove(nodeDatum.Key);
                 }
             }
@@ -376,7 +376,7 @@ namespace DoubleFile
 
             var listSameVol = new List<LocalTreeNode>();
 
-            if (_ieRootNodes.Any())
+            if (_ieRootNodes.LocalAny())
             {
                 var nCount = CountNodes.Go(_ieRootNodes);
                 var nCount_A = new AddTreeToList(_lsTreeNodes, listSameVol).Go(_ieRootNodes).Count;
@@ -489,7 +489,7 @@ namespace DoubleFile
             }
 
             if ((null != listClones) &&
-                listClones.Any() &&
+                listClones.LocalAny() &&
                 (null == rootClone))
             {
                 rootClone = treeNode;
@@ -591,7 +591,7 @@ namespace DoubleFile
                 _dictIgnoreNodes.Add(treeNode, lvItem);
 
                 if ((null != treeNode.Nodes) &&
-                    treeNode.Nodes.Any())
+                    treeNode.Nodes.LocalAny())
                 {
                     IgnoreNodeAndSubnodes(lvItem, treeNode.Nodes[0], bContinue: true);
                 }
@@ -625,7 +625,7 @@ namespace DoubleFile
                 }
 
                 if ((null != treeNode.Nodes) &&
-                    treeNode.Nodes.Any())
+                    treeNode.Nodes.LocalAny())
                 {
                     IgnoreNodeQuery(sbMatch, nMaxLevel, treeNode.Nodes[0]);
                 }

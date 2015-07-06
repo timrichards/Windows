@@ -25,7 +25,7 @@ namespace DoubleFile
         internal void OpenProject()
         {
             var bClearItems =
-                (false == _lvVM.Items.Any()) ||
+                (false == _lvVM.Items.LocalAny()) ||
                 (false == (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)));
 
             var strTitle = (bClearItems ? "Open" : "Append") + " Project";

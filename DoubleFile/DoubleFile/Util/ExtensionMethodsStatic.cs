@@ -88,7 +88,12 @@ namespace DoubleFile
                 .All(item => { action(item); return true; });
         }
 
-        static internal bool HasExactly<T>(this IEnumerable<T> source, int nDesiredElements)
+        static internal bool HasExactly<T>(this ICollection<T> source, int nDesiredElements)    // 5 references on 7/6/15
+        {
+            return source.Count == nDesiredElements;
+        }
+
+        static internal bool HasExactly<T>(this IEnumerable<T> source, int nDesiredElements)    // 1 reference on 7/6/15
         {
             var ie = source.GetEnumerator();
 
@@ -101,7 +106,27 @@ namespace DoubleFile
             return false == ie.MoveNext();
         }
 
-        static internal MoreThanOneEnum MoreThanOne<T>(this IEnumerable<T> source)
+        static internal bool LocalAny<T>(this ICollection<T> source)                    // 33 references on 7/6/15
+        {
+            return 0 < source.Count;
+        }
+
+        static internal bool LocalAny<T>(this IEnumerable<T> source)                    // 10 references on 7/6/15
+        {
+            return source.Any();
+        }
+
+        static internal MoreThanOneEnum MoreThanOne<T>(this ICollection<T> source)      // 5 references on7/6/15
+        {
+            return
+                (0 == source.Count)
+                ? MoreThanOneEnum.Zero
+                : (1 == source.Count)
+                ? MoreThanOneEnum.One
+                : MoreThanOneEnum.MoreThanOne;
+        }
+
+        static internal MoreThanOneEnum MoreThanOne<T>(this IEnumerable<T> source)      // not used as of on 7/6/15
         {
             var ie = source.GetEnumerator();
 

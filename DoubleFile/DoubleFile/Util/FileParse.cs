@@ -449,7 +449,7 @@ namespace DoubleFile
                 .Take(1)
                 .Select(strLine => strLine.Split('\t'))
                 .Select(asLine => ((3 < asLine.Length) && (ksHeader == asLine[2])))
-                .Any())
+                .LocalAny())
             {
                 return retVal;
             }

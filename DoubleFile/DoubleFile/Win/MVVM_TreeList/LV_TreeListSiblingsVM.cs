@@ -123,7 +123,7 @@ namespace DoubleFile
                 : null;
 
             if ((parentNode == _treeNode) &&
-                Items.Any())
+                Items.LocalAny())
             {
                 return false;
             }

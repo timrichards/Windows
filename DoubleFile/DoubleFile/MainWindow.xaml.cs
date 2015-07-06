@@ -112,7 +112,7 @@ namespace DoubleFile
         {
             if (bHidden)
             {
-                if (MenuLinkGroups.Any())
+                if (MenuLinkGroups.LocalAny())
                 {
                     while (false == MenuLinkGroups.HasExactly(1))
                         MenuLinkGroups.RemoveAt(1);

@@ -126,9 +126,9 @@ namespace DoubleFile
                     {
                         lsFilesInDir.Add(strLine);
                         lsLineNumbers.RemoveAt(0);
-                        nMatchLine = lsLineNumbers.Any() ? lsLineNumbers[0] : -1;
+                        nMatchLine = lsLineNumbers.LocalAny() ? lsLineNumbers[0] : -1;
                     }
-                    else if (lsFilesInDir.Any() &&
+                    else if (lsFilesInDir.LocalAny() &&
                         strLine.StartsWith(FileParse.ksLineType_Directory))
                     {
                         foreach (var strFileLine in lsFilesInDir)
@@ -148,7 +148,7 @@ namespace DoubleFile
 
                         lsFilesInDir.Clear();
 
-                        if (false == lsLineNumbers.Any())
+                        if (false == lsLineNumbers.LocalAny())
                             break;
                     }
                 }

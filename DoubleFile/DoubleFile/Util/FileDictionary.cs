@@ -82,7 +82,7 @@ namespace DoubleFile
                 : new[] { 0U, 0U, 0U };     // empty file
         }
 
-        internal IEnumerable<DuplicateStruct> GetDuplicates(string[] asFileLine)
+        internal IReadOnlyList<DuplicateStruct> GetDuplicates(string[] asFileLine)
         {
             var nHashColumn =
                 _bListingFileWithOnlyHashV1pt0
@@ -108,7 +108,8 @@ namespace DoubleFile
             {
                 LVitemProjectVM = _DictItemNumberToLV[GetLVitemProjectVM(lookup)],
                 LineNumber = GetLineNumber(lookup)
-            });
+            })
+                .ToList();
         }
 
         internal FileDictionary DoThreadFactory(LV_ProjectVM lvProjectVM, WeakReference<ICreateFileDictStatus> callbackWR)

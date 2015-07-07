@@ -43,11 +43,12 @@ namespace DoubleFile
 
         static internal void InsertSizeMarkers(List<LocalLVitem> listLVitems)
         {
-            if (0 == listLVitems.Count)
+            var nCount = listLVitems.Count;
+
+            if (0 == nCount)
                 return;
 
             var bUnique = (null != listLVitems[0].LocalTreeNode);
-            var nCount = listLVitems.Count;
             var nInterval = (nCount < 100) ? 10 : (nCount < 1000) ? 25 : 50;
 
             InsertSizeMarkerStatic.Go(listLVitems, nCount - 1, bUnique, bAdd: true);
@@ -488,7 +489,7 @@ namespace DoubleFile
             }
 
             if ((null != listClones) &&
-                0 < listClones.Count &&
+                (0 < listClones.Count) &&
                 (null == rootClone))
             {
                 rootClone = treeNode;

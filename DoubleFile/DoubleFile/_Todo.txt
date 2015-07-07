@@ -7,6 +7,7 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- check Count usage in loops
 - replace .Cast with (ICollection<>)
 - replace IEnumerable with ICollection where possible
 - Look for ToArray(): LocalTreeNode etc OK as array for Length.
@@ -20,6 +21,7 @@
 - allow moving the window when darkened
 - New Listing File dialog flashes when system choose folder dialog is shown
 - tool tip to tree map title bar area
+- go to button in tree map
 - regex search
 - save to both V1 and latest V as 2 files (in debug); convert V1 and compare to latest: for practice in consistency
 - rollover highlight project image button text
@@ -41,11 +43,11 @@
 - Add folder name to suffix title Tree List: My Documents; Files in Folder: My Documents; Folders Here: My Documents; etc.
 - Tree list is not updating from treemap selection - or maybe it's a drill down - didn't respond to tree map drill up. Did.
 - Option to show drive label and model/serial in Volume text (Nickname)
-- Good that tree does not autoupdate: extra window. Allow filter by volume type, for example.
 - Allow sorting the tree view by drive letter, etc.
+- Good that tree does not autoupdate: extra window. Allow filter by volume type, for example.
+- allow two different file windows to point to two different folders: each new folder window should have its own children
 - dupe vm event alerts: static vm internal counter or static transmit
 - Sync To button in tree view
-- allow two different file windows to point to two different folders: each new folder window should have its own children
 - compare mode - how is this folder different from that one besides looking at the details: show missing/different file.
 - Filtering user control header for tree list; tree view; files; search; duplicates
 - open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.
@@ -67,7 +69,6 @@
 - clones lvs; and all dupe files lv?
 - allow user toggle showing free space
 - UX tree map free space
-- go to button in tree map
 - resource all stringets; en-us etc.
 - auto layout? save layout?
 - Apply async/await

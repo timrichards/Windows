@@ -56,7 +56,7 @@ namespace DoubleFile
                     .Skip(3)                            // makes this an LV line: knColLengthLV
                     .ToArray();
 
-                var nDuplicates = (null != lsDuplicates) ? lsDuplicates.Count() - 1 : 0;
+                var nDuplicates = (null != lsDuplicates) ? lsDuplicates.Count - 1 : 0;
                 var lvItem = new LVitem_FilesVM() { DuplicatesRaw = nDuplicates, FileLine = asFileLine };
 
                 if (0 < nDuplicates)

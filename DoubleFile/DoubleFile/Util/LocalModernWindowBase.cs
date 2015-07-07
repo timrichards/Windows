@@ -82,7 +82,7 @@ namespace DoubleFile
                         if (bCanFlashWindow)
                             Win32Screen.FlashWindow((Window)topWindow);
 
-                        return;
+                        return;     // from lamnda
                     }
                 }
 

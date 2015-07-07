@@ -448,7 +448,8 @@ namespace DoubleFile
                 File.ReadLines(strFile)
                 .Take(1)
                 .Select(strLine => strLine.Split('\t'))
-                .Any(asLine => ((3 < asLine.Length) && (ksHeader == asLine[2]))))
+                .Select(asLine => ((3 < asLine.Length) && (ksHeader == asLine[2])))
+                .Any())
             {
                 return retVal;
             }

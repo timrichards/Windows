@@ -153,7 +153,7 @@ namespace DoubleFile
 
                                 var strError = tuple.Item2.TryGetValue(strFile);
 
-                                if (false == string.IsNullOrEmpty(strError))
+                                if (false == string.IsNullOrWhiteSpace(strError))
                                 {
                                     strError2_File += " " + strError;
                                     strError2_File = strError2_File.TrimStart();

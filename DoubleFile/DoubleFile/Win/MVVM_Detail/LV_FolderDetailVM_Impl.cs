@@ -36,13 +36,13 @@ namespace DoubleFile
                 var strFG_Description = UtilColor.Description[tuple.Item2.ForeColor];
                 var strBG_Description = UtilColor.Description[tuple.Item2.BackColor];
 
-                if (false == string.IsNullOrEmpty(strFG_Description))
+                if (false == string.IsNullOrWhiteSpace(strFG_Description))
                 {
                     ieDetail = ieDetail.Concat(new[]
                     { new LVitem_FolderDetailVM(new[] { "", strFG_Description }) { Foreground = tuple.Item2.Foreground } });
                 }
 
-                if (false == string.IsNullOrEmpty(strBG_Description))
+                if (false == string.IsNullOrWhiteSpace(strBG_Description))
                 {
                     ieDetail = ieDetail.Concat(new[]
                     { new LVitem_FolderDetailVM(new[] { "", strBG_Description }) { Background = tuple.Item2.Background } });

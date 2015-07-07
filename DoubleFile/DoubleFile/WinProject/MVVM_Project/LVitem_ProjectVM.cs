@@ -72,7 +72,7 @@ namespace DoubleFile
 
         static internal string RootText(string strNickname, string strSourcePath)
         {
-            if (string.IsNullOrEmpty(strSourcePath))
+            if (string.IsNullOrWhiteSpace(strSourcePath))
                 return strNickname;
 
             if (("" + strNickname).EndsWith(strSourcePath))

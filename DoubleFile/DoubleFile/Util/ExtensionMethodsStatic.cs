@@ -84,7 +84,7 @@ namespace DoubleFile
             if (source is ICollection<T>)
             {
                 MBoxStatic.Assert(99890, false, bTraceOnly: true);
-                return ((ICollection<T>)source).HasExactly(nDesiredElements);
+                return ((ICollection<T>)source).Count == nDesiredElements;
             }
 
             var ie = source.GetEnumerator();    // GetEnumerator() is only used here in ExtensionMethodsStatic 3x 7/6/15

@@ -9,7 +9,7 @@ namespace DoubleFile
     {
         internal LV_FileDetailVM()
         {
-            Icmd_Copy = new RelayCommand(Copy, () => false == string.IsNullOrEmpty(LocalPath));
+            Icmd_Copy = new RelayCommand(Copy, () => false == string.IsNullOrWhiteSpace(LocalPath));
             _lsDisposable.Add(WinDuplicatesVM.UpdateFileDetail.Subscribe(WinDuplicatesVM_UpdateFileDetail));
             _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.Subscribe(LV_FilesVM_SelectedFileChanged));
 

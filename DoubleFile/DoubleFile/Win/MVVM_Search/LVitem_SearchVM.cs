@@ -19,7 +19,7 @@ namespace DoubleFile
                 if (null != Directory)
                 {
                     var strFile = 
-                        (false == string.IsNullOrEmpty(Filename))
+                        (false == string.IsNullOrWhiteSpace(Filename))
                         ? Filename + " in "
                         : "";
 

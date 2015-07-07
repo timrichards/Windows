@@ -11,7 +11,7 @@ namespace DoubleFile
             var strLocalPath =
                 (null != treeNode)
                 ? treeNode.FullPath +
-                    ((false == string.IsNullOrEmpty(strFile))
+                    ((false == string.IsNullOrWhiteSpace(strFile))
                     ? '\\' + strFile
                     : "")
                 : null;

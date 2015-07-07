@@ -72,7 +72,7 @@ namespace DoubleFile
                 });
             });
 
-            //if (string.IsNullOrEmpty(strDriveModel))
+            //if (string.IsNullOrWhiteSpace(strDriveModel))
             //{
             //    var listDrives = GetAll();
 

@@ -56,7 +56,7 @@ namespace DoubleFile
 
         internal bool AlreadyInProject(string strFilename, LVitem_ProjectVM lvCurrentItem = null, bool bQuiet = false)
         {
-            if (string.IsNullOrEmpty(strFilename))
+            if (string.IsNullOrWhiteSpace(strFilename))
                 return false;
 
             var s = strFilename.ToLower();
@@ -217,7 +217,7 @@ namespace DoubleFile
 
         internal bool ContainsUnsavedPath(string strPath)
         {
-            if (string.IsNullOrEmpty(strPath))
+            if (string.IsNullOrWhiteSpace(strPath))
                 return false;
 
             var s = strPath.ToLower();

@@ -36,13 +36,17 @@ namespace DoubleFile
         static internal string
             DecodeAttributes(string strAttr)
         {
-            var nAttr = default(FileAttributes);
+            FileAttributes nAttr = 0;
 
             try
             {
-                nAttr = (FileAttributes)Convert.ToInt32(strAttr, 16);
+                nAttr = (FileAttributes)Convert.ToInt32(strAttr, /* from base */ 16);
             }
             catch (ArgumentException)
+            {
+                MBoxStatic.Assert(99933, false);
+            }
+            catch (FormatException)
             {
                 MBoxStatic.Assert(99933, false);
             }

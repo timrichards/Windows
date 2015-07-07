@@ -30,14 +30,19 @@ namespace DoubleFile
             {
                 for (var i = 0; i < 32; i += 2)
                     abHash[15 - (i >> 1)] = Convert.ToByte(strHash.Substring(i, 2), 16);
+
+                return Create(abHash);
+            }
+            catch (ArgumentException)
+            {
+                MBoxStatic.Assert(99935, false);
             }
             catch (FormatException)
             {
                 MBoxStatic.Assert(99935, false);
-                return null;
             }
 
-            return Create(abHash);
+            return null;
         }
 
         static HashTuple Create(byte[] abHash)

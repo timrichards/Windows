@@ -419,7 +419,7 @@ namespace DoubleFile
             Tuple<HashTuple, HashTuple>
                 HashFile(Tuple<string, ulong, string, IReadOnlyList<byte[]>> tuple)
             {
-                var retval = Tuple.Create(default(HashTuple), default(HashTuple));
+                var retval = Tuple.Create((HashTuple)null, (HashTuple)null);
                 var lsBuffer = tuple.Item4;
                 var nCount = lsBuffer.Count;
 

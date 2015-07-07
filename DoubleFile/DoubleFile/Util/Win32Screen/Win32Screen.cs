@@ -124,17 +124,28 @@ namespace DoubleFile
 
         static internal void FlashWindow(Window window, bool Once = false)
         {
-            var fInfo =
-                new NativeMethods.FLASHWINFO
+            try
             {
-                hwnd = (NativeWindow)window ?? (Window)App.LocalMainWindow,
-                dwFlags = NativeMethods.FLASHW_ALL,
-                uCount = (uint)(Once ? 1 : 7),
-                dwTimeout = 75,
-                cbSize = Convert.ToUInt32(Marshal.SizeOf(typeof(NativeMethods.FLASHWINFO)))
-            };
+                var fInfo =
+                    new NativeMethods.FLASHWINFO
+                {
+                    hwnd = (NativeWindow)window ?? (Window)App.LocalMainWindow,
+                    dwFlags = NativeMethods.FLASHW_ALL,
+                    uCount = (uint)(Once ? 1 : 7),
+                    dwTimeout = 75,
+                    cbSize = Convert.ToUInt32(Marshal.SizeOf(typeof(NativeMethods.FLASHWINFO)))
+                };
 
-            Util.UIthread(() => NativeMethods.FlashWindowEx(ref fInfo));
+                Util.UIthread(() => NativeMethods.FlashWindowEx(ref fInfo));
+            }
+            catch (ArgumentException)
+            {
+                MBoxStatic.Assert(99894, false);
+            }
+            catch (FormatException)
+            {
+                MBoxStatic.Assert(99894, false);
+            }
         }
     }
 }

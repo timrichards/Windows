@@ -7,6 +7,7 @@ namespace DoubleFile
     abstract class ListViewVM_Base<T> : ListViewVM_Base
         where T : ListViewItemVM_Base
     {
+        // covariant cast of each el to iterator type so can't be collectively cast to ICollection<T> even with .Cast<T>
         internal Func<IEnumerable<T>>
             Selected = () => { DesignModeOK(); return new T[] { }; };
         internal IEnumerable<T>

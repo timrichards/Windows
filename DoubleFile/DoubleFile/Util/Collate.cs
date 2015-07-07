@@ -13,7 +13,7 @@ namespace DoubleFile
             LocalLV lvClones,
             LocalLV lvSameVol,
             LocalLV lvUnique,
-            IEnumerable<LocalTreeNode> ieRootNodes,
+            ICollection<LocalTreeNode> icRootNodes,
             List<LocalTreeNode> lsTreeNodes,
             List<LocalLVitem> lsLVignore,
             bool bLoose)
@@ -23,7 +23,7 @@ namespace DoubleFile
             _lvClones = lvClones;
             _lvSameVol = lvSameVol;
             _lvUnique = lvUnique;
-            _ieRootNodes = ieRootNodes;
+            _icRootNodes = icRootNodes;
             _lsTreeNodes = lsTreeNodes;
             _lsLVignore = lsLVignore;
             _bLoose = bLoose;
@@ -75,7 +75,7 @@ namespace DoubleFile
             double nProgressItem = 0;
             const double nTotalProgressItems = 6;
 
-            if (false == _ieRootNodes.LocalAny())
+            if (0 == _icRootNodes.Count)
             {
                 MBoxStatic.Assert(1305.6314m, false);
                 return;
@@ -90,7 +90,7 @@ namespace DoubleFile
                 foreach (var lvItem in _lsLVignore)
                     sbMatch.AppendLine(lvItem.Text);
 
-                IgnoreNodeQuery(("" + sbMatch).ToLower(), nMaxLevel, _ieRootNodes.ElementAt(0));
+                IgnoreNodeQuery(("" + sbMatch).ToLower(), nMaxLevel, _icRootNodes.ElementAt(0));
                 Util.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds."); dtStart = DateTime.Now;
             }
 
@@ -227,10 +227,10 @@ namespace DoubleFile
 
             var dictClones = new SortedDictionary<FolderKeyTuple, List<LocalTreeNode>>();
 
-            nProgressDenominator += _ieRootNodes.Count();
+            nProgressDenominator += _icRootNodes.Count;
             ++nProgressItem;
 
-            foreach (var treeNode in _ieRootNodes)
+            foreach (var treeNode in _icRootNodes)
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
                 
@@ -376,10 +376,10 @@ namespace DoubleFile
 
             var listSameVol = new List<LocalTreeNode>();
 
-            if (_ieRootNodes.LocalAny())
+            if (0 < _icRootNodes.Count)
             {
-                var nCount = CountNodes.Go(_ieRootNodes);
-                var nCount_A = new AddTreeToList(_lsTreeNodes, listSameVol).Go(_ieRootNodes).Count;
+                var nCount = CountNodes.Go(_icRootNodes);
+                var nCount_A = new AddTreeToList(_lsTreeNodes, listSameVol).Go(_icRootNodes).Count;
 
                 MBoxStatic.Assert(1305.6325m, nCount_A == nCount);
                 MBoxStatic.Assert(1305.6326m, _lsTreeNodes.Count == nCount);
@@ -660,7 +660,7 @@ namespace DoubleFile
         readonly LocalLV _lvClones = null;
         readonly LocalLV _lvSameVol = null;
         readonly LocalLV _lvUnique = null;
-        readonly IEnumerable<LocalTreeNode> _ieRootNodes = null;
+        readonly ICollection<LocalTreeNode> _icRootNodes = null;
         readonly List<LocalTreeNode> _lsTreeNodes = null;
         readonly List<LocalLVitem> _lsLVignore = null;
 

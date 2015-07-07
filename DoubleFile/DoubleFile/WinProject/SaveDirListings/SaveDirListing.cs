@@ -421,16 +421,16 @@ namespace DoubleFile
                 var retval = Tuple.Create(default(HashTuple), default(HashTuple));
                 var lsBuffer = tuple.Item4;
 
+                var nCount = lsBuffer.Count;
+
                 if ((0 == tuple.Item2) ||       // empty file
                     (null != tuple.Item3))      // bad file handle, with error string
                 {
-                    MBoxStatic.Assert(99911, false == lsBuffer.LocalAny());
+                    MBoxStatic.Assert(99911, 0 == nCount);
                     return retval;
                 }
 
-                var ieBuffer = lsBuffer.GetEnumerator();
-
-                if (false == ieBuffer.MoveNext())       // 0
+                if (0 == nCount)
                 {
                     MBoxStatic.Assert(99932, false);
                     return retval;
@@ -442,14 +442,13 @@ namespace DoubleFile
 
                     retval = Tuple.Create(hash1pt0, hash1pt0);
 
-                    if (false == ieBuffer.MoveNext())
-                        return retval;                  // 1
+                    if (1 == nCount)
+                        return retval;
 
-                    var nSize = 0;                      // > 1
+                    var nSize = 0;
 
-                    do
-                        nSize += ieBuffer.Current.Length;
-                    while (ieBuffer.MoveNext());
+                    foreach (var buffer in lsBuffer.Skip(1))
+                        nSize += buffer.Length;
 
                     MBoxStatic.Assert(99909, 1048576 >= nSize);
 

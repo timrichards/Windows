@@ -30,7 +30,7 @@ namespace DoubleFile
             (
                 new ManagementScope(@"\\.\ROOT\cimv2"),
                 new ObjectQuery("SELECT * FROM Win32_LogicalDisk WHERE DeviceID='" + strDriveLetter + "'")
-            )
+            )   // can't cast to ICollection<ManagementObject>
                 .Get().Cast<ManagementObject>().FirstOnlyAssert(logicalDisk =>
             {
                 logicalDisk
@@ -40,7 +40,7 @@ namespace DoubleFile
                 {
                     partition
                         .GetRelated("Win32_DiskDrive")
-                        .Cast<ManagementObject>()
+                        .Cast<ManagementObject>()   // can't cast to ICollection<ManagementObject>
                         .FirstOnlyAssert(diskDrive =>
                     {
                         try { nSize = (ulong?)diskDrive["Size"]; }
@@ -61,7 +61,7 @@ namespace DoubleFile
                         {
                             diskDrive
                                 .GetRelated("Win32_PhysicalMedia")
-                                .Cast<ManagementObject>()
+                                .Cast<ManagementObject>()   // can't cast to ICollection<ManagementObject>
                                 .FirstOnlyAssert(diskMedia =>
                             {
                                 try { strDriveSerial = diskMedia["SerialNumber"].ToPrintString(); }
@@ -129,7 +129,7 @@ namespace DoubleFile
                 new ObjectQuery("SELECT * FROM Win32_DiskDrive")
             )
                 .Get()
-                .Cast<ManagementObject>()
+                .Cast<ManagementObject>()   // can't cast to ICollection<ManagementObject>
                 .ForEach(diskDrive =>
             {
                 string strDriveModel = null;
@@ -150,7 +150,7 @@ namespace DoubleFile
                 {
                     diskDrive
                         .GetRelated("Win32_PhysicalMedia")
-                        .Cast<ManagementObject>()
+                        .Cast<ManagementObject>()   // can't cast to ICollection<ManagementObject>
                         .FirstOnlyAssert(diskMedia =>
                     {
                         try { strDriveSerial = diskMedia["SerialNumber"].ToPrintString(); } catch (ManagementException) {}

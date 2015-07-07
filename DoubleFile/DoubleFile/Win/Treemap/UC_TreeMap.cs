@@ -867,8 +867,7 @@ namespace DoubleFile
                         parent = item;
 
                         ieChildren =
-                            item.Nodes
-                            .Cast<LocalTreeNode>()
+                            ((ICollection<LocalTreeNode>) item.Nodes)
                             .Where(t => 0 < t.NodeDatum.TotalLength);
                     }
 

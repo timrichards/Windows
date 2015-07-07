@@ -52,9 +52,8 @@ namespace DoubleFile
         static internal T FirstOnlyAssert<T>(this IEnumerable<T> source)
         {
             var retVal = source.FirstOrDefault();
-
 #if (DEBUG)
-            var enumerator = source.GetEnumerator();
+            var enumerator = source.GetEnumerator();    // GetEnumerator() is only used here in ExtensionMethodsStatic 5x 7/6/15
 
             if (enumerator.MoveNext())
                 MBoxStatic.Assert(99903, false == enumerator.MoveNext());
@@ -72,9 +71,8 @@ namespace DoubleFile
                 bRetVal = true;
                 return true;    // from lambda; NOT a no-op: has to be a non-default value.
             });
-
 #if (DEBUG)
-            var enumerator = source.GetEnumerator();
+            var enumerator = source.GetEnumerator();    // GetEnumerator() is only used here in ExtensionMethodsStatic 5x 7/6/15
 
             if (enumerator.MoveNext())
                 MBoxStatic.Assert(99953, false == enumerator.MoveNext());
@@ -101,7 +99,7 @@ namespace DoubleFile
                 return ((ICollection<T>)source).HasExactly(nDesiredElements);
             }
 
-            var ie = source.GetEnumerator();
+            var ie = source.GetEnumerator();    // GetEnumerator() is only used here in ExtensionMethodsStatic 5x 7/6/15
 
             for (var i = 0; i < nDesiredElements; ++i)
             {
@@ -121,7 +119,7 @@ namespace DoubleFile
         {
             if (source is ICollection<T>)
             {
-              //  MBoxStatic.Assert(99889, false, bTraceOnly: true);                    // Collate._ieRootNodes 7/6/15
+                MBoxStatic.Assert(99889, false, bTraceOnly: true);
                 return 0 < ((ICollection<T>)source).Count;
             }
 
@@ -146,7 +144,7 @@ namespace DoubleFile
                 return ((ICollection<T>)source).MoreThanOne();
             }
 
-            var ie = source.GetEnumerator();
+            var ie = source.GetEnumerator();    // GetEnumerator() is only used here in ExtensionMethodsStatic 5x 7/6/15
 
             if (false == ie.MoveNext())
                 return MoreThanOneEnum.Zero;
@@ -159,14 +157,15 @@ namespace DoubleFile
 
         static internal string ToPrintString(this object source)
         {
-            if (source == null) return null;
+            if (null == source)
+                return null;
 
             var s =
                 string.Join("",
-                    ("" + source).Where(c => Char.IsControl(c) == false))
+                ("" + source).Where(c => Char.IsControl(c) == false))
                 .Trim();
 
-            return (s.Length > 0) ? s : null;
+            return (0 < s.Length) ? s : null;
         }
 
         static internal T2 TryGetValue<T1, T2>(this IReadOnlyDictionary<T1, T2> dict, T1 key) where T2 : class
@@ -187,7 +186,7 @@ namespace DoubleFile
 
         static internal DateTime ToDateTime(this string str)
         {
-            DateTime nRet = DateTime.MinValue;
+            var nRet = DateTime.MinValue;
 
             if (false == DateTime.TryParse(str, out nRet))
                 MBoxStatic.Assert(99925, false);
@@ -197,7 +196,7 @@ namespace DoubleFile
 
         static internal int ToInt(this string str)
         {
-            int nRet = 0;
+            var nRet = 0;
 
             if (false == int.TryParse(str, out nRet))
                 MBoxStatic.Assert(99930, false);
@@ -207,7 +206,7 @@ namespace DoubleFile
 
         static internal ulong ToUlong(this string str)
         {
-            ulong nRet = 0;
+            var nRet = 0UL;
 
             if (false == ulong.TryParse(str, out nRet))
                 MBoxStatic.Assert(99929, false);

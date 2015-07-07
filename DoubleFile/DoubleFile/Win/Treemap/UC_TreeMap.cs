@@ -390,7 +390,7 @@ namespace DoubleFile
                 }
 
                 if ((null == treeNode.Nodes) ||
-                    (false == treeNode.Nodes.LocalAny()))
+                    (0 == treeNode.Nodes.Length))
                 {
                     continue;
                 }
@@ -785,7 +785,7 @@ namespace DoubleFile
                     nodeDatum.TreeMapFiles = GetFileList(item);
                 }
 
-                if ((null != item.Nodes) && item.Nodes.LocalAny() ||
+                if ((null != item.Nodes) && (0 < item.Nodes.Length) ||
                     (bStart && (null != nodeDatum.TreeMapFiles)))
                 {
                     IEnumerable<LocalTreeNode> ieChildren = null;
@@ -867,7 +867,7 @@ namespace DoubleFile
                         parent = item;
 
                         ieChildren =
-                            ((ICollection<LocalTreeNode>) item.Nodes)
+                            item.Nodes
                             .Where(t => 0 < t.NodeDatum.TotalLength);
                     }
 

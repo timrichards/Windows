@@ -131,11 +131,11 @@ namespace DoubleFile
                 fs.WriteLine(LVitemProjectVM.SourcePath);
 
                 // strModel and strSerial are not as throwaway as they look: this file will be read in when done
-                string strModel = LVitemProjectVM.DriveModel;
-                string strSerial = LVitemProjectVM.DriveSerial;
+                var strModel = LVitemProjectVM.DriveModel;
+                var strSerial = LVitemProjectVM.DriveSerial;
 
                 // at minimum get the drive size
-                ulong? nSize = DriveSerialStatic.Get(LVitemProjectVM.SourcePath, ref strModel, ref strSerial);
+                var nSize = DriveSerialStatic.Get(LVitemProjectVM.SourcePath, ref strModel, ref strSerial);
 
                 fs.WriteLine(ksDrive01);
 
@@ -210,7 +210,7 @@ namespace DoubleFile
                     // The above ThreadMake will be busy pumping out new file handles while the below processes will
                     // read those files' buffers and simultaneously hash them in batches until all files have been opened.
                     while ((false == bAllFilesOpened) ||
-                        lsFileHandles.LocalAny() ||
+                        0 < lsFileHandles.Count ||
                         bEnqueued)
                     {
                         // Avoid spinning too quickly while waiting for new file handles.
@@ -220,7 +220,8 @@ namespace DoubleFile
 
                         for (int i = 0; i < 4096; ++i)
                         {
-                            Tuple<string, ulong, SafeFileHandle, string> tupleA = null;
+                            Tuple<string, ulong, SafeFileHandle, string>
+                                tupleA = null;
 
                             lsFileHandles.TryTake(out tupleA);
 
@@ -230,8 +231,8 @@ namespace DoubleFile
                             lsOpenedFiles.Add(tupleA);
                         }
 
-                        var lsFileBuffers_Enqueue =
-                            default(IEnumerable<Tuple<string, ulong, string, IReadOnlyList<byte[]>>>);
+                        IReadOnlyList<Tuple<string, ulong, string, IReadOnlyList<byte[]>>>
+                            lsFileBuffers_Enqueue = null;
 
                         try
                         {
@@ -289,7 +290,7 @@ namespace DoubleFile
                                 blockUntilAllFilesOpened.Continue = false;
                         });
 
-                        bEnqueued = lsFileBuffers_Enqueue.LocalAny();
+                        bEnqueued = 0 < lsFileBuffers_Enqueue.Count;
                     }
 
                     Dispatcher.PushFrame(blockUntilAllFilesOpened);
@@ -407,7 +408,7 @@ namespace DoubleFile
                 if (0 == nRead)
                     return false;   // file was emptied since being catalogued
 
-                bool bMoreToRead = fs.Position < fs.Length;
+                var bMoreToRead = fs.Position < fs.Length;
                 
                 if (bMoreToRead)
                     MBoxStatic.Assert(99926, nRead == nBufferSize);
@@ -420,7 +421,6 @@ namespace DoubleFile
             {
                 var retval = Tuple.Create(default(HashTuple), default(HashTuple));
                 var lsBuffer = tuple.Item4;
-
                 var nCount = lsBuffer.Count;
 
                 if ((0 == tuple.Item2) ||       // empty file

@@ -3,7 +3,9 @@ using System;
 using System.IO;
 using System.Reactive.Linq;
 using System.Windows;
-using System.Linq;
+using System.Reactive;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace DoubleFile
 {
@@ -38,7 +40,7 @@ namespace DoubleFile
             Observable.FromEventPattern(this, "Loaded")
                 .Subscribe(Window_Loaded);
 
-            Observable.FromEventPattern<System.ComponentModel.CancelEventArgs>(this, "Closing")
+            Observable.FromEventPattern<CancelEventArgs>(this, "Closing")
                 .Subscribe(args => MainWindow_Closing(args.EventArgs));
         }
 
@@ -112,28 +114,21 @@ namespace DoubleFile
         {
             if (bHidden)
             {
-                if (MenuLinkGroups.LocalAny())
-                {
-                    while (false == MenuLinkGroups.HasExactly(1))
-                        MenuLinkGroups.RemoveAt(1);
-                }
-                else
-                {
-                    MBoxStatic.Assert(99894, false);
-                }
+                while (1 < MenuLinkGroups.Count)
+                    MenuLinkGroups.RemoveAt(1);
             }
-            else if (MenuLinkGroups.HasExactly(1))
+            else if (1 == MenuLinkGroups.Count)
             {
                 foreach (var group in _links)
                     MenuLinkGroups.Add(group);
             }
         }
 
-        void Window_Loaded(System.Reactive.EventPattern<object> obj)
+        void Window_Loaded(EventPattern<object> obj)
         {
 #if (DEBUG)
             //#warning DEBUG is defined.
-            MBoxStatic.Assert(99998, System.Diagnostics.Debugger.IsAttached, "Debugger is not attached!");
+            MBoxStatic.Assert(99998, Debugger.IsAttached, "Debugger is not attached!");
 #else
             if (MBoxStatic.Assert(99997, (System.Diagnostics.Debugger.IsAttached == false), "Debugger is attached but DEBUG is not defined.") == false)
                 return;
@@ -199,7 +194,7 @@ namespace DoubleFile
 #endif
         }
 
-        void MainWindow_Closing(System.ComponentModel.CancelEventArgs e)
+        void MainWindow_Closing(CancelEventArgs e)
         {
             if ((null != App.LVprojectVM) &&
                 App.LVprojectVM.Unsaved &&

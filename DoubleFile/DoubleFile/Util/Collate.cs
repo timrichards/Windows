@@ -43,7 +43,7 @@ namespace DoubleFile
 
         static internal void InsertSizeMarkers(List<LocalLVitem> listLVitems)
         {
-            if (false == listLVitems.LocalAny())
+            if (0 == listLVitems.Count)
                 return;
 
             var bUnique = (null != listLVitems[0].LocalTreeNode);
@@ -81,7 +81,7 @@ namespace DoubleFile
                 return;
             }
 
-            if (_lsLVignore.LocalAny())
+            if (0 < _lsLVignore.Count)
             {
                 var dtStart = DateTime.Now;
                 var nMaxLevel = _lsLVignore.Max(i => ("" + i.SubItems[1].Text).ToInt() - 1);
@@ -132,7 +132,7 @@ namespace DoubleFile
                     dictIgnoreMark.Add(treeNode, kvp.Value);
                     lsTreeNodes.Remove(treeNode);
 
-                    if (false == lsTreeNodes.LocalAny())
+                    if (0 == lsTreeNodes.Count)
                         dictNodes.Remove(nodeDatum.Key);
                 }
             }
@@ -148,22 +148,21 @@ namespace DoubleFile
                 if (App.LocalExit || _bThreadAbort)
                     return;
 
-                var listNodes = kvp.Value;
-                var moreThanOne = listNodes.MoreThanOne();
+                var lsNodes = kvp.Value;
 
-                if (MoreThanOneEnum.Zero == moreThanOne)
+                if (0 == lsNodes.Count)
                 {
                     MBoxStatic.Assert(1305.6315m, false);
                     continue;
                 }
                 
-                if (MoreThanOneEnum.MoreThanOne == moreThanOne)
+                if (1 < lsNodes.Count)
                 {
                     // Parent folder may contain only its clone subfolder, in which case unmark the subfolder
 
                     var listKeep = new List<LocalTreeNode>();
 
-                    foreach (var treeNode_A in listNodes)
+                    foreach (var treeNode_A in lsNodes)
                     {
                         if (App.LocalExit || _bThreadAbort)
                             return;
@@ -184,11 +183,11 @@ namespace DoubleFile
 
                         MBoxStatic.Assert(1305.6316m, 0 < nodeDatum.TotalLength);
 
-                        if (listNodes.Contains(treeNode_A.Parent) == false)
+                        if (lsNodes.Contains(treeNode_A.Parent) == false)
                             listKeep.Add(treeNode_A);
                     }
 
-                    if (MoreThanOneEnum.MoreThanOne == listKeep.MoreThanOne())
+                    if (1 < listKeep.Count)
                     {
                         foreach (var treeNode_A in listKeep)
                         {
@@ -205,13 +204,13 @@ namespace DoubleFile
                     }
                     else
                     {
-                        listNodes = listKeep;  // kick off "else" logic below after deleting child clones
+                        lsNodes = listKeep;  // kick off "else" logic below after deleting child clones
                     }
                 }
 
-                if (MoreThanOneEnum.One == moreThanOne)      // "else"
+                if (1 == lsNodes.Count)      // "else"
                 {
-                    var treeNode = listNodes[0];
+                    var treeNode = lsNodes[0];
                     var nodeDatum = treeNode.NodeDatum;
 
                     if (null == nodeDatum)      // added 2/13/15
@@ -489,7 +488,7 @@ namespace DoubleFile
             }
 
             if ((null != listClones) &&
-                listClones.LocalAny() &&
+                0 < listClones.Count &&
                 (null == rootClone))
             {
                 rootClone = treeNode;
@@ -591,7 +590,7 @@ namespace DoubleFile
                 _dictIgnoreNodes.Add(treeNode, lvItem);
 
                 if ((null != treeNode.Nodes) &&
-                    treeNode.Nodes.LocalAny())
+                    (0 < treeNode.Nodes.Length))
                 {
                     IgnoreNodeAndSubnodes(lvItem, treeNode.Nodes[0], bContinue: true);
                 }
@@ -625,7 +624,7 @@ namespace DoubleFile
                 }
 
                 if ((null != treeNode.Nodes) &&
-                    treeNode.Nodes.LocalAny())
+                    (0 < treeNode.Nodes.Length))
                 {
                     IgnoreNodeQuery(sbMatch, nMaxLevel, treeNode.Nodes[0]);
                 }

@@ -60,7 +60,7 @@ namespace DoubleFile
                 MBoxStatic.Assert(99939, 0 == LengthRead);
                 LengthRead = 0;
 
-                while (stackDirs.LocalAny())
+                while (0 < stackDirs.Count)
                 {
                     if (App.LocalExit ||
                         _bThreadAbort)

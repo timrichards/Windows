@@ -190,7 +190,7 @@ namespace DoubleFile
                     var Directory = PathBuilder.FactoryCreateOrFind(("" + searchResult.StrDir).TrimEnd('\\'));
 
                     if ((null != searchResult.ListFiles) &&
-                        searchResult.ListFiles.LocalAny())
+                        0 < searchResult.ListFiles.Count)
                     {
                         foreach (var strFile in searchResult.ListFiles.Keys)
                         {
@@ -221,7 +221,7 @@ namespace DoubleFile
 
             _dictResults = null;
 
-            if (false == lsLVitems.LocalAny())
+            if (0 == lsLVitems.Count)
                 return;
 
             if (_bDisposed)

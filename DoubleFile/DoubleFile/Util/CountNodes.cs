@@ -18,7 +18,7 @@ namespace DoubleFile
             do
             {
                 if ((null != treeNode.Nodes) &&
-                    treeNode.Nodes.LocalAny())
+                    (0 < treeNode.Nodes.Length))
                 {
                     nCount += Go(treeNode.Nodes[0]);
                 }

@@ -78,7 +78,7 @@ namespace DoubleFile
         {
             RaisePropertyChanged("Items");
 
-            if (_items.LocalAny())
+            if (0 < _items.Count)
                 _items[0].RaiseColumnWidths();
             else
                 MBoxStatic.Assert(99993, false);

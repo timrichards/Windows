@@ -45,7 +45,7 @@ namespace DoubleFile
 
             Reset();
 
-            if (App.LVprojectVM.Items.LocalAny())
+            if (0 < App.LVprojectVM.Items.Count)
             {
                 SaveListingsProcess.Go(App.LVprojectVM);
 

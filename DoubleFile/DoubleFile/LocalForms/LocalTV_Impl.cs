@@ -16,7 +16,7 @@ namespace DoubleFile
             Collate.ClearMem();
 
             if ((null != _allNodes) &&
-                _allNodes.LocalAny())
+                (0 < _allNodes.Length))
             {
                 _dictVolumeInfo.Clear();
             }
@@ -151,7 +151,7 @@ namespace DoubleFile
         void ITreeStatus.Done()
         {
             if ((null == _rootNodes) ||
-                (false == _rootNodes.LocalAny()))
+                (0 == _rootNodes.Length))
             {
                 WithWinProgress(w => w
                     .SetAborted()

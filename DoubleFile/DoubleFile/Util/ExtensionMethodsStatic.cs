@@ -6,13 +6,6 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    internal enum MoreThanOneEnum
-    {
-        Zero,
-        One,
-        MoreThanOne
-    }
-
     static internal partial class ExtensionMethodsStatic
     {
         static IDictionary<int, Tuple<DateTime, WeakReference>> _lsSubjects = new Dictionary<int, Tuple<DateTime, WeakReference>>();
@@ -53,7 +46,7 @@ namespace DoubleFile
         {
             var retVal = source.FirstOrDefault();
 #if (DEBUG)
-            var enumerator = source.GetEnumerator();    // GetEnumerator() is only used here in ExtensionMethodsStatic 5x 7/6/15
+            var enumerator = source.GetEnumerator();    // GetEnumerator() is only used here in ExtensionMethodsStatic 3x 7/6/15
 
             if (enumerator.MoveNext())
                 MBoxStatic.Assert(99903, false == enumerator.MoveNext());
@@ -72,7 +65,7 @@ namespace DoubleFile
                 return true;    // from lambda; NOT a no-op: has to be a non-default value.
             });
 #if (DEBUG)
-            var enumerator = source.GetEnumerator();    // GetEnumerator() is only used here in ExtensionMethodsStatic 5x 7/6/15
+            var enumerator = source.GetEnumerator();    // GetEnumerator() is only used here in ExtensionMethodsStatic 3x 7/6/15
 
             if (enumerator.MoveNext())
                 MBoxStatic.Assert(99953, false == enumerator.MoveNext());
@@ -86,11 +79,6 @@ namespace DoubleFile
                 action(item);
         }
 
-        static internal bool HasExactly<T>(this ICollection<T> source, int nDesiredElements)    // 5 references on 7/6/15
-        {
-            return source.Count == nDesiredElements;
-        }
-
         static internal bool HasExactly<T>(this IEnumerable<T> source, int nDesiredElements)    // 1 reference on 7/6/15
         {
             if (source is ICollection<T>)
@@ -99,7 +87,7 @@ namespace DoubleFile
                 return ((ICollection<T>)source).HasExactly(nDesiredElements);
             }
 
-            var ie = source.GetEnumerator();    // GetEnumerator() is only used here in ExtensionMethodsStatic 5x 7/6/15
+            var ie = source.GetEnumerator();    // GetEnumerator() is only used here in ExtensionMethodsStatic 3x 7/6/15
 
             for (var i = 0; i < nDesiredElements; ++i)
             {
@@ -108,51 +96,6 @@ namespace DoubleFile
             }
 
             return false == ie.MoveNext();
-        }
-
-        static internal bool LocalAny<T>(this ICollection<T> source)                    // 32 references on 7/6/15
-        {
-            return 0 < source.Count;
-        }
-
-        static internal bool LocalAny<T>(this IEnumerable<T> source)                    // 9 references on 7/6/15
-        {
-            if (source is ICollection<T>)
-            {
-                MBoxStatic.Assert(99889, false, bTraceOnly: true);
-                return 0 < ((ICollection<T>)source).Count;
-            }
-
-            return source.Any();
-        }
-
-        static internal MoreThanOneEnum MoreThanOne<T>(this ICollection<T> source)      // 5 references on 7/6/15
-        {
-            return
-                (0 == source.Count)
-                ? MoreThanOneEnum.Zero
-                : (1 == source.Count)
-                ? MoreThanOneEnum.One
-                : MoreThanOneEnum.MoreThanOne;
-        }
-
-        static internal MoreThanOneEnum MoreThanOne<T>(this IEnumerable<T> source)      // not used as of 7/6/15
-        {
-            if (source is ICollection<T>)
-            {
-                MBoxStatic.Assert(99888, false, bTraceOnly: true);
-                return ((ICollection<T>)source).MoreThanOne();
-            }
-
-            var ie = source.GetEnumerator();    // GetEnumerator() is only used here in ExtensionMethodsStatic 5x 7/6/15
-
-            if (false == ie.MoveNext())
-                return MoreThanOneEnum.Zero;
-
-            if (false == ie.MoveNext())
-                return MoreThanOneEnum.One;
-
-            return MoreThanOneEnum.MoreThanOne;
         }
 
         static internal string ToPrintString(this object source)

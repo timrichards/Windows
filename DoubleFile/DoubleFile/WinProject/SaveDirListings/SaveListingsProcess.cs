@@ -26,7 +26,7 @@ namespace DoubleFile
                 listSourcePaths.Add(volStrings.SourcePath);
             }
 
-            if (false == listSourcePaths.LocalAny())
+            if (0 == listSourcePaths.Count)
                 return;
 
             if ((null != App.SaveDirListings) &&

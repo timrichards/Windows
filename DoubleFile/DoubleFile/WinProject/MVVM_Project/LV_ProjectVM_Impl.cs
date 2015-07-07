@@ -13,7 +13,7 @@ namespace DoubleFile
         {
             get
             {
-                bool bIsEmpty = false == Items.LocalAny();
+                bool bIsEmpty = 0 == Items.Count;
 
                 MainWindow.WithMainWindowA(mainWindow =>
                     mainWindow.ShowLinks(bIsEmpty));
@@ -172,7 +172,7 @@ namespace DoubleFile
                 .ToList()
                 .ForEach(lvItem => Items.Remove(lvItem));
 
-            _unsaved = Items.LocalAny();
+            _unsaved = 0 < Items.Count;
             SetModified();
             RaisePropertyChanged("Visible");
             WinProject.OKtoNavigate_UpdateSaveListingsLink();
@@ -278,7 +278,7 @@ namespace DoubleFile
                     {
                         var astr = ("" + sbLine).Split('\t').ToList();
 
-                        MBoxStatic.Assert(1308.9312m, astr.HasExactly(3));
+                        MBoxStatic.Assert(1308.9312m, 3 == astr.Count);
 
                         while (3 > astr.Count)
                             astr.Add("");

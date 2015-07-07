@@ -234,7 +234,7 @@ namespace DoubleFile
                 lsListingFiles_Check.Add(Path.GetFileName(volStrings.ListingFile));
             }
 
-            bool bIsEmpty = false == lsListingFiles.LocalAny();
+            bool bIsEmpty = 0 == lsListingFiles.Count;
 
             if (bUnsavedListings || bIsEmpty)
             {

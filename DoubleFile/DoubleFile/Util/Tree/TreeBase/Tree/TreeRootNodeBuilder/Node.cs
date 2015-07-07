@@ -83,9 +83,8 @@ namespace DoubleFile
                     var nIndex = _strPath.LastIndexOf('\\');
                     var strShortPath = _bUseShortPath ? _strPath.Substring(nIndex + 1) : _strPath;
                     LocalTreeNode treeNode = null;
-                    var moreThanOne = _subNodes.MoreThanOne();
 
-                    if (MoreThanOneEnum.One == moreThanOne)
+                    if (1 == _subNodes.Count)
                     {
                         var subNode = _subNodes.Values.First();
 
@@ -107,7 +106,7 @@ namespace DoubleFile
                             treeNode = new LocalTreeNode(strShortPath, new[] { subNode.AddToTree() });
                         }
                     }
-                    else if (MoreThanOneEnum.MoreThanOne == moreThanOne)
+                    else if (1 < _subNodes.Count)
                     {
                         var treeList = new List<LocalTreeNode>();
 

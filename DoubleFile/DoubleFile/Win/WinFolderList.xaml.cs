@@ -10,12 +10,12 @@
             InitializeComponent();            
         }
 
-        protected override void LocalNavigatedTo()
+        protected override void LocalFragmentNavigation(string strFragment)
         {
             DataContext = 
                 _winFolderListVM =
                 new WinFolderListVM()
-                .Init();
+                .Init(strFragment);
         }
 
         protected override void LocalNavigatedFrom()

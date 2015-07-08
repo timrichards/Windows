@@ -14,15 +14,31 @@ namespace DoubleFile
     /// </summary>
     public partial class MainWindow
     {
-        static internal string
-            ExtraWindowFakeKey { get { return "/ExtraWindow.xaml"; } }
-        static readonly Link _extraWindowLink = new Link { DisplayName = "Extra Window", Source = new Uri(ExtraWindowFakeKey, UriKind.Relative) };
-        static internal string
-            SaveListingsFakeKey { get { return "/SaveListings.xaml"; } }
-        static readonly Link _saveListingsLink = new Link { DisplayName = "Save Listings", Source = new Uri(SaveListingsFakeKey, UriKind.Relative) };
-        static internal string
-            AdvancedFakeKey { get { return "/Advanced.xaml"; } }
-        static readonly Link _advancedLink = new Link { DisplayName = "Advanced", Source = new Uri(AdvancedFakeKey, UriKind.Relative) };
+        class MyLink : Link
+        {
+            internal MyLink(string strDisplayName, string strSource)
+            {
+                DisplayName = strDisplayName;
+                Source = new Uri(strSource, UriKind.Relative);
+            }
+        }
+
+        internal const string FolderListLarge = "large";
+        internal const string FolderListSmall = "small";
+        internal const string FolderListRandom = "random";
+        internal const string FolderListUnique = "unique";
+        internal const string FolderListSameVol = "sameVol";
+        internal const string FolderListClones = "clones";
+        static string FolderListUrlBuilder(string s = null) { return "/Win/WinFolderList.xaml#" + s; }
+
+        internal const string SaveListingsFakeKey = "/SaveListings.xaml";
+        static readonly Link _saveListingsLink = new MyLink("Save listings", SaveListingsFakeKey);
+
+        internal const string ExtraWindowFakeKey = "/ExtraWindow.xaml";
+        static readonly Link _extraWindowLink = new MyLink("Extra window", ExtraWindowFakeKey);
+
+        internal const string AdvancedFakeKey = "/Advanced.xaml";
+        static readonly Link _advancedLink = new MyLink("Advanced", AdvancedFakeKey);
 
         static Action Init = null;
         static void InitForMainWindowOnly(Action init) { Init = init; }
@@ -220,22 +236,31 @@ namespace DoubleFile
         {
             new LinkGroup { DisplayName="Explore", Links =
             {
-                new Link { DisplayName = "Tree map", Source = new Uri("/Win/WinTreeMap.xaml", UriKind.Relative)},
-                new Link { DisplayName = "Folders", Source = new Uri("/Win/WinTreeView.xaml", UriKind.Relative)},
-                new Link { DisplayName = "Tree list", Source = new Uri("/Win/WinTreeList.xaml", UriKind.Relative)}
+                new MyLink("Tree map", "/Win/WinTreeMap.xaml"),
+                new MyLink("Folders", "/Win/WinTreeView.xaml"),
+                new MyLink("Tree list", "/Win/WinTreeList.xaml")
+            }},
+            new LinkGroup { DisplayName="Folder lists", Links =
+            {
+                new MyLink("ANOVA weighted large", FolderListUrlBuilder(FolderListLarge)),
+                new MyLink("ANOVA weighted small", FolderListUrlBuilder(FolderListSmall)),
+                new MyLink("ANOVA weighted random", FolderListUrlBuilder(FolderListRandom)),
+                new MyLink("Unique", FolderListUrlBuilder(FolderListUnique)),
+                new MyLink("Same volume", FolderListUrlBuilder(FolderListSameVol)),
+                new MyLink("Clones", FolderListUrlBuilder(FolderListClones)),
             }},
             new LinkGroup { DisplayName="Files", Links =
             {
-                new Link { DisplayName = "Files in folder", Source = new Uri("/Win/WinFiles.xaml", UriKind.Relative)},
-                new Link { DisplayName = "Duplicates", Source = new Uri("/Win/WinDuplicates.xaml", UriKind.Relative)}
+                new MyLink("Files in folder", "/Win/WinFiles.xaml"),
+                new MyLink("Duplicates", "/Win/WinDuplicates.xaml")
             }},
             new LinkGroup { DisplayName="Search", Links =
             {
-                new Link { DisplayName = "Search", Source = new Uri("/Win/WinSearch.xaml", UriKind.Relative)}
+                new MyLink("Search", "/Win/WinSearch.xaml")
             }},
             new LinkGroup { DisplayName="Detailed info", Links =
             {
-                new Link { DisplayName = "Detailed info", Source = new Uri("/Win/WinDetail.xaml", UriKind.Relative)}
+                new MyLink("Detailed info", "/Win/WinDetail.xaml")
             }}
         };
 

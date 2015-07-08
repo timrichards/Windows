@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Linq;
 using System.IO;
 using System.Collections.Concurrent;
+using FirstFloor.ModernUI.Windows.Controls;
 
 namespace DoubleFile
 {
@@ -14,32 +15,33 @@ namespace DoubleFile
     {
         public string LocalTitle { get; set; }
 
-        public void OnFragmentNavigation(FragmentNavigationEventArgs e) { }
+        public void OnFragmentNavigation(FragmentNavigationEventArgs e) { LocalFragmentNavigation(e.Fragment); }
+        virtual protected void LocalFragmentNavigation(string strFragment) { }
+
         public void OnNavigatedFrom(NavigationEventArgs e) { LocalNavigatedFrom(); }
         virtual protected void LocalNavigatedFrom() { }
-        public void OnNavigatedTo(NavigationEventArgs e) { MainWindow.CurrentPage = this; LocalNavigatedTo(); }
+
+        public void OnNavigatedTo(NavigationEventArgs e)
+        {
+            MainWindow.CurrentPage = this;
+            LocalNavigatedTo();
+        }
         virtual protected void LocalNavigatedTo() { }
+
         public void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            if ("/Introduction.xaml" ==
-                "" + e.Source)
-            {
-                return;
-            }
+            var strSource = "" + e.Source;
 
-            if ("/WinProject/WinProject.xaml" ==
-                "" + e.Source)
-            {
+            if ("/Introduction.xaml" == strSource)
                 return;
-            }
+
+            if ("/WinProject/WinProject.xaml" == strSource)
+                return;
 
             var bSaveListings = false;
 
-            if (MainWindow.SaveListingsFakeKey ==
-                "" + e.Source)
-            {
+            if (MainWindow.SaveListingsFakeKey == strSource)
                 bSaveListings = true;
-            }
 
             if ((false == WinProject.OKtoNavigate_BuildExplorer(bSaveListings)) ||
                 bSaveListings)
@@ -48,19 +50,15 @@ namespace DoubleFile
                 return;
             }
 
-            if (MainWindow.AdvancedFakeKey ==
-                "" + e.Source)
+            if (MainWindow.AdvancedFakeKey == strSource)
             {
                 CalculateAverageFileLength();
                 e.Cancel = true;
                 return;
             }
 
-            if (MainWindow.ExtraWindowFakeKey !=
-                "" + e.Source)
-            {
+            if (MainWindow.ExtraWindowFakeKey != strSource)
                 return;
-            }
 
             var page = MainWindow.CurrentPage;
             var content = (LocalUserControlBase)Activator.CreateInstance(page.GetType());

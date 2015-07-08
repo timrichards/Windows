@@ -287,7 +287,7 @@ namespace DoubleFile
             SelRectAndTooltip(treeNodeChild, initiatorTuple.Item2, bFile: false);
         }
 
-        void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, string[], LocalTreeNode>, int> initiatorTuple)
+        void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyCollection<string>, LocalTreeNode>, int> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
 

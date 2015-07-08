@@ -7,6 +7,8 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- Make the array[] a ReadOnlyCollection using Array.AsReadOnly<T>(T[] array). This method is an O(1) operation.
+- Detail OnNavigatedTo(): load up the last selected file.
 - check Count usage in loops
 - replace .Cast with (ICollection<>)
 - replace IEnumerable with ICollection where possible

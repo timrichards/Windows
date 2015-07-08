@@ -16,10 +16,10 @@ namespace DoubleFile
         static readonly LocalSubject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new LocalSubject<Tuple<LVitem_ProjectVM, string, string>>();
         static void GoToFileOnNext(Tuple<LVitem_ProjectVM, string, string> value) { _goToFile.LocalOnNext(value, 99848); }
 
-        static internal IObservable<Tuple<Tuple<string[], LocalTreeNode>, int>>
+        static internal IObservable<Tuple<Tuple<IReadOnlyCollection<string>, LocalTreeNode>, int>>
             UpdateFileDetail { get { return _updateFileDetail.AsObservable(); } }
-        static readonly LocalSubject<Tuple<string[], LocalTreeNode>> _updateFileDetail = new LocalSubject<Tuple<string[], LocalTreeNode>>();
-        static void UpdateFileDetailOnNext(Tuple<string[], LocalTreeNode> value, int nInitiator) { _updateFileDetail.LocalOnNext(value, 99847, nInitiator); }
+        static readonly LocalSubject<Tuple<IReadOnlyCollection<string>, LocalTreeNode>> _updateFileDetail = new LocalSubject<Tuple<IReadOnlyCollection<string>, LocalTreeNode>>();
+        static void UpdateFileDetailOnNext(Tuple<IReadOnlyCollection<string>, LocalTreeNode> value, int nInitiator) { _updateFileDetail.LocalOnNext(value, 99847, nInitiator); }
 
         internal WinDuplicatesVM()
         {
@@ -37,7 +37,7 @@ namespace DoubleFile
             Util.LocalDispose(_lsDisposable);
         }
 
-        void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, string[], LocalTreeNode>, int> initiatorTuple)
+        void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyCollection<string>, LocalTreeNode>, int> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
 
@@ -47,7 +47,7 @@ namespace DoubleFile
 
             LocalTreeNode treeNode = null;
             IEnumerable<FileDictionary.DuplicateStruct> ieDuplicates = null;
-            string[] asFileLine = null;
+            IReadOnlyCollection<string> asFileLine = null;
 
             if (null != tuple)
             {

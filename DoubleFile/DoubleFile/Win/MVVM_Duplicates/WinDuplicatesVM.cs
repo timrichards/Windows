@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace DoubleFile
 {
@@ -21,7 +22,9 @@ namespace DoubleFile
                 if (null == value)
                     return;
 
-                UpdateFileDetailOnNext(Tuple.Create(value.FileLine, _treeNode), 0 /* UI Initiator */);
+                UpdateFileDetailOnNext(Tuple.Create(
+                    (IReadOnlyCollection<string>)Array.AsReadOnly(value.FileLine), _treeNode), 0 /* UI Initiator */);
+
                 SelectedItem_AllTriggers();
             }
         }

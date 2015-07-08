@@ -24,6 +24,11 @@ namespace DoubleFile
 
             if (null != folderDetail)
                 LocalPath_Set(folderDetail.Item2);
+
+            var lastSelectedFile = LV_FilesVM.LastSelectedFile;
+
+            if (null != lastSelectedFile)
+                LV_FilesVM_SelectedFileChanged(Tuple.Create(lastSelectedFile, 0));
         }
 
         public void Dispose()

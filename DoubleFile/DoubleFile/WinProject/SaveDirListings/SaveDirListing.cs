@@ -329,9 +329,9 @@ namespace DoubleFile
             }
 
             IEnumerable<Tuple<string, ulong, string, IReadOnlyList<byte[]>>>
-                ReadBuffers(IEnumerable<Tuple<string, ulong, SafeFileHandle, string>> listFileHandles)
+                ReadBuffers(IEnumerable<Tuple<string, ulong, SafeFileHandle, string>> ieFileHandles)
             {
-                foreach (var tuple in listFileHandles)
+                foreach (var tuple in ieFileHandles)
                 {
                     var lsRet = new List<byte[]> { };
                     var retval = Tuple.Create(tuple.Item1, tuple.Item2, tuple.Item4, (IReadOnlyList<byte[]>)lsRet);

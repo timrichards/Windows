@@ -287,7 +287,7 @@ namespace DoubleFile
             SelRectAndTooltip(treeNodeChild, initiatorTuple.Item2, bFile: false);
         }
 
-        void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int> initiatorTuple)
+        void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, string[], LocalTreeNode>, int> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
 
@@ -390,7 +390,7 @@ namespace DoubleFile
                 }
 
                 if ((null == treeNode.Nodes) ||
-                    (0 == treeNode.Nodes.Length))
+                    (0 == treeNode.Nodes.Count))
                 {
                     continue;
                 }
@@ -626,7 +626,7 @@ namespace DoubleFile
 
             ClearSelection();
             TreeMapVM.TreeNode = treeNode;
-            _lsRenderActions = DrawTreemap();
+            _ieRenderActions = DrawTreemap();
 
             Util.UIthread(() =>
             {
@@ -637,13 +637,13 @@ namespace DoubleFile
                {
                    _bg.Graphics.Clear(Color.DarkGray);
 
-                   if (null == _lsRenderActions)
+                   if (null == _ieRenderActions)
                        return;     // from lambda
 
-                   foreach (var stroke in _lsRenderActions)
+                   foreach (var stroke in _ieRenderActions)
                        stroke.Stroke(_bg.Graphics);
 
-                   _lsRenderActions = null;
+                   _ieRenderActions = null;
                    _bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), _rectBitmap);
                    _bg.Render();
 
@@ -785,7 +785,7 @@ namespace DoubleFile
                     nodeDatum.TreeMapFiles = GetFileList(item);
                 }
 
-                if ((null != item.Nodes) && (0 < item.Nodes.Length) ||
+                if ((null != item.Nodes) && (0 < item.Nodes.Count) ||
                     (bStart && (null != nodeDatum.TreeMapFiles)))
                 {
                     IEnumerable<LocalTreeNode> ieChildren = null;
@@ -1186,7 +1186,7 @@ namespace DoubleFile
 
         // Recurse class
         IEnumerable<RenderAction>
-            _lsRenderActions = null;
+            _ieRenderActions = null;
         LocalTreeNode
             _deepNodeDrawn = null;
 

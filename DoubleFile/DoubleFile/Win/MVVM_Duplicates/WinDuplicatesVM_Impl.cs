@@ -16,10 +16,10 @@ namespace DoubleFile
         static readonly LocalSubject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new LocalSubject<Tuple<LVitem_ProjectVM, string, string>>();
         static void GoToFileOnNext(Tuple<LVitem_ProjectVM, string, string> value) { _goToFile.LocalOnNext(value, 99848); }
 
-        static internal IObservable<Tuple<Tuple<IEnumerable<string>, LocalTreeNode>, int>>
+        static internal IObservable<Tuple<Tuple<string[], LocalTreeNode>, int>>
             UpdateFileDetail { get { return _updateFileDetail.AsObservable(); } }
-        static readonly LocalSubject<Tuple<IEnumerable<string>, LocalTreeNode>> _updateFileDetail = new LocalSubject<Tuple<IEnumerable<string>, LocalTreeNode>>();
-        static void UpdateFileDetailOnNext(Tuple<IEnumerable<string>, LocalTreeNode> value, int nInitiator) { _updateFileDetail.LocalOnNext(value, 99847, nInitiator); }
+        static readonly LocalSubject<Tuple<string[], LocalTreeNode>> _updateFileDetail = new LocalSubject<Tuple<string[], LocalTreeNode>>();
+        static void UpdateFileDetailOnNext(Tuple<string[], LocalTreeNode> value, int nInitiator) { _updateFileDetail.LocalOnNext(value, 99847, nInitiator); }
 
         internal WinDuplicatesVM()
         {
@@ -37,7 +37,7 @@ namespace DoubleFile
             Util.LocalDispose(_lsDisposable);
         }
 
-        void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int> initiatorTuple)
+        void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, string[], LocalTreeNode>, int> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
 
@@ -46,29 +46,29 @@ namespace DoubleFile
                 _cts.Cancel();
 
             LocalTreeNode treeNode = null;
-            IEnumerable<FileDictionary.DuplicateStruct> lsDuplicates = null;
-            IEnumerable<string> ieFileLine = null;
+            IEnumerable<FileDictionary.DuplicateStruct> ieDuplicates = null;
+            string[] asFileLine = null;
 
             if (null != tuple)
             {
                 treeNode = tuple.Item3;
-                lsDuplicates = tuple.Item1;
-                ieFileLine = tuple.Item2;
+                ieDuplicates = tuple.Item1;
+                asFileLine = tuple.Item2;
             }
 
             _treeNode = treeNode;
-            UpdateFileDetailOnNext(Tuple.Create(ieFileLine, _treeNode), initiatorTuple.Item2);
+            UpdateFileDetailOnNext(Tuple.Create(asFileLine, _treeNode), initiatorTuple.Item2);
             SelectedItem_Set(null);
             ClearItems();
 
-            if (null == lsDuplicates)
+            if (null == ieDuplicates)
                 return;
 
             Util.ThreadMake(() => 
             {
                 try
                 {
-                    TreeFileSelChanged(lsDuplicates, ieFileLine);
+                    TreeFileSelChanged(ieDuplicates, asFileLine);
                 }
                 catch (OperationCanceledException) { }
             });

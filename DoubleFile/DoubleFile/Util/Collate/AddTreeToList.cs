@@ -10,7 +10,7 @@ namespace DoubleFile
         {
             internal int Count { get; private set; }
 
-            internal AddTreeToList(List<LocalTreeNode> listTreeNodes, List<LocalTreeNode> listSameVol)
+            internal AddTreeToList(IList<LocalTreeNode> listTreeNodes, IList<LocalTreeNode> listSameVol)
             {
                 _listTreeNodes = listTreeNodes;
                 _listSameVol = listSameVol;
@@ -74,9 +74,9 @@ namespace DoubleFile
                 while (bNextNode && ((treeNode = treeNode.NextNode) != null));
             }
 
-            readonly List<LocalTreeNode>
+            readonly IList<LocalTreeNode>
                 _listTreeNodes = null;
-            readonly List<LocalTreeNode>
+            readonly IList<LocalTreeNode>
                 _listSameVol = null;
         }
     }

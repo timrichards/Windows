@@ -15,15 +15,12 @@ namespace DoubleFile
             _tree = null;
             Collate.ClearMem();
 
-            if ((null != _allNodes) &&
-                (0 < _allNodes.Length))
-            {
+            if (0 < _allNodes.Count)
                 _dictVolumeInfo.Clear();
-            }
 
             _dictNodes = null;           // m_dictNodes is tested to recreate tree.
-            _allNodes = null;
-            _rootNodes = null;
+            _allNodes = new List<LocalTreeNode> { };
+            _rootNodes = new List<LocalTreeNode> { };
         }
 
         bool DoTree(bool bKill = false)
@@ -122,36 +119,23 @@ namespace DoubleFile
             if (bError)
             {
                 //           volStrings.SetStatus_BadFile(LV);
+                return;
             }
-            else if (null != rootNode)
-                lock (_rootNodesLock)
-            {
-                if (null == _rootNodes)
-                {
-                    _rootNodes = new[] { rootNode };
-                }
-                else
-                {
-                    // The root volume list is very small so this copy-sort is viable
-                    var ls = new List<LocalTreeNode>(_rootNodes);
 
-                    ls.Insert(ls.TakeWhile(node => 0 < rootNode.Text.CompareTo(node.Text)).Count(), rootNode);
-                    _rootNodes = ls.ToArray();
-                }
+            lock (_rootNodes)
+            {
+                // The root volume list is very small so this insert sort is viable
+                _rootNodes.Insert(_rootNodes.TakeWhile(node => 0 < rootNode.Text.CompareTo(node.Text)).Count(), rootNode);
 
                 WithWinProgress(w => w
-                    .SetProgress(_ksFolderTreeKey, _rootNodes.Length * _knProgMult));
-            }
-            else
-            {
-                MBoxStatic.Assert(1304.5309m, false);
+                    .SetProgress(_ksFolderTreeKey, _rootNodes.Count * _knProgMult));
             }
         }
 
         void ITreeStatus.Done()
         {
             if ((null == _rootNodes) ||
-                (0 == _rootNodes.Length))
+                (0 == _rootNodes.Count))
             {
                 WithWinProgress(w => w
                     .SetAborted()
@@ -174,12 +158,12 @@ namespace DoubleFile
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                 .Subscribe(x => WithWinProgress(w => w.SetProgress(_ksFolderTreeKey, (3 + nProgress) / 4))))
             {
-                var lsTreeNodes = new List<LocalTreeNode> { };
+                _allNodes = new List<LocalTreeNode> { };
 
                 var collate = new Collate(
                     _dictNodes,
                     localLVclones, localLVsameVol, localLVsolitary,
-                    _rootNodes, lsTreeNodes,
+                    _rootNodes, _allNodes,
                     lsLVignore: lsLocalLVignore, bLoose: true);
 
                 var dtStart = DateTime.Now;
@@ -202,7 +186,6 @@ namespace DoubleFile
                 if (null == LocalTV.SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
                     LocalTV.SelectedNode = _topNode;
 
-                _allNodes = lsTreeNodes.ToArray();
                 Util.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
             }
 
@@ -240,7 +223,7 @@ namespace DoubleFile
                 var mean = folderScore / (double)folder.NodeDatum.FileCountTotal;
                 var meanDiff = (mean - totalMean);
                 var sumOfSquares = meanDiff * meanDiff * folder.NodeDatum.FileCountTotal;
-                return (uint) (sumOfSquares / (_allNodes.Length - 1));      // from lamnda
+                return (uint) (sumOfSquares / (_allNodes.Count - 1));      // from lamnda
             })
                 .ToArray());
 
@@ -254,10 +237,7 @@ namespace DoubleFile
                 .OrderByDescending(folder => folder.NodeDatum.FolderScore[0])
                 .ToArray();
 
-            _allNodes =
-                _allNodes
-                .OrderByDescending(folder => folder.NodeDatum.FolderScore[1])
-                .ToArray();
+            _allNodes.Sort((y, x) => x.NodeDatum.FolderScore[1].CompareTo(y.NodeDatum.FolderScore[1]));
 
             var allNodesWeightedSmall =
                 _allNodes
@@ -266,7 +246,9 @@ namespace DoubleFile
 
             Util.WriteLine("Completed ANOVA arrays in " + (DateTime.Now - dt).TotalMilliseconds + " ms");    // 500 ms
 
-            for (var i = 0; i < 50; ++i)
+            var nMax = Math.Min(50, allNodesHashParity.Length);
+
+            for (var i = 0; i < nMax; ++i)
                 Util.WriteLine(
                     allNodesHashParity[i].Text.PadRight(50) +
                     _allNodes[i].Text.PadRight(50) +

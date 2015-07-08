@@ -9,14 +9,13 @@ namespace DoubleFile
         static internal LocalTV
             Instance { get; private set; }
 
-        static internal IEnumerable<LocalTreeNode>
+        static internal IReadOnlyList<LocalTreeNode>
             AllNodes { get { return Util.WR(_wr, o => o._allNodes); } }
-        LocalTreeNode[] _allNodes = null;
+        List<LocalTreeNode> _allNodes = new List<LocalTreeNode> { };
 
-        static internal IEnumerable<LocalTreeNode>
+        static internal IReadOnlyList<LocalTreeNode>
             RootNodes { get { return Util.WR(_wr, o => o._rootNodes); } }
-        LocalTreeNode[] _rootNodes = null;
-        static readonly object _rootNodesLock = new object();
+        List<LocalTreeNode> _rootNodes = new List<LocalTreeNode> { };
 
         static internal LocalTreeNode
             TopNode { get { return Util.WR(_wr, o => o._topNode); } }
@@ -30,7 +29,7 @@ namespace DoubleFile
         }
         LocalTreeNode _selectedNode = null;
 
-        static internal IDictionary<string, string>
+        static internal IReadOnlyDictionary<string, string>
             DictVolumeInfo { get { return Util.WR(_wr, o => o._dictVolumeInfo); } }
         readonly Dictionary<string, string> _dictVolumeInfo = new Dictionary<string, string>();
 
@@ -118,7 +117,7 @@ namespace DoubleFile
             return includeSubTrees
                 ? CountSubnodes(_rootNodes)
                 : (null != _rootNodes)
-                ? _rootNodes.Length
+                ? _rootNodes.Count
                 : 0;
         }
 

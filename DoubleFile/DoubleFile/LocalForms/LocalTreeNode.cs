@@ -6,12 +6,12 @@ namespace DoubleFile
 {
     class LocalTreeNode : LocalColorItemBase
     {
-        public LocalTreeNode[]
+        public IReadOnlyList<LocalTreeNode>
             Nodes { get; protected set; }
         internal virtual string
             Text { get { return _Text; } set { _Text = value; } } TabledString<Tabled_Folders> _Text = null;
         internal LocalTreeNode
-            FirstNode { get { return ((null != Nodes) && (0 < Nodes.Length)) ? Nodes[0] : null; } }
+            FirstNode { get { return ((null != Nodes) && (0 < Nodes.Count)) ? Nodes[0] : null; } }
         public virtual LocalTreeNode
             NextNode { get; protected set; }
         public virtual LocalTreeNode
@@ -57,10 +57,10 @@ namespace DoubleFile
             Text = strContent;
         }
 
-        internal LocalTreeNode(string strContent, IEnumerable<LocalTreeNode> lsNodes)
+        internal LocalTreeNode(string strContent, IReadOnlyList<LocalTreeNode> lsNodes)
             : this(strContent)
         {
-            Nodes = lsNodes.ToArray();
+            Nodes = lsNodes;
         }
 
         internal LocalTreeNode DetachFromTree()
@@ -113,7 +113,7 @@ namespace DoubleFile
             return false;
         }
 
-        static internal void SetLevel(IEnumerable<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
+        static internal void SetLevel(IReadOnlyList<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
         {
             if (null == nodes)
                 return;

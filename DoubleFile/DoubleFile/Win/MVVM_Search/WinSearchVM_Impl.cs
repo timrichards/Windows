@@ -37,23 +37,12 @@ namespace DoubleFile
             if (Reinitialize_And_FullPathFound(SearchText))
                 return;
 
-            var lsTreeNodes = LocalTV.AllNodes;
-
-            if (null == lsTreeNodes)
-                return;
-
-            if (SearchText.ToLower() != SearchText)
-            {
-                lsTreeNodes =
-                    lsTreeNodes
-                    .Where(treeNode => treeNode.Text.Contains(SearchText));
-            }
-            else
-            {
-                lsTreeNodes =
-                    lsTreeNodes
+            var lsTreeNodes =
+                (SearchText.ToLower() != SearchText)
+                ? LocalTV.AllNodes
+                    .Where(treeNode => treeNode.Text.Contains(SearchText))
+                : LocalTV.AllNodes
                     .Where(treeNode => treeNode.Text.ToLower().Contains(SearchText));
-            }
 
             var lsLVitems = lsTreeNodes.AsParallel().Select(treeNode => new LVitem_SearchVM { LocalTreeNode = treeNode });
 

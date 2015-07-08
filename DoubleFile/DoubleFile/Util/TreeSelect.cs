@@ -54,9 +54,9 @@ namespace DoubleFile
         static void GetFileList(LocalTreeNode treeNode, string strFile, int nInitiator)
         {
             string strListingFile = null;
-            IEnumerable<string> lsFiles = null;
 
-            Util.Closure(() =>
+            var lsFiles =
+                Util.Closure(() =>
             {
                 var nodeDatum = treeNode.NodeDatum;
                 var rootNode = treeNode.Root;
@@ -65,7 +65,7 @@ namespace DoubleFile
                     (0 == nodeDatum.LineNo) ||
                     (false == rootNode.NodeDatum is RootNodeDatum))
                 {
-                    return;     // from lambda
+                    return null;     // from lambda
                 }
 
                 var rootNodeDatum = (RootNodeDatum)rootNode.NodeDatum;
@@ -76,17 +76,18 @@ namespace DoubleFile
                 var nLineNo = (int)nodeDatum.LineNo;
 
                 if (0 == nPrevDir)
-                    return;     // from lambda
+                    return null;     // from lambda
 
                 if (1 >= (nLineNo - nPrevDir))  // dir has no files
-                    return;     // from lambda
+                    return null;     // from lambda
 
-                lsFiles =
+                return
                     File
                     .ReadLines(strListingFile)
                     .Skip(nPrevDir)
                     .Take((nLineNo - nPrevDir - 1))
-                    .ToArray();
+                    .ToArray()
+                    .AsEnumerable();
             });
 
             FileListUpdatedOnNext(Tuple.Create(lsFiles, strListingFile, treeNode, strFile), nInitiator);
@@ -109,7 +110,7 @@ namespace DoubleFile
             lasItems.Add(new[] { "# Files Here", nodeDatum.FileCountHere.ToString(kStrFmt_thous) });
             lasItems.Add(new[] { "with Size of", FormatSize(nodeDatum.Length, bBytes: true) });
             lasItems.Add(new[] { "Total # Files", nodeDatum.FileCountTotal.ToString(kStrFmt_thous) });
-            lasItems.Add(new[] { "# Folders Here", ((null != treeNode.Nodes) ? treeNode.Nodes.Length : 0).ToString(kStrFmt_thous) });
+            lasItems.Add(new[] { "# Folders Here", ((null != treeNode.Nodes) ? treeNode.Nodes.Count : 0).ToString(kStrFmt_thous) });
 
             if (0 < nodeDatum.SubDirs)
             {
@@ -200,7 +201,7 @@ namespace DoubleFile
             VolumeDetailUpdatedOnNext(Tuple.Create(lasItems.Where(i => null != i), rootNode.Text), nInitiator);
         }
 
-        static IDictionary<string, string>
+        static IReadOnlyDictionary<string, string>
             _dictVolumeInfo = null;
         static bool
             _bCompareMode = false;

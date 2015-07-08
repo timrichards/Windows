@@ -7,15 +7,15 @@ namespace DoubleFile
 {
     partial class LV_FilesVM : ListViewVM_Base<LVitem_FilesVM>
     {
-        static internal IObservable<Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int>>
+        static internal IObservable<Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, string[], LocalTreeNode>, int>>
             SelectedFileChanged { get { return _selectedFileChanged.AsObservable(); } }
-        static readonly LocalSubject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>> _selectedFileChanged = new LocalSubject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>>();
-        static void SelectedFileChangedOnNext(Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode> value, int nInitiator)
+        static readonly LocalSubject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, string[], LocalTreeNode>> _selectedFileChanged = new LocalSubject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, string[], LocalTreeNode>>();
+        static void SelectedFileChangedOnNext(Tuple<IEnumerable<FileDictionary.DuplicateStruct>, string[], LocalTreeNode> value, int nInitiator)
         {
             _selectedFileChanged.LocalOnNext(value, 99852, nInitiator);
             LastSelectedFile = value;
         }
-        static internal Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>
+        static internal Tuple<IEnumerable<FileDictionary.DuplicateStruct>, string[], LocalTreeNode>
             LastSelectedFile
         {
             get { return WithLV_FilesVM(lv => lv._lastSelectedFile); }
@@ -31,7 +31,7 @@ namespace DoubleFile
                 ? doSomethingWith(vm)
                 : null;
         }
-        Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>
+        Tuple<IEnumerable<FileDictionary.DuplicateStruct>, string[], LocalTreeNode>
             _lastSelectedFile = null;
 
         public LVitem_FilesVM SelectedItem
@@ -62,7 +62,7 @@ namespace DoubleFile
         void SelectedItem_AllTriggers(int nInitiator)
         {
             if (null != _selectedItem)
-                SelectedFileChangedOnNext(Tuple.Create(_selectedItem.LSduplicates, _selectedItem.FileLine.AsEnumerable(), _treeNode), nInitiator);
+                SelectedFileChangedOnNext(Tuple.Create(_selectedItem.LSduplicates, _selectedItem.FileLine, _treeNode), nInitiator);
             else
                 SelectedFileChangedOnNext(null, nInitiator);
         }

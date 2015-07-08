@@ -13,7 +13,7 @@ namespace DoubleFile
 {
     interface IOpenListingFiles
     {
-        bool Callback(IEnumerable<string> lsFiles, bool bClearItems, Func<bool> userCanceled);
+        bool Callback(IEnumerable<string> ieFiles, bool bClearItems, Func<bool> userCanceled);
     }
 
     // The Process disposable field is managed by wrapper functions that dispose it once control returns.

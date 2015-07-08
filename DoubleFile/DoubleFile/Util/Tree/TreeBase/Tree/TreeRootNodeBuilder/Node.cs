@@ -103,7 +103,7 @@ namespace DoubleFile
                         }
                         else
                         {
-                            treeNode = new LocalTreeNode(strShortPath, new[] { subNode.AddToTree() });
+                            treeNode = new LocalTreeNode(strShortPath, new List<LocalTreeNode> { subNode.AddToTree() });
                         }
                     }
                     else if (1 < _subNodes.Count)

@@ -36,7 +36,7 @@ namespace DoubleFile
             Clipboard.SetText(LocalPath);
         }
 
-        void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IEnumerable<string>, LocalTreeNode>, int> initiatorTuple)
+        void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, string[], LocalTreeNode>, int> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
             var item2 = (null != tuple) ? tuple.Item2 : null;
@@ -45,7 +45,7 @@ namespace DoubleFile
             WinDuplicatesVM_UpdateFileDetail(Tuple.Create(Tuple.Create(item2, item3), initiatorTuple.Item2));
         }
 
-        void WinDuplicatesVM_UpdateFileDetail(Tuple<Tuple<IEnumerable<string>, LocalTreeNode>, int> initiatorTuple)
+        void WinDuplicatesVM_UpdateFileDetail(Tuple<Tuple<string[], LocalTreeNode>, int> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
 
@@ -57,9 +57,7 @@ namespace DoubleFile
             if (null == tuple.Item1)
                 return;
 
-            var asFileLine =
-                tuple.Item1
-                .ToArray();
+            var asFileLine = tuple.Item1;
 
             Title = asFileLine[0];
             LocalPath_Set(tuple.Item2, asFileLine[0]);

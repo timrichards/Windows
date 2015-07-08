@@ -152,7 +152,7 @@ namespace DoubleFile
         }
 
         internal bool OpenListingFiles(
-            IEnumerable<string> listFiles,
+            IEnumerable<string> ieFiles,
             bool bClearItems = false,
             Func<bool> userCanceled = null)
         {
@@ -168,7 +168,7 @@ namespace DoubleFile
                     listItems.Add(lvItem);
             }
 
-            Util.ParallelForEach(listFiles, new ParallelOptions { CancellationToken = cts.Token }, strFilename =>
+            Util.ParallelForEach(ieFiles, new ParallelOptions { CancellationToken = cts.Token }, strFilename =>
             {
                 if ((null != userCanceled) &&
                     userCanceled())
@@ -245,9 +245,9 @@ namespace DoubleFile
             return bOpenedFiles;
         }
 
-        bool IOpenListingFiles.Callback(IEnumerable<string> lsFiles, bool bClearItems, Func<bool> userCanceled)
+        bool IOpenListingFiles.Callback(IEnumerable<string> ieFiles, bool bClearItems, Func<bool> userCanceled)
         {
-            return OpenListingFiles(lsFiles, bClearItems, userCanceled);
+            return OpenListingFiles(ieFiles, bClearItems, userCanceled);
         }
 
         bool IWinProgressClosing.ConfirmClose()

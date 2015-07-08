@@ -90,7 +90,7 @@ namespace DoubleFile
                     var nDirLength = 0UL;
                     var bHasLength = false;
 
-                    foreach (var winFile in ieFiles.OrderBy(winData => winData.strAltFileName))
+                    foreach (var winFile in ieFiles)
                     {
                         if (App.LocalExit ||
                             _bThreadAbort)
@@ -197,7 +197,7 @@ namespace DoubleFile
                         }
                     }
 
-                    foreach (var winData in ieSubDirs.OrderBy(winData => winData.strAltFileName))
+                    foreach (var winData in ieSubDirs)
                         stackDirs.Push(winData);
                 }
 

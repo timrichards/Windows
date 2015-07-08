@@ -111,7 +111,7 @@ namespace DoubleFile
 
             public int CompareTo(object obj)
             {
-                return strFileName.CompareTo(((DATUM)obj).strFileName);
+                return strAltFileName.CompareTo(((DATUM)obj).strAltFileName);
             }
         }
 

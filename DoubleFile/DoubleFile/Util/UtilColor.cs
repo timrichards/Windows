@@ -6,7 +6,7 @@ namespace DoubleFile
 {
     static class UtilColor
     {
-        static internal IDictionary<int, string>
+        static internal readonly IDictionary<int, string>
             Description = new Dictionary<int, string>();
 
         static internal int Empty { get { return Color.Empty.ToArgb(); } }

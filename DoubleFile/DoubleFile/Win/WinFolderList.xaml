@@ -9,6 +9,15 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <DataGrid Name="form_lv" Grid.Column="0" SelectedItem="{Binding SelectedItem}" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+            <DataGrid.Resources>
+                <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Alternate}" Value="True">
+                            <Setter Property="Background" Value="Black" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.Resources>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Folders" Binding="{Binding Folder}" Width="{Binding WidthFolder}"/>
             </DataGrid.Columns>

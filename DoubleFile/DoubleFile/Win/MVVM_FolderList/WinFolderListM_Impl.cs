@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System;
 
 namespace DoubleFile
 {
@@ -8,33 +9,46 @@ namespace DoubleFile
         {
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
 
+            var nPrev = uint.MaxValue;
+            var bAlt = false;
+
+            Action<int> AddFolders = (nFolderScoreIndex) =>
+            {
+                Func<LocalTreeNode, bool> Alternate = folder =>
+                {
+                    var nFolderScore = folder.NodeDatum.FolderScore[nFolderScoreIndex];
+
+                    if (nPrev == nFolderScore)
+                        return bAlt;
+
+                    nPrev = nFolderScore;
+                    return bAlt = !bAlt;
+                };
+
+                Util.UIthread(() => Add(LocalTV.AllNodes
+                    .OrderByDescending(folder => folder.NodeDatum.FolderScore[nFolderScoreIndex])
+                    .Select(folder => new LVitem_FolderListVM { LocalTreeNode = folder, Alternate = Alternate(folder) })));
+            };
+
             switch (strFragment)
             {
                 case MainWindow.FolderListLarge:
                 {
-                    Util.UIthread(() => Add(LocalTV.AllNodes
-                        .Select(folder => new LVitem_FolderListVM { LocalTreeNode = folder })));
-
+                    AddFolders(1);
                     Util.WriteLine("FolderListLarge");
                     break;
                 }
 
                 case MainWindow.FolderListSmall:
                 {
-                    Util.UIthread(() => Add(LocalTV.AllNodes
-                        .OrderByDescending(folder => folder.NodeDatum.FolderScore[2])
-                        .Select(folder => new LVitem_FolderListVM { LocalTreeNode = folder })));
-
+                    AddFolders(2);
                     Util.WriteLine("FolderListSmall");
                     break;
                 }
 
                 case MainWindow.FolderListRandom:
                 {
-                    Util.UIthread(() => Add(LocalTV.AllNodes
-                        .OrderByDescending(folder => folder.NodeDatum.FolderScore[1])
-                        .Select(folder => new LVitem_FolderListVM { LocalTreeNode = folder })));
-
+                    AddFolders(0);
                     Util.WriteLine("FolderListRandom");
                     break;
                 }

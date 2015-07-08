@@ -7,6 +7,8 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- scroll to highlighted item in LVs
+- bold "folder in parent\folders" in search and folder LVs; foreground colors
 - Look for ToArray(): LocalTreeNode etc OK as array for Length.
 - string compare CompareTo()
 
@@ -62,7 +64,6 @@
 
 - vertical scrollbar: window height clips volumes lv
 - set hover bg same as bg in project lv for group etc
-- scroll to highlighted item in LVs
 - clones lvs; and all dupe files lv?
 - allow user toggle showing free space
 - UX tree map free space

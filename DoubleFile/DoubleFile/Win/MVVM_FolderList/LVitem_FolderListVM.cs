@@ -9,6 +9,8 @@ namespace DoubleFile
         internal LocalTreeNode LocalTreeNode { get { return _datum as LocalTreeNode; } set { _datum = value; } }
         object _datum = null;
 
+        public bool Alternate { get; internal set; }
+
         public string Folder
         {
             get

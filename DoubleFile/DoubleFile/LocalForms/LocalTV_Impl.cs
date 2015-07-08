@@ -134,8 +134,7 @@ namespace DoubleFile
 
         void ITreeStatus.Done()
         {
-            if ((null == _rootNodes) ||
-                (0 == _rootNodes.Count))
+            if (0 == _rootNodes.Count)
             {
                 WithWinProgress(w => w
                     .SetAborted()
@@ -149,9 +148,6 @@ namespace DoubleFile
             _tree = null;
             Collate.ClearMem();
 
-            var localLVclones = new LocalLV();
-            var localLVsameVol = new LocalLV();
-            var localLVsolitary = new LocalLV();
             var lsLocalLVignore = new List<LocalLVitem>();  // when implementing, replace the Forms ListViewItem.Tag in LocalLVItem
             var nProgress = 0d;
 
@@ -162,7 +158,7 @@ namespace DoubleFile
 
                 var collate = new Collate(
                     _dictNodes,
-                    localLVclones, localLVsameVol, localLVsolitary,
+                    _clones, _sameVol, _solitary,
                     _rootNodes, _allNodes,
                     lsLVignore: lsLocalLVignore, bLoose: true);
 
@@ -228,32 +224,7 @@ namespace DoubleFile
                 .ToArray());
 
             Util.WriteLine("Completed ANOVA in " + (DateTime.Now - dt).TotalMilliseconds + " ms");   // 350 ms
-            dt = DateTime.Now;
-
-            // Since it's just a parity, the hash parity serves as a random weight
-            // So this is also a mean square 
-            var allNodesHashParity =
-                _allNodes
-                .OrderByDescending(folder => folder.NodeDatum.FolderScore[0])
-                .ToArray();
-
             _allNodes.Sort((y, x) => x.NodeDatum.FolderScore[1].CompareTo(y.NodeDatum.FolderScore[1]));
-
-            var allNodesWeightedSmall =
-                _allNodes
-                .OrderByDescending(folder => folder.NodeDatum.FolderScore[2])
-                .ToArray();
-
-            Util.WriteLine("Completed ANOVA arrays in " + (DateTime.Now - dt).TotalMilliseconds + " ms");    // 500 ms
-
-            var nMax = Math.Min(50, allNodesHashParity.Length);
-
-            for (var i = 0; i < nMax; ++i)
-                Util.WriteLine(
-                    allNodesHashParity[i].Text.PadRight(50) +
-                    _allNodes[i].Text.PadRight(50) +
-                    allNodesWeightedSmall[i].Text);
-
             _bTreeDone = true;      // should preceed closing status dialog: returns true to the caller
 
             WithWinProgress(w => w

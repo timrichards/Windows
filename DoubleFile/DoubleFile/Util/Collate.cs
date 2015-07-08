@@ -14,7 +14,7 @@ namespace DoubleFile
             LocalLV lvSameVol,
             LocalLV lvUnique,
             IReadOnlyList<LocalTreeNode> lsRootNodes,
-            List<LocalTreeNode> lsTreeNodes,
+            List<LocalTreeNode> lsAllNodes,
             List<LocalLVitem> lsLVignore,
             bool bLoose)
         {
@@ -24,7 +24,7 @@ namespace DoubleFile
             _lvSameVol = lvSameVol;
             _lvUnique = lvUnique;
             _lsRootNodes = lsRootNodes;
-            _lsTreeNodes = lsTreeNodes;
+            _lsAllNodes = lsAllNodes;
             _lsLVignore = lsLVignore;
             _bLoose = bLoose;
         }
@@ -374,23 +374,22 @@ namespace DoubleFile
 
             InsertSizeMarkers(_lsLVunique);
 
-            var listSameVol = new List<LocalTreeNode>();
+            var lsSameVol = new List<LocalTreeNode>();
 
             if (0 < _lsRootNodes.Count)
             {
                 var nCount = CountNodes.Go(_lsRootNodes);
-                var nCount_A = new AddTreeToList(_lsTreeNodes, listSameVol).Go(_lsRootNodes).Count;
-
-                MBoxStatic.Assert(1305.6325m, nCount_A == nCount);
-                MBoxStatic.Assert(1305.6326m, _lsTreeNodes.Count == nCount);
+                
+                AddTreeToList.Go(_lsAllNodes, lsSameVol, _lsRootNodes);
+                MBoxStatic.Assert(1305.6326m, _lsAllNodes.Count == nCount);
                 Util.WriteLine("Step1_OnThread " + nCount);
             }
 
-            listSameVol.Sort((y, x) => x.NodeDatum.TotalLength.CompareTo(y.NodeDatum.TotalLength));
-            nProgressDenominator += listSameVol.Count;
+            lsSameVol.Sort((y, x) => x.NodeDatum.TotalLength.CompareTo(y.NodeDatum.TotalLength));
+            nProgressDenominator += lsSameVol.Count;
             ++nProgressItem;
 
-            foreach (var treeNode in listSameVol)
+            foreach (var treeNode in lsSameVol)
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
 
@@ -661,7 +660,7 @@ namespace DoubleFile
         readonly LocalLV _lvSameVol = null;
         readonly LocalLV _lvUnique = null;
         readonly IReadOnlyList<LocalTreeNode> _lsRootNodes = null;
-        readonly IList<LocalTreeNode> _lsTreeNodes = null;
+        readonly IList<LocalTreeNode> _lsAllNodes = null;
         readonly IList<LocalLVitem> _lsLVignore = null;
 
         // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.

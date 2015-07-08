@@ -8,20 +8,21 @@ namespace DoubleFile
         // can't be struct because it has an auto-implemented property
         class AddTreeToList
         {
-            internal int Count { get; private set; }
-
-            internal AddTreeToList(IList<LocalTreeNode> listTreeNodes, IList<LocalTreeNode> listSameVol)
+            static internal void Go(IList<LocalTreeNode> lsAllNodes, IList<LocalTreeNode> lsSameVol,
+                IEnumerable<LocalTreeNode> lsNodes)
             {
-                _listTreeNodes = listTreeNodes;
-                _listSameVol = listSameVol;
+                new AddTreeToList
+                {
+                    _lsAllNodes = lsAllNodes,
+                    _lsSameVol = lsSameVol,
+                }
+                    .Go(lsNodes);
             }
 
-            internal AddTreeToList Go(IEnumerable<LocalTreeNode> listNodes)
+            AddTreeToList Go(IEnumerable<LocalTreeNode> lsNodes)
             {
-                foreach (var treeNode in listNodes)
-                {
+                foreach (var treeNode in lsNodes)
                     Go(treeNode, bNextNode: false);
-                }
 
                 return this;
             }
@@ -38,12 +39,11 @@ namespace DoubleFile
 
                 do
                 {
-                    _listTreeNodes.Add(treeNode);
-                    ++Count;
+                    _lsAllNodes.Add(treeNode);
 
                     var nodeDatum = treeNode.NodeDatum;
 
-                    if (nodeDatum == null)
+                    if (null == nodeDatum)
                     {
                         MBoxStatic.Assert(1305.6303m, false);
                         continue;
@@ -52,7 +52,7 @@ namespace DoubleFile
                     if ((treeNode.ForeColor == UtilColor.Firebrick) &&
                         (treeNode == nodeDatum.Clones[0]))
                     {
-                        _listSameVol.Add(treeNode);
+                        _lsSameVol.Add(treeNode);
                     }
 
                     if (bCloneOK)
@@ -74,10 +74,10 @@ namespace DoubleFile
                 while (bNextNode && ((treeNode = treeNode.NextNode) != null));
             }
 
-            readonly IList<LocalTreeNode>
-                _listTreeNodes = null;
-            readonly IList<LocalTreeNode>
-                _listSameVol = null;
+            IList<LocalTreeNode>
+                _lsAllNodes = null;
+            IList<LocalTreeNode>
+                _lsSameVol = null;
         }
     }
 }

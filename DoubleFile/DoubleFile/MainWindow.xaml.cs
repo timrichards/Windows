@@ -23,13 +23,21 @@ namespace DoubleFile
             }
         }
 
+        class FolderListLink : Link
+        {
+            internal FolderListLink(string strDisplayName, string strFragment)
+            {
+                DisplayName = strDisplayName;
+                Source = new Uri("/Win/WinFolderList.xaml#" + strFragment, UriKind.Relative);
+            }
+        }
+
         internal const string FolderListLarge = "large";
         internal const string FolderListSmall = "small";
         internal const string FolderListRandom = "random";
         internal const string FolderListUnique = "unique";
         internal const string FolderListSameVol = "sameVol";
         internal const string FolderListClones = "clones";
-        static string FolderListUrlBuilder(string s = null) { return "/Win/WinFolderList.xaml#" + s; }
 
         internal const string SaveListingsFakeKey = "/SaveListings.xaml";
         static readonly Link _saveListingsLink = new MyLink("Save listings", SaveListingsFakeKey);
@@ -242,12 +250,12 @@ namespace DoubleFile
             }},
             new LinkGroup { DisplayName="Folder lists", Links =
             {
-                new MyLink("ANOVA weighted large", FolderListUrlBuilder(FolderListLarge)),
-                new MyLink("ANOVA weighted small", FolderListUrlBuilder(FolderListSmall)),
-                new MyLink("ANOVA weighted random", FolderListUrlBuilder(FolderListRandom)),
-                new MyLink("Unique", FolderListUrlBuilder(FolderListUnique)),
-                new MyLink("Same volume", FolderListUrlBuilder(FolderListSameVol)),
-                new MyLink("Clones", FolderListUrlBuilder(FolderListClones)),
+                new FolderListLink("ANOVA weighted large", FolderListLarge),
+                new FolderListLink("ANOVA weighted small", FolderListSmall),
+                new FolderListLink("ANOVA weighted random", FolderListRandom),
+                new FolderListLink("Unique", FolderListUnique),
+                new FolderListLink("Same volume", FolderListSameVol),
+                new FolderListLink("Clones", FolderListClones),
             }},
             new LinkGroup { DisplayName="Files", Links =
             {

@@ -1,4 +1,6 @@
-﻿namespace DoubleFile
+﻿using System.Linq;
+
+namespace DoubleFile
 {
     partial class WinFolderListVM
     {
@@ -10,18 +12,29 @@
             {
                 case MainWindow.FolderListLarge:
                 {
+                    Util.UIthread(() => Add(LocalTV.AllNodes
+                        .Select(folder => new LVitem_FolderListVM { LocalTreeNode = folder })));
+
                     Util.WriteLine("FolderListLarge");
                     break;
                 }
 
                 case MainWindow.FolderListSmall:
                 {
+                    Util.UIthread(() => Add(LocalTV.AllNodes
+                        .OrderByDescending(folder => folder.NodeDatum.FolderScore[2])
+                        .Select(folder => new LVitem_FolderListVM { LocalTreeNode = folder })));
+
                     Util.WriteLine("FolderListSmall");
                     break;
                 }
 
                 case MainWindow.FolderListRandom:
                 {
+                    Util.UIthread(() => Add(LocalTV.AllNodes
+                        .OrderByDescending(folder => folder.NodeDatum.FolderScore[1])
+                        .Select(folder => new LVitem_FolderListVM { LocalTreeNode = folder })));
+
                     Util.WriteLine("FolderListRandom");
                     break;
                 }

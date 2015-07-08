@@ -7,7 +7,6 @@ using System.Windows.Controls;
 using System.Linq;
 using System.IO;
 using System.Collections.Concurrent;
-using FirstFloor.ModernUI.Windows.Controls;
 
 namespace DoubleFile
 {

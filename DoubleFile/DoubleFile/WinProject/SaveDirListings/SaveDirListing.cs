@@ -231,7 +231,7 @@ namespace DoubleFile
                             lsOpenedFiles.Add(tupleA);
                         }
 
-                        IReadOnlyList<Tuple<string, ulong, string, IReadOnlyList<byte[]>>>
+                        IReadOnlyList<Tuple<string, ulong, string, IReadOnlyList<IReadOnlyCollection<byte>>>>
                             lsFileBuffers_Enqueue = null;
 
                         try
@@ -328,13 +328,16 @@ namespace DoubleFile
                 return Tuple.Create(strFile, tuple.Item2, fileHandle, strError);
             }
 
-            IEnumerable<Tuple<string, ulong, string, IReadOnlyList<byte[]>>>
+            IEnumerable<Tuple<string, ulong, string, IReadOnlyList<IReadOnlyCollection<byte>>>>
                 ReadBuffers(IEnumerable<Tuple<string, ulong, SafeFileHandle, string>> ieFileHandles)
             {
                 foreach (var tuple in ieFileHandles)
                 {
                     var lsRet = new List<byte[]> { };
-                    var retval = Tuple.Create(tuple.Item1, tuple.Item2, tuple.Item4, (IReadOnlyList<byte[]>)lsRet);
+
+                    var retval = Tuple.Create(tuple.Item1, tuple.Item2, tuple.Item4,
+                        (IReadOnlyList<IReadOnlyCollection<byte>>)lsRet);
+
                     var fileHandle = tuple.Item3;
 
                     if (fileHandle.IsInvalid)
@@ -417,7 +420,7 @@ namespace DoubleFile
             }
 
             Tuple<HashTuple, HashTuple>
-                HashFile(Tuple<string, ulong, string, IReadOnlyList<byte[]>> tuple)
+                HashFile(Tuple<string, ulong, string, IReadOnlyList<IReadOnlyCollection<byte>>> tuple)
             {
                 var retval = Tuple.Create((HashTuple)null, (HashTuple)null);
                 var lsBuffer = tuple.Item4;
@@ -438,7 +441,7 @@ namespace DoubleFile
 
                 using (var md5 = MD5.Create())
                 {
-                    var hash1pt0 = HashTuple.FactoryCreate(md5.ComputeHash(lsBuffer[0]));
+                    var hash1pt0 = HashTuple.FactoryCreate(md5.ComputeHash((byte[])lsBuffer[0]));
 
                     retval = Tuple.Create(hash1pt0, hash1pt0);
 
@@ -448,7 +451,7 @@ namespace DoubleFile
                     var nSize = 0;
 
                     foreach (var buffer in lsBuffer.Skip(1))
-                        nSize += buffer.Length;
+                        nSize += buffer.Count;
 
                     MBoxStatic.Assert(99909, 1048576 >= nSize);
 
@@ -457,8 +460,8 @@ namespace DoubleFile
 
                     foreach (var buffer in lsBuffer.Skip(1))
                     {
-                        buffer.CopyTo(hashArray, nIx);
-                        nIx += buffer.Length;
+                        ((byte[])buffer).CopyTo(hashArray, nIx);
+                        nIx += buffer.Count;
                     }
 
                     return Tuple.Create(hash1pt0,

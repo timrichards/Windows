@@ -13,7 +13,7 @@
                 <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Alternate}" Value="True">
-                            <Setter Property="Background" Value="Black" />
+                            <Setter Property="Foreground" Value="AntiqueWhite" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>

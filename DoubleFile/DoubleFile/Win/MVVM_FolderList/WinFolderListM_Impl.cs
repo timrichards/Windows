@@ -91,6 +91,11 @@ namespace DoubleFile
             return this;
         }
 
+        public void Dispose()
+        {
+            Util.LocalDispose(_lsDisposable);
+        }
+
         void TreeSelect_FolderDetailUpdated(Tuple<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>, int> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
@@ -110,5 +115,8 @@ namespace DoubleFile
 
             _selectedItem.LocalTreeNode.GoToFile(null);
         }
+
+        List<IDisposable>
+            _lsDisposable = new List<IDisposable>();
     }
 }

@@ -25,12 +25,15 @@ namespace DoubleFile
         }
 
         public static readonly DependencyProperty BehaviorsProperty =
-            DependencyProperty.RegisterAttached("Behaviors", typeof(Behaviors), typeof(SupplementaryInteraction), new UIPropertyMetadata(null, OnPropertyBehaviorsChanged));
+            DependencyProperty.RegisterAttached("Behaviors", typeof(Behaviors),
+            typeof(SupplementaryInteraction), new UIPropertyMetadata(null, OnPropertyBehaviorsChanged));
 
         private static void OnPropertyBehaviorsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var behaviors = Interaction.GetBehaviors(d);
-            foreach (var behavior in e.NewValue as Behaviors) behaviors.Add(behavior);
+
+            ((Behaviors)e.NewValue)
+                .ForEach(behaviors.Add);
         }
 
         public static Triggers GetTriggers(DependencyObject obj)
@@ -44,12 +47,15 @@ namespace DoubleFile
         }
 
         public static readonly DependencyProperty TriggersProperty =
-            DependencyProperty.RegisterAttached("Triggers", typeof(Triggers), typeof(SupplementaryInteraction), new UIPropertyMetadata(null, OnPropertyTriggersChanged));
+            DependencyProperty.RegisterAttached("Triggers", typeof(Triggers),
+            typeof(SupplementaryInteraction), new UIPropertyMetadata(null, OnPropertyTriggersChanged));
 
         private static void OnPropertyTriggersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var triggers = Interaction.GetTriggers(d);
-            foreach (var trigger in e.NewValue as Triggers) triggers.Add(trigger);
+
+            ((Triggers)e.NewValue)
+                .ForEach(triggers.Add);
         }
     }
 }

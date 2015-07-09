@@ -7,7 +7,7 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
-- scroll to highlighted item in LVs
+- select full row in WinFolderList
 - bold "folder in parent\folders" in search and folder LVs; foreground colors
 - Look for ToArray(): LocalTreeNode etc OK as array for Length.
 - string compare CompareTo()
@@ -93,7 +93,7 @@
 - replace .Cast with (ICollection<>)
 - replace IEnumerable with ICollection where possible
 
-99886 99885 99884 99883
+99885 99884 99883
 99881
 99879
 99877

@@ -1,6 +1,15 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:clr="clr-namespace:System;assembly=System">
+        xmlns:clr="clr-namespace:System;assembly=System"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:local="clr-namespace:DoubleFile">
+
+    <local:Triggers x:Key="dataGridTriggers" x:Shared="False">
+        <i:EventTrigger EventName="SelectionChanged">
+            <local:DataGrid_ScrollIntoViewAction SelectionChanged="{Binding RelativeSource=
+                {RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"/>
+        </i:EventTrigger>
+    </local:Triggers>
     
     <Style TargetType="{x:Type DataGrid}" BasedOn="{StaticResource {x:Type DataGrid}}">
         <Setter Property="ItemsSource" Value="{Binding Items}" />
@@ -15,6 +24,9 @@
         <Setter Property="CanUserDeleteRows" Value="False"/>
         <Setter Property="CanUserReorderColumns" Value="False"/>
         <Setter Property="CanUserResizeRows" Value="False"/>
+        <!--Scroll item into view when selected programmatically by the view model-->
+        <Setter Property="SelectedItem" Value="{Binding SelectedItem, Mode=TwoWay}"/>
+        <Setter Property="local:SupplementaryInteraction.Triggers" Value="{StaticResource dataGridTriggers}"/>
     </Style>
 
     <Style TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource {x:Type DataGridRow}}">

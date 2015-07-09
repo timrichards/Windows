@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:DoubleFile"
         LocalTitle="Files in Folder">
     <Grid>
-        <DataGrid SelectedItem="{Binding SelectedItem}" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+        <DataGrid>
             <DataGrid.Resources>
                 <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
                     <Style.Triggers>

@@ -1,4 +1,6 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows.Input;
 
 namespace DoubleFile
 {
@@ -39,5 +41,13 @@ namespace DoubleFile
         public string WidthFolder { get { return SCW; } }                   // franken all NaN
 
         internal override int NumCols { get { return LVitem_FolderListVM.NumCols_; } }
+
+        public void Dispose()
+        {
+            Util.LocalDispose(_lsDisposable);
+        }
+
+        List<IDisposable>
+            _lsDisposable = new List<IDisposable>();
     }
 }

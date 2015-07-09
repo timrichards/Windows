@@ -8,7 +8,7 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <DataGrid Name="form_lv" Grid.Column="0" SelectedItem="{Binding SelectedItem}" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+        <DataGrid Grid.Column="0">
             <DataGrid.Resources>
                 <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
                     <Style.Triggers>

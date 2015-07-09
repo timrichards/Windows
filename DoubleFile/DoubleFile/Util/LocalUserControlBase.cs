@@ -14,8 +14,13 @@ namespace DoubleFile
     {
         public string LocalTitle { get; set; }
 
-        public void OnFragmentNavigation(FragmentNavigationEventArgs e) { LocalFragmentNavigation(e.Fragment); }
+        public void OnFragmentNavigation(FragmentNavigationEventArgs e)
+        {
+            _strFragment = e.Fragment;
+            LocalFragmentNavigation(_strFragment);
+        }
         virtual protected void LocalFragmentNavigation(string strFragment) { }
+        string _strFragment = null;
 
         public void OnNavigatedFrom(NavigationEventArgs e) { LocalNavigatedFrom(); }
         virtual protected void LocalNavigatedFrom() { }
@@ -72,6 +77,7 @@ namespace DoubleFile
                 .Subscribe(x =>
             {
                 content.LocalNavigatedTo();
+                content.LocalFragmentNavigation(_strFragment);
                 //content.CopyTag_NewWindow(new WeakReference(page.Tag));
             });
 

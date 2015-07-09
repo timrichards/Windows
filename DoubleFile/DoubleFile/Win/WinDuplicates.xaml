@@ -8,7 +8,7 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <DataGrid Grid.Column="0" SelectedItem="{Binding SelectedItem}" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+        <DataGrid Grid.Column="0">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="File name" Binding="{Binding Filename}" Width="{Binding WidthFilename}"/>
                 <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="{Binding WidthPath}"/>

@@ -1,18 +1,17 @@
 ﻿using System.Linq;
 using System;
+using System.Collections.Generic;
 
 namespace DoubleFile
 {
     partial class WinFolderListVM
     {
-        internal WinFolderListVM Init(string strFragment)
+        internal WinFolderListVM(string strFragment)
         {
-            Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
-
             var nPrev = uint.MaxValue;
             var bAlt = false;
 
-            Action<int> AddFolders = (nFolderScoreIndex) =>
+            Action<int> AddFolders = nFolderScoreIndex =>
             {
                 Func<LocalTreeNode, bool> Alternate = folder =>
                 {
@@ -78,7 +77,27 @@ namespace DoubleFile
                 }
             }
 
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(TreeSelect_FolderDetailUpdated));
+
+            var folderDetail = LocalTV.TreeSelect_FolderDetail;
+
+            if (null != folderDetail)
+                TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
+        }
+
+        internal WinFolderListVM Init()
+        {
+            Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
             return this;
+        }
+
+        void TreeSelect_FolderDetailUpdated(Tuple<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>, int> initiatorTuple)
+        {
+            var tuple = initiatorTuple.Item1;
+
+            ItemsCast
+                .Where(lvItem => lvItem.LocalTreeNode == tuple.Item2)
+                .FirstOnlyAssert(SelectedItem_Set);
         }
 
         void GoTo()

@@ -14,8 +14,8 @@
         {
             DataContext = 
                 _winFolderListVM =
-                new WinFolderListVM()
-                .Init(strFragment);
+                new WinFolderListVM(strFragment)
+                .Init();
         }
 
         protected override void LocalNavigatedFrom()

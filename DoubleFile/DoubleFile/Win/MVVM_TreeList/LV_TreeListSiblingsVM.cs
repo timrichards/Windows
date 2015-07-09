@@ -56,11 +56,6 @@ namespace DoubleFile
                 TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
         }
 
-        internal void CopyFrom(LV_TreeListSiblingsVM vm)
-        {
-            Populate(vm._treeNode);
-        }
-
         public void Dispose()
         {
             Util.LocalDispose(_lsDisposable);

@@ -15,12 +15,12 @@
                 <Setter Property="Background" Value="{Binding Background}"/>
             </Style>
         </Grid.Resources>
-        <DataGrid Grid.Column="0" Name="formLV_Siblings" SelectedItem="{Binding SelectedItem}">
+        <DataGrid Grid.Column="0" Name="formLV_Siblings">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Sibling folders" Binding="{Binding Folder}" Width="{Binding WidthFolder}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid Grid.Column="1" Name="formLV_Children" SelectedItem="{Binding SelectedItem}">
+        <DataGrid Grid.Column="1" Name="formLV_Children">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Folders here" Binding="{Binding Folder}" Width="{Binding WidthFolder}"/>
             </DataGrid.Columns>

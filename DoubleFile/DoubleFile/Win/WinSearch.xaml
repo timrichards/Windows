@@ -25,7 +25,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <DataGrid Name="form_lv" Grid.Column="0" SelectedItem="{Binding SelectedItem}" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+            <DataGrid Name="form_lv" Grid.Column="0">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Results" Binding="{Binding Results}" Width="{Binding WidthResults}"/>
                 </DataGrid.Columns>

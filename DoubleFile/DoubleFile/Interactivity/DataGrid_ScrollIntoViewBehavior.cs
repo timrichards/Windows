@@ -19,13 +19,13 @@ namespace DoubleFile
 
         void AssociatedObject_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (false == sender is DataGrid)
-                return;
+            var grid = sender.As<DataGrid>();
 
-            var grid = (DataGrid)sender;
-
-            if (null == grid.SelectedItem)
+            if ((null == grid) ||
+                (null == grid.SelectedItem))
+            {
                 return;
+            }
 
             Util.UIthread(() =>
             {

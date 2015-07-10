@@ -794,13 +794,13 @@ namespace DoubleFile
 
                     Util.Closure(() =>
                     {
+                        var rootNodeDatum = item.NodeDatum.As<RootNodeDatum>();
+
                         if ((false == bStart) ||
-                            (false == item.NodeDatum is RootNodeDatum))
+                            (null == rootNodeDatum))
                         {
                             return;     // from lambda
                         }
-
-                        var rootNodeDatum = (RootNodeDatum)item.NodeDatum;
 
                         if (false == rootNodeDatum.VolumeView)
                             return;     // from lambda

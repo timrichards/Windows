@@ -251,7 +251,7 @@ namespace DoubleFile
 
                         // Expect block to be false: reading buffers from disk is The limiting factor. Opening files is
                         // slow too, which makes it even less likely to block. Allow block. It does get hit a handful of times.
-                        Dispatcher.PushFrame(blockWhileHashingPreviousBatch);
+                        App.PushFrame(blockWhileHashingPreviousBatch);
                         blockWhileHashingPreviousBatch.Continue = true;
 
                         // in C# this copy occurs every iteration. A closure is created each time in ThreadMake.
@@ -293,7 +293,7 @@ namespace DoubleFile
                         bEnqueued = 0 < lsFileBuffers_Enqueue.Count;
                     }
 
-                    Dispatcher.PushFrame(blockUntilAllFilesOpened);
+                    App.PushFrame(blockUntilAllFilesOpened);
                     StatusCallback(LVitemProjectVM, nProgress: 1);
                     
                     return Tuple.Create(

@@ -123,7 +123,7 @@ namespace DoubleFile
             DispatcherFrame blockingFrame = new DispatcherFrame(true) { Continue = true };
 
             _thread = Util.ThreadMake(() => { Go(); blockingFrame.Continue = false; });
-            Dispatcher.PushFrame(blockingFrame);
+            App.PushFrame(blockingFrame);
             return this;
         }
 

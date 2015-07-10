@@ -56,6 +56,9 @@ namespace DoubleFile
 
                 TabledString<Tabled_Folders>.GenerationStarting();
 
+                if (App.FileDictionary.IsAborted)
+                    return;
+
                 if (null == _dictNodes)
                     _dictNodes = new ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>();
 

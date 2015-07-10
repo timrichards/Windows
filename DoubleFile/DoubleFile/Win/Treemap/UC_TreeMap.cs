@@ -733,7 +733,7 @@ namespace DoubleFile
                 RecurseDrawGraph(item, rc, true);
 
                 if (0 < _nWorkerCount)
-                    Dispatcher.PushFrame(_blockingFrame);
+                    App.PushFrame(_blockingFrame);
 
                 deepNodeDrawn_out = _deepNodeDrawn;
                 return _lsRenderActions.Concat(_lsFrames);

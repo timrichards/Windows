@@ -25,7 +25,7 @@ namespace DoubleFile
                 blockingFrame.Continue = false;
             });
 
-            Dispatcher.PushFrame(blockingFrame);
+            App.PushFrame(blockingFrame);
         }
 
         static internal void
@@ -191,7 +191,7 @@ namespace DoubleFile
                         blockingFrame.Continue = false;
                     });
 
-                    Dispatcher.PushFrame(blockingFrame);
+                    App.PushFrame(blockingFrame);
                 }
             }
             catch (TaskCanceledException) { }

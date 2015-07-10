@@ -63,7 +63,7 @@ namespace DoubleFile
                         .Subscribe(x => blockingFrame.Continue = false);
 
                     blockingFrame.Continue = true;
-                    Dispatcher.PushFrame(blockingFrame);
+                    App.PushFrame(blockingFrame);
                     dt = DateTime.Now;
                 }
 

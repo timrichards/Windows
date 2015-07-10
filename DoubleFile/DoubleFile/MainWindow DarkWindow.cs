@@ -213,7 +213,34 @@ namespace DoubleFile
                     }
                 });
 
+                var nWindowCount = 0;
+                IDisposable d = null;
+
+                d = Observable.Timer(TimeSpan.FromMilliseconds(250), TimeSpan.FromSeconds(1)).Timestamp()
+                    .Subscribe(x => Util.UIthread(() =>
+                {
+                    if (0 == nWindowCount)
+                        nWindowCount = darkDialog.OwnedWindows.Count;
+
+                    var bAssert = (0 < nWindowCount) && (0 == darkDialog.OwnedWindows.Count);
+
+                    if (0 < darkDialog.OwnedWindows.Count)
+                    {
+                        darkDialog.OwnedWindows.Cast<ILocalWindow>()
+                            .FirstOnlyAssert(w => bAssert = w.LocalIsClosed);
+                    }
+
+                    if (false == bAssert)
+                        return;             // from lambda
+
+                    darkDialog.Close();
+                    d.Dispose();
+                    App.ClearFrames();
+                    MBoxStatic.Assert(99885, false);
+                }));
+
                 darkDialog.ShowDialog();
+                d.Dispose();
             }
 
             foreach (var kvp in dictOwners)

@@ -191,7 +191,7 @@ namespace DoubleFile
             {
                 base.Show();
                 _blockingFrame.Continue = true;
-                Dispatcher.PushFrame(_blockingFrame);
+                App.PushFrame(_blockingFrame);
                 return LocalDialogResult;
             }
 

@@ -7,11 +7,11 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- Automatically add Width properties from LV base
 - Title each Folder List window according to its fragment
 - Show parent folder\this folder in rest of path
 - clones lvs; and all dupe files lv?
 - The todo list is not read-only while debugging.
-- bold "folder in parent\folders" in search and folder LVs; foreground colors
 - Look for ToArray(): LocalTreeNode etc OK as array for Length.
 - string compare CompareTo()
 

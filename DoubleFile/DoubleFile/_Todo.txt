@@ -7,6 +7,9 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- Title each Folder List window according to its fragment
+- Show parent folder\this folder in rest of path
+- clones lvs; and all dupe files lv?
 - The todo list is not read-only while debugging.
 - bold "folder in parent\folders" in search and folder LVs; foreground colors
 - Look for ToArray(): LocalTreeNode etc OK as array for Length.
@@ -28,6 +31,7 @@
 - Allow a notes field
 - Allow rescan of drive, with history difference, or allow copying values of already saved to the new one
 - Allow opening values of listing file that failed scanning
+- compare mode - how is this folder different from that one besides looking at the details: show missing/different file.
 - This folder has no exact copy: so please itemize in a report what the exact differences are to the nearest copy.
 	- Show the global folder list which is ranked by similar neighbors; select this folder.
 	- Allow a list of important files and directories to watch, with alerts; links; etc.:
@@ -47,8 +51,7 @@
 - allow two different file windows to point to two different folders: each new folder window should have its own children
 - dupe vm event alerts: static vm internal counter or static transmit
 - Sync To button in tree view
-- compare mode - how is this folder different from that one besides looking at the details: show missing/different file.
-- Filtering user control header for tree list; tree view; files; search; duplicates
+- Filtering user control header for tree list; tree view; files; search; duplicates: like search but restrict the view
 - open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.
 - show messagbox title
 - Unimplemented code in DriveSerialStatic.cs which tries to scan all drives to find model # - not an issue: serial # usb is
@@ -64,7 +67,6 @@
 
 - vertical scrollbar: window height clips volumes lv
 - set hover bg same as bg in project lv for group etc
-- clones lvs; and all dupe files lv?
 - allow user toggle showing free space
 - UX tree map free space
 - resource all stringets; en-us etc.
@@ -76,10 +78,10 @@
 - services, decouple: Unity frameork: rewrite in Node/Angular; C++; Linux etc. Start these with unit testing.
 - what C# features don't translate well to other languages like C++? is operator?
 - neither is nor as are reflection. as is 20x slower though. p. 123
+- Join() vs Block() - Join() completely locks up the Dispatcher? Does Block() wait At PushFrame() like a traffic cop?
 
 - Count property is very slow on Dictionary even though it's an ICollection. List and stack to be trusted?
 - Replace First() with FirstOnlyAssert()
-- Join() vs Block() - Join() completely locks up the Dispatcher? Does Block() wait At PushFrame() like a traffic cop?
 - ToEnumerable() in FileDictionary cut 60MB off and did not take any time to make.
 - TotalMilliseconds gotcha
 - look for 0 ==    > 0 <   == 0   < 0 >  Count property;   etc.

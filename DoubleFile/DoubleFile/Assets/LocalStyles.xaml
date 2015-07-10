@@ -29,6 +29,21 @@
         <Setter Property="local:SupplementaryInteraction.Triggers" Value="{StaticResource dataGridTriggers}"/>
     </Style>
 
+    <!--<Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type DataGridCell}">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}" Margin="{TemplateBinding Margin}"
+                            SnapsToDevicePixels="True">
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent}, 
+                                  Path=Content.Text}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>-->
+
     <Style TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource {x:Type DataGridRow}}">
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">

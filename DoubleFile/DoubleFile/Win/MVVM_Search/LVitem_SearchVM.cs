@@ -12,31 +12,62 @@ namespace DoubleFile
 
         internal TabledString<Tabled_Files> Filename { get; set; }
 
-        public string Results
+        public string Folder
         {
             get
             {
                 if (null != Directory)
                 {
-                    var strFile = 
-                        (false == string.IsNullOrWhiteSpace(Filename))
-                        ? Filename + " in "
-                        : "";
+                    if (false == string.IsNullOrWhiteSpace(Filename))
+                    {
+                        return Filename;
+                    }
+                    else
+                    {
+                        var strDirectory = "" + Directory;
+                        var nIx = strDirectory.LastIndexOf('\\');
 
-                    return strFile + Directory;
+                        return (nIx < 0)
+                            ? strDirectory
+                            : strDirectory.Substring(nIx + 1);
+                    }
                 }
                 else
                 {
-                    return LocalTreeNode.Text +
-                        ((null != LocalTreeNode.Parent)
-                        ? " in " + LocalTreeNode.Parent.FullPath
-                        : "");
+                    return LocalTreeNode.Text;
+                }
+            }
+        }
+
+        public string Parent
+        {
+            get
+            {
+                if (null != Directory)
+                {
+                    var strDirectory = "" + Directory;
+                    var nIx = strDirectory.LastIndexOf('\\');
+
+                    if (false == string.IsNullOrWhiteSpace(Filename))
+                    {
+                        return strDirectory;
+                    }
+                    else
+                    {
+                        return (nIx < 0)
+                            ? strDirectory
+                            : strDirectory.Substring(0, nIx);
+                    }
+                }
+                else
+                {
+                    var p = LocalTreeNode.Parent; return (null != p) ? p.FullPath : null;
                 }
             }
         }
 
         internal override int NumCols { get { return NumCols_; } }
-        internal const int NumCols_ = 1;
+        internal const int NumCols_ = 2;
 
         protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static string[] _propNamesA = null;

@@ -6,10 +6,9 @@ namespace DoubleFile
 {
     class LVitem_SearchVM : ListViewItemVM_Base
     {
-        internal PathBuilder Directory { get { return As<PathBuilder>(); } set { _datum = value; } }
-        internal LocalTreeNode LocalTreeNode { get { return As<LocalTreeNode>(); } set { _datum = value; } }
+        internal PathBuilder Directory { get { return _datum.As<PathBuilder>(); } set { _datum = value; } }
+        internal LocalTreeNode LocalTreeNode { get { return _datum.As<LocalTreeNode>(); } set { _datum = value; } }
         object _datum = null;
-        T As<T>() where T: class { return  (_datum is T) ? (T)_datum : null; }  // 20x faster than as p. 123
 
         internal TabledString<Tabled_Files> Filename { get; set; }
 

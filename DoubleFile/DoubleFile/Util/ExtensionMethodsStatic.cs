@@ -8,6 +8,8 @@ namespace DoubleFile
 {
     static internal partial class ExtensionMethodsStatic
     {
+        static internal T As<T>(this object o) where T: class { return  (o is T) ? (T)o : null; }  // 20x faster than as p. 123
+      
         static readonly IDictionary<int, Tuple<DateTime, WeakReference>> _lsSubjects = new Dictionary<int, Tuple<DateTime, WeakReference>>();
         static internal void LocalOnNext<T>(this LocalSubject<T> subject, T value, int nOnNextAssertLoc, int nInitiator = 0)
         {

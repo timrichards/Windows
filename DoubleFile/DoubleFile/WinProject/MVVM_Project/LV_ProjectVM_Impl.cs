@@ -102,7 +102,7 @@ namespace DoubleFile
                     if (AlreadyInProject(lvItemTemp.ListingFile, lvItem))
                         continue;
 
-                    var dlgEdit = dlg as WinVolumeEdit;
+                    var dlgEdit = dlg.As<WinVolumeEdit>();
 
                     if (null != dlgEdit)
                     {

@@ -16,7 +16,7 @@ namespace DoubleFile
         internal string Folder { set { Util.UIthread(() => formTextBlock_folder.Text = value); } }
         internal string Size { set { Util.UIthread(() => formTextBlock_size.Text = value); } }
 
-        static internal LocalTreeNode LocalTreeNode { get { return (null == _winTooltip) ? null : _winTooltip.Tag as LocalTreeNode; } }
+        static internal LocalTreeNode LocalTreeNode { get { return (null == _winTooltip) ? null : _winTooltip.Tag.As<LocalTreeNode>(); } }
 
         internal struct ArgsStruct
         {

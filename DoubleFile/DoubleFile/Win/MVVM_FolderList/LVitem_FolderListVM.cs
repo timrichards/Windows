@@ -6,8 +6,7 @@ namespace DoubleFile
 {
     class LVitem_FolderListVM : ListViewItemVM_Base
     {
-        internal LocalTreeNode LocalTreeNode { get { return _datum as LocalTreeNode; } set { _datum = value; } }
-        object _datum = null;
+        internal LocalTreeNode LocalTreeNode { get; set; }
 
         public bool Alternate { get; internal set; }
 

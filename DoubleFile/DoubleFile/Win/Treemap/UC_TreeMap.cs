@@ -197,7 +197,7 @@ namespace DoubleFile
                         return;     // from lambda
                     }
 
-                    var rootNodeDatum = nodeDatum as RootNodeDatum;
+                    var rootNodeDatum = nodeDatum.As<RootNodeDatum>();
 
                     bVolumeView =
                         ((null != rootNodeDatum) &&
@@ -410,7 +410,7 @@ namespace DoubleFile
         static LocalTreeNode GetFileList(LocalTreeNode parent)
         {
             var nodeDatum = parent.NodeDatum;
-            var rootNodeDatum = parent.Root.NodeDatum as RootNodeDatum;
+            var rootNodeDatum = parent.Root.NodeDatum.As<RootNodeDatum>();
 
             if ((null == nodeDatum) ||
                 (0 == nodeDatum.LineNo) ||

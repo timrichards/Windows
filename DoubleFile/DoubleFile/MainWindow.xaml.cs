@@ -6,6 +6,8 @@ using System.Windows;
 using System.Reactive;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace DoubleFile
 {
@@ -25,12 +27,19 @@ namespace DoubleFile
 
         class FolderListLink : Link
         {
-            internal FolderListLink(string strDisplayName, string strFragment)
+            internal FolderListLink(KeyValuePair<string, string> kvp)
             {
-                DisplayName = strDisplayName;
-                Source = new Uri("/Win/WinFolderList.xaml#" + strFragment, UriKind.Relative);
+                if (false == _bFolderListLinkCheck)
+                {
+                    MBoxStatic.Assert(99886, 6 == WinFolderList.FolderListFragments.Count);
+                    _bFolderListLinkCheck = true;
+                }
+
+                Source = new Uri("/Win/WinFolderList.xaml#" + kvp.Key, UriKind.Relative);
+                DisplayName = kvp.Value;
             }
         }
+        static bool _bFolderListLinkCheck = false;
 
         internal const string FolderListLarge = "large";
         internal const string FolderListSmall = "small";
@@ -250,12 +259,12 @@ namespace DoubleFile
             }},
             new LinkGroup { DisplayName="Folder lists", Links =
             {
-                new FolderListLink("ANOVA weighted large", FolderListLarge),
-                new FolderListLink("ANOVA weighted small", FolderListSmall),
-                new FolderListLink("ANOVA weighted random", FolderListRandom),
-                new FolderListLink("Unique", FolderListUnique),
-                new FolderListLink("Same volume", FolderListSameVol),
-                new FolderListLink("Clones", FolderListClones),
+                new FolderListLink(WinFolderList.FolderListFragments.ElementAt(0)),
+                new FolderListLink(WinFolderList.FolderListFragments.ElementAt(1)),
+                new FolderListLink(WinFolderList.FolderListFragments.ElementAt(2)),
+                new FolderListLink(WinFolderList.FolderListFragments.ElementAt(3)),
+                new FolderListLink(WinFolderList.FolderListFragments.ElementAt(4)),
+                new FolderListLink(WinFolderList.FolderListFragments.ElementAt(5))
             }},
             new LinkGroup { DisplayName="Files", Links =
             {

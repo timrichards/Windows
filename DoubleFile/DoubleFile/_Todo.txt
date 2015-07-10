@@ -7,8 +7,9 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
-- Automatically add Width properties from LV base
-- Title each Folder List window according to its fragment
+- App.TopWindow = this in "Avtivated"; but when closed find an ExtraWindow to set it to
+- Search for 'a' then search again: searches for ''
+- Automatically add Width properties from LV base - not really worth making an expando out of it
 - Show parent folder\this folder in rest of path
 - clones lvs; and all dupe files lv?
 - The todo list is not read-only while debugging.
@@ -95,7 +96,7 @@
 - replace .Cast with (ICollection<>)
 - replace IEnumerable with ICollection where possible
 
-99886 99885 99884 99883
+99885 99884 99883
 99881
 99879
 99877

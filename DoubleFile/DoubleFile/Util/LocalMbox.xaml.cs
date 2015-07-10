@@ -63,10 +63,11 @@ namespace DoubleFile
             InitializeComponent();
             WindowStyle = WindowStyle.None;
             AllowsTransparency = true;
-            Owner = (Window)owner;
 
-            if (null == Owner)
-                Owner = MainWindow.WithMainWindow(w => w);
+            Owner =
+                ((null != owner) && (false == owner.LocalIsClosed))
+                ? (Window)owner
+                : MainWindow.WithMainWindow(w => w);
 
             var rc = Win32Screen.GetWindowRect(Owner);
 

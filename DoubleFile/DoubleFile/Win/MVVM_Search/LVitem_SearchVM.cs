@@ -12,7 +12,7 @@ namespace DoubleFile
 
         internal TabledString<Tabled_Files> Filename { get; set; }
 
-        public string Folder
+        public string FolderOrFile
         {
             get
             {

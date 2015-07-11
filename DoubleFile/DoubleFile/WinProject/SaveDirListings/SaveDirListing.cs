@@ -204,10 +204,8 @@ namespace DoubleFile
 
                     var dictHash = new ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>> { };
                     var dictException_FileRead = new ConcurrentDictionary<string, string> { };
-                    var blockWhileHashingPreviousBatch = new LocalDispatcherFrame(99872);
+                    var blockWhileHashingPreviousBatch = new LocalDispatcherFrame(99872) { Continue = false };
                     var bEnqueued = true;
-
-                    blockWhileHashingPreviousBatch.Continue = false;
 
                     // The above ThreadMake will be busy pumping out new file handles while the below processes will
                     // read those files' buffers and simultaneously hash them in batches until all files have been opened.

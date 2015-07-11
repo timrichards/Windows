@@ -11,11 +11,12 @@ using System.Windows.Media.Imaging;
 
 namespace DoubleFile
 {
+    interface IDarkableWindow : ILocalWindow { }
+    interface IDarkWindow : ILocalWindow { }
+
     public partial class MainWindow
     {
-        internal static object DarkWindowClass = "DarkWindow";
-
-        class DarkWindow : LocalWindowBase
+        class DarkWindow : LocalWindowBase, IDarkWindow
         {
             internal Rect Rect;
 
@@ -31,7 +32,6 @@ namespace DoubleFile
                 ResizeMode = ResizeMode.NoResize;
                 Focusable = false;
                 IsEnabled = false;
-                Tag = DarkWindowClass;
             }
 
             internal new DarkWindow Show() { ((Window)this).Show(); return this; }      // Darkens ExtraWindows and WinTooltip
@@ -40,8 +40,8 @@ namespace DoubleFile
         }
 
         static internal T
-            Darken<T>(Func<ILocalWindow, T> showDialog) { return MainWindow.WithMainWindow(mainWindow => mainWindow.DarkenA(showDialog)); }
-        T DarkenA<T>(Func<ILocalWindow, T> showDialog)
+            Darken<T>(Func<IDarkWindow, T> showDialog) { return MainWindow.WithMainWindow(mainWindow => mainWindow.DarkenA(showDialog)); }
+        T DarkenA<T>(Func<DarkWindow, T> showDialog)
         {
             if (_bBlocking)     // debounce
                 return default(T);
@@ -83,11 +83,9 @@ namespace DoubleFile
             
             var dictOwners = new Dictionary<Window, Window>();
 
-            foreach (var window in Application.Current.Windows.Cast<Window>()
-                .Where(w => (w is ILocalWindow) && (false == ((ILocalWindow)w).LocalIsClosed)))
-            {
-                dictOwners.Add(window, window.Owner);
-            }
+            Application.Current.Windows.Cast<Window>()
+                .Where(w => (w is ILocalWindow) && (false == ((ILocalWindow)w).LocalIsClosed))
+                .ForEach(window => dictOwners.Add(window, window.Owner));
 
             var bounds = MainWindow.WithMainWindow(Win32Screen.GetWindowMonitorInfo).rcMonitor;
 
@@ -150,8 +148,8 @@ namespace DoubleFile
                 }
             }
 
-            foreach (var window in darkenedWindows)
-                window.Owner = fakeBaseWindow;
+            darkenedWindows.ForEach(window =>
+                window.Owner = fakeBaseWindow);
 
             var lsDarkWindows = new List<DarkWindow> { };
 
@@ -161,11 +159,11 @@ namespace DoubleFile
 
             NativeMethods.SetWindowPos(this, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE);
 
-            foreach (var darkWindow in lsDarkWindows)
-                darkWindow.Show();
+            lsDarkWindows.ForEach(darkWindow => darkWindow
+                .Show());
 
-            foreach (var darkWindow in lsDarkWindows)
-                darkWindow.SetRect(darkWindow.Rect);
+            lsDarkWindows.ForEach(darkWindow => darkWindow
+                .SetRect(darkWindow.Rect));
 
             var retVal = default(T);
 
@@ -180,8 +178,8 @@ namespace DoubleFile
                 {
                     NativeMethods.SetWindowPos(fakeBaseWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
 
-                    foreach (var nativeWindow in lsWindowOrder)
-                        NativeMethods.BringWindowToTop(nativeWindow);
+                    lsWindowOrder.ForEach(NativeMethods
+                        .BringWindowToTop);
 
                     darkDialog.SetRect(darkDialog.Rect);
                     doubleBufferWindow.Opacity = 0;
@@ -248,16 +246,22 @@ namespace DoubleFile
                 d.Dispose();
             }
 
-            foreach (var kvp in dictOwners)
-                kvp.Key.Owner = kvp.Value;
+            dictOwners.ForEach(kvp =>
+                kvp.Key.Owner = kvp.Value);
 
             fakeBaseWindow.Close();
 
-            foreach (var nativeWindow in lsWindowOrder)
-                NativeMethods.BringWindowToTop(nativeWindow);
+            lsWindowOrder.ForEach(NativeMethods
+                .BringWindowToTop);
 
-            foreach (var darkWindow in lsDarkWindows)
-                darkWindow.Close();
+            lsDarkWindows.ForEach(darkWindow => darkWindow
+                .Close());
+
+            Application.Current.Windows.Cast<Window>()
+                .Where(w => (w is IDarkableWindow))
+                .Select(w => (NativeWindow)w)
+                .FirstOnlyAssert(nativeWindow => NativeMethods
+                .SetWindowPos(nativeWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE));
 
             _dtLastDarken = DateTime.Now;
             _bDarkening = false;

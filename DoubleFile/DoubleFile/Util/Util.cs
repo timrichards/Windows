@@ -175,7 +175,7 @@ namespace DoubleFile
                 return;
             }
 
-            var blockingFrame = new LocalDispatcherFrame(nLocation);
+            var blockingFrame = new LocalDispatcherFrame(nLocation) { Continue = bBlock };
 
             try
             {
@@ -185,8 +185,6 @@ namespace DoubleFile
                 }
                 else
                 {
-                    blockingFrame.Continue = bBlock;
-
                     mainWindow.Dispatcher.Invoke(() =>
                     {
                         action();

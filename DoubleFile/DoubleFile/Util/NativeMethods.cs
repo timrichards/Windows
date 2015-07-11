@@ -193,8 +193,8 @@ namespace DoubleFile
 
         [DllImport("user32.dll")]
         static extern bool BringWindowToTop(IntPtr hWnd);
-        static internal bool
-            BringWindowToTop(NativeWindow w) { return BringWindowToTop((IntPtr)w); }
+        static internal void
+            BringWindowToTop(NativeWindow w) { BringWindowToTop((IntPtr)w); }
 
         internal const uint GW_HWNDNEXT = 2;
 

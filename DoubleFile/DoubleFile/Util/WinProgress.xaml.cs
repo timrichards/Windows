@@ -16,7 +16,7 @@ namespace DoubleFile
 
     // Window_Closed() calls Dispose() on the LV_ProgressVM member.
     [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
-    partial class WinProgress
+    partial class WinProgress : IDarkableWindow
     {
         internal WeakReference<IWinProgressClosing>
             WindowClosingCallback { set; private get; }

@@ -238,8 +238,10 @@ namespace DoubleFile
 
                     darkDialog.Close();
                     d.Dispose();
-                    LocalDispatcherFrame.ClearFrames();
-                    MBoxStatic.Assert(99885, false);
+
+                    var strStuckFrames = LocalDispatcherFrame.ClearFrames();
+
+                    MBoxStatic.Assert(99885, false, strStuckFrames);
                 }));
 
                 darkDialog.ShowDialog();

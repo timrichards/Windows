@@ -119,16 +119,15 @@ namespace DoubleFile
             _DictFiles = null;
             IsAborted = false;
 
-            // 7/1/15 Make this synchronous so NodeDatum can use folder scorer
-            var blockingFrame = new LocalDispatcherFrame(99881);
-
-            _thread = Util.ThreadMake(() => { Go(); blockingFrame.Continue = false; });
-            blockingFrame.PushFrameToTrue();
+            _thread = Util.ThreadMake(() => { Go(); _blockingFrame.Continue = false; });
+            _blockingFrame.PushFrameToTrue();
             return this;
         }
 
         internal void Abort()
         {
+            _blockingFrame.Continue = false;
+
             if (IsAborted)
                 return;
 
@@ -397,6 +396,11 @@ namespace DoubleFile
             _callbackWR = null;
         Thread
             _thread = null;
+
+        // 7/1/15 Make this synchronous so NodeDatum can use folder scorer
+        LocalDispatcherFrame 
+            _blockingFrame = new LocalDispatcherFrame(99881);
+
         LV_ProjectVM
             _LVprojectVM = null;
     }

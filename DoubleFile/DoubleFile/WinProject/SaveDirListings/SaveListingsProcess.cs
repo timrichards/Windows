@@ -51,10 +51,17 @@ namespace DoubleFile
         void ISaveDirListingsStatus.Status(LVitem_ProjectVM lvItemProjectVM,
             string strError, bool bDone, double nProgress)
         {
-            if (_winProgress.LocalIsClosed)
-                return;
-
             var sdl = App.SaveDirListings;
+
+            if (_winProgress.LocalIsClosed)
+            {
+                MBoxStatic.Assert(99804,
+                    App.LocalExit ||
+                    (null == sdl) ||
+                    sdl.IsAborted);
+
+                return;
+            }
 
             if (App.LocalExit ||
                 (null == sdl) ||

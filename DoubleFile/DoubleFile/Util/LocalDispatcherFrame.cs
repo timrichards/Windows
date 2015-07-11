@@ -15,17 +15,25 @@ namespace DoubleFile
             _dispatcherFrames.Remove(this);
         }
 
-        internal static void ClearFrames()
+        internal static string ClearFrames()
         {
-            _dispatcherFrames.ForEach(dispatcherFrame =>
-                dispatcherFrame.Continue = false);
+            var strRet = "";
 
-            _dispatcherFrames = new List<DispatcherFrame>();
+            _dispatcherFrames.ForEach(dispatcherFrame =>
+            {
+                if (dispatcherFrame.Continue)
+                    strRet += dispatcherFrame._nLocation + " ";
+
+                dispatcherFrame.Continue = false;
+            });
+
+            _dispatcherFrames = new List<LocalDispatcherFrame>();
+            return strRet;
         }
 
         decimal
             _nLocation = -1;
-        static List<DispatcherFrame>
-            _dispatcherFrames = new List<DispatcherFrame>();
+        static List<LocalDispatcherFrame>
+            _dispatcherFrames = new List<LocalDispatcherFrame>();
     }
 }

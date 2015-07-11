@@ -5,8 +5,18 @@
         xmlns:local="clr-namespace:DoubleFile">
 
     <local:Triggers x:Key="dataGridTriggers" x:Shared="False">
+        <!--Scroll item into view when selected programmatically by the view model-->
         <i:EventTrigger EventName="SelectionChanged">
             <local:DataGrid_ScrollIntoViewAction SelectionChanged="{Binding RelativeSource=
+                {RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"/>
+        </i:EventTrigger>
+        <!--Prevent automatic horizontal scrolling when clicking a datagrid cell - requires 2 event listeners-->
+        <i:EventTrigger EventName="PreviewMouseDown">
+            <local:DataGrid_PreventHorizScrollOnClickAction PreviewMouseDown="{Binding RelativeSource=
+                {RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="SelectedCellsChanged">
+            <local:DataGrid_PreventHorizScrollOnClickAction SelectedCellsChanged="{Binding RelativeSource=
                 {RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"/>
         </i:EventTrigger>
     </local:Triggers>

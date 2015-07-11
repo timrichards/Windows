@@ -1,5 +1,4 @@
 ﻿- WithWinProgress(() => {});
-- stop the auto horizontal scrolling - solve it by selecting first column
 - first tree view item is bold and the wrong forecolors, incl highlighted - treeview shouldn't have a selected item.
 - tree map doesn't always show up at all; slow calc etc
 - large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
@@ -98,4 +97,4 @@
 - replace IEnumerable with ICollection where possible
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
-99803 next low assert
+99802 next low assert

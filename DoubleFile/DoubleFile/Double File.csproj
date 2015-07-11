@@ -159,6 +159,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Interactivity\DataGrid_PreventHorizScrollOnClickAction.cs" />
     <Compile Include="Interactivity\DataGrid_ScrollIntoViewBehavior.cs" />
     <Compile Include="Interactivity\DataGrid_ScrollIntoViewAction.cs" />
     <Compile Include="Interactivity\SupplementaryInteraction.cs" />

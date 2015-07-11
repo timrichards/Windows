@@ -257,12 +257,29 @@ namespace DoubleFile
             lsDarkWindows.ForEach(darkWindow => darkWindow
                 .Close());
 
-            Application.Current.Windows.Cast<Window>()
+            // Look for a darkable window stuck behind a darkened window and bring it to top.
+            // Otherwise close all dark windows. This will prevent the entire code block around
+            // assert loc 9 9 8 8 5 above.
+            if (false == Application.Current.Windows.Cast<Window>()
                 .Where(w => (w is IDarkableWindow))
                 .Select(w => (NativeWindow)w)
                 .FirstOnlyAssert(nativeWindow => NativeMethods
-                .SetWindowPos(nativeWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE));
+                .SetWindowPos(nativeWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE)))
+            {
+                if (Application.Current.Windows.Cast<Window>()
+                    .Where(w => (w is IDarkWindow))
+                    .Any())
+                {
+                    var strStuckFrames = LocalDispatcherFrame.ClearFrames();
 
+                    MBoxStatic.Assert(99803, false, strStuckFrames);
+
+                    Application.Current.Windows.Cast<Window>()
+                        .Where(w => (w is IDarkWindow))
+                        .ForEach(w => w.Close());
+                }
+            }
+             
             _dtLastDarken = DateTime.Now;
             _bDarkening = false;
             return retVal;

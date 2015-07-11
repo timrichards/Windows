@@ -76,7 +76,7 @@ namespace DoubleFile
         }
 
         // List has its own ForEach
-        static internal void ForEach<T>(this IEnumerable<T> source, Action<T> action)           // 3 references on 7/6/15
+        static internal void ForEach<T>(this IEnumerable<T> source, Action<T> action)           // 7 references on 7/11/15
         {
             foreach (var item in source)
                 action(item);

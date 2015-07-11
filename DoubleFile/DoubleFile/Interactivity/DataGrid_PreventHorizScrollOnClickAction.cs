@@ -8,35 +8,45 @@ namespace DoubleFile
 {
     public class DataGrid_PreventHorizScrollOnClickAction : TriggerAction<DataGrid>
     {
-        public object PreviewMouseDown
+        public object SaveHorizPosition
         {
-            get { return GetValue(PreviewMouseDownProperty); }
-            set { SetValue(PreviewMouseDownProperty, value); }
+            get { return GetValue(SaveHorizPositionProperty); }
+            set { SetValue(SaveHorizPositionProperty, value); }
         }
 
-        public static readonly DependencyProperty PreviewMouseDownProperty =
-            DependencyProperty.Register("PreviewMouseDown", typeof(object),
+        public static readonly DependencyProperty SaveHorizPositionProperty =
+            DependencyProperty.Register("SaveHorizPosition", typeof(object),
             typeof(DataGrid_PreventHorizScrollOnClickAction), new UIPropertyMetadata(""));
 
-        public object SelectedCellsChanged
+        public object RestoreHorizPosition
         {
-            get { return GetValue(SelectedCellsChangedProperty); }
-            set { SetValue(SelectedCellsChangedProperty, value); }
+            get { return GetValue(RestoreHorizPositionProperty); }
+            set { SetValue(RestoreHorizPositionProperty, value); }
         }
 
-        public static readonly DependencyProperty SelectedCellsChangedProperty =
-            DependencyProperty.Register("SelectedCellsChanged", typeof(object),
+        public static readonly DependencyProperty RestoreHorizPositionProperty =
+            DependencyProperty.Register("RestoreHorizPosition", typeof(object),
             typeof(DataGrid_PreventHorizScrollOnClickAction), new UIPropertyMetadata(""));
 
         protected override void Invoke(object parameter)
         {
-            var scrollVieweer = GetVisualChild<ScrollViewer>((DataGrid)
-                (parameter is MouseButtonEventArgs ? PreviewMouseDown : SelectedCellsChanged));
+            var bSaveHorizPosition = SaveHorizPosition is DataGrid;
 
-            if (parameter is MouseButtonEventArgs)
-                scrollVieweer.Tag = scrollVieweer.ContentHorizontalOffset;
-            else
-                scrollVieweer.ScrollToHorizontalOffset((double)scrollVieweer.Tag);
+            var scrollViewer = GetVisualChild<ScrollViewer>((DataGrid)
+                (bSaveHorizPosition ? SaveHorizPosition : RestoreHorizPosition));
+
+            if (bSaveHorizPosition)
+            {
+                scrollViewer.Tag = (double?)scrollViewer.ContentHorizontalOffset;
+                return;
+            }
+
+            var nHorizontalOffset = (double?)scrollViewer.Tag;
+
+            if (null == nHorizontalOffset)
+                return;
+
+            scrollViewer.ScrollToHorizontalOffset(nHorizontalOffset.Value);
         }
 
         static T GetVisualChild<T>(DependencyObject parent) where T : Visual

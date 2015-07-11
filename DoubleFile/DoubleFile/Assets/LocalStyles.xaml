@@ -10,13 +10,17 @@
             <local:DataGrid_ScrollIntoViewAction SelectionChanged="{Binding RelativeSource=
                 {RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"/>
         </i:EventTrigger>
-        <!--Prevent automatic horizontal scrolling when clicking a datagrid cell - requires 2 event listeners-->
+        <!--Prevent automatic horizontal scrolling when clicking a datagrid cell - requires 3 event listeners-->
         <i:EventTrigger EventName="PreviewMouseDown">
-            <local:DataGrid_PreventHorizScrollOnClickAction PreviewMouseDown="{Binding RelativeSource=
+            <local:DataGrid_PreventHorizScrollOnClickAction SaveHorizPosition="{Binding RelativeSource=
                 {RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"/>
         </i:EventTrigger>
         <i:EventTrigger EventName="SelectedCellsChanged">
-            <local:DataGrid_PreventHorizScrollOnClickAction SelectedCellsChanged="{Binding RelativeSource=
+            <local:DataGrid_PreventHorizScrollOnClickAction RestoreHorizPosition="{Binding RelativeSource=
+                {RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="MouseUp">
+            <local:DataGrid_PreventHorizScrollOnClickAction RestoreHorizPosition="{Binding RelativeSource=
                 {RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"/>
         </i:EventTrigger>
     </local:Triggers>

@@ -207,6 +207,8 @@ namespace DoubleFile
                     var blockWhileHashingPreviousBatch = new LocalDispatcherFrame(99872);
                     var bEnqueued = true;
 
+                    blockWhileHashingPreviousBatch.Continue = false;
+
                     // The above ThreadMake will be busy pumping out new file handles while the below processes will
                     // read those files' buffers and simultaneously hash them in batches until all files have been opened.
                     while ((false == bAllFilesOpened) ||

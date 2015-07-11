@@ -219,6 +219,12 @@ namespace DoubleFile
                 d = Observable.Timer(TimeSpan.FromMilliseconds(250), TimeSpan.FromSeconds(1)).Timestamp()
                     .Subscribe(x => Util.UIthread(99871, () =>
                 {
+                    if (darkDialog.LocalIsClosed)
+                    {
+                        d.Dispose();
+                        return;
+                    }
+
                     if (0 == nWindowCount)
                         nWindowCount = darkDialog.OwnedWindows.Count;
 

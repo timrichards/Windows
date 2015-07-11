@@ -5,8 +5,7 @@ namespace DoubleFile
 {
     class LocalDispatcherFrame : DispatcherFrame
     {
-        internal LocalDispatcherFrame(decimal nSource) : base(true) { Source = nSource; }
-        decimal Source = -1;
+        internal LocalDispatcherFrame(decimal nLocation) : base(true) { _nLocation = nLocation; }
 
         internal void PushFrameToTrue()
         {
@@ -24,6 +23,9 @@ namespace DoubleFile
             _dispatcherFrames = new List<DispatcherFrame>();
         }
 
-        static List<DispatcherFrame> _dispatcherFrames = new List<DispatcherFrame>();
+        decimal
+            _nLocation = -1;
+        static List<DispatcherFrame>
+            _dispatcherFrames = new List<DispatcherFrame>();
     }
 }

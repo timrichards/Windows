@@ -182,7 +182,13 @@ namespace DoubleFile
             Observable.FromEventPattern(this, "Closed")
                 .Subscribe(x =>
             {
-                App.TopWindow = prevTopWindow;
+                if ((null != prevTopWindow) &&
+                    (false == prevTopWindow.LocalIsClosed) &&
+                    (this != prevTopWindow))
+                {
+                    App.TopWindow = prevTopWindow;
+                }
+
                 me.Activate();
                 GoModeless();
             });

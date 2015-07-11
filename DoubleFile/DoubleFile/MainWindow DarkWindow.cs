@@ -207,7 +207,8 @@ namespace DoubleFile
                     }))
                     {
                         // The above code block did not execute. Still modal: child dialog closed.
-                        darkDialog.Close();
+                        if (false == darkDialog.LocalIsClosed)  // Should only occur at assert loc 9 9 8 8 5 below
+                            darkDialog.Close();
                     }
                 });
 
@@ -257,15 +258,19 @@ namespace DoubleFile
             lsDarkWindows.ForEach(darkWindow => darkWindow
                 .Close());
 
-            // Look for a darkable window stuck behind a darkened window and bring it to top.
-            // Otherwise close all dark windows. This will prevent the entire code block around
-            // assert loc 9 9 8 8 5 above.
-            if (false == Application.Current.Windows.Cast<Window>()
+            // 1. Look for a darkable window stuck behind a darkened window and bring it to top. This happens.
+            if (Application.Current.Windows.Cast<Window>()
                 .Where(w => (w is IDarkableWindow))
                 .Select(w => (NativeWindow)w)
                 .FirstOnlyAssert(nativeWindow => NativeMethods
                 .SetWindowPos(nativeWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE)))
             {
+                Util.WriteLine("Darkable window got stuck.");
+            }
+            else
+            {
+                // 2. Otherwise close all dark windows. This will prevent the entire code block around
+                // assert loc 9 9 8 8 5 above. -actually no it doesn't. But just in case.
                 if (Application.Current.Windows.Cast<Window>()
                     .Where(w => (w is IDarkWindow))
                     .Any())
@@ -279,7 +284,7 @@ namespace DoubleFile
                         .ForEach(w => w.Close());
                 }
             }
-             
+
             _dtLastDarken = DateTime.Now;
             _bDarkening = false;
             return retVal;

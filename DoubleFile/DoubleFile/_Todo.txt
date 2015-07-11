@@ -6,7 +6,6 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
-- find all references to WinProgress and LocalMBox if-tests: test for IDarkableWindow
 - App.TopWindow = this in "Activated"; but when closed find an ExtraWindow to set it to
 - Search for 'a' then search again: searches for ''
 - Show parent folder\this folder in rest of path

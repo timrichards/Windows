@@ -41,7 +41,7 @@ namespace DoubleFile
         {
             var dt = DateTime.Now;
             var nCounter = 0;
-            var blockingFrame = new DispatcherFrame(true) { Continue = true };
+            var blockingFrame = new LocalDispatcherFrame(99851);
 
             foreach (var item in ieItems)
             {
@@ -62,8 +62,7 @@ namespace DoubleFile
                     Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()
                         .Subscribe(x => blockingFrame.Continue = false);
 
-                    blockingFrame.Continue = true;
-                    App.PushFrame(blockingFrame);
+                    blockingFrame.PushFrameToTrue();
                     dt = DateTime.Now;
                 }
 

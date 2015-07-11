@@ -569,7 +569,7 @@ namespace DoubleFile
 
         void TreeMapVM_TreeNodeCallback(Tuple<LocalTreeNode, int> initiatorTuple)
         {
-            Util.UIthread(() => RenderA(initiatorTuple.Item1, initiatorTuple.Item2));
+            Util.UIthread(99825, () => RenderA(initiatorTuple.Item1, initiatorTuple.Item2));
         }
 
         void RenderA(LocalTreeNode treeNode, int nInitiator)
@@ -628,7 +628,7 @@ namespace DoubleFile
             TreeMapVM.TreeNode = treeNode;
             _ieRenderActions = DrawTreemap();
 
-            Util.UIthread(() =>
+            Util.UIthread(99823, () =>
             {
                if (null != LocalOwner)
                     LocalOwner.Title = "Double File";
@@ -733,7 +733,7 @@ namespace DoubleFile
                 RecurseDrawGraph(item, rc, true);
 
                 if (0 < _nWorkerCount)
-                    App.PushFrame(_blockingFrame);
+                    _blockingFrame.PushFrameToTrue();
 
                 deepNodeDrawn_out = _deepNodeDrawn;
                 return _lsRenderActions.Concat(_lsFrames);
@@ -1158,8 +1158,8 @@ namespace DoubleFile
                 RowStruct { internal double RowHeight; internal int ChildrenPerRow; }
             int
                 _nWorkerCount = 0;
-            DispatcherFrame
-                _blockingFrame = new DispatcherFrame(true) { Continue = true };
+            LocalDispatcherFrame
+                _blockingFrame = new LocalDispatcherFrame(99850);
         }
 
         abstract class

@@ -27,7 +27,7 @@ namespace DoubleFile
                 return;
             }
 
-            Util.UIthread(() =>
+            Util.UIthread(99817, () =>
             {
                 grid.UpdateLayout();
                 grid.ScrollIntoView(grid.SelectedItem, null);

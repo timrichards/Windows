@@ -27,7 +27,7 @@ namespace DoubleFile
             if (null == tuple.Item1)
                 return;
 
-            Util.UIthread(() =>
+            Util.UIthread(99819, () =>
                 Add(tuple.Item1.Select(ieLine => new LVitem_VolumeDetailVM(ieLine.ToList()))));
         }
 

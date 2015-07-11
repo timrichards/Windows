@@ -75,7 +75,7 @@ namespace DoubleFile
                     Util.FormatSize(asFileLine[FileParse.knColLengthLV], bBytes: true);
             }
 
-            Util.UIthread(() =>
+            Util.UIthread(99814, () =>
             {
                 var kasHeader = new[] { "Filename", "Created", "Modified", "Attributes", "Length", "Error 1", "Error 2" };
                 var nMax = Math.Min(asFileLine.Length, kasHeader.Length);

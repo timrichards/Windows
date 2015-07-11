@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Threading;
 
 namespace DoubleFile
 {
@@ -36,21 +34,6 @@ namespace DoubleFile
 
         static internal bool LocalActivated { get; private set; }
         static internal bool LocalExit { get; private set; }
-
-        internal static void PushFrame(DispatcherFrame dispatcherFrame)
-        {
-            _dispatcherFrames.Add(dispatcherFrame);
-            Dispatcher.PushFrame(dispatcherFrame);
-            _dispatcherFrames.Remove(dispatcherFrame);
-        }
-        internal static void ClearFrames()
-        {
-            _dispatcherFrames.ForEach(dispatcherFrame =>
-                dispatcherFrame.Continue = false);
-
-            _dispatcherFrames = new List<DispatcherFrame>();
-        }
-        static List<DispatcherFrame> _dispatcherFrames = new List<DispatcherFrame>();
 
         // SimulatingModal flag
 

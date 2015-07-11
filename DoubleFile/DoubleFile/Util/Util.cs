@@ -17,7 +17,7 @@ namespace DoubleFile
         static internal void
             Block(TimeSpan napTime)
         {
-            var blockingFrame = new DispatcherFrame(true) { Continue = true };
+            var blockingFrame = new LocalDispatcherFrame(99879);
 
             ThreadMake(() =>
             {
@@ -25,7 +25,7 @@ namespace DoubleFile
                 blockingFrame.Continue = false;
             });
 
-            App.PushFrame(blockingFrame);
+            blockingFrame.PushFrameToTrue();
         }
 
         static internal void
@@ -156,7 +156,7 @@ namespace DoubleFile
         }
 
         static internal void
-            UIthread(Action action, bool bBlock = true)
+            UIthread(decimal nLocation, Action action, bool bBlock = true)
         {
             if (App.LocalExit ||
                 (false == App.LocalMainWindow is Window) ||
@@ -175,6 +175,8 @@ namespace DoubleFile
                 return;
             }
 
+            var blockingFrame = new LocalDispatcherFrame(nLocation);
+
             try
             {
                 if (mainWindow.Dispatcher.CheckAccess())
@@ -183,18 +185,25 @@ namespace DoubleFile
                 }
                 else
                 {
-                    var blockingFrame = new DispatcherFrame(true) { Continue = bBlock };
+                    blockingFrame.Continue = bBlock;
 
                     mainWindow.Dispatcher.Invoke(() =>
                     {
                         action();
-                        blockingFrame.Continue = false;
+                        blockingFrame.Continue = false;     // A
                     });
 
-                    App.PushFrame(blockingFrame);
+                    // fast operation (e.g. OnPropertyChanged()) may exit Invoke() before this line is even hit:
+                    // A then B not the reverse.
+                    if (blockingFrame.Continue)             // B
+                        blockingFrame.PushFrameToTrue();
                 }
             }
             catch (TaskCanceledException) { }
+            finally
+            {
+                blockingFrame.Continue = false;
+            }
         }
 
         static internal void Write(string str)

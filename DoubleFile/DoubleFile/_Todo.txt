@@ -96,13 +96,5 @@
 - replace .Cast with (ICollection<>)
 - replace IEnumerable with ICollection where possible
 
-99884 99883
-99881
-99879
-99877
-99872 99871
-99851 99850 99849
-99843 99842
-
-99830 block is reserved: do not alert LocalOnNext. Next: 99838 on down
-99829 next low assert
+99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
+99804 next low assert

@@ -77,7 +77,7 @@ namespace DoubleFile
         {
             MainWindow.WithMainWindowA(mainWindow =>
             {
-                Util.UIthread(() =>
+                Util.UIthread(99843, () =>
                 {
                     foreach (Window window in mainWindow.OwnedWindows)
                         window.Close();

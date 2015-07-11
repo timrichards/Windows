@@ -136,11 +136,11 @@ namespace DoubleFile
                     cbSize = Convert.ToUInt32(Marshal.SizeOf(typeof(NativeMethods.FLASHWINFO)))
                 };
 
-                Util.UIthread(() => NativeMethods.FlashWindowEx(ref fInfo));
+                Util.UIthread(99826, () => NativeMethods.FlashWindowEx(ref fInfo));
             }
             catch (ArgumentException)
             {
-                MBoxStatic.Assert(99894, false);
+                MBoxStatic.Assert(99986, false);
             }
             catch (FormatException)
             {

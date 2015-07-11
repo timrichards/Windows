@@ -226,7 +226,7 @@ namespace DoubleFile
 
                     bool bAdded = false;
 
-                    Util.UIthread(() => bAdded = _lvVM.Add(lvItem));
+                    Util.UIthread(99849, () => bAdded = _lvVM.Add(lvItem));
                     return bAdded || current;  // from lambda
                 });
             }

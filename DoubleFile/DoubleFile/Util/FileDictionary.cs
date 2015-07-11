@@ -120,10 +120,10 @@ namespace DoubleFile
             IsAborted = false;
 
             // 7/1/15 Make this synchronous so NodeDatum can use folder scorer
-            DispatcherFrame blockingFrame = new DispatcherFrame(true) { Continue = true };
+            var blockingFrame = new LocalDispatcherFrame(99881);
 
             _thread = Util.ThreadMake(() => { Go(); blockingFrame.Continue = false; });
-            App.PushFrame(blockingFrame);
+            blockingFrame.PushFrameToTrue();
             return this;
         }
 

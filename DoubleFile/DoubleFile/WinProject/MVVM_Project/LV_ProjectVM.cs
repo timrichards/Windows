@@ -13,6 +13,7 @@
         public string WidthScannedLength { get { return SCW; } }
 
         public string WidthListingFile { get { return SCW; } }                  // HACK
+        public LVitem_ProjectVM SelectedItem { get; set; }                      // unused
 
         internal override int NumCols { get { return LVitem_ProjectVM.NumCols_; } }
     }

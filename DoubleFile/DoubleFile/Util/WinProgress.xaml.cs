@@ -87,7 +87,7 @@ namespace DoubleFile
 
                 if (_lv.ItemsCast.All(lvItemA => 1 == lvItemA.Progress))
                 {
-                    Util.UIthread(() => formBtn_Cancel.ToolTip = "Process completed. You may now close the window");
+                    Util.UIthread(99827, () => formBtn_Cancel.ToolTip = "Process completed. You may now close the window");
 
                     if (_bAllowSubsequentProcess)
                         GoModeless();
@@ -171,7 +171,7 @@ namespace DoubleFile
             {
                 bool bConfirmClose = false;
 
-                Util.UIthread(() => bConfirmClose = windowClosing.ConfirmClose());
+                Util.UIthread(99824, () => bConfirmClose = windowClosing.ConfirmClose());
 
                 if (bConfirmClose)
                 {

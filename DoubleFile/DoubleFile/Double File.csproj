@@ -186,6 +186,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Util\ILocalWindow.cs" />
+    <Compile Include="Util\LocalDispatcherFrame.cs" />
     <Compile Include="Util\LocalMbox.xaml.cs">
       <DependentUpon>LocalMbox.xaml</DependentUpon>
     </Compile>

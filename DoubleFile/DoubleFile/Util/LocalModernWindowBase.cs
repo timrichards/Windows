@@ -191,8 +191,7 @@ namespace DoubleFile
             if (I.SimulatingModal)
             {
                 base.Show();
-                _blockingFrame.Continue = true;
-                App.PushFrame(_blockingFrame);
+                _blockingFrame.PushFrameToTrue();
                 return LocalDialogResult;
             }
 
@@ -207,7 +206,7 @@ namespace DoubleFile
 
         internal new LocalModernWindowBase Close()
         {
-            Util.UIthread(base.Close);
+            Util.UIthread(99829, base.Close);
             return this;
         }
 
@@ -215,7 +214,7 @@ namespace DoubleFile
             I { get { return this; } }
         bool
             ILocalWindow.SimulatingModal { get; set; }
-        DispatcherFrame
-            _blockingFrame = new DispatcherFrame(true) { Continue = false };
+        LocalDispatcherFrame
+            _blockingFrame = new LocalDispatcherFrame(99877);
     }
 }

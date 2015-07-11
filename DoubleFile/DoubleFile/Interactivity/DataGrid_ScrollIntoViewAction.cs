@@ -23,7 +23,7 @@ namespace DoubleFile
             if (null == dataGrid.SelectedItem)
                 return;
 
-            Util.UIthread(() =>
+            Util.UIthread(99820, () =>
             {
                 dataGrid.UpdateLayout();
                 dataGrid.ScrollIntoView(dataGrid.SelectedItem, null);

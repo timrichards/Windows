@@ -155,7 +155,7 @@ namespace DoubleFile
             });
 
             if (false == _cts.IsCancellationRequested)
-                Util.UIthread(() => Add(lsLVitems));
+                Util.UIthread(99812, () => Add(lsLVitems));
 
             _cts = null;
         }

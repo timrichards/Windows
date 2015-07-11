@@ -76,7 +76,7 @@ namespace DoubleFile
                 lsItems.Add(lvItem);
             }
 
-            Util.UIthread(() => Add(lsItems));
+            Util.UIthread(99813, () => Add(lsItems));
 
             if (null != tuple.Item4)
             {

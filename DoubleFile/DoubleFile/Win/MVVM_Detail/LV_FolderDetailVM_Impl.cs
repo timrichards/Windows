@@ -27,7 +27,7 @@ namespace DoubleFile
             if (null == tuple.Item2)
                 return;
 
-            Util.UIthread(() =>
+            Util.UIthread(99818, () =>
             {
                 var ieDetail =
                     tuple.Item1

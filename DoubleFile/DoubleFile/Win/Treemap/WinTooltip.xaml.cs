@@ -13,8 +13,8 @@ namespace DoubleFile
     /// </summary>
     public partial class WinTooltip
     {
-        internal string Folder { set { Util.UIthread(() => formTextBlock_folder.Text = value); } }
-        internal string Size { set { Util.UIthread(() => formTextBlock_size.Text = value); } }
+        internal string Folder { set { Util.UIthread(99822, () => formTextBlock_folder.Text = value); } }
+        internal string Size { set { Util.UIthread(99821, () => formTextBlock_size.Text = value); } }
 
         static internal LocalTreeNode LocalTreeNode { get { return (null == _winTooltip) ? null : _winTooltip.Tag.As<LocalTreeNode>(); } }
 
@@ -50,7 +50,7 @@ namespace DoubleFile
                 if (null == winOwner)
                     return; // from lambda
 
-                Util.UIthread(() =>
+                Util.UIthread(99810, () =>
                 {
                     _winTooltip.Owner = winOwner;
                     _winTooltip.Left = winOwner.Left;
@@ -71,7 +71,7 @@ namespace DoubleFile
                 _winTooltip.LocalIsClosing ||
                 _winTooltip.LocalIsClosed)
             {
-                Util.UIthread(() =>
+                Util.UIthread(99808, () =>
                 {
                     (_winTooltip = new WinTooltip { WindowStartupLocation = WindowStartupLocation.Manual })
                         .Show();
@@ -84,7 +84,7 @@ namespace DoubleFile
 
             _winTooltip.Folder = args.strFolder;
             _winTooltip.Size = args.strSize;
-            Util.UIthread(() => _winTooltip.Tag = tag);
+            Util.UIthread(99807, () => _winTooltip.Tag = tag);
             _winTooltip._closingCallback = args.closingCallback;
             _winTooltip._clickCallback = args.clickCallback;
 
@@ -181,7 +181,7 @@ namespace DoubleFile
 
         static void WithWinTooltip(Action<WinTooltip> doSomethingWith)
         {
-            Util.UIthread(() =>
+            Util.UIthread(99806, () =>
             {
                 if (null != _winTooltip)
                     doSomethingWith(_winTooltip);

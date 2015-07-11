@@ -182,7 +182,7 @@ namespace DoubleFile
                     .Subscribe(x => StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator)))
                 {
                     var lsFileHandles = new ConcurrentBag<Tuple<string, ulong, SafeFileHandle, string>> { };
-                    var blockUntilAllFilesOpened = new DispatcherFrame(true) { Continue = true };
+                    var blockUntilAllFilesOpened = new LocalDispatcherFrame(99883);
                     var bAllFilesOpened = false;
                     var cts = new CancellationTokenSource();
 
@@ -204,7 +204,7 @@ namespace DoubleFile
 
                     var dictHash = new ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>> { };
                     var dictException_FileRead = new ConcurrentDictionary<string, string> { };
-                    var blockWhileHashingPreviousBatch = new DispatcherFrame(true) { Continue = false };
+                    var blockWhileHashingPreviousBatch = new LocalDispatcherFrame(99872);
                     var bEnqueued = true;
 
                     // The above ThreadMake will be busy pumping out new file handles while the below processes will
@@ -251,7 +251,9 @@ namespace DoubleFile
 
                         // Expect block to be false: reading buffers from disk is The limiting factor. Opening files is
                         // slow too, which makes it even less likely to block. Allow block. It does get hit a handful of times.
-                        App.PushFrame(blockWhileHashingPreviousBatch);
+                        if (blockWhileHashingPreviousBatch.Continue)
+                            blockWhileHashingPreviousBatch.PushFrameToTrue();
+
                         blockWhileHashingPreviousBatch.Continue = true;
 
                         // in C# this copy occurs every iteration. A closure is created each time in ThreadMake.
@@ -293,7 +295,7 @@ namespace DoubleFile
                         bEnqueued = 0 < lsFileBuffers_Enqueue.Count;
                     }
 
-                    App.PushFrame(blockUntilAllFilesOpened);
+                    blockUntilAllFilesOpened.PushFrameToTrue();
                     StatusCallback(LVitemProjectVM, nProgress: 1);
                     
                     return Tuple.Create(

@@ -71,7 +71,7 @@ namespace DoubleFile
                 lsLVitems.Add(new LVitem_TreeListVM(new[] { treeNode.Name }) { LocalTreeNode = treeNode });
 
             SelectedItem_Set(null);
-            Util.UIthread(() => Add(lsLVitems));
+            Util.UIthread(99815, () => Add(lsLVitems));
         }
     }
 }

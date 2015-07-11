@@ -24,7 +24,7 @@ namespace DoubleFile
                     return bAlt = !bAlt;
                 };
 
-                Util.UIthread(() => Add(LocalTV.AllNodes
+                Util.UIthread(99828, () => Add(LocalTV.AllNodes
                     .OrderByDescending(folder => folder.NodeDatum.FolderScore[nFolderScoreIndex])
                     .Select(folder => new LVitem_FolderListVM { LocalTreeNode = folder, Alternate = Alternate(folder) })));
             };

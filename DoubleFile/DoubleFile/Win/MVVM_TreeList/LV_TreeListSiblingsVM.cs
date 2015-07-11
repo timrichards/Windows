@@ -148,7 +148,7 @@ namespace DoubleFile
                 }
             }
 
-            Util.UIthread(() => Add(lsLVitems));
+            Util.UIthread(99811, () => Add(lsLVitems));
             SelectedItem_Set(selectedItem);
             return true;
         }

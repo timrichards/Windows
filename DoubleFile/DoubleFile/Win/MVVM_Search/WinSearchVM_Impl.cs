@@ -46,7 +46,7 @@ namespace DoubleFile
 
             var lsLVitems = lsTreeNodes.AsParallel().Select(treeNode => new LVitem_SearchVM { LocalTreeNode = treeNode });
 
-            Util.UIthread(() => Add(lsLVitems));
+            Util.UIthread(99816, () => Add(lsLVitems));
         }
 
         void SearchFoldersAndFiles(bool bSearchFilesOnly = false)
@@ -216,7 +216,7 @@ namespace DoubleFile
             if (_bDisposed)
                 return;
 
-            Util.UIthread(() => Add(lsLVitems, Cancel: () => _bDisposed));
+            Util.UIthread(99809, () => Add(lsLVitems, Cancel: () => _bDisposed));
 
             if (_bDisposed)
                 return;

@@ -12,6 +12,8 @@ using System.Threading;
 
 namespace DoubleFile
 {
+    interface IModalWindow : ILocalWindow { }
+    interface ICantBeTopWindow { }
     interface IDarkWindow : ILocalWindow, ICantBeTopWindow { }
 
     static class ModalThread
@@ -90,6 +92,11 @@ namespace DoubleFile
                     return default(T);
                 }
             
+                return Go_();
+            }
+
+            T Go_()
+            {
                 var dictOwners = new Dictionary<Window, Window>();
 
                 Application.Current.Windows.Cast<Window>()
@@ -97,6 +104,117 @@ namespace DoubleFile
                     .ForEach(window => dictOwners.Add(window, window.Owner));
 
                 var mainWindow = MainWindow.WithMainWindow(w => w);
+                var doubleBufferWindow = ShowDoubleBufferedWindow(mainWindow);
+                var fakeBaseWindow = ShowFakeBaseWindow();
+                var lsDarkWindows = new List<DarkWindow> { };
+
+                List<NativeWindow> lsNativeWindowsDarkenedFrontToBack = Util.Closure(() =>
+                {
+                    var lsDarkenedWindows = dictOwners.Keys.Where(w => mainWindow != w).ToList();
+
+                    lsDarkenedWindows.ForEach(window =>
+                        window.Owner = fakeBaseWindow);
+
+                    lsDarkenedWindows.Select(w => new DarkWindow(w)).ForEach(
+                        lsDarkWindows.Add);     // Add to lsDarkWindows
+
+                    return GetNativeWindowsDarkenedFrontToBack(lsDarkenedWindows);  // from lambda
+                });
+
+                NativeMethods.SetWindowPos(mainWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE);
+
+                lsDarkWindows.ForEach(darkWindow => darkWindow
+                    .Show());
+
+                lsDarkWindows.ForEach(darkWindow => darkWindow
+                    .SetRect(darkWindow.Rect));
+
+                var retVal = default(T);
+
+                {
+                    var darkDialog = new DarkWindow(mainWindow) { Content = new Grid() };
+
+                    Observable.FromEventPattern(darkDialog, "SourceInitialized")
+                        .Subscribe(x => darkDialog.ShowActivated = false);
+
+                    Observable.FromEventPattern(darkDialog, "ContentRendered")
+                        .Subscribe(x =>
+                    {
+                        NativeMethods.SetWindowPos(fakeBaseWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
+
+                        lsNativeWindowsDarkenedFrontToBack.ForEach(NativeMethods
+                            .BringWindowToTop);
+
+                        darkDialog.SetRect(darkDialog.Rect);
+                        doubleBufferWindow.Opacity = 0;
+                        doubleBufferWindow.Close();
+                        retVal = _showDialog(darkDialog);
+                        CloseDarkDialog(darkDialog);
+                    });
+
+                    var nWindowCount = 0;
+
+                    using (Observable.Timer(TimeSpan.FromMilliseconds(250), TimeSpan.FromSeconds(1)).Timestamp()
+                        .Subscribe(x => Util.UIthread(99871, () =>
+                        RepeatedCheckForLockup(darkDialog, ref nWindowCount))))
+                        darkDialog.ShowDialog();
+                }
+
+                dictOwners.ForEach(kvp =>
+                    kvp.Key.Owner = kvp.Value);
+
+                fakeBaseWindow.Close();
+
+                lsNativeWindowsDarkenedFrontToBack.ForEach(NativeMethods
+                    .BringWindowToTop);
+
+                lsDarkWindows.ForEach(darkWindow => darkWindow
+                    .Close());
+
+                // Look for a modal window stuck behind a dark window and bring it to top. This happens.
+                LastCheckForLockup();
+                _dtLastDarken = DateTime.Now;
+                _bDarkening = false;
+                return retVal;
+            }
+
+            List<NativeWindow> GetNativeWindowsDarkenedFrontToBack(IReadOnlyList<Window> lsDarkenedWindows)
+            {
+                var lsNativeWindowsDarkenedFrontToBack = new List<NativeWindow> { };
+                var lsNativeDarkenedWindows = lsDarkenedWindows.Select(w => (NativeWindow)w).ToList();
+
+                for (var nativeWindow = NativeMethods.GetTopWindow(IntPtr.Zero); nativeWindow != IntPtr.Zero;
+                    nativeWindow = NativeMethods.GetWindow(nativeWindow, NativeMethods.GW_HWNDNEXT))
+                {
+                    // array enumerable Linq extension Contains came up empty -?
+                    if (lsNativeDarkenedWindows.Contains(nativeWindow))
+                        lsNativeWindowsDarkenedFrontToBack.Insert(0, nativeWindow);
+                }
+
+                return lsNativeWindowsDarkenedFrontToBack;
+            }
+
+            Window ShowFakeBaseWindow()
+            {
+                var fakeBaseWindow = new Window
+                {
+                    ShowInTaskbar = false,
+                    WindowStyle = WindowStyle.None,
+                    AllowsTransparency = true,
+                    Opacity = 0
+                };
+
+                fakeBaseWindow.Show();
+
+                NativeMethods.SetWindowLong(
+                    fakeBaseWindow, NativeMethods.GWL_EXSTYLE, NativeMethods.GetWindowLong(fakeBaseWindow, NativeMethods.GWL_EXSTYLE)
+                    | NativeMethods.WS_EX_TOOLWINDOW);
+
+                return fakeBaseWindow;
+            }
+
+            Window ShowDoubleBufferedWindow(MainWindow mainWindow)
+            {
                 var bounds = Win32Screen.GetWindowMonitorInfo(mainWindow).rcMonitor;
 
                 var doubleBufferWindow =
@@ -128,146 +246,59 @@ namespace DoubleFile
 
                 doubleBufferWindow.Show();
                 doubleBufferWindow.Opacity = 1;
+                return doubleBufferWindow;
+            }
 
-                var fakeBaseWindow = new Window
+            void RepeatedCheckForLockup(DarkWindow darkDialog, ref int nWindowCount)
+            {
+                if (0 == nWindowCount)
+                    nWindowCount = darkDialog.OwnedWindows.Count;
+
+                var bAssert = (0 < nWindowCount) && (0 == darkDialog.OwnedWindows.Count);
+
+                darkDialog.OwnedWindows.Cast<ILocalWindow>()
+                    .FirstOnlyAssert(w => bAssert = w.LocalIsClosed);
+
+                if (false == bAssert)
+                    return;             // from lambda
+
+                darkDialog.Close();
+
+                var strStuckFrames = LocalDispatcherFrame.ClearFrames();
+
+                MBoxStatic.Assert(99885, false, strStuckFrames);
+            }
+
+            void CloseDarkDialog(DarkWindow darkDialog)
+            {
+                if (false == darkDialog.OwnedWindows.Cast<ILocalWindow>()
+                    .Where(dialog => false == dialog.LocalIsClosed)
+                    .FirstOnlyAssert(dialog =>
                 {
-                    ShowInTaskbar = false,
-                    WindowStyle = WindowStyle.None,
-                    AllowsTransparency = true,
-                    Opacity = 0
-                };
-
-                fakeBaseWindow.Show();
-
-                NativeMethods.SetWindowLong(
-                    fakeBaseWindow, NativeMethods.GWL_EXSTYLE, NativeMethods.GetWindowLong(fakeBaseWindow, NativeMethods.GWL_EXSTYLE)
-                    | NativeMethods.WS_EX_TOOLWINDOW);
-
-                var darkenedWindows = dictOwners.Keys.Where(w => mainWindow != w);
-                var lsWindowOrder = new List<NativeWindow> { };
-
-                {
-                    var nativeWindows = darkenedWindows.Select(w => (NativeWindow)w).ToList();
-
-                    for (var nativeWindow = NativeMethods.GetTopWindow(IntPtr.Zero); nativeWindow != IntPtr.Zero;
-                        nativeWindow = NativeMethods.GetWindow(nativeWindow, NativeMethods.GW_HWNDNEXT))
+                    Observable.FromEventPattern(dialog, "Closed")
+                        .Subscribe(y =>
                     {
-                        // array enumerable Linq extension Contains came up empty -?
-                        if (nativeWindows.Contains(nativeWindow))
-                            lsWindowOrder.Insert(0, nativeWindow);
-                    }
-                }
-
-                darkenedWindows.ForEach(window =>
-                    window.Owner = fakeBaseWindow);
-
-                var lsDarkWindows = new List<DarkWindow> { };
-
-                darkenedWindows
-                    .Select(w => new DarkWindow(w))
-                    .ForEach(lsDarkWindows.Add);
-
-                NativeMethods.SetWindowPos(mainWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE);
-
-                lsDarkWindows.ForEach(darkWindow => darkWindow
-                    .Show());
-
-                lsDarkWindows.ForEach(darkWindow => darkWindow
-                    .SetRect(darkWindow.Rect));
-
-                var retVal = default(T);
-
-                {
-                    var darkDialog = new DarkWindow(mainWindow) { Content = new Grid() };
-
-                    Observable.FromEventPattern(darkDialog, "SourceInitialized")
-                        .Subscribe(x => darkDialog.ShowActivated = false);
-
-                    Observable.FromEventPattern(darkDialog, "ContentRendered")
-                        .Subscribe(x =>
-                    {
-                        NativeMethods.SetWindowPos(fakeBaseWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
-
-                        lsWindowOrder.ForEach(NativeMethods
-                            .BringWindowToTop);
-
-                        darkDialog.SetRect(darkDialog.Rect);
-                        doubleBufferWindow.Opacity = 0;
-                        doubleBufferWindow.Close();
-                        retVal = _showDialog(darkDialog);
-
-                        if (false == darkDialog.OwnedWindows.Cast<ILocalWindow>()
-                            .Where(dialog => false == dialog.LocalIsClosed)
-                            .FirstOnlyAssert(dialog =>
-                        {
-                            Observable.FromEventPattern(dialog, "Closed")
-                                .Subscribe(y =>
-                            {
-                                if ((null == darkDialog) || darkDialog.LocalIsClosing || darkDialog.LocalIsClosed)
-                                    return;     // from lambda
-
-                                darkDialog.Close();
-                            });
-
-                            // Went modeless. Use-case 6/4/15: another progress window is being shown after
-                            // the first using AllowNewProcess. Now program flow will proceed just like Show()
-                            // except that the app effectively remains modal to the user (prevent UI via dark
-                            // dialog). 
-                            darkDialog.GoModeless();
-                        }))
-                        {
-                            // The above code block did not execute. Still modal: child dialog closed.
-                            if (false == darkDialog.LocalIsClosed)  // Should only occur at assert loc 9 9 8 8 5 below
-                                darkDialog.Close();
-                        }
-                    });
-
-                    var nWindowCount = 0;
-                    IDisposable d = null;
-
-                    d = Observable.Timer(TimeSpan.FromMilliseconds(250), TimeSpan.FromSeconds(1)).Timestamp()
-                        .Subscribe(x => Util.UIthread(99871, () =>
-                    {
-                        if (darkDialog.LocalIsClosed)
-                        {
-                            d.Dispose();
-                            return;
-                        }
-
-                        if (0 == nWindowCount)
-                            nWindowCount = darkDialog.OwnedWindows.Count;
-
-                        var bAssert = (0 < nWindowCount) && (0 == darkDialog.OwnedWindows.Count);
-
-                        darkDialog.OwnedWindows.Cast<ILocalWindow>()
-                            .FirstOnlyAssert(w => bAssert = w.LocalIsClosed);
-
-                        if (false == bAssert)
-                            return;             // from lambda
+                        if ((null == darkDialog) || darkDialog.LocalIsClosing || darkDialog.LocalIsClosed)
+                            return;     // from lambda
 
                         darkDialog.Close();
-                        d.Dispose();
+                    });
 
-                        var strStuckFrames = LocalDispatcherFrame.ClearFrames();
-
-                        MBoxStatic.Assert(99885, false, strStuckFrames);
-                    }));
-
-                    darkDialog.ShowDialog();
-                    d.Dispose();
+                    // Went modeless. Use-case 6/4/15: another progress window is being shown after
+                    // the first using AllowNewProcess. Now program flow will proceed just like Show()
+                    // except that the app effectively remains modal to the user (prevent UI via dark
+                    // dialog). 
+                    darkDialog.GoModeless();
+                }))
+                {
+                    // The above code block did not execute. Still modal: child dialog closed.
+                    if (false == darkDialog.LocalIsClosed)  // Should only occur at assert loc 9 9 8 8 5 below
+                        darkDialog.Close();
                 }
+            }
 
-                dictOwners.ForEach(kvp =>
-                    kvp.Key.Owner = kvp.Value);
-
-                fakeBaseWindow.Close();
-
-                lsWindowOrder.ForEach(NativeMethods
-                    .BringWindowToTop);
-
-                lsDarkWindows.ForEach(darkWindow => darkWindow
-                    .Close());
-
+            void LastCheckForLockup()
+            {
                 // Look for a modal window stuck behind a dark window and bring it to top. This happens.
                 var nativeModalWindow = Application.Current.Windows.Cast<Window>()
                     .Where(w => (w is IModalWindow))
@@ -320,10 +351,6 @@ namespace DoubleFile
                         .Where(w => (w is IDarkWindow))
                         .ForEach(w => w.Close());
                 }
-
-                _dtLastDarken = DateTime.Now;
-                _bDarkening = false;
-                return retVal;
             }
 
             Func<DarkWindow, T>
@@ -331,11 +358,11 @@ namespace DoubleFile
             //Thread
             //    _thread;
 
-            bool
+            static bool
                 _bDarkening = false;
-            bool
+            static bool
                 _bBlocking = false;
-            DateTime
+            static DateTime
                 _dtLastDarken = DateTime.MinValue;
         }
     }

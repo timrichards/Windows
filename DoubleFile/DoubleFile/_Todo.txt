@@ -6,6 +6,7 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- System dialogs are only currently on top of a modal window in Go(): the main loop in Go_() won't exit them properly
 - Release mode doesn't want to show messagebox during scenario causing the lockout bug fixed in build 195:
 	Keep are you sure dialog up while cancelling opening project and it will darken lockout in 194.
 - App.TopWindow = this in "Activated"; but when closed find an ExtraWindow to set it to

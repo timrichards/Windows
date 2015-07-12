@@ -13,17 +13,12 @@ using System.Collections.ObjectModel;
 
 namespace DoubleFile
 {
-    interface IModalWindow : ILocalWindow { }
+    interface IModalWindow { }
     interface ICantBeTopWindow { }
     interface IDarkWindow : ILocalWindow, ICantBeTopWindow { }
 
     class ModalThread
     {
-        internal static T Go<T>(Func<IDarkWindow, T> showDialog)
-        {
-            return new ModalThread().GoA<T>(showDialog);
-        }
-
         class DarkWindow : LocalWindowBase, IDarkWindow
         {
             internal Rect Rect;
@@ -47,13 +42,19 @@ namespace DoubleFile
             internal new void GoModeless() { base.GoModeless(); }
         }
 
+        internal static T Go<T>(Func<IDarkWindow, T> showDialog)
+        {
+            return new ModalThread().GoA<T>(showDialog);
+        }
+
         T GoA<T>(Func<IDarkWindow, T> showDialog)
         {
-
-            if (_bBlocking)     // debounce
+            if (_bNappingDontDebounce)
                 return default(T);
 
-            if (_bDarkening)
+            var retVal = default(T);
+
+            if (_thread.IsAlive)
             {
                 var prevTopWindow = App.TopWindow;
                 var darkWindow = new DarkWindow((Window)App.TopWindow);
@@ -62,35 +63,92 @@ namespace DoubleFile
                     .SetRect(darkWindow.Rect)
                     .Show();
 
-                var retValA = showDialog(darkWindow);
+                retVal = showDialog(darkWindow);
 
                 if (false == darkWindow.LocalIsClosed)      // happens with system dialogs
                     darkWindow.Close();
 
                 App.TopWindow = prevTopWindow;
-                return retValA;
+                return retVal;
             }
 
-            _bDarkening = true;
-
+            _thread = Util.ThreadMake(() => Util.UIthread(99799, () =>
             {
                 var napTime = _dtLastDarken - DateTime.Now + TimeSpan.FromMilliseconds(250);
 
                 if (0 < napTime.TotalMilliseconds)
                 {
-                    _bBlocking = true;
+                    _bNappingDontDebounce = true;
                     Util.Block(napTime);
-                    _bBlocking = false;
+                    _bNappingDontDebounce = false;
                 }
+
+                if (null == Application.Current)
+                {
+                    Abort();
+                    return;     // from thread lambda
+                }
+
+                retVal = GoB(showDialog);
+                _blockingFrame.Continue = false;
+            }));
+
+            using (Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
+                .Subscribe(x => Util.UIthread(99797, () =>
+                RepeatedOuterCheckForLockup())))
+                _blockingFrame.PushFrameToTrue();
+            
+            return retVal;
+        }
+
+        void Abort()
+        {
+            _thread.Abort();
+            _blockingFrame.Continue = false;
+        }
+
+        void RepeatedOuterCheckForLockup()
+        {
+            var lsNativeModalWindows = Application.Current.Windows.Cast<Window>()
+                .Where(w => (w is IModalWindow))
+                .Select(w => (NativeWindow)w)
+                .ToList();
+
+            if (lsNativeModalWindows.Contains(NativeTopWindow()))
+                return;
+
+            Abort();
+            ClearOut(99797);
+        }
+
+        void ClearOut(decimal nLocation)
+        {
+            var strStuckFrames = LocalDispatcherFrame.ClearFrames();
+
+            MBoxStatic.Assert(nLocation, false, strStuckFrames);
+
+            Application.Current.Windows.Cast<Window>()
+                .Where(w => (w is DarkWindow))
+                .ForEach(w => w.Close());
+        }
+
+        NativeWindow NativeTopWindow()
+        {
+            // Win32 owner; parent; and child windows ignored by WPF and without hierarchy.
+            var nativeWindows =
+                Application.Current.Windows.Cast<Window>()
+                .Where(w => (w is ILocalWindow) && (false == ((ILocalWindow)w).LocalIsClosed))
+                .Select(w => (NativeWindow)w)
+                .ToList();
+
+            for (var nativeWindow = NativeMethods.GetTopWindow(IntPtr.Zero); nativeWindow != IntPtr.Zero;
+                nativeWindow = NativeMethods.GetWindow(nativeWindow, NativeMethods.GW_HWNDNEXT))
+            {
+                if (nativeWindows.Contains(nativeWindow))
+                    return nativeWindow;    // from lambda
             }
 
-            if (null == Application.Current)
-            {
-                _bDarkening = false;
-                return default(T);
-            }
-            
-            return GoB(showDialog);
+            return null;
         }
 
         T GoB<T>(Func<IDarkWindow, T> showDialog)
@@ -163,7 +221,7 @@ namespace DoubleFile
 
                 using (Observable.Timer(TimeSpan.FromMilliseconds(250), TimeSpan.FromSeconds(1)).Timestamp()
                     .Subscribe(x => Util.UIthread(99871, () =>
-                    RepeatedCheckForLockup(darkDialog, ref nWindowCount))))
+                    RepeatedInnerCheckForLockup(darkDialog, ref nWindowCount))))
                     darkDialog.ShowDialog();
             }
 
@@ -181,7 +239,6 @@ namespace DoubleFile
             // Look for a modal window stuck behind a dark window and bring it to top. This happens.
             LastCheckForLockup();
             _dtLastDarken = DateTime.Now;
-            _bDarkening = false;
             return retVal;
         }
 
@@ -256,7 +313,7 @@ namespace DoubleFile
             return doubleBufferWindow;
         }
 
-        void RepeatedCheckForLockup(DarkWindow darkDialog, ref int nWindowCount)
+        void RepeatedInnerCheckForLockup(DarkWindow darkDialog, ref int nWindowCount)
         {
             if (0 == nWindowCount)
                 nWindowCount = darkDialog.OwnedWindows.Count;
@@ -269,11 +326,18 @@ namespace DoubleFile
             if (false == bAssert)
                 return;             // from lambda
 
-            darkDialog.Close();
+            if (false == darkDialog.LocalIsClosed)
+            {
+                darkDialog.Close();
 
-            var strStuckFrames = LocalDispatcherFrame.ClearFrames();
+                var strStuckFrames = LocalDispatcherFrame.ClearFrames();
 
-            MBoxStatic.Assert(99885, false, strStuckFrames);
+                MBoxStatic.Assert(99885, false, strStuckFrames);
+            }
+            else
+            {
+                Util.WriteLine("RepeatedCheckForLockup wonky.");
+            }
         }
 
         void CloseDarkDialog(DarkWindow darkDialog)
@@ -314,59 +378,34 @@ namespace DoubleFile
 
             if (null != nativeModalWindow)
             {
-                // Win32 owner; parent; and child windows ignored by WPF and without hierarchy.
-                Func<NativeWindow> nativeTopWindow = () =>
-                {
-                    var nativeWindows =
-                        Application.Current.Windows.Cast<Window>()
-                        .Where(w => (w is ILocalWindow) && (false == ((ILocalWindow)w).LocalIsClosed))
-                        .Select(w => (NativeWindow)w)
-                        .ToList();
-
-                    for (var nativeWindow = NativeMethods.GetTopWindow(IntPtr.Zero); nativeWindow != IntPtr.Zero;
-                        nativeWindow = NativeMethods.GetWindow(nativeWindow, NativeMethods.GW_HWNDNEXT))
-                    {
-                        if (nativeWindows.Contains(nativeWindow))
-                            return nativeWindow;    // from lambda
-                    }
-
-                    return null;
-                };
-
-                if (false == nativeModalWindow.Equals(nativeTopWindow()))
+                if (false == nativeModalWindow.Equals(NativeTopWindow()))
                 {
                     NativeMethods
                         .SetWindowPos(nativeModalWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
 
                     Util.WriteLine("Modal window got stuck behind dark window.");
-                    MBoxStatic.Assert(99802, nativeModalWindow.Equals(nativeTopWindow()));
+                    MBoxStatic.Assert(99802, nativeModalWindow.Equals(NativeTopWindow()));
                 }
             }
             else if (Application.Current.Windows.Cast<Window>()
-                .Where(w => (w is IDarkWindow))
+                .Where(w => (w is DarkWindow))
                 .Any())
             {
-                // This block has never been hit.
+                // This block got hit once, because a standard file dialog made it through to GoB()
+                // which happened because statics were per class<T>, so _blocking, at the time a bool, was false.
                 // There are no modal windows up. Assert; clear stuck frames; and close all dark windows. 
                 // This will prevent the entire code block around assert loc 9 9 8 8 5 above.
                 // -actually no it doesn't. But just in case.
-                var strStuckFrames = LocalDispatcherFrame.ClearFrames();
-
-                MBoxStatic.Assert(99803, false, strStuckFrames);
-
-                Application.Current.Windows.Cast<Window>()
-                    .Where(w => (w is IDarkWindow))
-                    .ForEach(w => w.Close());
+                ClearOut(99803);
             }
         }
 
-        //Thread
-        //    _thread;
-
+        static Thread
+            _thread = new Thread(() => { });
+        LocalDispatcherFrame
+            _blockingFrame = new LocalDispatcherFrame(99800);
         static bool
-            _bDarkening = false;
-        static bool
-            _bBlocking = false;
+            _bNappingDontDebounce = false;
         static DateTime
             _dtLastDarken = DateTime.MinValue;
     }

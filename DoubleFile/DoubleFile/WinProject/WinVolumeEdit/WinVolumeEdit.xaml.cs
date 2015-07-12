@@ -3,7 +3,7 @@
     /// <summary>
     /// Interaction logic for WinVolumeEdit.xaml
     /// </summary>
-    partial class WinVolumeEdit
+    partial class WinVolumeEdit : IModalWindow
     {
         public WinVolumeEdit()
         {

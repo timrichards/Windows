@@ -3,7 +3,7 @@
     /// <summary>
     /// Interaction logic for WinVolumeNew.xaml
     /// </summary>
-    partial class WinVolumeNew
+    partial class WinVolumeNew : IModalWindow
     {
         public WinVolumeNew()
         {

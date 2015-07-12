@@ -153,6 +153,12 @@ namespace DoubleFile
 
         internal new LocalModernWindowBase Show()
         {
+            if (this is IModalWindow)
+            {
+                MBoxStatic.Assert(99794, false);
+                return this;
+            }
+
             MBoxStatic.Restart();
 
             if (null == Owner)
@@ -166,6 +172,12 @@ namespace DoubleFile
 
         bool? ShowDialog(ILocalWindow me)
         {
+            if (false == this is IModalWindow)
+            {
+                MBoxStatic.Assert(99793, false);
+                return false;
+            }
+
             if (me.LocalIsClosed)
             {
                 MBoxStatic.Assert(99980, false);

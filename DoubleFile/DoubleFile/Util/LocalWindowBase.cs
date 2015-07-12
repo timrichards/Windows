@@ -152,6 +152,12 @@ namespace DoubleFile
 
         internal new LocalWindowBase Show()
         {
+            if (this is IModalWindow)
+            {
+                MBoxStatic.Assert(99796, false);
+                return this;
+            }
+
             MBoxStatic.Restart();
 
             if (null == Owner)
@@ -165,6 +171,13 @@ namespace DoubleFile
 
         protected bool? ShowDialog(ILocalWindow me)
         {
+            if ((false == this is IModalWindow) &&
+                (false == this is IDarkWindow))     // will start modal and modeless, will never be modern window.
+            {
+                MBoxStatic.Assert(99795, false);
+                return null;
+            }
+
             if (me.LocalIsClosed)
             {
                 MBoxStatic.Assert(99981, false);

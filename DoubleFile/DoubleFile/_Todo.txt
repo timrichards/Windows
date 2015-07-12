@@ -6,6 +6,7 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- Make sure all Observable.Timer (Subscribe) are disposed
 - System dialogs are only currently on top of a modal window in Go(): the main loop in Go_() won't exit them properly
 - Release mode doesn't want to show messagebox during scenario causing the lockout bug fixed in build 195:
 	Keep are you sure dialog up while cancelling opening project and it will darken lockout in 194.
@@ -100,4 +101,4 @@
 - replace IEnumerable with ICollection where possible
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
-99800 next low assert
+99792 next low assert

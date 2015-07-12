@@ -13,7 +13,7 @@ namespace DoubleFile
                 Description = "Source path of the directory for which a listing file is to be created."
             };
 
-            if (DialogResult.OK == MainWindow.Darken(x => dlg.ShowDialog()))
+            if (DialogResult.OK == ModalThread.Go(x => dlg.ShowDialog()))
                 FromSourcePathDlg(dlg.SelectedPath);
         }
 
@@ -43,7 +43,7 @@ namespace DoubleFile
                 Title = "Save Listing File"
             };
 
-            if (MainWindow.Darken(darkWindow => dlg.ShowDialog((Window)darkWindow)) ?? false)
+            if (ModalThread.Go(darkWindow => dlg.ShowDialog((Window)darkWindow)) ?? false)
                 FromListingFileDlg(dlg.FileName);
         }
     }

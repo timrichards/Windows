@@ -56,6 +56,9 @@ namespace DoubleFile
 
                 var retValA = showDialog(darkWindow);
 
+                if (false == darkWindow.LocalIsClosed)      // happens with system dialogs
+                    darkWindow.Close();
+
                 App.TopWindow = prevTopWindow;
                 return retValA;
             }

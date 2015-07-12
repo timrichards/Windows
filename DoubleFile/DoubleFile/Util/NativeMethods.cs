@@ -198,6 +198,7 @@ namespace DoubleFile
             BringWindowToTop(NativeWindow w) { BringWindowToTop((IntPtr)w); }
 
         internal const uint GW_HWNDNEXT = 2;
+        internal const uint GW_OWNER = 4;
 
         [DllImport("User32")]
         static extern IntPtr GetWindow(IntPtr hWnd, uint wCmd);

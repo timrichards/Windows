@@ -83,13 +83,9 @@ namespace DoubleFile
                     _bNappingDontDebounce = false;
                 }
 
-                if (null == Application.Current)
-                {
-                    Abort();
-                    return;     // from thread lambda
-                }
+                if (null != Application.Current)
+                    retVal = GoB(showDialog);
 
-                retVal = GoB(showDialog);
                 _blockingFrame.Continue = false;
             }));
 
@@ -117,8 +113,25 @@ namespace DoubleFile
             if (lsNativeModalWindows.Contains(NativeTopWindow()))
                 return;
 
-            Abort();
-            ClearOut(99797);
+            if (IntPtr.Zero != NativeMethods.GetWindow(NativeTopWindow(), NativeMethods.GW_OWNER))
+                return;     // assume it's a system file/folder dialog:  holey
+
+            if (1 != lsNativeModalWindows.Count)    // if there are two stuck then it needs to be looked into.
+            {
+                Abort();
+                ClearOut(99797);
+            }
+
+            UnstickDialog(lsNativeModalWindows[0]);
+        }
+
+        void UnstickDialog(NativeWindow nativeModalWindow)
+        {
+            NativeMethods
+                .SetWindowPos(nativeModalWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
+
+            Util.WriteLine("Modal window got stuck behind dark window.");
+            MBoxStatic.Assert(99802, nativeModalWindow.Equals(NativeTopWindow()));
         }
 
         void ClearOut(decimal nLocation)
@@ -379,13 +392,7 @@ namespace DoubleFile
             if (null != nativeModalWindow)
             {
                 if (false == nativeModalWindow.Equals(NativeTopWindow()))
-                {
-                    NativeMethods
-                        .SetWindowPos(nativeModalWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
-
-                    Util.WriteLine("Modal window got stuck behind dark window.");
-                    MBoxStatic.Assert(99802, nativeModalWindow.Equals(NativeTopWindow()));
-                }
+                    UnstickDialog(nativeModalWindow);
             }
             else if (Application.Current.Windows.Cast<Window>()
                 .Where(w => (w is DarkWindow))

@@ -57,8 +57,11 @@ namespace DoubleFile
             // You can comment this stuff out all you want: the flashing close box on the
             // system file dialogs isn't going away...
 
-            if (null == App.TopWindow)
+            if ((null == App.TopWindow) &&
+                (false == this is ICantBeTopWindow))    // no-op: all modern windows can be a top window
+            {
                 App.TopWindow = this;
+            }
 
             Observable.FromEventPattern(this, "SourceInitialized")
                 .Subscribe(x =>
@@ -75,7 +78,7 @@ namespace DoubleFile
                 if (topWindow.SimulatingModal)
                 {
                     if (((this != topWindow) && (false == I.SimulatingModal)) ||
-                        (this is ICantBeTopWindow))
+                        (this is ICantBeTopWindow))    // no-op: all modern windows can be a top window
                     {
                         topWindow.Activate();
 
@@ -87,7 +90,7 @@ namespace DoubleFile
                 }
 
                 if ((0 == OwnedWindows.Count) &&
-                    (false == this is ICantBeTopWindow))
+                    (false == this is ICantBeTopWindow))    // no-op: all modern windows can be a top window
                 {
                     App.TopWindow = this;
                 }

@@ -56,8 +56,11 @@ namespace DoubleFile
             // You can comment this stuff out all you want: the flashing close box on the
             // system file dialogs isn't going away...
 
-            if (null == App.TopWindow)
+            if ((null == App.TopWindow) &&
+                (false == this is ICantBeTopWindow))
+            {
                 App.TopWindow = this;
+            }
 
             Observable.FromEventPattern(this, "SourceInitialized")
                 .Subscribe(x =>

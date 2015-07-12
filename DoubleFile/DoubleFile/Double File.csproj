@@ -171,7 +171,7 @@
       <DependentUpon>Introduction.xaml</DependentUpon>
     </Compile>
     <Compile Include="LocalForms\LocalColorItemBase.cs" />
-    <Compile Include="MainWindow DarkWindow.cs" />
+    <Compile Include="Util\ModalThread.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>

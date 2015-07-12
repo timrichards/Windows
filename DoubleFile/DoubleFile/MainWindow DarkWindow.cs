@@ -56,7 +56,6 @@ namespace DoubleFile
 
                 var retValA = showDialog(darkWindow);
 
-                darkWindow.Close();
                 App.TopWindow = prevTopWindow;
                 return retValA;
             }

@@ -198,8 +198,12 @@ namespace DoubleFile
 
             if (I.SimulatingModal)
             {
-                base.Show();
-                _blockingFrame.PushFrameToTrue();
+                if (false == LocalIsClosing)
+                {
+                    base.Show();
+                    _blockingFrame.PushFrameToTrue();
+                }
+                
                 return LocalDialogResult;
             }
 
@@ -217,7 +221,7 @@ namespace DoubleFile
             if (false == LocalIsClosed)
                 Util.UIthread(99842, base.Close);
             else
-                MBoxStatic.Assert(99805, false);
+                MBoxStatic.Assert(99805, false, bTraceOnly: true);
 
             return this;
         }

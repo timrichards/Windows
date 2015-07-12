@@ -11,6 +11,7 @@
 - Show parent folder\this folder in rest of path
 - clones lvs; and all dupe files lv?
 - The todo list is not read-only while debugging.
+- You can go to type definition on var right-click
 - Look for ToArray(): LocalTreeNode etc OK as array for Length.
 - string compare CompareTo()
 
@@ -96,4 +97,4 @@
 - replace IEnumerable with ICollection where possible
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
-99802 next low assert
+99801 next low assert

@@ -15,6 +15,7 @@ namespace DoubleFile
         static public implicit operator NativeWindow(Window w) { return new NativeWindow { hwnd = new WindowInteropHelper(w).Handle }; }
         static public implicit operator NativeWindow(IntPtr hwnd) { return new NativeWindow { hwnd = hwnd }; }
 
+        // can't override == and != operator because of the implicit operator IntPtr above
         public bool Equals(NativeWindow other)
         {
             return hwnd == other.hwnd;

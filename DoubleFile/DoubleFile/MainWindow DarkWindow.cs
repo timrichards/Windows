@@ -137,13 +137,13 @@ namespace DoubleFile
             var lsWindowOrder = new List<NativeWindow> { };
 
             {
-                var nativeWindows = darkenedWindows.Select(w => (NativeWindow)w).ToArray();
+                var nativeWindows = darkenedWindows.Select(w => (NativeWindow)w).ToList();
 
                 for (var nativeWindow = NativeMethods.GetTopWindow(IntPtr.Zero); nativeWindow != IntPtr.Zero;
                     nativeWindow = NativeMethods.GetWindow(nativeWindow, NativeMethods.GW_HWNDNEXT))
                 {
-                    // array enumerable Contains came up empty -?
-                    if (Array.Exists(nativeWindows, w => w.Equals(nativeWindow)))
+                    // array enumerable Linq extension Contains came up empty -?
+                    if (nativeWindows.Contains(nativeWindow))
                         lsWindowOrder.Insert(0, nativeWindow);
                 }
             }
@@ -258,31 +258,59 @@ namespace DoubleFile
             lsDarkWindows.ForEach(darkWindow => darkWindow
                 .Close());
 
-            // 1. Look for a darkable window stuck behind a darkened window and bring it to top. This happens.
-            if (Application.Current.Windows.Cast<Window>()
+            // Look for a darkable window stuck behind a darkened window and bring it to top. This happens.
+            var nativeDarkableWindow = Application.Current.Windows.Cast<Window>()
                 .Where(w => (w is IDarkableWindow))
                 .Select(w => (NativeWindow)w)
-                .FirstOnlyAssert(nativeWindow => NativeMethods
-                .SetWindowPos(nativeWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE)))
+                .FirstOnlyAssert(); // Current use-case is one (LocalMbox) on another (WinProgress).  LocalMbox is now closed.
+
+            if (null != nativeDarkableWindow)
             {
-                Util.WriteLine("Darkable window got stuck.");
-            }
-            else
-            {
-                // 2. Otherwise close all dark windows. This will prevent the entire code block around
-                // assert loc 9 9 8 8 5 above. -actually no it doesn't. But just in case.
-                if (Application.Current.Windows.Cast<Window>()
-                    .Where(w => (w is IDarkWindow))
-                    .Any())
+                // Win32 owner; parent; and child windows ignored by WPF and without hierarchy.
+                Func<NativeWindow> nativeTopWindow = () =>
                 {
-                    var strStuckFrames = LocalDispatcherFrame.ClearFrames();
+                    var nativeWindows =
+                        Application.Current.Windows.Cast<Window>()
+                        .Where(w => (w is ILocalWindow) && (false == ((ILocalWindow)w).LocalIsClosed))
+                        .Select(w => (NativeWindow)w)
+                        .ToList();
 
-                    MBoxStatic.Assert(99803, false, strStuckFrames);
+                    for (var nativeWindow = NativeMethods.GetTopWindow(IntPtr.Zero); nativeWindow != IntPtr.Zero;
+                        nativeWindow = NativeMethods.GetWindow(nativeWindow, NativeMethods.GW_HWNDNEXT))
+                    {
+                        if (false == nativeWindows.Contains(nativeWindow))
+                            continue;
 
-                    Application.Current.Windows.Cast<Window>()
-                        .Where(w => (w is IDarkWindow))
-                        .ForEach(w => w.Close());
+                        return nativeWindow;    // from lambda
+                    }
+
+                    return null;
+                };
+
+                if (false == nativeDarkableWindow.Equals(nativeTopWindow()))
+                {
+                    NativeMethods
+                        .SetWindowPos(nativeDarkableWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
+
+                    Util.WriteLine("Darkable window got stuck.");
+                    MBoxStatic.Assert(99802, nativeDarkableWindow.Equals(nativeTopWindow()));
                 }
+            }
+            else if (Application.Current.Windows.Cast<Window>()
+                .Where(w => (w is IDarkWindow))
+                .Any())
+            {
+                // This block has never been hit.
+                // There are no darkable windows up. Assert; clear stuck frames; and close all dark windows. 
+                // This will prevent the entire code block around assert loc 9 9 8 8 5 above.
+                // -actually no it doesn't. But just in case.
+                var strStuckFrames = LocalDispatcherFrame.ClearFrames();
+
+                MBoxStatic.Assert(99803, false, strStuckFrames);
+
+                Application.Current.Windows.Cast<Window>()
+                    .Where(w => (w is IDarkWindow))
+                    .ForEach(w => w.Close());
             }
 
             _dtLastDarken = DateTime.Now;

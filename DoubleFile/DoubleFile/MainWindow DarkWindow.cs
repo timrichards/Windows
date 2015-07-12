@@ -11,7 +11,6 @@ using System.Windows.Media.Imaging;
 
 namespace DoubleFile
 {
-    interface IDarkableWindow : ILocalWindow { }
     interface IDarkWindow : ILocalWindow, ICantBeTopWindow { }
 
     public partial class MainWindow
@@ -258,13 +257,13 @@ namespace DoubleFile
             lsDarkWindows.ForEach(darkWindow => darkWindow
                 .Close());
 
-            // Look for a darkable window stuck behind a darkened window and bring it to top. This happens.
-            var nativeDarkableWindow = Application.Current.Windows.Cast<Window>()
-                .Where(w => (w is IDarkableWindow))
+            // Look for a modal window stuck behind a dark window and bring it to top. This happens.
+            var nativeModalWindow = Application.Current.Windows.Cast<Window>()
+                .Where(w => (w is IModalWindow))
                 .Select(w => (NativeWindow)w)
                 .FirstOnlyAssert(); // Current use-case is one (LocalMbox) on another (WinProgress).  LocalMbox is now closed.
 
-            if (null != nativeDarkableWindow)
+            if (null != nativeModalWindow)
             {
                 // Win32 owner; parent; and child windows ignored by WPF and without hierarchy.
                 Func<NativeWindow> nativeTopWindow = () =>
@@ -285,13 +284,13 @@ namespace DoubleFile
                     return null;
                 };
 
-                if (false == nativeDarkableWindow.Equals(nativeTopWindow()))
+                if (false == nativeModalWindow.Equals(nativeTopWindow()))
                 {
                     NativeMethods
-                        .SetWindowPos(nativeDarkableWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
+                        .SetWindowPos(nativeModalWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
 
-                    Util.WriteLine("Darkable window got stuck.");
-                    MBoxStatic.Assert(99802, nativeDarkableWindow.Equals(nativeTopWindow()));
+                    Util.WriteLine("Modal window got stuck behind dark window.");
+                    MBoxStatic.Assert(99802, nativeModalWindow.Equals(nativeTopWindow()));
                 }
             }
             else if (Application.Current.Windows.Cast<Window>()
@@ -299,7 +298,7 @@ namespace DoubleFile
                 .Any())
             {
                 // This block has never been hit.
-                // There are no darkable windows up. Assert; clear stuck frames; and close all dark windows. 
+                // There are no modal windows up. Assert; clear stuck frames; and close all dark windows. 
                 // This will prevent the entire code block around assert loc 9 9 8 8 5 above.
                 // -actually no it doesn't. But just in case.
                 var strStuckFrames = LocalDispatcherFrame.ClearFrames();

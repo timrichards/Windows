@@ -9,7 +9,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for LocalMbox.xaml
     /// </summary>
-    public partial class LocalMbox : IDarkableWindow
+    public partial class LocalMbox : IModalWindow
     {
         internal string Message
         {

@@ -1,5 +1,6 @@
 ﻿namespace DoubleFile
 {
+    interface IModalWindow : ILocalWindow { }
     interface ICantBeTopWindow { }
 
     public interface ILocalWindow

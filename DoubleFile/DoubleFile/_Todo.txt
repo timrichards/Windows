@@ -6,6 +6,8 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- Release mode doesn't want to show messagebox during scenario causing the lockout bug fixed in build 195:
+	Keep are you sure dialog up while cancelling opening project and it will darken lockout in 194.
 - App.TopWindow = this in "Activated"; but when closed find an ExtraWindow to set it to
 - Search for 'a' then search again: searches for ''
 - Show parent folder\this folder in rest of path
@@ -97,4 +99,4 @@
 - replace IEnumerable with ICollection where possible
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
-99801 next low assert
+99800 next low assert

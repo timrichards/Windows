@@ -1,5 +1,7 @@
 ﻿namespace DoubleFile
 {
+    interface ICantBeTopWindow { }
+
     public interface ILocalWindow
     {
         bool LocalIsClosed { get; }

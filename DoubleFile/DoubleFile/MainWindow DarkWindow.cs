@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 namespace DoubleFile
 {
     interface IDarkableWindow : ILocalWindow { }
-    interface IDarkWindow : ILocalWindow { }
+    interface IDarkWindow : ILocalWindow, ICantBeTopWindow { }
 
     public partial class MainWindow
     {
@@ -278,10 +278,8 @@ namespace DoubleFile
                     for (var nativeWindow = NativeMethods.GetTopWindow(IntPtr.Zero); nativeWindow != IntPtr.Zero;
                         nativeWindow = NativeMethods.GetWindow(nativeWindow, NativeMethods.GW_HWNDNEXT))
                     {
-                        if (false == nativeWindows.Contains(nativeWindow))
-                            continue;
-
-                        return nativeWindow;    // from lambda
+                        if (nativeWindows.Contains(nativeWindow))
+                            return nativeWindow;    // from lambda
                     }
 
                     return null;

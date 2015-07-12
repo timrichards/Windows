@@ -11,7 +11,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinTooltip.xaml
     /// </summary>
-    public partial class WinTooltip
+    public partial class WinTooltip : ICantBeTopWindow
     {
         internal string Folder { set { Util.UIthread(99822, () => formTextBlock_folder.Text = value); } }
         internal string Size { set { Util.UIthread(99821, () => formTextBlock_size.Text = value); } }

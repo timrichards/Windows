@@ -73,8 +73,8 @@ namespace DoubleFile
 
                 if (topWindow.SimulatingModal)
                 {
-                    if (((this != topWindow) && (false == I.SimulatingModal))
-                        || (false == Focusable))
+                    if (((this != topWindow) && (false == I.SimulatingModal)) ||
+                        (this is ICantBeTopWindow))
                     {
                         topWindow.Activate();
 
@@ -85,8 +85,8 @@ namespace DoubleFile
                     }
                 }
 
-                if ((0 == OwnedWindows.Count)
-                    && Focusable)
+                if ((0 == OwnedWindows.Count) &&
+                    (false == this is ICantBeTopWindow))
                 {
                     App.TopWindow = this;
                 }

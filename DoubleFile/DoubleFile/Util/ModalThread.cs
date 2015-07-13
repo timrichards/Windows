@@ -17,7 +17,7 @@ namespace DoubleFile
     interface ICantBeTopWindow { }
     interface IDarkWindow : ILocalWindow, ICantBeTopWindow { }
 
-    class ModalThread
+    static class ModalThread
     {
         class
             DarkWindow : LocalWindowBase, IDarkWindow
@@ -47,51 +47,6 @@ namespace DoubleFile
 
         internal static T
             Go<T>(Func<IDarkWindow, T> showDialog)
-        {
-            return new ModalThread().GoA<T>(showDialog);
-        }
-
-        void
-            Abort_ClearOut(decimal nLocation)
-        {
-            _thread.Abort();
-            _blockingFrame.Continue = false;
-
-            Application.Current.Windows
-                .OfType<DarkWindow>()
-                .ForEach(w => w.Close());
-
-            var strStuckFrames = LocalDispatcherFrame.ClearFrames();
-
-            MBoxStatic.Assert(nLocation, false, strStuckFrames);
-        }
-
-        IEnumerable<NativeWindow>
-            GetNativeWindowsTopDown(IEnumerable<ILocalWindow> ieWindows)
-        {
-            var lsNativeWindows = ieWindows.Select(w => (NativeWindow)(Window)w).ToList();
-
-            if (0 == lsNativeWindows.Count)
-                yield break;
-
-            for (var nativeWindow = NativeMethods.GetTopWindow(IntPtr.Zero); nativeWindow != IntPtr.Zero;
-                nativeWindow = NativeMethods.GetWindow(nativeWindow, NativeMethods.GW_HWNDNEXT))
-            {
-                // array enumerable Linq extension Contains came up empty -?
-                var nIx = lsNativeWindows.IndexOf(nativeWindow);
-
-                if (0 > nIx)
-                    continue;
-
-                yield return nativeWindow;
-                lsNativeWindows.RemoveAt(nIx);
-
-                if (0 == lsNativeWindows.Count)
-                    yield break;
-            }
-        }
-
-        T   GoA<T>(Func<IDarkWindow, T> showDialog)
         {
             if (_bNappingDontDebounce)
                 return default(T);
@@ -128,7 +83,7 @@ namespace DoubleFile
                 }
 
                 if (null != Application.Current)
-                    retVal = GoB(showDialog);
+                    retVal = GoA(showDialog);
 
                 _blockingFrame.Continue = false;
             }));
@@ -141,7 +96,48 @@ namespace DoubleFile
             return retVal;
         }
 
-        T   GoB<T>(Func<IDarkWindow, T> showDialog)
+        static void
+            Abort_ClearOut(decimal nLocation)
+        {
+            _thread.Abort();
+            _blockingFrame.Continue = false;
+
+            Application.Current.Windows
+                .OfType<DarkWindow>()
+                .ForEach(w => w.Close());
+
+            var strStuckFrames = LocalDispatcherFrame.ClearFrames();
+
+            MBoxStatic.Assert(nLocation, false, strStuckFrames);
+        }
+
+        static IEnumerable<NativeWindow>
+            GetNativeWindowsTopDown(IEnumerable<ILocalWindow> ieWindows)
+        {
+            var lsNativeWindows = ieWindows.Select(w => (NativeWindow)(Window)w).ToList();
+
+            if (0 == lsNativeWindows.Count)
+                yield break;
+
+            for (var nativeWindow = NativeMethods.GetTopWindow(IntPtr.Zero); nativeWindow != IntPtr.Zero;
+                nativeWindow = NativeMethods.GetWindow(nativeWindow, NativeMethods.GW_HWNDNEXT))
+            {
+                // array enumerable Linq extension Contains came up empty -?
+                var nIx = lsNativeWindows.IndexOf(nativeWindow);
+
+                if (0 > nIx)
+                    continue;
+
+                yield return nativeWindow;
+                lsNativeWindows.RemoveAt(nIx);
+
+                if (0 == lsNativeWindows.Count)
+                    yield break;
+            }
+        }
+
+        static T
+            GoA<T>(Func<IDarkWindow, T> showDialog)
         {
             var dictOwners = Util.Closure(() =>
             {
@@ -232,7 +228,7 @@ namespace DoubleFile
             return retVal;
         }
 
-        NativeWindow
+        static NativeWindow
             NativeTopWindow()
         {
             // Win32 owner; parent; and child windows ignored by WPF and without hierarchy. Owner set to root owner.
@@ -243,7 +239,7 @@ namespace DoubleFile
             .FirstOrDefault();
         }
 
-        void
+        static void
             RepeatedOuterCheckForLockup()
         {
             if (false ==
@@ -284,7 +280,7 @@ namespace DoubleFile
             UnstickDialog(lsNativeModalWindows[0]);
         }
 
-        Window
+        static Window
             Step1_ShowDoubleBufferedWindow(MainWindow mainWindow)
         {
             var bounds = Win32Screen.GetWindowMonitorInfo(mainWindow).rcMonitor;
@@ -321,7 +317,7 @@ namespace DoubleFile
             return doubleBufferWindow;
         }
 
-        Window
+        static Window
             Step2_ShowFakeBaseWindow()
         {
             var fakeBaseWindow = new Window
@@ -341,7 +337,7 @@ namespace DoubleFile
             return fakeBaseWindow;
         }
 
-        void
+        static void
             Step3_RepeatedInnerCheckForLockup(DarkWindow darkDialog, ref int nWindowCount)
         {
             if (0 == nWindowCount)
@@ -369,7 +365,7 @@ namespace DoubleFile
             }
         }
 
-        void
+        static void
             Step4_CloseDarkDialog(DarkWindow darkDialog)
         {
             if (false ==
@@ -400,7 +396,7 @@ namespace DoubleFile
             }
         }
 
-        void
+        static void
             Step5_LastCheckForLockup()
         {
             // Look for a modal window stuck behind a dark window and bring it to top. This happens.
@@ -427,7 +423,7 @@ namespace DoubleFile
             }
         }
 
-        void
+        static void
             UnstickDialog(NativeWindow nativeModalWindow)
         {
             NativeMethods
@@ -439,7 +435,7 @@ namespace DoubleFile
 
         static Thread
             _thread = new Thread(() => { });
-        LocalDispatcherFrame
+        static LocalDispatcherFrame
             _blockingFrame = new LocalDispatcherFrame(99800);
         static bool
             _bNappingDontDebounce = false;

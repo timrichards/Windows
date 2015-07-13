@@ -31,40 +31,40 @@ namespace DoubleFile
 
             switch (strFragment)
             {
-                case MainWindow.FolderListLarge:
+                case WinFolderList.FolderListLarge:
                 {
                     AddFolders(1);
                     Util.WriteLine("FolderListLarge");
                     break;
                 }
 
-                case MainWindow.FolderListSmall:
+                case WinFolderList.FolderListSmall:
                 {
                     AddFolders(2);
                     Util.WriteLine("FolderListSmall");
                     break;
                 }
 
-                case MainWindow.FolderListRandom:
+                case WinFolderList.FolderListRandom:
                 {
                     AddFolders(0);
                     Util.WriteLine("FolderListRandom");
                     break;
                 }
 
-                case MainWindow.FolderListUnique:
+                case WinFolderList.FolderListUnique:
                 {
                     Util.WriteLine("FolderListUnique");
                     break;
                 }
 
-                case MainWindow.FolderListSameVol:
+                case WinFolderList.FolderListSameVol:
                 {
                     Util.WriteLine("FolderListSameVol");
                     break;
                 }
 
-                case MainWindow.FolderListClones:
+                case WinFolderList.FolderListClones:
                 {
                     Util.WriteLine("FolderListClones");
                     break;

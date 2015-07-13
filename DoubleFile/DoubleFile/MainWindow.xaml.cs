@@ -41,13 +41,6 @@ namespace DoubleFile
         }
         static bool _bFolderListLinkCheck = false;
 
-        internal const string FolderListLarge = "large";
-        internal const string FolderListSmall = "small";
-        internal const string FolderListRandom = "random";
-        internal const string FolderListUnique = "unique";
-        internal const string FolderListSameVol = "sameVol";
-        internal const string FolderListClones = "clones";
-
         internal const string SaveListingsFakeKey = "/SaveListings.xaml";
         static readonly Link _saveListingsLink = new MyLink("Save listings", SaveListingsFakeKey);
 

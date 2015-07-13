@@ -12,15 +12,20 @@ namespace DoubleFile
         static internal readonly IDictionary<string, string>
             FolderListFragments = new ReadOnlyDictionary<string, string>(new Dictionary<string, string>
         {
-            {"large"  , "ANOVA weighted large" },   // These are all menu case (sentence case), even though
-            {"small"  , "ANOVA weighted small" },   // M:UI makes them all caps: future proof.
-            {"random" , "ANOVA weighted random"},
-            {"unique" , "Unique"               },
-            {"sameVol", "Same volume"          },
-            {"clones" , "Clones"               }
+            {FolderListLarge  , "ANOVA weighted large" },   // These are all menu case (sentence case), even though
+            {FolderListSmall  , "ANOVA weighted small" },   // M:UI makes them all caps: future proof.
+            {FolderListRandom , "ANOVA weighted random"},
+            {FolderListUnique , "Unique"               },
+            {FolderListSameVol, "Same volume"          },
+            {FolderListClones , "Clones"               }
         });
 
-        internal const string FolderListLarge = "ANOVA weighted large";
+        internal const string FolderListLarge = "large";
+        internal const string FolderListSmall = "small";
+        internal const string FolderListRandom = "random";
+        internal const string FolderListUnique = "unique";
+        internal const string FolderListSameVol = "sameVol";
+        internal const string FolderListClones = "clones";
 
         public WinFolderList()
         {

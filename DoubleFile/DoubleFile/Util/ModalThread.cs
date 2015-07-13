@@ -119,7 +119,7 @@ namespace DoubleFile
             var owner = NativeMethods.GetWindow(NativeTopWindow(), NativeMethods.GW_OWNER);
  
             if (owner.Equals(MainWindow.WithMainWindow(w => w)))
-                return;     // use-case: Open/Save Project; Open File system dialogs
+                return;     // use-case: Open/Save Project; Open Listing File system dialogs
 
             var lsModalWindows = 
                 Application.Current.Windows
@@ -177,7 +177,7 @@ namespace DoubleFile
                     .Where(w => false == w.LocalIsClosed)    // not shown yet
                     .ForEach(window => dictOwners_.Add(window, ((Window)window).Owner));
 
-                return new ReadOnlyDictionary<ILocalWindow, Window>(dictOwners_);
+                return new ReadOnlyDictionary<ILocalWindow, Window>(dictOwners_);   // from lasmbda
             });
 
             var mainWindow = MainWindow.WithMainWindow(w => w);
@@ -270,14 +270,14 @@ namespace DoubleFile
                 // array enumerable Linq extension Contains came up empty -?
                 var nIx = lsNativeWindows.IndexOf(nativeWindow);
 
-                if (0 <= nIx)
-                {
-                    yield return nativeWindow;
-                    lsNativeWindows.RemoveAt(nIx);
+                if (0 > nIx)
+                    continue;
 
-                    if (0 == lsNativeWindows.Count)
-                        yield break;
-                }
+                yield return nativeWindow;
+                lsNativeWindows.RemoveAt(nIx);
+
+                if (0 == lsNativeWindows.Count)
+                    yield break;
             }
         }
 

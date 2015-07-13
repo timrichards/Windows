@@ -13,7 +13,7 @@ using System.Collections.ObjectModel;
 
 namespace DoubleFile
 {
-    interface IModalWindow { }
+    interface IModalWindow : ILocalWindow { }
     interface ICantBeTopWindow { }
     interface IDarkWindow : ILocalWindow, ICantBeTopWindow { }
 
@@ -23,11 +23,13 @@ namespace DoubleFile
         {
             internal Rect Rect;
 
-            internal DarkWindow(Window owner)
+            internal DarkWindow(ILocalWindow owner)
             {
-                Rect = Win32Screen.GetWindowRect(owner);
+                var winOwner = (Window)owner;
+
+                Rect = Win32Screen.GetWindowRect(winOwner);
                 this.SetRect(new Rect());
-                Owner = owner;
+                Owner = winOwner;
                 Background = Brushes.Black;
                 AllowsTransparency = true;
                 Opacity = 0.4;
@@ -57,7 +59,7 @@ namespace DoubleFile
             if (_thread.IsAlive)
             {
                 var prevTopWindow = App.TopWindow;
-                var darkWindow = new DarkWindow((Window)App.TopWindow);
+                var darkWindow = new DarkWindow(App.TopWindow);
 
                 darkWindow
                     .SetRect(darkWindow.Rect)
@@ -119,8 +121,9 @@ namespace DoubleFile
             if (owner.Equals(MainWindow.WithMainWindow(w => w)))
                 return;     // use-case: Open/Save Project; Open File system dialogs
 
-            var lsModalWindows = Application.Current.Windows.Cast<Window>()
-                .Where(w => (w is IModalWindow))
+            var lsModalWindows = 
+                Application.Current.Windows
+                .OfType<IModalWindow>()
                 .ToList();
 
             if (owner.Equals(GetNativeWindowsTopDown(lsModalWindows).FirstOrDefault()))
@@ -128,7 +131,7 @@ namespace DoubleFile
 
             var lsNativeModalWindows = 
                 lsModalWindows
-                .Select(w => (NativeWindow)w)
+                .Select(w => (NativeWindow)(Window)w)
                 .ToList();
 
             if (lsNativeModalWindows.Contains(NativeTopWindow()))
@@ -158,23 +161,23 @@ namespace DoubleFile
 
             MBoxStatic.Assert(nLocation, false, strStuckFrames);
 
-            Application.Current.Windows.Cast<Window>()
-                .Where(w => (w is DarkWindow))
+            Application.Current.Windows
+                .OfType<DarkWindow>()
                 .ForEach(w => w.Close());
         }
 
         T GoB<T>(Func<IDarkWindow, T> showDialog)
         {
-            IReadOnlyDictionary<Window, Window>
-                dictOwners = Util.Closure(() =>
+            var dictOwners = Util.Closure(() =>
             {
-                var dictOwners_ = new Dictionary<Window, Window>();
+                var dictOwners_ = new Dictionary<ILocalWindow, Window>();
 
-                Application.Current.Windows.Cast<Window>()
-                    .Where(w => (w is ILocalWindow) && (false == ((ILocalWindow)w).LocalIsClosed))
-                    .ForEach(window => dictOwners_.Add(window, window.Owner));
+                Application.Current.Windows
+                    .OfType<ILocalWindow>()
+                    .Where(w => false == w.LocalIsClosed)    // not shown yet
+                    .ForEach(window => dictOwners_.Add(window, ((Window)window).Owner));
 
-                return new ReadOnlyDictionary<Window, Window>(dictOwners_);
+                return new ReadOnlyDictionary<ILocalWindow, Window>(dictOwners_);
             });
 
             var mainWindow = MainWindow.WithMainWindow(w => w);
@@ -187,7 +190,7 @@ namespace DoubleFile
                 var lsDarkenedWindows = dictOwners.Keys.Where(w => mainWindow != w).ToList();
 
                 lsDarkenedWindows.ForEach(window =>
-                    window.Owner = fakeBaseWindow);
+                    ((Window)window).Owner = fakeBaseWindow);
 
                 lsDarkWindows =
                     lsDarkenedWindows
@@ -238,7 +241,7 @@ namespace DoubleFile
             }
 
             dictOwners.ForEach(kvp =>
-                kvp.Key.Owner = kvp.Value);
+                ((Window)kvp.Key).Owner = kvp.Value);
 
             fakeBaseWindow.Close();
 
@@ -254,16 +257,27 @@ namespace DoubleFile
             return retVal;
         }
 
-        IEnumerable<NativeWindow> GetNativeWindowsTopDown(IEnumerable<Window> ieWindows)
+        IEnumerable<NativeWindow> GetNativeWindowsTopDown(IEnumerable<ILocalWindow> ieWindows)
         {
-            var lsNativeWindows = ieWindows.Select(w => (NativeWindow)w).ToList();
+            var lsNativeWindows = ieWindows.Select(w => (NativeWindow)(Window)w).ToList();
+
+            if (0 == lsNativeWindows.Count)
+                yield break;
 
             for (var nativeWindow = NativeMethods.GetTopWindow(IntPtr.Zero); nativeWindow != IntPtr.Zero;
                 nativeWindow = NativeMethods.GetWindow(nativeWindow, NativeMethods.GW_HWNDNEXT))
             {
                 // array enumerable Linq extension Contains came up empty -?
-                if (lsNativeWindows.Contains(nativeWindow))
+                var nIx = lsNativeWindows.IndexOf(nativeWindow);
+
+                if (0 <= nIx)
+                {
                     yield return nativeWindow;
+                    lsNativeWindows.RemoveAt(nIx);
+
+                    if (0 == lsNativeWindows.Count)
+                        yield break;
+                }
             }
         }
 
@@ -329,7 +343,7 @@ namespace DoubleFile
 
             var bAssert = (0 < nWindowCount) && (0 == darkDialog.OwnedWindows.Count);
 
-            darkDialog.OwnedWindows.Cast<ILocalWindow>()
+            darkDialog.OwnedWindows.OfType<ILocalWindow>()
                 .FirstOnlyAssert(w => bAssert = w.LocalIsClosed);
 
             if (false == bAssert)
@@ -351,7 +365,9 @@ namespace DoubleFile
 
         void CloseDarkDialog(DarkWindow darkDialog)
         {
-            if (false == darkDialog.OwnedWindows.Cast<ILocalWindow>()
+            if (false ==
+                darkDialog.OwnedWindows
+                .OfType<ILocalWindow>()
                 .Where(dialog => false == dialog.LocalIsClosed)
                 .FirstOnlyAssert(dialog =>
             {
@@ -380,9 +396,9 @@ namespace DoubleFile
         void LastCheckForLockup()
         {
             // Look for a modal window stuck behind a dark window and bring it to top. This happens.
-            var nativeModalWindow = Application.Current.Windows.Cast<Window>()
-                .Where(w => (w is IModalWindow))
-                .Select(w => (NativeWindow)w)
+            var nativeModalWindow = Application.Current.Windows
+                .OfType<IModalWindow>()
+                .Select(w => (NativeWindow)(Window)w)
                 .FirstOnlyAssert(); // Current use-case is one (LocalMbox) on another (WinProgress).  LocalMbox is now closed.
 
             if (null != nativeModalWindow)
@@ -390,8 +406,8 @@ namespace DoubleFile
                 if (false == nativeModalWindow.Equals(NativeTopWindow()))
                     UnstickDialog(nativeModalWindow);
             }
-            else if (Application.Current.Windows.Cast<Window>()
-                .Where(w => (w is DarkWindow))
+            else if (Application.Current.Windows
+                .OfType<DarkWindow>()
                 .Any())
             {
                 // This block got hit once, because a standard file dialog made it through to GoB()
@@ -407,9 +423,9 @@ namespace DoubleFile
         {
             // Win32 owner; parent; and child windows ignored by WPF and without hierarchy. Owner set to root owner.
             return GetNativeWindowsTopDown(
-                Application.Current.Windows.OfType<ILocalWindow>()
-                .Where(w => false == w.LocalIsClosed)
-                .Select(w => (Window)w))
+                Application.Current.Windows
+                .OfType<ILocalWindow>()
+                .Where(w => false == w.LocalIsClosed))
             .FirstOrDefault();
         }
 

@@ -265,8 +265,8 @@ namespace DoubleFile
                     new[] { ++nFolderScorer, nFolderCount - nFolderScorer },
                     kvp.Value.AsEnumerable()));
 
-            MBoxStatic.Assert(99895, 1 == nFolderCount - nFolderScorer);
-            MBoxStatic.Assert(99896, _DictFiles.Count == nFolderCount - 1);
+            MBoxStatic.Assert(99895, 1 == nFolderCount - nFolderScorer, bTraceOnly: true);
+            MBoxStatic.Assert(99896, _DictFiles.Count == nFolderCount - 1, bTraceOnly: true);
             Util.WriteLine("_DictFiles " + (DateTime.Now - dt).TotalMilliseconds + " ms");   // 650 ms 
 
             // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step

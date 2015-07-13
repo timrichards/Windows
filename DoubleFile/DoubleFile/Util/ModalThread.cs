@@ -90,7 +90,7 @@ namespace DoubleFile
             }));
 
             using (Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
-                .Subscribe(x => Util.UIthread(99797, () =>
+                .Subscribe(x => Util.UIthread(99798, () =>
                 RepeatedOuterCheckForLockup())))
                 _blockingFrame.PushFrameToTrue();
             
@@ -105,16 +105,34 @@ namespace DoubleFile
 
         void RepeatedOuterCheckForLockup()
         {
-            var lsNativeModalWindows = Application.Current.Windows.Cast<Window>()
+            if (false ==
+                Application.Current.Windows
+                .OfType<DarkWindow>()
+                .Any())
+            {
+                Util.WriteLine("RepeatedOuterCheckForLockup wonky.");
+                return;
+            }
+
+            var owner = NativeMethods.GetWindow(NativeTopWindow(), NativeMethods.GW_OWNER);
+ 
+            if (owner.Equals(MainWindow.WithMainWindow(w => w)))
+                return;     // use-case: Open/Save Project; Open File system dialogs
+
+            var lsModalWindows = Application.Current.Windows.Cast<Window>()
                 .Where(w => (w is IModalWindow))
+                .ToList();
+
+            if (owner.Equals(GetNativeWindowsTopDown(lsModalWindows).FirstOrDefault()))
+                return;     // use-case: Source Path and Save To system dialogs in in New/Edit Listing File IModalWindows
+
+            var lsNativeModalWindows = 
+                lsModalWindows
                 .Select(w => (NativeWindow)w)
                 .ToList();
 
             if (lsNativeModalWindows.Contains(NativeTopWindow()))
-                return;
-
-            if (IntPtr.Zero != NativeMethods.GetWindow(NativeTopWindow(), NativeMethods.GW_OWNER))
-                return;     // assume it's a system file/folder dialog:  holey
+                return;     // use-case: all IModalWindows: New/Edit Listing File; WinProgress; LocalMbox
 
             if (1 != lsNativeModalWindows.Count)    // if there are two stuck then it needs to be looked into.
             {
@@ -145,25 +163,6 @@ namespace DoubleFile
                 .ForEach(w => w.Close());
         }
 
-        NativeWindow NativeTopWindow()
-        {
-            // Win32 owner; parent; and child windows ignored by WPF and without hierarchy.
-            var nativeWindows =
-                Application.Current.Windows.Cast<Window>()
-                .Where(w => (w is ILocalWindow) && (false == ((ILocalWindow)w).LocalIsClosed))
-                .Select(w => (NativeWindow)w)
-                .ToList();
-
-            for (var nativeWindow = NativeMethods.GetTopWindow(IntPtr.Zero); nativeWindow != IntPtr.Zero;
-                nativeWindow = NativeMethods.GetWindow(nativeWindow, NativeMethods.GW_HWNDNEXT))
-            {
-                if (nativeWindows.Contains(nativeWindow))
-                    return nativeWindow;    // from lambda
-            }
-
-            return null;
-        }
-
         T GoB<T>(Func<IDarkWindow, T> showDialog)
         {
             IReadOnlyDictionary<Window, Window>
@@ -183,7 +182,7 @@ namespace DoubleFile
             var fakeBaseWindow = ShowFakeBaseWindow();
             var lsDarkWindows = new List<DarkWindow> { };
 
-            List<NativeWindow> lsNativeWindowsDarkenedFrontToBack = Util.Closure(() =>
+            var lsNativeWindowsDarkenedLowestFirst = Util.Closure(() =>
             {
                 var lsDarkenedWindows = dictOwners.Keys.Where(w => mainWindow != w).ToList();
 
@@ -195,7 +194,7 @@ namespace DoubleFile
                     .Select(w => new DarkWindow(w))
                     .ToList();
 
-                return GetNativeWindowsDarkenedFrontToBack(lsDarkenedWindows);  // from lambda
+                return GetNativeWindowsTopDown(lsDarkenedWindows).Reverse().ToList();  // from lambda
             });
 
             NativeMethods.SetWindowPos(
@@ -220,7 +219,7 @@ namespace DoubleFile
                 {
                     NativeMethods.SetWindowPos(fakeBaseWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
 
-                    lsNativeWindowsDarkenedFrontToBack.ForEach(NativeMethods
+                    lsNativeWindowsDarkenedLowestFirst.ForEach(NativeMethods
                         .BringWindowToTop);
 
                     darkDialog.SetRect(darkDialog.Rect);
@@ -243,7 +242,7 @@ namespace DoubleFile
 
             fakeBaseWindow.Close();
 
-            lsNativeWindowsDarkenedFrontToBack.ForEach(NativeMethods
+            lsNativeWindowsDarkenedLowestFirst.ForEach(NativeMethods
                 .BringWindowToTop);
 
             lsDarkWindows.ForEach(darkWindow => darkWindow
@@ -255,20 +254,17 @@ namespace DoubleFile
             return retVal;
         }
 
-        List<NativeWindow> GetNativeWindowsDarkenedFrontToBack(IReadOnlyList<Window> lsDarkenedWindows)
+        IEnumerable<NativeWindow> GetNativeWindowsTopDown(IEnumerable<Window> ieWindows)
         {
-            var lsNativeWindowsDarkenedFrontToBack = new List<NativeWindow> { };
-            var lsNativeDarkenedWindows = lsDarkenedWindows.Select(w => (NativeWindow)w).ToList();
+            var lsNativeWindows = ieWindows.Select(w => (NativeWindow)w).ToList();
 
             for (var nativeWindow = NativeMethods.GetTopWindow(IntPtr.Zero); nativeWindow != IntPtr.Zero;
                 nativeWindow = NativeMethods.GetWindow(nativeWindow, NativeMethods.GW_HWNDNEXT))
             {
                 // array enumerable Linq extension Contains came up empty -?
-                if (lsNativeDarkenedWindows.Contains(nativeWindow))
-                    lsNativeWindowsDarkenedFrontToBack.Insert(0, nativeWindow);
+                if (lsNativeWindows.Contains(nativeWindow))
+                    yield return nativeWindow;
             }
-
-            return lsNativeWindowsDarkenedFrontToBack;
         }
 
         Window ShowFakeBaseWindow()
@@ -349,7 +345,7 @@ namespace DoubleFile
             }
             else
             {
-                Util.WriteLine("RepeatedCheckForLockup wonky.");
+                Util.WriteLine("RepeatedInnerCheckForLockup wonky.");
             }
         }
 
@@ -405,6 +401,16 @@ namespace DoubleFile
                 // -actually no it doesn't. But just in case.
                 ClearOut(99803);
             }
+        }
+
+        NativeWindow NativeTopWindow()
+        {
+            // Win32 owner; parent; and child windows ignored by WPF and without hierarchy. Owner set to root owner.
+            return GetNativeWindowsTopDown(
+                Application.Current.Windows.OfType<ILocalWindow>()
+                .Where(w => false == w.LocalIsClosed)
+                .Select(w => (Window)w))
+            .FirstOrDefault();
         }
 
         static Thread

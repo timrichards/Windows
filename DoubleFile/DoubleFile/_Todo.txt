@@ -6,6 +6,7 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- Change Cast<>().Where() to OfType<>()
 - Compare Local[,Modern]WindowBase.cs
 - Make sure all Observable.Timer (Subscribe) are disposed
 - System dialogs are only currently on top of a modal window in Go(): the main loop in Go_() won't exit them properly

@@ -212,15 +212,21 @@ namespace DoubleFile
             }
 
             dictOwners.ForEach(kvp =>
-                ((Window)kvp.Key).Owner = kvp.Value);
+            {
+                if (false == kvp.Key.LocalIsClosed)
+                    ((Window)kvp.Key).Owner = kvp.Value;
+            });
 
             fakeBaseWindow.Close();
 
             lsNativeWindowsDarkenedLowestFirst.ForEach(NativeMethods
                 .BringWindowToTop);
 
-            lsDarkWindows.ForEach(darkWindow => darkWindow
-                .Close());
+            lsDarkWindows.ForEach(darkWindow =>
+            {
+                if (false == darkWindow.LocalIsClosed)
+                    darkWindow.Close();
+            });
 
             // Look for a modal window stuck behind a dark window and bring it to top. This happens.
             Step5_LastCheckForLockup();

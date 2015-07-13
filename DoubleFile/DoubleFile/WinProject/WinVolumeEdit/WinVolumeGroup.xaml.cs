@@ -7,7 +7,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinVolumeGroup.xaml
     /// </summary>
-    partial class WinVolumeGroup
+    partial class WinVolumeGroup : IModalWindow
     {
         public string Text { get { return formUC_VolumeGroup.Text; } set { formUC_VolumeGroup.Text = value; } }
 

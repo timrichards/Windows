@@ -291,7 +291,7 @@ namespace DoubleFile
                 if (nScannedLength != nTotalLength)
                 {
                     Util.WriteLine("" + nTotalLength);
-                    MBoxStatic.Assert(1301.23101, false, "nScannedLength != nTotalLength\n" + _volStrings.ListingFile, bTraceOnly: true);
+                    MBoxStatic.Assert(1301.23101m, false, "nScannedLength != nTotalLength\n" + _volStrings.ListingFile, bTraceOnly: true);
                 }
 
                 Util.WriteLine(_volStrings.ListingFile + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");

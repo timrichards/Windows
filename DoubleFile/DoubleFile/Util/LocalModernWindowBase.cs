@@ -1,10 +1,9 @@
 ﻿using FirstFloor.ModernUI.Windows.Controls;
 using System;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Interop;
-using System.Windows.Threading;
-using System.Linq;
 
 namespace DoubleFile
 {
@@ -175,7 +174,7 @@ namespace DoubleFile
             if (false == this is IModalWindow)
             {
                 MBoxStatic.Assert(99793, false);
-                return false;
+                return null;
             }
 
             if (me.LocalIsClosed)
@@ -184,8 +183,7 @@ namespace DoubleFile
                 return null;
             }
 
-            if (//(false == this is LocalMbox) &&
-                (false == this is IDarkWindow))     // future proof
+           // if false == this is LocalMbox)    // future proof
             {
                 MBoxStatic.Restart();
             }

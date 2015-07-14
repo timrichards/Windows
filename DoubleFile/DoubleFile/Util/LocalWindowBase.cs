@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Windows.Threading;
-using System.Windows;
-using System.Reactive.Linq;
-using System.Windows.Interop;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Windows;
+using System.Windows.Interop;
 
 namespace DoubleFile
 {
@@ -185,7 +184,7 @@ namespace DoubleFile
             }
 
             if ((false == this is LocalMbox) &&
-                (false == this is IDarkWindow))
+                (false == this is IDarkWindow))     //  will never be modern window.
             {
                 MBoxStatic.Restart();
             }

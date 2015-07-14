@@ -6,7 +6,7 @@ namespace DoubleFile
 {
     static class MBoxStatic
     {
-#if ((DEBUG == false) || LOCALMBOX)
+#if ((false == DEBUG) || LOCALMBOX)
         static bool _bAssertUp = false;
 #endif
         static internal bool Assert(decimal nLocation, bool bCondition, string strError_in = null,

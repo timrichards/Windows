@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Linq;
 using System.IO;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace DoubleFile
 {
@@ -110,6 +111,8 @@ namespace DoubleFile
                     App.LVprojectVM.ItemsCast
                     .Where(lvItem => lvItem.CanLoad), lvItem =>
                 {
+                    var lsFileLengths_ = new List<decimal>();
+
                     foreach (var nLength in
                         File
                         .ReadLines(lvItem.ListingFile)
@@ -118,11 +121,25 @@ namespace DoubleFile
                         .Where(asLine => FileParse.knColLength < asLine.Length)
                         .Select(asLine => (decimal)("" + asLine[FileParse.knColLength]).ToUlong()))
                     {
-                        lsFileLengths.Add(nLength);
+                        lsFileLengths_.Add(nLength);
                     }
+
+                    try
+                    {
+                        lsFileLengths.Add(lsFileLengths_.Average());
+                    }
+                    catch (OutOfMemoryException) { }
                 });
 
-                Util.WriteLine("Average file length = " + Util.FormatSize((ulong)lsFileLengths.Average(), true));
+                decimal nAverage = 0;
+
+                try
+                {
+                    nAverage = lsFileLengths.Average();
+                }
+                catch (OutOfMemoryException) { }
+
+                Util.WriteLine("Average file length = " + Util.FormatSize((ulong)nAverage, true));
             });
         }
     }

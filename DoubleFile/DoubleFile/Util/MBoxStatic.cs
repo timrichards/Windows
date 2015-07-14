@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 
 namespace DoubleFile
@@ -40,6 +41,9 @@ namespace DoubleFile
                         "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.".PadRight(100),
                         "SearchDirLists Assertion Failure");
                     _bAssertUp = false;
+#if (DEBUG && LOCALMBOX)
+                    Debugger.Break();
+#endif
                 };
 
                 if (bTrace)

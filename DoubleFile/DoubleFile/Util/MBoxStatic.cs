@@ -9,7 +9,6 @@ namespace DoubleFile
 #if ((DEBUG == false) || LOCALMBOX)
         static bool _bAssertUp = false;
 #endif
-
         static internal bool Assert(decimal nLocation, bool bCondition, string strError_in = null,
             bool bTraceOnly = false)
         {
@@ -29,37 +28,29 @@ namespace DoubleFile
 
             Util.WriteLine(strError);
 #if (DEBUG && (false == LOCALMBOX))
-            System.Diagnostics.Debug.Assert(false, strError);
+            Debug.Assert(false, strError);
+            return false;
 #else
-            if (_bAssertUp == false)
-            {
-                var bTrace = false; // Trace.Listeners.Cast<TraceListener>().Any(i => i is DefaultTraceListener);
+            if (_bAssertUp)
+                return false;
 
-                Action messageBox = () =>
-                {
-                    MBoxStatic.ShowDialog(strError +
-                        "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.".PadRight(100),
-                        "SearchDirLists Assertion Failure");
-                    _bAssertUp = false;
+            if (bTraceOnly)
+                return false;
+
+            _nLastAssertLoc = nLocation;
+            _dtLastAssert = DateTime.Now;
+            _bAssertUp = true;
+
+            MBoxStatic.ShowDialog(strError +
+                "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.",
+                "DoubleFile Assert");
+
+            _bAssertUp = false;
 #if (DEBUG && LOCALMBOX)
-                    Debugger.Break();
-#endif
-                };
-
-                if (bTrace)
-                {
-                    messageBox();
-                }
-                else if (bTraceOnly == false)
-                {
-                    _nLastAssertLoc = nLocation;
-                    _dtLastAssert = DateTime.Now;
-                    _bAssertUp = true;
-                    new System.Threading.Thread(new System.Threading.ThreadStart(messageBox)).Start();
-                }
-            }
+            Debugger.Break();
 #endif
             return false;
+#endif
         }
 
         static internal void Restart()

@@ -5,7 +5,7 @@ namespace DoubleFile
 {
     static class MBoxStatic
     {
-#if (DEBUG == false)
+#if ((DEBUG == false) || LOCALMBOX)
         static bool _bAssertUp = false;
 #endif
 
@@ -27,7 +27,7 @@ namespace DoubleFile
                 strError += "\n\nAdditional information: " + strError_in;
 
             Util.WriteLine(strError);
-#if (DEBUG)
+#if (DEBUG && (false == LOCALMBOX))
             System.Diagnostics.Debug.Assert(false, strError);
 #else
             if (_bAssertUp == false)

@@ -6,8 +6,8 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- Top ExtraWindow won't move until de/reactivated but it'll do everything else
 - replace App.LocalExit with (null == Application.Current) or Dispatcher.HasShutdownStarted, etc.
-- Open Project while ExtraWindows are open: darkens only main window
 - Save Project doesn't do this: but it does assert 99797 at blockingThread 99884 then crashes arg out of range.
 - Change Cast<>().Where() to OfType<>()
 - Compare Local[,Modern]WindowBase.cs

@@ -51,6 +51,17 @@ namespace DoubleFile
             if (_bNappingDontDebounce)
                 return default(T);
 
+            {
+                var napTime = _dtLastDarken - DateTime.Now + TimeSpan.FromMilliseconds(250);
+
+                if (0 < napTime.TotalMilliseconds)
+                {
+                    _bNappingDontDebounce = true;
+                    Util.Block(napTime);
+                    _bNappingDontDebounce = false;
+                }
+            }
+
             var retVal = default(T);
 
             if (_thread.IsAlive)
@@ -68,20 +79,12 @@ namespace DoubleFile
                     darkWindow.Close();
 
                 App.TopWindow = prevTopWindow;
+                _dtLastDarken = DateTime.Now;
                 return retVal;
             }
 
             _thread = Util.ThreadMake(() => Util.UIthread(99799, () =>
             {
-                var napTime = _dtLastDarken - DateTime.Now + TimeSpan.FromMilliseconds(250);
-
-                if (0 < napTime.TotalMilliseconds)
-                {
-                    _bNappingDontDebounce = true;
-                    Util.Block(napTime);
-                    _bNappingDontDebounce = false;
-                }
-
                 if (null != Application.Current)
                     retVal = GoA(showDialog);
 
@@ -92,7 +95,7 @@ namespace DoubleFile
                 .Subscribe(x => Util.UIthread(99798, () =>
                 RepeatedOuterCheckForLockup())))
                 _blockingFrame.PushFrameToTrue();
-            
+
             return retVal;
         }
 

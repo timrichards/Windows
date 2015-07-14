@@ -222,14 +222,14 @@ namespace DoubleFile
 
             fakeBaseWindow.Close();
 
-            lsNativeWindowsDarkenedLowestFirst.ForEach(NativeMethods
-                .BringWindowToTop);
-
             lsDarkWindows.ForEach(darkWindow =>
             {
                 if (false == darkWindow.LocalIsClosed)
                     darkWindow.Close();
             });
+
+            lsNativeWindowsDarkenedLowestFirst.ForEach(NativeMethods
+                .BringWindowToTop);
 
             // Look for a modal window stuck behind a dark window and bring it to top. This happens.
             Step5_LastCheckForLockup();
@@ -270,7 +270,7 @@ namespace DoubleFile
                 .OfType<IModalWindow>()
                 .ToList();
 
-            if (owner.Equals(GetNativeWindowsTopDown(lsModalWindows).FirstOrDefault()))
+            if (owner.Equals(GetNativeWindowsTopDown(lsModalWindows).FirstOrDefault())) // have to pass in the whole list
                 return;     // use-case: Source Path and Save To system dialogs in in New/Edit Listing File IModalWindows
 
             var lsNativeModalWindows = 
@@ -282,9 +282,7 @@ namespace DoubleFile
                 return;     // use-case: all IModalWindows: New/Edit Listing File; WinProgress; LocalMbox
 
             if (1 != lsNativeModalWindows.Count)    // if there are two stuck then it needs to be looked into.
-            {
                 Abort_ClearOut(99797);
-            }
 
             UnstickDialog(lsNativeModalWindows[0]);
         }
@@ -306,8 +304,8 @@ namespace DoubleFile
                 Focusable = false,
                 IsEnabled = false
             }
-                .SetRect(new Rect());
-                //.SetRect(bounds);        // mahApps seems to have slowed window creation to a crawl
+                //.SetRect(new Rect());
+                .SetRect(bounds);        // mahApps seems to have slowed window creation to a crawl
 
             using (var bitmap = new Drawing::Bitmap(bounds.Width, bounds.Height))
             {

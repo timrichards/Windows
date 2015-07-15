@@ -127,6 +127,7 @@ namespace DoubleFile
                     d => d.Dispose());
             });
 
+            // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromMilliseconds(250)).Timestamp()
                 .Subscribe(x => cts.Cancel());
 

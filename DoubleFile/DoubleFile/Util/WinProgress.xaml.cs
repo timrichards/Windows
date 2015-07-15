@@ -154,7 +154,10 @@ namespace DoubleFile
             });
 
             if (_bClosing)
+            {
+                _lv.Dispose();
                 return;
+            }
 
             e.Cancel = true;
 

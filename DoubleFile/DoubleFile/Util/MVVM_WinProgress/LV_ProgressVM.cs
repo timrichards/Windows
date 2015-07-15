@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    class LV_ProgressVM : ListViewVM_Base<LVitem_ProgressVM>
+    class LV_ProgressVM : ListViewVM_Base<LVitem_ProgressVM>, IDisposable
     {
         // queried by ObservableObject but not used for progress bar
         public string WidthBigLabel { get { return SCW; } }                         // franken all NaN
@@ -32,12 +32,20 @@ namespace DoubleFile
 
         internal LV_ProgressVM()
         {
-            Observable.Timer(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500)).Timestamp()
+            _lsDisposables.Add(Observable.Timer(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500)).Timestamp()
                 .Subscribe(x =>
             {
                 foreach (var lvItem in ItemsCast.ToArray())
                     lvItem.TimerTick();
-            });
+            }));
         }
+
+        public void Dispose()
+        {
+            Util.LocalDispose(_lsDisposables);
+        }
+
+        List<IDisposable>
+            _lsDisposables = new List<IDisposable>();
     }
 }

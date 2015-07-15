@@ -59,6 +59,7 @@ namespace DoubleFile
                 if (100 < (DateTime.Now - dt).TotalMilliseconds)
                 {
                     // When there are too many items you get UI thread lockup.
+                    // One-shot: no need to dispose
                     Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()
                         .Subscribe(x => blockingFrame.Continue = false);
 

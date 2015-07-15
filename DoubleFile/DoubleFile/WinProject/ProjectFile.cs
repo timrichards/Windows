@@ -431,6 +431,7 @@ namespace DoubleFile
                 _winProgress.Close();
             }
 
+            // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()
                 .Subscribe(x => MBoxStatic.ShowDialog(strError, "Error " + strMode + " Project"));
 

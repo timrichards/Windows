@@ -114,13 +114,16 @@ namespace DoubleFile
             {
                 LocalIsClosed = true;
 
-                if (this == App.TopWindow)
-                {
-                    App.TopWindow =
-                        (false == prevTopWindow.LocalIsClosed)
-                        ? prevTopWindow
-                        : MainWindow.WithMainWindow(w => w);
-                }
+                if (this is MainWindow)
+                    return;
+
+                if (this != App.TopWindow)
+                    return;
+
+                App.TopWindow =
+                    (false == prevTopWindow.LocalIsClosed)
+                    ? prevTopWindow
+                    : MainWindow.WithMainWindow(w => w);
             });
 
             ShowActivated = true;

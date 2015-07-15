@@ -6,9 +6,7 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
-- replace App.LocalExit with (null == Application.Current) or Dispatcher.HasShutdownStarted, etc.
-- Change Cast<>().Where() to OfType<>()
-- Make sure all Observable.Timer (Subscribe) are disposed
+- Application.Current.MainWindow can be LocalMbox (when exiting app)
 - System dialogs are only currently on top of a modal window in Go(): the main loop in GoA() won't exit them properly - check thread
 - Search for 'a' then search again: searches for ''
 - Show parent folder\this folder in rest of path

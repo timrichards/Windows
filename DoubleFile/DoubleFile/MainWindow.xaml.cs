@@ -121,6 +121,9 @@ namespace DoubleFile
         static internal T
             WithMainWindow<T>(Func<MainWindow, T> doSomethingWith)
         {
+            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
+                return default(T);
+
             MainWindow mainWindow = null;
 
             _mainWindowWR.TryGetTarget(out mainWindow);

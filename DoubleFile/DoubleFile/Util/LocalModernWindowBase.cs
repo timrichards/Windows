@@ -115,7 +115,11 @@ namespace DoubleFile
                 LocalIsClosed = true;
 
                 if (this is MainWindow)
+                {
+                    // this is an effective test of whether (null == Application.Current) really works
+                    // Util.ThreadMake(() => MBoxStatic.Assert(0, false));
                     return;
+                }
 
                 if (this != App.TopWindow)
                     return;
@@ -170,6 +174,9 @@ namespace DoubleFile
 
         internal new LocalModernWindowBase Show()
         {
+            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
+                return this;
+
             if (this is IModalWindow)
             {
                 MBoxStatic.Assert(99794, false);
@@ -189,6 +196,9 @@ namespace DoubleFile
 
         bool? ShowDialog(ILocalWindow me)
         {
+            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
+                return null;
+
             if (false == this is IModalWindow)
             {
                 MBoxStatic.Assert(99793, false);

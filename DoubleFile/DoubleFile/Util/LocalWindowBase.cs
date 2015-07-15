@@ -169,6 +169,9 @@ namespace DoubleFile
 
         internal new LocalWindowBase Show()
         {
+            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
+                return this;
+
             if (this is IModalWindow)
             {
                 MBoxStatic.Assert(99796, false);
@@ -188,6 +191,9 @@ namespace DoubleFile
 
         protected bool? ShowDialog(ILocalWindow me)
         {
+            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
+                return null;
+
             if ((false == this is IModalWindow) &&
                 (false == this is IDarkWindow))     // will start modal and modeless, will never be modern window.
             {

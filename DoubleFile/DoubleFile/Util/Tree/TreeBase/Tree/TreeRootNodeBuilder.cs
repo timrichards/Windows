@@ -327,7 +327,7 @@ namespace DoubleFile
             }
 
             Thread
-                _thread = null;
+                _thread = new Thread(() => { });
             bool
                 _bThreadAbort = false;
             readonly LVitem_ProjectVM

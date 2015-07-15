@@ -42,8 +42,7 @@ namespace DoubleFile
             var tuple = initiatorTuple.Item1;
 
             Util.Write("I");
-            if (null != _cts)
-                _cts.Cancel();
+            _cts.Cancel();
 
             LocalTreeNode treeNode = null;
             IEnumerable<FileDictionary.DuplicateStruct> ieDuplicates = null;
@@ -79,8 +78,7 @@ namespace DoubleFile
             {
                 var nCheck = 0;
 
-                while ((null != _cts) &&
-                    (false == _cts.IsCancellationRequested) &&
+                while ((false == _cts.IsCancellationRequested) &&
                     (10 > nCheck))
                 {
                     Util.WriteLine(nCheck + " false == _cts.IsCancellationRequested");
@@ -156,8 +154,6 @@ namespace DoubleFile
 
             if (false == _cts.IsCancellationRequested)
                 Util.UIthread(99812, () => Add(lsLVitems));
-
-            _cts = null;
         }
 
         internal void GoTo()
@@ -172,7 +168,7 @@ namespace DoubleFile
         }
 
         CancellationTokenSource
-            _cts = null;
+            _cts = new CancellationTokenSource();
         LocalTreeNode
             _treeNode = null;
         List<IDisposable>

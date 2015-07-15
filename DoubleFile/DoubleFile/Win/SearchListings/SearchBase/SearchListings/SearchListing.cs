@@ -176,7 +176,7 @@ namespace DoubleFile
             LVitem_ProjectVM
                 _volStrings = null;
             Thread
-                _thread = null;
+                _thread = new Thread(() => { });
             bool
                 _bThreadAbort = false;
         }

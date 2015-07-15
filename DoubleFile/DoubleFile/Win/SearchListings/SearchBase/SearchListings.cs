@@ -80,7 +80,7 @@ namespace DoubleFile
                 worker.Abort();
 
             IsAborted = true;
-            _thread = null;
+            _thread.Abort();
         }
 
         internal SearchListings DoThreadFactory()
@@ -98,6 +98,6 @@ namespace DoubleFile
         readonly ConcurrentBag<SearchListing>
             _cbagWorkers = new ConcurrentBag<SearchListing>();
         Thread
-            _thread = null;
+            _thread = new Thread(() => { });
     }
 }

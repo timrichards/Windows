@@ -475,7 +475,7 @@ namespace DoubleFile
             readonly ISaveDirListingsStatus
                 _saveDirListingsStatus = null;
             Thread
-                _thread = null;
+                _thread = new Thread(() => { });
         }
     }
 }

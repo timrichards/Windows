@@ -232,7 +232,7 @@ namespace DoubleFile
                 base.Show();
                 _blockingFrame.PushFrameToTrue();
             }
-                
+
             return LocalDialogResult;
         }
 

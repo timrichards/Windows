@@ -56,15 +56,14 @@ namespace DoubleFile
             if (_winProgress.LocalIsClosed)
             {
                 MBoxStatic.Assert(99804,
-                    App.LocalExit ||
+                    (null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
                     (null == sdl) ||
                     sdl.IsAborted);
 
                 return;
             }
 
-            if (App.LocalExit ||
-                (null == sdl) ||
+            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
                 sdl.IsAborted)
             {
                 _winProgress.SetAborted();

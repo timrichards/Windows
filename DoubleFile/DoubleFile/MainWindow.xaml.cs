@@ -125,7 +125,8 @@ namespace DoubleFile
 
             _mainWindowWR.TryGetTarget(out mainWindow);
 
-            if (null == mainWindow)
+            if ((null == mainWindow) ||
+                mainWindow.LocalIsClosed)
             {
                 MBoxStatic.Assert(99856, false);
                 return default(T);

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -130,6 +131,9 @@ namespace DoubleFile
 
         static internal void GenerationEnded()
         {
+            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
+                return;
+
             var t = TypedArrayBase.tA[new T().Type];
             var nCount = t.DictStrings.Count;
 

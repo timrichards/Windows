@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -62,7 +63,7 @@ namespace DoubleFile
 
                 while (0 < stackDirs.Count)
                 {
-                    if (App.LocalExit ||
+                    if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
                         _bThreadAbort)
                     {
                         return null;
@@ -92,7 +93,7 @@ namespace DoubleFile
 
                     foreach (var winFile in ieFiles)
                     {
-                        if (App.LocalExit ||
+                        if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
                             _bThreadAbort)
                         {
                             return null;

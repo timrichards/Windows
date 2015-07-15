@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -55,8 +56,11 @@ namespace DoubleFile
 
                     while (null != (strLine = sr.ReadLine()))
                     {
-                        if (App.LocalExit || _bThreadAbort)
+                        if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                            _bThreadAbort)
+                        {
                             return;
+                        }
 
                         var bDir = strLine.StartsWith(FileParse.ksLineType_Directory);
                         var bFile = strLine.StartsWith(FileParse.ksLineType_File);

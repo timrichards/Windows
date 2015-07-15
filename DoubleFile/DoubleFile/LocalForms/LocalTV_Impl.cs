@@ -79,8 +79,7 @@ namespace DoubleFile
 
         void ICreateFileDictStatus.Callback(bool bDone, double nProgress)
         {
-            if (App.LocalExit ||
-                (null == App.FileDictionary) ||
+            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
                 App.FileDictionary.IsAborted)
             {
                 WithWinProgress(w => w
@@ -106,8 +105,7 @@ namespace DoubleFile
         
         void ITreeStatus.Status(LVitem_ProjectVM volStrings, LocalTreeNode rootNode, bool bError)
         {
-            if (App.LocalExit ||
-                (null == App.FileDictionary) ||
+            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
                 App.FileDictionary.IsAborted ||
                 ((null != _tree) && (_tree.IsAborted)))
             {
@@ -171,7 +169,7 @@ namespace DoubleFile
                 Util.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
                 dtStart = DateTime.Now;
 
-                if (App.LocalExit)
+                if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
                 {
                     Collate.ClearMem();
                     return;

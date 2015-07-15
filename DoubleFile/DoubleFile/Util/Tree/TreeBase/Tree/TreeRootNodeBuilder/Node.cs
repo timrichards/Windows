@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -18,7 +19,7 @@ namespace DoubleFile
                     uint[] folderScore,
                     RootNode rootNode)
                 {
-                    if (App.LocalExit)
+                    if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
                         return;
 
                     MBoxStatic.Assert(1301.2303m, nLineNo != 0);
@@ -77,7 +78,7 @@ namespace DoubleFile
 
                 LocalTreeNode AddToTree()
                 {
-                    if (App.LocalExit)
+                    if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
                         return new LocalTreeNode();
 
                     var nIndex = _strPath.LastIndexOf('\\');

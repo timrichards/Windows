@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections.Concurrent;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -146,8 +147,11 @@ namespace DoubleFile
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
 
-                if (App.LocalExit || _bThreadAbort)
+                if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                    _bThreadAbort)
+                {
                     return;
+                }
 
                 var lsNodes = kvp.Value;
 
@@ -165,8 +169,11 @@ namespace DoubleFile
 
                     foreach (var treeNode_A in lsNodes)
                     {
-                        if (App.LocalExit || _bThreadAbort)
+                        if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                            _bThreadAbort)
+                        {
                             return;
+                        }
 
                         if (null == treeNode_A)
                         {
@@ -234,8 +241,11 @@ namespace DoubleFile
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
                 
-                if (App.LocalExit || _bThreadAbort)
+                if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                    _bThreadAbort)
+                {
                     return;
+                }
 
                 DifferentVolsQuery(dictClones, treeNode);
             }
@@ -249,8 +259,11 @@ namespace DoubleFile
 
                 // load up listLVdiffVol
 
-                if (App.LocalExit || _bThreadAbort)
+                if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                    _bThreadAbort)
+                {
                     return;
+                }
 
                 var nClones = listNodes.Value.Count;
 
@@ -284,8 +297,11 @@ namespace DoubleFile
 
                 foreach (var treeNode in listNodes.Value)
                 {
-                    if (App.LocalExit || _bThreadAbort)
+                    if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                        _bThreadAbort)
+                    {
                         return;
+                    }
 
                     if (treeNode.Level < nLevel)
                     {
@@ -344,8 +360,11 @@ namespace DoubleFile
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator);
 
-                if (App.LocalExit || _bThreadAbort)
+                if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                    _bThreadAbort)
+                {
                     return;
+                }
 
                 var treeNode = kvp.Value;
 
@@ -393,8 +412,11 @@ namespace DoubleFile
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
 
-                if (App.LocalExit || _bThreadAbort)
+                if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                    _bThreadAbort)
+                {
                     return;
+                }
 
                 SnowUniqueParents(treeNode);
 
@@ -437,22 +459,31 @@ namespace DoubleFile
 
         internal void Step2()
         {
-            if (App.LocalExit || _bThreadAbort)
+            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                _bThreadAbort)
+            {
                 return;
+            }
 
             MBoxStatic.Assert(1305.6333m, null == _lvClones.Items);
             _lvClones.Items = _lsLVdiffVol.ToArray();
             _lvClones.Invalidate();
 
-            if (App.LocalExit || _bThreadAbort)
+            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                _bThreadAbort)
+            {
                 return;
+            }
 
             MBoxStatic.Assert(1305.6334m, null == _lvUnique.Items);
             _lvUnique.Items =_lsLVunique.ToArray();
             _lvUnique.Invalidate();
 
-            if (App.LocalExit || _bThreadAbort)
+            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                _bThreadAbort)
+            {
                 return;
+            }
 
             MBoxStatic.Assert(1305.6335m, null == _lvSameVol.Items);
             _lvSameVol.Items = _lsLVsameVol.ToArray();
@@ -520,8 +551,11 @@ namespace DoubleFile
 
                     foreach (var subnode in listClones)
                     {
-                        if (App.LocalExit || _bThreadAbort)
+                        if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                            _bThreadAbort)
+                        {
                             return;
+                        }
 
                         MBoxStatic.Assert(1305.6309m, subnode.NodeDatum.Key.Equals(nodeDatum.Key));
 
@@ -569,8 +603,11 @@ namespace DoubleFile
 
             foreach (var subNode in treeNode.Nodes)
             {
-                if (App.LocalExit || _bThreadAbort)
+                if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                    _bThreadAbort)
+                {
                     return;
+                }
 
                 DifferentVolsQuery(dictClones, subNode, rootClone);
             }
@@ -607,8 +644,11 @@ namespace DoubleFile
 
             do
             {
-                if (App.LocalExit || _bThreadAbort)
+                if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                    _bThreadAbort)
+                {
                     return;
+                }
 
                 if (sbMatch.Contains(treeNode.Text.ToLower()))
                 {

@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.Win32.SafeHandles;
 using System.Windows.Threading;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -105,7 +106,7 @@ namespace DoubleFile
                         fs.WriteLine(FormatString(strDir: ksTotalLengthLoc01, nLength: LengthRead));
                     }
 
-                    if (App.LocalExit ||
+                    if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
                         _bThreadAbort)
                     {
                         File.Delete(LVitemProjectVM.ListingFile);

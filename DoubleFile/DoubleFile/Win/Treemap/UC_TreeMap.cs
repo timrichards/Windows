@@ -114,7 +114,7 @@ namespace DoubleFile
 
         internal void ClearSelection(bool bKeepTooltipActive = false)
         {
-            if (App.LocalExit)
+            if ((null == System.Windows.Application.Current) || System.Windows.Application.Current.Dispatcher.HasShutdownStarted)
                 return;
 
             if (_bClearingSelection)

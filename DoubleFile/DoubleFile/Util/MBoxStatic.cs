@@ -72,14 +72,8 @@ namespace DoubleFile
         static internal MessageBoxResult
             ShowDialog(string strMessage, string strTitle = null, MessageBoxButton? buttons = null, ILocalWindow owner = null)
         {
-            var mainWindow = MainWindow.WithMainWindow(w => w);
-
-            if (App.LocalExit ||
-                (null == mainWindow) || 
-                mainWindow.LocalIsClosed)
-            {
+            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
                 return MessageBoxResult.None;
-            }
 
             if ((null != owner) &&
                 owner.LocalIsClosed)

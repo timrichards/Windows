@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -32,8 +33,11 @@ namespace DoubleFile
                 {
                     foreach (var node in treeNode.Nodes)
                     {
-                        if (App.LocalExit || _bThreadAbort)
+                        if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                            _bThreadAbort)
+                        {
                             return datum;
+                        }
 
                         datum += TreeSubnodeDetails(node);
                     }
@@ -208,8 +212,11 @@ namespace DoubleFile
 
                 foreach (var strLine in File.ReadLines(_volStrings.ListingFile))
                 {
-                    if (App.LocalExit || _bThreadAbort)
+                    if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                        _bThreadAbort)
+                    {
                         return;
+                    }
 
                     var asLine = strLine.Split('\t');
 
@@ -285,7 +292,7 @@ namespace DoubleFile
                     nTotalLength = ((RootNodeDatum)rootTreeNode.NodeDatum).TotalLength;
                 }
 
-                if (App.LocalExit)
+                if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
                     return;     // to avoid the below assert box
 
                 if (nScannedLength != nTotalLength)

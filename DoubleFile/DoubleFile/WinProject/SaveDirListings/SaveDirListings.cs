@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -71,7 +72,7 @@ namespace DoubleFile
             Util.WriteLine(string.Format("Finished saving directory listings in {0} seconds.",
                 ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10d));
 
-            if (App.LocalExit ||
+            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
                 IsAborted)
             {
                 return;

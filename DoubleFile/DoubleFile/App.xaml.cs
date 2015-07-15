@@ -30,7 +30,6 @@ namespace DoubleFile
         static internal ImageSource Icon { get; set; }
 
         static internal bool LocalActivated { get; private set; }
-        static internal bool LocalExit { get; private set; }
 
         // SimulatingModal flag
 
@@ -62,16 +61,12 @@ namespace DoubleFile
         public App()
         {
             LocalActivated = true;      // Application_Activated() seemed to work but jic
-            LocalExit = false;
 
             Observable.FromEventPattern(this, "Activated")
                 .Subscribe(x => Application_Activated());
 
             Observable.FromEventPattern(this, "Deactivated")
                 .Subscribe(x => { LocalActivated = false; DeactivateDidOccurOnNext(); });
-
-            Observable.FromEventPattern(this, "Exit")
-                .Subscribe(x => LocalExit = true);   // App.FileDictionary.Dispose();
 
 #if (false == DEBUG)
             Observable.FromEventPattern<System.Windows.Threading.DispatcherUnhandledExceptionEventArgs>(this, "DispatcherUnhandledException")

@@ -56,17 +56,16 @@ namespace DoubleFile
             // You can comment this stuff out all you want: the flashing close box on the
             // system file dialogs isn't going away...
 
-            if ((null == App.TopWindow) &&
-                (false == this is ICantBeTopWindow))    // no-op: all modern windows can be a top window
-            {
-                App.TopWindow = this;
-            }
-
             Observable.FromEventPattern(this, "SourceInitialized")
                 .Subscribe(x =>
                 HwndSource
                     .FromHwnd((NativeWindow)this)
                     .AddHook(WndProc));
+
+            if (null == App.TopWindow)
+                App.TopWindow = App.LocalMainWindow;
+
+            var prevTopWindow = App.TopWindow;
 
             Observable.FromEventPattern(this, "Activated")
                 .Subscribe(x =>
@@ -91,6 +90,11 @@ namespace DoubleFile
                 if ((0 == OwnedWindows.Count) &&
                     (false == this is ICantBeTopWindow))    // no-op: all modern windows can be a top window
                 {
+                    prevTopWindow =
+                        (App.TopWindow is ExtraWindow)
+                        ? App.TopWindow
+                        : App.LocalMainWindow;
+
                     App.TopWindow = this;
                 }
             });
@@ -106,7 +110,18 @@ namespace DoubleFile
                 .Subscribe(x => LocalIsClosing = true);
 
             Observable.FromEventPattern(this, "Closed")
-                .Subscribe(x => LocalIsClosed = true);
+                .Subscribe(x =>
+            {
+                LocalIsClosed = true;
+
+                if (this == App.TopWindow)
+                {
+                    App.TopWindow =
+                        (false == prevTopWindow.LocalIsClosed)
+                        ? prevTopWindow
+                        : App.LocalMainWindow;
+                }
+            });
 
             ShowActivated = true;
             LocalIsClosed = true;
@@ -184,25 +199,14 @@ namespace DoubleFile
             }
 
            // if false == this is LocalMbox)    // future proof
-            {
                 MBoxStatic.Restart();
-            }
 
             I.SimulatingModal = App.SimulatingModal;
             Owner = (Window)me;
 
-            var prevTopWindow = App.TopWindow;
-
             Observable.FromEventPattern(this, "Closed")
                 .Subscribe(x =>
             {
-                if ((null != prevTopWindow) &&
-                    (false == prevTopWindow.LocalIsClosed) &&
-                    (this != prevTopWindow))
-                {
-                    App.TopWindow = prevTopWindow;
-                }
-
                 me.Activate();
                 GoModeless();
             });

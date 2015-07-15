@@ -223,18 +223,16 @@ namespace DoubleFile
                 GoModeless();
             });
 
-            if (I.SimulatingModal)
-            {
-                if (false == LocalIsClosing)
-                {
-                    base.Show();
-                    _blockingFrame.PushFrameToTrue();
-                }
-                
-                return LocalDialogResult;
-            }
+            if (false == I.SimulatingModal)
+                return base.ShowDialog();
 
-            return base.ShowDialog();
+            if (false == LocalIsClosing)
+            {
+                base.Show();
+                _blockingFrame.PushFrameToTrue();
+            }
+                
+            return LocalDialogResult;
         }
 
         protected LocalWindowBase GoModeless()

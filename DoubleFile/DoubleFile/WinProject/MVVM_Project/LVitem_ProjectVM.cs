@@ -48,7 +48,7 @@ namespace DoubleFile
 
         internal bool WouldSave
         {
-            get { return (false == (_ksFileExistsCheck + FileParse.ksError).Contains(Status)); }
+            get { return (false == _ksFileExistsCheck.Contains(Status)); }
         }
 
         internal bool CanLoad

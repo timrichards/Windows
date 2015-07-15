@@ -6,7 +6,6 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
-- choose between App.LocalMainWindow and WithMainWindow(w => w)
 - replace App.LocalExit with (null == Application.Current) or Dispatcher.HasShutdownStarted, etc.
 - Change Cast<>().Where() to OfType<>()
 - Make sure all Observable.Timer (Subscribe) are disposed

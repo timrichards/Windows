@@ -11,9 +11,6 @@ namespace DoubleFile
     public partial class App : Application
     {
         static internal ILocalWindow
-            LocalMainWindow { get; set; }
-
-        static internal ILocalWindow
             TopWindow { get; set; }
 
         static internal LV_ProjectVM

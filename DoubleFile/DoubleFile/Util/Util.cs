@@ -158,34 +158,23 @@ namespace DoubleFile
         static internal void
             UIthread(decimal nLocation, Action action, bool bBlock = true)
         {
-            if (App.LocalExit ||
-                (false == App.LocalMainWindow is Window) ||
-                App.LocalMainWindow.LocalIsClosed)
-            {
+            if (null == Application.Current)
                 return;
-            }
 
-            var mainWindow = (Window)App.LocalMainWindow;
-
-            if ((null == mainWindow) ||
-                (null == mainWindow.Dispatcher) ||
-                mainWindow.Dispatcher.HasShutdownStarted ||
-                mainWindow.Dispatcher.HasShutdownFinished)
-            {
+            if (Application.Current.Dispatcher.HasShutdownStarted)
                 return;
-            }
 
             var blockingFrame = new LocalDispatcherFrame(nLocation) { Continue = bBlock };
 
             try
             {
-                if (mainWindow.Dispatcher.CheckAccess())
+                if (Application.Current.Dispatcher.CheckAccess())
                 {
                     action();
                 }
                 else
                 {
-                    mainWindow.Dispatcher.Invoke(() =>
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
                         action();
                         blockingFrame.Continue = false;     // A

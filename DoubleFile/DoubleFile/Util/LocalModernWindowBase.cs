@@ -63,7 +63,7 @@ namespace DoubleFile
                     .AddHook(WndProc));
 
             if (null == App.TopWindow)
-                App.TopWindow = App.LocalMainWindow;
+                App.TopWindow = MainWindow.WithMainWindow(w => w);
 
             var prevTopWindow = App.TopWindow;
 
@@ -93,7 +93,7 @@ namespace DoubleFile
                     prevTopWindow =
                         (App.TopWindow is ExtraWindow)
                         ? App.TopWindow
-                        : App.LocalMainWindow;
+                        : MainWindow.WithMainWindow(w => w);
 
                     App.TopWindow = this;
                 }
@@ -119,7 +119,7 @@ namespace DoubleFile
                     App.TopWindow =
                         (false == prevTopWindow.LocalIsClosed)
                         ? prevTopWindow
-                        : App.LocalMainWindow;
+                        : MainWindow.WithMainWindow(w => w);
                 }
             });
 
@@ -176,7 +176,7 @@ namespace DoubleFile
             MBoxStatic.Restart();
 
             if (null == Owner)
-                Owner = (Window)App.LocalMainWindow;
+                Owner = Application.Current.MainWindow;
 
             base.Show();
             return this;

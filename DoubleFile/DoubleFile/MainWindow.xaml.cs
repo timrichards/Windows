@@ -57,11 +57,10 @@ namespace DoubleFile
             : base(InitForMainWindowOnly)
         {
             App.Icon = Icon;
-            App.LocalMainWindow = this;
+            _mainWindowWR.SetTarget(this);
             Init();
             Init = null;
             InitializeComponent();
-            _mainWindowWR.SetTarget(this);
 
             Observable.FromEventPattern(this, "Loaded")
                 .Subscribe(Window_Loaded);

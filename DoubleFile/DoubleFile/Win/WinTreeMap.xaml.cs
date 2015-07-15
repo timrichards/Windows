@@ -29,7 +29,7 @@ namespace DoubleFile
                 _ucTreeMap =
                 new UC_TreeMap()
             {
-                LocalOwner = App.LocalMainWindow.As<Window>(),
+                LocalOwner = Application.Current.MainWindow,
                 TreeMapVM = new WinTreeMapVM()
             };
 

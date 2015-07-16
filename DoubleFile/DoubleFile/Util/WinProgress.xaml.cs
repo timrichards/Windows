@@ -33,8 +33,11 @@ namespace DoubleFile
         {
             WithWinProgress(w =>
             {
-                if (w.LocalIsClosed)
+                if (w.LocalIsClosed ||
+                    w._bAllowSubsequentProcess)
+                {
                     return false;   // from lambda
+                }
 
                 MBoxStatic.Assert(99792, false);
                 w.SetAborted();

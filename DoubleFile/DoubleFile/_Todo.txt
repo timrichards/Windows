@@ -19,6 +19,7 @@
 - The todo list is not read-only while debugging.
 - You can go to type definition on var right-click
 - Derived class constructors can't assign to readonly protected member vars
+- factory create would be nice for e.g. WinProject but then you can't assign to object vars inline
 - directory listings preserve display case, which is irrespective: NTFS usage is always case insensitive.
 	Regex is case sensitive because the regex iteself might be: user can inline case-insensitve.
 

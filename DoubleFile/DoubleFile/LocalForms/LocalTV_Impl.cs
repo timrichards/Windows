@@ -49,7 +49,7 @@ namespace DoubleFile
             if (App.FileDictionary.IsEmpty)
                 lsProgressItems.Insert(0, _ksFileDictKey);
 
-            (_winProgress = new WinProgress(new string[lsProgressItems.Count], lsProgressItems, x =>
+            (new WinProgress(new string[lsProgressItems.Count], lsProgressItems, x =>
             {
                 if (App.FileDictionary.IsEmpty)
                     App.FileDictionary.DoThreadFactory(_lvProjectVM, new WeakReference<ICreateFileDictStatus>(this));
@@ -73,7 +73,6 @@ namespace DoubleFile
                 .ShowDialog();
 
             TabledString<Tabled_Folders>.GenerationEnded();
-            _winProgress = null;
             return _bTreeDone;
         }
 
@@ -82,7 +81,7 @@ namespace DoubleFile
             if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
                 App.FileDictionary.IsAborted)
             {
-                WithWinProgress(w => w
+                WinProgress.WithWinProgress(w => w
                     .SetAborted());
 
                 return;
@@ -90,7 +89,7 @@ namespace DoubleFile
 
             if (bDone)
             {
-                WithWinProgress(w => w
+                WinProgress.WithWinProgress(w => w
                     .SetCompleted(_ksFileDictKey)
                     .CloseIfNatural());
 
@@ -98,7 +97,7 @@ namespace DoubleFile
             }
             else if (0 <= nProgress)
             {
-                WithWinProgress(w => w
+                WinProgress.WithWinProgress(w => w
                     .SetProgress(_ksFileDictKey, nProgress));
             }
         }
@@ -111,7 +110,7 @@ namespace DoubleFile
             {
                 ClearMem_TreeForm();
 
-                WithWinProgress(w => w
+                WinProgress.WithWinProgress(w => w
                     .SetAborted());
 
                 return;
@@ -128,7 +127,7 @@ namespace DoubleFile
                 // The root volume list is very small so this insert sort is viable
                 _rootNodes.Insert(_rootNodes.TakeWhile(node => 0 < rootNode.Text.CompareTo(node.Text)).Count(), rootNode);
 
-                WithWinProgress(w => w
+                WinProgress.WithWinProgress(w => w
                     .SetProgress(_ksFolderTreeKey, _rootNodes.Count * _knProgMult));
             }
         }
@@ -137,7 +136,7 @@ namespace DoubleFile
         {
             if (0 == _rootNodes.Count)
             {
-                WithWinProgress(w => w
+                WinProgress.WithWinProgress(w => w
                     .SetAborted()
                     .Close());
 
@@ -153,7 +152,7 @@ namespace DoubleFile
             var nProgress = 0d;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
-                .Subscribe(x => WithWinProgress(w => w.SetProgress(_ksFolderTreeKey, (3 + nProgress) / 4))))
+                .Subscribe(x => WinProgress.WithWinProgress(w => w.SetProgress(_ksFolderTreeKey, (3 + nProgress) / 4))))
             {
                 _allNodes = new List<LocalTreeNode> { };
 
@@ -175,7 +174,7 @@ namespace DoubleFile
                     return;
                 }
 
-                WithWinProgress(w => w
+                WinProgress.WithWinProgress(w => w
                     .SetCompleted(_ksFolderTreeKey));
 
                 collate.Step2();
@@ -228,7 +227,7 @@ namespace DoubleFile
             _allNodes.Sort((y, x) => x.NodeDatum.FolderScore[1].CompareTo(y.NodeDatum.FolderScore[1]));
             _bTreeDone = true;      // should preceed closing status dialog: returns true to the caller
 
-            WithWinProgress(w => w
+            WinProgress.WithWinProgress(w => w
                 .CloseIfNatural());
 
             _dictNodes = null;      // saving memory here.
@@ -253,8 +252,8 @@ namespace DoubleFile
                 Util.WriteLine("IWinProgressClosing.ConfirmClose A");
 
                 return
-                    (MessageBoxResult.Yes ==
-                    MBoxStatic.ShowDialog("Do you want to cancel?", WithWinProgress(w => w.Title), MessageBoxButton.YesNo, _winProgress));
+                    (MessageBoxResult.Yes == WinProgress.WithWinProgress(w =>
+                    MBoxStatic.ShowDialog("Do you want to cancel?", w.Title, MessageBoxButton.YesNo, w)));
             }))
             {
                 return false;
@@ -273,14 +272,6 @@ namespace DoubleFile
             return true;
         }
 
-        T WithWinProgress<T>(Func<WinProgress, T> doSomethingWith) where T : class
-        {
-            return (null != _winProgress)
-                ? doSomethingWith(_winProgress)
-                : null;
-        }
-        WinProgress _winProgress = null;
-        
         const string _ksFileDictKey = "Creating file dictionary";
         const string _ksFolderTreeKey = "Creating folder tree browser";
 

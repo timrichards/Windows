@@ -36,7 +36,7 @@ namespace DoubleFile
                 App.SaveDirListings.EndThread();
             }
 
-            (_winProgress = new WinProgress(listNicknames, listSourcePaths, x =>
+            (new WinProgress(listNicknames, listSourcePaths, x =>
                 App.SaveDirListings =
                     new SaveDirListings(lvProjectVM, this)
                     .DoThreadFactory())
@@ -52,8 +52,9 @@ namespace DoubleFile
             string strError, bool bDone, double nProgress)
         {
             var sdl = App.SaveDirListings;
+            var winProgress = WinProgress.WithWinProgress(w => w);
 
-            if (_winProgress.LocalIsClosed)
+            if (winProgress.LocalIsClosed)
             {
                 MBoxStatic.Assert(99804,
                     (null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
@@ -66,10 +67,10 @@ namespace DoubleFile
             if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
                 sdl.IsAborted)
             {
-                _winProgress.SetAborted();
+                winProgress.SetAborted();
 
                 if (false == _bKeepShowingError)
-                    _winProgress.Close();
+                    winProgress.Close();
                     
                 return;
             }
@@ -78,17 +79,17 @@ namespace DoubleFile
             {
                 lvItemProjectVM.Status = FileParse.ksError;
                 _bKeepShowingError = true;
-                _winProgress.SetError(lvItemProjectVM.SourcePath, strError);
+                winProgress.SetError(lvItemProjectVM.SourcePath, strError);
             }
             else if (bDone)
             {
                 lvItemProjectVM.SetSaved();
                 Interlocked.Increment(ref sdl.FilesWritten);
-                _winProgress.SetCompleted(lvItemProjectVM.SourcePath);
+                winProgress.SetCompleted(lvItemProjectVM.SourcePath);
             }
             else if (0 <= nProgress)
             {
-                _winProgress.SetProgress(lvItemProjectVM.SourcePath, nProgress);
+                winProgress.SetProgress(lvItemProjectVM.SourcePath, nProgress);
             }
         }
 
@@ -105,7 +106,8 @@ namespace DoubleFile
                 return true;
             }
 
-            if (MessageBoxResult.Yes != MBoxStatic.ShowDialog("Do you want to cancel?", "Saving Directory Listings", MessageBoxButton.YesNo, _winProgress))
+            if (MessageBoxResult.Yes != MBoxStatic.ShowDialog("Do you want to cancel?", "Saving Directory Listings", MessageBoxButton.YesNo,
+                WinProgress.WithWinProgress(w => w)))
                 return false;
 
             if (null != App.SaveDirListings)
@@ -114,8 +116,6 @@ namespace DoubleFile
             return true;
         }
 
-        WinProgress
-            _winProgress = null;
         bool
             _bKeepShowingError = false;
     }

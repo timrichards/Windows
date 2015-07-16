@@ -181,9 +181,9 @@ namespace DoubleFile
                 Directory.Delete(TempPath01, true);
             }
 
-            _winProgress
+            WinProgress.WithWinProgress(w => w
                 .SetAborted()
-                .Close();
+                .Close());
 
             _bProcessing = false;
             return bRet && (false == _bUserCanceled);
@@ -307,7 +307,9 @@ namespace DoubleFile
             File.Move(strProjectFilename + ".7z", strProjectFilename);
             _bProcessing = false;
             bRet = true;
-            _winProgress.SetCompleted(Path.GetFileName(strProjectFilename));
+            
+            WinProgress.WithWinProgress(w =>
+                w.SetCompleted(Path.GetFileName(strProjectFilename)));
         }
 
         void SaveProjectFailedToStartProcess(string strProjectFilename, List<string> lsListingFiles)
@@ -353,7 +355,6 @@ namespace DoubleFile
             if (false == File.Exists(_process.StartInfo.FileName))
                 return false;
 
-            MBoxStatic.Assert(99942, null == _winProgress);
             _status = status;
             _process.StartInfo.WorkingDirectory = strWorkingDirectory;
             _process.StartInfo.Arguments = strArguments;
@@ -361,7 +362,7 @@ namespace DoubleFile
             Observable.FromEventPattern(_process, "Exited")
                 .Subscribe(x => onExit());
 
-            (_winProgress = new WinProgress(new[] { _status }, new[] { strProjectFileNoPath }, x =>
+            (new WinProgress(new[] { _status }, new[] { strProjectFileNoPath }, x =>
             {
                 _sbError.AppendLine(DateTime.Now.ToLongTimeString().PadRight(80, '-'));
                 _bProcessing = true;
@@ -379,8 +380,8 @@ namespace DoubleFile
             if (false == _bProcessing)
                 return true;
 
-            if (MessageBoxResult.Yes ==
-                MBoxStatic.ShowDialog("Do you want to cancel?", _status, MessageBoxButton.YesNo, _winProgress))
+            if (MessageBoxResult.Yes == WinProgress.WithWinProgress(w =>
+                MBoxStatic.ShowDialog("Do you want to cancel?", _status, MessageBoxButton.YesNo, w)))
             {
                 _bUserCanceled = true;
 
@@ -425,11 +426,15 @@ namespace DoubleFile
 
             // bootstrap the window close with a delay then messagebox
             // otherwise it freezes
-            if (false == _winProgress.LocalIsClosed)
+            WinProgress.WithWinProgress(w =>
             {
-                _winProgress.SetAborted();
-                _winProgress.Close();
-            }
+                if (w.LocalIsClosed)
+                    return false;   // from lambda
+
+                w.SetAborted();
+                w.Close();
+                return false;       // from lambda
+            });
 
             // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()
@@ -443,8 +448,6 @@ namespace DoubleFile
         readonly StringBuilder 
             _sbError = new StringBuilder();
 
-        WinProgress
-            _winProgress = null;
         bool
             _bProcessing = false;
         bool

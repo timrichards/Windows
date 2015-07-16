@@ -29,9 +29,20 @@ namespace DoubleFile
             SetAborted() { _bAborted = true; return this; }
         bool _bAborted = false;
 
-        internal
-            WinProgress(IEnumerable<string> astrBigLabels, IEnumerable<string> astrSmallKeyLabels, Action<WinProgress> initClient)
+        internal WinProgress(IEnumerable<string> astrBigLabels, IEnumerable<string> astrSmallKeyLabels, Action<WinProgress> initClient)
         {
+            WithWinProgress(w =>
+            {
+                if (w.LocalIsClosed)
+                    return false;   // from lambda
+
+                MBoxStatic.Assert(99792, false);
+                w.SetAborted();
+                w.Close();
+                return false;       // from lambda
+            });
+
+            _wr.SetTarget(this);
             InitializeComponent();
             WindowStyle = WindowStyle.None;
             AllowsTransparency = true;
@@ -188,6 +199,21 @@ namespace DoubleFile
             });
         }
 
+        internal static T
+            WithWinProgress<T>(Func<WinProgress, T> doSomethingWith)
+        {
+            WinProgress winProgress = null;
+
+            _wr.TryGetTarget(out winProgress);
+
+            return
+                (null != winProgress)
+                ? doSomethingWith(winProgress)
+                : default(T);
+        }
+        static WeakReference<WinProgress>
+            _wr = new WeakReference<WinProgress>(null);
+        
         readonly LV_ProgressVM
             _lv = new LV_ProgressVM();
         bool

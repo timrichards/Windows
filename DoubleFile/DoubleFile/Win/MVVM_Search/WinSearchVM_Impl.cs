@@ -63,21 +63,25 @@ namespace DoubleFile
             if (Reinitialize_And_FullPathFound(SearchText))
                 return;
 
-            _dictResults = new SortedDictionary<SearchResultsDir, bool>();
+            (new WinProgress(new[] { "" }, new[] { _ksSearchKey }, x =>
+            {
+                _dictResults = new SortedDictionary<SearchResultsDir, bool>();
 
-            _searchType2 =
-                new SearchListings
-            (
-                App.LVprojectVM,
-                SearchText,
-                SearchText.ToLower() != SearchText,
-                SearchBase.FolderSpecialHandling.None,
-                bSearchFilesOnly,
-                null,
-                Regex,
-                new WeakReference<ISearchStatus>(this)
-            )
-                .DoThreadFactory();
+                _searchType2 =
+                    new SearchListings
+                (
+                    App.LVprojectVM,
+                    SearchText,
+                    SearchText.ToLower() != SearchText,
+                    SearchBase.FolderSpecialHandling.None,
+                    bSearchFilesOnly,
+                    null,
+                    Regex,
+                    new WeakReference<ISearchStatus>(this)
+                )
+                    .DoThreadFactory();
+            }))
+                .ShowDialog();
         }
 
         bool Reinitialize_And_FullPathFound(string strPath)
@@ -140,21 +144,17 @@ namespace DoubleFile
                 foreach (var result in searchResults.Results)
                     _dictResults.Add(result, false);
             }
-            catch (Exception ex)
+            catch
             {
-                if ((ex is ArgumentNullException) ||
-                    (ex is NullReferenceException))
-                {
-                    if (null != _searchType2)
-                        _searchType2.EndThread();
+                MBoxStatic.Assert(99942, false);
 
-                    _searchType2 = null;
-                    _dictResults = null;
-                    Dispose();
-                    return;
-                }
+                if (null != _searchType2)
+                    _searchType2.EndThread();
 
-                throw;
+                _searchType2 = null;
+                _dictResults = null;
+                Dispose();
+                return;
             }
         }
 
@@ -218,6 +218,9 @@ namespace DoubleFile
                 }
             }
 
+            WinProgress.WithWinProgress(w =>
+                w.SetCompleted(_ksSearchKey).Close());
+
             _dictResults = null;
 
             if (0 == lsLVitems.Count)
@@ -238,5 +241,7 @@ namespace DoubleFile
             _dictResults = null;
         bool
             _bDisposed = false;
+        const string
+            _ksSearchKey = "Searching";
     }
 }

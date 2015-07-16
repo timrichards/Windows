@@ -37,16 +37,25 @@ namespace DoubleFile
             if (Reinitialize_And_FullPathFound(SearchText))
                 return;
 
+            var contains = SearchListings.GetContainsFunction(Regex);
+            var bCase = (SearchText.ToLower() != SearchText) || Regex;
+
             var lsTreeNodes =
-                (SearchText.ToLower() != SearchText)
+                bCase
                 ? LocalTV.AllNodes
-                    .Where(treeNode => treeNode.Text.Contains(SearchText))
+                    .Where(treeNode => contains(treeNode.Text, SearchText))
                 : LocalTV.AllNodes
                     .Where(treeNode => treeNode.Text.ToLower().Contains(SearchText));
 
-            var lsLVitems = lsTreeNodes.AsParallel().Select(treeNode => new LVitem_SearchVM { LocalTreeNode = treeNode });
+            var ieLVitems = lsTreeNodes
+                .AsParallel()
+                .Select(treeNode => new LVitem_SearchVM { LocalTreeNode = treeNode })
+                .OrderBy(lvItem => lvItem.Parent + lvItem.FolderOrFile);
 
-            Util.UIthread(99816, () => Add(lsLVitems));
+            if (false == ieLVitems.Any())
+                return;
+
+            Util.UIthread(99816, () => Add(ieLVitems));
         }
 
         void SearchFoldersAndFiles(bool bSearchFilesOnly = false)
@@ -65,6 +74,7 @@ namespace DoubleFile
                 SearchBase.FolderSpecialHandling.None,
                 bSearchFilesOnly,
                 null,
+                Regex,
                 new WeakReference<ISearchStatus>(this)
             )
                 .DoThreadFactory();

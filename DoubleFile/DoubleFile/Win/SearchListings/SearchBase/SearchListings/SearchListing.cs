@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 
@@ -8,6 +10,15 @@ namespace DoubleFile
 {
     partial class SearchListings : SearchBase
     {
+        static internal Func<string, string, bool>
+            GetContainsFunction(bool bRegex)
+        {
+            if (bRegex)
+                return (a, b) => Regex.IsMatch(a, b);
+            else
+                return (a, b) => a.Contains(b);
+        }
+
         class SearchListing : SearchBase
         {
             internal SearchListing(SearchBase searchBase, LVitem_ProjectVM volStrings)
@@ -53,6 +64,7 @@ namespace DoubleFile
                     var listResults = new SortedDictionary<SearchResultsDir, bool>();
                     var bFirst = false;
                     string strLine = null;
+                    var contains = GetContainsFunction(_bRegex);
 
                     while (null != (strLine = sr.ReadLine()))
                     {
@@ -120,7 +132,7 @@ namespace DoubleFile
 
                         if ((false == _bSearchFilesOnly) &&
                             bDir &&
-                            strMatchDir.Contains(strSearch))
+                            contains(strMatchDir, strSearch))
                         {
                             if (null == searchResultDir)
                                 searchResultDir = new SearchResultsDir();
@@ -131,7 +143,7 @@ namespace DoubleFile
                             searchResultDir = null;
                         }
                         else if (bFile &&
-                            strMatchFile.Contains(strSearch))
+                            contains(strMatchFile, strSearch))
                         {
                             var strFile = arrLine[3];
 

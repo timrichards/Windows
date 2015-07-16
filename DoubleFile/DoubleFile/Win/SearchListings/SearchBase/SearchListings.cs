@@ -23,16 +23,12 @@ namespace DoubleFile
             SearchBase.FolderSpecialHandling folderHandling,
             bool bSearchFilesOnly,
             string strCurrentNode,
+            bool bRegex,
             WeakReference<ISearchStatus> callbackWR)
-            : base(callbackWR)
+            : base(strSearch, bCaseSensitive, folderHandling, bSearchFilesOnly, strCurrentNode, bRegex, callbackWR)
         {
             IsAborted = false;
             _lvProjectVM = lvProjectVM;
-            _strSearch = strSearch;
-            _bCaseSensitive = bCaseSensitive;
-            _folderHandling = folderHandling;          // not used
-            _bSearchFilesOnly = bSearchFilesOnly;
-            _strCurrentNode = strCurrentNode;
         }
 
         void Go()

@@ -4,22 +4,37 @@ namespace DoubleFile
 {
     class SearchBase
     {
-        protected string 
+        protected readonly string 
             _strSearch = null;
-        protected bool 
+        protected readonly bool 
             _bCaseSensitive = true;
-        protected bool
+        protected readonly bool
             _bSearchFilesOnly = false;
-        protected string
+        protected readonly string
             _strCurrentNode = null;
-        protected WeakReference<ISearchStatus>
+        protected readonly bool
+            _bRegex = false;
+        protected readonly WeakReference<ISearchStatus>
             _callbackWR = null;
 
         internal enum FolderSpecialHandling { None, Outermost, Innermost };                     // not used
         protected FolderSpecialHandling _folderHandling = FolderSpecialHandling.Outermost;      // not used
 
-        protected SearchBase(WeakReference<ISearchStatus> callbackWR)
+        protected SearchBase(
+            string strSearch, 
+            bool bCaseSensitive,
+            SearchBase.FolderSpecialHandling folderHandling,
+            bool bSearchFilesOnly,
+            string strCurrentNode,
+            bool bRegex,
+            WeakReference<ISearchStatus> callbackWR)
         {
+            _strSearch = strSearch;
+            _bCaseSensitive = bCaseSensitive || _bRegex;
+            _folderHandling = folderHandling;          // not used
+            _bSearchFilesOnly = bSearchFilesOnly;
+            _bRegex = bRegex;
+            _strCurrentNode = strCurrentNode;
             _callbackWR = callbackWR;
         }
 
@@ -29,6 +44,7 @@ namespace DoubleFile
             _bCaseSensitive = searchBase._bCaseSensitive;
             _bSearchFilesOnly = searchBase._bSearchFilesOnly;
             _strCurrentNode = searchBase._strCurrentNode;
+            _bRegex = searchBase._bRegex;
             _folderHandling = searchBase._folderHandling;
             _callbackWR = searchBase._callbackWR;
         }

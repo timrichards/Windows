@@ -67,7 +67,7 @@ namespace DoubleFile
             if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
                 sdl.IsAborted)
             {
-                winProgress.SetAborted();
+                winProgress.AbortSet();
 
                 if (false == _bKeepShowingError)
                     winProgress.Close();

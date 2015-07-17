@@ -182,7 +182,7 @@ namespace DoubleFile
             }
 
             WinProgress.WithWinProgress(w => w
-                .SetAborted()
+                .AbortSet()
                 .Close());
 
             _bProcessing = false;
@@ -431,7 +431,7 @@ namespace DoubleFile
                 if (w.LocalIsClosed)
                     return false;   // from lambda
 
-                w.SetAborted();
+                w.AbortSet();
                 w.Close();
                 return false;       // from lambda
             });

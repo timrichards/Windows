@@ -82,7 +82,7 @@ namespace DoubleFile
                 App.FileDictionary.IsAborted)
             {
                 WinProgress.WithWinProgress(w => w
-                    .SetAborted());
+                    .AbortSet());
 
                 return;
             }
@@ -111,7 +111,7 @@ namespace DoubleFile
                 ClearMem_TreeForm();
 
                 WinProgress.WithWinProgress(w => w
-                    .SetAborted());
+                    .AbortSet());
 
                 return;
             }
@@ -137,7 +137,7 @@ namespace DoubleFile
             if (0 == _rootNodes.Count)
             {
                 WinProgress.WithWinProgress(w => w
-                    .SetAborted()
+                    .AbortSet()
                     .Close());
 
                 return;

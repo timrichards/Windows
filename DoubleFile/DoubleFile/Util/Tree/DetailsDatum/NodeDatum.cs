@@ -8,10 +8,6 @@ namespace DoubleFile
         internal NodeDatum() { }
         internal NodeDatum(DetailsDatum datum)
             : base(datum) { }
-        internal NodeDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, uint[] folderScore)
-            : base(nPrevLineNo, nLineNo, nLength, folderScore)
-        {
-        }
 
         internal List<LocalTreeNode>
             Clones { get; set; }

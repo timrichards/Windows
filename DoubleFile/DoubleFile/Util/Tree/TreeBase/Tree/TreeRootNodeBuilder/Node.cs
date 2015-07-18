@@ -124,7 +124,7 @@ namespace DoubleFile
                     //Utilities.Assert(1301.2305, treeNode.Text == strShortPath, "\"" + treeNode.Text + "\" != \"" + strShortPath + "\""); not true for non-root
                     MBoxStatic.Assert(1301.2306m, treeNode.SelectedImageIndex == -1);     // sets the bitmap size
                     treeNode.SelectedImageIndex = -1;
-                    treeNode.NodeDatum = new NodeDatum(_nPrevLineNo, _nLineNo, _nLength, _folderScore);  // this is almost but not quite always newly assigned here.
+                    treeNode.NodeDatum = new NodeDatum(new DetailsDatum(_nPrevLineNo, _nLineNo, _nLength, _folderScore));  // this is almost but not quite always newly assigned here.
                     return treeNode;
                 }
 

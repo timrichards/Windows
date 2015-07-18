@@ -89,8 +89,8 @@ namespace DoubleFile
             _weakReference.TryGetTarget(out winProject);
             winProject._lvProjectVM = null;
 
-            if (null != LocalTV.Instance)
-                LocalTV.LocalDispose();
+            LocalTV.WithLocalTV(localTV =>
+                localTV.LocalDispose());
 
             App.FileDictionary.Dispose();
             App.FileDictionary = new FileDictionary();

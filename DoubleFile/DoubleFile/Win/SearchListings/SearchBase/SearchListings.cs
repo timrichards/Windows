@@ -21,7 +21,6 @@ namespace DoubleFile
             SearchBase searchBase)
             : base(searchBase)
         {
-            IsAborted = false;
             _lvProjectVM = lvProjectVM;
         }
 

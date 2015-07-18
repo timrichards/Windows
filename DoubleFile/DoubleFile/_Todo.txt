@@ -10,7 +10,6 @@
 - Use WinProgress as a model for simulating factory create: use a weak reference and assert in constructor
 	- factory create would be nice for e.g. WinProgress but then you can't use variable initializer
 - Do all non-generic WeakReferences have to be that way?
-- Replace any Instance (LocalTV.cs) with LocalTV.WithLocalTV(w => w);
 - new LVitem_SearchVM is not created on the main thread
 - AsParallel() seems to work with LVitem_SearchVM: OrderBy in FileDictionary
 - Weighted small succeeded 7/15/15
@@ -108,6 +107,8 @@
 - replace .Cast with (ICollection<>)
 - replace IEnumerable with ICollection where possible
 - replace null member vars like Thread with instances so no need to test for null
+
+99857
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
 99790 next low assert

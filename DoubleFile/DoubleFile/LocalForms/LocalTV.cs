@@ -6,9 +6,6 @@ namespace DoubleFile
 {
     partial class LocalTV
     {
-        static internal LocalTV
-            Instance { get; private set; }
-
         static internal IReadOnlyList<LocalTreeNode>
             AllNodes { get { return Util.WR(_wr, o => o._allNodes); } }
         List<LocalTreeNode> _allNodes = new List<LocalTreeNode> { };
@@ -57,9 +54,10 @@ namespace DoubleFile
             TreeSelect_VolumeDetail { get { return Util.WR(_wr, o => o._treeSelect_VolumeDetail); } }
         Tuple<IEnumerable<IEnumerable<string>>, string> _treeSelect_VolumeDetail = null;
 
-        static internal bool FactoryCreate(LV_ProjectVM lvProjectVM)
+        static internal bool
+            FactoryCreate(LV_ProjectVM lvProjectVM)
         {
-            if (null != Instance)
+            if (null != _instance)
             {
                 MBoxStatic.Assert(99858, false);
                 return false;
@@ -69,10 +67,11 @@ namespace DoubleFile
                 return false;
 
             _wr.SetTarget(
-                Instance =
+                _instance =
                 new LocalTV(lvProjectVM));
 
-            return Instance.DoTree();
+            return WithLocalTV(localTV =>
+                localTV.DoTree());
         }
 
         LocalTV(LV_ProjectVM lvProjectVM)
@@ -93,24 +92,18 @@ namespace DoubleFile
             _lsDisposable.Add(TreeSelect.VolumeDetailUpdated.Subscribe(v => _treeSelect_VolumeDetail = v.Item1));
         }
 
-        static internal void LocalDispose()
+        internal LocalTV
+            LocalDispose()
         {
-            _wr.SetTarget(null);
-
-            if (null == Instance)
-            {
-                MBoxStatic.Assert(99857, false);
-                return;
-            }
-
-            if ((null != Instance._lvProjectVM) &&
-                (0 < Instance._lvProjectVM.CanLoadCount))
+            if ((null != _lvProjectVM) &&
+                (0 < _lvProjectVM.CanLoadCount))
             {
                 TabledString<Tabled_Folders>.DropRef();
             }
 
-            Util.LocalDispose(Instance._lsDisposable);
-            Instance = null;
+            Util.LocalDispose(_lsDisposable);
+            _wr.SetTarget(_instance = null);
+            return this;
         }
 
         static internal LocalTreeNode
@@ -124,7 +117,8 @@ namespace DoubleFile
             return GetOneNodeByRootPath.Go(strPath, nodes, lvItemProjectVM);
         }
 
-        internal int GetNodeCount(bool includeSubTrees = false)
+        internal int
+            GetNodeCount(bool includeSubTrees = false)
         {
             return includeSubTrees
                 ? CountSubnodes(_rootNodes)
@@ -133,7 +127,8 @@ namespace DoubleFile
                 : 0;
         }
 
-        static int CountSubnodes(IEnumerable<LocalTreeNode> nodes)
+        static int
+            CountSubnodes(IEnumerable<LocalTreeNode> nodes)
         {
             if (null == nodes)
                 return 0;
@@ -146,17 +141,20 @@ namespace DoubleFile
             return nRet;
         }
 
-        void WinDuplicatesVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, int> initiatorTuple)
+        void
+            WinDuplicatesVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, int> initiatorTuple)
         {
             Util.Write("C"); GoToFile(initiatorTuple.Item1);
         }
 
-        void WinSearchVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, int> initiatorTuple)
+        void
+            WinSearchVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, int> initiatorTuple)
         {
             Util.Write("D"); GoToFile(initiatorTuple.Item1);
         }
 
-        void GoToFile(Tuple<LVitem_ProjectVM, string, string> tuple)
+        void
+            GoToFile(Tuple<LVitem_ProjectVM, string, string> tuple)
         {
             if (null == _rootNodes)
                 return;
@@ -169,13 +167,28 @@ namespace DoubleFile
             treeNode.GoToFile(tuple.Item3);
         }
 
+        static internal T
+            WithLocalTV<T>(Func<LocalTV, T> doSomethingWith)
+        {
+            LocalTV localTV = null;
+
+            _wr.TryGetTarget(out localTV);
+
+            return
+                (null != localTV)
+                ? doSomethingWith(localTV)
+                : default(T);
+        }
+        static readonly WeakReference<LocalTV>
+            _wr = new WeakReference<LocalTV>(null);
+        static LocalTV
+            _instance = null;
+
         readonly LV_ProjectVM
             _lvProjectVM = null;
         readonly double
             _knProgMult = 0;
         List<IDisposable>
             _lsDisposable = new List<IDisposable>();
-        static readonly WeakReference<LocalTV>
-            _wr = new WeakReference<LocalTV>(null);
     }
 }

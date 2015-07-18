@@ -2,6 +2,12 @@
 
 namespace DoubleFile
 {
+    class LocalColorItemBase_ClassObject : LocalColorItemBase
+    {
+        internal int Datum8bits_ClassObject { get { return Datum8bits; } set { Datum8bits = value; } }
+        internal int Datum16bits_ClassObject { get { return Datum16bits; } set { Datum16bits = value; } }
+    }
+
     abstract class LocalColorItemBase
     {
         internal int ForeColor { get { return UtilColor.GetFG_ARGB(Color); } set { int c = Color; Color = UtilColor.SetFG_ARGB(ref c, value); } }

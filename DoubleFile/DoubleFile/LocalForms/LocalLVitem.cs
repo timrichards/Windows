@@ -4,8 +4,17 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    class LocalLVitem : LocalColorItemBase
+    class LocalLVitem : ListViewItemVM_Base<LocalColorItemBase_ClassObject>
     {
+        internal int ForeColor { get { return _classObject.ForeColor; } set { _classObject.ForeColor = value; } }
+        internal int BackColor { get { return _classObject.BackColor; } set { _classObject.BackColor = value; } }
+
+        protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
+        static string[] _propNamesA = null;
+
+        internal override int NumCols { get { return NumCols_; } }
+        internal const int NumCols_ = 9;
+
         internal TabledString<Tabled_Folders>
             Text { get; set; }
         internal TabledString<Tabled_Folders>
@@ -27,16 +36,18 @@ namespace DoubleFile
         internal void
             Select(bool bSel = true) { }
         internal int
-            Index { get { return Datum16bits; } set { Datum16bits = value; } }
+            Index { get { return _classObject.Datum16bits_ClassObject; } set { _classObject.Datum16bits_ClassObject = value; } }
         internal void
             EnsureVisible() { }
 
         internal LocalLVitem(LocalLV listView = null)
+            : base(new LocalColorItemBase_ClassObject(), null, null)
         {
             ListView = listView;
         }
 
-        internal LocalLVitem(string strContent, LocalLV listView = null) : this(listView) { Text = strContent; Index = -1; }
+        internal LocalLVitem(string strContent, LocalLV listView = null)
+            : this(listView) { Text = strContent; Index = -1; }
 
         internal LocalLVitem(IEnumerable<string> asString, LocalLV listView = null)
             : this(listView)
@@ -55,10 +66,10 @@ namespace DoubleFile
         // Only used for colors and bold font weight, not subitems, in Collate.cs InsertSizeMarker(). Size 18 to show obvious fault in interpretation.
         internal object Clone() { var lvItem = (LocalLVitem)MemberwiseClone(); lvItem.FontWeight = FontWeight; return lvItem; }
 
-        internal System.Windows.FontWeight FontWeight
+        internal FontWeight FontWeight
         {
-            get { return (Datum8bits != 0) ? FontWeights.Bold : FontWeights.Normal; }
-            set { Datum8bits = (value == FontWeights.Normal) ? 0 : -1; }
+            get { return (_classObject.Datum8bits_ClassObject != 0) ? FontWeights.Bold : FontWeights.Normal; }
+            set { _classObject.Datum8bits_ClassObject = (value == FontWeights.Normal) ? 0 : -1; }
         }
     }
 }

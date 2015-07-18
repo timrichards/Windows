@@ -9,6 +9,10 @@ namespace DoubleFile
 {
     partial class Collate
     {
+        internal Collate
+            Abort() { _bAborted = true; return this; }
+        bool _bAborted = false;
+
         internal Collate(
             ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>> dictNodes,
             LocalLV lvClones,
@@ -19,7 +23,6 @@ namespace DoubleFile
             List<LocalLVitem> lsLVignore,
             bool bLoose)
         {
-            _static_this = this;
             _dictNodes = dictNodes;
             _lvClones = lvClones;
             _lvSameVol = lvSameVol;
@@ -28,18 +31,6 @@ namespace DoubleFile
             _lsAllNodes = lsAllNodes;
             _lsLVignore = lsLVignore;
             _bLoose = bLoose;
-        }
-
-        static internal void ClearMem()
-        {
-            Abort();
-            _static_this = null;
-        }
-
-        static internal void Abort()
-        {
-            if (null != _static_this)
-                _static_this._bThreadAbort = true;
         }
 
         static internal void InsertSizeMarkers(IList<LocalLVitem> listLVitems)
@@ -148,7 +139,7 @@ namespace DoubleFile
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
 
                 if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
-                    _bThreadAbort)
+                    _bAborted)
                 {
                     return;
                 }
@@ -170,7 +161,7 @@ namespace DoubleFile
                     foreach (var treeNode_A in lsNodes)
                     {
                         if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
-                            _bThreadAbort)
+                            _bAborted)
                         {
                             return;
                         }
@@ -242,7 +233,7 @@ namespace DoubleFile
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
                 
                 if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
-                    _bThreadAbort)
+                    _bAborted)
                 {
                     return;
                 }
@@ -260,7 +251,7 @@ namespace DoubleFile
                 // load up listLVdiffVol
 
                 if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
-                    _bThreadAbort)
+                    _bAborted)
                 {
                     return;
                 }
@@ -298,7 +289,7 @@ namespace DoubleFile
                 foreach (var treeNode in listNodes.Value)
                 {
                     if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
-                        _bThreadAbort)
+                        _bAborted)
                     {
                         return;
                     }
@@ -361,7 +352,7 @@ namespace DoubleFile
                 reportProgress(++nProgressNumerator / nProgressDenominator);
 
                 if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
-                    _bThreadAbort)
+                    _bAborted)
                 {
                     return;
                 }
@@ -413,7 +404,7 @@ namespace DoubleFile
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
 
                 if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
-                    _bThreadAbort)
+                    _bAborted)
                 {
                     return;
                 }
@@ -460,7 +451,7 @@ namespace DoubleFile
         internal void Step2()
         {
             if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
-                _bThreadAbort)
+                _bAborted)
             {
                 return;
             }
@@ -470,7 +461,7 @@ namespace DoubleFile
             _lvClones.Invalidate();
 
             if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
-                _bThreadAbort)
+                _bAborted)
             {
                 return;
             }
@@ -480,7 +471,7 @@ namespace DoubleFile
             _lvUnique.Invalidate();
 
             if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
-                _bThreadAbort)
+                _bAborted)
             {
                 return;
             }
@@ -488,7 +479,6 @@ namespace DoubleFile
             MBoxStatic.Assert(1305.6335m, null == _lvSameVol.Items);
             _lvSameVol.Items = _lsLVsameVol.ToArray();
             _lvSameVol.Invalidate();
-            _static_this = null;
         }
 
         // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
@@ -552,7 +542,7 @@ namespace DoubleFile
                     foreach (var subnode in listClones)
                     {
                         if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
-                            _bThreadAbort)
+                            _bAborted)
                         {
                             return;
                         }
@@ -604,7 +594,7 @@ namespace DoubleFile
             foreach (var subNode in treeNode.Nodes)
             {
                 if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
-                    _bThreadAbort)
+                    _bAborted)
                 {
                     return;
                 }
@@ -645,7 +635,7 @@ namespace DoubleFile
             do
             {
                 if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
-                    _bThreadAbort)
+                    _bAborted)
                 {
                     return;
                 }
@@ -708,8 +698,5 @@ namespace DoubleFile
         readonly IList<LocalLVitem> _lsLVdiffVol = new List<LocalLVitem>();
         readonly IDictionary<LocalTreeNode, LocalLVitem> _dictIgnoreNodes = new Dictionary<LocalTreeNode, LocalLVitem>();
         readonly bool _bLoose = false;
-
-        bool _bThreadAbort = false;
-        static Collate _static_this = null;
     }
 }

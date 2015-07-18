@@ -33,7 +33,6 @@ namespace DoubleFile
                 worker.Abort();
 
             _cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
-            Collate.Abort();
             _dictNodes.Clear();
         }
 

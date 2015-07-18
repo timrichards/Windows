@@ -26,7 +26,7 @@ namespace DoubleFile
         bool _bAllowSubsequentProcess = false;
 
         internal WinProgress
-            AbortSet() { _bAborted = true; return this; }
+            Abort() { _bAborted = true; return this; }
         bool _bAborted = false;
 
         internal WinProgress(IEnumerable<string> astrBigLabels, IEnumerable<string> astrSmallKeyLabels, Action<WinProgress> initClient)
@@ -40,8 +40,7 @@ namespace DoubleFile
                 }
 
                 MBoxStatic.Assert(99792, false);
-                w.AbortSet();
-                w.Close();
+                w.Abort().Close();
                 return false;       // from lambda
             });
 

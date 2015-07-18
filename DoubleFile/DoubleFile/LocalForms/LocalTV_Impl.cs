@@ -13,7 +13,6 @@ namespace DoubleFile
         internal void ClearMem_TreeForm()
         {
             _tree = null;
-            Collate.ClearMem();
 
             if (0 < _allNodes.Count)
                 _dictVolumeInfo.Clear();
@@ -84,7 +83,7 @@ namespace DoubleFile
                 App.FileDictionary.IsAborted)
             {
                 WinProgress.WithWinProgress(w => w
-                    .AbortSet());
+                    .Abort());
 
                 return;
             }
@@ -113,7 +112,7 @@ namespace DoubleFile
                 ClearMem_TreeForm();
 
                 WinProgress.WithWinProgress(w => w
-                    .AbortSet());
+                    .Abort());
 
                 return;
             }
@@ -139,7 +138,7 @@ namespace DoubleFile
             if (0 == _rootNodes.Count)
             {
                 WinProgress.WithWinProgress(w => w
-                    .AbortSet()
+                    .Abort()
                     .Close());
 
                 return;
@@ -148,7 +147,6 @@ namespace DoubleFile
             _topNode = _rootNodes[0];
             LocalTreeNode.SetLevel(_rootNodes);
             _tree = null;
-            Collate.ClearMem();
 
             var lsLocalLVignore = new List<LocalLVitem>();  // when implementing, replace the Forms ListViewItem.Tag in LocalLVItem
             var nProgress = 0d;
@@ -171,10 +169,7 @@ namespace DoubleFile
                 dtStart = DateTime.Now;
 
                 if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
-                {
-                    Collate.ClearMem();
                     return;
-                }
 
                 WinProgress.WithWinProgress(w => w
                     .SetCompleted(_ksFolderTreeKey));
@@ -186,8 +181,6 @@ namespace DoubleFile
 
                 Util.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
             }
-
-            Collate.ClearMem();
 
             // Mean square from ANOVA: ((folder mean minus total mean) squared * folder total) == ss / (number of folders minus one == df)
 
@@ -270,7 +263,6 @@ namespace DoubleFile
                 _tree.EndThread();
 
             _tree = null;
-            Collate.ClearMem();
             return true;
         }
 

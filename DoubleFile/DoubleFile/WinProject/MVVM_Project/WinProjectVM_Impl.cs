@@ -142,7 +142,7 @@ namespace DoubleFile
                         _lvVM.Unsaved = true;
 
                     winProgress
-                        .AbortSet()
+                        .Abort()
                         .Close();
                 }))
             {

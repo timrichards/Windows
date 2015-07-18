@@ -5,7 +5,6 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
-- fix Collate _static_this
 - clones lvs; and all dupe files lvs?
 	- LVitemVM_Base
 - Do all non-generic WeakReferences have to be that way?

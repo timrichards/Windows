@@ -7,13 +7,10 @@
 
 - clones lvs; and all dupe files lvs?
 	- LVitemVM_Base
-- Fix search constructors
-	- Derived class constructors can't assign to readonly protected member vars
 - Use WinProgress as a model for simulating factory create: use a weak reference and assert in constructor
-	- factory create would be nice for e.g. WinProgress but then you can't assign to object vars inline
+	- factory create would be nice for e.g. WinProgress but then you can't use variable initializer
 - Do all non-generic WeakReferences have to be that way?
 - Replace any Instance (LocalTV.cs) with LocalTV.WithLocalTV(w => w);
-- Use inline variable assignment to SearchBase
 - Leaving search page then returning keeps the term in field but not in back-end: Search for 'a' then search again: searches for ''
 	This resulted in searching for "" which caused a dup dictionary key
 - new LVitem_SearchVM is not created on the main thread
@@ -26,6 +23,8 @@
 - Application.Current.MainWindow can be LocalMbox (when exiting app)
 - The todo list is not read-only while debugging.
 - You can go to type definition on var right-click
+- Use SearchListings as a model for derived class constructor
+	- Derived class constructors can't assign to readonly protected member vars
 - directory listings preserve display case, which is irrespective: NTFS usage is always case insensitive.
 	Regex is case sensitive because the regex iteself might be: user can inline case-insensitve.
 - Rename set methods to MethodSet(): hard to find: e.g. AbortSet() in WinProgress

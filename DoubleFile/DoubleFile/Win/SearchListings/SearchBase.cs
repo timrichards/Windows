@@ -17,10 +17,11 @@ namespace DoubleFile
         protected readonly WeakReference<ISearchStatus>
             _callbackWR = null;
 
-        internal enum FolderSpecialHandling { None, Outermost, Innermost };                     // not used
-        protected FolderSpecialHandling _folderHandling = FolderSpecialHandling.Outermost;      // not used
+        internal enum FolderSpecialHandling { None, Outermost, Innermost };     // not used
+        protected FolderSpecialHandling
+            _folderHandling = FolderSpecialHandling.Outermost;                  // not used
 
-        protected SearchBase(
+        internal SearchBase(
             string strSearch, 
             bool bCaseSensitive,
             SearchBase.FolderSpecialHandling folderHandling,
@@ -30,10 +31,10 @@ namespace DoubleFile
             WeakReference<ISearchStatus> callbackWR)
         {
             _strSearch = strSearch;
-            _bCaseSensitive = bCaseSensitive || _bRegex;
-            _folderHandling = folderHandling;          // not used
-            _bSearchFilesOnly = bSearchFilesOnly;
             _bRegex = bRegex;
+            _bCaseSensitive = bCaseSensitive || bRegex;     // bug prone if before bRegex assignment
+            _folderHandling = folderHandling;               // not used
+            _bSearchFilesOnly = bSearchFilesOnly;
             _strCurrentNode = strCurrentNode;
             _callbackWR = callbackWR;
         }

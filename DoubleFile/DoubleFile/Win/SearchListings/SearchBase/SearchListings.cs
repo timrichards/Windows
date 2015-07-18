@@ -18,14 +18,8 @@ namespace DoubleFile
     {
         internal SearchListings(
             LV_ProjectVM lvProjectVM,
-            string strSearch, 
-            bool bCaseSensitive,
-            SearchBase.FolderSpecialHandling folderHandling,
-            bool bSearchFilesOnly,
-            string strCurrentNode,
-            bool bRegex,
-            WeakReference<ISearchStatus> callbackWR)
-            : base(strSearch, bCaseSensitive, folderHandling, bSearchFilesOnly, strCurrentNode, bRegex, callbackWR)
+            SearchBase searchBase)
+            : base(searchBase)
         {
             IsAborted = false;
             _lvProjectVM = lvProjectVM;

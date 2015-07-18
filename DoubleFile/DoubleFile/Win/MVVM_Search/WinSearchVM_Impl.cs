@@ -68,9 +68,9 @@ namespace DoubleFile
                 _dictResults = new SortedDictionary<SearchResultsDir, bool>();
 
                 _searchType2 =
-                    new SearchListings
+                    new SearchListings(App.LVprojectVM,
+                    new SearchBase
                 (
-                    App.LVprojectVM,
                     SearchText,
                     SearchText.ToLower() != SearchText,
                     SearchBase.FolderSpecialHandling.None,
@@ -78,7 +78,7 @@ namespace DoubleFile
                     null,
                     Regex,
                     new WeakReference<ISearchStatus>(this)
-                )
+                ))
                     .DoThreadFactory();
             }))
                 .ShowDialog();

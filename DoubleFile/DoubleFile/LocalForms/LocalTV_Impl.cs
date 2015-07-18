@@ -63,7 +63,9 @@ namespace DoubleFile
                     _dictNodes = new ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>();
 
                 _tree =
-                    new Tree(_lvProjectVM, _dictNodes, _dictVolumeInfo, new WeakReference<ITreeStatus>(this))
+                    new Tree(
+                        _lvProjectVM,
+                        new TreeBase(_dictNodes, _dictVolumeInfo, new WeakReference<ITreeStatus>(this)))
                     .DoThreadFactory();
             })
             {

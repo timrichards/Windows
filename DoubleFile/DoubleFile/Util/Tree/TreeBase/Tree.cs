@@ -9,16 +9,14 @@ namespace DoubleFile
 {
     partial class Tree : TreeBase
     {
+        internal bool IsAborted { get; private set; }
+
         internal Tree(
             LV_ProjectVM lvProjectVM,
-            ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>> dictNodes,
-            IDictionary<string, string> dictDriveInfo,
-            WeakReference<ITreeStatus> callbackWR)
-            : base(dictNodes, dictDriveInfo, callbackWR)
+            TreeBase treeBase)
+            : base(treeBase)
         {
-            IsAborted = false;
             LVprojectVM = lvProjectVM;
-            MBoxStatic.Assert(1301.2301m, callbackWR != null);
         }
 
         internal void EndThread()     // bJoin is not used because it induces lag.
@@ -44,8 +42,6 @@ namespace DoubleFile
             _thread = Util.ThreadMake(Go);
             return this;
         }
-
-        internal bool IsAborted { get; private set; }
 
         void Go()
         {

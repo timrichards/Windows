@@ -7,8 +7,6 @@
 
 - clones lvs; and all dupe files lvs?
 	- LVitemVM_Base
-- Use WinProgress as a model for simulating factory create: use a weak reference and assert in constructor
-	- factory create would be nice for e.g. WinProgress but then you can't use variable initializer
 - Do all non-generic WeakReferences have to be that way?
 - new LVitem_SearchVM is not created on the main thread
 - AsParallel() seems to work with LVitem_SearchVM: OrderBy in FileDictionary
@@ -20,6 +18,8 @@
 - Application.Current.MainWindow can be LocalMbox (when exiting app)
 - The todo list is not read-only while debugging.
 - You can go to type definition on var right-click
+- Use WinProgress as a model for simulating factory create: use a weak reference and assert in constructor
+	- factory create would be nice for e.g. WinProgress but then you can't use variable initializer
 - Use SearchListings as a model for derived class constructor
 	- Derived class constructors can't assign to readonly protected member vars
 - directory listings preserve display case, which is irrespective: NTFS usage is always case insensitive.

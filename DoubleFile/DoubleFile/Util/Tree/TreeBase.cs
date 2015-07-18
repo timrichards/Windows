@@ -4,7 +4,7 @@ using System;
 
 namespace DoubleFile
 {
-    abstract class TreeBase : FileParse
+    class TreeBase : FileParse
     {
         protected readonly ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
             _dictNodes = null;
@@ -13,7 +13,7 @@ namespace DoubleFile
         protected readonly WeakReference<ITreeStatus>
             _callbackWR = null;
 
-        protected TreeBase(
+        internal TreeBase(
             ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>> dictNodes,
             IDictionary<string, string> dictDriveInfo,
             WeakReference<ITreeStatus> callbackWR)

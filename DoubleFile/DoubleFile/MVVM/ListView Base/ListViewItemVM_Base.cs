@@ -6,17 +6,6 @@ using System.Runtime.CompilerServices;
 
 namespace DoubleFile
 {
-    abstract class ListViewItemVM_Base<T> : ListViewItemVM_Base
-    {
-        internal ListViewItemVM_Base(T classObject, ListViewVM_Base lvvm, IList<string> lsStr)
-            : base(lvvm, lsStr)
-        {
-            _classObject = classObject;
-        }
-
-        protected T _classObject = default(T);
-    }
-
     abstract class ListViewItemVM_Base : ObservableObjectBase
     {
         internal string this[int i] { get { return marr[i]; } }

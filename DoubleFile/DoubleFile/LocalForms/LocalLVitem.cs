@@ -4,10 +4,10 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    class LocalLVitem : ListViewItemVM_Base<LocalColorItemBase_ClassObject>
+    class LocalLVitem : ListViewItemVM_Base, ILocalColorItemBase
     {
-        internal int ForeColor { get { return _classObject.ForeColor; } set { _classObject.ForeColor = value; } }
-        internal int BackColor { get { return _classObject.BackColor; } set { _classObject.BackColor = value; } }
+        public int ForeColor { get { return _classObject.ForeColor; } set { _classObject.ForeColor = value; } }
+        public int BackColor { get { return _classObject.BackColor; } set { _classObject.BackColor = value; } }
 
         protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static string[] _propNamesA = null;
@@ -41,7 +41,7 @@ namespace DoubleFile
             EnsureVisible() { }
 
         internal LocalLVitem(LocalLV listView = null)
-            : base(new LocalColorItemBase_ClassObject(), null, null)
+            : base(null, null)
         {
             ListView = listView;
         }
@@ -71,5 +71,7 @@ namespace DoubleFile
             get { return (_classObject.Datum8bits_ClassObject != 0) ? FontWeights.Bold : FontWeights.Normal; }
             set { _classObject.Datum8bits_ClassObject = (value == FontWeights.Normal) ? 0 : -1; }
         }
+
+        LocalColorItemBase_ClassObject _classObject = new LocalColorItemBase_ClassObject();
     }
 }

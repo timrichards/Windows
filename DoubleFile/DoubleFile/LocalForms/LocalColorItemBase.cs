@@ -2,16 +2,22 @@
 
 namespace DoubleFile
 {
+    interface ILocalColorItemBase
+    {
+        int ForeColor { get; set; }
+        int BackColor { get; set; }
+    }
+
     class LocalColorItemBase_ClassObject : LocalColorItemBase
     {
         internal int Datum8bits_ClassObject { get { return Datum8bits; } set { Datum8bits = value; } }
         internal int Datum16bits_ClassObject { get { return Datum16bits; } set { Datum16bits = value; } }
     }
 
-    abstract class LocalColorItemBase
+    abstract class LocalColorItemBase : ILocalColorItemBase
     {
-        internal int ForeColor { get { return UtilColor.GetFG_ARGB(Color); } set { int c = Color; Color = UtilColor.SetFG_ARGB(ref c, value); } }
-        internal int BackColor { get { return UtilColor.GetBG_ARGB(Color); } set { int c = Color; Color = UtilColor.SetBG_ARGB(ref c, value); } }
+        public int ForeColor { get { return UtilColor.GetFG_ARGB(Color); } set { int c = Color; Color = UtilColor.SetFG_ARGB(ref c, value); } }
+        public int BackColor { get { return UtilColor.GetBG_ARGB(Color); } set { int c = Color; Color = UtilColor.SetBG_ARGB(ref c, value); } }
 
         internal Brush Foreground
         {

@@ -34,6 +34,9 @@ namespace DoubleFile
 
         void SearchFolders()
         {
+            if (string.IsNullOrWhiteSpace(SearchText))
+                return;
+
             if (Reinitialize_And_FullPathFound(SearchText))
                 return;
 
@@ -60,6 +63,9 @@ namespace DoubleFile
 
         void SearchFoldersAndFiles(bool bSearchFilesOnly = false)
         {
+            if (string.IsNullOrWhiteSpace(SearchText))
+                return;
+
             if (Reinitialize_And_FullPathFound(SearchText))
                 return;
 
@@ -68,8 +74,7 @@ namespace DoubleFile
                 _dictResults = new SortedDictionary<SearchResultsDir, bool>();
 
                 _searchType2 =
-                    new SearchListings(App.LVprojectVM,
-                    new SearchBase
+                    new SearchListings(App.LVprojectVM, new SearchBase
                 (
                     SearchText,
                     SearchText.ToLower() != SearchText,

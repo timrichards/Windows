@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 
@@ -71,7 +73,7 @@ namespace DoubleFile
 
             (new WinProgress(new[] { "" }, new[] { _ksSearchKey }, x =>
             {
-                _dictResults = new SortedDictionary<SearchResultsDir, bool>();
+                _dictResults = new ConcurrentDictionary<SearchResultsDir, bool>();
 
                 _searchType2 =
                     new SearchListings(App.LVprojectVM, new SearchBase
@@ -122,7 +124,7 @@ namespace DoubleFile
                 result.ListFiles.Add(strPath.Substring(nLastBackSlashIx + 1), false);
             }
 
-            _dictResults = new SortedDictionary<SearchResultsDir, bool>();
+            _dictResults = new ConcurrentDictionary<SearchResultsDir, bool>();
             ((ISearchStatus)this).Status(new SearchResults(strPath, null, new[] { result }));
             ((ISearchStatus)this).Done();
             return true;
@@ -147,7 +149,12 @@ namespace DoubleFile
             try
             {
                 foreach (var result in searchResults.Results)
+                {
+                    if (null == result)
+                        Debugger.Break();
+
                     _dictResults.Add(result, false);
+                }
             }
             catch
             {
@@ -183,7 +190,7 @@ namespace DoubleFile
 
             var lsLVitems = new List<LVitem_SearchVM>();
 
-            foreach (var searchResult in _dictResults.Select(result => result.Key))
+            foreach (var searchResult in _dictResults.Select(result => result.Key).OrderBy(d => d))
             {
                 if (_bDisposed)
                     return;
@@ -242,7 +249,7 @@ namespace DoubleFile
 
         SearchListings
             _searchType2 = null;
-        SortedDictionary<SearchResultsDir, bool>
+        IDictionary<SearchResultsDir, bool>
             _dictResults = null;
         bool
             _bDisposed = false;

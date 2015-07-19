@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -118,6 +119,15 @@ namespace DoubleFile
                             // SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
                             // Not here. The other case below.
                             searchResultDir.StrDir = PathBuilder.FactoryCreateOrFind(strDir, Cancel: Abort);
+
+                            var bDebug = false;
+
+                            searchResultDir.StrDir.PathParts.Last(i =>
+                                bDebug = MBoxStatic.Assert(99789, -1 != i));
+
+                            if (false == bDebug)
+                                Debugger.Break();
+
                             listResults.Add(searchResultDir, false);
                             searchResultDir = null;
                         }

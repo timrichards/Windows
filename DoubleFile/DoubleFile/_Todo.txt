@@ -110,4 +110,4 @@
 - replace null member vars like Thread with instances so no need to test for null
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
-99790 next low assert
+99787 next low assert

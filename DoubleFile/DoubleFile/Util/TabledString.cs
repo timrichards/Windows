@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -232,7 +233,7 @@ namespace DoubleFile
             }
         }
 
-        static internal PathBuilder FactoryCreateOrFind(string str, Action Cancel = null)
+        static internal PathBuilder FactoryCreateOrFind(string strDir, Action Cancel = null)
         {
             var t = TypedArrayBase.tA[new Tabled_Files().Type];
 
@@ -247,7 +248,7 @@ namespace DoubleFile
                 {
                     return
                         t.DictPathParts
-                        .GetOrAdd(str, x => new PathBuilder(str));
+                        .GetOrAdd(strDir, x => new PathBuilder(strDir));
                 }
             }
             catch (NullReferenceException)
@@ -259,17 +260,17 @@ namespace DoubleFile
             }
         }
 
-        PathBuilder(string str)
+        PathBuilder(string strDir)
         {
             var t = TypedArrayBase.tA[new Tabled_Folders().Type];
             var lsInts = new List<int>();
 
-            foreach (var s in str.Split('\\'))
+            foreach (var s in strDir.Split('\\'))
             {
-                // MBoxStatic.Assert(99880, false == string.IsNullOrWhiteSpace(s));
+                // MBoxStatic.Assert(99880, false == string.IsNullOrEmpty(s));
                 // Acceptable: search results dir
-                // if (false == string.IsNullOrWhiteSpace(s))
-                if (string.IsNullOrWhiteSpace(s))
+                // if (false == string.IsNullOrEmpty(s))
+                if (string.IsNullOrEmpty(s))        //  <<<<<< Do not make this IsNullOrWhiteSpace() <<<<<<<
                     lsInts.Add(-1);
                 else
                     lsInts.Add(FindString(s));
@@ -305,7 +306,17 @@ namespace DoubleFile
                 var nShift = (nMax - nMin) >> 1;
 
                 if (0 == nShift)
-                    return -1;
+                {
+                    if ((1 == nMax) && (0 == nMin))     // zeroth
+                    {
+                        nShift = 0;
+                    }
+                    else
+                    {
+                        MBoxStatic.Assert(99788, false);
+                        return -2;
+                    }
+                }
 
                 var nIx = nMin + nShift;
 

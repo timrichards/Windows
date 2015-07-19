@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Media;
 
 namespace DoubleFile
 {
     class LocalLVitemVM : ListViewItemVM_Base, ILocalColorItemBase
     {
-        public int ForeColor { get { return _classObject.ForeColor; } set { _classObject.ForeColor = value; } }
-        public int BackColor { get { return _classObject.BackColor; } set { _classObject.BackColor = value; } }
-
         public string
             Text { get { return SubItems[0]; } }
         public string
@@ -19,6 +17,12 @@ namespace DoubleFile
 
         internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 2;
+
+        public Brush Foreground { get { return _classObject.Foreground; } }
+        public Brush Background { get { return _classObject.Background; } }
+
+        public int ForeColor { get { return _classObject.ForeColor; } set { _classObject.ForeColor = value; } }
+        public int BackColor { get { return _classObject.BackColor; } set { _classObject.BackColor = value; } }
 
         internal TabledString<Tabled_Folders>
             Name { get; set; }

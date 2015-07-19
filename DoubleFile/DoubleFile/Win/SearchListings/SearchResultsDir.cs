@@ -12,7 +12,10 @@ namespace DoubleFile
 
         public int CompareTo(object other)
         {
-            return StrDir.CompareTo(((SearchResultsDir)other).StrDir);
+            var nRet = StrDir.CompareTo(((SearchResultsDir)other).StrDir);
+
+            MBoxStatic.Assert(99790, 0 != nRet);
+            return nRet;
         }
     }
 }

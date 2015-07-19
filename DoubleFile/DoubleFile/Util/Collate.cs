@@ -15,12 +15,12 @@ namespace DoubleFile
 
         internal Collate(
             ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>> dictNodes,
-            LocalLV lvClones,
-            LocalLV lvSameVol,
-            LocalLV lvUnique,
+            LocalLVVM lvClones,
+            LocalLVVM lvSameVol,
+            LocalLVVM lvUnique,
             IReadOnlyList<LocalTreeNode> lsRootNodes,
             List<LocalTreeNode> lsAllNodes,
-            List<LocalLVitem> lsLVignore,
+            List<LocalLVitemVM> lsLVignore,
             bool bLoose)
         {
             _dictNodes = dictNodes;
@@ -33,7 +33,7 @@ namespace DoubleFile
             _bLoose = bLoose;
         }
 
-        static internal void InsertSizeMarkers(IList<LocalLVitem> listLVitems)
+        static internal void InsertSizeMarkers(IList<LocalLVitemVM> listLVitems)
         {
             var nCount = listLVitems.Count;
 
@@ -87,7 +87,7 @@ namespace DoubleFile
                 Util.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds."); dtStart = DateTime.Now;
             }
 
-            var dictIgnoreMark = new Dictionary<LocalTreeNode, LocalLVitem>();
+            var dictIgnoreMark = new Dictionary<LocalTreeNode, LocalLVitemVM>();
             var dictNodes = new SortedDictionary<FolderKeyTuple, List<LocalTreeNode>>();
 
             foreach (var kvp in _dictNodes)                     // clone to remove ignored
@@ -277,7 +277,7 @@ namespace DoubleFile
                         node.ForeColor = UtilColor.LightBlue;
                 }
 
-                var lvItem = new LocalLVitem(new[] { "", str_nClones })
+                var lvItem = new LocalLVitemVM(new[] { "", str_nClones })
                 {
                     TreeNodes = listNodes.Value,
                     ForeColor = listNodes.Value[0].ForeColor
@@ -361,7 +361,7 @@ namespace DoubleFile
 
                 MBoxStatic.Assert(1305.6321m, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
-                var lvItem = new LocalLVitem(new [] { treeNode.Text }) { LocalTreeNode = treeNode };
+                var lvItem = new LocalLVitemVM(new [] { treeNode.Text }) { LocalTreeNode = treeNode };
                 var nodeDatum = treeNode.NodeDatum;
 
                 if (null == nodeDatum)      // added 2/13/15
@@ -434,7 +434,7 @@ namespace DoubleFile
 
                 MBoxStatic.Assert(1305.6329m, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
-                var lvItem = new LocalLVitem(new[] { "" + treeNode.Text, str_nClones })
+                var lvItem = new LocalLVitemVM(new[] { "" + treeNode.Text, str_nClones })
                 {
                     TreeNodes = nodeDatum.Clones,
                     ForeColor = UtilColor.Firebrick,
@@ -456,9 +456,10 @@ namespace DoubleFile
                 return;
             }
 
-            MBoxStatic.Assert(1305.6333m, null == _lvClones.Items);
-            _lvClones.Items = _lsLVdiffVol.ToArray();
-            _lvClones.Invalidate();
+            MBoxStatic.Assert(1305.6333m, 0 == _lvClones.Items.Count);
+
+            if (0 < _lsLVdiffVol.Count)
+                _lvClones.Add(_lsLVdiffVol);
 
             if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
                 _bAborted)
@@ -466,9 +467,10 @@ namespace DoubleFile
                 return;
             }
 
-            MBoxStatic.Assert(1305.6334m, null == _lvUnique.Items);
-            _lvUnique.Items =_lsLVunique.ToArray();
-            _lvUnique.Invalidate();
+            MBoxStatic.Assert(1305.6334m, 0 == _lvUnique.Items.Count);
+
+            if (0 < _lsLVunique.Count)
+                _lvUnique.Add(_lsLVunique);
 
             if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
                 _bAborted)
@@ -476,9 +478,10 @@ namespace DoubleFile
                 return;
             }
 
-            MBoxStatic.Assert(1305.6335m, null == _lvSameVol.Items);
-            _lvSameVol.Items = _lsLVsameVol.ToArray();
-            _lvSameVol.Invalidate();
+            MBoxStatic.Assert(1305.6335m, 0 == _lvSameVol.Items.Count);
+
+            if (0 < _lsLVsameVol.Count)
+                _lvSameVol.Add(_lsLVsameVol);
         }
 
         // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
@@ -603,7 +606,7 @@ namespace DoubleFile
             }
         }
 
-        void IgnoreNodeAndSubnodes(LocalLVitem lvItem, LocalTreeNode treeNode_in, bool bContinue = false)
+        void IgnoreNodeAndSubnodes(LocalLVitemVM lvItem, LocalTreeNode treeNode_in, bool bContinue = false)
         {
             var treeNode = treeNode_in;
 
@@ -685,18 +688,18 @@ namespace DoubleFile
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
         readonly ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
             _dictNodes = null;
-        readonly LocalLV _lvClones = null;
-        readonly LocalLV _lvSameVol = null;
-        readonly LocalLV _lvUnique = null;
+        readonly LocalLVVM _lvClones = null;
+        readonly LocalLVVM _lvSameVol = null;
+        readonly LocalLVVM _lvUnique = null;
         readonly IReadOnlyList<LocalTreeNode> _lsRootNodes = null;
         readonly IList<LocalTreeNode> _lsAllNodes = null;
-        readonly IList<LocalLVitem> _lsLVignore = null;
+        readonly IList<LocalLVitemVM> _lsLVignore = null;
 
         // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.
-        readonly IList<LocalLVitem> _lsLVunique = new List<LocalLVitem>();
-        readonly IList<LocalLVitem> _lsLVsameVol = new List<LocalLVitem>();
-        readonly IList<LocalLVitem> _lsLVdiffVol = new List<LocalLVitem>();
-        readonly IDictionary<LocalTreeNode, LocalLVitem> _dictIgnoreNodes = new Dictionary<LocalTreeNode, LocalLVitem>();
+        readonly IList<LocalLVitemVM> _lsLVunique = new List<LocalLVitemVM>();
+        readonly IList<LocalLVitemVM> _lsLVsameVol = new List<LocalLVitemVM>();
+        readonly IList<LocalLVitemVM> _lsLVdiffVol = new List<LocalLVitemVM>();
+        readonly IDictionary<LocalTreeNode, LocalLVitemVM> _dictIgnoreNodes = new Dictionary<LocalTreeNode, LocalLVitemVM>();
         readonly bool _bLoose = false;
     }
 }

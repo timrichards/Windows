@@ -7,9 +7,9 @@ namespace DoubleFile
     {
         static class InsertSizeMarkerStatic
         {
-            static internal void Go(IList<LocalLVitem> listLVitems, int nIx, bool bUnique, bool bAdd = false)
+            static internal void Go(IList<LocalLVitemVM> listLVitems, int nIx, bool bUnique, bool bAdd = false)
             {
-                var lvItem = (LocalLVitem)_lvMarker.Clone();
+                var lvItem = (LocalLVitemVM)_lvMarker.Clone();
 
                 lvItem.SubItems[0] = ((Util.FormatSize(
                     (bUnique
@@ -29,8 +29,8 @@ namespace DoubleFile
                 }
             }
 
-            static readonly LocalLVitem
-                _lvMarker = new LocalLVitem(new[] { "" })
+            static readonly LocalLVitemVM
+                _lvMarker = new LocalLVitemVM(new[] { "" })
             {
                 BackColor = UtilColor.DarkSlateGray,
                 ForeColor = UtilColor.White,

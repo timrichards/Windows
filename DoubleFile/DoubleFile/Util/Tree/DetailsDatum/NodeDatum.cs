@@ -11,7 +11,7 @@ namespace DoubleFile
 
         internal List<LocalTreeNode>
             Clones { get; set; }
-        internal LocalLVitem 
+        internal LocalLVitemVM 
             LVitem { get; set; }
         internal LocalTreeNode
             TreeMapFiles { get; set; }

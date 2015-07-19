@@ -26,17 +26,17 @@ namespace DoubleFile
         }
         LocalTreeNode _selectedNode = null;
 
-        static internal IReadOnlyCollection<LocalLVitem>
-            Clones { get { return Util.WR(_wr, o => Array.AsReadOnly(o._clones.Items)); } }
-        LocalLV _clones = new LocalLV();
+        static internal IEnumerable<LocalLVitemVM>
+            Clones { get { return Util.WR(_wr, o => o._clones.Items.Cast<LocalLVitemVM>()); } }
+        LocalLVVM _clones = new LocalLVVM();
 
-        static internal IReadOnlyCollection<LocalLVitem>
-            SameVol { get { return Util.WR(_wr, o => Array.AsReadOnly(o._sameVol.Items)); } }
-        LocalLV _sameVol = new LocalLV();
+        static internal IEnumerable<LocalLVitemVM>
+            SameVol { get { return Util.WR(_wr, o => o._sameVol.Items.Cast<LocalLVitemVM>()); } }
+        LocalLVVM _sameVol = new LocalLVVM();
 
-        static internal IReadOnlyCollection<LocalLVitem>
-            Solitary { get { return Util.WR(_wr, o => Array.AsReadOnly(o._solitary.Items)); } }
-        LocalLV _solitary = new LocalLV();
+        static internal IEnumerable<LocalLVitemVM>
+            Solitary { get { return Util.WR(_wr, o => o._solitary.Items.Cast<LocalLVitemVM>()); } }
+        LocalLVVM _solitary = new LocalLVVM();
 
         static internal IReadOnlyDictionary<string, string>
             DictVolumeInfo { get { return Util.WR(_wr, o => o._dictVolumeInfo); } }

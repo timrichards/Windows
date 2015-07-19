@@ -1,12 +1,13 @@
 ﻿namespace DoubleFile
 {
-    class LocalLV
+    class LocalLVVM : ListViewVM_Base<LocalLVitemVM>
     {
-        internal LocalLVitem
+        internal LocalLVitemVM
             TopItem { get; set; }
-        internal LocalLVitem[]
-            Items { get; set; }
         
-        internal void Invalidate() { }
+        public string WidthText { get { return SCW; } }                     // franken all NaN
+        public string WidthSubItem { get { return SCW; } }                  // franken all NaN
+
+        internal override int NumCols { get { return LocalLVitemVM.NumCols_; } }
     }
 }

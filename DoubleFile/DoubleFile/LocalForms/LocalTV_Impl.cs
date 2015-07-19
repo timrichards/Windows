@@ -148,7 +148,7 @@ namespace DoubleFile
             LocalTreeNode.SetLevel(_rootNodes);
             _tree = null;
 
-            var lsLocalLVignore = new List<LocalLVitem>();  // when implementing, replace the Forms ListViewItem.Tag in LocalLVItem
+            var lsLocalLVignore = new List<LocalLVitemVM>();  // when implementing, replace the Forms ListViewItem.Tag in LocalLVItem
             var nProgress = 0d;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()

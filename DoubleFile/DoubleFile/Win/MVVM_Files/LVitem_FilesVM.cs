@@ -57,7 +57,7 @@ namespace DoubleFile
         public string Error2 { get { return 6 < FileLine.Length ? FileLine[6] : ""; } }
 
         internal override int NumCols { get { return NumCols_; } }
-        internal const int NumCols_ = 8;
+        internal const int NumCols_ = 0;
 
         protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static string[] _propNamesA = null;

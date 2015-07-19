@@ -120,7 +120,7 @@ namespace DoubleFile
                         continue;
                     }
 
-                    lvItem.StringValues = lvItemTemp.StringValues;
+                    lvItem.SubItems = lvItemTemp.SubItems;
                     break;
                 }
             });

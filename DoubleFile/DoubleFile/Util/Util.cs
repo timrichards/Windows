@@ -98,9 +98,10 @@ namespace DoubleFile
 
             if (nLength > 0)
             {
-                return strSz + (bBytes ?
-                    (" (" + nLength.ToString("###,###,###,###,###") + " bytes)") :
-                    string.Empty);
+                return strSz + (
+                    bBytes
+                    ? (" (" + nLength.ToString("###,###,###,###,###") + " bytes)")
+                    : "");
             }
 
             return "0 bytes";

@@ -18,16 +18,5 @@ namespace DoubleFile
 
         protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static string[] _propNamesA = null;
-
-        internal LVitem_FolderListVM(IList<string> lsStr = null)
-            : base(null, lsStr)
-        {
-            marr = null;
-        }
-
-        internal LVitem_FolderListVM(LVitem_FolderListVM lvItemTemp)
-            : this(lvItemTemp.StringValues)
-        {
-        }
     }
 }

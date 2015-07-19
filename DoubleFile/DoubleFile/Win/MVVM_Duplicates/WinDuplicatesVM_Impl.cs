@@ -98,7 +98,7 @@ namespace DoubleFile
             Util.ParallelForEach(
                 lsDuplicates
                     .GroupBy(duplicate => duplicate.LVitemProjectVM),
-                new ParallelOptions() { CancellationToken = (_cts = new CancellationTokenSource()).Token },
+                new ParallelOptions { CancellationToken = (_cts = new CancellationTokenSource()).Token },
                 g =>
             {
                 var lsLineNumbers =

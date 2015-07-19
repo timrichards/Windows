@@ -8,23 +8,33 @@ namespace DoubleFile
 {
     abstract class ListViewItemVM_Base : ObservableObjectBase
     {
-        internal string this[int i] { get { return marr[i]; } }
+        internal string this[int i] { get { return _subItems[i]; } }
 
-        internal string[] StringValues
+        internal IList<string> SubItems
         {
-            get { return marr; }
+            get { return _subItems; }
             set
             {
-                MBoxStatic.Assert(99996, value.Length <= NumCols);
-                marr = value;
-
-                foreach (var propName in PropNames)
+                if (null == value)
                 {
-                    RaisePropertyChanged(propName);
-                    RaiseColumnWidth(propName);
+                    _subItems = new string[NumCols];
+                    return;
                 }
+
+                MBoxStatic.Assert(99996, value.Count <= NumCols);
+
+                var nTack = NumCols - value.Count;
+
+                _subItems =
+                    (0 == nTack)
+                    ? value
+                    : value.Concat(new string[nTack]).ToList();
+
+                MBoxStatic.Assert(99995, _subItems.Count == NumCols);
+                RaiseColumnWidths();
             }
         }
+        IList<string> _subItems = null;
 
         ListViewItemVM_Base(ListViewVM_Base lvvm)
         {
@@ -33,29 +43,14 @@ namespace DoubleFile
 
         // NumCols, and columns, are covariant: while all subclasses have columns; the subclasses vary in the number of columns.
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        internal ListViewItemVM_Base(ListViewVM_Base lvvm, IList<string> lsStr)     // e.g. Volumes LV: marr
+        protected ListViewItemVM_Base(ListViewVM_Base lvvm = null, IList<string> lsStr = null)     // e.g. Volumes LV: marr
             : this(lvvm)
         {
-            if (null != lsStr)
-            {
-                var nCount = lsStr.Count;
-
-                marr =
-                    ((nCount < NumCols)
-                        ? lsStr.Concat(new string[NumCols - nCount])
-                        : lsStr)
-                    .ToArray();
-            }
-            else
-            {
-                marr = new string[NumCols];
-            }
-
-            MBoxStatic.Assert(99995, marr.Length == NumCols);
-            RaiseColumnWidths();
+            SubItems = lsStr;
         }
 
-        public virtual bool LocalEquals(ListViewItemVM_Base other)
+        public virtual bool
+            LocalEquals(ListViewItemVM_Base other)
         {
             if (null == other)
                 return false;
@@ -66,17 +61,17 @@ namespace DoubleFile
             if (SearchCol != other.SearchCol)
                 return false;
 
-            if ((null == marr) !=
-                (null == other.marr))
+            if ((null == _subItems) !=
+                (null == other._subItems))
             {
                 return false;
             }
 
-            if (null != marr)
+            if (null != _subItems)
             {
                 if (false ==
-                    string.Join("", marr).Equals(
-                    string.Join("", other.marr)))
+                    string.Join("", _subItems).Equals(
+                    string.Join("", other._subItems)))
                 {
                     return false;
                 }
@@ -98,7 +93,8 @@ namespace DoubleFile
             return true;
         }
 
-        internal void RaiseColumnWidths()
+        internal void
+            RaiseColumnWidths()
         {
             if (null == LVVM)
                 return;
@@ -107,7 +103,8 @@ namespace DoubleFile
                 RaiseColumnWidth(propName);
         }
 
-        void RaiseColumnWidth(string strPropName)
+        void
+            RaiseColumnWidth(string strPropName)
         {
             if (null == LVVM)
                 return;
@@ -120,25 +117,28 @@ namespace DoubleFile
             LVVM.RaisePropertyChanged("Width" + strPropName);
         }
 
-        internal string SearchValue { get { return marr[SearchCol].ToLower(); } }
+        internal string
+            SearchValue { get { return _subItems[SearchCol].ToLower(); } }
 
-        protected void SetProperty(int nCol, string s, [CallerMemberName]string propertyName = null)
+        protected void
+            SetProperty(int nCol, string s, [CallerMemberName]string propertyName = null)
         {
             if (this[nCol] == s)
                 return;
 
-            marr[nCol] = s;
+            _subItems[nCol] = s;
             MBoxStatic.Assert(99937, null != propertyName);
             RaisePropertyChanged(propertyName);
             RaiseColumnWidth(propertyName);
         }
 
-        internal ListViewVM_Base LVVM = null;
+        internal ListViewVM_Base
+            LVVM = null;
 
-        abstract internal int NumCols { get; }
-        virtual protected int SearchCol { get { return 0; } }
-
-        protected string[] marr = null;
+        abstract internal int
+            NumCols { get; }
+        virtual protected int
+            SearchCol { get { return 0; } }
 
         string[] PropNames
         {

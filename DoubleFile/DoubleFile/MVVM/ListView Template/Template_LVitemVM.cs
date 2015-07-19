@@ -6,7 +6,7 @@
     class Template_LVitemVM : ListViewItemVM_Base
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public string ColumnNameHere { get { return marr[0]; } internal set { SetProperty(0, value); } }
+        public string ColumnNameHere { get { return SubItems[0]; } internal set { SetProperty(0, value); } }
 
         internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 0;

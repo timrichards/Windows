@@ -5,6 +5,7 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- can LVitem_base be TabledString?
 - clones lvs; and all dupe files lvs?
 	- LVitemVM_Base
 - Do all non-generic WeakReferences have to be that way?
@@ -107,8 +108,6 @@
 - replace .Cast with (ICollection<>)
 - replace IEnumerable with ICollection where possible
 - replace null member vars like Thread with instances so no need to test for null
-
-99857
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
 99790 next low assert

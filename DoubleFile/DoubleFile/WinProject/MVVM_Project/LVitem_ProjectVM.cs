@@ -1,23 +1,24 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 namespace DoubleFile
 {
     class LVitem_ProjectVM : ListViewItemVM_Base
     {
-        public string Nickname { get { return marr[0]; } internal set { SetProperty(0, value); } }
-        public string SourcePath { get { return marr[1]; } internal set { SetProperty(1, value); } }
+        public string Nickname { get { return SubItems[0]; } internal set { SetProperty(0, value); } }
+        public string SourcePath { get { return SubItems[1]; } internal set { SetProperty(1, value); } }
 
-        public string ListingFile { get { return marr[2]; } set { SetProperty(2, value); } }
-        public string ListingFileNoPath { get { return System.IO.Path.GetFileName(marr[2]); } }
+        public string ListingFile { get { return SubItems[2]; } set { SetProperty(2, value); } }
+        public string ListingFileNoPath { get { return Path.GetFileName(SubItems[2]); } }
 
-        public string Status { get { return marr[3]; } internal set { SetProperty(3, value); } }
-        public string IncludeYN { get { return marr[4]; } private set { SetProperty(4, value); } }
-        public string VolumeGroup { get { return marr[5]; } internal set { SetProperty(5, value); } }
-        public string DriveModel { get { return marr[6]; } internal set { SetProperty(6, value); } }
-        public string DriveSerial { get { return marr[7]; } internal set { SetProperty(7, value); } }
+        public string Status { get { return SubItems[3]; } internal set { SetProperty(3, value); } }
+        public string IncludeYN { get { return SubItems[4]; } private set { SetProperty(4, value); } }
+        public string VolumeGroup { get { return SubItems[5]; } internal set { SetProperty(5, value); } }
+        public string DriveModel { get { return SubItems[6]; } internal set { SetProperty(6, value); } }
+        public string DriveSerial { get { return SubItems[7]; } internal set { SetProperty(7, value); } }
 
-        public string ScannedLength { get { return Util.FormatSize(marr[8]); } internal set { SetProperty(8, value); } }
-        public ulong ScannedLengthRaw { get { return ("" + marr[8]).ToUlong(); } }
+        public string ScannedLength { get { return Util.FormatSize(SubItems[8]); } internal set { SetProperty(8, value); } }
+        public ulong ScannedLengthRaw { get { return ("" + SubItems[8]).ToUlong(); } }
 
         internal int LinesTotal { get; set; }
         internal bool HashV2 { get; set; }
@@ -36,7 +37,7 @@ namespace DoubleFile
         }
 
         internal LVitem_ProjectVM(LVitem_ProjectVM lvItemTemp)
-            : this(lvItemTemp.StringValues)
+            : this(lvItemTemp.SubItems)
         {
         }
 
@@ -87,7 +88,7 @@ namespace DoubleFile
 
             if (FileParse.ReadHeader(ListingFile, out lvItem))
             {
-                StringValues = lvItem.StringValues;
+                SubItems = lvItem.SubItems;
                 LinesTotal = lvItem.LinesTotal;
                 HashV2 = lvItem.HashV2;
                 Status = FileParse.ksSaved;

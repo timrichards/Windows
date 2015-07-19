@@ -8,9 +8,9 @@ namespace DoubleFile
     class LVitem_ProgressVM : ListViewItemVM_Base
     {
         public string
-            BigLabel { get { return marr[0]; } private set { SetProperty(0, value); } }
+            BigLabel { get { return SubItems[0]; } private set { SetProperty(0, value); } }
         public string
-            SmallKeyLabel { get { return marr[1]; } private set { SetProperty(1, value); } }
+            SmallKeyLabel { get { return SubItems[1]; } private set { SetProperty(1, value); } }
         public double
             Progress { get; internal set; }
 
@@ -37,7 +37,7 @@ namespace DoubleFile
         Brush _brushProgressState = Brushes.Navy;
         
         public string
-            Remaining { get { return marr[5]; } private set { SetProperty(5, value); } }
+            Remaining { get { return SubItems[5]; } private set { SetProperty(5, value); } }
 
         internal override int
             NumCols { get { return NumCols_; } }

@@ -54,7 +54,7 @@ namespace DoubleFile
         internal string[] Split(string[] arrStr, StringSplitOptions opts) { return Get(nIndex).Split(arrStr, opts); }
         internal bool StartsWith(string str) { return Get(nIndex).StartsWith(str); }
         internal TabledString<T> ToLower() { return Get(nIndex).ToLower(); }
-        static internal TabledString<T> Empty { get { return string.Empty; } }
+        static internal TabledString<T> Empty { get { return ""; } }
 
         static internal void Reinitialize()
         {

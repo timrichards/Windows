@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -8,11 +9,9 @@ namespace DoubleFile
         {
             static internal void Go(IList<LocalLVitem> listLVitems, int nIx, bool bUnique, bool bAdd = false)
             {
-                Init();
+                var lvItem = (LocalLVitem)_lvMarker.Clone();
 
-                var lvItem = (LocalLVitem)lvMarker.Clone();
-
-                lvItem.Text = ((Util.FormatSize(
+                lvItem.SubItems[0] = ((Util.FormatSize(
                     (bUnique
                         ? listLVitems[nIx].LocalTreeNode
                         : (listLVitems[nIx].TreeNodes)[0])
@@ -30,19 +29,13 @@ namespace DoubleFile
                 }
             }
 
-            static void Init()
+            static readonly LocalLVitem
+                _lvMarker = new LocalLVitem(new[] { "" })
             {
-                if (bInit == false)
-                {
-                    lvMarker.BackColor = UtilColor.DarkSlateGray;
-                    lvMarker.ForeColor = UtilColor.White;
-                    lvMarker.FontWeight = System.Windows.FontWeights.Bold;
-                    bInit = true;
-                }
-            }
-
-            readonly static LocalLVitem lvMarker = new LocalLVitem();
-            static bool bInit = false;
+                BackColor = UtilColor.DarkSlateGray,
+                ForeColor = UtilColor.White,
+                FontWeight = FontWeights.Bold
+            };
         }
     }
 }

@@ -71,16 +71,5 @@ namespace DoubleFile
 
         protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static string[] _propNamesA = null;
-
-        internal LVitem_SearchVM(IList<string> lsStr = null)
-            : base(null, lsStr)
-        {
-            marr = null;
-        }
-
-        internal LVitem_SearchVM(LVitem_SearchVM lvItemTemp)
-            : this(lvItemTemp.StringValues)
-        {
-        }
     }
 }

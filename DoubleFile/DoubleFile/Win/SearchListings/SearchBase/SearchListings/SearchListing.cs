@@ -52,7 +52,7 @@ namespace DoubleFile
                 using (var sr = new StreamReader(_volStrings.ListingFile))
                 {
                     var strSearch = _strSearch;
-                    var strCurrentNode = _strCurrentNode ?? string.Empty;
+                    var strCurrentNode = "" + _strCurrentNode;
 
                     if (false == _bCaseSensitive)
                     {

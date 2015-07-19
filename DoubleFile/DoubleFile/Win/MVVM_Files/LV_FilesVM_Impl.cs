@@ -57,7 +57,7 @@ namespace DoubleFile
                     .ToArray();
 
                 var nDuplicates = (null != lsDuplicates) ? lsDuplicates.Count - 1 : 0;
-                var lvItem = new LVitem_FilesVM() { DuplicatesRaw = nDuplicates, FileLine = asFileLine };
+                var lvItem = new LVitem_FilesVM { DuplicatesRaw = nDuplicates, FileLine = asFileLine };
 
                 if (0 < nDuplicates)
                 {

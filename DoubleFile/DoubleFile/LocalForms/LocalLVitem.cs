@@ -15,8 +15,8 @@ namespace DoubleFile
         internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 9;
 
-        internal TabledString<Tabled_Folders>
-            Text { get; set; }
+        internal string
+            Text { get { return SubItems[0]; } }
         internal TabledString<Tabled_Folders>
             Name { get; set; }
         //internal LocalLVitem
@@ -26,8 +26,6 @@ namespace DoubleFile
         internal LocalTreeNode
             LocalTreeNode { get; set; }
 
-        internal LocalLVitem[]
-            SubItems { get; set; }
         internal LocalLV
             ListView { get; set; }
 
@@ -46,21 +44,10 @@ namespace DoubleFile
             ListView = listView;
         }
 
-        internal LocalLVitem(string strContent, LocalLV listView = null)
-            : this(listView) { Text = strContent; Index = -1; }
-
-        internal LocalLVitem(IEnumerable<string> asString, LocalLV listView = null)
-            : this(listView)
+        internal LocalLVitem(IList<string> asString, LocalLV listView = null)
+            : base(null, asString)
         {
-            var lsLVItems = new List<LocalLVitem>();
-
-            Text = asString.FirstOrDefault();
-            lsLVItems.Add(this);
-
-            foreach (var s in asString.Skip(1))
-                lsLVItems.Add(new LocalLVitem(s, listView));
-
-            SubItems = lsLVItems.ToArray();
+            ListView = listView;
         }
 
         // Only used for colors and bold font weight, not subitems, in Collate.cs InsertSizeMarker(). Size 18 to show obvious fault in interpretation.
@@ -72,6 +59,7 @@ namespace DoubleFile
             set { _classObject.Datum8bits_ClassObject = (value == FontWeights.Normal) ? 0 : -1; }
         }
 
-        LocalColorItemBase_ClassObject _classObject = new LocalColorItemBase_ClassObject();
+        LocalColorItemBase_ClassObject
+            _classObject = new LocalColorItemBase_ClassObject();
     }
 }

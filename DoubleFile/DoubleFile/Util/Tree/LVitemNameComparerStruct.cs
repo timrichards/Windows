@@ -26,9 +26,9 @@ namespace DoubleFile
             {
                 item.Name = item.Text;
 
-                if ((null != item.SubItems) && (item.SubItems.Length > FileParse.knColLengthLV))
+                if ((null != item.SubItems) && (item.SubItems.Count > FileParse.knColLengthLV))
                 {
-                    item.Name += item.SubItems[FileParse.knColLengthLV].Text;         // name + size
+                    item.Name += item.SubItems[FileParse.knColLengthLV];         // name + size
                 }
             }
         }

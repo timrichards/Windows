@@ -77,7 +77,7 @@ namespace DoubleFile
             if (0 < _lsLVignore.Count)
             {
                 var dtStart = DateTime.Now;
-                var nMaxLevel = _lsLVignore.Max(i => ("" + i.SubItems[1].Text).ToInt() - 1);
+                var nMaxLevel = _lsLVignore.Max(i => ("" + i.SubItems[1]).ToInt() - 1);
                 var sbMatch = new StringBuilder();
 
                 foreach (var lvItem in _lsLVignore)
@@ -277,7 +277,7 @@ namespace DoubleFile
                         node.ForeColor = UtilColor.LightBlue;
                 }
 
-                var lvItem = new LocalLVitem(new[] { string.Empty, str_nClones })
+                var lvItem = new LocalLVitem(new[] { "", str_nClones })
                 {
                     TreeNodes = listNodes.Value,
                     ForeColor = listNodes.Value[0].ForeColor
@@ -311,7 +311,7 @@ namespace DoubleFile
                     nodeDatum.LVitem = lvItem;
                 }
 
-                lvItem.Text = nameNode.Text;
+                lvItem.SubItems[0] = nameNode.Text;
                 MBoxStatic.Assert(1305.6318m, false == string.IsNullOrWhiteSpace(lvItem.Text));
                 _lsLVdiffVol.Add(lvItem);
             }
@@ -361,7 +361,7 @@ namespace DoubleFile
 
                 MBoxStatic.Assert(1305.6321m, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
-                var lvItem = new LocalLVitem(treeNode.Text) { LocalTreeNode = treeNode };
+                var lvItem = new LocalLVitem(new [] { treeNode.Text }) { LocalTreeNode = treeNode };
                 var nodeDatum = treeNode.NodeDatum;
 
                 if (null == nodeDatum)      // added 2/13/15
@@ -643,7 +643,7 @@ namespace DoubleFile
                 if (sbMatch.Contains(treeNode.Text.ToLower()))
                 {
                     if (_lsLVignore
-                        .Where(lvItem => treeNode.Level == (("" + lvItem.SubItems[1].Text).ToInt() - 1))
+                        .Where(lvItem => treeNode.Level == (("" + lvItem.SubItems[1]).ToInt() - 1))
                         .Any(lvItem => ("" + lvItem.Text).Equals(treeNode.Text,
                             StringComparison.InvariantCultureIgnoreCase)))
                     {

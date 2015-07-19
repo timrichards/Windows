@@ -264,8 +264,8 @@
     <Compile Include="Util\Collate\AddTreeToList.cs" />
     <Compile Include="Util\Collate\InsertSizeMarkerStatic.cs" />
     <Compile Include="Util\CountNodes.cs" />
-    <Compile Include="LocalForms\LocalLV.cs" />
-    <Compile Include="LocalForms\LocalLVitem.cs" />
+    <Compile Include="LocalForms\LocalLVVM.cs" />
+    <Compile Include="LocalForms\LocalLVitemVM.cs" />
     <Compile Include="Win\SearchListings\SearchBase.cs" />
     <Compile Include="Win\SearchListings\SearchBase\SearchListings.cs" />
     <Compile Include="Win\SearchListings\SearchBase\SearchListings\SearchListing.cs" />

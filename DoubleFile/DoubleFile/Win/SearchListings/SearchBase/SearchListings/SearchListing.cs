@@ -120,7 +120,6 @@ namespace DoubleFile
                             // Not here. The other case B below.
                             searchResultDir.StrDir = PathBuilder.FactoryCreateOrFind(strDir, Cancel: Abort);
 
-                            // Linq Last() often returns the first element instead.
                             var a = searchResultDir.StrDir.PathParts;
                             MBoxStatic.Assert(99787, -1 != a[a.Length - 1]);  // a will never and b will always end with a -1.
 
@@ -146,7 +145,6 @@ namespace DoubleFile
                             // b. SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
                             searchResultDir.StrDir = PathBuilder.FactoryCreateOrFind(strDir + '\\', Cancel: Abort);
 
-                            // Linq Last() often returns the first element instead.
                             var b = searchResultDir.StrDir.PathParts;
                             MBoxStatic.Assert(99787, -1 == b[b.Length - 1]);  // a will never and b will always end with a -1.
 

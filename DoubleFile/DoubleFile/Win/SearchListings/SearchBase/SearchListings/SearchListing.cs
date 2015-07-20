@@ -116,17 +116,13 @@ namespace DoubleFile
                         if (bDir &&
                             (null != searchResultDir))
                         {
-                            // SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
-                            // Not here. The other case below.
+                            // a. SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
+                            // Not here. The other case B below.
                             searchResultDir.StrDir = PathBuilder.FactoryCreateOrFind(strDir, Cancel: Abort);
 
-                            var bDebug = false;
-
-                            searchResultDir.StrDir.PathParts.Last(i =>
-                                bDebug = MBoxStatic.Assert(99789, -1 != i));
-
-                            if (false == bDebug)
-                                Debugger.Break();
+                            // Linq Last() often returns the first element instead.
+                            var a = searchResultDir.StrDir.PathParts;
+                            MBoxStatic.Assert(99787, -1 != a[a.Length - 1]);  // a will never and b will always end with a -1.
 
                             listResults.Add(searchResultDir, false);
                             searchResultDir = null;
@@ -147,8 +143,13 @@ namespace DoubleFile
                             if (null == searchResultDir)
                                 searchResultDir = new SearchResultsDir();
 
-                            // SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
+                            // b. SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
                             searchResultDir.StrDir = PathBuilder.FactoryCreateOrFind(strDir + '\\', Cancel: Abort);
+
+                            // Linq Last() often returns the first element instead.
+                            var b = searchResultDir.StrDir.PathParts;
+                            MBoxStatic.Assert(99787, -1 == b[b.Length - 1]);  // a will never and b will always end with a -1.
+
                             listResults.Add(searchResultDir, false);
                             searchResultDir = null;
                         }

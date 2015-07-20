@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -267,10 +266,10 @@ namespace DoubleFile
 
             foreach (var s in strDir.Split('\\'))
             {
-                // MBoxStatic.Assert(99880, false == string.IsNullOrEmpty(s));
+                // MBoxStatic.Assert(99880, false == string.IsNullOrWhiteSpace(s));
                 // Acceptable: search results dir
-                // if (false == string.IsNullOrEmpty(s))
-                if (string.IsNullOrEmpty(s))        //  <<<<<< Do not make this IsNullOrWhiteSpace() <<<<<<<
+                // if (false == string.IsNullOrWhiteSpace(s))
+                if (string.IsNullOrWhiteSpace(s))
                     lsInts.Add(-1);
                 else
                     lsInts.Add(FindString(s));

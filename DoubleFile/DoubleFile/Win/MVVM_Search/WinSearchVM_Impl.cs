@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 
@@ -149,16 +148,11 @@ namespace DoubleFile
             try
             {
                 foreach (var result in searchResults.Results)
-                {
-                    if (null == result)
-                        Debugger.Break();
-
                     _dictResults.Add(result, false);
-                }
             }
-            catch
+            catch (Exception ex)
             {
-                MBoxStatic.Assert(99942, false);
+                MBoxStatic.Assert(99942, false, ex.GetBaseException().Message);
 
                 if (null != _searchType2)
                     _searchType2.EndThread();

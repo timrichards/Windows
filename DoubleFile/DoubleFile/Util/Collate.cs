@@ -134,7 +134,7 @@ namespace DoubleFile
             nProgressDenominator += dictNodes.Count;
             ++nProgressItem;
 
-            foreach (var kvp in dictNodes)
+            foreach (var kvp in dictNodes.Reverse())
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
 
@@ -244,7 +244,7 @@ namespace DoubleFile
             nProgressDenominator += dictClones.Count;
             ++nProgressItem;
 
-            foreach (var listNodes in dictClones)
+            foreach (var listNodes in dictClones.Reverse())
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
 
@@ -346,7 +346,7 @@ namespace DoubleFile
             InsertSizeMarkers(_lsLVdiffVol);
             nProgressDenominator += dictUnique.Count;
 
-            foreach (var kvp in dictUnique)
+            foreach (var kvp in dictUnique.Reverse())
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator);
 

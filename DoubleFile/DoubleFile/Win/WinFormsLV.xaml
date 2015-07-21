@@ -13,6 +13,7 @@
                 <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
                     <Setter Property="Foreground" Value="{Binding Foreground}" />
                     <Setter Property="Background" Value="{Binding Background}" />
+                    <Setter Property="FontWeight" Value="{Binding FontWeight}" />
                 </Style>
             </DataGrid.Resources>
             <DataGrid.Columns>

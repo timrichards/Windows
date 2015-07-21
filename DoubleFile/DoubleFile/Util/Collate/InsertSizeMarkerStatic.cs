@@ -9,9 +9,14 @@ namespace DoubleFile
         {
             static internal void Go(IList<LocalLVitemVM> listLVitems, int nIx, bool bUnique, bool bAdd = false)
             {
-                var lvItem = (LocalLVitemVM)_lvMarker.Clone();
+                var lvItem = new LocalLVitemVM(new[] { "" })
+                {
+                    BackColor = UtilColor.DarkSlateGray,
+                    ForeColor = UtilColor.White,
+                    FontWeight = FontWeights.Bold
+                };
 
-                lvItem.SubItems[0] = ((Util.FormatSize(
+                lvItem.Folder = ((Util.FormatSize(
                     (bUnique
                         ? listLVitems[nIx].LocalTreeNode
                         : (listLVitems[nIx].TreeNodes)[0])
@@ -28,14 +33,6 @@ namespace DoubleFile
                     listLVitems.Insert(nIx, lvItem);
                 }
             }
-
-            static readonly LocalLVitemVM
-                _lvMarker = new LocalLVitemVM(new[] { "" })
-            {
-                BackColor = UtilColor.DarkSlateGray,
-                ForeColor = UtilColor.White,
-                FontWeight = FontWeights.Bold
-            };
         }
     }
 }

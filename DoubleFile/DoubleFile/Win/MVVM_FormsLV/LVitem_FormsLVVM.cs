@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.Windows;
+using System.Windows.Media;
 
 namespace DoubleFile
 {
@@ -11,6 +12,9 @@ namespace DoubleFile
 
         public Brush Foreground { get { return _localLVitemVM.Foreground; } }
         public Brush Background { get { return _localLVitemVM.Background; } }
+
+        public FontWeight
+            FontWeight { get { return _localLVitemVM.FontWeight; } }
 
         internal LocalTreeNode
             LocalTreeNode { get { return _localLVitemVM.LocalTreeNode; } }

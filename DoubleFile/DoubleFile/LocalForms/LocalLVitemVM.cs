@@ -15,6 +15,12 @@ namespace DoubleFile
         public Brush Foreground { get { return _classObject.Foreground; } }
         public Brush Background { get { return _classObject.Background; } }
 
+        internal FontWeight FontWeight
+        {
+            get { return (_classObject.Datum8bits_ClassObject != 0) ? FontWeights.Bold : FontWeights.Normal; }
+            set { _classObject.Datum8bits_ClassObject = (value == FontWeights.Normal) ? 0 : -1; }
+        }
+
         public int ForeColor { get { return _classObject.ForeColor; } set { _classObject.ForeColor = value; } }
         public int BackColor { get { return _classObject.BackColor; } set { _classObject.BackColor = value; } }
 
@@ -43,15 +49,6 @@ namespace DoubleFile
             : base(null, asString)
         {
             ListView = listView;
-        }
-
-        // Only used for colors and bold font weight, not subitems, in Collate.cs InsertSizeMarker(). Size 18 to show obvious fault in interpretation.
-        internal object Clone() { var lvItem = (LocalLVitemVM)MemberwiseClone(); lvItem.FontWeight = FontWeight; return lvItem; }
-
-        internal FontWeight FontWeight
-        {
-            get { return (_classObject.Datum8bits_ClassObject != 0) ? FontWeights.Bold : FontWeights.Normal; }
-            set { _classObject.Datum8bits_ClassObject = (value == FontWeights.Normal) ? 0 : -1; }
         }
 
         LocalColorItemBase_ClassObject

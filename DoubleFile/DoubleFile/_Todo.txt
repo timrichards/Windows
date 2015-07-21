@@ -5,6 +5,7 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- change SubItems[0] to Folder
 - observable object uses debug.assert
 - several unique still exist
 - WinFolderListVM has a Dispose method that's never called.

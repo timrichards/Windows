@@ -43,7 +43,7 @@ namespace DoubleFile
         internal int
             Index { get { return _classObject.Datum16bits_ClassObject; } set { _classObject.Datum16bits_ClassObject = value; } }
 
-        internal LocalLVitemVM(IList<string> asString, LocalLVVM listView = null)
+        internal LocalLVitemVM(IList<string> asString)
             : base(null, asString)
         {
         }

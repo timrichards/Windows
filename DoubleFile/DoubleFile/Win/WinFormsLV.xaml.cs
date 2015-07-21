@@ -12,9 +12,9 @@ namespace DoubleFile
         static internal readonly IDictionary<string, string>
             FolderListFragments = new ReadOnlyDictionary<string, string>(new Dictionary<string, string>
         {
-            {FolderListSolitary , "Solitary"      },
-            {FolderListSameVol, "Same volume"   },
-            {FolderListClones , "Clones"        }
+            {FolderListSolitary,    "Solitary"      },
+            {FolderListSameVol,     "Same volume"   },
+            {FolderListClones,      "Clones"        }
         });
 
         internal const string FolderListSolitary = "solitary";

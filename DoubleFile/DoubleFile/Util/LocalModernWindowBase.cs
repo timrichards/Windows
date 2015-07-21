@@ -65,6 +65,10 @@ namespace DoubleFile
             if (null == App.TopWindow)
                 App.TopWindow = MainWindow.WithMainWindow(w => w);
 
+            // use-case: assert before main window shown   future proof
+            if (null == App.TopWindow)
+                return;     // from lambda
+
             var prevTopWindow = App.TopWindow;
 
             Observable.FromEventPattern(this, "Activated")
@@ -211,8 +215,8 @@ namespace DoubleFile
                 return null;
             }
 
-           // if false == this is LocalMbox)    // future proof
-                MBoxStatic.Restart();
+            // if false == this is LocalMbox)    // future proof
+            MBoxStatic.Restart();
 
             I.SimulatingModal = App.SimulatingModal;
             Owner = (Window)me;

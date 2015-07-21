@@ -16,8 +16,6 @@
 - check and remove Linq/enumeration for arrays - prob OK: tests for ICollection
 - sort search results by result; breakout by path; etc.
 - can LVitem_base be TabledString?
-- clones lvs; and all dupe files lvs?
-	- LVitemVM_Base
 - Do all non-generic WeakReferences have to be that way?
 - new LVitem_SearchVM is not created on the main thread
 - AsParallel() seems to work with LVitem_SearchVM: OrderBy in FileDictionary

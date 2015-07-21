@@ -41,9 +41,7 @@ namespace DoubleFile
             }
 
             if (localLVVM.Items.Any())
-            {
                 Add(localLVVM.ItemsCast);
-            }
 
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(TreeSelect_FolderDetailUpdated));
 
@@ -80,6 +78,9 @@ namespace DoubleFile
                 MBoxStatic.Assert(99783, false);    // binding should dim the button
                 return;
             }
+
+            if (null == _selectedItem.LocalTreeNode)
+                return;
 
             _selectedItem.LocalTreeNode.GoToFile(null);
         }

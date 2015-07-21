@@ -64,6 +64,10 @@ namespace DoubleFile
             if (null == App.TopWindow)
                 App.TopWindow = MainWindow.WithMainWindow(w => w);
 
+            // use-case: assert before main window shown
+            if (null == App.TopWindow)
+                return;     // from lambda
+
             var prevTopWindow = App.TopWindow;
 
             Observable.FromEventPattern(this, "Activated")
@@ -71,10 +75,6 @@ namespace DoubleFile
             {
                 var bCanFlashWindow = App.CanFlashWindow_ResetsIt;     // querying it resets it
                 var topWindow = App.TopWindow;
-
-                // use-case: assert before main window shown
-                if (null == topWindow)
-                    return;     // from lambda
 
                 if (topWindow.SimulatingModal)
                 {
@@ -199,7 +199,7 @@ namespace DoubleFile
                 return null;
 
             if ((false == this is IModalWindow) &&
-                (false == this is IDarkWindow))     // will start modal and modeless, will never be modern window.
+                (false == this is IDarkWindow)) // IDarkWindow will start both modal and modeless; will never be modern window.
             {
                 MBoxStatic.Assert(99795, false);
                 return null;
@@ -212,7 +212,7 @@ namespace DoubleFile
             }
 
             if ((false == this is LocalMbox) &&
-                (false == this is IDarkWindow))     //  will never be modern window.
+                (false == this is IDarkWindow))     // IDarkWindow will never be modern window.
             {
                 MBoxStatic.Restart();
             }

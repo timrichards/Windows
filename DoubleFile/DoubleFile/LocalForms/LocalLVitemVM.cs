@@ -34,10 +34,8 @@ namespace DoubleFile
             Name { get; set; }
         //internal LocalLVitem
         //    IgnoreLVItem { get; set; }
-        internal List<LocalTreeNode>
-            TreeNodes { get; set; }
-        internal LocalTreeNode
-            LocalTreeNode { get; set; }
+        internal IList<LocalTreeNode>
+            TreeNodes = new LocalTreeNode[0];
 
         internal LocalLVVM
             ListView { get; set; }

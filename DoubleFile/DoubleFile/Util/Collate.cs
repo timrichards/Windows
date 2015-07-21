@@ -40,7 +40,7 @@ namespace DoubleFile
             if (0 == nCount)
                 return;
 
-            var bUnique = (null != listLVitems[0].LocalTreeNode);
+            var bUnique = (1 == listLVitems.Count);
             var nInterval = (nCount < 100) ? 10 : (nCount < 1000) ? 25 : 50;
 
             InsertSizeMarkerStatic.Go(listLVitems, nCount - 1, bUnique, bAdd: true);
@@ -360,7 +360,7 @@ namespace DoubleFile
 
                 MBoxStatic.Assert(1305.6321m, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
-                var lvItem = new LocalLVitemVM(new [] { treeNode.Text }) { LocalTreeNode = treeNode };
+                var lvItem = new LocalLVitemVM(new[] { treeNode.Text }) { TreeNodes = new[] { treeNode } };
                 var nodeDatum = treeNode.NodeDatum;
 
                 if (null == nodeDatum)      // added 2/13/15

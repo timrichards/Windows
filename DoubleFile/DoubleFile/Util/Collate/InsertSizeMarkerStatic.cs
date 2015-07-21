@@ -17,9 +17,7 @@ namespace DoubleFile
                 };
 
                 lvItem.Folder = ((Util.FormatSize(
-                    (bUnique
-                        ? listLVitems[nIx].LocalTreeNode
-                        : (listLVitems[nIx].TreeNodes)[0])
+                    listLVitems[nIx].TreeNodes[0]
                     .NodeDatum
                     .TotalLength,
                     bNoDecimal: true)));

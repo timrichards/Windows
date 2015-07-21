@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Media;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -17,7 +18,7 @@ namespace DoubleFile
             FontWeight { get { return _localLVitemVM.FontWeight; } }
 
         internal LocalTreeNode
-            LocalTreeNode { get { return _localLVitemVM.LocalTreeNode; } }
+            LocalTreeNode { get { return _localLVitemVM.TreeNodes.FirstOrDefault(); } }
 
         protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static string[] _propNamesA = null;

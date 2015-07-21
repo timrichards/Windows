@@ -7,15 +7,18 @@ namespace DoubleFile
 {
     class LocalLVitemVM : ListViewItemVM_Base, ILocalColorItemBase
     {
-        internal string
+        public string
             Folder { get { return SubItems[0]; } set { SubItems[0] = value; } }
-        internal string
+        public string
             Clones { get { return SubItems[1]; } }
 
         public Brush Foreground { get { return _classObject.Foreground; } }
         public Brush Background { get { return _classObject.Background; } }
 
-        internal FontWeight FontWeight
+        internal LocalTreeNode
+            LocalTreeNode { get { return TreeNodes.FirstOrDefault(); } }
+
+        public FontWeight FontWeight
         {
             get { return (_classObject.Datum8bits_ClassObject != 0) ? FontWeights.Bold : FontWeights.Normal; }
             set { _classObject.Datum8bits_ClassObject = (value == FontWeights.Normal) ? 0 : -1; }
@@ -37,16 +40,12 @@ namespace DoubleFile
         internal IList<LocalTreeNode>
             TreeNodes = new LocalTreeNode[0];
 
-        internal LocalLVVM
-            ListView { get; set; }
-
         internal int
             Index { get { return _classObject.Datum16bits_ClassObject; } set { _classObject.Datum16bits_ClassObject = value; } }
 
         internal LocalLVitemVM(IList<string> asString, LocalLVVM listView = null)
             : base(null, asString)
         {
-            ListView = listView;
         }
 
         LocalColorItemBase_ClassObject

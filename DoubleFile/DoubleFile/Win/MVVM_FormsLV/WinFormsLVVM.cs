@@ -2,11 +2,11 @@
 
 namespace DoubleFile
 {
-    partial class WinFormsLVVM : ListViewVM_Base<LVitem_FormsLVVM>
+    partial class WinFormsLVVM : LocalLVVM
     {
         public ICommand Icmd_GoTo { get; private set; }
 
-        public LVitem_FormsLVVM SelectedItem
+        public LocalLVitemVM SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -22,7 +22,7 @@ namespace DoubleFile
                 SelectedItem_AllTriggers();
             }
         }
-        internal void SelectedItem_Set(LVitem_FormsLVVM value)
+        internal void SelectedItem_Set(LocalLVitemVM value)
         {
             if (value == _selectedItem)
                 return;
@@ -34,11 +34,6 @@ namespace DoubleFile
         void SelectedItem_AllTriggers()
         {
         }
-        LVitem_FormsLVVM _selectedItem = null;
-
-        public string WidthFolder { get { return SCW; } }                   // franken all NaN
-        public string WidthClones { get { return SCW; } }                   // franken all NaN
-
-        internal override int NumCols { get { return LVitem_FormsLVVM.NumCols_; } }
+        LocalLVitemVM _selectedItem = null;
     }
 }

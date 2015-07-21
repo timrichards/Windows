@@ -42,8 +42,7 @@ namespace DoubleFile
 
             if (localLVVM.Items.Any())
             {
-                Add(localLVVM.ItemsCast.Select(item =>
-                    new LVitem_FormsLVVM(this, item)));
+                Add(localLVVM.ItemsCast);
             }
 
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(TreeSelect_FolderDetailUpdated));

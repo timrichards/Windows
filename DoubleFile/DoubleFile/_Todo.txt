@@ -5,6 +5,8 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- same volume / solitary red forecolors are too similar
+- message box is sizing to the top window but displaying on the main one: make an extra window small to test.
 - change SubItems[0] to Folder
 - observable object uses debug.assert
 - several unique still exist

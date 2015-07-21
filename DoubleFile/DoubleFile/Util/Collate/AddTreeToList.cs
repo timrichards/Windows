@@ -59,10 +59,10 @@ namespace DoubleFile
                     {
                         treeNode.BackColor = UtilColor.DarkYellowBG;
 
-                        if ((nodeDatum.LVitem != null) && (nodeDatum.LVitem.ListView == null))  // ignore LV
-                        {
-                            nodeDatum.LVitem.BackColor = treeNode.BackColor;
-                        }
+                        //if ((nodeDatum.LVitem != null) && (nodeDatum.LVitem.ListView == null))  // ignore LV
+                        //{
+                        //    nodeDatum.LVitem.BackColor = treeNode.BackColor;
+                        //}
                     }
 
                     if (treeNode.FirstNode != null)

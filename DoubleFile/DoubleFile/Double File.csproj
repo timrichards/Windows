@@ -210,7 +210,6 @@
     <Compile Include="Util\Win32Screen\RECT.cs" />
     <Compile Include="Util\Win32Screen\SWP.cs" />
     <Compile Include="Util\Win32Screen\Win32Screen.cs" />
-    <Compile Include="Win\MVVM_FormsLV\LVitem_FormsLVVM.cs" />
     <Compile Include="Win\MVVM_FormsLV\WinFormsLVVM_Impl.cs" />
     <Compile Include="Win\MVVM_FormsLV\WinFormsLVVM.cs" />
     <Compile Include="Win\MVVM_FolderList\LVitem_FolderListVM.cs" />

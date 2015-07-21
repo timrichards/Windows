@@ -117,11 +117,11 @@ namespace DoubleFile
                             (null != searchResultDir))
                         {
                             // a. SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
-                            // Not here. The other case B below.
+                            // Not here. The other case b below.
                             searchResultDir.StrDir = PathBuilder.FactoryCreateOrFind(strDir, Cancel: Abort);
 
                             var a = searchResultDir.StrDir.PathParts;
-                            MBoxStatic.Assert(99787, -1 != a[a.Length - 1]);  // a will never and b will always end with a -1.
+                            MBoxStatic.Assert(99789, -1 != a[a.Length - 1]);  // a will never and b will always end with a -1.
 
                             listResults.Add(searchResultDir, false);
                             searchResultDir = null;

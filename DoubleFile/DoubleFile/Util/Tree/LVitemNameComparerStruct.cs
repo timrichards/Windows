@@ -24,7 +24,7 @@ namespace DoubleFile
         {
             foreach (LocalLVitemVM item in list)
             {
-                item.Name = item.Text;
+                item.Name = item.Folder;
 
                 if ((null != item.SubItems) && (item.SubItems.Count > FileParse.knColLengthLV))
                 {

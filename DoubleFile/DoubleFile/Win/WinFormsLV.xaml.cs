@@ -7,21 +7,21 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinFolderList.xaml
     /// </summary>
-    partial class WinFolderList
+    partial class WinFormsLV
     {
         static internal readonly IDictionary<string, string>
             FolderListFragments = new ReadOnlyDictionary<string, string>(new Dictionary<string, string>
         {
-            {FolderListLarge  , "ANOVA weighted large" },   // These are all menu case (sentence case), even though
-            {FolderListSmall  , "ANOVA weighted small" },   // M:UI makes them all caps: future proof.
-            {FolderListRandom , "ANOVA weighted random"}
+            {FolderListSolitary , "Solitary"      },
+            {FolderListSameVol, "Same volume"   },
+            {FolderListClones , "Clones"        }
         });
 
-        internal const string FolderListLarge = "large";
-        internal const string FolderListSmall = "small";
-        internal const string FolderListRandom = "random";
+        internal const string FolderListSolitary = "solitary";
+        internal const string FolderListSameVol = "sameVol";
+        internal const string FolderListClones = "clones";
 
-        public WinFolderList()
+        public WinFormsLV()
         {
             InitializeComponent();            
         }
@@ -29,8 +29,8 @@ namespace DoubleFile
         protected override void LocalFragmentNavigation(string strFragment)
         {
             DataContext = 
-                _winFolderListVM =
-                new WinFolderListVM(strFragment)
+                _winFormsLVVM =
+                new WinFormsLVVM(strFragment)
                 .Init();
 
             LocalTitle =
@@ -41,11 +41,11 @@ namespace DoubleFile
         protected override void LocalNavigatedFrom()
         {
             DataContext =
-                _winFolderListVM =
+                _winFormsLVVM =
                 null;
         }
 
-        WinFolderListVM
-            _winFolderListVM = null;
+        WinFormsLVVM
+            _winFormsLVVM = null;
     }
 }

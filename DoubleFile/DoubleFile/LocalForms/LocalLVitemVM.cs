@@ -7,22 +7,22 @@ namespace DoubleFile
 {
     class LocalLVitemVM : ListViewItemVM_Base, ILocalColorItemBase
     {
-        public string
-            Text { get { return SubItems[0]; } }
-        public string
-            SubItem { get { return SubItems[1]; } }
-
-        protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
-        static string[] _propNamesA = null;
-
-        internal override int NumCols { get { return NumCols_; } }
-        internal const int NumCols_ = 2;
+        internal string
+            Folder { get { return SubItems[0]; } set { SubItems[0] = value; } }
+        internal string
+            Clones { get { return SubItems[1]; } }
 
         public Brush Foreground { get { return _classObject.Foreground; } }
         public Brush Background { get { return _classObject.Background; } }
 
         public int ForeColor { get { return _classObject.ForeColor; } set { _classObject.ForeColor = value; } }
         public int BackColor { get { return _classObject.BackColor; } set { _classObject.BackColor = value; } }
+
+        protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
+        static string[] _propNamesA = null;
+
+        internal override int NumCols { get { return NumCols_; } }
+        internal const int NumCols_ = 2;
 
         internal TabledString<Tabled_Folders>
             Name { get; set; }

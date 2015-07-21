@@ -1,62 +1,49 @@
-﻿using System.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DoubleFile
 {
-    partial class WinFolderListVM
+    partial class WinFormsLVVM
     {
-        internal WinFolderListVM(string strFragment)
+        internal WinFormsLVVM(string strFragment)
         {
-            var nPrev = uint.MaxValue;
-            var bAlt = false;
-
-            Action<int> AddFolders = nFolderScoreIndex =>
-            {
-                Func<LocalTreeNode, bool> Alternate = folder =>
-                {
-                    var nFolderScore = folder.NodeDatum.FolderScore[nFolderScoreIndex];
-
-                    if (nPrev == nFolderScore)
-                        return bAlt;
-
-                    nPrev = nFolderScore;
-                    return bAlt = !bAlt;
-                };
-
-                Util.UIthread(99828, () => Add(LocalTV.AllNodes
-                    .OrderByDescending(folder => folder.NodeDatum.FolderScore[nFolderScoreIndex])
-                    .Select(folder => new LVitem_FolderListVM { LocalTreeNode = folder, Alternate = Alternate(folder) })));
-            };
+            LocalLVVM localLVVM = null;
 
             switch (strFragment)
             {
-                case WinFolderList.FolderListLarge:
+                case WinFormsLV.FolderListSolitary:
                 {
-                    AddFolders(1);
-                    Util.WriteLine("FolderListLarge");
+                    Util.WriteLine("FolderListUnique");
+                    localLVVM = LocalTV.Solitary;
                     break;
                 }
 
-                case WinFolderList.FolderListSmall:
+                case WinFormsLV.FolderListSameVol:
                 {
-                    AddFolders(2);
-                    Util.WriteLine("FolderListSmall");
+                    Util.WriteLine("FolderListSameVol");
+                    localLVVM = LocalTV.SameVol;
                     break;
                 }
 
-                case WinFolderList.FolderListRandom:
+                case WinFormsLV.FolderListClones:
                 {
-                    AddFolders(0);
-                    Util.WriteLine("FolderListRandom");
+                    Util.WriteLine("FolderListClones");
+                    localLVVM = LocalTV.Clones;
                     break;
                 }
 
                 default:
                 {
-                    MBoxStatic.Assert(99887, false);
+                    MBoxStatic.Assert(99784, false);
                     return;
                 }
+            }
+
+            if (localLVVM.Items.Any())
+            {
+                Add(localLVVM.ItemsCast.Select(item =>
+                    new LVitem_FormsLVVM(this, item)));
             }
 
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(TreeSelect_FolderDetailUpdated));
@@ -67,7 +54,7 @@ namespace DoubleFile
                 TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
         }
 
-        internal WinFolderListVM Init()
+        internal WinFormsLVVM Init()
         {
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
             return this;
@@ -91,7 +78,7 @@ namespace DoubleFile
         {
             if (null == _selectedItem)
             {
-                MBoxStatic.Assert(99897, false);    // binding should dim the button
+                MBoxStatic.Assert(99783, false);    // binding should dim the button
                 return;
             }
 

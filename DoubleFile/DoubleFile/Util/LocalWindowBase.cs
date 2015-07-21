@@ -72,6 +72,10 @@ namespace DoubleFile
                 var bCanFlashWindow = App.CanFlashWindow_ResetsIt;     // querying it resets it
                 var topWindow = App.TopWindow;
 
+                // use-case: assert before main window shown
+                if (null == topWindow)
+                    return;     // from lambda
+
                 if (topWindow.SimulatingModal)
                 {
                     if (((this != topWindow) && (false == I.SimulatingModal)) ||

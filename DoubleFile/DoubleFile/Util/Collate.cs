@@ -81,7 +81,7 @@ namespace DoubleFile
                 var sbMatch = new StringBuilder();
 
                 foreach (var lvItem in _lsLVignore)
-                    sbMatch.AppendLine(lvItem.Text);
+                    sbMatch.AppendLine(lvItem.Folder);
 
                 IgnoreNodeQuery(("" + sbMatch).ToLower(), nMaxLevel, _lsRootNodes[0]);
                 Util.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds."); dtStart = DateTime.Now;
@@ -311,8 +311,7 @@ namespace DoubleFile
                     nodeDatum.LVitem = lvItem;
                 }
 
-                lvItem.SubItems[0] = nameNode.Text;
-                MBoxStatic.Assert(1305.6318m, false == string.IsNullOrWhiteSpace(lvItem.Text));
+                lvItem.Folder = nameNode.Text;
                 _lsLVdiffVol.Add(lvItem);
             }
 
@@ -647,7 +646,7 @@ namespace DoubleFile
                 {
                     if (_lsLVignore
                         .Where(lvItem => treeNode.Level == (("" + lvItem.SubItems[1]).ToInt() - 1))
-                        .Any(lvItem => ("" + lvItem.Text).Equals(treeNode.Text,
+                        .Any(lvItem => ("" + lvItem.Folder).Equals(treeNode.Text,
                             StringComparison.InvariantCultureIgnoreCase)))
                     {
                         MBoxStatic.Assert(99898, false);    // replace the Tag field with an LVitem

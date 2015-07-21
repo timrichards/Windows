@@ -69,7 +69,11 @@ namespace DoubleFile
                 ? (Window)owner
                 : MainWindow.WithMainWindow(w => w);
 
-            var rc = Win32Screen.GetWindowRect(Owner);
+            // use-case: assert before main window shown
+            var rc =
+                (null != Owner)
+                ? Win32Screen.GetWindowRect(Owner)
+                : Win32Screen.GetWindowMonitorInfo(this).rcWork;
 
             Left = rc.Left;
             Width = rc.Width;
@@ -119,7 +123,12 @@ namespace DoubleFile
                 }
             }
 
-            base.ShowDialog();
+            // use-case: assert before main window shown
+            if (null != MainWindow.WithMainWindow(w => w))
+                base.ShowDialog();
+            else
+                ((Window)this).ShowDialog();
+
             return _Result;
         }
 

@@ -31,7 +31,7 @@ namespace DoubleFile
             {
                 if (false == _bFolderListLinkCheck)
                 {
-                    MBoxStatic.Assert(99886, 6 == WinFolderList.FolderListFragments.Count);
+                    MBoxStatic.Assert(99886, 3 == WinFolderList.FolderListFragments.Count);
                     _bFolderListLinkCheck = true;
                 }
 
@@ -40,6 +40,22 @@ namespace DoubleFile
             }
         }
         static bool _bFolderListLinkCheck = false;
+
+        class FormsLV_Link : Link
+        {
+            internal FormsLV_Link(KeyValuePair<string, string> kvp)
+            {
+                if (false == _bFormsLV_LinkCheck)
+                {
+                    MBoxStatic.Assert(99782, 3 == WinFormsLV.FolderListFragments.Count);
+                    _bFormsLV_LinkCheck = true;
+                }
+
+                Source = new Uri("/Win/WinFormsLV.xaml#" + kvp.Key, UriKind.Relative);
+                DisplayName = kvp.Value;
+            }
+        }
+        static bool _bFormsLV_LinkCheck = false;
 
         internal const string SaveListingsFakeKey = "/SaveListings.xaml";
         static readonly Link _saveListingsLink = new MyLink("Save listings", SaveListingsFakeKey);
@@ -122,6 +138,10 @@ namespace DoubleFile
             WithMainWindow<T>(Func<MainWindow, T> doSomethingWith)
         {
             if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
+                return default(T);
+
+            // use-case: assert before main window shown
+            if (null == _mainWindowWR)
                 return default(T);
 
             MainWindow mainWindow = null;
@@ -253,14 +273,17 @@ namespace DoubleFile
                 new MyLink("Folders", "/Win/WinTreeView.xaml"),
                 new MyLink("Tree list", "/Win/WinTreeList.xaml")
             }},
-            new LinkGroup { DisplayName="Folder lists", Links =
+            new LinkGroup { DisplayName="Variance", Links =
             {
                 new FolderListLink(WinFolderList.FolderListFragments.ElementAt(0)),
                 new FolderListLink(WinFolderList.FolderListFragments.ElementAt(1)),
                 new FolderListLink(WinFolderList.FolderListFragments.ElementAt(2)),
-                new FolderListLink(WinFolderList.FolderListFragments.ElementAt(3)),
-                new FolderListLink(WinFolderList.FolderListFragments.ElementAt(4)),
-                new FolderListLink(WinFolderList.FolderListFragments.ElementAt(5))
+            }},
+            new LinkGroup { DisplayName="Clones", Links =
+            {
+                new FormsLV_Link(WinFormsLV.FolderListFragments.ElementAt(0)),
+                new FormsLV_Link(WinFormsLV.FolderListFragments.ElementAt(1)),
+                new FormsLV_Link(WinFormsLV.FolderListFragments.ElementAt(2))
             }},
             new LinkGroup { DisplayName="Files", Links =
             {

@@ -67,7 +67,7 @@ namespace DoubleFile
 
             // use-case: assert before main window shown   future proof
             if (null == App.TopWindow)
-                return;     // from lambda
+                return;
 
             var prevTopWindow = App.TopWindow;
 

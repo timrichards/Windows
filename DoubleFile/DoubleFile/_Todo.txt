@@ -6,7 +6,6 @@
 - fix slider in tree list
 
 - same volume / solitary red forecolors are too similar
-- message box is sizing to the top window but displaying on the main one: make an extra window small to test.
 - change SubItems[0] to Folder
 - observable object uses debug.assert
 - several unique still exist
@@ -99,7 +98,7 @@
 - services, decouple: Unity frameork: rewrite in Node/Angular; C++; Linux etc. Start these with unit testing.
 - what C# features don't translate well to other languages like C++? is operator?
 - neither is nor as are reflection. as is 20x slower though. p. 123
-- Join() vs Block() - Join() completely locks up the Dispatcher? Does Block() wait At PushFrame() like a traffic cop?
+- Join() vs Block() - Join() completely locks up the Dispatcher? Does Block() wait At PushFrame() like a tr affic cop?
 
 - Count property is very slow on Dictionary even though it's an ICollection. List and stack to be trusted?
 - Replace First() with FirstOnlyAssert()
@@ -116,6 +115,31 @@
 - replace .Cast with (ICollection<>)
 - replace IEnumerable with ICollection where possible
 - replace null member vars like Thread with instances so no need to test for null
+
+Coding purpose:
+- Change-managed Windows.Forms.ListView app into WPF app with MVVM DataGrids
+- Implemented modal (does not use WinForms ShowDialog)
+- Implemented 220 runtime asserts (does not depend on Debug.Assert)
+- Optimized memory; DRY; standards; maintainability; speed O(1) where possible
+
+Skills used:
+- Reactive Extensions (this is a C# project); subject-observer
+- Linq to objects; tuples; generics; try-catch; extension methods
+- Native methods; bit shifting; datum ints; binary search
+- Threading; parallel; dispatcher frame
+- Interactivity (System.Windows); triggers; behaviors; DRY xaml in styles
+
+Specific code areas:
+- UX surrounding compressed project file containing any number of flat directory listings
+- Metro UI; consistent page-by-page
+- Progress UI
+- String table
+- Bespoke UX: Tree map; tree list to replace tree view
+- search with regex; statistics: ANOVA
+- Fast long-path large fetch native directory listings
+- Fast 1 MB sample faux checksum per file on your drive (512K from start; 512K from tail)
+
+The main purpose of Double File is to allow you to pack up your drive and go: transition from one computer to another; or put a new drive or operating system in. Copy the files you use then let the rest just sit in storage. Drive capacities and speeds are increasing. This drive has nothing better to do than serve as backup; to maintain environment state. Plug it back in and be right where you were when you left it. But wait - what's actually on those drives, and are they backed up? Out of sight, out of mind: that's where Double File comes in. Catalog them, then have them curated for you on your current setup as they sit in storage: safe from transitional hazards. Plan well, then act: reuse the drives after making a plan.
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
 99781 next low assert

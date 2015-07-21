@@ -67,7 +67,7 @@ namespace DoubleFile
             Owner =
                 ((null != owner) && (false == owner.LocalIsClosed))
                 ? (Window)owner
-                : MainWindow.WithMainWindow(w => w);
+                : Application.Current.MainWindow;
 
             // use-case: assert before main window shown
             var rc =

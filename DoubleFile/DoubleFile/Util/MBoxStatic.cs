@@ -75,6 +75,14 @@ namespace DoubleFile
             if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
                 return MessageBoxResult.None;
 
+            if (null == owner)
+            {
+                owner =
+                    (App.TopWindow is IModalWindow)
+                    ? App.TopWindow
+                    : MainWindow.WithMainWindow(w => w);
+            } 
+
             if ((null != owner) &&
                 owner.LocalIsClosed)
             {
@@ -89,7 +97,7 @@ namespace DoubleFile
 
                 Util.UIthread(99888, () =>
                     msgBoxRet =
-                    (_messageBox = new LocalMbox(owner ?? App.TopWindow, strMessage, strTitle, buttons ?? MessageBoxButton.OK))
+                    (_messageBox = new LocalMbox(owner, strMessage, strTitle, buttons ?? MessageBoxButton.OK))
                     .ShowDialog());
 
                 if (_restart)

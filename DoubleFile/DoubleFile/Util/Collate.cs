@@ -17,7 +17,7 @@ namespace DoubleFile
             ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>> dictNodes,
             LocalLVVM lvClones,
             LocalLVVM lvSameVol,
-            LocalLVVM lvUnique,
+            LocalLVVM lvSolitary,
             IReadOnlyList<LocalTreeNode> lsRootNodes,
             List<LocalTreeNode> lsAllNodes,
             List<LocalLVitemVM> lsLVignore,
@@ -26,7 +26,7 @@ namespace DoubleFile
             _dictNodes = dictNodes;
             _lvClones = lvClones;
             _lvSameVol = lvSameVol;
-            _lvUnique = lvUnique;
+            _lvSolitary = lvSolitary;
             _lsRootNodes = lsRootNodes;
             _lsAllNodes = lsAllNodes;
             _lsLVignore = lsLVignore;
@@ -376,12 +376,12 @@ namespace DoubleFile
                 treeNode.ForeColor = UtilColor.Red;
 
                 lvItem.ForeColor = treeNode.ForeColor;
-                _lsLVunique.Add(lvItem);
+                _lsLVsolitary.Add(lvItem);
                 MBoxStatic.Assert(1305.6324m, nodeDatum.LVitem == null);
                 nodeDatum.LVitem = lvItem;
             }
 
-            InsertSizeMarkers(_lsLVunique);
+            InsertSizeMarkers(_lsLVsolitary);
 
             var lsSameVol = new List<LocalTreeNode>();
 
@@ -466,10 +466,10 @@ namespace DoubleFile
                 return;
             }
 
-            MBoxStatic.Assert(1305.6334m, 0 == _lvUnique.Items.Count);
+            MBoxStatic.Assert(1305.6334m, 0 == _lvSolitary.Items.Count);
 
-            if (0 < _lsLVunique.Count)
-                _lvUnique.Add(_lsLVunique);
+            if (0 < _lsLVsolitary.Count)
+                _lvSolitary.Add(_lsLVsolitary);
 
             if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
                 _bAborted)
@@ -689,13 +689,13 @@ namespace DoubleFile
             _dictNodes = null;
         readonly LocalLVVM _lvClones = null;
         readonly LocalLVVM _lvSameVol = null;
-        readonly LocalLVVM _lvUnique = null;
+        readonly LocalLVVM _lvSolitary = null;
         readonly IReadOnlyList<LocalTreeNode> _lsRootNodes = null;
         readonly IList<LocalTreeNode> _lsAllNodes = null;
         readonly IList<LocalLVitemVM> _lsLVignore = null;
 
         // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.
-        readonly IList<LocalLVitemVM> _lsLVunique = new List<LocalLVitemVM>();
+        readonly IList<LocalLVitemVM> _lsLVsolitary = new List<LocalLVitemVM>();
         readonly IList<LocalLVitemVM> _lsLVsameVol = new List<LocalLVitemVM>();
         readonly IList<LocalLVitemVM> _lsLVdiffVol = new List<LocalLVitemVM>();
         readonly IDictionary<LocalTreeNode, LocalLVitemVM> _dictIgnoreNodes = new Dictionary<LocalTreeNode, LocalLVitemVM>();

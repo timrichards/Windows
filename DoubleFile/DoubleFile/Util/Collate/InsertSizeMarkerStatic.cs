@@ -7,7 +7,7 @@ namespace DoubleFile
     {
         static class InsertSizeMarkerStatic
         {
-            static internal void Go(IList<LocalLVitemVM> listLVitems, int nIx, bool bUnique, bool bAdd = false)
+            static internal void Go(IList<LocalLVitemVM> listLVitems, int nIx, bool bSolitary, bool bAdd = false)
             {
                 var lvItem = new LocalLVitemVM(new[] { "" })
                 {
@@ -16,20 +16,16 @@ namespace DoubleFile
                     FontWeight = FontWeights.Bold
                 };
 
-                lvItem.Folder = ((Util.FormatSize(
-                    listLVitems[nIx].TreeNodes[0]
+                lvItem.Folder = listLVitems[nIx].WithLocalTreeNode(localTreeNode => ((Util.FormatSize(
+                    localTreeNode
                     .NodeDatum
                     .TotalLength,
-                    bNoDecimal: true)));
+                    bNoDecimal: true))));
 
                 if (bAdd)
-                {
                     listLVitems.Add(lvItem);
-                }
                 else
-                {
                     listLVitems.Insert(nIx, lvItem);
-                }
             }
         }
     }

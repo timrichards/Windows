@@ -29,7 +29,7 @@ namespace DoubleFile
                 if (this.ThrowOnInvalidPropertyName)
                     throw new Exception(msg);
                 else
-                    Debug.Fail(msg);
+                    MBoxStatic.Assert(99781, false, msg);
             }
         }
 

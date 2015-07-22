@@ -67,7 +67,7 @@ namespace DoubleFile
             var tuple = initiatorTuple.Item1;
 
             ItemsCast
-                .Where(lvItem => lvItem.LocalTreeNode == tuple.Item2)
+                .Where(lvItem => lvItem.WithLocalTreeNode(t => t) == tuple.Item2)
                 .FirstOnlyAssert(SelectedItem_Set);
         }
 
@@ -79,10 +79,12 @@ namespace DoubleFile
                 return;
             }
 
-            if (null == _selectedItem.LocalTreeNode)
+            var localTreeNode = _selectedItem.WithLocalTreeNode(t => t);
+
+            if (null == localTreeNode)
                 return;
 
-            _selectedItem.LocalTreeNode.GoToFile(null);
+            localTreeNode.GoToFile(null);
         }
 
         List<IDisposable>

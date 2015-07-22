@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -14,9 +15,6 @@ namespace DoubleFile
 
         public Brush Foreground { get { return _classObject.Foreground; } }
         public Brush Background { get { return _classObject.Background; } }
-
-        internal LocalTreeNode
-            LocalTreeNode { get { return TreeNodes.FirstOrDefault(); } }
 
         public FontWeight FontWeight
         {
@@ -42,6 +40,15 @@ namespace DoubleFile
 
         internal int
             Index { get { return _classObject.Datum16bits_ClassObject; } set { _classObject.Datum16bits_ClassObject = value; } }
+
+        internal T
+            WithLocalTreeNode<T>(Func<LocalTreeNode, T> doSomethingWith)
+        {
+            if (0 == TreeNodes.Count)
+                return default(T);
+
+            return doSomethingWith(TreeNodes[0]);
+        }
 
         internal LocalLVitemVM(IList<string> asString)
             : base(null, asString)

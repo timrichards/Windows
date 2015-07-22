@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -123,6 +124,22 @@ namespace DoubleFile
         }
 
         static internal T2 TryGetValue<T1, T2>(this IDictionary<T1, T2> dict, T1 key) where T2 : class
+        {
+            T2 outValue = null;
+
+            dict.TryGetValue(key, out outValue);
+            return outValue;
+        }
+
+        static internal T2 TryGetValue<T1, T2>(this SortedDictionary<T1, T2> dict, T1 key) where T2 : class
+        {
+            T2 outValue = null;
+
+            dict.TryGetValue(key, out outValue);
+            return outValue;
+        }
+
+        static internal T2 TryGetValue<T1, T2>(this ConcurrentDictionary<T1, T2> dict, T1 key) where T2 : class
         {
             T2 outValue = null;
 

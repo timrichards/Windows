@@ -10,7 +10,7 @@ namespace DoubleFile
     public partial class UC_VolumeGroup : UserControl
     {
         public string Text { get { return formEdit_VolumeGroup.Text; } set { formEdit_VolumeGroup.Text = value; } }
-        internal bool IsWinVolumeGroup { set; private get; }
+        internal bool IsWinVolumeGroup { private get; set; }
 
         public UC_VolumeGroup()
         {

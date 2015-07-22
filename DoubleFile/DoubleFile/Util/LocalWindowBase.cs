@@ -10,7 +10,7 @@ namespace DoubleFile
     {
         internal bool LocalDidOpen { get; private set; }
         internal bool LocalIsClosing { get; private set; }
-        public bool LocalIsClosed { get; private set; }
+        public bool LocalIsClosed { get; private set; } = true;
 
         internal bool? LocalDialogResult
         {
@@ -130,7 +130,6 @@ namespace DoubleFile
             });
 
             ShowActivated = true;
-            LocalIsClosed = true;
         }
 
         IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)

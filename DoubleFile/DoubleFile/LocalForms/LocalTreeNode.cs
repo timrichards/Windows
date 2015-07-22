@@ -9,7 +9,7 @@ namespace DoubleFile
         public IReadOnlyList<LocalTreeNode>
             Nodes { get; protected set; }
         internal virtual string
-            Text { get { return _Text; } set { _Text = value; } } TabledString<Tabled_Folders> _Text = null;
+            Text { get { return _text; } set { _text = value; } } TabledString<Tabled_Folders> _text = null;
         internal LocalTreeNode
             FirstNode { get { return ((null != Nodes) && (0 < Nodes.Count)) ? Nodes[0] : null; } }
         public virtual LocalTreeNode

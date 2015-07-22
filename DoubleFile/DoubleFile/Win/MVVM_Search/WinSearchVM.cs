@@ -10,7 +10,7 @@ namespace DoubleFile
         public ICommand Icmd_Files { get; private set; }
         public ICommand Icmd_GoTo { get; private set; }
 
-        public string SearchText { set; private get; }
+        public string SearchText { private get; set; }
 
         public LVitem_SearchVM SelectedItem
         {

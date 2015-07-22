@@ -6,7 +6,7 @@ namespace DoubleFile
 {
     static class UtilColor
     {
-        static internal IReadOnlyDictionary<int, string>
+        static internal readonly IReadOnlyDictionary<int, string>
             Descriptions = new Dictionary<int, string>
         {
             {Empty,             ""},

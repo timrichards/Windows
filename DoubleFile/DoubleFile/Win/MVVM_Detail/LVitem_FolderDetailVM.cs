@@ -5,8 +5,8 @@ namespace DoubleFile
 {
     class LVitem_FolderDetailVM : ListViewItemVM_Base
     {
-        public Brush Foreground { get; internal set; }
-        public Brush Background { get; internal set; }
+        public Brush Foreground { get; internal set; } = Brushes.White;
+        public Brush Background { get; internal set; } = Brushes.Transparent;
 
         public string Header { get { return SubItems[0]; } private set { SetProperty(0, value); } }
         public string Detail { get { return SubItems[1]; } private set { SetProperty(1, value); } }
@@ -19,13 +19,6 @@ namespace DoubleFile
 
         internal LVitem_FolderDetailVM(IList<string> lsStr = null)
             : base(null, lsStr)
-        {
-            Foreground = Brushes.White;
-            Background = Brushes.Transparent;
-        }
-
-        internal LVitem_FolderDetailVM(LVitem_FolderDetailVM lvItemTemp)
-            : this(lvItemTemp.SubItems)
         {
         }
     }

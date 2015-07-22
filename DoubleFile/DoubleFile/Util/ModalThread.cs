@@ -142,7 +142,7 @@ namespace DoubleFile
         static T
             GoA<T>(Func<IDarkWindow, T> showDialog)
         {
-            var dictOwners = Util.Closure(() =>
+            IReadOnlyDictionary<ILocalWindow, Window> dictOwners = Util.Closure(() =>
             {
                 var dictOwners_ = new Dictionary<ILocalWindow, Window>();
 
@@ -151,7 +151,7 @@ namespace DoubleFile
                     .Where(w => false == w.LocalIsClosed)    // not shown yet
                     .ForEach(window => dictOwners_.Add(window, ((Window)window).Owner));
 
-                return new ReadOnlyDictionary<ILocalWindow, Window>(dictOwners_);   // from lasmbda
+                return dictOwners_;   // from lasmbda
             });
 
             var mainWindow = MainWindow.WithMainWindow(w => w);

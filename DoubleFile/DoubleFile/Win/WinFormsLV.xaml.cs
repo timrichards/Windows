@@ -9,13 +9,13 @@ namespace DoubleFile
     /// </summary>
     partial class WinFormsLV
     {
-        static internal readonly IDictionary<string, string>
-            FolderListFragments = new ReadOnlyDictionary<string, string>(new Dictionary<string, string>
+        static internal readonly IReadOnlyDictionary<string, string>
+            FolderListFragments = new Dictionary<string, string>
         {
             {FolderListSolitary,    "Solitary"      },
             {FolderListSameVol,     "Same volume"   },
             {FolderListClones,      "Clones"        }
-        });
+        };
 
         internal const string FolderListSolitary = "solitary";
         internal const string FolderListSameVol = "sameVol";

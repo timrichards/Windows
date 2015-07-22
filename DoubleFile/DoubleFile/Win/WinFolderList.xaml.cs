@@ -9,13 +9,13 @@ namespace DoubleFile
     /// </summary>
     partial class WinFolderList
     {
-        static internal readonly IDictionary<string, string>
-            FolderListFragments = new ReadOnlyDictionary<string, string>(new Dictionary<string, string>
+        static internal readonly IReadOnlyDictionary<string, string>
+            FolderListFragments = new Dictionary<string, string>
         {
             {FolderListLarge  , "ANOVA weighted large" },   // These are all menu case (sentence case), even though
             {FolderListSmall  , "ANOVA weighted small" },   // M:UI makes them all caps: future proof.
             {FolderListRandom , "ANOVA weighted random"}
-        });
+        };
 
         internal const string FolderListLarge = "large";
         internal const string FolderListSmall = "small";

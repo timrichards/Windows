@@ -9,21 +9,21 @@ namespace DoubleFile
         static internal IReadOnlyDictionary<int, string>
             Descriptions = new Dictionary<int, string>
         {
-            {Empty,				""},
-            {White,				""},
-            {LightBlue,			"This folder has multiple copies on at least two separate volumes."},
-            {DarkGray,			""},						            // ignore list
-            {DarkKhaki,			""},						            // Treemap: Folder containing files
-            {DarkRedBG,			"Contains folders that have no copy}, or copies are on one volume."},
-            {DarkSlateGray,		""},						            // LV marker item back color
-            {Firebrick,			"All copies of this folder reside on one volume."},
-            {DarkYellowBG,		"This folder and its parent have a copy on a separate volume."},
-            {LightGray,			"This folder has no data."},
-            {MediumSpringGreen,	""},						            // Treemap: Free space
-            {MediumVioletRed,	""},						            // Treemap
-            {OliveDrab,			""},						            // Treemap: File
-            {Red,				"This folder has no exact copy."},
-            {SteelBlue,			"This folder has a copy on a separate volume."}
+            {Empty,             ""},
+            {White,             ""},
+            {LightBlue,         "This folder has multiple copies on at least two separate volumes."},
+            {DarkGray,          ""},						            // ignore list
+            {DarkKhaki,         ""},						            // Treemap: Folder containing files
+            {DarkRedBG,         "Contains folders that have no copy, or copies are on one volume."},
+            {DarkSlateGray,     ""},						            // LV marker item back color
+            {Firebrick,         "All copies of this folder reside on one volume."},
+            {DarkYellowBG,      "This folder and its parent have a copy on a separate volume."},
+            {LightGray,         "This folder has no data."},
+            {MediumSpringGreen, ""},						            // Treemap: Free space
+            {MediumVioletRed,   ""},						            // Treemap
+            {OliveDrab,         ""},						            // Treemap: File
+            {Red,               "This folder has no exact copy."},
+            {SteelBlue,         "This folder has a copy on a separate volume."}
         };
 
         static internal int Empty { get { return Color.Empty.ToArgb(); } }

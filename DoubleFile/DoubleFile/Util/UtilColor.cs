@@ -6,8 +6,25 @@ namespace DoubleFile
 {
     static class UtilColor
     {
-        static internal readonly IDictionary<int, string>
-            Description = new Dictionary<int, string>();
+        static internal IReadOnlyDictionary<int, string>
+            Descriptions = new Dictionary<int, string>
+        {
+            {Empty,				""},
+            {White,				""},
+            {LightBlue,			"This folder has multiple copies on at least two separate volumes."},
+            {DarkGray,			""},						            // ignore list
+            {DarkKhaki,			""},						            // Treemap: Folder containing files
+            {DarkRedBG,			"Contains folders that have no copy}, or copies are on one volume."},
+            {DarkSlateGray,		""},						            // LV marker item back color
+            {Firebrick,			"All copies of this folder reside on one volume."},
+            {DarkYellowBG,		"This folder and its parent have a copy on a separate volume."},
+            {LightGray,			"This folder has no data."},
+            {MediumSpringGreen,	""},						            // Treemap: Free space
+            {MediumVioletRed,	""},						            // Treemap
+            {OliveDrab,			""},						            // Treemap: File
+            {Red,				"This folder has no exact copy."},
+            {SteelBlue,			"This folder has a copy on a separate volume."}
+        };
 
         static internal int Empty { get { return Color.Empty.ToArgb(); } }
         static internal int White { get { return Color.White.ToArgb(); } }
@@ -41,8 +58,8 @@ namespace DoubleFile
 
         static internal int GetFG_ARGB(int n) { return CLUT[(n & _knCLUT_FGmask)]; }
         static internal int GetBG_ARGB(int n) { return CLUT[(n & _knCLUT_BGmask) >> (CLUT_Shift >> 1)]; }
-        static internal int SetFG_ARGB(ref int n, int argb) { return n = (int)(n & _knCLUT_BGmask) + _RevCLUT[argb]; }
-        static internal int SetBG_ARGB(ref int n, int argb) { return n = (int)(n & _knCLUT_FGmask) + (_RevCLUT[argb] << (CLUT_Shift >> 1)); }
+        static internal int SetFG_ARGB(ref int n, int argb) { return n = (int)(n & _knCLUT_BGmask) + _revCLUT[argb]; }
+        static internal int SetBG_ARGB(ref int n, int argb) { return n = (int)(n & _knCLUT_FGmask) + (_revCLUT[argb] << (CLUT_Shift >> 1)); }
 
         static internal System.Windows.Media.Brush ARGBtoBrush(int nFormsARGB)
         {
@@ -63,41 +80,26 @@ namespace DoubleFile
         static UtilColor()
         {
             int nIx = 0;
+            var revClut = new Dictionary<int, int>();
 
-            _RevCLUT[Empty] = nIx++;
-            _RevCLUT[White] = nIx++;
-            _RevCLUT[LightBlue] = nIx++;
-            _RevCLUT[DarkGray] = nIx++;
-            _RevCLUT[DarkKhaki] = nIx++;
-            _RevCLUT[DarkRedBG] = nIx++;
-            _RevCLUT[DarkSlateGray] = nIx++;
-            _RevCLUT[Firebrick] = nIx++;
-            _RevCLUT[DarkYellowBG] = nIx++;
-            _RevCLUT[LightGray] = nIx++;
-            _RevCLUT[MediumSpringGreen] = nIx++;
-            _RevCLUT[MediumVioletRed] = nIx++;
-            _RevCLUT[OliveDrab] = nIx++;
-            _RevCLUT[Red] = nIx++;
-            _RevCLUT[SteelBlue] = nIx++;
-
+            revClut[Empty] = nIx++;
+            revClut[White] = nIx++;
+            revClut[LightBlue] = nIx++;
+            revClut[DarkGray] = nIx++;
+            revClut[DarkKhaki] = nIx++;
+            revClut[DarkRedBG] = nIx++;
+            revClut[DarkSlateGray] = nIx++;
+            revClut[Firebrick] = nIx++;
+            revClut[DarkYellowBG] = nIx++;
+            revClut[LightGray] = nIx++;
+            revClut[MediumSpringGreen] = nIx++;
+            revClut[MediumVioletRed] = nIx++;
+            revClut[OliveDrab] = nIx++;
+            revClut[Red] = nIx++;
+            revClut[SteelBlue] = nIx++;
+            _revCLUT = revClut;
             MBoxStatic.Assert(99957, nIx == _knNumColors);
             MBoxStatic.Assert(99910, 0 == CLUT_Shift >> 4);          // 16 bits, not _knNumColors
-
-            Description[Empty] = "";
-            Description[White] = "";
-            Description[LightBlue] = "This folder has multiple copies on at least two separate volumes.";
-            Description[DarkGray] = "";             // ignore list
-            Description[DarkKhaki] = "";            // Treemap: Folder containing files
-            Description[DarkRedBG] = "Contains folders that have no copy; or copies are on one volume.";
-            Description[DarkSlateGray] = "";        // LV marker item back color
-            Description[Firebrick] = "All copies of this folder reside on one volume.";
-            Description[DarkYellowBG] = "This folder and its parent have a copy on a separate volume.";
-            Description[LightGray] = "This folder has no data.";
-            Description[MediumSpringGreen] = "";    // Treemap: Free space
-            Description[MediumVioletRed] = "";      // Treemap
-            Description[OliveDrab] = "";            // Treemap: File
-            Description[Red] = "This folder has no exact copy.";
-            Description[SteelBlue] = "This folder has a copy on a separate volume.";
         }
 
         const int
@@ -106,7 +108,7 @@ namespace DoubleFile
             _knCLUT_FGmask = 0xF;
         static readonly uint
             _knCLUT_BGmask = CLUT_Mask - _knCLUT_FGmask;
-        static readonly IDictionary<int, int>
-            _RevCLUT = new Dictionary<int, int>();
+        static readonly IReadOnlyDictionary<int, int>
+            _revCLUT = null;
     }
 }

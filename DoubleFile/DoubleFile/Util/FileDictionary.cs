@@ -31,11 +31,11 @@ namespace DoubleFile
 
         internal void Clear()
         {
-            _DictFiles = null;
+            _dictFiles = null;
             _bListingFileWithOnlyHashV1pt0 = false;
         }
 
-        internal bool IsEmpty { get { return null == _DictFiles; } }
+        internal bool IsEmpty { get { return null == _dictFiles; } }
         internal void ResetAbortFlag() { IsAborted = false; }
 
         internal bool AllListingsHashV2
@@ -72,7 +72,7 @@ namespace DoubleFile
 
         internal uint[] GetFolderScorer(FileKeyTuple fileKeyTuple)
         {
-            var tuple = _DictFiles.TryGetValue(fileKeyTuple);
+            var tuple = _dictFiles.TryGetValue(fileKeyTuple);
 
             return
                 (null != tuple)
@@ -89,13 +89,13 @@ namespace DoubleFile
                 ? 10
                 : 11;
 
-            if (null == _DictFiles)
+            if (null == _dictFiles)
                 return null;
 
             if (asFileLine.Length <= nHashColumn)
                 return null;
 
-            var tuple = _DictFiles.TryGetValue(FileKeyTuple.FactoryCreate(
+            var tuple = _dictFiles.TryGetValue(FileKeyTuple.FactoryCreate(
                 asFileLine[nHashColumn],
                 ("" + asFileLine[7]).ToUlong()));
 
@@ -106,7 +106,7 @@ namespace DoubleFile
                 tuple.Item2.AsParallel()
                 .Select(lookup => new DuplicateStruct
             {
-                LVitemProjectVM = _DictItemNumberToLV[GetLVitemProjectVM(lookup)],
+                LVitemProjectVM = _dictItemNumberToLV[GetLVitemProjectVM(lookup)],
                 LineNumber = GetLineNumber(lookup)
             })
                 .ToList();
@@ -116,7 +116,7 @@ namespace DoubleFile
         {
             _LVprojectVM = lvProjectVM;
             _callbackWR = callbackWR;
-            _DictFiles = null;
+            _dictFiles = null;
             IsAborted = false;
 
             _thread = Util.ThreadMake(() => { Go(); _blockingFrame.Continue = false; });
@@ -146,18 +146,21 @@ namespace DoubleFile
 
             var nLVitems = 0;
 
-            _DictLVtoItemNumber.Clear();
-            _DictItemNumberToLV.Clear();
+            var dictLVtoItemNumber = new Dictionary<LVitem_ProjectVM, int>();
+            var dictItemNumberToLV = new Dictionary<int, LVitem_ProjectVM>();
 
             foreach (var lvItem
                 in _LVprojectVM.ItemsCast
                 .Where(lvItem => lvItem.CanLoad)
                 .OrderBy(lvItem => lvItem.SourcePath))
             {
-                _DictLVtoItemNumber.Add(lvItem, nLVitems);
-                _DictItemNumberToLV.Add(nLVitems, lvItem);
+                dictLVtoItemNumber.Add(lvItem, nLVitems);
+                dictItemNumberToLV.Add(nLVitems, lvItem);
                 ++nLVitems;
             }
+
+            _dictLVtoItemNumber = dictLVtoItemNumber;
+            _dictItemNumberToLV = dictItemNumberToLV;
 
             var cts = new CancellationTokenSource();
             var nProgress = 0;
@@ -178,7 +181,7 @@ namespace DoubleFile
                     return;     // from inner lambda
                 }
 
-                var nLVitem = _DictLVtoItemNumber[lvItem];
+                var nLVitem = _dictLVtoItemNumber[lvItem];
                 var bOnlyHashV1pt0 = true;
 
                 foreach (var tuple in
@@ -232,7 +235,7 @@ namespace DoubleFile
                     SetLVitemProjectVM(ref lookup, nLVitem);
                     SetLineNumber(ref lookup, tuple.Item1);
 #if (DEBUG)
-                    MBoxStatic.Assert(99907, _DictItemNumberToLV[GetLVitemProjectVM(lookup)] == lvItem);
+                    MBoxStatic.Assert(99907, _dictItemNumberToLV[GetLVitemProjectVM(lookup)] == lvItem);
                     MBoxStatic.Assert(99908, GetLineNumber(lookup) == tuple.Item1);
 #endif
                     Insert(dictV1pt0, keyv1pt0, lookup, ref nFolderCount1pt0);
@@ -257,7 +260,7 @@ namespace DoubleFile
             var nFolderScorer = 0U;
             var nFolderCount = (uint)(_bListingFileWithOnlyHashV1pt0 ? nFolderCount1pt0 : nFolderCount2);
 
-            _DictFiles =
+            _dictFiles =
                 (_bListingFileWithOnlyHashV1pt0 ? dictV1pt0 : dictV2)
                 .Where(kvp => 1 < kvp.Value.Count)
                 .OrderBy(kvp => kvp.Key.Item2)
@@ -266,7 +269,7 @@ namespace DoubleFile
                     kvp.Value.AsEnumerable()));
 
             MBoxStatic.Assert(99895, 1 == nFolderCount - nFolderScorer, bTraceOnly: true);
-            MBoxStatic.Assert(99896, _DictFiles.Count == nFolderCount - 1, bTraceOnly: true);
+            MBoxStatic.Assert(99896, _dictFiles.Count == nFolderCount - 1, bTraceOnly: true);
             Util.WriteLine("_DictFiles " + (DateTime.Now - dt).TotalMilliseconds + " ms");   // 650 ms 
 
             // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step
@@ -331,7 +334,7 @@ namespace DoubleFile
         {
             using (var writer = new StreamWriter(_ksSerializeFile, false))
             {
-                foreach (var kvp in _DictFiles)
+                foreach (var kvp in _dictFiles)
                 {
                     writer.Write(kvp.Key.Item1 + " " + kvp.Key.Item2);
 
@@ -356,19 +359,21 @@ namespace DoubleFile
                 string strLine = null;
                 var nFolderScorer = 0U;
 
-                _DictFiles = new Dictionary<FileKeyTuple, Tuple<uint[], IEnumerable<int>>>();
+                var dictFiles = new Dictionary<FileKeyTuple, Tuple<uint[], IEnumerable<int>>>();
 
                 while (null != (strLine = reader.ReadLine()))
                 {
                     var asLine = strLine.Split('\t');
                     var asKey = asLine[0].Split(' ');
 
-                    _DictFiles[FileKeyTuple.FactoryCreate(asKey[0], ("" + asKey[1]).ToUlong())] =
+                    dictFiles[FileKeyTuple.FactoryCreate(asKey[0], ("" + asKey[1]).ToUlong())] =
                         Tuple.Create(new uint[] { nFolderScorer++, 0, 0 },
                         asLine
                         .Skip(1)
                         .Select(s => ("" + s).ToInt()));
                 }
+
+                _dictFiles = dictFiles;
             }
         }
 
@@ -383,12 +388,12 @@ namespace DoubleFile
         readonly string
             _ksSerializeFile = ProjectFile.TempPath + "_DuplicateFiles._";
 
-        readonly IDictionary<LVitem_ProjectVM, int>
-            _DictLVtoItemNumber = new Dictionary<LVitem_ProjectVM, int> { };
-        readonly IDictionary<int, LVitem_ProjectVM>
-            _DictItemNumberToLV = new Dictionary<int, LVitem_ProjectVM> { };
-        IDictionary<FileKeyTuple, Tuple<uint[], IEnumerable<int>>>
-            _DictFiles = null;
+        IReadOnlyDictionary<LVitem_ProjectVM, int>
+            _dictLVtoItemNumber = null;
+        IReadOnlyDictionary<int, LVitem_ProjectVM>
+            _dictItemNumberToLV = null;
+        IReadOnlyDictionary<FileKeyTuple, Tuple<uint[], IEnumerable<int>>>
+            _dictFiles = null;
         bool
             _bListingFileWithOnlyHashV1pt0 = false;
 

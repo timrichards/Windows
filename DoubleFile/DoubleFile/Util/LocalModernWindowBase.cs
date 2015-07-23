@@ -38,6 +38,7 @@ namespace DoubleFile
             if (null != InitForMainWindowOnly)
             {
                 InitForMainWindowOnly(Init);
+                LocalIsClosed = false;          // bootstrap main window
                 return;
             }
 

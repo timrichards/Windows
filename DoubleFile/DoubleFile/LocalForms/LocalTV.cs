@@ -41,9 +41,9 @@ namespace DoubleFile
             DictVolumeInfo { get { return Util.WR(_wr, o => o._dictVolumeInfo); } }
         readonly Dictionary<string, string> _dictVolumeInfo = new Dictionary<string, string>();
 
-        static internal Tuple<IEnumerable<string>, string, LocalTreeNode, string>
+        static internal TreeSelect.FileListUpdated
             TreeSelect_FileList { get { return Util.WR(_wr, o => o._treeSelect_FileList); } }
-        Tuple<IEnumerable<string>, string, LocalTreeNode, string> _treeSelect_FileList = null;
+        TreeSelect.FileListUpdated _treeSelect_FileList;
 
         static internal Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>
             TreeSelect_FolderDetail { get { return Util.WR(_wr, o => o._treeSelect_FolderDetail); } }
@@ -86,7 +86,7 @@ namespace DoubleFile
 
             _lsDisposable.Add(WinDuplicatesVM.GoToFile.Subscribe(WinDuplicatesVM_GoToFile));
             _lsDisposable.Add(WinSearchVM.GoToFile.Subscribe(WinSearchVM_GoToFile));
-            _lsDisposable.Add(TreeSelect.FileListUpdated.Subscribe(v => _treeSelect_FileList = v.Item1));
+            _lsDisposable.Add(TreeSelect.FileListUpdated.Observable.Subscribe(v => _treeSelect_FileList = v.Item1));
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(v => _treeSelect_FolderDetail = v.Item1));
             _lsDisposable.Add(TreeSelect.VolumeDetailUpdated.Subscribe(v => _treeSelect_VolumeDetail = v.Item1));
         }

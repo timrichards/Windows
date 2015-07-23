@@ -9,10 +9,29 @@ namespace DoubleFile
 {
     partial class TreeSelect : Util
     {
-        static internal IObservable<Tuple<Tuple<IEnumerable<string>, string, LocalTreeNode, string>, int>>
-            FileListUpdated { get { return _fileListUpdated.AsObservable(); } }
-        static readonly LocalSubject<Tuple<IEnumerable<string>, string, LocalTreeNode, string>> _fileListUpdated = new LocalSubject<Tuple<IEnumerable<string>, string, LocalTreeNode, string>>();
-        static void FileListUpdatedOnNext(Tuple<IEnumerable<string>, string, LocalTreeNode, string> value, int nInitiator) { _fileListUpdated.LocalOnNext(value, 99846, nInitiator); }
+        internal class FileListUpdated
+        {
+            internal readonly IEnumerable<string> ieFiles;
+            internal readonly string strListingFile;
+            internal readonly LocalTreeNode treeNode;
+            internal readonly string strFilename;
+
+            internal FileListUpdated(IEnumerable<string> ieFiles_, string strListingFile_, LocalTreeNode treeNode_, string strFilename_)
+            {
+                ieFiles = ieFiles_;
+                strListingFile = strListingFile_;
+                treeNode = treeNode_;
+                strFilename = strFilename_;
+            }
+
+            static internal IObservable<Tuple<FileListUpdated, int>>
+                Observable { get; } = new LocalSubject<FileListUpdated>();
+        }
+        static void
+            FileListUpdatedOnNext(FileListUpdated value, int nInitiator)
+        {
+            ((LocalSubject<FileListUpdated>)FileListUpdated.Observable).LocalOnNext(value, 99846, nInitiator);
+        }
 
         static internal IObservable<Tuple<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>, int>>
             FolderDetailUpdated { get { return _folderDetailUpdated.AsObservable(); } }
@@ -55,7 +74,7 @@ namespace DoubleFile
         {
             string strListingFile = null;
 
-            var lsFiles =
+            var ieFiles =
                 Util.Closure(() =>
             {
                 var nodeDatum = treeNode.NodeDatum;
@@ -90,7 +109,7 @@ namespace DoubleFile
                     .AsEnumerable();
             });
 
-            FileListUpdatedOnNext(Tuple.Create(lsFiles, strListingFile, treeNode, strFile), nInitiator);
+            FileListUpdatedOnNext(new FileListUpdated(ieFiles, strListingFile, treeNode, strFile), nInitiator);
         }
 
         static void GetFolderDetail(LocalTreeNode treeNode, int nInitiator)

@@ -8,7 +8,7 @@ namespace DoubleFile
     {
         internal LV_FilesVM()
         {
-            _lsDisposable.Add(TreeSelect.FileListUpdated.Subscribe(TreeSelect_FileListUpdated));
+            _lsDisposable.Add(TreeSelect.FileListUpdated.Observable.Subscribe(TreeSelect_FileListUpdated));
             _lsDisposable.Add(UC_TreeMap.SelectedFile.Subscribe(UC_TreeMap_SelectedFile));
 
             var fileList = LocalTV.TreeSelect_FileList;
@@ -24,24 +24,24 @@ namespace DoubleFile
             Util.LocalDispose(_lsDisposable);
         }
 
-        void TreeSelect_FileListUpdated(Tuple<Tuple<IEnumerable<string>, string, LocalTreeNode, string>, int> initiatorTuple)
+        void TreeSelect_FileListUpdated(Tuple<TreeSelect.FileListUpdated, int> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
 
             Util.Write("J");
-            if (tuple.Item3 == _treeNode)
+            if (tuple.treeNode == _treeNode)
                 return;
 
             SelectedItem_Set(null, initiatorTuple.Item2);
             ClearItems();
-            _treeNode = tuple.Item3;
+            _treeNode = tuple.treeNode;
 
-            if (null == tuple.Item1)
+            if (null == tuple.ieFiles)
                 return;
 
             var lsItems = new List<LVitem_FilesVM>();
 
-            foreach (var strFileLine in tuple.Item1)
+            foreach (var strFileLine in tuple.ieFiles)
             {
                 var asFileLine =
                     strFileLine
@@ -64,7 +64,7 @@ namespace DoubleFile
                     lvItem.LSduplicates =
                         lsDuplicates
                         .Where(dupe =>
-                            (dupe.LVitemProjectVM.ListingFile != tuple.Item2) ||    // exactly once every query
+                            (dupe.LVitemProjectVM.ListingFile != tuple.strListingFile) ||    // exactly once every query
                             (dupe.LineNumber != nLine));
 
                     lvItem.SameVolume =
@@ -78,9 +78,9 @@ namespace DoubleFile
 
             Util.UIthread(99813, () => Add(lsItems));
 
-            if (null != tuple.Item4)
+            if (null != tuple.strFilename)
             {
-                this[tuple.Item4].FirstOnlyAssert(fileVM =>
+                this[tuple.strFilename].FirstOnlyAssert(fileVM =>
                     SelectedItem_Set(fileVM, initiatorTuple.Item2));
             }
         }

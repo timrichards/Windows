@@ -20,7 +20,7 @@ namespace DoubleFile
                 nInitiator = nOnNextAssertLoc;
 
             var o = _lsSubjects.TryGetValue(nOnNextAssertLoc);
-            var oldValue = (T)o?.Item2?.Target;
+            var oldValue = o?.Item2?.Target ?? default(T);
 
             if ((null == o) ||
                 (false == oldValue?.Equals(value)) ||

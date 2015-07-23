@@ -54,7 +54,7 @@ namespace DoubleFile
                 nodeDatum.TotalLength = (datum.TotalLength += nodeDatum.Length);
                 nodeDatum.FileCountHere = nodeDatum.LineNo - nodeDatum.PrevLineNo - 1;
                 nodeDatum.FileCountTotal = (datum.FileCountTotal += nodeDatum.FileCountHere);
-                nodeDatum.SubDirs = (datum.SubDirs += (uint)treeNode.Nodes?.Count);
+                nodeDatum.SubDirs = (datum.SubDirs += (uint)(treeNode.Nodes?.Count ?? 0));
 
                 datum.FolderScore =
                     datum.FolderScore.Zip(nodeDatum.FolderScore, (n1, n2) => n1 + n2)

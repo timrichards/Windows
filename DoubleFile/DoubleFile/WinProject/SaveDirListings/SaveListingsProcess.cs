@@ -29,11 +29,10 @@ namespace DoubleFile
             if (0 == listSourcePaths.Count)
                 return;
 
-            if ((null != App.SaveDirListings) &&
-                (false == App.SaveDirListings.IsAborted))
+            if (false == App.SaveDirListings?.IsAborted)
             {
                 MBoxStatic.Assert(99940, false);
-                App.SaveDirListings.EndThread();
+                App.SaveDirListings?.EndThread();
             }
 
             (new WinProgress(listNicknames, listSourcePaths, x =>
@@ -110,9 +109,7 @@ namespace DoubleFile
                 WinProgress.WithWinProgress(w => w)))
                 return false;
 
-            if (null != App.SaveDirListings)
-                App.SaveDirListings.EndThread();
-
+            App.SaveDirListings?.EndThread();
             return true;
         }
 

@@ -338,9 +338,7 @@ namespace DoubleFile
 
                 nodeDatum.LVitem = lvIgnoreItem;
                 MBoxStatic.Assert(1305.6319m, nodeDatum.LVitem != null);
-
-                if (null != nodeDatum.Clones)
-                    nodeDatum.Clones.Remove(treeNode);
+                nodeDatum.Clones?.Remove(treeNode);
             }
 
             InsertSizeMarkers(_lsLVdiffVol);
@@ -418,10 +416,7 @@ namespace DoubleFile
                     return;
                 }
 
-                int nClones = 0;
-
-                if (null != nodeDatum.Clones)
-                    nClones = nodeDatum.Clones.Count;
+                int nClones = nodeDatum.Clones?.Count ?? 0;
 
                 if (0 == nClones)
                     MBoxStatic.Assert(1305.6328m, false);
@@ -510,8 +505,7 @@ namespace DoubleFile
                 nodeDatum.Clones = null;
             }
 
-            if ((null != listClones) &&
-                (0 < listClones.Count) &&
+            if ((0 < listClones?.Count) &&
                 (null == rootClone))
             {
                 rootClone = treeNode;
@@ -617,11 +611,8 @@ namespace DoubleFile
                 MBoxStatic.Assert(1305.6312m, null != lvItem);
                 _dictIgnoreNodes.Add(treeNode, lvItem);
 
-                if ((null != treeNode.Nodes) &&
-                    (0 < treeNode.Nodes.Count))
-                {
+                if (0 < treeNode.Nodes?.Count)
                     IgnoreNodeAndSubnodes(lvItem, treeNode.Nodes[0], bContinue: true);
-                }
             }
             while (bContinue &&
                 (null != (treeNode = treeNode.NextNode)));
@@ -654,11 +645,8 @@ namespace DoubleFile
                     }
                 }
 
-                if ((null != treeNode.Nodes) &&
-                    (0 < treeNode.Nodes.Count))
-                {
+                if (0 < treeNode.Nodes?.Count)
                     IgnoreNodeQuery(sbMatch, nMaxLevel, treeNode.Nodes[0]);
-                }
             }
             while (null != (treeNode = treeNode.NextNode));
         }

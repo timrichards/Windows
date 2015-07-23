@@ -61,7 +61,7 @@ namespace DoubleFile
                 }
                 else
                 {
-                    var p = LocalTreeNode.Parent; return (null != p) ? p.FullPath : null;
+                    return LocalTreeNode.Parent?.FullPath;
                 }
             }
         }

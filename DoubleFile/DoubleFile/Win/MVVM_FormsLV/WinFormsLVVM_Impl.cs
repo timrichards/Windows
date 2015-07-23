@@ -79,12 +79,8 @@ namespace DoubleFile
                 return;
             }
 
-            var localTreeNode = _selectedItem.WithLocalTreeNode(t => t);
-
-            if (null == localTreeNode)
-                return;
-
-            localTreeNode.GoToFile(null);
+            _selectedItem.WithLocalTreeNode(t => t)?
+                .GoToFile(null);
         }
 
         List<IDisposable>

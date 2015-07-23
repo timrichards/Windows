@@ -122,7 +122,8 @@ namespace DoubleFile
 
             using (var file_out = new StreamWriter(strFile))
             using (var file_in = new StreamReader(strFile_01))
-            while (null != (strLine = file_in.ReadLine()))
+            while (null !=
+                (strLine = file_in.ReadLine()))
             {
                 ++nLineNo;
 

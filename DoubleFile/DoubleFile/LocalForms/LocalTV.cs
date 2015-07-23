@@ -62,7 +62,7 @@ namespace DoubleFile
                 return false;
             }
 
-            if (0 == lvProjectVM.CanLoadCount)
+            if (0 == lvProjectVM?.CanLoadCount)
                 return false;
 
             _wr.SetTarget(
@@ -76,13 +76,10 @@ namespace DoubleFile
         LocalTV(LV_ProjectVM lvProjectVM)
         {
             _lvProjectVM = lvProjectVM;
+            _knProgMult = 3 / (4d * _lvProjectVM?.CanLoadCount ?? 0);
 
-            if ((null != _lvProjectVM) &&
-                (0 < _lvProjectVM.CanLoadCount))
-            {
-                _knProgMult = 3 / (4d * _lvProjectVM.CanLoadCount);
+            if (0 < _lvProjectVM?.CanLoadCount)
                 TabledString<Tabled_Folders>.AddRef();
-            }
 
             _lsDisposable.Add(WinDuplicatesVM.GoToFile.Subscribe(WinDuplicatesVM_GoToFile));
             _lsDisposable.Add(WinSearchVM.GoToFile.Subscribe(WinSearchVM_GoToFile));
@@ -94,11 +91,8 @@ namespace DoubleFile
         internal LocalTV
             LocalDispose()
         {
-            if ((null != _lvProjectVM) &&
-                (0 < _lvProjectVM.CanLoadCount))
-            {
+            if ((0 < _lvProjectVM?.CanLoadCount))
                 TabledString<Tabled_Folders>.DropRef();
-            }
 
             Util.LocalDispose(_lsDisposable);
             _wr.SetTarget(_instance = null);
@@ -121,9 +115,7 @@ namespace DoubleFile
         {
             return includeSubTrees
                 ? CountSubnodes(_rootNodes)
-                : (null != _rootNodes)
-                ? _rootNodes.Count
-                : 0;
+                : _rootNodes?.Count ?? 0;
         }
 
         static int

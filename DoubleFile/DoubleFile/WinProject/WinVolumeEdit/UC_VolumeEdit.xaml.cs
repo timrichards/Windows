@@ -211,10 +211,9 @@ namespace DoubleFile
                 var window = Window.GetWindow(uc_VolumeEdit).As<LocalModernWindowBase>();
 
                 if (null != window)
-                {
                     window.LocalDialogResult = true;
-                    window.CloseIfSimulatingModal();
-                }
+
+                window?.CloseIfSimulatingModal();
             }
             else
             {
@@ -224,10 +223,10 @@ namespace DoubleFile
 
         void BtnCancel_Click()
         {
-            var window = Window.GetWindow(uc_VolumeEdit).As<LocalModernWindowBase>();
-
-            if (null != window)
-                window.CloseIfSimulatingModal();
+            Window
+                .GetWindow(uc_VolumeEdit)
+                .As<LocalModernWindowBase>()?
+                .CloseIfSimulatingModal();
         }
     }
 }

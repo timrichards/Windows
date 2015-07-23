@@ -146,11 +146,8 @@ namespace DoubleFile
                             {
                                 var tupleA = tuple.Item1.TryGetValue(winFile.strAltFileName);
 
-                                if (null != tupleA)
-                                {
-                                    strHashV1pt0 = "" + tupleA.Item1;
-                                    strHashV2 = "" + tupleA.Item2;
-                                }
+                                strHashV1pt0 = "" + tupleA?.Item1;
+                                strHashV2 = "" + tupleA?.Item2;
 
                                 var strError = tuple.Item2.TryGetValue(strFile);
 

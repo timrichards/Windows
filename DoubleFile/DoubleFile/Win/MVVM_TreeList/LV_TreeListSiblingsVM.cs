@@ -94,11 +94,8 @@ namespace DoubleFile
             if (bSiblingFolder)
                 return;
 
-            if ((null != _selectedItem) &&
-                (tuple.treeNode.Parent != _selectedItem.LocalTreeNode))    // no-op on descending treemap subfolders.
-            {
+            if (tuple.treeNode.Parent != _selectedItem?.LocalTreeNode)    // no-op on descending treemap subfolders.
                 return;
-            }
 
             _lvChildrenVM.ItemsCast
                 .Where(lvItem => lvItem.LocalTreeNode == tuple.treeNode)
@@ -112,10 +109,7 @@ namespace DoubleFile
         /// <returns>true if it tried to select a folder</returns>
         bool Populate(LocalTreeNode treeNodeSel)
         {
-            var parentNode =
-                (null != treeNodeSel)
-                ? treeNodeSel.Parent
-                : null;
+            var parentNode = treeNodeSel?.Parent;
 
             if ((parentNode == _treeNode) &&
                 (0 < Items.Count))
@@ -127,11 +121,7 @@ namespace DoubleFile
             ClearItems();
             Util.Write("K");
 
-            var treeNodes =
-                (null != _treeNode)
-                ? _treeNode.Nodes
-                : LocalTV.RootNodes;
-
+            var treeNodes = _treeNode?.Nodes ?? LocalTV.RootNodes;
             var lsLVitems = new List<LVitem_TreeListVM>();
             LVitem_TreeListVM selectedItem = null;
 

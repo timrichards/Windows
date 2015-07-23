@@ -59,10 +59,7 @@ namespace DoubleFile
         static internal void Reinitialize()
         {
             var t = TypedArrayBase.tA[new T().Type];
-            var nRefCount = 0;
-
-            if (null != t)
-                nRefCount = t.RefCount;
+            int nRefCount = t?.RefCount ?? 0;
 
             TypedArrayBase.tA[new T().Type] = 
                 new TabledStringStatics()

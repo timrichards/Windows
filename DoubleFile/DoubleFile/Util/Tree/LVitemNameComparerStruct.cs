@@ -26,10 +26,8 @@ namespace DoubleFile
             {
                 item.Name = item.Folder;
 
-                if ((null != item.SubItems) && (item.SubItems.Count > FileParse.knColLengthLV))
-                {
+                if (item.SubItems?.Count > FileParse.knColLengthLV)
                     item.Name += item.SubItems[FileParse.knColLengthLV];         // name + size
-                }
             }
         }
 
@@ -52,20 +50,16 @@ namespace DoubleFile
             if (lv1.TopItem.Index > 0) { return; }
             if (lv2.TopItem == null) { return; }
 
-            var lv2Count = (null != lv2.Items) ? lv2.Items.Count : 0;
-            var lv1Count = (null != lv1.Items) ? lv1.Items.Count : 0;
+            int lv2Count = lv2.Items?.Count ?? 0;
+            int lv1Count = lv1.Items?.Count ?? 0;
 
             var nIx = lv2.TopItem.Index - Math.Abs(lv2Count - lv1Count);
 
-            if (nIx < 0)
-            {
+            if (0 < nIx)
                 return;
-            }
 
             if (lv1Count > nIx)
-            {
                 lv1.TopItem = (LocalLVitemVM)lv1.Items[nIx];
-            }
         }
     }
 }

@@ -127,14 +127,8 @@ namespace DoubleFile
         internal void Abort()
         {
             _blockingFrame.Continue = false;
-
-            if (IsAborted)
-                return;
-
             IsAborted = true;
-
-            if (null != _thread)
-                _thread.Abort();
+            _thread?.Abort();
         }
 
         internal bool IsAborted { get; private set; }
@@ -361,7 +355,8 @@ namespace DoubleFile
 
                 var dictFiles = new Dictionary<FileKeyTuple, Tuple<uint[], IEnumerable<int>>>();
 
-                while (null != (strLine = reader.ReadLine()))
+                while (null !=
+                    (strLine = reader.ReadLine()))
                 {
                     var asLine = strLine.Split('\t');
                     var asKey = asLine[0].Split(' ');

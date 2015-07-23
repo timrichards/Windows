@@ -194,8 +194,7 @@ namespace DoubleFile
                     // SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
                     var Directory = PathBuilder.FactoryCreateOrFind(("" + searchResult.StrDir).TrimEnd('\\'));
 
-                    if ((null != searchResult.ListFiles) &&
-                        0 < searchResult.ListFiles.Count)
+                    if (0 < searchResult.ListFiles?.Count)
                     {
                         foreach (var strFile in searchResult.ListFiles.Keys)
                         {

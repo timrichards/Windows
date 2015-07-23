@@ -11,7 +11,7 @@ namespace DoubleFile
         public bool Alternate { get; internal set; }
 
         public string Folder { get { return LocalTreeNode.Text; } }
-        public string Parent { get { var p = LocalTreeNode.Parent; return (null != p) ? p.FullPath : null; } }
+        public string Parent { get { return LocalTreeNode.Parent?.FullPath; } }
 
         internal override int NumCols { get { return NumCols_; } }
         internal const int NumCols_ = 2;

@@ -75,8 +75,7 @@ namespace DoubleFile
                 if (strNode != arrPath[0])
                     continue;
 
-                if ((null != lvItemProjectVM) &&
-                    (lvItemProjectVM.ListingFile != rootNodeDatum.ListingFile))
+                if (lvItemProjectVM?.ListingFile != rootNodeDatum.ListingFile)
                 {
                     continue;
                 }

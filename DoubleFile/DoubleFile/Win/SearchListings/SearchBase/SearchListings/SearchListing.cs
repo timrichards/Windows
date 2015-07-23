@@ -67,7 +67,8 @@ namespace DoubleFile
                     string strLine = null;
                     var contains = GetContainsFunction(_bRegex);
 
-                    while (null != (strLine = sr.ReadLine()))
+                    while (null !=
+                        (strLine = sr.ReadLine()))
                     {
                         if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
                             _bThreadAbort)

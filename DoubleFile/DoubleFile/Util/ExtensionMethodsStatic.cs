@@ -20,19 +20,10 @@ namespace DoubleFile
                 nInitiator = nOnNextAssertLoc;
 
             var o = _lsSubjects.TryGetValue(nOnNextAssertLoc);
-            var oldValue = default(T);
-
-            if ((null != o) &&
-                (null != o.Item2) &&
-                (null != o.Item2.Target))
-            {
-                oldValue = (T)o.Item2.Target;
-            }
+            var oldValue = (T)o?.Item2?.Target;
 
             if ((null == o) ||
-                (null == oldValue) ||
-                //EqualityComparer<T>.Default.Equals(oldValue) ||
-                (false == oldValue.Equals(value)) ||
+                (false == oldValue?.Equals(value)) ||
                 (DateTime.Now - o.Item1) > TimeSpan.FromMilliseconds(100))
             {
                 _lsSubjects[nOnNextAssertLoc] = Tuple.Create(DateTime.Now, new WeakReference(value));

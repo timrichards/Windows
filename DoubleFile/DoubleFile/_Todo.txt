@@ -5,6 +5,7 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- rename "tuple" in TreeSelect clients
 - same volume / solitary red forecolors are too similar
 - WinFolderListVM has a Dispose method that's never called.
 - object.MemberwiseClone()

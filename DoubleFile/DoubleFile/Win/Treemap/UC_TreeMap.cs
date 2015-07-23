@@ -139,9 +139,7 @@ namespace DoubleFile
 
             Util.ThreadMake(() =>
             {
-                if (null != _bg)
-                    _bg.Dispose();
-
+                _bg?.Dispose();
                 _bg = null;
                 WinTooltip.CloseTooltip();
                 _deepNodeDrawn = null;
@@ -199,9 +197,7 @@ namespace DoubleFile
 
                     var rootNodeDatum = nodeDatum.As<RootNodeDatum>();
 
-                    bVolumeView =
-                        ((null != rootNodeDatum) &&
-                        rootNodeDatum.VolumeView);
+                    bVolumeView = rootNodeDatum?.VolumeView ?? false;
 
                     if ((false == bVolumeView) &&
                         (null != (nodeRet = FindMapNode(nodeDatum.TreeMapFiles, pt))))
@@ -216,13 +212,11 @@ namespace DoubleFile
                 if (null != (nodeRet = FindMapNode(prevNode_A, pt)))
                     return;         // from lambda
 
-                if ((null != _prevNode) &&
-                    _prevNode.IsChildOf(TreeMapVM.TreeNode))
+                if (_prevNode?.IsChildOf(TreeMapVM.TreeNode) ?? false)
                 {
                     var nodeUplevel = _prevNode.Parent;
 
-                    while ((null != nodeUplevel) &&
-                        nodeUplevel.IsChildOf(TreeMapVM.TreeNode))
+                    while (nodeUplevel?.IsChildOf(TreeMapVM.TreeNode) ?? false)
                     {
                         if (null != (nodeRet = FindMapNode(nodeUplevel, pt)))
                             return;     // from lambda
@@ -613,10 +607,7 @@ namespace DoubleFile
                 var bgcontext = BufferedGraphicsManager.Current;
 
                 bgcontext.MaximumBuffer = _rectBitmap.Size;
-
-                if (null != _bg)
-                    _bg.Dispose();
-
+                _bg?.Dispose();
                 _bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), _rectBitmap);
                 TranslateSize();
                 Util.WriteLine("Size bitmap " + nPxPerSide + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000d + " seconds.");
@@ -772,8 +763,8 @@ namespace DoubleFile
                     return;
                 }
 
-                if ((null != _deepNode) &&
-                    ((item == _deepNode) || (_deepNode.IsChildOf(item))))
+                if ((item == _deepNode) ||
+                    (_deepNode?.IsChildOf(item) ?? false))
                 {
                     _deepNodeDrawn = item;
                 }
@@ -785,7 +776,7 @@ namespace DoubleFile
                     nodeDatum.TreeMapFiles = GetFileList(item);
                 }
 
-                if ((null != item.Nodes) && (0 < item.Nodes.Count) ||
+                if ((0 < item.Nodes?.Count) ||
                     (bStart && (null != nodeDatum.TreeMapFiles)))
                 {
                     IEnumerable<LocalTreeNode> ieChildren = null;

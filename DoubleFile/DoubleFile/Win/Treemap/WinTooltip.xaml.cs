@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Media;
-using System.Linq;
-using System.Windows.Controls;
 
 namespace DoubleFile
 {
@@ -99,22 +96,15 @@ namespace DoubleFile
             WithWinTooltip(w => w.Tag = null);
             _bClosingTooltip = true;
 
-            if ((null != _winTooltip) &&
-                (false == _winTooltip.LocalIsClosing) &&
-                (false == _winTooltip.LocalIsClosed))
+            if ((false == _winTooltip?.LocalIsClosing) &&
+                (false == _winTooltip?.LocalIsClosed))
             {
-                if (null != _winTooltip._closingCallback)
-                    _winTooltip._closingCallback();
-
-                _winTooltip.Close();
+                _winTooltip?._closingCallback();
+                _winTooltip?.Close();
             }
 
-            if (null != _winOwnerClosedObserver)
-            {
-                _winOwnerClosedObserver.Dispose();
-                _winOwnerClosedObserver = null;
-            }
-
+            _winOwnerClosedObserver?.Dispose();
+            _winOwnerClosedObserver = null;
             _winTooltip = null;
             _bClosingTooltip = false;
         }

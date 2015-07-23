@@ -44,8 +44,8 @@ namespace DoubleFile
         void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyCollection<string>, LocalTreeNode>, int> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
-            var item2 = (null != tuple) ? tuple.Item2 : null;
-            var item3 = (null != tuple) ? tuple.Item3 : null;
+            var item2 = tuple?.Item2;
+            var item3 = tuple?.Item3;
 
             WinDuplicatesVM_UpdateFileDetail(Tuple.Create(Tuple.Create(item2, item3), initiatorTuple.Item2));
         }

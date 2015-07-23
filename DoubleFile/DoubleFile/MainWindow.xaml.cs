@@ -245,8 +245,7 @@ namespace DoubleFile
 
         void MainWindow_Closing(CancelEventArgs e)
         {
-            if ((null != App.LVprojectVM) &&
-                App.LVprojectVM.Unsaved &&
+            if ((App.LVprojectVM?.Unsaved ?? false) &&
                 (MessageBoxResult.Cancel == 
                 MBoxStatic.ShowDialog(WinProjectVM.UnsavedWarning, "Quit Double File", MessageBoxButton.OKCancel)))
             {

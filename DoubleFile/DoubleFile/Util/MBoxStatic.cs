@@ -83,11 +83,8 @@ namespace DoubleFile
                     : MainWindow.WithMainWindow(w => w);
             } 
 
-            if ((null != owner) &&
-                owner.LocalIsClosed)
-            {
+            if (owner?.LocalIsClosed ?? false)
                 return MessageBoxResult.None;
-            }
 
             var msgBoxRet = MessageBoxResult.None;
             

@@ -12,12 +12,12 @@ namespace DoubleFile
     partial class WinDuplicatesVM : IDisposable
     {
         static internal IObservable<Tuple<Tuple<LVitem_ProjectVM, string, string>, int>>
-            GoToFile { get { return _goToFile.AsObservable(); } }
+            GoToFile { get { return _goToFile; } }
         static readonly LocalSubject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new LocalSubject<Tuple<LVitem_ProjectVM, string, string>>();
         static void GoToFileOnNext(Tuple<LVitem_ProjectVM, string, string> value) { _goToFile.LocalOnNext(value, 99848); }
 
         static internal IObservable<Tuple<Tuple<IReadOnlyCollection<string>, LocalTreeNode>, int>>
-            UpdateFileDetail { get { return _updateFileDetail.AsObservable(); } }
+            UpdateFileDetail { get { return _updateFileDetail; } }
         static readonly LocalSubject<Tuple<IReadOnlyCollection<string>, LocalTreeNode>> _updateFileDetail = new LocalSubject<Tuple<IReadOnlyCollection<string>, LocalTreeNode>>();
         static void UpdateFileDetailOnNext(Tuple<IReadOnlyCollection<string>, LocalTreeNode> value, int nInitiator) { _updateFileDetail.LocalOnNext(value, 99847, nInitiator); }
 

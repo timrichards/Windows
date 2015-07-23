@@ -11,7 +11,7 @@ namespace DoubleFile
         internal override void GoTo(LocalTreeNode treeNode) { treeNode.GoToFile(null); }
 
         static internal IObservable<Tuple<LocalTreeNode, int>>
-            TreeListChildSelected { get { return _treeListChildSelected.AsObservable(); } }
+            TreeListChildSelected { get { return _treeListChildSelected; } }
         static readonly LocalSubject<LocalTreeNode> _treeListChildSelected = new LocalSubject<LocalTreeNode>();
         static void TreeListChildSelectedOnNext(LocalTreeNode value) { _treeListChildSelected.LocalOnNext(value, kChildSelectedOnNext); }
         internal const int kChildSelectedOnNext = 99854;

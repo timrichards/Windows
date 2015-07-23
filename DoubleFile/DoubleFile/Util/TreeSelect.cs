@@ -24,8 +24,8 @@ namespace DoubleFile
                 strFilename = strFilename_;
             }
 
-            static internal IObservable<Tuple<FileListUpdated, int>>
-                Observable { get; } = new LocalSubject<FileListUpdated>();
+            static internal readonly IObservable<Tuple<FileListUpdated, int>>
+                Observable = new LocalSubject<FileListUpdated>();
         }
         static void
             FileListUpdatedOnNext(FileListUpdated value, int nInitiator)
@@ -34,12 +34,12 @@ namespace DoubleFile
         }
 
         static internal IObservable<Tuple<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>, int>>
-            FolderDetailUpdated { get { return _folderDetailUpdated.AsObservable(); } }
+            FolderDetailUpdated { get { return _folderDetailUpdated; } }
         static readonly LocalSubject<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>> _folderDetailUpdated = new LocalSubject<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>>();
         static void FolderDetailUpdatedOnNext(Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode> value, int nInitiator) { _folderDetailUpdated.LocalOnNext(value, 99845, nInitiator); }
 
         static internal IObservable<Tuple<Tuple<IEnumerable<IEnumerable<string>>, string>, int>>
-            VolumeDetailUpdated { get { return _volumeDetailUpdated.AsObservable(); } }
+            VolumeDetailUpdated { get { return _volumeDetailUpdated; } }
         static readonly LocalSubject<Tuple<IEnumerable<IEnumerable<string>>, string>> _volumeDetailUpdated = new LocalSubject<Tuple<IEnumerable<IEnumerable<string>>, string>>();
         static void VolumeDetailUpdatedOnNext(Tuple<IEnumerable<IEnumerable<string>>, string> value, int nInitiator) { _volumeDetailUpdated.LocalOnNext(value, 99844, nInitiator); }
 

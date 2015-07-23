@@ -23,7 +23,7 @@ namespace DoubleFile
             SaveDirListings { get; set; }
 
         static internal IObservable<Tuple<bool, int>>   // bool is a no-op: generic placeholder
-            DeactivateDidOccur { get { return _deactivateDidOccur.AsObservable(); } }
+            DeactivateDidOccur { get { return _deactivateDidOccur; } }
         static readonly LocalSubject<bool> _deactivateDidOccur = new LocalSubject<bool>();
         static void DeactivateDidOccurOnNext() { _deactivateDidOccur.LocalOnNext(false, 99839); }
 

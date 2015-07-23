@@ -16,7 +16,7 @@ namespace DoubleFile
     class UC_TreeMap : UserControl
     {
         static internal IObservable<Tuple<string, int>>
-            SelectedFile { get { return _selectedFile.AsObservable(); } }
+            SelectedFile { get { return _selectedFile; } }
         static readonly LocalSubject<string> _selectedFile = new LocalSubject<string>();
         static void SelectedFileOnNext(string value, int nInitiator) { _selectedFile.LocalOnNext(value, 99841, nInitiator); }
 

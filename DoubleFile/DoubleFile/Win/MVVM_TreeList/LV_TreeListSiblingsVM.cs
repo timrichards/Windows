@@ -94,7 +94,8 @@ namespace DoubleFile
             if (bSiblingFolder)
                 return;
 
-            if (tuple.treeNode.Parent != _selectedItem?.LocalTreeNode)    // no-op on descending treemap subfolders.
+            // no-op on descending treemap subfolders.
+            if (false == ReferenceEquals(tuple.treeNode.Parent, _selectedItem?.LocalTreeNode))
                 return;
 
             _lvChildrenVM.ItemsCast

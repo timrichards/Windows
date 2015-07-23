@@ -107,7 +107,7 @@ namespace DoubleFile
         {
             if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
                 App.FileDictionary.IsAborted ||
-                (_tree?.IsAborted ?? true))
+                (_tree?.IsAborted ?? false))
             {
                 ClearMem_TreeForm();
 

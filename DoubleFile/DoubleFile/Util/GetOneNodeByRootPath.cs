@@ -76,9 +76,7 @@ namespace DoubleFile
                     continue;
 
                 if (lvItemProjectVM?.ListingFile != rootNodeDatum.ListingFile)
-                {
                     continue;
-                }
 
                 nodeRet = topNode;
 

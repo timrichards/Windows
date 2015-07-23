@@ -55,7 +55,7 @@ namespace DoubleFile
 
             var nIx = lv2.TopItem.Index - Math.Abs(lv2Count - lv1Count);
 
-            if (0 < nIx)
+            if (0 > nIx)
                 return;
 
             if (lv1Count > nIx)

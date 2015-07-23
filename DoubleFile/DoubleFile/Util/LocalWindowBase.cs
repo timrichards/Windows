@@ -32,9 +32,9 @@ namespace DoubleFile
         }
         bool? _localDialogResult = null;
 
-        protected LocalWindowBase(Action<Action> InitForMainWindowOnly = null)
+        protected LocalWindowBase(Action<Action> /* future proof */ InitForMainWindowOnly = null)
         {
-            if (null != InitForMainWindowOnly)
+            if (null != InitForMainWindowOnly)  // future proof
             {
                 InitForMainWindowOnly(Init);
                 LocalIsClosed = false;          // bootstrap main window

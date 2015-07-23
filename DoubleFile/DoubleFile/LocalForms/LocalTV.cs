@@ -62,7 +62,7 @@ namespace DoubleFile
                 return false;
             }
 
-            if (0 == lvProjectVM?.CanLoadCount)
+            if (0 == (lvProjectVM?.CanLoadCount ?? 0))
                 return false;
 
             _wr.SetTarget(
@@ -78,7 +78,7 @@ namespace DoubleFile
             _lvProjectVM = lvProjectVM;
             _knProgMult = 3 / (4d * _lvProjectVM?.CanLoadCount ?? 0);
 
-            if (0 < _lvProjectVM?.CanLoadCount)
+            if (0 < (lvProjectVM?.CanLoadCount ?? 0))
                 TabledString<Tabled_Folders>.AddRef();
 
             _lsDisposable.Add(WinDuplicatesVM.GoToFile.Subscribe(WinDuplicatesVM_GoToFile));
@@ -91,7 +91,7 @@ namespace DoubleFile
         internal LocalTV
             LocalDispose()
         {
-            if ((0 < _lvProjectVM?.CanLoadCount))
+            if (0 < (_lvProjectVM?.CanLoadCount ?? 0))
                 TabledString<Tabled_Folders>.DropRef();
 
             Util.LocalDispose(_lsDisposable);

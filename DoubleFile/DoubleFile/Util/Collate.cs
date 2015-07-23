@@ -505,7 +505,7 @@ namespace DoubleFile
                 nodeDatum.Clones = null;
             }
 
-            if ((0 < listClones?.Count) &&
+            if ((0 < (listClones?.Count ?? 0)) &&
                 (null == rootClone))
             {
                 rootClone = treeNode;
@@ -611,7 +611,7 @@ namespace DoubleFile
                 MBoxStatic.Assert(1305.6312m, null != lvItem);
                 _dictIgnoreNodes.Add(treeNode, lvItem);
 
-                if (0 < treeNode.Nodes?.Count)
+                if (0 < (treeNode.Nodes?.Count ?? 0))
                     IgnoreNodeAndSubnodes(lvItem, treeNode.Nodes[0], bContinue: true);
             }
             while (bContinue &&
@@ -645,7 +645,7 @@ namespace DoubleFile
                     }
                 }
 
-                if (0 < treeNode.Nodes?.Count)
+                if (0 < (treeNode.Nodes?.Count ?? 0))
                     IgnoreNodeQuery(sbMatch, nMaxLevel, treeNode.Nodes[0]);
             }
             while (null != (treeNode = treeNode.NextNode));

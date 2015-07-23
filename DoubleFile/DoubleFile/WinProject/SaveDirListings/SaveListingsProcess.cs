@@ -29,7 +29,7 @@ namespace DoubleFile
             if (0 == listSourcePaths.Count)
                 return;
 
-            if (false == App.SaveDirListings?.IsAborted)
+            if (false == (App.SaveDirListings?.IsAborted ?? true))
             {
                 MBoxStatic.Assert(99940, false);
                 App.SaveDirListings?.EndThread();

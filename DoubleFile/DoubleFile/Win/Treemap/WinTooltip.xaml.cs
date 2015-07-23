@@ -96,11 +96,12 @@ namespace DoubleFile
             WithWinTooltip(w => w.Tag = null);
             _bClosingTooltip = true;
 
-            if ((false == _winTooltip?.LocalIsClosing) &&
-                (false == _winTooltip?.LocalIsClosed))
+            if ((null != _winTooltip) &&
+                (false == _winTooltip.LocalIsClosing) &&
+                (false == _winTooltip.LocalIsClosed))
             {
-                _winTooltip?._closingCallback();
-                _winTooltip?.Close();
+                _winTooltip._closingCallback();
+                _winTooltip.Close();
             }
 
             _winOwnerClosedObserver?.Dispose();

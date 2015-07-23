@@ -774,7 +774,7 @@ namespace DoubleFile
                     nodeDatum.TreeMapFiles = GetFileList(item);
                 }
 
-                if ((0 < item.Nodes?.Count) ||
+                if ((0 < (item.Nodes?.Count ?? 0)) ||
                     (bStart && (null != nodeDatum.TreeMapFiles)))
                 {
                     IEnumerable<LocalTreeNode> ieChildren = null;

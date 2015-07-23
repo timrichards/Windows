@@ -96,10 +96,8 @@ namespace DoubleFile
         {
             var treeNode = ZoomOrTooltip(ptLocation);
 
-            if (null == treeNode)
-                return;
-
-            LocalTV.SelectedNode = treeNode;
+            if (null != treeNode)
+                LocalTV.SelectedNode = treeNode;
         }
 
         internal void Clear()
@@ -114,7 +112,7 @@ namespace DoubleFile
 
         internal void ClearSelection(bool bKeepTooltipActive = false)
         {
-            if ((null == System.Windows.Application.Current) || System.Windows.Application.Current.Dispatcher.HasShutdownStarted)
+            if (System.Windows.Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                 return;
 
             if (_bClearingSelection)
@@ -383,8 +381,7 @@ namespace DoubleFile
                     return treeNode;
                 }
 
-                if ((null == treeNode.Nodes) ||
-                    (0 == treeNode.Nodes.Count))
+                if (0 == (treeNode.Nodes?.Count ?? 0))
                 {
                     continue;
                 }
@@ -585,18 +582,14 @@ namespace DoubleFile
 
         void Render(LocalTreeNode treeNode)
         {
-            if ((null == TreeMapVM.DeepNode) ||
-                (false == TreeMapVM.DeepNode.IsChildOf(treeNode)))
-            {
+            if (false == (TreeMapVM.DeepNode?.IsChildOf(treeNode) ?? false))
                 TreeMapVM.DeepNode = treeNode;
-            }
 
             var nPxPerSide = (treeNode.SelectedImageIndex < 0)
                 ? 2048
                 : treeNode.SelectedImageIndex;
 
-            if ((null == _bg) ||
-                (null == _bg.Graphics) ||
+            if ((null == _bg?.Graphics) ||
                 (nPxPerSide != _rectBitmap.Size.Width))
             {
                 var dtStart_A = DateTime.Now;

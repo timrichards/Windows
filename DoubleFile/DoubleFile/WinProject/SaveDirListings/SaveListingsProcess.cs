@@ -56,14 +56,13 @@ namespace DoubleFile
             if (winProgress.LocalIsClosed)
             {
                 MBoxStatic.Assert(99804,
-                    (null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
-                    (null == sdl) ||
-                    sdl.IsAborted);
+                    (Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
+                    (sdl?.IsAborted ?? true));
 
                 return;
             }
 
-            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                 sdl.IsAborted)
             {
                 winProgress.Abort();
@@ -99,8 +98,7 @@ namespace DoubleFile
 
         bool IWinProgressClosing.ConfirmClose()
         {
-            if ((null == App.SaveDirListings) ||
-                App.SaveDirListings.IsAborted)
+            if (App.SaveDirListings?.IsAborted ?? true)
             {
                 return true;
             }

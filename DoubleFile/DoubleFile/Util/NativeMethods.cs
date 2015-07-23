@@ -18,10 +18,7 @@ namespace DoubleFile
         // can't override == and != operator because of the implicit operator IntPtr above
         public bool Equals(NativeWindow other)
         {
-            if (null == other)
-                return false;
-
-            return hwnd == other.hwnd;
+            return hwnd == other?.hwnd;
         }
 
         IntPtr hwnd = IntPtr.Zero;

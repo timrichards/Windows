@@ -106,7 +106,7 @@ namespace DoubleFile
                         fs.WriteLine(FormatString(strDir: ksTotalLengthLoc01, nLength: LengthRead));
                     }
 
-                    if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                    if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                         _bThreadAbort)
                     {
                         File.Delete(LVitemProjectVM.ListingFile);

@@ -31,7 +31,7 @@ namespace DoubleFile
 
                 _selectedItem = value;
 
-                if (null == value)
+                if (null == _selectedItem)
                     return;
 
                 TreeListChildSelectedOnNext(value.LocalTreeNode);

@@ -36,10 +36,8 @@ namespace DoubleFile
             protected void WriteDirectoryListing(TextWriter fs,
                 Tuple<IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>>, IReadOnlyDictionary<string, string>> tuple)
             {
-                if (null == tuple)
-                    return;
-
-                ImplementationDetails(fs, tuple);
+                if (null != tuple)
+                    ImplementationDetails(fs, tuple);
             }
 
             /// <summary>
@@ -63,7 +61,7 @@ namespace DoubleFile
 
                 while (0 < stackDirs.Count)
                 {
-                    if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                    if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                         _bThreadAbort)
                     {
                         return null;
@@ -93,7 +91,7 @@ namespace DoubleFile
 
                     foreach (var winFile in ieFiles)
                     {
-                        if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                        if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                             _bThreadAbort)
                         {
                             return null;

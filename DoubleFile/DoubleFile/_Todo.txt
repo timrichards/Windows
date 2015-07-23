@@ -5,6 +5,9 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- if (null == tuple.Item3.NodeDatum.TreeMapFiles)     // TODO: Why would this be null?
+- SDL small then check outer folder score: 0 0 0
+- sometimes can't move extra window (suspect new topwindow setting)
 - rename "tuple" in TreeSelect clients
 - same volume / solitary red forecolors are too similar
 - WinFolderListVM has a Dispose method that's never called.
@@ -140,4 +143,4 @@ Specific code areas:
 The main purpose of Double File is to allow you to pack up your drive and go: transition from one computer to another; or put a new drive or operating system in. Copy the files you use then let the rest just sit in storage. Drive capacities and speeds are increasing. This drive has nothing better to do than serve as backup; to maintain environment state. Plug it back in and be right where you were when you left it. But wait - what's actually on those drives, and are they backed up? Out of sight, out of mind: that's where Double File comes in. Catalog them, then have them curated for you on your current setup as they sit in storage: safe from transitional hazards. Plan well, then act: reuse the drives after making a plan.
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
-99780 next low assert
+99779 next low assert

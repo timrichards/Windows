@@ -128,7 +128,7 @@ namespace DoubleFile
 
         static internal void GenerationEnded()
         {
-            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
+            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                 return;
 
             var t = TypedArrayBase.tA[new T().Type];

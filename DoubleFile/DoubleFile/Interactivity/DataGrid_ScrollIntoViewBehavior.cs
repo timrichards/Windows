@@ -21,11 +21,8 @@ namespace DoubleFile
         {
             var grid = sender.As<DataGrid>();
 
-            if ((null == grid) ||
-                (null == grid.SelectedItem))
-            {
+            if (null == grid?.SelectedItem)
                 return;
-            }
 
             Util.UIthread(99817, () =>
             {

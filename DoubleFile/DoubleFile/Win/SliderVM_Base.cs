@@ -63,7 +63,15 @@ namespace DoubleFile
             var treeNode = _deepNode;
 
             for (var nCount = 0; nCount < Value; ++nCount)
+            {
+                if (null == treeNode)
+                {
+                    MBoxStatic.Assert(99780, false);
+                    return;
+                }
+
                 treeNode = treeNode.Parent;
+            }
 
             GoTo(treeNode);
         }

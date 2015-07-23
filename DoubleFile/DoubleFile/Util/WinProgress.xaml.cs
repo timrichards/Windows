@@ -155,10 +155,7 @@ namespace DoubleFile
                     return true;    // from lambda
                 }
 
-                if (null == WindowClosingCallback)
-                    return true;    // from lambda
-
-                WindowClosingCallback.TryGetTarget(out windowClosing);
+                WindowClosingCallback?.TryGetTarget(out windowClosing);
 
                 if (null == windowClosing)
                     return true;    // from lambda

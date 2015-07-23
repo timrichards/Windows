@@ -92,11 +92,8 @@ namespace DoubleFile
 
         bool Reinitialize_And_FullPathFound(string strPath)
         {
-            if ((null == App.LVprojectVM) ||
-                (0 == App.LVprojectVM.CanLoadCount))
-            {
+            if (0 == (App.LVprojectVM?.CanLoadCount ?? 0))
                 return true;        // found there are no volumes loaded
-            }
 
             ClearItems();
             TabledString<Tabled_Files>.Reinitialize();

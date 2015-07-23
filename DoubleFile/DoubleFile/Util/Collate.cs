@@ -138,7 +138,7 @@ namespace DoubleFile
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
 
-                if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                     _bAborted)
                 {
                     return;
@@ -160,7 +160,7 @@ namespace DoubleFile
 
                     foreach (var treeNode_A in lsNodes)
                     {
-                        if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                        if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                             _bAborted)
                         {
                             return;
@@ -232,7 +232,7 @@ namespace DoubleFile
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
                 
-                if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                     _bAborted)
                 {
                     return;
@@ -250,7 +250,7 @@ namespace DoubleFile
 
                 // load up listLVdiffVol
 
-                if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                     _bAborted)
                 {
                     return;
@@ -288,7 +288,7 @@ namespace DoubleFile
 
                 foreach (var treeNode in listNodes.Value)
                 {
-                    if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                    if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                         _bAborted)
                     {
                         return;
@@ -348,7 +348,7 @@ namespace DoubleFile
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator);
 
-                if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                     _bAborted)
                 {
                     return;
@@ -400,7 +400,7 @@ namespace DoubleFile
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
 
-                if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                     _bAborted)
                 {
                     return;
@@ -444,7 +444,7 @@ namespace DoubleFile
 
         internal void Step2()
         {
-            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                 _bAborted)
             {
                 return;
@@ -455,7 +455,7 @@ namespace DoubleFile
             if (0 < _lsLVdiffVol.Count)
                 _lvClones.Add(_lsLVdiffVol);
 
-            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                 _bAborted)
             {
                 return;
@@ -466,7 +466,7 @@ namespace DoubleFile
             if (0 < _lsLVsolitary.Count)
                 _lvSolitary.Add(_lsLVsolitary);
 
-            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                 _bAborted)
             {
                 return;
@@ -537,7 +537,7 @@ namespace DoubleFile
 
                     foreach (var subnode in listClones)
                     {
-                        if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                        if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                             _bAborted)
                         {
                             return;
@@ -584,12 +584,9 @@ namespace DoubleFile
                 }
             }
 
-            if (null == treeNode.Nodes)
-                return;
-
-            foreach (var subNode in treeNode.Nodes)
+            foreach (var subNode in treeNode?.Nodes)
             {
-                if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                     _bAborted)
                 {
                     return;
@@ -627,7 +624,7 @@ namespace DoubleFile
 
             do
             {
-                if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                     _bAborted)
                 {
                     return;

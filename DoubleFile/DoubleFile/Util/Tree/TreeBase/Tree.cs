@@ -64,7 +64,7 @@ namespace DoubleFile
             Util.WriteLine(string.Format("Completed tree in {0} seconds.",
                 ((int)(DateTime.Now - dtStart).TotalMilliseconds / 10) / 100d));
 
-            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                 IsAborted)
             {
                 return;

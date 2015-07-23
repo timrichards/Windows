@@ -61,10 +61,7 @@ namespace DoubleFile
 
         static internal void Kill()
         {
-            if (null == _messageBox)
-                return;
-
-            _messageBox.Close();
+            _messageBox?.Close();
             _messageBox = null;
         }
 
@@ -72,7 +69,7 @@ namespace DoubleFile
         static internal MessageBoxResult
             ShowDialog(string strMessage, string strTitle = null, MessageBoxButton? buttons = null, ILocalWindow owner = null)
         {
-            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
+            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                 return MessageBoxResult.None;
 
             if (null == owner)

@@ -102,12 +102,10 @@ namespace DoubleFile
         static internal LocalTreeNode
             GetOneNodeByRootPathA(string strPath, LVitem_ProjectVM lvItemProjectVM)
         {
-            var nodes = LocalTV.RootNodes;
-
-            if (null == nodes)
-                return null;
-
-            return GetOneNodeByRootPath.Go(strPath, nodes, lvItemProjectVM);
+            return 
+                (null != RootNodes)
+                ? GetOneNodeByRootPath.Go(strPath, RootNodes, lvItemProjectVM)
+                : null;
         }
 
         internal int
@@ -121,13 +119,10 @@ namespace DoubleFile
         static int
             CountSubnodes(IEnumerable<LocalTreeNode> nodes)
         {
-            if (null == nodes)
-                return 0;
-
             var nRet = 0;
 
-            foreach (var treeNode in nodes)
-                nRet += 1 + CountSubnodes(treeNode.Nodes);
+            nodes?.ForEach(treeNode =>
+                nRet += 1 + CountSubnodes(treeNode.Nodes));
 
             return nRet;
         }
@@ -147,15 +142,8 @@ namespace DoubleFile
         void
             GoToFile(Tuple<LVitem_ProjectVM, string, string> tuple)
         {
-            if (null == _rootNodes)
-                return;
-
-            var treeNode = GetOneNodeByRootPathA(tuple.Item2, tuple.Item1);
-
-            if (null == treeNode)
-                return;
-
-            treeNode.GoToFile(tuple.Item3);
+            GetOneNodeByRootPathA(tuple.Item2, tuple.Item1)?
+                .GoToFile(tuple.Item3);
         }
 
         static internal T

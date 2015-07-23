@@ -18,10 +18,8 @@ namespace DoubleFile
 
                 _selectedItem = value;
 
-                if (null == value)
-                    return;
-
-                SelectedItem_AllTriggers();
+                if (null != _selectedItem)
+                    SelectedItem_AllTriggers();
             }
         }
         internal void SelectedItem_Set(LVitem_FolderListVM value)

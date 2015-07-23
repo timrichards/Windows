@@ -33,7 +33,7 @@ namespace DoubleFile
                 {
                     foreach (var node in treeNode.Nodes)
                     {
-                        if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                        if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                             _bThreadAbort)
                         {
                             return datum;
@@ -45,11 +45,8 @@ namespace DoubleFile
 
                 var nodeDatum = treeNode.NodeDatum;
 
-                if ((null == nodeDatum) ||
-                    (0 == nodeDatum.LineNo))
-                {
+                if (0 == (nodeDatum?.LineNo ?? 0))
                     return datum;
-                }
 
                 nodeDatum.TotalLength = (datum.TotalLength += nodeDatum.Length);
                 nodeDatum.FileCountHere = nodeDatum.LineNo - nodeDatum.PrevLineNo - 1;
@@ -212,7 +209,7 @@ namespace DoubleFile
 
                 foreach (var strLine in File.ReadLines(_volStrings.ListingFile))
                 {
-                    if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                    if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                         _bThreadAbort)
                     {
                         return;
@@ -292,7 +289,7 @@ namespace DoubleFile
                     nTotalLength = ((RootNodeDatum)rootTreeNode.NodeDatum).TotalLength;
                 }
 
-                if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
+                if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                     return;     // to avoid the below assert box
 
                 if (nScannedLength != nTotalLength)

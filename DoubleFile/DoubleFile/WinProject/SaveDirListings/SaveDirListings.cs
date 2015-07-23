@@ -72,7 +72,7 @@ namespace DoubleFile
             Util.WriteLine(string.Format("Finished saving directory listings in {0} seconds.",
                 ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10d));
 
-            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                 IsAborted)
             {
                 return;

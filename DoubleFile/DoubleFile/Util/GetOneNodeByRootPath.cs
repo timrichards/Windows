@@ -95,10 +95,7 @@ namespace DoubleFile
 
         static LocalTreeNode GetSubNode(LocalTreeNode node, string[] pathLevel, int nLevel, int nPathLevelLength, bool bIgnoreCase)
         {
-            if (null == node.Nodes)
-                return null;
-
-            foreach (LocalTreeNode subNode in node.Nodes)
+            foreach (LocalTreeNode subNode in node?.Nodes)
             {
                 var strText =
                     bIgnoreCase

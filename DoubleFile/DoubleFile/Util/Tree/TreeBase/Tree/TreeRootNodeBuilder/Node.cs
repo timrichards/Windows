@@ -19,7 +19,7 @@ namespace DoubleFile
                     uint[] folderScore,
                     RootNode rootNode)
                 {
-                    if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
+                    if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                         return;
 
                     MBoxStatic.Assert(1301.2303m, nLineNo != 0);
@@ -41,10 +41,8 @@ namespace DoubleFile
                     var strParent = _strPath;
                     var nIndex = strParent.LastIndexOf('\\');
 
-                    if (nIndex < 0)
-                    {
+                    if (0 > nIndex)
                         return;
-                    }
 
                     strParent = strParent.Remove(nIndex).TrimEnd('\\');
 
@@ -57,9 +55,7 @@ namespace DoubleFile
                     }
 
                     if (null == nodeParent._subNodes.TryGetValue(_strPath))
-                    {
                         nodeParent._subNodes.Add(_strPath, this);
-                    }
                 }
 
                 internal LocalTreeNode AddToTree(string strNickname, out string strRootPath)
@@ -78,7 +74,7 @@ namespace DoubleFile
 
                 LocalTreeNode AddToTree()
                 {
-                    if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
+                    if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                         return new LocalTreeNode();
 
                     var nIndex = _strPath.LastIndexOf('\\');

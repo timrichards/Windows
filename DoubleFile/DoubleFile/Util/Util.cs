@@ -159,10 +159,7 @@ namespace DoubleFile
         static internal void
             UIthread(decimal nLocation, Action action, bool bBlock = true)
         {
-            if (null == Application.Current)
-                return;
-
-            if (Application.Current.Dispatcher.HasShutdownStarted)
+            if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                 return;
 
             var blockingFrame = new LocalDispatcherFrame(nLocation) { Continue = bBlock };

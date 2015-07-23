@@ -43,10 +43,8 @@ namespace DoubleFile
 
             var nHorizontalOffset = (double?)scrollViewer.Tag;
 
-            if (null == nHorizontalOffset)
-                return;
-
-            scrollViewer.ScrollToHorizontalOffset(nHorizontalOffset.Value);
+            if (null != nHorizontalOffset)
+                scrollViewer.ScrollToHorizontalOffset(nHorizontalOffset.Value);
         }
 
         static T GetVisualChild<T>(DependencyObject parent) where T : Visual
@@ -58,12 +56,9 @@ namespace DoubleFile
             {
                 var v = (Visual)VisualTreeHelper.GetChild(parent, i);
                 
-                child = v.As<T>();
+                child = v.As<T>() ?? GetVisualChild<T>(v) ?? default(T);
 
-                if (null == child)
-                    child = GetVisualChild<T>(v);
-
-                if (null != child)
+                if (default(T) != child)
                     break;
             }
 

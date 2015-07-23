@@ -44,10 +44,8 @@ namespace DoubleFile
 
                 _selectedItem = value;
 
-                if (null == value)
-                    return;
-
-                SelectedItem_AllTriggers(0);
+                if (null != value)
+                    SelectedItem_AllTriggers(0);
             }
         }
         internal void SelectedItem_Set(LVitem_FilesVM value, int nInitiator)

@@ -137,7 +137,7 @@ namespace DoubleFile
         static internal T
             WithMainWindow<T>(Func<MainWindow, T> doSomethingWith)
         {
-            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
+            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                 return default(T);
 
             // use-case: assert before main window shown
@@ -148,8 +148,7 @@ namespace DoubleFile
 
             _mainWindowWR.TryGetTarget(out mainWindow);
 
-            if ((null == mainWindow) ||
-                mainWindow.LocalIsClosed)
+            if (mainWindow?.LocalIsClosed ?? true)
             {
                 MBoxStatic.Assert(99856, false);
                 return default(T);
@@ -182,12 +181,7 @@ namespace DoubleFile
             if (MBoxStatic.Assert(99997, (System.Diagnostics.Debugger.IsAttached == false), "Debugger is attached but DEBUG is not defined.") == false)
                 return;
 
-            var args = AppDomain.CurrentDomain.SetupInformation.ActivationArguments;
-
-            if (null == args)
-                return;
-
-            var arrArgs = args.ActivationData;
+            var arrArgs = AppDomain.CurrentDomain.SetupInformation.ActivationArguments?.ActivationData;
 
             // scenario: launched from Start menu
             if (null == arrArgs)                

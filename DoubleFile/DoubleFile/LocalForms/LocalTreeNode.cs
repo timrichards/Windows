@@ -67,11 +67,8 @@ namespace DoubleFile
         {
             Level = -1;
 
-            if (null == Nodes)
-                return this;
-
-            foreach (var treeNode in Nodes)
-                treeNode.DetachFromTree();
+            Nodes?.ForEach(treeNode =>
+                treeNode.DetachFromTree());
 
             return this;
         }
@@ -115,12 +112,9 @@ namespace DoubleFile
 
         static internal void SetLevel(IReadOnlyList<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
         {
-            if (null == nodes)
-                return;
-
             LocalTreeNode nodePrev = null;
 
-            foreach (var treeNode in nodes)
+            nodes?.ForEach(treeNode =>
             {
                 if (null != nodePrev)
                     nodePrev.NextNode = treeNode;
@@ -129,7 +123,7 @@ namespace DoubleFile
                 treeNode.Parent = nodeParent;
                 treeNode.Level = nLevel;
                 SetLevel(treeNode.Nodes, treeNode, nLevel + 1);
-            }
+            });
         }
 
         internal LocalTreeNode GoToFile(string strFile)

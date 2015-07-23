@@ -70,7 +70,7 @@ namespace DoubleFile
                     while (null !=
                         (strLine = sr.ReadLine()))
                     {
-                        if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+                        if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                             _bThreadAbort)
                         {
                             return;

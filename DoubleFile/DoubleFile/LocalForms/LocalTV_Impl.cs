@@ -79,7 +79,7 @@ namespace DoubleFile
 
         void ICreateFileDictStatus.Callback(bool bDone, double nProgress)
         {
-            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                 App.FileDictionary.IsAborted)
             {
                 WinProgress.WithWinProgress(w => w
@@ -105,7 +105,7 @@ namespace DoubleFile
         
         void ITreeStatus.Status(LVitem_ProjectVM volStrings, LocalTreeNode rootNode, bool bError)
         {
-            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted ||
+            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                 App.FileDictionary.IsAborted ||
                 (_tree?.IsAborted ?? false))
             {
@@ -168,7 +168,7 @@ namespace DoubleFile
                 Util.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
                 dtStart = DateTime.Now;
 
-                if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
+                if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                     return;
 
                 WinProgress.WithWinProgress(w => w
@@ -176,8 +176,8 @@ namespace DoubleFile
 
                 collate.Step2();
 
-                if (null == LocalTV.SelectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
-                    LocalTV.SelectedNode = _topNode;
+                if (null == _selectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
+                    _selectedNode = _topNode;
 
                 Util.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
             }

@@ -89,13 +89,10 @@ namespace DoubleFile
                 ? 10
                 : 11;
 
-            if (null == _dictFiles)
-                return null;
-
             if (asFileLine.Length <= nHashColumn)
                 return null;
 
-            var tuple = _dictFiles.TryGetValue(FileKeyTuple.FactoryCreate(
+            var tuple = _dictFiles?.TryGetValue(FileKeyTuple.FactoryCreate(
                 asFileLine[nHashColumn],
                 ("" + asFileLine[7]).ToUlong()));
 

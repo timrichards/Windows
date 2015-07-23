@@ -106,15 +106,13 @@ namespace DoubleFile
             {
                 var nodeDatum = treeNode.NodeDatum;
                 var rootNode = treeNode.Root;
+                var rootNodeDatum = rootNode.NodeDatum.As<RootNodeDatum>();
 
-                if ((null == nodeDatum) ||
-                    (0 == nodeDatum.LineNo) ||
-                    (false == rootNode.NodeDatum is RootNodeDatum))
+                if ((0 == (nodeDatum?.LineNo ?? 0)) ||
+                    (null == rootNodeDatum))
                 {
                     return null;     // from lambda
                 }
-
-                var rootNodeDatum = (RootNodeDatum)rootNode.NodeDatum;
 
                 strListingFile = rootNodeDatum.ListingFile;
 
@@ -144,8 +142,7 @@ namespace DoubleFile
             var nodeDatum = treeNode.NodeDatum;
             var lieDetail = new List<IEnumerable<string>>();
 
-            if ((null == nodeDatum) ||
-                (0 == nodeDatum.LineNo))
+            if (0 == (nodeDatum?.LineNo ?? 0))
             {
                 FolderDetailUpdatedOnNext(new FolderDetailUpdated(lieDetail, null), nInitiator);
                 return;

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Windows;
 
@@ -41,7 +38,7 @@ namespace DoubleFile
 
             Util.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", _strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10d));
 
-            if ((null == Application.Current) || Application.Current.Dispatcher.HasShutdownStarted)
+            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                 return;
 
             if (null == _callbackWR)

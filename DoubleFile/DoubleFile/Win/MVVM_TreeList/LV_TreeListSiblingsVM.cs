@@ -16,7 +16,7 @@ namespace DoubleFile
 
                 _selectedItem = value;
 
-                if (null == value)
+                if (null == _selectedItem)
                     return;
 
                 TreeSelect.DoThreadFactory(value.LocalTreeNode, nInitiator: _kTreeSelect);

@@ -584,6 +584,9 @@ namespace DoubleFile
                 }
             }
 
+            if (null == treeNode.Nodes)
+                return;
+
             foreach (var subNode in treeNode?.Nodes)
             {
                 if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||

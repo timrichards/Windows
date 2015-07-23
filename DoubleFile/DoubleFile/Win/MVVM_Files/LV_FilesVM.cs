@@ -44,7 +44,7 @@ namespace DoubleFile
 
                 _selectedItem = value;
 
-                if (null != value)
+                if (null != _selectedItem)
                     SelectedItem_AllTriggers(0);
             }
         }

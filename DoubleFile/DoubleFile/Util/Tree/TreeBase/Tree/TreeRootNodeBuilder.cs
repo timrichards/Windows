@@ -46,7 +46,10 @@ namespace DoubleFile
                 var nodeDatum = treeNode.NodeDatum;
 
                 if (0 == (nodeDatum?.LineNo ?? 0))
+                {
+                    MBoxStatic.Assert(99778, false);
                     return datum;
+                }
 
                 nodeDatum.TotalLength = (datum.TotalLength += nodeDatum.Length);
                 nodeDatum.FileCountHere = nodeDatum.LineNo - nodeDatum.PrevLineNo - 1;

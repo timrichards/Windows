@@ -6,21 +6,16 @@ namespace DoubleFile
 {
     static class GetOneNodeByRootPath
     {
-        static internal LocalTreeNode Go(
-            string strPath,
-            IEnumerable<LocalTreeNode> treeNodeCollection,
-            LVitem_ProjectVM lvItemProjectVM = null)
+        static internal LocalTreeNode
+            Go(string strPath, IEnumerable<LocalTreeNode> treeNodeCollection, LVitem_ProjectVM lvItemProjectVM = null)
         {
             return
-                Go_A(strPath, treeNodeCollection, lvItemProjectVM) 
-                ?? Go_A(strPath, treeNodeCollection, lvItemProjectVM, bIgnoreCase: true);
+                GoA(strPath, treeNodeCollection, lvItemProjectVM) 
+                ?? GoA(strPath, treeNodeCollection, lvItemProjectVM, bIgnoreCase: true);
         }
 
-        static LocalTreeNode Go_A(
-            string strPath,
-            IEnumerable<LocalTreeNode> treeNodeCollection,
-            LVitem_ProjectVM lvItemProjectVM,
-            bool bIgnoreCase = false)
+        static LocalTreeNode
+            GoA(string strPath, IEnumerable<LocalTreeNode> treeNodeCollection, LVitem_ProjectVM lvItemProjectVM, bool bIgnoreCase = false)
         {
             if ((string.IsNullOrWhiteSpace(strPath)) ||
                 (null == treeNodeCollection))
@@ -75,8 +70,11 @@ namespace DoubleFile
                 if (strNode != arrPath[0])
                     continue;
 
-                if (lvItemProjectVM?.ListingFile != rootNodeDatum.ListingFile)
+                if ((null != lvItemProjectVM) &&
+                    (lvItemProjectVM.ListingFile != rootNodeDatum.ListingFile))
+                {
                     continue;
+                }
 
                 nodeRet = topNode;
 
@@ -95,7 +93,10 @@ namespace DoubleFile
 
         static LocalTreeNode GetSubNode(LocalTreeNode node, string[] pathLevel, int nLevel, int nPathLevelLength, bool bIgnoreCase)
         {
-            foreach (LocalTreeNode subNode in node?.Nodes)
+            if (null == node.Nodes)
+                return null;
+
+            foreach (LocalTreeNode subNode in node.Nodes)
             {
                 var strText =
                     bIgnoreCase

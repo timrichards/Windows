@@ -102,7 +102,7 @@ namespace DoubleFile
             string strListingFile = null;
 
             var ieFiles =
-                Util.Closure(() =>
+                Closure(() =>
             {
                 var nodeDatum = treeNode.NodeDatum;
                 var rootNode = treeNode.Root;
@@ -111,6 +111,7 @@ namespace DoubleFile
                 if ((0 == (nodeDatum?.LineNo ?? 0)) ||
                     (null == rootNodeDatum))
                 {
+                    MBoxStatic.Assert(99779, false);
                     return null;     // from lambda
                 }
 

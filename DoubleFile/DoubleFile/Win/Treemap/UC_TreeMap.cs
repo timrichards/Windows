@@ -381,10 +381,15 @@ namespace DoubleFile
                     return treeNode;
                 }
 
+                //The following shows that you have to convert to int to compare to int.
+                //var a = treeNode.Nodes?.Count;
+                //var b = treeNode.Nodes?.Count ?? 0;
+
+                //if (0 == treeNode.Nodes?.Count)
+                //    continue;
+
                 if (0 == (treeNode.Nodes?.Count ?? 0))
-                {
                     continue;
-                }
 
                 var foundNode = FindMapNode(treeNode.Nodes[0], pt, bNextNode: true);
 

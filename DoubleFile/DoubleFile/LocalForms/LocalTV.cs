@@ -45,13 +45,13 @@ namespace DoubleFile
             TreeSelect_FileList { get { return Util.WR(_wr, o => o._treeSelect_FileList); } }
         TreeSelect.FileListUpdated _treeSelect_FileList;
 
-        static internal Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>
+        static internal TreeSelect.FolderDetailUpdated
             TreeSelect_FolderDetail { get { return Util.WR(_wr, o => o._treeSelect_FolderDetail); } }
-        Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode> _treeSelect_FolderDetail = null;
+        TreeSelect.FolderDetailUpdated _treeSelect_FolderDetail = null;
 
-        static internal Tuple<IEnumerable<IEnumerable<string>>, string>
+        static internal TreeSelect.VolumeDetailUpdated
             TreeSelect_VolumeDetail { get { return Util.WR(_wr, o => o._treeSelect_VolumeDetail); } }
-        Tuple<IEnumerable<IEnumerable<string>>, string> _treeSelect_VolumeDetail = null;
+        TreeSelect.VolumeDetailUpdated _treeSelect_VolumeDetail = null;
 
         static internal bool
             FactoryCreate(LV_ProjectVM lvProjectVM)
@@ -87,8 +87,8 @@ namespace DoubleFile
             _lsDisposable.Add(WinDuplicatesVM.GoToFile.Subscribe(WinDuplicatesVM_GoToFile));
             _lsDisposable.Add(WinSearchVM.GoToFile.Subscribe(WinSearchVM_GoToFile));
             _lsDisposable.Add(TreeSelect.FileListUpdated.Observable.Subscribe(v => _treeSelect_FileList = v.Item1));
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(v => _treeSelect_FolderDetail = v.Item1));
-            _lsDisposable.Add(TreeSelect.VolumeDetailUpdated.Subscribe(v => _treeSelect_VolumeDetail = v.Item1));
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.Subscribe(v => _treeSelect_FolderDetail = v.Item1));
+            _lsDisposable.Add(TreeSelect.VolumeDetailUpdated.Observable.Subscribe(v => _treeSelect_VolumeDetail = v.Item1));
         }
 
         internal LocalTV

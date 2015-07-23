@@ -8,7 +8,7 @@ namespace DoubleFile
     {
         internal LV_VolumeDetailVM()
         {
-            _lsDisposable.Add(TreeSelect.VolumeDetailUpdated.Subscribe(VolumeDetailUpdated));
+            _lsDisposable.Add(TreeSelect.VolumeDetailUpdated.Observable.Subscribe(VolumeDetailUpdated));
 
             var volumeDetail = LocalTV.TreeSelect_VolumeDetail;
 
@@ -16,19 +16,19 @@ namespace DoubleFile
                 VolumeDetailUpdated(Tuple.Create(volumeDetail, 0));
         }
 
-        void VolumeDetailUpdated(Tuple<Tuple<IEnumerable<IEnumerable<string>>, string>, int> initiatorTuple)
+        void VolumeDetailUpdated(Tuple<TreeSelect.VolumeDetailUpdated, int> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
 
             Util.Write("H");
-            Title = tuple.Item2;
+            Title = tuple.strVolume;
             ClearItems();
 
-            if (null == tuple.Item1)
+            if (null == tuple.ieDetail)
                 return;
 
             Util.UIthread(99819, () =>
-                Add(tuple.Item1.Select(ieLine => new LVitem_VolumeDetailVM(ieLine.ToList()))));
+                Add(tuple.ieDetail.Select(ieLine => new LVitem_VolumeDetailVM(ieLine.ToList()))));
         }
 
         public void Dispose()

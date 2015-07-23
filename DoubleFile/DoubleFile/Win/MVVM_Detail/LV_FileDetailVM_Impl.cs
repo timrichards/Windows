@@ -13,17 +13,17 @@ namespace DoubleFile
             _lsDisposable.Add(WinDuplicatesVM.UpdateFileDetail.Subscribe(WinDuplicatesVM_UpdateFileDetail));
             _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.Subscribe(LV_FilesVM_SelectedFileChanged));
 
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(initiatorTuple =>
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.Subscribe(initiatorTuple =>
             {
                 var tuple = initiatorTuple.Item1;
 
-                Util.Write("E"); if (null != tuple.Item2) LocalPath_Set(tuple.Item2);
+                Util.Write("E"); if (null != tuple.treeNode) LocalPath_Set(tuple.treeNode);
             }));
 
             var folderDetail = LocalTV.TreeSelect_FolderDetail;
 
             if (null != folderDetail)
-                LocalPath_Set(folderDetail.Item2);
+                LocalPath_Set(folderDetail.treeNode);
 
             var lastSelectedFile = LV_FilesVM.LastSelectedFile;
 

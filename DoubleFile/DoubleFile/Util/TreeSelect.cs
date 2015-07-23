@@ -33,15 +33,45 @@ namespace DoubleFile
             ((LocalSubject<FileListUpdated>)FileListUpdated.Observable).LocalOnNext(value, 99846, nInitiator);
         }
 
-        static internal IObservable<Tuple<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>, int>>
-            FolderDetailUpdated { get { return _folderDetailUpdated; } }
-        static readonly LocalSubject<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>> _folderDetailUpdated = new LocalSubject<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>>();
-        static void FolderDetailUpdatedOnNext(Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode> value, int nInitiator) { _folderDetailUpdated.LocalOnNext(value, 99845, nInitiator); }
+        internal class FolderDetailUpdated
+        {
+            internal readonly IEnumerable<IEnumerable<string>> ieDetail;
+            internal readonly LocalTreeNode treeNode;
 
-        static internal IObservable<Tuple<Tuple<IEnumerable<IEnumerable<string>>, string>, int>>
-            VolumeDetailUpdated { get { return _volumeDetailUpdated; } }
-        static readonly LocalSubject<Tuple<IEnumerable<IEnumerable<string>>, string>> _volumeDetailUpdated = new LocalSubject<Tuple<IEnumerable<IEnumerable<string>>, string>>();
-        static void VolumeDetailUpdatedOnNext(Tuple<IEnumerable<IEnumerable<string>>, string> value, int nInitiator) { _volumeDetailUpdated.LocalOnNext(value, 99844, nInitiator); }
+            internal FolderDetailUpdated(IEnumerable<IEnumerable<string>> ieDetail_, LocalTreeNode treeNode_)
+            {
+                ieDetail = ieDetail_;
+                treeNode = treeNode_;
+            }
+
+            static internal readonly IObservable<Tuple<FolderDetailUpdated, int>>
+                Observable = new LocalSubject<FolderDetailUpdated>();
+        }
+        static void
+            FolderDetailUpdatedOnNext(FolderDetailUpdated value, int nInitiator)
+        {
+            ((LocalSubject<FolderDetailUpdated>)FolderDetailUpdated.Observable).LocalOnNext(value, 99845, nInitiator);
+        }
+
+        internal class VolumeDetailUpdated
+        {
+            internal readonly IEnumerable<IEnumerable<string>> ieDetail;
+            internal readonly string strVolume;
+
+            internal VolumeDetailUpdated(IEnumerable<IEnumerable<string>> ieDetail_, string strVolume_)
+            {
+                ieDetail = ieDetail_;
+                strVolume = strVolume_;
+            }
+
+            static internal readonly IObservable<Tuple<VolumeDetailUpdated, int>>
+                Observable = new LocalSubject<VolumeDetailUpdated>();
+        }
+        static void
+            VolumeDetailUpdatedOnNext(VolumeDetailUpdated value, int nInitiator)
+        {
+            ((LocalSubject<VolumeDetailUpdated>)VolumeDetailUpdated.Observable).LocalOnNext(value, 99844, nInitiator);
+        }
 
         static internal bool DoThreadFactory(LocalTreeNode treeNode, int nInitiator, string strFile = null,
             bool bCompareMode = false, bool bSecondComparePane = false)
@@ -115,21 +145,21 @@ namespace DoubleFile
         static void GetFolderDetail(LocalTreeNode treeNode, int nInitiator)
         {
             var nodeDatum = treeNode.NodeDatum;
-            var lasItems = new List<IEnumerable<string>>();
+            var lieDetail = new List<IEnumerable<string>>();
 
             if ((null == nodeDatum) ||
                 (0 == nodeDatum.LineNo))
             {
-                FolderDetailUpdatedOnNext(Tuple.Create(lasItems.AsEnumerable(), (LocalTreeNode)null), nInitiator);
+                FolderDetailUpdatedOnNext(new FolderDetailUpdated(lieDetail, null), nInitiator);
                 return;
             }
 
             const string kStrFmt_thous = "###,###,###,##0";
 
-            lasItems.Add(new[] { "# Files Here", nodeDatum.FileCountHere.ToString(kStrFmt_thous) });
-            lasItems.Add(new[] { "with Size of", FormatSize(nodeDatum.Length, bBytes: true) });
-            lasItems.Add(new[] { "Total # Files", nodeDatum.FileCountTotal.ToString(kStrFmt_thous) });
-            lasItems.Add(new[] { "# Folders Here", ((null != treeNode.Nodes) ? treeNode.Nodes.Count : 0).ToString(kStrFmt_thous) });
+            lieDetail.Add(new[] { "# Files Here", nodeDatum.FileCountHere.ToString(kStrFmt_thous) });
+            lieDetail.Add(new[] { "with Size of", FormatSize(nodeDatum.Length, bBytes: true) });
+            lieDetail.Add(new[] { "Total # Files", nodeDatum.FileCountTotal.ToString(kStrFmt_thous) });
+            lieDetail.Add(new[] { "# Folders Here", ((null != treeNode.Nodes) ? treeNode.Nodes.Count : 0).ToString(kStrFmt_thous) });
 
             if (0 < nodeDatum.SubDirs)
             {
@@ -146,11 +176,11 @@ namespace DoubleFile
                         strItem += " (" + nDirsWithFiles.ToString(kStrFmt_thous) + " with files)";
                 }
 
-                lasItems.Add(new[] { "# Subfolders", strItem });
+                lieDetail.Add(new[] { "# Subfolders", strItem });
             }
 
-            lasItems.Add(new[] { "Total Size", FormatSize(nodeDatum.TotalLength, bBytes: true) });
-            FolderDetailUpdatedOnNext(Tuple.Create(lasItems.AsEnumerable(), treeNode), nInitiator);
+            lieDetail.Add(new[] { "Total Size", FormatSize(nodeDatum.TotalLength, bBytes: true) });
+            FolderDetailUpdatedOnNext(new FolderDetailUpdated(lieDetail, treeNode), nInitiator);
         }
 
         static void GetVolumeDetail(LocalTreeNode treeNode, int nInitiator)
@@ -161,7 +191,7 @@ namespace DoubleFile
             if ((null == _dictVolumeInfo) ||
                 (null == strDriveInfo))
             {
-                VolumeDetailUpdatedOnNext(Tuple.Create((IEnumerable<IEnumerable<string>>)null, rootNode.Text), nInitiator);
+                VolumeDetailUpdatedOnNext(new VolumeDetailUpdated(null, rootNode.Text), nInitiator);
                 return;
             }
 
@@ -217,7 +247,7 @@ namespace DoubleFile
                 lasItems.Add(asItems[ix]);
             }
 
-            VolumeDetailUpdatedOnNext(Tuple.Create(lasItems.Where(i => null != i), rootNode.Text), nInitiator);
+            VolumeDetailUpdatedOnNext(new VolumeDetailUpdated(lasItems.Where(i => null != i), rootNode.Text), nInitiator);
         }
 
         static IReadOnlyDictionary<string, string>

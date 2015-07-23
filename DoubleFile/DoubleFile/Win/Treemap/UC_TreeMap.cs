@@ -47,7 +47,7 @@ namespace DoubleFile
             _lsDisposable.Add(Observable.FromEventPattern<MouseEventArgs>(this, "MouseUp")
                 .Subscribe(args => { if (bMouseDown) { bMouseDown = false; form_tmapUserCtl_MouseUp(args.EventArgs.Location); } }));
 
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(initiatorTuple =>
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.Subscribe(initiatorTuple =>
             {
                 if (LV_TreeListChildrenVM.kChildSelectedOnNext == initiatorTuple.Item2)
                     return;
@@ -55,7 +55,7 @@ namespace DoubleFile
                 var tuple = initiatorTuple.Item1;
 
                 Util.Write("M");
-                RenderD(tuple.Item2, initiatorTuple.Item2);
+                RenderD(tuple.treeNode, initiatorTuple.Item2);
                 _bTreeSelect = false;
             }));
 

@@ -48,7 +48,7 @@ namespace DoubleFile
         internal LV_TreeListSiblingsVM(LV_TreeListChildrenVM lvChildrenVM)
         {
             _lvChildrenVM = lvChildrenVM;
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(TreeSelect_FolderDetailUpdated));
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.Subscribe(TreeSelect_FolderDetailUpdated));
 
             var folderDetail = LocalTV.TreeSelect_FolderDetail;
 
@@ -61,7 +61,7 @@ namespace DoubleFile
             Util.LocalDispose(_lsDisposable);
         }
 
-        void TreeSelect_FolderDetailUpdated(Tuple<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>, int> initiatorTuple)
+        void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, int> initiatorTuple)
         {
             if (new[] { _kTreeSelect, LV_TreeListChildrenVM.kChildSelectedOnNext }
                 .Contains(initiatorTuple.Item2))
@@ -75,7 +75,7 @@ namespace DoubleFile
             Util.Write("L");
 
             if (bSiblingFolder &&
-                Populate(tuple.Item2))
+                Populate(tuple.treeNode))
             {
                 return;
             }
@@ -83,8 +83,8 @@ namespace DoubleFile
             {
                 var siblingFolder =
                     bSiblingFolder
-                    ? tuple.Item2
-                    : tuple.Item2.Parent;
+                    ? tuple.treeNode
+                    : tuple.treeNode.Parent;
 
                 ItemsCast
                     .Where(lvItem => lvItem.LocalTreeNode == siblingFolder)
@@ -95,13 +95,13 @@ namespace DoubleFile
                 return;
 
             if ((null != _selectedItem) &&
-                (tuple.Item2.Parent != _selectedItem.LocalTreeNode))    // no-op on descending treemap subfolders.
+                (tuple.treeNode.Parent != _selectedItem.LocalTreeNode))    // no-op on descending treemap subfolders.
             {
                 return;
             }
 
             _lvChildrenVM.ItemsCast
-                .Where(lvItem => lvItem.LocalTreeNode == tuple.Item2)
+                .Where(lvItem => lvItem.LocalTreeNode == tuple.treeNode)
                 .FirstOnlyAssert(_lvChildrenVM.SelectedItem_Set);
         }
 

@@ -43,7 +43,7 @@ namespace DoubleFile
             if (localLVVM.Items.Any())
                 Add(localLVVM.ItemsCast);
 
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(TreeSelect_FolderDetailUpdated));
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.Subscribe(TreeSelect_FolderDetailUpdated));
 
             var folderDetail = LocalTV.TreeSelect_FolderDetail;
 
@@ -62,12 +62,12 @@ namespace DoubleFile
             Util.LocalDispose(_lsDisposable);
         }
 
-        void TreeSelect_FolderDetailUpdated(Tuple<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>, int> initiatorTuple)
+        void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, int> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
 
             ItemsCast
-                .Where(lvItem => lvItem.WithLocalTreeNode(t => t) == tuple.Item2)
+                .Where(lvItem => lvItem.WithLocalTreeNode(t => t) == tuple.treeNode)
                 .FirstOnlyAssert(SelectedItem_Set);
         }
 

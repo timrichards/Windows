@@ -8,7 +8,7 @@ namespace DoubleFile
     {
         internal LV_FolderDetailVM()
         {
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Subscribe(TreeSelect_FolderDetailUpdated));
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.Subscribe(TreeSelect_FolderDetailUpdated));
 
             var folderDetail = LocalTV.TreeSelect_FolderDetail;
 
@@ -16,7 +16,7 @@ namespace DoubleFile
                 TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
         }
 
-        void TreeSelect_FolderDetailUpdated(Tuple<Tuple<IEnumerable<IEnumerable<string>>, LocalTreeNode>, int> initiatorTuple)
+        void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, int> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
 
@@ -24,37 +24,37 @@ namespace DoubleFile
             Title = null;
             ClearItems();
 
-            if (null == tuple.Item2)
+            if (null == tuple.treeNode)
                 return;
 
             Util.UIthread(99818, () =>
             {
                 var ieDetail =
-                    tuple.Item1
+                    tuple.ieDetail
                     .Select(ieLine => new LVitem_FolderDetailVM(ieLine.ToList()));
 
-                var strFG_Description = UtilColor.Descriptions[tuple.Item2.ForeColor];
-                var strBG_Description = UtilColor.Descriptions[tuple.Item2.BackColor];
+                var strFG_Description = UtilColor.Descriptions[tuple.treeNode.ForeColor];
+                var strBG_Description = UtilColor.Descriptions[tuple.treeNode.BackColor];
 
                 if (false == string.IsNullOrWhiteSpace(strFG_Description))
                 {
                     ieDetail = ieDetail.Concat(new[]
-                    { new LVitem_FolderDetailVM(new[] { "", strFG_Description }) { Foreground = tuple.Item2.Foreground } });
+                    { new LVitem_FolderDetailVM(new[] { "", strFG_Description }) { Foreground = tuple.treeNode.Foreground } });
                 }
 
                 if (false == string.IsNullOrWhiteSpace(strBG_Description))
                 {
                     ieDetail = ieDetail.Concat(new[]
-                    { new LVitem_FolderDetailVM(new[] { "", strBG_Description }) { Background = tuple.Item2.Background } });
+                    { new LVitem_FolderDetailVM(new[] { "", strBG_Description }) { Background = tuple.treeNode.Background } });
                 }
 #if DEBUG
                 var nHashVersion = (App.FileDictionary.AllListingsHashV2) ? "1 MB" : "4K";
 
                 ieDetail = ieDetail.Concat(new[]
                 { new LVitem_FolderDetailVM(new[] { nHashVersion + " Folder Score", "" +
-                    string.Join(" ", tuple.Item2.NodeDatum.FolderScore)}) });
+                    string.Join(" ", tuple.treeNode.NodeDatum.FolderScore)}) });
 #endif
-                Title = tuple.Item2.Text;
+                Title = tuple.treeNode.Text;
                 Add(ieDetail);
             });
         }

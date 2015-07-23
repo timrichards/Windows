@@ -41,7 +41,7 @@ namespace DoubleFile
             if (null == folderDetail)
                 TreeSelect.DoThreadFactory(LocalTV.TopNode, 0);
             else
-                treeNode = folderDetail.Item2;
+                treeNode = folderDetail.treeNode;
 
             _ucTreeMap.TreeMapVM.GoTo(treeNode);
         }

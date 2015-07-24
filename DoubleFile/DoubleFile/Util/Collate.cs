@@ -416,7 +416,7 @@ namespace DoubleFile
                     return;
                 }
 
-                int nClones = nodeDatum.Clones?.Count ?? 0;
+                var nClones = nodeDatum.Clones?.Count ?? 0;
 
                 if (0 == nClones)
                     MBoxStatic.Assert(1305.6328m, false);

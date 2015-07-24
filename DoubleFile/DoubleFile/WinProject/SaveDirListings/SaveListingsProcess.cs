@@ -99,9 +99,7 @@ namespace DoubleFile
         bool IWinProgressClosing.ConfirmClose()
         {
             if (App.SaveDirListings?.IsAborted ?? true)
-            {
                 return true;
-            }
 
             if (MessageBoxResult.Yes != MBoxStatic.ShowDialog("Do you want to cancel?", "Saving Directory Listings", MessageBoxButton.YesNo,
                 WinProgress.WithWinProgress(w => w)))

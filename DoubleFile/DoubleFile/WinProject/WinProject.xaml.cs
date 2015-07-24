@@ -36,8 +36,8 @@ namespace DoubleFile
 
             _weakReference.TryGetTarget(out winProject);
 
-            if ((winProject._lvProjectVM?.LocalEquals(App.LVprojectVM) ?? false)
-                && OKtoNavigate_UpdateSaveListingsLink(bSaveListings))
+            if ((winProject._lvProjectVM?.LocalEquals(App.LVprojectVM) ?? false) &&
+                OKtoNavigate_UpdateSaveListingsLink(bSaveListings))
             {
                 return true;
             }

@@ -100,7 +100,7 @@ namespace DoubleFile
                 (false == _winTooltip.LocalIsClosing) &&
                 (false == _winTooltip.LocalIsClosed))
             {
-                _winTooltip._closingCallback();
+                _winTooltip._closingCallback?.Invoke();
                 _winTooltip.Close();
             }
 

@@ -50,9 +50,8 @@ namespace DoubleFile
             if (lv1.TopItem.Index > 0) { return; }
             if (lv2.TopItem == null) { return; }
 
-            int lv2Count = lv2.Items?.Count ?? 0;
-            int lv1Count = lv1.Items?.Count ?? 0;
-
+            var lv2Count = lv2.Items?.Count ?? 0;
+            var lv1Count = lv1.Items?.Count ?? 0;
             var nIx = lv2.TopItem.Index - Math.Abs(lv2Count - lv1Count);
 
             if (0 > nIx)

@@ -145,6 +145,7 @@ namespace DoubleFile
 
             if (0 == (nodeDatum?.LineNo ?? 0))
             {
+                MBoxStatic.Assert(99777, false);
                 FolderDetailUpdatedOnNext(new FolderDetailUpdated(lieDetail, null), nInitiator);
                 return;
             }

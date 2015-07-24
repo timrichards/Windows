@@ -188,7 +188,7 @@ namespace DoubleFile
 
                 LVitem_ProjectVM lvItem = null;
 
-                if (FileParse.ReadHeader(strFilename, out lvItem))
+                if (FileParse.ReadHeader(strFilename, ref lvItem))
                 {
                     listItems.Add(lvItem);
                 }

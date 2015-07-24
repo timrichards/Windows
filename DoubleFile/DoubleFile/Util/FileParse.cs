@@ -337,20 +337,18 @@ namespace DoubleFile
             return strRet;
         }
 
-        static internal bool ReadHeader(string strFile, out LVitem_ProjectVM lvItem_out)
+        static internal bool ReadHeader(string strFile, ref LVitem_ProjectVM lvItem_out)
         {
-            lvItem_out = null;
-
             var tupleValidate = ValidateFile(strFile);
 
             if (false == tupleValidate.Item1)
                 return false;
 
-            var lvItem = new LVitem_ProjectVM
+            var lvItem = new LVitem_ProjectVM(lvItem_out)
             {
                 ListingFile = strFile,
-                Status = ksUsingFile,
-                Include = true
+                Status = lvItem_out?.Status ?? ksUsingFile,
+                Include = lvItem_out?.Include ?? true
             };
 
             const int knLinesDesired = 4 + knDriveInfoItems;

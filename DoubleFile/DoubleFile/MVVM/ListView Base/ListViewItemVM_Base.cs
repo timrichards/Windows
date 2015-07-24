@@ -31,6 +31,10 @@ namespace DoubleFile
                     : value.Concat(new string[nTack]).ToList();
 
                 MBoxStatic.Assert(99995, _subItems.Count == NumCols);
+
+                foreach (var propName in PropNames)
+                    RaisePropertyChanged(propName);
+
                 RaiseColumnWidths();
             }
         }

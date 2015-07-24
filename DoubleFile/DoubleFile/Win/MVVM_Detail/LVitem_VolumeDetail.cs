@@ -17,10 +17,5 @@ namespace DoubleFile
             : base(null, lsStr)
         {
         }
-
-        internal LVitem_VolumeDetailVM(LVitem_VolumeDetailVM lvItemTemp)
-            : this(lvItemTemp.SubItems)
-        {
-        }
     }
 }

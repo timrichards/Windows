@@ -5,6 +5,9 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- Edit doesn't change anything else if it changes drive letter
+- No edits show up in list view until you click a column header
+- Fast WinDirStat capability - make a separate app just for that which shares the code base
 - Smells:
 	- ISaveDirListingsStatus.Status ignores WinProgress.WithWinProgress lambda 
 	- WinProject doesn't test its weak reference which is understandable

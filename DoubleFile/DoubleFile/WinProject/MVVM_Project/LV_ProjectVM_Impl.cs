@@ -107,7 +107,7 @@ namespace DoubleFile
                     if (null != dlgEdit)
                     {
                         if (ModifyListingFile(lvItem, lvItemTemp, dlgEdit.formUC_VolumeEdit.DriveLetter))
-                            FileParse.ReadHeader(lvItemTemp.ListingFile, out lvItemTemp);
+                            FileParse.ReadHeader(lvItemTemp.ListingFile, ref lvItemTemp);
                         else if (lvItem.LocalEquals(lvItemTemp))
                             break;  // no change to volume group; include y/n: columns that aren't in the listing file
 
@@ -309,8 +309,14 @@ namespace DoubleFile
                     sbOut.AppendLine("" + sbLine);
                 }
 
+                Action ModifyDriveLetter = () => { };
+
+                if (bDriveLetter_Todo)
+                    ModifyDriveLetter = () => sbOut.Replace("\t" + driveLetterOrig + @":\", "\t" + driveLetter + @":\");
+
                 if (sbOut.Length > 0)
                 {
+                    ModifyDriveLetter();
                     File.WriteAllText(lvItem_Orig.ListingFile, "" + sbOut);
                 }
                 else
@@ -339,10 +345,7 @@ namespace DoubleFile
                     {
                         sbOut.Clear();
                         sbOut.Append(buffer, 0, nRead);
-
-                        if (bDriveLetter_Todo)
-                            sbOut.Replace("\t" + driveLetterOrig + @":\", "\t" + driveLetter + @":\");
-
+                        ModifyDriveLetter();
                         fileWriter.Write("" + sbOut);
                     }
                 }

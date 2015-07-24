@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -37,7 +38,7 @@ namespace DoubleFile
         }
 
         internal LVitem_ProjectVM(LVitem_ProjectVM lvItemTemp)
-            : this(lvItemTemp.SubItems)
+            : this(lvItemTemp?.SubItems.ToList() ?? null)
         {
         }
 
@@ -86,7 +87,7 @@ namespace DoubleFile
         {
             LVitem_ProjectVM lvItem = null;
 
-            if (FileParse.ReadHeader(ListingFile, out lvItem))
+            if (FileParse.ReadHeader(ListingFile, ref lvItem))
             {
                 SubItems = lvItem.SubItems;
                 LinesTotal = lvItem.LinesTotal;

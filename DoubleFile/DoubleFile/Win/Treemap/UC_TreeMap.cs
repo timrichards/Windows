@@ -440,11 +440,11 @@ namespace DoubleFile
             {
                 ulong nLength = 0;
 
-                if ((asFileLine.Length > Util.knColLengthLV) &&
-                    (false == string.IsNullOrWhiteSpace(asFileLine[Util.knColLengthLV])))
+                if ((asFileLine.Length > FileParse.knColLengthLV) &&
+                    (false == string.IsNullOrWhiteSpace(asFileLine[FileParse.knColLengthLV])))
                 {
-                    nLengthDebug += nLength = ("" + asFileLine[Util.knColLengthLV]).ToUlong();
-                    asFileLine[Util.knColLengthLV] = Util.FormatSize(asFileLine[Util.knColLengthLV]);
+                    nLengthDebug += nLength = ("" + asFileLine[FileParse.knColLengthLV]).ToUlong();
+                    asFileLine[FileParse.knColLengthLV] = Util.FormatSize(asFileLine[FileParse.knColLengthLV]);
                 }
 
                 lsFiles.Add(Tuple.Create(asFileLine[0], nLength));

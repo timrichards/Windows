@@ -8,7 +8,6 @@ using System.Threading;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Reactive.Linq;
-using System.Windows.Threading;
 
 namespace DoubleFile
 {
@@ -67,7 +66,7 @@ namespace DoubleFile
         {
             base.OnLoad(e);
 
-            _lsDisposable.Add(Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(33)).Timestamp()         // 30 FPS
+            _lsDisposable.Add(Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(33)).Timestamp()    // 30 FPS
                 .Subscribe(x =>
             {
                 if (Rectangle.Empty == _rectCenter)

@@ -127,7 +127,7 @@ namespace DoubleFile
                 .Subscribe(x => bMouseDown = true);
 
             Observable.FromEventPattern(this, "MouseUp")
-                .Subscribe(x => { if (bMouseDown && (null != _clickCallback)) _clickCallback(); bMouseDown = false; });
+                .Subscribe(x => { if (bMouseDown) _clickCallback?.Invoke(); bMouseDown = false; });
         }
 
         void WinTooltip_SizeChanged(Size newSize)
@@ -138,7 +138,7 @@ namespace DoubleFile
             var nOwnerRight = Owner.Left + Owner.Width;
             var nOwnerBot = Owner.Top + Owner.Height;
 
-            var rcTooltip = new Rect()
+            var rcTooltip = new Rect
             {
                 X = nOwnerRight - newSize.Width,
                 Y = nOwnerBot,

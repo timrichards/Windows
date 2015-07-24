@@ -5,6 +5,9 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- Smells:
+	- ISaveDirListingsStatus.Status ignores WinProgress.WithWinProgress lambda 
+	- WinProject doesn't test its weak reference which is understandable
 - SelectedItem binding not found on Detail Datagrids: BindingExpression path error: 'SelectedItem' property not found on 'object' ''LV_VolumeDetailVM' (HashCode=47281521)'. BindingExpression:Path=SelectedItem; DataItem='LV_VolumeDetailVM' (HashCode=47281521); target element is 'DataGrid' (Name='formLV_Volume'); target property is 'SelectedItem' (type 'Object')
 - if (null == tuple.Item3.NodeDatum.TreeMapFiles)     // TODO: Why would this be null?
 - SDL small then check outer folder score: 0 0 0
@@ -121,26 +124,24 @@
 Coding purpose:
 - Change-managed Windows.Forms.ListView app into WPF app with MVVM DataGrids
 - Implemented modal (does not use WinForms ShowDialog)
-- Implemented 220 runtime asserts (does not depend on Debug.Assert)
+- Implemented 220 release mode asserts (does not depend on Debug.Assert)
 - Optimized memory; DRY; standards; maintainability; speed O(1) where possible
-
 Skills used:
-- Reactive Extensions (this is a C# project); subject-observer
-- Linq to objects; tuples; generics; try-catch; extension methods
-- Native methods; bit shifting; datum ints; binary search
+- WinMerge; GitHub; Spy++; JetBrains dotMemory and dotTrace; Visual Studio 2015
+- Reactive Extensions; subject-observer
+- Weak reference; try-catch; extension methods; closures; C# 4; Linq to objects; generics
+- External process (7-zip.exe); Native methods (PInvoke); bit shifting; datum ints; binary search
 - Threading; parallel; dispatcher frame
 - Interactivity (System.Windows); triggers; behaviors; DRY xaml in styles
-
 Specific code areas:
 - UX surrounding compressed project file containing any number of flat directory listings
 - Metro UI; consistent page-by-page
 - Progress UI
 - String table
-- Bespoke UX: Tree map; tree list to replace tree view
-- search with regex; statistics: ANOVA
+- Bespoke UX; tree list (vs. tree view); tree map (with tool tip; animation; drill-down hit testing)
+- Search with regex; statistics: ANOVA
 - Fast long-path large fetch native directory listings
 - Fast 1 MB sample faux checksum per file on your drive (512K from start; 512K from tail)
-
 The main purpose of Double File is to allow you to pack up your drive and go: transition from one computer to another; or put a new drive or operating system in. Copy the files you use then let the rest just sit in storage. Drive capacities and speeds are increasing. This drive has nothing better to do than serve as backup; to maintain environment state. Plug it back in and be right where you were when you left it. But wait - what's actually on those drives, and are they backed up? Out of sight, out of mind: that's where Double File comes in. Catalog them, then have them curated for you on your current setup as they sit in storage: safe from transitional hazards. Plan well, then act: reuse the drives after making a plan.
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down

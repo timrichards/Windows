@@ -131,6 +131,7 @@ namespace DoubleFile
             }
 
             var dictUnique = new SortedDictionary<FolderKeyTuple, LocalTreeNode>();
+
             nProgressDenominator += dictNodes.Count;
             ++nProgressItem;
 
@@ -182,7 +183,7 @@ namespace DoubleFile
 
                         MBoxStatic.Assert(1305.6316m, 0 < nodeDatum.TotalLength);
 
-                        if (lsNodes.Contains(treeNode_A.Parent) == false)
+                        if (false == lsNodes.Contains(treeNode_A.Parent))
                             listKeep.Add(treeNode_A);
                     }
 
@@ -367,15 +368,13 @@ namespace DoubleFile
                     return;
                 }
 
-                MBoxStatic.Assert(1305.6322m, nodeDatum.FileCountHere > 0);
+                MBoxStatic.Assert(1305.6322m, 0 < nodeDatum.FileCountHere);
                 SnowUniqueParents(treeNode);
-
-                MBoxStatic.Assert(1305.6323m, treeNode.ForeColor == UtilColor.Empty);
+                MBoxStatic.Assert(1305.6323m, UtilColor.Empty == treeNode.ForeColor);
                 treeNode.ForeColor = UtilColor.Red;
-
                 lvItem.ForeColor = treeNode.ForeColor;
                 _lsLVsolitary.Add(lvItem);
-                MBoxStatic.Assert(1305.6324m, nodeDatum.LVitem == null);
+                MBoxStatic.Assert(1305.6324m, null == nodeDatum.LVitem);
                 nodeDatum.LVitem = lvItem;
             }
 
@@ -545,21 +544,21 @@ namespace DoubleFile
 
                         MBoxStatic.Assert(1305.6309m, subnode.NodeDatum.Key.Equals(nodeDatum.Key));
 
-                        var rootNode_A = subnode.Root;
+                        var rootNodeA = subnode.Root;
 
-                        if (rootNode == rootNode_A)
+                        if (rootNode == rootNodeA)
                             continue;
 
-                        var rootNodeDatum_A = rootNode_A.NodeDatum.As<RootNodeDatum>();
+                        var rootNodeDatumA = rootNodeA.NodeDatum.As<RootNodeDatum>();
 
-                        if (null == rootNodeDatum_A)      // added 2/13/15, got hit on 5/4/15
+                        if (null == rootNodeDatumA)      // added 2/13/15, got hit on 5/4/15
                         {
                             MBoxStatic.Assert(99999, false);
                             return;
                         }
 
                         if (false == string.IsNullOrWhiteSpace(rootNodeDatum.VolumeGroup) &&
-                            (rootNodeDatum.VolumeGroup == rootNodeDatum_A.VolumeGroup))
+                            (rootNodeDatum.VolumeGroup == rootNodeDatumA.VolumeGroup))
                         {
                             continue;
                         }
@@ -587,7 +586,7 @@ namespace DoubleFile
             if (null == treeNode.Nodes)
                 return;
 
-            foreach (var subNode in treeNode?.Nodes)
+            foreach (var subNode in treeNode.Nodes)
             {
                 if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                     _bAborted)

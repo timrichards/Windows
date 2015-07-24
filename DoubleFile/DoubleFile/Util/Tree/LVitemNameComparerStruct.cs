@@ -17,7 +17,7 @@ namespace DoubleFile
 
         public int GetHashCode(LocalLVitemVM obj)
         {
-            return obj.Name == null ? 0 : obj.Name.GetHashCode();
+            return obj.Name?.GetHashCode() ?? 0;
         }
 
         static internal void NameItems(ListView.ListViewItemCollection list)

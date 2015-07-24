@@ -32,7 +32,7 @@ namespace DoubleFile
             if (false == (App.SaveDirListings?.IsAborted ?? true))
             {
                 MBoxStatic.Assert(99940, false);
-                App.SaveDirListings?.EndThread();
+                App.SaveDirListings.EndThread();
             }
 
             (new WinProgress(listNicknames, listSourcePaths, x =>
@@ -101,7 +101,8 @@ namespace DoubleFile
             if (App.SaveDirListings?.IsAborted ?? true)
                 return true;
 
-            if (MessageBoxResult.Yes != MBoxStatic.ShowDialog("Do you want to cancel?", "Saving Directory Listings", MessageBoxButton.YesNo,
+            if (MessageBoxResult.Yes !=
+                MBoxStatic.ShowDialog("Do you want to cancel?", "Saving Directory Listings", MessageBoxButton.YesNo,
                 WinProgress.WithWinProgress(w => w)))
                 return false;
 

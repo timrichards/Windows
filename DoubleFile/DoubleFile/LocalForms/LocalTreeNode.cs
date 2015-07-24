@@ -11,16 +11,14 @@ namespace DoubleFile
         internal virtual string
             Text { get { return _text; } set { _text = value; } } TabledString<Tabled_Folders> _text = null;
         internal LocalTreeNode
-            FirstNode { get { return ((null != Nodes) && (0 < Nodes.Count)) ? Nodes[0] : null; } }
+            FirstNode => ((null != Nodes) && (0 < Nodes.Count)) ? Nodes[0] : null;
         public virtual LocalTreeNode
             NextNode { get; protected set; }
         public virtual LocalTreeNode
             Parent { get; protected set; }
-        internal NodeDatum
-            NodeDatum { get; set; }
 
         internal string
-            Name { get { return Text; } }
+            Name => Text;
         internal int
             Level { get { return Datum8bits; } set { Datum8bits = value; } }
         internal int
@@ -131,5 +129,8 @@ namespace DoubleFile
             TreeSelect.DoThreadFactory(this, 0 /* UI Initiator */, strFile);
             return this;
         }
+
+        internal NodeDatum
+            NodeDatum;
     }
 }

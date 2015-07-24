@@ -13,7 +13,7 @@ namespace DoubleFile
     /// </summary>
     partial class UC_VolumeEdit
     {
-        internal char DriveLetter { get { return (formEdit_DriveLetter.Text + "\0")[0]; } }
+        internal char DriveLetter => (formEdit_DriveLetter.Text + "\0")[0];
 
         [Description("User control supports choice"), Category("New or Edit Volume window")]
         internal bool IsVolumeNew

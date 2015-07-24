@@ -13,30 +13,30 @@ namespace DoubleFile
         internal abstract int Type { get; }
         static internal TabledStringStatics[] tA = new TabledStringStatics[2];
     }
-    class Tabled_Folders : TypedArrayBase { internal override int Type { get { return 0; } } }
-    class Tabled_Files : TypedArrayBase { internal override int Type { get { return 1; } } }
+    class Tabled_Folders : TypedArrayBase { internal override int Type => 0; }
+    class Tabled_Files : TypedArrayBase { internal override int Type => 1; }
 
     class TabledStringStatics
     {
         internal int
-            RefCount { get; set; }
+            RefCount;
         internal bool
-            Generating { get; set; }
+            Generating;
 
         internal int
             IndexGenerator;
         internal ConcurrentDictionary<string, int>
-            DictStrings { get; set; }
+            DictStrings;
         internal ConcurrentDictionary<int, string>
-            DictStringsRev { get; set; }
+            DictStringsRev;
 
         internal string[]
-            Strings { get; set; }
+            Strings;
         internal int[]
-            Sort { get; set; }
+            Sort;
 
         internal ConcurrentDictionary<string, PathBuilder>
-            DictPathParts { get; set; }
+            DictPathParts;
     }
 
     // can't be struct because of null
@@ -338,6 +338,6 @@ namespace DoubleFile
             }
         }
 
-        internal int[] PathParts { get; set; }
+        internal int[] PathParts;
     }
 }

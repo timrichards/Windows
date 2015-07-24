@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reactive.Linq;
-using System.Linq;
 
 namespace DoubleFile
 {
     partial class LV_FilesVM : ListViewVM_Base<LVitem_FilesVM>
     {
         static internal IObservable<Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyCollection<string>, LocalTreeNode>, int>>
-            SelectedFileChanged { get { return _selectedFileChanged; } }
+            SelectedFileChanged => _selectedFileChanged;
         static readonly LocalSubject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyCollection<string>, LocalTreeNode>> _selectedFileChanged = new LocalSubject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyCollection<string>, LocalTreeNode>>();
         static void SelectedFileChangedOnNext(Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyCollection<string>, LocalTreeNode> value, int nInitiator)
         {
@@ -57,15 +55,15 @@ namespace DoubleFile
         }
         LVitem_FilesVM _selectedItem = null;
 
-        public string WidthFilename { get { return SCW; } }                   // franken all NaN
-        public string WidthDuplicates { get { return SCW; } }
-        public string WidthCreated { get { return SCW; } }
-        public string WidthModified { get { return SCW; } }
-        public string WidthAttributes { get { return SCW; } }
-        public string WidthLength { get { return SCW; } }
-        public string WidthError1 { get { return SCW; } }
-        public string WidthError2{ get { return SCW; } }
+        public string WidthFilename => SCW;                  // franken all NaN
+        public string WidthDuplicates => SCW;
+        public string WidthCreated => SCW;
+        public string WidthModified => SCW;
+        public string WidthAttributes => SCW;
+        public string WidthLength => SCW;
+        public string WidthError1 => SCW;
+        public string WidthError2 => SCW;
 
-        internal override int NumCols { get { return LVitem_FilesVM.NumCols_; } }
+        internal override int NumCols => LVitem_FilesVM.NumCols_;
     }
 }

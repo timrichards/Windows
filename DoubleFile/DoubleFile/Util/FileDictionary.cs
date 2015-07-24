@@ -6,7 +6,6 @@ using System.Linq;
 using System.Collections.Concurrent;
 using System;
 using System.Reactive.Linq;
-using System.Windows.Threading;
 
 namespace DoubleFile
 {
@@ -35,8 +34,7 @@ namespace DoubleFile
             _bListingFileWithOnlyHashV1pt0 = false;
         }
 
-        internal bool IsEmpty { get { return null == _dictFiles; } }
-        internal void ResetAbortFlag() { IsAborted = false; }
+        internal bool IsEmpty => null == _dictFiles;
 
         internal bool AllListingsHashV2
         {
@@ -129,6 +127,7 @@ namespace DoubleFile
         }
 
         internal bool IsAborted { get; private set; }
+        internal void ResetAbortFlag() { IsAborted = false; }
 
         void Go()
         {
@@ -369,10 +368,10 @@ namespace DoubleFile
             }
         }
 
-        static int GetLVitemProjectVM(int n) { return (int)(n & _knItemVMmask) >> 24; }
-        static int SetLVitemProjectVM(ref int n, int v) { return n = GetLineNumber(n) + (v << 24); }
-        static int GetLineNumber(int n) { return n & 0x00FFFFFF; }
-        static int SetLineNumber(ref int n, int v) { return n = (int)(n & _knItemVMmask) + v; }
+        static int GetLVitemProjectVM(int n) => (int)(n & _knItemVMmask) >> 24;
+        static int SetLVitemProjectVM(ref int n, int v) => GetLineNumber(n) + (v << 24);
+        static int GetLineNumber(int n) => n & 0x00FFFFFF;
+        static int SetLineNumber(ref int n, int v) => n = (int)(n & _knItemVMmask) + v;
 
         const uint
             _knItemVMmask = 0xFF000000;

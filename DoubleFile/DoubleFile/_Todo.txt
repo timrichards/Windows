@@ -5,6 +5,7 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- LocalTreeNode(TabledString<Tabled_Folders> strContent) is never called - keep it around. string passed in gets converted
 - Fast WinDirStat capability - make a separate app just for that which shares the code base
 - Smells:
 	- ISaveDirListingsStatus.Status ignores WinProgress.WithWinProgress lambda 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows;
 
 namespace DoubleFile
@@ -13,8 +12,8 @@ namespace DoubleFile
             protected ulong
                 LengthRead { get; private set; }
 
-            protected List<string>
-                ErrorList { get { return _errorList; } }
+            protected IList<string>
+                ErrorList => _errorList;
             readonly List<string> _errorList = new List<string> { };
 
             protected bool

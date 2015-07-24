@@ -10,7 +10,7 @@ namespace DoubleFile
     public partial class App : Application
     {
         static internal IObservable<Tuple<bool, int>>   // bool is a no-op: generic placeholder
-            DeactivateDidOccur { get { return _deactivateDidOccur; } }
+            DeactivateDidOccur => _deactivateDidOccur;
         static readonly LocalSubject<bool> _deactivateDidOccur = new LocalSubject<bool>();
         static void DeactivateDidOccurOnNext() { _deactivateDidOccur.LocalOnNext(false, 99839); }
 

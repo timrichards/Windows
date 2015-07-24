@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -8,7 +7,7 @@ namespace DoubleFile
 {
     abstract class ListViewItemVM_Base : ObservableObjectBase
     {
-        internal string this[int i] { get { return _subItems[i]; } }
+        internal string this[int i] => _subItems[i];
 
         internal IList<string> SubItems
         {
@@ -122,7 +121,7 @@ namespace DoubleFile
         }
 
         internal string
-            SearchValue { get { return _subItems[SearchCol].ToLower(); } }
+            SearchValue => _subItems[SearchCol].ToLower();
 
         protected void
             SetProperty(int nCol, string s, [CallerMemberName]string propertyName = null)

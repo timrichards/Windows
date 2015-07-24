@@ -34,9 +34,9 @@ namespace DoubleFile
         }
         LVitem_FolderListVM _selectedItem = null;
 
-        public string WidthFolder { get { return SCW; } }                   // franken all NaN
-        public string WidthParent { get { return SCW; } }                   // franken all NaN
+        public string WidthFolder => SCW;                  // franken all NaN
+        public string WidthParent => SCW;                  // franken all NaN
 
-        internal override int NumCols { get { return LVitem_FolderListVM.NumCols_; } }
+        internal override int NumCols => LVitem_FolderListVM.NumCols_;
     }
 }

@@ -10,7 +10,7 @@ namespace DoubleFile
         internal override void GoTo(LocalTreeNode treeNode) { treeNode.GoToFile(null); }
 
         static internal IObservable<Tuple<LocalTreeNode, int>>
-            TreeListChildSelected { get { return _treeListChildSelected; } }
+            TreeListChildSelected => _treeListChildSelected;
         static readonly LocalSubject<LocalTreeNode> _treeListChildSelected = new LocalSubject<LocalTreeNode>();
         static void TreeListChildSelectedOnNext(LocalTreeNode value) { _treeListChildSelected.LocalOnNext(value, kChildSelectedOnNext); }
         internal const int kChildSelectedOnNext = 99854;
@@ -53,9 +53,9 @@ namespace DoubleFile
         }
         LVitem_TreeListVM _selectedItem = null;
 
-        public string WidthFolder { get { return SCW; } }                   // franken all NaN
+        public string WidthFolder => SCW;                  // franken all NaN
 
-        internal override int NumCols { get { return LVitem_TreeListVM.NumCols_; } }
+        internal override int NumCols => LVitem_TreeListVM.NumCols_;
 
         internal void Populate(LocalTreeNode treeNodeParent)
         {

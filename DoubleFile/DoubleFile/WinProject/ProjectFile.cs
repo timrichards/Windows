@@ -23,8 +23,8 @@ namespace DoubleFile
         static internal event Func<string> OnSavingProject = null;
         static internal event Action OnOpenedProject = null;
 
-        static internal string TempPath { get { return Path.GetTempPath() + @"DoubleFile\"; } }
-        static internal string TempPath01 { get { return TempPath.TrimEnd('\\') + "01"; } }
+        static internal string TempPath => Path.GetTempPath() + @"DoubleFile\";
+        static internal string TempPath01 => TempPath.TrimEnd('\\') + "01";
 
         static internal bool
             OpenProject(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR, bool bClearItems)
@@ -160,8 +160,7 @@ namespace DoubleFile
                 () => _bUserCanceled
             );
 
-            if (null != OnOpenedProject)
-                OnOpenedProject();
+            OnOpenedProject?.Invoke();
 
             if (Directory.Exists(TempPath01))
             {
@@ -259,16 +258,11 @@ namespace DoubleFile
                 sbSource.Append("\"").Append(strFilename).Append("\" ");
             }
 
-            if (null != OnSavingProject)
-            {
-                foreach (var strFilename
-                    in OnSavingProject
-                    .GetInvocationList()
-                    .Select(onSavingProject => "" + onSavingProject.DynamicInvoke()))
-                {
-                    sbSource.Append("\"").Append(strFilename.Replace(strPath, "")).Append("\" ");
-                }
-            }
+            OnSavingProject?
+                .GetInvocationList()
+                .Select(onSavingProject => "" + onSavingProject.DynamicInvoke())
+                .ForEach(strFilename =>
+                sbSource.Append("\"").Append(strFilename.Replace(strPath, "")).Append("\" "));
 
             var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
             var bRet = true;

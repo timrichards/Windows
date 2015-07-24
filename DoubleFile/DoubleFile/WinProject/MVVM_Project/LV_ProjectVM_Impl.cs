@@ -23,12 +23,12 @@ namespace DoubleFile
         }
 
         static internal IObservable<Tuple<bool, int>>   // bool is a no-op: generic placeholder
-            Modified { get { return _modified; } }
+            Modified => _modified;
         static readonly LocalSubject<bool> _modified = new LocalSubject<bool>();
         static readonly int _nModifiedOnNextAssertLoc = 99838;
         internal void SetModified() { _modified.LocalOnNext(false, _nModifiedOnNextAssertLoc); }
 
-        internal int CanLoadCount { get { return ItemsCast.Where(item => item.CanLoad).Count(); } }
+        internal int CanLoadCount => ItemsCast.Where(item => item.CanLoad).Count();
 
         internal bool
             Unsaved

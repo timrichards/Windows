@@ -40,9 +40,9 @@ namespace DoubleFile
         }
         LVitem_SearchVM _selectedItem = null;
 
-        public string WidthFolderOrFile { get { return SCW; } }             // franken all NaN
-        public string WidthParent { get { return SCW; } }                   // franken all NaN
+        public string WidthFolderOrFile => SCW;            // franken all NaN
+        public string WidthParent => SCW;                  // franken all NaN
 
-        internal override int NumCols { get { return LVitem_SearchVM.NumCols_; } }
+        internal override int NumCols => LVitem_SearchVM.NumCols_;
     }
 }

@@ -13,9 +13,9 @@
         }
         string _Title = null;
 
-        public string WidthHeader { get { return SCW; } }                   // franken all NaN
-        public string WidthDetail { get { return SCW; } }   // not used
+        public string WidthHeader => SCW;       // franken all NaN
+        public string WidthDetail => SCW;       // not used
 
-        internal override int NumCols { get { return LVitem_FolderDetailVM.NumCols_; } }
+        internal override int NumCols => LVitem_FolderDetailVM.NumCols_;
     }
 }

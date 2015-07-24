@@ -255,7 +255,7 @@ namespace DoubleFile
         }
 
         ILocalWindow
-            I { get { return this; } }
+            I => this;
         bool
             ILocalWindow.SimulatingModal { get; set; }
         LocalDispatcherFrame

@@ -41,9 +41,9 @@ namespace DoubleFile
         }
         LVitem_TreeListVM _selectedItem = null;
 
-        public string WidthFolder { get { return SCW; } }                   // franken all NaN
+        public string WidthFolder => SCW;                  // franken all NaN
 
-        internal override int NumCols { get { return LVitem_TreeListVM.NumCols_; } }
+        internal override int NumCols => LVitem_TreeListVM.NumCols_;
 
         internal LV_TreeListSiblingsVM(LV_TreeListChildrenVM lvChildrenVM)
         {

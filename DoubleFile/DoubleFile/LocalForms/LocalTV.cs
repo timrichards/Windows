@@ -6,15 +6,15 @@ namespace DoubleFile
     partial class LocalTV
     {
         static internal IReadOnlyList<LocalTreeNode>
-            AllNodes { get { return _wr.Get(o => o._allNodes); } }
+            AllNodes => _wr.Get(o => o._allNodes);
         List<LocalTreeNode> _allNodes = new List<LocalTreeNode> { };
 
         static internal IReadOnlyList<LocalTreeNode>
-            RootNodes { get { return _wr.Get(o => o._rootNodes); } }
+            RootNodes => _wr.Get(o => o._rootNodes);
         List<LocalTreeNode> _rootNodes = new List<LocalTreeNode> { };
 
         static internal LocalTreeNode
-            TopNode { get { return _wr.Get(o => o._topNode); } }
+            TopNode => _wr.Get(o => o._topNode);
         LocalTreeNode _topNode = null;
 
         static internal LocalTreeNode
@@ -26,31 +26,31 @@ namespace DoubleFile
         LocalTreeNode _selectedNode = null;
 
         static internal LocalLVVM
-            Clones { get { return _wr.Get(o => o._clones); } }
+            Clones => _wr.Get(o => o._clones);
         LocalLVVM _clones = new LocalLVVM();
 
         static internal LocalLVVM
-            SameVol { get { return _wr.Get(o => o._sameVol); } }
+            SameVol => _wr.Get(o => o._sameVol);
         LocalLVVM _sameVol = new LocalLVVM();
 
         static internal LocalLVVM
-            Solitary { get { return _wr.Get(o => o._solitary); } }
+            Solitary => _wr.Get(o => o._solitary);
         LocalLVVM _solitary = new LocalLVVM();
 
         static internal IReadOnlyDictionary<string, string>
-            DictVolumeInfo { get { return _wr.Get(o => o._dictVolumeInfo); } }
+            DictVolumeInfo => _wr.Get(o => o._dictVolumeInfo);
         readonly Dictionary<string, string> _dictVolumeInfo = new Dictionary<string, string>();
 
         static internal TreeSelect.FileListUpdated
-            TreeSelect_FileList { get { return _wr.Get(o => o._treeSelect_FileList); } }
+            TreeSelect_FileList => _wr.Get(o => o._treeSelect_FileList);
         TreeSelect.FileListUpdated _treeSelect_FileList;
 
         static internal TreeSelect.FolderDetailUpdated
-            TreeSelect_FolderDetail { get { return _wr.Get(o => o._treeSelect_FolderDetail); } }
+            TreeSelect_FolderDetail => _wr.Get(o => o._treeSelect_FolderDetail);
         TreeSelect.FolderDetailUpdated _treeSelect_FolderDetail = null;
 
         static internal TreeSelect.VolumeDetailUpdated
-            TreeSelect_VolumeDetail { get { return _wr.Get(o => o._treeSelect_VolumeDetail); } }
+            TreeSelect_VolumeDetail => _wr.Get(o => o._treeSelect_VolumeDetail);
         TreeSelect.VolumeDetailUpdated _treeSelect_VolumeDetail = null;
 
         static internal bool

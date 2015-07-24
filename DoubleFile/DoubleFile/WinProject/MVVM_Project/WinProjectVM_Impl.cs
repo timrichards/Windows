@@ -14,13 +14,13 @@ namespace DoubleFile
     partial class WinProjectVM : IOpenListingFiles, IWinProgressClosing
     {
         // Menu items       
-        static internal string
-            ListingFilter { get { return "Double File Listing|*." + FileParse.ksFileExt_Listing + _ksAllFilesFilter; } }
+        internal const string
+            ListingFilter = "Double File Listing|*." + FileParse.ksFileExt_Listing + _ksAllFilesFilter;
         const string _ksProjectFilter = "Double File Project|*." + FileParse.ksFileExt_Project + _ksAllFilesFilter;
         const string _ksAllFilesFilter = "|All files|*.*";
 
-        static internal string
-            UnsavedWarning { get { return "You are about to lose changes to an unsaved project."; } }
+        internal const string
+            UnsavedWarning = "You are about to lose changes to an unsaved project.";
 
         internal void OpenProject()
         {

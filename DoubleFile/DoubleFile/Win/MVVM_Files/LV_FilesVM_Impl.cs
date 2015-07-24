@@ -49,7 +49,7 @@ namespace DoubleFile
                     .ToArray();
 
                 var nLine = ("" + asFileLine[1]).ToInt();
-                var lsDuplicates = App.FileDictionary.GetDuplicates(asFileLine);
+                var lsDuplicates = Statics.FileDictionary.GetDuplicates(asFileLine);
 
                 asFileLine =
                     asFileLine

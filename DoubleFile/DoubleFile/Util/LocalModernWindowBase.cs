@@ -45,7 +45,7 @@ namespace DoubleFile
             // Keep this around so you see how it's done
             // Icon = BitmapFrame.Create(new Uri(@"pack://application:,,/Assets/ic_people_white_18dp.png"));
 
-            Icon = App.Icon;
+            Icon = Statics.Icon;
             WindowStartupLocation = WindowStartupLocation.CenterOwner;
             ResizeMode = ResizeMode.CanResizeWithGrip;
             ShowInTaskbar = false;
@@ -63,20 +63,20 @@ namespace DoubleFile
                     .FromHwnd((NativeWindow)this)
                     .AddHook(WndProc));
 
-            if (null == App.TopWindow)
-                App.TopWindow = MainWindow.WithMainWindow(w => w);
+            if (null == Statics.TopWindow)
+                Statics.TopWindow = MainWindow.WithMainWindow(w => w);
 
             // use-case: assert before main window shown   future proof
-            if (null == App.TopWindow)
+            if (null == Statics.TopWindow)
                 return;
 
-            var prevTopWindow = App.TopWindow;
+            var prevTopWindow = Statics.TopWindow;
 
             Observable.FromEventPattern(this, "Activated")
                 .Subscribe(x =>
             {
                 var bCanFlashWindow = App.CanFlashWindow_ResetsIt;     // querying it resets it
-                var topWindow = App.TopWindow;
+                var topWindow = Statics.TopWindow;
 
                 if (topWindow.SimulatingModal)
                 {
@@ -96,11 +96,11 @@ namespace DoubleFile
                     (false == this is ICantBeTopWindow))    // no-op: all modern windows can be a top window
                 {
                     prevTopWindow =
-                        (App.TopWindow is ExtraWindow)
-                        ? App.TopWindow
+                        (Statics.TopWindow is ExtraWindow)
+                        ? Statics.TopWindow
                         : MainWindow.WithMainWindow(w => w);
 
-                    App.TopWindow = this;
+                    Statics.TopWindow = this;
                 }
             });
 
@@ -126,10 +126,10 @@ namespace DoubleFile
                     return;
                 }
 
-                if (this != App.TopWindow)
+                if (this != Statics.TopWindow)
                     return;
 
-                App.TopWindow =
+                Statics.TopWindow =
                     (false == prevTopWindow.LocalIsClosed)
                     ? prevTopWindow
                     : MainWindow.WithMainWindow(w => w);
@@ -151,7 +151,7 @@ namespace DoubleFile
                 return IntPtr.Zero;
             }
 
-            if (this == App.TopWindow)
+            if (this == Statics.TopWindow)
                 return IntPtr.Zero;
 
             if (NativeMethods.WM_SYSCOMMAND != msg)
@@ -218,7 +218,7 @@ namespace DoubleFile
             // if false == this is LocalMbox)    // future proof
             MBoxStatic.Restart();
 
-            I.SimulatingModal = App.SimulatingModal;
+            I.SimulatingModal = Statics.SimulatingModal;
             Owner = (Window)me;
 
             Observable.FromEventPattern(this, "Closed")

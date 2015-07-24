@@ -41,21 +41,21 @@ namespace DoubleFile
                 return false;
 
             _bTreeDone = false;
-            App.FileDictionary.ResetAbortFlag();
+            Statics.FileDictionary.ResetAbortFlag();
 
             var lsProgressItems = new List<string> { _ksFolderTreeKey };
 
-            if (App.FileDictionary.IsEmpty)
+            if (Statics.FileDictionary.IsEmpty)
                 lsProgressItems.Insert(0, _ksFileDictKey);
 
             (new WinProgress(new string[lsProgressItems.Count], lsProgressItems, x =>
             {
-                if (App.FileDictionary.IsEmpty)
-                    App.FileDictionary.DoThreadFactory(_lvProjectVM, new WeakReference<ICreateFileDictStatus>(this));
+                if (Statics.FileDictionary.IsEmpty)
+                    Statics.FileDictionary.DoThreadFactory(_lvProjectVM, new WeakReference<ICreateFileDictStatus>(this));
 
                 TabledString<Tabled_Folders>.GenerationStarting();
 
-                if (App.FileDictionary.IsAborted)
+                if (Statics.FileDictionary.IsAborted)
                     return;     // from lambda
 
                 if (null == _dictNodes)
@@ -80,7 +80,7 @@ namespace DoubleFile
         void ICreateFileDictStatus.Callback(bool bDone, double nProgress)
         {
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
-                App.FileDictionary.IsAborted)
+                Statics.FileDictionary.IsAborted)
             {
                 WinProgress.WithWinProgress(w => w
                     .Abort());
@@ -106,7 +106,7 @@ namespace DoubleFile
         void ITreeStatus.Status(LVitem_ProjectVM volStrings, LocalTreeNode rootNode, bool bError)
         {
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
-                App.FileDictionary.IsAborted ||
+                Statics.FileDictionary.IsAborted ||
                 (_tree?.IsAborted ?? false))
             {
                 ClearMem_TreeForm();
@@ -232,7 +232,7 @@ namespace DoubleFile
         {
             if (false == Util.Closure(() =>
             {
-                if (App.FileDictionary
+                if (Statics.FileDictionary
                     .IsAborted)
                 {
                     return true;
@@ -256,7 +256,7 @@ namespace DoubleFile
 
             Util.WriteLine("IWinProgressClosing.ConfirmClose B");
 
-            App.FileDictionary
+            Statics.FileDictionary
                 .Abort();
                     
             _tree?.EndThread();

@@ -72,7 +72,7 @@ namespace DoubleFile
             MainWindow()
             : base(InitForMainWindowOnly)
         {
-            App.Icon = Icon;
+            Statics.Icon = Icon;
             _mainWindowWR.SetTarget(this);
             Init();
             Init = null;
@@ -239,7 +239,7 @@ namespace DoubleFile
 
         void MainWindow_Closing(CancelEventArgs e)
         {
-            if ((App.LVprojectVM?.Unsaved ?? false) &&
+            if ((Statics.LVprojectVM?.Unsaved ?? false) &&
                 (MessageBoxResult.Cancel == 
                 MBoxStatic.ShowDialog(WinProjectVM.UnsavedWarning, "Quit Double File", MessageBoxButton.OKCancel)))
             {

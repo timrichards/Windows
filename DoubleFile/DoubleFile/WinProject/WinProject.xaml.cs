@@ -11,22 +11,22 @@ namespace DoubleFile
             InitializeComponent();
 
             form_lv.DataContext =
-                App.LVprojectVM =
-                new LV_ProjectVM(App.LVprojectVM)
+                Statics.LVprojectVM =
+                new LV_ProjectVM(Statics.LVprojectVM)
             {
                 SelectedOne = () => 1 == form_lv.SelectedItems.Count,
                 SelectedAny = () => 0 < form_lv.SelectedItems.Count,
                 Selected = () => form_lv.SelectedItems.Cast<LVitem_ProjectVM>()
             };
 
-            DataContext = new WinProjectVM(App.LVprojectVM);
+            DataContext = new WinProjectVM(Statics.LVprojectVM);
             _weakReference.SetTarget(this);
             LV_ProjectVM.Modified.Subscribe(x => Reset());
         }
 
         static internal bool OKtoNavigate_BuildExplorer(bool bSaveListings)
         {
-            if (null == App.LVprojectVM)
+            if (null == Statics.LVprojectVM)
             {
                 Reset();
                 return false;
@@ -36,7 +36,7 @@ namespace DoubleFile
 
             _weakReference.TryGetTarget(out winProject);
 
-            if ((winProject._lvProjectVM?.LocalEquals(App.LVprojectVM) ?? false) &&
+            if ((winProject._lvProjectVM?.LocalEquals(Statics.LVprojectVM) ?? false) &&
                 OKtoNavigate_UpdateSaveListingsLink(bSaveListings))
             {
                 return true;
@@ -44,14 +44,14 @@ namespace DoubleFile
 
             Reset();
 
-            if (0 < App.LVprojectVM.Items.Count)
+            if (0 < Statics.LVprojectVM.Items.Count)
             {
-                SaveListingsProcess.Go(App.LVprojectVM);
+                SaveListingsProcess.Go(Statics.LVprojectVM);
 
-                if ((0 < App.LVprojectVM.CanLoadCount) &&
-                    LocalTV.FactoryCreate(App.LVprojectVM))
+                if ((0 < Statics.LVprojectVM.CanLoadCount) &&
+                    LocalTV.FactoryCreate(Statics.LVprojectVM))
                 {
-                    winProject._lvProjectVM = new LV_ProjectVM(App.LVprojectVM);
+                    winProject._lvProjectVM = new LV_ProjectVM(Statics.LVprojectVM);
                 }
             }
 
@@ -61,7 +61,7 @@ namespace DoubleFile
 
         static internal bool OKtoNavigate_UpdateSaveListingsLink(bool bSaveListings = false)
         {
-            var bListingsToSave = App.LVprojectVM.ItemsCast.Any(lvItem => lvItem.WouldSave);
+            var bListingsToSave = Statics.LVprojectVM.ItemsCast.Any(lvItem => lvItem.WouldSave);
 
             if (bListingsToSave && bSaveListings)
                 bListingsToSave = false;
@@ -91,8 +91,8 @@ namespace DoubleFile
             LocalTV.WithLocalTV(localTV =>
                 localTV.LocalDispose());
 
-            App.FileDictionary.Dispose();
-            App.FileDictionary = new FileDictionary();
+            Statics.FileDictionary.Dispose();
+            Statics.FileDictionary = new FileDictionary();
         }
 
         LV_ProjectVM

@@ -66,8 +66,8 @@ namespace DoubleFile
 
             if (_thread.IsAlive)
             {
-                var prevTopWindow = App.TopWindow;
-                var darkWindow = new DarkWindow(App.TopWindow);
+                var prevTopWindow = Statics.TopWindow;
+                var darkWindow = new DarkWindow(Statics.TopWindow);
 
                 darkWindow
                     .SetRect(darkWindow.Rect)
@@ -78,7 +78,7 @@ namespace DoubleFile
                 if (false == darkWindow.LocalIsClosed)      // happens with system dialogs
                     darkWindow.Close();
 
-                App.TopWindow = prevTopWindow;
+                Statics.TopWindow = prevTopWindow;
                 _dtLastDarken = DateTime.Now;
                 return retVal;
             }

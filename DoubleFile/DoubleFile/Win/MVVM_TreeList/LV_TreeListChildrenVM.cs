@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reactive.Linq;
 using System.Windows.Input;
 
 namespace DoubleFile
 {
     class LV_TreeListChildrenVM : SliderVM_Base<LVitem_TreeListVM>
     {
-        public ICommand Icmd_GoTo { get; private set; }
+        public ICommand Icmd_GoTo { get; }
         internal override void GoTo(LocalTreeNode treeNode) { treeNode.GoToFile(null); }
 
         static internal IObservable<Tuple<LocalTreeNode, int>>

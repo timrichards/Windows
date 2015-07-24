@@ -6,7 +6,7 @@
             Name="uc_VolumeEdit">
     <Grid>
         <Grid.Resources>
-            <ResourceDictionary Source="/Double File;component/Assets/WinVolumeEdit.xaml"/>
+            <ResourceDictionary Source="/DoubleFile;component/Assets/WinVolumeEdit.xaml"/>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -35,7 +35,7 @@
 
         <Label Grid.Row="1" Content="Path" />
         <Button Grid.Row="1" Name="formBtn_SourcePath" Command="{Binding Icmd_EditSourcePath}" ToolTip="Click to open a folder browse dialog to enter the source path" Style="{StaticResource ImageButton}">
-            <Image Source="/Double File;component/Assets/ic_folder_open_black_18dp.png" />
+            <Image Source="/DoubleFile;component/Assets/ic_folder_open_black_18dp.png" />
         </Button>
         <TextBox Grid.Row="1" Name="formEdit_SourcePath">
             <TextBox.ToolTip>
@@ -56,7 +56,7 @@ folder browse dialog.
 
         <Label Grid.Row="4" Content="Drive model #" />
         <Button Grid.Row="4" Name="formBtn_DriveModel" Command="{Binding Icmd_Probe}" ToolTip="Optional. Click to try and probe your drive for the model and serial #" Style="{StaticResource ImageButton}">
-            <Image Source="/Double File;component/Assets/ic_storage_black_18dp.png" />
+            <Image Source="/DoubleFile;component/Assets/ic_storage_black_18dp.png" />
         </Button>
         <TextBox Grid.Row="4" Name="formEdit_DriveModel" ToolTip="Optional. Drive model helps to identify the drive this listing is for later on when reviewing." />
 
@@ -83,7 +83,7 @@ model/serial# do not.
 
         <Label Grid.Row="10" Content="Directory listing file" />
         <Button Name="formBtn_SaveListingFile" Grid.Row="10" Command="{Binding Icmd_SaveListingFile}" ToolTip="Optional. Click to open a file save dialog" Style="{StaticResource ImageButton}">
-            <Image Source="/Double File;component/Assets/ic_save_black_18dp.png" />
+            <Image Source="/DoubleFile;component/Assets/ic_save_black_18dp.png" />
         </Button>
         <TextBox Grid.Row="10" Name="formEdit_SaveListingFile" ToolTip="Optional. Where to save the directory listing."/>
 

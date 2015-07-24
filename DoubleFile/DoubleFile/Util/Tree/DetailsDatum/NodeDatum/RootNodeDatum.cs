@@ -2,26 +2,18 @@
 {
     class RootNodeDatum : NodeDatum
     {
-        internal string
-            ListingFile { get; private set; }
-        internal string
-            VolumeGroup { get; set; }
-        internal string
-            Root { get; private set; }
+        internal readonly string ListingFile;
+        internal readonly string VolumeGroup;
 
-        internal string
-            RootPath { get; private set; }
+        internal readonly string RootPath;
 
-        internal bool
-            VolumeView { get; set; }
+        internal readonly bool VolumeView;
 
-        internal ulong
-            VolumeFree { get; private set; }
-        internal ulong
-            VolumeLength { get; private set; }
+        internal readonly ulong VolumeFree;
+        internal readonly ulong VolumeLength;
 
-        internal RootNodeDatum(NodeDatum node, string listingFile, string strVolGroup,
-            ulong nVolumeFree, ulong nVolumeLength, string strRootPath)
+        internal
+            RootNodeDatum(NodeDatum node, string listingFile, string strVolGroup, ulong nVolumeFree, ulong nVolumeLength, string strRootPath)
             : base(node)
         {
             VolumeView = true;
@@ -31,12 +23,6 @@
             VolumeLength = nVolumeLength;
             VolumeFree = nVolumeFree;
             RootPath = strRootPath;
-        }
-
-        internal RootNodeDatum(NodeDatum node, RootNodeDatum rootNode)
-            : this(node, rootNode.ListingFile, rootNode.VolumeGroup, rootNode.VolumeLength, rootNode.VolumeFree,
-            rootNode.RootPath)
-        {
         }
     }
 }

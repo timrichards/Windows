@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Windows.Input;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace DoubleFile
 {
     partial class WinDuplicatesVM : ListViewVM_Base<LVitem_FileDuplicatesVM>
     {
-        public ICommand Icmd_GoTo { get; private set; }
+        public ICommand Icmd_GoTo { get; }
 
         public LVitem_FileDuplicatesVM SelectedItem
         {

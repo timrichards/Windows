@@ -75,8 +75,8 @@ namespace DoubleFile
             if (null == owner)
             {
                 owner =
-                    (App.TopWindow is IModalWindow)
-                    ? App.TopWindow
+                    (Statics.TopWindow is IModalWindow)
+                    ? Statics.TopWindow
                     : MainWindow.WithMainWindow(w => w);
             } 
 

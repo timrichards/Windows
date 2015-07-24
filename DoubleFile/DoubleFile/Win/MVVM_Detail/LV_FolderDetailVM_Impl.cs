@@ -48,7 +48,7 @@ namespace DoubleFile
                     { new LVitem_FolderDetailVM(new[] { "", strBG_Description }) { Background = tuple.treeNode.Background } });
                 }
 #if DEBUG
-                var nHashVersion = (App.FileDictionary.AllListingsHashV2) ? "1 MB" : "4K";
+                var nHashVersion = (Statics.FileDictionary.AllListingsHashV2) ? "1 MB" : "4K";
 
                 ieDetail = ieDetail.Concat(new[]
                 { new LVitem_FolderDetailVM(new[] { nHashVersion + " Folder Score", "" +

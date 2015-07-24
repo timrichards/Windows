@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
 
 namespace DoubleFile
@@ -8,28 +6,28 @@ namespace DoubleFile
     // can't be struct because it serves covariance; has parameterless constructor
     class DetailsDatum
     {
-        internal uint
-            PrevLineNo { get; private set; }        // Found 21 bits
-        internal uint
-            LineNo { get; private set; }            // Found 21 bits
-        internal ulong
-            Length { get; private set; }
+        internal readonly uint
+            PrevLineNo;                             // Found 21 bits
+        internal readonly uint
+            LineNo;                                 // Found 21 bits
+        internal readonly ulong
+            Length;
         internal uint[]
             FolderScore = new[] { 0U, 0U, 0U };     // Weighted folder scores: HashParity (random); largest; smallest
 
         internal ulong
-            TotalLength { get; set; }
+            TotalLength;
         internal uint
-            FileCountHere { get; set; }             // Found 15 bits
+            FileCountHere;                          // Found 15 bits
         internal uint
-            FileCountTotal { get; set; }            // Found 21 bits
+            FileCountTotal;                         // Found 21 bits
         internal uint
-            SubDirs { get; set; }                   // Found 17 bits
+            SubDirs;                                // Found 17 bits
         internal uint
-            DirsWithFiles { get; set; }             // Found 15 bits
+            DirsWithFiles;                          // Found 15 bits
 
         internal Rectangle
-            TreeMapRect { get; set; }
+            TreeMapRect;
 
         internal DetailsDatum() { }
         internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, uint[] folderScore)

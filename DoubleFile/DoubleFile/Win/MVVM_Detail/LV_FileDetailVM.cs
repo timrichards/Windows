@@ -1,9 +1,10 @@
 ﻿using System.Windows.Input;
+
 namespace DoubleFile
 {
     partial class LV_FileDetailVM : ListViewVM_Base<LVitem_FileDetailVM>
     {
-        public ICommand Icmd_Copy { get; private set; }
+        public ICommand Icmd_Copy { get; }
 
         public string LocalPath { get; private set; }
         void LocalPath_Set(LocalTreeNode treeNode = null, string strFile = null)

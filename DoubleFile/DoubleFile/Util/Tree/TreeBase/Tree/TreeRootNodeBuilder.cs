@@ -206,7 +206,7 @@ namespace DoubleFile
                 var folderScore = new[] { 0U, 0U, 0U };  // Weighted folder scores: HashParity (random); largest; smallest
 
                 var nHashColumn =
-                    App.FileDictionary.AllListingsHashV2
+                    Statics.FileDictionary.AllListingsHashV2
                     ? 11
                     : 10;
 
@@ -237,7 +237,7 @@ namespace DoubleFile
                        folderScore =
                             folderScore.Zip(
                             new[] { (uint)fileKeyTuple.GetHashCode() }
-                            .Concat(App.FileDictionary.GetFolderScorer(fileKeyTuple)),
+                            .Concat(Statics.FileDictionary.GetFolderScorer(fileKeyTuple)),
                             (n1, n2) => n1 + n2)
                             .ToArray();
                     }

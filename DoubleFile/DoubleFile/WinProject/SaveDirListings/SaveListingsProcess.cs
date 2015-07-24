@@ -29,14 +29,14 @@ namespace DoubleFile
             if (0 == listSourcePaths.Count)
                 return;
 
-            if (false == (App.SaveDirListings?.IsAborted ?? true))
+            if (false == (Statics.SaveDirListings?.IsAborted ?? true))
             {
                 MBoxStatic.Assert(99940, false);
-                App.SaveDirListings.EndThread();
+                Statics.SaveDirListings.EndThread();
             }
 
             (new WinProgress(listNicknames, listSourcePaths, x =>
-                App.SaveDirListings =
+                Statics.SaveDirListings =
                     new SaveDirListings(lvProjectVM, this)
                     .DoThreadFactory())
             {
@@ -50,7 +50,7 @@ namespace DoubleFile
         void ISaveDirListingsStatus.Status(LVitem_ProjectVM lvItemProjectVM,
             string strError, bool bDone, double nProgress)
         {
-            var sdl = App.SaveDirListings;
+            var sdl = Statics.SaveDirListings;
             var winProgress = WinProgress.WithWinProgress(w => w);
 
             if (winProgress.LocalIsClosed)
@@ -93,12 +93,12 @@ namespace DoubleFile
 
         void ISaveDirListingsStatus.Done()
         {
-            App.SaveDirListings = null;
+            Statics.SaveDirListings = null;
         }
 
         bool IWinProgressClosing.ConfirmClose()
         {
-            if (App.SaveDirListings?.IsAborted ?? true)
+            if (Statics.SaveDirListings?.IsAborted ?? true)
                 return true;
 
             if (MessageBoxResult.Yes !=
@@ -106,7 +106,7 @@ namespace DoubleFile
                 WinProgress.WithWinProgress(w => w)))
                 return false;
 
-            App.SaveDirListings?.EndThread();
+            Statics.SaveDirListings?.EndThread();
             return true;
         }
 

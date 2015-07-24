@@ -75,7 +75,7 @@ namespace DoubleFile
                 _dictResults = new ConcurrentDictionary<SearchResultsDir, bool>();
 
                 _searchType2 =
-                    new SearchListings(App.LVprojectVM, new SearchBase
+                    new SearchListings(Statics.LVprojectVM, new SearchBase
                 (
                     SearchText,
                     SearchText.ToLower() != SearchText,
@@ -92,7 +92,7 @@ namespace DoubleFile
 
         bool Reinitialize_And_FullPathFound(string strPath)
         {
-            if (0 == (App.LVprojectVM?.CanLoadCount ?? 0))
+            if (0 == (Statics.LVprojectVM?.CanLoadCount ?? 0))
                 return true;        // found there are no volumes loaded
 
             ClearItems();

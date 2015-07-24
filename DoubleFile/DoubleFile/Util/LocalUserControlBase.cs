@@ -108,7 +108,7 @@ namespace DoubleFile
             Util.ThreadMake(() =>
             {
                 Parallel.ForEach(
-                    App.LVprojectVM.ItemsCast
+                    Statics.LVprojectVM.ItemsCast
                     .Where(lvItem => lvItem.CanLoad), lvItem =>
                 {
                     var lsFileLengths_ = new List<decimal>();

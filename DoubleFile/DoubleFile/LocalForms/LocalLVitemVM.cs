@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
@@ -11,10 +10,10 @@ namespace DoubleFile
         public string
             Folder { get { return SubItems[0]; } set { SubItems[0] = value; } }
         public string
-            Clones { get { return SubItems[1]; } }
+            Clones => SubItems[1];
 
-        public Brush Foreground { get { return _classObject.Foreground; } }
-        public Brush Background { get { return _classObject.Background; } }
+        public Brush Foreground => _classObject.Foreground;
+        public Brush Background => _classObject.Background;
 
         public FontWeight FontWeight
         {
@@ -28,13 +27,13 @@ namespace DoubleFile
         protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static string[] _propNamesA = null;
 
-        internal override int NumCols { get { return NumCols_; } }
+        internal override int NumCols => NumCols_;
         internal const int NumCols_ = 2;
 
         internal TabledString<Tabled_Folders>
-            Name { get; set; }
+            Name;
         //internal LocalLVitem
-        //    IgnoreLVItem { get; set; }
+        //    IgnoreLVItem;
         internal IList<LocalTreeNode>
             TreeNodes = new LocalTreeNode[0];
 

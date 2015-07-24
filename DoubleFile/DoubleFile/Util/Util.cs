@@ -204,20 +204,5 @@ namespace DoubleFile
             System.Console.WriteLine(str);
 #endif
         }
-
-        static internal TMember
-            WR<THolder, TMember>(WeakReference<THolder> wr, Func<THolder, TMember> getValue)
-            where THolder : class
-            where TMember : class
-        {
-            THolder holder = null;
-
-            wr.TryGetTarget(out holder);
-
-            return
-                (null != holder)
-                ? getValue(holder)
-                : null;
-        }
     }
 }

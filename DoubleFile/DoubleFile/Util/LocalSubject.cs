@@ -3,7 +3,7 @@ using System.Reactive.Subjects;
 
 namespace DoubleFile
 {
-    class LocalSubject<T> : ISubject<Tuple<T, int>>
+    public class LocalSubject<T> : ISubject<Tuple<T, int>>
     {
         public void OnCompleted() { _subject.OnCompleted(); }
         public void OnError(Exception error) { _subject.OnError(error); }

@@ -39,15 +39,13 @@ namespace DoubleFile
         public string
             Remaining { get { return SubItems[5]; } private set { SetProperty(5, value); } }
 
-        internal override int
-            NumCols { get { return NumCols_; } }
-        internal const int
-            NumCols_ = 6;
+        internal override int NumCols => NumCols_;
+        internal const int NumCols_ = 6;
 
         protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static string[] _propNamesA = null;
 
-        protected override int SearchCol { get { return 1; } }
+        protected override int SearchCol => 1;
 
         internal LVitem_ProgressVM(LV_ProgressVM LV, string[] arrStr)
             : base(LV, arrStr)

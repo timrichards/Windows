@@ -18,18 +18,8 @@ namespace DoubleFile
         static internal Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyCollection<string>, LocalTreeNode>
             LastSelectedFile
         {
-            get { return WithLV_FilesVM(lv => lv._lastSelectedFile); }
-            private set { WithLV_FilesVM(lv => lv._lastSelectedFile = value); }
-        }
-        static T WithLV_FilesVM<T>(Func<LV_FilesVM, T> doSomethingWith) where T : class
-        {
-            LV_FilesVM vm = null;
-
-            _wr.TryGetTarget(out vm);
-
-            return (null != vm)
-                ? doSomethingWith(vm)
-                : null;
+            get { return _wr.Get(lv => lv._lastSelectedFile); }
+            private set { _wr.Get(lv => lv._lastSelectedFile = value); }
         }
         Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyCollection<string>, LocalTreeNode>
             _lastSelectedFile = null;

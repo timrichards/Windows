@@ -8,12 +8,12 @@ namespace DoubleFile
     abstract class ListViewVM_Base : Observable_OwnerWindowBase
     {
         internal Func<bool>
-            SelectedOne = () => { DesignModeOK(); return false; };
+            SelectedOne = () => DesignModeOK(false);
         internal Func<bool>
-            SelectedAny = () => { DesignModeOK(); return false; };
+            SelectedAny = () => DesignModeOK(false);
 
         public ObservableCollection<ListViewItemVM_Base>
-            Items { get { return _items; } }
+            Items => _items;
         ObservableCollection<ListViewItemVM_Base> _items = new ObservableCollection<ListViewItemVM_Base>();
         internal void
             ClearItems() { _items = new ObservableCollection<ListViewItemVM_Base>(); RaisePropertyChanged("Items"); }

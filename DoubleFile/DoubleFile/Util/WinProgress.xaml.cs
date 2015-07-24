@@ -199,19 +199,8 @@ namespace DoubleFile
         }
 
         internal static T
-            WithWinProgress<T>(Func<WinProgress, T> doSomethingWith)
-        {
-            WinProgress winProgress = null;
-
-            _wr.TryGetTarget(out winProgress);
-
-            return
-                (null != winProgress)
-                ? doSomethingWith(winProgress)
-                : default(T);
-        }
-        static WeakReference<WinProgress>
-            _wr = new WeakReference<WinProgress>(null);
+            WithWinProgress<T>(Func<WinProgress, T> doSomethingWith) => _wr.Get(o => doSomethingWith(o));
+        static WeakReference<WinProgress> _wr = new WeakReference<WinProgress>(null);
         
         readonly LV_ProgressVM
             _lv = new LV_ProgressVM();

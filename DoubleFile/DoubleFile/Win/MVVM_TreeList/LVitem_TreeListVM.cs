@@ -5,13 +5,12 @@ namespace DoubleFile
 {
     class LVitem_TreeListVM : ListViewItemVM_Base
     {
-        public Brush Foreground { get { return LocalTreeNode.Foreground; } }
-        public Brush Background { get { return LocalTreeNode.Background; } }
-        internal LocalTreeNode LocalTreeNode { get; set; }
+        public Brush Foreground => LocalTreeNode.Foreground;
+        public Brush Background => LocalTreeNode.Background;
 
         public string Folder { get { return SubItems[0]; } private set { SetProperty(0, value); } }
 
-        internal override int NumCols { get { return NumCols_; } }
+        internal override int NumCols => NumCols_;
         internal const int NumCols_ = 1;
 
         protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
@@ -21,5 +20,7 @@ namespace DoubleFile
             : base(null, lsStr)
         {
         }
+
+        internal LocalTreeNode LocalTreeNode;
     }
 }

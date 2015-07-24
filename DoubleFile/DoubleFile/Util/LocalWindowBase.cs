@@ -37,6 +37,7 @@ namespace DoubleFile
             if (null != InitForMainWindowOnly)  // future proof
             {
                 InitForMainWindowOnly(Init);
+                Statics.TopWindow = this;
                 LocalIsClosed = false;          // bootstrap main window
                 return;
             }
@@ -61,9 +62,6 @@ namespace DoubleFile
                 HwndSource
                     .FromHwnd((NativeWindow)this)
                     .AddHook(WndProc));
-
-            if (null == Statics.TopWindow)
-                Statics.TopWindow = MainWindow.WithMainWindow(w => w);
 
             // use-case: assert before main window shown
             if (null == Statics.TopWindow)

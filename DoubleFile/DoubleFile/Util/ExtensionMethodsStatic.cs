@@ -7,12 +7,12 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    static internal partial class ExtensionMethodsStatic
+    static public partial class ExtensionMethodsStatic
     {
         static internal T As<T>(this object o) where T: class { return  (o is T) ? (T)o : null; }  // 20x faster than as p. 123
       
         static readonly IDictionary<int, Tuple<DateTime, WeakReference>> _lsSubjects = new Dictionary<int, Tuple<DateTime, WeakReference>>();
-        static internal void LocalOnNext<T>(this LocalSubject<T> subject, T value, int nOnNextAssertLoc, int nInitiator = 0)
+        static public void LocalOnNext<T>(this LocalSubject<T> subject, T value, int nOnNextAssertLoc, int nInitiator = 0)
         {
             MBoxStatic.Assert(nOnNextAssertLoc, 0 <= nInitiator);
 
@@ -194,6 +194,20 @@ namespace DoubleFile
             window.Width = r.Width;
             window.Height = r.Height;
             return window;
+        }
+
+        static internal TMember
+            Get<THolder, TMember>(this WeakReference<THolder> wr, Func<THolder, TMember> getValue)
+            where THolder : class
+        {
+            THolder holder = null;
+
+            wr.TryGetTarget(out holder);
+
+            return
+                (null != holder)
+                ? getValue(holder)
+                : default(TMember);
         }
     }
 }

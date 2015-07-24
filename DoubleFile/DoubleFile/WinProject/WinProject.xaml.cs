@@ -16,7 +16,7 @@ namespace DoubleFile
             {
                 SelectedOne = () => 1 == form_lv.SelectedItems.Count,
                 SelectedAny = () => 0 < form_lv.SelectedItems.Count,
-                Selected = () => form_lv.SelectedItems.Cast<LVitem_ProjectVM>()
+                SelectedItems = () => form_lv.SelectedItems.Cast<LVitem_ProjectVM>()
             };
 
             DataContext = new WinProjectVM(Statics.LVprojectVM);

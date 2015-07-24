@@ -5,10 +5,16 @@ namespace DoubleFile
 {
     class LVitem_FilesVM : ListViewItemVM_Base
     {
-        internal IEnumerable<FileDictionary.DuplicateStruct>
-            LSduplicates = null;
-        internal string[]
-            FileLine { get; set; }
+        public string Filename => FileLine[0];
+        public string Created => FileLine[1];
+        public DateTime CreatedRaw => ("" + Created).ToDateTime();
+        public string Modified => FileLine[2];
+        public DateTime ModifiedRaw => ("" + Modified).ToDateTime();
+        public string Attributes => Util.DecodeAttributes(FileLine[3]);
+        public ulong LengthRaw => 4 < FileLine.Length ? ("" + FileLine[4]).ToUlong() : 0;
+        public string Length => Util.FormatSize(LengthRaw);
+        public string Error1 => 5 < FileLine.Length ? FileLine[5] : "";
+        public string Error2 => 6 < FileLine.Length ? FileLine[6] : "";
 
         public bool SameVolume
         {
@@ -21,45 +27,26 @@ namespace DoubleFile
         }
         bool _SameVolume = false;
 
-        public bool SolitaryAndNonEmpty
-        {
-            get
-            {
-                return
-                    (0 == DuplicatesRaw) &&
-                        ((FileLine.Length <= FileParse.knColLengthLV) ||                    // doesn't happen
-                        string.IsNullOrWhiteSpace(FileLine[FileParse.knColLengthLV]) ||     // doesn't happen
-                        (0 < ("" + FileLine[FileParse.knColLengthLV]).ToUlong()));
-            }
-        }
+        public bool SolitaryAndNonEmpty =>
+            (0 == DuplicatesRaw) &&
+                ((FileLine.Length <= FileParse.knColLengthLV) ||                    // doesn't happen
+                string.IsNullOrWhiteSpace(FileLine[FileParse.knColLengthLV]) ||     // doesn't happen
+                (0 < ("" + FileLine[FileParse.knColLengthLV]).ToUlong()));
 
-        public string Filename { get { return FileLine[0]; } }
-
-        public string Duplicates
-        {
-            get
-            {
-                return
-                    ((0 != DuplicatesRaw) ? "" + DuplicatesRaw : "") +
-                    (_SameVolume ? " all on the same volume." : "");
-            }
-        }
+        public string Duplicates =>
+            ((0 != DuplicatesRaw) ? "" + DuplicatesRaw : "") +
+            (_SameVolume ? " all on the same volume." : "");
         public int DuplicatesRaw { get; internal set; }
 
-        public string Created { get { return FileLine[1]; } }
-        public DateTime CreatedRaw { get { return ("" + Created).ToDateTime(); } }
-        public string Modified { get { return FileLine[2]; } }
-        public DateTime ModifiedRaw { get { return ("" + Modified).ToDateTime(); } }
-        public string Attributes { get { return Util.DecodeAttributes(FileLine[3]); } }
-        public string Length { get { return 4 < FileLine.Length ? Util.FormatSize(FileLine[4]) : ""; } }
-        public ulong LengthRaw { get { return 4 < FileLine.Length ? ("" + FileLine[4]).ToUlong() : 0; } }
-        public string Error1 { get { return 5 < FileLine.Length ? FileLine[5] : ""; } }
-        public string Error2 { get { return 6 < FileLine.Length ? FileLine[6] : ""; } }
-
-        internal override int NumCols { get { return NumCols_; } }
+        internal override int NumCols => NumCols_;
         internal const int NumCols_ = 0;
 
         protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static string[] _propNamesA = null;
+
+        internal IEnumerable<FileDictionary.DuplicateStruct>
+            LSduplicates = null;
+        internal string[]
+            FileLine;
     }
 }

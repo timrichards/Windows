@@ -10,8 +10,6 @@ namespace DoubleFile
         internal LocalTreeNode LocalTreeNode { get { return _datum.As<LocalTreeNode>(); } set { _datum = value; } }
         object _datum = null;
 
-        internal TabledString<Tabled_Files> Filename { get; set; }
-
         public string FolderOrFile
         {
             get
@@ -66,10 +64,12 @@ namespace DoubleFile
             }
         }
 
-        internal override int NumCols { get { return NumCols_; } }
+        internal override int NumCols => NumCols_;
         internal const int NumCols_ = 2;
 
         protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static string[] _propNamesA = null;
+
+        internal TabledString<Tabled_Files> Filename;
     }
 }

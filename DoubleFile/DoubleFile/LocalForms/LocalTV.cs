@@ -6,51 +6,51 @@ namespace DoubleFile
     partial class LocalTV
     {
         static internal IReadOnlyList<LocalTreeNode>
-            AllNodes { get { return Util.WR(_wr, o => o._allNodes); } }
+            AllNodes { get { return _wr.Get(o => o._allNodes); } }
         List<LocalTreeNode> _allNodes = new List<LocalTreeNode> { };
 
         static internal IReadOnlyList<LocalTreeNode>
-            RootNodes { get { return Util.WR(_wr, o => o._rootNodes); } }
+            RootNodes { get { return _wr.Get(o => o._rootNodes); } }
         List<LocalTreeNode> _rootNodes = new List<LocalTreeNode> { };
 
         static internal LocalTreeNode
-            TopNode { get { return Util.WR(_wr, o => o._topNode); } }
+            TopNode { get { return _wr.Get(o => o._topNode); } }
         LocalTreeNode _topNode = null;
 
         static internal LocalTreeNode
             SelectedNode
         {
-            get { return Util.WR(_wr, o => o._selectedNode); }
-            set { Util.WR(_wr, o => o._selectedNode = value); }
+            get { return _wr.Get(o => o._selectedNode); }
+            set { _wr.Get(o => o._selectedNode = value); }
         }
         LocalTreeNode _selectedNode = null;
 
         static internal LocalLVVM
-            Clones { get { return Util.WR(_wr, o => o._clones); } }
+            Clones { get { return _wr.Get(o => o._clones); } }
         LocalLVVM _clones = new LocalLVVM();
 
         static internal LocalLVVM
-            SameVol { get { return Util.WR(_wr, o => o._sameVol); } }
+            SameVol { get { return _wr.Get(o => o._sameVol); } }
         LocalLVVM _sameVol = new LocalLVVM();
 
         static internal LocalLVVM
-            Solitary { get { return Util.WR(_wr, o => o._solitary); } }
+            Solitary { get { return _wr.Get(o => o._solitary); } }
         LocalLVVM _solitary = new LocalLVVM();
 
         static internal IReadOnlyDictionary<string, string>
-            DictVolumeInfo { get { return Util.WR(_wr, o => o._dictVolumeInfo); } }
+            DictVolumeInfo { get { return _wr.Get(o => o._dictVolumeInfo); } }
         readonly Dictionary<string, string> _dictVolumeInfo = new Dictionary<string, string>();
 
         static internal TreeSelect.FileListUpdated
-            TreeSelect_FileList { get { return Util.WR(_wr, o => o._treeSelect_FileList); } }
+            TreeSelect_FileList { get { return _wr.Get(o => o._treeSelect_FileList); } }
         TreeSelect.FileListUpdated _treeSelect_FileList;
 
         static internal TreeSelect.FolderDetailUpdated
-            TreeSelect_FolderDetail { get { return Util.WR(_wr, o => o._treeSelect_FolderDetail); } }
+            TreeSelect_FolderDetail { get { return _wr.Get(o => o._treeSelect_FolderDetail); } }
         TreeSelect.FolderDetailUpdated _treeSelect_FolderDetail = null;
 
         static internal TreeSelect.VolumeDetailUpdated
-            TreeSelect_VolumeDetail { get { return Util.WR(_wr, o => o._treeSelect_VolumeDetail); } }
+            TreeSelect_VolumeDetail { get { return _wr.Get(o => o._treeSelect_VolumeDetail); } }
         TreeSelect.VolumeDetailUpdated _treeSelect_VolumeDetail = null;
 
         static internal bool
@@ -147,21 +147,9 @@ namespace DoubleFile
         }
 
         static internal T
-            WithLocalTV<T>(Func<LocalTV, T> doSomethingWith)
-        {
-            LocalTV localTV = null;
-
-            _wr.TryGetTarget(out localTV);
-
-            return
-                (null != localTV)
-                ? doSomethingWith(localTV)
-                : default(T);
-        }
-        static readonly WeakReference<LocalTV>
-            _wr = new WeakReference<LocalTV>(null);
-        static LocalTV
-            _instance = null;
+            WithLocalTV<T>(Func<LocalTV, T> doSomethingWith) => _wr.Get(o => doSomethingWith(o));
+        static readonly WeakReference<LocalTV> _wr = new WeakReference<LocalTV>(null);
+        static LocalTV _instance = null;
 
         readonly LV_ProjectVM
             _lvProjectVM = null;

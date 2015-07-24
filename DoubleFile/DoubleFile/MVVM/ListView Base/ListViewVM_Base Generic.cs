@@ -9,9 +9,9 @@ namespace DoubleFile
     {
         // covariant cast of each el to iterator type so can't be collectively cast to ICollection<T> even with .Cast<T>
         internal Func<IEnumerable<T>>
-            Selected = () => { DesignModeOK(); return new T[] { }; };
+            SelectedItems = () => DesignModeOK(new T[] { });
         internal IEnumerable<T>
-            ItemsCast { get { return Items.Cast<T>(); } }
+            ItemsCast => Items.Cast<T>();
 
         internal virtual IEnumerable<T> this[string s_in]
         {

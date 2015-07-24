@@ -83,6 +83,12 @@ namespace DoubleFile
 
             Observable.FromEventPattern<CancelEventArgs>(this, "Closing")
                 .Subscribe(args => MainWindow_Closing(args.EventArgs));
+
+            MenuLinkGroups.Add(new LinkGroup { DisplayName="Explore", Links =
+            {
+                new MyLink("View project", "/WinProject/WinProject.xaml"),
+                new MyLink("Introduction", "/Introduction.xaml")
+            }});
         }
 
         static internal LocalUserControlBase
@@ -140,21 +146,20 @@ namespace DoubleFile
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                 return default(T);
 
-            // use-case: assert before main window shown
+            // use-case: assert before main window class allocated
             if (null == _mainWindowWR)
                 return default(T);
 
-            MainWindow mainWindow = null;
-
-            _mainWindowWR.TryGetTarget(out mainWindow);
-
-            if (mainWindow?.LocalIsClosed ?? true)
+            return _mainWindowWR.Get(mainWindow =>
             {
-                MBoxStatic.Assert(99856, false);
-                return default(T);
-            }
+                if (mainWindow?.LocalIsClosed ?? true)
+                {
+                    MBoxStatic.Assert(99856, false);
+                    return default(T);      // from lambda
+                }
 
-            return doSomethingWith(mainWindow);
+                return doSomethingWith(mainWindow);      // from lambda
+            });
         }
 
         internal void

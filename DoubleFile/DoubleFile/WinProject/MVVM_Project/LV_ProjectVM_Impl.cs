@@ -77,7 +77,7 @@ namespace DoubleFile
 
         internal void EditListingFile()
         {
-            Selected()
+            SelectedItems()
                 .FirstOnlyAssert(lvItem =>
             {
                 var lvItemTemp = new LVitem_ProjectVM(lvItem);
@@ -160,7 +160,7 @@ namespace DoubleFile
 
         internal void RemoveListingFile()
         {
-            if (Selected().Any(lvItem => lvItem.WouldSave) &&
+            if (SelectedItems().Any(lvItem => lvItem.WouldSave) &&
                 (MessageBoxResult.Yes !=
                 MBoxStatic.ShowDialog("Selected listings have not been saved. Continue?", "Remove Listing File",
                 MessageBoxButton.YesNo)))
@@ -168,7 +168,7 @@ namespace DoubleFile
                 return;
             }
 
-            Selected()
+            SelectedItems()
                 .ToList()
                 .ForEach(lvItem => Items.Remove(lvItem));
 
@@ -183,7 +183,7 @@ namespace DoubleFile
             var dlg = new WinVolumeGroup
             {
                 Text =
-                    Selected()
+                    SelectedItems()
                     .Select(lvItem => lvItem.VolumeGroup)
                     .FirstOrDefault()
             };
@@ -193,7 +193,7 @@ namespace DoubleFile
                 var strLabel = dlg.Text.Trim();
                 bool bUnsaved = false;
 
-                foreach (var lvItem in Selected())
+                foreach (var lvItem in SelectedItems())
                 {
                     if (("" + lvItem.VolumeGroup).Equals(strLabel))
                         continue;
@@ -209,7 +209,7 @@ namespace DoubleFile
 
         internal void ToggleInclude()
         {
-            Selected()
+            SelectedItems()
                 .ForEach(lvItem => lvItem.Include = (false == lvItem.Include));
 
             Unsaved = true;

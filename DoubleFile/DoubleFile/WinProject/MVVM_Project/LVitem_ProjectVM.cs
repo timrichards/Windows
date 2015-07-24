@@ -10,7 +10,7 @@ namespace DoubleFile
         public string SourcePath { get { return SubItems[1]; } internal set { SetProperty(1, value); } }
 
         public string ListingFile { get { return SubItems[2]; } set { SetProperty(2, value); } }
-        public string ListingFileNoPath { get { return Path.GetFileName(SubItems[2]); } }
+        public string ListingFileNoPath => Path.GetFileName(SubItems[2]);
 
         public string Status { get { return SubItems[3]; } internal set { SetProperty(3, value); } }
         public string IncludeYN { get { return SubItems[4]; } private set { SetProperty(4, value); } }
@@ -19,12 +19,9 @@ namespace DoubleFile
         public string DriveSerial { get { return SubItems[7]; } internal set { SetProperty(7, value); } }
 
         public string ScannedLength { get { return Util.FormatSize(SubItems[8]); } internal set { SetProperty(8, value); } }
-        public ulong ScannedLengthRaw { get { return ("" + SubItems[8]).ToUlong(); } }
+        public ulong ScannedLengthRaw => ("" + SubItems[8]).ToUlong();
 
-        internal int LinesTotal { get; set; }
-        internal bool HashV2 { get; set; }
-
-        internal override int NumCols { get { return NumCols_; } }
+        internal override int NumCols => NumCols_;
         internal const int NumCols_ = 9;
 
         protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
@@ -48,15 +45,8 @@ namespace DoubleFile
             set { IncludeYN = (value ? FileParse.ksIncludeYes : FileParse.ksIncludeNo); } 
         }
 
-        internal bool WouldSave
-        {
-            get { return (false == _ksFileExistsCheck.Contains(Status)); }
-        }
-
-        internal bool CanLoad
-        {
-            get { return (Include && _ksFileExistsCheck.Contains(Status) && (FileParse.ksError != Status)); }
-        }
+        internal bool WouldSave => (false == _ksFileExistsCheck.Contains(Status));
+        internal bool CanLoad => (Include && _ksFileExistsCheck.Contains(Status) && (FileParse.ksError != Status));
 
         internal string Volume
         {
@@ -99,6 +89,9 @@ namespace DoubleFile
                 Status = FileParse.ksError;
             }
         }
+
+        internal int LinesTotal;
+        internal bool HashV2;
 
         readonly string _ksFileExistsCheck = FileParse.ksUsingFile + FileParse.ksSaved;
     }

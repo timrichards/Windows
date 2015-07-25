@@ -80,6 +80,8 @@ namespace DoubleFile
                 {
                     foreach (Window window in mainWindow.OwnedWindows)
                         window.Close();
+
+                    mainWindow.Activate();
                 });
             });
 

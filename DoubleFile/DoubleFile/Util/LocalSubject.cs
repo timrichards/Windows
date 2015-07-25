@@ -8,7 +8,12 @@ namespace DoubleFile
         public void OnCompleted() { _subject.OnCompleted(); }
         public void OnError(Exception error) { _subject.OnError(error); }
         public void OnNext(Tuple<T, int> value) { _subject.OnNext(value); }
-        public IDisposable Subscribe(IObserver<Tuple<T, int>> observer) { return _subject.Subscribe(observer); }
+
+        public IDisposable Subscribe(IObserver<Tuple<T, int>> observer)
+        {
+            Util.Assert(99772, false, "Use LocalSubscribe");
+            return _subject.Subscribe(observer);
+        }
 
         Subject<Tuple<T, int>>
             _subject = new Subject<Tuple<T, int>>();

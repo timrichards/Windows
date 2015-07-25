@@ -96,7 +96,7 @@ namespace DoubleFile
                 }
                 catch (Exception e)
                 {
-                    MBoxStatic.ShowDialog(e.GetBaseException().Message, "LocalSubscribe Exception");
+                    Util.Assert(99771, false, e.GetBaseException().Message);
                 }
             });
         }

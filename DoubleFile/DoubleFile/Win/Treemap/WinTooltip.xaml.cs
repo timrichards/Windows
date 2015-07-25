@@ -93,7 +93,7 @@ namespace DoubleFile
                 return;
 
             if (null != _winTooltip)
-                _winTooltip.Tag = null;
+                Util.UIthread(99773, () => _winTooltip.Tag = null);
 
             _bClosingTooltip = true;
 

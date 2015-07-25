@@ -1,5 +1,6 @@
 ﻿using System.Windows.Media;
 using System;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -38,6 +39,19 @@ namespace DoubleFile
             }
 
             _wr.SetTarget(this);
+
+            foreach (var strSource in new[]
+            {
+                "/FirstFloor.ModernUI;component/Assets/ModernUI.xaml",
+                "/DoubleFile;component/Assets/LocalBlankWindow.xaml",
+                "/DoubleFile;component/Assets/LocalMUIdark.xaml",
+                "/DoubleFile;component/Assets/Strings.xaml",
+                "/DoubleFile;component/Assets/LocalStyles.xaml"
+            })
+                Application.Current?.Resources.MergedDictionaries.Add(new ResourceDictionary
+            {
+                Source = new Uri(strSource, UriKind.Relative)
+            });
         }
 
         static WeakReference<Statics> _wr = new WeakReference<Statics>(null);

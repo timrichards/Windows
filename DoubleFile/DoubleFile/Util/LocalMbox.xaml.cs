@@ -60,7 +60,17 @@ namespace DoubleFile
 
         internal LocalMbox(ILocalWindow owner, string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
+            }
+            catch
+            {
+                MessageBox.Show("Could not initialize component while asserting another error (next...)");
+                MessageBox.Show(strMessage, strTitle, buttons ?? MessageBoxButton.OK);
+                return;
+            }
+
             WindowStyle = WindowStyle.None;
             AllowsTransparency = true;
 

@@ -30,6 +30,7 @@ namespace VolTreeMap
 
         public App()
         {
+            _statics = new Statics();
             Statics.AppActivated = true;      // Application_Activated() seemed to work but jic
 
             Observable.FromEventPattern(this, "Activated")
@@ -58,6 +59,6 @@ namespace VolTreeMap
         }
 
         Statics
-            _statics = new Statics();
+            _statics = null;
     }
 }

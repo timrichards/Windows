@@ -6,7 +6,7 @@ namespace DoubleFile
     class SearchResultsDir : IComparable
     {
         internal PathBuilder
-            StrDir { get; set; }
+            StrDir;
         internal readonly SortedDictionary<TabledString<Tabled_Files>, bool>
             ListFiles = new SortedDictionary<TabledString<Tabled_Files>, bool>();
 

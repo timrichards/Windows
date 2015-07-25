@@ -13,9 +13,7 @@ namespace DoubleFile
 
     partial class SearchListings : SearchBase
     {
-        internal SearchListings(
-            LV_ProjectVM lvProjectVM,
-            SearchBase searchBase)
+        internal SearchListings(LV_ProjectVM lvProjectVM, SearchBase searchBase)
             : base(searchBase)
         {
             _lvProjectVM = lvProjectVM;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DoubleFile;
+using System;
 
 namespace VolTreeMap
 {
@@ -13,7 +14,7 @@ namespace VolTreeMap
             MainWindow()
             : base(InitForMainWindowOnly)
         {
-     //       Statics.Icon = Icon;
+            Statics.Icon = Icon;
             Init();
             Init = null;
             InitializeComponent();

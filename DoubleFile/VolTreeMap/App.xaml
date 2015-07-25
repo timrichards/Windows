@@ -1,9 +1,18 @@
 ﻿<Application x:Class="VolTreeMap.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:VolTreeMap"
-             StartupUri="MainWindow.xaml">
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:local="clr-namespace:DoubleFile;assembly=DoubleFile"
+            xmlns:controls="clr-namespace:FirstFloor.ModernUI.Windows.Controls;assembly=FirstFloor.ModernUI"
+            StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/ModernUI.xaml" />
+                <ResourceDictionary Source="/DoubleFile;component/Assets/LocalBlankWindow.xaml" />
+                <ResourceDictionary Source="/DoubleFile;component/Assets/LocalMUIdark.xaml" />
+                <ResourceDictionary Source="/DoubleFile;component/Assets/Strings.xaml" />
+                <ResourceDictionary Source="/DoubleFile;component/Assets/LocalStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

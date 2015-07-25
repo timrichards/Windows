@@ -25,18 +25,15 @@ namespace DoubleFile
             AppActivated { get { return _wr.Get(s => s._appActivated); } set { _wr.Get(s => s._appActivated = value); } }
         bool _appActivated;
 
-        static internal ImageSource
+        static public ImageSource
             Icon { get { return _wr.Get(s => s._icon); } set { _wr.Get(s => s._icon = value); } }
         ImageSource _icon;
 
         public Statics()
         {
-            if (_wr.Get(s =>
+            if (_wr.Get(s => true))
             {
                 MBoxStatic.Assert(99776, false);
-                return true;    // from lambda
-            }))
-            {
                 return;
             }
 

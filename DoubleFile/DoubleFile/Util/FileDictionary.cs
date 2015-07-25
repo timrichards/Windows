@@ -369,7 +369,7 @@ namespace DoubleFile
         }
 
         static int GetLVitemProjectVM(int n) => (int)(n & _knItemVMmask) >> 24;
-        static int SetLVitemProjectVM(ref int n, int v) => GetLineNumber(n) + (v << 24);
+        static int SetLVitemProjectVM(ref int n, int v) => n = GetLineNumber(n) + (v << 24);
         static int GetLineNumber(int n) => n & 0x00FFFFFF;
         static int SetLineNumber(ref int n, int v) => n = (int)(n & _knItemVMmask) + v;
 
